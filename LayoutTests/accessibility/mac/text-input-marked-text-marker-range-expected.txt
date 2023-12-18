@@ -1,14 +1,12 @@
 This test ensures that the input method marked range is available to accessibility clients as text marker range.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: !text === true
+PASS: element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange()) === 'test'
+PASS: !element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange()) === true
+PASS: element.stringValue === 'AXValue: test'
+PASS: text === ' message'
+PASS: element.stringValue === 'AXValue: test message'
 
-
-PASS !text is true
-PASS text is 'test'
-PASS !text is true
-PASS element.stringValue is 'AXValue: test'
-PASS text is ' message'
-PASS element.stringValue is 'AXValue: test message'
 PASS successfullyParsed is true
 
 TEST COMPLETE

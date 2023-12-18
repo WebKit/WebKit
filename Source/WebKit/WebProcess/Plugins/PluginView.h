@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 #include <WebCore/FindOptions.h>
 #include <WebCore/PluginViewBase.h>
@@ -72,13 +72,16 @@ public:
     id accessibilityObject() const final;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const final;
 
+    void layerHostingStrategyDidChange() final;
+
     WebCore::HTMLPlugInElement& pluginElement() const { return m_pluginElement; }
     const URL& mainResourceURL() const { return m_mainResourceURL; }
 
-    void setPageScaleFactor(double);
+    void didBeginMagnificationGesture();
+    void didEndMagnificationGesture();
+    void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin);
     double pageScaleFactor() const;
 
-    void pageScaleFactorDidChange();
     void topContentInsetDidChange();
 
     void webPageDestroyed();
@@ -103,6 +106,8 @@ public:
 
     void invalidateRect(const WebCore::IntRect&) final;
 
+    void didChangeSettings();
+
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);
     virtual ~PluginView();
@@ -111,6 +116,7 @@ private:
 
     void viewGeometryDidChange();
     void viewVisibilityDidChange();
+
     WebCore::IntRect clipRectInWindowCoordinates() const;
     void focusPluginElement();
     
@@ -124,7 +130,11 @@ private:
     void updateDocumentForPluginSizingBehavior();
 
     // WebCore::PluginViewBase
+    WebCore::PluginLayerHostingStrategy layerHostingStrategy() const final;
+
     PlatformLayer* platformLayer() const final;
+    WebCore::GraphicsLayer* graphicsLayer() const final;
+
     bool scroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) final;
     WebCore::ScrollPosition scrollPositionForTesting() const final;
     WebCore::Scrollbar* horizontalScrollbar() final;
@@ -132,6 +142,9 @@ private:
     bool wantsWheelEvents() final;
     bool shouldAllowNavigationFromDrags() const final;
     void willDetachRenderer() final;
+
+    bool usesAsyncScrolling() const final;
+    WebCore::ScrollingNodeID scrollingNodeID() const final;
 
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) final;

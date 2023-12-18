@@ -27,10 +27,12 @@
 
 #if ENABLE(UNIFIED_PDF)
 
-#include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntDegrees.h>
 #include <wtf/RetainPtr.h>
+
+OBJC_CLASS PDFDocument;
+OBJC_CLASS PDFPage;
 
 namespace WebCore {
 class GraphicsContext;
@@ -53,16 +55,17 @@ public:
     PDFDocumentLayout();
     ~PDFDocumentLayout();
 
-    void setPDFDocument(RetainPtr<CGPDFDocumentRef>&&);
-    CGPDFDocumentRef pdfDocument() const { return m_pdfDocument.get(); }
+    void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
 
-    bool hasPDFDocument() const;
     size_t pageCount() const;
 
-    RetainPtr<CGPDFPageRef> pageAtIndex(PageIndex) const;
+    static constexpr WebCore::FloatSize documentMargin { 6, 8 };
+    static constexpr WebCore::FloatSize pageMargin { 4, 6 };
+
+    RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
-    IntDegrees rotationForPageAtIndex(PageIndex) const;
+    WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
 
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
@@ -70,21 +73,21 @@ public:
     void updateLayout(WebCore::IntSize pluginSize);
     WebCore::FloatSize scaledContentsSize() const;
 
+    void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
+    DisplayMode displayMode() const { return m_displayMode; }
+
 private:
     void layoutPages(float availableWidth, float maxRowWidth);
 
     void layoutSingleColumn(float availableWidth, float maxRowWidth);
     void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
 
-    static FloatSize documentMargin();
-    static FloatSize pageMargin();
-
     struct PageGeometry {
         WebCore::FloatRect normalizedBounds;
-        IntDegrees rotation { 0 };
+        WebCore::IntDegrees rotation { 0 };
     };
 
-    RetainPtr<CGPDFDocumentRef> m_pdfDocument;
+    RetainPtr<PDFDocument> m_pdfDocument;
     Vector<PageGeometry> m_pageGeometry;
     WebCore::FloatRect m_documentBounds;
     float m_scale { 1 };

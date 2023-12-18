@@ -24,9 +24,9 @@
 
 #include "CSSPropertyNames.h"
 #include "LegacyRenderSVGForeignObject.h"
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGForeignObject.h"
-#include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
@@ -130,7 +130,7 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
         return false;
 
     while (ancestor && ancestor->isSVGElement()) {
-        if (ancestor->renderer() && (ancestor->renderer()->isSVGHiddenContainer() || ancestor->renderer()->isLegacySVGHiddenContainer()))
+        if (ancestor->renderer() && (ancestor->renderer()->isRenderSVGHiddenContainer() || ancestor->renderer()->isLegacyRenderSVGHiddenContainer()))
             return false;
 
         ancestor = ancestor->parentElement();

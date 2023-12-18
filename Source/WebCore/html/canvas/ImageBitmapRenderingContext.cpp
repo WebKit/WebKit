@@ -59,8 +59,8 @@ ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
 {
     auto& base = canvasBase();
 #if ENABLE(OFFSCREEN_CANVAS)
-    if (is<OffscreenCanvas>(base))
-        return &downcast<OffscreenCanvas>(base);
+    if (auto* offscreenCanvas = dynamicDowncast<OffscreenCanvas>(base))
+        return offscreenCanvas;
 #endif
     return &downcast<HTMLCanvasElement>(base);
 }
@@ -137,7 +137,7 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
     //    then throw an "InvalidStateError" DOMException and abort these steps.
 
     if (imageBitmap->isDetached())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. Run the steps to set an ImageBitmapRenderingContext's output bitmap,
     //    with the context argument equal to bitmapContext, and the bitmap

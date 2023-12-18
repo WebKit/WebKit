@@ -196,10 +196,8 @@ void InjectedScriptBase::makeAsyncCall(ScriptFunctionCall& function, AsyncCallCa
     function.appendArgument(JSC::JSValue(jsFunction));
 
     auto result = callFunctionWithEvalEnabled(function);
-    ASSERT_UNUSED(result, result.value().isUndefined());
-
-    ASSERT(result);
-    if (!result) {
+    ASSERT_UNUSED(result, result && result.value() && result.value().isUndefined());
+    if (!result || !result.value()) {
         // Since `callback` is moved above, we can't call it if there's an exception while trying to
         // execute the `JSNativeStdFunction` inside InjectedScriptSource.js.
         jsFunction->function()(globalObject, nullptr);

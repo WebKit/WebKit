@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x50
-  RenderBlock {HTML} at (0,0) size 800x50
-    RenderBody {BODY} at (8,8) size 784x20
-      RenderBlock {DIV} at (0,0) size 784x20
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderBlock (floating) {P} at (392,0) size 392x42
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderBlock (floating) {P} at (392,0) size 392x43
             RenderImage {IMG} at (0,0) size 15x15 [color=#FF0000]
-            RenderText {#text} at (15,2) size 361x39
-              text run at (15,2) width 4: " "
-              text run at (19,2) width 342: "\x{21E6} There should be a green square at the top left of the"
-              text run at (0,22) width 55: "window."
+            RenderText {#text} at (15,4) size 361x38
+              text run at (15,4) width 4: " "
+              text run at (19,4) width 342: "\x{21E6} There should be a green square at the top left of the"
+              text run at (0,25) width 55: "window."
           RenderImage {IMG} at (0,0) size 15x15 [color=#FF0000]
           RenderText {#text} at (0,0) size 0x0

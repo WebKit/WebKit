@@ -23,7 +23,6 @@
 
 GPUProcess/GPUProcess.cpp
 GPUProcess/GPUConnectionToWebProcess.cpp
-GPUProcess/GPUProcessCreationParameters.cpp
 GPUProcess/GPUProcessPreferences.cpp
 GPUProcess/ShapeDetection/RemoteBarcodeDetector.cpp
 GPUProcess/ShapeDetection/RemoteFaceDetector.cpp
@@ -33,6 +32,7 @@ GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
 GPUProcess/graphics/RemoteImageBuffer.cpp
+GPUProcess/graphics/RemoteImageBufferSet.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp
 GPUProcess/graphics/RemoteResourceCache.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
@@ -112,11 +112,12 @@ NetworkProcess/NetworkResourceLoadMap.cpp
 NetworkProcess/NetworkResourceLoader.cpp
 NetworkProcess/NetworkSchemeRegistry.cpp
 NetworkProcess/NetworkSession.cpp
-NetworkProcess/NetworkSessionCreationParameters.cpp
 NetworkProcess/NetworkSocketChannel.cpp
 NetworkProcess/PingLoad.cpp
 NetworkProcess/PreconnectTask.cpp
 
+NetworkProcess/Classifier/ITPThirdPartyData.cpp
+NetworkProcess/Classifier/ITPThirdPartyDataForSpecificFirstParty.cpp
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/WebCookieManager.cpp
@@ -205,29 +206,24 @@ NetworkProcess/webtransport/NetworkTransportReceiveStream.cpp
 
 Platform/IPC/DaemonCoders.cpp
 
-Shared/AccessibilityPreferences.cpp
 Shared/ActivityAssertion.cpp
 Shared/AuxiliaryProcess.cpp
-Shared/AuxiliaryProcessCreationParameters.cpp
 Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
 Shared/DebuggableInfoData.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
-Shared/FontInfo.cpp
 Shared/InspectorExtensionTypes.cpp
 Shared/IPCConnectionTester.cpp
 Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
-Shared/LoadParameters.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
 Shared/RTCNetwork.cpp
 Shared/RTCPacketOptions.cpp
-Shared/RemoteWorkerInitializationData.cpp
 Shared/ScrollingAccelerationCurve.cpp
 Shared/SessionState.cpp
 Shared/ShareableBitmapHandle.cpp
@@ -236,9 +232,7 @@ Shared/ShareableResource.cpp
 Shared/SharedStringHashStore.cpp
 Shared/SharedStringHashTableReadOnly.cpp
 Shared/SharedStringHashTable.cpp
-Shared/URLSchemeTaskParameters.cpp
 Shared/UserData.cpp
-Shared/UserContentControllerParameters.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebCompiledContentRuleList.cpp
 Shared/WebCompiledContentRuleListData.cpp
@@ -261,14 +255,12 @@ Shared/WebKit2Initialize.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp
 Shared/WebPageGroupData.cpp
-Shared/WebPageNetworkParameters.cpp
 Shared/WebPlatformTouchPoint.cpp
 Shared/WebPopupItem.cpp
 Shared/WebPreferencesDefaultValues.cpp
 Shared/WebPreferencesStore.cpp
 Shared/WebPushMessage.cpp
 Shared/WebTouchEvent.cpp
-Shared/WebUserContentControllerDataTypes.cpp
 Shared/WebWheelEventCoalescer.cpp
 Shared/WebWheelEvent.cpp
 Shared/WebsitePoliciesData.cpp
@@ -380,7 +372,6 @@ Shared/WebGPU/WebGPUVertexState.cpp
 
 Shared/WebsiteData/WebsiteData.cpp
 
-Shared/XR/XRDeviceInfo.cpp
 Shared/XR/XRDeviceProxy.cpp
 
 UIProcess/AuxiliaryProcessProxy.cpp
@@ -728,6 +719,7 @@ WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp
 WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp
 WebProcess/GPU/graphics/RemoteImageBufferProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
+WebProcess/GPU/graphics/RemoteImageBufferSetProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp

@@ -53,4 +53,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderQuote, isQuote())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderQuote, isRenderQuote())

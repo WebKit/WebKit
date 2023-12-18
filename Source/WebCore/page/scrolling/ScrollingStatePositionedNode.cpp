@@ -35,9 +35,11 @@
 
 namespace WebCore {
 
-Ref<ScrollingStatePositionedNode> ScrollingStatePositionedNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, Vector<ScrollingNodeID>&& relatedOverflowScrollingNodes, AbsolutePositionConstraints&& constraints)
+    : ScrollingStateNode(ScrollingNodeType::Positioned, nodeID, WTFMove(children), changedProperties, layerID)
+    , m_relatedOverflowScrollingNodes(WTFMove(relatedOverflowScrollingNodes))
+    , m_constraints(WTFMove(constraints))
 {
-    return adoptRef(*new ScrollingStatePositionedNode(stateTree, nodeID));
 }
 
 ScrollingStatePositionedNode::ScrollingStatePositionedNode(ScrollingStateTree& tree, ScrollingNodeID nodeID)

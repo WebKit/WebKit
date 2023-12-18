@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-Ref<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale)
+Ref<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace colorSpace)
 {
-    return adoptRef(*new FEDisplacementMap(xChannelSelector, yChannelSelector, scale));
+    return adoptRef(*new FEDisplacementMap(xChannelSelector, yChannelSelector, scale, colorSpace));
 }
 
-FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale)
-    : FilterEffect(FilterEffect::Type::FEDisplacementMap)
+FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace colorSpace)
+    : FilterEffect(FilterEffect::Type::FEDisplacementMap, colorSpace)
     , m_xChannelSelector(xChannelSelector)
     , m_yChannelSelector(yChannelSelector)
     , m_scale(scale)

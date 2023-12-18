@@ -181,6 +181,7 @@ size_t integerIndexedObjectByteLength(JSArrayBufferView* typedArray, Getter& get
 
 inline JSArrayBufferView* validateTypedArray(JSGlobalObject* globalObject, JSArrayBufferView* typedArray)
 {
+    // https://tc39.es/ecma262/#sec-validatetypedarray
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 

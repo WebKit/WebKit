@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "SourceCode.h"
 #include "Weak.h"
 #include "WeakHandleOwner.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -46,7 +47,7 @@ enum class BuiltinCodeIndex {
 #undef BUILTIN_NAME_ONLY
 
 class BuiltinExecutables {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BuiltinExecutables);
 public:
     explicit BuiltinExecutables(VM&);
 
@@ -60,14 +61,14 @@ SourceCode name##Source();
     static SourceCode defaultConstructorSourceCode(ConstructorKind);
     UnlinkedFunctionExecutable* createDefaultConstructor(ConstructorKind, const Identifier& name, NeedsClassFieldInitializer, PrivateBrandRequirement);
 
-    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, NeedsClassFieldInitializer, PrivateBrandRequirement = PrivateBrandRequirement::None);
+    static UnlinkedFunctionExecutable* createExecutable(VM&, const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute, NeedsClassFieldInitializer, PrivateBrandRequirement = PrivateBrandRequirement::None);
 
     void finalizeUnconditionally(CollectionScope);
 
 private:
     VM& m_vm;
 
-    UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility);
+    UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode&, const Identifier&, ImplementationVisibility, ConstructorKind, ConstructAbility, InlineAttribute);
 
     Ref<StringSourceProvider> m_combinedSourceProvider;
     UnlinkedFunctionExecutable* m_unlinkedExecutables[static_cast<unsigned>(BuiltinCodeIndex::NumberOfBuiltinCodes)] { };

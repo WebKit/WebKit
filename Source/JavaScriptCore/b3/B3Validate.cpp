@@ -727,7 +727,7 @@ public:
                 break;
             case Extract: {
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
-                VALIDATE(value->child(0)->type() == Tuple, ("At ", *value));
+                VALIDATE(value->child(0)->type().isTuple(), ("At ", *value));
                 VALIDATE(value->type().isNumeric(), ("At ", *value));
                 break;
             }

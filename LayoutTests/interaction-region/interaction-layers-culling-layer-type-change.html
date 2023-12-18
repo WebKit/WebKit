@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        margin: 0;
+    }
+
+    #test {
+        position: absolute;
+        width: 100%;
+        height: 600px;
+        background: #efefef;
+        will-change: opacity;
+    }
+
+    #test a {
+        display: block;
+        margin: 50px;
+        font-size: 30px;
+    }
+
+    #moving {
+        position: absolute;
+        top: 500px;
+        left: 400px;
+        width: 200px;
+        height: 200px;
+        background: blue;
+    }
+
+    .animate {
+        animation-duration: 0.25s;
+        animation-name: grow-shrink;
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes grow-shrink {
+      0% { height: 200px;}
+      50% { height: 2000px;}
+      100% { height: 200px;}
+    }
+
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+
+<section id="test" >
+    <div id="moving">
+    </div>
+    <a href="#">Link 1</a>
+    <a href="#">Link 2</a>
+    <a href="#">Link 3</a>
+</section>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let testEl = document.getElementById("test");
+let movingEl = document.getElementById("moving");
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.animationFrame();
+
+    movingEl.classList.add("animate");
+    await new Promise(r => {
+        movingEl.addEventListener("animationend", r);
+    });
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    results.textContent = await UIHelper.getCALayerTree();
+    testEl.remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

@@ -5,7 +5,7 @@
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2014-2015 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -68,7 +68,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTable);
 
 RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
-    : RenderBlock(type, element, WTFMove(style), 0)
+    : RenderBlock(type, element, WTFMove(style), { })
     , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
@@ -84,10 +84,11 @@ RenderTable::RenderTable(Type type, Element& element, RenderStyle&& style)
     , m_columnOffsetHeight(-1)
 {
     setChildrenInline(false);
+    ASSERT(isRenderTable());
 }
 
 RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
-    : RenderBlock(type, document, WTFMove(style), 0)
+    : RenderBlock(type, document, WTFMove(style), { })
     , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
@@ -101,6 +102,7 @@ RenderTable::RenderTable(Type type, Document& document, RenderStyle&& style)
     , m_borderEnd(0)
 {
     setChildrenInline(false);
+    ASSERT(isRenderTable());
 }
 
 RenderTable::~RenderTable() = default;
@@ -156,7 +158,7 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         invalidateCollapsedBorders();
 }
 
-static inline void resetSectionPointerIfNotBefore(WeakPtr<RenderTableSection>& section, RenderObject* before)
+static inline void resetSectionPointerIfNotBefore(SingleThreadWeakPtr<RenderTableSection>& section, RenderObject* before)
 {
     if (!before || !section)
         return;
@@ -520,7 +522,7 @@ void RenderTable::layout()
             updateLogicalHeight();
 
         LayoutUnit computedLogicalHeight;
-    
+
         Length logicalHeightLength = style().logicalHeight();
         if (logicalHeightLength.isIntrinsic() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPositive()))
             computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
@@ -529,12 +531,15 @@ void RenderTable::layout()
             computedLogicalHeight = std::max(computedLogicalHeight, overridingLogicalHeight() - borderAndPaddingAfter - sumCaptionsLogicalHeight());
 
         Length logicalMaxHeightLength = style().logicalMaxHeight();
-        if (logicalMaxHeightLength.isIntrinsic() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative())) {
+        if (logicalMaxHeightLength.isFillAvailable() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative()
+            && !logicalMaxHeightLength.isMinContent() && !logicalMaxHeightLength.isMaxContent() && !logicalMaxHeightLength.isFitContent())) {
             LayoutUnit computedMaxLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMaxHeightLength);
             computedLogicalHeight = std::min(computedLogicalHeight, computedMaxLogicalHeight);
         }
 
         Length logicalMinHeightLength = style().logicalMinHeight();
+        if (logicalMinHeightLength.isMinContent() || logicalMinHeightLength.isMaxContent() || logicalMinHeightLength.isFitContent())
+            logicalMinHeightLength = LengthType::Auto;
         if (logicalMinHeightLength.isIntrinsic() || (logicalMinHeightLength.isSpecified() && !logicalMinHeightLength.isNegative())) {
             LayoutUnit computedMinLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMinHeightLength);
             computedLogicalHeight = std::max(computedLogicalHeight, computedMinLogicalHeight);
@@ -751,7 +756,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     info.updateSubtreePaintRootForChildren(this);
 
     for (auto& box : childrenOfType<RenderBox>(*this)) {
-        if (!box.hasSelfPaintingLayer() && (box.isTableSection() || box.isTableCaption())) {
+        if (!box.hasSelfPaintingLayer() && (box.isRenderTableSection() || box.isRenderTableCaption())) {
             LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
             box.paint(info, childPoint);
         }
@@ -1612,7 +1617,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Check kids first.
     if (!hasNonVisibleOverflow() || locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-            if (is<RenderBox>(*child) && !downcast<RenderBox>(*child).hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {
+            if (is<RenderBox>(*child) && !downcast<RenderBox>(*child).hasSelfPaintingLayer() && (child->isRenderTableSection() || child->isRenderTableCaption())) {
                 LayoutPoint childPoint = flipForWritingModeForChild(*downcast<RenderBox>(child), adjustedLocation);
                 if (child->nodeAtPoint(request, result, locationInContainer, childPoint, action)) {
                     updateHitTestResult(result, toLayoutPoint(locationInContainer.point() - childPoint));

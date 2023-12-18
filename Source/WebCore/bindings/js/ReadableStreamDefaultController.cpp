@@ -115,7 +115,7 @@ bool ReadableStreamDefaultController::enqueue(JSC::JSValue value)
 bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
 {
     if (!buffer) {
-        error(Exception { OutOfMemoryError });
+        error(Exception { ExceptionCode::OutOfMemoryError });
         return false;
     }
 

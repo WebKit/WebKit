@@ -103,7 +103,7 @@
     if (m_h264Decoder)
         return [m_h264Decoder setAVCFormat:data size:size width:width height:height];
     if (m_h265Decoder)
-        return [m_h265Decoder setAVCFormat:data size:size width:width height:height];
+        return [m_h265Decoder setHVCCFormat:data size:size width:width height:height];
     return 0;
 }
 
@@ -251,7 +251,7 @@ int32_t RemoteVideoDecoder::Decode(const EncodedImage& input_image, bool missing
     if (m_isVP9 && input_image._frameType == VideoFrameType::kVideoFrameKey && input_image.SpatialIndex() && *input_image.SpatialIndex() > 0)
         return WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE;
 
-    return videoDecoderCallbacks().decodeCallback(m_internalDecoder, input_image.Timestamp(), input_image.data(), input_image.size(), encodedWidth, encodedHeight);
+    return videoDecoderCallbacks().decodeCallback(m_internalDecoder, input_image.RtpTimestamp(), input_image.data(), input_image.size(), encodedWidth, encodedHeight);
 }
 
 int32_t RemoteVideoDecoder::RegisterDecodeCompleteCallback(DecodedImageCallback* callback)

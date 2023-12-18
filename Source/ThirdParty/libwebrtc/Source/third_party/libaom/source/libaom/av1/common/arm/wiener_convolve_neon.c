@@ -20,7 +20,100 @@
 #include "aom_dsp/arm/transpose_neon.h"
 #include "aom_ports/mem.h"
 #include "av1/common/common.h"
-#include "av1/common/arm/convolve_neon.h"
+
+static INLINE uint8x8_t wiener_convolve8_vert_4x8(
+    const int16x8_t s0, const int16x8_t s1, const int16x8_t s2,
+    const int16x8_t s3, const int16x8_t s4, const int16x8_t s5,
+    const int16x8_t s6, int16_t *filter_y, const int bd,
+    const int round1_bits) {
+  int16x8_t ss0, ss1, ss2;
+  int32x4_t sum0, sum1;
+  int16x8_t tmp;
+  uint8x8_t res;
+
+  const int32_t round_const = (1 << (bd + round1_bits - 1));
+  const int32x4_t round_bits = vdupq_n_s32(-round1_bits);
+  const int32x4_t round_vec = vdupq_n_s32(round_const);
+  const int16x4_t filter = vld1_s16(filter_y);
+
+  ss0 = vaddq_s16(s0, s6);
+  ss1 = vaddq_s16(s1, s5);
+  ss2 = vaddq_s16(s2, s4);
+
+  sum0 = vmull_lane_s16(vget_low_s16(ss0), filter, 0);
+  sum0 = vmlal_lane_s16(sum0, vget_low_s16(ss1), filter, 1);
+  sum0 = vmlal_lane_s16(sum0, vget_low_s16(ss2), filter, 2);
+  sum0 = vmlal_lane_s16(sum0, vget_low_s16(s3), filter, 3);
+
+  sum1 = vmull_lane_s16(vget_high_s16(ss0), filter, 0);
+  sum1 = vmlal_lane_s16(sum1, vget_high_s16(ss1), filter, 1);
+  sum1 = vmlal_lane_s16(sum1, vget_high_s16(ss2), filter, 2);
+  sum1 = vmlal_lane_s16(sum1, vget_high_s16(s3), filter, 3);
+
+  sum0 = vsubq_s32(sum0, round_vec);
+  sum1 = vsubq_s32(sum1, round_vec);
+
+  /* right shift & rounding */
+  sum0 = vrshlq_s32(sum0, round_bits);
+  sum1 = vrshlq_s32(sum1, round_bits);
+
+  /* from int32x4_t to uint8x8_t */
+  tmp = vcombine_s16(vmovn_s32(sum0), vmovn_s32(sum1));
+  res = vqmovun_s16(tmp);
+
+  return res;
+}
+
+static INLINE uint16x8_t wiener_convolve8_horiz_8x8(
+    const int16x8_t s0, const int16x8_t s1, const int16x8_t s2,
+    const int16x8_t s3, int16_t *filter_x, const int bd,
+    const int round0_bits) {
+  int16x8_t sum;
+  uint16x8_t res;
+  int32x4_t sum_0, sum_1;
+  int32x4_t s3_0, s3_1;
+  const int32_t round_const_0 = (1 << (bd + FILTER_BITS - 1));
+  const int32_t round_const_1 = (1 << (bd + 1 + FILTER_BITS - round0_bits)) - 1;
+
+  /* for the purpose of right shift by { conv_params->round_0 } */
+  const int32x4_t round_bits = vdupq_n_s32(-round0_bits);
+
+  const int32x4_t round_vec_0 = vdupq_n_s32(round_const_0);
+  const int32x4_t round_vec_1 = vdupq_n_s32(round_const_1);
+  const int16x4_t filter = vld1_s16(filter_x);
+
+  sum = vmulq_lane_s16(s0, filter, 0);
+  sum = vmlaq_lane_s16(sum, s1, filter, 1);
+  sum = vmlaq_lane_s16(sum, s2, filter, 2);
+
+  /* sum from 16x8 to 2 32x4 registers */
+  sum_0 = vmovl_s16(vget_low_s16(sum));
+  sum_1 = vmovl_s16(vget_high_s16(sum));
+
+  /* s[3]*128 -- and filter coef max can be 128
+   *  then max value possible = 128*128*255 exceeding 16 bit
+   */
+
+  s3_0 = vmull_lane_s16(vget_low_s16(s3), filter, 3);
+  s3_1 = vmull_lane_s16(vget_high_s16(s3), filter, 3);
+  sum_0 = vaddq_s32(sum_0, s3_0);
+  sum_1 = vaddq_s32(sum_1, s3_1);
+
+  /* Add the constant value */
+  sum_0 = vaddq_s32(sum_0, round_vec_0);
+  sum_1 = vaddq_s32(sum_1, round_vec_0);
+
+  /* right shift & rounding & saturating */
+  sum_0 = vqrshlq_s32(sum_0, round_bits);
+  sum_1 = vqrshlq_s32(sum_1, round_bits);
+
+  /* Clipping to max value */
+  sum_0 = vminq_s32(sum_0, round_vec_1);
+  sum_1 = vminq_s32(sum_1, round_vec_1);
+
+  res = vcombine_u16(vqmovun_s32(sum_0), vqmovun_s32(sum_1));
+  return res;
+}
 
 #define HORZ_FILTERING_CORE(t0, t1, t2, t3, t4, t5, t6, res)                 \
   res0 = vreinterpretq_s16_u16(vaddl_u8(t0, t1));                            \
@@ -124,7 +217,7 @@ void av1_wiener_convolve_add_src_neon(const uint8_t *src, ptrdiff_t src_stride,
   int16_t filter_x_tmp[7], filter_y_tmp[7];
 
   DECLARE_ALIGNED(16, uint16_t,
-                  temp[(MAX_SB_SIZE + HORIZ_EXTRA_ROWS) * MAX_SB_SIZE]);
+                  temp[(MAX_SB_SIZE + SUBPEL_TAPS - 1) * MAX_SB_SIZE]);
 
   assert(x_step_q4 == 16 && y_step_q4 == 16);
   assert(!(w % 8));
@@ -153,7 +246,7 @@ void av1_wiener_convolve_add_src_neon(const uint8_t *src, ptrdiff_t src_stride,
   height = intermediate_height;
 
   // For aarch_64.
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   int processed_height = 0;
   uint16_t *d_tmp;
   int width, remaining_height;
@@ -174,7 +267,7 @@ void av1_wiener_convolve_add_src_neon(const uint8_t *src, ptrdiff_t src_stride,
       __builtin_prefetch(src_ptr + 7 * src_stride);
 
       load_u8_8x8(src_ptr, src_stride, &t0, &t1, &t2, &t3, &t4, &t5, &t6, &t7);
-      transpose_u8_8x8(&t0, &t1, &t2, &t3, &t4, &t5, &t6, &t7);
+      transpose_elems_inplace_u8_8x8(&t0, &t1, &t2, &t3, &t4, &t5, &t6, &t7);
 
       s = src_ptr + 7;
       d_tmp = dst_ptr;
@@ -193,7 +286,8 @@ void av1_wiener_convolve_add_src_neon(const uint8_t *src, ptrdiff_t src_stride,
         int16x8_t res0, res1, res2, res3;
         uint8x8_t t8, t9, t10, t11, t12, t13, t14;
         load_u8_8x8(s, src_stride, &t7, &t8, &t9, &t10, &t11, &t12, &t13, &t14);
-        transpose_u8_8x8(&t7, &t8, &t9, &t10, &t11, &t12, &t13, &t14);
+        transpose_elems_inplace_u8_8x8(&t7, &t8, &t9, &t10, &t11, &t12, &t13,
+                                       &t14);
 
         HORZ_FILTERING_CORE(t0, t6, t1, t5, t2, t4, t3, res4)
         HORZ_FILTERING_CORE(t1, t7, t2, t6, t3, t5, t4, res5)
@@ -204,8 +298,8 @@ void av1_wiener_convolve_add_src_neon(const uint8_t *src, ptrdiff_t src_stride,
         HORZ_FILTERING_CORE(t6, t12, t7, t11, t8, t10, t9, res10)
         HORZ_FILTERING_CORE(t7, t13, t8, t12, t9, t11, t10, res11)
 
-        transpose_u16_8x8(&res4, &res5, &res6, &res7, &res8, &res9, &res10,
-                          &res11);
+        transpose_elems_inplace_u16_8x8(&res4, &res5, &res6, &res7, &res8,
+                                        &res9, &res10, &res11);
         store_u16_8x8(d_tmp, MAX_SB_SIZE, res4, res5, res6, res7, res8, res9,
                       res10, res11);
 

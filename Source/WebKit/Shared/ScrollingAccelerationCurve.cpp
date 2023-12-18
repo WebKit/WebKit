@@ -116,52 +116,6 @@ float ScrollingAccelerationCurve::accelerationFactor(float value)
     return multiplier * cursorScale;
 }
 
-void ScrollingAccelerationCurve::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_parameters.gainLinear;
-    encoder << m_parameters.gainParabolic;
-    encoder << m_parameters.gainCubic;
-    encoder << m_parameters.gainQuartic;
-
-    encoder << m_parameters.tangentSpeedLinear;
-    encoder << m_parameters.tangentSpeedParabolicRoot;
-
-    encoder << m_parameters.resolution;
-    encoder << m_parameters.frameRate;
-}
-
-std::optional<ScrollingAccelerationCurve> ScrollingAccelerationCurve::decode(IPC::Decoder& decoder)
-{
-    float gainLinear;
-    if (!decoder.decode(gainLinear))
-        return std::nullopt;
-    float gainParabolic;
-    if (!decoder.decode(gainParabolic))
-        return std::nullopt;
-    float gainCubic;
-    if (!decoder.decode(gainCubic))
-        return std::nullopt;
-    float gainQuartic;
-    if (!decoder.decode(gainQuartic))
-        return std::nullopt;
-
-    float tangentSpeedLinear;
-    if (!decoder.decode(tangentSpeedLinear))
-        return std::nullopt;
-    float tangentSpeedParabolicRoot;
-    if (!decoder.decode(tangentSpeedParabolicRoot))
-        return std::nullopt;
-
-    float resolution;
-    if (!decoder.decode(resolution))
-        return std::nullopt;
-    float frameRate;
-    if (!decoder.decode(frameRate))
-        return std::nullopt;
-
-    return { { gainLinear, gainParabolic, gainCubic, gainQuartic, tangentSpeedLinear, tangentSpeedParabolicRoot, resolution, frameRate } };
-}
-
 TextStream& operator<<(TextStream& ts, const ScrollingAccelerationCurve& curve)
 {
     TextStream::GroupScope group(ts);

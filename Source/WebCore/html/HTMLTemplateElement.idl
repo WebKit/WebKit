@@ -33,5 +33,5 @@
     Exposed=Window
 ] interface HTMLTemplateElement : HTMLElement {
     readonly attribute DocumentFragment content;
-    [CEReactions=NotNeeded, EnabledBySetting=DeclarativeShadowDOMEnabled] attribute [AtomString] DOMString? shadowRootMode;
+    [CEReactions=NotNeeded, EnabledBySetting=DeclarativeShadowRootsEnabled] attribute [AtomString] DOMString shadowRootMode;
 };

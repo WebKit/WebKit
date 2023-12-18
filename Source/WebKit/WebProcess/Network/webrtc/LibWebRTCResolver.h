@@ -27,16 +27,11 @@
 
 #if USE(LIBWEBRTC)
 
+#include "LibWebRTCDnsResolverFactory.h"
 #include "LibWebRTCResolverIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <wtf/Vector.h>
-
-ALLOW_COMMA_BEGIN
-
-#include <webrtc/api/packet_socket_factory.h>
-#include <webrtc/rtc_base/async_resolver_interface.h>
-
-ALLOW_COMMA_END
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -45,38 +40,37 @@ class Connection;
 namespace WebKit {
 class LibWebRTCSocketFactory;
 
-class LibWebRTCResolver final : public rtc::AsyncResolverInterface {
+class LibWebRTCResolver final : public LibWebRTCDnsResolverFactory::Resolver, private webrtc::AsyncDnsResolverResult, public CanMakeWeakPtr<LibWebRTCResolver> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCResolver() : m_identifier(LibWebRTCResolverIdentifier::generate()) { }
+    ~LibWebRTCResolver();
 
-    bool isResolving() const { return m_isResolving; }
     LibWebRTCResolverIdentifier identifier() const { return m_identifier; }
+
+    void start(const rtc::SocketAddress&, Function<void()>&&) final;
 
 private:
     friend class WebRTCResolver;
 
-    // AsyncResolverInterface API.
-    void Start(const rtc::SocketAddress& address) final { Start(address, address.family()); }
-    void Start(const rtc::SocketAddress&, int) final;
-    bool GetResolvedAddress(int, rtc::SocketAddress*) const final;
-    int GetError() const final { return m_error; }
-    void Destroy(bool) final;
+    // webrtc::AsyncDnsResolverInterface
+    const webrtc::AsyncDnsResolverResult& result() const final;
 
-    void doDestroy();
+    // webrtc::AsyncDnsResolverResult
+    bool GetResolvedAddress(int family, rtc::SocketAddress*) const final;
+    int GetError() const { return m_error; }
+
     void setError(int);
-    void setResolvedAddress(const Vector<rtc::IPAddress>&);
+    void setResolvedAddress(Vector<rtc::IPAddress>&&);
 
     static void sendOnMainThread(Function<void(IPC::Connection&)>&&);
 
     LibWebRTCResolverIdentifier m_identifier;
     Vector<rtc::IPAddress> m_addresses;
     rtc::SocketAddress m_addressToResolve;
+    Function<void()> m_callback;
     int m_error { 0 };
     uint16_t m_port { 0 };
-    bool m_isResolving { false };
-    bool m_isProvidingResults { false };
-    bool m_shouldDestroy { false };
 };
 
 } // namespace WebKit

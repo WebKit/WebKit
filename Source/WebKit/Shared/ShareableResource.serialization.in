@@ -24,7 +24,7 @@ header: "ShareableResource.h"
 
 #if ENABLE(SHAREABLE_RESOURCE)
 [CustomHeader, RValue] class WebKit::ShareableResourceHandle {
-    [Validator='!m_handle->isNull()'] WebKit::SharedMemoryHandle m_handle;
+    WebKit::SharedMemoryHandle m_handle;
     unsigned m_offset;
     [Validator='!(Checked<unsigned> { *m_offset } + *m_size).hasOverflowed() && (*m_offset + *m_size <= m_handle->size())'] unsigned m_size;
 }

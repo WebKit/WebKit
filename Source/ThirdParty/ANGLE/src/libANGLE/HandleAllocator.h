@@ -33,12 +33,14 @@ class HandleAllocator final : angle::NonCopyable
     void release(GLuint handle);
     void reserve(GLuint handle);
     void reset();
+    bool anyHandleAvailableForAllocation() const;
 
     void enableLogging(bool enabled);
 
   private:
     GLuint mBaseValue;
     GLuint mNextValue;
+    const GLuint mMaxValue;
 
     // Represents an inclusive range [begin, end]
     struct HandleRange

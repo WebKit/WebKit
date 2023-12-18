@@ -22,6 +22,7 @@
 
 #include "APIArray.h"
 #include "WebContextMenuItem.h"
+#include "WebKitContextMenuItem.h"
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
 #include <wtf/glib/GRefPtr.h>
@@ -32,8 +33,10 @@
 #include <WebCore/GUniquePtrGtk.h>
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
 using namespace WebKit;
 using namespace WebCore;
+#endif // ENABLE(CONTEXT_MENUS)
 
 /**
  * WebKitContextMenu:
@@ -80,6 +83,7 @@ static void webkit_context_menu_class_init(WebKitContextMenuClass* listClass)
     gObjectClass->dispose = webkitContextMenuDispose;
 }
 
+#if ENABLE(CONTEXT_MENUS)
 void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<WebContextMenuItemData>& contextMenuItems)
 {
     for (GList* item = menu->priv->items; item; item = g_list_next(item)) {
@@ -126,6 +130,7 @@ WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu* menu)
 {
     return menu->priv->parentItem;
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 /**
  * webkit_context_menu_new:

@@ -56,6 +56,16 @@ Image::Image(ImageObserver* observer)
 
 Image::~Image() = default;
 
+RefPtr<ImageObserver> Image::imageObserver() const
+{
+    return m_imageObserver.get();
+}
+
+void Image::setImageObserver(RefPtr<ImageObserver>&& observer)
+{
+    m_imageObserver = observer.get();
+}
+
 Image& Image::nullImage()
 {
     ASSERT(isMainThread());
@@ -144,7 +154,7 @@ void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, 
     ctxt.setCompositeOperation(previousOperator);
 }
 
-void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform,  const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     auto tileImage = preTransformedNativeImageForCurrentFrame(options.orientation() == ImageOrientation::Orientation::FromImage);
     if (!tileImage)
@@ -152,11 +162,11 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
 
     ctxt.drawPattern(*tileImage, destRect, tileRect, patternTransform, phase, spacing, options);
 
-    if (imageObserver())
-        imageObserver()->didDraw(*this);
+    if (auto observer = imageObserver())
+        observer->didDraw(*this);
 }
 
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options)
 {
     Color color = singlePixelSolidColor();
     if (color.isValid()) {
@@ -260,7 +270,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, const ImagePaintingOptions& options)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions options)
 {    
     Color color = singlePixelSolidColor();
     if (color.isValid()) {

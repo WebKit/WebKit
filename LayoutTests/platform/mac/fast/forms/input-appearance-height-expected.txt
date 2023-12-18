@@ -9,12 +9,12 @@ layer at (0,0) size 800x600
       RenderBlock {FORM} at (0,18) size 784x231
         RenderText {#text} at (0,0) size 37x18
           text run at (0,0) width 37: "input "
-        RenderTextControl {INPUT} at (36,0) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (36,0) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (184,0) size 1x18
         RenderText {#text} at (0,19) size 28x18
           text run at (0,19) width 28: "text "
-        RenderTextControl {INPUT} at (27,19) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (27,19) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (175,19) size 1x18
         RenderText {#text} at (0,38) size 66x18
@@ -67,12 +67,14 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (100,155) size 1x18
         RenderText {#text} at (0,174) size 51x18
           text run at (0,174) width 51: "isindex "
-        RenderTextControl {INPUT} at (50,174) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (50,174) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (198,174) size 1x18
         RenderText {#text} at (0,193) size 65x18
           text run at (0,193) width 65: "password "
-        RenderTextControl {INPUT} at (64,193) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (64,193) size 149x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+          RenderFlexibleBox {DIV} at (3,3) size 142x13
+            RenderBlock {DIV} at (0,0) size 142x13
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (212,193) size 1x18
         RenderText {#text} at (0,212) size 45x18
@@ -90,6 +92,6 @@ layer at (39,48) size 142x13
 layer at (61,203) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
 layer at (75,222) size 142x13
-  RenderBlock {DIV} at (3,3) size 142x13
+  RenderBlock {DIV} at (0,0) size 142x13
 layer at (64,241) size 115x13
   RenderBlock {DIV} at (0,0) size 115x13

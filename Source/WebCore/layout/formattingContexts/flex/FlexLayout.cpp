@@ -387,8 +387,8 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
             //    its content-box size at zero. If the item's target main size was made smaller by this, it's a max violation.
             //    If the item's target main size was made larger by this, it's a min violation.
             auto totalViolation = LayoutUnit { };
-            minimumViolationList.resize(0);
-            maximumViolationList.resize(0);
+            minimumViolationList.shrink(0);
+            maximumViolationList.shrink(0);
             for (auto nonFrozenIndex : nonFrozenSet) {
                 auto unclampedMainSize = mainSizeList[nonFrozenIndex];
                 auto& flexItem = flexItems[nonFrozenIndex];

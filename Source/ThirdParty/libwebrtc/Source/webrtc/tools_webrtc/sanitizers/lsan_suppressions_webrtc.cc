@@ -74,8 +74,6 @@ char kLSanDefaultSuppressions[] =
     // peerconnection_unittests
     // https://code.google.com/p/webrtc/issues/detail?id=2528
     "leak:cricket::FakeVideoMediaChannel::~FakeVideoMediaChannel\n"
-    "leak:cricket::MediaSessionDescriptionFactory::CreateAnswer\n"
-    "leak:cricket::MediaSessionDescriptionFactory::CreateOffer\n"
     "leak:DtmfSenderTest_InsertEmptyTonesToCancelPreviousTask_Test::TestBody\n"
     "leak:sigslot::_signal_base2*::~_signal_base2\n"
     "leak:testing::internal::CmpHelperEQ\n"
@@ -83,8 +81,6 @@ char kLSanDefaultSuppressions[] =
     "leak:webrtc::AudioDeviceLinuxALSA::InitSpeaker\n"
     "leak:webrtc::CreateIceCandidate\n"
     "leak:webrtc::WebRtcIdentityRequestObserver::OnSuccess\n"
-    "leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateAnswer\n"
-    "leak:webrtc::WebRtcSessionDescriptionFactory::InternalCreateOffer\n"
     "leak:PeerConnectionInterfaceTest_SsrcInOfferAnswer_Test::TestBody\n"
     "leak:PeerConnectionInterfaceTest_CloseAndTestMethods_Test::TestBody\n"
     "leak:WebRtcSdpTest::TestDeserializeRtcpFb\n"

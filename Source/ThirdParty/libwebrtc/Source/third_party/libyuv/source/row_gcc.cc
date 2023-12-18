@@ -738,7 +738,7 @@ void ARGBToRGB565Row_SSE2(const uint8_t* src, uint8_t* dst, int width) {
 
 void ARGBToRGB565DitherRow_SSE2(const uint8_t* src,
                                 uint8_t* dst,
-                                const uint32_t dither4,
+                                uint32_t dither4,
                                 int width) {
   asm volatile(
       "movd        %3,%%xmm6                     \n"
@@ -786,7 +786,7 @@ void ARGBToRGB565DitherRow_SSE2(const uint8_t* src,
 #ifdef HAS_ARGBTORGB565DITHERROW_AVX2
 void ARGBToRGB565DitherRow_AVX2(const uint8_t* src,
                                 uint8_t* dst,
-                                const uint32_t dither4,
+                                uint32_t dither4,
                                 int width) {
   asm volatile(
       "vbroadcastss %3,%%xmm6                    \n"

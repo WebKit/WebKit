@@ -248,7 +248,6 @@ class MockPeerConnectionInternal : public PeerConnectionInternal {
               (const cricket::SessionDescription*,
                (const std::map<std::string, const cricket::ContentGroup*>&)),
               (override));
-  MOCK_METHOD(absl::optional<std::string>, GetDataMid, (), (const, override));
   MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>,
               AddTransceiver,
               (cricket::MediaType,
@@ -263,16 +262,11 @@ class MockPeerConnectionInternal : public PeerConnectionInternal {
               (override));
   MOCK_METHOD(Call*, call_ptr, (), (override));
   MOCK_METHOD(bool, SrtpRequired, (), (const, override));
-  MOCK_METHOD(absl::optional<std::string>,
-              SetupDataChannelTransport_n,
-              (absl::string_view mid),
+  MOCK_METHOD(bool,
+              CreateDataChannelTransport,
+              (absl::string_view),
               (override));
-  MOCK_METHOD(void, TeardownDataChannelTransport_n, (RTCError), (override));
-  MOCK_METHOD(void,
-              SetSctpDataInfo,
-              (absl::string_view, absl::string_view),
-              (override));
-  MOCK_METHOD(void, ResetSctpDataInfo, (), (override));
+  MOCK_METHOD(void, DestroyDataChannelTransport, (RTCError error), (override));
   MOCK_METHOD(const FieldTrialsView&, trials, (), (const, override));
 
   // PeerConnectionInternal

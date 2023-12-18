@@ -49,7 +49,7 @@ IsoDeallocator<Config>::~IsoDeallocator()
 
 template<typename Config>
 template<typename Type>
-void IsoDeallocator<Config>::deallocate(api::IsoHeap<Type>& handle, void* ptr)
+void IsoDeallocator<Config>::deallocate(api::IsoHeapBase<Type>& handle, void* ptr)
 {
     static constexpr bool verbose = false;
     if (verbose)

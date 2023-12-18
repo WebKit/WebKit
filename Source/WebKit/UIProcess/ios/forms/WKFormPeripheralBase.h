@@ -37,6 +37,7 @@
 - (instancetype)initWithView:(WKContentView *)view control:(RetainPtr<NSObject <WKFormControl>>&&)control NS_DESIGNATED_INITIALIZER;
 
 - (void)beginEditing;
+- (void)updateEditing;
 - (void)endEditing;
 - (UIView *)assistantView;
 - (BOOL)handleKeyEvent:(UIEvent *)event;

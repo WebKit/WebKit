@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Style {
 
-PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableProperty>* animatedProperties)
+PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* animatedProperties)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
@@ -60,7 +60,7 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
 
 PropertyCascade::~PropertyCascade() = default;
 
-PropertyCascade::AnimationLayer::AnimationLayer(const HashSet<AnimatableProperty>& properties)
+PropertyCascade::AnimationLayer::AnimationLayer(const HashSet<AnimatableCSSProperty>& properties)
     : properties(properties)
 {
     hasCustomProperties = std::find_if(properties.begin(), properties.end(), [](auto& property) {
@@ -390,7 +390,7 @@ void PropertyCascade::sortDeferredPropertyIDs()
     });
 }
 
-const HashSet<AnimatableProperty> PropertyCascade::overriddenAnimatedProperties() const
+const HashSet<AnimatableCSSProperty> PropertyCascade::overriddenAnimatedProperties() const
 {
     if (m_animationLayer)
         return m_animationLayer->overriddenProperties;

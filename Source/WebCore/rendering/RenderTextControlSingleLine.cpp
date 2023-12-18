@@ -62,6 +62,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(type, element, WTFMove(style))
 {
+    ASSERT(isRenderTextControlSingleLine());
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine() = default;
@@ -152,8 +153,26 @@ void RenderTextControlSingleLine::layout()
         containerRenderer->layoutIfNeeded();
         oldContainerLogicalTop = containerRenderer->logicalTop();
         LayoutUnit containerLogicalHeight = containerRenderer->logicalHeight();
-        if (inputElement().hasAutoFillStrongPasswordButton() && innerTextRenderer && containerLogicalHeight != innerTextLogicalHeight) {
-            containerRenderer->mutableStyle().setLogicalHeight(Length { innerTextLogicalHeight, LengthType::Fixed });
+
+        CheckedPtr autoFillStrongPasswordButtonRenderer = [&]() -> RenderBox* {
+            if (!inputElement().hasAutoFillStrongPasswordButton())
+                return nullptr;
+
+            CheckedPtr autoFillButtonElement = inputElement().autoFillButtonElement();
+            if (!autoFillButtonElement)
+                return nullptr;
+
+            return autoFillButtonElement->renderBox();
+        }();
+
+        if (autoFillStrongPasswordButtonRenderer && innerTextRenderer && innerBlockRenderer) {
+            auto newContainerHeight = innerTextLogicalHeight;
+
+            // Don't expand the container height if the AutoFill button is wrapped onto a new line.
+            if (autoFillStrongPasswordButtonRenderer->logicalTop() < innerBlockRenderer->logicalBottom())
+                newContainerHeight = std::max<LayoutUnit>(newContainerHeight, autoFillStrongPasswordButtonRenderer->logicalHeight());
+
+            containerRenderer->mutableStyle().setLogicalHeight(Length { newContainerHeight, LengthType::Fixed });
             setNeedsLayout(MarkOnlyThis);
         } else if (containerLogicalHeight > logicalHeightLimit) {
             containerRenderer->mutableStyle().setLogicalHeight(Length(logicalHeightLimit, LengthType::Fixed));
@@ -471,6 +490,7 @@ HTMLInputElement& RenderTextControlSingleLine::inputElement() const
 RenderTextControlInnerBlock::RenderTextControlInnerBlock(Element& element, RenderStyle&& style)
     : RenderBlockFlow(Type::TextControlInnerBlock, element, WTFMove(style))
 {
+    ASSERT(isRenderTextControlInnerBlock());
 }
 
 }

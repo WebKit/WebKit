@@ -79,7 +79,7 @@ public:
     ExceptionOr<void> setMatrix(DOMMatrix2DInit&& matrixInit)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         AffineTransform transform;
         if (matrixInit.a)
@@ -102,7 +102,7 @@ public:
     ExceptionOr<void> setTranslate(float tx, float ty)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setTranslate(tx, ty);
         commitChange();
@@ -112,7 +112,7 @@ public:
     ExceptionOr<void> setScale(float sx, float sy)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setScale(sx, sy);
         commitChange();
@@ -122,7 +122,7 @@ public:
     ExceptionOr<void> setRotate(float angle, float cx, float cy)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setRotate(angle, cx, cy);
         commitChange();
@@ -132,7 +132,7 @@ public:
     ExceptionOr<void> setSkewX(float angle)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setSkewX(angle);
         commitChange();
@@ -142,7 +142,7 @@ public:
     ExceptionOr<void> setSkewY(float angle)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setSkewY(angle);
         commitChange();

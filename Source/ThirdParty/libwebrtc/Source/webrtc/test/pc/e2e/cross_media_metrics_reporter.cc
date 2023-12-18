@@ -71,7 +71,7 @@ void CrossMediaMetricsReporter::OnStatsReports(
               *audio_stat->kind != *video_stat->kind)
         << "Sync group should consist of one audio and one video stream.";
 
-    if (*audio_stat->kind == RTCMediaStreamTrackKind::kVideo) {
+    if (*audio_stat->kind == "video") {
       std::swap(audio_stat, video_stat);
     }
     // Stream labels of a sync group are same for all polls, so we need it add

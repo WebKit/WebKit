@@ -195,10 +195,10 @@ RenderThemeBoxGadget::RenderThemeBoxGadget(const RenderThemeGadget::Info& info, 
     : RenderThemeGadget(info, parent, Vector<RenderThemeGadget::Info>(), 0)
     , m_orientation(orientation)
 {
-    m_children.reserveCapacity(children.size());
     unsigned index = 0;
-    for (const auto& childInfo : children)
-        m_children.uncheckedAppend(RenderThemeGadget::create(childInfo, this, children, index++));
+    m_children = WTF::map(children, [&](auto& childInfo) {
+        return RenderThemeGadget::create(childInfo, this, children, index++);
+    });
 }
 
 IntSize RenderThemeBoxGadget::preferredSize() const

@@ -110,7 +110,7 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
     switch (name.nodeName()) {
     case AttributeNames::nowrapAttr:
         addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValueCollapse);
-        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrapMode, CSSValueNowrap);
         break;
     case AttributeNames::widthAttr:
         // width="0" is not allowed for compatibility with WinIE.
@@ -131,8 +131,8 @@ void HTMLTableCellElement::attributeChanged(const QualifiedName& name, const Ato
     HTMLTablePartElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (name == rowspanAttr || name == colspanAttr) {
-        if (is<RenderTableCell>(renderer()))
-            downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();
+        if (CheckedPtr tableCell = dynamicDowncast<RenderTableCell>(renderer()))
+            tableCell->colSpanOrRowSpanChanged();
     }
 }
 
@@ -208,12 +208,11 @@ void HTMLTableCellElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) c
 
 HTMLTableCellElement* HTMLTableCellElement::cellAbove() const
 {
-    auto* cellRenderer = renderer();
-    if (!is<RenderTableCell>(cellRenderer))
+    auto* tableCellRenderer = dynamicDowncast<RenderTableCell>(renderer());
+    if (!tableCellRenderer)
         return nullptr;
 
-    auto& tableCellRenderer = downcast<RenderTableCell>(*cellRenderer);
-    auto* cellAboveRenderer = tableCellRenderer.table()->cellAbove(&tableCellRenderer);
+    auto* cellAboveRenderer = tableCellRenderer->table()->cellAbove(tableCellRenderer);
     if (!cellAboveRenderer)
         return nullptr;
 

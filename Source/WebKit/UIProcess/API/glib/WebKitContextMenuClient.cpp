@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitContextMenuClient.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "APIContextMenuClient.h"
 #include "APIString.h"
 #include "WebContextMenuItem.h"
@@ -44,10 +45,9 @@ private:
             variant = adoptGRef(g_variant_parse(nullptr, userDataString.data(), userDataString.data() + userDataString.length(), nullptr, nullptr));
         }
 
-        Vector<WebContextMenuItemData> menuItems;
-        menuItems.reserveInitialCapacity(proposedMenu.size());
-        for (auto& item : proposedMenu)
-            menuItems.uncheckedAppend(item->data());
+        auto menuItems = WTF::map(proposedMenu, [](auto& item) {
+            return item->data();
+        });
         webkitWebViewPopulateContextMenu(m_webView, menuItems, hitTestResultData, variant.get());
         contextMenuListener.useContextMenuItems({ });
     }
@@ -60,3 +60,4 @@ void attachContextMenuClientToView(WebKitWebView* webView)
     webkitWebViewGetPage(webView).setContextMenuClient(makeUnique<ContextMenuClient>(webView));
 }
 
+#endif // ENABLE(CONTEXT_MENUS)

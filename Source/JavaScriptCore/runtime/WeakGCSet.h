@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "Weak.h"
 #include "WeakGCHashTable.h"
 #include <wtf/HashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -44,7 +45,7 @@ struct WeakGCSetHashTraits : HashTraits<Weak<T>> {
 
 template<typename ValueArg, typename HashArg = DefaultHash<Weak<ValueArg>>, typename TraitsArg = WeakGCSetHashTraits<ValueArg>>
 class WeakGCSet final : public WeakGCHashTable {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WeakGCSet);
     using ValueType = Weak<ValueArg>;
     using HashSetType = HashSet<ValueType, HashArg, TraitsArg>;
 

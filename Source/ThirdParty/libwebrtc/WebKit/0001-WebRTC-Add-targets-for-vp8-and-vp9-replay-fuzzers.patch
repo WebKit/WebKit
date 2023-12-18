@@ -1,0 +1,248 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/call_config_utils.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/test/call_config_utils.cc
+index d93c902bbe26..21104792041e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/call_config_utils.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/call_config_utils.cc
+@@ -25,17 +25,50 @@ VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
+   auto receive_config = VideoReceiveStreamInterface::Config(transport);
+   for (const auto& decoder_json : json["decoders"]) {
+     VideoReceiveStreamInterface::Decoder decoder;
++#if WEBRTC_WEBKIT_BUILD
++    decoder.video_format =
++        SdpVideoFormat(decoder_json["payload_name"].get<std::string>());
++    decoder.payload_type = decoder_json["payload_type"].get<int32_t>();
++#else
+     decoder.video_format =
+         SdpVideoFormat(decoder_json["payload_name"].asString());
+     decoder.payload_type = decoder_json["payload_type"].asInt64();
++#endif
+     for (const auto& params_json : decoder_json["codec_params"]) {
++#if WEBRTC_WEBKIT_BUILD
++      std::vector<std::string> members(params_json.size());
++      for (const auto& [key, value] : params_json.items()) {
++        members.emplace_back(key);
++      }
++      RTC_CHECK_EQ(members.size(), 1);
++      decoder.video_format.parameters[members[0]] =
++          params_json[members[0]].get<std::string>();
++#else
+       std::vector<std::string> members = params_json.getMemberNames();
+       RTC_CHECK_EQ(members.size(), 1);
+       decoder.video_format.parameters[members[0]] =
+           params_json[members[0]].asString();
++#endif
+     }
+     receive_config.decoders.push_back(decoder);
+   }
++#if WEBRTC_WEBKIT_BUILD
++  receive_config.render_delay_ms = json["render_delay_ms"].get<int32_t>();
++  receive_config.rtp.remote_ssrc = json["rtp"]["remote_ssrc"].get<uint32_t>();
++  receive_config.rtp.local_ssrc = json["rtp"]["local_ssrc"].get<uint32_t>();
++  receive_config.rtp.rtcp_mode =
++      json["rtp"]["rtcp_mode"].get<std::string>() == "RtcpMode::kCompound"
++          ? RtcpMode::kCompound
++          : RtcpMode::kReducedSize;
++  receive_config.rtp.lntf.enabled = json["rtp"]["lntf"]["enabled"].get<bool>();
++  receive_config.rtp.nack.rtp_history_ms =
++      json["rtp"]["nack"]["rtp_history_ms"].get<int32_t>();
++  receive_config.rtp.ulpfec_payload_type =
++      json["rtp"]["ulpfec_payload_type"].get<int32_t>();
++  receive_config.rtp.red_payload_type =
++      json["rtp"]["red_payload_type"].get<int32_t>();
++  receive_config.rtp.rtx_ssrc = json["rtp"]["rtx_ssrc"].get<uint32_t>();
++#else
+   receive_config.render_delay_ms = json["render_delay_ms"].asInt64();
+   receive_config.rtp.remote_ssrc = json["rtp"]["remote_ssrc"].asInt64();
+   receive_config.rtp.local_ssrc = json["rtp"]["local_ssrc"].asInt64();
+@@ -51,13 +84,25 @@ VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
+   receive_config.rtp.red_payload_type =
+       json["rtp"]["red_payload_type"].asInt64();
+   receive_config.rtp.rtx_ssrc = json["rtp"]["rtx_ssrc"].asInt64();
++#endif
+ 
+   for (const auto& pl_json : json["rtp"]["rtx_payload_types"]) {
++#if WEBRTC_WEBKIT_BUILD
++    std::vector<std::string> members(pl_json.size());
++    for (const auto& [key, value] : pl_json.items()) {
++        members.emplace_back(key);
++    }
++    RTC_CHECK_EQ(members.size(), 1);
++    Json::Value rtx_payload_type = pl_json[members[0]];
++    receive_config.rtp.rtx_associated_payload_types[std::stoi(members[0])] =
++        rtx_payload_type.get<int32_t>();
++#else
+     std::vector<std::string> members = pl_json.getMemberNames();
+     RTC_CHECK_EQ(members.size(), 1);
+     Json::Value rtx_payload_type = pl_json[members[0]];
+     receive_config.rtp.rtx_associated_payload_types[std::stoi(members[0])] =
+         rtx_payload_type.asInt64();
++#endif
+   }
+   return receive_config;
+ }
+@@ -66,18 +111,34 @@ Json::Value GenerateVideoReceiveStreamJsonConfig(
+     const VideoReceiveStreamInterface::Config& config) {
+   Json::Value root_json;
+ 
++#if WEBRTC_WEBKIT_BUILD
++  root_json["decoders"] = Json::Value("[]");
++#else
+   root_json["decoders"] = Json::Value(Json::arrayValue);
++#endif
+   for (const auto& decoder : config.decoders) {
+     Json::Value decoder_json;
+     decoder_json["payload_type"] = decoder.payload_type;
+     decoder_json["payload_name"] = decoder.video_format.name;
++#if WEBRTC_WEBKIT_BUILD
++    decoder_json["codec_params"] = Json::Value("[]");
++#else
+     decoder_json["codec_params"] = Json::Value(Json::arrayValue);
++#endif
+     for (const auto& codec_param_entry : decoder.video_format.parameters) {
+       Json::Value codec_param_json;
+       codec_param_json[codec_param_entry.first] = codec_param_entry.second;
++#if WEBRTC_WEBKIT_BUILD
++      decoder_json["codec_params"].push_back(codec_param_json);
++#else
+       decoder_json["codec_params"].append(codec_param_json);
++#endif
+     }
++#if WEBRTC_WEBKIT_BUILD
++    root_json["decoders"].push_back(decoder_json);
++#else
+     root_json["decoders"].append(decoder_json);
++#endif
+   }
+ 
+   Json::Value rtp_json;
+@@ -91,12 +152,20 @@ Json::Value GenerateVideoReceiveStreamJsonConfig(
+   rtp_json["ulpfec_payload_type"] = config.rtp.ulpfec_payload_type;
+   rtp_json["red_payload_type"] = config.rtp.red_payload_type;
+   rtp_json["rtx_ssrc"] = config.rtp.rtx_ssrc;
++#if WEBRTC_WEBKIT_BUILD
++  rtp_json["rtx_payload_types"] = Json::Value("[]");
++#else
+   rtp_json["rtx_payload_types"] = Json::Value(Json::arrayValue);
++#endif
+ 
+   for (auto& kv : config.rtp.rtx_associated_payload_types) {
+     Json::Value val;
+     val[std::to_string(kv.first)] = kv.second;
++#if WEBRTC_WEBKIT_BUILD
++    rtp_json["rtx_payload_types"].push_back(val);
++#else
+     rtp_json["rtx_payload_types"].append(val);
++#endif
+   }
+ 
+   root_json["rtp"] = rtp_json;
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/test/mac/video_renderer_mac.mm b/Source/ThirdParty/libwebrtc/Source/webrtc/test/mac/video_renderer_mac.mm
+index 71033753830e..e79ba72f795c 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/test/mac/video_renderer_mac.mm
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/test/mac/video_renderer_mac.mm
+@@ -17,7 +17,11 @@
+ @interface CocoaWindow : NSObject {
+  @private
+   NSWindow *window_;
++#if WEBRTC_WEBKIT_BUILD
++  NSOpenGLView *view_;
++#else
+   NSOpenGLContext *context_;
++#endif
+   NSString *title_;
+   int width_;
+   int height_;
+@@ -43,7 +47,21 @@ - (id)initWithTitle:(NSString *)title width:(int)width height:(int)height {
+   return self;
+ }
+ 
++#if WEBRTC_WEBKIT_BUILD
++- (void)dealloc {
++  @autoreleasepool {
++    [NSOpenGLContext clearCurrentContext];
++    [view_ clearGLContext];
++    [view_ removeFromSuperview];
++    [window_ orderOut:NSApp];
++  }
++}
++#endif
++
+ - (void)createWindow:(NSObject *)ignored {
++#if WEBRTC_WEBKIT_BUILD
++  @autoreleasepool {
++#endif
+   NSInteger xOrigin = nextXOrigin_;
+   NSRect screenFrame = [[NSScreen mainScreen] frame];
+   if (nextXOrigin_ + width_ < screenFrame.size.width) {
+@@ -66,16 +84,31 @@ - (void)createWindow:(NSObject *)ignored {
+                                             defer:NO];
+ 
+   NSRect viewFrame = NSMakeRect(0, 0, width_, height_);
++#if WEBRTC_WEBKIT_BUILD
++  view_ = [[NSOpenGLView alloc] initWithFrame:viewFrame pixelFormat:nil];
++
++  [[window_ contentView] addSubview:view_];
++#else
+   NSOpenGLView *view = [[NSOpenGLView alloc] initWithFrame:viewFrame pixelFormat:nil];
+   context_ = [view openGLContext];
+ 
+   [[window_ contentView] addSubview:view];
++#endif
+   [window_ setTitle:title_];
+   [window_ makeKeyAndOrderFront:NSApp];
++#if WEBRTC_WEBKIT_BUILD
++  } // @autoreleasepool
++#endif
+ }
+ 
+ - (void)makeCurrentContext {
++#if WEBRTC_WEBKIT_BUILD
++  @autoreleasepool {
++    [[view_ openGLContext] makeCurrentContext];
++  }
++#else
+   [context_ makeCurrentContext];
++#endif
+ }
+ 
+ @end
+@@ -98,10 +131,19 @@ MacRenderer::MacRenderer()
+     : window_(NULL) {}
+ 
+ MacRenderer::~MacRenderer() {
++#if WEBRTC_WEBKIT_BUILD
++  @autoreleasepool {
++#endif
+   GlRenderer::Destroy();
++#if WEBRTC_WEBKIT_BUILD
++  } // @autoreleasepool
++#endif
+ }
+ 
+ bool MacRenderer::Init(const char* window_title, int width, int height) {
++#if WEBRTC_WEBKIT_BUILD
++  @autoreleasepool {
++#endif
+   window_ = [[CocoaWindow alloc]
+       initWithTitle:[NSString stringWithUTF8String:window_title]
+                                              width:width
+@@ -116,11 +158,20 @@ bool MacRenderer::Init(const char* window_title, int width, int height) {
+   GlRenderer::Init();
+   GlRenderer::ResizeViewport(width, height);
+   return true;
++#if WEBRTC_WEBKIT_BUILD
++  } // @autoreleasepool
++#endif
+ }
+ 
+ void MacRenderer::OnFrame(const VideoFrame& frame) {
++#if WEBRTC_WEBKIT_BUILD
++  @autoreleasepool {
++#endif
+   [window_ makeCurrentContext];
+   GlRenderer::OnFrame(frame);
++#if WEBRTC_WEBKIT_BUILD
++  } // @autoreleasepool
++#endif
+ }
+ 
+ }  // test

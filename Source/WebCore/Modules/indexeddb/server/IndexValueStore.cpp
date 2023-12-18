@@ -87,7 +87,7 @@ IDBError IndexValueStore::addRecord(const IDBKeyData& indexKey, const IDBKeyData
     auto result = m_records.add(indexKey, nullptr);
 
     if (!result.isNewEntry && m_unique)
-        return IDBError(ConstraintError);
+        return IDBError(ExceptionCode::ConstraintError);
 
     if (result.isNewEntry)
         result.iterator->value = makeUnique<IndexValueEntry>(m_unique);
@@ -117,7 +117,7 @@ void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKey
         if (entry.value->removeKey(valueKey))
             index.notifyCursorsOfValueChange(entry.key, valueKey);
         if (!entry.value->getCount())
-            entryKeysToRemove.uncheckedAppend(entry.key);
+            entryKeysToRemove.append(entry.key);
     }
 
     for (auto& entry : entryKeysToRemove) {

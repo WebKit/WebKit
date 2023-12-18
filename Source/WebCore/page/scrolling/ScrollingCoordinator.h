@@ -183,7 +183,7 @@ public:
     virtual bool hasSubscrollers() const { return false; }
 
     // Generated a unique id for scrolling nodes.
-    ScrollingNodeID uniqueScrollingNodeID();
+    WEBCORE_EXPORT ScrollingNodeID uniqueScrollingNodeID();
 
     bool shouldUpdateScrollLayerPositionSynchronously(const LocalFrameView&) const;
 
@@ -224,7 +224,7 @@ protected:
 
     virtual void willCommitTree() { }
 
-    WeakPtr<Page> m_page; // FIXME: ideally this would be a reference but it gets nulled on async teardown.
+    SingleThreadWeakPtr<Page> m_page; // FIXME: ideally this would be a WeakRef but it gets nulled on async teardown.
 
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const LocalFrameView&) const;

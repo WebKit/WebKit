@@ -33,11 +33,14 @@
 #include "JITCode.h"
 #include "Options.h"
 #include "PerfLog.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 size_t LinkBuffer::s_profileCummulativeLinkedSizes[LinkBuffer::numberOfProfiles];
 size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles];
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkBuffer);
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
 {
@@ -214,18 +217,15 @@ private:
 
 static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_t regionStart, int32_t regionEnd, int32_t offset)
 {
+#if OS(DARWIN)
+    memset_pattern4(bitwise_cast<uint8_t*>(assemblerData.buffer()) + regionStart, &offset, regionEnd - regionStart);
+#else
     int32_t ptr = regionStart / sizeof(int32_t);
     const int32_t end = regionEnd / sizeof(int32_t);
     int32_t* offsets = reinterpret_cast_ptr<int32_t*>(assemblerData.buffer());
     while (ptr < end)
         offsets[ptr++] = offset;
-}
-
-// We use this to prevent compile errors on some platforms that are unhappy
-// about the signature of the system's memcpy.
-ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
-{
-    return memcpy(dst, src, bytes);
+#endif
 }
 
 template <typename InstructionType>
@@ -236,7 +236,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     if (didFailToAllocate())
         return;
 
-    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = macroAssembler.jumpsToLink();
+    auto& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
     uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
 #if CPU(ARM64E)
@@ -274,11 +274,12 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     if (m_shouldPerformBranchCompaction) {
         for (unsigned i = 0; i < jumpCount; ++i) {
+            auto& linkRecord = jumpsToLink[i];
             int offset = readPtr - writePtr;
             ASSERT(!(offset & 1));
-                
+
             // Copy the instructions from the last jump to the current one.
-            size_t regionSize = jumpsToLink[i].from() - readPtr;
+            size_t regionSize = linkRecord.from() - readPtr;
             InstructionType* copySource = reinterpret_cast_ptr<InstructionType*>(inData + readPtr);
             InstructionType* copyEnd = reinterpret_cast_ptr<InstructionType*>(inData + readPtr + regionSize);
             InstructionType* copyDst = reinterpret_cast_ptr<InstructionType*>(outData + writePtr);
@@ -289,38 +290,32 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
                 InstructionType insn = read(copySource++);
                 *copyDst++ = insn;
             }
-            recordLinkOffsets(m_assemblerStorage, readPtr, jumpsToLink[i].from(), offset);
+            recordLinkOffsets(m_assemblerStorage, readPtr, linkRecord.from(), offset);
             readPtr += regionSize;
             writePtr += regionSize;
                 
             // Calculate absolute address of the jump target, in the case of backwards
             // branches we need to be precise, forward branches we are pessimistic
             const uint8_t* target;
-#if CPU(ARM64)
-            const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
-#else
-            const intptr_t to = jumpsToLink[i].to();
-#endif
-            if (to >= jumpsToLink[i].from())
+            const intptr_t to = linkRecord.to(&macroAssembler.m_assembler);
+            if (linkRecord.isThunk())
+                target = bitwise_cast<uint8_t*>(to);
+            else if (to >= linkRecord.from())
                 target = codeOutData + to - offset; // Compensate for what we have collapsed so far
             else
                 target = codeOutData + to - executableOffsetFor(to);
 
-            JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], codeOutData + writePtr, target);
+            JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(linkRecord, codeOutData + writePtr, target);
             // Compact branch if we can...
-            if (MacroAssembler::canCompact(jumpsToLink[i].type())) {
+            if (MacroAssembler::canCompact(linkRecord.type())) {
                 // Step back in the write stream
-                int32_t delta = MacroAssembler::jumpSizeDelta(jumpsToLink[i].type(), jumpLinkType);
+                int32_t delta = MacroAssembler::jumpSizeDelta(linkRecord.type(), jumpLinkType);
                 if (delta) {
                     writePtr -= delta;
-                    recordLinkOffsets(m_assemblerStorage, jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
+                    recordLinkOffsets(m_assemblerStorage, linkRecord.from() - delta, readPtr, readPtr - writePtr);
                 }
             }
-#if CPU(ARM64)
-            jumpsToLink[i].setFrom(&macroAssembler.m_assembler, writePtr);
-#else
-            jumpsToLink[i].setFrom(writePtr);
-#endif
+            linkRecord.setFrom(&macroAssembler.m_assembler, writePtr);
         }
     } else {
         if (ASSERT_ENABLED) {
@@ -349,17 +344,18 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     recordLinkOffsets(m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
         
     for (unsigned i = 0; i < jumpCount; ++i) {
-        uint8_t* location = codeOutData + jumpsToLink[i].from();
-#if CPU(ARM64)
-        const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
-#else
-        const intptr_t to = jumpsToLink[i].to();
-#endif
-        uint8_t* target = codeOutData + to - executableOffsetFor(to);
-        if (g_jscConfig.useFastJITPermissions)
-            MacroAssembler::link<memcpyWrapper>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
+        auto& linkRecord = jumpsToLink[i];
+        uint8_t* location = codeOutData + linkRecord.from();
+        const intptr_t to = linkRecord.to(&macroAssembler.m_assembler);
+        uint8_t* target = nullptr;
+        if (linkRecord.isThunk())
+            target = bitwise_cast<uint8_t*>(to);
         else
-            MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
+            target = codeOutData + to - executableOffsetFor(to);
+        if (g_jscConfig.useFastJITPermissions)
+            MacroAssembler::link<memcpyWrapper>(linkRecord, outData + linkRecord.from(), location, target);
+        else
+            MacroAssembler::link<performJITMemcpy>(linkRecord, outData + linkRecord.from(), location, target);
     }
 
     size_t compactSize = writePtr + initialSize - readPtr;

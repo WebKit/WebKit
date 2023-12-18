@@ -95,18 +95,18 @@ ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPayment
 ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem& total)
 {
     if (!total.label)
-        return Exception { TypeError, "Missing total label."_s };
+        return Exception { ExceptionCode::TypeError, "Missing total label."_s };
 
     if (!total.amount)
-        return Exception { TypeError, "Missing total amount."_s };
+        return Exception { ExceptionCode::TypeError, "Missing total amount."_s };
 
     double amount = [NSDecimalNumber decimalNumberWithString:total.amount locale:@{ NSLocaleDecimalSeparator : @"." }].doubleValue;
 
     if (amount < 0)
-        return Exception { TypeError, "Total amount must not be negative."_s };
+        return Exception { ExceptionCode::TypeError, "Total amount must not be negative."_s };
 
     if (amount > 100000000)
-        return Exception { TypeError, "Total amount is too big."_s };
+        return Exception { ExceptionCode::TypeError, "Total amount is too big."_s };
 
     return { };
 }
@@ -114,20 +114,20 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem&
 static ExceptionOr<void> validateCountryCode(const String& countryCode)
 {
     if (!countryCode)
-        return Exception { TypeError, "Missing country code."_s };
+        return Exception { ExceptionCode::TypeError, "Missing country code."_s };
 
     for (auto *countryCodePtr = uloc_getISOCountries(); *countryCodePtr; ++countryCodePtr) {
         if (countryCode == StringView::fromLatin1(*countryCodePtr))
             return { };
     }
 
-    return Exception { TypeError, makeString("\"" + countryCode, "\" is not a valid country code.") };
+    return Exception { ExceptionCode::TypeError, makeString("\"" + countryCode, "\" is not a valid country code.") };
 }
 
 static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 {
     if (!currencyCode)
-        return Exception { TypeError, "Missing currency code."_s };
+        return Exception { ExceptionCode::TypeError, "Missing currency code."_s };
 
     UErrorCode errorCode = U_ZERO_ERROR;
     auto currencyCodes = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucurr_openISOCurrencies(UCURR_ALL, &errorCode));
@@ -138,13 +138,13 @@ static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
             return { };
     }
 
-    return Exception { TypeError, makeString("\"" + currencyCode, "\" is not a valid currency code.") };
+    return Exception { ExceptionCode::TypeError, makeString("\"" + currencyCode, "\" is not a valid currency code.") };
 }
 
 static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     if (!merchantCapabilities.supports3DS && !merchantCapabilities.supportsEMV && !merchantCapabilities.supportsCredit && !merchantCapabilities.supportsDebit)
-        return Exception { TypeError, "Missing merchant capabilities."_s };
+        return Exception { ExceptionCode::TypeError, "Missing merchant capabilities."_s };
 
     return { };
 }
@@ -152,7 +152,7 @@ static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPayme
 static ExceptionOr<void> validateSupportedNetworks(const Vector<String>& supportedNetworks)
 {
     if (supportedNetworks.isEmpty())
-        return Exception { TypeError, "Missing supported networks."_s };
+        return Exception { ExceptionCode::TypeError, "Missing supported networks."_s };
 
     return { };
 }
@@ -161,7 +161,7 @@ static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod& sh
 {
     NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:shippingMethod.amount locale:@{ NSLocaleDecimalSeparator : @"." }];
     if (amount.integerValue < 0)
-        return Exception { TypeError, "Shipping method amount must be greater than or equal to zero."_s };
+        return Exception { ExceptionCode::TypeError, "Shipping method amount must be greater than or equal to zero."_s };
 
     return { };
 }

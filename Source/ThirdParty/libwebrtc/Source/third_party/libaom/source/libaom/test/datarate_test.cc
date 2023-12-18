@@ -36,9 +36,9 @@ class DatarateTestLarge
   }
 
  protected:
-  virtual ~DatarateTestLarge() {}
+  ~DatarateTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(GET_PARAM(1));
     ResetModel();
   }
@@ -110,7 +110,7 @@ class DatarateTestLarge
         << " The datarate for the file is lower than target by too much!";
     ASSERT_LE(effective_datarate_, cfg_.rc_target_bitrate * 1.19)
         << " The datarate for the file is greater than target by too much!";
-    ASSERT_LT(num_spikes_, 8);
+    ASSERT_LE(num_spikes_, 8);
     ASSERT_LT(num_spikes_high_, 1);
   }
 
@@ -298,6 +298,72 @@ class DatarateTestLarge
         << " The datarate for the file missed the target!"
         << cfg_.rc_target_bitrate << " " << effective_datarate_;
   }
+
+  virtual void BasicRateTargetingSuperresCBR() {
+    ::libaom_test::I420VideoSource video("desktopqvga2.320_240.yuv", 320, 240,
+                                         30, 1, 0, 800);
+
+    cfg_.g_profile = 0;
+    cfg_.g_timebase = video.timebase();
+
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_buf_optimal_sz = 500;
+    cfg_.rc_buf_sz = 1000;
+    cfg_.rc_dropframe_thresh = 1;
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 63;
+    cfg_.rc_end_usage = AOM_CBR;
+
+    cfg_.rc_superres_mode = AOM_SUPERRES_FIXED;
+    cfg_.rc_superres_denominator = 16;
+    cfg_.rc_superres_kf_denominator = 16;
+
+    const int bitrate_array[2] = { 250, 650 };
+    cfg_.rc_target_bitrate = bitrate_array[GET_PARAM(4)];
+    ResetModel();
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    ASSERT_GE(static_cast<double>(cfg_.rc_target_bitrate),
+              effective_datarate_ * 0.85)
+        << " The datarate for the file exceeds the target by too much!";
+    ASSERT_LE(static_cast<double>(cfg_.rc_target_bitrate),
+              effective_datarate_ * 1.15)
+        << " The datarate for the file missed the target!"
+        << cfg_.rc_target_bitrate << " " << effective_datarate_;
+  }
+
+  virtual void BasicRateTargetingSuperresCBRMultiThreads() {
+    ::libaom_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30,
+                                         1, 0, 400);
+
+    cfg_.g_profile = 0;
+    cfg_.g_timebase = video.timebase();
+
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_buf_optimal_sz = 500;
+    cfg_.rc_buf_sz = 1000;
+    cfg_.rc_dropframe_thresh = 1;
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 63;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.g_threads = 2;
+
+    cfg_.rc_superres_mode = AOM_SUPERRES_FIXED;
+    cfg_.rc_superres_denominator = 16;
+    cfg_.rc_superres_kf_denominator = 16;
+
+    const int bitrate_array[2] = { 250, 650 };
+    cfg_.rc_target_bitrate = bitrate_array[GET_PARAM(4)];
+    ResetModel();
+    tile_column_ = 1;
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    ASSERT_GE(static_cast<double>(cfg_.rc_target_bitrate),
+              effective_datarate_ * 0.85)
+        << " The datarate for the file exceeds the target by too much!";
+    ASSERT_LE(static_cast<double>(cfg_.rc_target_bitrate),
+              effective_datarate_ * 1.15)
+        << " The datarate for the file missed the target!"
+        << cfg_.rc_target_bitrate << " " << effective_datarate_;
+  }
 };
 
 // Params: test mode, speed, aq mode.
@@ -312,9 +378,9 @@ class DatarateTestFrameDropLarge
   }
 
  protected:
-  virtual ~DatarateTestFrameDropLarge() {}
+  ~DatarateTestFrameDropLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(GET_PARAM(1));
     ResetModel();
   }
@@ -348,7 +414,7 @@ class DatarateTestFrameDropLarge
       ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
       ASSERT_GE(effective_datarate_, cfg_.rc_target_bitrate * 0.85)
           << " The datarate for the file is lower than target by too much!";
-      ASSERT_LE(effective_datarate_, cfg_.rc_target_bitrate * 1.35)
+      ASSERT_LE(effective_datarate_, cfg_.rc_target_bitrate * 1.40)
           << " The datarate for the file is greater than target by too much!";
       if (last_drop > 0) {
         ASSERT_LE(first_drop_, last_drop)
@@ -405,6 +471,16 @@ TEST_P(DatarateTestLarge, BasicRateTargeting444CBRScreen) {
   BasicRateTargeting444CBRScreenTest();
 }
 
+// Check basic rate targeting for Superres mode with CBR.
+TEST_P(DatarateTestLarge, BasicRateTargetingSuperresCBR) {
+  BasicRateTargetingSuperresCBR();
+}
+
+// Check basic rate targeting for Superres mode with CBR and multi-threads.
+TEST_P(DatarateTestLarge, BasicRateTargetingSuperresCBRMultiThreads) {
+  BasicRateTargetingSuperresCBRMultiThreads();
+}
+
 // Check that (1) the first dropped frame gets earlier and earlier
 // as the drop frame threshold is increased, and (2) that the total number of
 // frame drops does not decrease as we increase frame drop threshold.
@@ -433,9 +509,9 @@ class DatarateTestSpeedChangeRealtime
   }
 
  protected:
-  virtual ~DatarateTestSpeedChangeRealtime() {}
+  ~DatarateTestSpeedChangeRealtime() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(GET_PARAM(1));
     ResetModel();
   }
@@ -521,6 +597,16 @@ TEST_P(DatarateTestRealtime, BasicRateTargeting444CBRScreen) {
   BasicRateTargeting444CBRScreenTest();
 }
 
+// Check basic rate targeting for Superres mode with CBR.
+TEST_P(DatarateTestRealtime, BasicRateTargetingSuperresCBR) {
+  BasicRateTargetingSuperresCBR();
+}
+
+// Check basic rate targeting for Superres mode with CBR and multi-threads.
+TEST_P(DatarateTestRealtime, BasicRateTargetingSuperresCBRMultiThreads) {
+  BasicRateTargetingSuperresCBRMultiThreads();
+}
+
 // Check that (1) the first dropped frame gets earlier and earlier
 // as the drop frame threshold is increased, and (2) that the total number of
 // frame drops does not decrease as we increase frame drop threshold.
@@ -540,15 +626,15 @@ class DatarateTestSetFrameQpRealtime
   DatarateTestSetFrameQpRealtime() : DatarateTest(GetParam()), frame_(0) {}
 
  protected:
-  virtual ~DatarateTestSetFrameQpRealtime() {}
+  ~DatarateTestSetFrameQpRealtime() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(libaom_test::kRealTime);
     ResetModel();
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     set_cpu_used_ = 7;
     DatarateTest::PreEncodeFrameHook(video, encoder);
     frame_qp_ = rnd_.PseudoUniform(63);
@@ -556,7 +642,7 @@ class DatarateTestSetFrameQpRealtime
     frame_++;
   }
 
-  virtual void PostEncodeFrameHook(::libaom_test::Encoder *encoder) {
+  void PostEncodeFrameHook(::libaom_test::Encoder *encoder) override {
     if (frame_ >= total_frames_) return;
     int qp = 0;
     encoder->Control(AOME_GET_LAST_QUANTIZER_64, &qp);

@@ -45,6 +45,8 @@ String toString(TokenType type)
         return "IntegerLiteralUnsigned"_s;
     case TokenType::FloatLiteral:
         return "FloatLiteral"_s;
+    case TokenType::HalfLiteral:
+        return "HalfLiteral"_s;
     case TokenType::Identifier:
         return "Identifier"_s;
     case TokenType::ReservedWord:

@@ -1,0 +1,15 @@
+
+PASS CSSScopeRule.cssText, implicit scope
+PASS CSSScopeRule.cssText, root only
+PASS CSSScopeRule.cssText, root and limit
+PASS CSSScopeRule.cssText, limit only
+PASS CSSScopeRule.start, implicit scope
+PASS CSSScopeRule.start, root only
+PASS CSSScopeRule.start, root and limit
+PASS CSSScopeRule.start, limit only
+PASS CSSScopeRule.end, implicit scope
+PASS CSSScopeRule.end, root only
+PASS CSSScopeRule.end, root and limit
+PASS CSSScopeRule.end, limit only
+PASS CSSScopeRule is a CSSGroupingRule
+

@@ -71,7 +71,7 @@ void ReadableStreamToSharedBufferSink::error(String&& message)
         return;
 
     auto callback = std::exchange(m_callback, { });
-    callback(Exception { TypeError, WTFMove(message) });
+    callback(Exception { ExceptionCode::TypeError, WTFMove(message) });
 }
 
 } // namespace WebCore

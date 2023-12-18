@@ -2,7 +2,7 @@ This tests that performance.navigation.type is 2
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS navigation.type is 2
+PASS performance.navigation.type is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

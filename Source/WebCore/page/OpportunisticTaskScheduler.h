@@ -26,6 +26,10 @@
 #pragma once
 
 #include "RunLoopObserver.h"
+#include <JavaScriptCore/EdenGCActivityCallback.h>
+#include <JavaScriptCore/FullGCActivityCallback.h>
+#include <JavaScriptCore/MarkedSpace.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -50,7 +54,7 @@ private:
     WeakPtr<OpportunisticTaskScheduler> m_scheduler;
 };
 
-class OpportunisticTaskScheduler : public RefCounted<OpportunisticTaskScheduler>, public CanMakeWeakPtr<OpportunisticTaskScheduler> {
+class OpportunisticTaskScheduler final : public RefCounted<OpportunisticTaskScheduler>, public CanMakeWeakPtr<OpportunisticTaskScheduler> {
 public:
     static Ref<OpportunisticTaskScheduler> create(Page& page)
     {
@@ -59,10 +63,52 @@ public:
 
     ~OpportunisticTaskScheduler();
 
-    void reschedule(MonotonicTime deadline);
+    void willQueueIdleCallback() { m_mayHavePendingIdleCallbacks = true; }
+
+    void rescheduleIfNeeded(MonotonicTime deadline);
     bool hasImminentlyScheduledWork() const { return m_imminentlyScheduledWorkCount; }
 
     WARN_UNUSED_RETURN Ref<ImminentlyScheduledWorkScope> makeScheduledWorkScope();
+
+    class FullGCActivityCallback final : public JSC::FullGCActivityCallback {
+    public:
+        using Base = JSC::FullGCActivityCallback;
+
+        static Ref<FullGCActivityCallback> create(JSC::Heap& heap)
+        {
+            return adoptRef(*new FullGCActivityCallback(heap));
+        }
+
+        void doCollection(JSC::VM&) final;
+
+    private:
+        FullGCActivityCallback(JSC::Heap&);
+
+        JSC::VM& m_vm;
+        std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+        JSC::HeapVersion m_version { 0 };
+        unsigned m_deferCount { 0 };
+    };
+
+    class EdenGCActivityCallback final : public JSC::EdenGCActivityCallback {
+    public:
+        using Base = JSC::EdenGCActivityCallback;
+
+        static Ref<EdenGCActivityCallback> create(JSC::Heap& heap)
+        {
+            return adoptRef(*new EdenGCActivityCallback(heap));
+        }
+
+        void doCollection(JSC::VM&) final;
+
+    private:
+        EdenGCActivityCallback(JSC::Heap&);
+
+        JSC::VM& m_vm;
+        std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+        JSC::HeapVersion m_version { 0 };
+        unsigned m_deferCount { 0 };
+    };
 
 private:
     friend class ImminentlyScheduledWorkScope;
@@ -70,11 +116,16 @@ private:
     OpportunisticTaskScheduler(Page&);
     void runLoopObserverFired();
 
-    WeakPtr<Page> m_page;
+    bool isPageInactiveOrLoading() const;
+
+    bool shouldAllowOpportunisticallyScheduledTasks() const;
+
+    SingleThreadWeakPtr<Page> m_page;
     uint64_t m_imminentlyScheduledWorkCount { 0 };
     uint64_t m_runloopCountAfterBeingScheduled { 0 };
     MonotonicTime m_currentDeadline;
     std::unique_ptr<RunLoopObserver> m_runLoopObserver;
+    bool m_mayHavePendingIdleCallbacks { false };
 };
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #include "CachedResourceHandle.h"
 #include "FontLoadRequest.h"
 #include "FontSelectionAlgorithm.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -39,8 +40,9 @@ class FontCreationContext;
 class CachedFontLoadRequest final : public FontLoadRequest, public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
-    CachedFontLoadRequest(CachedFont& font)
+    CachedFontLoadRequest(CachedFont& font, ScriptExecutionContext& context)
         : m_font(&font)
+        , m_context(context)
     {
     }
 
@@ -80,12 +82,17 @@ private:
     void fontLoaded(CachedFont& font) final
     {
         ASSERT_UNUSED(font, &font == m_font.get());
+        if (m_font->didRefuseToLoadCustomFont() && m_context) {
+            auto message = makeString("[Lockdown Mode] This font has been blocked: ", m_font->url().string());
+            m_context->addConsoleMessage(MessageSource::Security, MessageLevel::Info, message);
+        }
         if (m_fontLoadRequestClient)
-            m_fontLoadRequestClient->fontLoaded(*this);
+            m_fontLoadRequestClient->fontLoaded(*this); // fontLoaded() might destroy this object. Don't deref its members after it.
     }
 
     CachedResourceHandle<CachedFont> m_font;
     FontLoadRequestClient* m_fontLoadRequestClient { nullptr };
+    WeakPtr<ScriptExecutionContext> m_context;
 };
 
 } // namespace WebCore

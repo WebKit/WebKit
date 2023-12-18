@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Skipping view transition because skipTransition() was called.
+
+Harness Error (FAIL), message = Unhandled rejection: Skipping view transition because skipTransition() was called.
+
+PASS finished promise should be resolved if skipTransition() is invoked before a synchronous updateCallbackDone callback is dispatched
+

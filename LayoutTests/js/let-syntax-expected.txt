@@ -442,8 +442,8 @@ SyntaxError: Cannot use 'let' as a catch parameter name in strict mode.
 SyntaxError: Cannot use 'let' as a catch parameter name in strict mode.
 PASS Has syntax error: ''use strict'; try { } catch(let) {}'
 PASS Does not have syntax error: 'let x; if (true) let: x = 3;'
-SyntaxError: Unexpected keyword 'let'
-SyntaxError: Unexpected keyword 'let'
+SyntaxError: Cannot use 'let' as a label in strict mode.
+SyntaxError: Cannot use 'let' as a label in strict mode.
 PASS Has syntax error: ''use strict'; let x; if (true) let: x = 3;'
 PASS successfullyParsed is true
 

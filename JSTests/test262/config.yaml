@@ -7,9 +7,11 @@ flags:
   Temporal: useTemporal
   array-grouping: useArrayGroupMethod
   ShadowRealm: useShadowRealm
-  resizable-arraybuffer: useArrayBufferTransfer
+  resizable-arraybuffer: useResizableArrayBuffer
+  arraybuffer-transfer: useArrayBufferTransfer
   import-assertions: useImportAttributes
   json-modules: useImportAttributes
+  promise-with-resolvers: usePromiseWithResolversMethod
 skip:
   features:
     - callable-boundary-realms
@@ -54,7 +56,9 @@ skip:
     - test/intl402/Temporal/PlainYearMonth
     - test/intl402/Temporal/TimeZone
     - test/intl402/Temporal/ZonedDateTime
-    - test/staging
+    - test/staging/Intl402
+    - test/staging/JSON
+    - test/staging/Temporal
   files:
     # https://github.com/claudepache/es-legacy-function-reflection
     - test/built-ins/ThrowTypeError/unique-per-realm-function-proto.js
@@ -190,6 +194,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/round/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/round/dateuntil-field.js
+    - test/built-ins/Temporal/Duration/prototype/round/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js
     - test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js
     - test/built-ins/Temporal/Duration/prototype/round/nanoseconds-to-days-loop-indefinitely-1.js
@@ -300,6 +305,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/total/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/total/dateuntil-field.js
+    - test/built-ins/Temporal/Duration/prototype/total/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/total/nanoseconds-to-days-loop-indefinitely-1.js
     - test/built-ins/Temporal/Duration/prototype/total/nanoseconds-to-days-loop-indefinitely-2.js
     - test/built-ins/Temporal/Duration/prototype/total/order-of-operations.js

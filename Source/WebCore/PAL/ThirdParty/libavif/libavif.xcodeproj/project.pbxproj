@@ -6,6 +6,20 @@
 	objectVersion = 56;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		44F97F162B2C191B0018D785 /* Fuzzers (libavif) */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 44F97F202B2C191B0018D785 /* Build configuration list for PBXAggregateTarget "Fuzzers (libavif)" */;
+			buildPhases = (
+			);
+			dependencies = (
+				44F97F2E2B2C19490018D785 /* PBXTargetDependency */,
+			);
+			name = "Fuzzers (libavif)";
+			productName = "Fuzzers (libavif)";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1C4FAF4A28FC862F00FFE212 /* avif.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF0F28FC84D200FFE212 /* avif.c */; };
 		1C4FAF4B28FC862F00FFE212 /* colr.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2028FC84D200FFE212 /* colr.c */; };
@@ -26,6 +40,8 @@
 		1C4FAF5D28FC862F00FFE212 /* alpha.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF2128FC84D200FFE212 /* alpha.c */; };
 		1C4FAF5E28FC862F00FFE212 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAF1C28FC84D200FFE212 /* utils.c */; };
 		1CB33732296A841C00EC4A12 /* libdav1d.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2D0E02296A455C00BE33A3 /* libdav1d.a */; };
+		44F97F2F2B2C19670018D785 /* avif_decode_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FAED028FC844D00FFE212 /* avif_decode_fuzzer.cc */; };
+		44F97F302B2C19790018D785 /* libavif.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C4FAE8F28FC83DC00FFE212 /* libavif.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +72,27 @@
 			proxyType = 2;
 			remoteGlobalIDString = 1C4FAE5D28FC7CF500FFE212;
 			remoteInfo = bitdepth_16;
+		};
+		44F97F1E2B2C191B0018D785 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CD366AA28FC888F000123EA /* dav1d.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 444A6F112AEB1D1C005FE121;
+			remoteInfo = dav1d_fuzzer;
+		};
+		44F97F2D2B2C19490018D785 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE8728FC83DC00FFE212 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44F97F242B2C19420018D785;
+			remoteInfo = avif_decode_fuzzer;
+		};
+		44F97F312B2C197C0018D785 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C4FAE8728FC83DC00FFE212 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C4FAE8E28FC83DC00FFE212;
+			remoteInfo = libavif;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -194,6 +231,9 @@
 		1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libavif.xcconfig; sourceTree = "<group>"; };
 		1C4FAF4428FC855100FFE212 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1CD366AA28FC888F000123EA /* dav1d.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = dav1d.xcodeproj; path = dav1d/dav1d.xcodeproj; sourceTree = "<group>"; };
+		44AD42962B2CB70F00D5F98C /* avif_decode_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = avif_decode_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44AD429B2B2CB70F00D5F98C /* BaseTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
+		44F97F252B2C19420018D785 /* avif_decode_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = avif_decode_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +242,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CB33732296A841C00EC4A12 /* libdav1d.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44F97F222B2C19420018D785 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44F97F302B2C19790018D785 /* libavif.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,8 +268,9 @@
 			isa = PBXGroup;
 			children = (
 				1C2D0E02296A455C00BE33A3 /* libdav1d.a */,
-				1C2D0E06296A455C00BE33A3 /* libdav1d_bitdepth_16.a */,
 				1C2D0E04296A455C00BE33A3 /* libdav1d_bitdepth_8.a */,
+				1C2D0E06296A455C00BE33A3 /* libdav1d_bitdepth_16.a */,
+				44F97F1F2B2C191B0018D785 /* dav1d_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -256,6 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				1C4FAE8F28FC83DC00FFE212 /* libavif.a */,
+				44F97F252B2C19420018D785 /* avif_decode_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -616,7 +666,9 @@
 		1C4FAF4128FC852800FFE212 /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				44AD42962B2CB70F00D5F98C /* avif_decode_fuzzer.xcconfig */,
 				1C4FAF4228FC854300FFE212 /* Base.xcconfig */,
+				44AD429B2B2CB70F00D5F98C /* BaseTarget.xcconfig */,
 				1C4FAF4428FC855100FFE212 /* DebugRelease.xcconfig */,
 				1C4FAF4328FC854B00FFE212 /* libavif.xcconfig */,
 			);
@@ -661,6 +713,23 @@
 			productReference = 1C4FAE8F28FC83DC00FFE212 /* libavif.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		44F97F242B2C19420018D785 /* avif_decode_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44F97F292B2C19420018D785 /* Build configuration list for PBXNativeTarget "avif_decode_fuzzer" */;
+			buildPhases = (
+				44F97F212B2C19420018D785 /* Sources */,
+				44F97F222B2C19420018D785 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44F97F322B2C197C0018D785 /* PBXTargetDependency */,
+			);
+			name = avif_decode_fuzzer;
+			productName = avif_decode_fuzzer;
+			productReference = 44F97F252B2C19420018D785 /* avif_decode_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -672,6 +741,12 @@
 				TargetAttributes = {
 					1C4FAE8E28FC83DC00FFE212 = {
 						CreatedOnToolsVersion = 14.0;
+					};
+					44F97F162B2C191B0018D785 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					44F97F242B2C19420018D785 = {
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
@@ -695,6 +770,8 @@
 			projectRoot = "";
 			targets = (
 				1C4FAE8E28FC83DC00FFE212 /* libavif */,
+				44F97F162B2C191B0018D785 /* Fuzzers (libavif) */,
+				44F97F242B2C19420018D785 /* avif_decode_fuzzer */,
 			);
 		};
 /* End PBXProject section */
@@ -719,6 +796,13 @@
 			fileType = archive.ar;
 			path = libdav1d_bitdepth_16.a;
 			remoteRef = 1C2D0E05296A455C00BE33A3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44F97F1F2B2C191B0018D785 /* dav1d_fuzzer */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = dav1d_fuzzer;
+			remoteRef = 44F97F1E2B2C191B0018D785 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -749,6 +833,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		44F97F212B2C19420018D785 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44F97F2F2B2C19670018D785 /* avif_decode_fuzzer.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -756,6 +848,16 @@
 			isa = PBXTargetDependency;
 			name = dav1d;
 			targetProxy = 1C122B1C296A4B7200814381 /* PBXContainerItemProxy */;
+		};
+		44F97F2E2B2C19490018D785 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44F97F242B2C19420018D785 /* avif_decode_fuzzer */;
+			targetProxy = 44F97F2D2B2C19490018D785 /* PBXContainerItemProxy */;
+		};
+		44F97F322B2C197C0018D785 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1C4FAE8E28FC83DC00FFE212 /* libavif */;
+			targetProxy = 44F97F312B2C197C0018D785 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -802,6 +904,51 @@
 			};
 			name = Production;
 		};
+		44F97F172B2C191B0018D785 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44F97F182B2C191B0018D785 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44F97F192B2C191B0018D785 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44F97F2A2B2C19420018D785 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44AD42962B2CB70F00D5F98C /* avif_decode_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		44F97F2B2B2C19420018D785 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44AD42962B2CB70F00D5F98C /* avif_decode_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		44F97F2C2B2C19420018D785 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44AD42962B2CB70F00D5F98C /* avif_decode_fuzzer.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -821,6 +968,26 @@
 				1C4FAE9428FC83DC00FFE212 /* Debug */,
 				1C4FAE9528FC83DC00FFE212 /* Release */,
 				1C4FAF4628FC859F00FFE212 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44F97F202B2C191B0018D785 /* Build configuration list for PBXAggregateTarget "Fuzzers (libavif)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44F97F172B2C191B0018D785 /* Debug */,
+				44F97F182B2C191B0018D785 /* Release */,
+				44F97F192B2C191B0018D785 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44F97F292B2C19420018D785 /* Build configuration list for PBXNativeTarget "avif_decode_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44F97F2A2B2C19420018D785 /* Debug */,
+				44F97F2B2B2C19420018D785 /* Release */,
+				44F97F2C2B2C19420018D785 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -78,7 +78,8 @@ static void callDefaultEventHandlersInBubblingOrder(Event& event, const EventPat
 
 static bool isInShadowTree(EventTarget* target)
 {
-    return is<Node>(target) && downcast<Node>(*target).isInShadowTree();
+    auto* node = dynamicDowncast<Node>(target);
+    return node && node->isInShadowTree();
 }
 
 static void dispatchEventInDOM(Event& event, const EventPath& path)
@@ -116,21 +117,19 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!event.isTrusted())
         return false;
 
-    auto frame = node.document().frame();
+    RefPtr frame = node.document().frame();
     if (!frame)
         return false;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
     if (!localFrame)
         return false;
 
-    if (!localFrame->loader().shouldSuppressTextInputFromEditing())
+    if (!localFrame->checkedLoader()->shouldSuppressTextInputFromEditing())
         return false;
 
-    if (is<TextEvent>(event)) {
-        auto& textEvent = downcast<TextEvent>(event);
-        return textEvent.isKeyboard() || textEvent.isComposition();
-    }
+    if (auto* textEvent = dynamicDowncast<TextEvent>(event))
+        return textEvent->isKeyboard() || textEvent->isComposition();
 
     return is<CompositionEvent>(event) || is<InputEvent>(event) || is<KeyboardEvent>(event);
 }
@@ -139,9 +138,9 @@ static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
 {
     size_t size = path.size();
     for (size_t i = 0; i < size; ++i) {
-        const EventContext& eventContext = path.contextAt(i);
-        if (is<HTMLInputElement>(eventContext.currentTarget()))
-            return downcast<HTMLInputElement>(eventContext.currentTarget());
+        auto& eventContext = path.contextAt(i);
+        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(eventContext.currentTarget()))
+            return inputElement;
     }
     return nullptr;
 }
@@ -158,7 +157,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     EventPath eventPath { node, event };
 
     if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && event.isMouseEvent()
-        && (event.type() == eventNames().mousedownEvent || event.type() == eventNames().mouseupEvent || event.type() == eventNames().clickEvent)) {
+        && (event.type() == eventNames().mousedownEvent || event.type() == eventNames().mouseupEvent || event.type() == eventNames().clickEvent || event.type() == eventNames().dblclickEvent)) {
         eventPath.adjustForDisabledFormControl();
     }
 
@@ -182,12 +181,15 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         return;
 
     InputElementClickState clickHandlingState;
+    clickHandlingState.trusted = event.isTrusted();
 
     RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
     if (!inputForLegacyPreActivationBehavior && event.bubbles() && event.type() == eventNames().clickEvent)
         inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
-    if (inputForLegacyPreActivationBehavior)
+    if (inputForLegacyPreActivationBehavior
+        && (!event.isTrusted() || !inputForLegacyPreActivationBehavior->isDisabledFormControl())) {
         inputForLegacyPreActivationBehavior->willDispatchEvent(event, clickHandlingState);
+    }
 
     if (!event.propagationStopped() && !eventPath.isEmpty() && !shouldSuppressEventDispatchInDOM(node, event)) {
         event.setEventPath(eventPath);

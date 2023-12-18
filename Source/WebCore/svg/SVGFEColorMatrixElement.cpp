@@ -127,9 +127,9 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::createFilterEffect(const FilterEff
         switch (filterType) {
         case FECOLORMATRIX_TYPE_MATRIX: {
             static constexpr unsigned matrixValueCount = 20;
-            filterValues.reserveInitialCapacity(matrixValueCount);
-            for (size_t i = 0; i < matrixValueCount; i++)
-                filterValues.uncheckedAppend((i % 6) ? 0 : 1);
+            filterValues = Vector<float>(matrixValueCount, [](size_t i) {
+                return (i % 6) ? 0.0 : 1.0;
+            });
             break;
         }
         case FECOLORMATRIX_TYPE_HUEROTATE:

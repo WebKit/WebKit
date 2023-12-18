@@ -23,8 +23,8 @@
 #include "config.h"
 #include "SVGMarkerElement.h"
 
+#include "LegacyRenderSVGResourceMarker.h"
 #include "NodeName.h"
-#include "RenderSVGResourceMarker.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -147,7 +147,7 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
 
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceMarker>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceMarker>(*this, WTFMove(style));
 }
 
 bool SVGMarkerElement::selfHasRelativeLengths() const

@@ -32,6 +32,7 @@
 #import "AppleMediaServicesUISPI.h"
 #import "CocoaImage.h"
 #import "Connection.h"
+#import "CoreTelephonyUtilities.h"
 #import "DataDetectionResult.h"
 #import "InsertTextOptions.h"
 #import "LoadParameters.h"
@@ -44,7 +45,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferReference.h"
 #import "SynapseSPI.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "WKErrorInternal.h"
 #import "WKWebView.h"
 #import "WebContextMenuProxy.h"
@@ -576,30 +577,30 @@ void WebPageProxy::updateFullscreenVideoTextRecognition()
         return;
 
 #if PLATFORM(IOS_FAMILY)
-    if (RetainPtr controller = m_videoFullscreenManager->playerViewController(*internals().currentFullscreenVideoSessionIdentifier))
+    if (RetainPtr controller = m_videoPresentationManager->playerViewController(*internals().currentFullscreenVideoSessionIdentifier))
         pageClient().cancelTextRecognitionForFullscreenVideo(controller.get());
 #endif
 }
 
 void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
 {
-    if (!internals().currentFullscreenVideoSessionIdentifier || !m_videoFullscreenManager)
+    if (!internals().currentFullscreenVideoSessionIdentifier || !m_videoPresentationManager)
         return;
 
     auto identifier = *internals().currentFullscreenVideoSessionIdentifier;
-    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
+    m_videoPresentationManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](std::optional<ShareableBitmap::Handle>&& imageHandle) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || protectedThis->internals().currentFullscreenVideoSessionIdentifier != identifier)
             return;
 
-        auto fullscreenManager = protectedThis->m_videoFullscreenManager;
-        if (!fullscreenManager)
+        auto presentationManager = protectedThis->m_videoPresentationManager;
+        if (!presentationManager)
             return;
         if (!imageHandle)
             return;
 
 #if PLATFORM(IOS_FAMILY)
-        if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
+        if (RetainPtr controller = presentationManager->playerViewController(identifier))
             protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(WTFMove(*imageHandle), controller.get());
 #endif
     });
@@ -853,7 +854,7 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 void WebPageProxy::grantAccessToAssetServices()
 {
     auto handles = SandboxExtension::createHandlesForMachLookup({ "com.apple.mobileassetd.v2"_s }, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
-    process().send(Messages::WebProcess::GrantAccessToAssetServices(handles), 0);
+    process().send(Messages::WebProcess::GrantAccessToAssetServices(WTFMove(handles)), 0);
 }
 
 void WebPageProxy::revokeAccessToAssetServices()
@@ -977,6 +978,102 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
     WEBPAGEPROXY_RELEASE_LOG(Process, "WebPageProxy::shouldForceForegroundPriorityForClientNavigation() returns %d based on PageClient::canTakeForegroundAssertions()", canTakeForegroundAssertions);
     return canTakeForegroundAssertions;
 }
+
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
+
+bool WebPageProxy::shouldAllowAutoFillForCellularIdentifiers() const
+{
+    return WebKit::shouldAllowAutoFillForCellularIdentifiers(URL { pageLoadState().activeURL() });
+}
+
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+
+const std::optional<MediaCapability>& WebPageProxy::mediaCapability() const
+{
+    return internals().mediaCapability;
+}
+
+void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capability)
+{
+    Ref processPool = protectedProcess()->protectedProcessPool();
+
+    if (auto& oldCapability = internals().mediaCapability) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: revoking (envID=%{public}s) for registrable domain '%{sensitive}s'", oldCapability->environmentIdentifier().utf8().data(), oldCapability->registrableDomain().string().utf8().data());
+        processPool->extensionCapabilityGranter().setMediaCapabilityActive(*oldCapability, false);
+        processPool->extensionCapabilityGranter().revoke(*oldCapability);
+    }
+
+    internals().mediaCapability = WTFMove(capability);
+
+    if (auto& newCapability = internals().mediaCapability) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: granting (envID=%{public}s) for registrable domain '%{sensitive}s'", newCapability->environmentIdentifier().utf8().data(), newCapability->registrableDomain().string().utf8().data());
+        processPool->extensionCapabilityGranter().grant(*newCapability);
+    }
+
+    send(Messages::WebPage::SetMediaEnvironment([&]() -> String {
+        if (auto& capability = internals().mediaCapability)
+            return capability->environmentIdentifier();
+        return { };
+    }()));
+}
+
+void WebPageProxy::updateMediaCapability()
+{
+#if USE(EXTENSIONKIT)
+    if (!AuxiliaryProcessProxy::manageProcessesAsExtensions())
+        return;
+#endif
+
+    if (!preferences().mediaCapabilityGrantsEnabled())
+        return;
+
+    URL currentURL { this->currentURL() };
+
+    if (m_isClosed || !currentURL.isValid())
+        setMediaCapability(std::nullopt);
+    else if (!mediaCapability() || !mediaCapability()->registrableDomain().matches(currentURL))
+        setMediaCapability(MediaCapability { currentURL });
+
+    auto& mediaCapability = internals().mediaCapability;
+    if (!mediaCapability)
+        return;
+
+    Ref processPool = protectedProcess()->protectedProcessPool();
+
+    if (shouldActivateMediaCapability())
+        processPool->extensionCapabilityGranter().setMediaCapabilityActive(*mediaCapability, true);
+    else if (shouldDeactivateMediaCapability())
+        processPool->extensionCapabilityGranter().setMediaCapabilityActive(*mediaCapability, false);
+}
+
+bool WebPageProxy::shouldActivateMediaCapability() const
+{
+    if (!isViewVisible())
+        return false;
+
+    if (internals().mediaState.contains(MediaProducerMediaState::IsPlayingAudio))
+        return true;
+
+    if (internals().mediaState.contains(MediaProducerMediaState::IsPlayingVideo))
+        return true;
+
+    return MediaProducer::isCapturing(internals().mediaState);
+}
+
+bool WebPageProxy::shouldDeactivateMediaCapability() const
+{
+    if (internals().mediaState & WebCore::MediaProducer::MediaCaptureMask)
+        return false;
+
+    if (internals().mediaState.containsAny(MediaProducerMediaState::HasAudioOrVideo))
+        return false;
+
+    return true;
+}
+
+#endif // ENABLE(EXTENSION_CAPABILITIES)
 
 } // namespace WebKit
 

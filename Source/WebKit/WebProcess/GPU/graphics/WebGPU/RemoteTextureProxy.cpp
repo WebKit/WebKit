@@ -63,7 +63,9 @@ Ref<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::opti
     auto sendResult = send(Messages::RemoteTexture::CreateView(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteTextureViewProxy::create(*this, m_convertToBackingContext, identifier);
+    result->setLabel(WTFMove(convertedDescriptor->label));
+    return result;
 }
 
 void RemoteTextureProxy::destroy()

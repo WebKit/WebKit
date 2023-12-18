@@ -32,6 +32,7 @@
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "RuleSet.h"
+#include "StyleRule.h"
 
 namespace WebCore {
 namespace Style {
@@ -371,10 +372,24 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::Ps
     return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Universal);
 };
 
-void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
+void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<const StyleRuleScope>>& scopeRules)
 {
     SelectorFeatures selectorFeatures;
     recursivelyCollectFeaturesFromSelector(selectorFeatures, *ruleData.selector());
+
+    for (auto& scopeRule : scopeRules) {
+        auto collectSelectorList = [&] (const auto& selectorList) {
+            if (!selectorList.isEmpty()) {
+                for (const auto* subSelector = selectorList.first() ; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                    recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, MatchElement::Ancestor);
+                    recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, MatchElement::Subject);
+                }
+            }
+        };
+        collectSelectorList(scopeRule->scopeStart());
+        collectSelectorList(scopeRule->scopeEnd());
+    }
+
     if (selectorFeatures.hasSiblingSelector)
         siblingRules.append({ ruleData });
     if (ruleData.containsUncommonAttributeSelector())

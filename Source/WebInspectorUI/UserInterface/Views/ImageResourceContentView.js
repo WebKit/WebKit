@@ -25,7 +25,7 @@
 
 WI.ImageResourceContentView = class ImageResourceContentView extends WI.ResourceContentView
 {
-    constructor(resource, {disableInteractions} = {})
+    constructor(resource, {disableInteractions, disableDropZone} = {})
     {
         console.assert(resource instanceof WI.Resource);
 
@@ -34,6 +34,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         this._imageElement = null;
         this._draggingInternalImageElement = false;
         this._disableInteractions = disableInteractions || false;
+        this._disableDropZone = disableDropZone || false;
 
         const toolTip = WI.repeatedUIString.showTransparencyGridTooltip();
         const activatedToolTip = WI.UIString("Hide transparency grid");
@@ -123,7 +124,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             this._gestureNavigationItemsDivider.hidden = false;
             this._updateResetGestureButtonNavigationItemLabel();
 
-            if (WI.NetworkManager.supportsOverridingResponses()) {
+            if (WI.NetworkManager.supportsOverridingResponses() && !this._disableDropZone) {
                 let dropZoneView = new WI.DropZoneView(this);
                 dropZoneView.targetElement = this._imageContainer;
                 this.addSubview(dropZoneView);

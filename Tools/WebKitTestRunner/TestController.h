@@ -202,6 +202,7 @@ public:
     void setShouldLogDownloadCallbacks(bool shouldLog) { m_shouldLogDownloadCallbacks = shouldLog; }
     void setShouldLogDownloadSize(bool shouldLog) { m_shouldLogDownloadSize = shouldLog; }
     void setShouldLogDownloadExpectedSize(bool shouldLog) { m_shouldLogDownloadExpectedSize = shouldLog; }
+    void setShouldDownloadContentDispositionAttachments(bool shouldDownload) { m_shouldDownloadContentDispositionAttachments = shouldDownload; }
 
     bool isCurrentInvocation(TestInvocation* invocation) const { return invocation == m_currentInvocation.get(); }
 
@@ -247,6 +248,7 @@ public:
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
+    void setStatisticsTimeAdvanceForTesting(double);
     void setStatisticsIsRunningTest(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double);
@@ -320,6 +322,7 @@ public:
 
     void setAllowStorageQuotaIncrease(bool);
     void setQuota(uint64_t);
+    void setOriginQuotaRatioEnabled(bool);
 
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }
@@ -332,7 +335,7 @@ public:
     void setMockCameraOrientation(uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
-    void triggerMockMicrophoneConfigurationChange();
+    void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
     bool hasAppBoundSession();
 
     void injectUserScript(WKStringRef);
@@ -390,6 +393,8 @@ public:
     void setIsMediaKeySystemPermissionGranted(bool);
     WKRetainPtr<WKStringRef> takeViewPortSnapshot();
 
+    WKRetainPtr<WKArrayRef> getAndClearReportedWindowProxyAccessDomains();
+
     WKPreferencesRef platformPreferences() { return m_preferences.get(); }
 
     bool grantNotificationPermission(WKStringRef origin);
@@ -420,6 +425,12 @@ public:
 
 #if ENABLE(IMAGE_ANALYSIS)
     static uint64_t currentImageAnalysisRequestID();
+    void installFakeMachineReadableCodeResultsForImageAnalysis();
+    bool shouldUseFakeMachineReadableCodeResultsForImageAnalysis() const;
+#endif
+
+#if PLATFORM(WPE)
+    bool useWPEPlatformAPI() const { return m_useWPEPlatformAPI; }
 #endif
 
 private:
@@ -618,6 +629,9 @@ private:
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     std::unique_ptr<InstanceMethodSwizzler> m_enhancedWindowingEnabledSwizzler;
 #endif
+#if ENABLE(DATA_DETECTION)
+    std::unique_ptr<InstanceMethodSwizzler> m_appStoreURLSwizzler;
+#endif
     bool m_verbose { false };
     bool m_printSeparators { false };
     bool m_usingServerMode { false };
@@ -649,6 +663,10 @@ private:
     RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+    bool m_useFakeMachineReadableCodeResultsForImageAnalysis { false };
 #endif
 
     enum State {
@@ -754,7 +772,13 @@ private:
     std::optional<uint64_t> m_downloadTotalBytesExpectedToWrite;
     bool m_shouldLogDownloadSize { false };
     bool m_shouldLogDownloadExpectedSize { false };
+    size_t m_downloadIndex { 0 };
+    bool m_shouldDownloadContentDispositionAttachments { true };
     bool m_dumpPolicyDelegateCallbacks { false };
+
+#if PLATFORM(WPE)
+    bool m_useWPEPlatformAPI { false };
+#endif
 };
 
 } // namespace WTR

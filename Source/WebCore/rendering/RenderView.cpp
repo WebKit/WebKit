@@ -81,7 +81,6 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     , m_initialContainingBlock(makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
     , m_layoutState(makeUniqueRef<Layout::LayoutState>(document, *m_initialContainingBlock))
     , m_selection(*this)
-    , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
 {
     // FIXME: We should find a way to enforce this at compile time.
     ASSERT(document.view());
@@ -95,11 +94,15 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
     setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
     
     setPositionState(PositionType::Absolute); // to 0,0 :)
+
+    ASSERT(isRenderView());
 }
 
 RenderView::~RenderView()
 {
     ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
+
+    deleteLines();
 }
 
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -110,42 +113,13 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     bool directionChanged = oldStyle && style().direction() != oldStyle->direction();
 
     if ((writingModeChanged || directionChanged) && multiColumnFlow()) {
-        if (frameView().pagination().mode != Unpaginated)
+        if (frameView().pagination().mode != Pagination::Mode::Unpaginated)
             updateColumnProgressionFromStyle(style());
         updateStylesForColumnChildren(oldStyle);
     }
 
     if (directionChanged)
         frameView().topContentDirectionDidChange();
-}
-
-void RenderView::scheduleLazyRepaint(RenderBox& renderer)
-{
-    if (renderer.renderBoxNeedsLazyRepaint())
-        return;
-    renderer.setRenderBoxNeedsLazyRepaint(true);
-    m_renderersNeedingLazyRepaint.add(renderer);
-    if (!m_lazyRepaintTimer.isActive())
-        m_lazyRepaintTimer.startOneShot(0_s);
-}
-
-void RenderView::unscheduleLazyRepaint(RenderBox& renderer)
-{
-    if (!renderer.renderBoxNeedsLazyRepaint())
-        return;
-    renderer.setRenderBoxNeedsLazyRepaint(false);
-    m_renderersNeedingLazyRepaint.remove(renderer);
-    if (m_renderersNeedingLazyRepaint.isEmptyIgnoringNullReferences())
-        m_lazyRepaintTimer.stop();
-}
-
-void RenderView::lazyRepaintTimerFired()
-{
-    for (auto& renderer : m_renderersNeedingLazyRepaint) {
-        renderer.repaint();
-        renderer.setRenderBoxNeedsLazyRepaint(false);
-    }
-    m_renderersNeedingLazyRepaint.clear();
 }
 
 RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit) const
@@ -180,7 +154,7 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
 
 bool RenderView::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isBox();
+    return child.isRenderBox();
 }
 
 void RenderView::layout()
@@ -206,7 +180,7 @@ void RenderView::layout()
                 || box.style().logicalHeight().isPercentOrCalculated()
                 || box.style().logicalMinHeight().isPercentOrCalculated()
                 || box.style().logicalMaxHeight().isPercentOrCalculated()
-                || box.isSVGRootOrLegacySVGRoot()
+                || box.isRenderOrLegacyRenderSVGRoot()
                 )
                 box.setChildNeedsLayout(MarkOnlyThis);
         }
@@ -337,7 +311,7 @@ void RenderView::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, Tra
 
 bool RenderView::requiresColumns(int) const
 {
-    return frameView().pagination().mode != Unpaginated;
+    return frameView().pagination().mode != Pagination::Mode::Unpaginated;
 }
 
 void RenderView::computeColumnCountAndWidth()
@@ -358,7 +332,7 @@ void RenderView::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     ASSERT(LayoutPoint(IntPoint(paintOffset.x(), paintOffset.y())) == paintOffset);
 
     // This avoids painting garbage between columns if there is a column gap.
-    if (frameView().pagination().mode != Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
+    if (frameView().pagination().mode != Pagination::Mode::Unpaginated && paintInfo.shouldPaintWithinRoot(*this))
         paintInfo.context().fillRect(paintInfo.rect, frameView().baseBackgroundColor());
 
     paintObject(paintInfo, paintOffset);
@@ -500,8 +474,8 @@ void RenderView::repaintRootContents()
 
     // Always use layoutOverflowRect() to fix rdar://problem/27182267.
     // This should be cleaned up via webkit.org/b/159913 and webkit.org/b/159914.
-    auto* repaintContainer = containerForRepaint().renderer;
-    repaintUsingContainer(repaintContainer, computeRectForRepaint(layoutOverflowRect(), repaintContainer));
+    CheckedPtr repaintContainer = containerForRepaint().renderer;
+    repaintUsingContainer(repaintContainer.get(), computeRectForRepaint(layoutOverflowRect(), repaintContainer.get()));
 }
 
 void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
@@ -510,18 +484,22 @@ void RenderView::repaintViewRectangle(const LayoutRect& repaintRect) const
         return;
 
     // FIXME: enclosingRect is needed as long as we integral snap ScrollView/FrameView/RenderWidget size/position.
-    IntRect enclosingRect = enclosingIntRect(repaintRect);
+    auto enclosingRect = enclosingIntRect(repaintRect);
     if (auto ownerElement = document().ownerElement()) {
-        RenderBox* ownerBox = ownerElement->renderBox();
+        auto* ownerBox = ownerElement->renderBox();
         if (!ownerBox)
             return;
         LayoutRect viewRect = this->viewRect();
 #if PLATFORM(IOS_FAMILY)
         // Don't clip using the visible rect since clipping is handled at a higher level on iPhone.
+        // FIXME: This statement is wrong for iframes.
         LayoutRect adjustedRect = enclosingRect;
 #else
         LayoutRect adjustedRect = intersection(enclosingRect, viewRect);
 #endif
+        if (adjustedRect.isEmpty())
+            return;
+
         adjustedRect.moveBy(-viewRect.location());
         adjustedRect.moveBy(ownerBox->contentBoxRect().location());
 
@@ -570,32 +548,30 @@ void RenderView::repaintViewAndCompositedLayers()
         compositor.repaintCompositedLayers();
 }
 
-std::optional<LayoutRect> RenderView::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
     // If a container was specified, and was not nullptr or the RenderView,
     // then we should have found it by now.
     ASSERT_ARG(container, !container || container == this);
 
     if (printing())
-        return rect;
-    
-    LayoutRect adjustedRect = rect;
+        return rects;
+
+    auto adjustedRects = rects;
     if (style().isFlippedBlocksWritingMode()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
-        if (style().isHorizontalWritingMode())
-            adjustedRect.setY(viewHeight() - adjustedRect.maxY());
-        else
-            adjustedRect.setX(viewWidth() - adjustedRect.maxX());
+        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), style().isHorizontalWritingMode());
     }
 
     if (context.hasPositionFixedDescendant)
-        adjustedRect.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
-    
+        adjustedRects.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
+
     // Apply our transform if we have one (because of full page zooming).
-    if (!container && layer() && layer()->transform())
-        adjustedRect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(adjustedRect, document().deviceScaleFactor())));
-    return adjustedRect;
+    if (!container && hasLayer() && layer()->transform())
+        adjustedRects.transform(*layer()->transform(), document().deviceScaleFactor());
+
+    return adjustedRects;
 }
 
 bool RenderView::isScrollableOrRubberbandableBox() const
@@ -924,12 +900,12 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
 
 void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
-    Vector<std::pair<WeakPtr<RenderElement>, WeakPtr<CachedImage>>, 10> toRemove;
+    Vector<std::pair<SingleThreadWeakPtr<RenderElement>, WeakPtr<CachedImage>>, 10> toRemove;
     for (auto it : m_renderersWithPausedImageAnimation) {
         auto& renderer = it.key;
         for (auto& image : it.value) {
             if (renderer.repaintForPausedImageAnimationsIfNeeded(visibleRect, *image))
-                toRemove.append({ renderer, image });
+                toRemove.append({ WeakPtr { renderer }, image });
         }
     }
     for (auto& pair : toRemove)
@@ -1048,7 +1024,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
 {
     int columnNumber = 0;
     const Pagination& pagination = page().pagination();
-    if (pagination.mode == Unpaginated)
+    if (pagination.mode == Pagination::Mode::Unpaginated)
         return columnNumber;
     
     bool progressionIsInline = false;
@@ -1073,7 +1049,7 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
 unsigned RenderView::pageCount() const
 {
     const Pagination& pagination = page().pagination();
-    if (pagination.mode == Unpaginated)
+    if (pagination.mode == Pagination::Mode::Unpaginated)
         return 0;
     
     if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
@@ -1125,7 +1101,7 @@ void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
     m_countersNeedingUpdate.add(renderer);
 }
 
-WeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
+SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
 {
     return std::exchange(m_countersNeedingUpdate, { });
 }

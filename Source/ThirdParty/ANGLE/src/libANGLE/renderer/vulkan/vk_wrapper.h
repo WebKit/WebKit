@@ -1385,7 +1385,7 @@ ANGLE_INLINE VkResult Image::bindMemory(VkDevice device, const vk::DeviceMemory 
 ANGLE_INLINE VkResult Image::bindMemory2(VkDevice device, const VkBindImageMemoryInfoKHR &bindInfo)
 {
     ASSERT(valid());
-    return vkBindImageMemory2KHR(device, 1, &bindInfo);
+    return vkBindImageMemory2(device, 1, &bindInfo);
 }
 
 ANGLE_INLINE void Image::getSubresourceLayout(VkDevice device,
@@ -1861,7 +1861,7 @@ ANGLE_INLINE void SamplerYcbcrConversion::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroySamplerYcbcrConversionKHR(device, mHandle, nullptr);
+        vkDestroySamplerYcbcrConversion(device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1870,7 +1870,7 @@ ANGLE_INLINE VkResult
 SamplerYcbcrConversion::init(VkDevice device, const VkSamplerYcbcrConversionCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateSamplerYcbcrConversionKHR(device, &createInfo, nullptr, &mHandle);
+    return vkCreateSamplerYcbcrConversion(device, &createInfo, nullptr, &mHandle);
 }
 
 // Event implementation.

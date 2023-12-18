@@ -51,8 +51,8 @@ protected:
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) const final;
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
-    FloatRect repaintRectInLocalCoordinates() const final { return m_repaintBoundingBox; }
+    FloatRect strokeBoundingBox() const final;
+    FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
 
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
 
@@ -70,11 +70,10 @@ protected:
     void updateCachedBoundaries();
 
 private:
-    bool isLegacySVGContainer() const final { return true; }
-
     FloatRect m_objectBoundingBox;
-    FloatRect m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_accurateRepaintBoundingBox;
 
     bool m_objectBoundingBoxValid { false };
     bool m_needsBoundariesUpdate { true };
@@ -82,4 +81,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGContainer, isLegacySVGContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGContainer, isLegacyRenderSVGContainer())

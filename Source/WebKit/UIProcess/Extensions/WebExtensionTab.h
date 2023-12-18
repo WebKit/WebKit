@@ -42,10 +42,16 @@ OBJC_PROTOCOL(_WKWebExtensionTab);
 namespace WebKit {
 
 class WebExtensionContext;
+class WebExtensionMatchPattern;
 class WebExtensionWindow;
 class WebProcessProxy;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
+
+enum class WebExtensionTabImageFormat : uint8_t {
+    PNG,
+    JPEG,
+};
 
 class WebExtensionTab : public RefCounted<WebExtensionTab>, public CanMakeWeakPtr<WebExtensionTab> {
     WTF_MAKE_NONCOPYABLE(WebExtensionTab);
@@ -61,7 +67,6 @@ public:
     explicit WebExtensionTab(const WebExtensionContext&, _WKWebExtensionTab *);
 
     enum class ChangedProperties : uint16_t {
-        None       = 0,
         Audible    = 1 << 1,
         Loading    = 1 << 2,
         Muted      = 1 << 3,
@@ -71,13 +76,24 @@ public:
         Title      = 1 << 7,
         URL        = 1 << 8,
         ZoomFactor = 1 << 9,
-        All        = Audible | Loading | Muted | Pinned | ReaderMode | Size | Title | URL | ZoomFactor,
     };
 
-    enum class ImageFormat : uint8_t {
-        PNG,
-        JPEG,
-    };
+    static constexpr OptionSet<ChangedProperties> allChangedProperties()
+    {
+        return {
+            ChangedProperties::Audible,
+            ChangedProperties::Loading,
+            ChangedProperties::Muted,
+            ChangedProperties::Pinned,
+            ChangedProperties::ReaderMode,
+            ChangedProperties::Size,
+            ChangedProperties::Title,
+            ChangedProperties::URL,
+            ChangedProperties::ZoomFactor,
+        };
+    }
+
+    using ImageFormat = WebExtensionTabImageFormat;
 
     enum class AssumeWindowMatches : bool { No, Yes };
     enum class SkipContainsCheck : bool { No, Yes };
@@ -88,7 +104,7 @@ public:
 
     WebExtensionTabIdentifier identifier() const { return m_identifier; }
     WebExtensionTabParameters parameters() const;
-    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties>) const;
+    WebExtensionTabParameters changedParameters(OptionSet<ChangedProperties> = { }) const;
 
     WebExtensionContext* extensionContext() const;
 
@@ -97,6 +113,17 @@ public:
     bool matches(const WebExtensionTabQueryParameters&, AssumeWindowMatches = AssumeWindowMatches::No, std::optional<WebPageProxyIdentifier> = std::nullopt) const;
 
     bool extensionHasAccess() const;
+    bool extensionHasPermission() const;
+
+    bool hasActiveUserGesture() { return m_activeUserGesture; }
+    void setActiveUserGesture(bool activeUserGesture) { m_activeUserGesture = activeUserGesture; }
+
+    RefPtr<WebExtensionMatchPattern> temporaryPermissionMatchPattern() { return m_temporaryPermissionMatchPattern; }
+    void setTemporaryPermissionMatchPattern(RefPtr<WebExtensionMatchPattern>&& matchPattern) { m_temporaryPermissionMatchPattern = WTFMove(matchPattern); }
+
+    OptionSet<ChangedProperties> changedProperties() const { return m_changedProperties; }
+    void addChangedProperties(OptionSet<ChangedProperties> properties) { m_changedProperties.add(properties); }
+    void clearChangedProperties() { m_changedProperties = { }; }
 
     RefPtr<WebExtensionWindow> window(SkipContainsCheck = SkipContainsCheck::No) const;
     size_t index() const;
@@ -170,6 +197,11 @@ private:
     WebExtensionTabIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionTab> m_delegate;
+    RefPtr<WebExtensionMatchPattern> m_temporaryPermissionMatchPattern;
+    OptionSet<ChangedProperties> m_changedProperties;
+    bool m_activeUserGesture : 1 { false };
+    mutable bool m_private : 1 { false };
+    mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToWindow : 1 { false };
     bool m_respondsToParentTab : 1 { false };
     bool m_respondsToSetParentTab : 1 { false };
@@ -211,11 +243,18 @@ private:
 
 namespace WTF {
 
-template<> struct EnumTraits<WebKit::WebExtensionTab::ImageFormat> {
+template<> struct EnumTraits<WebKit::WebExtensionTab::ChangedProperties> {
     using values = EnumValues<
-        WebKit::WebExtensionTab::ImageFormat,
-        WebKit::WebExtensionTab::ImageFormat::PNG,
-        WebKit::WebExtensionTab::ImageFormat::JPEG
+        WebKit::WebExtensionTab::ChangedProperties,
+        WebKit::WebExtensionTab::ChangedProperties::Audible,
+        WebKit::WebExtensionTab::ChangedProperties::Loading,
+        WebKit::WebExtensionTab::ChangedProperties::Muted,
+        WebKit::WebExtensionTab::ChangedProperties::Pinned,
+        WebKit::WebExtensionTab::ChangedProperties::ReaderMode,
+        WebKit::WebExtensionTab::ChangedProperties::Size,
+        WebKit::WebExtensionTab::ChangedProperties::Title,
+        WebKit::WebExtensionTab::ChangedProperties::URL,
+        WebKit::WebExtensionTab::ChangedProperties::ZoomFactor
     >;
 };
 

@@ -39,6 +39,7 @@
 #import "WebExtensionWindowIdentifier.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionWindowCreationOptionsInternal.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebKit {
 
@@ -98,7 +99,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     creationOptions.desiredURLs = [urls copy];
     creationOptions.desiredTabs = [tabs copy];
 
-    [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:^(id<_WKWebExtensionWindow> newWindow, NSError *error) {
+    [delegate webExtensionController:extensionController()->wrapper() openNewWindowWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{private}@", error);
             completionHandler(std::nullopt, error.localizedDescription);
@@ -112,8 +113,10 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 
         THROW_UNLESS([newWindow conformsToProtocol:@protocol(_WKWebExtensionWindow)], @"Object returned by webExtensionController:openNewWindowWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionWindow protocol");
 
-        completionHandler(getOrCreateWindow(newWindow)->parameters(), std::nullopt);
-    }];
+        auto window = getOrCreateWindow(newWindow);
+
+        completionHandler(window->extensionHasAccess() ? std::optional(window->parameters()) : std::nullopt, std::nullopt);
+    }).get()];
 }
 
 void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowIdentifier windowIdentifier, OptionSet<WindowTypeFilter> filter, PopulateTabs populate, CompletionHandler<void(std::optional<WebExtensionWindowParameters>, WebExtensionWindow::Error)>&& completionHandler)

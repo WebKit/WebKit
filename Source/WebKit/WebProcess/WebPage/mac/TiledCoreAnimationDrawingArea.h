@@ -98,7 +98,7 @@ private:
     void didCompleteRenderingUpdateDisplay() override;
 
     // Message handlers.
-    void updateGeometry(const WebCore::IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>&, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) override;
+    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) override;
     void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();
@@ -115,7 +115,7 @@ private:
     void handleActivityStateChangeCallbacks();
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
-    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) override;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint origin);
     WebCore::PlatformCALayer* layerForTransientZoom() const;
     WebCore::PlatformCALayer* shadowLayerForTransientZoom() const;

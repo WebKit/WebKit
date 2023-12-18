@@ -19,16 +19,19 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     platforms = ['osx', 'linux']
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._server_process = None
         self._server_port = 0
         self._ip = '127.0.0.1'
         self._http_log_path = None
+        self._server_type = kwargs.get('server_type', 'twisted')
+        self.set_device_id(kwargs.get('device_id'))
         self._ensure_http_server_dependencies()
 
     def serve(self, web_root):
         _log.info('Launching an http server')
-        http_server_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "http_server/twisted_http_server.py")
+        http_server_file = 'http_server/{}_http_server.py'.format(self._server_type)
+        http_server_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), http_server_file)
         extra_args = []
         if self._ip:
             extra_args.extend(['--interface', self._ip])
@@ -113,6 +116,10 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
     def set_http_log(self, log_path):
         self._http_log_path = log_path
 
+    def set_http_server_type(self, server_type):
+        self._server_type = server_type
+
     def _ensure_http_server_dependencies(self):
         _log.info('Ensure dependencies of http server is satisfied')
-        from webkitpy.autoinstalled import twisted
+        if(self._server_type == 'twisted'):
+            from webkitpy.autoinstalled import twisted

@@ -54,7 +54,7 @@ public:
     ExceptionOr<void> setX(float xValue)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setX(xValue);
         commitChange();
@@ -66,7 +66,7 @@ public:
     ExceptionOr<void> setY(float xValue)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setY(xValue);
         commitChange();
@@ -78,7 +78,7 @@ public:
     ExceptionOr<void> setWidth(float widthValue)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setWidth(widthValue);
         commitChange();
@@ -90,7 +90,7 @@ public:
     ExceptionOr<void> setHeight(float heightValue)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setHeight(heightValue);
         commitChange();

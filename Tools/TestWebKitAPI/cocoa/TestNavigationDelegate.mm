@@ -85,6 +85,12 @@
         _didFinishNavigation(webView, navigation);
 }
 
+- (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didSameDocumentNavigation:(_WKSameDocumentNavigationType)navigationType
+{
+    if (_didSameDocumentNavigation)
+        _didSameDocumentNavigation(webView, navigation);
+}
+
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
     if (_webContentProcessDidTerminate)
@@ -142,6 +148,20 @@
     self.didFinishNavigation = nil;
 }
 
+- (void)waitForDidSameDocumentNavigation
+{
+    EXPECT_FALSE(self.didSameDocumentNavigation);
+
+    __block bool finished = false;
+    self.didSameDocumentNavigation = ^(WKWebView *, WKNavigation *) {
+        finished = true;
+    };
+
+    TestWebKitAPI::Util::run(&finished);
+
+    self.didSameDocumentNavigation = nil;
+}
+
 - (void)waitForWebContentProcessDidTerminate
 {
     EXPECT_FALSE(self.webContentProcessDidTerminate);
@@ -195,6 +215,12 @@
 {
     if (_didChangeLookalikeCharactersFromURL)
         _didChangeLookalikeCharactersFromURL(webView, originalURL, adjustedURL);
+}
+
+- (void)_webView:(WKWebView *)webView didPromptForStorageAccess:(NSString *)topFrameDomain forSubFrameDomain:(NSString *)subFrameDomain forQuirk:(BOOL)hasQuirk
+{
+    if (_didPromptForStorageAccess)
+        _didPromptForStorageAccess(webView, topFrameDomain, subFrameDomain, hasQuirk);
 }
 
 @end
@@ -262,6 +288,17 @@
     }];
     TestWebKitAPI::Util::run(&presentationUpdateHappened);
 #endif
+}
+
+- (void)_test_waitForDidSameDocumentNavigation
+{
+    EXPECT_FALSE(self.navigationDelegate);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    self.navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidSameDocumentNavigation];
+
+    self.navigationDelegate = nil;
 }
 
 - (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors

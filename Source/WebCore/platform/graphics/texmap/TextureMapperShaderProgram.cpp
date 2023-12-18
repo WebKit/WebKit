@@ -22,11 +22,10 @@
 #include "config.h"
 #include "TextureMapperShaderProgram.h"
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 
 #include "GLContext.h"
 #include "Logging.h"
-#include "TextureMapperGL.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -677,4 +676,4 @@ GLuint TextureMapperShaderProgram::getLocation(VariableID variable, ASCIILiteral
 
 } // namespace WebCore
 
-#endif // USE(TEXTURE_MAPPER_GL)
+#endif // USE(TEXTURE_MAPPER)

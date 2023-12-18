@@ -6,6 +6,7 @@ Date: 2018-03-22
 License: Custom license
 License File: LICENSE
 Security Critical: yes
+Shipped: yes
 
 Description:
 Sqrt routine, originally was posted to the USENET group comp.sys.arm on

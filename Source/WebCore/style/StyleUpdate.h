@@ -60,6 +60,7 @@ public:
     Update(Document&);
 
     const ListHashSet<RefPtr<ContainerNode>>& roots() const { return m_roots; }
+    ListHashSet<RefPtr<Element>> takeRebuildRoots() { return WTFMove(m_rebuildRoots); }
 
     const ElementUpdate* elementUpdate(const Element&) const;
     ElementUpdate* elementUpdate(const Element&);
@@ -84,9 +85,11 @@ public:
 
 private:
     void addPossibleRoot(Element*);
+    void addPossibleRebuildRoot(Element&, Element* parent);
 
     Ref<Document> m_document;
     ListHashSet<RefPtr<ContainerNode>> m_roots;
+    ListHashSet<RefPtr<Element>> m_rebuildRoots;
     HashMap<RefPtr<const Element>, ElementUpdate> m_elements;
     HashMap<RefPtr<const Text>, TextUpdate> m_texts;
     std::unique_ptr<RenderStyle> m_initialContainingBlockUpdate;

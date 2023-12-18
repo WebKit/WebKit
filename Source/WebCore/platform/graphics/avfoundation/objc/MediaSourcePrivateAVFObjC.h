@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
@@ -62,29 +62,20 @@ public:
     static Ref<MediaSourcePrivateAVFObjC> create(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
     virtual ~MediaSourcePrivateAVFObjC();
 
+    constexpr MediaPlatformType platformType() const final { return MediaPlatformType::AVFObjC; }
+
     MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player.get(); }
-    const Vector<RefPtr<SourceBufferPrivateAVFObjC>>& sourceBuffers() const { return m_sourceBuffers; }
-    const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
     AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
     void markEndOfStream(EndOfStreamStatus) final;
-    void unmarkEndOfStream() final;
-    bool isEnded() const final { return m_isEnded; }
-    MediaPlayer::ReadyState readyState() const final;
-    void setReadyState(MediaPlayer::ReadyState) final;
 
-    void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
-    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
+    MediaPlayer::ReadyState mediaPlayerReadyState() const final;
+    void setMediaPlayerReadyState(MediaPlayer::ReadyState) final;
 
-    MediaTime duration() const;
-    const PlatformTimeRanges& buffered();
-
-    bool hasAudio() const;
-    bool hasVideo() const;
     bool hasSelectedVideo() const;
 
-    MediaTime currentMediaTime() const;
+    MediaTime currentMediaTime() const final;
     void willSeek();
 
     FloatSize naturalSize() const;
@@ -100,7 +91,7 @@ public:
     void cdmInstanceDetached(CDMInstance&);
     void attemptToDecryptWithInstance(CDMInstance&);
     bool waitingForKey() const;
-    
+
     CDMInstance* cdmInstance() const { return m_cdmInstance.get(); }
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
 #endif
@@ -116,27 +107,24 @@ public:
 
     using RendererType = MediaSourcePrivateClient::RendererType;
     void failedToCreateRenderer(RendererType);
+    bool needsVideoLayer() const;
 
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC&, MediaSourcePrivateClient&);
 
-    void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateAVFObjC*, bool active);
+    void notifyActiveSourceBuffersChanged() final;
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC*, const SharedBuffer&);
 #endif
-    void removeSourceBuffer(SourceBufferPrivate*);
+    void removeSourceBuffer(SourceBufferPrivate&) final;
 
     void setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC*);
 
     friend class SourceBufferPrivateAVFObjC;
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_player;
-    WeakPtr<MediaSourcePrivateClient> m_client;
-    Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
-    Vector<SourceBufferPrivateAVFObjC*> m_activeSourceBuffers;
     Deque<SourceBufferPrivateAVFObjC*> m_sourceBuffersNeedingSessions;
     SourceBufferPrivateAVFObjC* m_sourceBufferWithSelectedVideo { nullptr };
-    bool m_isEnded { false };
 #if ENABLE(ENCRYPTED_MEDIA)
     RefPtr<CDMInstance> m_cdmInstance;
 #endif
@@ -147,6 +135,10 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSourcePrivateAVFObjC)
+static bool isType(const WebCore::MediaSourcePrivate& mediaSource) { return mediaSource.platformType() == WebCore::MediaPlatformType::AVFObjC; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)

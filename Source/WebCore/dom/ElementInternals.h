@@ -35,11 +35,13 @@
 
 namespace WebCore {
 
+class CustomStateSet;
 class HTMLFormElement;
 class FormAssociatedCustomElement;
 
 class ElementInternals final : public ScriptWrappable, public RefCounted<ElementInternals> {
     WTF_MAKE_ISO_ALLOCATED(ElementInternals);
+
 public:
     static Ref<ElementInternals> create(HTMLElement& element)
     {
@@ -47,7 +49,7 @@ public:
     }
 
     Element* element() const { return m_element.get(); }
-    ShadowRoot* shadowRoot() const;
+    RefPtr<ShadowRoot> shadowRoot() const;
 
     ExceptionOr<RefPtr<HTMLFormElement>> form() const;
 
@@ -66,10 +68,12 @@ public:
     const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
     void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
 
-    Element* getElementAttribute(const QualifiedName&) const;
+    RefPtr<Element> getElementAttribute(const QualifiedName&) const;
     void setElementAttribute(const QualifiedName&, Element*);
     std::optional<Vector<RefPtr<Element>>> getElementsArrayAttribute(const QualifiedName&) const;
     void setElementsArrayAttribute(const QualifiedName&, std::optional<Vector<RefPtr<Element>>>&&);
+
+    CustomStateSet& states();
 
 private:
     ElementInternals(HTMLElement& element)

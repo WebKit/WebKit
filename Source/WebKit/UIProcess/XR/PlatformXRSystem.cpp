@@ -111,7 +111,7 @@ void PlatformXRSystem::shutDownTrackingAndRendering()
         xrCoordinator->endSessionIfExists(m_page);
 }
 
-void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::Device::FrameData&&)>&& completionHandler)
+void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
 {
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(completionHandler));
@@ -126,23 +126,23 @@ void PlatformXRSystem::submitFrame()
 void PlatformXRSystem::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
 {
     ensureOnMainRunLoop([weakThis = WeakPtr { *this }, deviceIdentifier]() mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        strongThis->m_page.send(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier));
-        strongThis->m_immersiveSessionActivity = nullptr;
+        protectedThis->m_page.send(Messages::PlatformXRSystemProxy::SessionDidEnd(deviceIdentifier));
+        protectedThis->m_immersiveSessionActivity = nullptr;
     });
 }
 
 void PlatformXRSystem::sessionDidUpdateVisibilityState(XRDeviceIdentifier deviceIdentifier, PlatformXR::VisibilityState visibilityState)
 {
     ensureOnMainRunLoop([weakThis = WeakPtr { *this }, deviceIdentifier, visibilityState]() mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        strongThis->m_page.send(Messages::PlatformXRSystemProxy::SessionDidUpdateVisibilityState(deviceIdentifier, visibilityState));
+        protectedThis->m_page.send(Messages::PlatformXRSystemProxy::SessionDidUpdateVisibilityState(deviceIdentifier, visibilityState));
     });
 }
 

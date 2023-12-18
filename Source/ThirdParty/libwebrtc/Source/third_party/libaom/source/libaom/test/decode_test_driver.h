@@ -153,7 +153,7 @@ class DecoderTest {
   explicit DecoderTest(const CodecFactory *codec)
       : codec_(codec), cfg_(), flags_(0) {}
 
-  virtual ~DecoderTest() {}
+  virtual ~DecoderTest() = default;
 
   const CodecFactory *codec_;
   aom_codec_dec_cfg_t cfg_;

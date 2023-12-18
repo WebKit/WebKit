@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT <a> fires navigate and populates downloadRequest with '' Test timed out
+TIMEOUT <a> fires navigate and populates downloadRequest with 'filename' Test timed out
+TIMEOUT <area> fires navigate and populates downloadRequest with '' Test timed out
+TIMEOUT <area> fires navigate and populates downloadRequest with 'filename' Test timed out
+

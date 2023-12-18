@@ -171,7 +171,9 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             let extension = "";
             switch (this.representedObject.canvas.contextType) {
             case WI.Canvas.ContextType.WebGL:
+            case WI.Canvas.ContextType.OffscreenWebGL:
             case WI.Canvas.ContextType.WebGL2:
+            case WI.Canvas.ContextType.OffscreenWebGL2:
                 extension = WI.unlocalizedString(".glsl");
                 break;
             case WI.Canvas.ContextType.WebGPU:

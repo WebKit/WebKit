@@ -53,24 +53,3 @@ struct DrawingAreaIdentifierType;
 using DrawingAreaIdentifier = ObjectIdentifier<DrawingAreaIdentifierType>;
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::DrawingAreaType> {
-    using values = EnumValues<
-        WebKit::DrawingAreaType
-#if PLATFORM(COCOA)
-#if !PLATFORM(IOS_FAMILY)
-        , WebKit::DrawingAreaType::TiledCoreAnimation
-#endif
-        , WebKit::DrawingAreaType::RemoteLayerTree
-#elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-        , WebKit::DrawingAreaType::CoordinatedGraphics
-#endif
-#if USE(GRAPHICS_LAYER_WC)
-        , WebKit::DrawingAreaType::WC
-#endif
-    >;
-};
-
-} // namespace WTF

@@ -23,9 +23,6 @@ promise_test(async () => {
 }, "Ensure getDisplayMedia generate frames");
 
 promise_test(async () => {
-    if (!window.internals)
-        return;
-
     const stream = await callGetDisplayMedia({ video: { frameRate : 30 } });
     assert_equals(stream.getVideoTracks()[0].getSettings().frameRate, 30, "before cloning");
     assert_equals(stream.getVideoTracks()[0].getSettings().width, 1920, "before cloning");
@@ -45,15 +42,30 @@ promise_test(async () => {
     assert_equals(video2.videoWidth, 320);
     assert_equals(video2.videoHeight, 320 * 1080 / 1920);
 
-    internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
-    let currentCount = internals.trackVideoSampleCount;
-    while (!currentCount) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-        currentCount = internals.trackVideoSampleCount;
-    }
+    let counter = 0;
+    while (counter++ < 10) {
+        const metadata1Promise = new Promise(resolve => video1.requestVideoFrameCallback((now, metadata) => resolve(metadata)));
+        const metadata2Promise = new Promise(resolve => video2.requestVideoFrameCallback((now, metadata) => resolve(metadata)));
 
-    await new Promise(resolve => setTimeout(resolve, 500));
-    assert_true(internals.trackVideoSampleCount - currentCount > 1);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const m1 = await metadata1Promise;
+        const m2 = await metadata2Promise;
+
+        const metadata3Promise = new Promise(resolve => video1.requestVideoFrameCallback((now, metadata) => resolve(metadata)));
+        const metadata4Promise = new Promise(resolve => video2.requestVideoFrameCallback((now, metadata) => resolve(metadata)));
+        const m3 = await metadata3Promise;
+        const m4 = await metadata4Promise;
+
+        const frames1Count = m3.presentedFrames - m1.presentedFrames;
+        const frames2Count = m4.presentedFrames - m2.presentedFrames;
+
+        if (frames2Count && frames1Count / frames2Count >= 2)
+            return;
+        if (frames1Count > 5)
+            return;
+    };
+    assert_not_equals(counter, 10);
 }, "Ensure getDisplayMedia generate frames with valid frame rate and size in case of clones");
         </script>
     </body>

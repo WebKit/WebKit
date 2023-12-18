@@ -105,14 +105,6 @@ void Widget::setFocus(bool focused)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void Widget::setCursor(const Cursor& cursor)
-{
-    auto* view = root();
-    if (!view)
-        return;
-    view->hostWindow()->setCursor(cursor);
-}
-
 void Widget::show()
 {
     if (isSelfVisible())

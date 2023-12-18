@@ -222,10 +222,10 @@ FAIL Element interface: document.createElement("img") must inherit property "con
 FAIL Element interface: calling convertPointFromNode(DOMPointInit, GeometryNode, optional ConvertCoordinateOptions) on document.createElement("img") with too few arguments must throw TypeError assert_inherits: property "convertPointFromNode" not found in prototype chain
 PASS Window interface: operation matchMedia(CSSOMString)
 PASS Window interface: attribute screen
-FAIL Window interface: operation moveTo(long, long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Window interface: operation moveBy(long, long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Window interface: operation resizeTo(long, long) assert_equals: property has wrong .length expected 2 but got 0
-FAIL Window interface: operation resizeBy(long, long) assert_equals: property has wrong .length expected 2 but got 0
+PASS Window interface: operation moveTo(long, long)
+PASS Window interface: operation moveBy(long, long)
+PASS Window interface: operation resizeTo(long, long)
+PASS Window interface: operation resizeBy(long, long)
 PASS Window interface: attribute innerWidth
 PASS Window interface: attribute innerHeight
 PASS Window interface: attribute scrollX
@@ -249,21 +249,13 @@ PASS Window interface: window must inherit property "matchMedia(CSSOMString)" wi
 PASS Window interface: calling matchMedia(CSSOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "screen" with the proper type
 PASS Window interface: window must inherit property "moveTo(long, long)" with the proper type
-FAIL Window interface: calling moveTo(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling moveTo(long, long) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "moveBy(long, long)" with the proper type
-FAIL Window interface: calling moveBy(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling moveBy(long, long) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "resizeTo(long, long)" with the proper type
-FAIL Window interface: calling resizeTo(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling resizeTo(long, long) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "resizeBy(long, long)" with the proper type
-FAIL Window interface: calling resizeBy(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
-            fn.apply(obj, args);
-        }" did not throw
+PASS Window interface: calling resizeBy(long, long) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "innerWidth" with the proper type
 PASS Window interface: window must inherit property "innerHeight" with the proper type
 PASS Window interface: window must inherit property "scrollX" with the proper type

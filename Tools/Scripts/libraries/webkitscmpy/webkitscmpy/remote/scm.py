@@ -27,6 +27,8 @@ from webkitcorepy import string_utils
 
 
 class Scm(ScmBase):
+    EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
+
     class PRGenerator(object):
         SUPPORTS_DRAFTS = False
 
@@ -55,6 +57,9 @@ class Scm(ScmBase):
             raise NotImplementedError()
 
         def review(self, pull_request, comment=None, approve=None):
+            raise NotImplementedError()
+
+        def statuses(self, pull_request):
             raise NotImplementedError()
 
 

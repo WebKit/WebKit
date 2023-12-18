@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerFetchTask.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Connection.h"
 #include "FormDataReference.h"
 #include "Logging.h"
@@ -246,7 +244,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         }
     }
     if (protectedLoader->parameters().options.mode == FetchOptions::Mode::NoCors) {
-        if (auto error = validateCrossOriginResourcePolicy(protectedLoader->parameters().crossOriginEmbedderPolicy.value, *protectedLoader->parameters().sourceOrigin, m_currentRequest.url(), response, ForNavigation::No, protectedLoader->connectionToWebProcess().originAccessPatterns())) {
+        if (auto error = validateCrossOriginResourcePolicy(protectedLoader->parameters().crossOriginEmbedderPolicy.value, *protectedLoader->parameters().sourceOrigin.copyRef(), m_currentRequest.url(), response, ForNavigation::No, protectedLoader->connectionToWebProcess().originAccessPatterns())) {
             didFail(*error);
             return;
         }
@@ -572,5 +570,3 @@ RefPtr<NetworkResourceLoader> ServiceWorkerFetchTask::protectedLoader() const
 
 #undef SWFETCH_RELEASE_LOG
 #undef SWFETCH_RELEASE_LOG_ERROR
-
-#endif // ENABLE(SERVICE_WORKER)

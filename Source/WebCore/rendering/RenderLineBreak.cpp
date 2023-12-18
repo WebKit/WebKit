@@ -50,11 +50,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLineBreak);
 static const int invalidLineHeight = -1;
 
 RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
-    : RenderBoxModelObject(Type::LineBreak, element, WTFMove(style), 0)
+    : RenderBoxModelObject(Type::LineBreak, element, WTFMove(style), { })
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
     , m_isWBR(is<HTMLWBRElement>(element))
 {
+    ASSERT(isRenderLineBreak());
 }
 
 RenderLineBreak::~RenderLineBreak()
@@ -218,7 +219,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
         extentsRect = extentsRect.transposedRect();
     bool isFirstOnLine = !run->previousOnLine();
     bool isLastOnLine = !run->nextOnLine();
-    if (containingBlock->isRubyBase() || containingBlock->isRubyText())
+    if (containingBlock->isRenderRubyBase() || containingBlock->isRenderRubyText())
         isLastOnLine = !containingBlock->containingBlock()->inlineBoxWrapper()->nextOnLineExists();
 
     bool isFixed = false;
@@ -234,7 +235,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
         }
     }
 
-    rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(element()), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
+    rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(element()), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, containingBlock->isRenderRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
 }
 #endif
 

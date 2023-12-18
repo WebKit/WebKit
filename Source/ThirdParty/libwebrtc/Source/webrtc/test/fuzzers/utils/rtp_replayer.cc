@@ -76,7 +76,7 @@ void RtpReplayer::Replay(
   webrtc::RtcEventLogNull event_log;
   std::unique_ptr<TaskQueueFactory> task_queue_factory =
       CreateDefaultTaskQueueFactory();
-  Call::Config call_config(&event_log);
+  CallConfig call_config(&event_log);
   call_config.task_queue_factory = task_queue_factory.get();
   FieldTrialBasedConfig field_trials;
   call_config.trials = &field_trials;
@@ -187,6 +187,15 @@ void RtpReplayer::ReplayPackets(
       RTC_LOG(LS_ERROR) << "Packet error, corrupt packets or incorrect setup?";
       break;
     }
+#ifdef WEBRTC_WEBKIT_BUILD
+    // Set the clock rate if zero - always 90K for video
+    if (received_packet.payload_type_frequency() == 0) {
+        received_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
+    }
+#else
+    // Set the clock rate - always 90K for video
+    received_packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
+#endif
 
     call->Receiver()->DeliverRtpPacket(
         MediaType::VIDEO, std::move(received_packet),

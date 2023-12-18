@@ -28,6 +28,8 @@ namespace WebCore {
 
 class RenderObject;
 
+enum class RepaintRectCalculation : bool;
+
 class SVGClipPathElement final : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGClipPathElement);
 public:
@@ -35,6 +37,10 @@ public:
 
     SVGUnitTypes::SVGUnitType clipPathUnits() const { return m_clipPathUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGAnimatedEnumeration& clipPathUnitsAnimated() { return m_clipPathUnits; }
+
+    SVGGraphicsElement* shouldApplyPathClipping() const;
+
+    FloatRect calculateClipContentRepaintRect(RepaintRectCalculation);
 
 private:
     SVGClipPathElement(const QualifiedName&, Document&);

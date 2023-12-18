@@ -13,6 +13,9 @@
 #include <limits>
 #include <utility>
 
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -229,15 +232,17 @@ void RemoteBitrateEstimatorTest::IncomingPacket(uint32_t ssrc,
                                                 int64_t arrival_time,
                                                 uint32_t rtp_timestamp,
                                                 uint32_t absolute_send_time) {
-  RTPHeader header;
-  memset(&header, 0, sizeof(header));
-  header.ssrc = ssrc;
-  header.timestamp = rtp_timestamp;
-  header.extension.hasAbsoluteSendTime = true;
-  header.extension.absoluteSendTime = absolute_send_time;
-  RTC_CHECK_GE(arrival_time + arrival_time_offset_ms_, 0);
-  bitrate_estimator_->IncomingPacket(arrival_time + arrival_time_offset_ms_,
-                                     payload_size, header);
+  RtpHeaderExtensionMap extensions;
+  extensions.Register<AbsoluteSendTime>(1);
+  RtpPacketReceived rtp_packet(&extensions);
+  rtp_packet.SetSsrc(ssrc);
+  rtp_packet.SetTimestamp(rtp_timestamp);
+  rtp_packet.SetExtension<AbsoluteSendTime>(absolute_send_time);
+  rtp_packet.SetPayloadSize(payload_size);
+  rtp_packet.set_arrival_time(
+      Timestamp::Millis(arrival_time + arrival_time_offset_ms_));
+
+  bitrate_estimator_->IncomingPacket(rtp_packet);
 }
 
 // Generates a frame of packets belonging to a stream at a given bitrate and
@@ -472,7 +477,8 @@ void RemoteBitrateEstimatorTest::CapacityDropTestHelper(
   uint32_t bitrate_bps = SteadyStateRun(
       kDefaultSsrc, steady_state_time * kFramerate, kStartBitrate,
       kMinExpectedBitrate, kMaxExpectedBitrate, kInitialCapacityBps);
-  EXPECT_NEAR(kInitialCapacityBps, bitrate_bps, 130000u);
+  EXPECT_GE(bitrate_bps, 0.85 * kInitialCapacityBps);
+  EXPECT_LE(bitrate_bps, 1.05 * kInitialCapacityBps);
   bitrate_observer_->Reset();
 
   // Add an offset to make sure the BWE can handle it.

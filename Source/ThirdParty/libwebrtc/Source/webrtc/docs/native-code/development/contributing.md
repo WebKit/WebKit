@@ -38,6 +38,7 @@ You will not have to repeat the above. After all that, you’re ready to upload:
 [AUTHORS]: https://webrtc.googlesource.com/src/+/refs/heads/main/AUTHORS
 [new-password]: https://webrtc.googlesource.com/new-password
 [discuss-webrtc]: https://groups.google.com/forum/#!forum/discuss-webrtc
+[Chromium recommendations for code reviews]: https://chromium.googlesource.com/chromium/src/+/main/docs/cl_tips.md
 
 ### Uploading your First Patch
 Now that you have your account set up, you can do the actual upload:

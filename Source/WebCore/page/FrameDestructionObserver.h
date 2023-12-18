@@ -40,6 +40,7 @@ public:
     WEBCORE_EXPORT virtual void willDetachPage();
 
     inline LocalFrame* frame() const; // Defined in FrameDestructionObserverInlines.h.
+    inline RefPtr<LocalFrame> protectedFrame() const; // Defined in FrameDestructionObserverInlines.h.
 
 protected:
     WEBCORE_EXPORT virtual ~FrameDestructionObserver();

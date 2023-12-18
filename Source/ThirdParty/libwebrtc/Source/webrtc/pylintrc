@@ -93,13 +93,13 @@ ignore-docstrings=yes
 [FORMAT]
 
 # Maximum number of characters on a single line.
-max-line-length=80
+max-line-length=79
 
 # Maximum number of lines in a module
 max-module-lines=1000
 
-# We use two spaces for indents, instead of the usual four spaces or tab.
-indent-string='  '
+# Use four spaces for indents.
+indent-string='    '
 
 
 [BASIC]
@@ -107,43 +107,29 @@ indent-string='  '
 # List of builtins function names that should not be used, separated by a comma
 bad-functions=map,filter,apply,input
 
-# Regular expression which should only match correct module names
-module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+# Naming style matching correct module names.
+module-naming-style=snake_case
 
-# Regular expression which should only match correct module level names
-# (CAPS_WITH_UNDER)
-const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+# Naming style matching correct constant names.
+const-naming-style=UPPER_CASE
 
-# Regular expression which should only match correct class names
-# (CapWords)
-class-rgx=[A-Z_][a-zA-Z0-9]+$
+# Naming style matching correct class names.
+class-naming-style=PascalCase
 
-# Regular expression which should only match correct function names
-# The Chromium standard is different than PEP-8, so we need to redefine this to
-# only allow:
-# - CapWords
-# - main: Standard for main function.
-function-rgx=([A-Z_][a-zA-Z0-9]{2,60}|main)$
+# Naming style matching correct function names.
+function-naming-style=snake_case
 
-# Regular expression which should only match correct method names
-# The Chromium standard is different than PEP-8, so we need to redefine this to
-# only allow:
-# - CapWords, starting with a capital letter.  No underscores in function
-#   names.  Can also have a "_" prefix (private method) or a "test" prefix
-#   (unit test).
-# - Methods that look like __xyz__, which are used to do things like
-#   __init__, __del__, etc.
-# - setUp, tearDown: For unit tests.
-method-rgx=((_|test)?[A-Z][a-zA-Z0-9]{2,60}|__[a-z]+__|setUp|tearDown)$
+# Regular expression matching correct method names.
+method-rgx=([a-z_][a-z0-9_]{2,}|setUp|tearDown)$
 
-# Regular expression which should only match correct instance attribute names
-attr-rgx=[a-z_][a-z0-9_]{2,30}$
+# Naming style matching correct attribute names.
+attr-naming-style=snake_case
 
-# Regular expression which should only match correct argument names
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+# Naming style matching correct argument names.
+argument-naming-style=snake_case
 
-# Regular expression which should only match correct variable names
-variable-rgx=[a-z_][a-z0-9_]{0,30}$
+# Naming style matching correct variable names.
+variable-naming-style=snake_case
 
 # Regular expression which should only match correct list comprehension /
 # generator expression variable names

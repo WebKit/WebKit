@@ -46,21 +46,24 @@ public:
     {
     }
 
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& highlightName)
+    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameIdentifier)
         : pseudoId(pseudoId)
-        , highlightName(highlightName)
+        , nameIdentifier(nameIdentifier)
     {
-        ASSERT(pseudoId == PseudoId::Highlight);
+        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
     }
 
     PseudoId pseudoId;
     std::optional<StyleScrollbarState> scrollbarState;
-    AtomString highlightName;
+
+    // highlight name for ::highlight or view transition name for view transition pseudo elements.
+    AtomString nameIdentifier;
 };
 
 struct MatchedRule {
-    const RuleData* ruleData;
-    unsigned specificity;
+    const RuleData* ruleData { nullptr };
+    unsigned specificity { 0 };
+    unsigned scopingRootDistance { 0 };
     ScopeOrdinal styleScopeOrdinal;
     CascadeLayerPriority cascadeLayerPriority;
 };
@@ -116,8 +119,13 @@ private:
     void collectMatchingRules(CascadeLevel);
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
-    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
+    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const Element* scopingRoot = nullptr);
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
+    struct ScopingRootWithDistance {
+        const Element* scopingRoot { nullptr };
+        unsigned distance { std::numeric_limits<unsigned>::max() };
+    };
+    std::pair<bool, std::optional<Vector<ScopingRootWithDistance>>> scopeRulesMatch(const RuleData&, const MatchRequest&);
 
     void sortMatchedRules();
 
@@ -126,7 +134,7 @@ private:
     void sortAndTransferMatchedRules(DeclarationOrigin);
     void transferMatchedRules(DeclarationOrigin, std::optional<ScopeOrdinal> forScope = { });
 
-    void addMatchedRule(const RuleData&, unsigned specificity, const MatchRequest&);
+    void addMatchedRule(const RuleData&, unsigned specificity, unsigned scopingRootDistance, const MatchRequest&);
     void addMatchedProperties(MatchedProperties&&, DeclarationOrigin);
 
     const Element& element() const { return m_element.get(); }

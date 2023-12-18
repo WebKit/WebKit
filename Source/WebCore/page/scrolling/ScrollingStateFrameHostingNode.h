@@ -36,6 +36,7 @@ class Scrollbar;
 class ScrollingStateFrameHostingNode final : public ScrollingStateNode {
 public:
     WEBCORE_EXPORT static Ref<ScrollingStateFrameHostingNode> create(ScrollingStateTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingStateFrameHostingNode> create(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
     virtual ~ScrollingStateFrameHostingNode();
@@ -43,6 +44,7 @@ public:
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
+    ScrollingStateFrameHostingNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>);
     ScrollingStateFrameHostingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFrameHostingNode(const ScrollingStateFrameHostingNode&, ScrollingStateTree&);
 };

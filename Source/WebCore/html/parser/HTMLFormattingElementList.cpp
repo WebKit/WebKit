@@ -194,7 +194,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem& newItem)
 
             auto* candidateAttribute = candidate->findAttribute(attribute.name());
             if (candidateAttribute && candidateAttribute->value() == attribute.value())
-                remainingCandidates.uncheckedAppend(candidate);
+                remainingCandidates.append(candidate);
         }
 
         if (remainingCandidates.size() < kNoahsArkCapacity)

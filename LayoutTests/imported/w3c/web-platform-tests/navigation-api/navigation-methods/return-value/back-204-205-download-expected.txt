@@ -1,0 +1,6 @@
+
+
+FAIL back() promises to 204s never settle promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.index')"
+FAIL back() promises to 205s never settle promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.index')"
+FAIL back() promises to Content-Disposition: attachment responses never settle promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.index')"
+

@@ -15,10 +15,22 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/computed-keyframes-shorthands.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-in-removed-iframe-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-on-marquee-parent-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-filling.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-interval-distance.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect-in-shadow-root-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect-in-shadow-root-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect-in-shadow-root.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-replaced-animations.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/keyframe-exceptions.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/transform-and-opacity-on-inline-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/transform-and-opacity-on-inline-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/transform-and-opacity-on-inline-001.html

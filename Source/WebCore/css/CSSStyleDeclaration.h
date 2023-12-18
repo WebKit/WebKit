@@ -36,7 +36,7 @@ class MutableStyleProperties;
 class StyleProperties;
 class StyledElement;
 
-class CSSStyleDeclaration : public ScriptWrappable, public CanMakeCheckedPtr {
+class CSSStyleDeclaration : public ScriptWrappable, public CanMakeSingleThreadWeakPtr<CSSStyleDeclaration> {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
     WTF_MAKE_ISO_ALLOCATED(CSSStyleDeclaration);
 public:

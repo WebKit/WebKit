@@ -55,6 +55,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include "GStreamerCaptureDeviceManager.h"
 #include "GStreamerMediaStreamSource.h"
 #endif
 
@@ -440,6 +441,15 @@ void registerWebKitGStreamerVideoEncoder()
         GStreamerRegistryScanner::singleton().refresh();
 }
 
+void deinitializeGStreamer()
+{
+#if ENABLE(MEDIA_STREAM)
+    teardownGStreamerCaptureDeviceManagers();
+#endif
+    teardownGStreamerRegistryScanner();
+    gst_deinit();
+}
+
 unsigned getGstPlayFlag(const char* nick)
 {
     static GFlagsClass* flagsClass = static_cast<GFlagsClass*>(g_type_class_ref(g_type_from_name("GstPlayFlags")));
@@ -788,7 +798,7 @@ PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo& info)
         colorSpace.matrix = PlatformVideoMatrixCoefficients::Fcc;
         break;
     case GST_VIDEO_COLOR_MATRIX_BT2020:
-        colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
+        colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt2020Ncl;
         break;
     case GST_VIDEO_COLOR_MATRIX_UNKNOWN:
         colorSpace.matrix = PlatformVideoMatrixCoefficients::Unspecified;
@@ -917,7 +927,7 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
         case PlatformVideoMatrixCoefficients::Fcc:
             GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_FCC;
             break;
-        case PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance:
+        case PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance:
             GST_VIDEO_INFO_COLORIMETRY(info).matrix = GST_VIDEO_COLOR_MATRIX_BT2020;
             break;
         case PlatformVideoMatrixCoefficients::Unspecified:

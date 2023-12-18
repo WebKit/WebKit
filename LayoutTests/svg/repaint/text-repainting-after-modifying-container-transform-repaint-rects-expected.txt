@@ -2,9 +2,7 @@ PASS
 (repaint rects
   (rect 0 0 1 1)
   (rect 50 14 96 46)
-  (rect 0 0 50 1)
-  (rect 1 14 145 46)
-  (rect 0 0 1 14)
-  (rect 50 1 96 59)
+  (rect 0 0 1 1)
+  (rect 50 14 96 46)
 )
 

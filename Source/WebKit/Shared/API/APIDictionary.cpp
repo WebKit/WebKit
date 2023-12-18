@@ -36,19 +36,17 @@ Ref<Dictionary> Dictionary::create()
     return create({ });
 }
 
-Ref<Dictionary> Dictionary::create(MapType map)
+Ref<Dictionary> Dictionary::create(MapType&& map)
 {
     return adoptRef(*new Dictionary(WTFMove(map)));
 }
 
-Dictionary::Dictionary(MapType map)
+Dictionary::Dictionary(MapType&& map)
     : m_map(WTFMove(map))
 {
 }
 
-Dictionary::~Dictionary()
-{
-}
+Dictionary::~Dictionary() = default;
 
 Ref<Array> Dictionary::keys() const
 {

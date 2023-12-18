@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env vpython3
 #
 # Copyright 2023 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
@@ -78,17 +78,23 @@ def diff_files(path, expected_path):
 
 def run_test(test_name, overwrite_expected):
     with temporary_dir() as temp_dir:
-        exe = angle_test_util.ExecutablePathInCurrentDir('angle_end2end_tests')
+        if angle_test_util.IsAndroid():
+            cmd = [
+                '../../src/tests/angle_android_test_runner.py', 'gtest',
+                '--suite=angle_end2end_tests', '--output-directory=.'
+            ]
+        else:
+            cmd = [angle_test_util.ExecutablePathInCurrentDir('angle_end2end_tests')]
+
         test_args = ['--gtest_filter=%s' % test_name, '--angle-per-test-capture-label']
         extra_env = {
-            'ANGLE_FEATURE_OVERRIDES_ENABLED': 'forceRobustResourceInit:forceInitShaderVariables',
             'ANGLE_CAPTURE_ENABLED': '1',
             'ANGLE_CAPTURE_FRAME_START': '2',
             'ANGLE_CAPTURE_FRAME_END': '5',
             'ANGLE_CAPTURE_OUT_DIR': temp_dir,
             'ANGLE_CAPTURE_COMPRESSION': '0',
         }
-        subprocess.check_call([exe] + test_args, env={**os.environ.copy(), **extra_env})
+        subprocess.check_call(cmd + test_args, env={**os.environ.copy(), **extra_env})
         logging.info('Capture finished, comparing files')
         files = sorted(fn for fn in os.listdir(temp_dir))
         expected_dir = os.path.join(SCRIPT_DIR, 'expected')
@@ -124,7 +130,6 @@ def main():
     logging.basicConfig(level=args.log.upper())
 
     angle_test_util.Initialize('angle_end2end_tests')
-    assert not angle_test_util.IsAndroid(), 'capture_tests not yet supported on Android'
 
     test_name = 'CapturedTest.MultiFrame/ES3_Vulkan'
     had_error = False

@@ -100,10 +100,11 @@ static bool hasImpliedEndTag(const HTMLStackItem& item)
 
 static bool shouldUseLengthLimit(const ContainerNode& node)
 {
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
         return true;
 
-    switch (downcast<Element>(node).elementName()) {
+    switch (element->elementName()) {
     case HTML::script:
     case HTML::style:
     case SVG::script:
@@ -218,7 +219,6 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
 void HTMLConstructionSite::attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& child, bool selfClosing)
 {
     ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !is<Element>(child) || !isScriptElement(downcast<Element>(child.get())));
-    ASSERT(pluginContentIsAllowed(m_parserContentPolicy) || !child->isPluginElement());
 
     if (shouldFosterParent()) {
         fosterParent(WTFMove(child));
@@ -262,7 +262,6 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserC
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(document.inQuirksMode())
 {
-    ASSERT(document.isHTMLDocument() || document.isXHTMLDocument());
 }
 
 HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
@@ -274,7 +273,6 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(fragment.document().inQuirksMode())
 {
-    ASSERT(document().isHTMLDocument() || document().isXHTMLDocument());
 }
 
 HTMLConstructionSite::~HTMLConstructionSite() = default;
@@ -541,7 +539,7 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
-    if (document().settings().declarativeShadowDOMEnabled() && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowDOM)) {
+    if (document().settings().declarativeShadowRootsEnabled() && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
         std::optional<ShadowRootMode> mode;
         bool delegatesFocus = false;
         for (auto& attribute : token.attributes()) {
@@ -553,13 +551,12 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             } else if (attribute.name() == HTMLNames::shadowrootdelegatesfocusAttr)
                 delegatesFocus = true;
         }
-        if (mode) {
+        if (mode && is<Element>(currentNode())) {
             auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus);
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
                 auto element = createHTMLElement(token);
-                RELEASE_ASSERT(is<HTMLTemplateElement>(element));
-                downcast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
+                checkedDowncast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
                 m_openElements.push(HTMLStackItem(WTFMove(element), WTFMove(token)));
                 return;
             }
@@ -771,8 +768,8 @@ Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const Ato
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
-    if (is<HTMLTemplateElement>(currentNode()))
-        return downcast<HTMLTemplateElement>(currentNode()).fragmentForInsertion().document();
+    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+        return templateElement->fragmentForInsertion().document();
     return currentNode().document();
 }
 
@@ -824,8 +821,10 @@ RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementIn
     // loading is working. When this hack is removed, the assertion just before
     // the setPictureElement() call in HTMLImageElement::insertedIntoAncestor
     // can be simplified.
-    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(*element))
-        downcast<HTMLImageElement>(*element).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
+    if (auto* currentPictureElement = dynamicDowncast<HTMLPictureElement>(currentNode())) {
+        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(*element))
+            imageElement->setPictureElement(currentPictureElement);
+    }
 
     setAttributes(*element, token, m_parserContentPolicy);
     return element;

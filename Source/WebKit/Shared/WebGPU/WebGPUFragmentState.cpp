@@ -47,9 +47,9 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const Web
             auto convertedTarget = convertToBacking(*target);
             if (!convertedTarget)
                 return std::nullopt;
-            targets.uncheckedAppend(WTFMove(*convertedTarget));
+            targets.append(WTFMove(*convertedTarget));
         } else
-            targets.uncheckedAppend(std::nullopt);
+            targets.append(std::nullopt);
     }
 
     return { { WTFMove(*base), WTFMove(targets) } };
@@ -68,9 +68,9 @@ std::optional<WebCore::WebGPU::FragmentState> ConvertFromBackingContext::convert
             auto target = convertFromBacking(*backingTarget);
             if (!target)
                 return std::nullopt;
-            targets.uncheckedAppend(WTFMove(*target));
+            targets.append(WTFMove(*target));
         } else
-            targets.uncheckedAppend(std::nullopt);
+            targets.append(std::nullopt);
     }
 
     return { { WTFMove(*base), WTFMove(targets) } };

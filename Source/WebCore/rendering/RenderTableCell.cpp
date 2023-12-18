@@ -81,6 +81,7 @@ RenderTableCell::RenderTableCell(Element& element, RenderStyle&& style)
     // We only update the flags when notified of DOM changes in colSpanOrRowSpanChanged()
     // so we need to set their initial values here in case something asks for colSpan()/rowSpan() before then.
     updateColAndRowSpanFlags();
+    ASSERT(isRenderTableCell());
 }
 
 RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
@@ -94,6 +95,7 @@ RenderTableCell::RenderTableCell(Document& document, RenderStyle&& style)
     , m_hasEmptyCollapsedStartBorder(false)
     , m_hasEmptyCollapsedEndBorder(false)
 {
+    ASSERT(isRenderTableCell());
 }
 
 void RenderTableCell::willBeRemovedFromTree(IsInternalMove isInternalMove)
@@ -364,14 +366,14 @@ LayoutSize RenderTableCell::offsetFromContainer(RenderElement& container, const 
     return offset;
 }
 
-LayoutRect RenderTableCell::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+auto RenderTableCell::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
     // If the table grid is dirty, we cannot get reliable information about adjoining cells,
     // so we ignore outside borders. This should not be a problem because it means that
     // the table is going to recalculate the grid, relayout and repaint its current rect, which
     // includes any outside borders of this cell.
     if (!table()->collapseBorders() || table()->needsSectionRecalc())
-        return RenderBlockFlow::clippedOverflowRect(repaintContainer, context);
+        return RenderBlockFlow::localRectsForRepaint(repaintOutlineBounds);
 
     bool rtl = !styleForCellFlow().isLeftToRightDirection();
     LayoutUnit outlineSize { style().outlineSize() };
@@ -403,23 +405,31 @@ LayoutRect RenderTableCell::clippedOverflowRect(const RenderLayerModelObject* re
             right = std::max(right, below->borderHalfRight(true));
         }
     }
+
     LayoutPoint location(std::max<LayoutUnit>(left, -visualOverflowRect().x()), std::max<LayoutUnit>(top, -visualOverflowRect().y()));
-    LayoutRect r(-location.x(), -location.y(), location.x() + std::max(width() + right, visualOverflowRect().maxX()), location.y() + std::max(height() + bottom, visualOverflowRect().maxY()));
+    auto overflowRect = LayoutRect(-location.x(), -location.y(), location.x() + std::max(width() + right, visualOverflowRect().maxX()), location.y() + std::max(height() + bottom, visualOverflowRect().maxY()));
 
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    r.move(view().frameView().layoutContext().layoutDelta());
-    return computeRect(r, repaintContainer, context);
+    overflowRect.move(view().frameView().layoutContext().layoutDelta());
+
+    auto rects = RepaintRects { overflowRect };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = localOutlineBoundsRepaintRect();
+
+    return rects;
 }
 
-std::optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderTableCell::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
     if (container == this)
-        return rect;
-    LayoutRect adjustedRect = rect;
+        return rects;
+
+    auto adjustedRects = rects;
     if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || container || context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) && parent())
-        adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
-    return RenderBlockFlow::computeVisibleRectInContainer(adjustedRect, container, context);
+        adjustedRects.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
+
+    return RenderBlockFlow::computeVisibleRectsInContainer(adjustedRects, container, context);
 }
 
 LayoutUnit RenderTableCell::cellBaselinePosition() const

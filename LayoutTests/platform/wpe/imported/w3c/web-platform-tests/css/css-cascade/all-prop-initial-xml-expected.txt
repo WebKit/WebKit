@@ -6,7 +6,6 @@ PASS accent-color
 PASS align-content
 PASS align-items
 PASS align-self
-PASS align-tracks
 PASS alignment-baseline
 PASS alt
 PASS animation-composition
@@ -17,6 +16,7 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
+PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
 PASS aspect-ratio
@@ -179,7 +179,6 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS justify-tracks
 PASS kerning
 PASS left
 PASS letter-spacing
@@ -290,6 +289,8 @@ PASS scroll-padding-top
 PASS scroll-snap-align
 PASS scroll-snap-stop
 PASS scroll-snap-type
+PASS scroll-timeline-axis
+PASS scroll-timeline-name
 PASS scrollbar-color
 PASS scrollbar-gutter
 PASS scrollbar-width
@@ -337,13 +338,15 @@ PASS text-spacing-trim
 PASS text-transform
 PASS text-underline-offset
 PASS text-underline-position
-PASS text-wrap
+PASS text-wrap-mode
+PASS text-wrap-style
 PASS top
 PASS touch-action
 PASS transform
 PASS transform-box
 PASS transform-origin
 PASS transform-style
+PASS transition-behavior
 PASS transition-delay
 PASS transition-duration
 PASS transition-property
@@ -352,6 +355,10 @@ PASS translate
 PASS unicode-bidi
 PASS vector-effect
 PASS vertical-align
+PASS view-timeline-axis
+PASS view-timeline-inset
+PASS view-timeline-name
+PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
 PASS widows

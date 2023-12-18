@@ -68,3 +68,7 @@
 (define (read-write-and-issue-extensions path-filter)
     (apply-read-and-issue-extension allow path-filter)
     (apply-write-and-issue-extension allow path-filter))
+
+(define (webcontent-process-launched)
+    (state-flag "local:WebContentProcessLaunched"))
+

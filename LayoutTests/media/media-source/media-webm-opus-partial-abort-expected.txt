@@ -49,7 +49,6 @@ RUN(sourceBuffer.remove(0, 100))
 EVENT(update)
 Same as above without waiting for the first append to complete. This is not a deterministic speced behaviour
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, loader.mediaSegmentSize(1)/2)))
-EVENT(updatestart)
 RUN(sourceBuffer.abort())
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 EVENT(update)

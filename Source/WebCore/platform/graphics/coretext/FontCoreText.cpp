@@ -692,6 +692,13 @@ static int extractNumber(CFNumberRef number)
     return result;
 }
 
+static bool extractBoolean(CFBooleanRef value)
+{
+    if (value)
+        return CFBooleanGetValue(value);
+    return false;
+}
+
 void Font::determinePitch()
 {
     CTFontRef ctFont = m_platformData.ctFont();
@@ -712,14 +719,18 @@ void Font::determinePitch()
     auto fullName = adoptCF(CTFontCopyFullName(ctFont));
     auto familyName = adoptCF(CTFontCopyFamilyName(ctFont));
 
-    int fixedPitch = extractNumber(adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(m_platformData.ctFont(), kCTFontFixedAdvanceAttribute))).get());
+    int fixedPitch = extractNumber(adoptCF(static_cast<CFNumberRef>(CTFontCopyAttribute(ctFont, kCTFontFixedAdvanceAttribute))).get());
+    bool userInstalled = extractBoolean(adoptCF(static_cast<CFBooleanRef>(CTFontCopyAttribute(ctFont, kCTFontUserInstalledAttribute))).get());
     m_treatAsFixedPitch = (CTFontGetSymbolicTraits(ctFont) & kCTFontMonoSpaceTrait) || fixedPitch || (caseInsensitiveCompare(fullName.get(), CFSTR("Osaka-Mono")) || caseInsensitiveCompare(fullName.get(), CFSTR("MS-PGothic")) || caseInsensitiveCompare(fullName.get(), CFSTR("MonotypeCorsiva")));
-#if PLATFORM(IOS_FAMILY)
     if (familyName && caseInsensitiveCompare(familyName.get(), CFSTR("Courier New"))) {
+#if PLATFORM(IOS_FAMILY)
         // Special case Courier New to not be treated as fixed pitch, as this will make use of a hacked space width which is undesireable for iPhone (see rdar://6269783).
         m_treatAsFixedPitch = false;
-    }
 #endif
+        // "Courier New" has many special case characters which does not have widths (u0181, u0182 etc.). Thus we disable fast content measuring for monospace fonts.
+        m_canTakeFixedPitchFastContentMeasuring = false;
+    } else
+        m_canTakeFixedPitchFastContentMeasuring = m_treatAsFixedPitch && !userInstalled;
 }
 
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
@@ -751,7 +762,7 @@ Path Font::platformPathForGlyph(Glyph glyph) const
     return { PathCG::create(adoptCF(CGPathCreateMutableCopy(result.get()))) };
 }
 
-bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> variation) const
+bool Font::platformSupportsCodePoint(char32_t character, std::optional<char32_t> variation) const
 {
     if (variation)
         return false;

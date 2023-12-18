@@ -306,11 +306,16 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         currentTime += nanosecondsEventInterval;
     }
 
-    WorkQueue::main().dispatch([this, strongThis = Ref { *this }, callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     });
+}
+
+int64_t UIScriptControllerMac::pasteboardChangeCount() const
+{
+    return NSPasteboard.generalPasteboard.changeCount;
 }
 
 } // namespace WTR

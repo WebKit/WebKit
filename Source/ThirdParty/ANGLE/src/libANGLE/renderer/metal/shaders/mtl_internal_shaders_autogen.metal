@@ -11,7 +11,7 @@
 # 1 "temp_master_source.metal"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
-# 482 "<built-in>" 3
+# 483 "<built-in>" 3
 # 1 "<command line>" 1
 # 1 "<built-in>" 2
 # 1 "temp_master_source.metal" 2
@@ -152,7 +152,7 @@ static inline vec<T, 4> resolveTextureMS(texture2d_ms<T> srcTexture, uint2 coord
 static inline float4 sRGBtoLinear(float4 color)
 {
     float3 linear1 = color.rgb / 12.92;
-    float3 linear2 = pow((color.rgb + float3(0.055)) / 1.055, 2.4);
+    float3 linear2 = powr((color.rgb + float3(0.055)) / 1.055, 2.4);
     float3 factor = float3(color.rgb <= float3(0.04045));
     float4 linear = float4(factor * linear1 + float3(1.0 - factor) * linear2, color.a);
 
@@ -163,12 +163,11 @@ static inline float linearToSRGB(float color)
 {
     if (color <= 0.0f)
         return 0.0f;
-    else if (color < 0.0031308f)
+    if (color < 0.0031308f)
         return 12.92f * color;
-    else if (color < 1.0f)
-        return 1.055f * pow(color, 0.41666f) - 0.055f;
-    else
-        return 1.0f;
+    if (color < 1.0f)
+        return 1.055f * powr(color, 0.41666f) - 0.055f;
+    return 1.0f;
 }
 
 static inline float4 linearToSRGB(float4 color)
@@ -307,8 +306,9 @@ using namespace rx::mtl_shader;
 
 constant bool kPremultiplyAlpha [[function_constant(1)]];
 constant bool kUnmultiplyAlpha [[function_constant(2)]];
-constant int kSourceTextureType [[function_constant(3)]];
-constant int kSourceTexture2Type [[function_constant(4)]];
+constant bool kTransformLinearToSrgb [[function_constant(3)]];
+constant int kSourceTextureType [[function_constant(4)]];
+constant int kSourceTexture2Type [[function_constant(5)]];
 
 constant bool kSourceTextureType2D = kSourceTextureType == kTextureType2D;
 constant bool kSourceTextureType2DArray = kSourceTextureType == kTextureType2DArray;
@@ -324,37 +324,25 @@ constant bool kSourceTexture2TypeCube = kSourceTexture2Type == kTextureTypeCube;
 struct BlitParams
 {
 
-    float2 srcTexCoords[3];
+    float4 srcTexCoords;
     int srcLevel;
     int srcLayer;
-    bool dstFlipViewportX;
-    bool dstFlipViewportY;
     bool dstLuminance;
-    uint8_t padding[13];
+    uint8_t padding[7];
 };
 
 struct BlitVSOut
 {
     float4 position [[position]];
-    float2 texCoords [[user(locn1)]];
+    float2 texCoords [[center_no_perspective, user(locn1)]];
 };
 
 vertex BlitVSOut blitVS(unsigned int vid [[vertex_id]], constant BlitParams &options [[buffer(0)]])
 {
     BlitVSOut output;
-    output.position = float4(gCorners[vid], 0.0, 1.0);
-    output.texCoords = options.srcTexCoords[vid];
-
-    if (options.dstFlipViewportX)
-    {
-        output.position.x = -output.position.x;
-    }
-    if (!options.dstFlipViewportY)
-    {
-
-
-        output.position.y = -output.position.y;
-    }
+    output.position.xy = select(float2(-1.0f), float2(1.0f), bool2(vid & uint2(2, 1)));
+    output.position.zw = float2(0.0, 1.0);
+    output.texCoords = select(options.srcTexCoords.xy, options.srcTexCoords.zw, bool2(vid & uint2(2, 1)));
 
     return output;
 }
@@ -386,7 +374,7 @@ static inline vec<T, 4> blitSampleTexture3D(texture3d<T> srcTexture,
 
     return srcTexture.sample(textureSampler, float3(texCoords, zCoord), level(options.srcLevel));
 }
-# 112 "./blit.metal"
+# 101 "./blit.metal"
 template <typename T>
 static inline vec<T, 4> blitReadTexture(BlitVSOut input [[stage_in]], texture2d<T> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<T> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<T> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<T> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<T> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {
@@ -414,16 +402,21 @@ static inline vec<T, 4> blitReadTexture(BlitVSOut input [[stage_in]], texture2d<
             break;
     }
 
-    if (kPremultiplyAlpha)
-    {
-        output.xyz *= output.a;
+    if (kTransformLinearToSrgb) {
+        output.x = linearToSRGB(output.x);
+        output.y = linearToSRGB(output.y);
+        output.z = linearToSRGB(output.z);
     }
-    else if (kUnmultiplyAlpha)
+    if (kUnmultiplyAlpha)
     {
         if (output.a != 0.0)
         {
             output.xyz /= output.a;
         }
+    }
+    if (kPremultiplyAlpha)
+    {
+        output.xyz *= output.a;
     }
 
     if (options.dstLuminance)
@@ -1731,7 +1724,15 @@ enum
     X2R10G10B10_SSCALED_VERTEX,
     X2R10G10B10_UINT_VERTEX,
     X2R10G10B10_UNORM_VERTEX,
-    X2R10G10B10_USCALED_VERTEX
+    X2R10G10B10_USCALED_VERTEX,
+    EXTERNAL0,
+    EXTERNAL1,
+    EXTERNAL2,
+    EXTERNAL3,
+    EXTERNAL4,
+    EXTERNAL5,
+    EXTERNAL6,
+    EXTERNAL7
 };
 
 }
@@ -3124,6 +3125,39 @@ vertex void expandVertexFormatComponentsVS(uint index [[vertex_id]],
                                            device uchar *dstBuffer [[buffer(2)]])
 {
     expandVertexFormatComponents(index, options, srcBuffer, dstBuffer);
+}
+
+
+kernel void linearizeBlocks(ushort2 position [[thread_position_in_grid]],
+                            constant uint2 *dimensions [[buffer(0)]],
+                            constant uint2 *srcBuffer [[buffer(1)]],
+                            device uint2 *dstBuffer [[buffer(2)]])
+{
+    if (any(uint2(position) >= *dimensions))
+    {
+        return;
+    }
+    uint2 t = uint2(position);
+    t = (t | (t << 8)) & 0x00FF00FF;
+    t = (t | (t << 4)) & 0x0F0F0F0F;
+    t = (t | (t << 2)) & 0x33333333;
+    t = (t | (t << 1)) & 0x55555555;
+    dstBuffer[position.y * (*dimensions).x + position.x] = srcBuffer[(t.x << 1) | t.y];
+}
+
+
+kernel void saturateDepth(uint2 position [[thread_position_in_grid]],
+                          constant uint3 *dimensions [[buffer(0)]],
+                          device float *srcBuffer [[buffer(1)]],
+                          device float *dstBuffer [[buffer(2)]])
+{
+    if (any(position >= (*dimensions).xy))
+    {
+        return;
+    }
+    const uint srcOffset = position.y * (*dimensions).z + position.x;
+    const uint dstOffset = position.y * (*dimensions).x + position.x;
+    dstBuffer[dstOffset] = saturate(srcBuffer[srcOffset]);
 }
 # 6 "temp_master_source.metal" 2
 # 1 "./visibility.metal" 1

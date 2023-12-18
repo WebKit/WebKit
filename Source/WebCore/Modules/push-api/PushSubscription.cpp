@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushSubscription.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "EventLoop.h"
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
@@ -103,7 +101,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscription::getKey(PushEncryptionKey
 
     auto buffer = ArrayBuffer::tryCreate(source->data(), source->size());
     if (!buffer)
-        return Exception { OutOfMemoryError };
+        return Exception { ExceptionCode::OutOfMemoryError };
     return buffer;
 }
 
@@ -132,5 +130,3 @@ PushSubscriptionJSON PushSubscription::toJSON() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

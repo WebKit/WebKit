@@ -28,4 +28,5 @@
 WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(CString&&, CString&&);
 #endif
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
-WebKitITPThirdParty* webkitITPThirdPartyCreate(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&&);
+
+WebKitITPThirdParty* webkitITPThirdPartyCreate(WebKit::ITPThirdPartyData&&);

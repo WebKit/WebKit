@@ -24,6 +24,5 @@
  */
 
 [
-    Conditional=SERVICE_WORKER,
     ExportMacro=WEBCORE_EXPORT,
 ] enum BackgroundFetchResult { "", "success", "failure" };

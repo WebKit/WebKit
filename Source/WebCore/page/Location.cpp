@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
+#include "LocalDOMWindowProperty.h"
 #include "LocalFrame.h"
 #include "NavigationScheduler.h"
 #include "SecurityOrigin.h"
@@ -43,17 +44,34 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Location);
 
-Location::Location(LocalDOMWindow& window)
-    : LocalDOMWindowProperty(&window)
+Location::Location(DOMWindow& window)
+    : m_window(window)
 {
 }
 
-inline const URL& Location::url() const
+Frame* Location::frame()
 {
-    if (!frame())
-        return aboutBlankURL();
+    if (!m_window)
+        return nullptr;
+    return m_window->frame();
+}
 
-    const URL& url = frame()->document()->urlForBindings();
+const Frame* Location::frame() const
+{
+    if (!m_window)
+        return nullptr;
+    return m_window->frame();
+}
+
+const URL& Location::url() const
+{
+    RefPtr localWindow = dynamicDowncast<LocalDOMWindow>(*m_window);
+    if (!localWindow) {
+        static NeverDestroyed<URL> nullURL;
+        return nullURL.get();
+    }
+
+    const URL& url = localWindow->document()->urlForBindings();
     if (!url.isValid())
         return aboutBlankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 
@@ -133,72 +151,72 @@ ExceptionOr<void> Location::setHref(LocalDOMWindow& incumbentWindow, LocalDOMWin
 
 ExceptionOr<void> Location::setProtocol(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& protocol)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    URL url = frame->document()->url();
+    URL url = localFrame->document()->url();
     if (!url.setProtocol(protocol))
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
 ExceptionOr<void> Location::setHost(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& host)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    URL url = frame->document()->url();
+    URL url = localFrame->document()->url();
     url.setHostAndPort(host);
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
 ExceptionOr<void> Location::setHostname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& hostname)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    URL url = frame->document()->url();
+    URL url = localFrame->document()->url();
     url.setHost(hostname);
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
 ExceptionOr<void> Location::setPort(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& portString)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    URL url = frame->document()->url();
+    URL url = localFrame->document()->url();
     url.setPort(parseInteger<uint16_t>(portString));
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
 ExceptionOr<void> Location::setPathname(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& pathname)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    URL url = frame->document()->url();
+    URL url = localFrame->document()->url();
     url.setPath(pathname);
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
 ExceptionOr<void> Location::setSearch(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& search)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    URL url = frame->document()->url();
+    URL url = localFrame->document()->url();
     url.setQuery(search);
     return setLocation(incumbentWindow, firstWindow, url.string());
 }
 
 ExceptionOr<void> Location::setHash(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& hash)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return { };
-    ASSERT(frame->document());
-    auto url = frame->document()->url();
+    ASSERT(localFrame->document());
+    auto url = localFrame->document()->url();
     auto oldFragmentIdentifier = url.fragmentIdentifier();
     StringView newFragmentIdentifier { hash };
     if (hash.startsWith('#'))
@@ -221,11 +239,10 @@ ExceptionOr<void> Location::assign(LocalDOMWindow& activeWindow, LocalDOMWindow&
 
 ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString)
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     if (!frame)
         return { };
-    ASSERT(frame->document());
-    ASSERT(frame->document()->domWindow());
+    ASSERT(frame->window());
 
     auto* firstFrame = firstWindow.frame();
     if (!firstFrame || !firstFrame->document())
@@ -233,28 +250,28 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
 
     URL completedURL = firstFrame->document()->completeURL(urlString);
     if (!completedURL.isValid())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
-    if (!activeWindow.document()->canNavigate(frame, completedURL))
-        return Exception { SecurityError };
+    if (!activeWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
+        return Exception { ExceptionCode::SecurityError };
 
     // We call LocalDOMWindow::setLocation directly here because replace() always operates on the current frame.
-    frame->document()->domWindow()->setLocation(activeWindow, completedURL, LockHistoryAndBackForwardList);
+    frame->window()->setLocation(activeWindow, completedURL, SetLocationLocking::LockHistoryAndBackForwardList);
     return { };
 }
 
 void Location::reload(LocalDOMWindow& activeWindow)
 {
-    auto* frame = this->frame();
-    if (!frame)
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
         return;
 
     ASSERT(activeWindow.document());
-    ASSERT(frame->document());
-    ASSERT(frame->document()->domWindow());
+    ASSERT(localFrame->document());
+    ASSERT(localFrame->document()->domWindow());
 
     auto& activeDocument = *activeWindow.document();
-    auto& targetDocument = *frame->document();
+    auto& targetDocument = *localFrame->document();
 
     // FIXME: It's not clear this cross-origin security check is valuable.
     // We allow one page to change the location of another. Why block attempts to reload?
@@ -268,12 +285,12 @@ void Location::reload(LocalDOMWindow& activeWindow)
     if (targetDocument.url().protocolIsJavaScript())
         return;
 
-    frame->navigationScheduler().scheduleRefresh(activeDocument);
+    localFrame->navigationScheduler().scheduleRefresh(activeDocument);
 }
 
 ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String& urlString)
 {
-    auto* frame = this->frame();
+    RefPtr frame = this->frame();
     ASSERT(frame);
 
     auto* firstFrame = firstWindow.frame();
@@ -283,15 +300,19 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     URL completedURL = firstFrame->document()->completeURL(urlString);
 
     if (!completedURL.isValid())
-        return Exception { SyntaxError, "Invalid URL"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
 
-    if (!incumbentWindow.document()->canNavigate(frame, completedURL))
-        return Exception { SecurityError };
+    if (!incumbentWindow.document()->canNavigate(dynamicDowncast<LocalFrame>(frame.get()), completedURL))
+        return Exception { ExceptionCode::SecurityError };
 
-    ASSERT(frame->document());
-    ASSERT(frame->document()->domWindow());
-    frame->document()->domWindow()->setLocation(incumbentWindow, completedURL);
+    ASSERT(frame->window());
+    frame->window()->setLocation(incumbentWindow, completedURL);
     return { };
+}
+
+RefPtr<DOMWindow> Location::protectedWindow()
+{
+    return m_window.get();
 }
 
 } // namespace WebCore

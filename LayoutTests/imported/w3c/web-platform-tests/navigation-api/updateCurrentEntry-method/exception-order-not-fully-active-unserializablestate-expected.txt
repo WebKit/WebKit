@@ -1,0 +1,5 @@
+
+FAIL updateCurrentEntry() with unserializable state while not fully active must throw an "InvalidStateError", not a "DataCloneError" assert_throws_dom: function "() => {
+      wNavigation.updateCurrentEntry({ state: document.body });
+    }" did not throw
+

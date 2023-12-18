@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "GeneratedSerializers.h"
+#include "GeneratedWebKitSecureCoding.h"
 
 #include "CommonHeader.h"
 #if ENABLE(TEST_FEATURE)
@@ -33,8 +34,11 @@
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
+#include "FooWrapper.h"
+#include "FormDataReference.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
+#include "RValueWithFunctionCalls.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
@@ -50,7 +54,15 @@
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
 #include <WebCore/MoveOnlyDerivedClass.h>
+#include <WebCore/ScrollingStateFrameHostingNode.h>
+#include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
+#if USE(AVFOUNDATION)
+#include <pal/cocoa/AVFoundationSoftLink.h>
+#endif
+#if ENABLE(DATA_DETECTION)
+#include <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#endif
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 
@@ -115,6 +127,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder
 #endif
         , offsetof(Namespace::Subnamespace::StructName, nullableTestMember)
     >::value);
+
     encoder << instance.firstMemberName;
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
@@ -144,6 +157,7 @@ void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(OtherEncoder& en
 #endif
         , offsetof(Namespace::Subnamespace::StructName, nullableTestMember)
     >::value);
+
     encoder << instance.firstMemberName;
 #if ENABLE(SECOND_MEMBER)
     encoder << instance.secondMemberName;
@@ -188,6 +202,7 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
         , offsetof(Namespace::OtherClass, a)
         , offsetof(Namespace::OtherClass, dataDetectorResults)
     >::value);
+
     encoder << instance.a;
     encoder << instance.b;
     encoder << instance.dataDetectorResults;
@@ -197,7 +212,7 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 {
     auto a = decoder.decode<int>();
     auto b = decoder.decode<bool>();
-    auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
+    auto dataDetectorResults = decoder.decodeWithAllowedClasses<NSArray>({ NSArray.class, PAL::getDDScannerResultClass() });
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
@@ -214,6 +229,7 @@ void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Na
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.functionCall().member1)>, double>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.functionCall().member2)>, double>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.uniqueMember)>, std::unique_ptr<int>>);
+
     encoder << instance.functionCall().member1;
     encoder << instance.functionCall().member2;
     encoder << instance.uniqueMember;
@@ -248,6 +264,7 @@ void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, 
         , offsetof(Namespace::EmptyConstructorStruct, m_int)
         , offsetof(Namespace::EmptyConstructorStruct, m_double)
     >::value);
+
     encoder << instance.m_int;
     encoder << instance.m_double;
 }
@@ -289,6 +306,7 @@ void ArgumentCoder<Namespace::EmptyConstructorWithIf>::encode(Encoder& encoder, 
         , offsetof(Namespace::EmptyConstructorWithIf, m_value)
 #endif
     >::value);
+
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     encoder << instance.m_type;
 #endif
@@ -327,6 +345,7 @@ void ArgumentCoder<WithoutNamespace>::encode(Encoder& encoder, const WithoutName
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespace, a)
     >::value);
+
     encoder << instance.a;
 }
 
@@ -352,6 +371,7 @@ void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(Encoder& encoder, con
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespaceWithAttributes, a)
     >::value);
+
     encoder << instance.a;
 }
 
@@ -365,6 +385,7 @@ void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(OtherEncoder& encoder
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespaceWithAttributes, a)
     >::value);
+
     encoder << instance.a;
 }
 
@@ -386,10 +407,12 @@ void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCor
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespace, a)
     >::value);
+
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, float>);
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::InheritsFrom, b)
     >::value);
+
     encoder << instance.a;
     encoder << instance.b;
 }
@@ -416,14 +439,17 @@ void ArgumentCoder<WebCore::InheritanceGrandchild>::encode(Encoder& encoder, con
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WithoutNamespace, a)
     >::value);
+
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, float>);
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::InheritsFrom, b)
     >::value);
+
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.c)>, double>);
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebCore::InheritanceGrandchild, c)
     >::value);
+
     encoder << instance.a;
     encoder << instance.b;
     encoder << instance.c;
@@ -452,6 +478,7 @@ std::optional<WebCore::InheritanceGrandchild> ArgumentCoder<WebCore::Inheritance
 void ArgumentCoder<WTF::Seconds>::encode(Encoder& encoder, const WTF::Seconds& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value())>, double>);
+
     encoder << instance.value();
 }
 
@@ -477,6 +504,7 @@ void ArgumentCoder<WTF::CreateUsingClass>::encode(Encoder& encoder, const WTF::C
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WTF::CreateUsingClass, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -498,6 +526,7 @@ void ArgumentCoder<WebCore::FloatBoxExtent>::encode(Encoder& encoder, const WebC
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.right())>, float>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.bottom())>, float>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.left())>, float>);
+
     encoder << instance.top();
     encoder << instance.right();
     encoder << instance.bottom();
@@ -535,14 +564,15 @@ void ArgumentCoder<SoftLinkedMember>::encode(Encoder& encoder, const SoftLinkedM
         , offsetof(SoftLinkedMember, firstMember)
         , offsetof(SoftLinkedMember, secondMember)
     >::value);
+
     encoder << instance.firstMember;
     encoder << instance.secondMember;
 }
 
 std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder& decoder)
 {
-    auto firstMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
-    auto secondMember = IPC::decode<DDActionContext>(decoder, @[ PAL::getDDActionContextClass() ]);
+    auto firstMember = decoder.decodeWithAllowedClasses<DDActionContext>({ PAL::getDDActionContextClass() });
+    auto secondMember = decoder.decodeWithAllowedClasses<DDActionContext>({ PAL::getDDActionContextClass() });
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     return {
@@ -554,10 +584,12 @@ std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder&
 }
 
 enum class WebCore_TimingFunction_Subclass : IPC::EncodedVariantIndex {
-    LinearTimingFunction,
-    CubicBezierTimingFunction,
-    StepsTimingFunction,
-    SpringTimingFunction
+    LinearTimingFunction
+    , CubicBezierTimingFunction
+#if CONDITION
+    , StepsTimingFunction
+#endif
+    , SpringTimingFunction
 };
 
 void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebCore::TimingFunction& instance)
@@ -572,11 +604,13 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
         encoder << *subclass;
         return;
     }
+#if CONDITION
     if (auto* subclass = dynamicDowncast<WebCore::StepsTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::StepsTimingFunction;
         encoder << *subclass;
         return;
     }
+#endif
     if (auto* subclass = dynamicDowncast<WebCore::SpringTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::SpringTimingFunction;
         encoder << *subclass;
@@ -588,6 +622,7 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
 std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
 {
     auto type = decoder.decode<WebCore_TimingFunction_Subclass>();
+    UNUSED_PARAM(type);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
@@ -603,12 +638,14 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunctio
             return std::nullopt;
         return WTFMove(*result);
     }
+#if CONDITION
     if (type == WebCore_TimingFunction_Subclass::StepsTimingFunction) {
         auto result = decoder.decode<Ref<WebCore::StepsTimingFunction>>();
         if (UNLIKELY(!decoder.isValid()))
             return std::nullopt;
         return WTFMove(*result);
     }
+#endif
     if (type == WebCore_TimingFunction_Subclass::SpringTimingFunction) {
         auto result = decoder.decode<Ref<WebCore::SpringTimingFunction>>();
         if (UNLIKELY(!decoder.isValid()))
@@ -630,6 +667,7 @@ void ArgumentCoder<Namespace::ConditionalCommonClass>::encode(Encoder& encoder, 
     static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::ConditionalCommonClass, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -657,6 +695,7 @@ void ArgumentCoder<Namespace::CommonClass>::encode(Encoder& encoder, const Names
     static_assert(MembersInCorrectOrder < 0
         , offsetof(Namespace::CommonClass, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -685,6 +724,7 @@ void ArgumentCoder<Namespace::AnotherCommonClass>::encode(Encoder& encoder, cons
         , offsetof(Namespace::AnotherCommonClass, value)
         , offsetof(Namespace::AnotherCommonClass, notSerialized)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -717,6 +757,7 @@ void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore
 std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseClass>::decode(Decoder& decoder)
 {
     auto type = decoder.decode<WebCore_MoveOnlyBaseClass_Subclass>();
+    UNUSED_PARAM(type);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
@@ -743,6 +784,7 @@ void ArgumentCoder<WebCore::MoveOnlyDerivedClass>::encode(Encoder& encoder, WebC
         , offsetof(WebCore::MoveOnlyDerivedClass, firstMember)
         , offsetof(WebCore::MoveOnlyDerivedClass, secondMember)
     >::value);
+
     encoder << WTFMove(instance.firstMember);
     encoder << WTFMove(instance.secondMember);
 }
@@ -808,6 +850,7 @@ void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebK
 #endif
         , static_cast<uint64_t>(WebKit::LayerChange::FeatureEnabledMember)
     >::value);
+
     encoder << instance.changedProperties;
     if (instance.changedProperties & WebKit::LayerChange::NameChanged)
         encoder << instance.name;
@@ -822,34 +865,32 @@ void ArgumentCoder<WebKit::LayerProperties>::encode(Encoder& encoder, const WebK
 std::optional<WebKit::LayerProperties> ArgumentCoder<WebKit::LayerProperties>::decode(Decoder& decoder)
 {
     WebKit::LayerProperties result;
-    auto bits = decoder.decode<OptionSet<WebKit::LayerChange>>();
-    if (!bits)
+    auto changedProperties = decoder.decode<OptionSet<WebKit::LayerChange>>();
+    if (!changedProperties)
         return std::nullopt;
-    result.changedProperties = *bits;
-
-    if (*bits & WebKit::LayerChange::NameChanged) {
+    result.changedProperties = *changedProperties;
+    if (*changedProperties & WebKit::LayerChange::NameChanged) {
         if (auto deserialized = decoder.decode<String>())
             result.name = WTFMove(*deserialized);
         else
             return std::nullopt;
     }
-
 #if ENABLE(FEATURE)
-    if (*bits & WebKit::LayerChange::TransformChanged) {
+    if (*changedProperties & WebKit::LayerChange::TransformChanged) {
         if (auto deserialized = decoder.decode<std::unique_ptr<WebCore::TransformationMatrix>>())
             result.featureEnabledMember = WTFMove(*deserialized);
         else
             return std::nullopt;
     }
 #endif
-
-    if (*bits & WebKit::LayerChange::FeatureEnabledMember) {
+    if (*changedProperties & WebKit::LayerChange::FeatureEnabledMember) {
         if (auto deserialized = decoder.decode<bool>())
             result.bitFieldMember = WTFMove(*deserialized);
         else
             return std::nullopt;
     }
-
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
     return { WTFMove(result) };
 }
 
@@ -863,6 +904,7 @@ void ArgumentCoder<WebKit::TemplateTest<WebKit::Fabulous>>::encode(Encoder& enco
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebKit::TemplateTest, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -888,6 +930,7 @@ void ArgumentCoder<WebKit::TemplateTest<WebCore::Amazing>>::encode(Encoder& enco
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebKit::TemplateTest, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -913,6 +956,7 @@ void ArgumentCoder<WebKit::TemplateTest<JSC::Incredible>>::encode(Encoder& encod
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebKit::TemplateTest, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -938,6 +982,7 @@ void ArgumentCoder<WebKit::TemplateTest<Testing::StorageSize>>::encode(Encoder& 
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebKit::TemplateTest, value)
     >::value);
+
     encoder << instance.value;
 }
 
@@ -953,31 +998,260 @@ std::optional<WebKit::TemplateTest<Testing::StorageSize>> ArgumentCoder<WebKit::
     };
 }
 
+void ArgumentCoder<WebCore::ScrollingStateFrameHostingNode>::encode(Encoder& encoder, const WebCore::ScrollingStateFrameHostingNode& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.scrollingNodeID())>, WebCore::ScrollingNodeID>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.children())>, Vector<Ref<WebCore::ScrollingStateNode>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.changedProperties())>, OptionSet<WebCore::ScrollingStateNodeProperty>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.layer().layerIDForEncoding())>, std::optional<WebCore::PlatformLayerIdentifier>>);
+    static_assert(static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer) == 1);
+    static_assert(BitsInIncreasingOrder<
+        static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer)
+    >::value);
+
+    encoder << instance.scrollingNodeID();
+    encoder << instance.children();
+    encoder << instance.changedProperties();
+    if (instance.changedProperties() & WebCore::ScrollingStateNode::Property::Layer)
+        encoder << instance.layer().layerIDForEncoding();
+}
+
+std::optional<Ref<WebCore::ScrollingStateFrameHostingNode>> ArgumentCoder<WebCore::ScrollingStateFrameHostingNode>::decode(Decoder& decoder)
+{
+    auto scrollingNodeID = decoder.decode<WebCore::ScrollingNodeID>();
+    auto children = decoder.decode<Vector<Ref<WebCore::ScrollingStateNode>>>();
+    auto changedProperties = decoder.decode<OptionSet<WebCore::ScrollingStateNodeProperty>>();
+    if (!changedProperties)
+        return std::nullopt;
+
+    std::optional<WebCore::PlatformLayerIdentifier> layerlayerIDForEncoding { };
+    if (*changedProperties & WebCore::ScrollingStateNode::Property::Layer) {
+        if (auto deserialized = decoder.decode<std::optional<WebCore::PlatformLayerIdentifier>>())
+            layerlayerIDForEncoding = WTFMove(*deserialized);
+        else
+            return std::nullopt;
+    }
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebCore::ScrollingStateFrameHostingNode::create(
+            WTFMove(*scrollingNodeID),
+            WTFMove(*children),
+            WTFMove(*changedProperties),
+            WTFMove(layerlayerIDForEncoding)
+        )
+    };
+}
+
+void ArgumentCoder<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>::encode(Encoder& encoder, const WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.scrollingNodeID())>, WebCore::ScrollingNodeID>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.children())>, Vector<Ref<WebCore::ScrollingStateNode>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.changedProperties())>, OptionSet<WebCore::ScrollingStateNodeProperty>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.layer().layerIDForEncoding())>, std::optional<WebCore::PlatformLayerIdentifier>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.otherMember)>, bool>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.memberAfterTuple)>, int>);
+    static_assert(static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer) == 1);
+    static_assert(BitsInIncreasingOrder<
+        static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Layer)
+        , static_cast<uint64_t>(WebCore::ScrollingStateNode::Property::Other)
+    >::value);
+
+    encoder << instance.scrollingNodeID();
+    encoder << instance.children();
+    encoder << instance.changedProperties();
+    if (instance.changedProperties() & WebCore::ScrollingStateNode::Property::Layer)
+        encoder << instance.layer().layerIDForEncoding();
+    if (instance.changedProperties() & WebCore::ScrollingStateNode::Property::Other)
+        encoder << instance.otherMember;
+    encoder << instance.memberAfterTuple;
+}
+
+std::optional<Ref<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>> ArgumentCoder<WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple>::decode(Decoder& decoder)
+{
+    auto scrollingNodeID = decoder.decode<WebCore::ScrollingNodeID>();
+    auto children = decoder.decode<Vector<Ref<WebCore::ScrollingStateNode>>>();
+    auto changedProperties = decoder.decode<OptionSet<WebCore::ScrollingStateNodeProperty>>();
+    if (!changedProperties)
+        return std::nullopt;
+
+    std::optional<WebCore::PlatformLayerIdentifier> layerlayerIDForEncoding { };
+    if (*changedProperties & WebCore::ScrollingStateNode::Property::Layer) {
+        if (auto deserialized = decoder.decode<std::optional<WebCore::PlatformLayerIdentifier>>())
+            layerlayerIDForEncoding = WTFMove(*deserialized);
+        else
+            return std::nullopt;
+    }
+
+    bool otherMember { };
+    if (*changedProperties & WebCore::ScrollingStateNode::Property::Other) {
+        if (auto deserialized = decoder.decode<bool>())
+            otherMember = WTFMove(*deserialized);
+        else
+            return std::nullopt;
+    }
+    auto memberAfterTuple = decoder.decode<int>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebCore::ScrollingStateFrameHostingNodeWithStuffAfterTuple::create(
+            WTFMove(*scrollingNodeID),
+            WTFMove(*children),
+            WTFMove(*changedProperties),
+            WTFMove(layerlayerIDForEncoding),
+            WTFMove(otherMember),
+            WTFMove(*memberAfterTuple)
+        )
+    };
+}
+
+void ArgumentCoder<RequestEncodedWithBody>::encode(Encoder& encoder, const RequestEncodedWithBody& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.request)>, WebCore::ResourceRequest>);
+    struct ShouldBeSameSizeAsRequestEncodedWithBody : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<RequestEncodedWithBody>, false> {
+        WebCore::ResourceRequest request;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsRequestEncodedWithBody) == sizeof(RequestEncodedWithBody));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(RequestEncodedWithBody, request)
+    >::value);
+
+    encoder << instance.request;
+    encoder << IPC::FormDataReference { instance.request.httpBody() };
+}
+
+std::optional<RequestEncodedWithBody> ArgumentCoder<RequestEncodedWithBody>::decode(Decoder& decoder)
+{
+    auto request = decoder.decode<WebCore::ResourceRequest>();
+    if (request) {
+        if (auto requestBody = decoder.decode<IPC::FormDataReference>())
+            request->setHTTPBody(requestBody->takeData());
+    }
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        RequestEncodedWithBody {
+            WTFMove(*request)
+        }
+    };
+}
+
+void ArgumentCoder<RequestEncodedWithBodyRValue>::encode(Encoder& encoder, RequestEncodedWithBodyRValue&& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.request)>, WebCore::ResourceRequest>);
+    struct ShouldBeSameSizeAsRequestEncodedWithBodyRValue : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<RequestEncodedWithBodyRValue>, false> {
+        WebCore::ResourceRequest request;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsRequestEncodedWithBodyRValue) == sizeof(RequestEncodedWithBodyRValue));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(RequestEncodedWithBodyRValue, request)
+    >::value);
+
+    RefPtr requestBody = instance.request.httpBody();
+    encoder << WTFMove(instance.request);
+    encoder << IPC::FormDataReference { WTFMove(requestBody) };
+}
+
+std::optional<RequestEncodedWithBodyRValue> ArgumentCoder<RequestEncodedWithBodyRValue>::decode(Decoder& decoder)
+{
+    auto request = decoder.decode<WebCore::ResourceRequest>();
+    if (request) {
+        if (auto requestBody = decoder.decode<IPC::FormDataReference>())
+            request->setHTTPBody(requestBody->takeData());
+    }
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        RequestEncodedWithBodyRValue {
+            WTFMove(*request)
+        }
+    };
+}
+
+void ArgumentCoder<CFFooRef>::encode(Encoder& encoder, CFFooRef instance)
+{
+    encoder << WebKit::FooWrapper { instance };
+}
+
+std::optional<RetainPtr<CFFooRef>> ArgumentCoder<RetainPtr<CFFooRef>>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WebKit::FooWrapper>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return result->toCF();
+}
+
+#if USE(CFBAR)
+void ArgumentCoder<CFBarRef>::encode(Encoder& encoder, CFBarRef instance)
+{
+    encoder << WebKit::BarWrapper::createFromCF(instance);
+}
+
+void ArgumentCoder<CFBarRef>::encode(StreamConnectionEncoder& encoder, CFBarRef instance)
+{
+    encoder << WebKit::BarWrapper::createFromCF(instance);
+}
+
+std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(Decoder& decoder)
+{
+    auto result = decoder.decode<WebKit::BarWrapper>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return createCFBar(*result);
+}
+
+#endif
+
+void ArgumentCoder<WebKit::RValueWithFunctionCalls>::encode(Encoder& encoder, WebKit::RValueWithFunctionCalls&& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.callFunction())>, SandboxExtensionHandle>);
+
+    encoder << instance.callFunction();
+}
+
+std::optional<WebKit::RValueWithFunctionCalls> ArgumentCoder<WebKit::RValueWithFunctionCalls>::decode(Decoder& decoder)
+{
+    auto callFunction = decoder.decode<SandboxExtensionHandle>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::RValueWithFunctionCalls {
+            WTFMove(*callFunction)
+        }
+    };
+}
+
 } // namespace IPC
 
 namespace WTF {
 
 template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(IPC::EncodedVariantIndex value)
 {
+IGNORE_WARNINGS_BEGIN("switch-unreachable")
     switch (static_cast<IPC::WebCore_TimingFunction_Subclass>(value)) {
     case IPC::WebCore_TimingFunction_Subclass::LinearTimingFunction:
     case IPC::WebCore_TimingFunction_Subclass::CubicBezierTimingFunction:
+#if CONDITION
     case IPC::WebCore_TimingFunction_Subclass::StepsTimingFunction:
+#endif
     case IPC::WebCore_TimingFunction_Subclass::SpringTimingFunction:
         return true;
     default:
         return false;
     }
+IGNORE_WARNINGS_END
 }
 
 template<> bool isValidEnum<IPC::WebCore_MoveOnlyBaseClass_Subclass, void>(IPC::EncodedVariantIndex value)
 {
+IGNORE_WARNINGS_BEGIN("switch-unreachable")
     switch (static_cast<IPC::WebCore_MoveOnlyBaseClass_Subclass>(value)) {
     case IPC::WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass:
         return true;
     default:
         return false;
     }
+IGNORE_WARNINGS_END
 }
 
 template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t value)

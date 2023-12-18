@@ -33,6 +33,22 @@
 @interface UIScrollView (WebKitInternal)
 @property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
 @property (readonly, nonatomic) BOOL _wk_isScrolledBeyondExtents;
+@property (readonly, nonatomic) BOOL _wk_canScrollHorizontallyWithoutBouncing;
+@property (readonly, nonatomic) BOOL _wk_canScrollVerticallyWithoutBouncing;
+@property (readonly, nonatomic) CGFloat _wk_contentWidthIncludingInsets;
+@property (readonly, nonatomic) CGFloat _wk_contentHeightIncludingInsets;
+@property (readonly, nonatomic) BOOL _wk_isScrollAnimating;
+@property (readonly, nonatomic) BOOL _wk_isZoomAnimating;
+- (void)_wk_setContentOffsetAndShowScrollIndicators:(CGPoint)offset animated:(BOOL)animated;
+- (void)_wk_setTransfersHorizontalScrollingToParent:(BOOL)value;
+- (void)_wk_setTransfersVerticalScrollingToParent:(BOOL)value;
+- (void)_wk_stopScrollingAndZooming;
+- (CGPoint)_wk_clampToScrollExtents:(CGPoint)contentOffset;
+@end
+
+@interface UIGestureRecognizer (WebKitInternal)
+@property (nonatomic, readonly) BOOL _wk_isTextInteractionLoupeGesture;
+@property (nonatomic, readonly) BOOL _wk_isTextInteractionTapGesture;
 @end
 
 @interface UIView (WebKitInternal)

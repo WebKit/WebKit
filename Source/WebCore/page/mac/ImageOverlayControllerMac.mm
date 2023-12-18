@@ -72,11 +72,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     if (dataDetectorResultElementsWithHighlights == dataDetectorResultElements)
         return;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    RefPtr mainFrameView = localMainFrame->view();
+    RefPtr mainFrameView = m_page->mainFrame().virtualView();
     if (!mainFrameView)
         return;
 
@@ -85,10 +81,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
         return;
 
     m_activeDataDetectorHighlight = nullptr;
-    m_dataDetectorContainersAndHighlights.clear();
-    m_dataDetectorContainersAndHighlights.reserveInitialCapacity(dataDetectorResultElements.size());
-
-    for (auto& element : dataDetectorResultElements) {
+    m_dataDetectorContainersAndHighlights = WTF::map(dataDetectorResultElements, [&](auto& element) {
         CGRect elementBounds = element->renderer()->absoluteBoundingBoxRect();
         elementBounds.origin = mainFrameView->windowToContents(frameView->contentsToWindow(roundedIntPoint(elementBounds.origin)));
 
@@ -98,17 +91,13 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 #else
         auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES));
 #endif
-        m_dataDetectorContainersAndHighlights.uncheckedAppend({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
-    }
+        return ContainerAndHighlight { element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) };
+    });
 }
 
 bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& event)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    RefPtr mainFrameView = localMainFrame->view();
+    RefPtr mainFrameView = m_page->mainFrame().virtualView();
     if (!mainFrameView)
         return false;
 

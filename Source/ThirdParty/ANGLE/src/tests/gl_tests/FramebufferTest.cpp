@@ -443,6 +443,194 @@ TEST_P(FramebufferTest_ES3, SubInvalidateIncomplete)
     EXPECT_GL_NO_ERROR();
 }
 
+enum class DisableDitherVsClear
+{
+    Before,
+    After
+};
+
+void testDitherDisabledProperlyOnRGB565(GLColor gradientColor,
+                                        DisableDitherVsClear disableDitherVsClear)
+{
+    GLFramebuffer framebuffer;
+
+    constexpr GLsizei kFramebufferWidth  = 4;
+    constexpr GLsizei kFramebufferHeight = 4;
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB565, kFramebufferWidth, kFramebufferHeight);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer.get());
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    constexpr char kVS[] = {
+        R"(#version 300 es
+        in highp vec4 a_position;
+        in mediump vec4 a_color;
+        out mediump vec4 v_color;
+        void main()
+        {
+        gl_Position = a_position;
+        v_color = a_color;
+        })",
+    };
+
+    constexpr char kFS[] = {
+        R"(#version 300 es
+            in mediump vec4 v_color;
+            layout(location = 0) out mediump vec4 o_color;
+            void main()
+            {
+                o_color = v_color;
+            })",
+    };
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    glUseProgram(program.get());
+
+    // setup quad data
+    // black ----> gradientColor
+    // **********
+    // *        *
+    // *        *
+    // **********
+    const std::vector<float> positions = {-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
+                                          1.0f,  -1.0f, 0.0f, 1.0f, 1.0f,  1.0f, 0.0f, 1.0f};
+
+    const std::vector<float> color0 = {0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       0.0f,
+                                       gradientColor.R * 1.0f / 255.0f,
+                                       gradientColor.G * 1.0f / 255.0f,
+                                       gradientColor.B * 1.0f / 255.0f,
+                                       gradientColor.A * 1.0f / 255.0f,
+                                       gradientColor.R * 1.0f / 255.0f,
+                                       gradientColor.G * 1.0f / 255.0f,
+                                       gradientColor.B * 1.0f / 255.0f,
+                                       gradientColor.A * 1.0f / 255.0f};
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions[0]) * positions.size(), positions.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer colorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(color0[0]) * color0.size(), color0.data(), GL_STATIC_DRAW);
+
+    GLint vertexPosLocation = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(vertexPosLocation, -1);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glEnableVertexAttribArray(vertexPosLocation);
+    glVertexAttribPointer(vertexPosLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLint vertexColorLocation = glGetAttribLocation(program, "a_color");
+    ASSERT_NE(vertexColorLocation, -1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer.get());
+    glEnableVertexAttribArray(vertexColorLocation);
+    glVertexAttribPointer(vertexColorLocation, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+    const std::vector<uint8_t> indices = {0, 2, 1, 1, 2, 3};
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
+                 GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    switch (disableDitherVsClear)
+    {
+        case DisableDitherVsClear::Before:
+            glDisable(GL_DITHER);
+            glClearColor(0.125, 0.25, 0.5, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            break;
+
+        case DisableDitherVsClear::After:
+            glClearColor(0.125, 0.25, 0.5, 1);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glDisable(GL_DITHER);
+            break;
+    }
+
+    // draw quad
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_BYTE, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // validate that when disabling dithering, the color selection must be coordinate-independent
+    std::vector<GLColor> pixelData(kFramebufferWidth * kFramebufferHeight);
+    glReadPixels(0, 0, kFramebufferWidth, kFramebufferHeight, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelData.data());
+
+    const int increasingDirectionSize = kFramebufferWidth;
+    const int constantDirectionSize   = kFramebufferHeight;
+
+    for (int incrPos = 0; incrPos < increasingDirectionSize; incrPos++)
+    {
+        bool colorHasChanged = false;
+
+        GLColor prevConstantDirectionPixel;
+
+        for (int constPos = 0; constPos < constantDirectionSize; constPos++)
+        {
+            const int x = incrPos;
+            const int y = constPos;
+
+            const int currentPixelLoc  = y * kFramebufferWidth + x;
+            const GLColor currentPixel = pixelData[currentPixelLoc];
+
+            if (constPos > 0 && currentPixel != prevConstantDirectionPixel)
+            {
+                if (colorHasChanged)
+                {
+                    ASSERT(false);
+                }
+                else
+                {
+                    colorHasChanged = true;
+                }
+            }
+
+            prevConstantDirectionPixel = currentPixel;
+        }
+    }
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_red failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientRedTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::red, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::red, DisableDitherVsClear::After);
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_green failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientGreenTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::green, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::green, DisableDitherVsClear::After);
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_blue failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientBlueTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::blue, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::blue, DisableDitherVsClear::After);
+}
+
+// repro dEQP-GLES3.functional.dither.disabled.gradient_white failure
+TEST_P(FramebufferTest_ES3, RGB565DisableDitheringGradientWhiteTest)
+{
+    testDitherDisabledProperlyOnRGB565(GLColor::white, DisableDitherVsClear::Before);
+    testDitherDisabledProperlyOnRGB565(GLColor::white, DisableDitherVsClear::After);
+}
+
 // Test that subinvalidate with no prior command works.  Regression test for the Vulkan backend that
 // assumed a render pass is started when sub invalidate is called.
 TEST_P(FramebufferTest_ES3, SubInvalidateFirst)
@@ -3858,6 +4046,237 @@ void main()
     EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::green);
 }
 
+// Test that clear with color masks on framebuffer texture with internal format GL_RGB5_A1 works
+// This is a simplified version of below two deqp tests:
+// KHR-GLES31.core.draw_buffers_indexed.color_masks
+// KHR-GLES32.core.draw_buffers_indexed.color_masks
+TEST_P(FramebufferTest_ES31, ClearWithColorMasksRGB5A1)
+{
+    constexpr int kSize  = 4;
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    std::vector<GLenum> bufs(maxDrawBuffers);
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        bufs[i] = GL_COLOR_ATTACHMENT0 + i;
+    }
+
+    // Specifies a list of color buffers to be drawn into
+    glDrawBuffers(maxDrawBuffers, &bufs[0]);
+
+    glDisable(GL_DITHER);
+
+    // Attach textures with internal format GL_RGB5_A1 to each framebuffer color attachment
+    GLTexture textures[maxDrawBuffers];
+    std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB5_A1, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     pixelData.data());
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i],
+                               0);
+    }
+
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Clear all buffers with clear color (0.15f, 0.3f, 0.45f, 0.6f)
+    angle::Vector4 clearColor(0.15f, 0.3f, 0.45f, 0.6f);
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        glClearBufferfv(GL_COLOR, i, clearColor.data());
+    }
+
+    ASSERT_GL_NO_ERROR();
+
+    // Set color masks
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        if (i % 4 == 0)
+        {
+            glColorMaski(i, GL_TRUE, GL_FALSE, GL_FALSE, GL_FALSE);
+        }
+
+        if (i % 4 == 1)
+        {
+            glColorMaski(i, GL_FALSE, GL_TRUE, GL_FALSE, GL_FALSE);
+        }
+
+        if (i % 4 == 2)
+        {
+            glColorMaski(i, GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
+        }
+
+        if (i % 4 == 3)
+        {
+            glColorMaski(i, GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+        }
+    }
+
+    ASSERT_GL_NO_ERROR();
+
+    // Clear buffers again with a new clear color (0.85f, 0.85f, 0.85f, 0.85f)
+    // Only the channel with color mask set to GL_TRUE is cleared with the new color.
+    clearColor = {0.85f, 0.85f, 0.85f, 0.85f};
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        glClearBufferfv(GL_COLOR, i, &clearColor[0]);
+    }
+
+    ASSERT_GL_NO_ERROR();
+
+    // Read and Verify
+    // calculate the comparison epsilon based on the number of bits
+    std::vector<int> bits        = {0, 0, 0, 0};
+    std::vector<uint8_t> epsilon = {0, 0, 0, 0};
+    for (int i = 0; i < 4; ++i)
+    {
+        glGetIntegerv(GL_RED_BITS + i, bits.data() + i);
+        epsilon[i] =
+            std::min(255u, static_cast<unsigned int>(
+                               ceil(1.0 + 255.0 * (1.0 / pow(2.0, static_cast<double>(bits[i]))))));
+
+        ASSERT(epsilon[i] >= 0 && epsilon[i] <= 255u);
+    }
+
+    std::vector<GLColor> rendered(kSize * kSize, GLColor::green);
+
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        std::vector<uint8_t> expected = {
+            static_cast<uint8_t>(0.15f * 255), static_cast<uint8_t>(0.30f * 255),
+            static_cast<uint8_t>(0.45f * 255), static_cast<uint8_t>(0.60f * 255)};
+        expected[i % 4] = static_cast<uint8_t>(0.85f * 255);
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
+        glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, rendered.data());
+
+        for (int y = 0; y < kSize; ++y)
+        {
+            for (int x = 0; x < kSize; ++x)
+            {
+                GLColor readBackData = rendered[y * kSize + x];
+
+                bool exactMatch = readBackData.R == expected[0] && readBackData.G == expected[1] &&
+                                  readBackData.B == expected[2] && readBackData.A == expected[3];
+
+                bool matchWithinEpsilon =
+                    abs(static_cast<int>(readBackData.R) - static_cast<int>(expected[0])) <=
+                        static_cast<int>(epsilon[0]) &&
+                    abs(static_cast<int>(readBackData.G) - static_cast<int>(expected[1])) <=
+                        static_cast<int>(epsilon[1]) &&
+                    abs(static_cast<int>(readBackData.B) - static_cast<int>(expected[2])) <=
+                        static_cast<int>(epsilon[2]) &&
+                    abs(static_cast<int>(readBackData.A) - static_cast<int>(expected[3])) <=
+                        static_cast<int>(epsilon[3]);
+
+                ASSERT(exactMatch || matchWithinEpsilon);
+            }
+        }
+    }
+
+    // Set the framebuffer color mask back to default values
+    for (int i = 0; i < maxDrawBuffers; ++i)
+    {
+        glColorMaski(i, GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
+void clearColorMorePrecisionThanFBOFormatNoDithering(const GLint &fboInternalFormat)
+{
+    constexpr int kSize = 4;
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glDisable(GL_DITHER);
+
+    // Attach texture with internal format GL_RGB5_A1 to each framebuffer color attachment
+    std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, fboInternalFormat, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 pixelData.data());
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Clear FBO color attachment with clear color (0.15f, 0.3f, 0.45f, 0.6f)
+    glClearColor(0.15f, 0.3f, 0.45f, 0.6f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    ASSERT_GL_NO_ERROR();
+
+    // Read and Verify
+    // calculate the comparison epsilon based on the number of bits
+    std::vector<int> bits        = {0, 0, 0, 0};
+    std::vector<uint8_t> epsilon = {0, 0, 0, 0};
+    for (int i = 0; i < 4; ++i)
+    {
+        glGetIntegerv(GL_RED_BITS + i, bits.data() + i);
+        epsilon[i] =
+            std::min(255u, static_cast<unsigned int>(
+                               ceil(1.0 + 255.0 * (1.0 / pow(2.0, static_cast<double>(bits[i]))))));
+
+        ASSERT(epsilon[i] >= 0 && epsilon[i] <= 255u);
+    }
+
+    std::vector<GLColor> rendered(kSize * kSize, GLColor::green);
+
+    std::vector<uint8_t> expected = {
+        static_cast<uint8_t>(0.15f * 255), static_cast<uint8_t>(0.30f * 255),
+        static_cast<uint8_t>(0.45f * 255), static_cast<uint8_t>(0.60f * 255)};
+
+    glReadPixels(0, 0, kSize, kSize, GL_RGBA, GL_UNSIGNED_BYTE, rendered.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Every pixel should have the same rendered result color. No dithering should be applied.
+    GLColor clearedResultAtFirstPixel = rendered[0];
+
+    for (int y = 0; y < kSize; ++y)
+    {
+        for (int x = 0; x < kSize; ++x)
+        {
+            GLColor readBackData = rendered[y * kSize + x];
+
+            // Firstly check the rendered result is rational
+            bool exactMatch = readBackData.R == expected[0] && readBackData.G == expected[1] &&
+                              readBackData.B == expected[2] && readBackData.A == expected[3];
+
+            bool matchWithinEpsilon =
+                abs(static_cast<int>(readBackData.R) - static_cast<int>(expected[0])) <=
+                    static_cast<int>(epsilon[0]) &&
+                abs(static_cast<int>(readBackData.G) - static_cast<int>(expected[1])) <=
+                    static_cast<int>(epsilon[1]) &&
+                abs(static_cast<int>(readBackData.B) - static_cast<int>(expected[2])) <=
+                    static_cast<int>(epsilon[2]) &&
+                abs(static_cast<int>(readBackData.A) - static_cast<int>(expected[3])) <=
+                    static_cast<int>(epsilon[3]);
+
+            ASSERT(exactMatch || matchWithinEpsilon);
+
+            // Secondly check no dithering is applied
+            bool sameClearResultAsFirstPixel = readBackData.R == clearedResultAtFirstPixel.R &&
+                                               readBackData.G == clearedResultAtFirstPixel.G &&
+                                               readBackData.B == clearedResultAtFirstPixel.B &&
+                                               readBackData.A == clearedResultAtFirstPixel.A;
+            ASSERT(sameClearResultAsFirstPixel);
+        }
+    }
+}
+
+// Verify that when clear color has more precision than FBO color attachment format can hold,
+// dithering is not automatically applied.
+// https://issuetracker.google.com/292282210
+TEST_P(FramebufferTest_ES31, ClearColorMorePrecisionThanFBOFormatShouldNotApplyDithering)
+{
+    clearColorMorePrecisionThanFBOFormatNoDithering(GL_RGB5_A1);
+}
+
 // Validates both MESA and standard functions can be used on OpenGL ES >=3.1
 TEST_P(FramebufferTest_ES31, ValidateFramebufferFlipYMesaExtension)
 {
@@ -4376,7 +4795,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexStorage2D(GL_TEXTURE_2D, 3, GL_DEPTH_COMPONENT32F, kLevel0Size, kLevel0Size);
     // Initialize level 1 with known depth value
-    std::array<GLfloat, kLevel1Size *kLevel1Size> gData = {0.2, 0.4, 0.6, 0.8};
+    std::array<GLfloat, kLevel1Size * kLevel1Size> gData = {0.2, 0.4, 0.6, 0.8};
     glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, kLevel1Size, kLevel1Size, GL_DEPTH_COMPONENT, GL_FLOAT,
                     gData.data());
     // set base_level and max_level to 1, exclude level 0
@@ -5748,9 +6167,149 @@ TEST_P(FramebufferExtensionsTest, ColorBufferFloatRgba)
     test("GL_CHROMIUM_color_buffer_float_rgba", GL_RGBA32F_EXT, true);
 }
 
+class DefaultFramebufferTest : public ANGLETest<>
+{
+  protected:
+    DefaultFramebufferTest()
+    {
+        setWindowWidth(kWidth);
+        setWindowHeight(kHeight);
+    }
+
+    static constexpr GLsizei kWidth  = 16;
+    static constexpr GLsizei kHeight = 16;
+};
+
+// glReadPixel from default FBO with format and type retrieved from
+// GL_IMPLEMENTATION_COLOR_READ_FORMAT and GL_IMPLEMENTATION_COLOR_READ_TYPE
+// should work
+TEST_P(DefaultFramebufferTest, ReadFromDefaultFBOOnDefaultEGLWindowSurface)
+{
+    // Bind the default framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Create shader programs
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    constexpr char kVS1[] = R"(#version 300 es
+in highp vec2 a_position;
+in highp vec2 a_texcoord;
+out highp vec2 texcoord;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+    texcoord = a_texcoord;
+})";
+
+    constexpr char kFS1[] = R"(#version 300 es
+precision highp float;
+in highp vec2 texcoord;
+out highp vec4 fragColor;
+uniform highp sampler2D texSampler;
+
+void main()
+{
+    fragColor = texture(texSampler, texcoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS1, kFS1);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    // Create Vertex data
+    const std::vector<float> positions = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions[0]) * positions.size(), positions.data(),
+                 GL_STATIC_DRAW);
+    GLint vertexPosLocation = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(vertexPosLocation, -1);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.get());
+    glEnableVertexAttribArray(vertexPosLocation);
+    glVertexAttribPointer(vertexPosLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    const std::vector<float> texcoords = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f};
+    GLBuffer texcoordBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, texcoordBuffer.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords[0]) * texcoords.size(), texcoords.data(),
+                 GL_STATIC_DRAW);
+    GLint texCoordLocation = glGetAttribLocation(program, "a_texcoord");
+    ASSERT_NE(texCoordLocation, -1);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoordBuffer.get());
+    glEnableVertexAttribArray(texCoordLocation);
+    glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    const std::vector<uint16_t> quadIndices = {0, 1, 2, 2, 1, 3};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.get());
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices[0]) * quadIndices.size(),
+                 quadIndices.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // Create Texture
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+
+    std::vector<uint8_t> texData;
+
+    constexpr size_t width               = 4;
+    constexpr size_t height              = 4;
+    constexpr size_t bytePerColorChannel = 4;
+    constexpr uint8_t texColorPerChannel = 125;
+
+    texData.resize(width * height * bytePerColorChannel);
+
+    for (size_t i = 0; i < width * height; ++i)
+    {
+        texData.push_back(texColorPerChannel);
+        texData.push_back(texColorPerChannel);
+        texData.push_back(texColorPerChannel);
+        texData.push_back(texColorPerChannel);
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 texData.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize uniform values
+    GLint uniformTextureSamplerLocation = glGetUniformLocation(program, "texSampler");
+    glUniform1i(uniformTextureSamplerLocation, 0);
+    ASSERT_GL_NO_ERROR();
+
+    // Disable Dither
+    glDisable(GL_DITHER);
+
+    // Draw quad
+    glDrawElements(GL_TRIANGLES, quadIndices.size(), GL_UNSIGNED_BYTE, 0);
+
+    // Get glReadPixel format and type
+    GLint readFormat;
+    glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_FORMAT, &readFormat);
+
+    GLint readType;
+    glGetIntegerv(GL_IMPLEMENTATION_COLOR_READ_TYPE, &readType);
+
+    // Read Pixel with glReadPixel
+    std::vector<uint8_t> renderResult;
+    renderResult.resize(width * height * 4);
+    glReadPixels(0, 0, width, height, readFormat, readType, renderResult.data());
+
+    // glReadPixel with format and type retrieved from
+    // GL_IMPLEMENTATION_COLOR_READ_FORMAT &
+    // GL_IMPLEMENTATION_COLOR_READ_TYPE
+    // should not trigger errors
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
-                               ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));
+                               ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget),
+                               ES2_VULKAN().enable(Feature::ForceDelayedDeviceCreationForTesting));
 
 ANGLE_INSTANTIATE_TEST_ES2(FramebufferTest);
 ANGLE_INSTANTIATE_TEST_ES2(FramebufferExtensionsTest);
@@ -5767,6 +6326,9 @@ ANGLE_INSTANTIATE_TEST(FramebufferTest_ES3Metal,
                        ES3_METAL().enable(Feature::LimitMaxColorTargetBitsForTesting));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferTest_ES31);
-ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferTest_ES31,
-                                ES31_VULKAN().disable(Feature::SupportsImagelessFramebuffer));
+ANGLE_INSTANTIATE_TEST_ES31_AND(
+    FramebufferTest_ES31,
+    ES31_VULKAN().disable(Feature::SupportsImagelessFramebuffer),
+    ES31_VULKAN().enable(Feature::ForceDelayedDeviceCreationForTesting));
 ANGLE_INSTANTIATE_TEST_ES3(FramebufferTestWithFormatFallback);
+ANGLE_INSTANTIATE_TEST_ES3(DefaultFramebufferTest);

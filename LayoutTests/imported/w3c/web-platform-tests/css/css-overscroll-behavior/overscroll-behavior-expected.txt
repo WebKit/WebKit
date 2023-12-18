@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "wheel".
 
 overscroll-behavior
 
@@ -9,7 +8,5 @@ Repeat the same scrolls as in step 1 and then tap on DONE.
 Repeat the same scrolls as in step 1 and then tap on DONE.
 Make two separate scrolls on GREEN, in this order: scroll UP (or drag down), then scroll LEFT (or drag right). Scroll (or drag) until nothing is scrolling. Then tap on DONE.
 
-Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
-
-NOTRUN overscroll-behavior prevents scroll-propagation in the area and direction as specified
+FAIL overscroll-behavior prevents scroll-propagation in the area and direction as specified assert_equals: expected 0 but got 100
 

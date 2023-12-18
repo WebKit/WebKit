@@ -43,6 +43,7 @@ public:
     StackFrame(VM&, JSCell* owner, JSCell* callee);
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex);
     StackFrame(Wasm::IndexOrName);
+    StackFrame() = default;
 
     // @forkChanges
     JSCell * callee() const { return m_callee.get(); }

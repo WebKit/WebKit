@@ -55,6 +55,7 @@ public:
     virtual bool isProducingData() const = 0;
 
     virtual void delaySamples(Seconds) { }
+    virtual void prewarmAudioUnitCreation(CompletionHandler<void()>&& callback) { callback(); };
 
     void prepareForNewCapture();
 
@@ -116,6 +117,7 @@ protected:
 
     virtual void isProducingMicrophoneSamplesChanged() { }
     virtual void validateOutputDevice(uint32_t /* currentOutputDeviceID */) { }
+    virtual bool migrateToNewDefaultDevice(const CaptureDevice&) { return false; }
 
 private:
     OSStatus startUnit();
@@ -140,6 +142,7 @@ private:
     Vector<CheckedPtr<CoreAudioCaptureSource>> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);
     Lock m_audioThreadClientsLock;
 
+    bool m_isCapturingWithDefaultMicrophone { false };
     bool m_isProducingMicrophoneSamples { true };
     Vector<Function<void()>> m_whenNotRunningCallbacks;
 };

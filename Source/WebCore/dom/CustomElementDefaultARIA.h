@@ -26,6 +26,7 @@
 #pragma once
 
 #include "QualifiedName.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Vector.h>
@@ -37,7 +38,7 @@ namespace WebCore {
 class Element;
 class WeakPtrImplWithEventTargetData;
 
-class CustomElementDefaultARIA {
+class CustomElementDefaultARIA : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(CustomElementDefaultARIA);
 public:
     CustomElementDefaultARIA();
@@ -46,7 +47,7 @@ public:
     bool hasAttribute(const QualifiedName&) const;
     const AtomString& valueForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setValueForAttribute(const QualifiedName&, const AtomString&);
-    Element* elementForAttribute(const Element& thisElement, const QualifiedName&) const;
+    RefPtr<Element> elementForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setElementForAttribute(const QualifiedName&, Element*);
     Vector<RefPtr<Element>> elementsForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setElementsForAttribute(const QualifiedName&, std::optional<Vector<RefPtr<Element>>>&&);

@@ -1,0 +1,21 @@
+
+== Running test suite: retryUntil
+-- Running test case: retryUntil.DefaultConfiguration.Success
+PASS: Waited at least the default 100ms delay between retries.
+PASS: Predicate is falsy on first try.
+PASS: Success within default number of retries.
+
+-- Running test case: retryUntil.CustomConfiguration.Success
+PASS: Retried 3 times.
+PASS: Success after 3 retries.
+
+-- Running test case: retryUntil.CustomConfiguration.Fail
+PASS: Retried 3 times.
+PASS: Failure after 3 retries for falsy value: false
+PASS: Retried 3 times.
+PASS: Failure after 3 retries for falsy value: null
+PASS: Retried 3 times.
+PASS: Failure after 3 retries for falsy value: undefined
+PASS: Retried 3 times.
+PASS: Failure after 3 retries for falsy value: 0
+

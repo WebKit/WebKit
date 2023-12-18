@@ -92,6 +92,7 @@ TEST_F(TransmissionControlBlockTest, LogsAllCapabilitiesInToSring) {
   capabilities_.negotiated_maximum_outgoing_streams = 2000;
   capabilities_.message_interleaving = true;
   capabilities_.partial_reliability = true;
+  capabilities_.zero_checksum = true;
   capabilities_.reconfig = true;
 
   TransmissionControlBlock tcb(
@@ -99,9 +100,10 @@ TEST_F(TransmissionControlBlockTest, LogsAllCapabilitiesInToSring) {
       kMyVerificationTag, kMyInitialTsn, kPeerVerificationTag, kPeerInitialTsn,
       kArwnd, kTieTag, sender_, on_connection_established.AsStdFunction());
 
-  EXPECT_EQ(tcb.ToString(),
-            "verification_tag=000001c8, last_cumulative_ack=999, "
-            "capabilities=PR,IL,Reconfig, max_in=1000 max_out=2000");
+  EXPECT_EQ(
+      tcb.ToString(),
+      "verification_tag=000001c8, last_cumulative_ack=999, "
+      "capabilities=PR,IL,Reconfig,ZeroChecksum, max_in=1000 max_out=2000");
 }
 
 TEST_F(TransmissionControlBlockTest, IsInitiallyHandoverReady) {

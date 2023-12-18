@@ -37,6 +37,25 @@
 struct WGPURenderBundleEncoderImpl {
 };
 
+@interface RenderBundleICBWithResources : NSObject
+
+- (instancetype)initWithICB:(id<MTLIndirectCommandBuffer>)icb pipelineState:(id<MTLRenderPipelineState>)pipelineState depthStencilState:(id<MTLDepthStencilState>)depthStencilState cullMode:(MTLCullMode)cullMode frontFace:(MTLWinding)frontFace depthClipMode:(MTLDepthClipMode)depthClipMode depthBias:(float)depthBias depthBiasSlopeScale:(float)depthBiasSlopeScale depthBiasClamp:(float)depthBiasClamp fragmentDynamicOffsetsBuffer:(id<MTLBuffer>)fragmentDynamicOffsetsBuffer NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+@property (readonly, nonatomic) id<MTLIndirectCommandBuffer> indirectCommandBuffer;
+@property (readonly, nonatomic) id<MTLRenderPipelineState> currentPipelineState;
+@property (readonly, nonatomic) id<MTLDepthStencilState> depthStencilState;
+@property (readonly, nonatomic) MTLCullMode cullMode;
+@property (readonly, nonatomic) MTLWinding frontFace;
+@property (readonly, nonatomic) MTLDepthClipMode depthClipMode;
+@property (readonly, nonatomic) float depthBias;
+@property (readonly, nonatomic) float depthBiasSlopeScale;
+@property (readonly, nonatomic) float depthBiasClamp;
+@property (readonly, nonatomic) id<MTLBuffer> fragmentDynamicOffsetsBuffer;
+
+- (Vector<WebGPU::BindableResources>*)resources;
+@end
+
 namespace WebGPU {
 
 class BindGroup;
@@ -68,7 +87,7 @@ public:
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
-    void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
+    void setBindGroup(uint32_t groupIndex, const BindGroup&, std::optional<Vector<uint32_t>>&& dynamicOffsets);
     void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
@@ -77,6 +96,10 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_indirectCommandBuffer; }
+    void replayCommands(id<MTLRenderCommandEncoder> commmandEncoder);
+
+    static constexpr auto startIndexForFragmentDynamicOffsets = 3;
+    static constexpr uint32_t defaultSampleMask = UINT32_MAX;
 
 private:
     RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
@@ -87,6 +110,11 @@ private:
 
     void makeInvalid() { m_indirectCommandBuffer = nil; }
     void executePreDrawCommands();
+    void endCurrentICB();
+    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, ResourceUsageAndRenderStage*);
+    void addResource(RenderBundle::ResourcesContainer*, id<MTLResource>, MTLRenderStages);
+    bool icbNeedsToBeSplit(const RenderPipeline& a, const RenderPipeline& b);
+    void finalizeRenderCommand();
 
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
     MTLIndirectCommandBufferDescriptor *m_icbDescriptor { nil };
@@ -99,11 +127,14 @@ private:
     MTLCullMode m_cullMode { MTLCullModeNone };
     MTLWinding m_frontFace { MTLWindingClockwise };
     MTLDepthClipMode m_depthClipMode { MTLDepthClipModeClip };
+    float m_depthBias { 0 };
+    float m_depthBiasSlopeScale { 0 };
+    float m_depthBiasClamp { 0 };
 
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
-    Vector<WTF::Function<void(void)>> m_recordedCommands;
+    Vector<WTF::Function<bool(void)>> m_recordedCommands;
     NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>* m_resources;
     struct BufferAndOffset {
         id<MTLBuffer> buffer { nil };
@@ -114,10 +145,20 @@ private:
     Vector<BufferAndOffset> m_vertexBuffers;
     Vector<BufferAndOffset> m_fragmentBuffers;
     const Ref<Device> m_device;
-    Vector<uint32_t> m_vertexDynamicOffsets;
-    Vector<uint32_t> m_fragmentDynamicOffsets;
     const RenderPipeline* m_pipeline { nullptr };
-    HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
+    using BindGroupDynamicOffsetsContainer = HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    std::optional<BindGroupDynamicOffsetsContainer> m_bindGroupDynamicOffsets;
+    NSMutableArray<RenderBundleICBWithResources*> *m_icbArray;
+    id<MTLBuffer> m_dynamicOffsetsVertexBuffer { nil };
+    id<MTLBuffer> m_dynamicOffsetsFragmentBuffer { nil };
+    uint64_t m_vertexDynamicOffset { 0 };
+    uint64_t m_fragmentDynamicOffset { 0 };
+
+    id<MTLRenderCommandEncoder> m_commandEncoder { nil };
+    id<MTLIndirectRenderCommand> m_currentCommand { nil };
+    bool m_requiresCommandReplay { false };
+    bool m_requiresMetalWorkaround { true };
+    uint32_t m_sampleMask { defaultSampleMask };
 };
 
 } // namespace WebGPU

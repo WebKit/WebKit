@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../webrtc/routines.js"></script>
+    </head>
+    <body>
+        <video id="localVideo" autoplay playsinline muted></video>
+        <video id="remoteVideo" autoplay playsinline></video>
+        <script>
+promise_test(async (t) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    localVideo.srcObject = localStream;
+    await localVideo.play();
+
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+            firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    remoteVideo.srcObject = remoteStream;
+    await remoteVideo.play();
+
+    if (!window.internals)
+        return;
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    assert_false(internals.nowPlayingState.haveEverRegisteredAsNowPlayingApplication);
+
+    internals.setMediaStreamTrackMuted(localStream.getAudioTracks()[0], false); 
+    internals.setMediaStreamTrackMuted(localStream.getVideoTracks()[0], false); 
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    assert_false(internals.nowPlayingState.haveEverRegisteredAsNowPlayingApplication);
+}, "Check NowPlaying status on a VC page");
+        </script>
+    </body>
+</html>

@@ -56,4 +56,9 @@ double GetCurrentSystemTime()
     double secondCoeff = timebaseInfo.numer * 1e-9 / timebaseInfo.denom;
     return secondCoeff * mach_absolute_time();
 }
+
+void SetCurrentThreadName(const char *name)
+{
+    pthread_setname_np(name);
+}
 }  // namespace angle

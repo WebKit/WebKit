@@ -33,6 +33,6 @@
 # Needed to avoid <iosfwd>
 { symbol: ["std::ostringstream", "public", "<sstream>", "public"] },
 
-{ ref: "../../buildtools/third_party/libc++/trunk/include/libcxx.imp" },
+{ ref: "../../third_party/libc++/src/include/libcxx.imp" },
 ]
 

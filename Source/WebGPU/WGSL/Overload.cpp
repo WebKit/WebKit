@@ -211,6 +211,11 @@ const Type* OverloadResolver::materialize(const AbstractType& abstractType) cons
             if (auto* element = materialize(array.element))
                 return m_types.arrayType(element, std::nullopt);
             return nullptr;
+        },
+        [&](const AbstractAtomic& atomic) -> const Type* {
+            if (auto* element = materialize(atomic.element))
+                return m_types.atomicType(element);
+            return nullptr;
         });
 }
 
@@ -339,6 +344,11 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, co
     if (auto* arrayParameter = std::get_if<AbstractArray>(parameter.get())) {
         auto& arrayArgument = std::get<Types::Array>(*argumentType);
         return calculateRank(arrayParameter->element, arrayArgument.element);
+    }
+
+    if (auto* atomicParameter = std::get_if<AbstractAtomic>(parameter.get())) {
+        auto& atomicArgument = std::get<Types::Atomic>(*argumentType);
+        return calculateRank(atomicParameter->element, atomicArgument.element);
     }
 
     if (std::holds_alternative<AbstractTextureStorage>(*parameter.get()))
@@ -483,6 +493,13 @@ bool OverloadResolver::unify(const AbstractType& parameter, const Type* argument
         if (arrayArgument->size.has_value())
             return false;
         return unify(arrayParameter->element, arrayArgument->element);
+    }
+
+    if (auto* atomicParameter = std::get_if<AbstractAtomic>(parameter.get())) {
+        auto* atomicArgument = std::get_if<Types::Atomic>(argumentType);
+        if (!atomicArgument)
+            return false;
+        return unify(atomicParameter->element, atomicArgument->element);
     }
 
     auto* parameterType = std::get<const Type*>(*parameter);
@@ -638,6 +655,11 @@ void printInternal(PrintStream& out, const WGSL::AbstractType& type)
         [&](const WGSL::AbstractArray& array) {
             out.print("array<");
             printInternal(out, array.element);
+            out.print(">");
+        },
+        [&](const WGSL::AbstractAtomic& atomic) {
+            out.print("atomic<");
+            printInternal(out, atomic.element);
             out.print(">");
         });
 }

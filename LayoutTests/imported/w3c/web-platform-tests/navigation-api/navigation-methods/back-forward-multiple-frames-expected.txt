@@ -1,0 +1,4 @@
+
+
+FAIL navigation.back() and navigation.forward() can navigate multiple frames promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+

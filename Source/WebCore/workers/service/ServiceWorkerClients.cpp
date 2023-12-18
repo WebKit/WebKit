@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerClients.h"
 
 #include "JSDOMPromiseDeferred.h"
@@ -97,18 +95,18 @@ void ServiceWorkerClients::openWindow(ScriptExecutionContext& context, const Str
     LOG(ServiceWorker, "WebProcess %i service worker calling openWindow to URL %s", getpid(), urlString.utf8().data());
 
     if (context.settingsValues().serviceWorkersUserGestureEnabled && !downcast<ServiceWorkerGlobalScope>(context).isProcessingUserGesture()) {
-        promise->reject(Exception { InvalidAccessError, "ServiceWorkerClients.openWindow() requires a user gesture"_s });
+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "ServiceWorkerClients.openWindow() requires a user gesture"_s });
         return;
     }
 
     auto url = context.completeURL(urlString);
     if (!url.isValid()) {
-        promise->reject(Exception { TypeError, makeString("URL string ", urlString, " cannot successfully be parsed"_s) });
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("URL string ", urlString, " cannot successfully be parsed"_s) });
         return;
     }
 
     if (url.protocolIsAbout()) {
-        promise->reject(Exception { TypeError, makeString("ServiceWorkerClients.openWindow() cannot be called with URL "_s, url.string()) });
+        promise->reject(Exception { ExceptionCode::TypeError, makeString("ServiceWorkerClients.openWindow() cannot be called with URL "_s, url.string()) });
         return;
     }
 
@@ -180,5 +178,3 @@ WebCoreOpaqueRoot root(ServiceWorkerClients* clients)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

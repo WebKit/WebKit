@@ -17,18 +17,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x80
-        RenderText {#text} at (0,0) size 773x79
+      RenderBlock {P} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 773x71
           text run at (0,0) width 418: "This tests moveTo{Beginning, End}OfLineAndModifySelection. "
           text run at (418,0) width 343: "It should operate on line boundaries and not paragraph"
-          text run at (0,20) width 77: "boundaries. "
-          text run at (77,20) width 682: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right"
-          text run at (0,40) width 605: "Arrow, the selection should extend to the start/end of the line, not the start/end of the paragraph. "
-          text run at (605,40) width 168: "Also, moveTo{Beginning,"
-          text run at (0,60) width 335: "End}OfParagraphAndModifySelection should work."
-      RenderBlock {DIV} at (0,96) size 200x40
-        RenderText {#text} at (0,0) size 189x39
+          text run at (0,18) width 77: "boundaries. "
+          text run at (77,18) width 682: "To run it manually, click inside the first line of the editable region below and do Command+Shift+Left/Right"
+          text run at (0,36) width 605: "Arrow, the selection should extend to the start/end of the line, not the start/end of the paragraph. "
+          text run at (605,36) width 168: "Also, moveTo{Beginning,"
+          text run at (0,54) width 335: "End}OfParagraphAndModifySelection should work."
+      RenderBlock {DIV} at (0,88) size 200x36
+        RenderText {#text} at (0,0) size 189x35
           text run at (0,0) width 189: "The quick brown fox jumped "
-          text run at (0,20) width 158: "over the lazy brown dog."
+          text run at (0,18) width 158: "over the lazy brown dog."
 selection start: position 0 of child 0 {#text} of child 2 {DIV} of body
 selection end:   position 51 of child 0 {#text} of child 2 {DIV} of body

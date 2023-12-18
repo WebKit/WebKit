@@ -108,12 +108,14 @@ private:
 template <typename T>
 struct GetPtrHelper<UniqueRef<T>> {
     using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const UniqueRef<T>& p) { return const_cast<T*>(p.ptr()); }
 };
 
 template <typename T>
 struct IsSmartPtr<UniqueRef<T>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = false;
 };
 
 template<typename ExpectedType, typename ArgType>

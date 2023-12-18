@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if HAVE(REPLAYKIT)
 
 #import <ReplayKit/ReplayKit.h>
 #import <wtf/SoftLinking.h>
@@ -33,4 +33,4 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, ReplayKit)
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, RPScreenRecorder)
 
-#endif
+#endif // HAVE(REPLAYKIT)

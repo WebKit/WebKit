@@ -99,7 +99,25 @@ static void initializeLogd(bool disableLogging)
     RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
 }
 
-static void XPCServiceEventHandler(xpc_connection_t peer)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+
+NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
+{
+    CRASH();
+}
+static void checkFrameworkVersion(xpc_object_t message)
+{
+    auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(message, "WebKitBundleVersion"));
+    String expectedBundleVersion = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
+    if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
+        auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
+        logAndSetCrashLogMessage(errorMessage.utf8().data());
+        crashDueWebKitFrameworkVersionMismatch();
+    }
+}
+#endif // PLATFORM(MAC)
+
+void XPCServiceEventHandler(xpc_connection_t peer)
 {
     OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
 
@@ -128,6 +146,14 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
         if (!strcmp(messageName, "bootstrap")) {
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
+
+#if PLATFORM(IOS_FAMILY)
+            auto containerEnvironmentVariables = xpc_dictionary_get_value(event, "ContainerEnvironmentVariables");
+            xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
+                setenv(key, xpc_string_get_string_ptr(value), 1);
+                return true;
+            });
+#endif
 
             const char* serviceName = xpc_dictionary_get_string(event, "service-name");
             if (!serviceName) {
@@ -173,7 +199,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 WTF::initializeMainThread();
 
                 initializeCFPrefs();
-
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+                checkFrameworkVersion(event.get());
+#endif
                 initializerFunctionPtr(retainedPeerConnection.get(), event.get());
 
                 setAppleLanguagesPreference();
@@ -188,27 +216,11 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-
-NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
-{
-    CRASH();
-}
-
-#endif // PLATFORM(MAC)
-
 int XPCServiceMain(int, const char**)
 {
     auto bootstrap = adoptOSObject(xpc_copy_bootstrap());
 
     if (bootstrap) {
-#if PLATFORM(IOS_FAMILY)
-        auto containerEnvironmentVariables = xpc_dictionary_get_value(bootstrap.get(), "ContainerEnvironmentVariables");
-        xpc_dictionary_apply(containerEnvironmentVariables, ^(const char *key, xpc_object_t value) {
-            setenv(key, xpc_string_get_string_ptr(value), 1);
-            return true;
-        });
-#endif
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ASAN_ENABLED
         // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
@@ -223,13 +235,6 @@ int XPCServiceMain(int, const char**)
             }
         }
 #endif
-        auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion"));
-        String expectedBundleVersion = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
-        if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
-            auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
-            logAndSetCrashLogMessage(errorMessage.utf8().data());
-            crashDueWebKitFrameworkVersionMismatch();
-        }
 #endif
     }
 

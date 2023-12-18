@@ -47,6 +47,7 @@ class Event;
 class File;
 class FrontendMenuProvider;
 class HTMLIFrameElement;
+class OffscreenCanvasRenderingContext2D;
 class Page;
 class Path2D;
 
@@ -172,6 +173,13 @@ public:
     Ref<Path2D> getPath(const CanvasRenderingContext2D&) const;
     void setPath(CanvasRenderingContext2D&, Path2D&) const;
 
+#if ENABLE(OFFSCREEN_CANVAS)
+    float getCurrentX(const OffscreenCanvasRenderingContext2D&) const;
+    float getCurrentY(const OffscreenCanvasRenderingContext2D&) const;
+    Ref<Path2D> getPath(const OffscreenCanvasRenderingContext2D&) const;
+    void setPath(OffscreenCanvasRenderingContext2D&, Path2D&) const;
+#endif
+
 private:
 #if ENABLE(CONTEXT_MENUS)
     friend class FrontendMenuProvider;
@@ -179,7 +187,7 @@ private:
     WEBCORE_EXPORT InspectorFrontendHost(InspectorFrontendClient*, Page* frontendPage);
 
     InspectorFrontendClient* m_client;
-    WeakPtr<Page> m_frontendPage;
+    SingleThreadWeakPtr<Page> m_frontendPage;
 #if ENABLE(CONTEXT_MENUS)
     FrontendMenuProvider* m_menuProvider;
 #endif

@@ -30,7 +30,6 @@
 
 #include "WebPageProxy.h"
 #include "pointer-constraints-unstable-v1-client-protocol.h"
-#include <WebCore/WlUniquePtr.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -47,13 +46,14 @@ PointerLockManagerWayland::PointerLockManagerWayland(WebPageProxy& webPage, cons
     : PointerLockManager(webPage, position, globalPosition, button, buttons, modifiers)
 {
     auto* display = gdk_wayland_display_get_wl_display(gtk_widget_get_display(m_webPage.viewWidget()));
-    WlUniquePtr<struct wl_registry> registry(wl_display_get_registry(display));
-    wl_registry_add_listener(registry.get(), &s_registryListener, this);
+    m_registry = wl_display_get_registry(display);
+    wl_registry_add_listener(m_registry, &s_registryListener, this);
     wl_display_roundtrip(display);
 }
 
 PointerLockManagerWayland::~PointerLockManagerWayland()
 {
+    g_clear_pointer(&m_registry, wl_registry_destroy);
     g_clear_pointer(&m_relativePointerManager, zwp_relative_pointer_manager_v1_destroy);
     g_clear_pointer(&m_pointerConstraints, zwp_pointer_constraints_v1_destroy);
 }

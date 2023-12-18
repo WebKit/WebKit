@@ -36,61 +36,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-void VisibleContentRectUpdateInfo::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_exposedContentRect;
-    encoder << m_unobscuredContentRect;
-    encoder << m_contentInsets;
-    encoder << m_unobscuredContentRectRespectingInputViewBounds;
-    encoder << m_unobscuredRectInScrollViewCoordinates;
-    encoder << m_layoutViewportRect;
-    encoder << m_obscuredInsets;
-    encoder << m_unobscuredSafeAreaInsets;
-    encoder << m_scrollVelocity;
-    encoder << m_lastLayerTreeTransactionID;
-    encoder << m_scale;
-    encoder << m_viewStability;
-    encoder << m_isFirstUpdateForNewViewSize;
-    encoder << m_allowShrinkToFit;
-    encoder << m_enclosedInScrollableAncestorView;
-}
-
-bool VisibleContentRectUpdateInfo::decode(IPC::Decoder& decoder, VisibleContentRectUpdateInfo& result)
-{
-    if (!decoder.decode(result.m_exposedContentRect))
-        return false;
-    if (!decoder.decode(result.m_unobscuredContentRect))
-        return false;
-    if (!decoder.decode(result.m_contentInsets))
-        return false;
-    if (!decoder.decode(result.m_unobscuredContentRectRespectingInputViewBounds))
-        return false;
-    if (!decoder.decode(result.m_unobscuredRectInScrollViewCoordinates))
-        return false;
-    if (!decoder.decode(result.m_layoutViewportRect))
-        return false;
-    if (!decoder.decode(result.m_obscuredInsets))
-        return false;
-    if (!decoder.decode(result.m_unobscuredSafeAreaInsets))
-        return false;
-    if (!decoder.decode(result.m_scrollVelocity))
-        return false;
-    if (!decoder.decode(result.m_lastLayerTreeTransactionID))
-        return false;
-    if (!decoder.decode(result.m_scale))
-        return false;
-    if (!decoder.decode(result.m_viewStability))
-        return false;
-    if (!decoder.decode(result.m_isFirstUpdateForNewViewSize))
-        return false;
-    if (!decoder.decode(result.m_allowShrinkToFit))
-        return false;
-    if (!decoder.decode(result.m_enclosedInScrollableAncestorView))
-        return false;
-
-    return true;
-}
-
 String VisibleContentRectUpdateInfo::dump() const
 {
     TextStream stream;

@@ -44,7 +44,7 @@ TEST(IDataChunkTest, AtBeginningFromCapture) {
   ASSERT_HAS_VALUE_AND_ASSIGN(IDataChunk chunk, IDataChunk::Parse(data));
   EXPECT_EQ(*chunk.tsn(), 2487901653);
   EXPECT_EQ(*chunk.stream_id(), 1);
-  EXPECT_EQ(*chunk.message_id(), 0u);
+  EXPECT_EQ(*chunk.mid(), 0u);
   EXPECT_EQ(*chunk.ppid(), 53u);
   EXPECT_EQ(*chunk.fsn(), 0u);  // Not provided (so set to zero)
 }
@@ -62,13 +62,13 @@ TEST(IDataChunkTest, AtBeginningSerializeAndDeserialize) {
                               IDataChunk::Parse(serialized));
   EXPECT_EQ(*deserialized.tsn(), 123u);
   EXPECT_EQ(*deserialized.stream_id(), 456u);
-  EXPECT_EQ(*deserialized.message_id(), 789u);
+  EXPECT_EQ(*deserialized.mid(), 789u);
   EXPECT_EQ(*deserialized.ppid(), 53u);
   EXPECT_EQ(*deserialized.fsn(), 0u);
 
   EXPECT_EQ(deserialized.ToString(),
             "I-DATA, type=ordered::first, tsn=123, stream_id=456, "
-            "message_id=789, ppid=53, length=1");
+            "mid=789, ppid=53, length=1");
 }
 
 TEST(IDataChunkTest, InMiddleFromCapture) {
@@ -93,7 +93,7 @@ TEST(IDataChunkTest, InMiddleFromCapture) {
   ASSERT_HAS_VALUE_AND_ASSIGN(IDataChunk chunk, IDataChunk::Parse(data));
   EXPECT_EQ(*chunk.tsn(), 2487901706);
   EXPECT_EQ(*chunk.stream_id(), 3u);
-  EXPECT_EQ(*chunk.message_id(), 1u);
+  EXPECT_EQ(*chunk.mid(), 1u);
   EXPECT_EQ(*chunk.ppid(), 0u);  // Not provided (so set to zero)
   EXPECT_EQ(*chunk.fsn(), 8u);
 }
@@ -109,14 +109,14 @@ TEST(IDataChunkTest, InMiddleSerializeAndDeserialize) {
                               IDataChunk::Parse(serialized));
   EXPECT_EQ(*deserialized.tsn(), 123u);
   EXPECT_EQ(*deserialized.stream_id(), 456u);
-  EXPECT_EQ(*deserialized.message_id(), 789u);
+  EXPECT_EQ(*deserialized.mid(), 789u);
   EXPECT_EQ(*deserialized.ppid(), 0u);
   EXPECT_EQ(*deserialized.fsn(), 101112u);
   EXPECT_THAT(deserialized.payload(), ElementsAre(1, 2, 3));
 
   EXPECT_EQ(deserialized.ToString(),
             "I-DATA, type=ordered::middle, tsn=123, stream_id=456, "
-            "message_id=789, fsn=101112, length=3");
+            "mid=789, fsn=101112, length=3");
 }
 
 }  // namespace

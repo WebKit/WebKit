@@ -1,0 +1,13 @@
+
+FAIL Property timeline-scope value 'initial' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'inherit' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'unset' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'revert' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'none' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'test' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'foo, bar' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'bar, foo' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL Property timeline-scope value 'a, b, c, D, e' assert_true: timeline-scope doesn't seem to be supported in the computed style expected true got false
+FAIL The timeline-scope property shows up in CSSStyleDeclaration enumeration assert_not_equals: got disallowed value -1
+FAIL The timeline-scope property shows up in CSSStyleDeclaration.cssText assert_not_equals: got disallowed value -1
+

@@ -26,7 +26,6 @@
 
 [
     Exposed=(Window,Worker),
-    Conditional=CHANNEL_MESSAGING,
     JSCustomMarkFunction,
 ] interface MessageChannel {
     [CallWith=CurrentScriptExecutionContext] constructor();

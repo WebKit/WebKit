@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void WebProcessPool::platformInitialize()
+void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 {
     m_userId = m_configuration->userId();
 }

@@ -43,6 +43,7 @@ class NavigationAction;
 
 namespace WebCore {
 class ResourceResponse;
+class SecurityOrigin;
 }
 
 namespace WebKit {
@@ -113,6 +114,7 @@ private:
     void continueStartAfterGetAuthorizationHints(const String&);
     void continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy&);
 
+    virtual bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) { return false; }
     State m_state  { State::Idle };
     RetainPtr<SOAuthorization> m_soAuthorization;
     RefPtr<API::NavigationAction> m_navigationAction;

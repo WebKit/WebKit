@@ -1006,11 +1006,11 @@ aom_codec_err_t aom_codec_enc_config_set(aom_codec_ctx_t *ctx,
 aom_fixed_buf_t *aom_codec_get_global_headers(aom_codec_ctx_t *ctx);
 
 /*!\brief usage parameter analogous to AV1 GOOD QUALITY mode. */
-#define AOM_USAGE_GOOD_QUALITY (0)
+#define AOM_USAGE_GOOD_QUALITY 0
 /*!\brief usage parameter analogous to AV1 REALTIME mode. */
-#define AOM_USAGE_REALTIME (1)
+#define AOM_USAGE_REALTIME 1
 /*!\brief usage parameter analogous to AV1 all intra mode. */
-#define AOM_USAGE_ALL_INTRA (2)
+#define AOM_USAGE_ALL_INTRA 2
 
 /*!\brief Encode a frame
  *

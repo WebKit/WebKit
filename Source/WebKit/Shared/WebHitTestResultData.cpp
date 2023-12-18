@@ -22,6 +22,7 @@
 
 #include "ShareableBitmapUtilities.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
 #include <WebCore/Document.h>
 #include <WebCore/ElementInlines.h>
 #include <WebCore/EventHandler.h>
@@ -65,7 +66,9 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, c
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , mediaIsInFullscreen(hitTestResult.mediaIsInFullscreen())
     , elementType(ElementType::None)
+    , frameInfo(frameInfoDataFromHitTestResult(hitTestResult))
     , toolTipText(toolTipText)
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
@@ -89,7 +92,9 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     , isTextNode(hitTestResult.innerNode() && hitTestResult.innerNode()->isTextNode())
     , isOverTextInsideFormControlElement(hitTestResult.isOverTextInsideFormControlElement())
     , isDownloadableMedia(hitTestResult.isDownloadableMedia())
+    , mediaIsInFullscreen(hitTestResult.mediaIsInFullscreen())
     , elementType(ElementType::None)
+    , frameInfo(frameInfoDataFromHitTestResult(hitTestResult))
 {
     if (auto* scrollbar = hitTestResult.scrollbar())
         isScrollbar = scrollbar->orientation() == ScrollbarOrientation::Horizontal ? IsScrollbar::Horizontal : IsScrollbar::Vertical;
@@ -126,7 +131,7 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
     }
 }
 
-WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, const WebHitTestResultData::ElementType& elementType, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebKit::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
+WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const String& absolutePDFURL, const String& absoluteLinkURL, const String& absoluteMediaURL, const String& linkLabel, const String& linkTitle, const String& linkSuggestedFilename, bool isContentEditable, const WebCore::IntRect& elementBoundingBox, const WebKit::WebHitTestResultData::IsScrollbar& isScrollbar, bool isSelected, bool isTextNode, bool isOverTextInsideFormControlElement, bool isDownloadableMedia, bool mediaIsInFullscreen, const WebHitTestResultData::ElementType& elementType, std::optional<FrameInfoData>&& frameInfo, const String& lookupText, const String& toolTipText, const String& imageText, std::optional<WebKit::SharedMemory::Handle>&& imageHandle, const RefPtr<WebKit::ShareableBitmap>& imageBitmap, const String& sourceImageMIMEType,
 #if PLATFORM(MAC)
     const WebHitTestResultPlatformData& platformData,
 #endif
@@ -145,7 +150,9 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , isTextNode(isTextNode)
         , isOverTextInsideFormControlElement(isOverTextInsideFormControlElement)
         , isDownloadableMedia(isDownloadableMedia)
+        , mediaIsInFullscreen(mediaIsInFullscreen)
         , elementType(elementType)
+        , frameInfo(frameInfo)
         , lookupText(lookupText)
         , toolTipText(toolTipText)
         , imageText(imageText)
@@ -157,7 +164,7 @@ WebHitTestResultData::WebHitTestResultData(const String& absoluteImageURL, const
         , dictionaryPopupInfo(dictionaryPopupInfo)
         , linkTextIndicator(linkTextIndicator)
 {
-    if (imageHandle && !imageHandle->isNull())
+    if (imageHandle)
         imageSharedMemory = WebKit::SharedMemory::map(WTFMove(*imageHandle), WebKit::SharedMemory::Protection::ReadOnly);
 }
 
@@ -194,6 +201,19 @@ std::optional<WebKit::SharedMemory::Handle> WebHitTestResultData::getImageShared
             imageHandle = WTFMove(*handle);
     }
     return imageHandle;
+}
+
+std::optional<FrameInfoData> WebHitTestResultData::frameInfoDataFromHitTestResult(const WebCore::HitTestResult& hitTestResult)
+{
+    RefPtr coreFrame = hitTestResult.frame();
+    if (!coreFrame)
+        return std::nullopt;
+
+    RefPtr webFrame = WebFrame::fromCoreFrame(*coreFrame);
+    if (!webFrame)
+        return std::nullopt;
+
+    return webFrame->info();
 }
 
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)

@@ -154,6 +154,3 @@ MediaTime/
 
 # https://bugs.webkit.org/show_bug.cgi?id=241729
 Layout/nested-flexbox.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=255156
-IndexedDB/stress/large-number-of-inserts.html

@@ -113,6 +113,7 @@ public:
     void apply();
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
     EditCommandComposition* composition() const;
+    RefPtr<EditCommandComposition> protectedComposition() const { return composition(); }
     EditCommandComposition& ensureComposition();
 
     virtual bool isCreateLinkCommand() const;

@@ -259,7 +259,7 @@ typedef GenericProc(KHRONOS_APIENTRY *LoadProc)(const char *);
 ANGLE_UTIL_EXPORT void LoadUtilEGL(LoadProc loadProc);
 
 #if defined(__cplusplus)
-}  // extern "C"
+}       // extern "C"
 #endif  // defined(__cplusplus)
 
 #endif  // UTIL_EGL_LOADER_AUTOGEN_H_

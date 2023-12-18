@@ -1,0 +1,12 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText() }
+function go() {
+    const i = document.getElementById('i');
+    const doc = i.contentWindow.document;
+    const div = doc.getElementsByTagName("div")[0];
+    const text = div.innerText;
+    alert(text);
+}
+</script>
+
+<iframe id=i src="resources/xslt-external-entity.svg" width=500 height=500 onload=go()></iframe>

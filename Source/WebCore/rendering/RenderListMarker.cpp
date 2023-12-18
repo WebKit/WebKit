@@ -50,11 +50,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListMarker);
 constexpr int cMarkerPadding = 7;
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
-    : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style), 0)
+    : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style), { })
     , m_listItem(listItem)
 {
     setInline(true);
     setReplacedOrInlineBlock(true); // pretend to be replaced
+    ASSERT(isRenderListMarker());
 }
 
 RenderListMarker::~RenderListMarker()
@@ -259,7 +260,7 @@ RenderBox* RenderListMarker::parentBox(RenderBox& box)
 void RenderListMarker::addOverflowFromListMarker()
 {
     ASSERT(m_listItem);
-    if (!parent() || !parent()->isBox())
+    if (!parent() || !parent()->isRenderBox())
         return;
 
     if (isInside() || !inlineBoxWrapper())

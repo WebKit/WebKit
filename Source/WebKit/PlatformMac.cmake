@@ -142,7 +142,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/XPCService"
     "${WEBKIT_DIR}/Shared/mac"
     "${WEBKIT_DIR}/Shared/mac/MediaFormatReader"
-    "${WEBKIT_DIR}/Shared/Plugins/mac"
     "${WEBKIT_DIR}/Shared/Scrolling"
     "${WEBKIT_DIR}/UIProcess/Cocoa/GroupActivities"
     "${WEBKIT_DIR}/UIProcess/Media"
@@ -261,6 +260,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/Cocoa/CacheStoragePolicy.serialization.in
     Shared/Cocoa/DataDetectionResult.serialization.in
+    Shared/Cocoa/InsertTextOptions.serialization.in
     Shared/Cocoa/RevealItem.serialization.in
     Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 )

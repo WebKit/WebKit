@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "DFGGraph.h"
 #include "DFGNodeFlowProjection.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
@@ -36,7 +37,7 @@ namespace JSC { namespace DFG {
 // Node-keyed maps. The special part is that it also allocated indices for the shadow values of Phi
 // nodes, which is needed for any flow-sensitive analysis.
 class FlowIndexing {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FlowIndexing);
 public:
     FlowIndexing(Graph&);
     ~FlowIndexing();

@@ -50,7 +50,7 @@ namespace WebKit {
 class SharedMemory;
 class WebProcessProxy;
 
-class UserMediaCaptureManagerProxy : private IPC::MessageReceiver {
+class UserMediaCaptureManagerProxy : public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class ConnectionProxy {
@@ -65,6 +65,9 @@ public:
         virtual const WebCore::ProcessIdentity& resourceOwner() const = 0;
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
+#endif
+#if ENABLE(EXTENSION_CAPABILITIES)
+        virtual void setCurrentMediaEnvironment(WebCore::PageIdentifier) { };
 #endif
         virtual void startProducingData(WebCore::CaptureDevice::DeviceType) { }
         virtual RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() { return nullptr; }
@@ -85,29 +88,39 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    using CreateSourceCallback = CompletionHandler<void(WebCore::CaptureSourceError&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&)>;
+    using CreateSourceCallback = CompletionHandler<void(const WebCore::CaptureSourceError&, const WebCore::RealtimeMediaSourceSettings&, const WebCore::RealtimeMediaSourceCapabilities&)>;
     void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints&, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier, CreateSourceCallback&&);
-    void startProducingData(WebCore::RealtimeMediaSourceIdentifier);
+    void startProducingData(WebCore::RealtimeMediaSourceIdentifier, WebCore::PageIdentifier);
     void stopProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
     void capabilities(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
-    void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::MediaConstraints&);
+    void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, WebCore::MediaConstraints&&);
     void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID, WebCore::PageIdentifier);
     void endProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void setShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier, bool shouldApplyRotation);
     void setIsInBackground(WebCore::RealtimeMediaSourceIdentifier, bool);
 
-    using GetPhotoCapabilitiesCallback = CompletionHandler<void(WebCore::PhotoCapabilitiesOrError&&)>;
-    void getPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier, GetPhotoCapabilitiesCallback&& handler);
+    using TakePhotoCallback = CompletionHandler<void(Expected<std::pair<Vector<uint8_t>, String>, String>&&)>;
+    void takePhoto(WebCore::RealtimeMediaSourceIdentifier, WebCore::PhotoSettings&&, TakePhotoCallback&&);
+
+    using GetPhotoCapabilitiesCallback = CompletionHandler<void(Expected<WebCore::PhotoCapabilities, String>&&)>;
+    void getPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier, GetPhotoCapabilitiesCallback&&);
+
+    using GetPhotoSettingsCallback = CompletionHandler<void(Expected<WebCore::PhotoSettings, String>&&)>;
+    void getPhotoSettings(WebCore::RealtimeMediaSourceIdentifier, GetPhotoSettingsCallback&&);
 
     WebCore::CaptureSourceOrError createMicrophoneSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints*, WebCore::PageIdentifier);
     WebCore::CaptureSourceOrError createCameraSource(const WebCore::CaptureDevice&, WebCore::MediaDeviceHashSalts&&, WebCore::PageIdentifier);
+
+    using SerialAction = Function<Ref<GenericPromise>()>;
+    void queueAndProcessSerialAction(SerialAction&&);
 
     class SourceProxy;
     friend class SourceProxy;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<SourceProxy>> m_proxies;
     UniqueRef<ConnectionProxy> m_connectionProxy;
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
+    Ref<GenericPromise> m_pendingAction { GenericPromise::createAndResolve() };
 
     struct PageSources {
         ThreadSafeWeakPtr<WebCore::RealtimeMediaSource> microphoneSource;

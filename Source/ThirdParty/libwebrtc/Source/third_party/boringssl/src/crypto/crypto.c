@@ -78,6 +78,11 @@ HIDDEN uint8_t BORINGSSL_function_hit[7] = {0};
 // This value must be explicitly initialized to zero. See similar comment above.
 HIDDEN uint32_t OPENSSL_ia32cap_P[4] = {0};
 
+uint32_t OPENSSL_get_ia32cap(int idx) {
+  CRYPTO_library_init();
+  return OPENSSL_ia32cap_P[idx];
+}
+
 #elif defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
 
 #include <openssl/arm_arch.h>
@@ -116,9 +121,15 @@ HIDDEN uint32_t OPENSSL_armcap_P =
 HIDDEN uint32_t OPENSSL_armcap_P = 0;
 
 uint32_t *OPENSSL_get_armcap_pointer_for_test(void) {
+  CRYPTO_library_init();
   return &OPENSSL_armcap_P;
 }
 #endif
+
+uint32_t OPENSSL_get_armcap(void) {
+  CRYPTO_library_init();
+  return OPENSSL_armcap_P;
+}
 
 #endif
 

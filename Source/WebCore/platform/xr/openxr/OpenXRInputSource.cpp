@@ -142,9 +142,9 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
     return XR_SUCCESS;
 }
 
-std::optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpace localSpace, const XrFrameState& frameState) const
+std::optional<FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpace localSpace, const XrFrameState& frameState) const
 {
-    Device::FrameData::InputSource data;
+    FrameData::InputSource data;
     data.handeness = m_handeness;
     data.handle = m_handle;
     data.targetRayMode = XRTargetRayMode::TrackedPointer;
@@ -152,12 +152,12 @@ std::optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(
 
     // Pose transforms.
     getPose(m_pointerSpace, localSpace, frameState, data.pointerOrigin);
-    Device::FrameData::InputSourcePose gripPose;
+    FrameData::InputSourcePose gripPose;
     if (XR_SUCCEEDED(getPose(m_gripSpace, localSpace, frameState, gripPose)))
         data.gripOrigin = gripPose;
 
     // Buttons.
-    Vector<std::optional<Device::FrameData::InputSourceButton>> buttons;
+    Vector<std::optional<FrameData::InputSourceButton>> buttons;
     for (auto& type : openXRButtonTypes) 
         buttons.append(getButton(type));
 
@@ -277,7 +277,7 @@ XrResult OpenXRInputSource::createBinding(const char* profilePath, XrAction acti
     return XR_SUCCESS;
 }
 
-XrResult OpenXRInputSource::getPose(XrSpace space, XrSpace baseSpace, const XrFrameState& frameState, Device::FrameData::InputSourcePose& pose) const
+XrResult OpenXRInputSource::getPose(XrSpace space, XrSpace baseSpace, const XrFrameState& frameState, FrameData::InputSourcePose& pose) const
 {
     auto location = createStructure<XrSpaceLocation, XR_TYPE_SPACE_LOCATION>();
     RETURN_RESULT_IF_FAILED(xrLocateSpace(space, baseSpace, frameState.predictedDisplayTime, &location), m_instance);
@@ -289,13 +289,13 @@ XrResult OpenXRInputSource::getPose(XrSpace space, XrSpace baseSpace, const XrFr
     return XR_SUCCESS;
 }
 
-std::optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton(OpenXRButtonType buttonType) const
+std::optional<FrameData::InputSourceButton> OpenXRInputSource::getButton(OpenXRButtonType buttonType) const
 {
     auto it = m_buttonActions.find(buttonType);
     if (it == m_buttonActions.end())
         return std::nullopt;
 
-    Device::FrameData::InputSourceButton result;
+    FrameData::InputSourceButton result;
     bool hasValue = false;
     auto& actions = it->value;
 

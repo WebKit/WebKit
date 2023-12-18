@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class KeyframeList;
+class BlendingKeyframes;
 class PaintedContentsInfo;
 class RegionContext;
 class RenderLayerCompositor;
@@ -62,18 +62,14 @@ public:
     explicit RenderLayerBacking(RenderLayer&);
     ~RenderLayerBacking();
 
-#if PLATFORM(IOS_FAMILY)
-    void layerWillBeDestroyed();
-#endif
-
     // Do cleanup while layer->backing() is still valid.
     void willBeDestroyed();
 
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
     // Included layers are non-z-order descendant layers that are painted into this backing.
-    const WeakListHashSet<RenderLayer>& backingSharingLayers() const { return m_backingSharingLayers; }
-    void setBackingSharingLayers(WeakListHashSet<RenderLayer>&&);
+    const SingleThreadWeakListHashSet<RenderLayer>& backingSharingLayers() const { return m_backingSharingLayers; }
+    void setBackingSharingLayers(SingleThreadWeakListHashSet<RenderLayer>&&);
 
     bool hasBackingSharingLayers() const { return !m_backingSharingLayers.isEmptyIgnoringNullReferences(); }
 
@@ -138,6 +134,8 @@ public:
             return 0;
         case ScrollCoordinationRole::FrameHosting:
             return m_frameHostingNodeID;
+        case ScrollCoordinationRole::PluginHosting:
+            return m_pluginHostingNodeID;
         case ScrollCoordinationRole::ViewportConstrained:
             return m_viewportConstrainedNodeID;
         case ScrollCoordinationRole::Positioning:
@@ -177,7 +175,7 @@ public:
     void contentChanged(ContentChangeType);
 
     // Interface to start, finish, suspend and resume animations
-    bool startAnimation(double timeOffset, const Animation&, const KeyframeList&);
+    bool startAnimation(double timeOffset, const Animation&, const BlendingKeyframes&);
     void animationPaused(double timeOffset, const String& name);
     void animationFinished(const String& name);
     void transformRelatedPropertyDidChange();
@@ -273,12 +271,12 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
     GraphicsLayer* overflowControlsContainer() const { return m_overflowControlsContainer.get(); }
 
+    GraphicsLayer* layerForContents() const;
+
     void adjustOverflowControlsPositionRelativeToAncestor(const RenderLayer&);
 
     bool canCompositeFilters() const { return m_canCompositeFilters; }
-#if ENABLE(FILTERS_LEVEL_2)
     bool canCompositeBackdropFilters() const { return m_canCompositeBackdropFilters; }
-#endif
 
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     WEBCORE_EXPORT double backingStoreMemoryEstimate() const;
@@ -348,10 +346,8 @@ private:
     void updateTransform(const RenderStyle&);
     void updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer);
     void updateFilters(const RenderStyle&);
-#if ENABLE(FILTERS_LEVEL_2)
     void updateBackdropFilters(const RenderStyle&);
     void updateBackdropFiltersGeometry();
-#endif
     bool updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
@@ -414,7 +410,7 @@ private:
     RenderLayer& m_owningLayer;
     
     // A list other layers that paint into this backing store, later than m_owningLayer in paint order.
-    WeakListHashSet<RenderLayer> m_backingSharingLayers;
+    SingleThreadWeakListHashSet<RenderLayer> m_backingSharingLayers;
 
     std::unique_ptr<LayerAncestorClippingStack> m_ancestorClippingStack; // Only used if we are clipped by an ancestor which is not a stacking context.
     std::unique_ptr<LayerAncestorClippingStack> m_overflowControlsHostLayerAncestorClippingStack; // Used when we have an overflow controls host layer which was reparented, and needs clipping by ancestors.
@@ -443,6 +439,7 @@ private:
     ScrollingNodeID m_viewportConstrainedNodeID { 0 };
     ScrollingNodeID m_scrollingNodeID { 0 };
     ScrollingNodeID m_frameHostingNodeID { 0 };
+    ScrollingNodeID m_pluginHostingNodeID { 0 };
     ScrollingNodeID m_positioningNodeID { 0 };
 
     bool m_artificiallyInflatedBounds { false }; // bounds had to be made non-zero to make transform-origin work
@@ -450,9 +447,7 @@ private:
     bool m_isFrameLayerWithTiledBacking { false };
     bool m_requiresOwnBackingStore { true };
     bool m_canCompositeFilters { false };
-#if ENABLE(FILTERS_LEVEL_2)
     bool m_canCompositeBackdropFilters { false };
-#endif
     bool m_backgroundLayerPaintsFixedRootBackground { false };
     bool m_requiresBackgroundLayer { false };
     bool m_hasSubpixelRounding { false };

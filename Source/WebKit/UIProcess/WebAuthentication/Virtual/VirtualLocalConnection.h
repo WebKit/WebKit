@@ -41,7 +41,6 @@ public:
 private:
     void verifyUser(const String&, WebCore::ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&&) final;
     void verifyUser(SecAccessControlRef, LAContext *, CompletionHandler<void(UserVerification)>&&) final;
-    void getAttestation(SecKeyRef, NSData *authData, NSData *hash, AttestationCallback&&) const final;
     void filterResponses(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&) const final;
 
     VirtualAuthenticatorConfiguration m_configuration;

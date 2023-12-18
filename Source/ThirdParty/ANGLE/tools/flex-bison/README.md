@@ -17,7 +17,7 @@ simultaneously. Note that we don't currently support Mac for generating the
 lexer and parser files. If we do we should add a flex/bison download for Mac
 as well.
 
-Contact jmadill or syoussefi for any help with updating the binaries.
+Contact syoussefi for any help with updating the binaries.
 
 ## Updating flex and bison binaries
 

@@ -6,7 +6,7 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 sources:
-- kind: git
+- kind: git_repo
   url: github_com:sctplab/usrsctp.git
   ref: 17983b032c3f0e33523972e534b18df832922800
 variables:

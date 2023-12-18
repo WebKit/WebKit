@@ -110,7 +110,7 @@ void WebSharedWorkerContextManagerConnection::launchSharedWorker(WebCore::Client
 
     pageConfiguration.clientForMainFrame = UniqueRef<WebCore::LocalFrameLoaderClient>(makeUniqueRef<RemoteWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, m_userAgent));
 
-    auto page = makeUniqueRef<WebCore::Page>(WTFMove(pageConfiguration));
+    Ref page = WebCore::Page::create(WTFMove(pageConfiguration));
     if (m_preferencesStore) {
         WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
         page->settings().setStorageBlockingPolicy(static_cast<WebCore::StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));

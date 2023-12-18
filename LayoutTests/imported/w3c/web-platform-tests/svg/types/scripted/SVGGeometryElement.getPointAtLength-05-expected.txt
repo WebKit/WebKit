@@ -1,0 +1,14 @@
+
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, path with display: default and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, path with display: none and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, rect with display: default and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+PASS SVGGeometryElement.getPointAtLength: 'display' and empty path, rect with display: none and an empty path
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, circle with display: default and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+PASS SVGGeometryElement.getPointAtLength: 'display' and empty path, circle with display: none and an empty path
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, polygon with display: default and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+PASS SVGGeometryElement.getPointAtLength: 'display' and empty path, polygon with display: none and an empty path
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, polyline with display: default and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+PASS SVGGeometryElement.getPointAtLength: 'display' and empty path, polyline with display: none and an empty path
+FAIL SVGGeometryElement.getPointAtLength: 'display' and empty path, ellipse with display: default and an empty path assert_throws_dom: function "function() { element.getPointAtLength(300); }" did not throw
+PASS SVGGeometryElement.getPointAtLength: 'display' and empty path, ellipse with display: none and an empty path
+

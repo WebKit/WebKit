@@ -24,18 +24,9 @@
 
 namespace WebCore {
 
-unsigned TextureMapperBackingStore::calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect)
+bool TextureMapperBackingStore::allTileEdgesExposed(const FloatRect& totalRect, const FloatRect& tileRect)
 {
-    unsigned exposedEdges = TextureMapper::NoEdges;
-    if (!tileRect.x())
-        exposedEdges |= TextureMapper::LeftEdge;
-    if (!tileRect.y())
-        exposedEdges |= TextureMapper::TopEdge;
-    if (tileRect.width() + tileRect.x() >= totalRect.width())
-        exposedEdges |= TextureMapper::RightEdge;
-    if (tileRect.height() + tileRect.y() >= totalRect.height())
-        exposedEdges |= TextureMapper::BottomEdge;
-    return exposedEdges;
+    return !tileRect.x() && !tileRect.y() && tileRect.width() + tileRect.x() >= totalRect.width() && tileRect.height() + tileRect.y() >= totalRect.height();
 }
 
 } // namespace WebCore

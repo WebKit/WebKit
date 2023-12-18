@@ -41,10 +41,27 @@ class TestPullRequest(unittest.TestCase):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
-                message='[scoping] Bug to fix\n\nReviewed by Tim Contributor.\n',
+                message='[scoping] Bug to fix\nhttps://bugs.webkit.org/1234\nrdar://1234\n\nReviewed by Tim Contributor.\n',
             )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 <pre>
 [scoping] Bug to fix
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+<a href="https://rdar.apple.com/1234">rdar://1234</a>
+
+Reviewed by Tim Contributor.
+</pre>''',
+        )
+
+    def test_create_body_single_linked_punctuation(self):
+        self.assertEqual(
+            PullRequest.create_body(None, [Commit(
+                hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
+                message='[scoping] Bug to fix\nhttps://bugs.webkit.org/1234\n(rdar://1234)\n\nReviewed by Tim Contributor.\n',
+            )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+(<a href="https://rdar.apple.com/1234">rdar://1234</a>)
 
 Reviewed by Tim Contributor.
 </pre>''',
@@ -75,7 +92,7 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
-    def test_parse_body_single(self):
+    def test_parse_body_single_ews(self):
         body, commits = PullRequest.parse_body('''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
 ```
 [scoping] Bug to fix
@@ -120,7 +137,7 @@ Reviewed by Tim Contributor.
 #### ccc39e76f938a1685e388991fc3127a85d0be0f0
 <pre>
 [scoping] Bug to fix (Part 1)
-&lt;rdar:///1234&gt;
+&lt;<a href="https://rdar.apple.com//1234">rdar:///1234</a>&gt;
 
 Reviewed by Tim Contributor.
 </pre>''',
@@ -273,6 +290,23 @@ Reviewed by Tim Contributor.
         self.assertEqual(len(commits), 1)
         self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
+
+    def test_parse_html_body_single_links(self):
+        body, commits = PullRequest.parse_body('''Comment body
+
+----------------------------------------------------------------------
+#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+<a href="https://rdar.apple.com/1234">rdar://1234</a>
+
+Reviewed by Tim Contributor.
+</pre>''')
+        self.assertEqual(body, 'Comment body')
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].hash, '11aa76f9fc380e9fe06157154f32b304e8dc4749')
+        self.assertEqual(commits[0].message, '[scoping] Bug to fix\nhttps://bugs.webkit.org/1234\nrdar://1234\n\nReviewed by Tim Contributor.')
 
     def test_parse_html_body_single_ews(self):
         body, commits = PullRequest.parse_body('''Comment body
@@ -864,7 +898,6 @@ No pre-PR checks to run""")
         )
 
     def test_github_number_reentrance(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
                 projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
                 self.BUGZILLA.split('://')[-1],
@@ -1174,7 +1207,6 @@ No pre-PR checks to run""")
             self.assertEqual(gh_issue.project, 'WebKit')
             self.assertEqual(gh_issue.component, 'Scrolling')
 
-        self.maxDiff = None
         self.assertEqual(
             captured.stdout.getvalue(),
             "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
@@ -1981,6 +2013,13 @@ Reviewed by NOBODY (OOPS!).
                 issue=dict(href='https://{}/issues/1'.format(result.api_remote)),
             ), draft=False,
         )]
+
+        result.statuses['95507e3a1a4a'] = PullRequest.Status.Encoder().default([
+            PullRequest.Status(name='test-webkitpy', status='pending', description='Running...'),
+            PullRequest.Status(name='test-webkitcorepy', status='success', description='Finished!'),
+            PullRequest.Status(name='test-webkitscmpy', status='failure', description='Failed webkitscmpy.test.pull_request_unittest.TestNetworkPullRequestGitHub.test_status'),
+        ])
+
         return result
 
     def test_find(self):
@@ -2047,6 +2086,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.comments, [])
             pr.comment('Commenting!')
             self.assertEqual([c.content for c in pr.comments], ['Commenting!'])
+            self.assertTrue(all([isinstance(c.timestamp, int) for c in pr.comments]))
 
     def test_open_close(self):
         with self.webserver():
@@ -2068,6 +2108,17 @@ Reviewed by NOBODY (OOPS!).
             pr.review(comment='Looks good!', approve=True)
             self.assertEqual(pr.comments[-1].content, 'Looks good!')
             self.assertEqual(len(pr.approvers), 2)
+
+    def test_status(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(len(pr.statuses), 3)
+            self.assertEqual(
+                [pr.status for pr in pr.statuses],
+                ['pending', 'success', 'failure'],
+            )
+
 
 
 class TestNetworkPullRequestBitBucket(unittest.TestCase):
@@ -2120,6 +2171,13 @@ Reviewed by NOBODY (OOPS!).
                 ),
             ],
         )]
+
+        result.statuses['95507e3a1a4a'] = PullRequest.Status.Encoder().default([
+            PullRequest.Status(name='test-webkitpy', status='pending', description='Running...'),
+            PullRequest.Status(name='test-webkitcorepy', status='success', description='Finished!'),
+            PullRequest.Status(name='test-webkitscmpy', status='failure', description='Failed webkitscmpy.test.pull_request_unittest.TestNetworkPullRequestGitHub.test_status'),
+        ])
+
         return result
 
     def test_find(self):
@@ -2205,3 +2263,13 @@ Reviewed by NOBODY (OOPS!).
 
             self.assertEqual(pr.comments[-1].content, 'Looks good!')
             self.assertEqual(len(pr.approvers), 2)
+
+    def test_status(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(len(pr.statuses), 3)
+            self.assertEqual(
+                [pr.status for pr in pr.statuses],
+                ['pending', 'success', 'failure'],
+            )

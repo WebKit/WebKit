@@ -18,7 +18,7 @@ editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-or
 editing/pasteboard/data-transfer-set-data-sanitize-url-when-dragging-in-null-origin.html [ Pass ]
 editing/pasteboard/data-transfer-item-list-add-file-on-drag.html [ Pass ]
 editing/pasteboard/datatransfer-items-drop-plaintext-file-promise.html [ Pass ]
-webkit.org/b/261318 editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Pass Failure ] # change this back to "Pass" once fixed
+editing/pasteboard/datatransfer-types-dropping-text-file-promise.html [ Pass ]
 editing/pasteboard/drag-drop-href-as-url.html [ Pass ]
 editing/pasteboard/drag-end-crash-accessing-item-list.html [ Pass ]
 editing/pasteboard/drag-file-promises-to-editable-element-as-URLs.html [ Pass ]
@@ -40,6 +40,7 @@ imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-x
 
 webkit.org/b/235072 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-repeating.html [ Skip ]
 
+http/tests/webcodecs [ Skip ]
 http/wpt/webcodecs [ Skip ]
 imported/w3c/web-platform-tests/webcodecs [ Skip ]
 
@@ -74,6 +75,7 @@ media/audio-session-category-at-most-recent-playback.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-constructor.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
+media/now-playing-status-for-video-conference-web-page.html [ Skip ]
 
 # Payment request API is not supported on WK1.
 imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
@@ -790,7 +792,7 @@ webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-repor
 
 # WebKitLegacy is flaky on reporting API
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Pass Failure ]
-webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure ]
+webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-with-text-editor.tentative.html [ Failure ]
 webkit.org/b/251618 imported/w3c/web-platform-tests/editing/other/exec-command-without-editable-element.tentative.html [ Failure ]
@@ -806,6 +808,7 @@ fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
 fast/speechrecognition/start-recognition-without-devices.html [ Skip ]
 
+accessibility/announcement-notification.html [ WontFix ]
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
@@ -838,7 +841,11 @@ accessibility/display-contents/aria-owns.html [ Skip ]
 accessibility/mac/text-field-number-of-characters.html [ Skip ]
 accessibility/mac/content-editable-attributed-string.html [ Skip ]
 accessibility/mac/lazy-spellchecking.html [ Skip ]
+accessibility/mac/spellcheck-with-voiceover.html [ Skip ]
 accessibility/text-marker/text-marker-range-with-unordered-markers.html
+
+# New API not supported in WK1
+accessibility/mac/intersection-with-selection-range.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
@@ -890,6 +897,10 @@ webkit.org/b/156069 http/tests/download/anchor-download-no-extension.html [ Skip
 webkit.org/b/156069 http/tests/download/anchor-download-redirect.html [ Skip ]
 webkit.org/b/156069 http/tests/download/anchor-load-after-download.html [ Skip ]
 webkit.org/b/156069 http/tests/download/area-download.html [ Skip ]
+webkit.org/b/156069 http/tests/download/sandboxed-iframe-download-allowed-in-popup-noopener.html [ Skip ]
+webkit.org/b/156069 http/tests/download/sandboxed-iframe-download-allowed-in-popup.html [ Skip ]
+webkit.org/b/156069 http/tests/download/sandboxed-iframe-download-allowed.html [ Skip ]
+webkit.org/b/156069 http/tests/download/sandboxed-iframe-download-not-allowed.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
 webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
@@ -1001,12 +1012,26 @@ platform/mac/media/media-source/media-source-change-source.html [ Skip ]
 media/now-playing-status-without-media.html [ Skip ]
 
 # WebM not supported in WK1 on macOS.
+http/tests/media/cross-origin-webm-video.html [ Skip ]
 http/tests/media/video-webm-stall.html
 media/W3C/video/canPlayType/canPlayType_codecs_order_1.html [ Failure ]
 media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html [ Failure ]
 media/W3C/video/canPlayType/canPlayType_two_implies_one_1.html [ Failure ]
 media/W3C/video/canPlayType/canPlayType_two_implies_one_2.html [ Failure ]
 media/media-can-play-webm.html [ Failure ]
+media/track/media-audio-track.html [ Failure ]
+
+# VP9/VP8 are not supported on WK1 and turned off by default
+media/media-source/media-source-webm-configuration-change.html [ Failure ]
+media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
+media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
+media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Failure ]
+
+# CRABS WebM isn't supported in WK1
+media/media-webm-opus-buffered.html [ Failure ]
+media/media-webm-opus-error.html [ Failure ]
+media/media-webm-opus-variable-length.html [ Failure ]
+media/media-webm-no-duration.html [ Failure ]
 
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
@@ -1014,6 +1039,9 @@ webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 # The CookieStore API is not fully implemented on macOS WK1 yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
+
+# View Transitions API is disabled in WK1.
+imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
@@ -1086,6 +1114,8 @@ imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?6001-7000 [ Slow ]
 imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
 
+imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html [ Failure ]
+
 # FIXME: Needs bugzilla (<rdar://problem/18273139>)
 storage/websql/sql-error-codes.html [ Failure ]
 
@@ -1102,7 +1132,7 @@ webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Cras
 
 webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [ Pass Timeout ]
 
-webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Timeout ]
+webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Slow Pass ]
 
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
@@ -1325,8 +1355,9 @@ webrtc/datachannel [ Pass ]
 webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
 webrtc/datachannel/filter-ice-candidate.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
-
 imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
+imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Failure ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
@@ -1396,21 +1427,16 @@ http/tests/multipart/multipart-async-image.html
 
 css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
-webkit.org/b/152178 fast/replaced/replaced-breaking.html [ Failure ]
-
 # DRT can open way more files than the DatabaseProcess with WebKitTestRunner, and the number is reasonable.
 # So we shouldn't bother with this test in WebKit1.
 storage/indexeddb/modern/exceed-open-file-limit.html
 
 # Only fails in WK1
-imported/w3c/web-platform-tests/cookies/secure/set-from-wss.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/secure/set-from-ws.sub.html [ Failure ]
 
 webkit.org/b/244308 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
 # WebKit1 frames use native scrollbars causing these tests to fail.
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-stop-change.html [ Failure ]
 
 # Lack of ways to control the cross-frame scroll chaining in WK1.
 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]
@@ -1492,9 +1518,6 @@ http/tests/download/convert-cached-load-to-download.html [ Skip ]
 
 webkit.org/b/157007 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ Pass ImageOnlyFailure ]
 
-# This test relies on a settings option that we can only set with WKRT.
-js/dom/regress-157246.html
-
 # dumpPolicyDelegateCallbacks is not supported in DumpRenderTree
 fast/loader/iframe-src-invalid-url.html [ Skip ]
 
@@ -1533,6 +1556,7 @@ accessibility/focusable-ancestor.html [ Skip ]
 
 # Missing AccessibilityUIElement::{editableAncestor, highestEditableAncestor} implementations.
 accessibility/editable-ancestor.html [ Skip ]
+accessibility/content-editable-property-change.html [ Skip ]
 
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way
 # to have platform specific results that are different between WK1 and WK2.
@@ -1543,6 +1567,7 @@ accessibility/parent-delete.html [ Failure ]
 accessibility/mac/basic-embed-pdf-accessibility.html [ Skip ]
 accessibility/mac/iframe-pdf.html [ Skip ]
 accessibility/mac/scrolling-in-pdf-crash.html [ Skip ]
+accessibility/mac/widget-visibility.html [ Skip ]
 
 # rdar://problem/26478296
 svg/hixie/text/003.html [ Failure ]
@@ -1554,8 +1579,6 @@ imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_server.html
 imported/w3c/web-platform-tests/navigation-timing/nav2_test_attributes_values.html [ Pass Failure ]
 
 webkit.org/b/244676 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/dom_interactive_media_document.html [ Pass Crash ]
-
-webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
 # rdar://problem/27723718
 imported/blink/compositing/child-transform-with-anchor-point.html [ ImageOnlyFailure ]
@@ -1573,8 +1596,6 @@ webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-fr
 webkit.org/b/163361 imported/w3c/web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html [ Pass Failure ]
 
 # Resource Metrics data not available in WebKit1.
-http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
-http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 http/tests/inspector/network/resource-request-headers.html [ Failure ]
 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 http/tests/inspector/network/resource-sizes-memory-cache.html [ Failure ]
@@ -1698,7 +1719,6 @@ webkit.org/b/172877 svg/as-image/svg-image-with-data-uri-background.html [ Pass 
 webkit.org/b/214760 imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating.svg [ Pass Failure ]
 
 # <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
 
 # <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
 svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
@@ -1812,7 +1832,7 @@ webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass I
 
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/190627 [ Monterey+ ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
+webkit.org/b/177397 [ Release ] compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ] # old: webkit.org/b/190627
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
 
@@ -1835,6 +1855,7 @@ webkit.org/b/199632 http/wpt/prefetch/load-events-dynamic.html [ Skip ]
 webkit.org/b/198177 pointerevents/mouse/compatibility-mouse-events-prevention-mouse-pressed.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-events-when-removing-nodes.html [ Skip ]
 
+webkit.org/b/198459 [ Debug ] inspector/canvas/recording-offscreen-webgl-full.html [ Slow ]
 webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
 
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
@@ -1844,10 +1865,12 @@ webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/repo
 webkit.org/b/199242 [ Debug ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Pass Failure ]
 
 # No support for reftest-wait in DRT.
-imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/range-setattribute-value.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-display/display-none-inline-img.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-compositing-change.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Skip ]
+
+# "reftest-wait" blocks attachment rendering.
+webkit.org/b/263367 fast/attachment/attachment-icon-from-file-extension.html [ Skip ]
+webkit.org/b/263367 fast/attachment/attachment-uti.html [ Skip ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
 fast/images/animated-heics-draw.html [ Skip ]
@@ -1859,8 +1882,6 @@ http/tests/is-logged-in/ [ Skip ]
 webkit.org/b/203305 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 
 # wpt css-position failures
-webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-change-top.html [ ImageOnlyFailure ]
-webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
@@ -1960,7 +1981,6 @@ webkit.org/b/230072 [ Release ] inspector/dom/shadow-and-non-shadow-children.htm
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
 webkit.org/b/251544 accessibility/date-input-aria-label-and-value.html [ Skip ]
 accessibility/mac/textmarker-range-for-range.html [ Skip ]
-accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 accessibility/aria-current-state-changed-notification.html [ Skip ]
 accessibility/aria-current.html [ Skip ]
 accessibility/aria-sort-changed-notification.html [ Skip ]
@@ -1979,6 +1999,8 @@ accessibility/mac/mathml-elements.html [ Skip ]
 accessibility/mac/mathml-root.html [ Skip ]
 accessibility/deep-tree.html [ Skip ]
 accessibility/mac/table-wrapped-by-role-grid.html [ Skip ]
+accessibility/aria-labeled-with-hidden-node.html [ Skip ]
+accessibility/text-alternative-calculation-from-unrendered-table.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
@@ -2017,13 +2039,10 @@ fast/forms/ua-shadow-select-all-crash.html
 # New failure after update of WPT tests in bug 214278
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-htb-in-vrl-013.xht [ ImageOnlyFailure ]
 
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-change-margin.html [ ImageOnlyFailure ]
 
 webkit.org/b/214308 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html [ Pass Failure ]
 
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
-webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-overflow/overflow-ellipsis-dynamic-001.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-fixed-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-scroll-reposition.html [ ImageOnlyFailure ]
@@ -2073,11 +2092,7 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # <rdar://problem/63022026> REGRESSION: [ 20A267-20A279 ]: multiple fast tests are failing with scrolling related diffs.
 [ Monterey+ ] fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
-[ Monterey+ ] fast/multicol/pagination/RightToLeft-tb.html [ Failure ]
-[ Monterey+ ] fast/multicol/pagination/RightToLeft-rl.html [ Failure ]
 
-# rdar://66868787 ([ Layout Tests ] REGRESSION: fast/images/image-copy-memory-usage.html is a flaky failure)
-[ Monterey+ ] fast/images/image-copy-memory-usage.html [ Failure ]
 
 # rdar://65642935 15 canvas layout tests consistently failing
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
@@ -2189,9 +2204,6 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ Monterey arm64 ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
-
-# rdar://80343074 ([ Mac wk1 ] http/tests/websocket/tests/hybi/client-close-2.html [ Failure ])
-http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 
 # webkit.org/b/221300 Updating tests expectations for 3 tests
 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
@@ -2353,8 +2365,6 @@ webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-qu
 
 webkit.org/b/237783 imported/w3c/web-platform-tests/html/semantics/forms/input-change-event-properties.html [ Timeout ]
 
-webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
-
 # Flaky since their import.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/window-open-self-during-load.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/window-open-self-during-pageshow.html [ Failure Pass ]
@@ -2369,7 +2379,6 @@ fast/text/glyph-display-lists [ Skip ]
 # rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
 webgl [ Skip ]
 
-webkit.org/b/231298 accessibility/mac/selection-boundary-userinfo.html [ Failure ]
 webkit.org/b/232630 fast/forms/autofocus-opera-003.html [ Failure ]
 
 webkit.org/b/240841 fast/forms/scroll-into-view-and-show-validation-message.html [ Pass Failure ]
@@ -2429,7 +2438,6 @@ webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.ht
 
 webkit.org/b/244372 imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html [ Pass Failure ]
 
-webkit.org/b/244404 js/dom/modules/missing-exception-check-for-import.html [ Crash ]
 
 webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
 
@@ -2477,6 +2485,10 @@ http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-me
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
@@ -2542,7 +2554,7 @@ fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Skip ]
 
 # webgpu is being brought up in the GPU process, radar://106507574 tracks fixing WK1
-http/tests/webgpu/webgpu/api/operation/buffers/map.html [ Skip ]
+http/tests/webgpu [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-shared-stylesheet.html [ ImageOnlyFailure ]
@@ -2591,15 +2603,15 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 # rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
 fast/html/transient-activation.html [ Skip ]
 
-webkit.org/b/259485 [ Ventura ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
+webkit.org/b/259485 [ Ventura+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
 
-webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Crash Timeout ]
+webkit.org/b/259546 [ Debug ] media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html [ Skip ]
 
 webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-descendants.html [ Pass Failure ]
 webkit.org/b/260070 fast/selectors/style-invalidation-hover-change-siblings.html [ Failure ]
 
 webkit.org/b/260107 [ Debug ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Skip ]
-webkit.org/b/260111 [ Ventura Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Failure ]
+webkit.org/b/260111 [ Ventura+ Release ] http/wpt/workers/modules/dedicated-worker-import-csp.html [ Pass Failure ]
 
 webkit.org/b/260280 fullscreen/fullscreen-no-scrollbars-on-ancestor-root.html [ ImageOnlyFailure ]
 
@@ -2620,15 +2632,13 @@ webkit.org/b/260360 inspector/timeline/timeline-event-TimerFire.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerInstall.html [ Failure ]
 webkit.org/b/260360 inspector/timeline/timeline-event-TimerRemove.html [ Failure ]
 
-webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Failure ]
+webkit.org/b/260883 [ Monterey+ ] inspector/timeline/timeline-recording.html [ Skip ]
+
 # rdar://105177062 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/backdrop/add-remove-add-backdrop-filter.html is a consistent image failure)
 css3/filters/backdrop/add-remove-add-backdrop-filter.html [ Pass ImageOnlyFailure ]
 
 # rdar://105178122 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/filters/filter-mask-clip-order.html is a consistent image failure)
 css3/filters/filter-mask-clip-order.html [ ImageOnlyFailure ]
-
-# rdar://105178880 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] css3/masking/mask-base64.html is a consistent image failure)
-css3/masking/mask-base64.html [ ImageOnlyFailure ]
 
 # rdar://105179850 (REGRESSION ( Sonoma ): [  Sonoma wk1 ] css3/masking/mask-repeat-space-content.html is a consistent image failure)
 css3/masking/mask-repeat-space-content.html [ Pass ImageOnlyFailure ]
@@ -2636,7 +2646,6 @@ css3/masking/mask-repeat-space-content.html [ Pass ImageOnlyFailure ]
 # rdar://105915702 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] Nine imported/w3c/web-platform-tests/css/css tests are a consistent failure)
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3f.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3g.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image-hash.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/subpixel-transform-changes-002.html [ ImageOnlyFailure ]
 
@@ -2651,7 +2660,7 @@ compositing/backing/solid-color-with-paints-into-ancestor.html [ Pass ImageOnlyF
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Timeout ]
 
 # rdar://111398769 (REGRESSION (265250@main): [ macOS ] fast/mediastream/device-change-event-2.html is a consistent failure)
-fast/mediastream/device-change-event-2.html [ Failure ]
+fast/mediastream/device-change-event-2.html [ Skip ]
 
 # Initial css/compositing test import
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-with-text.html [ Pass ]
@@ -2666,6 +2675,8 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-paragraph.html [ ImageOnlyFailure ]
 
 webkit.org/b/261305 [ Monterey+ Debug ] editing/inserting/break-out-of-nested-lists.html [ Crash ]
+
+fast/forms/select/select-show-picker.html [ Skip ]
 
 # webkit.org/b/261304 Batch mark expectations for flaky media tests
 [ Monterey+ ] http/tests/media/fairplay/legacy-fairplay-hls.html [ Pass Failure ]
@@ -2696,5 +2707,28 @@ webkit.org/b/262340 [ Sonoma ] compositing/repaint/iframes/compositing-iframe-wi
 # rdar://113991102 (REGRESSION ( Sonoma ): [ Sonoma ] 10 fast/text/canvas-color-fonts/..COLR tests are a consistent image failure)
 [ Sonoma+ ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ ImageOnlyFailure ]
 
-# rdar://114345450 (REGRESSION ( Sonoma ): [ Sonoma wk1 ] fast/images/animated-webp-as-image.html is a consistent failure)
-[ Sonoma+ ] fast/images/animated-webp-as-image.html [ ImageOnlyFailure ]
+fast/events/cancel-mousedown-and-drag-from-frame-to-other-frame.html [ Failure ]
+fast/events/cancel-mousedown-and-drag-to-frame.html [ Failure ]
+
+# SVG gradients are not bit-for-bit equivalent through a scale.
+webkit.org/b/142192 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+
+# rdar://117432620 [ arm64 ] 2 tests in imported/w3c/web-platform-tests/css/css-backgrounds/background-size have constant image failure
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+
+# webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]
+
+fast/css/transform-function-perspective-crash.html [ Failure ]
+
+webkit.org/b/265535 inspector/layers/layers-for-node.html [ Pass Timeout ]
+
+webkit.org/b/265783 fast/ruby/ruby-line-height.html [ Skip ]
+webkit.org/b/265783 accessibility/mac/ruby-hierarchy-roles.html [ Skip ]
+
+webkit.org/b/266184 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
+
+# webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
+imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]

@@ -203,7 +203,7 @@ public:
             m_floatingTerm.addCharacter(static_cast<UChar>(i), m_patternIsCaseSensitive);
     }
 
-    void atomClassStringDisjunction(Vector<Vector<UChar32>>)
+    void atomClassStringDisjunction(Vector<Vector<char32_t>>)
     {
         fail(URLFilterParser::AtomCharacter);
     }

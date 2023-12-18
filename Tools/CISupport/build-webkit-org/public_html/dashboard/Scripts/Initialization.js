@@ -25,8 +25,7 @@
 
 var settings = new Settings;
 var buildbots = [ new WebKitBuildbot ];
-Dashboard.Repository.OpenSource.commits = new Commits("https://commits.webkit.org/");
-Dashboard.Repository.OpenSource.trac = new Trac("https://trac.webkit.org/");
+Dashboard.Repository.OpenSource.commitStore = new CommitsWebKitOrg("https://commits.webkit.org/");
 if (typeof Bugzilla !== "undefined")
     var bugzilla = new Bugzilla;
 if (typeof BubbleQueueServer !== "undefined")

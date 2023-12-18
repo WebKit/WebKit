@@ -39,8 +39,6 @@ class Encoder;
 namespace WebKit {
 
 struct GPUProcessCreationParameters {
-    GPUProcessCreationParameters();
-
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices { false };
@@ -68,17 +66,11 @@ struct GPUProcessCreationParameters {
 #endif
 
     String applicationVisibleName;
-#if PLATFORM(COCOA)
-    bool strictSecureDecodingForAllObjCEnabled { false };
-#endif
 
 #if USE(GBM)
     String renderDeviceFile;
 #endif
     Vector<String> overrideLanguages;
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, GPUProcessCreationParameters&);
 };
 
 } // namespace WebKit

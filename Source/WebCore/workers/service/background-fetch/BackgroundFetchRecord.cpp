@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchRecord.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchRecordInformation.h"
 #include "FetchRequest.h"
 #include "JSFetchResponse.h"
@@ -60,7 +58,3 @@ void BackgroundFetchRecord::settleResponseReadyPromise(ExceptionOr<Ref<FetchResp
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)
-
-

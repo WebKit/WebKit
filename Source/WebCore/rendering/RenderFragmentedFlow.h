@@ -43,9 +43,9 @@ class RenderStyle;
 class RenderFragmentContainer;
 class LegacyRootInlineBox;
 
-typedef WeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
-typedef Vector<WeakPtr<RenderLayer>> RenderLayerList;
-typedef HashMap<const LegacyRootInlineBox*, WeakPtr<RenderFragmentContainer>> ContainingFragmentMap;
+typedef SingleThreadWeakListHashSet<RenderFragmentContainer> RenderFragmentContainerList;
+typedef Vector<SingleThreadWeakPtr<RenderLayer>> RenderLayerList;
+typedef HashMap<const LegacyRootInlineBox*, SingleThreadWeakPtr<RenderFragmentContainer>> ContainingFragmentMap;
 
 // RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -91,8 +91,6 @@ public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void repaintRectangleInFragments(const LayoutRect&) const;
-    
-    LayoutPoint adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject&, const LayoutPoint&) const;
 
     LayoutUnit pageLogicalTopForOffset(LayoutUnit) const;
     LayoutUnit pageLogicalWidthForOffset(LayoutUnit) const;
@@ -226,8 +224,8 @@ protected:
         void clearRangeInvalidated() { m_rangeInvalidated = false; }
 
     private:
-        WeakPtr<RenderFragmentContainer> m_startFragment;
-        WeakPtr<RenderFragmentContainer> m_endFragment;
+        SingleThreadWeakPtr<RenderFragmentContainer> m_startFragment;
+        SingleThreadWeakPtr<RenderFragmentContainer> m_endFragment;
         bool m_rangeInvalidated;
     };
 
@@ -247,7 +245,7 @@ protected:
     RenderBoxToFragmentMap m_breakBeforeToFragmentMap;
     RenderBoxToFragmentMap m_breakAfterToFragmentMap;
 
-    using FragmentIntervalTree = PODIntervalTree<LayoutUnit, WeakPtr<RenderFragmentContainer>>;
+    using FragmentIntervalTree = PODIntervalTree<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>;
     FragmentIntervalTree m_fragmentIntervalTree;
 
     CurrentRenderFragmentContainerMaintainer* m_currentFragmentMaintainer;

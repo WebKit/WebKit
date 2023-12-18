@@ -44,13 +44,12 @@
     await test_driver.bless("request full screen", null, iframe.contentWindow);
     await iframe.contentDocument.documentElement.requestFullscreen();
     const orientation = getOppositeOrientation();
-    const p = iframe.contentWindow.screen.orientation.lock(orientation);
+    const lockPromise = iframe.contentWindow.screen.orientation.lock(orientation);
     const frameDOMException = iframe.contentWindow.DOMException;
     await new Promise((r) => {
       iframe.addEventListener("load", r, { once: true });
-      iframe.contentWindow.location.href =
-        "./resources/empty.html?" + Math.random();
+      iframe.contentWindow.location.href = "about:blank";
     });
-    await promise_rejects_dom(t, "AbortError", frameDOMException, p);
+    await promise_rejects_dom(t, "AbortError", frameDOMException, lockPromise);
   }, "Unloading an iframe by navigating it must abort the lock promise");
 </script>

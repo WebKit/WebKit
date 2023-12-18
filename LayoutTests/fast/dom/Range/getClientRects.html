@@ -442,11 +442,7 @@
     range12.setEndBefore(document.getElementById('test12').firstChild);
     show(range12);
     rects = range12.getClientRects();
-    shouldBe("rects.length", "1");
-    shouldBeEqualToString("rects[0].left.toFixed(2)", "8.00");
-    shouldBeEqualToString("rects[0].top.toFixed(2)", "2840.00");
-    shouldBeEqualToString("rects[0].width.toFixed(2)", "400.00");
-    shouldBeEqualToString("rects[0].height.toFixed(2)", "160.00");
+    shouldBe("rects.length", "0");
 
     // Test 13
     debug("Test 13");

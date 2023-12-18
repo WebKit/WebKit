@@ -38,10 +38,10 @@ class ExtendBorderTest
     : public VpxScaleBase,
       public ::testing::TestWithParam<ExtendFrameBorderFunc> {
  public:
-  virtual ~ExtendBorderTest() {}
+  ~ExtendBorderTest() override = default;
 
  protected:
-  virtual void SetUp() { extend_fn_ = GetParam(); }
+  void SetUp() override { extend_fn_ = GetParam(); }
 
   void ExtendBorder() { ASM_REGISTER_STATE_CHECK(extend_fn_(&img_)); }
 
@@ -68,10 +68,10 @@ INSTANTIATE_TEST_SUITE_P(C, ExtendBorderTest,
 class CopyFrameTest : public VpxScaleBase,
                       public ::testing::TestWithParam<CopyFrameFunc> {
  public:
-  virtual ~CopyFrameTest() {}
+  ~CopyFrameTest() override = default;
 
  protected:
-  virtual void SetUp() { copy_frame_fn_ = GetParam(); }
+  void SetUp() override { copy_frame_fn_ = GetParam(); }
 
   void CopyFrame() {
     ASM_REGISTER_STATE_CHECK(copy_frame_fn_(&img_, &dst_img_));

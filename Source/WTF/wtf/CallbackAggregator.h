@@ -28,6 +28,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WTF {
@@ -62,7 +63,48 @@ private:
 using CallbackAggregator = CallbackAggregatorOnThread<DestructionThread::Any>;
 using MainRunLoopCallbackAggregator = CallbackAggregatorOnThread<DestructionThread::MainRunLoop>;
 
+// EagerCallbackAggregator ensures a callback is executed at its first opportunity, ignoring subsequent triggers.
+// It's particularly useful in situations where a callback might be triggered multiple times, but only the first
+// execution is necessary. If the callback hasn't been executed by the time of the aggregator's destruction,
+// it's automatically called with default parameters, ensuring a single, definitive execution.
+
+template<typename> class EagerCallbackAggregator;
+template <typename Out, typename... In>
+class EagerCallbackAggregator<Out(In...)> : public RefCounted<EagerCallbackAggregator<Out(In...)>> {
+public:
+    template<typename CallableType, class = typename std::enable_if<std::is_rvalue_reference<CallableType&&>::value>::type>
+    static Ref<EagerCallbackAggregator> create(CallableType&& callback, In... defaultArgs)
+    {
+        return adoptRef(*new EagerCallbackAggregator(std::forward<CallableType>(callback), std::forward<In>(defaultArgs)...));
+    }
+
+    Out operator()(In... args)
+    {
+        if (m_callback)
+            return m_callback(std::forward<In>(args)...);
+        return Out();
+    }
+
+    ~EagerCallbackAggregator()
+    {
+        if (m_callback)
+            std::apply(m_callback, m_defaultArgs);
+    }
+
+private:
+    template<typename CallableType>
+    explicit EagerCallbackAggregator(CallableType&& callback, In... defaultArgs)
+        : m_callback(std::forward<CallableType>(callback))
+        , m_defaultArgs(std::forward<In>(defaultArgs)...)
+    {
+    }
+
+    CompletionHandler<Out(In...)> m_callback;
+    std::tuple<In...> m_defaultArgs;
+};
+
 } // namespace WTF
 
 using WTF::CallbackAggregator;
 using WTF::MainRunLoopCallbackAggregator;
+using WTF::EagerCallbackAggregator;

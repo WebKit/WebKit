@@ -33,7 +33,7 @@ extern "C" {
 
 #define RESTORATION_PROC_UNIT_SIZE 64
 
-// Filter tile grid offset upwards compared to the superblock grid
+// Filter stripe grid offset upwards compared to the superblock grid
 #define RESTORATION_UNIT_OFFSET 8
 
 #define SGRPROJ_BORDER_VERT 3  // Vertical border used for Sgr
@@ -180,10 +180,6 @@ extern "C" {
 #error "Wiener filter currently only works if WIENER_FILT_PREC_BITS == 7"
 #endif
 
-#define LR_TILE_ROW 0
-#define LR_TILE_COL 0
-#define LR_TILE_COLS 1
-
 typedef struct {
   int r[2];  // radii
   int s[2];  // sgr parameters for r[0] and r[1], based on GenSgrprojVtable()
@@ -214,12 +210,6 @@ typedef struct {
 // margin of RESTORATION_EXTRA_HORZ on each side.
 #define RESTORATION_LINEBUFFER_WIDTH \
   (RESTORATION_UNITSIZE_MAX * 3 / 2 + 2 * RESTORATION_EXTRA_HORZ)
-
-// Similarly, the column buffers (used when we're at a vertical tile edge
-// that we can't filter across) need space for one processing unit's worth
-// of pixels, plus the top/bottom border width
-#define RESTORATION_COLBUFFER_HEIGHT \
-  (RESTORATION_PROC_UNIT_SIZE + 2 * RESTORATION_BORDER)
 
 typedef struct {
   // Temporary buffers to save/restore 3 lines above/below the restoration
@@ -266,32 +256,26 @@ typedef struct {
 
   /**
    * \name Fields allocated and initialised by av1_alloc_restoration_struct.
-   * (horz_)units_per_tile give the number of restoration units in
-   * (one row of) the largest tile in the frame.
    */
   /**@{*/
   /*!
-   * Number of units per tile for the largest tile in the frame
+   * Total number of restoration units in this plane
    */
-  int units_per_tile;
+  int num_rest_units;
 
   /*!
-   * Number of vertical units per tile
+   * Number of vertical restoration units in this plane
    */
-  int vert_units_per_tile;
+  int vert_units;
 
   /*!
-   * Number of horizontal units per tile for the largest tile in the frame
+   * Number of horizontal restoration units in this plane
    */
-  int horz_units_per_tile;
+  int horz_units;
   /**@}*/
 
   /*!
-   * List of info for units in tile.
-   * The data in unit_info is laid out with units_per_tile entries for each
-   * tile, which have stride horz_units_per_tile.
-   * Even if there are tiles of different sizes, the data in unit_info is
-   * laid out as if all tiles are of full size.
+   * Parameters for each restoration unit in this plane
    */
   RestorationUnitInfo *unit_info;
 
@@ -332,19 +316,17 @@ typedef struct {
 } RestorationTileLimits;
 
 typedef void (*rest_unit_visitor_t)(const RestorationTileLimits *limits,
-                                    const PixelRect *tile_rect,
                                     int rest_unit_idx, void *priv,
                                     int32_t *tmpbuf,
                                     RestorationLineBuffers *rlbs);
 
 typedef struct FilterFrameCtxt {
   const RestorationInfo *rsi;
-  int tile_stripe0;
   int ss_x, ss_y;
+  int plane_w, plane_h;
   int highbd, bit_depth;
   uint8_t *data8, *dst8;
   int data_stride, dst_stride;
-  PixelRect tile_rect;
 } FilterFrameCtxt;
 
 typedef struct AV1LrStruct {
@@ -380,10 +362,10 @@ void av1_decode_xq(const int *xqd, int *xq, const sgr_params_type *params);
  *                           coefficients
  * \param[in]  rsb           Deblocked pixels to use for stripe boundaries
  * \param[in]  rlbs          Space to use as a scratch buffer
- * \param[in]  tile_rect     Limits of the tile containing this unit
- * \param[in]  tile_stripe0  Index of the first stripe in this tile
  * \param[in]  ss_x          Horizontal subsampling for plane
  * \param[in]  ss_y          Vertical subsampling for plane
+ * \param[in]  plane_w       Width of the current plane
+ * \param[in]  plane_h       Height of the current plane
  * \param[in]  highbd        Whether high bitdepth pipeline is used
  * \param[in]  bit_depth     Bit-depth of the video
  * \param[in]  data8         Frame data (pointing at the top-left corner of
@@ -400,12 +382,14 @@ void av1_decode_xq(const int *xqd, int *xq, const sgr_params_type *params);
  * \remark Nothing is returned. Instead, the filtered unit is output in
  * \c dst8 at the proper restoration unit offset.
  */
-void av1_loop_restoration_filter_unit(
-    const RestorationTileLimits *limits, const RestorationUnitInfo *rui,
-    const RestorationStripeBoundaries *rsb, RestorationLineBuffers *rlbs,
-    const PixelRect *tile_rect, int tile_stripe0, int ss_x, int ss_y,
-    int highbd, int bit_depth, uint8_t *data8, int stride, uint8_t *dst8,
-    int dst_stride, int32_t *tmpbuf, int optimized_lr);
+void av1_loop_restoration_filter_unit(const RestorationTileLimits *limits,
+                                      const RestorationUnitInfo *rui,
+                                      const RestorationStripeBoundaries *rsb,
+                                      RestorationLineBuffers *rlbs, int plane_w,
+                                      int plane_h, int ss_x, int ss_y,
+                                      int highbd, int bit_depth, uint8_t *data8,
+                                      int stride, uint8_t *dst8, int dst_stride,
+                                      int32_t *tmpbuf, int optimized_lr);
 
 /*!\brief Function for applying loop restoration filter to a frame
  *
@@ -427,8 +411,6 @@ void av1_loop_restoration_filter_frame(YV12_BUFFER_CONFIG *frame,
 
 void av1_loop_restoration_precal();
 
-typedef void (*rest_tile_start_visitor_t)(int tile_row, int tile_col,
-                                          void *priv);
 struct AV1LrSyncData;
 
 typedef void (*sync_read_fn_t)(void *const lr_sync, int r, int c, int plane);
@@ -439,8 +421,7 @@ typedef void (*sync_write_fn_t)(void *const lr_sync, int r, int c,
 // Call on_rest_unit for each loop restoration unit in the plane.
 void av1_foreach_rest_unit_in_plane(const struct AV1Common *cm, int plane,
                                     rest_unit_visitor_t on_rest_unit,
-                                    void *priv, PixelRect *tile_rect,
-                                    int32_t *tmpbuf,
+                                    void *priv, int32_t *tmpbuf,
                                     RestorationLineBuffers *rlbs);
 
 // Return 1 iff the block at mi_row, mi_col with size bsize is a
@@ -448,10 +429,9 @@ void av1_foreach_rest_unit_in_plane(const struct AV1Common *cm, int plane,
 // loop restoration unit.
 //
 // If the block is a top-level superblock, the function writes to
-// *rcol0, *rcol1, *rrow0, *rrow1. The rectangle of restoration unit
-// indices given by [*rcol0, *rcol1) x [*rrow0, *rrow1) are relative
-// to the current tile, whose starting index is returned as
-// *tile_tl_idx.
+// *rcol0, *rcol1, *rrow0, *rrow1. This means that the parameters for all
+// restoration units in the rectangle [*rcol0, *rcol1) x [*rrow0, *rrow1)
+// are signaled in this superblock.
 int av1_loop_restoration_corners_in_sb(const struct AV1Common *cm, int plane,
                                        int mi_row, int mi_col, BLOCK_SIZE bsize,
                                        int *rcol0, int *rcol1, int *rrow0,
@@ -467,14 +447,16 @@ void av1_loop_restoration_filter_frame_init(AV1LrStruct *lr_ctxt,
 void av1_loop_restoration_copy_planes(AV1LrStruct *loop_rest_ctxt,
                                       struct AV1Common *cm, int num_planes);
 void av1_foreach_rest_unit_in_row(
-    RestorationTileLimits *limits, const PixelRect *tile_rect,
+    RestorationTileLimits *limits, int plane_w,
     rest_unit_visitor_t on_rest_unit, int row_number, int unit_size,
-    int unit_idx0, int hunits_per_tile, int vunits_per_tile, int plane,
-    void *priv, int32_t *tmpbuf, RestorationLineBuffers *rlbs,
-    sync_read_fn_t on_sync_read, sync_write_fn_t on_sync_write,
-    struct AV1LrSyncData *const lr_sync);
-PixelRect av1_whole_frame_rect(const struct AV1Common *cm, int is_uv);
-int av1_lr_count_units_in_tile(int unit_size, int tile_size);
+    int hnum_rest_units, int vnum_rest_units, int plane, void *priv,
+    int32_t *tmpbuf, RestorationLineBuffers *rlbs, sync_read_fn_t on_sync_read,
+    sync_write_fn_t on_sync_write, struct AV1LrSyncData *const lr_sync,
+    struct aom_internal_error_info *error_info);
+
+void av1_get_upsampled_plane_size(const struct AV1Common *cm, int is_uv,
+                                  int *plane_w, int *plane_h);
+int av1_lr_count_units(int unit_size, int plane_size);
 void av1_lr_sync_read_dummy(void *const lr_sync, int r, int c, int plane);
 void av1_lr_sync_write_dummy(void *const lr_sync, int r, int c,
                              const int sb_cols, int plane);

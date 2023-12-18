@@ -50,6 +50,7 @@ struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
 class SecurityOriginData;
 
+using CapabilitiesCompletionHandler = CompletionHandler<void(HashMap<String, bool>&&)>;
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
@@ -60,13 +61,12 @@ public:
     AuthenticatorCoordinatorClient() = default;
     virtual ~AuthenticatorCoordinatorClient() = default;
 
-    virtual void makeCredential(const LocalFrame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) = 0;
+    virtual void makeCredential(const LocalFrame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, MediationRequirement, RequestCompletionHandler&&) = 0;
     virtual void getAssertion(const LocalFrame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, MediationRequirement, const ScopeAndCrossOriginParent&, RequestCompletionHandler&&) = 0;
     virtual void isConditionalMediationAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
+    virtual void getClientCapabilities(const SecurityOrigin&, CapabilitiesCompletionHandler&&) = 0;
     virtual void cancel() = 0;
-
-    virtual void resetUserGestureRequirement() { }
 };
 
 } // namespace WebCore

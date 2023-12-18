@@ -257,32 +257,32 @@ static const std::array<uint8_t, 12> algorithmId(WebCore::CryptoKeyOKP::NamedCur
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 {
     if (type() != CryptoKeyType::Public)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     PAL::TASN1::Structure spki;
     {
         // Create the `SubjectPublicKeyInfo` structure.
         if (!PAL::TASN1::createStructure("WebCrypto.SubjectPublicKeyInfo", &spki))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // Write out the id-edPublicKey identifier under `algorithm.algorithm`.
         if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", algorithmId(m_curve).data(), 1))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // The 'paramaters' element should not be present
         if (!PAL::TASN1::writeElement(spki, "algorithm.parameters", nullptr, 0))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // Write out the public key data under `subjectPublicKey`. Because this is a
         // bit string parameter, the data size has to be multiplied by 8.
         if (!PAL::TASN1::writeElement(spki, "subjectPublicKey", m_data.data(), m_data.size() * 8))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
     }
 
     // Retrieve the encoded `SubjectPublicKeyInfo` data and return it.
     auto result = PAL::TASN1::encodedData(spki, "");
     if (!result)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return WTFMove(result.value());
 }
@@ -408,53 +408,53 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
 {
     if (type() != CryptoKeyType::Private)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     PAL::TASN1::Structure ecPrivateKey;
     {
         // Create the `ECPrivateKey` structure.
         if (!PAL::TASN1::createStructure("WebCrypto.CurvePrivateKey", &ecPrivateKey))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // Write out the data under `privateKey`.
         if (!PAL::TASN1::writeElement(ecPrivateKey, "", m_data.data(), m_data.size()))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
     }
 
     PAL::TASN1::Structure pkcs8;
     {
         // Create the `PrivateKeyInfo` structure.
         if (!PAL::TASN1::createStructure("WebCrypto.PrivateKeyInfo", &pkcs8))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // Write out '0' under `version`.
         if (!PAL::TASN1::writeElement(pkcs8, "version", "0", 0))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // Write out the id-Ed25519 identifier under `privateKeyAlgorithm.algorithm`.
         if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", algorithmId(m_curve).data(), 1))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // The 'paramaters' element should not be present
         if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.parameters", nullptr, 0))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
 
         // Write out the `CurvePrivateKey` data under `privateKey`.
         {
             auto data = PAL::TASN1::encodedData(ecPrivateKey, "");
             if (!data || !PAL::TASN1::writeElement(pkcs8, "privateKey", data->data(), data->size()))
-                return Exception { OperationError };
+                return Exception { ExceptionCode::OperationError };
         }
 
         // Eliminate the optional `attributes` element.
         if (!PAL::TASN1::writeElement(pkcs8, "attributes", nullptr, 0))
-            return Exception { OperationError };
+            return Exception { ExceptionCode::OperationError };
     }
 
     // Retrieve the encoded `PrivateKeyInfo` data and return it.
     auto result = PAL::TASN1::encodedData(pkcs8, "");
     if (!result)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return WTFMove(result.value());
 }

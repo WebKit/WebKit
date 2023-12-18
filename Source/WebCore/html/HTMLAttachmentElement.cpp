@@ -366,7 +366,7 @@ DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
         return nullptr;
 
     bool unusedIsReplaced;
-    auto rect = m_saveButton->pixelSnappedRenderRect(&unusedIsReplaced);
+    auto rect = m_saveButton->pixelSnappedAbsoluteBoundingRect(&unusedIsReplaced);
     m_saveButtonClientRect = DOMRectReadOnly::create(rect.x(), rect.y(), rect.width(), rect.height());
     return m_saveButtonClientRect.get();
 }
@@ -488,10 +488,7 @@ void HTMLAttachmentElement::setUniqueIdentifier(const String& uniqueIdentifier)
 
 RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 {
-    if (auto hostElement = shadowHost(); is<HTMLImageElement>(hostElement))
-        return downcast<HTMLImageElement>(hostElement);
-
-    return { };
+    return dynamicDowncast<HTMLImageElement>(shadowHost());
 }
 
 void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -705,11 +702,14 @@ void HTMLAttachmentElement::updateThumbnailForWideLayout(Vector<uint8_t>&& thumb
 void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
 {
     ASSERT(!isWideLayout());
-    if (!icon)
+    if (!icon) {
+        dispatchEvent(Event::create(eventNames().loadingerrorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         return;
+    }
     m_icon = icon;
     m_iconSize = iconSize;
     invalidateRendering();
+    dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 void HTMLAttachmentElement::updateIconForWideLayout(Vector<uint8_t>&& iconSrcData)
@@ -745,12 +745,13 @@ void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(attachmentIconSize, attachmentIconSize));
 }
 
-void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
+void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size)
 {
     ASSERT(!isWideLayout());
     if (!document().page() || !document().page()->attachmentElementClient())
         return;
 
+    queueTaskToDispatchEvent(TaskSource::InternalAsyncTask, Event::create(eventNames().beforeloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
     document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), size);
 }
 

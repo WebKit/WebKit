@@ -732,28 +732,6 @@ constexpr unsigned getMSBSetConstexpr(T t)
     return bitSize - 1 - clzConstexpr(t);
 }
 
-inline size_t countTrailingZeros(uint32_t v)
-{
-    static const unsigned Mod37BitPosition[] = {
-        32, 0, 1, 26, 2, 23, 27, 0, 3, 16, 24, 30, 28, 11, 0, 13,
-        4, 7, 17, 0, 25, 22, 31, 15, 29, 10, 12, 6, 0, 21, 14, 9,
-        5, 20, 8, 19, 18
-    };
-    return Mod37BitPosition[((1 + ~v) & v) % 37];
-}
-
-inline size_t countTrailingZeros(uint64_t v)
-{
-    static const unsigned Mod67Position[] = {
-        64, 0, 1, 39, 2, 15, 40, 23, 3, 12, 16, 59, 41, 19, 24, 54,
-        4, 64, 13, 10, 17, 62, 60, 28, 42, 30, 20, 51, 25, 44, 55,
-        47, 5, 32, 65, 38, 14, 22, 11, 58, 18, 53, 63, 9, 61, 27,
-        29, 50, 43, 46, 31, 37, 21, 57, 52, 8, 26, 49, 45, 36, 56,
-        7, 48, 35, 6, 34, 33, 0
-    };
-    return Mod67Position[((1 + ~v) & v) % 67];
-}
-
 inline uint32_t reverseBits32(uint32_t value)
 {
 #if COMPILER(GCC_COMPATIBLE) && CPU(ARM64)
@@ -771,7 +749,7 @@ inline uint32_t reverseBits32(uint32_t value)
 #endif
 }
 
-// FIXME: Replace with std::isnan() once std::isnan() is constexpr.
+// FIXME: Replace with std::isnan() once std::isnan() is constexpr. requires C++23
 template<typename T> constexpr typename std::enable_if_t<std::is_floating_point_v<T>, bool> isNaNConstExpr(T value)
 {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_isnan)
@@ -786,6 +764,19 @@ template<typename T> constexpr typename std::enable_if_t<std::is_integral_v<T>, 
     return false;
 }
 
+// FIXME: Replace with std::fabs() once std::fabs() is constexpr. requires C++23
+template<typename T> constexpr T fabsConstExpr(T value)
+{
+    static_assert(std::is_floating_point_v<T>);
+    if (value != value)
+        return value;
+    if (!value)
+        return 0.0; // -0.0 should be converted to +0.0
+    if (value < 0.0)
+        return -value;
+    return value;
+}
+
 } // namespace WTF
 
 using WTF::shuffleVector;
@@ -794,4 +785,5 @@ using WTF::ctz;
 using WTF::getLSBSet;
 using WTF::getMSBSet;
 using WTF::isNaNConstExpr;
+using WTF::fabsConstExpr;
 using WTF::reverseBits32;

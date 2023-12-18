@@ -39,40 +39,47 @@ WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(Element& element)
 void WrapContentsInDummySpanCommand::executeApply()
 {
     Vector<Ref<Node>> children;
-    for (Node* child = m_element->firstChild(); child; child = child->nextSibling())
+    Ref element = protectedElement();
+    for (RefPtr child = element->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
+    auto dummySpan = protectedDummySpan();
     for (auto& child : children)
-        m_dummySpan->appendChild(child);
+        dummySpan->appendChild(child);
 
-    m_element->appendChild(*m_dummySpan);
+    element->appendChild(*dummySpan);
 }
 
 void WrapContentsInDummySpanCommand::doApply()
 {
-    m_dummySpan = createStyleSpanElement(document());
+    m_dummySpan = createStyleSpanElement(protectedDocument());
     
     executeApply();
 }
     
 void WrapContentsInDummySpanCommand::doUnapply()
 {
-    if (!m_dummySpan || !m_element->hasEditableStyle())
+    if (!m_dummySpan)
+        return;
+
+    Ref element = protectedElement();
+    if (!element->hasEditableStyle())
         return;
 
     Vector<Ref<Node>> children;
-    for (Node* child = m_dummySpan->firstChild(); child; child = child->nextSibling())
+    auto dummySpan = protectedDummySpan();
+    for (RefPtr child = dummySpan->firstChild(); child; child = child->nextSibling())
         children.append(*child);
 
     for (auto& child : children)
-        m_element->appendChild(child);
+        element->appendChild(child);
 
-    m_dummySpan->remove();
+    dummySpan->remove();
 }
 
 void WrapContentsInDummySpanCommand::doReapply()
-{    
-    if (!m_dummySpan || !m_element->hasEditableStyle())
+{
+    if (!m_dummySpan || !protectedElement()->hasEditableStyle())
         return;
 
     executeApply();
@@ -81,8 +88,8 @@ void WrapContentsInDummySpanCommand::doReapply()
 #ifndef NDEBUG
 void WrapContentsInDummySpanCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
 {
-    addNodeAndDescendants(m_element.ptr(), nodes);
-    addNodeAndDescendants(m_dummySpan.get(), nodes);
+    addNodeAndDescendants(protectedElement().ptr(), nodes);
+    addNodeAndDescendants(protectedDummySpan().get(), nodes);
 }
 #endif
     

@@ -69,6 +69,11 @@ StandardQueryGL::StandardQueryGL(gl::QueryType type,
 
 StandardQueryGL::~StandardQueryGL()
 {
+    clearInternalQueries();
+}
+
+void StandardQueryGL::clearInternalQueries()
+{
     if (mActiveQuery != 0)
     {
         mStateManager->endQuery(mType, this, mActiveQuery);
@@ -86,6 +91,7 @@ StandardQueryGL::~StandardQueryGL()
 
 angle::Result StandardQueryGL::begin(const gl::Context *context)
 {
+    clearInternalQueries();
     mResultSum = 0;
     return resume(context);
 }

@@ -41,7 +41,6 @@ class StreamConnectionWorkQueue;
 
 struct StreamServerConnectionHandle {
     WTF_MAKE_NONCOPYABLE(StreamServerConnectionHandle);
-    StreamServerConnectionHandle() = default;
     StreamServerConnectionHandle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
         : outOfStreamConnection(WTFMove(connection))
         , buffer(WTFMove(bufferHandle))
@@ -51,6 +50,12 @@ struct StreamServerConnectionHandle {
 
     Connection::Handle outOfStreamConnection;
     StreamConnectionBuffer::Handle buffer;
+};
+
+struct StreamServerConnectionParameters {
+#if ENABLE(IPC_TESTING_API)
+    bool ignoreInvalidMessageForTesting { false };
+#endif
 };
 
 // StreamServerConnection represents the connection between stream client and server, as used by the server.
@@ -69,7 +74,7 @@ public:
     using AsyncReplyID = Connection::AsyncReplyID;
     using Handle = StreamServerConnectionHandle;
 
-    static RefPtr<StreamServerConnection> tryCreate(Handle&&);
+    static RefPtr<StreamServerConnection> tryCreate(Handle&&, const StreamServerConnectionParameters&);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
@@ -77,6 +82,7 @@ public:
     void stopReceivingMessages(ReceiverName, uint64_t destinationID);
 
     Connection& connection() { return m_connection; }
+    Ref<Connection> protectedConnection() { return m_connection; }
 
     enum DispatchResult : bool {
         HasNoMessages,
@@ -90,6 +96,10 @@ public:
 
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
+
+#if ENABLE(IPC_TESTING_API)
+    void sendDeserializationErrorSyncReply(Connection::SyncRequestID);
+#endif
 
     template<typename T, typename... Arguments>
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
@@ -113,7 +123,7 @@ private:
     bool dispatchOutOfStreamMessage(Decoder&&);
 
     using WakeUpClient = StreamServerConnectionBuffer::WakeUpClient;
-    Ref<IPC::Connection> m_connection;
+    const Ref<IPC::Connection> m_connection;
     RefPtr<StreamConnectionWorkQueue> m_workQueue;
     StreamServerConnectionBuffer m_buffer;
 

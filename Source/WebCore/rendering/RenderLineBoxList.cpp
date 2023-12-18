@@ -150,6 +150,12 @@ void RenderLineBoxList::dirtyLineBoxes()
         curr->dirtyLineBoxes();
 }
 
+void RenderLineBoxList::shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY)
+{
+    for (auto* box = firstLineBox(); box; box = box->nextLineBox())
+        box->adjustPosition(shiftX, shiftY);
+}
+
 // FIXME: This should take a RenderBoxModelObject&.
 bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, LayoutUnit logicalTop, LayoutUnit logicalBottom, const LayoutRect& rect, const LayoutPoint& offset) const
 {
@@ -222,7 +228,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         return;
 
     PaintInfo info(paintInfo);
-    WeakListHashSet<RenderInline> outlineObjects;
+    SingleThreadWeakListHashSet<RenderInline> outlineObjects;
     info.outlineObjects = &outlineObjects;
 
     // See if our root lines intersect with the dirty rect.  If so, then we paint

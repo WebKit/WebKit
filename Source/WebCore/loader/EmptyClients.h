@@ -117,6 +117,9 @@ class EmptyChromeClient : public ChromeClient {
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
+#if PLATFORM(IOS_FAMILY)
+    void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const final { };
+#endif
 
     void didFinishLoadingImageForElement(HTMLImageElement&) final { }
 

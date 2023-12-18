@@ -1562,8 +1562,7 @@ private:
         // Nodes without remaining unmaterialized fields will be
         // materialized first - amongst the remaining unmaterialized
         // nodes
-        Vector<Allocation> toMaterialize;
-        toMaterialize.resize(escapees.size());
+        Vector<Allocation> toMaterialize(escapees.size());
         size_t firstIndex = 0;
         size_t lastIndex = toMaterialize.size();
         auto materializeFirst = [&] (Allocation&& allocation) {

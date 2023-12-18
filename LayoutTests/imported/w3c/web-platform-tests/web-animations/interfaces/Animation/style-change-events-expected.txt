@@ -1,5 +1,5 @@
 
-PASS All property keys are recognized
+FAIL All property keys are recognized assert_in_array: Test property 'rangeStart' should be one of the properties on  Animation value "rangeStart" not in array ["id", "effect", "timeline", "startTime", "currentTime", "playbackRate", "frameRate", "playState", "replaceState", "pending", "onfinish", "oncancel", "onremove", "ready", "finished", "cancel", "finish", "play", "pause", "updatePlaybackRate", "reverse", "persist", "commitStyles", "Animation constructor"]
 PASS Animation.id produces expected style change events
 PASS Animation.effect produces expected style change events
 PASS Animation.timeline produces expected style change events

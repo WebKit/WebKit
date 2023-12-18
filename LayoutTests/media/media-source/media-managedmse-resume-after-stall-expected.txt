@@ -1,0 +1,21 @@
+
+RUN(video.src = URL.createObjectURL(source))
+RUN(video.muted = true)
+RUN(video.playsInline = true)
+RUN(video.disableRemotePlayback = true)
+RUN(video.autoplay = true)
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(1)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3)))
+EVENT(update)
+EXPECTED (video.currentTime >= '3.5') OK
+END OF TEST
+

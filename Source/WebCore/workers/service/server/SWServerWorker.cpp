@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServerWorker.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Logging.h"
 #include "SWServer.h"
 #include "SWServerRegistration.h"
@@ -462,5 +460,3 @@ bool SWServerWorker::matchingImportedScripts(const Vector<std::pair<URL, ScriptB
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

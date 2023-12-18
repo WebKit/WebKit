@@ -66,6 +66,10 @@ private:
     bool enterAcceleratedCompositingModeIfNeeded() override;
 #endif
 
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+    void preferredBufferFormatsDidChange() override;
+#endif
+
     bool supportsAsyncScrolling() const override;
     void registerScrollingTree() override;
     void unregisterScrollingTree() override;
@@ -74,10 +78,6 @@ private:
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void triggerRenderingUpdate() override;
 
-#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-    void layerHostDidFlushLayers() override;
-#endif
-    
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
     void activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&) override;
@@ -92,12 +92,11 @@ private:
 
 #if PLATFORM(GTK)
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
-    void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) override;
 #endif
 
     void exitAcceleratedCompositingModeSoon();
     bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
-    void discardPreviousLayerTreeHost();
 
     void suspendPainting();
     void resumePainting();
@@ -132,9 +131,6 @@ private:
 
     // The layer tree host that handles accelerated compositing.
     std::unique_ptr<LayerTreeHost> m_layerTreeHost;
-
-    std::unique_ptr<LayerTreeHost> m_previousLayerTreeHost;
-    RunLoop::Timer m_discardPreviousLayerTreeHostTimer;
 
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;

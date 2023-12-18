@@ -19,6 +19,7 @@
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/net_test_helpers.h"
 #include "rtc_base/network_monitor.h"
 #include "rtc_base/socket_unittest.h"
 #include "rtc_base/test_utils.h"

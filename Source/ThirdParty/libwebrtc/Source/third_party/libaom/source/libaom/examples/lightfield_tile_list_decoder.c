@@ -170,7 +170,7 @@ int main(int argc, char **argv) {
         if (!aom_img_alloc_with_border(&reference_images[j], ref_fmt,
                                        frame_res[0], frame_res[1], 32, 8,
                                        border)) {
-          die("Failed to allocate references.");
+          fatal("Failed to allocate references.");
         }
       }
     }

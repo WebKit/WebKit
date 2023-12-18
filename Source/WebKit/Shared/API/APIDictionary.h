@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIDictionary_h
-#define APIDictionary_h
+#pragma once
 
 #include "APIObject.h"
 #include <wtf/HashMap.h>
@@ -37,10 +36,10 @@ class Array;
 
 class Dictionary final : public ObjectImpl<Object::Type::Dictionary> {
 public:
-    typedef HashMap<WTF::String, RefPtr<Object>> MapType;
+    using MapType = HashMap<WTF::String, RefPtr<Object>>;
 
     static Ref<Dictionary> create();
-    static Ref<Dictionary> create(MapType);
+    static Ref<Dictionary> create(MapType&&);
 
     virtual ~Dictionary();
 
@@ -49,10 +48,10 @@ public:
     {
         RefPtr<Object> item = m_map.get(key);
         if (!item)
-            return 0;
+            return nullptr;
 
         if (item->type() != T::APIType)
-            return 0;
+            return nullptr;
 
         return static_cast<T*>(item.get());
     }
@@ -83,11 +82,11 @@ public:
     const MapType& map() const { return m_map; }
 
 private:
-    explicit Dictionary(MapType);
+    explicit Dictionary(MapType&&);
 
     MapType m_map;
 };
 
 } // namespace API
 
-#endif // APIDictionary_h
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(Dictionary);

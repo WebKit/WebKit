@@ -122,6 +122,11 @@ void RemoteMediaSessionHelperProxy::activeVideoRouteDidChange(SupportsAirPlayVid
     m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ActiveVideoRouteDidChange(supportsAirPlayVideo, context), { });
 }
 
+void RemoteMediaSessionHelperProxy::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
+{
+    m_gpuConnection.connection().send(Messages::RemoteMediaSessionHelper::ActiveAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback), { });
+}
+
 }
 
 #endif

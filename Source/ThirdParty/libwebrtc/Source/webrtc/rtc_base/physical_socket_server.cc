@@ -10,6 +10,7 @@
 #include "rtc_base/physical_socket_server.h"
 
 #include <cstdint>
+#include <utility>
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 #pragma warning(disable : 4786)
@@ -21,7 +22,6 @@
 
 #if defined(WEBRTC_POSIX)
 #include <fcntl.h>
-#include <string.h>
 #if defined(WEBRTC_USE_EPOLL)
 // "poll" will be used to wait for the signal dispatcher.
 #include <poll.h>
@@ -30,7 +30,6 @@
 #endif
 #include <sys/ioctl.h>
 #include <sys/select.h>
-#include <sys/time.h>
 #include <unistd.h>
 #endif
 
@@ -38,20 +37,18 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
 #undef SetPort
 #endif
 
 #include <errno.h>
 
-#include <algorithm>
-#include <map>
-
-#include "rtc_base/arraysize.h"
-#include "rtc_base/byte_order.h"
+#include "rtc_base/async_dns_resolver.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/event.h"
+#include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network_monitor.h"
-#include "rtc_base/null_socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "system_wrappers/include/field_trial.h"
@@ -70,6 +67,7 @@
 
 #if defined(WEBRTC_POSIX)
 #include <netinet/tcp.h>  // for TCP_NODELAY
+
 #define IP_MTU 14  // Until this is integrated from linux/in.h to netinet/in.h
 typedef void* SockOptArg;
 
@@ -252,9 +250,8 @@ int PhysicalSocket::Connect(const SocketAddress& addr) {
   }
   if (addr.IsUnresolvedIP()) {
     RTC_LOG(LS_VERBOSE) << "Resolving addr in PhysicalSocket::Connect";
-    resolver_ = new AsyncResolver();
-    resolver_->SignalDone.connect(this, &PhysicalSocket::OnResolveResult);
-    resolver_->Start(addr);
+    resolver_ = std::make_unique<webrtc::AsyncDnsResolver>();
+    resolver_->Start(addr, [this] { OnResolveResult(resolver_->result()); });
     state_ = CS_CONNECTING;
     return 0;
   }
@@ -564,8 +561,7 @@ int PhysicalSocket::Close() {
   state_ = CS_CLOSED;
   SetEnabledEvents(0);
   if (resolver_) {
-    resolver_->Destroy(false);
-    resolver_ = nullptr;
+    resolver_.reset();
   }
   return err;
 }
@@ -589,14 +585,16 @@ int PhysicalSocket::DoSendTo(SOCKET socket,
   return ::sendto(socket, buf, len, flags, dest_addr, addrlen);
 }
 
-void PhysicalSocket::OnResolveResult(AsyncResolverInterface* resolver) {
-  if (resolver != resolver_) {
-    return;
-  }
-
-  int error = resolver_->GetError();
+void PhysicalSocket::OnResolveResult(
+    const webrtc::AsyncDnsResolverResult& result) {
+  int error = result.GetError();
   if (error == 0) {
-    error = DoConnect(resolver_->address());
+    SocketAddress address;
+    if (result.GetResolvedAddress(AF_INET, &address)) {
+      error = DoConnect(address);
+    } else {
+      Close();
+    }
   } else {
     Close();
   }

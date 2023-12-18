@@ -30,6 +30,7 @@
 #include "LocalDOMWindow.h"
 #include "Supplementable.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashCountedSet.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace WebCore {
 class DeviceClient;
 class Page;
 
-class DeviceController : public Supplement<Page> {
+class DeviceController : public Supplement<Page>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit DeviceController(DeviceClient&);

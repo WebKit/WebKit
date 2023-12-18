@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,7 +111,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(JSGlo
 
     ASSERT(length || buffer->isResizableOrGrowableShared());
 
-    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value_or(0), elementSize)) {
+    if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, length.value_or(0), elementSize)) {
         throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
         return nullptr;
     }
@@ -347,7 +347,7 @@ void JSGenericTypedArrayView<Adaptor>::copyFromInt32ShapeArray(size_t offset, JS
 {
     ASSERT(canAccessRangeQuickly(offset, length));
     ASSERT((array->indexingType() & IndexingShapeMask) == Int32Shape);
-    ASSERT(Adaptor::typeValue != TypeBigInt64 || Adaptor::typeValue != TypeBigUint64);
+    ASSERT(Adaptor::typeValue != TypeBigInt64 && Adaptor::typeValue != TypeBigUint64);
     ASSERT((length + objectOffset) <= array->length());
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
@@ -380,7 +380,7 @@ void JSGenericTypedArrayView<Adaptor>::copyFromDoubleShapeArray(size_t offset, J
 {
     ASSERT(canAccessRangeQuickly(offset, length));
     ASSERT((array->indexingType() & IndexingShapeMask) == DoubleShape);
-    ASSERT(Adaptor::typeValue != TypeBigInt64 || Adaptor::typeValue != TypeBigUint64);
+    ASSERT(Adaptor::typeValue != TypeBigInt64 && Adaptor::typeValue != TypeBigUint64);
     ASSERT((length + objectOffset) <= array->length());
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
@@ -411,9 +411,9 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
     size_t safeUnadjustedLength = std::min(length, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
     size_t safeLength = objectOffset <= safeUnadjustedLength ? safeUnadjustedLength - objectOffset : 0;
 
-    if constexpr (TypedArrayStorageType != TypeBigInt64 || TypedArrayStorageType != TypeBigUint64) {
+    if constexpr (TypedArrayStorageType != TypeBigInt64 && TypedArrayStorageType != TypeBigUint64) {
         if (JSArray* array = jsDynamicCast<JSArray*>(object); LIKELY(array && isJSArray(array))) {
-            if (safeLength == length && (safeLength + objectOffset) >= array->length() && array->isIteratorProtocolFastAndNonObservable()) {
+            if (safeLength == length && (safeLength + objectOffset) <= array->length() && array->isIteratorProtocolFastAndNonObservable()) {
                 IndexingType indexingType = array->indexingType() & IndexingShapeMask;
                 if (indexingType == Int32Shape) {
                     copyFromInt32ShapeArray(offset, array, objectOffset, safeLength);
@@ -856,26 +856,42 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::toAdapt
     return toNativeFromValueWithoutCoercion<Adaptor>(jsValue);
 }
 
-template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::sort()
+template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::sort() -> SortResult
 {
     RELEASE_ASSERT(!isDetached());
+    Vector<ElementType, 16> forShared;
+    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
+    auto lengthValue = integerIndexedObjectLength(this, getter);
+    if (!lengthValue)
+        return SortResult::Failed;
+
+    size_t length = lengthValue.value();
+
+    ElementType* originalArray = typedVector();
+    ElementType* array = originalArray;
+    if (isShared()) {
+        if (UNLIKELY(!forShared.tryGrow(length)))
+            return SortResult::OutOfMemory;
+        WTF::copyElements(forShared.data(), originalArray, length);
+        array = forShared.data();
+    }
+
     switch (Adaptor::typeValue) {
     case TypeFloat32:
-        return sortFloat<int32_t>();
+        sortFloat<int32_t>(array, array + length);
+        break;
     case TypeFloat64:
-        return sortFloat<int64_t>();
-    default: {
-        IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-        auto lengthValue = integerIndexedObjectLength(this, getter);
-        if (!lengthValue)
-            return false;
-
-        size_t length = lengthValue.value();
-        ElementType* array = typedVector();
+        sortFloat<int64_t>(array, array + length);
+        break;
+    default:
         std::sort(array, array + length);
-        return true;
+        break;
     }
-    }
+
+    if (isShared())
+        WTF::copyElements(originalArray, forShared.data(), length);
+
+    return SortResult::Success;
 }
 
 template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::canAccessRangeQuickly(size_t offset, size_t length)
@@ -933,39 +949,24 @@ inline GCClient::IsoSubspace* JSGenericTypedArrayView<Adaptor>::subspaceFor(VM& 
 }
 
 template<typename Adaptor>  template<typename IntegralType>
-inline bool JSGenericTypedArrayView<Adaptor>::sortFloat()
+inline void JSGenericTypedArrayView<Adaptor>::sortFloat(ElementType* begin, ElementType* end)
 {
     // FIXME: Need to get m_length once.
     ASSERT(sizeof(IntegralType) == sizeof(ElementType));
-
-    IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> getter;
-    auto lengthValue = integerIndexedObjectLength(this, getter);
-    if (!lengthValue)
-        return false;
-
-    size_t length = lengthValue.value();
-
-    auto purifyArray = [&]() {
-        ElementType* array = typedVector();
-        for (size_t i = 0; i < length; i++)
-            array[i] = purifyNaN(array[i]);
-    };
 
     // Since there might be another view that sets the bits of
     // our floats to NaNs with negative sign bits we need to
     // purify the array.
     // We use a separate function here to avoid the strict aliasing rule.
     // We could use a union but ASAN seems to frown upon that.
-    purifyArray();
+    for (auto it = begin; it != end; ++it)
+        *it = purifyNaN(*it);
 
-    IntegralType* array = reinterpret_cast_ptr<IntegralType*>(typedVector());
-    std::sort(array, array + length, [] (IntegralType a, IntegralType b) {
+    std::sort(reinterpret_cast_ptr<IntegralType*>(begin), reinterpret_cast_ptr<IntegralType*>(end), [](IntegralType a, IntegralType b) {
         if (a >= 0 || b >= 0)
             return a < b;
         return a > b;
     });
-
-    return true;
 }
 
 template<typename Adaptor> RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(VM& vm, JSValue value)

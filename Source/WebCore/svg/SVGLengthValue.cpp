@@ -329,11 +329,11 @@ ExceptionOr<void> SVGLengthValue::setValueAsString(StringView string)
     return readCharactersForParsing(string, [&](auto buffer) -> ExceptionOr<void> {
         auto convertedNumber = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
         if (!convertedNumber)
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
 
         auto lengthType = parseLengthType(buffer);
         if (lengthType == SVGLengthType::Unknown)
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
 
         m_lengthType = lengthType;
         m_valueInSpecifiedUnits = *convertedNumber;

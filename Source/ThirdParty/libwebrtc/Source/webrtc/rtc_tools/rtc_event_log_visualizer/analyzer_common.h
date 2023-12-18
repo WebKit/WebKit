@@ -11,11 +11,14 @@
 #ifndef RTC_TOOLS_RTC_EVENT_LOG_VISUALIZER_ANALYZER_COMMON_H_
 #define RTC_TOOLS_RTC_EVENT_LOG_VISUALIZER_ANALYZER_COMMON_H_
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 
 #include "absl/types/optional.h"
 #include "api/function_view.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
 

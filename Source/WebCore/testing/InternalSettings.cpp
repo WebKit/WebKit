@@ -59,7 +59,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedPrefersContrastAccessibilityValue(settings.forcedPrefersContrastAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
     , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
-    , m_fetchAPIKeepAliveAPIEnabled(DeprecatedGlobalSettings::fetchAPIKeepAliveEnabled())
     , m_customPasteboardDataEnabled(DeprecatedGlobalSettings::customPasteboardDataEnabled())
     , m_originalMockScrollbarsEnabled(DeprecatedGlobalSettings::mockScrollbarsEnabled())
 #if USE(AUDIO_SESSION)
@@ -113,7 +112,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
     settings.setFontLoadTimingOverride(m_fontLoadTimingOverride);
 
-    DeprecatedGlobalSettings::setFetchAPIKeepAliveEnabled(m_fetchAPIKeepAliveAPIEnabled);
     DeprecatedGlobalSettings::setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
 
 #if USE(AUDIO_SESSION)
@@ -198,7 +196,7 @@ Settings& InternalSettings::settings() const
 ExceptionOr<void> InternalSettings::setStandardFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -210,7 +208,7 @@ ExceptionOr<void> InternalSettings::setStandardFontFamily(const String& family, 
 ExceptionOr<void> InternalSettings::setSerifFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -222,7 +220,7 @@ ExceptionOr<void> InternalSettings::setSerifFontFamily(const String& family, con
 ExceptionOr<void> InternalSettings::setSansSerifFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -234,7 +232,7 @@ ExceptionOr<void> InternalSettings::setSansSerifFontFamily(const String& family,
 ExceptionOr<void> InternalSettings::setFixedFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -246,7 +244,7 @@ ExceptionOr<void> InternalSettings::setFixedFontFamily(const String& family, con
 ExceptionOr<void> InternalSettings::setCursiveFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -258,7 +256,7 @@ ExceptionOr<void> InternalSettings::setCursiveFontFamily(const String& family, c
 ExceptionOr<void> InternalSettings::setFantasyFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -270,7 +268,7 @@ ExceptionOr<void> InternalSettings::setFantasyFontFamily(const String& family, c
 ExceptionOr<void> InternalSettings::setPictographFontFamily(const String& family, const String& script)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     UScriptCode code = scriptNameToCode(script);
     if (code == USCRIPT_INVALID_CODE)
         return { };
@@ -282,7 +280,7 @@ ExceptionOr<void> InternalSettings::setPictographFontFamily(const String& family
 ExceptionOr<void> InternalSettings::setTextAutosizingWindowSizeOverride(int width, int height)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(TEXT_AUTOSIZING)
     settings().setTextAutosizingWindowSizeOverrideWidth(width);
     settings().setTextAutosizingWindowSizeOverrideHeight(height);
@@ -296,7 +294,7 @@ ExceptionOr<void> InternalSettings::setTextAutosizingWindowSizeOverride(int widt
 ExceptionOr<void> InternalSettings::setEditingBehavior(EditingBehaviorType editingBehaviorType)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setEditingBehaviorType(editingBehaviorType);
     return { };
 }
@@ -304,7 +302,7 @@ ExceptionOr<void> InternalSettings::setEditingBehavior(EditingBehaviorType editi
 ExceptionOr<void> InternalSettings::setStorageBlockingPolicy(StorageBlockingPolicy policy)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setStorageBlockingPolicy(policy);
     return { };
 }
@@ -312,7 +310,7 @@ ExceptionOr<void> InternalSettings::setStorageBlockingPolicy(StorageBlockingPoli
 ExceptionOr<void> InternalSettings::setMinimumTimerInterval(double intervalInSeconds)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setMinimumDOMTimerInterval(Seconds { intervalInSeconds });
     return { };
 }
@@ -320,7 +318,7 @@ ExceptionOr<void> InternalSettings::setMinimumTimerInterval(double intervalInSec
 ExceptionOr<void> InternalSettings::setTimeWithoutMouseMovementBeforeHidingControls(double time)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setTimeWithoutMouseMovementBeforeHidingControls(Seconds { time });
     return { };
 }
@@ -328,7 +326,7 @@ ExceptionOr<void> InternalSettings::setTimeWithoutMouseMovementBeforeHidingContr
 ExceptionOr<void> InternalSettings::setFontLoadTimingOverride(FontLoadTimingOverride fontLoadTimingOverride)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setFontLoadTimingOverride(fontLoadTimingOverride);
     return { };
 }
@@ -336,7 +334,7 @@ ExceptionOr<void> InternalSettings::setFontLoadTimingOverride(FontLoadTimingOver
 ExceptionOr<void> InternalSettings::setAllowAnimationControlsOverride(bool allowAnimationControls)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setAllowAnimationControlsOverride(allowAnimationControls);
     return { };
 }
@@ -344,7 +342,7 @@ ExceptionOr<void> InternalSettings::setAllowAnimationControlsOverride(bool allow
 ExceptionOr<void> InternalSettings::setUserInterfaceDirectionPolicy(UserInterfaceDirectionPolicy policy)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setUserInterfaceDirectionPolicy(policy);
     return { };
 }
@@ -352,7 +350,7 @@ ExceptionOr<void> InternalSettings::setUserInterfaceDirectionPolicy(UserInterfac
 ExceptionOr<void> InternalSettings::setSystemLayoutDirection(SystemLayoutDirection direction)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     settings().setSystemLayoutDirection(direction);
     return { };
 }
@@ -407,14 +405,6 @@ void InternalSettings::setForcedSupportsHighDynamicRangeValue(InternalSettings::
     settings().setForcedSupportsHighDynamicRangeValue(value);
 }
 
-ExceptionOr<void> InternalSettings::setFetchAPIKeepAliveEnabled(bool enabled)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    DeprecatedGlobalSettings::setFetchAPIKeepAliveEnabled(enabled);
-    return { };
-}
-
 bool InternalSettings::vp9DecoderEnabled() const
 {
 #if ENABLE(VP9)
@@ -436,7 +426,7 @@ bool InternalSettings::mediaSourceInlinePaintingEnabled() const
 ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     DeprecatedGlobalSettings::setCustomPasteboardDataEnabled(enabled);
     return { };
 }
@@ -448,14 +438,14 @@ ExceptionOr<void> InternalSettings::setShouldManageAudioSessionCategory(bool sho
     return { };
 #else
     UNUSED_PARAM(should);
-    return Exception { InvalidAccessError };
+    return Exception { ExceptionCode::InvalidAccessError };
 #endif
 }
 
 ExceptionOr<void> InternalSettings::setShouldDisplayTrackKind(TrackKind kind, bool enabled)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(VIDEO)
     auto& captionPreferences = m_page->group().ensureCaptionPreferences();
     switch (kind) {
@@ -479,7 +469,7 @@ ExceptionOr<void> InternalSettings::setShouldDisplayTrackKind(TrackKind kind, bo
 ExceptionOr<bool> InternalSettings::shouldDisplayTrackKind(TrackKind kind)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(VIDEO)
     auto& captionPreferences = m_page->group().ensureCaptionPreferences();
     switch (kind) {
@@ -499,7 +489,7 @@ ExceptionOr<bool> InternalSettings::shouldDisplayTrackKind(TrackKind kind)
 ExceptionOr<void> InternalSettings::setEditableRegionEnabled(bool enabled)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(EDITABLE_REGION)
     m_page->setEditableRegionEnabled(enabled);
 #else
@@ -511,7 +501,7 @@ ExceptionOr<void> InternalSettings::setEditableRegionEnabled(bool enabled)
 ExceptionOr<void> InternalSettings::setCanStartMedia(bool enabled)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->setCanStartMedia(enabled);
     return { };
 }
@@ -519,7 +509,7 @@ ExceptionOr<void> InternalSettings::setCanStartMedia(bool enabled)
 ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->effectiveAppearanceDidChange(useDarkAppearance, m_page->useElevatedUserInterfaceLevel());
     return { };
 }
@@ -527,7 +517,7 @@ ExceptionOr<void> InternalSettings::setUseDarkAppearance(bool useDarkAppearance)
 ExceptionOr<void> InternalSettings::setUseElevatedUserInterfaceLevel(bool useElevatedUserInterfaceLevel)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->effectiveAppearanceDidChange(m_page->useDarkAppearance(), useElevatedUserInterfaceLevel);
     return { };
 }
@@ -536,7 +526,7 @@ ExceptionOr<void> InternalSettings::setAllowUnclampedScrollPosition(bool allowUn
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (!m_page || !localMainFrame || !localMainFrame->view())
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     localMainFrame->view()->setAllowsUnclampedScrollPositionForTesting(allowUnclamped);
     return { };
@@ -545,9 +535,11 @@ ExceptionOr<void> InternalSettings::setAllowUnclampedScrollPosition(bool allowUn
 ExceptionOr<void>  InternalSettings::setShouldDeactivateAudioSession(bool should)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(should);
+#else
+    UNUSED_PARAM(should);
 #endif
     return { };
 }
@@ -555,7 +547,7 @@ ExceptionOr<void>  InternalSettings::setShouldDeactivateAudioSession(bool should
 ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(bool should)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     FontCache::invalidateAllFontCaches();
 #if PLATFORM(COCOA)
     setOverrideEnhanceTextLegibility(should);
@@ -568,7 +560,7 @@ ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(
 ExceptionOr<void> InternalSettings::setDefaultAudioContextSampleRate(float sampleRate)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 #if ENABLE(WEB_AUDIO)
     AudioContext::setDefaultSampleRateForTesting(sampleRate);
 #else
@@ -580,7 +572,7 @@ ExceptionOr<void> InternalSettings::setDefaultAudioContextSampleRate(float sampl
 ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& types)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->settings().setAllowedMediaContainerTypes(types);
     return { };
 }
@@ -588,7 +580,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& 
 ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& types)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->settings().setAllowedMediaCodecTypes(types);
     return { };
 }
@@ -596,7 +588,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& type
 ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& types)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->settings().setAllowedMediaVideoCodecIDs(types);
     return { };
 }
@@ -604,7 +596,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& t
 ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& types)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->settings().setAllowedMediaAudioCodecIDs(types);
     return { };
 }
@@ -612,7 +604,7 @@ ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& t
 ExceptionOr<void> InternalSettings::setAllowedMediaCaptionFormatTypes(const String& types)
 {
     if (!m_page)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     m_page->settings().setAllowedMediaCaptionFormatTypes(types);
     return { };
 }

@@ -69,9 +69,9 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
         return FetchBody(WTFMove(buffer));
     }, [&](RefPtr<ReadableStream>& stream) mutable -> ExceptionOr<FetchBody> {
         if (stream->isDisturbed())
-            return Exception { TypeError, "Input body is disturbed."_s };
+            return Exception { ExceptionCode::TypeError, "Input body is disturbed."_s };
         if (stream->isLocked())
-            return Exception { TypeError, "Input body is locked."_s };
+            return Exception { ExceptionCode::TypeError, "Input body is locked."_s };
 
         return FetchBody(stream.releaseNonNull());
     }, [&](String& value) -> ExceptionOr<FetchBody> {

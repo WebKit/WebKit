@@ -18,7 +18,7 @@ namespace webrtc {
 // This class is thread safe.
 class DefaultVideoQualityAnalyzerCpuMeasurer {
  public:
-  double GetCpuUsagePercent();
+  double GetCpuUsagePercent() const;
 
   void StartMeasuringCpuProcessTime();
   void StopMeasuringCpuProcessTime();
@@ -26,7 +26,7 @@ class DefaultVideoQualityAnalyzerCpuMeasurer {
   void StopExcludingCpuThreadTime();
 
  private:
-  Mutex mutex_;
+  mutable Mutex mutex_;
   int64_t cpu_time_ RTC_GUARDED_BY(mutex_) = 0;
   int64_t wallclock_time_ RTC_GUARDED_BY(mutex_) = 0;
 };

@@ -61,6 +61,12 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  */
 - (void)_webExtensionController:(_WKWebExtensionController *)controller recordTestFinishedWithResult:(BOOL)result message:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber forExtensionContext:(_WKWebExtensionContext *)context;
 
+/*!
+ @abstract Delegate notification about the creation of the background web view in the web extension context.
+ @discussion The app can use this to setup additional properties on the web view before it is loaded. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(_WKWebExtensionController *)controller didCreateBackgroundWebView:(WKWebView *)webView forExtensionContext:(_WKWebExtensionContext *)context;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -16,13 +16,16 @@
 
 #include "absl/strings/str_cat.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <limits>
 #include <string>
 #include <vector>
 
 #include "gtest/gtest.h"
 #include "absl/strings/str_format.h"
-#include "absl/strings/substitute.h"
+#include "absl/strings/string_view.h"
 
 #ifdef __ANDROID__
 // Android assert messages only go to system log, so death tests cannot inspect
@@ -660,6 +663,22 @@ void AbslStringify(Sink& sink, EnumWithStringify e) {
 TEST(StrCat, AbslStringifyWithEnum) {
   const auto e = EnumWithStringify::Choices;
   EXPECT_EQ(absl::StrCat(e), "Choices");
+}
+
+template <typename Integer>
+void CheckSingleArgumentIntegerLimits() {
+  Integer max = std::numeric_limits<Integer>::max();
+  Integer min = std::numeric_limits<Integer>::min();
+
+  EXPECT_EQ(absl::StrCat(max), std::to_string(max));
+  EXPECT_EQ(absl::StrCat(min), std::to_string(min));
+}
+
+TEST(StrCat, SingleArgumentLimits) {
+  CheckSingleArgumentIntegerLimits<int32_t>();
+  CheckSingleArgumentIntegerLimits<uint32_t>();
+  CheckSingleArgumentIntegerLimits<int64_t>();
+  CheckSingleArgumentIntegerLimits<uint64_t>();
 }
 
 }  // namespace

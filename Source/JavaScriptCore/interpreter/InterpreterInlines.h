@@ -63,7 +63,7 @@ inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedSt
     return CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
 }
 
-inline Opcode Interpreter::getOpcode(OpcodeID id)
+inline JSC::Opcode Interpreter::getOpcode(OpcodeID id)
 {
     return LLInt::getOpcode(id);
 }
@@ -71,7 +71,7 @@ inline Opcode Interpreter::getOpcode(OpcodeID id)
 // This function is only available as a debugging tool for development work.
 // It is not currently used except in a RELEASE_ASSERT to ensure that it is
 // working properly.
-inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
+inline OpcodeID Interpreter::getOpcodeID(JSC::Opcode opcode)
 {
 #if ENABLE(COMPUTED_GOTO_OPCODES)
     ASSERT(isOpcode(opcode));
@@ -112,23 +112,10 @@ ALWAYS_INLINE JSValue Interpreter::executeCachedCall(CachedCall& cachedCall)
             return throwScope.exception();
     }
 
-    auto* codeBlock = cachedCall.functionExecutable()->codeBlockForCall();
-    void* addressForCall = codeBlock ? codeBlock->jitCode()->addressForCall() : nullptr;
-    if (cachedCall.m_addressForCall != addressForCall) {
+    if (UNLIKELY(!cachedCall.m_addressForCall)) {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
-
-        // Reload CodeBlock since GC can replace CodeBlock owned by Executable.
-        CodeBlock* codeBlock;
-        cachedCall.functionExecutable()->prepareForExecution<FunctionExecutable>(vm, cachedCall.function(), cachedCall.scope(), CodeForCall, codeBlock);
+        cachedCall.relink();
         RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-
-        ASSERT(codeBlock);
-        codeBlock->m_shouldAlwaysBeInlined = false;
-        {
-            DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-            cachedCall.m_protoCallFrame.setCodeBlock(codeBlock);
-            cachedCall.m_addressForCall = codeBlock->jitCode()->addressForCall();
-        }
     }
 
     // Execute the code:

@@ -88,7 +88,7 @@ struct RTPVideoHeader {
   uint8_t simulcastIdx = 0;
   VideoCodecType codec = VideoCodecType::kVideoCodecGeneric;
 
-  VideoPlayoutDelay playout_delay;
+  absl::optional<VideoPlayoutDelay> playout_delay;
   VideoSendTiming video_timing;
   absl::optional<ColorSpace> color_space;
   // This field is meant for media quality testing purpose only. When enabled it

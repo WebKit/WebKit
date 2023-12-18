@@ -116,16 +116,11 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
-#if ENABLE(TRACKING_PREVENTION)
     std::optional<Seconds> cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
-#else
-    UNUSED_PARAM(pageID);
-    std::optional<Seconds> cappedLifetime = std::nullopt;
-#endif
     cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script, cappedLifetime);
 }
 
-bool NetworkStorageSession::setCookieFromDOM(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, Cookie&&) const
+bool NetworkStorageSession::setCookieFromDOM(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, const Cookie&, ShouldRelaxThirdPartyCookieBlocking) const
 {
     // FIXME: Implement for the Cookie Store API.
     return false;

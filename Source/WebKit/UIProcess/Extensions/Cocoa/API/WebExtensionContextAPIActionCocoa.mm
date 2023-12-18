@@ -106,7 +106,7 @@ void WebExtensionContext::actionGetTitle(std::optional<WebExtensionWindowIdentif
 
     ASSERT(action);
 
-    completionHandler(action->displayLabel(WebExtensionAction::FallbackWhenEmpty::No), std::nullopt);
+    completionHandler(action->label(WebExtensionAction::FallbackWhenEmpty::No), std::nullopt);
 }
 
 void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const String& title, CompletionHandler<void(std::optional<String>)>&& completionHandler)
@@ -122,7 +122,7 @@ void WebExtensionContext::actionSetTitle(std::optional<WebExtensionWindowIdentif
 
     ASSERT(action);
 
-    action->setDisplayLabel(title);
+    action->setLabel(title);
 
     completionHandler(std::nullopt);
 }
@@ -196,7 +196,7 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
         }
 
         if (auto activeTab = window->activeTab()) {
-            if (getAction(activeTab.get())->hasPopup())
+            if (getAction(activeTab.get())->presentsPopup())
                 performAction(activeTab.get(), UserTriggered::No);
 
             completionHandler(std::nullopt);
@@ -211,14 +211,14 @@ void WebExtensionContext::actionOpenPopup(WebPageProxyIdentifier identifier, std
             return;
         }
 
-        if (getAction(tab.get())->hasPopup())
+        if (getAction(tab.get())->presentsPopup())
             performAction(tab.get(), UserTriggered::No);
 
         completionHandler(std::nullopt);
         return;
     }
 
-    if (defaultAction().hasPopup())
+    if (defaultAction().presentsPopup())
         performAction(nullptr, UserTriggered::No);
 
     completionHandler(std::nullopt);

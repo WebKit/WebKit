@@ -54,9 +54,6 @@ namespace WebKit {
 enum class AllowsCellularAccess : bool { No, Yes };
 
 struct NetworkSessionCreationParameters {
-    void encode(IPC::Encoder&) const;
-    static std::optional<NetworkSessionCreationParameters> decode(IPC::Decoder&);
-    
     PAL::SessionID sessionID { PAL::SessionID::defaultSessionID() };
     Markable<WTF::UUID> dataStoreIdentifier;
     String boundInterfaceIdentifier;
@@ -106,15 +103,12 @@ struct NetworkSessionCreationParameters {
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication { false };
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
-    bool useNetworkLoader { false };
+    std::optional<bool> useNetworkLoader { std::nullopt };
     bool allowsHSTSWithUntrustedRootCertificate { false };
     String pcmMachServiceName;
     String webPushMachServiceName;
     String webPushPartitionString;
     bool enablePrivateClickMeasurementDebugMode { false };
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldAcceptInsecureCertificatesForWebSockets { false };
-#endif
     bool isBlobRegistryTopOriginPartitioningEnabled { false };
 
     UnifiedOriginStorageLevel unifiedOriginStorageLevel { UnifiedOriginStorageLevel::Standard };
@@ -131,12 +125,10 @@ struct NetworkSessionCreationParameters {
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     String generalStorageDirectory;
     SandboxExtension::Handle generalStorageDirectoryHandle;
-#if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled { true };
     bool inspectionForServiceWorkersAllowed { true };
-#endif
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled { false };
 #endif

@@ -1,0 +1,27 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    window.jsTestIsAsync = true;
+    testRunner.dumpAsText();
+}
+
+addEventListener("message", (event) => {
+    testPassed("iframe received mouse event.");
+    finishJSTest();
+});
+
+addEventListener("mousedown", (event) => {
+    testFailed("main frame received mouse event.");
+    event.preventDefault();
+});
+
+function onLoad() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(100, 100);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+<iframe onload="onLoad()" width="500" height="500" src="http://localhost:8000/site-isolation/mouse-events/resources/message-mouse-down-coordinates.html"></iframe>

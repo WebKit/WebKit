@@ -1,0 +1,4 @@
+
+
+FAIL navigation.traverseTo() goes to the nearest entry when going back null is not an object (evaluating 'navigation.currentEntry.index')
+

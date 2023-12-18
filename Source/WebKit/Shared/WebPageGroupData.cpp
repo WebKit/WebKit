@@ -30,25 +30,4 @@
 
 namespace WebKit {
 
-void WebPageGroupData::encode(IPC::Encoder& encoder) const
-{
-    encoder << identifier;
-    encoder << pageGroupID;
-}
-
-std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
-{
-    std::optional<String> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-    
-    std::optional<PageGroupIdentifier> pageGroupID;
-    decoder >> pageGroupID;
-    if (!pageGroupID)
-        return std::nullopt;
-        
-    return {{ WTFMove(*identifier), *pageGroupID }};
-}
-
 } // namespace WebKit

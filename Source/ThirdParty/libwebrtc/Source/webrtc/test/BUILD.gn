@@ -66,6 +66,7 @@ rtc_library("frame_generator_impl") {
     "../modules/video_coding:webrtc_h264",
     "../modules/video_coding:webrtc_vp8",
     "../modules/video_coding:webrtc_vp9",
+    "../modules/video_coding/codecs/av1:dav1d_decoder",
     "../rtc_base:checks",
     "../rtc_base:criticalsection",
     "../rtc_base:logging",
@@ -255,6 +256,7 @@ if (!build_with_chromium) {
         "../api:media_stream_interface",
         "../api:scoped_refptr",
         "../modules/video_capture:video_capture_module",
+        "../rtc_base:logging",
         "../rtc_base:threading",
         "../sdk:base_objc",
         "../sdk:native_api",
@@ -412,11 +414,11 @@ if (is_ios) {
     sources = [
       "ios/coverage_util_ios.h",
       "ios/coverage_util_ios.mm",
-      "ios/google_test_runner_delegate.h",
       "ios/test_support.h",
       "ios/test_support.mm",
     ]
     deps = [
+      ":google_test_runner_delegate",
       ":perf_test",
       "../api/test/metrics:chrome_perf_dashboard_metrics_exporter",
       "../api/test/metrics:global_metrics_logger_and_exporter",
@@ -430,13 +432,17 @@ if (is_ios) {
     configs += [ ":test_support_objc_config" ]
   }
 
+  rtc_library("google_test_runner_delegate") {
+    sources = [ "ios/google_test_runner_delegate.h" ]
+  }
+
   rtc_library("google_test_runner_objc") {
     testonly = true
     visibility = [ "*" ]
     sources = [ "ios/google_test_runner.mm" ]
-    deps = [ ":test_support_objc" ]
     configs += [ "//build/config/ios:xctest_config" ]
     frameworks = [ "UIKit.framework" ]
+    deps = [ ":google_test_runner_delegate" ]
   }
 
   config("test_support_objc_config") {
@@ -478,7 +484,6 @@ rtc_source_set("test_support") {
     "gtest.h",
   ]
 
-  public_deps = []  # no-presubmit-check TODO(webrtc:8603)
   if (is_ios) {
     public_deps +=  # no-presubmit-check TODO(webrtc:8603)
         [ ":test_support_objc" ]
@@ -579,16 +584,6 @@ if (rtc_include_tests) {
       sources = [
         "testsupport/resources_dir_flag.cc",
         "testsupport/resources_dir_flag.h",
-      ]
-      absl_deps = [ "//third_party/abseil-cpp/absl/flags:flag" ]
-    }
-
-    rtc_library("test_flags") {
-      visibility = [ "*" ]
-      testonly = true
-      sources = [
-        "test_flags.cc",
-        "test_flags.h",
       ]
       absl_deps = [ "//third_party/abseil-cpp/absl/flags:flag" ]
     }
@@ -754,6 +749,7 @@ if (rtc_include_tests) {
         "../rtc_base:rtc_task_queue",
         "../rtc_base/synchronization:mutex",
         "../rtc_base/system:file_wrapper",
+        "jitter:jitter_unittests",
         "pc/e2e:e2e_unittests",
         "pc/e2e/analyzer/video:video_analyzer_unittests",
         "pc/e2e/analyzer/video/dvqa:dvqa_unittests",
@@ -908,9 +904,9 @@ rtc_library("fileutils_override_impl") {
 rtc_source_set("run_test") {
   testonly = true
   if (is_mac) {
-    public_deps = [ ":run_test_objc" ]  # no-presubmit-check TODO(webrtc:8603)
+    public_deps += [ ":run_test_objc" ]  # no-presubmit-check TODO(webrtc:8603)
   } else {
-    public_deps =  # no-presubmit-check TODO(webrtc:8603)
+    public_deps +=  # no-presubmit-check TODO(webrtc:8603)
         [ ":run_test_generic" ]
   }
 }
@@ -974,7 +970,7 @@ rtc_library("direct_transport") {
     "../rtc_base/task_utils:repeating_task",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
-  public_deps =  # no-presubmit-check TODO(webrtc:8603)
+  public_deps +=  # no-presubmit-check TODO(webrtc:8603)
       [ "../call:fake_network" ]
 }
 
@@ -1015,7 +1011,10 @@ rtc_library("fake_video_codecs") {
     "../rtc_base/synchronization:mutex",
     "../system_wrappers",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 }
 
 rtc_library("null_transport") {
@@ -1083,7 +1082,7 @@ rtc_library("mock_transport") {
 }
 
 rtc_source_set("test_renderer") {
-  public_deps =  # no-presubmit-check TODO(webrtc:8603)
+  public_deps +=  # no-presubmit-check TODO(webrtc:8603)
       [ ":test_renderer_generic" ]
   testonly = true
   if (is_mac) {
@@ -1236,6 +1235,15 @@ if (!build_with_chromium) {
     ]
   }
 
+  rtc_library("test_flags") {
+    testonly = true
+    sources = [
+      "test_flags.cc",
+      "test_flags.h",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/flags:flag" ]
+  }
+
   rtc_library("test_common") {
     testonly = true
     sources = [
@@ -1257,7 +1265,9 @@ if (!build_with_chromium) {
       ":mock_transport",
       ":run_loop",
       ":scoped_key_value_config",
+      ":test_flags",
       ":test_support",
+      ":test_video_capturer",
       ":video_test_common",
       ":video_test_constants",
       "../api:array_view",
@@ -1302,7 +1312,10 @@ if (!build_with_chromium) {
       "../system_wrappers:field_trial",
       "../video/config:encoder_config",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
     if (!is_android && !build_with_chromium) {
       deps += [ "../modules/video_capture:video_capture_internal_impl" ]
     }
@@ -1324,6 +1337,8 @@ if (!build_with_chromium && is_android) {
 }
 
 rtc_library("call_config_utils") {
+  testonly = true
+
   # TODO(bugs.webrtc.org/10814): Remove rtc_json_suppressions as soon as it
   # gets removed upstream.
   public_configs = [ "../rtc_base:rtc_json_suppressions" ]

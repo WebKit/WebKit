@@ -375,9 +375,8 @@ private:
     template <typename T>
     static WeakPtrImpl* keyImplIfExists(const T& key)
     {
-        auto& weakPtrImpl = key.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return pointer;
+        if (auto* impl = key.weakPtrFactory().impl(); impl && *impl)
+            return impl;
         return nullptr;
     }
 

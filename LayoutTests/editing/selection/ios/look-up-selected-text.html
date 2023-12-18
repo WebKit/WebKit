@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+#target {
+    font-size: 44px;
+    border: 1px solid tomato;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that tapping 'Look Up' in the edit menu does not cause a crash or hang. To manually run the test, select 'Apple' below and select 'Look Up' in the edit menu.");
+    let target = document.getElementById("target");
+    await UIHelper.longPressElement(target);
+    await UIHelper.waitForMenuToShow();
+    while (true) {
+        if (await UIHelper.rectForMenuAction("Look Up"))
+            break;
+        await UIHelper.delayFor(100);
+    }
+    await UIHelper.chooseMenuAction("Look Up");
+    testPassed("Tapped 'Look Up'");
+    await UIHelper.activateAt(0, 0);
+    await UIHelper.delayFor(1000); // Wait for the Look Up view controller to finish dismissing.
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<span id="target">Apple</span>
+</body>
+</html>

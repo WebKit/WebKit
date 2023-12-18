@@ -98,6 +98,41 @@ static INLINE __m256i sum_to_32bit_avx2(const __m256i sum) {
   return _mm256_add_epi32(sum_lo, sum_hi);
 }
 
+static INLINE void variance8_kernel_avx2(
+    const uint8_t *const src, const int src_stride, const uint8_t *const ref,
+    const int ref_stride, __m256i *const sse, __m256i *const sum) {
+  __m128i src0, src1, ref0, ref1;
+  __m256i ss, rr, diff;
+
+  // 0 0 0.... 0 s07 s06 s05 s04 s03 s02 s01 s00
+  src0 = _mm_loadl_epi64((const __m128i *)(src + 0 * src_stride));
+
+  // 0 0 0.... 0 s17 s16 s15 s14 s13 s12 s11 s10
+  src1 = _mm_loadl_epi64((const __m128i *)(src + 1 * src_stride));
+
+  // s17 s16...s11 s10 s07 s06...s01 s00 (8bit)
+  src0 = _mm_unpacklo_epi64(src0, src1);
+
+  // s17 s16...s11 s10 s07 s06...s01 s00 (16 bit)
+  ss = _mm256_cvtepu8_epi16(src0);
+
+  // 0 0 0.... 0 r07 r06 r05 r04 r03 r02 r01 r00
+  ref0 = _mm_loadl_epi64((const __m128i *)(ref + 0 * ref_stride));
+
+  // 0 0 0.... 0 r17 r16 0 r15 0 r14 0 r13 0 r12 0 r11 0 r10
+  ref1 = _mm_loadl_epi64((const __m128i *)(ref + 1 * ref_stride));
+
+  // r17 r16...r11 r10 r07 r06...r01 r00 (8 bit)
+  ref0 = _mm_unpacklo_epi64(ref0, ref1);
+
+  // r17 r16...r11 r10 r07 r06...r01 r00 (16 bit)
+  rr = _mm256_cvtepu8_epi16(ref0);
+
+  diff = _mm256_sub_epi16(ss, rr);
+  *sse = _mm256_add_epi32(*sse, _mm256_madd_epi16(diff, diff));
+  *sum = _mm256_add_epi16(*sum, diff);
+}
+
 static INLINE void variance16_kernel_avx2(
     const uint8_t *const src, const int src_stride, const uint8_t *const ref,
     const int ref_stride, __m256i *const sse, __m256i *const sum) {
@@ -117,6 +152,21 @@ static INLINE void variance32_kernel_avx2(const uint8_t *const src,
   const __m256i s = _mm256_loadu_si256((__m256i const *)(src));
   const __m256i r = _mm256_loadu_si256((__m256i const *)(ref));
   variance_kernel_avx2(s, r, sse, sum);
+}
+
+static INLINE void variance8_avx2(const uint8_t *src, const int src_stride,
+                                  const uint8_t *ref, const int ref_stride,
+                                  const int h, __m256i *const vsse,
+                                  __m256i *const vsum) {
+  int i;
+  *vsum = _mm256_setzero_si256();
+  *vsse = _mm256_setzero_si256();
+
+  for (i = 0; i < h; i += 2) {
+    variance8_kernel_avx2(src, src_stride, ref, ref_stride, vsse, vsum);
+    src += 2 * src_stride;
+    ref += 2 * ref_stride;
+  }
 }
 
 static INLINE void variance16_avx2(const uint8_t *src, const int src_stride,
@@ -590,17 +640,20 @@ static INLINE int sub_pix_var32xh(const uint8_t *src, int src_stride,
   return sum;
 }
 
-static unsigned int sub_pixel_variance32xh_avx2(
-    const uint8_t *src, int src_stride, int x_offset, int y_offset,
-    const uint8_t *dst, int dst_stride, int height, unsigned int *sse) {
+static int sub_pixel_variance32xh_avx2(const uint8_t *src, int src_stride,
+                                       int x_offset, int y_offset,
+                                       const uint8_t *dst, int dst_stride,
+                                       int height, unsigned int *sse) {
   return sub_pix_var32xh(src, src_stride, x_offset, y_offset, dst, dst_stride,
                          NULL, 0, 0, height, sse);
 }
 
-static unsigned int sub_pixel_avg_variance32xh_avx2(
-    const uint8_t *src, int src_stride, int x_offset, int y_offset,
-    const uint8_t *dst, int dst_stride, const uint8_t *second_pred,
-    int second_stride, int height, unsigned int *sse) {
+static int sub_pixel_avg_variance32xh_avx2(const uint8_t *src, int src_stride,
+                                           int x_offset, int y_offset,
+                                           const uint8_t *dst, int dst_stride,
+                                           const uint8_t *second_pred,
+                                           int second_stride, int height,
+                                           unsigned int *sse) {
   return sub_pix_var32xh(src, src_stride, x_offset, y_offset, dst, dst_stride,
                          second_pred, second_stride, 1, height, sse);
 }
@@ -608,6 +661,36 @@ static unsigned int sub_pixel_avg_variance32xh_avx2(
 typedef void (*get_var_avx2)(const uint8_t *src_ptr, int src_stride,
                              const uint8_t *ref_ptr, int ref_stride,
                              unsigned int *sse, int *sum);
+
+unsigned int vpx_variance8x4_avx2(const uint8_t *src_ptr, int src_stride,
+                                  const uint8_t *ref_ptr, int ref_stride,
+                                  unsigned int *sse) {
+  __m256i vsse, vsum;
+  int sum;
+  variance8_avx2(src_ptr, src_stride, ref_ptr, ref_stride, 4, &vsse, &vsum);
+  variance_final_from_16bit_sum_avx2(vsse, vsum, sse, &sum);
+  return *sse - ((sum * sum) >> 5);
+}
+
+unsigned int vpx_variance8x8_avx2(const uint8_t *src_ptr, int src_stride,
+                                  const uint8_t *ref_ptr, int ref_stride,
+                                  unsigned int *sse) {
+  __m256i vsse, vsum;
+  int sum;
+  variance8_avx2(src_ptr, src_stride, ref_ptr, ref_stride, 8, &vsse, &vsum);
+  variance_final_from_16bit_sum_avx2(vsse, vsum, sse, &sum);
+  return *sse - ((sum * sum) >> 6);
+}
+
+unsigned int vpx_variance8x16_avx2(const uint8_t *src_ptr, int src_stride,
+                                   const uint8_t *ref_ptr, int ref_stride,
+                                   unsigned int *sse) {
+  __m256i vsse, vsum;
+  int sum;
+  variance8_avx2(src_ptr, src_stride, ref_ptr, ref_stride, 16, &vsse, &vsum);
+  variance_final_from_16bit_sum_avx2(vsse, vsum, sse, &sum);
+  return *sse - ((sum * sum) >> 7);
+}
 
 unsigned int vpx_variance16x8_avx2(const uint8_t *src_ptr, int src_stride,
                                    const uint8_t *ref_ptr, int ref_stride,

@@ -150,15 +150,11 @@ public:
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
 #if PLATFORM(COCOA)
-    virtual void updateGeometry(const WebCore::IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>&, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) = 0;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) = 0;
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
     virtual void updateGeometryWC(uint64_t, WebCore::IntSize) { };
-#endif
-
-#if USE(COORDINATED_GRAPHICS) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-    virtual void layerHostDidFlushLayers() { }
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
@@ -166,6 +162,10 @@ public:
     virtual void didChangeViewportAttributes(WebCore::ViewportAttributes&&) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
     virtual bool enterAcceleratedCompositingModeIfNeeded() = 0;
+#endif
+
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+    virtual void preferredBufferFormatsDidChange() { }
 #endif
 
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }
@@ -226,7 +226,7 @@ private:
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) { }
 #endif
 
     bool m_hasRemovedMessageReceiver { false };

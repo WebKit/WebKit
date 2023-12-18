@@ -15,4 +15,12 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/altering-dom-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/ellisize-rtl-text-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/removing-collapsible-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/removing-collapsible-spaces-before-float-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-stroke-width-subpixel-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-stroke-width-subpixel-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-stroke-width-subpixel.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/whitespace-followed-by-cham-symbol-crash.html

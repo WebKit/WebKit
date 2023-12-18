@@ -1749,6 +1749,9 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
  *
  * Ignore further TLS errors on the @host for the certificate present in @info.
  *
+ * If @host is an IPv6 address, it should not be surrounded by brackets. This
+ * expectation matches g_uri_get_host().
+ *
  * Since: 2.6
  */
 void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context, GTlsCertificate* certificate, const gchar* host)
@@ -1915,7 +1918,7 @@ void webkit_web_context_send_message_to_all_extensions(WebKitWebContext* context
 
     // We sink the reference in case of being floating.
     GRefPtr<WebKitUserMessage> adoptedMessage = message;
-    for (auto& process : context->priv->processPool->processes())
+    for (Ref process : context->priv->processPool->processes())
         process->send(Messages::WebProcess::SendMessageToWebProcessExtension(webkitUserMessageGetMessage(message)), 0);
 }
 

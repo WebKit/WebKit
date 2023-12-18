@@ -279,8 +279,7 @@ void CodeBlockBytecodeDumper<Block>::dumpGraph(Block* block, const JSInstruction
 
     out.printf("\n");
 
-    Vector<Vector<unsigned>> predecessors;
-    predecessors.resize(graph.size());
+    Vector<Vector<unsigned>> predecessors(graph.size());
     for (auto& block : graph) {
         if (block.isEntryBlock() || block.isExitBlock())
             continue;

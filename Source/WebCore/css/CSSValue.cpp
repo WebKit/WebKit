@@ -65,10 +65,12 @@
 #include "CSSPaintImageValue.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSProperty.h"
 #include "CSSQuadValue.h"
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
+#include "CSSScrollValue.h"
 #include "CSSShadowValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
@@ -77,6 +79,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
+#include "CSSViewValue.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 #include "EventTarget.h"
@@ -202,6 +205,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRectShapeValue>(*this));
     case ReflectClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSReflectValue>(*this));
+    case ScrollClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSScrollValue>(*this));
     case ShadowClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSShadowValue>(*this));
     case SubgridClass:
@@ -220,6 +225,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSValuePair>(*this));
     case VariableReferenceClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSVariableReferenceValue>(*this));
+    case ViewClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSViewValue>(*this));
     case XywhShapeClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSXywhValue>(*this));
 #if ENABLE(CSS_PAINTING_API)
@@ -247,6 +254,20 @@ bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>&
 {
     return visitDerived([&](auto& value) {
         return value.customTraverseSubresources(handler);
+    });
+}
+
+void CSSValue::setReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    return visitDerived([&](auto& value) {
+        return value.customSetReplacementURLForSubresources(replacementURLStrings);
+    });
+}
+
+void CSSValue::clearReplacementURLForSubresources()
+{
+    return visitDerived([&](auto& value) {
+        return value.customClearReplacementURLForSubresources();
     });
 }
 
@@ -279,10 +300,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return typedThis.equals(downcast<ValueType>(other));
         });
     }
-    if (is<CSSValueList>(*this))
-        return downcast<CSSValueList>(*this).containsSingleEqualItem(other);
-    if (is<CSSValueList>(other))
-        return downcast<CSSValueList>(other).containsSingleEqualItem(*this);
+    if (auto* thisList = dynamicDowncast<CSSValueList>(*this))
+        return thisList->containsSingleEqualItem(other);
+    if (auto* otherList = dynamicDowncast<CSSValueList>(other))
+        return otherList->containsSingleEqualItem(*this);
     return false;
 }
 

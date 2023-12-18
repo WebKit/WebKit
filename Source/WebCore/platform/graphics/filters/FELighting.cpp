@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-FELighting::FELighting(Type type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource)
-    : FilterEffect(type)
+FELighting::FELighting(Type type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, DestinationColorSpace colorSpace)
+    : FilterEffect(type, colorSpace)
     , m_lightingColor(lightingColor)
     , m_surfaceScale(surfaceScale)
     , m_diffuseConstant(std::max(diffuseConstant, 0.0f))

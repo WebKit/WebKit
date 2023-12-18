@@ -84,13 +84,6 @@ enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
     NeedsNoDisplay
 };
 
-header: "RemoteScrollingUIState.h"
-[OptionSet] enum class WebKit::RemoteScrollingUIStateChanges : uint8_t {
-    ScrollSnapNodes
-    UserScrollNodes
-    RubberbandingNodes
-};
-
 [LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
 {
     WebCore::PlatformLayerIdentifier m_rootLayerID;
@@ -139,6 +132,10 @@ header: "RemoteScrollingUIState.h"
     std::optional<WebKit::EditorState> m_editorState;
 #if PLATFORM(IOS_FAMILY)
     std::optional<uint64_t> m_dynamicViewportSizeUpdateID;
+#endif
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    Seconds m_acceleratedTimelineTimeOrigin;
 #endif
 }
 
@@ -189,7 +186,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     std::unique_ptr<WebKit::RemoteLayerBackingStoreProperties> properties;
 };
 
-struct WebKit::LayerProperties {
+[LegacyPopulateFromEmptyConstructor] struct WebKit::LayerProperties {
     [OptionalTupleBits] OptionSet<WebKit::LayerChange> changedProperties;
     [NotSerialized] OptionSet<WebKit::LayerChange> everChangedProperties;
 

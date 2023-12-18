@@ -26,10 +26,12 @@
 #pragma once
 
 #include "ContextDestructionObserver.h"
+#include "EventTarget.h"
 #include "QualifiedName.h"
 #include <wtf/Lock.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -66,7 +68,7 @@ public:
     JSCustomElementInterface* findInterface(const Element&) const;
     JSCustomElementInterface* findInterface(const QualifiedName&) const;
     JSCustomElementInterface* findInterface(const AtomString&) const;
-    JSCustomElementInterface* findInterface(const JSC::JSObject*) const;
+    RefPtr<JSCustomElementInterface> findInterface(const JSC::JSObject*) const;
     bool containsConstructor(const JSC::JSObject*) const;
 
     JSC::JSValue get(const AtomString&);
@@ -80,7 +82,7 @@ public:
 private:
     CustomElementRegistry(LocalDOMWindow&, ScriptExecutionContext*);
 
-    LocalDOMWindow& m_window;
+    WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
     HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;

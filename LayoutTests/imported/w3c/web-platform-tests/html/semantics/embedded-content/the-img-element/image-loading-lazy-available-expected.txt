@@ -1,5 +1,5 @@
 
 
 
-FAIL The list of available images gets checked before deciding to make a load lazy assert_equals: The list of available images should be checked before delaying the image load expected 256 but got 0
+PASS The list of available images gets checked before deciding to make a load lazy
 

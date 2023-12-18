@@ -105,8 +105,8 @@ template <typename ElementType>
 inline ElementType* findElementAncestorOfType(const Node& current)
 {
     for (Element* ancestor = current.parentElement(); ancestor; ancestor = ancestor->parentElement()) {
-        if (is<ElementType>(*ancestor))
-            return downcast<ElementType>(ancestor);
+        if (auto* element = dynamicDowncast<ElementType>(*ancestor))
+            return element;
     }
     return nullptr;
 }

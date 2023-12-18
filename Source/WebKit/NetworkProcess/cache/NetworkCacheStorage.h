@@ -155,6 +155,7 @@ private:
     void removeFromPendingWriteOperations(const Key&);
 
     ConcurrentWorkQueue& ioQueue() { return m_ioQueue.get(); }
+    Ref<ConcurrentWorkQueue> protectedIOQueue() { return ioQueue(); }
     ConcurrentWorkQueue& backgroundIOQueue() { return m_backgroundIOQueue.get(); }
     WorkQueue& serialBackgroundIOQueue() { return m_serialBackgroundIOQueue.get(); }
 

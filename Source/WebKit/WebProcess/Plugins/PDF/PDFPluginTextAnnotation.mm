@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginTextAnnotation.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFLayerControllerSPI.h"
@@ -153,4 +153,4 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

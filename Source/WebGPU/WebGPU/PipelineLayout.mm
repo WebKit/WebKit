@@ -34,19 +34,55 @@ namespace WebGPU {
 
 Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return PipelineLayout::createInvalid(*this);
 
     std::optional<Vector<Ref<BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
     if (descriptor.bindGroupLayouts) {
-        Vector<Ref<BindGroupLayout>> bindGroupLayouts;
-        bindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayoutCount);
-        for (uint32_t i = 0; i < descriptor.bindGroupLayoutCount; ++i) {
+        auto& deviceLimits = limits();
+        if (descriptor.bindGroupLayoutCount > deviceLimits.maxBindGroups) {
+            generateAValidationError("Too many bind groups"_s);
+            return PipelineLayout::createInvalid(*this);
+        }
+        Vector<Ref<BindGroupLayout>> bindGroupLayouts(descriptor.bindGroupLayoutCount, [&](size_t i) {
             auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
-            bindGroupLayouts.uncheckedAppend(WebGPU::fromAPI(bindGroupLayout));
+            return Ref<BindGroupLayout> { WebGPU::fromAPI(bindGroupLayout) };
+        });
+        ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+        for (ShaderStage shaderStage : stages) {
+            uint32_t uniformBufferCount = 0, storageBufferCount = 0, samplerCount = 0, textureCount = 0, storageTextureCount = 0;
+            for (auto& bindGroupLayout : bindGroupLayouts) {
+                if (this != &bindGroupLayout->device()) {
+                    generateAValidationError("Device mismatch"_s);
+                    return PipelineLayout::createInvalid(*this);
+                }
+                uniformBufferCount += bindGroupLayout->uniformBuffersPerStage(shaderStage);
+                storageBufferCount += bindGroupLayout->storageBuffersPerStage(shaderStage);
+                samplerCount += bindGroupLayout->samplersPerStage(shaderStage);
+                textureCount += bindGroupLayout->texturesPerStage(shaderStage);
+                storageTextureCount += bindGroupLayout->storageTexturesPerStage(shaderStage);
+                if (uniformBufferCount > deviceLimits.maxUniformBuffersPerShaderStage || storageBufferCount > deviceLimits.maxStorageBuffersPerShaderStage || samplerCount > deviceLimits.maxSamplersPerShaderStage || textureCount > deviceLimits.maxSampledTexturesPerShaderStage || storageTextureCount > deviceLimits.maxStorageTexturesPerShaderStage) {
+                    generateAValidationError("Resource usage limits exceeded"_s);
+                    return PipelineLayout::createInvalid(*this);
+                }
+            }
         }
 
-        optionalBindGroupLayouts = bindGroupLayouts;
+        uint32_t dynamicUniformBuffers = 0, dynamicStorageBuffers = 0;
+        for (auto& bindGroupLayout : bindGroupLayouts) {
+            dynamicUniformBuffers += bindGroupLayout->dynamicUniformBuffers();
+            dynamicStorageBuffers += bindGroupLayout->dynamicStorageBuffers();
+        }
+        if (dynamicUniformBuffers > deviceLimits.maxDynamicUniformBuffersPerPipelineLayout) {
+            generateAValidationError("Too many dynamic uniform buffers"_s);
+            return PipelineLayout::createInvalid(*this);
+        }
+        if (dynamicStorageBuffers > deviceLimits.maxDynamicStorageBuffersPerPipelineLayout) {
+            generateAValidationError("Too many dynamic storage buffers"_s);
+            return PipelineLayout::createInvalid(*this);
+        }
+
+        optionalBindGroupLayouts = WTFMove(bindGroupLayouts);
     }
 
     return PipelineLayout::create(WTFMove(optionalBindGroupLayouts), *this);
@@ -56,7 +92,7 @@ static void addInitialOffset(uint32_t initialOffset, uint32_t offset, uint32_t g
 {
     if (initialOffset != offset) {
         offsets.add(groupIndex, Vector<uint32_t>((offset - initialOffset) / sizeof(uint32_t)));
-        dynamicOffets.add(groupIndex, initialOffset);
+        dynamicOffets.add(groupIndex, initialOffset / sizeof(uint32_t));
     }
 }
 

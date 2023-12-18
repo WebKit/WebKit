@@ -74,7 +74,8 @@ void SpinButtonElement::willDetachRenderers()
 
 void SpinButtonElement::defaultEventHandler(Event& event)
 {
-    if (!is<MouseEvent>(event)) {
+    auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+    if (!mouseEvent) {
         if (!event.defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -93,9 +94,8 @@ void SpinButtonElement::defaultEventHandler(Event& event)
         return;
     }
 
-    MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-    IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent.absoluteLocation(), UseTransforms));
-    if (mouseEvent.type() == eventNames().mousedownEvent && mouseEvent.button() == MouseButton::Left) {
+    IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent->absoluteLocation(), UseTransforms));
+    if (mouseEvent->type() == eventNames().mousedownEvent && mouseEvent->button() == MouseButton::Left) {
         if (box->borderBoxRect().contains(local)) {
             // The following functions of HTMLInputElement may run JavaScript
             // code which detaches this shadow node. We need to take a reference
@@ -114,11 +114,11 @@ void SpinButtonElement::defaultEventHandler(Event& event)
                     doStepAction(m_upDownState == Up ? 1 : -1);
                 }
             }
-            mouseEvent.setDefaultHandled();
+            mouseEvent->setDefaultHandled();
         }
-    } else if (mouseEvent.type() == eventNames().mouseupEvent && mouseEvent.button() == MouseButton::Left)
+    } else if (mouseEvent->type() == eventNames().mouseupEvent && mouseEvent->button() == MouseButton::Left)
         stopRepeatingTimer();
-    else if (mouseEvent.type() == eventNames().mousemoveEvent) {
+    else if (mouseEvent->type() == eventNames().mousemoveEvent) {
         if (box->borderBoxRect().contains(local)) {
             if (!m_capturing) {
                 if (RefPtr frame = document().frame()) {
@@ -148,8 +148,8 @@ void SpinButtonElement::defaultEventHandler(Event& event)
         }
     }
 
-    if (!mouseEvent.defaultHandled())
-        HTMLDivElement::defaultEventHandler(mouseEvent);
+    if (!mouseEvent->defaultHandled())
+        HTMLDivElement::defaultEventHandler(*mouseEvent);
 }
 
 void SpinButtonElement::willOpenPopup()
@@ -160,7 +160,8 @@ void SpinButtonElement::willOpenPopup()
 
 void SpinButtonElement::forwardEvent(Event& event)
 {
-    if (!is<WheelEvent>(event))
+    auto* wheelEvent = dynamicDowncast<WheelEvent>(event);
+    if (!wheelEvent)
         return;
 
     if (!m_spinButtonOwner)
@@ -169,8 +170,8 @@ void SpinButtonElement::forwardEvent(Event& event)
     if (!m_spinButtonOwner->shouldSpinButtonRespondToWheelEvents())
         return;
 
-    doStepAction(downcast<WheelEvent>(event).wheelDeltaY());
-    event.setDefaultHandled();
+    doStepAction(wheelEvent->wheelDeltaY());
+    wheelEvent->setDefaultHandled();
 }
 
 bool SpinButtonElement::willRespondToMouseMoveEvents() const

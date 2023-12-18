@@ -59,8 +59,9 @@ public:
     ~Queue();
 
     void onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
-    void submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands);
+    void submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands);
     void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
+    void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, const void* data, size_t);
     void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
     void setLabel(String&&);
 
@@ -72,12 +73,14 @@ public:
     id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
 
     const Device& device() const { return m_device; }
+    void waitUntilIdle();
+    void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
 
 private:
     Queue(id<MTLCommandQueue>, Device&);
     Queue(Device&);
 
-    bool validateSubmit(const Vector<std::reference_wrapper<const CommandBuffer>>&) const;
+    bool validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>&) const;
     bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
 
     void ensureBlitCommandEncoder();
@@ -102,6 +105,7 @@ private:
     HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
+    NSMutableSet<id<MTLCommandBuffer>> *m_pendingCommandBuffers;
 };
 
 } // namespace WebGPU

@@ -48,7 +48,7 @@ WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState&& backFo
     , m_pageID(pageID)
     , m_lastProcessIdentifier(m_itemState.identifier.processIdentifier())
 {
-    auto result = allItems().add(m_itemState.identifier, this);
+    auto result = allItems().add(m_itemState.identifier, *this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -60,10 +60,10 @@ WebBackForwardListItem::~WebBackForwardListItem()
     removeFromBackForwardCache();
 }
 
-HashMap<BackForwardItemIdentifier, CheckedPtr<WebBackForwardListItem>>& WebBackForwardListItem::allItems()
+HashMap<BackForwardItemIdentifier, CheckedRef<WebBackForwardListItem>>& WebBackForwardListItem::allItems()
 {
     RELEASE_ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<BackForwardItemIdentifier, CheckedPtr<WebBackForwardListItem>>> items;
+    static NeverDestroyed<HashMap<BackForwardItemIdentifier, CheckedRef<WebBackForwardListItem>>> items;
     return items;
 }
 

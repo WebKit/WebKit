@@ -253,6 +253,7 @@ page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeMac.mm
 page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
+page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
 platform/VideoFrame.mm
 platform/animation/AcceleratedEffectStack.mm @no-unify
@@ -314,7 +315,7 @@ platform/cocoa/TextRecognitionResultCocoa.mm
 platform/cocoa/ThemeCocoa.mm
 platform/cocoa/ThermalMitigationNotifier.mm
 platform/cocoa/UserAgentCocoa.mm
-platform/cocoa/VideoFullscreenModelVideoElement.mm
+platform/cocoa/VideoPresentationModelVideoElement.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm
@@ -367,7 +368,7 @@ platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
-platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm
+platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm @no-unify
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/ca/LayerPool.cpp
@@ -412,6 +413,7 @@ platform/graphics/cg/PathCG.cpp
 platform/graphics/cg/PatternCG.cpp
 platform/graphics/cg/TransformationMatrixCG.cpp
 platform/graphics/cg/UTIRegistry.cpp
+platform/graphics/cocoa/AV1UtilitiesCocoa.mm @no-unify
 platform/graphics/cocoa/AudioTrackPrivateWebM.cpp
 platform/graphics/cocoa/CMUtilities.mm @no-unify
 platform/graphics/cocoa/ColorCocoa.mm
@@ -501,6 +503,9 @@ platform/graphics/mac/controls/SearchFieldMac.mm
 platform/graphics/mac/controls/SearchFieldResultsMac.mm
 platform/graphics/mac/controls/SliderThumbMac.mm
 platform/graphics/mac/controls/SliderTrackMac.mm
+platform/graphics/mac/controls/SwitchMacUtilities.mm
+platform/graphics/mac/controls/SwitchThumbMac.mm
+platform/graphics/mac/controls/SwitchTrackMac.mm
 platform/graphics/mac/controls/TextAreaMac.mm
 platform/graphics/mac/controls/TextFieldMac.mm
 platform/graphics/mac/controls/ToggleButtonMac.mm
@@ -582,6 +587,7 @@ platform/mac/RevealUtilities.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm
 platform/mac/ScrollViewMac.mm
+platform/mac/ScrollbarMac.mm @no-unify
 platform/mac/ScrollbarsControllerMac.mm @no-unify
 platform/mac/ScrollbarThemeMac.mm @no-unify
 platform/mac/ScrollingEffectsController.mm
@@ -678,6 +684,7 @@ platform/text/cocoa/LocalizedDateCache.mm
 platform/text/mac/TextBoundaries.mm
 platform/text/mac/TextCheckingMac.mm
 platform/xr/cocoa/PlatformXRCocoa.mm
+platform/xr/cocoa/PlatformXRPose.cpp
 platform/text/mac/CoreTextChineseCompositionEngine.cpp
 platform/text/mac/CoreTextCompositionEngine.cpp
 rendering/AttachmentLayout.mm

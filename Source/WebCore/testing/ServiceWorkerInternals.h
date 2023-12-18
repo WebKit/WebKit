@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "EpochTimeStamp.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferredForward.h"
@@ -88,5 +86,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

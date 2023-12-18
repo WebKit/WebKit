@@ -770,11 +770,6 @@ void GenerateCaps(IDirect3D9 *d3d9,
     // state.
     limitations->noSeparateStencilRefsAndMasks = true;
 
-    // D3D9 shader models have limited support for looping, so the Appendix A
-    // index/loop limitations are necessary. Workarounds that are needed to
-    // support dynamic indexing of vectors on HLSL also don't work on D3D9.
-    limitations->shadersRequireIndexedLoopValidation = true;
-
     // D3D9 cannot support constant color and alpha blend funcs together
     limitations->noSimultaneousConstantColorAndAlphaBlendFunc = true;
 
@@ -842,8 +837,19 @@ void InitializeFeatures(angle::FeaturesD3D *features, DWORD vendorID)
     ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, true);
 
     ANGLE_FEATURE_CONDITION(features, borderColorSrgb, IsNvidia(vendorID));
+
+    // D3D9 shader models have limited support for looping, so the Appendix A
+    // index/loop limitations are necessary. Workarounds that are needed to
+    // support dynamic indexing of vectors on HLSL also don't work on D3D9.
+    ANGLE_FEATURE_CONDITION(features, supportsNonConstantLoopIndexing, false);
 }
 
+void InitializeFrontendFeatures(angle::FrontendFeatures *features, DWORD vendorID)
+{
+    // The D3D backend's handling of compile and link is thread-safe
+    ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
+}
 }  // namespace d3d9
 
 }  // namespace rx

@@ -91,7 +91,7 @@ RtpSenderFrameEncryptionConfig CreateFrameEncryptionConfig(
 RtpSenderObservers CreateObservers(RtcpRttStats* call_stats,
                                    EncoderRtcpFeedback* encoder_feedback,
                                    SendStatisticsProxy* stats_proxy,
-                                   SendDelayStats* send_delay_stats) {
+                                   SendPacketObserver* send_packet_observer) {
   RtpSenderObservers observers;
   observers.rtcp_rtt_stats = call_stats;
   observers.intra_frame_callback = encoder_feedback;
@@ -101,8 +101,7 @@ RtpSenderObservers CreateObservers(RtcpRttStats* call_stats,
   observers.bitrate_observer = stats_proxy;
   observers.frame_count_observer = stats_proxy;
   observers.rtcp_type_observer = stats_proxy;
-  observers.send_delay_observer = stats_proxy;
-  observers.send_packet_observer = send_delay_stats;
+  observers.send_packet_observer = send_packet_observer;
   return observers;
 }
 
@@ -122,7 +121,7 @@ std::unique_ptr<VideoStreamEncoder> CreateVideoStreamEncoder(
   TaskQueueBase* encoder_queue_ptr = encoder_queue.get();
   return std::make_unique<VideoStreamEncoder>(
       clock, num_cpu_cores, stats_proxy, encoder_settings,
-      std::make_unique<OveruseFrameDetector>(stats_proxy, field_trials),
+      std::make_unique<OveruseFrameDetector>(stats_proxy),
       FrameCadenceAdapterInterface::Create(clock, encoder_queue_ptr,
                                            field_trials),
       std::move(encoder_queue), bitrate_allocation_callback_type, field_trials,
@@ -151,6 +150,7 @@ VideoSendStream::VideoSendStream(
     const FieldTrialsView& field_trials)
     : transport_(transport),
       stats_proxy_(clock, config, encoder_config.content_type, field_trials),
+      send_packet_observer_(&stats_proxy_, send_delay_stats),
       config_(std::move(config)),
       content_type_(encoder_config.content_type),
       video_stream_encoder_(CreateVideoStreamEncoder(
@@ -169,20 +169,20 @@ VideoSendStream::VideoSendStream(
           [this](uint32_t ssrc, const std::vector<uint16_t>& seq_nums) {
             return rtp_video_sender_->GetSentRtpPacketInfos(ssrc, seq_nums);
           }),
-      rtp_video_sender_(
-          transport->CreateRtpVideoSender(suspended_ssrcs,
-                                          suspended_payload_states,
-                                          config_.rtp,
-                                          config_.rtcp_report_interval_ms,
-                                          config_.send_transport,
-                                          CreateObservers(call_stats,
-                                                          &encoder_feedback_,
-                                                          &stats_proxy_,
-                                                          send_delay_stats),
-                                          event_log,
-                                          std::move(fec_controller),
-                                          CreateFrameEncryptionConfig(&config_),
-                                          config_.frame_transformer)),
+      rtp_video_sender_(transport->CreateRtpVideoSender(
+          suspended_ssrcs,
+          suspended_payload_states,
+          config_.rtp,
+          config_.rtcp_report_interval_ms,
+          config_.send_transport,
+          CreateObservers(call_stats,
+                          &encoder_feedback_,
+                          &stats_proxy_,
+                          &send_packet_observer_),
+          event_log,
+          std::move(fec_controller),
+          CreateFrameEncryptionConfig(&config_),
+          config_.frame_transformer)),
       send_stream_(clock,
                    &stats_proxy_,
                    transport,
@@ -281,6 +281,8 @@ void VideoSendStream::ReconfigureVideoEncoder(VideoEncoderConfig config,
                                               SetParametersCallback callback) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
   RTC_DCHECK_EQ(content_type_, config.content_type);
+  RTC_LOG(LS_VERBOSE) << "Encoder config: " << config.ToString()
+                      << " VideoSendStream config: " << config_.ToString();
   video_stream_encoder_->ConfigureEncoder(
       std::move(config),
       config_.rtp.max_packet_size - CalculateMaxHeaderSize(config_.rtp),

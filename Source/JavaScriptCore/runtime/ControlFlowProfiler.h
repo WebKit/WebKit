@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Saam Barati. <saambarati1@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 #include "BasicBlockLocation.h"
 #include "SourceID.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -88,7 +89,7 @@ struct BasicBlockRange {
 };
 
 class ControlFlowProfiler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ControlFlowProfiler);
 public:
     ControlFlowProfiler();
     ~ControlFlowProfiler();

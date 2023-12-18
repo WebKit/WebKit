@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/touch-events/#touchlist-interface
+
 [
     Conditional=TOUCH_EVENTS,
     Exposed=Window
 ] interface TouchList {
     readonly attribute unsigned long length;
-
-    getter Touch item(unsigned long index);
+    getter Touch? item(unsigned long index);
 };

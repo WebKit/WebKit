@@ -50,7 +50,7 @@ public:
     ~WeakSet();
     void lastChanceToFinalize();
     
-    Heap* heap() const;
+    JSC::Heap* heap() const;
     VM& vm() const;
 
     bool isEmpty() const;

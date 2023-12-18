@@ -24,6 +24,7 @@ TEST(SampleCounterTest, ProcessesNoSamples) {
   SampleCounter counter;
   EXPECT_THAT(counter.Avg(kMinSamples), Eq(absl::nullopt));
   EXPECT_THAT(counter.Max(), Eq(absl::nullopt));
+  EXPECT_THAT(counter.Min(), Eq(absl::nullopt));
 }
 
 TEST(SampleCounterTest, NotEnoughSamples) {
@@ -35,6 +36,7 @@ TEST(SampleCounterTest, NotEnoughSamples) {
   EXPECT_THAT(counter.Avg(kMinSamples), Eq(absl::nullopt));
   EXPECT_THAT(counter.Sum(kMinSamples), Eq(absl::nullopt));
   EXPECT_THAT(counter.Max(), Eq(5));
+  EXPECT_THAT(counter.Min(), Eq(1));
 }
 
 TEST(SampleCounterTest, EnoughSamples) {
@@ -46,6 +48,7 @@ TEST(SampleCounterTest, EnoughSamples) {
   EXPECT_THAT(counter.Avg(kMinSamples), Eq(3));
   EXPECT_THAT(counter.Sum(kMinSamples), Eq(15));
   EXPECT_THAT(counter.Max(), Eq(5));
+  EXPECT_THAT(counter.Min(), Eq(1));
 }
 
 TEST(SampleCounterTest, ComputesVariance) {
@@ -74,6 +77,7 @@ TEST(SampleCounterTest, AggregatesTwoCounters) {
   counter1.Add(counter2);
   EXPECT_THAT(counter1.Avg(kMinSamples), Eq(3));
   EXPECT_THAT(counter1.Max(), Eq(5));
+  EXPECT_THAT(counter1.Min(), Eq(1));
   EXPECT_THAT(counter1.Variance(kMinSamples), Eq(2));
 }
 

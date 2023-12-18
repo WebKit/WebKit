@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="10vw"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="10vh"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="10vmin"
+CONSOLE MESSAGE: Error: Invalid value for <rect> attribute x="10vmax"
+
+FAIL vw unit in SVGLength assert_equals: expected 0 but got 1
+FAIL Convert back to vw from new user unit value assert_approx_equals: expected 20 +/- 0.2 but got 160
+FAIL vh unit in SVGLength assert_equals: expected 0 but got 1
+FAIL Convert back to vh from new user unit value assert_approx_equals: expected 20 +/- 0.2 but got 120
+FAIL vmin unit in SVGLength assert_equals: expected 0 but got 1
+FAIL Convert back to vmin from new user unit value assert_approx_equals: expected 20 +/- 0.2 but got 120
+FAIL vmax unit in SVGLength assert_equals: expected 0 but got 1
+FAIL Convert back to vmax from new user unit value assert_approx_equals: expected 20 +/- 0.2 but got 160
+

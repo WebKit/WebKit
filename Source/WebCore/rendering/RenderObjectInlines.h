@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
 
@@ -27,6 +28,7 @@ namespace WebCore {
 inline bool RenderObject::hasTransformOrPerspective() const { return hasTransformRelatedProperty() && (isTransformed() || style().hasPerspective()); }
 inline bool RenderObject::isAtomicInlineLevelBox() const { return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplacedOrInlineBlock()); }
 inline bool RenderObject::isTransformed() const { return hasTransformRelatedProperty() && (style().affectsTransform() || hasSVGTransform()); }
-inline bool RenderObject::preservesNewline() const { return !isSVGInlineText() && style().preserveNewline(); }
+inline bool RenderObject::preservesNewline() const { return !isRenderSVGInlineText() && style().preserveNewline(); }
+inline Ref<Document> RenderObject::protectedDocument() const { return document(); }
 
 } // namespace WebCore

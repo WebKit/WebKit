@@ -56,11 +56,11 @@ class OptimizingCallLinkInfo;
 class GCAwareJITStubRoutine : public JITStubRoutine {
 public:
     friend class JITStubRoutine;
-    GCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&);
+    GCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, JSCell* owner);
 
-    static Ref<JITStubRoutine> create(VM& vm, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code)
+    static Ref<JITStubRoutine> create(VM& vm, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, JSCell* owner)
     {
-        auto stub = adoptRef(*new GCAwareJITStubRoutine(Type::GCAwareJITStubRoutineType, code));
+        auto stub = adoptRef(*new GCAwareJITStubRoutine(Type::GCAwareJITStubRoutineType, code, owner));
         stub->makeGCAware(vm);
         return stub;
     }
@@ -68,6 +68,8 @@ public:
     void deleteFromGC();
 
     void makeGCAware(VM&);
+
+    JSCell* owner() const { return m_owner; }
     
 protected:
     void observeZeroRefCountImpl();
@@ -75,9 +77,11 @@ protected:
 private:
     friend class JITStubRoutineSet;
 
-    bool m_mayBeExecuting { false };
-    bool m_isJettisoned { false };
-    bool m_isGCAware { false };
+    JSCell* m_owner { nullptr };
+    bool m_mayBeExecuting : 1 { false };
+    bool m_isJettisoned : 1 { false };
+    bool m_ownerIsDead : 1 { false };
+    bool m_isGCAware : 1 { false };
 };
 
 class PolymorphicAccessJITStubRoutine : public GCAwareJITStubRoutine {
@@ -85,7 +89,7 @@ public:
     using Base = GCAwareJITStubRoutine;
     friend class JITStubRoutine;
 
-    PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&);
+    PolymorphicAccessJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner);
 
     const FixedVector<RefPtr<AccessCase>>& cases() const { return m_cases; }
     const FixedVector<StructureID>& weakStructures() const { return m_weakStructures; }
@@ -115,7 +119,7 @@ public:
     using Base = PolymorphicAccessJITStubRoutine;
     friend class JITStubRoutine;
 
-    MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, const JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&);
+    MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&);
 
 protected:
     template<typename Visitor> void markRequiredObjectsInternalImpl(Visitor&);
@@ -136,7 +140,7 @@ public:
     using Base = MarkingGCAwareJITStubRoutine;
     friend class JITStubRoutine;
 
-    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, const JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
+    GCAwareJITStubRoutineWithExceptionHandler(const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<RefPtr<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&&, CodeBlock*, DisposableCallSiteIndex);
     ~GCAwareJITStubRoutineWithExceptionHandler();
 
 
@@ -168,7 +172,7 @@ private:
 //    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code,
 //    VM& vm,
 //    FixedVector<RefPtr<AccessCase>>&& cases,
-//    const JSCell* owner,
+//    JSCell* owner,
 //    bool makesCalls,
 //    ...);
 //
@@ -179,7 +183,7 @@ private:
 // way.
 
 Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, VM&, const JSCell* owner, bool makesCalls,
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, FixedVector<RefPtr<AccessCase>>&& cases, FixedVector<StructureID>&& weakStructures, VM&, JSCell* owner, bool makesCalls,
     const Vector<JSCell*>&, Bag<OptimizingCallLinkInfo>&& callLinkInfos,
     CodeBlock* codeBlockForExceptionHandlers, DisposableCallSiteIndex exceptionHandlingCallSiteIndex);
 

@@ -26,10 +26,11 @@
 
 messages -> WebAuthenticatorCoordinatorProxy NotRefCounted {
 
-    MakeCredential(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, enum:uint8_t WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception)
-    GetAssertion(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options, enum:uint8_t WebCore::CredentialRequestOptions::MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, enum:uint8_t WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception)
+    MakeCredential(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialCreationOptions options) -> (struct WebCore::AuthenticatorResponseData data, enum:uint8_t WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception)
+    GetAssertion(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options, enum:uint8_t WebCore::MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin) -> (struct WebCore::AuthenticatorResponseData data, enum:uint8_t WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception)
     isConditionalMediationAvailable(WebCore::SecurityOriginData origin) -> (bool result)
     IsUserVerifyingPlatformAuthenticatorAvailable(WebCore::SecurityOriginData origin) -> (bool result)
+    GetClientCapabilities(WebCore::SecurityOriginData origin) -> (HashMap<String, bool> result)
     Cancel()
 }
 

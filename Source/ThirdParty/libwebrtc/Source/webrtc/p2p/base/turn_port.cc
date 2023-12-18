@@ -299,7 +299,7 @@ TurnPort::~TurnPort() {
   entries_.clear();
 
   if (socket_)
-    socket_->UnsubscribeClose(this);
+    socket_->UnsubscribeCloseEvent(this);
 
   if (!SharedSocket()) {
     delete socket_;
@@ -447,9 +447,9 @@ bool TurnPort::CreateTurnClientSocket() {
   if (server_address_.proto == PROTO_TCP ||
       server_address_.proto == PROTO_TLS) {
     socket_->SignalConnect.connect(this, &TurnPort::OnSocketConnect);
-    socket_->SubscribeClose(this, [this](rtc::AsyncPacketSocket* s, int err) {
-      OnSocketClose(s, err);
-    });
+    socket_->SubscribeCloseEvent(
+        this,
+        [this](rtc::AsyncPacketSocket* s, int err) { OnSocketClose(s, err); });
   } else {
     state_ = STATE_CONNECTED;
   }
@@ -541,7 +541,7 @@ void TurnPort::OnAllocateMismatch() {
                       "STUN_ERROR_ALLOCATION_MISMATCH, retry: "
                    << allocate_mismatch_retries_ + 1;
 
-  socket_->UnsubscribeClose(this);
+  socket_->UnsubscribeCloseEvent(this);
 
   if (SharedSocket()) {
     ResetSharedSocket();
@@ -954,11 +954,6 @@ bool TurnPort::AllowedTurnPort(int port,
   // Port 53, 80 and 443 are used for existing deployments.
   // Ports above 1024 are assumed to be OK to use.
   if (port == 53 || port == 80 || port == 443 || port >= 1024) {
-    return true;
-  }
-  // Allow any port if relevant field trial is set. This allows disabling the
-  // check.
-  if (field_trials && field_trials->IsEnabled("WebRTC-Turn-AllowSystemPorts")) {
     return true;
   }
   return false;

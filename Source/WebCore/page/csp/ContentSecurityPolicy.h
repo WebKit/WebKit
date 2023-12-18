@@ -80,7 +80,7 @@ enum class ContentSecurityPolicyModeForExtension : uint8_t {
     ManifestV3
 };
 
-class ContentSecurityPolicy {
+class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ContentSecurityPolicy(URL&&, ScriptExecutionContext&);
@@ -246,7 +246,7 @@ private:
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
 
     // We can never have both a script execution context and a ContentSecurityPolicyClient.
-    ScriptExecutionContext* m_scriptExecutionContext { nullptr };
+    WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;
     ContentSecurityPolicyClient* m_client { nullptr };
     mutable ReportingClient* m_reportingClient { nullptr };
 

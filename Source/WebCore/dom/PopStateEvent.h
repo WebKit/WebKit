@@ -42,6 +42,7 @@ public:
 
     struct Init : EventInit {
         JSC::JSValue state;
+        bool hasUAVisualTransition { false };
     };
 
     static Ref<PopStateEvent> create(const AtomString&, const Init&, IsTrusted = IsTrusted::No);
@@ -54,6 +55,9 @@ public:
     
     History* history() const { return m_history.get(); }
 
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=264748): add logic to determine hasUAVisualTransition value.
+    bool hasUAVisualTransition() const { return m_hasUAVisualTransition; }
+
 private:
     PopStateEvent() = default;
     PopStateEvent(const AtomString&, const Init&, IsTrusted);
@@ -64,6 +68,7 @@ private:
     JSValueInWrappedObject m_state;
     RefPtr<SerializedScriptValue> m_serializedState;
     bool m_triedToSerialize { false };
+    bool m_hasUAVisualTransition { false };
     RefPtr<History> m_history;
 };
 

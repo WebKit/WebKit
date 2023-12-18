@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #include "Debugger.h"
 #include "DebuggerScope.h"
 #include "DeferGC.h"
+#include "ExecutableBaseInlines.h"
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -53,12 +54,16 @@
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
 const ASCIILiteral InspectorDebuggerAgent::backtraceObjectGroup = "backtrace"_s;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDebuggerAgent);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorDebuggerAgentProtocolBreakpoint, InspectorDebuggerAgent::ProtocolBreakpoint);
 
 // Objects created and retained by evaluating breakpoint actions are put into object groups
 // according to the breakpoint action identifier assigned by the frontend. A breakpoint may
@@ -142,7 +147,7 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).value_or(false);
 
-                actions.uncheckedAppend(WTFMove(action));
+                actions.append(WTFMove(action));
             }
         }
 

@@ -367,7 +367,7 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
     return [NSString stringWithFormat:@"data:image/png;base64,%@", base64String];
 }
 
-static bool isValidDimensionKey(NSString *dimension)
+bool WebExtensionAPIAction::isValidDimensionKey(NSString *dimension)
 {
     double value = dimension.doubleValue;
     if (!value)
@@ -427,7 +427,7 @@ void WebExtensionAPIAction::setIcon(JSContextRef, NSDictionary *details, Ref<Web
                 return;
             }
 
-            if (!validateObject(images[key], key, JSValue.class, outExceptionString))
+            if (!validateObject(images[key], [NSString stringWithFormat:@"%@[%@]", imageDataKey, key], JSValue.class, outExceptionString))
                 return;
 
             JSValue *imageData = images[key];
@@ -450,11 +450,11 @@ void WebExtensionAPIAction::setIcon(JSContextRef, NSDictionary *details, Ref<Web
     if (auto *paths = objectForKey<NSDictionary>(details, pathKey)) {
         for (NSString *key in paths) {
             if (!isValidDimensionKey(key)) {
-                *outExceptionString = toErrorString(nil, imageDataKey, @"'%@' in not a valid dimension", key);
+                *outExceptionString = toErrorString(nil, pathKey, @"'%@' in not a valid dimension", key);
                 return;
             }
 
-            if (!validateObject(paths[key], key, NSString.class, outExceptionString))
+            if (!validateObject(paths[key], [NSString stringWithFormat:@"%@[%@]", pathKey, key], NSString.class, outExceptionString))
                 return;
         }
 

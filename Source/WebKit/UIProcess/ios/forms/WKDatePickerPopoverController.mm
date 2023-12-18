@@ -227,10 +227,20 @@
 {
     auto viewBounds = self.view.bounds;
     auto originalContentFrame = [_contentView frame];
-    if (CGRectIsEmpty(originalContentFrame) || CGRectGetHeight(originalContentFrame) <= CGRectGetHeight(viewBounds))
+    if (CGRectIsEmpty(viewBounds) || CGRectIsEmpty(originalContentFrame))
         return;
 
+    if (CGRectGetHeight(originalContentFrame) <= CGRectGetHeight(viewBounds)) {
+        // The UIDatePicker content view gets clipped vertically if the containing view is too short.
+        // However, if the date picker is wider than the view bounds, the date picker will automatically
+        // shrink horizontally to fit.
+        return;
+    }
+
     auto targetScale = std::min(CGRectGetWidth(viewBounds) / CGRectGetWidth(originalContentFrame), CGRectGetHeight(viewBounds) / CGRectGetHeight(originalContentFrame));
+    if (targetScale <= CGFLOAT_EPSILON || !std::isfinite(targetScale))
+        return;
+
     auto adjustedContentSize = CGSizeMake(CGRectGetWidth(originalContentFrame) * targetScale, CGRectGetHeight(originalContentFrame) * targetScale);
 
     [_contentView setTransform:^{

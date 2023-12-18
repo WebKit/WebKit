@@ -1,4 +1,4 @@
-This is a link. This is a wiki-style link. This is a link with visible edges. This is a JavaScript link. This link does nothing.
+This is a link. This is a wiki-style link. This is a link with a background. This is a link with an outline. This is a link with borders on all sides. This is a link with border-radius explicitly set. This is a link with a box shadow. border-bottom link This is a JavaScript link. This link does nothing.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -12,15 +12,33 @@ This is a link. This is a wiki-style link. This is a link with visible edges. Th
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-4) width=37 height=27)
+        (interaction (-4,-4) width=36.45 height=27)
         (borderRadius 8.00),
-        (interaction (87,-4) width=37 height=27)
+        (interaction (87.11,-4) width=36.45 height=27)
         (borderRadius 8.00),
-        (guard (250,-10) width=29 height=39)
+        (guard (250.21,-10) width=28.45 height=39)
         (borderRadius 0.00),
-        (interaction (250,0) width=29 height=19)
+        (interaction (250.21,0) width=28.45 height=19)
         (borderRadius 0.00),
-        (interaction (456,-4) width=38 height=27)
+        (guard (464.40,-10) width=28.45 height=39)
+        (borderRadius 0.00),
+        (interaction (464.40,0) width=28.45 height=19)
+        (borderRadius 0.00),
+        (guard (657.49,-10) width=28.45 height=39)
+        (borderRadius 0.00),
+        (interaction (657.49,0) width=28.45 height=19)
+        (borderRadius 0.00),
+        (guard (131.98,10) width=28.45 height=39)
+        (borderRadius 0.00),
+        (interaction (131.98,20) width=28.45 height=19)
+        (borderRadius 0.00),
+        (guard (431.60,10) width=28.45 height=39)
+        (borderRadius 0.00),
+        (interaction (431.60,20) width=28.45 height=19)
+        (borderRadius 0.00),
+        (interaction (642.10,16) width=128.99 height=27)
+        (borderRadius 8.00),
+        (interaction (767.09,16) width=36.45 height=27)
         (borderRadius 8.00)])
       )
     )

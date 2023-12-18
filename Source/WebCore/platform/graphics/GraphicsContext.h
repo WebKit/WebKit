@@ -29,6 +29,7 @@
 #include "ControlPart.h"
 #include "DashArray.h"
 #include "DestinationColorSpace.h"
+#include "DisplayListItem.h"
 #include "FloatRect.h"
 #include "FontCascade.h"
 #include "GraphicsContextState.h"
@@ -62,6 +63,7 @@ class VideoFrame;
 
 namespace DisplayList {
 class DrawNativeImage;
+class ResourceHeap;
 }
 
 class GraphicsContext {
@@ -124,11 +126,10 @@ public:
     void setStrokeStyle(StrokeStyle style) { m_state.setStrokeStyle(style); didUpdateState(m_state); }
 
     std::optional<GraphicsDropShadow> dropShadow() const { return m_state.dropShadow(); }
-    void setDropShadow(const GraphicsDropShadow& dropShadow) { m_state.setStyle(dropShadow); didUpdateState(m_state); }
-    WEBCORE_EXPORT void clearShadow();
-    bool hasVisibleShadow() const;
-    bool hasBlurredShadow() const;
-    bool hasShadow() const;
+    void setDropShadow(const GraphicsDropShadow& dropShadow) { m_state.setDropShadow(dropShadow); didUpdateState(m_state); }
+    void clearDropShadow() { m_state.setDropShadow(std::nullopt); didUpdateState(m_state); }
+    bool hasBlurredDropShadow() const { return dropShadow() && dropShadow()->isBlurred(); }
+    bool hasDropShadow() const { return dropShadow() && dropShadow()->hasOutsets(); }
 
     std::optional<GraphicsStyle> style() const { return m_state.style(); }
     void setStyle(const std::optional<GraphicsStyle>& style) { m_state.setStyle(style); didUpdateState(m_state); }
@@ -199,10 +200,6 @@ public:
 
     // Pixel Snapping
 
-    enum RoundingMode {
-        RoundAllSides,
-        RoundOriginAndDimensions
-    };
     WEBCORE_EXPORT static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     // Shapes
@@ -253,31 +250,29 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
 
-    WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });
-
-    virtual bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) { return true; }
+    WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { });
 
     WEBCORE_EXPORT virtual void drawSystemImage(SystemImage&, const FloatRect&);
 
-    WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = { ImageOrientation::Orientation::FromImage });
-    WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatRect& destination, const ImagePaintingOptions& = { ImageOrientation::Orientation::FromImage });
-    WEBCORE_EXPORT virtual ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { ImageOrientation::Orientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
+    WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatRect& destination, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
+    WEBCORE_EXPORT virtual ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });
 
-    WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = { });
-    WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule, Image::TileRule, const ImagePaintingOptions& = { });
+    WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { });
+    WEBCORE_EXPORT virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule, Image::TileRule, ImagePaintingOptions = { });
 
-    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatPoint& destination, const ImagePaintingOptions& = { });
-    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const ImagePaintingOptions& = { });
-    WEBCORE_EXPORT virtual void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { });
+    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatPoint& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT virtual void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { });
 
-    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatPoint& destination, const ImagePaintingOptions& = { });
-    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const ImagePaintingOptions& = { });
-    WEBCORE_EXPORT virtual void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { });
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatPoint& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, ImagePaintingOptions = { });
+    WEBCORE_EXPORT virtual void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { });
 
     WEBCORE_EXPORT virtual void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&);
 
-    virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
-    WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
+    virtual void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
+    WEBCORE_EXPORT virtual void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
     WEBCORE_EXPORT virtual void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
@@ -317,6 +312,9 @@ public:
     WEBCORE_EXPORT void drawLineForText(const FloatRect&, bool printing, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke);
     virtual void drawLinesForText(const FloatPoint&, float thickness, const DashArray& widths, bool printing, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
+
+    // DisplayList
+    WEBCORE_EXPORT virtual void drawDisplayListItems(const Vector<DisplayList::Item>&, const DisplayList::ResourceHeap&, const FloatPoint& destination);
 
     // Transparency Layers
 
@@ -372,7 +370,7 @@ public:
 
     IsDeferred deferred() const { return m_isDeferred; }
 private:
-    virtual void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
+    virtual void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
 protected:
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);

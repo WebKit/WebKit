@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+#include <functional>
 #include <map>
 #include <string>
 #include <utility>

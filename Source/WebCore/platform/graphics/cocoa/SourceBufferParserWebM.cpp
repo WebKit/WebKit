@@ -359,11 +359,11 @@ public:
                 Vector<uint8_t> buffer;
                 if (!buffer.tryReserveInitialCapacity(numToRead))
                     return Status(Status::kNotEnoughMemory);
-                buffer.resize(numToRead);
+                buffer.grow(numToRead);
                 auto readResult = currentSegment.read(m_positionWithinSegment, numToRead, buffer.data());
                 if (!readResult.has_value())
                     return segmentReadErrorToWebmStatus(readResult.error());
-                buffer.resize(readResult.value());
+                buffer.shrink(readResult.value());
                 rawBlockBuffer = SharedBuffer::create(WTFMove(buffer));
             } else
                 rawBlockBuffer = sharedBuffer->getContiguousData(m_positionWithinSegment, numToRead);
@@ -569,7 +569,7 @@ void WebMParser::createByteRangeSamples()
 ExceptionOr<int> WebMParser::parse(SourceBufferParser::Segment&& segment)
 {
     if (!m_parser)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_reader->appendSegment(WTFMove(segment));
 
@@ -1583,7 +1583,7 @@ void SourceBufferParserWebM::flushPendingAudioSamples()
     m_queuedAudioDuration = { };
 }
 
-void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags appendFlags)
+Expected<void, PlatformMediaError> SourceBufferParserWebM::appendData(Segment&& segment, AppendFlags appendFlags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "flags(", appendFlags == AppendFlags::Discontinuity ? "Discontinuity" : "", "), size(", segment.size(), ")");
 
@@ -1593,41 +1593,19 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
     }
 
     auto result = m_parser.parse(WTFMove(segment));
-    if (result.hasException()) {
-        completionHandler();
-        return;
-    }
-
-    if (result.returnValue()) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "status.code(", result.returnValue(), ")");
-
-        m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, code = result.returnValue()] {
-            if (m_didEncounterErrorDuringParsingCallback)
-                m_didEncounterErrorDuringParsingCallback(code);
-        });
-    }
+    if (result.hasException() || result.returnValue())
+        return makeUnexpected(PlatformMediaError::ParsingError);
 
     // Audio tracks are grouped into meta-samples of a duration no more than m_minimumSampleDuration.
     // But at the end of a file, no more audio data may be incoming, so flush and emit any pending
     // audio buffers.
     flushPendingAudioSamples();
 
-    completionHandler();
+    return { };
 }
 
 void SourceBufferParserWebM::flushPendingMediaData()
 {
-}
-
-void SourceBufferParserWebM::setShouldProvideMediaDataForTrackID(bool, uint64_t)
-{
-    notImplemented();
-}
-
-bool SourceBufferParserWebM::shouldProvideMediadataForTrackID(uint64_t)
-{
-    notImplemented();
-    return false;
 }
 
 void SourceBufferParserWebM::invalidate()

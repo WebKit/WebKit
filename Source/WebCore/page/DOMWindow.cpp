@@ -27,8 +27,11 @@
 #include "DOMWindow.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "HTTPParsers.h"
+#include "Location.h"
 #include "SecurityOrigin.h"
+#include "WebCoreOpaqueRoot.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -36,25 +39,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DOMWindow);
 
-HashMap<GlobalWindowIdentifier, DOMWindow*>& DOMWindow::allWindows()
-{
-    ASSERT(isMainThread());
-    static NeverDestroyed<HashMap<GlobalWindowIdentifier, DOMWindow*>> map;
-    return map;
-}
-
 DOMWindow::DOMWindow(GlobalWindowIdentifier&& identifier)
     : m_identifier(WTFMove(identifier))
 {
-    ASSERT(!allWindows().contains(m_identifier));
-    allWindows().add(m_identifier, this);
 }
 
-DOMWindow::~DOMWindow()
-{
-    ASSERT(allWindows().contains(identifier()));
-    allWindows().remove(identifier());
-}
+DOMWindow::~DOMWindow() = default;
 
 ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(const String& targetOrigin, Document& sourceDocument)
 {
@@ -66,9 +56,26 @@ ExceptionOr<RefPtr<SecurityOrigin>> DOMWindow::createTargetOriginForPostMessage(
         // It doesn't make sense target a postMessage at an opaque origin
         // because there's no way to represent an opaque origin in a string.
         if (targetSecurityOrigin->isOpaque())
-            return Exception { SyntaxError };
+            return Exception { ExceptionCode::SyntaxError };
     }
     return targetSecurityOrigin;
+}
+
+Location& DOMWindow::location()
+{
+    if (!m_location)
+        m_location = Location::create(*this);
+    return *m_location;
+}
+
+RefPtr<Frame> DOMWindow::protectedFrame() const
+{
+    return frame();
+}
+
+WebCoreOpaqueRoot root(DOMWindow* window)
+{
+    return WebCoreOpaqueRoot { window };
 }
 
 } // namespace WebCore

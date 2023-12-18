@@ -108,7 +108,7 @@ void MockRealtimeVideoSourceGStreamer::captureEnded()
 
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 {
-    auto imageBuffer = this->imageBuffer();
+    auto imageBuffer = this->imageBufferInternal();
     if (!imageBuffer)
         return;
 

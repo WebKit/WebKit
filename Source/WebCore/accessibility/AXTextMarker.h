@@ -130,9 +130,7 @@ public:
     Node* node() const;
     bool isIgnored() const { return m_data.ignored; }
 
-#if ENABLE(TREE_DEBUGGING)
     String debugDescription() const;
-#endif
 
     // Sets m_data.node when the marker was created with a PlatformTextMarkerData that lacks the node pointer because it was created off the main thread.
     void setNodeIfNeeded() const;
@@ -158,6 +156,8 @@ public:
     std::optional<SimpleRange> simpleRange() const;
     std::optional<CharacterRange> characterRange() const;
 
+    std::optional<AXTextMarkerRange> intersectionWith(const AXTextMarkerRange&) const;
+
 #if PLATFORM(MAC)
     RetainPtr<AXTextMarkerRangeRef> platformData() const;
     operator AXTextMarkerRangeRef() const { return platformData().autorelease(); }
@@ -170,6 +170,8 @@ public:
     AXTextMarker start() const { return m_start; }
     AXTextMarker end() const { return m_end; }
     bool isConfinedTo(AXID) const;
+
+    String debugDescription() const;
 private:
     AXTextMarker m_start;
     AXTextMarker m_end;

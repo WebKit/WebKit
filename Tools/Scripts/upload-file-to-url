@@ -22,15 +22,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy
+import sys
+
+try:
+    import webkitpy
+except Exception as e:
+    sys.stderr.write(f'Error while importing webkitpy: {e}... trying to continue\n')
 
 import argparse
 import os
 import requests
-import sys
 
 
-def upload(filename, url):
+def upload(filename, url, max_attempts=3):
     if not os.path.isfile(filename):
         print(f'ERROR: File not found: {filename}')
         return -1
@@ -39,19 +43,27 @@ def upload(filename, url):
         print(f'Error: missing url, either pass --url or set UPLOAD_URL environment variable.')
         return -1
 
-    filesize = os.stat(filename).st_size // 1024 ;
-    print(f'Uploading {filename}, size: {filesize} KB')
+    filesize = os.stat(filename).st_size / 1024 / 1024;
+    print(f'Uploading {filename}, size: {filesize:.2f} MB')
 
     with open(filename, 'rb') as f:
         try:
             data = f.read()
-            response = requests.put(url, data=data, timeout=5*60)
         except Exception as e:
-           print(f'Exception: {e}')
-           sys.exit(-1)
-        print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
-        if response and response.status_code // 100 == 2:
-            return 0
+            print(f'Exception: {e}')
+            return -1
+
+        for attempt in range(1, max_attempts + 1):
+            try:
+                response = requests.put(url, data=data, timeout=10*60)
+                print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
+                if response and response.status_code // 100 == 2:
+                    return 0
+            except Exception as e:
+                print(f'Exception: {e}')
+
+            if attempt < max_attempts:
+                print(f'Retrying, attempt {attempt + 1} of {max_attempts}')
         return -1
 
 

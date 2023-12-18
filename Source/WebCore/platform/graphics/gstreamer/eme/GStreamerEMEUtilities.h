@@ -85,7 +85,7 @@ public:
         unsigned numEvents = gst_value_list_get_size(streamEncryptionEventsList);
         m_events.reserveInitialCapacity(numEvents);
         for (unsigned i = 0; i < numEvents; ++i)
-            m_events.uncheckedAppend(GRefPtr<GstEvent>(static_cast<GstEvent*>(g_value_get_boxed(gst_value_list_get_value(streamEncryptionEventsList, i)))));
+            m_events.append(GRefPtr<GstEvent>(static_cast<GstEvent*>(g_value_get_boxed(gst_value_list_get_value(streamEncryptionEventsList, i)))));
         const GValue* streamEncryptionAllowedSystemsValue = gst_structure_get_value(structure, "available-stream-encryption-systems");
         const char** streamEncryptionAllowedSystems = reinterpret_cast<const char**>(g_value_get_boxed(streamEncryptionAllowedSystemsValue));
         if (streamEncryptionAllowedSystems) {

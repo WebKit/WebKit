@@ -160,12 +160,12 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
         // These properties are defined for EGL_ANGLE_power_preference as EGLContext attributes,
         // but Metal backend uses EGLDisplay attributes.
-        auto powerPreference = attrs.effectivePowerPreference();
-        if (powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance) {
+        auto powerPreference = attrs.powerPreference;
+        if (powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
         } else {
-            if (powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower) {
+            if (powerPreference == GraphicsContextGLPowerPreference::LowPower) {
                 displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
                 displayAttributes.append(EGL_LOW_POWER_ANGLE);
             }
@@ -265,24 +265,11 @@ std::tuple<GCGLenum, GCGLenum> GraphicsContextGLCocoa::externalImageTextureBindi
 bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
-    m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+    m_isForWebGL2 = attributes.isWebGL2;
     if (attributes.useMetal && !platformSupportsMetal()) {
         attributes.useMetal = false;
         setContextAttributes(attributes);
     }
-
-#if ENABLE(WEBXR)
-    if (attributes.xrCompatible) {
-        // FIXME: It's almost certain that any connected headset will require the high-power GPU,
-        // which is the same GPU we need this context to use. However, this is not guaranteed, and
-        // there is also the chance that there are multiple GPUs. Given that you can request the
-        // GraphicsContextGL before initializing the WebXR session, we'll need some way to
-        // migrate the context to the appropriate GPU when the code here does not work.
-        LOG(WebGL, "WebXR compatible context requested. This will also trigger a request for the high-power GPU.");
-        attributes.forceRequestForHighPerformanceGPU = true;
-        setContextAttributes(attributes);
-    }
-#endif
 
     m_displayObj = initializeEGLDisplay(attributes);
     if (!m_displayObj)
@@ -297,10 +284,8 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
         const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
         bool supportsPowerPreference = strstr(displayExtensions, "EGL_ANGLE_power_preference");
         if (!supportsPowerPreference) {
-            attributes.forceRequestForHighPerformanceGPU = false;
-            if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
+            if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
                 attributes.powerPreference = GraphicsContextGLPowerPreference::Default;
-            }
             setContextAttributes(attributes);
         }
     }
@@ -386,98 +371,41 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
     return true;
 }
 
-bool GraphicsContextGLCocoa::platformInitialize()
+bool GraphicsContextGLCocoa::platformInitializeExtensions()
 {
     auto attributes = contextAttributes();
-    if (m_isForWebGL2)
-        GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
-
-    Vector<ASCIILiteral, 4> requiredExtensions;
-    if (m_isForWebGL2) {
-        // For WebGL 2.0 occlusion queries to work.
-        requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
-    }
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (!needsEAGLOnMac()) {
         // For IOSurface-backed textures.
-        if (!attributes.useMetal)
-            requiredExtensions.append("GL_ANGLE_texture_rectangle"_s);
+        if (!attributes.useMetal && !enableExtension("GL_ANGLE_texture_rectangle"_s))
+            return false;
         // For creating the EGL surface from an IOSurface.
-        requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
+        if (!enableExtension("GL_EXT_texture_format_BGRA8888"_s))
+            return false;
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ENABLE(WEBXR)
-    if (attributes.xrCompatible && !enableRequiredWebXRExtensions())
+    if (attributes.xrCompatible && !enableRequiredWebXRExtensionsImpl())
         return false;
 #endif
-    if (m_isForWebGL2)
-        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
 
-    for (auto& extension : requiredExtensions) {
-        if (!supportsExtension(extension)) {
-            LOG(WebGL, "Missing required extension. %s", extension.characters());
-            return false;
-        }
-        ensureExtensionEnabled(extension);
-    }
-    if (attributes.useMetal) {
-        // GraphicsContextGLANGLE uses sync objects to throttle display on Metal implementations.
-        // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
-        // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
-        // some sort of internal throttling.
-        if (supportsExtension("GL_ARB_sync"_s))
-            ensureExtensionEnabled("GL_ARB_sync"_s);
-    }
-    validateAttributes();
-    attributes = contextAttributes(); // They may have changed during validation.
+    // GraphicsContextGLANGLE uses sync objects to throttle display on Metal implementations.
+    // OpenGL sync objects are not signaling upon completion on Catalina-era drivers, so
+    // OpenGL cannot use this method of throttling. OpenGL drivers typically implement
+    // some sort of internal throttling.
+    if (attributes.useMetal && !enableExtension("GL_ARB_sync"_s))
+        return false;
+    return true;
+}
 
-    // Create the texture that will be used for the framebuffer.
-    GLenum textureTarget = drawingBufferTextureTarget();
-
-    GL_GenTextures(1, &m_texture);
-    GL_BindTexture(textureTarget, m_texture);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GL_BindTexture(textureTarget, 0);
-
-    GL_GenFramebuffers(1, &m_fbo);
-    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
-
-    if (!attributes.antialias && (attributes.stencil || attributes.depth))
-        GL_GenRenderbuffers(1, &m_depthStencilBuffer);
-
-    // If necessary, create another framebuffer for the multisample results.
-    if (attributes.antialias) {
-        GL_GenFramebuffers(1, &m_multisampleFBO);
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-        GL_GenRenderbuffers(1, &m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth)
-            GL_GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-    } else if (attributes.preserveDrawingBuffer) {
-        // If necessary, create another texture to handle preserveDrawingBuffer:true without
-        // antialiasing.
-        GL_GenTextures(1, &m_preserveDrawingBufferTexture);
-        GL_BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        GL_BindTexture(GL_TEXTURE_2D, 0);
-        // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
-        GL_GenFramebuffers(1, &m_preserveDrawingBufferFBO);
-    }
-
-    GL_ClearColor(0, 0, 0, 0);
-
+bool GraphicsContextGLCocoa::platformInitialize()
+{
 #if PLATFORM(MAC)
-    if (!attributes.useMetal && attributes.effectivePowerPreference() == GraphicsContextGLPowerPreference::HighPerformance)
+    auto attributes = contextAttributes();
+    if (!attributes.useMetal && attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
         m_switchesGPUOnDisplayReconfiguration = true;
 #endif
-    return GraphicsContextGLANGLE::platformInitialize();
+    return true;
 }
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
@@ -573,13 +501,20 @@ void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSp
         forceContextLost();
 }
 
-GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
-{
-    return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
-}
-
 GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::drawingBuffer()
 {
+    return surfaceBuffer(SurfaceBuffer::DrawingBuffer);
+}
+
+GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
+{
+    return surfaceBuffer(SurfaceBuffer::DisplayBuffer);
+}
+
+GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
+{
+    if (buffer == SurfaceBuffer::DisplayBuffer)
+        return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
     return m_drawingBuffers[m_currentDrawingBufferIndex % maxReusedDrawingBuffers];
 }
 
@@ -765,22 +700,24 @@ GCEGLSync GraphicsContextGLCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
 bool GraphicsContextGLCocoa::enableRequiredWebXRExtensions()
 {
 #if ENABLE(WEBXR)
-    String requiredExtensions[] = {
-        "GL_ANGLE_framebuffer_multisample"_str,
-        "GL_ANGLE_framebuffer_blit"_str,
-        "GL_EXT_sRGB"_str,
-        "GL_OES_EGL_image"_str,
-        "GL_OES_rgb8_rgba8"_str
-    };
-
-    for (const auto& ext : requiredExtensions) {
-        if (!supportsExtension(ext))
-            return false;
-        ensureExtensionEnabled(ext);
-    }
+    if (!makeContextCurrent())
+        return false;
+    if (enableRequiredWebXRExtensionsImpl())
+        return true;
 #endif
-    return true;
+    return false;
 }
+
+#if ENABLE(WEBXR)
+bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
+{
+    return enableExtension("GL_ANGLE_framebuffer_multisample"_s)
+        && enableExtension("GL_ANGLE_framebuffer_blit"_s)
+        && enableExtension("GL_EXT_sRGB"_s)
+        && enableExtension("GL_OES_EGL_image"_s)
+        && enableExtension("GL_OES_rgb8_rgba8"_s);
+}
+#endif
 
 GCEGLSync GraphicsContextGLCocoa::createEGLSync(id sharedEvent, uint64_t signalValue)
 {
@@ -818,15 +755,10 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
         finishedSignal();
         return;
     }
-    if (m_layerComposited) {
-        // FIXME: It makes no sense that this happens. Tracking this state should be moved to caller, WebGLRendenderingContextBase.
-        // https://bugs.webkit.org/show_bug.cgi?id=219342
-        insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
-        waitUntilWorkScheduled();
+    if (!drawingBuffer()) {
+        finishedSignal();
         return;
     }
-    if (!drawingBuffer())
-        return;
     prepareTexture();
     // The fence inserted by this will be scheduled because next BindTexImage will wait until scheduled.
     insertFinishedSignalOrInvoke(WTFMove(finishedSignal));
@@ -836,7 +768,6 @@ void GraphicsContextGLCocoa::prepareForDisplayWithFinishedSignal(Function<void()
         forceContextLost();
         return;
     }
-    markLayerComposited();
 }
 
 
@@ -879,13 +810,20 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLCocoa::paintCompositedResultsToVideoFrame()
+
+RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    auto& buffer = displayBuffer();
-    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
+    if (!makeContextCurrent())
         return nullptr;
-    // Display surface is not marked in use since we will mirror and rotate it explicitly.
-    auto pixelBuffer = createCVPixelBuffer(buffer.surface->surface());
+    if (buffer == SurfaceBuffer::DrawingBuffer) {
+        prepareTexture();
+        waitUntilWorkScheduled();
+    }
+    auto& source = surfaceBuffer(buffer);
+    if (!source || source.surface->size() != getInternalFramebufferSize())
+        return nullptr;
+    // We will mirror and rotate the buffer explicitly. Thus the source being used is always a new one.
+    auto pixelBuffer = createCVPixelBuffer(source.surface->surface());
     if (!pixelBuffer)
         return nullptr;
     // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
@@ -936,81 +874,45 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
         m_cv->invalidateKnownTextureContent(texture);
 }
 
-void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(NativeImage&)> func)
+void GraphicsContextGLCocoa::withBufferAsNativeImage(SurfaceBuffer buffer, Function<void(NativeImage&)> func)
 {
-    if (!makeContextCurrent())
-        return;
-
-    auto& buffer = drawingBuffer();
-    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
-        return;
-
-    prepareTexture();
-
     RetainPtr<CGContextRef> cgContext;
-    RefPtr<NativeImage> drawingImage;
-
+    RefPtr<NativeImage> image;
     if (contextAttributes().premultipliedAlpha) {
         // Use the IOSurface backed image directly
-        waitUntilWorkScheduled();
-
-        cgContext = buffer.surface->createPlatformContext();
+        if (!makeContextCurrent())
+            return;
+        if (buffer == SurfaceBuffer::DrawingBuffer) {
+            prepareTexture();
+            waitUntilWorkScheduled();
+        }
+        IOSurfacePbuffer& source = surfaceBuffer(buffer);
+        if (!source || source.surface->size() != getInternalFramebufferSize())
+            return;
+        cgContext = source.surface->createPlatformContext();
         if (cgContext)
-            drawingImage = NativeImage::create(buffer.surface->createImage(cgContext.get()));
+            image = NativeImage::create(source.surface->createImage(cgContext.get()));
     } else {
         // Since IOSurface-backed images only support premultiplied alpha, read
         // the image into a PixelBuffer which can be used to create a CGImage
         // that does the conversion.
         //
         // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer(FlipY::No);
-        if (!drawingPixelBuffer)
+        RefPtr<PixelBuffer> pixelBuffer;
+        if (buffer == SurfaceBuffer::DrawingBuffer)
+            pixelBuffer = drawingBufferToPixelBuffer(FlipY::No);
+        else
+            pixelBuffer = readCompositedResults();
+        if (!pixelBuffer)
             return;
-
-        drawingImage = createNativeImageFromPixelBuffer(contextAttributes(), drawingPixelBuffer.releaseNonNull());
+        image = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
     }
 
-    if (!drawingImage)
+    if (!image)
         return;
 
-    CGImageSetCachingFlags(drawingImage->platformImage().get(), kCGImageCachingTransient);
-    func(*drawingImage);
-}
-
-void GraphicsContextGLCocoa::withDisplayBufferAsNativeImage(Function<void(NativeImage&)> func)
-{
-    auto& buffer = displayBuffer();
-    if (!buffer)
-        return;
-    if (buffer.surface->size() != getInternalFramebufferSize())
-        return;
-
-    RetainPtr<CGContextRef> cgContext;
-    RefPtr<NativeImage> displayImage;
-
-    if (contextAttributes().premultipliedAlpha) {
-        // Use the IOSurface backed image directly
-        cgContext = buffer.surface->createPlatformContext();
-        if (cgContext)
-            displayImage = NativeImage::create(buffer.surface->createImage(cgContext.get()));
-    } else {
-        // Since IOSurface-backed images only support premultiplied alpha, read
-        // the image into a PixelBuffer which can be used to create a CGImage
-        // that does the conversion.
-        //
-        // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        auto displayPixelBuffer = readCompositedResults();
-        if (!displayPixelBuffer)
-            return;
-
-        displayImage = createNativeImageFromPixelBuffer(contextAttributes(), displayPixelBuffer.releaseNonNull());
-    }
-
-    if (!displayImage)
-        return;
-
-    CGImageSetCachingFlags(displayImage->platformImage().get(), kCGImageCachingTransient);
-    func(*displayImage);
+    CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
+    func(*image);
 }
 
 void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signal)

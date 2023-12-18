@@ -26,7 +26,10 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
+#include "ControlPart.h"
+#include "DashArray.h"
 #include "DisplayListItem.h"
+#include "Filter.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
@@ -46,7 +49,6 @@ class TextStream;
 
 namespace WebCore {
 
-class MediaPlayer;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
@@ -164,62 +166,57 @@ class SetInlineFillColor {
 public:
     static constexpr char name[] = "set-inline-fill-color";
 
-    SetInlineFillColor() = default;
+    SetInlineFillColor(PackedColor::RGBA colorData)
+        : m_colorData(colorData)
+    {
+    }
+
     SetInlineFillColor(SRGBA<uint8_t> colorData)
-        : m_colorData(colorData)
+        : m_colorData(*Color(colorData).tryGetAsPackedInline())
     {
     }
-    SetInlineFillColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-        : SetInlineFillColor(SRGBA<uint8_t> { red, green, blue, alpha }) { }
 
-    Color color() const { return { m_colorData }; }
-    const SRGBA<uint8_t>& colorData() const { return m_colorData; }
+    Color color() const { return { asSRGBA(colorData()) }; }
+    const PackedColor::RGBA& colorData() const { return m_colorData; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    SRGBA<uint8_t> m_colorData;
+    PackedColor::RGBA m_colorData;
 };
 
-class SetInlineStrokeColor {
+class SetInlineStroke {
 public:
-    static constexpr char name[] = "set-inline-stroke-color";
+    static constexpr char name[] = "set-inline-stroke";
 
-    SetInlineStrokeColor() = default;
-    SetInlineStrokeColor(SRGBA<uint8_t> colorData)
+    SetInlineStroke(std::optional<PackedColor::RGBA> colorData, std::optional<float> thickness = std::nullopt)
         : m_colorData(colorData)
+        , m_thickness(thickness)
     {
+        ASSERT(m_colorData || m_thickness);
     }
-    SetInlineStrokeColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-        : SetInlineStrokeColor(SRGBA<uint8_t> { red, green, blue, alpha }) { }
 
-    Color color() const { return { m_colorData }; }
-    const SRGBA<uint8_t>& colorData() const { return m_colorData; }
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const;
-
-private:
-    SRGBA<uint8_t> m_colorData;
-};
-
-class SetStrokeThickness {
-public:
-    static constexpr char name[] = "set-stroke-thickness";
-
-    SetStrokeThickness(float thickness)
+    SetInlineStroke(float thickness)
         : m_thickness(thickness)
     {
     }
 
-    float thickness() const { return m_thickness; }
+    SetInlineStroke(SRGBA<uint8_t> colorData)
+        : m_colorData(PackedColor::RGBA(colorData))
+    {
+    }
+
+    std::optional<Color> color() const { return m_colorData ? std::optional<Color>(asSRGBA(*m_colorData)) : std::nullopt; }
+    std::optional<PackedColor::RGBA> colorData() const { return m_colorData; }
+    std::optional<float> thickness() const { return m_thickness; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    float m_thickness { 0 };
+    std::optional<PackedColor::RGBA> m_colorData;
+    std::optional<float> m_thickness;
 };
 
 class SetState {
@@ -313,9 +310,9 @@ private:
     float m_miterLimit;
 };
 
-class ClearShadow {
+class ClearDropShadow {
 public:
-    static constexpr char name[] = "set-clear-shadow";
+    static constexpr char name[] = "clear-drop-shadow";
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }
@@ -405,6 +402,7 @@ public:
 
     RenderingResourceIdentifier imageBufferIdentifier() const { return m_imageBufferIdentifier; }
     FloatRect destinationRect() const { return m_destinationRect; }
+
     bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
@@ -485,6 +483,7 @@ public:
 
     std::optional<RenderingResourceIdentifier> sourceImageIdentifier() const { return m_sourceImageIdentifier; }
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
+    Ref<Filter> filter() const { return m_filter; }
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
@@ -539,11 +538,30 @@ private:
     RenderingResourceIdentifier m_decomposedGlyphsIdentifier;
 };
 
+class DrawDisplayListItems {
+public:
+    static constexpr char name[] = "draw-display-list-items";
+
+    DrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination);
+    WEBCORE_EXPORT DrawDisplayListItems(Vector<Item>&&, const FloatPoint& destination);
+
+    const Vector<Item>& items() const { return m_items; }
+    FloatPoint destination() const { return m_destination; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&, const ResourceHeap&) const;
+    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    Vector<Item> m_items;
+    FloatPoint m_destination;
+};
+
 class DrawImageBuffer {
 public:
     static constexpr char name[] = "draw-image-buffer";
 
-    DrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+    DrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
         : m_imageBufferIdentifier(imageBufferIdentifier)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
@@ -555,6 +573,7 @@ public:
     FloatRect source() const { return m_srcRect; }
     FloatRect destinationRect() const { return m_destinationRect; }
     ImagePaintingOptions options() const { return m_options; }
+
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return m_imageBufferIdentifier.isValid(); }
 
@@ -572,7 +591,7 @@ class DrawNativeImage {
 public:
     static constexpr char name[] = "draw-native-image";
 
-    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
         : m_imageIdentifier(imageIdentifier)
         , m_imageSize(imageSize)
         , m_destinationRect(destRect)
@@ -582,8 +601,11 @@ public:
     }
 
     RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
-    const FloatRect& source() const { return m_srcRect; }
+    FloatSize imageSize() const { return m_imageSize; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
+    const FloatRect& source() const { return m_srcRect; }
+    ImagePaintingOptions options() const { return m_options; }
+
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return m_imageIdentifier.isValid(); }
 
@@ -623,7 +645,7 @@ class DrawPattern {
 public:
     static constexpr char name[] = "draw-pattern";
 
-    WEBCORE_EXPORT DrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { });
+    WEBCORE_EXPORT DrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
     RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
     FloatRect destRect() const { return m_destination; }
@@ -631,6 +653,8 @@ public:
     const AffineTransform& patternTransform() const { return m_patternTransform; }
     FloatPoint phase() const { return m_phase; }
     FloatSize spacing() const { return m_spacing; }
+    ImagePaintingOptions options() const { return m_options; }
+
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return m_imageIdentifier.isValid(); }
 
@@ -753,7 +777,7 @@ public:
         , m_style(style)
     {
     }
-    
+
     FloatRect rect() const { return m_rect; }
     DocumentMarkerLineStyle style() const { return m_style; }
 
@@ -1015,6 +1039,7 @@ public:
     {
     }
 
+    const PathDataLine& line() const { return m_line; };
     Path path() const { return Path({ PathSegment(m_line) }); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1033,7 +1058,9 @@ public:
     {
     }
 
+    const PathArc& arc() const { return m_arc; };
     Path path() const { return Path({ PathSegment(m_arc) }); }
+
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
@@ -1050,7 +1077,9 @@ public:
     {
     }
 
+    const PathDataQuadCurve& quadCurve() const { return m_quadCurve; };
     Path path() const { return Path({ PathSegment(m_quadCurve) }); }
+
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
@@ -1067,7 +1096,9 @@ public:
     {
     }
 
+    const PathDataBezierCurve& bezierCurve() const { return m_bezierCurve; };
     Path path() const { return Path({ PathSegment(m_bezierCurve) }); }
+
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
@@ -1086,6 +1117,7 @@ public:
     {
     }
 
+    const PathSegment& segment() const { return m_segment; };
     Path path() const { return Path({ m_segment }); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1141,10 +1173,10 @@ class PaintFrameForMedia {
 public:
     static constexpr char name[] = "paint-frame-for-media";
 
-    PaintFrameForMedia(MediaPlayer&, const FloatRect& destination);
+    WEBCORE_EXPORT PaintFrameForMedia(MediaPlayerIdentifier, const FloatRect& destination);
 
-    const FloatRect& destination() const { return m_destination; }
     MediaPlayerIdentifier identifier() const { return m_identifier; }
+    const FloatRect& destination() const { return m_destination; }
 
     bool isValid() const { return m_identifier.isValid(); }
 
@@ -1217,6 +1249,7 @@ public:
     {
     }
 
+    const PathArc& arc() const { return m_arc; }
     Path path() const { return Path({ PathSegment(m_arc) }); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1235,6 +1268,7 @@ public:
     {
     }
 
+    const PathDataQuadCurve& quadCurve() const { return m_quadCurve; }
     Path path() const { return Path({ PathSegment(m_quadCurve) }); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1253,6 +1287,7 @@ public:
     {
     }
 
+    const PathDataBezierCurve& bezierCurve() const { return m_bezierCurve; }
     Path path() const { return Path({ PathSegment(m_bezierCurve) }); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1273,6 +1308,7 @@ public:
     {
     }
 
+    const PathSegment& segment() const { return m_segment; }
     Path path() const { return Path({ m_segment }); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
@@ -1347,10 +1383,11 @@ public:
 
     WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
-    StyleAppearance type() const { return m_part->type(); }
+    Ref<ControlPart> part() const { return m_part; }
     FloatRoundedRect borderRect() const { return m_borderRect; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     const ControlStyle& style() const { return m_style; }
+    StyleAppearance type() const { return m_part->type(); }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;

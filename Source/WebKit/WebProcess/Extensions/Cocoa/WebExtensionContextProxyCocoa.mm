@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "JSWebExtensionWrapper.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionContextProxyMessages.h"
@@ -69,15 +70,44 @@ WebExtensionContextProxy::~WebExtensionContextProxy()
     WebProcess::singleton().removeMessageReceiver(Messages::WebExtensionContextProxy::messageReceiverName(), m_identifier);
 }
 
-Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExtensionContextParameters& parameters)
+Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExtensionContextParameters& parameters, WebPage* newPage)
 {
     auto updateProperties = [&](WebExtensionContextProxy& context) {
         context.m_baseURL = parameters.baseURL;
         context.m_uniqueIdentifier = parameters.uniqueIdentifier;
-        context.m_localization = parseLocalization(parameters.localizationJSON.get());
+        context.m_localization = parseLocalization(parameters.localizationJSON.get(), parameters.baseURL);
         context.m_manifest = parseJSON(parameters.manifestJSON.get());
         context.m_manifestVersion = parameters.manifestVersion;
         context.m_testingMode = parameters.testingMode;
+
+        if (parameters.backgroundPageIdentifier) {
+            if (newPage && parameters.backgroundPageIdentifier.value() == newPage->identifier())
+                context.setBackgroundPage(*newPage);
+            else if (auto* page = WebProcess::singleton().webPage(parameters.backgroundPageIdentifier.value()))
+                context.setBackgroundPage(*page);
+        }
+
+        for (auto& identifierTuple : parameters.popupPageIdentifiers) {
+            auto& pageIdentifier = std::get<WebCore::PageIdentifier>(identifierTuple);
+            auto& tabIdentifier = std::get<std::optional<WebExtensionTabIdentifier>>(identifierTuple);
+            auto& windowIdentifier = std::get<std::optional<WebExtensionWindowIdentifier>>(identifierTuple);
+
+            if (newPage && pageIdentifier == newPage->identifier())
+                context.addPopupPage(*newPage, tabIdentifier, windowIdentifier);
+            else if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+                context.addPopupPage(*page, tabIdentifier, windowIdentifier);
+        }
+
+        for (auto& identifierTuple : parameters.tabPageIdentifiers) {
+            auto& pageIdentifier = std::get<WebCore::PageIdentifier>(identifierTuple);
+            auto& tabIdentifier = std::get<std::optional<WebExtensionTabIdentifier>>(identifierTuple);
+            auto& windowIdentifier = std::get<std::optional<WebExtensionWindowIdentifier>>(identifierTuple);
+
+            if (newPage && pageIdentifier == newPage->identifier())
+                context.addTabPage(*newPage, tabIdentifier, windowIdentifier);
+            else if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+                context.addTabPage(*page, tabIdentifier, windowIdentifier);
+        }
     };
 
     if (auto context = webExtensionContextProxies().get(parameters.identifier)) {
@@ -90,13 +120,9 @@ Ref<WebExtensionContextProxy> WebExtensionContextProxy::getOrCreate(const WebExt
     return result.releaseNonNull();
 }
 
-_WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Data& json)
+_WKWebExtensionLocalization *WebExtensionContextProxy::parseLocalization(API::Data& json, const URL& baseURL)
 {
-    NSDictionary *localizedDictionary = parseJSON(json);
-    if (!localizedDictionary)
-        return nil;
-
-    return [[_WKWebExtensionLocalization alloc] initWithRegionalLocalization:localizedDictionary languageLocalization:nil defaultLocalization:nil withBestLocale:localizedDictionary[@"@@ui_locale"][@"message"] uniqueIdentifier:nil];
+    return [[_WKWebExtensionLocalization alloc] initWithLocalizedDictionary:parseJSON(json) uniqueIdentifier:baseURL.host().toString()];
 }
 
 } // namespace WebKit

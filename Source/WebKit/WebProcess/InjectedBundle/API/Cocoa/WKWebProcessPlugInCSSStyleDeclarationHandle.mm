@@ -45,7 +45,7 @@
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
     JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
-    return wrapper(WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate(contextRef, objectRef));
+    return wrapper(WebKit::InjectedBundleCSSStyleDeclarationHandle::getOrCreate(contextRef, objectRef)).autorelease();
 }
 
 - (WebKit::InjectedBundleCSSStyleDeclarationHandle&)_cssStyleDeclarationHandle

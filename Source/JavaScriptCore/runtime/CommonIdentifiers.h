@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 // MarkedArgumentBuffer of property names, passed to a macro so we can do set them up various
 // ways without repeating the list.
@@ -109,6 +110,7 @@
     macro(deref) \
     macro(description) \
     macro(descriptions) \
+    macro(detached) \
     macro(detail) \
     macro(displayName) \
     macro(done) \
@@ -278,6 +280,7 @@
     macro(toWellFormed) \
     macro(trailingZeroDisplay) \
     macro(transfer) \
+    macro(transferToFixedLength) \
     macro(type) \
     macro(uid) \
     macro(unicode) \
@@ -378,7 +381,8 @@ namespace JSC {
     class BuiltinNames;
     
     class CommonIdentifiers {
-        WTF_MAKE_NONCOPYABLE(CommonIdentifiers); WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_NONCOPYABLE(CommonIdentifiers);
+        WTF_MAKE_TZONE_ALLOCATED(CommonIdentifiers);
     private:
         CommonIdentifiers(VM&);
         ~CommonIdentifiers();

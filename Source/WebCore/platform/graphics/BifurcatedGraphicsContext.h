@@ -35,7 +35,7 @@ namespace WebCore {
 // Any state that is returned by GraphicsContext methods will be retrieved from the primary context.
 
 class WEBCORE_EXPORT BifurcatedGraphicsContext : public GraphicsContext {
-    WTF_FORBID_HEAP_ALLOCATION;
+    WTF_MAKE_NONCOPYABLE(BifurcatedGraphicsContext);
 public:
     BifurcatedGraphicsContext(GraphicsContext& primaryContext, GraphicsContext& secondaryContext);
     ~BifurcatedGraphicsContext();
@@ -68,6 +68,7 @@ public:
     using GraphicsContext::fillRect;
     void fillRect(const FloatRect&) final;
     void fillRect(const FloatRect&, const Color&) final;
+    void fillRect(const FloatRect&, Gradient&) final;
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final;
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) final;
     void clearRect(const FloatRect&) final;
@@ -101,13 +102,12 @@ public:
     void setLineJoin(LineJoin) final;
     void setMiterLimit(float) final;
 
-    void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
-    bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) final;
+    void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
     void drawSystemImage(SystemImage&, const FloatRect&) final;
-    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
-    ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& = { ImageOrientation::Orientation::FromImage }) final;
-    ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
-    ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule, Image::TileRule, const ImagePaintingOptions& = { }) final;
+    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
+    ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage }) final;
+    ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }) final;
+    ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule, Image::TileRule, ImagePaintingOptions = { }) final;
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 
 #if ENABLE(VIDEO)

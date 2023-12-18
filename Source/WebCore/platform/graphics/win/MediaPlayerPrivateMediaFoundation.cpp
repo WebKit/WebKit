@@ -129,9 +129,9 @@ class MediaPlayerFactoryMediaFoundation final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateMediaFoundation>(player);
+        return adoptRef(*new MediaPlayerPrivateMediaFoundation(player));
     }
 
     void getSupportedTypes(HashSet<String>& types) const final

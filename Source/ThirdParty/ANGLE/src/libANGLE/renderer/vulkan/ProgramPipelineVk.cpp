@@ -101,23 +101,20 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
                                                       &contextVk->getDescriptorSetLayoutCache(),
                                                       &contextVk->getMetaDescriptorPools()));
 
-    vk::RenderPass temporaryCompatibleRenderPass;
-    angle::Result result = executableVk->warmUpPipelineCache(
-        contextVk, contextVk->pipelineRobustness(), contextVk->pipelineProtectedAccess(),
-        &temporaryCompatibleRenderPass);
+    angle::Result result = angle::Result::Continue;
 
-    temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+    if (contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled)
+    {
+        vk::RenderPass temporaryCompatibleRenderPass;
+        result = executableVk->warmUpPipelineCache(contextVk, contextVk->pipelineRobustness(),
+                                                   contextVk->pipelineProtectedAccess(),
+                                                   &temporaryCompatibleRenderPass);
+
+        temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+    }
+
     return result;
 }  // namespace rx
-
-angle::Result ProgramPipelineVk::syncState(const gl::Context *context,
-                                           const gl::Program::DirtyBits &dirtyBits)
-{
-    ASSERT(dirtyBits.any());
-    // Push dirty bits to executable so that they can be used later.
-    getExecutable()->mDirtyBits |= dirtyBits;
-    return angle::Result::Continue;
-}
 
 void ProgramPipelineVk::onProgramUniformUpdate(gl::ShaderType shaderType)
 {

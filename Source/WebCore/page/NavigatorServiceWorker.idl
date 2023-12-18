@@ -25,7 +25,6 @@
 
 // https://w3c.github.io/ServiceWorker/#navigator-serviceworker
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled
 ] interface mixin NavigatorServiceWorker {
     [CallWith=CurrentScriptExecutionContext, SecureContext, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;

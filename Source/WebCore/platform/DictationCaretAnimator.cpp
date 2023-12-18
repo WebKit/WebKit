@@ -40,8 +40,9 @@ static constexpr size_t dictationCaretAnimatorUpdateRate = 60;
 
 static constexpr KeyFrame keyframe(size_t i)
 {
-    i %= dictationCaretAnimatorUpdateRate;
-    constexpr float inverseFrameRate = 1.f / static_cast<float>(dictationCaretAnimatorUpdateRate);
+    constexpr auto updateRate = 40;
+    i %= updateRate;
+    constexpr float inverseFrameRate = 1.f / static_cast<float>(updateRate);
     return KeyFrame { Seconds(i * inverseFrameRate), fabs(sinf(static_cast<float>(M_PI * i * inverseFrameRate))) };
 }
 
@@ -158,7 +159,7 @@ void DictationCaretAnimator::updateAnimationProperties()
 
         m_currentKeyframeIndex++;
         updateGlowTail(elapsedTime);
-        constexpr auto scaleAnimationSpeed = 2.f;
+        constexpr auto scaleAnimationSpeed = 4.f;
         m_initialScale = std::max(0.f, m_initialScale - scaleAnimationSpeed * static_cast<float>(elapsedTime.value()));
 
         m_blinkTimer.startOneShot(keyframeTimeDelta());
@@ -280,7 +281,7 @@ FloatRoundedRect DictationCaretAnimator::expandedCaretRect(const FloatRect& rect
     auto extraScaleFactor = 1.f;
     auto pulseExpansion = 1.f;
     if (m_initialScale > 0.f)
-        extraScaleFactor = 1.f + sinf(2.f * m_initialScale);
+        extraScaleFactor = 1.f + 1.4f * sinf(2.f * m_initialScale);
     else
         pulseExpansion = 0.75f * m_presentationProperties.opacity * extraScaleFactor;
 

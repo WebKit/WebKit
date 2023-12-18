@@ -27,6 +27,7 @@
 #include "config.h"
 #include "PendingScript.h"
 
+#include "Element.h"
 #include "PendingScriptClient.h"
 #include "ScriptElement.h"
 
@@ -34,7 +35,7 @@ namespace WebCore {
 
 Ref<PendingScript> PendingScript::create(ScriptElement& element, LoadableScript& loadableScript)
 {
-    auto pendingScript = adoptRef(*new PendingScript(element, loadableScript));
+    Ref pendingScript = adoptRef(*new PendingScript(element, loadableScript));
     loadableScript.addClient(pendingScript.get());
     return pendingScript;
 }
@@ -58,8 +59,8 @@ PendingScript::PendingScript(ScriptElement& element, LoadableScript& loadableScr
 
 PendingScript::~PendingScript()
 {
-    if (m_loadableScript)
-        m_loadableScript->removeClient(*this);
+    if (RefPtr loadableScript = m_loadableScript)
+        loadableScript->removeClient(*this);
 }
 
 void PendingScript::notifyClientFinished()

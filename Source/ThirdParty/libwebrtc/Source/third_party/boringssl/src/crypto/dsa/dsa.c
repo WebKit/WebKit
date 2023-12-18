@@ -88,18 +88,14 @@ static int dsa_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
 static CRYPTO_EX_DATA_CLASS g_ex_data_class = CRYPTO_EX_DATA_CLASS_INIT;
 
 DSA *DSA_new(void) {
-  DSA *dsa = OPENSSL_malloc(sizeof(DSA));
+  DSA *dsa = OPENSSL_zalloc(sizeof(DSA));
   if (dsa == NULL) {
     return NULL;
   }
 
-  OPENSSL_memset(dsa, 0, sizeof(DSA));
-
   dsa->references = 1;
-
   CRYPTO_MUTEX_init(&dsa->method_mont_lock);
   CRYPTO_new_ex_data(&dsa->ex_data);
-
   return dsa;
 }
 
@@ -533,16 +529,7 @@ err:
   return ok;
 }
 
-DSA_SIG *DSA_SIG_new(void) {
-  DSA_SIG *sig;
-  sig = OPENSSL_malloc(sizeof(DSA_SIG));
-  if (!sig) {
-    return NULL;
-  }
-  sig->r = NULL;
-  sig->s = NULL;
-  return sig;
-}
+DSA_SIG *DSA_SIG_new(void) { return OPENSSL_zalloc(sizeof(DSA_SIG)); }
 
 void DSA_SIG_free(DSA_SIG *sig) {
   if (!sig) {

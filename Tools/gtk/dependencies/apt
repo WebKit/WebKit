@@ -11,7 +11,8 @@ PACKAGES+=(
     libffi-dev
     libgirepository1.0-dev
     libgl1-mesa-dev
-    libgl1-mesa-glx
+    $(aptIfExists libgl1-mesa-glx)
+    $(aptIfExists libgtk-4-dev)
     libgtk-3-dev
     libgudev-1.0-dev
     libhyphen-dev
@@ -28,8 +29,6 @@ PACKAGES+=(
     libupower-glib-dev
     libvorbis-dev
     libvpx-dev
-    libwpe-1.0-dev
-    libwpebackend-fdo-1.0-dev
     libxcomposite-dev
     libxt-dev
     libxtst-dev

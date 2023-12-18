@@ -1,0 +1,16 @@
+
+PASS Property view-timeline-axis value 'initial'
+PASS Property view-timeline-axis value 'inherit'
+PASS Property view-timeline-axis value 'unset'
+PASS Property view-timeline-axis value 'revert'
+PASS Property view-timeline-axis value 'block'
+PASS Property view-timeline-axis value 'inline'
+PASS Property view-timeline-axis value 'y'
+PASS Property view-timeline-axis value 'x'
+PASS Property view-timeline-axis value 'block, inline'
+PASS Property view-timeline-axis value 'inline, block'
+PASS Property view-timeline-axis value 'block, y, x, inline'
+PASS Property view-timeline-axis value 'inline, inline, inline, inline'
+PASS The view-timeline-axis property shows up in CSSStyleDeclaration enumeration
+PASS The view-timeline-axis property shows up in CSSStyleDeclaration.cssText
+

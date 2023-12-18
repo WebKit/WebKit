@@ -13,14 +13,13 @@ TODO:
 import { kUnitCaseParamsBuilder } from '../../../../common/framework/params_builder.js';
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { assert, unreachable } from '../../../../common/util/util.js';
+import { kTextureAspects, kTextureDimensions } from '../../../capability_info.js';
+import { GPUConst } from '../../../constants.js';
 import {
   kTextureFormatInfo,
-  kTextureAspects,
   kUncompressedTextureFormats,
   textureDimensionAndFormatCompatible,
-  kTextureDimensions,
-} from '../../../capability_info.js';
-import { GPUConst } from '../../../constants.js';
+} from '../../../format_info.js';
 import { GPUTest } from '../../../gpu_test.js';
 import { virtualMipSize } from '../../../util/texture/base.js';
 import { createTextureUploadBuffer } from '../../../util/texture/layout.js';
@@ -451,10 +450,10 @@ const kTestParams = kUnitCaseParamsBuilder
       (readMethod === ReadMethod.StencilTest && (!info.stencil || aspect === 'depth-only')) ||
       (readMethod === ReadMethod.ColorBlending && !info.color) ||
       // [1]: Test with depth/stencil sampling
-      (readMethod === ReadMethod.Sample && (info.depth || info.stencil)) ||
+      (readMethod === ReadMethod.Sample && (!!info.depth || !!info.stencil)) ||
       (aspect === 'depth-only' && !info.depth) ||
       (aspect === 'stencil-only' && !info.stencil) ||
-      (aspect === 'all' && info.depth && info.stencil) ||
+      (aspect === 'all' && !!info.depth && !!info.stencil) ||
       // Cannot copy from a packed depth format.
       // [2]: Test copying out of the stencil aspect.
       ((readMethod === ReadMethod.CopyToBuffer || readMethod === ReadMethod.CopyToTexture) &&
@@ -480,8 +479,8 @@ const kTestParams = kUnitCaseParamsBuilder
     return (
       dimension !== '2d' &&
       (sampleCount > 1 ||
-        formatInfo.depth ||
-        formatInfo.stencil ||
+        !!formatInfo.depth ||
+        !!formatInfo.stencil ||
         readMethod === ReadMethod.DepthTest ||
         readMethod === ReadMethod.StencilTest ||
         readMethod === ReadMethod.ColorBlending ||
@@ -508,7 +507,7 @@ const kTestParams = kUnitCaseParamsBuilder
 
     return (
       ((usage & GPUConst.TextureUsage.RENDER_ATTACHMENT) !== 0 && !info.renderable) ||
-      ((usage & GPUConst.TextureUsage.STORAGE_BINDING) !== 0 && !info.storage) ||
+      ((usage & GPUConst.TextureUsage.STORAGE_BINDING) !== 0 && !info.color?.storage) ||
       (sampleCount > 1 && !info.multisample)
     );
   })
@@ -544,6 +543,7 @@ export const g = makeTestGroup(TextureZeroInitTest);
 g.test('uninitialized_texture_is_zero')
   .params(kTestParams)
   .beforeAllSubcases(t => {
+    t.skipIfTextureFormatNotSupported(t.params.format);
     t.selectDeviceOrSkipTestCase(kTextureFormatInfo[t.params.format].feature);
   })
   .fn(t => {

@@ -5,16 +5,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS form.getAttribute('autocapitalize') is null
 form.autocapitalize = null
-PASS form.getAttribute('autocapitalize') is ""
-PASS form.autocapitalize is ""
+PASS form.getAttribute('autocapitalize') is "null"
+PASS form.autocapitalize is "sentences"
 PASS input.getAttribute('autocapitalize') is null
 input.autocapitalize = null
-PASS input.getAttribute('autocapitalize') is ""
-PASS input.autocapitalize is ""
+PASS input.getAttribute('autocapitalize') is "null"
+PASS input.autocapitalize is "sentences"
 PASS textarea.getAttribute('autocapitalize') is null
 textarea.autocapitalize = null
-PASS textarea.getAttribute('autocapitalize') is ""
-PASS textarea.autocapitalize is ""
+PASS textarea.getAttribute('autocapitalize') is "null"
+PASS textarea.autocapitalize is "sentences"
 PASS successfullyParsed is true
 
 TEST COMPLETE

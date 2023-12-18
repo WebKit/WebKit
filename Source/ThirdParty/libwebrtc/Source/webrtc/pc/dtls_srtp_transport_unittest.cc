@@ -77,17 +77,23 @@ class DtlsSrtpTransportTest : public ::testing::Test,
     dtls_srtp_transport2_ =
         MakeDtlsSrtpTransport(rtp_dtls2, rtcp_dtls2, rtcp_mux_enabled);
 
-    dtls_srtp_transport1_->SignalRtcpPacketReceived.connect(
+    dtls_srtp_transport1_->SubscribeRtcpPacketReceived(
         &transport_observer1_,
-        &webrtc::TransportObserver::OnRtcpPacketReceived);
-    dtls_srtp_transport1_->SignalReadyToSend.connect(
-        &transport_observer1_, &webrtc::TransportObserver::OnReadyToSend);
+        [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+          transport_observer1_.OnRtcpPacketReceived(buffer, packet_time_ms);
+        });
+    dtls_srtp_transport1_->SubscribeReadyToSend(
+        &transport_observer1_,
+        [this](bool ready) { transport_observer1_.OnReadyToSend(ready); });
 
-    dtls_srtp_transport2_->SignalRtcpPacketReceived.connect(
+    dtls_srtp_transport2_->SubscribeRtcpPacketReceived(
         &transport_observer2_,
-        &webrtc::TransportObserver::OnRtcpPacketReceived);
-    dtls_srtp_transport2_->SignalReadyToSend.connect(
-        &transport_observer2_, &webrtc::TransportObserver::OnReadyToSend);
+        [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+          transport_observer2_.OnRtcpPacketReceived(buffer, packet_time_ms);
+        });
+    dtls_srtp_transport2_->SubscribeReadyToSend(
+        &transport_observer2_,
+        [this](bool ready) { transport_observer2_.OnReadyToSend(ready); });
     webrtc::RtpDemuxerCriteria demuxer_criteria;
     // 0x00 is the payload type used in kPcmuFrame.
     demuxer_criteria.payload_types() = {0x00};

@@ -1,0 +1,10 @@
+<script>
+    function setFocus() {
+        frame.focus();
+    }
+
+    addEventListener("message", (event) => {
+        document.body.focus();
+    });
+</script>
+<iframe onload="setFocus()" id="frame" src="http://127.0.0.1:8000/site-isolation/resources/selected-text.html"></iframe>

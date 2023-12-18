@@ -1,0 +1,4 @@
+
+FAIL navigate() navigates same-document and fires onnavigate (async) assert_equals: expected "#d" but got ""
+FAIL navigate() navigates same-document and fires onnavigate (sync) assert_equals: expected "#d" but got ""
+

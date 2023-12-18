@@ -73,6 +73,29 @@ int GzipUncompressHelperPatched(Bytef *dest,
     err = inflateEnd(&stream);
     return err;
 }
+
+bool UncompressData(const std::vector<uint8_t> &compressedData,
+                    std::vector<uint8_t> *uncompressedData)
+{
+    uint32_t uncompressedSize =
+        zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
+
+    uncompressedData->resize(uncompressedSize + 1);  // +1 to make sure .data() is valid
+    uLong destLen = uncompressedSize;
+    z_stream stream;
+    int zResult =
+        GzipUncompressHelperPatched(uncompressedData->data(), &destLen, compressedData.data(),
+                                    static_cast<uLong>(compressedData.size()), stream);
+
+    if (zResult != Z_OK)
+    {
+        std::cerr << "Failure to decompressed binary data: " << zResult
+                  << " msg=" << (stream.msg ? stream.msg : "nil") << "\n";
+        return false;
+    }
+
+    return true;
+}
 }  // namespace
 
 bool LoadTraceNamesFromJSON(const std::string jsonFilePath, std::vector<std::string> *namesOut)
@@ -257,21 +280,18 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
             exit(1);
         }
 
-        uint32_t uncompressedSize =
-            zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
-
-        mBinaryData.resize(uncompressedSize + 1);  // +1 to make sure .data() is valid
-        uLong destLen = uncompressedSize;
-        z_stream stream;
-        int zResult =
-            GzipUncompressHelperPatched(mBinaryData.data(), &destLen, compressedData.data(),
-                                        static_cast<uLong>(compressedData.size()), stream);
-
-        if (zResult != Z_OK)
+        if (!UncompressData(compressedData, &mBinaryData))
         {
-            std::cerr << "Failure to decompressed binary data: " << zResult
-                      << " msg=" << (stream.msg ? stream.msg : "nil") << "\n";
-            exit(1);
+            // Workaround for sporadic failures https://issuetracker.google.com/296921272
+            std::vector<uint8_t> uncompressedData;
+            bool secondResult = UncompressData(compressedData, &uncompressedData);
+            if (!secondResult)
+            {
+                std::cerr << "Uncompress retry failed\n";
+                exit(1);
+            }
+            std::cerr << "Uncompress retry succeeded, moving to mBinaryData\n";
+            mBinaryData = std::move(uncompressedData);
         }
     }
     else

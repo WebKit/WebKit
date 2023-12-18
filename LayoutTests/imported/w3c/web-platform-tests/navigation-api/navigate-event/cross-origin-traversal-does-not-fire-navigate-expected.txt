@@ -1,0 +1,3 @@
+
+FAIL A cross-origin traversal does not fire the navigate event assert_equals: expected 1 but got 0
+

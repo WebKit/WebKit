@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "CGImagePixelReader.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestCocoa.h"
 #import "TestInputDelegate.h"
@@ -36,13 +37,16 @@
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import "UserInterfaceSwizzler.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebViewPrivateForTestingIOS.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
+#import <pal/cocoa/CoreTelephonySoftLink.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 
 namespace TestWebKitAPI {
@@ -797,38 +801,6 @@ TEST(KeyboardInputTests, TestWebViewAccessoryDoneDuringStrongPasswordAssistance)
     EXPECT_TRUE([webView _contentViewIsFirstResponder]);
 }
 
-TEST(KeyboardInputTests, SupportsImagePaste)
-{
-    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
-    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
-        return _WKFocusStartsInputSessionPolicyAllow;
-    }];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
-    auto contentView = (id <UITextInputPrivate>)[webView textInputContentView];
-    [webView synchronouslyLoadHTMLString:@"<input id='input'></input><select id='select'></select><div contenteditable id='editor'></div><textarea id='textarea'></textarea>"];
-    [webView _setInputDelegate:inputDelegate.get()];
-
-    [webView stringByEvaluatingJavaScript:@"input.focus()"];
-    EXPECT_TRUE(contentView.supportsImagePaste);
-
-    [webView stringByEvaluatingJavaScript:@"document.activeElement.blur()"];
-    [webView waitForNextPresentationUpdate];
-    [webView stringByEvaluatingJavaScript:@"select.focus()"];
-    EXPECT_FALSE(contentView.supportsImagePaste);
-
-    [webView stringByEvaluatingJavaScript:@"editor.focus()"];
-    EXPECT_TRUE(contentView.supportsImagePaste);
-
-    [webView stringByEvaluatingJavaScript:@"document.activeElement.blur(); input.type = 'color'"];
-    [webView waitForNextPresentationUpdate];
-    [webView stringByEvaluatingJavaScript:@"input.focus()"];
-    EXPECT_FALSE(contentView.supportsImagePaste);
-
-    [webView stringByEvaluatingJavaScript:@"textarea.focus()"];
-    EXPECT_TRUE(contentView.supportsImagePaste);
-}
-
 TEST(KeyboardInputTests, SuppressSoftwareKeyboard)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -1047,6 +1019,37 @@ TEST(KeyboardInputTests, NoCrashWhenDiscardingMarkedText)
     Util::runFor(100_ms);
 }
 
+TEST(KeyboardInputTests, CharactersAroundCaretSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:delegate.get()];
+
+    bool focused = false;
+    [delegate setFocusStartsInputSessionPolicyHandler:[&](WKWebView *, id<_WKFocusedElementInfo>) {
+        focused = true;
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView synchronouslyLoadHTMLString:@"<input autofocus autocapitalize='words' value='foo bar' type='text' />"];
+    Util::run(&focused);
+
+    auto testSelection = [&](unsigned selectionOffset, UTF32Char twoCharactersBefore, UTF32Char characterBefore, UTF32Char characterAfter) {
+        auto script = [NSString stringWithFormat:@"document.querySelector('input').setSelectionRange(%u, %u)", selectionOffset, selectionOffset];
+        [webView objectByEvaluatingJavaScript:script];
+        [webView waitForNextPresentationUpdate];
+
+        auto contentView = [webView textInputContentView];
+        EXPECT_EQ([contentView _characterInRelationToCaretSelection:-2], twoCharactersBefore);
+        EXPECT_EQ([contentView _characterInRelationToCaretSelection:-1], characterBefore);
+        EXPECT_EQ([contentView _characterInRelationToCaretSelection:0], characterAfter);
+    };
+
+    testSelection(1, '\0', 'f', 'o');
+    testSelection(3, 'o', 'o', ' ');
+    testSelection(7, 'a', 'r', '\0');
+}
+
 #if HAVE(REDESIGNED_TEXT_CURSOR)
 
 TEST(KeyboardInputTests, MarkedTextSegmentsWithUnderlines)
@@ -1116,7 +1119,156 @@ TEST(KeyboardInputTests, MarkedTextSegmentsWithUnderlines)
     EXPECT_GT(numberOfDifferentPixels, 0U);
 }
 
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedAncestorColorProperty)
+{
+    auto frame = CGRectMake(0, 0, 320, 568);
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:frame]);
+
+    auto createSnapshotForHTMLString = ^(NSString *HTMLString) {
+        auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame configuration:configuration addToWindow:NO]);
+
+        [window addSubview:webView.get()];
+
+        auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+        [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+            return _WKFocusStartsInputSessionPolicyAllow;
+        }];
+
+        [webView _setInputDelegate:inputDelegate.get()];
+        [webView synchronouslyLoadHTMLString:HTMLString];
+
+        [webView waitForNextPresentationUpdate];
+
+        [webView stringByEvaluatingJavaScript:@"document.getElementById('input').focus();"];
+
+        [webView waitForNextPresentationUpdate];
+
+        auto *contentView = [webView textInputContentView];
+        [contentView insertText:@"Is it diferent"];
+
+        [webView waitForNextPresentationUpdate];
+
+        NSString *hasCorrectionIndicatorMarkerJavaScript = @"internals.hasCorrectionIndicatorMarker(6, 9);";
+
+        __block bool done = false;
+
+        [[webView textInputContentView] applyAutocorrection:@"different" toString:@"diferent" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
+            NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
+            EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
+            done = true;
+        }];
+
+        TestWebKitAPI::Util::run(&done);
+
+        [webView waitForNextPresentationUpdate];
+
+        auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+        [snapshotConfiguration setAfterScreenUpdates:YES];
+
+        __block RetainPtr<CGImage> result;
+        done = false;
+        [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(UIImage *snapshot, NSError *error) {
+            EXPECT_NULL(error);
+            result = snapshot.CGImage;
+            done = true;
+        }];
+
+        Util::run(&done);
+
+        [webView removeFromSuperview];
+
+        return result;
+    };
+
+    auto expected = createSnapshotForHTMLString(@"<body><div id='input' contenteditable/></body>");
+
+    auto actual = createSnapshotForHTMLString(@"<body style='color: black'><div id='input' contenteditable/></body>");
+
+    CGImagePixelReader snapshotReaderExpected { expected.get() };
+    CGImagePixelReader snapshotReaderActual { actual.get() };
+
+    for (int x = 0; x < frame.size.width * 3; ++x) {
+        for (int y = 0; y < frame.size.height * 3; ++y)
+            EXPECT_EQ(snapshotReaderExpected.at(x, y), snapshotReaderActual.at(x, y));
+    }
+}
+#endif
+
 #endif // HAVE(REDESIGNED_TEXT_CURSOR)
+
+#if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
+
+static BOOL allowESIMAutoFillForWebKitDomains(id, SEL, NSString *domain, NSError **)
+{
+    return [domain isEqualToString:@"webkit.org"];
+}
+
+TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
+{
+    auto clientClass = PAL::getCoreTelephonyClientClass();
+    auto autoFillAllowedSelector = @selector(isAutofilleSIMIdAllowedForDomain:error:);
+    if (![clientClass instancesRespondToSelector:autoFillAllowedSelector]) {
+        // Skip this test altogether if system support is missing.
+        return;
+    }
+
+    InstanceMethodSwizzler swizzler { clientClass, autoFillAllowedSelector, reinterpret_cast<IMP>(allowESIMAutoFillForWebKitDomains) };
+    [WKWebView _setApplicationBundleIdentifier:@"org.webkit.SomeTelephonyApp"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id<_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    __block bool didStartInputSession = false;
+    [inputDelegate setDidStartInputSessionHandler:^(WKWebView *, id<_WKFormInputSession>) {
+        didStartInputSession = true;
+    }];
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    auto loadSimulatedRequest = ^(NSString *urlString) {
+        [webView loadSimulatedRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]] responseHTMLString:@"<body>"
+            "<input id='imei' type='number' placeholder='imei' autocomplete='device-imei' />"
+            "<input id='eid' type='number' placeholder='eid' autocomplete='device-eid' />"
+            "</body>"];
+        [navigationDelegate waitForDidFinishNavigation];
+    };
+
+    auto focusElementWithID = ^(NSString *identifier) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').focus()", identifier]];
+        Util::run(&didStartInputSession);
+    };
+
+    auto blurActiveElement = ^{
+        [webView objectByEvaluatingJavaScript:@"document.activeElement.blur()"];
+        [webView waitForNextPresentationUpdate];
+        didStartInputSession = false;
+    };
+
+    loadSimulatedRequest(@"https://webkit.org"); // AutoFill is allowed here.
+    focusElementWithID(@"imei");
+    EXPECT_WK_STREQ(UITextContentTypeCellularIMEI, [webView _textInputTraits].textContentType);
+
+    blurActiveElement();
+    focusElementWithID(@"eid");
+    EXPECT_WK_STREQ(UITextContentTypeCellularEID, [webView _textInputTraits].textContentType);
+
+    loadSimulatedRequest(@"https://apple.com"); // AutoFill is not allowed here.
+    focusElementWithID(@"imei");
+    EXPECT_NULL([webView _textInputTraits].textContentType);
+
+    blurActiveElement();
+    focusElementWithID(@"eid");
+    EXPECT_NULL([webView _textInputTraits].textContentType);
+}
+
+#endif // HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
 
 } // namespace TestWebKitAPI
 

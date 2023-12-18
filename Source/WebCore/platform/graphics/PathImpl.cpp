@@ -28,18 +28,13 @@
 
 namespace WebCore {
 
-void PathImpl::appendSegment(const PathSegment& segment)
-{
-    segment.addToImpl(*this);
-}
-
 void PathImpl::addLinesForRect(const FloatRect& rect)
 {
-    moveTo(rect.minXMinYCorner());
-    addLineTo(rect.maxXMinYCorner());
-    addLineTo(rect.maxXMaxYCorner());
-    addLineTo(rect.minXMaxYCorner());
-    closeSubpath();
+    add(PathMoveTo { rect.minXMinYCorner() });
+    add(PathLineTo { rect.maxXMinYCorner() });
+    add(PathLineTo { rect.maxXMaxYCorner() });
+    add(PathLineTo { rect.minXMaxYCorner() });
+    add(PathCloseSubpath { });
 }
 
 void PathImpl::addBeziersForRoundedRect(const FloatRoundedRect& roundedRect)
@@ -52,37 +47,37 @@ void PathImpl::addBeziersForRoundedRect(const FloatRoundedRect& roundedRect)
     const auto& bottomLeftRadius = radii.bottomLeft();
     const auto& bottomRightRadius = radii.bottomRight();
 
-    moveTo(FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
+    add(PathMoveTo { FloatPoint(rect.x() + topLeftRadius.width(), rect.y()) });
 
-    addLineTo(FloatPoint(rect.maxX() - topRightRadius.width(), rect.y()));
+    add(PathLineTo { FloatPoint(rect.maxX() - topRightRadius.width(), rect.y()) });
     if (topRightRadius.width() > 0 || topRightRadius.height() > 0) {
-        addBezierCurveTo(FloatPoint(rect.maxX() - topRightRadius.width() * circleControlPoint(), rect.y()),
+        add(PathBezierCurveTo { FloatPoint(rect.maxX() - topRightRadius.width() * circleControlPoint(), rect.y()),
             FloatPoint(rect.maxX(), rect.y() + topRightRadius.height() * circleControlPoint()),
-            FloatPoint(rect.maxX(), rect.y() + topRightRadius.height()));
+            FloatPoint(rect.maxX(), rect.y() + topRightRadius.height()) });
     }
 
-    addLineTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height()));
+    add(PathLineTo { FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height()) });
     if (bottomRightRadius.width() > 0 || bottomRightRadius.height() > 0) {
-        addBezierCurveTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height() * circleControlPoint()),
+        add(PathBezierCurveTo { FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height() * circleControlPoint()),
             FloatPoint(rect.maxX() - bottomRightRadius.width() * circleControlPoint(), rect.maxY()),
-            FloatPoint(rect.maxX() - bottomRightRadius.width(), rect.maxY()));
+            FloatPoint(rect.maxX() - bottomRightRadius.width(), rect.maxY()) });
     }
 
-    addLineTo(FloatPoint(rect.x() + bottomLeftRadius.width(), rect.maxY()));
+    add(PathLineTo { FloatPoint(rect.x() + bottomLeftRadius.width(), rect.maxY()) });
     if (bottomLeftRadius.width() > 0 || bottomLeftRadius.height() > 0) {
-        addBezierCurveTo(FloatPoint(rect.x() + bottomLeftRadius.width() * circleControlPoint(), rect.maxY()),
+        add(PathBezierCurveTo { FloatPoint(rect.x() + bottomLeftRadius.width() * circleControlPoint(), rect.maxY()),
             FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height() * circleControlPoint()),
-            FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height()));
+            FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height()) });
     }
 
-    addLineTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height()));
+    add(PathLineTo { FloatPoint(rect.x(), rect.y() + topLeftRadius.height()) });
     if (topLeftRadius.width() > 0 || topLeftRadius.height() > 0) {
-        addBezierCurveTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height() * circleControlPoint()),
+        add(PathBezierCurveTo { FloatPoint(rect.x(), rect.y() + topLeftRadius.height() * circleControlPoint()),
             FloatPoint(rect.x() + topLeftRadius.width() * circleControlPoint(), rect.y()),
-            FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
+            FloatPoint(rect.x() + topLeftRadius.width(), rect.y()) });
     }
 
-    closeSubpath();
+    add(PathCloseSubpath { });
 }
 
 bool PathImpl::isClosed() const
@@ -103,6 +98,12 @@ bool PathImpl::isClosed() const
     });
 
     return lastElementIsClosed;
+}
+
+bool PathImpl::hasSubpaths() const
+{
+    auto rect = fastBoundingRect();
+    return rect.height() || rect.width();
 }
 
 } // namespace WebCore

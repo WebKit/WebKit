@@ -132,7 +132,7 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
         for (unsigned i = 0; i < browserArgumentsLength; ++i) {
             auto argument = browserArguments->get(i)->asString();
             ASSERT(!argument.isNull());
-            capabilities.browserArguments->uncheckedAppend(WTFMove(argument));
+            capabilities.browserArguments->append(WTFMove(argument));
         }
     }
 
@@ -156,7 +156,7 @@ void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapa
             auto certificateFile = certificate->getString("certificateFile"_s);
             ASSERT(!certificateFile.isNull());
 
-            capabilities.certificates->uncheckedAppend({ WTFMove(host), WTFMove(certificateFile) });
+            capabilities.certificates->append({ WTFMove(host), WTFMove(certificateFile) });
         }
     }
 }

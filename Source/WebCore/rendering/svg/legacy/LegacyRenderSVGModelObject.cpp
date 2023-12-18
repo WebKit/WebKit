@@ -31,10 +31,10 @@
 #include "config.h"
 #include "LegacyRenderSVGModelObject.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "NotImplemented.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
-#include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
@@ -46,14 +46,23 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
-LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderElement(type, element, WTFMove(style), 0)
+LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<RenderElementType> typeFlags)
+    : RenderElement(type, element, WTFMove(style), typeFlags)
 {
 }
 
-LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const
+LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
+}
+
+auto LegacyRenderSVGModelObject::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
+{
+    auto rects = RepaintRects { clippedOverflowRect(repaintContainer, visibleRectContextForRepaint()) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = outlineBoundsForRepaint(repaintContainer);
+
+    return rects;
 }
 
 std::optional<FloatRect> LegacyRenderSVGModelObject::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
@@ -71,13 +80,27 @@ const RenderObject* LegacyRenderSVGModelObject::pushMappingToContainer(const Ren
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
+static void adjustRectForOutlineAndShadow(const RenderObject& renderer, LayoutRect& rect)
+{
+    auto shadowRect = rect;
+    if (auto* boxShadow = renderer.style().boxShadow())
+        boxShadow->adjustRectForShadow(shadowRect);
+
+    auto outlineRect = rect;
+    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().outlineSize() };
+    if (outlineSize)
+        outlineRect.inflate(outlineSize);
+
+    rect = unionRect(shadowRect, outlineRect);
+}
+
 // Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.
 // FIXME: This may also need to move into SVGRenderSupport as the RenderBox version depends
 // on borderBoundingBox() which SVG RenderBox subclases (like SVGRenderBlock) do not implement.
 LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const
 {
     LayoutRect box = enclosingLayoutRect(repaintRectInLocalCoordinates());
-    adjustRectForOutlineAndShadow(box);
+    adjustRectForOutlineAndShadow(*this, box);
 
     FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
     return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));
@@ -157,7 +180,7 @@ static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
 // image, line, path, polygon, polyline, rect, text and use.
 static bool isGraphicsElement(const RenderElement& renderer)
 {
-    return renderer.isLegacySVGShape() || renderer.isSVGText() || renderer.isLegacySVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
+    return renderer.isLegacyRenderSVGShape() || renderer.isRenderSVGText() || renderer.isLegacyRenderSVGImage() || renderer.element()->hasTagName(SVGNames::useTag);
 }
 
 // The SVG addFocusRingRects() method adds rects in local coordinates so the default absoluteFocusRingQuads
@@ -177,7 +200,9 @@ bool LegacyRenderSVGModelObject::checkIntersection(RenderElement* renderer, cons
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
-    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
+    // FIXME: [SVG] checkEnclosure implementation is inconsistent
+    // https://bugs.webkit.org/show_bug.cgi?id=262709
+    return intersectsAllowingEmpty(rect, ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRect& rect)
@@ -190,7 +215,9 @@ bool LegacyRenderSVGModelObject::checkEnclosure(RenderElement* renderer, const F
     SVGElement* svgElement = downcast<SVGElement>(renderer->element());
     getElementCTM(svgElement, ctm);
     ASSERT(svgElement->renderer());
-    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates()));
+    // FIXME: [SVG] checkEnclosure implementation is inconsistent
+    // https://bugs.webkit.org/show_bug.cgi?id=262709
+    return rect.contains(ctm.mapRect(svgElement->renderer()->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
 }
 
 } // namespace WebCore

@@ -20,23 +20,23 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::WebProcessDataStoreParameters {
+[RValue] struct WebKit::WebProcessDataStoreParameters {
     PAL::SessionID sessionID;
     String applicationCacheDirectory;
     WebKit::SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
+#if !ENABLE(GPU_PROCESS)
     WebKit::SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+#endif
     String mediaKeyStorageDirectory;
     WebKit::SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     FileSystem::Salt mediaKeysStorageSalt;
     String javaScriptConfigurationDirectory;
     WebKit::SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
-#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode;
     HashSet<WebCore::RegistrableDomain> domainsWithUserInteraction;
     HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domainsWithStorageAccessQuirk;
-#endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     String modelElementCacheDirectory;
     WebKit::SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;

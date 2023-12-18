@@ -203,36 +203,21 @@ void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
     m_context->ensureExtensionEnabled(extension);
 }
 
-void RemoteGraphicsContextGL::markContextChanged()
+void RemoteGraphicsContextGL::drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    m_context->markContextChanged();
-}
-
-void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    m_context->withDrawingBufferAsNativeImage([&](NativeImage& image) {
-        paintNativeImageToImageBuffer(image, imageBufferIdentifier);
-    });
-    completionHandler();
-}
-
-void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    m_context->withDisplayBufferAsNativeImage([&](NativeImage& image) {
+    m_context->withBufferAsNativeImage(buffer, [&](NativeImage& image) {
         paintNativeImageToImageBuffer(image, imageBufferIdentifier);
     });
     completionHandler();
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-void RemoteGraphicsContextGL::paintCompositedResultsToVideoFrame(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
-    if (auto videoFrame = m_context->paintCompositedResultsToVideoFrame())
+    if (auto videoFrame = m_context->surfaceBufferToVideoFrame(buffer))
         result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
     completionHandler(WTFMove(result));
 }
@@ -318,14 +303,13 @@ void RemoteGraphicsContextGL::readPixelsSharedMemory(WebCore::IntRect rect, uint
 {
     assertIsCurrent(workQueue());
     std::optional<WebCore::IntSize> readArea;
-    if (!handle.isNull()) {
-        handle.setOwnershipOfMemory(m_resourceOwner, WebKit::MemoryLedger::Default);
-        if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
-            readArea = m_context->readPixelsWithStatus(rect, format, type, std::span<uint8_t>(static_cast<uint8_t*>(buffer->data()), buffer->size()));
-        else
-            m_context->addError(GCGLErrorCode::InvalidOperation);
-    } else
+
+    handle.setOwnershipOfMemory(m_resourceOwner, WebKit::MemoryLedger::Default);
+    if (auto buffer = SharedMemory::map(WTFMove(handle), SharedMemory::Protection::ReadWrite))
+        readArea = m_context->readPixelsWithStatus(rect, format, type, std::span<uint8_t>(static_cast<uint8_t*>(buffer->data()), buffer->size()));
+    else
         m_context->addError(GCGLErrorCode::InvalidOperation);
+
     completionHandler(readArea);
 }
 

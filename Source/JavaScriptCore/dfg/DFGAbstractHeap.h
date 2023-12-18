@@ -282,7 +282,7 @@ public:
         return WTF::IntHash<int64_t>::hash(m_value);
     }
     
-    friend bool operator==(AbstractHeap, AbstractHeap) = default;
+    friend bool operator==(const AbstractHeap&, const AbstractHeap&) = default;
     
     bool operator<(const AbstractHeap& other) const
     {

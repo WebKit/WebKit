@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,7 @@ public:
     };
 
     enum ResultCondition {
+        Carry = X86Assembler::ConditionC,
         Overflow = X86Assembler::ConditionO,
         Signed = X86Assembler::ConditionS,
         PositiveOrZero = X86Assembler::ConditionNS,
@@ -4369,6 +4370,12 @@ public:
     static void replaceWithJump(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)
     {
         X86Assembler::replaceWithJump(instructionStart.taggedPtr(), destination.taggedPtr());
+    }
+
+    template<PtrTag startTag>
+    static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
+    {
+        X86Assembler::replaceWithNops(instructionStart.taggedPtr(), memoryToFillWithNopsInBytes);
     }
     
     static ptrdiff_t maxJumpReplacementSize()

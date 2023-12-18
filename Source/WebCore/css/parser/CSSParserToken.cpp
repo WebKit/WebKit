@@ -33,21 +33,12 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
-#include "DeprecatedGlobalSettings.h"
 #include <limits.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSParserToken);
-
-struct SameSizeAsCSSParserToken {
-    StringView value;
-    unsigned flags;
-    double unionValue;
-};
-
-static_assert(sizeof(CSSParserToken) == sizeof(SameSizeAsCSSParserToken), "CSSParserToken should stay small");
 
 template<typename CharacterType>
 CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned length)
@@ -99,7 +90,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             }
             break;
         case 'l':
-            if (toASCIILower(data[1]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
+            if (toASCIILower(data[1]) == 'h')
                 return CSSUnitType::CSS_LH;
             break;
         case 'm':
@@ -217,7 +208,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                     return CSSUnitType::CSS_RIC;
                 break;
             case 'l':
-                if (toASCIILower(data[2]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
+                if (toASCIILower(data[2]) == 'h')
                     return CSSUnitType::CSS_RLH;
                 break;
             }
@@ -377,30 +368,30 @@ CSSParserToken::CSSParserToken(CSSParserTokenType type, UChar c)
 }
 
 CSSParserToken::CSSParserToken(CSSParserTokenType type, StringView value, BlockType blockType)
-    : m_value(value)
-    , m_type(type)
+    : m_type(type)
     , m_blockType(blockType)
 {
+    initValueFromStringView(value);
     m_id = -1;
 }
 
 CSSParserToken::CSSParserToken(double numericValue, NumericValueType numericValueType, NumericSign sign, StringView originalText)
-    : m_value(originalText)
-    , m_type(NumberToken)
+    : m_type(NumberToken)
     , m_blockType(NotBlock)
     , m_numericValueType(numericValueType)
     , m_numericSign(sign)
     , m_unit(static_cast<unsigned>(CSSUnitType::CSS_NUMBER))
     , m_numericValue(numericValue)
 {
+    initValueFromStringView(originalText);
 }
 
 CSSParserToken::CSSParserToken(HashTokenType type, StringView value)
-    : m_value(value)
-    , m_type(HashToken)
+    : m_type(HashToken)
     , m_blockType(NotBlock)
     , m_hashTokenType(type)
 {
+    initValueFromStringView(value);
 }
 
 static StringView mergeIfAdjacent(StringView a, StringView b)
@@ -430,7 +421,7 @@ void CSSParserToken::convertToDimensionWithUnit(StringView unit)
     m_type = DimensionToken;
     m_unit = static_cast<unsigned>(stringToUnitType(unit));
     m_nonUnitPrefixLength = string == unit ? 0 : originalNumberTextLength;
-    m_value = string;
+    initValueFromStringView(string);
 }
 
 void CSSParserToken::convertToPercentage()
@@ -548,7 +539,7 @@ CSSParserToken CSSParserToken::copyWithUpdatedString(StringView string) const
 {
     ASSERT(value() == string);
     CSSParserToken copy(*this);
-    copy.m_value = string;
+    copy.initValueFromStringView(string);
     return copy;
 }
 

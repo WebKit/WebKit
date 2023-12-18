@@ -28,12 +28,8 @@ function NRWTResultsParser() {
 
 NRWTResultsParser.prototype = {
     parse: function(unexpectedResultsJS) {
-        var data;
-        function ADD_RESULTS(x) {
-            data = x;
-        }
-
-        eval(unexpectedResultsJS);
+        unexpectedResultsJS = unexpectedResultsJS.replace(/^ADD_RESULTS\\((.*)\\);?$/, "$1");
+        var data = JSON.parse(unexpectedResultsJS);
         console.assert(data);
 
         var result = { tests: {}, tooManyFailures: data.interrupted };

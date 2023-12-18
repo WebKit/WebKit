@@ -30,11 +30,11 @@
 import logging
 import unittest
 
+from webkitcorepy import OutputCapture
+
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
-
-from webkitcorepy import OutputCapture
 
 
 class ValidateChangeLogsTest(unittest.TestCase):

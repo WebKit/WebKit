@@ -58,10 +58,19 @@ FontCascade::FontCascade()
 {
 }
 
-FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float wordSpacing)
-    : m_fontDescription(WTFMove(fd))
-    , m_letterSpacing(letterSpacing)
-    , m_wordSpacing(wordSpacing)
+FontCascade::FontCascade(FontCascadeDescription&& description)
+    : m_fontDescription(WTFMove(description))
+    , m_generation(++lastFontCascadeGeneration)
+    , m_useBackslashAsYenSymbol(FontCache::forCurrentThread().useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
+    , m_enableKerning(computeEnableKerning())
+    , m_requiresShaping(computeRequiresShaping())
+{
+    m_fontDescription.setShouldDisableLigaturesForSpacing(false);
+}
+
+FontCascade::FontCascade(FontCascadeDescription&& description, const FontCascade& other)
+    : m_fontDescription(WTFMove(description))
+    , m_spacing(other.m_spacing)
     , m_generation(++lastFontCascadeGeneration)
     , m_useBackslashAsYenSymbol(FontCache::forCurrentThread().useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
     , m_enableKerning(computeEnableKerning())
@@ -71,10 +80,10 @@ FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float
 
 FontCascade::FontCascade(const FontCascade& other)
     : CanMakeWeakPtr<FontCascade>()
+    , CanMakeCheckedPtr()
     , m_fontDescription(other.m_fontDescription)
+    , m_spacing(other.m_spacing)
     , m_fonts(other.m_fonts)
-    , m_letterSpacing(other.m_letterSpacing)
-    , m_wordSpacing(other.m_wordSpacing)
     , m_generation(other.m_generation)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)
     , m_enableKerning(computeEnableKerning())
@@ -86,8 +95,7 @@ FontCascade& FontCascade::operator=(const FontCascade& other)
 {
     m_fontDescription = other.m_fontDescription;
     m_fonts = other.m_fonts;
-    m_letterSpacing = other.m_letterSpacing;
-    m_wordSpacing = other.m_wordSpacing;
+    m_spacing = other.m_spacing;
     m_generation = other.m_generation;
     m_useBackslashAsYenSymbol = other.m_useBackslashAsYenSymbol;
     m_enableKerning = other.m_enableKerning;
@@ -100,7 +108,7 @@ bool FontCascade::operator==(const FontCascade& other) const
     if (isLoadingCustomFonts() || other.isLoadingCustomFonts())
         return false;
 
-    if (m_fontDescription != other.m_fontDescription || m_letterSpacing != other.m_letterSpacing || m_wordSpacing != other.m_wordSpacing)
+    if (m_fontDescription != other.m_fontDescription || m_spacing != other.m_spacing)
         return false;
     if (m_fonts == other.m_fonts)
         return true;
@@ -145,6 +153,36 @@ GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, 
         return layoutSimpleText(run, from, to, forTextEmphasis);
 
     return layoutComplexText(run, from, to, forTextEmphasis);
+}
+
+float FontCascade::letterSpacing() const
+{
+    switch (m_spacing.letter.type()) {
+    case LengthType::Fixed:
+        return m_spacing.letter.value();
+    case LengthType::Percent:
+        return m_spacing.letter.percent() / 100 * size();
+    case LengthType::Calculated:
+        return m_spacing.letter.nonNanCalculatedValue(size());
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+float FontCascade::wordSpacing() const
+{
+    switch (m_spacing.word.type()) {
+    case LengthType::Fixed:
+        return m_spacing.word.value();
+    case LengthType::Percent:
+        return m_spacing.word.percent() / 100 * size();
+    case LengthType::Calculated:
+        return m_spacing.word.nonNanCalculatedValue(size());
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
 
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
@@ -323,11 +361,41 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
     return width;
 }
 
-GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant variant) const
+float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const
+{
+    if (text.isNull() || text.isEmpty())
+        return 0;
+
+    auto monospaceCharacterWidth = primaryFont().spaceWidth();
+    if (whitespaceIsCollapsed)
+        return text.length() * monospaceCharacterWidth;
+
+    float* cacheEntry = m_fonts->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
+    if (cacheEntry && !std::isnan(*cacheEntry))
+        return *cacheEntry;
+
+    auto width = 0.f;
+    for (unsigned index = 0; index < text.length(); ++index) {
+        auto character = text[index];
+        ASSERT(character != tabCharacter); // canUseSimplifiedTextMeasuring will return false for tab character with !whitespaceIsCollapsed.
+        if (character == newlineCharacter || character == lineSeparator || character == paragraphSeparator) {
+            // Zero width.
+        } else if (character >= space)
+            width += monospaceCharacterWidth;
+        if (index && character == space)
+            width += wordSpacing();
+    }
+
+    if (cacheEntry)
+        *cacheEntry = width;
+    return width;
+}
+
+GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVariant variant) const
 {
     if (variant == AutoVariant) {
         if (m_fontDescription.variantCaps() == FontVariantCaps::Small) {
-            UChar32 upperC = u_toupper(c);
+            char32_t upperC = u_toupper(c);
             if (upperC != c) {
                 c = upperC;
                 variant = SmallCapsVariant;
@@ -419,14 +487,12 @@ Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& ru
 
     bool rtl = run.rtl();
 
-    Vector<LayoutRect> characterRects;
-    characterRects.reserveInitialCapacity(to - from);
-
     // FIXME: We could further optimize this by using the simple text codepath when applicable.
     ComplexTextController controller(*this, run);
     controller.advance(from);
 
-    for (auto current = from + 1; current <= to; ++current) {
+    return Vector<LayoutRect>(to - from, [&](size_t i) {
+        auto current = from + i + 1;
         auto characterRect = selectionRect;
         auto beforeWidth = controller.runWidthSoFar();
 
@@ -435,10 +501,8 @@ Vector<LayoutRect> FontCascade::characterSelectionRectsForText(const TextRun& ru
 
         characterRect.move(rtl ? controller.totalAdvance().width() - afterWidth : beforeWidth, 0);
         characterRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
-        characterRects.uncheckedAppend(WTFMove(characterRect));
-    }
-
-    return characterRects;
+        return characterRect;
+    });
 }
 
 void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, std::optional<unsigned> to) const
@@ -679,7 +743,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
             if (!U16_IS_TRAIL(next))
                 continue;
 
-            UChar32 supplementaryCharacter = U16_GET_SUPPLEMENTARY(c, next);
+            char32_t supplementaryCharacter = U16_GET_SUPPLEMENTARY(c, next);
 
             if (supplementaryCharacter < 0x10A00)
                 continue;
@@ -777,7 +841,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
     return result;
 }
 
-bool FontCascade::isCJKIdeograph(UChar32 c)
+bool FontCascade::isCJKIdeograph(char32_t c)
 {
     // The basic CJK Unified Ideographs block.
     if (c >= 0x4E00 && c <= 0x9FFF)
@@ -822,7 +886,7 @@ bool FontCascade::isCJKIdeograph(UChar32 c)
     return false;
 }
 
-bool FontCascade::isCJKIdeographOrSymbol(UChar32 c)
+bool FontCascade::isCJKIdeographOrSymbol(char32_t c)
 {
     // 0x2C7 Caron, Mandarin Chinese 3rd Tone
     // 0x2CA Modifier Letter Acute Accent, Mandarin Chinese 2nd Tone
@@ -1027,7 +1091,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
     }
     if (direction == TextDirection::LTR) {
         for (unsigned i = 0; i < length; ++i) {
-            UChar32 character = characters[i];
+            char32_t character = characters[i];
             if (treatAsSpace(character)) {
                 count++;
                 isAfterExpansion = true;
@@ -1048,7 +1112,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
         }
     } else {
         for (unsigned i = length; i > 0; --i) {
-            UChar32 character = characters[i - 1];
+            char32_t character = characters[i - 1];
             if (treatAsSpace(character)) {
                 count++;
                 isAfterExpansion = true;
@@ -1095,7 +1159,7 @@ bool FontCascade::leftExpansionOpportunity(StringView stringView, TextDirection 
     if (!stringView.length())
         return false;
 
-    UChar32 initialCharacter;
+    char32_t initialCharacter;
     if (direction == TextDirection::LTR) {
         initialCharacter = stringView[0];
         if (U16_IS_LEAD(initialCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
@@ -1114,7 +1178,7 @@ bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection
     if (!stringView.length())
         return false;
 
-    UChar32 finalCharacter;
+    char32_t finalCharacter;
     if (direction == TextDirection::LTR) {
         finalCharacter = stringView[stringView.length() - 1];
         if (U16_IS_TRAIL(finalCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
@@ -1128,7 +1192,7 @@ bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection
     return treatAsSpace(finalCharacter) || (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(finalCharacter));
 }
 
-bool FontCascade::canReceiveTextEmphasis(UChar32 c)
+bool FontCascade::canReceiveTextEmphasis(char32_t c)
 {
     if (U_GET_GC_MASK(c) & (U_GC_Z_MASK | U_GC_CN_MASK | U_GC_CC_MASK | U_GC_CF_MASK))
         return false;
@@ -1157,7 +1221,7 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
     // In general, we want to skip descenders. However, skipping descenders on CJK characters leads to undesirable renderings,
     // so we want to draw through CJK characters (on a character-by-character basis).
     // FIXME: The CSS spec says this should instead be done by the user-agent stylesheet using the lang= attribute.
-    UChar32 baseCharacter;
+    char32_t baseCharacter;
     auto offsetInString = glyphBuffer.checkedStringOffsetAt(index, textRun.length());
     if (!offsetInString)
         return GlyphUnderlineType::SkipDescenders;
@@ -1209,7 +1273,7 @@ std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString&
     if (mark.isEmpty())
         return std::nullopt;
 
-    UChar32 character;
+    char32_t character;
     if (!mark.is8Bit()) {
         size_t i = 0;
         U16_NEXT(mark.characters16(), i, mark.length(), character);
@@ -1227,7 +1291,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.value().font;
+    CheckedPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1241,7 +1305,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    const Font* markFontData = markGlyphData.value().font;
+    CheckedPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1256,7 +1320,7 @@ const Font* FontCascade::fontForEmphasisMark(const AtomString& mark) const
         return { };
 
     ASSERT(markGlyphData->font);
-    return markGlyphData->font;
+    return markGlyphData->font.get();
 }
 
 int FontCascade::emphasisMarkHeight(const AtomString& mark) const
@@ -1405,7 +1469,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     if (!markGlyphData)
         return;
 
-    const Font* markFontData = markGlyphData.value().font;
+    CheckedPtr markFontData = markGlyphData.value().font;
     ASSERT(markFontData);
     if (!markFontData)
         return;
@@ -1556,12 +1620,12 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     ASSERT(stringView.length() > 0);
-    UChar32 baseCharacter = *stringView.codePoints().begin();
+    char32_t baseCharacter = *stringView.codePoints().begin();
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, NormalVariant);
 
-    if (!baseCharacterGlyphData.glyph)
+    if (!baseCharacterGlyphData.isValid())
         return nullptr;
-    return baseCharacterGlyphData.font;
+    return baseCharacterGlyphData.font.get();
 }
 #endif
 
@@ -1730,7 +1794,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     return result;
 }
 
-bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFont, UChar32 baseCharacter, std::optional<UChar32> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
+bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFont, char32_t baseCharacter, std::optional<char32_t> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
 {
     if (fontVariantCaps == FontVariantCaps::Normal)
         return false;
@@ -1747,12 +1811,12 @@ bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFon
 }
 
 // FIXME: Capitalization is language-dependent and context-dependent and should operate on grapheme clusters instead of codepoints.
-std::optional<UChar32> capitalized(UChar32 baseCharacter)
+std::optional<char32_t> capitalized(char32_t baseCharacter)
 {
     if (U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK)
         return std::nullopt;
 
-    UChar32 uppercaseCharacter = u_toupper(baseCharacter);
+    char32_t uppercaseCharacter = u_toupper(baseCharacter);
     ASSERT(uppercaseCharacter == baseCharacter || (U_IS_BMP(baseCharacter) == U_IS_BMP(uppercaseCharacter)));
     if (uppercaseCharacter != baseCharacter)
         return uppercaseCharacter;

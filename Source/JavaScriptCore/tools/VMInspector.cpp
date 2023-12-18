@@ -37,8 +37,11 @@
 #include "VMEntryRecord.h"
 #include <mutex>
 #include <wtf/Expected.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VMInspector);
 
 VM* VMInspector::m_recentVM { nullptr };
 

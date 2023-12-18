@@ -342,7 +342,7 @@ void ARGBToRGB565Row_C(const uint8_t* src_argb, uint8_t* dst_rgb, int width) {
 // or the upper byte for big endian.
 void ARGBToRGB565DitherRow_C(const uint8_t* src_argb,
                              uint8_t* dst_rgb,
-                             const uint32_t dither4,
+                             uint32_t dither4,
                              int width) {
   int x;
   for (x = 0; x < width - 1; x += 2) {

@@ -90,11 +90,11 @@ static inline void convertJSMethodNameToObjc(const CString& jsName, JSNameConver
     while (true) {
         if (*source == '$') {
             ++source;
-            buffer.uncheckedAppend(*source);
+            buffer.append(*source);
         } else if (*source == '_')
-            buffer.uncheckedAppend(':');
+            buffer.append(':');
         else
-            buffer.uncheckedAppend(*source);
+            buffer.append(*source);
 
         if (!*source)
             return;

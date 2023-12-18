@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureETC);
 
 WebGLCompressedTextureETC::WebGLCompressedTextureETC(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLCompressedTextureETC)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_compressed_texture_etc"_s);
 

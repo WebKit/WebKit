@@ -173,13 +173,13 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
     m_hasReachedMaxNestingLevel = m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers);
     if (m_oneShot) {
         m_timer = eventLoop.scheduleTask(m_currentTimerInterval, context, m_hasReachedMaxNestingLevel ? HasReachedMaxNestingLevel::Yes : HasReachedMaxNestingLevel::No, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
-            if (RefPtr strongThis = weakThis.get())
-                strongThis->fired();
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->fired();
         });
     } else {
         m_timer = eventLoop.scheduleRepeatingTask(m_originalInterval, m_currentTimerInterval, context, m_hasReachedMaxNestingLevel ? HasReachedMaxNestingLevel::Yes : HasReachedMaxNestingLevel::No, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
-            if (RefPtr strongThis = weakThis.get())
-                strongThis->fired();
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->fired();
         });
     }
 }
@@ -311,8 +311,8 @@ void DOMTimer::fired()
     if (RefPtr document = dynamicDowncast<Document>(context); document && m_oneShot) {
         if (auto* holdingTank = document->domTimerHoldingTankIfExists(); holdingTank && holdingTank->contains(*this)) {
             m_timer = document->eventLoop().scheduleTask(0_s, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
-                if (RefPtr strongThis = weakThis.get())
-                    strongThis->fired();
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->fired();
             });
             return;
         }

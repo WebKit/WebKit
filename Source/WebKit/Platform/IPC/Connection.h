@@ -85,11 +85,9 @@ enum class SendOption : uint8_t {
 };
 
 enum class SendSyncOption : uint8_t {
-    // Use this to inform that this sync call will suspend this process until the user responds with input.
-    InformPlatformProcessWillSuspend = 1 << 0,
-    UseFullySynchronousModeForTesting = 1 << 1,
-    ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply = 1 << 2,
-    MaintainOrderingWithAsyncMessages = 1 << 3,
+    UseFullySynchronousModeForTesting = 1 << 0,
+    ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply = 1 << 1,
+    MaintainOrderingWithAsyncMessages = 1 << 2,
 };
 
 enum class WaitForOption {
@@ -530,9 +528,6 @@ private:
     void enqueueIncomingMessage(std::unique_ptr<Decoder>) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
     size_t incomingMessagesDispatchingBatchSize() const;
 
-    void willSendSyncMessage(OptionSet<SendSyncOption>);
-    void didReceiveSyncReply(OptionSet<SendSyncOption>);
-
     Timeout timeoutRespectingIgnoreTimeoutsForTesting(Timeout) const;
 
 #if PLATFORM(COCOA)
@@ -898,7 +893,5 @@ public:
 private:
     static std::atomic<unsigned> unboundedSynchronousIPCCount;
 };
-
-void AccessibilityProcessSuspendedNotification(bool suspended);
 
 } // namespace IPC

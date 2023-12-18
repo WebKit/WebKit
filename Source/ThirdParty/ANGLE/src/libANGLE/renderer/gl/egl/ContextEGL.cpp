@@ -21,24 +21,6 @@ ContextEGL::ContextEGL(const gl::State &state,
 
 ContextEGL::~ContextEGL() {}
 
-angle::Result ContextEGL::onMakeCurrent(const gl::Context *context)
-{
-    // If this context is wrapping an external native context, save state from
-    // that external context when first making this context current.
-    if (!mIsCurrent && context->isExternal())
-    {
-        // TODO: The following is done if saveAndRestoreState() until chrome is switched to using
-        // glAcquireExternalContextANGLE and drops usage of EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE.
-        // After that, this code can be removed.  http://anglebug.com/5509
-        if (context->saveAndRestoreState())
-        {
-            acquireExternalContext(context);
-        }
-    }
-    mIsCurrent = true;
-    return ContextGL::onMakeCurrent(context);
-}
-
 void ContextEGL::acquireExternalContext(const gl::Context *context)
 {
     ASSERT(context->isExternal());
@@ -59,18 +41,6 @@ void ContextEGL::acquireExternalContext(const gl::Context *context)
     auto framebufferGL           = GetImplAs<FramebufferGL>(framebuffer);
     mPrevDefaultFramebufferID    = framebufferGL->getFramebufferID();
     framebufferGL->updateDefaultFramebufferID(mExtState->framebufferBinding);
-}
-
-angle::Result ContextEGL::onUnMakeCurrent(const gl::Context *context)
-{
-    mIsCurrent = false;
-
-    if (context->isExternal() && context->saveAndRestoreState())
-    {
-        releaseExternalContext(context);
-    }
-
-    return ContextGL::onUnMakeCurrent(context);
 }
 
 void ContextEGL::releaseExternalContext(const gl::Context *context)

@@ -31,6 +31,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "Settings.h"
 #include "WorkerOrWorkletGlobalScope.h"
 
@@ -52,7 +53,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
         return nullptr;
 
     ASSERT(document.contentSecurityPolicy());
-    bool hasKnownNonce = document.contentSecurityPolicy()->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
+    bool hasKnownNonce = document.checkedContentSecurityPolicy()->allowScriptWithNonce(m_nonce, m_isInUserAgentShadowTree);
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
@@ -68,7 +69,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     if (!m_initiatorType.isNull())
         request.setInitiatorType(m_initiatorType);
 
-    return document.cachedResourceLoader().requestScript(WTFMove(request)).value_or(nullptr);
+    return document.protectedCachedResourceLoader()->requestScript(WTFMove(request)).value_or(nullptr);
 }
 
 }

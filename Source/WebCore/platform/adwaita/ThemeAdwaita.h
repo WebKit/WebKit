@@ -49,8 +49,8 @@ public:
 
     virtual void platformColorsDidChange() { };
 
-    bool userPrefersReducedMotion() const final;
     bool userPrefersContrast() const final;
+    bool userPrefersReducedMotion() const final;
 
     void setAccentColor(const Color&);
     Color accentColor();
@@ -58,12 +58,12 @@ private:
     LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox&, float) const final;
-    void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&) final;
+    void paint(StyleAppearance, OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&) final;
 
-    void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
-    void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
-    void paintButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
-    void paintSpinButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+    void paintCheckbox(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&);
+    void paintRadio(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&);
+    void paintButton(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool);
+    void paintSpinButton(OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool);
 
     static Color focusColor(const Color&);
 

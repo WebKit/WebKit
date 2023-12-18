@@ -27,6 +27,7 @@
 #include "LoadableImportMap.h"
 
 #include "DefaultResourceLoadPriority.h"
+#include "Element.h"
 #include "FetchIdioms.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
@@ -49,7 +50,7 @@ LoadableImportMap::LoadableImportMap(const AtomString& nonce, const AtomString& 
 void LoadableImportMap::execute(ScriptElement& scriptElement)
 {
     ASSERT(!m_error);
-    scriptElement.registerImportMap(ScriptSourceCode(m_cachedScript.get(), JSC::SourceProviderSourceType::ImportMap, *this));
+    scriptElement.registerImportMap(ScriptSourceCode(protectedCachedScript().get(), JSC::SourceProviderSourceType::ImportMap, *this));
 }
 
 }

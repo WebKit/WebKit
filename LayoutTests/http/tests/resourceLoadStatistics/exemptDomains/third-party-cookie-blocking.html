@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="../resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that third-party cookies are blocked when managed domains added.");
+    jsTestIsAsync = true;
+
+    const firstPartyOrigin = "http://127.0.0.1:8000";
+    const thirdPartyOrigin = "http://localhost:8000";
+    const thirdPartyResourceUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
+    const firstPartyCookieName = "firstPartyCookie";
+    const subPathToSetFirstPartyCookie = "/set-cookie.py?name=" + firstPartyCookieName + "&value=value";
+    const returnUrl = firstPartyOrigin + "/resourceLoadStatistics/exemptDomains/third-party-cookie-blocking.html";
+    const subPathToGetCookies = "/get-cookies.py?name1=" + firstPartyCookieName;
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                // Set first-party cookie for localhost.
+                document.location.href = thirdPartyResourceUrl + subPathToSetFirstPartyCookie + "#" + returnUrl + "#step2";
+                break;
+            case "#step2":
+                // Check that the localhost first party cookie doesn't get sent for 127.0.0.1
+                document.location.hash = "step3";
+                openIframe(thirdPartyResourceUrl + subPathToGetCookies + "&message=Before adding a managed domain, should receive no cookies.", function() {
+                    runTest();
+                });
+                break;
+            case "#step3":
+                // Making the third party origin a managed domain still doesn't grant 127.0.0.1 permission to get the cookie in a third party context.
+                document.location.hash = "step4";
+                testRunner.setManagedDomains([ thirdPartyOrigin ], function() {
+                    // Check that the cookie is still blocked for localhost under 127.0.0.1.
+                    openIframe(thirdPartyResourceUrl + subPathToGetCookies +  "&message=After adding an unrelated managed domain, should still not receive cookies.", function() {
+                        runTest();
+                    });
+                });
+                break;
+            case "#step4":
+                // If 127.0.0.1 is a managed domain, now it can get the localhost cookie.
+                document.location.hash = "step5";
+                testRunner.setManagedDomains([ firstPartyOrigin, thirdPartyOrigin ], function() {
+                    openIframe(thirdPartyResourceUrl + subPathToGetCookies +  "&message=Should receive both cookies.", function() {
+                        runTest();
+                    });
+                });
+                break;
+            case "#step5":
+                testRunner.setStatisticsShouldBlockThirdPartyCookies(false, function() {
+                    setEnableFeature(false, finishJSTest);
+                });
+                break;
+        }
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true, function () {
+            if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                testFailed("Localhost was classified as prevalent resource before the test starts.");
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
+            testRunner.setStatisticsShouldBlockThirdPartyCookies(true, runTest);
+        });
+    } else {
+        runTest();
+    }
+</script>
+</body>
+</html>

@@ -49,24 +49,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import "ProcessAssertion.h"
-#import <UIKit/UIAccessibility.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <AXRuntime/AXDefines.h>
-#import <AXRuntime/AXNotificationConstants.h>
-#else
-#define kAXPidStatusChangedNotification 0
-#endif
 
 #endif
-
-#if PLATFORM(MAC)
-
-#import "ApplicationServicesSPI.h"
-
-extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
-
-#endif // PLATFORM(MAC)
 
 namespace IPC {
 
@@ -195,8 +179,7 @@ void Connection::platformOpen()
         m_isConnected = true;
 
         // Send the initialize message, which contains a send right for the server to use.
-        mach_port_insert_right(mach_task_self(), m_receivePort, m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
-        auto serverSendRight = MachSendRight::adopt(m_receivePort);
+        auto serverSendRight = MachSendRight::createFromReceiveRight(m_receivePort);
 
         // Call Client::didClose() when the serverSendRight gets destroyed.
         requestNoSenderNotifications(m_receivePort);
@@ -590,29 +573,6 @@ bool Connection::kill()
     return false;
 }
 
-void AccessibilityProcessSuspendedNotification(bool suspended)
-{
-#if PLATFORM(MAC)
-    _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
-#elif PLATFORM(IOS_FAMILY)
-    UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
-#else
-    UNUSED_PARAM(suspended);
-#endif
-}
-
-void Connection::willSendSyncMessage(OptionSet<SendSyncOption> sendSyncOptions)
-{
-    if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
-        AccessibilityProcessSuspendedNotification(true);
-}
-
-void Connection::didReceiveSyncReply(OptionSet<SendSyncOption> sendSyncOptions)
-{
-    if (sendSyncOptions.contains(IPC::SendSyncOption::InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
-        AccessibilityProcessSuspendedNotification(false);
-}
-
 pid_t Connection::remoteProcessID() const
 {
     if (!m_xpcConnection)
@@ -634,8 +594,7 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
         RELEASE_LOG_ERROR(Process, "Connection::createConnectionIdentifierPair: Could not allocate mach port, returned port was invalid");
         return std::nullopt;
     }
-    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::adopt(listeningPort) };
+    return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::createFromReceiveRight(listeningPort) };
 }
 
 } // namespace IPC

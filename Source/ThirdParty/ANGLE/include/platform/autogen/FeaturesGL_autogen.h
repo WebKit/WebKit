@@ -217,6 +217,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo preTransformTextureCubeGradDerivatives = {
+        "preTransformTextureCubeGradDerivatives",
+        FeatureCategory::OpenGLWorkarounds,
+        "Apply a vendor-specific transformation to explicit cubemap derivatives",
+        &members,
+    };
+
     FeatureInfo disableBlendFuncExtended = {
         "disableBlendFuncExtended",
         FeatureCategory::OpenGLWorkarounds,
@@ -590,6 +597,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo emulateClipOrigin = {
+        "emulateClipOrigin",
+        FeatureCategory::OpenGLWorkarounds,
+        "Some drivers incorrectly apply GL_CLIP_ORIGIN_EXT state.",
+        &members,
+    };
+
     FeatureInfo bindCompleteFramebufferForTimerQueries = {
         "bindCompleteFramebufferForTimerQueries",
         FeatureCategory::OpenGLWorkarounds,
@@ -687,6 +701,13 @@ struct FeaturesGL : FeatureSetBase
         FeatureCategory::OpenGLWorkarounds,
         "Disable EXT_texture_mirror_clamp_to_edge extension.",
         &members, "https://anglebug.com/8319"
+    };
+
+    FeatureInfo resyncDepthRangeOnClipControl = {
+        "resyncDepthRangeOnClipControl",
+        FeatureCategory::OpenGLWorkarounds,
+        "Resync depth range to apply clip control updates.",
+        &members, "https://anglebug.com/8381"
     };
 
 };

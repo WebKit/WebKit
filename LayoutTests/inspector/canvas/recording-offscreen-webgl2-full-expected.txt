@@ -1,0 +1,965 @@
+Test that CanvasManager is able to record actions made to offscreen WebGL2 canvas contexts.
+
+
+== Running test suite: Canvas.recordingOffscreenWebGL2
+-- Running test case: Canvas.recordingOffscreenWebGL2.multipleFrames
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"powerPreference":"default","failIfMajorPerformanceCaveat":false}
+  content: <filtered>
+frames:
+  0: (duration)
+    0: activeTexture(1)
+      swizzleTypes: [Number]
+      trace:
+        0: activeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: performActions
+        4: Global Code
+  1: (duration)
+    0: attachShader(1, 4)
+      swizzleTypes: [WebGLProgram, WebGLShader]
+      trace:
+        0: attachShader
+        1: (anonymous function)
+        2: executeFrameFunction
+  2: (duration)
+    0: bindAttribLocation(1, 1, "test")
+      swizzleTypes: [WebGLProgram, Number, String]
+      trace:
+        0: bindAttribLocation
+        1: (anonymous function)
+        2: executeFrameFunction
+  3: (duration)
+    0: bindBuffer(1, 1)
+      swizzleTypes: [Number, WebGLBuffer]
+      trace:
+        0: bindBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  4: (duration)
+    0: bindFramebuffer(1, 3)
+      swizzleTypes: [Number, WebGLFramebuffer]
+      trace:
+        0: bindFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  5: (duration)
+    0: bindRenderbuffer(1, 3)
+      swizzleTypes: [Number, WebGLRenderbuffer]
+      trace:
+        0: bindRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  6: (duration)
+    0: bindTexture(1, 2)
+      swizzleTypes: [Number, WebGLTexture]
+      trace:
+        0: bindTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  7: (duration)
+    0: blendColor(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: blendColor
+        1: (anonymous function)
+        2: executeFrameFunction
+  8: (duration)
+    0: blendEquation(1)
+      swizzleTypes: [Number]
+      trace:
+        0: blendEquation
+        1: (anonymous function)
+        2: executeFrameFunction
+  9: (duration)
+    0: blendEquationSeparate(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: blendEquationSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
+  10: (duration)
+    0: blendFunc(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: blendFunc
+        1: (anonymous function)
+        2: executeFrameFunction
+  11: (duration)
+    0: blendFuncSeparate(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: blendFuncSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
+  12: (duration)
+    0: bufferData(1, 0, 2)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: bufferData
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: bufferData(3, 4, 5)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: bufferData
+        1: (anonymous function)
+        2: executeFrameFunction
+  13: (duration)
+    0: bufferSubData(1, 2, 0)
+      swizzleTypes: [Number, Number, TypedArray]
+      trace:
+        0: bufferSubData
+        1: (anonymous function)
+        2: executeFrameFunction
+  14: (duration)
+    0: checkFramebufferStatus(1)
+      swizzleTypes: [Number]
+      trace:
+        0: checkFramebufferStatus
+        1: (anonymous function)
+        2: executeFrameFunction
+  15: (duration)
+    0: clear(1)
+      swizzleTypes: [Number]
+      trace:
+        0: clear
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: <filtered>
+  16: (duration)
+    0: clearColor(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearColor
+        1: (anonymous function)
+        2: executeFrameFunction
+  17: (duration)
+    0: clearDepth(1)
+      swizzleTypes: [Number]
+      trace:
+        0: clearDepth
+        1: (anonymous function)
+        2: executeFrameFunction
+  18: (duration)
+    0: clearStencil(1)
+      swizzleTypes: [Number]
+      trace:
+        0: clearStencil
+        1: (anonymous function)
+        2: executeFrameFunction
+  19: (duration)
+    0: colorMask(true, false, true, false)
+      swizzleTypes: [Boolean, Boolean, Boolean, Boolean]
+      trace:
+        0: colorMask
+        1: (anonymous function)
+        2: executeFrameFunction
+  20: (duration)
+    0: compileShader(4)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: compileShader
+        1: (anonymous function)
+        2: executeFrameFunction
+  21: (duration)
+    0: compressedTexSubImage2D(1, 2, 3, 4, 5, 6, 7, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: compressedTexSubImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
+  22: (duration)
+    0: copyTexImage2D(1, 2, 3, 4, 5, 6, 7, 8)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: copyTexImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
+  23: (duration)
+    0: copyTexSubImage2D(1, 2, 3, 4, 5, 6, 7, 8)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: copyTexSubImage2D
+        1: (anonymous function)
+        2: executeFrameFunction
+  24: (duration)
+    0: createBuffer()
+      trace:
+        0: createBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  25: (duration)
+    0: createFramebuffer()
+      trace:
+        0: createFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  26: (duration)
+    0: createProgram()
+      trace:
+        0: createProgram
+        1: (anonymous function)
+        2: executeFrameFunction
+  27: (duration)
+    0: createRenderbuffer()
+      trace:
+        0: createRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  28: (duration)
+    0: createShader(1)
+      swizzleTypes: [Number]
+      trace:
+        0: createShader
+        1: (anonymous function)
+        2: executeFrameFunction
+  29: (duration)
+    0: createTexture()
+      trace:
+        0: createTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  30: (duration)
+    0: cullFace(1)
+      swizzleTypes: [Number]
+      trace:
+        0: cullFace
+        1: (anonymous function)
+        2: executeFrameFunction
+  31: (duration)
+    0: deleteBuffer(1)
+      swizzleTypes: [WebGLBuffer]
+      trace:
+        0: deleteBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  32: (duration)
+    0: deleteFramebuffer(3)
+      swizzleTypes: [WebGLFramebuffer]
+      trace:
+        0: deleteFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  33: (duration)
+    0: deleteProgram(1)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: deleteProgram
+        1: (anonymous function)
+        2: executeFrameFunction
+  34: (duration)
+    0: deleteRenderbuffer(3)
+      swizzleTypes: [WebGLRenderbuffer]
+      trace:
+        0: deleteRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  35: (duration)
+    0: deleteShader(4)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: deleteShader
+        1: (anonymous function)
+        2: executeFrameFunction
+  36: (duration)
+    0: deleteTexture(2)
+      swizzleTypes: [WebGLTexture]
+      trace:
+        0: deleteTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  37: (duration)
+    0: depthFunc(1)
+      swizzleTypes: [Number]
+      trace:
+        0: depthFunc
+        1: (anonymous function)
+        2: executeFrameFunction
+  38: (duration)
+    0: depthMask(true)
+      swizzleTypes: [Boolean]
+      trace:
+        0: depthMask
+        1: (anonymous function)
+        2: executeFrameFunction
+  39: (duration)
+    0: depthRange(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: depthRange
+        1: (anonymous function)
+        2: executeFrameFunction
+  40: (duration)
+    0: detachShader(0, 0)
+      swizzleTypes: [WebGLProgram, WebGLShader]
+      trace:
+        0: detachShader
+        1: (anonymous function)
+        2: executeFrameFunction
+  41: (duration)
+    0: disable(1)
+      swizzleTypes: [Number]
+      trace:
+        0: disable
+        1: (anonymous function)
+        2: executeFrameFunction
+  42: (duration)
+    0: disableVertexAttribArray(1)
+      swizzleTypes: [Number]
+      trace:
+        0: disableVertexAttribArray
+        1: (anonymous function)
+        2: executeFrameFunction
+  43: (duration)
+    0: drawArrays(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: drawArrays
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: <filtered>
+  44: (duration)
+    0: drawElements(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: drawElements
+        1: (anonymous function)
+        2: executeFrameFunction
+      snapshot: <filtered>
+  45: (duration)
+    0: enable(1)
+      swizzleTypes: [Number]
+      trace:
+        0: enable
+        1: (anonymous function)
+        2: executeFrameFunction
+  46: (duration)
+    0: enableVertexAttribArray(1)
+      swizzleTypes: [Number]
+      trace:
+        0: enableVertexAttribArray
+        1: (anonymous function)
+        2: executeFrameFunction
+  47: (duration)
+    0: finish()
+      trace:
+        0: finish
+        1: (anonymous function)
+        2: executeFrameFunction
+  48: (duration)
+    0: flush()
+      trace:
+        0: flush
+        1: (anonymous function)
+        2: executeFrameFunction
+  49: (duration)
+    0: framebufferRenderbuffer(1, 2, 3, 0)
+      swizzleTypes: [Number, Number, Number, WebGLRenderbuffer]
+      trace:
+        0: framebufferRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  50: (duration)
+    0: framebufferTexture2D(1, 2, 3, 0, 4)
+      swizzleTypes: [Number, Number, Number, WebGLTexture, Number]
+      trace:
+        0: framebufferTexture2D
+        1: (anonymous function)
+        2: executeFrameFunction
+  51: (duration)
+    0: frontFace(1)
+      swizzleTypes: [Number]
+      trace:
+        0: frontFace
+        1: (anonymous function)
+        2: executeFrameFunction
+  52: (duration)
+    0: generateMipmap(1)
+      swizzleTypes: [Number]
+      trace:
+        0: generateMipmap
+        1: (anonymous function)
+        2: executeFrameFunction
+  53: (duration)
+    0: getActiveAttrib(0, 1)
+      swizzleTypes: [WebGLProgram, Number]
+      trace:
+        0: getActiveAttrib
+        1: (anonymous function)
+        2: executeFrameFunction
+  54: (duration)
+    0: getActiveUniform(0, 1)
+      swizzleTypes: [WebGLProgram, Number]
+      trace:
+        0: getActiveUniform
+        1: (anonymous function)
+        2: executeFrameFunction
+  55: (duration)
+    0: getAttachedShaders(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: getAttachedShaders
+        1: (anonymous function)
+        2: executeFrameFunction
+  56: (duration)
+    0: getAttribLocation(0, "test")
+      swizzleTypes: [WebGLProgram, String]
+      trace:
+        0: getAttribLocation
+        1: (anonymous function)
+        2: executeFrameFunction
+  57: (duration)
+    0: getBufferParameter(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getBufferParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  58: (duration)
+    0: getContextAttributes()
+      trace:
+        0: getContextAttributes
+        1: (anonymous function)
+        2: executeFrameFunction
+  59: (duration)
+    0: getError()
+      trace:
+        0: getError
+        1: (anonymous function)
+        2: executeFrameFunction
+  60: (duration)
+    0: getExtension("test")
+      swizzleTypes: [String]
+      trace:
+        0: getExtension
+        1: (anonymous function)
+        2: executeFrameFunction
+  61: (duration)
+    0: getFramebufferAttachmentParameter(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: getFramebufferAttachmentParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  62: (duration)
+    0: getParameter(1)
+      swizzleTypes: [Number]
+      trace:
+        0: getParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  63: (duration)
+    0: getProgramInfoLog(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: getProgramInfoLog
+        1: (anonymous function)
+        2: executeFrameFunction
+  64: (duration)
+    0: getProgramParameter(0, 1)
+      swizzleTypes: [WebGLProgram, Number]
+      trace:
+        0: getProgramParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  65: (duration)
+    0: getRenderbufferParameter(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getRenderbufferParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  66: (duration)
+    0: getShaderInfoLog(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: getShaderInfoLog
+        1: (anonymous function)
+        2: executeFrameFunction
+  67: (duration)
+    0: getShaderParameter(0, 1)
+      swizzleTypes: [WebGLShader, Number]
+      trace:
+        0: getShaderParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  68: (duration)
+    0: getShaderPrecisionFormat(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getShaderPrecisionFormat
+        1: (anonymous function)
+        2: executeFrameFunction
+  69: (duration)
+    0: getShaderSource(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: getShaderSource
+        1: (anonymous function)
+        2: executeFrameFunction
+  70: (duration)
+    0: getSupportedExtensions()
+      trace:
+        0: getSupportedExtensions
+        1: (anonymous function)
+        2: executeFrameFunction
+  71: (duration)
+    0: getTexParameter(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getTexParameter
+        1: (anonymous function)
+        2: executeFrameFunction
+  72: (duration)
+    0: getUniform(0, 0)
+      swizzleTypes: [WebGLProgram, WebGLUniformLocation]
+      trace:
+        0: getUniform
+        1: (anonymous function)
+        2: executeFrameFunction
+  73: (duration)
+    0: getUniformLocation(0, "test")
+      swizzleTypes: [WebGLProgram, String]
+      trace:
+        0: getUniformLocation
+        1: (anonymous function)
+        2: executeFrameFunction
+  74: (duration)
+    0: getVertexAttrib(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getVertexAttrib
+        1: (anonymous function)
+        2: executeFrameFunction
+  75: (duration)
+    0: getVertexAttribOffset(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: getVertexAttribOffset
+        1: (anonymous function)
+        2: executeFrameFunction
+  76: (duration)
+    0: hint(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: hint
+        1: (anonymous function)
+        2: executeFrameFunction
+  77: (duration)
+    0: isBuffer(0)
+      swizzleTypes: [WebGLBuffer]
+      trace:
+        0: isBuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  78: (duration)
+    0: isContextLost()
+      trace:
+        0: isContextLost
+        1: (anonymous function)
+        2: executeFrameFunction
+  79: (duration)
+    0: isEnabled(1)
+      swizzleTypes: [Number]
+      trace:
+        0: isEnabled
+        1: (anonymous function)
+        2: executeFrameFunction
+  80: (duration)
+    0: isFramebuffer(0)
+      swizzleTypes: [WebGLFramebuffer]
+      trace:
+        0: isFramebuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  81: (duration)
+    0: isProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: isProgram
+        1: (anonymous function)
+        2: executeFrameFunction
+  82: (duration)
+    0: isRenderbuffer(0)
+      swizzleTypes: [WebGLRenderbuffer]
+      trace:
+        0: isRenderbuffer
+        1: (anonymous function)
+        2: executeFrameFunction
+  83: (duration)
+    0: isShader(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: isShader
+        1: (anonymous function)
+        2: executeFrameFunction
+  84: (duration)
+    0: isTexture(0)
+      swizzleTypes: [WebGLTexture]
+      trace:
+        0: isTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+  85: (duration)
+    0: lineWidth(1)
+      swizzleTypes: [Number]
+      trace:
+        0: lineWidth
+        1: (anonymous function)
+        2: executeFrameFunction
+  86: (duration)
+    0: linkProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: linkProgram
+        1: (anonymous function)
+        2: executeFrameFunction
+  87: (duration)
+    0: pixelStorei(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: pixelStorei
+        1: (anonymous function)
+        2: executeFrameFunction
+  88: (duration)
+    0: polygonOffset(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: polygonOffset
+        1: (anonymous function)
+        2: executeFrameFunction
+  89: (duration)
+    0: readPixels(1, 2, 3, 4, 5, 6, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: readPixels
+        1: (anonymous function)
+        2: executeFrameFunction
+  90: (duration)
+    0: renderbufferStorage(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: renderbufferStorage
+        1: (anonymous function)
+        2: executeFrameFunction
+  91: (duration)
+    0: sampleCoverage(1, true)
+      swizzleTypes: [Number, Boolean]
+      trace:
+        0: sampleCoverage
+        1: (anonymous function)
+        2: executeFrameFunction
+  92: (duration)
+    0: scissor(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: scissor
+        1: (anonymous function)
+        2: executeFrameFunction
+  93: (duration)
+    0: shaderSource(0, "test")
+      swizzleTypes: [WebGLShader, String]
+      trace:
+        0: shaderSource
+        1: (anonymous function)
+        2: executeFrameFunction
+  94: (duration)
+    0: stencilFunc(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: stencilFunc
+        1: (anonymous function)
+        2: executeFrameFunction
+  95: (duration)
+    0: stencilFuncSeparate(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: stencilFuncSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
+  96: (duration)
+    0: stencilMask(1)
+      swizzleTypes: [Number]
+      trace:
+        0: stencilMask
+        1: (anonymous function)
+        2: executeFrameFunction
+  97: (duration)
+    0: stencilMaskSeparate(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: stencilMaskSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
+  98: (duration)
+    0: stencilOp(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: stencilOp
+        1: (anonymous function)
+        2: executeFrameFunction
+  99: (duration)
+    0: stencilOpSeparate(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: stencilOpSeparate
+        1: (anonymous function)
+        2: executeFrameFunction
+  100: (duration)
+    0: texParameterf(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: texParameterf
+        1: (anonymous function)
+        2: executeFrameFunction
+  101: (duration)
+    0: texParameteri(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: texParameteri
+        1: (anonymous function)
+        2: executeFrameFunction
+  102: (duration)
+    0: uniform1f(0, 1)
+      swizzleTypes: [WebGLUniformLocation, Number]
+      trace:
+        0: uniform1f
+        1: (anonymous function)
+        2: executeFrameFunction
+  103: (duration)
+    0: uniform1fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform1fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  104: (duration)
+    0: uniform1i(0, 1)
+      swizzleTypes: [WebGLUniformLocation, Number]
+      trace:
+        0: uniform1i
+        1: (anonymous function)
+        2: executeFrameFunction
+  105: (duration)
+    0: uniform1iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform1iv
+        1: (anonymous function)
+        2: executeFrameFunction
+  106: (duration)
+    0: uniform2f(0, 1, 2)
+      swizzleTypes: [WebGLUniformLocation, Number, Number]
+      trace:
+        0: uniform2f
+        1: (anonymous function)
+        2: executeFrameFunction
+  107: (duration)
+    0: uniform2fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform2fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  108: (duration)
+    0: uniform2i(0, 1, 2)
+      swizzleTypes: [WebGLUniformLocation, Number, Number]
+      trace:
+        0: uniform2i
+        1: (anonymous function)
+        2: executeFrameFunction
+  109: (duration)
+    0: uniform2iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform2iv
+        1: (anonymous function)
+        2: executeFrameFunction
+  110: (duration)
+    0: uniform3f(0, 1, 2, 3)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number]
+      trace:
+        0: uniform3f
+        1: (anonymous function)
+        2: executeFrameFunction
+  111: (duration)
+    0: uniform3fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform3fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  112: (duration)
+    0: uniform3i(0, 1, 2, 3)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number]
+      trace:
+        0: uniform3i
+        1: (anonymous function)
+        2: executeFrameFunction
+  113: (duration)
+    0: uniform3iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform3iv
+        1: (anonymous function)
+        2: executeFrameFunction
+  114: (duration)
+    0: uniform4f(0, 1, 2, 3, 4)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number, Number]
+      trace:
+        0: uniform4f
+        1: (anonymous function)
+        2: executeFrameFunction
+  115: (duration)
+    0: uniform4fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform4fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  116: (duration)
+    0: uniform4i(0, 1, 2, 3, 4)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number, Number]
+      trace:
+        0: uniform4i
+        1: (anonymous function)
+        2: executeFrameFunction
+  117: (duration)
+    0: uniform4iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
+      trace:
+        0: uniform4iv
+        1: (anonymous function)
+        2: executeFrameFunction
+  118: (duration)
+    0: uniformMatrix2fv(0, true, 0)
+      swizzleTypes: [WebGLUniformLocation, Boolean, TypedArray]
+      trace:
+        0: uniformMatrix2fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  119: (duration)
+    0: uniformMatrix3fv(0, true, 0)
+      swizzleTypes: [WebGLUniformLocation, Boolean, TypedArray]
+      trace:
+        0: uniformMatrix3fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  120: (duration)
+    0: uniformMatrix4fv(0, true, 0)
+      swizzleTypes: [WebGLUniformLocation, Boolean, TypedArray]
+      trace:
+        0: uniformMatrix4fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  121: (duration)
+    0: useProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: useProgram
+        1: (anonymous function)
+        2: executeFrameFunction
+  122: (duration)
+    0: validateProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: validateProgram
+        1: (anonymous function)
+        2: executeFrameFunction
+  123: (duration)
+    0: vertexAttrib1f(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: vertexAttrib1f
+        1: (anonymous function)
+        2: executeFrameFunction
+  124: (duration)
+    0: vertexAttrib1fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: vertexAttrib1fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  125: (duration)
+    0: vertexAttrib2f(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: vertexAttrib2f
+        1: (anonymous function)
+        2: executeFrameFunction
+  126: (duration)
+    0: vertexAttrib2fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: vertexAttrib2fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  127: (duration)
+    0: vertexAttrib3f(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: vertexAttrib3f
+        1: (anonymous function)
+        2: executeFrameFunction
+  128: (duration)
+    0: vertexAttrib3fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: vertexAttrib3fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  129: (duration)
+    0: vertexAttrib4f(1, 2, 3, 4, 5)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: vertexAttrib4f
+        1: (anonymous function)
+        2: executeFrameFunction
+  130: (duration)
+    0: vertexAttrib4fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: vertexAttrib4fv
+        1: (anonymous function)
+        2: executeFrameFunction
+  131: (duration)
+    0: vertexAttribPointer(1, 2, 3, true, 5, 6)
+      swizzleTypes: [Number, Number, Number, Boolean, Number, Number]
+      trace:
+        0: vertexAttribPointer
+        1: (anonymous function)
+        2: executeFrameFunction
+  132: (duration)
+    0: viewport(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: viewport
+        1: (anonymous function)
+        2: executeFrameFunction
+  133: (duration)
+    0: width
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: width = 2
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+  134: (duration)
+    0: height
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+    1: height = 2
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function)
+        1: executeFrameFunction
+

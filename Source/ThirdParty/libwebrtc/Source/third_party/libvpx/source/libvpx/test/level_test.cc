@@ -22,9 +22,9 @@ class LevelTest
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         cpu_used_(GET_PARAM(2)), min_gf_internal_(24), target_level_(0),
         level_(0) {}
-  virtual ~LevelTest() {}
+  ~LevelTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(encoding_mode_);
     if (encoding_mode_ != ::libvpx_test::kRealTime) {
@@ -41,8 +41,8 @@ class LevelTest
     cfg_.rc_min_quantizer = 0;
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
       encoder->Control(VP9E_SET_TARGET_LEVEL, target_level_);

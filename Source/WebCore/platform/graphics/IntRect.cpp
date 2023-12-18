@@ -158,6 +158,18 @@ bool IntRect::isValid() const
     return !max.hasOverflowed();
 }
 
+IntRect IntRect::toRectWithExtentsClippedToNumericLimits() const
+{
+    using T = int32_t;
+    IntRect clippedRect { *this };
+    constexpr auto max = std::numeric_limits<T>::max();
+    if (sumOverflows<T>(x(), width()))
+        clippedRect.setWidth(max - x());
+    if (sumOverflows<T>(y(), height()))
+        clippedRect.setHeight(max - y());
+    return clippedRect;
+}
+
 TextStream& operator<<(TextStream& ts, const IntRect& r)
 {
     if (ts.hasFormattingFlag(TextStream::Formatting::SVGStyleRect))

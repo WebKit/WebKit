@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/idlharness.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeelement-interface.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeevent-dispatch-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invokeevent-interface.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-fullscreen-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-details-behavior.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-on-popover-behavior.tentative.html

@@ -274,7 +274,7 @@ template<typename T> struct IDLTypedArray : IDLBufferSource<T> { };
 struct IDLDate : IDLType<WallTime> { 
     using NullableType = WallTime;
     static WallTime nullValue() { return WallTime::nan(); }
-    static bool isNullValue(WallTime value) { return std::isnan(value); }
+    static bool isNullValue(WallTime value) { return value.isNaN(); }
     static WallTime extractValueFromNullable(WallTime value) { return value; }
 };
 

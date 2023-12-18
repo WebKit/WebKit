@@ -353,6 +353,8 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         webView._dragInteractionPolicy = dragInteractionPolicy(options);
         webView.focusStartsInputSessionPolicy = focusStartsInputSessionPolicy(options);
         webView.suppressInputAccessoryView = options.suppressInputAccessoryView();
+        webView.scrollView.showsVerticalScrollIndicator = options.showsScrollIndicators();
+        webView.scrollView.showsHorizontalScrollIndicator = options.showsScrollIndicators();
 
 #if HAVE(UIFINDINTERACTION)
         webView.findInteractionEnabled = options.findInteractionEnabled();
@@ -527,9 +529,9 @@ void TestController::setKeyboardInputModeIdentifier(const String& identifier)
 
     auto controllerClass = UIKeyboardInputModeController.class;
     m_inputModeSwizzlers.reserveCapacity(3);
-    m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputMode), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
-    m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputModeInPreference), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
-    m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(activeInputModes), reinterpret_cast<IMP>(swizzleActiveInputModes)));
+    m_inputModeSwizzlers.append(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputMode), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
+    m_inputModeSwizzlers.append(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputModeInPreference), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
+    m_inputModeSwizzlers.append(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(activeInputModes), reinterpret_cast<IMP>(swizzleActiveInputModes)));
     [UIKeyboardImpl.sharedInstance prepareKeyboardInputModeFromPreferences:nil];
 }
 

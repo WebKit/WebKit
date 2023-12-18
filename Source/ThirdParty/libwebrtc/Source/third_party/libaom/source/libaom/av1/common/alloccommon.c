@@ -303,21 +303,13 @@ void av1_alloc_restoration_buffers(AV1_COMMON *cm, bool is_sgr_enabled) {
     CHECK_MEM_ERROR(cm, cm->rlbs, aom_malloc(sizeof(RestorationLineBuffers)));
   }
 
-  // For striped loop restoration, we divide each row of tiles into "stripes",
+  // For striped loop restoration, we divide each plane into "stripes",
   // of height 64 luma pixels but with an offset by RESTORATION_UNIT_OFFSET
   // luma pixels to match the output from CDEF. We will need to store 2 *
-  // RESTORATION_CTX_VERT lines of data for each stripe, and also need to be
-  // able to quickly answer the question "Where is the <n>'th stripe for tile
-  // row <m>?" To make that efficient, we generate the rst_last_stripe array.
-  int num_stripes = 0;
-  for (int i = 0; i < cm->tiles.rows; ++i) {
-    TileInfo tile_info;
-    av1_tile_set_row(&tile_info, cm, i);
-    const int mi_h = tile_info.mi_row_end - tile_info.mi_row_start;
-    const int ext_h = RESTORATION_UNIT_OFFSET + (mi_h << MI_SIZE_LOG2);
-    const int tile_stripes = (ext_h + 63) / 64;
-    num_stripes += tile_stripes;
-  }
+  // RESTORATION_CTX_VERT lines of data for each stripe.
+  int mi_h = cm->mi_params.mi_rows;
+  const int ext_h = RESTORATION_UNIT_OFFSET + (mi_h << MI_SIZE_LOG2);
+  const int num_stripes = (ext_h + 63) / 64;
 
   // Now we need to allocate enough space to store the line buffers for the
   // stripes

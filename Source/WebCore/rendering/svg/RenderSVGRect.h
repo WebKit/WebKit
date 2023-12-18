@@ -57,8 +57,8 @@ private:
     bool shapeDependentFillContains(const FloatPoint&, const WindRule) const override;
 
 private:
-    FloatRect m_innerStrokeRect;
-    FloatRect m_outerStrokeRect;
+    bool definitelyHasSimpleStroke() const;
+    bool canUseStrokeHitTestFastPath() const;
 };
 
 } // namespace WebCore

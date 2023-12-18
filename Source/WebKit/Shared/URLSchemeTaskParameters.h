@@ -30,21 +30,26 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 
-namespace IPC {
-class Encoder;
-class Decoder;
+namespace WebCore {
+class FormData;
 }
 
 namespace WebKit {
 
 struct URLSchemeTaskParameters {
+    URLSchemeTaskParameters(WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, const WebCore::ResourceRequest& request, FrameInfoData&& frameInfo)
+        : handlerIdentifier(handlerIdentifier)
+        , taskIdentifier(taskIdentifier)
+        , request(request)
+        , frameInfo(WTFMove(frameInfo))
+    { }
+
     WebURLSchemeHandlerIdentifier handlerIdentifier;
     WebCore::ResourceLoaderIdentifier taskIdentifier;
     WebCore::ResourceRequest request;
     FrameInfoData frameInfo;
-    
-    void encode(IPC::Encoder&) const;
-    static std::optional<URLSchemeTaskParameters> decode(IPC::Decoder&);
+
+    RefPtr<WebCore::FormData> requestBody() const;
 };
 
 } // namespace WebKit

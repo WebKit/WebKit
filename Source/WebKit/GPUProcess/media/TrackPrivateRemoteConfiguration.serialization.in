@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 struct WebKit::TrackPrivateRemoteConfiguration {
-    AtomString trackId;
+    WebCore::TrackID trackId;
     AtomString label;
     AtomString language;
     MediaTime startTimeVariance;

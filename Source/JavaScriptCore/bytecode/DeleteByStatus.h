@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "ExitFlag.h"
 #include "ICStatusMap.h"
 #include "StubInfoSummary.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -41,7 +42,7 @@ class CodeBlock;
 class StructureStubInfo;
 
 class DeleteByStatus final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DeleteByStatus);
 public:
     enum State : uint8_t {
         // It's uncached so we have no information.

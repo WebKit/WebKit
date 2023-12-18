@@ -26,6 +26,7 @@
 #include "CachedResourceHandle.h"
 #include "DragActions.h"
 #include "DragImage.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,7 +43,7 @@ class Pasteboard;
 class ScriptExecutionContext;
 enum class WebContentReadingPolicy : bool;
 
-class DataTransfer : public RefCounted<DataTransfer> {
+class DataTransfer : public RefCounted<DataTransfer>, public CanMakeWeakPtr<DataTransfer> {
 public:
     // https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
     enum class StoreMode { Invalid, ReadWrite, Readonly, Protected };

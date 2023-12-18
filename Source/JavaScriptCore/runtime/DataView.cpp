@@ -55,7 +55,12 @@ RefPtr<DataView> DataView::wrappedAs(Ref<ArrayBuffer>&& buffer, size_t byteOffse
     // We do not check verifySubRangeLength for resizable buffer case since this function is only called from already created JS DataViews.
     // It is possible that verifySubRangeLength fails when underlying ArrayBuffer is resized, but it is OK since it will be just recognized as OOB DataView.
     if (!buffer->isResizableOrGrowableShared()) {
-        if (!ArrayBufferView::verifySubRangeLength(buffer.get(), byteOffset, byteLength.value_or(0), 1))
+        if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, byteLength.value_or(0), 1))
+            return nullptr;
+    } else if (buffer->isGrowableShared()) {
+        // For growable buffer, we extra-check whether byteOffset and length are within maxByteLength.
+        // This does not hit in normal condition, just extra hardening.
+        if (!ArrayBufferView::verifySubRangeLength(buffer->maxByteLength().value(), byteOffset, byteLength.value_or(0), 1))
             return nullptr;
     }
 

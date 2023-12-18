@@ -24,7 +24,7 @@
  
 use strict;
 use warnings;
-use Math::BigInt;
+use bigint;
 use Getopt::Long qw(:config pass_through);
 
 my $file = shift @ARGV or die("Must provide source file as final argument.");
@@ -42,7 +42,7 @@ my $hasSetter = "false";
 my $includeBuiltin = 0;
 my $inside = 0;
 my $name;
-my $pefectHashSize;
+my $perfectHashSize;
 my $compactSize;
 my $compactHashSizeMask;
 my $banner = 0;
@@ -133,10 +133,10 @@ sub jsc_ucfirst($)
 
 sub ceilingToPowerOf2
 {
-    my ($pefectHashSize) = @_;
+    my ($perfectHashSize) = @_;
 
     my $powerOf2 = 1;
-    while ($pefectHashSize > $powerOf2) {
+    while ($perfectHashSize > $powerOf2) {
         $powerOf2 <<= 1;
     }
 
@@ -147,10 +147,13 @@ sub calcPerfectHashSize($)
 {
     my ($isMac) = @_;
 tableSizeLoop:
-    for ($pefectHashSize = ceilingToPowerOf2(scalar @keys); ; $pefectHashSize += $pefectHashSize) {
+    for ($perfectHashSize = ceilingToPowerOf2(scalar @keys); ; $perfectHashSize += $perfectHashSize) {
+        if ($perfectHashSize > 2**15) {
+            die "The hash size is far too big. This should not be reached.";
+        }
         my @table = ();
         foreach my $key (@keys) {
-            my $h = hashValue($key, $isMac) % $pefectHashSize;
+            my $h = hashValue($key, $isMac) % $perfectHashSize;
             next tableSizeLoop if $table[$h];
             $table[$h] = 1;
         }
@@ -176,6 +179,12 @@ sub calcCompactHashSize($)
         my $depth = 0;
         my $h = hashValue($key, $isMac) % $compactHashSize;
         while (defined($table[$h])) {
+            if ($compactSize > 1000) {
+                die "The hash size is far too big. This should not be reached.";
+            }
+            if ($depth > 100) {
+                die "The depth is far too big. This should not be reached.";
+            }
             if (defined($links[$h])) {
                 $h = $links[$h];
                 $depth++;
@@ -188,7 +197,7 @@ sub calcCompactHashSize($)
         }
         $table[$h] = $i;
         $i++;
-        $maxdepth = $depth if ( $depth > $maxdepth);
+        $maxdepth = $depth if ($depth > $maxdepth);
     }
 }
 
@@ -525,10 +534,10 @@ sub output() {
     };
 
     my $hashTableForMacOS = generateHashTableHelper(1, 1);
-    my $hashTableForIOS = generateHashTableHelper(0, 0);
+    my $hashTableForNonMacOSPlatforms = generateHashTableHelper(0, 0);
     my $hashTableToWrite = $hashTableForMacOS;
-    if ($hashTableForMacOS ne $hashTableForIOS) {
-        $hashTableToWrite = "#if PLATFORM(MAC)\n" . $hashTableForMacOS . "#else\n" . $hashTableForIOS . "#endif\n";
+    if ($hashTableForMacOS ne $hashTableForNonMacOSPlatforms) {
+        $hashTableToWrite = "#if PLATFORM(MAC)\n" . $hashTableForMacOS . "#else\n" . $hashTableForNonMacOSPlatforms . "#endif\n";
     }
     print $hashTableToWrite;
 

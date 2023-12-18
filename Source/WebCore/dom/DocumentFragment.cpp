@@ -73,7 +73,7 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
 
 Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningOperation type)
 {
-    Ref<DocumentFragment> clone = create(targetDocument);
+    Ref clone = create(targetDocument);
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:
@@ -87,15 +87,17 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningO
 
 void DocumentFragment::parseHTML(const String& source, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    if (tryFastParsingHTMLFragment(source, document(), *this, contextElement, parserContentPolicy)) {
+    Ref document = this->document();
+    if (tryFastParsingHTMLFragment(source, document, *this, contextElement, parserContentPolicy)) {
 #if ASSERT_ENABLED
         // As a sanity check for the fast-path, create another fragment using the full parser and compare the results.
-        auto referenceFragment = DocumentFragment::create(document());
+        auto referenceFragment = DocumentFragment::create(document);
         HTMLDocumentParser::parseDocumentFragment(source, referenceFragment, contextElement, parserContentPolicy);
         ASSERT(serializeFragment(*this, SerializedNodes::SubtreesOfChildren) == serializeFragment(referenceFragment, SerializedNodes::SubtreesOfChildren));
 #endif
         return;
-    } else if (hasChildNodes())
+    }
+    if (hasChildNodes())
         removeChildren();
 
     HTMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
@@ -113,7 +115,7 @@ Element* DocumentFragment::getElementById(const AtomString& id) const
 
     // Fast path for ShadowRoot, where we are both a DocumentFragment and a TreeScope.
     if (isTreeScope())
-        return treeScope().getElementById(id);
+        return treeScope().getElementById(id).get();
 
     // Otherwise, fall back to iterating all of the element descendants.
     for (auto& element : descendantsOfType<Element>(*this)) {

@@ -62,18 +62,18 @@ void Worklet::addModule(const String& moduleURLString, WorkletOptions&& options,
 {
     auto* document = this->document();
     if (!document || !document->page()) {
-        promise.reject(Exception { InvalidStateError, "This frame is detached"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "This frame is detached"_s });
         return;
     }
 
     URL moduleURL = document->completeURL(moduleURLString);
     if (!moduleURL.isValid()) {
-        promise.reject(Exception { SyntaxError, "Module URL is invalid"_s });
+        promise.reject(Exception { ExceptionCode::SyntaxError, "Module URL is invalid"_s });
         return;
     }
 
-    if (!document->contentSecurityPolicy()->allowScriptFromSource(moduleURL)) {
-        promise.reject(Exception { SecurityError, "Not allowed by CSP"_s });
+    if (!document->checkedContentSecurityPolicy()->allowScriptFromSource(moduleURL)) {
+        promise.reject(Exception { ExceptionCode::SecurityError, "Not allowed by CSP"_s });
         return;
     }
 

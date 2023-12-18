@@ -46,7 +46,7 @@ struct PropertyValue;
 enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
 
-enum class PseudoId : uint16_t;
+enum class PseudoId : uint32_t;
 enum class SVGPaintType : uint8_t;
 
 using CSSValueListBuilder = Vector<Ref<CSSValue>, 4>;
@@ -81,8 +81,6 @@ public:
 
     static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
 
-    static void addValueForAnimationPropertyToList(CSSValueListBuilder&, CSSPropertyID, const Animation*);
-
     static bool updateStyleIfNeededForProperty(Element&, CSSPropertyID);
 
 private:
@@ -103,6 +101,7 @@ private:
     Ref<CSSValue> getMaskShorthandValue() const;
     Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&) const;
     Ref<CSSValue> fontVariantShorthandValue() const;
+    RefPtr<CSSValue> textWrapShorthandValue(const RenderStyle&) const;
     RefPtr<CSSValue> whiteSpaceShorthandValue(const RenderStyle&) const;
 
     RefPtr<Element> m_element;

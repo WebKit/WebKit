@@ -45,12 +45,12 @@ static ExceptionOr<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalObjec
     auto function = globalObject.get(&globalObject, identifier);
     ASSERT(!!scope.exception() || function.isCallable());
     scope.assertNoExceptionExceptTermination();
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
     auto callData = JSC::getCallData(function);
 
     auto result = call(&globalObject, function, callData, JSC::jsUndefined(), arguments);
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
     return result;
 }
@@ -181,12 +181,12 @@ ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>>
 {
     auto* globalObject = this->globalObject();
     if (!globalObject)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
     auto result = tee(*globalObject, shouldClone);
     if (UNLIKELY(scope.exception()))
-        return Exception { ExistingExceptionError };
+        return Exception { ExceptionCode::ExistingExceptionError };
 
     auto results = Detail::SequenceConverter<IDLObject>::convert(*globalObject, result);
     ASSERT(results.size() == 2);

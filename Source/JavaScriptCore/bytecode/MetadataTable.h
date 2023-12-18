@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "UnlinkedMetadataTable.h"
 #include "ValueProfile.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -40,7 +41,7 @@ class CodeBlock;
 //                                                   ^
 //                 The pointer of MetadataTable points at this address.
 class MetadataTable {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MetadataTable);
     WTF_MAKE_NONCOPYABLE(MetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class UnlinkedMetadataTable;
@@ -70,7 +71,7 @@ public:
     ALWAYS_INLINE void forEachValueProfile(const Functor& func)
     {
         // We could do a checked multiply here but if it overflows we'd just not look at any value profiles so it's probably not worth it.
-        int lastValueProfileOffset = -linkingData().unlinkedMetadata->m_numValueProfiles;
+        int lastValueProfileOffset = -unlinkedMetadata().m_numValueProfiles;
         for (int i = -1; i >= lastValueProfileOffset; --i)
             func(valueProfilesEnd()[i]);
     }
@@ -82,6 +83,7 @@ public:
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset)
     {
+        ASSERT(profileOffset <= unlinkedMetadata().m_numValueProfiles);
         return valueProfilesEnd()[-static_cast<ptrdiff_t>(profileOffset)];
     }
 
@@ -122,6 +124,8 @@ public:
 
     void validate() const;
 
+    UnlinkedMetadataTable& unlinkedMetadata() const { return linkingData().unlinkedMetadata.get(); }
+
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
@@ -130,7 +134,7 @@ private:
 
     size_t totalSize() const
     {
-        return linkingData().unlinkedMetadata->m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
+        return unlinkedMetadata().m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
     }
 
     UnlinkedMetadataTable::LinkingData& linkingData() const

@@ -32,6 +32,18 @@ messages -> WebExtensionContextProxy {
     // Alarms
     DispatchAlarmsEvent(struct WebKit::WebExtensionAlarmParameters alarmInfo)
 
+    // Commands
+    DispatchCommandsCommandEvent(String identifier, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+    DispatchCommandsChangedEvent(String identifier, String oldShortcut, String newShortcut)
+
+    // Extension
+    SetBackgroundPageIdentifier(WebCore::PageIdentifier pageID)
+    AddPopupPageIdentifier(WebCore::PageIdentifier pageID, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+    AddTabPageIdentifier(WebCore::PageIdentifier pageID, WebKit::WebExtensionTabIdentifier tabIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier)
+
+    // Menus
+    DispatchMenusClickedEvent(struct WebKit::WebExtensionMenuItemParameters menuItemParameters, bool wasChecked, struct WebKit::WebExtensionMenuItemContextParameters contextParameters, std::optional<WebKit::WebExtensionTabParameters> tabParameters)
+
     // Permissions
     DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
 
@@ -42,6 +54,8 @@ messages -> WebExtensionContextProxy {
     // Runtime
     DispatchRuntimeMessageEvent(WebKit::WebExtensionContentWorldType contentWorldType, String messageJSON, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::optional<String> replyJSON)
     DispatchRuntimeConnectEvent(WebKit::WebExtensionContentWorldType contentWorldType, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, std::optional<WebKit::WebExtensionFrameIdentifier> targetFrameIdentifier, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (size_t firedEventCount)
+    DispatchRuntimeInstalledEvent(WebKit::WebExtensionContext::InstallReason installReason, String previousVersion)
+    DispatchRuntimeStartupEvent()
 
     // Tabs Events
     DispatchTabsCreatedEvent(WebKit::WebExtensionTabParameters tabParameters)
@@ -55,7 +69,7 @@ messages -> WebExtensionContextProxy {
     DispatchTabsRemovedEvent(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionContext::WindowIsClosing windowIsClosing)
 
     // Web Navigation
-    DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DispatchWebNavigationEvent(WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionTabIdentifier tabID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
 
     // Windows
     DispatchWindowsEvent(WebKit::WebExtensionEventListenerType type, std::optional<WebKit::WebExtensionWindowParameters> windowParameters)

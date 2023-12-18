@@ -1,0 +1,6 @@
+
+
+PASS horizontal-input block size should match height and inline size should match width
+FAIL vertical-lr-input block size should match width and inline size should match height assert_greater_than: expected a number greater than 51 but got 31
+FAIL vertical-rl-input block size should match width and inline size should match height assert_greater_than: expected a number greater than 51 but got 31
+

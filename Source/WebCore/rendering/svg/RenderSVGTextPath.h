@@ -49,4 +49,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTextPath, isSVGTextPath())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGTextPath, isRenderSVGTextPath())

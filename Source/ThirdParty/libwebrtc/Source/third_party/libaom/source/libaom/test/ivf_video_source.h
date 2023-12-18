@@ -37,20 +37,20 @@ class IVFVideoSource : public CompressedVideoSource {
         compressed_frame_buf_(nullptr), frame_sz_(0), frame_(0),
         end_of_file_(false) {}
 
-  virtual ~IVFVideoSource() {
+  ~IVFVideoSource() override {
     delete[] compressed_frame_buf_;
 
     if (input_file_) fclose(input_file_);
   }
 
-  virtual void Init() {
+  void Init() override {
     // Allocate a buffer for read in the compressed video frame.
     compressed_frame_buf_ = new uint8_t[kCodeBufferSize];
     ASSERT_NE(compressed_frame_buf_, nullptr) << "Allocate frame buffer failed";
     ASAN_POISON_MEMORY_REGION(compressed_frame_buf_, kCodeBufferSize);
   }
 
-  virtual void Begin() {
+  void Begin() override {
     input_file_ = OpenTestDataFile(file_name_);
     ASSERT_NE(input_file_, nullptr)
         << "Input file open failed. Filename: " << file_name_;
@@ -67,7 +67,7 @@ class IVFVideoSource : public CompressedVideoSource {
     FillFrame();
   }
 
-  virtual void Next() {
+  void Next() override {
     ++frame_;
     FillFrame();
   }
@@ -94,11 +94,11 @@ class IVFVideoSource : public CompressedVideoSource {
     }
   }
 
-  virtual const uint8_t *cxdata() const {
+  const uint8_t *cxdata() const override {
     return end_of_file_ ? nullptr : compressed_frame_buf_;
   }
-  virtual size_t frame_size() const { return frame_sz_; }
-  virtual unsigned int frame_number() const { return frame_; }
+  size_t frame_size() const override { return frame_sz_; }
+  unsigned int frame_number() const override { return frame_; }
 
  protected:
   std::string file_name_;

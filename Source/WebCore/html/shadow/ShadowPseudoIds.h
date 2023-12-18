@@ -37,6 +37,9 @@ const AtomString& fileSelectorButton();
 
 const AtomString& placeholder();
 
+const AtomString& thumb();
+const AtomString& track();
+
 const AtomString& webkitContactsAutoFillButton();
 const AtomString& webkitCredentialsAutoFillButton();
 const AtomString& webkitCreditCardAutoFillButton();

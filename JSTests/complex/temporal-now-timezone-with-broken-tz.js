@@ -3,4 +3,4 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-shouldBe(Temporal.Now.timeZone().id, `UTC`);
+shouldBe(Temporal.Now.timeZoneId(), `UTC`);

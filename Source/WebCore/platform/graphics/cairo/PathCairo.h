@@ -39,18 +39,30 @@ class PathStream;
 
 class PathCairo final : public PathImpl {
 public:
-    static UniqueRef<PathCairo> create();
-    static UniqueRef<PathCairo> create(const PathStream&);
-    static UniqueRef<PathCairo> create(RefPtr<cairo_t>&&, std::unique_ptr<PathStream>&& = nullptr);
+    static Ref<PathCairo> create();
+    static Ref<PathCairo> create(const PathSegment&);
+    static Ref<PathCairo> create(const PathStream&);
+    static Ref<PathCairo> create(RefPtr<cairo_t>&&, RefPtr<PathStream>&& = nullptr);
 
     PathCairo();
-    PathCairo(RefPtr<cairo_t>&&, std::unique_ptr<PathStream>&&);
+    PathCairo(RefPtr<cairo_t>&&, RefPtr<PathStream>&&);
 
     PlatformPathPtr platformPath() const;
 
-    bool operator==(const PathImpl&) const final;
-
     void addPath(const PathCairo&, const AffineTransform&);
+
+    Ref<PathImpl> copy() const final;
+    void add(PathMoveTo) final;
+    void add(PathLineTo) final;
+    void add(PathQuadCurveTo) final;
+    void add(PathBezierCurveTo) final;
+    void add(PathArcTo) final;
+    void add(PathArc) final;
+    void add(PathEllipse) final;
+    void add(PathEllipseInRect) final;
+    void add(PathRect) final;
+    void add(PathRoundedRect) final;
+    void add(PathCloseSubpath) final;
 
     bool applyElements(const PathElementApplier&) const final;
 
@@ -62,23 +74,6 @@ public:
     FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
 private:
-    UniqueRef<PathImpl> clone() const final;
-
-    void moveTo(const FloatPoint&) final;
-
-    void addLineTo(const FloatPoint&) final;
-    void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint) final;
-    void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint) final;
-    void addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) final;
-
-    void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, RotationDirection) final;
-    void addEllipse(const FloatPoint&, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection) final;
-    void addEllipseInRect(const FloatRect&) final;
-    void addRect(const FloatRect&) final;
-    void addRoundedRect(const FloatRoundedRect&, PathRoundedRect::Strategy) final;
-
-    void closeSubpath() final;
-
     void applySegments(const PathSegmentApplier&) const final;
 
     bool isEmpty() const final;
@@ -89,7 +84,7 @@ private:
     FloatRect boundingRect() const final;
 
     RefPtr<cairo_t> m_platformPath;
-    std::unique_ptr<PathStream> m_elementsStream;
+    RefPtr<PathStream> m_elementsStream;
 };
 
 } // namespace WebCore

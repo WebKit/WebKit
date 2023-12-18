@@ -22,6 +22,9 @@
 
 namespace webrtc {
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 class BasicAsyncResolverFactoryTest : public ::testing::Test,
                                       public sigslot::has_slots<> {
  public:
@@ -107,5 +110,7 @@ TEST(WrappingAsyncDnsResolverFactoryDeathTest, DestroyResolverInCallback) {
                    "Check failed: !within_resolve_result_");
 }
 #endif
+
+#pragma clang diagnostic pop
 
 }  // namespace webrtc

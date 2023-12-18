@@ -35,7 +35,9 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
+OBJC_CLASS JSValue;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS _WKWebExtensionLocalization;
 
@@ -55,11 +57,14 @@ class WebExtensionContextProxy final : public RefCounted<WebExtensionContextProx
 
 public:
     static RefPtr<WebExtensionContextProxy> get(WebExtensionContextIdentifier);
-    static Ref<WebExtensionContextProxy> getOrCreate(const WebExtensionContextParameters&);
+    static Ref<WebExtensionContextProxy> getOrCreate(const WebExtensionContextParameters&, WebPage* = nullptr);
 
     ~WebExtensionContextProxy();
 
     using WeakFrameSet = WeakHashSet<WebFrame>;
+    using WeakPageSet = WeakHashSet<WebPage>;
+    using TabWindowIdentifierPair = std::pair<std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
+    using WeakPageTabWindowMap = WeakHashMap<WebPage, TabWindowIdentifierPair>;
 
     WebExtensionContextIdentifier identifier() { return m_identifier; }
 
@@ -75,8 +80,6 @@ public:
 
     _WKWebExtensionLocalization *localization() { return m_localization.get(); }
 
-    static _WKWebExtensionLocalization *parseLocalization(API::Data&);
-
     bool inTestingMode() { return m_testingMode; }
 
     static WebCore::DOMWrapperWorld& mainWorld() { return WebCore::mainThreadNormalWorld(); }
@@ -85,6 +88,15 @@ public:
     void setContentScriptWorld(WebCore::DOMWrapperWorld* world) { m_contentScriptWorld = world; }
 
     void addFrameWithExtensionContent(WebFrame&);
+
+    RefPtr<WebPage> backgroundPage() const;
+    void setBackgroundPage(WebPage&);
+
+    Vector<Ref<WebPage>> popupPages(std::optional<WebExtensionTabIdentifier> = std::nullopt, std::optional<WebExtensionWindowIdentifier> = std::nullopt) const;
+    void addPopupPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
+
+    Vector<Ref<WebPage>> tabPages(std::optional<WebExtensionTabIdentifier> = std::nullopt, std::optional<WebExtensionWindowIdentifier> = std::nullopt) const;
+    void addTabPage(WebPage&, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
 
     void enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>&, WebCore::DOMWrapperWorld& = mainWorld());
 
@@ -103,11 +115,25 @@ public:
 private:
     explicit WebExtensionContextProxy(const WebExtensionContextParameters&);
 
+    static _WKWebExtensionLocalization *parseLocalization(API::Data&, const URL& baseURL);
+
     // Action
     void dispatchActionClickedEvent(const std::optional<WebExtensionTabParameters>&);
 
     // Alarms
     void dispatchAlarmsEvent(const WebExtensionAlarmParameters&);
+
+    // Commands
+    void dispatchCommandsCommandEvent(const String& identifier, const std::optional<WebExtensionTabParameters>&);
+    void dispatchCommandsChangedEvent(const String& identifier, const String& oldShortcut, const String& newShortcut);
+
+    // Extension
+    void setBackgroundPageIdentifier(WebCore::PageIdentifier);
+    void addPopupPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
+    void addTabPageIdentifier(WebCore::PageIdentifier, WebExtensionTabIdentifier, std::optional<WebExtensionWindowIdentifier>);
+
+    // Menus
+    void dispatchMenusClickedEvent(const WebExtensionMenuItemParameters&, bool wasChecked, const WebExtensionMenuItemContextParameters&, const std::optional<WebExtensionTabParameters>&);
 
     // Permissions
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
@@ -121,6 +147,8 @@ private:
     void internalDispatchRuntimeConnectEvent(WebCore::DOMWrapperWorld&, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
     void dispatchRuntimeMessageEvent(WebExtensionContentWorldType, const String& messageJSON, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(std::optional<String> replyJSON)>&&);
     void dispatchRuntimeConnectEvent(WebExtensionContentWorldType, WebExtensionPortChannelIdentifier, const String& name, std::optional<WebExtensionFrameIdentifier>, const WebExtensionMessageSenderParameters&, CompletionHandler<void(size_t firedEventCount)>&&);
+    void dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason, String previousVersion);
+    void dispatchRuntimeStartupEvent();
 
     // Tabs
     void dispatchTabsCreatedEvent(const WebExtensionTabParameters&);
@@ -134,7 +162,7 @@ private:
     void dispatchTabsRemovedEvent(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, WebExtensionContext::WindowIsClosing);
 
     // Web Navigation
-    void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebPageProxyIdentifier, WebCore::FrameIdentifier, URL);
+    void dispatchWebNavigationEvent(WebExtensionEventListenerType, WebExtensionTabIdentifier, WebExtensionFrameIdentifier, WebExtensionFrameIdentifier parentFrameID, const URL&, WallTime);
 
     // Windows
     void dispatchWindowsEvent(WebExtensionEventListenerType, const std::optional<WebExtensionWindowParameters>&);
@@ -151,6 +179,9 @@ private:
     bool m_testingMode { false };
     RefPtr<WebCore::DOMWrapperWorld> m_contentScriptWorld;
     WeakFrameSet m_extensionContentFrames;
+    WeakPtr<WebPage> m_backgroundPage;
+    WeakPageTabWindowMap m_popupPageMap;
+    WeakPageTabWindowMap m_tabPageMap;
 };
 
 } // namespace WebKit

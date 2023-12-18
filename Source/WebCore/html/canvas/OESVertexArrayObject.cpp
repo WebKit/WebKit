@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESVertexArrayObject);
 
 OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContext& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::OESVertexArrayObject)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_vertex_array_object"_s);
 }

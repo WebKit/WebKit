@@ -43,16 +43,16 @@ from twisted.trial import unittest
 from . import send_email
 
 from .layout_test_failures import LayoutTestFailures
-from .steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
+from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults,
                    AnalyzeJSCTestsResults, AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
-                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
+                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStatusOfPR, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, DetermineLabelOwner,
                    DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin, GenerateS3URL,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks,
-                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
+                   KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
                    MapBranchAlias, ReRunWebKitTests, RevertPullRequestChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
                    RunJavaScriptCoreTests, RunJSCTestsWithoutChange, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -1244,6 +1244,23 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
         return self.runStep()
 
+    def test_success_architecture(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64 arm64')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=1200,
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--architecture', 'x86_64 arm64', 'WK_VALIDATE_DEPENDENCIES=YES'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.runStep()
+
     def test_success_gtk(self):
         self.setupStep(CompileWebKit())
         self.setProperty('platform', 'gtk')
@@ -2033,6 +2050,25 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.assertEqual(self.getProperty(self.property_failures), ['fast/scrolling/ios/reconcile-layer-position-recursive.html'])
         return rc
 
+    def test_parse_results_invalid_json(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '60', '--skip-failing-tests'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.results_json_with_newlines + " non-JSON nonsense"),
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.property_exceed_failure_limit), None)
+        self.assertEqual(self.getProperty(self.property_failures), None)
+        return rc
+
     def test_parse_results_json_with_missing_results(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
@@ -2096,6 +2132,43 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
                         logfiles={'json': self.jsonFileName},
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', 'imported/w3c/web-platform-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.runStep()
+
+    def test_failure_no_failure_limits(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('github_labels', ['no-failure-limits'])
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=60 * 90,
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--no-retry'],
+                        )
+            + ExpectShell.log('stdio', stdout='9 failures found.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        return self.runStep()
+
+    def test_success_no_failure_limits(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('github_labels', ['no-failure-limits'])
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        maxTime=60 * 90,
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--no-retry'],
                         )
             + 0,
         )
@@ -2937,6 +3010,33 @@ class TestRunWebKitTestsRedTree(BuildStepMixinAdditions, unittest.TestCase):
         self.assertFalse(self.getProperty('first_results_exceed_failure_limit'))
         return rc
 
+    def test_last_try_unexpected_failure_without_list_of_failing_tests_then_schedule_update_libs_and_test_without_patch(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_flakies', [])
+        self.setProperty('retry_count', AnalyzeLayoutTestsResultsRedTree.MAX_RETRY)
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(FAILURE)
+        self.assertTrue(RevertPullRequestChanges() in next_steps)
+        self.assertTrue(InstallWpeDependencies() in next_steps)
+        self.assertTrue(CompileWebKitWithoutChange(retry_build_on_failure=True))
+        self.assertTrue(RunWebKitTestsWithoutChangeRedTree() in next_steps)
+
+    def test_flakies_but_no_failures_then_go_to_analyze_results(self):
+        self.configureStep()
+        self.setProperty('first_run_failures', [])
+        self.setProperty('first_run_flakies', ['fast/css/flaky1.html', 'fast/svg/flaky2.svg', 'imported/test/flaky3.html'])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(SUCCESS)
+        self.assertFalse(RevertPullRequestChanges() in next_steps)
+        self.assertFalse(InstallWpeDependencies() in next_steps)
+        self.assertFalse(RunWebKitTestsWithoutChangeRedTree() in next_steps)
+        self.assertTrue(AnalyzeLayoutTestsResultsRedTree() in next_steps)
+
 
 class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3013,6 +3113,35 @@ class TestRunWebKitTestsRepeatFailuresRedTree(BuildStepMixinAdditions, unittest.
         self.assertEqual(fake_flaky_tests, self.getProperty('with_change_repeat_failures_results_flakies'))
         self.assertTrue(self.getProperty('with_change_repeat_failures_results_exceed_failure_limit'))
         return rc
+
+    def test_last_run_with_patch_ends_with_list_of_failing_tests_then_schedule_update_libs_and_test_without_patch(self):
+        self.configureStep()
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', ['fake/should/not/happen/failure1.html', 'imported/fake/failure2.html'])
+        self.setProperty('with_change_repeat_failures_results_flakies', [])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRepeatFailuresRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(FAILURE)
+        self.assertTrue(RevertPullRequestChanges() in next_steps)
+        self.assertTrue(InstallWpeDependencies() in next_steps)
+        self.assertTrue(CompileWebKitWithoutChange(retry_build_on_failure=True) in next_steps)
+        self.assertTrue(RunWebKitTestsRepeatFailuresWithoutChangeRedTree() in next_steps)
+        self.assertFalse(AnalyzeLayoutTestsResultsRedTree() in next_steps)
+
+    def test_last_run_with_patch_ends_with_no_failing_tests_then_go_to_analyze(self):
+        self.configureStep()
+        self.setProperty('with_change_repeat_failures_results_nonflaky_failures', [])
+        self.setProperty('with_change_repeat_failures_results_flakies', ['fake/should/not/happen/flaky1.html', 'imported/fake/flaky2.html'])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsRepeatFailuresRedTree, 'evaluateResult', lambda s, r: r)
+        self.step.evaluateCommand(FAILURE)
+        self.assertFalse(RevertPullRequestChanges() in next_steps)
+        self.assertFalse(InstallWpeDependencies() in next_steps)
+        self.assertFalse(CompileWebKitWithoutChange(retry_build_on_failure=True) in next_steps)
+        self.assertFalse(RunWebKitTestsRepeatFailuresWithoutChangeRedTree() in next_steps)
+        self.assertTrue(AnalyzeLayoutTestsResultsRedTree() in next_steps)
+
 
 class TestRunWebKitTestsRepeatFailuresWithoutChangeRedTree(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -4609,7 +4738,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=360,
+                        timeout=1800,
                         )
             + 0,
         )
@@ -4624,7 +4753,7 @@ class TestUploadFileToS3(BuildStepMixinAdditions, unittest.TestCase):
                         env=dict(UPLOAD_URL='https://test-s3-url'),
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/upload-file-to-url', '--filename', 'WebKitBuild/release.zip'],
-                        timeout=360,
+                        timeout=1800,
                         )
             + ExpectShell.log('stdio', stdout='''Uploading WebKitBuild/release.zip
 response: <Response [403]>, 403, Forbidden
@@ -4718,6 +4847,39 @@ All tests successfully passed!
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
                         command=['python3', 'Tools/Scripts/run-gtk-tests', '--release', f'--json-output={self.jsonFileName}'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''...
+**PASS** TransformationMatrix.Blend
+**PASS** TransformationMatrix.Blend2
+**PASS** TransformationMatrix.Blend4
+**PASS** TransformationMatrix.Equality
+**PASS** TransformationMatrix.Casting
+**PASS** TransformationMatrix.MakeMapBetweenRects
+**PASS** URLParserTextEncodingTest.QueryEncoding
+**PASS** GStreamerTest.mappedBufferBasics
+**PASS** GStreamerTest.mappedBufferReadSanity
+**PASS** GStreamerTest.mappedBufferWriteSanity
+**PASS** GStreamerTest.mappedBufferCachesSharedBuffers
+**PASS** GStreamerTest.mappedBufferDoesNotAddExtraRefs
+
+Ran 1316 tests of 1318 with 1316 successful
+''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='run-api-tests')
+        return self.runStep()
+
+    def test_success_wpe(self):
+        self.setupStep(RunAPITests())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'release')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/run-wpe-tests', '--release', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         )
             + ExpectShell.log('stdio', stdout='''...
@@ -5026,6 +5188,49 @@ Ran 1296 tests of 1298 with 1293 successful
         self.expectOutcome(result=FAILURE, state_string='3 api tests failed or timed out')
         return self.runStep()
 
+    def test_multiple_failures_wpe(self):
+        self.setupStep(RunAPITestsWithoutChange())
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('platform', 'wpe')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('buildername', 'API-Tests-WPE-EWS')
+        self.setProperty('buildnumber', '11529')
+        self.setProperty('workername', 'igalia14-wpe-ews')
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3',
+                                 'Tools/Scripts/run-wpe-tests',
+                                 '--debug',
+                                 f'--json-output={self.jsonFileName}'],
+                        logfiles={'json': self.jsonFileName},
+                        )
+            + ExpectShell.log('stdio', stdout='''
+**PASS** GStreamerTest.mappedBufferBasics
+**PASS** GStreamerTest.mappedBufferReadSanity
+**PASS** GStreamerTest.mappedBufferWriteSanity
+**PASS** GStreamerTest.mappedBufferCachesSharedBuffers
+**PASS** GStreamerTest.mappedBufferDoesNotAddExtraRefs
+
+Unexpected failures (3)
+    /TestWTF
+        WTF_DateMath.calculateLocalTimeOffset
+    /WebKit2WPE/TestPrinting
+        /webkit/WebKitPrintOperation/close-after-print
+    /WebKit2WPE/TestWebsiteData
+        /webkit/WebKitWebsiteData/databases
+
+Unexpected passes (1)
+    /WebKit2WPE/TestUIClient
+        /webkit/WebKitWebView/usermedia-enumeratedevices-permission-check
+
+Ran 1296 tests of 1298 with 1293 successful
+''')
+            + 3,
+        )
+        self.expectOutcome(result=FAILURE, state_string='3 api tests failed or timed out')
+        return self.runStep()
 
 class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -5769,6 +5974,320 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
+class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(RetrievePRDataFromLabel(project='WebKit/WebKit'))
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label: 4
+        query_result = {'data': {'repository': {'pullRequests': {'edges': [
+            {'node':
+                {'title': 'Fix `test-webkitpy webkitflaskpy`', 'number': 17412, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/582fb8b4f85cc9f385c0e0809170cadc48c7fed5', 'status': {'state': 'SUCCESS', 'contexts': [
+                        {'context': 'api-gtk', 'state': 'SUCCESS'},
+                        {'context': 'api-ios', 'state': 'SUCCESS'},
+                        {'context': 'api-mac', 'state': 'SUCCESS'},
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'gtk', 'state': 'SUCCESS'},
+                        {'context': 'gtk-wk2', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'ios-sim', 'state': 'SUCCESS'},
+                        {'context': 'ios-wk2', 'state': 'SUCCESS'},
+                        {'context': 'ios-wk2-wpt', 'state': 'SUCCESS'},
+                        {'context': 'jsc', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'mac', 'state': 'SUCCESS'},
+                        {'context': 'mac-AS-debug', 'state': 'SUCCESS'},
+                        {'context': 'mac-AS-debug-wk2', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk1', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk2', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk2-stress', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'style', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'tv-sim', 'state': 'SUCCESS'},
+                        {'context': 'watch', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wincairo', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'},
+                        {'context': 'wpe-wk2', 'state': 'SUCCESS'}]}}}]}}},
+            {'node':
+                {'title': 'Import WPT css/compositing directory', 'number': 17418, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/b8df1771f6cb7197bcc8c3940670a24b8cd77d47', 'status': {'state': 'SUCCESS', 'contexts': [
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'style', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}},
+            {'node':
+                {'title': 'Test safe-merge-queue labelling', 'number': 17451, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/b12b5ee6709e3ce6a9019342a12eded04975af18', 'status': {'state': 'FAILURE', 'contexts': [
+                        {'context': 'style', 'state': 'FAILURE'},
+                        {'context': 'api-gtk', 'state': 'SUCCESS'},
+                        {'context': 'api-ios', 'state': 'SUCCESS'},
+                        {'context': 'api-mac', 'state': 'SUCCESS'},
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'gtk', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'ios-sim', 'state': 'SUCCESS'},
+                        {'context': 'ios-wk2', 'state': 'SUCCESS'},
+                        {'context': 'jsc', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'mac', 'state': 'SUCCESS'},
+                        {'context': 'mac-AS-debug', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk1', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk2', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk2-stress', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'tv-sim', 'state': 'SUCCESS'},
+                        {'context': 'watch', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}},
+            {'node':
+                {'title': 'Split webkitpy.common.net.bugzilla.TestExpectationUpdater', 'number': 17454, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/4b36be2acc1b4b3190f93c69acd6484e58b35ef0', 'status': {'state': 'SUCCESS', 'contexts': [
+                        {'context': 'api-gtk', 'state': 'SUCCESS'},
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'gtk', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'ios-sim', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'mac-AS-debug', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'style', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}}]}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: query_result
+        self.expectOutcome(result=SUCCESS, state_string="Successfully retrieved pull request data")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('project'), 'WebKit/WebKit')
+        self.assertEqual(self.getProperty('repository'), 'https://github.com/WebKit/WebKit')
+        self.assertEqual(self.getProperty('list_of_prs'), [17412, 17418, 17451, 17454])
+        return rc
+
+    def test_success_project(self):
+        self.setupStep(RetrievePRDataFromLabel(project='testRepo/WebKit'))
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label: 4
+        query_result = {'data': {'repository': {'pullRequests': {'edges': [
+            {'node':
+                {'title': 'Fix `test-webkitpy webkitflaskpy`', 'number': 17412, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/582fb8b4f85cc9f385c0e0809170cadc48c7fed5',
+                        'status': {'state': 'SUCCESS', 'contexts': [
+                            {'context': 'api-gtk', 'state': 'SUCCESS'},
+                            {'context': 'api-ios', 'state': 'SUCCESS'},
+                            {'context': 'api-mac', 'state': 'SUCCESS'},
+                            {'context': 'bindings', 'state': 'SUCCESS'},
+                            {'context': 'gtk', 'state': 'SUCCESS'},
+                            {'context': 'gtk-wk2', 'state': 'SUCCESS'},
+                            {'context': 'ios', 'state': 'SUCCESS'},
+                            {'context': 'ios-sim', 'state': 'SUCCESS'},
+                            {'context': 'ios-wk2', 'state': 'SUCCESS'},
+                            {'context': 'ios-wk2-wpt', 'state': 'SUCCESS'},
+                            {'context': 'jsc', 'state': 'SUCCESS'},
+                            {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                            {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                            {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                            {'context': 'mac', 'state': 'SUCCESS'},
+                            {'context': 'mac-AS-debug', 'state': 'SUCCESS'},
+                            {'context': 'mac-AS-debug-wk2', 'state': 'SUCCESS'},
+                            {'context': 'mac-wk1', 'state': 'SUCCESS'},
+                            {'context': 'mac-wk2', 'state': 'SUCCESS'},
+                            {'context': 'mac-wk2-stress', 'state': 'SUCCESS'},
+                            {'context': 'services', 'state': 'SUCCESS'},
+                            {'context': 'style', 'state': 'SUCCESS'},
+                            {'context': 'tv', 'state': 'SUCCESS'},
+                            {'context': 'tv-sim', 'state': 'SUCCESS'},
+                            {'context': 'watch', 'state': 'SUCCESS'},
+                            {'context': 'watch-sim', 'state': 'SUCCESS'},
+                            {'context': 'webkitperl', 'state': 'SUCCESS'},
+                            {'context': 'webkitpy', 'state': 'SUCCESS'},
+                            {'context': 'wincairo', 'state': 'SUCCESS'},
+                            {'context': 'wpe', 'state': 'SUCCESS'},
+                            {'context': 'wpe-wk2', 'state': 'SUCCESS'}]}}}]}}},
+            {'node':
+                {'title': 'Import WPT css/compositing directory', 'number': 17418, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/b8df1771f6cb7197bcc8c3940670a24b8cd77d47', 'status': {'state': 'SUCCESS', 'contexts': [
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'style', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}},
+            {'node':
+                {'title': 'Test safe-merge-queue labelling', 'number': 17451, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/b12b5ee6709e3ce6a9019342a12eded04975af18', 'status': {'state': 'FAILURE', 'contexts': [
+                        {'context': 'style', 'state': 'FAILURE'},
+                        {'context': 'api-gtk', 'state': 'SUCCESS'},
+                        {'context': 'api-ios', 'state': 'SUCCESS'},
+                        {'context': 'api-mac', 'state': 'SUCCESS'},
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'gtk', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'ios-sim', 'state': 'SUCCESS'},
+                        {'context': 'ios-wk2', 'state': 'SUCCESS'},
+                        {'context': 'jsc', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'mac', 'state': 'SUCCESS'},
+                        {'context': 'mac-AS-debug', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk1', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk2', 'state': 'SUCCESS'},
+                        {'context': 'mac-wk2-stress', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'tv-sim', 'state': 'SUCCESS'},
+                        {'context': 'watch', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}},
+            {'node':
+                {'title': 'Split webkitpy.common.net.bugzilla.TestExpectationUpdater', 'number': 17454, 'commits':
+                    {'nodes': [{'commit': {'commitUrl': 'https://github.com/WebKit/WebKit/commit/4b36be2acc1b4b3190f93c69acd6484e58b35ef0', 'status': {'state': 'SUCCESS', 'contexts': [
+                        {'context': 'api-gtk', 'state': 'SUCCESS'},
+                        {'context': 'bindings', 'state': 'SUCCESS'},
+                        {'context': 'gtk', 'state': 'SUCCESS'},
+                        {'context': 'ios', 'state': 'SUCCESS'},
+                        {'context': 'ios-sim', 'state': 'SUCCESS'},
+                        {'context': 'jsc-arm64', 'state': 'SUCCESS'},
+                        {'context': 'jsc-armv7', 'state': 'SUCCESS'},
+                        {'context': 'jsc-i386', 'state': 'SUCCESS'},
+                        {'context': 'mac-AS-debug', 'state': 'SUCCESS'},
+                        {'context': 'services', 'state': 'SUCCESS'},
+                        {'context': 'style', 'state': 'SUCCESS'},
+                        {'context': 'tv', 'state': 'SUCCESS'},
+                        {'context': 'watch-sim', 'state': 'SUCCESS'},
+                        {'context': 'webkitperl', 'state': 'SUCCESS'},
+                        {'context': 'webkitpy', 'state': 'SUCCESS'},
+                        {'context': 'wpe', 'state': 'SUCCESS'}]}}}]}}}]}}}}
+        GitHubMixin.query_graph_ql = lambda self, query: query_result
+        self.expectOutcome(result=SUCCESS, state_string="Successfully retrieved pull request data")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('project'), 'testRepo/WebKit')
+        self.assertEqual(self.getProperty('repository'), 'https://github.com/testRepo/WebKit')
+        self.assertEqual(self.getProperty('list_of_prs'), [17412, 17418, 17451, 17454])
+        return rc
+
+
+class TestCheckStatusOfPR(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CheckStatusOfPR())
+        self.setProperty('github.number', 12345)
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('list_of_prs', [12344, 12346])
+        CheckStatusOfPR.validateCommitterStatus = lambda self, pr_number: True
+        CheckStatusOfPR.checkPRStatus = lambda self, pr_number: True
+        self.expectOutcome(result=SUCCESS, state_string="PR 12345 marked safe for merge-queue")
+        rc = self.runStep()
+        return rc
+
+
+class TestAddMergeLabelsToPRs(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(AddMergeLabelsToPRs())
+        self.setProperty('passed_status_check', [12345, 12344])
+        self.setProperty('failed_status_check', [12345])
+        self.expectOutcome(result=SUCCESS, state_string="Started PR labelling process successfully")
+        rc = self.runStep()
+        return rc
+
+
+class TestRemoveAndAddLabels(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success_blocked(self):
+        self.setupStep(RemoveAndAddLabels(label_to_add='merging-blocked'))
+        self.setProperty('buildername', 'Merge-Queue')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('failed_status_check', [17451])
+        self.setProperty('passed_status_check', [12345])
+        RemoveAndAddLabels.update_labels = lambda self, pr_number: SUCCESS
+        self.expectOutcome(result=SUCCESS, state_string='Labelled PR 17451 with merging-blocked')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('failed_status_check'), [])
+        self.assertEqual(self.getProperty('passed_status_check'), [12345])
+        return rc
+
+    def test_failure_blocked(self):
+        self.setupStep(RemoveAndAddLabels(label_to_add='merging-blocked'))
+        self.setProperty('buildername', 'Merge-Queue')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('failed_status_check', [])
+        self.expectOutcome(result=FAILURE, state_string='Failed to label PR  with merging-blocked')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('failed_status_check'), [])
+        return rc
+
+    def test_success_merge_queue(self):
+        self.setupStep(RemoveAndAddLabels(label_to_add='merge-queue'))
+        self.setProperty('buildername', 'Merge-Queue')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('passed_status_check', [17451])
+        RemoveAndAddLabels.update_labels = lambda self, pr_number: SUCCESS
+        self.expectOutcome(result=SUCCESS, state_string='Labelled PR 17451 with merge-queue')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('passed_status_check'), [])
+        return rc
+
+    def test_failure_merge_queue(self):
+        self.setupStep(RemoveAndAddLabels(label_to_add='merge-queue'))
+        self.setProperty('buildername', 'Merge-Queue')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('passed_status_check', [])
+        self.expectOutcome(result=FAILURE, state_string='Failed to label PR  with merge-queue')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('passed_status_check'), [])
+        return rc
+
+
 class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -5785,7 +6304,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('reviewer', 'reviewer@apple.com')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
@@ -5797,7 +6316,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('owners', ['webkit-commit-queue'])
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
@@ -5809,7 +6328,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('owners', ['webkit-commit-queue'])
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
@@ -5895,7 +6414,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
@@ -5908,7 +6427,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
@@ -5934,7 +6453,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'security')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer and reviewer')
         rc = self.runStep()
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
@@ -7826,7 +8345,7 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
 <pre>
 [Merge-Queue] Add http credential helper
 <a href="https://bugs.webkit.org/show_bug.cgi?id=238553">https://bugs.webkit.org/show_bug.cgi?id=238553</a>
-&lt;rdar://problem/91044821&gt;
+&lt;<a href="https://rdar.apple.com/problem/91044821">rdar://problem/91044821</a>&gt;
 
 Reviewed by NOBODY (OOPS!).
 
@@ -7992,11 +8511,11 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
                 description,
                 '''#### 9140b95e718e7342366bbcdc29cb1ba0f9328422
 <pre>
-Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). rdar://107367418
+Cherry-pick 252432.1026@safari-7614-branch (2a8469e53b2f). <a href="https://rdar.apple.com/107367418">rdar://107367418</a>
 
     Remove inheritance of designMode attribute
     <a href="https://bugs.webkit.org/show_bug.cgi?id=248615">https://bugs.webkit.org/show_bug.cgi?id=248615</a>
-    rdar://102868995
+    <a href="https://rdar.apple.com/102868995">rdar://102868995</a>
 
     Reviewed by Wenson Hsieh and Jonathan Bedard.
 
@@ -8022,11 +8541,11 @@ Canonical link: <a href="https://commits.webkit.org/262299@main">https://commits
 ----------------------------------------------------------------------
 #### 6ec5319be307db36a27ea61d208cf68ce84abd67
 <pre>
-Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). rdar://107367090
+Cherry-pick 252432.1024@safari-7614-branch (2ea437d75522). <a href="https://rdar.apple.com/107367090">rdar://107367090</a>
 
     Use-after-free in ContactsManager::select
     <a href="https://bugs.webkit.org/show_bug.cgi?id=250351">https://bugs.webkit.org/show_bug.cgi?id=250351</a>
-    rdar://101241436
+    <a href="https://rdar.apple.com/101241436">rdar://101241436</a>
 
     Reviewed by Wenson Hsieh and Jonathan Bedard.
 

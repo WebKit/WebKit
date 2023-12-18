@@ -67,13 +67,11 @@ static bool sendMessage(WebPage* page, const Function<bool(IPC::Connection&, uin
     std::optional<WebCore::PageIdentifier> pageIdentifier;
     if (page)
         pageIdentifier = page->identifier();
-#if ENABLE(SERVICE_WORKER)
     else if (auto* connection = SWContextManager::singleton().connection()) {
         // Pageless notification messages are, by default, on behalf of a service worker.
         // So use the service worker connection's page identifier.
         pageIdentifier = connection->pageIdentifier();
     }
-#endif
 
     ASSERT(pageIdentifier);
     Ref parentConnection = *WebProcess::singleton().parentProcessConnection();
@@ -268,7 +266,7 @@ void WebNotificationManager::didClickNotification(const WTF::UUID& notificationI
 
         // Indicate that this event is being dispatched in reaction to a user's interaction with a platform notification.
         if (isMainRunLoop()) {
-            UserGestureIndicator indicator(ProcessingUserGesture);
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes);
             notification->dispatchClickEvent();
         } else
             notification->dispatchClickEvent();

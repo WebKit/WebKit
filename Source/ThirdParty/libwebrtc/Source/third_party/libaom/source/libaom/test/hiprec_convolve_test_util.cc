@@ -83,12 +83,10 @@ namespace AV1HiprecConvolve {
   return ::testing::ValuesIn(params);
 }
 
-AV1HiprecConvolveTest::~AV1HiprecConvolveTest() {}
+AV1HiprecConvolveTest::~AV1HiprecConvolveTest() = default;
 void AV1HiprecConvolveTest::SetUp() {
   rnd_.Reset(ACMRandom::DeterministicSeed());
 }
-
-void AV1HiprecConvolveTest::TearDown() {}
 
 void AV1HiprecConvolveTest::RunCheckOutput(hiprec_convolve_func test_impl) {
   const int w = 128, h = 128;
@@ -217,12 +215,10 @@ namespace AV1HighbdHiprecConvolve {
   return ::testing::ValuesIn(params);
 }
 
-AV1HighbdHiprecConvolveTest::~AV1HighbdHiprecConvolveTest() {}
+AV1HighbdHiprecConvolveTest::~AV1HighbdHiprecConvolveTest() = default;
 void AV1HighbdHiprecConvolveTest::SetUp() {
   rnd_.Reset(ACMRandom::DeterministicSeed());
 }
-
-void AV1HighbdHiprecConvolveTest::TearDown() {}
 
 void AV1HighbdHiprecConvolveTest::RunCheckOutput(
     highbd_hiprec_convolve_func test_impl) {

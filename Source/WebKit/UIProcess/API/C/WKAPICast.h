@@ -49,6 +49,7 @@
 #include <WebCore/Settings.h>
 
 namespace API {
+class CaptionUserPreferencesTestingModeToken;
 class ContentRuleList;
 class ContentRuleListStore;
 class Feature;
@@ -115,6 +116,7 @@ WK_ADD_API_MAPPING(WKAuthenticationDecisionListenerRef, AuthenticationDecisionLi
 WK_ADD_API_MAPPING(WKBackForwardListItemRef, WebBackForwardListItem)
 WK_ADD_API_MAPPING(WKBackForwardListRef, WebBackForwardList)
 WK_ADD_API_MAPPING(WKBundleHitTestResultMediaType, BundleHitTestResultMediaType)
+WK_ADD_API_MAPPING(WKCaptionUserPreferencesTestingModeTokenRef, API::CaptionUserPreferencesTestingModeToken)
 WK_ADD_API_MAPPING(WKColorPickerResultListenerRef, WebColorPickerResultListenerProxy)
 WK_ADD_API_MAPPING(WKContextRef, WebProcessPool)
 WK_ADD_API_MAPPING(WKContextConfigurationRef, API::ProcessPoolConfiguration)
@@ -345,13 +347,13 @@ inline WebCore::CredentialPersistence toCredentialPersistence(WKCredentialPersis
 {
     switch (type) {
     case kWKCredentialPersistenceNone:
-        return WebCore::CredentialPersistenceNone;
+        return WebCore::CredentialPersistence::None;
     case kWKCredentialPersistenceForSession:
-        return WebCore::CredentialPersistenceForSession;
+        return WebCore::CredentialPersistence::ForSession;
     case kWKCredentialPersistencePermanent:
-        return WebCore::CredentialPersistencePermanent;
+        return WebCore::CredentialPersistence::Permanent;
     default:
-        return WebCore::CredentialPersistenceNone;
+        return WebCore::CredentialPersistence::None;
     }
 }
 

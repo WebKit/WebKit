@@ -3,5 +3,7 @@ Test cancel event with preventDefault on cancel event for dialog element
 Hello World
 
 
-PASS Test cancel event with preventDefault on cancel event for dialog element
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Test cancel event with preventDefault on cancel event for dialog element
 

@@ -101,6 +101,16 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 - (nullable _WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension NS_SWIFT_NAME(extensionContext(for:));
 
 /*!
+ @abstract Returns a loaded extension context matching the specified URL.
+ @param URL The URL to lookup.
+ @result An extension context or `nil` if no match was found.
+ @discussion This method is useful for determining the extension context to use when about to navigate to an extension URL. For example,
+ you could use this method to retrieve the appropriate extension context and then use its `webViewConfiguration` property to configure a
+ web view for loading that URL.
+ */
+- (nullable _WKWebExtensionContext *)extensionContextForURL:(NSURL *)URL NS_SWIFT_NAME(extensionContext(for:));
+
+/*!
  @abstract A set of all the currently loaded extensions.
  @seealso extensionContexts
 */

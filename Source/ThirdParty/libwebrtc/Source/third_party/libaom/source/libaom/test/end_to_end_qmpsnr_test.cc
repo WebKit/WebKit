@@ -69,7 +69,7 @@ class EndToEndQMPSNRTest
         test_video_param_(GET_PARAM(2)), cpu_used_(GET_PARAM(3)), nframes_(0),
         ssim_(0.0) {}
 
-  ~EndToEndQMPSNRTest() override {}
+  ~EndToEndQMPSNRTest() override = default;
 
   void SetUp() override { InitializeConfig(encoding_mode_); }
 

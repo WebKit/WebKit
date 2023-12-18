@@ -123,14 +123,13 @@ void PageDebugger::runEventLoopWhilePausedInternal()
 {
     TimerBase::fireTimersInNestedEventLoop();
 
-    m_page.incrementNestedRunLoopCount();
+    // Protect the page during the execution of the nested run loop.
+    Ref protectedPage = m_page;
 
     while (!m_doneProcessingDebuggerEvents) {
         if (!platformShouldContinueRunningEventLoopWhilePaused())
             break;
     }
-
-    m_page.decrementNestedRunLoopCount();
 }
 
 bool PageDebugger::isContentScript(JSGlobalObject* state) const

@@ -26,8 +26,8 @@ PASS RTCOutboundRtpStreamStats's remoteId
 PASS RTCOutboundRtpStreamStats's framesEncoded
 PASS RTCOutboundRtpStreamStats's nackCount
 PASS RTCOutboundRtpStreamStats's framesSent
-FAIL RTCRemoteOutboundRtpStreamStats's localId assert_true: Is localId present expected true got false
-FAIL RTCRemoteOutboundRtpStreamStats's remoteTimestamp assert_true: Is remoteTimestamp present expected true got false
+PASS RTCRemoteOutboundRtpStreamStats's localId
+PASS RTCRemoteOutboundRtpStreamStats's remoteTimestamp
 PASS RTCPeerConnectionStats's dataChannelsOpened
 PASS RTCPeerConnectionStats's dataChannelsClosed
 PASS RTCDataChannelStats's label
@@ -40,11 +40,11 @@ PASS RTCDataChannelStats's messagesReceived
 PASS RTCDataChannelStats's bytesReceived
 PASS RTCMediaSourceStats's trackIdentifier
 PASS RTCMediaSourceStats's kind
-FAIL RTCAudioSourceStats's totalAudioEnergy assert_true: Is totalAudioEnergy present expected true got false
-FAIL RTCAudioSourceStats's totalSamplesDuration assert_true: Is totalSamplesDuration present expected true got false
+PASS RTCAudioSourceStats's totalAudioEnergy
+PASS RTCAudioSourceStats's totalSamplesDuration
 FAIL RTCVideoSourceStats's width assert_true: Is width present expected true got false
 FAIL RTCVideoSourceStats's height assert_true: Is height present expected true got false
-FAIL RTCVideoSourceStats's framesPerSecond assert_true: Is framesPerSecond present expected true got false
+PASS RTCVideoSourceStats's framesPerSecond
 PASS RTCCodecStats's payloadType
 PASS RTCCodecStats's mimeType
 PASS RTCCodecStats's clockRate

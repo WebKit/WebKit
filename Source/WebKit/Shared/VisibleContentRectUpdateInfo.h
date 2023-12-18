@@ -58,7 +58,10 @@ class VisibleContentRectUpdateInfo {
 public:
     VisibleContentRectUpdateInfo() = default;
 
-    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets, const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& layoutViewportRect, const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, OptionSet<ViewStabilityFlag> viewStability, bool isFirstUpdateForNewViewSize, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId)
+    VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets,
+        const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& layoutViewportRect,
+        const WebCore::FloatBoxExtent& obscuredInsets, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double scale, OptionSet<ViewStabilityFlag> viewStability,
+        bool isFirstUpdateForNewViewSize, bool allowShrinkToFit, bool enclosedInScrollableAncestorView, const WebCore::VelocityData& scrollVelocity, TransactionID lastLayerTreeTransactionId)
         : m_exposedContentRect(exposedContentRect)
         , m_unobscuredContentRect(unobscuredContentRect)
         , m_contentInsets(contentInsets)
@@ -83,7 +86,6 @@ public:
     const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates() const { return m_unobscuredRectInScrollViewCoordinates; }
     const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds() const { return m_unobscuredContentRectRespectingInputViewBounds; }
     const WebCore::FloatRect& layoutViewportRect() const { return m_layoutViewportRect; }
-    const WebCore::VelocityData& scrollVelocity() const { return m_scrollVelocity; }
     const WebCore::FloatBoxExtent& obscuredInsets() const { return m_obscuredInsets; }
     const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets() const { return m_unobscuredSafeAreaInsets; }
 
@@ -93,12 +95,10 @@ public:
     bool isFirstUpdateForNewViewSize() const { return m_isFirstUpdateForNewViewSize; }
     bool allowShrinkToFit() const { return m_allowShrinkToFit; }
     bool enclosedInScrollableAncestorView() const { return m_enclosedInScrollableAncestorView; }
+    const WebCore::VelocityData& scrollVelocity() const { return m_scrollVelocity; }
     TransactionID lastLayerTreeTransactionID() const { return m_lastLayerTreeTransactionID; }
 
     MonotonicTime timestamp() const { return m_scrollVelocity.lastUpdateTime; }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, VisibleContentRectUpdateInfo&);
 
     String dump() const;
 
@@ -142,20 +142,5 @@ WTF::TextStream& operator<<(WTF::TextStream&, ViewStabilityFlag);
 WTF::TextStream& operator<<(WTF::TextStream&, const VisibleContentRectUpdateInfo&);
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::ViewStabilityFlag> {
-    using values = EnumValues<
-        WebKit::ViewStabilityFlag,
-        WebKit::ViewStabilityFlag::ScrollViewInteracting,
-        WebKit::ViewStabilityFlag::ScrollViewAnimatedScrollOrZoom,
-        WebKit::ViewStabilityFlag::ScrollViewRubberBanding,
-        WebKit::ViewStabilityFlag::ChangingObscuredInsetsInteractively,
-        WebKit::ViewStabilityFlag::UnstableForTesting
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

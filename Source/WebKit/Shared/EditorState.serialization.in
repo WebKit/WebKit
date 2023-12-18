@@ -74,9 +74,9 @@ struct WebKit::EditorState {
 #if PLATFORM(IOS_FAMILY)
     String markedText;
     String wordAtSelection;
-    UChar32 characterAfterSelection;
-    UChar32 characterBeforeSelection;
-    UChar32 twoCharacterBeforeSelection;
+    char32_t characterAfterSelection;
+    char32_t characterBeforeSelection;
+    char32_t twoCharacterBeforeSelection;
 #endif
 #if PLATFORM(IOS_FAMILY) && USE(DICTATION_ALTERNATIVES)
     Vector<WebCore::DictationContext> dictationContextsForSelection;
@@ -88,6 +88,7 @@ struct WebKit::EditorState {
     bool insideFixedPosition;
     bool hasPlainText;
     WebCore::Color caretColor;
+    bool hasCaretColorAuto;
     bool atStartOfSentence;
     bool selectionStartIsAtParagraphBoundary;
     bool selectionEndIsAtParagraphBoundary;

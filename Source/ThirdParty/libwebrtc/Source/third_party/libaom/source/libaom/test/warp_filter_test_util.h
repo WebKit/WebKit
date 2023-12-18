@@ -50,10 +50,8 @@ typedef std::tuple<WarpTestParam, int, int, int, int> WarpTestParams;
 
 class AV1WarpFilterTest : public ::testing::TestWithParam<WarpTestParams> {
  public:
-  virtual ~AV1WarpFilterTest();
-  virtual void SetUp();
-
-  virtual void TearDown();
+  ~AV1WarpFilterTest() override;
+  void SetUp() override;
 
  protected:
   void RunCheckOutput(warp_affine_func test_impl);
@@ -86,10 +84,8 @@ typedef std::tuple<HighbdWarpTestParam, int, int, int, int>
 class AV1HighbdWarpFilterTest
     : public ::testing::TestWithParam<HighbdWarpTestParams> {
  public:
-  virtual ~AV1HighbdWarpFilterTest();
-  virtual void SetUp();
-
-  virtual void TearDown();
+  ~AV1HighbdWarpFilterTest() override;
+  void SetUp() override;
 
  protected:
   void RunCheckOutput(highbd_warp_affine_func test_impl);

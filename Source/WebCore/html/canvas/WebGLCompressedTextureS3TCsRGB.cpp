@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureS3TCsRGB);
 
 WebGLCompressedTextureS3TCsRGB::WebGLCompressedTextureS3TCsRGB(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLCompressedTextureS3TCsRGB)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_compression_s3tc_srgb"_s);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB_S3TC_DXT1_EXT);

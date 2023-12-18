@@ -1,6 +1,6 @@
 {
     "timeout": 1800,
-    "count": 1,
+    "count": 3,
     "github_source": "https://github.com/webkit/MotionMark/tree/655c569c743dc3092102cf5c759b1d446105a74b/MotionMark",
     "webserver_benchmark_patch": "data/patches/webserver/MotionMark1.3-tentative.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark1.3-tentative.patch",

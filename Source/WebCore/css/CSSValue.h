@@ -55,10 +55,10 @@ struct ComputedStyleDependencies {
     bool isComputationallyIndependent() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions; }
 };
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
+DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 class CSSValue {
     WTF_MAKE_NONCOPYABLE(CSSValue);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue);
+    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(CSSValue);
 public:
     static constexpr unsigned refCountFlagIsStatic = 0x1;
     static constexpr unsigned refCountIncrement = 0x2; // This allows us to ref / deref without disturbing the static CSSValue flag.
@@ -124,6 +124,7 @@ public:
     bool isRect() const { return m_classType == RectClass; }
     bool isRectShape() const { return m_classType == RectShapeClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
+    bool isScrollValue() const { return m_classType == ScrollClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isSpringTimingFunctionValue() const { return m_classType == SpringTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
@@ -132,6 +133,7 @@ public:
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
     bool isValueList() const { return m_classType == ValueListClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
+    bool isViewValue() const { return m_classType == ViewClass; }
     bool isXywhShape() const { return m_classType == XywhShapeClass; }
 
 #if ENABLE(CSS_PAINTING_API)
@@ -150,6 +152,8 @@ public:
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool traverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    void setReplacementURLForSubresources(const HashMap<String, String>&);
+    void clearReplacementURLForSubresources();
 
     // What properties does this value rely on (eg, font-size for em units)
     ComputedStyleDependencies computedStyleDependencies() const;
@@ -188,8 +192,11 @@ public:
     inline bool isValueID() const;
     inline CSSValueID valueID() const;
 
+    void customSetReplacementURLForSubresources(const HashMap<String, String>&) { }
+    void customClearReplacementURLForSubresources() { }
+
 protected:
-    static const size_t ClassTypeBits = 6;
+    static const size_t ClassTypeBits = 7;
 
     // FIXME: Use an enum class here so we don't have to repeat "Class" in every name.
     enum ClassType {
@@ -254,10 +261,12 @@ protected:
         RectClass,
         RectShapeClass,
         ReflectClass,
+        ScrollClass,
         ShadowClass,
         UnicodeRangeClass,
         ValuePairClass,
         VariableReferenceClass,
+        ViewClass,
         XywhShapeClass,
 
         // Classes that contain vectors, which derive from CSSValueContainingVector.

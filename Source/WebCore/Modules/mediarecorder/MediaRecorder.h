@@ -80,6 +80,10 @@ public:
 
     MediaStream& stream() { return m_stream.get(); }
 
+    using EventTarget::weakPtrFactory;
+    using EventTarget::WeakValueType;
+    using EventTarget::WeakPtrImplType;
+
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, Options&&);
 

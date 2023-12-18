@@ -30,7 +30,6 @@ typedef double DOMHighResTimeStamp;
 
 [
     Exposed=*,
-    EnabledByDeprecatedGlobalSetting=ServerTimingEnabled
 ] interface PerformanceServerTiming {
     readonly attribute DOMString name;
     readonly attribute DOMHighResTimeStamp duration;

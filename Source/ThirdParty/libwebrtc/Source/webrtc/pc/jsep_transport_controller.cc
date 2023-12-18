@@ -80,7 +80,11 @@ RTCError JsepTransportController::SetLocalDescription(
   TRACE_EVENT0("webrtc", "JsepTransportController::SetLocalDescription");
   if (!network_thread_->IsCurrent()) {
     return network_thread_->BlockingCall(
-        [=] { return SetLocalDescription(type, description); });
+        [=
+#if WEBRTC_WEBKIT_BUILD
+         , this
+#endif
+        ] { return SetLocalDescription(type, description); });
   }
 
   RTC_DCHECK_RUN_ON(network_thread_);
@@ -101,7 +105,11 @@ RTCError JsepTransportController::SetRemoteDescription(
   TRACE_EVENT0("webrtc", "JsepTransportController::SetRemoteDescription");
   if (!network_thread_->IsCurrent()) {
     return network_thread_->BlockingCall(
-        [=] { return SetRemoteDescription(type, description); });
+        [=
+#if WEBRTC_WEBKIT_BUILD
+         , this
+#endif
+        ] { return SetRemoteDescription(type, description); });
   }
 
   RTC_DCHECK_RUN_ON(network_thread_);
@@ -360,11 +368,6 @@ bool JsepTransportController::GetStats(const std::string& transport_name,
 
 void JsepTransportController::SetActiveResetSrtpParams(
     bool active_reset_srtp_params) {
-  if (!network_thread_->IsCurrent()) {
-    network_thread_->BlockingCall(
-        [=] { SetActiveResetSrtpParams(active_reset_srtp_params); });
-    return;
-  }
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_LOG(LS_INFO)
       << "Updating the active_reset_srtp_params for JsepTransportController: "
@@ -377,7 +380,11 @@ void JsepTransportController::SetActiveResetSrtpParams(
 
 RTCError JsepTransportController::RollbackTransports() {
   if (!network_thread_->IsCurrent()) {
-    return network_thread_->BlockingCall([=] { return RollbackTransports(); });
+    return network_thread_->BlockingCall([=
+#if WEBRTC_WEBKIT_BUILD
+                                          , this
+#endif
+                                         ] { return RollbackTransports(); });
   }
   RTC_DCHECK_RUN_ON(network_thread_);
   bundles_.Rollback();
@@ -641,7 +648,12 @@ RTCError JsepTransportController::ApplyDescription_n(
 
     cricket::JsepTransport* transport =
         GetJsepTransportForMid(content_info.name);
-    RTC_DCHECK(transport);
+    if (!transport) {
+      LOG_AND_RETURN_ERROR(
+          RTCErrorType::INVALID_PARAMETER,
+          "Could not find transport for m= section with mid='" +
+              content_info.name + "'");
+    }
 
     SetIceRole_n(DetermineIceRole(transport, transport_info, type, local));
 
@@ -813,7 +825,8 @@ RTCError JsepTransportController::ValidateAndMaybeUpdateBundleGroups(
 
   if (config_.bundle_policy ==
           PeerConnectionInterface::kBundlePolicyMaxBundle &&
-      !description->HasGroup(cricket::GROUP_TYPE_BUNDLE)) {
+      !description->HasGroup(cricket::GROUP_TYPE_BUNDLE) &&
+      description->contents().size() > 1) {
     return RTCError(RTCErrorType::INVALID_PARAMETER,
                     "max-bundle is used but no bundle group found.");
   }
@@ -1089,10 +1102,16 @@ RTCError JsepTransportController::MaybeCreateJsepTransport(
             UpdateAggregateStates_n();
           });
 
-  jsep_transport->rtp_transport()->SignalRtcpPacketReceived.connect(
-      this, &JsepTransportController::OnRtcpPacketReceived_n);
-  jsep_transport->rtp_transport()->SignalUnDemuxableRtpPacketReceived.connect(
-      this, &JsepTransportController::OnUnDemuxableRtpPacketReceived_n);
+  jsep_transport->rtp_transport()->SubscribeRtcpPacketReceived(
+      this, [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+        RTC_DCHECK_RUN_ON(network_thread_);
+        OnRtcpPacketReceived_n(buffer, packet_time_ms);
+      });
+  jsep_transport->rtp_transport()->SetUnDemuxableRtpPacketReceivedHandler(
+      [this](webrtc::RtpPacketReceived& packet) {
+        RTC_DCHECK_RUN_ON(network_thread_);
+        OnUnDemuxableRtpPacketReceived_n(packet);
+      });
 
   transports_.RegisterTransport(content_info.name, std::move(jsep_transport));
   UpdateAggregateStates_n();

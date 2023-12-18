@@ -40,10 +40,17 @@ typedef void (*distwtdcompavgupsampled_func)(
     int height, int subpel_x_q3, int subpel_y_q3, const uint8_t *ref,
     int ref_stride, const DIST_WTD_COMP_PARAMS *jcp_param, int subpel_search);
 
+typedef void (*DistWtdCompAvgFunc)(uint8_t *comp_pred, const uint8_t *pred,
+                                   int width, int height, const uint8_t *ref,
+                                   int ref_stride,
+                                   const DIST_WTD_COMP_PARAMS *jcp_param);
+
 typedef std::tuple<distwtdcompavg_func, BLOCK_SIZE> DISTWTDCOMPAVGParam;
 
 typedef std::tuple<distwtdcompavgupsampled_func, BLOCK_SIZE>
     DISTWTDCOMPAVGUPSAMPLEDParam;
+
+typedef std::tuple<int, int, DistWtdCompAvgFunc, int> DistWtdCompAvgParam;
 
 #if CONFIG_AV1_HIGHBITDEPTH
 typedef void (*highbddistwtdcompavgupsampled_func)(
@@ -90,8 +97,8 @@ BuildParams(highbddistwtdcompavgupsampled_func filter) {
 class AV1DISTWTDCOMPAVGTest
     : public ::testing::TestWithParam<DISTWTDCOMPAVGParam> {
  public:
-  ~AV1DISTWTDCOMPAVGTest() {}
-  void SetUp() { rnd_.Reset(ACMRandom::DeterministicSeed()); }
+  ~AV1DISTWTDCOMPAVGTest() override = default;
+  void SetUp() override { rnd_.Reset(ACMRandom::DeterministicSeed()); }
 
  protected:
   void RunCheckOutput(distwtdcompavg_func test_impl) {
@@ -193,8 +200,8 @@ class AV1DISTWTDCOMPAVGTest
 class AV1DISTWTDCOMPAVGUPSAMPLEDTest
     : public ::testing::TestWithParam<DISTWTDCOMPAVGUPSAMPLEDParam> {
  public:
-  ~AV1DISTWTDCOMPAVGUPSAMPLEDTest() {}
-  void SetUp() { rnd_.Reset(ACMRandom::DeterministicSeed()); }
+  ~AV1DISTWTDCOMPAVGUPSAMPLEDTest() override = default;
+  void SetUp() override { rnd_.Reset(ACMRandom::DeterministicSeed()); }
 
  protected:
   void RunCheckOutput(distwtdcompavgupsampled_func test_impl) {
@@ -317,12 +324,198 @@ class AV1DISTWTDCOMPAVGUPSAMPLEDTest
   libaom_test::ACMRandom rnd_;
 };  // class AV1DISTWTDCOMPAVGUPSAMPLEDTest
 
+class DistWtdCompAvgTest
+    : public ::testing::WithParamInterface<DistWtdCompAvgParam>,
+      public ::testing::Test {
+ public:
+  DistWtdCompAvgTest()
+      : width_(GET_PARAM(0)), height_(GET_PARAM(1)), bd_(GET_PARAM(3)) {}
+
+  static void SetUpTestSuite() {
+    reference_data8_ = reinterpret_cast<uint8_t *>(
+        aom_memalign(kDataAlignment, kDataBufferSize));
+    ASSERT_NE(reference_data8_, nullptr);
+    second_pred8_ =
+        reinterpret_cast<uint8_t *>(aom_memalign(kDataAlignment, 128 * 128));
+    ASSERT_NE(second_pred8_, nullptr);
+    comp_pred8_ =
+        reinterpret_cast<uint8_t *>(aom_memalign(kDataAlignment, 128 * 128));
+    ASSERT_NE(comp_pred8_, nullptr);
+    comp_pred8_test_ =
+        reinterpret_cast<uint8_t *>(aom_memalign(kDataAlignment, 128 * 128));
+    ASSERT_NE(comp_pred8_test_, nullptr);
+    reference_data16_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(kDataAlignment, kDataBufferSize * sizeof(uint16_t)));
+    ASSERT_NE(reference_data16_, nullptr);
+    second_pred16_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(kDataAlignment, 128 * 128 * sizeof(uint16_t)));
+    ASSERT_NE(second_pred16_, nullptr);
+    comp_pred16_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(kDataAlignment, 128 * 128 * sizeof(uint16_t)));
+    ASSERT_NE(comp_pred16_, nullptr);
+    comp_pred16_test_ = reinterpret_cast<uint16_t *>(
+        aom_memalign(kDataAlignment, 128 * 128 * sizeof(uint16_t)));
+    ASSERT_NE(comp_pred16_test_, nullptr);
+  }
+
+  static void TearDownTestSuite() {
+    aom_free(reference_data8_);
+    reference_data8_ = nullptr;
+    aom_free(second_pred8_);
+    second_pred8_ = nullptr;
+    aom_free(comp_pred8_);
+    comp_pred8_ = nullptr;
+    aom_free(comp_pred8_test_);
+    comp_pred8_test_ = nullptr;
+    aom_free(reference_data16_);
+    reference_data16_ = nullptr;
+    aom_free(second_pred16_);
+    second_pred16_ = nullptr;
+    aom_free(comp_pred16_);
+    comp_pred16_ = nullptr;
+    aom_free(comp_pred16_test_);
+    comp_pred16_test_ = nullptr;
+  }
+
+ protected:
+  // Handle up to 4 128x128 blocks, with stride up to 256
+  static const int kDataAlignment = 16;
+  static const int kDataBlockSize = 128 * 256;
+  static const int kDataBufferSize = 4 * kDataBlockSize;
+
+  void SetUp() override {
+    if (bd_ == -1) {
+      use_high_bit_depth_ = false;
+      bit_depth_ = AOM_BITS_8;
+      reference_data_ = reference_data8_;
+      second_pred_ = second_pred8_;
+      comp_pred_ = comp_pred8_;
+      comp_pred_test_ = comp_pred8_test_;
+    } else {
+      use_high_bit_depth_ = true;
+      bit_depth_ = static_cast<aom_bit_depth_t>(bd_);
+      reference_data_ = CONVERT_TO_BYTEPTR(reference_data16_);
+      second_pred_ = CONVERT_TO_BYTEPTR(second_pred16_);
+      comp_pred_ = CONVERT_TO_BYTEPTR(comp_pred16_);
+      comp_pred_test_ = CONVERT_TO_BYTEPTR(comp_pred16_test_);
+    }
+    mask_ = (1 << bit_depth_) - 1;
+    reference_stride_ = width_ * 2;
+    rnd_.Reset(ACMRandom::DeterministicSeed());
+  }
+
+  virtual uint8_t *GetReference(int block_idx) {
+    if (use_high_bit_depth_)
+      return CONVERT_TO_BYTEPTR(CONVERT_TO_SHORTPTR(reference_data_) +
+                                block_idx * kDataBlockSize);
+    return reference_data_ + block_idx * kDataBlockSize;
+  }
+
+  void ReferenceDistWtdCompAvg(int block_idx) {
+    const uint8_t *const reference8 = GetReference(block_idx);
+    const uint8_t *const second_pred8 = second_pred_;
+    uint8_t *const comp_pred8 = comp_pred_;
+    const uint16_t *const reference16 =
+        CONVERT_TO_SHORTPTR(GetReference(block_idx));
+    const uint16_t *const second_pred16 = CONVERT_TO_SHORTPTR(second_pred_);
+    uint16_t *const comp_pred16 = CONVERT_TO_SHORTPTR(comp_pred_);
+    for (int h = 0; h < height_; ++h) {
+      for (int w = 0; w < width_; ++w) {
+        if (!use_high_bit_depth_) {
+          const int tmp =
+              second_pred8[h * width_ + w] * jcp_param_.bck_offset +
+              reference8[h * reference_stride_ + w] * jcp_param_.fwd_offset;
+          comp_pred8[h * width_ + w] = ROUND_POWER_OF_TWO(tmp, 4);
+        } else {
+          const int tmp =
+              second_pred16[h * width_ + w] * jcp_param_.bck_offset +
+              reference16[h * reference_stride_ + w] * jcp_param_.fwd_offset;
+          comp_pred16[h * width_ + w] = ROUND_POWER_OF_TWO(tmp, 4);
+        }
+      }
+    }
+  }
+
+  void FillConstant(uint8_t *data, int stride, uint16_t fill_constant) {
+    uint8_t *data8 = data;
+    uint16_t *data16 = CONVERT_TO_SHORTPTR(data);
+    for (int h = 0; h < height_; ++h) {
+      for (int w = 0; w < width_; ++w) {
+        if (!use_high_bit_depth_) {
+          data8[h * stride + w] = static_cast<uint8_t>(fill_constant);
+        } else {
+          data16[h * stride + w] = fill_constant;
+        }
+      }
+    }
+  }
+
+  void FillRandom(uint8_t *data, int stride) {
+    uint8_t *data8 = data;
+    uint16_t *data16 = CONVERT_TO_SHORTPTR(data);
+    for (int h = 0; h < height_; ++h) {
+      for (int w = 0; w < width_; ++w) {
+        if (!use_high_bit_depth_) {
+          data8[h * stride + w] = rnd_.Rand8();
+        } else {
+          data16[h * stride + w] = rnd_.Rand16() & mask_;
+        }
+      }
+    }
+  }
+
+  void dist_wtd_comp_avg(int block_idx) {
+    const uint8_t *const reference = GetReference(block_idx);
+
+    API_REGISTER_STATE_CHECK(GET_PARAM(2)(comp_pred_test_, second_pred_, width_,
+                                          height_, reference, reference_stride_,
+                                          &jcp_param_));
+  }
+
+  void CheckCompAvg() {
+    for (int j = 0; j < 2; ++j) {
+      for (int i = 0; i < 4; ++i) {
+        jcp_param_.fwd_offset = quant_dist_lookup_table[i][j];
+        jcp_param_.bck_offset = quant_dist_lookup_table[i][1 - j];
+
+        ReferenceDistWtdCompAvg(0);
+        dist_wtd_comp_avg(0);
+
+        for (int y = 0; y < height_; ++y)
+          for (int x = 0; x < width_; ++x)
+            ASSERT_EQ(comp_pred_[y * width_ + x],
+                      comp_pred_test_[y * width_ + x]);
+      }
+    }
+  }
+
+  int width_, height_, mask_, bd_;
+  aom_bit_depth_t bit_depth_;
+  static uint8_t *reference_data_;
+  static uint8_t *second_pred_;
+  bool use_high_bit_depth_;
+  static uint8_t *reference_data8_;
+  static uint8_t *second_pred8_;
+  static uint16_t *reference_data16_;
+  static uint16_t *second_pred16_;
+  int reference_stride_;
+  static uint8_t *comp_pred_;
+  static uint8_t *comp_pred8_;
+  static uint16_t *comp_pred16_;
+  static uint8_t *comp_pred_test_;
+  static uint8_t *comp_pred8_test_;
+  static uint16_t *comp_pred16_test_;
+  DIST_WTD_COMP_PARAMS jcp_param_;
+
+  ACMRandom rnd_;
+};
+
 #if CONFIG_AV1_HIGHBITDEPTH
 class AV1HighBDDISTWTDCOMPAVGTest
     : public ::testing::TestWithParam<HighbdDISTWTDCOMPAVGParam> {
  public:
-  ~AV1HighBDDISTWTDCOMPAVGTest() {}
-  void SetUp() { rnd_.Reset(ACMRandom::DeterministicSeed()); }
+  ~AV1HighBDDISTWTDCOMPAVGTest() override = default;
+  void SetUp() override { rnd_.Reset(ACMRandom::DeterministicSeed()); }
 
  protected:
   void RunCheckOutput(distwtdcompavg_func test_impl) {
@@ -430,8 +623,8 @@ class AV1HighBDDISTWTDCOMPAVGTest
 class AV1HighBDDISTWTDCOMPAVGUPSAMPLEDTest
     : public ::testing::TestWithParam<HighbdDISTWTDCOMPAVGUPSAMPLEDParam> {
  public:
-  ~AV1HighBDDISTWTDCOMPAVGUPSAMPLEDTest() {}
-  void SetUp() { rnd_.Reset(ACMRandom::DeterministicSeed()); }
+  ~AV1HighBDDISTWTDCOMPAVGUPSAMPLEDTest() override = default;
+  void SetUp() override { rnd_.Reset(ACMRandom::DeterministicSeed()); }
 
  protected:
   void RunCheckOutput(highbddistwtdcompavgupsampled_func test_impl) {

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerFetch.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CrossOriginAccessControl.h"
 #include "EventNames.h"
 #include "FetchEvent.h"
@@ -227,7 +225,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
         if (event->defaultPrevented()) {
             ResourceError error { errorDomainWebKitInternal, 0, requestURL, "Fetch event was canceled"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes };
             client->didFail(error);
-            deferredPromise->reject(Exception { NetworkError });
+            deferredPromise->reject(Exception { ExceptionCode::NetworkError });
             return;
         }
         client->didNotHandle();
@@ -240,5 +238,3 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 } // namespace ServiceWorkerFetch
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

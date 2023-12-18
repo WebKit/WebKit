@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,13 @@
 #include "CodeBlockSet.h"
 
 #include "CodeBlock.h"
+#include "HeapInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CodeBlockSet);
 
 CodeBlockSet::CodeBlockSet()
 {
@@ -48,9 +52,13 @@ bool CodeBlockSet::contains(const AbstractLocker&, void* candidateCodeBlock)
     return m_codeBlocks.contains(codeBlock);
 }
 
-void CodeBlockSet::clearCurrentlyExecuting()
+void CodeBlockSet::clearCurrentlyExecutingAndRemoveDeadCodeBlocks(VM& vm)
 {
+    ASSERT(vm.heap.isInPhase(CollectorPhase::End));
     m_currentlyExecuting.clear();
+    m_codeBlocks.removeIf([&](CodeBlock* codeBlock) {
+        return !vm.heap.isMarked(codeBlock);
+    });
 }
 
 bool CodeBlockSet::isCurrentlyExecuting(CodeBlock* codeBlock)

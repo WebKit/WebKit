@@ -18,3 +18,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/all-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/layer-import-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/layer.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/parsing/supports-import-parsing.html

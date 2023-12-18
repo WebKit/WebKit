@@ -166,6 +166,10 @@ class MockDcSctpSocketCallbacks : public DcSctpSocketCallbacks {
     return timeout_manager_.GetNextExpiredTimeout();
   }
 
+  DurationMs GetTimeToNextTimeout() const {
+    return timeout_manager_.GetTimeToNextTimeout();
+  }
+
  private:
   const std::string log_prefix_;
   TimeMs now_ = TimeMs(0);

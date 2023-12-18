@@ -49,6 +49,7 @@ RenderMultiColumnSet::RenderMultiColumnSet(RenderFragmentedFlow& fragmentedFlow,
     , m_maxColumnHeight(RenderFragmentedFlow::maxLogicalHeight())
     , m_minSpaceShortage(RenderFragmentedFlow::maxLogicalHeight())
 {
+    ASSERT(isRenderMultiColumnSet());
 }
 
 RenderMultiColumnSet* RenderMultiColumnSet::nextSiblingMultiColumnSet() const
@@ -108,7 +109,7 @@ bool RenderMultiColumnSet::containsRendererInFragmentedFlow(const RenderObject& 
 {
     if (!previousSiblingMultiColumnSet() && !nextSiblingMultiColumnSet()) {
         // There is only one set. This is easy, then.
-        return renderer.isDescendantOf(m_fragmentedFlow);
+        return renderer.isDescendantOf(m_fragmentedFlow.get());
     }
 
     RenderObject* firstRenderer = firstRendererInFragmentedFlow();

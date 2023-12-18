@@ -1,8 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011-2012. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -26,7 +25,7 @@
 #include "RenderReplaced.h"
 
 #include "BackgroundPainter.h"
-#include "DeprecatedGlobalSettings.h"
+#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
 #include "FloatRoundedRect.h"
@@ -34,7 +33,7 @@
 #include "HTMLElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLParserIdioms.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBoxInlines.h"
 #include "LayoutRepainter.h"
@@ -66,24 +65,27 @@ const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style)
-    : RenderBox(type, element, WTFMove(style), RenderReplacedFlag)
+    : RenderBox(type, element, WTFMove(style), RenderElementType::RenderReplacedFlag)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplacedOrInlineBlock(true);
+    ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(type, element, WTFMove(style), RenderReplacedFlag)
+    : RenderBox(type, element, WTFMove(style), RenderElementType::RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);
+    ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(type, document, WTFMove(style), RenderReplacedFlag)
+    : RenderBox(type, document, WTFMove(style), RenderElementType::RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);
+    ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::~RenderReplaced() = default;
@@ -156,9 +158,9 @@ Color RenderReplaced::calculateHighlightColor() const
 {
     RenderHighlight renderHighlight;
 #if ENABLE(APP_HIGHLIGHTS)
-    if (auto appHighlightRegister = document().appHighlightRegisterIfExists()) {
-        if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
-            for (auto& highlight : appHighlightRegister->map()) {
+    if (auto appHighlightRegistry = document().appHighlightRegistryIfExists()) {
+        if (appHighlightRegistry->highlightsVisibility() == HighlightVisibility::Visible) {
+            for (auto& highlight : appHighlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
@@ -174,9 +176,9 @@ Color RenderReplaced::calculateHighlightColor() const
         }
     }
 #endif
-    if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
-        if (auto highlightRegister = document().highlightRegisterIfExists()) {
-            for (auto& highlight : highlightRegister->map()) {
+    if (document().settings().highlightAPIEnabled()) {
+        if (auto highlightRegistry = document().highlightRegistryIfExists()) {
+            for (auto& highlight : highlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
@@ -192,8 +194,8 @@ Color RenderReplaced::calculateHighlightColor() const
         }
     }
     if (document().settings().scrollToTextFragmentEnabled()) {
-        if (auto highlightRegister = document().fragmentHighlightRegisterIfExists()) {
-            for (auto& highlight : highlightRegister->map()) {
+        if (auto highlightRegistry = document().fragmentHighlightRegistryIfExists()) {
+            for (auto& highlight : highlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
                     if (!renderHighlight.setRenderRange(highlightRange))
                         continue;
@@ -221,8 +223,8 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase == PaintPhase::EventRegion) {
         if (visibleToHitTesting()) {
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
-            auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegionContext()->unite(borderRegion, *this, style());
+            auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
+            paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style());
         }
         return;
     }
@@ -238,7 +240,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (element() && element()->parentOrShadowHostElement()) {
         auto* parentContainer = element()->parentOrShadowHostElement();
         ASSERT(parentContainer);
-        if (draggedContentContainsReplacedElement(document().markers().markersFor(*parentContainer, DocumentMarker::DraggedContent), *element())) {
+        if (draggedContentContainsReplacedElement(document().markers().markersFor(*parentContainer, DocumentMarker::Type::DraggedContent), *element())) {
             savedGraphicsContext.save();
             paintInfo.context().setAlpha(0.25);
         }
@@ -402,6 +404,8 @@ static bool isVideoWithDefaultObjectSize(const RenderReplaced* maybeVideo)
 #if ENABLE(VIDEO)
     if (auto* video = dynamicDowncast<RenderVideo>(maybeVideo))
         return video->hasDefaultObjectSize();
+#else
+    UNUSED_PARAM(maybeVideo);
 #endif
     return false;
 } 
@@ -528,7 +532,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
             return;
     }
     // Figure out if we need to compute an intrinsic ratio.
-    if (!RenderObject::hasIntrinsicAspectRatio() && !isSVGRootOrLegacySVGRoot())
+    if (!RenderObject::hasIntrinsicAspectRatio() && !isRenderOrLegacyRenderSVGRoot())
         return;
 
     // After supporting contain-intrinsic-size, the intrinsicSize of size containment is not always empty.
@@ -571,7 +575,7 @@ static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsic
     if (hasIntrinsicWidth && hasIntrinsicHeight)
         return true;
     if (hasIntrinsicWidth || hasIntrinsicHeight)
-        return contentRenderer && contentRenderer->isSVGRootOrLegacySVGRoot();
+        return contentRenderer && contentRenderer->isRenderOrLegacyRenderSVGRoot();
     return false;
 }
 
@@ -700,10 +704,9 @@ void RenderReplaced::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    // We cannot resolve some logical width here (i.e. percent, fill-available or fit-content)
-    // as the available logical width may not be set on our containing block.
-    const auto& logicalWidth = style().logicalWidth();
-    if (logicalWidth.isPercentOrCalculated() || logicalWidth.isFillAvailable() || logicalWidth.isFitContent())
+    // We cannot resolve any percent logical width here as the available logical
+    // width may not be set on our containing block.
+    if (style().logicalWidth().isPercentOrCalculated())
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
     else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
@@ -814,18 +817,24 @@ bool RenderReplaced::isHighlighted(HighlightState state, const RenderHighlight& 
     return false;
 }
 
-LayoutRect RenderReplaced::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+auto RenderReplaced::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
     if (isInsideEntirelyHiddenLayer())
         return { };
 
     // The selectionRect can project outside of the overflowRect, so take their union
     // for repainting to avoid selection painting glitches.
-    LayoutRect r = unionRect(localSelectionRect(false), visualOverflowRect());
+    auto overflowRect = unionRect(localSelectionRect(false), visualOverflowRect());
+
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    r.move(view().frameView().layoutContext().layoutDelta());
-    return computeRect(r, repaintContainer, context);
+    overflowRect.move(view().frameView().layoutContext().layoutDelta());
+
+    auto rects = RepaintRects { overflowRect };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = localOutlineBoundsRepaintRect();
+
+    return rects;
 }
 
 bool RenderReplaced::isContentLikelyVisibleInViewport()

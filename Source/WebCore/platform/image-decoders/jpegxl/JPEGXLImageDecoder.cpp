@@ -329,7 +329,7 @@ JxlDecoderStatus JPEGXLImageDecoder::processInput(Query query)
             }
 
             if (m_currentFrame >= m_frameBufferCache.size())
-                m_frameBufferCache.resize(m_frameCount + 1);
+                m_frameBufferCache.grow(m_frameCount + 1);
 
             auto& buffer = m_frameBufferCache[m_currentFrame];
             if (buffer.isInvalid() && buffer.initialize(size(), m_premultiplyAlpha)) {

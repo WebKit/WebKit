@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "DatabaseUtilities.h"
 #include "ResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -61,7 +59,7 @@ public:
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
 
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyData> aggregatedThirdPartyData() const override;
+    Vector<ITPThirdPartyData> aggregatedThirdPartyData() const override;
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
 
     void classifyPrevalentResources() override;
@@ -141,7 +139,7 @@ private:
     void destroyStatements() final;
 
     bool hasStorageAccess(const TopFrameDomain&, const SubFrameDomain&) const;
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
+    Vector<ITPThirdPartyDataForSpecificFirstParty> getThirdPartyDataForSpecificFirstPartyDomains(unsigned, const RegistrableDomain&) const;
     void openAndUpdateSchemaIfNecessary();
     String getDomainStringFromDomainID(unsigned) const final;
     ASCIILiteral getSubStatisticStatement(ASCIILiteral) const;
@@ -270,5 +268,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ResourceLoadStatisticsDatabaseStore)
     static bool isType(const WebKit::ResourceLoadStatisticsStore& store) { return store.isDatabaseStore(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

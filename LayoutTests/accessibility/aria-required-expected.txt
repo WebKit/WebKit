@@ -3,7 +3,7 @@ This tests that aria-required is a usable attribute.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Elements to test: 36
+Elements to test: 39
 
 PASS textfield isRequired is false
 PASS textfield_required isRequired is true
@@ -41,6 +41,9 @@ PASS spinbutton isRequired is false
 PASS tree_ariarequiredtrue isRequired is true
 PASS tree_ariarequiredfalse isRequired is false
 PASS tree isRequired is false
+PASS switch_ariarequiredtrue isRequired is true
+PASS switch_ariarequiredfalse isRequired is false
+PASS switch isRequired is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

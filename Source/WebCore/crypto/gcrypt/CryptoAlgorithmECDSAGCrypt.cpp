@@ -55,7 +55,7 @@ static bool extractECDSASignatureInteger(Vector<uint8_t>& signature, gcry_sexp_t
     } else {
         // If not, prefix the binary data with zero bytes.
         for (size_t paddingSize = keySizeInBytes - dataSize; paddingSize > 0; --paddingSize)
-            signature.uncheckedAppend(0x00);
+            signature.append(0x00);
         signature.appendVector(*integerData);
     }
 
@@ -174,7 +174,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgo
 {
     auto output = gcryptSign(key.platformKey(), data, parameters.hashIdentifier, (key.keySizeInBits() + 7) / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -182,7 +182,7 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
 {
     auto output = gcryptVerify(key.platformKey(), signature, data, parameters.hashIdentifier, (key.keySizeInBits() + 7)/ 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/support/plus-lighter.js
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/support/transform-triangle-left.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/support/utils.js

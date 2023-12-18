@@ -45,7 +45,7 @@ class WebXRInputSourceArray final : public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSourceArray);
     friend UniqueRef<WebXRInputSourceArray> WTF::makeUniqueRefWithoutFastMallocCheck<WebXRInputSourceArray, WebCore::WebXRSession&>(WebCore::WebXRSession&);
 public:
-    using InputSourceList = Vector<PlatformXR::Device::FrameData::InputSource>;
+    using InputSourceList = Vector<PlatformXR::FrameData::InputSource>;
     static UniqueRef<WebXRInputSourceArray> create(WebXRSession&);
     ~WebXRInputSourceArray();
 
@@ -65,8 +65,8 @@ public:
 private:
     WebXRInputSourceArray(WebXRSession&);
 
-    void handleRemovedInputSources(const InputSourceList&, Vector<RefPtr<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
-    void handleAddedOrUpdatedInputSources(double timestamp, const InputSourceList&, Vector<RefPtr<WebXRInputSource>>&, Vector<RefPtr<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
+    void handleRemovedInputSources(const InputSourceList&, Vector<RefPtr<WebXRInputSource>>&, Vector<RefPtr<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
+    void handleAddedOrUpdatedInputSources(double timestamp, const InputSourceList&, Vector<RefPtr<WebXRInputSource>>&, Vector<RefPtr<WebXRInputSource>>&, Vector<RefPtr<WebXRInputSource>>&, Vector<Ref<XRInputSourceEvent>>&);
 
     WebXRSession& m_session;
     Vector<Ref<WebXRInputSource>> m_inputSources;

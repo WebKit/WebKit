@@ -214,8 +214,8 @@ class BugzillaBeautifulSoup():
     browser = property(_get_browser, _set_browser)
 
     def authenticate(self):
-        username = os.getenv('BUGZILLA_USERNAME', None)
-        password = os.getenv('BUGZILLA_PASSWORD', None)
+        username = util.load_password('BUGZILLA_USERNAME')
+        password = util.load_password('BUGZILLA_PASSWORD')
         if not username or not password:
             _log.warn('Bugzilla username/password not configured in environment variables. Skipping authentication.')
             return

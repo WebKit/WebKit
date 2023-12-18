@@ -26,6 +26,7 @@
 // https://wicg.github.io/cookie-store/#cookiechangeevent
 
 [
+    EnabledBySetting=CookieStoreAPIEnabled,
     Exposed=Window,
     SecureContext
 ] interface CookieChangeEvent : Event {

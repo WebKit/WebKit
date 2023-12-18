@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JITExceptions.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyStruct.h"
 #include "TypedArrayController.h"
@@ -212,8 +213,9 @@ inline EncodedJSValue arrayNewData(Instance* instance, uint32_t typeIndex, uint3
 
     // Check that the type index is within bounds
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
+
     // Get the array element type
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
@@ -259,7 +261,7 @@ inline EncodedJSValue arrayNewElem(Instance* instance, uint32_t typeIndex, uint3
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
 
 #if ASSERT_ENABLED
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 #else
     UNUSED_PARAM(typeIndex);
@@ -321,7 +323,7 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
     const StructType& structType = *structTypeDefinition.as<StructType>();
     auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
 
-    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT);
+    JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::create(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT);
     RELEASE_ASSERT(structValue);
     if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
         for (unsigned i = 0; i < structType.fieldCount(); ++i) {
@@ -333,8 +335,6 @@ inline EncodedJSValue structNew(Instance* instance, uint32_t typeIndex, bool use
     } else {
         ASSERT(arguments);
         for (unsigned dstIndex = 0; dstIndex < structType.fieldCount(); ++dstIndex) {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-            ASSERT(structType.field(dstIndex).type.is<Type>());
             // Arguments are in reverse order!
             unsigned srcIndex = structType.fieldCount() - dstIndex - 1;
             structValue->set(dstIndex, arguments[srcIndex]);
@@ -360,9 +360,6 @@ inline void structSet(EncodedJSValue encodedStructReference, uint32_t fieldIndex
     JSObject* structureAsObject = jsCast<JSObject*>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
     JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=246981
-    ASSERT(structPointer->structType()->field(fieldIndex).type.is<Type>());
 
     return structPointer->set(fieldIndex, argument);
 }

@@ -39,7 +39,7 @@ WebCodecsEncodedAudioChunk::WebCodecsEncodedAudioChunk(Init&& init)
 ExceptionOr<void> WebCodecsEncodedAudioChunk::copyTo(BufferSource&& source)
 {
     if (source.length() < byteLength())
-        return Exception { TypeError, "buffer is too small"_s };
+        return Exception { ExceptionCode::TypeError, "buffer is too small"_s };
 
     std::memcpy(source.mutableData(), data(), byteLength());
     return { };

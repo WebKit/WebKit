@@ -464,7 +464,6 @@ typedef struct {
   int last_kfgroup_zeromotion_pct;
   int extend_minq;
   int extend_maxq;
-  int extend_minq_fast;
   /*!\endcond */
 } TWO_PASS;
 
@@ -568,6 +567,8 @@ void av1_first_pass_row(struct AV1_COMP *cpi, struct ThreadData *td,
                         struct TileDataEnc *tile_data, const int mb_row,
                         const BLOCK_SIZE fp_block_size);
 void av1_end_first_pass(struct AV1_COMP *cpi);
+
+void av1_free_firstpass_data(FirstPassData *firstpass_data);
 
 void av1_twopass_zero_stats(FIRSTPASS_STATS *section);
 void av1_accumulate_stats(FIRSTPASS_STATS *section,

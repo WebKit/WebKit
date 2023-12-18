@@ -28,36 +28,18 @@
 #include "Connection.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 
+#if HAVE(AUDIT_TOKEN)
+#include "CoreIPCAuditToken.h"
+#endif
+
 namespace WebKit {
 
 struct NetworkProcessConnectionInfo {
     IPC::Connection::Handle connection;
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> auditToken;
+    std::optional<CoreIPCAuditToken> auditToken;
 #endif
-
-    void encode(IPC::Encoder& encoder)
-    {
-        encoder << WTFMove(connection);
-        encoder << cookieAcceptPolicy;
-#if HAVE(AUDIT_TOKEN)
-        encoder << auditToken;
-#endif
-    }
-    
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, NetworkProcessConnectionInfo& info)
-    {
-        if (!decoder.decode(info.connection))
-            return false;
-        if (!decoder.decode(info.cookieAcceptPolicy))
-            return false;
-#if HAVE(AUDIT_TOKEN)
-        if (!decoder.decode(info.auditToken))
-            return false;
-#endif
-        return true;
-    }
 };
 
 };

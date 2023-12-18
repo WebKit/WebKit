@@ -44,4 +44,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMeter, isMeter())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMeter, isRenderMeter())

@@ -1,0 +1,3 @@
+
+FAIL Dispose should fire when an entry is removed from session history due to too many entries promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.ondispose = r')"
+

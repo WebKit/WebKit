@@ -2,6 +2,8 @@
 hello world
 hello world
 
-PASS Disabled fieldset elements should not prevent click event propagation.
-PASS Disabled fieldset elements should not block click events.
+PASS Disabled fieldset elements should not prevent click event propagation from native click
+PASS Disabled fieldset elements should not block click events from native click.
+PASS Disabled fieldset elements should not prevent click event propagation from click()
+PASS Disabled fieldset elements should not block click events from click().
 

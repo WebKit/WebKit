@@ -33,6 +33,7 @@
 #include "StackAlignment.h"
 #include <wtf/FunctionTraits.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -49,6 +50,7 @@ class RegisteredStructure;
 };
 
 class CCallHelpers : public AssemblyHelpers {
+    WTF_MAKE_TZONE_ALLOCATED(CCallHelpers);
 public:
     CCallHelpers(CodeBlock* codeBlock = nullptr)
         : AssemblyHelpers(codeBlock)
@@ -973,8 +975,6 @@ public:
 
     // Leaves behind a pointer to the Packet we should write to in shadowPacket.
     void ensureShadowChickenPacket(VM&, GPRReg shadowPacket, GPRReg scratch1NonArgGPR, GPRReg scratch2);
-
-    static void emitJITCodeOver(CodePtr<JSInternalPtrTag> where, ScopedLambda<void(CCallHelpers&)>, const char*);
 
     void emitCTIThunkPrologue(bool returnAddressAlreadyTagged = false);
     void emitCTIThunkEpilogue();

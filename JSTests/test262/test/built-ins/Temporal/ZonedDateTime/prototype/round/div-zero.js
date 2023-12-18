@@ -7,18 +7,18 @@ description: RangeError thrown if the calculated day length is zero
 features: [Temporal]
 ---*/
 
-class Calendar extends Temporal.Calendar {
-  constructor() {
-    super("iso8601");
-  }
-  dateAdd(d) {
-    return d;
+class TimeZone extends Temporal.TimeZone {
+  #calls = 0;
+  getPossibleInstantsFor(dateTime) {
+    if (++this.#calls === 2) {
+      return super.getPossibleInstantsFor(dateTime.withCalendar("iso8601").subtract({ days: 1 }));
+    }
+    return super.getPossibleInstantsFor(dateTime);
   }
 }
 
-const zdt = new Temporal.ZonedDateTime(0n, "UTC", new Calendar());
-
 const units = ["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"];
 for (const smallestUnit of units) {
-  assert.throws(RangeError, () => zdt.round({ smallestUnit, roundingIncrement: 2 }));
+  const zdt = new Temporal.ZonedDateTime(0n, new TimeZone("UTC"));
+  assert.throws(RangeError, () => zdt.round({ smallestUnit, roundingIncrement: 2 }), `zero day-length with smallestUnit ${smallestUnit}`);
 }

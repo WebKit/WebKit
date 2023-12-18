@@ -16,40 +16,29 @@ import static org.junit.Assert.assertNotNull;
 import androidx.annotation.Nullable;
 import androidx.test.filters.SmallTest;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import org.chromium.base.test.params.BaseJUnit4RunnerDelegate;
-import org.chromium.base.test.params.ParameterAnnotations.ClassParameter;
-import org.chromium.base.test.params.ParameterAnnotations.UseRunnerDelegate;
-import org.chromium.base.test.params.ParameterSet;
-import org.chromium.base.test.params.ParameterizedRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /** Unit tests for {@link AndroidVideoDecoder}. */
-@RunWith(ParameterizedRunner.class)
-@UseRunnerDelegate(BaseJUnit4RunnerDelegate.class)
+@RunWith(Parameterized.class)
 public final class AndroidVideoDecoderInstrumentationTest {
-  @ClassParameter private static List<ParameterSet> CLASS_PARAMS = new ArrayList<>();
-
-  static {
-    CLASS_PARAMS.add(new ParameterSet()
-                         .value(/* codecName= */ "VP8", false /* useEglContext */)
-                         .name("VP8WithoutEglContext"));
-    CLASS_PARAMS.add(new ParameterSet()
-                         .value(/* codecName= */ "VP8", true /* useEglContext */)
-                         .name("VP8WithEglContext"));
-    CLASS_PARAMS.add(new ParameterSet()
-                         .value(/* codecName= */ "H264", false /* useEglContext */)
-                         .name("H264WithoutEglContext"));
-    CLASS_PARAMS.add(new ParameterSet()
-                         .value(/* codecName= */ "H264", true /* useEglContext */)
-                         .name("H264WithEglContext"));
+  @Parameters(name = "{0};useEglContext={1}")
+  public static Collection<Object[]> parameters() {
+    return Arrays.asList(new Object[] {/*codecName=*/"VP8", /*useEglContext=*/false},
+        new Object[] {/*codecName=*/"VP8", /*useEglContext=*/true},
+        new Object[] {/*codecName=*/"H264", /*useEglContext=*/false},
+        new Object[] {/*codecName=*/"H264", /*useEglContext=*/true});
   }
 
   private final VideoCodecInfo codecType;

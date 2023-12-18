@@ -223,7 +223,7 @@ private:
         Vector<String> vector;
         vector.reserveInitialCapacity(value.count);
         for (NSString *pattern in value)
-            vector.uncheckedAppend(pattern);
+            vector.append(pattern);
         map.add(key, WTFMove(vector));
     }];
     _websitePolicies->setActiveContentRuleListActionPatterns(WTFMove(map));
@@ -394,10 +394,10 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (void)_setCustomHeaderFields:(NSArray<_WKCustomHeaderFields *> *)fields
 {
-    Vector<WebCore::CustomHeaderFields> vector;
-    vector.reserveInitialCapacity(fields.count);
-    for (_WKCustomHeaderFields *element in fields)
-        vector.uncheckedAppend(static_cast<API::CustomHeaderFields&>([element _apiObject]).coreFields());
+    Vector<WebCore::CustomHeaderFields> vector(fields.count, [fields](size_t i) {
+        _WKCustomHeaderFields *element = fields[i];
+        return static_cast<API::CustomHeaderFields&>([element _apiObject]).coreFields();
+    });
     _websitePolicies->setCustomHeaderFields(WTFMove(vector));
 }
 

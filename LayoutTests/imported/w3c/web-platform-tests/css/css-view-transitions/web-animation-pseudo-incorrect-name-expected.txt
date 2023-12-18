@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: The string did not match the expected pattern.
+
+Harness Error (FAIL), message = Unhandled rejection: The string did not match the expected pattern.
+
+TIMEOUT animation created with incorrect name Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: The string did not match the expected pattern.
+
+TIMEOUT animation created with incorrect name Test timed out
+

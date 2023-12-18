@@ -40,7 +40,8 @@
     uint16_t keyCode;
     UIKeyboardInputFlags inputFlags;
     NSInteger modifierFlags;
-    BOOL isHardwareKeyboardEvent = !!event._hidEvent;
+    static auto physicalKeyboardEventClass = NSClassFromString(@"UIPhysicalKeyboardEvent");
+    BOOL isHardwareKeyboardEvent = [event isKindOfClass:physicalKeyboardEventClass] && event._hidEvent;
     RetainPtr<UIEvent> uiEvent;
     if (!isHardwareKeyboardEvent) {
         keyCode = 0;

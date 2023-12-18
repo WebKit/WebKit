@@ -26,8 +26,13 @@ namespace jni {
 namespace {
 
 ScopedJavaLocalRef<jobject> NativeToJavaBigInteger(JNIEnv* env, uint64_t u) {
+#ifdef RTC_JNI_GENERATOR_LEGACY_SYMBOLS
   return JNI_BigInteger::Java_BigInteger_ConstructorJMBI_JLS(
       env, NativeToJavaString(env, rtc::ToString(u)));
+#else
+  return JNI_BigInteger::Java_BigInteger_Constructor__String(
+      env, NativeToJavaString(env, rtc::ToString(u)));
+#endif
 }
 
 ScopedJavaLocalRef<jobjectArray> NativeToJavaBigIntegerArray(
@@ -112,7 +117,7 @@ ScopedJavaLocalRef<jobject> MemberToJava(
                                   NativeToJavaDouble(env, entry.second));
           });
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return nullptr;
 }
 
@@ -126,7 +131,7 @@ ScopedJavaLocalRef<jobject> NativeToJavaRtcStats(JNIEnv* env,
                 MemberToJava(env, *member));
   }
   return Java_RTCStats_create(
-      env, stats.timestamp_us(), NativeToJavaString(env, stats.type()),
+      env, stats.timestamp().us(), NativeToJavaString(env, stats.type()),
       NativeToJavaString(env, stats.id()), builder.GetJavaMap());
 }
 
@@ -138,7 +143,7 @@ ScopedJavaLocalRef<jobject> NativeToJavaRtcStatsReport(
         return std::make_pair(NativeToJavaString(env, stats.id()),
                               NativeToJavaRtcStats(env, stats));
       });
-  return Java_RTCStatsReport_create(env, report->timestamp_us(), j_stats_map);
+  return Java_RTCStatsReport_create(env, report->timestamp().us(), j_stats_map);
 }
 
 }  // namespace

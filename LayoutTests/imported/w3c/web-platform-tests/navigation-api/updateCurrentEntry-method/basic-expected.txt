@@ -1,0 +1,3 @@
+
+FAIL updateCurrentEntry() works as expected null is not an object (evaluating 'navigation.currentEntry.getState')
+

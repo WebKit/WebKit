@@ -34,15 +34,32 @@ async function checkDoesNotKeepObjectsAlive()
         }
     }
 
+    async function waitUntilItemGoesAway(value)
+    {
+        let attempts = 50;
+        while (attempts--) {
+            let containsValue = false;
+            for (let item of iterableWeakSet) {
+               if (item.value === value) {
+                   containsValue = true;
+                   break;
+               }
+            }
+            if (!containsValue)
+                return;
+            await new Promise(setTimeout);
+            gc();
+            await new Promise(setTimeout);
+        }
+    }
+
     TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
     check("construction", one[0], true);
     check("construction", two[0], true);
     check("construction", three[0], true);
 
     nukeArray(one);
-    await new Promise(setTimeout);
-    gc();
-    await new Promise(setTimeout);
+    await waitUntilItemGoesAway(1);
 
     TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
     check("`one = null`", 1, false);
@@ -50,9 +67,7 @@ async function checkDoesNotKeepObjectsAlive()
     check("`one = null`", three[0], true);
 
     nukeArray(two);
-    await new Promise(setTimeout);
-    gc();
-    await new Promise(setTimeout);
+    await waitUntilItemGoesAway(2);
 
     TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
     check("`two = null`", 1, false);
@@ -60,9 +75,7 @@ async function checkDoesNotKeepObjectsAlive()
     check("`two = null`", three[0], true);
 
     nukeArray(three);
-    await new Promise(setTimeout);
-    gc();
-    await new Promise(setTimeout);
+    await waitUntilItemGoesAway(3);
 
     TestPage.dispatchEventToFrontend("TestPage-checkDoesNotKeepObjectsAlive-log", {message: JSON.stringify(iterableWeakSet)});
     check("`three = null`", 1, false);

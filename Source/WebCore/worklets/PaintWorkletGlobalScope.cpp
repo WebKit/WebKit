@@ -81,62 +81,62 @@ ExceptionOr<void> PaintWorkletGlobalScope::registerPaint(JSC::JSGlobalObject& gl
 
     // Validate that paintConstructor is a VoidFunction
     if (!paintConstructor->isCallable())
-        return Exception { TypeError, "paintConstructor must be callable"_s };
+        return Exception { ExceptionCode::TypeError, "paintConstructor must be callable"_s };
 
     if (name.isEmpty())
-        return Exception { TypeError, "The first argument must not be the empty string"_s };
+        return Exception { ExceptionCode::TypeError, "The first argument must not be the empty string"_s };
 
     {
         Locker locker { paintDefinitionLock() };
 
         if (paintDefinitionMap().contains(name))
-            return Exception { InvalidModificationError, "This name has already been registered"_s };
+            return Exception { ExceptionCode::InvalidModificationError, "This name has already been registered"_s };
 
         Vector<AtomString> inputProperties;
 
         JSValue inputPropertiesIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputProperties"_s));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         if (!inputPropertiesIterableValue.isUndefined())
             inputProperties = convert<IDLSequence<IDLAtomStringAdaptor<IDLDOMString>>>(globalObject, inputPropertiesIterableValue);
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         // FIXME: Validate input properties here (step 7).
 
         Vector<String> inputArguments;
 
         JSValue inputArgumentsIterableValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "inputArguments"_s));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         if (!inputArgumentsIterableValue.isUndefined())
             inputArguments = convert<IDLSequence<IDLDOMString>>(globalObject, inputArgumentsIterableValue);
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         // FIXME: Parse syntax for inputArguments here (steps 11 and 12).
 
         JSValue contextOptionsValue = paintConstructor->get(&globalObject, Identifier::fromString(vm, "contextOptions"_s));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
         UNUSED_PARAM(contextOptionsValue);
 
         // FIXME: Convert to PaintRenderingContext2DSettings here (step 14).
 
         if (!paintConstructor->isConstructor())
-            return Exception { TypeError, "The second argument must be a constructor"_s };
+            return Exception { ExceptionCode::TypeError, "The second argument must be a constructor"_s };
 
         JSValue prototypeValue = paintConstructor->get(&globalObject, vm.propertyNames->prototype);
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         if (!prototypeValue.isObject())
-            return Exception { TypeError, "The second argument must have a prototype that is an object"_s };
+            return Exception { ExceptionCode::TypeError, "The second argument must have a prototype that is an object"_s };
 
         JSValue paintValue = prototypeValue.get(&globalObject, Identifier::fromString(vm, "paint"_s));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         if (paintValue.isUndefined())
-            return Exception { TypeError, "The class must have a paint method"_s };
+            return Exception { ExceptionCode::TypeError, "The class must have a paint method"_s };
 
         RefPtr<JSCSSPaintCallback> paint = convert<IDLCallbackFunction<JSCSSPaintCallback>>(globalObject, paintValue, *jsCast<JSDOMGlobalObject*>(&globalObject));
-        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
         auto paintDefinition = makeUnique<PaintDefinition>(name, paintConstructor.get(), paint.releaseNonNull(), WTFMove(inputProperties), WTFMove(inputArguments));
         paintDefinitionMap().add(name, WTFMove(paintDefinition));

@@ -43,7 +43,17 @@ public:
 
     // Shader Module
     virtual void visit(ShaderModule&);
+
+    // Directive
     virtual void visit(AST::Directive&);
+    virtual void visit(AST::DiagnosticDirective&);
+
+    // Declaration
+    virtual void visit(AST::Declaration&);
+    virtual void visit(AST::Function&);
+    virtual void visit(AST::Variable&);
+    virtual void visit(AST::Structure&);
+    virtual void visit(AST::TypeAlias&);
 
     // Attribute
     virtual void visit(AST::Attribute&);
@@ -51,11 +61,13 @@ public:
     virtual void visit(AST::BindingAttribute&);
     virtual void visit(AST::BuiltinAttribute&);
     virtual void visit(AST::ConstAttribute&);
+    virtual void visit(AST::DiagnosticAttribute&);
     virtual void visit(AST::GroupAttribute&);
     virtual void visit(AST::IdAttribute&);
     virtual void visit(AST::InterpolateAttribute&);
     virtual void visit(AST::InvariantAttribute&);
     virtual void visit(AST::LocationAttribute&);
+    virtual void visit(AST::MustUseAttribute&);
     virtual void visit(AST::SizeAttribute&);
     virtual void visit(AST::StageAttribute&);
     virtual void visit(AST::WorkgroupSizeAttribute&);
@@ -70,6 +82,7 @@ public:
     virtual void visit(AST::CallExpression&);
     virtual void visit(AST::FieldAccessExpression&);
     virtual void visit(AST::Float32Literal&);
+    virtual void visit(AST::Float16Literal&);
     virtual void visit(AST::IdentifierExpression&);
     virtual void visit(AST::IdentityExpression&);
     virtual void visit(AST::IndexAccessExpression&);
@@ -78,7 +91,6 @@ public:
     virtual void visit(AST::UnaryExpression&);
     virtual void visit(AST::Unsigned32Literal&);
 
-    virtual void visit(AST::Function&);
     virtual void visit(AST::Parameter&);
 
     virtual void visit(AST::Identifier&);
@@ -103,17 +115,14 @@ public:
     virtual void visit(AST::VariableStatement&);
     virtual void visit(AST::WhileStatement&);
 
-    virtual void visit(AST::Structure&);
-    virtual void visit(AST::StructureMember&);
-
     virtual void visit(AST::ArrayTypeExpression&);
     virtual void visit(AST::ElaboratedTypeExpression&);
     virtual void visit(AST::ReferenceTypeExpression&);
 
-    virtual void visit(AST::Variable&);
+    virtual void visit(AST::StructureMember&);
     virtual void visit(AST::VariableQualifier&);
-
-    virtual void visit(AST::InterpolateAttribute::Type, std::optional<AST::InterpolateAttribute::Sampling>) { }
+    virtual void visit(AST::SwitchClause&);
+    virtual void visit(AST::Continuing&);
 
     bool hasError() const;
     Result<void> result();

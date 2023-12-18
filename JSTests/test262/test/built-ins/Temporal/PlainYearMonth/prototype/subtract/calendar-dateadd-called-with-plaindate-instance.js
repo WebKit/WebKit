@@ -10,9 +10,9 @@ features: [Temporal]
 
 const calendar = TemporalHelpers.calendarDateAddPlainDateInstance();
 const instance = new Temporal.PlainYearMonth(1983, 3, calendar);
-TemporalHelpers.assertPlainYearMonth(instance.subtract({days: 31}), 1983, 2, 'M02', "Removing 31 days to march in is8601 calendar")
-assert.sameValue(calendar.dateAddCallCount, 3, "dateAdd called 3 times with positive subtract");
+TemporalHelpers.assertPlainYearMonth(instance.subtract({weeks: 5}), 1983, 2, 'M02', "Removing 5 weeks from March in is8601 calendar")
+assert.sameValue(calendar.dateAddCallCount, 2, "dateAdd called 2 times with positive subtract");
 
 calendar.dateAddCallCount = 0;
-TemporalHelpers.assertPlainYearMonth(instance.subtract({days: -31}), 1983, 4, 'M04', "Removing -31 days to march in is8601 calendar")
+TemporalHelpers.assertPlainYearMonth(instance.subtract({weeks: -5}), 1983, 4, 'M04', "Removing -5 weeks from March in is8601 calendar")
 assert.sameValue(calendar.dateAddCallCount, 1, "dateAdd called once with negative subtract");

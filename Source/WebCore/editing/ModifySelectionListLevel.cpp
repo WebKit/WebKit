@@ -79,7 +79,7 @@ static bool getStartEndListChildren(const VisibleSelection& selection, RefPtr<No
     }
     
     // if the selection ends on a list item with a sublist, include the entire sublist
-    if (endListChild->renderer()->isListItem()) {
+    if (endListChild->renderer()->isRenderListItem()) {
         RenderObject* r = endListChild->renderer()->nextSibling();
         if (r && isListHTMLElement(r->node()) && r->node()->parentNode() == startListChild->parentNode())
             endListChild = r->node();

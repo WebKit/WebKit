@@ -102,9 +102,10 @@ auto LinkIconCollector::iconsOfTypes(OptionSet<LinkIconType> iconTypes) -> Vecto
 
         Vector<std::pair<String, String>> attributes;
         if (linkElement.hasAttributes()) {
-            attributes.reserveInitialCapacity(linkElement.attributeCount());
-            for (auto& attribute : linkElement.attributesIterator())
-                attributes.uncheckedAppend({ attribute.localName(), attribute.value() });
+            auto attributesAccessor = linkElement.attributesIterator();
+            attributes = WTF::map(attributesAccessor, [](auto& attribute) -> std::pair<String, String> {
+                return { attribute.localName(), attribute.value() };
+            });
         }
 
         icons.append({ url, iconType, linkElement.type(), iconSize, WTFMove(attributes) });

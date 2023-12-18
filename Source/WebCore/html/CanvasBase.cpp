@@ -52,12 +52,7 @@ static std::atomic<size_t> s_activePixelMemory { 0 };
 
 namespace WebCore {
 
-#if USE(CG)
 constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Low;
-#else
-constexpr InterpolationQuality defaultInterpolationQuality = InterpolationQuality::Medium;
-#endif
-
 static std::optional<size_t> maxCanvasAreaForTesting;
 
 CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
@@ -107,7 +102,7 @@ AffineTransform CanvasBase::baseTransform() const
 void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
-        context->paintRenderingResultsToCanvas();
+        context->drawBufferToCanvas(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
         if (m_canvasNoiseHashSalt)
             m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *m_canvasNoiseHashSalt);
     }
@@ -185,11 +180,14 @@ void CanvasBase::notifyObserversCanvasChanged(const std::optional<FloatRect>& re
 void CanvasBase::didDraw(const std::optional<FloatRect>& rect, ShouldApplyPostProcessingToDirtyRect shouldApplyPostProcessingToDirtyRect)
 {
     // FIXME: We should exclude rects with ShouldApplyPostProcessingToDirtyRect::No
-    if (shouldInjectNoiseBeforeReadback() && shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes) {
-        if (rect)
-            m_canvasNoiseInjection.updateDirtyRect(intersection(enclosingIntRect(*rect), { { }, size() }));
-        else
-            m_canvasNoiseInjection.updateDirtyRect({ { }, size() });
+    if (shouldInjectNoiseBeforeReadback()) {
+        if (shouldApplyPostProcessingToDirtyRect == ShouldApplyPostProcessingToDirtyRect::Yes) {
+            if (rect)
+                m_canvasNoiseInjection.updateDirtyRect(intersection(enclosingIntRect(*rect), { { }, size() }));
+            else
+                m_canvasNoiseInjection.updateDirtyRect({ { }, size() });
+        } else if (!rect)
+            m_canvasNoiseInjection.clearDirtyRect();
     }
 }
 
@@ -231,10 +229,11 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
 {
     HashSet<Element*> cssCanvasClients;
     for (auto& observer : m_observers) {
-        if (!is<StyleCanvasImage>(observer))
+        auto* image = dynamicDowncast<StyleCanvasImage>(observer);
+        if (!image)
             continue;
 
-        for (auto entry : downcast<StyleCanvasImage>(observer).clients()) {
+        for (auto entry : image->clients()) {
             auto& client = entry.key;
             if (auto element = client.element())
                 cssCanvasClients.add(element);

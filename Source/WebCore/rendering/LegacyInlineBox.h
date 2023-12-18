@@ -47,7 +47,7 @@ public:
     virtual void extractLine() = 0;
     virtual void attachLine() = 0;
 
-    virtual bool isLineBreak() const { return renderer().isLineBreak(); }
+    virtual bool isLineBreak() const { return renderer().isRenderLineBreak(); }
 
     WEBCORE_EXPORT virtual void adjustPosition(float dx, float dy);
     void adjustLogicalPosition(float deltaLogicalLeft, float deltaLogicalTop)
@@ -278,7 +278,7 @@ private:
 
     LegacyInlineFlowBox* m_parent { nullptr }; // The box that contains us.
 
-    WeakPtr<RenderObject> m_renderer;
+    SingleThreadWeakPtr<RenderObject> m_renderer;
 
 private:
     float m_logicalWidth { 0 };

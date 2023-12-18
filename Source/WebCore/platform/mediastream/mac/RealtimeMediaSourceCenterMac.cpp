@@ -32,6 +32,7 @@
 #include "RealtimeMediaSourceCenter.h"
 
 #if ENABLE(MEDIA_STREAM)
+
 #include "AVCaptureDeviceManager.h"
 #include "AVVideoCaptureSource.h"
 #include "CoreAudioCaptureSource.h"
@@ -48,7 +49,15 @@ public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
+#if HAVE(AVCAPTUREDEVICE)
         return AVVideoCaptureSource::create(device, WTFMove(hashSalts), constraints, pageIdentifier);
+#else
+        UNUSED_PARAM(device);
+        UNUSED_PARAM(hashSalts);
+        UNUSED_PARAM(constraints);
+        UNUSED_PARAM(pageIdentifier);
+        return CaptureSourceOrError({ "AVVideoCaptureSource not available"_s , MediaAccessDenialReason::PermissionDenied });
+#endif
     }
 
 private:

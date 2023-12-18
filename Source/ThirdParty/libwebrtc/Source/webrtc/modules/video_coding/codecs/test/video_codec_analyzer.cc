@@ -79,7 +79,7 @@ void VideoCodecAnalyzer::StartEncode(const VideoFrame& input_frame) {
 void VideoCodecAnalyzer::FinishEncode(const EncodedImage& frame) {
   int64_t encode_finished_us = rtc::TimeMicros();
 
-  task_queue_.PostTask([this, timestamp_rtp = frame.Timestamp(),
+  task_queue_.PostTask([this, timestamp_rtp = frame.RtpTimestamp(),
                         spatial_idx = frame.SpatialIndex().value_or(0),
                         temporal_idx = frame.TemporalIndex().value_or(0),
                         width = frame._encodedWidth,
@@ -114,7 +114,7 @@ void VideoCodecAnalyzer::FinishEncode(const EncodedImage& frame) {
 
 void VideoCodecAnalyzer::StartDecode(const EncodedImage& frame) {
   int64_t decode_start_us = rtc::TimeMicros();
-  task_queue_.PostTask([this, timestamp_rtp = frame.Timestamp(),
+  task_queue_.PostTask([this, timestamp_rtp = frame.RtpTimestamp(),
                         spatial_idx = frame.SpatialIndex().value_or(0),
                         frame_size_bytes = frame.size(), decode_start_us]() {
     RTC_DCHECK_RUN_ON(&sequence_checker_);

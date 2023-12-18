@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "EpochTimeStamp.h"
 #include "PushSubscriptionIdentifier.h"
 #include "SQLiteDatabase.h"
@@ -120,5 +118,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

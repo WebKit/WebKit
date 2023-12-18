@@ -155,33 +155,34 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
+        } else if (invokeTargetElement()) {
+            handleInvokeAction();
         } else
             handlePopoverTargetAction();
     }
 
-    if (is<KeyboardEvent>(event)) {
-        KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.type() == eventNames.keydownEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
+    if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
+        if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
             setActive(true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
         }
-        if (keyboardEvent.type() == eventNames.keypressEvent) {
-            switch (keyboardEvent.charCode()) {
+        if (keyboardEvent->type() == eventNames.keypressEvent) {
+            switch (keyboardEvent->charCode()) {
                 case '\r':
-                    dispatchSimulatedClick(&keyboardEvent);
-                    keyboardEvent.setDefaultHandled();
+                    dispatchSimulatedClick(keyboardEvent.get());
+                    keyboardEvent->setDefaultHandled();
                     return;
                 case ' ':
                     // Prevent scrolling down the page.
-                    keyboardEvent.setDefaultHandled();
+                    keyboardEvent->setDefaultHandled();
                     return;
             }
         }
-        if (keyboardEvent.type() == eventNames.keyupEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
             if (active())
-                dispatchSimulatedClick(&keyboardEvent);
-            keyboardEvent.setDefaultHandled();
+                dispatchSimulatedClick(keyboardEvent.get());
+            keyboardEvent->setDefaultHandled();
             return;
         }
     }

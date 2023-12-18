@@ -222,18 +222,6 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
     return nil;
 }
 
-bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
-{
-    return pdfPluginEnabled()
-#if ENABLE(PDFJS)
-        && !corePage()->settings().pdfJSViewerEnabled()
-#endif
-        && getPDFLayerControllerClass()
-        && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
-            || (contentType.isEmpty()
-                && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s))));
-}
-
 static String commandNameForSelectorName(const String& selectorName)
 {
     // Map selectors into Editor command names.
@@ -385,7 +373,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     completionHandler(WebCore::AttributedString::fromNSAttributedString(WTFMove(attributedString)), rangeToSend);
 }
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelection *selection, PluginView& pdfPlugin, NSDictionary *options, WebCore::TextIndicatorPresentationTransition presentationTransition)
 {
@@ -600,7 +588,7 @@ void WebPage::setTopOverhangImage(WebImage* image)
     if (!frameView)
         return;
 
-    auto* layer = frameView->setWantsLayerForTopOverHangArea(image);
+    RefPtr layer = frameView->setWantsLayerForTopOverHangArea(image);
     if (!layer)
         return;
 
@@ -619,7 +607,7 @@ void WebPage::setBottomOverhangImage(WebImage* image)
     if (!frameView)
         return;
 
-    auto* layer = frameView->setWantsLayerForBottomOverHangArea(image);
+    RefPtr layer = frameView->setWantsLayerForBottomOverHangArea(image);
     if (!layer)
         return;
 
@@ -931,7 +919,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         }
     }
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (is<HTMLPlugInImageElement>(element)) {
         if (RefPtr pluginView = static_cast<PluginView*>(downcast<HTMLPlugInImageElement>(*element).pluginWidget())) {
             // FIXME: We don't have API to identify images inside PDFs based on position.
@@ -956,6 +944,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     RefPtr<API::Object> userData;
     injectedBundleContextMenuClient().prepareForImmediateAction(*this, hitTestResult, userData);
 
+    immediateActionResult.elementBoundingBox = immediateActionResult.elementBoundingBox.toRectWithExtentsClippedToNumericLimits();
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
@@ -1073,11 +1062,25 @@ void WebPage::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdenti
 }
 #endif
 
+void WebPage::didBeginMagnificationGesture()
+{
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
+        pluginView->didBeginMagnificationGesture();
+        return;
+    }
+#endif
+}
+
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         localMainFrame->eventHandler().didEndMagnificationGesture();
+#endif
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn())
+        pluginView->didEndMagnificationGesture();
 #endif
 }
 
@@ -1103,7 +1106,16 @@ void WebPage::setAccentColor(WebCore::Color color)
     [NSApp _setAccentColor:cocoaColorOrNil(color).get()];
 }
 
+#if PLATFORM(MAC)
+void WebPage::setAppUsesCustomAccentColor(bool appUsesCustomAccentColor)
+{
+    corePage()->setAppUsesCustomAccentColor(appUsesCustomAccentColor);
+}
+#endif
+
 #endif // HAVE(APP_ACCENT_COLORS)
+
+#if ENABLE(PDF_PLUGIN)
 
 void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 {
@@ -1137,24 +1149,26 @@ void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandl
     pdfPlugin->openWithPreview(WTFMove(completionHandler));
 }
 
-void WebPage::createPDFHUD(PDFPlugin& plugin, const IntRect& boundingBox)
+void WebPage::createPDFHUD(PDFPluginBase& plugin, const IntRect& boundingBox)
 {
     auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), plugin);
     if (addResult.isNewEntry)
         send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), boundingBox));
 }
 
-void WebPage::updatePDFHUDLocation(PDFPlugin& plugin, const IntRect& boundingBox)
+void WebPage::updatePDFHUDLocation(PDFPluginBase& plugin, const IntRect& boundingBox)
 {
     if (m_pdfPlugInsWithHUD.contains(plugin.identifier()))
         send(Messages::WebPageProxy::UpdatePDFHUDLocation(plugin.identifier(), boundingBox));
 }
 
-void WebPage::removePDFHUD(PDFPlugin& plugin)
+void WebPage::removePDFHUD(PDFPluginBase& plugin)
 {
     if (m_pdfPlugInsWithHUD.remove(plugin.identifier()))
         send(Messages::WebPageProxy::RemovePDFHUD(plugin.identifier()));
 }
+
+#endif // ENABLE(PDF_PLUGIN)
 
 } // namespace WebKit
 

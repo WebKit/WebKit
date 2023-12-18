@@ -124,6 +124,9 @@ void TextTrackLoader::notifyFinished(CachedResource& resource, const NetworkLoad
     if (m_resource->resourceError().isAccessControl())
         corsPolicyPreventedLoad();
 
+    if (!m_resource->resourceBuffer())
+        m_state = Failed;
+
     if (m_state != Failed) {
         processNewCueData(*m_resource);
         if (m_cueParser)

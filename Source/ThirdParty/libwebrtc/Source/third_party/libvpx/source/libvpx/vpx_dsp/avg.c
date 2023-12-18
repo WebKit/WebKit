@@ -7,6 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+
+#include <assert.h>
 #include <stdlib.h>
 
 #include "./vpx_dsp_rtcd.h"
@@ -293,19 +295,19 @@ void vpx_hadamard_32x32_c(const int16_t *src_diff, ptrdiff_t src_stride,
     vpx_hadamard_16x16_c(src_ptr, src_stride, coeff + idx * 256);
   }
 
-  // coeff: 15 bit, dynamic range [-16320, 16320]
+  // coeff: 16 bit, dynamic range [-32768, 32767]
   for (idx = 0; idx < 256; ++idx) {
     tran_low_t a0 = coeff[0];
     tran_low_t a1 = coeff[256];
     tran_low_t a2 = coeff[512];
     tran_low_t a3 = coeff[768];
 
-    tran_low_t b0 = (a0 + a1) >> 2;  // (a0 + a1): 16 bit, [-32640, 32640]
+    tran_low_t b0 = (a0 + a1) >> 2;  // (a0 + a1): 17 bit, [-65536, 65535]
     tran_low_t b1 = (a0 - a1) >> 2;  // b0-b3: 15 bit, dynamic range
-    tran_low_t b2 = (a2 + a3) >> 2;  // [-16320, 16320]
+    tran_low_t b2 = (a2 + a3) >> 2;  // [-16384, 16383]
     tran_low_t b3 = (a2 - a3) >> 2;
 
-    coeff[0] = b0 + b2;  // 16 bit, [-32640, 32640]
+    coeff[0] = b0 + b2;  // 16 bit, [-32768, 32767]
     coeff[256] = b1 + b3;
     coeff[512] = b0 - b2;
     coeff[768] = b1 - b3;
@@ -344,6 +346,7 @@ void vpx_int_pro_row_c(int16_t hbuf[16], const uint8_t *ref,
                        const int ref_stride, const int height) {
   int idx;
   const int norm_factor = height >> 1;
+  assert(height >= 2);
   for (idx = 0; idx < 16; ++idx) {
     int i;
     hbuf[idx] = 0;
@@ -425,7 +428,7 @@ void vpx_highbd_minmax_8x8_c(const uint8_t *s8, int p, const uint8_t *d8,
   int i, j;
   const uint16_t *s = CONVERT_TO_SHORTPTR(s8);
   const uint16_t *d = CONVERT_TO_SHORTPTR(d8);
-  *min = 255;
+  *min = 65535;
   *max = 0;
   for (i = 0; i < 8; ++i, s += p, d += dp) {
     for (j = 0; j < 8; ++j) {

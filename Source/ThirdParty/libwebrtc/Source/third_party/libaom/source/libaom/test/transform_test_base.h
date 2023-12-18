@@ -12,11 +12,12 @@
 #ifndef AOM_TEST_TRANSFORM_TEST_BASE_H_
 #define AOM_TEST_TRANSFORM_TEST_BASE_H_
 
-#include "config/aom_config.h"
+#include "third_party/googletest/src/googletest/include/gtest/gtest.h"
 
-#include "aom_mem/aom_mem.h"
 #include "aom/aom_codec.h"
 #include "aom_dsp/txfm_common.h"
+#include "aom_mem/aom_mem.h"
+#include "test/acm_random.h"
 
 namespace libaom_test {
 
@@ -40,7 +41,7 @@ using IhtFunc = void (*)(const tran_low_t *in, uint8_t *out, int stride,
 template <typename OutType>
 class TransformTestBase {
  public:
-  virtual ~TransformTestBase() {}
+  virtual ~TransformTestBase() = default;
 
  protected:
   virtual void RunFwdTxfm(const int16_t *in, OutType *out, int stride) = 0;

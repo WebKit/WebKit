@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <string>
 
+#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network_constants.h"
@@ -43,7 +44,7 @@ class RTC_EXPORT Candidate {
             uint32_t priority,
             absl::string_view username,
             absl::string_view password,
-            absl::string_view type,
+            absl::string_view type ABSL_ATTRIBUTE_LIFETIME_BOUND,
             uint32_t generation,
             absl::string_view foundation,
             uint16_t network_id = 0,
@@ -101,7 +102,14 @@ class RTC_EXPORT Candidate {
   void set_password(absl::string_view password) { Assign(password_, password); }
 
   const std::string& type() const { return type_; }
-  void set_type(absl::string_view type) { Assign(type_, type); }
+
+  // Setting the type requires a constant string (e.g.
+  // cricket::LOCAL_PORT_TYPE). The type should really be an enum rather than a
+  // string, but until we make that change the lifetime attribute helps us lock
+  // things down. See also the `Port` class.
+  void set_type(absl::string_view type ABSL_ATTRIBUTE_LIFETIME_BOUND) {
+    Assign(type_, type);
+  }
 
   const std::string& network_name() const { return network_name_; }
   void set_network_name(absl::string_view network_name) {
@@ -173,7 +181,8 @@ class RTC_EXPORT Candidate {
 
   uint32_t GetPriority(uint32_t type_preference,
                        int network_adapter_preference,
-                       int relay_preference) const;
+                       int relay_preference,
+                       bool adjust_local_preference) const;
 
   bool operator==(const Candidate& o) const;
   bool operator!=(const Candidate& o) const;

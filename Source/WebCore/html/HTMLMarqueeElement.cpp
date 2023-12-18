@@ -183,7 +183,7 @@ int HTMLMarqueeElement::loop() const
 ExceptionOr<void> HTMLMarqueeElement::setLoop(int loop)
 {
     if (loop <= 0 && loop != -1)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
     setIntegralAttribute(loopAttr, loop);
     return { };
 }

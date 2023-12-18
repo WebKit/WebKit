@@ -84,7 +84,11 @@ class RtpPacketizerH264 : public RtpPacketizer {
 
   bool GeneratePackets(H264PacketizationMode packetization_mode);
   bool PacketizeFuA(size_t fragment_index);
+#ifdef WEBRTC_WEBKIT_BUILD
+  std::optional<size_t> PacketizeStapA(size_t fragment_index);
+#else
   size_t PacketizeStapA(size_t fragment_index);
+#endif
   bool PacketizeSingleNalu(size_t fragment_index);
 
   void NextAggregatePacket(RtpPacketToSend* rtp_packet);

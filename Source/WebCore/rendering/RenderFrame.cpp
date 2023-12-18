@@ -37,6 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrame);
 RenderFrame::RenderFrame(HTMLFrameElement& frame, RenderStyle&& style)
     : RenderFrameBase(Type::Frame, frame, WTFMove(style))
 {
+    ASSERT(isRenderFrame());
 }
 
 HTMLFrameElement& RenderFrame::frameElement() const

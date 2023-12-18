@@ -1,6 +1,6 @@
 
-FAIL CustomStateSet behavior of ElementInternals.states: Initial state Can't find variable: CustomStateSet
-FAIL CustomStateSet behavior of ElementInternals.states: Exceptions assert_throws_dom: function "() => { i.states.add(''); }" threw object "TypeError: undefined is not an object (evaluating 'i.states.add')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL CustomStateSet behavior of ElementInternals.states: Modifications undefined is not an object (evaluating 'i.states.add')
-FAIL Updating a CustomStateSet while iterating it should work undefined is not an object (evaluating 'i.states.add')
+PASS CustomStateSet behavior of ElementInternals.states: Initial state
+PASS CustomStateSet behavior of ElementInternals.states: Exceptions
+PASS CustomStateSet behavior of ElementInternals.states: Modifications
+PASS Updating a CustomStateSet while iterating it should work
 

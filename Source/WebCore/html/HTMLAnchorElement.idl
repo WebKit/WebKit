@@ -26,7 +26,7 @@
     [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementFraudPreventionEnabled, Reflect] attribute DOMString attributionSourceNonce;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString coords;
-    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
     [CEReactions=NotNeeded, Reflect] attribute DOMString hreflang;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute USVString ping;

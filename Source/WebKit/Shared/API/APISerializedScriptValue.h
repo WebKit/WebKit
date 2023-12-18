@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APISerializedScriptValue_h
-#define APISerializedScriptValue_h
+#pragma once
 
 #include "APIObject.h"
 
@@ -57,9 +56,9 @@ public:
         return adoptRef(*new SerializedScriptValue(serializedValue.releaseNonNull()));
     }
     
-    static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& buffer)
+    static Ref<SerializedScriptValue> createFromWireBytes(IPC::DataReference buffer)
     {
-        return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::createFromWireBytes(WTFMove(buffer))));
+        return adoptRef(*new SerializedScriptValue(WebCore::SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(buffer))));
     }
     
     JSValueRef deserialize(JSContextRef context, JSValueRef* exception)
@@ -94,4 +93,4 @@ private:
     
 }
 
-#endif
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(SerializedScriptValue);

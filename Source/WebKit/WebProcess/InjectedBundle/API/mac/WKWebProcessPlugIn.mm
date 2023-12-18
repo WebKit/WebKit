@@ -113,7 +113,7 @@ static Ref<API::Array> createWKArray(NSArray *array)
     
     for (id entry in array) {
         if ([entry isKindOfClass:[NSString class]])
-            strings.uncheckedAppend(adoptRef(WebKit::toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
+            strings.append(adoptRef(WebKit::toImpl(WKStringCreateWithCFString((__bridge CFStringRef)entry))));
     }
     
     return API::Array::create(WTFMove(strings));

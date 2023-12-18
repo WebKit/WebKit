@@ -329,10 +329,8 @@ public:
     static bool isAvailable();
 
     Type type() const { return Type::WebM; }
-    WEBCORE_EXPORT void appendData(Segment&&, CompletionHandler<void()>&& = [] { }, AppendFlags = AppendFlags::None) final;
+    WEBCORE_EXPORT Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
-    void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
-    bool shouldProvideMediadataForTrackID(uint64_t) final;
     void resetParserState() final { m_parser.resetState(); }
     void invalidate() final;
 

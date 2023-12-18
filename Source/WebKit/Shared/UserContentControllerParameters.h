@@ -29,15 +29,9 @@
 #include "WebCompiledContentRuleListData.h"
 #include "WebUserContentControllerDataTypes.h"
 
-namespace IPC {
-class Encoder;
-class Decoder;
-}
-
 namespace WebKit {
 
 struct UserContentControllerParameters {
-
     UserContentControllerIdentifier identifier;
     Vector<std::pair<ContentWorldIdentifier, String>> userContentWorlds;
     Vector<WebUserScriptData> userScripts;
@@ -46,9 +40,6 @@ struct UserContentControllerParameters {
 #if ENABLE(CONTENT_EXTENSIONS)
     Vector<std::pair<WebCompiledContentRuleListData, URL>> contentRuleLists;
 #endif
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<UserContentControllerParameters> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

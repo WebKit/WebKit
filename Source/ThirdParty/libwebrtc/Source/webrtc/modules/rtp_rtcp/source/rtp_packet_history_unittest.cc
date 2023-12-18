@@ -10,9 +10,13 @@
 
 #include "modules/rtp_rtcp/source/rtp_packet_history.h"
 
+#include <cstdint>
+#include <limits>
 #include <memory>
 #include <utility>
 
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "system_wrappers/include/clock.h"
@@ -28,11 +32,28 @@ constexpr uint16_t kStartSeqNum = 65534u;
 uint16_t To16u(size_t sequence_number) {
   return static_cast<uint16_t>(sequence_number & 0xFFFF);
 }
-}  // namespace
 
 using StorageMode = RtpPacketHistory::StorageMode;
 
-class RtpPacketHistoryTest : public ::testing::TestWithParam<bool> {
+using ::testing::AllOf;
+using ::testing::Pointee;
+using ::testing::Property;
+
+std::unique_ptr<RtpPacketToSend> CreatePacket(
+    uint16_t seq_num,
+    Timestamp capture_time = Timestamp::Zero()) {
+  // Payload, ssrc, timestamp and extensions are irrelevant for this tests.
+  std::unique_ptr<RtpPacketToSend> packet(new RtpPacketToSend(nullptr));
+  packet->SetSequenceNumber(seq_num);
+  packet->set_capture_time(capture_time);
+  packet->set_allow_retransmission(true);
+  return packet;
+}
+
+}  // namespace
+
+class RtpPacketHistoryTest
+    : public ::testing::TestWithParam<RtpPacketHistory::PaddingMode> {
  protected:
   RtpPacketHistoryTest()
       : fake_clock_(123456),
@@ -42,12 +63,7 @@ class RtpPacketHistoryTest : public ::testing::TestWithParam<bool> {
   RtpPacketHistory hist_;
 
   std::unique_ptr<RtpPacketToSend> CreateRtpPacket(uint16_t seq_num) {
-    // Payload, ssrc, timestamp and extensions are irrelevant for this tests.
-    std::unique_ptr<RtpPacketToSend> packet(new RtpPacketToSend(nullptr));
-    packet->SetSequenceNumber(seq_num);
-    packet->set_capture_time(fake_clock_.CurrentTime());
-    packet->set_allow_retransmission(true);
-    return packet;
+    return CreatePacket(seq_num, fake_clock_.CurrentTime());
   }
 };
 
@@ -229,9 +245,8 @@ TEST_P(RtpPacketHistoryTest, RemovesOldestPacketWhenAtMaxCapacity) {
 }
 
 TEST_P(RtpPacketHistoryTest, RemovesLowestPrioPaddingWhenAtMaxCapacity) {
-  if (!GetParam()) {
-    // Padding prioritization is off, ignore this test.
-    return;
+  if (GetParam() != RtpPacketHistory::PaddingMode::kPriority) {
+    GTEST_SKIP() << "Padding prioritization required for this test";
   }
 
   // Tests the absolute upper bound on number of packets in the prioritized
@@ -516,9 +531,8 @@ TEST_P(RtpPacketHistoryTest, DontRemovePendingTransmissions) {
 }
 
 TEST_P(RtpPacketHistoryTest, PrioritizedPayloadPadding) {
-  if (!GetParam()) {
-    // Padding prioritization is off, ignore this test.
-    return;
+  if (GetParam() != RtpPacketHistory::PaddingMode::kPriority) {
+    GTEST_SKIP() << "Padding prioritization required for this test";
   }
 
   hist_.SetStorePacketsStatus(StorageMode::kStoreAndCull, 1);
@@ -566,7 +580,12 @@ TEST_P(RtpPacketHistoryTest, NoPendingPacketAsPadding) {
 
   // If packet is pending retransmission, don't try to use it as padding.
   hist_.GetPacketAndMarkAsPending(kStartSeqNum);
-  EXPECT_EQ(nullptr, hist_.GetPayloadPaddingPacket());
+  if (GetParam() != RtpPacketHistory::PaddingMode::kRecentLargePacket) {
+    EXPECT_EQ(nullptr, hist_.GetPayloadPaddingPacket());
+  } else {
+    // We do allow sending the same packet multiple times in this mode.
+    EXPECT_NE(nullptr, hist_.GetPayloadPaddingPacket());
+  }
 
   // Market it as no longer pending, should be usable as padding again.
   hist_.MarkPacketAsSent(kStartSeqNum);
@@ -633,9 +652,8 @@ TEST_P(RtpPacketHistoryTest, OutOfOrderInsertRemoval) {
 }
 
 TEST_P(RtpPacketHistoryTest, UsesLastPacketAsPaddingWithPrioOff) {
-  if (GetParam()) {
-    // Padding prioritization is enabled, ignore this test.
-    return;
+  if (GetParam() != RtpPacketHistory::PaddingMode::kDefault) {
+    GTEST_SKIP() << "Default padding prioritization required for this test";
   }
 
   const size_t kHistorySize = 10;
@@ -675,7 +693,100 @@ TEST_P(RtpPacketHistoryTest, UsesLastPacketAsPaddingWithPrioOff) {
   EXPECT_EQ(hist_.GetPayloadPaddingPacket(), nullptr);
 }
 
-INSTANTIATE_TEST_SUITE_P(WithAndWithoutPaddingPrio,
-                         RtpPacketHistoryTest,
-                         ::testing::Bool());
+INSTANTIATE_TEST_SUITE_P(
+    WithAndWithoutPaddingPrio,
+    RtpPacketHistoryTest,
+    ::testing::Values(RtpPacketHistory::PaddingMode::kDefault,
+                      RtpPacketHistory::PaddingMode::kPriority,
+                      RtpPacketHistory::PaddingMode::kRecentLargePacket));
+
+TEST(RtpPacketHistoryRecentLargePacketMode,
+     GetPayloadPaddingPacketAfterCullWithAcksReturnOldPacket) {
+  SimulatedClock fake_clock(1234);
+  RtpPacketHistory history(&fake_clock,
+                           RtpPacketHistory::PaddingMode::kRecentLargePacket);
+
+  history.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+  std::unique_ptr<RtpPacketToSend> packet = CreatePacket(kStartSeqNum);
+  packet->SetPayloadSize(1000);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+  fake_clock.AdvanceTimeMilliseconds(33);
+  history.CullAcknowledgedPackets(std::vector<uint16_t>{kStartSeqNum});
+
+  EXPECT_THAT(
+      history.GetPayloadPaddingPacket(),
+      Pointee(AllOf(Property(&RtpPacketToSend::SequenceNumber, kStartSeqNum),
+                    (Property(&RtpPacketToSend::payload_size, 1000)))));
+}
+
+TEST(RtpPacketHistoryRecentLargePacketMode,
+     GetPayloadPaddingPacketIgnoreSmallRecentPackets) {
+  SimulatedClock fake_clock(1234);
+  RtpPacketHistory history(&fake_clock,
+                           RtpPacketHistory::PaddingMode::kRecentLargePacket);
+  history.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+  std::unique_ptr<RtpPacketToSend> packet = CreatePacket(kStartSeqNum);
+  packet->SetPayloadSize(1000);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+  packet = CreatePacket(kStartSeqNum + 1);
+  packet->SetPayloadSize(100);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+
+  EXPECT_THAT(
+      history.GetPayloadPaddingPacket(),
+      Pointee(AllOf(Property(&RtpPacketToSend::SequenceNumber, kStartSeqNum),
+                    Property(&RtpPacketToSend::payload_size, 1000))));
+}
+
+TEST(RtpPacketHistoryRecentLargePacketMode,
+     GetPayloadPaddingPacketReturnsRecentPacketIfSizeNearMax) {
+  SimulatedClock fake_clock(1234);
+  RtpPacketHistory history(&fake_clock,
+                           RtpPacketHistory::PaddingMode::kRecentLargePacket);
+  history.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+  std::unique_ptr<RtpPacketToSend> packet = CreatePacket(kStartSeqNum);
+  packet->SetPayloadSize(1000);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+  packet = CreatePacket(kStartSeqNum + 1);
+  packet->SetPayloadSize(950);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+
+  EXPECT_THAT(history.GetPayloadPaddingPacket(),
+              (Pointee(AllOf(
+                  Property(&RtpPacketToSend::SequenceNumber, kStartSeqNum + 1),
+                  Property(&RtpPacketToSend::payload_size, 950)))));
+}
+
+TEST(RtpPacketHistoryRecentLargePacketMode,
+     GetPayloadPaddingPacketReturnsLastPacketAfterLargeSequenceNumberGap) {
+  SimulatedClock fake_clock(1234);
+  RtpPacketHistory history(&fake_clock,
+                           RtpPacketHistory::PaddingMode::kRecentLargePacket);
+  history.SetStorePacketsStatus(StorageMode::kStoreAndCull, 10);
+  uint16_t sequence_number = std::numeric_limits<uint16_t>::max() - 50;
+  std::unique_ptr<RtpPacketToSend> packet = CreatePacket(sequence_number);
+  packet->SetPayloadSize(1000);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+  ASSERT_THAT(
+      history.GetPayloadPaddingPacket(),
+      Pointee(Property(&RtpPacketToSend::SequenceNumber, sequence_number)));
+
+  // A long time pass... and potentially many small packets are injected, or
+  // timestamp jumps.
+  sequence_number = 1 << 13;
+  packet = CreatePacket(sequence_number);
+  packet->SetPayloadSize(100);
+  history.PutRtpPacket(std::move(packet),
+                       /*send_time=*/fake_clock.CurrentTime());
+  EXPECT_THAT(
+      history.GetPayloadPaddingPacket(),
+      Pointee(Property(&RtpPacketToSend::SequenceNumber, sequence_number)));
+}
+
 }  // namespace webrtc

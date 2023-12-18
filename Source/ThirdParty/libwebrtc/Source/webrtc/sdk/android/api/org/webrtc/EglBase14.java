@@ -10,11 +10,21 @@
 
 package org.webrtc;
 
+import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
+import android.opengl.EGLDisplay;
 
 /** EGL 1.4 implementation of EglBase. */
 public interface EglBase14 extends EglBase {
   interface Context extends EglBase.Context {
     EGLContext getRawContext();
+  }
+
+  interface EglConnection extends EglBase.EglConnection {
+    EGLContext getContext();
+
+    EGLDisplay getDisplay();
+
+    EGLConfig getConfig();
   }
 }

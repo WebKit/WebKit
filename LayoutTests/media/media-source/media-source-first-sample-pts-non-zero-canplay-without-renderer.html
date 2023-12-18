@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>media-source-first-sample-pts-non-zero-canplay-without-renderer</title>
+<script src="../video-test.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+(async () => {
+    consoleWrite('This test verifies that the "canplay" event fires on a video element with a MediaSource that loads a video track whose first sample has a presentation timestamp greater than 0 when the video element is not in the DOM.');
+
+    var video = document.createElement("video");
+
+    var source = new MediaSource();
+    video.srcObject = source;
+    await waitFor(source, "sourceopen");
+
+    var buffer = source.addSourceBuffer("video/mp4");
+    var response = await fetch("resources/first-sample-pts-non-zero/first-sample-pts-non-zero.mp4");
+    buffer.appendBuffer(await response.arrayBuffer());
+    await waitFor(video, "canplay", true);
+
+    endTest();
+})();
+</script>
+</body>
+</html>

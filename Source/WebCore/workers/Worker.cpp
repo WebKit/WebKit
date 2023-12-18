@@ -213,16 +213,14 @@ void Worker::notifyFinished()
         return;
     }
 
-    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->contentSecurityPolicy()->responseHeaders();
+    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders = m_contentSecurityPolicyResponseHeaders ? m_contentSecurityPolicyResponseHeaders.value() : context->checkedContentSecurityPolicy()->responseHeaders();
     ReferrerPolicy referrerPolicy = ReferrerPolicy::EmptyString;
     if (auto policy = parseReferrerPolicy(m_scriptLoader->referrerPolicy(), ReferrerPolicySource::HTTPHeader))
         referrerPolicy = *policy;
 
     m_didStartWorkerGlobalScope = true;
     WorkerInitializationData initializationData {
-#if ENABLE(SERVICE_WORKER)
         m_scriptLoader->takeServiceWorkerData(),
-#endif
         m_clientIdentifier,
         context->userAgent(m_scriptLoader->responseURL())
     };

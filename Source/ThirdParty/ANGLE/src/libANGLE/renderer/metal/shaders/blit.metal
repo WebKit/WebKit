@@ -12,8 +12,9 @@ using namespace rx::mtl_shader;
 // function_constant(0) is already used by common.h
 constant bool kPremultiplyAlpha [[function_constant(1)]];
 constant bool kUnmultiplyAlpha [[function_constant(2)]];
-constant int kSourceTextureType [[function_constant(3)]];   // Source color/depth texture type.
-constant int kSourceTexture2Type [[function_constant(4)]];  // Source stencil texture type.
+constant bool kTransformLinearToSrgb [[function_constant(3)]];
+constant int kSourceTextureType [[function_constant(4)]];   // Source color/depth texture type.
+constant int kSourceTexture2Type [[function_constant(5)]];  // Source stencil texture type.
 
 constant bool kSourceTextureType2D      = kSourceTextureType == kTextureType2D;
 constant bool kSourceTextureType2DArray = kSourceTextureType == kTextureType2DArray;
@@ -28,38 +29,26 @@ constant bool kSourceTexture2TypeCube    = kSourceTexture2Type == kTextureTypeCu
 
 struct BlitParams
 {
-    // 0: lower left, 1: lower right, 2: upper left
-    float2 srcTexCoords[3];
+    // xy: lower left, zw: upper right
+    float4 srcTexCoords;
     int srcLevel;  // Source texture level.
     int srcLayer;  // Source texture layer.
-    bool dstFlipViewportX;
-    bool dstFlipViewportY;
     bool dstLuminance;  // destination texture is luminance. Unused by depth & stencil blitting.
-    uint8_t padding[13];
+    uint8_t padding[7];
 };
 
 struct BlitVSOut
 {
     float4 position [[position]];
-    float2 texCoords [[user(locn1)]];
+    float2 texCoords [[center_no_perspective, user(locn1)]];
 };
 
 vertex BlitVSOut blitVS(unsigned int vid [[vertex_id]], constant BlitParams &options [[buffer(0)]])
 {
     BlitVSOut output;
-    output.position  = float4(gCorners[vid], 0.0, 1.0);
-    output.texCoords = options.srcTexCoords[vid];
-
-    if (options.dstFlipViewportX)
-    {
-        output.position.x = -output.position.x;
-    }
-    if (!options.dstFlipViewportY)
-    {
-        // If viewport is not flipped, we have to flip Y in normalized device coordinates.
-        // Since NDC has Y is opposite direction of viewport coodrinates.
-        output.position.y = -output.position.y;
-    }
+    output.position.xy = select(float2(-1.0f), float2(1.0f), bool2(vid & uint2(2, 1)));
+    output.position.zw = float2(0.0, 1.0);
+    output.texCoords = select(options.srcTexCoords.xy, options.srcTexCoords.zw, bool2(vid & uint2(2, 1)));
 
     return output;
 }
@@ -136,16 +125,21 @@ static inline vec<T, 4> blitReadTexture(BLIT_COLOR_FS_PARAMS(T))
             break;
     }
 
-    if (kPremultiplyAlpha)
-    {
-        output.xyz *= output.a;
+    if (kTransformLinearToSrgb) {
+        output.x = linearToSRGB(output.x);
+        output.y = linearToSRGB(output.y);
+        output.z = linearToSRGB(output.z);
     }
-    else if (kUnmultiplyAlpha)
+    if (kUnmultiplyAlpha)
     {
         if (output.a != 0.0)
         {
             output.xyz /= output.a;
         }
+    }
+    if (kPremultiplyAlpha)
+    {
+        output.xyz *= output.a;
     }
 
     if (options.dstLuminance)

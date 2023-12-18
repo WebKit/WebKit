@@ -81,22 +81,20 @@ SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameFromStateOfInputSources(c
     // The client of this class is required to intern SimulatedInputSource instances if the last state
     // from the previous command should be used as the inital state for the next command. This is the
     // case for Perform Actions and Release Actions, but not Element Click or Element Send Keys.
-    Vector<SimulatedInputKeyFrame::StateEntry> entries;
-    entries.reserveCapacity(inputSources.size());
-
-    for (const auto& inputSource : inputSources.values())
-        entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), inputSource->state });
+    auto& values = inputSources.values();
+    auto entries = WTF::map(values, [](auto& inputSource) {
+        return std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), inputSource->state };
+    });
 
     return SimulatedInputKeyFrame(WTFMove(entries));
 }
 
 SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>& inputSources)
 {
-    Vector<SimulatedInputKeyFrame::StateEntry> entries;
-    entries.reserveCapacity(inputSources.size());
-
-    for (const auto& inputSource : inputSources.values())
-        entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), SimulatedInputSourceState::emptyStateForSourceType(inputSource->type) });
+    auto& values = inputSources.values();
+    auto entries = WTF::map(values, [](auto& inputSource) {
+        return std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), SimulatedInputSourceState::emptyStateForSourceType(inputSource->type) };
+    });
 
     return SimulatedInputKeyFrame(WTFMove(entries));
 }
@@ -178,7 +176,7 @@ void SimulatedInputDispatcher::transitionToNextInputSourceState()
 
     auto& nextKeyFrame = m_keyframes[m_keyframeIndex];
     auto& postStateEntry = nextKeyFrame.states[m_inputSourceStateIndex];
-    SimulatedInputSource& inputSource = postStateEntry.first;
+    Ref inputSource = postStateEntry.first;
 
     transitionInputSourceToState(inputSource, postStateEntry.second, [this, protectedThis = Ref { *this }](std::optional<AutomationCommandError> error) {
         if (error) {

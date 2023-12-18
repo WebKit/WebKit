@@ -252,8 +252,7 @@ public:
 
     int lineNumberForBytecodeIndex(BytecodeIndex);
 
-    void expressionRangeForBytecodeIndex(BytecodeIndex, int& divot,
-        int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
+    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
 
@@ -296,8 +295,8 @@ public:
     bool wasCompiledWithControlFlowProfilerOpcodes() const { return m_codeGenerationMode.contains(CodeGenerationMode::ControlFlowProfiler); }
     OptionSet<CodeGenerationMode> codeGenerationMode() const { return m_codeGenerationMode; }
 
-    TriState didOptimize() const { return static_cast<TriState>(m_didOptimize); }
-    void setDidOptimize(TriState didOptimize) { m_didOptimize = static_cast<unsigned>(didOptimize); }
+    TriState didOptimize() const { return m_metadata->didOptimize(); }
+    void setDidOptimize(TriState didOptimize) { m_metadata->setDidOptimize(didOptimize); }
 
     static constexpr unsigned maxAge = 7;
 
@@ -414,7 +413,6 @@ private:
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
     unsigned m_codeType : 2;
-    unsigned m_didOptimize : 2;
     unsigned m_age : 3;
     static_assert(((1U << 3) - 1) >= maxAge);
     bool m_hasCheckpoints : 1;

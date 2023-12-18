@@ -96,7 +96,7 @@ DestinationColorSpace NativeImage::colorSpace() const
     return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 
-void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     auto isHDRColorSpace = [](CGColorSpaceRef colorSpace) -> bool {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -124,7 +124,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 
-    auto drawHDRNativeImage = [&](GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options) -> bool {
+    auto drawHDRNativeImage = [&](GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options) -> bool {
         if (sourceRect.isEmpty() || !isHDRNativeImage(*this))
             return false;
 

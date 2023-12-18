@@ -199,7 +199,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformEncrypt(const Crypt
 {
     auto output = gcryptAES_CTR(gcry_cipher_encrypt, key.key(), parameters.counterVector(), parameters.length, plainText);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -207,7 +207,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CTR::platformDecrypt(const Crypt
 {
     auto output = gcryptAES_CTR(gcry_cipher_decrypt, key.key(), parameters.counterVector(), parameters.length, cipherText);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

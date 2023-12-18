@@ -44,10 +44,8 @@ typedef std::tuple<int, int, int, hiprec_convolve_func> HiprecConvolveParam;
 class AV1HiprecConvolveTest
     : public ::testing::TestWithParam<HiprecConvolveParam> {
  public:
-  virtual ~AV1HiprecConvolveTest();
-  virtual void SetUp();
-
-  virtual void TearDown();
+  ~AV1HiprecConvolveTest() override;
+  void SetUp() override;
 
  protected:
   void RunCheckOutput(hiprec_convolve_func test_impl);
@@ -75,10 +73,8 @@ typedef std::tuple<int, int, int, int, highbd_hiprec_convolve_func>
 class AV1HighbdHiprecConvolveTest
     : public ::testing::TestWithParam<HighbdHiprecConvolveParam> {
  public:
-  virtual ~AV1HighbdHiprecConvolveTest();
-  virtual void SetUp();
-
-  virtual void TearDown();
+  ~AV1HighbdHiprecConvolveTest() override;
+  void SetUp() override;
 
  protected:
   void RunCheckOutput(highbd_hiprec_convolve_func test_impl);

@@ -506,14 +506,13 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
 
   PacketList packet_list;
   // Insert packet in a packet list.
-  packet_list.push_back([&rtp_header, &payload, &receive_time] {
+  packet_list.push_back([&rtp_header, &payload] {
     // Convert to Packet.
     Packet packet;
     packet.payload_type = rtp_header.payloadType;
     packet.sequence_number = rtp_header.sequenceNumber;
     packet.timestamp = rtp_header.timestamp;
     packet.payload.SetData(payload.data(), payload.size());
-    packet.packet_info = RtpPacketInfo(rtp_header, receive_time);
     // Waiting time will be set upon inserting the packet in the buffer.
     RTC_DCHECK(!packet.waiting_time);
     return packet;
@@ -630,10 +629,9 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
       parsed_packet_list.splice(parsed_packet_list.end(), packet_list,
                                 packet_list.begin());
     } else {
-      const auto sequence_number = packet.sequence_number;
-      const auto payload_type = packet.payload_type;
+      const uint16_t sequence_number = packet.sequence_number;
+      const uint8_t payload_type = packet.payload_type;
       const Packet::Priority original_priority = packet.priority;
-      const auto& packet_info = packet.packet_info;
       auto packet_from_result = [&](AudioDecoder::ParseResult& result) {
         Packet new_packet;
         new_packet.sequence_number = sequence_number;
@@ -641,7 +639,10 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
         new_packet.timestamp = result.timestamp;
         new_packet.priority.codec_level = result.priority;
         new_packet.priority.red_level = original_priority.red_level;
-        new_packet.packet_info = packet_info;
+        // Only associate the header information with the primary packet.
+        if (new_packet.timestamp == rtp_header.timestamp) {
+          new_packet.packet_info = RtpPacketInfo(rtp_header, receive_time);
+        }
         new_packet.frame = std::move(result.frame);
         return new_packet;
       };
@@ -1474,8 +1475,9 @@ int NetEqImpl::DecodeLoop(PacketList* packet_list,
     auto opt_result = packet_list->front().frame->Decode(
         rtc::ArrayView<int16_t>(&decoded_buffer_[*decoded_length],
                                 decoded_buffer_length_ - *decoded_length));
-    last_decoded_packet_infos_.push_back(
-        std::move(packet_list->front().packet_info));
+    if (packet_list->front().packet_info) {
+      last_decoded_packet_infos_.push_back(*packet_list->front().packet_info);
+    }
     packet_list->pop_front();
     if (opt_result) {
       const auto& result = *opt_result;

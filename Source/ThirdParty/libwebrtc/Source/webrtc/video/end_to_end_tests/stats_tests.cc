@@ -59,11 +59,11 @@ TEST_F(StatsEndToEndTest, GetStats) {
           }) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       // Drop every 25th packet => 4% loss.
       static const int kPacketLossFrac = 25;
       RtpPacket header;
-      if (header.Parse(packet, length) &&
+      if (header.Parse(packet) &&
           expected_send_ssrcs_.find(header.Ssrc()) !=
               expected_send_ssrcs_.end() &&
           header.SequenceNumber() % kPacketLossFrac == 0) {
@@ -73,17 +73,17 @@ TEST_F(StatsEndToEndTest, GetStats) {
       return SEND_PACKET;
     }
 
-    Action OnSendRtcp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtcp(rtc::ArrayView<const uint8_t> packet) override {
       check_stats_event_.Set();
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtp(rtc::ArrayView<const uint8_t> packet) override {
       check_stats_event_.Set();
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       check_stats_event_.Set();
       return SEND_PACKET;
     }
@@ -126,6 +126,15 @@ TEST_F(StatsEndToEndTest, GetStats) {
         receive_stats_filled_["FrameCounts"] |=
             stats.frame_counts.key_frames != 0 ||
             stats.frame_counts.delta_frames != 0;
+
+        receive_stats_filled_["JitterBufferDelay"] =
+            stats.jitter_buffer_delay > TimeDelta::Zero();
+        receive_stats_filled_["JitterBufferTargetDelay"] =
+            stats.jitter_buffer_target_delay > TimeDelta::Zero();
+        receive_stats_filled_["JitterBufferEmittedCount"] =
+            stats.jitter_buffer_emitted_count != 0;
+        receive_stats_filled_["JitterBufferMinimumDelay"] =
+            stats.jitter_buffer_minimum_delay > TimeDelta::Zero();
 
         receive_stats_filled_["CName"] |= !stats.c_name.empty();
 
@@ -421,7 +430,7 @@ TEST_F(StatsEndToEndTest, TestReceivedRtpPacketStats) {
 
     void OnStreamsStopped() override { task_safety_flag_->SetNotAlive(); }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       if (sent_rtp_ >= kNumRtpPacketsToSend) {
         // Need to check the stats on the correct thread.
         task_queue_->PostTask(SafeTask(task_safety_flag_, [this]() {
@@ -480,7 +489,7 @@ TEST_F(StatsEndToEndTest, MAYBE_ContentTypeSwitches) {
       }
     }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       if (MinNumberOfFramesReceived())
         observation_complete_.Set();
       return SEND_PACKET;
@@ -509,9 +518,9 @@ TEST_F(StatsEndToEndTest, MAYBE_ContentTypeSwitches) {
 
   metrics::Reset();
 
-  Call::Config send_config(send_event_log_.get());
+  CallConfig send_config(send_event_log_.get());
   test.ModifySenderBitrateConfig(&send_config.bitrate_config);
-  Call::Config recv_config(recv_event_log_.get());
+  CallConfig recv_config(recv_event_log_.get());
   test.ModifyReceiverBitrateConfig(&recv_config.bitrate_config);
 
   VideoEncoderConfig encoder_config_with_screenshare;
@@ -594,12 +603,12 @@ TEST_F(StatsEndToEndTest, VerifyNackStats) {
           task_queue_(task_queue) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       {
         MutexLock lock(&mutex_);
         if (++sent_rtp_packets_ == kPacketNumberToDrop) {
           RtpPacket header;
-          EXPECT_TRUE(header.Parse(packet, length));
+          EXPECT_TRUE(header.Parse(packet));
           dropped_rtp_packet_ = header.SequenceNumber();
           return DROP_PACKET;
         }
@@ -609,10 +618,10 @@ TEST_F(StatsEndToEndTest, VerifyNackStats) {
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       test::RtcpPacketParser rtcp_parser;
-      rtcp_parser.Parse(packet, length);
+      rtcp_parser.Parse(packet);
       const std::vector<uint16_t>& nacks = rtcp_parser.nack()->packet_ids();
       if (!nacks.empty() && absl::c_linear_search(nacks, dropped_rtp_packet_)) {
         dropped_rtp_packet_requested_ = true;

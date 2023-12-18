@@ -138,6 +138,7 @@ public:
     virtual inline LayoutUnit borderEnd() const;
 
     inline LayoutUnit borderAndPaddingStart() const;
+    inline LayoutUnit borderAndPaddingEnd() const;
     inline LayoutUnit borderAndPaddingBefore() const;
     inline LayoutUnit borderAndPaddingAfter() const;
 
@@ -151,6 +152,7 @@ public:
     inline LayoutUnit borderAndPaddingLogicalHeight() const;
     inline LayoutUnit borderAndPaddingLogicalWidth() const;
     inline LayoutUnit borderAndPaddingLogicalLeft() const;
+    inline LayoutUnit borderAndPaddingLogicalRight() const;
 
     inline LayoutUnit borderLogicalLeft() const;
     inline LayoutUnit borderLogicalRight() const;
@@ -188,7 +190,7 @@ public:
 
     void setSelectionState(HighlightState) override;
 
-    bool canHaveBoxInfoInFragment() const { return !isFloating() && !isReplacedOrInlineBlock() && !isInline() && !isTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
+    bool canHaveBoxInfoInFragment() const { return !isFloating() && !isReplacedOrInlineBlock() && !isInline() && !isRenderTableCell() && isRenderBlock() && !isRenderSVGBlock(); }
 
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
@@ -211,8 +213,8 @@ public:
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
 
 protected:
-    RenderBoxModelObject(Type, Element&, RenderStyle&&, BaseTypeFlags);
-    RenderBoxModelObject(Type, Document&, RenderStyle&&, BaseTypeFlags);
+    RenderBoxModelObject(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderBoxModelObject(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
 
     void willBeDestroyed() override;
 
@@ -244,7 +246,7 @@ public:
     struct ContinuationChainNode {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        WeakPtr<RenderBoxModelObject> renderer;
+        SingleThreadWeakPtr<RenderBoxModelObject> renderer;
         ContinuationChainNode* previous { nullptr };
         ContinuationChainNode* next { nullptr };
 
@@ -269,4 +271,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBoxModelObject, isBoxModelObject())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBoxModelObject, isRenderBoxModelObject())

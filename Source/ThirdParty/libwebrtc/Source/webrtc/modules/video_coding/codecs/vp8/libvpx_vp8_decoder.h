@@ -31,6 +31,11 @@ class LibvpxVp8Decoder : public VideoDecoder {
 
   bool Configure(const Settings& settings) override;
   int Decode(const EncodedImage& input_image,
+             int64_t /*render_time_ms*/) override;
+
+  // TODO(bugs.webrtc.org/15444): Remove once all subclasses have been migrated
+  // to expecting calls Decode without a missing_frames param.
+  int Decode(const EncodedImage& input_image,
              bool missing_frames,
              int64_t /*render_time_ms*/) override;
 
@@ -61,7 +66,6 @@ class LibvpxVp8Decoder : public VideoDecoder {
   DecodedImageCallback* decode_complete_callback_;
   bool inited_;
   vpx_codec_ctx_t* decoder_;
-  int propagation_cnt_;
   int last_frame_width_;
   int last_frame_height_;
   bool key_frame_required_;

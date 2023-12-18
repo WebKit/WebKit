@@ -13,6 +13,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/State.h"
 #include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
 #include "platform/autogen/FeaturesGL_autogen.h"
 
@@ -290,13 +291,20 @@ class StateManagerGL final : angle::NonCopyable
                             const gl::state::ExtendedDirtyBits &extendedBitMask);
 
     ANGLE_INLINE void updateMultiviewBaseViewLayerIndexUniform(
-        const gl::Program *program,
+        const gl::ProgramExecutable *executable,
         const gl::FramebufferState &drawFramebufferState) const
     {
-        if (mIsMultiviewEnabled && program && program->usesMultiview())
+        if (mIsMultiviewEnabled && executable && executable->usesMultiview())
         {
-            updateMultiviewBaseViewLayerIndexUniformImpl(program, drawFramebufferState);
+            updateMultiviewBaseViewLayerIndexUniformImpl(executable, drawFramebufferState);
         }
+    }
+
+    ANGLE_INLINE void updateEmulatedClipOriginUniform(const gl::ProgramExecutable *executable,
+                                                      const gl::ClipOrigin origin) const
+    {
+        ASSERT(executable);
+        GetImplAs<ProgramExecutableGL>(executable)->updateEmulatedClipOrigin(origin);
     }
 
     GLuint getProgramID() const { return mProgram; }
@@ -321,8 +329,13 @@ class StateManagerGL final : angle::NonCopyable
   private:
     void setTextureCubemapSeamlessEnabled(bool enabled);
 
+    void setClipControlWithEmulatedClipOrigin(const gl::ProgramExecutable *executable,
+                                              GLenum frontFace,
+                                              gl::ClipOrigin origin,
+                                              gl::ClipDepthMode depth);
+
     angle::Result propagateProgramToVAO(const gl::Context *context,
-                                        const gl::Program *program,
+                                        const gl::ProgramExecutable *executable,
                                         VertexArrayGL *vao);
 
     void updateProgramTextureBindings(const gl::Context *context);
@@ -344,11 +357,10 @@ class StateManagerGL final : angle::NonCopyable
     void syncTransformFeedbackState(const gl::Context *context);
 
     void updateEmulatedClipDistanceState(const gl::ProgramExecutable *executable,
-                                         const gl::Program *program,
                                          const gl::ClipDistanceEnableBits enables) const;
 
     void updateMultiviewBaseViewLayerIndexUniformImpl(
-        const gl::Program *program,
+        const gl::ProgramExecutable *executable,
         const gl::FramebufferState &drawFramebufferState) const;
 
     void syncBlendFromNativeContext(const gl::Extensions &extensions, ExternalContextState *state);

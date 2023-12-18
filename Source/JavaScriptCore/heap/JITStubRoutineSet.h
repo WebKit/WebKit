@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 #pragma once
 
 #include "JITStubRoutine.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Range.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 using WTF::Range;
@@ -41,8 +41,7 @@ class GCAwareJITStubRoutine;
 
 class JITStubRoutineSet {
     WTF_MAKE_NONCOPYABLE(JITStubRoutineSet);
-    WTF_MAKE_FAST_ALLOCATED;
-    
+    WTF_MAKE_TZONE_ALLOCATED(JITStubRoutineSet);
 public:
     JITStubRoutineSet();
     ~JITStubRoutineSet();
@@ -61,7 +60,7 @@ public:
 
     void prepareForConservativeScan();
     
-    void deleteUnmarkedJettisonedStubRoutines();
+    void deleteUnmarkedJettisonedStubRoutines(VM&);
 
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&);
     
@@ -80,8 +79,7 @@ private:
 
 class JITStubRoutineSet {
     WTF_MAKE_NONCOPYABLE(JITStubRoutineSet);
-    WTF_MAKE_FAST_ALLOCATED;
-    
+    WTF_MAKE_TZONE_ALLOCATED(JITStubRoutineSet);
 public:
     JITStubRoutineSet() { }
     ~JITStubRoutineSet() { }
@@ -90,7 +88,7 @@ public:
     void clearMarks() { }
     void mark(void*) { }
     void prepareForConservativeScan() { }
-    void deleteUnmarkedJettisonedStubRoutines() { }
+    void deleteUnmarkedJettisonedStubRoutines(VM&) { }
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&) { }
 };
 

@@ -66,22 +66,13 @@ const EXPECT_INVALID = false;
 
 /* DATA **********************************************************************/
 
-let externrefs = {};
-let externsym = Symbol("externref");
-function externref(s) {
-  if (! (s in externrefs)) externrefs[s] = {[externsym]: s};
-  return externrefs[s];
+let hostrefs = {};
+let hostsym = Symbol("hostref");
+function hostref(s) {
+  if (! (s in hostrefs)) hostrefs[s] = {[hostsym]: s};
+  return hostrefs[s];
 }
-function is_externref(x) {
-  return (x !== null && externsym in x) ? 1 : 0;
-}
-function is_funcref(x) {
-  return typeof x === "function" ? 1 : 0;
-}
-function eq_externref(x, y) {
-  return x === y ? 1 : 0;
-}
-function eq_funcref(x, y) {
+function eq_ref(x, y) {
   return x === y ? 1 : 0;
 }
 
@@ -96,11 +87,8 @@ function reinitializeRegistry() {
         return;
 
     let spectest = {
-        externref: externref,
-        is_externref: is_externref,
-        is_funcref: is_funcref,
-        eq_externref: eq_externref,
-        eq_funcref: eq_funcref,
+        hostref: hostref,
+        eq_ref: eq_ref,
         print: console.log.bind(console),
         print_i32: console.log.bind(console),
         print_i32_f32: console.log.bind(console),
@@ -336,7 +324,9 @@ function assert_return(action, ...expected) {
     _assert(result instanceof Result);
 
     uniqueTest(() => {
-        assert_true(!result.isError(), `expected success result, got: ${result.value}.`);
+        // FIXME: the currently JS API behavior results in string coerion failing for GC objects,
+        //        so we cannot construct an error message here currently.
+        assert_true(!result.isError(), `expected success result`);
         let actual = result.value;
         if (actual === undefined) {
             actual = [];
@@ -360,11 +350,27 @@ function assert_return(action, ...expected) {
                     // so there's no good way to test that it's a canonical NaN.
                     assert_true(Number.isNaN(actual[i]), `expected NaN, observed ${actual[i]}.`);
                     return;
+                case "ref.i31":
+                    assert_true(typeof actual[i] === "number" && (actual[i] & 0x7fffffff) === actual[i],
+                                `expected Wasm i31, got ${actual[i]}`);
+                    return;
+                case "ref.any":
+                case "ref.eq":
+                case "ref.struct":
+                case "ref.array":
+                    // For now, JS can't distinguish exported Wasm GC values,
+                    // so we only test for object.
+                    assert_true(typeof actual[i] === "object", `expected Wasm object`);
+                    return;
                 case "ref.func":
                     assert_true(typeof actual[i] === "function", `expected Wasm function, got ${actual[i]}`);
                     return;
                 case "ref.extern":
-                    assert_true(actual[i] !== null, `expected Wasm reference, got ${actual[i]}`);
+                    // FIXME: see comment above about error messages
+                    assert_true(actual[i] !== null, `expected Wasm reference`);
+                    return;
+                case "ref.null":
+                    assert_true(actual[i] === null, `expected Wasm null reference, got ${actual[i]}`);
                     return;
                 default:
                     assert_equals(actual[i], expected[i]);

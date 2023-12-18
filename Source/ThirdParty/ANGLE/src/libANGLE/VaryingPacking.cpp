@@ -148,8 +148,10 @@ GLint GetMaxShaderOutputVectors(const Caps &caps, ShaderType shaderStage)
 bool ShouldSkipPackedVarying(const sh::ShaderVariable &varying, PackMode packMode)
 {
     // Don't pack gl_Position. Also don't count gl_PointSize for D3D9.
+    // Additionally, gl_TessLevelInner and gl_TessLevelOuter should not be packed.
     return varying.name == "gl_Position" ||
-           (varying.name == "gl_PointSize" && packMode == PackMode::ANGLE_NON_CONFORMANT_D3D9);
+           (varying.name == "gl_PointSize" && packMode == PackMode::ANGLE_NON_CONFORMANT_D3D9) ||
+           varying.name == "gl_TessLevelInner" || varying.name == "gl_TessLevelOuter";
 }
 
 std::vector<unsigned int> StripVaryingArrayDimension(const sh::ShaderVariable *frontVarying,

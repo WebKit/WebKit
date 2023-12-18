@@ -33,6 +33,10 @@ class WgcCaptureSource {
   virtual ~WgcCaptureSource();
 
   virtual DesktopVector GetTopLeft() = 0;
+  // Lightweight version of IsCapturable which avoids allocating/deallocating
+  // COM objects for each call. As such may return a different value than
+  // IsCapturable.
+  virtual bool ShouldBeCapturable();
   virtual bool IsCapturable();
   virtual bool FocusOnSource();
   virtual ABI::Windows::Graphics::SizeInt32 GetSize();
@@ -99,6 +103,7 @@ class WgcWindowSource final : public WgcCaptureSource {
 
   DesktopVector GetTopLeft() override;
   ABI::Windows::Graphics::SizeInt32 GetSize() override;
+  bool ShouldBeCapturable() override;
   bool IsCapturable() override;
   bool FocusOnSource() override;
 

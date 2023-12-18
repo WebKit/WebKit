@@ -27,7 +27,7 @@ class Cocoa {
     {
     }
 }
-`, `SyntaxError: Cannot declare a generator function named 'constructor'.`);
+`, `SyntaxError: Cannot declare a generator method named 'constructor'.`);
 
 testSyntax(`
 class Cocoa {

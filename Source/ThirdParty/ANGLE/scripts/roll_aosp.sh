@@ -137,6 +137,15 @@ for dep in "${third_party_deps[@]}" "${delete_only_deps[@]}"; do
     rm -rf "$dep"
 done
 
+# Remove cruft from any previous bad rolls (https://anglebug.com/8352)
+extra_third_party_removal_patterns=(
+   "*/_gclient_*"
+)
+
+for removal_dir in "${extra_third_party_removal_patterns[@]}"; do
+    find third_party -wholename "$removal_dir" -delete
+done
+
 # Sync all of ANGLE's deps so that 'gn gen' works
 python scripts/bootstrap.py
 gclient sync --reset --force --delete_unversioned_trees

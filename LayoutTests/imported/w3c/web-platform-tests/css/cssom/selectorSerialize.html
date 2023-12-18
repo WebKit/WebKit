@@ -130,7 +130,7 @@
               assert_selector_serializes_to("|\\\\", "|\\\\");
             }, "escaped character (\\) in element name with no namespace");
 
-            const element_escaped_ns_rule = "@namespace x\\* 'blah';";            
+            const element_escaped_ns_rule = "@namespace x\\* 'blah';";
             test(() => {
               assert_selector_serializes_to(element_escaped_ns_rule + "x\\*|test", "x\\*|test");
             }, "escaped character (*) in element prefix");

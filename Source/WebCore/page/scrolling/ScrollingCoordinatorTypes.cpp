@@ -60,9 +60,17 @@ void RequestedScrollData::merge(RequestedScrollData&& other)
     *this = WTFMove(other);
 }
 
-FloatPoint RequestedScrollData::destinationPosition(const FloatPoint& currentScrollPosition) const
+FloatPoint RequestedScrollData::destinationPosition(FloatPoint currentScrollPosition) const
 {
-    return requestType == ScrollRequestType::DeltaUpdate ? (currentScrollPosition + std::get<FloatSize>(scrollPositionOrDelta)) : std::get<FloatPoint>(scrollPositionOrDelta);
+    return computeDestinationPosition(currentScrollPosition, requestType, scrollPositionOrDelta);
+}
+
+FloatPoint RequestedScrollData::computeDestinationPosition(FloatPoint currentScrollPosition, ScrollRequestType requestType, const std::variant<FloatPoint, FloatSize>& scrollPositionOrDelta)
+{
+    if (requestType == ScrollRequestType::DeltaUpdate)
+        return currentScrollPosition + std::get<FloatSize>(scrollPositionOrDelta);
+
+    return std::get<FloatPoint>(scrollPositionOrDelta);
 }
 
 TextStream& operator<<(TextStream& ts, SynchronousScrollingReason reason)
@@ -90,6 +98,12 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
         break;
     case ScrollingNodeType::FrameHosting:
         ts << "frame-hosting";
+        break;
+    case ScrollingNodeType::PluginScrolling:
+        ts << "plugin-scrolling";
+        break;
+    case ScrollingNodeType::PluginHosting:
+        ts << "plugin-hosting";
         break;
     case ScrollingNodeType::Overflow:
         ts << "overflow-scrolling";
@@ -126,7 +140,7 @@ TextStream& operator<<(TextStream& ts, ScrollingLayerPositionAction action)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, ScrollableAreaParameters scrollableAreaParameters)
+TextStream& operator<<(TextStream& ts, const ScrollableAreaParameters& scrollableAreaParameters)
 {
     ts.dumpProperty("horizontal scroll elasticity", scrollableAreaParameters.horizontalScrollElasticity);
     ts.dumpProperty("vertical scroll elasticity", scrollableAreaParameters.verticalScrollElasticity);
@@ -200,30 +214,40 @@ TextStream& operator<<(WTF::TextStream& ts, ScrollRequestType type)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, RequestedScrollData requestedScrollData)
+TextStream& operator<<(TextStream& ts, const RequestedScrollData& requestedScrollData)
 {
-    ts.dumpProperty("requested-type", requestedScrollData.requestType);
+    ts.dumpProperty("type", requestedScrollData.requestType);
 
-    if (requestedScrollData.requestType != ScrollRequestType::CancelAnimatedScroll) {
-        if (requestedScrollData.requestType == ScrollRequestType::DeltaUpdate)
-            ts.dumpProperty("requested-scroll-delta", std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
+    if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll)
+        return ts;
+
+    if (requestedScrollData.requestType == ScrollRequestType::DeltaUpdate)
+        ts.dumpProperty("scroll delta", std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
+    else
+        ts.dumpProperty("position", std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
+
+    if (requestedScrollData.scrollType == ScrollType::Programmatic)
+        ts.dumpProperty("is programmatic", requestedScrollData.scrollType);
+
+    if (requestedScrollData.clamping == ScrollClamping::Clamped)
+        ts.dumpProperty("clamping", requestedScrollData.clamping);
+
+    if (requestedScrollData.animated == ScrollIsAnimated::Yes)
+        ts.dumpProperty("animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
+
+    if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
+        auto oldType = std::get<0>(*requestedScrollData.requestedDataBeforeAnimatedScroll);
+        ts.dumpProperty("before-animated scroll type", oldType);
+
+        if (oldType == ScrollRequestType::DeltaUpdate)
+            ts.dumpProperty("before-animated scroll delta", std::get<FloatSize>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
         else
-            ts.dumpProperty("requested-scroll-position", std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
-        ts.dumpProperty("requested-scroll-position-is-programatic", requestedScrollData.scrollType);
-        ts.dumpProperty("requested-scroll-position-clamping", requestedScrollData.clamping);
-        ts.dumpProperty("requested-scroll-position-animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
-        if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
-            auto oldType = std::get<0>(*requestedScrollData.requestedDataBeforeAnimatedScroll);
-            ts.dumpProperty("requested-scroll-position-old-data-type", oldType);
+            ts.dumpProperty("before-animated scroll position", std::get<FloatPoint>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
 
-            if (oldType == ScrollRequestType::DeltaUpdate)
-                ts.dumpProperty("requested-scroll-position-old-delta", std::get<FloatSize>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
-            else
-                ts.dumpProperty("requested-scroll-position-old-position", std::get<FloatPoint>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
-            ts.dumpProperty("requested-scroll-position-old-data-is-programatic", std::get<2>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
-            ts.dumpProperty("requested-scroll-position-old-data-animated", std::get<3>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
-        }
+        ts.dumpProperty("before-animated scroll programatic", std::get<2>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
+        ts.dumpProperty("before-animated scroll animated", std::get<3>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
     }
+
     return ts;
 }
 

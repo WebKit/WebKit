@@ -31,7 +31,6 @@
 #import "_WKWebExtensionMessagePortInternal.h"
 
 #import "WebExtensionMessagePort.h"
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 
@@ -43,8 +42,7 @@ NSErrorDomain const _WKWebExtensionMessagePortErrorDomain = @"_WKWebExtensionMes
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionMessagePort.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionMessagePort->~WebExtensionMessagePort();
 }

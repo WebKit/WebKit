@@ -40,7 +40,11 @@
 
 namespace JSC { namespace Wasm {
 
+#if OS(WINDOWS)
+constexpr unsigned numberOfLLIntCalleeSaveRegisters = 3;
+#else
 constexpr unsigned numberOfLLIntCalleeSaveRegisters = 2;
+#endif
 constexpr unsigned numberOfIPIntCalleeSaveRegisters = 3;
 constexpr unsigned numberOfLLIntInternalRegisters = 2;
 
@@ -254,6 +258,11 @@ public:
     CallInformation callInformationFor(const TypeDefinition& type, CallRole role = CallRole::Caller) const
     {
         const auto& signature = *type.as<FunctionSignature>();
+        return callInformationFor(signature, role);
+    }
+
+    CallInformation callInformationFor(const FunctionSignature& signature, CallRole role = CallRole::Caller) const
+    {
         bool argumentsIncludeI64 = false;
         bool resultsIncludeI64 = false;
         bool argumentsOrResultsIncludeV128 = false;

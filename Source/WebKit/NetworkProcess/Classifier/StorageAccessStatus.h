@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class StorageAccessStatus : uint8_t {
@@ -36,18 +34,3 @@ enum class StorageAccessStatus : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-    
-template<> struct EnumTraits<WebKit::StorageAccessStatus> {
-    using values = EnumValues<
-    WebKit::StorageAccessStatus,
-    WebKit::StorageAccessStatus::CannotRequestAccess,
-    WebKit::StorageAccessStatus::RequiresUserPrompt,
-    WebKit::StorageAccessStatus::HasAccess
-    >;
-};
-    
-} // namespace WTF
-
-

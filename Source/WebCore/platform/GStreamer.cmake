@@ -57,8 +57,8 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     set_source_files_properties(platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp PROPERTIES COMPILE_DEFINITIONS "GLIB_DISABLE_DEPRECATION_WARNINGS=1")
 
     if (VIDEO_DECODING_LIMIT)
-        # Specify video decoding limits.
-        set_source_files_properties(platform/graphics/gstreamer/GStreamerRegistryScanner.cpp PROPERTIES COMPILE_DEFINITIONS VIDEO_DECODING_LIMIT="${VIDEO_DECODING_LIMIT}")
+        # Specify video decoding limits for platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
+        list(APPEND WebCore_PRIVATE_DEFINITIONS VIDEO_DECODING_LIMIT="${VIDEO_DECODING_LIMIT}")
     endif ()
 endif ()
 

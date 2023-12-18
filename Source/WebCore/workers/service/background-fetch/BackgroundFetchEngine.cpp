@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchEngine.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "ExceptionData.h"
@@ -51,7 +49,7 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
     if (iterator == m_fetches.end()) {
         m_store->initializeFetches(registration.key(), [weakThis = WeakPtr { *this }, registration = WeakPtr { registration }, backgroundFetchIdentifier, requests = WTFMove(requests), options = WTFMove(options), callback = WTFMove(callback)]() mutable {
             if (!weakThis || !registration) {
-                callback(makeUnexpected(ExceptionData { InvalidStateError, "BackgroundFetchEngine is gone"_s }));
+                callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "BackgroundFetchEngine is gone"_s }));
                 return;
             }
             weakThis->m_fetches.ensure(registration->key(), [] {
@@ -69,22 +67,22 @@ void BackgroundFetchEngine::startBackgroundFetch(SWServerRegistration& registrat
         });
     });
     if (!result.isNewEntry) {
-        callback(makeUnexpected(ExceptionData { TypeError, "A background fetch registration already exists"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "A background fetch registration already exists"_s }));
         return;
     }
 
     auto& fetch = *result.iterator->value;
     fetch.doStore([server = m_server, fetch = WeakPtr { fetch }, callback = WTFMove(callback)](auto result) mutable {
         if (!fetch || !server) {
-            callback(makeUnexpected(ExceptionData { TypeError, "Background fetch is gone"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Background fetch is gone"_s }));
             return;
         }
         switch (result) {
         case BackgroundFetchStore::StoreResult::QuotaError:
-            callback(makeUnexpected(ExceptionData { QuotaExceededError, "Background fetch requested space is above quota"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::QuotaExceededError, "Background fetch requested space is above quota"_s }));
             break;
         case BackgroundFetchStore::StoreResult::InternalError:
-            callback(makeUnexpected(ExceptionData { TypeError, "Background fetch store operation failed"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "Background fetch store operation failed"_s }));
             break;
         case BackgroundFetchStore::StoreResult::OK:
             if (!fetch->pausedFlagIsSet()) {
@@ -127,7 +125,7 @@ void BackgroundFetchEngine::backgroundFetchInformation(SWServerRegistration& reg
     if (iterator == m_fetches.end()) {
         m_store->initializeFetches(registration.key(), [weakThis = WeakPtr { *this }, registration = WeakPtr { registration }, backgroundFetchIdentifier, callback = WTFMove(callback)]() mutable {
             if (!weakThis || !registration) {
-                callback(makeUnexpected(ExceptionData { InvalidStateError, "BackgroundFetchEngine is gone"_s }));
+                callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "BackgroundFetchEngine is gone"_s }));
                 return;
             }
             weakThis->m_fetches.ensure(registration->key(), [] {
@@ -165,12 +163,11 @@ void BackgroundFetchEngine::backgroundFetchIdentifiers(SWServerRegistration& reg
         return;
     }
 
-    Vector<String> identifiers;
-    identifiers.reserveInitialCapacity(iterator->value.size());
-    for (auto& keyValue : iterator->value) {
+    Vector<String> identifiers = WTF::compactMap(iterator->value, [](auto& keyValue) -> std::optional<String> {
         if (keyValue.value->isActive())
-            identifiers.uncheckedAppend(keyValue.key);
-    }
+            return keyValue.key;
+        return std::nullopt;
+    });
     callback(WTFMove(identifiers));
 }
 
@@ -230,14 +227,12 @@ void BackgroundFetchEngine::matchBackgroundFetch(SWServerRegistration& registrat
             callback({ });
             return;
         }
-        Vector<BackgroundFetchRecordInformation> recordsInformation;
-        recordsInformation.reserveInitialCapacity(records.size());
-        for (auto& record : records) {
+        auto recordsInformation = WTF::map(WTFMove(records), [&](auto&& record) {
             // FIXME: We need a way to remove the record from m_records.
             auto information = record->information();
             weakThis->m_records.add(information.identifier, WTFMove(record));
-            recordsInformation.uncheckedAppend(WTFMove(information));
-        }
+            return information;
+        });
         callback(WTFMove(recordsInformation));
     });
 }
@@ -255,7 +250,7 @@ void BackgroundFetchEngine::retrieveRecordResponse(BackgroundFetchRecordIdentifi
 {
     auto record = m_records.get(recordIdentifier);
     if (!record) {
-        callback(makeUnexpected(ExceptionData { InvalidStateError, "Record not found"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "Record not found"_s }));
         return;
     }
     record->retrieveResponse(m_store.get(), WTFMove(callback));
@@ -366,5 +361,3 @@ WeakPtr<BackgroundFetch> BackgroundFetchEngine::backgroundFetch(const ServiceWor
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

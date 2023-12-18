@@ -27,24 +27,23 @@
 #include "GStreamerCommon.h"
 #include "MediaSample.h"
 #include "VideoFrameTimeMetadata.h"
-#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class MediaSampleGStreamer : public MediaSample {
 public:
-    static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId)
+    static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, TrackID id)
     {
-        return adoptRef(*new MediaSampleGStreamer(WTFMove(sample), presentationSize, trackId));
+        return adoptRef(*new MediaSampleGStreamer(WTFMove(sample), presentationSize, id));
     }
 
-    static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, const AtomString& trackId);
+    static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, TrackID);
 
     void extendToTheBeginning();
     MediaTime presentationTime() const override { return m_pts; }
     MediaTime decodeTime() const override { return m_dts; }
     MediaTime duration() const override { return m_duration; }
-    AtomString trackID() const override { return m_trackId; }
+    TrackID trackID() const override { return m_trackId; }
     size_t sizeInBytes() const override { return m_size; }
     FloatSize presentationSize() const override { return m_presentationSize; }
     void offsetTimestampsBy(const MediaTime&) override;
@@ -56,16 +55,16 @@ public:
     void dump(PrintStream&) const override;
 
 protected:
-    MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const AtomString& trackId);
+    MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, TrackID);
     virtual ~MediaSampleGStreamer() = default;
 
 private:
-    MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId);
+    MediaSampleGStreamer(const FloatSize& presentationSize, TrackID);
 
     MediaTime m_pts;
     MediaTime m_dts;
     MediaTime m_duration;
-    AtomString m_trackId;
+    TrackID m_trackId;
     size_t m_size { 0 };
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;

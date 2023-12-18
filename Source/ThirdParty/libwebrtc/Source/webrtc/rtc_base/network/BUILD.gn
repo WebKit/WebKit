@@ -16,3 +16,18 @@ rtc_library("sent_packet") {
   deps = [ "../system:rtc_export" ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
+
+rtc_library("received_packet") {
+  sources = [
+    "received_packet.cc",
+    "received_packet.h",
+  ]
+  deps = [
+    "../../api:array_view",
+    "../../api/units:timestamp",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}

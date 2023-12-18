@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Script focus after setSelectionRange after mouse focus does not match :focus-visible</title>
+        <meta charset="utf-8">
+        <style>
+        :focus {
+            background: lime;
+        }
+        :focus-visible {
+            outline: solid 5px blue;
+        }
+        </style>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="../../resources/ui-helper.js"></script>
+    </head>
+    <body>
+        <div id="initial" tabindex="0">Click me</div>
+        <input id="input" type="text" value=""/>
+        <div id="target" tabindex="0">Target</div>
+        <script>
+        const initial = document.getElementById('initial');
+        const input = document.getElementById('input');
+        const target = document.getElementById('target');
+
+        async_test(t => {
+            initial.addEventListener('click', t.step_func_done(() => {
+                input.setSelectionRange(0, 0);
+                target.focus();
+                assert_not_equals(getComputedStyle(target).outlineColor, "rgb(0, 0, 255)", `outline-color for ${target.tagName}#${target.id} shoult NOT be blue`);
+            }));
+        }, 'Script focus after setSelectionRange after mouse focus does not match :focus-visible');
+
+        if (window.testRunner)
+            UIHelper.activateElement(initial);
+
+        </script>
+    </body>
+</html>

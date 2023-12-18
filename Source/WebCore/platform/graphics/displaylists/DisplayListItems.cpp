@@ -109,24 +109,20 @@ void SetInlineFillColor::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("color", color());
 }
 
-void SetInlineStrokeColor::apply(GraphicsContext& context) const
+void SetInlineStroke::apply(GraphicsContext& context) const
 {
-    context.setStrokeColor(color());
+    if (auto color = this->color())
+        context.setStrokeColor(*color);
+    if (auto thickness = this->thickness())
+        context.setStrokeThickness(*thickness);
 }
 
-void SetInlineStrokeColor::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+void SetInlineStroke::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    ts.dumpProperty("color", color());
-}
-
-void SetStrokeThickness::apply(GraphicsContext& context) const
-{
-    context.setStrokeThickness(m_thickness);
-}
-
-void SetStrokeThickness::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts.dumpProperty("thickness", thickness());
+    if (auto color = this->color())
+        ts.dumpProperty("color", *color);
+    if (auto thickness = this->thickness())
+        ts.dumpProperty("thickness", *thickness);
 }
 
 SetState::SetState(const GraphicsContextState& state)
@@ -185,9 +181,9 @@ void SetMiterLimit::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("mitre-limit", miterLimit());
 }
 
-void ClearShadow::apply(GraphicsContext& context) const
+void ClearDropShadow::apply(GraphicsContext& context) const
 {
-    context.clearShadow();
+    context.clearDropShadow();
 }
 
 void Clip::apply(GraphicsContext& context) const
@@ -331,6 +327,34 @@ void DrawDecomposedGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag> flags) con
     }
 }
 
+DrawDisplayListItems::DrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
+    : m_items(items)
+    , m_destination(destination)
+{
+}
+
+DrawDisplayListItems::DrawDisplayListItems(Vector<Item>&& items, const FloatPoint& destination)
+    : m_items(WTFMove(items))
+    , m_destination(destination)
+{
+}
+
+void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap) const
+{
+    context.drawDisplayListItems(m_items, resourceHeap, m_destination);
+}
+
+NO_RETURN_DUE_TO_ASSERT void DrawDisplayListItems::apply(GraphicsContext&) const
+{
+    ASSERT_NOT_REACHED();
+}
+
+void DrawDisplayListItems::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts << items();
+    ts.dumpProperty("destination", destination());
+}
+
 void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
@@ -368,7 +392,7 @@ void DrawSystemImage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("destination", destinationRect());
 }
 
-DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
     : m_imageIdentifier(imageIdentifier)
     , m_destination(destRect)
     , m_tileRect(tileRect)
@@ -666,8 +690,8 @@ void FillEllipse::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 }
 
 #if ENABLE(VIDEO)
-PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
-    : m_identifier(player.identifier())
+PaintFrameForMedia::PaintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
+    : m_identifier(identifier)
     , m_destination(destination)
 {
 }

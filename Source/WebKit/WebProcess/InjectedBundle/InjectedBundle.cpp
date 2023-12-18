@@ -125,9 +125,7 @@ void InjectedBundle::setClient(std::unique_ptr<API::InjectedBundle::Client>&& cl
 
 void InjectedBundle::setServiceWorkerProxyCreationCallback(void (*callback)(uint64_t))
 {
-#if ENABLE(SERVICE_WORKER)
     SWContextManager::singleton().setServiceWorkerCreationCallback(callback);
-#endif
 }
 
 void InjectedBundle::postMessage(const String& messageName, API::Object* messageBody)
@@ -192,11 +190,11 @@ int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, dou
 
 int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, double pageWidthInPixels, double pageHeightInPixels)
 {
-    auto* coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
     if (!coreFrame)
         return -1;
 
-    auto* element = coreFrame->document()->getElementById(id);
+    RefPtr element = coreFrame->document()->getElementById(id);
     if (!element)
         return -1;
 
@@ -205,7 +203,7 @@ int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, 
     if (!pageHeightInPixels)
         pageHeightInPixels = coreFrame->view()->height();
 
-    return PrintContext::pageNumberForElement(element, FloatSize(pageWidthInPixels, pageHeightInPixels));
+    return PrintContext::pageNumberForElement(element.get(), FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
 String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
@@ -336,7 +334,7 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool exclude
 {
     DocumentIDToURLMap result;
 
-    for (const auto* document : Document::allDocuments())
+    for (auto& document : Document::allDocuments())
         result.add(document->identifier().object(), document->url().string());
 
     if (excludeDocumentsInPageGroupPages) {

@@ -20,8 +20,8 @@ PASS w.location.reload('') did not throw exception.
 PASS !!w.screen is true
 PASS w.screen.height is 0
 PASS w.screen.width is 0
-PASS w.screen.colorDepth is 0
-PASS w.screen.pixelDepth is 0
+PASS w.screen.colorDepth is 24
+PASS w.screen.pixelDepth is 24
 PASS w.screen.availLeft is 0
 PASS w.screen.availTop is 0
 PASS w.screen.availHeight is 0
@@ -94,8 +94,8 @@ PASS w.location.reload('') did not throw exception.
 PASS !!w.screen is true
 PASS w.screen.height is 0
 PASS w.screen.width is 0
-PASS w.screen.colorDepth is 0
-PASS w.screen.pixelDepth is 0
+PASS w.screen.colorDepth is 24
+PASS w.screen.pixelDepth is 24
 PASS w.screen.availLeft is 0
 PASS w.screen.availTop is 0
 PASS w.screen.availHeight is 0

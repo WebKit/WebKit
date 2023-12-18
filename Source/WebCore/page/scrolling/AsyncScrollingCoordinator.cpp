@@ -117,14 +117,6 @@ static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrolli
     node.setSnapOffsetsInfo(offsetInfo->convertUnits<FloatScrollSnapOffsetsInfo>(deviceScaleFactor));
 }
 
-void AsyncScrollingCoordinator::setEventTrackingRegionsDirty()
-{
-    m_eventTrackingRegionsDirty = true;
-    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
-    // FIXME: This needs to disambiguate between event regions in the scrolling tree, and those in GraphicsLayers.
-    scheduleTreeStateCommit();
-}
-
 void AsyncScrollingCoordinator::willCommitTree()
 {
     updateEventTrackingRegions();
@@ -147,11 +139,15 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(LocalFrameView& frameView
     ASSERT(isMainThread());
     ASSERT(m_page);
 
+    m_eventTrackingRegionsDirty = true;
+
     // If there isn't a root node yet, don't do anything. We'll be called again after creating one.
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    setEventTrackingRegionsDirty();
+    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
+    // FIXME: This needs to disambiguate between event regions in the scrolling tree, and those in GraphicsLayers.
+    scheduleTreeStateCommit();
 
 #if PLATFORM(COCOA)
     if (!coordinatesScrollingForFrameView(frameView))
@@ -224,10 +220,14 @@ void AsyncScrollingCoordinator::updateIsMonitoringWheelEventsForFrameView(const 
 
 void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(LocalFrameView& frameView)
 {
+    m_eventTrackingRegionsDirty = true;
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    setEventTrackingRegionsDirty();
+    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
+    // FIXME: This needs to disambiguate between event regions in the scrolling tree, and those in GraphicsLayers.
+    scheduleTreeStateCommit();
+
     DebugPageOverlays::didChangeEventHandlers(frameView.frame());
 }
 
@@ -344,7 +344,7 @@ bool AsyncScrollingCoordinator::requestScrollToPosition(ScrollableArea& scrollab
     else
         stateNode->setRequestedScrollData({ ScrollRequestType::PositionUpdate, scrollPosition, options.type, options.clamping, options.animated });
 
-    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::requestScrollToPosition: " << (options.animated == ScrollIsAnimated::Yes ? "isAnimated" : "isntAnimated") << " currentScrollPosition: " << scrollableArea.scrollPosition() << " scrollTo:" << (options.animated == ScrollIsAnimated::Yes ? IntPoint(scrollPosition - scrollableArea.scrollPosition()) : scrollPosition) << " requestedScrollData: " << stateNode->requestedScrollData() << "options" << options);
+    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::requestScrollToPosition " << scrollPosition << " for nodeID " << scrollingNodeID << " requestedScrollData " << stateNode->requestedScrollData());
 
     // FIXME: This should schedule a rendering update
     commitTreeStateIfNeeded();
@@ -893,11 +893,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     if (!is<ScrollingStateFrameScrollingNode>(stateNode))
         return;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto& settings = localMainFrame->settings();
+    auto& settings = m_page->mainFrame().settings();
     auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*stateNode);
 
     frameScrollingNode.setFrameScaleFactor(frameView.frame().frameScaleFactor());

@@ -26,7 +26,6 @@
 
 namespace webrtc {
 class ReceiveStatisticsProvider;
-class Transport;
 
 // Interface to watch incoming rtcp packets by media (rtp) receiver.
 // All message handlers have default empty implementation. This way users only
@@ -113,8 +112,8 @@ struct RtcpTransceiverConfig {
   // The clock to use when querying for the NTP time. Should be set.
   Clock* clock = nullptr;
 
-  // Transport to send rtcp packets to. Should be set.
-  Transport* outgoing_transport = nullptr;
+  // Transport to send RTCP packets to.
+  std::function<void(rtc::ArrayView<const uint8_t>)> rtcp_transport;
 
   // Queue for scheduling delayed tasks, e.g. sending periodic compound packets.
   TaskQueueBase* task_queue = nullptr;
@@ -131,11 +130,15 @@ struct RtcpTransceiverConfig {
   //  or allow reduced size packets: https://tools.ietf.org/html/rfc5506
   // Receiving accepts both compound and reduced-size packets.
   RtcpMode rtcp_mode = RtcpMode::kCompound;
+
   //
   // Tuning parameters.
   //
-  // Initial state if `outgoing_transport` ready to accept packets.
+  // Initial flag if `rtcp_transport` can be used to send packets.
+  // If set to false, RtcpTransciever won't call `rtcp_transport` until
+  // `RtcpTransceover(Impl)::SetReadyToSend(true)` is called.
   bool initial_ready_to_send = true;
+
   // Delay before 1st periodic compound packet.
   TimeDelta initial_report_delay = TimeDelta::Millis(500);
 

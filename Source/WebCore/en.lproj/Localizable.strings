@@ -118,9 +118,6 @@
 /* 1× media controls context menu playback speed label */
 "1× (Media Controls Menu Playback Speed)" = "1×";
 
-/* Menu item title for KEYGEN pop-up menu */
-"2048 (High Grade)" = "2048 (High Grade)";
-
 /* 2× media controls context menu playback speed label */
 "2× (Media Controls Menu Playback Speed)" = "2×";
 
@@ -235,7 +232,7 @@
 /* Menu item label for automatic track selection behavior. */
 "Auto (Recommended) (text track)" = "Auto (Recommended)";
 
-/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only). */
+/* Menu item label to toggle automatic scene dimming in fullscreen (visionOS only) */
 "Auto Dimming" = "Auto Dimming";
 
 /* Automatically Resize context menu item */
@@ -427,6 +424,15 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
+/* Message for requesting cross-site cookie and website data access. */
+"Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?" = "Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?";
+
+/* Informative text for requesting cross-site cookie and website data access. */
+"Allowing access to website data is necessary for the website to work correctly." = "Allowing access to website data is necessary for the website to work correctly.";
+
+/* Accessory text for requesting cross-site cookie and website data access. */
+"While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@" = "While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@";
+
 /* Label for the donate with Apple Pay button. */
 "Donate with Apple Pay" = "Donate with Apple Pay";
 
@@ -472,14 +478,26 @@
 /* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
 "Easy Reader (text track)" = "Easy Reader";
 
-/* WKWebExtensionErrorInvalidManifestEntry description for URL overrides */
-"Empty or invalid URL overrides manifest entry" = "Empty or invalid URL overrides manifest entry";
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty JSON path */
+"Empty `declarative_net_request` JSON path." = "Empty `declarative_net_request` JSON path.";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for empty ruleset id */
+"Empty `declarative_net_request` ruleset id." = "Empty `declarative_net_request` ruleset id.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for background */
 "Empty or invalid `background` manifest entry." = "Empty or invalid `background` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for browser URL overrides */
+"Empty or invalid `browser_url_overrides` manifest entry" = "Empty or invalid `browser_url_overrides` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for chrome URL overrides */
+"Empty or invalid `chrome_url_overrides` manifest entry" = "Empty or invalid `chrome_url_overrides` manifest entry";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for content_scripts */
 "Empty or invalid `content_scripts` manifest entry." = "Empty or invalid `content_scripts` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for content_security_policy */
+"Empty or invalid `content_security_policy` manifest entry." = "Empty or invalid `content_security_policy` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in action only */
 "Empty or invalid `default_icon` for the `action` manifest entry." = "Empty or invalid `default_icon` for the `action` manifest entry.";
@@ -487,8 +505,26 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
 "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command description */
+"Empty or invalid `description` in the `commands` manifest entry." = "Empty or invalid `description` in the `commands` manifest entry.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for externally_connectable */
 "Empty or invalid `externally_connectable` manifest entry." = "Empty or invalid `externally_connectable` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid new tab entry */
+"Empty or invalid `newtab` manifest entry." = "Empty or invalid `newtab` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for options page */
+"Empty or invalid `options_page` manifest entry" = "Empty or invalid `options_page` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for options UI */
+"Empty or invalid `options_ui` manifest entry" = "Empty or invalid `options_ui` manifest entry";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command */
+"Empty or invalid command in the `commands` manifest entry." = "Empty or invalid command in the `commands` manifest entry.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command identifier */
+"Empty or invalid identifier in the `commands` manifest entry." = "Empty or invalid identifier in the `commands` manifest entry.";
 
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
@@ -510,6 +546,12 @@
 
 /* Custom protocol synchronous load failure description */
 "Error handling synchronous load with custom protocol" = "Error handling synchronous load with custom protocol";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets */
+"Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets." = "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
+"Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
 
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
@@ -598,9 +640,6 @@
 /* WebKitErrorHTTPSUpgradeRedirectLoop description */
 "HTTPS Upgrade redirect loop detected" = "HTTPS Upgrade redirect loop detected";
 
-/* WebKitErrorHTTPNavigationWithHTTPSOnly description */
-"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
-
 /* Title of the Hide button for zoomed form controls. */
 "Hide" = "Hide";
 
@@ -637,6 +676,9 @@
 /* Inspect Element context menu item */
 "Inspect Element" = "Inspect Element";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for commands */
+"Invalid `commands` manifest entry." = "Invalid `commands` manifest entry.";
+
 /* WKWebExtensionErrorInvalidBackgroundPersistence description */
 "Invalid `persistent` manifest entry." = "Invalid `persistent` manifest entry.";
 
@@ -648,6 +690,9 @@
 
 /* WKWebExtensionErrorInvalidBackgroundPersistence description for iOS */
 "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS." = "Invalid `persistent` manifest entry. A non-persistent background is required on iOS and iPadOS.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for invalid command shortcut */
+"Invalid `suggested_key` in the `commands` manifest entry." = "Invalid `suggested_key` in the `commands` manifest entry.";
 
 /* WKWebExtensionErrorInvalidManifestEntry description for web_accessible_resources */
 "Invalid `web_accessible_resources` manifest entry." = "Invalid `web_accessible_resources` manifest entry.";
@@ -681,9 +726,6 @@
 
 /* Undo action name */
 "Justify (Undo action name)" = "Justify";
-
-/* Name of keychain key generated by the KEYGEN tag */
-"Key from %@" = "Key from %@";
 
 /* Languages media controls context menu title */
 "Languages (Media Controls Menu)" = "Languages";
@@ -760,6 +802,9 @@
 /* WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value */
 "Manifest `content_scripts` entry has unknown `run_at` value." = "Manifest `content_scripts` entry has unknown `run_at` value.";
 
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for missing declarativeNetRequest permission */
+"Manifest has no `declarativeNetRequest` permission." = "Manifest has no `declarativeNetRequest` permission.";
+
 /* Validation message for input form controls requiring a constrained value according to pattern */
 "Match the requested format" = "Match the requested format";
 
@@ -798,6 +843,9 @@
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
+
+/* WebKitErrorHTTPSOnlyHTTPURL description */
+"Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled" = "Navigation failed because the request was for an HTTP URL with HTTPS-Only enabled";
 
 /* New Quick Note context menu item. */
 "New Quick Note" = "New Quick Note";
@@ -867,6 +915,9 @@
 
 /* context menu item for PDF */
 "Open with %@" = "Open with %@";
+
+/* Open with Preview context menu item */
+"Open with Preview" = "Open with Preview";
 
 /* Label for the order with Apple Pay button. */
 "Order with Apple Pay" = "Order with Apple Pay";
@@ -943,14 +994,14 @@
 /* Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
 "Portable Document Format (Safari)" = "Portable Document Format";
 
-/* Description of the PostScript type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
-"PostScript" = "PostScript";
-
 /* Title for file upload progress view */
 "Preparing (file upload)" = "Preparing…";
 
 /* Previous Page context menu item */
 "Previous Page" = "Previous Page";
+
+/* Title for the webarea while the accessibility tree is being built. */
+"Processing page" = "Processing page";
 
 /* Undo action name */
 "Raise Baseline (Undo action name)" = "Raise Baseline";
@@ -1012,7 +1063,7 @@
 /* Validation message for required radio boxes that have no selection */
 "Select one of these options" = "Select one of these options";
 
-/* Validation message for required checkboxes that have not be selected */
+/* Validation message for required checkboxes that have not been selected */
 "Select this checkbox" = "Select this checkbox";
 
 /* Selection direction context sub-menu item */
@@ -1174,6 +1225,9 @@
 /* File Upload alert sheet camera button string for taking only videos */
 "Take Video (file upload action sheet)" = "Take Video";
 
+/* Validation message for required switches that are not on */
+"Tap this switch" = "Tap this switch";
+
 /* Tencent Safe Browsing */
 "Tencent Safe Browsing" = "Tencent Safe Browsing";
 
@@ -1269,6 +1323,9 @@
 
 /* prompt string in authentication panel */
 "To view this page, you must log in to this area on %@:" = "To view this page, you must log in to this area on %@:";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for too many command shortcuts */
+"Too many shortcuts specified for `commands`, only 4 shortcuts are allowed." = "Too many shortcuts specified for `commands`, only 4 shortcuts are allowed.";
 
 /* Label for the top up with Apple Pay button. */
 "Top up with Apple Pay" = "Top up with Apple Pay";
@@ -1416,6 +1473,9 @@
 
 /* Zoom Out context menu item */
 "Zoom Out" = "Zoom Out";
+
+/* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for duplicate ruleset id */
+"`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique." = "`declarative_net_request` ruleset with id \"%@\" is invalid. Ruleset id must be unique.";
 
 /* Verb stating the action that will occur when a text field is selected, as used by accessibility */
 "activate" = "activate";

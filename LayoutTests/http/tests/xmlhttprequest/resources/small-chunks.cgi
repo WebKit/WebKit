@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+binmode STDOUT;
 
 use IO::Socket;
 

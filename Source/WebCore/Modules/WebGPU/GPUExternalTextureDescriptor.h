@@ -68,7 +68,7 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 #if ENABLE(VIDEO)
             mediaIdentifierForSource(source),
 #else
-            { 0 },
+            { },
 #endif
             WebCore::convertToBacking(colorSpace),
         };

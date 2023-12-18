@@ -1,0 +1,5 @@
+
+FAIL Default source for a View timeline is the nearest scroll ancestor to the subject assert_true: No source expected true got false
+FAIL View timeline ignores explicitly set source assert_true: No source expected true got false
+FAIL View timeline source is null when display:none assert_true: No source expected true got false
+

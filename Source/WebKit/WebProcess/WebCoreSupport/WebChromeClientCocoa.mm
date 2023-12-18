@@ -29,7 +29,17 @@
 #if PLATFORM(COCOA)
 
 #import "WebIconUtilities.h"
+#import "WebPage.h"
+#import <WebCore/AXObjectCache.h>
 #import <WebCore/Icon.h>
+
+#if PLATFORM(MAC)
+
+#import "ApplicationServicesSPI.h"
+
+extern "C" AXError _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatus);
+
+#endif // PLATFORM(MAC)
 
 namespace WebKit {
 using namespace WebCore;
@@ -37,6 +47,20 @@ using namespace WebCore;
 RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
 {
     return Icon::create(iconForFiles(filenames).get());
+}
+
+void AXRelayProcessSuspendedNotification::sendProcessSuspendMessage(bool suspended)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+#if PLATFORM(MAC)
+    _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
+#else
+    NSDictionary *message = @{ @"pid" : @(getpid()), @"suspended" : @(suspended) };
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:message requiringSecureCoding:YES error:nil];
+    m_page->relayAccessibilityNotification("AXProcessSuspended"_s, data);
+#endif
 }
 
 } // namespace WebKit

@@ -31,10 +31,12 @@
 #include "JITInlines.h"
 #include "JSInterfaceJIT.h"
 #include "LinkBuffer.h"
+#include "MacroAssembler.h"
 
 namespace JSC {
 
     class SpecializedThunkJIT : public JSInterfaceJIT {
+        WTF_MAKE_TZONE_ALLOCATED(SpecializedThunkJIT);
     public:
         static constexpr int ThisArgument = -1;
         SpecializedThunkJIT(VM& vm, int expectedArgCount)
@@ -170,8 +172,8 @@ namespace JSC {
         
         MacroAssemblerCodeRef<JITThunkPtrTag> finalize(CodePtr<JITThunkPtrTag> fallback, const char* thunkKind)
         {
+            m_failures.linkThunk(CodeLocationLabel<JITThunkPtrTag>(fallback), this);
             LinkBuffer patchBuffer(*this, GLOBAL_THUNK_ID, LinkBuffer::Profile::SpecializedThunk);
-            patchBuffer.link(m_failures, CodeLocationLabel<JITThunkPtrTag>(fallback));
             for (unsigned i = 0; i < m_calls.size(); i++)
                 patchBuffer.link(m_calls[i].first, m_calls[i].second);
             return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Specialized thunk for %s", thunkKind);

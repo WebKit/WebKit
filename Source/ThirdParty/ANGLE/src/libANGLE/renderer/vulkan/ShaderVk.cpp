@@ -16,14 +16,12 @@
 
 namespace rx
 {
-
 ShaderVk::ShaderVk(const gl::ShaderState &state) : ShaderImpl(state) {}
 
 ShaderVk::~ShaderVk() {}
 
-std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *context,
-                                                        gl::ShCompilerInstance *compilerInstance,
-                                                        ShCompileOptions *options)
+std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *context,
+                                                       ShCompileOptions *options)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
@@ -128,7 +126,8 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         options->pls = contextVk->getNativePixelLocalStorageOptions();
     }
 
-    return compileImpl(context, compilerInstance, mState.getSource(), options);
+    // The Vulkan backend needs no post-processing of the translated shader.
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
 }
 
 std::string ShaderVk::getDebugInfo() const

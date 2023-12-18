@@ -47,10 +47,6 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
 
-#if PLATFORM(MAC)
-#import "LocalCurrentGraphicsContext.h"
-#endif
-
 @class NSColor;
 
 // FIXME: More of this should use CoreGraphics instead of AppKit.

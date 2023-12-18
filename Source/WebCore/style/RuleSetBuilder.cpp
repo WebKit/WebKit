@@ -41,6 +41,7 @@
 #include "StyleRuleImport.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "css/CSSSelectorList.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -116,6 +117,35 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
         if (m_ruleSet)
             addStyleRule(downcast<StyleRule>(rule));
         return;
+
+    case StyleRuleType::Scope: {
+        auto scopeRule = downcast<StyleRuleScope>(WTFMove(rule));
+        auto previousScopeIdentifier = m_currentScopeIdentifier;
+        if (m_ruleSet) {
+            m_ruleSet->m_scopeRules.append({ scopeRule.copyRef(), previousScopeIdentifier });
+            m_currentScopeIdentifier = m_ruleSet->m_scopeRules.size();
+        }
+
+        // https://drafts.csswg.org/css-nesting/#nesting-at-scope
+        // For the purposes of the style rules in its body and its own <scope-end> selector,
+        // the @scope rule is treated as an ancestor style rule, matching the elements matched by its <scope-start> selector.
+        if (m_shouldResolveNesting == ShouldResolveNesting::Yes) {
+            const CSSSelectorList* parentResolvedSelectorList = nullptr;
+            if (m_selectorListStack.size())
+                parentResolvedSelectorList =  m_selectorListStack.last();
+            if (!scopeRule->originalScopeStart().isEmpty())
+                scopeRule->setScopeStart(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeStart(), parentResolvedSelectorList));
+            if (!scopeRule->originalScopeEnd().isEmpty())
+                scopeRule->setScopeEnd(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeEnd(), &scopeRule->scopeStart()));
+        }
+
+        m_selectorListStack.append(&scopeRule->scopeStart());
+        addChildRules(scopeRule->childRules());
+        m_selectorListStack.removeLast();
+        if (m_ruleSet)
+            m_currentScopeIdentifier = previousScopeIdentifier;
+        return;
+    }
 
     case StyleRuleType::Page:
         if (m_ruleSet)
@@ -220,15 +250,15 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
 void RuleSetBuilder::resolveSelectorListWithNesting(StyleRuleWithNesting& rule)
 {
     const CSSSelectorList* parentResolvedSelectorList = nullptr;
-    if (m_styleRuleStack.size()) 
-        parentResolvedSelectorList =  m_styleRuleStack.last();
+    if (m_selectorListStack.size())
+        parentResolvedSelectorList =  m_selectorListStack.last();
 
     // If it's a top-level rule without a nesting parent selector, keep the selector list as is.
     if (!rule.originalSelectorList().hasExplicitNestingParent() && !parentResolvedSelectorList)
         return;
 
     auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.originalSelectorList(), parentResolvedSelectorList);
-    rule.wrapperAdoptSelectorList(WTFMove(resolvedSelectorList));    
+    rule.wrapperAdoptSelectorList(WTFMove(resolvedSelectorList));
 }
 
 void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selectorList, const StyleRule& rule)
@@ -238,7 +268,7 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
         for (size_t selectorIndex = 0; selectorIndex != notFound; selectorIndex = selectorList.indexOfNextSelectorAfter(selectorIndex)) {
             RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount());
             m_mediaQueryCollector.addRuleIfNeeded(ruleData);
-            m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier);
+            m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier, m_currentScopeIdentifier);
             ++selectorListIndex;
         }
     }
@@ -251,12 +281,12 @@ void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
 
     auto& selectorList = rule.selectorList();
     addStyleRuleWithSelectorList(selectorList, rule);
-    
+
     // Process nested rules
-    m_styleRuleStack.append(&selectorList);
+    m_selectorListStack.append(&selectorList);
     for (auto& nestedRule : rule.nestedRules())
         addChildRule(nestedRule);
-    m_styleRuleStack.removeLast();
+    m_selectorListStack.removeLast();
 }
 
 void RuleSetBuilder::addStyleRule(const StyleRule& rule)
@@ -352,10 +382,9 @@ void RuleSetBuilder::updateCascadeLayerPriorities()
 
     auto layerCount = m_ruleSet->m_cascadeLayers.size();
 
-    Vector<RuleSet::CascadeLayerIdentifier> layersInPriorityOrder;
-    layersInPriorityOrder.reserveInitialCapacity(layerCount);
-    for (RuleSet::CascadeLayerIdentifier identifier = 1; identifier <= layerCount; ++identifier)
-        layersInPriorityOrder.uncheckedAppend(identifier);
+    Vector<RuleSet::CascadeLayerIdentifier> layersInPriorityOrder(layerCount, [](size_t i) {
+        return i + 1;
+    });
 
     std::sort(layersInPriorityOrder.begin(), layersInPriorityOrder.end(), compare);
 
@@ -473,9 +502,9 @@ void RuleSetBuilder::MediaQueryCollector::pop(const MQ::MediaQueryList& mediaQue
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         RuleSet::DynamicMediaQueryRules rules;
-        rules.mediaQueries.reserveCapacity(rules.mediaQueries.size() + dynamicContextStack.size());
-        for (auto& context : dynamicContextStack)
-            rules.mediaQueries.uncheckedAppend(context.queries);
+        rules.mediaQueries = WTF::map(dynamicContextStack, [](auto& context) {
+            return context.queries;
+        });
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);

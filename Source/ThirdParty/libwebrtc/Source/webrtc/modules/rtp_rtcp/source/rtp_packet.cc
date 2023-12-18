@@ -398,10 +398,6 @@ uint8_t* RtpPacket::AllocatePayload(size_t size_bytes) {
 
 uint8_t* RtpPacket::SetPayloadSize(size_t size_bytes) {
   RTC_DCHECK_EQ(padding_size_, 0);
-  if (payload_offset_ + size_bytes > capacity()) {
-    RTC_LOG(LS_WARNING) << "Cannot set payload, not enough space in buffer.";
-    return nullptr;
-  }
   payload_size_ = size_bytes;
   buffer_.SetSize(payload_offset_ + payload_size_);
   return WriteAt(payload_offset_);

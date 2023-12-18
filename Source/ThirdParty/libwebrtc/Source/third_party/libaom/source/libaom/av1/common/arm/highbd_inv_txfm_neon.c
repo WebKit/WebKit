@@ -17,7 +17,7 @@
 #include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
 #define TRANSPOSE_4X4(x0, x1, x2, x3, y0, y1, y2, y3)         \
   do {                                                        \
     int32x4x2_t swap_low = vtrnq_s32(x0, x1);                 \
@@ -49,7 +49,7 @@
     y3 = vextq_s32(swap_low.val[1],                                      \
                    vextq_s32(swap_high.val[1], swap_high.val[1], 2), 2); \
   } while (0)
-#endif  // (__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
 static INLINE void transpose_4x4(const int32x4_t *in, int32x4_t *out) {
   TRANSPOSE_4X4(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
@@ -590,7 +590,7 @@ static void iadst4x4_neon(int32x4_t *in, int32x4_t *out, int bit, int do_cols,
                           int bd, int out_shift) {
   const int32_t *sinpi = sinpi_arr(bit);
   const int32x4_t zero = vdupq_n_s32(0);
-  int64x2_t rnding = vdupq_n_s64(1 << (bit + 4 - 1));
+  int64x2_t rnding = vdupq_n_s64(1ll << (bit + 4 - 1));
   const int32x2_t mul = vdup_n_s32(1 << 4);
   int32x4_t t;
   int32x4_t s0, s1, s2, s3, s4, s5, s6, s7;
@@ -644,12 +644,12 @@ static void iadst4x4_neon(int32x4_t *in, int32x4_t *out, int bit, int do_cols,
       vreinterpretq_s16_s32(u0x.val[1]), vreinterpretq_s16_s32(zero), 1));
 
   u0x = vzipq_s32(u0x.val[0], u0x.val[1]);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   u0 = vreinterpretq_s32_s64(vzip1q_s64(vreinterpretq_s64_s32(u0x.val[0]),
                                         vreinterpretq_s64_s32(u0x.val[1])));
 #else
   u0 = vcombine_s32(vget_low_s32(u0x.val[0]), vget_low_s32(u0x.val[1]));
-#endif  // (__aarch64__)
+#endif  // AOM_ARCH_AARCH64
   // u1
   int32x4x2_t u1x;
   u1x.val[0] = vreinterpretq_s32_s64(
@@ -669,12 +669,12 @@ static void iadst4x4_neon(int32x4_t *in, int32x4_t *out, int bit, int do_cols,
       vreinterpretq_s16_s32(u1x.val[1]), vreinterpretq_s16_s32(zero), 1));
 
   u1x = vzipq_s32(u1x.val[0], u1x.val[1]);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   u1 = vreinterpretq_s32_s64(vzip1q_s64(vreinterpretq_s64_s32(u1x.val[0]),
                                         vreinterpretq_s64_s32(u1x.val[1])));
 #else
   u1 = vcombine_s32(vget_low_s32(u1x.val[0]), vget_low_s32(u1x.val[1]));
-#endif  // (__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // u2
   int32x4x2_t u2x;
@@ -695,12 +695,12 @@ static void iadst4x4_neon(int32x4_t *in, int32x4_t *out, int bit, int do_cols,
       vreinterpretq_s16_s32(u2x.val[1]), vreinterpretq_s16_s32(zero), 1));
 
   u2x = vzipq_s32(u2x.val[0], u2x.val[1]);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   u2 = vreinterpretq_s32_s64(vzip1q_s64(vreinterpretq_s64_s32(u2x.val[0]),
                                         vreinterpretq_s64_s32(u2x.val[1])));
 #else
   u2 = vcombine_s32(vget_low_s32(u2x.val[0]), vget_low_s32(u2x.val[1]));
-#endif  // (__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // u3
   int32x4x2_t u3x;
@@ -721,12 +721,12 @@ static void iadst4x4_neon(int32x4_t *in, int32x4_t *out, int bit, int do_cols,
       vreinterpretq_s16_s32(u3x.val[1]), vreinterpretq_s16_s32(zero), 1));
 
   u3x = vzipq_s32(u3x.val[0], u3x.val[1]);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   u3 = vreinterpretq_s32_s64(vzip1q_s64(vreinterpretq_s64_s32(u3x.val[0]),
                                         vreinterpretq_s64_s32(u3x.val[1])));
 #else
   u3 = vcombine_s32(vget_low_s32(u3x.val[0]), vget_low_s32(u3x.val[1]));
-#endif  // (__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   out[0] = u0;
   out[1] = u1;
@@ -809,7 +809,7 @@ static void iidentity4_neon(int32x4_t *in, int32x4_t *out, int bit, int do_cols,
         vshrq_n_s64(vreinterpretq_s64_s32(a0.val[1]), NewSqrt2Bits));
 
     a0 = vzipq_s32(a0.val[0], a0.val[1]);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
     out[i] = vreinterpretq_s32_s64(vzip1q_s64(
         vreinterpretq_s64_s32(a0.val[0]), vreinterpretq_s64_s32(a0.val[1])));
 #else
@@ -2824,7 +2824,7 @@ static void iidentity16_neon(int32x4_t *in, int32x4_t *out, int bit,
     a0.val[1] = vreinterpretq_s32_s64(
         vshrq_n_s64(vreinterpretq_s64_s32(a0.val[1]), NewSqrt2Bits));
     a0 = vzipq_s32(a0.val[0], a0.val[1]);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
     out[i] = vreinterpretq_s32_s64(vzip1q_s64(
         vreinterpretq_s64_s32(a0.val[0]), vreinterpretq_s64_s32(a0.val[1])));
 #else

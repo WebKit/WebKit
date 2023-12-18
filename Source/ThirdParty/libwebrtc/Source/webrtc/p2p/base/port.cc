@@ -169,6 +169,7 @@ Port::Port(TaskQueueBase* thread,
 }
 
 void Port::Construct() {
+  RTC_DCHECK_RUN_ON(thread_);
   // TODO(pthatcher): Remove this old behavior once we're sure no one
   // relies on it.  If the username_fragment and password are empty,
   // we should just create one.
@@ -187,11 +188,11 @@ void Port::Construct() {
 
 Port::~Port() {
   RTC_DCHECK_RUN_ON(thread_);
-  CancelPendingTasks();
   DestroyAllConnections();
+  CancelPendingTasks();
 }
 
-const std::string& Port::Type() const {
+const absl::string_view Port::Type() const {
   return type_;
 }
 const rtc::Network* Port::Network() const {
@@ -270,9 +271,11 @@ void Port::AddAddress(const rtc::SocketAddress& address,
       ComputeFoundation(type, protocol, relay_protocol, base_address);
   Candidate c(component_, protocol, address, 0U, username_fragment(), password_,
               type, generation_, foundation, network_->id(), network_cost_);
-  c.set_priority(
-      c.GetPriority(type_preference, network_->preference(), relay_preference));
   c.set_relay_protocol(relay_protocol);
+  c.set_priority(
+      c.GetPriority(type_preference, network_->preference(), relay_preference,
+                    field_trials_->IsEnabled(
+                        "WebRTC-IncreaseIceCandidatePriorityHostSrflx")));
   c.set_tcptype(tcptype);
   c.set_network_name(network_->name());
   c.set_network_type(network_->type());
@@ -428,6 +431,7 @@ bool Port::GetStunMessage(const char* data,
                           const rtc::SocketAddress& addr,
                           std::unique_ptr<IceMessage>* out_msg,
                           std::string* out_username) {
+  RTC_DCHECK_RUN_ON(thread_);
   // NOTE: This could clearly be optimized to avoid allocating any memory.
   //       However, at the data rates we'll be looking at on the client side,
   //       this probably isn't worth worrying about.
@@ -656,6 +660,7 @@ bool Port::ParseStunUsername(const StunMessage* stun_msg,
 bool Port::MaybeIceRoleConflict(const rtc::SocketAddress& addr,
                                 IceMessage* stun_msg,
                                 absl::string_view remote_ufrag) {
+  RTC_DCHECK_RUN_ON(thread_);
   // Validate ICE_CONTROLLING or ICE_CONTROLLED attributes.
   bool ret = true;
   IceRole remote_ice_role = ICEROLE_UNKNOWN;
@@ -715,6 +720,7 @@ bool Port::MaybeIceRoleConflict(const rtc::SocketAddress& addr,
 }
 
 std::string Port::CreateStunUsername(absl::string_view remote_username) const {
+  RTC_DCHECK_RUN_ON(thread_);
   return std::string(remote_username) + ":" + username_fragment();
 }
 
@@ -735,6 +741,7 @@ void Port::SendBindingErrorResponse(StunMessage* message,
                                     const rtc::SocketAddress& addr,
                                     int error_code,
                                     absl::string_view reason) {
+  RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK(message->type() == STUN_BINDING_REQUEST ||
              message->type() == GOOG_PING_REQUEST);
 
@@ -784,6 +791,7 @@ void Port::SendUnknownAttributesErrorResponse(
     StunMessage* message,
     const rtc::SocketAddress& addr,
     const std::vector<uint16_t>& unknown_types) {
+  RTC_DCHECK_RUN_ON(thread_);
   RTC_DCHECK(message->type() == STUN_BINDING_REQUEST);
 
   // Fill in the response message.
@@ -957,7 +965,8 @@ void Port::Destroy() {
   delete this;
 }
 
-const std::string Port::username_fragment() const {
+const std::string& Port::username_fragment() const {
+  RTC_DCHECK_RUN_ON(thread_);
   return ice_username_fragment_;
 }
 

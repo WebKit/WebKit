@@ -152,6 +152,8 @@ extern CFStringRef kAXInterfaceReduceMotionStatusDidChangeNotification;
 
 extern CFStringRef kAXInterfaceIncreaseContrastKey;
 
+extern CFStringRef kAXInterfaceDifferentiateWithoutColorKey;
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

@@ -35,6 +35,7 @@
 #include "Opcode.h"
 #include <variant>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(C_LOOP)
 #include "CLoopStack.h"
@@ -56,7 +57,7 @@ struct WasmOpcodeTraits;
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
-using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*>;
+using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*, uintptr_t /* IPIntOffset */>;
 
     class ArgList;
     class CachedCall;
@@ -115,10 +116,12 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         CodePtr<ExceptionHandlerPtrTag> m_nativeCodeForDispatchAndCatch;
 #endif
         JSOrWasmInstruction m_catchPCForInterpreter;
+        uintptr_t m_catchMetadataPCForInterpreter { 0 };
+        uint32_t m_tryDepthForThrow { 0 };
     };
 
     class Interpreter {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Interpreter);
         friend class CachedCall;
         friend class LLIntOffsetsExtractor;
         friend class JIT;
@@ -133,9 +136,9 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         const CLoopStack& cloopStack() const { return m_cloopStack; }
 #endif
         
-        static inline Opcode getOpcode(OpcodeID);
+        static inline JSC::Opcode getOpcode(OpcodeID);
 
-        static inline OpcodeID getOpcodeID(Opcode);
+        static inline OpcodeID getOpcodeID(JSC::Opcode);
 
 #if ASSERT_ENABLED
         static bool isOpcode(Opcode);
@@ -156,10 +159,12 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
 
         void getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip = 0, size_t maxStackSize = std::numeric_limits<size_t>::max(), JSCell* caller = nullptr);
 
+        static JSValue checkVMEntryPermission();
+
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
         
-        void prepareForCachedCall(CachedCall&, JSFunction*, int argumentCountIncludingThis, const ArgList&);
+        CodeBlock* prepareForCachedCall(CachedCall&, JSFunction*);
 
         JSValue executeCachedCall(CachedCall&);
         JSValue executeBoundCall(VM&, JSBoundFunction*, const ArgList&);

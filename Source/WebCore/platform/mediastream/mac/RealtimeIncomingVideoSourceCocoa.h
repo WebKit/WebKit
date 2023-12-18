@@ -51,7 +51,7 @@ private:
     RetainPtr<CVPixelBufferRef> pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, webrtc::BufferType);
     RefPtr<VideoFrame> toVideoFrame(const webrtc::VideoFrame&, VideoFrameRotation);
-    Ref<VideoFrame> createVideoSampleFromCVPixelBuffer(CVPixelBufferRef, VideoFrameRotation, int64_t);
+    Ref<VideoFrame> createVideoSampleFromCVPixelBuffer(RetainPtr<CVPixelBufferRef>&&, VideoFrameRotation, int64_t);
 
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;

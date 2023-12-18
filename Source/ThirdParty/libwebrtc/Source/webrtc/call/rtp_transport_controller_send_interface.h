@@ -46,7 +46,6 @@ class TargetTransferRateObserver;
 class Transport;
 class PacketRouter;
 class RtpVideoSenderInterface;
-class RtcpBandwidthObserver;
 class RtpPacketSender;
 
 struct RtpSenderObservers {
@@ -58,7 +57,6 @@ struct RtpSenderObservers {
   BitrateStatisticsObserver* bitrate_observer;
   FrameCountObserver* frame_count_observer;
   RtcpPacketTypeCounterObserver* rtcp_type_observer;
-  SendSideDelayObserver* send_delay_observer;
   SendPacketObserver* send_packet_observer;
 };
 
@@ -130,7 +128,7 @@ class RtpTransportControllerSendInterface {
       absl::string_view transport_name,
       const rtc::NetworkRoute& network_route) = 0;
   virtual void OnNetworkAvailability(bool network_available) = 0;
-  virtual RtcpBandwidthObserver* GetBandwidthObserver() = 0;
+  virtual NetworkLinkRtcpObserver* GetRtcpObserver() = 0;
   virtual int64_t GetPacerQueuingDelayMs() const = 0;
   virtual absl::optional<Timestamp> GetFirstPacketTime() const = 0;
   virtual void EnablePeriodicAlrProbing(bool enable) = 0;

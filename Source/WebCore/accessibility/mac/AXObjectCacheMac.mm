@@ -325,6 +325,10 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         return;
     }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
+
     bool skipSystemNotification = false;
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
     NSString *macNotification;
@@ -459,12 +463,29 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     AXPostNotificationWithUserInfo(object->wrapper(), macNotification, nil, skipSystemNotification);
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-static void createIsolatedObjectIfNeeded(AXCoreObject& object, std::optional<PageIdentifier> pageID)
+void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 {
-    if (!is<AccessibilityObject>(object))
-        return;
+    ASSERT(isMainThread());
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
+
+    NSDictionary *userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
+        NSAccessibilityAnnouncementKey: message,
+    };
+    NSAccessibilityPostNotificationWithUserInfo(NSApp, NSAccessibilityAnnouncementRequestedNotification, userInfo);
+
+    // To simplify monitoring of notifications in tests, repost as a simple NSNotification instead of forcing test infrastucture to setup an IPC client and do all the translation between WebCore types and platform specific IPC types and back.
+    if (UNLIKELY(axShouldRepostNotificationsForTests)) {
+        if (RefPtr root = getOrCreate(m_document->view()))
+            [root->wrapper() accessibilityPostedNotification:NSAccessibilityAnnouncementRequestedNotification userInfo:userInfo];
+    }
+}
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+static void createIsolatedObjectIfNeeded(AccessibilityObject& object, std::optional<PageIdentifier> pageID)
+{
     // The wrapper associated with a published notification may not have an isolated object yet.
     // This should only happen when the live object is ignored, meaning we will never create an isolated object for it.
     // This is generally correct, but not in this case, since AX clients will try to query this wrapper but the wrapper
@@ -477,7 +498,7 @@ static void createIsolatedObjectIfNeeded(AXCoreObject& object, std::optional<Pag
 
     if (object.accessibilityIsIgnored()) {
         if (auto tree = AXIsolatedTree::treeForPageID(pageID))
-            tree->addUnconnectedNode(downcast<AccessibilityObject>(object));
+            tree->addUnconnectedNode(object);
     }
 }
 #endif
@@ -490,6 +511,10 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (!object)
         return;
     RefPtr protectedObject = object;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
@@ -581,7 +606,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     postTextReplacementPlatformNotification(object, AXTextEditTypeUnknown, emptyString(), type, text, position);
 }
 
-static void postUserInfoForChanges(AXCoreObject& rootWebArea, AXCoreObject& object, NSMutableArray* changes, std::optional<PageIdentifier> pageID)
+static void postUserInfoForChanges(AccessibilityObject& rootWebArea, AccessibilityObject& object, NSMutableArray *changes, std::optional<PageIdentifier> pageID)
 {
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:4]);
     [userInfo setObject:@(platformChangeTypeForWebCoreChangeType(AXTextStateChangeTypeEdit)) forKey:NSAccessibilityTextStateChangeTypeKey];
@@ -611,6 +636,10 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
         return;
     RefPtr protectedObject = object;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
+
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*object, deletionType, deletedText, position))
         [changes addObject:change];
@@ -629,6 +658,10 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
     if (!object)
         return;
     RefPtr protectedObject = object;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeDelete, deletedText, textControl))
@@ -728,6 +761,10 @@ void AXObjectCache::initializeAXThreadIfNeeded()
 
 bool AXObjectCache::shouldSpellCheck()
 {
+    // This method can be called from non-accessibility contexts, so we need to allow spellchecking if accessibility is disabled.
+    if (!accessibilityEnabled())
+        return true;
+
     if (UNLIKELY(forceDeferredSpellChecking()))
         return false;
 
@@ -744,6 +781,13 @@ bool AXObjectCache::shouldSpellCheck()
     return true;
 #endif
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+Seconds AXObjectCache::platformSelectedTextRangeDebounceInterval() const
+{
+    return 100_ms;
+}
+#endif
 
 // TextMarker and TextMarkerRange funcstions.
 // FIXME: TextMarker and TextMarkerRange should become classes wrapping the system objects.
@@ -915,6 +959,33 @@ std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextM
     CharacterOffset startCharacterOffset = characterOffsetForTextMarker(cache, startTextMarker.get());
     CharacterOffset endCharacterOffset = characterOffsetForTextMarker(cache, endTextMarker.get());
     return cache->rangeForUnorderedCharacterOffsets(startCharacterOffset, endCharacterOffset);
+}
+
+void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        if (selection.isNull())
+            tree->setSelectedTextMarkerRange({ });
+        else {
+            auto startPosition = selection.start.deepEquivalent();
+            auto endPosition = selection.end.deepEquivalent();
+
+            if (startPosition.isNull() || endPosition.isNull())
+                tree->setSelectedTextMarkerRange({ });
+            else {
+                if (auto* startObject = get(startPosition.anchorNode()))
+                    createIsolatedObjectIfNeeded(*startObject, m_pageID);
+                if (auto* endObject = get(endPosition.anchorNode()))
+                    createIsolatedObjectIfNeeded(*endObject, m_pageID);
+
+                tree->setSelectedTextMarkerRange({ selection });
+            }
+        }
+    }
+#else
+    UNUSED_PARAM(selection);
+#endif
 }
 
 }

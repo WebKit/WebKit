@@ -310,12 +310,7 @@ func (t test) envMsg() string {
 }
 
 func (t test) getGTestShards() ([]test, error) {
-	if *numWorkers == 1 || len(t.Cmd) != 1 {
-		return []test{t}, nil
-	}
-
-	// Only shard the three GTest-based tests.
-	if t.Cmd[0] != "crypto/crypto_test" && t.Cmd[0] != "ssl/ssl_test" && t.Cmd[0] != "decrepit/decrepit_test" {
+	if *numWorkers == 1 || !t.Shard {
 		return []test{t}, nil
 	}
 

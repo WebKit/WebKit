@@ -48,6 +48,7 @@
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/platform_video_capturer.h"
+#include "test/test_flags.h"
 #include "test/testsupport/file_utils.h"
 #include "test/video_renderer.h"
 #include "video/frame_dumping_decoder.h"
@@ -75,8 +76,6 @@ constexpr int kOpusBitrateFbBps = 32000;
 constexpr int kFramesSentInQuickTest = 1;
 constexpr uint32_t kThumbnailSendSsrcStart = 0xE0000;
 constexpr uint32_t kThumbnailRtxSsrcStart = 0xF0000;
-
-constexpr int kDefaultMaxQp = cricket::WebRtcVideoChannel::kDefaultQpMax;
 
 const VideoEncoder::Capabilities kCapabilities(false);
 
@@ -246,7 +245,7 @@ class QualityTestVideoEncoder : public VideoEncoder,
       RTC_DCHECK_GE(simulcast_index, 0);
       if (analyzer_) {
         analyzer_->PostEncodeOnFrame(simulcast_index,
-                                     encoded_image.Timestamp());
+                                     encoded_image.RtpTimestamp());
       }
       if (static_cast<size_t>(simulcast_index) < writers_.size()) {
         writers_[simulcast_index]->WriteFrame(encoded_image,
@@ -578,7 +577,7 @@ VideoStream VideoQualityTest::DefaultVideoStream(const Params& params,
   stream.min_bitrate_bps = params.video[video_idx].min_bitrate_bps;
   stream.target_bitrate_bps = params.video[video_idx].target_bitrate_bps;
   stream.max_bitrate_bps = params.video[video_idx].max_bitrate_bps;
-  stream.max_qp = kDefaultMaxQp;
+  stream.max_qp = cricket::kDefaultVideoMaxQpVpx;
   stream.num_temporal_layers = params.video[video_idx].num_temporal_layers;
   stream.active = true;
   return stream;
@@ -593,7 +592,7 @@ VideoStream VideoQualityTest::DefaultThumbnailStream() {
   stream.min_bitrate_bps = 7500;
   stream.target_bitrate_bps = 37500;
   stream.max_bitrate_bps = 50000;
-  stream.max_qp = kDefaultMaxQp;
+  stream.max_qp = cricket::kDefaultVideoMaxQpVpx;
   return stream;
 }
 
@@ -626,7 +625,7 @@ void VideoQualityTest::FillScalabilitySettings(
     encoder_config.simulcast_layers = std::vector<VideoStream>(num_streams);
     encoder_config.video_stream_factory =
         rtc::make_ref_counted<cricket::EncoderStreamFactory>(
-            params->video[video_idx].codec, kDefaultMaxQp,
+            params->video[video_idx].codec, cricket::kDefaultVideoMaxQpVpx,
             params->screenshare[video_idx].enabled, true, encoder_info);
     params->ss[video_idx].streams =
         encoder_config.video_stream_factory->CreateEncoderStreams(
@@ -1246,8 +1245,8 @@ void VideoQualityTest::RunWithAnalyzer(const Params& params) {
   }
 
   SendTask(task_queue(), [this, &params, &send_transport, &recv_transport]() {
-    Call::Config send_call_config(send_event_log_.get());
-    Call::Config recv_call_config(recv_event_log_.get());
+    CallConfig send_call_config(send_event_log_.get());
+    CallConfig recv_call_config(recv_event_log_.get());
     send_call_config.bitrate_config = params.call.call_bitrate_config;
     recv_call_config.bitrate_config = params.call.call_bitrate_config;
     if (params_.audio.enabled)
@@ -1262,7 +1261,7 @@ void VideoQualityTest::RunWithAnalyzer(const Params& params) {
   std::string graph_title = params_.analyzer.graph_title;
   if (graph_title.empty())
     graph_title = VideoQualityTest::GenerateGraphTitle();
-  bool is_quick_test_enabled = field_trial::IsEnabled("WebRTC-QuickPerfTest");
+  bool is_quick_test_enabled = absl::GetFlag(FLAGS_webrtc_quick_perf_test);
   analyzer_ = std::make_unique<VideoAnalyzer>(
       send_transport.get(), params_.analyzer.test_label,
       params_.analyzer.avg_psnr_threshold, params_.analyzer.avg_ssim_threshold,
@@ -1365,8 +1364,8 @@ rtc::scoped_refptr<AudioDeviceModule> VideoQualityTest::CreateAudioDevice() {
 #endif
 }
 
-void VideoQualityTest::InitializeAudioDevice(Call::Config* send_call_config,
-                                             Call::Config* recv_call_config,
+void VideoQualityTest::InitializeAudioDevice(CallConfig* send_call_config,
+                                             CallConfig* recv_call_config,
                                              bool use_real_adm) {
   rtc::scoped_refptr<AudioDeviceModule> audio_device;
   if (use_real_adm) {
@@ -1472,11 +1471,11 @@ void VideoQualityTest::RunWithRenderers(const Params& params) {
     params_ = params;
     CheckParamsAndInjectionComponents();
 
-    // TODO(ivica): Remove bitrate_config and use the default Call::Config(), to
+    // TODO(ivica): Remove bitrate_config and use the default CallConfig(), to
     // match the full stack tests.
-    Call::Config send_call_config(send_event_log_.get());
+    CallConfig send_call_config(send_event_log_.get());
     send_call_config.bitrate_config = params_.call.call_bitrate_config;
-    Call::Config recv_call_config(recv_event_log_.get());
+    CallConfig recv_call_config(recv_event_log_.get());
 
     if (params_.audio.enabled)
       InitializeAudioDevice(&send_call_config, &recv_call_config,

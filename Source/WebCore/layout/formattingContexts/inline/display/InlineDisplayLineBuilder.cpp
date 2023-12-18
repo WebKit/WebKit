@@ -42,7 +42,7 @@ static InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect& li
         return lineLogicalRect;
     case BlockFlowDirection::LeftToRight:
     case BlockFlowDirection::RightToLeft:
-        // See InlineFormattingGeometry for more info.
+        // See InlineFormattingUtils for more info.
         return { lineLogicalRect.left(), lineLogicalRect.top(), lineLogicalRect.height(), lineLogicalRect.width() };
     default:
         ASSERT_NOT_REACHED();
@@ -97,7 +97,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         } else if (inlineLevelBox.isInlineBox()) {
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             // In standards mode, inline boxes always start with an imaginary strut.
-            auto isContentful = formattingContext().inlineLayoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
+            auto isContentful = formattingContext().layoutState().inStandardsMode() || inlineLevelBox.hasContent() || boxGeometry.horizontalBorder() || (boxGeometry.horizontalPadding() && boxGeometry.horizontalPadding().value());
             if (!isContentful)
                 continue;
             borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);

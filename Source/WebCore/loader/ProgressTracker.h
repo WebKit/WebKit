@@ -28,6 +28,7 @@
 #include "Page.h"
 #include "ResourceLoaderIdentifier.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -41,7 +42,7 @@ class ResourceResponse;
 class ProgressTrackerClient;
 struct ProgressItem;
 
-class ProgressTracker {
+class ProgressTracker : public CanMakeCheckedPtr {
     WTF_MAKE_NONCOPYABLE(ProgressTracker);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:

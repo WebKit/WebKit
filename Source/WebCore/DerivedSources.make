@@ -94,7 +94,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUCompilationMessageType.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePassDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePassEncoder.idl \
-    $(WebCore)/Modules/WebGPU/GPUComputePassTimestampLocation.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePassTimestampWrites.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipeline.idl \
     $(WebCore)/Modules/WebGPU/GPUComputePipelineDescriptor.idl \
@@ -160,7 +159,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPURenderPassDescriptor.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPassEncoder.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPassLayout.idl \
-    $(WebCore)/Modules/WebGPU/GPURenderPassTimestampLocation.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPassTimestampWrites.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPipeline.idl \
     $(WebCore)/Modules/WebGPU/GPURenderPipelineDescriptor.idl \
@@ -306,6 +304,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl \
     $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
+    $(WebCore)/Modules/credentialmanagement/CredentialMediationRequirement.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialsContainer.idl \
     $(WebCore)/Modules/credentialmanagement/Navigator+Credentials.idl \
@@ -370,7 +369,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/geolocation/PositionCallback.idl \
     $(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
     $(WebCore)/Modules/geolocation/PositionOptions.idl \
-    $(WebCore)/Modules/highlight/HighlightRegister.idl \
+    $(WebCore)/Modules/highlight/HighlightRegistry.idl \
     $(WebCore)/Modules/highlight/Highlight.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
@@ -454,6 +453,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/OverconstrainedError.idl \
     $(WebCore)/Modules/mediastream/OverconstrainedErrorEvent.idl \
     $(WebCore)/Modules/mediastream/PhotoCapabilities.idl \
+    $(WebCore)/Modules/mediastream/PhotoSettings.idl \
     $(WebCore)/Modules/mediastream/RedEyeReduction.idl \
     $(WebCore)/Modules/mediastream/RTCAnswerOptions.idl \
     $(WebCore)/Modules/mediastream/RTCCertificate.idl \
@@ -478,7 +478,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediastream/RTCIceConnectionState.idl \
     $(WebCore)/Modules/mediastream/RTCIceGatheringState.idl \
     $(WebCore)/Modules/mediastream/RTCIceProtocol.idl \
+    $(WebCore)/Modules/mediastream/RTCIceRole.idl \
     $(WebCore)/Modules/mediastream/RTCIceServer.idl \
+    $(WebCore)/Modules/mediastream/RTCIceServerTransportProtocol.idl \
     $(WebCore)/Modules/mediastream/RTCIceTcpCandidateType.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransport.idl \
     $(WebCore)/Modules/mediastream/RTCIceTransportState.idl \
@@ -720,6 +722,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/AuthenticatorResponse.idl \
     $(WebCore)/Modules/webauthn/AuthenticatorTransport.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredential.idl \
+    $(WebCore)/Modules/webauthn/PublicKeyCredentialClientCapabilities.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptor.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
@@ -744,6 +747,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsAlphaOption.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsAudioDataOutputCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderSupport.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunk.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkMetadata.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkOutputCallback.idl \
@@ -753,15 +763,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsSvcOutputMetadata.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoder.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoder.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderConfig.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl \
@@ -878,6 +880,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/animation/KeyframeEffectOptions.idl \
     $(WebCore)/animation/OptionalEffectTiming.idl \
     $(WebCore)/animation/PlaybackDirection.idl \
+    $(WebCore)/animation/ScrollAxis.idl \
+    $(WebCore)/animation/ScrollTimeline.idl \
+    $(WebCore)/animation/ScrollTimelineOptions.idl \
+    $(WebCore)/animation/ViewTimeline.idl \
+    $(WebCore)/animation/ViewTimelineOptions.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
@@ -928,6 +935,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/CSSPropertyRule.idl \
     $(WebCore)/css/CSSRule.idl \
     $(WebCore)/css/CSSRuleList.idl \
+    $(WebCore)/css/CSSScopeRule.idl \
     $(WebCore)/css/CSSStyleDeclaration.idl \
     $(WebCore)/css/CSSStyleRule.idl \
     $(WebCore)/css/CSSStyleSheet.idl \
@@ -1011,6 +1019,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/BroadcastChannel.idl \
     $(WebCore)/dom/CDATASection.idl \
     $(WebCore)/dom/CharacterData.idl \
+    $(WebCore)/dom/CheckVisibilityOptions.idl \
     $(WebCore)/dom/ChildNode.idl \
     $(WebCore)/dom/ClipboardEvent.idl \
     $(WebCore)/dom/Comment.idl \
@@ -1018,6 +1027,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
+    $(WebCore)/dom/CustomStateSet.idl \
     $(WebCore)/dom/DOMException.idl \
     $(WebCore)/dom/DOMImplementation.idl \
     $(WebCore)/dom/DOMPoint.idl \
@@ -1047,6 +1057,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Document+Selection.idl \
     $(WebCore)/dom/Document+StorageAccess.idl \
     $(WebCore)/dom/Document+UndoMananger.idl \
+    $(WebCore)/dom/Document+ViewTransition.idl \
     $(WebCore)/dom/DocumentAndElementEventHandlers.idl \
     $(WebCore)/dom/DocumentFragment.idl \
     $(WebCore)/dom/DocumentOrShadowRoot.idl \
@@ -1083,6 +1094,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/IdleRequestOptions.idl \
     $(WebCore)/dom/InnerHTML.idl \
     $(WebCore)/dom/InputEvent.idl \
+    $(WebCore)/dom/InvokeEvent.idl \
     $(WebCore)/dom/KeyboardEvent.idl \
     $(WebCore)/dom/MessageChannel.idl \
     $(WebCore)/dom/MessageEvent.idl \
@@ -1135,6 +1147,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \
     $(WebCore)/dom/ValidityStateFlags.idl \
+    $(WebCore)/dom/ViewTransition.idl \
+    $(WebCore)/dom/ViewTransitionUpdateCallback.idl \
     $(WebCore)/dom/VisibilityState.idl \
     $(WebCore)/dom/WheelEvent.idl \
     $(WebCore)/dom/XMLDocument.idl \
@@ -1237,6 +1251,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/ImageBitmapOptions.idl \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/ImageDataSettings.idl \
+    $(WebCore)/html/InvokerElement.idl \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaEncryptedEvent.idl \
     $(WebCore)/html/MediaError.idl \
@@ -1407,6 +1422,14 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/LocalDOMWindow+Selection.idl \
     $(WebCore)/page/LocalDOMWindow+VisualViewport.idl \
     $(WebCore)/page/Location.idl \
+    $(WebCore)/page/NavigateEvent.idl \
+    $(WebCore)/page/Navigation.idl \
+    $(WebCore)/page/NavigationCurrentEntryChangeEvent.idl \
+    $(WebCore)/page/NavigationDestination.idl \
+    $(WebCore)/page/NavigationHistoryEntry.idl \
+    $(WebCore)/page/NavigationInterceptHandler.idl \
+    $(WebCore)/page/NavigationNavigationType.idl \
+    $(WebCore)/page/NavigationTransition.idl \
     $(WebCore)/page/Navigator.idl \
     $(WebCore)/page/Navigator+IsLoggedIn.idl \
     $(WebCore)/page/Navigator+UserActivation.idl \
@@ -1672,7 +1695,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/worklets/WorkletOptions.idl \
     $(WebCore)/xml/CustomXPathNSResolver.idl \
     $(WebCore)/xml/DOMParser.idl \
-    $(WebCore)/xml/ParseFromStringOptions.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestEventTarget.idl \
     $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \
@@ -1693,8 +1715,6 @@ JS_BINDING_IDLS := \
 ADDITIONAL_BINDING_IDLS = \
     DocumentTouch.idl \
     GestureEvent.idl \
-    Internals+Additions.idl \
-    InternalsAdditions.idl \
     Touch.idl \
     TouchEvent.idl \
     TouchList.idl \
@@ -1968,11 +1988,10 @@ POSSIBLE_ADDITIONAL_USER_AGENT_STYLE_SHEETS = \
 
 USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/counterStyles.css \
-    $(WebCore)/css/dialog.css \
     $(WebCore)/css/fullscreen.css \
     $(WebCore)/css/horizontalFormControls.css \
     $(WebCore)/css/html.css \
-    $(WebCore)/css/legacyFormControlsIOS.css \
+    $(WebCore)/css/htmlSwitchControl.css \
     $(WebCore)/css/mathml.css \
     $(WebCore)/css/mediaControls.css \
     $(WebCore)/css/plugIns.css \
@@ -1980,6 +1999,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/ruby.css \
     $(WebCore)/css/svg.css \
+    $(WebCore)/css/viewTransitions.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \
     $(WebCore)/html/shadow/attachmentElementShadow.css \
     $(WebCore)/html/shadow/imageOverlay.css \

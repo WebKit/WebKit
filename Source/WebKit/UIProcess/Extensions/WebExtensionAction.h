@@ -69,21 +69,26 @@ public:
     WebExtensionTab* tab() { return m_tab.get(); }
     WebExtensionWindow* window() { return m_window.get(); }
 
+    void clearCustomizations();
+    void clearBlockedResourceCount();
+
     void propertiesDidChange();
 
     CocoaImage *icon(CGSize);
     void setIconsDictionary(NSDictionary *);
 
-    String displayLabel(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
-    void setDisplayLabel(String);
+    String label(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
+    void setLabel(String);
 
     String badgeText() const;
     void setBadgeText(String);
 
+    void incrementBlockedResourceCount(ssize_t amount);
+
     bool isEnabled() const;
     void setEnabled(std::optional<bool>);
 
-    bool hasPopup() const { return !popupPath().isEmpty(); }
+    bool presentsPopup() const { return !popupPath().isEmpty(); }
     bool canProgrammaticallyPresentPopup() const { return m_respondsToPresentPopup; }
 
     String popupPath() const;
@@ -95,6 +100,8 @@ public:
     void popupSizeDidChange();
     void popupDidClose();
     void closePopupWebView();
+
+    NSArray *platformMenuItems() const;
 
 #ifdef __OBJC__
     _WKWebExtensionAction *wrapper() const { return (_WKWebExtensionAction *)API::ObjectImpl<API::Object::Type::WebExtensionAction>::wrapper(); }
@@ -112,6 +119,7 @@ private:
     RetainPtr<NSDictionary> m_customIcons;
     String m_customLabel;
     String m_customBadgeText;
+    ssize_t m_blockedResourceCount { 0 };
     std::optional<bool> m_customEnabled;
     bool m_popupPresented { false };
     bool m_respondsToPresentPopup { false };

@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class StyleRule;
+class StyleRuleScope;
 
 namespace Style {
 
@@ -98,12 +99,12 @@ struct RuleFeatureSet {
     void add(const RuleFeatureSet&);
     void clear();
     void shrinkToFit();
-    void collectFeatures(const RuleData&);
+    void collectFeatures(const RuleData&, const Vector<Ref<const StyleRuleScope>>& scopeRules = { });
     void registerContentAttribute(const AtomString&);
 
     bool usesHasPseudoClass() const;
-    bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[static_cast<uint8_t>(matchElement)]; }
-    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[static_cast<uint8_t>(matchElement)] = true; }
+    bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[enumToUnderlyingType(matchElement)]; }
+    void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[enumToUnderlyingType(matchElement)] = true; }
 
     HashSet<AtomString> idsInRules;
     HashSet<AtomString> idsMatchingAncestorsInRules;

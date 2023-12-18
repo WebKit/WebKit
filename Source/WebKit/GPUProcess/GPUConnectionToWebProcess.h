@@ -53,6 +53,10 @@
 #include <wtf/MachSendRight.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#include "SampleBufferDisplayLayerIdentifier.h"
+#endif
+
 #if ENABLE(WEBGL)
 #include "GraphicsContextGLIdentifier.h"
 #include <WebCore/GraphicsContextGLAttributes.h>
@@ -135,7 +139,9 @@ public:
     bool isWebGPUEnabled() const { return m_preferences.isWebGPUEnabled; }
     bool isWebGLEnabled() const { return m_preferences.isWebGLEnabled; }
 
-    void updatePreferences(const GPUProcessPreferencesForWebProcess& preferences) { m_preferences = preferences; }
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    bool isDynamicContentScalingEnabled() const { return m_preferences.isDynamicContentScalingEnabled; }
+#endif
 
     using WebCore::NowPlayingManager::Client::weakPtrFactory;
     using WebCore::NowPlayingManager::Client::WeakValueType;
@@ -154,7 +160,7 @@ public:
     PAL::SessionID sessionID() const { return m_sessionID; }
 
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
-    bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
+    bool allowTestOnlyIPC() const { return m_preferences.allowTestOnlyIPC; }
 
     Logger& logger();
 
@@ -243,6 +249,11 @@ public:
     void overridePresentingApplicationPIDIfNeeded();
 #endif
 
+#if ENABLE(EXTENSION_CAPABILITIES)
+    String mediaEnvironment(WebCore::PageIdentifier);
+    void setMediaEnvironment(WebCore::PageIdentifier, const String&);
+#endif
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
@@ -278,6 +289,9 @@ private:
 
 #if ENABLE(MEDIA_SOURCE)
     void enableMockMediaSource();
+#endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    void updateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<MachSendRight>&&);
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -407,9 +421,12 @@ private:
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };
     const bool m_isLockdownModeEnabled { false };
-    const bool m_allowTestOnlyIPC { false };
 #if ENABLE(MEDIA_SOURCE)
     bool m_mockMediaSourceEnabled { false };
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    HashMap<WebCore::PageIdentifier, String> m_mediaEnvironments;
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
@@ -418,7 +435,9 @@ private:
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
-    GPUProcessPreferencesForWebProcess m_preferences;
+    // GPU preferences don't change for a given WebProcess. Pages that use different GPUProcessPreferences
+    // cannot be in the same WebProcess.
+    const GPUProcessPreferencesForWebProcess m_preferences;
 };
 
 } // namespace WebKit

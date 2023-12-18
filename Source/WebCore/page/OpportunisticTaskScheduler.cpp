@@ -26,26 +26,39 @@
 #include "config.h"
 #include "OpportunisticTaskScheduler.h"
 
+#include "CommonVM.h"
+#include "GCController.h"
 #include "Page.h"
+#include <JavaScriptCore/HeapInlines.h>
+#include <wtf/DataLog.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebCore {
 
 OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     : m_page(&page)
     , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [weakThis = WeakPtr { this }] {
-        if (auto strongThis = weakThis.get())
-            strongThis->runLoopObserverFired();
-    }, RunLoopObserver::Type::Repeating))
+        if (auto protectedThis = weakThis.get())
+            protectedThis->runLoopObserverFired();
+    }, RunLoopObserver::Type::OneShot))
 {
-    m_runLoopObserver->schedule();
 }
 
 OpportunisticTaskScheduler::~OpportunisticTaskScheduler() = default;
 
-void OpportunisticTaskScheduler::reschedule(MonotonicTime deadline)
+void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
 {
+    RefPtr page = m_page.get();
+    if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
+        return;
+
+    if (!m_mayHavePendingIdleCallbacks && !page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
+        return;
+
     m_runloopCountAfterBeingScheduled = 0;
     m_currentDeadline = deadline;
+    m_runLoopObserver->invalidate();
+    m_runLoopObserver->schedule();
 }
 
 Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkScope()
@@ -55,14 +68,19 @@ Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkS
 
 void OpportunisticTaskScheduler::runLoopObserverFired()
 {
+    constexpr bool verbose = false;
+
     if (!m_currentDeadline)
         return;
 
-    auto page = m_page;
-    if (UNLIKELY(!page))
+    if (UNLIKELY(!m_page))
         return;
 
-    if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
+    RefPtr page = m_page.get();
+    if (page->isWaitingForLoadToFinish())
+        return;
+
+    if (!page->isVisibleAndActive())
         return;
 
     auto currentTime = ApproximateTime::now();
@@ -84,11 +102,16 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
         if (m_runloopCountAfterBeingScheduled > minimumRunloopCountWhenScheduledWorkIsImminent)
             return true;
 
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: task does not get scheduled ", remainingTime, " ", hasImminentlyScheduledWork(), " ", page->preferredRenderingUpdateInterval(), " ", m_runloopCountAfterBeingScheduled);
         return false;
     }();
 
-    if (!shouldRunTask)
+    if (!shouldRunTask) {
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] RunLoopObserverInvalidate");
+        m_runLoopObserver->invalidate();
+        m_runLoopObserver->schedule();
         return;
+    }
 
     TraceScope tracingScope {
         PerformOpportunisticallyScheduledTasksStart,
@@ -97,9 +120,19 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     };
 
     auto deadline = std::exchange(m_currentDeadline, MonotonicTime { });
-    page->opportunisticallyRunIdleCallbacks();
-    if (UNLIKELY(!page))
+    if (std::exchange(m_mayHavePendingIdleCallbacks, false)) {
+        auto weakPage = m_page;
+        page->opportunisticallyRunIdleCallbacks();
+        if (UNLIKELY(!weakPage)) {
+            dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: page gets destroyed");
+            return;
+        }
+    }
+
+    if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled()) {
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: opportunistic sweep and GC is not enabled");
         return;
+    }
 
     page->performOpportunisticallyScheduledTasks(deadline);
 }
@@ -114,6 +147,114 @@ ImminentlyScheduledWorkScope::~ImminentlyScheduledWorkScope()
 {
     if (m_scheduler)
         m_scheduler->m_imminentlyScheduledWorkCount--;
+}
+
+static bool isBusyForTimerBasedGC()
+{
+    bool isVisibleAndActive = false;
+    bool hasPendingTasks = false;
+    bool opportunisticSweepingAndGarbageCollectionEnabled = false;
+    Page::forEachPage([&](auto& page) {
+        if (page.isVisibleAndActive())
+            isVisibleAndActive = true;
+        if (page.isWaitingForLoadToFinish())
+            hasPendingTasks = true;
+        if (page.opportunisticTaskScheduler().hasImminentlyScheduledWork())
+            hasPendingTasks = true;
+        if (page.settings().opportunisticSweepingAndGarbageCollectionEnabled())
+            opportunisticSweepingAndGarbageCollectionEnabled = true;
+    });
+
+    // If all pages are not visible, we do not care about this GC tasks. We should just run as requested.
+    return opportunisticSweepingAndGarbageCollectionEnabled && isVisibleAndActive && hasPendingTasks;
+}
+
+OpportunisticTaskScheduler::FullGCActivityCallback::FullGCActivityCallback(JSC::Heap& heap)
+    : Base(heap, JSC::Synchronousness::Sync)
+    , m_vm(heap.vm())
+    , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
+        JSC::JSLockHolder locker(m_vm);
+        m_version = 0;
+        m_deferCount = 0;
+        Base::doCollection(m_vm);
+    }, RunLoopObserver::Type::OneShot))
+{
+}
+
+// We would like to keep FullGCActivityCallback::doCollection and EdenGCActivityCallback::doCollection separate
+// since we would like to encode more and more different heuristics for them.
+void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& vm)
+{
+    constexpr Seconds delay { 100_ms };
+    constexpr unsigned deferCountThreshold = 3;
+
+    if (isBusyForTimerBasedGC()) {
+        if (!m_version || m_version != vm.heap.objectSpace().markingVersion()) {
+            m_version = vm.heap.objectSpace().markingVersion();
+            m_deferCount = 0;
+            m_delay = delay;
+            setTimeUntilFire(delay);
+            return;
+        }
+
+        if (++m_deferCount < deferCountThreshold) {
+            m_delay = delay;
+            setTimeUntilFire(delay);
+            return;
+        }
+
+        m_runLoopObserver->invalidate();
+        m_runLoopObserver->schedule();
+        return;
+    }
+
+    JSC::JSLockHolder locker(m_vm);
+    m_version = 0;
+    m_deferCount = 0;
+    Base::doCollection(vm);
+}
+
+OpportunisticTaskScheduler::EdenGCActivityCallback::EdenGCActivityCallback(JSC::Heap& heap)
+    : Base(heap, JSC::Synchronousness::Sync)
+    , m_vm(heap.vm())
+    , m_runLoopObserver(makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::PostRenderingUpdate, [this] {
+        JSC::JSLockHolder locker(m_vm);
+        m_version = 0;
+        m_deferCount = 0;
+        Base::doCollection(m_vm);
+    }, RunLoopObserver::Type::OneShot))
+{
+}
+
+void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& vm)
+{
+    constexpr Seconds delay { 10_ms };
+    constexpr unsigned deferCountThreshold = 5;
+
+    if (isBusyForTimerBasedGC()) {
+        if (!m_version || m_version != vm.heap.objectSpace().edenVersion()) {
+            m_version = vm.heap.objectSpace().edenVersion();
+            m_deferCount = 0;
+            m_delay = delay;
+            setTimeUntilFire(delay);
+            return;
+        }
+
+        if (++m_deferCount < deferCountThreshold) {
+            m_delay = delay;
+            setTimeUntilFire(delay);
+            return;
+        }
+
+        m_runLoopObserver->invalidate();
+        m_runLoopObserver->schedule();
+        return;
+    }
+
+    JSC::JSLockHolder locker(m_vm);
+    m_version = 0;
+    m_deferCount = 0;
+    Base::doCollection(m_vm);
 }
 
 } // namespace WebCore

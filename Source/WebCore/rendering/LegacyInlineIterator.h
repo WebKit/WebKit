@@ -185,7 +185,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
 static inline bool isIteratorTarget(RenderObject* object)
 {
     ASSERT(object); // The iterator will of course return 0, but its not an expected argument to this function.
-    return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplacedOrInlineBlock();
+    return object->isRenderTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplacedOrInlineBlock();
 }
 
 template <class Observer>
@@ -275,7 +275,7 @@ inline void LegacyInlineIterator::incrementByCodePointInTextNode()
         ++m_pos;
         return;
     }
-    UChar32 character;
+    char32_t character;
     U16_NEXT(text.characters16(), m_pos, text.length(), character);
 }
 
@@ -354,7 +354,7 @@ ALWAYS_INLINE UCharDirection LegacyInlineIterator::direction() const
         return surrogateTextDirection(codeUnit);
     }
 
-    if (m_renderer->isListMarker())
+    if (m_renderer->isRenderListMarker())
         return m_renderer->style().isLeftToRightDirection() ? U_LEFT_TO_RIGHT : U_RIGHT_TO_LEFT;
 
     return U_OTHER_NEUTRAL;

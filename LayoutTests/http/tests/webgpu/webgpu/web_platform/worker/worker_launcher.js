@@ -1,6 +1,6 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
- **/
+ **/ import { getDefaultRequestAdapterOptions } from '../../../common/util/navigator_gpu.js';
 
 export async function launchWorker() {
   const selfPath = import.meta.url;
@@ -11,6 +11,6 @@ export async function launchWorker() {
   const promise = new Promise(resolve => {
     worker.addEventListener('message', ev => resolve(ev.data), { once: true });
   });
-  worker.postMessage({});
+  worker.postMessage({ defaultRequestAdapterOptions: getDefaultRequestAdapterOptions() });
   return await promise;
 }

@@ -211,6 +211,16 @@ struct Metrics {
   // Number of messages requested to be sent.
   size_t tx_messages_count = 0;
 
+  // Number of packets retransmitted. Since SCTP packets can contain both
+  // retransmitted DATA chunks and DATA chunks that are transmitted for the
+  // first time, this represents an upper bound as it's incremented every time a
+  // packet contains a retransmitted DATA chunk.
+  size_t rtx_packets_count = 0;
+
+  // Total number of bytes retransmitted. This includes the payload and
+  // DATA/I-DATA headers, but not SCTP packet headers.
+  uint64_t rtx_bytes_count = 0;
+
   // The current congestion window (cwnd) in bytes, corresponding to spinfo_cwnd
   // defined in RFC6458.
   size_t cwnd_bytes = 0;
@@ -244,6 +254,10 @@ struct Metrics {
   // Indicates if RFC8260 User Message Interleaving has been negotiated by both
   // peers.
   bool uses_message_interleaving = false;
+
+  // Indicates if draft-tuexen-tsvwg-sctp-zero-checksum-00 has been negotiated
+  // by both peers.
+  bool uses_zero_checksum = false;
 
   // The number of negotiated incoming and outgoing streams, which is configured
   // locally as `DcSctpOptions::announced_maximum_incoming_streams` and
@@ -583,7 +597,9 @@ class DcSctpSocketInterface {
                                              size_t bytes) = 0;
 
   // Retrieves the latest metrics. If the socket is not fully connected,
-  // `absl::nullopt` will be returned.
+  // `absl::nullopt` will be returned. Note that metrics are not guaranteed to
+  // be carried over if this socket is handed over by calling
+  // `GetHandoverStateAndClose`.
   virtual absl::optional<Metrics> GetMetrics() const = 0;
 
   // Returns empty bitmask if the socket is in the state in which a snapshot of

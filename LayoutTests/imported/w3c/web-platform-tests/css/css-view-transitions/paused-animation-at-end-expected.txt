@@ -1,0 +1,3 @@
+
+FAIL view transition is not over if animations are paused promise_test: Unhandled rejection with value: "transition unexpectedly finished"
+

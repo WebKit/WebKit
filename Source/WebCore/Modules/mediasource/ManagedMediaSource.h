@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSource.h"
 #include "Timer.h"
@@ -71,4 +71,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ManagedMediaSource)
     static bool isType(const WebCore::MediaSource& mediaSource) { return mediaSource.isManaged(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

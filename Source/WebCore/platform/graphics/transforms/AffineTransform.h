@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  *               2010 Dirk Schulze <krit@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,6 +111,7 @@ public:
     WEBCORE_EXPORT AffineTransform& scaleNonUniform(double sx, double sy); // Same as scale(sx, sy).
     WEBCORE_EXPORT AffineTransform& scale(const FloatSize&);
     WEBCORE_EXPORT AffineTransform& rotate(double);
+    WEBCORE_EXPORT AffineTransform& rotateRadians(double);
     AffineTransform& rotateFromVector(double x, double y);
     WEBCORE_EXPORT AffineTransform& translate(double tx, double ty);
     WEBCORE_EXPORT AffineTransform& translate(const FloatPoint&);

@@ -105,97 +105,6 @@ template<typename T> static Vector<PlatformCAAnimationRemote::KeyframeValue> toK
     });
 }
 
-void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
-{
-    encoder << keyPath;
-    encoder << animationType;
-
-    encoder << beginTime;
-    encoder << duration;
-    encoder << timeOffset;
-    encoder << repeatCount;
-    encoder << speed;
-
-    encoder << fillMode;
-    encoder << valueFunction;
-    encoder << timingFunction;
-
-    encoder << autoReverses;
-    encoder << removedOnCompletion;
-    encoder << additive;
-    encoder << reverseTimingFunctions;
-    encoder << hasExplicitBeginTime;
-    
-    encoder << keyValues;
-    encoder << keyTimes;
-    encoder << timingFunctions;
-
-    encoder << animations;
-}
-
-std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
-{
-    PlatformCAAnimationRemote::Properties properties;
-    if (!decoder.decode(properties.keyPath))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.animationType))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.beginTime))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.duration))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.timeOffset))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.repeatCount))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.speed))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.fillMode))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.valueFunction))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.timingFunction))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.autoReverses))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.removedOnCompletion))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.additive))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.reverseTimingFunctions))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.hasExplicitBeginTime))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.keyValues))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.keyTimes))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.timingFunctions))
-        return std::nullopt;
-
-    if (!decoder.decode(properties.animations))
-        return std::nullopt;
-
-    return WTFMove(properties);
-}
-    
 Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
     return adoptRef(*new PlatformCAAnimationRemote(type, keyPath));
@@ -220,7 +129,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const
     downcast<PlatformCAAnimationRemote>(animation.get()).setHasExplicitBeginTime(hasExplicitBeginTime());
     
     // Copy the specific Basic or Keyframe values.
-    if (animationType() == Keyframe) {
+    if (animationType() == AnimationType::Keyframe) {
         animation->copyValuesFrom(*this);
         animation->copyKeyTimesFrom(*this);
         animation->copyTimingFunctionsFrom(*this);
@@ -368,7 +277,7 @@ void PlatformCAAnimationRemote::setValueFunction(ValueFunctionType value)
 
 void PlatformCAAnimationRemote::setFromValue(float value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -377,7 +286,7 @@ void PlatformCAAnimationRemote::setFromValue(float value)
 
 void PlatformCAAnimationRemote::setFromValue(const TransformationMatrix& value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -386,7 +295,7 @@ void PlatformCAAnimationRemote::setFromValue(const TransformationMatrix& value)
 
 void PlatformCAAnimationRemote::setFromValue(const FloatPoint3D& value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -395,7 +304,7 @@ void PlatformCAAnimationRemote::setFromValue(const FloatPoint3D& value)
 
 void PlatformCAAnimationRemote::setFromValue(const Color& value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -404,7 +313,7 @@ void PlatformCAAnimationRemote::setFromValue(const Color& value)
 
 void PlatformCAAnimationRemote::setFromValue(const FilterOperation* operation)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -424,7 +333,7 @@ void PlatformCAAnimationRemote::copyFromValueFrom(const PlatformCAAnimation& val
 
 void PlatformCAAnimationRemote::setToValue(float value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -433,7 +342,7 @@ void PlatformCAAnimationRemote::setToValue(float value)
 
 void PlatformCAAnimationRemote::setToValue(const TransformationMatrix& value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -442,7 +351,7 @@ void PlatformCAAnimationRemote::setToValue(const TransformationMatrix& value)
 
 void PlatformCAAnimationRemote::setToValue(const FloatPoint3D& value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -451,7 +360,7 @@ void PlatformCAAnimationRemote::setToValue(const FloatPoint3D& value)
 
 void PlatformCAAnimationRemote::setToValue(const Color& value)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
 
     m_properties.keyValues.resize(2);
@@ -460,7 +369,7 @@ void PlatformCAAnimationRemote::setToValue(const Color& value)
 
 void PlatformCAAnimationRemote::setToValue(const FilterOperation* operation)
 {
-    if (animationType() != Basic)
+    if (animationType() != AnimationType::Basic)
         return;
     
     ASSERT(operation);
@@ -481,7 +390,7 @@ void PlatformCAAnimationRemote::copyToValueFrom(const PlatformCAAnimation& value
 // Keyframe-animation properties.
 void PlatformCAAnimationRemote::setValues(const Vector<float>& values)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     m_properties.keyValues = toKeyframeValueVector(values);
@@ -489,7 +398,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<float>& values)
 
 void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& values)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     m_properties.keyValues = toKeyframeValueVector(values);
@@ -497,7 +406,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& va
 
 void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     m_properties.keyValues = toKeyframeValueVector(values);
@@ -505,7 +414,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
 
 void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     m_properties.keyValues = toKeyframeValueVector(values);
@@ -513,7 +422,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
 
 void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>& values)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     m_properties.keyValues = toKeyframeValueVector(values);
@@ -587,7 +496,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
 {
     RetainPtr<CAAnimation> caAnimation;
     switch (properties.animationType) {
-    case PlatformCAAnimation::Basic: {
+    case PlatformCAAnimation::AnimationType::Basic: {
         auto basicAnimation = [CABasicAnimation animationWithKeyPath:properties.keyPath];
 
         if (properties.keyValues.size() > 1) {
@@ -601,7 +510,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         caAnimation = basicAnimation;
         break;
     }
-    case PlatformCAAnimation::Group: {
+    case PlatformCAAnimation::AnimationType::Group: {
         auto animationGroup = [CAAnimationGroup animation];
 
         if (properties.animations.size()) {
@@ -613,7 +522,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         caAnimation = animationGroup;
         break;
     }
-    case PlatformCAAnimation::Keyframe: {
+    case PlatformCAAnimation::AnimationType::Keyframe: {
         auto keyframeAnimation = [CAKeyframeAnimation animationWithKeyPath:properties.keyPath];
 
         if (properties.keyValues.size()) {
@@ -640,7 +549,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         caAnimation = keyframeAnimation;
         break;
     }
-    case PlatformCAAnimation::Spring: {
+    case PlatformCAAnimation::AnimationType::Spring: {
         auto springAnimation = [CASpringAnimation animationWithKeyPath:properties.keyPath];
 
         if (properties.keyValues.size() > 1) {
@@ -673,11 +582,11 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
 
     if ([caAnimation isKindOfClass:[CAPropertyAnimation class]]) {
         [(CAPropertyAnimation *)caAnimation setAdditive:properties.additive];
-        if (properties.valueFunction != PlatformCAAnimation::NoValueFunction)
+        if (properties.valueFunction != PlatformCAAnimation::ValueFunctionType::NoValueFunction)
             [(CAPropertyAnimation *)caAnimation setValueFunction:[CAValueFunction functionWithName:toCAValueFunctionType(properties.valueFunction)]];
     }
 
-    if (properties.fillMode != PlatformCAAnimation::NoFillMode)
+    if (properties.fillMode != PlatformCAAnimation::FillModeType::NoFillMode)
         [caAnimation setFillMode:toCAFillModeType(properties.fillMode)];
 
     if (properties.hasExplicitBeginTime)

@@ -20,7 +20,10 @@ namespace rtc {
 using ::testing::_;
 using ::testing::InvokeWithoutArgs;
 
-class MockAsyncResolver : public AsyncResolverInterface {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+class [[deprecated]] MockAsyncResolver : public AsyncResolverInterface {
+#pragma clang diagnostic pop
  public:
   MockAsyncResolver() {
     ON_CALL(*this, Start(_)).WillByDefault(InvokeWithoutArgs([this] {
@@ -47,11 +50,13 @@ class MockAsyncResolver : public AsyncResolverInterface {
 
 namespace webrtc {
 
-class MockAsyncResolverFactory : public AsyncResolverFactory {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+class [[deprecated]] MockAsyncResolverFactory : public AsyncResolverFactory {
  public:
   MOCK_METHOD(rtc::AsyncResolverInterface*, Create, (), (override));
 };
-
+#pragma clang diagnostic pop
 }  // namespace webrtc
 
 #endif  // P2P_BASE_MOCK_ASYNC_RESOLVER_H_

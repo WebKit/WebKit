@@ -55,7 +55,7 @@ class SecondaryCommandPool final : angle::NonCopyable
     // Other thread access members.
 
     // Fast lock free queue for processing buffers while new may be added from the other thread.
-    angle::FixedQueue<VkCommandBuffer, kFixedQueueLimit> mCollectedBuffers;
+    angle::FixedQueue<VkCommandBuffer> mCollectedBuffers;
 
     // Overflow vector to use in cases when FixedQueue is filled.
     std::vector<VkCommandBuffer> mCollectedBuffersOverflow;

@@ -152,20 +152,20 @@ void ComplexTextController::finishConstruction()
 
     if (!m_isLTROnly) {
         unsigned length = m_complexTextRuns.size();
-        m_runIndices.reserveInitialCapacity(length);
-        for (unsigned i = 0; i < length; ++i)
-            m_runIndices.uncheckedAppend(length - i - 1);
+        m_runIndices = Vector<unsigned, 16>(length, [&](size_t i) {
+            return length - i - 1;
+        });
         std::sort(m_runIndices.data(), m_runIndices.data() + length,
             [this](auto a, auto b) {
                 return stringBegin(*m_complexTextRuns[a]) < stringBegin(*m_complexTextRuns[b]);
             });
 
-        m_glyphCountFromStartToIndex.reserveInitialCapacity(length);
         unsigned glyphCountSoFar = 0;
-        for (unsigned i = 0; i < length; ++i) {
-            m_glyphCountFromStartToIndex.uncheckedAppend(glyphCountSoFar);
+        m_glyphCountFromStartToIndex = Vector<unsigned, 16>(length, [&](size_t i) {
+            auto glyphCountThisTime = glyphCountSoFar;
             glyphCountSoFar += m_complexTextRuns[i]->glyphCount();
-        }
+            return glyphCountThisTime;
+        });
     }
 }
 
@@ -262,7 +262,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
     return 0;
 }
 
-bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, UChar32& baseCharacter, unsigned& markCount)
+bool ComplexTextController::advanceByCombiningCharacterSequence(const CachedTextBreakIterator& graphemeClusterIterator, unsigned& currentIndex, char32_t& baseCharacter, unsigned& markCount)
 {
     unsigned remainingCharacters = m_end - currentIndex;
     ASSERT(remainingCharacters);
@@ -331,7 +331,7 @@ void ComplexTextController::collectComplexTextRuns()
     CachedTextBreakIterator graphemeClusterIterator(m_run.text(), nullptr, 0, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
     unsigned markCount;
-    UChar32 baseCharacter;
+    char32_t baseCharacter;
     if (!advanceByCombiningCharacterSequence(graphemeClusterIterator, currentIndex, baseCharacter, markCount))
         return;
 
@@ -347,7 +347,7 @@ void ComplexTextController::collectComplexTextRuns()
     if (shouldSynthesizeSmallCaps(dontSynthesizeSmallCaps, nextFont, baseCharacter, capitalizedBase, fontVariantCaps, engageAllSmallCapsProcessing)) {
         synthesizedFont = &nextFont->noSynthesizableFeaturesFont();
         smallSynthesizedFont = synthesizedFont->smallCapsFont(m_font.fontDescription());
-        UChar32 characterToWrite = capitalizedBase ? capitalizedBase.value() : baseOfString[0];
+        char32_t characterToWrite = capitalizedBase ? capitalizedBase.value() : baseOfString[0];
         unsigned characterIndex = 0;
         U16_APPEND_UNSAFE(m_smallCapsBuffer, characterIndex, characterToWrite);
         for (unsigned i = characterIndex; i < currentIndex; ++i)
@@ -759,7 +759,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             m_totalAdvance += advance;
 
             if (m_forTextEmphasis) {
-                UChar32 ch32 = ch;
+                char32_t ch32 = ch;
                 if (U16_IS_SURROGATE(ch))
                     U16_GET(cp, 0, characterIndex, complexTextRun.stringLength(), ch32);
                 // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
@@ -807,12 +807,12 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, const UC
     unsigned r = m_indexBegin;
     while (r < m_indexEnd) {
         auto currentIndex = r;
-        UChar32 character;
+        char32_t character;
         U16_NEXT(m_characters, r, m_stringLength, character);
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
         if (!FontCascade::isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(character))
-            m_coreTextIndices.uncheckedAppend(currentIndex);
+            m_coreTextIndices.append(currentIndex);
     }
     m_glyphCount = m_coreTextIndices.size();
     if (!ltr) {

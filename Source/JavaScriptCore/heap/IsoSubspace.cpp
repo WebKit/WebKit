@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,13 @@
 #include "IsoCellSetInlines.h"
 #include "JSCellInlines.h"
 #include "MarkedSpaceInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
-IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IsoSubspace);
+
+IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))

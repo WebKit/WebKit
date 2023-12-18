@@ -56,10 +56,10 @@ function testNumberFormat(numberFormat, possibleDifferences) {
             useGrouping: "auto",
             notation: "standard",
             signDisplay: "auto",
-            roundingMode: "halfExpand",
             roundingIncrement: 1,
-            trailingZeroDisplay: "auto",
+            roundingMode: "halfExpand",
             roundingPriority: "auto",
+            trailingZeroDisplay: "auto",
         };
         Object.assign(defaultOptions, difference);
         return JSON.stringify(defaultOptions);
@@ -438,8 +438,8 @@ shouldThrow(() => Intl.NumberFormat.prototype.resolvedOptions.call(5), TypeError
 // Returns the default options.
 {
     let options = defaultNFormat.resolvedOptions();
-    delete options.locale; 
-    shouldBe(JSON.stringify(options), `{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":"auto","notation":"standard","signDisplay":"auto","roundingMode":"halfExpand","roundingIncrement":1,"trailingZeroDisplay":"auto","roundingPriority":"auto"}`);
+    delete options.locale;
+    shouldBe(JSON.stringify(options), `{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":"auto","notation":"standard","signDisplay":"auto","roundingIncrement":1,"roundingMode":"halfExpand","roundingPriority":"auto","trailingZeroDisplay":"auto"}`);
 }
 
 // Legacy compatibility with ECMA-402 1.0

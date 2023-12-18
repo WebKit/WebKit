@@ -41,4 +41,9 @@ void UIScriptControllerCommon::setWindowIsKey(bool isKey)
     TestController::singleton().mainWebView()->setWindowIsKey(isKey);
 }
 
+void UIScriptControllerCommon::resizeWindowTo(unsigned width, unsigned height)
+{
+    TestController::singleton().mainWebView()->resizeTo(width, height);
+}
+
 } // namespace WTR

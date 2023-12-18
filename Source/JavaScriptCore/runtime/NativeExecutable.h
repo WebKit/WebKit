@@ -37,7 +37,7 @@ public:
     typedef ExecutableBase Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static NativeExecutable* create(VM&, Ref<JITCode>&& callThunk, TaggedNativeFunction, Ref<JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility, const String& name);
+    static NativeExecutable* create(VM&, Ref<JSC::JITCode>&& callThunk, TaggedNativeFunction, Ref<JSC::JITCode>&& constructThunk, TaggedNativeFunction constructor, ImplementationVisibility, const String& name);
 
     static void destroy(JSCell*);
     
@@ -91,7 +91,7 @@ public:
 
 private:
     NativeExecutable(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility);
-    void finishCreation(VM&, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name);
+    void finishCreation(VM&, Ref<JSC::JITCode>&& callThunk, Ref<JSC::JITCode>&& constructThunk, const String& name);
 
     JSString* toStringSlow(JSGlobalObject*);
 

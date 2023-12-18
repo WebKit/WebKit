@@ -83,7 +83,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             JSValueRegs inputJSR = wasmFrameConvention.results[0].location.jsr();
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToBigInt)>(GPRInfo::wasmContextInstancePointer, inputJSR);
-            jit.callOperation(operationConvertToBigInt);
+            jit.callOperation<OperationPtrTag>(operationConvertToBigInt);
         } else
             boxNativeCalleeResult(jit, signature.returnType(0), wasmFrameConvention.results[0].location, JSRInfo::returnValueJSR);
     } else {
@@ -193,7 +193,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
                 jit.loadValue(address, valueJSR);
                 jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
                 jit.setupArguments<decltype(operationConvertToBigInt)>(GPRInfo::wasmContextInstancePointer, valueJSR);
-                jit.callOperation(operationConvertToBigInt);
+                jit.callOperation<OperationPtrTag>(operationConvertToBigInt);
                 jit.storeValue(JSRInfo::returnValueJSR, address);
             }
         }
@@ -206,7 +206,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
         jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
         jit.setupArguments<decltype(operationAllocateResultsArray)>(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
         JIT_COMMENT(jit, "operationAllocateResultsArray");
-        jit.callOperation(operationAllocateResultsArray);
+        jit.callOperation<OperationPtrTag>(operationAllocateResultsArray);
         if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 

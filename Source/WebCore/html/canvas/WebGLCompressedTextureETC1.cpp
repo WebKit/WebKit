@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureETC1);
 
 WebGLCompressedTextureETC1::WebGLCompressedTextureETC1(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLCompressedTextureETC1)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_compressed_ETC1_RGB8_texture"_s);
 

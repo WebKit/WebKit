@@ -35,7 +35,6 @@
 #import "_WKWebExtensionControllerConfigurationInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import <WebCore/EventRegion.h>
-#import <WebCore/WebCoreObjCExtras.h>
 
 @implementation _WKWebExtensionController
 
@@ -65,8 +64,7 @@
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionController.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionController->~WebExtensionController();
 }
@@ -95,6 +93,15 @@
     NSParameterAssert([extension isKindOfClass:_WKWebExtension.class]);
 
     if (auto extensionContext = _webExtensionController->extensionContext(extension._webExtension))
+        return extensionContext->wrapper();
+    return nil;
+}
+
+- (_WKWebExtensionContext *)extensionContextForURL:(NSURL *)url
+{
+    NSParameterAssert([url isKindOfClass:NSURL.class]);
+
+    if (auto extensionContext = _webExtensionController->extensionContext(url))
         return extensionContext->wrapper();
     return nil;
 }
@@ -257,6 +264,11 @@ static inline NSSet *toAPI(const HashSet<Ref<T>>& inputSet)
 }
 
 - (_WKWebExtensionContext *)extensionContextForExtension:(_WKWebExtension *)extension
+{
+    return nil;
+}
+
+- (_WKWebExtensionContext *)extensionContextForURL:(NSURL *)url
 {
     return nil;
 }

@@ -26,13 +26,14 @@
 #pragma once
 
 #include "Structure.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MegamorphicCache);
 
 class MegamorphicCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MegamorphicCache);
     WTF_MAKE_NONCOPYABLE(MegamorphicCache);
 public:
     static constexpr uint32_t primarySize = 2048;

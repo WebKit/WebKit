@@ -65,13 +65,6 @@ void PathSegment::extendBoundingRect(const FloatPoint& currentPoint, const Float
     });
 }
 
-void PathSegment::addToImpl(PathImpl& impl) const
-{
-    WTF::switchOn(m_data, [&](auto& data) {
-        data.addToImpl(impl);
-    });
-}
-
 bool PathSegment::canApplyElements() const
 {
     return WTF::switchOn(m_data, [&](auto& data) {

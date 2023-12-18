@@ -50,6 +50,13 @@ class ProgramPrelude : public TIntermTraverser
                 break;
             case MetalShaderType::Fragment:
                 functionConstants();
+                mOut << "constant bool " << mtl::kSampleMaskWriteEnabledConstName << " = "
+                     << mtl::kMultisampledRenderingConstName;
+                if (ppc.usesDerivatives)
+                {
+                    mOut << " || " << mtl::kWriteHelperSampleMaskConstName;
+                }
+                mOut << ";\n";
                 break;
             case MetalShaderType::Compute:
                 ASSERT(0 && "compute shaders not currently supported");
@@ -146,11 +153,14 @@ class ProgramPrelude : public TIntermTraverser
     void addMatrixScalarAssign();
     void subMatrixScalarAssign();
     void addMatrixScalar();
+    void addScalarMatrix();
     void subMatrixScalar();
+    void subScalarMatrix();
     void divMatrixScalar();
     void divMatrixScalarFast();
     void divMatrixScalarAssign();
     void divMatrixScalarAssignFast();
+    void divScalarMatrix();
     void tensor();
     void componentWiseDivide();
     void componentWiseDivideAssign();
@@ -864,6 +874,19 @@ ANGLE_ALWAYS_INLINE metal::matrix<T, Cols, Rows> operator+(metal::matrix<T, Cols
 )",
                         addMatrixScalarAssign())
 
+PROGRAM_PRELUDE_DECLARE(addScalarMatrix,
+                        R"(
+template <typename T, int Cols, int Rows>
+ANGLE_ALWAYS_INLINE metal::matrix<T, Cols, Rows> operator+(T x, metal::matrix<T, Cols, Rows> m)
+{
+    for (size_t col = 0; col < Cols; ++col)
+    {
+        m[col] = x + m[col];
+    }
+    return m;
+}
+)")
+
 PROGRAM_PRELUDE_DECLARE(subMatrixScalarAssign,
                         R"(
 template <typename T, int Cols, int Rows>
@@ -887,6 +910,19 @@ ANGLE_ALWAYS_INLINE metal::matrix<T, Cols, Rows> operator-(metal::matrix<T, Cols
 }
 )",
                         subMatrixScalarAssign())
+
+PROGRAM_PRELUDE_DECLARE(subScalarMatrix,
+                        R"(
+template <typename T, int Cols, int Rows>
+ANGLE_ALWAYS_INLINE metal::matrix<T, Cols, Rows> operator-(T x, metal::matrix<T, Cols, Rows> m)
+{
+    for (size_t col = 0; col < Cols; ++col)
+    {
+        m[col] = x - m[col];
+    }
+    return m;
+}
+)")
 
 PROGRAM_PRELUDE_DECLARE(divMatrixScalarAssignFast,
                         R"(
@@ -940,6 +976,19 @@ ANGLE_ALWAYS_INLINE metal::matrix<T, Cols, Rows> operator/(metal::matrix<T, Cols
 #endif
 )",
                         divMatrixScalarAssign())
+
+PROGRAM_PRELUDE_DECLARE(divScalarMatrix,
+                        R"(
+template <typename T, int Cols, int Rows>
+ANGLE_ALWAYS_INLINE metal::matrix<T, Cols, Rows> operator/(T x, metal::matrix<T, Cols, Rows> m)
+{
+    for (size_t col = 0; col < Cols; ++col)
+    {
+        m[col] = x / m[col];
+    }
+    return m;
+}
+)")
 
 PROGRAM_PRELUDE_DECLARE(componentWiseDivide, R"(
 template <typename T, int Cols, int Rows>
@@ -1515,6 +1564,7 @@ PROGRAM_PRELUDE_DECLARE(functionConstants,
 #define ANGLE_MULTISAMPLED_RENDERING_INDEX    3
 #define ANGLE_DEPTH_WRITE_ENABLED_INDEX       4
 #define ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX 5
+#define ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX  6
 
 constant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
 constant bool ANGLEUseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
@@ -1522,6 +1572,7 @@ constant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZAT
 constant bool ANGLEMultisampledRendering    [[function_constant(ANGLE_MULTISAMPLED_RENDERING_INDEX)]];
 constant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];
 constant bool ANGLEEmulateAlphaToCoverage   [[function_constant(ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX)]];
+constant bool ANGLEWriteHelperSampleMask    [[function_constant(ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX)]];
 
 #define ANGLE_ALPHA0
 )")
@@ -3794,6 +3845,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 addMatrixScalar();
             }
+            if (argType0->isScalar() && argType1->isMatrix())
+            {
+                addScalarMatrix();
+            }
             break;
 
         case TOperator::EOpAddAssign:
@@ -3807,6 +3862,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             if (argType0->isMatrix() && argType1->isScalar())
             {
                 subMatrixScalar();
+            }
+            if (argType0->isScalar() && argType1->isMatrix())
+            {
+                subScalarMatrix();
             }
             break;
 
@@ -3828,6 +3887,10 @@ void ProgramPrelude::visitOperator(TOperator op,
                 {
                     divMatrixScalar();
                 }
+            }
+            if (argType0->isScalar() && argType1->isMatrix())
+            {
+                divScalarMatrix();
             }
             break;
 

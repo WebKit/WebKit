@@ -45,7 +45,7 @@ static Vector<size_t> computeBreakOpportunities(const InlineItemList& inlineItem
     Vector<size_t> breakOpportunities;
     size_t currentIndex = range.startIndex();
     while (currentIndex < range.endIndex()) {
-        currentIndex = InlineFormattingGeometry::nextWrapOpportunity(currentIndex, range, inlineItemList);
+        currentIndex = InlineFormattingUtils::nextWrapOpportunity(currentIndex, range, inlineItemList);
         breakOpportunities.append(currentIndex);
     }
     return breakOpportunities;
@@ -95,10 +95,8 @@ static bool cannotBalanceInlineItem(const InlineItem& inlineItem)
         return true;
     if (containsPreservedTab(inlineItem))
         return true;
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     if (inlineItem.style().boxDecorationBreak() == BoxDecorationBreak::Clone)
         return true;
-#endif
     return false;
 }
 
@@ -112,7 +110,7 @@ InlineContentBalancer::InlineContentBalancer(InlineFormattingContext& inlineForm
 
 void InlineContentBalancer::initialize()
 {
-    if (!m_inlineFormattingContext.placedFloats().isEmpty()) {
+    if (!m_inlineFormattingContext.layoutState().placedFloats().isEmpty()) {
         m_cannotBalanceContent = true;
         return;
     }
@@ -128,8 +126,8 @@ void InlineContentBalancer::initialize()
             m_cannotBalanceContent = true;
             return;
         }
-        m_inlineItemWidths.append(m_inlineFormattingContext.formattingGeometry().inlineItemWidth(item, 0, false));
-        m_firstLineStyleInlineItemWidths.append(m_inlineFormattingContext.formattingGeometry().inlineItemWidth(item, 0, true));
+        m_inlineItemWidths.append(m_inlineFormattingContext.formattingUtils().inlineItemWidth(item, 0, false));
+        m_firstLineStyleInlineItemWidths.append(m_inlineFormattingContext.formattingUtils().inlineItemWidth(item, 0, true));
     }
 
     // Perform a line layout with `text-wrap: wrap` to compute useful metrics such as:
@@ -152,12 +150,12 @@ void InlineContentBalancer::initialize()
         bool isFirstLineInChunk = !lineIndex || m_originalLineEndsWithForcedBreak[lineIndex - 1];
         SlidingWidth lineSlidingWidth { *this, m_inlineItemList, lineLayoutResult.inlineItemRange.startIndex(), lineLayoutResult.inlineItemRange.endIndex(), useFirstLineStyle, isFirstLineInChunk };
         auto previousLineEndsWithLineBreak = lineIndex ? std::optional<bool> { m_originalLineEndsWithForcedBreak[lineIndex - 1] } : std::nullopt;
-        auto textIndent = m_inlineFormattingContext.formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
+        auto textIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
         m_originalLineWidths.append(textIndent + lineSlidingWidth.width());
 
-        layoutRange.start = InlineFormattingGeometry::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
+        layoutRange.start = InlineFormattingUtils::leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
         previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+        previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, !lineLayoutResult.inlineContent.isEmpty() && lineLayoutResult.inlineContent.last().isLineBreak(), !lineLayoutResult.inlineContent.isEmpty(), lineLayoutResult.directionality.inlineBaseDirection, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
         lineIndex++;
     }
 
@@ -225,8 +223,8 @@ std::optional<Vector<LayoutUnit>> InlineContentBalancer::balanceRangeWithLineReq
 
     // Indentation offsets
     auto previousLineEndsWithLineBreak = isFirstChunk ? std::nullopt : std::optional<bool> { true };
-    auto firstLineTextIndent = m_inlineFormattingContext.formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
-    auto textIndent = m_inlineFormattingContext.formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, false, m_maximumLineWidth);
+    auto firstLineTextIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
+    auto textIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, false, m_maximumLineWidth);
 
     struct Entry {
         float accumulatedCost { std::numeric_limits<float>::infinity() };
@@ -325,8 +323,8 @@ std::optional<Vector<LayoutUnit>> InlineContentBalancer::balanceRangeWithNoLineR
 
     // Indentation offsets
     auto previousLineEndsWithLineBreak = isFirstChunk ? std::nullopt : std::optional<bool> { true };
-    auto firstLineTextIndent = m_inlineFormattingContext.formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
-    auto textIndent = m_inlineFormattingContext.formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, false, m_maximumLineWidth);
+    auto firstLineTextIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
+    auto textIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, false, m_maximumLineWidth);
 
     struct Entry {
         float accumulatedCost { std::numeric_limits<float>::infinity() };

@@ -54,6 +54,8 @@
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameSelection.h"
+#include "HTMLBodyElement.h"
+#include "HTMLHtmlElement.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
 #include "LineClampValue.h"
@@ -82,6 +84,9 @@ namespace WebCore {
 RenderLayerScrollableArea::RenderLayerScrollableArea(RenderLayer& layer)
     : m_layer(layer)
 {
+    auto& renderer = m_layer.renderer();
+    if (renderer.document().settings().cssScrollAnchoringEnabled() && !is<HTMLHtmlElement>(renderer.element()) && !is<HTMLBodyElement>(renderer.element()))
+        m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
 }
 
 RenderLayerScrollableArea::~RenderLayerScrollableArea()
@@ -102,7 +107,7 @@ void RenderLayerScrollableArea::clear()
 #if ENABLE(IOS_TOUCH_EVENTS)
     unregisterAsTouchEventListenerForScrolling();
 #endif
-    if (Element* element = renderer.element())
+    if (auto* element = renderer.element())
         element->setSavedLayerScrollPosition(m_scrollPosition);
 
     destroyScrollbar(ScrollbarOrientation::Horizontal);
@@ -128,7 +133,7 @@ void RenderLayerScrollableArea::restoreScrollPosition()
             scrollAnimator().setCurrentPosition(m_scrollPosition);
     }
 
-    element->setSavedLayerScrollPosition(IntPoint());
+    element->setSavedLayerScrollPosition({ });
 }
 
 bool RenderLayerScrollableArea::shouldPlaceVerticalScrollbarOnLeft() const
@@ -346,6 +351,9 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     m_scrollPosition = newPosition;
 
     auto& renderer = m_layer.renderer();
+    if (auto* element = renderer.element())
+        element->setSavedLayerScrollPosition(m_scrollPosition);
+
     RenderView& view = renderer.view();
 
     // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
@@ -379,11 +387,11 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     }
 
     LocalFrame& frame = renderer.frame();
-    auto* repaintContainer = renderer.containerForRepaint().renderer;
+    CheckedPtr repaintContainer = renderer.containerForRepaint().renderer;
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
 
-    LayoutRect rectForRepaint = layer().repaintRects() ? layer().repaintRects()->clippedOverflowRect : renderer.clippedOverflowRectForRepaint(repaintContainer);
+    auto rectForRepaint = valueOrCompute(layer().cachedClippedOverflowRect(), [&] { return renderer.clippedOverflowRectForRepaint(repaintContainer.get()); });
 
     FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
     if (repaintContainer)
@@ -404,7 +412,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
 
     // Just schedule a full repaint of our object.
     if (requiresRepaint) {
-        renderer.repaintUsingContainer(repaintContainer, rectForRepaint);
+        renderer.repaintUsingContainer(repaintContainer.get(), rectForRepaint);
 
         // We also have to repaint any descendant composited layers that have fixed backgrounds.
         if (auto slowRepaintObjects = view.frameView().slowRepaintObjects()) {
@@ -476,7 +484,7 @@ void RenderLayerScrollableArea::updateMarqueePosition()
 void RenderLayerScrollableArea::createOrDestroyMarquee()
 {
     auto& renderer = m_layer.renderer();
-    if (renderer.isHTMLMarquee() && renderer.style().marqueeBehavior() != MarqueeBehavior::None && renderer.isBox()) {
+    if (renderer.isHTMLMarquee() && renderer.style().marqueeBehavior() != MarqueeBehavior::None && renderer.isRenderBox()) {
         if (!m_marquee)
             m_marquee = makeUnique<RenderMarquee>(&m_layer);
         m_marquee->updateMarqueeStyle();
@@ -583,7 +591,7 @@ IntRect RenderLayerScrollableArea::scrollCornerRect() const
 
 bool RenderLayerScrollableArea::isScrollCornerVisible() const
 {
-    ASSERT(m_layer.renderer().isBox());
+    ASSERT(m_layer.renderer().isRenderBox());
     return !scrollCornerRect().isEmpty();
 }
 
@@ -1302,7 +1310,7 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
 
         // FIXME: This does not belong here.
         auto* parent = renderer.parent();
-        if (is<RenderFlexibleBox>(parent) && renderer.isBox())
+        if (is<RenderFlexibleBox>(parent) && renderer.isRenderBox())
             downcast<RenderFlexibleBox>(parent)->clearCachedMainSizeForChild(*m_layer.renderBox());
     }
 
@@ -1891,6 +1899,7 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
 
     scrollByRecursively(adjustedScrollDelta(delta));
 }
+
 static LayoutRect getLocalExposeRect(const LayoutRect& absoluteRect, RenderBox* box, int verticalScrollbarWidth, const LayoutRect& layerBounds)
 {
     LayoutRect localExposeRect(box->absoluteToLocalQuad(FloatQuad(FloatRect(absoluteRect))).boundingBox());
@@ -2024,5 +2033,24 @@ float RenderLayerScrollableArea::deviceScaleFactor() const
 {
     return m_layer.renderer().document().deviceScaleFactor();
 }
+
+void RenderLayerScrollableArea::updateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->updateAnchorElement();
+}
+
+void RenderLayerScrollableArea::updateScrollPositionForScrollAnchoringController()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->adjustScrollPositionForAnchoring();
+}
+
+void RenderLayerScrollableArea::invalidateScrollAnchoringElement()
+{
+    if (m_scrollAnchoringController)
+        m_scrollAnchoringController->invalidateAnchorElement();
+}
+
 
 } // namespace WebCore

@@ -94,7 +94,15 @@ bool RtpPacketizerH264::GeneratePackets(
             return false;
           ++i;
         } else {
+#ifdef WEBRTC_WEBKIT_BUILD
+          auto newFragmentIndex = PacketizeStapA(i);
+          if (!newFragmentIndex) {
+            return false;
+          }
+          i = *newFragmentIndex;
+#else
           i = PacketizeStapA(i);
+#endif
         }
         break;
     }
@@ -150,35 +158,43 @@ bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
   return true;
 }
 
-size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
+#ifdef WEBRTC_WEBKIT_BUILD
+std::optional<size_t> RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
+#else
+size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
+#endif
+{
   // Aggregate fragments into one packet (STAP-A).
   size_t payload_size_left = limits_.max_payload_len;
-  if (input_fragments_.size() == 1)
-    payload_size_left -= limits_.single_packet_reduction_len;
-  else if (fragment_index == 0)
-    payload_size_left -= limits_.first_packet_reduction_len;
   int aggregated_fragments = 0;
   size_t fragment_headers_length = 0;
   rtc::ArrayView<const uint8_t> fragment = input_fragments_[fragment_index];
   RTC_CHECK_GE(payload_size_left, fragment.size());
   ++num_packets_left_;
 
+  const bool has_first_fragment = fragment_index == 0;
   auto payload_size_needed = [&] {
     size_t fragment_size = fragment.size() + fragment_headers_length;
-    if (input_fragments_.size() == 1) {
-      // Single fragment, single packet, payload_size_left already adjusted
-      // with limits_.single_packet_reduction_len.
+    bool has_last_fragment = fragment_index == input_fragments_.size() - 1;
+    if (has_first_fragment && has_last_fragment) {
+      return fragment_size + limits_.single_packet_reduction_len;
+    } else if (has_first_fragment) {
+      return fragment_size + limits_.first_packet_reduction_len;
+    } else if (has_last_fragment) {
+      return fragment_size + limits_.last_packet_reduction_len;
+    } else {
       return fragment_size;
     }
-    if (fragment_index == input_fragments_.size() - 1) {
-      // Last fragment, so STAP-A might be the last packet.
-      return fragment_size + limits_.last_packet_reduction_len;
-    }
-    return fragment_size;
   };
 
   while (payload_size_left >= payload_size_needed()) {
+#ifdef WEBRTC_WEBKIT_BUILD
+    if (fragment.size() == 0) {
+      return std::nullopt;
+    }
+#else
     RTC_CHECK_GT(fragment.size(), 0);
+#endif
     packets_.push(PacketUnit(fragment, aggregated_fragments == 0, false, true,
                              fragment[0]));
     payload_size_left -= fragment.size();
@@ -221,7 +237,13 @@ bool RtpPacketizerH264::PacketizeSingleNalu(size_t fragment_index) {
                       << limits_.max_payload_len;
     return false;
   }
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (fragment.size() == 0u) {
+    return false;
+  }
+#else
   RTC_CHECK_GT(fragment.size(), 0u);
+#endif
   packets_.push(PacketUnit(fragment, true /* first */, true /* last */,
                            false /* aggregated */, fragment[0]));
   ++num_packets_left_;

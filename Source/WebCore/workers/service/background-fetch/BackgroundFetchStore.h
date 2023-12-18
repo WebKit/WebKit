@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ServiceWorkerRegistrationKey.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
@@ -66,5 +64,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

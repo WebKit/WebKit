@@ -1,0 +1,11 @@
+
+PASS A1 Unlayered !important style
+PASS B1 Same specificity, layered !important first
+PASS C1 Same specificity, layered !important second
+PASS D1 Same specificity, all !important
+PASS D2 Same specificity, all !important
+PASS D3 Same specificity, all !important
+PASS D4 Same specificity, all !important
+PASS E1 Different specificity, all !important
+PASS E2 Different specificity, all !important
+

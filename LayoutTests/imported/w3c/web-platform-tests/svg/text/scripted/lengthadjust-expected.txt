@@ -1,0 +1,6 @@
+Stretched text
+Stretched text
+
+FAIL Tests dynamic updates of the "lengthAdjust" content attribute assert_greater_than: expected a number greater than 88.4140625 but got 88.4140625
+FAIL Tests dynamic updates of the "lengthAdjust" IDL attribute assert_greater_than: expected a number greater than 88.4140625 but got 88.4140625
+

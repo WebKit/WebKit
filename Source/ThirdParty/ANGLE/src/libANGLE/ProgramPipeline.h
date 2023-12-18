@@ -54,7 +54,8 @@ class ProgramPipelineState final : angle::NonCopyable
     void useProgramStages(const Context *context,
                           const gl::ShaderBitSet &shaderTypes,
                           Program *shaderProgram,
-                          std::vector<angle::ObserverBinding> *programObserverBindings);
+                          std::vector<angle::ObserverBinding> *programObserverBindings,
+                          std::vector<angle::ObserverBinding> *programExecutableObserverBindings);
 
     Program *getActiveShaderProgram() { return mActiveShaderProgram; }
 
@@ -76,7 +77,8 @@ class ProgramPipelineState final : angle::NonCopyable
     void useProgramStage(const Context *context,
                          ShaderType shaderType,
                          Program *shaderProgram,
-                         angle::ObserverBinding *programObserverBindings);
+                         angle::ObserverBinding *programObserverBinding,
+                         angle::ObserverBinding *programExecutableObserverBinding);
     void destroyDiscardedExecutables(const Context *context);
 
     friend class ProgramPipeline;
@@ -219,6 +221,7 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
     ProgramPipelineState mState;
 
     std::vector<angle::ObserverBinding> mProgramObserverBindings;
+    std::vector<angle::ObserverBinding> mProgramExecutableObserverBindings;
     angle::ObserverBinding mExecutableObserverBinding;
 };
 }  // namespace gl

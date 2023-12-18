@@ -20,18 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(SERVICE_WORKER)
-
 messages -> WebSWClientConnection {
     # When possible, these messages can be implemented directly by WebCore::SWServer::Connection
     JobRejectedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ExceptionData exception)
     RegistrationJobResolvedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ServiceWorkerRegistrationData registration, enum:bool WebCore::ShouldNotifyWhenResolved shouldNotifyWhenResolved)
     StartScriptFetchForServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, enum:uint8_t WebCore::FetchOptions::Cache cachePolicy)
+
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:uint8_t WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
     SetRegistrationLastUpdateTime(WebCore::ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
     SetRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerUpdateViaCache updateViaCache)
+
     NotifyClientsOfControllerChange(HashSet<WebCore::ScriptExecutionContextIdentifier> contextIdentifiers, std::optional<WebCore::ServiceWorkerData> newController)
     UpdateBackgroundFetchRegistration(struct WebCore::BackgroundFetchInformation information)
 
@@ -46,5 +46,3 @@ messages -> WebSWClientConnection {
     NotifyRecordResponseBodyChunk(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, IPC::SharedBufferReference data);
     NotifyRecordResponseBodyEnd(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError error);
 }
-
-#endif // ENABLE(SERVICE_WORKER)

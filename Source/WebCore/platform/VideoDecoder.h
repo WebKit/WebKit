@@ -45,6 +45,7 @@ public:
         std::span<const uint8_t> description;
         uint64_t width { 0 };
         uint64_t height { 0 };
+        bool prefersSoftware { false };
     };
 
     struct EncodedFrame {

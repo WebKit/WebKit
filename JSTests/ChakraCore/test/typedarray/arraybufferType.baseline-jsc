@@ -9,8 +9,11 @@ bar = 42
 slice
 byteLength
 resize
+transfer
+transferToFixedLength
 resizable
 maxByteLength
+detached
 constructor
 aaa
 foo
@@ -23,8 +26,11 @@ bar = 42
 slice
 byteLength
 resize
+transfer
+transferToFixedLength
 resizable
 maxByteLength
+detached
 constructor
 aaa
 foo

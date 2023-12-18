@@ -46,7 +46,7 @@ public:
     SampleFlags flags() const final;
     std::optional<ByteRange> byteRange() const final;
 
-    AtomString trackID() const final;
+    WebCore::TrackID trackID() const final;
     WebCore::PlatformSample platformSample() const final;
     WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::ByteRangeSampleType; }
     void offsetTimestampsBy(const MediaTime&) final;

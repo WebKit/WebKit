@@ -1683,13 +1683,13 @@ CGSize WebViewImpl::fixedLayoutSize() const
     return m_page->fixedLayoutSize();
 }
 
-std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy()
+std::unique_ptr<WebKit::DrawingAreaProxy> WebViewImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
     switch (m_drawingAreaType) {
     case DrawingAreaType::TiledCoreAnimation:
-        return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page);
+        return makeUnique<TiledCoreAnimationDrawingAreaProxy>(m_page, webProcessProxy);
     case DrawingAreaType::RemoteLayerTree:
-        return makeUnique<RemoteLayerTreeDrawingAreaProxyMac>(m_page);
+        return makeUnique<RemoteLayerTreeDrawingAreaProxyMac>(m_page, webProcessProxy);
     }
 
     ASSERT_NOT_REACHED();
@@ -2563,7 +2563,7 @@ NSView *WebViewImpl::fullScreenPlaceholderView()
 NSWindow *WebViewImpl::fullScreenWindow()
 {
 #if ENABLE(FULLSCREEN_API)
-    return adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskUnifiedTitleAndToolbar | NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskResizable) backing:NSBackingStoreBuffered defer:NO]).autorelease();
+    return adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:[[NSScreen mainScreen] frame] styleMask:(NSWindowStyleMaskTitled | NSWindowStyleMaskUnifiedTitleAndToolbar | NSWindowStyleMaskFullSizeContentView | NSWindowStyleMaskResizable | NSWindowStyleMaskClosable) backing:NSBackingStoreBuffered defer:NO]).autorelease();
 #else
     return nil;
 #endif
@@ -3949,7 +3949,7 @@ void WebViewImpl::draggingExited(id <NSDraggingInfo> draggingInfo)
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
     WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo), WebCore::anyDragDestinationAction(), m_page->webPageID());
-    m_page->dragExited(dragData, draggingInfo.draggingPasteboard.name);
+    m_page->dragExited(dragData);
     m_page->resetCurrentDragInformation();
     draggingInfo.numberOfValidItemsForDrop = m_initialNumberOfValidItemsForDrop;
     m_initialNumberOfValidItemsForDrop = 0;
@@ -4524,7 +4524,7 @@ void WebViewImpl::setCustomSwipeViews(NSArray *customSwipeViews)
     Vector<RetainPtr<NSView>> views;
     views.reserveInitialCapacity(customSwipeViews.count);
     for (NSView *view in customSwipeViews)
-        views.uncheckedAppend(view);
+        views.append(view);
 
     ensureGestureController().setCustomSwipeViews(views);
 }
@@ -5026,7 +5026,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     mergedHighlights.reserveInitialCapacity(highlights.size());
     for (auto& highlight : highlights) {
         if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
-            mergedHighlights.uncheckedAppend(highlight);
+            mergedHighlights.append(highlight);
         else
             mergedHighlights.last().endOffset = highlight.endOffset;
     }
@@ -5703,12 +5703,8 @@ void WebViewImpl::effectiveAppearanceDidChange()
 
 bool WebViewImpl::effectiveAppearanceIsDark()
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     NSAppearanceName appearance = [[m_view effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
     return [appearance isEqualToString:NSAppearanceNameDarkAqua];
-#else
-    return false;
-#endif
 }
 
 bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()

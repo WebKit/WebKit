@@ -128,7 +128,7 @@ Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uin
     return authData;
 }
 
-cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation)
+cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
 {
     cbor::CBORValue::MapValue attestationObjectMap;
     // The following implements Step 20 with regard to AttestationConveyancePreference
@@ -137,7 +137,7 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
     // step to return self attestation.
     if (attestation == AttestationConveyancePreference::None) {
         const size_t aaguidOffset = rpIdHashLength + flagsLength + signCounterLength;
-        if (authData.size() >= aaguidOffset + aaguidLength)
+        if (authData.size() >= aaguidOffset + aaguidLength && shouldZero == ShouldZeroAAGUID::Yes)
             memset(authData.data() + aaguidOffset, 0, aaguidLength);
         format = String::fromLatin1(noneAttestationValue);
         statementMap.clear();
@@ -148,9 +148,9 @@ cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String
     return attestationObjectMap;
 }
 
-Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation)
+Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation, ShouldZeroAAGUID shouldZero)
 {
-    cbor::CBORValue::MapValue attestationObjectMap = buildAttestationMap(WTFMove(authData), WTFMove(format), WTFMove(statementMap), attestation);
+    cbor::CBORValue::MapValue attestationObjectMap = buildAttestationMap(WTFMove(authData), WTFMove(format), WTFMove(statementMap), attestation, shouldZero);
 
     auto attestationObject = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(attestationObjectMap)));
     ASSERT(attestationObject);
@@ -194,7 +194,7 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
 {
     Vector<uint8_t> rawKey;
     rawKey.reserveInitialCapacity(1 + x.size() + y.size());
-    rawKey.uncheckedAppend(0x04);
+    rawKey.append(0x04);
     rawKey.appendVector(x);
     rawKey.appendVector(y);
     return rawKey;

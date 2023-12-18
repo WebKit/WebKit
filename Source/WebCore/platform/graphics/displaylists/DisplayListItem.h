@@ -44,7 +44,7 @@ class ResourceHeap;
 class ApplyDeviceScaleFactor;
 class BeginTransparencyLayer;
 class ClearRect;
-class ClearShadow;
+class ClearDropShadow;
 class Clip;
 class ClipRoundedRect;
 class ClipOut;
@@ -61,6 +61,7 @@ class DrawFocusRingPath;
 class DrawFocusRingRects;
 class DrawGlyphs;
 class DrawDecomposedGlyphs;
+class DrawDisplayListItems;
 class DrawImageBuffer;
 class DrawLine;
 class DrawLinesForText;
@@ -86,13 +87,12 @@ class Save;
 class Scale;
 class SetCTM;
 class SetInlineFillColor;
-class SetInlineStrokeColor;
+class SetInlineStroke;
 class SetLineCap;
 class SetLineDash;
 class SetLineJoin;
 class SetMiterLimit;
 class SetState;
-class SetStrokeThickness;
 class StrokeEllipse;
 class StrokeLine;
 class StrokePathSegment;
@@ -120,7 +120,7 @@ using Item = std::variant
     < ApplyDeviceScaleFactor
     , BeginTransparencyLayer
     , ClearRect
-    , ClearShadow
+    , ClearDropShadow
     , Clip
     , ClipRoundedRect
     , ClipOut
@@ -137,6 +137,7 @@ using Item = std::variant
     , DrawFocusRingRects
     , DrawGlyphs
     , DrawDecomposedGlyphs
+    , DrawDisplayListItems
     , DrawImageBuffer
     , DrawLine
     , DrawLinesForText
@@ -162,13 +163,12 @@ using Item = std::variant
     , Scale
     , SetCTM
     , SetInlineFillColor
-    , SetInlineStrokeColor
+    , SetInlineStroke
     , SetLineCap
     , SetLineDash
     , SetLineJoin
     , SetMiterLimit
     , SetState
-    , SetStrokeThickness
     , StrokeEllipse
     , StrokeLine
     , StrokePathSegment

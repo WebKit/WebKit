@@ -214,13 +214,12 @@ class ExternalFrameBufferMD5Test
       : DecoderTest(GET_PARAM(::libaom_test::kCodecFactoryParam)),
         md5_file_(nullptr), num_buffers_(0) {}
 
-  virtual ~ExternalFrameBufferMD5Test() {
+  ~ExternalFrameBufferMD5Test() override {
     if (md5_file_ != nullptr) fclose(md5_file_);
   }
 
-  virtual void PreDecodeFrameHook(
-      const libaom_test::CompressedVideoSource &video,
-      libaom_test::Decoder *decoder) {
+  void PreDecodeFrameHook(const libaom_test::CompressedVideoSource &video,
+                          libaom_test::Decoder *decoder) override {
     if (num_buffers_ > 0 && video.frame_number() == 0) {
       // Have libaom use frame buffers we create.
       ASSERT_TRUE(fb_list_.CreateBufferList(num_buffers_));
@@ -236,8 +235,8 @@ class ExternalFrameBufferMD5Test
         << "Md5 file open failed. Filename: " << md5_file_name_;
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     const unsigned int frame_number) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             const unsigned int frame_number) override {
     ASSERT_NE(md5_file_, nullptr);
     char expected_md5[33];
     char junk[128];
@@ -315,7 +314,7 @@ class ExternalFrameBufferTest : public ::testing::Test {
   ExternalFrameBufferTest()
       : video_(nullptr), decoder_(nullptr), num_buffers_(0) {}
 
-  virtual void SetUp() {
+  void SetUp() override {
     video_ = new libaom_test::WebMVideoSource(kAV1TestFile);
     ASSERT_NE(video_, nullptr);
     video_->Init();
@@ -327,7 +326,7 @@ class ExternalFrameBufferTest : public ::testing::Test {
     ASSERT_NE(decoder_, nullptr);
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     delete decoder_;
     decoder_ = nullptr;
     delete video_;
@@ -383,7 +382,7 @@ class ExternalFrameBufferTest : public ::testing::Test {
 
 class ExternalFrameBufferNonRefTest : public ExternalFrameBufferTest {
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     video_ = new libaom_test::IVFVideoSource(kAV1NonRefTestFile);
     ASSERT_NE(video_, nullptr);
     video_->Init();

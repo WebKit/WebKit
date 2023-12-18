@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerAgent.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "SecurityOrigin.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
@@ -65,5 +63,3 @@ Protocol::ErrorStringOr<Ref<Protocol::ServiceWorker::Configuration>> ServiceWork
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

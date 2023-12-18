@@ -119,16 +119,6 @@ enum AddIceCandidateResult {
   kAddIceCandidateMax
 };
 
-// Metric for recording which api surface was used to enable simulcast.
-// These values are persisted to logs. Entries should not be renumbered and
-// numeric values should never be reused.
-enum SimulcastApiVersion {
-  kSimulcastApiVersionNone = 0,
-  kSimulcastApiVersionLegacy = 1,
-  kSimulcastApiVersionSpecCompliant = 2,
-  kSimulcastApiVersionMax
-};
-
 // Metrics for reporting usage of BUNDLE.
 // These values are persisted to logs. Entries should not be renumbered and
 // numeric values should never be reused.

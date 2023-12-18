@@ -80,7 +80,7 @@ function testBadTypeIndex() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem type index 1 does not reference an array definition, in function at index 1");
+    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
 }
 
 function testNonArrayType() {
@@ -97,7 +97,7 @@ function testNonArrayType() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem type index 1 does not reference an array definition, in function at index 1");
+    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
 }
 
 function testImmutableArrayType() {
@@ -195,7 +195,7 @@ function testTypeMismatch() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type funcref but array.new_elem operation expects elements of type I32, in function at index 1");
+    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type (ref null func) but array.new_elem operation expects elements of type I32, in function at index 1");
 }
 
 function testWrongNumberOfArguments() {
@@ -559,9 +559,6 @@ function testAllElementSegmentKinds() {
     assert.eq(returnedFun(42), 45);
 
     // elem ::= 5 et:reftype el*:vec(expr)
-
-    // FIXME: Replace m with the following once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-    /*
     m = instantiate(`
     (module
       (type $fty (func (param i32) (result i32)))
@@ -583,9 +580,8 @@ function testAllElementSegmentKinds() {
     assert.eq(retVal, 44);
     retVal = m.exports.test(1);
     assert.eq(retVal, 45);
-*/
 
-        m = instantiate(`
+    m = instantiate(`
     (module
       (type $fty (func (param i32) (result i32)))
       (type $a (array (mut funcref)))
@@ -609,8 +605,6 @@ function testAllElementSegmentKinds() {
     assert.eq(retVal, 45);
 
     // elem ::= 6 x:tableidx e:expr et:reftype el*:vec(expr) et:reftype el*:vec(expr)
-    // FIXME: Replace m with the following once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-    /*
     m = instantiate(`
     (module
       (type $fty (func (param i32) (result i32)))
@@ -628,8 +622,14 @@ function testAllElementSegmentKinds() {
          (array.new_elem $a 0)
          (local.get $i)
          (array.get $a)
-         (call_ref $fty)))`);
-    */
+         (call_ref $fty)))
+`);
+
+    var retVal = m.exports.test(0);
+    assert.eq(retVal, 44);
+    retVal = m.exports.test(1);
+    assert.eq(retVal, 45);
+
     m = instantiate(`
     (module
       (type $fty (func (param i32) (result i32)))
@@ -656,8 +656,6 @@ function testAllElementSegmentKinds() {
     assert.eq(retVal, 45);
 
     // elem ::= 7 et:reftype el*:vec(expr)
-    // FIXME: Replace m with the following once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-/*
     m = instantiate(`
     (module
       (type $fty (func (param i32) (result i32)))
@@ -676,7 +674,11 @@ function testAllElementSegmentKinds() {
          (local.get $i)
          (array.get $a)
          (call_ref $fty)))`);
-*/
+    var retVal = m.exports.test(0);
+    assert.eq(retVal, 44);
+    retVal = m.exports.test(1);
+    assert.eq(retVal, 45);
+
     m = instantiate(`
     (module
       (type $fty (func (param i32) (result i32)))
@@ -733,7 +735,7 @@ function testNullFunctionIndex() {
           (array.get 0)))`);
     assert.throws(() => compile(m),
                   WebAssembly.CompileError,
-                  "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type funcref but array.new_elem operation expects elements of type Ref, in function at index 2");
+                  "WebAssembly.Module doesn't validate: type mismatch in array.new_elem: segment elements have type (ref null func) but array.new_elem operation expects elements of type (ref func), in function at index 2");
 
     // Element segment type is a subtype of declared array type: this should work
     m = instantiate(`(module
@@ -831,12 +833,27 @@ function testJSFunctions() {
     assert.eq(retVal, 47.5);
 }
 
-// FIXME: uncomment these tests once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-// testRefCallNullary();
-// testRefCall();
-// testArrayNewCanonElemExternref();
-// testArrayNewCanonElemSubtype();
+function testRecGroup() {
+    instantiate(`
+        (module
+          (func $f)
+          (func $g)
+          (rec (type (array (mut funcref)))
+               (type (struct)))
+          (elem (ref func) (ref.func $f) (item ref.func $f) (ref.func $g) (ref.func $g))
+          (func (export "f") (result funcref)
+            (i32.const 0)
+            (i32.const 4)
+            (array.new_elem 0 0)
+            (i32.const 2)
+            (array.get 0)))
+    `);
+}
 
+testRefCallNullary();
+testRefCall();
+testArrayNewCanonElemExternref();
+testArrayNewCanonElemSubtype();
 testArrayNewCanonElem();
 testIndirectCallNullary();
 testIndirectCall();
@@ -855,3 +872,4 @@ testZeroLengthArray();
 testNullFunctionIndex();
 testImportFunctions();
 testJSFunctions();
+testRecGroup();

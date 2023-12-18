@@ -418,7 +418,7 @@ void setFileDescriptorData(IDataObject* dataObject, int size, const String& pass
     fgd->fgd[0].nFileSizeLow = size;
 
     int maxSize = std::min<int>(pathname.length(), std::size(fgd->fgd[0].cFileName));
-    CopyMemory(fgd->fgd[0].cFileName, pathname.charactersWithNullTermination().data(), maxSize * sizeof(UChar));
+    CopyMemory(fgd->fgd[0].cFileName, pathname.charactersWithNullTermination()->data(), maxSize * sizeof(UChar));
     GlobalUnlock(medium.hGlobal);
 
     dataObject->SetData(fileDescriptorFormat(), &medium, TRUE);

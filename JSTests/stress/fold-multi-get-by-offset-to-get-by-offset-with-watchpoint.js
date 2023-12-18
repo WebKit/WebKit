@@ -1,3 +1,4 @@
+//@ skip if $addressBits <= 32
 //@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 

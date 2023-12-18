@@ -56,7 +56,7 @@ public:
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&);
 
-    CheckedRef<DocumentLoader> m_documentLoader;
+    SingleThreadWeakRef<DocumentLoader> m_documentLoader;
     std::optional<ApplicationManifest> m_processedManifest;
     URL m_url;
     bool m_useCredentials;

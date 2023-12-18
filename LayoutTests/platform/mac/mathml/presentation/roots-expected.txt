@@ -57,7 +57,7 @@ layer at (0,0) size 800x602
           text run at (0,10) width 117: "root of a fraction: "
         RenderMathMLMath {math} at (116,0) size 55x40
           RenderMathMLRoot {msqrt} at (0,0) size 55x40
-            RenderMathMLFraction {mfrac} at (18,3) size 37x32
+            RenderMathMLFraction {mfrac} at (18,3) size 37x32 [padding: 0 1 0 1]
               RenderMathMLRow {mrow} at (0,0) size 36x12
                 RenderMathMLToken {mi} at (0,3) size 9x8 [padding: 0 2 0 0]
                   RenderBlock (anonymous) at (0,0) size 8x8
@@ -132,7 +132,7 @@ layer at (0,0) size 800x602
           text run at (0,10) width 188: "long index w/ complex base: "
         RenderMathMLMath {math} at (187,0) size 86x40
           RenderMathMLRoot {mroot} at (0,0) size 85x40
-            RenderMathMLFraction {mfrac} at (49,3) size 36x32
+            RenderMathMLFraction {mfrac} at (49,3) size 36x32 [padding: 0 1 0 1]
               RenderMathMLRow {mrow} at (0,0) size 36x12
                 RenderMathMLToken {mi} at (0,3) size 9x8 [padding: 0 2 0 0]
                   RenderBlock (anonymous) at (0,0) size 8x8
@@ -189,8 +189,8 @@ layer at (0,0) size 800x602
               RenderBlock (anonymous) at (0,0) size 8x11
                 RenderText {#text} at (0,-1) size 8x16
                   text run at (0,-1) width 8: "2"
-            RenderMathMLFraction {mfrac} at (1,0) size 6x26
-              RenderMathMLFraction {mfrac} at (0,0) size 6x17
+            RenderMathMLFraction {mfrac} at (1,0) size 6x26 [padding: 0 1 0 1]
+              RenderMathMLFraction {mfrac} at (0,0) size 6x17 [padding: 0 1 0 1]
                 RenderMathMLToken {mi} at (0,0) size 6x5 [padding: 0 1 0 0]
                   RenderBlock (anonymous) at (0,0) size 5x5
                     RenderText {#text} at (0,-2) size 5x9
@@ -361,7 +361,7 @@ layer at (0,0) size 800x602
                                           RenderBlock (anonymous) at (0,0) size 12x11
                                             RenderText {#text} at (0,-1) size 12x16
                                               text run at (0,-1) width 12: "A"
-                                        RenderMathMLFraction {mfrac} at (1,0) size 21x17
+                                        RenderMathMLFraction {mfrac} at (1,0) size 21x17 [padding: 0 1 0 1]
                                           RenderMathMLRow {mrow} at (0,0) size 21x9
                                             RenderMathMLToken {mi} at (0,2) size 6x5 [padding: 0 1 0 0]
                                               RenderBlock (anonymous) at (0,0) size 5x5
@@ -487,7 +487,7 @@ layer at (0,0) size 800x602
                                           RenderBlock (anonymous) at (0,0) size 12x11
                                             RenderText {#text} at (0,-1) size 12x16
                                               text run at (0,-1) width 12: "A"
-                                        RenderMathMLFraction {mfrac} at (18,0) size 21x17
+                                        RenderMathMLFraction {mfrac} at (18,0) size 21x17 [padding: 0 1 0 1]
                                           RenderMathMLRow {mrow} at (0,0) size 21x9
                                             RenderMathMLToken {mi} at (15,2) size 6x5 [padding: 0 0 0 1]
                                               RenderBlock (anonymous) at (0,0) size 5x5

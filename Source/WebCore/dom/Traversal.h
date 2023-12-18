@@ -36,6 +36,7 @@ class NodeIteratorBase {
 public:
     Node& root() { return m_root.get(); }
     const Node& root() const { return m_root.get(); }
+    Ref<Node> protectedRoot() const { return m_root; }
 
     unsigned whatToShow() const { return m_whatToShow; }
     NodeFilter* filter() const { return m_filter.get(); }

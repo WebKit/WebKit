@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushSubscriptionOptions.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -56,12 +54,10 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscriptionOptions::applicationServer
     if (!m_applicationServerKey) {
         m_applicationServerKey = ArrayBuffer::tryCreate(m_serverVAPIDPublicKey.data(), m_serverVAPIDPublicKey.size());
         if (!m_applicationServerKey)
-            return Exception { OutOfMemoryError };
+            return Exception { ExceptionCode::OutOfMemoryError };
     }
 
     return m_applicationServerKey.copyRef();
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

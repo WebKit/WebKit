@@ -1423,15 +1423,7 @@ inline bool HTMLTokenizer::isAppropriateEndTag() const
 {
     if (m_bufferedEndTagName.size() != m_appropriateEndTagName.size())
         return false;
-
-    unsigned size = m_bufferedEndTagName.size();
-
-    for (unsigned i = 0; i < size; i++) {
-        if (m_bufferedEndTagName[i] != m_appropriateEndTagName[i])
-            return false;
-    }
-
-    return true;
+    return equal(m_bufferedEndTagName.data(), m_appropriateEndTagName.data(), m_bufferedEndTagName.size());
 }
 
 inline void HTMLTokenizer::parseError()

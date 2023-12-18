@@ -152,6 +152,13 @@ var values = {
             'static to absolute': ['none', 'block', {discrete: true}],
             'block to inline-block': ['block', 'inline-block', {discrete: true}]
         };
+    },
+    'object-view-box': function() {
+        return {
+            inset: ['inset(10% 10% 20% 20%)', 'inset(20% 20% 30% 30%)'],
+            rect: ['rect(10px 20px 30px 40px)', 'rect(20px 30px 40px 50px)'],
+            xywh: ['xywh(10px 20px 30px 40px)', 'xywh(20px 30px 40px 50px)'],
+        };
     }
 };
 
@@ -261,7 +268,8 @@ var unspecified_properties = {
     'transform': ['transform'],
     'transform-origin': ['horizontal'],
     'display': ['display'],
-    'position': ['position']
+    'position': ['position'],
+    'object-view-box': ['object-view-box']
 };
 
 /*

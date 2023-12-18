@@ -1,0 +1,5 @@
+
+FAIL currentTime handles direction: rtl correctly promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
+FAIL currentTime handles writing-mode: vertical-rl correctly promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
+FAIL currentTime handles writing-mode: vertical-lr correctly promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'actual.unit')"
+

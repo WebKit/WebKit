@@ -88,7 +88,7 @@ layer at (0,0) size 785x614
           RenderTableRow {TR} at (0,2) size 544x63
             RenderTableCell {TD} at (2,2) size 84x25 [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 82x23 [border: (2px solid #0000FF)]
-                RenderTextControl {INPUT} at (2,2) size 78x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (2,2) size 78x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
             RenderTableCell {TD} at (87,2) size 40x63 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 37x61 [border: (2px solid #0000FF)]
                 RenderListBox {SELECT} at (2,2) size 33x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
@@ -169,7 +169,7 @@ layer at (0,0) size 785x614
       RenderBlock {DIV} at (0,428) size 769x38
         RenderText {#text} at (0,18) size 28x18
           text run at (0,18) width 28: "text "
-        RenderTextControl {INPUT} at (27,18) size 79x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (27,18) size 79x19 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (105,18) size 5x18
           text run at (105,18) width 5: " "
         RenderFileUploadControl {INPUT} at (109,19) size 239x18 "no file selected"

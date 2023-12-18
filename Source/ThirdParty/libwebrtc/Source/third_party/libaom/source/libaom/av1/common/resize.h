@@ -20,23 +20,25 @@
 extern "C" {
 #endif
 
-void av1_resize_plane(const uint8_t *const input, int height, int width,
+bool av1_resize_plane(const uint8_t *const input, int height, int width,
                       int in_stride, uint8_t *output, int height2, int width2,
                       int out_stride);
-void av1_upscale_plane_double_prec(const double *const input, int height,
+bool av1_upscale_plane_double_prec(const double *const input, int height,
                                    int width, int in_stride, double *output,
                                    int height2, int width2, int out_stride);
+// TODO(aomedia:3228): In libaom 4.0.0, remove av1_resize_frame420 from
+// av1/exports_com and delete this function.
 void av1_resize_frame420(const uint8_t *const y, int y_stride,
                          const uint8_t *const u, const uint8_t *const v,
                          int uv_stride, int height, int width, uint8_t *oy,
                          int oy_stride, uint8_t *ou, uint8_t *ov,
                          int ouv_stride, int oheight, int owidth);
-void av1_resize_frame422(const uint8_t *const y, int y_stride,
+bool av1_resize_frame422(const uint8_t *const y, int y_stride,
                          const uint8_t *const u, const uint8_t *const v,
                          int uv_stride, int height, int width, uint8_t *oy,
                          int oy_stride, uint8_t *ou, uint8_t *ov,
                          int ouv_stride, int oheight, int owidth);
-void av1_resize_frame444(const uint8_t *const y, int y_stride,
+bool av1_resize_frame444(const uint8_t *const y, int y_stride,
                          const uint8_t *const u, const uint8_t *const v,
                          int uv_stride, int height, int width, uint8_t *oy,
                          int oy_stride, uint8_t *ou, uint8_t *ov,
@@ -77,7 +79,7 @@ YV12_BUFFER_CONFIG *av1_realloc_and_scale_if_required(
     const bool for_psnr, const int border_in_pixels,
     const int num_pyramid_levels);
 
-void av1_resize_and_extend_frame_nonnormative(const YV12_BUFFER_CONFIG *src,
+bool av1_resize_and_extend_frame_nonnormative(const YV12_BUFFER_CONFIG *src,
                                               YV12_BUFFER_CONFIG *dst, int bd,
                                               const int num_planes);
 

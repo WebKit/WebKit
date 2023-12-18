@@ -54,7 +54,6 @@ New Tokens
     eglCreateContext:
 
         EGL_EXTERNAL_CONTEXT_ANGLE 0x348E
-        EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE 0x3490
 
     Accepted in the <buftype> parameter of eglCreatePbufferFromClientBuffer:
 
@@ -69,12 +68,6 @@ Additions to the EGL 1.4 Specification
     In this case, the context must be made current by the application before
     calling other EGL or GL functions that may access the context.
 
-    EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE indicates whether the context state
-    is automatically synchronized from and to the external context when
-    eglMakeCurrent is called.
-    eglAcquireExternalContextANGLE and eglReleaseExternalContextANGLE can be
-    used to perform this synchronization independently from MakeCurrent.
-
     Add the following to section 3.5.3 "Binding Off-Screen Rendering Surfaces
     To Client Buffers":
 
@@ -87,25 +80,17 @@ Additions to the EGL 1.4 Specification
 
     Before making a call that uses a context created with
     EGL_EXTERNAL_CONTEXT_ANGLE, the context must be synchronized from external.
-    If EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE is specified when creating the
-    context, this can be done with a call to eglMakeCurrent.
-    Alternatively, eglAcquireExternalContextANGLE can be called to perform this
-    synchronization.
-    The eglAcquireExternalContextANGLE call ensures that the implementation is
-    up-to-date with respect to changes that external has made to the context.
+    eglAcquireExternalContextANGLE can be called to perform this
+    synchronization, ensuring that the implementation is up-to-date with
+    respect to changes that external has made to the context.
 
     Before the application (external) can continue using the context after the
     implementation has modified it, the context must be synchronized to
     external, restoring the state from when the external context was
     "acquired".
-    If EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE is specified when creating the
-    context, this can be done with a call to eglMakeCurrent that sets the
-    context to NULL.
-    Alternatively, eglReleaseExternalContextANGLE can be called to perform this
-    synchronization.
-    The eglReleaseExternalContextANGLE call ensures that the context is
-    restored to its original state from before the
-    eglAcquireExternalContextANGLE call.
+    eglReleaseExternalContextANGLE can be called to perform this
+    synchronization, ensuring that the context is restored to its original
+    state from before the eglAcquireExternalContextANGLE call.
 
 Issues
 
@@ -118,3 +103,4 @@ Revision History
       1   Jan 7, 2021    penghuang  Initial version
       2   July 24, 2023  syoussefi  Add eglAcquireExternalContextANGLE, and
                                       eglReleaseExternalContextANGLE
+      3   July 27, 2023  syoussefi  Remove EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE

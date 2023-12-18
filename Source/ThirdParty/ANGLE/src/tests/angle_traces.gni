@@ -32,7 +32,7 @@ template("angle_trace") {
       suppressed_configs += [
         "//build/config/compiler:afdo",
         "//build/config/compiler:afdo_optimize_size",
-        "//build/config/compiler:default_optimization",
+        "//build/config/compiler:optimize_max",
         "//build/config/compiler/pgo:default_pgo_flags",
       ]
       configs += [ "//build/config/compiler:no_optimize" ]

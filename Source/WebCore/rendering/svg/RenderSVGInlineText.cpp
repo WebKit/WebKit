@@ -76,6 +76,7 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     , m_scalingFactor(1)
     , m_layoutAttributes(*this)
 {
+    ASSERT(isRenderSVGInlineText());
 }
 
 String RenderSVGInlineText::originalText() const
@@ -142,7 +143,7 @@ bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
     ASSERT(position < static_cast<int>(text().length()));
 
     // Each <textPath> element starts a new text chunk, regardless of any x/y values.
-    if (!position && parent()->isSVGTextPath() && !previousSibling())
+    if (!position && parent()->isRenderSVGTextPath() && !previousSibling())
         return true;
 
     const SVGCharacterDataMap::const_iterator it = m_layoutAttributes.characterDataMap().find(static_cast<unsigned>(position + 1));
@@ -238,7 +239,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     if (fontDescription.orientation() != FontOrientation::Horizontal)
         fontDescription.setOrientation(FontOrientation::Horizontal);
 
-    scaledFont = FontCascade(WTFMove(fontDescription), 0, 0);
+    scaledFont = FontCascade(WTFMove(fontDescription));
     scaledFont.update(&renderer.document().fontSelector());
 }
 

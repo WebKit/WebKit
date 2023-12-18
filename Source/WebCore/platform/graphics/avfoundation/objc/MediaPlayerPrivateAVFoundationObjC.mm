@@ -190,11 +190,11 @@ enum MediaPlayerAVFoundationObservationContext {
 
 @interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate, AVPlayerItemMetadataOutputPushDelegate, AVPlayerItemMetadataCollectorPushDelegate>
 {
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
+    ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
     int m_delayCallbacks;
     RefPtr<WorkQueue> m_backgroundQueue;
 }
--(id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)callback;
+-(id)initWithPlayer:(ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)callback;
 -(void)disconnect;
 -(void)metadataLoaded;
 -(void)didEnd:(NSNotification *)notification;
@@ -207,9 +207,9 @@ enum MediaPlayerAVFoundationObservationContext {
 @end
 
 @interface WebCoreAVFLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
+    ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_player;
 }
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
+- (id)initWithPlayer:(ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player;
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
 @end
 
@@ -283,9 +283,9 @@ public:
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundation; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateAVFoundationObjC>(player);
+        return adoptRef(*new MediaPlayerPrivateAVFoundationObjC(player));
     }
 
     void getSupportedTypes(HashSet<String>& types) const final
@@ -450,8 +450,6 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 {
-    weakPtrFactory().revokeAll();
-
     [[m_avAsset resourceLoader] setDelegate:nil queue:0];
 
     for (auto& pair : m_resourceLoaderMap)
@@ -613,8 +611,9 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_avPlayer || m_haveBeenAskedToCreateLayer)
         return;
 
-    ensureOnMainThread([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
+    ensureOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         if (!m_avPlayer || m_haveBeenAskedToCreateLayer)
@@ -798,8 +797,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url)
     if (!player)
         return;
 
-    player->getRawCookies(url, [this, weakThis = WeakPtr { *this }, options = WTFMove(options), url] (auto cookies) mutable {
-        if (!weakThis)
+    player->getRawCookies(url, [this, weakThis = ThreadSafeWeakPtr { *this }, options = WTFMove(options), url] (auto cookies) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         if (cookies.size()) {
@@ -890,8 +890,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
     if (m_avAsset)
         return;
-
-    setDelayCallbacks(true);
 
     [options setObject:@(AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote) forKey:AVURLAssetReferenceRestrictionsKey];
 
@@ -1040,8 +1038,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
 
     m_haveCheckedPlayability = false;
 
-    setDelayCallbacks(false);
-
     checkPlayability();
 }
 
@@ -1093,8 +1089,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    setDelayCallbacks(true);
 
     m_avPlayer = adoptNS([PAL::allocAVPlayerInstance() init]);
     for (NSString *keyName in playerKVOProperties())
@@ -1155,9 +1149,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
     ASSERT(!m_currentTimeObserver);
-    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER, this] (CMTime cmTime) {
+    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis = ThreadSafeWeakPtr { *this }, identifier = LOGIDENTIFIER, this] (CMTime cmTime) {
         ensureOnMainThread([weakThis, cmTime, this, identifier] {
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
             auto time = PAL::toMediaTime(cmTime);
@@ -1171,13 +1166,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
                 ALWAYS_LOG(identifier, "PeriodicTimeObserver called with called with infinite time");
             m_lastPeriodicObserverMediaTime = time;
 
-            weakThis->currentMediaTimeDidChange(WTFMove(time));
+            currentMediaTimeDidChange(WTFMove(time));
         });
     }];
 
     if (m_isGatheringVideoFrameMetadata)
         startVideoFrameMetadataGathering();
-    setDelayCallbacks(false);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
@@ -1190,8 +1184,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    setDelayCallbacks(true);
 
     // Create the player item so we can load media data.
     m_avPlayerItem = adoptNS([PAL::allocAVPlayerItemInstance() initWithAsset:m_avAsset.get()]);
@@ -1244,8 +1236,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     [m_metadataOutput setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
     [m_metadataOutput setAdvanceIntervalForDelegateInvocation:avPlayerOutputAdvanceInterval];
     [m_avPlayerItem addOutput:m_metadataOutput.get()];
-
-    setDelayCallbacks(false);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
@@ -1255,12 +1245,14 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
     m_haveCheckedPlayability = true;
 
     INFO_LOG(LOGIDENTIFIER);
-    WeakPtr weakThis { *this };
+    __block ThreadSafeWeakPtr weakThis { *this };
 
     [m_avAsset loadValuesAsynchronouslyForKeys:@[@"playable", @"tracks"] completionHandler:^{
-        callOnMainThread([weakThis] {
-            if (weakThis)
-                weakThis->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::AssetPlayabilityKnown);
+        ensureOnMainThread([this, weakThis = WTFMove(weakThis)] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                updateStates();
+                playabilityKnown();
+            }
         });
     }];
 }
@@ -1271,11 +1263,11 @@ void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 
     OSObjectPtr<dispatch_group_t> metadataLoadingGroup = adoptOSObject(dispatch_group_create());
     dispatch_group_enter(metadataLoadingGroup.get());
-    WeakPtr weakThis { *this };
+    ThreadSafeWeakPtr weakThis { *this };
     [m_avAsset loadValuesAsynchronouslyForKeys:assetMetadataKeyNames() completionHandler:^{
-        callOnMainThread([weakThis, metadataLoadingGroup] {
-            if (weakThis && [weakThis->m_avAsset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-                for (AVAssetTrack *track in [weakThis->m_avAsset tracks]) {
+        callOnMainThread([this, weakThis, metadataLoadingGroup] {
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && [m_avAsset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
+                for (AVAssetTrack *track in [m_avAsset tracks]) {
                     dispatch_group_enter(metadataLoadingGroup.get());
                     [track loadValuesAsynchronouslyForKeys:assetTrackMetadataKeyNames() completionHandler:^{
                         dispatch_group_leave(metadataLoadingGroup.get());
@@ -1288,8 +1280,8 @@ void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 
     dispatch_group_notify(metadataLoadingGroup.get(), dispatch_get_main_queue(), ^{
         callOnMainThread([weakThis] {
-            if (weakThis)
-                [weakThis->m_objcObserver metadataLoaded];
+            if (RefPtr protectedThis = weakThis.get())
+                [protectedThis->m_objcObserver metadataLoaded];
         });
     });
 }
@@ -1322,8 +1314,9 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 
 void MediaPlayerPrivateAVFoundationObjC::updateVideoFullscreenInlineImage()
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage ? m_lastImage->platformImage() : nullptr);
+    updateLastImage([&] {
+        m_videoLayerManager->updateVideoFullscreenInlineImage(m_lastImage ? m_lastImage->platformImage() : nullptr);
+    });
 }
 
 RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscreenLayer()
@@ -1333,11 +1326,15 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscre
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
+    auto completion = [&] {
+        m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
+        updateVideoLayerGravity(ShouldAnimate::Yes);
+        updateDisableExternalPlayback();
+    };
     if (videoFullscreenLayer)
-        updateLastImage(UpdateType::UpdateSynchronously);
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
-    updateVideoLayerGravity(ShouldAnimate::Yes);
-    updateDisableExternalPlayback();
+        updateLastImage(WTFMove(completion));
+    else
+        completion();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenFrame(FloatRect frame)
@@ -1588,8 +1585,6 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTargetInternal(const SeekTarget& 
     ASSERT(target.time.isFinite());
 
     // setCurrentTime generates several event callbacks, update afterwards.
-    setDelayCallbacks(true);
-
     if (m_metadataTrack)
         m_metadataTrack->flushPartialCues();
 
@@ -1603,20 +1598,19 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTargetInternal(const SeekTarget& 
     if (!CMTIME_IS_VALID(cmAfter) || PAL::CMTimeCompare(cmAfter, PAL::kCMTimeZero) < 0)
         cmAfter = PAL::kCMTimePositiveInfinity;
 
-    WeakPtr weakThis { *this };
+    ThreadSafeWeakPtr weakThis { *this };
 
     setShouldObserveTimeControlStatus(false);
     [m_avPlayerItem seekToTime:cmTime toleranceBefore:cmBefore toleranceAfter:cmAfter completionHandler:^(BOOL finished) {
-        callOnMainThread([weakThis, finished] {
-            if (!weakThis)
+        callOnMainThread([this, weakThis, finished] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
-            weakThis->setShouldObserveTimeControlStatus(true);
-            weakThis->seekCompleted(finished);
+            setShouldObserveTimeControlStatus(true);
+            seekCompleted(finished);
         });
     }];
-
-    setDelayCallbacks(false);
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setVolume(float volume)
@@ -1664,8 +1658,6 @@ void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
 
 void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate, std::optional<MonotonicTime>&& hostTime)
 {
-    setDelayCallbacks(true);
-
     if (auto player = this->player())
         [m_avPlayerItem setAudioTimePitchAlgorithm:MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player->pitchCorrectionAlgorithm(), player->preservesPitch(), m_requestedRate)];
 
@@ -1689,7 +1681,6 @@ void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate, std::optiona
 
     m_cachedTimeControlStatus = [m_avPlayer timeControlStatus];
     setShouldObserveTimeControlStatus(true);
-    setDelayCallbacks(false);
 
     m_wallClockAtCachedCurrentTime = std::nullopt;
 }
@@ -1784,7 +1775,7 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
         m_cachedSeekableRanges = [m_avPlayerItem seekableTimeRanges];
 
     if (![m_cachedSeekableRanges count])
-        return platformDuration();
+        return durationMediaTime();
 
     MediaTime maxTimeSeekable;
     for (NSValue *thisRangeValue in m_cachedSeekableRanges.get()) {
@@ -1981,13 +1972,11 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
     if (!metaDataAvailable() || context.paintingDisabled() || isCurrentPlaybackTargetWireless())
         return;
 
-    setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     paintWithVideoOutput(context, rect);
 
     END_BLOCK_OBJC_EXCEPTIONS
-    setDelayCallbacks(false);
 
     m_videoFrameHasDrawn = true;
 }
@@ -2280,7 +2269,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         String language = [locale localeIdentifier];
         auto track = m_chapterTracks.ensure(language, [&]() {
-            auto track = InbandChapterTrackPrivateAVFObjC::create(locale);
+            auto track = InbandChapterTrackPrivateAVFObjC::create(locale, m_currentTextTrackID++);
             if (player)
                 player->addTextTrack(track.get());
             return track;
@@ -2731,23 +2720,35 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
     return m_videoOutput->hasImageForTime(PAL::toMediaTime([m_avPlayerItem currentTime]));
 }
 
-void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
+void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateCompletion&& completion)
 {
-    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData) {
+        completion();
         return;
+    }
 
     auto* firstEnabledVideoTrack = firstEnabledVisibleTrack();
-    if (!firstEnabledVideoTrack)
+    if (!firstEnabledVideoTrack) {
+        completion();
         return;
+    }
 
-    if (type == UpdateType::UpdateSynchronously && !m_lastImage && !videoOutputHasAvailableFrame())
-        waitForVideoOutputMediaDataWillChange();
+    if (!m_lastImage && !videoOutputHasAvailableFrame()) {
+        if (waitForVideoOutputMediaDataWillChange() == UpdateResult::ObjectDestroyed) {
+            // NOTE: Do not call the completion handler here, as the `this` pointer is now invalid.
+            // This will cause an ASSERT that the completion handler was not called before destruction.
+            // This is intentional; this is a ASSERT-able behavior, and should not occur.
+            return;
+        }
+    }
 
     // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
     // for the requested time has already been retrieved. In this case, the last valid image (if any)
     // should be displayed.
-    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer))
+    if (!updateLastPixelBuffer() && (m_lastImage || !m_lastPixelBuffer)) {
+        completion();
         return;
+    }
 
     if (!m_pixelBufferConformer) {
         NSDictionary *attributes = @{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) };
@@ -2759,24 +2760,26 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
     m_lastImage = NativeImage::create(m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
 
     INFO_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
+
+    completion();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& context, const FloatRect& outputRect)
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    if (!m_lastImage)
-        return;
+    updateLastImage([&, logIdentifier = LOGIDENTIFIER] {
+        if (!m_lastImage)
+            return;
 
-    INFO_LOG(LOGIDENTIFIER);
+        INFO_LOG(logIdentifier);
 
-    FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
-    context.drawNativeImage(Ref { *m_lastImage }, imageRect.size(), outputRect, imageRect);
+        FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
+        context.drawNativeImage(*m_lastImage, imageRect.size(), outputRect, imageRect);
 
-    // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
-    // video frame, destroy it now that it is no longer needed.
-    if (m_imageGenerator)
-        destroyImageGenerator();
-
+        // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
+        // video frame, destroy it now that it is no longer needed.
+        if (m_imageGenerator)
+            destroyImageGenerator();
+    });
 }
 
 RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime()
@@ -2795,23 +2798,27 @@ RefPtr<VideoFrame> MediaPlayerPrivateAVFoundationObjC::videoFrameForCurrentTime(
 
 RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTime()
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    return m_lastImage;
+    RefPtr<NativeImage> returnValue = nullptr;
+    updateLastImage([&] {
+        returnValue = m_lastImage;
+    });
+    return returnValue;
 }
 
 DestinationColorSpace MediaPlayerPrivateAVFoundationObjC::colorSpace()
 {
-    updateLastImage(UpdateType::UpdateSynchronously);
-    if (!m_lastPixelBuffer)
-        return DestinationColorSpace::SRGB();
-
-    return DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
+    DestinationColorSpace colorSpace = DestinationColorSpace::SRGB();
+    updateLastImage([&] {
+        if (m_lastPixelBuffer)
+            colorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
+    });
+    return colorSpace;
 }
 
-void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
+auto MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange() -> UpdateResult
 {
     if (m_waitForVideoOutputMediaDataWillChangeTimedOut)
-        return;
+        return UpdateResult::Failed;
 
     // Wait for 1 second.
     MonotonicTime start = MonotonicTime::now();
@@ -2819,8 +2826,8 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
     std::optional<RunLoop::Timer> timeoutTimer;
 
     if (!m_runLoopNestingLevel) {
-        m_waitForVideoOutputMediaDataWillChangeObserver = WTF::makeUnique<Observer<void()>>([this, logIdentifier = LOGIDENTIFIER] () mutable {
-            if (m_runLoopNestingLevel)
+        m_waitForVideoOutputMediaDataWillChangeObserver = WTF::makeUnique<Observer<void()>>([weakThis = ThreadSafeWeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_runLoopNestingLevel)
                 RunLoop::main().stop();
         });
         m_videoOutput->addCurrentImageChangedObserver(*m_waitForVideoOutputMediaDataWillChangeObserver);
@@ -2831,21 +2838,28 @@ void MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange()
         timeoutTimer->startOneShot(1_s);
     }
 
+    auto weakThis = ThreadSafeWeakPtr { *this };
     ++m_runLoopNestingLevel;
     RunLoop::run();
+    if (!weakThis.get())
+        return UpdateResult::ObjectDestroyed;
+
     --m_runLoopNestingLevel;
 
     if (m_runLoopNestingLevel) {
         RunLoop::main().stop();
-        return;
+        return UpdateResult::Failed;
     }
 
     bool satisfied = timeoutTimer->isActive();
     if (!satisfied) {
         ERROR_LOG(LOGIDENTIFIER, "timed out");
         m_waitForVideoOutputMediaDataWillChangeTimedOut = true;
-    } else
-        INFO_LOG(LOGIDENTIFIER, "waiting for videoOutput took ", (MonotonicTime::now() - start).seconds());
+        return UpdateResult::TimedOut;
+    }
+
+    INFO_LOG(LOGIDENTIFIER, "waiting for videoOutput took ", (MonotonicTime::now() - start).seconds());
+    return UpdateResult::Succeeded;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::outputMediaDataWillChange()
@@ -3371,9 +3385,7 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled(bool d
     if (!m_avPlayer)
         return;
 
-    setDelayCallbacks(true);
     [m_avPlayer setAllowsExternalPlayback:!disabled];
-    setDelayCallbacks(false);
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3412,22 +3424,21 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
         if ((!newContext && !currentContext.get()) || [currentContext isEqual:newContext])
             return;
 
-        setDelayCallbacks(true);
         m_avPlayer.get().outputContext = newContext;
-        setDelayCallbacks(false);
 
         return;
     }
 
     ASSERT(m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::Mock);
 
-    setDelayCallbacks(true);
-    scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->playbackTargetIsWirelessDidChange();
-    }));
-    setDelayCallbacks(false);
+    if (RefPtr player = this->player()) {
+        player->queueTaskOnEventLoop([this, weakThis = ThreadSafeWeakPtr { *this }] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            playbackTargetIsWirelessDidChange();
+        });
+    }
 }
 
 #endif // !PLATFORM(IOS_FAMILY)
@@ -3438,8 +3449,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateDisableExternalPlayback()
     if (!m_avPlayer)
         return;
 
-    auto player = this->player();
-    if (player && [m_avPlayer respondsToSelector:@selector(setUsesExternalPlaybackWhileExternalScreenIsActive:)])
+    if (RefPtr player = this->player(); player && [m_avPlayer respondsToSelector:@selector(setUsesExternalPlaybackWhileExternalScreenIsActive:)])
         [m_avPlayer setUsesExternalPlaybackWhileExternalScreenIsActive:(player->fullscreenMode() == MediaPlayer::VideoFullscreenModeStandard) || player->isVideoFullscreenStandby()];
 #endif
 }
@@ -3744,9 +3754,22 @@ void MediaPlayerPrivateAVFoundationObjC::presentationSizeDidChange(FloatSize siz
 
 void MediaPlayerPrivateAVFoundationObjC::durationDidChange(const MediaTime& duration)
 {
+    if (m_cachedDuration == duration)
+        return;
+
+    INFO_LOG(LOGIDENTIFIER, duration);
+    bool cachedDurationWasValid = m_cachedDuration.isValid();
+
     m_cachedDuration = duration;
 
-    invalidateCachedDuration();
+    // Don't fire a durationChanged() callback if we are updating from an invalid
+    // cachedDuration; this will lead to double "durationchanged" events fired from
+    // the HTMLMediaElement.
+    if (!cachedDurationWasValid)
+        return;
+
+    if (auto player = this->player())
+        player->durationChanged();
 }
 
 void MediaPlayerPrivateAVFoundationObjC::rateDidChange(double rate)
@@ -3974,7 +3997,7 @@ NSArray* playerKVOProperties()
 
 @implementation WebCoreAVFMovieObserver
 
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
+- (id)initWithPlayer:(ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
 {
     self = [super init];
     if (!self)
@@ -3992,13 +4015,11 @@ NSArray* playerKVOProperties()
 - (void)metadataLoaded
 {
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        if (!m_player)
-            return;
-
-        m_player->queueTaskOnEventLoop([player = m_player] {
-            if (player)
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player)] {
                 player->metadataLoaded();
-        });
+            });
+        }
     });
 }
 
@@ -4006,13 +4027,11 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(unusedNotification);
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        if (!m_player)
-            return;
-
-        m_player->queueTaskOnEventLoop([player = m_player] {
-            if (player)
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player)] {
                 player->didEnd();
-        });
+            });
+        }
     });
 }
 
@@ -4020,13 +4039,11 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(unusedNotification);
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        if (!m_player)
-            return;
-
-        m_player->queueTaskOnEventLoop([player = m_player] {
-            if (player)
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player)] {
                 player->processChapterTracks();
-        });
+            });
+        }
     });
 }
 
@@ -4034,16 +4051,12 @@ NSArray* playerKVOProperties()
 {
     auto queueTaskOnEventLoopWithPlayer = [self, strongSelf = retainPtr(self)] (Function<void(MediaPlayerPrivateAVFoundationObjC&)>&& function) mutable {
         ensureOnMainThread([self, strongSelf = WTFMove(strongSelf), function = WTFMove(function)] () mutable {
-            if (!m_player)
-                return;
-
-            m_player->queueTaskOnEventLoop([player = m_player, function = WTFMove(function)] {
-                if (!player)
-                    return;
-
-                ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-                function(*player);
-            });
+            if (RefPtr player = m_player.get()) {
+                player->queueTaskOnEventLoop([player = WTFMove(player), function = WTFMove(function)] {
+                    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+                    function(*player);
+                });
+            }
         });
     };
 
@@ -4155,18 +4168,14 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(output);
 
     ensureOnMainThread([self, strongSelf = retainPtr(self), strings = retainPtr(strings), nativeSamples = retainPtr(nativeSamples), itemTime]() mutable {
-        if (!m_player)
-            return;
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player), strings = WTFMove(strings), nativeSamples = WTFMove(nativeSamples), itemTime] {
+                ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        m_player->queueTaskOnEventLoop([player = m_player, strings = WTFMove(strings), nativeSamples = WTFMove(nativeSamples), itemTime] {
-            if (!player)
-                return;
-
-            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-
-            MediaTime time = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
-            player->processCue(strings.get(), nativeSamples.get(), time);
-        });
+                MediaTime time = std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
+                player->processCue(strings.get(), nativeSamples.get(), time);
+            });
+        }
     });
 }
 
@@ -4175,13 +4184,11 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(output);
 
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        if (!m_player)
-            return;
-
-        m_player->queueTaskOnEventLoop([player = m_player] {
-            if (player)
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player)] {
                 player->flushCues();
-        });
+            });
+        }
     });
 }
 
@@ -4191,18 +4198,17 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(output);
     UNUSED_PARAM(track);
 
-    if (!m_player || !metadataGroups)
+    if (!metadataGroups)
         return;
 
-    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
-        if (!player)
-            return;
+    if (RefPtr player = m_player.get()) {
+        player->queueTaskOnEventLoop([player, metadataGroups = retainPtr(metadataGroups), currentTime = player->currentMediaTime()] {
+            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-
-        for (AVTimedMetadataGroup *group in metadataGroups.get())
-            player->metadataDidArrive(retainPtr(group.items), currentTime);
-    });
+            for (AVTimedMetadataGroup *group in metadataGroups.get())
+                player->metadataDidArrive(retainPtr(group.items), currentTime);
+        });
+    }
 }
 
 - (void)metadataCollector:(AVPlayerItemMetadataCollector *)metadataCollector didCollectDateRangeMetadataGroups:(NSArray<AVDateRangeMetadataGroup *> *)metadataGroups indexesOfNewGroups:(NSIndexSet *)indexesOfNewGroups indexesOfModifiedGroups:(NSIndexSet *)indexesOfModifiedGroups
@@ -4212,21 +4218,20 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(indexesOfNewGroups);
     UNUSED_PARAM(indexesOfModifiedGroups);
 
-    if (!m_player || !metadataGroups)
+    if (!metadataGroups)
         return;
 
-    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
-        if (!player)
-            return;
-
-        player->metadataGroupDidArrive(metadataGroups, currentTime);
-    });
+    if (RefPtr player = m_player.get()) {
+        player->queueTaskOnEventLoop([player, metadataGroups = retainPtr(metadataGroups), currentTime = player->currentMediaTime()] {
+            player->metadataGroupDidArrive(metadataGroups, currentTime);
+        });
+    }
 }
 @end
 
 @implementation WebCoreAVFLoaderDelegate
 
-- (id)initWithPlayer:(WeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
+- (id)initWithPlayer:(ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC>&&)player
 {
     self = [super init];
     if (!self)
@@ -4238,22 +4243,17 @@ NSArray* playerKVOProperties()
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
-    if (!m_player)
+    RefPtr player = m_player.get();
+    if (!player)
         return NO;
 
     ensureOnMainThread([self, strongSelf = retainPtr(self), loadingRequest = retainPtr(loadingRequest)]() mutable {
-        if (!m_player)
-            return;
-
-        m_player->queueTaskOnEventLoop([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
-            if (!player) {
-                [loadingRequest finishLoadingWithError:nil];
-                return;
-            }
-
-            if (!player->shouldWaitForLoadingOfResource(loadingRequest.get()))
-                [loadingRequest finishLoadingWithError:nil];
-        });
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player), loadingRequest = WTFMove(loadingRequest)] {
+                if (!player->shouldWaitForLoadingOfResource(loadingRequest.get()))
+                    [loadingRequest finishLoadingWithError:nil];
+            });
+        }
     });
 
     return YES;
@@ -4271,16 +4271,13 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(resourceLoader);
     ensureOnMainThread([self, strongSelf = retainPtr(self), loadingRequest = retainPtr(loadingRequest)]() mutable {
-        if (!m_player)
-            return;
+        if (RefPtr player = m_player.get()) {
+            player->queueTaskOnEventLoop([player = WTFMove(player), loadingRequest = WTFMove(loadingRequest)] {
+                ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        m_player->queueTaskOnEventLoop([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
-
-            ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-
-            if (player)
                 player->didCancelLoadingRequest(loadingRequest.get());
-        });
+            });
+        }
     });
 }
 

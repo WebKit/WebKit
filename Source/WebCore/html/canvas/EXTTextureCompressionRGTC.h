@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTTextureCompressionRGTC final : public RefCounted<EXTTextureCompressionRGTC>, public WebGLExtension<WebGLRenderingContextBase> {
+class EXTTextureCompressionRGTC final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureCompressionRGTC);
     WTF_MAKE_NONCOPYABLE(EXTTextureCompressionRGTC);
 public:

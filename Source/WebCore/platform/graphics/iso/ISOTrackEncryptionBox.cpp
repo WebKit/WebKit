@@ -99,7 +99,7 @@ bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
             int8_t character = 0;
             if (!checkedRead<int8_t>(character, view, offset, BigEndian))
                 return false;
-            defaultConstantIV.uncheckedAppend(character);
+            defaultConstantIV.append(character);
         }
         m_defaultConstantIV = WTFMove(defaultConstantIV);
     }

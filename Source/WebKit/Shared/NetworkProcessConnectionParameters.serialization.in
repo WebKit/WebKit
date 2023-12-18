@@ -22,4 +22,7 @@
 
 struct WebKit::NetworkProcessConnectionParameters {
     bool allowTestOnlyIPC;
+#if ENABLE(IPC_TESTING_API)
+    bool ignoreInvalidMessageForTesting;
+#endif
 };

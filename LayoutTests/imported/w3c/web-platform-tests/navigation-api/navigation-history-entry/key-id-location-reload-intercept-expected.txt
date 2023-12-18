@@ -1,0 +1,4 @@
+
+
+FAIL NavigationHistoryEntry's key and id after location.reload() intercepted by intercept() promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+

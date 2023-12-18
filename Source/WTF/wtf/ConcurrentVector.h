@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,7 +81,8 @@ private:
 // elements and another thread continues to access elements at lower indices. Only one thread can
 // append at a time, so that activity still needs locking. size() and last() are racy with append(),
 // in the sense that last() may crash if an append() is running concurrently because size()-1 does yet
-// have a segment.
+// have a segment. If you want size() to be safe with additions use appendConcurrently() but note
+// appendConcurrently() is not multi-writer safe.
 //
 // Typical users of ConcurrentVector already have some way of ensuring that by the time someone is
 // trying to use an index, some synchronization has happened to ensure that this index contains fully
@@ -144,7 +145,7 @@ public:
     }
     
     // This may crash if run concurrently to append(). If you want to accurately track the size of
-    // this vector, you'll have to do it yourself, with your own fencing.
+    // this vector, use appendConcurrently().
     T& last()
     {
         ASSERT_WITH_SECURITY_IMPLICATION(!isEmpty());
@@ -178,6 +179,18 @@ public:
     {
         append(std::forward<Args>(args)...);
         return last();
+    }
+
+    // Note, appendConcurrently() assumes only one thread can append at a time and is not safe with removeLast()/takeLast().
+    template<typename... Args>
+    void appendConcurrently(Args&&... args)
+    {
+        if (!segmentExistsFor(m_size))
+            allocateSegment();
+        T* slot = &segmentFor(m_size)->entries[subscriptFor(m_size)];
+        new (NotNull, slot) T(std::forward<Args>(args)...);
+        WTF::storeStoreFence();
+        ++m_size;
     }
 
     void removeLast()

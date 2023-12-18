@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+    <button id="button">Press Me</button>
+</div>
+
+<script>
+let output = "This test ensures that changes to the contenteditable property are reflected in accessibility\n\n";
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var button = accessibilityController.accessibleElementById("button");
+    output += expect("button.editableAncestor()", "null");
+
+    document.getElementById("content").contentEditable = "true";
+    setTimeout(async () => {
+        await waitFor(() => button.editableAncestor());
+        output += expect("button.editableAncestor().domIdentifier", "'content'");
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
+</body>

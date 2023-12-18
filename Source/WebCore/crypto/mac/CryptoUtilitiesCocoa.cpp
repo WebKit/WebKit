@@ -44,7 +44,7 @@ ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vecto
 
     // Detect loop
     if (counterLength < sizeof(size_t) * 8 && numberOfBlocks > (static_cast<size_t>(1) << counterLength))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     // Calculate capacity before overflow
     CryptoAlgorithmAES_CTR::CounterBlockHelper counterBlockHelper(counter, counterLength);
@@ -59,20 +59,20 @@ ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vecto
     CCCryptorRef cryptor;
     CCCryptorStatus status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, counter.data(), key.data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> head(CCCryptorGetOutputLength(cryptor, headSize, true));
 
     size_t bytesWritten;
     status = CCCryptorUpdate(cryptor, data, headSize, head.data(), head.size(), &bytesWritten);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     uint8_t* p = head.data() + bytesWritten;
     status = CCCryptorFinal(cryptor, p, head.end() - p, &bytesWritten);
     p += bytesWritten;
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     ASSERT_WITH_SECURITY_IMPLICATION(p <= head.end());
     head.shrink(p - head.begin());
@@ -87,20 +87,20 @@ ExceptionOr<Vector<uint8_t>> transformAES_CTR(CCOperation operation, const Vecto
     Vector<uint8_t> remainingCounter = counterBlockHelper.counterVectorAfterOverflow();
     status = CCCryptorCreateWithMode(operation, kCCModeCTR, kCCAlgorithmAES128, ccNoPadding, remainingCounter.data(), key.data(), key.size(), 0, 0, 0, kCCModeOptionCTR_BE, &cryptor);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     size_t tailSize = dataSize - headSize;
     Vector<uint8_t> tail(CCCryptorGetOutputLength(cryptor, tailSize, true));
 
     status = CCCryptorUpdate(cryptor, data + headSize, tailSize, tail.data(), tail.size(), &bytesWritten);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     p = tail.data() + bytesWritten;
     status = CCCryptorFinal(cryptor, p, tail.end() - p, &bytesWritten);
     p += bytesWritten;
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     ASSERT_WITH_SECURITY_IMPLICATION(p <= tail.end());
     tail.shrink(p - tail.begin());
@@ -131,7 +131,7 @@ ExceptionOr<Vector<uint8_t>> deriveHDKFBits(CCDigestAlgorithm digestAlgorithm, c
 
     // <rdar://problem/32439455> Currently, when key data is empty, CCKeyDerivationHMac will bail out.
     if (keyDerivationHMAC(digestAlgorithm, key, keySize, info, infoSize, salt, saltSize, result.data(), result.size()) != kCCSuccess)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return WTFMove(result);
 }

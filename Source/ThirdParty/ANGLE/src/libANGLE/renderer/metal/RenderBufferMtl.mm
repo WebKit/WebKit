@@ -56,6 +56,9 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
         angle::Format::InternalFormatToID(internalFormat.sizedInternalFormat);
     mFormat = contextMtl->getPixelFormat(angleFormatId);
 
+    bool useImplicitResolve =
+        contextMtl->getDisplay()->getFeatures().alwaysResolveMultisampleRenderBuffers.enabled;
+
     uint32_t actualSamples;
     if (samples == 0)
     {
@@ -74,16 +77,16 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
 
     if ((mTexture == nullptr || !mTexture->valid()) && (width != 0 && height != 0))
     {
-        if (actualSamples == 1 || (mFormat.getCaps().resolve))
+        if (actualSamples == 1 || (useImplicitResolve && mFormat.getCaps().resolve))
         {
             ANGLE_TRY(mtl::Texture::Make2DTexture(
                 contextMtl, mFormat, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1,
                 /* renderTargetOnly */ false,
                 /* allowFormatView */ mFormat.hasDepthAndStencilBits(), &mTexture));
 
-            // Use implicit resolve for depth stencil texture whenever possible. This is because
-            // for depth stencil texture, if stencil needs to be blitted, a formatted clone has
-            // to be created. And it is expensive to clone a multisample texture.
+            // Use implicit resolve if alwaysResolveMultisampleRenderBuffers feature is enabled. At
+            // the end of every render pass, the MSAA render buffer will be automatically resolved
+            // to a single sampled texture.
             if (actualSamples > 1)
             {
                 // This format must supports implicit resolve
@@ -219,4 +222,4 @@ angle::Result RenderbufferMtl::initializeContents(const gl::Context *context,
             context, mTexture, mFormat,
             mtl::ImageNativeIndex::FromBaseZeroGLIndex(gl::ImageIndex::Make2D(0)));
 }
-}
+}  // namespace rx

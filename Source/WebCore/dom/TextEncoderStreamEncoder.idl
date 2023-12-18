@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledBySetting=TransformStreamAPIEnabled,
     Exposed=(Window,Worker),
     PrivateIdentifier,
 ] interface TextEncoderStreamEncoder {

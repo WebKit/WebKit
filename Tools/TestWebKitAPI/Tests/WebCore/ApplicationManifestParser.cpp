@@ -30,6 +30,7 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ApplicationManifestParser.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
@@ -110,6 +111,52 @@ public:
         return parseString(manifestContent);
     }
 
+    ApplicationManifest parseShortcutFirstTopLevelProperty(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\""_s, key, "\": "_s, value, ", \"url\": \"example\" }]}"_s);
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutFirstTopLevelPropertyForURL(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\""_s, key, "\": "_s, value, " }]}"_s);
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutIconFirstTopLevelProperty(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\"url\": \"example\", \"icons\": [{\""_s, key, "\": "_s, value, ", \"src\": \"icon/example.png\" }]}]}"_s);
+        return parseString(manifestContent);
+    }
+
+    ApplicationManifest parseShortcutIconFirstTopLevelPropertyForSrc(const String& key, const String& value)
+    {
+        auto manifestContent = makeString("{ \"shortcuts\": [{\"url\": \"example\", \"icons\": [{\""_s, key, "\": "_s, value, " }]}]}"_s);
+        return parseString(manifestContent);
+    }
+
+    void testRawJSON(const String& rawJSON, bool isValidJSON)
+    {
+        auto manifest = parseString(rawJSON);
+        auto value = manifest.rawJSON;
+        if (isValidJSON)
+            EXPECT_STREQ(rawJSON.utf8().data(), value.utf8().data());
+        else
+            ASSERT_STREQ(rawJSON.utf8().data(), value.utf8().data());
+    }
+
+    void testManifestURL(const String& expectedValue)
+    {
+        testManifestURL(URL { expectedValue });
+    }
+
+    void testManifestURL(const URL& expectedValue)
+    {
+        auto manifest = ApplicationManifestParser::parse("{ \"name\": \"Example\" }"_s, expectedValue, m_documentURL);
+        auto value = manifest.manifestURL;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
     void testStartURL(const String& rawJSON, const String& expectedValue)
     {
         testStartURL(rawJSON, { { }, expectedValue });
@@ -157,17 +204,18 @@ public:
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
-    void testScope(const String& rawJSON, const String& startURL, const String& expectedValue)
+    void testScope(const String& rawJSON, const String& startURL, const String& expectedValue, bool expectedIsDefaultScope)
     {
         String manifestContent = "{ \"scope\" : " + rawJSON + ", \"start_url\" : \"" + startURL + "\" }";
         auto manifest = parseString(manifestContent);
         auto value = manifest.scope;
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
+        EXPECT_EQ(expectedIsDefaultScope, manifest.isDefaultScope);
     }
 
-    void testScope(const String& rawJSON, const String& expectedValue)
+    void testScope(const String& rawJSON, const String& expectedValue, bool expectedIsDefaultScope)
     {
-        testScope(rawJSON, String(), expectedValue);
+        testScope(rawJSON, m_startURL.string(), expectedValue, expectedIsDefaultScope);
     }
 
     void testBackgroundColor(const String& rawJSON, const Color& expectedValue)
@@ -184,11 +232,35 @@ public:
         EXPECT_EQ(expectedValue, value);
     }
 
+    void testCategories(const Vector<String>& expectedValue)
+    {
+        StringBuilder builder;
+        builder.append('[');
+        for (auto& value : expectedValue) {
+            if (builder.length() > 1)
+                builder.append(", "_s);
+
+            builder.append('\"');
+            builder.append(value);
+            builder.append('\"');
+        }
+        builder.append(']');
+        auto categoriesValue = builder.toString();
+        String manifestContent = makeString("{ \"categories\" : "_s, categoriesValue, " }"_s);
+        auto manifest = parseString(manifestContent);
+        auto value = manifest.categories;
+        EXPECT_EQ(expectedValue, value);
+    }
+
     void testIconsSrc(const String& rawJSON, const URL& expectedValue)
     {
         auto manifest = parseIconFirstTopLevelPropertyForSrc("src"_s, rawJSON);
         auto value = manifest.icons[0].src;
         EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelPropertyForSrc("src"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].src;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), shortcutValue.string().utf8().data());
     }
 
     void testIconsType(const String &rawJSON, const String& expectedValue)
@@ -196,6 +268,10 @@ public:
         auto manifest = parseIconFirstTopLevelProperty("type"_s, rawJSON);
         auto value = manifest.icons[0].type;
         EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelProperty("type"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].type;
+        EXPECT_STREQ(expectedValue.utf8().data(), shortcutValue.utf8().data());
     }
 
     void testIconsSizes(const String &rawJSON, size_t expectedCount, size_t testIndex, const String& expectedValue)
@@ -205,6 +281,12 @@ public:
         EXPECT_EQ(expectedCount, value.size());
         EXPECT_TRUE(testIndex < value.size());
         EXPECT_STREQ(expectedValue.utf8().data(), value[testIndex].utf8().data());
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelProperty("sizes"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].sizes;
+        EXPECT_EQ(expectedCount, shortcutValue.size());
+        EXPECT_TRUE(testIndex < shortcutValue.size());
+        EXPECT_STREQ(expectedValue.utf8().data(), shortcutValue[testIndex].utf8().data());
     }
 
     void testIconsPurposes(const String &rawJSON, OptionSet<ApplicationManifest::Icon::Purpose> expectedValues)
@@ -212,6 +294,24 @@ public:
         auto manifest = parseIconFirstTopLevelProperty("purpose"_s, rawJSON);
         auto value = manifest.icons[0].purposes;
         EXPECT_EQ(expectedValues, value);
+
+        auto shortcutManifest = parseShortcutIconFirstTopLevelProperty("purpose"_s, rawJSON);
+        auto shortcutValue = shortcutManifest.shortcuts[0].icons[0].purposes;
+        EXPECT_EQ(expectedValues, shortcutValue);
+    }
+
+    void testShortcutsURL(const String& rawJSON, const URL& expectedValue)
+    {
+        auto manifest = parseShortcutFirstTopLevelPropertyForURL("url"_s, rawJSON);
+        auto value = manifest.shortcuts[0].url;
+        EXPECT_STREQ(expectedValue.string().utf8().data(), value.string().utf8().data());
+    }
+
+    void testShortcutsName(const String &rawJSON, const String& expectedValue)
+    {
+        auto manifest = parseShortcutFirstTopLevelProperty("name"_s, rawJSON);
+        auto value = manifest.shortcuts[0].name;
+        EXPECT_STREQ(expectedValue.utf8().data(), value.utf8().data());
     }
 
     void testId(const String& rawJSON, const URL& expectedValue)
@@ -249,6 +349,13 @@ TEST_F(ApplicationManifestParserTest, DefaultManifest)
     assertManifestHasDefaultValues(m_manifestURL, m_documentURL, parseString("This is 100% not JSON."_s));
 }
 
+TEST_F(ApplicationManifestParserTest, RawJSON)
+{
+    testRawJSON("{ \"name\" : \"Example\", \"start_url\" : \"https://example.com\"}"_s, true);
+    testRawJSON("{ \"start_url\" : \"https://example.com\"}"_s, true);
+    testRawJSON("This is 100% not JSON."_s, false);
+}
+
 TEST_F(ApplicationManifestParserTest, Id)
 {
     m_documentURL = URL { "https://example.com/home"_s };
@@ -278,6 +385,14 @@ TEST_F(ApplicationManifestParserTest, Id)
     testId("https://example.com/foo"_s, m_startURL, "https://example.com/foo"_s);
     testId("https://anothersite.com/foo"_s, m_startURL, m_startURL.string());
     testId("https://invalid.com:a"_s, m_startURL, m_startURL.string());
+}
+
+TEST_F(ApplicationManifestParserTest, ManifestURL)
+{
+    m_documentURL = URL { "https://example.com/home"_s };
+
+    testManifestURL("https://example.com/manifest.json"_s);
+    testManifestURL("https://example.com/test/manifest.json"_s);
 }
 
 TEST_F(ApplicationManifestParserTest, StartURL)
@@ -403,45 +518,51 @@ TEST_F(ApplicationManifestParserTest, Scope)
 {
     // If the scope is not a string or not a valid URL, return the default scope (the parent path of the start URL).
     m_documentURL = URL { "https://example.com/a/page?queryParam=value#fragment"_s };
+    m_startURL = URL { "https://example.com/a/page?queryParam=value#fragment"_s };
     m_manifestURL = URL { "https://example.com/manifest.json"_s };
-    testScope("123"_s, "https://example.com/a/"_s);
-    testScope("null"_s, "https://example.com/a/"_s);
-    testScope("true"_s, "https://example.com/a/"_s);
-    testScope("{ }"_s, "https://example.com/a/"_s);
-    testScope("[ ]"_s, "https://example.com/a/"_s);
-    testScope("\"\""_s, "https://example.com/a/"_s);
-    testScope("\"http:?\""_s, "https://example.com/a/"_s);
+    testScope("123"_s, "https://example.com/a/"_s, true);
+    testScope("null"_s, "https://example.com/a/"_s, true);
+    testScope("true"_s, "https://example.com/a/"_s, true);
+    testScope("{ }"_s, "https://example.com/a/"_s, true);
+    testScope("[ ]"_s, "https://example.com/a/"_s, true);
+    testScope("\"\""_s, "https://example.com/a/"_s, true);
+    testScope("\"http:?\""_s, "https://example.com/a/"_s, true);
 
     m_documentURL = URL { "https://example.com/a/pageEndingWithSlash/"_s };
-    testScope("null"_s, "https://example.com/a/pageEndingWithSlash/"_s);
+    m_startURL = URL { "https://example.com/a/pageEndingWithSlash/"_s };
+    testScope("null"_s, "https://example.com/a/pageEndingWithSlash/"_s, true);
 
     // If scope URL is not same origin as document URL, return the default scope.
     m_documentURL = URL { "https://example.com/home"_s };
+    m_startURL = URL { "https://example.com/home"_s };
     m_manifestURL = URL { "https://other-site.com/manifest.json"_s };
-    testScope("\"https://other-site.com/some-scope\""_s, "https://example.com/"_s);
+    testScope("\"https://other-site.com/some-scope\""_s, "https://example.com/"_s, true);
 
     m_documentURL = URL { "https://example.com/app/home"_s };
+    m_startURL = URL { "https://example.com/app/home"_s };
     m_manifestURL = URL { "https://example.com/app/manifest.json"_s };
 
     // If start URL is not within scope of scope URL, return the default scope.
-    testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s);
-    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s);
-    testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s);
-    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s);
+    testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s, true);
+    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s, false);
+    testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s, true);
+    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s, false);
 
     m_documentURL = URL { "https://example.com/a/b/c/index"_s };
+    m_startURL = URL { "https://example.com/a/b/c/index"_s };
     m_manifestURL = URL { "https://example.com/a/manifest.json"_s };
 
-    testScope("\"./b/c/index\""_s, "https://example.com/a/b/c/index"_s);
-    testScope("\"b/somewhere-else/../c\""_s, "https://example.com/a/b/c"_s);
-    testScope("\"b\""_s, "https://example.com/a/b"_s);
-    testScope("\"b/\""_s, "https://example.com/a/b/"_s);
+    testScope("\"./b/c/index\""_s, "https://example.com/a/b/c/index"_s, false);
+    testScope("\"b/somewhere-else/../c\""_s, "https://example.com/a/b/c"_s, false);
+    testScope("\"b\""_s, "https://example.com/a/b"_s, false);
+    testScope("\"b/\""_s, "https://example.com/a/b/"_s, false);
 
     m_documentURL = URL { "https://example.com/documents/home"_s };
+    m_startURL = URL { "https://example.com/documents/home"_s };
     m_manifestURL = URL { "https://example.com/resources/manifest.json"_s };
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
-    testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s);
+    testScope("\"https://example.com/other\""_s, "https://example.com/other/start-url"_s, "https://example.com/other"_s, false);
 }
 
 TEST_F(ApplicationManifestParserTest, BackgroundColor)
@@ -484,6 +605,16 @@ TEST_F(ApplicationManifestParserTest, ThemeColor)
     testThemeColor("\"hsla(0, 100%, 50%, 1)\""_s, Color::red);
 }
 
+TEST_F(ApplicationManifestParserTest, Categories)
+{
+    testCategories({ });
+    testCategories({ "health"_s });
+    testCategories({ "music"_s });
+    testCategories({ "video"_s });
+    testCategories({ "lifestyle"_s, "magazine"_s });
+    testCategories({ "books & reference"_s, "social network"_s, "education"_s });
+}
+
 TEST_F(ApplicationManifestParserTest, Whitespace)
 {
     auto manifest = parseString("  { \"name\": \"PASS\" }\n"_s);
@@ -518,6 +649,18 @@ TEST_F(ApplicationManifestParserTest, Icons)
     OptionSet<ApplicationManifest::Icon::Purpose> purposeMonochromeAny { ApplicationManifest::Icon::Purpose::Monochrome, ApplicationManifest::Icon::Purpose::Any };
 
     testIconsPurposes("\"monochrome any\""_s, purposeMonochromeAny);
+}
+
+TEST_F(ApplicationManifestParserTest, Shortcuts)
+{
+    testShortcutsURL("\"example1\""_s, URL { "https://example.com/example1"_s });
+    testShortcutsURL("\"/example2\""_s, URL { "https://example.com/example2"_s });
+    testShortcutsURL("\"/example3/\""_s, URL { "https://example.com/example3/"_s });
+    testShortcutsURL("\"https://example.com/example4\""_s, URL { "https://example.com/example4"_s });
+
+    testShortcutsName("\"Example\""_s, "Example"_s);
+    testShortcutsName("\" \""_s, ""_s);
+    testShortcutsName("\"\""_s, ""_s);
 }
 
 #endif

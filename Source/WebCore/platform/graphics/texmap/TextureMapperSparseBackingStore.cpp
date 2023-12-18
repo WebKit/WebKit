@@ -50,7 +50,7 @@ void TextureMapperSparseBackingStore::paintToTextureMapper(TextureMapper& textur
     IntRect rect = { { }, m_size };
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (auto& iterator : m_tiles)
-        iterator.value->paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect, iterator.value->rect()));
+        iterator.value->paint(textureMapper, adjustedTransform, opacity, allTileEdgesExposed(rect, iterator.value->rect()));
 }
 
 void TextureMapperSparseBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
@@ -67,12 +67,12 @@ void TextureMapperSparseBackingStore::drawRepaintCounter(TextureMapper& textureM
         textureMapper.drawNumber(repaintCount, borderColor, iterator.value->rect().location(), adjustedTransform);
 }
 
-void TextureMapperSparseBackingStore::updateContents(TextureMapper& textureMapper, const TileIndex& index, Image& image, const IntRect& dirtyRect)
+void TextureMapperSparseBackingStore::updateContents(const TileIndex& index, Image& image, const IntRect& dirtyRect)
 {
     auto addResult = m_tiles.ensure(index, [&]() {
         return makeUnique<TextureMapperTile>(dirtyRect);
     });
-    addResult.iterator->value->updateContents(textureMapper, &image, dirtyRect);
+    addResult.iterator->value->updateContents(&image, dirtyRect);
 }
 
 void TextureMapperSparseBackingStore::removeTile(const TileIndex& index)

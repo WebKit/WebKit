@@ -183,7 +183,7 @@ void OMGPlan::work(CompilationEffort)
                 IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();
                 Locker locker { ipintCallee.tierUpCounter().m_lock };
                 ipintCallee.setReplacement(callee.copyRef(), mode());
-                ipintCallee.tierUpCounter().m_compilationStatus = LLIntTierUpCounter::CompilationStatus::Compiled;
+                ipintCallee.tierUpCounter().m_compilationStatus = IPIntTierUpCounter::CompilationStatus::Compiled;
             }
             if (!Options::useWasmIPInt() && m_calleeGroup->m_llintCallees) {
                 LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();

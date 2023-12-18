@@ -126,6 +126,8 @@ private:
 
     Node* baseNodeForEmittingNewLine() const;
 
+    RefPtr<Node> protectedStartContainer() const { return m_startContainer; }
+
     const TextIteratorBehaviors m_behaviors;
 
     // Current position, not necessarily of the text being returned, but position as we walk through the DOM tree.
@@ -160,7 +162,7 @@ private:
     InlineIterator::TextLogicalOrderCache m_remainingTextRunLogicalOrderCache;
 
     // Used to point to RenderText object for :first-letter.
-    WeakPtr<RenderText> m_firstLetterText;
+    SingleThreadWeakPtr<RenderText> m_firstLetterText;
 
     // Used to do the whitespace collapsing logic.
     RefPtr<Text> m_lastTextNode;

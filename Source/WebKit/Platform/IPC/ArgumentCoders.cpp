@@ -155,23 +155,4 @@ void ArgumentCoder<StringView>::encode<Encoder>(Encoder&, StringView);
 template
 void ArgumentCoder<StringView>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, StringView);
 
-#if HAVE(AUDIT_TOKEN)
-
-void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t& auditToken)
-{
-    for (unsigned i = 0; i < std::size(auditToken.val); i++)
-        encoder << auditToken.val[i];
-}
-
-WARN_UNUSED_RETURN bool ArgumentCoder<audit_token_t>::decode(Decoder& decoder, audit_token_t& auditToken)
-{
-    for (unsigned i = 0; i < std::size(auditToken.val); i++) {
-        if (!decoder.decode(auditToken.val[i]))
-            return false;
-    }
-    return true;
-}
-
-#endif // HAVE(AUDIT_TOKEN)
-
 } // namespace IPC

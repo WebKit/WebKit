@@ -122,7 +122,7 @@ ExceptionOr<void> FileReader::readInternal(Blob& blob, FileReaderLoader::ReadTyp
 {
     // If multiple concurrent read methods are called on the same FileReader, InvalidStateError should be thrown when the state is LOADING.
     if (m_state == LOADING)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_blob = &blob;
     m_readType = type;
@@ -145,7 +145,7 @@ void FileReader::abort()
 
     m_pendingTasks.clear();
     stop();
-    m_error = DOMException::create(Exception { AbortError });
+    m_error = DOMException::create(Exception { ExceptionCode::AbortError });
 
     Ref protectedThis { *this };
     fireEvent(eventNames().abortEvent);
@@ -163,7 +163,7 @@ void FileReader::didReceiveData()
 {
     enqueueTask([this] {
         auto now = MonotonicTime::now();
-        if (std::isnan(m_lastProgressNotificationTime)) {
+        if (m_lastProgressNotificationTime.isNaN()) {
             m_lastProgressNotificationTime = now;
             return;
         }

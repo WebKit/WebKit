@@ -30,11 +30,10 @@
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public RefCounted<WebGLMultiDrawInstancedBaseVertexBaseInstance>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLMultiDrawInstancedBaseVertexBaseInstance final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLMultiDrawInstancedBaseVertexBaseInstance);
     WTF_MAKE_NONCOPYABLE(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 public:

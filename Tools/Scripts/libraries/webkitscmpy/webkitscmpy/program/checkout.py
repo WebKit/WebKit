@@ -89,7 +89,7 @@ class Checkout(Command):
 
         try:
             if isinstance(repository, local.Git):
-                commit = repository.checkout(target, prune=args.prune)
+                commit = repository.checkout(target, prune=args.prune, prompt=True)
             elif args.prune is not None:
                 sys.stderr.write("'prune' arguments only valid for 'git' checkouts\n")
                 return 1

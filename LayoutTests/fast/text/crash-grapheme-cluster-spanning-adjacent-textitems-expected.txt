@@ -1,0 +1,2 @@
+؀🀀
+This test used for grapheme cluster spanning adjucent inline text-items.PASS if no crash or ASSERT.

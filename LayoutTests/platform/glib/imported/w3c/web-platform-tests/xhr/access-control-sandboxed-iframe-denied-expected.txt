@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: Origin null is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/xhr/resources/pass.txt?pipe=header(Cache-Control,no-store)|header(Content-Type,text/plain) due to access control checks.
-
-
-PASS Check that path exists and is accessible via local XHR request
-PASS Sandboxed iframe is denied access to path
-

@@ -1,5 +1,8 @@
 
-PASS submit element directionality
+PASS submit input element directionality
+PASS submit textarea element directionality
+User:
+
 Comment:
 
 Post Comment

@@ -77,7 +77,7 @@ XrResult OpenXRInput::initialize()
     return XR_SUCCESS;
 }
 
-Vector<Device::FrameData::InputSource> OpenXRInput::collectInputSources(const XrFrameState& frameState) const
+Vector<FrameData::InputSource> OpenXRInput::collectInputSources(const XrFrameState& frameState) const
 {
     Vector<XrActiveActionSet> actionSets;
     for (auto& input : m_inputSources)
@@ -88,7 +88,7 @@ Vector<Device::FrameData::InputSource> OpenXRInput::collectInputSources(const Xr
     syncInfo.activeActionSets = actionSets.data();
     RETURN_IF_FAILED(xrSyncActions(m_session, &syncInfo), "xrSyncActions", m_instance, { });
 
-    Vector<Device::FrameData::InputSource> result;
+    Vector<FrameData::InputSource> result;
     for (auto& input : m_inputSources) {
         if (auto data = input->getInputSource(m_localSpace, frameState))
             result.append(*data);

@@ -28,7 +28,6 @@
 ] interface AccessibilityUIElement {
     boolean isEqual(AccessibilityUIElement otherElement);
     readonly attribute DOMString domIdentifier;
-    readonly attribute boolean isIsolatedObject;
 
     // Element access.
     AccessibilityUIElement elementAtPoint(long x, long y);
@@ -60,6 +59,7 @@
     readonly attribute unsigned long numberOfCharacters;
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
+    readonly attribute DOMString intersectionWithSelectionRange;
     readonly attribute DOMString textInputMarkedRange;
 
     DOMString stringDescriptionOfAttributeValue(DOMString attr);
@@ -117,6 +117,7 @@
     readonly attribute boolean isDeletion;
     readonly attribute boolean isFirstItemInSuggestion;
     readonly attribute boolean isLastItemInSuggestion;
+    readonly attribute boolean isInNonNativeTextControl;
 
     readonly attribute long x;
     readonly attribute long y;

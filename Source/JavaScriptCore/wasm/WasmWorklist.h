@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include <wtf/AutomaticThread.h>
 #include <wtf/PrintStream.h>
 #include <wtf/PriorityQueue.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -43,7 +44,7 @@ namespace Wasm {
 class Plan;
 
 class Worklist {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Worklist);
 public:
     Worklist();
     ~Worklist();
@@ -91,7 +92,7 @@ private:
     // Priority it the wrong order, which isn't wrong, just suboptimal.
     Ticket m_lastGrantedTicket { 0 };
     PriorityQueue<QueueElement, isHigherPriority, 10> m_queue;
-    Vector<std::unique_ptr<Thread>> m_threads;
+    Vector<Ref<Thread>> m_threads;
 };
 
 Worklist* existingWorklistOrNull();

@@ -30,22 +30,25 @@
 
 namespace JSC {
 
-EdenGCActivityCallback::EdenGCActivityCallback(Heap* heap)
-    : GCActivityCallback(heap)
+EdenGCActivityCallback::EdenGCActivityCallback(JSC::Heap& heap, Synchronousness synchronousness)
+    : GCActivityCallback(heap, synchronousness)
 {
 }
+
+EdenGCActivityCallback::~EdenGCActivityCallback() = default;
 
 void EdenGCActivityCallback::doCollection(VM& vm)
 {
-    vm.heap.collectAsync(CollectionScope::Eden);
+    setDidGCRecently(false);
+    vm.heap.collect(m_synchronousness, CollectionScope::Eden);
 }
 
-Seconds EdenGCActivityCallback::lastGCLength(Heap& heap)
+Seconds EdenGCActivityCallback::lastGCLength(JSC::Heap& heap)
 {
     return heap.lastEdenGCLength();
 }
 
-double EdenGCActivityCallback::deathRate(Heap& heap)
+double EdenGCActivityCallback::deathRate(JSC::Heap& heap)
 {
     size_t sizeBefore = heap.sizeBeforeLastEdenCollection();
     size_t sizeAfter = heap.sizeAfterLastEdenCollection();

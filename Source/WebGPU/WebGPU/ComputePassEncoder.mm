@@ -29,29 +29,24 @@
 #import "APIConversions.h"
 #import "BindGroup.h"
 #import "Buffer.h"
+#import "CommandEncoder.h"
 #import "ComputePipeline.h"
 #import "QuerySet.h"
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, Device& device)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, CommandEncoder& parentEncoder, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
+    , m_parentEncoder(&parentEncoder)
 {
+    m_parentEncoder->lock(true);
+
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
-        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
-            const auto& timestampWrite = descriptor.timestampWrites[i];
-            switch (timestampWrite.location) {
-            case WGPUComputePassTimestampLocation_Beginning:
-                [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.queryIndex withBarrier:NO];
-                break;
-            case WGPUComputePassTimestampLocation_End:
-                m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.queryIndex });
-                break;
-            case WGPUComputePassTimestampLocation_Force32:
-                ASSERT_NOT_REACHED();
-                break;
-            }
+        if (descriptor.timestampWrites) {
+            const auto& timestampWrite = *descriptor.timestampWrites;
+            [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.beginningOfPassWriteIndex withBarrier:NO];
+            m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
         }
     }
 }
@@ -64,12 +59,6 @@ ComputePassEncoder::ComputePassEncoder(Device& device)
 ComputePassEncoder::~ComputePassEncoder()
 {
     [m_computeCommandEncoder endEncoding];
-}
-
-void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, uint32_t queryIndex)
-{
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
 }
 
 void ComputePassEncoder::executePreDispatchCommands()
@@ -89,36 +78,50 @@ void ComputePassEncoder::executePreDispatchCommands()
         }
     }
 
-    [m_computeCommandEncoder setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() atIndex:m_device->maxBuffersForComputeStage()];
+    [m_computeCommandEncoder setBytes:&m_computeDynamicOffsets[0] length:m_computeDynamicOffsets.size() * sizeof(m_computeDynamicOffsets[0]) atIndex:m_device->maxBuffersForComputeStage()];
 
     m_bindGroupDynamicOffsets.clear();
 }
 
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
+    if (!(x * y * z))
+        return;
+
     executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    // FIXME: ensure higher levels perform validation on indirectOffset before reaching this callsite
+    if ((indirectOffset % 4) || !(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset + 3 * sizeof(uint32_t) > indirectBuffer.buffer().length)) {
+        makeInvalid();
+        return;
+    }
+
     executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::endPass()
 {
+    if (!m_parentEncoder) {
+        ASSERT(!m_computeCommandEncoder);
+        return;
+    }
+
+    if (m_debugGroupStackSize || !isValid()) {
+        m_parentEncoder->makeInvalid();
+        return;
+    }
+
     ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
     [m_computeCommandEncoder endEncoding];
     m_computeCommandEncoder = nil;
-}
-
-void ComputePassEncoder::endPipelineStatisticsQuery()
-{
+    m_parentEncoder->lock(false);
 }
 
 void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
@@ -177,8 +180,10 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
     if (dynamicOffsetCount)
         m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
 
-    for (const auto& resource : group.resources())
-        [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+    for (const auto& resource : group.resources()) {
+        if (resource.renderStages == BindGroup::MTLRenderStageCompute)
+            [m_computeCommandEncoder useResources:&resource.mtlResources[0] count:resource.mtlResources.size() usage:resource.usage];
+    }
 
     [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
 }
@@ -218,11 +223,6 @@ void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
     WebGPU::fromAPI(computePassEncoder).deref();
 }
 
-void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
-{
-    WebGPU::fromAPI(computePassEncoder).beginPipelineStatisticsQuery(WebGPU::fromAPI(querySet), queryIndex);
-}
-
 void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
     WebGPU::fromAPI(computePassEncoder).dispatch(x, y, z);
@@ -236,11 +236,6 @@ void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder com
 void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
 {
     WebGPU::fromAPI(computePassEncoder).endPass();
-}
-
-void wgpuComputePassEncoderEndPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder)
-{
-    WebGPU::fromAPI(computePassEncoder).endPipelineStatisticsQuery();
 }
 
 void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, const char* markerLabel)

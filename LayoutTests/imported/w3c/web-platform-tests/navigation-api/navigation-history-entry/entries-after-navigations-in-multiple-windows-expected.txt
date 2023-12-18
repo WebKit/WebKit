@@ -1,0 +1,4 @@
+
+
+FAIL navigation.entries() behavior when multiple windows navigate. null is not an object (evaluating 'navigation.currentEntry.index')
+

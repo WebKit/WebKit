@@ -27,6 +27,7 @@
 #include "InlineQuirks.h"
 
 #include "InlineFormattingContext.h"
+#include "InlineLineBox.h"
 #include "LayoutBoxGeometry.h"
 #include "RenderStyleInlines.h"
 
@@ -43,12 +44,12 @@ bool InlineQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWid
     if (isInIntrinsicWidthMode || !lineHasOverflow)
         return false;
     auto& rootStyle = formattingContext().root().style();
-    return rootStyle.nbspMode() == NBSPMode::Space && rootStyle.textWrap() != TextWrap::NoWrap && rootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
+    return rootStyle.nbspMode() == NBSPMode::Space && rootStyle.textWrapMode() != TextWrapMode::NoWrap && rootStyle.whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces;
 }
 
 InlineLayoutUnit InlineQuirks::initialLineHeight() const
 {
-    ASSERT(!formattingContext().inlineLayoutState().inStandardsMode());
+    ASSERT(!formattingContext().layoutState().inStandardsMode());
     return 0.f;
 }
 
@@ -77,7 +78,7 @@ bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
 
 bool InlineQuirks::inlineBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
 {
-    ASSERT(!formattingContext().inlineLayoutState().inStandardsMode());
+    ASSERT(!formattingContext().layoutState().inStandardsMode());
     ASSERT(inlineLevelBox.isInlineBox());
     // Inline boxes (e.g. root inline box or <span>) affects line boxes either through the strut or actual content.
     if (inlineLevelBox.hasContent())
@@ -118,7 +119,7 @@ std::optional<LayoutUnit> InlineQuirks::initialLetterAlignmentOffset(const Box& 
 std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const InlineRect& rect) const
 {
     auto& rootBoxStyle = formattingContext().root().style();
-    auto& parentBlockLayoutState = formattingContext().inlineLayoutState().parentBlockLayoutState();
+    auto& parentBlockLayoutState = formattingContext().layoutState().parentBlockLayoutState();
 
     if (rootBoxStyle.lineAlign() == LineAlign::None)
         return { };
@@ -128,7 +129,7 @@ std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const I
     // This implement the legacy -webkit-line-align property.
     // It snaps line edges to a grid defined by an ancestor box.
     auto& lineGrid = *parentBlockLayoutState.lineGrid();
-    auto offset = InlineLayoutUnit { lineGrid.logicalOffset.width() };
+    auto offset = InlineLayoutUnit { lineGrid.layoutOffset.width() + lineGrid.gridOffset.width() };
     auto columnWidth = lineGrid.columnWidth;
     auto leftShift = fmodf(columnWidth - fmodf(rect.left() + offset, columnWidth), columnWidth);
     auto rightShift = -fmodf(rect.right() + offset, columnWidth);
@@ -141,6 +142,68 @@ std::optional<InlineRect> InlineQuirks::adjustedRectForLineGridLineAlign(const I
         return { };
 
     return adjustedRect;
+}
+
+std::optional<InlineLayoutUnit> InlineQuirks::adjustmentForLineGridLineSnap(const LineBox& lineBox) const
+{
+    auto& rootBoxStyle = formattingContext().root().style();
+    auto& inlineLayoutState = formattingContext().layoutState();
+
+    if (rootBoxStyle.lineSnap() == LineSnap::None)
+        return { };
+    if (!inlineLayoutState.parentBlockLayoutState().lineGrid())
+        return { };
+
+    // This implement the legacy -webkit-line-snap property.
+    // It snaps line baselines to a grid defined by an ancestor box.
+
+    auto& lineGrid = *inlineLayoutState.parentBlockLayoutState().lineGrid();
+
+    auto gridLineHeight = lineGrid.rowHeight;
+    if (!roundToInt(gridLineHeight))
+        return { };
+
+    auto& gridFontMetrics = lineGrid.primaryFont->fontMetrics();
+    auto lineGridFontAscent = gridFontMetrics.ascent(lineBox.baselineType());
+    auto lineGridFontHeight = gridFontMetrics.height();
+    auto lineGridHalfLeading = (gridLineHeight - lineGridFontHeight) / 2;
+
+    auto firstLineTop = lineGrid.topRowOffset + lineGrid.gridOffset.height();
+
+    if (lineGrid.paginationOrigin && lineGrid.pageLogicalTop > firstLineTop)
+        firstLineTop = lineGrid.paginationOrigin->height() + lineGrid.pageLogicalTop;
+
+    auto firstTextTop = firstLineTop + lineGridHalfLeading;
+    auto firstBaselinePosition = firstTextTop + lineGridFontAscent;
+
+    auto rootInlineBoxTop = lineBox.logicalRect().top() + lineBox.logicalRectForRootInlineBox().top();
+
+    auto ascent = lineBox.rootInlineBox().ascent();
+    auto logicalHeight = ascent + lineBox.rootInlineBox().descent();
+    auto currentBaselinePosition = rootInlineBoxTop + ascent + lineGrid.layoutOffset.height();
+
+    if (rootBoxStyle.lineSnap() == LineSnap::Contain) {
+        if (logicalHeight <= lineGridFontHeight)
+            firstTextTop += (lineGridFontHeight - logicalHeight) / 2;
+        else {
+            LayoutUnit numberOfLinesWithLeading { ceilf(static_cast<float>(logicalHeight - lineGridFontHeight) / gridLineHeight) };
+            LayoutUnit totalHeight = lineGridFontHeight + numberOfLinesWithLeading * gridLineHeight;
+            firstTextTop += (totalHeight - logicalHeight) / 2;
+        }
+        firstBaselinePosition = firstTextTop + ascent;
+    }
+
+    // If we're above the first line, just push to the first line.
+    if (currentBaselinePosition < firstBaselinePosition)
+        return firstBaselinePosition - currentBaselinePosition;
+
+    // Otherwise we're in the middle of the grid somewhere. Just push to the next line.
+    auto baselineOffset = currentBaselinePosition - firstBaselinePosition;
+    auto remainder = roundToInt(baselineOffset) % roundToInt(gridLineHeight);
+    if (!remainder)
+        return { };
+
+    return gridLineHeight - remainder;
 }
 
 }

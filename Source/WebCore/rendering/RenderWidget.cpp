@@ -103,11 +103,6 @@ RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyl
 
 void RenderWidget::willBeDestroyed()
 {
-#if PLATFORM(IOS_FAMILY)
-    if (hasLayer())
-        layer()->willBeDestroyed();
-#endif
-
     if (AXObjectCache* cache = document().existingAXObjectCache()) {
         cache->childrenChanged(this->parent());
         cache->remove(this);
@@ -206,6 +201,8 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
                 m_widget->show();
                 repaint();
             }
+            if (auto* cache = document().existingAXObjectCache())
+                cache->onWidgetVisibilityChanged(this);
         }
         moveWidgetToParentSoon(*m_widget, &view().frameView());
     }
@@ -230,6 +227,9 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             m_widget->hide();
         else
             m_widget->show();
+
+        if (auto* cache = document().existingAXObjectCache())
+            cache->onWidgetVisibilityChanged(this);
     }
 }
 
@@ -446,7 +446,7 @@ bool RenderWidget::requiresLayer() const
 bool RenderWidget::requiresAcceleratedCompositing() const
 {
     // If this is a renderer with a contentDocument and that document needs a layer, then we need a layer.
-    if (Document* contentDocument = frameOwnerElement().contentDocument()) {
+    if (auto* contentDocument = frameOwnerElement().contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return view->usesCompositing();
     }

@@ -28,7 +28,6 @@ messages -> LibWebRTCCodecs NotRefCounted {
     CompletedDecoding(WebKit::VideoDecoderIdentifier identifier, int64_t timeStamp, int64_t timeStampNs, WebKit::RemoteVideoFrameProxy::Properties frame)
     CompletedDecodingCV(WebKit::VideoDecoderIdentifier identifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef> pixelBuffer)
     CompletedEncoding(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference data, struct webrtc::WebKitEncodedFrameInfo info);
-    FlushEncoderCompleted(WebKit::VideoEncoderIdentifier id)
     SetEncodingConfiguration(WebKit::VideoEncoderIdentifier identifier, struct IPC::DataReference description, std::optional<WebCore::PlatformVideoColorSpace> colorSpace);
 }
 

@@ -132,6 +132,7 @@ public:
     // invalid().
     ObjectPropertyConditionSet mergedWith(const ObjectPropertyConditionSet& other) const;
     
+    bool isStillValid() const;
     bool structuresEnsureValidity() const;
     
     bool needImpurePropertyWatchpoint() const;

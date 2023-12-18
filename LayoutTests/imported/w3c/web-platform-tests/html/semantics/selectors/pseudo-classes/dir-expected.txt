@@ -3,3 +3,5 @@ PASS ':dir(rtl)' matches all elements whose directionality is 'rtl'.
 PASS ':dir(ltr)' matches all elements whose directionality is 'ltr'.
 PASS ':dir(ltr)' doesn't match elements not in the document.
 WERBEH HEBREW HEBREW WERBEH HEBREW إيان WERBEH WERBEH HEBREW ‮WERBEH‬      HEBREW إيان עברית
+إيان
+HEBREWإيان

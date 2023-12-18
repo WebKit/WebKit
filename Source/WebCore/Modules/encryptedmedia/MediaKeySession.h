@@ -32,6 +32,7 @@
 
 #include "ActiveDOMObject.h"
 #include "CDMInstanceSession.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
 #include "IDLTypes.h"
 #include "MediaKeyMessageType.h"

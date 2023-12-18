@@ -1,0 +1,4 @@
+
+
+FAIL entries() should not be leaked from cross-origin when navigating to about:blank assert_equals: expected 1 but got 0
+

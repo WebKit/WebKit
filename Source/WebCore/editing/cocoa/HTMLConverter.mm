@@ -811,7 +811,10 @@ static PlatformFont *_font(Element& element)
     auto* renderer = element.renderer();
     if (!renderer)
         return nil;
-    return (__bridge PlatformFont *)renderer->style().fontCascade().primaryFont().getCTFont();
+    Ref primaryFont = renderer->style().fontCascade().primaryFont();
+    if (primaryFont->attributes().origin == FontOrigin::Remote)
+        return [PlatformFontClass systemFontOfSize:defaultFontSize];
+    return (__bridge PlatformFont *)primaryFont->getCTFont();
 }
 
 NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)

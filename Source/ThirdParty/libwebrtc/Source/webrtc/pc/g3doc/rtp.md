@@ -50,6 +50,49 @@ the assignments of the audio and video payload types may arise. These are
 resolved by the [UsedPayloadTypes][4] class which will reassign payload type
 numbers descending from 127.
 
+# Bitrate probing
+
+Bandwidth estimation sometimes requires sending RTP packets to ramp up the
+estimate above a certain treshold. WebRTC uses two techniques for that:
+
+* Packets that only consist of RTP padding
+* RTX packets
+
+At the receiving end, both types of probing packets do not interfere with media processing.
+After being taken into account for bandwidth estimation, probing packets only consisting
+of padding can be dropped and RTX packets act as redundancy.
+
+Using RTX for probing is generally preferred as padding probes are limited to 256 bytes
+of RTP payload which results in a larger number of packets being used for probing which
+is a disadvantage from a congestion control point of view.
+
+## Padding probes
+
+Padding probes consist of RTP packets with header extensions (either abs-send time or
+the transport-wide-cc sequence number) and set the RTP "P" bit. The last byte of the
+RTP payload which specifies the amount of padding is set to 255 and preceeded by 255
+bytes of all zeroes. See [section 5.1 of RFC3550][1].
+Padding probes use the RTX RTP stream (i.e. payload type, sequence number and timestamp)
+when RTX is negotiated or share the same RTP stream as the media packets otherwise.
+
+Padding probes are used either when
+* RTX is not negotiated (such as for audio, less commonly for video) or
+* no suitable original packet is found for RTX probing.
+
+Padding probes should not be interleaved with packets of a video frame.
+
+## RTX probes
+
+RTX probes are resends of previous packets that use RTX retransmissions specified in
+[RFC4588](https://www.rfc-editor.org/rfc/rfc4588) as payload format when negotiated with
+the peer. These packets will have a different abs-send-time or transport-wide-cc sequence
+number and use the RTX RTP stream (i.e. RTX payload type, sequence number and timestamp)
+associated with the media RTP stream.
+
+RTX probing uses recently sent RTP packets that have not yet been acknowledged by
+the remote side. Sending these packets again has a small chance of being useful when the
+original packet is lost and will not affect RTP processing at the receiver otherwise.
+
 [1]: https://datatracker.ietf.org/doc/html/rfc3550#section-5.1
 [2]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/engine/payload_type_mapper.cc;l=25;drc=4f26a3c7e8e20e0e0ca4ca67a6ebdf3f5543dc3f
 [3]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/engine/webrtc_video_engine.cc;l=119;drc=b412efdb780c86e6530493afa403783d14985347

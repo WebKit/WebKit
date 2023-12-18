@@ -43,9 +43,9 @@
       This can also be overridden by a -n or --no-overwrite flag
 
     - If no import_directory is provided, the script will download the tests from the W3C github repositories.
-      The selection of tests and folders to import will be based on the following files:
-         1. LayoutTests/imported/w3c/resources/TestRepositories lists the repositories to clone, the corresponding revision to checkout and the infrastructure folders that need to be imported/skipped.
-         2. LayoutTests/imported/w3c/resources/ImportExpectations list the test suites or tests to NOT import.
+      The selection of tests and folders to import will be based on
+      LayoutTests/imported/w3c/resources/import-expectations.json which lists the test suites or tests to
+      import or not.
 
     - All files are converted to work in WebKit:
          1. All CSS properties requiring the -webkit-vendor prefix are prefixed - this current
@@ -97,7 +97,10 @@ def main(_argv, _stdout, _stderr):
 
     configure_logging()
 
-    test_importer = TestImporter(Host(), test_paths, options)
+    host = Host()
+    port = host.port_factory.get()
+
+    test_importer = TestImporter(port, test_paths, options)
     test_importer.do_import()
 
 
@@ -158,21 +161,21 @@ To import a web-platform-tests suite from a specific folder, use 'import-w3c-tes
 
 class TestImporter(object):
 
-    def __init__(self, host, test_paths, options):
-        self.host = host
+    def __init__(self, port, test_paths, options):
+        self.host = port.host
+        self.port = port
         self.source_directory = options.source
         self.options = options
         self.test_paths = test_paths if test_paths else []
 
-        self.port = PortFactory(host).get()
         self.filesystem = self.host.filesystem
 
         webkit_finder = WebKitFinder(self.filesystem)
         self._webkit_root = webkit_finder.webkit_base()
 
-        self.destination_directory = webkit_finder.path_from_webkit_base("LayoutTests", options.destination)
+        self.destination_directory = self.port.path_from_webkit_base("LayoutTests", options.destination)
         self.tests_w3c_relative_path = self.filesystem.join('imported', 'w3c')
-        self.layout_tests_path = webkit_finder.path_from_webkit_base('LayoutTests')
+        self.layout_tests_path = self.port.path_from_webkit_base('LayoutTests')
         self.layout_tests_w3c_path = self.filesystem.join(self.layout_tests_path, self.tests_w3c_relative_path)
         self.tests_download_path = WPTPaths.checkout_directory(webkit_finder)
 
@@ -181,6 +184,7 @@ class TestImporter(object):
         self._potential_test_resource_files = []
 
         self.import_list = []
+        self.upstream_revision = None
 
         self._test_resource_files_json_path = self.filesystem.join(self.layout_tests_w3c_path, "resources", "resource-files.json")
         self._test_resource_files = json.loads(self.filesystem.read_text_file(self._test_resource_files_json_path)) if self.filesystem.exists(self._test_resource_files_json_path) else None
@@ -188,6 +192,8 @@ class TestImporter(object):
         self._tests_options_json_path = self.filesystem.join(self.layout_tests_path, 'tests-options.json')
         self._tests_options = json.loads(self.filesystem.read_text_file(self._tests_options_json_path)) if self.filesystem.exists(self._tests_options_json_path) else None
         self._slow_tests = []
+
+        self._to_skip_new_directories = set()
 
         self.globalToSuffixes = {
             'window': ('html',),
@@ -203,6 +209,7 @@ class TestImporter(object):
             _log.info('Downloading W3C test repositories')
             self.filesystem.maybe_make_directory(self.tests_download_path)
             self.test_downloader().download_tests(self.options.use_tip_of_tree)
+            self.upstream_revision = self.test_downloader().upstream_revision
             self.source_directory = self.tests_download_path
 
         for test_path in self.test_paths:
@@ -243,15 +250,12 @@ class TestImporter(object):
 
         self.generate_git_submodules_description_for_all_repositories()
 
-        self.test_downloader().update_import_expectations(self.test_paths)
+        self.test_downloader().update_import_expectations(
+            self.test_paths, self._to_skip_new_directories
+        )
 
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:
-            if 'generate_git_submodules_description' in test_repository['import_options']:
-                self.filesystem.maybe_make_directory(self.filesystem.join(self.destination_directory, 'resources'))
-                self._test_downloader.generate_git_submodules_description(test_repository, self.filesystem.join(self.destination_directory, 'resources', test_repository['name'] + '-modules.json'))
-            if 'generate_gitignore' in test_repository['import_options']:
-                self._test_downloader.generate_gitignore(test_repository, self.destination_directory)
             if 'generate_init_py' in test_repository['import_options']:
                 self.write_init_py(self.filesystem.join(self.destination_directory, test_repository['name'], '__init__.py'))
 
@@ -264,7 +268,7 @@ class TestImporter(object):
             download_options.fetch = self.options.fetch
             download_options.verbose = self.options.verbose
             download_options.import_all = self.options.import_all
-            self._test_downloader = TestDownloader(self.tests_download_path, self.host, download_options)
+            self._test_downloader = TestDownloader(self.tests_download_path, self.port, download_options)
         return self._test_downloader
 
     def should_skip_path(self, path):
@@ -276,10 +280,21 @@ class TestImporter(object):
             return True
 
         downloader = self.test_downloader()
+        paths_to_skip_new_directories = {Path(p) for p in downloader.paths_to_skip_new_directories}
         paths_to_skip = {Path(p) for p in downloader.paths_to_skip}
         paths_to_import = {Path(p) for p in downloader.paths_to_import}
 
         for parent in itertools.chain([rel_path], rel_path.parents):
+            if parent in paths_to_skip_new_directories:
+                if parent != rel_path:
+                    to_skip = parent / rel_path.relative_to(parent).parts[0]
+                    if not to_skip.is_dir():
+                        # Files directly under skip-new-directories _are_ imported.
+                        assert rel_path == to_skip
+                        return False
+                    self._to_skip_new_directories.add(str(to_skip))
+                return True
+
             if parent in paths_to_skip:
                 return True
 
@@ -307,7 +322,15 @@ class TestImporter(object):
         #FIXME: Clean also the expected files stored in all platform specific folders.
         directory = self.filesystem.join(self.destination_directory, filename)
         tests = LayoutTestFinder(self.port, None).find_tests_by_path([directory])
-        baselines_for_tests = {self.port.expected_filename(test.test_path, '.txt') for test in tests}
+        baselines_for_tests = {
+            self.filesystem.join(
+                platform_dir or self.port.layout_tests_dir(), baseline_filename
+            )
+            for test in tests
+            for platform_dir, baseline_filename in self.port.expected_baselines(
+                test.test_path, ".txt", all_baselines=True
+            )
+        }
         for relative_path in self.filesystem.files_under(directory, file_filter=self._is_baseline):
             path = self.filesystem.join(directory, relative_path)
             if path not in baselines_for_tests:
@@ -342,7 +365,7 @@ class TestImporter(object):
                     continue
 
                 mimetype = mimetypes.guess_type(fullpath)
-                if not 'html' in str(mimetype[0]) and not 'application/xhtml+xml' in str(mimetype[0]) and not 'application/xml' in str(mimetype[0]):
+                if 'html' not in str(mimetype[0]) and 'application/xhtml+xml' not in str(mimetype[0]) and 'application/xml' not in str(mimetype[0]) and 'image/svg+xml' not in str(mimetype[0]):
                     copy_list.append({'src': fullpath, 'dest': filename})
                     continue
 
@@ -602,7 +625,6 @@ class TestImporter(object):
             self.write_import_log(new_path, copied_files, prefixed_properties, prefixed_property_values)
 
         _log.info('Import complete')
-
         _log.info('IMPORTED %d TOTAL TESTS', total_imported_tests)
         _log.info('Imported %d reftests', total_imported_reftests)
         _log.info('Imported %d JS tests', total_imported_jstests)
@@ -620,6 +642,11 @@ class TestImporter(object):
 
         for prefixed_value in sorted(total_prefixed_property_values, key=lambda p: total_prefixed_property_values[p]):
             _log.info('  %s: %s', prefixed_value, total_prefixed_property_values[prefixed_value])
+
+        if self.upstream_revision:
+            _log.info('\n--------- Please include the following in your commit message: ---------\n')
+            _log.info('Upstream commit: https://github.com/web-platform-tests/wpt/commit/%s', self.upstream_revision)
+            _log.info('-' * 72)
 
         if self._test_resource_files:
             # FIXME: We should check that actual tests are not in the test_resource_files list

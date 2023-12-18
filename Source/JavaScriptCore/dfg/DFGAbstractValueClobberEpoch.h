@@ -64,7 +64,7 @@ public:
         m_value |= watchedFlag;
     }
     
-    friend bool operator==(AbstractValueClobberEpoch, AbstractValueClobberEpoch) = default;
+    friend bool operator==(const AbstractValueClobberEpoch&, const AbstractValueClobberEpoch&) = default;
     
     StructureClobberState structureClobberState() const
     {

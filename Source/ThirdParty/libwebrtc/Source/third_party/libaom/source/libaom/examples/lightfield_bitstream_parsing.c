@@ -92,7 +92,6 @@ static int get_image_bps(aom_img_fmt_t fmt) {
     case AOM_IMG_FMT_I44416: return 48;
     default: die("Invalid image format");
   }
-  return 0;
 }
 
 static void process_tile_list(const TILE_LIST_INFO *tiles, int num_tiles,

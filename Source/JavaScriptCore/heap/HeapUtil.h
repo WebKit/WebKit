@@ -46,7 +46,7 @@ public:
     // before liveness data is cleared to be accurate.
     template<typename Func>
     static void findGCObjectPointersForMarking(
-        Heap& heap, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> filter,
+        JSC::Heap& heap, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> filter,
         void* passedPointer, const Func& func)
     {
         const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
@@ -134,7 +134,7 @@ public:
             tryPointer(alignedPointer - candidate->cellSize());
     }
     
-    static bool isPointerGCObjectJSCell(Heap& heap, TinyBloomFilter<uintptr_t> filter, JSCell* pointer)
+    static bool isPointerGCObjectJSCell(JSC::Heap& heap, TinyBloomFilter<uintptr_t> filter, JSCell* pointer)
     {
         // It could point to a large allocation.
         if (pointer->isPreciseAllocation()) {
@@ -176,7 +176,7 @@ public:
     
     // This does not find the cell if the pointer is pointing at the middle of a JSCell.
     static bool isValueGCObject(
-        Heap& heap, TinyBloomFilter<uintptr_t> filter, JSValue value)
+        JSC::Heap& heap, TinyBloomFilter<uintptr_t> filter, JSValue value)
     {
         ASSERT(heap.objectSpace().preciseAllocationSet());
         if (!value.isCell())

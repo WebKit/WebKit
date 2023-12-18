@@ -1,0 +1,13 @@
+<style>
+div {
+  font-family: Monospace;
+  font-size: 10px;
+  width: 100px;
+}
+</style>
+PASS if no crash or assert
+<div>This <div style="position: absolute;"></div> should <span style="white-space: pre">not assert.</span></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

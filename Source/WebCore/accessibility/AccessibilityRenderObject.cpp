@@ -534,7 +534,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 
 #if USE(ATSPI)
     // Expose markers that are not direct children of a list item too.
-    if (m_renderer->isListMarker()) {
+    if (m_renderer->isRenderListMarker()) {
         if (auto* listItem = ancestorsOfType<RenderListItem>(*m_renderer).first()) {
             AccessibilityObject* parent = axObjectCache()->getOrCreate(listItem);
             if (downcast<AccessibilityRenderObject>(*parent).markerRenderer() == m_renderer)
@@ -563,7 +563,7 @@ bool AccessibilityRenderObject::isAttachment() const
 
     auto* renderer = this->renderer();
     // Widgets are the replaced elements that we represent to AX as attachments
-    return renderer && renderer->isWidget();
+    return renderer && renderer->isRenderWidget();
 }
 
 bool AccessibilityRenderObject::isOffScreen() const
@@ -835,7 +835,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     Vector<FloatQuad> quads;
     bool isSVGRoot = false;
 
-    if (obj->isSVGRootOrLegacySVGRoot())
+    if (obj->isRenderOrLegacyRenderSVGRoot())
         isSVGRoot = true;
 
     if (is<RenderText>(*obj))
@@ -860,7 +860,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     
 bool AccessibilityRenderObject::supportsPath() const
 {
-    return is<RenderText>(renderer()) || (renderer() && renderer()->isSVGShapeOrLegacySVGShape());
+    return is<RenderText>(renderer()) || (renderer() && renderer()->isRenderOrLegacyRenderSVGShape());
 }
 
 Path AccessibilityRenderObject::elementPath() const
@@ -1066,14 +1066,10 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
-    // If this element is within a parent that cannot have children, it should not be exposed.
-    if (isDescendantOfBarrenParent())
-        return true;    
-
     if (roleValue() == AccessibilityRole::Ignored)
         return true;
 
-    if (roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole())
+    if (ignoredFromPresentationalRole())
         return true;
 
     // WebAreas should be ignored if their iframe container is marked as presentational.
@@ -1102,48 +1098,63 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (!m_renderer)
         return true;
 
-    if (m_renderer->isBR())
+    if (m_renderer->isBR()) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        // We need to preserve BRs within editable contexts (e.g. inside contenteditable) for serving
+        // text APIs off the main-thread because this allows them to be part of the AX tree, which is
+        // traversed to compute text markers.
+        auto* node = this->node();
+        return !node || !node->hasEditableStyle();
+#else
         return true;
+#endif
+    }
 
-    if (is<RenderText>(*m_renderer)) {
-        // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
-        AXCoreObject* parent = parentObjectUnignored();
-
-        // Walking up the parent chain might reset the m_renderer.
-        if (!m_renderer)
+    if (WeakPtr renderText = dynamicDowncast<RenderText>(m_renderer.get())) {
+        // Text elements with no rendered text, or only whitespace should not be part of the AX tree.
+        if (!renderText->hasRenderedText())
             return true;
 
-        if (parent && (parent->isMenuItem() || parent->isMenuButton()))
+        if (renderText->text().containsOnly<isASCIIWhitespace>()) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+            // Preserve whitespace-only text within editable contexts because ignoring it would cause
+            // accessibility's representation of text to be different than what is actually rendered.
+            auto* node = this->node();
+            return !node || !node->hasEditableStyle();
+#else
             return true;
-
-        auto& renderText = downcast<RenderText>(*m_renderer);
-        if (!renderText.hasRenderedText())
-            return true;
-
-        if (renderText.parent()->isFirstLetter())
-            return true;
-
-        // static text beneath TextControls is reported along with the text control text so it's ignored.
-        for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) { 
-            if (parent->roleValue() == AccessibilityRole::TextField)
-                return true;
+#endif
         }
-        
-        // Walking up the parent chain might reset the m_renderer.
-        if (!m_renderer)
+
+        if (renderText->parent()->isFirstLetter())
             return true;
-        
+
         // The alt attribute may be set on a text fragment through CSS, which should be honored.
-        if (is<RenderTextFragment>(renderText)) {
-            AccessibilityObjectInclusion altTextInclusion = objectInclusionFromAltText(downcast<RenderTextFragment>(renderText).altText());
+        if (auto* renderTextFragment = dynamicDowncast<RenderTextFragment>(renderText.get())) {
+            auto altTextInclusion = objectInclusionFromAltText(renderTextFragment->altText());
             if (altTextInclusion == AccessibilityObjectInclusion::IgnoreObject)
                 return true;
             if (altTextInclusion == AccessibilityObjectInclusion::IncludeObject)
                 return false;
         }
 
-        // text elements that are just empty whitespace should not be returned
-        return renderText.text().containsOnly<isASCIIWhitespace>();
+        bool checkForIgnored = true;
+        for (RefPtr ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+            // Static text beneath TextControls is reported along with the text control text so it's ignored.
+            // FIXME: Why does this not check for the other text-control roles (e.g. textarea)?
+            if (ancestor->roleValue() == AccessibilityRole::TextField)
+                return true;
+
+            if (checkForIgnored && !ancestor->accessibilityIsIgnored()) {
+                checkForIgnored = false;
+                // Static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level.
+                if (ancestor->isMenuItem() || ancestor->isMenuButton())
+                    return true;
+            }
+        }
+
+        // If iterating the ancestry has caused m_renderer to be destroyed, ignore `this`.
+        return !renderText;
     }
     
     if (isHeading())
@@ -1159,7 +1170,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (isControl())
         return false;
     
-    if (isFigureElement())
+    if (isFigureElement() || isSummary())
         return false;
 
     switch (roleValue()) {
@@ -1264,7 +1275,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         // Otherwise fall through; use presence of help text, title, or description to decide.
     }
 
-    if (m_renderer->isListMarker()) {
+    if (m_renderer->isRenderListMarker()) {
         AXCoreObject* parent = parentObjectUnignored();
         return parent && !parent->isListItem();
     }
@@ -1306,8 +1317,18 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return false;
     
     // Make sure that ruby containers are not ignored.
-    if (m_renderer->isRubyRun() || m_renderer->isRubyBlock() || m_renderer->isRubyInline())
+    if (m_renderer->isRenderRubyRun() || m_renderer->isRenderRubyAsBlock() || m_renderer->isRenderRubyAsInline())
         return false;
+
+    switch (m_renderer->style().display()) {
+    case DisplayType::Ruby:
+    case DisplayType::RubyBlock:
+    case DisplayType::RubyAnnotation:
+    case DisplayType::RubyBase:
+        return false;
+    default:
+        break;
+    }
 
     // Find out if this element is inside of a label element.
     // If so, it may be ignored because it's the label for a checkbox or radio button.
@@ -1372,6 +1393,68 @@ CharacterRange AccessibilityRenderObject::selectedTextRange() const
 
     return documentBasedSelectedTextRange();
 }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+Vector<AXTextRun> AccessibilityRenderObject::textRuns()
+{
+    if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer())) {
+        auto box = InlineIterator::boxFor(*renderLineBreak);
+        return { { box->lineIndex(), makeString('\n') } };
+    }
+
+    WeakPtr renderText = dynamicDowncast<RenderText>(renderer());
+    if (!renderText)
+        return { };
+
+    // FIXME: Need to handle PseudoId::FirstLetter. Right now, it will be chopped off from the other
+    // other text in the line, and AccessibilityRenderObject::computeAccessibilityIsIgnored ignores the
+    // first-letter RenderText, meaning we can't recover it later by combining text across AX objects.
+
+    Vector<AXTextRun> runs;
+    StringBuilder lineString;
+    // Appends text to the current lineString, collapsing whitespace as necessary (similar to how TextIterator::handleTextRun() does).
+    auto appendToLineString = [&] (const InlineIterator::TextBoxIterator& textBox) {
+        auto text = textBox->originalText();
+        if (text.isEmpty())
+            return;
+        bool collapseTabs = textBox->style().collapseWhiteSpace();
+        bool collapseNewlines = !textBox->style().preserveNewline();
+        if (!collapseTabs && !collapseNewlines) {
+            lineString.append(text);
+            return;
+        }
+
+        lineString.reserveCapacity(lineString.length() + text.length());
+        for (unsigned i = 0; i < text.length(); i++) {
+            UChar character = text[i];
+            if (character == '\t' && collapseTabs)
+                lineString.append(' ');
+            else if (character == '\n' && collapseNewlines)
+                lineString.append(' ');
+            else
+                lineString.append(character);
+        }
+    };
+
+    auto textBox = InlineIterator::firstTextBoxFor(*renderText);
+    size_t currentLineIndex = textBox ? textBox->lineIndex() : 0;
+    for (; textBox; textBox.traverseNextTextBox()) {
+        size_t newLineIndex = textBox->lineIndex();
+        if (newLineIndex != currentLineIndex) {
+            // FIXME: Currently, this is only ever called to ship text runs off to the accessibility thread. But maybe we should we make the isolatedCopy()s in this function optional based on a parameter?
+            runs.append({ currentLineIndex, lineString.toString().isolatedCopy() });
+            lineString.clear();
+        }
+        currentLineIndex = newLineIndex;
+
+        appendToLineString(textBox);
+    }
+
+    if (!lineString.isEmpty())
+        runs.append({ currentLineIndex, lineString.toString().isolatedCopy() });
+    return runs;
+}
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
 int AccessibilityRenderObject::insertionPointLineNumber() const
 {
@@ -1476,11 +1559,11 @@ bool AccessibilityRenderObject::setValue(const String& string)
         }
     }
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (renderer.isTextField() && is<HTMLInputElement>(element)) {
+    if (renderer.isRenderTextControlSingleLine() && is<HTMLInputElement>(element)) {
         downcast<HTMLInputElement>(element).setValue(string);
         return true;
     }
-    if (renderer.isTextArea() && is<HTMLTextAreaElement>(element)) {
+    if (renderer.isRenderTextControlMultiLine() && is<HTMLTextAreaElement>(element)) {
         downcast<HTMLTextAreaElement>(element).setValue(string);
         return true;
     }
@@ -1511,12 +1594,12 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
     if (!map)
         return nullptr;
 
-    HTMLImageElement* imageElement = map->imageElement();
+    RefPtr imageElement = map->imageElement();
     if (!imageElement)
         return nullptr;
     
-    if (AXObjectCache* cache = axObjectCache())
-        return cache->getOrCreate(imageElement);
+    if (CheckedPtr cache = axObjectCache())
+        return cache->getOrCreate(imageElement.get());
     
     return nullptr;
 }
@@ -1538,7 +1621,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
         } else {
             auto* parent = current->parentNode();
             if (is<HTMLAreaElement>(*current) && is<HTMLMapElement>(parent)) {
-                auto* parentImage = downcast<HTMLMapElement>(parent)->imageElement();
+                RefPtr parentImage = downcast<HTMLMapElement>(parent)->imageElement();
                 auto* parentImageRenderer = parentImage ? parentImage->renderer() : nullptr;
                 if (auto* parentImageAxObject = document.axObjectCache()->getOrCreate(parentImageRenderer)) {
                     for (const auto& child : parentImageAxObject->children()) {
@@ -1603,15 +1686,14 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     return AccessibilityNodeObject::indexForVisiblePosition(position);
 }
 
-Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
+RefPtr<Element> AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
 {
     // Find the root editable or pseudo-editable (i.e. having an editable ARIA role) element.
-    Element* result = nullptr;
-    
-    Element* rootEditableElement = position.rootEditableElement();
+    RefPtr<Element> result;
+    RefPtr rootEditableElement = position.rootEditableElement();
 
-    for (Element* e = position.element(); e && e != rootEditableElement; e = e->parentElement()) {
-        if (nodeIsTextControl(e))
+    for (RefPtr e = position.anchorElementAncestor(); e && e != rootEditableElement; e = e->parentElement()) {
+        if (nodeIsTextControl(e.get()))
             result = e;
         if (e->hasTagName(bodyTag))
             break;
@@ -1852,7 +1934,7 @@ IntRect AccessibilityRenderObject::doAXBoundsForRangeUsingCharacterOffset(const 
     return boundsForRange(*range);
 }
 
-AXCoreObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const IntPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const IntPoint& point) const
 {
     if (!area)
         return nullptr;
@@ -1867,13 +1949,13 @@ AXCoreObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaEl
 
     for (const auto& child : parent->children()) {
         if (child->elementRect().contains(point))
-            return child.get();
+            return dynamicDowncast<AccessibilityObject>(child.get());
     }
 
     return nullptr;
 }
 
-AXCoreObject* AccessibilityRenderObject::remoteSVGElementHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::remoteSVGElementHitTest(const IntPoint& point) const
 {
     AccessibilityObject* remote = remoteSVGRootElement(Create);
     if (!remote)
@@ -1883,7 +1965,7 @@ AXCoreObject* AccessibilityRenderObject::remoteSVGElementHitTest(const IntPoint&
     return remote->accessibilityHitTest(IntPoint(offset));
 }
 
-AXCoreObject* AccessibilityRenderObject::elementAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::elementAccessibilityHitTest(const IntPoint& point) const
 {
     if (isSVGImage())
         return remoteSVGElementHitTest(point);
@@ -1897,7 +1979,7 @@ static bool shouldUseShadowHostForHitTesting(Node* shadowHost)
     return shadowHost && !shadowHost->hasTagName(videoTag);
 }
 
-AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& point) const
 {
     if (!m_renderer || !m_renderer->hasLayer())
         return nullptr;
@@ -1936,7 +2018,7 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
 
     result->updateChildrenIfNecessary();
     // Allow the element to perform any hit-testing it might need to do to reach non-render children.
-    result = static_cast<AccessibilityObject*>(result->elementAccessibilityHitTest(point));
+    result = result->elementAccessibilityHitTest(point);
     
     if (result && result->accessibilityIsIgnored()) {
         // If this element is the label of a control, a hit test should return the control.
@@ -1961,7 +2043,7 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
     if (!node)
         return false;
     
-    if (nodeHasRole(node, "listbox"_s) || (is<RenderBoxModelObject>(renderer) && downcast<RenderBoxModelObject>(renderer).isListBox()))
+    if (nodeHasRole(node, "listbox"_s) || (is<RenderBoxModelObject>(renderer) && downcast<RenderBoxModelObject>(renderer).isRenderListBox()))
         return true;
 
     // Textboxes should send out notifications.
@@ -2026,12 +2108,16 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     Node* node = m_renderer->node();
 
-    if (m_renderer->isListItem())
+    if (m_renderer->isRenderListItem())
         return AccessibilityRole::ListItem;
-    if (m_renderer->isListMarker())
+    if (m_renderer->isRenderListMarker())
         return AccessibilityRole::ListMarker;
-    if (m_renderer->isText())
+    if (m_renderer->isRenderText())
         return AccessibilityRole::StaticText;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (m_renderer->isBR())
+        return AccessibilityRole::LineBreak;
+#endif
     if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(*node).hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
     if (m_renderer->isImage()) {
@@ -2047,29 +2133,42 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 
     if (m_renderer->isRenderView())
         return AccessibilityRole::WebArea;
-    if (m_renderer->isTextField()) {
+    if (m_renderer->isRenderTextControlSingleLine()) {
         if (is<HTMLInputElement>(node))
             return downcast<HTMLInputElement>(*node).isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
     }
-    if (m_renderer->isTextArea())
+    if (m_renderer->isRenderTextControlMultiLine())
         return AccessibilityRole::TextArea;
-    if (m_renderer->isMenuList())
+    if (m_renderer->isRenderMenuList())
         return AccessibilityRole::PopUpButton;
 
-    if (m_renderer->isSVGRootOrLegacySVGRoot())
+    if (m_renderer->isRenderOrLegacyRenderSVGRoot())
         return AccessibilityRole::SVGRoot;
     
     // Check for Ruby elements
-    if (m_renderer->isRubyText())
+    if (m_renderer->isRenderRubyText())
         return AccessibilityRole::RubyText;
-    if (m_renderer->isRubyBase())
+    if (m_renderer->isRenderRubyBase())
         return AccessibilityRole::RubyBase;
-    if (m_renderer->isRubyRun())
+    if (m_renderer->isRenderRubyRun())
         return AccessibilityRole::RubyRun;
-    if (m_renderer->isRubyBlock())
+    if (m_renderer->isRenderRubyAsBlock())
         return AccessibilityRole::RubyBlock;
-    if (m_renderer->isRubyInline())
+    if (m_renderer->isRenderRubyAsInline())
         return AccessibilityRole::RubyInline;
+
+    switch (m_renderer->style().display()) {
+    case DisplayType::Ruby:
+        return AccessibilityRole::RubyInline;
+    case DisplayType::RubyBlock:
+        return AccessibilityRole::RubyBlock;
+    case DisplayType::RubyAnnotation:
+        return AccessibilityRole::RubyText;
+    case DisplayType::RubyBase:
+        return AccessibilityRole::RubyBase;
+    default:
+        break;
+    }
 
     if (m_renderer->isAnonymous() && (is<RenderTableCell>(m_renderer.get()) || is<RenderTableRow>(m_renderer.get()) || is<RenderTable>(m_renderer.get())))
         return AccessibilityRole::Ignored;
@@ -2079,7 +2178,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (is<RenderTableCell>(m_renderer.get()))
         return AccessibilityRole::TextGroup;
     // Table sections should be ignored.
-    if (m_renderer->isTableSection())
+    if (m_renderer->isRenderTableSection())
         return AccessibilityRole::Ignored;
 
     auto treatStyleFormatGroupAsInline = is<RenderInline>(*m_renderer) ? TreatStyleFormatGroupAsInline::Yes : TreatStyleFormatGroupAsInline::No;
@@ -2260,7 +2359,7 @@ void AccessibilityRenderObject::addCanvasChildren()
 {
     // Add the unrendered canvas children as AX nodes, unless we're not using a canvas renderer
     // because JS is disabled for example.
-    if (!node() || !node()->hasTagName(canvasTag) || (renderer() && !renderer()->isCanvas()))
+    if (!node() || !node()->hasTagName(canvasTag) || (renderer() && !renderer()->isRenderHTMLCanvas()))
         return;
 
     // If it's a canvas, it won't have rendered children, but it might have accessible fallback content.
@@ -2366,7 +2465,7 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
 #if USE(ATSPI)
 RenderObject* AccessibilityRenderObject::markerRenderer() const
 {
-    if (accessibilityIsIgnored() || !isListItem() || !m_renderer || !m_renderer->isListItem())
+    if (accessibilityIsIgnored() || !isListItem() || !m_renderer || !m_renderer->isRenderListItem())
         return nullptr;
 
     return downcast<RenderListItem>(*m_renderer).markerRenderer();
@@ -2425,7 +2524,7 @@ void AccessibilityRenderObject::addChildren()
 
     auto addChildIfNeeded = [this](AccessibilityObject& object) {
 #if USE(ATSPI)
-        if (object.renderer()->isListMarker())
+        if (object.renderer()->isRenderListMarker())
             return;
 #endif
         auto owners = object.owners();

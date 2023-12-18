@@ -1,1 +1,6 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :all_usages:
+PASS :error_buffer:
+PASS :twice:
+PASS :while_mapped:
+

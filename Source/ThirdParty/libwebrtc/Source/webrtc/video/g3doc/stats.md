@@ -106,7 +106,7 @@ Updated when the available bitrate changes, `VideoSendStreamImpl::OnBitrateUpdat
 
 ### ReceiveStatisticsProxy
 `VideoReceiveStream` owns a [ReceiveStatisticsProxy] which implements
-`VCMReceiveStatisticsCallback`,
+`VideoStreamBufferControllerStatsObserver`,
 `RtcpCnameCallback`,
 `RtcpPacketTypeCounterObserver`,
 `CallStatsObserver`
@@ -123,13 +123,13 @@ Updated when a complete frame is received, `FrameBuffer::InsertFrame`.
 *   `network_frame_rate` - number of frames received during the last second.
 
 Updated when a frame is ready for decoding, `FrameBuffer::GetNextFrame`. From `VCMTiming`:
-*   `jitter_buffer_ms` - jitter buffer delay in ms.
+*   `jitter_buffer_ms` - jitter delay in ms: this is the delay added to handle network jitter
 *   `max_decode_ms` - the 95th percentile observed decode time within a time window (10 sec).
 *   `render_delay_ms` - render delay in ms.
 *   `min_playout_delay_ms` - minimum playout delay in ms.
 *   `target_delay_ms` - target playout delay in ms. Max(`min_playout_delay_ms`, `jitter_delay_ms` + `max_decode_ms` + `render_delay_ms`).
 *   `current_delay_ms` - actual playout delay in ms.
-*   `jitter_buffer_delay_seconds` - total jitter buffer delay in seconds [[rtcinboundrtpstreamstats-jitterbufferdelay]].
+*   `jitter_buffer_delay_seconds` - total jitter buffer delay in seconds: this is the time spent waiting in the jitter buffer [[rtcinboundrtpstreamstats-jitterbufferdelay]].
 *   `jitter_buffer_emitted_count` - total number of frames that have come out from the jitter buffer [[rtcinboundrtpstreamstats-jitterbufferemittedcount]].
 
 Updated (if changed) after a frame is passed to the decoder, `VCMGenericDecoder::Decode`.

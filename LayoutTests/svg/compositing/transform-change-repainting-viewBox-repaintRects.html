@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+
+<html>
+<head>
+    <style>
+        svg { border: 1px solid black; }
+
+        .rotate {
+	    transform-origin: 50% 50%;
+            transform: rotate(45deg) translateZ(0);
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            requestAnimationFrame(() => {
+                document.body.offsetTop;
+                if (window.internals)
+                    window.internals.startTrackingRepaints();
+
+                document.getElementById('rect').setAttribute('class', 'rotate');
+
+                if (window.internals)
+                    document.getElementById('repaintRects').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+	    });
+	}, false);
+    </script>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="500" height="300">
+        <rect id="rect" x="10" y="10" width="180" height="180" fill="green"/>
+    </svg>
+    <pre id="repaintRects"></pre>
+</body>
+</html>

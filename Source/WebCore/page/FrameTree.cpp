@@ -44,10 +44,8 @@ FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
 
 FrameTree::~FrameTree()
 {
-    for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
-        if (auto* localFrame = dynamicDowncast<LocalFrame>(child))
-            localFrame->setView(nullptr);
-    }
+    for (auto* child = firstChild(); child; child = child->tree().nextSibling())
+        child->disconnectView();
 }
 
 void FrameTree::setSpecifiedName(const AtomString& specifiedName)
@@ -251,24 +249,16 @@ Frame* FrameTree::childByUniqueName(const AtomString& name) const
 
 // FrameTree::find() only returns frames in pages that are related to the active
 // page by an opener <-> openee relationship.
-static bool isFrameFamiliarWith(Frame& abstractFrameA, Frame& abstractFrameB)
+static bool isFrameFamiliarWith(Frame& frameA, Frame& frameB)
 {
-    if (abstractFrameA.page() == abstractFrameB.page())
+    if (frameA.page() == frameB.page())
         return true;
 
-    auto* frameA = dynamicDowncast<LocalFrame>(abstractFrameA);
-    auto* frameB = dynamicDowncast<LocalFrame>(abstractFrameB);
-    if (!frameA || !frameB)
-        return false;
-
-    auto* mainFrameA = dynamicDowncast<LocalFrame>(frameA->mainFrame());
-    auto* mainFrameB = dynamicDowncast<LocalFrame>(frameB->mainFrame());
-    if (!mainFrameA || !mainFrameB)
-        return false;
-
-    auto* frameAOpener = mainFrameA->loader().opener();
-    auto* frameBOpener = mainFrameB->loader().opener();
-    return (frameAOpener && frameAOpener->page() == frameB->page()) || (frameBOpener && frameBOpener->page() == frameA->page()) || (frameAOpener && frameBOpener && frameAOpener->page() == frameBOpener->page());
+    auto* frameAOpener = frameA.mainFrame().opener();
+    auto* frameBOpener = frameB.mainFrame().opener();
+    return (frameAOpener && frameAOpener->page() == frameB.page())
+        || (frameBOpener && frameBOpener->page() == frameA.page())
+        || (frameAOpener && frameBOpener && frameAOpener->page() == frameBOpener->page());
 }
 
 inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomString&(const FrameTree&)>& nameGetter, Frame& activeFrame) const
@@ -293,8 +283,7 @@ inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomS
     }
 
     // Then the rest of the tree.
-    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
-    for (Frame* frame = localFrame ? dynamicDowncast<LocalFrame>(localFrame->mainFrame()) : nullptr; frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_thisFrame.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (nameGetter(frame->tree()) == name)
             return frame;
     }
@@ -407,21 +396,14 @@ Frame* FrameTree::firstRenderedChild() const
     if (!child)
         return nullptr;
 
-    auto* localChild = dynamicDowncast<LocalFrame>(child);
-    if (!localChild)
-        return nullptr;
-
-    if (localChild->ownerRenderer())
+    if (auto* localChild = dynamicDowncast<LocalFrame>(child); localChild && localChild->ownerRenderer())
         return child;
 
     while ((child = child->tree().nextSibling())) {
-        auto* localChild = dynamicDowncast<LocalFrame>(child);
-        if (!localChild)
-            continue;
-        if (localChild->ownerRenderer())
+        if (auto* localChild = dynamicDowncast<LocalFrame>(child); localChild && localChild->ownerRenderer())
             return child;
     }
-    
+
     return nullptr;
 }
 
@@ -430,8 +412,7 @@ Frame* FrameTree::nextRenderedSibling() const
     auto* sibling = &m_thisFrame;
 
     while ((sibling = sibling->tree().nextSibling())) {
-        auto* localSibling = dynamicDowncast<LocalFrame>(sibling);
-        if (localSibling && localSibling->ownerRenderer())
+        if (auto* localSibling = dynamicDowncast<LocalFrame>(sibling); localSibling && localSibling->ownerRenderer())
             return sibling;
     }
     
@@ -479,10 +460,7 @@ Frame* FrameTree::traverseNext(CanWrap canWrap, DidWrap* didWrap) const
     if (canWrap == CanWrap::Yes) {
         if (didWrap)
             *didWrap = DidWrap::Yes;
-        auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
-        if (!localFrame)
-            return nullptr;
-        return dynamicDowncast<LocalFrame>(localFrame->mainFrame());
+        return &m_thisFrame.mainFrame();
     }
 
     return nullptr;
@@ -513,7 +491,7 @@ Frame* FrameTree::traverseNextInPostOrder(CanWrap canWrap) const
     if (m_nextSibling)
         return m_nextSibling->tree().deepFirstChild();
     if (m_parent)
-        return dynamicDowncast<LocalFrame>(m_parent.get());
+        return m_parent.get();
     if (canWrap == CanWrap::Yes)
         return deepFirstChild();
     return nullptr;
@@ -603,26 +581,24 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
         printIndent(indent);
 
     auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
-    if (!localFrame) {
+    if (!localFrame)
         printf("RemoteFrame %p\n", &frame);
-        return;
+    else {
+        auto* view = localFrame->view();
+        printf("Frame %p %dx%d\n", &frame, view ? view->width() : 0, view ? view->height() : 0);
+        printIndent(indent);
+        printf("  ownerElement=%p\n", localFrame->ownerElement());
+        printIndent(indent);
+        printf("  frameView=%p (needs layout %d)\n", view, view ? view->needsLayout() : false);
+        printIndent(indent);
+        printf("  renderView=%p\n", view ? view->renderView() : nullptr);
+        printIndent(indent);
+        printf("  ownerRenderer=%p\n", localFrame->ownerRenderer());
+        printIndent(indent);
+        printf("  document=%p (needs style recalc %d)\n", localFrame->document(), localFrame->document() ? localFrame->document()->childNeedsStyleRecalc() : false);
+        printIndent(indent);
+        printf("  uri=%s\n", localFrame->document()->documentURI().utf8().data());
     }
-
-    auto* view = localFrame->view();
-    printf("Frame %p %dx%d\n", &frame, view ? view->width() : 0, view ? view->height() : 0);
-    printIndent(indent);
-    printf("  ownerElement=%p\n", localFrame->ownerElement());
-    printIndent(indent);
-    printf("  frameView=%p (needs layout %d)\n", view, view ? view->needsLayout() : false);
-    printIndent(indent);
-    printf("  renderView=%p\n", view ? view->renderView() : nullptr);
-    printIndent(indent);
-    printf("  ownerRenderer=%p\n", localFrame->ownerRenderer());
-    printIndent(indent);
-    printf("  document=%p (needs style recalc %d)\n", localFrame->document(), localFrame->document() ? localFrame->document()->childNeedsStyleRecalc() : false);
-    printIndent(indent);
-    printf("  uri=%s\n", localFrame->document()->documentURI().utf8().data());
-
     for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         printFrames(*child, targetFrame, indent + 1);
 }

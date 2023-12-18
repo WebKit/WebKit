@@ -385,6 +385,9 @@ IGNORE_WARNINGS_END
         || scroller.isVerticalBouncing || scroller.isHorizontalBouncing || scroller.isZoomBouncing)
         return YES;
 
+    if (self._keyboardScrollingAnimationRunning)
+        return YES;
+
     static NeverDestroyed<RetainPtr<NSSet>> animationKeyNames = [NSSet setWithArray:@[
         @"bounds.size",
         @"bounds.origin",

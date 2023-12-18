@@ -199,15 +199,6 @@ RetainPtr<SecKeyRef> LocalConnection::createCredentialPrivateKey(LAContext *cont
     return credentialPrivateKey;
 }
 
-void LocalConnection::getAttestation(SecKeyRef privateKey, NSData *authData, NSData *hash, AttestationCallback&& completionHandler) const
-{
-#if HAVE(APPLE_ATTESTATION)
-    AppAttest_WebAuthentication_AttestKey(privateKey, authData, hash, makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSArray *certificates, NSError *error) mutable {
-        completionHandler(certificates, error);
-    }).get());
-#endif
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

@@ -97,6 +97,6 @@ inline RenderVideo* HTMLVideoElement::renderer() const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderVideo, isVideo())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderVideo, isRenderVideo())
 
 #endif // ENABLE(VIDEO)

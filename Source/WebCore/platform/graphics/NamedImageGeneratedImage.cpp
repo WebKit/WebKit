@@ -40,9 +40,8 @@ NamedImageGeneratedImage::NamedImageGeneratedImage(String name, const FloatSize&
     setContainerSize(size);
 }
 
-ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-#if USE(NEW_THEME) || PLATFORM(IOS_FAMILY)
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
     context.clip(dstRect);
@@ -53,18 +52,10 @@ ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const F
 
     Theme::singleton().drawNamedImage(m_name, context, dstRect.size());
     return ImageDrawResult::DidDraw;
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(dstRect);
-    UNUSED_PARAM(srcRect);
-    UNUSED_PARAM(options);
-    return ImageDrawResult::DidNothing;
-#endif
 }
 
-void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
-#if USE(NEW_THEME)
     auto imageBuffer = context.createAlignedImageBuffer(size());
     if (!imageBuffer)
         return;
@@ -74,15 +65,6 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
 
     // Tile the image buffer into the context.
     context.drawPattern(*imageBuffer, dstRect, srcRect, patternTransform, phase, spacing, options);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(dstRect);
-    UNUSED_PARAM(srcRect);
-    UNUSED_PARAM(patternTransform);
-    UNUSED_PARAM(phase);
-    UNUSED_PARAM(spacing);
-    UNUSED_PARAM(options);
-#endif
 }
 
 void NamedImageGeneratedImage::dump(TextStream& ts) const

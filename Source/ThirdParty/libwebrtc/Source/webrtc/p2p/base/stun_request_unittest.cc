@@ -54,15 +54,15 @@ class StunRequestTest : public ::testing::Test {
     request_count_++;
   }
 
-  void OnResponse(StunMessage* res) {
+  virtual void OnResponse(StunMessage* res) {
     response_ = res;
     success_ = true;
   }
-  void OnErrorResponse(StunMessage* res) {
+  virtual void OnErrorResponse(StunMessage* res) {
     response_ = res;
     failure_ = true;
   }
-  void OnTimeout() { timeout_ = true; }
+  virtual void OnTimeout() { timeout_ = true; }
 
  protected:
   rtc::AutoThread main_thread_;
@@ -213,6 +213,44 @@ TEST_F(StunRequestTest, TestUnrecognizedComprehensionRequiredAttribute) {
   EXPECT_EQ(nullptr, response_);
   EXPECT_FALSE(success_);
   EXPECT_FALSE(failure_);
+  EXPECT_FALSE(timeout_);
+}
+
+class StunRequestReentranceTest : public StunRequestTest {
+ public:
+  void OnResponse(StunMessage* res) override {
+    manager_.Clear();
+    StunRequestTest::OnResponse(res);
+  }
+  void OnErrorResponse(StunMessage* res) override {
+    manager_.Clear();
+    StunRequestTest::OnErrorResponse(res);
+  }
+};
+
+TEST_F(StunRequestReentranceTest, TestSuccess) {
+  auto* request = new StunRequestThunker(manager_, this);
+  std::unique_ptr<StunMessage> res =
+      request->CreateResponseMessage(STUN_BINDING_RESPONSE);
+  manager_.Send(request);
+  EXPECT_TRUE(manager_.CheckResponse(res.get()));
+
+  EXPECT_TRUE(response_ == res.get());
+  EXPECT_TRUE(success_);
+  EXPECT_FALSE(failure_);
+  EXPECT_FALSE(timeout_);
+}
+
+TEST_F(StunRequestReentranceTest, TestError) {
+  auto* request = new StunRequestThunker(manager_, this);
+  std::unique_ptr<StunMessage> res =
+      request->CreateResponseMessage(STUN_BINDING_ERROR_RESPONSE);
+  manager_.Send(request);
+  EXPECT_TRUE(manager_.CheckResponse(res.get()));
+
+  EXPECT_TRUE(response_ == res.get());
+  EXPECT_FALSE(success_);
+  EXPECT_TRUE(failure_);
   EXPECT_FALSE(timeout_);
 }
 

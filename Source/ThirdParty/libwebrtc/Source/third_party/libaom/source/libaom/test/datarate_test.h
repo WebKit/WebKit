@@ -28,7 +28,7 @@ class DatarateTest : public ::libaom_test::EncoderTest {
         speed_change_test_(false) {}
 
  protected:
-  virtual ~DatarateTest() {}
+  ~DatarateTest() override = default;
 
   virtual void ResetModel() {
     last_pts_ = 0;
@@ -57,8 +57,8 @@ class DatarateTest : public ::libaom_test::EncoderTest {
     }
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, set_cpu_used_);
       encoder->Control(AV1E_SET_AQ_MODE, aq_mode_);
@@ -122,7 +122,7 @@ class DatarateTest : public ::libaom_test::EncoderTest {
     duration_ = 0;
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     // Time since last timestamp = duration.
     aom_codec_pts_t duration = pkt->data.frame.pts - last_pts_;
 
@@ -176,7 +176,7 @@ class DatarateTest : public ::libaom_test::EncoderTest {
     }
   }
 
-  virtual void EndPassHook() {
+  void EndPassHook() override {
     duration_ = (last_pts_ + 1) * timebase_;
     // Effective file datarate:
     effective_datarate_ = (bits_total_ / 1000.0) / duration_;

@@ -36,10 +36,13 @@
 #import "Logging.h"
 #import "NotImplemented.h"
 #import <wtf/CheckedPtr.h>
+#import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,6 +51,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) const void* logIdentifier;
 @property (nonatomic, readonly) const Logger* loggerPtr;
 @property (nonatomic, readonly) WTFLogChannel* logChannel;
+@end
+#endif
+
+#if HAVE(AVCONTENTKEY_REVOKE)
+// FIXME (117803793): Remove staging code once -[AVContentKey revoke] is available in SDKs used by WebKit builders
+@interface AVContentKey (Staging_113340014)
+- (void)revoke;
 @end
 #endif
 
@@ -91,9 +101,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)expire
 {
-    auto keys = _dataSource->contentKeyGroupDataSourceKeys();
-    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "keys.size=", keys.size());
-    // FIXME (113405292): Actually expire the keys once API is available to do so.
+#if HAVE(AVCONTENTKEY_REVOKE)
+    Vector keys = _dataSource->contentKeyGroupDataSourceKeys();
+    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "keys=", keys.size());
+
+    // FIXME (117803793): Remove staging code once -[AVContentKey revoke] is available in SDKs used by WebKit builders
+    if (![PAL::getAVContentKeyClass() instancesRespondToSelector:@selector(revoke)])
+        return;
+
+    for (auto& key : keys)
+        [key revoke];
+#endif
 }
 
 - (void)processContentKeyRequestWithIdentifier:(nullable id)identifier initializationData:(nullable NSData *)initializationData options:(nullable NSDictionary<NSString *, id> *)options

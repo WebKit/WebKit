@@ -106,9 +106,6 @@ WebKitBuildbot = function()
         "JSCOnly ARMv7 Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "ARMv7", combinedQueues: {
             "JSCOnly-Linux-ARMv7-Thumb2-Release": {heading: "ARMv7 Thumb2"},
         }},
-        "JSCOnly MIPS Testers": {platform: Dashboard.Platform.LinuxJSCOnly, heading: "MIPS", combinedQueues: {
-            "JSCOnly-Linux-MIPS32el-Release": {heading: "MIPS32el"},
-        }},
         "PlayStation-Release-Build": {platform: Dashboard.Platform.PlayStation, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "PlayStation-Debug-Build": {platform: Dashboard.Platform.PlayStation, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
     };

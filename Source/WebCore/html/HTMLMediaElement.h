@@ -529,6 +529,7 @@ public:
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
+    MediaElementSession* mediaSessionIfExists() const { return m_mediaSession.get(); }
     WEBCORE_EXPORT MediaElementSession& mediaSession() const;
 
     void pageScaleFactorChanged();
@@ -647,7 +648,7 @@ public:
     void updateMediaState();
 
 protected:
-    constexpr static auto CreateHTMLMediaElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateHTMLMediaElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
 
@@ -961,6 +962,8 @@ private:
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
     bool isAudible() const final { return canProduceAudio(); };
+    bool isEnded() const final { return ended(); }
+    MediaTime mediaSessionDuration() const final;
     bool hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
     bool shouldOverridePauseDuringRouteChange() const final;
@@ -1019,7 +1022,6 @@ private:
     void setInActiveDocument(bool);
 
     void checkForAudioAndVideo();
-    bool hasLiveSource() const;
 
     void playPlayer();
     void pausePlayer();
@@ -1346,7 +1348,11 @@ template<> struct LogArgument<WebCore::HTMLMediaElement::SpeechSynthesisState> {
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLMediaElement)
     static bool isType(const WebCore::Element& element) { return element.isMediaElement(); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* element = dynamicDowncast<WebCore::Element>(node);
+        return element && isType(*element);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

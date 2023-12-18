@@ -29,7 +29,6 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "RenderIterator.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGRenderingContext.h"
@@ -43,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGContainer);
 
 LegacyRenderSVGContainer::LegacyRenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGModelObject(type, element, WTFMove(style))
+    : LegacyRenderSVGModelObject(type, element, WTFMove(style), RenderElementType::LegacyRenderSVGContainer)
 {
 }
 
@@ -154,8 +153,41 @@ void LegacyRenderSVGContainer::addFocusRingRects(Vector<LayoutRect>& rects, cons
 
 void LegacyRenderSVGContainer::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
-    SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
+    m_strokeBoundingBox = std::nullopt;
+    m_repaintBoundingBox = { };
+    m_accurateRepaintBoundingBox = std::nullopt;
+    FloatRect repaintBoundingBox;
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, repaintBoundingBox);
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox);
+    m_repaintBoundingBox = repaintBoundingBox;
+}
+
+FloatRect LegacyRenderSVGContainer::strokeBoundingBox() const
+{
+    if (!m_strokeBoundingBox) {
+        // Initialize m_strokeBoundingBox before calling computeContainerStrokeBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_strokeBoundingBox = FloatRect { };
+        m_strokeBoundingBox = SVGRenderSupport::computeContainerStrokeBoundingBox(*this);
+    }
+    return *m_strokeBoundingBox;
+}
+
+FloatRect LegacyRenderSVGContainer::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
+{
+    if (repaintRectCalculation == RepaintRectCalculation::Fast)
+        return m_repaintBoundingBox;
+
+    if (!m_accurateRepaintBoundingBox) {
+        // Initialize m_accurateRepaintBoundingBox before calling computeContainerBoundingBoxes, since recursively referenced markers can cause us to re-enter here.
+        m_accurateRepaintBoundingBox = FloatRect { };
+        FloatRect objectBoundingBox;
+        FloatRect repaintBoundingBox;
+        bool objectBoundingBoxValid = true;
+        SVGRenderSupport::computeContainerBoundingBoxes(*this, objectBoundingBox, objectBoundingBoxValid, repaintBoundingBox, RepaintRectCalculation::Accurate);
+        SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, RepaintRectCalculation::Accurate);
+        m_accurateRepaintBoundingBox = repaintBoundingBox;
+    }
+    return *m_accurateRepaintBoundingBox;
 }
 
 bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)

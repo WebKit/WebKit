@@ -359,7 +359,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(get_tests_run(['--skip-failing-tests', '--skipped=always'] + list_of_tests_failing), [])
 
     def test_ews_corner_case_failing_directory(self):
-        # When a whole directory is is marked as failing (or flaky), then the tests inside should not run if we specify the name of the directory and we pass '--skip-failing-tests'
+        # When a whole directory is is marked as failing (or flaky), then the tests inside should not run if we specify the name of the directory and we pass '--skip-failing-tests' or '--skip-flaky-tests'
         self.assertEqual(get_tests_run(['--skip-failing-tests', 'corner-cases/ews/directory-flaky']), [])
         # But if we specify on the command-line the name of individual tests inside that directory the tests should run (even with '--skip-failing-tests')
         list_of_tests_failing = ['corner-cases/ews/directory-skipped/failure.html', 'corner-cases/ews/directory-skipped/timeout.html']
@@ -1138,9 +1138,18 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 0)
-        self.assertEqual(len(file_list), 9)
-        self.assertBaselines(file_list, "passes/image", [".txt", ".png"], err)
-        self.assertBaselines(file_list, "failures/expected/missing_image", [".txt", ".png"], err)
+        self.assertEqual(
+            {
+                "/test.checkout/LayoutTests/failures/expected/missing_image-expected.png",
+                "/test.checkout/LayoutTests/failures/expected/missing_image-expected.txt",
+                "/test.checkout/LayoutTests/passes/image-expected.png",
+                "/test.checkout/LayoutTests/passes/image-expected.txt",
+                "/tmp/layout-test-results/full_results.json",
+                "/tmp/layout-test-results/layout_test_perf_metrics.json",
+                "/tmp/layout-test-results/stats.json",
+            },
+            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+        )
 
     def test_missing_results(self):
         # Test that we update expectations in place. If the expectation
@@ -1155,10 +1164,20 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 0)
-        self.assertEqual(len(file_list), 11)
-        self.assertBaselines(file_list, "failures/unexpected/missing_text", [".txt"], err)
-        self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_image", [".png"], err)
-        self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_render_tree_dump", [".txt"], err)
+        self.assertEqual(
+            {
+                "/test.checkout/LayoutTests/failures/unexpected/missing_text-expected.txt",
+                "/test.checkout/LayoutTests/platform/test/failures/unexpected/missing_image-expected.png",
+                "/test.checkout/LayoutTests/platform/test/failures/unexpected/missing_render_tree_dump-expected.txt",
+                "/tmp/layout-test-results/failures/unexpected/missing_image-actual.png",
+                "/tmp/layout-test-results/failures/unexpected/missing_render_tree_dump-actual.txt",
+                "/tmp/layout-test-results/failures/unexpected/missing_text-actual.txt",
+                "/tmp/layout-test-results/full_results.json",
+                "/tmp/layout-test-results/layout_test_perf_metrics.json",
+                "/tmp/layout-test-results/stats.json",
+            },
+            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+        )
 
     def test_new_baseline(self):
         # Test that we update the platform expectations in the version-specific directories
@@ -1170,11 +1189,18 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 0)
-        self.assertEqual(len(file_list), 9)
-        self.assertBaselines(file_list,
-            "platform/test-mac-leopard/passes/image", [".txt", ".png"], err)
-        self.assertBaselines(file_list,
-            "platform/test-mac-leopard/failures/expected/missing_image", [".txt", ".png"], err)
+        self.assertEqual(
+            {
+                "/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/missing_image-expected.png",
+                "/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/missing_image-expected.txt",
+                "/test.checkout/LayoutTests/platform/test-mac-leopard/passes/image-expected.png",
+                "/test.checkout/LayoutTests/platform/test-mac-leopard/passes/image-expected.txt",
+                "/tmp/layout-test-results/full_results.json",
+                "/tmp/layout-test-results/layout_test_perf_metrics.json",
+                "/tmp/layout-test-results/stats.json",
+            },
+            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+        )
 
 
 class PortTest(unittest.TestCase):

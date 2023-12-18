@@ -53,14 +53,14 @@ int64_t BlockError8BitWrapper(const tran_low_t *coeff,
 
 class BlockErrorTest : public ::testing::TestWithParam<BlockErrorParam> {
  public:
-  virtual ~BlockErrorTest() {}
-  virtual void SetUp() {
+  ~BlockErrorTest() override = default;
+  void SetUp() override {
     error_block_op_ = GET_PARAM(0);
     ref_error_block_op_ = GET_PARAM(1);
     bit_depth_ = GET_PARAM(2);
   }
 
-  virtual void TearDown() { libvpx_test::ClearSystemState(); }
+  void TearDown() override { libvpx_test::ClearSystemState(); }
 
  protected:
   vpx_bit_depth_t bit_depth_;
@@ -197,4 +197,22 @@ INSTANTIATE_TEST_SUITE_P(
                                  &BlockError8BitWrapper<vp9_block_error_c>,
                                  VPX_BITS_8)));
 #endif  // HAVE_AVX2
+
+#if HAVE_NEON
+const BlockErrorParam neon_block_error_tests[] = {
+#if CONFIG_VP9_HIGHBITDEPTH
+  make_tuple(&vp9_highbd_block_error_neon, &vp9_highbd_block_error_c,
+             VPX_BITS_10),
+  make_tuple(&vp9_highbd_block_error_neon, &vp9_highbd_block_error_c,
+             VPX_BITS_12),
+  make_tuple(&vp9_highbd_block_error_neon, &vp9_highbd_block_error_c,
+             VPX_BITS_8),
+#endif  // CONFIG_VP9_HIGHBITDEPTH
+  make_tuple(&BlockError8BitWrapper<vp9_block_error_neon>,
+             &BlockError8BitWrapper<vp9_block_error_c>, VPX_BITS_8)
+};
+
+INSTANTIATE_TEST_SUITE_P(NEON, BlockErrorTest,
+                         ::testing::ValuesIn(neon_block_error_tests));
+#endif  // HAVE_NEON
 }  // namespace

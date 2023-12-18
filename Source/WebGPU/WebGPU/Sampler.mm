@@ -116,9 +116,9 @@ static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
         return MTLCompareFunctionEqual;
     case WGPUCompareFunction_NotEqual:
         return MTLCompareFunctionNotEqual;
+    case WGPUCompareFunction_Undefined:
     case WGPUCompareFunction_Always:
         return MTLCompareFunctionAlways;
-    case WGPUCompareFunction_Undefined:
     case WGPUCompareFunction_Force32:
         ASSERT_NOT_REACHED();
         return MTLCompareFunctionAlways;
@@ -127,7 +127,7 @@ static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
 
 Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return Sampler::createInvalid(*this);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler

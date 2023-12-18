@@ -88,7 +88,7 @@ enum class Gate : uint8_t {
 
 #define JSC_COUNT(gateName, tag) + 1
 #define JSC_OPCODE_COUNT(gateName, tag) + 3
-static constexpr unsigned numberOfGates = (JSC_UTILITY_GATES(JSC_COUNT)) + (JSC_JS_GATE_OPCODES(JSC_OPCODE_COUNT)) + (JSC_WASM_GATE_OPCODES(JSC_OPCODE_COUNT));
+static constexpr unsigned numberOfGates = 0 JSC_UTILITY_GATES(JSC_COUNT) JSC_JS_GATE_OPCODES(JSC_OPCODE_COUNT) JSC_WASM_GATE_OPCODES(JSC_OPCODE_COUNT);
 #undef JSC_COUNT
 #undef JSC_OPCODE_COUNT
 

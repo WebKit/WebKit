@@ -44,6 +44,8 @@
 #import "SearchFieldResultsPart.h"
 #import "SliderThumbMac.h"
 #import "SliderTrackMac.h"
+#import "SwitchThumbMac.h"
+#import "SwitchTrackMac.h"
 #import "TextAreaMac.h"
 #import "TextFieldMac.h"
 #import "ToggleButtonMac.h"
@@ -293,6 +295,16 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderThumb(Sl
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSliderTrack(SliderTrackPart& part)
 {
     return makeUnique<SliderTrackMac>(part, *this);
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchThumb(SwitchThumbPart& part)
+{
+    return makeUnique<SwitchThumbMac>(part, *this);
+}
+
+std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformSwitchTrack(SwitchTrackPart& part)
+{
+    return makeUnique<SwitchTrackMac>(part, *this);
 }
 
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformTextArea(TextAreaPart& part)

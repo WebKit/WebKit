@@ -31,11 +31,11 @@ namespace WebCore {
 static NSURLCredentialPersistence toNSURLCredentialPersistence(CredentialPersistence persistence)
 {
     switch (persistence) {
-    case CredentialPersistenceNone:
+    case CredentialPersistence::None:
         return NSURLCredentialPersistenceNone;
-    case CredentialPersistenceForSession:
+    case CredentialPersistence::ForSession:
         return NSURLCredentialPersistenceForSession;
-    case CredentialPersistencePermanent:
+    case CredentialPersistence::Permanent:
         return NSURLCredentialPersistencePermanent;
     }
 
@@ -47,16 +47,16 @@ static CredentialPersistence toCredentialPersistence(NSURLCredentialPersistence 
 {
     switch (persistence) {
     case NSURLCredentialPersistenceNone:
-        return CredentialPersistenceNone;
+        return CredentialPersistence::None;
     case NSURLCredentialPersistenceForSession:
-        return CredentialPersistenceForSession;
+        return CredentialPersistence::ForSession;
     case NSURLCredentialPersistencePermanent:
     case NSURLCredentialPersistenceSynchronizable:
-        return CredentialPersistencePermanent;
+        return CredentialPersistence::Permanent;
     }
 
     ASSERT_NOT_REACHED();
-    return CredentialPersistenceNone;
+    return CredentialPersistence::None;
 }
 
 Credential::Credential(const Credential& original, CredentialPersistence persistence)

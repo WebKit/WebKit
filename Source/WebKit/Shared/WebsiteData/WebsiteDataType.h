@@ -41,9 +41,7 @@ enum class WebsiteDataType : uint32_t {
     SearchFieldRecentSearches = 1 << 10,
     ResourceLoadStatistics = 1 << 12,
     Credentials = 1 << 13,
-#if ENABLE(SERVICE_WORKER)
     ServiceWorkerRegistrations = 1 << 14,
-#endif
     DOMCache = 1 << 15,
     DeviceIdHashSalt = 1 << 16,
     PrivateClickMeasurements = 1 << 17,
@@ -51,9 +49,7 @@ enum class WebsiteDataType : uint32_t {
     AlternativeServices = 1 << 18,
 #endif
     FileSystem = 1 << 19,
-#if ENABLE(SERVICE_WORKER)
     BackgroundFetchStorage = 1 << 20,
-#endif
 };
 
 } // namespace WebKit

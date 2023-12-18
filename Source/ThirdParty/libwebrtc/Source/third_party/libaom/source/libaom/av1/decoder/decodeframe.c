@@ -1275,9 +1275,13 @@ static AOM_INLINE void decode_partition(AV1Decoder *const pbi,
     const int num_planes = av1_num_planes(cm);
     for (int plane = 0; plane < num_planes; ++plane) {
       int rcol0, rcol1, rrow0, rrow1;
+
+      // Skip some unnecessary work if loop restoration is disabled
+      if (cm->rst_info[plane].frame_restoration_type == RESTORE_NONE) continue;
+
       if (av1_loop_restoration_corners_in_sb(cm, plane, mi_row, mi_col, bsize,
                                              &rcol0, &rcol1, &rrow0, &rrow1)) {
-        const int rstride = cm->rst_info[plane].horz_units_per_tile;
+        const int rstride = cm->rst_info[plane].horz_units;
         for (int rrow = rrow0; rrow < rrow1; ++rrow) {
           for (int rcol = rcol0; rcol < rcol1; ++rcol) {
             const int runit_idx = rcol + rrow * rstride;
@@ -4326,7 +4330,6 @@ static int read_global_motion_params(WarpedMotionParams *params,
                        trans_dec_factor;
   }
 
-  assert(params->wmtype <= AFFINE);
   int good_shear_params = av1_get_shear_params(params);
   if (!good_shear_params) return 0;
 
@@ -5238,6 +5241,7 @@ void av1_decode_tg_tiles_and_wrapup(AV1Decoder *pbi, const uint8_t *data,
   MACROBLOCKD *const xd = &pbi->dcb.xd;
   const int tile_count_tg = end_tile - start_tile + 1;
 
+  xd->error_info = cm->error;
   if (initialize_flag) setup_frame_info(pbi);
   const int num_planes = av1_num_planes(cm);
 

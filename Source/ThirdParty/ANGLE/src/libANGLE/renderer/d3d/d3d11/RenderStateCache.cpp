@@ -97,20 +97,28 @@ d3d11::BlendStateKey RenderStateCache::GetBlendStateKey(const gl::Context *conte
             // MIN and MAX operations do not need factors, so use default values to further
             // reduce the number of unique keys. Additionally, ID3D11Device::CreateBlendState
             // fails if SRC1 factors are specified together with MIN or MAX operations.
-            const GLenum equationColor = blendStateExt.getEquationColorIndexed(sourceIndex);
-            const GLenum equationAlpha = blendStateExt.getEquationAlphaIndexed(sourceIndex);
-            const bool setColorFactors = equationColor != GL_MIN && equationColor != GL_MAX;
-            const bool setAlphaFactors = equationAlpha != GL_MIN && equationAlpha != GL_MAX;
+            const gl::BlendEquationType equationColor =
+                blendStateExt.getEquationColorIndexed(sourceIndex);
+            const gl::BlendEquationType equationAlpha =
+                blendStateExt.getEquationAlphaIndexed(sourceIndex);
+            const bool setColorFactors = equationColor != gl::BlendEquationType::Min &&
+                                         equationColor != gl::BlendEquationType::Max;
+            const bool setAlphaFactors = equationAlpha != gl::BlendEquationType::Min &&
+                                         equationAlpha != gl::BlendEquationType::Max;
             if (setColorFactors || setAlphaFactors)
             {
-                const GLenum srcColor =
-                    setColorFactors ? blendStateExt.getSrcColorIndexed(sourceIndex) : GL_ONE;
-                const GLenum dstColor =
-                    setColorFactors ? blendStateExt.getDstColorIndexed(sourceIndex) : GL_ZERO;
-                const GLenum srcAlpha =
-                    setAlphaFactors ? blendStateExt.getSrcAlphaIndexed(sourceIndex) : GL_ONE;
-                const GLenum dstAlpha =
-                    setAlphaFactors ? blendStateExt.getDstAlphaIndexed(sourceIndex) : GL_ZERO;
+                const gl::BlendFactorType srcColor =
+                    setColorFactors ? blendStateExt.getSrcColorIndexed(sourceIndex)
+                                    : gl::BlendFactorType::One;
+                const gl::BlendFactorType dstColor =
+                    setColorFactors ? blendStateExt.getDstColorIndexed(sourceIndex)
+                                    : gl::BlendFactorType::Zero;
+                const gl::BlendFactorType srcAlpha =
+                    setAlphaFactors ? blendStateExt.getSrcAlphaIndexed(sourceIndex)
+                                    : gl::BlendFactorType::One;
+                const gl::BlendFactorType dstAlpha =
+                    setAlphaFactors ? blendStateExt.getDstAlphaIndexed(sourceIndex)
+                                    : gl::BlendFactorType::Zero;
                 key.blendStateExt.setFactorsIndexed(keyBlendIndex, srcColor, dstColor, srcAlpha,
                                                     dstAlpha);
             }

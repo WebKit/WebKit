@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServer.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchEngine.h"
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchOptions.h"
@@ -481,7 +479,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
             if (jobQueue.size() == 1)
                 jobQueue.runNextJob();
         } else
-            rejectJob(jobData, { TypeError, "Job rejected for non app-bound domain"_s });
+            rejectJob(jobData, { ExceptionCode::TypeError, "Job rejected for non app-bound domain"_s });
     });
 }
 
@@ -759,7 +757,7 @@ std::optional<ExceptionData> SWServer::claim(SWServerWorker& worker)
 {
     auto* registration = worker.registration();
     if (!registration || &worker != registration->activeWorker())
-        return ExceptionData { InvalidStateError, "Service worker is not active"_s };
+        return ExceptionData { ExceptionCode::InvalidStateError, "Service worker is not active"_s };
 
     auto& origin = worker.origin();
     forEachClientForOrigin(origin, [&](auto& clientData) {
@@ -1721,23 +1719,23 @@ void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentif
 {
     auto* registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
         return;
     }
 
     server().requestBackgroundFetchPermission({ registration->key().topOrigin(), SecurityOriginData::fromURL(registration->key().scope()) }, [server = WeakPtr { server() }, registrationIdentifier, backgroundFetchIdentifier, requests = WTFMove(requests), options = WTFMove(options), callback = WTFMove(callback)](bool result) mutable {
         if (!server || !result) {
-            callback(makeUnexpected(ExceptionData { NotAllowedError, "Background fetch permission is denied"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::NotAllowedError, "Background fetch permission is denied"_s }));
             return;
         }
 
         auto* registration = server->getRegistration(registrationIdentifier);
         if (!registration) {
-            callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
             return;
         }
         if (!registration->activeWorker()) {
-            callback(makeUnexpected(ExceptionData { TypeError, "No active worker"_s }));
+            callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No active worker"_s }));
             return;
         }
 
@@ -1756,7 +1754,7 @@ void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationI
 {
     auto* registration = server().getRegistration(registrationIdentifier);
     if (!registration) {
-        callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+        callback(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No registration found"_s }));
         return;
     }
 
@@ -1807,5 +1805,3 @@ void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdent
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

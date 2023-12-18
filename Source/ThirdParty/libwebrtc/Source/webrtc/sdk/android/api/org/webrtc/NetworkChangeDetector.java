@@ -88,13 +88,13 @@ public interface NetworkChangeDetector {
   };
 
   /** Observer interface by which observer is notified of network changes. */
-  public static interface Observer {
+  public static abstract class Observer {
     /** Called when default network changes. */
-    public void onConnectionTypeChanged(ConnectionType newConnectionType);
+    public abstract void onConnectionTypeChanged(ConnectionType newConnectionType);
 
-    public void onNetworkConnect(NetworkInformation networkInfo);
+    public abstract void onNetworkConnect(NetworkInformation networkInfo);
 
-    public void onNetworkDisconnect(long networkHandle);
+    public abstract void onNetworkDisconnect(long networkHandle);
 
     /**
      * Called when network preference change for a (list of) connection type(s). (e.g WIFI) is
@@ -103,7 +103,13 @@ public interface NetworkChangeDetector {
      * <p>note: `types` is a list of ConnectionTypes, so that all cellular types can be modified in
      * one call.
      */
-    public void onNetworkPreference(List<ConnectionType> types, @NetworkPreference int preference);
+    public abstract void onNetworkPreference(
+        List<ConnectionType> types, @NetworkPreference int preference);
+
+    // Add default impl. for down-stream tests.
+    public String getFieldTrialsString() {
+      return "";
+    }
   }
 
   public ConnectionType getCurrentConnectionType();

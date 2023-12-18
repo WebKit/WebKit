@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include "Document.h"
 #include "ScriptElement.h"
 
@@ -40,16 +41,18 @@ public:
         : m_document(document)
     {
         bool shouldPushNullForCurrentScript = scriptElement.element().isInShadowTree() || scriptElement.scriptType() != ScriptType::Classic;
-        m_document.pushCurrentScript(shouldPushNullForCurrentScript ? nullptr : &scriptElement.element());
+        protectedDocument()->pushCurrentScript(shouldPushNullForCurrentScript ? nullptr : &scriptElement.element());
     }
 
     ~CurrentScriptIncrementer()
     {
-        m_document.popCurrentScript();
+        protectedDocument()->popCurrentScript();
     }
 
 private:
-    Document& m_document;
+    Ref<Document> protectedDocument() const { return m_document.get(); }
+
+    CheckedRef<Document> m_document;
 };
 
 } // namespace WebCore

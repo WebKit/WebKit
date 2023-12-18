@@ -1,7 +1,9 @@
 // META: script=/common/gc.js
 
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 async function doCleanup()
 {

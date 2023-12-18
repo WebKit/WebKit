@@ -3,6 +3,9 @@ var response30ko = new Response(new ArrayBuffer(30 * 1024));
 var response400 = new Response(new ArrayBuffer(400 * 1024));
 let cache;
 
+if (window.testRunner)
+    testRunner.setOriginQuotaRatioEnabled(false);
+
 promise_test(async (test) => {
     if (!window.testRunner)
         return Promise.reject("Test requires internals");

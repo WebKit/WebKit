@@ -204,6 +204,13 @@ struct FeaturesD3D : FeatureSetBase
         &members,
     };
 
+    FeatureInfo supportsNonConstantLoopIndexing = {
+        "supportsNonConstantLoopIndexing",
+        FeatureCategory::D3DWorkarounds,
+        "Whether the API supports non-constant loop indexing",
+        &members,
+    };
+
 };
 
 inline FeaturesD3D::FeaturesD3D()  = default;

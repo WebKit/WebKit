@@ -33,6 +33,26 @@ class LinkAndRelinkTestES31 : public ANGLETest<>
     LinkAndRelinkTestES31() {}
 };
 
+// Test destruction of a context with a pending relink of the current in-use
+// program.
+TEST_P(LinkAndRelinkTest, DestructionWithPendingRelink)
+{
+    constexpr char kVS[] = "void main() {}";
+    constexpr char kFS[] = "void main() {}";
+
+    GLuint vs = CompileShader(GL_VERTEX_SHADER, kVS);
+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
+
+    GLuint program = glCreateProgram();
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    glLinkProgram(program);
+    glUseProgram(program);
+    glLinkProgram(program);
+    EXPECT_GL_NO_ERROR();
+}
+
 // When a program link or relink fails, if you try to install the unsuccessfully
 // linked program (via UseProgram) and start rendering or dispatch compute,
 // We can not always report INVALID_OPERATION for rendering/compute pipeline.

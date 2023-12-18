@@ -47,12 +47,14 @@ struct TimerOptions {
   TimerOptions(DurationMs duration,
                TimerBackoffAlgorithm backoff_algorithm,
                absl::optional<int> max_restarts)
-      : TimerOptions(duration, backoff_algorithm, max_restarts, absl::nullopt) {
-  }
+      : TimerOptions(duration,
+                     backoff_algorithm,
+                     max_restarts,
+                     DurationMs::InfiniteDuration()) {}
   TimerOptions(DurationMs duration,
                TimerBackoffAlgorithm backoff_algorithm,
                absl::optional<int> max_restarts,
-               absl::optional<DurationMs> max_backoff_duration)
+               DurationMs max_backoff_duration)
       : TimerOptions(duration,
                      backoff_algorithm,
                      max_restarts,
@@ -61,7 +63,7 @@ struct TimerOptions {
   TimerOptions(DurationMs duration,
                TimerBackoffAlgorithm backoff_algorithm,
                absl::optional<int> max_restarts,
-               absl::optional<DurationMs> max_backoff_duration,
+               DurationMs max_backoff_duration,
                webrtc::TaskQueueBase::DelayPrecision precision)
       : duration(duration),
         backoff_algorithm(backoff_algorithm),
@@ -78,7 +80,7 @@ struct TimerOptions {
   // or absl::nullopt if there is no limit.
   const absl::optional<int> max_restarts;
   // The maximum timeout value for exponential backoff.
-  const absl::optional<DurationMs> max_backoff_duration;
+  const DurationMs max_backoff_duration;
   // The precision of the webrtc::TaskQueueBase used for scheduling.
   const webrtc::TaskQueueBase::DelayPrecision precision;
 };

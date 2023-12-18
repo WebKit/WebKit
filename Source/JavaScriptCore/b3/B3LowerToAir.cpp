@@ -3379,7 +3379,7 @@ private:
                 uint64_t highWidth = highWidthValue->asInt();
                 uint64_t lowWidth = lowWidthValue->asInt();
                 uint64_t datasize = opcode == ExtractRegister32 ? 32 : 64;
-                if (lowWidth + highWidth != datasize || maskBitCount != lowWidth)
+                if (lowWidth + highWidth != datasize || maskBitCount != lowWidth || lowWidth == datasize)
                     return false;
 
                 append(opcode, tmp(nValue), tmp(mValue), imm(lowWidthValue), tmp(m_value));

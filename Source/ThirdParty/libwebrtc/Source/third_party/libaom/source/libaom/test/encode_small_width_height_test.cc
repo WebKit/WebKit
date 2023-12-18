@@ -25,21 +25,21 @@
 namespace {
 
 // Dummy buffer of zero samples.
-constexpr unsigned char kBuffer[256 * 512 + 2 * 128 * 256] = { 0 };
+constexpr unsigned char kBuffer[2 * (256 * 512 + 2 * 128 * 256)] = { 0 };
 #if CONFIG_REALTIME_ONLY
 const int kUsage = 1;
 #else
 const int kUsage = 0;
 #endif
 
-TEST(EncodeSmallWidthHeight, SmallWidthMultiThreaded) {
+void EncodeSmallWidthMultiThreaded(aom_img_fmt fmt, aom_codec_flags_t flag) {
   // The image has only one tile and the tile is two AV1 superblocks wide.
   // For speed >= 1, superblock size is 64x64 (see av1_select_sb_size()).
   constexpr int kWidth = 128;
   constexpr int kHeight = 512;
 
   aom_image_t img;
-  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I420, kWidth, kHeight, 1,
+  EXPECT_EQ(&img, aom_img_wrap(&img, fmt, kWidth, kHeight, 1,
                                const_cast<unsigned char *>(kBuffer)));
 
   aom_codec_iface_t *iface = aom_codec_av1_cx();
@@ -49,22 +49,33 @@ TEST(EncodeSmallWidthHeight, SmallWidthMultiThreaded) {
   cfg.g_w = kWidth;
   cfg.g_h = kHeight;
   aom_codec_ctx_t enc;
-  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, flag));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 5));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
 
+TEST(EncodeSmallWidthHeight, SmallWidthMultiThreaded) {
+  EncodeSmallWidthMultiThreaded(AOM_IMG_FMT_I420, 0);
+}
+
+#if CONFIG_AV1_HIGHBITDEPTH
+TEST(HighbdEncodeSmallWidthHeight, SmallWidthMultiThreaded) {
+  EncodeSmallWidthMultiThreaded(AOM_IMG_FMT_I42016, AOM_CODEC_USE_HIGHBITDEPTH);
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+
 #if !CONFIG_REALTIME_ONLY
-TEST(EncodeSmallWidthHeight, SmallWidthMultiThreadedSpeed0) {
+void EncodeSmallWidthMultiThreadedSpeed0(aom_img_fmt fmt,
+                                         aom_codec_flags_t flag) {
   // The image has only one tile and the tile is two AV1 superblocks wide.
   // For speed 0, superblock size is 128x128 (see av1_select_sb_size()).
   constexpr int kWidth = 256;
   constexpr int kHeight = 512;
 
   aom_image_t img;
-  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I420, kWidth, kHeight, 1,
+  EXPECT_EQ(&img, aom_img_wrap(&img, fmt, kWidth, kHeight, 1,
                                const_cast<unsigned char *>(kBuffer)));
 
   aom_codec_iface_t *iface = aom_codec_av1_cx();
@@ -74,22 +85,34 @@ TEST(EncodeSmallWidthHeight, SmallWidthMultiThreadedSpeed0) {
   cfg.g_w = kWidth;
   cfg.g_h = kHeight;
   aom_codec_ctx_t enc;
-  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, flag));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
+
+TEST(EncodeSmallWidthHeight, SmallWidthMultiThreadedSpeed0) {
+  EncodeSmallWidthMultiThreadedSpeed0(AOM_IMG_FMT_I420, 0);
+}
+
+#if CONFIG_AV1_HIGHBITDEPTH
+TEST(HighbdEncodeSmallWidthHeight, SmallWidthMultiThreadedSpeed0) {
+  EncodeSmallWidthMultiThreadedSpeed0(AOM_IMG_FMT_I42016,
+                                      AOM_CODEC_USE_HIGHBITDEPTH);
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+
 #endif
 
-TEST(EncodeSmallWidthHeight, SmallHeightMultiThreaded) {
+void EncodeSmallHeightMultiThreaded(aom_img_fmt fmt, aom_codec_flags_t flag) {
   // The image has only one tile and the tile is one AV1 superblock tall.
   // For speed >= 1, superblock size is 64x64 (see av1_select_sb_size()).
   constexpr int kWidth = 512;
   constexpr int kHeight = 64;
 
   aom_image_t img;
-  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I420, kWidth, kHeight, 1,
+  EXPECT_EQ(&img, aom_img_wrap(&img, fmt, kWidth, kHeight, 1,
                                const_cast<unsigned char *>(kBuffer)));
 
   aom_codec_iface_t *iface = aom_codec_av1_cx();
@@ -99,22 +122,34 @@ TEST(EncodeSmallWidthHeight, SmallHeightMultiThreaded) {
   cfg.g_w = kWidth;
   cfg.g_h = kHeight;
   aom_codec_ctx_t enc;
-  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, flag));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 5));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
 
+TEST(EncodeSmallWidthHeight, SmallHeightMultiThreaded) {
+  EncodeSmallHeightMultiThreaded(AOM_IMG_FMT_I420, 0);
+}
+
+#if CONFIG_AV1_HIGHBITDEPTH
+TEST(HighbdEncodeSmallWidthHeight, SmallHeightMultiThreaded) {
+  EncodeSmallHeightMultiThreaded(AOM_IMG_FMT_I42016,
+                                 AOM_CODEC_USE_HIGHBITDEPTH);
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+
 #if !CONFIG_REALTIME_ONLY
-TEST(EncodeSmallWidthHeight, SmallHeightMultiThreadedSpeed0) {
+void EncodeSmallHeightMultiThreadedSpeed0(aom_img_fmt fmt,
+                                          aom_codec_flags_t flag) {
   // The image has only one tile and the tile is one AV1 superblock tall.
   // For speed 0, superblock size is 128x128 (see av1_select_sb_size()).
   constexpr int kWidth = 512;
   constexpr int kHeight = 128;
 
   aom_image_t img;
-  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I420, kWidth, kHeight, 1,
+  EXPECT_EQ(&img, aom_img_wrap(&img, fmt, kWidth, kHeight, 1,
                                const_cast<unsigned char *>(kBuffer)));
 
   aom_codec_iface_t *iface = aom_codec_av1_cx();
@@ -124,17 +159,28 @@ TEST(EncodeSmallWidthHeight, SmallHeightMultiThreadedSpeed0) {
   cfg.g_w = kWidth;
   cfg.g_h = kHeight;
   aom_codec_ctx_t enc;
-  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, flag));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
+
+TEST(EncodeSmallWidthHeight, SmallHeightMultiThreadedSpeed0) {
+  EncodeSmallHeightMultiThreadedSpeed0(AOM_IMG_FMT_I420, 0);
+}
+
+#if CONFIG_AV1_HIGHBITDEPTH
+TEST(HighbdEncodeSmallWidthHeight, SmallHeightMultiThreadedSpeed0) {
+  EncodeSmallHeightMultiThreadedSpeed0(AOM_IMG_FMT_I42016,
+                                       AOM_CODEC_USE_HIGHBITDEPTH);
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif
 
 // A reproducer test for aomedia:3113. The test should complete without any
 // memory errors.
-TEST(EncodeSmallWidthHeight, 1x1) {
+void Encode1x1(aom_img_fmt fmt, int bitdepth, aom_codec_flags_t flags) {
   constexpr int kWidth = 1;
   constexpr int kHeight = 1;
 
@@ -144,8 +190,8 @@ TEST(EncodeSmallWidthHeight, 1x1) {
   // set up img manually.
   aom_image_t img;
   memset(&img, 0, sizeof(img));
-  img.fmt = AOM_IMG_FMT_I420;
-  img.bit_depth = 8;
+  img.fmt = fmt;
+  img.bit_depth = bitdepth;
   img.w = kWidth;
   img.h = kHeight;
   img.d_w = kWidth;
@@ -153,10 +199,14 @@ TEST(EncodeSmallWidthHeight, 1x1) {
   img.x_chroma_shift = 1;
   img.y_chroma_shift = 1;
   img.bps = 12;
-  int y_stride = kWidth;
-  int uv_stride = (kWidth + 1) >> 1;
+  const int y_stride = kWidth;
+  const int uv_stride = (kWidth + 1) >> 1;
   int y_height = kHeight;
   int uv_height = (kHeight + 1) >> 1;
+  if (bitdepth > 8) {
+    y_height <<= 1;
+    uv_height <<= 1;
+  }
   img.stride[AOM_PLANE_Y] = y_stride;
   img.stride[AOM_PLANE_U] = img.stride[AOM_PLANE_V] = uv_stride;
   std::unique_ptr<unsigned char[]> y_plane(
@@ -178,11 +228,19 @@ TEST(EncodeSmallWidthHeight, 1x1) {
   cfg.g_w = kWidth;
   cfg.g_h = kHeight;
   aom_codec_ctx_t enc;
-  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, 0));
+  EXPECT_EQ(AOM_CODEC_OK, aom_codec_enc_init(&enc, iface, &cfg, flags));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_control(&enc, AOME_SET_CPUUSED, 5));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, &img, 0, 1, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_encode(&enc, nullptr, 0, 0, 0));
   EXPECT_EQ(AOM_CODEC_OK, aom_codec_destroy(&enc));
 }
+
+TEST(EncodeSmallWidthHeight, 1x1) { Encode1x1(AOM_IMG_FMT_I420, 8, 0); }
+
+#if CONFIG_AV1_HIGHBITDEPTH
+TEST(HighbdEncodeSmallWidthHeight, 1x1) {
+  Encode1x1(AOM_IMG_FMT_I42016, 12, AOM_CODEC_USE_HIGHBITDEPTH);
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 
 }  // namespace

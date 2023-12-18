@@ -62,6 +62,13 @@ inline ImplementationVisibility ExecutableBase::implementationVisibility() const
     return ImplementationVisibility::Public;
 }
 
+inline InlineAttribute ExecutableBase::inlineAttribute() const
+{
+    if (isFunctionExecutable())
+        return jsCast<const FunctionExecutable*>(this)->inlineAttribute();
+    return InlineAttribute::None;
+}
+
 inline bool ExecutableBase::hasJITCodeForCall() const
 {
     if (isHostFunction())

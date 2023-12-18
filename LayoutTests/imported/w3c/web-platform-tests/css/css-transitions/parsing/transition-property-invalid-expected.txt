@@ -4,4 +4,14 @@ PASS e.style['transition-property'] = "1, 2, 3" should not set the property valu
 PASS e.style['transition-property'] = "none, one" should not set the property value
 PASS e.style['transition-property'] = "initial, top" should not set the property value
 PASS e.style['transition-property'] = "top, initial" should not set the property value
+PASS e.style['transition-property'] = "inherit, top" should not set the property value
+PASS e.style['transition-property'] = "top, inherit" should not set the property value
+PASS e.style['transition-property'] = "unset, top" should not set the property value
+PASS e.style['transition-property'] = "top, unset" should not set the property value
+PASS e.style['transition-property'] = "default, top" should not set the property value
+PASS e.style['transition-property'] = "top, default" should not set the property value
+PASS e.style['transition-property'] = "revert, top" should not set the property value
+PASS e.style['transition-property'] = "top, revert" should not set the property value
+PASS e.style['transition-property'] = "revert-layer, top" should not set the property value
+PASS e.style['transition-property'] = "top, revert-layer" should not set the property value
 

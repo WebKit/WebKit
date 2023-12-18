@@ -213,7 +213,7 @@ static void writeOID(CryptoKeyOKP::NamedCurve namedCurve, Vector<uint8_t>& resul
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 {
     if (type() != CryptoKeyType::Public)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     size_t keySize = keySizeInBytes();
 
@@ -322,7 +322,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
 {
     if (type() != CryptoKeyType::Private)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     size_t keySize = keySizeInBytes();
 

@@ -32,6 +32,7 @@ namespace gl
 {
 struct FormatType;
 struct InternalFormat;
+class ProgramExecutable;
 class State;
 }  // namespace gl
 
@@ -431,14 +432,14 @@ angle::Result MultiDrawElementsInstancedBaseVertexBaseInstanceGeneral(ContextImp
 class ResetBaseVertexBaseInstance : angle::NonCopyable
 {
   public:
-    ResetBaseVertexBaseInstance(gl::Program *programObject,
+    ResetBaseVertexBaseInstance(gl::ProgramExecutable *executable,
                                 bool resetBaseVertex,
                                 bool resetBaseInstance);
 
     ~ResetBaseVertexBaseInstance();
 
   private:
-    gl::Program *mProgramObject;
+    gl::ProgramExecutable *mExecutable;
     bool mResetBaseVertex;
     bool mResetBaseInstance;
 };
@@ -468,18 +469,18 @@ enum class PipelineType
 // in the header as we want to share with specialized context impl on some platforms for multidraw
 #define ANGLE_SET_DRAW_ID_UNIFORM_0(drawID) \
     {}
-#define ANGLE_SET_DRAW_ID_UNIFORM_1(drawID) programObject->setDrawIDUniform(drawID)
+#define ANGLE_SET_DRAW_ID_UNIFORM_1(drawID) executable->setDrawIDUniform(drawID)
 #define ANGLE_SET_DRAW_ID_UNIFORM(cond) ANGLE_SET_DRAW_ID_UNIFORM_##cond
 
 #define ANGLE_SET_BASE_VERTEX_UNIFORM_0(baseVertex) \
     {}
-#define ANGLE_SET_BASE_VERTEX_UNIFORM_1(baseVertex) programObject->setBaseVertexUniform(baseVertex);
+#define ANGLE_SET_BASE_VERTEX_UNIFORM_1(baseVertex) executable->setBaseVertexUniform(baseVertex);
 #define ANGLE_SET_BASE_VERTEX_UNIFORM(cond) ANGLE_SET_BASE_VERTEX_UNIFORM_##cond
 
 #define ANGLE_SET_BASE_INSTANCE_UNIFORM_0(baseInstance) \
     {}
 #define ANGLE_SET_BASE_INSTANCE_UNIFORM_1(baseInstance) \
-    programObject->setBaseInstanceUniform(baseInstance)
+    executable->setBaseInstanceUniform(baseInstance)
 #define ANGLE_SET_BASE_INSTANCE_UNIFORM(cond) ANGLE_SET_BASE_INSTANCE_UNIFORM_##cond
 
 #define ANGLE_NOOP_DRAW_ context->noopDraw(mode, counts[drawID])

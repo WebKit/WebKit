@@ -22,7 +22,6 @@
 #include "FilterOperations.h"
 #include "FloatRect.h"
 #include "NicosiaAnimation.h"
-#include "TextureMapper.h"
 #include "TextureMapperSolidColorLayer.h"
 #include <wtf/WeakPtr.h>
 
@@ -33,6 +32,7 @@
 namespace WebCore {
 
 class Region;
+class TextureMapper;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 

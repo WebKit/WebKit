@@ -82,6 +82,61 @@ struct ETC2Block
         }
     }
 
+    // Transcodes  block to BC4
+    void transcodeAsBC4(uint8_t *dest, size_t x, size_t y, size_t w, size_t h, bool isSigned) const
+    {
+        static constexpr int kIndexMap[] = {1, 7, 6, 5, 4, 3, 2, 0};
+        int alpha[16];
+        size_t k     = 0;
+        int minAlpha = std::numeric_limits<int>::max();
+        int maxAlpha = std::numeric_limits<int>::min();
+        for (size_t j = 0; j < 4; j++)
+        {
+            for (size_t i = 0; i < 4; i++)
+            {
+                if (isSigned)
+                {
+                    alpha[k] = clampSByte(getSingleETC2Channel(i, j, isSigned));
+                }
+                else
+                {
+                    alpha[k] = clampByte(getSingleETC2Channel(i, j, isSigned));
+                }
+                minAlpha = std::min(minAlpha, alpha[k]);
+                maxAlpha = std::max(maxAlpha, alpha[k]);
+                k++;
+            }
+        }
+        uint64_t *result = (uint64_t *)dest;
+        *result          = (maxAlpha & 0xff) | ((minAlpha & 0xff) << 8);
+        if (minAlpha != maxAlpha)
+        {
+            float dist = static_cast<float>(maxAlpha - minAlpha);
+            for (size_t i = 0; i < 16; i++)
+            {
+                int ind = int(roundf((alpha[i] - minAlpha) / dist * 7.0f));
+                // 0 : maxAlpha
+                // 1 : minAlpha
+                // 2 : 6/7*maxAlpha + 1/7*minAlpha;
+                // 3 : 5/7*maxAlpha + 2/7*minAlpha;
+                // 4 : 4/7*maxAlpha + 3/7*minAlpha;
+                // 5 : 3/7*maxAlpha + 4/7*minAlpha;
+                // 6 : 2/7*maxAlpha + 5/7*minAlpha;
+                // 7 : 1/7*maxAlpha + 6/7*minAlpha;
+                // so the mapping is
+                // 0 -> 1
+                // 1 -> 7
+                // 2 -> 6
+                // 3 -> 5
+                // 4 -> 4
+                // 5 -> 3
+                // 6 -> 2
+                // 7 -> 0
+                *result |= ((uint64_t)kIndexMap[ind]) << ((3 * i) + 16);
+            }
+        }
+    }
+
     // Decodes unsigned single or dual channel EAC block to 16-bit color
     void decodeAsSingleEACChannel(uint16_t *dest,
                                   size_t x,
@@ -1621,6 +1676,45 @@ void LoadETC2RGB8ToBC1(const ImageLoadContext &context,
     }
 }
 
+void LoadETC2RGBA8ToBC3(const ImageLoadContext &context,
+                        size_t width,
+                        size_t height,
+                        size_t depth,
+                        const uint8_t *input,
+                        size_t inputRowPitch,
+                        size_t inputDepthPitch,
+                        uint8_t *output,
+                        size_t outputRowPitch,
+                        size_t outputDepthPitch,
+                        bool punchthroughAlpha,
+                        bool isSigned)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y += 4)
+        {
+            const ETC2Block *sourceRow =
+                priv::OffsetDataPointer<ETC2Block>(input, y / 4, z, inputRowPitch, inputDepthPitch);
+            uint8_t *destRow = priv::OffsetDataPointer<uint8_t>(output, y / 4, z, outputRowPitch,
+                                                                outputDepthPitch);
+
+            for (size_t x = 0; x < width; x += 4)
+            {
+                const ETC2Block *sourceAlphaBlock = sourceRow + (x / 4) * 2;
+                uint8_t *destAlphaPixels          = destRow + (x * 4);
+
+                const ETC2Block *sourceRgbBlock = sourceAlphaBlock + 1;
+                uint8_t *destRgbPixels          = destAlphaPixels + 8;
+
+                sourceRgbBlock->transcodeAsBC1(destRgbPixels, x, y, width, height,
+                                               DefaultETCAlphaValues, punchthroughAlpha);
+
+                sourceAlphaBlock->transcodeAsBC4(destAlphaPixels, x, y, width, height, isSigned);
+            }
+        }
+    }
+}
+
 void LoadETC2RGBA8ToRGBA8(const ImageLoadContext &context,
                           size_t width,
                           size_t height,
@@ -2020,6 +2114,162 @@ void LoadETC2SRGBA8ToSRGBA8(const ImageLoadContext &context,
 {
     LoadETC2RGBA8ToRGBA8(context, width, height, depth, input, inputRowPitch, inputDepthPitch,
                          output, outputRowPitch, outputDepthPitch, true);
+}
+
+void LoadETC2RGBA8ToBC3(const ImageLoadContext &context,
+                        size_t width,
+                        size_t height,
+                        size_t depth,
+                        const uint8_t *input,
+                        size_t inputRowPitch,
+                        size_t inputDepthPitch,
+                        uint8_t *output,
+                        size_t outputRowPitch,
+                        size_t outputDepthPitch)
+{
+    LoadETC2RGBA8ToBC3(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                       outputRowPitch, outputDepthPitch, false, false);
+}
+
+void LoadETC2SRGBA8ToBC3(const ImageLoadContext &context,
+                         size_t width,
+                         size_t height,
+                         size_t depth,
+                         const uint8_t *input,
+                         size_t inputRowPitch,
+                         size_t inputDepthPitch,
+                         uint8_t *output,
+                         size_t outputRowPitch,
+                         size_t outputDepthPitch)
+{
+    LoadETC2RGBA8ToBC3(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                       outputRowPitch, outputDepthPitch, false, true);
+}
+
+void LoadEACR11ToBC4(const ImageLoadContext &context,
+                     size_t width,
+                     size_t height,
+                     size_t depth,
+                     const uint8_t *input,
+                     size_t inputRowPitch,
+                     size_t inputDepthPitch,
+                     uint8_t *output,
+                     size_t outputRowPitch,
+                     size_t outputDepthPitch,
+                     bool isSigned)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y += 4)
+        {
+            const ETC2Block *sourceRow =
+                priv::OffsetDataPointer<ETC2Block>(input, y / 4, z, inputRowPitch, inputDepthPitch);
+            uint8_t *destRow = priv::OffsetDataPointer<uint8_t>(output, y / 4, z, outputRowPitch,
+                                                                outputDepthPitch);
+
+            for (size_t x = 0; x < width; x += 4)
+            {
+                const ETC2Block *sourceR11Block = sourceRow + (x / 4);
+                uint8_t *destR11Pixels          = destRow + (x * 2);
+                sourceR11Block->transcodeAsBC4(destR11Pixels, x, y, width, height, isSigned);
+            }
+        }
+    }
+}
+
+void LoadEACRG11ToBC5(const ImageLoadContext &context,
+                      size_t width,
+                      size_t height,
+                      size_t depth,
+                      const uint8_t *input,
+                      size_t inputRowPitch,
+                      size_t inputDepthPitch,
+                      uint8_t *output,
+                      size_t outputRowPitch,
+                      size_t outputDepthPitch,
+                      bool isSigned)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y += 4)
+        {
+            const ETC2Block *sourceRow =
+                priv::OffsetDataPointer<ETC2Block>(input, y / 4, z, inputRowPitch, inputDepthPitch);
+            uint8_t *destRow = priv::OffsetDataPointer<uint8_t>(output, y / 4, z, outputRowPitch,
+                                                                outputDepthPitch);
+
+            for (size_t x = 0; x < width; x += 4)
+            {
+                const ETC2Block *sourceR11Block = sourceRow + (x / 2);
+                uint8_t *destR11Pixels          = destRow + (x * 4);
+
+                const ETC2Block *sourceG11Block = sourceR11Block + 1;
+                uint8_t *destG11Pixels          = destR11Pixels + 8;
+                sourceR11Block->transcodeAsBC4(destR11Pixels, x, y, width, height, isSigned);
+                sourceG11Block->transcodeAsBC4(destG11Pixels, x, y, width, height, isSigned);
+            }
+        }
+    }
+}
+
+void LoadEACR11ToBC4(const ImageLoadContext &context,
+                     size_t width,
+                     size_t height,
+                     size_t depth,
+                     const uint8_t *input,
+                     size_t inputRowPitch,
+                     size_t inputDepthPitch,
+                     uint8_t *output,
+                     size_t outputRowPitch,
+                     size_t outputDepthPitch)
+{
+    LoadEACR11ToBC4(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                    outputRowPitch, outputDepthPitch, false);
+}
+
+void LoadEACR11SToBC4(const ImageLoadContext &context,
+                      size_t width,
+                      size_t height,
+                      size_t depth,
+                      const uint8_t *input,
+                      size_t inputRowPitch,
+                      size_t inputDepthPitch,
+                      uint8_t *output,
+                      size_t outputRowPitch,
+                      size_t outputDepthPitch)
+{
+    LoadEACR11ToBC4(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                    outputRowPitch, outputDepthPitch, true);
+}
+
+void LoadEACRG11ToBC5(const ImageLoadContext &context,
+                      size_t width,
+                      size_t height,
+                      size_t depth,
+                      const uint8_t *input,
+                      size_t inputRowPitch,
+                      size_t inputDepthPitch,
+                      uint8_t *output,
+                      size_t outputRowPitch,
+                      size_t outputDepthPitch)
+{
+    LoadEACRG11ToBC5(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                     outputRowPitch, outputDepthPitch, false);
+}
+
+void LoadEACRG11SToBC5(const ImageLoadContext &context,
+                       size_t width,
+                       size_t height,
+                       size_t depth,
+                       const uint8_t *input,
+                       size_t inputRowPitch,
+                       size_t inputDepthPitch,
+                       uint8_t *output,
+                       size_t outputRowPitch,
+                       size_t outputDepthPitch)
+{
+    LoadEACRG11ToBC5(context, width, height, depth, input, inputRowPitch, inputDepthPitch, output,
+                     outputRowPitch, outputDepthPitch, true);
 }
 
 }  // namespace angle

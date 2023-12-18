@@ -106,12 +106,12 @@ static void truncateWithEllipsis(String& string, size_t length)
         string = makeString(StringView(string).left(length), horizontalEllipsis);
 }
 
-static FloatPoint localPointToRootPoint(const LocalFrameView* view, const FloatPoint& point)
+static FloatPoint localPointToRootPoint(const FrameView* view, const FloatPoint& point)
 {
     return view->contentsToRootView(point);
 }
 
-static void contentsQuadToCoordinateSystem(const LocalFrameView* mainView, const LocalFrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
+static void contentsQuadToCoordinateSystem(const FrameView* mainView, const LocalFrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
     quad.setP1(localPointToRootPoint(view, quad.p1()));
     quad.setP2(localPointToRootPoint(view, quad.p2()));
@@ -145,11 +145,10 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
 
     highlight.setDataFromConfig(highlightConfig);
     auto* containingView = containingFrame->view();
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
-    auto* mainView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* mainView = containingFrame->page()->mainFrame().virtualView();
 
     // (Legacy)RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
-    bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRootOrLegacySVGRoot();
+    bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isRenderOrLegacyRenderSVGRoot();
 
     if (isSVGRenderer) {
         highlight.type = InspectorOverlay::Highlight::Type::Rects;
@@ -319,8 +318,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
         return;
 
     auto* containingView = containingFrame->view();
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
-    auto* mainView = localMainFrame ? localMainFrame->view() : nullptr;
+    auto* mainView = containingFrame->page()->mainFrame().virtualView();
 
     static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
 
@@ -402,11 +400,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    FloatSize viewportSize = localMainFrame->view()->sizeForVisibleContent();
+    auto viewportSize = m_page.mainFrame().virtualView()->sizeForVisibleContent();
 
     context.clearRect({ FloatPoint::zero(), viewportSize });
 
@@ -603,12 +597,8 @@ void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlig
 
 void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const InspectorOverlay::Highlight::Config& highlightConfig)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
     if (highlightConfig.usePageCoordinates)
-        *quad -= toIntSize(localMainFrame->view()->scrollPosition());
+        *quad -= toIntSize(m_page.mainFrame().virtualView()->scrollPosition());
 
     m_quadHighlightConfig = highlightConfig;
     m_highlightQuad = WTFMove(quad);
@@ -654,12 +644,7 @@ void InspectorOverlay::update()
         return;
     }
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto* view = localMainFrame->view();
-    if (!view)
+    if (!m_page.mainFrame().virtualView())
         return;
 
     m_client->highlight();
@@ -683,11 +668,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     if (!m_showPaintRects)
         return;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    IntRect rootRect = localMainFrame->view()->contentsToRootView(enclosingIntRect(rect));
+    auto rootRect = m_page.mainFrame().virtualView()->contentsToRootView(enclosingIntRect(rect));
 
     const auto removeDelay = 250_ms;
 
@@ -996,7 +977,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { m_page.settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(10);
 
-        FontCascade font(WTFMove(fontDescription), 0, 0);
+        FontCascade font(WTFMove(fontDescription));
         font.update(nullptr);
 
         GraphicsContextStateSaver lineStateSaver(context);
@@ -1086,7 +1067,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { m_page.settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(12);
 
-        FontCascade font(WTFMove(fontDescription), 0, 0);
+        FontCascade font(WTFMove(fontDescription));
         font.update(nullptr);
 
         auto viewportRect = pageView->visualViewportRect();
@@ -1530,11 +1511,8 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     }
 
     constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(230);
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return { };
 
-    auto* pageView = localMainFrame->view();
+    RefPtr pageView = m_page.mainFrame().virtualView();
     if (!pageView)
         return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
@@ -1548,7 +1526,23 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     auto rowPositions = renderGrid.rowPositions();
     if (!columnPositions.size() || !rowPositions.size())
         return { };
-    
+
+    LayoutUnit masonryContentSize = renderGrid.masonryContentSize();
+
+    // There are no actual rows or columns in the masonry axis of a masonry layout.
+    // But we can borrow the concept to draw the two lines at the start and end of the masonry axis.
+    if (renderGrid.areMasonryRows()) {
+        auto firstRowPosition = rowPositions[0];
+        auto lastRowPosition = rowPositions[0] + masonryContentSize;
+        rowPositions = Vector<LayoutUnit> { firstRowPosition, lastRowPosition };
+    }
+
+    if (renderGrid.areMasonryColumns()) {
+        auto firstColumnPosition = columnPositions[0];
+        auto lastColumnPosition = columnPositions[0] + masonryContentSize;
+        columnPositions = Vector<LayoutUnit> { firstColumnPosition, lastColumnPosition };
+    }
+
     float gridStartX = columnPositions[0];
     float gridEndX = columnPositions[columnPositions.size() - 1];
     float gridStartY = rowPositions[0];
@@ -1669,6 +1663,10 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         } else {
             gridHighlightOverlay.gridLines.append(columnStartLine);
         }
+
+        // Draw only the bounding lines of the masonry axis.
+        if (renderGrid.areMasonryColumns())
+            continue;
         
         FloatLine gapLabelLine = columnStartLine;
         if (i) {
@@ -1755,6 +1753,10 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             gridHighlightOverlay.gridLines.append(rowStartLine);
         }
 
+        // Draw only the bounding lines of the masonry axis.
+        if (renderGrid.areMasonryRows())
+            continue;
+
         FloatPoint gapLabelPosition = rowStartLine.start();
         if (i) {
             FloatLine lineBetweenRowStarts = { rowStartLine.start(), previousRowEndLine.start() };
@@ -1814,7 +1816,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         }
     }
 
-    if (gridOverlay.config.showAreaNames) {
+    if (gridOverlay.config.showAreaNames && !renderGrid.isMasonry()) {
         for (auto& gridArea : node->renderStyle()->namedGridArea().map) {
             auto& name = gridArea.key;
             auto& area = gridArea.value;

@@ -31,7 +31,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "WKVideoView.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
@@ -77,7 +77,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
-            if (auto videoManager = m_drawingArea->page().videoFullscreenManager()) {
+            if (auto videoManager = m_drawingArea->page().videoPresentationManager()) {
                 m_videoLayers.add(properties.layerID, properties.videoElementData->playerIdentifier);
                 return makeWithView(videoManager->createViewWithID(properties.videoElementData->playerIdentifier, properties.hostingContextID(), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }

@@ -47,8 +47,24 @@
     "label": "//src/tests:angle_deqp_gles31_tests",
     "type": "windowed_test_launcher",
   },
+  "angle_deqp_gles31_multisample_tests": {
+    "label": "//src/tests:angle_deqp_gles31_multisample_tests",
+    "type": "windowed_test_launcher",
+  },
+  "angle_deqp_gles31_565_no_depth_no_stencil_tests": {
+    "label": "//src/tests:angle_deqp_gles31_565_no_depth_no_stencil_tests",
+    "type": "windowed_test_launcher",
+  },
   "angle_deqp_gles3_tests": {
     "label": "//src/tests:angle_deqp_gles3_tests",
+    "type": "windowed_test_launcher",
+  },
+  "angle_deqp_gles3_multisample_tests": {
+    "label": "//src/tests:angle_deqp_gles3_multisample_tests",
+    "type": "windowed_test_launcher",
+  },
+  "angle_deqp_gles3_565_no_depth_no_stencil_tests": {
+    "label": "//src/tests:angle_deqp_gles3_565_no_depth_no_stencil_tests",
     "type": "windowed_test_launcher",
   },
   "angle_deqp_khr_gles2_tests": {

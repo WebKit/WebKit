@@ -25,6 +25,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
+#import "WKSEDefinitions.h"
 #import <UIKit/UIScrollView.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
@@ -33,6 +34,7 @@
 @class CALayer;
 @class UIScrollEvent;
 @class UIScrollView;
+@class WKBaseScrollView;
 @class WKScrollingNodeScrollViewDelegate;
 
 namespace WebCore {
@@ -70,7 +72,7 @@ public:
     void repositionScrollingLayers();
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled));
+    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled));
 #endif
 
     OptionSet<WebCore::TouchAction> activeTouchActions() const { return m_activeTouchActions; }
@@ -79,7 +81,7 @@ public:
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*);
 
     UIScrollView *findActingScrollParent(UIScrollView *);
-    UIScrollView *scrollView() const;
+    WKBaseScrollView *scrollView() const;
 
     bool startAnimatedScrollToPosition(WebCore::FloatPoint) final;
     void stopAnimatedScroll() final;
@@ -101,7 +103,7 @@ private:
 
 } // namespace WebKit
 
-@interface WKScrollingNodeScrollViewDelegate : NSObject <UIScrollViewDelegate> {
+@interface WKScrollingNodeScrollViewDelegate : NSObject <WKSEScrollViewDelegate> {
     WebKit::ScrollingTreeScrollingNodeDelegateIOS* _scrollingTreeNodeDelegate;
 }
 

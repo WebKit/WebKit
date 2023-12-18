@@ -178,6 +178,7 @@ Status vp9_alloc_motion_field_info(MotionFieldInfo *motion_field_info,
   motion_field_info->frame_num = frame_num;
   motion_field_info->motion_field_array =
       vpx_calloc(frame_num, sizeof(*motion_field_info->motion_field_array));
+  if (!motion_field_info->motion_field_array) return STATUS_FAILED;
   for (frame_idx = 0; frame_idx < frame_num; ++frame_idx) {
     for (rf_idx = 0; rf_idx < MAX_INTER_REF_FRAMES; ++rf_idx) {
       for (square_block_idx = 0; square_block_idx < SQUARE_BLOCK_SIZES;
@@ -422,6 +423,7 @@ void vp9_get_smooth_motion_field(const MV *search_mf,
   int row, col;
   int bw = 4 << b_width_log2_lookup[bsize];
   int bh = 4 << b_height_log2_lookup[bsize];
+  if (!(input && output)) goto fail;
   // copy search results to input buffer
   for (idx = 0; idx < rows * cols; ++idx) {
     input[idx].row = (float)search_mf[idx].row / bh;
@@ -450,6 +452,7 @@ void vp9_get_smooth_motion_field(const MV *search_mf,
     smooth_mf[idx].row = (int)(input[idx].row * bh);
     smooth_mf[idx].col = (int)(input[idx].col * bw);
   }
+fail:
   free(input);
   free(output);
 }

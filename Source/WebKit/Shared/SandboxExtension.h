@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
@@ -34,14 +35,47 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class Encoder;
-class Decoder;
-}
-
 namespace WebKit {
-    
-class SandboxExtensionImpl;
+
+enum class SandboxExtensionFlags : uint8_t {
+    Default,
+    NoReport,
+    DoNotCanonicalize,
+};
+
+enum class SandboxExtensionType : uint8_t {
+    ReadOnly,
+    ReadWrite,
+    Mach,
+    IOKit,
+    Generic,
+    ReadByProcess
+};
+
+#if ENABLE(SANDBOX_EXTENSIONS)
+class SandboxExtensionImpl {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtensionType, std::optional<audit_token_t> = std::nullopt, OptionSet<SandboxExtensionFlags> = SandboxExtensionFlags::Default);
+    SandboxExtensionImpl(std::span<const uint8_t>);
+    ~SandboxExtensionImpl();
+
+    bool WARN_UNUSED_RETURN consume();
+    bool invalidate();
+    std::span<const uint8_t> WARN_UNUSED_RETURN getSerializedFormat();
+
+    SandboxExtensionImpl(SandboxExtensionImpl&& other)
+        : m_token(std::exchange(other.m_token, nullptr))
+        , m_handle(std::exchange(other.m_handle, 0)) { }
+private:
+    char* sandboxExtensionForType(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
+
+    SandboxExtensionImpl(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
+
+    char* m_token { nullptr };
+    int64_t m_handle { 0 };
+};
+#endif
 
 class SandboxExtensionHandle {
     WTF_MAKE_NONCOPYABLE(SandboxExtensionHandle);
@@ -50,18 +84,22 @@ public:
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtensionHandle(SandboxExtensionHandle&&);
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&);
+    SandboxExtensionHandle(std::unique_ptr<SandboxExtensionImpl>&& impl)
+        : m_sandboxExtension(WTFMove(impl)) { }
 #else
     SandboxExtensionHandle(SandboxExtensionHandle&&) = default;
     SandboxExtensionHandle& operator=(SandboxExtensionHandle&&) = default;
 #endif
     ~SandboxExtensionHandle();
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<SandboxExtensionHandle> decode(IPC::Decoder&);
+#if ENABLE(SANDBOX_EXTENSIONS)
+    std::unique_ptr<SandboxExtensionImpl> takeImpl() { return std::exchange(m_sandboxExtension, nullptr); }
+#endif
 
 private:
     friend class SandboxExtension;
 #if ENABLE(SANDBOX_EXTENSIONS)
+    // FIXME: change SandboxExtension(const Handle&) to SandboxExtension(Handle&&) and make this no longer mutable.
     mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
 #endif
 };
@@ -69,27 +107,13 @@ private:
 class SandboxExtension : public RefCounted<SandboxExtension> {
 public:
     using Handle = SandboxExtensionHandle;
-
-    enum class Type : uint8_t {
-        ReadOnly,
-        ReadWrite,
-        Mach,
-        IOKit,
-        Generic,
-        ReadByProcess
-    };
-
-    enum class Flags : uint8_t {
-        Default,
-        NoReport,
-        DoNotCanonicalize,
-    };
+    using Type = SandboxExtensionType;
+    using Flags = SandboxExtensionFlags;
 
     enum class MachBootstrapOptions : uint8_t {
         DoNotEnableMachBootstrap,
         EnableMachBootstrap
     };
-
 
     static RefPtr<SandboxExtension> create(Handle&&);
     static std::optional<Handle> createHandle(StringView path, Type);
@@ -122,7 +146,7 @@ private:
     explicit SandboxExtension(const Handle&);
                      
 #if ENABLE(SANDBOX_EXTENSIONS)
-    mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
+    std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
     size_t m_useCount { 0 };
 #endif
 };
@@ -135,8 +159,6 @@ String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path);
 
 inline SandboxExtensionHandle::SandboxExtensionHandle() { }
 inline SandboxExtensionHandle::~SandboxExtensionHandle() { }
-inline void SandboxExtensionHandle::encode(IPC::Encoder&) const { }
-inline std::optional<SandboxExtensionHandle> SandboxExtensionHandle::decode(IPC::Decoder&) { return SandboxExtensionHandle { }; }
 inline RefPtr<SandboxExtension> SandboxExtension::create(Handle&&) { return nullptr; }
 inline auto SandboxExtension::createHandle(StringView, Type) -> std::optional<Handle> { return Handle { }; }
 inline auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral, const Vector<String>&) -> Vector<Handle> { return { }; }

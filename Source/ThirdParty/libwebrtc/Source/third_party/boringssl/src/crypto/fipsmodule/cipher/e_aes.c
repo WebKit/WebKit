@@ -454,6 +454,10 @@ static int aes_gcm_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr) {
       gctx->ivlen = arg;
       return 1;
 
+    case EVP_CTRL_GET_IVLEN:
+      *(int *)ptr = gctx->ivlen;
+      return 1;
+
     case EVP_CTRL_AEAD_SET_TAG:
       if (arg <= 0 || arg > 16 || c->encrypt) {
         return 0;

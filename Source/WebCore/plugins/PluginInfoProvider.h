@@ -47,7 +47,7 @@ public:
 private:
     virtual void refreshPlugins() = 0;
 
-    WeakHashSet<Page> m_pages;
+    SingleThreadWeakHashSet<Page> m_pages;
 };
 
 }

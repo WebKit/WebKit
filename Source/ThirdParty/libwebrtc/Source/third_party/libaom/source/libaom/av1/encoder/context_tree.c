@@ -304,8 +304,6 @@ void av1_setup_sms_tree(AV1_COMP *const cpi, ThreadData *td) {
 }
 
 void av1_free_sms_tree(ThreadData *td) {
-  if (td->sms_tree != NULL) {
-    aom_free(td->sms_tree);
-    td->sms_tree = NULL;
-  }
+  aom_free(td->sms_tree);
+  td->sms_tree = NULL;
 }

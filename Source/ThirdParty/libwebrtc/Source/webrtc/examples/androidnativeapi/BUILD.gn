@@ -1,6 +1,7 @@
 import("//webrtc.gni")
 
 if (is_android) {
+  import("//third_party/jni_zero/jni_zero.gni")
   rtc_android_apk("androidnativeapi") {
     testonly = true
     apk_name = "androidnativeapi"
@@ -15,7 +16,6 @@ if (is_android) {
 
     deps = [
       ":resources",
-      "//modules/audio_device:audio_device_java",
       "//rtc_base:base_java",
       "//sdk/android:camera_java",
       "//sdk/android:surfaceviewrenderer_java",

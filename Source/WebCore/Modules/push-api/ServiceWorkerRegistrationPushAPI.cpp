@@ -26,9 +26,8 @@
 #include "config.h"
 #include "ServiceWorkerRegistrationPushAPI.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "PushManager.h"
+#include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/StdLibExtras.h>
 
@@ -49,7 +48,7 @@ PushManager& ServiceWorkerRegistrationPushAPI::pushManager(ServiceWorkerRegistra
 PushManager& ServiceWorkerRegistrationPushAPI::pushManager()
 {
     if (!m_pushManager)
-        m_pushManager = makeUnique<PushManager>(m_serviceWorkerRegistration);
+        m_pushManager = makeUniqueWithoutRefCountedCheck<PushManager>(m_serviceWorkerRegistration);
 
     return *m_pushManager;
 }
@@ -71,5 +70,3 @@ const char* ServiceWorkerRegistrationPushAPI::supplementName()
 }
 
 }
-
-#endif // ENABLE(SERVICE_WORKER)

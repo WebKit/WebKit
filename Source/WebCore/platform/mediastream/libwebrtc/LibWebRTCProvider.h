@@ -52,7 +52,7 @@ class RTCCertificateGenerator;
 }
 
 namespace webrtc {
-class AsyncResolverFactory;
+class AsyncDnsResolverFactory;
 class PeerConnectionFactoryInterface;
 }
 
@@ -122,7 +122,7 @@ public:
 protected:
     LibWebRTCProvider();
 
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncResolverFactory>&&);
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>&&);
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread);
     virtual std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory();

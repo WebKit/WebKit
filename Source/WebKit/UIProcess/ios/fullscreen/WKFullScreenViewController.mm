@@ -24,14 +24,15 @@
  */
 
 #import "config.h"
+#import "WKFullScreenViewController.h"
 
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
-#import "WKFullScreenViewController.h"
 
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "UIKitUtilities.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
+#import "WKExtrinsicButton.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewIOS.h"
 #import "WebFullScreenManagerProxy.h"
@@ -94,47 +95,6 @@ private:
     RefPtr<WebCore::PlaybackSessionInterfaceAVKit> m_interface;
 };
 
-#pragma mark - _WKExtrinsicButton
-
-@class _WKExtrinsicButton;
-
-@protocol _WKExtrinsicButtonDelegate <NSObject>
-- (void)_wkExtrinsicButtonWillDisplayMenu:(_WKExtrinsicButton *)button;
-- (void)_wkExtrinsicButtonWillDismissMenu:(_WKExtrinsicButton *)button;
-@end
-
-@interface _WKExtrinsicButton : UIButton
-@property (nonatomic, assign) CGSize extrinsicContentSize;
-@property (nonatomic, weak) id<_WKExtrinsicButtonDelegate> delegate;
-@end
-
-@implementation _WKExtrinsicButton
-
-- (void)setExtrinsicContentSize:(CGSize)size
-{
-    _extrinsicContentSize = size;
-    [self invalidateIntrinsicContentSize];
-}
-
-- (CGSize)intrinsicContentSize
-{
-    return _extrinsicContentSize;
-}
-
-- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
-{
-    [super contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
-    [_delegate _wkExtrinsicButtonWillDisplayMenu:self];
-}
-
-- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
-{
-    [super contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
-    [_delegate _wkExtrinsicButtonWillDismissMenu:self];
-}
-
-@end
-
 #pragma mark - _WKInsetLabel
 
 @interface _WKInsetLabel : UILabel
@@ -158,7 +118,7 @@ private:
 
 #pragma mark - WKFullScreenViewController
 
-@interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate, _WKExtrinsicButtonDelegate>
+@interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate, WKExtrinsicButtonDelegate>
 @property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
 @property (readonly, nonatomic) WebKit::WebFullScreenManagerProxy* _manager;
 @property (readonly, nonatomic) WebCore::FloatBoxExtent _effectiveFullscreenInsets;
@@ -174,8 +134,8 @@ private:
     RetainPtr<UIStackView> _banner;
     RetainPtr<_WKInsetLabel> _bannerLabel;
 #endif
-    RetainPtr<_WKExtrinsicButton> _cancelButton;
-    RetainPtr<_WKExtrinsicButton> _pipButton;
+    RetainPtr<WKExtrinsicButton> _cancelButton;
+    RetainPtr<WKExtrinsicButton> _pipButton;
     RetainPtr<UIButton> _locationButton;
     RetainPtr<UILayoutGuide> _topGuide;
     RetainPtr<NSLayoutConstraint> _topConstraint;
@@ -186,7 +146,7 @@ private:
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
     BOOL _isShowingMenu;
 #if PLATFORM(VISION)
-    RetainPtr<_WKExtrinsicButton> _moreActionsButton;
+    RetainPtr<WKExtrinsicButton> _moreActionsButton;
     BOOL _shouldHideCustomControls;
     BOOL _isInteractingWithSystemChrome;
 #endif
@@ -372,8 +332,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     auto page = [self._webView _page];
-    auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
-    auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
+    auto* videoPresentationManager = page ? page->videoPresentationManager() : nullptr;
+    auto* videoFullscreenInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
     auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
 
     _playbackClient.setInterface(playbackSessionInterface);
@@ -444,7 +404,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     ASSERT(_valid);
     _prefersHomeIndicatorAutoHidden = value;
+#if !PLATFORM(APPLETV)
     [self setNeedsUpdateOfHomeIndicatorAutoHidden];
+#endif
 }
 
 - (void)setPlaying:(BOOL)isPlaying
@@ -518,10 +480,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIImage *doneImage;
     UIImage *startPiPImage;
     UIImage *stopPiPImage;
+
+    // FIXME: Rename `alternateFullScreenControlDesignEnabled` to something that explains it is for visionOS.
     auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
     
     if (alternateFullScreenControlDesignEnabled) {
-        buttonSize = CGSizeMake(38.0, 38.0);
+        buttonSize = CGSizeMake(48.0, 48.0);
         doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
         startPiPImage = nil;
         stopPiPImage = nil;
@@ -553,6 +517,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_cancelButton setConfiguration:cancelButtonConfiguration];
 
 #if PLATFORM(VISION)
+        // FIXME: I think PLATFORM(VISION) is always true when `alternateFullScreenControlDesignEnabled` is true.
         _moreActionsButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
         [_moreActionsButton setConfiguration:cancelButtonConfiguration];
         [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
@@ -575,8 +540,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
         
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
+#if PLATFORM(APPLETV)
+        [stackView addArrangedSubviewForTV:_cancelButton.get()];
+#else
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
         _stackView = WTFMove(stackView);
     }
 
@@ -593,7 +562,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_bannerLabel setText:[NSString stringWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), (NSString *)self.location]];
 
     auto banner = adoptNS([[WKFullscreenStackView alloc] init]);
+#if PLATFORM(APPLETV)
+    [banner addArrangedSubviewForTV:_bannerLabel.get()];
+#else
     [banner addArrangedSubview:_bannerLabel.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
     _banner = WTFMove(banner);
     [_banner setTranslatesAutoresizingMaskIntoConstraints:NO];
 
@@ -608,7 +581,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
     NSLayoutConstraint *stackViewToTopGuideConstraint;
     if (alternateFullScreenControlDesignEnabled)
-        stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:2];
+        stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:3];
     else
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToAnchor:topAnchor];
     _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
@@ -664,15 +637,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     [self _updateWebViewFullscreenInsets];
     _secheuristic.setSize(self.view.bounds.size);
+    [self._webView setFrame:[_animatingView bounds]];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-        [self._webView _beginAnimatedResizeWithUpdates:^{
-            [self._webView _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
-        }];
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [self._webView _setInterfaceOrientationOverride:UIApplication.sharedApplication.statusBarOrientation];
         ALLOW_DEPRECATED_DECLARATIONS_END
@@ -824,9 +795,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self presentViewController:alert.get() animated:YES completion:nil];
 }
 
-- (_WKExtrinsicButton *)_createButtonWithExtrinsicContentSize:(CGSize)size
+- (WKExtrinsicButton *)_createButtonWithExtrinsicContentSize:(CGSize)size
 {
-    _WKExtrinsicButton *button = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+    WKExtrinsicButton *button = [WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
     [button setDelegate:self];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -837,13 +808,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return button;
 }
 
-- (void)_wkExtrinsicButtonWillDisplayMenu:(_WKExtrinsicButton *)button
+- (void)wkExtrinsicButtonWillDisplayMenu:(WKExtrinsicButton *)button
 {
     _isShowingMenu = YES;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
 }
 
-- (void)_wkExtrinsicButtonWillDismissMenu:(_WKExtrinsicButton *)button
+- (void)wkExtrinsicButtonWillDismissMenu:(WKExtrinsicButton *)button
 {
     _isShowingMenu = NO;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];

@@ -36,11 +36,14 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     ReleaseAllImageResources()
     ReleaseRenderingResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 
+    CreateRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier)
+    ReleaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier bufferSetIdentifier)
+
 #if PLATFORM(COCOA)
-    PrepareBuffersForDisplay(Vector<WebKit::PrepareBackingStoreBuffersInputData> swapBuffersInput) -> (Vector<WebKit::PrepareBackingStoreBuffersOutputData> swapBuffersOutput) Synchronous NotStreamEncodableReply
+    PrepareImageBufferSetsForDisplay(Vector<WebKit::ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput)  -> (Vector<WebKit::ImageBufferSetPrepareBufferForDisplayOutputData> swapBuffersOutput) NotStreamEncodableReply ReplyCanDispatchOutOfOrder
 #endif
 
-    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<WebCore::RenderingResourceIdentifier> renderingResourceIdentifiers)
+    MarkSurfacesVolatile(WebKit::MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<WebKit::RemoteImageBufferSetIdentifier, OptionSet<WebKit::BufferInSetType>>> renderingResourceIdentifiers)
     FinalizeRenderingUpdate(WebKit::RenderingUpdateID renderingUpdateID)
 
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)

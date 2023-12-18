@@ -26,23 +26,28 @@ TEST(FixedVector, Constructors)
     EXPECT_EQ(3u, countAndValue.size());
     EXPECT_EQ(2, countAndValue[1]);
 
-    FixedVector<int, 5> copy(countAndValue);
-    EXPECT_EQ(copy, countAndValue);
-
-    FixedVector<int, 5> copyRValue(std::move(count));
-    EXPECT_EQ(3u, copyRValue.size());
-
     FixedVector<int, 5> initializerList{1, 2, 3, 4, 5};
     EXPECT_EQ(5u, initializerList.size());
     EXPECT_EQ(3, initializerList[2]);
 
-    FixedVector<int, 5> assignCopy(copyRValue);
-    EXPECT_EQ(3u, assignCopy.size());
+    FixedVector<int, 5> copy(initializerList);
+    EXPECT_EQ(copy, initializerList);
 
-    FixedVector<int, 5> assignRValue(std::move(assignCopy));
-    EXPECT_EQ(3u, assignRValue.size());
+    FixedVector<int, 5> copyRValue(std::move(copy));
+    EXPECT_EQ(copyRValue, initializerList);
+    EXPECT_EQ(0u, copy.size());
 
-    FixedVector<int, 5> assignmentInitializerList = {1, 2, 3, 4, 5};
+    FixedVector<int, 5> assignCopy;
+    assignCopy = copyRValue;
+    EXPECT_EQ(assignCopy, initializerList);
+
+    FixedVector<int, 5> assignRValue;
+    assignRValue = std::move(assignCopy);
+    EXPECT_EQ(assignRValue, initializerList);
+    EXPECT_EQ(0u, assignCopy.size());
+
+    FixedVector<int, 5> assignmentInitializerList;
+    assignmentInitializerList = {1, 2, 3, 4, 5};
     EXPECT_EQ(5u, assignmentInitializerList.size());
     EXPECT_EQ(3, assignmentInitializerList[2]);
 }

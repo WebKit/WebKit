@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchFailureReason.h"
 #include "BackgroundFetchResult.h"
 #include "ServiceWorkerTypes.h"
@@ -49,5 +47,3 @@ struct BackgroundFetchInformation {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

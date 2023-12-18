@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,13 @@
 #include "DFGOperations.h"
 #include "DFGSlowPathGenerator.h"
 #include "DFGSpeculativeJIT.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
 class SaneStringGetByValSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::Jump> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SaneStringGetByValSlowPathGenerator);
 public:
     SaneStringGetByValSlowPathGenerator(
         const MacroAssembler::Jump& from, SpeculativeJIT* jit, JSValueRegs resultRegs, JITCompiler::LinkableConstant globalObject, GPRReg baseReg, GPRReg propertyReg)

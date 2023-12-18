@@ -76,11 +76,13 @@ TEST(FirstpassTest, FirstpassInfoPushPop) {
   EXPECT_EQ(firstpass_info.stats_count, FIRSTPASS_INFO_STATIC_BUF_SIZE);
 
   EXPECT_EQ(firstpass_info.stats_count, firstpass_info.stats_buf_size);
-  // Push the stats when the queue is full.
-  FIRSTPASS_STATS stats;
-  av1_zero(stats);
-  aom_codec_err_t ret = av1_firstpass_info_push(&firstpass_info, &stats);
-  EXPECT_EQ(ret, AOM_CODEC_ERROR);
+  {
+    // Push the stats when the queue is full.
+    FIRSTPASS_STATS stats;
+    av1_zero(stats);
+    aom_codec_err_t ret = av1_firstpass_info_push(&firstpass_info, &stats);
+    EXPECT_EQ(ret, AOM_CODEC_ERROR);
+  }
 }
 
 TEST(FirstpassTest, FirstpassInfoTotalStats) {
@@ -110,9 +112,11 @@ TEST(FirstpassTest, FirstpassInfoMoveCurr) {
     EXPECT_EQ(ret, AOM_CODEC_OK);
   }
   EXPECT_EQ(firstpass_info.cur_index, firstpass_info.start_index);
-  aom_codec_err_t ret = av1_firstpass_info_pop(&firstpass_info);
-  // We cannot pop when cur_index == start_index
-  EXPECT_EQ(ret, AOM_CODEC_ERROR);
+  {
+    aom_codec_err_t ret = av1_firstpass_info_pop(&firstpass_info);
+    // We cannot pop when cur_index == start_index
+    EXPECT_EQ(ret, AOM_CODEC_ERROR);
+  }
   int ref_frame_cnt = 0;
   const int move_count = FIRSTPASS_INFO_STATIC_BUF_SIZE * 2 / 3;
   for (int i = 0; i < move_count; ++i) {

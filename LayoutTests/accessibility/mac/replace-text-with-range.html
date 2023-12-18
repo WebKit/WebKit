@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 <div id="content">
@@ -11,34 +12,41 @@
 <textarea id="textarea">Hello world</textarea>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that the replace with range API functions as expected.");
+var result = "This tests that the replace with range API functions as expected.\n\n";
 
-    if (window.accessibilityController) {
-        var contenteditable = accessibilityController.accessibleElementById("contenteditable");
-        shouldBeTrue('contenteditable.replaceTextInRange("Blurb", 5, 5)');
-        shouldBe("contenteditable.stringValue", "'AXValue: HelloBlurb'");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    var contenteditable = accessibilityController.accessibleElementById("contenteditable");
+    var text = accessibilityController.accessibleElementById("text");
+    var textarea = accessibilityController.accessibleElementById("textarea");
+
+    setTimeout(async function() {
+        result += expect('contenteditable.replaceTextInRange("Blurb", 5, 5)', "true");
+        await waitFor(() => contenteditable.stringValue == "AXValue: HelloBlurb");
+        result += expect("contenteditable.stringValue", "'AXValue: HelloBlurb'");
 
         // now test what happens when a control has focus
         document.getElementById("contenteditable").focus();
-        shouldBeTrue('contenteditable.replaceTextInRange("Blorg", 5, 5)');
-        shouldBe("contenteditable.stringValue", "'AXValue: HelloBlorg'");
+        result += expect('contenteditable.replaceTextInRange("Blorg", 5, 5)', "true");
+        await waitFor(() => contenteditable.stringValue == "AXValue: HelloBlorg");
+        result += expect("contenteditable.stringValue", "'AXValue: HelloBlorg'");
         document.getElementById("contenteditable").blur();
 
-        var text = accessibilityController.accessibleElementById("text");
-        shouldBeTrue('text.replaceTextInRange("blurb", 6, 5)');
-        shouldBe("text.stringValue", "'AXValue: Hello blurb'");
+        result += expect('text.replaceTextInRange("blurb", 6, 5)', "true");
+        await waitFor(() => text.stringValue == "AXValue: Hello blurb");
+        result += expect("text.stringValue", "'AXValue: Hello blurb'");
 
-        var textarea = accessibilityController.accessibleElementById("textarea");
-        shouldBeTrue('textarea.replaceTextInRange("blurb", 6, 5)');
-        shouldBe("textarea.stringValue", "'AXValue: Hello blurb'");
+        result += expect('textarea.replaceTextInRange("blurb", 6, 5)', "true");
+         await waitFor(() => textarea.stringValue == "AXValue: Hello blurb");
+        result += expect("textarea.stringValue", "'AXValue: Hello blurb'");
 
         document.getElementById("content").style.visibility = "hidden";
-    }
 
+        debug(result);
+        finishJSTest();
+    }, 0);
+}
 </script>
 
 </body>

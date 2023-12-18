@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005-2017 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2023 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -80,6 +80,8 @@ my $buildbotWorker;
 my $buildJSC = 1;
 my $copyJSC = 1;
 
+my $noRetry;
+
 use constant {
     ENV_VAR_SAYS_DO_RUN => 4,
     ENV_VAR_SAYS_DONT_RUN => 3,
@@ -101,6 +103,7 @@ my $runMozillaTests = RUN_IF_NO_TESTS_SPECIFIED;
 # on the JSC stress test or mozilla tests.
 my $runJITStressTests = 1;
 
+my $runCLoopMode = 0;
 my $runQuickMode = 0;
 
 my $forceCollectContinuously = 0;
@@ -307,6 +310,7 @@ Usage: $programName [options] [options to pass to build system]
   --builder-name:               The name of the buildbot builder tests were run on.
   --build-number:               The buildbot build number tests are associated with.
   --buildbot-worker:            The buildbot worker tests were run on.
+  --no-retry:                   Disable retry
 
 Environment Variables:
   - set RUN_JAVASCRIPTCORE_TESTS_TESTMASM to "true" or "false" (no quotes) to determine if we run testmasm by default.
@@ -337,6 +341,7 @@ GetOptions(
     'jsc-stress!' => \$runJSCStress,
     'mozilla-tests!' => \$runMozillaTests,
     'jit-stress-tests!' => \$runJITStressTests,
+    'cloop' => \$runCLoopMode,
     'quick!' => \$runQuickMode,
     'fail-fast!' => \$failFast,
     'force-collectContinuously!' => \$forceCollectContinuously,
@@ -375,6 +380,7 @@ GetOptions(
     'builder-name=s' => \$builderName,
     'build-number=s' => \$buildNumber,
     'buildbot-worker=s' => \$buildbotWorker,
+    'no-retry' => \$noRetry,
 );
 
 my $specificTestsSpecified = 0;
@@ -551,8 +557,8 @@ if (defined $remoteConfigFile) {
 if (defined $archs) {
     die "$archs not supported by the provided binary, which supports '$archsInBuild'" if index($archsInBuild, $archs) == -1;
 } else {
-    # Fallback is x86_64, which we replace with the native architecture if the native architecture is in the provided build
-    $archs = "x86_64";
+    # Fallback is the architecture of the host machine. Avoid calling lipo which allows this script to work without Xcode being installed.
+    chomp($archs = `/usr/bin/arch`);
     $archs = nativeArchitecture($remotes) if (!isAppleMacWebKit() || index($archsInBuild, nativeArchitecture($remotes)) != -1);
 }
 
@@ -848,6 +854,10 @@ sub runJSCStressTests
             push(@jscStressDriverCmd, $envVars);
     }
 
+    if ($runCLoopMode) {
+        push(@jscStressDriverCmd, "--cloop");
+    }
+
     if ($runQuickMode) {
         push(@jscStressDriverCmd, "--quick");
     }
@@ -918,6 +928,10 @@ sub runJSCStressTests
     if ($filter) {
         push(@jscStressDriverCmd, "--filter");
         push(@jscStressDriverCmd, $filter);
+    }
+
+    if ($noRetry) {
+        push(@jscStressDriverCmd, "--no-retry");
     }
 
     push(@jscStressDriverCmd, ("--verbose") x $verbose) if ($verbose > 0);

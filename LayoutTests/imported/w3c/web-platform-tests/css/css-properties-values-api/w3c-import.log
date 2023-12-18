@@ -28,12 +28,17 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/conditional-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/determine-registration.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/font-size-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/get-computed-style-enumeration.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/invalid-at-computed-value-time.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/property-cascade.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/register-property-syntax-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/register-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-properties-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-change-style-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-change-style-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-change-style-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-change-style-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-computation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-crosstalk.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-properties-values-api/registered-property-cssom.html

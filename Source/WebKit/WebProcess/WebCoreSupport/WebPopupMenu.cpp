@@ -79,24 +79,15 @@ void WebPopupMenu::setTextForIndex(int index)
 
 Vector<WebPopupItem> WebPopupMenu::populateItems()
 {
-    size_t size = m_popupClient->listSize();
-
-    Vector<WebPopupItem> items;
-    items.reserveInitialCapacity(size);
-    
-    for (size_t i = 0; i < size; ++i) {
+    return Vector<WebPopupItem>(m_popupClient->listSize(), [&](size_t i) {
         if (m_popupClient->itemIsSeparator(i))
-            items.append(WebPopupItem(WebPopupItem::Type::Separator));
-        else {
-            // FIXME: Add support for styling the font.
-            // FIXME: Add support for styling the foreground and background colors.
-            // FIXME: Find a way to customize text color when an item is highlighted.
-            PopupMenuStyle itemStyle = m_popupClient->itemStyle(i);
-            items.append(WebPopupItem(WebPopupItem::Type::Item, m_popupClient->itemText(i), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride(), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i), m_popupClient->itemIsLabel(i), m_popupClient->itemIsSelected(i)));
-        }
-    }
-
-    return items;
+            return WebPopupItem(WebPopupItem::Type::Separator);
+        // FIXME: Add support for styling the font.
+        // FIXME: Add support for styling the foreground and background colors.
+        // FIXME: Find a way to customize text color when an item is highlighted.
+        PopupMenuStyle itemStyle = m_popupClient->itemStyle(i);
+        return WebPopupItem(WebPopupItem::Type::Item, m_popupClient->itemText(i), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride(), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i), m_popupClient->itemIsLabel(i), m_popupClient->itemIsSelected(i));
+    });
 }
 
 void WebPopupMenu::show(const IntRect& rect, LocalFrameView* view, int selectedIndex)

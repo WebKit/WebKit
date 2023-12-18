@@ -2102,6 +2102,15 @@
     "imported/w3c/web-platform-tests/cookies/size/name-and-value.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-embed.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/third-party-cookies/resources/third-party-cookies-cross-site-window.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/cookies/third-party-cookies/third-party-cookies.tentative.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/cookies/value/value-ctl.html": [
         "slow"
     ],
@@ -2198,6 +2207,48 @@
     "imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/content-with-transform-old-image.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/iframe-transition.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-changes-overflow.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-has-scrollbars.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/new-content-with-object-view-box.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/no-css-animation-while-render-blocked.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blocked.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/object-view-box-old-image.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/old-content-captures-different-size.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/old-content-has-scrollbars.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/css-view-transitions/old-content-with-object-view-box.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/idlharness.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-back-to-initial-position.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-default-css.html": [
         "slow"
     ],
@@ -2211,6 +2262,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-scrollintoview-nested.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-navigation.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html": [
@@ -2241,6 +2295,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-state-pseudo-class/custom-state-set-strong-ref.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-state-pseudo-class/state-css-selector.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html": [
@@ -3968,6 +4028,15 @@
     "imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-multiple.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-size.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/show-picker-user-gesture.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html": [
         "slow"
     ],
@@ -5120,6 +5189,9 @@
     "imported/w3c/web-platform-tests/mixed-content/gen/worker-module.http-rp/unset/xhr.https.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationEffect.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/setting-allowpaymentrequest-timing.https.sub.html": [
         "slow"
     ],
@@ -5265,6 +5337,12 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/screen-orientation/hidden_document.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-fill-modes.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-phases.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [
@@ -5505,6 +5583,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/svg/animations/svglengthlist-animation-3.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/unset/fetch.https.html": [
@@ -6141,6 +6222,15 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/webrtc/RTCConfiguration-iceTransportPolicy.html": [

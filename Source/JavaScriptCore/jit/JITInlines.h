@@ -87,30 +87,6 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     done.link(this);
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedNearCall(CodePtr<NoPtrTag> target)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    Call nakedCall = nearCall();
-    m_nearCalls.append(NearCallRecord(nakedCall, target.retagged<JSInternalPtrTag>()));
-    return nakedCall;
-}
-
-ALWAYS_INLINE JIT::Call JIT::emitNakedNearTailCall(CodePtr<NoPtrTag> target)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    Call nakedCall = nearTailCall();
-    m_nearCalls.append(NearCallRecord(nakedCall, target.retagged<JSInternalPtrTag>()));
-    return nakedCall;
-}
-
-ALWAYS_INLINE JIT::Jump JIT::emitNakedNearJump(CodePtr<JITThunkPtrTag> target)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    Jump nakedJump = jump();
-    m_nearJumps.append(NearJumpRecord(nakedJump, CodeLocationLabel(target)));
-    return nakedJump;
-}
-
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex.offset()).bits();
@@ -501,7 +477,7 @@ ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode,
 
 ALWAYS_INLINE void JIT::loadConstant(CCallHelpers& jit, JITConstantPool::Constant constantIndex, GPRReg result)
 {
-    jit.loadPtr(Address(s_constantsGPR, BaselineJITData::offsetOfData() + static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
+    jit.loadPtr(Address(s_constantsGPR, BaselineJITData::offsetOfTrailingData() + static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
 }
 
 ALWAYS_INLINE void JIT::loadGlobalObject(CCallHelpers& jit, GPRReg result)
@@ -517,6 +493,16 @@ ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GP
 ALWAYS_INLINE void JIT::loadGlobalObject(GPRReg result)
 {
     loadGlobalObject(*this, result);
+}
+
+ALWAYS_INLINE void JIT::loadStructureStubInfo(CCallHelpers& jit, StructureStubInfoIndex index, GPRReg result)
+{
+    jit.subPtr(s_constantsGPR, TrustedImm32(static_cast<uintptr_t>(index.m_index + 1) * sizeof(StructureStubInfo)), result);
+}
+
+ALWAYS_INLINE void JIT::loadStructureStubInfo(StructureStubInfoIndex index, GPRReg result)
+{
+    loadStructureStubInfo(*this, index, result);
 }
 
 ALWAYS_INLINE static void loadAddrOfCodeBlockConstantBuffer(JIT &jit, GPRReg dst)

@@ -71,6 +71,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueArray.h>
@@ -106,6 +107,7 @@ class BuiltinExecutables;
 class BytecodeIntrinsicRegistry;
 class CallFrame;
 enum class CallMode;
+enum class CommonJITThunkID : uint8_t;
 struct CheckpointOSRExitSideState;
 class CodeBlock;
 class CodeCache;
@@ -173,7 +175,7 @@ struct EntryFrame;
 
 class MicrotaskQueue;
 class QueuedTask {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(QueuedTask);
     friend class MicrotaskQueue;
 public:
     static constexpr unsigned maxArguments = 4;
@@ -196,7 +198,7 @@ private:
 };
 
 class MicrotaskQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MicrotaskQueue);
     WTF_MAKE_NONCOPYABLE(MicrotaskQueue);
 public:
     MicrotaskQueue() = default;
@@ -354,6 +356,9 @@ public:
     WeakRandom& heapRandom() { return m_heapRandom; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
 
+    template<typename Type, typename Functor>
+    Type& ensureSideData(void* key, const Functor&);
+
     bool hasTerminationRequest() const { return m_hasTerminationRequest; }
     void clearHasTerminationRequest()
     {
@@ -421,22 +426,30 @@ public:
     };
     JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
 
-private:
-    VMIdentifier m_identifier;
-    RefPtr<JSLock> m_apiLock;
-    Ref<WTF::RunLoop> m_runLoop;
-
     // Keep super frequently accessed fields top in VM.
+    unsigned disallowVMEntryCount { 0 };
+private:
     void* m_softStackLimit { nullptr };
     Exception* m_exception { nullptr };
     Exception* m_terminationException { nullptr };
     Exception* m_lastException { nullptr };
+public:
+    // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
+    // topEntryFrame.
+    // FIXME: This should be a void*, because it might not point to a CallFrame.
+    // https://bugs.webkit.org/show_bug.cgi?id=160441
+    CallFrame* topCallFrame { nullptr };
+    EntryFrame* topEntryFrame { nullptr };
+private:
+    OptionSet<EntryScopeService> m_entryScopeServices;
+
+    VMIdentifier m_identifier;
+    RefPtr<JSLock> m_apiLock;
+    Ref<WTF::RunLoop> m_runLoop;
 
     WeakRandom m_random;
     WeakRandom m_heapRandom;
     Integrity::Random m_integrityRandom;
-
-    OptionSet<EntryScopeService> m_entryScopeServices;
 
     bool hasEntryScopeServiceRequest(EntryScopeService service)
     {
@@ -499,12 +512,6 @@ public:
     VMType vmType;
     bool m_mightBeExecutingTaintedCode { false };
     ClientData* clientData { nullptr };
-    EntryFrame* topEntryFrame { nullptr };
-    // NOTE: When throwing an exception while rolling back the call frame, this may be equal to
-    // topEntryFrame.
-    // FIXME: This should be a void*, because it might not point to a CallFrame.
-    // https://bugs.webkit.org/show_bug.cgi?id=160441
-    CallFrame* topCallFrame { nullptr };
 #if ENABLE(WEBASSEMBLY)
     Wasm::Context wasmContext;
 #endif
@@ -670,6 +677,7 @@ public:
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
     MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(CommonJITThunkID);
     std::unique_ptr<SharedJITStubSet> m_sharedJITStubs;
 #endif
 #if ENABLE(FTL_JIT)
@@ -776,6 +784,8 @@ public:
     void* targetMachinePCForThrow;
     void* targetMachinePCAfterCatch;
     JSOrWasmInstruction targetInterpreterPCForThrow;
+    uintptr_t targetInterpreterMetadataPCForThrow;
+    uint32_t targetTryDepthForThrow;
 
     unsigned varargsLength;
     uint32_t osrExitIndex;
@@ -808,7 +818,6 @@ public:
     void scanSideState(ConservativeRoots&) const;
 
     Interpreter interpreter;
-    unsigned disallowVMEntryCount { 0 };
     VMEntryScope* entryScope { nullptr };
 
     JSObject* stringRecursionCheckFirstObject { nullptr };
@@ -1134,6 +1143,7 @@ private:
     WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)> m_onComputeErrorInfo;
     uintptr_t m_currentWeakRefVersion { 0 };
 
+    bool m_hasSideData { false };
     bool m_hasTerminationRequest { false };
     bool m_executionForbidden { false };
     bool m_executionForbiddenOnTermination { false };

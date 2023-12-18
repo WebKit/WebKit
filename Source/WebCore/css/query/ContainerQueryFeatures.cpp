@@ -45,15 +45,14 @@ struct SizeFeatureSchema : public FeatureSchema {
         // or the query container does not support container size queries on the relevant axes, then the result of
         // evaluating the size feature is unknown."
         // https://drafts.csswg.org/css-contain-3/#size-container
-        if (!is<RenderBox>(context.renderer))
+        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer);
+        if (!renderer)
             return MQ::EvaluationResult::Unknown;
 
-        auto& renderer = downcast<RenderBox>(*context.renderer);
-
-        if (!renderer.hasEligibleContainmentForSizeQuery())
+        if (!renderer->hasEligibleContainmentForSizeQuery())
             return MQ::EvaluationResult::Unknown;
 
-        return evaluate(feature, renderer, context.conversionData);
+        return evaluate(feature, *renderer, context.conversionData);
     }
 
     virtual EvaluationResult evaluate(const MQ::Feature&, const RenderBox&, const CSSToLengthConversionData&) const = 0;

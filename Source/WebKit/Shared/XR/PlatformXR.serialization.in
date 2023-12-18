@@ -1,0 +1,161 @@
+# Copyright (C) 2023 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(WEBXR)
+
+enum class PlatformXR::SessionFeature : uint8_t {
+    ReferenceSpaceTypeViewer,
+    ReferenceSpaceTypeLocal,
+    ReferenceSpaceTypeLocalFloor,
+    ReferenceSpaceTypeBoundedFloor,
+    ReferenceSpaceTypeUnbounded,
+#if ENABLE(WEBXR_HANDS)
+    HandTracking,
+#endif
+};
+
+enum class PlatformXR::SessionMode : uint8_t {
+    Inline,
+    ImmersiveVr,
+    ImmersiveAr,
+};
+
+enum class PlatformXR::ReferenceSpaceType : uint8_t {
+    Viewer,
+    Local,
+    LocalFloor,
+    BoundedFloor,
+    Unbounded
+};
+
+enum class PlatformXR::VisibilityState : uint8_t {
+    Visible,
+    VisibleBlurred,
+    Hidden
+};
+
+enum class PlatformXR::XRHandedness : uint8_t {
+    None,
+    Left,
+    Right,
+};
+
+enum class PlatformXR::XRTargetRayMode : uint8_t {
+    Gaze,
+    TrackedPointer,
+    Screen,
+    TransientPointer,
+};
+
+[Nested] struct PlatformXR::FrameData::FloatQuaternion {
+    float x;
+    float y;
+    float z;
+    float w;
+};
+
+[Nested] struct PlatformXR::FrameData::Pose {
+    WebCore::FloatPoint3D position;
+    PlatformXR::FrameData::FloatQuaternion orientation;
+};
+
+[Nested] struct PlatformXR::FrameData::Fov {
+    float up;
+    float down;
+    float left;
+    float right;
+};
+
+[Nested] struct PlatformXR::FrameData::View {
+    PlatformXR::FrameData::Pose offset;
+    PlatformXR::FrameData::Projection projection;
+};
+
+[Nested] struct PlatformXR::FrameData::StageParameters {
+    int id;
+    Vector<WebCore::FloatPoint> bounds;
+};
+
+[Nested, RValue] struct PlatformXR::FrameData::LayerData {
+#if PLATFORM(COCOA)
+    std::tuple<MachSendRight, bool> colorTexture;
+    std::tuple<MachSendRight, bool> depthStencilBuffer;
+    std::tuple<MachSendRight, uint64_t> completionSyncEvent;
+#else
+    PlatformGLObject opaqueTexture;
+#endif
+};
+
+[Nested] struct PlatformXR::FrameData::InputSourceButton {
+    bool touched;
+    bool pressed;
+    float pressedValue;
+};
+
+[Nested] struct PlatformXR::FrameData::InputSourcePose {
+    PlatformXR::FrameData::Pose pose;
+    bool isPositionEmulated;
+};
+
+#endif
+
+#if ENABLE(WEBXR_HANDS)
+
+[Nested] struct PlatformXR::FrameData::InputSourceHandJoint {
+    PlatformXR::FrameData::InputSourcePose pose;
+    float radius;
+};
+
+#endif
+
+#if ENABLE(WEBXR)
+
+[Nested] struct PlatformXR::FrameData::InputSource {
+    int handle;
+    PlatformXR::XRHandedness handeness;
+    PlatformXR::XRTargetRayMode targetRayMode;
+    Vector<String> profiles;
+    PlatformXR::FrameData::InputSourcePose pointerOrigin;
+    std::optional<PlatformXR::FrameData::InputSourcePose> gripOrigin;
+    Vector<PlatformXR::FrameData::InputSourceButton> buttons;
+    Vector<float> axes;
+#if ENABLE(WEBXR_HANDS)
+    std::optional<PlatformXR::FrameData::HandJointsVector> handJoints;
+#endif
+};
+
+header: <WebCore/PlatformXR.h>
+[CustomHeader, RValue] struct PlatformXR::FrameData {
+    bool isTrackingValid;
+    bool isPositionValid;
+    bool isPositionEmulated;
+    bool shouldRender;
+    long predictedDisplayTime;
+    PlatformXR::FrameData::Pose origin;
+    std::optional<PlatformXR::FrameData::Pose> floorTransform;
+    PlatformXR::FrameData::StageParameters stageParameters;
+    Vector<PlatformXR::FrameData::View> views;
+    HashMap<PlatformXR::LayerHandle, PlatformXR::FrameData::LayerData> layers;
+    Vector<PlatformXR::FrameData::InputSource> inputSources;
+};
+
+#endif

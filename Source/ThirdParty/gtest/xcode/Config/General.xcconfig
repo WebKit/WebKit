@@ -63,5 +63,7 @@ COMBINE_HIDPI_IMAGES = YES;
 // VERSIONING BUILD SETTINGS (used in Info.plist)
 GTEST_VERSIONINFO_ABOUT =  © 2008 Google Inc.
 
+PRODUCT_BUNDLE_IDENTIFIER = com.google.$(PRODUCT_NAME:rfc1034identifier);
+
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;

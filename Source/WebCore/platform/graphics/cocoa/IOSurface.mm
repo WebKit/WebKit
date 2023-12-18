@@ -64,6 +64,8 @@ static auto surfaceNameToNSString(IOSurface::Name name)
         return @"WebKit ImageBufferShareableMapped";
     case IOSurface::Name::LayerBacking:
         return @"WebKit LayerBacking";
+    case IOSurface::Name::BitmapOnlyLayerBacking:
+        return @"WebKit LayerBacking (bitmap only)";
     case IOSurface::Name::MediaPainting:
         return @"WebKit MediaPainting";
     case IOSurface::Name::Snapshot:
@@ -677,6 +679,9 @@ IOSurface::Name IOSurface::nameForRenderingPurpose(RenderingPurpose purpose)
 
     case RenderingPurpose::LayerBacking:
         return Name::LayerBacking;
+
+    case RenderingPurpose::BitmapOnlyLayerBacking:
+        return Name::BitmapOnlyLayerBacking;
 
     case RenderingPurpose::Snapshot:
         return Name::Snapshot;

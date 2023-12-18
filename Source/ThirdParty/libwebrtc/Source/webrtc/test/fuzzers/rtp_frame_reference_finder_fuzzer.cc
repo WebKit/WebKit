@@ -120,6 +120,9 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         reader.CopyTo(
             &video_header.video_type_header.emplace<RTPVideoHeaderH264>());
         break;
+      case kVideoCodecH265:
+        // TODO(bugs.webrtc.org/13485)
+        break;
       default:
         break;
     }

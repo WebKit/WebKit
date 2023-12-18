@@ -73,11 +73,14 @@ protected:
 
     const WebCore::RealtimeMediaSourceSettings& settings() final { return m_settings; }
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
-    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
+
+    Ref<TakePhotoNativePromise> takePhoto(WebCore::PhotoSettings&&) final;
+    Ref<PhotoCapabilitiesNativePromise> getPhotoCapabilities() final;
+    Ref<PhotoSettingsNativePromise> getPhotoSettings() final;
 
 private:
     // RealtimeMediaSource
-    void startProducingData() final { m_proxy.startProducingData(); }
+    void startProducingData() final { m_proxy.startProducingData(pageIdentifier()); }
     void stopProducingData() final { m_proxy.stopProducingData(); }
     bool isCaptureSource() const final { return true; }
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;

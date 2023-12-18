@@ -4689,7 +4689,6 @@
 {
     "domain": "ServiceWorker",
     "description": "Actions and events related to the inspected service worker.",
-    "condition": "defined(ENABLE_SERVICE_WORKER) && ENABLE_SERVICE_WORKER",
     "debuggableTypes": ["service-worker"],
     "targetTypes": ["service-worker"],
     "types": [
@@ -4964,4 +4963,4 @@
         }
     ]
 }
-], "conditionFlags": "ENABLE_DARK_MODE_CSS ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS ENABLE_RESOURCE_USAGE ENABLE_SERVICE_WORKER ENABLE_VIDEO ENABLE_WEB_ARCHIVE ENABLE_WEBGL HAVE_OS_DARK_MODE_SUPPORT USE_CF WTF_PLATFORM_COCOA"}
+], "conditionFlags": "ENABLE_DARK_MODE_CSS ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS ENABLE_RESOURCE_USAGE ENABLE_VIDEO ENABLE_WEB_ARCHIVE ENABLE_WEBGL HAVE_OS_DARK_MODE_SUPPORT USE_CF WTF_PLATFORM_COCOA"}

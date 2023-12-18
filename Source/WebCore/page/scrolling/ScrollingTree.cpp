@@ -318,7 +318,7 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
 
     LOG(ScrollingTree, "\nScrollingTree %p commitTreeState", this);
 
-    auto* rootNode = scrollingStateTree->rootStateNode();
+    auto rootNode = scrollingStateTree->rootStateNode();
     if (rootNode
         && (rootStateNodeChanged
             || rootNode->hasChangedProperty(ScrollingStateNode::Property::EventTrackingRegion)
@@ -360,7 +360,7 @@ bool ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree>&& scroll
     for (auto nodeID : m_nodeMap.keys())
         commitState.unvisitedNodes.add(nodeID);
 
-    bool succeeded = updateTreeFromStateNodeRecursive(rootNode, commitState);
+    bool succeeded = updateTreeFromStateNodeRecursive(rootNode.get(), commitState);
     if (!succeeded)
         return false;
 
@@ -442,6 +442,7 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
 
     // Now update the children if we have any.
     for (auto& child : stateNode->children()) {
+        ASSERT(child->parent().get() == stateNode);
         if (!updateTreeFromStateNodeRecursive(child.ptr(), state))
             return false;
     }

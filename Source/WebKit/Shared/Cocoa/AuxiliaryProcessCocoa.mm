@@ -30,6 +30,7 @@
 #import "OSStateSPI.h"
 #import "SharedBufferReference.h"
 #import "WKCrashReporter.h"
+#import "WKProcessExtension.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -46,6 +47,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "AppKitSPI.h"
 #import <pal/spi/mac/HIServicesSPI.h>
 #endif
 
@@ -84,6 +86,10 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
     setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
+
+#if USE(EXTENSIONKIT)
+    setProcessIsExtension(!!WKProcessExtension.sharedInstance);
+#endif
 }
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
@@ -208,7 +214,15 @@ static const WTF::String& increaseContrastPreferenceKey()
 }
 #endif
 
-static void handleAXPreferenceChange(const String& domain, const String& key, id value)
+#if USE(APPKIT)
+static const WTF::String& invertColorsPreferenceKey()
+{
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("whiteOnBlack"));
+    return key;
+}
+#endif
+
+void AuxiliaryProcess::handleAXPreferenceChange(const String& domain, const String& key, id value)
 {
 #if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS)
     if (!libAccessibilityLibrary())
@@ -228,6 +242,14 @@ static void handleAXPreferenceChange(const String& domain, const String& key, id
             _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
 #endif
     }
+
+#if USE(APPKIT)
+    auto cfKey = key.createCFString();
+    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || CFEqual(cfKey.get(), kAXInterfaceDifferentiateWithoutColorKey) || key == invertColorsPreferenceKey()) {
+        [NSWorkspace _invalidateAccessibilityDisplayValues];
+        accessibilitySettingsDidChange();
+    }
+#endif
 }
 
 void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String& key, id value)

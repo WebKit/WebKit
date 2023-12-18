@@ -104,19 +104,17 @@ struct lhash_st {
 };
 
 _LHASH *OPENSSL_lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
-  _LHASH *ret = OPENSSL_malloc(sizeof(_LHASH));
+  _LHASH *ret = OPENSSL_zalloc(sizeof(_LHASH));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(_LHASH));
 
   ret->num_buckets = kMinNumBuckets;
-  ret->buckets = OPENSSL_malloc(sizeof(LHASH_ITEM *) * ret->num_buckets);
+  ret->buckets = OPENSSL_calloc(ret->num_buckets, sizeof(LHASH_ITEM *));
   if (ret->buckets == NULL) {
     OPENSSL_free(ret);
     return NULL;
   }
-  OPENSSL_memset(ret->buckets, 0, sizeof(LHASH_ITEM *) * ret->num_buckets);
 
   ret->comp = comp;
   ret->hash = hash;
@@ -214,11 +212,10 @@ static void lh_rebucket(_LHASH *lh, const size_t new_num_buckets) {
     return;
   }
 
-  new_buckets = OPENSSL_malloc(alloc_size);
+  new_buckets = OPENSSL_zalloc(alloc_size);
   if (new_buckets == NULL) {
     return;
   }
-  OPENSSL_memset(new_buckets, 0, alloc_size);
 
   for (i = 0; i < lh->num_buckets; i++) {
     for (cur = lh->buckets[i]; cur != NULL; cur = next) {

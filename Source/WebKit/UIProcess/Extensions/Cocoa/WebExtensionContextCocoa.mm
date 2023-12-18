@@ -32,7 +32,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIArray.h"
+#import "APIContentRuleList.h"
+#import "APIContentRuleListStore.h"
 #import "CocoaHelpers.h"
+#import "ContextMenuContextData.h"
 #import "InjectUserScriptImmediately.h"
 #import "Logging.h"
 #import "WKNavigationActionPrivate.h"
@@ -41,18 +45,27 @@
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
+#import "WKWebpagePreferencesPrivate.h"
+#import "WKWebsiteDataStorePrivate.h"
 #import "WebExtensionAction.h"
+#import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionDynamicScripts.h"
+#import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
 #import "WebPageProxy.h"
+#import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
+#import "_WKWebExtensionDeclarativeNetRequestTranslator.h"
 #import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
+#import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionWindow.h"
 #import <WebCore/LocalizedStrings.h>
@@ -67,11 +80,16 @@
 static constexpr size_t maximumCachedPermissionResults = 256;
 
 static NSString * const backgroundContentEventListenersKey = @"BackgroundContentEventListeners";
+static NSString * const backgroundContentEventListenersVersionKey = @"BackgroundContentEventListenersVersion";
 static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
+static NSString * const lastLoadedDeclarativeNetRequestHashStateKey = @"LastLoadedDeclarativeNetRequestHash";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
-static constexpr NSInteger currentBackgroundPageListenerStateVersion = 1;
+static constexpr NSInteger currentBackgroundContentListenerStateVersion = 3;
+
+// Update this value when any changes are made to the rule translation logic in _WKWebExtensionDeclarativeNetRequestRule.
+static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1;
 
 @interface _WKWebExtensionContextDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
     WeakPtr<WebKit::WebExtensionContext> _webExtensionContext;
@@ -133,6 +151,8 @@ static constexpr NSInteger currentBackgroundPageListenerStateVersion = 1;
 @end
 
 namespace WebKit {
+
+using namespace WebExtensionDynamicScripts;
 
 WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     : WebExtensionContext()
@@ -206,19 +226,26 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
     m_contentScriptWorld = API::ContentWorld::sharedWorldWithName(makeString("WebExtension-", m_uniqueIdentifier));
 
     readStateFromStorage();
+
+    auto lastSeenBaseURL = URL { objectForKey<NSString>(m_state, lastSeenBaseURLStateKey) };
+    [m_state setObject:(NSString *)m_baseURL.string() forKey:lastSeenBaseURLStateKey];
+
     writeStateToStorage();
 
     populateWindowsAndTabs();
 
-    // FIXME: <https://webkit.org/b/248430> Move local storage (if base URL changed).
+    // FIXME: <https://webkit.org/b/249266> Remove registered scripts from storage if an extension has updated.
 
-    // FIXME: <https://webkit.org/b/248889> Check to see if extension is being loaded as part of startup.
+    moveLocalStorageIfNeeded(lastSeenBaseURL, [&] {
+        loadBackgroundWebViewDuringLoad();
 
-    loadBackgroundWebViewDuringLoad();
+        loadRegisteredContentScripts();
 
-    // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by loading them from storage here.
+        loadDeclarativeNetRequestRulesetStateFromStorage();
+        loadDeclarativeNetRequestRules([](bool) { });
 
-    addInjectedContent();
+        addInjectedContent();
+    });
 
     return true;
 }
@@ -240,9 +267,33 @@ bool WebExtensionContext::unload(NSError **outError)
     unloadBackgroundWebView();
     removeInjectedContent();
 
-    m_storageDirectory = nullString();
+    invalidateStorage();
+    unloadDeclarativeNetRequestState();
+
     m_extensionController = nil;
     m_contentScriptWorld = nullptr;
+
+    return true;
+}
+
+bool WebExtensionContext::reload(NSError **outError)
+{
+    if (outError)
+        *outError = nil;
+
+    if (!isLoaded()) {
+        RELEASE_LOG_ERROR(Extensions, "Extension context not loaded");
+        if (outError)
+            *outError = createError(Error::NotLoaded);
+        return false;
+    }
+
+    Ref controller = *m_extensionController;
+    if (!controller->unload(*this, outError))
+        return false;
+
+    if (!controller->load(*this, outError))
+        return false;
 
     return true;
 }
@@ -251,22 +302,20 @@ String WebExtensionContext::stateFilePath() const
 {
     if (!storageIsPersistent())
         return nullString();
-    return FileSystem::pathByAppendingComponent(m_storageDirectory, "State.plist"_s);
+    return FileSystem::pathByAppendingComponent(storageDirectory(), "State.plist"_s);
 }
 
 NSDictionary *WebExtensionContext::currentState() const
 {
-    [m_state setObject:(NSString *)m_baseURL.string() forKey:lastSeenBaseURLStateKey];
-    [m_state setObject:m_extension->version() ?: @"" forKey:lastSeenVersionStateKey];
-
-    return [m_state.get() copy];
+    return [m_state copy];
 }
 
 NSDictionary *WebExtensionContext::readStateFromStorage()
 {
     if (!storageIsPersistent()) {
-        m_state = [NSMutableDictionary dictionary];
-        return @{ };
+        if (!m_state)
+            m_state = [NSMutableDictionary dictionary];
+        return m_state.get();
     }
 
     NSFileCoordinator *fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
@@ -302,6 +351,23 @@ void WebExtensionContext::writeStateToStorage() const
 
     if (coordinatorError)
         RELEASE_LOG_ERROR(Extensions, "Failed to coordinate writing extension state: %{private}@", coordinatorError);
+}
+
+void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&& completionHandler)
+{
+    if (previousBaseURL == baseURL()) {
+        completionHandler();
+        return;
+    }
+
+    static NSSet<NSString *> *dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeLocalStorage, nil];
+    [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL to:baseURL() forDataOfTypes:dataTypes completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
+}
+
+void WebExtensionContext::invalidateStorage()
+{
+    m_storageDirectory = nullString();
+    m_registeredContentScriptsStorage = nil;
 }
 
 void WebExtensionContext::setBaseURL(URL&& url)
@@ -354,14 +420,11 @@ void WebExtensionContext::setInspectable(bool inspectable)
 
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
 {
-    // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by including them here.
     return m_extension->staticInjectedContents();
 }
 
-bool WebExtensionContext::hasInjectedContentForURL(NSURL *url)
+bool WebExtensionContext::hasInjectedContentForURL(const URL& url)
 {
-    ASSERT(url);
-
     for (auto& injectedContent : injectedContents()) {
         // FIXME: <https://webkit.org/b/246492> Add support for exclude globs.
         bool isExcluded = false;
@@ -385,6 +448,47 @@ bool WebExtensionContext::hasInjectedContentForURL(NSURL *url)
     return false;
 }
 
+bool WebExtensionContext::hasInjectedContent()
+{
+    return !injectedContents().isEmpty();
+}
+
+URL WebExtensionContext::optionsPageURL() const
+{
+    if (!extension().hasOptionsPage())
+        return { };
+    return { m_baseURL, extension().optionsPagePath() };
+}
+
+URL WebExtensionContext::overrideNewTabPageURL() const
+{
+    if (!extension().hasOverrideNewTabPage())
+        return { };
+    return { m_baseURL, extension().overrideNewTabPagePath() };
+}
+
+void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
+{
+    if (m_hasAccessInPrivateBrowsing == hasAccess)
+        return;
+
+    m_hasAccessInPrivateBrowsing = hasAccess;
+
+    if (!isLoaded())
+        return;
+
+    if (m_hasAccessInPrivateBrowsing) {
+        addDeclarativeNetRequestRulesToPrivateUserContentControllers();
+        for (auto& controller : extensionController()->allPrivateUserContentControllers())
+            addInjectedContent(controller);
+    } else {
+        for (auto& controller : extensionController()->allPrivateUserContentControllers()) {
+            removeInjectedContent(controller);
+            controller.removeContentRuleList(uniqueIdentifier());
+        }
+    }
+}
+
 const WebExtensionContext::PermissionsMap& WebExtensionContext::grantedPermissions()
 {
     return removeExpired(m_grantedPermissions, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
@@ -406,6 +510,7 @@ void WebExtensionContext::setGrantedPermissions(PermissionsMap&& grantedPermissi
             continue;
         }
 
+        addedPermissions.add(entry.key);
         addedPermissions.add(entry.key);
     }
 
@@ -539,10 +644,19 @@ void WebExtensionContext::postAsyncNotification(NSNotificationName notificationN
     if (matchPatterns.isEmpty())
         return;
 
-    if ([notificationName isEqualToString:_WKWebExtensionContextPermissionsWereGrantedNotification])
+    if ([notificationName isEqualToString:_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification])
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
-    else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionsWereRemovedNotification])
+    else if ([notificationName isEqualToString:_WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification])
         firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+
+    // Fire the tab updated event for any tabs that match the changed patterns, now that the extension has / does not have permission to see the URL and title.
+    constexpr auto changedProperties = OptionSet { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title };
+    for (auto& tab : openTabs()) {
+        for (auto& matchPattern : matchPatterns) {
+            if (matchPattern->matchesURL(tab->url()))
+                didChangeTabProperties(tab, changedProperties);
+        }
+    }
 
     dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, notificationName = retainPtr(notificationName), matchPatterns]() {
         [NSNotificationCenter.defaultCenter postNotificationName:notificationName.get() object:wrapper() userInfo:@{ _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns: toAPI(matchPatterns) }];
@@ -581,7 +695,7 @@ void WebExtensionContext::denyPermissions(PermissionsSet&& permissions, WallTime
     postAsyncNotification(_WKWebExtensionContextPermissionsWereDeniedNotification, permissions);
 }
 
-void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate)
+void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
 {
     if (permissionMatchPatterns.isEmpty())
         return;
@@ -592,7 +706,7 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
     for (auto& pattern : permissionMatchPatterns)
         m_grantedPermissionMatchPatterns.add(pattern, expirationDate);
 
-    removeDeniedPermissionMatchPatterns(permissionMatchPatterns, EqualityOnly::Yes);
+    removeDeniedPermissionMatchPatterns(permissionMatchPatterns, equalityOnly);
     clearCachedPermissionStates();
 
     addInjectedContent(injectedContents(), permissionMatchPatterns);
@@ -600,7 +714,7 @@ void WebExtensionContext::grantPermissionMatchPatterns(MatchPatternSet&& permiss
     postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification, permissionMatchPatterns);
 }
 
-void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate)
+void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissionMatchPatterns, WallTime expirationDate, EqualityOnly equalityOnly)
 {
     if (permissionMatchPatterns.isEmpty())
         return;
@@ -611,7 +725,7 @@ void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissi
     for (auto& pattern : permissionMatchPatterns)
         m_deniedPermissionMatchPatterns.add(pattern, expirationDate);
 
-    removeGrantedPermissionMatchPatterns(permissionMatchPatterns, EqualityOnly::Yes);
+    removeGrantedPermissionMatchPatterns(permissionMatchPatterns, equalityOnly);
     clearCachedPermissionStates();
 
     updateInjectedContent();
@@ -619,34 +733,52 @@ void WebExtensionContext::denyPermissionMatchPatterns(MatchPatternSet&& permissi
     postAsyncNotification(_WKWebExtensionContextPermissionMatchPatternsWereDeniedNotification, permissionMatchPatterns);
 }
 
-void WebExtensionContext::removeGrantedPermissions(PermissionsSet& permissionsToRemove)
+bool WebExtensionContext::removeGrantedPermissions(PermissionsSet& permissionsToRemove)
 {
-    removePermissions(m_grantedPermissions, permissionsToRemove, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
+    return removePermissions(m_grantedPermissions, permissionsToRemove, m_nextGrantedPermissionsExpirationDate, _WKWebExtensionContextGrantedPermissionsWereRemovedNotification);
 }
 
-void WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
+bool WebExtensionContext::removeGrantedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
 {
-    removePermissionMatchPatterns(m_grantedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextGrantedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification);
+    if (!removePermissionMatchPatterns(m_grantedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextGrantedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextGrantedPermissionMatchPatternsWereRemovedNotification))
+        return false;
 
     removeInjectedContent(matchPatternsToRemove);
+
+    // Clear activeTab permissions if the patterns match.
+    for (auto& tab : openTabs()) {
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (!temporaryPattern)
+            continue;
+
+        for (auto& pattern : matchPatternsToRemove) {
+            if (temporaryPattern->matchesPattern(pattern))
+                tab->setTemporaryPermissionMatchPattern(nullptr);
+        }
+    }
+
+    return true;
 }
 
-void WebExtensionContext::removeDeniedPermissions(PermissionsSet& permissionsToRemove)
+bool WebExtensionContext::removeDeniedPermissions(PermissionsSet& permissionsToRemove)
 {
-    removePermissions(m_deniedPermissions, permissionsToRemove, m_nextDeniedPermissionsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
+    return removePermissions(m_deniedPermissions, permissionsToRemove, m_nextDeniedPermissionsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
 }
 
-void WebExtensionContext::removeDeniedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
+bool WebExtensionContext::removeDeniedPermissionMatchPatterns(MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly)
 {
-    removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionsWereRemovedNotification);
+    if (!removePermissionMatchPatterns(m_deniedPermissionMatchPatterns, matchPatternsToRemove, equalityOnly, m_nextDeniedPermissionMatchPatternsExpirationDate, _WKWebExtensionContextDeniedPermissionMatchPatternsWereRemovedNotification))
+        return false;
 
     updateInjectedContent();
+
+    return true;
 }
 
-void WebExtensionContext::removePermissions(PermissionsMap& permissionMap, PermissionsSet& permissionsToRemove, WallTime& nextExpirationDate, NSNotificationName notificationName)
+bool WebExtensionContext::removePermissions(PermissionsMap& permissionMap, PermissionsSet& permissionsToRemove, WallTime& nextExpirationDate, NSNotificationName notificationName)
 {
     if (permissionsToRemove.isEmpty())
-        return;
+        return false;
 
     nextExpirationDate = WallTime::infinity();
 
@@ -664,15 +796,17 @@ void WebExtensionContext::removePermissions(PermissionsMap& permissionMap, Permi
     });
 
     if (removedPermissions.isEmpty() || !notificationName)
-        return;
+        return false;
 
     postAsyncNotification(notificationName, removedPermissions);
+
+    return true;
 }
 
-void WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsMap& matchPatternMap, MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly, WallTime& nextExpirationDate, NSNotificationName notificationName)
+bool WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsMap& matchPatternMap, MatchPatternSet& matchPatternsToRemove, EqualityOnly equalityOnly, WallTime& nextExpirationDate, NSNotificationName notificationName)
 {
     if (matchPatternsToRemove.isEmpty())
-        return;
+        return false;
 
     nextExpirationDate = WallTime::infinity();
 
@@ -705,11 +839,13 @@ void WebExtensionContext::removePermissionMatchPatterns(PermissionMatchPatternsM
     });
 
     if (removedMatchPatterns.isEmpty() || !notificationName)
-        return;
+        return false;
 
     clearCachedPermissionStates();
 
     postAsyncNotification(notificationName, removedMatchPatterns);
+
+    return true;
 }
 
 WebExtensionContext::PermissionsMap& WebExtensionContext::removeExpired(PermissionsMap& permissionMap, WallTime& nextExpirationDate, NSNotificationName notificationName)
@@ -770,6 +906,8 @@ WebExtensionContext::PermissionMatchPatternsMap& WebExtensionContext::removeExpi
         return matchPatternMap;
 
     clearCachedPermissionStates();
+
+    updateInjectedContent();
 
     postAsyncNotification(notificationName, removedMatchPatterns);
 
@@ -865,22 +1003,22 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     return PermissionState::Unknown;
 }
 
-WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& coreURL, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
+WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& url, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
-    if (coreURL.isEmpty())
+    if (url.isEmpty())
         return PermissionState::Unknown;
 
-    if (isURLForThisExtension(coreURL))
+    if (isURLForThisExtension(url))
         return PermissionState::GrantedImplicitly;
 
-    NSURL *url = coreURL;
-    ASSERT(url);
-
-    if (!WebExtensionMatchPattern::validSchemes().contains(url.scheme))
+    if (!WebExtensionMatchPattern::validSchemes().contains(url.protocol().toStringWithoutCopying()))
         return PermissionState::Unknown;
 
-    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab->delegate()] matchesURL:url])
-        return PermissionState::GrantedExplicitly;
+    if (tab) {
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && temporaryPattern->matchesURL(url))
+            return PermissionState::GrantedExplicitly;
+    }
 
     bool skipRequestedPermissions = options.contains(PermissionStateOptions::SkipRequestedPermissions);
 
@@ -889,13 +1027,13 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     auto& deniedPermissionMatchPatterns = this->deniedPermissionMatchPatterns();
 
     // If the cache still has the URL, then it has not expired.
-    if (m_cachedPermissionURLs.contains(coreURL)) {
-        PermissionState cachedState = m_cachedPermissionStates.get(coreURL);
+    if (m_cachedPermissionURLs.contains(url)) {
+        PermissionState cachedState = m_cachedPermissionStates.get(url);
 
         // We only want to return an unknown cached state if the SkippingRequestedPermissions option isn't used.
         if (cachedState != PermissionState::Unknown || skipRequestedPermissions) {
             // Move the URL to the end, so it stays in the cache longer as a recent hit.
-            m_cachedPermissionURLs.appendOrMoveToLast(coreURL);
+            m_cachedPermissionURLs.appendOrMoveToLast(url);
 
             if ((cachedState == PermissionState::RequestedExplicitly || cachedState == PermissionState::RequestedImplicitly) && skipRequestedPermissions)
                 return PermissionState::Unknown;
@@ -905,8 +1043,8 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     }
 
     auto cacheResultAndReturn = ^PermissionState(PermissionState result) {
-        m_cachedPermissionURLs.appendOrMoveToLast(coreURL);
-        m_cachedPermissionStates.set(coreURL, result);
+        m_cachedPermissionURLs.appendOrMoveToLast(url);
+        m_cachedPermissionStates.set(url, result);
 
         ASSERT(m_cachedPermissionURLs.size() == m_cachedPermissionURLs.size());
 
@@ -992,8 +1130,11 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(WebExt
     if (!pattern.matchesAllURLs() && !WebExtensionMatchPattern::validSchemes().contains(pattern.scheme()))
         return PermissionState::Unknown;
 
-    if (tab && [[m_temporaryTabPermissionMatchPatterns objectForKey:tab->delegate()] matchesPattern:pattern.wrapper()])
-        return PermissionState::GrantedExplicitly;
+    if (tab) {
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && temporaryPattern->matchesPattern(pattern))
+            return PermissionState::GrantedExplicitly;
+    }
 
     // Access the maps here to remove any expired entries, and only do it once for this call.
     auto& grantedPermissionMatchPatterns = this->grantedPermissionMatchPatterns();
@@ -1063,20 +1204,21 @@ void WebExtensionContext::setPermissionState(PermissionState state, const String
 {
     ASSERT(!permission.isEmpty());
 
+    auto permissions = PermissionsSet { permission };
+
     switch (state) {
     case PermissionState::DeniedExplicitly:
-        denyPermissions({ permission }, expirationDate);
+        denyPermissions(WTFMove(permissions), expirationDate);
         break;
 
     case PermissionState::Unknown: {
-        PermissionsSet permissionsToRemove = { permission };
-        removeGrantedPermissions(permissionsToRemove);
-        removeDeniedPermissions(permissionsToRemove);
+        removeGrantedPermissions(permissions);
+        removeDeniedPermissions(permissions);
         break;
     }
 
     case PermissionState::GrantedExplicitly:
-        grantPermissions({ permission }, expirationDate);
+        grantPermissions(WTFMove(permissions), expirationDate);
         break;
 
     case PermissionState::DeniedImplicitly:
@@ -1103,20 +1245,22 @@ void WebExtensionContext::setPermissionState(PermissionState state, WebExtension
 {
     ASSERT(pattern.isValid());
 
+    auto patterns = MatchPatternSet { pattern };
+    auto equalityOnly = pattern.matchesAllHosts() ? EqualityOnly::Yes : EqualityOnly::No;
+
     switch (state) {
     case PermissionState::DeniedExplicitly:
-        denyPermissionMatchPatterns({ pattern }, expirationDate);
+        denyPermissionMatchPatterns(WTFMove(patterns), expirationDate, equalityOnly);
         break;
 
     case PermissionState::Unknown: {
-        MatchPatternSet patternsToRemove = { pattern };
-        removeGrantedPermissionMatchPatterns(patternsToRemove, EqualityOnly::Yes);
-        removeDeniedPermissionMatchPatterns(patternsToRemove, EqualityOnly::Yes);
+        removeGrantedPermissionMatchPatterns(patterns, equalityOnly);
+        removeDeniedPermissionMatchPatterns(patterns, equalityOnly);
         break;
     }
 
     case PermissionState::GrantedExplicitly:
-        grantPermissionMatchPatterns({ pattern }, expirationDate);
+        grantPermissionMatchPatterns(WTFMove(patterns), expirationDate, equalityOnly);
         break;
 
     case PermissionState::DeniedImplicitly:
@@ -1171,7 +1315,7 @@ Ref<WebExtensionWindow> WebExtensionContext::getOrCreateWindow(_WKWebExtensionWi
     return window.releaseNonNull();
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier)
+RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIdentifier identifier, std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (!isValid(identifier))
         return nullptr;
@@ -1180,12 +1324,12 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
 
     if (isCurrent(identifier)) {
         if (webPageProxyIdentifier) {
-            if (auto tab = getTab(webPageProxyIdentifier.value()))
+            if (auto tab = getCurrentTab(webPageProxyIdentifier.value(), ignoreExtensionAccess))
                 result = tab->window();
         }
 
         if (!result)
-            result = frontmostWindow();
+            result = frontmostWindow(ignoreExtensionAccess);
     } else
         result = m_windowMap.get(identifier);
 
@@ -1207,6 +1351,9 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
         return nullptr;
     }
 
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
+
     return result;
 }
 
@@ -1227,30 +1374,36 @@ Ref<WebExtensionTab> WebExtensionContext::getOrCreateTab(_WKWebExtensionTab *del
     return tab.releaseNonNull();
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier)
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebExtensionTabIdentifier identifier, IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (!isValid(identifier))
         return nullptr;
 
-    auto* tab = m_tabMap.get(identifier);
-    if (!tab) {
+    auto* result = m_tabMap.get(identifier);
+    if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu was not found", identifier.toUInt64());
         return nullptr;
     }
 
-    if (!tab->isValid()) {
+    if (!result->isValid()) {
         RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", identifier.toUInt64());
         m_tabMap.remove(identifier);
         return nullptr;
     }
 
-    return tab;
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
+
+    return result;
 }
 
-RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier)
+RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> identifier, IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (identifier)
         return getTab(identifier.value());
+
+    if (m_backgroundWebView && webPageProxyIdentifier == m_backgroundWebView.get()._page->identifier())
+        return nullptr;
 
     RefPtr<WebExtensionTab> result;
 
@@ -1266,7 +1419,59 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
             break;
     }
 
-    // FIXME: <https://webkit.org/b/260154> Use the page identifier to get the current tab for popup pages.
+    if (!result) {
+        RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
+        return nullptr;
+    }
+
+    if (!result->isValid()) {
+        RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", result->identifier().toUInt64());
+        m_tabMap.remove(result->identifier());
+        return nullptr;
+    }
+
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
+
+    return result;
+}
+
+RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifier webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess)
+{
+    if (m_backgroundWebView && webPageProxyIdentifier == m_backgroundWebView.get()._page->identifier()) {
+        if (RefPtr window = frontmostWindow())
+            return window->activeTab();
+        return nullptr;
+    }
+
+    // Search open tabs for the page.
+    RefPtr<WebExtensionTab> result = getTab(webPageProxyIdentifier, std::nullopt, ignoreExtensionAccess);
+    if (result)
+        return result;
+
+    // Search tab actions for the page.
+    for (auto entry : m_actionTabMap) {
+        auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
+        if (!webView)
+            continue;
+
+        if (webView._page->identifier() == webPageProxyIdentifier) {
+            result = &entry.key;
+            break;
+        }
+    }
+
+    // Search window actions for the page.
+    for (auto entry : m_actionWindowMap) {
+        auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
+        if (!webView)
+            continue;
+
+        if (webView._page->identifier() == webPageProxyIdentifier) {
+            result = entry.key.activeTab();
+            break;
+        }
+    }
 
     if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
@@ -1278,6 +1483,9 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
         m_tabMap.remove(result->identifier());
         return nullptr;
     }
+
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
 
     return result;
 }
@@ -1314,28 +1522,22 @@ void WebExtensionContext::populateWindowsAndTabs()
 
 WebExtensionContext::WindowVector WebExtensionContext::openWindows() const
 {
-    WindowVector result;
-    result.reserveInitialCapacity(m_openWindowIdentifiers.size());
-
-    for (auto& identifier : m_openWindowIdentifiers) {
-        if (auto window = m_windowMap.get(identifier))
-            result.uncheckedAppend(*window);
-    }
-
-    return result;
+    return WTF::compactMap(m_openWindowIdentifiers, [&](auto& identifier) -> RefPtr<WebExtensionWindow> {
+        return m_windowMap.get(identifier);
+    });
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow()
+RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (m_focusedWindowIdentifier)
-        return getWindow(m_focusedWindowIdentifier.value());
+        return getWindow(m_focusedWindowIdentifier.value(), std::nullopt, ignoreExtensionAccess);
     return nullptr;
 }
 
-RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow()
+RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess)
 {
     if (!m_openWindowIdentifiers.isEmpty())
-        return getWindow(m_openWindowIdentifiers.first());
+        return getWindow(m_openWindowIdentifiers.first(), std::nullopt, ignoreExtensionAccess);
     return nullptr;
 }
 
@@ -1355,7 +1557,7 @@ void WebExtensionContext::didOpenWindow(const WebExtensionWindow& window)
     // Request the tabs here so they will be registered and populate openTabs().
     window.tabs();
 
-    if (!isLoaded())
+    if (!isLoaded() || !window.extensionHasAccess())
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnCreated, window.parameters());
@@ -1380,7 +1582,7 @@ void WebExtensionContext::didCloseWindow(const WebExtensionWindow& window)
     for (auto& tab : window.tabs())
         didCloseTab(tab, WindowIsClosing::Yes);
 
-    if (!isLoaded())
+    if (!isLoaded() || !window.extensionHasAccess())
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnRemoved, window.minimalParameters());
@@ -1403,7 +1605,7 @@ void WebExtensionContext::didFocusWindow(WebExtensionWindow* window)
         m_openWindowIdentifiers.insert(0, window->identifier());
     }
 
-    if (!isLoaded())
+    if (!isLoaded() || (window && !window->extensionHasAccess()))
         return;
 
     fireWindowsEventIfNeeded(WebExtensionEventListenerType::WindowsOnFocusChanged, window ? std::optional(window->minimalParameters()) : std::nullopt);
@@ -1417,7 +1619,7 @@ void WebExtensionContext::didOpenTab(const WebExtensionTab& tab)
 
     RELEASE_LOG_DEBUG(Extensions, "Opened tab %{public}llu", tab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     fireTabsCreatedEventIfNeeded(tab.parameters());
@@ -1435,7 +1637,7 @@ void WebExtensionContext::didCloseTab(const WebExtensionTab& tab, WindowIsClosin
 
     m_tabMap.remove(tab.identifier());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     auto window = tab.window(WebExtensionTab::SkipContainsCheck::Yes);
@@ -1455,7 +1657,7 @@ void WebExtensionContext::didActivateTab(const WebExtensionTab& tab, const WebEx
 
     RELEASE_LOG_DEBUG(Extensions, "Activated tab %{public}llu", tab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     auto window = tab.window();
@@ -1473,7 +1675,7 @@ void WebExtensionContext::didSelectOrDeselectTabs(const TabSet& tabs)
         ASSERT(tab->extensionContext() == this);
 
         auto window = tab->window();
-        if (!window)
+        if (!window || !window->extensionHasAccess())
             continue;
 
         windowToTabs.ensure(window->identifier(), [&] {
@@ -1511,7 +1713,7 @@ void WebExtensionContext::didMoveTab(const WebExtensionTab& tab, size_t oldIndex
     else
         RELEASE_LOG_DEBUG(Extensions, "Moved tab %{public}llu to index %{public}zu (in same window)", tab.identifier().toUInt64(), oldIndex);
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
     auto window = tab.window();
@@ -1531,22 +1733,123 @@ void WebExtensionContext::didReplaceTab(const WebExtensionTab& oldTab, const Web
 
     RELEASE_LOG_DEBUG(Extensions, "Replaced tab %{public}llu with tab %{public}llu", oldTab.identifier().toUInt64(), newTab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !newTab.extensionHasAccess())
         return;
 
     fireTabsReplacedEventIfNeeded(oldTab.identifier(), newTab.identifier());
 }
 
-void WebExtensionContext::didChangeTabProperties(const WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
+void WebExtensionContext::didChangeTabProperties(WebExtensionTab& tab, OptionSet<WebExtensionTab::ChangedProperties> properties)
 {
     ASSERT(tab.extensionContext() == this);
 
-    RELEASE_LOG_DEBUG(Extensions, "Changed tab properties (%{public}X) for tab %{public}llu", properties.toRaw(), tab.identifier().toUInt64());
+    RELEASE_LOG_DEBUG(Extensions, "Changed tab properties (0x%{public}X) for tab %{public}llu", properties.toRaw(), tab.identifier().toUInt64());
 
-    if (!isLoaded())
+    if (!isLoaded() || !tab.extensionHasAccess())
         return;
 
-    fireTabsUpdatedEventIfNeeded(tab.parameters(), tab.changedParameters(properties));
+    bool hasChangesPending = !tab.changedProperties().isEmpty();
+    tab.addChangedProperties(properties);
+
+    // If there are already changes pending, don't schedule the event to fire again.
+    if (hasChangesPending)
+        return;
+
+    constexpr auto updatedEventDelay = 25_ms;
+
+    // Fire the updated event after a small delay to coalesce relevant changes together.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(updatedEventDelay.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, tabIdentifier = tab.identifier()]() {
+        // Get the tab again, it might have closed since this was scheduled.
+        RefPtr tab = getTab(tabIdentifier);
+        if (!tab)
+            return;
+
+        RELEASE_LOG_DEBUG(Extensions, "Firing updated tab properties (0x%{public}X) for tab %{public}llu", tab->changedProperties().toRaw(), tab->identifier().toUInt64());
+        fireTabsUpdatedEventIfNeeded(tab->parameters(), tab->changedParameters());
+        tab->clearChangedProperties();
+    }).get());
+}
+
+void WebExtensionContext::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
+{
+    auto tab = getTab(pageID);
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(targetURL, tab.get())) {
+        constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnBeforeNavigate;
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+            sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, targetURL, timestamp));
+        });
+    }
+}
+
+void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+{
+    auto page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return;
+
+    auto tab = getTab(pageID);
+
+    if (tab && isMainFrame(frameID)) {
+        // Clear tab action customizations.
+        if (auto *tabAction = m_actionTabMap.get(*tab))
+            tabAction->clearCustomizations();
+
+        // Clear activeTab permissions and user gesture if the site changed.
+        auto temporaryPattern = tab->temporaryPermissionMatchPattern();
+        if (temporaryPattern && !temporaryPattern->matchesURL(frameURL))
+            clearUserGesture(*tab);
+
+        // Clear injected styles tied to this specific page.
+        // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's.
+        auto& userContentController = page.get()->userContentController();
+        m_dynamicallyInjectedUserStyleSheets.removeAllMatching([&](auto& styleSheet) {
+            auto styleSheetPageID = styleSheet->userStyleSheet().pageID();
+            if (!styleSheetPageID || styleSheetPageID.value() != page->webPageID())
+                return false;
+
+            userContentController.removeUserStyleSheet(styleSheet);
+            return true;
+        });
+    }
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+        constexpr auto committedEventType = WebExtensionEventListenerType::WebNavigationOnCommitted;
+        constexpr auto contentEventType = WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded;
+
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ committedEventType, contentEventType }, [&] {
+            sendToProcessesForEvent(committedEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(committedEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+            sendToProcessesForEvent(contentEventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(contentEventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+        });
+    }
+}
+
+void WebExtensionContext::didFinishLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+{
+    auto tab = getTab(pageID);
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+        constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnCompleted;
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+            sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+        });
+    }
+}
+
+void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& frameURL, WallTime timestamp)
+{
+    auto tab = getTab(pageID);
+
+    // Dispatch webNavigation events.
+    if (tab && hasPermission(_WKWebExtensionPermissionWebNavigation, tab.get()) && hasPermission(frameURL, tab.get())) {
+        constexpr auto eventType = WebExtensionEventListenerType::WebNavigationOnErrorOccurred;
+        wakeUpBackgroundContentIfNecessaryToFireEvents({ eventType }, [&] {
+            sendToProcessesForEvent(eventType, Messages::WebExtensionContextProxy::DispatchWebNavigationEvent(eventType, tab->identifier(), frameID, parentFrameID, frameURL, timestamp));
+        });
+    }
 }
 
 WebExtensionAction& WebExtensionContext::defaultAction()
@@ -1601,11 +1904,15 @@ Ref<WebExtensionAction> WebExtensionContext::getOrCreateAction(WebExtensionTab* 
 
 void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered userTriggered)
 {
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
     if (tab && userTriggered == UserTriggered::Yes)
         userGesturePerformed(*tab);
 
     auto action = getOrCreateAction(tab);
-    if (action->hasPopup()) {
+    if (action->presentsPopup()) {
         action->presentPopupWhenReady();
         return;
     }
@@ -1613,49 +1920,293 @@ void WebExtensionContext::performAction(WebExtensionTab* tab, UserTriggered user
     fireActionClickedEventIfNeeded(tab);
 }
 
+const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
+{
+    if (m_populatedCommands)
+        return m_commands;
+
+    m_commands = WTF::map(extension().commands(), [&](auto& data) {
+        return WebExtensionCommand::create(*this, data);
+    });
+
+    m_populatedCommands = true;
+
+    return m_commands;
+}
+
+WebExtensionCommand* WebExtensionContext::command(const String& commandIdentifier)
+{
+    if (commandIdentifier.isEmpty())
+        return nullptr;
+
+    for (auto& command : commands()) {
+        if (command->identifier() == commandIdentifier)
+            return command.ptr();
+    }
+
+    return nullptr;
+}
+
+void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTriggered userTriggered)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
+    ASSERT(command.extensionContext() == this);
+    if (command.extensionContext() != this)
+        return;
+
+    auto currentWindow = frontmostWindow();
+    auto activeTab = currentWindow ? currentWindow->activeTab() : nullptr;
+
+    if (command.isActionCommand()) {
+        performAction(activeTab.get(), userTriggered);
+        return;
+    }
+
+    if (activeTab && userTriggered == UserTriggered::Yes)
+        userGesturePerformed(*activeTab);
+
+    fireCommandEventIfNeeded(command, activeTab.get());
+}
+
+#if USE(APPKIT)
+WebExtensionCommand* WebExtensionContext::command(NSEvent *event)
+{
+    ASSERT(event);
+
+    if (event.type != NSEventTypeKeyDown || event.isARepeat)
+        return nullptr;
+
+    for (auto& command : commands()) {
+        if (command->matchesEvent(event))
+            return command.ptr();
+    }
+
+    return nullptr;
+}
+
+bool WebExtensionContext::performCommand(NSEvent *event)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return false;
+
+    if (event.type != NSEventTypeKeyDown || event.isARepeat)
+        return false;
+
+    if (RefPtr result = command(event)) {
+        performCommand(*result, UserTriggered::Yes);
+        return true;
+    }
+
+    return false;
+}
+#endif // USE(APPKIT)
+
+NSArray *WebExtensionContext::platformMenuItems(const WebExtensionTab& tab) const
+{
+    WebExtensionMenuItemContextParameters contextParameters;
+    contextParameters.types = WebExtensionMenuItemContextType::Tab;
+    contextParameters.tabIdentifier = tab.identifier();
+
+    if (auto *menuItem = singleMenuItemOrExtensionItemWithSubmenu(contextParameters))
+        return @[ menuItem ];
+    return @[ ];
+}
+
+WebExtensionMenuItem* WebExtensionContext::menuItem(const String& identifier) const
+{
+    if (identifier.isEmpty())
+        return nullptr;
+    return m_menuItems.get(identifier);
+}
+
+void WebExtensionContext::performMenuItem(WebExtensionMenuItem& menuItem, const WebExtensionMenuItemContextParameters& contextParameters, UserTriggered userTriggered)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
+    ASSERT(menuItem.extensionContext() == this);
+    if (menuItem.extensionContext() != this)
+        return;
+
+    if (contextParameters.tabIdentifier) {
+        RefPtr activeTab = getTab(contextParameters.tabIdentifier.value());
+        if (activeTab && userTriggered == UserTriggered::Yes)
+            userGesturePerformed(*activeTab);
+    }
+
+    if (RefPtr command = menuItem.command()) {
+        performCommand(*command);
+        return;
+    }
+
+    bool wasChecked = menuItem.toggleCheckedIfNeeded(contextParameters);
+    fireMenusClickedEventIfNeeded(menuItem, wasChecked, contextParameters);
+}
+
+CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(const WebExtensionMenuItemContextParameters& contextParameters) const
+{
+#if USE(APPKIT)
+    auto *menuItems = WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+    if (!menuItems.count)
+        return nil;
+
+    if (menuItems.count == 1) {
+        // Don't allow images for the top-level items, it isn't typical on macOS for menus.
+        dynamic_objc_cast<NSMenuItem>(menuItems.firstObject).image = nil;
+
+        return menuItems.firstObject;
+    }
+
+    auto *extensionItem = [[_WKWebExtensionMenuItem alloc] initWithTitle:extension().displayShortName() handler:^(id) { }];
+    auto *extensionSubmenu = [[NSMenu alloc] init];
+    extensionSubmenu.itemArray = menuItems;
+    extensionItem.submenu = extensionSubmenu;
+
+    return extensionItem;
+#else
+    auto *menuItems = WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+    if (!menuItems.count)
+        return nil;
+
+    if (menuItems.count == 1)
+        return menuItems.firstObject;
+
+    return [UIMenu menuWithTitle:extension().displayShortName() children:menuItems];
+#endif
+}
+
+#if PLATFORM(MAC)
+void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const ContextMenuContextData& contextData, NSMenu *menu)
+{
+    WebExtensionMenuItemContextParameters contextParameters;
+
+    ASSERT(contextData.webHitTestResultData());
+    auto& hitTestData = contextData.webHitTestResultData().value();
+
+    if (!hitTestData.frameInfo)
+        return;
+
+    auto& frameInfo = hitTestData.frameInfo.value();
+    contextParameters.frameIdentifier = toWebExtensionFrameIdentifier(frameInfo);
+    contextParameters.frameURL = frameInfo.request.url();
+
+    RefPtr tab = getTab(page.identifier());
+    if (tab)
+        contextParameters.tabIdentifier = tab->identifier();
+
+    // Don't show context menu items unless the extension has permission, or can be granted permission
+    // with an activeTab user gesture if the user interacts with one of the menu items.
+    if (!hasPermission(frameInfo.request.url(), tab.get()) && (!tab || !frameInfo.isMainFrame || !hasPermission(_WKWebExtensionPermissionActiveTab)))
+        return;
+
+    if (!hitTestData.absoluteImageURL.isEmpty()) {
+        contextParameters.types.add(WebExtensionMenuItemContextType::Image);
+        contextParameters.sourceURL = URL { hitTestData.absoluteImageURL };
+    }
+
+    if (!hitTestData.absoluteMediaURL.isEmpty() && hitTestData.elementType != WebHitTestResultData::ElementType::None) {
+        contextParameters.sourceURL = URL { hitTestData.absoluteMediaURL };
+
+        switch (hitTestData.elementType) {
+        case WebHitTestResultData::ElementType::None:
+            ASSERT_NOT_REACHED();
+            break;
+
+        case WebHitTestResultData::ElementType::Audio:
+            contextParameters.types.add(WebExtensionMenuItemContextType::Audio);
+            break;
+
+        case WebHitTestResultData::ElementType::Video:
+            contextParameters.types.add(WebExtensionMenuItemContextType::Video);
+            break;
+        }
+    }
+
+    if (hitTestData.isContentEditable) {
+        contextParameters.types.add(WebExtensionMenuItemContextType::Editable);
+        contextParameters.editable = true;
+    }
+
+    if (hitTestData.isSelected && !contextData.selectedText().isEmpty()) {
+        contextParameters.types.add(WebExtensionMenuItemContextType::Selection);
+        contextParameters.selectionString = contextData.selectedText();
+    }
+
+    if (!hitTestData.absoluteLinkURL.isEmpty()) {
+        // Links are selected when showing the context menu, so remove the Selection type since Link is more specific.
+        // This matches how built-in context menus work, e.g. hiding Lookup and Translate when on a link.
+        contextParameters.types.remove(WebExtensionMenuItemContextType::Selection);
+
+        contextParameters.types.add(WebExtensionMenuItemContextType::Link);
+        contextParameters.linkURL = URL { hitTestData.absoluteLinkURL };
+        contextParameters.linkText = hitTestData.linkLabel;
+    }
+
+    // The Page and Frame contexts only apply if there are no other contexts.
+    if (contextParameters.types.isEmpty())
+        contextParameters.types.add(frameInfo.isMainFrame ? WebExtensionMenuItemContextType::Page : WebExtensionMenuItemContextType::Frame);
+
+    if (auto *menuItem = singleMenuItemOrExtensionItemWithSubmenu(contextParameters))
+        [menu addItem:menuItem];
+}
+#endif
+
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
 {
-    // Nothing else to do if the extension does not have the activeTab permissions.
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
+    tab.setActiveUserGesture(true);
+
+    // Nothing else to do if the extension does not have the activeTab permission.
     if (!hasPermission(_WKWebExtensionPermissionActiveTab))
         return;
 
-    NSURL *currentURL = tab.url();
-    if (!currentURL)
+    auto currentURL = tab.url();
+    if (currentURL.isEmpty())
         return;
 
-    _WKWebExtensionMatchPattern *pattern = [m_temporaryTabPermissionMatchPatterns objectForKey:tab.delegate()];
+    auto pattern = tab.temporaryPermissionMatchPattern();
 
     // Nothing to do if the tab already has a pattern matching the current URL.
-    if (pattern && [pattern matchesURL:currentURL])
+    if (pattern && pattern->matchesURL(currentURL))
         return;
 
     // A pattern should not exist, since it should be cleared in clearUserGesture
     // on any navigation between different hosts.
     ASSERT(!pattern);
 
-    if (!m_temporaryTabPermissionMatchPatterns)
-        m_temporaryTabPermissionMatchPatterns = [NSMapTable weakToStrongObjectsMapTable];
-
     // Grant the tab a temporary permission to access to a pattern matching the current URL's scheme and host for all paths.
-    pattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:currentURL.scheme host:currentURL.host path:@"/*"];
-    [m_temporaryTabPermissionMatchPatterns setObject:pattern forKey:tab.delegate()];
+    pattern = WebExtensionMatchPattern::getOrCreate(currentURL.protocol().toStringWithoutCopying(), currentURL.host().toStringWithoutCopying(), "/*"_s);
+    tab.setTemporaryPermissionMatchPattern(pattern.copyRef());
+
+    // Fire the updated event now that the extension has permission to see the URL and title.
+    didChangeTabProperties(tab, { WebExtensionTab::ChangedProperties::URL, WebExtensionTab::ChangedProperties::Title });
 }
 
 bool WebExtensionContext::hasActiveUserGesture(WebExtensionTab& tab) const
 {
-    if (!m_temporaryTabPermissionMatchPatterns)
+    ASSERT(isLoaded());
+    if (!isLoaded())
         return false;
 
-    NSURL *currentURL = tab.url();
-    return [[m_temporaryTabPermissionMatchPatterns objectForKey:tab.delegate()] matchesURL:currentURL];
+    return tab.hasActiveUserGesture();
 }
 
 void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
 {
-    if (!m_temporaryTabPermissionMatchPatterns)
+    ASSERT(isLoaded());
+    if (!isLoaded())
         return;
 
-    [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab.delegate()];
+    tab.setActiveUserGesture(false);
+    tab.setTemporaryPermissionMatchPattern(nullptr);
 }
 
 void WebExtensionContext::setTestingMode(bool testingMode)
@@ -1667,47 +2218,130 @@ void WebExtensionContext::setTestingMode(bool testingMode)
     m_testingMode = testingMode;
 }
 
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const
+{
+    if (!m_backgroundWebView || extension().backgroundContentIsServiceWorker())
+        return std::nullopt;
+
+    return m_backgroundWebView.get()._page->webPageID();
+}
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers() const
+{
+    Vector<PageIdentifierTuple> result;
+
+    auto addWebViewPageIdentifier = [&](auto& action) {
+        auto *webView = action->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
+        if (!webView)
+            return;
+
+        RefPtr tab = action->tab();
+        RefPtr window = tab ? tab->window() : action->window();
+
+        result.append({ webView._page->webPageID(), tab ? std::optional(tab->identifier()) : std::nullopt, window ? std::optional(window->identifier()) : std::nullopt });
+    };
+
+    for (auto entry : m_actionWindowMap)
+        addWebViewPageIdentifier(entry.value);
+
+    for (auto entry : m_actionTabMap)
+        addWebViewPageIdentifier(entry.value);
+
+    if (m_defaultAction)
+        addWebViewPageIdentifier(m_defaultAction);
+
+    return result;
+}
+
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers() const
+{
+    Vector<PageIdentifierTuple> result;
+
+    for (auto& tab : openTabs()) {
+        auto window = tab->window();
+        for (WKWebView *webView in tab->webViews())
+            result.append({ webView._page->webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt });
+    }
+
+    return result;
+}
+
 WKWebView *WebExtensionContext::relatedWebView()
 {
+    ASSERT(isLoaded());
+
     if (m_backgroundWebView)
         return m_backgroundWebView.get();
 
-    for (auto entry : m_actionTabMap) {
-        if (auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
-            return webView;
-    }
-
-    if (m_defaultAction) {
-        if (auto *webView = m_defaultAction->popupWebView(WebExtensionAction::LoadOnFirstAccess::No))
-            return webView;
+    for (auto& page : extensionController()->allPages()) {
+        if (auto* mainFrame = page.mainFrame()) {
+            if (isURLForThisExtension(mainFrame->url()))
+                return page.cocoaView().get();
+        }
     }
 
     return nil;
 }
 
-WKWebViewConfiguration *WebExtensionContext::webViewConfiguration()
+NSString *WebExtensionContext::processDisplayName()
 {
-    ASSERT(isLoaded());
+ALLOW_NONLITERAL_FORMAT_BEGIN
+    return [NSString localizedStringWithFormat:WEB_UI_STRING("%@ Web Extension", "Extension's process name that appears in Activity Monitor where the parameter is the name of the extension"), extension().displayShortName()];
+ALLOW_NONLITERAL_FORMAT_END
+}
+
+NSArray *WebExtensionContext::corsDisablingPatterns()
+{
+    NSMutableSet<NSString *> *patterns = [NSMutableSet set];
+
+    auto requestedMatchPatterns = m_extension->allRequestedMatchPatterns();
+    for (auto& requestedMatchPattern : requestedMatchPatterns)
+        [patterns addObjectsFromArray:requestedMatchPattern->expandedStrings()];
+
+    // Include manifest optional permission origins here, these should be dynamically added when the are granted
+    // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
+    // FIXME: <rdar://problem/61837474> Web Extensions: Need the ability to update corsDisablingPatterns on WKWebView
+    auto optionalPermissionMatchPatterns = m_extension->allRequestedMatchPatterns();
+    for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
+        [patterns addObjectsFromArray:optionalMatchPattern->expandedStrings()];
+
+    return [patterns allObjects];
+}
+
+WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose purpose)
+{
+    if (!isLoaded())
+        return nil;
+
+    bool isManifestVersion3 = extension().supportsManifestVersion(3);
 
     WKWebViewConfiguration *configuration = [extensionController()->configuration().webViewConfiguration() copy];
+    configuration._contentSecurityPolicyModeForExtension = isManifestVersion3 ? _WKContentSecurityPolicyModeForExtensionManifestV3 : _WKContentSecurityPolicyModeForExtensionManifestV2;
+    configuration._corsDisablingPatterns = corsDisablingPatterns();
+    configuration._crossOriginAccessControlCheckEnabled = NO;
+    configuration._processDisplayName = processDisplayName();
+    configuration._relatedWebView = relatedWebView();
+    configuration._requiredWebExtensionBaseURL = baseURL();
+    configuration._shouldRelaxThirdPartyCookieBlocking = YES;
 
-    // When using manifest v2 the web views need to use the same process.
-    if (extension().supportsManifestVersion(2))
-        configuration._relatedWebView = relatedWebView();
+    configuration.defaultWebpagePreferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
 
-    // Use the weak property to avoid a reference cycle while an extension web view is being held by the context.
-    configuration._weakWebExtensionController = extensionController()->wrapper();
-    configuration._webExtensionController = nil;
+    if (purpose == WebViewPurpose::Tab) {
+        configuration._webExtensionController = extensionController()->wrapper();
+        configuration._weakWebExtensionController = nil;
+    } else {
+        // Use the weak property to avoid a reference cycle while an extension web view is owned by the context.
+        configuration._weakWebExtensionController = extensionController()->wrapper();
+        configuration._webExtensionController = nil;
+    }
 
-    configuration._processDisplayName = extension().webProcessDisplayName();
-
-    auto *preferences = configuration.preferences;
-#if PLATFORM(MAC)
-    preferences._domTimersThrottlingEnabled = NO;
-#endif
-    preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
-
-    // FIXME: Configure other extension web view configuration properties.
+    if (purpose == WebViewPurpose::Background) {
+        // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
+        auto *preferences = configuration.preferences;
+        preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
+        preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+        preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
+    }
 
     return configuration;
 }
@@ -1726,19 +2360,16 @@ void WebExtensionContext::loadBackgroundWebViewDuringLoad()
     if (!extension().hasBackgroundContent())
         return;
 
-    if (!extension().backgroundContentIsPersistent()) {
-        uint64_t backgroundPageListenersVersionNumber = loadBackgroundPageListenersVersionNumberFromStorage();
-        bool savedVersionNumberDoesNotMatchCurrentVersionNumber = backgroundPageListenersVersionNumber != currentBackgroundPageListenerStateVersion;
+    m_shouldFireStartupEvent = extensionController()->isFreshlyCreated();
 
-        // FIXME: <https://webkit.org/b/248889> Check to see if the background page listens to onStartup().
-        bool backgroundPageListensToOnStartup = false;
+    queueStartupAndInstallEventsForExtensionIfNecessary();
+
+    if (!extension().backgroundContentIsPersistent()) {
         loadBackgroundPageListenersFromStorage();
 
-        // FIXME: <https://webkit.org/b/248889> Check to see if the extension is being loaded as part of startup.
-        if (m_backgroundContentEventListeners.isEmpty() || savedVersionNumberDoesNotMatchCurrentVersionNumber || backgroundPageListensToOnStartup)
+        bool hasEventsToFire = m_shouldFireStartupEvent || m_installReason != InstallReason::None;
+        if (m_backgroundContentEventListeners.isEmpty() || hasEventsToFire)
             loadBackgroundWebView();
-        else
-            m_shouldFireStartupEvent = false;
     } else
         loadBackgroundWebView();
 }
@@ -1751,13 +2382,17 @@ void WebExtensionContext::loadBackgroundWebView()
         return;
 
     ASSERT(!m_backgroundWebView);
-    m_backgroundWebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration()];
+    m_backgroundWebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:webViewConfiguration(WebViewPurpose::Background)];
 
     m_lastBackgroundContentLoadDate = NSDate.now;
 
     m_backgroundWebView.get().UIDelegate = m_delegate.get();
     m_backgroundWebView.get().navigationDelegate = m_delegate.get();
     m_backgroundWebView.get().inspectable = m_inspectable;
+
+    auto delegate = m_extensionController->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:didCreateBackgroundWebView:forExtensionContext:)])
+        [delegate _webExtensionController:m_extensionController->wrapper() didCreateBackgroundWebView:m_backgroundWebView.get() forExtensionContext:wrapper()];
 
     if (extension().backgroundContentIsServiceWorker())
         m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
@@ -1767,6 +2402,9 @@ void WebExtensionContext::loadBackgroundWebView()
     extension().removeError(WebExtension::Error::BackgroundContentFailedToLoad);
 
     if (!extension().backgroundContentIsServiceWorker()) {
+        auto backgroundPage = m_backgroundWebView.get()._page;
+        backgroundPage->process().send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageID()), identifier());
+
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
         return;
     }
@@ -1827,75 +2465,111 @@ void WebExtensionContext::scheduleBackgroundContentToUnload()
 
 void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
 {
-    // FIXME: <https://webkit.org/b/248889> Add support for setup and install events for web extensions.
-
-    bool didQueueStartupEvent = false;
+    String currentVersion = extension().version();
+    m_previousVersion = objectForKey<NSString>(m_state, lastSeenVersionStateKey);
 
     // FIXME: <https://webkit.org/b/249266> The version number changing isn't the most accurate way to determine if an extension was updated.
-    NSString *webExtensionVersion = extension().version();
-    NSString *lastSeenVersion = [m_state objectForKey:lastSeenVersionStateKey];
-    BOOL extensionVersionDidChange = lastSeenVersion && ![lastSeenVersion isEqualToString:webExtensionVersion];
+    bool extensionVersionDidChange = !m_previousVersion.isEmpty() && m_previousVersion != currentVersion;
 
     if (extensionVersionDidChange) {
-        // FIXME: Remove declarative net request modified rulesets.
+        [m_state setObject:(NSString *)currentVersion forKey:lastSeenVersionStateKey];
         [m_state removeObjectForKey:backgroundContentEventListenersKey];
+        [m_state removeObjectForKey:backgroundContentEventListenersVersionKey];
+        clearDeclarativeNetRequestRulesetState();
 
-        // FIXME: <https://webkit.org/b/248889> Set queued install event details.
-    } else if (!didQueueStartupEvent) {
-        // FIXME: <https://webkit.org/b/248889> Set queued install event details.
-    }
+        writeStateToStorage();
 
-    [m_state setObject:webExtensionVersion forKey:lastSeenVersionStateKey];
+        RELEASE_LOG_DEBUG(Extensions, "Queued installed event with extension update reason");
+        m_installReason = InstallReason::ExtensionUpdate;
+    } else if (!m_shouldFireStartupEvent) {
+        [m_state setObject:(NSString *)currentVersion forKey:lastSeenVersionStateKey];
+
+        writeStateToStorage();
+
+        RELEASE_LOG_DEBUG(Extensions, "Queued installed event with extension install reason");
+        m_installReason = InstallReason::ExtensionInstall;
+    } else
+        m_installReason = InstallReason::None;
 }
 
 void WebExtensionContext::loadBackgroundPageListenersFromStorage()
 {
-    NSData *listenersData = [m_state objectForKey:backgroundContentEventListenersKey];
-    NSCountedSet *savedListeners = [NSKeyedUnarchiver _strictlyUnarchivedObjectOfClasses:[NSSet setWithObjects:NSCountedSet.class, NSNumber.class, nil] fromData:listenersData error:nil];
+    if (!storageIsPersistent() || extension().backgroundContentIsPersistent())
+        return;
 
     m_backgroundContentEventListeners.clear();
+
+    auto backgroundContentListenersVersionNumber = objectForKey<NSNumber>(m_state, backgroundContentEventListenersVersionKey).unsignedLongValue;
+    if (backgroundContentListenersVersionNumber != currentBackgroundContentListenerStateVersion) {
+        RELEASE_LOG_DEBUG(Extensions, "Background listener version mismatch %{public}zu != %{public}zu", backgroundContentListenersVersionNumber, currentBackgroundContentListenerStateVersion);
+
+        [m_state removeObjectForKey:backgroundContentEventListenersKey];
+        [m_state removeObjectForKey:backgroundContentEventListenersVersionKey];
+
+        writeStateToStorage();
+        return;
+    }
+
+    auto *listenersData = objectForKey<NSData>(m_state, backgroundContentEventListenersKey);
+    NSCountedSet *savedListeners = [NSKeyedUnarchiver _strictlyUnarchivedObjectOfClasses:[NSSet setWithObjects:NSCountedSet.class, NSNumber.class, nil] fromData:listenersData error:nil];
+
     for (NSNumber *entry in savedListeners)
         m_backgroundContentEventListeners.add(static_cast<WebExtensionEventListenerType>(entry.unsignedIntValue), [savedListeners countForObject:entry]);
 }
 
 void WebExtensionContext::saveBackgroundPageListenersToStorage()
 {
-    if (extension().backgroundContentIsPersistent())
+    if (!storageIsPersistent() || extension().backgroundContentIsPersistent())
         return;
 
-    NSCountedSet *listeners = [NSCountedSet set];
+    RELEASE_LOG_DEBUG(Extensions, "Saving %{public}u background content event listeners to storage", m_backgroundContentEventListeners.size());
+
+    auto *listeners = [NSCountedSet set];
     for (auto& entry : m_backgroundContentEventListeners)
         [listeners addObject:@(static_cast<unsigned>(entry.key))];
 
-    NSData *newBackgroundPageListenersAsData = [NSKeyedArchiver archivedDataWithRootObject:listeners requiringSecureCoding:YES error:nil];
-    NSData *savedBackgroundPageListenersAsData = [m_state objectForKey:backgroundContentEventListenersKey];
+    auto *newBackgroundPageListenersAsData = [NSKeyedArchiver archivedDataWithRootObject:listeners requiringSecureCoding:YES error:nil];
+    auto *savedBackgroundPageListenersAsData = objectForKey<NSData>(m_state, backgroundContentEventListenersKey);
     [m_state setObject:newBackgroundPageListenersAsData forKey:backgroundContentEventListenersKey];
 
-    NSNumber *savedListenerVersionNumber = [m_state objectForKey:lastSeenVersionStateKey];
-    [m_state setObject:@(currentBackgroundPageListenerStateVersion) forKey:lastSeenVersionStateKey];
+    auto *savedListenerVersionNumber = objectForKey<NSNumber>(m_state, backgroundContentEventListenersVersionKey);
+    [m_state setObject:@(currentBackgroundContentListenerStateVersion) forKey:backgroundContentEventListenersVersionKey];
 
     bool hasListenerStateChanged = ![newBackgroundPageListenersAsData isEqualToData:savedBackgroundPageListenersAsData];
-    bool hasVersionNumberChanged = savedListenerVersionNumber.integerValue != currentBackgroundPageListenerStateVersion;
+    bool hasVersionNumberChanged = savedListenerVersionNumber.unsignedLongValue != currentBackgroundContentListenerStateVersion;
     if (hasListenerStateChanged || hasVersionNumberChanged)
         writeStateToStorage();
 }
 
-uint64_t WebExtensionContext::loadBackgroundPageListenersVersionNumberFromStorage()
-{
-    return static_cast<uint64_t>([[m_state objectForKey:lastSeenVersionStateKey] integerValue]);
-}
-
 void WebExtensionContext::performTasksAfterBackgroundContentLoads()
 {
-    // FIXME: <https://webkit.org/b/246483> Implement. Fire setup and install events (if needed), etc.
+    RELEASE_LOG_DEBUG(Extensions, "Performing after background content tasks soon");
 
-    for (auto& event : m_actionsToPerformAfterBackgroundContentLoads)
-        event();
-    m_actionsToPerformAfterBackgroundContentLoads.clear();
+    // Delay to give time for addListener messages to register the events, this is needed because modules execute after page load fires.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }] {
+        if (m_shouldFireStartupEvent) {
+            fireRuntimeStartupEventIfNeeded();
 
-    saveBackgroundPageListenersToStorage();
+            m_shouldFireStartupEvent = false;
+        }
 
-    scheduleBackgroundContentToUnload();
+        if (m_installReason != InstallReason::None) {
+            fireRuntimeInstalledEventIfNeeded();
+
+            m_installReason = InstallReason::None;
+            m_previousVersion = nullString();
+        }
+
+        RELEASE_LOG_DEBUG(Extensions, "Performing %{public}zu task(s) after background content", m_actionsToPerformAfterBackgroundContentLoads.size());
+
+        for (auto& action : m_actionsToPerformAfterBackgroundContentLoads)
+            action();
+
+        m_actionsToPerformAfterBackgroundContentLoads.clear();
+
+        saveBackgroundPageListenersToStorage();
+        scheduleBackgroundContentToUnload();
+    }).get());
 }
 
 void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet types, CompletionHandler<void()>&& completionHandler)
@@ -1933,6 +2607,8 @@ void WebExtensionContext::wakeUpBackgroundContentIfNecessaryToFireEvents(EventLi
 void WebExtensionContext::queueEventToFireAfterBackgroundContentLoads(CompletionHandler<void()> &&completionHandler)
 {
     ASSERT(extension().backgroundContentPath());
+
+    RELEASE_LOG_DEBUG(Extensions, "Scheduled task for after background content loads");
 
     m_actionsToPerformAfterBackgroundContentLoads.append(WTFMove(completionHandler));
 }
@@ -2079,7 +2755,7 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         [baseExcludeMatchPatternsSet addObjectsFromArray:deniedEntry.key->expandedStrings()];
     }
 
-    auto allUserContentControllers = extensionController()->allUserContentControllers();
+    auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
 
     for (auto& injectedContentData : injectedContents) {
         NSMutableSet<NSString *> *includeMatchPatternsSet = [NSMutableSet set];
@@ -2133,6 +2809,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto waitForNotification = WebCore::WaitForNotificationBeforeInjecting::No;
         Ref executionWorld = injectedContentData.forMainWorld ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
 
+        auto scriptID = injectedContentData.identifier;
+        bool isRegisteredScript = !scriptID.isEmpty();
+
         for (NSString *scriptPath in injectedContentData.scriptPaths.get()) {
             NSString *scriptString = m_extension->resourceStringForPath(scriptPath, WebExtension::CacheResult::Yes);
             if (!scriptString)
@@ -2141,8 +2820,17 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             auto userScript = API::UserScript::create(WebCore::UserScript { scriptString, URL { m_baseURL, scriptPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectionTime, injectedFrames, waitForNotification }, executionWorld);
             originInjectedScripts.append(userScript);
 
-            for (auto& userContentController : allUserContentControllers)
+            for (auto& userContentController : userContentControllers)
                 userContentController.addUserScript(userScript, InjectUserScriptImmediately::Yes);
+
+            if (isRegisteredScript) {
+                RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+                ASSERT(registeredScript);
+                if (!registeredScript)
+                    continue;
+
+                registeredScript->addUserScript(scriptID, userScript);
+            }
         }
 
         for (NSString *styleSheetPath in injectedContentData.styleSheetPaths.get()) {
@@ -2150,11 +2838,20 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
             if (!styleSheetString)
                 continue;
 
-            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleUserLevel, std::nullopt }, executionWorld);
+            auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheetString, URL { m_baseURL, styleSheetPath }, makeVector<String>(includeMatchPatterns), makeVector<String>(excludeMatchPatterns), injectedFrames, WebCore::UserStyleLevel::User, std::nullopt }, executionWorld);
             originInjectedStyleSheets.append(userStyleSheet);
 
-            for (auto& userContentController : allUserContentControllers)
+            for (auto& userContentController : userContentControllers)
                 userContentController.addUserStyleSheet(userStyleSheet);
+
+            if (isRegisteredScript) {
+                RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+                ASSERT(registeredScript);
+                if (!registeredScript)
+                    continue;
+
+                registeredScript->addUserStyleSheet(scriptID, userStyleSheet);
+            }
         }
     }
 }
@@ -2177,7 +2874,10 @@ void WebExtensionContext::removeInjectedContent()
     if (!isLoaded())
         return;
 
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
     auto allUserContentControllers = extensionController()->allUserContentControllers();
+
     for (auto& userContentController : allUserContentControllers) {
         for (auto& entry : m_injectedScriptsPerPatternMap) {
             for (auto& userScript : entry.value)
@@ -2219,6 +2919,8 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
     if (originInjectedScripts.isEmpty() && originInjectedStyleSheets.isEmpty())
         return;
 
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
     auto allUserContentControllers = extensionController()->allUserContentControllers();
 
     for (auto& userContentController : allUserContentControllers) {
@@ -2228,20 +2930,6 @@ void WebExtensionContext::removeInjectedContent(WebExtensionMatchPattern& patter
         for (auto& userStyleSheet : originInjectedStyleSheets)
             userContentController.removeUserStyleSheet(userStyleSheet);
     }
-
-    auto *tabsToRemove = [NSMutableSet set];
-    for (id<_WKWebExtensionTab> tabDelegate in m_temporaryTabPermissionMatchPatterns.get().keyEnumerator) {
-        auto tab = getOrCreateTab(tabDelegate);
-        NSURL *currentURL = tab->url();
-        if (!currentURL)
-            continue;
-
-        if (pattern.matchesURL(currentURL))
-            [tabsToRemove addObject:tabDelegate];
-    }
-
-    for (id tab in tabsToRemove)
-        [m_temporaryTabPermissionMatchPatterns removeObjectForKey:tab];
 }
 
 void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& userContentController)
@@ -2255,6 +2943,238 @@ void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& u
         for (auto& userStyleSheet : entry.value)
             userContentController.removeUserStyleSheet(userStyleSheet);
     }
+}
+
+void WebExtensionContext::unloadDeclarativeNetRequestState()
+{
+    removeDeclarativeNetRequestRules();
+
+    m_sessionRulesIDs.clear();
+    m_dynamicRulesIDs.clear();
+    m_matchedRules.clear();
+
+    m_declarativeNetRequestDynamicRulesStore = nullptr;
+    m_declarativeNetRequestSessionRulesStore = nullptr;
+}
+
+String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
+{
+    if (!m_declarativeNetRequestContentRuleListFilePath.isEmpty())
+        return m_declarativeNetRequestContentRuleListFilePath;
+
+    auto directoryPath = storageIsPersistent() ? storageDirectory() : String(FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest"));
+    m_declarativeNetRequestContentRuleListFilePath = FileSystem::pathByAppendingComponent(directoryPath, "DeclarativeNetRequestContentRuleList.data"_s);
+
+    return m_declarativeNetRequestContentRuleListFilePath;
+}
+
+void WebExtensionContext::removeDeclarativeNetRequestRules()
+{
+    if (!isLoaded())
+        return;
+
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
+    auto allUserContentControllers = extensionController()->allUserContentControllers();
+
+    for (auto& userContentController : allUserContentControllers)
+        userContentController.removeContentRuleList(uniqueIdentifier());
+}
+
+void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentControllers()
+{
+    API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }](RefPtr<API::ContentRuleList> ruleList, std::error_code) {
+        if (!ruleList)
+            return;
+
+        for (auto& controller : extensionController()->allPrivateUserContentControllers())
+            controller.addContentRuleList(*ruleList, m_baseURL);
+    });
+}
+
+static NSString *computeStringHashForContentBlockerRules(NSString *rules)
+{
+    SHA1 sha1;
+    sha1.addBytes(String(rules).span8());
+
+    SHA1::Digest digest;
+    sha1.computeHash(digest);
+
+    auto hashAsCString = SHA1::hexDigest(digest);
+    auto hashAsString = String::fromUTF8(hashAsCString);
+    return [hashAsString stringByAppendingString:[NSString stringWithFormat:@"-%zu", currentDeclarativeNetRequestRuleTranslatorVersion]];
+}
+
+void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, CompletionHandler<void(bool)>&& completionHandler)
+{
+    NSArray<NSString *> *jsonDeserializationErrorStrings;
+    auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData errorStrings:&jsonDeserializationErrorStrings];
+
+    NSArray<NSString *> *parsingErrorStrings;
+    auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects errorStrings:&parsingErrorStrings];
+
+    auto *webKitRules = encodeJSONString(allConvertedRules, JSONOptions::FragmentsAllowed);
+    if (!webKitRules) {
+        completionHandler(false);
+        return;
+    }
+
+    auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
+    auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
+
+    API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
+        if (foundRuleList) {
+            if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
+                auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
+                for (auto& userContentController : userContentControllers)
+                    userContentController.addContentRuleList(*foundRuleList, m_baseURL);
+
+                completionHandler(true);
+                return;
+            }
+        }
+
+        API::ContentRuleListStore::defaultStore().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules = String { hashOfWebKitRules }](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
+                completionHandler(false);
+                return;
+            }
+
+            [m_state setObject:hashOfWebKitRules forKey:lastLoadedDeclarativeNetRequestHashStateKey];
+            writeStateToStorage();
+
+            auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
+            for (auto& userContentController : userContentControllers)
+                userContentController.addContentRuleList(*ruleList, m_baseURL);
+
+            completionHandler(true);
+        });
+    });
+}
+
+void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
+        completionHandler(false);
+        return;
+    }
+
+    auto *allJSONData = [NSMutableArray array];
+
+    auto applyDeclarativeNetRequestRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), allJSONData = RetainPtr { allJSONData }] () mutable {
+        if (!allJSONData.get().count) {
+            removeDeclarativeNetRequestRules();
+            API::ContentRuleListStore::defaultStore().removeContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), [completionHandler = WTFMove(completionHandler)](std::error_code error) mutable {
+                completionHandler(error ? false : true);
+            });
+            return;
+        }
+
+        compileDeclarativeNetRequestRules(allJSONData.get(), WTFMove(completionHandler));
+    };
+
+    auto addStaticRulesets = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), applyDeclarativeNetRequestRules = WTFMove(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
+        for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
+            if (!ruleset.enabled)
+                continue;
+
+            auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
+            if (!jsonData)
+                continue;
+
+            [allJSONData addObject:jsonData];
+        }
+
+        applyDeclarativeNetRequestRules();
+    };
+
+    auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
+        [declarativeNetRequestDynamicRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
+            if (!rules.count) {
+                m_dynamicRulesIDs.clear();
+                addStaticRulesets();
+                return;
+            }
+
+            NSError *serializationError;
+            NSData *dynamicRulesAsData = encodeJSONData(rules, JSONOptions::FragmentsAllowed, &serializationError);
+            if (serializationError)
+                RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
+            else
+                [allJSONData addObject:dynamicRulesAsData];
+
+            HashSet<double> dynamicRuleIDs;
+            for (NSDictionary<NSString *, id> *rule in rules)
+                dynamicRuleIDs.add(objectForKey<NSNumber>(rule, @"id").doubleValue);
+
+            m_dynamicRulesIDs = WTFMove(dynamicRuleIDs);
+
+            addStaticRulesets();
+        }).get()];
+    };
+
+    [declarativeNetRequestSessionRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addDynamicAndStaticRules = WTFMove(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
+        if (!rules.count) {
+            m_sessionRulesIDs.clear();
+            addDynamicAndStaticRules();
+            return;
+        }
+
+        NSError *serializationError;
+        NSData *sessionRulesAsData = encodeJSONData(rules, JSONOptions::FragmentsAllowed, &serializationError);
+        if (serializationError)
+            RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
+        else
+            [allJSONData addObject:sessionRulesAsData];
+
+        HashSet<double> sessionRuleIDs;
+        for (NSDictionary<NSString *, id> *rule in rules)
+            sessionRuleIDs.add(objectForKey<NSNumber>(rule, @"id").doubleValue);
+
+        m_sessionRulesIDs = WTFMove(sessionRuleIDs);
+
+        addDynamicAndStaticRules();
+    }).get()];
+}
+
+
+bool WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTab& tab, const URL& url, WebCore::ContentRuleListResults::Result)
+{
+    incrementActionCountForTab(tab, 1);
+
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(_WKWebExtensionPermissionActiveTab)))
+        return false;
+
+    m_matchedRules.append({
+        url,
+        WallTime::now(),
+        tab.identifier()
+    });
+
+    return true;
+}
+
+bool WebExtensionContext::purgeMatchedRulesFromBefore(const WallTime& startTime)
+{
+    if (m_matchedRules.isEmpty())
+        return false;
+
+    DeclarativeNetRequestMatchedRuleVector filteredMatchedRules;
+    for (auto& matchedRule : m_matchedRules) {
+        if (matchedRule.timeStamp >= startTime)
+            filteredMatchedRules.append(matchedRule);
+    }
+
+    m_matchedRules = WTFMove(filteredMatchedRules);
+    return !m_matchedRules.isEmpty();
+}
+
+RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> WebExtensionContext::registeredContentScriptsStore()
+{
+    if (!m_registeredContentScriptsStorage)
+        m_registeredContentScriptsStorage = [[_WKWebExtensionRegisteredScriptsSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+    return m_registeredContentScriptsStorage;
 }
 
 } // namespace WebKit

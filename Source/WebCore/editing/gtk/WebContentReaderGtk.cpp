@@ -42,42 +42,42 @@ namespace WebCore {
 
 bool WebContentReader::readFilePath(const String& path, PresentationSize, const String&)
 {
-    if (path.isEmpty() || !frame.document())
+    if (path.isEmpty() || !frame().document())
         return false;
 
     auto markup = urlToMarkup(URL({ }, path), path);
-    addFragment(createFragmentFromMarkup(*frame.document(), markup, "file://"_s, { }));
+    addFragment(createFragmentFromMarkup(*frame().protectedDocument(), markup, "file://"_s, { }));
 
     return true;
 }
 
 bool WebContentReader::readHTML(const String& string)
 {
-    if (frame.settings().preferMIMETypeForImages() || !frame.document())
+    if (frame().settings().preferMIMETypeForImages() || !frame().document())
         return false;
 
-    addFragment(createFragmentFromMarkup(*frame.document(), string, emptyString(), { }));
+    addFragment(createFragmentFromMarkup(*frame().protectedDocument(), string, emptyString(), { }));
     return true;
 }
 
 bool WebContentReader::readPlainText(const String& text)
 {
-    if (!allowPlainText)
+    if (!m_allowPlainText)
         return false;
 
-    addFragment(createFragmentFromText(context, text));
+    addFragment(createFragmentFromText(m_context, text));
 
-    madeFragmentFromPlainText = true;
+    m_madeFragmentFromPlainText = true;
     return true;
 }
 
 bool WebContentReader::readImage(Ref<FragmentedSharedBuffer>&& buffer, const String& type, PresentationSize preferredPresentationSize)
 {
-    ASSERT(frame.document());
-    auto& document = *frame.document();
-    addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(&document, buffer->extractData(), type)), preferredPresentationSize));
+    ASSERT(frame().document());
+    Ref document = *frame().document();
+    addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(document.ptr(), buffer->extractData(), type)), preferredPresentationSize));
 
-    return fragment;
+    return m_fragment;
 }
 
 bool WebContentReader::readURL(const URL&, const String&)
@@ -92,19 +92,19 @@ static bool shouldReplaceSubresourceURL(const URL& url)
 
 bool WebContentMarkupReader::readHTML(const String& string)
 {
-    if (!frame.document())
+    if (!frame().document())
         return false;
 
     if (shouldSanitize()) {
-        markup = sanitizeMarkup(string, MSOListQuirks::Disabled, Function<void(DocumentFragment&)> { [](DocumentFragment& fragment) {
+        m_markup = sanitizeMarkup(string, MSOListQuirks::Disabled, Function<void(DocumentFragment&)> { [](DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [](const URL& url) {
                 return shouldReplaceSubresourceURL(url);
             });
         } });
     } else
-        markup = string;
+        m_markup = string;
 
-    return !markup.isEmpty();
+    return !m_markup.isEmpty();
 }
 
 } // namespace WebCore

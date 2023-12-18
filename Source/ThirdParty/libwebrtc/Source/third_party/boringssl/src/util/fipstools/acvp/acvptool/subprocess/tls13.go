@@ -77,9 +77,11 @@ func (k *tls13) Process(vectorSet []byte, m Transactable) (any, error) {
 
 	var respGroups []tls13TestGroupResponse
 	for _, group := range parsed.Groups {
+		group := group
 		groupResp := tls13TestGroupResponse{ID: group.ID}
 
 		for _, test := range group.Tests {
+			test := test
 			testResp := tls13TestResponse{ID: test.ID}
 
 			clientHello, err := hex.DecodeString(test.ClientHelloHex)

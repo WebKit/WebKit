@@ -165,7 +165,8 @@ bool SameStreamsEnabled(const VideoBitrateAllocation& lhs,
 absl::optional<float> GetConfiguredPacingFactor(
     const VideoSendStream::Config& config,
     VideoEncoderConfig::ContentType content_type,
-    const PacingConfig& default_pacing_config) {
+    const PacingConfig& default_pacing_config,
+    const FieldTrialsView& field_trials) {
   if (!TransportSeqNumExtensionConfigured(config))
     return absl::nullopt;
 
@@ -175,7 +176,7 @@ absl::optional<float> GetConfiguredPacingFactor(
     return alr_settings->pacing_factor;
 
   RateControlSettings rate_control_settings =
-      RateControlSettings::ParseFromFieldTrials();
+      RateControlSettings::ParseFromKeyValueConfig(&field_trials);
   return rate_control_settings.GetPacingFactor().value_or(
       default_pacing_config.pacing_factor);
 }
@@ -246,8 +247,10 @@ VideoSendStreamImpl::VideoSendStreamImpl(
       encoder_bitrate_priority_(initial_encoder_bitrate_priority),
       video_stream_encoder_(video_stream_encoder),
       rtp_video_sender_(rtp_video_sender),
-      configured_pacing_factor_(
-          GetConfiguredPacingFactor(*config_, content_type, pacing_config_)) {
+      configured_pacing_factor_(GetConfiguredPacingFactor(*config_,
+                                                          content_type,
+                                                          pacing_config_,
+                                                          field_trials)) {
   RTC_DCHECK_GE(config_->rtp.payload_type, 0);
   RTC_DCHECK_LE(config_->rtp.payload_type, 127);
   RTC_DCHECK(!config_->rtp.ssrcs.empty());
@@ -281,7 +284,7 @@ VideoSendStreamImpl::VideoSendStreamImpl(
       queue_time_limit_ms = alr_settings->max_paced_queue_time;
     } else {
       RateControlSettings rate_control_settings =
-          RateControlSettings::ParseFromFieldTrials();
+          RateControlSettings::ParseFromKeyValueConfig(&field_trials);
       enable_alr_bw_probing = rate_control_settings.UseAlrProbing();
       queue_time_limit_ms = pacing_config_.max_pacing_delay.Get().ms();
     }

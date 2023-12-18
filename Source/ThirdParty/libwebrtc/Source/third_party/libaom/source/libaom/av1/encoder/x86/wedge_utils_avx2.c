@@ -72,7 +72,7 @@ uint64_t av1_wedge_sse_from_residuals_avx2(const int16_t *r1, const int16_t *d,
   __m128i v_acc_q_0 = _mm256_castsi256_si128(v_acc0_q);
   __m128i v_acc_q_1 = _mm256_extracti128_si256(v_acc0_q, 1);
   v_acc_q_0 = _mm_add_epi64(v_acc_q_0, v_acc_q_1);
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   csse = (uint64_t)_mm_extract_epi64(v_acc_q_0, 0);
 #else
   xx_storel_64(&csse, v_acc_q_0);
@@ -141,7 +141,7 @@ int8_t av1_wedge_sign_from_residuals_avx2(const int16_t *ds, const uint8_t *m,
   __m128i v_acc_q_1 = _mm256_extracti128_si256(v_acc_q, 1);
   v_acc_q_0 = _mm_add_epi64(v_acc_q_0, v_acc_q_1);
 
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   acc = _mm_extract_epi64(v_acc_q_0, 0);
 #else
   xx_storel_64(&acc, v_acc_q_0);

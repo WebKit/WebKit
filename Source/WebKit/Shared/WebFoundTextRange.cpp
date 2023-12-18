@@ -43,31 +43,4 @@ bool WebFoundTextRange::operator==(const WebFoundTextRange& other) const
         && order == other.order;
 }
 
-void WebFoundTextRange::encode(IPC::Encoder& encoder) const
-{
-    encoder << location;
-    encoder << length;
-    encoder << frameIdentifier;
-    encoder << order;
-}
-
-std::optional<WebFoundTextRange> WebFoundTextRange::decode(IPC::Decoder& decoder)
-{
-    WebFoundTextRange result;
-
-    if (!decoder.decode(result.location))
-        return std::nullopt;
-
-    if (!decoder.decode(result.length))
-        return std::nullopt;
-
-    if (!decoder.decode(result.frameIdentifier))
-        return std::nullopt;
-
-    if (!decoder.decode(result.order))
-        return std::nullopt;
-
-    return result;
-}
-
 } // namespace WebKit

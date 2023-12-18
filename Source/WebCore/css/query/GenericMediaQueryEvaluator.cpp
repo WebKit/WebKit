@@ -34,19 +34,19 @@ namespace MQ {
 
 static std::optional<LayoutUnit> computeLength(const CSSValue* value, const CSSToLengthConversionData& conversionData)
 {
-    if (!is<CSSPrimitiveValue>(value))
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    if (!primitiveValue)
         return { };
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
-    if (primitiveValue.isNumberOrInteger()) {
-        if (primitiveValue.doubleValue())
+    if (primitiveValue->isNumberOrInteger()) {
+        if (primitiveValue->doubleValue())
             return { };
         return 0_lu;
     }
 
-    if (!primitiveValue.isLength())
+    if (!primitiveValue->isLength())
         return { };
-    return primitiveValue.computeLength<LayoutUnit>(conversionData);
+    return primitiveValue->computeLength<LayoutUnit>(conversionData);
 }
 
 template<typename T>
@@ -138,15 +138,14 @@ static EvaluationResult evaluateRatioComparison(FloatSize size, const std::optio
     if (!comparison)
         return EvaluationResult::True;
 
-    if (!is<CSSAspectRatioValue>(comparison->value))
+    auto* ratioValue = dynamicDowncast<CSSAspectRatioValue>(comparison->value.get());
+    if (!ratioValue)
         return EvaluationResult::Unknown;
 
-    auto& ratioValue = downcast<CSSAspectRatioValue>(*comparison->value);
-
     // Ratio with zero denominator is infinite and compares greater to any value.
-    auto denominator = ratioValue.denominatorValue();
+    auto denominator = ratioValue->denominatorValue();
 
-    auto comparisonA = denominator ? size.height() * ratioValue.numeratorValue() : 1.f;
+    auto comparisonA = denominator ? size.height() * ratioValue->numeratorValue() : 1.f;
     auto comparisonB = denominator ? size.width() * denominator : 0.f;
 
     auto left = side == Side::Left ? comparisonA : comparisonB;

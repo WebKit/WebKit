@@ -158,7 +158,7 @@ class Setting
   def setterFunctionName
     if @name.start_with?("html")
       "set" + @name[0..3].upcase + @name[4..@name.length]
-    elsif @name.start_with?("css", "xss", "ftp", "dom", "dns", "ice", "hdr")
+    elsif @name.start_with?("css", "xss", "ftp", "dom", "dns", "ice", "hdr", "pdf")
       "set" + @name[0..2].upcase + @name[3..@name.length]
     elsif @name.start_with?("vp")
       "set" + @name[0..1].upcase + @name[2..@name.length]

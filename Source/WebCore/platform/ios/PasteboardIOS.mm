@@ -322,7 +322,7 @@ static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t> itemIndex)
 {
-    reader.contentOrigin = readOrigin();
+    reader.setContentOrigin(readOrigin());
     if (respectsUTIFidelities()) {
         readRespectingUTIFidelities(reader, policy, itemIndex);
         return;

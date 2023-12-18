@@ -1,0 +1,4 @@
+
+
+FAIL event.intercept() throws if used on a canceled event assert_true: expected true got false
+

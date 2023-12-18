@@ -81,7 +81,7 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     writing-mode: horizontal-tb;
     background: rgba(0,0,0,0.8);
     overflow-wrap: break-word;
-    font: 5cqh sans-serif;
+    font: 5cqmin sans-serif;
     color: rgba(255,255,255,1);
     overflow: hidden;
     min-height: 0px;

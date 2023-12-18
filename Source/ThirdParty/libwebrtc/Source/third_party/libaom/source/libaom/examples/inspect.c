@@ -509,7 +509,6 @@ int put_block_info(char *buffer, const map_entry *map, const char *name,
   int r, c, t, i;
   if (compress && len == 1) {
     die("Can't encode scalars as arrays when RLE compression is enabled.");
-    return -1;
   }
   if (map) {
     buf += snprintf(buf, MAX_BUFFER, "  \"%sMap\": {", name);

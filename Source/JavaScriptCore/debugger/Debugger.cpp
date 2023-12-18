@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
  *
@@ -31,15 +31,20 @@
 #include "Microtask.h"
 #include "VMEntryScopeInlines.h"
 #include "VMTrapsInlines.h"
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Debugger);
+
 class DebuggerPausedScope {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     DebuggerPausedScope(Debugger& debugger)
         : m_debugger(debugger)

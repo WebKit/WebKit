@@ -122,7 +122,7 @@ void IDBConnectionProxy::completeOpenDBRequest(const IDBResultData& resultData)
         switch (resultData.type()) {
         case IDBResultType::OpenDatabaseUpgradeNeeded: {
             abortOpenAndUpgradeNeeded(resultData.databaseConnectionIdentifier(), resultData.transactionInfo().identifier());
-            auto result = IDBResultData::error(resultData.requestIdentifier(), IDBError { UnknownError, "Version change transaction on cached page is aborted to unblock other connections"_s });
+            auto result = IDBResultData::error(resultData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Version change transaction on cached page is aborted to unblock other connections"_s });
             request->performCallbackOnOriginThread(*request, &IDBOpenDBRequest::requestCompleted, result);
             return;
         }
@@ -287,7 +287,7 @@ void IDBConnectionProxy::fireVersionChangeEvent(uint64_t databaseConnectionIdent
 
     if (database->isContextSuspended()) {
         didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer::Yes);
-        database->performCallbackOnOriginThread(*database, &IDBDatabase::connectionToServerLost, IDBError { UnknownError, "Connection on cached page closed to unblock other connections"_s});
+        database->performCallbackOnOriginThread(*database, &IDBDatabase::connectionToServerLost, IDBError { ExceptionCode::UnknownError, "Connection on cached page closed to unblock other connections"_s });
         return;
     }
 

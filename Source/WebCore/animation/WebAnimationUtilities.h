@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-enum class PseudoId : uint16_t;
+enum class PseudoId : uint32_t;
 
 class AnimationEventBase;
 class Element;
@@ -60,7 +60,7 @@ bool compareAnimationsByCompositeOrder(const WebAnimation&, const WebAnimation&)
 bool compareAnimationEventsByCompositeOrder(const AnimationEventBase&, const AnimationEventBase&);
 String pseudoIdAsString(PseudoId);
 ExceptionOr<PseudoId> pseudoIdFromString(const String&);
-AtomString animatablePropertyAsString(AnimatableProperty);
+AtomString animatablePropertyAsString(AnimatableCSSProperty);
 
 } // namespace WebCore
 

@@ -70,7 +70,7 @@ NEVER_INLINE auto WARN_UNUSED_RETURN StreamingParser::fail(Args... args) -> Stat
     return State::FatalError;
 }
 
-#if ENABLE(WEBASSEMBLY)
+#if ENABLE(WEBASSEMBLY) && ASSERT_ENABLED
 static void dumpWasmSource(const Vector<uint8_t>& source)
 {
     static int count = 0;
@@ -289,8 +289,6 @@ auto StreamingParser::addBytes(const uint8_t* bytes, size_t bytesSize, IsEndOfSt
             dumpWasmSource(m_buffer);
         }
     }
-#else
-    (void) dumpWasmSource;
 #endif
     if (m_state == State::FatalError)
         return m_state;

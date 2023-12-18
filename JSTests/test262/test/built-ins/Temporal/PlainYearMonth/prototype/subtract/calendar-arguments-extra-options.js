@@ -33,7 +33,7 @@ class CustomCalendar extends Temporal.Calendar {
   dateAdd(date, duration, options) {
     const result = super.dateAdd(date, duration, options);
     dateAddCalls++;
-    if (dateAddCalls == 3)
+    if (dateAddCalls == 2)
       options.overflow = 'meatloaf';
     return result;
   }

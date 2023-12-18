@@ -84,6 +84,7 @@ protected:
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const override;
 
 private:
     void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);

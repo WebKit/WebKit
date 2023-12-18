@@ -6,7 +6,7 @@ TEST COMPLETE: 5 PASS, 0 FAIL
 
 
 PASS [object WebGLRenderingContext] is non-null.
-PASS "failPlatformContextCreationForTesting" in glWorks.getContextAttributes() is true
+PASS "failContextCreationForTesting" in glWorks.getContextAttributes() is true
 PASS Received context lost error for glFails
 PASS glWorks.NO_ERROR is glWorks.getError()
 PASS successfullyParsed is true

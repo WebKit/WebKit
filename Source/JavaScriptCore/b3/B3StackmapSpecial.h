@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "AirArg.h"
 #include "AirSpecial.h"
 #include "B3ValueRep.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
@@ -40,6 +41,7 @@ namespace Air { class Code; }
 // Stackmap.
 
 class StackmapSpecial : public Air::Special {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(StackmapSpecial, JS_EXPORT_PRIVATE);
 public:
     StackmapSpecial();
     ~StackmapSpecial() override;

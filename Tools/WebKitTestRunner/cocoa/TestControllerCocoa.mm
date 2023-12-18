@@ -45,6 +45,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKUserMediaPermissionCheck.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -56,6 +57,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -67,17 +69,82 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
+static const UIMenuIdentifier fakeMachineReadableCodeActionIdentifier = @"org.webkit.FakeMachineReadableCodeMenuAction";
+static UIMenu *fakeMachineReadableCodeMenuForTesting()
+{
+    static NeverDestroyed<RetainPtr<UIMenu>> menu;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [&] {
+        RetainPtr action = [UIAction actionWithTitle:@"QR Code Action" image:nil identifier:fakeMachineReadableCodeActionIdentifier handler:^(UIAction *) {
+        }];
+        menu.get() = [UIMenu menuWithTitle:@"QR Code" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[ action.get() ]];
+    });
+    return menu->get();
+}
+
+@interface FakeMachineReadableCodeImageAnalysis : NSObject
+@property (nonatomic, readonly) UIMenu *mrcMenu;
+@property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
+@end
+
+@implementation FakeMachineReadableCodeImageAnalysis
+
+- (NSArray<VKWKLineInfo *> *)allLines
+{
+    return @[ ];
+}
+
+- (BOOL)hasResultsForAnalysisTypes:(VKAnalysisTypes)analysisTypes
+{
+    return analysisTypes == VKAnalysisTypeMachineReadableCode;
+}
+
+- (UIMenu *)mrcMenu
+{
+    return fakeMachineReadableCodeMenuForTesting();
+}
+
+@end
+
+#endif // HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
 static VKImageAnalysisRequestID gCurrentImageAnalysisRequestID = 0;
 
 VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAnalyzerRequest *, void (^progressHandler)(double), void (^completionHandler)(VKCImageAnalysis *, NSError *))
 {
     RunLoop::main().dispatchAfter(25_ms, [completionHandler = makeBlockPtr(completionHandler)] {
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+        if (WTR::TestController::singleton().shouldUseFakeMachineReadableCodeResultsForImageAnalysis()) {
+            auto result = adoptNS([FakeMachineReadableCodeImageAnalysis new]);
+            completionHandler(static_cast<VKCImageAnalysis *>(result.get()), nil);
+            return;
+        }
+#endif
         completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:404 userInfo:nil]);
     });
     return ++gCurrentImageAnalysisRequestID;
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+#if ENABLE(DATA_DETECTION)
+
+NSURL *swizzledAppStoreURL(NSURL *url, SEL)
+{
+    auto components = adoptNS([[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO]);
+    if (![[components scheme] isEqualToString:@"http"] && ![[components scheme] isEqualToString:@"https"])
+        return nil;
+
+    if (![[components host] isEqualToString:@"itunes.apple.com"])
+        return nil;
+
+    [components setScheme:@"itms-appss"];
+    return [components URL];
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 namespace WTR {
 
@@ -152,6 +219,10 @@ void TestController::cocoaPlatformInitialize(const Options& options)
         reinterpret_cast<IMP>(swizzledProcessImageAnalysisRequest)
     );
 #endif
+
+#if ENABLE(DATA_DETECTION)
+    m_appStoreURLSwizzler = makeUnique<InstanceMethodSwizzler>(NSURL.class, @selector(iTunesStoreURL), reinterpret_cast<IMP>(swizzledAppStoreURL));
+#endif
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -161,7 +232,17 @@ uint64_t TestController::currentImageAnalysisRequestID()
     return static_cast<uint64_t>(gCurrentImageAnalysisRequestID);
 }
 
-#endif
+void TestController::installFakeMachineReadableCodeResultsForImageAnalysis()
+{
+    m_useFakeMachineReadableCodeResultsForImageAnalysis = true;
+}
+
+bool TestController::shouldUseFakeMachineReadableCodeResultsForImageAnalysis() const
+{
+    return m_useFakeMachineReadableCodeResultsForImageAnalysis;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 WKContextRef TestController::platformContext()
 {
@@ -214,6 +295,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setLimitsNavigationsToAppBoundDomains:YES];
 
     [copiedConfiguration _setAppInitiatedOverrideValueForTesting:options.isAppInitiated() ? _WKAttributionOverrideTestingAppInitiated : _WKAttributionOverrideTestingUserInitiated];
+    [copiedConfiguration _setLongPressActionsEnabled:options.longPressActionsEnabled()];
 #endif
 
     if (options.enableAttachmentElement())
@@ -351,6 +433,9 @@ void TestController::clearApplicationBundleIdentifierTestingOverride()
 
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
+#if ENABLE(IMAGE_ANALYSIS)
+    m_useFakeMachineReadableCodeResultsForImageAnalysis = false;
+#endif
     m_calendarSwizzler = nullptr;
     m_overriddenCalendarAndLocaleIdentifiers = { nil, nil };
     
@@ -359,7 +444,12 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         platformView._viewScale = 1;
         platformView._minimumEffectiveDeviceWidth = 0;
         platformView._editable = NO;
+#if PLATFORM(MAC)
+        platformView.allowsMagnification = NO;
+        [platformView setMagnification:1 centeredAtPoint:CGPointZero];
+#endif
         [platformView _setContinuousSpellCheckingEnabledForTesting:options.shouldShowSpellCheckingDots()];
+        [platformView _setGrammarCheckingEnabledForTesting:YES];
         [platformView resetInteractionCallbacks];
         [platformView _resetNavigationGestureStateForTesting];
         [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];
@@ -368,6 +458,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
     [LayoutTestSpellChecker uninstallAndReset];
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
+
+    [globalWebsiteDataStoreDelegateClient() clearReportedWindowProxyAccessDomains];
 }
 
 void TestController::platformWillRunTest(const TestInvocation& testInvocation)
@@ -565,7 +657,6 @@ void TestController::setQuota(uint64_t quota)
 void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     m_allowsAnySSLCertificate = allows;
-    WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(websiteDataStore(), allows);
     [globalWebsiteDataStoreDelegateClient() setAllowAnySSLCertificate: allows];
 }
 
@@ -580,7 +671,7 @@ void TestController::setAllowedMenuActions(const Vector<String>& actions)
 
 bool TestController::isDoingMediaCapture() const
 {
-    return m_mainWebView->platformView()._mediaCaptureState != _WKMediaCaptureStateDeprecatedNone;
+    return m_mainWebView->platformView().microphoneCaptureState != WKMediaCaptureStateNone || m_mainWebView->platformView().cameraCaptureState != WKMediaCaptureStateNone;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -608,11 +699,33 @@ void TestController::configureWebpagePreferences(WKWebViewConfiguration *configu
     [webpagePreferences setPreferredContentMode:contentMode(options)];
 #endif
     configuration.defaultWebpagePreferences = webpagePreferences.get();
+#if HAVE(INLINE_PREDICTIONS)
+    configuration.allowsInlinePredictions = options.allowsInlinePredictions();
+#endif
 }
 
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
     return adoptWK(WKImageCreateDataURLFromImage(mainWebView()->windowSnapshotImage().get()));
+}
+
+static WKRetainPtr<WKArrayRef> createWKArray(NSArray *nsArray)
+{
+    auto array = adoptWK(WKMutableArrayCreate());
+
+    for (NSString *nsString in nsArray) {
+        auto string = adoptWK(WKStringCreateWithCFString((CFStringRef)nsString));
+        WKArrayAppendItem(array.get(), string.get());
+    }
+
+    return array;
+}
+
+WKRetainPtr<WKArrayRef> TestController::getAndClearReportedWindowProxyAccessDomains()
+{
+    auto domains = createWKArray([globalWebsiteDataStoreDelegateClient() reportedWindowProxyAccessDomains]);
+    [globalWebsiteDataStoreDelegateClient() clearReportedWindowProxyAccessDomains];
+    return domains;
 }
 
 WKRetainPtr<WKStringRef> TestController::getBackgroundFetchIdentifier()

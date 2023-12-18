@@ -1,0 +1,160 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<img src="resources/background.png" id="img">
+<script>
+    let dataURLComparisonArray = [];
+
+    description("Test that noise injection is controlled by the salt, and that noise is not applied for bitmaps.");
+    function hasPendingCanvasNoiseInjection(canvas) {
+        return internals.doesCanvasHavePendingCanvasNoiseInjection(canvas);
+    }
+
+    function setCanvasNoiseInjection(canvas) {
+        const salt = 5;
+        internals.setCanvasNoiseInjectionSalt(canvas, salt);
+    }
+
+    function expectFalse(result, msg) {
+        expectTrue(!result, msg);
+    }
+
+    function setOrCompareDataUrl(index, url, shouldExpectTrue, msg) {
+        if (dataURLComparisonArray[index] === undefined)
+            dataURLComparisonArray[index] = url;
+        else if (shouldExpectTrue)
+            expectTrue(dataURLComparisonArray[index] === url, msg);
+        else
+            expectFalse(dataURLComparisonArray[index] === url, msg);
+    }
+
+    function runTest(noiseInjectionEnabled) {
+        let dataURLComparisonIndex = 0;
+        let dataURLMsg;
+        let img = document.getElementById("img");
+        let canvas = document.createElement("canvas");
+        if (noiseInjectionEnabled)
+            setCanvasNoiseInjection(canvas);
+
+        document.body.appendChild(canvas);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "Initial canvas should not have pending dirty rects");
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage should not require noise injection");
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
+        document.body.appendChild(canvas);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "Initial canvas should not have pending dirty rects");
+        ctx = canvas.getContext("2d");
+        ctx.putImageData(imageData, 0, 0);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "putImageData should not require noise injection");
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), true, "data: url after putImageData should be equal");
+
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
+        if (noiseInjectionEnabled)
+            setCanvasNoiseInjection(canvas);
+
+        document.body.appendChild(canvas);
+        ctx = canvas.getContext("2d");
+        ctx.setFillColor("blue", .9);
+        ctx.fillText("This is text", 10, 10);
+        if (noiseInjectionEnabled)
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillText should require noise injection");
+        else
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "fillText should not require noise injection when noise injection is not enabled");
+
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        if (noiseInjectionEnabled)
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should apply all required noise");
+        else
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should not apply noise when noise injection is not enabled");
+        ctx.putImageData(imageData, 0, 0);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "putImageData should not require noise injection");
+
+        ctx.fillRect(50, 50, 100, 100);
+        if (noiseInjectionEnabled) {
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillRect should require noise injection");
+            dataURLMsg = "data: url after fillRect should not be equal";
+        } else {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "fillRect should not require noise injection when noise injection is not enabled");
+            dataURLMsg = "data: url after fillRect should be equal";
+        }
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), !noiseInjectionEnabled, dataURLMsg);
+
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        if (noiseInjectionEnabled)
+            setCanvasNoiseInjection(canvas);
+        document.body.appendChild(canvas);
+        ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage that covers entire canvas should not require noise injection");
+
+        document.body.removeChild(canvas);
+
+        canvas = document.createElement("canvas");
+        if (noiseInjectionEnabled)
+            setCanvasNoiseInjection(canvas);
+
+        document.body.appendChild(canvas);
+        ctx = canvas.getContext("2d");
+        ctx.setFillColor("blue", .9);
+        ctx.fillText("This is text", 10, 10);
+        if (noiseInjectionEnabled)
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillText should require noise injection");
+        else
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "fillText should not require noise injection when noise injection is not enabled");
+
+        ctx.drawImage(img, 0, 0);
+        if (noiseInjectionEnabled)
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "drawImage after fillText require noise injection");
+        else
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "drawImage after fillText should not require noise injection when noise injection is not enabled");
+
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        if (noiseInjectionEnabled)
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should apply all required noise");
+        else
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should not apply noise when noise injection is not enabled");
+        ctx.putImageData(imageData, 0, 0);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "putImageData should not require noise injection");
+
+        ctx.fillRect(50, 50, 100, 100);
+        if (noiseInjectionEnabled) {
+            expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillRect should require noise injection");
+            dataURLMsg = "data: url after fillRect should not be equal";
+        } else {
+            expectFalse(hasPendingCanvasNoiseInjection(canvas), "fillRect should not require noise injection when noise injection is not enabled");
+            dataURLMsg = "data: url after fillRect should be equal";
+        }
+        setOrCompareDataUrl(dataURLComparisonIndex++, canvas.toDataURL(), !noiseInjectionEnabled, dataURLMsg);
+
+        document.body.removeChild(canvas);
+    }
+
+    if (window.internals) {
+        let noiseInjectionEnabled = false;
+        runTest(noiseInjectionEnabled);
+
+        debug("Enabling canvas noise injection");
+        noiseInjectionEnabled = true;
+        runTest(noiseInjectionEnabled);
+    } else
+        document.body.innerHTML = "window.internals is required for this test";
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

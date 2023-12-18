@@ -32,10 +32,8 @@ from webkitpy.tool.steps.addradar import AddRadar
 from webkitpy.tool.steps.applypatch import ApplyPatch
 from webkitpy.tool.steps.applypatchwithlocalcommit import ApplyPatchWithLocalCommit
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
-from webkitpy.tool.steps.attachtobug import AttachToBug
 from webkitpy.tool.steps.build import Build
 from webkitpy.tool.steps.checkforredactedissue import CheckForRedactedIssue
-from webkitpy.tool.steps.checkpatchrelevance import CheckPatchRelevance
 from webkitpy.tool.steps.checkstyle import CheckStyle
 from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
 from webkitpy.tool.steps.closebug import CloseBug
@@ -49,7 +47,6 @@ from webkitpy.tool.steps.editchangelog import EditChangeLog
 from webkitpy.tool.steps.ensurebugisopenandassigned import EnsureBugIsOpenAndAssigned
 from webkitpy.tool.steps.ensurelocalcommitifneeded import EnsureLocalCommitIfNeeded
 from webkitpy.tool.steps.formatcppfiles import FormatCppFiles
-from webkitpy.tool.steps.haslanded import HasLanded
 from webkitpy.tool.steps.obsoletepatches import ObsoletePatches
 from webkitpy.tool.steps.options import Options
 from webkitpy.tool.steps.postdiff import PostDiff
@@ -64,7 +61,9 @@ from webkitpy.tool.steps.sortxcodeprojectfiles import SortXcodeProjectFiles
 from webkitpy.tool.steps.submittoews import SubmitToEWS
 from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
 from webkitpy.tool.steps.update import Update
-from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
+from webkitpy.tool.steps.updatechangelogswithreviewer import (
+    UpdateChangeLogsWithReviewer,
+)
 from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
 from webkitpy.tool.steps.validatereviewer import ValidateReviewer
 from webkitpy.tool.steps.wptchangeexport import WPTChangeExport

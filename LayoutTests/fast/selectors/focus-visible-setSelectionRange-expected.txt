@@ -1,0 +1,6 @@
+Click me
+
+Target
+
+PASS Script focus after setSelectionRange after mouse focus does not match :focus-visible
+

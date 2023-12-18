@@ -67,6 +67,8 @@ LIBYUV_API extern const struct YuvConstants kYvuV2020Constants;  // BT.2020 full
   I210ToAR30Matrix(a, b, e, f, c, d, g, h, i##VU, j, k)
 #define I410ToAB30Matrix(a, b, c, d, e, f, g, h, i, j, k) \
   I410ToAR30Matrix(a, b, e, f, c, d, g, h, i##VU, j, k)
+#define I012ToAB30Matrix(a, b, c, d, e, f, g, h, i, j, k) \
+  I012ToAR30Matrix(a, b, e, f, c, d, g, h, i##VU, j, k)
 #define I420AlphaToABGRMatrix(a, b, c, d, e, f, g, h, i, j, k, l, m, n) \
   I420AlphaToARGBMatrix(a, b, e, f, c, d, g, h, i, j, k##VU, l, m, n)
 #define I422AlphaToABGRMatrix(a, b, c, d, e, f, g, h, i, j, k, l, m, n) \

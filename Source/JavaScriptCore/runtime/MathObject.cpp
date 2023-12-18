@@ -190,13 +190,12 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncHypot, (JSGlobalObject* globalObject, Call
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     unsigned argsCount = callFrame->argumentCount();
-    Vector<double, 8> args;
-    args.reserveInitialCapacity(argsCount);
-    for (unsigned i = 0; i < argsCount; ++i) {
+    Vector<double, 8> args(argsCount, [&](size_t i) -> std::optional<double> {
         double argument = callFrame->uncheckedArgument(i).toNumber(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
-        args.uncheckedAppend(argument);
-    }
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
+        return argument;
+    });
+    RETURN_IF_EXCEPTION(scope, { });
 
     double max = 0;
     for (double argument : args) {

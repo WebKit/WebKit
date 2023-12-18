@@ -15,12 +15,12 @@ PASS "::slotted(*)" should be a valid selector
 PASS "::slotted(div)" should be a valid selector
 PASS "::slotted([attr]:hover)" should be a valid selector
 PASS "::slotted(:not(.a))" should be a valid selector
-PASS "::slotted(*):is()" should be a valid selector
-PASS "::slotted(*):is(:hover)" should be a valid selector
-PASS "::slotted(*):is(#id)" should be a valid selector
-PASS "::slotted(*):where()" should be a valid selector
-PASS "::slotted(*):where(:hover)" should be a valid selector
-PASS "::slotted(*):where(#id)" should be a valid selector
+FAIL "::slotted(*):is()" should be a valid selector assert_equals: CSS.supports() reports the expected value expected true but got false
+FAIL "::slotted(*):is(:hover)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected true but got false
+FAIL "::slotted(*):is(#id)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected true but got false
+FAIL "::slotted(*):where()" should be a valid selector assert_equals: CSS.supports() reports the expected value expected true but got false
+FAIL "::slotted(*):where(:hover)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected true but got false
+FAIL "::slotted(*):where(#id)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected true but got false
 PASS "::slotted(*)::before" should be a valid selector
 PASS "::slotted(*)::after" should be a valid selector
 FAIL "::slotted(*)::placeholder" should be a valid selector '::slotted(*)::placeholder' is not a valid selector.

@@ -5,6 +5,7 @@ PASS Property text-transform value 'uppercase'
 PASS Property text-transform value 'lowercase'
 PASS Property text-transform value 'full-width'
 PASS Property text-transform value 'full-size-kana'
+FAIL Property text-transform value 'math-auto' assert_true: 'math-auto' is a supported value for text-transform. expected true got false
 PASS Property text-transform value 'capitalize full-width'
 PASS Property text-transform value 'full-width full-size-kana'
 PASS Property text-transform value 'uppercase full-width full-size-kana'

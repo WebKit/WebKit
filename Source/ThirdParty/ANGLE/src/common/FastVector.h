@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstring>
 #include <initializer_list>
 #include <iterator>
 
@@ -151,6 +152,7 @@ class FastVector final
     const_reference back() const;
 
     void swap(FastVector<T, N, Storage> &other);
+    void resetWithRawData(size_type count, const uint8_t *data);
 
     void resize(size_type count);
     void resize(size_type count, const value_type &value);
@@ -450,6 +452,16 @@ void FastVector<T, N, Storage>::swap(FastVector<T, N, Storage> &other)
 }
 
 template <class T, size_t N, class Storage>
+void FastVector<T, N, Storage>::resetWithRawData(size_type count, const uint8_t *data)
+{
+    static_assert(std::is_trivially_copyable<value_type>(),
+                  "This is a special method for trivially copyable types.");
+    ASSERT(count > 0 && data != nullptr);
+    resize_impl(count);
+    std::memcpy(mData, data, count * sizeof(value_type));
+}
+
+template <class T, size_t N, class Storage>
 ANGLE_INLINE void FastVector<T, N, Storage>::resize(size_type count)
 {
     // Trivially constructible types will have undefined values when created therefore reusing
@@ -613,6 +625,11 @@ class FastMap final
     }
 
     void clear() { mData.clear(); }
+
+    void resetWithRawData(size_type count, const uint8_t *data)
+    {
+        mData.resetWithRawData(count, data);
+    }
 
     bool empty() const { return mData.empty(); }
     size_t size() const { return mData.size(); }

@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "CallEdge.h"
+#include "CallLinkInfoBase.h"
 #include "CallVariant.h"
 #include "GCAwareJITStubRoutine.h"
 #include <wtf/Noncopyable.h>
@@ -38,23 +39,22 @@ namespace JSC {
 
 class CallLinkInfo;
 
-class PolymorphicCallNode : public PackedRawSentinelNode<PolymorphicCallNode> {
+class PolymorphicCallNode final : public CallLinkInfoBase {
     WTF_MAKE_NONCOPYABLE(PolymorphicCallNode);
 public:
     PolymorphicCallNode(CallLinkInfo* info)
-        : m_callLinkInfo(info)
+        : CallLinkInfoBase(CallSiteType::PolymorphicCallNode)
+        , m_callLinkInfo(info)
     {
     }
     
-    ~PolymorphicCallNode();
-    
-    void unlink(VM&);
+    void unlinkImpl(VM&);
 
-    bool hasCallLinkInfo(CallLinkInfo* info) { return m_callLinkInfo.get() == info; }
+    bool hasCallLinkInfo(CallLinkInfo* info) { return m_callLinkInfo == info; }
     void clearCallLinkInfo();
     
 private:
-    PackedPtr<CallLinkInfo> m_callLinkInfo;
+    CallLinkInfo* m_callLinkInfo;
 };
 
 class PolymorphicCallCase {
@@ -85,7 +85,7 @@ public:
     friend class JITStubRoutine;
 
     PolymorphicCallStubRoutine(
-        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, const JSCell* owner,
+        const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, JSCell* owner,
         CallFrame* callerFrame, CallLinkInfo&, const Vector<PolymorphicCallCase>&,
         UniqueArray<uint32_t>&& fastCounts);
     

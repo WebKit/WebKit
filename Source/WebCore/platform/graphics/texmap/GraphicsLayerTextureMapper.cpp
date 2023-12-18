@@ -427,11 +427,10 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         return;
 
     if (m_changeMask & ChildrenChange) {
-        Vector<TextureMapperLayer*> rawChildren;
-        rawChildren.reserveInitialCapacity(children().size());
-        for (auto& child : children())
-            rawChildren.uncheckedAppend(&downcast<GraphicsLayerTextureMapper>(child.get()).layer());
-        m_layer.setChildren(rawChildren);
+        auto rawChildren = WTF::map(children(), [](auto& child) -> TextureMapperLayer* {
+            return &downcast<GraphicsLayerTextureMapper>(child.get()).layer();
+        });
+        m_layer.setChildren(WTFMove(rawChildren));
     }
 
     if (m_changeMask & MaskLayerChange) {
@@ -639,7 +638,7 @@ void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, dou
     m_animations.pause(animationName, Seconds(timeOffset));
 }
 
-void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
+void GraphicsLayerTextureMapper::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
 {
     m_animations.remove(animationName);
 }

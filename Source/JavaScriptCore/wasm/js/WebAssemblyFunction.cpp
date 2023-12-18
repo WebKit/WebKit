@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JITOpaqueByproducts.h"
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 #include "JSObjectInlines.h"
@@ -267,7 +268,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         case Wasm::TypeKind::RefNull:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Externref: {
-            if (!Wasm::isExternref(type)) {
+            if (Wasm::isFuncref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::TypeInformation::get(type.index).is<Wasm::FunctionSignature>())) {
                 // Ensure we have a WASM exported function.
                 jit.loadValue(jsParam, scratchJSR);
                 auto isNull = jit.branchIfNull(scratchJSR);
@@ -293,6 +294,10 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
                 if (type.isNullable())
                     isNull.link(&jit);
+            } else if (!Wasm::isExternref(type)) {
+                // FIXME: this should implement some fast paths for, e.g., i31refs and other
+                // types that can be easily handled.
+                slowPath.append(jit.jump());
             }
 
             if (isStack) {
@@ -388,8 +393,8 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     // 1. We need to know where to get callee saves.
     // 2. We need to know to restore the previous wasm context.
     ASSERT(!m_jsToWasmICCallee);
-    m_jsToWasmICCallee = Wasm::JSToWasmICCallee::create();
-    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(m_jsToWasmICCallee.get())), scratchJSR.payloadGPR());
+    RefPtr<Wasm::JSToWasmICCallee> jsToWasmICCallee = Wasm::JSToWasmICCallee::create();
+    jit.move(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(jsToWasmICCallee.get())), scratchJSR.payloadGPR());
     // We do not need to set up |this| in this IC since the caller of this IC itself already set up arguments and its |this| should be WebAssemblyFunction,
     // which anchors JSWebAssemblyInstance correctly from GC.
 #if USE(JSVALUE32_64)
@@ -425,15 +430,18 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 #if CPU(ARM64E)
     jit.untagReturnAddress(scratchJSR.payloadGPR());
 #endif
-    auto jumpToHostCallThunk = jit.jump();
+    jit.jumpThunk(CodeLocationLabel<JSEntryPtrTag> { executable()->entrypointFor(CodeForCall, MustCheckArity) });
 
     LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return nullptr;
 
-    linkBuffer.link(jumpToHostCallThunk, CodeLocationLabel<JSEntryPtrTag>(executable()->entrypointFor(CodeForCall, MustCheckArity)));
     auto compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, "JS->Wasm IC"), nullptr);
-    m_jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
+    jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
+
+    // Successfully compiled and linked the IC.
+    m_jsToWasmICCallee = jsToWasmICCallee;
+
     return m_jsToWasmICCallee->entrypoint().retagged<JSEntryPtrTag>();
 }
 #endif // ENABLE(JIT)

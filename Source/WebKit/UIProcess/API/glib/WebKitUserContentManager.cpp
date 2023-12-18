@@ -35,10 +35,6 @@
 #include "WebKitJavascriptResultPrivate.h"
 #endif
 
-#if PLATFORM(WPE)
-#include "WPEView.h"
-#endif
-
 using namespace WebCore;
 using namespace WebKit;
 

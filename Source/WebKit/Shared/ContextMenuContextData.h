@@ -48,6 +48,28 @@ public:
     ContextMenuContextData();
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const WebCore::ContextMenuContext&);
 
+    ContextMenuContextData(WebCore::ContextMenuContext::Type
+        , WebCore::IntPoint&& menuLocation
+        , Vector<WebContextMenuItemData>&& menuItems
+        , std::optional<WebKit::WebHitTestResultData>&&
+        , String&& selectedText
+#if ENABLE(SERVICE_CONTROLS)
+        , std::optional<WebKit::ShareableBitmapHandle>&& controlledImageHandle
+        , Vector<uint8_t>&& controlledSelectionData
+        , Vector<String>&& selectedTelephoneNumbers
+        , bool selectionIsEditable
+        , WebCore::IntRect&& controlledImageBounds
+        , String&& controlledImageAttachmentID
+        , std::optional<WebCore::ElementContext>&& controlledImageElementContext
+        , String&& controlledImageMIMEType
+#endif // ENABLE(SERVICE_CONTROLS)
+#if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+        , std::optional<WebKit::ShareableBitmapHandle>&& potentialQRCodeNodeSnapshotImageHandle
+        , std::optional<WebKit::ShareableBitmapHandle>&& potentialQRCodeViewportSnapshotImageHandle
+#endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
+        , bool hasEntireImage
+    );
+
     Type type() const { return m_type; }
     const WebCore::IntPoint& menuLocation() const { return m_menuLocation; }
     const Vector<WebKit::WebContextMenuItemData>& menuItems() const { return m_menuItems; }
@@ -80,8 +102,12 @@ public:
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
 
     ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
+    std::optional<ShareableBitmap::Handle> createControlledImageReadOnlyHandle() const;
+
     const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
     const Vector<String>& selectedTelephoneNumbers() const { return m_selectedTelephoneNumbers; }
+
+    bool selectionIsEditable() const { return m_selectionIsEditable; }
 
     bool isServicesMenu() const { return m_type == ContextMenuContextData::Type::ServicesMenu; }
     bool controlledDataIsEditable() const;
@@ -93,14 +119,13 @@ public:
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     ShareableBitmap* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    std::optional<ShareableBitmap::Handle> createPotentialQRCodeNodeSnapshotImageReadOnlyHandle() const;
     ShareableBitmap* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+    std::optional<ShareableBitmap::Handle> createPotentialQRCodeViewportSnapshotImageReadOnlyHandle() const;
 
     const String& qrCodePayloadString() const { return m_qrCodePayloadString; }
     void setQRCodePayloadString(const String& string) { m_qrCodePayloadString = string; }
 #endif
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ContextMenuContextData&);
 
 private:
     Type m_type;

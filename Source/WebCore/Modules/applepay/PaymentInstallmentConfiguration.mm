@@ -218,7 +218,7 @@ ExceptionOr<PaymentInstallmentConfiguration> PaymentInstallmentConfiguration::cr
 {
     auto dictionary = applicationMetadataDictionary(configuration);
     if (!configuration.applicationMetadata.isNull() && !dictionary)
-        return Exception { TypeError, "applicationMetadata must be a JSON object"_s };
+        return Exception { ExceptionCode::TypeError, "applicationMetadata must be a JSON object"_s };
 
     return PaymentInstallmentConfiguration(ApplePayInstallmentConfiguration(configuration), WTFMove(dictionary));
 }

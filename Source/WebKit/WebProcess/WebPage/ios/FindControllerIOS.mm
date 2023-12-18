@@ -114,7 +114,7 @@ bool FindController::updateFindIndicator(LocalFrame& selectedFrame, bool isShowi
     if (shouldAnimate) {
         bool isReplaced;
         const VisibleSelection& visibleSelection = selectedFrame.selection().selection();
-        FloatRect renderRect = visibleSelection.start().containerNode()->renderRect(&isReplaced);
+        FloatRect renderRect = visibleSelection.start().containerNode()->absoluteBoundingRect(&isReplaced);
         IntRect startRect = visibleSelection.visibleStart().absoluteCaretBounds();
 
         m_webPage->send(Messages::SmartMagnificationController::ScrollToRect(startRect.center(), renderRect));

@@ -25,7 +25,6 @@
 
 #include "FilterEffect.h"
 #include "NodeName.h"
-#include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElementInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -104,7 +103,7 @@ void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const Quali
         return;
 
     if (auto* renderer = this->renderer())
-        static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
+        static_cast<LegacyRenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
 }
 
 void SVGFilterPrimitiveStandardAttributes::primitiveAttributeOnChildChanged(const Element& child, const QualifiedName& attribute)
@@ -115,13 +114,13 @@ void SVGFilterPrimitiveStandardAttributes::primitiveAttributeOnChildChanged(cons
         return;
 
     if (auto* renderer = this->renderer())
-        static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
+        static_cast<LegacyRenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
 }
 
 void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
 {
     if (auto* renderer = this->renderer())
-        static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRebuild();
+        static_cast<LegacyRenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRebuild();
 
     m_effect = nullptr;
 }
@@ -148,7 +147,7 @@ void SVGFilterPrimitiveStandardAttributes::childrenChanged(const ChildChange& ch
 
 RenderPtr<RenderElement> SVGFilterPrimitiveStandardAttributes::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceFilterPrimitive>(*this, WTFMove(style));
 }
 
 bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const RenderStyle& style)
@@ -169,7 +168,7 @@ void SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent(SVGEl
         return;
 
     RenderElement* renderer = parent->renderer();
-    if (!renderer || !renderer->isSVGResourceFilterPrimitive())
+    if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
         return;
 
     downcast<SVGElement>(*parent).updateSVGRendererForElementChange();

@@ -55,9 +55,10 @@ static constexpr auto borderFillColor = SRGBA<uint8_t> { 208, 208, 208 };
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFrameSet);
 
 RenderFrameSet::RenderFrameSet(HTMLFrameSetElement& frameSet, RenderStyle&& style)
-    : RenderBox(Type::FrameSet, frameSet, WTFMove(style), 0)
+    : RenderBox(Type::FrameSet, frameSet, WTFMove(style), { })
     , m_isResizing(false)
 {
+    ASSERT(isRenderFrameSet());
     setInline(false);
 }
 
@@ -437,13 +438,13 @@ void RenderFrameSet::layout()
 
     bool doFullRepaint = selfNeedsLayout() && checkForRepaintDuringLayout();
     LayoutRect oldBounds;
-    const RenderLayerModelObject* repaintContainer = nullptr;
+    CheckedPtr<const RenderLayerModelObject> repaintContainer;
     if (doFullRepaint) {
         repaintContainer = containerForRepaint().renderer;
-        oldBounds = clippedOverflowRectForRepaint(repaintContainer);
+        oldBounds = clippedOverflowRectForRepaint(repaintContainer.get());
     }
 
-    if (!parent()->isFrameSet() && !document().printing()) {
+    if (!parent()->isRenderFrameSet() && !document().printing()) {
         setWidth(view().viewWidth());
         setHeight(view().viewHeight());
     }
@@ -469,10 +470,10 @@ void RenderFrameSet::layout()
     updateLayerTransform();
 
     if (doFullRepaint) {
-        repaintUsingContainer(repaintContainer, snappedIntRect(oldBounds));
-        LayoutRect newBounds = clippedOverflowRectForRepaint(repaintContainer);
+        repaintUsingContainer(repaintContainer.get(), snappedIntRect(oldBounds));
+        LayoutRect newBounds = clippedOverflowRectForRepaint(repaintContainer.get());
         if (newBounds != oldBounds)
-            repaintUsingContainer(repaintContainer, snappedIntRect(newBounds));
+            repaintUsingContainer(repaintContainer.get(), snappedIntRect(newBounds));
     }
 
     clearNeedsLayout();
@@ -645,7 +646,7 @@ int RenderFrameSet::hitTestSplit(const GridAxis& axis, int position) const
 
 bool RenderFrameSet::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isFrame() || child.isFrameSet();
+    return child.isRenderFrame() || child.isRenderFrameSet();
 }
 
 CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& cursor) const

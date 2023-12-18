@@ -117,6 +117,10 @@
     (literal "/Library/Preferences/com.apple.security.plist")
     (home-literal "/Library/Preferences/com.apple.security.plist"))
 
+(allow file-read*
+    (literal "/System/Library/DarwinDirectory/system/recordStore.data")
+    (literal "/private/var/db/DarwinDirectory/local/recordStore.data"))
+
 ;;; Allow reading internal profiles on development builds
 (allow file-read*
     (require-all (file-mode #o0004)

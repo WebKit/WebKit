@@ -79,14 +79,14 @@ function waitForVideoFrameUntil(video, time, cb) {
     return p;
 }
 
-function timeRangesToString(ranges) {
-    var str = "";
-    if (!!!ranges) {
-        str += "null";
-        return str;
+function timeRangesToString(timeRanges) {
+    if (!timeRanges?.length)
+        return "[]";
+
+    const ranges = [];
+    for (let i = 0; i < timeRanges?.length; i++) {
+      const range = "[" + [timeRanges.start(i)  + ", " + timeRanges.end(i)] + ")";
+      ranges.push(range);
     }
-    for (var i = 0; i < ranges.length; i++) {
-        str += "[" + ranges.start(i) + ", " + ranges.end(i) + ")";
-    }
-    return str;
+    return ranges.toString();
 }

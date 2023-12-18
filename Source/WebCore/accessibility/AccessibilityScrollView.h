@@ -62,7 +62,7 @@ private:
     AccessibilityObject* scrollBar(AccessibilityOrientation) override;
     void addChildren() override;
     void clearChildren() override;
-    AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
     void updateChildrenIfNecessary() override;
     void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
     void updateScrollbars();
@@ -80,7 +80,7 @@ private:
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
 
-    WeakPtr<ScrollView> m_scrollView;
+    SingleThreadWeakPtr<ScrollView> m_scrollView;
     WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_frameOwnerElement;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;

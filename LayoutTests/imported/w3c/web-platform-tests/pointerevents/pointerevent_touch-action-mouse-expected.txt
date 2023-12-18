@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: Unknown source type "wheel".
 Pointer Events touch-action attribute support
 
-Test Description: Try to scroll text down using mouse (use mouse wheel or click on the scrollbar). Wait for description update.
+Test Description: Test complete
 
 Note: this test is for mouse only
 
@@ -74,7 +73,5 @@ touch-action: none
 The following pointer types were detected: (none).
 
 
-Harness Error (FAIL), message = Unhandled rejection: Unknown source type "wheel".
-
-NOTRUN touch-action attribute test
+PASS touch-action attribute test
 

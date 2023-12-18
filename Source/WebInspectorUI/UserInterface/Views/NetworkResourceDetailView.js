@@ -120,8 +120,10 @@ WI.NetworkResourceDetailView = class NetworkResourceDetailView extends WI.Networ
 
         switch (identifier) {
         case "preview":
-            if (!this._resourceContentView)
-                this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this.representedObject);
+            if (!this._resourceContentView) {
+                const cookie = false;
+                this._resourceContentView = this._contentBrowser.showContentViewForRepresentedObject(this.representedObject, cookie, {disableDropZone: true});
+            }
             this._contentBrowser.showContentView(this._resourceContentView, this._contentViewCookie);
             break;
         case "headers":

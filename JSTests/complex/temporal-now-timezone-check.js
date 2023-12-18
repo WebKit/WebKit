@@ -3,4 +3,4 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-shouldBe(Temporal.Now.timeZone().id, `America/Los_Angeles`);
+shouldBe(Temporal.Now.timeZoneId(), `America/Los_Angeles`);

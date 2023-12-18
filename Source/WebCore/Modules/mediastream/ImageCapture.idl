@@ -28,17 +28,17 @@
     Conditional=MEDIA_STREAM,
     SecureContext,
     JSGenerateToNativeObject,
+    EnabledBySetting=ImageCaptureEnabled,
+    DisabledByQuirk=shouldDisableImageCapture,
     Exposed=Window
 ] interface ImageCapture {
     [CallWith=CurrentDocument] constructor(MediaStreamTrack videoTrack);
 
     Promise<PhotoCapabilities> getPhotoCapabilities();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=262467
-    // Promise<Blob> takePhoto(optional PhotoSettings photoSettings = {});
+    Promise<Blob> takePhoto(optional PhotoSettings photoSettings = {});
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=262466
-    // Promise<PhotoSettings> getPhotoSettings();
+    Promise<PhotoSettings> getPhotoSettings();
 
     readonly attribute MediaStreamTrack track;
 };

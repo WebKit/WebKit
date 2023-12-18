@@ -47,12 +47,14 @@
 #include "TypeofType.h"
 #include "VM.h"
 #include <variant>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 typedef void (*V_DebugOperation_EPP)(CallFrame*, void*, void*);
 
 class AssemblyHelpers : public MacroAssembler {
+    WTF_MAKE_TZONE_ALLOCATED(AssemblyHelpers);
 public:
     AssemblyHelpers(CodeBlock* codeBlock)
         : m_codeBlock(codeBlock)

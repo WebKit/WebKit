@@ -46,10 +46,8 @@ typedef std::tuple<av1_calc_indices_dim2_func, BLOCK_SIZE>
 class AV1KmeansTest1
     : public ::testing::TestWithParam<av1_calc_indices_dim1Param> {
  public:
-  ~AV1KmeansTest1();
-  void SetUp();
-
-  void TearDown();
+  ~AV1KmeansTest1() override;
+  void SetUp() override;
 
  protected:
   void RunCheckOutput(av1_calc_indices_dim1_func test_impl, BLOCK_SIZE bsize,
@@ -75,7 +73,7 @@ class AV1KmeansTest1
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1KmeansTest1);
 
-AV1KmeansTest1::~AV1KmeansTest1() {}
+AV1KmeansTest1::~AV1KmeansTest1() = default;
 
 void AV1KmeansTest1::SetUp() {
   rnd_.Reset(libaom_test::ACMRandom::DeterministicSeed());
@@ -86,8 +84,6 @@ void AV1KmeansTest1::SetUp() {
     centroids_[i] = (int)rnd_.Rand8() << 4;
   }
 }
-
-void AV1KmeansTest1::TearDown() {}
 
 void AV1KmeansTest1::RunCheckOutput(av1_calc_indices_dim1_func test_impl,
                                     BLOCK_SIZE bsize, int k) {
@@ -152,10 +148,8 @@ TEST_P(AV1KmeansTest1, DISABLED_Speed) {
 class AV1KmeansTest2
     : public ::testing::TestWithParam<av1_calc_indices_dim2Param> {
  public:
-  ~AV1KmeansTest2();
-  void SetUp();
-
-  void TearDown();
+  ~AV1KmeansTest2() override;
+  void SetUp() override;
 
  protected:
   void RunCheckOutput(av1_calc_indices_dim2_func test_impl, BLOCK_SIZE bsize,
@@ -185,7 +179,7 @@ class AV1KmeansTest2
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1KmeansTest2);
 
-AV1KmeansTest2::~AV1KmeansTest2() {}
+AV1KmeansTest2::~AV1KmeansTest2() = default;
 
 void AV1KmeansTest2::SetUp() {
   rnd_.Reset(libaom_test::ACMRandom::DeterministicSeed());
@@ -196,8 +190,6 @@ void AV1KmeansTest2::SetUp() {
     centroids_[i] = (int)rnd_.Rand8();
   }
 }
-
-void AV1KmeansTest2::TearDown() {}
 
 void AV1KmeansTest2::RunCheckOutput(av1_calc_indices_dim2_func test_impl,
                                     BLOCK_SIZE bsize, int k) {

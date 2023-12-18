@@ -85,8 +85,8 @@ class RtpSenderInternal : public RtpSenderInterface {
   virtual RTCError SetParametersInternalWithAllLayers(
       const RtpParameters& parameters) = 0;
 
-  // Additional checks that are specific to the Sender type
-  virtual RTCError CheckSVCParameters(const RtpParameters& parameters) {
+  // Additional checks that are specific to the current codec settings
+  virtual RTCError CheckCodecParameters(const RtpParameters& parameters) {
     return webrtc::RTCError::OK();
   }
 
@@ -104,8 +104,8 @@ class RtpSenderInternal : public RtpSenderInterface {
 
   // Used by the owning transceiver to inform the sender on the currently
   // selected codecs.
-  virtual void SetVideoCodecPreferences(
-      std::vector<cricket::VideoCodec> codec_preferences) = 0;
+  virtual void SetCodecPreferences(
+      std::vector<cricket::Codec> codec_preferences) = 0;
 };
 
 // Shared implementation for RtpSenderInternal interface.
@@ -144,6 +144,7 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
                              SetParametersCallback callback = nullptr,
                              bool blocking = true) override;
   RTCError CheckSetParameters(const RtpParameters& parameters);
+  RTCError CheckCodecParameters(const RtpParameters& parameters) override;
   RtpParameters GetParametersInternalWithAllLayers() const override;
   RTCError SetParametersInternalWithAllLayers(
       const RtpParameters& parameters) override;
@@ -222,9 +223,9 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
     is_transceiver_stopped_ = true;
   }
 
-  void SetVideoCodecPreferences(
-      std::vector<cricket::VideoCodec> codec_preferences) override {
-    video_codec_preferences_ = codec_preferences;
+  void SetCodecPreferences(
+      std::vector<cricket::Codec> codec_preferences) override {
+    codec_preferences_ = codec_preferences;
   }
 
  protected:
@@ -262,7 +263,7 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
 
   std::vector<std::string> stream_ids_;
   RtpParameters init_parameters_;
-  std::vector<cricket::VideoCodec> video_codec_preferences_;
+  std::vector<cricket::Codec> codec_preferences_;
 
   // TODO(tommi): `media_channel_` and several other member variables in this
   // class (ssrc_, stopped_, etc) are accessed from more than one thread without
@@ -287,6 +288,10 @@ class RtpSenderBase : public RtpSenderInternal, public ObserverInterface {
   rtc::scoped_refptr<FrameTransformerInterface> frame_transformer_;
   std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>
       encoder_selector_;
+
+#if !defined(WEBRTC_WEBKIT_BUILD)
+  virtual RTCError GenerateKeyFrame(const std::vector<std::string>& rids) = 0;
+#endif
 };
 
 // LocalAudioSinkAdapter receives data callback as a sink to the local
@@ -421,8 +426,6 @@ class VideoRtpSender : public RtpSenderBase {
 
   rtc::scoped_refptr<DtmfSenderInterface> GetDtmfSender() const override;
   RTCError GenerateKeyFrame(const std::vector<std::string>& rids) override;
-
-  RTCError CheckSVCParameters(const RtpParameters& parameters) override;
 
  protected:
   VideoRtpSender(rtc::Thread* worker_thread,

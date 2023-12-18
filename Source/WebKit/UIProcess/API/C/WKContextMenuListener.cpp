@@ -54,7 +54,7 @@ void WKContextMenuListenerUseContextMenuItems(WKContextMenuListenerRef listenerR
         if (!item)
             continue;
         
-        items.uncheckedAppend(*item);
+        items.append(*item);
     }
 
     toImpl(listenerRef)->useContextMenuItems(WTFMove(items));

@@ -1081,6 +1081,94 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             mVertexLoadRequiresConversion = false;
             break;
 
+        case angle::FormatID::EXTERNAL0:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL0;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL0;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL0;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL1:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL1;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL1;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL1;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL2:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL2;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL2;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL2;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL3:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL3;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL3;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL3;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL4:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL4;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL4;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL4;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL5:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL5;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL5;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL5;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL6:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL6;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL6;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL6;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
+        case angle::FormatID::EXTERNAL7:
+            mIntendedGLFormat              = GL_NONE;
+            mActualSampleOnlyImageFormatID = angle::FormatID::EXTERNAL7;
+            mActualRenderableImageFormatID = angle::FormatID::EXTERNAL7;
+            mImageInitializerFunction      = nullptr;
+            mActualBufferFormatID          = angle::FormatID::EXTERNAL7;
+            mVkBufferFormatIsPacked        = false;
+            mVertexLoadFunction            = CopyNativeVertexData<GLbyte, 4, 4, 0>;
+            mVertexLoadRequiresConversion  = false;
+            break;
+
         case angle::FormatID::G8_B8R8_2PLANE_420_UNORM:
             mIntendedGLFormat              = GL_G8_B8R8_2PLANE_420_UNORM_ANGLE;
             mActualSampleOnlyImageFormatID = angle::FormatID::G8_B8R8_2PLANE_420_UNORM;
@@ -2691,6 +2779,14 @@ VkFormat GetVkFormatFromFormatID(angle::FormatID formatID)
         {angle::FormatID::ETC2_R8G8B8A8_UNORM_BLOCK, VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK},
         {angle::FormatID::ETC2_R8G8B8_SRGB_BLOCK, VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK},
         {angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK, VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK},
+        {angle::FormatID::EXTERNAL0, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL1, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL2, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL3, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL4, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL5, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL6, VK_FORMAT_UNDEFINED},
+        {angle::FormatID::EXTERNAL7, VK_FORMAT_UNDEFINED},
         {angle::FormatID::G8_B8R8_2PLANE_420_UNORM, VK_FORMAT_G8_B8R8_2PLANE_420_UNORM},
         {angle::FormatID::G8_B8_R8_3PLANE_420_UNORM, VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM},
         {angle::FormatID::NONE, VK_FORMAT_UNDEFINED},

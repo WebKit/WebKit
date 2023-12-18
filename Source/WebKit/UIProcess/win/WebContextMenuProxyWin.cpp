@@ -60,14 +60,14 @@ static void createMenuItem(const ContextMenuContextData &context, HMENU menu, co
     flags |= data.checked() ? MF_CHECKED : MF_UNCHECKED;
 
     switch (data.type()) {
-    case ActionType:
-    case CheckableActionType:
+    case ContextMenuItemType::Action:
+    case ContextMenuItemType::CheckableAction:
         ::AppendMenu(menu, flags | MF_STRING, data.action(), data.title().wideCharacters().data());
         break;
-    case SeparatorType:
+    case ContextMenuItemType::Separator:
         ::AppendMenu(menu, flags | MF_SEPARATOR, data.action(), nullptr);
         break;
-    case SubmenuType:
+    case ContextMenuItemType::Submenu:
         HMENU submenu = createMenu(context);
         populate(context, submenu, data.submenu());
         ::AppendMenu(menu, flags | MF_POPUP, (UINT_PTR)submenu, data.title().wideCharacters().data());

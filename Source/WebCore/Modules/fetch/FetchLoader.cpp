@@ -97,13 +97,15 @@ void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& req
     ResourceRequest fetchRequest = request.resourceRequest();
 
     ASSERT(context.contentSecurityPolicy());
-    auto& contentSecurityPolicy = *context.contentSecurityPolicy();
+    {
+        CheckedRef contentSecurityPolicy = *context.contentSecurityPolicy();
 
-    contentSecurityPolicy.upgradeInsecureRequestIfNeeded(fetchRequest, ContentSecurityPolicy::InsecureRequestType::Load);
+        contentSecurityPolicy->upgradeInsecureRequestIfNeeded(fetchRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy.allowConnectToSource(fetchRequest.url())) {
-        m_client.didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_s, ResourceError::Type::AccessControl });
-        return;
+        if (!context.shouldBypassMainWorldContentSecurityPolicy() && !contentSecurityPolicy->allowConnectToSource(fetchRequest.url())) {
+            m_client.didFail({ errorDomainWebKitInternal, 0, fetchRequest.url(), "Not allowed by ContentSecurityPolicy"_s, ResourceError::Type::AccessControl });
+            return;
+        }
     }
 
     String referrer = request.internalRequestReferrer();

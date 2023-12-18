@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Preflight response is not successful. Status code: 501
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.web-platform.test:8800/xhr/resources/access-control-preflight-request-invalid-status.py?code=501 due to access control checks.
-
-PASS Request with 501 preflight response
-

@@ -1,0 +1,74 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-006-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-010-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-016-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-017-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-018-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-018.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-019-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-019.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-020-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-021-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-022-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-022.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-023-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-023.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-024-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-024.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-025-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-025.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-026-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-026.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-027-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-028-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-028.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-029-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-029.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-030-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-space-transform/word-space-transform-030.html

@@ -89,11 +89,11 @@ PKRecurringPaymentSummaryItem *platformRecurringSummaryItem(const ApplePayLineIt
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Recurring);
     PKRecurringPaymentSummaryItem *summaryItem = [PAL::getPKRecurringPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
-    if (!std::isnan(lineItem.recurringPaymentStartDate))
+    if (!lineItem.recurringPaymentStartDate.isNaN())
         summaryItem.startDate = toDate(lineItem.recurringPaymentStartDate);
     summaryItem.intervalUnit = toCalendarUnit(lineItem.recurringPaymentIntervalUnit);
     summaryItem.intervalCount = lineItem.recurringPaymentIntervalCount;
-    if (!std::isnan(lineItem.recurringPaymentEndDate))
+    if (!lineItem.recurringPaymentEndDate.isNaN())
         summaryItem.endDate = toDate(lineItem.recurringPaymentEndDate);
     return summaryItem;
 }
@@ -106,7 +106,7 @@ PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem
 {
     ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::Deferred);
     PKDeferredPaymentSummaryItem *summaryItem = [PAL::getPKDeferredPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
-    if (!std::isnan(lineItem.deferredPaymentDate))
+    if (!lineItem.deferredPaymentDate.isNaN())
         summaryItem.deferredDate = toDate(lineItem.deferredPaymentDate);
     return summaryItem;
 }

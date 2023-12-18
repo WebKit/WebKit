@@ -41,6 +41,8 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 ] interface Document : Node {
     [CallWith=CurrentDocument] constructor();
 
+    [CallWith=CurrentDocument, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] static Document parseHTMLUnsafe(DOMString html);
+
     [SameObject] readonly attribute DOMImplementation implementation;
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;

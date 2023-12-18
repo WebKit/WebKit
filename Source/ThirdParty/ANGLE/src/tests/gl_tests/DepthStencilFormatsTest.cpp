@@ -489,17 +489,11 @@ TEST_P(DepthStencilFormatsTestES3, DepthStencilReadback_DepthFloatStencil)
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     ASSERT_GL_NO_ERROR();
 
-    GLTexture depthStencilTexture;
-    glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, getWindowWidth(), getWindowHeight(), 0,
-                 GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, nullptr);
-    ASSERT_GL_NO_ERROR();
-
-    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilTexture);
+    GLRenderbuffer RBO;
+    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH32F_STENCIL8, getWindowWidth(),
                           getWindowHeight());
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                              depthStencilTexture);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
     ASSERT_GL_NO_ERROR();
 
     constexpr float kDepthClearValue     = 0.123f;
@@ -902,7 +896,7 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithDepth16)
 // is a random value.
 TEST_P(DepthStencilFormatsTestES3, DrawWithLargeViewport)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && (IsMac() || IsWindows()));
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsWindows());
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
 

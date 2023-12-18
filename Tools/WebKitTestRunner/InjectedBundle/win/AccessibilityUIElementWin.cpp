@@ -658,6 +658,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
+{
+    notImplemented();
+    return nullptr;
+}
+
 bool AccessibilityUIElement::setSelectedTextRange(unsigned, unsigned)
 {
     notImplemented();
@@ -1066,6 +1072,12 @@ bool AccessibilityUIElement::isFirstItemInSuggestion() const
 
 
 bool AccessibilityUIElement::isLastItemInSuggestion() const
+{
+    notImplemented();
+    return false;
+}
+
+bool AccessibilityUIElement::isInNonNativeTextControl() const
 {
     notImplemented();
     return false;

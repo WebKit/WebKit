@@ -204,7 +204,7 @@ ImageSubsamplingEnabled:
   type: bool
   defaultValue:
     WebCore:
-      PLATFORM(IOS_FAMILY): true
+      PLATFORM(COCOA): true
       default: false
 
 ImagesEnabled:

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerGlobalScope.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Document.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -171,6 +169,15 @@ ServiceWorkerThread& ServiceWorkerGlobalScope::thread()
     return static_cast<ServiceWorkerThread&>(WorkerGlobalScope::thread());
 }
 
+void ServiceWorkerGlobalScope::prepareForDestruction()
+{
+    // Make sure we destroy fetch events objects before the VM goes away, since their
+    // destructor may access the VM.
+    m_extendedEvents.clear();
+
+    WorkerGlobalScope::prepareForDestruction();
+}
+
 // https://w3c.github.io/ServiceWorker/#update-service-worker-extended-events-set-algorithm
 void ServiceWorkerGlobalScope::updateExtendedEventsSet(ExtendableEvent* newEvent)
 {
@@ -265,5 +272,3 @@ CookieStore& ServiceWorkerGlobalScope::cookieStore()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -86,7 +86,8 @@ Color CSSPropertyParserWorkerSafe::parseColor(const String& string)
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
-    return (is<Document>(context) && downcast<Document>(context).inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
+    auto* document = dynamicDowncast<Document>(context);
+    return (document && document->inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
 }
 
 RefPtr<CSSValueList> CSSPropertyParserWorkerSafe::parseFontFaceSrc(const String& string, const CSSParserContext& context)
@@ -489,8 +490,8 @@ static String consumeUnicodeRangeString(CSSParserTokenRange& range)
 }
 
 struct UnicodeRange {
-    UChar32 start;
-    UChar32 end;
+    char32_t start;
+    char32_t end;
 };
 
 static std::optional<UnicodeRange> consumeUnicodeRange(CSSParserTokenRange& range)
@@ -498,7 +499,7 @@ static std::optional<UnicodeRange> consumeUnicodeRange(CSSParserTokenRange& rang
     return readCharactersForParsing(consumeUnicodeRangeString(range), [&](auto buffer) -> std::optional<UnicodeRange> {
         if (!skipExactly(buffer, '+'))
             return std::nullopt;
-        UChar32 start = 0;
+        char32_t start = 0;
         unsigned hexDigitCount = 0;
         while (buffer.hasCharactersRemaining() && isASCIIHexDigit(*buffer)) {
             if (++hexDigitCount > 6)

@@ -10,25 +10,25 @@ layer at (0,0) size 785x900
     RenderBody {BODY} at (8,64) size 769x772
       RenderBlock {DIV} at (64,0) size 748x772 [border: (50px solid #FF0000)]
         RenderBlock {DIV} at (74,74) size 600x624
-          RenderText {#text} at (0,10) size 587x123
-            text run at (0,10) width 558: "Four score and seven years ago our fathers brought forth, "
-            text run at (0,58) width 587: "upon this continent, a new nation, conceived in Liberty, and "
-            text run at (0,106) width 399: "dedicated to the proposition that all men "
-          RenderBR {BR} at (399,106) size 0x27
-          RenderText {#text} at (0,154) size 590x123
-            text run at (0,154) width 581: "are created equal. Now we are engaged in a great civil war, "
-            text run at (0,202) width 590: "testing whether that nation, or any nation, so conceived, and "
-            text run at (0,250) width 567: "so dedicated, can long endure. We are met here on a great "
-          RenderBR {BR} at (567,250) size 0x27
-          RenderText {#text} at (0,298) size 603x171
-            text run at (0,298) width 603: "battlefield of that war. We have come to dedicate a portion of "
-            text run at (0,346) width 585: "it as a final resting place for those who here gave their lives "
-            text run at (0,394) width 588: "that that nation might live. It is altogether fitting and proper "
-            text run at (0,442) width 224: "that we should do this. "
-          RenderBR {BR} at (224,442) size 0x27
-          RenderText {#text} at (0,490) size 587x123
-            text run at (0,490) width 558: "Four score and seven years ago our fathers brought forth, "
-            text run at (0,538) width 587: "upon this continent, a new nation, conceived in Liberty, and "
-            text run at (0,586) width 571: "dedicated to the proposition that all men are created equal."
+          RenderText {#text} at (0,11) size 587x122
+            text run at (0,11) width 558: "Four score and seven years ago our fathers brought forth, "
+            text run at (0,59) width 587: "upon this continent, a new nation, conceived in Liberty, and "
+            text run at (0,107) width 399: "dedicated to the proposition that all men "
+          RenderBR {BR} at (399,107) size 0x26
+          RenderText {#text} at (0,155) size 590x122
+            text run at (0,155) width 581: "are created equal. Now we are engaged in a great civil war, "
+            text run at (0,203) width 590: "testing whether that nation, or any nation, so conceived, and "
+            text run at (0,251) width 567: "so dedicated, can long endure. We are met here on a great "
+          RenderBR {BR} at (567,251) size 0x26
+          RenderText {#text} at (0,299) size 603x170
+            text run at (0,299) width 603: "battlefield of that war. We have come to dedicate a portion of "
+            text run at (0,347) width 585: "it as a final resting place for those who here gave their lives "
+            text run at (0,395) width 588: "that that nation might live. It is altogether fitting and proper "
+            text run at (0,443) width 224: "that we should do this. "
+          RenderBR {BR} at (224,443) size 0x26
+          RenderText {#text} at (0,491) size 587x122
+            text run at (0,491) width 558: "Four score and seven years ago our fathers brought forth, "
+            text run at (0,539) width 587: "upon this continent, a new nation, conceived in Liberty, and "
+            text run at (0,587) width 571: "dedicated to the proposition that all men are created equal."
 selection start: position 1 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of body
 selection end:   position 180 of child 6 {#text} of child 1 {DIV} of child 1 {DIV} of body

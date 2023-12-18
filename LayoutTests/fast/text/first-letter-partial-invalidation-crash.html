@@ -1,0 +1,20 @@
+<style>
+.container {
+  width: 0px;
+  word-break: break-all;
+}
+
+.container::first-letter {
+  vertical-align: 0px;
+}
+</style>
+<div class=container><area id="area"> PASS if no crash or assert</area></div><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+area.outerHTML = "<div></div>";
+document.designMode = "on";
+window.find("rt");
+document.execCommand("insertHTML",false,"AAAA");
+</script>

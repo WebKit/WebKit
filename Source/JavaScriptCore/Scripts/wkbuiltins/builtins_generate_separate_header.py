@@ -129,7 +129,8 @@ class FunctionExecutable;
 extern const int s_%(codeName)sLength;
 extern const JSC::ConstructAbility s_%(codeName)sConstructAbility;
 extern const JSC::ConstructorKind s_%(codeName)sConstructorKind;
-extern const JSC::ImplementationVisibility s_%(codeName)sImplementationVisibility;""" % function_args)
+extern const JSC::ImplementationVisibility s_%(codeName)sImplementationVisibility;
+extern const JSC::InlineAttribute s_%(codeName)sInlineAttribute;""" % function_args)
 
         return lines
 

@@ -6,6 +6,7 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
+%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -18,6 +19,7 @@ global	aes_hw_encrypt
 ALIGN	16
 aes_hw_encrypt:
 
+_CET_ENDBR
 %ifdef BORINGSSL_DISPATCH_TEST
 EXTERN	BORINGSSL_function_hit
 	mov	BYTE[((BORINGSSL_function_hit+1))],1
@@ -39,7 +41,7 @@ $L$oop_enc1_1:
 	pxor	xmm1,xmm1
 	movups	XMMWORD[rdx],xmm2
 	pxor	xmm2,xmm2
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -48,6 +50,7 @@ global	aes_hw_decrypt
 ALIGN	16
 aes_hw_decrypt:
 
+_CET_ENDBR
 	movups	xmm2,XMMWORD[rcx]
 	mov	eax,DWORD[240+r8]
 	movups	xmm0,XMMWORD[r8]
@@ -65,7 +68,7 @@ $L$oop_dec1_2:
 	pxor	xmm1,xmm1
 	movups	XMMWORD[rdx],xmm2
 	pxor	xmm2,xmm2
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -96,7 +99,7 @@ $L$enc_loop2:
 	DB	102,15,56,220,217
 	DB	102,15,56,221,208
 	DB	102,15,56,221,216
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -127,7 +130,7 @@ $L$dec_loop2:
 	DB	102,15,56,222,217
 	DB	102,15,56,223,208
 	DB	102,15,56,223,216
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -163,7 +166,7 @@ $L$enc_loop3:
 	DB	102,15,56,221,208
 	DB	102,15,56,221,216
 	DB	102,15,56,221,224
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -199,7 +202,7 @@ $L$dec_loop3:
 	DB	102,15,56,223,208
 	DB	102,15,56,223,216
 	DB	102,15,56,223,224
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -241,7 +244,7 @@ $L$enc_loop4:
 	DB	102,15,56,221,216
 	DB	102,15,56,221,224
 	DB	102,15,56,221,232
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -283,7 +286,7 @@ $L$dec_loop4:
 	DB	102,15,56,223,216
 	DB	102,15,56,223,224
 	DB	102,15,56,223,232
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -339,7 +342,7 @@ $L$enc_loop6_enter:
 	DB	102,15,56,221,232
 	DB	102,15,56,221,240
 	DB	102,15,56,221,248
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -395,7 +398,7 @@ $L$dec_loop6_enter:
 	DB	102,15,56,223,232
 	DB	102,15,56,223,240
 	DB	102,15,56,223,248
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -461,7 +464,7 @@ $L$enc_loop8_enter:
 	DB	102,15,56,221,248
 	DB	102,68,15,56,221,192
 	DB	102,68,15,56,221,200
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -527,7 +530,7 @@ $L$dec_loop8_enter:
 	DB	102,15,56,223,248
 	DB	102,68,15,56,223,192
 	DB	102,68,15,56,223,200
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 global	aes_hw_ecb_encrypt
@@ -546,6 +549,7 @@ $L$SEH_begin_aes_hw_ecb_encrypt:
 
 
 
+_CET_ENDBR
 	lea	rsp,[((-88))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -900,7 +904,7 @@ $L$ecb_ret:
 $L$ecb_enc_ret:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_aes_hw_ecb_encrypt:
 global	aes_hw_ctr32_encrypt_blocks
@@ -919,6 +923,7 @@ $L$SEH_begin_aes_hw_ctr32_encrypt_blocks:
 
 
 
+_CET_ENDBR
 %ifdef BORINGSSL_DISPATCH_TEST
 	mov	BYTE[BORINGSSL_function_hit],1
 %endif
@@ -1307,6 +1312,8 @@ $L$ctr32_enc_done:
 	pxor	xmm13,xmm0
 	movdqu	xmm15,XMMWORD[80+rdi]
 	pxor	xmm14,xmm0
+	prefetcht0	[448+rdi]
+	prefetcht0	[512+rdi]
 	pxor	xmm15,xmm0
 	DB	102,15,56,220,209
 	DB	102,15,56,220,217
@@ -1516,7 +1523,7 @@ $L$ctr32_done:
 $L$ctr32_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_aes_hw_ctr32_encrypt_blocks:
 global	aes_hw_cbc_encrypt
@@ -1536,6 +1543,7 @@ $L$SEH_begin_aes_hw_cbc_encrypt:
 
 
 
+_CET_ENDBR
 	test	rdx,rdx
 	jz	NEAR $L$cbc_ret
 
@@ -2149,7 +2157,7 @@ $L$cbc_dec_ret:
 $L$cbc_ret:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_aes_hw_cbc_encrypt:
 global	aes_hw_set_decrypt_key
@@ -2157,6 +2165,7 @@ global	aes_hw_set_decrypt_key
 ALIGN	16
 aes_hw_set_decrypt_key:
 
+_CET_ENDBR
 	DB	0x48,0x83,0xEC,0x08
 
 	call	__aesni_set_encrypt_key
@@ -2192,7 +2201,7 @@ $L$dec_key_inverse:
 $L$dec_key_ret:
 	add	rsp,8
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_set_decrypt_key:
 
@@ -2202,6 +2211,7 @@ ALIGN	16
 aes_hw_set_encrypt_key:
 __aesni_set_encrypt_key:
 
+_CET_ENDBR
 %ifdef BORINGSSL_DISPATCH_TEST
 	mov	BYTE[((BORINGSSL_function_hit+3))],1
 %endif
@@ -2501,7 +2511,7 @@ $L$enc_key_ret:
 	pxor	xmm5,xmm5
 	add	rsp,8
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_set_encrypt_key:
 
@@ -2516,7 +2526,7 @@ $L$key_expansion_128_cold:
 	xorps	xmm0,xmm4
 	shufps	xmm1,xmm1,255
 	xorps	xmm0,xmm1
-	DB	0F3h,0C3h		;repret
+	ret
 
 ALIGN	16
 $L$key_expansion_192a:
@@ -2536,7 +2546,7 @@ $L$key_expansion_192b_warm:
 	pxor	xmm0,xmm1
 	pshufd	xmm3,xmm0,255
 	pxor	xmm2,xmm3
-	DB	0F3h,0C3h		;repret
+	ret
 
 ALIGN	16
 $L$key_expansion_192b:
@@ -2559,7 +2569,7 @@ $L$key_expansion_256a_cold:
 	xorps	xmm0,xmm4
 	shufps	xmm1,xmm1,255
 	xorps	xmm0,xmm1
-	DB	0F3h,0C3h		;repret
+	ret
 
 ALIGN	16
 $L$key_expansion_256b:
@@ -2572,7 +2582,7 @@ $L$key_expansion_256b:
 	xorps	xmm2,xmm4
 	shufps	xmm1,xmm1,170
 	xorps	xmm2,xmm1
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 section	.rdata rdata align=8
@@ -2769,7 +2779,7 @@ $L$common_seh_tail:
 	pop	rbx
 	pop	rdi
 	pop	rsi
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 section	.pdata rdata align=4

@@ -30,10 +30,19 @@ promise_test(async (test) => {
     const iframe = await with_iframe("resources/empty.html");
 
     const options = { method: "POST", cache: "no-cache", mode: "cors", body: "body" };
-    const response = await iframe.contentWindow.fetch(get_host_info().HTTP_REMOTE_ORIGIN +  "/WebKit/service-workers/resources/cross-origin-allow.py", options);
+    const response = await iframe.contentWindow.fetch(get_host_info().HTTP_REMOTE_ORIGIN +  "/WebKit/service-workers/resources/cross-origin-allow.py?Cache-Control", options);
     assert_not_equals(await response.text(), "no cache-control header");
     iframe.remove();
 }, "Ensure cache-control does not break service worker fetch handling");
+
+promise_test(async (test) => {
+    const iframe = await with_iframe("resources/empty.html");
+
+    const options = { method: "GET", cache: "no-store", mode: "cors" };
+    const response = await iframe.contentWindow.fetch(get_host_info().HTTP_REMOTE_ORIGIN +  "/WebKit/service-workers/resources/cross-origin-allow.py?Pragma", options);
+    assert_not_equals(await response.text(), "no pragma header");
+    iframe.remove();
+}, "Ensure pragma does not break service worker fetch handling");
 
 promise_test(async (test) => {
     const iframe = await with_iframe("resources/empty.html");

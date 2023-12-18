@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button onclick="toggleDialog(document.getElementById('dialog'), 'show');
+    attemptFocus(document.getElementById('textfield'));
+    return false;"
+    id="showButton">Show dialog</button>
+
+<div role="dialog" aria-labelledby="description1" id="dialog" style="display: none" tabindex="-1">
+    <h3 id="description">Just an example.</h3>
+    <input type="text" id="textfield" tabindex="-1" value="Text field.">
+    <button id="ok" onclick="toggleDialog(document.getElementById('dialog'), 'hide');">OK</button>
+</div>
+
+<script>
+let output = "Tests that focus is tracked correctly when set inside a modal dialog.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    let focusNotificationCount = 0;
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification == "AXFocusChanged")
+            ++focusNotificationCount;
+    });
+
+    output += "Click the show button to open dialog.\n";
+    accessibilityController.accessibleElementById("showButton").press();
+    setTimeout(async () => {
+        await waitFor(() => {
+            return focusNotificationCount
+                && accessibilityController.accessibleElementById("textfield");
+        });
+        output += expect("accessibilityController.focusedElement.domIdentifier", "'textfield'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+
+function toggleDialog(dialog, sh) {
+    if (sh == "show") {
+        dialog.style.display = "block";
+        dialog.setAttribute("aria-modal", "true");
+    } else {
+        dialog.style.display = "none";
+        dialog.setAttribute("aria-modal", "false");
+    }
+}
+
+function attemptFocus(element) {
+    try {
+        element.focus();
+    } catch (e) {
+        debug(`attemptFocus threw exception ${e}\n`);
+        return;
+    }
+    output += `attemptFocus successsful ? ${document.activeElement === element}\n`;
+}
+</script>
+</body>
+</html>

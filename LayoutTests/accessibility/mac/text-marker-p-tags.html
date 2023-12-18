@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 <script src="./resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
@@ -14,36 +15,46 @@
 </div>
 
 <script>
+var result = "This tests that previous sentence\/word\/paragraph text marker calls work with p tag elements\n\n";
 
-    description("This tests that previous sentence\/word\/paragraph text marker calls work with p tag elements");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
+    // select text
+    selectTextInNode('p2');
+    var p2 = accessibilityController.accessibleElementById("p2");
+    setTimeout(async function() {
+        var selectedRange = null;
+        var selectedString = "";
 
-        // select text
-        selectTextInNode('p2');
-        var p2 = accessibilityController.accessibleElementById("p2");
-        var selectedRange = p2.selectedTextMarkerRange();
-        var selectedString = p2.stringForTextMarkerRange(selectedRange);
-        shouldBe("selectedString", "'Where'");
+        await waitFor(() => {
+            selectedRange = p2.selectedTextMarkerRange();
+            selectedString = p2.stringForTextMarkerRange(selectedRange);
+            return selectedString == "Where";
+        });
+        result += `selectedString is ${selectedString}\n`;
 
         var startTextMarker = p2.startTextMarkerForTextMarkerRange(selectedRange);
         var preSentenceStart = p2.previousSentenceStartTextMarkerForTextMarker(startTextMarker);
         var sentenceRange = p2.textMarkerRangeForMarkers(preSentenceStart, startTextMarker);
         var sentenceString = p2.stringForTextMarkerRange(sentenceRange);
-        debug("Previous sentence: " + sentenceString);
+        result += `Previous sentence: ${sentenceString}\n`;
 
         var preWordStart = p2.previousWordStartTextMarkerForTextMarker(startTextMarker);
         var wordRange = p2.textMarkerRangeForMarkers(preWordStart, startTextMarker);
         var wordString = p2.stringForTextMarkerRange(wordRange);
-        debug("Previous word: " + wordString);
+        result += `Previous word: ${wordString}\n`;
 
         var preParagraphStart = p2.previousParagraphStartTextMarkerForTextMarker(startTextMarker);
         var paragraphRange = p2.textMarkerRangeForMarkers(preParagraphStart, startTextMarker);
         var paragraphString = p2.stringForTextMarkerRange(paragraphRange);
-        debug("Previous paragraph: " + paragraphString);
-    }
+        result += `Previous paragraph: ${paragraphString}\n`;
+
+        debug(result);
+        finishJSTest();
+    }, 0);
+}
 </script>
 
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

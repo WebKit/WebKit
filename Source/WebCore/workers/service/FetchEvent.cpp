@@ -35,8 +35,6 @@
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FetchEvent);
@@ -86,10 +84,10 @@ ResourceError FetchEvent::createResponseError(const URL& url, const String& erro
 ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 {
     if (!isBeingDispatched())
-        return Exception { InvalidStateError, "Event is not being dispatched"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_s };
 
     if (m_respondWithEntered)
-        return Exception { InvalidStateError, "Event respondWith flag is set"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Event respondWith flag is set"_s };
 
     m_respondPromise = WTFMove(promise);
     addExtendLifetimePromise(*m_respondPromise);
@@ -202,9 +200,7 @@ void FetchEvent::navigationPreloadFailed(ResourceError&& error)
 {
     if (!m_preloadResponsePromise)
         m_preloadResponsePromise = makeUnique<PreloadResponsePromise>();
-    m_preloadResponsePromise->reject(Exception { TypeError, error.sanitizedDescription() });
+    m_preloadResponsePromise->reject(Exception { ExceptionCode::TypeError, error.sanitizedDescription() });
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

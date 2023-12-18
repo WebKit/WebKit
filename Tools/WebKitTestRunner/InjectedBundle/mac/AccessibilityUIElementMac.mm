@@ -89,10 +89,13 @@
 #define NSAccessibilityTextInputMarkedTextMarkerRangeAttribute @"AXTextInputMarkedTextMarkerRange"
 #endif
 
+#ifndef NSAccessibilityIntersectionWithSelectionRangeAttribute
+#define NSAccessibilityIntersectionWithSelectionRangeAttribute @"AXIntersectionWithSelectionRange"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
-- (BOOL)isIsolatedObject;
 - (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string;
 - (BOOL)accessibilityInsertText:(NSString *)text;
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
@@ -130,13 +133,6 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
         return false;
     return platformUIElement() == otherElement->platformUIElement();
 }
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-bool AccessibilityUIElement::isIsolatedObject() const
-{
-    return [m_element isIsolatedObject];
-}
-#endif
 
 RetainPtr<NSArray> supportedAttributes(id element)
 {
@@ -1298,9 +1294,9 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, UINT_MAX, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    auto value = attributeValueForParameter(@"AXUIElementCountForSearchPredicate", parameterizedAttribute);
-    if ([value isKindOfClass:[NSNumber class]])
-        return [value unsignedIntValue];
+    auto value = attributeValueForParameter(@"AXUIElementsForSearchPredicate", parameterizedAttribute);
+    if ([value isKindOfClass:[NSArray class]])
+        return [value count];
     END_AX_OBJC_EXCEPTIONS
     
     return 0;
@@ -1542,8 +1538,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     auto indexRange = attributeValue(NSAccessibilitySelectedTextRangeAttribute);
     if (indexRange)
         range = [indexRange rangeValue];
-    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+    NSString *rangeDescription = [NSString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
     return [rangeDescription createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    if (auto rangeAttribute = attributeValue(NSAccessibilityIntersectionWithSelectionRangeAttribute)) {
+        NSRange range = [rangeAttribute rangeValue];
+        NSString *rangeDescription = [NSString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+        return [rangeDescription createJSStringRef];
+    }
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;
@@ -2574,6 +2583,11 @@ bool AccessibilityUIElement::isFirstItemInSuggestion() const
 }
 
 bool AccessibilityUIElement::isLastItemInSuggestion() const
+{
+    return false;
+}
+
+bool AccessibilityUIElement::isInNonNativeTextControl() const
 {
     return false;
 }

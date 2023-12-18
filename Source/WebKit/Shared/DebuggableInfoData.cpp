@@ -42,49 +42,4 @@ DebuggableInfoData DebuggableInfoData::empty()
     };
 }
 
-void DebuggableInfoData::encode(IPC::Encoder& encoder) const
-{
-    encoder << debuggableType;
-    encoder << targetPlatformName;
-    encoder << targetBuildVersion;
-    encoder << targetProductVersion;
-    encoder << targetIsSimulator;
-}
-
-std::optional<DebuggableInfoData> DebuggableInfoData::decode(IPC::Decoder& decoder)
-{
-    std::optional<Inspector::DebuggableType> debuggableType;
-    decoder >> debuggableType;
-    if (!debuggableType)
-        return std::nullopt;
-
-    std::optional<String> targetPlatformName;
-    decoder >> targetPlatformName;
-    if (!targetPlatformName)
-        return std::nullopt;
-
-    std::optional<String> targetBuildVersion;
-    decoder >> targetBuildVersion;
-    if (!targetBuildVersion)
-        return std::nullopt;
-
-    std::optional<String> targetProductVersion;
-    decoder >> targetProductVersion;
-    if (!targetProductVersion)
-        return std::nullopt;
-
-    std::optional<bool> targetIsSimulator;
-    decoder >> targetIsSimulator;
-    if (!targetIsSimulator)
-        return std::nullopt;
-
-    return {{
-        *debuggableType,
-        *targetPlatformName,
-        *targetBuildVersion,
-        *targetProductVersion,
-        *targetIsSimulator
-    }};
-}
-
 } // namespace WebKit

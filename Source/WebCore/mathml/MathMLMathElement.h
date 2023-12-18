@@ -39,7 +39,7 @@ public:
     static Ref<MathMLMathElement> create(const QualifiedName& tagName, Document&);
 
 private:
-    constexpr static auto CreateMathMLMathElement = CreateMathMLRowElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateMathMLMathElement = CreateMathMLRowElement | NodeFlag::HasCustomStyleResolveCallbacks;
     MathMLMathElement(const QualifiedName& tagName, Document&);
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     void didAttachRenderers() final;

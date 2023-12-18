@@ -30,6 +30,7 @@
 
 #include "AccessibilityNodeObject.h"
 #include "LayoutRect.h"
+#include "PluginViewBase.h"
 #include "RenderObject.h"
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
@@ -80,7 +81,7 @@ public:
     AccessibilityObject* titleUIElement() const override;
 
     // Should be called on the root accessibility object to kick off a hit test.
-    AXCoreObject* accessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* accessibilityHitTest(const IntPoint&) const override;
 
     Element* anchorElement() const override;
     
@@ -98,12 +99,16 @@ public:
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String selectedText() const override;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    Vector<AXTextRun> textRuns() final;
+#endif
 
     bool isWidget() const override;
     Widget* widget() const override;
     Widget* widgetForAttachmentView() const override;
     AccessibilityChildrenVector documentLinks() override;
     LocalFrameView* documentFrameView() const override;
+    bool isPlugin() const final { return is<PluginViewBase>(widget()); }
 
     void setSelectedTextRange(CharacterRange&&) override;
     bool setValue(const String&) override;
@@ -147,19 +152,19 @@ protected:
     virtual bool isIgnoredElementWithinMathTree() const;
 #endif
 
-    WeakPtr<RenderObject> m_renderer;
+    SingleThreadWeakPtr<RenderObject> m_renderer;
 
 private:
     bool isAccessibilityRenderObject() const final { return true; }
     bool isAllowedChildOfTree() const;
     CharacterRange documentBasedSelectedTextRange() const;
-    Element* rootEditableElementForPosition(const Position&) const;
+    RefPtr<Element> rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;
     
-    AXCoreObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
+    AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
-    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
@@ -171,7 +176,7 @@ private:
     void detachRemoteSVGRoot();
     enum CreationChoice { Create, Retrieve };
     AccessibilitySVGRoot* remoteSVGRootElement(CreationChoice createIfNecessary) const;
-    AXCoreObject* remoteSVGElementHitTest(const IntPoint&) const;
+    AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
     bool supportsPath() const override;
 

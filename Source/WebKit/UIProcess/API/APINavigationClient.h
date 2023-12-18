@@ -95,6 +95,7 @@ public:
     virtual void didFailLoadWithErrorForFrame(WebKit::WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, WebKit::FrameInfoData&&) { }
     virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, Navigation*, WebKit::SameDocumentNavigationType, Object*) { }
     virtual void didApplyLinkDecorationFiltering(WebKit::WebPageProxy&, const WTF::URL&, const WTF::URL&) { }
+    virtual void didPromptForStorageAccess(WebKit::WebPageProxy&, const WTF::String& topFrameDomain, const WTF::String& subFrameDomain, bool hasQuirk) { }
 
     virtual void didDisplayInsecureContent(WebKit::WebPageProxy&, API::Object*) { }
     virtual void didRunInsecureContent(WebKit::WebPageProxy&, API::Object*) { }

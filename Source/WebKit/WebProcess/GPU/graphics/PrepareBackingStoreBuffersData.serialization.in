@@ -24,16 +24,18 @@
 
 header: "PrepareBackingStoreBuffersData.h"
 
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::PrepareBackingStoreBuffersInputData {
-    WebKit::BufferIdentifierSet bufferSet;
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebKit::ImageBufferSetPrepareBufferForDisplayInputData {
+    WebKit::RemoteImageBufferSetIdentifier remoteBufferSet;
+    WebCore::Region dirtyRegion;
     bool supportsPartialRepaint;
     bool hasEmptyDirtyRegion;
+    bool requiresClearedPixels;
 };
 
-[CustomHeader, RValue] struct WebKit::PrepareBackingStoreBuffersOutputData {
-    WebKit::BufferIdentifierSet bufferSet;
-    std::optional<WebKit::ImageBufferBackendHandle> frontBufferHandle;
+[CustomHeader, RValue] struct WebKit::ImageBufferSetPrepareBufferForDisplayOutputData {
+    std::optional<WebKit::ImageBufferBackendHandle> backendHandle;
     WebKit::SwapBuffersDisplayRequirement displayRequirement;
+    WebKit::BufferIdentifierSet bufferCacheIdentifiers;
 };
 
 #endif

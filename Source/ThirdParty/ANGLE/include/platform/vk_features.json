@@ -133,13 +133,6 @@
             ]
         },
         {
-            "name": "supports_filtering_precision",
-            "category": "Features",
-            "description": [
-                "VkDevice supports the VK_GOOGLE_sampler_filtering_precision extension"
-            ]
-        },
-        {
             "name": "supports_external_fence_capabilities",
             "category": "Features",
             "description": [
@@ -446,6 +439,14 @@
             "issue": "https://anglebug.com/6574"
         },
         {
+            "name": "force_delayed_device_creation_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Artificially defer device creation to after surface is enabled for testing multi-queue scenarios"
+            ],
+            "issue": "https://anglebug.com/8300"
+        },
+        {
             "name": "supports_shader_float16",
             "category": "Features",
             "description": [
@@ -670,13 +671,6 @@
             "issue": "http://anglebug.com/5535"
         },
         {
-            "name": "supports_negative_viewport",
-            "category": "Features",
-            "description": [
-                "The driver supports inverting the viewport with a negative height."
-            ]
-        },
-        {
             "name": "force_fragment_shader_precision_highp_to_mediump",
             "category": "Workarounds",
             "description": [
@@ -836,6 +830,14 @@
                 "Round output after dithering to workaround a driver bug that rounds the output up"
             ],
             "issue": "http://anglebug.com/6953"
+        },
+        {
+            "name": "adjust_clear_color_precision",
+            "category": "Workarounds",
+            "description": [
+                "Adjust normalized clear color precision based on framebuffer color channel bits count"
+            ],
+            "issue": "https://issuetracker.google.com/292282210"
         },
         {
             "name": "emulate_advanced_blend_equations",
@@ -1189,6 +1191,14 @@
             "issue": "https://anglebug.com/7369"
         },
         {
+            "name": "disable_pipeline_cache_load_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Disable loading the pipeline cache from the blob cache for testing"
+            ],
+            "issue": "https://anglebug.com/8417"
+        },
+        {
             "name": "sync_monolithic_pipelines_to_blob_cache",
             "category": "Workarounds",
             "description": [
@@ -1361,12 +1371,65 @@
             ]
         },
         {
+            "name": "supports_format_feature_flags2",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_format_feature_flags2 extension"
+            ]
+        },
+        {
+            "name": "supports_host_image_copy",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_host_image_copy extension"
+            ]
+        },
+        {
+            "name": "allow_host_image_copy_despite_non_identical_layout",
+            "category": "Features",
+            "description": [
+                "When using VK_EXT_host_image_copy, allow VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT even if",
+                "perf query indicates only optimalDeviceAccess, but not identicalMemoryLayout"
+            ]
+        },
+        {
             "name": "enable_parallel_compile_and_link",
             "category": "Features",
             "description": [
                 "Expose the GL_KHR_parallel_shader_compile extension"
             ],
             "issue": "http://anglebug.com/8297"
+        },
+        {
+            "name": "prefer_host_cached_for_non_static_buffer_usage",
+            "category": "Features",
+            "description": [
+                "prefer host cached memory for non static buffer usage"
+            ],
+            "issue": "https://issuetracker.google.com/288119108"
+        },
+        {
+            "name": "supports_external_format_resolve",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_ANDROID_external_format_resolve extension"
+            ]
+        },
+        {
+            "name": "force_AHB_layer_count_to_one",
+            "category": "Workarounds",
+            "description": [
+                "Force AHB's layerCount to 1"
+            ],
+            "issue": "http://b/239181279"
+        },
+        {
+            "name": "disable_separate_shader_objects",
+            "category": "AppWorkarounds",
+            "description": [
+                "Disable GL_EXT_separate_shader_objects and cap core ES version to 3.0"
+            ],
+            "issue": "https://issuetracker.google.com/309028728"
         }
     ]
 }

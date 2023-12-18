@@ -31,6 +31,7 @@
 #include "JSCBuiltins.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -72,9 +73,7 @@ namespace JSC {
     macro(Map) \
     macro(throwTypeErrorFunction) \
     macro(typedArrayLength) \
-    macro(typedArrayClone) \
     macro(typedArrayContentType) \
-    macro(typedArraySort) \
     macro(typedArrayGetOriginalConstructor) \
     macro(BuiltinLog) \
     macro(BuiltinDescribe) \
@@ -129,7 +128,6 @@ namespace JSC {
     macro(isSharedTypedArrayView) \
     macro(isResizableOrGrowableSharedTypedArrayView) \
     macro(isDetached) \
-    macro(typedArrayDefaultComparator) \
     macro(typedArrayFromFast) \
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
@@ -198,6 +196,7 @@ namespace JSC {
     macro(sentinelString) \
     macro(createRemoteFunction) \
     macro(isRemoteFunction) \
+    macro(arrayFromFast) \
     macro(arraySort) \
     macro(jsonParse) \
     macro(jsonStringify) \
@@ -227,7 +226,8 @@ extern JS_EXPORT_PRIVATE SymbolImpl::StaticSymbolImpl polyProtoPrivateName;
 }
 
 class BuiltinNames {
-    WTF_MAKE_NONCOPYABLE(BuiltinNames); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(BuiltinNames);
+    WTF_MAKE_TZONE_ALLOCATED(BuiltinNames);
     
 public:
     using PrivateNameSet = MemoryCompactLookupOnlyRobinHoodHashSet<String>;

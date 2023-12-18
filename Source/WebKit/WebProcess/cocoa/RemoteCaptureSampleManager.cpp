@@ -122,10 +122,10 @@ void RemoteCaptureSampleManager::didUpdateSourceConnection(IPC::Connection& conn
     setConnection(&connection);
 }
 
-void RemoteCaptureSampleManager::setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy* proxy)
+void RemoteCaptureSampleManager::setVideoFrameObjectHeapProxy(RefPtr<RemoteVideoFrameObjectHeapProxy>&& proxy)
 {
     Locker lock(m_videoFrameObjectHeapProxyLock);
-    m_videoFrameObjectHeapProxy = proxy;
+    m_videoFrameObjectHeapProxy = WTFMove(proxy);
 }
 
 void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description, IPC::Semaphore&& semaphore, const MediaTime& mediaTime, size_t frameChunkSize)

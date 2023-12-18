@@ -6,5 +6,4 @@ ruby {
 ruby > rt {
     display: ruby-text;
     white-space: nowrap;
-    line-height: 1;
 }

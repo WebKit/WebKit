@@ -1,0 +1,6 @@
+
+PASS can't bypass required members by omitting the dictionary entirely
+PASS from is required
+FAIL all properties are reflected back Type error
+FAIL defaults are as expected Type error
+

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Failure to process entity passwd
+
+CONSOLE MESSAGE: Entity 'passwd' not defined
+
+CONSOLE MESSAGE: Failure to process entity hosts
+
+CONSOLE MESSAGE: Entity 'hosts' not defined
+
+CONSOLE MESSAGE: Failure to process entity group
+
+CONSOLE MESSAGE: Entity 'group' not defined
+
+ALERT: document()
+

@@ -1,0 +1,4 @@
+
+PASS switch IDL attribute, setter
+PASS switch IDL attribute, getter
+

@@ -1,0 +1,3 @@
+
+PASS element with display: none should have inactive viewtimeline
+

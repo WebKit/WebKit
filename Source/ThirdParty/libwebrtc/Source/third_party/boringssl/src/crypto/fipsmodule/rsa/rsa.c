@@ -206,12 +206,10 @@ RSA *RSA_new_private_key_large_e(const BIGNUM *n, const BIGNUM *e,
 RSA *RSA_new(void) { return RSA_new_method(NULL); }
 
 RSA *RSA_new_method(const ENGINE *engine) {
-  RSA *rsa = OPENSSL_malloc(sizeof(RSA));
+  RSA *rsa = OPENSSL_zalloc(sizeof(RSA));
   if (rsa == NULL) {
     return NULL;
   }
-
-  OPENSSL_memset(rsa, 0, sizeof(RSA));
 
   if (engine) {
     rsa->meth = ENGINE_get_RSA_method(engine);

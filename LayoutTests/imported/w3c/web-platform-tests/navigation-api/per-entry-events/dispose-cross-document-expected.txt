@@ -1,0 +1,4 @@
+
+
+FAIL No dispose events are fired due to cross-document forward pruning promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'iframe.contentWindow.navigation.currentEntry.key')"
+

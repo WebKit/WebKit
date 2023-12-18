@@ -2,31 +2,31 @@ Parent
 Specified Child
 Inherit Child
 
-FAIL color-scheme property affects Menu system color keyword assert_not_equals: got disallowed value "rgb(246, 246, 246)"
-FAIL System color doesn't compute to itself on color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS color-scheme property affects Menu system color keyword
+PASS System color doesn't compute to itself on color
 PASS Inherited system color keyword is observable on color
-FAIL System color doesn't compute to itself on background-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on background-color
 PASS Inherited system color keyword is observable on background-color
-FAIL System color doesn't compute to itself on box-shadow assert_not_equals: got disallowed value "rgb(246, 246, 246) 2px 2px 0px 0px"
+PASS System color doesn't compute to itself on box-shadow
 PASS Inherited system color keyword is observable on box-shadow
-FAIL System color doesn't compute to itself on text-shadow assert_not_equals: got disallowed value "rgb(246, 246, 246) 2px 2px 0px"
+PASS System color doesn't compute to itself on text-shadow
 PASS Inherited system color keyword is observable on text-shadow
-FAIL System color doesn't compute to itself on border-left-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on border-left-color
 PASS Inherited system color keyword is observable on border-left-color
-FAIL System color doesn't compute to itself on border-top-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on border-top-color
 PASS Inherited system color keyword is observable on border-top-color
-FAIL System color doesn't compute to itself on border-right-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on border-right-color
 PASS Inherited system color keyword is observable on border-right-color
-FAIL System color doesn't compute to itself on border-bottom-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on border-bottom-color
 PASS Inherited system color keyword is observable on border-bottom-color
-FAIL System color doesn't compute to itself on column-rule-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on column-rule-color
 PASS Inherited system color keyword is observable on column-rule-color
-FAIL System color doesn't compute to itself on outline-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on outline-color
 PASS Inherited system color keyword is observable on outline-color
-FAIL System color doesn't compute to itself on caret-color assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on caret-color
 PASS Inherited system color keyword is observable on caret-color
-FAIL System color doesn't compute to itself on fill assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on fill
 PASS Inherited system color keyword is observable on fill
-FAIL System color doesn't compute to itself on stroke assert_not_equals: got disallowed value "rgb(246, 246, 246)"
+PASS System color doesn't compute to itself on stroke
 PASS Inherited system color keyword is observable on stroke
 

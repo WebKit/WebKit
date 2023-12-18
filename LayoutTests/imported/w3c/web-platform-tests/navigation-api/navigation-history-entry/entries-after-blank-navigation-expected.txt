@@ -1,0 +1,4 @@
+
+
+FAIL entries() after navigation to about:blank assert_equals: expected 2 but got 0
+

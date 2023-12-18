@@ -50,7 +50,6 @@ typedef struct {
   MOTION_MODE best_motion_mode;
   WarpedMotionParams wm_params;
   int num_proj_ref;
-  uint8_t blk_skip[MAX_MIB_SIZE * MAX_MIB_SIZE];
   PALETTE_MODE_INFO pmi;
   int64_t best_sse;
 } BEST_PICKMODE;
@@ -104,6 +103,8 @@ typedef struct {
   int use_ref_frame_mask[REF_FRAMES];
   //! Array to hold flags of evaluated modes for each reference frame
   uint8_t mode_checked[MB_MODE_COUNT][REF_FRAMES];
+  //! Array to hold flag indicating if scaled reference frame is used.
+  bool use_scaled_ref_frame[REF_FRAMES];
 } InterModeSearchStateNonrd;
 
 static const uint8_t b_width_log2_lookup[BLOCK_SIZES] = { 0, 0, 1, 1, 1, 2,
@@ -393,12 +394,12 @@ DECLARE_ALIGNED(16, static const int16_t, av1_fast_idtx_iscan_16x16[256]) = {
 // Indicates the blocks for which RD model should be based on special logic
 static INLINE int get_model_rd_flag(const AV1_COMP *cpi, const MACROBLOCKD *xd,
                                     BLOCK_SIZE bsize) {
-  const int large_block = bsize >= BLOCK_32X32;
   const AV1_COMMON *const cm = &cpi->common;
+  const int large_block = bsize >= BLOCK_32X32;
+  // Only enable for low bitdepth to mitigate issue: b/303023614.
   return cpi->oxcf.rc_cfg.mode == AOM_CBR && large_block &&
          !cyclic_refresh_segment_id_boosted(xd->mi[0]->segment_id) &&
-         cm->quant_params.base_qindex &&
-         cm->seq_params->bit_depth == AOM_BITS_8;
+         cm->quant_params.base_qindex && !cpi->oxcf.use_highbitdepth;
 }
 /*!\brief Finds predicted motion vectors for a block.
  *
@@ -413,30 +414,35 @@ static INLINE int get_model_rd_flag(const AV1_COMP *cpi, const MACROBLOCKD *xd,
  *                                        data for the current macroblock
  * \param[in]    ref_frame                Reference frame for which to find
  *                                        ref MVs
- * \param[in]    frame_mv                 Predicted MVs for a block
+ * \param[out]   frame_mv                 Predicted MVs for a block
  * \param[in]    yv12_mb                  Buffer to hold predicted block
  * \param[in]    bsize                    Current block size
  * \param[in]    force_skip_low_temp_var  Flag indicating possible mode search
  *                                        prune for low temporal variance block
  * \param[in]    skip_pred_mv             Flag indicating to skip av1_mv_pred
+ * \param[out]   use_scaled_ref_frame     Flag to indicate if scaled reference
+ *                                        frame is used.
  *
  * \remark Nothing is returned. Instead, predicted MVs are placed into
- * \c frame_mv array
+ * \c frame_mv array, and use_scaled_ref_frame is set.
  */
-static INLINE void find_predictors(AV1_COMP *cpi, MACROBLOCK *x,
-                                   MV_REFERENCE_FRAME ref_frame,
-                                   int_mv frame_mv[MB_MODE_COUNT][REF_FRAMES],
-                                   struct buf_2d yv12_mb[8][MAX_MB_PLANE],
-                                   BLOCK_SIZE bsize,
-                                   int force_skip_low_temp_var,
-                                   int skip_pred_mv) {
+static INLINE void find_predictors(
+    AV1_COMP *cpi, MACROBLOCK *x, MV_REFERENCE_FRAME ref_frame,
+    int_mv frame_mv[MB_MODE_COUNT][REF_FRAMES],
+    struct buf_2d yv12_mb[8][MAX_MB_PLANE], BLOCK_SIZE bsize,
+    int force_skip_low_temp_var, int skip_pred_mv, bool *use_scaled_ref_frame) {
   AV1_COMMON *const cm = &cpi->common;
   MACROBLOCKD *const xd = &x->e_mbd;
   MB_MODE_INFO *const mbmi = xd->mi[0];
   MB_MODE_INFO_EXT *const mbmi_ext = &x->mbmi_ext;
-  const YV12_BUFFER_CONFIG *yv12 = get_ref_frame_yv12_buf(cm, ref_frame);
+  const YV12_BUFFER_CONFIG *ref = get_ref_frame_yv12_buf(cm, ref_frame);
+  const bool ref_is_scaled =
+      ref->y_crop_height != cm->height || ref->y_crop_width != cm->width;
+  const YV12_BUFFER_CONFIG *scaled_ref =
+      av1_get_scaled_ref_frame(cpi, ref_frame);
+  const YV12_BUFFER_CONFIG *yv12 =
+      ref_is_scaled && scaled_ref ? scaled_ref : ref;
   const int num_planes = av1_num_planes(cm);
-
   x->pred_mv_sad[ref_frame] = INT_MAX;
   x->pred_mv0_sad[ref_frame] = INT_MAX;
   x->pred_mv1_sad[ref_frame] = INT_MAX;
@@ -444,8 +450,8 @@ static INLINE void find_predictors(AV1_COMP *cpi, MACROBLOCK *x,
   // TODO(kyslov) this needs various further optimizations. to be continued..
   assert(yv12 != NULL);
   if (yv12 != NULL) {
-    const struct scale_factors *const sf =
-        get_ref_scale_factors_const(cm, ref_frame);
+    struct scale_factors *const sf =
+        scaled_ref ? NULL : get_ref_scale_factors(cm, ref_frame);
     av1_setup_pred_block(xd, yv12_mb[ref_frame], yv12, sf, sf, num_planes);
     av1_find_mv_refs(cm, xd, mbmi, ref_frame, mbmi_ext->ref_mv_count,
                      xd->ref_mv_stack, xd->weight, NULL, mbmi_ext->global_mvs,
@@ -458,7 +464,7 @@ static INLINE void find_predictors(AV1_COMP *cpi, MACROBLOCK *x,
         &frame_mv[NEARESTMV][ref_frame], &frame_mv[NEARMV][ref_frame], 0);
     frame_mv[GLOBALMV][ref_frame] = mbmi_ext->global_mvs[ref_frame];
     // Early exit for non-LAST frame if force_skip_low_temp_var is set.
-    if (!av1_is_scaled(sf) && bsize >= BLOCK_8X8 && !skip_pred_mv &&
+    if (!ref_is_scaled && bsize >= BLOCK_8X8 && !skip_pred_mv &&
         !(force_skip_low_temp_var && ref_frame != LAST_FRAME)) {
       av1_mv_pred(cpi, x, yv12_mb[ref_frame][0].buf, yv12->y_stride, ref_frame,
                   bsize);
@@ -468,6 +474,7 @@ static INLINE void find_predictors(AV1_COMP *cpi, MACROBLOCK *x,
     av1_count_overlappable_neighbors(cm, xd);
   }
   mbmi->num_proj_ref = 1;
+  *use_scaled_ref_frame = ref_is_scaled && scaled_ref;
 }
 
 static INLINE void init_mbmi_nonrd(MB_MODE_INFO *mbmi,

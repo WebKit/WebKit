@@ -64,7 +64,7 @@ VideoFrame CreateVideoFrame(uint32_t timestamp_rtp) {
 
 EncodedImage CreateEncodedImage(uint32_t timestamp_rtp) {
   EncodedImage encoded_image;
-  encoded_image.SetTimestamp(timestamp_rtp);
+  encoded_image.SetRtpTimestamp(timestamp_rtp);
   return encoded_image;
 }
 

@@ -38,8 +38,8 @@ class TextControlInnerContainer final : public HTMLDivElement {
 public:
     static Ref<TextControlInnerContainer> create(Document&);
 private:
-    constexpr static auto CreateTextControlInnerContainer = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    TextControlInnerContainer(Document&);
+    static constexpr auto CreateTextControlInnerContainer = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit TextControlInnerContainer(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 };
@@ -50,8 +50,8 @@ public:
     static Ref<TextControlInnerElement> create(Document&);
 
 private:
-    constexpr static auto CreateTextControlInnerElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    TextControlInnerElement(Document&);
+    static constexpr auto CreateTextControlInnerElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit TextControlInnerElement(Document&);
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 
     bool isMouseFocusable() const override { return false; }
@@ -75,8 +75,8 @@ public:
 private:
     void updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization);
 
-    constexpr static auto CreateTextControlInnerTextElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    TextControlInnerTextElement(Document&);
+    static constexpr auto CreateTextControlInnerTextElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit TextControlInnerTextElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
     bool isMouseFocusable() const override { return false; }
@@ -89,8 +89,8 @@ public:
     static Ref<TextControlPlaceholderElement> create(Document&);
 
 private:
-    constexpr static auto CreateTextControlPlaceholderElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    TextControlPlaceholderElement(Document&);
+    static constexpr auto CreateTextControlPlaceholderElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit TextControlPlaceholderElement(Document&);
     
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 };
@@ -108,8 +108,8 @@ public:
     bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
 
 private:
-    constexpr static auto CreateSearchFieldResultsButtonElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    SearchFieldResultsButtonElement(Document&);
+    static constexpr auto CreateSearchFieldResultsButtonElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit SearchFieldResultsButtonElement(Document&);
     bool isMouseFocusable() const override { return false; }
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
     bool isSearchFieldResultsButtonElement() const override { return true; }
@@ -128,8 +128,8 @@ public:
 #endif
 
 private:
-    constexpr static auto CreateSearchFieldCancelButtonElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    SearchFieldCancelButtonElement(Document&);
+    static constexpr auto CreateSearchFieldCancelButtonElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    explicit SearchFieldCancelButtonElement(Document&);
     bool isMouseFocusable() const override { return false; }
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 };
@@ -138,10 +138,18 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextControlInnerTextElement)
     static bool isType(const WebCore::HTMLElement& element) { return element.isTextControlInnerTextElement(); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SearchFieldResultsButtonElement)
     static bool isType(const WebCore::HTMLElement& element) { return element.isSearchFieldResultsButtonElement(); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
 SPECIALIZE_TYPE_TRAITS_END()

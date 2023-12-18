@@ -16,12 +16,6 @@ class ExpressionLimitTest : public testing::Test
     static const int kMaxExpressionComplexity = 16;
     static const int kMaxCallStackDepth       = 16;
     static const int kMaxFunctionParameters   = 16;
-    static const char *kExpressionTooComplex;
-    static const char *kCallStackTooDeep;
-    static const char *kHasRecursion;
-    static const char *kTooManyParameters;
-    static const char *kTooComplexSwitch;
-    static const char *kGlobalVariableInit;
 
     virtual void SetUp()
     {
@@ -125,9 +119,7 @@ class ExpressionLimitTest : public testing::Test
 
         GenerateDeepFunctionStack(length, &ss);
 
-        ss << "void main() {\n"
-           << "  gl_FragColor = function" << length << "();\n"
-           << "}";
+        ss << "void main() {\n" << "  gl_FragColor = function" << length << "();\n" << "}";
 
         return ss.str();
     }
@@ -138,9 +130,7 @@ class ExpressionLimitTest : public testing::Test
 
         GenerateDeepFunctionStack(length, &ss);
 
-        ss << "void main() {\n"
-           << "  gl_FragColor = vec4(0,0,0,0);\n"
-           << "}";
+        ss << "void main() {\n" << "  gl_FragColor = vec4(0,0,0,0);\n" << "}";
 
         return ss.str();
     }
@@ -149,9 +139,7 @@ class ExpressionLimitTest : public testing::Test
     {
         std::stringstream ss;
 
-        ss << "precision mediump float;\n"
-           << "\n"
-           << "float foo(";
+        ss << "precision mediump float;\n" << "\n" << "float foo(";
         for (int i = 0; i < parameters; ++i)
         {
             ss << "float f" << i;
@@ -244,15 +232,13 @@ class ExpressionLimitTest : public testing::Test
     ShBuiltInResources resources;
 };
 
-const char *ExpressionLimitTest::kExpressionTooComplex = "Expression too complex";
-const char *ExpressionLimitTest::kCallStackTooDeep     = "Call stack too deep";
-const char *ExpressionLimitTest::kHasRecursion =
-    "Recursive function call in the following call chain";
-const char *ExpressionLimitTest::kTooManyParameters = "Function has too many parameters";
-const char *ExpressionLimitTest::kTooComplexSwitch =
-    "too complex expressions inside a switch statement";
-const char *ExpressionLimitTest::kGlobalVariableInit =
-    "global variable initializers must be constant expressions";
+constexpr char kExpressionTooComplex[] = "Expression too complex";
+constexpr char kCallStackTooDeep[]     = "Call stack too deep";
+constexpr char kHasRecursion[]         = "Recursive function call in the following call chain";
+constexpr char kTooManyParameters[]    = "Function has too many parameters";
+constexpr char kTooComplexSwitch[]     = "too complex expressions inside a switch statement";
+constexpr char kGlobalVariableInit[] = "global variable initializers must be constant expressions";
+constexpr char kTooManyFields[]      = "Too many fields in the struct";
 
 TEST_F(ExpressionLimitTest, ExpressionComplexity)
 {
@@ -630,5 +616,33 @@ TEST_F(ExpressionLimitTest, NestingInsideGlobalInitializer)
         compiler,
         GenerateShaderWithNestingInsideGlobalInitializer(kMaxExpressionComplexity + 1).c_str(),
         compileOptions, nullptr));
+    sh::Destruct(compiler);
+}
+
+TEST_F(ExpressionLimitTest, TooManyStructFields)
+{
+    ShShaderSpec spec     = SH_WEBGL2_SPEC;
+    ShShaderOutput output = SH_ESSL_OUTPUT;
+    ShHandle compiler     = sh::ConstructCompiler(GL_FRAGMENT_SHADER, spec, output, &resources);
+    ShCompileOptions compileOptions = {};
+
+    std::ostringstream fs;
+    fs << R"(#version 300 es
+precision highp float;
+struct TooManyFields
+{
+)";
+    for (uint32_t i = 0; i < (1 << 16); ++i)
+    {
+        fs << "    float field" << i << ";\n";
+    }
+    fs << R"(};
+uniform B { TooManyFields s; };
+out vec4 color;
+void main() {
+    color = vec4(s.field0, 0.0, 0.0, 1.0);
+})";
+
+    EXPECT_TRUE(CheckShaderCompilation(compiler, fs.str().c_str(), compileOptions, kTooManyFields));
     sh::Destruct(compiler);
 }

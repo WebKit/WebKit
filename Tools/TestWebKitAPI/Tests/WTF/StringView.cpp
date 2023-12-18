@@ -108,9 +108,9 @@ bool compareLoopIterations(StringView::GraphemeClusters graphemeClusters, std::v
     return actual == expected;
 }
 
-bool compareLoopIterations(StringView::CodePoints codePoints, std::vector<UChar32> expected)
+bool compareLoopIterations(StringView::CodePoints codePoints, std::vector<char32_t> expected)
 {
-    std::vector<UChar32> actual;
+    std::vector<char32_t> actual;
     for (auto codePoint : codePoints)
         actual.push_back(codePoint);
     return actual == expected;
@@ -146,22 +146,21 @@ TEST(WTF, StringViewIterators)
 
     auto codePoints = heloView.codePoints();
     auto codePointsIterator = codePoints.begin();
-    EXPECT_EQ(*codePointsIterator, 'h');
-    EXPECT_EQ(*codePointsIterator, 'h');
+    EXPECT_EQ(*codePointsIterator, U'h');
     ++codePointsIterator;
     ++codePointsIterator;
-    EXPECT_EQ(*codePointsIterator, 'l');
+    EXPECT_EQ(*codePointsIterator, U'l');
     auto savedIterator = codePointsIterator;
     codePointsIterator = codePoints.begin();
-    EXPECT_EQ(*codePointsIterator, 'h');
+    EXPECT_EQ(*codePointsIterator, U'h');
     codePointsIterator = savedIterator;
-    EXPECT_EQ(*codePointsIterator, 'l');
+    EXPECT_EQ(*codePointsIterator, U'l');
     String webkit("webkit"_s);
     auto webkitCodePoints = StringView(webkit).codePoints();
     codePointsIterator = webkitCodePoints.begin();
     ++codePointsIterator;
     ++codePointsIterator;
-    EXPECT_EQ(*codePointsIterator, 'b');
+    EXPECT_EQ(*codePointsIterator, U'b');
     while (codePointsIterator != webkitCodePoints.end())
         ++codePointsIterator;
 

@@ -9055,6 +9055,84 @@ void main() {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test a fuzzer-discovered bug with the VectorizeVectorScalarArithmetic transformation.
+TEST_P(GLSLTest, VectorScalarArithmeticWithSideEffectInLoop)
+{
+    // The VectorizeVectorScalarArithmetic transformation was generating invalid code in the past
+    // (notice how sbcd references i outside the for loop.  The loop condition doesn't look right
+    // either):
+    //
+    //     #version 450
+    //     void main(){
+    //     (gl_Position = vec4(0.0, 0.0, 0.0, 0.0));
+    //     mat3 _utmp = mat3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    //     vec3 _ures = vec3(0.0, 0.0, 0.0);
+    //     vec3 sbcd = vec3(_ures[_ui]);
+    //     for (int _ui = 0; (_ures[((_utmp[_ui] += (((sbcd *= _ures[_ui]), (_ures[_ui] = sbcd.x)),
+    //     sbcd)), _ui)], (_ui < 7)); )
+    //     {
+    //     }
+    //     }
+
+    constexpr char kVS[] = R"(
+void main()
+{
+    mat3 tmp;
+    vec3 res;
+    for(int i; res[tmp[i]+=res[i]*=res[i],i],i<7;);
+})";
+
+    GLuint shader = glCreateShader(GL_VERTEX_SHADER);
+
+    const char *sourceArray[1] = {kVS};
+    GLint lengths[1]           = {static_cast<GLint>(sizeof(kVS) - 1)};
+    glShaderSource(shader, 1, sourceArray, lengths);
+    glCompileShader(shader);
+
+    GLint compileResult;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
+    EXPECT_NE(compileResult, 0);
+}
+
+// Test that packing of excessive 3-column variables does not overflow the count of 3-column
+// variables in VariablePacker
+TEST_P(WebGL2GLSLTest, ExcessiveMat3UniformPacking)
+{
+    std::ostringstream srcStream;
+
+    srcStream << "#version 300 es\n";
+    srcStream << "precision mediump float;\n";
+    srcStream << "out vec4 finalColor;\n";
+    srcStream << "in vec4 color;\n";
+    srcStream << "uniform mat4 r[254];\n";
+
+    srcStream << "uniform mat3 ";
+    constexpr size_t kNumUniforms = 10000;
+    for (size_t i = 0; i < kNumUniforms; ++i)
+    {
+        if (i > 0)
+        {
+            srcStream << ", ";
+        }
+        srcStream << "m3a_" << i << "[256]";
+    }
+    srcStream << ";\n";
+
+    srcStream << "void main(void) { finalColor = color; }\n";
+    std::string src = std::move(srcStream).str();
+
+    GLuint shader = glCreateShader(GL_VERTEX_SHADER);
+
+    const char *sourceArray[1] = {src.c_str()};
+    GLint lengths[1]           = {static_cast<GLint>(src.length())};
+    glShaderSource(shader, 1, sourceArray, lengths);
+    glCompileShader(shader);
+
+    GLint compileResult;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
+    EXPECT_EQ(compileResult, 0);
+}
+
 // Test that a varying with a flat qualifier that is used as an operand of a folded ternary operator
 // is handled correctly.
 TEST_P(GLSLTest_ES3, FlatVaryingUsedInFoldedTernary)
@@ -9611,8 +9689,7 @@ TEST_P(GLSLTest_ES31, ExceedCombinedShaderOutputResourcesInVSAndFS)
                     "}\n";
 
     std::ostringstream fragmentStream;
-    fragmentStream << "#version 310 es\n"
-                   << "precision highp float;\n";
+    fragmentStream << "#version 310 es\n" << "precision highp float;\n";
     for (int i = 0; i < fragmentSSBOs; ++i)
     {
         fragmentStream << "layout(shared, binding = " << i << ") buffer blockName" << i
@@ -16255,6 +16332,74 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Test coverage of some matrix/scalar ops which Metal translation was missing.
+TEST_P(GLSLTest, MatrixScalarOps)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main() {
+    float scalar = 0.5;
+    mat3 matrix = mat3(vec3(0.1), vec3(0.1), vec3(0.1));
+
+    mat3 m0 = scalar / matrix;
+    mat3 m1 = scalar * matrix;
+    mat3 m2 = scalar + matrix;
+    mat3 m3 = scalar - matrix;
+
+    gl_FragColor = vec4(m0[0][0], m1[0][0], m2[0][0], m3[0][0]);
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(testProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 13, 153, 102), 1.0);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test coverage of some matrix ops which Metal translation was missing.
+TEST_P(GLSLTest, MatrixNegate)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main() {
+    mat3 matrix = mat3(vec3(-0.1), vec3(-0.1), vec3(-0.1));
+
+    mat3 m0 = -matrix;
+
+    gl_FragColor = vec4(m0[0][0], 0, 0, 1);
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(testProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(26, 0, 0, 255), 1.0);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test coverage of the mix(float, float, bool) overload which was missing in Metal translation
+TEST_P(GLSLTest_ES3, MixFloatFloatBool)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 fragColor;
+void main() {
+    vec4 testData = vec4(0.0, 1.0, 0.5, 0.25);
+    float scalar = mix(testData.x, testData.y, testData.x < 0.5);
+    vec2 vector = mix(testData.xy, testData.xw, bvec2(testData.x < 0.5, testData.y < 0.5));
+    fragColor = vec4(scalar, vector.x, vector.y, 1);
+}
+)";
+
+    ANGLE_GL_PROGRAM(testProgram, essl3_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255, 0, 255, 255));
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that aliasing function inout parameters work when more than one param is aliased.
 TEST_P(GLSLTest, AliasingFunctionInOutParamsMultiple)
 {
@@ -18124,14 +18269,239 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that the ScalarizeVecAndMatConstructorArgs workaround works correctly with constructors that
+// have no precision.  Regression test for a bug where the generated helper has no precision
+// specified on the parameters and return value.
+TEST_P(GLSLTest, ScalarizeVectorWorkaroundVsPrecisionlessConstructor)
+{
+    constexpr char kFS[] = R"(precision highp float;
+void main() {
+    bool b1 = true;
+    float f1 = dot(vec4(b1 ? 1.0 : 0.0, 0.0, 0.0, 0.0), vec4(1.0));
+    gl_FragColor = vec4(f1,0.0,0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that Metal compiler doesn't inline non-const globals
+TEST_P(WebGLGLSLTest, InvalidGlobalsNotInlined)
+{
+    constexpr char kFS[] = R"(#version 100
+  precision highp float;
+  float v1 = 0.5;
+  float v2 = v1;
+
+  float f1() {
+    return v2;
+  }
+
+  void main() {
+    gl_FragColor = vec4(v1 + f1(),0.0,0.0, 1.0);
+  })";
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that a struct can have lots of fields.  Regression test for an inefficient O(n^2) check for
+// fields having unique names.
+TEST_P(GLSLTest_ES3, LotsOfFieldsInStruct)
+{
+    std::ostringstream fs;
+    fs << R"(#version 300 es
+precision highp float;
+struct LotsOfFields
+{
+)";
+    // Note: 16383 is the SPIR-V limit for struct member count.
+    for (uint32_t i = 0; i < 16383; ++i)
+    {
+        fs << "    float field" << i << ";\n";
+    }
+    fs << R"(};
+uniform B { LotsOfFields s; };
+out vec4 color;
+void main() {
+    color = vec4(s.field0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), fs.str().c_str());
+}
+
+// Test that structs with too many fields are rejected.  In SPIR-V, the instruction that defines the
+// struct lists the fields which means the length of the instruction is a function of the field
+// count.  Since SPIR-V instruction sizes are limited to 16 bits, structs with more fields cannot be
+// represented.
+TEST_P(GLSLTest_ES3, TooManyFieldsInStruct)
+{
+    std::ostringstream fs;
+    fs << R"(#version 300 es
+precision highp float;
+struct TooManyFields
+{
+)";
+    for (uint32_t i = 0; i < (1 << 16); ++i)
+    {
+        fs << "    float field" << i << ";\n";
+    }
+    fs << R"(};
+uniform B { TooManyFields s; };
+out vec4 color;
+void main() {
+    color = vec4(s.field0, 0.0, 0.0, 1.0);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.str().c_str());
+    EXPECT_EQ(0u, shader);
+}
+
+// Test that passing large arrays to functions are compiled correctly.  Regression test for the
+// SPIR-V generator that made a copy of the array to pass to the function, by decomposing and
+// reconstructing it (in the absence of OpCopyLogical), but the reconstruction instruction has a
+// length higher than can fit in SPIR-V.
+TEST_P(GLSLTest_ES3, LargeInterfaceBlockArrayPassedToFunction)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform Large { float a[65536]; };
+float f(float b[65536])
+{
+    b[0] = 1.0;
+    return b[0] + b[1];
+}
+out vec4 color;
+void main() {
+    color = vec4(f(a), 0.0, 0.0, 1.0);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_EQ(0u, shader);
+}
+
+// Make sure the shader in LargeInterfaceBlockArrayPassedToFunction works if the large local is
+// avoided.
+TEST_P(GLSLTest_ES3, LargeInterfaceBlockArray)
+{
+    int maxUniformBlockSize = 0;
+    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
+    ANGLE_SKIP_TEST_IF(maxUniformBlockSize < 16384 * 4);
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform Large { float a[16384]; };
+out vec4 color;
+void main() {
+    color = vec4(a[0], 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+}
+
+// Similar to LargeInterfaceBlockArrayPassedToFunction, but the array is nested in a struct.
+TEST_P(GLSLTest_ES3, LargeInterfaceBlockNestedArrayPassedToFunction)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+struct S { float a[65536]; };
+uniform Large { S s; };
+float f(float b[65536])
+{
+    b[0] = 1.0;
+    return b[0] + b[1];
+}
+out vec4 color;
+void main() {
+    color = vec4(f(s.a), 0.0, 0.0, 1.0);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_EQ(0u, shader);
+}
+
+// Make sure the shader in LargeInterfaceBlockNestedArrayPassedToFunction works if the large local
+// is avoided.
+TEST_P(GLSLTest_ES3, LargeInterfaceBlockNestedArray)
+{
+    int maxUniformBlockSize = 0;
+    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &maxUniformBlockSize);
+    ANGLE_SKIP_TEST_IF(maxUniformBlockSize < 16384 * 4);
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+struct S { float a[16384]; };
+uniform Large { S s; };
+out vec4 color;
+void main() {
+    color = vec4(s.a[0], 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+}
+
+// Similar to LargeInterfaceBlockArrayPassedToFunction, but the large array is copied to a local
+// variable instead.
+TEST_P(GLSLTest_ES3, LargeInterfaceBlockArrayCopiedToLocal)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+uniform Large { float a[65536]; };
+out vec4 color;
+void main() {
+    float b[65536] = a;
+    color = vec4(b[0], 0.0, 0.0, 1.0);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_EQ(0u, shader);
+}
+
+// Similar to LargeInterfaceBlockArrayCopiedToLocal, but the array is nested in a struct
+TEST_P(GLSLTest_ES3, LargeInterfaceBlockNestedArrayCopiedToLocal)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+struct S { float a[65536]; };
+uniform Large { S s; };
+out vec4 color;
+void main() {
+    S s2 = s;
+    color = vec4(s2.a[0], 0.0, 0.0, 1.0);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_EQ(0u, shader);
+}
+
+// Test that too large varyings are rejected.
+TEST_P(GLSLTest_ES3, LargeArrayVarying)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+in float a[65536];
+out vec4 color;
+void main() {
+    color = vec4(a[0], 0.0, 0.0, 1.0);
+})";
+
+    GLuint shader = CompileShader(GL_FRAGMENT_SHADER, kFS);
+    EXPECT_EQ(0u, shader);
+}
+
 }  // anonymous namespace
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
+    GLSLTest,
+    ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
+    ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs));
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(GLSLTestNoValidation);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTest_ES3);
-ANGLE_INSTANTIATE_TEST_ES3(GLSLTest_ES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(GLSLTest_ES3,
+                               ES3_OPENGL().enable(Feature::ScalarizeVecAndMatConstructorArgs),
+                               ES3_OPENGLES().enable(Feature::ScalarizeVecAndMatConstructorArgs));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLTestLoops);
 ANGLE_INSTANTIATE_TEST_ES3(GLSLTestLoops);

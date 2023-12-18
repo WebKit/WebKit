@@ -38,6 +38,3 @@ set(CMAKE_SYSTEM_PROCESSOR "arm64")
 
 # No intrinsics flag required for arm64-linux-gcc.
 set(AOM_NEON_INTRIN_FLAG "")
-
-# No runtime cpu detect for arm64-linux-gcc.
-set(CONFIG_RUNTIME_CPU_DETECT 0 CACHE STRING "")

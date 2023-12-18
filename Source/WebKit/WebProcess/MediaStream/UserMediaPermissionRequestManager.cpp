@@ -41,8 +41,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static constexpr OptionSet<ActivityState> focusedActiveWindow = { ActivityState::IsFocused, ActivityState::WindowIsActive };
-
 UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& page)
     : m_page(page)
 {

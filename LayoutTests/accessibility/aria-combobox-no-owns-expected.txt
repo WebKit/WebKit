@@ -1,0 +1,12 @@
+A combobox should still support aria-activedescendant even if it doesn't use aria-owns.
+PASS: list.selectedChildrenCount === 0
+Received AXSelectedChildrenChanged for Combobox
+PASS: list.selectedChildrenCount === 1
+PASS list.selectedChildAtIndex(0) is listitem1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+item1
+item2

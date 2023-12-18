@@ -26,6 +26,7 @@
 
 #include "StyleScopeOrdinal.h"
 #include <wtf/text/AtomString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
@@ -38,6 +39,11 @@ struct ScopedName {
     bool operator==(const ScopedName&) const = default;
 };
 
-}
+inline WTF::TextStream& operator<<(WTF::TextStream& ts, ScopedName scopedName)
+{
+    ts << scopedName.name;
+    return ts;
 }
 
+} // namespace Style
+} // namespace WebCore

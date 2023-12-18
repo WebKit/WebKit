@@ -29,6 +29,7 @@
 #include "AnimationFrameRate.h"
 #include "AnimationFrameRatePreset.h"
 #include "CSSNumericValue.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IDLTypes.h"

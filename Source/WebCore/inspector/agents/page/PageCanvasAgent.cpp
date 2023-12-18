@@ -41,6 +41,7 @@
 #include "ImageData.h"
 #include "InspectorCanvas.h"
 #include "InspectorDOMAgent.h"
+#include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "Page.h"
 

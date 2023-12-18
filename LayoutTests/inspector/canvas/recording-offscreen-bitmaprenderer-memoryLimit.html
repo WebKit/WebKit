@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/recording-bitmaprenderer.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingOffscreenBitmapRenderer");
+
+    suite.addTestCase({
+        name: "Canvas.recordingOffscreenBitmapRenderer.memoryLimit",
+        description: "Check that the recording is stopped when it reaches the memory limit.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.OffscreenBitmapRenderer, resolve, reject, {memoryLimit: 10});
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load({offscreen: true})">
+    <p>Test that CanvasManager is able to record actions made to offscreen BitmapRenderer canvas contexts.</p>
+</body>
+</html>

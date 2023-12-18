@@ -159,6 +159,8 @@ public:
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
     void popoverAttributeChanged(const AtomString& value);
 
+    virtual void handleInvokeInternal(const AtomString&) { }
+
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);
 #endif
@@ -194,7 +196,9 @@ protected:
     void updateTextDirectionalityAfterInputTypeChange();
     void updateEffectiveDirectionalityOfDirAuto();
 
-    using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
+    virtual void effectiveSpellcheckAttributeChanged(bool);
+
+    using EventHandlerNameMap = HashMap<AtomString, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 
 private:
@@ -227,14 +231,19 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document
 
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const
 {
-    return is<HTMLElement>(*this) && downcast<HTMLElement>(*this).hasTagName(name);
+    auto* htmlElement = dynamicDowncast<HTMLElement>(*this);
+    return htmlElement && htmlElement->hasTagName(name);
 }
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLElement)
     static bool isType(const WebCore::Node& node) { return node.isHTMLElement(); }
-    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
+    static bool isType(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && isType(*node);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #include "HTMLElementTypeHelpers.h"

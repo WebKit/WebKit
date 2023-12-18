@@ -33,7 +33,7 @@ void VideoCaptureOptions::Init(Callback* callback) {
   if (allow_pipewire_) {
     pipewire_session_ =
         rtc::make_ref_counted<videocapturemodule::PipeWireSession>();
-    pipewire_session_->Init(callback);
+    pipewire_session_->Init(callback, pipewire_fd_);
     return;
   }
 #endif

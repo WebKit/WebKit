@@ -115,7 +115,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(const Cryp
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!(key.keySizeInBits() % 8));
     auto output = gcryptEncrypt(key.hashAlgorithmIdentifier(), key.platformKey(), parameters.labelVector(), plainText, key.keySizeInBits() / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -123,7 +123,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(const Cryp
 {
     auto output = gcryptDecrypt(key.hashAlgorithmIdentifier(), key.platformKey(), parameters.labelVector(), cipherText);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

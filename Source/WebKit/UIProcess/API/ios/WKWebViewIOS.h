@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKBaseScrollView.h"
 #import "WKWebViewInternal.h"
 #import "_WKTapHandlingResult.h"
 
@@ -36,11 +37,7 @@ namespace WebKit {
 enum class TapHandlingResult : uint8_t;
 }
 
-namespace WebKit {
-class VisibleContentRectUpdateInfo;
-}
-
-@interface WKWebView (WKViewInternalIOS)
+@interface WKWebView (WKViewInternalIOS) <WKBaseScrollViewDelegate>
 
 - (void)_setupScrollAndContentViews;
 - (void)_registerForNotifications;
@@ -98,7 +95,6 @@ class VisibleContentRectUpdateInfo;
 - (void)_willInvokeUIScrollViewDelegateCallback;
 - (void)_didInvokeUIScrollViewDelegateCallback;
 
-- (std::optional<WebKit::VisibleContentRectUpdateInfo>)_createVisibleContentRectUpdateInfo;
 - (void)_scheduleVisibleContentRectUpdate;
 - (void)_scheduleForcedVisibleContentRectUpdate;
 
@@ -131,7 +127,6 @@ class VisibleContentRectUpdateInfo;
 - (void)_define:(id)sender;
 - (void)_lookup:(id)sender;
 - (void)_share:(id)sender;
-- (void)_showTextStyleOptions:(id)sender;
 - (void)_promptForReplace:(id)sender;
 - (void)_transliterateChinese:(id)sender;
 - (void)replace:(id)sender;
@@ -163,6 +158,7 @@ class VisibleContentRectUpdateInfo;
 - (void)_dispatchSetDeviceOrientation:(WebCore::IntDegrees)deviceOrientation;
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
+- (void)_resetScrollViewInsetAdjustmentBehavior;
 
 - (BOOL)_effectiveAppearanceIsDark;
 - (BOOL)_effectiveUserInterfaceLevelIsElevated;
@@ -176,10 +172,6 @@ class VisibleContentRectUpdateInfo;
 
 #if ENABLE(LOCKDOWN_MODE_API)
 + (void)_clearLockdownModeWarningNeeded;
-#endif
-
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
 #endif
 
 - (UIColor *)_insertionPointColor;
@@ -204,7 +196,17 @@ class VisibleContentRectUpdateInfo;
 @property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
 #endif
 
+@property (nonatomic, readonly) WKVelocityTrackingScrollView *_scrollViewInternal;
 @property (nonatomic, readonly) CGRect _contentRectForUserInteraction;
+
+@property (nonatomic, readonly) BOOL _haveSetUnobscuredSafeAreaInsets;
+@property (nonatomic, readonly) BOOL _hasOverriddenLayoutParameters;
+@property (nonatomic, readonly) std::optional<CGSize> _viewLayoutSizeOverride;
+@property (nonatomic, readonly) std::optional<CGSize> _minimumUnobscuredSizeOverride;
+@property (nonatomic, readonly) std::optional<CGSize> _maximumUnobscuredSizeOverride;
+- (void)_resetContentOffset;
+- (void)_resetUnobscuredSafeAreaInsets;
+- (void)_resetObscuredInsets;
 
 @end
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,11 @@
 #include "VMInspector.h"
 #include "ValueProfile.h"
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapVerifier);
 
 HeapVerifier::HeapVerifier(Heap* heap, unsigned numberOfGCCyclesToRecord)
     : m_heap(heap)
@@ -323,8 +326,8 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
         CodeBlock* codeBlock = jsDynamicCast<CodeBlock*>(cell);
         if (UNLIKELY(codeBlock)) {
             bool success = true;
-            codeBlock->forEachValueProfile([&](ValueProfile& valueProfile, bool) {
-                for (unsigned i = 0; i < ValueProfile::totalNumberOfBuckets; ++i) {
+            codeBlock->forEachValueProfile([&](auto& valueProfile, bool) {
+                for (unsigned i = 0; i < std::remove_reference_t<decltype(valueProfile)>::totalNumberOfBuckets; ++i) {
                     JSValue value = JSValue::decode(valueProfile.m_buckets[i]);
                     if (!value)
                         continue;

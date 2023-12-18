@@ -444,7 +444,7 @@ Error Range: {"startOffset":10,"endOffset":11}
 PASS: Should be SyntaxErrorType Irrecoverable.
 Source: ({}))
             ^
-Error Message: Unexpected token ')'. Parse error.
+Error Message: Unexpected token ')'
 Error Range: {"startOffset":4,"endOffset":5}
 
 PASS: Should be SyntaxErrorType Irrecoverable.

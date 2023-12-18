@@ -32,11 +32,19 @@
 #include <wtf/Algorithms.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Function.h>
+#include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #include "ImportanceAssertion.h"
+#endif
+
+#ifdef __OBJC__
+typedef Class ClassStructPtr;
+#else
+typedef struct objc_class* ClassStructPtr;
 #endif
 
 namespace IPC {
@@ -47,6 +55,17 @@ enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t;
 template<typename, typename> struct ArgumentCoder;
 template<typename, typename, typename> struct HasLegacyDecoder;
 template<typename, typename, typename> struct HasModernDecoder;
+
+#ifdef __OBJC__
+template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
+template<typename T> using IsNotObjCObject = std::enable_if_t<!std::is_convertible<T *, id>::value, T *>;
+template<typename T, typename = IsObjCObject<T>> std::optional<RetainPtr<T>> decodeRequiringAllowedClasses(Decoder&);
+
+template<typename T, typename = IsObjCObject<T>> Class getClass()
+{
+    return [T class];
+}
+#endif
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -73,6 +92,9 @@ public:
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || m_isAllowedWhenWaitingForSyncReplyOverride; }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
+#if ENABLE(IPC_TESTING_API)
+    bool hasSyncMessageDeserializationFailure() const;
+#endif
     bool shouldUseFullySynchronousModeForTesting() const;
     bool shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
@@ -147,6 +169,26 @@ public:
         }
     }
 
+#ifdef __OBJC__
+    template<typename T, typename = IsObjCObject<T>>
+    std::optional<RetainPtr<T>> decodeWithAllowedClasses(const HashSet<ClassStructPtr>& allowedClasses = { getClass<T>() })
+    {
+        m_allowedClasses = allowedClasses;
+        return IPC::decodeRequiringAllowedClasses<T>(*this);
+    }
+
+    template<typename T, typename = IsNotObjCObject<T>>
+    std::optional<T> decodeWithAllowedClasses(const HashSet<ClassStructPtr>& allowedClasses)
+    {
+        m_allowedClasses = allowedClasses;
+        return decode<T>();
+    }
+#endif
+
+#if PLATFORM(COCOA)
+    HashSet<ClassStructPtr>& allowedClasses() { return m_allowedClasses; }
+#endif
+
     std::optional<Attachment> takeLastAttachment();
 
 private:
@@ -164,6 +206,9 @@ private:
 
 #if PLATFORM(MAC)
     ImportanceAssertion m_importanceAssertion;
+#endif
+#if PLATFORM(COCOA)
+    HashSet<ClassStructPtr> m_allowedClasses;
 #endif
 
     uint64_t m_destinationID;

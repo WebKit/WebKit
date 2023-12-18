@@ -43,11 +43,11 @@ exclude \.xcconfig$
 exclude \.xcodeproj$
 
 # Exclude directories from other ports
-exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|win|wpe)\/.*$
+exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|win|wpe|libwpe)\/.*$
 
 directory Source
 exclude Source/JavaScriptCore/tests
-exclude Source/WebCore/PAL/libavif
+exclude Source/WebCore/PAL/ThirdParty
 exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/Resources
@@ -62,8 +62,8 @@ exclude Source/ThirdParty
 directory Source/ThirdParty/ANGLE
 directory Source/ThirdParty/gtest
 directory Source/ThirdParty/pdfjs
-# We need to include ThirdParty/pdfjs/web/locale/ca/viewer.properties manually, because ca directories are excluded as port specific.
-file Source/ThirdParty/pdfjs/web/locale/ca/viewer.properties
+# We need to include ThirdParty/pdfjs/web/locale/ca/viewer.ftl manually, because ca directories are excluded as port specific.
+file Source/ThirdParty/pdfjs/web/locale/ca/viewer.ftl
 directory Source/ThirdParty/xdgmime
 
 exclude Source/WebKit/Resources
@@ -107,4 +107,4 @@ file Tools/PlatformGTK.cmake
 
 directory ${CMAKE_BINARY_DIR}/Documentation/javascriptcoregtk-${WEBKITGTK_API_VERSION} Documentation/jsc-glib-${WEBKITGTK_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-${WEBKITGTK_API_VERSION}
-directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-extension-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-extension-${WEBKITGTK_API_VERSION}
+directory ${CMAKE_BINARY_DIR}/Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-process-extension-${WEBKITGTK_API_VERSION} Documentation/webkit${WEBKITGTK_API_INFIX}gtk-web-process-extension-${WEBKITGTK_API_VERSION}

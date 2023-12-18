@@ -57,7 +57,7 @@ static RemoteInspector::Client::SessionCapabilities processSessionCapabilities(G
         const char* host;
         const char* certificateFile;
         while (g_variant_iter_loop(&iter, "(&s&s)", &host, &certificateFile))
-            capabilities.certificates.uncheckedAppend({ String::fromUTF8(host), String::fromUTF8(certificateFile) });
+            capabilities.certificates.append({ String::fromUTF8(host), String::fromUTF8(certificateFile) });
     }
 
     if (GRefPtr<GVariant> proxy = g_variant_lookup_value(sessionCapabilities, "proxy", G_VARIANT_TYPE("a{sv}"))) {
@@ -326,7 +326,9 @@ void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspec
 
     uint64_t connectionID = m_remoteInspectorConnectionToIDMap.get(&remoteInspectorConnection);
     auto connectionTargetPair = std::make_pair(connectionID, targetID);
-    ASSERT(m_automationTargets.contains(connectionTargetPair) || m_inspectionTargets.contains(connectionTargetPair));
+    if (!m_automationTargets.contains(connectionTargetPair) && !m_inspectionTargets.contains(connectionTargetPair))
+        return;
+
     SocketConnection* clientConnection = m_inspectionTargets.contains(connectionTargetPair) ? m_clientConnection : m_automationConnection;
     ASSERT(clientConnection);
     clientConnection->sendMessage("SendMessageToFrontend", g_variant_new("(tt&s)", connectionID, targetID, message));

@@ -27,9 +27,8 @@
   type *name##_bss_get(void) __attribute__((const));
 // For FIPS builds we require that CRYPTO_ONCE_INIT be zero.
 #define DEFINE_STATIC_ONCE(name) DEFINE_BSS_GET(CRYPTO_once_t, name)
-// For FIPS builds we require that CRYPTO_STATIC_MUTEX_INIT be zero.
-#define DEFINE_STATIC_MUTEX(name) \
-  DEFINE_BSS_GET(struct CRYPTO_STATIC_MUTEX, name)
+// For FIPS builds we require that CRYPTO_MUTEX_INIT be zero.
+#define DEFINE_STATIC_MUTEX(name) DEFINE_BSS_GET(CRYPTO_MUTEX, name)
 // For FIPS builds we require that CRYPTO_EX_DATA_CLASS_INIT be zero.
 #define DEFINE_STATIC_EX_DATA_CLASS(name) \
   DEFINE_BSS_GET(CRYPTO_EX_DATA_CLASS, name)
@@ -40,9 +39,9 @@
 #define DEFINE_STATIC_ONCE(name)                \
   static CRYPTO_once_t name = CRYPTO_ONCE_INIT; \
   static CRYPTO_once_t *name##_bss_get(void) { return &name; }
-#define DEFINE_STATIC_MUTEX(name)                                    \
-  static struct CRYPTO_STATIC_MUTEX name = CRYPTO_STATIC_MUTEX_INIT; \
-  static struct CRYPTO_STATIC_MUTEX *name##_bss_get(void) { return &name; }
+#define DEFINE_STATIC_MUTEX(name)               \
+  static CRYPTO_MUTEX name = CRYPTO_MUTEX_INIT; \
+  static CRYPTO_MUTEX *name##_bss_get(void) { return &name; }
 #define DEFINE_STATIC_EX_DATA_CLASS(name)                       \
   static CRYPTO_EX_DATA_CLASS name = CRYPTO_EX_DATA_CLASS_INIT; \
   static CRYPTO_EX_DATA_CLASS *name##_bss_get(void) { return &name; }

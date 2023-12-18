@@ -36,7 +36,7 @@ namespace PAL {
 
 const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208();
 const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212();
-const std::array<std::pair<uint16_t, UChar32>, 18590>& big5();
+const std::array<std::pair<uint16_t, char32_t>, 18590>& big5();
 const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR();
 const std::array<UChar, 23940>& gb18030();
 

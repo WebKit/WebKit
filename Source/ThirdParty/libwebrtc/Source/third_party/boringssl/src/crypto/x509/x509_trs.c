@@ -168,7 +168,7 @@ int X509_TRUST_set(int *t, int trust) {
 }
 
 int X509_TRUST_add(int id, int flags, int (*ck)(X509_TRUST *, X509 *, int),
-                   char *name, int arg1, void *arg2) {
+                   const char *name, int arg1, void *arg2) {
   int idx;
   X509_TRUST *trtmp;
   char *name_dup;

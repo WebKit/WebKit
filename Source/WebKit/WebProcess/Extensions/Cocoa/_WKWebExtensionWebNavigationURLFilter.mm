@@ -171,8 +171,10 @@ static NSString * const portsKey = @"ports";
         constexpr NSInteger maximumPortNumber = 65535;
         static NSOrderedSet *expectedPortOrRangeTypes = [NSOrderedSet orderedSetWithObjects:NSNumber.class, @[ NSNumber.class ], nil];
 
-        for (id portOrRange in rawValue) {
-            if (!validateObject(portOrRange, portsKey, expectedPortOrRangeTypes, outErrorMessage))
+        NSUInteger count = dynamic_objc_cast<NSArray>(rawValue).count;
+        for (NSUInteger i = 0; i < count; ++i) {
+            id portOrRange = rawValue[i];
+            if (!validateObject(portOrRange, [NSString stringWithFormat:@"%@[%lu]", portsKey, i], expectedPortOrRangeTypes, outErrorMessage))
                 return nil;
 
             if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushSubscriptionChangeEvent.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "PushSubscription.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -57,5 +55,3 @@ PushSubscriptionChangeEvent::PushSubscriptionChangeEvent(const AtomString& type,
 PushSubscriptionChangeEvent::~PushSubscriptionChangeEvent() = default;
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

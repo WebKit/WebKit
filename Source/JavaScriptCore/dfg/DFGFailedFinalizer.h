@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,12 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGFinalizer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class FailedFinalizer final : public Finalizer {
+    WTF_MAKE_TZONE_ALLOCATED(FailedFinalizer);
 public:
     FailedFinalizer(Plan&);
     ~FailedFinalizer() final;

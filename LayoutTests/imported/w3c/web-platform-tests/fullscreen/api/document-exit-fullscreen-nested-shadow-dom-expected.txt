@@ -1,11 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
 fullscreen
 
-Harness Error (FAIL), message = Unhandled rejection: Type error
-
-TIMEOUT Exiting fullscreen from a nested shadow root works correctly. Test timed out
-
-Harness Error (FAIL), message = Unhandled rejection: Type error
-
-TIMEOUT Exiting fullscreen from a nested shadow root works correctly. Test timed out
+PASS Exiting fullscreen from a nested shadow root works correctly.
 

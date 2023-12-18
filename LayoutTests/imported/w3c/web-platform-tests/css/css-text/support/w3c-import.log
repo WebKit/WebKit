@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/cat.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/emphasis-black.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/emphasis-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/get-char-advances.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/pattern-grg-rrg-rgg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/support/pattern-rgr-grg-rgr.png

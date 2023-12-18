@@ -239,128 +239,128 @@ void Cursor::ensurePlatformCursor() const
         return;
 
     switch (m_type) {
-    case Cursor::Pointer:
+    case Type::Pointer:
         m_platformCursor = [NSCursor arrowCursor];
         break;
 
-    case Cursor::Cross:
+    case Type::Cross:
         m_platformCursor = [NSCursor crosshairCursor];
         break;
 
-    case Cursor::Hand:
+    case Type::Hand:
         m_platformCursor = [NSCursor pointingHandCursor];
         break;
 
-    case Cursor::IBeam:
+    case Type::IBeam:
         m_platformCursor = [NSCursor IBeamCursor];
         break;
 
-    case Cursor::Wait:
+    case Type::Wait:
         m_platformCursor = cursor("BusyButClickable");
         break;
 
-    case Cursor::Help:
+    case Type::Help:
         m_platformCursor = cursor("Help");
         break;
 
-    case Cursor::Move:
-    case Cursor::MiddlePanning:
+    case Type::Move:
+    case Type::MiddlePanning:
         m_platformCursor = cursor("Move");
         break;
 
-    case Cursor::EastResize:
-    case Cursor::EastPanning:
+    case Type::EastResize:
+    case Type::EastPanning:
         m_platformCursor = cursor("ResizeEast");
         break;
 
-    case Cursor::NorthResize:
-    case Cursor::NorthPanning:
+    case Type::NorthResize:
+    case Type::NorthPanning:
         m_platformCursor = cursor("ResizeNorth");
         break;
 
-    case Cursor::NorthEastResize:
-    case Cursor::NorthEastPanning:
+    case Type::NorthEastResize:
+    case Type::NorthEastPanning:
         m_platformCursor = cursor("ResizeNortheast");
         break;
 
-    case Cursor::NorthWestResize:
-    case Cursor::NorthWestPanning:
+    case Type::NorthWestResize:
+    case Type::NorthWestPanning:
         m_platformCursor = cursor("ResizeNorthwest");
         break;
 
-    case Cursor::SouthResize:
-    case Cursor::SouthPanning:
+    case Type::SouthResize:
+    case Type::SouthPanning:
         m_platformCursor = cursor("ResizeSouth");
         break;
 
-    case Cursor::SouthEastResize:
-    case Cursor::SouthEastPanning:
+    case Type::SouthEastResize:
+    case Type::SouthEastPanning:
         m_platformCursor = cursor("ResizeSoutheast");
         break;
 
-    case Cursor::SouthWestResize:
-    case Cursor::SouthWestPanning:
+    case Type::SouthWestResize:
+    case Type::SouthWestPanning:
         m_platformCursor = cursor("ResizeSouthwest");
         break;
 
-    case Cursor::WestResize:
-    case Cursor::WestPanning:
+    case Type::WestResize:
+    case Type::WestPanning:
         m_platformCursor = cursor("ResizeWest");
         break;
 
-    case Cursor::NorthSouthResize:
+    case Type::NorthSouthResize:
         m_platformCursor = cursor("ResizeNorthSouth");
         break;
 
-    case Cursor::EastWestResize:
+    case Type::EastWestResize:
         m_platformCursor = cursor("ResizeEastWest");
         break;
 
-    case Cursor::NorthEastSouthWestResize:
+    case Type::NorthEastSouthWestResize:
         m_platformCursor = cursor("ResizeNortheastSouthwest");
         break;
 
-    case Cursor::NorthWestSouthEastResize:
+    case Type::NorthWestSouthEastResize:
         m_platformCursor = cursor("ResizeNorthwestSoutheast");
         break;
 
-    case Cursor::ColumnResize:
+    case Type::ColumnResize:
         m_platformCursor = [NSCursor resizeLeftRightCursor];
         break;
 
-    case Cursor::RowResize:
+    case Type::RowResize:
         m_platformCursor = [NSCursor resizeUpDownCursor];
         break;
 
-    case Cursor::VerticalText:
+    case Type::VerticalText:
         m_platformCursor = [NSCursor IBeamCursorForVerticalLayout];
         break;
 
-    case Cursor::Cell:
+    case Type::Cell:
         m_platformCursor = cursor("Cell");
         break;
 
-    case Cursor::ContextMenu:
+    case Type::ContextMenu:
         m_platformCursor = [NSCursor contextualMenuCursor];
         break;
 
-    case Cursor::Alias:
+    case Type::Alias:
         m_platformCursor = cursor("MakeAlias");
         break;
 
-    case Cursor::Progress:
+    case Type::Progress:
         m_platformCursor = cursor("BusyButClickable");
         break;
 
-    case Cursor::NoDrop:
+    case Type::NoDrop:
         m_platformCursor = [NSCursor operationNotAllowedCursor];
         break;
 
-    case Cursor::Copy:
+    case Type::Copy:
         m_platformCursor = [NSCursor dragCopyCursor];
         break;
 
-    case Cursor::None:
+    case Type::None:
 #if ENABLE(CUSTOM_CURSOR_SUPPORT)
         m_platformCursor = adoptNS([[NSCursor alloc] initWithImage:adoptNS([[NSImage alloc] initWithSize:NSMakeSize(1, 1)]).get() hotSpot:NSZeroPoint]);
 #else
@@ -368,27 +368,27 @@ void Cursor::ensurePlatformCursor() const
 #endif
         break;
 
-    case Cursor::NotAllowed:
+    case Type::NotAllowed:
         m_platformCursor = [NSCursor operationNotAllowedCursor];
         break;
 
-    case Cursor::ZoomIn:
+    case Type::ZoomIn:
         m_platformCursor = cursor("ZoomIn");
         break;
 
-    case Cursor::ZoomOut:
+    case Type::ZoomOut:
         m_platformCursor = cursor("ZoomOut");
         break;
 
-    case Cursor::Grab:
+    case Type::Grab:
         m_platformCursor = [NSCursor openHandCursor];
         break;
 
-    case Cursor::Grabbing:
+    case Type::Grabbing:
         m_platformCursor = [NSCursor closedHandCursor];
         break;
 
-    case Cursor::Custom:
+    case Type::Custom:
 #if ENABLE(CUSTOM_CURSOR_SUPPORT)
 #if ENABLE(MOUSE_CURSOR_SCALE)
         m_platformCursor = createCustomCursor(m_image.get(), m_hotSpot, m_imageScaleFactor);
@@ -397,6 +397,10 @@ void Cursor::ensurePlatformCursor() const
 #endif // ENABLE(MOUSE_CURSOR_SCALE)
 #endif // ENABLE(CUSTOM_CURSOR_SUPPORT)
         break;
+
+    case Type::Invalid:
+    default:
+        ASSERT_NOT_REACHED();
     }
 }
 

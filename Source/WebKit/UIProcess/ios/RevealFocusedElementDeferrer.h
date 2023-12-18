@@ -27,7 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <wtf/EnumTraits.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RefCounted.h>
 #import <wtf/WeakObjCPtr.h>
@@ -55,18 +54,5 @@ private:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::RevealFocusedElementDeferralReason> {
-    using values = EnumValues<
-        WebKit::RevealFocusedElementDeferralReason,
-        WebKit::RevealFocusedElementDeferralReason::EditorState,
-        WebKit::RevealFocusedElementDeferralReason::KeyboardWillShow,
-        WebKit::RevealFocusedElementDeferralReason::KeyboardDidShow
-    >;
-};
-
-} // namespace WTF
 
 #endif // PLATFORM(IOS_FAMILY)

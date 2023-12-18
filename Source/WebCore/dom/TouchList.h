@@ -61,9 +61,9 @@ private:
 
     explicit TouchList(FixedVector<std::reference_wrapper<Touch>>&& touches)
     {
-        m_values.reserveInitialCapacity(touches.size());
-        for (auto& touch : touches)
-            m_values.uncheckedAppend(touch.get());
+        m_values = WTF::map(touches, [](auto& touch) -> Ref<Touch> {
+            return touch.get();
+        });
     }
 
     Vector<Ref<Touch>> m_values;

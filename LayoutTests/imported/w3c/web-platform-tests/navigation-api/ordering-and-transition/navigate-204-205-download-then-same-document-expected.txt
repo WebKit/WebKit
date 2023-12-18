@@ -1,0 +1,6 @@
+
+
+FAIL event and promise ordering when navigate() is to a 204s and then to a same-document navigation promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.committed.then')"
+FAIL event and promise ordering when navigate() is to a 205s and then to a same-document navigation promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.committed.then')"
+FAIL event and promise ordering when navigate() is to a Content-Disposition: attachment responses and then to a same-document navigation promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.committed.then')"
+

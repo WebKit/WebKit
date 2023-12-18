@@ -91,7 +91,7 @@ RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
 ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& newHead)
 {
     if (UNLIKELY(newHead && !newHead->hasTagName(theadTag)))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
 
     deleteTHead();
     if (!newHead)
@@ -118,7 +118,7 @@ RefPtr<HTMLTableSectionElement> HTMLTableElement::tFoot() const
 ExceptionOr<void> HTMLTableElement::setTFoot(RefPtr<HTMLTableSectionElement>&& newFoot)
 {
     if (UNLIKELY(newFoot && !newFoot->hasTagName(tfootTag)))
-        return Exception { HierarchyRequestError };
+        return Exception { ExceptionCode::HierarchyRequestError };
     deleteTFoot();
     if (!newFoot)
         return { };
@@ -190,7 +190,7 @@ HTMLTableSectionElement* HTMLTableElement::lastBody() const
 ExceptionOr<Ref<HTMLElement>> HTMLTableElement::insertRow(int index)
 {
     if (index < -1)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     Ref<HTMLTableElement> protectedThis(*this);
 
@@ -203,7 +203,7 @@ ExceptionOr<Ref<HTMLElement>> HTMLTableElement::insertRow(int index)
             row = HTMLTableRowsCollection::rowAfter(*this, lastRow.get());
             if (!row) {
                 if (i != index)
-                    return Exception { IndexSizeError };
+                    return Exception { ExceptionCode::IndexSizeError };
                 break;
             }
             lastRow = row;
@@ -248,7 +248,7 @@ ExceptionOr<void> HTMLTableElement::deleteRow(int index)
                 break;
         }
         if (!row)
-            return Exception { IndexSizeError };
+            return Exception { ExceptionCode::IndexSizeError };
     }
     return row->remove();
 }

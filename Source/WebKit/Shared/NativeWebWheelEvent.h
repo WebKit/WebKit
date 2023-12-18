@@ -43,6 +43,10 @@ typedef union _GdkEvent GdkEvent;
 #endif
 #endif
 
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+typedef struct _WPEEvent WPEEvent;
+#endif
+
 #if USE(LIBWPE)
 struct wpe_input_axis_event;
 #endif
@@ -62,6 +66,10 @@ public:
     NativeWebWheelEvent(GdkEvent*, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase, bool hasPreciseDeltas = false);
 #elif USE(LIBWPE)
     NativeWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    explicit NativeWebWheelEvent(WPEEvent*);
+#endif
+
 #elif PLATFORM(WIN)
     NativeWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
 #endif

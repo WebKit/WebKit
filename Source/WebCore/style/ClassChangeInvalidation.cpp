@@ -46,11 +46,9 @@ using ClassChangeVector = Vector<ClassChange, 4>;
 
 static ClassChangeVector collectClasses(const SpaceSplitString& classes, ClassChangeType changeType)
 {
-    ClassChangeVector result;
-    result.reserveInitialCapacity(classes.size());
-    for (unsigned i = 0; i < classes.size(); ++i)
-        result.uncheckedAppend({ classes[i].impl(), changeType });
-    return result;
+    return ClassChangeVector(classes.size(), [&](size_t i) {
+        return ClassChange { classes[i].impl(), changeType };
+    });
 }
 
 static ClassChangeVector computeClassChanges(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)

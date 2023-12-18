@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TextBoundaries_h
-#define TextBoundaries_h
+#pragma once
 
 #include <unicode/uchar.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-    inline bool requiresContextForWordBoundary(UChar32 character)
-    {
-        // FIXME: This function won't be needed when https://bugs.webkit.org/show_bug.cgi?id=120656 is fixed.
+inline bool requiresContextForWordBoundary(char32_t character)
+{
+    // FIXME: This function won't be needed when https://bugs.webkit.org/show_bug.cgi?id=120656 is fixed.
 
-        // We can get rid of this constant if we require a newer version of the ICU headers.
-        const int WK_U_LB_CONDITIONAL_JAPANESE_STARTER = 37;
+    // We can get rid of this constant if we require a newer version of the ICU headers, which has U_LB_CONDITIONAL_JAPANESE_STARTER.
+    constexpr int lineBreakConditionalJapaneseStarter = 37;
 
-        int lineBreak = u_getIntPropertyValue(character, UCHAR_LINE_BREAK);
-        return lineBreak == U_LB_COMPLEX_CONTEXT || lineBreak == WK_U_LB_CONDITIONAL_JAPANESE_STARTER || lineBreak == U_LB_IDEOGRAPHIC;
-    }
-
-    unsigned endOfFirstWordBoundaryContext(StringView);
-    unsigned startOfLastWordBoundaryContext(StringView);
-
-    void findWordBoundary(StringView, int position, int* start, int* end);
-    void findEndWordBoundary(StringView, int position, int* end);
-    int findNextWordFromIndex(StringView, int position, bool forward);
-
+    int lineBreak = u_getIntPropertyValue(character, UCHAR_LINE_BREAK);
+    return lineBreak == U_LB_COMPLEX_CONTEXT || lineBreak == lineBreakConditionalJapaneseStarter || lineBreak == U_LB_IDEOGRAPHIC;
 }
 
-#endif
+unsigned endOfFirstWordBoundaryContext(StringView);
+unsigned startOfLastWordBoundaryContext(StringView);
+
+void findWordBoundary(StringView, int position, int* start, int* end);
+void findEndWordBoundary(StringView, int position, int* end);
+int findNextWordFromIndex(StringView, int position, bool forward);
+
+}

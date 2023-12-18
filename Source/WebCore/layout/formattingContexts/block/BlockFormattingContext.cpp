@@ -34,6 +34,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
+#include "LayoutDescendantIterator.h"
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
@@ -67,7 +68,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
     auto& formattingRoot = root();
     ASSERT(formattingRoot.hasInFlowOrFloatingChild());
     auto& placedFloats = formattingState().placedFloats();
-    auto floatingContext = FloatingContext { *this, placedFloats };
+    auto floatingContext = FloatingContext { root(), layoutState(), placedFloats };
 
     Vector<const ElementBox*> layoutQueue;
     enum class LayoutDirection { Child, Sibling };
@@ -188,13 +189,12 @@ void BlockFormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlo
         computeBorderAndPadding(outOfFlowBox, horizontalConstraintsForBorderAndPadding);
 
         computeOutOfFlowHorizontalGeometry(outOfFlowBox, containingBlockConstraints);
-        auto outOfFlowBoxHasContent = is<ElementBox>(outOfFlowBox.get()) && downcast<ElementBox>(outOfFlowBox.get()).hasChild();
-        if (outOfFlowBoxHasContent) {
-            auto& elementBox = downcast<ElementBox>(outOfFlowBox.get());
-            auto formattingContext = LayoutContext::createFormattingContext(elementBox, layoutState());
-            if (elementBox.hasInFlowOrFloatingChild())
-                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(elementBox));
-            computeOutOfFlowVerticalGeometry(elementBox, containingBlockConstraints);
+        auto* elementBox = dynamicDowncast<ElementBox>(outOfFlowBox.get());
+        if (elementBox && elementBox->hasChild()) {
+            auto formattingContext = LayoutContext::createFormattingContext(*elementBox, layoutState());
+            if (elementBox->hasInFlowOrFloatingChild())
+                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(*elementBox));
+            computeOutOfFlowVerticalGeometry(*elementBox, containingBlockConstraints);
         } else
             computeOutOfFlowVerticalGeometry(outOfFlowBox, containingBlockConstraints);
     }
@@ -303,7 +303,7 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
         bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
     }
 
-    auto floatingContext = FloatingContext { *this, formattingState().placedFloats() };
+    auto floatingContext = FloatingContext { root(), layoutState(), formattingState().placedFloats() };
     if (auto floatTop = floatingContext.top()) {
         top = std::min(*floatTop, top.value_or(*floatTop));
         auto floatBottom = *floatingContext.bottom();

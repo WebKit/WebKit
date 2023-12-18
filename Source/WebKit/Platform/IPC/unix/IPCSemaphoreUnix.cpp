@@ -124,18 +124,9 @@ bool Semaphore::waitFor(Timeout timeout)
 #endif
 }
 
-void Semaphore::encode(Encoder& encoder) const
+UnixFileDescriptor Semaphore::duplicateDescriptor() const
 {
-    encoder << m_fd.duplicate();
-}
-
-std::optional<Semaphore> Semaphore::decode(Decoder& decoder)
-{
-    std::optional<UnixFileDescriptor> fd;
-    decoder >> fd;
-    if (!fd)
-        return std::nullopt;
-    return std::optional<Semaphore> { std::in_place, WTFMove(*fd) };
+    return m_fd.duplicate();
 }
 
 void Semaphore::destroy()

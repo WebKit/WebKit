@@ -26,14 +26,15 @@
 #pragma once
 
 #include "ASTBuilder.h"
+#include "ASTDeclaration.h"
 #include "ASTDirective.h"
-#include "ASTFunction.h"
 #include "ASTIdentityExpression.h"
-#include "ASTStructure.h"
-#include "ASTVariable.h"
 #include "TypeStore.h"
 #include "WGSL.h"
+#include "WGSLEnums.h"
 
+#include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,10 +54,9 @@ public:
 
     const String& source() const { return m_source; }
     const Configuration& configuration() const { return m_configuration; }
+    AST::Declaration::List& declarations() { return m_declarations; }
+    const AST::Declaration::List& declarations() const { return m_declarations; }
     AST::Directive::List& directives() { return m_directives; }
-    AST::Function::List& functions() { return m_functions; }
-    AST::Structure::List& structures() { return m_structures; }
-    AST::Variable::List& variables() { return m_variables; }
     TypeStore& types() { return m_types; }
     AST::Builder& astBuilder() { return m_astBuilder; }
 
@@ -68,13 +68,28 @@ public:
     void setUsesPackArray() { m_usesPackArray = true; }
     void clearUsesPackArray() { m_usesPackArray = false; }
 
+    bool usesPackedStructs() const { return m_usesPackedStructs; }
+    void setUsesPackedStructs() { m_usesPackedStructs = true; }
+    void clearUsesPackedStructs() { m_usesPackedStructs = false; }
+
     bool usesUnpackArray() const { return m_usesUnpackArray; }
     void setUsesUnpackArray() { m_usesUnpackArray = true; }
     void clearUsesUnpackArray() { m_usesUnpackArray = false; }
 
     bool usesWorkgroupUniformLoad() const { return m_usesWorkgroupUniformLoad; }
     void setUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = true; }
-    void clearUsesWorkgroupUniformLoad() { m_usesWorkgroupUniformLoad = false; }
+
+    bool usesDivision() const { return m_usesDivision; }
+    void setUsesDivision() { m_usesDivision = true; }
+
+    bool usesModulo() const { return m_usesModulo; }
+    void setUsesModulo() { m_usesModulo = true; }
+
+    bool usesFrexp() const { return m_usesFrexp; }
+    void setUsesFrexp() { m_usesFrexp = true; }
+
+    bool usesModf() const { return m_usesModf; }
+    void setUsesModf() { m_usesModf = true; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
@@ -96,7 +111,7 @@ public:
     }
 
     template<typename CurrentType, typename ReplacementType>
-    std::enable_if_t<sizeof(CurrentType) < sizeof(ReplacementType), void> replace(CurrentType& current, ReplacementType& replacement)
+    std::enable_if_t<sizeof(CurrentType) < sizeof(ReplacementType) || std::is_same_v<ReplacementType, AST::Expression>, void> replace(CurrentType& current, ReplacementType& replacement)
     {
         m_replacements.append([&current, currentCopy = current]() mutable {
             bitwise_cast<AST::IdentityExpression*>(&current)->~IdentityExpression();
@@ -108,7 +123,7 @@ public:
     }
 
     template<typename CurrentType, typename ReplacementType>
-    std::enable_if_t<sizeof(CurrentType) >= sizeof(ReplacementType), void> replace(CurrentType& current, ReplacementType& replacement)
+    std::enable_if_t<sizeof(CurrentType) >= sizeof(ReplacementType) && !std::is_same_v<ReplacementType, AST::Expression>, void> replace(CurrentType& current, ReplacementType& replacement)
     {
         m_replacements.append([&current, currentCopy = current]() mutable {
             bitwise_cast<ReplacementType*>(&current)->~ReplacementType();
@@ -150,6 +165,37 @@ public:
         });
     }
 
+    template<typename T, size_t size, typename T2, size_t size2>
+    void insertVector(const Vector<T, size>& constVector, size_t position, const Vector<T2, size2>& value)
+    {
+        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        vector.insertVector(position, value);
+        m_replacements.append([&vector, position, length = value.size()]() {
+            vector.remove(position, length);
+        });
+    }
+
+    template<typename T, size_t size>
+    void remove(const Vector<T, size>& constVector, size_t position)
+    {
+        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        auto entry = vector[position];
+        m_replacements.append([&vector, position, entry]() mutable {
+            vector.insert(position, entry);
+        });
+        vector.remove(position);
+    }
+
+    template<typename T, size_t size>
+    void clear(const Vector<T, size>& constVector)
+    {
+        auto& vector = const_cast<Vector<T, size>&>(constVector);
+        m_replacements.append([&vector, contents = WTFMove(vector)]() mutable {
+            vector = contents;
+        });
+        vector.clear();
+    }
+
     void revertReplacements()
     {
         for (int i = m_replacements.size() - 1; i >= 0; --i)
@@ -176,20 +222,37 @@ public:
         AST::Builder::State m_builderState;
     };
 
+    OptionSet<Extension>& enabledExtensions() { return m_enabledExtensions; }
+    OptionSet<LanguageFeature> requiredFeatures() { return m_requiredFeatures; }
+    bool containsOverride(uint32_t idValue) const
+    {
+        return m_pipelineOverrideIds.contains(idValue);
+    }
+    void addOverride(uint32_t idValue)
+    {
+        m_pipelineOverrideIds.add(idValue);
+    }
+
 private:
     String m_source;
     bool m_usesExternalTextures { false };
     bool m_usesPackArray { false };
+    bool m_usesPackedStructs { false };
     bool m_usesUnpackArray { false };
     bool m_usesWorkgroupUniformLoad { false };
+    bool m_usesDivision { false };
+    bool m_usesModulo { false };
+    bool m_usesFrexp { false };
+    bool m_usesModf { false };
+    OptionSet<Extension> m_enabledExtensions;
+    OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
+    AST::Declaration::List m_declarations;
     AST::Directive::List m_directives;
-    AST::Function::List m_functions;
-    AST::Structure::List m_structures;
-    AST::Variable::List m_variables;
     TypeStore m_types;
     AST::Builder m_astBuilder;
     Vector<std::function<void()>> m_replacements;
+    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pipelineOverrideIds;
 };
 
 } // namespace WGSL

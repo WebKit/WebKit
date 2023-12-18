@@ -30,13 +30,13 @@ PASS accessibilityController.accessibleElementById("row-2").role is "AXRole: AXR
 PASS accessibilityController.accessibleElementById("cell5").role is "AXRole: AXCell"
 PASS accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIARowIndex") is 8
 PASS accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIAColumnIndex") is 2
-PASS accessibilityController.accessibleElementById("cell5").rowIndexRange() is "{4, 1}"
+PASS accessibilityController.accessibleElementById("cell5").rowIndexRange() is "{2, 1}"
 PASS accessibilityController.accessibleElementById("cell5").columnIndexRange() is "{0, 2}"
 PASS accessibilityController.accessibleElementById("row-3").role is "AXRole: AXRow"
 PASS accessibilityController.accessibleElementById("cell6").role is "AXRole: AXCell"
 PASS accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIARowIndex") is 9
 PASS accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIAColumnIndex") is 2
-PASS accessibilityController.accessibleElementById("cell6").rowIndexRange() is "{5, 1}"
+PASS accessibilityController.accessibleElementById("cell6").rowIndexRange() is "{3, 1}"
 PASS accessibilityController.accessibleElementById("cell6").columnIndexRange() is "{0, 3}"
 PASS successfullyParsed is true
 

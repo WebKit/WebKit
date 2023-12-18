@@ -56,8 +56,8 @@ void WebInspectorInterruptDispatcher::notifyNeedDebuggerBreak()
     if (!WebCore::commonVMOrNull())
         return;
 
-    JSC::VM& vm = WebCore::commonVM();
-    vm.notifyNeedDebuggerBreak();
+    Ref vm = WebCore::commonVM();
+    vm->notifyNeedDebuggerBreak();
 }
 
 } // namespace WebKit

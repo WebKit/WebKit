@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "ResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <wtf/CompletionHandler.h>
@@ -51,7 +49,7 @@ public:
     void clear(CompletionHandler<void()>&&) override;
     bool isEmpty() const override;
 
-    Vector<WebResourceLoadStatisticsStore::ThirdPartyData> aggregatedThirdPartyData() const override;
+    Vector<ITPThirdPartyData> aggregatedThirdPartyData() const override;
     const HashMap<RegistrableDomain, UniqueRef<WebCore::ResourceLoadStatistics>>& data() const { return m_resourceStatisticsMap; }
 
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
@@ -146,5 +144,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ResourceLoadStatisticsMemoryStore)
     static bool isType(const WebKit::ResourceLoadStatisticsStore& store) { return store.isMemoryStore(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

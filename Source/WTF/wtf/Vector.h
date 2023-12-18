@@ -714,8 +714,17 @@ public:
 
         asanSetInitialBufferSizeTo(size);
 
-        for (size_t i = 0; i < size; ++i)
-            unsafeAppendWithoutCapacityCheck(valueGenerator(i));
+        if constexpr (std::is_same_v<std::invoke_result_t<Functor, size_t>, std::optional<T>>) {
+            for (size_t i = 0; i < size; ++i) {
+                if (auto item = valueGenerator(i))
+                    unsafeAppendWithoutCapacityCheck(WTFMove(*item));
+                else
+                    return;
+            }
+        } else {
+            for (size_t i = 0; i < size; ++i)
+                unsafeAppendWithoutCapacityCheck(valueGenerator(i));
+        }
     }
 
     template<typename U = T>
@@ -838,7 +847,8 @@ public:
     template<typename U> bool appendIfNotContains(const U&);
 
     void shrink(size_t size);
-    void grow(size_t size);
+    ALWAYS_INLINE void grow(size_t size) { growImpl<FailureAction::Crash>(size); }
+    ALWAYS_INLINE bool tryGrow(size_t size) { return growImpl<FailureAction::Report>(size); }
     void resize(size_t size);
     void resizeToFit(size_t size);
     ALWAYS_INLINE void reserveCapacity(size_t newCapacity) { reserveCapacity<FailureAction::Crash>(newCapacity); }
@@ -862,15 +872,12 @@ public:
     template<typename U> ALWAYS_INLINE void append(const U* u, size_t size) { append<FailureAction::Crash>(u, size); }
     template<typename U> ALWAYS_INLINE bool tryAppend(const U* u, size_t size) { return append<FailureAction::Report>(u, size); }
     template<typename U> ALWAYS_INLINE void append(std::span<const U> span) { append(span.data(), span.size()); }
+    template<typename U> ALWAYS_INLINE void appendList(std::initializer_list<U> initializerList) { append(std::data(initializerList), initializerList.size()); }
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(const Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&);
     template<typename U, size_t otherCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> void appendVector(Vector<U, otherCapacity, OtherOverflowHandler, otherMinCapacity, OtherMalloc>&&);
 
-    // FIXME: Remove uncheckedAppend() alias to append() after confirming there is no performance
-    // regression and call sites have been ported over.
-    ALWAYS_INLINE void uncheckedAppend(ValueType&& value) { append(std::forward<ValueType>(value)); }
-    template<typename U> ALWAYS_INLINE void uncheckedAppend(U&& value) { append(std::forward<U>(value)); }
-    template<typename... Args> ALWAYS_INLINE void uncheckedConstructAndAppend(Args&&... args) { constructAndAppend(std::forward<Args>(args)...); }
-    template<typename U> ALWAYS_INLINE void uncheckedAppend(std::span<const U> span) { append(span); }
+    template<typename Functor, typename = typename std::enable_if_t<std::is_invocable_v<Functor, size_t>>>
+    void appendUsingFunctor(size_t, const Functor&);
 
     void insert(size_t position, ValueType&& value) { insert<ValueType>(position, std::forward<ValueType>(value)); }
     template<typename U> void insert(size_t position, const U*, size_t);
@@ -898,6 +905,7 @@ public:
     void fill(const T& val) { fill(val, size()); }
 
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
+    template<typename ContainerType, typename MapFunction> void appendContainerWithMapping(ContainerType&&, const MapFunction&);
 
     MallocPtr<T, Malloc> releaseBuffer();
 
@@ -931,7 +939,12 @@ public:
 
     bool isHashTableDeletedValue() const { return m_size == std::numeric_limits<decltype(m_size)>::max(); }
 
+    void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
+    template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
+    template<typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
+
 private:
+    template<FailureAction> bool growImpl(size_t);
     template<FailureAction> bool reserveCapacity(size_t newCapacity);
     template<FailureAction> bool reserveInitialCapacity(size_t initialCapacity);
     template<FailureAction> bool growCapacityBy(size_t increment);
@@ -947,14 +960,11 @@ private:
     template<FailureAction, typename U> bool append(const U*, size_t);
 
     template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable> friend struct Mapper;
+    template<typename MapFunction, typename DestinationVectorType, typename SourceType, typename Enable> friend struct CompactMapper;
     template<typename DestinationItemType, typename Collection> friend Vector<DestinationItemType> copyToVectorOf(const Collection&);
     template<typename Collection> friend Vector<typename CopyOrMoveToVectorResult<Collection>::Type> copyToVector(const Collection&);
     template<typename U, size_t otherInlineCapacity, typename OtherOverflowHandler, size_t otherMinCapacity, typename OtherMalloc> friend class Vector;
     template<typename DestinationVector, typename Collection> friend DestinationVector copyToVectorSpecialization(const Collection&);
-
-    void unsafeAppendWithoutCapacityCheck(ValueType&& value) { unsafeAppendWithoutCapacityCheck<ValueType>(std::forward<ValueType>(value)); }
-    template<typename U> void unsafeAppendWithoutCapacityCheck(U&&);
-    template<FailureAction, typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
 
     template<size_t position, typename U, typename... Items>
     void uncheckedInitialize(U&& item, Items&&... items)
@@ -1170,8 +1180,27 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 template<typename Iterator>
 void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendRange(Iterator start, Iterator end)
 {
-    for (Iterator it = start; it != end; ++it)
-        append(*it);
+    using category = typename std::iterator_traits<Iterator>::iterator_category;
+    static_assert(std::is_base_of_v<std::input_iterator_tag, category>);
+
+    if constexpr (std::is_base_of_v<std::random_access_iterator_tag, category>)
+        reserveCapacity(size() + (end - start));
+
+    for (Iterator it = start; it != end; ++it) {
+        if constexpr (std::is_base_of_v<std::random_access_iterator_tag, category>)
+            unsafeAppendWithoutCapacityCheck(*it);
+        else
+            append(*it);
+    }
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename Functor, typename>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendUsingFunctor(size_t size, const Functor& valueGenerator)
+{
+    reserveCapacity(this->size() + size);
+    for (size_t i = 0; i < size; ++i)
+        unsafeAppendWithoutCapacityCheck(valueGenerator(i));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1253,15 +1282,22 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrink(siz
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::grow(size_t size)
+template<FailureAction failureAction>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::growImpl(size_t size)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(size >= m_size);
-    if (size > capacity())
-        expandCapacity<FailureAction::Crash>(size);
+    if (size > capacity()) {
+        bool success = expandCapacity<failureAction>(size);
+        if constexpr (failureAction == FailureAction::Report) {
+            if (UNLIKELY(!success))
+                return false;
+        }
+    }
     asanBufferSizeWillChangeTo(size);
     if (begin())
         TypeOperations::initializeIfNonPOD(end(), begin() + size);
     m_size = size;
+    return true;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1300,6 +1336,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::asa
 #if ASAN_ENABLED
     if (!buffer())
         return;
+
+    RELEASE_ASSERT_WITH_MESSAGE(newSize <= capacity(), "Attempt to expand size (%lu) beyond current capacity (%lu)", newSize, capacity());
 
     // Change allowed range.
     __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size(), buffer() + newSize);
@@ -1428,10 +1466,9 @@ ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mallo
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<FailureAction action, typename U>
+template<typename U>
 ALWAYS_INLINE bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::unsafeAppendWithoutCapacityCheck(const U* data, size_t dataSize)
 {
-    static_assert(action == FailureAction::Crash || action == FailureAction::Report);
     if (!dataSize)
         return true;
 
@@ -1723,11 +1760,23 @@ inline auto Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map
     return result;
 }
 
+template <typename ContainerType>
+size_t containerSize(const ContainerType& container) { return std::size(container); }
+
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 template<typename MapFunction>
 inline auto Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::map(MapFunction&& mapFunction) const -> std::enable_if_t<std::is_invocable_v<MapFunction, const T&>, Vector<typename std::invoke_result_t<MapFunction, const T&>>>
 {
     return map<Vector<typename std::invoke_result_t<MapFunction, const T&>>, MapFunction>(std::forward<MapFunction>(mapFunction));
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<typename ContainerType, typename MapFunction>
+void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendContainerWithMapping(ContainerType&& container, const MapFunction& mapFunction)
+{
+    reserveCapacity(size() + containerSize(container));
+    for (auto&& item : container)
+        unsafeAppendWithoutCapacityCheck(mapFunction(std::forward<decltype(item)>(item)));
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
@@ -1812,8 +1861,7 @@ template<typename MapFunction, typename DestinationVectorType, typename SourceTy
 struct Mapper {
     static void map(DestinationVectorType& result, const SourceType& source, const MapFunction& mapFunction)
     {
-        // FIXME: Use std::size when available on all compilers.
-        result.reserveInitialCapacity(source.size());
+        result.reserveInitialCapacity(containerSize(source));
         for (auto&& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
     }
@@ -1823,8 +1871,7 @@ template<typename MapFunction, typename DestinationVectorType, typename SourceTy
 struct Mapper<MapFunction, DestinationVectorType, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
     static void map(DestinationVectorType& result, SourceType&& source, const MapFunction& mapFunction)
     {
-        // FIXME: Use std::size when available on all compilers.
-        result.reserveInitialCapacity(source.size());
+        result.reserveInitialCapacity(containerSize(source));
         for (auto&& item : source)
             result.unsafeAppendWithoutCapacityCheck(mapFunction(WTFMove(item)));
     }
@@ -1908,7 +1955,7 @@ struct CompactMapper<MapFunction, DestinationVectorType, SourceType, typename st
         for (auto&& item : source) {
             auto itemResult = mapFunction(WTFMove(item));
             if (CompactMapTraits<ResultItemType>::hasValue(itemResult))
-                result.append(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
+                result.unsafeAppendWithoutCapacityCheck(CompactMapTraits<ResultItemType>::extractValue(WTFMove(itemResult)));
         }
         result.shrinkToFit();
     }
@@ -1923,6 +1970,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typena
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
+    result.reserveInitialCapacity(containerSize(source));
     CompactMapper<MapFunction, DestinationVectorType, SourceType>::compactMap(result, std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
     return result;
 }
@@ -1936,6 +1984,7 @@ Vector<typename CompactMapTraits<typename std::invoke_result<MapFunction, typena
     using DestinationVectorType = Vector<DestinationItemType, inlineCapacity, OverflowHandler, minCapacity>;
 
     DestinationVectorType result;
+    result.reserveInitialCapacity(containerSize(source));
     CompactMapper<MapFunction, DestinationVectorType, SourceType&>::compactMap(result, source, std::forward<MapFunction>(mapFunction));
     return result;
 }

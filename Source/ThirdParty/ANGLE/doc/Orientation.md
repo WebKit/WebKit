@@ -66,8 +66,8 @@ A basic guide to get up and running fixing bugs and performance issues in ANGLE.
 - Read up on testing with
   [dEQP on the ANGLE Wiki](https://chromium.googlesource.com/angle/angle/+/main/doc/dEQP.md).
 
-- Try running `angle_deqp_gles2_tests_no_gtest` with the flag
-  `--deqp-case=dEQP-GLES2.functional.negative_api.*` and load a test report in Cherry.
+- Try running `angle_deqp_gles2_tests` with the flag
+  `--gtest_filter=dEQP-GLES2.functional.negative_api.*` and load a test report in Cherry.
 
 - To use Cherry, browse to [http://localhost:8080/#/results](http://localhost:8080/#/results) and
   click '**Import existing batch**', loading `TestResults.qpa`.  Look for the qpa file in the

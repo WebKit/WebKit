@@ -1,0 +1,5 @@
+
+PASS ":has(:is(:has(*)))" should be a valid selector
+PASS ":has(:where(:has(*)))" should be a valid selector
+FAIL ":has(:is(.a, 123))" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+

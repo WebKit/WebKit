@@ -397,9 +397,7 @@ std::tuple<NSString *, NSDictionary *> DictionaryLookup::stringForPDFSelection(P
     auto fullPlainTextString = [selectionForLookup string];
     auto rangeToPass = NSMakeRange(charactersAddedBeforeStart, 0);
 
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:fullPlainTextString selectedRange:rangeToPass]);
-    NSRange extractedRange = item.get().highlightRange;
-    
+    NSRange extractedRange = adoptNS([PAL::allocRVItemInstance() initWithText:fullPlainTextString selectedRange:rangeToPass]).get().highlightRange;
     if (extractedRange.location == NSNotFound)
         return { selection.string, nil };
 

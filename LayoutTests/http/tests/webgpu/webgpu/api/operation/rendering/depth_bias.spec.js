@@ -6,10 +6,9 @@ Tests render results with different depth bias values like 'positive', 'negative
 `;
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
 import { unreachable } from '../../../../common/util/util.js';
-import { kTextureFormatInfo } from '../../../capability_info.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { kTextureFormatInfo } from '../../../format_info.js';
+import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { TexelView } from '../../../util/texture/texel_view.js';
-import { textureContentIsOKByT2B } from '../../../util/texture/texture_ok.js';
 var QuadAngle;
 
 // Floating point depth buffers use the following formula to calculate bias
@@ -27,7 +26,7 @@ var QuadAngle;
 })(QuadAngle || (QuadAngle = {}));
 const kPointTwoFiveBiasForPointTwoFiveZOnFloat = 8388608;
 
-class DepthBiasTest extends GPUTest {
+class DepthBiasTest extends TextureTestMixin(GPUTest) {
   runDepthBiasTestInternal(
     depthFormat,
     { quadAngle, bias, biasSlopeScale, biasClamp, initialDepth }
@@ -73,19 +72,23 @@ class DepthBiasTest extends GPUTest {
         unreachable();
     }
 
-    const renderTarget = this.device.createTexture({
-      format: renderTargetFormat,
-      size: { width: 1, height: 1, depthOrArrayLayers: 1 },
-      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
-    });
+    const renderTarget = this.trackForCleanup(
+      this.device.createTexture({
+        format: renderTargetFormat,
+        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+        usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+      })
+    );
 
-    const depthTexture = this.device.createTexture({
-      size: { width: 1, height: 1, depthOrArrayLayers: 1 },
-      format: depthFormat,
-      sampleCount: 1,
-      mipLevelCount: 1,
-      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
-    });
+    const depthTexture = this.trackForCleanup(
+      this.device.createTexture({
+        size: { width: 1, height: 1, depthOrArrayLayers: 1 },
+        format: depthFormat,
+        sampleCount: 1,
+        mipLevelCount: 1,
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
+      })
+    );
 
     const depthStencilAttachment = {
       view: depthTexture.createView(),
@@ -134,7 +137,7 @@ class DepthBiasTest extends GPUTest {
   }
 
   runDepthBiasTest(depthFormat, { quadAngle, bias, biasSlopeScale, biasClamp, _expectedDepth }) {
-    const { renderTarget, depthTexture } = this.runDepthBiasTestInternal(depthFormat, {
+    const { depthTexture } = this.runDepthBiasTestInternal(depthFormat, {
       quadAngle,
       bias,
       biasSlopeScale,
@@ -144,25 +147,14 @@ class DepthBiasTest extends GPUTest {
 
     const expColor = { Depth: _expectedDepth };
     const expTexelView = TexelView.fromTexelsAsColors(depthFormat, coords => expColor);
-
-    const result = textureContentIsOKByT2B(
-      this,
-      { texture: depthTexture },
-      [1, 1],
-      { expTexelView },
-      { maxDiffULPsForFloatFormat: 1 }
-    );
-
-    this.eventualExpectOK(result);
-    this.trackForCleanup(renderTarget);
-    this.trackForCleanup(depthTexture);
+    this.expectTexelViewComparisonIsOkInTexture({ texture: depthTexture }, expTexelView, [1, 1]);
   }
 
   runDepthBiasTestFor24BitFormat(
     depthFormat,
     { quadAngle, bias, biasSlopeScale, biasClamp, _expectedColor }
   ) {
-    const { renderTarget, depthTexture } = this.runDepthBiasTestInternal(depthFormat, {
+    const { renderTarget } = this.runDepthBiasTestInternal(depthFormat, {
       quadAngle,
       bias,
       biasSlopeScale,
@@ -178,18 +170,7 @@ class DepthBiasTest extends GPUTest {
       A: _expectedColor[3],
     };
     const expTexelView = TexelView.fromTexelsAsColors(renderTargetFormat, coords => expColor);
-
-    const result = textureContentIsOKByT2B(
-      this,
-      { texture: renderTarget },
-      [1, 1],
-      { expTexelView },
-      { maxDiffULPsForNormFormat: 1 }
-    );
-
-    this.eventualExpectOK(result);
-    this.trackForCleanup(renderTarget);
-    this.trackForCleanup(depthTexture);
+    this.expectTexelViewComparisonIsOkInTexture({ texture: renderTarget }, expTexelView, [1, 1]);
   }
 
   createRenderPipelineForTest(vertex, depthStencil) {

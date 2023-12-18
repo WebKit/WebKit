@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ScrollTypes.h"
 
+#include "ScrollBehavior.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -68,6 +69,16 @@ TextStream& operator<<(TextStream& ts, ScrollBehaviorForFixedElements behavior)
     case ScrollBehaviorForFixedElements::StickToViewportBounds:
         ts << 1;
         break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ScrollBehavior behavior)
+{
+    switch (behavior) {
+    case ScrollBehavior::Auto: ts << "auto"; break;
+    case ScrollBehavior::Instant: ts << "instant"; break;
+    case ScrollBehavior::Smooth: ts << "smooth"; break;
     }
     return ts;
 }
@@ -173,11 +184,11 @@ TextStream& operator<<(TextStream& ts, ScrollbarWidth width)
 
 TextStream& operator<<(TextStream& ts, ScrollPositionChangeOptions options)
 {
-    ts.dumpProperty("scroll-position-change-options-type", options.type);
-    ts.dumpProperty("scroll-position-change-options-clamping", options.clamping);
-    ts.dumpProperty("scroll-position-change-options-animated", (options.animated == ScrollIsAnimated::Yes ? "animated" : "not animated"));
-    ts.dumpProperty("scroll-position-change-options-snap-point-selection-method", options.snapPointSelectionMethod);
-    ts.dumpProperty("scroll-position-change-options-original-scroll-delta", options.originalScrollDelta ? *options.originalScrollDelta : FloatSize());
+    ts.dumpProperty("type", options.type);
+    ts.dumpProperty("clamping", options.clamping);
+    ts.dumpProperty("animated", options.animated == ScrollIsAnimated::Yes);
+    ts.dumpProperty("snap point selection method", options.snapPointSelectionMethod);
+    ts.dumpProperty("original scroll delta", options.originalScrollDelta ? *options.originalScrollDelta : FloatSize());
 
     return ts;
 }

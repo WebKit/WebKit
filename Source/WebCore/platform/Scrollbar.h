@@ -144,6 +144,8 @@ public:
     bool shouldRegisterScrollbar() const;
     int minimumThumbLength() const;
 
+    virtual bool isMacScrollbar() const { return false; }
+
 protected:
     Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarWidth, ScrollbarTheme* = nullptr, bool isCustomScrollbar = false);
 
@@ -196,3 +198,7 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_WIDGET(Scrollbar, isScrollbar())
 
+#define SPECIALIZE_TYPE_TRAITS_SCROLLBAR_HOLDS_SCROLLER_IMP(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
+    static bool isType(const WebCore::Scrollbar& scrollbar) { return scrollbar.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

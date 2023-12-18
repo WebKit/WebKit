@@ -87,6 +87,7 @@ public:
 
     bool hasViewportDependentMediaQueries() const;
     bool hasContainerQueries() const;
+    bool hasScopeRules() const;
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 

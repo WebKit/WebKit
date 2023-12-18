@@ -38,7 +38,6 @@
 #include "RenderLayerModelObject.h"
 #include "RenderStyleConstants.h"
 #include "Styleable.h"
-#include "WebAnimation.h"
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
@@ -75,7 +74,7 @@ void AcceleratedTimeline::updateEffectStacks()
 
 void AcceleratedTimeline::updateEffectStackForTarget(const Styleable& target)
 {
-    m_targetsPendingUpdate.add({ &target.element, static_cast<unsigned>(target.pseudoId) });
+    m_targetsPendingUpdate.add({ &target.element, enumToUnderlyingType(target.pseudoId) });
 }
 
 } // namespace WebCore

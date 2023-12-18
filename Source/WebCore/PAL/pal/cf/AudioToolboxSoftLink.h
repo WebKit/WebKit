@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 
 #if USE(AVFOUNDATION)
 
+#include <AudioToolbox/AudioToolbox.h>
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/SoftLinking.h>
 
@@ -75,6 +76,9 @@ typedef UInt32 AudioUnitPropertyID;
 typedef UInt32 AudioUnitScope;
 typedef UInt32 AudioUnitElement;
 
+enum SpatialContentTypeID : UInt32;
+struct SpatialAudioPreferences;
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AudioToolbox)
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AudioToolboxCore)
 
@@ -110,6 +114,9 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolboxCore, AudioComponentFetc
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolboxCore, AudioComponentApplyServerRegistrations, OSStatus, (CFDataRef inBundleRegistrations), (inBundleRegistrations))
 #define AudioComponentApplyServerRegistrations softLinkAudioToolboxCoreAudioComponentApplyServerRegistrations
 
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolbox, AudioGetDeviceSpatialPreferencesForContentType, OSStatus, (CFStringRef inDeviceUID, SpatialContentTypeID contentType, SpatialAudioPreferences *outPreferences), (inDeviceUID, contentType, outPreferences))
+#define AudioGetDeviceSpatialPreferencesForContentType softLinkAudioToolboxAudioGetDeviceSpatialPreferencesForContentType
+
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileClose, OSStatus, (AudioFileID inAudioFile), (inAudioFile))
 #define AudioFileClose softLink_AudioToolbox_AudioFileClose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileOpenWithCallbacks, OSStatus, (void* inClientData, AudioFile_ReadProc inReadFunc, AudioFile_WriteProc inWriteFunc, AudioFile_GetSizeProc inGetSizeFunc, AudioFile_SetSizeProc inSetSizeFunc, AudioFileTypeID inFileTypeHint, AudioFileID* outAudioFile), (inClientData, inReadFunc, inWriteFunc, inGetSizeFunc, inSetSizeFunc, inFileTypeHint, outAudioFile))
@@ -137,5 +144,9 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitInitialize, OSStatus, 
 #define AudioUnitInitialize softLink_AudioToolbox_AudioUnitInitialize
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitSetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, const void* inData, UInt32 inDataSize), (inUnit, inID, inScope, inElement, inData, inDataSize))
 #define AudioUnitSetProperty softLink_AudioToolbox_AudioUnitSetProperty
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitRender, OSStatus, (AudioUnit inUnit, AudioUnitRenderActionFlags* ioActionFlags, const AudioTimeStamp* inTimeStamp, UInt32 inOutputBusNumber, UInt32 inNumberFrames, AudioBufferList* ioData), (inUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, ioData))
+#define AudioUnitRender softLink_AudioToolbox_AudioUnitRender
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioUnitUninitialize, OSStatus, (AudioUnit inUnit), (inUnit))
+#define AudioUnitUninitialize softLink_AudioToolbox_AudioUnitUninitialize
 
 #endif // USE(AVFOUNDATION)

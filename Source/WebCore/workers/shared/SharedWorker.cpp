@@ -70,25 +70,25 @@ static inline SharedWorkerObjectConnection* mainThreadConnection()
 ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
 {
     if (!mainThreadConnection())
-        return Exception { NotSupportedError, "Shared workers are not supported"_s };
+        return Exception { ExceptionCode::NotSupportedError, "Shared workers are not supported"_s };
 
     if (!document.hasBrowsingContext())
-        return Exception { InvalidStateError, "No browsing context"_s };
+        return Exception { ExceptionCode::InvalidStateError, "No browsing context"_s };
 
     auto url = document.completeURL(scriptURLString);
     if (!url.isValid())
-        return Exception { SyntaxError, "Invalid script URL"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid script URL"_s };
 
-    auto* contentSecurityPolicy = document.contentSecurityPolicy();
+    CheckedPtr contentSecurityPolicy = document.contentSecurityPolicy();
     if (contentSecurityPolicy)
         contentSecurityPolicy->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     // Per the specification, any same-origin URL (including blob: URLs) can be used. data: URLs can also be used, but they create a worker with an opaque origin.
     if (!document.securityOrigin().canRequest(url, OriginAccessPatternsForWebProcess::singleton()) && !url.protocolIsData())
-        return Exception { SecurityError, "URL of the shared worker is cross-origin"_s };
+        return Exception { ExceptionCode::SecurityError, "URL of the shared worker is cross-origin"_s };
 
     if (contentSecurityPolicy && !contentSecurityPolicy->allowWorkerFromSource(url))
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
 
     WorkerOptions options;
     if (maybeOptions) {

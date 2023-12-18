@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-      RenderBlock {DIV} at (16,0) size 400x160
-        RenderBlock (floating) at (2,3) size 37x73
-          RenderText at (0,-13) size 37x108
-            text run at (0,-13) width 37: "J"
-        RenderText {#text} at (41,40) size 394x119
-          text run at (41,40) width 336: "ust an example of first-letter. This letter should span 3"
-          text run at (41,60) width 353: "lines of text, and so it should align itself cleanly with the"
-          text run at (0,80) width 375: "cap-height of the H lining up with the cap-height of the first"
-          text run at (0,100) width 392: "line, and the baseline of the J lining up with the baseline of the"
-          text run at (0,120) width 385: "third line. The descender of the J is still avoided by following"
-          text run at (0,140) width 33: "lines."
+      RenderBlock {DIV} at (16,0) size 400x144
+        RenderBlock (floating) at (2,1) size 34x70
+          RenderText at (0,-9) size 34x95
+            text run at (0,-9) width 34: "J"
+        RenderText {#text} at (37,36) size 392x107
+          text run at (37,36) width 337: "ust an example of first-letter. This letter should span 3"
+          text run at (37,54) width 354: "lines of text, and so it should align itself cleanly with the"
+          text run at (0,72) width 375: "cap-height of the H lining up with the cap-height of the first"
+          text run at (0,90) width 392: "line, and the baseline of the J lining up with the baseline of the"
+          text run at (0,108) width 385: "third line. The descender of the J is still avoided by following"
+          text run at (0,126) width 33: "lines."

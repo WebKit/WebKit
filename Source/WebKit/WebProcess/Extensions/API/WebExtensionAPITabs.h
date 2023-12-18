@@ -39,6 +39,7 @@ OBJC_CLASS NSString;
 namespace WebKit {
 
 class WebExtensionAPIPort;
+struct WebExtensionScriptInjectionParameters;
 struct WebExtensionTabParameters;
 struct WebExtensionTabQueryParameters;
 
@@ -75,6 +76,10 @@ public:
     void sendMessage(WebFrame*, double tabID, NSString *message, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     RefPtr<WebExtensionAPIPort> connect(WebFrame*, JSContextRef, double tabID, NSDictionary *options, NSString **outExceptionString);
 
+    void executeScript(WebPage*, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void insertCSS(WebPage*, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void removeCSS(WebPage*, double tabID, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+
     double tabIdentifierNone() const { return -1; }
 
     WebExtensionAPIEvent& onActivated();
@@ -88,13 +93,14 @@ public:
     WebExtensionAPIEvent& onUpdated();
 
 private:
-    static bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
-    static bool parseTabUpdateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
+    bool parseTabCreateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
+    bool parseTabUpdateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabDuplicateOptions(NSDictionary *, WebExtensionTabParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseTabQueryOptions(NSDictionary *, WebExtensionTabQueryParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseCaptureVisibleTabOptions(NSDictionary *, WebExtensionTab::ImageFormat&, uint8_t& imageQuality, NSString *sourceKey, NSString **outExceptionString);
     static bool parseSendMessageOptions(NSDictionary *, std::optional<WebExtensionFrameIdentifier>&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, std::optional<WebExtensionFrameIdentifier>&, NSString *sourceKey, NSString **outExceptionString);
+    static bool parseScriptOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onActivated;
     RefPtr<WebExtensionAPIEvent> m_onAttached;

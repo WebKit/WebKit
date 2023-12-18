@@ -39,3 +39,36 @@ enum class WebCore::PlatformMediaSessionRemoteControlCommandType : uint8_t {
     BeginScrubbingCommand,
     EndScrubbingCommand,
 };
+
+[Nested] enum class WebCore::PlatformMediaSessionMediaType : uint8_t {
+    None,
+    Video,
+    VideoAudio,
+    Audio,
+    WebAudio,
+};
+
+[Nested] enum class WebCore::PlatformMediaSessionState : uint8_t {
+    Idle,
+    Autoplaying,
+    Playing,
+    Paused,
+    Interrupted,
+};
+
+[Nested] enum class WebCore::PlatformMediaSessionInterruptionType : uint8_t {
+    NoInterruption,
+    SystemSleep,
+    EnteringBackground,
+    SystemInterruption,
+    SuspendedUnderLock,
+    InvisibleAutoplay,
+    ProcessInactive,
+    PlaybackSuspended,
+    PageNotVisible,
+};
+
+[Nested, OptionSet] enum class WebCore::PlatformMediaSessionEndInterruptionFlags : uint8_t {
+    NoFlags,
+    MayResumePlaying,
+};

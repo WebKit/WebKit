@@ -70,7 +70,7 @@ protected:
 private:
     virtual LayoutSize imageSize(float multiplier, CachedImage::SizeType) const;
 
-    WeakPtr<RenderElement> m_renderer;
+    SingleThreadWeakPtr<RenderElement> m_renderer;
     CachedResourceHandle<CachedImage> m_cachedImage;
     bool m_cachedImageRemoveClientIsNeeded { true };
 };

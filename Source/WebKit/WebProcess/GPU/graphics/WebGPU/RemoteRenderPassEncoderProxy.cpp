@@ -208,15 +208,13 @@ void RemoteRenderPassEncoderProxy::endOcclusionQuery()
 
 void RemoteRenderPassEncoderProxy::executeBundles(Vector<std::reference_wrapper<WebCore::WebGPU::RenderBundle>>&& renderBundles)
 {
-    Vector<WebGPUIdentifier> convertedRenderBundles;
-    convertedRenderBundles.reserveInitialCapacity(renderBundles.size());
-    for (auto renderBundle : renderBundles) {
+    auto convertedRenderBundles = WTF::compactMap(renderBundles, [&](auto& renderBundle) -> std::optional<WebGPUIdentifier> {
         auto convertedRenderBundle = m_convertToBackingContext->convertToBacking(renderBundle);
         ASSERT(convertedRenderBundle);
         if (!convertedRenderBundle)
-            return;
-        convertedRenderBundles.uncheckedAppend(convertedRenderBundle);
-    }
+            return std::nullopt;
+        return convertedRenderBundle;
+    });
 
     auto sendResult = send(Messages::RemoteRenderPassEncoder::ExecuteBundles(WTFMove(convertedRenderBundles)));
     UNUSED_VARIABLE(sendResult);

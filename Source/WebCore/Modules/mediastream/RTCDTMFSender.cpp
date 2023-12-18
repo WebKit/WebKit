@@ -93,11 +93,11 @@ static inline bool isToneCharacterInvalid(UChar character)
 ExceptionOr<void> RTCDTMFSender::insertDTMF(const String& tones, size_t duration, size_t interToneGap)
 {
     if (!canInsertDTMF())
-        return Exception { InvalidStateError, "Cannot insert DTMF"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot insert DTMF"_s };
 
     auto normalizedTones = tones.convertToUppercaseWithoutLocale();
     if (normalizedTones.find(isToneCharacterInvalid) != notFound)
-        return Exception { InvalidCharacterError, "Tones are not valid"_s };
+        return Exception { ExceptionCode::InvalidCharacterError, "Tones are not valid"_s };
 
     m_tones = WTFMove(normalizedTones);
     m_duration = clampTo(duration, minToneDurationMs, maxToneDurationMs);

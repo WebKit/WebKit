@@ -58,7 +58,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  indicates no open windows are available for the extension. Defaults to empty array if not implemented.
  @seealso webExtensionController:focusedWindowForExtensionContext:
  */
-- (NSArray<id <_WKWebExtensionWindow>> *)webExtensionController:(_WKWebExtensionController *)controller openWindowsForExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_NAME(webExtensionController(_:windowsFor:));
+- (NSArray<id <_WKWebExtensionWindow>> *)webExtensionController:(_WKWebExtensionController *)controller openWindowsForExtensionContext:(_WKWebExtensionContext *)extensionContext;
 
 /*!
  @abstract Called when an extension context requests the currently focused window.
@@ -69,7 +69,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  If not implemented, the first window in the result of `webExtensionController:openWindowsForExtensionContext:` is used.
  @seealso webExtensionController:openWindowsForExtensionContext:
  */
-- (nullable id <_WKWebExtensionWindow>)webExtensionController:(_WKWebExtensionController *)controller focusedWindowForExtensionContext:(_WKWebExtensionContext *)extensionContext NS_SWIFT_NAME(webExtensionController(_:focusedWindowFor:));
+- (nullable id <_WKWebExtensionWindow>)webExtensionController:(_WKWebExtensionController *)controller focusedWindowForExtensionContext:(_WKWebExtensionContext *)extensionContext;
 
 /*!
  @abstract Called when an extension context requests a new window to be opened.
@@ -77,13 +77,12 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param options The set of options specifying how the new window should be created.
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the newly created window or \c nil if the window wasn't created. An error should be
- provided if any errors occured.
+ provided if any errors occurred.
  @discussion This method should be implemented by the app to handle requests to open new windows. The app can decide how to handle
- the creation based on the provided options and existing windows. Once handled, the app should call the completion block with the created window
- or `nil` if the creation was declined or failed. If not implemented or the completion block is not called within a reasonable amount of time, the
- request is assumed to have been denied.
+ the creation based on the provided options and existing windows. Once handled, the app should call the completion handler with the created window
+ or `nil` if the creation was declined or failed. If not implemented, the extension can't open new windows.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller openNewWindowWithOptions:(_WKWebExtensionWindowCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id <_WKWebExtensionWindow> _Nullable newWindow, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:openNewWindowWithOptions:for:completionHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller openNewWindowWithOptions:(_WKWebExtensionWindowCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id <_WKWebExtensionWindow> WK_NULLABLE_RESULT newWindow, NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called when an extension context requests a new tab to be opened.
@@ -91,13 +90,24 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param options The set of options specifying how the new tab should be created.
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the newly created tab or \c nil if the tab wasn't created. An error should be
- provided if any errors occured.
+ provided if any errors occurred.
  @discussion This method should be implemented by the app to handle requests to open new tabs. The app can decide how to handle
- the creation based on the provided options and existing tabs. Once handled, the app should call the completion block with the created tab
- or `nil` if the creation was declined or failed. If not implemented or the completion block is not called within a reasonable amount of time,
- the request is assumed to have been denied.
+ the creation based on the provided options and existing tabs. Once handled, the app should call the completion handler with the created tab
+ or `nil` if the creation was declined or failed. If not implemented, the extension can't open new tabs.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller openNewTabWithOptions:(_WKWebExtensionTabCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id <_WKWebExtensionTab> _Nullable newTab, NSError * _Nullable error))completionHandler NS_SWIFT_NAME(webExtensionController(_:openNewTabWithOptions:for:completionHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller openNewTabWithOptions:(_WKWebExtensionTabCreationOptions *)options forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(id <_WKWebExtensionTab> WK_NULLABLE_RESULT newTab, NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when an extension context requests its options page to be opened.
+ @param controller The web extension controller that is managing the extension.
+ @param extensionContext The context in which the web extension is running.
+ @param completionHandler A block to be called once the options page has been displayed or with an error if the page could not be shown.
+ @discussion This method should be implemented by the app to handle requests to display the extension's options page. The app can decide
+ how and where to display the options page (e.g., in a new tab or a separate window). The app should call the completion handler once the options
+ page is visible to the user, or with an error if the operation was declined or failed. If not implemented, the options page will be opened in a new tab
+ using the `webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:` delegate method.
+ */
+- (void)webExtensionController:(_WKWebExtensionController *)controller openOptionsPageForExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called when an extension context requests permissions.
@@ -106,8 +116,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param tab The tab in which the extension is running, or \c nil if the request are not specific to a tab.
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the set of allowed permissions.
- @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
- set of permissions that were granted. If not implemented or the completion block is not called within a reasonable amount of time, the
+ @discussion This method should be implemented by the app to prompt the user for permission and call the completion handler with the
+ set of permissions that were granted. If not implemented or the completion handler is not called within a reasonable amount of time, the
  request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissions:(NSSet<_WKWebExtensionPermission> *)permissions inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionPermission> *allowedPermissions))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissions:in:for:completionHandler:));
@@ -119,8 +129,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the set of allowed URLs.
- @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
- set of URLs that were granted access to. If not implemented or the completion block is not called within a reasonable amount of time, the
+ @discussion This method should be implemented by the app to prompt the user for permission and call the completion handler with the
+ set of URLs that were granted access to. If not implemented or the completion handler is not called within a reasonable amount of time, the
  request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionToAccessURLs:(NSSet<NSURL *> *)urls inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<NSURL *> *allowedURLs))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionToAccess:in:for:completionHandler:));
@@ -132,8 +142,8 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @param tab The tab in which the extension is running, or \c nil if the request is not specific to a tab.
  @param extensionContext The context in which the web extension is running.
  @param completionHandler A block to be called with the set of allowed match patterns.
- @discussion This method should be implemented by the app to prompt the user for permission and call the completion block with the
- set of match patterns that were granted access to. If not implemented or the completion block is not called within a reasonable amount of time,
+ @discussion This method should be implemented by the app to prompt the user for permission and call the completion handler with the
+ set of match patterns that were granted access to. If not implemented or the completion handler is not called within a reasonable amount of time,
  the request is assumed to have been denied.
  */
 - (void)webExtensionController:(_WKWebExtensionController *)controller promptForPermissionMatchPatterns:(NSSet<_WKWebExtensionMatchPattern *> *)matchPatterns inTab:(nullable id <_WKWebExtensionTab>)tab forExtensionContext:(_WKWebExtensionContext *)extensionContext completionHandler:(void (^)(NSSet<_WKWebExtensionMatchPattern *> *allowedMatchPatterns))completionHandler NS_SWIFT_NAME(webExtensionController(_:promptForPermissionMatchPatterns:in:for:completionHandler:));
@@ -149,7 +159,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  called when the web view for the popup is fully loaded and ready to display. Implementing this method is needed if the app intends to support
  programmatically showing the popup by the extension, although it is recommended for handling both programmatic and user-initiated cases.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller presentActionPopup:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)webExtensionController:(_WKWebExtensionController *)controller presentPopupForAction:(_WKWebExtensionAction *)action forExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called when an extension context wants to send a one-time message to an application.
@@ -162,7 +172,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  If not implemented, the default behavior is to pass the message to the app extension handler within the extension's bundle,
  if the extension was loaded from an app extension bundle; otherwise, no action is performed if not implemented.
  */
-- (void)webExtensionController:(_WKWebExtensionController *)controller sendMessage:(id)message toApplicationIdentifier:(nullable NSString *)applicationIdentifier forExtensionContext:(_WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id _Nullable replyMessage, NSError * _Nullable error))replyHandler WK_SWIFT_ASYNC(5) NS_SWIFT_NAME(webExtensionController(_:sendMessage:to:for:replyHandler:));
+- (void)webExtensionController:(_WKWebExtensionController *)controller sendMessage:(id)message toApplicationIdentifier:(nullable NSString *)applicationIdentifier forExtensionContext:(_WKWebExtensionContext *)extensionContext replyHandler:(void (^)(id WK_NULLABLE_RESULT replyMessage, NSError * _Nullable error))replyHandler WK_SWIFT_ASYNC(5) NS_SWIFT_NAME(webExtensionController(_:sendMessage:to:for:replyHandler:));
 
 /*!
  @abstract Called when an extension context wants to establish a persistent connection to an application.

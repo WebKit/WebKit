@@ -1,23 +1,24 @@
 import json
 import sys
-import urllib2
+from urllib.request import Request, urlopen, HTTPBasicAuthHandler, HTTPDigestAuthHandler, HTTPPasswordMgr
+from urllib.request import install_opener, build_opener
 
 
-def submit_commits(commits, dashboard_url, worker_name, worker_password, status_to_accept=['OK']):
+def submit_commits(commits, dashboard_url, worker_name, worker_password, status_to_accept=('OK',)):
     try:
         payload = json.dumps({
             'workerName': worker_name,
             'workerPassword': worker_password,
             'commits': commits,
         })
-        request = urllib2.Request(dashboard_url + '/api/report-commits')
+        request = Request(dashboard_url + '/api/report-commits')
         request.add_header('Content-Type', 'application/json')
-        request.add_header('Content-Length', len(payload))
+        request.add_header('Content-Length', f'{len(payload)}')
 
-        output = urllib2.urlopen(request, payload).read()
+        output = urlopen(request, payload.encode()).read()
         try:
             result = json.loads(output)
-        except Exception, error:
+        except Exception as error:
             raise Exception(error, output)
 
         if result.get('status') not in status_to_accept:
@@ -38,8 +39,8 @@ def text_content(element):
 
 
 HTTP_AUTH_HANDLERS = {
-    'basic': urllib2.HTTPBasicAuthHandler,
-    'digest': urllib2.HTTPDigestAuthHandler,
+    'basic': HTTPBasicAuthHandler,
+    'digest': HTTPDigestAuthHandler,
 }
 
 
@@ -48,10 +49,10 @@ def setup_auth(server):
     if not auth:
         return
 
-    password_manager = urllib2.HTTPPasswordMgr()
+    password_manager = HTTPPasswordMgr()
     password_manager.add_password(realm=auth['realm'], uri=server['url'], user=auth['username'], passwd=auth['password'])
     auth_handler = HTTP_AUTH_HANDLERS[auth['type']](password_manager)
-    urllib2.install_opener(urllib2.build_opener(auth_handler))
+    install_opener(build_opener(auth_handler))
 
 
 def load_server_config(json_path):

@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include "WebPage.h"
 #include <WebCore/GeolocationClient.h>
 #include <wtf/CheckedRef.h>
 
 namespace WebKit {
-
-class WebPage;
 
 class WebGeolocationClient final : public WebCore::GeolocationClient {
     WTF_MAKE_FAST_ALLOCATED;

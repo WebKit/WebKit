@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            function canplaythrough()
+            {
+                testExpected('video.audioTracks.length', '1');
+                testExpected('video.audioTracks[0].enabled', true);
+                testExpected('video.videoTracks.length', '1');
+                testExpected('video.videoTracks[0].selected', true);
+                run('video.audioTracks[0].enabled = false');
+                run('video.audioTracks[0].enabled = true');
+                run('video.videoTracks[0].selected = false');
+                run('video.videoTracks[0].selected = true');
+                setTimeout(endTest, 2000);
+                setInterval(() => {
+                    if (!video.audioTracks[0].enabled)
+                        failTest('The audio track should be enabled');
+
+                    if (!video.videoTracks[0].selected)
+                        failTest('The video track should be selected');
+                }, 50);
+            }
+
+            function start()
+            {
+                findMediaElement();
+                run('mediaElement.src = findMediaFile("video", "../content/test")');
+                waitForEventOnce('canplaythrough', canplaythrough);
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video></video>
+        <p>1) Disable and enable an audio track in a run loop will enable the audio track.</br>
+           2) Deselect and select a video track in a run loop will select the video track.</p>
+    </body>
+</html>

@@ -30,7 +30,6 @@ from webkitpy.common.system import logutils
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 
-
 _log = logutils.get_logger(__file__)
 
 

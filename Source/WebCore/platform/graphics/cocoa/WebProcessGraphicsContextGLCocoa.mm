@@ -84,16 +84,15 @@ private:
 
 class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque, float contentsScale)
+    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque)
     {
-        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
+        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque));
     }
 
     // GraphicsLayerContentsDisplayDelegate overrides.
     void prepareToDelegateDisplay(PlatformCALayer& layer) final
     {
         layer.setOpaque(m_isOpaque);
-        layer.setContentsScale(m_contentsScale);
     }
 
     void display(PlatformCALayer& layer) final
@@ -123,15 +122,13 @@ public:
     }
 
 private:
-    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
-        : m_contentsScale(contentsScale)
-        , m_isOpaque(isOpaque)
+    DisplayBufferDisplayDelegate(bool isOpaque)
+        : m_isOpaque(isOpaque)
     {
     }
 
     std::unique_ptr<IOSurface> m_displayBuffer;
     RefPtr<DisplayBufferFence> m_finishedFence;
-    const float m_contentsScale;
     const bool m_isOpaque;
 };
 
@@ -161,7 +158,7 @@ private:
 
 WebProcessGraphicsContextGLCocoa::WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes&& attributes, SerialFunctionDispatcher* dispatcher)
     : GraphicsContextGLCocoa(WTFMove(attributes), { })
-    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
+    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
 {
 #if PLATFORM(MAC)
     DisplayConfigurationMonitor::singleton().addClient(*this, dispatcher);

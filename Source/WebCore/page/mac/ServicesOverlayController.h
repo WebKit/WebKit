@@ -86,7 +86,6 @@ private:
 
     Vector<SimpleRange> telephoneNumberRangesForFocusedFrame();
 
-    LocalFrame& mainFrame() const;
     Page& page() const { return m_page; }
 
     Page& m_page;

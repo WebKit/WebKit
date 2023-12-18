@@ -1,6 +1,28 @@
 Tests the #comp_tooltip portions of the AccName Name Computation algorithm.
 
+ content
+content
+           button WPT CTRL + OPT
+summary
 
 
-PASS link label from tooltip
+PASS link with img with tooltip label
+FAIL link with text with tooltip label assert_equals: <a href="#" title="label" data-expectedlabel="label" data-testname="link with text with tooltip label" class="ex">content</a> expected "label" but got "content"
+PASS div with text with tooltip label
+PASS img with tooltip label without alt
+PASS img with tooltip label with empty alt
+PASS img with tooltip label with alt
+PASS img with tooltip label without title
+PASS textarea with placeholder and tooltip label
+PASS text input with placeholder and tooltip label
+PASS email input with placeholder and tooltip label
+PASS password input with placeholder and tooltip label
+PASS checkbox input with tooltip label
+PASS radio input with tooltip label
+FAIL button with tooltip label assert_equals: <button title="label" data-expectedlabel="label" data-testname="button with tooltip label" class="ex">button</button> expected "label" but got "button"
+PASS abbr with tooltip label
+PASS kbd with tooltip label
+PASS select with tooltip label
+PASS summary with tooltip label
+PASS iframe with tooltip label
 

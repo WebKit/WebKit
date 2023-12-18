@@ -796,8 +796,6 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = self.textSelectionDisplayInteraction.cursorView; !view.hidden)
         caretView = view;
-#else
-    caretView = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
 #endif
 
     return [caretView convertRect:caretView.bounds toView:self.textInputContentView];
@@ -810,8 +808,6 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
         rects = view.selectionRects;
-#else
-    rects = [self.textInputContentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.rects"];
 #endif
 
     for (UITextSelectionRect *rect in rects)

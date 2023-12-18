@@ -210,7 +210,7 @@ static bool canCachePage(Page& page)
         return false;
     bool isCacheable = canCacheFrame(*localMainFrame, diagnosticLoggingClient, indentLevel + 1);
 
-    if (!page.settings().usesBackForwardCache() || page.isResourceCachingDisabledByWebInspector()) {
+    if (!page.settings().usesBackForwardCache() || page.isResourceCachingDisabledByWebInspector() || page.settings().siteIsolationEnabled()) {
         PCLOG("   -Page settings says b/f cache disabled");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isDisabledKey());
         isCacheable = false;

@@ -146,7 +146,7 @@ static void contextMenuItemActivatedCallback(GAction* action, GVariant*, WebPage
     auto* stateType = g_action_get_state_type(action);
     gboolean isToggle = stateType && g_variant_type_equal(stateType, G_VARIANT_TYPE_BOOLEAN);
     GRefPtr<GVariant> state = isToggle ? adoptGRef(g_action_get_state(action)) : nullptr;
-    WebContextMenuItemData item(isToggle ? CheckableActionType : ActionType,
+    WebContextMenuItemData item(isToggle ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action,
         static_cast<ContextMenuAction>(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(action), gContextMenuActionId))),
         String::fromUTF8(static_cast<const char*>(g_object_get_data(G_OBJECT(action), gContextMenuTitle))), g_action_get_enabled(action),
         state ? g_variant_get_boolean(state.get()) : false);
@@ -164,8 +164,8 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& m
     g_action_map_add_action(G_ACTION_MAP(m_actionGroup.get()), action);
 
     switch (menuItem.type()) {
-    case ActionType:
-    case CheckableActionType: {
+    case ContextMenuItemType::Action:
+    case ContextMenuItemType::CheckableAction: {
         gMenuItem = adoptGRef(g_menu_item_new(menuItem.title().utf8().data(), nullptr));
         GUniquePtr<char> actionName(g_strdup_printf("%s.%s", gContextMenuItemGroup, g_action_get_name(action)));
         g_menu_item_set_action_and_target_value(gMenuItem.get(), actionName.get(), menuItem.gActionTarget());
@@ -178,12 +178,12 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& m
         }
         break;
     }
-    case SubmenuType: {
+    case ContextMenuItemType::Submenu: {
         GRefPtr<GMenu> submenu = buildMenu(menuItem.submenuItems());
         gMenuItem = adoptGRef(g_menu_item_new_submenu(menuItem.title().utf8().data(), G_MENU_MODEL(submenu.get())));
         break;
     }
-    case SeparatorType:
+    case ContextMenuItemType::Separator:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -196,7 +196,7 @@ GRefPtr<GMenu> WebContextMenuProxyGtk::buildMenu(const Vector<WebContextMenuItem
     GRefPtr<GMenu> menu = adoptGRef(g_menu_new());
     GMenu* sectionMenu = menu.get();
     for (const auto& item : items) {
-        if (item.type() == SeparatorType) {
+        if (item.type() == ContextMenuItemType::Separator) {
             GRefPtr<GMenu> section = adoptGRef(g_menu_new());
             g_menu_append_section(menu.get(), nullptr, G_MENU_MODEL(section.get()));
             sectionMenu = section.get();
@@ -211,7 +211,7 @@ Vector<WebContextMenuItemGlib> WebContextMenuProxyGtk::populateSubMenu(const Web
 {
     Vector<WebContextMenuItemGlib> items;
     for (const auto& itemData : subMenuItemData.submenu()) {
-        if (itemData.type() == SubmenuType)
+        if (itemData.type() == ContextMenuItemType::Submenu)
             items.append(WebContextMenuItemGlib(itemData, populateSubMenu(itemData)));
         else
             items.append(itemData);
@@ -231,19 +231,19 @@ void WebContextMenuProxyGtk::populate(const Vector<Ref<WebContextMenuItem>>& ite
     GMenu* sectionMenu = menu.get();
     for (const auto& item : items) {
         switch (item->data().type()) {
-        case SeparatorType: {
+        case ContextMenuItemType::Separator: {
             GRefPtr<GMenu> section = adoptGRef(g_menu_new());
             g_menu_append_section(menu.get(), nullptr, G_MENU_MODEL(section.get()));
             sectionMenu = section.get();
             break;
         }
-        case SubmenuType: {
+        case ContextMenuItemType::Submenu: {
             WebContextMenuItemGlib menuitem(item->data(), populateSubMenu(item->data()));
             append(sectionMenu, menuitem);
             break;
         }
-        case ActionType:
-        case CheckableActionType: {
+        case ContextMenuItemType::Action:
+        case ContextMenuItemType::CheckableAction: {
             WebContextMenuItemGlib menuitem(item->data());
             append(sectionMenu, menuitem);
             break;

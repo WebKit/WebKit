@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
+#include "ExecutableBaseInlines.h"
 #include "JSCellInlines.h"
 #include "Options.h"
 
@@ -72,18 +73,21 @@ bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 
 bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->bytecodeCost() <= Options::maximumFunctionForCallInlineCandidateBytecodeCost()
-        && isSupportedForInlining(codeBlock);
+    if (codeBlock->ownerExecutable()->inlineAttribute() != InlineAttribute::Always && codeBlock->bytecodeCost() > Options::maximumFunctionForCallInlineCandidateBytecodeCost())
+        return false;
+    return isSupportedForInlining(codeBlock);
 }
 bool mightInlineFunctionForClosureCall(CodeBlock* codeBlock)
 {
-    return codeBlock->bytecodeCost() <= Options::maximumFunctionForClosureCallInlineCandidateBytecodeCost()
-        && isSupportedForInlining(codeBlock);
+    if (codeBlock->ownerExecutable()->inlineAttribute() != InlineAttribute::Always && codeBlock->bytecodeCost() > Options::maximumFunctionForClosureCallInlineCandidateBytecodeCost())
+        return false;
+    return isSupportedForInlining(codeBlock);
 }
 bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->bytecodeCost() <= Options::maximumFunctionForConstructInlineCandidateBytecoodeCost()
-        && isSupportedForInlining(codeBlock);
+    if (codeBlock->ownerExecutable()->inlineAttribute() != InlineAttribute::Always && codeBlock->bytecodeCost() > Options::maximumFunctionForConstructInlineCandidateBytecoodeCost())
+        return false;
+    return isSupportedForInlining(codeBlock);
 }
 bool canUseOSRExitFuzzing(CodeBlock* codeBlock)
 {

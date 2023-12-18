@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "EntryFrame.h"
 #include "FuzzerAgent.h"
 #include "ProfilerDatabase.h"
+#include "SideDataRepository.h"
 #include "VM.h"
 #include "Watchdog.h"
 
@@ -106,6 +107,13 @@ inline void VM::forEachDebugger(const Func& callback)
 
     for (auto* debugger = m_debuggers.head(); debugger; debugger = debugger->next())
         callback(*debugger);
+}
+
+template<typename Type, typename Functor>
+Type& VM::ensureSideData(void* key, const Functor& functor)
+{
+    m_hasSideData = true;
+    return sideDataRepository().ensure<Type>(this, key, functor);
 }
 
 } // namespace JSC

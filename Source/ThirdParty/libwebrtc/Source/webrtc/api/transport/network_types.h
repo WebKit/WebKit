@@ -93,7 +93,7 @@ struct PacedPacketInfo {
 
   // TODO(srte): Move probing info to a separate, optional struct.
   static constexpr int kNotAProbe = -1;
-  int send_bitrate_bps = -1;
+  DataRate send_bitrate = DataRate::BitsPerSec(0);
   int probe_cluster_id = kNotAProbe;
   int probe_cluster_min_probes = -1;
   int probe_cluster_min_bytes = -1;

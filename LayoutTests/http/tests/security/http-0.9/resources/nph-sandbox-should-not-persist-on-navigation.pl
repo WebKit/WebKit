@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # This script relies on its nph- filename to invoke the CGI non-parsed-header facility.
+binmode STDOUT;
 
 print <<'EOF';
 <!DOCTYPE html>

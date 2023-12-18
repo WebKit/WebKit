@@ -98,9 +98,6 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css/typedom/numeric"
     "${WEBCORE_DIR}/css/typedom/transform"
     "${WEBCORE_DIR}/cssjit"
-    "${WEBCORE_DIR}/display"
-    "${WEBCORE_DIR}/display/compositing"
-    "${WEBCORE_DIR}/display/css"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/messageports"
     "${WEBCORE_DIR}/domjit"
@@ -310,6 +307,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/credentialmanagement/BasicCredential.idl
     Modules/credentialmanagement/CredentialCreationOptions.idl
+    Modules/credentialmanagement/CredentialMediationRequirement.idl
     Modules/credentialmanagement/CredentialRequestOptions.idl
     Modules/credentialmanagement/CredentialsContainer.idl
     Modules/credentialmanagement/Navigator+Credentials.idl
@@ -369,7 +367,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/geolocation/PositionOptions.idl
 
     Modules/highlight/Highlight.idl
-    Modules/highlight/HighlightRegister.idl
+    Modules/highlight/HighlightRegistry.idl
 
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorDirection.idl
@@ -459,6 +457,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/OverconstrainedError.idl
     Modules/mediastream/OverconstrainedErrorEvent.idl
     Modules/mediastream/PhotoCapabilities.idl
+    Modules/mediastream/PhotoSettings.idl
     Modules/mediastream/RTCAnswerOptions.idl
     Modules/mediastream/RTCCertificate.idl
     Modules/mediastream/RTCConfiguration.idl
@@ -482,7 +481,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCIceConnectionState.idl
     Modules/mediastream/RTCIceGatheringState.idl
     Modules/mediastream/RTCIceProtocol.idl
+    Modules/mediastream/RTCIceRole.idl
     Modules/mediastream/RTCIceServer.idl
+    Modules/mediastream/RTCIceServerTransportProtocol.idl
     Modules/mediastream/RTCIceTcpCandidateType.idl
     Modules/mediastream/RTCIceTransport.idl
     Modules/mediastream/RTCIceTransportState.idl
@@ -739,6 +740,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/AuthenticatorResponse.idl
     Modules/webauthn/AuthenticatorTransport.idl
     Modules/webauthn/PublicKeyCredential.idl
+    Modules/webauthn/PublicKeyCredentialClientCapabilities.idl
     Modules/webauthn/PublicKeyCredentialCreationOptions.idl
     Modules/webauthn/PublicKeyCredentialDescriptor.idl
     Modules/webauthn/PublicKeyCredentialRequestOptions.idl
@@ -862,6 +864,11 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/KeyframeEffectOptions.idl
     animation/OptionalEffectTiming.idl
     animation/PlaybackDirection.idl
+    animation/ScrollAxis.idl
+    animation/ScrollTimeline.idl
+    animation/ScrollTimelineOptions.idl
+    animation/ViewTimeline.idl
+    animation/ViewTimelineOptions.idl
     animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl
@@ -916,6 +923,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSPropertyRule.idl
     css/CSSRule.idl
     css/CSSRuleList.idl
+    css/CSSScopeRule.idl
     css/CSSStyleDeclaration.idl
     css/CSSStyleRule.idl
     css/CSSStyleSheet.idl
@@ -1004,6 +1012,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/BroadcastChannel.idl
     dom/CDATASection.idl
     dom/CharacterData.idl
+    dom/CheckVisibilityOptions.idl
     dom/ChildNode.idl
     dom/ClipboardEvent.idl
     dom/Comment.idl
@@ -1011,6 +1020,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ContentVisibilityAutoStateChangeEvent.idl
     dom/CustomElementRegistry.idl
     dom/CustomEvent.idl
+    dom/CustomStateSet.idl
     dom/DOMException.idl
     dom/DOMImplementation.idl
     dom/DOMPoint.idl
@@ -1040,6 +1050,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Document+StorageAccess.idl
     dom/Document+Touch.idl
     dom/Document+UndoMananger.idl
+    dom/Document+ViewTransition.idl
     dom/Document.idl
     dom/DocumentAndElementEventHandlers.idl
     dom/DocumentFragment.idl
@@ -1076,6 +1087,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/IdleRequestOptions.idl
     dom/InnerHTML.idl
     dom/InputEvent.idl
+    dom/InvokeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
@@ -1131,6 +1143,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/UIEvent.idl
     dom/UIEventInit.idl
     dom/ValidityStateFlags.idl
+    dom/ViewTransition.idl
+    dom/ViewTransitionUpdateCallback.idl
     dom/VisibilityState.idl
     dom/WheelEvent.idl
     dom/XMLDocument.idl
@@ -1235,6 +1249,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageBitmapOptions.idl
     html/ImageData.idl
     html/ImageDataSettings.idl
+    html/InvokerElement.idl
     html/MediaController.idl
     html/MediaEncryptedEvent.idl
     html/MediaError.idl
@@ -1334,6 +1349,14 @@ set(WebCore_NON_SVG_IDL_FILES
     page/LocalDOMWindow+VisualViewport.idl
     page/LocalDOMWindow.idl
     page/Location.idl
+    page/NavigateEvent.idl
+    page/Navigation.idl
+    page/NavigationCurrentEntryChangeEvent.idl
+    page/NavigationDestination.idl
+    page/NavigationHistoryEntry.idl
+    page/NavigationInterceptHandler.idl
+    page/NavigationNavigationType.idl
+    page/NavigationTransition.idl
     page/Navigator+UserActivation.idl
     page/Navigator.idl
     page/NavigatorCookies.idl
@@ -1451,7 +1474,6 @@ set(WebCore_NON_SVG_IDL_FILES
 
     xml/CustomXPathNSResolver.idl
     xml/DOMParser.idl
-    xml/ParseFromStringOptions.idl
     xml/XMLHttpRequest.idl
     xml/XMLHttpRequestEventTarget.idl
     xml/XMLHttpRequestProgressEvent.idl
@@ -1723,7 +1745,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPUCompilationMessageType.idl
     Modules/WebGPU/GPUComputePassDescriptor.idl
     Modules/WebGPU/GPUComputePassEncoder.idl
-    Modules/WebGPU/GPUComputePassTimestampLocation.idl
     Modules/WebGPU/GPUComputePassTimestampWrites.idl
     Modules/WebGPU/GPUComputePipeline.idl
     Modules/WebGPU/GPUComputePipelineDescriptor.idl
@@ -1789,7 +1810,6 @@ list(APPEND WebCore_NON_SVG_IDL_FILES
     Modules/WebGPU/GPURenderPassDescriptor.idl
     Modules/WebGPU/GPURenderPassEncoder.idl
     Modules/WebGPU/GPURenderPassLayout.idl
-    Modules/WebGPU/GPURenderPassTimestampLocation.idl
     Modules/WebGPU/GPURenderPassTimestampWrites.idl
     Modules/WebGPU/GPURenderPipeline.idl
     Modules/WebGPU/GPURenderPipelineDescriptor.idl
@@ -1846,16 +1866,17 @@ set(WebCore_CSS_VALUE_KEYWORDS
 
 set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/counterStyles.css
-    ${WEBCORE_DIR}/css/dialog.css
     ${WEBCORE_DIR}/css/fullscreen.css
     ${WEBCORE_DIR}/css/horizontalFormControls.css
     ${WEBCORE_DIR}/css/html.css
+    ${WEBCORE_DIR}/css/htmlSwitchControl.css
     ${WEBCORE_DIR}/css/mathml.css
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/ruby.css
     ${WEBCORE_DIR}/css/svg.css
+    ${WEBCORE_DIR}/css/viewTransitions.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
     ${WEBCORE_DIR}/html/shadow/imageOverlay.css
     ${WEBCORE_DIR}/html/shadow/meterElementShadow.css
@@ -2018,6 +2039,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLContextEvent.cpp
         html/canvas/WebGLDebugRendererInfo.cpp
         html/canvas/WebGLDebugShaders.cpp
+        html/canvas/WebGLDefaultFramebuffer.cpp
         html/canvas/WebGLDepthTexture.cpp
         html/canvas/WebGLDrawBuffers.cpp
         html/canvas/WebGLDrawInstancedBaseVertexBaseInstance.cpp
@@ -2043,6 +2065,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLTimerQueryEXT.cpp
         html/canvas/WebGLTransformFeedback.cpp
         html/canvas/WebGLUniformLocation.cpp
+        html/canvas/WebGLUtilities.cpp
         html/canvas/WebGLVertexArrayObject.cpp
         html/canvas/WebGLVertexArrayObjectBase.cpp
         html/canvas/WebGLVertexArrayObjectOES.cpp
@@ -2779,18 +2802,12 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/LayoutMilestones.serialization.in
     page/MediaProducer.serialization.in
 
-    platform/graphics/ca/PlatformCALayer.messages.in
-
     platform/PlatformEvent.serialization.in
     platform/PlatformScreen.serialization.in
     platform/PlatformWheelEvent.serialization.in
     platform/ScrollTypes.serialization.in
 
     platform/audio/PlatformMediaSession.serialization.in
-
-    platform/cocoa/PlaybackSessionModel.serialization.in
-
-    platform/graphics/cocoa/MediaPlaybackTargetContext.serialization.in
 
     platform/graphics/InbandTextTrackPrivate.serialization.in
 

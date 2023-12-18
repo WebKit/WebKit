@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Archive.h"
 
+#include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {

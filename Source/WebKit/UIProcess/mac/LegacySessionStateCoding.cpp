@@ -405,8 +405,8 @@ static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pa
     values.reserveInitialCapacity(keyValuePairs.size());
 
     for (const auto& keyValuePair : keyValuePairs) {
-        keys.uncheckedAppend(keyValuePair.first);
-        values.uncheckedAppend(keyValuePair.second);
+        keys.append(keyValuePair.first);
+        values.append(keyValuePair.second);
     }
 
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keyValuePairs.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

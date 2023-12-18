@@ -222,8 +222,23 @@ function documentReady()
         row.appendChild(cell);
 
         cell = document.createElement("td");
-        var view = new BuildbotBuilderQueueView(platformQueues.builders);
-        cell.appendChild(view.element);
+        var queues = {};
+        var generators = [];
+
+        // FIXME: Only required as long as we are mixing XCode Cloud and buildbot builder queues
+        platformQueues.builders.forEach(function(queue) {
+            var generator = queue.viewGenerator ? queue.viewGenerator : BuildbotBuilderQueueView;
+            if (!queues[String(generator)]) {
+                queues[String(generator)] = [];
+                generators.push(generator);
+            }
+            queues[String(generator)].push(queue);
+        });
+
+        generators.forEach(function(generator) {
+            var view = new generator(queues[String(generator)]);
+            cell.appendChild(view.element);
+        });
         row.appendChild(cell);
 
         if ("builderCombinedQueues" in platformQueues) {
@@ -329,11 +344,11 @@ function documentReady()
     }
 }
 
-var sortedRepositories = Dashboard.sortedRepositories;
-for (var i = 0; i < sortedRepositories.length; ++i) {
-    var commits = sortedRepositories[i].commits;
-    if (typeof commits !== "undefined")
-        commits.startPeriodicUpdates();
+const sortedRepositories = Dashboard.sortedRepositories;
+for (let i = 0; i < sortedRepositories.length; ++i) {
+    const commitStore = sortedRepositories[i].commitStore;
+    if (typeof commitStore !== "undefined")
+        commitStore.startPeriodicUpdates();
 }
 
 document.addEventListener("DOMContentLoaded", documentReady);

@@ -26,7 +26,6 @@
 // https://wicg.github.io/cookie-store/#extendablecookiechangeevent
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=CookieStoreAPIEnabled&CookieStoreAPIServiceWorkerEnabled,
     Exposed=ServiceWorker
 ] interface ExtendableCookieChangeEvent : ExtendableEvent {

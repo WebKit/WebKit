@@ -28,7 +28,6 @@ class FakeVp8Decoder : public VideoDecoder {
   bool Configure(const Settings& settings) override;
 
   int32_t Decode(const EncodedImage& input,
-                 bool missing_frames,
                  int64_t render_time_ms) override;
 
   int32_t RegisterDecodeCompleteCallback(
@@ -38,7 +37,8 @@ class FakeVp8Decoder : public VideoDecoder {
 
   DecoderInfo GetDecoderInfo() const override;
   const char* ImplementationName() const override;
-  static const char* kImplementationName;
+
+  static constexpr char kImplementationName[] = "fake_vp8_decoder";
 
  private:
   DecodedImageCallback* callback_;

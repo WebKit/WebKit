@@ -73,7 +73,7 @@ void UIScriptControllerMac::zoomToScale(double scale, JSValueRef callback)
     auto* webView = this->webView();
     [webView _setPageScale:scale withOrigin:CGPointZero];
 
-    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
+    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -93,7 +93,7 @@ void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSVa
     NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
     [center postNotificationName:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:webView];
 
-    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
+    [webView _doAfterNextPresentationUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -213,7 +213,7 @@ void UIScriptControllerMac::chooseMenuAction(JSStringRef jsAction, JSValueRef ca
         [activeMenu cancelTracking];
     }
 
-    WorkQueue::main().dispatch([this, strongThis = Ref { *this }, callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -307,11 +307,16 @@ void UIScriptControllerMac::activateAtPoint(long x, long y, JSValueRef callback)
     eventSender->mouseDown(0, 0);
     eventSender->mouseUp(0, 0);
 
-    WorkQueue::main().dispatch([this, strongThis = Ref { *this }, callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
     });
+}
+
+int64_t UIScriptControllerMac::pasteboardChangeCount() const
+{
+    return NSPasteboard.generalPasteboard.changeCount;
 }
 
 void UIScriptControllerMac::copyText(JSStringRef text)
@@ -427,7 +432,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         currentTime += nanosecondsEventInterval;
     }
 
-    WorkQueue::main().dispatch([this, strongThis = Ref { *this }, callbackID] {
+    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -442,6 +447,11 @@ JSRetainPtr<JSStringRef> UIScriptControllerMac::scrollbarStateForScrollingNodeID
 void UIScriptControllerMac::setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue)
 {
     NSApp._accentColor = [NSColor colorWithRed:red / 255. green:green / 255. blue:blue / 255. alpha:1];
+}
+
+void UIScriptControllerMac::setWebViewAllowsMagnification(bool allowsMagnification)
+{
+    webView().allowsMagnification = allowsMagnification;
 }
 
 } // namespace WTR

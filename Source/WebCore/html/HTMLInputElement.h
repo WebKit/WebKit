@@ -52,6 +52,7 @@ struct InputElementClickState {
     bool stateful { false };
     bool checked { false };
     bool indeterminate { false };
+    bool trusted { false };
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
 
@@ -64,7 +65,7 @@ public:
     virtual ~HTMLInputElement();
 
     bool checked() const { return m_isChecked; }
-    WEBCORE_EXPORT void setChecked(bool);
+    WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
@@ -92,6 +93,7 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> stepDown(int = 1);
     WEBCORE_EXPORT unsigned width() const;
     WEBCORE_EXPORT void setWidth(unsigned);
+    bool hasSwitchAttribute() const { return m_hasSwitchAttribute; }
     WEBCORE_EXPORT String validationMessage() const final;
     std::optional<unsigned> selectionStartForBindings() const;
     ExceptionOr<void> setSelectionStartForBindings(std::optional<unsigned>);
@@ -144,6 +146,7 @@ public:
     WEBCORE_EXPORT bool isPasswordField() const;
     bool isSecureField() const { return isPasswordField() || isAutoFilledAndObscured(); }
     bool isCheckbox() const;
+    bool isSwitch() const;
     bool isRangeControl() const;
 #if ENABLE(INPUT_TYPE_COLOR)
     WEBCORE_EXPORT bool isColorControl() const;
@@ -187,10 +190,8 @@ public:
     WEBCORE_EXPORT HTMLElement* dataListButtonElement() const;
 #endif
 
-    // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    bool shouldAppearChecked() const;
+    bool matchesCheckedPseudoClass() const;
     bool matchesIndeterminatePseudoClass() const final;
-    bool shouldAppearIndeterminate() const final;
     void setDefaultCheckedState(bool);
 
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
@@ -337,6 +338,12 @@ public:
     bool isInnerTextElementEditable() const final { return !hasAutoFillStrongPasswordButton() && HTMLTextFormControlElement::isInnerTextElementEditable(); }
     void finishParsingChildren() final;
 
+    bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
+
+    float switchAnimationVisuallyOnProgress() const;
+    bool isSwitchVisuallyOn() const;
+    float switchAnimationPressedProgress() const;
+
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 
@@ -429,6 +436,10 @@ private:
     void updateType(const AtomString& typeAttributeValue);
     void runPostTypeUpdateTasks();
 
+#if ENABLE(TOUCH_EVENTS)
+    void updateTouchEventHandler();
+#endif
+
     void subtreeHasChanged() final;
     void disabledStateChanged() final;
     void readOnlyStateChanged() final;
@@ -464,8 +475,8 @@ private:
     bool m_isAutoFilled : 1 { false };
     bool m_isAutoFilledAndViewable : 1 { false };
     bool m_isAutoFilledAndObscured : 1 { false };
-    unsigned m_autoFillButtonType : 3 { static_cast<uint8_t>(AutoFillButtonType::None) }; // AutoFillButtonType
-    unsigned m_lastAutoFillButtonType : 3 { static_cast<uint8_t>(AutoFillButtonType::None) }; // AutoFillButtonType
+    unsigned m_autoFillButtonType : 3 { enumToUnderlyingType(AutoFillButtonType::None) }; // AutoFillButtonType
+    unsigned m_lastAutoFillButtonType : 3 { enumToUnderlyingType(AutoFillButtonType::None) }; // AutoFillButtonType
     bool m_isAutoFillAvailable : 1 { false };
 #if ENABLE(DATALIST_ELEMENT)
     bool m_hasNonEmptyList : 1 { false };
@@ -480,6 +491,8 @@ private:
 #endif
     bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };
     bool m_hasPendingUserAgentShadowTreeUpdate : 1 { false };
+    bool m_hasSwitchAttribute : 1 { false };
+    bool m_hasEverBeenPasswordField : 1 { false };
     RefPtr<InputType> m_inputType;
     // The ImageLoader must be owned by this element because the loader code assumes
     // that it lives as long as its owning element lives. If we move the loader into

@@ -40,6 +40,10 @@ IncludeFile.processIncludeOptions()
 
 inputFlnm = ARGV.shift
 outputFlnm = ARGV.shift
+tempFlnm = File.join(
+    ENV['TARGET_TEMP_DIR'] || File.dirname(outputFlnm),
+    "#{File.basename(outputFlnm)}.part"
+)
 
 inputBackends = canonicalizeBackendNames(ARGV.shift.split(/[,\s]+/))
 includeOnlyBackends(inputBackends)
@@ -78,7 +82,7 @@ if $options[:depfile]
     depfile.puts(Shellwords.join(sources.sort))
 end
 
-File.open(outputFlnm, "w") {
+File.open(tempFlnm, "w") {
     | outp |
     $output = outp
     outp.puts inputHash
@@ -96,5 +100,5 @@ File.open(outputFlnm, "w") {
         outp.puts "#{index},"
     }
     outp.puts "};"
-
 }
+File.rename(tempFlnm, outputFlnm)

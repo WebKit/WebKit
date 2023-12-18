@@ -29,7 +29,7 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString shape;
     [CEReactions=NotNeeded, Reflect] attribute DOMString target;
 
-    [CEReactions=NotNeeded, Conditional=DOWNLOAD_ATTRIBUTE, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
+    [CEReactions=NotNeeded, EnabledBySetting=DownloadAttributeEnabled, Reflect] attribute DOMString download;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
 
     [PutForwards=value] readonly attribute DOMTokenList relList;

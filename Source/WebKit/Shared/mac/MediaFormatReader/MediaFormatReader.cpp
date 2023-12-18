@@ -179,10 +179,9 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     m_parseTracksStatus = errorCode ? static_cast<OSStatus>(kMTPluginFormatReaderError_ParsingFailure) : noErr;
     m_duration = WTFMove(segment.duration);
 
-    uint64_t nextUnknownTrackID = 0;
     for (auto& videoTrack : segment.videoTracks) {
         auto track = videoTrack.track.get();
-        auto trackID = track->trackUID().value_or(nextUnknownTrackID++);
+        auto trackID = track->id();
         auto trackReader = MediaTrackReader::create(allocator(), *this, kCMMediaType_Video, trackID, track->defaultEnabled());
         if (!trackReader)
             continue;
@@ -192,7 +191,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
 
     for (auto& audioTrack : segment.audioTracks) {
         auto track = audioTrack.track.get();
-        auto trackID = track->trackUID().value_or(nextUnknownTrackID++);
+        auto trackID = track->id();
         auto trackReader = MediaTrackReader::create(allocator(), *this, kCMMediaType_Audio, trackID, track->defaultEnabled());
         if (!trackReader)
             continue;
@@ -202,7 +201,7 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
 
     for (auto& textTrack : segment.textTracks) {
         auto track = textTrack.track.get();
-        auto trackID = track->trackUID().value_or(nextUnknownTrackID++);
+        auto trackID = track->id();
         if (auto trackReader = MediaTrackReader::create(allocator(), *this, kCMMediaType_Text, trackID, track->defaultEnabled()))
             m_trackReaders.append(trackReader.releaseNonNull());
     }

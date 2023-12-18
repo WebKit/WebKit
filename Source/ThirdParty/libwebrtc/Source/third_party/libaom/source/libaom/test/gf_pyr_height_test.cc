@@ -79,9 +79,9 @@ class GFPyrHeightTest
     gf_max_pyr_height_ = GET_PARAM(3).gf_max_pyr_height;
     psnr_threshold_ = GET_PARAM(3).psnr_thresh;
   }
-  virtual ~GFPyrHeightTest() {}
+  ~GFPyrHeightTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -95,18 +95,18 @@ class GFPyrHeightTest
     init_flags_ = AOM_CODEC_USE_PSNR;
   }
 
-  virtual void BeginPassHook(unsigned int) {
+  void BeginPassHook(unsigned int) override {
     psnr_ = 0.0;
     nframes_ = 0;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
       if (rc_mode_ == AOM_Q) {

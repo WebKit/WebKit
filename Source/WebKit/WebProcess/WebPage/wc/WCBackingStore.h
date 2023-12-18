@@ -46,11 +46,9 @@ public:
     {
         std::optional<ImageBufferBackendHandle> handle;
         if (m_imageBuffer) {
-            if (auto* backend = m_imageBuffer->ensureBackendCreated()) {
-                auto* sharing = backend->toBackendSharing();
-                if (is<ImageBufferBackendHandleSharing>(sharing))
-                    handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
-            }
+            auto* sharing = m_imageBuffer->toBackendSharing();
+            if (is<ImageBufferBackendHandleSharing>(sharing))
+                handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
         }
         encoder << WTFMove(handle);
     }

@@ -8,6 +8,9 @@
       (contentsOpaque 1)
       (drawsContent 1)
       (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=4112)
+      )
       (children 1
         (GraphicsLayer
           (position 8.00 8.00)

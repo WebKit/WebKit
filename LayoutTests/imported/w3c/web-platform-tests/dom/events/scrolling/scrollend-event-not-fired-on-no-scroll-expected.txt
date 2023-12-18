@@ -1,8 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: No scrollend event received for target [object HTMLDocument]
 target
 doc
 
-FAIL No scroll via wheel on div shouldn't fire scrollend. promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
-PASS No scroll via keys on div shouldn't fire scrollend.
-FAIL No scroll via wheel on document shouldn't fire scrollend. promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
-PASS No scroll via keys on document shouldn't fire scrollend.
+Harness Error (FAIL), message = Unhandled rejection
+
+PASS No scroll via wheel on div shouldn't fire scrollend.
+TIMEOUT No scroll via keys on div shouldn't fire scrollend. Test timed out
+NOTRUN No scroll via wheel on document shouldn't fire scrollend.
+NOTRUN No scroll via keys on document shouldn't fire scrollend.
 

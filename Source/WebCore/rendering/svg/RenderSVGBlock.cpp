@@ -22,9 +22,9 @@
 #include "config.h"
 #include "RenderSVGBlock.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGBlockInlines.h"
-#include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGGraphicsElement.h"
 #include "SVGRenderSupport.h"
@@ -146,30 +146,41 @@ void RenderSVGBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recompu
 LayoutRect RenderSVGBlock::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (isInsideEntirelyHiddenLayer())
-            return { };
-
-        ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
-        return computeRect(visualOverflowRect(), repaintContainer, context);
-    }
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return RenderBlockFlow::clippedOverflowRect(repaintContainer, context);
 #else
     UNUSED_PARAM(context);
 #endif
 
-    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
+    return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
 
-std::optional<LayoutRect> RenderSVGBlock::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderSVGBlock::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
-        return computeVisibleRectInSVGContainer(rect, container, context);
+        return RenderBlockFlow::rectsForRepaintingAfterLayout(repaintContainer, repaintOutlineBounds);
 #endif
 
-    std::optional<FloatRect> adjustedRect = computeFloatVisibleRectInContainer(rect, container, context);
+    auto rects = RepaintRects { SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, visibleRectContextForRepaint()) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = outlineBoundsForRepaint(repaintContainer);
+
+    return rects;
+}
+
+auto RenderSVGBlock::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return computeVisibleRectsInSVGContainer(rects, container, context);
+#endif
+
+    // FIXME: computeFloatVisibleRectInContainer() needs to be merged with computeVisibleRectsInContainer().
+    auto adjustedRect = computeFloatVisibleRectInContainer(rects.clippedOverflowRect, container, context);
     if (adjustedRect)
-        return enclosingLayoutRect(*adjustedRect);
+        return RepaintRects { enclosingLayoutRect(*adjustedRect) };
+
     return std::nullopt;
 }
 

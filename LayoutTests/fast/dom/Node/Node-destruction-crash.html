@@ -1,0 +1,22 @@
+<html>
+<head>
+<style>
+    html {
+        content: "a" url();
+    }
+
+    html::before {
+        container-type: size;
+        content: url();
+        float: left;
+    }
+</style>
+</head>
+<body>
+<p>This test passes if it doesn't crash.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</body>
+</html>

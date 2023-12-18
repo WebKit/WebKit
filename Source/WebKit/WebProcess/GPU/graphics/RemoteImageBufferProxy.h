@@ -39,7 +39,6 @@
 namespace WebKit {
 
 class RemoteRenderingBackendProxy;
-class RemoteImageBufferProxyFlushFence;
 
 class RemoteImageBufferProxy : public WebCore::ImageBuffer {
     friend class RemoteSerializedImageBufferProxy;
@@ -57,7 +56,7 @@ public:
 
     ~RemoteImageBufferProxy();
 
-    WebCore::ImageBufferBackend* ensureBackendCreated() const final;
+    WebCore::ImageBufferBackend* ensureBackend() const final;
 
     void clearBackend();
     void backingStoreWillChange();
@@ -90,7 +89,6 @@ private:
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;
 
-    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final;
     void prepareForBackingStoreChange();
 
     void assertDispatcherIsCurrent() const;
@@ -99,7 +97,6 @@ private:
 
     IPC::StreamClientConnection& streamConnection() const;
 
-    RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteDisplayListRecorderProxy m_remoteDisplayList;
     bool m_needsFlush { true };

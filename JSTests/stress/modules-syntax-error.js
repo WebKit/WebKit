@@ -377,3 +377,32 @@ new import()
 checkModuleSyntaxError(String.raw`
 new import
 `, `SyntaxError: Cannot use new with import.:3`);
+
+// --- top-level function declarations are lexical in module code ---
+
+checkModuleSyntaxError(String.raw`
+var test;
+function test() {}
+`, `SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'test'.:4`);
+
+checkModuleSyntax(String.raw`
+function foo() {
+    var test;
+    function test() {}
+}`);
+
+checkModuleSyntaxError(String.raw`
+function test() {}
+function test() {}
+`, `SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'test'.:4`);
+
+checkModuleSyntax(String.raw`
+function foo() {
+    function test() {}
+    function test() {}
+}`);
+
+checkModuleSyntaxError(String.raw`
+function test() {}
+export async function test() {}
+`, `SyntaxError: Cannot declare an async function that shadows a let/const/class/function variable 'test'.:4`);

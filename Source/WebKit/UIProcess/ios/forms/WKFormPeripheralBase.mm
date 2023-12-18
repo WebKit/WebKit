@@ -55,6 +55,14 @@
     [_control controlBeginEditing];
 }
 
+- (void)updateEditing
+{
+    if (!_editing)
+        return;
+
+    [_control controlUpdateEditing];
+}
+
 - (void)endEditing
 {
     if (!_editing)

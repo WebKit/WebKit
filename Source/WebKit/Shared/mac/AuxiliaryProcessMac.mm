@@ -210,14 +210,11 @@ static std::optional<Vector<char>> fileContents(const String& path, bool shouldL
 
     char chunk[4096];
     constexpr size_t chunkSize = std::size(chunk);
-    size_t contentSize = 0;
     Vector<char> contents;
     contents.reserveInitialCapacity(chunkSize);
-    while (size_t bytesRead = file.read(chunk, chunkSize)) {
+    while (size_t bytesRead = file.read(chunk, chunkSize))
         contents.append(chunk, bytesRead);
-        contentSize += bytesRead;
-    }
-    contents.resize(contentSize);
+    contents.shrinkToFit();
 
     return contents;
 }

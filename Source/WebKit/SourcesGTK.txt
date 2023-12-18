@@ -108,7 +108,6 @@ Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/AuxiliaryProcessMain.cpp
 
-UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/ViewGestureController.cpp
@@ -207,6 +206,7 @@ UIProcess/API/gtk/DropTargetGtk3.cpp @no-unify
 UIProcess/API/gtk/DropTargetGtk4.cpp @no-unify
 UIProcess/API/gtk/InputMethodFilterGtk.cpp @no-unify
 UIProcess/API/gtk/PageClientImpl.cpp @no-unify
+UIProcess/API/gtk/ToplevelWindow.cpp @no-unify
 UIProcess/API/gtk/WebKitAuthenticationDialog.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooser.cpp @no-unify
 UIProcess/API/gtk/WebKitColorChooserRequest.cpp @no-unify
@@ -257,7 +257,7 @@ UIProcess/linux/MemoryPressureMonitor.cpp
 UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 
-UIProcess/cairo/BackingStoreCairo.cpp @no-unify
+UIProcess/cairo/BackingStore.cpp
 
 UIProcess/glib/DisplayLinkGLib.cpp
 UIProcess/glib/DisplayVBlankMonitor.cpp
@@ -271,8 +271,6 @@ UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
 UIProcess/gtk/AcceleratedBackingStore.cpp @no-unify
 UIProcess/gtk/AcceleratedBackingStoreDMABuf.cpp @no-unify
-UIProcess/gtk/AcceleratedBackingStoreWayland.cpp @no-unify
-UIProcess/gtk/AcceleratedBackingStoreX11.cpp @no-unify
 UIProcess/gtk/Clipboard.cpp
 UIProcess/gtk/ClipboardGtk3.cpp @no-unify
 UIProcess/gtk/ClipboardGtk4.cpp @no-unify
@@ -336,14 +334,12 @@ WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
+WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
+
 WebProcess/WebPage/glib/WebPageGLib.cpp
 
-WebProcess/WebPage/gtk/AcceleratedSurfaceDMABuf.cpp @no-unify
-WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp @no-unify
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
-
-WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
 
 WebProcess/glib/WebProcessGLib.cpp
 

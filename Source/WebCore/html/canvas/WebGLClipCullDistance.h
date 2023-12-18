@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLClipCullDistance final : public RefCounted<WebGLClipCullDistance>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLClipCullDistance final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLClipCullDistance);
 public:
     explicit WebGLClipCullDistance(WebGLRenderingContextBase&);

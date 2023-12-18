@@ -46,7 +46,6 @@ AlignConsecutiveAssignments: true
 # Use 2 space negative offset for access modifiers
 AccessModifierOffset: -2
 
-# TODO(jmadill): Decide if we want this on. Doesn't have an "all or none" mode.
 AllowShortCaseLabelsOnASingleLine: false
 
 # Useful for spacing out functions in classes

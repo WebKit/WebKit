@@ -149,7 +149,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
             gboolean hasLocalDebugger;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &url, &hasLocalDebugger)) {
                 if (!g_strcmp0(type, "JavaScript") || !g_strcmp0(type, "ServiceWorker") || !g_strcmp0(type, "WebPage"))
-                    targetList.uncheckedAppend({ targetID, type, name, url });
+                    targetList.append({ targetID, type, name, url });
             }
             client.setTargetList(connectionID, WTFMove(targetList));
         }}

@@ -45,6 +45,15 @@ typedef NS_ENUM(NSInteger, WKBackgroundFetchChange) {
     WKBackgroundFetchChangeUpdate,
 } WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
+typedef NS_ENUM(NSInteger, WKWindowProxyProperty) {
+    WKWindowProxyPropertyInitialOpen,
+    WKWindowProxyPropertyPostMessage,
+    WKWindowProxyPropertyClosed,
+    WKWindowProxyPropertyOther,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+#define HAVE_WK_WINDOW_PROXY_PROPERTY 1
+
 WK_API_AVAILABLE(macos(10.15), ios(13.0))
 @protocol _WKWebsiteDataStoreDelegate <NSObject>
 
@@ -60,4 +69,5 @@ WK_API_AVAILABLE(macos(10.15), ios(13.0))
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore navigateToNotificationActionURL:(NSURL *)url;
 - (void)requestBackgroundFetchPermission:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL  decisionHandler:(void (^)(bool isGranted))decisionHandler;
 - (void)notifyBackgroundFetchChange:(NSString *)backgroundFetchIdentifier change:(WKBackgroundFetchChange)change;
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore domain:(NSString *)registrableDomain didOpenDomainViaWindowOpen:(NSString *)openedRegistrableDomain withProperty:(WKWindowProxyProperty)property directly:(BOOL)directly;
 @end

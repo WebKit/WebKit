@@ -109,6 +109,11 @@ typedef struct HandleInterModeArgs {
    */
   int skip_motion_mode;
   /*!
+   * Initialized to false. If true, skips interpolation filter search and uses
+   * the default EIGHTTAP_REGULAR.
+   */
+  bool skip_ifs;
+  /*!
    * A pointer to the first element in an array of INTERINTRA_MODE types. This
    * contains the best inter_intra mode for each reference frame.
    */
@@ -124,6 +129,11 @@ typedef struct HandleInterModeArgs {
    * Stack to store full pixel search start mv of NEWMV mode.
    */
   FULLPEL_MV start_mv_stack[(MAX_REF_MV_SEARCH - 1) * 2];
+
+  /*!
+   * Stack to store ref_mv_idx of NEWMV mode.
+   */
+  uint8_t ref_mv_idx_stack[(MAX_REF_MV_SEARCH - 1) * 2];
 
   /*!
    * Count of mvs in start mv stack.

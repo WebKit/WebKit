@@ -1,0 +1,5 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT event.intercept() should abort if the handler throws Test timed out
+

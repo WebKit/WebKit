@@ -1,0 +1,3 @@
+
+FAIL Get Named cookie  w/ default SameSite promise_test: Unhandled rejection with value: object "Error: get_named_cookie() is not implemented by testdriver-vendor.js"
+

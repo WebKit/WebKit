@@ -53,7 +53,7 @@ WK_EXPORT WKHTTPCookieStoreRef WKWebsiteDataStoreGetHTTPCookieStore(WKWebsiteDat
 WK_EXPORT void WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataStoreRef dataStore, double seconds);
 WK_EXPORT void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataStoreRef dataStore);
 
-WK_EXPORT void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef dataStore, bool allows);
+WK_EXPORT void WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(WKWebsiteDataStoreRef dataStore, bool allows) WK_C_API_DEPRECATED;
 WK_EXPORT void WKWebsiteDataStoreTerminateNetworkProcess(WKWebsiteDataStoreRef dataStore);
 
 WK_EXPORT WKProcessID WKWebsiteDataStoreGetNetworkProcessIdentifier(WKWebsiteDataStoreRef dataStore);
@@ -112,6 +112,7 @@ typedef void (*WKWebsiteDataStoreStatisticsUpdateCookieBlockingFunction)(void* f
 WK_EXPORT void WKWebsiteDataStoreStatisticsUpdateCookieBlocking(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsUpdateCookieBlockingFunction completionHandler);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsNotifyPagesWhenDataRecordsWereScanned(WKWebsiteDataStoreRef dataStoreRef, bool value);
 typedef void (*WKWebsiteDataStoreSetStatisticsIsRunningTestFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetResourceLoadStatisticsTimeAdvanceForTesting(WKWebsiteDataStoreRef dataStoreRef, double value, void* context, WKWebsiteDataStoreSetStatisticsIsRunningTestFunction callback);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsIsRunningTest(WKWebsiteDataStoreRef dataStoreRef, bool value, void* context, WKWebsiteDataStoreSetStatisticsIsRunningTestFunction callback);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(WKWebsiteDataStoreRef dataStoreRef, bool value);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsMinimumTimeBetweenDataRecordsRemoval(WKWebsiteDataStoreRef dataStoreRef, double seconds);
@@ -217,6 +218,9 @@ WK_EXPORT void WKWebsiteDataStoreUpdateBundleIdentifierInNetworkProcess(WKWebsit
 
 typedef void (*WKWebsiteDataStoreClearBundleIdentifierInNetworkProcessFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreClearBundleIdentifierInNetworkProcess(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearBundleIdentifierInNetworkProcessFunction completionHandler);
+
+typedef void (*KWebsiteDataStoreSetOriginQuotaRatioEnabledCallback)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetOriginQuotaRatioEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enabled, void* context, KWebsiteDataStoreSetOriginQuotaRatioEnabledCallback callback);
 
 #ifdef __cplusplus
 }

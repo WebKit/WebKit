@@ -252,7 +252,7 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
     std::pair<uint32_t, uint16_t> timestamp_frame_id;
     while (!timestamp_to_frame_id_list_.empty()) {
       timestamp_frame_id = timestamp_to_frame_id_list_.front();
-      if (timestamp_frame_id.first == encoded_image.Timestamp()) {
+      if (timestamp_frame_id.first == encoded_image.RtpTimestamp()) {
         break;
       }
       timestamp_to_frame_id_list_.pop_front();
@@ -271,7 +271,7 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
       // posting frame to it, but then call the callback for this frame.
       RTC_LOG(LS_ERROR) << "QualityAnalyzingVideoEncoder::OnEncodedImage: No "
                            "frame id for encoded_image.Timestamp()="
-                        << encoded_image.Timestamp();
+                        << encoded_image.RtpTimestamp();
       return EncodedImageCallback::Result(
           EncodedImageCallback::Result::Error::OK);
     }

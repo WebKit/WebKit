@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true allowsInlinePredictions=true ] -->
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+    margin: 0;
+}
+
+#target {
+    padding: 4px;
+    border: 1px solid tomato;
+    box-sizing: border-box;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+function targetContainsCaretSelection()
+{
+    if (getSelection().type !== "Caret")
+        return false;
+
+    let target = document.getElementById("target");
+    let container = getSelection().getRangeAt(0).startContainer;
+    while (container) {
+        if (container === target)
+            return true;
+        container = container.parentElement;
+    }
+    return false;
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that you can change an editable selection with a tap gesture after accepting an inline prediction. This test accepts an inline completion, taps the red box below, and verifies that the selection is correctly set. Requires WebKitTestRunner.");
+    getSelection().setPosition(document.body, 0);
+
+    await UIHelper.activateAndWaitForInputSessionAt(10, 10);
+
+    for (let character of [..."I want to c"])
+        await UIHelper.typeCharacter(character);
+
+    await UIHelper.setInlinePrediction("elebrate");
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.acceptInlinePrediction();
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.activateElement(document.getElementById("target"));
+    await shouldBecomeEqual("targetContainsCaretSelection()", "true");
+
+    document.body.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body contenteditable>
+    <div><br></div>
+    <p id="description"></p>
+    <div id="target"><br></div>
+</body>
+</html>

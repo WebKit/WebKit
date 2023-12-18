@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -36,8 +37,6 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
-#include "RenderSVGResource.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
@@ -65,6 +64,7 @@ LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& s
     , m_needsBoundariesOrTransformUpdate(true)
     , m_hasBoxDecorations(false)
 {
+    ASSERT(isLegacyRenderSVGRoot());
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())
         intrinsicSize.setWidth(defaultWidth);
@@ -246,7 +246,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     GraphicsContext& context = paintInfo.context();
     if (context.detectingContentfulPaint()) {
         for (auto& current : childrenOfType<RenderObject>(*this)) {
-            if (!current.isLegacySVGHiddenContainer()) {
+            if (!current.isLegacyRenderSVGHiddenContainer()) {
                 context.setContentfulPaintDetected();
                 return;
             }
@@ -357,19 +357,37 @@ const AffineTransform& LegacyRenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGRoot::localClippedOverflowRect(RepaintRectCalculation repaintRectCalculation) const
 {
-    if (isInsideEntirelyHiddenLayer())
-        return { };
-
-    FloatRect contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates());
+    auto contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates(repaintRectCalculation));
     contentRepaintRect.intersect(snappedIntRect(borderBoxRect()));
 
     LayoutRect repaintRect = enclosingLayoutRect(contentRepaintRect);
     if (m_hasBoxDecorations || hasRenderOverflow())
         repaintRect.unite(unionRect(localSelectionRect(false), visualOverflowRect()));
 
-    return RenderReplaced::computeRect(enclosingIntRect(repaintRect), repaintContainer, context);
+    return enclosingIntRect(repaintRect);
+}
+
+LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+{
+    if (isInsideEntirelyHiddenLayer())
+        return { };
+
+    auto rects = RepaintRects { localClippedOverflowRect(context.repaintRectCalculation()) };
+    return RenderReplaced::computeRects(rects, repaintContainer, context).clippedOverflowRect;
+}
+
+auto LegacyRenderSVGRoot::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
+{
+    if (isInsideEntirelyHiddenLayer())
+        return { };
+
+    auto rects = RepaintRects { localClippedOverflowRect(RepaintRectCalculation::Fast) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = localOutlineBoundsRepaintRect();
+
+    return RenderReplaced::computeRects(rects, repaintContainer, visibleRectContextForRepaint());
 }
 
 std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
@@ -394,9 +412,12 @@ std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer
         adjustedRect.unite(decoratedRepaintRect);
     }
 
-    if (std::optional<LayoutRect> rectInContainer = RenderReplaced::computeVisibleRectInContainer(enclosingIntRect(adjustedRect), container, context))
-        return FloatRect(*rectInContainer);
-    return std::nullopt;
+    auto rects = RepaintRects { LayoutRect(enclosingIntRect(adjustedRect)) };
+    auto rectsInContainer = RenderReplaced::computeVisibleRectsInContainer(rects, container, context);
+    if (!rectsInContainer)
+        return std::nullopt;
+
+    return FloatRect(rectsInContainer->clippedOverflowRect);
 }
 
 // This method expects local CSS box coordinates.
@@ -414,9 +435,45 @@ const RenderObject* LegacyRenderSVGRoot::pushMappingToContainer(const RenderLaye
 
 void LegacyRenderSVGRoot::updateCachedBoundaries()
 {
-    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, m_strokeBoundingBox, m_repaintBoundingBox);
-    SVGRenderSupport::intersectRepaintRectWithResources(*this, m_repaintBoundingBox);
-    m_repaintBoundingBox.inflate(horizontalBorderAndPaddingExtent());
+    m_strokeBoundingBox = std::nullopt;
+    m_repaintBoundingBox = { };
+    m_accurateRepaintBoundingBox = std::nullopt;
+    FloatRect repaintBoundingBox;
+    SVGRenderSupport::computeContainerBoundingBoxes(*this, m_objectBoundingBox, m_objectBoundingBoxValid, repaintBoundingBox);
+    SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox);
+    repaintBoundingBox.inflate(horizontalBorderAndPaddingExtent());
+    m_repaintBoundingBox = repaintBoundingBox;
+}
+
+FloatRect LegacyRenderSVGRoot::strokeBoundingBox() const
+{
+    // FIXME: Once we enable approximate repainting bounding box computation, m_strokeBoundingBox becomes std::nullopt in updateCachedBoundaries and gets lazily computed.
+    // https://bugs.webkit.org/show_bug.cgi?id=262409
+    if (!m_strokeBoundingBox) {
+        // Initialize m_strokeBoundingBox before calling computeContainerStrokeBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_strokeBoundingBox = FloatRect { };
+        m_strokeBoundingBox = SVGRenderSupport::computeContainerStrokeBoundingBox(*this);
+    }
+    return *m_strokeBoundingBox;
+}
+
+FloatRect LegacyRenderSVGRoot::repaintRectInLocalCoordinates(RepaintRectCalculation repaintRectCalculation) const
+{
+    if (repaintRectCalculation == RepaintRectCalculation::Fast)
+        return m_repaintBoundingBox;
+
+    if (!m_accurateRepaintBoundingBox) {
+        // Initialize m_accurateRepaintBoundingBox before calling computeContainerBoundingBoxes, since recursively referenced markers can cause us to re-enter here.
+        m_accurateRepaintBoundingBox = FloatRect { };
+        FloatRect objectBoundingBox;
+        FloatRect repaintBoundingBox;
+        bool objectBoundingBoxValid = true;
+        SVGRenderSupport::computeContainerBoundingBoxes(*this, objectBoundingBox, objectBoundingBoxValid, repaintBoundingBox, RepaintRectCalculation::Accurate);
+        SVGRenderSupport::intersectRepaintRectWithResources(*this, repaintBoundingBox, RepaintRectCalculation::Accurate);
+        repaintBoundingBox.inflate(horizontalBorderAndPaddingExtent());
+        m_accurateRepaintBoundingBox = repaintBoundingBox;
+    }
+    return *m_accurateRepaintBoundingBox;
 }
 
 bool LegacyRenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

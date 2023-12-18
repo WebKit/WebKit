@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true ] -->
+<html class="reftest-wait">
+<body>
+<attachment></attachment>
+<script>
+if (window.internals)
+    file = window.internals.createFile("../resources/test-file.pages");
+
+document.querySelector("attachment").file = file;
+</script>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+takeExpectedScreenshotWhenAttachmentsSettled();
+</script>
+</body>
+</html>

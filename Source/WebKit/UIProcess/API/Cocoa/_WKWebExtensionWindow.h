@@ -109,7 +109,10 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @abstract Called when the private browsing state of the window is needed.
  @param context The context in which the web extension is running.
  @return `YES` if the window is private, `NO` otherwise.
- @discussion Defaults to `NO` if not implemented.
+ @discussion Defaults to `NO` if not implemented. This value is cached and will not change for the duration of the window or its contained tabs.
+ @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
+ use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
+ website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
  */
 - (BOOL)isUsingPrivateBrowsingForWebExtensionContext:(_WKWebExtensionContext *)context;
 

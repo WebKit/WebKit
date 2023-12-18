@@ -223,6 +223,38 @@ TEST(ScrollViewInsetTests, RestoreInitialContentOffsetAfterCrashWithAsyncPolicyD
     EXPECT_EQ(-400, initialContentOffset.y);
 }
 
+TEST(ScrollViewInsetTests, RestoreContentOffsetAfterBackWithInsetChange)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, viewHeight)]);
+    [webView scrollView].contentInset = UIEdgeInsetsMake(100, 0, 0, 0);
+
+    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"scrollable-page" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    [webView _test_waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    [webView stringByEvaluatingJavaScript:@"scrollTo(0, 1000)"];
+    [webView waitForNextPresentationUpdate];
+
+    CGPoint contentOffsetAfterScrolling = [webView scrollView].contentOffset;
+    EXPECT_EQ(0, contentOffsetAfterScrolling.x);
+    EXPECT_EQ(1000, contentOffsetAfterScrolling.y);
+
+    RetainPtr<NSURL> secondPageURL = [[NSBundle mainBundle] URLForResource:@"composited" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:secondPageURL.get()]];
+    [webView _test_waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    constexpr float additionalViewHeight = 20;
+    [webView goBack];
+    [webView setFrame:CGRectMake(0, 0, 320, viewHeight + additionalViewHeight)];
+    [webView _test_waitForDidFinishNavigation];
+
+    CGPoint contentOffsetAfterNavigation = [webView scrollView].contentOffset;
+    EXPECT_EQ(0, contentOffsetAfterNavigation.x);
+    EXPECT_EQ(1000 - additionalViewHeight / 2, contentOffsetAfterNavigation.y);
+}
+
 TEST(ScrollViewInsetTests, ChangeInsetWithoutAutomaticAdjustmentWhileWebProcessIsUnresponsive)
 {
     constexpr CGFloat initialTopInset = 100;
@@ -316,7 +348,7 @@ TEST(ScrollViewInsetTests, ScrollabilityWithObscuredInsetsAndOverrideSizes)
 
     auto minimumLayoutSize = CGSizeMake(390, 664);
     auto maxUnobscuredLayoutSize = CGSizeMake(390, 745);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize maximumUnobscuredSizeOverride:maxUnobscuredLayoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:maxUnobscuredLayoutSize];
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><style> body { overflow: hidden; height: 2000px; } </style>"];
     [webView waitForNextPresentationUpdate];
@@ -336,7 +368,7 @@ TEST(ScrollViewInsetTests, ScrollabilityWithMaxOverrideSize)
     [webView _setObscuredInsets:insets];
 
     auto unobscuredLayoutSize = CGSizeMake(390, 797);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:unobscuredLayoutSize maximumUnobscuredSizeOverride:unobscuredLayoutSize];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:unobscuredLayoutSize minimumUnobscuredSizeOverride:unobscuredLayoutSize maximumUnobscuredSizeOverride:unobscuredLayoutSize];
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><style> body { overflow: hidden; height: 2000px; } </style>"];
     [webView waitForNextPresentationUpdate];

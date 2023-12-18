@@ -45,10 +45,12 @@ public:
 private:
     void frameDetached() final;
     void sizeDidChange(WebCore::IntSize) final;
-    void postMessageToRemote(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&) final;
+    void postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&) final;
     void changeLocation(WebCore::FrameLoadRequest&&) final;
     String renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>) final;
     void broadcastFrameRemovalToOtherProcesses() final;
+    void close() final;
+    void focus() final;
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 };

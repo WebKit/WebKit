@@ -373,6 +373,13 @@ void RemoteDevice::popErrorScope(CompletionHandler<void(std::optional<WebGPU::Er
     });
 }
 
+void RemoteDevice::resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&& callback)
+{
+    m_backing->resolveDeviceLostPromise([callback = WTFMove(callback)] (WebCore::WebGPU::DeviceLostReason reason) mutable {
+        callback(reason);
+    });
+}
+
 void RemoteDevice::setLabel(String&& label)
 {
     m_backing->setLabel(WTFMove(label));

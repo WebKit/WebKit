@@ -599,14 +599,6 @@ JSFunction::PropertyStatus JSFunction::reifyName(VM& vm, JSGlobalObject* globalO
     unsigned initialAttributes = PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
     const Identifier& propID = vm.propertyNames->name;
 
-    if (globalObject->needsSiteSpecificQuirks()) {
-        auto illegalCharMatcher = [] (UChar ch) -> bool {
-            return ch == ' ' || ch == '|';
-        };
-        if (name.find(illegalCharMatcher) != notFound)
-            name = String();
-    }
-
     if (jsExecutable()->isGetter())
         name = makeNameWithOutOfMemoryCheck(globalObject, throwScope, "Getter ", "get ", name);
     else if (jsExecutable()->isSetter())

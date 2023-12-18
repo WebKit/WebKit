@@ -661,6 +661,15 @@ void EventSendingController::cancelTouchPoint(int index)
 
 #endif
 
+void EventSendingController::smartMagnify()
+{
+#if PLATFORM(MAC)
+    auto body = adoptWK(WKMutableDictionaryCreate());
+    setValue(body, "SubMessage", "SmartMagnify");
+    postSynchronousPageMessage("EventSender", body);
+#endif
+}
+
 #if ENABLE(MAC_GESTURE_EVENTS)
 
 void EventSendingController::scaleGestureStart(double scale)

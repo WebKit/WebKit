@@ -85,22 +85,22 @@ ExceptionOr<void> IDBIndex::setName(const String& name)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted)
-        return Exception { InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index has been deleted."_s };
 
     if (m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index's object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index's object store has been deleted."_s };
 
     if (!m_objectStore.transaction().isVersionChange())
-        return Exception { InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index's transaction is not a version change transaction."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed set property 'name' on 'IDBIndex': The index's transaction is not a version change transaction."_s };
 
     if (!m_objectStore.transaction().isActive())
-        return Exception { TransactionInactiveError, "Failed set property 'name' on 'IDBIndex': The index's transaction is not active."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed set property 'name' on 'IDBIndex': The index's transaction is not active."_s };
 
     if (m_info.name() == name)
         return { };
 
     if (m_objectStore.info().hasIndex(name))
-        return Exception { ConstraintError, makeString("Failed set property 'name' on 'IDBIndex': The owning object store already has an index named '", name, "'.") };
+        return Exception { ExceptionCode::ConstraintError, makeString("Failed set property 'name' on 'IDBIndex': The owning object store already has an index named '", name, "'.") };
 
     m_objectStore.transaction().database().renameIndex(*this, name);
     m_info.rename(name);
@@ -156,10 +156,10 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(IDBCursorDirection direction
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'openCursor' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openCursor' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     if (!m_objectStore.transaction().isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'openCursor' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'openCursor' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -187,7 +187,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(JSGlobalObject& execState, JSV
     return doOpenCursor(direction, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
-            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'openCursor' on 'IDBIndex': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openCursor' on 'IDBIndex': The parameter is not a valid key."_s) };
 
         return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
     });
@@ -199,10 +199,10 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(IDBCursorDirection direct
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     if (!m_objectStore.transaction().isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -225,7 +225,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::openKeyCursor(JSGlobalObject& execState, 
     return doOpenKeyCursor(direction, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
-            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The parameter is not a valid key."_s) };
 
         return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
     });
@@ -253,14 +253,14 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doCount(const IDBKeyRangeData& range)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'count' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'count' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'count' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'count' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     if (!range.isValid())
-        return Exception { DataError, "Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key."_s };
+        return Exception { ExceptionCode::DataError, "Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key."_s };
 
     return transaction.requestCount(*this, range);
 }
@@ -278,7 +278,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::get(JSGlobalObject& execState, JSValue ke
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
-        return doGet(Exception(DataError, "Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key."_s));
+        return doGet(Exception(ExceptionCode::DataError, "Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key."_s));
 
     return doGet(IDBKeyRangeData(idbKey.ptr()));
 }
@@ -288,18 +288,18 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGet(ExceptionOr<IDBKeyRangeData> range)
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'get' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'get' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'get' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'get' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     if (range.hasException())
         return range.releaseException();
     auto keyRange = range.releaseReturnValue();
 
     if (keyRange.isNull())
-        return Exception { DataError };
+        return Exception { ExceptionCode::DataError };
 
     return transaction.requestGetValue(*this, keyRange);
 }
@@ -317,7 +317,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getKey(JSGlobalObject& execState, JSValue
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
-        return doGetKey(Exception(DataError, "Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key."_s));
+        return doGetKey(Exception(ExceptionCode::DataError, "Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key."_s));
 
     return doGetKey(IDBKeyRangeData(idbKey.ptr()));
 }
@@ -327,18 +327,18 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetKey(ExceptionOr<IDBKeyRangeData> ran
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'getKey' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getKey' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'getKey' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getKey' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     if (range.hasException())
         return range.releaseException();
     auto keyRange = range.releaseReturnValue();
     
     if (keyRange.isNull())
-        return Exception { DataError };
+        return Exception { ExceptionCode::DataError };
 
     return transaction.requestGetKey(*this, keyRange);
 }
@@ -349,10 +349,10 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAll(std::optional<uint32_t> count, F
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'getAll' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getAll' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     if (!m_objectStore.transaction().isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'getAll' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getAll' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -374,7 +374,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getAll(JSGlobalObject& execState, JSValue
     return doGetAll(count, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
-            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'getAll' on 'IDBIndex': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'getAll' on 'IDBIndex': The parameter is not a valid key."_s) };
 
         return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
     });
@@ -386,10 +386,10 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllKeys(std::optional<uint32_t> coun
     ASSERT(canCurrentThreadAccessThreadLocalData(m_objectStore.transaction().database().originThread()));
 
     if (m_deleted || m_objectStore.isDeleted())
-        return Exception { InvalidStateError, "Failed to execute 'getAllKeys' on 'IDBIndex': The index or its object store has been deleted."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to execute 'getAllKeys' on 'IDBIndex': The index or its object store has been deleted."_s };
 
     if (!m_objectStore.transaction().isActive())
-        return Exception { TransactionInactiveError, "Failed to execute 'getAllKeys' on 'IDBIndex': The transaction is inactive or finished."_s };
+        return Exception { ExceptionCode::TransactionInactiveError, "Failed to execute 'getAllKeys' on 'IDBIndex': The transaction is inactive or finished."_s };
 
     auto keyRange = function();
     if (keyRange.hasException())
@@ -411,7 +411,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getAllKeys(JSGlobalObject& execState, JSV
     return doGetAllKeys(count, [state = &execState, key]() {
         auto onlyResult = IDBKeyRange::only(*state, key);
         if (onlyResult.hasException())
-            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'getAllKeys' on 'IDBIndex': The parameter is not a valid key."_s) };
+            return ExceptionOr<RefPtr<IDBKeyRange>> { Exception(ExceptionCode::DataError, "Failed to execute 'getAllKeys' on 'IDBIndex': The parameter is not a valid key."_s) };
 
         return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
     });

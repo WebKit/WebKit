@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "SWServer.h"
 #include "ServiceWorkerJobData.h"
 #include "Timer.h"
@@ -88,5 +86,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

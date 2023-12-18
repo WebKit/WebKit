@@ -37,7 +37,7 @@ class GitHub(bmocks.GitHub):
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
         default_branch='main', git_svn=False, environment=None,
         releases=None, issues=None, projects=None, labels=None,
-        private=False,
+        private=False, statuses=None,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -71,6 +71,7 @@ class GitHub(bmocks.GitHub):
         self.tags = {}
         self.pull_requests = []
         self.releases = releases or dict()
+        self.statuses = statuses or {}
 
     def resolve_all_commits(self, branch):
         all_commits = self.commits[branch][:]
@@ -93,6 +94,8 @@ class GitHub(bmocks.GitHub):
             return self.commits[ref][-1]
         if ref in self.tags:
             return self.tags[ref]
+        if ref == 'HEAD':
+            return self.commits[self.default_branch][-1]
 
         for branch, commits in self.commits.items():
             for commit in commits:
@@ -197,6 +200,21 @@ class GitHub(bmocks.GitHub):
     def _commit_response(self, url, ref):
         from datetime import datetime, timedelta
 
+        path = None
+        split = ref.split('/', 1)
+        if len(split) > 1:
+            ref, path = split
+
+        if path == 'statuses':
+            return mocks.Response.fromJson([dict(
+                context=status['name'],
+                target_url=status.get('url'),
+                state=status.get('status') or 'pending',
+                description=status.get('description'),
+            ) for status in self.statuses.get(ref[:Commit.HASH_LABEL_SIZE], [])], url=url)
+        elif path:
+            return mocks.Response.create404(url)
+
         commit = self.commit(ref)
         if not commit:
             return mocks.Response.fromJson(
@@ -204,6 +222,7 @@ class GitHub(bmocks.GitHub):
                 url=url,
                 status_code=404,
             )
+
         return mocks.Response.fromJson({
             'sha': commit.hash,
             'commit': {
@@ -224,6 +243,22 @@ class GitHub(bmocks.GitHub):
             # FIXME: All mock commits have the same set of files changed with this implementation
             'files': [dict(filename=name) for name in ('Source/main.cpp', 'Source/main.h')],
         }, url=url)
+
+    def _diff_response(self, url, ref):
+        commit = self.commit(ref)
+        if not commit:
+            return mocks.Response.fromJson(
+                dict(message='No commit found for SHA: {}'.format(ref)),
+                url=url,
+                status_code=404,
+            )
+        return mocks.Response.fromText(
+            'diff --git a/ChangeLog b/ChangeLog\n'
+            '--- a/ChangeLog\n'
+            '+++ b/ChangeLog\n'
+            '@@ -1,0 +1,0 @@\n{}'.format('\n'.join(['+{}'.format(line) for line in commit.message.splitlines()])),
+            url=url,
+        )
 
     def _compare_response(self, url, ref_a, ref_b):
         commit_a = self.commit(ref_a)
@@ -357,7 +392,7 @@ class GitHub(bmocks.GitHub):
 
         return mocks.Response.create404(url)
 
-    def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
+    def request(self, method, url, data=None, params=None, auth=None, json=None, headers=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
 
@@ -378,7 +413,9 @@ class GitHub(bmocks.GitHub):
 
         # Extract single commit
         if stripped_url.startswith('{}/commits/'.format(self.api_remote)):
-            return self._commit_response(url=url, ref=stripped_url.split('/')[-1])
+            if (headers or {}).get('Accept') == 'application/vnd.github.diff':
+                return self._diff_response(url=url, ref=stripped_url.split('/', 5)[-1])
+            return self._commit_response(url=url, ref=stripped_url.split('/', 5)[-1])
 
         # Compare two commits
         if stripped_url.startswith('{}/compare/'.format(self.api_remote)):

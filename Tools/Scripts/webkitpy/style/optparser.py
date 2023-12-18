@@ -198,42 +198,6 @@ class CommandOptionValues(object):
         return not self.__eq__(other)
 
 
-class ArgumentPrinter(object):
-
-    """Supports the printing of check-webkit-style command arguments."""
-
-    def _flag_pair_to_string(self, flag_key, flag_value):
-        return '--%(key)s=%(val)s' % {'key': flag_key, 'val': flag_value}
-
-    def to_flag_string(self, options):
-        """Return a flag string of the given CommandOptionValues instance.
-
-        This method orders the flag values alphabetically by the flag key.
-
-        Args:
-          options: A CommandOptionValues instance.
-
-        """
-        flags = {}
-        flags['min-confidence'] = options.min_confidence
-        flags['output'] = options.output_format
-        # Only include the filter flag if user-provided rules are present.
-        filter_rules = options.filter_rules
-        if filter_rules:
-            flags['filter'] = ",".join(filter_rules)
-        if options.git_commit:
-            flags['git-commit'] = options.git_commit
-        if options.diff_files:
-            flags['diff_files'] = options.diff_files
-
-        flag_string = ''
-        # Alphabetizing lets us unit test this method.
-        for key in sorted(flags.keys()):
-            flag_string += self._flag_pair_to_string(key, flags[key]) + ' '
-
-        return flag_string.strip()
-
-
 class ArgumentParser(object):
 
     # FIXME: Move the documentation of the attributes to the __init__

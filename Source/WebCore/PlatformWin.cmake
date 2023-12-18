@@ -115,7 +115,6 @@ list(APPEND WebCore_SOURCES
     platform/win/WebCoreInstanceHandle.cpp
     platform/win/WebCoreTextRenderer.cpp
     platform/win/WheelEventWin.cpp
-    platform/win/WidgetWin.cpp
     platform/win/WindowMessageBroadcaster.cpp
     platform/win/WindowsKeyNames.cpp
 )
@@ -180,6 +179,7 @@ if (ENABLE_VIDEO AND USE_MEDIA_FOUNDATION)
     target_link_libraries(MediaFoundation INTERFACE
         d3d9
         delayimp
+        dwrite
         dxva2
         evr
         mf

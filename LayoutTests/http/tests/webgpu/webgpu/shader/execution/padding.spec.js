@@ -423,3 +423,75 @@ g.test('vec3')
     `;
     runShaderTest(t, wgsl, new Uint32Array([0x12345678, 0xabcdef01, 0x98765432, 0xdeadbeef]));
   });
+
+g.test('matCx3')
+  .desc(
+    `Test padding bytes are preserved when assigning to a variable of type matCx3.
+    `
+  )
+  .params(u => u.combine('columns', [2, 3, 4]).combine('use_struct', [true, false]).beginSubcases())
+  .fn(t => {
+    const cols = t.params.columns;
+    const wgsl = `
+      alias Mat = mat${cols}x3<f32>;
+      ${t.params.use_struct ? `struct S { m : Mat } alias Type = S;` : `alias Type = Mat;`}
+      @group(0) @binding(0) var<storage, read_write> buffer : Type;
+
+      @compute @workgroup_size(1)
+      fn main() {
+        var m : Mat;
+        for (var c = 0u; c < ${cols}; c++) {
+          m[c] = vec3(f32(c*3 + 1), f32(c*3 + 2), f32(c*3 + 3));
+        }
+        buffer = Type(m);
+      }
+    `;
+    const f_values = new Float32Array(cols * 4);
+    const u_values = new Uint32Array(f_values.buffer);
+    for (let c = 0; c < cols; c++) {
+      f_values[c * 4 + 0] = c * 3 + 1;
+      f_values[c * 4 + 1] = c * 3 + 2;
+      f_values[c * 4 + 2] = c * 3 + 3;
+      u_values[c * 4 + 3] = 0xdeadbeef;
+    }
+    runShaderTest(t, wgsl, u_values);
+  });
+
+g.test('array_of_matCx3')
+  .desc(
+    `Test that padding bytes in between array elements are preserved.
+
+     This test defines creates a read-write storage buffer with type array<matCx3<f32>, 4>. The
+     shader assigns the whole variable at once, and we then test that data in the padding bytes was
+     preserved.
+    `
+  )
+  .params(u => u.combine('columns', [2, 3, 4]).combine('use_struct', [true, false]).beginSubcases())
+  .fn(t => {
+    const cols = t.params.columns;
+    const wgsl = `
+    alias Mat = mat${cols}x3<f32>;
+    ${t.params.use_struct ? `struct S { m : Mat } alias Type = S;` : `alias Type = Mat;`}
+    @group(0) @binding(0) var<storage, read_write> buffer : array<Type, 4>;
+
+    @compute @workgroup_size(1)
+    fn main() {
+      var m : Mat;
+      for (var c = 0u; c < ${cols}; c++) {
+        m[c] = vec3(f32(c*3 + 1), f32(c*3 + 2), f32(c*3 + 3));
+      }
+      buffer = array<Type, 4>(Type(m), Type(m * 2), Type(m * 3), Type(m * 4));
+    }
+  `;
+    const f_values = new Float32Array(cols * 4 * 4);
+    const u_values = new Uint32Array(f_values.buffer);
+    for (let i = 0; i < 4; i++) {
+      for (let c = 0; c < cols; c++) {
+        f_values[i * (cols * 4) + c * 4 + 0] = (c * 3 + 1) * (i + 1);
+        f_values[i * (cols * 4) + c * 4 + 1] = (c * 3 + 2) * (i + 1);
+        f_values[i * (cols * 4) + c * 4 + 2] = (c * 3 + 3) * (i + 1);
+        u_values[i * (cols * 4) + c * 4 + 3] = 0xdeadbeef;
+      }
+    }
+    runShaderTest(t, wgsl, u_values);
+  });

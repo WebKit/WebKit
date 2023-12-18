@@ -290,12 +290,9 @@ void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector
 
     ensureCache();
     String path = makeString("/org/a11y/webkit/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
-    Vector<unsigned, 3> registeredObjects;
-    registeredObjects.reserveInitialCapacity(interfaces.size());
-    for (const auto& interface : interfaces) {
-        auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, nullptr);
-        registeredObjects.uncheckedAppend(id);
-    }
+    auto registeredObjects = WTF::map<3>(interfaces, [&](auto& interface) -> unsigned {
+        return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, nullptr);
+    });
     m_rootObjects.add(&rootObject, WTFMove(registeredObjects));
     String reference = makeString(uniqueName(), ':', path);
     rootObject.setPath(WTFMove(path));
@@ -334,12 +331,9 @@ String AccessibilityAtspi::registerObject(AccessibilityObjectAtspi& atspiObject,
 
     ensureCache();
     String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
-    Vector<unsigned, 7> registeredObjects;
-    registeredObjects.reserveInitialCapacity(interfaces.size());
-    for (const auto& interface : interfaces) {
-        auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
-        registeredObjects.uncheckedAppend(id);
-    }
+    auto registeredObjects = WTF::map<7>(interfaces, [&](auto& interface) -> unsigned {
+        return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
+    });
     m_atspiObjects.add(&atspiObject, WTFMove(registeredObjects));
 
     m_cacheUpdateList.add(&atspiObject);
@@ -384,12 +378,9 @@ String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObje
         return { };
 
     String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
-    Vector<unsigned, 1> registeredObjects;
-    registeredObjects.reserveInitialCapacity(interfaces.size());
-    for (const auto& interface : interfaces) {
-        auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
-        registeredObjects.uncheckedAppend(id);
-    }
+    auto registeredObjects = WTF::map<1>(interfaces, [&](auto& interface) -> unsigned {
+        return g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
+    });
     m_atspiHyperlinks.add(&atspiObject, WTFMove(registeredObjects));
 
     return path;
@@ -594,12 +585,11 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::ApplicationTimer, { "timer", N_("timer") } },
     { AccessibilityRole::Audio, { "audio", N_("audio") } },
     { AccessibilityRole::Blockquote, { "block quote", N_("block quote") } },
-    { AccessibilityRole::BusyIndicator, { "progress bar", N_("progress bar") } },
     { AccessibilityRole::Button, { "push button", N_("push button") } },
     { AccessibilityRole::Canvas, { "canvas", N_("canvas") } },
     { AccessibilityRole::Caption, { "caption", N_("caption") } },
     { AccessibilityRole::Cell, { "table cell", N_("table cell") } },
-    { AccessibilityRole::CheckBox, { "check box", N_("check box") } },
+    { AccessibilityRole::Checkbox, { "check box", N_("check box") } },
     { AccessibilityRole::ColorWell, { "push button", N_("push button") } },
     { AccessibilityRole::ColumnHeader, { "column header", N_("column header") } },
     { AccessibilityRole::ComboBox, { "combo box", N_("combo box") } },
@@ -659,7 +649,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::MenuListPopup, { "menu", N_("menu") } },
     { AccessibilityRole::MenuListOption, { "menu item", N_("menu item") } },
     { AccessibilityRole::Meter, { "level bar", N_("level bar") } },
-    { AccessibilityRole::Outline, { "tree", N_("tree") } },
     { AccessibilityRole::Paragraph, { "paragraph", N_("paragraph") } },
     { AccessibilityRole::PopUpButton, { "combo box", N_("combo box") } },
     { AccessibilityRole::Pre, { "section", N_("section") } },
@@ -673,7 +662,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::SearchField, { "entry", N_("entry") } },
     { AccessibilityRole::Slider, { "slider", N_("slider") } },
     { AccessibilityRole::SpinButton, { "spin button", N_("spin button") } },
-    { AccessibilityRole::SplitGroup, { "split pane", N_("split pane") } },
     { AccessibilityRole::Splitter, { "separator", N_("separator") } },
     { AccessibilityRole::StaticText, { "text", N_("text") } },
     { AccessibilityRole::Subscript, { "subscript", N_("subscript") } },
@@ -703,7 +691,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::Video, { "video", N_("video") } },
     { AccessibilityRole::WebArea, { "document web", N_("document web") } },
     { AccessibilityRole::WebCoreLink, { "link", N_("link") } },
-    { AccessibilityRole::Window, { "window", N_("window") } }
 };
 
 const char* AccessibilityAtspi::localizedRoleName(AccessibilityRole role)

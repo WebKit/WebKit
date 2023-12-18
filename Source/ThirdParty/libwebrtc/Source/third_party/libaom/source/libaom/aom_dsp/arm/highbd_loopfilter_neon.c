@@ -247,12 +247,12 @@ void aom_highbd_lpf_horizontal_4_neon(uint16_t *s, int pitch,
   filter4_masks(p0q0, p1q1, hev_thresh, outer_mask, inner_thresh, &hev_mask,
                 &needs_filter4_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter4_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // Copy the masks to the high bits for packed comparisons later.
   const uint16x8_t hev_mask_8 = vcombine_u16(hev_mask, hev_mask);
@@ -298,7 +298,7 @@ void aom_highbd_lpf_vertical_4_neon(uint16_t *s, int pitch,
 
   uint16x4_t src[4] = { vld1_u16(dst_p1), vld1_u16(dst_p0), vld1_u16(dst_q0),
                         vld1_u16(dst_q1) };
-  transpose_u16_4x4(src);
+  transpose_array_inplace_u16_4x4(src);
 
   // Adjust thresholds to bitdepth.
   const int outer_thresh = *blimit << (bd - 8);
@@ -313,12 +313,12 @@ void aom_highbd_lpf_vertical_4_neon(uint16_t *s, int pitch,
   filter4_masks(p0q0, p1q1, hev_thresh, outer_mask, inner_thresh, &hev_mask,
                 &needs_filter4_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter4_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // Copy the masks to the high bits for packed comparisons later.
   const uint16x8_t hev_mask_8 = vcombine_u16(hev_mask, hev_mask);
@@ -344,7 +344,7 @@ void aom_highbd_lpf_vertical_4_neon(uint16_t *s, int pitch,
     vget_high_u16(p0q0_output),
     vget_high_u16(p1q1_output),
   };
-  transpose_u16_4x4(output);
+  transpose_array_inplace_u16_4x4(output);
 
   vst1_u16(dst_p1, output[0]);
   vst1_u16(dst_p0, output[1]);
@@ -386,7 +386,7 @@ static INLINE void filter6(const uint16x8_t p2q2, const uint16x8_t p1q1,
   // p1q1 = p2q2 + 2 * (p2q2 + p1q1 + p0q0) + q0p0
   //        ^^^^^^                          ^^^^^^
   // Should dual issue with the left shift.
-  const uint16x8_t q0p0 = transpose64_u16q(p0q0);
+  const uint16x8_t q0p0 = vextq_u16(p0q0, p0q0, 4);
   const uint16x8_t outer_sum = vaddq_u16(p2q2, q0p0);
   sum = vaddq_u16(sum, outer_sum);
 
@@ -401,7 +401,7 @@ static INLINE void filter6(const uint16x8_t p2q2, const uint16x8_t p1q1,
   // p0q0 = p1q1 - (2 * p2q2) + q0p0 + q1p1
   //        ^^^^^^^^
   sum = vsubq_u16(sum, p2q2_double);
-  const uint16x8_t q1p1 = transpose64_u16q(p1q1);
+  const uint16x8_t q1p1 = vextq_u16(p1q1, p1q1, 4);
   sum = vaddq_u16(sum, vaddq_u16(q0p0, q1p1));
 
   *p0q0_output = vrshrq_n_u16(sum, 3);
@@ -437,12 +437,12 @@ void aom_highbd_lpf_horizontal_6_neon(uint16_t *s, int pitch,
   filter6_masks(p2q2, p1q1, p0q0, hev_thresh, outer_mask, inner_thresh, bd,
                 &needs_filter_mask, &is_flat3_mask, &hev_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // Copy the masks to the high bits for packed comparisons later.
   const uint16x8_t hev_mask_8 = vcombine_u16(hev_mask, hev_mask);
@@ -505,7 +505,7 @@ void aom_highbd_lpf_vertical_6_neon(uint16_t *s, int pitch,
   // and src_raw[3] after transpose.
   uint16x8_t src_raw[4] = { vld1q_u16(dst_0), vld1q_u16(dst_1),
                             vld1q_u16(dst_2), vld1q_u16(dst_3) };
-  transpose_u16_4x8q(src_raw);
+  transpose_array_inplace_u16_4x8(src_raw);
   // p2, p1, p0, q0, q1, q2
   const uint16x4_t src[6] = {
     vget_low_u16(src_raw[0]),  vget_low_u16(src_raw[1]),
@@ -528,12 +528,12 @@ void aom_highbd_lpf_vertical_6_neon(uint16_t *s, int pitch,
   filter6_masks(p2q2, p1q1, p0q0, hev_thresh, outer_mask, inner_thresh, bd,
                 &needs_filter_mask, &is_flat3_mask, &hev_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // Copy the masks to the high bits for packed comparisons later.
   const uint16x8_t hev_mask_8 = vcombine_u16(hev_mask, hev_mask);
@@ -574,7 +574,7 @@ void aom_highbd_lpf_vertical_6_neon(uint16_t *s, int pitch,
     vget_high_u16(p0q0_output),
     vget_high_u16(p1q1_output),
   };
-  transpose_u16_4x4(output);
+  transpose_array_inplace_u16_4x4(output);
 
   // dst_n starts at p2, so adjust to p1.
   vst1_u16(dst_0 + 1, output[0]);
@@ -626,7 +626,7 @@ static INLINE void filter8(const uint16x8_t p3q3, const uint16x8_t p2q2,
 
   // p2q2 = p3q3 + 2 * (p3q3 + p2q2) + p1q1 + p0q0 + q0p0
   //                                               ^^^^^^
-  const uint16x8_t q0p0 = transpose64_u16q(p0q0);
+  const uint16x8_t q0p0 = vextq_u16(p0q0, p0q0, 4);
   sum = vaddq_u16(sum, q0p0);
 
   *p2q2_output = vrshrq_n_u16(sum, 3);
@@ -635,7 +635,7 @@ static INLINE void filter8(const uint16x8_t p3q3, const uint16x8_t p2q2,
   // p1 = p2 - p3 - p2 + p1 + q1
   // q1 = q2 - q3 - q2 + q0 + p1
   sum = vsubq_u16(sum, p23q23);
-  const uint16x8_t q1p1 = transpose64_u16q(p1q1);
+  const uint16x8_t q1p1 = vextq_u16(p1q1, p1q1, 4);
   sum = vaddq_u16(sum, vaddq_u16(p1q1, q1p1));
 
   *p1q1_output = vrshrq_n_u16(sum, 3);
@@ -644,7 +644,7 @@ static INLINE void filter8(const uint16x8_t p3q3, const uint16x8_t p2q2,
   // p0 = p1 - p3 - p1 + p0 + q2
   // q0 = q1 - q3 - q1 + q0 + p2
   sum = vsubq_u16(sum, vaddq_u16(p3q3, p1q1));
-  const uint16x8_t q2p2 = transpose64_u16q(p2q2);
+  const uint16x8_t q2p2 = vextq_u16(p2q2, p2q2, 4);
   sum = vaddq_u16(sum, vaddq_u16(p0q0, q2p2));
 
   *p0q0_output = vrshrq_n_u16(sum, 3);
@@ -684,12 +684,12 @@ void aom_highbd_lpf_horizontal_8_neon(uint16_t *s, int pitch,
   filter8_masks(p3q3, p2q2, p1q1, p0q0, hev_thresh, outer_mask, inner_thresh,
                 bd, &needs_filter_mask, &is_flat4_mask, &hev_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // Copy the masks to the high bits for packed comparisons later.
   const uint16x8_t hev_mask_8 = vcombine_u16(hev_mask, hev_mask);
@@ -783,12 +783,12 @@ void aom_highbd_lpf_vertical_8_neon(uint16_t *s, int pitch,
   filter8_masks(p3q3, p2q2, p1q1, p0q0, hev_thresh, outer_mask, inner_thresh,
                 bd, &needs_filter_mask, &is_flat4_mask, &hev_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
   // Copy the masks to the high bits for packed comparisons later.
   const uint16x8_t hev_mask_8 = vcombine_u16(hev_mask, hev_mask);
@@ -827,7 +827,7 @@ void aom_highbd_lpf_vertical_8_neon(uint16_t *s, int pitch,
   uint16x8_t output[4] = { p0q0_output, p1q1_output, p2q2_output, p3q3 };
   // After transpose, |output| will contain rows of the form:
   // p0 p1 p2 p3 q0 q1 q2 q3
-  transpose_u16_4x8q(output);
+  transpose_array_inplace_u16_4x8(output);
 
   // Reverse p values to produce original order:
   // p3 p2 p1 p0 q0 q1 q2 q3
@@ -883,7 +883,7 @@ static INLINE void filter14(
   //                                                           ^^
   // q5 = p0 + q0 + q1 + q2 + q3 + (2 * q4) + (2 * q5) + (7 * q6)
   //      ^^
-  const uint16x8_t q0p0 = transpose64_u16q(p0q0);
+  const uint16x8_t q0p0 = vextq_u16(p0q0, p0q0, 4);
   sum = vaddq_u16(sum, q0p0);
 
   *p5q5_output = vrshrq_n_u16(sum, 4);
@@ -892,7 +892,7 @@ static INLINE void filter14(
   // p4 = p5 - (2 * p6) + p3 + q1
   // q4 = q5 - (2 * q6) + q3 + p1
   sum = vsubq_u16(sum, vshlq_n_u16(p6q6, 1));
-  const uint16x8_t q1p1 = transpose64_u16q(p1q1);
+  const uint16x8_t q1p1 = vextq_u16(p1q1, p1q1, 4);
   sum = vaddq_u16(vaddq_u16(p3q3, q1p1), sum);
 
   *p4q4_output = vrshrq_n_u16(sum, 4);
@@ -901,7 +901,7 @@ static INLINE void filter14(
   // p3 = p4 - p6 - p5 + p2 + q2
   // q3 = q4 - q6 - q5 + q2 + p2
   sum = vsubq_u16(sum, vaddq_u16(p6q6, p5q5));
-  const uint16x8_t q2p2 = transpose64_u16q(p2q2);
+  const uint16x8_t q2p2 = vextq_u16(p2q2, p2q2, 4);
   sum = vaddq_u16(vaddq_u16(p2q2, q2p2), sum);
 
   *p3q3_output = vrshrq_n_u16(sum, 4);
@@ -910,7 +910,7 @@ static INLINE void filter14(
   // p2 = p3 - p6 - p4 + p1 + q3
   // q2 = q3 - q6 - q4 + q1 + p3
   sum = vsubq_u16(sum, vaddq_u16(p6q6, p4q4));
-  const uint16x8_t q3p3 = transpose64_u16q(p3q3);
+  const uint16x8_t q3p3 = vextq_u16(p3q3, p3q3, 4);
   sum = vaddq_u16(vaddq_u16(p1q1, q3p3), sum);
 
   *p2q2_output = vrshrq_n_u16(sum, 4);
@@ -919,7 +919,7 @@ static INLINE void filter14(
   // p1 = p2 - p6 - p3 + p0 + q4
   // q1 = q2 - q6 - q3 + q0 + p4
   sum = vsubq_u16(sum, vaddq_u16(p6q6, p3q3));
-  const uint16x8_t q4p4 = transpose64_u16q(p4q4);
+  const uint16x8_t q4p4 = vextq_u16(p4q4, p4q4, 4);
   sum = vaddq_u16(vaddq_u16(p0q0, q4p4), sum);
 
   *p1q1_output = vrshrq_n_u16(sum, 4);
@@ -928,7 +928,7 @@ static INLINE void filter14(
   // p0 = p1 - p6 - p2 + q0 + q5
   // q0 = q1 - q6 - q2 + p0 + p5
   sum = vsubq_u16(sum, vaddq_u16(p6q6, p2q2));
-  const uint16x8_t q5p5 = transpose64_u16q(p5q5);
+  const uint16x8_t q5p5 = vextq_u16(p5q5, p5q5, 4);
   sum = vaddq_u16(vaddq_u16(q0p0, q5p5), sum);
 
   *p0q0_output = vrshrq_n_u16(sum, 4);
@@ -976,12 +976,12 @@ void aom_highbd_lpf_horizontal_14_neon(uint16_t *s, int pitch,
   filter8_masks(p3q3, p2q2, p1q1, p0q0, hev_thresh, outer_mask, inner_thresh,
                 bd, &needs_filter_mask, &is_flat4_mask, &hev_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
   const uint16x8_t p4q4 = vcombine_u16(src[2], src[11]);
   const uint16x8_t p5q5 = vcombine_u16(src[1], src[12]);
   const uint16x8_t p6q6 = vcombine_u16(src[0], src[13]);
@@ -1083,7 +1083,7 @@ void aom_highbd_lpf_horizontal_14_dual_neon(
 static INLINE uint16x8x2_t permute_acdb64(const uint16x8_t ab,
                                           const uint16x8_t cd) {
   uint16x8x2_t acdb;
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   // a[b] <- [c]d
   acdb.val[0] = vreinterpretq_u16_u64(
       vtrn1q_u64(vreinterpretq_u64_u16(ab), vreinterpretq_u64_u16(cd)));
@@ -1099,7 +1099,7 @@ static INLINE uint16x8x2_t permute_acdb64(const uint16x8_t ab,
   acdb.val[1] = vreinterpretq_u16_u64(
       vsetq_lane_u64(vgetq_lane_u64(vreinterpretq_u64_u16(cd), 1),
                      vreinterpretq_u64_u16(ab), 0));
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
   return acdb;
 }
 
@@ -1118,14 +1118,14 @@ void aom_highbd_lpf_vertical_14_neon(uint16_t *s, int pitch,
   uint16x8_t src_p[4] = { vld1q_u16(dst_0), vld1q_u16(dst_1), vld1q_u16(dst_2),
                           vld1q_u16(dst_3) };
   // p7 will be the low half of src_p[0]. Not used until the end.
-  transpose_u16_4x8q(src_p);
+  transpose_array_inplace_u16_4x8(src_p);
 
   // Low halves:  q0 q1 q2 q3
   // High halves: q4 q5 q6 q7
   uint16x8_t src_q[4] = { vld1q_u16(dst_0 + 8), vld1q_u16(dst_1 + 8),
                           vld1q_u16(dst_2 + 8), vld1q_u16(dst_3 + 8) };
   // q7 will be the high half of src_q[3]. Not used until the end.
-  transpose_u16_4x8q(src_q);
+  transpose_array_inplace_u16_4x8(src_q);
 
   // Adjust thresholds to bitdepth.
   const int outer_thresh = *blimit << (bd - 8);
@@ -1144,12 +1144,12 @@ void aom_highbd_lpf_vertical_14_neon(uint16_t *s, int pitch,
   filter8_masks(p3q3, p2q2, p1q1, p0q0, hev_thresh, outer_mask, inner_thresh,
                 bd, &needs_filter_mask, &is_flat4_mask, &hev_mask);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   if (vaddv_u16(needs_filter_mask) == 0) {
     // None of the values will be filtered.
     return;
   }
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
   const uint16x8_t p4q4 =
       vcombine_u16(vget_low_u16(src_p[3]), vget_high_u16(src_q[0]));
   const uint16x8_t p5q5 =
@@ -1238,10 +1238,10 @@ void aom_highbd_lpf_vertical_14_neon(uint16_t *s, int pitch,
   const uint16x8x2_t p4p0_q0q4 = permute_acdb64(p4q4_output, p0q0_output);
   uint16x8_t output_p[4] = { p7p3_q3q7.val[0], p6p2_q2q6.val[0],
                              p5p1_q1q5.val[0], p4p0_q0q4.val[0] };
-  transpose_u16_4x8q(output_p);
+  transpose_array_inplace_u16_4x8(output_p);
   uint16x8_t output_q[4] = { p4p0_q0q4.val[1], p5p1_q1q5.val[1],
                              p6p2_q2q6.val[1], p7p3_q3q7.val[1] };
-  transpose_u16_4x8q(output_q);
+  transpose_array_inplace_u16_4x8(output_q);
 
   // Reverse p values to produce original order:
   // p3 p2 p1 p0 q0 q1 q2 q3

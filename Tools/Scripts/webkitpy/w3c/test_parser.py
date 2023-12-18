@@ -145,9 +145,6 @@ class TestParser(object):
         if test_info and self.is_slow_test():
             test_info['slow'] = True
 
-        if test_info:
-            test_info['fuzzy'] = self.fuzzy_metadata()
-
         return test_info
 
     def reference_links_of_type(self, reftest_type):

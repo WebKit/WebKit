@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled,
     Exposed=ServiceWorker,
     InterfaceName=WindowClient,

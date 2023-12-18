@@ -25,15 +25,16 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Platform.h>
 
 #if USE(SYSTEM_MALLOC) || !USE(ISO_MALLOC)
 
-#include <wtf/FastMalloc.h>
-
 #define WTF_MAKE_ISO_ALLOCATED(name) WTF_MAKE_FAST_ALLOCATED
 #define WTF_MAKE_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED(name) WTF_MAKE_FAST_COMPACT_ALLOCATED
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_COMPACT_ALLOCATED
 #define WTF_MAKE_ISO_NONALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
 
 #else
@@ -42,8 +43,14 @@
 
 #define WTF_NOEXPORT
 
-#define WTF_MAKE_ISO_ALLOCATED(name) MAKE_BISO_MALLOCED(name, WTF_NOEXPORT)
-#define WTF_MAKE_ISO_ALLOCATED_EXPORT(name, exportMacro) MAKE_BISO_MALLOCED(name, exportMacro)
+#define WTF_MAKE_ISO_ALLOCATED(name) MAKE_BISO_MALLOCED(name, IsoHeap, WTF_NOEXPORT)
+#define WTF_MAKE_ISO_ALLOCATED_EXPORT(name, exportMacro) MAKE_BISO_MALLOCED(name, IsoHeap, exportMacro)
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED(name) \
+    WTF_ALLOW_COMPACT_POINTERS; \
+    MAKE_BISO_MALLOCED(name, CompactIsoHeap, WTF_NOEXPORT)
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_EXPORT(name, exportMacro) \
+    WTF_ALLOW_COMPACT_POINTERS; \
+    MAKE_BISO_MALLOCED(name, CompactIsoHeap, exportMacro)
 #define WTF_MAKE_ISO_NONALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
 
 #endif

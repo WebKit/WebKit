@@ -30,16 +30,16 @@
 #ifndef GlyphPage_h
 #define GlyphPage_h
 
+#include "Font.h"
 #include "Glyph.h"
 #include "TextFlags.h"
 #include <unicode/utypes.h>
 #include <wtf/BitSet.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
-
-class Font;
 
 // Holds the glyph index and the corresponding Font information for a given
 // character.
@@ -51,11 +51,11 @@ struct GlyphData {
     {
     }
 
-    bool isValid() const { return glyph || font; }
+    bool isValid() const { return !!font; }
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
-    const Font* font;
+    CheckedPtr<const Font> font;
 };
 
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
@@ -78,17 +78,17 @@ public:
     static const unsigned size = 16;
 
     static unsigned sizeForPageNumber(unsigned) { return 16; }
-    static unsigned indexForCodePoint(UChar32 c) { return c % size; }
-    static unsigned pageNumberForCodePoint(UChar32 c) { return c / size; }
-    static UChar32 startingCodePointInPageNumber(unsigned pageNumber) { return pageNumber * size; }
+    static unsigned indexForCodePoint(char32_t c) { return c % size; }
+    static unsigned pageNumberForCodePoint(char32_t c) { return c / size; }
+    static char32_t startingCodePointInPageNumber(unsigned pageNumber) { return pageNumber * size; }
     static bool pageNumberIsUsedForArabic(unsigned pageNumber) { return startingCodePointInPageNumber(pageNumber) >= 0x600 && startingCodePointInPageNumber(pageNumber) + sizeForPageNumber(pageNumber) < 0x700; }
 
-    GlyphData glyphDataForCharacter(UChar32 c) const
+    GlyphData glyphDataForCharacter(char32_t c) const
     {
         return glyphDataForIndex(indexForCodePoint(c));
     }
 
-    Glyph glyphForCharacter(UChar32 c) const
+    Glyph glyphForCharacter(char32_t c) const
     {
         return glyphForIndex(indexForCodePoint(c));
     }
@@ -97,7 +97,7 @@ public:
     {
         Glyph glyph = glyphForIndex(index);
         auto colorGlyphType = colorGlyphTypeForIndex(index);
-        return GlyphData(glyph, glyph ? &m_font : nullptr, colorGlyphType);
+        return GlyphData(glyph, glyph ? m_font.get() : nullptr, colorGlyphType);
     }
 
     Glyph glyphForIndex(unsigned index) const
@@ -122,7 +122,7 @@ public:
 
     const Font& font() const
     {
-        return m_font;
+        return *m_font;
     }
 
     // Implemented by the platform.
@@ -135,7 +135,7 @@ private:
         ++s_count;
     }
 
-    const Font& m_font;
+    WeakPtr<const Font> m_font;
     Glyph m_glyphs[size] { };
     WTF::BitSet<size> m_isColor;
 

@@ -57,12 +57,12 @@ private:
 
         void fileSystemGetDirectory(ClientOrigin&&, StorageConnection::GetDirectoryCallback&& completionHandler) final
         {
-            completionHandler(Exception { NotSupportedError });
+            completionHandler(Exception { ExceptionCode::NotSupportedError });
         }
 
         void getEstimate(ClientOrigin&&, GetEstimateCallback&& completionHandler) final
         {
-            completionHandler(Exception { NotSupportedError });
+            completionHandler(Exception { ExceptionCode::NotSupportedError });
         }
     };
 

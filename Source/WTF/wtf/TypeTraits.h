@@ -31,6 +31,7 @@
 #pragma once
 
 #include <type_traits>
+#include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -107,6 +108,19 @@ static auto HasRefCountMethodsTest(long) -> std::false_type;
 template<class T>
 struct HasRefCountMethods : decltype(detail::HasRefCountMethodsTest<T>(0)) { };
 
+// HasIsolatedCopy()
+namespace detail {
+
+template<class T>
+static auto HasIsolatedCopyTest(int) -> SFINAE1True<decltype(std::declval<T>().isolatedCopy())>;
+template<class>
+static auto HasIsolatedCopyTest(long) -> std::false_type;
+
+} // namespace detail
+
+template<class T>
+struct HasIsolatedCopy : decltype(detail::HasIsolatedCopyTest<T>(0)) { };
+
 // LooksLikeRCSerialDispatcher implementation
 namespace detail {
 
@@ -156,5 +170,12 @@ constexpr bool IsConvertibleToNativePromise = std::is_base_of<ConvertibleToNativ
 template <typename T, typename U>
 constexpr bool RelatedNativePromise = IsConvertibleToNativePromise<T> && IsConvertibleToNativePromise<U>;
 #endif
+
+
+template <typename T>
+struct IsExpected : std::false_type { };
+
+template <typename T, typename E>
+struct IsExpected<Expected<T, E>> : std::true_type { };
 
 } // namespace NTF

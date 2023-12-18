@@ -47,8 +47,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
     : InbandTextTrackPrivate(CueFormat::WebVTT)
     , TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Text, this, index, stream)
 {
-    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream.get()));
-    GST_INFO("Track %d got stream start for stream %s.", m_index, m_id.string().utf8().data());
+    GST_INFO("Track %d got stream start for stream %s.", m_index, m_stringId.string().utf8().data());
 
     GST_DEBUG("Stream %" GST_PTR_FORMAT, m_stream.get());
     auto caps = adoptGRef(gst_stream_get_caps(m_stream.get()));

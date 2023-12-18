@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # http://trac.webkit.org/projects/webkit/changeset/7800
 # rdar://problem/3829452 REGRESSION (156-157): onload handler doesn't run on page with meta refresh of 0 duration (new Apple start page)
+binmode STDOUT;
 
 # flush the buffers after each print
 select (STDOUT);

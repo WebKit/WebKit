@@ -42,9 +42,9 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
  public:
   EncodeTxbTest() : get_nz_map_contexts_func_(GetParam()) {}
 
-  virtual ~EncodeTxbTest() {}
+  ~EncodeTxbTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     coeff_contexts_ref_ = reinterpret_cast<int8_t *>(
         aom_memalign(16, sizeof(*coeff_contexts_ref_) * MAX_TX_SQUARE));
     ASSERT_NE(coeff_contexts_ref_, nullptr);
@@ -53,7 +53,7 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
     ASSERT_NE(coeff_contexts_, nullptr);
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     aom_free(coeff_contexts_ref_);
     aom_free(coeff_contexts_);
   }
@@ -211,8 +211,7 @@ typedef std::tuple<av1_txb_init_levels_func, int> TxbInitLevelParam;
 class EncodeTxbInitLevelTest
     : public ::testing::TestWithParam<TxbInitLevelParam> {
  public:
-  virtual ~EncodeTxbInitLevelTest() {}
-  virtual void TearDown() {}
+  ~EncodeTxbInitLevelTest() override = default;
   void RunTest(av1_txb_init_levels_func test_func, int tx_size, int is_speed);
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EncodeTxbInitLevelTest);

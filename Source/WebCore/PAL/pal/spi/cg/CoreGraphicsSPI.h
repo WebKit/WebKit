@@ -40,6 +40,9 @@
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
+#if ENABLE(UNIFIED_PDF)
+#include <CoreGraphics/CGPDFPageLayout.h>
+#endif // ENABLE(UNIFIED_PDF)
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CGShadingPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
@@ -50,7 +53,7 @@
 #include <CoreGraphics/CGEventPrivate.h>
 #endif
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
 
 struct CGFontHMetrics {
     int ascent;
@@ -63,6 +66,7 @@ struct CGFontHMetrics {
 
 typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
 {
+    deDrawPath = 6,
     deDrawImage = 7,
     deDrawGlyphs = 8,
     deBeginLayer = 17,
@@ -236,6 +240,22 @@ typedef struct CGRenderingState *CGRenderingStateRef;
 typedef struct CGGState *CGGStateRef;
 typedef struct CGStyle *CGStyleRef;
 
+#if ENABLE(UNIFIED_PDF)
+
+typedef CF_OPTIONS(uint32_t, CGPDFAreaOfInterest) {
+    kCGPDFAreaText   = (1 << 0),
+    kCGPDFAreaImage  = (1 << 1),
+};
+typedef struct CGPDFPageLayout *CGPDFPageLayoutRef;
+
+WTF_EXTERN_C_BEGIN
+
+CGPDFAreaOfInterest CGPDFPageLayoutGetAreaOfInterestAtPoint(CGPDFPageLayoutRef, CGPoint);
+
+WTF_EXTERN_C_END
+
+#endif // ENABLE(UNIFIED_PDF)
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(COCOA)
@@ -289,6 +309,9 @@ CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
 void CGImageSetProperty(CGImageRef, CFStringRef, CFTypeRef);
 
 CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
+#if ENABLE(UNIFIED_PDF)
+bool CGPDFDocumentIsTaggedPDF(CGPDFDocumentRef);
+#endif // ENABLE(UNIFIED_PDF)
 
 CGFontAntialiasingStyle CGContextGetFontAntialiasingStyle(CGContextRef);
 void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);
@@ -394,7 +417,7 @@ IOHIDEventRef CGEventCopyIOHIDEvent(CGEventRef);
 CGError CGSSetDenyWindowServerConnections(bool);
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
 
 extern const off_t kCGDataProviderIndeterminateSize;
 extern const CFStringRef kCGDataProviderHasHighLatency;
@@ -415,7 +438,7 @@ extern CGDataProviderRef CGDataProviderCreateMultiRangeDirectAccess(
     void *info, off_t size,
     const CGDataProviderDirectAccessRangesCallbacks *);
 
-#endif // ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
 CG_EXTERN void CGEnterLockdownModeForPDF();

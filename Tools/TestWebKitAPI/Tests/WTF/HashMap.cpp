@@ -766,7 +766,7 @@ struct DerefObserver {
 
 TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
 {
-    auto observer = makeUnique<DerefObserver>();
+    auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
     HashMap<RefPtr<DerefObserver>, int> map;
     map.add(adoptRef(observer.get()), 5);

@@ -64,8 +64,6 @@ public:
     int pageY() const final;
     WEBCORE_EXPORT FloatPoint locationInRootViewCoordinates() const;
     virtual const LayoutPoint& pageLocation() const;
-    WEBCORE_EXPORT int x() const;
-    WEBCORE_EXPORT int y() const;
 
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).

@@ -156,7 +156,7 @@ String AccessibilitySVGElement::description() const
     // FIXME: This is here to not break the svg-image.html test. But 'alt' is not
     // listed as a supported attribute of the 'image' element in the SVG spec:
     // https://www.w3.org/TR/SVG/struct.html#ImageElement
-    if (m_renderer->isSVGImageOrLegacySVGImage()) {
+    if (m_renderer->isRenderOrLegacyRenderSVGImage()) {
         const AtomString& alt = getAttribute(HTMLNames::altAttr);
         if (!alt.isNull())
             return alt;
@@ -210,7 +210,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
-    if (!m_renderer || m_renderer->isLegacySVGHiddenContainer() || m_renderer->isSVGHiddenContainer())
+    if (!m_renderer || m_renderer->isLegacyRenderSVGHiddenContainer() || m_renderer->isRenderSVGHiddenContainer())
         return true;
 
     // The SVG AAM states objects with at least one 'title' or 'desc' element MUST be included.
@@ -220,14 +220,14 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
             return false;
     }
 
-    if (roleValue() == AccessibilityRole::Presentational || inheritsPresentationalRole())
+    if (ignoredFromPresentationalRole())
         return true;
 
     if (ariaRoleAttribute() != AccessibilityRole::Unknown)
         return false;
 
     // The SVG AAM states text elements should also be included, if they have content.
-    if (m_renderer->isSVGText() || m_renderer->isSVGTextPath()) {
+    if (m_renderer->isRenderSVGText() || m_renderer->isRenderSVGTextPath()) {
         for (auto& child : childrenOfType<RenderText>(downcast<RenderElement>(*m_renderer))) {
             if (!child.containsOnlyCollapsibleWhitespace())
                 return false;
@@ -236,7 +236,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
 
     // SVG shapes should not be included unless there's a concrete reason for inclusion.
     // https://rawgit.com/w3c/aria/master/svg-aam/svg-aam.html#exclude_elements
-    if (m_renderer->isSVGShapeOrLegacySVGShape()) {
+    if (m_renderer->isRenderOrLegacyRenderSVGShape()) {
         if (canSetFocusAttribute() || element()->hasEventListeners())
             return false;
         if (auto* svgParent = Accessibility::findAncestor<AccessibilityObject>(*this, true, [] (const AccessibilityObject& object) {
@@ -293,15 +293,15 @@ AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
 
     Element* svgElement = element();
 
-    if (m_renderer->isSVGShapeOrLegacySVGShape() || m_renderer->isSVGPathOrLegacySVGPath() || m_renderer->isSVGImageOrLegacySVGImage() || is<SVGUseElement>(svgElement))
+    if (m_renderer->isRenderOrLegacyRenderSVGShape() || m_renderer->isRenderOrLegacyRenderSVGPath() || m_renderer->isRenderOrLegacyRenderSVGImage() || is<SVGUseElement>(svgElement))
         return AccessibilityRole::Image;
-    if (m_renderer->isSVGForeignObjectOrLegacySVGForeignObject() || is<SVGGElement>(svgElement))
+    if (m_renderer->isRenderOrLegacyRenderSVGForeignObject() || is<SVGGElement>(svgElement))
         return AccessibilityRole::Group;
-    if (m_renderer->isSVGText())
+    if (m_renderer->isRenderSVGText())
         return AccessibilityRole::SVGText;
-    if (m_renderer->isSVGTextPath())
+    if (m_renderer->isRenderSVGTextPath())
         return AccessibilityRole::SVGTextPath;
-    if (m_renderer->isSVGTSpan())
+    if (m_renderer->isRenderSVGTSpan())
         return AccessibilityRole::SVGTSpan;
     if (is<SVGAElement>(svgElement))
         return AccessibilityRole::WebCoreLink;

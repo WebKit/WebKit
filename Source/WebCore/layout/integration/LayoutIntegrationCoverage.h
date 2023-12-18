@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,13 +40,10 @@ class LineLayout;
 enum class AvoidanceReason : uint8_t {
     ContentIsRuby,
     ContentIsSVG,
-    FlowHasLineSnap,
-    FlowIsInitialContainingBlock,
     FeatureIsDisabled
 };
 
 bool canUseForLineLayout(const RenderBlockFlow&);
-bool canUseForLineLayoutAfterBlockStyleChange(const RenderBlockFlow&, StyleDifference);
 bool canUseForPreferredWidthComputation(const RenderBlockFlow&);
 enum class TypeOfChangeForInvalidation : uint8_t {
     NodeInsertion,

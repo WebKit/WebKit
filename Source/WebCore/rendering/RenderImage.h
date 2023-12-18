@@ -52,7 +52,7 @@ public:
 
     void updateAltText();
 
-    HTMLMapElement* imageMap() const;
+    RefPtr<HTMLMapElement> imageMap() const;
     void areaElementFocusChanged(HTMLAreaElement*);
     
 #if PLATFORM(IOS_FAMILY)

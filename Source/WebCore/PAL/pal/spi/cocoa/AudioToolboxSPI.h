@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #import <AudioToolbox/AudioComponentPriv.h>
 #import <AudioToolbox/AudioFormatPriv.h>
+#import <AudioToolbox/Spatialization.h>
 
 #else
 
@@ -40,5 +41,25 @@ struct AudioFormatVorbisModeInfo {
     UInt64 mModeFlags;
 };
 typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;
+
+enum SpatialAudioSourceID : UInt32;
+static constexpr UInt32 kSpatialAudioSource_Multichannel = 'mlti';
+static constexpr UInt32 kSpatialAudioSource_MonoOrStereo = 'most';
+static constexpr UInt32 kSpatialAudioSource_BinauralForHeadphones = 'binh';
+static constexpr UInt32 kSpatialAudioSource_Unknown = '?src';
+
+enum SpatialContentTypeID : UInt32;
+static constexpr UInt32 kAudioSpatialContentType_Audiovisual = 'moov';
+static constexpr UInt32 kAudioSpatialContentType_AudioOnly = 'soun';
+
+struct SpatialAudioPreferences {
+    Boolean prefersHeadTrackedSpatialization;
+    Boolean prefersLossyAudioSources;
+    Boolean alwaysSpatialize;
+    Boolean pad[5];
+    UInt32 maxSpatializableChannels;
+    UInt32 spatialAudioSourceCount;
+    SpatialAudioSourceID spatialAudioSources[3];
+};
 
 #endif

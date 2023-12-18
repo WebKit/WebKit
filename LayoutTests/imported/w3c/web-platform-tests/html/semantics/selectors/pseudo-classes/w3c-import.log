@@ -16,9 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/active-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/autofill.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked-indeterminate.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/checked.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/default.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir-html-input-dynamic-text.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/dir01.html
@@ -27,9 +29,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-autofocus.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/focus.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-group-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-group-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-group.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/input-checkbox-switch.tentative.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/inrange-outofrange.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/invalid-after-clone.html
@@ -40,4 +46,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/required-optional-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/required-optional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/valid-invalid-fieldset-disconnected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/selectors/pseudo-classes/valid-invalid.html

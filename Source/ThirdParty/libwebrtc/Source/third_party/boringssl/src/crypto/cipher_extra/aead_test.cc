@@ -821,7 +821,7 @@ TEST(ChaChaPoly1305Test, ABI) {
     return;
   }
 
-  std::unique_ptr<uint8_t[]> buf(new uint8_t[1024]);
+  auto buf = std::make_unique<uint8_t[]>(1024);
   for (size_t len = 0; len <= 1024; len += 5) {
     SCOPED_TRACE(len);
     union chacha20_poly1305_open_data open_ctx = {};

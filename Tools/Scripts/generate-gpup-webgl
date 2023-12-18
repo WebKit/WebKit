@@ -105,15 +105,14 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void EnsureExtensionEnabled(String extension)
     void MarkContextChanged()
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
-    void PaintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
-    void PaintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+    void DrawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    void SurfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
+#endif
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     void CopyTextureFromVideoFrame(struct WebKit::SharedVideoFrame frame, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) -> (bool success) Synchronous NotStreamEncodable
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
-#endif
-#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, IPC::ArrayReference<uint8_t> data) Synchronous

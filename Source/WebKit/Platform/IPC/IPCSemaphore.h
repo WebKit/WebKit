@@ -62,9 +62,6 @@ public:
     ~Semaphore();
     Semaphore& operator=(Semaphore&&);
 
-    void encode(Encoder&) const;
-    static std::optional<Semaphore> decode(Decoder&);
-
     void signal();
     bool wait();
     bool waitFor(Timeout);
@@ -76,8 +73,11 @@ public:
     explicit operator bool() const { return m_sendRight || m_semaphore != SEMAPHORE_NULL; }
 #elif OS(WINDOWS)
     explicit Semaphore(Win32Handle&&);
+    Win32Handle win32Handle() const { return Win32Handle { m_semaphoreHandle }; }
+
 #elif USE(UNIX_DOMAIN_SOCKETS)
     explicit Semaphore(UnixFileDescriptor&&);
+    UnixFileDescriptor duplicateDescriptor() const;
     explicit operator bool() const { return !!m_fd; }
 #else
     explicit operator bool() const { return true; }

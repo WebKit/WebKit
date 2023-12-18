@@ -196,7 +196,7 @@ bool WebExtensionAPIWindows::parsePopulateTabs(NSDictionary *options, PopulateTa
 bool WebExtensionAPIWindows::parseWindowTypesFilter(NSDictionary *options, OptionSet<WindowTypeFilter>& windowTypeFilter, NSString *sourceKey, NSString **outExceptionString)
 {
     // All windows match by default.
-    windowTypeFilter = WindowTypeFilter::All;
+    windowTypeFilter = allWebExtensionWindowTypeFilters();
 
     static NSDictionary<NSString *, id> *types = @{
         windowTypesKey: @[ NSString.class ],
@@ -272,7 +272,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
 
     if (NSString *url = objectForKey<NSString>(options, urlKey, true)) {
         WebExtensionTabParameters tabParameters;
-        tabParameters.url = URL { url };
+        tabParameters.url = URL { extensionContext().baseURL(), url };
 
         if (!tabParameters.url.value().isValid()) {
             *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
@@ -286,14 +286,14 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
 
         for (NSString *url in urls) {
             WebExtensionTabParameters tabParameters;
-            tabParameters.url = URL { url };
+            tabParameters.url = URL { extensionContext().baseURL(), url };
 
             if (!tabParameters.url.value().isValid()) {
                 *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
                 return false;
             }
 
-            tabs.uncheckedAppend(WTFMove(tabParameters));
+            tabs.append(WTFMove(tabParameters));
         }
 
         parameters.tabs = WTFMove(tabs);
@@ -365,11 +365,11 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))
-            *outExceptionString = toErrorString(nil, @"windowID", @"'windows.WINDOW_ID_NONE' is not allowed");
+            *outExceptionString = toErrorString(nil, @"windowId", @"'windows.WINDOW_ID_NONE' is not allowed");
         else if (identifier)
-            *outExceptionString = toErrorString(nil, @"windowID", @"'%llu' is not a window identifier", identifier.value().toUInt64());
+            *outExceptionString = toErrorString(nil, @"windowId", @"'%llu' is not a window identifier", identifier.value().toUInt64());
         else
-            *outExceptionString = toErrorString(nil, @"windowID", @"it is not a window identifier");
+            *outExceptionString = toErrorString(nil, @"windowId", @"it is not a window identifier");
         return false;
     }
 
@@ -584,20 +584,20 @@ WebExtensionAPIWindowsEvent& WebExtensionAPIWindows::onFocusChanged()
     return *m_onFocusChanged;
 }
 
-inline WebExtensionAPIWindows::WindowTypeFilter toWindowTypeFilter(WebExtensionWindow::Type type)
+inline OptionSet<WebExtensionWindowTypeFilter> toWindowTypeFilter(WebExtensionWindow::Type type)
 {
     switch (type) {
     case WebExtensionWindow::Type::Normal:
-        return WebExtensionAPIWindows::WindowTypeFilter::Normal;
+        return WebExtensionWindowTypeFilter::Normal;
 
     case WebExtensionWindow::Type::Popup:
-        return WebExtensionAPIWindows::WindowTypeFilter::Popup;
+        return WebExtensionWindowTypeFilter::Popup;
     }
 }
 
 void WebExtensionContextProxy::dispatchWindowsEvent(WebExtensionEventListenerType type, const std::optional<WebExtensionWindowParameters>& windowParameters)
 {
-    auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : WebExtensionAPIWindows::WindowTypeFilter::All;
+    auto filter = windowParameters ? toWindowTypeFilter(windowParameters.value().type.value()) : allWebExtensionWindowTypeFilters();
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {
         auto& windowsObject = namespaceObject.windows();

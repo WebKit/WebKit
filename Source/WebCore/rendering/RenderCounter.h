@@ -53,14 +53,14 @@ private:
     RefPtr<CSSCounterStyle> counterStyle() const;
 
     CounterContent m_counter;
-    CheckedPtr<CounterNode> m_counterNode;
+    SingleThreadWeakPtr<CounterNode> m_counterNode;
     RenderCounter* m_nextForSameCounter { nullptr };
     friend class CounterNode;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCounter, isCounter())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderCounter, isRenderCounter())
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.

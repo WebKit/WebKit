@@ -43,6 +43,7 @@
 /third_party/catapult
 /third_party/cherry
 /third_party/clang-format/script
+/third_party/clspv/src
 /third_party/colorama/src
 /third_party/cpu_features/src
 /third_party/depot_tools
@@ -65,6 +66,7 @@
 /third_party/libpng/src
 /third_party/libunwind/src
 /third_party/llvm-build
+/third_party/llvm/src
 /third_party/markupsafe
 /third_party/meson
 /third_party/nasm

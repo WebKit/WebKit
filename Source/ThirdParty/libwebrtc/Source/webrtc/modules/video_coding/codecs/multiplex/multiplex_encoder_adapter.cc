@@ -93,6 +93,9 @@ int MultiplexEncoderAdapter::InitEncode(
       key_frame_interval_ = video_codec.H264()->keyFrameInterval;
       video_codec.H264()->keyFrameInterval = 0;
       break;
+    case kVideoCodecH265:
+      // TODO(bugs.webrtc.org/13485)
+      break;
     default:
       break;
   }
@@ -318,7 +321,7 @@ EncodedImageCallback::Result MultiplexEncoderAdapter::OnEncodedImage(
 
   MutexLock lock(&mutex_);
   const auto& stashed_image_itr =
-      stashed_images_.find(encodedImage.Timestamp());
+      stashed_images_.find(encodedImage.RtpTimestamp());
   const auto& stashed_image_next_itr = std::next(stashed_image_itr, 1);
   RTC_DCHECK(stashed_image_itr != stashed_images_.end());
   MultiplexImage& stashed_image = stashed_image_itr->second;

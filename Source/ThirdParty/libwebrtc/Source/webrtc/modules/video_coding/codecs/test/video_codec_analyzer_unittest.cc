@@ -52,7 +52,7 @@ VideoFrame CreateVideoFrame(uint32_t timestamp_rtp,
 
 EncodedImage CreateEncodedImage(uint32_t timestamp_rtp, int spatial_idx = 0) {
   EncodedImage encoded_image;
-  encoded_image.SetTimestamp(timestamp_rtp);
+  encoded_image.SetRtpTimestamp(timestamp_rtp);
   encoded_image.SetSpatialIndex(spatial_idx);
   return encoded_image;
 }

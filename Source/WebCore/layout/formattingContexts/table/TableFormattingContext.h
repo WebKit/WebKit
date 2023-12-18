@@ -45,7 +45,7 @@ public:
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
 
-    const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }
+    const TableFormattingGeometry& formattingGeometry() const { return m_tableFormattingGeometry; }
     const TableFormattingQuirks& formattingQuirks() const { return m_tableFormattingQuirks; }
     const TableFormattingState& formattingState() const { return m_tableFormattingState; }
 

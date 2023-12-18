@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 print "Content-Type: text/plain\n";
 print "Cache-Control: no-cache, no-store\n";

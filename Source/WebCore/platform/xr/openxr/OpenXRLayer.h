@@ -37,7 +37,7 @@ class OpenXRLayer {
 public:
     virtual ~OpenXRLayer() = default;
 
-    virtual std::optional<Device::FrameData::LayerData> startFrame() = 0;
+    virtual std::optional<FrameData::LayerData> startFrame() = 0;
     virtual XrCompositionLayerBaseHeader* endFrame(const Device::Layer&, XrSpace, const Vector<XrView>&) = 0;
 
 protected:
@@ -52,7 +52,7 @@ public:
 private:
     OpenXRLayerProjection(UniqueRef<OpenXRSwapchain>&&);
 
-    std::optional<Device::FrameData::LayerData> startFrame() final;
+    std::optional<FrameData::LayerData> startFrame() final;
     XrCompositionLayerBaseHeader* endFrame(const Device::Layer&, XrSpace, const Vector<XrView>&) final;
 
     UniqueRef<OpenXRSwapchain> m_swapchain;

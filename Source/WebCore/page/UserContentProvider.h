@@ -84,7 +84,7 @@ protected:
     WEBCORE_EXPORT void invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 
 private:
-    WeakHashSet<Page> m_pages;
+    SingleThreadWeakHashSet<Page> m_pages;
     WeakHashSet<UserContentProviderInvalidationClient> m_userMessageHandlerInvalidationClients;
 };
 

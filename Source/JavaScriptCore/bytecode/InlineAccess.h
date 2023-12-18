@@ -33,6 +33,7 @@
 namespace JSC {
 
 class CodeBlock;
+class InlineCacheHandler;
 class JSArray;
 class Structure;
 class StructureStubInfo;
@@ -111,9 +112,7 @@ public:
     static bool generateSelfInAccess(CodeBlock*, StructureStubInfo&, Structure*);
     static bool generateStringLength(CodeBlock*, StructureStubInfo&);
 
-    static void rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
-    static void rewireStubAsJumpInAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
-    static void resetStubAsJumpInAccessNotUsingInlineAccess(CodeBlock*, StructureStubInfo&);
+    static void rewireStubAsJumpInAccess(CodeBlock*, StructureStubInfo&, InlineCacheHandler&);
     static void resetStubAsJumpInAccess(CodeBlock*, StructureStubInfo&);
 
     // This is helpful when determining the size of an IC on

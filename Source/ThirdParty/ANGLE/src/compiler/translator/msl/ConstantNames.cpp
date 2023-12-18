@@ -20,6 +20,8 @@ const char kMultisampledRenderingConstName[]    = "ANGLEMultisampledRendering";
 const char kRasterizerDiscardEnabledConstName[] = "ANGLERasterizerDisabled";
 const char kDepthWriteEnabledConstName[]        = "ANGLEDepthWriteEnabled";
 const char kEmulateAlphaToCoverageConstName[]   = "ANGLEEmulateAlphaToCoverage";
+const char kWriteHelperSampleMaskConstName[]    = "ANGLEWriteHelperSampleMask";
+const char kSampleMaskWriteEnabledConstName[]   = "ANGLESampleMaskWriteEnabled";
 }  // namespace mtl
 
 }  // namespace sh

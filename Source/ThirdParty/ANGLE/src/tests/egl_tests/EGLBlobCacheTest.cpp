@@ -75,11 +75,10 @@ EGLsizeiANDROID GetBlob(const void *key,
     auto entry = gApplicationCache.find(keyVec);
     if (entry == gApplicationCache.end())
     {
-        // A compile+link operation can generate multiple queries to the cache; one per shader, one
-        // for link, and in the Vulkan backend, potentially also one for the pipeline cache.  For
-        // the purposes of the test, make sure that any of these hitting the cache is considered a
-        // success, particularly because it's valid for the pipeline cache entry not to exist in the
-        // cache.
+        // A compile+link operation can generate multiple queries to the cache; one per shader and
+        // one for link.  For the purposes of the test, make sure that any of these hitting the
+        // cache is considered a success, particularly because it's valid for the pipeline cache
+        // entry not to exist in the cache.
         if (gLastCacheOpResult != CacheOpResult::GetSuccess)
         {
             gLastCacheOpResult = CacheOpResult::GetNotFound;
@@ -166,28 +165,41 @@ void main()
     gl_FragColor = vTest - vec4(0.0, 1.0, 0.0, 0.0);
 })";
 
-    // Compile a shader so it puts something in the cache
+    // Compile a shader so it puts something in the cache.  Note that with Vulkan, some optional
+    // link subtasks may run beyond link, and so the caching is delayed until the program is used.
+    // A small draw call is used to wait on these subtasks.
     if (programBinaryAvailable())
     {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, 1, 1);
+
         ANGLE_GL_PROGRAM(program, kVertexShaderSrc, kFragmentShaderSrc);
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
         // Compile the same shader again, so it would try to retrieve it from the cache
         program.makeRaster(kVertexShaderSrc, kFragmentShaderSrc);
         ASSERT_TRUE(program.valid());
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::GetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
         // Compile another shader, which should create a new entry
         program.makeRaster(kVertexShaderSrc2, kFragmentShaderSrc2);
         ASSERT_TRUE(program.valid());
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
         // Compile the first shader again, which should still reside in the cache
         program.makeRaster(kVertexShaderSrc, kFragmentShaderSrc);
         ASSERT_TRUE(program.valid());
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::GetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
     }
@@ -254,6 +266,9 @@ TEST_P(EGLBlobCacheTest, FragmentOutputLocationKey)
     // Compile a shader so it puts something in the cache
     if (programBinaryAvailable())
     {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, 1, 1);
+
         constexpr char kFragmentShaderSrc[] = R"(#version 300 es
 #extension GL_EXT_blend_func_extended : require
 precision mediump float;
@@ -277,6 +292,8 @@ void main() {
             glBindFragDataLocationIndexedEXT(p, 0, 1, "SecondaryFragData[0]");
         });
         ASSERT_NE(0u, program);
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
 
@@ -286,6 +303,8 @@ void main() {
             glBindFragDataLocationIndexedEXT(p, 0, 1, "SecondaryFragData");
         });
         ASSERT_NE(0u, program);
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         EXPECT_EQ(CacheOpResult::SetSuccess, gLastCacheOpResult);
         gLastCacheOpResult = CacheOpResult::ValueNotSet;
     }
@@ -400,4 +419,43 @@ TEST_P(EGLBlobCacheTest, ThreadSafety)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EGLBlobCacheTest);
+ANGLE_INSTANTIATE_TEST(EGLBlobCacheTest,
+                       ES2_D3D9(),
+                       ES2_D3D11(),
+                       ES3_D3D11(),
+                       ES2_OPENGL(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES2_OPENGLES(),
+                       ES2_METAL(),
+                       ES3_METAL(),
+                       // Note: For the Vulkan backend, disable reads and writes for the global
+                       // pipeline cache, so it does not interfere with the test's expectations of
+                       // when the cache should and shouldn't be hit.
+                       ES2_VULKAN()
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                       ES3_VULKAN_SWIFTSHADER()
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                       ES3_VULKAN()
+                           .enable(Feature::AsyncCommandQueue)
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                       ES2_VULKAN_SWIFTSHADER()
+                           .enable(Feature::AsyncCommandQueue)
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                       ES2_VULKAN_SWIFTSHADER()
+                           .enable(Feature::EnableParallelCompileAndLink)
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                       ES3_VULKAN()
+                           .enable(Feature::EnableParallelCompileAndLink)
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
+                       ES2_VULKAN_SWIFTSHADER()
+                           .enable(Feature::EnableParallelCompileAndLink)
+                           .enable(Feature::AsyncCommandQueue)
+                           .enable(Feature::DisablePipelineCacheLoadForTesting)
+                           .disable(Feature::SyncMonolithicPipelinesToBlobCache));

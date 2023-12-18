@@ -61,16 +61,16 @@ static ExceptionOr<LengthBox> parseRootMargin(String& rootMargin)
     Vector<Length, 4> margins;
     while (!tokenRange.atEnd()) {
         if (margins.size() == 4)
-            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': Extra text found at the end of rootMargin."_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': Extra text found at the end of rootMargin."_s };
         RefPtr<CSSPrimitiveValue> parsedValue = CSSPropertyParserHelpers::consumeLengthOrPercent(tokenRange, HTMLStandardMode, ValueRange::All);
         if (!parsedValue || parsedValue->isCalculated())
-            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
         if (parsedValue->isPercentage())
             margins.append(Length(parsedValue->doubleValue(), LengthType::Percent));
         else if (parsedValue->isPx())
             margins.append(Length(parsedValue->intValue(), LengthType::Fixed));
         else
-            return Exception { SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
+            return Exception { ExceptionCode::SyntaxError, "Failed to construct 'IntersectionObserver': rootMargin must be specified in pixels or percent."_s };
     }
     switch (margins.size()) {
     case 0:
@@ -124,7 +124,7 @@ ExceptionOr<Ref<IntersectionObserver>> IntersectionObserver::create(Document& do
 
     for (auto threshold : thresholds) {
         if (!(threshold >= 0 && threshold <= 1))
-            return Exception { RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
+            return Exception { ExceptionCode::RangeError, "Failed to construct 'IntersectionObserver': all thresholds must lie in the range [0.0, 1.0]."_s };
     }
 
     return adoptRef(*new IntersectionObserver(document, WTFMove(callback), root.get(), rootMarginOrException.releaseReturnValue(), WTFMove(thresholds)));
@@ -293,12 +293,21 @@ static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const LengthBo
 
 static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const RenderElement* renderer)
 {
-    OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-    std::optional<LayoutRect> rectInFrameAbsoluteSpace = renderer->computeVisibleRectInContainer(rect, &renderer->view(), { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
-    if (!rectInFrameAbsoluteSpace || renderer->frame().isMainFrame())
-        return rectInFrameAbsoluteSpace;
+    auto visibleRectOptions = OptionSet {
+        RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection,
+        RenderObject::VisibleRectContextOption::ApplyCompositedClips,
+        RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls
+    };
 
-    bool intersects = rectInFrameAbsoluteSpace->edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
+    auto absoluteRects = renderer->computeVisibleRectsInContainer({ rect }, &renderer->view(), { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+    if (!absoluteRects)
+        return std::nullopt;
+
+    auto absoluteClippedRect = absoluteRects->clippedOverflowRect;
+    if (renderer->frame().isMainFrame())
+        return absoluteClippedRect;
+
+    bool intersects = absoluteClippedRect.edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
     if (!intersects)
         return std::nullopt;
 
@@ -306,7 +315,7 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     if (!ownerRenderer)
         return std::nullopt;
 
-    LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(*rectInFrameAbsoluteSpace) };
+    LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(absoluteClippedRect) };
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
     return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
@@ -349,7 +358,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
 
         ASSERT(frameView.frame().isMainFrame());
         // FIXME: Handle the case of an implicit-root observer that has a target in a different frame tree.
-        if (dynamicDowncast<LocalFrame>(targetRenderer->frame().mainFrame()) != &frameView.frame())
+        if (&targetRenderer->frame().mainFrame() != &frameView.frame())
             return;
 
         intersectionState.canComputeIntersection = true;
@@ -392,7 +401,10 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
                 RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection,
                 RenderObject::VisibleRectContextOption::ApplyCompositedClips,
                 RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-            return targetRenderer->computeVisibleRectInContainer(localTargetBounds, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+            auto result = targetRenderer->computeVisibleRectsInContainer({ localTargetBounds }, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+            if (!result)
+                return std::nullopt;
+            return result->clippedOverflowRect;
         }
 
         return computeClippedRectInRootContentsSpace(localTargetBounds, targetRenderer);

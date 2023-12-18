@@ -86,17 +86,17 @@ static bool isFilterStable(const Vector<double>& feedback)
 ExceptionOr<Ref<IIRFilterNode>> IIRFilterNode::create(ScriptExecutionContext& scriptExecutionContext, BaseAudioContext& context, IIRFilterOptions&& options)
 {
     if (!options.feedforward.size() || options.feedforward.size() > IIRFilter::maxOrder)
-        return Exception { NotSupportedError, "feedforward array must have a length between 1 and 20"_s };
+        return Exception { ExceptionCode::NotSupportedError, "feedforward array must have a length between 1 and 20"_s };
 
     auto nonZeroValueIndex = options.feedforward.findIf([](auto& value) { return !!value; });
     if (nonZeroValueIndex == notFound)
-        return Exception { InvalidStateError, "feedforward array must contain a non-zero value"_s };
+        return Exception { ExceptionCode::InvalidStateError, "feedforward array must contain a non-zero value"_s };
 
     if (!options.feedback.size() || options.feedback.size() > IIRFilter::maxOrder)
-        return Exception { NotSupportedError, "feedback array must have a length between 1 and 20"_s };
+        return Exception { ExceptionCode::NotSupportedError, "feedback array must have a length between 1 and 20"_s };
 
     if (!options.feedback[0])
-        return Exception { InvalidStateError, "first value of feedback array cannot be zero"_s };
+        return Exception { ExceptionCode::InvalidStateError, "first value of feedback array cannot be zero"_s };
 
     bool isFilterStable = WebCore::isFilterStable(options.feedback);
     if (!isFilterStable)
@@ -123,7 +123,7 @@ ExceptionOr<void> IIRFilterNode::getFrequencyResponse(Float32Array& frequencyHz,
 {
     auto expectedLength = frequencyHz.length();
     if (magResponse.length() != expectedLength || phaseResponse.length() != expectedLength)
-        return Exception { InvalidAccessError, "Arrays must have the same length"_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Arrays must have the same length"_s };
 
     // Nothing to do if the length is 0.
     if (expectedLength > 0)

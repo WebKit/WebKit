@@ -130,6 +130,7 @@ function forEach(callback /*, thisArg */)
     }
 }
 
+@alwaysInline
 function filter(callback /*, thisArg */)
 {
     "use strict";

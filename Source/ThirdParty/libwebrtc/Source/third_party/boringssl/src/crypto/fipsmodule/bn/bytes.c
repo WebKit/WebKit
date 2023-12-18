@@ -116,7 +116,7 @@ BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   return ret;
 }
 
-BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
+BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   BIGNUM *bn = NULL;
   if (ret == NULL) {
     bn = BN_new();
@@ -147,6 +147,10 @@ BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
   // internal representation.
   OPENSSL_memcpy(ret->d, in, len);
   return ret;
+}
+
+BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret) {
+  return BN_lebin2bn(in, len, ret);
 }
 
 // fits_in_bytes returns one if the |num_words| words in |words| can be

@@ -61,7 +61,7 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
     if (LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName == messageName) {
         m_networkProcess->m_endpointMessage = event;
         for (auto& processPool : WebProcessPool::allProcessPools()) {
-            for (auto& process : processPool->processes())
+            for (Ref process : processPool->processes())
                 m_networkProcess->sendXPCEndpointToProcess(process);
         }
 #if ENABLE(GPU_PROCESS)

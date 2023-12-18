@@ -65,6 +65,8 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<WebCo
 
 void webKitMediaSrcFlush(WebKitMediaSrc*, const AtomString& streamName);
 
+void webKitMediaSrcSetPlayer(WebKitMediaSrc*, WeakPtr<WebCore::MediaPlayerPrivateGStreamerMSE>&&);
+
 G_END_DECLS
 
 namespace WTF {

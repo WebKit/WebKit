@@ -35,14 +35,40 @@ Ref<ByteArrayPixelBuffer> ByteArrayPixelBuffer::create(const PixelBufferFormat& 
     return adoptRef(*new ByteArrayPixelBuffer(format, size, { data }));
 }
 
+std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, std::span<const uint8_t> data)
+{
+    // FIXME: Support non-8 bit formats.
+    if (!(format.pixelFormat == PixelFormat::RGBA8 || format.pixelFormat == PixelFormat::BGRA8)) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto computedBufferSize = PixelBuffer::computeBufferSize(format.pixelFormat, size);
+    if (computedBufferSize.hasOverflowed()) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    if (data.size_bytes() != computedBufferSize.value()) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    auto buffer = Uint8ClampedArray::tryCreate(data.data(), data.size_bytes());
+    if (!buffer) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    return ByteArrayPixelBuffer::create(format, size, buffer.releaseNonNull());
+}
+
 RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
-    auto bufferSize = computeBufferSize(format, size);
+    auto bufferSize = computeBufferSize(format.pixelFormat, size);
     if (bufferSize.hasOverflowed())
-        return nullptr;
-    if (bufferSize > std::numeric_limits<int32_t>::max())
         return nullptr;
 
     auto data = Uint8ClampedArray::tryCreateUninitialized(bufferSize);
@@ -56,7 +82,7 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
-    auto bufferSize = computeBufferSize(format, size);
+    auto bufferSize = computeBufferSize(format.pixelFormat, size);
     if (bufferSize.hasOverflowed())
         return nullptr;
     if (bufferSize != arrayBuffer->byteLength())
@@ -78,6 +104,12 @@ ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, cons
 RefPtr<PixelBuffer> ByteArrayPixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
     return ByteArrayPixelBuffer::tryCreate(m_format, size);
+}
+
+std::span<const uint8_t> ByteArrayPixelBuffer::dataSpan() const
+{
+    ASSERT(m_data->byteLength() == (m_size.area() * 4));
+    return { m_data->data(), m_data->byteLength() };
 }
 
 } // namespace WebCore

@@ -458,29 +458,24 @@ void UpdateVertexArrayID(GLuint id, GLsizei readBufferOffset)
     UpdateResourceMap(gVertexArrayMap, id, readBufferOffset);
 }
 
-void SetResourceID(GLuint *map, GLuint id)
-{
-    map[id] = id;
-}
-
 void SetFramebufferID(GLuint id)
 {
-    SetResourceID(gFramebufferMap, id);
+    glGenFramebuffers(1, &gFramebufferMap[id]);
 }
 
 void SetBufferID(GLuint id)
 {
-    SetResourceID(gBufferMap, id);
+    glGenBuffers(1, &gBufferMap[id]);
 }
 
 void SetRenderbufferID(GLuint id)
 {
-    SetResourceID(gRenderbufferMap, id);
+    glGenRenderbuffers(1, &gRenderbufferMap[id]);
 }
 
 void SetTextureID(GLuint id)
 {
-    SetResourceID(gTextureMap, id);
+    glGenTextures(1, &gTextureMap[id]);
 }
 
 void ValidateSerializedState(const char *serializedState, const char *fileName, uint32_t line)

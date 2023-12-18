@@ -113,17 +113,14 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
     if (auto* connection = networkProcess.parentProcessConnection())
         connectionID = connection->uniqueID();
     String serviceWorkerStorageDirectory;
-#if ENABLE(SERVICE_WORKER)
     serviceWorkerStorageDirectory = parameters.serviceWorkerRegistrationDirectory;
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-#endif
     return NetworkStorageManager::create(networkProcess, parameters.sessionID, parameters.dataStoreIdentifier, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, serviceWorkerStorageDirectory, parameters.perOriginStorageQuota, parameters.originQuotaRatio, parameters.totalQuotaRatio, parameters.standardVolumeCapacity, parameters.volumeCapacityOverride, parameters.unifiedOriginStorageLevel);
 }
 
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
-#if ENABLE(TRACKING_PREVENTION)
     , m_resourceLoadStatisticsDirectory(parameters.resourceLoadStatisticsParameters.directory)
     , m_shouldIncludeLocalhostInResourceLoadStatistics(parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No)
     , m_enableResourceLoadStatisticsDebugMode(parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No)
@@ -133,7 +130,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_sameSiteStrictEnforcementEnabled(parameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled)
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
-#endif
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
     , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
     , m_broadcastChannelRegistry(makeUniqueRef<NetworkBroadcastChannelRegistry>(networkProcess))
@@ -141,15 +137,10 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
     , m_shouldRunServiceWorkersOnMainThreadForTesting(parameters.shouldRunServiceWorkersOnMainThreadForTesting)
     , m_overrideServiceWorkerRegistrationCountTestingValue(parameters.overrideServiceWorkerRegistrationCountTestingValue)
-#if ENABLE(SERVICE_WORKER)
     , m_inspectionForServiceWorkersAllowed(parameters.inspectionForServiceWorkersAllowed)
-#endif
     , m_storageManager(createNetworkStorageManager(networkProcess, parameters))
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     , m_notificationManager(*this, parameters.webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration { parameters.webPushDaemonConnectionConfiguration })
-#endif
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    , m_shouldAcceptInsecureCertificatesForWebSockets(parameters.shouldAcceptInsecureCertificatesForWebSockets)
 #endif
 {
     if (!m_sessionID.isEphemeral()) {
@@ -181,31 +172,24 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
-#if ENABLE(TRACKING_PREVENTION)
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-#endif
 
     setBlobRegistryTopOriginPartitioningEnabled(parameters.isBlobRegistryTopOriginPartitioningEnabled);
 
-#if ENABLE(SERVICE_WORKER)
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     m_serviceWorkerInfo = ServiceWorkerInfo {
         parameters.serviceWorkerRegistrationDirectory,
         parameters.serviceWorkerProcessTerminationDelayEnabled
     };
-#endif
 }
 
 NetworkSession::~NetworkSession()
 {
-#if ENABLE(TRACKING_PREVENTION)
     destroyResourceLoadStatistics([] { });
-#endif
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
     if (!m_resourceLoadStatistics)
@@ -214,17 +198,14 @@ void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& c
     m_resourceLoadStatistics->didDestroyNetworkSession(WTFMove(completionHandler));
     m_resourceLoadStatistics = nullptr;
 }
-#endif
 
 void NetworkSession::invalidateAndCancel()
 {
     m_dataTaskSet.forEach([] (auto& task) {
         task.invalidateAndCancel();
     });
-#if ENABLE(TRACKING_PREVENTION)
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
-#endif
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -241,7 +222,6 @@ void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void(
     privateClickMeasurement().destroyStoreForTesting(WTFMove(completionHandler));
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void NetworkSession::setTrackingPreventionEnabled(bool enable)
 {
     ASSERT(!m_isInvalidated);
@@ -378,7 +358,6 @@ std::optional<WebCore::IPAddress> NetworkSession::firstPartyHostIPAddress(const 
 
     return { iterator->value };
 }
-#endif // ENABLE(TRACKING_PREVENTION)
 
 void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& unattributedPrivateClickMeasurement)
 {
@@ -627,14 +606,11 @@ void NetworkSession::lowMemoryHandler(Critical)
 {
     clearPrefetchCache();
 
-#if ENABLE(SERVICE_WORKER)
     if (m_swServer)
         m_swServer->handleLowMemoryWarning();
-#endif
     m_storageManager->handleLowMemoryWarning();
 }
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkSession::addNavigationPreloaderTask(ServiceWorkerFetchTask& task)
 {
     m_navigationPreloaders.add(task.fetchIdentifier(), task);
@@ -692,7 +668,6 @@ void NetworkSession::requestBackgroundFetchPermission(const ClientOrigin& origin
 {
     m_networkProcess->requestBackgroundFetchPermission(m_sessionID, origin, WTFMove(callback));
 }
-#endif // ENABLE(SERVICE_WORKER)
 
 WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
 {
@@ -719,7 +694,6 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&& completionHandler)
 {
     m_softUpdateLoaders.add(makeUnique<ServiceWorkerSoftUpdateLoader>(*this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
@@ -820,7 +794,5 @@ void NetworkSession::setInspectionForServiceWorkersAllowed(bool inspectable)
     if (m_swServer)
         m_swServer->setInspectable(inspectable ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No);
 }
-
-#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

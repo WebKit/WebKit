@@ -134,6 +134,9 @@ enum class SourceCodeRepresentation : uint8_t {
 };
 
 extern JS_EXPORT_PRIVATE const ASCIILiteral SymbolCoercionError;
+#if HAVE(OS_SIGNPOST)
+extern JS_EXPORT_PRIVATE std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount;
+#endif
 
 class JSValue {
     friend struct EncodedJSValueHashTraits;
@@ -299,7 +302,7 @@ public:
 
     // Integer conversions.
     JS_EXPORT_PRIVATE double toIntegerPreserveNaN(JSGlobalObject*) const;
-    double toIntegerWithoutRounding(JSGlobalObject*) const;
+    double toIntegerWithTruncation(JSGlobalObject*) const;
     double toIntegerOrInfinity(JSGlobalObject*) const;
     int32_t toInt32(JSGlobalObject*) const;
     uint32_t toUInt32(JSGlobalObject*) const;

@@ -44,7 +44,7 @@ SVGTextLayoutEngine::SVGTextLayoutEngine(Vector<SVGTextLayoutAttributes*>& layou
     ASSERT(!m_layoutAttributes.isEmpty());
 }
 
-void SVGTextLayoutEngine::updateCharacerPositionIfNeeded(float& x, float& y)
+void SVGTextLayoutEngine::updateCharacterPositionIfNeeded(float& x, float& y)
 {
     if (m_inPathLayout)
         return;
@@ -141,7 +141,7 @@ bool SVGTextLayoutEngine::parentDefinesTextLength(RenderObject* parent) const
                 return true;
         }
 
-        if (currentParent->isSVGText())
+        if (currentParent->isRenderSVGText())
             return false;
 
         currentParent = currentParent->parent();
@@ -455,47 +455,60 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
 
         float x = data.x;
         float y = data.y;
+        auto* previousBoxOnLine = textBox.previousOnLine();
 
-        // When we've advanced to the box start offset, determine using the original x/y values
-        // whether this character starts a new text chunk before doing any further processing.
-        bool startsNewTextChunk = false;
-        if (m_visualCharacterOffset == textBox.start()) {
+        // If we start a new chunk following an chunk that had a textLength set, use that
+        // textLength to determine the chunk start position, instead of glyph advance values.
+        auto moveToExpectedChunkStartPositionIfNeeded = [&]() {
+            if (m_inPathLayout || !m_lastChunkHasTextLength || !previousBoxOnLine)
+                return;
+
+            if (m_isVerticalText) {
+                if (y != SVGTextLayoutAttributes::emptyValue())
+                    return;
+            } else {
+                if (x != SVGTextLayoutAttributes::emptyValue())
+                    return;
+            }
+
+            auto* textContentElement = SVGTextContentElement::elementFromRenderer(&previousBoxOnLine->renderer());
+            if (!textContentElement)
+                return;
+
+            SVGLengthContext lengthContext(textContentElement);
+            auto specifiedTextLength = textContentElement->specifiedTextLength().value(lengthContext);
+
+            if (m_lastChunkIsVerticalText)
+                y = m_lastChunkStartPosition + specifiedTextLength;
+            else
+                x = m_lastChunkStartPosition + specifiedTextLength;
+        };
+
+        bool startsNewTextChunk = [&]() {
             // If we're at a position that could start a new text chunk, but doesn't for intrinsic reasons (no x/y information specified for the
             // current character), check further if there are other conditions met that enforce a new text chunk -- e.g. previous sibiling on the
             // same line specified 'textLength' (consider: <text><tspan textLength="100">AB</tspan> <tspan dy="1em">...
             // The space character is not allowed to be part of the 'AB' text chunk -- there is not explicit x/y given for the space character
             // but because of the textLength attribute, we have to keep the space in a separated chunk, and position it such that it renders
             // after the user-specified textLength.
-            startsNewTextChunk = logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset);
-
-            auto currentBoxOnLineHasAbsolutePosition = [&]() {
-                if (m_isVerticalText)
-                    return y != SVGTextLayoutAttributes::emptyValue();
-                return x != SVGTextLayoutAttributes::emptyValue();
-            };
+            if (logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset))
+                return true;
 
             // If we encounter an InlineTextBox that follows an InlineFlowBox with specified textLength,
             // and if the InlineTextBox content is not positioned by explicit x/y attributes, then we have
             // to correct the position of the InlineTextBox, to account for the textLength adjustments
             // that will be applied on chunk-level in the next SVG text layout phase. Failing to do so,
             // will lay out the remaining content at the nominal position, as if no textLength was given.
-            auto* previousBoxOnLine = textBox.previousOnLine();
-            if (m_lastChunkHasTextLength && previousBoxOnLine) {
-                startsNewTextChunk = true;
+            if (m_lastChunkHasTextLength && previousBoxOnLine)
+                return true;
 
-                if (!currentBoxOnLineHasAbsolutePosition()) {
-                    if (auto* textContentElement = SVGTextContentElement::elementFromRenderer(&previousBoxOnLine->renderer())) {
-                        SVGLengthContext lengthContext(textContentElement);
-                        auto specifiedTextLength = textContentElement->specifiedTextLength().value(lengthContext);
+            return false;
+        }();
 
-                        if (m_lastChunkIsVerticalText)
-                            y = m_lastChunkStartPosition + specifiedTextLength;
-                        else
-                            x = m_lastChunkStartPosition + specifiedTextLength;
-                    }
-                }
-            }
-
+        // When we've advanced to the box start offset, determine using the original x/y values
+        // whether this character starts a new text chunk before doing any further processing.
+        if (m_visualCharacterOffset == textBox.start()) {
+            moveToExpectedChunkStartPositionIfNeeded();
             textBox.setStartsNewTextChunk(startsNewTextChunk);
         }
 
@@ -511,7 +524,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
         float glyphAdvance = baselineLayout.calculateGlyphAdvanceAndOrientation(m_isVerticalText, visualMetrics, orientationAngle, xOrientationShift, yOrientationShift);
 
         // Assign current text position to x/y values, if needed.
-        updateCharacerPositionIfNeeded(x, y);
+        updateCharacterPositionIfNeeded(x, y);
 
         // Apply dx/dy value adjustments to current text position, if needed.
         updateRelativePositionAdjustmentsIfNeeded(data.dx, data.dy);

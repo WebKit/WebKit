@@ -152,6 +152,9 @@ ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resource
             if (auto missingCachedResourceIdentifier = applyDrawDecomposedGlyphs(context, resourceHeap, item))
                 return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
             return { };
+        }, [&](const DrawDisplayListItems& item) -> ApplyItemResult {
+            item.apply(context, resourceHeap);
+            return { };
         }, [&](const DrawImageBuffer& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applyImageBufferItem(context, resourceHeap, item))
                 return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };

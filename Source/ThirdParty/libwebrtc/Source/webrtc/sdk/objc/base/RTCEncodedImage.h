@@ -47,6 +47,7 @@ __attribute__((objc_runtime_name("WK_RTCEncodedImage")))
 @property(nonatomic, assign) RTCFrameType frameType;
 @property(nonatomic, assign) RTCVideoRotation rotation;
 @property(nonatomic, assign) BOOL completeFrame;
+@property(nonatomic, assign) int32_t temporalIndex;
 @property(nonatomic, strong) NSNumber *qp;
 @property(nonatomic, assign) RTCVideoContentType contentType;
 

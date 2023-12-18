@@ -40,6 +40,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"
+#include "HistoryItem.h"
 #include "InspectorClient.h"
 #include "LocalFrameLoaderClient.h"
 #include "MediaRecorderProvider.h"
@@ -59,9 +60,6 @@
 #include "ValidationMessageClient.h"
 #include "VisitedLinkStore.h"
 #include "WebRTCProvider.h"
-#if ENABLE(WEBGL)
-#include "WebGLStateTracker.h"
-#endif
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorCoordinatorClient.h"
 #endif

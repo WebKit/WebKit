@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="initial-scale=1.0">
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         html {
             -webkit-overflow-scrolling: touch;
@@ -33,20 +34,19 @@
             testRunner.dumpAsText();
         }
 
-        function startTest()
+        async function startTest()
         {
             document.body.offsetWidth;
-            window.setTimeout(function() {
-                var scroller = document.getElementById('scroller');
-                scroller.classList.toggle('no-scroll');
+            await UIHelper.renderingUpdate();
 
-                if (window.internals)
-                    document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
+            var scroller = document.getElementById('scroller');
+            scroller.classList.toggle('no-scroll');
 
-                if (window.testRunner)
-                    window.testRunner.notifyDone();
-                
-            }, 0);
+            if (window.internals)
+                document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document);
+
+            if (window.testRunner)
+                window.testRunner.notifyDone();
         }
         window.addEventListener('load', startTest, false);
     </script>

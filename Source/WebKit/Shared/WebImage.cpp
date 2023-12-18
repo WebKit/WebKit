@@ -33,7 +33,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
+Ref<WebImage> WebImage::createEmpty()
+{
+    return adoptRef(*new WebImage(nullptr));
+}
+
+Ref<WebImage> WebImage::create(const IntSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
 {
     if (client) {
         auto purpose = (options & ImageOptionsShareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
@@ -46,29 +51,33 @@ RefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options, con
     if (options & ImageOptionsShareable) {
         auto buffer = ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, 1, colorSpace, PixelFormat::BGRA8, RenderingPurpose::ShareableSnapshot, { });
         if (!buffer)
-            return nullptr;
+            return createEmpty();
         return WebImage::create(buffer.releaseNonNull());
     }
 
     auto buffer = ImageBuffer::create(size, RenderingPurpose::Snapshot, 1, colorSpace, PixelFormat::BGRA8);
     if (!buffer)
-        return nullptr;
+        return createEmpty();
     return WebImage::create(buffer.releaseNonNull());
 }
 
-RefPtr<WebImage> WebImage::create(ImageBufferParameters&& parameters, ShareableBitmap::Handle&& handle)
+Ref<WebImage> WebImage::create(std::optional<ParametersAndHandle>&& parametersAndHandle)
 {
+    if (!parametersAndHandle)
+        return createEmpty();
+    auto [parameters, handle] = WTFMove(*parametersAndHandle);
+
     // FIXME: These should be abstracted as a encodable image buffer handle.
     auto backendParameters = ImageBuffer::backendParameters(parameters);
     auto backend = ImageBufferShareableBitmapBackend::create(backendParameters, WTFMove(handle));
     if (!backend)
-        return nullptr;
+        return createEmpty();
     
     auto info = ImageBuffer::populateBackendInfo<ImageBufferShareableBitmapBackend>(backendParameters);
 
-    auto buffer = ImageBuffer::create(WTFMove(parameters), info, WTFMove(backend));
+    auto buffer = ImageBuffer::create(WTFMove(parameters), info, { }, WTFMove(backend));
     if (!buffer)
-        return nullptr;
+        return createEmpty();
 
     return WebImage::create(buffer.releaseNonNull());
 }
@@ -78,28 +87,45 @@ Ref<WebImage> WebImage::create(Ref<ImageBuffer>&& buffer)
     return adoptRef(*new WebImage(WTFMove(buffer)));
 }
 
-WebImage::WebImage(Ref<ImageBuffer>&& buffer)
+WebImage::WebImage(RefPtr<ImageBuffer>&& buffer)
     : m_buffer(WTFMove(buffer))
 {
 }
 
 IntSize WebImage::size() const
 {
+    if (!m_buffer)
+        return { };
     return m_buffer->backendSize();
 }
 
-const ImageBufferParameters& WebImage::parameters() const
+const ImageBufferParameters* WebImage::parameters() const
 {
-    return m_buffer->parameters();
+    if (!m_buffer)
+        return nullptr;
+    return &m_buffer->parameters();
 }
 
-GraphicsContext& WebImage::context() const
+auto WebImage::parametersAndHandle() const -> std::optional<ParametersAndHandle>
 {
-    return m_buffer->context();
+    auto handle = createHandle();
+    if (!handle)
+        return std::nullopt;
+    RELEASE_ASSERT(m_buffer);
+    return { { m_buffer->parameters(), WTFMove(*handle) } };
+}
+
+GraphicsContext* WebImage::context() const
+{
+    if (!m_buffer)
+        return nullptr;
+    return &m_buffer->context();
 }
 
 RefPtr<NativeImage> WebImage::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
+    if (!m_buffer)
+        return nullptr;
     if (copyBehavior == CopyBackingStore)
         return m_buffer->copyNativeImage();
     return m_buffer->createNativeImageReference();
@@ -107,13 +133,11 @@ RefPtr<NativeImage> WebImage::copyNativeImage(BackingStoreCopy copyBehavior) con
 
 RefPtr<ShareableBitmap> WebImage::bitmap() const
 {
-    auto* backend = m_buffer->ensureBackendCreated();
-    if (!backend)
+    if (!m_buffer)
         return nullptr;
+    const_cast<ImageBuffer&>(*m_buffer).flushDrawingContext();
 
-    const_cast<ImageBuffer&>(*m_buffer.ptr()).flushDrawingContext();
-
-    auto* sharing = backend->toBackendSharing();
+    auto* sharing = m_buffer->toBackendSharing();
     if (!is<ImageBufferBackendHandleSharing>(sharing))
         return nullptr;
 
@@ -123,19 +147,19 @@ RefPtr<ShareableBitmap> WebImage::bitmap() const
 #if USE(CAIRO)
 RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 {
+    if (!m_buffer)
+        return nullptr;
     return m_buffer->createCairoSurface();
 }
 #endif
 
 std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Protection protection) const
 {
-    auto* backend = m_buffer->ensureBackendCreated();
-    if (!backend)
+    if (!m_buffer)
         return std::nullopt;
+    const_cast<ImageBuffer&>(*m_buffer).flushDrawingContext();
 
-    const_cast<ImageBuffer&>(*m_buffer.ptr()).flushDrawingContext();
-
-    auto* sharing = backend->toBackendSharing();
+    auto* sharing = m_buffer->toBackendSharing();
     if (!is<ImageBufferBackendHandleSharing>(sharing))
         return std::nullopt;
 

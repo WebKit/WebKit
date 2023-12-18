@@ -94,7 +94,7 @@ MediaTime MediaTrackReader::greatestPresentationTime() const
     if (sampleMap.empty())
         return MediaTime::invalidTime();
 
-    auto& lastSample = *sampleMap.decodeOrder().rbegin()->second;
+    const MediaSample& lastSample = sampleMap.decodeOrder().rbegin()->second;
     return lastSample.presentationTime() + lastSample.duration();
 }
 
@@ -184,7 +184,7 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
         return kCMBaseObjectError_ValueNotAvailable;
     }
 
-    auto& lastSample = *sampleMap.decodeOrder().rbegin()->second;
+    const MediaSample& lastSample = sampleMap.decodeOrder().rbegin()->second;
 
     if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_FormatDescriptionArray())) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(lastSample.platformSample().type == PlatformSample::ByteRangeSampleType);

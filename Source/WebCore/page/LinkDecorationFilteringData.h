@@ -26,28 +26,23 @@
 #pragma once
 
 #include "RegistrableDomain.h"
-#include <optional>
 
 namespace WebCore {
 
 struct LinkDecorationFilteringData {
     RegistrableDomain domain;
+    String path;
     String linkDecoration;
 
-    LinkDecorationFilteringData(RegistrableDomain&& domain, const String& linkDecoration)
+    LinkDecorationFilteringData(RegistrableDomain&& domain, String&& path, String&& linkDecoration)
         : domain(WTFMove(domain))
-        , linkDecoration(linkDecoration)
+        , path(WTFMove(path))
+        , linkDecoration(WTFMove(linkDecoration))
     {
     }
 
-    LinkDecorationFilteringData(const String& domain, const String& linkDecoration)
-        : domain(RegistrableDomain { URL { domain } } )
-        , linkDecoration(linkDecoration)
-    {
-    }
-
-    LinkDecorationFilteringData(const String& linkDecoration)
-        : linkDecoration(linkDecoration)
+    LinkDecorationFilteringData(String&& domain, String&& path, String&& linkDecoration)
+        : LinkDecorationFilteringData(RegistrableDomain { URL { WTFMove(domain) } }, WTFMove(path), WTFMove(linkDecoration))
     {
     }
 
@@ -56,6 +51,7 @@ struct LinkDecorationFilteringData {
 
     LinkDecorationFilteringData(LinkDecorationFilteringData&& data)
         : domain(WTFMove(data.domain))
+        , path(WTFMove(data.path))
         , linkDecoration(WTFMove(data.linkDecoration))
     {
     }
@@ -63,6 +59,7 @@ struct LinkDecorationFilteringData {
     LinkDecorationFilteringData& operator=(LinkDecorationFilteringData&& data)
     {
         domain = WTFMove(data.domain);
+        path = WTFMove(data.path);
         linkDecoration = WTFMove(data.linkDecoration);
         return *this;
     }

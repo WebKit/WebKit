@@ -30,7 +30,7 @@ SECTION .text
 %define LOCAL_VARS_SIZE 16*6
 
 %macro SETUP_LOCAL_VARS 0
-    ; TODO(slavarnway): using xmm registers for these on ARCH_X86_64 +
+    ; TODO(slavarnway): using xmm registers for these on AOM_ARCH_X86_64 +
     ; pmaddubsw has a higher latency on some platforms, this might be eased by
     ; interleaving the instructions.
     %define    k0k1  [rsp + 16*0]
@@ -52,7 +52,7 @@ SECTION .text
     mova       k2k3, m1
     mova       k4k5, m2
     mova       k6k7, m3
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     %define     krd  m12
     %define    tmp0  [rsp + 16*4]
     %define    tmp1  [rsp + 16*5]
@@ -72,7 +72,7 @@ SECTION .text
 %endm
 
 ;-------------------------------------------------------------------------------
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
   %define LOCAL_VARS_SIZE_H4 0
 %else
   %define LOCAL_VARS_SIZE_H4 16*4
@@ -83,7 +83,7 @@ cglobal filter_block1d4_%1, 6, 6, 11, LOCAL_VARS_SIZE_H4, \
                             src, sstride, dst, dstride, height, filter
     mova                m4, [filterq]
     packsswb            m4, m4
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     %define       k0k1k4k5  m8
     %define       k2k3k6k7  m9
     %define            krd  m10
@@ -346,7 +346,7 @@ cglobal filter_block1d16_%1, 6, 6, 14, LOCAL_VARS_SIZE, \
     psraw         m0, 7
     psraw         m4, 7
 %ifidn %1, h8_add_src
-%if ARCH_X86=1 && CONFIG_PIC=1
+%if AOM_ARCH_X86=1 && CONFIG_PIC=1
     pcmpeqb       m2, m2                  ;all ones
     psrlw         m2, 8                   ;even_byte_mask
 %else
@@ -383,7 +383,7 @@ SUBPIX_HFILTER4  h8
 ; TODO(Linfeng): Detect cpu type and choose the code with better performance.
 %define X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON 1
 
-%if ARCH_X86_64 && X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON
+%if AOM_ARCH_X86_64 && X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON
     %define NUM_GENERAL_REG_USED 9
 %else
     %define NUM_GENERAL_REG_USED 6
@@ -403,9 +403,9 @@ cglobal filter_block1d%2_%1, 6, NUM_GENERAL_REG_USED, 15, LOCAL_VARS_SIZE, \
 
     dec                 heightd
 
-%if ARCH_X86 || X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON
+%if AOM_ARCH_X86 || X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON
 
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     %define               src1q  r7
     %define           sstride6q  r8
     %define          dst_stride  dstrideq
@@ -528,7 +528,7 @@ cglobal filter_block1d%2_%1, 6, NUM_GENERAL_REG_USED, 15, LOCAL_VARS_SIZE, \
     movx                 [dstq], m0
 
 %else
-    ; ARCH_X86_64
+    ; AOM_ARCH_X86_64
 
     movx                     m0, [srcq                ]     ;A
     movx                     m1, [srcq + sstrideq     ]     ;B
@@ -628,7 +628,7 @@ cglobal filter_block1d%2_%1, 6, NUM_GENERAL_REG_USED, 15, LOCAL_VARS_SIZE, \
 %endif
     movx                 [dstq], m0
 
-%endif ; ARCH_X86_64
+%endif ; AOM_ARCH_X86_64
 
 .done:
     REP_RET
@@ -642,9 +642,9 @@ cglobal filter_block1d16_%1, 6, NUM_GENERAL_REG_USED, 16, LOCAL_VARS_SIZE, \
     mova                     m4, [filterq]
     SETUP_LOCAL_VARS
 
-%if ARCH_X86 || X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON
+%if AOM_ARCH_X86 || X86_SUBPIX_VFILTER_PREFER_SLOW_CELERON
 
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     %define               src1q  r7
     %define           sstride6q  r8
     %define          dst_stride  dstrideq
@@ -724,7 +724,7 @@ cglobal filter_block1d16_%1, 6, NUM_GENERAL_REG_USED, 16, LOCAL_VARS_SIZE, \
     REP_RET
 
 %else
-    ; ARCH_X86_64
+    ; AOM_ARCH_X86_64
     dec                 heightd
 
     movu                     m1, [srcq                ]     ;A
@@ -860,7 +860,7 @@ cglobal filter_block1d16_%1, 6, NUM_GENERAL_REG_USED, 16, LOCAL_VARS_SIZE, \
 .done:
     REP_RET
 
-%endif ; ARCH_X86_64
+%endif ; AOM_ARCH_X86_64
 
 %endm
 

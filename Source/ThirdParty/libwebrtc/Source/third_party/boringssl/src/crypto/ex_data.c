@@ -116,7 +116,6 @@
 #include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
-#include <openssl/stack.h>
 #include <openssl/thread.h>
 
 #include "internal.h"
@@ -128,14 +127,14 @@ struct crypto_ex_data_func_st {
   long argl;   // Arbitary long
   void *argp;  // Arbitary void pointer
   CRYPTO_EX_free *free_func;
+  // next points to the next |CRYPTO_EX_DATA_FUNCS| or NULL if this is the last
+  // one. It may only be read if synchronized with a read from |num_funcs|.
+  CRYPTO_EX_DATA_FUNCS *next;
 };
 
 int CRYPTO_get_ex_new_index(CRYPTO_EX_DATA_CLASS *ex_data_class, int *out_index,
                             long argl, void *argp, CRYPTO_EX_free *free_func) {
-  CRYPTO_EX_DATA_FUNCS *funcs;
-  int ret = 0;
-
-  funcs = OPENSSL_malloc(sizeof(CRYPTO_EX_DATA_FUNCS));
+  CRYPTO_EX_DATA_FUNCS *funcs = OPENSSL_malloc(sizeof(CRYPTO_EX_DATA_FUNCS));
   if (funcs == NULL) {
     return 0;
   }
@@ -143,37 +142,32 @@ int CRYPTO_get_ex_new_index(CRYPTO_EX_DATA_CLASS *ex_data_class, int *out_index,
   funcs->argl = argl;
   funcs->argp = argp;
   funcs->free_func = free_func;
+  funcs->next = NULL;
 
-  CRYPTO_STATIC_MUTEX_lock_write(&ex_data_class->lock);
+  CRYPTO_MUTEX_lock_write(&ex_data_class->lock);
 
-  if (ex_data_class->meth == NULL) {
-    ex_data_class->meth = sk_CRYPTO_EX_DATA_FUNCS_new_null();
-  }
-
-  if (ex_data_class->meth == NULL) {
-    goto err;
-  }
-
+  uint32_t num_funcs = CRYPTO_atomic_load_u32(&ex_data_class->num_funcs);
   // The index must fit in |int|.
-  if (sk_CRYPTO_EX_DATA_FUNCS_num(ex_data_class->meth) >
-          (size_t)(INT_MAX - ex_data_class->num_reserved)) {
+  if (num_funcs > (size_t)(INT_MAX - ex_data_class->num_reserved)) {
     OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
-    goto err;
+    CRYPTO_MUTEX_unlock_write(&ex_data_class->lock);
+    return 0;
   }
 
-  if (!sk_CRYPTO_EX_DATA_FUNCS_push(ex_data_class->meth, funcs)) {
-    goto err;
+  // Append |funcs| to the linked list.
+  if (ex_data_class->last == NULL) {
+    assert(num_funcs == 0);
+    ex_data_class->funcs = funcs;
+    ex_data_class->last = funcs;
+  } else {
+    ex_data_class->last->next = funcs;
+    ex_data_class->last = funcs;
   }
-  funcs = NULL;  // |sk_CRYPTO_EX_DATA_FUNCS_push| takes ownership.
 
-  *out_index = (int)sk_CRYPTO_EX_DATA_FUNCS_num(ex_data_class->meth) - 1 +
-               ex_data_class->num_reserved;
-  ret = 1;
-
-err:
-  CRYPTO_STATIC_MUTEX_unlock_write(&ex_data_class->lock);
-  OPENSSL_free(funcs);
-  return ret;
+  CRYPTO_atomic_store_u32(&ex_data_class->num_funcs, num_funcs + 1);
+  CRYPTO_MUTEX_unlock_write(&ex_data_class->lock);
+  *out_index = (int)num_funcs + ex_data_class->num_reserved;
+  return 1;
 }
 
 int CRYPTO_set_ex_data(CRYPTO_EX_DATA *ad, int index, void *val) {
@@ -209,33 +203,6 @@ void *CRYPTO_get_ex_data(const CRYPTO_EX_DATA *ad, int idx) {
   return sk_void_value(ad->sk, idx);
 }
 
-// get_func_pointers takes a copy of the CRYPTO_EX_DATA_FUNCS pointers, if any,
-// for the given class. If there are some pointers, it sets |*out| to point to
-// a fresh stack of them. Otherwise it sets |*out| to NULL. It returns one on
-// success or zero on error.
-static int get_func_pointers(STACK_OF(CRYPTO_EX_DATA_FUNCS) **out,
-                             CRYPTO_EX_DATA_CLASS *ex_data_class) {
-  size_t n;
-
-  *out = NULL;
-
-  // CRYPTO_EX_DATA_FUNCS structures are static once set, so we can take a
-  // shallow copy of the list under lock and then use the structures without
-  // the lock held.
-  CRYPTO_STATIC_MUTEX_lock_read(&ex_data_class->lock);
-  n = sk_CRYPTO_EX_DATA_FUNCS_num(ex_data_class->meth);
-  if (n > 0) {
-    *out = sk_CRYPTO_EX_DATA_FUNCS_dup(ex_data_class->meth);
-  }
-  CRYPTO_STATIC_MUTEX_unlock_read(&ex_data_class->lock);
-
-  if (n > 0 && *out == NULL) {
-    return 0;
-  }
-
-  return 1;
-}
-
 void CRYPTO_new_ex_data(CRYPTO_EX_DATA *ad) {
   ad->sk = NULL;
 }
@@ -247,26 +214,21 @@ void CRYPTO_free_ex_data(CRYPTO_EX_DATA_CLASS *ex_data_class, void *obj,
     return;
   }
 
-  STACK_OF(CRYPTO_EX_DATA_FUNCS) *func_pointers;
-  if (!get_func_pointers(&func_pointers, ex_data_class)) {
-    // TODO(davidben): This leaks memory on malloc error.
-    return;
-  }
-
+  uint32_t num_funcs = CRYPTO_atomic_load_u32(&ex_data_class->num_funcs);
   // |CRYPTO_get_ex_new_index| will not allocate indices beyond |INT_MAX|.
-  assert(sk_CRYPTO_EX_DATA_FUNCS_num(func_pointers) <=
-         (size_t)(INT_MAX - ex_data_class->num_reserved));
-  for (int i = 0; i < (int)sk_CRYPTO_EX_DATA_FUNCS_num(func_pointers); i++) {
-    CRYPTO_EX_DATA_FUNCS *func_pointer =
-        sk_CRYPTO_EX_DATA_FUNCS_value(func_pointers, i);
-    if (func_pointer->free_func) {
-      void *ptr = CRYPTO_get_ex_data(ad, i + ex_data_class->num_reserved);
-      func_pointer->free_func(obj, ptr, ad, i + ex_data_class->num_reserved,
-                              func_pointer->argl, func_pointer->argp);
-    }
-  }
+  assert(num_funcs <= (size_t)(INT_MAX - ex_data_class->num_reserved));
 
-  sk_CRYPTO_EX_DATA_FUNCS_free(func_pointers);
+  // Defer dereferencing |ex_data_class->funcs| and |funcs->next|. It must come
+  // after the |num_funcs| comparison to be correctly synchronized.
+  CRYPTO_EX_DATA_FUNCS *const *funcs = &ex_data_class->funcs;
+  for (uint32_t i = 0; i < num_funcs; i++) {
+    if ((*funcs)->free_func != NULL) {
+      int index = (int)i + ex_data_class->num_reserved;
+      void *ptr = CRYPTO_get_ex_data(ad, index);
+      (*funcs)->free_func(obj, ptr, ad, index, (*funcs)->argl, (*funcs)->argp);
+    }
+    funcs = &(*funcs)->next;
+  }
 
   sk_void_free(ad->sk);
   ad->sk = NULL;

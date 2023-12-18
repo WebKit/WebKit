@@ -1,3 +1,4 @@
 
-FAIL Move down, up and down again, receive scrollend event only once promise_test: Unhandled rejection with value: "target_div did not receive scrollend event after sequence of scrolls on target."
+PASS Move down, up and down again, receive scrollend event only once
+PASS Move right, left and right again, receive scrollend event only once
 

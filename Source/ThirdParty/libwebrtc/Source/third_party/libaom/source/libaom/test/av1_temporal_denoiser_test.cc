@@ -43,11 +43,9 @@ class AV1DenoiserTest
     : public ::testing::Test,
       public ::testing::WithParamInterface<AV1DenoiserTestParam> {
  public:
-  virtual ~AV1DenoiserTest() {}
+  ~AV1DenoiserTest() override = default;
 
-  virtual void SetUp() { bs_ = GET_PARAM(1); }
-
-  virtual void TearDown() {}
+  void SetUp() override { bs_ = GET_PARAM(1); }
 
  protected:
   BLOCK_SIZE bs_;

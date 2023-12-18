@@ -27,12 +27,13 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
+#include <WebCore/TrackBase.h>
 #include <wtf/MediaTime.h>
 
 namespace WebKit {
 
 struct TrackPrivateRemoteConfiguration {
-    AtomString trackId;
+    WebCore::TrackID trackId;
     AtomString label;
     AtomString language;
     MediaTime startTimeVariance { MediaTime::zeroTime() };

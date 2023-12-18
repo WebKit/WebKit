@@ -161,6 +161,46 @@
                 "Check the filesystem for translated shaders to use instead of the shader translator's"
             ],
             "issue": "http://anglebug.com/8280"
+        },
+        {
+            "name": "compile_job_is_thread_safe",
+            "category": "Features",
+            "description": [
+                "If false, parts of the compile job cannot be parallelized"
+            ],
+            "issue": "http://anglebug.com/8297"
+        },
+        {
+            "name": "link_job_is_thread_safe",
+            "category": "Features",
+            "description": [
+                "If false, parts of the link job cannot be parallelized"
+            ],
+            "issue": "http://anglebug.com/8297"
+        },
+        {
+            "name": "always_run_link_sub_jobs_threaded",
+            "category": "Features",
+            "description": [
+                "If true, sub tasks of the link job are always threaded, regardless of GL_KHR_parallel_shader_compile"
+            ],
+            "issue": "http://anglebug.com/8417"
+        },
+        {
+            "name": "uncurrent_egl_surface_upon_surface_destroy",
+            "category": "Workarounds",
+            "description": [
+                "Make egl surface uncurrent when calling eglDestroySurface(), if the surface is still bound by the context of current render thread"
+            ],
+            "issue": "https://issuetracker.google.com/292285899"
+        },
+        {
+            "name": "force_minimum_max_vertex_attributes",
+            "category": "Features",
+            "description": [
+                "Force the minimum GL_MAX_VERTEX_ATTRIBS that the context's client version allows."
+            ],
+            "issue": ""
         }
     ]
 }

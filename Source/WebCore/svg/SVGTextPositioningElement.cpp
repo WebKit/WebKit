@@ -23,9 +23,9 @@
 #include "config.h"
 #include "SVGTextPositioningElement.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
 #include "RenderSVGInline.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGAltGlyphElement.h"
 #include "SVGElementTypeHelpers.h"

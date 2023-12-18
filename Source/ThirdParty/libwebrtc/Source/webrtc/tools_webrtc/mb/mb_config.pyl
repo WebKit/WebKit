@@ -122,9 +122,7 @@
       # build anything).
       # TODO(http://crbug.com/1029452): Nuke these and isolate on builder
       # instead?
-      'Perf Android32 (O Pixel2)': 'release_bot_x64',
       'Perf Android32 (R Pixel5)': 'release_bot_x64',
-      'Perf Android64 (O Pixel2)': 'release_bot_x64',
       'Perf Android64 (R Pixel5)': 'release_bot_x64',
       'Perf Fuchsia': 'release_bot_x64_fuchsia',
       'Perf Linux Bionic': 'release_bot_x64',
@@ -240,20 +238,21 @@
     'android_release_bot_x64': ['android', 'release_bot', 'x64'],
     'android_release_bot_x86': ['android', 'release_bot', 'x86'],
     'asan_lsan_clang_release_bot_x64':
-    ['asan', 'lsan', 'clang', 'openh264', 'pure_release_bot', 'x64'],
+    ['asan', 'lsan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
     'bwe_test_logging_android_arm':
     ['android', 'debug_static_bot', 'arm', 'bwe_test_logging'],
     'bwe_test_logging_x64': ['debug_bot', 'x64', 'bwe_test_logging'],
     'bwe_test_logging_x86': ['debug_bot', 'x86', 'bwe_test_logging'],
     'code_coverage_bot_x64': [
       'openh264', 'release_bot', 'x64', 'code_coverage',
-      'partial_code_coverage_instrumentation'
+      'partial_code_coverage_instrumentation', 'h265'
     ],
-    'codesearch_gen_linux_bot': ['openh264', 'debug_bot', 'minimal_symbols'],
-    'debug_bot_arm': ['openh264', 'debug_bot', 'arm'],
-    'debug_bot_arm64': ['openh264', 'debug_bot', 'arm64'],
-    'debug_bot_x64': ['openh264', 'debug_bot', 'x64'],
-    'debug_bot_x86': ['openh264', 'debug_bot', 'x86'],
+    'codesearch_gen_linux_bot':
+    ['openh264', 'debug_bot', 'minimal_symbols', 'h265'],
+    'debug_bot_arm': ['openh264', 'debug_bot', 'arm', 'h265'],
+    'debug_bot_arm64': ['openh264', 'debug_bot', 'arm64', 'h265'],
+    'debug_bot_x64': ['openh264', 'debug_bot', 'x64', 'h265'],
+    'debug_bot_x86': ['openh264', 'debug_bot', 'x86', 'h265'],
     'dummy_audio_file_devices_no_protobuf_android_arm': [
       'android', 'debug_static_bot', 'arm', 'dummy_audio_file_devices',
       'no_protobuf'
@@ -271,7 +270,8 @@
     ],
     'ios_internal_pure_release_bot_arm64': [
       'ios', 'pure_release_bot', 'arm64',
-      'ios_code_signing_identity_description', 'xctest'
+      'ios_code_signing_identity_description', 'xctest',
+      'rtc_objc_test_prefix',
     ],
     'ios_internal_release_bot_arm64': [
       'ios', 'release_bot', 'arm64', 'ios_code_signing_identity_description',
@@ -282,7 +282,7 @@
     ],
     'libfuzzer_asan_release_bot_x64': [
       'libfuzzer', 'asan', 'optimize_for_fuzzing', 'openh264',
-      'pure_release_bot', 'x64'
+      'pure_release_bot', 'x64', 'h265'
     ],
     'mac_asan_clang_release_bot_x64': [
       'asan',
@@ -290,29 +290,31 @@
       'openh264',
       'pure_release_bot',
       'x64',
+      'h265',
     ],
     'msan_clang_release_bot_x64':
-    ['msan', 'clang', 'openh264', 'pure_release_bot', 'x64'],
+    ['msan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
     'no_h264_debug_bot_x86': ['debug_bot', 'x86'],
-    'pure_release_bot_x64': ['openh264', 'pure_release_bot', 'x64'],
-    'pure_release_bot_x86': ['openh264', 'pure_release_bot', 'x86'],
-    'release_bot_arm': ['openh264', 'release_bot', 'arm'],
-    'release_bot_arm64': ['openh264', 'release_bot', 'arm64'],
-    'release_bot_x64': ['openh264', 'release_bot', 'x64'],
-    'release_bot_x64_fuchsia': ['openh264', 'release_bot', 'x64', 'fuchsia'],
-    'release_bot_x86': ['openh264', 'release_bot', 'x86'],
+    'pure_release_bot_x64': ['openh264', 'pure_release_bot', 'x64', 'h265'],
+    'pure_release_bot_x86': ['openh264', 'pure_release_bot', 'x86', 'h265'],
+    'release_bot_arm': ['openh264', 'release_bot', 'arm', 'h265'],
+    'release_bot_arm64': ['openh264', 'release_bot', 'arm64', 'h265'],
+    'release_bot_x64': ['openh264', 'release_bot', 'x64', 'h265'],
+    'release_bot_x64_fuchsia':
+    ['openh264', 'release_bot', 'x64', 'fuchsia', 'h265'],
+    'release_bot_x86': ['openh264', 'release_bot', 'x86', 'h265'],
     'rtti_no_sctp_android_arm':
     ['android', 'debug_static_bot', 'arm', 'rtti', 'no_sctp'],
     'rtti_no_sctp_no_unicode_win_x86':
     ['debug_bot', 'x86', 'rtti', 'no_sctp', 'win_undef_unicode'],
     'rtti_no_sctp_x64': ['debug_bot', 'x64', 'rtti', 'no_sctp'],
     'tsan_clang_release_bot_x64':
-    ['tsan', 'clang', 'openh264', 'pure_release_bot', 'x64'],
+    ['tsan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'],
     'ubsan_clang_release_bot_x64': [
-      'ubsan', 'clang', 'openh264', 'pure_release_bot', 'x64'
+      'ubsan', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'
     ],
     'ubsan_vptr_clang_release_bot_x64': [
-      'ubsan_vptr', 'clang', 'openh264', 'pure_release_bot', 'x64'
+      'ubsan_vptr', 'clang', 'openh264', 'pure_release_bot', 'x64', 'h265'
     ],
     'win_asan_clang_release_bot_x64': [
       'asan',
@@ -321,36 +323,42 @@
       'openh264',
       'pure_release_bot',
       'x64',
+      'h265',
     ],
     'win_clang_debug_bot_x64': [
       'clang',
       'openh264',
       'debug_bot',
       'x64',
+      'h265',
     ],
     'win_clang_debug_bot_x86': [
       'clang',
       'openh264',
       'debug_bot',
       'x86',
+      'h265',
     ],
     'win_clang_pure_release_bot_x64': [
       'clang',
       'openh264',
       'pure_release_bot',
       'x64',
+      'h265',
     ],
     'win_clang_release_bot_x64': [
       'clang',
       'openh264',
       'release_bot',
       'x64',
+      'h265',
     ],
     'win_clang_release_bot_x86': [
       'clang',
       'openh264',
       'release_bot',
       'x86',
+      'h265',
     ],
   },
 
@@ -389,10 +397,10 @@
       'gn_args': 'is_debug=true',
     },
     'debug_bot': {
-      'mixins': ['debug', 'reclient'],
+      'mixins': ['debug', 'reclient', 'strict_field_trials'],
     },
     'debug_static_bot': {
-      'mixins': ['debug', 'minimal_symbols', 'reclient'],
+      'mixins': ['debug', 'minimal_symbols', 'reclient', 'strict_field_trials'],
     },
     'dummy_audio_file_devices': {
       'gn_args': 'rtc_use_dummy_audio_file_devices=true',
@@ -402,6 +410,9 @@
     },
     'full_symbols': {
       'gn_args': 'symbol_level=2',
+    },
+    'h265': {
+      'gn_args': 'rtc_use_h265=true',
     },
     'ios': {
       'gn_args': 'target_os="ios"',
@@ -454,10 +465,16 @@
       'gn_args': 'is_debug=false',
     },
     'release_bot': {
-      'mixins': ['pure_release_bot', 'dcheck_always_on'],
+      'mixins': ['pure_release_bot', 'dcheck_always_on', 'strict_field_trials'],
+    },
+    'rtc_objc_test_prefix': {
+      'gn_args': 'rtc_objc_prefix="RTC_TESTING"',
     },
     'rtti': {
       'gn_args': 'use_rtti=true',
+    },
+    'strict_field_trials': {
+      'gn_args': 'rtc_strict_field_trials="dcheck"',
     },
     'tsan': {
       'gn_args': 'is_tsan=true',

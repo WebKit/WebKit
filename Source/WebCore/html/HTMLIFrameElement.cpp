@@ -66,7 +66,7 @@ int HTMLIFrameElement::defaultTabIndex() const
 DOMTokenList& HTMLIFrameElement::sandbox()
 {
     if (!m_sandbox) {
-        m_sandbox = makeUnique<DOMTokenList>(*this, sandboxAttr, [](Document&, StringView token) {
+        m_sandbox = makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, sandboxAttr, [](Document&, StringView token) {
             return SecurityContext::isSupportedSandboxPolicy(token);
         });
     }

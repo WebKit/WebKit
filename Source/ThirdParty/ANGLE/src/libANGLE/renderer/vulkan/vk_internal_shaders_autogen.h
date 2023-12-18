@@ -19,6 +19,17 @@ namespace vk
 {
 namespace InternalShader
 {
+namespace Blit3DSrc_frag
+{
+enum Blit
+{
+    kBlitFloat = 0x00000000,
+    kBlitInt   = 0x00000001,
+    kBlitUint  = 0x00000002,
+};
+constexpr size_t kArrayLen = 0x00000003;
+}  // namespace Blit3DSrc_frag
+
 namespace BlitResolve_frag
 {
 enum flags
@@ -212,6 +223,9 @@ class ShaderLibrary final : angle::NonCopyable
 
     void destroy(VkDevice device);
 
+    angle::Result getBlit3DSrc_frag(Context *context,
+                                    uint32_t shaderFlags,
+                                    RefCounted<ShaderModule> **shaderOut);
     angle::Result getBlitResolve_frag(Context *context,
                                       uint32_t shaderFlags,
                                       RefCounted<ShaderModule> **shaderOut);
@@ -259,6 +273,7 @@ class ShaderLibrary final : angle::NonCopyable
                                       RefCounted<ShaderModule> **shaderOut);
 
   private:
+    RefCounted<ShaderModule> mBlit3DSrc_frag_shaders[InternalShader::Blit3DSrc_frag::kArrayLen];
     RefCounted<ShaderModule> mBlitResolve_frag_shaders[InternalShader::BlitResolve_frag::kArrayLen];
     RefCounted<ShaderModule> mBlitResolveStencilNoExport_comp_shaders
         [InternalShader::BlitResolveStencilNoExport_comp::kArrayLen];

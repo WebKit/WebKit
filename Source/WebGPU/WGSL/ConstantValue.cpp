@@ -31,14 +31,48 @@
 
 namespace WGSL {
 
+ConstantValue ConstantArray::operator[](unsigned index)
+{
+    return elements[index];
+}
+
+ConstantValue ConstantVector::operator[](unsigned index)
+{
+    return elements[index];
+}
+
+ConstantVector ConstantMatrix::operator[](unsigned index)
+{
+    ConstantVector result(rows);
+    for (unsigned i = 0; i < rows; ++i)
+        result.elements[i] = elements[index * rows + i];
+    return result;
+}
+
 void ConstantValue::dump(PrintStream& out) const
 {
     WTF::switchOn(*this,
         [&](double d) {
             out.print(String::number(d));
         },
+        [&](float f) {
+            out.print(String::number(f));
+            if (std::isfinite(f))
+                out.print("f");
+        },
+        [&](half h) {
+            out.print(String::number(h));
+            if (std::isfinite(static_cast<double>(h)))
+                out.print("h");
+        },
         [&](int64_t i) {
             out.print(String::number(i));
+        },
+        [&](int32_t i) {
+            out.print(String::number(i), "i");
+        },
+        [&](uint32_t u) {
+            out.print(String::number(u), "u");
         },
         [&](bool b) {
             out.print(b ? "true" : "false");
@@ -64,6 +98,28 @@ void ConstantValue::dump(PrintStream& out) const
                 out.print(element);
             }
             out.print(")");
+        },
+        [&](const ConstantMatrix& m) {
+            out.print("mat", m.columns, "x", m.rows, "(");
+            bool first = true;
+            for (const auto& element : m.elements) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(element);
+            }
+            out.print(")");
+        },
+        [&](const ConstantStruct& s) {
+            out.print("struct { ");
+            bool first = true;
+            for (const auto& entry : s.fields) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(entry.key, ": ", entry.value);
+            }
+            out.print(" }");
         });
 }
 

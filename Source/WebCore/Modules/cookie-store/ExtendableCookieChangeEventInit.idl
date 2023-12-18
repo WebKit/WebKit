@@ -27,9 +27,7 @@
 
 typedef sequence<CookieListItem> CookieList;
 
-[
-    Conditional=SERVICE_WORKER,
-] dictionary ExtendableCookieChangeEventInit : ExtendableEventInit {
-  CookieList changed;
-  CookieList deleted;
+dictionary ExtendableCookieChangeEventInit : ExtendableEventInit {
+    CookieList changed;
+    CookieList deleted;
 };

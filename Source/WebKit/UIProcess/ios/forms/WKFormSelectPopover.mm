@@ -415,6 +415,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self presentPopoverAnimated:NO];
 }
 
+- (void)controlUpdateEditing
+{
+    [[_tableViewController tableView] reloadData];
+}
+
 - (void)controlEndEditing
 {
     [self dismissPopoverAnimated:[_tableViewController shouldDismissWithAnimation]];

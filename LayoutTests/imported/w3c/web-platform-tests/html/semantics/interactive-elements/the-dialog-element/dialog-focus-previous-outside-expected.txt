@@ -6,4 +6,5 @@ FAIL Focus restore should not occur when the focused element is in a shadowroot 
 </div> but got Element node <button id="b2">button 2</button>
 PASS Focus restore should occur when the focused element is in a shadowroot inside the dialog.
 PASS Focus restore should occur when the focused element is slotted into a dialog.
+PASS Focus restore should always occur for modal dialogs.
 

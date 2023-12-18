@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Connection.h"
 #include "DataReference.h"
 #include "Download.h"
@@ -105,5 +103,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(SERVICE_WORKER)

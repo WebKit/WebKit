@@ -39,59 +39,6 @@ namespace WTF {
 
 template<typename E> class OptionSet;
 
-
-template<typename T, typename E> struct OptionSetValueChecker;
-
-template<typename T, typename E, E e, E... es>
-struct OptionSetValueChecker<T, EnumValues<E, e, es...>> {
-    static constexpr T allValidBits()
-    {
-        return static_cast<T>(e) | OptionSetValueChecker<T, EnumValues<E, es...>>::allValidBits();
-    }
-
-    static constexpr bool isValidOptionSetEnum(T t)
-    {
-        return (static_cast<T>(e) == t) ? true : OptionSetValueChecker<T, EnumValues<E, es...>>::isValidOptionSetEnum(t);
-    }
-};
-
-template<typename T, typename E>
-struct OptionSetValueChecker<T, EnumValues<E>> {
-    static constexpr T allValidBits()
-    {
-        return 0;
-    }
-
-    static constexpr bool isValidOptionSetEnum(T)
-    {
-        return false;
-    }
-};
-
-template<typename E>
-constexpr std::enable_if_t<std::is_enum_v<E>, bool> isValidOptionSetEnum(E e)
-{
-    if constexpr (IsTypeComplete<EnumTraits<E>>)
-        return OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isValidOptionSetEnum(static_cast<std::underlying_type_t<E>>(e));
-    else {
-        // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
-        return hasOneBitSet(static_cast<typename OptionSet<E>::StorageType>(e));
-    }
-}
-
-template<typename E>
-constexpr std::enable_if_t<std::is_enum_v<E>, typename OptionSet<E>::StorageType> maskRawValue(typename OptionSet<E>::StorageType rawValue)
-{
-    if constexpr (IsTypeComplete<EnumTraits<E>>) {
-        auto allValidBitsValue = OptionSetValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::allValidBits();
-        return rawValue & allValidBitsValue;
-    } else {
-        // FIXME: Remove once all OptionSet<> enums have EnumTraits<> defined.
-        return rawValue;
-    }
-}
-
-
 // OptionSet is a class that represents a set of enumerators in a space-efficient manner. The enumerators
 // must be powers of two greater than 0. This class is useful as a replacement for passing a bitmask of
 // enumerators around.
@@ -125,11 +72,12 @@ public:
 
         StorageType m_value;
     };
+
     using iterator = Iterator<StorageType>;
 
     static constexpr OptionSet fromRaw(StorageType rawValue)
     {
-        return OptionSet(static_cast<E>(maskRawValue<E>(rawValue)), FromRawValue);
+        return OptionSet(static_cast<E>(rawValue), FromRawValue);
     }
 
     constexpr OptionSet() = default;
@@ -137,13 +85,13 @@ public:
     constexpr OptionSet(E e)
         : m_storage(static_cast<StorageType>(e))
     {
-        ASSERT(!m_storage || isValidOptionSetEnum(e));
+        ASSERT(!m_storage || hasOneBitSet(static_cast<StorageType>(e)));
     }
 
     constexpr OptionSet(std::initializer_list<E> initializerList)
     {
         for (auto& option : initializerList) {
-            ASSERT(isValidOptionSetEnum(option));
+            ASSERT(hasOneBitSet(static_cast<StorageType>(option)));
             m_storage |= static_cast<StorageType>(option);
         }
     }
@@ -236,10 +184,23 @@ private:
     StorageType m_storage { 0 };
 };
 
+namespace IsValidOptionSetHelper {
+template<typename T, typename E> struct OptionSetValueChecker;
+template<typename T, typename E, E e, E... es>
+struct OptionSetValueChecker<T, EnumValues<E, e, es...>> {
+    static constexpr T allValidBits() { return static_cast<T>(e) | OptionSetValueChecker<T, EnumValues<E, es...>>::allValidBits(); }
+};
+template<typename T, typename E>
+struct OptionSetValueChecker<T, EnumValues<E>> {
+    static constexpr T allValidBits() { return 0; }
+};
+}
+
 template<typename E>
 WARN_UNUSED_RETURN constexpr bool isValidOptionSet(OptionSet<E> optionSet)
 {
-    auto allValidBitsValue = OptionSetValueChecker<std::make_unsigned_t<std::underlying_type_t<E>>, typename EnumTraits<E>::values>::allValidBits();
+    // FIXME: Remove this when all OptionSet enums are migrated to generated serialization.
+    auto allValidBitsValue = IsValidOptionSetHelper::OptionSetValueChecker<std::make_unsigned_t<std::underlying_type_t<E>>, typename EnumTraits<E>::values>::allValidBits();
     return (optionSet.toRaw() | allValidBitsValue) == allValidBitsValue;
 }
 

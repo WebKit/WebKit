@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct SameSizeAsFloatingObject {
-    WeakPtr<RenderBox> renderer;
+    SingleThreadWeakPtr<RenderBox> renderer;
     WeakPtr<LegacyRootInlineBox> originatingLine;
     LayoutRect rect;
     int paginationStrut;
@@ -44,7 +44,7 @@ struct SameSizeAsFloatingObject {
 
 static_assert(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), "FloatingObject should stay small");
 #if !ASSERT_ENABLED
-static_assert(sizeof(WeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(SingleThreadWeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
@@ -165,7 +165,7 @@ public:
 protected:
     virtual bool updateOffsetIfNeeded(const FloatingObject&) = 0;
 
-    WeakPtr<const RenderBlockFlow> m_renderer;
+    SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_lineTop;
     LayoutUnit m_lineBottom;
     LayoutUnit m_offset;
@@ -220,7 +220,7 @@ public:
     LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
-    WeakPtr<const RenderBlockFlow> m_renderer;
+    SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_belowLogicalHeight;
     std::optional<LayoutUnit> m_nextLogicalBottom;
     std::optional<LayoutUnit> m_nextShapeLogicalBottom;
@@ -437,6 +437,17 @@ LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUni
         placedFloatsTree->allOverlapsWithAdapter(adapter);
 
     return std::min(fixedOffset, adapter.offset());
+}
+
+void FloatingObjects::shiftFloatsBy(LayoutUnit blockShift)
+{
+    LayoutUnit shiftX = (m_horizontalWritingMode) ? 0_lu : -blockShift;
+    LayoutUnit shiftY = (m_horizontalWritingMode) ? blockShift : 0_lu;
+
+    for (auto& floater : m_set) {
+        floater->m_frameRect.move(shiftX, shiftY);
+        floater->renderer().move(shiftX, shiftY);
+    }
 }
 
 template<>

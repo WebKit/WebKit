@@ -68,11 +68,9 @@ public:
     VideoTrackPrivate::Kind videoKind() const;
 
     int index() const;
-    AtomString id() const;
+    TrackID id() const;
     AtomString label() const;
     AtomString language() const;
-
-    int trackID() const;
 
     static String languageForAVAssetTrack(AVAssetTrack*);
     static String languageForAVMediaSelectionOption(AVMediaSelectionOption *);

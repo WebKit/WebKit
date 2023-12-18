@@ -93,7 +93,7 @@ static USet* getSmartSet(bool isPreviousCharacter)
     return smartSet;
 }
 
-bool isCharacterSmartReplaceExempt(UChar32 c, bool isPreviousCharacter)
+bool isCharacterSmartReplaceExempt(char32_t c, bool isPreviousCharacter)
 {
     return uset_contains(getSmartSet(isPreviousCharacter), c);
 }

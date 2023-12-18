@@ -26,7 +26,7 @@ let imageData23 = new ImageData(2, 3);
 
 let bitmap = null;
 
-async function load({offscreen = false} = { }) {
+async function load({offscreen} = { }) {
     if (offscreen) {
         if (window.OffscreenCanvas)
             ctx = new OffscreenCanvas(2, 2).getContext("2d");

@@ -139,11 +139,11 @@ mips
 
 arm disassembly:
 
-    third_party/android_ndk/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-objdump -d ./out/Release/obj/libyuv/row_common.o >row_common.txt
+    llvm-objdump -d ./out/Release/obj/libyuv/row_common.o >row_common.txt
 
-    third_party/android_ndk/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-objdump -d ./out/Release/obj/libyuv_neon/row_neon.o >row_neon.txt
+    llvm-objdump -d ./out/Release/obj/libyuv_neon/row_neon.o >row_neon.txt
 
-    third_party/android_ndk/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-objdump -d ./out/Release/obj/libyuv_neon/row_neon64.o >row_neon64.txt
+    llvm-objdump -d ./out/Release/obj/libyuv_neon/row_neon64.o >row_neon64.txt
 
     Caveat: Disassembly may require optimize_max be disabled in BUILD.gn
 

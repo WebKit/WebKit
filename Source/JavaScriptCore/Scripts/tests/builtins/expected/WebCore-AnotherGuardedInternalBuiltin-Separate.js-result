@@ -49,6 +49,7 @@ extern const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength;
 extern const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility;
 extern const JSC::ConstructorKind s_anotherGuardedInternalBuiltinLetsFetchCodeConstructorKind;
 extern const JSC::ImplementationVisibility s_anotherGuardedInternalBuiltinLetsFetchCodeImplementationVisibility;
+extern const JSC::InlineAttribute s_anotherGuardedInternalBuiltinLetsFetchCodeInlineAttribute;
 
 #define WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_DATA(macro) \
     macro(letsFetch, anotherGuardedInternalBuiltinLetsFetch, 0) \
@@ -108,7 +109,7 @@ inline JSC::UnlinkedFunctionExecutable* AnotherGuardedInternalBuiltinBuiltinsWra
         JSC::Identifier executableName = functionName##PublicName();\
         if (overriddenName)\
             executableName = JSC::Identifier::fromString(m_vm, overriddenName);\
-        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility), this, &m_##name##Executable);\
+        m_##name##Executable = JSC::Weak<JSC::UnlinkedFunctionExecutable>(JSC::createBuiltinExecutable(m_vm, m_##name##Source, executableName, s_##name##ImplementationVisibility, s_##name##ConstructorKind, s_##name##ConstructAbility, s_##name##InlineAttribute), this, &m_##name##Executable);\
     }\
     return m_##name##Executable.get();\
 }
@@ -211,6 +212,7 @@ namespace WebCore {
 const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
 const JSC::ConstructorKind s_anotherGuardedInternalBuiltinLetsFetchCodeConstructorKind = JSC::ConstructorKind::None;
 const JSC::ImplementationVisibility s_anotherGuardedInternalBuiltinLetsFetchCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+const JSC::InlineAttribute s_anotherGuardedInternalBuiltinLetsFetchCodeInlineAttribute = JSC::InlineAttribute::None;
 const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength = 83;
 static const JSC::Intrinsic s_anotherGuardedInternalBuiltinLetsFetchCodeIntrinsic = JSC::NoIntrinsic;
 const char* const s_anotherGuardedInternalBuiltinLetsFetchCode =

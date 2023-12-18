@@ -34,6 +34,8 @@
 #include <WebCore/ScrollingTreeFrameHostingNode.h>
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
 #include <WebCore/ScrollingTreeOverflowScrollProxyNodeCocoa.h>
+#include <WebCore/ScrollingTreePluginHostingNode.h>
+#include <WebCore/ScrollingTreePluginScrollingNode.h>
 #include <WebCore/ScrollingTreePositionedNodeCocoa.h>
 #include <WebCore/ScrollingTreeStickyNodeCocoa.h>
 
@@ -145,11 +147,14 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
     case ScrollingNodeType::MainFrame:
     case ScrollingNodeType::Subframe:
     case ScrollingNodeType::Overflow:
+    case ScrollingNodeType::PluginScrolling:
         ASSERT_NOT_REACHED(); // Subclass should have handled this.
         break;
 
     case ScrollingNodeType::FrameHosting:
         return ScrollingTreeFrameHostingNode::create(*this, nodeID);
+    case ScrollingNodeType::PluginHosting:
+        return ScrollingTreePluginHostingNode::create(*this, nodeID);
     case ScrollingNodeType::OverflowProxy:
         return ScrollingTreeOverflowScrollProxyNodeCocoa::create(*this, nodeID);
     case ScrollingNodeType::Fixed:

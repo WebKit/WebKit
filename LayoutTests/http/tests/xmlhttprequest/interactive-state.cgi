@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use Time::HiRes;
+binmode STDOUT;
 
 # flush the buffers after each print
 select (STDOUT);

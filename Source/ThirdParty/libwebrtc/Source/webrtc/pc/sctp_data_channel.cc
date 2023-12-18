@@ -396,7 +396,7 @@ void SctpDataChannel::RegisterObserver(DataChannelObserver* observer) {
   if (network_thread_ == current_thread) {
     register_observer();
   } else {
-    network_thread_->PostTask(std::move(register_observer));
+    network_thread_->BlockingCall(std::move(register_observer));
   }
 }
 

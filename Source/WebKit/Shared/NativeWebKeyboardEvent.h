@@ -45,6 +45,10 @@ typedef union _GdkEvent GdkEvent;
 #endif
 #endif
 
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+typedef struct _WPEEvent WPEEvent;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebEvent;
@@ -77,6 +81,9 @@ public:
 #elif USE(LIBWPE)
     enum class HandledByInputMethod : bool { No, Yes };
     NativeWebKeyboardEvent(struct wpe_input_keyboard_event*, const String&, bool isAutoRepeat, HandledByInputMethod, std::optional<Vector<WebCore::CompositionUnderline>>&&, std::optional<EditingRange>&&);
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    NativeWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);
+#endif
 #elif PLATFORM(WIN)
     NativeWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM, Vector<MSG>&& pendingCharEvents);
 #endif

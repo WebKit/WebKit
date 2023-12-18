@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "AccessCase.h"
+#include "CachedCall.h"
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
 #include "FullCodeOrigin.h"
@@ -37,21 +38,18 @@
 
 namespace JSC {
 
-PolymorphicCallNode::~PolymorphicCallNode()
+void PolymorphicCallNode::unlinkImpl(VM& vm)
 {
+    // We first remove itself from the linked-list before unlinking m_callLinkInfo.
+    // The reason is that m_callLinkInfo can potentially link PolymorphicCallNode's stub itself, and it may destroy |this| (the other CallLinkInfo
+    // does not do it since it is not chained in PolymorphicCallStubRoutine).
     if (isOnList())
         remove();
-}
 
-void PolymorphicCallNode::unlink(VM& vm)
-{
     if (m_callLinkInfo) {
         dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call at ", m_callLinkInfo->doneLocation(), ", bc#", m_callLinkInfo->codeOrigin().bytecodeIndex());
         m_callLinkInfo->unlink(vm);
     }
-
-    if (isOnList())
-        remove();
 }
 
 void PolymorphicCallNode::clearCallLinkInfo()
@@ -65,10 +63,10 @@ void PolymorphicCallCase::dump(PrintStream& out) const
 }
 
 PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, const JSCell* owner, CallFrame* callerFrame,
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, JSCell* owner, CallFrame* callerFrame,
     CallLinkInfo& info, const Vector<PolymorphicCallCase>& cases,
     UniqueArray<uint32_t>&& fastCounts)
-    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, codeRef)
+    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, codeRef, owner)
     , m_variants(cases.size())
     , m_fastCounts(WTFMove(fastCounts))
 {
@@ -80,7 +78,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
                 dataLog("Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
         }
         if (CodeBlock* codeBlock = callCase.codeBlock())
-            codeBlock->linkIncomingPolymorphicCall(callerFrame, m_callNodes.add(&info));
+            codeBlock->linkIncomingCall(callerFrame, m_callNodes.add(&info));
     }
     WTF::storeStoreFence();
     makeGCAware(vm);

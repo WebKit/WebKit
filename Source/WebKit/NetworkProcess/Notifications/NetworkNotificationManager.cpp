@@ -47,8 +47,7 @@ NetworkNotificationManager::NetworkNotificationManager(NetworkSession& networkSe
 #if PLATFORM(COCOA)
         auto token = m_networkSession.networkProcess().parentProcessConnection()->getAuditToken();
         if (token) {
-            Vector<uint8_t> auditTokenData;
-            auditTokenData.resize(sizeof(*token));
+            Vector<uint8_t> auditTokenData(sizeof(*token));
             memcpy(auditTokenData.data(), &(*token), sizeof(*token));
             configuration.hostAppAuditTokenData = WTFMove(auditTokenData);
         }
@@ -124,7 +123,7 @@ void NetworkNotificationManager::didDestroyNotification(const WTF::UUID&)
 void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     if (!m_connection) {
-        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
         return;
     }
 
@@ -134,7 +133,7 @@ void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<u
 void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std::optional<PushSubscriptionIdentifier> pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     if (!m_connection) {
-        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
         return;
     }
 
@@ -149,7 +148,7 @@ void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionH
     }
 
     if (!m_connection) {
-        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
         return;
     }
 
@@ -164,7 +163,7 @@ void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, Completi
     }
 
     if (!m_connection) {
-        completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
+        completionHandler(makeUnexpected(ExceptionData { ExceptionCode::AbortError, "No connection to push daemon"_s }));
         return;
     }
 

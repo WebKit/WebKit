@@ -89,6 +89,12 @@
 }
 #endif // PLATFORM(MAC)
 
+- (void)webViewDidClose:(WKWebView *)webView
+{
+    if (_webViewDidClose)
+        _webViewDidClose(webView);
+}
+
 - (void)_webView:(WKWebView *)webView saveDataToFile:(NSData *)data suggestedFilename:(NSString *)suggestedFilename mimeType:(NSString *)mimeType originatingURL:(NSURL *)url
 {
     if (_saveDataToFile)
@@ -148,6 +154,16 @@
 
     self.runJavaScriptPromptPanelWithMessage = nil;
     return result.autorelease();
+}
+
+- (void)waitForDidClose
+{
+    EXPECT_FALSE(self.webViewDidClose);
+    __block bool closed { false };
+    self.webViewDidClose = ^(WKWebView *) {
+        closed = true;
+    };
+    TestWebKitAPI::Util::run(&closed);
 }
 
 - (void)_webView:(WKWebView *)webView didAttachLocalInspector:(_WKInspector *)inspector

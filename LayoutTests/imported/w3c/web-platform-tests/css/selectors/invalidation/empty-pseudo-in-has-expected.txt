@@ -2,4 +2,7 @@
 PASS Empty #subject
 PASS Insert div#child to #subject
 PASS Insert div to div.#child
+PASS Remove div from div.#child
+PASS Insert text into div.#child
+PASS Remove text from div.#child
 

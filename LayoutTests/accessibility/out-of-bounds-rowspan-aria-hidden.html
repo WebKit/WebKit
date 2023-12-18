@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<table id="table">
+<thead>
+    <tr id="r0">
+        <th id="c0r0">Author</th>
+        <th id="c1r0">Title</th>
+    </tr>
+</thead>
+<tbody id="tbody0">
+    <tr id="r1">
+        <td id="c0r1" rowspan="3">Stephen Hawking</td>
+        <td id="c1r1">A Brief History of Time</td>
+    </tr>
+    <tr id="r2" aria-hidden="true">
+        <td id="c0r2">Carl Sagan</td>
+        <td id="c1r2">Cosmos</td>
+    </tr>
+</tbody>
+<tbody id="tbody1">
+    <tr id="r3">
+        <td id="c0r3">Stan Owocki</td>
+        <td id="c1r3">Fundamentals of Astrophysics</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures that a rowspan cell does not extend outside its table section.\n\n";
+
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table");
+    output += dumpAXTable(table);
+    output += dumpAXSearchTraversal(table);
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>
+

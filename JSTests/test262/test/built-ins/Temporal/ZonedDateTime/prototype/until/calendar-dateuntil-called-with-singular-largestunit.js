@@ -55,10 +55,10 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     earlier.until(later, { largestUnit });
   },
   {
-    years: ["year", "day"],
-    months: ["month", "day"],
-    weeks: ["week", "day"],
-    days: ["day", "day"],
+    years: ["year"],
+    months: ["month"],
+    weeks: ["week"],
+    days: [],
     hours: [],
     minutes: [],
     seconds: [],
@@ -72,15 +72,15 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
 
 TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
   (calendar, largestUnit) => {
-    const earlier = new Temporal.ZonedDateTime(0n, "UTC", calendar);
+    const earlier = new Temporal.ZonedDateTime(-31536000_000_000_000n /* = -365 days */, "UTC", calendar);
     const later = new Temporal.ZonedDateTime(86_399_999_999_999n, "UTC", calendar);
     earlier.until(later, { largestUnit, roundingIncrement: 2, roundingMode: 'ceil' });
   },
   {
-    years: ["year", "day", "day", "day"],
-    months: ["month", "day", "day", "day"],
-    weeks: ["week", "day", "day", "day"],
-    days: ["day", "day", "day", "day"],
+    years: ["year", "year"],
+    months: ["month", "month"],
+    weeks: ["week", "week"],
+    days: [],
     hours: [],
     minutes: [],
     seconds: [],
@@ -100,10 +100,10 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     earlier.until(later, { smallestUnit });
   },
   {
-    years: ["year", "day", "day", "year"],
-    months: ["month", "day", "day"],
-    weeks: ["week", "day", "day"],
-    days: ["day", "day", "day"],
+    years: ["year", "year"],
+    months: ["month"],
+    weeks: ["week"],
+    days: [],
     hours: [],
     minutes: [],
     seconds: [],

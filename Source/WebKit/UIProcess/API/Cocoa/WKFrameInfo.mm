@@ -91,12 +91,12 @@
 
 - (_WKFrameHandle *)_handle
 {
-    return retainPtr(wrapper(_frameInfo->handle())).autorelease();
+    return wrapper(_frameInfo->handle()).autorelease();
 }
 
 - (_WKFrameHandle *)_parentFrameHandle
 {
-    return retainPtr(wrapper(_frameInfo->parentFrameHandle())).autorelease();
+    return wrapper(_frameInfo->parentFrameHandle()).autorelease();
 }
 
 - (pid_t)_processIdentifier

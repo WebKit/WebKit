@@ -355,7 +355,7 @@ void webkit_cookie_manager_get_cookies(WebKitCookieManager* manager, const gchar
  *
  * Finish an asynchronous operation started with webkit_cookie_manager_get_cookies().
  *
- * The return value is a #GSList of #SoupCookie instances which should be released
+ * The return value is a #GList of #SoupCookie instances which should be released
  * with g_list_free_full() and soup_cookie_free().
  *
  * Returns: (element-type SoupCookie) (transfer full): A #GList of #SoupCookie instances.
@@ -606,7 +606,7 @@ void webkit_cookie_manager_get_all_cookies(WebKitCookieManager* manager, GCancel
  *
  * Finish an asynchronous operation started with webkit_cookie_manager_get_all_cookies().
  *
- * The return value is a #GSList of #SoupCookie instances which should be released
+ * The return value is a #GList of #SoupCookie instances which should be released
  * with g_list_free_full() and soup_cookie_free().
  *
  * Returns: (element-type SoupCookie) (transfer full): A #GList of #SoupCookie instances.

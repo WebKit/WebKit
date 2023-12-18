@@ -148,7 +148,7 @@ AtomString InbandTextTrack::inBandMetadataTrackDispatchType() const
     return m_private->inBandMetadataTrackDispatchType();
 }
 
-void InbandTextTrack::idChanged(const AtomString& id)
+void InbandTextTrack::idChanged(TrackID id)
 {
     setId(id);
 }

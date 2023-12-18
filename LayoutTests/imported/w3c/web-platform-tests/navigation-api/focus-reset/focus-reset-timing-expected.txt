@@ -1,0 +1,4 @@
+
+FAIL Focus should be reset before navigatesuccess assert_true: expected true got false
+FAIL Focus should be reset before navigateerror promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'promise.then')"
+

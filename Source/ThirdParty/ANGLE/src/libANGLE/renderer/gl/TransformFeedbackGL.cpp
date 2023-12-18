@@ -13,7 +13,7 @@
 #include "libANGLE/State.h"
 #include "libANGLE/renderer/gl/BufferGL.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
-#include "libANGLE/renderer/gl/ProgramGL.h"
+#include "libANGLE/renderer/gl/ProgramExecutableGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 
@@ -43,6 +43,11 @@ TransformFeedbackGL::~TransformFeedbackGL()
 angle::Result TransformFeedbackGL::begin(const gl::Context *context,
                                          gl::PrimitiveMode primitiveMode)
 {
+    const gl::ProgramExecutable *executable = context->getState().getProgramExecutable();
+    ASSERT(executable);
+
+    const ProgramExecutableGL *executableGL = GetImplAs<ProgramExecutableGL>(executable);
+    mActiveProgram                          = executableGL->getProgramID();
     mStateManager->onTransformFeedbackStateChange();
     return angle::Result::Continue;
 }
@@ -131,7 +136,6 @@ void TransformFeedbackGL::syncActiveState(const gl::Context *context,
         if (mIsActive)
         {
             ASSERT(primitiveMode != gl::PrimitiveMode::InvalidEnum);
-            mActiveProgram = GetImplAs<ProgramGL>(mState.getBoundProgram())->getProgramID();
             mStateManager->useProgram(mActiveProgram);
             mFunctions->beginTransformFeedback(gl::ToGLenum(primitiveMode));
         }

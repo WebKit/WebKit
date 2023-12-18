@@ -325,7 +325,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 {
     if (type() != CryptoKeyType::Public)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     // The current SecLibrary cannot output a valid SPKI format binary. Hence, we need the following hack.
     // This hack can be removed when <rdar://problem/29523286> is resolved.
@@ -334,7 +334,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
     Vector<uint8_t> keyBytes(keySizeInBits() / 4);
     size_t keySize = keyBytes.size();
     if (CCRSACryptorExport(platformKey(), keyBytes.data(), &keySize))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     keyBytes.shrink(keySize);
 
     // RSAOIDHeader + BitStringMark + Length + keySize + InitialOctet
@@ -382,7 +382,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 {
     if (type() != CryptoKeyType::Private)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     // The current SecLibrary cannot output a valid PKCS8 format binary. Hence, we need the following hack.
     // This hack can be removed when <rdar://problem/29523286> is resolved.
@@ -393,7 +393,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
     Vector<uint8_t> keyBytes(keySizeInBits());
     size_t keySize = keyBytes.size();
     if (CCRSACryptorExport(platformKey(), keyBytes.data(), &keySize))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     keyBytes.shrink(keySize);
 
     // Version + RSAOIDHeader + OctetStringMark + Length + keySize

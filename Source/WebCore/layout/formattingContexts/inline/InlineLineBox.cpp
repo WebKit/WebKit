@@ -40,6 +40,7 @@ LineBox::LineBox(const Box& rootLayoutBox, InlineLayoutUnit contentLogicalLeft, 
 {
     m_nonRootInlineLevelBoxList.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
     m_nonRootInlineLevelBoxMap.reserveInitialCapacity(nonSpanningInlineLevelBoxCount);
+    m_rootInlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(rootLayoutBox, downcast<ElementBox>(rootLayoutBox)));
 }
 
 void LineBox::addInlineLevelBox(InlineLevelBox&& inlineLevelBox)

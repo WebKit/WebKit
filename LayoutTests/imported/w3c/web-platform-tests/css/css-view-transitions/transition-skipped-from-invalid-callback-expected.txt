@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: bar
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: bar
+
+PASS transition skipped because callback has invalid syntax
+

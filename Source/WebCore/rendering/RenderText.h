@@ -26,6 +26,7 @@
 #include "RenderTextLineBoxes.h"
 #include "Text.h"
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
@@ -56,7 +57,10 @@ public:
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
-    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
+    const RenderStyle* selectionPseudoStyle() const;
+
+    const RenderStyle* spellingErrorPseudoStyle() const;
+    const RenderStyle* grammarErrorPseudoStyle() const;
 
     virtual String originalText() const;
 
@@ -104,6 +108,7 @@ public:
         float endMax { 0 };
         bool beginWS { false };
         bool endWS { false };
+        bool endZeroSpace { false };
         bool hasBreakableChar { false };
         bool hasBreak { false };
         bool endsWithBreak { false };
@@ -184,6 +189,8 @@ public:
 
     void setCanUseSimplifiedTextMeasuring(bool canUseSimplifiedTextMeasuring) { m_canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring; }
     std::optional<bool> canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
+    void setHasPositionDependentContentWidth(bool hasPositionDependentContentWidth) { m_hasPositionDependentContentWidth = hasPositionDependentContentWidth; }
+    std::optional<bool> hasPositionDependentContentWidth() const { return m_hasPositionDependentContentWidth; }
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false);
@@ -208,6 +215,7 @@ private:
     void setSelectionState(HighlightState) final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
+    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const final;
 
     void computePreferredLogicalWidths(float leadWidth, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
@@ -228,17 +236,31 @@ private:
 
     float maxWordFragmentWidth(const RenderStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow&);
     float widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow&) const;
+    void initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(const String&);
 
-    // We put the bitfield first to minimize padding on 64-bit.
+#if ENABLE(TEXT_AUTOSIZING)
+    // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
+    float m_candidateComputedTextSize { 0 };
+#endif
+    Markable<float, WTF::FloatMarkableTraits> m_minWidth;
+    Markable<float, WTF::FloatMarkableTraits> m_maxWidth;
+    float m_beginMinWidth { 0 };
+    float m_endMinWidth { 0 };
+
+    String m_text;
+
+    std::optional<bool> m_canUseSimplifiedTextMeasuring;
+    std::optional<bool> m_hasPositionDependentContentWidth;
+    std::optional<bool> m_hasStrongDirectionalityContent;
     unsigned m_hasBreakableChar : 1 { false }; // Whether or not we can be broken into multiple lines.
     unsigned m_hasBreak : 1 { false }; // Whether or not we have a hard break (e.g., <pre> with '\n').
     unsigned m_hasTab : 1 { false }; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
     unsigned m_hasBeginWS : 1 { false }; // Whether or not we begin with WS (only true if we aren't pre)
     unsigned m_hasEndWS : 1 { false }; // Whether or not we end with WS (only true if we aren't pre)
     unsigned m_linesDirty : 1 { false }; // This bit indicates that the text run has already dirtied specific
-                           // line boxes, and this hint will enable layoutInlineChildren to avoid
-                           // just dirtying everything when character data is modified (e.g., appended/inserted
-                           // or removed).
+                                         // line boxes, and this hint will enable layoutInlineChildren to avoid
+                                         // just dirtying everything when character data is modified (e.g., appended/inserted
+                                         // or removed).
     unsigned m_needsVisualReordering : 1 { false };
     unsigned m_containsOnlyASCII : 1 { false };
     unsigned m_canUseSimpleFontCodePath : 1 { false };
@@ -246,18 +268,6 @@ private:
     unsigned m_useBackslashAsYenSymbol : 1 { false };
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
-
-#if ENABLE(TEXT_AUTOSIZING)
-    // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
-    float m_candidateComputedTextSize { 0 };
-#endif
-    std::optional<float> m_minWidth;
-    std::optional<float> m_maxWidth;
-    std::optional<bool> m_canUseSimplifiedTextMeasuring { };
-    float m_beginMinWidth { 0 };
-    float m_endMinWidth { 0 };
-
-    String m_text;
 };
 
 String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
@@ -309,10 +319,24 @@ inline Color RenderText::selectionEmphasisMarkColor() const
     return Color();
 }
 
-inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
+inline const RenderStyle* RenderText::selectionPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->selectionPseudoStyle();
+    return nullptr;
+}
+
+inline const RenderStyle* RenderText::spellingErrorPseudoStyle() const
+{
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->spellingErrorPseudoStyle();
+    return nullptr;
+}
+
+inline const RenderStyle* RenderText::grammarErrorPseudoStyle() const
+{
+    if (auto* ancestor = firstNonAnonymousAncestor())
+        return ancestor->grammarErrorPseudoStyle();
     return nullptr;
 }
 
@@ -329,4 +353,4 @@ inline void RenderText::resetMinMaxWidth()
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isText())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderText, isRenderText())

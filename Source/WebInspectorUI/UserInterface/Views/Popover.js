@@ -160,6 +160,7 @@ WI.Popover = class Popover extends WI.Object
         window.removeEventListener("scroll", this, true);
         window.removeEventListener("resize", this, true);
         window.removeEventListener("keypress", this, true);
+        WI.tabBrowser.contentViewContainer.removeEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this.dismiss, this);
 
         this._prefersDarkColorSchemeMediaQueryList.removeListener(this._boundUpdate);
 
@@ -609,6 +610,7 @@ WI.Popover = class Popover extends WI.Object
             window.addEventListener("scroll", this, true);
             window.addEventListener("resize", this, true);
             window.addEventListener("keypress", this, true);
+            WI.tabBrowser.contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this.dismiss, this);
 
             if (!this._boundUpdate)
                 this._boundUpdate = this._update.bind(this);

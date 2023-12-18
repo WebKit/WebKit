@@ -62,10 +62,14 @@ struct GPUFrameCapture {
     {
         // Allow GPU frame capture "notifyutil -p com.apple.WebKit.WebGPU.CaptureFrame" when process is
         // run with __XPC_METAL_CAPTURE_ENABLED=1
+        // notifyutil -s com.apple.WebKit.WebGPU.CaptureFrame 10 --> captures 10 GPUQueue.submit calls
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [] {
             int captureFrameToken;
-            notify_register_dispatch("com.apple.WebKit.WebGPU.CaptureFrame", &captureFrameToken, dispatch_get_main_queue(), ^(int) {
+            notify_register_dispatch("com.apple.WebKit.WebGPU.CaptureFrame", &captureFrameToken, dispatch_get_main_queue(), ^(int token) {
+                uint64_t state;
+                notify_get_state(token, &state);
+                maxSubmitCallsToCapture = std::max<int>(1, state);
                 enabled = true;
             });
 
@@ -78,6 +82,17 @@ struct GPUFrameCapture {
         if (captureFirstFrame)
             captureFrame(captureObject);
     }
+
+    static bool shouldStopCaptureAfterSubmit()
+    {
+        ++submitCallsCaptured;
+        auto result = submitCallsCaptured >= maxSubmitCallsToCapture;
+        if (result)
+            submitCallsCaptured = 0;
+
+        return result;
+    }
+
 private:
     static void captureFrame(id<MTLDevice> captureObject)
     {
@@ -99,10 +114,19 @@ private:
 
     static bool captureFirstFrame;
     static bool enabled;
+    static int submitCallsCaptured;
+    static int maxSubmitCallsToCapture;
 };
 
 bool GPUFrameCapture::captureFirstFrame = false;
 bool GPUFrameCapture::enabled = false;
+int GPUFrameCapture::submitCallsCaptured = 0;
+int GPUFrameCapture::maxSubmitCallsToCapture = 1;
+
+bool Device::shouldStopCaptureAfterSubmit()
+{
+    return GPUFrameCapture::shouldStopCaptureAfterSubmit();
+}
 
 Ref<Device> Device::create(id<MTLDevice> device, String&& deviceLabel, HardwareCapabilities&& capabilities, Adapter& adapter)
 {
@@ -127,13 +151,14 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
 {
 #if PLATFORM(MAC)
     auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
-        RefPtr<Device> strongThis = weakThis.get();
-        if (!strongThis)
+        RefPtr<Device> protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        strongThis->instance().scheduleWork([strongThis = WTFMove(strongThis), device = device]() {
-            if (![strongThis->m_device isEqual:device])
+        auto& instance = protectedThis->instance();
+        instance.scheduleWork([protectedThis = WTFMove(protectedThis), device = device]() {
+            if (![protectedThis->m_device isEqual:device])
                 return;
-            strongThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
+            protectedThis->loseTheDevice(WGPUDeviceLostReason_Undefined);
         });
     });
 
@@ -188,9 +213,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
     makeInvalid();
 
     if (m_deviceLostCallback) {
-        instance().scheduleWork([deviceLostCallback = WTFMove(m_deviceLostCallback), reason]() {
-            deviceLostCallback(reason, "Device lost."_s);
-        });
+        m_deviceLostCallback(reason, "Device lost."_s);
         m_deviceLostCallback = nullptr;
     }
 
@@ -232,7 +255,7 @@ Queue& Device::getQueue()
     return m_defaultQueue;
 }
 
-bool Device::hasFeature(WGPUFeatureName feature)
+bool Device::hasFeature(WGPUFeatureName feature) const
 {
     return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
 }
@@ -308,7 +331,7 @@ void Device::generateAnInternalError(String&& message)
 uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 {
     ASSERT(m_capabilities.limits.maxBindGroupsPlusVertexBuffers > 0);
-    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers - 1;
+    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers;
 }
 
 uint32_t Device::maxBuffersForFragmentStage() const
@@ -374,6 +397,15 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
     ErrorScope scope { std::nullopt, filter };
 
     m_errorScopeStack.append(WTFMove(scope));
+}
+
+void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
+{
+    m_deviceLostCallback = WTFMove(callback);
+    if (m_isLost)
+        loseTheDevice(WGPUDeviceLostReason_Destroyed);
+    else if (!m_adapter->isValid())
+        loseTheDevice(WGPUDeviceLostReason_Undefined);
 }
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)
@@ -540,6 +572,22 @@ void wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback 
 void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 {
     WebGPU::fromAPI(device).pushErrorScope(filter);
+}
+
+void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata)
+{
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback, userdata](WGPUDeviceLostReason reason, String&& message) {
+        if (callback)
+            callback(reason, message.utf8().data(), userdata);
+    });
+}
+
+void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback)
+{
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUDeviceLostReason reason, String&& message) {
+        if (callback)
+            callback(reason, message.utf8().data());
+    });
 }
 
 void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback callback, void* userdata)

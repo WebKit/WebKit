@@ -43,8 +43,8 @@ EventContext::~EventContext() = default;
 
 void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 {
-    event.setTarget(m_target.get());
-    event.setCurrentTarget(m_currentTarget.get(), m_currentTargetIsInShadowTree);
+    event.setTarget(m_target.copyRef());
+    event.setCurrentTarget(m_currentTarget.copyRef(), m_currentTargetIsInShadowTree);
 
     if (m_relatedTargetIsSet) {
         ASSERT(!m_relatedTarget || m_type == Type::MouseOrFocus);
@@ -73,7 +73,7 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 #endif
 
     if (!m_node || UNLIKELY(m_type == Type::Window)) {
-        m_currentTarget->fireEventListeners(event, phase);
+        protectedCurrentTarget()->fireEventListeners(event, phase);
         return;
     }
 
@@ -90,10 +90,13 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
     if (!m_node->hasEventTargetData())
         return;
 
-    if (event.isTrusted() && is<Element>(m_node) && downcast<Element>(*m_node).isDisabledFormControl() && event.isMouseEvent() && !event.isWheelEvent() && !m_node->document().settings().sendMouseEventsToDisabledFormControlsEnabled())
-        return;
+    if (event.isTrusted()) {
+        auto* element = dynamicDowncast<Element>(m_node.get());
+        if (element && element->isDisabledFormControl() && event.isMouseEvent() && !event.isWheelEvent() && !m_node->document().settings().sendMouseEventsToDisabledFormControlsEnabled())
+            return;
+    }
 
-    m_node->fireEventListeners(event, phase);
+    protectedNode()->fireEventListeners(event, phase);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -112,7 +115,8 @@ void EventContext::initializeTouchLists()
 bool EventContext::isUnreachableNode(EventTarget* target) const
 {
     // FIXME: Checks also for SVG elements.
-    return is<Node>(target) && !downcast<Node>(*target).isSVGElement() && m_node && m_node->isClosedShadowHidden(downcast<Node>(*target));
+    auto* node = dynamicDowncast<Node>(target);
+    return node && !node->isSVGElement() && m_node && m_node->isClosedShadowHidden(*node);
 }
 
 #endif

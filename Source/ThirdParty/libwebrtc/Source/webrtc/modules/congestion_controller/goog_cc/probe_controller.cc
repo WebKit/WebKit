@@ -11,18 +11,23 @@
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <initializer_list>
 #include <memory>
-#include <string>
+#include <vector>
 
 #include "absl/strings/match.h"
 #include "absl/types/optional.h"
+#include "api/field_trials_view.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_probe_cluster_created.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -104,35 +109,23 @@ ProbeControllerConfig::ProbeControllerConfig(
       allocation_probe_max("alloc_probe_max", DataRate::PlusInfinity()),
       min_probe_packets_sent("min_probe_packets_sent", 5),
       min_probe_duration("min_probe_duration", TimeDelta::Millis(15)),
-      limit_probe_target_rate_to_loss_bwe("limit_probe_target_rate_to_loss_bwe",
-                                          false),
       loss_limited_probe_scale("loss_limited_scale", 1.5),
       skip_if_estimate_larger_than_fraction_of_max(
           "skip_if_est_larger_than_fraction_of_max",
-          0.0),
-      not_probe_if_delay_increased("not_probe_if_delay_increased", false) {
-  ParseFieldTrial({&first_exponential_probe_scale,
-                   &second_exponential_probe_scale,
-                   &further_exponential_probe_scale,
-                   &further_probe_threshold,
-                   &alr_probing_interval,
-                   &alr_probe_scale,
-                   &probe_on_max_allocated_bitrate_change,
-                   &first_allocation_probe_scale,
-                   &second_allocation_probe_scale,
-                   &allocation_allow_further_probing,
-                   &min_probe_duration,
-                   &network_state_estimate_probing_interval,
-                   &probe_if_estimate_lower_than_network_state_estimate_ratio,
-                   &estimate_lower_than_network_state_estimate_probing_interval,
-                   &network_state_probe_scale,
-                   &network_state_probe_duration,
-                   &min_probe_packets_sent,
-                   &limit_probe_target_rate_to_loss_bwe,
-                   &loss_limited_probe_scale,
-                   &skip_if_estimate_larger_than_fraction_of_max,
-                   &not_probe_if_delay_increased},
-                  key_value_config->Lookup("WebRTC-Bwe-ProbingConfiguration"));
+          0.0) {
+  ParseFieldTrial(
+      {&first_exponential_probe_scale, &second_exponential_probe_scale,
+       &further_exponential_probe_scale, &further_probe_threshold,
+       &alr_probing_interval, &alr_probe_scale,
+       &probe_on_max_allocated_bitrate_change, &first_allocation_probe_scale,
+       &second_allocation_probe_scale, &allocation_allow_further_probing,
+       &min_probe_duration, &network_state_estimate_probing_interval,
+       &probe_if_estimate_lower_than_network_state_estimate_ratio,
+       &estimate_lower_than_network_state_estimate_probing_interval,
+       &network_state_probe_scale, &network_state_probe_duration,
+       &min_probe_packets_sent, &loss_limited_probe_scale,
+       &skip_if_estimate_larger_than_fraction_of_max},
+      key_value_config->Lookup("WebRTC-Bwe-ProbingConfiguration"));
 
   // Specialized keys overriding subsets of WebRTC-Bwe-ProbingConfiguration
   ParseFieldTrial(
@@ -157,7 +150,7 @@ ProbeControllerConfig::~ProbeControllerConfig() = default;
 
 ProbeController::ProbeController(const FieldTrialsView* key_value_config,
                                  RtcEventLog* event_log)
-    : network_available_(true),
+    : network_available_(false),
       enable_periodic_alr_probing_(false),
       in_rapid_recovery_experiment_(absl::StartsWith(
           key_value_config->Lookup(kBweRapidRecoveryExperiment),
@@ -479,29 +472,21 @@ std::vector<ProbeClusterConfig> ProbeController::InitiateProbing(
   }
 
   DataRate estimate_capped_bitrate = DataRate::PlusInfinity();
-  if (config_.limit_probe_target_rate_to_loss_bwe) {
-    switch (bandwidth_limited_cause_) {
-      case BandwidthLimitedCause::kLossLimitedBweDecreasing:
-        // If bandwidth estimate is decreasing because of packet loss, do not
-        // send probes.
-        return {};
-      case BandwidthLimitedCause::kLossLimitedBweIncreasing:
-        estimate_capped_bitrate =
-            std::min(max_probe_bitrate,
-                     estimated_bitrate_ * config_.loss_limited_probe_scale);
-        break;
-      case BandwidthLimitedCause::kDelayBasedLimited:
-        break;
-      default:
-        break;
-    }
-  }
-  if (config_.not_probe_if_delay_increased &&
-      (bandwidth_limited_cause_ ==
-           BandwidthLimitedCause::kDelayBasedLimitedDelayIncreased ||
-       bandwidth_limited_cause_ ==
-           BandwidthLimitedCause::kRttBasedBackOffHighRtt)) {
-    return {};
+  switch (bandwidth_limited_cause_) {
+    case BandwidthLimitedCause::kRttBasedBackOffHighRtt:
+    case BandwidthLimitedCause::kDelayBasedLimitedDelayIncreased:
+    case BandwidthLimitedCause::kLossLimitedBwe:
+      RTC_LOG(LS_INFO) << "Not sending probe in bandwidth limited state.";
+      return {};
+    case BandwidthLimitedCause::kLossLimitedBweIncreasing:
+      estimate_capped_bitrate =
+          std::min(max_probe_bitrate,
+                   estimated_bitrate_ * config_.loss_limited_probe_scale);
+      break;
+    case BandwidthLimitedCause::kDelayBasedLimited:
+      break;
+    default:
+      break;
   }
 
   if (config_.network_state_estimate_probing_interval->IsFinite() &&
@@ -510,16 +495,15 @@ std::vector<ProbeClusterConfig> ProbeController::InitiateProbing(
       RTC_LOG(LS_INFO) << "Not sending probe, Network state estimate is zero";
       return {};
     }
-    estimate_capped_bitrate =
-        std::min({estimate_capped_bitrate, max_probe_bitrate,
-                  network_estimate_->link_capacity_upper *
-                      config_.network_state_probe_scale});
+    estimate_capped_bitrate = std::min(
+        {estimate_capped_bitrate, max_probe_bitrate,
+         std::max(estimated_bitrate_, network_estimate_->link_capacity_upper *
+                                          config_.network_state_probe_scale)});
   }
 
   std::vector<ProbeClusterConfig> pending_probes;
   for (DataRate bitrate : bitrates_to_probe) {
     RTC_DCHECK(!bitrate.IsZero());
-
     bitrate = std::min(bitrate, estimate_capped_bitrate);
     if (bitrate > max_probe_bitrate) {
       bitrate = max_probe_bitrate;

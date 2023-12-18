@@ -105,7 +105,7 @@ public:
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
 
-    void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials);
+    void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
 
     void setResponse(WebCore::ResourceResponse&& response) { m_response = WTFMove(response); }
     const WebCore::ResourceResponse& response() const { return m_response; }
@@ -127,7 +127,7 @@ public:
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final;
     bool isSynchronous() const final;
     bool isAllowedToAskUserForCredentials() const final { return m_isAllowedToAskUserForCredentials; }
-    void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&) final;
+    void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
     void didReceiveInformationalResponse(WebCore::ResourceResponse&&) final;
     void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) final;
     void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) final;
@@ -146,7 +146,7 @@ public:
     bool isMainFrameLoad() const { return isMainResource() && m_parameters.frameAncestorOrigins.isEmpty(); }
     bool isCrossOriginPrefetch() const;
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, PAL::SessionID);
     static void logCookieInformation(NetworkConnectionToWebProcess&, ASCIILiteral label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
 #endif
@@ -157,13 +157,11 @@ public:
 
     void consumeSandboxExtensionsIfNeeded();
 
-#if ENABLE(SERVICE_WORKER)
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
     void setWorkerStart(MonotonicTime);
     MonotonicTime workerStart() const { return m_workerStart; }
-#endif
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
     void sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
@@ -217,7 +215,7 @@ private:
 
     enum class FirstLoad : bool { No, Yes };
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
-    void restartNetworkLoad(WebCore::ResourceRequest&&);
+    void restartNetworkLoad(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void continueDidReceiveResponse();
     void didReceiveMainResourceResponse(const WebCore::ResourceResponse&);
 
@@ -238,11 +236,11 @@ private:
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     void logCookieInformation() const;
 #endif
 
-    void continueWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, std::optional<WebCore::PCM::AttributionTriggerData>&&);
+    void continueWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, std::optional<WebCore::PCM::AttributionTriggerData>&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void didFinishWithRedirectResponse(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
@@ -269,7 +267,7 @@ private:
     WebCore::FrameIdentifier frameIdentifierForReport() const;
 
     enum class IsFromServiceWorker : bool { No, Yes };
-    void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker);
+    void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     std::optional<WebCore::NetworkLoadMetrics> computeResponseMetrics(const WebCore::ResourceResponse&) const;
 
     void startRequest(const WebCore::ResourceRequest&);
@@ -312,11 +310,9 @@ private:
     std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
-#if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
     MonotonicTime m_workerStart;
-#endif
     NetworkResourceLoadIdentifier m_resourceLoadID;
     WebCore::ResourceResponse m_redirectResponse;
     URL m_firstResponseURL; // First URL in response's URL list (https://fetch.spec.whatwg.org/#concept-response-url-list).

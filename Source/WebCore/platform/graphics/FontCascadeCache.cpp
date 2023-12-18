@@ -90,15 +90,13 @@ void FontCascadeCache::pruneSystemFallbackFonts()
 
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
-    FontCascadeCacheKey key;
-    key.fontDescriptionKey = FontDescriptionKey(description);
     unsigned familyCount = description.familyCount();
-    key.families.reserveInitialCapacity(familyCount);
-    for (unsigned i = 0; i < familyCount; ++i)
-        key.families.uncheckedAppend(description.familyAt(i));
-    key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
-    key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
-    return key;
+    return FontCascadeCacheKey {
+        FontDescriptionKey(description),
+        Vector<FontFamilyName, 3>(familyCount, [&](size_t i) { return description.familyAt(i); }),
+        fontSelector ? fontSelector->uniqueId() : 0,
+        fontSelector ? fontSelector->version() : 0
+    };
 }
 
 Ref<FontCascadeFonts> FontCascadeCache::retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)

@@ -19,7 +19,7 @@ namespace angle
 // Make sure the various constructors compile and do basic checks
 TEST(FixedQueue, Constructors)
 {
-    FixedQueue<int, 5> q;
+    FixedQueue<int> q(5);
     EXPECT_EQ(0u, q.size());
     EXPECT_EQ(true, q.empty());
 }
@@ -48,7 +48,7 @@ TEST(FixedQueue, Destructor)
     int destructorCount = 0;
 
     {
-        FixedQueue<s, 11> q;
+        FixedQueue<s> q(11);
         q.push(s(&destructorCount));
         // Destructor called once for the temporary above.
         EXPECT_EQ(1, destructorCount);
@@ -90,7 +90,7 @@ TEST(FixedQueue, Pop)
 
     int destructorCount = 0;
 
-    FixedQueue<s, 11> q;
+    FixedQueue<s> q(11);
     q.push(s(&destructorCount));
     // Destructor called once for the temporary above.
     EXPECT_EQ(1, destructorCount);
@@ -102,7 +102,7 @@ TEST(FixedQueue, Pop)
 // Test circulating behavior.
 TEST(FixedQueue, WrapAround)
 {
-    FixedQueue<int, 7> q;
+    FixedQueue<int> q(7);
 
     for (int i = 0; i < 7; ++i)
     {
@@ -123,22 +123,32 @@ TEST(FixedQueue, WrapAround)
 // Test concurrent push and pop behavior.
 TEST(FixedQueue, ConcurrentPushPop)
 {
-    FixedQueue<uint64_t, 7> q;
-    double timeOut            = 1.0;
-    uint64_t kMaxLoop         = 1000000ull;
+    FixedQueue<uint64_t> q(7);
+    double timeOut    = 1.0;
+    uint64_t kMaxLoop = 1000000ull;
+    std::atomic<bool> enqueueThreadFinished;
+    enqueueThreadFinished = false;
+    std::atomic<bool> dequeueThreadFinished;
+    dequeueThreadFinished = false;
+
     std::thread enqueueThread = std::thread([&]() {
         std::time_t t1 = std::time(nullptr);
         uint64_t value = 0;
         do
         {
-            while (q.full())
+            while (q.full() && !dequeueThreadFinished)
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
+            }
+            if (dequeueThreadFinished)
+            {
+                break;
             }
             q.push(value);
             value++;
         } while (difftime(std::time(nullptr), t1) < timeOut && value < kMaxLoop);
         ASSERT(difftime(std::time(nullptr), t1) >= timeOut || value >= kMaxLoop);
+        enqueueThreadFinished = true;
     });
 
     std::thread dequeueThread = std::thread([&]() {
@@ -146,7 +156,7 @@ TEST(FixedQueue, ConcurrentPushPop)
         uint64_t expectedValue = 0;
         do
         {
-            while (q.empty())
+            while (q.empty() && !enqueueThreadFinished)
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(1));
             }
@@ -158,6 +168,108 @@ TEST(FixedQueue, ConcurrentPushPop)
             expectedValue++;
         } while (difftime(std::time(nullptr), t1) < timeOut && expectedValue < kMaxLoop);
         ASSERT(difftime(std::time(nullptr), t1) >= timeOut || expectedValue >= kMaxLoop);
+        dequeueThreadFinished = true;
+    });
+
+    enqueueThread.join();
+    dequeueThread.join();
+}
+
+// Test concurrent push and pop behavior. When queue is full, instead of wait, it will try to
+// increase capacity. At dequeue thread, it will also try to shrink the queue capacity when size
+// fall under half of the capacity.
+TEST(FixedQueue, ConcurrentPushPopWithResize)
+{
+    static constexpr size_t kInitialQueueCapacity = 64;
+    static constexpr size_t kMaxQueueCapacity     = 64 * 1024;
+    FixedQueue<uint64_t> q(kInitialQueueCapacity);
+    double timeOut    = 1.0;
+    uint64_t kMaxLoop = 1000000ull;
+    std::atomic<bool> enqueueThreadFinished(false);
+    std::atomic<bool> dequeueThreadFinished(false);
+    std::mutex enqueueMutex;
+    std::mutex dequeueMutex;
+
+    std::thread enqueueThread = std::thread([&]() {
+        std::time_t t1 = std::time(nullptr);
+        uint64_t value = 0;
+        do
+        {
+            std::unique_lock<std::mutex> enqueueLock(enqueueMutex);
+            if (q.full())
+            {
+                // Take both lock to ensure no one will access while we try to double the
+                // storage. Note that under a well balanced system, this should happen infrequently.
+                std::unique_lock<std::mutex> dequeueLock(dequeueMutex);
+                // Check again to see if queue is still full after taking the dequeueMutex.
+                size_t newCapacity = q.capacity() * 2;
+                if (q.full() && newCapacity < kMaxQueueCapacity)
+                {
+                    // Double the storage size while we took the lock
+                    q.updateCapacity(newCapacity);
+                }
+            }
+
+            // If queue is still full, lets wait for dequeue thread to make some progress
+            while (q.full() && !dequeueThreadFinished)
+            {
+                enqueueLock.unlock();
+                std::this_thread::sleep_for(std::chrono::microseconds(1));
+                enqueueLock.lock();
+            }
+
+            if (dequeueThreadFinished)
+            {
+                break;
+            }
+
+            q.push(value);
+            value++;
+        } while (difftime(std::time(nullptr), t1) < timeOut && value < kMaxLoop &&
+                 !dequeueThreadFinished);
+        enqueueThreadFinished = true;
+    });
+
+    std::thread dequeueThread = std::thread([&]() {
+        std::time_t t1         = std::time(nullptr);
+        uint64_t expectedValue = 0;
+        do
+        {
+            std::unique_lock<std::mutex> dequeueLock(dequeueMutex);
+            if (q.size() < q.capacity() / 10 && q.capacity() > kInitialQueueCapacity)
+            {
+                // Shrink the storage if we only used less than 10% of storage. We must take both
+                // lock to ensure no one is accessing it when we update storage. And the lock must
+                // take in the same order as other thread to avoid deadlock.
+                dequeueLock.unlock();
+                std::unique_lock<std::mutex> enqueueLock(enqueueMutex);
+                dequeueLock.lock();
+                // Figure out what the new capacity should be
+                size_t newCapacity = q.capacity() / 2;
+                while (q.size() < newCapacity)
+                {
+                    newCapacity /= 2;
+                }
+                newCapacity *= 2;
+                newCapacity = std::max(newCapacity, kInitialQueueCapacity);
+
+                q.updateCapacity(newCapacity);
+            }
+
+            while (q.empty() && !enqueueThreadFinished)
+            {
+                dequeueLock.unlock();
+                std::this_thread::sleep_for(std::chrono::microseconds(1));
+                dequeueLock.lock();
+            }
+
+            ASSERT(expectedValue == q.front());
+            // test pop
+            q.pop();
+            expectedValue++;
+        } while (difftime(std::time(nullptr), t1) < timeOut && expectedValue < kMaxLoop &&
+                 !enqueueThreadFinished);
+        dequeueThreadFinished = true;
     });
 
     enqueueThread.join();
@@ -167,7 +279,7 @@ TEST(FixedQueue, ConcurrentPushPop)
 // Test clearing the queue
 TEST(FixedQueue, Clear)
 {
-    FixedQueue<int, 5> q;
+    FixedQueue<int> q(5);
     for (int i = 0; i < 5; ++i)
     {
         q.push(i);

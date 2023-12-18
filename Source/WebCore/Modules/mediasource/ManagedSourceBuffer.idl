@@ -25,7 +25,7 @@
 
 [
     ActiveDOMObject,
-    Conditional=MANAGED_MEDIA_SOURCE,
+    Conditional=MEDIA_SOURCE,
     EnabledBySetting=ManagedMediaSourceEnabled,
     ExportMacro=WEBCORE_EXPORT,
     GenerateAddOpaqueRoot,

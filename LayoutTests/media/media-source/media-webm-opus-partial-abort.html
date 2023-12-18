@@ -97,7 +97,6 @@
 
             consoleWrite('Same as above without waiting for the first append to complete. This is not a deterministic speced behaviour');
             run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, loader.mediaSegmentSize(1)/2))');
-            await waitFor(sourceBuffer, 'updatestart');
             run('sourceBuffer.abort()');
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');

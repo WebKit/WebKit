@@ -1,3 +1,12 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: No scrollend event received for target [object HTMLDivElement]
 
-FAIL Tests that the document gets overscroll event with right deltaX/Y attributes. promise_test: Unhandled rejection with value: "Document did not receive scrollend event."
+Harness Error (FAIL), message = Unhandled rejection
+
+FAIL testing, vertical promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+TIMEOUT testing, horizontal Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection
+
+FAIL testing, vertical promise_test: Unhandled rejection with value: "No scrollend event received for target [object HTMLDivElement]"
+TIMEOUT testing, horizontal Test timed out
 

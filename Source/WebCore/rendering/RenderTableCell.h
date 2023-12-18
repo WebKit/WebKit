@@ -129,7 +129,7 @@ public:
     bool isFirstOrLastCellInRow() const { return !table()->cellAfter(this) || !table()->cellBefore(this); }
 #endif
     
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
 
     void invalidateHasEmptyCollapsedBorders();
     void setHasEmptyCollapsedBorder(CollapsedBorderSide, bool empty) const;
@@ -152,7 +152,7 @@ private:
     void paintMask(PaintInfo&, const LayoutPoint&) override;
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
-    std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const override;
+    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, VisibleRectContext) const override;
 
     LayoutUnit borderHalfLeft(bool outer) const;
     LayoutUnit borderHalfRight(bool outer) const;
@@ -326,4 +326,4 @@ inline RenderPtr<RenderBox> RenderTableCell::createAnonymousBoxWithSameTypeAs(co
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCell, isTableCell())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableCell, isRenderTableCell())

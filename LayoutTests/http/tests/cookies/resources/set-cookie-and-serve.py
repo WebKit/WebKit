@@ -9,14 +9,15 @@ cookie_name = query.get('cookie-name', [''])[0]
 cookie_value = query.get('cookie-value', [''])[0]
 destination = query.get('destination', [''])[0]
 
-sys.stdout.write(
+sys.stdout.buffer.write(
     'Content-Type: text/html\r\n'
     'Cache-Control: no-store\r\n'
-    'Set-Cookie: {}={}; path=/\r\n'.format(cookie_name, cookie_value)
+    'Set-Cookie: {}={}; path=/\r\n'.format(cookie_name, cookie_value).encode()
 )
 
-with open(os.path.join(os.path.dirname(__file__), destination), 'r') as file:
+with open(os.path.join(os.path.dirname(__file__), destination), 'rb') as file:
     content = file.read()
-    sys.stdout.write('Content-Length: {}\r\n\r\n{}'.format(len(content), content))
+    sys.stdout.buffer.write('Content-Length: {}\r\n\r\n'.format(len(content)).encode())
+    sys.stdout.buffer.write(content)
 
 sys.exit(0)

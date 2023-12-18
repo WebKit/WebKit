@@ -13,7 +13,6 @@
 
 #include <vector>
 
-#include "absl/base/attributes.h"
 #include "absl/types/optional.h"
 #include "api/video/video_frame.h"
 #include "api/video_codecs/scalability_mode.h"
@@ -82,8 +81,6 @@ struct CodecSpecificInfoVP9 {
   // Frame reference data.
   uint8_t num_ref_pics;
   uint8_t p_diff[kMaxVp9RefPics];
-
-  ABSL_DEPRECATED("") bool end_of_picture;
 };
 static_assert(std::is_pod<CodecSpecificInfoVP9>::value, "");
 

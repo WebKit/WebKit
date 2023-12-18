@@ -35,6 +35,7 @@
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntData.h"
+#include "LLIntExceptions.h"
 #include "WasmBBQPlan.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
@@ -95,7 +96,7 @@ inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, Wasm::Instance
 {
     ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
-    Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
+    Wasm::IPIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
     if (!tierUpCounter.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "    JIT threshold should be lifted.");
         return false;
@@ -111,14 +112,14 @@ inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, Wasm::Instance
     {
         Locker locker { tierUpCounter.m_lock };
         switch (tierUpCounter.m_compilationStatus) {
-        case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
+        case Wasm::IPIntTierUpCounter::CompilationStatus::NotCompiled:
             compile = true;
-            tierUpCounter.m_compilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+            tierUpCounter.m_compilationStatus = Wasm::IPIntTierUpCounter::CompilationStatus::Compiling;
             break;
-        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
+        case Wasm::IPIntTierUpCounter::CompilationStatus::Compiling:
             tierUpCounter.optimizeAfterWarmUp();
             break;
-        case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
+        case Wasm::IPIntTierUpCounter::CompilationStatus::Compiled:
             break;
         }
     }
@@ -160,10 +161,10 @@ WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame* callFrame)
     WASM_RETURN_TWO(callee->replacement(instance->memory()->mode())->entrypoint().taggedPtr(), nullptr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t *pl)
+WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t* pl)
 {
     Wasm::IPIntCallee* callee = IPINT_CALLEE();
-    Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
+    Wasm::IPIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
     if (!Options::useWebAssemblyOSR() || !Options::useWasmIPIntLoopOSR() || !shouldJIT(callee, RequiredWasmJIT::OMG)) {
         ipint_extern_prologue_osr(instance, callFrame);
@@ -192,7 +193,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
         RELEASE_ASSERT(bbqCallee);
 
         size_t osrEntryScratchBufferSize = bbqCallee->osrEntryScratchBufferSize();
-        RELEASE_ASSERT(osrEntryScratchBufferSize >= osrEntryData.values.size());
+        RELEASE_ASSERT(osrEntryScratchBufferSize >= callee->m_numLocals + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
 
         uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
         if (!buffer)
@@ -202,7 +203,13 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
         buffer[index++] = osrEntryData.loopIndex;
         for (uint32_t i = 0; i < callee->m_numLocals; ++i)
             buffer[index++] = pl[i];
-        while (index < osrEntryData.values.size()) {
+
+        // If there's no rethrow slots just 0 fill the buffer.
+        ASSERT(osrEntryData.tryDepth <= callee->m_numRethrowSlotsToAlloc || !callee->m_numRethrowSlotsToAlloc);
+        for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
+            buffer[index++] = callee->m_numRethrowSlotsToAlloc ? pl[callee->m_localSizeToAlloc + i] : 0;
+
+        for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
             pl -= 2; // each stack slot is 16B
             buffer[index++] = *pl;
         }
@@ -216,7 +223,7 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
                 WASM_RETURN_TWO(nullptr, nullptr);
 
             size_t osrEntryScratchBufferSize = osrEntryCallee->osrEntryScratchBufferSize();
-            RELEASE_ASSERT(osrEntryScratchBufferSize == osrEntryData.values.size());
+            RELEASE_ASSERT(osrEntryScratchBufferSize == callee->m_numLocals + osrEntryData.numberOfStackValues + osrEntryData.tryDepth);
 
             uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(osrEntryScratchBufferSize);
             if (!buffer)
@@ -225,7 +232,13 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
             uint32_t index = 0;
             for (uint32_t i = 0; i < callee->m_numLocals; ++i)
                 buffer[index++] = pl[i];
-            while (index < osrEntryData.values.size()) {
+
+            // If there's no rethrow slots just 0 fill the buffer.
+            ASSERT(osrEntryData.tryDepth <= callee->m_numRethrowSlotsToAlloc || !callee->m_numRethrowSlotsToAlloc);
+            for (uint32_t i = 0; i < osrEntryData.tryDepth; ++i)
+                buffer[index++] = callee->m_numRethrowSlotsToAlloc ? pl[callee->m_localSizeToAlloc + i] : 0;
+
+            for (uint32_t i = 0; i < osrEntryData.numberOfStackValues; ++i) {
                 pl -= 2; // each stack slot is 16B
                 buffer[index++] = *pl;
             }
@@ -240,14 +253,14 @@ WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame* callFrame, uint32_t pc, uint64_t
         {
             Locker locker { tierUpCounter.m_lock };
             switch (tierUpCounter.m_loopCompilationStatus) {
-            case Wasm::LLIntTierUpCounter::CompilationStatus::NotCompiled:
+            case Wasm::IPIntTierUpCounter::CompilationStatus::NotCompiled:
                 compile = true;
-                tierUpCounter.m_loopCompilationStatus = Wasm::LLIntTierUpCounter::CompilationStatus::Compiling;
+                tierUpCounter.m_loopCompilationStatus = Wasm::IPIntTierUpCounter::CompilationStatus::Compiling;
                 break;
-            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiling:
+            case Wasm::IPIntTierUpCounter::CompilationStatus::Compiling:
                 tierUpCounter.optimizeAfterWarmUp();
                 break;
-            case Wasm::LLIntTierUpCounter::CompilationStatus::Compiled:
+            case Wasm::IPIntTierUpCounter::CompilationStatus::Compiled:
                 break;
             }
         }
@@ -287,13 +300,100 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
 #endif
 #endif
 
+WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, v128_t* stackPointer, uint64_t* pl)
+{
+    VM& vm = instance->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_ASSERT(!!throwScope.exception());
+
+    Wasm::IPIntCallee* callee = IPINT_CALLEE();
+    if (callee->m_numRethrowSlotsToAlloc) {
+        RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->m_numRethrowSlotsToAlloc);
+        pl[callee->m_localSizeToAlloc + vm.targetTryDepthForThrow - 1] = bitwise_cast<uint64_t>(throwScope.exception()->value());
+    }
+
+    if (stackPointer) {
+        // We only have a stack pointer if we're doing a catch not a catch_all
+        Exception* exception = throwScope.exception();
+        auto* wasmException = jsSecureCast<JSWebAssemblyException*>(exception->value());
+
+        ASSERT(wasmException->payload().size() == wasmException->tag().parameterCount());
+        uint64_t size = wasmException->payload().size();
+
+#if ASSERT_ENABLED
+        constexpr uint64_t hole = 0x1BADBEEF;
+#else
+        constexpr uint64_t hole = 0;
+#endif
+        for (unsigned i = 0; i < size; ++i)
+            stackPointer[size - i - 1] = { hole, wasmException->payload()[i] };
+    }
+
+    // We want to clear the exception here rather than in the catch prologue
+    // JIT code because clearing it also entails clearing a bit in an Atomic
+    // bit field in VMTraps.
+    throwScope.clearException();
+
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(throw_exception, CallFrame* callFrame, v128_t* stack, unsigned exceptionIndex)
+{
+    VM& vm = instance->vm();
+    SlowPathFrameTracer tracer(vm, callFrame);
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    RELEASE_ASSERT(!throwScope.exception());
+
+    JSGlobalObject* globalObject = instance->globalObject();
+    const Wasm::Tag& tag = instance->tag(exceptionIndex);
+
+    size_t size = tag.parameterCount();
+    FixedVector<uint64_t> values(size);
+    for (unsigned i = 0; i < size; ++i)
+        values[i] = stack[size - i - 1].u64x2[1];
+
+    ASSERT(tag.type().returnsVoid());
+    if (tag.type().numVectors()) {
+        // Note: the spec is still in flux on what to do here, so we conservatively just disallow throwing any vectors.
+        throwException(globalObject, throwScope, createTypeError(globalObject, errorMessageForExceptionType(Wasm::ExceptionType::TypeErrorInvalidV128Use)));
+    } else {
+        JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+        throwException(globalObject, throwScope, exception);
+    }
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(rethrow_exception, CallFrame* callFrame, uint64_t* pl, unsigned tryDepth)
+{
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
+    JSGlobalObject* globalObject = instance->globalObject();
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    Wasm::IPIntCallee* callee = IPINT_CALLEE();
+    RELEASE_ASSERT(tryDepth <= callee->m_numRethrowSlotsToAlloc);
+    JSWebAssemblyException* exception = reinterpret_cast<JSWebAssemblyException**>(pl)[callee->m_localSizeToAlloc + tryDepth - 1];
+    RELEASE_ASSERT(exception);
+    throwException(globalObject, throwScope, exception);
+
+    genericUnwind(vm, callFrame);
+    ASSERT(!!vm.callFrameForCatch);
+    ASSERT(!!vm.targetMachinePCForThrow);
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
+}
 
 WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, unsigned index)
 {
 #if CPU(ARM64) || CPU(X86_64)
     EncodedJSValue result = Wasm::tableGet(instance, tableIndex, index);
     if (!result)
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<uint64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(bitwise_cast<void*>(result), 0);
 #else
     UNUSED_PARAM(instance);
@@ -307,7 +407,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_set, unsigned tableIndex, unsigned index, Encod
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::tableSet(instance, tableIndex, index, value))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<uint64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -325,7 +425,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_init, uint32_t* metadata, uint32_t dest, uint64
     uint32_t srcOffset = srcAndLength >> 32;
     uint32_t length = srcAndLength & 0xffffffff;
     if (!Wasm::tableInit(instance, metadata[0], metadata[1], dstOffset, srcOffset, length))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<uint64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -342,7 +442,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_fill, uint32_t tableIndex, EncodedJSValue fill,
     uint32_t offset = offsetAndSize >> 32;
     uint32_t size = offsetAndSize & 0xffffffff;
     if (!Wasm::tableFill(instance, tableIndex, offset, fill, size))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<uint64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -386,7 +486,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, int32_t dst, int64_t 
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::memoryInit(instance, dataIndex, dst, srcAndLength >> 32, srcAndLength & 0xffffffff))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<int64_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -407,7 +507,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_copy, int32_t dst, int32_t src, int32_t count)
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::memoryCopy(instance, dst, src, count))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<int64_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -422,7 +522,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_fill, int32_t dst, int32_t targetValue, int32_
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::memoryFill(instance, dst, targetValue, count))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<int64_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -443,7 +543,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_copy, int32_t* metadata, int32_t dst, int64_t s
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::tableCopy(instance, metadata[0], metadata[1], dst, srcAndCount >> 32, srcAndCount & 0xffffffff))
-        WASM_RETURN_TWO(bitwise_cast<void*>(1L), bitwise_cast<void*>(static_cast<int64_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -591,26 +691,6 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, unsigned base, unsigned offset,
     UNUSED_PARAM(count);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supports ARM64 and X86_64 (for now)");
 #endif
-}
-
-WASM_IPINT_EXTERN_CPP_DECL(throw, CallFrame* callFrame, uint32_t exceptionIndex)
-{
-    SlowPathFrameTracer tracer(instance->vm(), callFrame);
-
-    JSGlobalObject* globalObject = instance->globalObject();
-    VM& vm = globalObject->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    const Wasm::Tag& tag = instance->tag(exceptionIndex);
-
-    FixedVector<uint64_t> values(tag.parameterCount());
-    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
-    throwException(globalObject, throwScope, exception);
-
-    genericUnwind(vm, callFrame);
-    ASSERT(!!vm.callFrameForCatch);
-    ASSERT(!!vm.targetMachinePCForThrow);
-    WASM_RETURN_TWO(vm.targetMachinePCForThrow, nullptr);
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)

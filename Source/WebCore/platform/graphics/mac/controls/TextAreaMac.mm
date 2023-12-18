@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "TextAreaPart.h"
 #import <pal/spi/mac/NSCellSPI.h>
 

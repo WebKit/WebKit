@@ -75,6 +75,11 @@
 #import <wtf/threads/BinarySemaphore.h>
 #import "AppKitSoftLink.h"
 
+#if USE(EXTENSIONKIT)
+#import <UIKit/UIInteraction.h>
+#import "ExtensionKitSPI.h"
+#endif
+
 @interface _WKPrintFormattingAttributes : NSObject
 @property (nonatomic, readonly) size_t pageCount;
 @property (nonatomic, readonly) WebCore::FrameIdentifier frameID;
@@ -165,6 +170,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<WKInspectorHighlightView> _inspectorHighlightView;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
+#if USE(EXTENSIONKIT)
+    RetainPtr<id<UIInteraction>> _visibilityPropagationInteractionForWebProcess;
+    RetainPtr<id<UIInteraction>> _visibilityPropagationInteractionForGPUProcess;
+    RetainPtr<UIView> _visibilityPropagationViewForWebProcess;
+    RetainPtr<UIView> _visibilityPropagationViewForGPUProcess;
+#else
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
     RetainPtr<_UINonHostingVisibilityPropagationView> _visibilityPropagationViewForWebProcess;
 #else
@@ -173,6 +184,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(GPU_PROCESS)
     RetainPtr<_UILayerHostView> _visibilityPropagationViewForGPUProcess;
 #endif // ENABLE(GPU_PROCESS)
+#endif // !USE(EXTENSIONKIT)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
     WebCore::HistoricalVelocityData _historicalKinematicData;
@@ -203,6 +215,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     _page = processPool.createWebPage(*_pageClient, WTFMove(configuration));
     _page->initializeWebPage();
+
+    [self _updateRuntimeProtocolConformanceIfNeeded];
+
     _page->setIntrinsicDeviceScaleFactor(WebCore::screenScaleFactor([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);
     _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
@@ -261,6 +276,19 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 - (void)_setupVisibilityPropagationViewForWebProcess
 {
+#if USE(EXTENSIONKIT)
+    if (!_visibilityPropagationInteractionForWebProcess && !_visibilityPropagationViewForWebProcess) {
+        SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
+        if ([_page->process().extensionProcess().get() respondsToSelector:selector])
+            _visibilityPropagationInteractionForWebProcess = [_page->process().extensionProcess() performSelector:selector];
+        if (_visibilityPropagationInteractionForWebProcess) {
+            _visibilityPropagationViewForWebProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+            [_visibilityPropagationViewForWebProcess addInteraction:_visibilityPropagationInteractionForWebProcess.get()];
+            [self addSubview:_visibilityPropagationViewForWebProcess.get()];
+            return;
+        }
+    }
+#endif
     auto processID = _page->process().processID();
     auto contextID = _page->contextIDForVisibilityPropagationInWebProcess();
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
@@ -288,6 +316,20 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     auto* gpuProcess = _page->process().processPool().gpuProcess();
     if (!gpuProcess)
         return;
+#if USE(EXTENSIONKIT)
+    if (!_visibilityPropagationInteractionForGPUProcess && !_visibilityPropagationInteractionForGPUProcess) {
+        SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
+        if ([_page->process().extensionProcess().get() respondsToSelector:selector])
+            _visibilityPropagationInteractionForGPUProcess = [_page->process().extensionProcess() performSelector:selector];
+        if (_visibilityPropagationInteractionForGPUProcess) {
+            _visibilityPropagationViewForGPUProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+            [_visibilityPropagationViewForGPUProcess addInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
+            [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
+            return;
+        }
+    }
+#endif
+
     auto processID = gpuProcess->processID();
     auto contextID = _page->contextIDForVisibilityPropagationInGPUProcess();
     if (!processID || !contextID)
@@ -305,6 +347,13 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
 - (void)_removeVisibilityPropagationViewForWebProcess
 {
+#if USE(EXTENSIONKIT)
+    if (_visibilityPropagationInteractionForWebProcess) {
+        [_visibilityPropagationViewForWebProcess removeInteraction:_visibilityPropagationInteractionForWebProcess.get()];
+        _visibilityPropagationInteractionForWebProcess = nullptr;
+    }
+#endif
+
     if (!_visibilityPropagationViewForWebProcess)
         return;
 
@@ -315,6 +364,13 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
 - (void)_removeVisibilityPropagationViewForGPUProcess
 {
+#if USE(EXTENSIONKIT)
+    if (_visibilityPropagationInteractionForGPUProcess) {
+        [_visibilityPropagationViewForGPUProcess removeInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
+        _visibilityPropagationInteractionForGPUProcess = nullptr;
+    }
+#endif
+
     if (!_visibilityPropagationViewForGPUProcess)
         return;
 
@@ -419,6 +475,8 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
     [super didMoveToWindow];
 
+    _cachedHasCustomTintColor = std::nullopt;
+
     if (self.window)
         [self setUpInteraction];
     else
@@ -498,7 +556,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_needsDeferredEndScrollingSelectionUpdate)
         return;
 
-    [_textInteractionAssistant deactivateSelection];
+    [_textInteractionWrapper deactivateSelection];
 }
 
 static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
@@ -515,7 +573,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     return unobscuredContentRect;
 }
 
-- (std::optional<WebKit::VisibleContentRectUpdateInfo>)createVisibleContentRectUpdateInfoFromVisibleRect:(CGRect)visibleContentRect
+- (void)didUpdateVisibleRect:(CGRect)visibleContentRect
     unobscuredRect:(CGRect)unobscuredContentRect
     contentInsets:(UIEdgeInsets)contentInsets
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
@@ -529,7 +587,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 {
     auto drawingArea = _page->drawingArea();
     if (!drawingArea)
-        return std::nullopt;
+        return;
 
     MonotonicTime timestamp = MonotonicTime::now();
     WebCore::VelocityData velocityData;
@@ -544,7 +602,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     CGRect unobscuredContentRectRespectingInputViewBounds = [self _computeUnobscuredContentRectRespectingInputViewBounds:unobscuredContentRect inputViewBounds:inputViewBounds];
     WebCore::FloatRect fixedPositionRectForLayout = _page->computeLayoutViewportRect(unobscuredContentRect, unobscuredContentRectRespectingInputViewBounds, _page->layoutViewportRect(), zoomScale, WebCore::LayoutViewportConstraint::ConstrainedToDocumentRect);
 
-    return WebKit::VisibleContentRectUpdateInfo {
+    WebKit::VisibleContentRectUpdateInfo visibleContentRectUpdateInfo(
         visibleContentRect,
         unobscuredContentRect,
         floatBoxExtent(contentInsets),
@@ -559,41 +617,20 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
         !!self.webView._allowsViewportShrinkToFit,
         !!enclosedInScrollableAncestorView,
         velocityData,
-        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID()
-    };
-}
+        downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea).lastCommittedLayerTreeTransactionID());
 
-- (void)didUpdateVisibleRect:(CGRect)visibleContentRect
-    unobscuredRect:(CGRect)unobscuredContentRect
-    contentInsets:(UIEdgeInsets)contentInsets
-    unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInsets:(UIEdgeInsets)obscuredInsets
-    unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
-    inputViewBounds:(CGRect)inputViewBounds
-    scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale
-    viewStability:(OptionSet<WebKit::ViewStabilityFlag>)viewStability
-    enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
-    sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged
-{
-    auto visibleContentRectUpdateInfo = [self createVisibleContentRectUpdateInfoFromVisibleRect:visibleContentRect unobscuredRect:unobscuredContentRect contentInsets:contentInsets unobscuredRectInScrollViewCoordinates:unobscuredRectInScrollViewCoordinates obscuredInsets:obscuredInsets unobscuredSafeAreaInsets:unobscuredSafeAreaInsets inputViewBounds:inputViewBounds scale:zoomScale minimumScale:minimumScale viewStability:viewStability enclosedInScrollableAncestorView:enclosedInScrollableAncestorView sendEvenIfUnchanged:sendEvenIfUnchanged];
-
-    if (!visibleContentRectUpdateInfo)
-        return;
-
-    bool inStableState = viewStability.isEmpty();
-
-    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo->dump());
+    LOG_WITH_STREAM(VisibleRects, stream << "-[WKContentView didUpdateVisibleRect]" << visibleContentRectUpdateInfo.dump());
 
     bool wasStableState = _page->inStableState();
 
-    _page->updateVisibleContentRects(*visibleContentRectUpdateInfo, sendEvenIfUnchanged);
+    _page->updateVisibleContentRects(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
 
     auto layoutViewport = _page->unconstrainedLayoutViewportRect();
     _page->adjustLayersForLayoutViewport(_page->unobscuredContentRect().location(), layoutViewport, _page->displayedContentScale());
 
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 
-    _page->drawingArea()->updateDebugIndicator();
+    drawingArea->updateDebugIndicator();
 
     [self updateFixedClippingView:layoutViewport];
 
@@ -738,9 +775,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #pragma mark PageClientImpl methods
 
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)webProcessProxy
 {
-    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(*_page);
+    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(*_page, webProcessProxy);
 }
 
 - (void)_processDidExit

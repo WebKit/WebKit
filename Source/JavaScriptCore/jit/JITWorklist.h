@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,10 @@
 #include "JITPlan.h"
 #include "JITWorklistThread.h"
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -43,7 +43,7 @@ class VM;
 
 class JITWorklist {
     WTF_MAKE_NONCOPYABLE(JITWorklist);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(JITWorklist);
 
     friend class JITWorklistThread;
 

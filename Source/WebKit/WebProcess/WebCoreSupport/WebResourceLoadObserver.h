@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
@@ -95,5 +93,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(TRACKING_PREVENTION)

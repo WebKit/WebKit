@@ -46,7 +46,7 @@ std::optional<BindGroupLayoutDescriptor> ConvertToBackingContext::convertToBacki
         auto convertedEntry = convertToBacking(entry);
         if (!convertedEntry)
             return std::nullopt;
-        entries.uncheckedAppend(WTFMove(*convertedEntry));
+        entries.append(WTFMove(*convertedEntry));
     }
 
     return { { WTFMove(*base), WTFMove(entries) } };
@@ -64,7 +64,7 @@ std::optional<WebCore::WebGPU::BindGroupLayoutDescriptor> ConvertFromBackingCont
         auto entry = convertFromBacking(backingEntry);
         if (!entry)
             return std::nullopt;
-        entries.uncheckedAppend(WTFMove(*entry));
+        entries.append(WTFMove(*entry));
     }
 
     return { { WTFMove(*base), WTFMove(entries) } };

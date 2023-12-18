@@ -66,7 +66,7 @@ public:
     void suspendPendingRequests() final;
     void resumePendingRequests() final;
 
-    bool usePingLoad() const final;
+    bool usePingLoad() const final { return false; }
     void startPingLoad(WebCore::LocalFrame&, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap& originalRequestHeaders, const WebCore::FetchOptions&, WebCore::ContentSecurityPolicyImposition, PingLoadCompletionHandler&&) final;
     void didFinishPingLoad(WebCore::ResourceLoaderIdentifier pingLoadIdentifier, WebCore::ResourceError&&, WebCore::ResourceResponse&&);
 

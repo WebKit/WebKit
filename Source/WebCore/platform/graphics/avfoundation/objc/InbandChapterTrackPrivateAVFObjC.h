@@ -38,13 +38,14 @@ namespace WebCore {
 
 class InbandChapterTrackPrivateAVFObjC : public InbandTextTrackPrivate {
 public:
-    static Ref<InbandChapterTrackPrivateAVFObjC> create(RetainPtr<NSLocale> locale)
+    static Ref<InbandChapterTrackPrivateAVFObjC> create(RetainPtr<NSLocale> locale, TrackID trackID)
     {
-        return adoptRef(*new InbandChapterTrackPrivateAVFObjC(WTFMove(locale)));
+        return adoptRef(*new InbandChapterTrackPrivateAVFObjC(WTFMove(locale), trackID));
     }
 
     virtual ~InbandChapterTrackPrivateAVFObjC() = default;
 
+    TrackID id() const final { return m_id; }
     InbandTextTrackPrivate::Kind kind() const final { return InbandTextTrackPrivate::Kind::Chapters; }
     AtomString language() const final;
 
@@ -54,7 +55,7 @@ public:
     void processChapters(RetainPtr<NSArray<AVTimedMetadataGroup *>>);
 
 private:
-    InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale>);
+    InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale>, TrackID);
 
     AtomString inBandMetadataTrackDispatchType() const final { return "com.apple.chapters"_s; }
     const char* logClassName() const final { return "InbandChapterTrackPrivateAVFObjC"; }
@@ -70,6 +71,7 @@ private:
     Vector<ChapterData> m_processedChapters;
     RetainPtr<NSLocale> m_locale;
     mutable AtomString m_language;
+    const TrackID m_id;
     int m_index { 0 };
 };
 

@@ -41,18 +41,22 @@ struct WGPURenderBundleImpl {
 @property (nonatomic) MTLRenderStages renderStages;
 @end
 
+@class RenderBundleICBWithResources;
+
 namespace WebGPU {
 
 class Device;
+
+class RenderBundleEncoder;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode clipMode, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, Device& device)
     {
-        return adoptRef(*new RenderBundle(indirectCommandBuffer, WTFMove(resources), renderPipelineState, depthStencilState, cullMode, frontFace, clipMode, device));
+        return adoptRef(*new RenderBundle(resources, encoder, device));
     }
     static Ref<RenderBundle> createInvalid(Device& device)
     {
@@ -63,31 +67,23 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_indirectCommandBuffer; }
-
-    id<MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
+    bool isValid() const { return m_renderBundlesResources != nil; }
 
     Device& device() const { return m_device; }
-    const Vector<BindableResources>& resources() const { return m_resources; }
-    id<MTLRenderPipelineState> currentPipelineState() const;
-    id<MTLDepthStencilState> depthStencilState() const;
-    MTLCullMode cullMode() const;
-    MTLWinding frontFace() const;
-    MTLDepthClipMode depthClipMode() const;
+    NSArray<RenderBundleICBWithResources*> *renderBundlesResources() const { return m_renderBundlesResources; }
+
+    void replayCommands(id<MTLRenderCommandEncoder>) const;
+    void updateMinMaxDepths(float minDepth, float maxDepth);
 
 private:
-    RenderBundle(id<MTLIndirectCommandBuffer>, ResourcesContainer*, id<MTLRenderPipelineState>, id<MTLDepthStencilState>, MTLCullMode, MTLWinding, MTLDepthClipMode, Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, Device&);
     RenderBundle(Device&);
 
-    const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
-
     const Ref<Device> m_device;
-    Vector<BindableResources> m_resources;
-    id<MTLRenderPipelineState> m_currentPipelineState { nil };
-    id<MTLDepthStencilState> m_depthStencilState { nil };
-    MTLCullMode m_cullMode { MTLCullModeNone };
-    MTLWinding m_frontFace { MTLWindingClockwise };
-    MTLDepthClipMode m_depthClipMode { MTLDepthClipModeClip };
+    RefPtr<RenderBundleEncoder> m_renderBundleEncoder;
+    NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
+    float m_minDepth { 0.f };
+    float m_maxDepth { 1.f };
 };
 
 } // namespace WebGPU

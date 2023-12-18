@@ -3615,8 +3615,8 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
         return createShareMenuItem(hitTestResult);
 
     switch (item.type()) {
-    case WebCore::ActionType:
-    case WebCore::CheckableActionType: {
+    case WebCore::ContextMenuItemType::Action:
+    case WebCore::ContextMenuItemType::CheckableAction: {
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
         if (auto tag = toTag(item.action()))
@@ -3628,10 +3628,10 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
         return menuItem;
     }
 
-    case WebCore::SeparatorType:
+    case WebCore::ContextMenuItemType::Separator:
         return [NSMenuItem separatorItem];
 
-    case WebCore::SubmenuType: {
+    case WebCore::ContextMenuItemType::Submenu: {
         auto menu = adoptNS([[NSMenu alloc] init]);
         {
             auto submenuItems = createMenuItems(hitTestResult, item.subMenuItems());
@@ -3960,11 +3960,11 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     // we risk disabling screen updates when no flush is pending.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if ([NSGraphicsContext currentContext] == [[self window] graphicsContext] && [webView _needsOneShotDrawingSynchronization]) {
-ALLOW_DEPRECATED_DECLARATIONS_END
         // Disable screen updates to minimize the chances of the race between the CA
         // display link and AppKit drawing causing flashes.
         [[self window] disableScreenUpdatesUntilFlush];
-        
+ALLOW_DEPRECATED_DECLARATIONS_END
+
         // Make sure any layer changes that happened as a result of layout
         // via -viewWillDraw are committed.
         [CATransaction flush];
@@ -4625,8 +4625,8 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
 
 #if PLATFORM(IOS_FAMILY)
         if (auto* document = coreFrame->document()) {
-            document->markers().removeMarkers(WebCore::DocumentMarker::DictationPhraseWithAlternatives);
-            document->markers().removeMarkers(WebCore::DocumentMarker::DictationResult);
+            document->markers().removeMarkers(WebCore::DocumentMarker::Type::DictationPhraseWithAlternatives);
+            document->markers().removeMarkers(WebCore::DocumentMarker::Type::DictationResult);
         }
 #endif
 
@@ -7110,7 +7110,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto* document = coreFrame->document();
     if (!document)
         return;
-    document->markers().removeMarkers(WebCore::DocumentMarker::TextMatch);
+    document->markers().removeMarkers(WebCore::DocumentMarker::Type::TextMatch);
 }
 
 - (NSArray *)rectsForTextMatches
@@ -7122,7 +7122,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!document)
         return @[];
 
-    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::TextMatch)).autorelease();
+    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::Type::TextMatch)).autorelease();
 }
 
 - (BOOL)_findString:(NSString *)string options:(WebFindOptions)options

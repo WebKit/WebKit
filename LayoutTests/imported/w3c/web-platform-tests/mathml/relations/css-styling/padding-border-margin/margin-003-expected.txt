@@ -1,6 +1,6 @@
 
 FAIL Margin properties on the children of menclose assert_approx_equals: inline size expected 56.15625 +/- 1 but got 31.15625
-FAIL Margin properties on the children of merror assert_approx_equals: inline size expected 45 +/- 1 but got 20
+FAIL Margin properties on the children of merror assert_approx_equals: inline size expected 47 +/- 1 but got 22
 FAIL Margin properties on the children of mfrac assert_approx_equals: inline size expected 45 +/- 1 but got 20
 FAIL Margin properties on the children of mmultiscripts assert_approx_equals: inline size expected 90.625 +/- 1 but got 40.625
 FAIL Margin properties on the children of mover assert_approx_equals: inline size expected 45 +/- 1 but got 20

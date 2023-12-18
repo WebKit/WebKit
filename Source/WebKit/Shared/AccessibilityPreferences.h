@@ -33,39 +33,60 @@
 
 namespace WebKit {
 
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+enum class WebKitAXValueState : int {
+    AXValueStateInvalid = -2,
+    AXValueStateEmpty = -1,
+    AXValueStateOff,
+    AXValueStateOn
+};
+
+inline WebKitAXValueState toWebKitAXValueState(AXValueState value)
+{
+    switch (value) {
+    case AXValueState::AXValueStateInvalid:
+        return WebKitAXValueState::AXValueStateInvalid;
+    case AXValueState::AXValueStateEmpty:
+        return WebKitAXValueState::AXValueStateEmpty;
+    case AXValueState::AXValueStateOff:
+        return WebKitAXValueState::AXValueStateOff;
+    case AXValueState::AXValueStateOn:
+        return WebKitAXValueState::AXValueStateOn;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WebKitAXValueState::AXValueStateInvalid;
+}
+
+inline AXValueState fromWebKitAXValueState(WebKitAXValueState value)
+{
+    switch (value) {
+    case WebKitAXValueState::AXValueStateInvalid:
+        return AXValueState::AXValueStateInvalid;
+    case WebKitAXValueState::AXValueStateEmpty:
+        return AXValueState::AXValueStateEmpty;
+    case WebKitAXValueState::AXValueStateOff:
+        return AXValueState::AXValueStateOff;
+    case WebKitAXValueState::AXValueStateOn:
+        return AXValueState::AXValueStateOn;
+    }
+
+    ASSERT_NOT_REACHED();
+    return AXValueState::AXValueStateInvalid;
+}
+#endif
+
 struct AccessibilityPreferences {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-    AXValueState reduceMotionEnabled { AXValueStateEmpty };
-    AXValueState increaseButtonLegibility { AXValueStateEmpty };
-    AXValueState enhanceTextLegibility { AXValueStateEmpty };
-    AXValueState darkenSystemColors { AXValueStateEmpty };
-    AXValueState invertColorsEnabled { AXValueStateEmpty };
+    WebKitAXValueState reduceMotionEnabled { WebKitAXValueState::AXValueStateEmpty };
+    WebKitAXValueState increaseButtonLegibility { WebKitAXValueState::AXValueStateEmpty };
+    WebKitAXValueState enhanceTextLegibility { WebKitAXValueState::AXValueStateEmpty };
+    WebKitAXValueState darkenSystemColors { WebKitAXValueState::AXValueStateEmpty };
+    WebKitAXValueState invertColorsEnabled { WebKitAXValueState::AXValueStateEmpty };
+
 #endif
     bool imageAnimationEnabled { true };
     bool enhanceTextLegibilityOverall { false };
 };
 
 } // namespace WebKit
-
-namespace IPC {
-template<> struct ArgumentCoder<WebKit::AccessibilityPreferences> {
-    static void encode(Encoder&, const WebKit::AccessibilityPreferences&);
-    static std::optional<WebKit::AccessibilityPreferences> decode(Decoder&);
-};
-}
-
-#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
-namespace WTF {
-
-template<> struct EnumTraits<AXValueState> {
-    using values = EnumValues<
-        AXValueState,
-        AXValueState::AXValueStateInvalid,
-        AXValueState::AXValueStateEmpty,
-        AXValueState::AXValueStateOff,
-        AXValueState::AXValueStateOn
-    >;
-};
-
-} // namespace WTF
-#endif

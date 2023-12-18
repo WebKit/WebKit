@@ -61,7 +61,11 @@ public:
 
     void reset();
 
+#if LIBXML_VERSION >= 21200
+    static void parseErrorFunc(void* userData, const xmlError*);
+#else
     static void parseErrorFunc(void* userData, xmlError*);
+#endif
     static void genericErrorFunc(void* userData, const char* msg, ...);
     
     // Only for libXSLT callbacks

@@ -48,14 +48,43 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
+class MediaRecorderPrivateGPUProcessDidCloseObserver final
+    : public GPUProcessConnection::Client
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateGPUProcessDidCloseObserver> {
+public:
+    static Ref<MediaRecorderPrivateGPUProcessDidCloseObserver> create(MediaRecorderPrivate& recorder) { return adoptRef(*new MediaRecorderPrivateGPUProcessDidCloseObserver(recorder)); }
+
+    // GPUProcessConnection::Client
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+
+private:
+    explicit MediaRecorderPrivateGPUProcessDidCloseObserver(MediaRecorderPrivate& recorder)
+        : m_recorder(recorder)
+    {
+    }
+
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final
+    {
+        callOnMainRunLoop([recorder = m_recorder] {
+            if (recorder)
+                recorder->gpuProcessConnectionDidClose();
+        });
+    }
+
+    WeakPtr<MediaRecorderPrivate> m_recorder;
+};
+
 MediaRecorderPrivate::MediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_identifier(MediaRecorderIdentifier::generate())
     , m_stream(stream)
     , m_connection(WebProcess::singleton().ensureGPUProcessConnection().connection())
     , m_options(options)
     , m_hasVideo(stream.hasVideo())
+    , m_gpuProcessDidCloseObserver(MediaRecorderPrivateGPUProcessDidCloseObserver::create(*this))
 {
-    WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+    WebProcess::singleton().ensureGPUProcessConnection().addClient(m_gpuProcessDidCloseObserver.get());
 }
 
 void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
@@ -64,21 +93,20 @@ void MediaRecorderPrivate::startRecording(StartRecordingCallback&& callback)
     // Currently we only choose the first track as the recorded track.
 
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [this, weakThis = ThreadSafeWeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis) {
-            callback(Exception { InvalidStateError }, 0, 0);
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaRecorderManager::CreateRecorder { m_identifier, !!selectedTracks.audioTrack, !!selectedTracks.videoTrack, m_options }, [weakThis = WeakPtr { *this }, audioTrack = RefPtr { selectedTracks.audioTrack }, videoTrack = RefPtr { selectedTracks.videoTrack }, callback = WTFMove(callback)](auto&& exception, String&& mimeType, unsigned audioBitRate, unsigned videoBitRate) mutable {
+        if (!weakThis) {
+            callback(Exception { ExceptionCode::InvalidStateError }, 0, 0);
             return;
         }
         if (exception) {
             callback(Exception { exception->code, WTFMove(exception->message) }, 0, 0);
             return;
         }
-        if (!m_isStopped) {
+        if (!weakThis->m_isStopped) {
             if (audioTrack)
-                setAudioSource(&audioTrack->source());
+                weakThis->setAudioSource(&audioTrack->source());
             if (videoTrack)
-                setVideoSource(&videoTrack->source());
+                weakThis->setVideoSource(&videoTrack->source());
         }
         callback(WTFMove(mimeType), audioBitRate, videoBitRate);
     }, 0);
@@ -123,7 +151,9 @@ void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const Pl
         // Allocate a ring buffer large enough to contain 2 seconds of audio.
         m_numberOfFrames = m_description->sampleRate() * 2;
         auto& format = m_description->streamDescription();
-        auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+        auto result = ProducerSharedCARingBuffer::allocate(format, m_numberOfFrames);
+        RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+        auto [ringBuffer, handle] = WTFMove(*result);
         m_ringBuffer = WTFMove(ringBuffer);
         m_connection->send(Messages::RemoteMediaRecorder::AudioSamplesStorageChanged { WTFMove(handle), format }, m_identifier);
         m_silenceAudioBuffer = nullptr;
@@ -177,7 +207,7 @@ const String& MediaRecorderPrivate::mimeType() const
     return m_hasVideo ? videoMP4 : audioMP4;
 }
 
-void MediaRecorderPrivate::gpuProcessConnectionDidClose(GPUProcessConnection&)
+void MediaRecorderPrivate::gpuProcessConnectionDidClose()
 {
     m_sharedVideoFrameWriter.disable();
 }

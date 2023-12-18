@@ -45,7 +45,7 @@ public:
     using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, OptionSet<WindowTypeFilter>>;
     using ListenerVector = Vector<FilterAndCallbackPair>;
 
-    void invokeListenersWithArgument(id argument, WindowTypeFilter);
+    void invokeListenersWithArgument(id argument, OptionSet<WindowTypeFilter>);
 
     const ListenerVector& listeners() const { return m_listeners; }
 

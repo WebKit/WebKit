@@ -80,6 +80,7 @@ enum {
     kIOHIDEventTypeZoom = 8,
     kIOHIDEventTypeDigitizer = 11,
     kIOHIDEventTypeNavigationSwipe = 16,
+    kIOHIDEventTypeZoomToggle = 22,
     kIOHIDEventTypeForce = 32,
 };
 typedef uint32_t IOHIDEventType;

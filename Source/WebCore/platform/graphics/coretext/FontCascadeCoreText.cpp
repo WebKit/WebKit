@@ -364,7 +364,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     bool hasSimpleShadow = context.textDrawingMode() == TextDrawingMode::Fill && shadow && shadow->color.isValid() && !shadow->radius && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
-        context.clearShadow();
+        context.clearDropShadow();
         Color fillColor = context.fillColor();
         Color shadowFillColor = shadow->color.colorWithAlphaMultipliedBy(fillColor.alphaAsFloat());
         context.setFillColor(shadowFillColor);
@@ -406,7 +406,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     auto codePointsIterator = codePoints.begin();
 
     ASSERT(!stringView.isEmpty());
-    UChar32 baseCharacter = *codePointsIterator;
+    char32_t baseCharacter = *codePointsIterator;
     ++codePointsIterator;
     bool isOnlySingleCodePoint = codePointsIterator == codePoints.end();
 
@@ -416,12 +416,15 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
         return nullptr;
 
     if (isOnlySingleCodePoint)
-        return baseCharacterGlyphData.font;
+        return baseCharacterGlyphData.font.get();
 
     bool triedBaseCharacterFont = false;
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        const Font* font = fallbackRangesAt(i).fontForCharacter(baseCharacter);
+        auto& fontRanges = fallbackRangesAt(i);
+        if (fontRanges.isGeneric() && isPrivateUseAreaCharacter(baseCharacter))
+            continue;
+        const Font* font = fontRanges.fontForCharacter(baseCharacter);
         if (!font)
             continue;
 #if PLATFORM(IOS_FAMILY)
@@ -453,12 +456,12 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     }
 
     if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(stringView))
-        return baseCharacterGlyphData.font;
+        return baseCharacterGlyphData.font.get();
 
     return Font::systemFallback();
 }
 
-ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, UChar32 character)
+ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t character)
 {
     // You may think that this function should be different between macOS and iOS. And you may even be right!
     //

@@ -61,7 +61,7 @@ ExceptionOr<void> PaymentHandler::canCreateSession(Document& document)
 #if ENABLE(APPLE_PAY)
     auto result = PaymentSession::canCreateSession(document);
     if (result.hasException())
-        return Exception { SecurityError, result.releaseException().releaseMessage() };
+        return Exception { ExceptionCode::SecurityError, result.releaseException().releaseMessage() };
 #else
     UNUSED_PARAM(document);
 #endif

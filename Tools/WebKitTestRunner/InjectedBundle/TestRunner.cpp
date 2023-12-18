@@ -684,6 +684,7 @@ enum {
     AppBoundRequestContextDataForDomainCallbackID,
     TakeViewPortSnapshotCallbackID,
     RemoveAllCookiesCallbackID,
+    GetAndClearReportedWindowProxyAccessDomainsCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1105,6 +1106,11 @@ void TestRunner::setShouldLogCanAuthenticateAgainstProtectionSpace(bool value)
 void TestRunner::setShouldLogDownloadCallbacks(bool value)
 {
     postPageMessage("SetShouldLogDownloadCallbacks", value);
+}
+
+void TestRunner::setShouldDownloadContentDispositionAttachments(bool value)
+{
+    postPageMessage("SetShouldDownloadContentDispositionAttachments", value);
 }
 
 void TestRunner::setShouldLogDownloadSize(bool value)
@@ -1627,6 +1633,11 @@ void TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
     postSynchronousMessage("StatisticsNotifyPagesWhenDataRecordsWereScanned", value);
 }
 
+void TestRunner::setStatisticsTimeAdvanceForTesting(double value)
+{
+    postSynchronousMessage("StatisticsSetTimeAdvanceForTesting", value);
+}
+
 void TestRunner::setStatisticsIsRunningTest(bool value)
 {
     postSynchronousMessage("StatisticsSetIsRunningTest", value);
@@ -1975,9 +1986,12 @@ void TestRunner::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
     }));
 }
 
-void TestRunner::triggerMockMicrophoneConfigurationChange()
+void TestRunner::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 {
-    postSynchronousMessage("TriggerMockMicrophoneConfigurationChange");
+    postSynchronousMessage("TriggerMockCaptureConfigurationChange", createWKDictionary({
+        { "microphone", adoptWK(WKBooleanCreate(forMicrophone)) },
+        { "display", adoptWK(WKBooleanCreate(forDisplay)) },
+    }));
 }
 
 #if ENABLE(GAMEPAD)
@@ -2128,6 +2142,11 @@ void TestRunner::setAllowStorageQuotaIncrease(bool willIncrease)
 void TestRunner::setQuota(uint64_t quota)
 {
     postSynchronousMessage("SetQuota", quota);
+}
+
+void TestRunner::setOriginQuotaRatioEnabled(bool enabled)
+{
+    postSynchronousPageMessage("SetOriginQuotaRatioEnabled", enabled);
 }
 
 void TestRunner::getApplicationManifestThen(JSValueRef callback)
@@ -2405,6 +2424,18 @@ void TestRunner::viewPortSnapshotTaken(WKStringRef value)
 void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
 {
     _WKBundleFrameGenerateTestReport(mainFrame(), toWK(message).get(), toWK(group).get());
+}
+
+void TestRunner::getAndClearReportedWindowProxyAccessDomains(JSValueRef callback)
+{
+    cacheTestRunnerCallback(GetAndClearReportedWindowProxyAccessDomainsCallbackID, callback);
+    postMessage("GetAndClearReportedWindowProxyAccessDomains");
+}
+
+void TestRunner::didGetAndClearReportedWindowProxyAccessDomains(WKArrayRef value)
+{
+    auto jsValue = stringArrayToJS(mainFrameJSContext(), value);
+    callTestRunnerCallback(GetAndClearReportedWindowProxyAccessDomainsCallbackID, 1, &jsValue);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

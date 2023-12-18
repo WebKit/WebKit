@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderSharedExponent);
 
 WebGLRenderSharedExponent::WebGLRenderSharedExponent(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLRenderSharedExponent)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_QCOM_render_shared_exponent"_s);
 }

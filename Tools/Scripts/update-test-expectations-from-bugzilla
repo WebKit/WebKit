@@ -31,5 +31,14 @@ import sys
 
 from webkitpy.common.net.bugzilla import test_expectation_updater
 
-
-sys.exit(test_expectation_updater.main(sys.argv[1:], sys.stdout, sys.stderr))
+# Refer to update-test-expectations in the help as the canonical form of invoking this,
+# as otherwise the auto-generated help says `update-test-expectations-from-bugzilla
+# bugzilla` which is wrong given we prepend "bugzilla" below.
+sys.exit(
+    test_expectation_updater.main(
+        ["bugzilla"] + sys.argv[1:],
+        sys.stdout,
+        sys.stderr,
+        prog="update-test-expectations",
+    )
+)

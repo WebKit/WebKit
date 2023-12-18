@@ -37,12 +37,12 @@ inline ContainerNode& HTMLCollection::rootNode() const
     return ownerNode();
 }
 
-inline const Vector<Element*>* CollectionNamedElementCache::findElementsWithId(const AtomString& id) const
+inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::findElementsWithId(const AtomString& id) const
 {
     return find(m_idMap, id);
 }
 
-inline const Vector<Element*>* CollectionNamedElementCache::findElementsWithName(const AtomString& name) const
+inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::findElementsWithName(const AtomString& name) const
 {
     return find(m_nameMap, name);
 }
@@ -66,7 +66,7 @@ inline void CollectionNamedElementCache::didPopulate()
         reportExtraMemoryAllocatedForCollectionIndexCache(cost);
 }
 
-inline const Vector<Element*>* CollectionNamedElementCache::find(const StringToElementsMap& map, const AtomString& key) const
+inline const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* CollectionNamedElementCache::find(const StringToElementsMap& map, const AtomString& key) const
 {
     ASSERT(m_didPopulate);
     auto it = map.find(key.impl());
@@ -77,7 +77,7 @@ inline void CollectionNamedElementCache::append(StringToElementsMap& map, const 
 {
     if (!m_idMap.contains(key.impl()) && !m_nameMap.contains(key.impl()))
         m_propertyNames.append(key);
-    map.add(key.impl(), Vector<Element*>()).iterator->value.append(&element);
+    map.add(key.impl(), Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>()).iterator->value.append(element);
 }
 
 inline bool HTMLCollection::isRootedAtTreeScope() const

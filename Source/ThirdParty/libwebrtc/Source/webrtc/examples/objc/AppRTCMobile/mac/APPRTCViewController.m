@@ -14,7 +14,6 @@
 
 #import "sdk/objc/api/peerconnection/RTCVideoTrack.h"
 #import "sdk/objc/components/renderer/metal/RTCMTLNSVideoView.h"
-#import "sdk/objc/components/renderer/opengl/RTCNSGLVideoView.h"
 
 #import "ARDAppClient.h"
 #import "ARDCaptureController.h"
@@ -45,7 +44,7 @@ static NSUInteger const kBottomViewHeight = 200;
 
 @end
 
-@interface APPRTCMainView () <NSTextFieldDelegate, RTC_OBJC_TYPE (RTCNSGLVideoViewDelegate)>
+@interface APPRTCMainView () <NSTextFieldDelegate, RTC_OBJC_TYPE (RTCVideoViewDelegate)>
 @end
 @implementation APPRTCMainView  {
   NSScrollView* _scrollView;
@@ -178,9 +177,9 @@ static NSUInteger const kBottomViewHeight = 200;
   [self setNeedsUpdateConstraints:YES];
 }
 
-#pragma mark - RTC_OBJC_TYPE(RTCNSGLVideoViewDelegate)
+#pragma mark - RTCVideoViewDelegate
 
-- (void)videoView:(RTC_OBJC_TYPE(RTCNSGLVideoView) *)videoView didChangeVideoSize:(NSSize)size {
+- (void)videoView:(id<RTC_OBJC_TYPE(RTCVideoRenderer)>)videoView didChangeVideoSize:(CGSize)size {
   if (videoView == _remoteVideoView) {
     _remoteVideoSize = size;
   } else if (videoView == _localVideoView) {
@@ -216,38 +215,8 @@ static NSUInteger const kBottomViewHeight = 200;
   [_scrollView setDocumentView:_logView];
   [self addSubview:_scrollView];
 
-// NOTE (daniela): Ignoring Clang diagonstic here.
-// We're performing run time check to make sure class is available on runtime.
-// If not we're providing sensible default.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpartial-availability"
-  if ([RTC_OBJC_TYPE(RTCMTLNSVideoView) class] &&
-      [RTC_OBJC_TYPE(RTCMTLNSVideoView) isMetalAvailable]) {
-    _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLNSVideoView) alloc] initWithFrame:NSZeroRect];
-    _localVideoView = [[RTC_OBJC_TYPE(RTCMTLNSVideoView) alloc] initWithFrame:NSZeroRect];
-  }
-#pragma clang diagnostic pop
-  if (_remoteVideoView == nil) {
-    NSOpenGLPixelFormatAttribute attributes[] = {
-      NSOpenGLPFADoubleBuffer,
-      NSOpenGLPFADepthSize, 24,
-      NSOpenGLPFAOpenGLProfile,
-      NSOpenGLProfileVersion3_2Core,
-      0
-    };
-    NSOpenGLPixelFormat* pixelFormat =
-    [[NSOpenGLPixelFormat alloc] initWithAttributes:attributes];
-
-    RTC_OBJC_TYPE(RTCNSGLVideoView)* remote =
-        [[RTC_OBJC_TYPE(RTCNSGLVideoView) alloc] initWithFrame:NSZeroRect pixelFormat:pixelFormat];
-    remote.delegate = self;
-    _remoteVideoView = remote;
-
-    RTC_OBJC_TYPE(RTCNSGLVideoView)* local =
-        [[RTC_OBJC_TYPE(RTCNSGLVideoView) alloc] initWithFrame:NSZeroRect pixelFormat:pixelFormat];
-    local.delegate = self;
-    _localVideoView = local;
-  }
+  _remoteVideoView = [[RTC_OBJC_TYPE(RTCMTLNSVideoView) alloc] initWithFrame:NSZeroRect];
+  _localVideoView = [[RTC_OBJC_TYPE(RTCMTLNSVideoView) alloc] initWithFrame:NSZeroRect];
 
   [_remoteVideoView setTranslatesAutoresizingMaskIntoConstraints:NO];
   [self addSubview:_remoteVideoView];
@@ -269,7 +238,7 @@ static NSUInteger const kBottomViewHeight = 200;
   _connectButton = [[NSButton alloc] initWithFrame:NSZeroRect];
   [_connectButton setTranslatesAutoresizingMaskIntoConstraints:NO];
   _connectButton.title = @"Start call";
-  _connectButton.bezelStyle = NSRoundedBezelStyle;
+  _connectButton.bezelStyle = NSBezelStyleSmallSquare;
   _connectButton.target = self;
   _connectButton.action = @selector(startCall:);
   [_actionItemsView addSubview:_connectButton];
@@ -277,7 +246,7 @@ static NSUInteger const kBottomViewHeight = 200;
   _loopbackButton = [[NSButton alloc] initWithFrame:NSZeroRect];
   [_loopbackButton setTranslatesAutoresizingMaskIntoConstraints:NO];
   _loopbackButton.title = @"Loopback";
-  [_loopbackButton setButtonType:NSSwitchButton];
+  [_loopbackButton setButtonType:NSButtonTypeSwitch];
   [_actionItemsView addSubview:_loopbackButton];
 }
 

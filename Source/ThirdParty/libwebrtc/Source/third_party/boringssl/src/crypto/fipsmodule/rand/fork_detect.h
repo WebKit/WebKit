@@ -17,6 +17,23 @@
 
 #include <openssl/base.h>
 
+#if defined(OPENSSL_LINUX)
+// On linux we use MADVISE instead of pthread_atfork(), due
+// to concerns about clone() being used for address space
+// duplication.
+#define OPENSSL_FORK_DETECTION
+#define OPENSSL_FORK_DETECTION_MADVISE
+#elif defined(OPENSSL_MACOS) || defined(OPENSSL_IOS) || \
+    defined(OPENSSL_OPENBSD) || defined(OPENSSL_FREEBSD)
+// These platforms may detect address space duplication with pthread_atfork.
+// iOS doesn't normally allow fork in apps, but it's there.
+#define OPENSSL_FORK_DETECTION
+#define OPENSSL_FORK_DETECTION_PTHREAD_ATFORK
+#elif defined(OPENSSL_WINDOWS) || defined(OPENSSL_TRUSTY)
+// These platforms do not fork.
+#define OPENSSL_DOES_NOT_FORK
+#endif
+
 #if defined(__cplusplus)
 extern "C" {
 #endif

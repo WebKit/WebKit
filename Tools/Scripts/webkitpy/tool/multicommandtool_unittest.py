@@ -29,11 +29,11 @@
 
 import logging
 import unittest
-
 from optparse import make_option
-from webkitpy.tool.multicommandtool import MultiCommandTool, Command, TryAgain
 
 from webkitcorepy import OutputCapture
+
+from webkitpy.tool.multicommandtool import Command, MultiCommandTool, TryAgain
 
 
 class TrivialCommand(Command):

@@ -1,0 +1,3 @@
+
+FAIL navigate() when the onnavigate handler calls preventDefault() assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+

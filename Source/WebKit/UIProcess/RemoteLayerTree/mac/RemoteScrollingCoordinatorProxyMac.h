@@ -69,8 +69,13 @@ private:
     void didCommitLayerAndScrollingTrees() override;
     void applyScrollingTreeLayerPositionsAfterCommit() override;
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
+    void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+#endif
+
 #if ENABLE(SCROLLING_THREAD)
-    RefPtr<RemoteLayerTreeEventDispatcher> m_wheelEventDispatcher;
+    RefPtr<RemoteLayerTreeEventDispatcher> m_eventDispatcher;
 #endif
 };
 

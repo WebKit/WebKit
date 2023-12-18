@@ -1,0 +1,3 @@
+
+PASS validates that view-transition-name: unset or initial are ignored
+

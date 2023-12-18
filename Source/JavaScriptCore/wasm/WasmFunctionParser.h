@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,8 @@
 #include "WasmParser.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/DataLog.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/ListDump.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace Wasm {
 
@@ -52,14 +52,14 @@ enum class CatchKind {
 };
 
 template<typename EnclosingStack, typename NewStack>
-void splitStack(BlockSignature originalSignature, EnclosingStack& enclosingStack, NewStack& newStack)
+void splitStack(BlockSignature signature, EnclosingStack& enclosingStack, NewStack& newStack)
 {
-    BlockSignature signature = &originalSignature->expand();
-    newStack.reserveInitialCapacity(signature->as<FunctionSignature>()->argumentCount());
-    ASSERT(enclosingStack.size() >= signature->as<FunctionSignature>()->argumentCount());
-    unsigned offset = enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount();
-    for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
-        newStack.uncheckedAppend(enclosingStack.at(i + offset));
+    ASSERT(enclosingStack.size() >= signature->argumentCount());
+
+    unsigned offset = enclosingStack.size() - signature->argumentCount();
+    newStack = NewStack(signature->argumentCount(), [&](size_t i) {
+        return enclosingStack.at(i + offset);
+    });
     enclosingStack.shrink(offset);
 }
 
@@ -114,7 +114,7 @@ struct FunctionParserTypes {
 
 template<typename Context>
 class FunctionParser : public Parser<void>, public FunctionParserTypes<typename Context::ControlType, typename Context::ExpressionType, typename Context::CallType> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FunctionParser);
 public:
     using CallType = typename FunctionParser::CallType;
     using ControlType = typename FunctionParser::ControlType;
@@ -156,6 +156,14 @@ public:
     };
     bool localIsInitialized(uint32_t localIndex) { return m_localInitFlags.quickGet(localIndex); }
 
+    uint32_t getStackHeightInValues() const
+    {
+        uint32_t result = m_expressionStack.size();
+        for (const ControlEntry& entry : m_controlStack)
+            result += entry.enclosedExpressionStack.size();
+        return result;
+    }
+
 private:
     static constexpr bool verbose = false;
 
@@ -166,6 +174,9 @@ private:
     PartialResult WARN_UNUSED_RETURN checkBranchTarget(const ControlType&);
     PartialResult WARN_UNUSED_RETURN checkLocalInitialized(uint32_t);
     PartialResult WARN_UNUSED_RETURN unify(const ControlType&);
+
+    PartialResult WARN_UNUSED_RETURN parseNestedBlocksEagerly(bool&);
+    void switchToBlock(ControlType&&, Stack&&);
 
 #define WASM_TRY_POP_EXPRESSION_STACK_INTO(result, what) do {                               \
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in ", what); \
@@ -262,9 +273,52 @@ private:
             WTFBreakpointTrap();
 
         StringPrintStream out;
-        out.print("WebAssembly.Module doesn't validate: "_s, args...);
+        out.print("WebAssembly.Module doesn't validate: "_s, validationFailHelper(args)...);
         return UnexpectedResult(out.toString());
     }
+
+    template <typename Arg>
+    String WARN_UNUSED_RETURN validationFailHelper(const Arg& arg) const
+    {
+        if constexpr (std::is_same<Arg, Type>())
+            return typeToStringModuleRelative(arg);
+        else
+            return FailureHelper::makeString(arg);
+    }
+
+    String typeToStringModuleRelative(const Type& type) const
+    {
+        if (isRefType(type) && Options::useWebAssemblyTypedFunctionReferences()) {
+            StringPrintStream out;
+            out.print("(ref ");
+            if (type.isNullable())
+                out.print("null ");
+            if (typeIndexIsType(type.index))
+                out.print(heapTypeKindAsString(static_cast<TypeKind>(type.index)));
+            // FIXME: use name section if it exists to provide a nicer name.
+            else {
+                const auto& typeDefinition = TypeInformation::get(type.index);
+                const auto& expandedDefinition = typeDefinition.expand();
+                if (expandedDefinition.is<FunctionSignature>())
+                    out.print("<func:");
+                else if (expandedDefinition.is<ArrayType>())
+                    out.print("<array:");
+                else {
+                    ASSERT(expandedDefinition.is<StructType>());
+                    out.print("<struct:");
+                }
+                ASSERT(m_info.typeSignatures.contains(Ref { typeDefinition }));
+                out.print(m_info.typeSignatures.findIf([&](auto& sig) {
+                    return sig.get() == typeDefinition;
+                }));
+                out.print(">");
+            }
+            out.print(")");
+            return out.toString();
+        }
+        return FailureHelper::makeString(type);
+    }
+
 
 #define WASM_VALIDATOR_FAIL_IF(condition, ...) do { \
         if (UNLIKELY(condition)) \
@@ -327,8 +381,9 @@ auto FunctionParser<Context>::parse() -> Result
     WASM_PARSER_FAIL_IF(!parseVarUInt32(localGroupsCount), "can't get local groups count");
 
     WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(signature.argumentCount()), "can't allocate enough memory for function's ", signature.argumentCount(), " arguments");
-    for (uint32_t i = 0; i < signature.argumentCount(); ++i)
-        m_locals.uncheckedAppend(signature.argumentType(i));
+    m_locals.appendUsingFunctor(signature.argumentCount(), [&](size_t i) {
+        return signature.argumentType(i);
+    });
 
     uint64_t totalNumberOfLocals = signature.argumentCount();
     uint64_t totalNonDefaultableLocals = 0;
@@ -353,8 +408,7 @@ auto FunctionParser<Context>::parse() -> Result
         }
 
         WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(totalNumberOfLocals), "can't allocate enough memory for function's ", totalNumberOfLocals, " locals");
-        for (uint32_t i = 0; i < numberOfLocals; ++i)
-            m_locals.uncheckedAppend(typeOfLocal);
+        m_locals.appendUsingFunctor(numberOfLocals, [&](size_t) { return typeOfLocal; });
 
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }
@@ -396,7 +450,7 @@ auto FunctionParser<Context>::parseConstantExpression() -> Result
 template<typename Context>
 auto FunctionParser<Context>::parseBody() -> PartialResult
 {
-    m_controlStack.append({ { }, { }, 0, m_context.addTopLevel(&m_signature) });
+    m_controlStack.append({ { }, { }, 0, m_context.addTopLevel(m_signature.as<FunctionSignature>()) });
     uint8_t op = 0;
     while (m_controlStack.size()) {
         m_currentOpcodeStartingOffset = m_offset;
@@ -421,7 +475,7 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseExpression());
         m_context.didParseOpcode();
     }
-    WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel(&m_signature, m_expressionStack));
+    WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel(m_signature.as<FunctionSignature>(), m_expressionStack));
 
     ASSERT(op == OpType::End);
     return { };
@@ -1512,7 +1566,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> Pa
 
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
     for (unsigned i = 0; i < target.branchTargetArity(); ++i)
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a block's type branch target type. Stack value has type ", m_expressionStack[offset + i].type(), " but branch target expects a value of ", target.branchTargetType(i), " at index ", i);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a subtype of block's type branch target type. Stack value has type ", m_expressionStack[offset + i].type(), " but branch target expects a value of ", target.branchTargetType(i), " at index ", i);
 
     return { };
 }
@@ -1531,8 +1585,7 @@ auto FunctionParser<Context>::checkLocalInitialized(uint32_t index) -> PartialRe
 template<typename Context>
 auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialResult
 {
-    const TypeDefinition* typeDefinition = controlData.signature(); // just to avoid a weird compiler error with templates at the next line.
-    const FunctionSignature* signature = typeDefinition->as<FunctionSignature>();
+    const FunctionSignature* signature = controlData.signature();
     WASM_VALIDATOR_FAIL_IF(signature->returnCount() != m_expressionStack.size(), " block with type: ", signature->toString(), " returns: ", signature->returnCount(), " but stack has: ", m_expressionStack.size(), " values");
     for (unsigned i = 0; i < signature->returnCount(); ++i)
         WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[i].type(), signature->returnType(i)), "control flow returns with unexpected type. ", m_expressionStack[i].type(), " is not a ", signature->returnType(i));
@@ -1543,13 +1596,14 @@ auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialRe
 template<typename Context>
 void FunctionParser<Context>::addReferencedFunctions(const Element& segment)
 {
-    ASSERT(segment.elementType == TableElementType::Funcref);
+    if (!isSubtype(segment.elementType, funcrefType()))
+        return;
 
     // Add each function index as a referenced function. This ensures that
     // wrappers will be created for GC.
-    for (uint32_t functionIndex : segment.functionIndices) {
-        if (functionIndex != Element::nullFuncIndex)
-            m_info.addReferencedFunction(functionIndex);
+    for (uint32_t i = 0; i < segment.length(); i++) {
+        if (segment.initTypes[i] == Element::InitializationType::FromRefFunc)
+            m_info.addReferencedFunction(segment.initialBitsOrIndices[i]);
     }
 }
 
@@ -1575,6 +1629,64 @@ auto FunctionParser<Context>::parseArrayTypeDefinition(const char* operation, bo
     arrayRefType = Type { isNullable ? TypeKind::RefNull : TypeKind::Ref, typeDefinition.index() };
 
     return { };
+}
+
+// Sets shouldContinue to true if parsing should continue after, false if parseExpression() should return.
+template <typename Context>
+ALWAYS_INLINE auto FunctionParser<Context>::parseNestedBlocksEagerly(bool& shouldContinue) -> PartialResult
+{
+    shouldContinue = true;
+    do {
+        int8_t kindByte;
+        BlockSignature inlineSignature;
+
+        // Only attempt to parse the most optimistic case of a single non-ref or void return signature.
+        if (LIKELY(peekInt7(kindByte) && isValidTypeKind(kindByte))) {
+            TypeKind typeKind = static_cast<TypeKind>(kindByte);
+            Type type = { typeKind, TypeDefinition::invalidIndex };
+            if (UNLIKELY(!(type.isVoid() || isValueType(type))))
+                return { };
+            inlineSignature = m_typeInformation.thunkFor(type);
+        } else
+            return { };
+
+        ASSERT(!inlineSignature->argumentCount());
+
+        int64_t oldSize = m_expressionStack.size();
+        Stack newStack;
+        ControlType block;
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(inlineSignature, m_expressionStack, block, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
+        ASSERT(newStack.size() == inlineSignature->argumentCount());
+
+        // Only increment after possible block failures are checked.
+        m_offset++;
+
+        switchToBlock(WTFMove(block), WTFMove(newStack));
+
+        if (m_offset >= length()) {
+            shouldContinue = false;
+            return { };
+        }
+
+        OpType nextOpcode = static_cast<OpType>(source()[m_offset]);
+        if (!isValidOpType(nextOpcode)) {
+            shouldContinue = false;
+            return { };
+        }
+
+        m_currentOpcode = nextOpcode;
+    } while (m_currentOpcode == OpType::Block && m_offset++);
+
+    shouldContinue = false;
+    return { };
+}
+
+template <typename Context>
+ALWAYS_INLINE void FunctionParser<Context>::switchToBlock(ControlType&& block, Stack&& newStack)
+{
+    m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(block) });
+    m_expressionStack = WTFMove(newStack);
 }
 
 template<typename Context>
@@ -1623,8 +1735,8 @@ auto FunctionParser<Context>::parseExpression() -> PartialResult
         WASM_TRY_POP_EXPRESSION_STACK_INTO(nonZero, "select non-zero");
 
         WASM_VALIDATOR_FAIL_IF(!condition.type().isI32(), "select condition must be i32, got ", condition.type());
-        WASM_VALIDATOR_FAIL_IF(nonZero.type() != immediates.targetType, "select result types must match, got ", nonZero.type(), " and ", immediates.targetType);
-        WASM_VALIDATOR_FAIL_IF(zero.type() != immediates.targetType, "select result types must match, got ", zero.type(), " and ", immediates.targetType);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(nonZero.type(), immediates.targetType), "select result types must match, got ", nonZero.type(), " and ", immediates.targetType);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(zero.type(), immediates.targetType), "select result types must match, got ", zero.type(), " and ", immediates.targetType);
 
         ExpressionType result;
         WASM_TRY_ADD_TO_CONTEXT(addSelect(condition, nonZero, zero, result));
@@ -1710,7 +1822,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             TableInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
 
-            WASM_VALIDATOR_FAIL_IF(m_info.tables[immediates.tableIndex].type() != m_info.elements[immediates.elementIndex].elementType, "table.init requires table's type \"", m_info.tables[immediates.tableIndex].type(), "\" and element's type \"", m_info.elements[immediates.elementIndex].elementType, "\" are the same");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_info.elements[immediates.elementIndex].elementType, m_info.tables[immediates.tableIndex].wasmType()), "table.init requires table's type \"", m_info.tables[immediates.tableIndex].wasmType(), "\" and element's type \"", m_info.elements[immediates.elementIndex].elementType, "\" are the same");
 
             TypedExpression dstOffset;
             TypedExpression srcOffset;
@@ -1783,7 +1895,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             const auto srcType = m_info.table(immediates.srcTableIndex).wasmType();
             const auto dstType = m_info.table(immediates.dstTableIndex).wasmType();
-            WASM_VALIDATOR_FAIL_IF(srcType != dstType, "type mismatch at table.copy. got ", srcType, " and ", dstType);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(srcType, dstType), "type mismatch at table.copy. got ", srcType, " and ", dstType);
 
             TypedExpression dstOffset;
             TypedExpression srcOffset;
@@ -1884,13 +1996,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExtGCOpType op = static_cast<ExtGCOpType>(extOp);
         switch (op) {
-        case ExtGCOpType::I31New: {
+        case ExtGCOpType::RefI31: {
             TypedExpression value;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "i31.new");
-            WASM_VALIDATOR_FAIL_IF(!value.type().isI32(), "i31.new value to type ", value.type(), " expected ", TypeKind::I32);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "ref.i31");
+            WASM_VALIDATOR_FAIL_IF(!value.type().isI32(), "ref.i31 value to type ", value.type(), " expected ", TypeKind::I32);
 
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addI31New(value, result));
+            WASM_TRY_ADD_TO_CONTEXT(addRefI31(value, result));
 
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
             return { };
@@ -1975,7 +2087,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             Vector<ExpressionType> args;
             size_t firstArgumentIndex = m_expressionStack.size() - argc;
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argc), "can't allocate enough memory for array.new_fixed ", argc, " values");
-            args.resize(argc);
+            args.grow(argc);
 
             // Start parsing arguments; the expected type for each one is the unpacked version of the array element type
             for (size_t i = 0; i < argc; ++i) {
@@ -1995,13 +2107,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         case ExtGCOpType::ArrayNewData: {
             uint32_t typeIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new_data");
-            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new_data type index ", typeIndex, " is out of bounds");
-
-            // Type of result array must be a mutable array type
-            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
-            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new_data type index ", typeIndex, " does not reference an array definition");
-            const FieldType& fieldType = typeDefinition.as<ArrayType>()->elementType();
+            FieldType fieldType;
+            Type arrayRefType;
+            WASM_FAIL_IF_HELPER_FAILS(parseArrayTypeDefinition("array.new_data", false, typeIndex, fieldType, arrayRefType));
 
             // Array element type must be numeric, vector or packed
             const StorageType storageType = fieldType.type;
@@ -2025,8 +2133,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             uint32_t dataIndex;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataIndex), "can't get data segment index for array.new_data");
-            WASM_VALIDATOR_FAIL_IF(!(m_info.numberOfDataSegments.value()), "array.new_data in module with no data segments");
-            WASM_VALIDATOR_FAIL_IF(dataIndex >= m_info.numberOfDataSegments, "array.new_data segment index ",
+            WASM_VALIDATOR_FAIL_IF(!(m_info.dataSegmentsCount()), "array.new_data in module with no data segments");
+            WASM_VALIDATOR_FAIL_IF(dataIndex >= m_info.dataSegmentsCount(), "array.new_data segment index ",
                 dataIndex, " is out of bounds (maximum data segment index is ", *m_info.numberOfDataSegments -1, ")");
 
             // Get the array size
@@ -2041,18 +2149,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewData(typeIndex, dataIndex, size, offset, result));
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
+            m_expressionStack.constructAndAppend(arrayRefType, result);
             return { };
         }
         case ExtGCOpType::ArrayNewElem: {
-
             uint32_t typeIndex;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new_elem");
-            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new_elem type index ", typeIndex, " is out of bounds");
-
-            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
-            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new_elem type index ", typeIndex, " does not reference an array definition");
-            const FieldType& fieldType = typeDefinition.as<ArrayType>()->elementType();
+            FieldType fieldType;
+            Type arrayRefType;
+            WASM_FAIL_IF_HELPER_FAILS(parseArrayTypeDefinition("array.new_elem", false, typeIndex, fieldType, arrayRefType));
 
             // Get the element segment index
             uint32_t elemSegmentIndex;
@@ -2064,28 +2168,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             // Get the element type for this segment
             const Element& elementsSegment = m_info.elements[elemSegmentIndex];
-            TableElementType segmentElementType = elementsSegment.elementType;
 
             // Array element type must be a supertype of the element type for this element segment
             const StorageType storageType = fieldType.type;
             WASM_VALIDATOR_FAIL_IF(storageType.is<PackedType>(), "type mismatch in array.new_elem: expected `funcref` or `externref`");
 
-            // FIXME in the current implementation, segment element types can only be `funcref` or `externref`, so subtyping is trivial
-            // this will need to be extended once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-            switch (segmentElementType) {
-            case TableElementType::Funcref: {
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(funcrefType(), storageType.as<Type>()), "type mismatch in array.new_elem: segment elements have type funcref but array.new_elem operation expects elements of type ", storageType);
-                // Create function wrappers for any functions in this element segment.
-                // We conservatively assume that the `array.new_canon_elem` instruction will be executed.
-                // An optimization would be to lazily create the wrappers when the array is initialized.
-                addReferencedFunctions(elementsSegment);
-                break;
-            }
-            case TableElementType::Externref: {
-                WASM_VALIDATOR_FAIL_IF(!isExternref(storageType.as<Type>()), "type mismatch in array.new_elem: segment elements have type externref but array.new_elem operation expects elements of type ", storageType);
-                break;
-            }
-            }
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(elementsSegment.elementType, storageType.unpacked()), "type mismatch in array.new_elem: segment elements have type ", elementsSegment.elementType, " but array.new_elem operation expects elements of type ", storageType.unpacked());
+            // Create function wrappers for any functions in this element segment.
+            // We conservatively assume that the `array.new_canon_elem` instruction will be executed.
+            // An optimization would be to lazily create the wrappers when the array is initialized.
+            addReferencedFunctions(elementsSegment);
 
             // Get the array size
             TypedExpression size;
@@ -2099,7 +2191,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addArrayNewElem(typeIndex, elemSegmentIndex, size, offset, result));
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
+            m_expressionStack.constructAndAppend(arrayRefType, result);
             return { };
         }
         case ExtGCOpType::ArrayGet:
@@ -2171,8 +2263,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
         // The struct.new and struct.new_canon instructions are identical but with different opcodes for compatibility with both the spec & other implementations.
         // FIXME: Remove this redundancy when the GC proposal's opcode numbering is finalized.
-        case ExtGCOpType::StructNew:
-        case ExtGCOpType::StructNewCanon: {
+        case ExtGCOpType::StructNew: {
             uint32_t typeIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new"));
 
@@ -2183,7 +2274,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             Vector<ExpressionType> args;
             size_t firstArgumentIndex = m_expressionStack.size() - structType->fieldCount();
             WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(structType->fieldCount()), "can't allocate enough memory for struct.new ", structType->fieldCount(), " values");
-            args.resize(structType->fieldCount());
+            args.grow(structType->fieldCount());
 
             for (size_t i = 0; i < structType->fieldCount(); ++i) {
                 TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
@@ -2200,8 +2291,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition->index() }, result);
             return { };
         }
-        case ExtGCOpType::StructNewDefault:
-        case ExtGCOpType::StructNewCanonDefault: {
+        case ExtGCOpType::StructNewDefault: {
             uint32_t typeIndex;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(typeIndex, "struct.new_default"));
 
@@ -2216,13 +2306,23 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeDefinition.index() }, result);
             return { };
         }
-        case ExtGCOpType::StructGet: {
+        case ExtGCOpType::StructGet:
+        case ExtGCOpType::StructGetS:
+        case ExtGCOpType::StructGetU: {
+            const char* opName = op == ExtGCOpType::StructGet ? "struct.get" : op == ExtGCOpType::StructGetS ? "struct.get_s" : "struct.get_u";
+
             StructFieldManipulation structGetInput;
-            WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, "struct.get"));
+            WASM_FAIL_IF_HELPER_FAILS(parseStructFieldManipulation(structGetInput, opName));
+
+            if (op == ExtGCOpType::StructGetS || op == ExtGCOpType::StructGetU)
+                WASM_PARSER_FAIL_IF(!structGetInput.field.type.template is<PackedType>(), opName, " applied to wrong type of struct -- expected: i8 or i16, found ", structGetInput.field.type.template as<Type>().kind);
+
+            if (op == ExtGCOpType::StructGet)
+                WASM_PARSER_FAIL_IF(structGetInput.field.type.template is<PackedType>(), opName, " applied to packed array of ", structGetInput.field.type.template as<PackedType>(), " -- use struct.get_s or struct.get_u");
 
             ExpressionType result;
             const auto& structType = *m_info.typeSignatures[structGetInput.indices.structTypeIndex]->expand().template as<StructType>();
-            WASM_TRY_ADD_TO_CONTEXT(addStructGet(structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
+            WASM_TRY_ADD_TO_CONTEXT(addStructGet(op, structGetInput.structReference, structType, structGetInput.indices.fieldIndex, result));
 
             m_expressionStack.constructAndAppend(structGetInput.field.type.unpacked(), result);
             return { };
@@ -2255,63 +2355,122 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), opName, " to type ", ref.type(), " expected a reference type");
 
             TypeIndex resultTypeIndex = static_cast<TypeIndex>(heapType);
-            switch (static_cast<TypeKind>(heapType)) {
-            case TypeKind::Funcref:
-            case TypeKind::Nullfuncref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
-                break;
-            case TypeKind::Externref:
-            case TypeKind::Nullexternref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type ", ref.type(), " expected an externref");
-                break;
-            case TypeKind::Eqref:
-            case TypeKind::Anyref:
-            case TypeKind::Nullref:
-            case TypeKind::I31ref:
-            case TypeKind::Arrayref:
-            case TypeKind::Structref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
-                break;
-            default:
-                ASSERT(isTypeIndexHeapType(heapType));
+            if (typeIndexIsType(resultTypeIndex)) {
+                switch (static_cast<TypeKind>(heapType)) {
+                case TypeKind::Funcref:
+                case TypeKind::Nullfuncref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
+                    break;
+                case TypeKind::Externref:
+                case TypeKind::Nullexternref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type ", ref.type(), " expected an externref");
+                    break;
+                case TypeKind::Eqref:
+                case TypeKind::Anyref:
+                case TypeKind::Nullref:
+                case TypeKind::I31ref:
+                case TypeKind::Arrayref:
+                case TypeKind::Structref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            } else {
                 const TypeDefinition& signature = m_info.typeSignatures[heapType];
                 if (signature.expand().is<FunctionSignature>())
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
                 else
-                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), opName, " to type ", ref.type(), " expected a subtype of anyref");
                 resultTypeIndex = signature.index();
-                break;
             }
 
             ExpressionType result;
             bool allowNull = op == ExtGCOpType::RefCastNull || op == ExtGCOpType::RefTestNull;
             if (op == ExtGCOpType::RefCast || op == ExtGCOpType::RefCastNull) {
                 WASM_TRY_ADD_TO_CONTEXT(addRefCast(ref, allowNull, heapType, result));
-                m_expressionStack.constructAndAppend(Type { ref.type().kind, resultTypeIndex }, result);
+                m_expressionStack.constructAndAppend(Type { allowNull ? TypeKind::RefNull : TypeKind::Ref, resultTypeIndex }, result);
             } else {
-                WASM_TRY_ADD_TO_CONTEXT(addRefTest(ref, allowNull, heapType, result));
+                WASM_TRY_ADD_TO_CONTEXT(addRefTest(ref, allowNull, heapType, false, result));
                 m_expressionStack.constructAndAppend(Types::I32, result);
             }
 
             return { };
         }
-        case ExtGCOpType::ExternInternalize: {
+        case ExtGCOpType::BrOnCast:
+        case ExtGCOpType::BrOnCastFail: {
+            const char* opName = op == ExtGCOpType::BrOnCast ? "br_on_cast" : "br_on_cast_fail";
+            uint8_t flags;
+            WASM_VALIDATOR_FAIL_IF(!parseUInt8(flags), "can't get flags byte for ", opName);
+            bool hasNull1 = flags & 0x1;
+            bool hasNull2 = flags & 0x2;
+
+            uint32_t target;
+            WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+            int32_t heapType1, heapType2;
+            WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType1), "can't get first heap type for ", opName);
+            WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType2), "can't get second heap type for ", opName);
+
+            TypeIndex typeIndex1, typeIndex2;
+            if (isTypeIndexHeapType(heapType1))
+                typeIndex1 = m_info.typeSignatures[heapType1].get().index();
+            else
+                typeIndex1 = static_cast<TypeIndex>(heapType1);
+
+            if (isTypeIndexHeapType(heapType2))
+                typeIndex2 = m_info.typeSignatures[heapType2].get().index();
+            else
+                typeIndex2 = static_cast<TypeIndex>(heapType2);
+
+            // Manually pop the stack in order to avoid decreasing the stack size, as we will immediately put it back.
+            TypedExpression ref;
+            WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in ", opName);
+            ref = m_expressionStack.takeLast();
+
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), Type { hasNull1 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 }), opName, " to type ", ref.type(), " expected a reference type with source heaptype");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(Type { hasNull2 ? TypeKind::RefNull : TypeKind::Ref, typeIndex2 }, Type { hasNull1 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 }), "target heaptype was not a subtype of source heaptype for ", opName);
+
+            Type branchTargetType;
+            Type nonTakenType;
+            // Depending on the op, the ref gets typed with targetType or srcType \ targetType in the branches.
+            if (op == ExtGCOpType::BrOnCast) {
+                branchTargetType = Type { hasNull2 ? TypeKind::RefNull : TypeKind::Ref, typeIndex2 };
+                nonTakenType = Type { hasNull1 && !hasNull2 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 };
+            } else {
+                branchTargetType = Type { hasNull1 && !hasNull2 ? TypeKind::RefNull : TypeKind::Ref, typeIndex1 };
+                nonTakenType = Type { hasNull2 ? TypeKind::RefNull : TypeKind::Ref, typeIndex2 };
+            }
+
+            // Put the ref back on the stack to check the branch type.
+            m_expressionStack.constructAndAppend(branchTargetType, ref.value());
+            ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+
+            m_expressionStack.takeLast();
+            m_expressionStack.constructAndAppend(nonTakenType, ref.value());
+
+            WASM_TRY_ADD_TO_CONTEXT(addBranchCast(data, ref, m_expressionStack, hasNull2, heapType2, op == ExtGCOpType::BrOnCastFail));
+
+            return { };
+        }
+        case ExtGCOpType::AnyConvertExtern: {
             TypedExpression reference;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.internalize");
-            WASM_VALIDATOR_FAIL_IF(!isExternref(reference.type()), "extern.internalize reference to type ", reference.type(), " expected ", TypeKind::Externref);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "any.convert_extern");
+            WASM_VALIDATOR_FAIL_IF(!isExternref(reference.type()), "any.convert_extern reference to type ", reference.type(), " expected ", TypeKind::Externref);
 
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addExternInternalize(reference, result));
+            WASM_TRY_ADD_TO_CONTEXT(addAnyConvertExtern(reference, result));
             m_expressionStack.constructAndAppend(anyrefType(reference.type().isNullable()), result);
             return { };
         }
-        case ExtGCOpType::ExternExternalize: {
+        case ExtGCOpType::ExternConvertAny: {
             TypedExpression reference;
-            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.externalize");
-            WASM_VALIDATOR_FAIL_IF(!isSubtype(reference.type(), anyrefType()), "extern.externalize reference to type ", reference.type(), " expected ", TypeKind::Anyref);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(reference, "extern.convert_any");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(reference.type(), anyrefType()), "extern.convert_any reference to type ", reference.type(), " expected ", TypeKind::Anyref);
 
             ExpressionType result;
-            WASM_TRY_ADD_TO_CONTEXT(addExternExternalize(reference, result));
+            WASM_TRY_ADD_TO_CONTEXT(addExternConvertAny(reference, result));
             m_expressionStack.constructAndAppend(externrefType(reference.type().isNullable()), result);
             return { };
         }
@@ -2421,6 +2580,50 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
 
         m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+        return { };
+    }
+
+    case BrOnNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        TypedExpression ref;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "br_on_null");
+        WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_null ref to type ", ref.type(), " expected a reference type");
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, false, result));
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+
+        return { };
+    }
+
+    case BrOnNonNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        TypedExpression ref;
+        // Pop the stack manually to avoid changing the stack size, because the branch needs the value with a different type.
+        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in br_on_non_null");
+        ref = m_expressionStack.takeLast();
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, ref.value());
+        WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type ", ref.type(), " expected a reference type");
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+
+        ExpressionType unused;
+        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, true, unused));
+
+        // On a non-taken branch, the value is null so it's not needed on the stack.
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "br_on_non_null");
+
         return { };
     }
 
@@ -2540,7 +2743,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         size_t firstArgumentIndex = m_expressionStack.size() - calleeSignature.argumentCount();
         Vector<ExpressionType> args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(calleeSignature.argumentCount()), "can't allocate enough memory for call's ", calleeSignature.argumentCount(), " arguments");
-        args.resize(calleeSignature.argumentCount());
+        args.grow(calleeSignature.argumentCount());
         for (size_t i = 0; i < calleeSignature.argumentCount(); ++i) {
             size_t stackIndex = m_expressionStack.size() - i - 1;
             TypedExpression arg = m_expressionStack.at(stackIndex);
@@ -2609,7 +2812,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         Vector<ExpressionType> args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
-        args.resize(argumentCount);
+        args.grow(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
         for (size_t i = 0; i < argumentCount; ++i) {
             size_t stackIndex = m_expressionStack.size() - i - 1;
@@ -2663,24 +2866,26 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "call_ref index ", typeIndex, " is out of bounds");
 
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't call_ref on empty expression stack");
-        WASM_VALIDATOR_FAIL_IF(!isRefWithTypeIndex(m_expressionStack.last().type()), "non-funcref call_ref value ", m_expressionStack.last().type().kind);
-        WASM_VALIDATOR_FAIL_IF(m_expressionStack.last().type().index != m_info.typeSignatures[typeIndex]->index(), "invalid type index for call_ref value");
 
-        const TypeIndex calleeTypeIndex = m_expressionStack.last().type().index;
-        const TypeDefinition& typeDefinition = TypeInformation::get(calleeTypeIndex);
+        const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex];
+        const TypeIndex calleeTypeIndex = typeDefinition.index();
+        WASM_VALIDATOR_FAIL_IF(!typeDefinition.expand().is<FunctionSignature>(), "invalid type index (not a function signature) for call_ref, got ", typeIndex);
         const auto& calleeSignature = *typeDefinition.expand().as<FunctionSignature>();
+        Type calleeType = Type { TypeKind::RefNull, calleeTypeIndex };
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack.last().type(), calleeType), "invalid type for call_ref value, expected ", calleeType, " got ", m_expressionStack.last().type());
+
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's value.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
 
         Vector<ExpressionType> args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
-        args.resize(argumentCount);
+        args.grow(argumentCount);
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
         for (size_t i = 0; i < argumentCount; ++i) {
             size_t stackIndex = m_expressionStack.size() - i - 1;
             TypedExpression arg = m_expressionStack.at(stackIndex);
             if (i > 0)
-                WASM_VALIDATOR_FAIL_IF(arg.type() != calleeSignature.argumentType(argumentCount - i - 1), "argument type mismatch in call_indirect, got ", arg.type(), ", expected ", calleeSignature.argumentType(argumentCount - i - 1));
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argumentType(argumentCount - i - 1)), "argument type mismatch in call_ref, got ", arg.type(), ", expected ", calleeSignature.argumentType(argumentCount - i - 1));
             args[args.size() - i - 1] = arg;
             m_context.didPopValueFromStack(arg, "CallRef"_s);
         }
@@ -2704,47 +2909,48 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case Block: {
-        BlockSignature inlineSignatureAsType;
-        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignatureAsType), "can't get block's signature");
+        // First try parsing the simple cases with potentially repeated block instructions.
+        bool shouldContinue;
+        WASM_FAIL_IF_HELPER_FAILS(parseNestedBlocksEagerly(shouldContinue));
+        if (!shouldContinue)
+            return { };
 
-        BlockSignature expandedSignature = &inlineSignatureAsType->expand();
-        const FunctionSignature* inlineSignature = expandedSignature->as<FunctionSignature>();
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get block's signature");
+
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature->toString());
         unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
         for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i) {
             Type type = m_expressionStack.at(offset + i).type();
-            WASM_VALIDATOR_FAIL_IF(type != inlineSignature->argumentType(i), "Block expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", type);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature->argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", type);
         }
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType block;
-        WASM_TRY_ADD_TO_CONTEXT(addBlock(expandedSignature, m_expressionStack, block, newStack));
+        WASM_TRY_ADD_TO_CONTEXT(addBlock(inlineSignature, m_expressionStack, block, newStack));
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
         ASSERT(newStack.size() == inlineSignature->argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(block) });
-        m_expressionStack = WTFMove(newStack);
+        switchToBlock(WTFMove(block), WTFMove(newStack));
         return { };
     }
 
     case Loop: {
-        BlockSignature inlineSignatureAsType;
-        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignatureAsType), "can't get loop's signature");
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get loop's signature");
 
-        BlockSignature expandedSignature = &inlineSignatureAsType->expand();
-        const FunctionSignature* inlineSignature = expandedSignature->as<FunctionSignature>();
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few values on stack for loop block. Loop expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Loop has inlineSignature: ", inlineSignature->toString());
         unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
         for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i) {
             Type type = m_expressionStack.at(offset + i).type();
-            WASM_VALIDATOR_FAIL_IF(type != inlineSignature->argumentType(i), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", type);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", type);
         }
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType loop;
-        WASM_TRY_ADD_TO_CONTEXT(addLoop(expandedSignature, m_expressionStack, loop, newStack, m_loopIndex++));
+        WASM_TRY_ADD_TO_CONTEXT(addLoop(inlineSignature, m_expressionStack, loop, newStack, m_loopIndex++));
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
         ASSERT(newStack.size() == inlineSignature->argumentCount());
 
@@ -2754,23 +2960,21 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case If: {
-        BlockSignature inlineSignatureAsType;
+        BlockSignature inlineSignature;
         TypedExpression condition;
-        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignatureAsType), "can't get if's signature");
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get if's signature");
         WASM_TRY_POP_EXPRESSION_STACK_INTO(condition, "if condition");
 
-        BlockSignature expandedSignature = &inlineSignatureAsType->expand();
-        const FunctionSignature* inlineSignature = expandedSignature->as<FunctionSignature>();
         WASM_VALIDATOR_FAIL_IF(!condition.type().isI32(), "if condition must be i32, got ", condition.type());
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for if block. If expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. If block has signature: ", inlineSignature->toString());
         unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
         for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
-            WASM_VALIDATOR_FAIL_IF(m_expressionStack[offset + i].type() != inlineSignature->argumentType(i), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature->argumentType(i)), "Loop expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType control;
-        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, expandedSignature, m_expressionStack, control, newStack));
+        WASM_TRY_ADD_TO_CONTEXT(addIf(condition, inlineSignature, m_expressionStack, control, newStack));
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
         ASSERT(newStack.size() == inlineSignature->argumentCount());
 
@@ -2793,20 +2997,18 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case Try: {
-        BlockSignature inlineSignatureAsType;
-        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignatureAsType), "can't get try's signature");
+        BlockSignature inlineSignature;
+        WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get try's signature");
 
-        BlockSignature expandedSignature = &inlineSignatureAsType->expand();
-        const FunctionSignature* inlineSignature = expandedSignature->as<FunctionSignature>();
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature->argumentCount(), "Too few arguments on stack for try block. Try expects ", inlineSignature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Try block has signature: ", inlineSignature->toString());
         unsigned offset = m_expressionStack.size() - inlineSignature->argumentCount();
         for (unsigned i = 0; i < inlineSignature->argumentCount(); ++i)
-            WASM_VALIDATOR_FAIL_IF(m_expressionStack[offset + i].type() != inlineSignature->argumentType(i), "Try expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), inlineSignature->argumentType(i)), "Try expects the argument at index", i, " to be ", inlineSignature->argumentType(i), " but argument has type ", m_expressionStack[i].type());
 
         int64_t oldSize = m_expressionStack.size();
         Stack newStack;
         ControlType control;
-        WASM_TRY_ADD_TO_CONTEXT(addTry(expandedSignature, m_expressionStack, control, newStack));
+        WASM_TRY_ADD_TO_CONTEXT(addTry(inlineSignature, m_expressionStack, control, newStack));
         ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature->argumentCount());
         ASSERT(newStack.size() == inlineSignature->argumentCount());
 
@@ -2892,10 +3094,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
         Vector<ExpressionType> args;
         WASM_PARSER_FAIL_IF(!args.tryReserveInitialCapacity(exceptionSignature.argumentCount()), "can't allocate enough memory for throw's ", exceptionSignature.argumentCount(), " arguments");
-        args.resize(exceptionSignature.argumentCount());
+        args.grow(exceptionSignature.argumentCount());
         for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
             TypedExpression arg = m_expressionStack.at(m_expressionStack.size() - i - 1);
-            WASM_VALIDATOR_FAIL_IF(arg.type() != exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1), "The exception being thrown expects the argument at index ", i, " to be ", exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1), " but argument has type ", arg.type());
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1)), "The exception being thrown expects the argument at index ", i, " to be ", exceptionSignature.argumentType(exceptionSignature.argumentCount() - i - 1), " but argument has type ", arg.type());
             args[args.size() - i - 1] = arg;
             m_context.didPopValueFromStack(arg, "Throw"_s);
         }
@@ -2948,12 +3150,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big ", numberOfTargets);
 
         WASM_PARSER_FAIL_IF(!targets.tryReserveCapacity(numberOfTargets), "can't allocate memory for ", numberOfTargets, " br_table targets");
-        for (uint32_t i = 0; i < numberOfTargets; ++i) {
+        String errorMessage;
+        targets.appendUsingFunctor(numberOfTargets, [&](size_t i) -> ControlType* {
             uint32_t target;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get ", i, "th target for br_table");
-            WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br_table's ", i, "th target ", target, " exceeds control stack size ", m_controlStack.size());
-            targets.uncheckedAppend(&m_controlStack[m_controlStack.size() - 1 - target].controlData);
-        }
+            if (UNLIKELY(!parseVarUInt32(target))) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("can't get ", i, "th target for br_table");
+                return nullptr;
+            }
+            if (UNLIKELY(target >= m_controlStack.size())) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("br_table's ", i, "th target ", target, " exceeds control stack size ", m_controlStack.size());
+                return nullptr;
+            }
+            return &m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        });
+        WASM_PARSER_FAIL_IF(!errorMessage.isNull(), errorMessage);
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTargetIndex), "can't get default target for br_table");
         WASM_PARSER_FAIL_IF(defaultTargetIndex >= m_controlStack.size(), "br_table's default target ", defaultTargetIndex, " exceeds control stack size ", m_controlStack.size());
@@ -2965,8 +3177,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         for (unsigned i = 0; i < targets.size(); ++i) {
             ControlType* target = targets[i];
             WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetArity() != target->branchTargetArity(), "br_table target type size mismatch. Default has size: ", defaultTarget.branchTargetArity(), "but target: ", i, " has size: ", target->branchTargetArity());
-            for (unsigned type = 0; type < defaultTarget.branchTargetArity(); ++type)
-                WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetType(type) != target->branchTargetType(type), "br_table target type mismatch at offset ", type, " expected: ", defaultTarget.branchTargetType(type), " but saw: ", target->branchTargetType(type), " when targeting block: ", target->signature()->toString());
+            // In the presence of subtyping, we need to check each branch target.
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(*target));
         }
 
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget));
@@ -3262,6 +3474,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case TeeLocal: {
         uint32_t index;
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
+        pushLocalInitialized(index);
         return { };
     }
 
@@ -3401,6 +3614,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         return { };
     }
 
+    case BrOnNull:
+    case BrOnNonNull: {
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+        return { };
+    }
+
     case ExtGC: {
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyGC(), "Wasm GC is not enabled");
 
@@ -3414,7 +3634,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 #endif
 
         switch (op) {
-        case ExtGCOpType::I31New:
+        case ExtGCOpType::RefI31:
         case ExtGCOpType::I31GetS:
         case ExtGCOpType::I31GetU:
             return { };
@@ -3450,14 +3670,12 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         }
         case ExtGCOpType::ArrayLen:
             return { };
-        case ExtGCOpType::StructNew:
-        case ExtGCOpType::StructNewCanon: {
+        case ExtGCOpType::StructNew: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new"));
             return { };
         }
-        case ExtGCOpType::StructNewDefault:
-        case ExtGCOpType::StructNewCanonDefault: {
+        case ExtGCOpType::StructNewDefault: {
             uint32_t unused;
             WASM_FAIL_IF_HELPER_FAILS(parseStructTypeIndex(unused, "struct.new_default"));
             return { };

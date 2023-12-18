@@ -81,7 +81,9 @@ public:
     void detachFromDocument();
 
 private:
-    Document& m_document;
+    Ref<Document> protectedDocument() const;
+
+    CheckedRef<Document> m_document;
 
     RefPtr<CSSStyleSheet> m_pageUserSheet;
 

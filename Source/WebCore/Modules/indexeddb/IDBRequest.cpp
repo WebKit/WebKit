@@ -164,7 +164,7 @@ IDBRequest::~IDBRequest()
 ExceptionOr<IDBRequest::Result> IDBRequest::result() const
 {
     if (!isDone())
-        return Exception { InvalidStateError, "Failed to read the 'result' property from 'IDBRequest': The request has not finished."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to read the 'result' property from 'IDBRequest': The request has not finished."_s };
 
     return IDBRequest::Result { m_result };
 }
@@ -174,7 +174,7 @@ ExceptionOr<DOMException*> IDBRequest::error() const
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     if (!isDone())
-        return Exception { InvalidStateError, "Failed to read the 'error' property from 'IDBRequest': The request has not finished."_s };
+        return Exception { ExceptionCode::InvalidStateError, "Failed to read the 'error' property from 'IDBRequest': The request has not finished."_s };
 
     return m_domError.get();
 }
@@ -339,7 +339,7 @@ void IDBRequest::dispatchEvent(Event& event)
         return;
 
     if (m_hasUncaughtException)
-        m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
+        m_transaction->abortDueToFailedRequest(DOMException::create(ExceptionCode::AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
     else if (!event.defaultPrevented() && event.type() == eventNames().errorEvent && !m_transaction->isFinishedOrFinishing()) {
         ASSERT(m_domError);
         m_transaction->abortDueToFailedRequest(*m_domError);
@@ -363,8 +363,8 @@ void IDBRequest::uncaughtExceptionInEventHandler()
         m_hasUncaughtException = true;
         return;
     }
-    if (m_transaction && m_idbError.code() != AbortError)
-        m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
+    if (m_transaction && m_idbError.code() != ExceptionCode::AbortError)
+        m_transaction->abortDueToFailedRequest(DOMException::create(ExceptionCode::AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
 }
 
 void IDBRequest::setResult(const IDBKeyData& keyData)

@@ -32,6 +32,7 @@
 #include "JSWebExtensionWrapper.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include "WebProcess.h"
 
 namespace WebKit {
 
@@ -40,6 +41,78 @@ using namespace WebCore;
 void WebExtensionContextProxy::addFrameWithExtensionContent(WebFrame& frame)
 {
     m_extensionContentFrames.add(frame);
+}
+
+RefPtr<WebPage> WebExtensionContextProxy::backgroundPage() const
+{
+    return m_backgroundPage.get();
+}
+
+void WebExtensionContextProxy::setBackgroundPage(WebPage& page)
+{
+    m_backgroundPage = page;
+}
+
+Vector<Ref<WebPage>> WebExtensionContextProxy::popupPages(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier) const
+{
+    Vector<Ref<WebPage>> result;
+
+    for (auto entry : m_popupPageMap) {
+        if (tabIdentifier && entry.value.first && entry.value.first.value() != tabIdentifier.value())
+            continue;
+
+        if (windowIdentifier && entry.value.second && entry.value.second.value() != windowIdentifier.value())
+            continue;
+
+        result.append(entry.key);
+    }
+
+    return result;
+}
+
+void WebExtensionContextProxy::addPopupPage(WebPage& page, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    m_popupPageMap.set(page, TabWindowIdentifierPair { tabIdentifier, windowIdentifier });
+}
+
+Vector<Ref<WebPage>> WebExtensionContextProxy::tabPages(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier) const
+{
+    Vector<Ref<WebPage>> result;
+
+    for (auto entry : m_tabPageMap) {
+        if (tabIdentifier && entry.value.first && entry.value.first.value() != tabIdentifier.value())
+            continue;
+
+        if (windowIdentifier && entry.value.second && entry.value.second.value() != windowIdentifier.value())
+            continue;
+
+        result.append(entry.key);
+    }
+
+    return result;
+}
+
+void WebExtensionContextProxy::addTabPage(WebPage& page, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    m_tabPageMap.set(page, TabWindowIdentifierPair { tabIdentifier, windowIdentifier });
+}
+
+void WebExtensionContextProxy::setBackgroundPageIdentifier(WebCore::PageIdentifier pageIdentifier)
+{
+    if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+        setBackgroundPage(*page);
+}
+
+void WebExtensionContextProxy::addPopupPageIdentifier(WebCore::PageIdentifier pageIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+        addPopupPage(*page, tabIdentifier, windowIdentifier);
+}
+
+void WebExtensionContextProxy::addTabPageIdentifier(WebCore::PageIdentifier pageIdentifier, WebExtensionTabIdentifier tabIdentifier, std::optional<WebExtensionWindowIdentifier> windowIdentifier)
+{
+    if (auto* page = WebProcess::singleton().webPage(pageIdentifier))
+        addTabPage(*page, tabIdentifier, windowIdentifier);
 }
 
 void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)

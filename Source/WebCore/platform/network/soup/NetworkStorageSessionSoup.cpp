@@ -203,7 +203,7 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
             size_t length;
             GRefPtr<SecretValue> secretValue = adoptGRef(secret_item_get_secret(secretItem.get()));
             const char* passwordData = secret_value_get(secretValue.get(), &length);
-            data->completionHandler(Credential(user, String::fromUTF8(passwordData, length), CredentialPersistencePermanent));
+            data->completionHandler(Credential(user, String::fromUTF8(passwordData, length), CredentialPersistence::Permanent));
         }, data.release());
 #else
     UNUSED_PARAM(protectionSpace);
@@ -248,13 +248,11 @@ void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSp
 
 void NetworkStorageSession::setCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (m_isTrackingPreventionEnabled && m_thirdPartyCookieBlockingMode == ThirdPartyCookieBlockingMode::All) {
         m_cookieAcceptPolicy = policy;
         if (m_cookieAcceptPolicy == HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain)
             policy = HTTPCookieAcceptPolicy::AlwaysAccept;
     }
-#endif
 
     SoupCookieJarAcceptPolicy soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
     switch (policy) {
@@ -296,7 +294,6 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void NetworkStorageSession::setTrackingPreventionEnabled(bool enabled)
 {
     if (enabled) {
@@ -309,7 +306,6 @@ void NetworkStorageSession::setTrackingPreventionEnabled(bool enabled)
         setCookieAcceptPolicy(m_cookieAcceptPolicy);
     }
 }
-#endif
 
 static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name, const gchar* path)
 {
@@ -327,14 +323,8 @@ static inline bool httpOnlyCookieExists(const GSList* cookies, const gchar* name
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, const String& value, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking) const
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(firstParty, url, frameID, pageID, relaxThirdPartyCookieBlocking))
         return;
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-    UNUSED_PARAM(applyTrackingPrevention);
-#endif
 
     auto origin = urlToSoupURI(url);
     if (!origin)
@@ -344,9 +334,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     if (!firstPartyURI)
         return;
 
-#if ENABLE(TRACKING_PREVENTION)
     auto cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
-#endif
 
     // Get existing cookies for this origin.
     SoupCookieJar* jar = cookieStorage();
@@ -366,7 +354,6 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
         if (httpOnlyCookieExists(existingCookies, soup_cookie_get_name(cookie.get()), soup_cookie_get_path(cookie.get())))
             continue;
 
-#if ENABLE(TRACKING_PREVENTION)
         // Cap lifetime of persistent, client-side cookies to a week.
         if (cappedLifetime) {
             if (auto* expiresDate = soup_cookie_get_expires(cookie.get())) {
@@ -379,7 +366,6 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
                     soup_cookie_set_max_age(cookie.get(), cappedLifetime->secondsAs<int>());
             }
         }
-#endif
 
 #if SOUP_CHECK_VERSION(2, 67, 1)
         soup_cookie_jar_add_cookie_full(jar, cookie.release(), origin.get(), firstPartyURI.get());
@@ -391,7 +377,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     soup_cookies_free(existingCookies);
 }
 
-bool NetworkStorageSession::setCookieFromDOM(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, Cookie&&) const
+bool NetworkStorageSession::setCookieFromDOM(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, const Cookie&, ShouldRelaxThirdPartyCookieBlocking) const
 {
     // FIXME: Implement for the Cookie Store API.
     return false;
@@ -566,14 +552,8 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
 {
     rawCookies.clear();
 
-#if ENABLE(TRACKING_PREVENTION)
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(firstParty, url, frameID, pageID, relaxThirdPartyCookieBlocking))
         return true;
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-    UNUSED_PARAM(applyTrackingPrevention);
-#endif
 
     auto uri = urlToSoupURI(url);
     if (!uri)
@@ -606,14 +586,8 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
 
 static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const SameSiteInfo& sameSiteInfo, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, bool forHTTPHeader, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && session.shouldBlockCookies(firstParty, url, frameID, pageID, relaxThirdPartyCookieBlocking))
         return { { }, false };
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-    UNUSED_PARAM(applyTrackingPrevention);
-#endif
 
     auto uri = urlToSoupURI(url);
     if (!uri)

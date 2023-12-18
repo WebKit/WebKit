@@ -48,7 +48,7 @@ String contextMenuItemTagDownloadImageToDisk()
     return String::fromUTF8(_("Sa_ve Image As"));
 }
 
-String contextMenuItemTagCopyImageUrlToClipboard()
+String contextMenuItemTagCopyImageURLToClipboard()
 {
     return String::fromUTF8(_("Copy Image _Address"));
 }

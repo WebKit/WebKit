@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,10 +31,13 @@
 #include "InspectorConsoleAgent.h"
 #include "JSGlobalObjectDebugger.h"
 #include "ScriptCallStackFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSGlobalObjectDebuggerAgent);
 
 JSGlobalObjectDebuggerAgent::JSGlobalObjectDebuggerAgent(JSAgentContext& context, InspectorConsoleAgent* consoleAgent)
     : InspectorDebuggerAgent(context)

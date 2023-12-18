@@ -64,21 +64,20 @@ void DirectTransport::SetReceiver(PacketReceiver* receiver) {
   fake_network_->SetReceiver(receiver);
 }
 
-bool DirectTransport::SendRtp(const uint8_t* data,
-                              size_t length,
+bool DirectTransport::SendRtp(rtc::ArrayView<const uint8_t> data,
                               const PacketOptions& options) {
   if (send_call_) {
     rtc::SentPacket sent_packet(options.packet_id, rtc::TimeMillis());
     sent_packet.info.included_in_feedback = options.included_in_feedback;
     sent_packet.info.included_in_allocation = options.included_in_allocation;
-    sent_packet.info.packet_size_bytes = length;
+    sent_packet.info.packet_size_bytes = data.size();
     sent_packet.info.packet_type = rtc::PacketType::kData;
     send_call_->OnSentPacket(sent_packet);
   }
 
   const RtpHeaderExtensionMap* extensions = nullptr;
-  MediaType media_type = demuxer_.GetMediaType(data, length);
-  switch (demuxer_.GetMediaType(data, length)) {
+  MediaType media_type = demuxer_.GetMediaType(data.data(), data.size());
+  switch (demuxer_.GetMediaType(data.data(), data.size())) {
     case webrtc::MediaType::AUDIO:
       extensions = &audio_extensions_;
       break;
@@ -92,7 +91,7 @@ bool DirectTransport::SendRtp(const uint8_t* data,
   if (media_type == MediaType::VIDEO) {
     packet.set_payload_type_frequency(kVideoPayloadTypeFrequency);
   }
-  RTC_CHECK(packet.Parse(rtc::CopyOnWriteBuffer(data, length)));
+  RTC_CHECK(packet.Parse(rtc::CopyOnWriteBuffer(data)));
   fake_network_->DeliverRtpPacket(
       media_type, std::move(packet),
       [](const RtpPacketReceived& packet) { return false; });
@@ -103,8 +102,8 @@ bool DirectTransport::SendRtp(const uint8_t* data,
   return true;
 }
 
-bool DirectTransport::SendRtcp(const uint8_t* data, size_t length) {
-  fake_network_->DeliverRtcpPacket(rtc::CopyOnWriteBuffer(data, length));
+bool DirectTransport::SendRtcp(rtc::ArrayView<const uint8_t> data) {
+  fake_network_->DeliverRtcpPacket(rtc::CopyOnWriteBuffer(data));
   MutexLock lock(&process_lock_);
   if (!next_process_task_.Running())
     ProcessPackets();

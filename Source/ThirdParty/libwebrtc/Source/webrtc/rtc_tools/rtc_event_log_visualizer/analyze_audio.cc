@@ -10,18 +10,39 @@
 
 #include "rtc_tools/rtc_event_log_visualizer/analyze_audio.h"
 
+#include <cstdint>
+#include <map>
 #include <memory>
 #include <set>
+#include <string>
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+#include "api/audio_codecs/audio_codec_pair_id.h"
+#include "api/audio_codecs/audio_decoder.h"
+#include "api/audio_codecs/audio_decoder_factory.h"
+#include "api/audio_codecs/audio_format.h"
+#include "api/function_view.h"
+#include "api/make_ref_counted.h"
+#include "api/neteq/neteq.h"
+#include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/rtc_event_audio_network_adaptation.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
 #include "modules/audio_coding/neteq/tools/neteq_event_log_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_replacement_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
+#include "rtc_base/checks.h"
+#include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
+#include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
 
 namespace webrtc {
 

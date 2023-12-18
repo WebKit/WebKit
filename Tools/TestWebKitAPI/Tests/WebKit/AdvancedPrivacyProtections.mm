@@ -57,6 +57,7 @@
 
 @interface WPLinkFilteringData (TestSupport)
 - (instancetype)initWithQueryParameters:(NSArray<NSString *> *)queryParameters;
+- (instancetype)initWithQueryParameters:(NSArray<NSString *> *)queryParameters domains:(NSArray<NSString *> *)domains paths:(NSArray<NSString *> *)paths;
 @end
 
 @interface TestWKWebView (TrackingPrevention)
@@ -99,11 +100,15 @@ namespace TestWebKitAPI {
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
-static IMP makeQueryParameterRequestHandler(NSArray<NSString *> *parameters, bool& didHandleRequest)
+static IMP makeQueryParameterRequestHandler(NSArray<NSString *> *parameters, NSArray<NSString *> *domains, NSArray<NSString *> *paths, bool& didHandleRequest)
 {
-    return imp_implementationWithBlock([&didHandleRequest, parameters = RetainPtr { parameters }](WPResources *, WPResourceRequestOptions *, void(^completion)(WPLinkFilteringData *, NSError *)) mutable {
-        RunLoop::main().dispatch([&didHandleRequest, parameters = WTFMove(parameters), completion = makeBlockPtr(completion)]() mutable {
-            auto data = adoptNS([PAL::allocWPLinkFilteringDataInstance() initWithQueryParameters:parameters.get()]);
+    return imp_implementationWithBlock([&didHandleRequest, parameters = RetainPtr { parameters }, domains = RetainPtr { domains }, paths = RetainPtr { paths }](WPResources *, WPResourceRequestOptions *, void(^completion)(WPLinkFilteringData *, NSError *)) mutable {
+        RunLoop::main().dispatch([&didHandleRequest, parameters = WTFMove(parameters), domains = WTFMove(domains), paths = WTFMove(paths), completion = makeBlockPtr(completion)]() mutable {
+            auto data = adoptNS([PAL::allocWPLinkFilteringDataInstance() initWithQueryParameters:parameters.get()
+#if defined(HAS_WEB_PRIVACY_LINK_FILTERING_RULE_PATH)
+                domains:domains.get() paths:paths.get()
+#endif
+            ]);
             completion(data.get(), nil);
             didHandleRequest = true;
         });
@@ -141,17 +146,17 @@ class QueryParameterRequestSwizzler {
     WTF_MAKE_NONCOPYABLE(QueryParameterRequestSwizzler);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    QueryParameterRequestSwizzler(NSArray<NSString *> *parameters)
+    QueryParameterRequestSwizzler(NSArray<NSString *> *parameters, NSArray<NSString *> *domains, NSArray<NSString *> *paths)
     {
-        update(parameters);
+        update(parameters, domains, paths);
     }
 
-    void update(NSArray<NSString *> *parameters)
+    void update(NSArray<NSString *> *parameters, NSArray<NSString *> *domains, NSArray<NSString *> *paths)
     {
         m_didHandleRequest = false;
         // Ensure that the previous swizzler is destroyed before creating the new one.
         m_swizzler = nullptr;
-        m_swizzler = makeUnique<InstanceMethodSwizzler>(PAL::getWPResourcesClass(), @selector(requestLinkFilteringData:completionHandler:), makeQueryParameterRequestHandler(parameters, m_didHandleRequest));
+        m_swizzler = makeUnique<InstanceMethodSwizzler>(PAL::getWPResourcesClass(), @selector(requestLinkFilteringData:completionHandler:), makeQueryParameterRequestHandler(parameters, domains, paths, m_didHandleRequest));
         [[NSNotificationCenter defaultCenter] postNotificationName:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil userInfo:@{ PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey() : @(WPResourceTypeLinkFilteringData) }];
     }
 
@@ -191,7 +196,7 @@ static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL
 TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWhenPrivacyProtectionsAreDisabled)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections(NO);
     auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
@@ -202,7 +207,7 @@ TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingQueryParametersWhenPrivacyPr
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenNavigating)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
@@ -213,7 +218,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenNavigating)
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenNavigatingWithContentBlockersDisabled)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto preferences = adoptNS([WKWebpagePreferences new]);
     [preferences _setContentBlockersEnabled:NO];
@@ -222,6 +227,61 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenNavigatingWith
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
     EXPECT_WK_STREQ("https://bundle-file/simple.html?garply=20", [webView URL].absoluteString);
 }
+
+#if defined(HAS_WEB_PRIVACY_LINK_FILTERING_RULE_PATH)
+TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersByDomain)
+{
+    [TestProtocol registerWithScheme:@"https"];
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"http://a.com", @"", @"" ], @[ @"", @"", @"" ] };
+
+    auto webView = createWebViewWithAdvancedPrivacyProtections();
+    auto url = [NSURL URLWithString:@"https://b.com/bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://b.com/bundle-file/simple.html?foo=10&garply=20", [webView URL].absoluteString);
+
+    url = [NSURL URLWithString:@"https://a.com/bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://a.com/bundle-file/simple.html?garply=20", [webView URL].absoluteString);
+}
+
+TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersByPath)
+{
+    [TestProtocol registerWithScheme:@"https"];
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"/abc/", @"", @"" ] };
+
+    auto webView = createWebViewWithAdvancedPrivacyProtections();
+    auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://bundle-file/simple.html?foo=10&garply=20", [webView URL].absoluteString);
+
+    url = [NSURL URLWithString:@"https://bundle-file/abc/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://bundle-file/abc/simple.html?garply=20", [webView URL].absoluteString);
+}
+
+TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersByDomainAndPath)
+{
+    [TestProtocol registerWithScheme:@"https"];
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"http://a.com", @"", @"" ], @[ @"/abc/", @"", @"" ] };
+
+    auto webView = createWebViewWithAdvancedPrivacyProtections();
+    auto url = [NSURL URLWithString:@"https://b.com/bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://b.com/bundle-file/simple.html?foo=10&garply=20", [webView URL].absoluteString);
+
+    url = [NSURL URLWithString:@"https://a.com/bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://a.com/bundle-file/simple.html?foo=10&garply=20", [webView URL].absoluteString);
+
+    url = [NSURL URLWithString:@"https://b.com/bundle-file/abc/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://b.com/bundle-file/abc/simple.html?foo=10&garply=20", [webView URL].absoluteString);
+
+    url = [NSURL URLWithString:@"https://a.com/bundle-file/abc/simple.html?foo=10&garply=20&bar=30&baz=40"];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    EXPECT_WK_STREQ("https://a.com/bundle-file/abc/simple.html?garply=20", [webView URL].absoluteString);
+}
+#endif
 
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenCopyingURL)
 {
@@ -234,7 +294,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenCopyingURL)
 #endif
 
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     auto url = [NSURL URLWithString:@"https://bundle-file/clipboard.html"];
@@ -271,7 +331,7 @@ static void copyURLWithQueryParameters()
 
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersFromDataTransferWhenPastingURL)
 {
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
     copyURLWithQueryParameters();
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
@@ -284,7 +344,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersFromDataTransferWh
 
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenPastingURL)
 {
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
     copyURLWithQueryParameters();
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
@@ -299,14 +359,14 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenPastingURL)
 TEST(AdvancedPrivacyProtections, UpdateTrackingQueryParametersAfterInitialization)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo" ], @[ @"" ], @[ @"" ] };
     auto url = [NSURL URLWithString:@"https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40"];
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
     EXPECT_WK_STREQ("https://bundle-file/simple.html?garply=20&bar=30&baz=40", [webView URL].absoluteString);
 
-    swizzler.update(@[ @"foo", @"bar", @"baz" ]);
+    swizzler.update(@[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ]);
     swizzler.waitUntilDidHandleRequest();
 
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
@@ -316,7 +376,7 @@ TEST(AdvancedPrivacyProtections, UpdateTrackingQueryParametersAfterInitializatio
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenDecidingNavigationPolicy)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ] };
+    QueryParameterRequestSwizzler swizzler { @[ @"foo", @"bar", @"baz" ], @[ @"", @"", @"" ], @[ @"", @"", @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     [webView synchronouslyLoadHTMLString:@"<body><a href='https://bundle-file/simple.html?foo=10&garply=20&bar=30&baz=40'>Link</a></body>"];
@@ -341,7 +401,7 @@ TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersWhenDecidingNaviga
 TEST(AdvancedPrivacyProtections, RemoveTrackingQueryParametersForMainResourcesOnly)
 {
     [TestProtocol registerWithScheme:@"https"];
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockThis" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockThis" ], @[ @"" ], @[ @"" ] };
 
     auto webView = createWebViewWithAdvancedPrivacyProtections();
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -443,7 +503,7 @@ static RetainPtr<TestWKWebView> setUpWebViewForTestingQueryParameterHiding(NSStr
 TEST(AdvancedPrivacyProtections, HideQueryParametersAfterCrossSiteNavigation)
 {
     AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
 
     auto webView = setUpWebViewForTestingQueryParameterHiding(@"<!DOCTYPE html>"
         "<html>"
@@ -476,7 +536,7 @@ TEST(AdvancedPrivacyProtections, HideQueryParametersAfterCrossSiteNavigation)
 TEST(AdvancedPrivacyProtections, DoNotHideQueryParametersForFirstPartyScript)
 {
     AllowedLinkFilteringDataRequestSwizzler allowListSwizzler { @[ @"preserveMe" ] };
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"blockMe" ], @[ @"" ], @[ @"" ] };
 
     auto webView = setUpWebViewForTestingQueryParameterHiding(@"<!DOCTYPE html>"
         "<html>"
@@ -642,7 +702,7 @@ TEST(AdvancedPrivacyProtections, DoNotHideReferrerAfterReducingPrivacyProtection
 
 TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingParametersAfterReducingPrivacyProtections)
 {
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"someID" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"someID" ], @[ @"" ], @[ @"" ] };
 
     auto pathAndQuery = "/index2.html?someID=123"_s;
     HTTPServer server({
@@ -668,7 +728,7 @@ TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingParametersAfterReducingPriva
 
 TEST(AdvancedPrivacyProtections, DoNotRemoveTrackingParametersAfterReducingPrivacyProtectionsWithJSRedirect)
 {
-    QueryParameterRequestSwizzler blockListSwizzler { @[ @"someID" ] };
+    QueryParameterRequestSwizzler blockListSwizzler { @[ @"someID" ], @[ @"" ], @[ @"" ] };
 
     auto pathAndQuery = "/destination.html?someID=123"_s;
     HTTPServer server({

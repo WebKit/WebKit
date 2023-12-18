@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+binmode STDOUT;
 
 # Flush STDOUT after each print.
 select (STDOUT);

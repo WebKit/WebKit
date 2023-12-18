@@ -33,19 +33,21 @@ INSTANTIATE_TEST_SUITE_P(
     C, AV1WarpFilterTest,
     libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_c));
 
-#if HAVE_SSE4_1
-INSTANTIATE_TEST_SUITE_P(
-    SSE4_1, AV1WarpFilterTest,
-    libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_sse4_1));
-
-#if CONFIG_AV1_HIGHBITDEPTH
+#if CONFIG_AV1_HIGHBITDEPTH && (HAVE_SSE4_1 || HAVE_NEON)
 TEST_P(AV1HighbdWarpFilterTest, CheckOutput) {
   RunCheckOutput(std::get<4>(GET_PARAM(0)));
 }
 TEST_P(AV1HighbdWarpFilterTest, DISABLED_Speed) {
   RunSpeedTest(std::get<4>(GET_PARAM(0)));
 }
+#endif  // CONFIG_AV1_HIGHBITDEPTH && (HAVE_SSE4_1 || HAVE_NEON)
 
+#if HAVE_SSE4_1
+INSTANTIATE_TEST_SUITE_P(
+    SSE4_1, AV1WarpFilterTest,
+    libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_sse4_1));
+
+#if CONFIG_AV1_HIGHBITDEPTH
 INSTANTIATE_TEST_SUITE_P(SSE4_1, AV1HighbdWarpFilterTest,
                          libaom_test::AV1HighbdWarpFilter::BuildParams(
                              av1_highbd_warp_affine_sse4_1));
@@ -58,7 +60,6 @@ INSTANTIATE_TEST_SUITE_P(
     libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_avx2));
 
 #if CONFIG_AV1_HIGHBITDEPTH
-
 INSTANTIATE_TEST_SUITE_P(
     AVX2, AV1HighbdWarpFilterTest,
     libaom_test::AV1HighbdWarpFilter::BuildParams(av1_highbd_warp_affine_avx2));
@@ -69,6 +70,24 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     NEON, AV1WarpFilterTest,
     libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_neon));
+
+#if CONFIG_AV1_HIGHBITDEPTH
+INSTANTIATE_TEST_SUITE_P(
+    NEON, AV1HighbdWarpFilterTest,
+    libaom_test::AV1HighbdWarpFilter::BuildParams(av1_highbd_warp_affine_neon));
+#endif  // CONFIG_AV1_HIGHBITDEPTH
 #endif  // HAVE_NEON
+
+#if HAVE_NEON_I8MM
+INSTANTIATE_TEST_SUITE_P(
+    NEON_I8MM, AV1WarpFilterTest,
+    libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_neon_i8mm));
+#endif  // HAVE_NEON_I8MM
+
+#if HAVE_SVE
+INSTANTIATE_TEST_SUITE_P(
+    SVE, AV1WarpFilterTest,
+    libaom_test::AV1WarpFilter::BuildParams(av1_warp_affine_sve));
+#endif  // HAVE_SVE
 
 }  // namespace

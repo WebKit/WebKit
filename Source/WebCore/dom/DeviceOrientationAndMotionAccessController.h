@@ -30,6 +30,7 @@
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "ExceptionOr.h"
 #include "SecurityOriginData.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -48,7 +49,7 @@ public:
     void shouldAllowAccess(const Document&, Function<void(DeviceOrientationOrMotionPermissionState)>&&);
 
 private:
-    Document& m_topDocument;
+    CheckedRef<Document> m_topDocument;
     HashMap<SecurityOriginData, DeviceOrientationOrMotionPermissionState> m_accessStatePerOrigin;
 };
 

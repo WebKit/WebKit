@@ -38,10 +38,9 @@
 #include <WebCore/LocalDOMWindow.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
-#include <WebCore/NicosiaBackingStoreTextureMapperImpl.h>
-#include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
-#include <WebCore/NicosiaImageBackingStore.h>
-#include <WebCore/NicosiaImageBackingTextureMapperImpl.h>
+#include <WebCore/NicosiaBackingStore.h>
+#include <WebCore/NicosiaContentLayer.h>
+#include <WebCore/NicosiaImageBacking.h>
 #include <WebCore/NicosiaPaintingEngine.h>
 #include <WebCore/Page.h>
 #include <wtf/MemoryPressureHandler.h>
@@ -115,14 +114,13 @@ void CompositingCoordinator::setViewOverlayRootLayer(GraphicsLayer* graphicsLaye
 void CompositingCoordinator::sizeDidChange(const IntSize& newSize)
 {
     m_rootLayer->setSize(newSize);
-    notifyFlushRequired(m_rootLayer.get());
 }
 
 bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
     SetForScope protector(m_isFlushingLayerChanges, true);
 
-    initializeRootCompositingLayerIfNeeded();
+    bool shouldSyncFrame = initializeRootCompositingLayerIfNeeded();
 
     m_page.updateRendering();
     m_page.flushPendingEditorStateUpdate();
@@ -137,9 +135,13 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
     auto& coordinatedLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     coordinatedLayer.updateContentBuffersIncludingSubLayers();
-    coordinatedLayer.syncPendingStateChangesIncludingSubLayers();
+    shouldSyncFrame |= coordinatedLayer.checkPendingStateChangesIncludingSubLayers();
 
-    if (m_shouldSyncFrame) {
+#if !HAVE(DISPLAY_LINK)
+    shouldSyncFrame |= m_forceFrameSync;
+#endif
+
+    if (shouldSyncFrame) {
         m_nicosia.scene->accessState(
             [this](Nicosia::Scene::State& state)
             {
@@ -149,20 +151,14 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
                         [&platformLayerUpdated]
                         (const Nicosia::CompositionLayer::LayerState& state)
                         {
-                            if (state.backingStore) {
-                                auto& impl = downcast<Nicosia::BackingStoreTextureMapperImpl>(state.backingStore->impl());
-                                impl.flushUpdate();
-                            }
+                            if (state.backingStore)
+                                state.backingStore->flushUpdate();
 
-                            if (state.imageBacking) {
-                                auto& impl = downcast<Nicosia::ImageBackingTextureMapperImpl>(state.imageBacking->impl());
-                                impl.flushUpdate();
-                            }
+                            if (state.imageBacking)
+                                state.imageBacking->flushUpdate();
 
-                            if (state.contentLayer) {
-                                auto& impl = downcast<Nicosia::ContentLayerTextureMapperImpl>(state.contentLayer->impl());
-                                platformLayerUpdated |= impl.flushUpdate();
-                            }
+                            if (state.contentLayer)
+                                platformLayerUpdated |= state.contentLayer->flushUpdate();
                         });
                 }
 
@@ -173,7 +169,9 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
             });
 
         m_client.commitSceneState(m_nicosia.scene);
-        m_shouldSyncFrame = false;
+#if !HAVE(DISPLAY_LINK)
+        m_forceFrameSync = false;
+#endif
     }
 
     m_page.didUpdateRendering();
@@ -209,36 +207,15 @@ double CompositingCoordinator::nextAnimationServiceTime() const
     return std::max<double>(0., MinimalTimeoutForAnimations - timestamp() + m_lastAnimationServiceTime);
 }
 
-void CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
+bool CompositingCoordinator::initializeRootCompositingLayerIfNeeded()
 {
     if (m_didInitializeRootCompositingLayer)
-        return;
+        return false;
 
     auto& rootLayer = downcast<CoordinatedGraphicsLayer>(*m_rootLayer);
     m_nicosia.state.rootLayer = rootLayer.compositionLayer();
     m_didInitializeRootCompositingLayer = true;
-    m_shouldSyncFrame = true;
-}
-
-void CompositingCoordinator::syncLayerState()
-{
-    m_shouldSyncFrame = true;
-}
-
-void CompositingCoordinator::notifyFlushRequired(const GraphicsLayer*)
-{
-    if (m_rootLayer && !isFlushingLayerChanges())
-        m_client.notifyFlushRequired();
-}
-
-float CompositingCoordinator::deviceScaleFactor() const
-{
-    return m_page.corePage()->deviceScaleFactor();
-}
-
-float CompositingCoordinator::pageScaleFactor() const
-{
-    return m_page.corePage()->pageScaleFactor();
+    return true;
 }
 
 Ref<GraphicsLayer> CompositingCoordinator::createGraphicsLayer(GraphicsLayer::Type layerType, GraphicsLayerClient& client)
@@ -272,11 +249,6 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
     }
 }
 
-void CompositingCoordinator::deviceOrPageScaleFactorChanged()
-{
-    m_rootLayer->deviceOrPageScaleFactorChanged();
-}
-
 void CompositingCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 {
     if (m_isPurging)
@@ -301,10 +273,6 @@ void CompositingCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
     m_registeredLayers.add(layer->id(), layer);
     layer->setNeedsVisibleRectAdjustment();
     notifyFlushRequired(layer);
-}
-
-void CompositingCoordinator::renderNextFrame()
-{
 }
 
 void CompositingCoordinator::purgeBackingStores()

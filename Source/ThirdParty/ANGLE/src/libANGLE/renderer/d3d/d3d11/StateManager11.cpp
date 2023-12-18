@@ -3079,9 +3079,7 @@ angle::Result StateManager11::syncProgramForCompute(const gl::Context *context)
 
     ShaderExecutableD3D *computeExe = nullptr;
     ANGLE_TRY(mExecutableD3D->getComputeExecutableForImage2DBindLayout(
-        context11, context11->getRenderer(),
-        context->getState().getProgram()->getState().getAttachedShader(gl::ShaderType::Compute),
-        &computeExe, nullptr));
+        context11, context11->getRenderer(), &computeExe, nullptr));
 
     const d3d11::ComputeShader *computeShader =
         (computeExe ? &GetAs<ShaderExecutable11>(computeExe)->getComputeShader() : nullptr);
@@ -3799,14 +3797,14 @@ angle::Result StateManager11::getUAVsForShaderStorageBuffers(const gl::Context *
                                                              gl::ShaderType shaderType,
                                                              UAVList *uavList)
 {
-    const gl::State &glState   = context->getState();
-    const gl::Program *program = glState.getProgram();
+    const gl::State &glState                = context->getState();
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
     angle::FixedVector<Buffer11 *, gl::IMPLEMENTATION_MAX_SHADER_STORAGE_BUFFER_BINDINGS>
         previouslyBound;
-    for (size_t blockIndex = 0; blockIndex < program->getActiveShaderStorageBlockCount();
+    for (size_t blockIndex = 0; blockIndex < executable->getShaderStorageBlocks().size();
          blockIndex++)
     {
-        GLuint binding = program->getShaderStorageBlockBinding(static_cast<GLuint>(blockIndex));
+        GLuint binding = executable->getShaderStorageBlockBinding(static_cast<GLuint>(blockIndex));
         const unsigned int registerIndex = mExecutableD3D->getShaderStorageBufferRegisterIndex(
             static_cast<GLuint>(blockIndex), shaderType);
         // It means this block is active but not statically used.
@@ -3881,11 +3879,11 @@ angle::Result StateManager11::getUAVsForAtomicCounterBuffers(const gl::Context *
                                                              gl::ShaderType shaderType,
                                                              UAVList *uavList)
 {
-    const gl::State &glState   = context->getState();
-    const gl::Program *program = glState.getProgram();
-    for (const auto &atomicCounterBuffer : program->getState().getAtomicCounterBuffers())
+    const gl::State &glState                = context->getState();
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    for (const auto &atomicCounterBuffer : executable->getAtomicCounterBuffers())
     {
-        GLuint binding     = atomicCounterBuffer.binding;
+        GLuint binding     = atomicCounterBuffer.pod.binding;
         const auto &buffer = glState.getIndexedAtomicCounterBuffer(binding);
         const unsigned int registerIndex =
             mExecutableD3D->getAtomicCounterBufferRegisterIndex(binding, shaderType);

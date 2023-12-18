@@ -60,10 +60,10 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
           num_packets_sent_(0) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       EXPECT_TRUE(rtp_packet.PayloadType() ==
                       test::VideoTestConstants::kVideoSendPayloadType ||
@@ -182,10 +182,10 @@ class FlexfecRenderObserver : public test::EndToEndTest,
   size_t GetNumFlexfecStreams() const override { return 1; }
 
  private:
-  Action OnSendRtp(const uint8_t* packet, size_t length) override {
+  Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
     MutexLock lock(&mutex_);
     RtpPacket rtp_packet;
-    EXPECT_TRUE(rtp_packet.Parse(packet, length));
+    EXPECT_TRUE(rtp_packet.Parse(packet));
 
     EXPECT_TRUE(
         rtp_packet.PayloadType() ==
@@ -255,10 +255,10 @@ class FlexfecRenderObserver : public test::EndToEndTest,
     return SEND_PACKET;
   }
 
-  Action OnReceiveRtcp(const uint8_t* data, size_t length) override {
+  Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> data) override {
     test::RtcpPacketParser parser;
 
-    parser.Parse(data, length);
+    parser.Parse(data);
     if (parser.sender_ssrc() == kFlexfecLocalSsrc) {
       EXPECT_EQ(1, parser.receiver_report()->num_packets());
       const std::vector<rtcp::ReportBlock>& report_blocks =
@@ -375,10 +375,10 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
           encoder_factory_([]() { return VP8Encoder::Create(); }) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock_(&mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       int encapsulated_payload_type = -1;
       if (rtp_packet.PayloadType() ==
@@ -443,11 +443,11 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock_(&mutex_);
       if (state_ == kVerifyUlpfecPacketNotInNackList) {
         test::RtcpPacketParser rtcp_parser;
-        rtcp_parser.Parse(packet, length);
+        rtcp_parser.Parse(packet);
         const std::vector<uint16_t>& nacks = rtcp_parser.nack()->packet_ids();
         EXPECT_THAT(nacks, Not(Contains(ulpfec_sequence_number_)))
             << "Got nack for ULPFEC packet";

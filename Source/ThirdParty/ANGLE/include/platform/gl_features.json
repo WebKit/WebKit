@@ -217,6 +217,13 @@
             ]
         },
         {
+            "name": "pre_transform_texture_cube_grad_derivatives",
+            "category": "Workarounds",
+            "description": [
+                "Apply a vendor-specific transformation to explicit cubemap derivatives"
+            ]
+        },
+        {
             "name": "disable_blend_func_extended",
             "category": "Workarounds",
             "description": [
@@ -636,6 +643,13 @@
             ]
         },
         {
+            "name": "emulate_clip_origin",
+            "category": "Workarounds",
+            "description": [
+                "Some drivers incorrectly apply GL_CLIP_ORIGIN_EXT state."
+            ]
+        },
+        {
             "name": "bind_complete_framebuffer_for_timer_queries",
             "category": "Workarounds",
             "description": [
@@ -747,6 +761,14 @@
                 "Disable EXT_texture_mirror_clamp_to_edge extension."
             ],
             "issue": "https://anglebug.com/8319"
+        },
+        {
+            "name": "resync_depth_range_on_clip_control",
+            "category": "Workarounds",
+            "description": [
+                "Resync depth range to apply clip control updates."
+            ],
+            "issue": "https://anglebug.com/8381"
         }
     ]
 }

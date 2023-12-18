@@ -108,7 +108,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(const 
 {
     if (!m_current)
         return;
-    m_ancestorSiblingStack.uncheckedAppend({ nullptr, 0 });
+    m_ancestorSiblingStack.append({ nullptr, 0 });
     m_depth = 1;
 }
 
@@ -131,7 +131,7 @@ inline ElementAndTextDescendantIterator::ElementAndTextDescendantIterator(const 
         ancestor = ancestor->parentNode();
     }
 
-    m_ancestorSiblingStack.uncheckedAppend({ nullptr, 0 });
+    m_ancestorSiblingStack.append({ nullptr, 0 });
     for (unsigned i = ancestorStack.size(); i; --i) {
         if (auto* sibling = nextSibling(*ancestorStack[i - 1]))
             m_ancestorSiblingStack.append({ sibling, i });

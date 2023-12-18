@@ -40,8 +40,8 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 NS_SWIFT_NAME(_WKWebExtensionController.Configuration)
 @interface _WKWebExtensionControllerConfiguration : NSObject <NSSecureCoding, NSCopying>
 
-- (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
 /*!
  @abstract Returns a new default configuration that is persistent and not unique.

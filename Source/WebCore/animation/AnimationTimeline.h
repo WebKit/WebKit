@@ -40,8 +40,9 @@ class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWe
 public:
     virtual ~AnimationTimeline();
 
-    // DocumentTimeline is currently the only subclass of AnimationTimeline.
-    constexpr static bool isDocumentTimeline() { return true; }
+    virtual bool isDocumentTimeline() const { return false; }
+    virtual bool isScrollTimeline() const { return false; }
+    virtual bool isViewTimeline() const { return false; }
 
     const AnimationCollection& relevantAnimations() const { return m_animations; }
 

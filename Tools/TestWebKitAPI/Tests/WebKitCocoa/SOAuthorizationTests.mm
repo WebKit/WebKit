@@ -1363,7 +1363,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
     resetState();
     SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"SAML"]]);
@@ -1374,7 +1374,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
     configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
 
     // Add a http body to the request to mimic a SAML request.
-    auto request = adoptNS([NSMutableURLRequest requestWithURL:testURL.get()]);
+    RetainPtr request = [NSMutableURLRequest requestWithURL:testURL.get()];
     [request setHTTPBody:adoptNS([[NSData alloc] init]).get()];
     haveHttpBody = true;
 
@@ -2382,7 +2382,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
 
     navigationCompleted = false;
     [webView evaluateJavaScript: @"newWindow" completionHandler:^(id result, NSError *) {
-        EXPECT_TRUE(result == adoptNS([NSNull null]).get());
+        EXPECT_TRUE(result == [NSNull null]);
         navigationCompleted = true;
     }];
     Util::run(&navigationCompleted);
@@ -2744,11 +2744,72 @@ TEST(SOAuthorizationSubFrame, InterceptionSucceedWithCookie)
 
     checkAuthorizationOptions(false, "null"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
-
-    [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello."]];
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello.", @"http://www.example.com", @"Cookies: sessionid=38afes7a8"]];
 
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Set-Cookie" : @"sessionid=38afes7a8;"}]);
-    auto iframeHtmlCString = generateHtml(iframeTemplate, emptyString()).utf8();
+    auto iframeHtmlCString = generateHtml(iframeTemplate, "parent.postMessage('Cookies: ' + document.cookie, '*');"_s).utf8();
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
+    Util::run(&allMessagesReceived);
+}
+
+TEST(SOAuthorizationSubFrame, InterceptionSucceedWithCookieButCSPDeny)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
+
+    URL testURL { "http://www.example.com"_str };
+    auto testHtml = generateHtml(parentTemplate, testURL.string());
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"http://www.example.com", @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    [webView loadHTMLString:testHtml baseURL:nil];
+    Util::run(&allMessagesReceived);
+
+    checkAuthorizationOptions(false, "null"_s, 2);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"SOAuthorizationDidCancel"]];
+
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Set-Cookie" : @"sessionid=38afes7a8;", @"Content-Security-Policy" : @"frame-ancestors 'none';" }]);
+    auto iframeHtmlCString = generateHtml(iframeTemplate, "parent.postMessage('Cookies: ' + document.cookie, '*');"_s).utf8();
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
+    Util::run(&allMessagesReceived);
+}
+
+TEST(SOAuthorizationSubFrame, InterceptionSucceedWithCookieButXFrameDeny)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
+
+    URL testURL { "http://www.example.com"_str };
+    auto testHtml = generateHtml(parentTemplate, testURL.string());
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"http://www.example.com", @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    [webView loadHTMLString:testHtml baseURL:nil];
+    Util::run(&allMessagesReceived);
+
+    checkAuthorizationOptions(false, "null"_s, 2);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"SOAuthorizationDidCancel"]];
+
+    auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Set-Cookie" : @"sessionid=38afes7a8;", @"X-Frame-Options" : @"DENY" }]);
+    auto iframeHtmlCString = generateHtml(iframeTemplate, "parent.postMessage('Cookies: ' + document.cookie, '*');"_s).utf8();
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
     Util::run(&allMessagesReceived);
 }

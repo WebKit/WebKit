@@ -82,7 +82,7 @@ private:
         return mappedRect;
     }
 
-    WeakHashMap<RenderText, FloatRect> m_accumulatedRenderTextRects;
+    SingleThreadWeakHashMap<RenderText, FloatRect> m_accumulatedRenderTextRects;
 }; // class AccessibilityRegionContext
 
 } // namespace WebCore

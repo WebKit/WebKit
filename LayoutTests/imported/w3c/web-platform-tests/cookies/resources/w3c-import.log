@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/echo-json.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/helpers.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/imgIfMatch.py
+/LayoutTests/imported/w3c/web-platform-tests/cookies/resources/list-cookies-for-script.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/list.py
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/resources/postToParent.py

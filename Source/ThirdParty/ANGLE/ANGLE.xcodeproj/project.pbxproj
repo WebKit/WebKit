@@ -443,8 +443,8 @@
 		7B359DE02A7CEE9D0016DC59 /* VersionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DD02A7CEE9D0016DC59 /* VersionGLSL.cpp */; };
 		7B359DE32A7CEF750016DC59 /* context_private_call_gles_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE12A7CEF750016DC59 /* context_private_call_gles_autogen.h */; };
 		7B359DE42A7CEF750016DC59 /* context_private_call_gles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE22A7CEF750016DC59 /* context_private_call_gles.cpp */; };
-		7B359DE92A7CEF9F0016DC59 /* SharedContextMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE52A7CEF9E0016DC59 /* SharedContextMutex.h */; };
-		7B359DEA2A7CEF9F0016DC59 /* SharedContextMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE62A7CEF9E0016DC59 /* SharedContextMutex.cpp */; };
+		7B359DE92A7CEF9F0016DC59 /* ContextMutex.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */; };
+		7B359DEA2A7CEF9F0016DC59 /* ContextMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */; };
 		7B359DEB2A7CEF9F0016DC59 /* ShareGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DE72A7CEF9E0016DC59 /* ShareGroup.h */; };
 		7B359DEC2A7CEF9F0016DC59 /* ShareGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */; };
 		7B359DEE2A7CEFE80016DC59 /* validationEGL_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359DED2A7CEFE70016DC59 /* validationEGL_autogen.h */; };
@@ -476,6 +476,8 @@
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
+		7BB2CF222B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */; };
+		7BB2CF232B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB2CF212B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp */; };
 		7BB62F522AA2008600C1DDA8 /* RescopeGlobalVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */; };
 		7BB62F552AA200A500C1DDA8 /* RescopeGlobalVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */; };
 		7BB62F582AA202FD00C1DDA8 /* ProgramExecutableGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */; };
@@ -1524,8 +1526,8 @@
 		7B359DD02A7CEE9D0016DC59 /* VersionGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionGLSL.cpp; sourceTree = "<group>"; };
 		7B359DE12A7CEF750016DC59 /* context_private_call_gles_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = context_private_call_gles_autogen.h; sourceTree = "<group>"; };
 		7B359DE22A7CEF750016DC59 /* context_private_call_gles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = context_private_call_gles.cpp; sourceTree = "<group>"; };
-		7B359DE52A7CEF9E0016DC59 /* SharedContextMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedContextMutex.h; sourceTree = "<group>"; };
-		7B359DE62A7CEF9E0016DC59 /* SharedContextMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedContextMutex.cpp; sourceTree = "<group>"; };
+		7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextMutex.h; sourceTree = "<group>"; };
+		7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMutex.cpp; sourceTree = "<group>"; };
 		7B359DE72A7CEF9E0016DC59 /* ShareGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareGroup.h; sourceTree = "<group>"; };
 		7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareGroup.cpp; sourceTree = "<group>"; };
 		7B359DED2A7CEFE70016DC59 /* validationEGL_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = validationEGL_autogen.h; sourceTree = "<group>"; };
@@ -1561,6 +1563,8 @@
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
 		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
+		7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreTransformTextureCubeGradDerivatives.h; sourceTree = "<group>"; };
+		7BB2CF212B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreTransformTextureCubeGradDerivatives.cpp; sourceTree = "<group>"; };
 		7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RescopeGlobalVariables.h; sourceTree = "<group>"; };
 		7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RescopeGlobalVariables.cpp; sourceTree = "<group>"; };
 		7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutableGL.h; sourceTree = "<group>"; };
@@ -2168,6 +2172,8 @@
 				FF62F68C27448D6900AD6EDC /* Context_gles_ext_autogen.h */,
 				7B359DE22A7CEF750016DC59 /* context_private_call_gles.cpp */,
 				7B359DE12A7CEF750016DC59 /* context_private_call_gles_autogen.h */,
+				7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */,
+				7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */,
 				5CCD815A1DBFE999006066B8 /* Debug.cpp */,
 				5CCD815B1DBFE999006066B8 /* Debug.h */,
 				5C1DBC5B1B0438D200235552 /* Device.cpp */,
@@ -2260,8 +2266,6 @@
 				3A2C67022923766600FEDF46 /* serialize_mock.cpp */,
 				5C1DBDB91B0438D200235552 /* Shader.cpp */,
 				5C1DBDBA1B0438D200235552 /* Shader.h */,
-				7B359DE62A7CEF9E0016DC59 /* SharedContextMutex.cpp */,
-				7B359DE52A7CEF9E0016DC59 /* SharedContextMutex.h */,
 				7B359DE82A7CEF9E0016DC59 /* ShareGroup.cpp */,
 				7B359DE72A7CEF9E0016DC59 /* ShareGroup.h */,
 				315EBDD91FCE452A00AC7A89 /* SizedMRUCache.h */,
@@ -2612,6 +2616,8 @@
 				5C55D61F22826B9400B5BA2C /* InitializeVariables.h */,
 				FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */,
 				FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */,
+				7BB2CF212B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp */,
+				7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */,
 				5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */,
 				5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */,
 				5C55D61222826B9100B5BA2C /* PruneNoOps.cpp */,
@@ -3328,6 +3334,7 @@
 				31CD0007249184BB00486F27 /* ContextEAGL.h in Headers */,
 				31CD001A249184E700486F27 /* ContextGL.h in Headers */,
 				31CD0036249184F400486F27 /* ContextImpl.h in Headers */,
+				7B359DE92A7CEF9F0016DC59 /* ContextMutex.h in Headers */,
 				7B359D9C2A7CEDAA0016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.h in Headers */,
 				31CDFFFE249184B000486F27 /* copyimage.h in Headers */,
 				31CD0096249184FD00486F27 /* Debug.h in Headers */,
@@ -3516,6 +3523,7 @@
 				31CDFFF8249184A700486F27 /* PoolAlloc.h in Headers */,
 				31CDFFCD249184A700486F27 /* Pragma.h in Headers */,
 				31CDFF712491849200486F27 /* Preprocessor.h in Headers */,
+				7BB2CF222B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h in Headers */,
 				FFD002B42746E5B2002BE3BC /* proc_table_egl.h in Headers */,
 				31CD006F249184FC00486F27 /* Program.h in Headers */,
 				31CD0058249184FC00486F27 /* ProgramExecutable.h in Headers */,
@@ -3607,7 +3615,6 @@
 				31CD0042249184F400486F27 /* ShaderImpl.h in Headers */,
 				31CDFE0E249183D900486F27 /* ShaderLang.h in Headers */,
 				31CDFE0D249183D900486F27 /* ShaderVars.h in Headers */,
-				7B359DE92A7CEF9F0016DC59 /* SharedContextMutex.h in Headers */,
 				7B359DEB2A7CEF9F0016DC59 /* ShareGroup.h in Headers */,
 				7B359DF22A7CF6C10016DC59 /* ShareGroupImpl.h in Headers */,
 				31CDFFAC2491849800486F27 /* SimplifyLoopConditions.h in Headers */,
@@ -3856,6 +3863,7 @@
 				DF83E3582639FE92000825EF /* ContextGL.cpp in Sources */,
 				DF83E39A2639FED4000825EF /* ContextImpl.cpp in Sources */,
 				DF83E3772639FEB8000825EF /* ContextMtl.mm in Sources */,
+				7B359DEA2A7CEF9F0016DC59 /* ContextMutex.cpp in Sources */,
 				7B359DB62A7CEDAA0016DC59 /* ConvertUnsupportedConstructorsToFunctionCalls.cpp in Sources */,
 				DF83E2DD2639FE17000825EF /* copyimage.cpp in Sources */,
 				DF83E2F12639FE17000825EF /* Debug.cpp in Sources */,
@@ -4027,6 +4035,7 @@
 				DF83E2322639FCB0000825EF /* Preprocessor.cpp in Sources */,
 				DF83E22C2639FCB0000825EF /* preprocessor_lex_autogen.cpp in Sources */,
 				DF83E2332639FCB0000825EF /* preprocessor_tab_autogen.cpp in Sources */,
+				7BB2CF232B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp in Sources */,
 				FFD002B32746E5B2002BE3BC /* proc_table_egl_autogen.cpp in Sources */,
 				7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */,
 				DF83E3052639FE17000825EF /* Program.cpp in Sources */,
@@ -4107,7 +4116,6 @@
 				DF83E28D2639FD83000825EF /* ShaderLang.cpp in Sources */,
 				DF83E3832639FEB8000825EF /* ShaderMtl.mm in Sources */,
 				DF83E2952639FD83000825EF /* ShaderVars.cpp in Sources */,
-				7B359DEA2A7CEF9F0016DC59 /* SharedContextMutex.cpp in Sources */,
 				7B359DEC2A7CEF9F0016DC59 /* ShareGroup.cpp in Sources */,
 				DF83E2532639FD33000825EF /* SimplifyLoopConditions.cpp in Sources */,
 				7BFF6EE129E9908A009E1A57 /* SourcesCGL-mm.mm in Sources */,

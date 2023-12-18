@@ -107,8 +107,23 @@ Ref<GPUQueue> GPUDevice::queue() const
     return m_queue;
 }
 
-void GPUDevice::destroy()
+void GPUDevice::addBufferToUnmap(GPUBuffer& buffer)
 {
+    m_buffersToUnmap.add(&buffer);
+}
+
+void GPUDevice::removeBufferToUnmap(GPUBuffer& buffer)
+{
+    m_buffersToUnmap.remove(&buffer);
+}
+
+void GPUDevice::destroy(ScriptExecutionContext& scriptExecutionContext)
+{
+    for (auto& buffer : m_buffersToUnmap)
+        buffer->destroy(scriptExecutionContext);
+
+    m_buffersToUnmap.clear();
+
     m_backing->destroy();
 }
 
@@ -118,18 +133,26 @@ GPUDevice::LostPromise& GPUDevice::lost()
         return m_lostPromise;
 
     m_waitingForDeviceLostPromise = true;
+    m_backing->resolveDeviceLostPromise([weakThis = WeakPtr { *this }](WebCore::WebGPU::DeviceLostReason reason) {
+        if (!weakThis)
+            return;
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257656 Implement this.
+        auto ref = GPUDeviceLostInfo::create(WebCore::WebGPU::DeviceLostInfo::create(reason, ""_s));
+        weakThis->m_lostPromise->resolve(WTFMove(ref));
+    });
 
     return m_lostPromise;
 }
 
-Ref<GPUBuffer> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
+ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
 {
     auto bufferSize = bufferDescriptor.size;
+    if (bufferSize > limits()->maxBufferSize())
+        return Exception { ExceptionCode::RangeError };
+
     auto usage = bufferDescriptor.usage;
     auto mappedAtCreation = bufferDescriptor.mappedAtCreation;
-    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()), bufferSize, usage, mappedAtCreation);
+    return GPUBuffer::create(m_backing->createBuffer(bufferDescriptor.convertToBacking()), bufferSize, usage, mappedAtCreation, *this);
 }
 
 Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDescriptor)
@@ -246,7 +269,7 @@ Ref<GPURenderBundleEncoder> GPUDevice::createRenderBundleEncoder(const GPURender
 
 Ref<GPUQuerySet> GPUDevice::createQuerySet(const GPUQuerySetDescriptor& querySetDescriptor)
 {
-    return GPUQuerySet::create(m_backing->createQuerySet(querySetDescriptor.convertToBacking()));
+    return GPUQuerySet::create(m_backing->createQuerySet(querySetDescriptor.convertToBacking()), querySetDescriptor);
 }
 
 void GPUDevice::pushErrorScope(GPUErrorFilter errorFilter)

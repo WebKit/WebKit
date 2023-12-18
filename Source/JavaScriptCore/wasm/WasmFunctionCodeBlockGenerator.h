@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include "WasmLLIntTierUpCounter.h"
 #include "WasmOps.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -61,7 +62,7 @@ struct JumpTableEntry {
 using JumpTable = FixedVector<JumpTableEntry>;
 
 class FunctionCodeBlockGenerator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FunctionCodeBlockGenerator);
     WTF_MAKE_NONCOPYABLE(FunctionCodeBlockGenerator);
 
     friend BytecodeGeneratorBase<GeneratorTraits>;

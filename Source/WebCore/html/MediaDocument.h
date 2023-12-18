@@ -61,7 +61,11 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaDocument)
     static bool isType(const WebCore::Document& document) { return document.isMediaDocument(); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::Document>(node) && isType(downcast<WebCore::Document>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* document = dynamicDowncast<WebCore::Document>(node);
+        return document && isType(*document);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(VIDEO)

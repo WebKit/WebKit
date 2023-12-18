@@ -52,12 +52,12 @@
 {
     JSContextRef contextRef = [context JSGlobalContextRef];
     JSObjectRef objectRef = JSValueToObject(contextRef, [value JSValueRef], nullptr);
-    return wrapper(WebKit::InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef));
+    return wrapper(WebKit::InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef)).autorelease();
 }
 
 - (WKWebProcessPlugInFrame *)frame
 {
-    return wrapper(_rangeHandle->document()->documentFrame());
+    return wrapper(_rangeHandle->document()->documentFrame()).autorelease();
 }
 
 - (NSString *)text

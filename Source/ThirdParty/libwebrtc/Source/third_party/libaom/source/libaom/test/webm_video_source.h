@@ -30,19 +30,19 @@ class WebMVideoSource : public CompressedVideoSource {
         webm_ctx_(new WebmInputContext()), buf_(nullptr), buf_sz_(0),
         frame_sz_(0), frame_number_(0), end_of_file_(false) {}
 
-  virtual ~WebMVideoSource() {
+  ~WebMVideoSource() override {
     if (aom_ctx_->file != nullptr) fclose(aom_ctx_->file);
     webm_free(webm_ctx_);
     delete aom_ctx_;
     delete webm_ctx_;
   }
 
-  virtual void Init() {
+  void Init() override {
     ASSERT_NE(aom_ctx_, nullptr);
     ASSERT_NE(webm_ctx_, nullptr);
   }
 
-  virtual void Begin() {
+  void Begin() override {
     ASSERT_NE(aom_ctx_, nullptr);
     ASSERT_NE(webm_ctx_, nullptr);
     aom_ctx_->file = OpenTestDataFile(file_name_);
@@ -54,7 +54,7 @@ class WebMVideoSource : public CompressedVideoSource {
     FillFrame();
   }
 
-  virtual void Next() {
+  void Next() override {
     ++frame_number_;
     FillFrame();
   }
@@ -85,11 +85,11 @@ class WebMVideoSource : public CompressedVideoSource {
     } while (!webm_ctx_->is_key_frame && !end_of_file_);
   }
 
-  virtual const uint8_t *cxdata() const {
+  const uint8_t *cxdata() const override {
     return end_of_file_ ? nullptr : buf_;
   }
-  virtual size_t frame_size() const { return frame_sz_; }
-  virtual unsigned int frame_number() const { return frame_number_; }
+  size_t frame_size() const override { return frame_sz_; }
+  unsigned int frame_number() const override { return frame_number_; }
 
  protected:
   std::string file_name_;

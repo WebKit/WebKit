@@ -1,0 +1,4 @@
+
+
+FAIL reload() variant with info and state: undefined counts the same as not present (because of Web IDL dictionary semantics), so preserves the state undefined is not an object (evaluating 'i.contentWindow.navigation.navigate("#1", { state: navState }).committed.then')
+

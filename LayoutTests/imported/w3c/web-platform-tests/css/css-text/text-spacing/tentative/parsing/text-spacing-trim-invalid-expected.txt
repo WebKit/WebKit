@@ -1,4 +1,0 @@
-
-PASS e.style['text-spacing-trim'] = "auto space-all" should not set the property value
-PASS e.style['text-spacing-trim'] = "space-all auto" should not set the property value
-

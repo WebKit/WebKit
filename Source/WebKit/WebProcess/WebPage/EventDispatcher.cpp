@@ -36,6 +36,7 @@
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
 #include <WebCore/DisplayUpdate.h>
+#include <WebCore/HandleUserInputEventResult.h>
 #include <WebCore/Page.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/MainThread.h>
@@ -47,6 +48,10 @@
 #endif
 
 #include <WebCore/DisplayRefreshMonitorManager.h>
+
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include <WebCore/RemoteUserInputEventData.h>
+#endif
 
 #if ENABLE(SCROLLING_THREAD)
 #include <WebCore/ScrollingThread.h>
@@ -206,12 +211,7 @@ void EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage, Touch
     destinationQueue = m_touchEvents.take(webPage.identifier());
 }
 
-void EventDispatcher::touchEventWithoutCallback(PageIdentifier pageID, const WebTouchEvent& touchEvent)
-{
-    this->touchEvent(pageID, touchEvent, nullptr);
-}
-
-void EventDispatcher::touchEvent(PageIdentifier pageID, const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& completionHandler)
+void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, const WebTouchEvent& touchEvent, CompletionHandler<void(bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
     bool updateListWasEmpty;
     {
@@ -219,16 +219,16 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, const WebTouchEvent& tou
         updateListWasEmpty = m_touchEvents.isEmpty();
         auto addResult = m_touchEvents.add(pageID, TouchEventQueue());
         if (addResult.isNewEntry)
-            addResult.iterator->value.append({ touchEvent, WTFMove(completionHandler) });
+            addResult.iterator->value.append({ frameID, touchEvent, WTFMove(completionHandler) });
         else {
             auto& queuedEvents = addResult.iterator->value;
             ASSERT(!queuedEvents.isEmpty());
-            auto& lastEventAndCallback = queuedEvents.last();
+            auto& touchEventData = queuedEvents.last();
             // Coalesce touch move events.
-            if (touchEvent.type() == WebEventType::TouchMove && lastEventAndCallback.first.type() == WebEventType::TouchMove && !completionHandler && !lastEventAndCallback.second)
-                queuedEvents.last() = { touchEvent, nullptr };
+            if (touchEvent.type() == WebEventType::TouchMove && touchEventData.event.type() == WebEventType::TouchMove)
+                queuedEvents.last() = { frameID, touchEvent, WTFMove(completionHandler) };
             else
-                queuedEvents.append({ touchEvent, WTFMove(completionHandler) });
+                queuedEvents.append({ frameID, touchEvent, WTFMove(completionHandler) });
         }
     }
 
@@ -274,7 +274,7 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 
     bool handled = false;
     if (webPage->mainFrame())
-        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps, wheelEventOrigin);
+        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps, wheelEventOrigin).wasHandled();
 
     if (processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
         sendDidReceiveEvent(pageID, wheelEvent.type(), handled);

@@ -25,16 +25,21 @@
 
 #pragma once
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+
 namespace WebKit {
+enum class ContextMenuItemEnablement : bool { Disabled, Enabled };
+
+enum class ContextMenuItemIsSeparator : bool { No, Yes };
     
+enum class ContextMenuItemHasAction : bool { No, Yes };
 struct PDFContextMenuItem {
     String title;
-    bool enabled;
-    bool separator;
     int state;
-    bool hasAction;
     int tag;
+    ContextMenuItemEnablement enabled;
+    ContextMenuItemHasAction hasAction;
+    ContextMenuItemIsSeparator separator;
 };
 
 struct PDFContextMenu {

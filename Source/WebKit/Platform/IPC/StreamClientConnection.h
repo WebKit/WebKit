@@ -86,6 +86,7 @@ public:
 
     template<typename T, typename U, typename V>
     Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
+    template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout);
 
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
@@ -225,6 +226,12 @@ Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGene
 }
 
 template<typename T>
+Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
+{
+    return m_connection->waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout);
+}
+
+template<typename T>
 std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(T& message, Timeout timeout, std::span<uint8_t>& span)
 {
     // In this function, SendSyncResult<T> { } means error happened and caller should stop processing.
@@ -286,7 +293,7 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
         return Error::StreamConnectionEncodingError;
     }
     auto wakeUpResult = m_buffer.release(encoder.size());
-    wakeUpServer(wakeUpResult);
+    wakeUpServerBatched(wakeUpResult);
     m_currentDestinationID = destinationID;
     return Error::NoError;
 }

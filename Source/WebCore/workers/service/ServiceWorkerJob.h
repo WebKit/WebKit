@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
 #include "ServiceWorkerJobClient.h"
@@ -94,6 +92,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)
-

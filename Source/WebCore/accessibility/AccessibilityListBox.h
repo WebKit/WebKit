@@ -52,7 +52,7 @@ private:
 
     bool isAccessibilityListBoxInstance() const override { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
-    AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
+    AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const final;
 };
     
 } // namespace WebCore

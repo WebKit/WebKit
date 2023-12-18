@@ -42,11 +42,8 @@ public:
 
 private:
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier) final;
-    void addExtensiveObserver(ExtensiveObserver&) final;
-    void removeExtensiveObserver(ExtensiveObserver&) final;
 
     RetainPtr<WebCoreAudioCaptureSourceIOSListener> m_listener;
-    WeakHashSet<ExtensiveObserver> m_observers;
 };
 
 } // namespace WebCore

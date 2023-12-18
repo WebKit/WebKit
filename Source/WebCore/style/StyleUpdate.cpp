@@ -94,6 +94,9 @@ void Update::addElement(Element& element, Element* parent, ElementUpdate&& eleme
     m_roots.remove(&element);
     addPossibleRoot(parent);
 
+    if (elementUpdate.change == Change::Renderer)
+        addPossibleRebuildRoot(element, parent);
+
     m_elements.add(&element, WTFMove(elementUpdate));
 }
 
@@ -140,6 +143,14 @@ void Update::addPossibleRoot(Element* element)
     if (element->needsSVGRendererUpdate() || m_elements.contains(element))
         return;
     m_roots.add(element);
+}
+
+void Update::addPossibleRebuildRoot(Element& element, Element* parent)
+{
+    if (parent && m_rebuildRoots.contains(parent))
+        return;
+
+    m_rebuildRoots.add(&element);
 }
 
 }

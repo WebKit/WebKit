@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if HAVE(NSURLSESSION_WEBSOCKET)
-
 #include "DataReference.h"
 #include "NetworkTaskCocoa.h"
 #include "WebPageProxyIdentifier.h"
@@ -98,5 +96,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

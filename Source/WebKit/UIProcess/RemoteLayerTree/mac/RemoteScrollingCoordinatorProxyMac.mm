@@ -34,11 +34,13 @@
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
+#import <WebCore/ScrollingStatePluginScrollingNode.h>
 #import <WebCore/ScrollingStatePositionedNode.h>
 #import <WebCore/ScrollingStateTree.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
+#import <WebCore/ScrollingTreePluginScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WheelEventDeltaFilter.h>
 
@@ -48,23 +50,23 @@ using namespace WebCore;
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
 #if ENABLE(SCROLLING_THREAD)
-    , m_wheelEventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
+    , m_eventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
 #endif
 {
-    m_wheelEventDispatcher->setScrollingTree(scrollingTree());
+    m_eventDispatcher->setScrollingTree(scrollingTree());
 }
 
 RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->invalidate();
+    m_eventDispatcher->invalidate();
 #endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
+    m_eventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
 #else
     UNUSED_PARAM(nativeWheelEvent);
 #endif
@@ -73,7 +75,7 @@ void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCur
 void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
+    m_eventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(rubberBandableEdges);
@@ -83,7 +85,7 @@ void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& w
 void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
+    m_eventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(scrollingNodeID);
@@ -107,7 +109,7 @@ bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsKeyboardScroll
 void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
+    m_eventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
 #else
     auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
     if (!drawingArea)
@@ -168,7 +170,7 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
         switch (currNode->nodeType()) {
         case ScrollingNodeType::MainFrame:
         case ScrollingNodeType::Subframe: {
-            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
+            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(currNode);
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
                 scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrollContainerLayer() }));
@@ -203,7 +205,22 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
             break;
         }
         case ScrollingNodeType::Overflow: {
-            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
+            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(currNode);
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
+                scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrollContainerLayer() }));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
+                scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrolledContentsLayer() }));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
+                scrollingStateNode.setVerticalScrollbarLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.verticalScrollbarLayer() }));
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer))
+                scrollingStateNode.setHorizontalScrollbarLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.horizontalScrollbarLayer() }));
+            break;
+        }
+        case ScrollingNodeType::PluginScrolling: {
+            ScrollingStatePluginScrollingNode& scrollingStateNode = downcast<ScrollingStatePluginScrollingNode>(currNode);
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
                 scrollingStateNode.setScrollContainerLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrollContainerLayer() }));
 
@@ -219,6 +236,7 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
         }
         case ScrollingNodeType::OverflowProxy:
         case ScrollingNodeType::FrameHosting:
+        case ScrollingNodeType::PluginHosting:
         case ScrollingNodeType::Fixed:
         case ScrollingNodeType::Sticky:
         case ScrollingNodeType::Positioned:
@@ -234,21 +252,21 @@ void RemoteScrollingCoordinatorProxyMac::establishLayerTreeScrollingRelations(co
 void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->mainThreadDisplayDidRefresh(displayID);
+    m_eventDispatcher->mainThreadDisplayDidRefresh(displayID);
 #endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
+    m_eventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
 #endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenWillChange()
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->windowScreenWillChange();
+    m_eventDispatcher->windowScreenWillChange();
 #endif
 }
 
@@ -265,8 +283,20 @@ void RemoteScrollingCoordinatorProxyMac::didCommitLayerAndScrollingTrees()
 void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCommit()
 {
     RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit();
-    m_wheelEventDispatcher->renderingUpdateComplete();
+    m_eventDispatcher->renderingUpdateComplete();
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteScrollingCoordinatorProxyMac::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    m_eventDispatcher->animationsWereAddedToNode(node);
+}
+
+void RemoteScrollingCoordinatorProxyMac::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    m_eventDispatcher->animationsWereRemovedFromNode(node);
+}
+#endif
 
 } // namespace WebKit
 

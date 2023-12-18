@@ -70,14 +70,16 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
 
-        Track(const AtomString& trackId, StreamType streamType, const GRefPtr<GstCaps>& caps, const FloatSize& presentationSize)
+        Track(TrackID trackId, const AtomString& trackSringId, StreamType streamType, const GRefPtr<GstCaps>& caps, const FloatSize& presentationSize)
             : trackId(trackId)
+            , trackSringId(trackSringId)
             , streamType(streamType)
             , caps(caps)
             , presentationSize(presentationSize)
         { }
 
-        AtomString trackId;
+        TrackID trackId;
+        const AtomString trackSringId;
         StreamType streamType;
         GRefPtr<GstCaps> caps;
         FloatSize presentationSize;

@@ -162,7 +162,10 @@ rtc_library("candidate") {
     "../rtc_base:stringutils",
     "../rtc_base/system:rtc_export",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/strings",
+  ]
 }
 
 rtc_source_set("turn_customizer") {
@@ -268,7 +271,7 @@ rtc_library("libjingle_peerconnection_api") {
     "dtmf_sender_interface.h",
     "rtp_sender_interface.h",
   ]
-  public_deps = [  # no-presubmit-check TODO(webrtc:8603)
+  public_deps += [  # no-presubmit-check TODO(webrtc:8603)
     # Remove when downstream has been updated
     ":dtmf_sender_interface",
     ":rtp_sender_interface",
@@ -410,6 +413,7 @@ rtc_source_set("async_dns_resolver") {
     "../rtc_base:socket_address",
     "../rtc_base/system:rtc_export",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/functional:any_invocable" ]
 }
 
 rtc_source_set("wrapping_async_dns_resolver") {
@@ -796,6 +800,7 @@ rtc_library("transport_api") {
     "call/transport.h",
   ]
   deps = [
+    ":array_view",
     ":refcountedbase",
     ":scoped_refptr",
   ]

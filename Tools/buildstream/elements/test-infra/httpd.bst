@@ -25,7 +25,7 @@ variables:
     --libexecdir=/usr/lib/apache2/modules
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:apache/httpd
   track: 2.4.x
   ref: 3feff7c0c48c65639e7102e29f2bb552dabb10a2

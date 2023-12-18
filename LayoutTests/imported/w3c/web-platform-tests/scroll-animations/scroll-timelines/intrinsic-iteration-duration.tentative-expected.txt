@@ -1,0 +1,8 @@
+
+FAIL Computed duration in percent even when specified in ms assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
+FAIL Time-based duration normalized to fill animation range. assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
+FAIL Time-based duration normalized to preserve proportional delays. assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
+FAIL Intrinsic iteration duration fills timeline. assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
+FAIL Intrinsic iteration duration accounts for animation range. assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
+FAIL Intrinsic iteration duration accounts for number of iterations assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
+

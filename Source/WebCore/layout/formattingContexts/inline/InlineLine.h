@@ -28,6 +28,7 @@
 #include "InlineDisplayBox.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
+#include "RenderStyleInlines.h"
 #include <unicode/ubidi.h>
 #include <wtf/Range.h>
 
@@ -35,6 +36,7 @@ namespace WebCore {
 namespace Layout {
 
 struct ExpansionInfo;
+class InlineContentAligner;
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
 enum class IntrinsicWidthMode;
@@ -52,6 +54,7 @@ public:
 
     bool hasContent() const;
     bool hasContentOrListMarker() const;
+    bool hasRubyContent() const { return m_hasRubyContent; }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
     InlineLayoutUnit contentLogicalRight() const { return lastRunLogicalRight() + m_clonedEndDecorationWidthForInlineBoxRuns; }
@@ -59,6 +62,7 @@ public:
     bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
     size_t nonSpanningInlineLevelBoxCount() const { return m_nonSpanningInlineLevelBoxCount; }
     InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
+    size_t hangingTrailingWhitespaceLength() const { return m_hangingContent.trailingWhitespaceLength(); }
     bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
@@ -71,12 +75,8 @@ public:
     InlineLayoutUnit handleTrailingTrimmableContent(TrailingContentAction);
     void handleTrailingHangingContent(std::optional<IntrinsicWidthMode>, InlineLayoutUnit horizontalAvailableSpace, bool isLastFormattedLine);
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
-    const Box* removeOverflowingOurOfFlowContent();
+    const Box* removeOverflowingOutOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
-    void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
-    void applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
-    void moveRunsBy(size_t startRunIndex, InlineLayoutUnit offset);
-    void expandBy(size_t startRunIndex, InlineLayoutUnit logicalWidth);
 
     struct Run {
         enum class Type : uint8_t {
@@ -142,6 +142,8 @@ public:
 
     private:
         friend class Line;
+        friend class InlineContentAligner;
+        friend class RubyFormattingContext;
 
         Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
@@ -191,6 +193,11 @@ public:
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
+    RunList& runs() { return m_runs; }
+    void inflateContentLogicalWidth(InlineLayoutUnit delta) { m_contentLogicalWidth += delta; }
+    // FIXME: This is temporary and should be removed when annotation transitions to inline box structure.
+    void adjustContentRightWithRubyAlign(InlineLayoutUnit offset) { m_rubyAlignContentRightOffset = offset; }
+
     using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
     const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
 
@@ -297,6 +304,8 @@ private:
     InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
     bool m_hasNonDefaultBidiLevelRun { false };
     bool m_isFirstFormattedLine { false };
+    bool m_hasRubyContent { false };
+    InlineLayoutUnit m_rubyAlignContentRightOffset { 0.f };
     Vector<InlineLayoutUnit> m_inlineBoxLogicalLeftStack;
 };
 

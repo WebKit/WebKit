@@ -266,8 +266,7 @@ webrtc::AudioReceiveStreamInterface::Stats AudioReceiveStreamImpl::GetStats(
   stats.packets_lost = call_stats.cumulativeLost;
   stats.nacks_sent = call_stats.nacks_sent;
   stats.capture_start_ntp_time_ms = call_stats.capture_start_ntp_time_ms_;
-  stats.last_packet_received_timestamp_ms =
-      call_stats.last_packet_received_timestamp_ms;
+  stats.last_packet_received = call_stats.last_packet_received;
   stats.codec_name = receive_codec->second.name;
   stats.codec_payload_type = receive_codec->first;
   int clockrate_khz = receive_codec->second.clockrate_hz / 1000;

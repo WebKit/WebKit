@@ -68,7 +68,7 @@
     RunLoop::main().dispatch([] {
         for (auto& pool : WebKit::WebProcessPool::allProcessPools()) {
             for (size_t i = 0; i < pool->processes().size(); ++i) {
-                auto process = pool->processes()[i];
+                Ref process = pool->processes()[i];
                 process->enableRemoteInspectorIfNeeded();
             }
         }

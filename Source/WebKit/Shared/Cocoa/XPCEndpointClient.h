@@ -27,7 +27,7 @@
 
 #ifdef __cplusplus
 
-#include "WKDeclarationSpecifiers.h"
+#include <WebKit/WKBase.h>
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>

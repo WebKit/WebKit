@@ -31,10 +31,10 @@ typedef std::tuple<get_crc32c_value_func, int> HashParam;
 
 class AV1Crc32cHashTest : public ::testing::TestWithParam<HashParam> {
  public:
-  ~AV1Crc32cHashTest();
-  void SetUp();
+  ~AV1Crc32cHashTest() override;
+  void SetUp() override;
 
-  void TearDown();
+  void TearDown() override;
 
  protected:
   void RunCheckOutput(get_crc32c_value_func test_impl);
@@ -49,7 +49,7 @@ class AV1Crc32cHashTest : public ::testing::TestWithParam<HashParam> {
   size_t length_;
 };
 
-AV1Crc32cHashTest::~AV1Crc32cHashTest() {}
+AV1Crc32cHashTest::~AV1Crc32cHashTest() = default;
 
 void AV1Crc32cHashTest::SetUp() {
   rnd_.Reset(libaom_test::ACMRandom::DeterministicSeed());

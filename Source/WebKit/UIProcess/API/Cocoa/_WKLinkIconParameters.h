@@ -31,9 +31,9 @@ typedef NS_ENUM(NSInteger, WKLinkIconType) {
     WKLinkIconTypeFavicon,
     WKLinkIconTypeTouchIcon,
     WKLinkIconTypeTouchPrecomposedIcon,
-} WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
+} WK_API_AVAILABLE(macos(10.12.4), ios(10.3));
 
-WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
+WK_CLASS_AVAILABLE(macos(10.12.4), ios(10.3))
 @interface _WKLinkIconParameters : NSObject
 
 @property (nonatomic, readonly, copy) NSURL *url;

@@ -14,14 +14,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-parser-interaction.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-parser-interaction.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/script-access.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/declarative/script-access.html

@@ -24,7 +24,6 @@ PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
 PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
 PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
 PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
-PASS: axElement.intValue === parseInt(el.getAttribute('data-expected'))
 
 Verifying initial heading level of #dynamic-aria-heading.
 PASS: axElement.intValue === 1

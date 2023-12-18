@@ -224,7 +224,7 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
     return features;
 }
 
-static std::optional<UScriptCode> characterScript(UChar32 character)
+static std::optional<UScriptCode> characterScript(char32_t character)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
     UScriptCode script = uscript_getScript(character, &errorCode);
@@ -242,7 +242,7 @@ struct HBRun {
 static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length, unsigned offset)
 {
     SurrogatePairAwareTextIterator textIterator(characters + offset, offset, length, length);
-    UChar32 character;
+    char32_t character;
     unsigned clusterLength = 0;
     if (!textIterator.consume(character, clusterLength))
         return std::nullopt;

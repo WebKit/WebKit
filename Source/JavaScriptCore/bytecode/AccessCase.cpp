@@ -52,10 +52,6 @@
 
 namespace JSC {
 
-namespace AccessCaseInternal {
-static constexpr bool verbose = false;
-}
-
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
 
 AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
@@ -1641,39 +1637,6 @@ JSObject* AccessCase::alternateBase() const
         result = accessCase->alternateBaseImpl();
     });
     return result;
-}
-
-RefPtr<PolymorphicAccessJITStubRoutine> SharedJITStubSet::getMegamorphic(AccessType type)
-{
-    switch (type) {
-    case AccessType::GetByVal:
-        return m_getByValMegamorphic;
-    case AccessType::GetByValWithThis:
-        return m_getByValWithThisMegamorphic;
-    case AccessType::PutByValStrict:
-    case AccessType::PutByValSloppy:
-        return m_putByValMegamorphic;
-    default:
-        return nullptr;
-    }
-}
-
-void SharedJITStubSet::setMegamorphic(AccessType type, Ref<PolymorphicAccessJITStubRoutine> stub)
-{
-    switch (type) {
-    case AccessType::GetByVal:
-        m_getByValMegamorphic = WTFMove(stub);
-        break;
-    case AccessType::GetByValWithThis:
-        m_getByValWithThisMegamorphic = WTFMove(stub);
-        break;
-    case AccessType::PutByValStrict:
-    case AccessType::PutByValSloppy:
-        m_putByValMegamorphic = WTFMove(stub);
-        break;
-    default:
-        break;
-    }
 }
 
 } // namespace JSC

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerNavigationPreloader.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DownloadManager.h"
 #include "Logging.h"
 #include "NetworkCache.h"
@@ -152,9 +150,10 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     m_networkLoad->start();
 }
 
-void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response)
+void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }](auto) {
+    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](auto) mutable {
+        completionHandler({ });
         if (weakThis)
             weakThis->didComplete();
     });
@@ -255,5 +254,3 @@ bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manage
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

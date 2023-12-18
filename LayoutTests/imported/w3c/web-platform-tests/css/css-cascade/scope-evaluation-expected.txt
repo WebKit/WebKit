@@ -1,0 +1,24 @@
+
+PASS Single scope
+PASS Scope can not match its own root without :scope
+PASS Selecting self with :scope
+PASS Single scope with limit
+PASS Single scope, :scope pseudo in main selector
+PASS Single scope, :scope pseudo in to-selector
+PASS Multiple scopes, :scope pseudo in to-selector
+PASS Inner @scope with :scope in from-selector
+PASS Multiple scopes from same @scope-rule, only one limited
+PASS Multiple scopes from same @scope-rule, both limited
+PASS Nested scopes
+PASS Nested scopes, reverse
+PASS Nested scopes, with to-selector
+PASS :scope selecting itself
+PASS The scoping limit is not in scope
+PASS Simulated inclusive scoping limit
+PASS Scope with no elements
+PASS :scope direct adjacent sibling
+PASS :scope indirect adjacent sibling
+PASS Relative selector inside @scope
+PASS :scope in two different compounds
+PASS Scope root with :has()
+

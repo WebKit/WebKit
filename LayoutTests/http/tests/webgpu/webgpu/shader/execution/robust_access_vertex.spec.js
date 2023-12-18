@@ -62,7 +62,7 @@ it should be added into drawCallTestParameter list.
 `;
 import { makeTestGroup } from '../../../common/framework/test_group.js';
 import { assert } from '../../../common/util/util.js';
-import { GPUTest } from '../../gpu_test.js';
+import { GPUTest, TextureTestMixin } from '../../gpu_test.js';
 
 // Encapsulates a draw call (either indexed or non-indexed)
 class DrawCall {
@@ -253,7 +253,7 @@ const typeInfoMap = {
   },
 };
 
-class F extends GPUTest {
+class F extends TextureTestMixin(GPUTest) {
   generateBufferContents(numVertices, attributesPerBuffer, typeInfo, arbitraryValues, bufferCount) {
     // Make an array big enough for the vertices, attributes, and size of each element
     const vertexArray = new Float32Array(
@@ -457,12 +457,9 @@ class F extends GPUTest {
     this.device.queue.submit([encoder.finish()]);
 
     // Validate we see green on the left pixel, showing that no failure case is detected
-    this.expectSinglePixelIn2DTexture(
-      colorAttachment,
-      'rgba8unorm',
-      { x: 0, y: 0 },
-      { exp: new Uint8Array([0x00, 0xff, 0x00, 0xff]), layout: { mipLevel: 0 } }
-    );
+    this.expectSinglePixelComparisonsAreOkInTexture({ texture: colorAttachment }, [
+      { coord: { x: 0, y: 0 }, exp: new Uint8Array([0x00, 0xff, 0x00, 0xff]) },
+    ]);
   }
 }
 

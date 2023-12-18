@@ -1,12 +1,12 @@
-From c9f142c2def9f9b33fc2f4573fe003e34935ceac Mon Sep 17 00:00:00 2001
+From 80df988d4593faa6035c2607410b2e048020b0fd Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
-Date: Sat, 15 Jul 2023 14:37:04 +0100
+Date: Sun, 8 Oct 2023 16:37:05 +0100
 Subject: [PATCH] gst-plugins-bad: Enable x265 encoder
 
 ---
  elements/components/gstreamer-plugins-bad.bst |  3 +
- elements/components/x265-10bits.bst           | 38 +++++++++++
- elements/components/x265-12bits.bst           | 39 ++++++++++++
+ elements/components/x265-10bits.bst           | 43 +++++++++++++
+ elements/components/x265-12bits.bst           | 44 +++++++++++++
  elements/components/x265.bst                  | 46 ++++++++++++++
  elements/include/x265-source.yml              | 17 +++++
  files/x265.pc                                 | 11 ++++
@@ -15,7 +15,7 @@ Subject: [PATCH] gst-plugins-bad: Enable x265 encoder
  patches/x265/x265-high-bit-depth-soname.patch | 31 +++++++++
  patches/x265/x265-pic.patch                   | 11 ++++
  patches/x265/x265-pkgconfig_path_fix.patch    | 11 ++++
- 11 files changed, 285 insertions(+)
+ 12 files changed, 296 insertions(+)
  create mode 100644 elements/components/x265-10bits.bst
  create mode 100644 elements/components/x265-12bits.bst
  create mode 100644 elements/components/x265.bst
@@ -28,18 +28,18 @@ Subject: [PATCH] gst-plugins-bad: Enable x265 encoder
  create mode 100644 patches/x265/x265-pkgconfig_path_fix.patch
 
 diff --git a/elements/components/gstreamer-plugins-bad.bst b/elements/components/gstreamer-plugins-bad.bst
-index d98ac6007..d050ad0f6 100644
+index b19759ca..91029fd6 100644
 --- a/elements/components/gstreamer-plugins-bad.bst
 +++ b/elements/components/gstreamer-plugins-bad.bst
-@@ -25,6 +25,7 @@ depends:
- - components/webrtc-audio-processing-1.bst
+@@ -23,6 +23,7 @@ depends:
+ - components/webrtc-audio-processing.bst
  - components/noopenh264.bst
  - components/libsrtp2.bst
 +- components/x265.bst
  
  build-depends:
  - public-stacks/buildsystem-meson.bst
-@@ -60,6 +61,8 @@ variables:
+@@ -57,6 +58,8 @@ variables:
      -Dwebp=enabled
      -Dopenh264=enabled
      -Dsrtp=enabled
@@ -50,7 +50,7 @@ index d98ac6007..d050ad0f6 100644
    bst:
 diff --git a/elements/components/x265-10bits.bst b/elements/components/x265-10bits.bst
 new file mode 100644
-index 000000000..4a83bcc9e
+index 00000000..7fd82422
 --- /dev/null
 +++ b/elements/components/x265-10bits.bst
 @@ -0,0 +1,43 @@
@@ -99,7 +99,7 @@ index 000000000..4a83bcc9e
 +- elements/include/x265-source.yml
 diff --git a/elements/components/x265-12bits.bst b/elements/components/x265-12bits.bst
 new file mode 100644
-index 000000000..1fe316a9f
+index 00000000..d52feadb
 --- /dev/null
 +++ b/elements/components/x265-12bits.bst
 @@ -0,0 +1,44 @@
@@ -149,7 +149,7 @@ index 000000000..1fe316a9f
 +- elements/include/x265-source.yml
 diff --git a/elements/components/x265.bst b/elements/components/x265.bst
 new file mode 100644
-index 000000000..5c23843a7
+index 00000000..5c23843a
 --- /dev/null
 +++ b/elements/components/x265.bst
 @@ -0,0 +1,46 @@
@@ -201,13 +201,13 @@ index 000000000..5c23843a7
 +- elements/include/x265-source.yml
 diff --git a/elements/include/x265-source.yml b/elements/include/x265-source.yml
 new file mode 100644
-index 000000000..e75643a75
+index 00000000..638e5af4
 --- /dev/null
 +++ b/elements/include/x265-source.yml
 @@ -0,0 +1,17 @@
 +sources:
 +- kind: tar
-+  url: https://bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz
++  url: git_https:bitbucket.org/multicoreware/x265_git/downloads/x265_3.5.tar.gz
 +  ref: e70a3335cacacbba0b3a20ec6fecd6783932288ebc8163ad74bcc9606477cae8
 +# https://github.com/rpmfusion/x265/
 +- kind: patch
@@ -224,7 +224,7 @@ index 000000000..e75643a75
 +  path: files/x265.pc
 diff --git a/files/x265.pc b/files/x265.pc
 new file mode 100644
-index 000000000..a5fb43463
+index 00000000..a5fb4346
 --- /dev/null
 +++ b/files/x265.pc
 @@ -0,0 +1,11 @@
@@ -241,7 +241,7 @@ index 000000000..a5fb43463
 +Cflags: -I${includedir}
 diff --git a/patches/x265/x265-arm-cflags.patch b/patches/x265/x265-arm-cflags.patch
 new file mode 100644
-index 000000000..8cd5c867d
+index 00000000..8cd5c867
 --- /dev/null
 +++ b/patches/x265/x265-arm-cflags.patch
 @@ -0,0 +1,63 @@
@@ -310,7 +310,7 @@ index 000000000..8cd5c867d
 +
 diff --git a/patches/x265/x265-detect_cpu_armhfp.patch b/patches/x265/x265-detect_cpu_armhfp.patch
 new file mode 100644
-index 000000000..797ad0412
+index 00000000..797ad041
 --- /dev/null
 +++ b/patches/x265/x265-detect_cpu_armhfp.patch
 @@ -0,0 +1,15 @@
@@ -331,7 +331,7 @@ index 000000000..797ad0412
 + {
 diff --git a/patches/x265/x265-high-bit-depth-soname.patch b/patches/x265/x265-high-bit-depth-soname.patch
 new file mode 100644
-index 000000000..5b1e5ed6b
+index 00000000..5b1e5ed6
 --- /dev/null
 +++ b/patches/x265/x265-high-bit-depth-soname.patch
 @@ -0,0 +1,31 @@
@@ -368,7 +368,7 @@ index 000000000..5b1e5ed6b
 +
 diff --git a/patches/x265/x265-pic.patch b/patches/x265/x265-pic.patch
 new file mode 100644
-index 000000000..a047ad15a
+index 00000000..a047ad15
 --- /dev/null
 +++ b/patches/x265/x265-pic.patch
 @@ -0,0 +1,11 @@
@@ -385,7 +385,7 @@ index 000000000..a047ad15a
 +         if(INTEL_CXX)
 diff --git a/patches/x265/x265-pkgconfig_path_fix.patch b/patches/x265/x265-pkgconfig_path_fix.patch
 new file mode 100644
-index 000000000..5d958f3e7
+index 00000000..5d958f3e
 --- /dev/null
 +++ b/patches/x265/x265-pkgconfig_path_fix.patch
 @@ -0,0 +1,11 @@

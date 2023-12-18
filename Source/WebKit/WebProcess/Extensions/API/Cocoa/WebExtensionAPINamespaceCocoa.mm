@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,19 @@ bool WebExtensionAPINamespace::isPropertyAllowed(ASCIILiteral name, WebPage*)
     if (name == "action"_s)
         return extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"action");
 
+    if (name == "commands"_s)
+        return objectForKey<NSDictionary>(extensionContext().manifest(), @"commands");
+
     if (name == "browserAction"_s)
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"browser_action");
+
+    if (name == "notifications"_s) {
+        // FIXME: <rdar://problem/57202210> Add support for browser.notifications.
+        // Notifications are currently only available in test mode as an empty stub.
+        if (!extensionContext().inTestingMode())
+            return false;
+        // Fall through to the permissions check below.
+    }
 
     if (name == "pageAction"_s)
         return !extensionContext().supportsManifestVersion(3) && objectForKey<NSDictionary>(extensionContext().manifest(), @"page_action");
@@ -75,6 +86,34 @@ WebExtensionAPIAlarms& WebExtensionAPINamespace::alarms()
     return *m_alarms;
 }
 
+WebExtensionAPICommands& WebExtensionAPINamespace::commands()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/commands
+
+    if (!m_commands)
+        m_commands = WebExtensionAPICommands::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_commands;
+}
+
+WebExtensionAPICookies& WebExtensionAPINamespace::cookies()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies
+
+    if (!m_cookies)
+        m_cookies = WebExtensionAPICookies::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_cookies;
+}
+
+WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRequest()
+{
+    if (!m_declarativeNetRequest)
+        m_declarativeNetRequest = WebExtensionAPIDeclarativeNetRequest::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_declarativeNetRequest;
+}
+
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension
@@ -93,6 +132,26 @@ WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
         m_i18n = WebExtensionAPILocalization::create(forMainWorld(), runtime(), extensionContext());
 
     return *m_i18n;
+}
+
+WebExtensionAPIMenus& WebExtensionAPINamespace::menus()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus
+
+    if (!m_menus)
+        m_menus = WebExtensionAPIMenus::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_menus;
+}
+
+WebExtensionAPINotifications& WebExtensionAPINamespace::notifications()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications
+
+    if (!m_notifications)
+        m_notifications = WebExtensionAPINotifications::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_notifications;
 }
 
 WebExtensionAPIPermissions& WebExtensionAPINamespace::permissions()

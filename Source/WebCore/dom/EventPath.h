@@ -64,12 +64,12 @@ private:
 
 inline Node* EventPath::eventTargetRespectingTargetRules(Node& referenceNode)
 {
-    if (is<PseudoElement>(referenceNode))
-        return downcast<PseudoElement>(referenceNode).hostElement();
+    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(referenceNode))
+        return pseudoElement->hostElement();
 
     // Events sent to elements inside an SVG use element's shadow tree go to the use element.
-    if (is<SVGElement>(referenceNode)) {
-        if (auto useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
+    if (auto* svgElement = dynamicDowncast<SVGElement>(referenceNode)) {
+        if (auto useElement = svgElement->correspondingUseElement())
             return useElement.get();
     }
 

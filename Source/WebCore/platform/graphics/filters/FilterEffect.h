@@ -55,7 +55,7 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
 protected:
-    using FilterFunction::FilterFunction;
+    explicit FilterEffect(Type, DestinationColorSpace = DestinationColorSpace::SRGB(), std::optional<RenderingResourceIdentifier> = std::nullopt);
 
     template<typename FilterEffectType>
     static bool areEqual(const FilterEffectType& a, const FilterEffect& b)
@@ -100,9 +100,4 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterEffect&
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FilterEffect)
     static bool isType(const WebCore::FilterFunction& function) { return function.isFilterEffect(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-#define SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(ClassName) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
-    static bool isType(const WebCore::FilterEffect& effect) { return effect.filterType() == WebCore::FilterEffect::Type::ClassName; } \
 SPECIALIZE_TYPE_TRAITS_END()

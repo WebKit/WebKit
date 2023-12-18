@@ -1,4 +1,8 @@
 <script>
     window.parent.top.postMessage("top children: " + window.parent.top.length + ", parent children: " + window.parent.length + ", parent parent is top: " + (window.parent.parent === window.top), "*");
     window.parent.top.customFunction();
+
+    try { loc = window.parent.location } catch (e) { window.parent.top.postMessage("unexpected error: " + e) }
+    try { h = loc.href } catch (e) { window.parent.top.postMessage("expected error: " + e) }
+    try { loc.href = "http://localhost:8000/site-isolation/resources/window-properties-child-2.html" } catch (e) { window.parent.top.postMessage("unexpected error: " + e) }
 </script>

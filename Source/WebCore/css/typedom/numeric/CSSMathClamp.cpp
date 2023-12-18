@@ -44,10 +44,10 @@ ExceptionOr<Ref<CSSMathClamp>> CSSMathClamp::create(CSSNumberish&& lower, CSSNum
 
     auto addedType = CSSNumericType::addTypes(rectifiedLower->type(), rectifiedValue->type());
     if (!addedType)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     addedType = CSSNumericType::addTypes(*addedType, rectifiedUpper->type());
     if (!addedType)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     return adoptRef(*new CSSMathClamp(WTFMove(*addedType), WTFMove(rectifiedLower), WTFMove(rectifiedValue), WTFMove(rectifiedUpper)));
 }

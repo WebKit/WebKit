@@ -109,7 +109,7 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
         removedItems.reserveInitialCapacity(m_entries.size() - targetSize);
         while (m_entries.size() > targetSize) {
             didRemoveItem(m_entries.last());
-            removedItems.uncheckedAppend(WTFMove(m_entries.last()));
+            removedItems.append(WTFMove(m_entries.last()));
             m_entries.removeLast();
         }
 
@@ -234,6 +234,11 @@ WebBackForwardListItem* WebBackForwardList::currentItem() const
     return m_page && m_currentIndex ? m_entries[*m_currentIndex].ptr() : nullptr;
 }
 
+RefPtr<WebBackForwardListItem> WebBackForwardList::protectedCurrentItem() const
+{
+    return currentItem();
+}
+
 WebBackForwardListItem* WebBackForwardList::backItem() const
 {
     ASSERT(!m_currentIndex || *m_currentIndex < m_entries.size());
@@ -306,12 +311,11 @@ Ref<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned limit) 
     if (!size)
         return API::Array::create();
 
-    Vector<RefPtr<API::Object>> vector;
-    vector.reserveInitialCapacity(size);
-
     ASSERT(backListSize >= size);
-    for (unsigned i = backListSize - size; i < backListSize; ++i)
-        vector.uncheckedAppend(m_entries[i].ptr());
+    size_t startIndex = backListSize - size;
+    Vector<RefPtr<API::Object>> vector(size, [&](size_t i) -> RefPtr<API::Object> {
+        return m_entries[startIndex + i].ptr();
+    });
 
     return API::Array::create(WTFMove(vector));
 }
@@ -327,13 +331,10 @@ Ref<API::Array> WebBackForwardList::forwardListAsAPIArrayWithLimit(unsigned limi
     if (!size)
         return API::Array::create();
 
-    Vector<RefPtr<API::Object>> vector;
-    vector.reserveInitialCapacity(size);
-
-    size_t last = *m_currentIndex + size;
-    ASSERT(last < m_entries.size());
-    for (size_t i = *m_currentIndex + 1; i <= last; ++i)
-        vector.uncheckedAppend(m_entries[i].ptr());
+    size_t startIndex = *m_currentIndex + 1;
+    Vector<RefPtr<API::Object>> vector(size, [&](size_t i) -> RefPtr<API::Object> {
+        return m_entries[startIndex + i].ptr();
+    });
 
     return API::Array::create(WTFMove(vector));
 }
@@ -386,7 +387,7 @@ void WebBackForwardList::clear()
     removedItems.reserveInitialCapacity(size - 1);
     for (size_t i = 0; i < size; ++i) {
         if (m_currentIndex && i != *m_currentIndex)
-            removedItems.uncheckedAppend(WTFMove(m_entries[i]));
+            removedItems.append(WTFMove(m_entries[i]));
     }
 
     m_currentIndex = 0;
@@ -446,15 +447,11 @@ void WebBackForwardList::restoreFromState(BackForwardListState backForwardListSt
 
 Vector<BackForwardListItemState> WebBackForwardList::filteredItemStates(Function<bool(WebBackForwardListItem&)>&& functor) const
 {
-    Vector<BackForwardListItemState> itemStates;
-    itemStates.reserveInitialCapacity(m_entries.size());
-
-    for (const auto& entry : m_entries) {
+    return WTF::compactMap(m_entries, [&](auto& entry) -> std::optional<BackForwardListItemState> {
         if (functor(entry))
-            itemStates.uncheckedAppend(entry->itemState());
-    }
-
-    return itemStates;
+            return entry->itemState();
+        return std::nullopt;
+    });
 }
 
 Vector<BackForwardListItemState> WebBackForwardList::itemStates() const

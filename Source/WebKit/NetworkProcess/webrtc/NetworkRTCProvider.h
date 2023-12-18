@@ -76,7 +76,7 @@ struct SocketComparator {
     }
 };
 
-class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider> {
+class NetworkRTCProvider : private FunctionDispatcher, private IPC::MessageReceiver, public ThreadSafeRefCounted<NetworkRTCProvider, WTF::DestructionThread::MainRunLoop> {
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection)
     {

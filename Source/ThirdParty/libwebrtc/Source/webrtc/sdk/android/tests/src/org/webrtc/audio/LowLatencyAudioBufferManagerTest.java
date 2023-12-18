@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 import android.media.AudioTrack;
 import android.os.Build;
-import org.chromium.testing.local.LocalRobolectricTestRunner;
+import androidx.test.runner.AndroidJUnit4;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +32,7 @@ import org.webrtc.audio.LowLatencyAudioBufferManager;
 /**
  * Tests for LowLatencyAudioBufferManager.
  */
-@RunWith(LocalRobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 @Config(manifest = Config.NONE, sdk = Build.VERSION_CODES.O)
 public class LowLatencyAudioBufferManagerTest {
   @Mock private AudioTrack mockAudioTrack;

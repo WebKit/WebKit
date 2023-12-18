@@ -56,10 +56,14 @@ class DirectTransport : public Transport {
   // TODO(holmer): Look into moving this to the constructor.
   virtual void SetReceiver(PacketReceiver* receiver);
 
-  bool SendRtp(const uint8_t* data,
-               size_t length,
+  // Backwards compatibility using statements.
+  // TODO(https://bugs.webrtc.org/15410): Remove when not needed.
+  using Transport::SendRtcp;
+  using Transport::SendRtp;
+
+  bool SendRtp(rtc::ArrayView<const uint8_t> data,
                const PacketOptions& options) override;
-  bool SendRtcp(const uint8_t* data, size_t length) override;
+  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override;
 
   int GetAverageDelayMs();
 

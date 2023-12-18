@@ -29,8 +29,10 @@
 #include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTForward.h"
+#include "ASTFunction.h"
 #include "ASTStatement.h"
 #include "ASTStructure.h"
+#include "ASTTypeAlias.h"
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
@@ -61,7 +63,9 @@ public:
 
     // AST::<type>::Ref whenever it can return multiple types.
     Result<AST::Identifier> parseIdentifier();
-    Result<void> parseGlobalDecl();
+    Result<void> parseEnableDirective();
+    Result<void> parseRequireDirective();
+    Result<AST::Declaration::Ref> parseDeclaration();
     Result<AST::Attribute::List> parseAttributes();
     Result<AST::Attribute::Ref> parseAttribute();
     Result<AST::Structure::Ref> parseStructure(AST::Attribute::List&&);
@@ -74,6 +78,7 @@ public:
     Result<AST::VariableQualifier::Ref> parseVariableQualifier();
     Result<AddressSpace> parseAddressSpace();
     Result<AccessMode> parseAccessMode();
+    Result<AST::TypeAlias::Ref> parseTypeAlias();
     Result<AST::Function::Ref> parseFunction(AST::Attribute::List&&);
     Result<std::reference_wrapper<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
@@ -81,6 +86,8 @@ public:
     Result<AST::Statement::Ref> parseIfStatement();
     Result<AST::Statement::Ref> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
     Result<AST::Statement::Ref> parseForStatement();
+    Result<AST::Statement::Ref> parseLoopStatement();
+    Result<AST::Statement::Ref> parseSwitchStatement();
     Result<AST::Statement::Ref> parseWhileStatement();
     Result<AST::Statement::Ref> parseReturnStatement();
     Result<AST::Statement::Ref> parseVariableUpdatingStatement();
@@ -101,6 +108,7 @@ public:
     Result<AST::Expression::Ref> parseLHSExpression();
     Result<AST::Expression::Ref> parseCoreLHSExpression();
     Result<AST::Expression::List> parseArgumentExpressionList();
+    Result<AST::Diagnostic> parseDiagnostic();
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);

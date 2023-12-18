@@ -1,0 +1,4 @@
+
+
+FAIL history.back() does not fire a navigate event when there's nothing to navigate promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+

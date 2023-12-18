@@ -62,14 +62,14 @@ struct ConnectionInfo {
 static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
 {
     if (!navigator)
-        return Exception { InvalidStateError, "Navigator does not exist"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Navigator does not exist"_s };
 
     RefPtr context = navigator->scriptExecutionContext();
     if (!context)
-        return Exception { InvalidStateError, "Context is invalid"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Context is invalid"_s };
 
     if (context->canAccessResource(ScriptExecutionContext::ResourceType::StorageManager) == ScriptExecutionContext::HasResourceAccess::No)
-        return Exception { TypeError, "Context not access storage"_s };
+        return Exception { ExceptionCode::TypeError, "Context not access storage"_s };
 
     RefPtr origin = context->securityOrigin();
     ASSERT(origin);
@@ -78,13 +78,13 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
         if (RefPtr connection = downcast<Document>(context)->storageConnection())
             return ConnectionInfo { *connection, { context->topOrigin().data(), origin->data() } };
 
-        return Exception { InvalidStateError, "Connection is invalid"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Connection is invalid"_s };
     }
 
     if (is<WorkerGlobalScope>(context))
         return ConnectionInfo { downcast<WorkerGlobalScope>(context)->storageConnection(), { context->topOrigin().data(), origin->data() } };
 
-    return Exception { NotSupportedError };
+    return Exception { ExceptionCode::NotSupportedError };
 }
 
 void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
@@ -138,7 +138,7 @@ void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterfac
         RefPtr context = weakNavigator ? weakNavigator->scriptExecutionContext() : nullptr;
         if (!context) {
             connection->closeHandle(identifier);
-            return promise.reject(Exception { InvalidStateError, "Context has stopped"_s });
+            return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
         }
 
         promise.resolve(FileSystemDirectoryHandle::create(*context, { }, identifier, Ref { *connection }));

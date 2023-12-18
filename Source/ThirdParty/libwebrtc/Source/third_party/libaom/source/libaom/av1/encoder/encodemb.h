@@ -56,7 +56,6 @@ struct encode_b_args {
   const struct AV1_COMP *cpi;
   MACROBLOCK *x;
   struct optimize_ctx *ctx;
-  uint8_t *skip;
   ENTROPY_CONTEXT *ta;
   ENTROPY_CONTEXT *tl;
   RUN_TYPE dry_run;

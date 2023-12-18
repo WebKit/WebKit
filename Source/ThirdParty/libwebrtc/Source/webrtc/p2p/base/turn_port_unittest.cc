@@ -50,7 +50,6 @@ using rtc::SocketAddress;
 
 using ::testing::_;
 using ::testing::DoAll;
-using ::testing::InvokeArgument;
 using ::testing::Return;
 using ::testing::ReturnPointee;
 using ::testing::SetArgPointee;
@@ -217,19 +216,7 @@ class TurnPortTest : public ::testing::Test,
                             bool /*port_muxed*/) {
     turn_unknown_address_ = true;
   }
-  void OnTurnReadPacket(Connection* conn,
-                        const char* data,
-                        size_t size,
-                        int64_t packet_time_us) {
-    turn_packets_.push_back(rtc::Buffer(data, size));
-  }
   void OnUdpPortComplete(Port* port) { udp_ready_ = true; }
-  void OnUdpReadPacket(Connection* conn,
-                       const char* data,
-                       size_t size,
-                       int64_t packet_time_us) {
-    udp_packets_.push_back(rtc::Buffer(data, size));
-  }
   void OnSocketReadPacket(rtc::AsyncPacketSocket* socket,
                           const char* data,
                           size_t size,
@@ -248,6 +235,10 @@ class TurnPortTest : public ::testing::Test,
     turn_refresh_success_ = (code == 0);
   }
   void OnTurnPortClosed() override { turn_port_closed_ = true; }
+
+  void OnConnectionSignalDestroyed(Connection* connection) {
+    connection->DeregisterReceivedPacketCallback();
+  }
 
   rtc::Socket* CreateServerSocket(const SocketAddress addr) {
     rtc::Socket* socket = ss_->CreateSocket(AF_INET, SOCK_STREAM);
@@ -728,10 +719,20 @@ class TurnPortTest : public ::testing::Test,
                                                     Port::ORIGIN_MESSAGE);
     ASSERT_TRUE(conn1 != NULL);
     ASSERT_TRUE(conn2 != NULL);
-    conn1->SignalReadPacket.connect(static_cast<TurnPortTest*>(this),
-                                    &TurnPortTest::OnTurnReadPacket);
-    conn2->SignalReadPacket.connect(static_cast<TurnPortTest*>(this),
-                                    &TurnPortTest::OnUdpReadPacket);
+    conn1->RegisterReceivedPacketCallback(
+        [&](Connection* connection, const rtc::ReceivedPacket& packet) {
+          turn_packets_.push_back(
+              rtc::Buffer(packet.payload().data(), packet.payload().size()));
+        });
+    conn1->SignalDestroyed.connect(this,
+                                   &TurnPortTest::OnConnectionSignalDestroyed);
+    conn2->RegisterReceivedPacketCallback(
+        [&](Connection* connection, const rtc::ReceivedPacket& packet) {
+          udp_packets_.push_back(
+              rtc::Buffer(packet.payload().data(), packet.payload().size()));
+        });
+    conn2->SignalDestroyed.connect(this,
+                                   &TurnPortTest::OnConnectionSignalDestroyed);
     conn1->Ping(0);
     EXPECT_EQ_SIMULATED_WAIT(Connection::STATE_WRITABLE, conn1->write_state(),
                              kSimulatedRtt * 2, fake_clock_);
@@ -781,10 +782,21 @@ class TurnPortTest : public ::testing::Test,
                                                     Port::ORIGIN_MESSAGE);
     ASSERT_TRUE(conn1 != NULL);
     ASSERT_TRUE(conn2 != NULL);
-    conn1->SignalReadPacket.connect(static_cast<TurnPortTest*>(this),
-                                    &TurnPortTest::OnTurnReadPacket);
-    conn2->SignalReadPacket.connect(static_cast<TurnPortTest*>(this),
-                                    &TurnPortTest::OnUdpReadPacket);
+    conn1->RegisterReceivedPacketCallback(
+        [&](Connection* connection, const rtc::ReceivedPacket& packet) {
+          turn_packets_.push_back(
+              rtc::Buffer(packet.payload().data(), packet.payload().size()));
+        });
+    conn1->SignalDestroyed.connect(this,
+                                   &TurnPortTest::OnConnectionSignalDestroyed);
+    conn2->RegisterReceivedPacketCallback(
+        [&](Connection* connection, const rtc::ReceivedPacket& packet) {
+          udp_packets_.push_back(
+              rtc::Buffer(packet.payload().data(), packet.payload().size()));
+        });
+    conn2->SignalDestroyed.connect(this,
+                                   &TurnPortTest::OnConnectionSignalDestroyed);
+
     conn1->Ping(0);
     EXPECT_EQ_SIMULATED_WAIT(Connection::STATE_WRITABLE, conn1->write_state(),
                              kSimulatedRtt * 2, fake_clock_);
@@ -1508,10 +1520,15 @@ TEST_F(TurnPortTest, TestChannelBindGetErrorResponse) {
                              kSimulatedRtt, fake_clock_);
   // Verify that packets are allowed to be sent after a bind request error.
   // They'll just use a send indication instead.
-  conn2->SignalReadPacket.connect(static_cast<TurnPortTest*>(this),
-                                  &TurnPortTest::OnUdpReadPacket);
+
+  conn2->RegisterReceivedPacketCallback(
+      [&](Connection* connection, const rtc::ReceivedPacket& packet) {
+        udp_packets_.push_back(
+            rtc::Buffer(packet.payload().data(), packet.payload().size()));
+      });
   conn1->Send(data.data(), data.length(), options);
   EXPECT_TRUE_SIMULATED_WAIT(!udp_packets_.empty(), kSimulatedRtt, fake_clock_);
+  conn2->DeregisterReceivedPacketCallback();
 }
 
 // Do a TURN allocation, establish a UDP connection, and send some data.
@@ -1881,13 +1898,6 @@ TEST_F(TurnPortTest, TestTurnDangerousAlternateServer) {
   ASSERT_EQ(0U, turn_port_->Candidates().size());
 }
 
-TEST_F(TurnPortTest, TestTurnDangerousServerAllowedWithFieldTrial) {
-  webrtc::test::ScopedKeyValueConfig override_field_trials(
-      field_trials_, "WebRTC-Turn-AllowSystemPorts/Enabled/");
-  CreateTurnPort(kTurnUsername, kTurnPassword, kTurnDangerousProtoAddr);
-  ASSERT_TRUE(turn_port_);
-}
-
 class TurnPortWithMockDnsResolverTest : public TurnPortTest {
  public:
   TurnPortWithMockDnsResolverTest()
@@ -1913,7 +1923,8 @@ TEST_F(TurnPortWithMockDnsResolverTest, TestHostnameResolved) {
       [](webrtc::MockAsyncDnsResolver* resolver,
          webrtc::MockAsyncDnsResolverResult* resolver_result) {
         EXPECT_CALL(*resolver, Start(kTurnValidAddr, /*family=*/AF_INET, _))
-            .WillOnce(InvokeArgument<2>());
+            .WillOnce([](const rtc::SocketAddress& addr, int family,
+                         absl::AnyInvocable<void()> callback) { callback(); });
         EXPECT_CALL(*resolver, result)
             .WillRepeatedly(ReturnPointee(resolver_result));
         EXPECT_CALL(*resolver_result, GetError).WillRepeatedly(Return(0));
@@ -1933,7 +1944,8 @@ TEST_F(TurnPortWithMockDnsResolverTest, TestHostnameResolvedIPv6Network) {
       [](webrtc::MockAsyncDnsResolver* resolver,
          webrtc::MockAsyncDnsResolverResult* resolver_result) {
         EXPECT_CALL(*resolver, Start(kTurnValidAddr, /*family=*/AF_INET6, _))
-            .WillOnce(InvokeArgument<2>());
+            .WillOnce([](const rtc::SocketAddress& addr, int family,
+                         absl::AnyInvocable<void()> callback) { callback(); });
         EXPECT_CALL(*resolver, result)
             .WillRepeatedly(ReturnPointee(resolver_result));
         EXPECT_CALL(*resolver_result, GetError).WillRepeatedly(Return(0));

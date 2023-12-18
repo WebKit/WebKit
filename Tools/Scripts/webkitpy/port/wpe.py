@@ -62,6 +62,8 @@ class WPEPort(GLibPort):
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
         environment['WEBKIT_NICOSIA_PAINTING_THREADS'] = '0'
+        if self.get_option('wpe-platform-api'):
+            environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
         self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         self._copy_value_from_environ_if_set(environment, 'BREAKPAD_MINIDUMP_DIR')
         return environment

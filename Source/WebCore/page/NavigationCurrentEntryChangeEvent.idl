@@ -1,0 +1,14 @@
+[
+    EnabledBySetting=NavigationAPIEnabled,
+    Exposed=Window
+] interface NavigationCurrentEntryChangeEvent : Event {
+  constructor([AtomString] DOMString type, NavigationCurrentEntryChangeEventInit eventInitDict);
+
+  readonly attribute NavigationNavigationType? navigationType;
+  readonly attribute NavigationHistoryEntry from;
+};
+
+dictionary NavigationCurrentEntryChangeEventInit : EventInit {
+  NavigationNavigationType? navigationType = null;
+  required NavigationHistoryEntry from;
+};

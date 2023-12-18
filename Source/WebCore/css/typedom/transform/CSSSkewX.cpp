@@ -45,7 +45,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSkewX);
 ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
 {
     if (!ax->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return adoptRef(*new CSSSkewX(WTFMove(ax)));
 }
 
@@ -58,15 +58,16 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(CSSFunctionValue& cssFunctionValue)
 
     if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
         ASSERT_NOT_REACHED();
-        return Exception { TypeError, "Unexpected number of values."_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
     auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
     if (valueOrException.hasException())
         return valueOrException.releaseException();
-    if (!is<CSSNumericValue>(valueOrException.returnValue()))
-        return Exception { TypeError, "Expected a CSSNumericValue."_s };
-    return CSSSkewX::create(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
+    RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
+    if (!numericValue)
+        return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
+    return CSSSkewX::create(numericValue.releaseNonNull());
 }
 
 CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
@@ -78,7 +79,7 @@ CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
 ExceptionOr<void> CSSSkewX::setAx(Ref<CSSNumericValue> ax)
 {
     if (!ax->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     m_ax = WTFMove(ax);
     return { };
@@ -94,12 +95,13 @@ void CSSSkewX::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
 {
-    if (!is<CSSUnitValue>(m_ax))
-        return Exception { TypeError };
+    RefPtr ax = dynamicDowncast<CSSUnitValue>(m_ax);
+    if (!ax)
+        return Exception { ExceptionCode::TypeError };
 
-    auto x = downcast<CSSUnitValue>(m_ax.get()).convertTo(CSSUnitType::CSS_DEG);
+    auto x = ax->convertTo(CSSUnitType::CSS_DEG);
     if (!x)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     TransformationMatrix matrix { };
     matrix.skewX(x->value());

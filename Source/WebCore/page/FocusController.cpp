@@ -81,7 +81,7 @@ static const HTMLFormControlElement* invokerForPopoverShowingState(const Node* n
     RefPtr invoker = dynamicDowncast<HTMLFormControlElement>(node);
     if (!invoker)
         return nullptr;
-    HTMLElement* popover = invoker->popoverTargetElement();
+    RefPtr popover = invoker->popoverTargetElement();
     if (popover && popover->isPopoverShowing() && popover->popoverData()->invoker() == invoker)
         return invoker.get();
     return nullptr;
@@ -383,8 +383,8 @@ FocusNavigationScope FocusNavigationScope::scopeOwnedByIFrame(HTMLFrameOwnerElem
 FocusNavigationScope FocusNavigationScope::scopeOwnedByPopoverInvoker(const HTMLFormControlElement& invoker)
 {
     ASSERT(invokerForPopoverShowingState(&invoker));
-    HTMLElement* popover = invoker.popoverTargetElement();
-    ASSERT(isOpenPopoverWithInvoker(popover));
+    RefPtr popover = invoker.popoverTargetElement();
+    ASSERT(isOpenPopoverWithInvoker(popover.get()));
     return FocusNavigationScope(*popover);
 }
 
@@ -439,7 +439,7 @@ FocusController::FocusController(Page& page, OptionSet<ActivityState> activitySt
 {
 }
 
-void FocusController::setFocusedFrame(Frame* frame)
+void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadcast)
 {
     ASSERT(!frame || frame->page() == &m_page);
     if (m_focusedFrame == frame || m_isChangingFocusedFrame)
@@ -457,30 +457,27 @@ void FocusController::setFocusedFrame(Frame* frame)
         oldFrameView->stopKeyboardScrollAnimation();
         oldFrame->selection().setFocused(false);
         oldFrame->document()->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
-#if ENABLE(SERVICE_WORKER)
         Frame* frame = oldFrame.get();
         do {
             if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
                 localFrame->document()->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
-#endif
     }
 
     if (newFrame && newFrame->view() && isFocused()) {
         newFrame->selection().setFocused(true);
         newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
-#if ENABLE(SERVICE_WORKER)
         Frame* frame = newFrame.get();
         do {
             if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
                 localFrame->document()->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
-#endif
     }
 
-    m_page.chrome().focusedFrameChanged(frame);
+    if (broadcast == BroadcastFocusedFrame::Yes)
+        m_page.chrome().focusedFrameChanged(frame);
 
     m_isChangingFocusedFrame = false;
 }
@@ -507,10 +504,8 @@ void FocusController::setFocusedInternal(bool focused)
     if (!isFocused())
         focusedOrMainFrame().eventHandler().stopAutoscrollTimer();
 
-    if (!focusedFrame()) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
-            setFocusedFrame(localMainFrame);
-    }
+    if (!focusedFrame())
+        setFocusedFrame(&m_page.mainFrame());
 
     auto* focusedFrame = focusedLocalFrame();
     if (focusedFrame && focusedFrame->view()) {
@@ -635,7 +630,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             return false;
 
         document->setFocusedElement(nullptr);
-        setFocusedFrame(dynamicDowncast<LocalFrame>(owner.contentFrame()));
+        setFocusedFrame(owner.contentFrame());
         return true;
     }
     
@@ -1032,17 +1027,13 @@ static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didSho
 
 void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto* view = localMainFrame->view();
+    auto* view = m_page.mainFrame().virtualView();
     if (!view)
         return;
 
     contentAreaDidShowOrHide(view, contentIsVisible);
 
-    for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1242,7 +1233,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
             startingRect = nodeRectInAbsoluteCoordinates(focusedElement, true /* ignore border */);
         } else if (is<HTMLAreaElement>(*focusedElement)) {
             HTMLAreaElement& area = downcast<HTMLAreaElement>(*focusedElement);
-            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area.imageElement());
+            container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area.imageElement().get());
             startingRect = virtualRectForAreaElementAndDirection(&area, direction);
         }
     }

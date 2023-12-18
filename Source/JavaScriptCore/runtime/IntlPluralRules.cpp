@@ -204,9 +204,6 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
         options->putDirect(vm, vm.propertyNames->maximumSignificantDigits, jsNumber(m_maximumSignificantDigits));
         break;
     }
-    options->putDirect(vm, vm.propertyNames->roundingMode, jsNontrivialString(vm, IntlNumberFormat::roundingModeString(m_roundingMode)));
-    options->putDirect(vm, vm.propertyNames->roundingIncrement, jsNumber(m_roundingIncrement));
-    options->putDirect(vm, vm.propertyNames->trailingZeroDisplay, jsNontrivialString(vm, IntlNumberFormat::trailingZeroDisplayString(m_trailingZeroDisplay)));
 
     JSArray* categories = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (UNLIKELY(!categories)) {
@@ -227,7 +224,10 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
         RETURN_IF_EXCEPTION(scope, { });
     }
     options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"_s), categories);
+    options->putDirect(vm, vm.propertyNames->roundingIncrement, jsNumber(m_roundingIncrement));
+    options->putDirect(vm, vm.propertyNames->roundingMode, jsNontrivialString(vm, IntlNumberFormat::roundingModeString(m_roundingMode)));
     options->putDirect(vm, vm.propertyNames->roundingPriority, jsNontrivialString(vm, IntlNumberFormat::roundingPriorityString(m_roundingType)));
+    options->putDirect(vm, vm.propertyNames->trailingZeroDisplay, jsNontrivialString(vm, IntlNumberFormat::trailingZeroDisplayString(m_trailingZeroDisplay)));
 
     return options;
 }

@@ -55,7 +55,7 @@ XPathExpression::~XPathExpression() = default;
 ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node& contextNode, unsigned short type, XPathResult*)
 {
     if (!XPath::isValidContextNode(contextNode))
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     auto& evaluationContext = XPath::Expression::evaluationContext();
     evaluationContext.node = &contextNode;
@@ -66,7 +66,7 @@ ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node& contextNode, unsig
     evaluationContext.node = nullptr; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
     if (evaluationContext.hadTypeConversionError)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     if (type != XPathResult::ANY_TYPE) {
         auto convertToResult = result->convertTo(type);

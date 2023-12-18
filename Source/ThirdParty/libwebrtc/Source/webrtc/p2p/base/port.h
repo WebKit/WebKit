@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/base/attributes.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/candidate.h"
@@ -185,14 +186,14 @@ class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
   // 30 seconds.
   enum class State { INIT, KEEP_ALIVE_UNTIL_PRUNED, PRUNED };
   Port(webrtc::TaskQueueBase* thread,
-       absl::string_view type,
+       absl::string_view type ABSL_ATTRIBUTE_LIFETIME_BOUND,
        rtc::PacketSocketFactory* factory,
        const rtc::Network* network,
        absl::string_view username_fragment,
        absl::string_view password,
        const webrtc::FieldTrialsView* field_trials = nullptr);
   Port(webrtc::TaskQueueBase* thread,
-       absl::string_view type,
+       absl::string_view type ABSL_ATTRIBUTE_LIFETIME_BOUND,
        rtc::PacketSocketFactory* factory,
        const rtc::Network* network,
        uint16_t min_port,
@@ -207,7 +208,7 @@ class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
   // uniquely identify subclasses. Whenever a new subclass of Port introduces a
   // conflit in the value of the 2-tuple, make sure that the implementation that
   // relies on this 2-tuple for RTTI is properly changed.
-  const std::string& Type() const override;
+  const absl::string_view Type() const override;
   const rtc::Network* Network() const override;
 
   // Methods to set/get ICE role and tiebreaker values.
@@ -255,7 +256,7 @@ class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
   uint32_t generation() const { return generation_; }
   void set_generation(uint32_t generation) { generation_ = generation; }
 
-  const std::string username_fragment() const;
+  const std::string& username_fragment() const;
   const std::string& password() const { return password_; }
 
   // May be called when this port was initially created by a pooled
@@ -394,8 +395,6 @@ class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
  protected:
   virtual void UpdateNetworkCost();
 
-  void set_type(absl::string_view type) { type_ = std::string(type); }
-
   rtc::WeakPtr<Port> NewWeakPtr() { return weak_factory_.GetWeakPtr(); }
 
   void AddAddress(const rtc::SocketAddress& address,
@@ -484,7 +483,7 @@ class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
 
   webrtc::TaskQueueBase* const thread_;
   rtc::PacketSocketFactory* const factory_;
-  std::string type_;
+  const absl::string_view type_;
   bool send_retransmit_count_attribute_;
   const rtc::Network* network_;
   uint16_t min_port_;
@@ -496,12 +495,8 @@ class RTC_EXPORT Port : public PortInterface, public sigslot::has_slots<> {
   // sent through), the other side must send us a STUN binding request that is
   // authenticated with this username_fragment and password.
   // PortAllocatorSession will provide these username_fragment and password.
-  //
-  // Note: we should always use username_fragment() instead of using
-  // `ice_username_fragment_` directly. For the details see the comment on
-  // username_fragment().
-  std::string ice_username_fragment_;
-  std::string password_;
+  std::string ice_username_fragment_ RTC_GUARDED_BY(thread_);
+  std::string password_ RTC_GUARDED_BY(thread_);
   std::vector<Candidate> candidates_ RTC_GUARDED_BY(thread_);
   AddressMap connections_;
   int timeout_delay_;

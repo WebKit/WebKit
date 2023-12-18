@@ -102,7 +102,7 @@ void PingLoader::loadImage(LocalFrame& frame, const URL& url)
         return;
 #endif
 
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+    document.checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
@@ -132,8 +132,8 @@ void PingLoader::sendPing(LocalFrame& frame, const URL& pingURL, const URL& dest
         return;
 #endif
 
-    auto& document = *frame.document();
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+    Ref document = *frame.document();
+    document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
     request.setHTTPMethod("POST"_s);
     request.setHTTPContentType("text/ping"_s);
@@ -142,15 +142,15 @@ void PingLoader::sendPing(LocalFrame& frame, const URL& pingURL, const URL& dest
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 
-    auto& sourceOrigin = document.securityOrigin();
-    FrameLoader::addHTTPOriginIfNeeded(request, SecurityPolicy::generateOriginHeader(document.referrerPolicy(), request.url(), sourceOrigin, OriginAccessPatternsForWebProcess::singleton()));
+    auto& sourceOrigin = document->securityOrigin();
+    FrameLoader::addHTTPOriginIfNeeded(request, SecurityPolicy::generateOriginHeader(document->referrerPolicy(), request.url(), sourceOrigin, OriginAccessPatternsForWebProcess::singleton()));
 
     frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
     // https://html.spec.whatwg.org/multipage/links.html#hyperlink-auditing
-    if (document.securityOrigin().isSameOriginAs(SecurityOrigin::create(pingURL).get())
-        || !document.url().protocolIs("https"_s))
-        request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document.url().string());
+    if (document->securityOrigin().isSameOriginAs(SecurityOrigin::create(pingURL).get())
+        || !document->url().protocolIs("https"_s))
+        request.setHTTPHeaderField(HTTPHeaderName::PingFrom, document->url().string());
     request.setHTTPHeaderField(HTTPHeaderName::PingTo, destinationURL.string());
 
     startPingLoad(frame, request, WTFMove(originalRequestHeader), ShouldFollowRedirects::Yes, ContentSecurityPolicyImposition::DoPolicyCheck, ReferrerPolicy::NoReferrer);
@@ -171,8 +171,8 @@ void PingLoader::sendViolationReport(LocalFrame& frame, const URL& reportURL, Re
         return;
 #endif
 
-    auto& document = *frame.document();
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
+    Ref document = *frame.document();
+    document->checkedContentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
     request.setHTTPMethod("POST"_s);
     request.setHTTPBody(WTFMove(report));
@@ -191,7 +191,7 @@ void PingLoader::sendViolationReport(LocalFrame& frame, const URL& reportURL, Re
     }
 
     bool removeCookies = true;
-    if (document.securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
+    if (document->securityOrigin().isSameSchemeHostPort(SecurityOrigin::create(reportURL).get()))
         removeCookies = false;
     if (removeCookies)
         request.setAllowCookies(false);
@@ -201,7 +201,7 @@ void PingLoader::sendViolationReport(LocalFrame& frame, const URL& reportURL, Re
     if (reportType == ViolationReportType::ContentSecurityPolicy)
         frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
-    String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), reportURL, frame.loader().outgoingReferrer(), OriginAccessPatternsForWebProcess::singleton());
+    String referrer = SecurityPolicy::generateReferrerHeader(document->referrerPolicy(), reportURL, frame.loader().outgoingReferrer(), OriginAccessPatternsForWebProcess::singleton());
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 

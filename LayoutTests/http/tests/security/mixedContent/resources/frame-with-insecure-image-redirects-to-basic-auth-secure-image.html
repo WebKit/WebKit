@@ -2,15 +2,12 @@
 <html>
 <head>
 <script>
-
-var allowCrossOriginSubresourcesToAskForCredentials = document.location.search.includes("?allowCrossOriginSubresourcesToAskForCredentials");
-
 function checkResult(event)
 {
     if (event.type == "error")
-        window.opener.postMessage((allowCrossOriginSubresourcesToAskForCredentials ? "FAIL" : "PASS") + " did not load image.", "*");
+        window.opener.postMessage("PASS did not load image.", "*");
     else if (event.type == "load")
-        window.opener.postMessage((allowCrossOriginSubresourcesToAskForCredentials ? "PASS" : "FAIL") + " did load image.", "*");
+        window.opener.postMessage("FAIL did load image.", "*");
 }
 </script>
 </head>

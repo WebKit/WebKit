@@ -2,31 +2,39 @@
 <html>
 <head>
     <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
 <input id="editable" type="text">
 <script type="text/javascript">
-description("This test ensures that the input method marked range is available to accessibility clients as text marker range.");
+let output = "This test ensures that the input method marked range is available to accessibility clients as text marker range.\n\n";
 editable.focus();
 if (window.textInputController && window.accessibilityController) {
+    window.jsTestIsAsync = true;
     var element = accessibilityController.accessibleElementById("editable");
     
     var text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
-    shouldBeTrue("!text");
-    
+    output += expect("!text", "true");
     textInputController.setMarkedText("test");
-    text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
-    shouldBe("text", "'test'");
 
-    textInputController.unmarkText();
-    text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
-    shouldBeTrue("!text");
-    shouldBe("element.stringValue", "'AXValue: test'");
+    setTimeout(async function() {
+        output += await expectAsync("element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange())", "'test'");
 
-    textInputController.setMarkedText(" message", 4, " message".length);
-    text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
-    shouldBe("text", "' message'");
-    shouldBe("element.stringValue", "'AXValue: test message'");
+        textInputController.unmarkText();
+        output += await expectAsync("!element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange())", "true");
+        output += await expectAsync("element.stringValue", "'AXValue: test'");
+
+        textInputController.setMarkedText(" message", 4, " message".length);
+        await waitFor(() => {
+            text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
+            return text == " message";
+        });
+        output += await expectAsync("text", "' message'");
+        output += await expectAsync("element.stringValue", "'AXValue: test message'");
+
+        debug(output);
+        finishJSTest();
+    });
 }
 </script>
 </body>

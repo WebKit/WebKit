@@ -19,9 +19,14 @@ using std::tuple;
 
 namespace libaom_test {
 
-int32_t random_warped_param(libaom_test::ACMRandom *rnd, int bits) {
-  // 1 in 8 chance of generating zero (arbitrarily chosen)
-  if (((rnd->Rand8()) & 7) == 0) return 0;
+int32_t random_warped_param(libaom_test::ACMRandom *rnd, int bits,
+                            int rnd_gen_zeros) {
+  // Avoid accidentally generating a zero in speed tests, they are set by the
+  // is_*_zero parameters instead.
+  if (rnd_gen_zeros) {
+    // 1 in 8 chance of generating zero (arbitrarily chosen)
+    if (((rnd->Rand8()) & 7) == 0) return 0;
+  }
   // Otherwise, enerate uniform values in the range
   // [-(1 << bits), 1] U [1, 1<<bits]
   int32_t v = 1 + (rnd->Rand16() & ((1 << bits) - 1));
@@ -33,34 +38,47 @@ void generate_warped_model(libaom_test::ACMRandom *rnd, int32_t *mat,
                            int16_t *alpha, int16_t *beta, int16_t *gamma,
                            int16_t *delta, const int is_alpha_zero,
                            const int is_beta_zero, const int is_gamma_zero,
-                           const int is_delta_zero) {
-  while (1) {
+                           const int is_delta_zero, const int rnd_gen_zeros) {
+  while (true) {
     int rnd8 = rnd->Rand8() & 3;
-    mat[0] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS + 6);
-    mat[1] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS + 6);
-    mat[2] = (random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3)) +
-             (1 << WARPEDMODEL_PREC_BITS);
-    mat[3] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3);
+    mat[0] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS + 6, rnd_gen_zeros);
+    mat[1] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS + 6, rnd_gen_zeros);
+    mat[2] =
+        (random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3, rnd_gen_zeros)) +
+        (1 << WARPEDMODEL_PREC_BITS);
+    mat[3] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3, rnd_gen_zeros);
 
     if (rnd8 <= 1) {
       // AFFINE
-      mat[4] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3);
-      mat[5] = (random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3)) +
-               (1 << WARPEDMODEL_PREC_BITS);
+      mat[4] =
+          random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3, rnd_gen_zeros);
+      mat[5] =
+          (random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3, rnd_gen_zeros)) +
+          (1 << WARPEDMODEL_PREC_BITS);
     } else if (rnd8 == 2) {
       mat[4] = -mat[3];
       mat[5] = mat[2];
     } else {
-      mat[4] = random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3);
-      mat[5] = (random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3)) +
-               (1 << WARPEDMODEL_PREC_BITS);
-      if (is_alpha_zero == 1) mat[2] = 1 << WARPEDMODEL_PREC_BITS;
-      if (is_beta_zero == 1) mat[3] = 0;
-      if (is_gamma_zero == 1) mat[4] = 0;
-      if (is_delta_zero == 1)
-        mat[5] = static_cast<int32_t>(
-            ((static_cast<int64_t>(mat[3]) * mat[4] + (mat[2] / 2)) / mat[2]) +
-            (1 << WARPEDMODEL_PREC_BITS));
+      mat[4] =
+          random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3, rnd_gen_zeros);
+      mat[5] =
+          (random_warped_param(rnd, WARPEDMODEL_PREC_BITS - 3, rnd_gen_zeros)) +
+          (1 << WARPEDMODEL_PREC_BITS);
+    }
+
+    if (is_alpha_zero == 1) {
+      mat[2] = 1 << WARPEDMODEL_PREC_BITS;
+    }
+    if (is_beta_zero == 1) {
+      mat[3] = 0;
+    }
+    if (is_gamma_zero == 1) {
+      mat[4] = 0;
+    }
+    if (is_delta_zero == 1) {
+      mat[5] = static_cast<int32_t>(
+          ((static_cast<int64_t>(mat[3]) * mat[4] + (mat[2] / 2)) / mat[2]) +
+          (1 << WARPEDMODEL_PREC_BITS));
     }
 
     // Calculate the derived parameters and check that they are suitable
@@ -109,10 +127,8 @@ namespace AV1WarpFilter {
                             ::testing::Values(0, 1), ::testing::Values(0, 1));
 }
 
-AV1WarpFilterTest::~AV1WarpFilterTest() {}
+AV1WarpFilterTest::~AV1WarpFilterTest() = default;
 void AV1WarpFilterTest::SetUp() { rnd_.Reset(ACMRandom::DeterministicSeed()); }
-
-void AV1WarpFilterTest::TearDown() {}
 
 void AV1WarpFilterTest::RunSpeedTest(warp_affine_func test_impl) {
   const int w = 128, h = 128;
@@ -144,7 +160,7 @@ void AV1WarpFilterTest::RunSpeedTest(warp_affine_func test_impl) {
   ASSERT_NE(dsta, nullptr);
   generate_warped_model(&rnd_, mat, &alpha, &beta, &gamma, &delta,
                         is_alpha_zero, is_beta_zero, is_gamma_zero,
-                        is_delta_zero);
+                        is_delta_zero, 0);
 
   for (int r = 0; r < h; ++r)
     for (int c = 0; c < w; ++c) input[r * stride + c] = rnd_.Rand8();
@@ -170,8 +186,8 @@ void AV1WarpFilterTest::RunSpeedTest(warp_affine_func test_impl) {
 
   aom_usec_timer_mark(&timer);
   const int elapsed_time = static_cast<int>(aom_usec_timer_elapsed(&timer));
-  printf("warp %3dx%-3d: %7.2f ns\n", out_w, out_h,
-         1000.0 * elapsed_time / num_loops);
+  printf("warp %3dx%-3d alpha=%d beta=%d gamma=%d delta=%d: %7.2f ns \n", out_w,
+         out_h, alpha, beta, gamma, delta, 1000.0 * elapsed_time / num_loops);
 }
 
 void AV1WarpFilterTest::RunCheckOutput(warp_affine_func test_impl) {
@@ -185,7 +201,6 @@ void AV1WarpFilterTest::RunCheckOutput(warp_affine_func test_impl) {
   const int is_delta_zero = GET_PARAM(4);
   const int out_w = std::get<0>(params), out_h = std::get<1>(params);
   const int num_iters = std::get<2>(params);
-  int i, j, sub_x, sub_y;
   const int bd = 8;
 
   // The warp functions always write rows with widths that are multiples of 8.
@@ -209,7 +224,7 @@ void AV1WarpFilterTest::RunCheckOutput(warp_affine_func test_impl) {
   ASSERT_NE(dstb, nullptr);
   for (int i = 0; i < output_n; ++i) output[i] = output2[i] = rnd_.Rand8();
 
-  for (i = 0; i < num_iters; ++i) {
+  for (int i = 0; i < num_iters; ++i) {
     // Generate an input block and extend its borders horizontally
     for (int r = 0; r < h; ++r)
       for (int c = 0; c < w; ++c) input[r * stride + c] = rnd_.Rand8();
@@ -218,11 +233,11 @@ void AV1WarpFilterTest::RunCheckOutput(warp_affine_func test_impl) {
       memset(input + r * stride + w, input[r * stride + (w - 1)], border);
     }
     const int use_no_round = rnd_.Rand8() & 1;
-    for (sub_x = 0; sub_x < 2; ++sub_x)
-      for (sub_y = 0; sub_y < 2; ++sub_y) {
+    for (int sub_x = 0; sub_x < 2; ++sub_x)
+      for (int sub_y = 0; sub_y < 2; ++sub_y) {
         generate_warped_model(&rnd_, mat, &alpha, &beta, &gamma, &delta,
                               is_alpha_zero, is_beta_zero, is_gamma_zero,
-                              is_delta_zero);
+                              is_delta_zero, 1);
 
         for (int ii = 0; ii < 2; ++ii) {
           for (int jj = 0; jj < 5; ++jj) {
@@ -258,18 +273,18 @@ void AV1WarpFilterTest::RunCheckOutput(warp_affine_func test_impl) {
                         out_h, out_w, sub_x, sub_y, &conv_params, alpha, beta,
                         gamma, delta);
               if (use_no_round) {
-                for (j = 0; j < out_w * out_h; ++j)
+                for (int j = 0; j < out_w * out_h; ++j)
                   ASSERT_EQ(dsta[j], dstb[j])
                       << "Pixel mismatch at index " << j << " = ("
                       << (j % out_w) << ", " << (j / out_w) << ") on iteration "
                       << i;
-                for (j = 0; j < out_w * out_h; ++j)
+                for (int j = 0; j < out_w * out_h; ++j)
                   ASSERT_EQ(output[j], output2[j])
                       << "Pixel mismatch at index " << j << " = ("
                       << (j % out_w) << ", " << (j / out_w) << ") on iteration "
                       << i;
               } else {
-                for (j = 0; j < out_w * out_h; ++j)
+                for (int j = 0; j < out_w * out_h; ++j)
                   ASSERT_EQ(output[j], output2[j])
                       << "Pixel mismatch at index " << j << " = ("
                       << (j % out_w) << ", " << (j / out_w) << ") on iteration "
@@ -302,12 +317,10 @@ namespace AV1HighbdWarpFilter {
                             ::testing::Values(0, 1), ::testing::Values(0, 1));
 }
 
-AV1HighbdWarpFilterTest::~AV1HighbdWarpFilterTest() {}
+AV1HighbdWarpFilterTest::~AV1HighbdWarpFilterTest() = default;
 void AV1HighbdWarpFilterTest::SetUp() {
   rnd_.Reset(ACMRandom::DeterministicSeed());
 }
-
-void AV1HighbdWarpFilterTest::TearDown() {}
 
 void AV1HighbdWarpFilterTest::RunSpeedTest(highbd_warp_affine_func test_impl) {
   const int w = 128, h = 128;
@@ -340,7 +353,7 @@ void AV1HighbdWarpFilterTest::RunSpeedTest(highbd_warp_affine_func test_impl) {
 
   generate_warped_model(&rnd_, mat, &alpha, &beta, &gamma, &delta,
                         is_alpha_zero, is_beta_zero, is_gamma_zero,
-                        is_delta_zero);
+                        is_delta_zero, 0);
   // Generate an input block and extend its borders horizontally
   for (int r = 0; r < h; ++r)
     for (int c = 0; c < w; ++c) input[r * stride + c] = rnd_.Rand16() & mask;
@@ -368,7 +381,8 @@ void AV1HighbdWarpFilterTest::RunSpeedTest(highbd_warp_affine_func test_impl) {
 
   aom_usec_timer_mark(&timer);
   const int elapsed_time = static_cast<int>(aom_usec_timer_elapsed(&timer));
-  printf("highbd warp %3dx%-3d: %7.2f ns\n", out_w, out_h,
+  printf("highbd warp %3dx%-3d alpha=%d beta=%d gamma=%d delta=%d: %7.2f ns \n",
+         out_w, out_h, alpha, beta, gamma, delta,
          1000.0 * elapsed_time / num_loops);
 }
 
@@ -386,7 +400,6 @@ void AV1HighbdWarpFilterTest::RunCheckOutput(
   const int bd = std::get<3>(param);
   const int num_iters = std::get<2>(param);
   const int mask = (1 << bd) - 1;
-  int i, j, sub_x, sub_y;
 
   // The warp functions always write rows with widths that are multiples of 8.
   // So to avoid a buffer overflow, we may need to pad rows to a multiple of 8.
@@ -409,7 +422,7 @@ void AV1HighbdWarpFilterTest::RunCheckOutput(
   ASSERT_NE(dstb, nullptr);
   for (int i = 0; i < output_n; ++i) output[i] = output2[i] = rnd_.Rand16();
 
-  for (i = 0; i < num_iters; ++i) {
+  for (int i = 0; i < num_iters; ++i) {
     // Generate an input block and extend its borders horizontally
     for (int r = 0; r < h; ++r)
       for (int c = 0; c < w; ++c) input[r * stride + c] = rnd_.Rand16() & mask;
@@ -420,11 +433,11 @@ void AV1HighbdWarpFilterTest::RunCheckOutput(
       }
     }
     const int use_no_round = rnd_.Rand8() & 1;
-    for (sub_x = 0; sub_x < 2; ++sub_x)
-      for (sub_y = 0; sub_y < 2; ++sub_y) {
+    for (int sub_x = 0; sub_x < 2; ++sub_x)
+      for (int sub_y = 0; sub_y < 2; ++sub_y) {
         generate_warped_model(&rnd_, mat, &alpha, &beta, &gamma, &delta,
                               is_alpha_zero, is_beta_zero, is_gamma_zero,
-                              is_delta_zero);
+                              is_delta_zero, 1);
         for (int ii = 0; ii < 2; ++ii) {
           for (int jj = 0; jj < 5; ++jj) {
             for (int do_average = 0; do_average <= 1; ++do_average) {
@@ -464,18 +477,18 @@ void AV1HighbdWarpFilterTest::RunCheckOutput(
                         beta, gamma, delta);
 
               if (use_no_round) {
-                for (j = 0; j < out_w * out_h; ++j)
+                for (int j = 0; j < out_w * out_h; ++j)
                   ASSERT_EQ(dsta[j], dstb[j])
                       << "Pixel mismatch at index " << j << " = ("
                       << (j % out_w) << ", " << (j / out_w) << ") on iteration "
                       << i;
-                for (j = 0; j < out_w * out_h; ++j)
+                for (int j = 0; j < out_w * out_h; ++j)
                   ASSERT_EQ(output[j], output2[j])
                       << "Pixel mismatch at index " << j << " = ("
                       << (j % out_w) << ", " << (j / out_w) << ") on iteration "
                       << i;
               } else {
-                for (j = 0; j < out_w * out_h; ++j)
+                for (int j = 0; j < out_w * out_h; ++j)
                   ASSERT_EQ(output[j], output2[j])
                       << "Pixel mismatch at index " << j << " = ("
                       << (j % out_w) << ", " << (j / out_w) << ") on iteration "

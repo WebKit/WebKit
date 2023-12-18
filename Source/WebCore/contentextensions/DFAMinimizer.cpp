@@ -87,7 +87,7 @@ public:
             m_elementPositionInPartitionedNodes[i] = i;
             m_elementToSetMap[i] = 0;
         }
-        m_sets.uncheckedAppend(SetDescriptor { 0, size, 0 });
+        m_sets.append(SetDescriptor { 0, size, 0 });
     }
 
     void reserveUninitializedCapacity(unsigned elementCount)
@@ -260,10 +260,9 @@ public:
         m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
         memset(m_flattenedTransitionsStartOffsetPerNode.data(), 0, m_flattenedTransitionsStartOffsetPerNode.size() * sizeof(unsigned));
 
-        Vector<char, 0, ContentExtensionsOverflowHandler> singularTransitionsFirsts;
-        singularTransitionsFirsts.reserveInitialCapacity(singularTransitions.m_ranges.size());
-        for (const auto& transition : singularTransitions)
-            singularTransitionsFirsts.uncheckedAppend(transition.first);
+        auto singularTransitionsFirsts = WTF::map<0, ContentExtensionsOverflowHandler>(singularTransitions, [&](auto& transition) {
+            return transition.first;
+        });
 
         for (const DFANode& node : dfa.nodes) {
             if (node.isKilled())
@@ -475,10 +474,7 @@ void DFAMinimizer::minimize(DFA& dfa)
     // Use every splitter to refine the node partitions.
     fullGraphPartition.splitByUniqueTransitions();
 
-    Vector<unsigned> relocationVector;
-    relocationVector.reserveInitialCapacity(dfa.nodes.size());
-    for (unsigned i = 0; i < dfa.nodes.size(); ++i)
-        relocationVector.uncheckedAppend(i);
+    Vector<unsigned> relocationVector(dfa.nodes.size(), [](size_t i) { return i; });
 
     // Update all the transitions.
     for (unsigned i = 0; i < dfa.nodes.size(); ++i) {

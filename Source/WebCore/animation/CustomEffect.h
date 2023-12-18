@@ -44,7 +44,7 @@ private:
     // AnimationEffect
     bool isCustomEffect() const final { return true; }
     void animationDidTick() final;
-    bool ticksContinouslyWhileActive() const final { return true; }
+    bool ticksContinuouslyWhileActive() const final { return true; }
 
     Ref<CustomEffectCallback> m_callback;
 };

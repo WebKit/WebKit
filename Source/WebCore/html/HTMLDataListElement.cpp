@@ -77,7 +77,8 @@ Ref<HTMLCollection> HTMLDataListElement::options()
 
 void HTMLDataListElement::optionElementChildrenChanged()
 {
-    treeScope().idTargetObserverRegistry().notifyObservers(getIdAttribute());
+    if (auto& id = getIdAttribute(); !id.isEmpty())
+        treeScope().idTargetObserverRegistry().notifyObservers(id);
 }
 
 auto HTMLDataListElement::suggestions() const -> SuggestionRange

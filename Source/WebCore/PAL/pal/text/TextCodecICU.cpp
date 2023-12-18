@@ -43,29 +43,29 @@ namespace PAL {
 const size_t ConversionBufferSize = 16384;
 
 #define DECLARE_ALIASES(encoding, ...) \
-    static const char* const encoding##_aliases[] { __VA_ARGS__ }
+    static constexpr ASCIILiteral encoding##_aliases[] { __VA_ARGS__ }
 
 // From https://encoding.spec.whatwg.org. Plus a few extra aliases that macOS had historically from TEC.
-DECLARE_ALIASES(ISO_8859_2, "csisolatin2", "iso-ir-101", "iso8859-2", "iso88592", "iso_8859-2", "iso_8859-2:1987", "l2", "latin2");
-DECLARE_ALIASES(ISO_8859_4, "csisolatin4", "iso-ir-110", "iso8859-4", "iso88594", "iso_8859-4", "iso_8859-4:1988", "l4", "latin4");
-DECLARE_ALIASES(ISO_8859_5, "csisolatincyrillic", "cyrillic", "iso-ir-144", "iso8859-5", "iso88595", "iso_8859-5", "iso_8859-5:1988");
-DECLARE_ALIASES(ISO_8859_10, "csisolatin6", "iso-ir-157", "iso8859-10", "iso885910", "l6", "latin6", "iso8859101992", "isoir157");
-DECLARE_ALIASES(ISO_8859_13, "iso8859-13", "iso885913");
-DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914", "isoceltic", "iso8859141998", "isoir199", "latin8", "l8");
-DECLARE_ALIASES(ISO_8859_15, "csisolatin9", "iso8859-15", "iso885915", "iso_8859-15", "l9");
-DECLARE_ALIASES(ISO_8859_16, "isoir226", "iso8859162001", "l10", "latin10");
-DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
-DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
-DECLARE_ALIASES(windows_1250, "cp1250", "x-cp1250", "winlatin2");
-DECLARE_ALIASES(windows_1251, "cp1251", "wincyrillic", "x-cp1251");
-DECLARE_ALIASES(windows_1254, "winturkish", "cp1254", "csisolatin5", "iso-8859-9", "iso-ir-148", "iso8859-9", "iso88599", "iso_8859-9", "iso_8859-9:1989", "l5", "latin5", "x-cp1254");
-DECLARE_ALIASES(windows_1256, "winarabic", "cp1256", "x-cp1256");
-DECLARE_ALIASES(windows_1258, "winvietnamese", "cp1258", "x-cp1258");
-DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic", "x-mac-ukrainian", "windows-10007", "mac-cyrillic", "maccy", "x-MacCyrillic", "x-MacUkraine");
+DECLARE_ALIASES(ISO_8859_2, "csisolatin2"_s, "iso-ir-101"_s, "iso8859-2"_s, "iso88592"_s, "iso_8859-2"_s, "iso_8859-2:1987"_s, "l2"_s, "latin2"_s);
+DECLARE_ALIASES(ISO_8859_4, "csisolatin4"_s, "iso-ir-110"_s, "iso8859-4"_s, "iso88594"_s, "iso_8859-4"_s, "iso_8859-4:1988"_s, "l4"_s, "latin4"_s);
+DECLARE_ALIASES(ISO_8859_5, "csisolatincyrillic"_s, "cyrillic"_s, "iso-ir-144"_s, "iso8859-5"_s, "iso88595"_s, "iso_8859-5"_s, "iso_8859-5:1988"_s);
+DECLARE_ALIASES(ISO_8859_10, "csisolatin6"_s, "iso-ir-157"_s, "iso8859-10"_s, "iso885910"_s, "l6"_s, "latin6"_s, "iso8859101992"_s, "isoir157"_s);
+DECLARE_ALIASES(ISO_8859_13, "iso8859-13"_s, "iso885913"_s);
+DECLARE_ALIASES(ISO_8859_14, "iso8859-14"_s, "iso885914"_s, "isoceltic"_s, "iso8859141998"_s, "isoir199"_s, "latin8"_s, "l8"_s);
+DECLARE_ALIASES(ISO_8859_15, "csisolatin9"_s, "iso8859-15"_s, "iso885915"_s, "iso_8859-15"_s, "l9"_s);
+DECLARE_ALIASES(ISO_8859_16, "isoir226"_s, "iso8859162001"_s, "l10"_s, "latin10"_s);
+DECLARE_ALIASES(KOI8_R, "cskoi8r"_s, "koi"_s, "koi8"_s, "koi8_r"_s);
+DECLARE_ALIASES(macintosh, "csmacintosh"_s, "mac"_s, "x-mac-roman"_s, "macroman"_s, "x-macroman"_s);
+DECLARE_ALIASES(windows_1250, "cp1250"_s, "x-cp1250"_s, "winlatin2"_s);
+DECLARE_ALIASES(windows_1251, "cp1251"_s, "wincyrillic"_s, "x-cp1251"_s);
+DECLARE_ALIASES(windows_1254, "winturkish"_s, "cp1254"_s, "csisolatin5"_s, "iso-8859-9"_s, "iso-ir-148"_s, "iso8859-9"_s, "iso88599"_s, "iso_8859-9"_s, "iso_8859-9:1989"_s, "l5"_s, "latin5"_s, "x-cp1254"_s);
+DECLARE_ALIASES(windows_1256, "winarabic"_s, "cp1256"_s, "x-cp1256"_s);
+DECLARE_ALIASES(windows_1258, "winvietnamese"_s, "cp1258"_s, "x-cp1258"_s);
+DECLARE_ALIASES(x_mac_cyrillic, "maccyrillic"_s, "x-mac-ukrainian"_s, "windows-10007"_s, "mac-cyrillic"_s, "maccy"_s, "x-MacCyrillic"_s, "x-MacUkraine"_s);
 // Encodings below are not in the standard.
-DECLARE_ALIASES(x_mac_greek, "windows-10006", "macgr", "x-MacGreek");
-DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029", "x-mac-ce", "macce", "maccentraleurope", "x-MacCentralEurope");
-DECLARE_ALIASES(x_mac_turkish, "windows-10081", "mactr", "x-MacTurkish");
+DECLARE_ALIASES(x_mac_greek, "windows-10006"_s, "macgr"_s, "x-MacGreek"_s);
+DECLARE_ALIASES(x_mac_centraleurroman, "windows-10029"_s, "x-mac-ce"_s, "macce"_s, "maccentraleurope"_s, "x-MacCentralEurope"_s);
+DECLARE_ALIASES(x_mac_turkish, "windows-10081"_s, "mactr"_s, "x-MacTurkish"_s);
 
 #define DECLARE_ENCODING_NAME(encoding, alias_array) \
     { encoding, std::size(alias_array##_aliases), alias_array##_aliases }
@@ -74,31 +74,31 @@ DECLARE_ALIASES(x_mac_turkish, "windows-10081", "mactr", "x-MacTurkish");
     { encoding, 0, nullptr }
 
 static const struct EncodingName {
-    const char* name;
+    ASCIILiteral name;
     unsigned aliasCount;
-    const char* const * aliases;
+    const ASCIILiteral* aliases;
 } encodingNames[] = {
-    DECLARE_ENCODING_NAME("ISO-8859-2", ISO_8859_2),
-    DECLARE_ENCODING_NAME("ISO-8859-4", ISO_8859_4),
-    DECLARE_ENCODING_NAME("ISO-8859-5", ISO_8859_5),
-    DECLARE_ENCODING_NAME("ISO-8859-10", ISO_8859_10),
-    DECLARE_ENCODING_NAME("ISO-8859-13", ISO_8859_13),
-    DECLARE_ENCODING_NAME("ISO-8859-14", ISO_8859_14),
-    DECLARE_ENCODING_NAME("ISO-8859-15", ISO_8859_15),
-    DECLARE_ENCODING_NAME("ISO-8859-16", ISO_8859_16),
-    DECLARE_ENCODING_NAME("KOI8-R", KOI8_R),
-    DECLARE_ENCODING_NAME("macintosh", macintosh),
-    DECLARE_ENCODING_NAME("windows-1250", windows_1250),
-    DECLARE_ENCODING_NAME("windows-1251", windows_1251),
-    DECLARE_ENCODING_NAME("windows-1254", windows_1254),
-    DECLARE_ENCODING_NAME("windows-1256", windows_1256),
-    DECLARE_ENCODING_NAME("windows-1258", windows_1258),
-    DECLARE_ENCODING_NAME("x-mac-cyrillic", x_mac_cyrillic),
+    DECLARE_ENCODING_NAME("ISO-8859-2"_s, ISO_8859_2),
+    DECLARE_ENCODING_NAME("ISO-8859-4"_s, ISO_8859_4),
+    DECLARE_ENCODING_NAME("ISO-8859-5"_s, ISO_8859_5),
+    DECLARE_ENCODING_NAME("ISO-8859-10"_s, ISO_8859_10),
+    DECLARE_ENCODING_NAME("ISO-8859-13"_s, ISO_8859_13),
+    DECLARE_ENCODING_NAME("ISO-8859-14"_s, ISO_8859_14),
+    DECLARE_ENCODING_NAME("ISO-8859-15"_s, ISO_8859_15),
+    DECLARE_ENCODING_NAME("ISO-8859-16"_s, ISO_8859_16),
+    DECLARE_ENCODING_NAME("KOI8-R"_s, KOI8_R),
+    DECLARE_ENCODING_NAME("macintosh"_s, macintosh),
+    DECLARE_ENCODING_NAME("windows-1250"_s, windows_1250),
+    DECLARE_ENCODING_NAME("windows-1251"_s, windows_1251),
+    DECLARE_ENCODING_NAME("windows-1254"_s, windows_1254),
+    DECLARE_ENCODING_NAME("windows-1256"_s, windows_1256),
+    DECLARE_ENCODING_NAME("windows-1258"_s, windows_1258),
+    DECLARE_ENCODING_NAME("x-mac-cyrillic"_s, x_mac_cyrillic),
     // Encodings below are not in the standard.
-    DECLARE_ENCODING_NAME("x-mac-greek", x_mac_greek),
-    DECLARE_ENCODING_NAME("x-mac-centraleurroman", x_mac_centraleurroman),
-    DECLARE_ENCODING_NAME("x-mac-turkish", x_mac_turkish),
-    DECLARE_ENCODING_NAME_NO_ALIASES("EUC-TW"),
+    DECLARE_ENCODING_NAME("x-mac-greek"_s, x_mac_greek),
+    DECLARE_ENCODING_NAME("x-mac-centraleurroman"_s, x_mac_centraleurroman),
+    DECLARE_ENCODING_NAME("x-mac-turkish"_s, x_mac_turkish),
+    DECLARE_ENCODING_NAME_NO_ALIASES("EUC-TW"_s),
 };
 
 void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
@@ -113,7 +113,7 @@ void TextCodecICU::registerEncodingNames(EncodingNameRegistrar registrar)
 void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
 {
     for (auto& encodingName : encodingNames) {
-        const char* name = encodingName.name;
+        ASCIILiteral name = encodingName.name;
 
         UErrorCode error = U_ZERO_ERROR;
         const char* canonicalConverterName = ucnv_getCanonicalName(name, "IANA", &error);
@@ -129,16 +129,18 @@ void TextCodecICU::registerCodecs(TextCodecRegistrar registrar)
             }
         }
         registrar(name, [name, canonicalConverterName] {
-            return makeUnique<TextCodecICU>(name, canonicalConverterName);
+            // ucnv_getCanonicalName() returns a static string owned by libicu so the call to
+            // ASCIILiteral::fromLiteralUnsafe() should be safe.
+            return makeUnique<TextCodecICU>(name, ASCIILiteral::fromLiteralUnsafe(canonicalConverterName));
         });
     }
 }
 
-TextCodecICU::TextCodecICU(const char* encoding, const char* canonicalConverterName)
+TextCodecICU::TextCodecICU(ASCIILiteral encoding, ASCIILiteral canonicalConverterName)
     : m_encodingName(encoding)
     , m_canonicalConverterName(canonicalConverterName)
 {
-    ASSERT(m_canonicalConverterName);
+    ASSERT(!m_canonicalConverterName.isNull());
 }
 
 TextCodecICU::~TextCodecICU()

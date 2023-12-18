@@ -159,380 +159,6 @@ static uint32_t sad_64width_msa(const uint8_t *src, int32_t src_stride,
   return sad;
 }
 
-static void sad_4width_x3_msa(const uint8_t *src_ptr, int32_t src_stride,
-                              const uint8_t *ref_ptr, int32_t ref_stride,
-                              int32_t height, uint32_t *sad_array) {
-  int32_t ht_cnt;
-  uint32_t src0, src1, src2, src3;
-  v16u8 src = { 0 };
-  v16u8 ref = { 0 };
-  v16u8 ref0, ref1, ref2, ref3, diff;
-  v8u16 sad0 = { 0 };
-  v8u16 sad1 = { 0 };
-  v8u16 sad2 = { 0 };
-
-  for (ht_cnt = (height >> 2); ht_cnt--;) {
-    LW4(src_ptr, src_stride, src0, src1, src2, src3);
-    src_ptr += (4 * src_stride);
-    INSERT_W4_UB(src0, src1, src2, src3, src);
-
-    LD_UB4(ref_ptr, ref_stride, ref0, ref1, ref2, ref3);
-    ref_ptr += (4 * ref_stride);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad0 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad1 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad2 += __msa_hadd_u_h(diff, diff);
-  }
-
-  sad_array[0] = HADD_UH_U32(sad0);
-  sad_array[1] = HADD_UH_U32(sad1);
-  sad_array[2] = HADD_UH_U32(sad2);
-}
-
-static void sad_8width_x3_msa(const uint8_t *src, int32_t src_stride,
-                              const uint8_t *ref, int32_t ref_stride,
-                              int32_t height, uint32_t *sad_array) {
-  int32_t ht_cnt;
-  v16u8 src0, src1, src2, src3;
-  v16u8 ref0, ref1, ref00, ref11, ref22, ref33;
-  v8u16 sad0 = { 0 };
-  v8u16 sad1 = { 0 };
-  v8u16 sad2 = { 0 };
-
-  for (ht_cnt = (height >> 2); ht_cnt--;) {
-    LD_UB4(src, src_stride, src0, src1, src2, src3);
-    src += (4 * src_stride);
-    LD_UB4(ref, ref_stride, ref00, ref11, ref22, ref33);
-    ref += (4 * ref_stride);
-    PCKEV_D4_UB(src1, src0, src3, src2, ref11, ref00, ref33, ref22, src0, src1,
-                ref0, ref1);
-    sad0 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad1 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad2 += SAD_UB2_UH(src0, src1, ref0, ref1);
-  }
-
-  sad_array[0] = HADD_UH_U32(sad0);
-  sad_array[1] = HADD_UH_U32(sad1);
-  sad_array[2] = HADD_UH_U32(sad2);
-}
-
-static void sad_16width_x3_msa(const uint8_t *src_ptr, int32_t src_stride,
-                               const uint8_t *ref_ptr, int32_t ref_stride,
-                               int32_t height, uint32_t *sad_array) {
-  int32_t ht_cnt;
-  v16u8 src, ref, ref0, ref1, diff;
-  v8u16 sad0 = { 0 };
-  v8u16 sad1 = { 0 };
-  v8u16 sad2 = { 0 };
-
-  for (ht_cnt = (height >> 1); ht_cnt--;) {
-    src = LD_UB(src_ptr);
-    src_ptr += src_stride;
-    LD_UB2(ref_ptr, 16, ref0, ref1);
-    ref_ptr += ref_stride;
-
-    diff = __msa_asub_u_b(src, ref0);
-    sad0 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 1);
-    diff = __msa_asub_u_b(src, ref);
-    sad1 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 2);
-    diff = __msa_asub_u_b(src, ref);
-    sad2 += __msa_hadd_u_h(diff, diff);
-
-    src = LD_UB(src_ptr);
-    src_ptr += src_stride;
-    LD_UB2(ref_ptr, 16, ref0, ref1);
-    ref_ptr += ref_stride;
-
-    diff = __msa_asub_u_b(src, ref0);
-    sad0 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 1);
-    diff = __msa_asub_u_b(src, ref);
-    sad1 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 2);
-    diff = __msa_asub_u_b(src, ref);
-    sad2 += __msa_hadd_u_h(diff, diff);
-  }
-
-  sad_array[0] = HADD_UH_U32(sad0);
-  sad_array[1] = HADD_UH_U32(sad1);
-  sad_array[2] = HADD_UH_U32(sad2);
-}
-
-static void sad_4width_x8_msa(const uint8_t *src_ptr, int32_t src_stride,
-                              const uint8_t *ref_ptr, int32_t ref_stride,
-                              int32_t height, uint32_t *sad_array) {
-  int32_t ht_cnt;
-  uint32_t src0, src1, src2, src3;
-  v16u8 ref0, ref1, ref2, ref3, diff;
-  v16u8 src = { 0 };
-  v16u8 ref = { 0 };
-  v8u16 sad0 = { 0 };
-  v8u16 sad1 = { 0 };
-  v8u16 sad2 = { 0 };
-  v8u16 sad3 = { 0 };
-  v8u16 sad4 = { 0 };
-  v8u16 sad5 = { 0 };
-  v8u16 sad6 = { 0 };
-  v8u16 sad7 = { 0 };
-
-  for (ht_cnt = (height >> 2); ht_cnt--;) {
-    LW4(src_ptr, src_stride, src0, src1, src2, src3);
-    INSERT_W4_UB(src0, src1, src2, src3, src);
-    src_ptr += (4 * src_stride);
-    LD_UB4(ref_ptr, ref_stride, ref0, ref1, ref2, ref3);
-    ref_ptr += (4 * ref_stride);
-
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad0 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad1 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad2 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad3 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad4 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad5 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad6 += __msa_hadd_u_h(diff, diff);
-
-    SLDI_B2_UB(ref0, ref1, ref0, ref1, ref0, ref1, 1);
-    SLDI_B2_UB(ref2, ref3, ref2, ref3, ref2, ref3, 1);
-    SAD_INSVE_W4_UB(ref0, ref1, ref2, ref3, ref);
-    diff = __msa_asub_u_b(src, ref);
-    sad7 += __msa_hadd_u_h(diff, diff);
-  }
-
-  sad_array[0] = HADD_UH_U32(sad0);
-  sad_array[1] = HADD_UH_U32(sad1);
-  sad_array[2] = HADD_UH_U32(sad2);
-  sad_array[3] = HADD_UH_U32(sad3);
-  sad_array[4] = HADD_UH_U32(sad4);
-  sad_array[5] = HADD_UH_U32(sad5);
-  sad_array[6] = HADD_UH_U32(sad6);
-  sad_array[7] = HADD_UH_U32(sad7);
-}
-
-static void sad_8width_x8_msa(const uint8_t *src, int32_t src_stride,
-                              const uint8_t *ref, int32_t ref_stride,
-                              int32_t height, uint32_t *sad_array) {
-  int32_t ht_cnt;
-  v16u8 src0, src1, src2, src3;
-  v16u8 ref0, ref1, ref00, ref11, ref22, ref33;
-  v8u16 sad0 = { 0 };
-  v8u16 sad1 = { 0 };
-  v8u16 sad2 = { 0 };
-  v8u16 sad3 = { 0 };
-  v8u16 sad4 = { 0 };
-  v8u16 sad5 = { 0 };
-  v8u16 sad6 = { 0 };
-  v8u16 sad7 = { 0 };
-
-  for (ht_cnt = (height >> 2); ht_cnt--;) {
-    LD_UB4(src, src_stride, src0, src1, src2, src3);
-    src += (4 * src_stride);
-    LD_UB4(ref, ref_stride, ref00, ref11, ref22, ref33);
-    ref += (4 * ref_stride);
-    PCKEV_D4_UB(src1, src0, src3, src2, ref11, ref00, ref33, ref22, src0, src1,
-                ref0, ref1);
-    sad0 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad1 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad2 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad3 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad4 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad5 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad6 += SAD_UB2_UH(src0, src1, ref0, ref1);
-
-    SLDI_B2_UB(ref00, ref11, ref00, ref11, ref00, ref11, 1);
-    SLDI_B2_UB(ref22, ref33, ref22, ref33, ref22, ref33, 1);
-    PCKEV_D2_UB(ref11, ref00, ref33, ref22, ref0, ref1);
-    sad7 += SAD_UB2_UH(src0, src1, ref0, ref1);
-  }
-
-  sad_array[0] = HADD_UH_U32(sad0);
-  sad_array[1] = HADD_UH_U32(sad1);
-  sad_array[2] = HADD_UH_U32(sad2);
-  sad_array[3] = HADD_UH_U32(sad3);
-  sad_array[4] = HADD_UH_U32(sad4);
-  sad_array[5] = HADD_UH_U32(sad5);
-  sad_array[6] = HADD_UH_U32(sad6);
-  sad_array[7] = HADD_UH_U32(sad7);
-}
-
-static void sad_16width_x8_msa(const uint8_t *src_ptr, int32_t src_stride,
-                               const uint8_t *ref_ptr, int32_t ref_stride,
-                               int32_t height, uint32_t *sad_array) {
-  int32_t ht_cnt;
-  v16u8 src, ref0, ref1, ref;
-  v16u8 diff;
-  v8u16 sad0 = { 0 };
-  v8u16 sad1 = { 0 };
-  v8u16 sad2 = { 0 };
-  v8u16 sad3 = { 0 };
-  v8u16 sad4 = { 0 };
-  v8u16 sad5 = { 0 };
-  v8u16 sad6 = { 0 };
-  v8u16 sad7 = { 0 };
-
-  for (ht_cnt = (height >> 1); ht_cnt--;) {
-    src = LD_UB(src_ptr);
-    src_ptr += src_stride;
-    LD_UB2(ref_ptr, 16, ref0, ref1);
-    ref_ptr += ref_stride;
-
-    diff = __msa_asub_u_b(src, ref0);
-    sad0 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 1);
-    diff = __msa_asub_u_b(src, ref);
-    sad1 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 2);
-    diff = __msa_asub_u_b(src, ref);
-    sad2 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 3);
-    diff = __msa_asub_u_b(src, ref);
-    sad3 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 4);
-    diff = __msa_asub_u_b(src, ref);
-    sad4 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 5);
-    diff = __msa_asub_u_b(src, ref);
-    sad5 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 6);
-    diff = __msa_asub_u_b(src, ref);
-    sad6 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 7);
-    diff = __msa_asub_u_b(src, ref);
-    sad7 += __msa_hadd_u_h(diff, diff);
-
-    src = LD_UB(src_ptr);
-    src_ptr += src_stride;
-    LD_UB2(ref_ptr, 16, ref0, ref1);
-    ref_ptr += ref_stride;
-
-    diff = __msa_asub_u_b(src, ref0);
-    sad0 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 1);
-    diff = __msa_asub_u_b(src, ref);
-    sad1 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 2);
-    diff = __msa_asub_u_b(src, ref);
-    sad2 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 3);
-    diff = __msa_asub_u_b(src, ref);
-    sad3 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 4);
-    diff = __msa_asub_u_b(src, ref);
-    sad4 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 5);
-    diff = __msa_asub_u_b(src, ref);
-    sad5 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 6);
-    diff = __msa_asub_u_b(src, ref);
-    sad6 += __msa_hadd_u_h(diff, diff);
-
-    ref = (v16u8)__msa_sldi_b((v16i8)ref1, (v16i8)ref0, 7);
-    diff = __msa_asub_u_b(src, ref);
-    sad7 += __msa_hadd_u_h(diff, diff);
-  }
-
-  sad_array[0] = HADD_UH_U32(sad0);
-  sad_array[1] = HADD_UH_U32(sad1);
-  sad_array[2] = HADD_UH_U32(sad2);
-  sad_array[3] = HADD_UH_U32(sad3);
-  sad_array[4] = HADD_UH_U32(sad4);
-  sad_array[5] = HADD_UH_U32(sad5);
-  sad_array[6] = HADD_UH_U32(sad6);
-  sad_array[7] = HADD_UH_U32(sad7);
-}
-
 static void sad_4width_x4d_msa(const uint8_t *src_ptr, int32_t src_stride,
                                const uint8_t *const aref_ptr[],
                                int32_t ref_stride, int32_t height,
@@ -1037,80 +663,38 @@ static uint32_t avgsad_64width_msa(const uint8_t *src, int32_t src_stride,
     return sad_64width_msa(src, src_stride, ref, ref_stride, height);         \
   }
 
-#define VPX_SAD_4xHEIGHTx3_MSA(height)                                   \
-  void vpx_sad4x##height##x3_msa(const uint8_t *src, int32_t src_stride, \
-                                 const uint8_t *ref, int32_t ref_stride, \
-                                 uint32_t *sads) {                       \
-    sad_4width_x3_msa(src, src_stride, ref, ref_stride, height, sads);   \
-  }
-
-#define VPX_SAD_8xHEIGHTx3_MSA(height)                                   \
-  void vpx_sad8x##height##x3_msa(const uint8_t *src, int32_t src_stride, \
-                                 const uint8_t *ref, int32_t ref_stride, \
-                                 uint32_t *sads) {                       \
-    sad_8width_x3_msa(src, src_stride, ref, ref_stride, height, sads);   \
-  }
-
-#define VPX_SAD_16xHEIGHTx3_MSA(height)                                   \
-  void vpx_sad16x##height##x3_msa(const uint8_t *src, int32_t src_stride, \
-                                  const uint8_t *ref, int32_t ref_stride, \
-                                  uint32_t *sads) {                       \
-    sad_16width_x3_msa(src, src_stride, ref, ref_stride, height, sads);   \
-  }
-
-#define VPX_SAD_4xHEIGHTx8_MSA(height)                                   \
-  void vpx_sad4x##height##x8_msa(const uint8_t *src, int32_t src_stride, \
-                                 const uint8_t *ref, int32_t ref_stride, \
-                                 uint32_t *sads) {                       \
-    sad_4width_x8_msa(src, src_stride, ref, ref_stride, height, sads);   \
-  }
-
-#define VPX_SAD_8xHEIGHTx8_MSA(height)                                   \
-  void vpx_sad8x##height##x8_msa(const uint8_t *src, int32_t src_stride, \
-                                 const uint8_t *ref, int32_t ref_stride, \
-                                 uint32_t *sads) {                       \
-    sad_8width_x8_msa(src, src_stride, ref, ref_stride, height, sads);   \
-  }
-
-#define VPX_SAD_16xHEIGHTx8_MSA(height)                                   \
-  void vpx_sad16x##height##x8_msa(const uint8_t *src, int32_t src_stride, \
-                                  const uint8_t *ref, int32_t ref_stride, \
-                                  uint32_t *sads) {                       \
-    sad_16width_x8_msa(src, src_stride, ref, ref_stride, height, sads);   \
-  }
-
 #define VPX_SAD_4xHEIGHTx4D_MSA(height)                                   \
   void vpx_sad4x##height##x4d_msa(const uint8_t *src, int32_t src_stride, \
-                                  const uint8_t *const refs[],            \
-                                  int32_t ref_stride, uint32_t *sads) {   \
+                                  const uint8_t *const refs[4],           \
+                                  int32_t ref_stride, uint32_t sads[4]) { \
     sad_4width_x4d_msa(src, src_stride, refs, ref_stride, height, sads);  \
   }
 
 #define VPX_SAD_8xHEIGHTx4D_MSA(height)                                   \
   void vpx_sad8x##height##x4d_msa(const uint8_t *src, int32_t src_stride, \
-                                  const uint8_t *const refs[],            \
-                                  int32_t ref_stride, uint32_t *sads) {   \
+                                  const uint8_t *const refs[4],           \
+                                  int32_t ref_stride, uint32_t sads[4]) { \
     sad_8width_x4d_msa(src, src_stride, refs, ref_stride, height, sads);  \
   }
 
 #define VPX_SAD_16xHEIGHTx4D_MSA(height)                                   \
   void vpx_sad16x##height##x4d_msa(const uint8_t *src, int32_t src_stride, \
-                                   const uint8_t *const refs[],            \
-                                   int32_t ref_stride, uint32_t *sads) {   \
+                                   const uint8_t *const refs[4],           \
+                                   int32_t ref_stride, uint32_t sads[4]) { \
     sad_16width_x4d_msa(src, src_stride, refs, ref_stride, height, sads);  \
   }
 
 #define VPX_SAD_32xHEIGHTx4D_MSA(height)                                   \
   void vpx_sad32x##height##x4d_msa(const uint8_t *src, int32_t src_stride, \
-                                   const uint8_t *const refs[],            \
-                                   int32_t ref_stride, uint32_t *sads) {   \
+                                   const uint8_t *const refs[4],           \
+                                   int32_t ref_stride, uint32_t sads[4]) { \
     sad_32width_x4d_msa(src, src_stride, refs, ref_stride, height, sads);  \
   }
 
 #define VPX_SAD_64xHEIGHTx4D_MSA(height)                                   \
   void vpx_sad64x##height##x4d_msa(const uint8_t *src, int32_t src_stride, \
-                                   const uint8_t *const refs[],            \
-                                   int32_t ref_stride, uint32_t *sads) {   \
+                                   const uint8_t *const refs[4],           \
+                                   int32_t ref_stride, uint32_t sads[4]) { \
     sad_64width_x4d_msa(src, src_stride, refs, ref_stride, height, sads);  \
   }
 
@@ -1186,29 +770,21 @@ VPX_AVGSAD_16xHEIGHT_MSA(32);
 
 // 16x16
 VPX_SAD_16xHEIGHT_MSA(16);
-VPX_SAD_16xHEIGHTx3_MSA(16);
-VPX_SAD_16xHEIGHTx8_MSA(16);
 VPX_SAD_16xHEIGHTx4D_MSA(16);
 VPX_AVGSAD_16xHEIGHT_MSA(16);
 
 // 16x8
 VPX_SAD_16xHEIGHT_MSA(8);
-VPX_SAD_16xHEIGHTx3_MSA(8);
-VPX_SAD_16xHEIGHTx8_MSA(8);
 VPX_SAD_16xHEIGHTx4D_MSA(8);
 VPX_AVGSAD_16xHEIGHT_MSA(8);
 
 // 8x16
 VPX_SAD_8xHEIGHT_MSA(16);
-VPX_SAD_8xHEIGHTx3_MSA(16);
-VPX_SAD_8xHEIGHTx8_MSA(16);
 VPX_SAD_8xHEIGHTx4D_MSA(16);
 VPX_AVGSAD_8xHEIGHT_MSA(16);
 
 // 8x8
 VPX_SAD_8xHEIGHT_MSA(8);
-VPX_SAD_8xHEIGHTx3_MSA(8);
-VPX_SAD_8xHEIGHTx8_MSA(8);
 VPX_SAD_8xHEIGHTx4D_MSA(8);
 VPX_AVGSAD_8xHEIGHT_MSA(8);
 
@@ -1224,7 +800,5 @@ VPX_AVGSAD_4xHEIGHT_MSA(8);
 
 // 4x4
 VPX_SAD_4xHEIGHT_MSA(4);
-VPX_SAD_4xHEIGHTx3_MSA(4);
-VPX_SAD_4xHEIGHTx8_MSA(4);
 VPX_SAD_4xHEIGHTx4D_MSA(4);
 VPX_AVGSAD_4xHEIGHT_MSA(4);

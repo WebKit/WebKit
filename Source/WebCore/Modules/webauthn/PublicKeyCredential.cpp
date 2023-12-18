@@ -70,6 +70,12 @@ void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document
         page->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(document, WTFMove(promise));
 }
 
+void PublicKeyCredential::getClientCapabilities(Document& document, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&& promise)
+{
+    if (auto* page = document.page())
+        page->authenticatorCoordinator().getClientCapabilities(document, WTFMove(promise));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

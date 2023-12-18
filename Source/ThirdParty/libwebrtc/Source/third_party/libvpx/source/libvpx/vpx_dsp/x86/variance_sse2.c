@@ -19,7 +19,7 @@
 static INLINE unsigned int add32x4_sse2(__m128i val) {
   val = _mm_add_epi32(val, _mm_srli_si128(val, 8));
   val = _mm_add_epi32(val, _mm_srli_si128(val, 4));
-  return _mm_cvtsi128_si32(val);
+  return (unsigned int)_mm_cvtsi128_si32(val);
 }
 
 unsigned int vpx_get_mb_ss_sse2(const int16_t *src_ptr) {
@@ -36,8 +36,8 @@ unsigned int vpx_get_mb_ss_sse2(const int16_t *src_ptr) {
 }
 
 static INLINE __m128i load4x2_sse2(const uint8_t *const p, const int stride) {
-  const __m128i p0 = _mm_cvtsi32_si128(loadu_uint32(p + 0 * stride));
-  const __m128i p1 = _mm_cvtsi32_si128(loadu_uint32(p + 1 * stride));
+  const __m128i p0 = _mm_cvtsi32_si128(loadu_int32(p + 0 * stride));
+  const __m128i p1 = _mm_cvtsi32_si128(loadu_int32(p + 1 * stride));
   const __m128i p01 = _mm_unpacklo_epi32(p0, p1);
   return _mm_unpacklo_epi8(p01, _mm_setzero_si128());
 }
@@ -85,7 +85,7 @@ static INLINE void variance_final_512_pel_sse2(__m128i vsse, __m128i vsum,
   vsum = _mm_add_epi16(vsum, _mm_srli_si128(vsum, 8));
   vsum = _mm_unpacklo_epi16(vsum, vsum);
   vsum = _mm_srai_epi32(vsum, 16);
-  *sum = add32x4_sse2(vsum);
+  *sum = (int)add32x4_sse2(vsum);
 }
 
 static INLINE __m128i sum_to_32bit_sse2(const __m128i sum) {
@@ -97,7 +97,7 @@ static INLINE __m128i sum_to_32bit_sse2(const __m128i sum) {
 // Can handle 1024 pixels' diff sum (such as 32x32)
 static INLINE int sum_final_sse2(const __m128i sum) {
   const __m128i t = sum_to_32bit_sse2(sum);
-  return add32x4_sse2(t);
+  return (int)add32x4_sse2(t);
 }
 
 static INLINE void variance4_sse2(const uint8_t *src_ptr, const int src_stride,
@@ -349,7 +349,7 @@ unsigned int vpx_variance32x64_sse2(const uint8_t *src_ptr, int src_stride,
     vsum = _mm_add_epi32(vsum, sum_to_32bit_sse2(vsum16));
   }
   *sse = add32x4_sse2(vsse);
-  sum = add32x4_sse2(vsum);
+  sum = (int)add32x4_sse2(vsum);
   return *sse - (unsigned int)(((int64_t)sum * sum) >> 11);
 }
 
@@ -369,7 +369,7 @@ unsigned int vpx_variance64x32_sse2(const uint8_t *src_ptr, int src_stride,
     vsum = _mm_add_epi32(vsum, sum_to_32bit_sse2(vsum16));
   }
   *sse = add32x4_sse2(vsse);
-  sum = add32x4_sse2(vsum);
+  sum = (int)add32x4_sse2(vsum);
   return *sse - (unsigned int)(((int64_t)sum * sum) >> 11);
 }
 
@@ -389,7 +389,7 @@ unsigned int vpx_variance64x64_sse2(const uint8_t *src_ptr, int src_stride,
     vsum = _mm_add_epi32(vsum, sum_to_32bit_sse2(vsum16));
   }
   *sse = add32x4_sse2(vsse);
-  sum = add32x4_sse2(vsum);
+  sum = (int)add32x4_sse2(vsum);
   return *sse - (unsigned int)(((int64_t)sum * sum) >> 12);
 }
 
@@ -471,23 +471,23 @@ DECLS(ssse3, ssse3);
            (unsigned int)(cast_prod(cast se * se) >> (wlog2 + hlog2));    \
   }
 
-#define FNS(opt1, opt2)                              \
-  FN(64, 64, 16, 6, 6, opt1, (int64_t), (int64_t));  \
-  FN(64, 32, 16, 6, 5, opt1, (int64_t), (int64_t));  \
-  FN(32, 64, 16, 5, 6, opt1, (int64_t), (int64_t));  \
-  FN(32, 32, 16, 5, 5, opt1, (int64_t), (int64_t));  \
-  FN(32, 16, 16, 5, 4, opt1, (int64_t), (int64_t));  \
-  FN(16, 32, 16, 4, 5, opt1, (int64_t), (int64_t));  \
-  FN(16, 16, 16, 4, 4, opt1, (uint32_t), (int64_t)); \
-  FN(16, 8, 16, 4, 3, opt1, (int32_t), (int32_t));   \
-  FN(8, 16, 8, 3, 4, opt1, (int32_t), (int32_t));    \
-  FN(8, 8, 8, 3, 3, opt1, (int32_t), (int32_t));     \
-  FN(8, 4, 8, 3, 2, opt1, (int32_t), (int32_t));     \
-  FN(4, 8, 4, 2, 3, opt1, (int32_t), (int32_t));     \
+#define FNS(opt1, opt2)                             \
+  FN(64, 64, 16, 6, 6, opt1, (int64_t), (int64_t))  \
+  FN(64, 32, 16, 6, 5, opt1, (int64_t), (int64_t))  \
+  FN(32, 64, 16, 5, 6, opt1, (int64_t), (int64_t))  \
+  FN(32, 32, 16, 5, 5, opt1, (int64_t), (int64_t))  \
+  FN(32, 16, 16, 5, 4, opt1, (int64_t), (int64_t))  \
+  FN(16, 32, 16, 4, 5, opt1, (int64_t), (int64_t))  \
+  FN(16, 16, 16, 4, 4, opt1, (uint32_t), (int64_t)) \
+  FN(16, 8, 16, 4, 3, opt1, (int32_t), (int32_t))   \
+  FN(8, 16, 8, 3, 4, opt1, (int32_t), (int32_t))    \
+  FN(8, 8, 8, 3, 3, opt1, (int32_t), (int32_t))     \
+  FN(8, 4, 8, 3, 2, opt1, (int32_t), (int32_t))     \
+  FN(4, 8, 4, 2, 3, opt1, (int32_t), (int32_t))     \
   FN(4, 4, 4, 2, 2, opt1, (int32_t), (int32_t))
 
-FNS(sse2, sse2);
-FNS(ssse3, ssse3);
+FNS(sse2, sse2)
+FNS(ssse3, ssse3)
 
 #undef FNS
 #undef FN
@@ -543,23 +543,23 @@ DECLS(ssse3, ssse3);
            (unsigned int)(cast_prod(cast se * se) >> (wlog2 + hlog2));    \
   }
 
-#define FNS(opt1, opt2)                              \
-  FN(64, 64, 16, 6, 6, opt1, (int64_t), (int64_t));  \
-  FN(64, 32, 16, 6, 5, opt1, (int64_t), (int64_t));  \
-  FN(32, 64, 16, 5, 6, opt1, (int64_t), (int64_t));  \
-  FN(32, 32, 16, 5, 5, opt1, (int64_t), (int64_t));  \
-  FN(32, 16, 16, 5, 4, opt1, (int64_t), (int64_t));  \
-  FN(16, 32, 16, 4, 5, opt1, (int64_t), (int64_t));  \
-  FN(16, 16, 16, 4, 4, opt1, (uint32_t), (int64_t)); \
-  FN(16, 8, 16, 4, 3, opt1, (uint32_t), (int32_t));  \
-  FN(8, 16, 8, 3, 4, opt1, (uint32_t), (int32_t));   \
-  FN(8, 8, 8, 3, 3, opt1, (uint32_t), (int32_t));    \
-  FN(8, 4, 8, 3, 2, opt1, (uint32_t), (int32_t));    \
-  FN(4, 8, 4, 2, 3, opt1, (uint32_t), (int32_t));    \
+#define FNS(opt1, opt2)                             \
+  FN(64, 64, 16, 6, 6, opt1, (int64_t), (int64_t))  \
+  FN(64, 32, 16, 6, 5, opt1, (int64_t), (int64_t))  \
+  FN(32, 64, 16, 5, 6, opt1, (int64_t), (int64_t))  \
+  FN(32, 32, 16, 5, 5, opt1, (int64_t), (int64_t))  \
+  FN(32, 16, 16, 5, 4, opt1, (int64_t), (int64_t))  \
+  FN(16, 32, 16, 4, 5, opt1, (int64_t), (int64_t))  \
+  FN(16, 16, 16, 4, 4, opt1, (uint32_t), (int64_t)) \
+  FN(16, 8, 16, 4, 3, opt1, (uint32_t), (int32_t))  \
+  FN(8, 16, 8, 3, 4, opt1, (uint32_t), (int32_t))   \
+  FN(8, 8, 8, 3, 3, opt1, (uint32_t), (int32_t))    \
+  FN(8, 4, 8, 3, 2, opt1, (uint32_t), (int32_t))    \
+  FN(4, 8, 4, 2, 3, opt1, (uint32_t), (int32_t))    \
   FN(4, 4, 4, 2, 2, opt1, (uint32_t), (int32_t))
 
-FNS(sse2, sse);
-FNS(ssse3, ssse3);
+FNS(sse2, sse)
+FNS(ssse3, ssse3)
 
 #undef FNS
 #undef FN

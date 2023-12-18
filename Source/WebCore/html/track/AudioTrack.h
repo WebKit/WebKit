@@ -79,7 +79,7 @@ private:
     void configurationChanged(const PlatformAudioTrackConfiguration&) final;
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomString&) final;
+    void idChanged(TrackID) final;
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
@@ -95,7 +95,7 @@ private:
     WeakHashSet<AudioTrackClient> m_clients;
     Ref<AudioTrackPrivate> m_private;
     bool m_enabled { false };
-    
+
     Ref<AudioTrackConfiguration> m_configuration;
 };
 

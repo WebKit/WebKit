@@ -200,7 +200,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 
     {
         CompilerTimingScope timingScope("DFG", "bytecode parser");
-        parse(dfg);
+        if (!parse(dfg))
+            return CancelPath;
     }
 
     bool changed = false;
@@ -700,7 +701,7 @@ void Plan::cleanMustHandleValuesIfNecessary()
     }
 }
 
-std::unique_ptr<JITData> Plan::tryFinalizeJITData(const JITCode& jitCode)
+std::unique_ptr<JITData> Plan::tryFinalizeJITData(const DFG::JITCode& jitCode)
 {
     auto osrExitThunk = m_vm->getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
     auto exits = JITData::ExitVector::createWithSizeAndConstructorArguments(jitCode.m_osrExit.size(), osrExitThunk);

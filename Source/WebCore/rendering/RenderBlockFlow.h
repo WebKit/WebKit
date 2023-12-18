@@ -54,8 +54,8 @@ enum LineCount {
 class RenderBlockFlow : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderBlockFlow);
 public:
-    RenderBlockFlow(Type, Element&, RenderStyle&&, BaseTypeFlags = 0);
-    RenderBlockFlow(Type, Document&, RenderStyle&&, BaseTypeFlags = 0);
+    RenderBlockFlow(Type, Element&, RenderStyle&&, OptionSet<RenderElementType> = { });
+    RenderBlockFlow(Type, Document&, RenderStyle&&, OptionSet<RenderElementType> = { });
     virtual ~RenderBlockFlow();
         
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
@@ -76,6 +76,7 @@ protected:
     void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     void simplifiedNormalFlowLayout() override;
+    LayoutUnit shiftForAlignContent(LayoutUnit intrinsicLogicalHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     // RenderBlockFlows override these methods, since they are the only class that supports margin collapsing.
     LayoutUnit collapsedMarginBefore() const final { return maxPositiveMarginBefore() - maxNegativeMarginBefore(); }
@@ -149,7 +150,7 @@ public:
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
 
-        WeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
+        SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
 
         bool m_didBreakAtLineToAvoidWidow : 1;
     };
@@ -524,6 +525,7 @@ private:
     bool hasModernLineLayout() const;
     void layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     bool tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
+    void setStaticPositionsForSimpleOutOfFlowContent();
 
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
     void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;

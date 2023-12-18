@@ -1,0 +1,140 @@
+<style>
+@scope (.a) to (.b) {
+  .green-1 { color: green; }
+}
+@scope (.a) {
+  @scope (.b) {
+    .green-2 { color: green; }
+  }
+}
+div {
+  @scope (.a) {
+    .green-3 { color: green; }
+  }
+}
+video {
+  @scope (.a) {
+    .green-4 { color: green; }
+  }
+}
+@scope (.b) to (.a) {
+  .green-5 { color: green; }
+}
+@scope (.a) {
+  .green-6 :scope { color: green; }
+}
+@scope (.a) {
+  :scope :scope .green-7 { color: green; }
+}
+
+@scope (.a) {
+  span.green-9 { color: green; }
+}
+@scope (.b) {
+  .green-8 { color: green; }
+  .green-9 { color: red; }
+}
+@scope (.a) {
+  .green-8 { color: red; }
+  .green-9 { color: red; }
+}
+
+div {
+  @scope (&.a) to (&.foo) {
+    & {
+      .green-10 { color:green; }
+    }
+  }
+}
+
+div {
+  @scope (&) {
+    & {
+      .green-11 { color:green; }
+    }
+  }
+}
+
+@scope (#a) {
+  @scope (#b) {
+    :scope {
+      .green-12 {
+        color: green;
+      }
+    }
+  }
+  :scope {
+    .green-12 {
+      color: red;
+    }
+  }
+}
+
+</style>
+
+<div class="a">
+  <span class="green-1">should be green</span>
+  <div class="b">
+    <span class="green-1">should not be green</span>
+      <div class="j">
+        <span class="green-1">should not be green</span>
+      </div>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-2">should be green</span>
+  </div>
+</div>
+
+<div>
+  <span class="green-4">should not be green</span>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-5">should be green</span>
+  </div>
+</div>
+
+<div class="green-6">
+    <span class="a">should be green</span>
+</div>
+
+<div class="a">
+  <div class="a">
+    <div class="a">
+      <span class="green-7">should not be green</span>
+    </div>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-8">should be green</span>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-9">should be green</span>
+  </div>
+
+<div>
+  <div class="a b">
+    <div class="a b">
+      <div class="a b green-10">should be green</span>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="green-11">should be green</span>
+</div>
+
+<div id="a">
+  <div id="b">
+    <span class="green-12">should be green</div>
+  </div>
+</div>

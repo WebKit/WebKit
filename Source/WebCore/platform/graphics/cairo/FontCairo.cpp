@@ -57,11 +57,18 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         return;
 
     auto xOffset = point.x();
-    Vector<cairo_glyph_t> cairoGlyphs(numGlyphs);
+    Vector<cairo_glyph_t> cairoGlyphs;
+    cairoGlyphs.reserveInitialCapacity(numGlyphs);
     {
         auto yOffset = point.y();
         for (size_t i = 0; i < numGlyphs; ++i) {
-            cairoGlyphs[i] = { glyphs[i], xOffset, yOffset };
+            bool append = true;
+#if PLATFORM(WIN)
+            // GlyphBuffer::makeGlyphInvisible expects 0xFFFF glyph is invisible. However, DirectWrite shows a blank square for it.
+            append = glyphs[i] != 0xFFFF;
+#endif
+            if (append)
+                cairoGlyphs.append({ glyphs[i], xOffset, yOffset });
             xOffset += advances[i].width();
             yOffset += advances[i].height();
         }
@@ -126,7 +133,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return width ? width : m_spaceWidth;
 }
 
-ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, UChar32)
+ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t)
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=259205 We can't return RequireText or RequireEmoji
     // unless we have a way of knowing whether a font/glyph is color or not.

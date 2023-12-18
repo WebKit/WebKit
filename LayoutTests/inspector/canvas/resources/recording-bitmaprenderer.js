@@ -14,8 +14,12 @@ let canvas = document.createElement("canvas");
 canvas.width = 2;
 canvas.height = 2;
 
-function load() {
-    ctx = canvas.getContext("bitmaprenderer");
+function load({offscreen} = {}) {
+    if (offscreen) {
+        if (window.OffscreenCanvas)
+            ctx = new OffscreenCanvas(2, 2).getContext("bitmaprenderer");
+    } else
+        ctx = canvas.getContext("bitmaprenderer");
 
     cancelActions();
 

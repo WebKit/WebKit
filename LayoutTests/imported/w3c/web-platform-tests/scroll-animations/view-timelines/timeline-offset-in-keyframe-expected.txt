@@ -1,0 +1,9 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Timeline offsets in programmatic keyframes promise_test: Unhandled rejection with value: object "TypeError: The provided value is non-finite"
+TIMEOUT String offsets in programmatic keyframes Test timed out
+NOTRUN Invalid timeline offset in programmatic keyframe throws
+NOTRUN Timeline offsets in programmatic keyframes adjust for change in timeline
+NOTRUN Timeline offsets in programmatic keyframes resolved when updating the animation effect
+

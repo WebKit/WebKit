@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x110 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x109 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,14) size 756x27
           RenderInline {B} at (0,0) size 36x26
             RenderText {#text} at (0,0) size 36x26
@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 53x26
             RenderText {#text} at (0,0) size 53x26
               text run at (0,0) width 53: "three"
-        RenderBlock {DIV} at (14,68) size 756x28
-          RenderInline {I} at (0,0) size 40x27
-            RenderText {#text} at (0,0) size 40x27
+        RenderBlock {DIV} at (14,68) size 756x27
+          RenderInline {I} at (0,0) size 40x26
+            RenderText {#text} at (0,0) size 40x26
               text run at (0,0) width 40: "four"
 caret: position 3 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 1 {DIV} of body

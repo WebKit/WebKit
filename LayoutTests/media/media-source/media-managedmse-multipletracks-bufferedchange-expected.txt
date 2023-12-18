@@ -1,0 +1,23 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/webm; codecs="vp9,opus"'))
+RUN(sourceBuffer.appendBuffer(buffer))
+onbufferedchange called.
+e.addedRanges = [0, 9.999)
+e.removedRanges = []
+EVENT(bufferedchange)
+EVENT(update)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+video.buffered = [0, 9.999)
+sourceBuffer.buffered = [0, 9.999)
+RUN(source.endOfStream())
+video.buffered = [0, 10.0555)
+sourceBuffer.buffered = [0, 10.0555)
+EVENT(sourceended)
+onbufferedchange called.
+e.addedRanges = [9.999, 10.0555)
+e.removedRanges = []
+EVENT(bufferedchange)
+END OF TEST
+

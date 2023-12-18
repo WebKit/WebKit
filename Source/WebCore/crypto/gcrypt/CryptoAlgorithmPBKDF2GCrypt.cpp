@@ -61,7 +61,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(const Cry
 {
     auto output = gcryptDeriveBits(key.key(), parameters.saltVector(), parameters.hashIdentifier, parameters.iterations, length);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

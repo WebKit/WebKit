@@ -48,7 +48,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPUCompilationMessageType.h
     Modules/WebGPU/GPUComputePassDescriptor.h
     Modules/WebGPU/GPUComputePassEncoder.h
-    Modules/WebGPU/GPUComputePassTimestampLocation.h
     Modules/WebGPU/GPUComputePassTimestampWrites.h
     Modules/WebGPU/GPUComputePipeline.h
     Modules/WebGPU/GPUComputePipelineDescriptor.h
@@ -106,7 +105,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/GPURenderPassDescriptor.h
     Modules/WebGPU/GPURenderPassEncoder.h
     Modules/WebGPU/GPURenderPassLayout.h
-    Modules/WebGPU/GPURenderPassTimestampLocation.h
     Modules/WebGPU/GPURenderPassTimestampWrites.h
     Modules/WebGPU/GPURenderPipeline.h
     Modules/WebGPU/GPURenderPipelineDescriptor.h
@@ -209,7 +207,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPUCompositorIntegration.h
     Modules/WebGPU/InternalAPI/WebGPUComputePassDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPUComputePassEncoder.h
-    Modules/WebGPU/InternalAPI/WebGPUComputePassTimestampLocation.h
     Modules/WebGPU/InternalAPI/WebGPUComputePassTimestampWrites.h
     Modules/WebGPU/InternalAPI/WebGPUComputePipeline.h
     Modules/WebGPU/InternalAPI/WebGPUComputePipelineDescriptor.h
@@ -267,7 +264,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/WebGPU/InternalAPI/WebGPURenderPassDescriptor.h
     Modules/WebGPU/InternalAPI/WebGPURenderPassEncoder.h
     Modules/WebGPU/InternalAPI/WebGPURenderPassLayout.h
-    Modules/WebGPU/InternalAPI/WebGPURenderPassTimestampLocation.h
     Modules/WebGPU/InternalAPI/WebGPURenderPassTimestampWrites.h
     Modules/WebGPU/InternalAPI/WebGPURenderPipeline.h
     Modules/WebGPU/InternalAPI/WebGPURenderPipelineDescriptor.h
@@ -346,6 +342,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/cookie-store/CookieStoreGetOptions.h
 
+    Modules/credentialmanagement/CredentialRequestOptions.h
+
     Modules/encryptedmedia/CDMClient.h
     Modules/encryptedmedia/MediaKeySystemClient.h
     Modules/encryptedmedia/MediaKeySystemController.h
@@ -391,7 +389,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/highlight/AppHighlight.h
     Modules/highlight/Highlight.h
-    Modules/highlight/HighlightRegister.h
+    Modules/highlight/HighlightRegistry.h
     Modules/highlight/HighlightVisibility.h
 
     Modules/indexeddb/IDBActiveDOMObject.h
@@ -558,6 +556,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/speech/SpeechRecognitionResultData.h
     Modules/speech/SpeechRecognitionUpdate.h
     Modules/speech/SpeechRecognizer.h
+    Modules/speech/SpeechSynthesisErrorCode.h
+    Modules/speech/SpeechSynthesisUtterance.h
+    Modules/speech/SpeechSynthesisVoice.h
 
     Modules/storage/DummyStorageProvider.h
     Modules/storage/StorageConnection.h
@@ -666,6 +667,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     animation/AcceleratedTimeline.h
     animation/AnimationFrameRatePreset.h
+    animation/AnimationTimeline.h
     animation/CSSPropertyBlendingClient.h
     animation/CustomAnimationOptions.h
     animation/CompositeOperation.h
@@ -677,7 +679,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/IterationCompositeOperation.h
     animation/KeyframeAnimationOptions.h
     animation/KeyframeEffectOptions.h
+    animation/KeyframeInterpolation.h
     animation/PlaybackDirection.h
+    animation/ScrollAxis.h
+    animation/ScrollTimeline.h
+    animation/ScrollTimelineOptions.h
+    animation/ViewTimeline.h
+    animation/ViewTimelineOptions.h
     animation/WebAnimationTypes.h
 
     bindings/IDLTypes.h
@@ -873,24 +881,19 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/parser/CSSParserToken.h
     css/parser/CSSParserTokenRange.h
     css/parser/CSSSelectorParser.h
+    css/parser/CSSSelectorParserContext.h
 
     css/query/GenericMediaQueryTypes.h
     css/query/MediaQuery.h
 
+    css/typedom/CSSKeywordValue.h
+    css/typedom/CSSNumericValue.h
+    css/typedom/CSSStyleValue.h
+
+    css/typedom/numeric/CSSNumericBaseType.h
+    css/typedom/numeric/CSSNumericType.h
+
     cssjit/CompiledSelector.h
-
-    display/DisplayTree.h
-    display/DisplayTreeBuilder.h
-    display/DisplayView.h
-
-    display/compositing/DisplayLayerController.h
-
-    display/css/DisplayBox.h
-    display/css/DisplayCSSPainter.h
-    display/css/DisplayContainerBox.h
-    display/css/DisplayImageBox.h
-    display/css/DisplayReplacedBox.h
-    display/css/DisplayStyle.h
 
     dom/AbortSignal.h
     dom/AbstractRange.h
@@ -906,11 +909,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/CDATASection.h
     dom/CallbackResult.h
     dom/CharacterData.h
+    dom/CheckVisibilityOptions.h
     dom/CollectionIndexCache.h
     dom/CollectionIndexCacheInlines.h
     dom/Comment.h
     dom/ContainerNode.h
     dom/ContextDestructionObserver.h
+    dom/ContextDestructionObserverInlines.h
     dom/CrossOriginMode.h
     dom/CustomElementReactionQueue.h
     dom/DOMException.h
@@ -933,6 +938,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DocumentInlines.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
+    dom/DocumentParser.h
     dom/DocumentStorageAccess.h
     dom/DocumentType.h
     dom/Element.h
@@ -968,11 +974,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FocusOptions.h
     dom/FragmentDirectiveParser.h
     dom/FragmentDirectiveRangeFinder.h
-    dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
     dom/ImageOverlay.h
     dom/InlineStyleSheetOwner.h
+    dom/InvokeEvent.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h
     dom/LiveNodeListInlines.h
@@ -997,6 +1003,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeRenderStyle.h
     dom/NodeTraversal.h
     dom/OverflowEvent.h
+    dom/ParserContentPolicy.h
     dom/PointerEvent.h
     dom/PointerEventTypeNames.h
     dom/PopoverData.h
@@ -1036,6 +1043,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Touch.h
     dom/Traversal.h
     dom/TreeScope.h
+    dom/TreeScopeInlines.h
     dom/TreeScopeOrderedMap.h
     dom/TreeWalker.h
     dom/TypedElementDescendantIterator.h
@@ -1047,6 +1055,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/UserGestureIndicator.h
     dom/UserTypingGestureIndicator.h
     dom/ValidityStateFlags.h
+    dom/ViewTransition.h
+    dom/ViewTransitionUpdateCallback.h
     dom/ViewportArguments.h
     dom/VisibilityChangeClient.h
     dom/VisibilityState.h
@@ -1083,6 +1093,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/FrameSelection.h
     editing/HTMLInterchange.h
     editing/InlineRunAndOffset.h
+    editing/MarkupExclusionRule.h
     editing/SelectionGeometryGatherer.h
     editing/SerializedAttachmentData.h
     editing/SmartReplace.h
@@ -1238,6 +1249,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/MediaDocument.h
     html/MediaElementSession.h
     html/MediaError.h
+    html/OffscreenCanvas.h
     html/PDFDocument.h
     html/PluginDocument.h
     html/StepRange.h
@@ -1256,8 +1268,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/canvas/WebGLAny.h
     html/canvas/WebGLContextAttributes.h
     html/canvas/WebGLExtensionAny.h
-    html/canvas/WebGLExtensionAnyInlines.h
-    html/canvas/WebGLStateTracker.h
 
     html/forms/FileIconLoader.h
 
@@ -1273,6 +1283,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/track/TextTrackCue.h
     html/track/TrackBase.h
     html/track/VTTCue.h
+    html/track/VTTRegion.h
     html/track/VideoTrack.h
     html/track/VideoTrackClient.h
 
@@ -1389,6 +1400,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/MixedContentChecker.h
     loader/NavigationAction.h
     loader/NavigationRequester.h
+    loader/NavigationScheduler.h
     loader/NetscapePlugInStreamLoader.h
     loader/PCMSites.h
     loader/PCMTokens.h
@@ -1491,7 +1503,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/FrameView.h
     page/GlobalFrameIdentifier.h
     page/GlobalWindowIdentifier.h
-    page/HandleMouseEventResult.h
+    page/HandleUserInputEventResult.h
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
     page/LayoutMilestone.h
@@ -1532,7 +1544,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteFrame.h
     page/RemoteFrameClient.h
     page/RemoteFrameView.h
-    page/RemoteMouseEventData.h
+    page/RemoteUserInputEventData.h
     page/RenderingUpdateScheduler.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h
@@ -1556,6 +1568,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
     page/TranslationContextMenuInfo.h
+    page/UndoManager.h
     page/UserContentController.h
     page/UserContentProvider.h
     page/UserContentTypes.h
@@ -1626,7 +1639,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ContentType.h
     platform/ContextMenu.h
     platform/ContextMenuItem.h
-    platform/ControlStates.h
     platform/Cookie.h
     platform/CountedUserActivity.h
     platform/Cursor.h
@@ -1671,6 +1683,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MediaCapabilitiesEncodingInfo.h
     platform/MediaCapabilitiesInfo.h
     platform/MediaDescription.h
+    platform/MediaPromiseTypes.h
     platform/MediaSample.h
     platform/MediaSelectionOption.h
     platform/MediaSessionGroupIdentifier.h
@@ -1694,6 +1707,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PlatformEvent.h
     platform/PlatformExportMacros.h
     platform/PlatformKeyboardEvent.h
+    platform/PlatformMediaError.h
     platform/PlatformMouseEvent.h
     platform/PlatformPasteboard.h
     platform/PlatformScreen.h
@@ -1918,6 +1932,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageBufferBackendParameters.h
+    platform/graphics/ImageBufferPipe.h
     platform/graphics/ImageBufferPlatformBackend.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
@@ -1998,6 +2013,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ScreenDataOverrides.h
     platform/graphics/ShouldLocalizeAxisNames.h
     platform/graphics/SourceBrush.h
+    platform/graphics/SourceBrushLogicalGradient.h
     platform/graphics/SourceBufferPrivate.h
     platform/graphics/SourceBufferPrivateClient.h
     platform/graphics/SourceImage.h
@@ -2018,6 +2034,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/VideoTrackPrivateClient.h
     platform/graphics/WidthCache.h
+    platform/graphics/WidthIterator.h
     platform/graphics/WindRule.h
 
     platform/graphics/angle/ANGLEHeaders.h
@@ -2041,6 +2058,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/controls/SearchFieldResultsPart.h
     platform/graphics/controls/SliderThumbPart.h
     platform/graphics/controls/SliderTrackPart.h
+    platform/graphics/controls/SwitchThumbPart.h
+    platform/graphics/controls/SwitchTrackPart.h
     platform/graphics/controls/TextAreaPart.h
     platform/graphics/controls/TextFieldPart.h
     platform/graphics/controls/ToggleButtonPart.h
@@ -2104,8 +2123,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/iso/ISOTrackEncryptionBox.h
     platform/graphics/iso/ISOVTTCue.h
 
-    platform/graphics/libwpe/PlatformDisplayLibWPE.h
-
     platform/graphics/opentype/OpenTypeMathData.h
     platform/graphics/opentype/OpenTypeVerticalData.h
 
@@ -2152,6 +2169,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/MediaStreamTrackPrivate.h
     platform/mediastream/MeteringMode.h
     platform/mediastream/PhotoCapabilities.h
+    platform/mediastream/PhotoSettings.h
     platform/mediastream/RedEyeReduction.h
     platform/mediastream/RTCDataChannelHandler.h
     platform/mediastream/RTCDataChannelHandlerClient.h
@@ -2218,6 +2236,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkStateNotifier.h
     platform/network/NetworkStorageSession.h
     platform/network/NetworkingContext.h
+    platform/network/OrganizationStorageAccessPromptQuirk.h
     platform/network/ParsedContentRange.h
     platform/network/ParsedContentType.h
     platform/network/ParsedRequestRange.h
@@ -2342,6 +2361,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderView.h
     rendering/RenderWidget.h
     rendering/TextBoxSelectableRange.h
+    rendering/TransformOperationData.h
 
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h
@@ -2404,6 +2424,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/TextUnderlineOffset.h
     rendering/style/WillChangeData.h
 
+    rendering/svg/legacy/LegacyRenderSVGModelObject.h
     rendering/svg/RenderSVGModelObject.h
     rendering/svg/SVGBoundingBoxComputation.h
     rendering/svg/SVGRenderSupport.h
@@ -2414,7 +2435,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     storage/StorageMap.h
     storage/StorageNamespace.h
     storage/StorageNamespaceProvider.h
-    storage/StorageQuotaManager.h
     storage/StorageType.h
     storage/StorageUtilities.h
 
@@ -2427,6 +2447,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/StyleValidity.h
     style/Styleable.h
 
+    svg/SVGElement.h
     svg/SVGLengthContext.h
     svg/SVGLengthValue.h
     svg/SVGParserUtilities.h
@@ -2601,7 +2622,3 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/WritableStreamInternalsBuiltins.h
 )
-
-if (ENABLE_OPENCDM)
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS platform/encryptedmedia/CDMOpenCDMTypes.h)
-endif ()

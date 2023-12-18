@@ -116,7 +116,8 @@ def get_load_func(func_name, type_functions):
     snippet += "    {\n"
     for gl_type, load_function in sorted(type_functions.items()):
         snippet += "        case " + gl_type + ":\n"
-        requiresConversion = str('LoadToNative<' not in load_function).lower()
+        requiresConversion = str('LoadToNative<' not in load_function and
+                                 'LoadCompressedToNative<' not in load_function).lower()
         snippet += "            return LoadImageFunctionInfo(" + load_function + ", " + requiresConversion + ");\n"
     snippet += "        default:\n"
     snippet += "            UNREACHABLE();\n"

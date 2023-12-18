@@ -26,14 +26,14 @@ struct CryptoParams {
                absl::string_view cs,
                absl::string_view kp,
                absl::string_view sp)
-      : tag(t), cipher_suite(cs), key_params(kp), session_params(sp) {}
+      : tag(t), crypto_suite(cs), key_params(kp), session_params(sp) {}
 
   bool Matches(const CryptoParams& params) const {
-    return (tag == params.tag && cipher_suite == params.cipher_suite);
+    return (tag == params.tag && crypto_suite == params.crypto_suite);
   }
 
   int tag;
-  std::string cipher_suite;
+  std::string crypto_suite;
   std::string key_params;
   std::string session_params;
 };

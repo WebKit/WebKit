@@ -361,7 +361,8 @@ void WebEditorClient::textFieldDidBeginEditing(Element& element)
     if (!inputElement)
         return;
 
-    auto webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    RefPtr frame = element.document().frame();
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page.get(), *inputElement, webFrame.get());

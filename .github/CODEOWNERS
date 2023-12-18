@@ -74,16 +74,16 @@
 # ================================================================================
 # Web Inspector
 
-/Source/JavaScriptCore/debugger @patrickangle
-/Source/JavaScriptCore/inspector @patrickangle
-/Source/WebCore/inspector @patrickangle
+/Source/JavaScriptCore/debugger @dcrousso @patrickangle
+/Source/JavaScriptCore/inspector @dcrousso @patrickangle
+/Source/WebCore/inspector @dcrousso @patrickangle
 /Source/WebInspectorUI @dcrousso @patrickangle
-/Source/WebKit/UIProcess/Inspector @patrickangle
-/Source/WebKit/WebProcess/Inspector @patrickangle
-/Tools/Scripts/webkitpy/inspector @patrickangle
-/LayoutTests/http/tests/inspector @patrickangle
-/LayoutTests/http/tests/websocket/tests/hybi/inspector @patrickangle
-/LayoutTests/inspector @patrickangle
+/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
+/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
+/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
+/LayoutTests/inspector @dcrousso @patrickangle
 
 # ================================================================================
 # WebCore
@@ -95,6 +95,8 @@
 /Source/WebCore/editing @rniwa
 /LayoutTests/editing @rniwa
 
+/Source/WebCore/Modules/applepay @aprotyas
+/Source/WebCore/Modules/applepay-ams-ui @aprotyas
 /Source/WebCore/Modules/applicationmanifest/ @marcoscaceres
 /Source/WebCore/Modules/beacon @cdumez
 /Source/WebCore/Modules/contact-picker @marcoscaceres
@@ -102,7 +104,7 @@
 /Source/WebCore/Modules/geolocation @cdumez @marcoscaceres
 /Source/WebCore/Modules/model-element @graouts @marcoscaceres
 /Source/WebCore/Modules/notifications @cdumez
-/Source/WebCore/Modules/paymentrequest @marcoscaceres
+/Source/WebCore/Modules/paymentrequest @aprotyas @marcoscaceres
 /Source/WebCore/Modules/permissions @marcoscaceres
 /Source/WebCore/Modules/screen-wake-lock @marcoscaceres
 /Source/WebCore/Modules/web-locks @cdumez
@@ -123,9 +125,11 @@
 
 /Source/WebCore/crypto/ @zdobersek
 
-/LayoutTests/http/tests/paymentrequest @marcoscaceres
+/LayoutTests/http/tests/paymentrequest @aprotyas @marcoscaceres
+/LayoutTests/http/tests/ssl/applepay @aprotyas
+/LayoutTests/http/tests/ssl/applepay-ams-ui @aprotyas
 /LayoutTests/imported/w3c/web-platform-tests/geolocation-API @marcoscaceres
-/LayoutTests/imported/w3c/web-platform-tests/payment-request @marcoscaceres
+/LayoutTests/imported/w3c/web-platform-tests/payment-request @aprotyas @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/permissions @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/screen-orientation @marcoscaceres
 /LayoutTests/imported/w3c/web-platform-tests/web-share @marcoscaceres
@@ -140,11 +144,14 @@
 /Source/WebKit/NetworkProcess @cdumez
 /Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/Platform @cdumez
+/Source/WebKit/Platform/*/Payment* @aprotyas
 /Source/WebKit/Resources/SandboxProfiles @brentfulgham @pvollan
+/Source/WebKit/Shared/ApplePay @aprotyas
 /Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess @cdumez
+/Source/WebKit/WebProcess/ApplePay @aprotyas
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
 
@@ -158,6 +165,11 @@
 
 /Source/cmake/WebKitCompilerFlags.cmake @mcatanzaro
 /Source/cmake/WebKitFeatures.cmake @mcatanzaro
+
+# ================================================================================
+# Xcode
+
+*.xcconfig @emw-apple
 
 # ================================================================================
 # Linux graphics
@@ -198,6 +210,19 @@ xdg/ @WebKit/glib-reviewers
 wpe/ @WebKit/glib-reviewers @zdobersek
 **/wpe/qt/ @philn
 
+# Don't want to own these
+/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/util/ar/testdata/linux
+/Source/ThirdParty/libwebrtc/Source/third_party/libaom/source/config/linux
+/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/examples/peerconnection/client/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_capture/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/test/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/audio_quality/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/video_quality_toolchain/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_tools/testing/golang/linux
+
 /LayoutTests/platform/glib/
 /LayoutTests/platform/gtk/
 /LayoutTests/platform/gtk4/
@@ -208,11 +233,10 @@ wpe/ @WebKit/glib-reviewers @zdobersek
 # ================================================================================
 # WebGPU
 
-/Source/WebCore/Modules/webgpu @litherum @mwyrzykowski
-/Source/WebCore/PAL/pal/graphics/WebGPU @litherum @mwyrzykowski
-/Source/WebGPU @litherum @mwyrzykowski
-/Source/WebKit/Shared/WebGPU @litherum @mwyrzykowski
-/Source/WebKit/WebProcess/GPU/graphics/WebGPU @litherum @mwyrzykowski
-/Source/WebKit/GPUProcess/graphics/WebGPU @litherum @mwyrzykowski
+/Source/WebCore/Modules/webgpu @tadeuzagallo @mwyrzykowski
+/Source/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/Shared/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/WebProcess/GPU/graphics/WebGPU @tadeuzagallo @mwyrzykowski
+/Source/WebKit/GPUProcess/graphics/WebGPU @tadeuzagallo @mwyrzykowski
 
-/Source/WebGPU/WGSL @litherum @djg @tadeuzagallo
+/Source/WebGPU/WGSL @mwyrzykowski @djg @tadeuzagallo

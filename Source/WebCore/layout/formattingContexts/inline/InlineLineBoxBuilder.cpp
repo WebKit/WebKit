@@ -63,8 +63,14 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
+    if (m_lineHasRubyContent)
+        RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext());
     computeLineBoxGeometry(lineBox);
     adjustOutsideListMarkersPosition(lineBox);
+
+    if (auto adjustment = formattingContext().quirks().adjustmentForLineGridLineSnap(lineBox))
+        expandAboveRootInlineBox(lineBox, *adjustment);
+
     return lineBox;
 }
 
@@ -214,11 +220,6 @@ void LineBoxBuilder::setLayoutBoundsForInlineBox(InlineLevelBox& inlineBox, Font
                 descent += halfLeading;
             }
         }
-        if (inlineBox.layoutBox().isRubyBase()) {
-            auto [over, under] = RubyFormattingContext { formattingContext() }.annotationContributionToLayoutBounds(inlineBox.layoutBox());
-            ascent += over;
-            descent += under;
-        }
         return { ascent, descent };
     }();
 
@@ -313,7 +314,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto& inlineLevelBoxGeometry = formattingContext().geometryForBox(layoutBox);
         auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
         auto ascent = [&]() -> InlineLayoutUnit {
-            if (inlineLayoutState().shouldNotSynthesizeInlineBlockBaseline())
+            if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
                 return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
 
             if (layoutBox.isInlineBlockBox()) {
@@ -362,15 +363,15 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         }
         if (run.isLineSpanningInlineBoxStart()) {
             auto marginStart = LayoutUnit { };
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
                 marginStart = formattingContext.geometryForBox(layoutBox).marginStart();
-#endif
             logicalLeft += std::max(0_lu, marginStart);
             auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
+            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
+            m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
             continue;
         }
         if (run.isInlineBoxStart()) {
@@ -384,8 +385,10 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
+            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
+            m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
             continue;
         }
         if (run.isInlineBoxEnd()) {
@@ -426,7 +429,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, lineBreakBox);
             lineBox.addInlineLevelBox(WTFMove(lineBreakBox));
 
-            if (inlineLayoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
+            if (layoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
                 lineBox.parentInlineBox(run).setHasContent();
             continue;
         }
@@ -690,9 +693,8 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
 
 void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
 {
-    auto floatingContext = FloatingContext { formattingContext(), formattingContext().placedFloats() };
     auto lineBoxRect = lineBox.logicalRect();
-    auto floatConstraints = floatingContext.constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
+    auto floatConstraints = formattingContext().floatingContext().constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
 
     auto lineBoxOffset = lineBoxRect.left() - lineLayoutResult().lineGeometry.initialLogicalLeftIncludingIntrusiveFloats;
     auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
@@ -706,7 +708,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
         auto listMarkerInitialOffsetFromRootInlineBox = listMarkerInlineLevelBox.logicalLeft() - rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat;
         auto logicalLeft = listMarkerInitialOffsetFromRootInlineBox;
         auto nestedListMarkerMarginStart = [&] {
-            auto nestedOffset = inlineLayoutState().nestedListMarkerOffset(listMarkerBox);
+            auto nestedOffset = layoutState().nestedListMarkerOffset(listMarkerBox);
             if (nestedOffset == LayoutUnit::min())
                 return 0_lu;
             // Nested list markers (in standards mode) share the same line and have offsets as if they had dedicated lines.
@@ -735,6 +737,14 @@ void LineBoxBuilder::adjustMarginStartForListMarker(const ElementBox& listMarker
     // Make sure that the line content does not get pulled in to logical left direction due to
     // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
     listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + nestedListMarkerMarginStart - LayoutUnit { rootInlineBoxOffset }, listMarkerGeometry.marginEnd() - nestedListMarkerMarginStart + LayoutUnit { rootInlineBoxOffset } });
+}
+
+void LineBoxBuilder::expandAboveRootInlineBox(LineBox& lineBox, InlineLayoutUnit expansion) const
+{
+    lineBox.rootInlineBox().setLogicalTop(lineBox.rootInlineBox().logicalTop() + expansion);
+    auto lineBoxRect = lineBox.logicalRect();
+    lineBoxRect.expandVertically(expansion);
+    lineBox.setLogicalRect(lineBoxRect);
 }
 
 }

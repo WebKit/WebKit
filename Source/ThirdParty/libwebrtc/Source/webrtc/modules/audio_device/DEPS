@@ -9,5 +9,6 @@ specific_include_rules = {
   ],
   "audio_device_impl\.cc": [
     "+sdk/objc",
+    "+sdk/android",
   ],
 }

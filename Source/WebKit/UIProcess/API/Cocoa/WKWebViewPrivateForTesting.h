@@ -59,6 +59,7 @@ struct WKAppPrivacyReportTestingData {
 - (CGFloat)_pageScale;
 
 - (void)_setContinuousSpellCheckingEnabledForTesting:(BOOL)enabled;
+- (void)_setGrammarCheckingEnabledForTesting:(BOOL)enabled;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 
 - (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback;

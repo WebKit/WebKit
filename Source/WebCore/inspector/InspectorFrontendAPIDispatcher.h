@@ -90,7 +90,7 @@ private:
     void invalidatePendingResponses();
     ValueOrException evaluateExpression(const String&);
 
-    WeakPtr<Page> m_frontendPage;
+    SingleThreadWeakPtr<Page> m_frontendPage;
     Vector<std::pair<String, EvaluationResultHandler>> m_queuedEvaluations;
     HashMap<Ref<DOMPromise>, EvaluationResultHandler> m_pendingResponses;
     bool m_frontendLoaded { false };

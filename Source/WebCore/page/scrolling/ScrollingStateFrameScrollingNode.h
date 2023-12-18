@@ -39,7 +39,7 @@ class Scrollbar;
 
 class ScrollingStateFrameScrollingNode final : public ScrollingStateScrollingNode {
 public:
-    static Ref<ScrollingStateFrameScrollingNode> create(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
+    template<typename... Args> static Ref<ScrollingStateFrameScrollingNode> create(Args&&... args) { return adoptRef(*new ScrollingStateFrameScrollingNode(std::forward<Args>(args)...)); }
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) override;
 
@@ -119,10 +119,63 @@ public:
     
     bool overlayScrollbarsEnabled() const { return m_overlayScrollbarsEnabled; }
     WEBCORE_EXPORT void setOverlayScrollbarsEnabled(bool);
+
+    WEBCORE_EXPORT bool isMainFrame() const;
     
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
 private:
+    WEBCORE_EXPORT ScrollingStateFrameScrollingNode(
+        bool isMainFrame,
+        ScrollingNodeID,
+        Vector<Ref<WebCore::ScrollingStateNode>>&& children,
+        OptionSet<ScrollingStateNodeProperty> changedProperties,
+        std::optional<WebCore::PlatformLayerIdentifier>,
+        FloatSize scrollableAreaSize,
+        FloatSize totalContentsSize,
+        FloatSize reachableContentsSize,
+        FloatPoint scrollPosition,
+        IntPoint scrollOrigin,
+        ScrollableAreaParameters&&,
+#if ENABLE(SCROLLING_THREAD)
+        OptionSet<SynchronousScrollingReason> synchronousScrollingReasons,
+#endif
+        RequestedScrollData&&,
+        FloatScrollSnapOffsetsInfo&&,
+        std::optional<unsigned> currentHorizontalSnapPointIndex,
+        std::optional<unsigned> currentVerticalSnapPointIndex,
+        bool isMonitoringWheelEvents,
+        std::optional<PlatformLayerIdentifier> scrollContainerLayer,
+        std::optional<PlatformLayerIdentifier> scrolledContentsLayer,
+        std::optional<PlatformLayerIdentifier> horizontalScrollbarLayer,
+        std::optional<PlatformLayerIdentifier> verticalScrollbarLayer,
+        bool mouseIsOverContentArea,
+        MouseLocationState&&,
+        ScrollbarHoverState&&,
+        ScrollbarEnabledState&&,
+        RequestedKeyboardScrollData&&,
+        float frameScaleFactor,
+        EventTrackingRegions&&,
+        std::optional<PlatformLayerIdentifier> rootContentsLayer,
+        std::optional<PlatformLayerIdentifier> counterScrollingLayer,
+        std::optional<PlatformLayerIdentifier> insetClipLayer,
+        std::optional<PlatformLayerIdentifier> contentShadowLayer,
+        int headerHeight,
+        int footerHeight,
+        ScrollBehaviorForFixedElements&&,
+        float topContentInset,
+        bool fixedElementsLayoutRelativeToFrame,
+        bool visualViewportIsSmallerThanLayoutViewport,
+        bool asyncFrameOrOverflowScrollingEnabled,
+        bool wheelEventGesturesBecomeNonBlocking,
+        bool scrollingPerformanceTestingEnabled,
+        FloatRect layoutViewport,
+        FloatPoint minLayoutViewportOrigin,
+        FloatPoint maxLayoutViewportOrigin,
+        std::optional<FloatSize> overrideVisualViewportSize,
+        bool overlayScrollbarsEnabled
+    );
+
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
     ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode&, ScrollingStateTree&);
 

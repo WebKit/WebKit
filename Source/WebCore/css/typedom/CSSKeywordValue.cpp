@@ -54,7 +54,7 @@ Ref<CSSKeywordValue> CSSKeywordValue::rectifyKeywordish(CSSKeywordish&& keywordi
 ExceptionOr<Ref<CSSKeywordValue>> CSSKeywordValue::create(const String& value)
 {
     if (value.isEmpty())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     
     return adoptRef(*new CSSKeywordValue(value));
 }
@@ -62,7 +62,7 @@ ExceptionOr<Ref<CSSKeywordValue>> CSSKeywordValue::create(const String& value)
 ExceptionOr<void> CSSKeywordValue::setValue(const String& value)
 {
     if (value.isEmpty())
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     
     m_value = value;
     return { };

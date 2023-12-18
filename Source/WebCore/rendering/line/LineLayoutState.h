@@ -35,6 +35,7 @@
 
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
+#include "RenderFragmentedFlow.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -116,14 +117,13 @@ public:
     LayoutUnit endLineLogicalTop() const { return m_endLineLogicalTop; }
     void setEndLineLogicalTop(LayoutUnit logicalTop) { m_endLineLogicalTop = logicalTop; }
 
-    LegacyRootInlineBox* endLine() const { return m_endLine; }
+    LegacyRootInlineBox* endLine() const { return m_endLine.get(); }
     void setEndLine(LegacyRootInlineBox* line) { m_endLine = line; }
 
     LayoutUnit adjustedLogicalLineTop() const { return m_adjustedLogicalLineTop; }
     void setAdjustedLogicalLineTop(LayoutUnit value) { m_adjustedLogicalLineTop = value; }
 
-    RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow; }
-    void setFragmentedFlow(RenderFragmentedFlow* thread) { m_fragmentedFlow = thread; }
+    RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow.get(); }
 
     bool endLineMatched() const { return m_endLineMatched; }
     void setEndLineMatched(bool endLineMatched) { m_endLineMatched = endLineMatched; }
@@ -156,11 +156,11 @@ public:
 private:
     LineInfo m_lineInfo;
     LayoutUnit m_endLineLogicalTop;
-    LegacyRootInlineBox* m_endLine { nullptr };
+    WeakPtr<LegacyRootInlineBox> m_endLine;
 
     LayoutUnit m_adjustedLogicalLineTop;
 
-    RenderFragmentedFlow* m_fragmentedFlow { nullptr };
+    SingleThreadWeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
 
     FloatList m_floatList;
     // FIXME: Should this be a range object instead of two ints?

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,15 @@
 #include "JSLock.h"
 #include "ObjectConstructor.h"
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorAuditAgent);
 
 InspectorAuditAgent::InspectorAuditAgent(AgentContext& context)
     : InspectorAgentBase("Audit"_s)

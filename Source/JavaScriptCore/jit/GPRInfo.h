@@ -71,7 +71,7 @@ public:
     bool operator!() const { return m_gpr == InvalidGPRReg; }
     explicit operator bool() const { return m_gpr != InvalidGPRReg; }
 
-    friend constexpr bool operator==(JSValueRegs, JSValueRegs) = default;
+    friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
 
     constexpr GPRReg gpr() const { return m_gpr; }
     constexpr GPRReg tagGPR() const { return InvalidGPRReg; }
@@ -196,7 +196,7 @@ public:
             || static_cast<GPRReg>(m_payloadGPR) != InvalidGPRReg;
     }
 
-    friend constexpr bool operator==(JSValueRegs, JSValueRegs) = default;
+    friend constexpr bool operator==(const JSValueRegs&, const JSValueRegs&) = default;
     
     constexpr GPRReg tagGPR() const { return m_tagGPR; }
     constexpr GPRReg payloadGPR() const { return m_payloadGPR; }
@@ -478,13 +478,23 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = X86Registers::eax;
+
+    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
+
     static constexpr GPRReg wasmScratchGPR0 = X86Registers::eax;
 #if !OS(WINDOWS)
     static constexpr GPRReg wasmScratchGPR1 = X86Registers::r10;
+#else
+    static constexpr GPRReg wasmScratchCSR0 = regCS2;
 #endif
     static constexpr GPRReg wasmContextInstancePointer = regCS0;
+#if !OS(WINDOWS)
     static constexpr GPRReg wasmBaseMemoryPointer = regCS3;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS4;
+#else
+    static constexpr GPRReg wasmBaseMemoryPointer = regCS5;
+    static constexpr GPRReg wasmBoundsCheckingSizeRegister = regCS6;
+#endif
 
     // FIXME: I believe that all uses of this are dead in the sense that it just causes the scratch
     // register allocator to select a different register and potentially spill things. It would be better
@@ -589,6 +599,8 @@ public:
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARMRegisters::r4;
 
+    static constexpr GPRReg handlerGPR = InvalidGPRReg;
+
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;
     static constexpr GPRReg wasmContextInstancePointer = regCS0;
@@ -692,7 +704,10 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARM64Registers::x8;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARM64Registers::x9;
+
+    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
     static constexpr GPRReg patchpointScratchRegister = ARM64Registers::ip0;
+
     static constexpr GPRReg wasmScratchGPR0 = ARM64Registers::x9;
     static constexpr GPRReg wasmScratchGPR1 = ARM64Registers::x10;
     static constexpr GPRReg wasmScratchGPR2 = ARM64Registers::x11;
@@ -801,6 +816,10 @@ public:
     static constexpr GPRReg returnValueGPR = regT0;
     static constexpr GPRReg returnValueGPR2 = regT1;
     static constexpr GPRReg nonPreservedNonReturnGPR = regT2;
+    static constexpr GPRReg nonPreservedNonArgumentGPR0 = regT0;
+    static constexpr GPRReg nonPreservedNonArgumentGPR1 = regT1;
+
+    static constexpr GPRReg handlerGPR = InvalidGPRReg;
 
     static constexpr GPRReg toRegister(unsigned index)
     {
@@ -901,6 +920,8 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = RISCV64Registers::x12; // regT2
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = RISCV64Registers::x5; // regT8
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = RISCV64Registers::x6; // regT9
+
+    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR1;
 
     static constexpr GPRReg wasmScratchGPR0 = RISCV64Registers::x6; // regT9
     static constexpr GPRReg wasmScratchGPR1 = RISCV64Registers::x7; // regT10
@@ -1173,7 +1194,7 @@ public:
             GPRInfo::argumentGPR2, GPRInfo::argumentGPR3,
             GPRInfo::regT2,        GPRInfo::regT3,
             GPRInfo::regT4,        GPRInfo::regT5,
-            GPRInfo::regT6,        GPRInfo::regT7);
+            GPRInfo::regT6);
 #endif
 #endif
     }

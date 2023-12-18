@@ -108,9 +108,9 @@ private:
         Atomic<void*> array[1];
     };
     
-    static unsigned hash(void* ptr)
+    static unsigned hash(const void* ptr)
     {
-        return PtrHash<void*>::hash(ptr);
+        return PtrHash<const void*>::hash(ptr);
     }
     
     void initialize();

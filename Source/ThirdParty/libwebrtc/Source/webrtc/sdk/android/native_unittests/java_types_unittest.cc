@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "sdk/android/native_api/jni/java_types.h"
+
 #include <memory>
 #include <vector>
 
 #include "sdk/android/generated_native_unittests_jni/JavaTypesTestHelper_jni.h"
-#include "sdk/android/native_api/jni/java_types.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -26,7 +27,9 @@ TEST(JavaTypesTest, TestJavaToNativeStringMap) {
   std::map<std::string, std::string> output = JavaToNativeStringMap(env, j_map);
 
   std::map<std::string, std::string> expected{
-      {"one", "1"}, {"two", "2"}, {"three", "3"},
+      {"one", "1"},
+      {"two", "2"},
+      {"three", "3"},
   };
   EXPECT_EQ(expected, output);
 }

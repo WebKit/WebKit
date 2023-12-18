@@ -40,11 +40,11 @@
 #import <WebCore/Editor.h>
 #import <WebCore/ElementInlines.h>
 #import <WebCore/FrameDestructionObserver.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/LocalFrame.h>
-#import <WebCore/LocalFrameView.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PagePasteboardContext.h>
@@ -67,13 +67,9 @@ using DragImage = NSImage *;
 using DragImage = CGImageRef;
 #endif
 
-static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, LocalFrame& frame)
+static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const IntSize& size, Frame& frame)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
-    if (!localMainFrame)
-        return nullptr;
-
-    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(localMainFrame->view()) });
+    auto bitmap = ShareableBitmap::create({ size, screenColorSpace(frame.mainFrame().virtualView()) });
     if (!bitmap)
         return nullptr;
 
@@ -91,7 +87,7 @@ static RefPtr<ShareableBitmap> convertDragImageToBitmap(DragImage image, const I
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, LocalFrame& frame)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
 {
     auto& image = dragItem.image;
 
@@ -157,23 +153,25 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     
     auto imageBuffer = image->image()->data();
 
-    SharedMemory::Handle imageHandle;
+    std::optional<SharedMemory::Handle> imageHandle;
     {
         auto sharedMemoryBuffer = SharedMemory::copyBuffer(*imageBuffer);
         if (!sharedMemoryBuffer)
             return;
-        if (auto handle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
-            imageHandle = WTFMove(*handle);
+        imageHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!imageHandle)
+            return;
     }
     RetainPtr<CFDataRef> data = archive ? archive->rawDataRepresentation() : 0;
-    SharedMemory::Handle archiveHandle;
+    std::optional<SharedMemory::Handle> archiveHandle;
     if (data) {
         auto archiveBuffer = SharedBuffer::create((__bridge NSData *)data.get());
         auto archiveSharedMemoryBuffer = SharedMemory::copyBuffer(archiveBuffer.get());
         if (!archiveSharedMemoryBuffer)
             return;
-        if (auto handle = archiveSharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
-            archiveHandle = WTFMove(*handle);
+        archiveHandle = archiveSharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!archiveHandle)
+            return;
     }
 
     String filename = String([response suggestedFilename]);
@@ -183,7 +181,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
             filename = downloadFilename;
     }
 
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), WTFMove(archiveHandle), element.document().originIdentifierForPasteboard()));
+    m_page->send(Messages::WebPageProxy::SetPromisedDataForImage(pasteboardName, WTFMove(*imageHandle), filename, extension, title, String([[response URL] absoluteString]), WTF::userVisibleString(url), WTFMove(*archiveHandle), element.document().originIdentifierForPasteboard()));
 }
 
 #else

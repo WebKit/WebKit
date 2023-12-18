@@ -1,0 +1,24 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+function eventhandler1() {
+    label.removeEventListener("DOMSubtreeModified", eventhandler1);
+    label.appendChild(embed);
+}
+
+function eventhandler2() {
+    label.addEventListener("DOMSubtreeModified", eventhandler1);
+    label.appendChild(embed);
+}
+
+function eventhandler3() {
+    embed.align = "Right";
+    setTimeout(eventhandler3, 0);
+}
+</script>
+
+<style onload="setTimeout(eventhandler3, 0)">AA</style>
+<label id="label">This test passes if it doesn't crash.</label>
+<embed id="embed" src="data:text/html,foo" onload="eventhandler2()">AA</embed>

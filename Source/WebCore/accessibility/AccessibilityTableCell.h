@@ -63,6 +63,8 @@ public:
     int axRowIndex() const override;
     unsigned colSpan() const;
     unsigned rowSpan() const;
+    void incrementEffectiveRowSpan() { ++m_effectiveRowSpan; }
+    void resetEffectiveRowSpan() { m_effectiveRowSpan = 1; }
     void setAXColIndexFromRow(int index) { m_axColIndexFromRow = index; }
 
     void setRowIndex(unsigned index) { m_rowIndex = index; }
@@ -81,10 +83,6 @@ protected:
     AccessibilityRole determineAccessibilityRole() final;
     AccessibilityObject* parentObjectUnignored() const override;
 
-    unsigned m_rowIndex { 0 };
-    unsigned m_columnIndex { 0 };
-    int m_axColIndexFromRow { -1 };
-
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
     AccessibilityObject* titleUIElement() const final;
@@ -94,6 +92,15 @@ private:
     AccessibilityTableRow* ariaOwnedByParent() const;
     void ensureIndexesUpToDate() const;
 
+    unsigned m_rowIndex { 0 };
+    unsigned m_columnIndex { 0 };
+    int m_axColIndexFromRow { -1 };
+
+    // How many rows does this cell actually span?
+    // This differs from rowSpan(), which can be an author-specified number all the way up 65535 that doesn't actually
+    // reflect how many rows the cell spans in the rendered table.
+    // Default to 1, as the cell should span at least the row it starts in.
+    unsigned m_effectiveRowSpan { 1 };
 };
 
 } // namespace WebCore 

@@ -20,16 +20,15 @@ ShaderNULL::ShaderNULL(const gl::ShaderState &data) : ShaderImpl(data) {}
 
 ShaderNULL::~ShaderNULL() {}
 
-std::shared_ptr<WaitableCompileEvent> ShaderNULL::compile(const gl::Context *context,
-                                                          gl::ShCompilerInstance *compilerInstance,
-                                                          ShCompileOptions *options)
+std::shared_ptr<ShaderTranslateTask> ShaderNULL::compile(const gl::Context *context,
+                                                         ShCompileOptions *options)
 {
     const gl::Extensions &extensions = context->getImplementation()->getExtensions();
     if (extensions.shaderPixelLocalStorageANGLE)
     {
         options->pls = context->getImplementation()->getNativePixelLocalStorageOptions();
     }
-    return compileImpl(context, compilerInstance, mState.getSource(), options);
+    return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTask);
 }
 
 std::string ShaderNULL::getDebugInfo() const

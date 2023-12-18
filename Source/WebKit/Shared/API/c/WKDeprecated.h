@@ -27,8 +27,10 @@
 
 #ifdef _MSC_VER
 #define WK_C_API_DEPRECATED
+#define WK_C_API_DEPRECATED_WITH_MESSAGE(...)
 #define WK_C_API_DEPRECATED_WITH_REPLACEMENT(...)
 #else
 #define WK_C_API_DEPRECATED __attribute__((deprecated("No longer supported")))
+#define WK_C_API_DEPRECATED_WITH_MESSAGE(message) __attribute__((deprecated(message)))
 #define WK_C_API_DEPRECATED_WITH_REPLACEMENT(_replacement, ...) __attribute__((deprecated("use " #_replacement)))
 #endif

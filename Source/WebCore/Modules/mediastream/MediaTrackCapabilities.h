@@ -41,7 +41,6 @@ struct MediaTrackCapabilities {
     std::optional<DoubleRange> aspectRatio;
     std::optional<DoubleRange> frameRate;
     std::optional<Vector<String>> facingMode;
-    std::optional<Vector<String>> whiteBalanceMode;
     std::optional<DoubleRange> volume;
     std::optional<LongRange> sampleRate;
     std::optional<LongRange> sampleSize;
@@ -50,7 +49,9 @@ struct MediaTrackCapabilities {
     String groupId;
     String displaySurface;
     std::optional<DoubleRange> focusDistance;
+    std::optional<Vector<String>> whiteBalanceMode;
     std::optional<DoubleRange> zoom;
+    std::optional<bool> torch;
 };
 
 MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities&, const String& groupId);

@@ -1301,6 +1301,10 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
                 "TODO: http://anglebug.com/6443 Vulkan Test failure on Pixel4XL due to vulkan "
                 "validation error VUID-vkDestroyBuffer-buffer-00922");
         }
+        if (isIntelWinNative)
+        {
+            skipTest("https://anglebug.com/8440 Flaky on native Win Intel");
+        }
     }
 
     if (traceNameIs("pokemon_unite"))

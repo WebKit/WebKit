@@ -78,7 +78,7 @@ public:
     ChildWidgetState updateWidgetPosition() WARN_UNUSED_RETURN;
     WEBCORE_EXPORT IntRect windowClipRect() const;
 
-    bool requiresAcceleratedCompositing() const;
+    virtual bool requiresAcceleratedCompositing() const;
 
     RemoteFrame* remoteFrame() const;
 
@@ -95,7 +95,7 @@ protected:
 private:
     void element() const = delete;
 
-    bool isWidget() const final { return true; }
+    bool isRenderWidget() const final { return true; }
 
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
@@ -114,4 +114,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderWidget, isWidget())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderWidget, isRenderWidget())

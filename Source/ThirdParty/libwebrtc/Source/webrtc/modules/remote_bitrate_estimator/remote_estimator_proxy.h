@@ -105,6 +105,7 @@ class RemoteEstimatorProxy {
   // Unwraps absolute send times.
   uint32_t previous_abs_send_time_ RTC_GUARDED_BY(&lock_);
   Timestamp abs_send_timestamp_ RTC_GUARDED_BY(&lock_);
+  Timestamp last_arrival_time_with_abs_send_time_ RTC_GUARDED_BY(&lock_);
 };
 
 }  // namespace webrtc

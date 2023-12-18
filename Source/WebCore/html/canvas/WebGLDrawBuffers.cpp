@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDrawBuffers);
 
 WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLDrawBuffers)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
 }
@@ -68,7 +68,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)
         context.graphicsContextGL()->drawBuffersEXT(value);
         context.setBackDrawBuffer(bufs[0]);
     } else {
-        if (n > context.getMaxDrawBuffers()) {
+        if (n > context.maxDrawBuffers()) {
             context.synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffersWEBGL", "more than max draw buffers");
             return;
         }

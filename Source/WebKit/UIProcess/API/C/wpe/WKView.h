@@ -34,26 +34,18 @@ extern "C" {
 #endif
 
 struct wpe_view_backend;
+typedef struct _WPEDisplay WPEDisplay;
+typedef struct _WPEView WPEView;
 
-WK_EXPORT WKViewRef WKViewCreate(struct wpe_view_backend*, WKPageConfigurationRef);
+#if ENABLE(WPE_PLATFORM)
+WK_EXPORT WKViewRef WKViewCreate(WPEDisplay*, WKPageConfigurationRef);
+#endif
+WK_EXPORT WKViewRef WKViewCreateDeprecated(struct wpe_view_backend*, WKPageConfigurationRef);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
-
-typedef void (*WKViewFrameDisplayed)(WKViewRef view, const void* clientInfo);
-
-typedef struct WKViewClientBase {
-    int version;
-    const void* clientInfo;
-} WKViewClientBase;
-
-typedef struct WKViewClientV0 {
-    WKViewClientBase base;
-
-    // version 0
-    WKViewFrameDisplayed frameDisplayed;
-} WKViewClientV0;
-
-WK_EXPORT void WKViewSetViewClient(WKViewRef, const WKViewClientBase*);
+#if ENABLE(WPE_PLATFORM)
+WK_EXPORT WPEView*  WKViewGetView(WKViewRef);
+#endif
 
 #ifdef __cplusplus
 }

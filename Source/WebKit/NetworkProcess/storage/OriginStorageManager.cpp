@@ -26,6 +26,7 @@
 #include "config.h"
 #include "OriginStorageManager.h"
 
+#include "BackgroundFetchStoreManager.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
 #include "FileSystemStorageHandleRegistry.h"
@@ -35,6 +36,7 @@
 #include "LocalStorageManager.h"
 #include "Logging.h"
 #include "MemoryStorageArea.h"
+#include "ServiceWorkerStorageManager.h"
 #include "SessionStorageManager.h"
 #include "StorageAreaRegistry.h"
 #include "UnifiedOriginStorageLevel.h"
@@ -42,11 +44,6 @@
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/StorageEstimate.h>
 #include <wtf/FileSystem.h>
-
-#if ENABLE(SERVICE_WORKER)
-#include "BackgroundFetchStoreManager.h"
-#include "ServiceWorkerStorageManager.h"
-#endif
 
 namespace WebKit {
 
@@ -62,10 +59,8 @@ public:
         SessionStorage,
         IndexedDB,
         CacheStorage,
-#if ENABLE(SERVICE_WORKER)
         BackgroundFetchStorage,
         ServiceWorkerStorage,
-#endif
     };
     std::optional<StorageType> toStorageType(WebsiteDataType) const;
     String toStorageIdentifier(StorageType) const;
@@ -84,10 +79,8 @@ public:
     IDBStorageManager* existingIDBStorageManager() { return m_idbStorageManager.get(); }
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, CacheStorageManager::QuotaCheckFunction&&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager() { return m_cacheStorageManager.get(); }
-#if ENABLE(SERVICE_WORKER)
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WorkQueue>&&, BackgroundFetchStoreManager::QuotaCheckFunction&&);
     ServiceWorkerStorageManager& serviceWorkerStorageManager();
-#endif
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
     bool isActive() const;
@@ -100,9 +93,7 @@ public:
     String resolvedLocalStoragePath();
     String resolvedIDBStoragePath();
     String resolvedCacheStoragePath();
-#if ENABLE(SERVICE_WORKER)
     String resolvedBackgroundFetchStoragePath();
-#endif
     String resolvedPath(WebsiteDataType);
 
 private:
@@ -129,10 +120,8 @@ private:
     String m_customCacheStoragePath;
     String m_resolvedCacheStoragePath;
     UnifiedOriginStorageLevel m_level;
-#if ENABLE(SERVICE_WORKER)
     std::unique_ptr<BackgroundFetchStoreManager> m_backgroundFetchManager;
     std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
-#endif
 };
 
 OriginStorageManager::StorageBucket::StorageBucket(const String& rootPath, const String& identifier, const String& localStoragePath, const String& idbStoragePath, const String& cacheStoragePath, UnifiedOriginStorageLevel level)
@@ -173,12 +162,10 @@ std::optional<OriginStorageManager::StorageBucket::StorageType> OriginStorageMan
         return StorageType::IndexedDB;
     case WebsiteDataType::DOMCache:
         return StorageType::CacheStorage;
-#if ENABLE(SERVICE_WORKER)
     case WebsiteDataType::BackgroundFetchStorage:
         return StorageType::BackgroundFetchStorage;
     case WebsiteDataType::ServiceWorkerRegistrations:
         return StorageType::ServiceWorkerStorage;
-#endif
     default:
         break;
     }
@@ -200,12 +187,10 @@ String OriginStorageManager::StorageBucket::toStorageIdentifier(StorageType type
         return "IndexedDB"_s;
     case StorageType::CacheStorage:
         return "CacheStorage"_s;
-#if ENABLE(SERVICE_WORKER)
     case StorageType::BackgroundFetchStorage:
         return "BackgroundFetchStorage"_s;
     case StorageType::ServiceWorkerStorage:
         return "ServiceWorkers"_s;
-#endif
     default:
         break;
     }
@@ -266,8 +251,6 @@ CacheStorageManager& OriginStorageManager::StorageBucket::cacheStorageManager(Ca
     return *m_cacheStorageManager;
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 BackgroundFetchStoreManager& OriginStorageManager::StorageBucket::backgroundFetchManager(Ref<WorkQueue>&& queue, BackgroundFetchStoreManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_backgroundFetchManager)
@@ -285,8 +268,6 @@ ServiceWorkerStorageManager& OriginStorageManager::StorageBucket::serviceWorkerS
 
     return *m_serviceWorkerStorageManager;
 }
-
-#endif
 
 bool OriginStorageManager::StorageBucket::isActive() const
 {
@@ -598,7 +579,6 @@ String OriginStorageManager::StorageBucket::resolvedCacheStoragePath()
     return m_resolvedCacheStoragePath;
 }
 
-#if ENABLE(SERVICE_WORKER)
 String OriginStorageManager::StorageBucket::resolvedBackgroundFetchStoragePath()
 {
     if (m_resolvedCacheStoragePath.isNull())
@@ -606,7 +586,6 @@ String OriginStorageManager::StorageBucket::resolvedBackgroundFetchStoragePath()
 
     return m_resolvedCacheStoragePath;
 }
-#endif
 
 String OriginStorageManager::StorageBucket::resolvedPath(WebsiteDataType webisteDataType)
 {
@@ -621,11 +600,9 @@ String OriginStorageManager::StorageBucket::resolvedPath(WebsiteDataType webiste
         return resolvedIDBStoragePath();
     case StorageType::CacheStorage:
         return resolvedCacheStoragePath();
-#if ENABLE(SERVICE_WORKER)
     case StorageType::BackgroundFetchStorage:
         return resolvedBackgroundFetchStoragePath();
     case StorageType::ServiceWorkerStorage:
-#endif
     case StorageType::SessionStorage:
     case StorageType::FileSystem:
         return typeStoragePath(*type);
@@ -643,35 +620,34 @@ String OriginStorageManager::originFileIdentifier()
     return originFileName;
 }
 
-Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager()
+Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager(OriginQuotaManager::Parameters&& parameters)
 {
-    auto idbStoragePath = resolvedPath(WebsiteDataType::IndexedDBDatabases);
-    auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
-    auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
-    OriginQuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }, idbStoragePath, cacheStoragePath, fileSystemStoragePath]() {
+    OriginQuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }]() -> uint64_t {
+        if (!weakThis)
+            return 0;
+
+        auto idbStoragePath = resolvedPath(WebsiteDataType::IndexedDBDatabases);
+        auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
+        auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
         uint64_t fileSystemStorageSize = valueOrDefault(FileSystem::directorySize(fileSystemStoragePath));
-        if (weakThis) {
-            if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
-                CheckedUint64 totalFileSystemStorageSize = fileSystemStorageSize;
-                totalFileSystemStorageSize += fileSystemStorageManager->allocatedUnusedCapacity();
-                if (!totalFileSystemStorageSize.hasOverflowed())
-                    fileSystemStorageSize = totalFileSystemStorageSize;
-            }
+        if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
+            CheckedUint64 totalFileSystemStorageSize = fileSystemStorageSize;
+            totalFileSystemStorageSize += fileSystemStorageManager->allocatedUnusedCapacity();
+            if (!totalFileSystemStorageSize.hasOverflowed())
+                fileSystemStorageSize = totalFileSystemStorageSize;
         }
         return IDBStorageManager::idbStorageSize(idbStoragePath) + CacheStorageManager::cacheStorageSize(cacheStoragePath) + fileSystemStorageSize;
     };
-    return OriginQuotaManager::create(m_quota, m_standardReportedQuota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }), std::exchange(m_notifySpaceGrantedFunction, { }));
+
+    return OriginQuotaManager::create(WTFMove(parameters), WTFMove(getUsageFunction));
 }
 
-OriginStorageManager::OriginStorageManager(uint64_t quota, uint64_t standardReportedQuota, OriginQuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, OriginQuotaManager::NotifySpaceGrantedFunction&& notifySpaceGrantedFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
+OriginStorageManager::OriginStorageManager(OriginQuotaManager::Parameters&& parameters, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
     : m_path(WTFMove(path))
     , m_customLocalStoragePath(WTFMove(customLocalStoragePath))
     , m_customIDBStoragePath(WTFMove(customIDBStoragePath))
     , m_customCacheStoragePath(WTFMove(customCacheStoragePath))
-    , m_quota(quota)
-    , m_standardReportedQuota(standardReportedQuota)
-    , m_increaseQuotaFunction(WTFMove(increaseQuotaFunction))
-    , m_notifySpaceGrantedFunction(WTFMove(notifySpaceGrantedFunction))
+    , m_quotaManager(createQuotaManager(WTFMove(parameters)))
     , m_level(level)
 {
     ASSERT(!RunLoop::isMain());
@@ -695,10 +671,7 @@ OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
 
 OriginQuotaManager& OriginStorageManager::quotaManager()
 {
-    if (!m_quotaManager)
-        m_quotaManager = createQuotaManager();
-
-    return *m_quotaManager;
+    return m_quotaManager.get();
 }
 
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
@@ -774,7 +747,6 @@ CacheStorageManager& OriginStorageManager::cacheStorageManager(CacheStorageRegis
     }, WTFMove(queue));
 }
 
-#if ENABLE(SERVICE_WORKER)
 BackgroundFetchStoreManager& OriginStorageManager::backgroundFetchManager(Ref<WorkQueue>&& queue)
 {
     return defaultBucket().backgroundFetchManager(WTFMove(queue), [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
@@ -791,7 +763,6 @@ ServiceWorkerStorageManager& OriginStorageManager::serviceWorkerStorageManager()
 {
     return defaultBucket().serviceWorkerStorageManager();
 }
-#endif
 
 String OriginStorageManager::resolvedPath(WebsiteDataType type)
 {

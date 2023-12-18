@@ -1,0 +1,7 @@
+
+
+PASS Initially no placeholder text
+PASS Added placeholder text
+FAIL Set placeholder text to empty string assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Removed placeholder attribute
+

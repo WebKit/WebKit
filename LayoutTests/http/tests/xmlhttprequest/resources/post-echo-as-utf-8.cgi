@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 #use CGI ();
+binmode STDIN;
+binmode STDOUT;
 
 print "Content-type: text/plain;charset=utf-8\n\n";
 

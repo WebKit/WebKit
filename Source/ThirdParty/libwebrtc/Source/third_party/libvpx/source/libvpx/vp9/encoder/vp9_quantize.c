@@ -15,6 +15,7 @@
 #include "vpx_ports/mem.h"
 
 #include "vp9/common/vp9_quant_common.h"
+#include "vp9/common/vp9_scan.h"
 #include "vp9/common/vp9_seg_common.h"
 
 #include "vp9/encoder/vp9_encoder.h"
@@ -22,15 +23,14 @@
 #include "vp9/encoder/vp9_rd.h"
 
 void vp9_quantize_fp_c(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                       int skip_block, const int16_t *round_ptr,
-                       const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
-                       tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr,
-                       uint16_t *eob_ptr, const int16_t *scan,
-                       const int16_t *iscan) {
+                       const struct macroblock_plane *const mb_plane,
+                       tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
+                       const int16_t *dequant_ptr, uint16_t *eob_ptr,
+                       const struct ScanOrder *const scan_order) {
   int i, eob = -1;
-  (void)iscan;
-  (void)skip_block;
-  assert(!skip_block);
+  const int16_t *round_ptr = mb_plane->round_fp;
+  const int16_t *quant_ptr = mb_plane->quant_fp;
+  const int16_t *scan = scan_order->scan;
 
   memset(qcoeff_ptr, 0, n_coeffs * sizeof(*qcoeff_ptr));
   memset(dqcoeff_ptr, 0, n_coeffs * sizeof(*dqcoeff_ptr));
@@ -56,17 +56,15 @@ void vp9_quantize_fp_c(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
 
 #if CONFIG_VP9_HIGHBITDEPTH
 void vp9_highbd_quantize_fp_c(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                              int skip_block, const int16_t *round_ptr,
-                              const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
-                              tran_low_t *dqcoeff_ptr,
+                              const struct macroblock_plane *const mb_plane,
+                              tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
                               const int16_t *dequant_ptr, uint16_t *eob_ptr,
-                              const int16_t *scan, const int16_t *iscan) {
+                              const struct ScanOrder *const scan_order) {
   int i;
   int eob = -1;
-
-  (void)iscan;
-  (void)skip_block;
-  assert(!skip_block);
+  const int16_t *round_ptr = mb_plane->round_fp;
+  const int16_t *quant_ptr = mb_plane->quant_fp;
+  const int16_t *scan = scan_order->scan;
 
   memset(qcoeff_ptr, 0, n_coeffs * sizeof(*qcoeff_ptr));
   memset(dqcoeff_ptr, 0, n_coeffs * sizeof(*dqcoeff_ptr));
@@ -91,15 +89,14 @@ void vp9_highbd_quantize_fp_c(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
 // TODO(jingning) Refactor this file and combine functions with similar
 // operations.
 void vp9_quantize_fp_32x32_c(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                             int skip_block, const int16_t *round_ptr,
-                             const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
-                             tran_low_t *dqcoeff_ptr,
+                             const struct macroblock_plane *const mb_plane,
+                             tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
                              const int16_t *dequant_ptr, uint16_t *eob_ptr,
-                             const int16_t *scan, const int16_t *iscan) {
+                             const struct ScanOrder *const scan_order) {
   int i, eob = -1;
-  (void)iscan;
-  (void)skip_block;
-  assert(!skip_block);
+  const int16_t *round_ptr = mb_plane->round_fp;
+  const int16_t *quant_ptr = mb_plane->quant_fp;
+  const int16_t *scan = scan_order->scan;
 
   memset(qcoeff_ptr, 0, n_coeffs * sizeof(*qcoeff_ptr));
   memset(dqcoeff_ptr, 0, n_coeffs * sizeof(*dqcoeff_ptr));
@@ -126,15 +123,14 @@ void vp9_quantize_fp_32x32_c(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
 
 #if CONFIG_VP9_HIGHBITDEPTH
 void vp9_highbd_quantize_fp_32x32_c(
-    const tran_low_t *coeff_ptr, intptr_t n_coeffs, int skip_block,
-    const int16_t *round_ptr, const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
+    const tran_low_t *coeff_ptr, intptr_t n_coeffs,
+    const struct macroblock_plane *const mb_plane, tran_low_t *qcoeff_ptr,
     tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr, uint16_t *eob_ptr,
-    const int16_t *scan, const int16_t *iscan) {
+    const struct ScanOrder *const scan_order) {
   int i, eob = -1;
-
-  (void)iscan;
-  (void)skip_block;
-  assert(!skip_block);
+  const int16_t *round_ptr = mb_plane->round_fp;
+  const int16_t *quant_ptr = mb_plane->quant_fp;
+  const int16_t *scan = scan_order->scan;
 
   memset(qcoeff_ptr, 0, n_coeffs * sizeof(*qcoeff_ptr));
   memset(dqcoeff_ptr, 0, n_coeffs * sizeof(*dqcoeff_ptr));
@@ -158,35 +154,6 @@ void vp9_highbd_quantize_fp_32x32_c(
   *eob_ptr = eob + 1;
 }
 #endif
-
-void vp9_regular_quantize_b_4x4(MACROBLOCK *x, int plane, int block,
-                                const int16_t *scan, const int16_t *iscan) {
-  MACROBLOCKD *const xd = &x->e_mbd;
-  struct macroblock_plane *p = &x->plane[plane];
-  struct macroblockd_plane *pd = &xd->plane[plane];
-  tran_low_t *qcoeff = BLOCK_OFFSET(p->qcoeff, block),
-             *dqcoeff = BLOCK_OFFSET(pd->dqcoeff, block);
-  const int n_coeffs = 4 * 4;
-
-  if (x->skip_block) {
-    memset(qcoeff, 0, n_coeffs * sizeof(*qcoeff));
-    memset(dqcoeff, 0, n_coeffs * sizeof(*dqcoeff));
-    return;
-  }
-
-#if CONFIG_VP9_HIGHBITDEPTH
-  if (xd->cur_buf->flags & YV12_FLAG_HIGHBITDEPTH) {
-    vpx_highbd_quantize_b(BLOCK_OFFSET(p->coeff, block), n_coeffs,
-                          x->skip_block, p->zbin, p->round, p->quant,
-                          p->quant_shift, qcoeff, dqcoeff, pd->dequant,
-                          &p->eobs[block], scan, iscan);
-    return;
-  }
-#endif
-  vpx_quantize_b(BLOCK_OFFSET(p->coeff, block), n_coeffs, x->skip_block,
-                 p->zbin, p->round, p->quant, p->quant_shift, qcoeff, dqcoeff,
-                 pd->dequant, &p->eobs[block], scan, iscan);
-}
 
 static void invert_quant(int16_t *quant, int16_t *shift, int d) {
   unsigned t;
@@ -288,8 +255,7 @@ void vp9_init_plane_quantizers(VP9_COMP *cpi, MACROBLOCK *x) {
   // Y
   x->plane[0].quant = quants->y_quant[qindex];
   x->plane[0].quant_fp = quants->y_quant_fp[qindex];
-  memcpy(x->plane[0].round_fp, quants->y_round_fp[qindex],
-         8 * sizeof(*(x->plane[0].round_fp)));
+  x->plane[0].round_fp = quants->y_round_fp[qindex];
   x->plane[0].quant_shift = quants->y_quant_shift[qindex];
   x->plane[0].zbin = quants->y_zbin[qindex];
   x->plane[0].round = quants->y_round[qindex];
@@ -301,8 +267,7 @@ void vp9_init_plane_quantizers(VP9_COMP *cpi, MACROBLOCK *x) {
   for (i = 1; i < 3; i++) {
     x->plane[i].quant = quants->uv_quant[qindex];
     x->plane[i].quant_fp = quants->uv_quant_fp[qindex];
-    memcpy(x->plane[i].round_fp, quants->uv_round_fp[qindex],
-           8 * sizeof(*(x->plane[i].round_fp)));
+    x->plane[i].round_fp = quants->uv_round_fp[qindex];
     x->plane[i].quant_shift = quants->uv_quant_shift[qindex];
     x->plane[i].zbin = quants->uv_zbin[qindex];
     x->plane[i].round = quants->uv_round[qindex];

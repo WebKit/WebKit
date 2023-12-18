@@ -68,20 +68,9 @@
 #include "conf_def.h"
 #include "internal.h"
 #include "../internal.h"
-#include "../lhash/internal.h"
 
-
-DEFINE_LHASH_OF(CONF_VALUE)
-
-struct conf_st {
-  LHASH_OF(CONF_VALUE) *data;
-};
 
 static const char kDefaultSectionName[] = "default";
-
-// The maximum length we can grow a value to after variable expansion. 64k
-// should be more than enough for all reasonable uses.
-#define MAX_CONF_VALUE_LENGTH 65536
 
 static uint32_t conf_value_hash(const CONF_VALUE *v) {
   const uint32_t section_hash = v->section ? OPENSSL_strhash(v->section) : 0;
@@ -129,34 +118,26 @@ CONF *NCONF_new(void *method) {
   return conf;
 }
 
-CONF_VALUE *CONF_VALUE_new(void) {
-  CONF_VALUE *v = OPENSSL_malloc(sizeof(CONF_VALUE));
-  if (!v) {
-    return NULL;
-  }
-  OPENSSL_memset(v, 0, sizeof(CONF_VALUE));
-  return v;
-}
+CONF_VALUE *CONF_VALUE_new(void) { return OPENSSL_zalloc(sizeof(CONF_VALUE)); }
 
 static void value_free_contents(CONF_VALUE *value) {
-  if (value->section) {
-    OPENSSL_free(value->section);
-  }
+  OPENSSL_free(value->section);
   if (value->name) {
     OPENSSL_free(value->name);
-    if (value->value) {
-      OPENSSL_free(value->value);
-    }
+    OPENSSL_free(value->value);
   } else {
-    if (value->value) {
-      sk_CONF_VALUE_free((STACK_OF(CONF_VALUE)*)value->value);
-    }
+    // TODO(davidben): When |value->name| is NULL, |CONF_VALUE| is actually an
+    // entirely different structure. This is fragile and confusing. Make a
+    // proper |CONF_SECTION| type that doesn't require this.
+    sk_CONF_VALUE_free((STACK_OF(CONF_VALUE) *)value->value);
   }
 }
 
 static void value_free(CONF_VALUE *value) {
-  value_free_contents(value);
-  OPENSSL_free(value);
+  if (value != NULL) {
+    value_free_contents(value);
+    OPENSSL_free(value);
+  }
 }
 
 static void value_free_arg(CONF_VALUE *value, void *arg) { value_free(value); }
@@ -192,28 +173,21 @@ static CONF_VALUE *NCONF_new_section(const CONF *conf, const char *section) {
   if (!lh_CONF_VALUE_insert(conf->data, &old_value, v)) {
     goto err;
   }
-  if (old_value) {
-    value_free(old_value);
-  }
+  value_free(old_value);
   ok = 1;
 
 err:
   if (!ok) {
-    if (sk != NULL) {
-      sk_CONF_VALUE_free(sk);
-    }
-    if (v != NULL) {
-      OPENSSL_free(v);
-    }
+    sk_CONF_VALUE_free(sk);
+    OPENSSL_free(v);
     v = NULL;
   }
   return v;
 }
 
 static int str_copy(CONF *conf, char *section, char **pto, char *from) {
-  int q, r, rr = 0, to = 0, len = 0;
-  char *s, *e, *rp, *rrp, *np, *cp, v;
-  const char *p;
+  int q, to = 0, len = 0;
+  char v;
   BUF_MEM *buf;
 
   buf = BUF_MEM_new();
@@ -242,22 +216,6 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
       if (*from == q) {
         from++;
       }
-    } else if (IS_DQUOTE(conf, *from)) {
-      q = *from;
-      from++;
-      while (!IS_EOF(conf, *from)) {
-        if (*from == q) {
-          if (*(from + 1) == q) {
-            from++;
-          } else {
-            break;
-          }
-        }
-        buf->data[to++] = *(from++);
-      }
-      if (*from == q) {
-        from++;
-      }
     } else if (IS_ESC(conf, *from)) {
       from++;
       v = *(from++);
@@ -276,102 +234,23 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
     } else if (IS_EOF(conf, *from)) {
       break;
     } else if (*from == '$') {
-      // try to expand it
-      rrp = NULL;
-      s = &(from[1]);
-      if (*s == '{') {
-        q = '}';
-      } else if (*s == '(') {
-        q = ')';
-      } else {
-        q = 0;
-      }
-
-      if (q) {
-        s++;
-      }
-      cp = section;
-      e = np = s;
-      while (IS_ALPHA_NUMERIC(conf, *e)) {
-        e++;
-      }
-      if (e[0] == ':' && e[1] == ':') {
-        cp = np;
-        rrp = e;
-        rr = *e;
-        *rrp = '\0';
-        e += 2;
-        np = e;
-        while (IS_ALPHA_NUMERIC(conf, *e)) {
-          e++;
-        }
-      }
-      r = *e;
-      *e = '\0';
-      rp = e;
-      if (q) {
-        if (r != q) {
-          OPENSSL_PUT_ERROR(CONF, CONF_R_NO_CLOSE_BRACE);
-          goto err;
-        }
-        e++;
-      }
-      // So at this point we have
-      // np which is the start of the name string which is
-      //   '\0' terminated.
-      // cp which is the start of the section string which is
-      //   '\0' terminated.
-      // e is the 'next point after'.
-      // r and rr are the chars replaced by the '\0'
-      // rp and rrp is where 'r' and 'rr' came from.
-      p = NCONF_get_string(conf, cp, np);
-      if (rrp != NULL) {
-        *rrp = rr;
-      }
-      *rp = r;
-      if (p == NULL) {
-        OPENSSL_PUT_ERROR(CONF, CONF_R_VARIABLE_HAS_NO_VALUE);
-        goto err;
-      }
-      size_t newsize = strlen(p) + buf->length - (e - from);
-      if (newsize > MAX_CONF_VALUE_LENGTH) {
-        OPENSSL_PUT_ERROR(CONF, CONF_R_VARIABLE_EXPANSION_TOO_LONG);
-        goto err;
-      }
-      if (!BUF_MEM_grow_clean(buf, newsize)) {
-        goto err;
-      }
-      while (*p) {
-        buf->data[to++] = *(p++);
-      }
-
-      /* Since we change the pointer 'from', we also have
-         to change the perceived length of the string it
-         points at.  /RL */
-      len -= e - from;
-      from = e;
-
-      /* In case there were no braces or parenthesis around
-         the variable reference, we have to put back the
-         character that was replaced with a '\0'.  /RL */
-      *rp = r;
+      // Historically, $foo would expand to a previously-parsed value. This
+      // feature has been removed as it was unused and is a DoS vector.
+      OPENSSL_PUT_ERROR(CONF, CONF_R_VARIABLE_EXPANSION_NOT_SUPPORTED);
+      goto err;
     } else {
       buf->data[to++] = *(from++);
     }
   }
 
   buf->data[to] = '\0';
-  if (*pto != NULL) {
-    OPENSSL_free(*pto);
-  }
+  OPENSSL_free(*pto);
   *pto = buf->data;
   OPENSSL_free(buf);
   return 1;
 
 err:
-  if (buf != NULL) {
-    BUF_MEM_free(buf);
-  }
+  BUF_MEM_free(buf);
   return 0;
 }
 
@@ -472,33 +351,8 @@ static char *scan_quote(CONF *conf, char *p) {
   return p;
 }
 
-
-static char *scan_dquote(CONF *conf, char *p) {
-  int q = *p;
-
-  p++;
-  while (!(IS_EOF(conf, *p))) {
-    if (*p == q) {
-      if (*(p + 1) == q) {
-        p++;
-      } else {
-        break;
-      }
-    }
-    p++;
-  }
-  if (*p == q) {
-    p++;
-  }
-  return p;
-}
-
 static void clear_comments(CONF *conf, char *p) {
   for (;;) {
-    if (IS_FCOMMENT(conf, *p)) {
-      *p = '\0';
-      return;
-    }
     if (!IS_WS(conf, *p)) {
       break;
     }
@@ -509,10 +363,6 @@ static void clear_comments(CONF *conf, char *p) {
     if (IS_COMMENT(conf, *p)) {
       *p = '\0';
       return;
-    }
-    if (IS_DQUOTE(conf, *p)) {
-      p = scan_dquote(conf, p);
-      continue;
     }
     if (IS_QUOTE(conf, *p)) {
       p = scan_quote(conf, p);
@@ -530,7 +380,7 @@ static void clear_comments(CONF *conf, char *p) {
   }
 }
 
-static int def_load_bio(CONF *conf, BIO *in, long *out_error_line) {
+int NCONF_load_bio(CONF *conf, BIO *in, long *out_error_line) {
   static const size_t CONFBUFSIZE = 512;
   int bufnum = 0, i, ii;
   BUF_MEM *buff = NULL;
@@ -707,37 +557,23 @@ static int def_load_bio(CONF *conf, BIO *in, long *out_error_line) {
       v = NULL;
     }
   }
-  if (buff != NULL) {
-    BUF_MEM_free(buff);
-  }
-  if (section != NULL) {
-    OPENSSL_free(section);
-  }
+  BUF_MEM_free(buff);
+  OPENSSL_free(section);
   return 1;
 
 err:
-  if (buff != NULL) {
-    BUF_MEM_free(buff);
-  }
-  if (section != NULL) {
-    OPENSSL_free(section);
-  }
+  BUF_MEM_free(buff);
+  OPENSSL_free(section);
   if (out_error_line != NULL) {
     *out_error_line = eline;
   }
-  BIO_snprintf(btmp, sizeof btmp, "%ld", eline);
+  snprintf(btmp, sizeof btmp, "%ld", eline);
   ERR_add_error_data(2, "line ", btmp);
 
   if (v != NULL) {
-    if (v->name != NULL) {
-      OPENSSL_free(v->name);
-    }
-    if (v->value != NULL) {
-      OPENSSL_free(v->value);
-    }
-    if (v != NULL) {
-      OPENSSL_free(v);
-    }
+    OPENSSL_free(v->name);
+    OPENSSL_free(v->value);
+    OPENSSL_free(v);
   }
   return 0;
 }
@@ -751,14 +587,10 @@ int NCONF_load(CONF *conf, const char *filename, long *out_error_line) {
     return 0;
   }
 
-  ret = def_load_bio(conf, in, out_error_line);
+  ret = NCONF_load_bio(conf, in, out_error_line);
   BIO_free(in);
 
   return ret;
-}
-
-int NCONF_load_bio(CONF *conf, BIO *bio, long *out_error_line) {
-  return def_load_bio(conf, bio, out_error_line);
 }
 
 int CONF_parse_list(const char *list, char sep, int remove_whitespace,

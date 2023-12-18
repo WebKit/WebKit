@@ -34,6 +34,7 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
+#include <wtf/Algorithms.h>
 #include <wtf/MathExtras.h>
 
 #if USE(ACCELERATE)
@@ -125,14 +126,14 @@ static size_t calculateChunkSize(unsigned blockSize, double scaleFactor)
     return blockSize / scaleFactor;
 }
 
-SincResampler::SincResampler(double scaleFactor, unsigned requestFrames, Function<void(float* buffer, size_t framesToProcess)>&& provideInput)
+SincResampler::SincResampler(double scaleFactor, unsigned requestFrames, Function<void(std::span<float> buffer, size_t framesToProcess)>&& provideInput)
     : m_scaleFactor(scaleFactor)
     , m_kernelStorage(kernelStorageSize)
     , m_requestFrames(requestFrames)
     , m_provideInput(WTFMove(provideInput))
     , m_inputBuffer(m_requestFrames + kernelSize) // See input buffer layout above.
-    , m_r1(m_inputBuffer.data())
-    , m_r2(m_inputBuffer.data() + kernelSize / 2)
+    , m_r1(m_inputBuffer.data(), m_inputBuffer.size())
+    , m_r2(m_inputBuffer.span().subspan(kernelSize / 2))
 {
     ASSERT(m_provideInput);
     ASSERT(m_requestFrames > 0);
@@ -145,18 +146,18 @@ void SincResampler::updateRegions(bool isSecondLoad)
 {
     // Setup various region pointers in the buffer (see diagram above). If we're
     // on the second load we need to slide m_r0 to the right by kernelSize / 2.
-    m_r0 = m_inputBuffer.data() + (isSecondLoad ? kernelSize : kernelSize / 2);
-    m_r3 = m_r0 + m_requestFrames - kernelSize;
-    m_r4 = m_r0 + m_requestFrames - kernelSize / 2;
-    m_blockSize = m_r4 - m_r2;
+    m_r0 = m_inputBuffer.span().subspan(isSecondLoad ? kernelSize : kernelSize / 2);
+    m_r3 = m_r0.subspan(m_requestFrames - kernelSize);
+    m_r4 = m_r0.subspan(m_requestFrames - kernelSize / 2);
+    m_blockSize = std::distance(m_r2.begin(), m_r4.begin());
     m_chunkSize = calculateChunkSize(m_blockSize, m_scaleFactor);
 
     // m_r1 at the beginning of the buffer.
-    ASSERT(m_r1 == m_inputBuffer.data());
+    ASSERT(m_r1.data() == m_inputBuffer.data());
     // m_r1 left of m_r2, m_r4 left of m_r3 and size correct.
-    ASSERT((m_r2 - m_r1) == (m_r4 - m_r3));
+    ASSERT(std::distance(m_r1.begin(), m_r2.begin()) == std::distance(m_r3.begin(), m_r4.begin()));
     // m_r2 left of r3.
-    ASSERT(m_r2 <= m_r3);
+    ASSERT(m_r2.begin() <= m_r3.begin());
 }
 
 void SincResampler::initializeKernel()
@@ -200,34 +201,32 @@ void SincResampler::initializeKernel()
     }
 }
 
-void SincResampler::processBuffer(const float* source, float* destination, unsigned numberOfSourceFrames, double scaleFactor)
+void SincResampler::processBuffer(std::span<const float> source, std::span<float> destination, double scaleFactor)
 {
-    SincResampler resampler(scaleFactor, AudioUtilities::renderQuantumSize, [source, numberOfSourceFrames](float* buffer, size_t framesToProcess) mutable {
+    RELEASE_ASSERT(destination.size() == static_cast<size_t>(source.size() / scaleFactor));
+    SincResampler resampler(scaleFactor, AudioUtilities::renderQuantumSize, [&source](std::span<float> buffer, size_t framesToProcess) mutable {
         // Clamp to number of frames available and zero-pad.
-        size_t framesToCopy = std::min<size_t>(numberOfSourceFrames, framesToProcess);
-        memcpy(buffer, source, sizeof(float) * framesToCopy);
+        size_t framesToCopy = std::min(source.size(), framesToProcess);
+
+        IGNORE_WARNINGS_BEGIN("restrict")
+        memcpySpan(buffer.subspan(0, framesToCopy), source.subspan(0, framesToCopy));
+        IGNORE_WARNINGS_END
 
         // Zero-pad if necessary.
         if (framesToCopy < framesToProcess)
-            memset(buffer + framesToCopy, 0, sizeof(float) * (framesToProcess - framesToCopy));
+            memsetSpan(buffer.subspan(framesToCopy, framesToProcess - framesToCopy), 0);
 
-        numberOfSourceFrames -= framesToCopy;
-        source += framesToCopy;
+        source = source.subspan(framesToCopy);
     });
 
-    unsigned numberOfDestinationFrames = static_cast<unsigned>(numberOfSourceFrames / scaleFactor);
-    unsigned remaining = numberOfDestinationFrames;
-
-    while (remaining) {
-        unsigned framesThisTime = std::min<unsigned>(remaining, AudioUtilities::renderQuantumSize);
+    while (!destination.empty()) {
+        unsigned framesThisTime = std::min<size_t>(destination.size(), AudioUtilities::renderQuantumSize);
         resampler.process(destination, framesThisTime);
-        
-        destination += framesThisTime;
-        remaining -= framesThisTime;
+        destination = destination.subspan(framesThisTime);
     }
 }
 
-void SincResampler::process(float* destination, size_t framesToProcess)
+void SincResampler::process(std::span<float> destination, size_t framesToProcess)
 {
     unsigned numberOfDestinationFrames = framesToProcess;
 
@@ -240,6 +239,7 @@ void SincResampler::process(float* destination, size_t framesToProcess)
     
     // Step (2)
 
+    size_t destinationIndex = 0;
     while (numberOfDestinationFrames) {
         while (m_virtualSourceIndex < m_blockSize) {
             // m_virtualSourceIndex lies in between two kernel offsets so figure out what they are.
@@ -249,20 +249,20 @@ void SincResampler::process(float* destination, size_t framesToProcess)
             double virtualOffsetIndex = subsampleRemainder * numberOfKernelOffsets;
             int offsetIndex = static_cast<int>(virtualOffsetIndex);
             
-            float* k1 = m_kernelStorage.data() + offsetIndex * kernelSize;
-            float* k2 = k1 + kernelSize;
+            auto k1 = m_kernelStorage.span().subspan(offsetIndex * kernelSize);
+            auto k2 = k1.subspan(kernelSize);
 
             // Ensure |k1|, |k2| are 16-byte aligned for SIMD usage. Should always be true so long as kernelSize is a multiple of 16.
-            ASSERT(!(reinterpret_cast<uintptr_t>(k1) & 0x0F));
-            ASSERT(!(reinterpret_cast<uintptr_t>(k2) & 0x0F));
+            ASSERT(!(reinterpret_cast<uintptr_t>(k1.data()) & 0x0F));
+            ASSERT(!(reinterpret_cast<uintptr_t>(k2.data()) & 0x0F));
 
             // Initialize input pointer based on quantized m_virtualSourceIndex.
-            float* inputP = m_r1 + sourceIndexI;
+            auto inputP = m_r1.subspan(sourceIndexI);
 
             // Figure out how much to weight each kernel's "convolution".
             double kernelInterpolationFactor = virtualOffsetIndex - offsetIndex;
 
-            *destination++ = convolve(inputP, k1, k2, kernelInterpolationFactor);
+            destination[destinationIndex++] = convolve(inputP.data(), k1.data(), k2.data(), kernelInterpolationFactor);
 
             // Advance the virtual index.
             m_virtualSourceIndex += m_scaleFactor;
@@ -278,10 +278,10 @@ void SincResampler::process(float* destination, size_t framesToProcess)
 
         // Step (3) Copy r3 to r1.
         // This wraps the last input frames back to the start of the buffer.
-        memcpy(m_r1, m_r3, sizeof(float) * kernelSize);
+        memcpySpan(m_r1.subspan(0, kernelSize), m_r3.subspan(0, kernelSize));
 
         // Step (4) -- Reinitialize regions if necessary.
-        if (m_r0 == m_r2)
+        if (m_r0.data() == m_r2.data())
             updateRegions(true);
 
         // Step (5)

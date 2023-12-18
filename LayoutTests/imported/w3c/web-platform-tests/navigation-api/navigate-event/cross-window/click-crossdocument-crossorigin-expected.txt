@@ -1,0 +1,4 @@
+
+
+PASS clicking on an <a> element that navigates cross-document targeting a cross-origin window
+

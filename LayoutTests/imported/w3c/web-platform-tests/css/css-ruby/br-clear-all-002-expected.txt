@@ -12,5 +12,5 @@ FAIL #container 1 assert_equals:
   </ruby>
   <br clear="all">
 </div>
-height expected 170 but got 227
+height expected 170 but got 221
 

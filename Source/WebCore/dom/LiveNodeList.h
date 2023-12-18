@@ -47,6 +47,7 @@ public:
 
     NodeListInvalidationType invalidationType() const { return m_invalidationType; }
     ContainerNode& ownerNode() const { return m_ownerNode; }
+    Ref<ContainerNode> protectedOwnerNode() const { return m_ownerNode; }
     void invalidateCacheForAttribute(const QualifiedName& attributeName) const;
     virtual void invalidateCacheForDocument(Document&) const = 0;
     void invalidateCache() const { invalidateCacheForDocument(document()); }
@@ -58,6 +59,7 @@ protected:
     LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType);
 
     Document& document() const { return m_ownerNode->document(); }
+    Ref<Document> protectedDocument() const { return document(); }
     ContainerNode& rootNode() const;
 
 private:

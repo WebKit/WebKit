@@ -57,8 +57,8 @@ if (!window.location.search) {
 
 function checkDidLoadVictim()
 {
-    if (secondOpenerDocument.location.href == "about:blank") {
-        // Victim loaded.
+    if (window.internals && !window.internals.isFullyActive(secondOpenerDocument)) {
+        console.log("Victim loaded.");
         window.clearInterval(intervalId);
 
         // Run code in victim.

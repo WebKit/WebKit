@@ -1622,16 +1622,12 @@ const Vector<String>& intlAvailableCalendars()
     static LazyNeverDestroyed<Vector<String>> availableCalendars;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        availableCalendars.construct();
-        ASSERT(availableCalendars->isEmpty());
-
         UErrorCode status = U_ZERO_ERROR;
         auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendars", "und", false, &status));
         ASSERT(U_SUCCESS(status));
 
         int32_t count = uenum_count(enumeration.get(), &status);
         ASSERT(U_SUCCESS(status));
-        availableCalendars->reserveInitialCapacity(count);
 
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
@@ -1639,16 +1635,15 @@ const Vector<String>& intlAvailableCalendars()
             return StringImpl::createStaticStringImpl(string.characters16(), string.length());
         };
 
-        for (int32_t index = 0; index < count; ++index) {
+        availableCalendars.construct(count, [&](size_t) {
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
             String calendar(pointer, length);
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-                availableCalendars->append(createImmortalThreadSafeString(WTFMove(mapped.value())));
-            else
-                availableCalendars->append(createImmortalThreadSafeString(WTFMove(calendar)));
-        }
+                return createImmortalThreadSafeString(WTFMove(mapped.value()));
+            return createImmortalThreadSafeString(WTFMove(calendar));
+        });
 
         // The AvailableCalendars abstract operation returns a List, ordered as if an Array of the same
         // values had been sorted using %Array.prototype.sort% using undefined as comparator
@@ -1731,7 +1726,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
     auto end = std::unique(elements.begin(), elements.end());
-    elements.resize(elements.size() - (elements.end() - end));
+    elements.shrink(elements.size() - (elements.end() - end));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
@@ -1787,7 +1782,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
     auto end = std::unique(elements.begin(), elements.end());
-    elements.resize(elements.size() - (elements.end() - end));
+    elements.shrink(elements.size() - (elements.end() - end));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
@@ -1896,15 +1891,15 @@ const Vector<String>& intlAvailableTimeZones()
             });
         auto end = std::unique(temporary.begin(), temporary.end());
         availableTimeZones.construct();
-        availableTimeZones->reserveInitialCapacity(end - temporary.begin());
 
         auto createImmortalThreadSafeString = [&](String&& string) {
             if (string.is8Bit())
                 return StringImpl::createStaticStringImpl(string.characters8(), string.length());
             return StringImpl::createStaticStringImpl(string.characters16(), string.length());
         };
-        for (auto iterator = temporary.begin(); iterator != end; ++iterator)
-            availableTimeZones->uncheckedAppend(createImmortalThreadSafeString(WTFMove(*iterator)));
+        availableTimeZones.get() = WTF::map(std::span(temporary.begin(), end), [&](auto&& string) -> String {
+            return createImmortalThreadSafeString(WTFMove(string));
+        });
     });
     return availableTimeZones;
 }

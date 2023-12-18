@@ -79,9 +79,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         document.settingsValues(),
         WorkerThreadMode::CreateNewThread,
         *document.sessionID(),
-#if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
-#endif
         *initializationData.clientIdentifier,
         document.noiseInjectionHashSalt()
     };
@@ -97,7 +95,7 @@ bool SharedWorkerThreadProxy::hasInstances()
     return !allSharedWorkerThreadProxies().isEmpty();
 }
 
-SharedWorkerThreadProxy::SharedWorkerThreadProxy(UniqueRef<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, WorkerInitializationData&& initializationData, CacheStorageProvider& cacheStorageProvider)
+SharedWorkerThreadProxy::SharedWorkerThreadProxy(Ref<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, WorkerInitializationData&& initializationData, CacheStorageProvider& cacheStorageProvider)
     : m_page(WTFMove(page))
     , m_document(*dynamicDowncast<LocalFrame>(m_page->mainFrame())->document())
     , m_contextIdentifier(*initializationData.clientIdentifier)

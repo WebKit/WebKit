@@ -181,18 +181,10 @@ JSC_DEFINE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSR
     RELEASE_AND_RETURN(scope, JSValue::encode(getWrappedValue(globalObject, globalObject, JSValue::decode(encodedValue))));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair, (JSRemoteFunction* callee))
+static inline UGPRPair materializeTargetCode(VM& vm, JSFunction* targetFunction)
 {
-    JSGlobalObject* globalObject = callee->globalObject();
-    VM& vm = globalObject->vm();
-
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(isRemoteFunction(callee));
-
-    auto* targetFunction = jsCast<JSFunction*>(callee->targetFunction()); // We call this function only when JSRemoteFunction's target is JSFunction.
     ExecutableBase* executable = targetFunction->executable();
 
     // Force the executable to cache its arity entrypoint.
@@ -207,6 +199,27 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair,
         }
         return encodeResult(executable->entrypointFor(CodeForCall, MustCheckArity).taggedPtr(), codeBlockSlot);
     }
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMaterializeBoundFunctionTargetCode, UGPRPair, (JSBoundFunction* callee))
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto* targetFunction = jsCast<JSFunction*>(callee->targetFunction()); // We call this function only when JSBoundFunction's target is JSFunction.
+    return materializeTargetCode(vm, targetFunction);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair, (JSRemoteFunction* callee))
+{
+    JSGlobalObject* globalObject = callee->globalObject();
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    ASSERT(isRemoteFunction(callee));
+    auto* targetFunction = jsCast<JSFunction*>(callee->targetFunction()); // We call this function only when JSRemoteFunction's target is JSFunction.
+    return materializeTargetCode(vm, targetFunction);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction* callee))
@@ -698,10 +711,8 @@ JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (EncodedJSVal
         CodeBlock* codeBlock = callFrame->codeBlock();
         Structure* structure = baseValue.asCell()->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayInByVal(globalObject, codeBlock, baseValue, key, *stubInfo, InByKind::ByVal);
         }
 
@@ -1402,10 +1413,8 @@ static ALWAYS_INLINE void putByValOptimize(JSGlobalObject* globalObject, CodeBlo
         if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
             Structure* structure = baseObject->structure();
             if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-                if (profile) {
-                    ConcurrentJSLocker locker(codeBlock->m_lock);
-                    profile->computeUpdatedPrediction(locker, codeBlock, structure);
-                }
+                if (profile)
+                    profile->computeUpdatedPrediction(codeBlock, structure);
                 repatchArrayPutByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, kind);
             }
         }
@@ -1473,10 +1482,8 @@ static ALWAYS_INLINE void directPutByValOptimize(JSGlobalObject* globalObject, C
     if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
         Structure* structure = baseObject->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayPutByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, kind);
         }
     }
@@ -2523,7 +2530,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, UGPRPair, (VM* vmPointer, uint32_t b
     }
     
     CodeBlock* optimizedCodeBlock = codeBlock->replacement();
-    ASSERT(optimizedCodeBlock && JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
+    ASSERT(optimizedCodeBlock && JSC::JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
     
     if (void* dataBuffer = DFG::prepareOSREntry(vm, callFrame, optimizedCodeBlock, bytecodeIndex)) {
         CODEBLOCK_LOG_EVENT(optimizedCodeBlock, "osrEntry", ("at bc#", bytecodeIndex));
@@ -2809,10 +2816,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValOptimize, EncodedJSValue, (EncodedJSVa
     if (baseValue.isCell() && subscript.isInt32()) {
         Structure* structure = baseValue.asCell()->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, GetByKind::ByVal);
         }
     }
@@ -3067,10 +3072,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetByValWithThisOptimize, EncodedJSValue, (Enc
     if (baseValue.isCell() && subscript.isInt32()) {
         Structure* structure = baseValue.asCell()->structure();
         if (stubInfo->considerRepatchingCacheGeneric(vm, codeBlock, structure)) {
-            if (profile) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
-                profile->computeUpdatedPrediction(locker, codeBlock, structure);
-            }
+            if (profile)
+                profile->computeUpdatedPrediction(codeBlock, structure);
             repatchArrayGetByVal(globalObject, codeBlock, baseValue, subscript, *stubInfo, GetByKind::ByValWithThis);
         }
     }

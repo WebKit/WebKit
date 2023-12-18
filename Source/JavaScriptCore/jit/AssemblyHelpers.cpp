@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "UnlinkedCodeBlock.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBASSEMBLY)
 #include "WasmContext.h"
@@ -52,6 +53,8 @@ namespace JSC {
 namespace AssemblyHelpersInternal {
 constexpr bool dumpVerbose = false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AssemblyHelpers);
 
 AssemblyHelpers::Jump AssemblyHelpers::branchIfFastTypedArray(GPRReg baseGPR)
 {
@@ -107,6 +110,8 @@ void AssemblyHelpers::clearSamplingFlag(int32_t flag)
 #if USE(JSVALUE64)
 void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
 #if CPU(X86_64) || CPU(ARM64)
     Jump checkInt32 = branch64(BelowOrEqual, gpr, TrustedImm64(static_cast<uintptr_t>(0xFFFFFFFFu)));
     abortWithReason(AHIsNotInt32);
@@ -118,6 +123,8 @@ void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::numberTagRegister);
     abortWithReason(AHIsNotJSInt32);
     checkJSInt32.link(this);
@@ -125,6 +132,8 @@ void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::numberTagRegister);
     abortWithReason(AHIsNotJSNumber);
     checkJSNumber.link(this);
@@ -132,6 +141,8 @@ void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkJSInt32 = branch64(AboveOrEqual, gpr, GPRInfo::numberTagRegister);
     Jump checkJSNumber = branchTest64(MacroAssembler::NonZero, gpr, GPRInfo::numberTagRegister);
     checkJSInt32.link(this);
@@ -141,6 +152,8 @@ void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkCell = branchTest64(MacroAssembler::Zero, gpr, GPRInfo::notCellMaskRegister);
     abortWithReason(AHIsNotCell);
     checkCell.link(this);
@@ -148,6 +161,8 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertTagsInPlace()
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump ok = branch64(Equal, GPRInfo::numberTagRegister, TrustedImm64(JSValue::NumberTag));
     abortWithReason(AHNumberTagNotInPlace);
     breakpoint();
@@ -160,11 +175,15 @@ void AssemblyHelpers::jitAssertTagsInPlace()
 #elif USE(JSVALUE32_64)
 void AssemblyHelpers::jitAssertIsInt32(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     UNUSED_PARAM(gpr);
 }
 
 void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
     abortWithReason(AHIsNotJSInt32);
     checkJSInt32.link(this);
@@ -172,6 +191,8 @@ void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
     Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
     abortWithReason(AHIsNotJSNumber);
@@ -181,6 +202,8 @@ void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
     abortWithReason(AHIsNotJSDouble);
     checkJSDouble.link(this);
@@ -188,6 +211,8 @@ void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkCell = branchIfCell(gpr);
     abortWithReason(AHIsNotCell);
     checkCell.link(this);
@@ -195,11 +220,15 @@ void AssemblyHelpers::jitAssertIsCell(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertTagsInPlace()
 {
+    if (!Options::useJITAsserts())
+        return;
 }
 #endif // USE(JSVALUE32_64)
 
 void AssemblyHelpers::jitAssertHasValidCallFrame()
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkCFR = branchTestPtr(Zero, GPRInfo::callFrameRegister, TrustedImm32(7));
     abortWithReason(AHCallFrameMisaligned);
     checkCFR.link(this);
@@ -207,6 +236,8 @@ void AssemblyHelpers::jitAssertHasValidCallFrame()
 
 void AssemblyHelpers::jitAssertIsNull(GPRReg gpr)
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump checkNull = branchTestPtr(Zero, gpr);
     abortWithReason(AHIsNotNull);
     checkNull.link(this);
@@ -214,6 +245,8 @@ void AssemblyHelpers::jitAssertIsNull(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertArgumentCountSane()
 {
+    if (!Options::useJITAsserts())
+        return;
     Jump ok = branch32(Below, payloadFor(CallFrameSlot::argumentCountIncludingThis), TrustedImm32(10000000));
     abortWithReason(AHInsaneArgumentCount);
     ok.link(this);
@@ -221,6 +254,8 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
 
 void AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType type)
 {
+    if (!Options::useJITAsserts())
+        return;
     JIT_COMMENT(*this, "jitAssertCodeBlockOnCallFrameWithType | ", scratchGPR, " = callFrame->codeBlock->jitCode->jitType == ", type);
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR);
     loadPtr(Address(scratchGPR, CodeBlock::jitCodeOffset()), scratchGPR);
@@ -232,6 +267,8 @@ void AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, J
 
 void AssemblyHelpers::jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(GPRReg scratchGPR, GPRReg scratchGPR2, UnlinkedCodeBlock& block)
 {
+    if (!Options::useJITAsserts())
+        return;
     if (block.codeType() != FunctionCode)
         return;
     auto kind = block.isConstructor() ? CodeForConstruct : CodeForCall;
@@ -254,6 +291,8 @@ void AssemblyHelpers::jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame
 
 void AssemblyHelpers::jitAssertCodeBlockOnCallFrameIsOptimizingJIT(GPRReg scratchGPR)
 {
+    if (!Options::useJITAsserts())
+        return;
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR);
     loadPtr(Address(scratchGPR, CodeBlock::jitCodeOffset()), scratchGPR);
     load8(Address(scratchGPR, JITCode::offsetOfJITType()), scratchGPR);
@@ -1085,14 +1124,7 @@ void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, Call
 void AssemblyHelpers::emitVirtualCallWithoutMovingGlobalObject(VM& vm, GPRReg callLinkInfoGPR, CallMode callMode)
 {
     move(callLinkInfoGPR, GPRInfo::regT2);
-    Call call = nearCall();
-    addLinkTask([=, &vm] (LinkBuffer& linkBuffer) {
-        auto callLocation = linkBuffer.locationOfNearCall<JITCompilationPtrTag>(call);
-        linkBuffer.addMainThreadFinalizationTask([=, &vm] () {
-            MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = vm.getCTIVirtualCall(callMode);
-            MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
-        });
-    });
+    nearCallThunk(CodeLocationLabel<JITStubRoutinePtrTag> { vm.getCTIVirtualCall(callMode).code() });
 }
 
 #if USE(JSVALUE64)

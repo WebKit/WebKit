@@ -64,6 +64,7 @@ RenderFragmentedFlow::RenderFragmentedFlow(Type type, Document& document, Render
     , m_pageLogicalSizeChanged(false)
 {
     setIsRenderFragmentedFlow(true);
+    ASSERT(isRenderFragmentedFlow());
 }
 
 void RenderFragmentedFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -258,7 +259,7 @@ public:
     const LayoutUnit& lowValue() const { return m_offset; }
     const LayoutUnit& highValue() const { return m_offset; }
 
-    void collectIfNeeded(const PODInterval<LayoutUnit, WeakPtr<RenderFragmentContainer>>& interval)
+    void collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>& interval)
     {
         if (m_result)
             return;
@@ -270,7 +271,7 @@ public:
 
 private:
     LayoutUnit m_offset;
-    WeakPtr<RenderFragmentContainer> m_result;
+    SingleThreadWeakPtr<RenderFragmentContainer> m_result;
 };
 
 RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastFragment) const
@@ -301,87 +302,6 @@ RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const Rende
         return clamp(const_cast<RenderFragmentContainer*>(&m_fragmentList.last()));
 
     return nullptr;
-}
-
-LayoutPoint RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint) const
-{
-    LayoutPoint referencePoint = startPoint;
-    
-    const RenderBlock* objContainingBlock = boxModelObject.containingBlock();
-    // FIXME: This needs to be adapted for different writing modes inside the flow thread.
-    RenderFragmentContainer* startFragment = fragmentAtBlockOffset(objContainingBlock, referencePoint.y());
-    if (startFragment) {
-        // Take into account the offset coordinates of the fragment.
-        RenderBoxModelObject* startFragmentBox = startFragment;
-        RenderBoxModelObject* currObject = startFragmentBox;
-        RenderBoxModelObject* currOffsetParent;
-        while ((currOffsetParent = currObject->offsetParent())) {
-            referencePoint.move(currObject->offsetLeft(), currObject->offsetTop());
-            
-            // Since we're looking for the offset relative to the body, we must also
-            // take into consideration the borders of the fragment's offsetParent.
-            if (is<RenderBox>(*currOffsetParent) && !currOffsetParent->isBody())
-                referencePoint.move(downcast<RenderBox>(*currOffsetParent).borderLeft(), downcast<RenderBox>(*currOffsetParent).borderTop());
-            
-            currObject = currOffsetParent;
-        }
-        
-        // We need to check if any of this box's containing blocks start in a different fragment
-        // and if so, drop the object's top position (which was computed relative to its containing block
-        // and is no longer valid) and recompute it using the fragment in which it flows as reference.
-        bool wasComputedRelativeToOtherFragment = false;
-        while (objContainingBlock && !is<RenderView>(*objContainingBlock)) {
-            // Check if this object is in a different fragment.
-            RenderFragmentContainer* parentStartFragment = nullptr;
-            RenderFragmentContainer* parentEndFragment = nullptr;
-            if (getFragmentRangeForBox(objContainingBlock, parentStartFragment, parentEndFragment) && parentStartFragment != startFragment) {
-                wasComputedRelativeToOtherFragment = true;
-                break;
-            }
-            objContainingBlock = objContainingBlock->containingBlock();
-        }
-        
-        if (wasComputedRelativeToOtherFragment) {
-            if (is<RenderBox>(boxModelObject)) {
-                // Use borderBoxRectInFragment to account for variations such as percentage margins.
-                LayoutRect borderBoxRect = downcast<RenderBox>(boxModelObject).borderBoxRectInFragment(startFragment, RenderBox::DoNotCacheRenderBoxFragmentInfo);
-                referencePoint.move(borderBoxRect.location().x(), 0_lu);
-            }
-            
-            // Get the logical top coordinate of the current object.
-            LayoutUnit top;
-            if (is<RenderBlock>(boxModelObject))
-                top = downcast<RenderBlock>(boxModelObject).offsetFromLogicalTopOfFirstPage();
-            else {
-                if (boxModelObject.containingBlock())
-                    top = boxModelObject.containingBlock()->offsetFromLogicalTopOfFirstPage();
-                
-                if (is<RenderBox>(boxModelObject))
-                    top += downcast<RenderBox>(boxModelObject).topLeftLocation().y();
-                else if (is<RenderInline>(boxModelObject))
-                    top -= downcast<RenderInline>(boxModelObject).borderTop();
-            }
-            
-            // Get the logical top of the fragment this object starts in
-            // and compute the object's top, relative to the fragment's top.
-            LayoutUnit fragmentLogicalTop = startFragment->pageLogicalTopForOffset(top);
-            LayoutUnit topRelativeToFragment = top - fragmentLogicalTop;
-            referencePoint.setY(startFragmentBox->offsetTop() + topRelativeToFragment);
-            
-            // Since the top has been overridden, check if the
-            // relative/sticky positioning must be reconsidered.
-            if (boxModelObject.isRelativelyPositioned())
-                referencePoint.move(0_lu, boxModelObject.relativePositionOffset().height());
-            else if (boxModelObject.isStickilyPositioned())
-                referencePoint.move(0_lu, boxModelObject.stickyPositionOffset().height());
-        }
-        
-        // Since we're looking for the offset relative to the body, we must also
-        // take into consideration the borders of the fragment.
-        referencePoint.move(startFragmentBox->borderLeft(), startFragmentBox->borderTop());
-    }
-    
-    return referencePoint;
 }
 
 LayoutUnit RenderFragmentedFlow::pageLogicalTopForOffset(LayoutUnit offset) const
@@ -743,7 +663,7 @@ bool RenderFragmentedFlow::objectShouldFragmentInFlowFragment(const RenderObject
         && !fragmentInRange(fragment, enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
     
-    return object->isBox() || object->isRenderInline();
+    return object->isRenderBox() || object->isRenderInline();
 }
 
 bool RenderFragmentedFlow::objectInFlowFragment(const RenderObject* object, const RenderFragmentContainer* fragment) const
@@ -766,7 +686,7 @@ bool RenderFragmentedFlow::objectInFlowFragment(const RenderObject* object, cons
     if (!fragmentInRange(fragment, enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
 
-    if (object->isBox())
+    if (object->isRenderBox())
         return true;
 
     LayoutRect objectABBRect = object->absoluteBoundingBoxRect(true);
@@ -956,7 +876,7 @@ void RenderFragmentedFlow::mapLocalToContainer(const RenderLayerModelObject* anc
 
         // If the repaint container is nullptr, we have to climb up to the RenderView, otherwise swap
         // it with the fragment's repaint container.
-        ancestorContainer = ancestorContainer ? fragment->containerForRepaint().renderer : nullptr;
+        ancestorContainer = ancestorContainer ? fragment->containerForRepaint().renderer.get() : nullptr;
 
         if (RenderFragmentedFlow* fragmentFragmentedFlow = fragment->enclosingFragmentedFlow()) {
             RenderFragmentContainer* startFragment = nullptr;

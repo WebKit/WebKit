@@ -1,0 +1,4 @@
+
+
+FAIL traverseTo() in a detached window promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'iWindow.navigation.currentEntry.key')"
+

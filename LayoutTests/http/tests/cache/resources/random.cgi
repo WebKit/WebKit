@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+binmode STDOUT;
 
 print "Content-type: text/javascript\n";
 print "Cache-control: no-store\n";

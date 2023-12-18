@@ -59,13 +59,13 @@ ExceptionOr<RectifiedCSSColorPercent> CSSColorValue::rectifyCSSColorPercent(CSSC
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorPercent> {
         if (numericValue->type().matches<CSSNumericBaseType::Percent>())
             return { WTFMove(numericValue) };
-        return Exception { SyntaxError, "Invalid CSSColorPercent"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorPercent"_s };
     }, [](String&& string) -> ExceptionOr<RectifiedCSSColorPercent> {
         return { RefPtr<CSSKeywordValue> { CSSKeywordValue::rectifyKeywordish(WTFMove(string)) } };
     }, [](RefPtr<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorPercent> {
         if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
             return { WTFMove(keywordValue) };
-        return Exception { SyntaxError, "Invalid CSSColorPercent"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorPercent"_s };
     });
 }
 
@@ -77,13 +77,13 @@ ExceptionOr<RectifiedCSSColorAngle> CSSColorValue::rectifyCSSColorAngle(CSSColor
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorAngle> {
         if (numericValue->type().matches<CSSNumericBaseType::Angle>())
             return { WTFMove(numericValue) };
-        return Exception { SyntaxError, "Invalid CSSColorAngle"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorAngle"_s };
     }, [](String&& string) -> ExceptionOr<RectifiedCSSColorAngle> {
         return { RefPtr<CSSKeywordValue> { CSSKeywordValue::rectifyKeywordish(WTFMove(string)) } };
     }, [](RefPtr<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorAngle> {
         if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
             return { WTFMove(keywordValue) };
-        return Exception { SyntaxError, "Invalid CSSColorAngle"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorAngle"_s };
     });
 }
 
@@ -95,13 +95,13 @@ ExceptionOr<RectifiedCSSColorNumber> CSSColorValue::rectifyCSSColorNumber(CSSCol
     }, [](RefPtr<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorNumber> {
         if (numericValue->type().matchesNumber())
             return { WTFMove(numericValue) };
-        return Exception { SyntaxError, "Invalid CSSColorNumber"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorNumber"_s };
     }, [](String&& string) -> ExceptionOr<RectifiedCSSColorNumber> {
         return { RefPtr<CSSKeywordValue> { CSSKeywordValue::rectifyKeywordish(WTFMove(string)) } };
     }, [](RefPtr<CSSKeywordValue>&& keywordValue) -> ExceptionOr<RectifiedCSSColorNumber> {
         if (equalIgnoringASCIICase(keywordValue->value(), "none"_s))
             return { WTFMove(keywordValue) };
-        return Exception { SyntaxError, "Invalid CSSColorNumber"_s };
+        return Exception { ExceptionCode::SyntaxError, "Invalid CSSColorNumber"_s };
     });
 }
 

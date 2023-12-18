@@ -23,29 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FontInfo_h
-#define FontInfo_h
+#pragma once
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
-    
+
 struct FontInfo {
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, FontInfo&);
-    
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> fontAttributeDictionary;
 #endif
 };
-    
-} // namespace WebKit
 
-#endif // FontInfo_h
+} // namespace WebKit

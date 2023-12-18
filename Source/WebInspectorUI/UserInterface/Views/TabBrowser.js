@@ -108,6 +108,8 @@ WI.TabBrowser = class TabBrowser extends WI.View
         return this._contentViewContainer.currentContentView;
     }
 
+    get contentViewContainer() { return this._contentViewContainer; }
+
     bestTabContentViewForClass(constructor)
     {
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);

@@ -55,7 +55,7 @@ public:
 #endif // PLATFORM(COCOA)
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    virtual CGImageRef copySubjectResult() const { return nullptr; }
+    virtual RetainPtr<CGImageRef> imageForCopySubject() const { return { }; }
 #endif
 
 protected:

@@ -47,7 +47,7 @@ enum SentinelTag { Sentinel };
 
 template<typename T, typename PassedPtrTraits = RawPtrTraits<T>>
 class BasicRawSentinelNode {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_COMPACT_ALLOCATED;
 public:
     using PtrTraits = typename PassedPtrTraits::template RebindTraits<BasicRawSentinelNode>;
 

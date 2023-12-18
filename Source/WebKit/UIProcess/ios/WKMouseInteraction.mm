@@ -56,21 +56,29 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    self.state = UIGestureRecognizerStateBegan;
+
     [_interaction _updateMouseTouches:touches];
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    self.state = UIGestureRecognizerStateChanged;
+
     [_interaction _updateMouseTouches:touches];
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    self.state = UIGestureRecognizerStateEnded;
+
     [_interaction _updateMouseTouches:touches];
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
+    self.state = UIGestureRecognizerStateCancelled;
+
     [_interaction _updateMouseTouches:touches];
 }
 
@@ -96,8 +104,14 @@
         return nil;
 
     _mouseTouchGestureRecognizer = adoptNS([[WKMouseTouchGestureRecognizer alloc] initWithInteraction:self]);
+    [_mouseTouchGestureRecognizer setName:@"WKMouseTouch"];
+
     _pencilHoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognized:)]);
+    [_pencilHoverGestureRecognizer setName:@"WKPencilHover"];
+
     _mouseHoverGestureRecognizer = adoptNS([[UIHoverGestureRecognizer alloc] initWithTarget:self action:@selector(_hoverGestureRecognized:)]);
+    [_mouseHoverGestureRecognizer setName:@"WKMouseHover"];
+
     [self _forEachGesture:^(UIGestureRecognizer *gesture) {
         gesture.delegate = self;
     }];

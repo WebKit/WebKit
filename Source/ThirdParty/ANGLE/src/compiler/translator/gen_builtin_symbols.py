@@ -1459,7 +1459,13 @@ def get_op(name, function_props, group_op_suffix):
 
 def get_known_to_not_have_side_effects(function_props):
     if 'hasSideEffects' in function_props:
-        return 'false'
+        has_side_effects = function_props['hasSideEffects']
+        if isinstance(has_side_effects, str):
+            assert has_side_effects in ['true',
+                                        'false'], 'Bad side effects value: ' + has_side_effects
+            has_side_effects = has_side_effects == 'true'
+        assert isinstance(has_side_effects, bool)
+        return 'false' if has_side_effects else 'true'
     else:
         for param in get_parameters(function_props):
             if 'qualifier' in param.data and (param.data['qualifier'] == 'ParamOut' or

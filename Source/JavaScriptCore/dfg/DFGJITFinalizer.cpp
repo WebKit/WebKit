@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,13 @@
 #include "DFGPlan.h"
 #include "HeapInlines.h"
 #include "ProfilerDatabase.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
 
-JITFinalizer::JITFinalizer(Plan& plan, Ref<JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, CodePtr<JSEntryPtrTag> withArityCheck)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITFinalizer);
+
+JITFinalizer::JITFinalizer(Plan& plan, Ref<DFG::JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, CodePtr<JSEntryPtrTag> withArityCheck)
     : Finalizer(plan)
     , m_jitCode(WTFMove(jitCode))
     , m_linkBuffer(WTFMove(linkBuffer))

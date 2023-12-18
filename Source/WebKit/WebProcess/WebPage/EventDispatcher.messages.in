@@ -23,8 +23,7 @@
 messages -> EventDispatcher NotRefCounted {
     WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, WebCore::RectEdges<bool> rubberBandableEdges)
 #if ENABLE(IOS_TOUCH_EVENTS)
-    TouchEvent(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event) -> (bool handled) MainThreadCallback
-    TouchEventWithoutCallback(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event)
+    TouchEvent(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, WebKit::WebTouchEvent event) -> (bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteTouchEventData) MainThreadCallback
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
     GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event) -> (std::optional<WebKit::WebEventType> eventType, bool handled) MainThreadCallback

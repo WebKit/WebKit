@@ -66,7 +66,7 @@ namespace Style {
 class CustomPropertyRegistry;
 class Resolver;
 
-class Scope : public CanMakeWeakPtr<Scope> {
+class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Scope(Document&);
@@ -139,7 +139,10 @@ public:
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
     struct QueryContainerUpdateContext {
-        HashSet<CheckedRef<Element>> invalidatedContainers;
+        // FIXME: Switching to a WeakHashSet causes fast/dom/Node/Node-destruction-crash.html
+        // to time out. Scope::updateQueryContainerState() seems to rely on this container
+        // containing stale pointers.
+        HashSet<Element*> invalidatedContainers;
     };
     bool updateQueryContainerState(QueryContainerUpdateContext&);
 
@@ -179,7 +182,7 @@ private:
     };
     struct StyleSheetChange {
         ResolverUpdateType resolverUpdateType;
-        Vector<CheckedRef<StyleSheetContents>> addedSheets { };
+        Vector<Ref<StyleSheetContents>> addedSheets { };
     };
     StyleSheetChange analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets);
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
@@ -200,7 +203,7 @@ private:
     using MediaQueryViewportState = std::tuple<IntSize, float, bool>;
     static MediaQueryViewportState mediaQueryViewportStateForDocument(const Document&);
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
     RefPtr<Resolver> m_resolver;
@@ -210,7 +213,7 @@ private:
 
     Timer m_pendingUpdateTimer;
 
-    mutable HashSet<CheckedRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
+    mutable HashSet<SingleThreadWeakRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
     // Track the currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.

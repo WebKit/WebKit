@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SERVICE_WORKER,
-] dictionary BackgroundFetchEventInit : ExtendableEventInit {
+dictionary BackgroundFetchEventInit : ExtendableEventInit {
     required BackgroundFetchRegistration registration;
 };

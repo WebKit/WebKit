@@ -71,4 +71,13 @@ TEST(ColorSpace, TestSettingChromaSitingVerticalFromUint8) {
   EXPECT_FALSE(color_space.set_chroma_siting_vertical_from_uint8(3));
 }
 
+TEST(ColorSpace, TestAsStringFunction) {
+  ColorSpace color_space(
+      ColorSpace::PrimaryID::kBT709, ColorSpace::TransferID::kBT709,
+      ColorSpace::MatrixID::kBT709, ColorSpace::RangeID::kLimited);
+  EXPECT_EQ(
+      color_space.AsString(),
+      "{primaries:kBT709, transfer:kBT709, matrix:kBT709, range:kLimited}");
+}
+
 }  // namespace webrtc

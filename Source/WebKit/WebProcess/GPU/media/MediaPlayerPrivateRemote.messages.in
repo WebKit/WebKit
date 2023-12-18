@@ -42,32 +42,32 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 
     CurrentTimeChanged(MediaTime mediaTime, MonotonicTime wallTime, bool timeIsProgressing)
 
-    AddRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
-    RemoveRemoteAudioTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
-    RemoteAudioTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
+    AddRemoteAudioTrack(struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteAudioTrack(WebCore::TrackID trackID)
+    RemoteAudioTrackConfigurationChanged(WebCore::TrackID trackID, struct WebKit::AudioTrackPrivateRemoteConfiguration configuration)
 
-    AddRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::VideoTrackPrivateRemoteConfiguration configuration)
-    RemoveRemoteVideoTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
-    RemoteVideoTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::VideoTrackPrivateRemoteConfiguration configuration)
+    AddRemoteVideoTrack(struct WebKit::VideoTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteVideoTrack(WebCore::TrackID trackID)
+    RemoteVideoTrackConfigurationChanged(WebCore::TrackID trackID, struct WebKit::VideoTrackPrivateRemoteConfiguration configuration)
 
-    AddRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
-    RemoveRemoteTextTrack(WebKit::TrackPrivateRemoteIdentifier trackID)
-    RemoteTextTrackConfigurationChanged(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
+    AddRemoteTextTrack(struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
+    RemoveRemoteTextTrack(WebCore::TrackID trackID)
+    RemoteTextTrackConfigurationChanged(WebCore::TrackID trackID, struct WebKit::TextTrackPrivateRemoteConfiguration configuration)
 
-    ParseWebVTTFileHeader(WebKit::TrackPrivateRemoteIdentifier trackID, String header)
-    ParseWebVTTCueData(WebKit::TrackPrivateRemoteIdentifier trackID, IPC::DataReference data)
-    ParseWebVTTCueDataStruct(WebKit::TrackPrivateRemoteIdentifier trackID, WebCore::ISOWebVTTCue cueData)
+    ParseWebVTTFileHeader(WebCore::TrackID trackID, String header)
+    ParseWebVTTCueData(WebCore::TrackID trackID, IPC::DataReference data)
+    ParseWebVTTCueDataStruct(WebCore::TrackID trackID, WebCore::ISOWebVTTCue cueData)
 
-    AddDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, IPC::DataReference data)
+    AddDataCue(WebCore::TrackID trackID, MediaTime start, MediaTime end, IPC::DataReference data)
 #if ENABLE(DATACUE_VALUE)
-    AddDataCueWithType(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData, String type)
-    UpdateDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
-    RemoveDataCue(WebKit::TrackPrivateRemoteIdentifier trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
+    AddDataCueWithType(WebCore::TrackID trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData, String type)
+    UpdateDataCue(WebCore::TrackID trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
+    RemoveDataCue(WebCore::TrackID trackID, MediaTime start, MediaTime end, WebCore::SerializedPlatformDataCueValue cueData)
 #endif
 
-    AddGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
-    UpdateGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
-    RemoveGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
+    AddGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
+    UpdateGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
+    RemoveGenericCue(WebCore::TrackID trackID, struct WebCore::GenericCueData cue)
 
     RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options)
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)

@@ -1,16 +1,31 @@
-# Required for Python to search this directory for module files
-
-# Keep this file free of any code or import statements that could
-# cause either an error to occur or a log message to be logged.
-# This ensures that calling code can import initialization code from
-# webkitpy before any errors or log messages due to code in this file.
-# Initialization code can include things like version-checking code and
-# logging configuration code.
+# Copyright (C) 2008-2020 Andrey Petrov and contributors.
+# Copyright (C) 2023 Apple Inc. All rights reserved.
 #
-# We do not execute any version-checking code or logging configuration
-# code in this file so that callers can opt-in as they want.  This also
-# allows different callers to choose different initialization code,
-# as necessary.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
 import platform
@@ -35,7 +50,7 @@ from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
 if sys.version_info >= (3, 7):
-    AutoInstall.register(Package('pylint', Version(2, 6, 0)))
+    AutoInstall.register(Package('pylint', Version(2, 13, 9)))
     AutoInstall.register(
         Package("pytest", Version(7, 2, 0),
                 implicit_deps=["attr", "pluggy", "iniconfig"]
@@ -58,12 +73,15 @@ else:
 
 if sys.version_info >= (3, 6):
     AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
-    AutoInstall.register(Package('typing_extensions', Version(3, 10, 0)))
+    if sys.version_info >= (3, 9):
+        AutoInstall.register(Package('typing_extensions', Version(4, 8, 0), wheel=True))
+    else:
+        AutoInstall.register(Package('typing_extensions', Version(3, 10, 0)))
 else:
     AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
-AutoInstall.register(Package('attr', Version(20, 3, 0), pypi_name='attrs'))
+AutoInstall.register(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
 
 if sys.version_info >= (3, 6):
     AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4'))
@@ -73,7 +91,6 @@ AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['p
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
 AutoInstall.register(Package('coverage', Version(5, 2, 1)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('genshi', Version(0, 7, 3), pypi_name='Genshi'))
 AutoInstall.register(Package('html5lib', Version(1, 1)))
 AutoInstall.register(Package('iniconfig', Version(1, 1, 1)))
 AutoInstall.register(Package('mechanize', Version(0, 4, 5)))
@@ -84,10 +101,24 @@ AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 11, 0)))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
-AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
+
+if sys.version_info >= (3, 7):
+    AutoInstall.register(Package('pyfakefs', Version(5, 2, 4)))
+else:
+    AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
+
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
-AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
-AutoInstall.register(Package('selenium', Version(3, 141, 0)))
+
+if sys.version_info >= (3, 6):
+    AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
+else:
+    AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
+
+if sys.version_info < (3, 8):
+    AutoInstall.register(Package('selenium', Version(3, 141, 0)))
+else:
+    AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
+
 AutoInstall.register(Package('toml', Version(0, 10, 1), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
 AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
@@ -102,3 +133,82 @@ AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
 AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
 
 import webkitscmpy
+
+# Disable IPV6 if Bugzilla can't use IPV6.
+try:
+    import six
+except Exception as e:
+    sys.stderr.write('Error while importing six: {}... trying to continue\n'.format(e))
+
+import socket
+import urllib3
+
+HAS_CHECKED_IPV6 = False
+FIRST_IPV6_TIMEOUT = 3
+
+
+# Pulled from urllib3, https://github.com/urllib3/urllib3/blob/main/src/urllib3/util/connection.py
+# Disable IPV6 if the first attempt to connect to an IPV6 address fails
+def create_connection(
+    address,
+    timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+    source_address=None,
+    socket_options=None,
+):
+    global HAS_CHECKED_IPV6
+
+    host, port = address
+    if host.startswith("["):
+        host = host.strip("[]")
+    err = None
+
+    family = urllib3.util.connection.allowed_gai_family()
+
+    try:
+        host.encode("idna")
+    except UnicodeError:
+        return six.raise_from(
+            LocationParseError(u"'%s', label empty or too long" % host), None
+        )
+
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+        af, socktype, proto, canonname, sa = res
+
+        is_first_ipv6 = not HAS_CHECKED_IPV6 and af == socket.AF_INET6
+        if af == socket.AF_INET6 and not urllib3.util.connection.HAS_IPV6:
+            continue
+
+        sock = None
+        try:
+            sock = socket.socket(af, socktype, proto)
+
+            urllib3.util.connection._set_socket_options(sock, socket_options)
+
+            if is_first_ipv6 and (not timeout or timeout > FIRST_IPV6_TIMEOUT):
+                sock.settimeout(FIRST_IPV6_TIMEOUT)
+            elif timeout is not socket._GLOBAL_DEFAULT_TIMEOUT:
+                sock.settimeout(timeout)
+            if source_address:
+                sock.bind(source_address)
+            sock.connect(sa)
+            return sock
+
+        except socket.error as e:
+            err = e
+            if sock is not None:
+                sock.close()
+                sock = None
+            if is_first_ipv6:
+                sys.stderr.write('IPV6 request to {} has failed, disabling IPV6\n'.format(host))
+                urllib3.util.connection.HAS_IPV6 = False
+        finally:
+            if af == socket.AF_INET6:
+                HAS_CHECKED_IPV6 = True
+
+    if err is not None:
+        raise err
+
+    raise socket.error("getaddrinfo returns an empty list")
+
+
+urllib3.util.connection.create_connection = create_connection

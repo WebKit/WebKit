@@ -19,7 +19,7 @@ abbr[title]
 
 address
       AXRole: AXGroup
-      AXSubrole:
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
 
 article
@@ -633,7 +633,9 @@ table
       AXRoleDescription: table
 
 caption
-      Could not get AX element.
+      AXRole: AXGroup
+      AXSubrole:
+      AXRoleDescription: group
 
 thead
       Could not get AX element.

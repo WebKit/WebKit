@@ -58,19 +58,18 @@ class _FeatureDefineMatcher:
         self._prefix = prefix
 
     def __call__(self, line):
-        match = self._regex.search(line)
+        feature_defines = []
 
-        if not match:
-            return None
+        for match in self._regex.finditer(line):
+            groups = match.groupdict()
 
-        groups = match.groupdict()
+            flag = self._prefix + groups['flag']
+            description = groups.get('description', '')
+            value = groups.get('value', '') in ['1', 'ON']
 
-        flag = self._prefix + groups['flag']
-        description = groups.get('description', '')
-        value = groups.get('value', '') in ['1', 'ON']
+            feature_defines.append(FeatureDefine(flag, value=value, description=description))
 
-        return FeatureDefine(flag, value=value, description=description)
-
+        return feature_defines
 
 def usage_matcher(macro='ENABLE'):
     """ Matches MACRO(FLAG) """

@@ -61,7 +61,8 @@ void WebContextMenuProxy::show()
         return;
 
     m_contextMenuListener = WebContextMenuListenerProxy::create(*this);
-    page->contextMenuClient().getContextMenuFromProposedMenu(*page, proposedItems(), *m_contextMenuListener, m_context.webHitTestResultData().value(), page->process().transformHandlesToObjects(m_userData.object()).get());
+    page->contextMenuClient().getContextMenuFromProposedMenu(*page, proposedItems(), *m_contextMenuListener, m_context.webHitTestResultData().value(),
+        page->process().transformHandlesToObjects(m_userData.protectedObject().get()).get());
 }
 
 void WebContextMenuProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& items)

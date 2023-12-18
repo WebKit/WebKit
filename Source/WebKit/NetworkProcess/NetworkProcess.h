@@ -43,6 +43,7 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/MessagePortChannelRegistry.h>
 #include <WebCore/NotificationEventType.h>
+#include <WebCore/NotificationPayload.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PushPermissionState.h>
@@ -70,6 +71,10 @@
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 
+#if USE(EXTENSIONKIT)
+OBJC_CLASS WKGrant;
+#endif
+
 namespace IPC {
 class FormDataReference;
 }
@@ -94,6 +99,7 @@ enum class StorageAccessWasGranted : bool;
 struct ClientOrigin;
 struct MessageWithMessagePorts;
 class SecurityOriginData;
+struct OrganizationStorageAccessPromptQuirk;
 struct SoupNetworkProxySettings;
 }
 
@@ -145,6 +151,13 @@ public:
 
     using CanMakeThreadSafeCheckedPtr::incrementPtrCount;
     using CanMakeThreadSafeCheckedPtr::decrementPtrCount;
+#if CHECKED_POINTER_DEBUG
+    using CanMakeThreadSafeCheckedPtr::registerCheckedPtr;
+    using CanMakeThreadSafeCheckedPtr::copyCheckedPtr;
+    using CanMakeThreadSafeCheckedPtr::moveCheckedPtr;
+    using CanMakeThreadSafeCheckedPtr::unregisterCheckedPtr;
+#endif // CHECKED_POINTER_DEBUG
+
 
     NetworkProcess(AuxiliaryProcessInitializationParameters&&);
     ~NetworkProcess();
@@ -209,7 +222,6 @@ public:
 
     void registrableDomainsWithLastAccessedTime(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&&);
     void registrableDomainsExemptFromWebsiteDataDeletion(PAL::SessionID, CompletionHandler<void(HashSet<RegistrableDomain>)>&&);
-#if ENABLE(TRACKING_PREVENTION)
     void clearPrevalentResource(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
     void clearUserInteraction(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::SessionID, OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
@@ -237,7 +249,7 @@ public:
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, CompletionHandler<void()>&&);
     void resetParametersToDefaultValues(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleClearInMemoryAndPersistent(PAL::SessionID, std::optional<WallTime> modifiedSince, ShouldGrandfatherStatistics, CompletionHandler<void()>&&);
-    void getResourceLoadStatisticsDataSummary(PAL::SessionID, CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
+    void getResourceLoadStatisticsDataSummary(PAL::SessionID, CompletionHandler<void(Vector<ITPThirdPartyData>&&)>&&);
     void scheduleCookieBlockingUpdate(PAL::SessionID, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing(PAL::SessionID, CompletionHandler<void()>&&);
     void statisticsDatabaseHasAllTables(PAL::SessionID, CompletionHandler<void(bool)>&&);
@@ -252,6 +264,7 @@ public:
     void setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setTrackingPreventionEnabled(PAL::SessionID, bool);
+    void updateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
     void setResourceLoadStatisticsLogTestingEvent(bool);
     void setResourceLoadStatisticsDebugMode(PAL::SessionID, bool debugMode, CompletionHandler<void()>&&d);
     void isResourceLoadStatisticsEphemeral(PAL::SessionID, CompletionHandler<void(bool)>&&) const;
@@ -267,6 +280,7 @@ public:
     void didCommitCrossSiteLoadWithDataTransfer(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag>, WebPageProxyIdentifier, WebCore::PageIdentifier);
     void setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID, RegistrableDomain&& fromDomain, RegistrableDomain&& toDomain, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
+    void grantStorageAccessForTesting(PAL::SessionID, Vector<WebCore::RegistrableDomain>&& subFrameDomains, WebCore::RegistrableDomain&& topFrameDomain, CompletionHandler<void(void)>&&);
     void hasIsolatedSession(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void(bool)>&&) const;
     void closeITPDatabase(PAL::SessionID, CompletionHandler<void()>&&);
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -282,7 +296,6 @@ public:
     void setToSameSiteStrictCookiesForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
-#endif
 
     void notifyMediaStreamingActivity(bool);
 
@@ -307,6 +320,7 @@ public:
     void storeServiceWorkerRegistrations(PAL::SessionID, CompletionHandler<void()>&&);
 
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
+    void setOriginQuotaRatioEnabledForTesting(PAL::SessionID, bool enabled, CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
 #endif
@@ -328,8 +342,6 @@ public:
 
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
-
-    void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&&);
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
     void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);
@@ -394,7 +406,6 @@ public:
     bool ftpEnabled() const { return m_ftpEnabled; }
     bool builtInNotificationsEnabled() const { return m_builtInNotificationsEnabled; }
 
-#if ENABLE(SERVICE_WORKER)
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
     void processPushMessage(PAL::SessionID, WebPushMessage&&, WebCore::PushPermissionState, CompletionHandler<void(bool, std::optional<WebCore::NotificationPayload>&&)>&&);
     void processNotificationEvent(WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&);
@@ -405,7 +416,6 @@ public:
     void pauseBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
     void resumeBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
     void clickBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
-#endif
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
@@ -423,10 +433,8 @@ public:
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
     void webProcessWillLoadWebArchive(WebCore::ProcessIdentifier);
 
-#if ENABLE(SERVICE_WORKER)
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
-#endif
 
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
@@ -474,7 +482,6 @@ private:
 #if PLATFORM(COCOA)
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtensionHandle&&);
 #endif
-    void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
     void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
     void applicationDidEnterBackground();
@@ -486,8 +493,6 @@ private:
     void allowSpecificHTTPSCertificateForHost(PAL::SessionID, const WebCore::CertificateInfo&, const String& host);
 #endif
     void allowTLSCertificateChainForLocalPCMTesting(PAL::SessionID, const WebCore::CertificateInfo&);
-    void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
-
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void addWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier, WebPageNetworkParameters&&);
@@ -525,6 +530,11 @@ private:
 
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
+#if USE(EXTENSIONKIT)
+    bool aqcuireLockedFileGrant();
+    void invalidateGrant();
+    bool hasAcquiredGrant() const;
+#endif
 #endif
     void stopRunLoopIfNecessary();
 
@@ -561,6 +571,9 @@ private:
 
 #if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
+#if USE(EXTENSIONKIT)
+    RetainPtr<WKGrant> m_holdingLockedFileGrant;
+#endif
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
     

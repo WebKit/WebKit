@@ -47,15 +47,15 @@ static WorkQueue& gstEncoderWorkQueue()
     return queue.get();
 }
 
-class GStreamerInternalVideoEncoder : public ThreadSafeRefCounted<GStreamerInternalVideoEncoder>
-    , public CanMakeWeakPtr<GStreamerInternalVideoEncoder, WeakPtrFactoryInitialization::Eager> {
+class GStreamerInternalVideoEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerInternalVideoEncoder, WTF::DestructionThread::Main> {
+    WTF_MAKE_NONCOPYABLE(GStreamerInternalVideoEncoder);
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    static Ref<GStreamerInternalVideoEncoder> create(const String& codecName, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback, VideoEncoder::PostTaskCallback&& postTaskCallback) { return adoptRef(*new GStreamerInternalVideoEncoder(codecName, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback))); }
+    static Ref<GStreamerInternalVideoEncoder> create(VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback, VideoEncoder::PostTaskCallback&& postTaskCallback) { return adoptRef(*new GStreamerInternalVideoEncoder(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback))); }
     ~GStreamerInternalVideoEncoder();
 
-    String initialize(const VideoEncoder::Config&);
+    String initialize(const String& codecName, const VideoEncoder::Config&);
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
     bool encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
     void flush(Function<void()>&&);
@@ -65,9 +65,8 @@ public:
     bool isClosed() const { return m_isClosed; }
 
 private:
-    GStreamerInternalVideoEncoder(const String& codecName, VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&, VideoEncoder::PostTaskCallback&&);
+    GStreamerInternalVideoEncoder(VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&, VideoEncoder::PostTaskCallback&&);
 
-    const String m_codecName;
     VideoEncoder::DescriptionCallback m_descriptionCallback;
     VideoEncoder::OutputCallback m_outputCallback;
     VideoEncoder::PostTaskCallback m_postTaskCallback;
@@ -90,31 +89,34 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
     registerWebKitGStreamerVideoEncoder();
     auto& scanner = GStreamerRegistryScanner::singleton();
     if (!scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName)) {
-        gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), codecName]() mutable {
-            callback(makeUnexpected(makeString("No GStreamer encoder found for codec "_s, codecName)));
+        auto errorMessage = makeString("No GStreamer encoder found for codec "_s, codecName);
+        postTaskCallback([callback = WTFMove(callback), errorMessage = WTFMove(errorMessage)]() mutable {
+            callback(makeUnexpected(WTFMove(errorMessage)));
         });
         return;
     }
 
-    auto encoder = makeUniqueRef<GStreamerVideoEncoder>(codecName, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
-    auto error = encoder->initialize(config);
-    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder), error]() mutable {
+    auto encoder = makeUniqueRef<GStreamerVideoEncoder>(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
+    auto internalEncoder = encoder->m_internalEncoder;
+    auto error = internalEncoder->initialize(codecName, config);
+    if (!error.isEmpty()) {
+        encoder->m_internalEncoder->postTask([callback = WTFMove(callback), error = WTFMove(error)]() mutable {
+            GST_WARNING("Error creating encoder: %s", error.ascii().data());
+            callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
+        });
+        return;
+    }
+    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
-        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder), error]() mutable {
-            if (!error.isEmpty()) {
-                GST_WARNING("Error creating encoder: %s", error.ascii().data());
-                callback(makeUnexpected(makeString("GStreamer encoding initialization failed with error: "_s, error)));
-                return;
-            }
-
+        internalEncoder->postTask([callback = WTFMove(callback), encoder = WTFMove(encoder)]() mutable {
             GST_DEBUG("Encoder created");
             callback(UniqueRef<VideoEncoder> { WTFMove(encoder) });
         });
     });
 }
 
-GStreamerVideoEncoder::GStreamerVideoEncoder(const String& codecName, DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
-    : m_internalEncoder(GStreamerInternalVideoEncoder::create(codecName, WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback)))
+GStreamerVideoEncoder::GStreamerVideoEncoder(DescriptionCallback&& descriptionCallback, OutputCallback&& outputCallback, PostTaskCallback&& postTaskCallback)
+    : m_internalEncoder(GStreamerInternalVideoEncoder::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback)))
 {
 }
 
@@ -122,11 +124,6 @@ GStreamerVideoEncoder::~GStreamerVideoEncoder()
 {
     GST_DEBUG_OBJECT(m_internalEncoder->harness()->element(), "Destroying");
     close();
-}
-
-String GStreamerVideoEncoder::initialize(const VideoEncoder::Config& config)
-{
-    return m_internalEncoder->initialize(config);
 }
 
 void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame, EncodeCallback&& callback)
@@ -142,8 +139,9 @@ void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame
         else
             resultString = "Encoding failed"_s;
 
-        encoder->postTask([weakEncoder = WeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
-            if (!weakEncoder || weakEncoder->isClosed())
+        encoder->postTask([weakEncoder = ThreadSafeWeakPtr { encoder.get() }, result = WTFMove(resultString), callback = WTFMove(callback)]() mutable {
+            auto encoder = weakEncoder.get();
+            if (!encoder || encoder->isClosed())
                 return;
 
             callback(WTFMove(result));
@@ -170,9 +168,8 @@ void GStreamerVideoEncoder::close()
     m_internalEncoder->close();
 }
 
-GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codecName, VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback, VideoEncoder::PostTaskCallback&& postTaskCallback)
-    : m_codecName(codecName)
-    , m_descriptionCallback(WTFMove(descriptionCallback))
+GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(VideoEncoder::DescriptionCallback&& descriptionCallback, VideoEncoder::OutputCallback&& outputCallback, VideoEncoder::PostTaskCallback&& postTaskCallback)
+    : m_descriptionCallback(WTFMove(descriptionCallback))
     , m_outputCallback(WTFMove(outputCallback))
     , m_postTaskCallback(WTFMove(postTaskCallback))
 {
@@ -180,14 +177,19 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
 
     auto pad = adoptGRef(gst_element_get_static_pad(element.get(), "src"));
     g_signal_connect_data(pad.get(), "notify::caps", G_CALLBACK(+[](GObject* pad, GParamSpec*, gpointer userData) {
-        WeakPtr<GStreamerInternalVideoEncoder> encoder(*static_cast<WeakPtr<GStreamerInternalVideoEncoder>*>(userData));
+        auto weakEncoder = static_cast<ThreadSafeWeakPtr<GStreamerInternalVideoEncoder>*>(userData);
+        auto encoder = weakEncoder->get();
         if (!encoder)
             return;
 
         GRefPtr<GstCaps> caps;
         g_object_get(pad, "caps", &caps.outPtr(), nullptr);
-        encoder.get()->postTask([weakEncoder = WeakPtr { *encoder.get() }, caps = WTFMove(caps)] {
-            if (!weakEncoder)
+        if (!caps)
+            return;
+
+        encoder->postTask([weakEncoder = WTFMove(weakEncoder), caps = WTFMove(caps)] {
+            auto encoder = weakEncoder->get();
+            if (!encoder)
                 return;
 
             VideoEncoder::ActiveConfiguration configuration;
@@ -209,14 +211,14 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
                 GstMappedBuffer buffer(header, GST_MAP_READ);
                 configuration.description = { { buffer.data(), buffer.size() } };
             }
-            weakEncoder.get()->m_descriptionCallback(WTFMove(configuration));
+            encoder->m_descriptionCallback(WTFMove(configuration));
         });
-    }), new WeakPtr { *this }, [](void* data, GClosure*) {
-        delete static_cast<WeakPtr<GStreamerInternalVideoEncoder>*>(data);
+    }), new ThreadSafeWeakPtr { *this }, [](void* data, GClosure*) {
+        delete static_cast<ThreadSafeWeakPtr<GStreamerInternalVideoEncoder>*>(data);
     }, static_cast<GConnectFlags>(0));
 
-    m_harness = GStreamerElementHarness::create(WTFMove(element), [weakThis = WeakPtr { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
-        if (!weakThis)
+    m_harness = GStreamerElementHarness::create(WTFMove(element), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&, const GRefPtr<GstBuffer>& outputBuffer) {
+        if (!weakThis.get())
             return;
         if (m_isClosed)
             return;
@@ -251,34 +253,34 @@ GStreamerInternalVideoEncoder::~GStreamerInternalVideoEncoder()
     g_signal_handlers_disconnect_by_data(pad.get(), this);
 }
 
-String GStreamerInternalVideoEncoder::initialize(const VideoEncoder::Config& config)
+String GStreamerInternalVideoEncoder::initialize(const String& codecName, const VideoEncoder::Config& config)
 {
-    GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", m_codecName.ascii().data());
+    GST_DEBUG_OBJECT(m_harness->element(), "Initializing encoder for codec %s", codecName.ascii().data());
     GRefPtr<GstCaps> encoderCaps;
-    if (m_codecName == "vp8"_s)
+    if (codecName == "vp8"_s)
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
-    else if (m_codecName.startsWith("vp09"_s)) {
+    else if (codecName.startsWith("vp09"_s)) {
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
-        if (auto profileId = GStreamerCodecUtilities::parseVP9Profile(m_codecName)) {
+        if (auto profileId = GStreamerCodecUtilities::parseVP9Profile(codecName)) {
             auto profile = makeString(profileId);
             gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile.ascii().data(), nullptr);
         }
-    } else if (m_codecName.startsWith("avc1"_s)) {
+    } else if (codecName.startsWith("avc1"_s)) {
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
-        auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(m_codecName);
+        auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecName);
         if (profile)
             gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
         // FIXME: Set level on caps too?
         UNUSED_VARIABLE(level);
-    } else if (m_codecName.startsWith("av01"_s)) {
+    } else if (codecName.startsWith("av01"_s)) {
         // FIXME: parse codec parameters.
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-av1"));
-    } else if (m_codecName.startsWith("hvc1"_s) || m_codecName.startsWith("hev1"_s)) {
+    } else if (codecName.startsWith("hvc1"_s) || codecName.startsWith("hev1"_s)) {
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h265"));
-        if (const char* profile = GStreamerCodecUtilities::parseHEVCProfile(m_codecName))
+        if (const char* profile = GStreamerCodecUtilities::parseHEVCProfile(codecName))
             gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile, nullptr);
     } else
-        return makeString("Unsupported outgoing video encoding: "_s, m_codecName);
+        return makeString("Unsupported outgoing video encoding: "_s, codecName);
 
     if (config.width)
         gst_caps_set_simple(encoderCaps.get(), "width", G_TYPE_INT, static_cast<int>(config.width), nullptr);
@@ -290,8 +292,8 @@ String GStreamerInternalVideoEncoder::initialize(const VideoEncoder::Config& con
     if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps)))
         return "Unable to set encoder format"_s;
 
-    if (config.bitRate)
-        g_object_set(m_harness->element(), "bitrate", static_cast<uint32_t>(config.bitRate / 1024), nullptr);
+    if (config.bitRate > 1000)
+        g_object_set(m_harness->element(), "bitrate", static_cast<uint32_t>(config.bitRate / 1000), nullptr);
     m_isInitialized = true;
     return emptyString();
 }

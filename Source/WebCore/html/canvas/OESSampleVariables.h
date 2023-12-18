@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESSampleVariables final : public RefCounted<OESSampleVariables>, public WebGLExtension<WebGLRenderingContextBase> {
+class OESSampleVariables final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESSampleVariables);
 public:
     explicit OESSampleVariables(WebGLRenderingContextBase&);

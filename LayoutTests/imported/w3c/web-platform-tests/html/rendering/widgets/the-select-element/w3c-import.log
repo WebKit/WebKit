@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-quirks-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label-quirks.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-add-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-checked-styling-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-checked-styling-ref.html
@@ -30,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-only-label.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-rm-label-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/option-rm-label.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-as-listbox-default-styles.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-invalidation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-invalidation-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/widgets/the-select-element/select-invalidation.html

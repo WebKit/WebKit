@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://web-platform.test:49001/' failed: WebSocket is closed before the connection is established.
-
-PASS WebSockets: close() in close event handler
-

@@ -1,35 +1,3 @@
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load aaa://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load cap://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load cid://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load dav://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load dict://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load dns://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load geo://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load im://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load imap://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load ipp://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load ldap://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load mailto://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load nfs://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load pop://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load rtsp://web-platform.test:8800/ due to access control checks.
-CONSOLE MESSAGE: Cross origin requests are only supported for HTTP.
-CONSOLE MESSAGE: Fetch API cannot load snmp://web-platform.test:8800/ due to access control checks.
 
 PASS Fetching aaa://web-platform.test:8800/ is KO
 PASS Fetching cap://web-platform.test:8800/ is KO

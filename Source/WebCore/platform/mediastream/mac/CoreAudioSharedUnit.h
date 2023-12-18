@@ -40,6 +40,15 @@ typedef UInt32 AudioUnitRenderActionFlags;
 struct AudioBufferList;
 struct AudioTimeStamp;
 
+#if TARGET_OS_IPHONE || (defined(AUDIOCOMPONENT_NOCARBONINSTANCES) && AUDIOCOMPONENT_NOCARBONINSTANCES)
+typedef struct OpaqueAudioComponentInstance* AudioComponentInstance;
+using AudioUnitStruct = OpaqueAudioComponentInstance;
+#else
+typedef struct ComponentInstanceRecord* AudioComponentInstance;
+using AudioUnitStruct = ComponentInstanceRecord;
+#endif
+typedef AudioComponentInstance AudioUnit;
+
 namespace WebCore {
 
 #if PLATFORM(IOS_FAMILY)
@@ -88,6 +97,16 @@ public:
 
     bool isUsingVPIO() const { return m_shouldUseVPIO; }
 
+    struct AudioUnitDeallocator {
+        void operator()(AudioUnit) const;
+    };
+    using StoredAudioUnit = std::unique_ptr<AudioUnitStruct, AudioUnitDeallocator>;
+
+#if PLATFORM(MAC)
+    void setStoredVPIOUnit(StoredAudioUnit&&);
+    StoredAudioUnit takeStoredVPIOUnit() { return std::exchange(m_storedVPIOUnit, nullptr); }
+#endif
+
 private:
     static size_t preferredIOBufferSize();
 
@@ -106,6 +125,10 @@ private:
     bool isProducingData() const final { return m_ioUnitStarted; }
     void isProducingMicrophoneSamplesChanged() final;
     void validateOutputDevice(uint32_t deviceID) final;
+#if PLATFORM(MAC)
+    bool migrateToNewDefaultDevice(const CaptureDevice&) final;
+    void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
+#endif
     int actualSampleRate() const final;
     void resetSampleRate();
 
@@ -168,6 +191,10 @@ private:
 #endif
 
     bool m_shouldUseVPIO { true };
+#if PLATFORM(MAC)
+    StoredAudioUnit m_storedVPIOUnit { nullptr };
+    RefPtr<GenericNonExclusivePromise> m_audioUnitCreationWarmupPromise;
+#endif
 };
 
 } // namespace WebCore

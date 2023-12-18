@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x20
-        RenderInline {A} at (0,0) size 59x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 59x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderInline {A} at (0,0) size 59x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 59x17
             text run at (0,0) width 59: "bug 7118"
-        RenderText {#text} at (59,0) size 354x19
+        RenderText {#text} at (59,0) size 354x17
           text run at (59,0) width 354: ": Wrong property values do not get invalidated correctly."
-      RenderBlock (anonymous) at (0,36) size 784x0
+      RenderBlock (anonymous) at (0,34) size 784x0
         RenderInline {DIV} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (8,44) size 200x200 clip at (8,44) size 185x200
+layer at (8,42) size 200x200 clip at (8,42) size 185x200
   RenderBlock (floating) {DIV} at (0,0) size 200x200 [color=#FFFFFF] [bgcolor=#006400]
     RenderText {#text} at (0,0) size 182x128
       text run at (0,0) width 160: "this text should be left-"
@@ -22,6 +22,6 @@ layer at (8,44) size 200x200 clip at (8,44) size 185x200
       text run at (0,48) width 182: "bold, normally spaced and"
       text run at (0,64) width 165: "wrapped, in a darkgreen"
       text run at (0,80) width 102: "200x200px div "
-      text run at (102,80) width 66: "in the top"
+      text run at (101,80) width 67: "in the top"
       text run at (0,96) width 182: "left corner with no borders"
       text run at (0,112) width 78: "or outlines."

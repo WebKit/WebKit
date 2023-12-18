@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContextMenuItemGlib.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "APIObject.h"
 #include <gio/gio.h>
 
@@ -37,20 +38,20 @@ namespace WebKit {
 using namespace WebCore;
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
-    : WebContextMenuItemData(type, action, title, enabled, checked)
+    : WebContextMenuItemData(type, action, String { title }, enabled, checked)
 {
-    ASSERT(type != SubmenuType);
+    ASSERT(type != ContextMenuItemType::Submenu);
     createActionIfNeeded();
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemData& data)
-    : WebContextMenuItemData(data.type() == SubmenuType ? ActionType : data.type(), data.action(), data.title(), data.enabled(), data.checked())
+    : WebContextMenuItemData(data.type() == ContextMenuItemType::Submenu ? ContextMenuItemType::Action : data.type(), data.action(), String { data.title() }, data.enabled(), data.checked())
 {
     createActionIfNeeded();
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(const WebContextMenuItemGlib& data, Vector<WebContextMenuItemGlib>&& submenu)
-    : WebContextMenuItemData(ActionType, data.action(), data.title(), data.enabled(), false)
+    : WebContextMenuItemData(ContextMenuItemType::Action, data.action(), String { data.title() }, data.enabled(), false)
 {
     m_gAction = data.gAction();
     m_submenuItems = WTFMove(submenu);
@@ -70,7 +71,7 @@ static bool isGActionChecked(GAction* action)
 }
 
 WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& title, GVariant* target)
-    : WebContextMenuItemData(g_action_get_state_type(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, title, g_action_get_enabled(action), isGActionChecked(action))
+    : WebContextMenuItemData(g_action_get_state_type(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String { title }, g_action_get_enabled(action), isGActionChecked(action))
     , m_gAction(action)
     , m_gActionTarget(target)
 {
@@ -80,7 +81,7 @@ WebContextMenuItemGlib::WebContextMenuItemGlib(GAction* action, const String& ti
 #if PLATFORM(GTK) && !USE(GTK4)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WebContextMenuItemGlib::WebContextMenuItemGlib(GtkAction* action)
-    : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? CheckableActionType : ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false)
+    : WebContextMenuItemData(GTK_IS_TOGGLE_ACTION(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action), GTK_IS_TOGGLE_ACTION(action) ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false)
 {
     m_gtkAction = action;
     createActionIfNeeded();
@@ -108,12 +109,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void WebContextMenuItemGlib::createActionIfNeeded()
 {
-    if (type() == SeparatorType)
+    if (type() == ContextMenuItemType::Separator)
         return;
 
     if (!m_gAction) {
         auto actionName = buildActionName();
-        if (type() == CheckableActionType)
+        if (type() == ContextMenuItemType::CheckableAction)
             m_gAction = adoptGRef(G_ACTION(g_simple_action_new_stateful(actionName.get(), nullptr, g_variant_new_boolean(checked()))));
         else
             m_gAction = adoptGRef(G_ACTION(g_simple_action_new(actionName.get(), nullptr)));
@@ -124,7 +125,7 @@ void WebContextMenuItemGlib::createActionIfNeeded()
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // Create the GtkAction for backwards compatibility only.
     if (!m_gtkAction) {
-        if (type() == CheckableActionType) {
+        if (type() == ContextMenuItemType::CheckableAction) {
             m_gtkAction = GTK_ACTION(gtk_toggle_action_new(g_action_get_name(m_gAction.get()), title().utf8().data(), nullptr, nullptr));
             gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(m_gtkAction), checked());
         } else
@@ -139,3 +140,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

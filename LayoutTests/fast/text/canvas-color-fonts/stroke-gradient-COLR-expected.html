@@ -4,5 +4,21 @@
 <meta charset="utf-8">
 </head>
 <body>
+<canvas id="canvas" width="700" height="500" style="width: 700px; height: 500px;"></canvas>
+<script>
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+context.lineWidth = 2;
+let gradient = context.createLinearGradient(100, 200, 400, 200);
+gradient.addColorStop(0, "rgb(255, 0, 128)");
+gradient.addColorStop(1, "rgb(255, 153, 51)");
+context.fillStyle = gradient;
+context.fillRect(200, 20, 100, 100);
+context.strokeStyle = "white";
+context.strokeRect(100, 20, 100, 100);
+context.strokeRect(200, 20, 100, 100);
+context.strokeRect(220, 20, 20, 100);
+context.strokeRect(300, 20, 100, 100);
+</script>
 </body>
 </html>

@@ -54,7 +54,8 @@ UserTypingGestureIndicator::UserTypingGestureIndicator(LocalFrame& frame)
     , m_previousFocusedNode(focusedNode())
 {
     s_processingUserTypingGesture = true;
-    focusedNode() = frame.document() ? frame.document()->focusedElement() : nullptr;
+    RefPtr document = frame.document();
+    focusedNode() = document ? document->focusedElement() : nullptr;
 }
 
 UserTypingGestureIndicator::~UserTypingGestureIndicator()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,14 @@
 #include "config.h"
 #include "WasmTag.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Tag);
 
 } } // namespace JSC::Wasm
 

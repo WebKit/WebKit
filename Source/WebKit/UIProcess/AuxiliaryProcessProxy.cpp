@@ -32,21 +32,27 @@
 #include "OverrideLanguages.h"
 #include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
+#include "CoreIPCSecureCoding.h"
 #include "SandboxUtilities.h"
 #include <sys/sysctl.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#include <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
 #if PLATFORM(VISION)
-#import <WebCore/ThermalMitigationNotifier.h>
+#include <WebCore/ThermalMitigationNotifier.h>
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "ExtensionCapabilityGrant.h"
 #endif
 
 namespace WebKit {
@@ -59,6 +65,10 @@ static Seconds adjustedTimeoutForThermalState(Seconds timeout)
     return timeout;
 #endif
 }
+
+#if USE(EXTENSIONKIT)
+bool AuxiliaryProcessProxy::s_manageProcessesAsExtensions = false;
+#endif
 
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
     : m_responsivenessTimer(*this, adjustedTimeoutForThermalState(responsivenessTimeout))
@@ -80,6 +90,10 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
     }
 
     replyToPendingMessages();
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ASSERT(m_extensionCapabilityGrants.isEmpty());
+#endif
 }
 
 void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions) const
@@ -144,6 +158,12 @@ void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& lau
 
     platformGetLaunchOptions(launchOptions);
 }
+
+#if !PLATFORM(COCOA)
+void AuxiliaryProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions&)
+{
+}
+#endif
 
 void AuxiliaryProcessProxy::connect()
 {
@@ -310,7 +330,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     m_lifetimeActivity = throttler().foregroundActivity("Lifetime Activity"_s).moveToUniquePtr();
-    m_boostedJetsamAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
+    m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
 #endif
 
     RefPtr connection = IPC::Connection::createServerConnection(connectionIdentifier);
@@ -489,6 +509,13 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     parameters.webCoreLoggingChannels = UIProcess::webCoreLogLevelString();
     parameters.webKitLoggingChannels = UIProcess::webKitLogLevelString();
 #endif
+
+#if PLATFORM(COCOA)
+    auto* exemptClassNames = SecureCoding::classNamesExemptFromSecureCodingCrash();
+    if (exemptClassNames)
+        parameters.classNamesExemptFromSecureCodingCrash = WTF::makeUnique<HashSet<String>>(*exemptClassNames);
+#endif
+
     return parameters;
 }
 

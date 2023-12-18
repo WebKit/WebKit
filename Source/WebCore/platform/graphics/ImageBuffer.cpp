@@ -43,12 +43,17 @@
 #if USE(CG)
 #include "ImageBufferUtilitiesCG.h"
 #endif
+
 #if USE(CAIRO)
 #include "ImageBufferUtilitiesCairo.h"
 #endif
 
 #if HAVE(IOSURFACE)
-#include "IOSurfaceImageBuffer.h"
+#include "ImageBufferIOSurfaceBackend.h"
+#endif
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include "DynamicContentScalingDisplayList.h"
 #endif
 
 namespace WebCore {
@@ -70,7 +75,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         ImageBufferCreationContext creationContext;
         if (graphicsClient)
             creationContext.displayID = graphicsClient->displayID();
-        if (auto imageBuffer = IOSurfaceImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
+        if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
             return imageBuffer;
     }
 #endif
@@ -78,7 +83,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 }
 
-ImageBuffer::ImageBuffer(Parameters parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
+ImageBuffer::ImageBuffer(Parameters parameters, const ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext&, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
     : m_parameters(parameters)
     , m_backendInfo(backendInfo)
     , m_backend(WTFMove(backend))
@@ -200,9 +205,9 @@ static RefPtr<ImageBuffer> copyImageBuffer(Ref<ImageBuffer> source, PreserveReso
     if (!copyBuffer)
         return nullptr;
     if (source->hasOneRef())
-        copyBuffer->context().drawConsumingImageBuffer(WTFMove(source), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, CompositeOperator::Copy);
+        copyBuffer->context().drawConsumingImageBuffer(WTFMove(source), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, { CompositeOperator::Copy });
     else
-        copyBuffer->context().drawImageBuffer(source, FloatPoint { }, CompositeOperator::Copy);
+        copyBuffer->context().drawImageBuffer(source, FloatPoint { }, { CompositeOperator::Copy });
     return copyBuffer;
 }
 
@@ -250,7 +255,7 @@ void ImageBuffer::flushDrawingContext()
     // The direct backend context flush is not part of ImageBuffer abstraction semantics,
     // rather implementation detail of the ImageBufferBackends that need separate management
     // of their context lifetime for purposes of drawing from the image buffer.
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         backend->flushContext();
 }
 
@@ -270,34 +275,28 @@ void ImageBuffer::setBackend(std::unique_ptr<ImageBufferBackend>&& backend)
     ++m_backendGeneration;
 }
 
-std::unique_ptr<ImageBufferBackend> ImageBuffer::takeBackend()
-{
-    return WTFMove(m_backend);
-}
-
 IntSize ImageBuffer::backendSize() const
 {
     return calculateBackendSize(m_parameters.logicalSize, m_parameters.resolutionScale);
 }
 
-
 RefPtr<NativeImage> ImageBuffer::copyNativeImage() const
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->copyNativeImage();
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::createNativeImageReference() const
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->createNativeImageReference();
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->sinkIntoNativeImage();
     return nullptr;
 }
@@ -320,7 +319,7 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter)
 {
     ASSERT(!filter.filterRenderingModes().contains(FilterRenderingMode::GraphicsContext));
 
-    auto* backend = ensureBackendCreated();
+    auto* backend = ensureBackend();
     if (!backend)
         return nullptr;
 
@@ -358,10 +357,17 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<vo
     return filteredNativeImage(filter);
 }
 
+#if HAVE(IOSURFACE)
+IOSurface* ImageBuffer::surface()
+{
+    return m_backend ? m_backend->surface() : nullptr;
+}
+#endif
+
 #if USE(CAIRO)
 RefPtr<cairo_surface_t> ImageBuffer::createCairoSurface()
 {
-    auto* backend = ensureBackendCreated();
+    auto* backend = ensureBackend();
     if (!backend)
         return nullptr;
 
@@ -387,13 +393,13 @@ RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
 
 void ImageBuffer::convertToLuminanceMask()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         backend->convertToLuminanceMask();
 }
 
 void ImageBuffer::transformToColorSpace(const DestinationColorSpace& newColorSpace)
 {
-    if (auto* backend = ensureBackendCreated()) {
+    if (auto* backend = ensureBackend()) {
         backend->transformToColorSpace(newColorSpace);
         m_parameters.colorSpace = newColorSpace;
     }
@@ -433,7 +439,7 @@ RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destina
     auto destination = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());
     if (!destination)
         return nullptr;
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         backend->getPixelBuffer(sourceRectScaled, *destination);
     else
         destination->zeroFill();
@@ -443,7 +449,7 @@ RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destina
 void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationFormat)
 {
     ASSERT(resolutionScale() == 1);
-    auto* backend = ensureBackendCreated();
+    auto* backend = ensureBackend();
     if (!backend)
         return;
     auto sourceRectScaled = sourceRect;
@@ -455,20 +461,20 @@ void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& 
 
 bool ImageBuffer::isInUse() const
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->isInUse();
     return false;
 }
 
 void ImageBuffer::releaseGraphicsContext()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->releaseGraphicsContext();
 }
 
 bool ImageBuffer::setVolatile()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->setVolatile();
 
     return true; // Just claim we succeedded.
@@ -476,27 +482,27 @@ bool ImageBuffer::setVolatile()
 
 SetNonVolatileResult ImageBuffer::setNonVolatile()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->setNonVolatile();
     return SetNonVolatileResult::Valid;
 }
 
 VolatilityState ImageBuffer::volatilityState() const
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->volatilityState();
     return VolatilityState::NonVolatile;
 }
 
 void ImageBuffer::setVolatilityState(VolatilityState volatilityState)
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         backend->setVolatilityState(volatilityState);
 }
 
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
 {
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         return backend->createFlusher();
     return nullptr;
 }
@@ -504,6 +510,25 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
 unsigned ImageBuffer::backendGeneration() const
 {
     return m_backendGeneration;
+}
+
+ImageBufferBackendSharing* ImageBuffer::toBackendSharing()
+{
+    if (auto* backend = ensureBackend())
+        return backend->toBackendSharing();
+    return nullptr;
+}
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<DynamicContentScalingDisplayList> ImageBuffer::dynamicContentScalingDisplayList()
+{
+    return std::nullopt;
+}
+#endif
+
+void ImageBuffer::transferToNewContext(const ImageBufferCreationContext& context)
+{
+    backend()->transferToNewContext(context);
 }
 
 String ImageBuffer::debugDescription() const

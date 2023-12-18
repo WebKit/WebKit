@@ -33,15 +33,22 @@ const expected = [
 ];
 const actual = [];
 
-const instance = new Temporal.Instant(0n);
-instance.until(
-  TemporalHelpers.toPrimitiveObserver(actual, "2001-09-09T01:46:40Z", "other"),
-  TemporalHelpers.propertyBagObserver(actual, {
-    roundingIncrement: 1,
-    roundingMode: "halfExpand",
-    largestUnit: "hours",
-    smallestUnit: "minutes",
-    additional: true,
-  }, "options"),
-);
+const instance = new Temporal.Instant(1_000_000_000_000_000_000n);
+const options = TemporalHelpers.propertyBagObserver(actual, {
+  roundingIncrement: 1,
+  roundingMode: "halfExpand",
+  largestUnit: "hours",
+  smallestUnit: "minutes",
+  additional: true,
+}, "options");
+
+instance.until(TemporalHelpers.toPrimitiveObserver(actual, "1970-01-01T00:00Z", "other"), options);
 assert.compareArray(actual, expected, "order of operations");
+
+actual.splice(0); // clear
+
+// short-circuit does not skip reading options
+instance.until(TemporalHelpers.toPrimitiveObserver(actual, "2001-09-09T01:46:40Z", "other"), options);
+assert.compareArray(actual, expected, "order of operations with identical instants");
+
+actual.splice(0); // clear

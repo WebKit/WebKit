@@ -149,6 +149,24 @@ def types_that_must_be_moved():
         'WebKit::GPUProcessConnectionParameters',
         'WebKit::ImageBufferBackendHandle',
         'std::optional<WebKit::ImageBufferBackendHandle>',
+        'WebKit::SandboxExtensionHandle',
+        'WebKit::SandboxExtension::Handle',
+        'Vector<WebKit::SandboxExtensionHandle>',
+        'Vector<WebKit::SandboxExtension::Handle>',
+        'std::optional<WebKit::SandboxExtension::Handle>',
+        'std::optional<Vector<WebKit::SandboxExtension::Handle>>',
+        'WebKit::NetworkSessionCreationParameters',
+        'WebKit::GPUProcessCreationParameters',
+        'WebKit::NetworkProcessCreationParameters',
+        'WebKit::WebsiteDataStoreParameters',
+        'WebKit::GPUProcessSessionParameters',
+        'WebKit::GoToBackForwardItemParameters',
+        'WebKit::ResourceLoadStatisticsParameters',
+        'WebKit::WebPageCreationParameters',
+        'WebKit::WebProcessDataStoreParameters',
+        'WebKit::MediaDeviceSandboxExtensions',
+        'WebKit::WebIDBResult',
+        'WebKit::LoadParameters',
         'WebKit::ShareableBitmap::Handle',
         'WebKit::ShareableResource::Handle',
         'WebKit::SharedMemory::Handle',
@@ -160,6 +178,7 @@ def types_that_must_be_moved():
         'std::optional<MachSendRight>',
         'std::optional<WebKit::ShareableBitmap::Handle>',
         'std::optional<WebKit::ShareableResource::Handle>',
+        'std::optional<WebKit::SharedMemory::Handle>',
         'std::optional<WebKit::SharedVideoFrame::Buffer>',
         'std::optional<Win32Handle>'
     ]
@@ -180,6 +199,7 @@ def function_parameter_type(type, kind):
         'int32_t',
         'int64_t',
         'size_t',
+        'WebCore::TrackID',
     ])
 
     if type in builtin_types:
@@ -234,11 +254,11 @@ def message_to_struct_declaration(receiver, message):
         result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             if len(message.reply_parameters) == 0:
-                result.append('    using Promise = WTF::NativePromise<void, IPC::Error, true>;\n')
+                result.append('    using Promise = WTF::NativePromise<void, IPC::Error>;\n')
             elif len(message.reply_parameters) == 1:
-                result.append('    using Promise = WTF::NativePromise<%s, IPC::Error, true>;\n' % message.reply_parameters[0].type)
+                result.append('    using Promise = WTF::NativePromise<%s, IPC::Error>;\n' % message.reply_parameters[0].type)
             else:
-                result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error, true>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
+                result.append('    using Promise = WTF::NativePromise<std::tuple<%s>, IPC::Error>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
 
     if len(function_parameters):
         result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
@@ -336,6 +356,7 @@ def serialized_identifiers():
         'WebKit::RemoteAudioDestinationIdentifier',
         'WebKit::RemoteAudioHardwareListenerIdentifier',
         'WebKit::RemoteAudioSessionIdentifier',
+        'WebKit::RemoteImageBufferSetIdentifier',
         'WebKit::RemoteCDMIdentifier',
         'WebKit::RemoteCDMInstanceIdentifier',
         'WebKit::RemoteCDMInstanceSessionIdentifier',
@@ -355,7 +376,6 @@ def serialized_identifiers():
         'WebKit::StorageAreaMapIdentifier',
         'WebKit::StorageNamespaceIdentifier',
         'WebKit::TapIdentifier',
-        'WebKit::TrackPrivateRemoteIdentifier',
         'WebKit::TransactionID',
         'WebKit::UserContentControllerIdentifier',
         'WebKit::VideoDecoderIdentifier',
@@ -422,6 +442,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::SharedWorkerObjectIdentifier',
         'WebCore::SourceBufferAppendMode',
         'WebCore::StorageType',
+        'WebCore::TrackID',
         'WebCore::TransferredMessagePort',
         'WebCore::WebLockIdentifier',
         'WebKit::ActivityStateChangeID',
@@ -442,8 +463,15 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::WCContentBufferIdentifier',
         'WebKit::WCLayerTreeHostIdentifier',
+        'WebKit::WebExtensionCommandParameters',
         'WebKit::WebExtensionContentWorldType',
         'WebKit::WebExtensionEventListenerType',
+        'WebKit::WebExtensionFrameParameters',
+        'WebKit::WebExtensionMenuItemContextParameters',
+        'WebKit::WebExtensionMenuItemParameters',
+        'WebKit::WebExtensionRegisteredScriptParameters',
+        'WebKit::WebExtensionScriptInjectionParameters',
+        'WebKit::WebExtensionScriptInjectionResultParameters',
         'WebKit::WebExtensionTab::ImageFormat',
         'WebKit::WebExtensionTabParameters',
         'WebKit::WebExtensionTabQueryParameters',
@@ -454,6 +482,7 @@ def types_that_cannot_be_forward_declared():
 
 def conditions_for_header(header):
     conditions = {
+        '"DMABufRendererBufferFormat.h"': ["USE(GBM)"],
         '"GestureTypes.h"': ["PLATFORM(IOS_FAMILY)"],
         '"InputMethodState.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
         '"RemoteAudioSessionIdentifier.h"': ["ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)"],
@@ -467,6 +496,7 @@ def conditions_for_header(header):
         '"WCLayerTreeHostIdentifier.h"': ["USE(GRAPHICS_LAYER_WC)"],
         '<WebCore/CVUtilities.h>': ["PLATFORM(COCOA)", ],
         '<WebCore/DataDetectorType.h>': ["ENABLE(DATA_DETECTION)"],
+        '<WebCore/DynamicContentScalingDisplayList.h>': ["ENABLE(RE_DYNAMIC_CONTENT_SCALING)"],
         '<WebCore/MediaPlaybackTargetContext.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
         '<WebCore/PlaybackTargetClientContextIdentifier.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
         '<WebCore/VideoFrameCV.h>': ["PLATFORM(COCOA)", ],
@@ -592,7 +622,7 @@ def async_message_statement(receiver, message):
 
     connection = 'connection, '
     if receiver.has_attribute(STREAM_ATTRIBUTE):
-        connection = 'connection.connection(), '
+        connection = 'connection.protectedConnection(), '
     if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
         connection = ''
 
@@ -644,6 +674,7 @@ def class_template_headers(template_string):
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': ['"ArgumentCodersCF.h"']},
+        'WebCore::ProcessQualified': {'headers': ['<WebCore/ProcessQualified.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }
 
     match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)
@@ -715,7 +746,7 @@ def headers_for_type(type):
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'PAL::SessionID': ['<pal/SessionID.h>'],
         'PAL::UserInterfaceIdiom': ['<pal/system/ios/UserInterfaceIdiom.h>'],
-        'PlatformXR::Device::FrameData': ['<WebCore/PlatformXR.h>'],
+        'PlatformXR::FrameData': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::ReferenceSpaceType': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::SessionFeature': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::SessionMode': ['<WebCore/PlatformXR.h>'],
@@ -784,6 +815,8 @@ def headers_for_type(type):
         'WebCore::MediaProducerMediaCaptureKind': ['<WebCore/MediaProducer.h>'],
         'WebCore::MediaProducerMediaState': ['<WebCore/MediaProducer.h>'],
         'WebCore::MediaProducerMutedState': ['<WebCore/MediaProducer.h>'],
+        'WebCore::MediaPromise::Result': ['<WebCore/MediaPromiseTypes.h>'],
+        'WebCore::MediaTimePromise::Result': ['<WebCore/MediaPromiseTypes.h>'],
         'WebCore::MediaSettingsRange': ['<WebCore/MediaSettingsRange.h>'],
         'WebCore::MessagePortChannelProvider::HasActivity': ['<WebCore/MessagePortChannelProvider.h>'],
         'WebCore::ModalContainerControlType': ['<WebCore/ModalContainerTypes.h>'],
@@ -821,6 +854,7 @@ def headers_for_type(type):
         'WebCore::RouteSharingPolicy': ['<WebCore/AudioSession.h>'],
         'WebCore::SameSiteStrictEnforcementEnabled': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::ScriptExecutionContextIdentifier': ['<WebCore/ProcessQualified.h>', '<WebCore/ScriptExecutionContextIdentifier.h>', '<wtf/ObjectIdentifier.h>'],
+        'WebCore::ScheduleLocationChangeResult': ['<WebCore/NavigationScheduler.h>'],
         'WebCore::ScrollDirection': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollGranularity': ['<WebCore/ScrollTypes.h>'],
         'WebCore::ScrollPinningBehavior': ['<WebCore/ScrollTypes.h>'],
@@ -859,6 +893,7 @@ def headers_for_type(type):
         'WebCore::TextIndicatorData': ['<WebCore/TextIndicator.h>'],
         'WebCore::TextManipulationTokenIdentifier': ['<WebCore/TextManipulationToken.h>'],
         'WebCore::ThirdPartyCookieBlockingMode': ['<WebCore/NetworkStorageSession.h>'],
+        'WebCore::TrackID': ['<WebCore/TrackBase.h>'],
         'WebCore::UsedLegacyTLS': ['<WebCore/ResourceResponseBase.h>'],
         'WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],
         'WebCore::VideoPresetData': ['<WebCore/VideoPreset.h>'],
@@ -873,7 +908,6 @@ def headers_for_type(type):
         'WebCore::WebGPU::ColorWriteFlags': ['<WebCore/WebGPUColorWrite.h>'],
         'WebCore::WebGPU::CompareFunction': ['<WebCore/WebGPUCompareFunction.h>'],
         'WebCore::WebGPU::CompilationMessageType': ['<WebCore/WebGPUCompilationMessageType.h>'],
-        'WebCore::WebGPU::ComputePassTimestampLocation': ['<WebCore/WebGPUComputePassTimestampLocation.h>'],
         'WebCore::WebGPU::CullMode': ['<WebCore/WebGPUCullMode.h>'],
         'WebCore::WebGPU::DepthBias': ['<WebCore/WebGPUIntegralTypes.h>'],
         'WebCore::WebGPU::DeviceLostReason': ['<WebCore/WebGPUDeviceLostReason.h>'],
@@ -892,7 +926,6 @@ def headers_for_type(type):
         'WebCore::WebGPU::PredefinedColorSpace': ['<WebCore/WebGPUPredefinedColorSpace.h>'],
         'WebCore::WebGPU::PrimitiveTopology': ['<WebCore/WebGPUPrimitiveTopology.h>'],
         'WebCore::WebGPU::QueryType': ['<WebCore/WebGPUQueryType.h>'],
-        'WebCore::WebGPU::RenderPassTimestampLocation': ['<WebCore/WebGPURenderPassTimestampLocation.h>'],
         'WebCore::WebGPU::SampleMask': ['<WebCore/WebGPUIntegralTypes.h>'],
         'WebCore::WebGPU::SamplerBindingType': ['<WebCore/WebGPUSamplerBindingType.h>'],
         'WebCore::WebGPU::ShaderStageFlags': ['<WebCore/WebGPUShaderStage.h>'],
@@ -915,11 +948,13 @@ def headers_for_type(type):
         'WebCore::WheelScrollGestureState': ['<WebCore/PlatformWheelEvent.h>'],
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::WillInternallyHandleFailure': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::WindowProxyProperty': ['<WebCore/FrameLoaderTypes.h>'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::AllowOverwrite': ['"DownloadID.h"'],
         'WebKit::AppPrivacyReportTestingData': ['"AppPrivacyReport.h"'],
         'WebKit::AuthenticationChallengeIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
+        'WebKit::BufferInSetType': ['"BufferIdentifierSet.h"'],
         'WebKit::CallDownloadDidStart': ['"DownloadManager.h"'],
         'WebKit::ConsumerSharedCARingBuffer::Handle': ['"SharedCARingBuffer.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
@@ -935,16 +970,18 @@ def headers_for_type(type):
         'WebKit::PageState': ['"SessionState.h"'],
         'WebKit::PaymentSetupConfiguration': ['"PaymentSetupConfigurationWebKit.h"'],
         'WebKit::PaymentSetupFeatures': ['"ApplePayPaymentSetupFeaturesWebKit.h"'],
-        'WebKit::PrepareBackingStoreBuffersInputData': ['"PrepareBackingStoreBuffersData.h"'],
-        'WebKit::PrepareBackingStoreBuffersOutputData': ['"PrepareBackingStoreBuffersData.h"'],
+        'WebKit::ImageBufferSetPrepareBufferForDisplayInputData': ['"PrepareBackingStoreBuffersData.h"'],
+        'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData': ['"PrepareBackingStoreBuffersData.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoFrameWriteReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RespectSelectionAnchor': ['"GestureTypes.h"'],
+        'WebKit::SandboxExtensionHandle': ['"SandboxExtension.h"'],
         'WebKit::SelectionFlags': ['"GestureTypes.h"'],
         'WebKit::SelectionTouch': ['"GestureTypes.h"'],
         'WebKit::TapIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::TextCheckerRequestID': ['"IdentifierTypes.h"'],
         'WebKit::WebEventType': ['"WebEvent.h"'],
+        'WebKit::WebExtensionContext::InstallReason': ['"WebExtensionContext.h"'],
         'WebKit::WebExtensionTab::ImageFormat': ['"WebExtensionTab.h"'],
         'WebKit::WebGPU::BindGroupDescriptor': ['"WebGPUBindGroupDescriptor.h"'],
         'WebKit::WebGPU::BindGroupEntry': ['"WebGPUBindGroupEntry.h"'],
@@ -1170,7 +1207,7 @@ def generate_message_handler(receiver):
             result.append('    UNUSED_PARAM(decoder);\n')
             result.append('    UNUSED_PARAM(connection);\n')
             result.append('#if ENABLE(IPC_TESTING_API)\n')
-            result.append('    if (connection.connection().ignoreInvalidMessageForTesting())\n')
+            result.append('    if (connection.protectedConnection()->ignoreInvalidMessageForTesting())\n')
             result.append('        return;\n')
             result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());\n')

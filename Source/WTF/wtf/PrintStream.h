@@ -120,6 +120,7 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, bool);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, signed char); // NOTE: this prints as a number, not as a character; use CharacterDump if you want the character
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned char); // NOTE: see above.
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, char16_t);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, char32_t);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, short);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned short);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, int);

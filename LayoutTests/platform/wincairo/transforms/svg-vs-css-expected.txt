@@ -10,7 +10,7 @@ layer at (0,0) size 800x580
         RenderBlock {h2} at (0,286) size 220x28
           RenderText {#text} at (0,0) size 114x26
             text run at (0,0) width 114: "CSS nested"
-      RenderText {#text} at (240,0) size 4x19
+      RenderText {#text} at (240,0) size 4x17
         text run at (240,0) width 4: " "
       RenderBlock {div} at (254,10) size 220x544
         RenderBlock {h2} at (0,19) size 220x28
@@ -19,7 +19,7 @@ layer at (0,0) size 800x580
         RenderBlock {h2} at (0,286) size 220x28
           RenderText {#text} at (0,0) size 156x26
             text run at (0,0) width 156: "CSS compound"
-      RenderText {#text} at (484,0) size 4x19
+      RenderText {#text} at (484,0) size 4x17
         text run at (484,0) width 4: " "
       RenderBlock {div} at (498,10) size 220x544
         RenderBlock {h2} at (0,19) size 220x28

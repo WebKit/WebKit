@@ -52,7 +52,8 @@ public:
     bool contains(TrackBase&) const override;
 
     TextTrack* item(unsigned index) const;
-    TextTrack* getTrackById(const AtomString&);
+    TextTrack* getTrackById(const AtomString&) const;
+    TextTrack* getTrackById(TrackID) const;
     TextTrack* lastItem() const { return item(length() - 1); }
 
     void append(Ref<TextTrack>&&);

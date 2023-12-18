@@ -76,7 +76,8 @@ bool DeviceOrientationController::hasLastData()
 
 RefPtr<Event> DeviceOrientationController::getLastEvent()
 {
-    return DeviceOrientationEvent::create(eventNames().deviceorientationEvent, deviceOrientationClient().lastOrientation());
+    RefPtr orientation = deviceOrientationClient().lastOrientation();
+    return DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation.get());
 }
 
 #endif // PLATFORM(IOS_FAMILY)

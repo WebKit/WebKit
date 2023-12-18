@@ -29,6 +29,6 @@
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKFrameHandle : NSObject <NSCopying, NSSecureCoding>
 
-@property (nonatomic, readonly) uint64_t frameID WK_API_AVAILABLE(macos(12.0), ios(15.0));
+@property (nonatomic, readonly) uint64_t frameID WK_API_DEPRECATED("With site isolation, this identifier may collide with frame identifiers generated in another process", macos(12.0, WK_MAC_TBA), ios(15.0, WK_IOS_TBA));
 
 @end

@@ -6,7 +6,7 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:NixOS/patchelf.git
-  track: '0.14.5'
-  ref: 0.14.5-0-ga35054504293f9ff64539850d1ed0bfd2f5399f2
+  track: '0.18.0'
+  ref: 0.18.0-0-g99c24238981b7b1084313aca8f5c493bb46f302c

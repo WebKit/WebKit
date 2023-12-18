@@ -35,29 +35,25 @@ messages -> NetworkProcessProxy LegacyReceiver {
     LogDiagnosticMessageWithResult(WebKit::WebPageProxyIdentifier pageID, String message, String description, uint32_t result, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithValue(WebKit::WebPageProxyIdentifier pageID, String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
 
-#if ENABLE(TRACKING_PREVENTION)
     LogTestingEvent(PAL::SessionID sessionID, String event)
     NotifyResourceLoadStatisticsProcessed()
     NotifyWebsiteDataDeletionForRegistrableDomainsFinished()
     NotifyWebsiteDataScanForRegistrableDomainsFinished()
-    RequestStorageAccessConfirm(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> (bool userDidGrantAccess)
+    RequestStorageAccessConfirm(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk> organizationStorageAccessPromptQuirk) -> (bool userDidGrantAccess)
     DeleteWebsiteDataInUIProcessForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> dataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain> domains) -> (HashSet<WebCore::RegistrableDomain> domainsWithMatchingDataRecords)
     DidCommitCrossSiteLoadWithDataTransferFromPrevalentResource(WebKit::WebPageProxyIdentifier pageID)
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
     SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
-#endif
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentExtensionRules(WebKit::UserContentControllerIdentifier identifier)
 #endif
 
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 
-#if ENABLE(SERVICE_WORKER)
     StartServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     EndServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
     RequestBackgroundFetchPermission(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin) -> (bool result)
     NotifyBackgroundFetchChange(PAL::SessionID sessionID, String backgroundFetchIdentifier, enum:uint8_t WebKit::BackgroundFetchChange change)
-#endif
     EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:uint8_t WebKit::RemoteWorkerType workerType, WebCore::RegistrableDomain registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID) -> (WebCore::ProcessIdentifier remoteProcessIdentifier)
     RemoteWorkerContextConnectionNoLongerNeeded(enum:uint8_t WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier identifier)
     RegisterRemoteWorkerClientProcess(enum:uint8_t WebKit::RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
@@ -69,9 +65,8 @@ messages -> NetworkProcessProxy LegacyReceiver {
     GetAppBoundDomains(PAL::SessionID sessionID) -> (HashSet<WebCore::RegistrableDomain> appBoundDomains)
 #endif
 
-    RequestStorageSpace(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired) -> (std::optional<uint64_t> newQuota)
     IncreaseQuota(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, WebKit::QuotaIncreaseRequestIdentifier identifier, uint64_t quota, uint64_t currentSize, uint64_t spaceRequested)
-    
+
     ResourceLoadDidSendRequest(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceRequest request, std::optional<IPC::FormDataReference> httpBody)
     ResourceLoadDidPerformHTTPRedirection(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::ResourceResponse resourceResponse, WebCore::ResourceRequest request)
     ResourceLoadDidReceiveChallenge(WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::ResourceLoadInfo resourceLoadInfo, WebCore::AuthenticationChallenge challenge)

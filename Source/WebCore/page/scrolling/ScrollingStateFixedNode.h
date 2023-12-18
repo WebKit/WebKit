@@ -38,7 +38,7 @@ class FixedPositionViewportConstraints;
 
 class ScrollingStateFixedNode final : public ScrollingStateNode {
 public:
-    static Ref<ScrollingStateFixedNode> create(ScrollingStateTree&, ScrollingNodeID);
+    template<typename... Args> static Ref<ScrollingStateFixedNode> create(Args&&... args) { return adoptRef(*new ScrollingStateFixedNode(std::forward<Args>(args)...)); }
 
     Ref<ScrollingStateNode> clone(ScrollingStateTree&) final;
 
@@ -48,6 +48,7 @@ public:
     const FixedPositionViewportConstraints& viewportConstraints() const { return m_constraints; }
 
 private:
+    WEBCORE_EXPORT ScrollingStateFixedNode(ScrollingNodeID, Vector<Ref<ScrollingStateNode>>&&, OptionSet<ScrollingStateNodeProperty>, std::optional<PlatformLayerIdentifier>, FixedPositionViewportConstraints&&);
     ScrollingStateFixedNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateFixedNode(const ScrollingStateFixedNode&, ScrollingStateTree&);
 

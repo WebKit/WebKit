@@ -60,7 +60,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
     list.append(SetInlineFillColor(Color::green));
     list.append(FillRect(contextBounds));
     list.append(DrawImageBuffer(imageBufferIdentifier, contextBounds, contextBounds, ImagePaintingOptions { }));
-    list.append(SetInlineStrokeColor(Color::red));
+    list.append(SetInlineStroke(Color::red));
     list.append(StrokeLine(FloatPoint { 0, contextHeight }, FloatPoint { contextWidth, 0 }));
 
     {
@@ -83,8 +83,6 @@ TEST(DisplayListTests, ReplayWithMissingResource)
 
 TEST(DisplayListTests, ItemValidationFailure)
 {
-    FloatRect contextBounds { 0, 0, contextWidth, contextHeight };
-
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto cgContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.get(), kCGImageAlphaPremultipliedLast));
     GraphicsContextCG context { cgContext.get() };

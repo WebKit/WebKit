@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>short-audio-now-playing</title>
+    <script src=../video-test.js></script>
+    <script>
+    async function runTest() {
+        window.audio = document.createElement('audio');
+        waitFor(audio, 'error').then(failTest);
+        consoleWrite('Test playing short audio; should not become now playing');
+        run('audio.src = "../content/short.mp3"');
+        run('audio.load()');
+        await waitFor(audio, 'canplay');
+        run('audio.play()');
+        await waitFor(audio, 'playing');
+        testExpected('internals.nowPlayingState.registeredAsNowPlayingApplication', false);
+
+        consoleWrite('Test playing long audio; should become now playing');
+        run('audio.src = "../content/silence.mp3"');
+        run('audio.load()');
+        await waitFor(audio, 'canplay');
+        run('audio.play()');
+        await waitFor(audio, 'playing');
+        testExpected('internals.nowPlayingState.registeredAsNowPlayingApplication', true);
+    }
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+</body>
+</html>

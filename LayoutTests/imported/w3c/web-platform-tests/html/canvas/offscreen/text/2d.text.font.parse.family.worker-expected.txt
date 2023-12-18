@@ -1,3 +1,3 @@
 
-FAIL 2d assert_equals: ctx.font === '20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, "QuotedFont\\\\\\","' (got 20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, QuotedFont\",[string], expected 20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, "QuotedFont\\\","[string]) expected "20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, \"QuotedFont\\\\\\\",\"" but got "20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, QuotedFont\\\","
+PASS 2d
 

@@ -47,6 +47,27 @@ static AOM_INLINE int tx_size_cost(const MACROBLOCK *const x, BLOCK_SIZE bsize,
   return x->mode_costs.tx_size_cost[tx_size_cat][tx_size_ctx][depth];
 }
 
+/*!\brief Compute the pixel domain distortion.
+ *
+ * \ingroup transform_search
+ * Compute the pixel domain distortion from diff on all visible 4x4s in the
+ * transform block.
+ *
+ * \param[in]    x              Pointer to structure holding the data for the
+                                current encoding macroblock
+ * \param[in]    plane          Plane index
+ * \param[in]    blk_row        Block row index
+ * \param[in]    blk_col        Block col index
+ * \param[in]    plane_bsize    Current plane block size
+ * \param[in]    tx_bsize       Transform size
+ * \param[in]    block_mse_q8   Block mse
+ * \return       An int64_t value that is the block sse.
+ */
+int64_t av1_pixel_diff_dist(const MACROBLOCK *x, int plane, int blk_row,
+                            int blk_col, const BLOCK_SIZE plane_bsize,
+                            const BLOCK_SIZE tx_bsize,
+                            unsigned int *block_mse_q8);
+
 int64_t av1_estimate_txfm_yrd(const AV1_COMP *const cpi, MACROBLOCK *x,
                               RD_STATS *rd_stats, int64_t ref_best_rd,
                               BLOCK_SIZE bs, TX_SIZE tx_size);

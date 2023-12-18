@@ -167,7 +167,6 @@ class UserStyleSheet;
 class ValidationMessageClient;
 class VisibleSelection;
 class VisitedLinkStore;
-class WebGLStateTracker;
 class WheelEventDeltaFilter;
 class WheelEventTestMonitor;
 class WindowEventLoop;
@@ -220,26 +219,27 @@ enum class RenderingUpdateStep : uint32_t {
     Fullscreen                      = 1 << 4,
     AnimationFrameCallbacks         = 1 << 5,
     UpdateContentRelevancy          = 1 << 6,
-    IntersectionObservations        = 1 << 7,
-    ResizeObservations              = 1 << 8,
-    Images                          = 1 << 9,
-    WheelEventMonitorCallbacks      = 1 << 10,
-    CursorUpdate                    = 1 << 11,
-    EventRegionUpdate               = 1 << 12,
-    LayerFlush                      = 1 << 13,
+    PerformPendingViewTransitions   = 1 << 7,
+    IntersectionObservations        = 1 << 8,
+    ResizeObservations              = 1 << 9,
+    Images                          = 1 << 10,
+    WheelEventMonitorCallbacks      = 1 << 11,
+    CursorUpdate                    = 1 << 12,
+    EventRegionUpdate               = 1 << 13,
+    LayerFlush                      = 1 << 14,
 #if ENABLE(ASYNC_SCROLLING)
-    ScrollingTreeUpdate             = 1 << 14,
+    ScrollingTreeUpdate             = 1 << 15,
 #endif
-    FlushAutofocusCandidates        = 1 << 15,
-    VideoFrameCallbacks             = 1 << 16,
-    PrepareCanvasesForDisplay       = 1 << 17,
-    CaretAnimation                  = 1 << 18,
-    FocusFixup                      = 1 << 19,
-    UpdateValidationMessagePositions= 1 << 20,
+    FlushAutofocusCandidates        = 1 << 16,
+    VideoFrameCallbacks             = 1 << 17,
+    PrepareCanvasesForDisplay       = 1 << 18,
+    CaretAnimation                  = 1 << 19,
+    FocusFixup                      = 1 << 20,
+    UpdateValidationMessagePositions= 1 << 21,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    AccessibilityRegionUpdate       = 1 << 21,
+    AccessibilityRegionUpdate       = 1 << 22,
 #endif
-    RestoreScrollPositionAndViewState = 1 << 22,
+    RestoreScrollPositionAndViewState = 1 << 23,
 };
 
 enum class LinkDecorationFilteringTrigger : uint8_t {
@@ -269,6 +269,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::PrepareCanvasesForDisplay,
     RenderingUpdateStep::CaretAnimation,
     RenderingUpdateStep::UpdateContentRelevancy,
+    RenderingUpdateStep::PerformPendingViewTransitions,
 };
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {
@@ -279,21 +280,21 @@ constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<Render
 };
 
 
-class Page : public Supplementable<Page>, public CanMakeWeakPtr<Page>, public CanMakeCheckedPtr {
+class Page : public RefCounted<Page>, public Supplementable<Page>, public CanMakeSingleThreadWeakPtr<Page> {
     WTF_MAKE_NONCOPYABLE(Page);
     WTF_MAKE_FAST_ALLOCATED;
     friend class SettingsBase;
 
 public:
+    WEBCORE_EXPORT static Ref<Page> create(PageConfiguration&&);
+    WEBCORE_EXPORT ~Page();
+
     WEBCORE_EXPORT static void updateStyleForAllPagesAfterGlobalChangeInEnvironment();
     WEBCORE_EXPORT static void clearPreviousItemFromAllPages(HistoryItem*);
 
     WEBCORE_EXPORT void setupForRemoteWorker(const URL& scriptURL, const SecurityOriginData& topOrigin, const String& referrerPolicy);
 
     void updateStyleAfterChangeInEnvironment();
-
-    WEBCORE_EXPORT explicit Page(PageConfiguration&&);
-    WEBCORE_EXPORT ~Page();
 
     // Utility pages (e.g. SVG image pages) don't have an identifier currently.
     std::optional<PageIdentifier> identifier() const { return m_identifier; }
@@ -324,6 +325,8 @@ public:
     Frame& mainFrame() { return m_mainFrame.get(); }
     const Frame& mainFrame() const { return m_mainFrame.get(); }
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
+    const URL& mainFrameURL() const { return m_mainFrameURL; }
+    WEBCORE_EXPORT void setMainFrameURL(const URL&);
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();
@@ -345,11 +348,6 @@ public:
     WEBCORE_EXPORT static unsigned nonUtilityPageCount();
 
     unsigned subframeCount() const;
-
-    void incrementNestedRunLoopCount();
-    void decrementNestedRunLoopCount();
-    bool insideNestedRunLoop() const { return m_nestedRunLoopCount > 0; }
-    WEBCORE_EXPORT void whenUnnested(Function<void()>&&);
 
     void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const { return m_currentKeyboardScrollingAnimator.get(); }
@@ -397,6 +395,7 @@ public:
     void updateValidationBubbleStateIfNeeded();
 
     WEBCORE_EXPORT ScrollingCoordinator* scrollingCoordinator();
+    WEBCORE_EXPORT RefPtr<ScrollingCoordinator> protectedScrollingCoordinator();
 
     WEBCORE_EXPORT String scrollingStateTreeAsText();
     WEBCORE_EXPORT String synchronousScrollingReasonsAsText();
@@ -408,8 +407,12 @@ public:
     WEBCORE_EXPORT void settingsDidChange();
 
     Settings& settings() const { return *m_settings; }
+
     ProgressTracker& progress() { return m_progress.get(); }
     const ProgressTracker& progress() const { return m_progress.get(); }
+    CheckedRef<ProgressTracker> checkedProgress();
+    CheckedRef<const ProgressTracker> checkedProgress() const;
+
     void progressEstimateChanged(LocalFrame&) const;
     void progressFinished(LocalFrame&) const;
     BackForwardController& backForward() { return m_backForwardController.get(); }
@@ -557,6 +560,8 @@ public:
     WEBCORE_EXPORT void setFullscreenAutoHideDuration(Seconds);
     WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
 
+    Document* outermostFullscreenDocument() const;
+
     bool shouldSuppressScrollbarAnimations() const { return m_suppressScrollbarAnimations; }
     WEBCORE_EXPORT void setShouldSuppressScrollbarAnimations(bool suppressAnimations);
     void lockAllOverlayScrollbarsToHidden(bool lockOverlayScrollbars);
@@ -612,7 +617,7 @@ public:
 
 #if ENABLE(APPLE_PAY_AMS_UI)
     bool hasActiveApplePayAMSUISession() const { return m_activeApplePayAMSUIPaymentHandler; }
-    bool startApplePayAMSUISession(Document&, ApplePayAMSUIPaymentHandler&, const ApplePayAMSUIRequest&);
+    bool startApplePayAMSUISession(const URL&, ApplePayAMSUIPaymentHandler&, const ApplePayAMSUIRequest&);
     void abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler&);
 #endif
 
@@ -639,11 +644,9 @@ public:
 
     WEBCORE_EXPORT static Page* serviceWorkerPage(ScriptExecutionContextIdentifier);
 
-#if ENABLE(SERVICE_WORKER)
     // Service worker pages have an associated ServiceWorkerGlobalScope on the main thread.
     void setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);
     WEBCORE_EXPORT JSC::JSGlobalObject* serviceWorkerGlobalObject(DOMWrapperWorld&);
-#endif
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState>);
@@ -668,7 +671,7 @@ public:
     WEBCORE_EXPORT void addActivityStateChangeObserver(ActivityStateChangeObserver&);
     WEBCORE_EXPORT void removeActivityStateChangeObserver(ActivityStateChangeObserver&);
 
-    WEBCORE_EXPORT void layoutIfNeeded();
+    WEBCORE_EXPORT void layoutIfNeeded(OptionSet<LayoutOptions> = { });
     WEBCORE_EXPORT void updateRendering();
     // A call to updateRendering() that is not followed by a call to finalizeRenderingUpdate().
     WEBCORE_EXPORT void isolatedUpdateRendering();
@@ -699,10 +702,12 @@ public:
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations();
     WEBCORE_EXPORT void setImageAnimationEnabled(bool);
+    WEBCORE_EXPORT void setSystemAllowsAnimationControls(bool isAllowed);
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
 #endif
     bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
+    bool systemAllowsAnimationControls() const { return m_systemAllowsAnimationControls; }
 
     void userStyleSheetLocationChanged();
     const String& userStyleSheet() const;
@@ -765,6 +770,11 @@ public:
     WEBCORE_EXPORT Color themeColor() const;
     WEBCORE_EXPORT Color pageExtendedBackgroundColor() const;
     WEBCORE_EXPORT Color sampledPageTopColor() const;
+
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    WEBCORE_EXPORT void setAppUsesCustomAccentColor(bool);
+    WEBCORE_EXPORT bool appUsesCustomAccentColor() const;
+#endif
 
     Color underPageBackgroundColorOverride() const { return m_underPageBackgroundColorOverride; }
     WEBCORE_EXPORT void setUnderPageBackgroundColorOverride(Color&&);
@@ -835,6 +845,7 @@ public:
     PluginInfoProvider& pluginInfoProvider();
 
     WEBCORE_EXPORT UserContentProvider& userContentProvider();
+    WEBCORE_EXPORT Ref<UserContentProvider> protectedUserContentProvider();
     WEBCORE_EXPORT void setUserContentProvider(Ref<UserContentProvider>&&);
 
     ScreenOrientationManager* screenOrientationManager() const;
@@ -929,10 +940,6 @@ public:
 
     std::optional<CompositingPolicy> compositingPolicyOverride() const { return m_compositingPolicyOverride; }
     void setCompositingPolicyOverride(std::optional<CompositingPolicy> policy) { m_compositingPolicyOverride = policy; }
-
-#if ENABLE(WEBGL)
-    WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
-#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
@@ -1052,7 +1059,7 @@ public:
     void willBeginScrolling();
     void didFinishScrolling();
 
-    const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
+    const HashSet<WeakRef<LocalFrame>>& rootFrames() const { return m_rootFrames; }
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
     WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
 
@@ -1069,6 +1076,8 @@ public:
     WEBCORE_EXPORT String sceneIdentifier() const;
 
 private:
+    explicit Page(PageConfiguration&&);
+
     struct Navigation {
         RegistrableDomain domain;
         FrameLoadType type;
@@ -1144,19 +1153,16 @@ private:
     UniqueRef<ProgressTracker> m_progress;
 
     UniqueRef<BackForwardController> m_backForwardController;
-    WeakHashSet<LocalFrame> m_rootFrames;
+    HashSet<WeakRef<LocalFrame>> m_rootFrames;
     UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
+    URL m_mainFrameURL;
 
     RefPtr<PluginData> m_pluginData;
 
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
-
-#if ENABLE(WEBGL)
-    std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
-#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;
@@ -1170,9 +1176,6 @@ private:
 
     PlatformDisplayID m_displayID { 0 };
     std::optional<FramesPerSecond> m_displayNominalFramesPerSecond;
-
-    int m_nestedRunLoopCount { 0 };
-    Function<void()> m_unnestCallback;
 
     String m_groupName;
     bool m_openedByDOM { false };
@@ -1235,6 +1238,7 @@ private:
 
     bool m_canStartMedia { true };
     bool m_imageAnimationEnabled { true };
+    bool m_systemAllowsAnimationControls { false };
     // Elements containing animations that are individually playing (potentially overriding the page-wide m_imageAnimationEnabled state).
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_individuallyPlayingAnimationElements;
 
@@ -1254,7 +1258,7 @@ private:
     int m_footerHeight { 0 };
 
     std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
-    WeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
+    SingleThreadWeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
 
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;
@@ -1294,10 +1298,7 @@ private:
     Ref<BroadcastChannelRegistry> m_broadcastChannelRegistry;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     WeakHashSet<ActivityStateChangeObserver> m_activityStateChangeObservers;
-
-#if ENABLE(SERVICE_WORKER)
     WeakPtr<ServiceWorkerGlobalScope, WeakPtrImplWithEventTargetData> m_serviceWorkerGlobalScope;
-#endif
 
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;
@@ -1328,6 +1329,7 @@ private:
     bool m_mediaBufferingIsSuspended { false };
     bool m_hasResourceLoadClient { false };
     bool m_delegatesScaling { false };
+
 
 #if ENABLE(EDITABLE_REGION)
     bool m_isEditableRegionEnabled { false };
@@ -1446,6 +1448,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     String m_sceneIdentifier;
 #endif
+
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    bool m_appUsesCustomAccentColor { false };
+#endif
 };
 
 inline PageGroup& Page::group()
@@ -1460,9 +1466,19 @@ inline Page* Frame::page() const
     return m_page.get();
 }
 
+inline RefPtr<Page> Frame::protectedPage() const
+{
+    return m_page.get();
+}
+
 inline Page* Document::page() const
 {
     return m_frame ? m_frame->page() : nullptr;
+}
+
+inline RefPtr<Page> Document::protectedPage() const
+{
+    return page();
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, RenderingUpdateStep);

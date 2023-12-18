@@ -33,6 +33,10 @@
 #include "WKMutableArray.h"
 #include "WKString.h"
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(MEDIA_STREAM)
+#include <WebCore/AVAudioSessionCaptureDeviceManager.h>
+#endif
+
 using namespace WebKit;
 
 WKTypeID WKUserMediaPermissionCheckGetTypeID()
@@ -44,4 +48,3 @@ void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermissionCheck
 {
     toImpl(userMediaPermissionRequestRef)->setUserMediaAccessInfo(allowed);
 }
-

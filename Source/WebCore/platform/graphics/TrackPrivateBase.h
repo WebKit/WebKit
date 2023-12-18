@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+using TrackID = uint64_t;
+
 class WEBCORE_EXPORT TrackPrivateBase
     : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
@@ -50,12 +52,12 @@ public:
 
     virtual TrackPrivateBaseClient* client() const = 0;
 
-    virtual AtomString id() const { return emptyAtom(); }
+    virtual TrackID id() const { return 0; }
     virtual AtomString label() const { return emptyAtom(); }
     virtual AtomString language() const { return emptyAtom(); }
 
     virtual int trackIndex() const { return 0; }
-    virtual std::optional<uint64_t> trackUID() const;
+    virtual std::optional<AtomString> trackUID() const;
     virtual std::optional<bool> defaultEnabled() const;
 
     virtual MediaTime startTimeVariance() const { return MediaTime::zeroTime(); }
@@ -65,7 +67,7 @@ public:
         if (auto* client = this->client())
             client->willRemove();
     }
-    
+
     bool operator==(const TrackPrivateBase&) const;
 
     enum class Type { Video, Audio, Text };

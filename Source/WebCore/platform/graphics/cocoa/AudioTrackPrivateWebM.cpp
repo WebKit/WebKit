@@ -44,20 +44,14 @@ AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
         setEnabled(m_track.is_enabled.value());
 }
 
-AtomString AudioTrackPrivateWebM::id() const
-{
-    if (m_trackID.isNull()) {
-        auto uid = trackUID();
-        m_trackID = uid ? AtomString::number(*uid) : emptyAtom();
-    }
-    return m_trackID;
-}
-
-std::optional<uint64_t> AudioTrackPrivateWebM::trackUID() const
+TrackID AudioTrackPrivateWebM::id() const
 {
     if (m_track.track_uid.is_present())
         return m_track.track_uid.value();
-    return std::nullopt;
+    if (m_track.track_number.is_present())
+        return m_track.track_number.value();
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 std::optional<bool> AudioTrackPrivateWebM::defaultEnabled() const

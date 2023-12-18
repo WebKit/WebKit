@@ -44,7 +44,7 @@ bool SourceAlphaSoftwareApplier::apply(const Filter&, const FilterImageVector& i
     auto& filterContext = resultImage->context();
 
     filterContext.fillRect(imageRect, Color::black);
-    filterContext.drawImageBuffer(*inputImage, IntPoint(), CompositeOperator::DestinationIn);
+    filterContext.drawImageBuffer(*inputImage, IntPoint(), { CompositeOperator::DestinationIn });
     return true;
 }
 

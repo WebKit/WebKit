@@ -1,0 +1,22 @@
+
+PASS :object_has_descriptor_label:name="createBuffer"
+PASS :object_has_descriptor_label:name="requestDevice"
+PASS :object_has_descriptor_label:name="createTexture"
+PASS :object_has_descriptor_label:name="createSampler"
+PASS :object_has_descriptor_label:name="createBindGroupLayout"
+PASS :object_has_descriptor_label:name="createPipelineLayout"
+PASS :object_has_descriptor_label:name="createBindGroup"
+PASS :object_has_descriptor_label:name="createShaderModule"
+PASS :object_has_descriptor_label:name="createComputePipeline"
+PASS :object_has_descriptor_label:name="createRenderPipeline"
+PASS :object_has_descriptor_label:name="createComputePipelineAsync"
+PASS :object_has_descriptor_label:name="createRenderPipelineAsync"
+PASS :object_has_descriptor_label:name="createCommandEncoder"
+PASS :object_has_descriptor_label:name="createRenderBundleEncoder"
+PASS :object_has_descriptor_label:name="createQuerySet"
+PASS :object_has_descriptor_label:name="beginRenderPass"
+PASS :object_has_descriptor_label:name="beginComputePass"
+PASS :object_has_descriptor_label:name="finish"
+PASS :object_has_descriptor_label:name="createView"
+PASS :wrappers_do_not_share_labels:
+

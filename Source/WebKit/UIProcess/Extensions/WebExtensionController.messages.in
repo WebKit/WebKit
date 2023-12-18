@@ -27,11 +27,10 @@
 
 messages -> WebExtensionController {
 
-    // webNavigation support.
-    DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+    DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
 
 }
 

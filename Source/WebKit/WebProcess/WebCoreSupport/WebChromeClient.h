@@ -33,6 +33,7 @@ namespace WebCore {
 class HTMLImageElement;
 class RegistrableDomain;
 enum class CookieConsentDecisionResult : uint8_t;
+enum class DidFilterLinkDecoration : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
 struct TextRecognitionOptions;
@@ -51,6 +52,10 @@ public:
 
     WebPage& page() const { return m_page.get(); }
     Ref<WebPage> protectedPage() const;
+
+#if PLATFORM(IOS_FAMILY)
+    void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const final;
+#endif
 
 private:
     void chromeDestroyed() final;
@@ -323,6 +328,7 @@ private:
     void elementDidBlur(WebCore::Element&) final;
     void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode) final;
+    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
 
     void makeFirstResponder() final;
     void assistiveTechnologyMakeFirstResponder() final;
@@ -405,6 +411,8 @@ private:
 
     void inputElementDidResignStrongPasswordAppearance(WebCore::HTMLInputElement&) final;
 
+    void performSwitchHapticFeedback() final;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
     void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
@@ -421,11 +429,9 @@ private:
 
     void didInvalidateDocumentMarkerRects() final;
 
-#if ENABLE(TRACKING_PREVENTION)
     void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::LocalFrame&, WTF::CompletionHandler<void(bool)>&&) final;
     void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::LocalFrame&, WebCore::StorageAccessScope, WTF::CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&) final;
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const final;
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::LocalFrame&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&) final;
@@ -461,7 +467,7 @@ private:
     void textAutosizingUsesIdempotentModeChanged() final;
 #endif
 
-    URL applyLinkDecorationFiltering(const URL&, WebCore::LinkDecorationFilteringTrigger) const final;
+    std::pair<URL, WebCore::DidFilterLinkDecoration> applyLinkDecorationFilteringWithResult(const URL&, WebCore::LinkDecorationFilteringTrigger) const final;
     URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const final;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -494,6 +500,19 @@ private:
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 
     CheckedRef<WebPage> m_page;
+};
+
+class AXRelayProcessSuspendedNotification {
+public:
+    enum class AutomaticallySend : bool { No, Yes };
+
+    explicit AXRelayProcessSuspendedNotification(Ref<WebPage>, AutomaticallySend = AutomaticallySend::Yes);
+    ~AXRelayProcessSuspendedNotification();
+
+    void sendProcessSuspendMessage(bool suspended);
+private:
+    CheckedRef<WebPage> m_page;
+    AutomaticallySend m_automaticallySend;
 };
 
 } // namespace WebKit

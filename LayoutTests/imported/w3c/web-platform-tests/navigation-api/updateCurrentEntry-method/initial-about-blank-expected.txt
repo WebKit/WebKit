@@ -1,0 +1,6 @@
+
+
+FAIL updateCurrentEntry() must throw if the document is still on the initial about:blank assert_throws_dom: function "() => {
+    iframe.contentWindow.navigation.updateCurrentEntry({ state: 1 });
+  }" did not throw
+

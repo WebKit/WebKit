@@ -32,7 +32,7 @@ std::unique_ptr<TransformableVideoFrameInterface> CreateVideoSenderFrame();
 std::unique_ptr<TransformableVideoFrameInterface> CreateVideoReceiverFrame();
 // Creates a new frame with the same metadata as the original.
 // The original can be a sender or receiver frame.
-RTC_EXPORT std::unique_ptr<TransformableFrameInterface> CloneAudioFrame(
+RTC_EXPORT std::unique_ptr<TransformableAudioFrameInterface> CloneAudioFrame(
     TransformableAudioFrameInterface* original);
 RTC_EXPORT std::unique_ptr<TransformableVideoFrameInterface> CloneVideoFrame(
     TransformableVideoFrameInterface* original);

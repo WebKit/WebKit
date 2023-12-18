@@ -48,8 +48,7 @@ Ref<StaticRange> StaticRange::create(SimpleRange&& range)
 
 Ref<StaticRange> StaticRange::create(const SimpleRange& range)
 {
-    auto copiedRange = range;
-    return create(WTFMove(copiedRange));
+    return create(SimpleRange { range });
 }
 
 static bool isDocumentTypeOrAttr(Node& node)
@@ -73,7 +72,7 @@ ExceptionOr<Ref<StaticRange>> StaticRange::create(Init&& init)
     ASSERT(init.startContainer);
     ASSERT(init.endContainer);
     if (isDocumentTypeOrAttr(*init.startContainer) || isDocumentTypeOrAttr(*init.endContainer))
-        return Exception { InvalidNodeTypeError };
+        return Exception { ExceptionCode::InvalidNodeTypeError };
     return create({ { init.startContainer.releaseNonNull(), init.startOffset }, { init.endContainer.releaseNonNull(), init.endOffset } });
 }
 

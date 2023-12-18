@@ -141,7 +141,17 @@ for opt in "$@"; do
     case "$opt" in
         --help|-h) show_help
         ;;
-        --target=*) target="${optval}"
+        --target=*)
+            target="${optval}"
+            platform_toolset=$(echo ${target} | awk 'BEGIN{FS="-"}{print $4}')
+            case "$platform_toolset" in
+                clangcl) platform_toolset="ClangCl"
+                ;;
+                "")
+                ;;
+                *) die Unrecognized Visual Studio Platform Toolset in $opt
+                ;;
+            esac
         ;;
         --out=*) outfile="$optval"
         ;;
@@ -157,6 +167,8 @@ for opt in "$@"; do
         ;;
         --lib) proj_kind="lib"
         ;;
+        --as=*) as="${optval}"
+        ;;
         --src-path-bare=*)
             src_path_bare=$(fix_path "$optval")
             src_path_bare=${src_path_bare%/}
@@ -168,7 +180,7 @@ for opt in "$@"; do
         --ver=*)
             vs_ver="$optval"
             case "$optval" in
-                1[4-6])
+                1[4-7])
                 ;;
                 *) die Unrecognized Visual Studio Version in $opt
                 ;;
@@ -247,16 +259,20 @@ libs=${libs// /;}
 case "$target" in
     x86_64*)
         platforms[0]="x64"
-        asm_Debug_cmdline="yasm -Xvc -g cv8 -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
-        asm_Release_cmdline="yasm -Xvc -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Debug_cmdline="${as} -Xvc -gcv8 -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Release_cmdline="${as} -Xvc -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
     ;;
     x86*)
         platforms[0]="Win32"
-        asm_Debug_cmdline="yasm -Xvc -g cv8 -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
-        asm_Release_cmdline="yasm -Xvc -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Debug_cmdline="${as} -Xvc -gcv8 -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Release_cmdline="${as} -Xvc -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
     ;;
     arm64*)
         platforms[0]="ARM64"
+        # As of Visual Studio 2022 17.5.5, clang-cl does not support ARM64EC.
+        if [ "$vs_ver" -ge 17 -a "$platform_toolset" != "ClangCl" ]; then
+            platforms[1]="ARM64EC"
+        fi
         asm_Debug_cmdline="armasm64 -nologo -oldit &quot;%(FullPath)&quot;"
         asm_Release_cmdline="armasm64 -nologo -oldit &quot;%(FullPath)&quot;"
     ;;
@@ -333,14 +349,21 @@ generate_vcxproj() {
             else
                 tag_content ConfigurationType StaticLibrary
             fi
-            if [ "$vs_ver" = "14" ]; then
-                tag_content PlatformToolset v140
-            fi
-            if [ "$vs_ver" = "15" ]; then
-                tag_content PlatformToolset v141
-            fi
-            if [ "$vs_ver" = "16" ]; then
-                tag_content PlatformToolset v142
+            if [ -n "$platform_toolset" ]; then
+                tag_content PlatformToolset "$platform_toolset"
+            else
+                if [ "$vs_ver" = "14" ]; then
+                    tag_content PlatformToolset v140
+                fi
+                if [ "$vs_ver" = "15" ]; then
+                    tag_content PlatformToolset v141
+                fi
+                if [ "$vs_ver" = "16" ]; then
+                    tag_content PlatformToolset v142
+                fi
+                if [ "$vs_ver" = "17" ]; then
+                    tag_content PlatformToolset v143
+                fi
             fi
             tag_content CharacterSet Unicode
             if [ "$config" = "Release" ]; then

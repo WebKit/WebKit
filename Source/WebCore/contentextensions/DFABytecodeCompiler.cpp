@@ -288,17 +288,17 @@ DFABytecodeCompiler::JumpTable DFABytecodeCompiler::extractJumpTable(Vector<DFAB
     jumpTable.caseSensitive = ranges[lastRange].caseSensitive;
 
     unsigned size = lastRange - firstRange + 1;
-    jumpTable.destinations.reserveInitialCapacity(size);
-    for (unsigned i = firstRange; i <= lastRange; ++i) {
-        const Range& range = ranges[i];
+    jumpTable.destinations = Vector<uint32_t>(size, [&](size_t i) {
+        size_t index = firstRange + i;
+        const Range& range = ranges[index];
 
         ASSERT(range.caseSensitive == jumpTable.caseSensitive);
         ASSERT(range.min == range.max);
         ASSERT(range.min >= jumpTable.min);
         ASSERT(range.min <= jumpTable.max);
 
-        jumpTable.destinations.uncheckedAppend(range.destination);
-    }
+        return range.destination;
+    });
 
     ranges.remove(firstRange, size);
 
@@ -510,7 +510,6 @@ void DFABytecodeCompiler::compile()
     // Populate m_maxNodeStartOffsets with a worst-case index of where the node would be with no branch compaction.
     // Compacting the branches using 1-4 byte signed jump distances should only make nodes closer together than this.
     ASSERT(m_maxNodeStartOffsets.isEmpty());
-    m_maxNodeStartOffsets.clear();
     m_maxNodeStartOffsets.resize(m_dfa.nodes.size());
     unsigned rootActionsSize = 0;
     for (uint64_t action : m_dfa.nodes[m_dfa.root].actions(m_dfa))

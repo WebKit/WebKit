@@ -72,14 +72,12 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
             if (m_user.isEmpty() && m_password.isEmpty())
                 m_initialCredential = m_session->networkStorageSession()->credentialStorage().get(m_partition, request.url());
             else
-                m_session->networkStorageSession()->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistenceNone), request.url());
+                m_session->networkStorageSession()->credentialStorage().set(m_partition, Credential(m_user, m_password, CredentialPersistence::None), request.url());
         }
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(request))
         blockCookies();
-#endif
     restrictRequestReferrerToOriginIfNeeded(request);
 
     m_curlRequest = createCurlRequest(WTFMove(request));
@@ -386,10 +384,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         }
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     if (!m_blockingCookies && shouldBlockCookies(request))
         blockCookies();
-#endif
     auto response = ResourceResponse(m_response);
     m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = Ref { *this }, didChangeCredential](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
@@ -416,7 +412,7 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
 void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challenge)
 {
     if (!m_user.isNull() && !m_password.isNull()) {
-        auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistenceForSession : WebCore::CredentialPersistenceNone;
+        auto persistence = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use ? WebCore::CredentialPersistence::ForSession : WebCore::CredentialPersistence::None;
         restartWithCredential(challenge.protectionSpace(), Credential(m_user, m_password, persistence));
         m_user = String();
         m_password = String();
@@ -434,7 +430,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
         if (!challenge.previousFailureCount()) {
             auto credential = m_session->networkStorageSession()->credentialStorage().get(m_partition, challenge.protectionSpace());
             if (!credential.isEmpty() && credential != m_initialCredential) {
-                ASSERT(credential.persistence() == CredentialPersistenceNone);
+                ASSERT(credential.persistence() == CredentialPersistence::None);
                 if (challenge.failureResponse().isUnauthorized()) {
                     // Store the credential back, possibly adding it as a default for this directory.
                     m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
@@ -457,7 +453,7 @@ void NetworkDataTaskCurl::tryHttpAuthentication(AuthenticationChallenge&& challe
 
         if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
             if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
-                if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
+                if (credential.persistence() == CredentialPersistence::ForSession || credential.persistence() == CredentialPersistence::Permanent)
                     m_session->networkStorageSession()->credentialStorage().set(m_partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
             }
 
@@ -485,7 +481,7 @@ void NetworkDataTaskCurl::tryProxyAuthentication(WebCore::AuthenticationChalleng
             CurlContext::singleton().setProxyUserPass(credential.user(), credential.password());
             CurlContext::singleton().setDefaultProxyAuthMethod();
 
-            auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistenceNone) : Credential();
+            auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistence::None) : Credential();
             restartWithCredential(challenge.protectionSpace(), requestCredential);
             return;
         }
@@ -501,7 +497,7 @@ void NetworkDataTaskCurl::tryServerTrustEvaluation(AuthenticationChallenge&& cha
             return;
 
         if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
-            auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistenceNone) : Credential();
+            auto requestCredential = m_curlRequest ? Credential(m_curlRequest->user(), m_curlRequest->password(), CredentialPersistence::None) : Credential();
             restartWithCredential(challenge.protectionSpace(), requestCredential);
             return;
         }
@@ -553,21 +549,16 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
 
 void NetworkDataTaskCurl::blockCookies()
 {
-#if ENABLE(TRACKING_PREVENTION)
     m_blockingCookies = true;
-#endif
 }
 
 void NetworkDataTaskCurl::unblockCookies()
 {
-#if ENABLE(TRACKING_PREVENTION)
     m_blockingCookies = false;
-#endif
 }
 
 bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& request)
 {
-#if ENABLE(TRACKING_PREVENTION)
     bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
 
     if (!shouldBlockCookies && m_session->networkStorageSession())
@@ -575,7 +566,6 @@ bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& req
 
     if (shouldBlockCookies)
         return true;
-#endif
     return false;
 }
 

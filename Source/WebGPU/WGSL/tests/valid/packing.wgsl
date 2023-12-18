@@ -1,6 +1,10 @@
 // RUN: %metal-compile main
 // RUN: %metal main 2>&1 | %check
 
+struct Unpacked {
+  x: i32,
+}
+
 struct T {
     v2f: vec2<f32>,
     v3f: vec3<f32>,
@@ -10,6 +14,12 @@ struct T {
     v4u: vec4<u32>,
     f: f32,
     u: u32,
+    unpacked: Unpacked,
+}
+
+struct U {
+    // CHECK: array<type\d::PackedType, 4> field0
+    ts: array<T, 4>,
 }
 
 var<private> t: T;
@@ -25,6 +35,8 @@ var<private> m3: mat3x3<f32>;
 @group(0) @binding(4) var<storage, read_write> at1: array<T, 1>;
 @group(0) @binding(5) var<storage, read_write> at2: array<T, 1>;
 
+@group(0) @binding(8) var<storage, read_write> u1: U;
+
 fn testUnpacked() -> i32
 {
     _ = t.v3f * m3;
@@ -32,25 +44,29 @@ fn testUnpacked() -> i32
 
     _ = t1.v2f * m2;
     _ = m2 * t1.v2f;
+
+    _ = u1.ts[0].v3f * m3;
+    _ = m3 * u1.ts[0].v3f;
+
     return 0;
 }
 
 fn testAssignment() -> i32
 {
     // packed struct
-    // CHECK: local\d+ = __unpack\(parameter\d+\);
+    // CHECK: local\d+ = __unpack\(global\d+\);
     var t = t1;
-    // CHECK-NEXT: parameter\d+ = parameter\d+;
+    // CHECK-NEXT: global\d+ = global\d+;
     t1 = t2;
-    // CHECK-NEXT: parameter\d+ = __pack\(local\d+\);
+    // CHECK-NEXT: global\d+ = __pack\(local\d+\);
     t2 = t;
 
     // array of packed structs
-    // CHECK-NEXT: local\d+ = __unpack_array\(parameter\d+\);
+    // CHECK-NEXT: local\d+ = __unpack\(global\d+\);
     var at = at1;
-    // CHECK-NEXT: parameter\d+ = parameter\d+;
+    // CHECK-NEXT: global\d+ = global\d+;
     at1 = at2;
-    // CHECK-NEXT: parameter\d+ = __pack_array\(local\d+\);
+    // CHECK-NEXT: global\d+ = __pack\(local\d+\);
     at2 = at;
 
     return 0;
@@ -58,20 +74,20 @@ fn testAssignment() -> i32
 
 fn testFieldAccess() -> i32
 {
-    // CHECK: parameter\d+\.v2f\.x = parameter\d+\.v2f\.x;
-    // CHECK-NEXT: parameter\d+\.v3f\.x = parameter\d+\.v3f\.x;
-    // CHECK-NEXT: parameter\d+\.v4f\.x = parameter\d+\.v4f\.x;
-    // CHECK-NEXT: parameter\d+\.v2u\.x = parameter\d+\.v2u\.x;
-    // CHECK-NEXT: parameter\d+\.v3u\.x = parameter\d+\.v3u\.x;
-    // CHECK-NEXT: parameter\d+\.v4u\.x = parameter\d+\.v4u\.x;
-    // CHECK-NEXT: parameter\d+\.v2f = parameter\d+\.v2f;
-    // CHECK-NEXT: parameter\d+\.v3f = float3\(parameter\d+\.v3f\);
-    // CHECK-NEXT: parameter\d+\.v4f = parameter\d+\.v4f;
-    // CHECK-NEXT: parameter\d+\.v2u = parameter\d+\.v2u;
-    // CHECK-NEXT: parameter\d+\.v3u = uint3\(parameter\d+\.v3u\);
-    // CHECK-NEXT: parameter\d+\.v4u = parameter\d+\.v4u;
-    // CHECK-NEXT: parameter\d+\.f = parameter\d+\.f;
-    // CHECK-NEXT: parameter\d+\.u = parameter\d+\.u;
+    // CHECK: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = float3\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = uint3\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
     t.v2f.x = t1.v2f.x;
     t.v3f.x = t1.v3f.x;
     t.v4f.x = t1.v4f.x;
@@ -87,20 +103,20 @@ fn testFieldAccess() -> i32
     t.f     = t1.f;
     t.u     = t1.u;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = parameter\d+\.v2f\.x;
-    // CHECK-NEXT: parameter\d+\.v3f\.x = parameter\d+\.v3f\.x;
-    // CHECK-NEXT: parameter\d+\.v4f\.x = parameter\d+\.v4f\.x;
-    // CHECK-NEXT: parameter\d+\.v2u\.x = parameter\d+\.v2u\.x;
-    // CHECK-NEXT: parameter\d+\.v3u\.x = parameter\d+\.v3u\.x;
-    // CHECK-NEXT: parameter\d+\.v4u\.x = parameter\d+\.v4u\.x;
-    // CHECK-NEXT: parameter\d+\.v2f = parameter\d+\.v2f;
-    // CHECK-NEXT: parameter\d+\.v3f = parameter\d+\.v3f;
-    // CHECK-NEXT: parameter\d+\.v4f = parameter\d+\.v4f;
-    // CHECK-NEXT: parameter\d+\.v2u = parameter\d+\.v2u;
-    // CHECK-NEXT: parameter\d+\.v3u = parameter\d+\.v3u;
-    // CHECK-NEXT: parameter\d+\.v4u = parameter\d+\.v4u;
-    // CHECK-NEXT: parameter\d+\.f = parameter\d+\.f;
-    // CHECK-NEXT: parameter\d+\.u = parameter\d+\.u;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
     t1.v2f.x = t2.v2f.x;
     t1.v3f.x = t2.v3f.x;
     t1.v4f.x = t2.v4f.x;
@@ -116,20 +132,20 @@ fn testFieldAccess() -> i32
     t1.f     = t2.f;
     t1.u     = t2.u;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = parameter\d+\.v2f\.x;
-    // CHECK-NEXT: parameter\d+\.v3f\.x = parameter\d+\.v3f\.x;
-    // CHECK-NEXT: parameter\d+\.v4f\.x = parameter\d+\.v4f\.x;
-    // CHECK-NEXT: parameter\d+\.v2u\.x = parameter\d+\.v2u\.x;
-    // CHECK-NEXT: parameter\d+\.v3u\.x = parameter\d+\.v3u\.x;
-    // CHECK-NEXT: parameter\d+\.v4u\.x = parameter\d+\.v4u\.x;
-    // CHECK-NEXT: parameter\d+\.v2f = parameter\d+\.v2f;
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(parameter\d+\.v3f\);
-    // CHECK-NEXT: parameter\d+\.v4f = parameter\d+\.v4f;
-    // CHECK-NEXT: parameter\d+\.v2u = parameter\d+\.v2u;
-    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(parameter\d+\.v3u\);
-    // CHECK-NEXT: parameter\d+\.v4u = parameter\d+\.v4u;
-    // CHECK-NEXT: parameter\d+\.f = parameter\d+\.f;
-    // CHECK-NEXT: parameter\d+\.u = parameter\d+\.u;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d\.x = global\d+\.field\d\.x;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = packed_uint3\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d;
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d
+    // CHECK-NEXT: global\d+\.field\d = global\d+\.field\d
     t2.v2f.x = t.v2f.x;
     t2.v3f.x = t.v3f.x;
     t2.v4f.x = t.v4f.x;
@@ -148,36 +164,39 @@ fn testFieldAccess() -> i32
     return 0;
 }
 
+@group(0) @binding(9) var<storage, read_write> index: u32;
 fn testIndexAccess() -> i32
 {
-    // CHECK: local\d+ = __unpack_array\(parameter\d+\);
-    // CHECK-NEXT: local\d+\[0\] = __unpack\(parameter\d+\[0\]\);
-    // CHECK-NEXT: parameter\d+\[0\] = parameter\d+\[0\];
-    // CHECK-NEXT: parameter\d+\[0\] = __pack\(local\d+\[0\]\);
+    // CHECK: local\d+ = __unpack\(global\d+\);
+    // CHECK-NEXT: local\d+\[0\] = __unpack\(global\d+\[0\]\);
+    // CHECK-NEXT: global\d+\[0\] = global\d+\[0\];
+    // CHECK-NEXT: global\d+\[0\] = __pack\(local\d+\[0\]\);
+    // CHECK-NEXT: global\d+\[global\d+\] = __pack\(local\d+\[global\d+\]\);
     var at = at1;
     at[0] = at1[0];
     at1[0] = at2[0];
     at2[0] = at[0];
+    at2[index] = at[index];
     return 0;
 }
 
 
 fn testBinaryOperations() -> i32
 {
-    // CHECK: parameter\d+\.v2f\.x = \(2. \* parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2. \* parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2. \* parameter\d+\.v4f\.x\);
-    // CHECK-NEXT: parameter\d+\.v2u\.x = \(2u \* parameter\d+\.v2u\.x\);
-    // CHECK-NEXT: parameter\d+\.v3u\.x = \(2u \* parameter\d+\.v3u\.x\);
-    // CHECK-NEXT: parameter\d+\.v4u\.x = \(2u \* parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = \(2. \* parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = \(2. \* float3\(parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = \(2. \* parameter\d+\.v4f\);
-    // CHECK-NEXT: parameter\d+\.v2u = \(2u \* parameter\d+\.v2u\);
-    // CHECK-NEXT: parameter\d+\.v3u = \(2u \* uint3\(parameter\d+\.v3u\)\);
-    // CHECK-NEXT: parameter\d+\.v4u = \(2u \* parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = \(2. \* parameter\d+\.f\);
-    // CHECK-NEXT: parameter\d+\.u = \(2u \* parameter\d+\.u\);
+    // CHECK: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* float3\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* uint3\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
     t.v2f.x = 2 * t1.v2f.x;
     t.v3f.x = 2 * t1.v3f.x;
     t.v4f.x = 2 * t1.v4f.x;
@@ -193,20 +212,20 @@ fn testBinaryOperations() -> i32
     t.f     = 2 * t1.f;
     t.u     = 2 * t1.u;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = \(2. \* parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2. \* parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2. \* parameter\d+\.v4f\.x\);
-    // CHECK-NEXT: parameter\d+\.v2u\.x = \(2u \* parameter\d+\.v2u\.x\);
-    // CHECK-NEXT: parameter\d+\.v3u\.x = \(2u \* parameter\d+\.v3u\.x\);
-    // CHECK-NEXT: parameter\d+\.v4u\.x = \(2u \* parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = \(2. \* parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(\(2. \* float3\(parameter\d+\.v3f\)\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = \(2. \* parameter\d+\.v4f\);
-    // CHECK-NEXT: parameter\d+\.v2u = \(2u \* parameter\d+\.v2u\);
-    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(\(2u \* uint3\(parameter\d+\.v3u\)\)\);
-    // CHECK-NEXT: parameter\d+\.v4u = \(2u \* parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = \(2. \* parameter\d+\.f\);
-    // CHECK-NEXT: parameter\d+\.u = \(2u \* parameter\d+\.u\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(\(2. \* float3\(global\d+\.field\d\)\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_uint3\(\(2u \* uint3\(global\d+\.field\d\)\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
     t1.v2f.x = 2 * t2.v2f.x;
     t1.v3f.x = 2 * t2.v3f.x;
     t1.v4f.x = 2 * t2.v4f.x;
@@ -222,20 +241,20 @@ fn testBinaryOperations() -> i32
     t1.f     = 2 * t2.f;
     t1.u     = 2 * t2.u;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = \(2. \* parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = \(2. \* parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = \(2. \* parameter\d+\.v4f\.x\);
-    // CHECK-NEXT: parameter\d+\.v2u\.x = \(2u \* parameter\d+\.v2u\.x\);
-    // CHECK-NEXT: parameter\d+\.v3u\.x = \(2u \* parameter\d+\.v3u\.x\);
-    // CHECK-NEXT: parameter\d+\.v4u\.x = \(2u \* parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = \(2. \* parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(\(2. \* parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = \(2. \* parameter\d+\.v4f\);
-    // CHECK-NEXT: parameter\d+\.v2u = \(2u \* parameter\d+\.v2u\);
-    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(\(2u \* parameter\d+\.v3u\)\);
-    // CHECK-NEXT: parameter\d+\.v4u = \(2u \* parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = \(2. \* parameter\d+\.f\);
-    // CHECK-NEXT: parameter\d+\.u = \(2u \* parameter\d+\.u\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2. \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(2u \* global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(\(2. \* global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_uint3\(\(2u \* global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2. \* global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(2u \* global\d+\.field\d\);
     t2.v2f.x = 2 * t.v2f.x;
     t2.v3f.x = 2 * t.v3f.x;
     t2.v4f.x = 2 * t.v4f.x;
@@ -256,13 +275,13 @@ fn testBinaryOperations() -> i32
 
 fn testUnaryOperations() -> i32
 {
-    // CHECK: parameter\d+\.v2f\.x = -parameter\d+\.v2f\.x;
-    // CHECK-NEXT: parameter\d+\.v3f\.x = -parameter\d+\.v3f\.x;
-    // CHECK-NEXT: parameter\d+\.v4f\.x = -parameter\d+\.v4f\.x;
-    // CHECK-NEXT: parameter\d+\.v2f = -parameter\d+\.v2f;
-    // CHECK-NEXT: parameter\d+\.v3f = -float3\(parameter\d+\.v3f\);
-    // CHECK-NEXT: parameter\d+\.v4f = -parameter\d+\.v4f;
-    // CHECK-NEXT: parameter\d+\.f = -parameter\d+\.f;
+    // CHECK: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(-float3\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
     t.v2f.x = -t1.v2f.x;
     t.v3f.x = -t1.v3f.x;
     t.v4f.x = -t1.v4f.x;
@@ -271,13 +290,13 @@ fn testUnaryOperations() -> i32
     t.v4f   = -t1.v4f;
     t.f     = -t1.f;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = -parameter\d+\.v2f\.x;
-    // CHECK-NEXT: parameter\d+\.v3f\.x = -parameter\d+\.v3f\.x;
-    // CHECK-NEXT: parameter\d+\.v4f\.x = -parameter\d+\.v4f\.x;
-    // CHECK-NEXT: parameter\d+\.v2f = -parameter\d+\.v2f;
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(-float3\(parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = -parameter\d+\.v4f;
-    // CHECK-NEXT: parameter\d+\.f = -parameter\d+\.f;
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(\(-float3\(global\d+\.field\d\)\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
     t1.v2f.x = -t2.v2f.x;
     t1.v3f.x = -t2.v3f.x;
     t1.v4f.x = -t2.v4f.x;
@@ -286,13 +305,13 @@ fn testUnaryOperations() -> i32
     t1.v4f   = -t2.v4f;
     t1.f     = -t2.f;
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = -parameter\d+\.v2f\.x;
-    // CHECK-NEXT: parameter\d+\.v3f\.x = -parameter\d+\.v3f\.x;
-    // CHECK-NEXT: parameter\d+\.v4f\.x = -parameter\d+\.v4f\.x;
-    // CHECK-NEXT: parameter\d+\.v2f = -parameter\d+\.v2f;
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(-parameter\d+\.v3f\);
-    // CHECK-NEXT: parameter\d+\.v4f = -parameter\d+\.v4f;
-    // CHECK-NEXT: parameter\d+\.f = -parameter\d+\.f;
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = \(-global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(\(-global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = \(-global\d+\.field\d\);
     t2.v2f.x = -t.v2f.x;
     t2.v3f.x = -t.v3f.x;
     t2.v4f.x = -t.v4f.x;
@@ -306,20 +325,20 @@ fn testUnaryOperations() -> i32
 
 fn testCall() -> i32
 {
-    // CHECK: parameter\d+\.v2f\.x = abs\(parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = abs\(parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = abs\(parameter\d+\.v4f\.x\);
-    // CHECK-NEXT: parameter\d+\.v2u\.x = abs\(parameter\d+\.v2u\.x\);
-    // CHECK-NEXT: parameter\d+\.v3u\.x = abs\(parameter\d+\.v3u\.x\);
-    // CHECK-NEXT: parameter\d+\.v4u\.x = abs\(parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = abs\(parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = abs\(float3\(parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = abs\(parameter\d+\.v4f\);
-    // CHECK-NEXT: parameter\d+\.v2u = abs\(parameter\d+\.v2u\);
-    // CHECK-NEXT: parameter\d+\.v3u = abs\(uint3\(parameter\d+\.v3u\)\);
-    // CHECK-NEXT: parameter\d+\.v4u = abs\(parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = abs\(parameter\d+\.f\);
-    // CHECK-NEXT: parameter\d+\.u = abs\(parameter\d+\.u\);
+    // CHECK: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(float3\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(uint3\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
     t.v2f.x = abs(t1.v2f.x);
     t.v3f.x = abs(t1.v3f.x);
     t.v4f.x = abs(t1.v4f.x);
@@ -335,20 +354,20 @@ fn testCall() -> i32
     t.f     = abs(t1.f);
     t.u     = abs(t1.u);
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = abs\(parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = abs\(parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = abs\(parameter\d+\.v4f\.x\);
-    // CHECK-NEXT: parameter\d+\.v2u\.x = abs\(parameter\d+\.v2u\.x\);
-    // CHECK-NEXT: parameter\d+\.v3u\.x = abs\(parameter\d+\.v3u\.x\);
-    // CHECK-NEXT: parameter\d+\.v4u\.x = abs\(parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = abs\(parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(abs\(float3\(parameter\d+\.v3f\)\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = abs\(parameter\d+\.v4f\);
-    // CHECK-NEXT: parameter\d+\.v2u = abs\(parameter\d+\.v2u\);
-    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(abs\(uint3\(parameter\d+\.v3u\)\)\);
-    // CHECK-NEXT: parameter\d+\.v4u = abs\(parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = abs\(parameter\d+\.f\);
-    // CHECK-NEXT: parameter\d+\.u = abs\(parameter\d+\.u\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(abs\(float3\(global\d+\.field\d\)\)\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_uint3\(abs\(uint3\(global\d+\.field\d\)\)\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
     t1.v2f.x = abs(t2.v2f.x);
     t1.v3f.x = abs(t2.v3f.x);
     t1.v4f.x = abs(t2.v4f.x);
@@ -364,20 +383,20 @@ fn testCall() -> i32
     t1.f     = abs(t2.f);
     t1.u     = abs(t2.u);
 
-    // CHECK-NEXT: parameter\d+\.v2f\.x = abs\(parameter\d+\.v2f\.x\);
-    // CHECK-NEXT: parameter\d+\.v3f\.x = abs\(parameter\d+\.v3f\.x\);
-    // CHECK-NEXT: parameter\d+\.v4f\.x = abs\(parameter\d+\.v4f\.x\);
-    // CHECK-NEXT: parameter\d+\.v2u\.x = abs\(parameter\d+\.v2u\.x\);
-    // CHECK-NEXT: parameter\d+\.v3u\.x = abs\(parameter\d+\.v3u\.x\);
-    // CHECK-NEXT: parameter\d+\.v4u\.x = abs\(parameter\d+\.v4u\.x\);
-    // CHECK-NEXT: parameter\d+\.v2f = abs\(parameter\d+\.v2f\);
-    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(abs\(parameter\d+\.v3f\)\);
-    // CHECK-NEXT: parameter\d+\.v4f = abs\(parameter\d+\.v4f\);
-    // CHECK-NEXT: parameter\d+\.v2u = abs\(parameter\d+\.v2u\);
-    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(abs\(parameter\d+\.v3u\)\);
-    // CHECK-NEXT: parameter\d+\.v4u = abs\(parameter\d+\.v4u\);
-    // CHECK-NEXT: parameter\d+\.f = abs\(parameter\d+\.f\);
-    // CHECK-NEXT: parameter\d+\.u = abs\(parameter\d+\.u\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d\.x = abs\(global\d+\.field\d\.x\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_float3\(abs\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = packed_uint3\(abs\(global\d+\.field\d\)\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
+    // CHECK-NEXT: global\d+\.field\d = abs\(global\d+\.field\d\);
     t2.v2f.x = abs(t.v2f.x);
     t2.v3f.x = abs(t.v3f.x);
     t2.v4f.x = abs(t.v4f.x);

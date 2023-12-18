@@ -79,7 +79,7 @@ void VTTRegion::setId(const String& id)
 ExceptionOr<void> VTTRegion::setWidth(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_width = value;
     return { };
 }
@@ -92,7 +92,7 @@ void VTTRegion::setLines(unsigned value)
 ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_regionAnchor.setX(value);
     return { };
 }
@@ -100,7 +100,7 @@ ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
 ExceptionOr<void> VTTRegion::setRegionAnchorY(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_regionAnchor.setY(value);
     return { };
 }
@@ -108,7 +108,7 @@ ExceptionOr<void> VTTRegion::setRegionAnchorY(double value)
 ExceptionOr<void> VTTRegion::setViewportAnchorX(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_viewportAnchor.setX(value);
     return { };
 }
@@ -116,7 +116,7 @@ ExceptionOr<void> VTTRegion::setViewportAnchorX(double value)
 ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
 {
     if (!(value >= 0 && value <= 100))
-        return Exception { IndexSizeError };
+        return Exception { WebCore::ExceptionCode::IndexSizeError };
     m_viewportAnchor.setY(value);
     return { };
 }
@@ -143,41 +143,43 @@ void VTTRegion::updateParametersFromRegion(const VTTRegion& other)
 
 void VTTRegion::setRegionSettings(const String& inputString)
 {
+    // https://w3c.github.io/webvtt/#region-settings-parsing
+    // 6.2. WebVTT region settings parsing
     m_settings = inputString;
     VTTScanner input(inputString);
 
     while (!input.isAtEnd()) {
-        input.skipWhile<isTabOrSpace>();
-        if (input.isAtEnd())
-            break;
+        // Step 1 - Split input on spaces.
+        input.skipWhile<isASCIIWhitespace<UChar>>();
+        VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<UChar>>();
+        auto settingValue = input.extractString(valueRun);
+        VTTScanner setting(settingValue);
 
-        // Scan the name part.
-        RegionSetting name = scanSettingName(input);
+        // Step 2.2 - Let name be the leading substring of setting up to and excluding the first U+003A COLON character (:) in that string.
+        RegionSetting name = scanSettingName(setting);
 
-        // Verify that we're looking at a ':'.
-        if (name == None || !input.scan(':')) {
-            input.skipUntil<isASCIIWhitespace<UChar>>();
+        // Step 2.1 - If the first ':' in setting is the last character of setting, then jump to the next setting.
+        if (name == None || setting.isAtEnd())
             continue;
-        }
 
-        // Scan the value part.
-        parseSettingValue(name, input);
+        // Steps 2.3-2.4 - Scan the value part.
+        parseSettingValue(name, setting);
     }
 }
 
 VTTRegion::RegionSetting VTTRegion::scanSettingName(VTTScanner& input)
 {
-    if (input.scan("id"))
+    if (input.scan("id:"))
         return Id;
-    if (input.scan("lines"))
+    if (input.scan("lines:"))
         return Lines;
-    if (input.scan("width"))
+    if (input.scan("width:"))
         return Width;
-    if (input.scan("viewportanchor"))
+    if (input.scan("viewportanchor:"))
         return ViewportAnchor;
-    if (input.scan("regionanchor"))
+    if (input.scan("regionanchor:"))
         return RegionAnchor;
-    if (input.scan("scroll"))
+    if (input.scan("scroll:"))
         return Scroll;
 
     return None;

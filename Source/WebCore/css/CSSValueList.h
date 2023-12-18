@@ -26,7 +26,8 @@
 
 namespace WebCore {
 
-using CSSValueListBuilder = Vector<Ref<CSSValue>, 4>;
+static constexpr size_t CSSValueListBuilderInlineCapacity = 4;
+using CSSValueListBuilder = Vector<Ref<CSSValue>, CSSValueListBuilderInlineCapacity>;
 
 class CSSValueContainingVector : public CSSValue {
 public:
@@ -65,6 +66,8 @@ public:
     using CSSValue::separatorCSSText;
 
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
+    void customSetReplacementURLForSubresources(const HashMap<String, String>&);
+    void customClearReplacementURLForSubresources();
 
     CSSValueListBuilder copyValues() const;
 
@@ -134,10 +137,12 @@ inline CSSValueContainingVector::~CSSValueContainingVector()
 
 inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) const
 {
-    ASSERT(index < m_size);
     unsigned maxInlineSize = m_inlineStorage.size();
-    if (index < maxInlineSize)
+    if (index < maxInlineSize) {
+        ASSERT(index < m_size);
         return *m_inlineStorage[index];
+    }
+    RELEASE_ASSERT(index < m_size);
     return *m_additionalStorage[index - maxInlineSize];
 }
 

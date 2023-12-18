@@ -7,27 +7,23 @@ PASS rubyElem != null is true
 PASS axRuby != null is true
 PASS role is expectedRubyRole
 PASS subrole is expectedRubyInlineSubrole
-PASS axRubyRun != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyRunSubrole
-PASS axRubyText != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyTextSubrole
 PASS axRubyBase != null is true
 PASS role is expectedRubyRole
 PASS subrole is expectedRubyBaseSubrole
+PASS axRubyText != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyTextSubrole
 PASS axRuby != null is true
 PASS role is expectedRubyRole
 PASS subrole is expectedRubyBlockSubrole
-PASS axRubyRun != null is true
 PASS role is expectedRubyRole
-PASS subrole is expectedRubyRunSubrole
-PASS axRubyText != null is true
-PASS role is expectedRubyRole
-PASS subrole is expectedRubyTextSubrole
+PASS subrole is expectedRubyInlineSubrole
 PASS axRubyBase != null is true
 PASS role is expectedRubyRole
 PASS subrole is expectedRubyBaseSubrole
+PASS axRubyText != null is true
+PASS role is expectedRubyRole
+PASS subrole is expectedRubyTextSubrole
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -352,10 +352,9 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
             # without invalidating local builds made by Xcode, and we set it
             # via xcconfigs until all building of Xcode-based webkit is done in
             # workspaces (rdar://88135402).
-            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
             if architecture:
-                self.setCommand(self.command + ['ARCHS=' + architecture])
-                self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
+                self.setCommand(self.command + ['--architecture', architecture])
+            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
             if buildOnly:
                 # For build-only bots, the expectation is that tests will be run on separate machines,
                 # so we need to package debug info as dSYMs. Only generating line tables makes
@@ -643,7 +642,7 @@ class RunJavaScriptCoreTests(TestWithFailureCount, CustomFlagsMixin):
         # high enough.
         self.command += self.commandExtra
         # Currently run-javascriptcore-test doesn't support run javascript core test binaries list below remotely
-        if architecture in ['mips', 'aarch64'] or platform in ['win']:
+        if architecture in ['aarch64'] or platform in ['win']:
             self.command += ['--no-testmasm', '--no-testair', '--no-testb3', '--no-testdfg', '--no-testapi']
         # Linux bots have currently problems with JSC tests that try to use large amounts of memory.
         # Check: https://bugs.webkit.org/show_bug.cgi?id=175140

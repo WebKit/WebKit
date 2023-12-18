@@ -39,7 +39,6 @@ public:
     void updateCancelButtonVisibility() const;
 
     void addSearchResult();
-    void stopSearchEventTimer();
 
     bool popupIsVisible() const { return m_searchPopupIsVisible; }
     void showPopup();
@@ -92,4 +91,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSearchField, isSearchField())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSearchField, isRenderSearchField())

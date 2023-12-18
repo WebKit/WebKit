@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
+
 namespace WebCore {
 
 class PendingScript;
 
-class PendingScriptClient {
+class PendingScriptClient : public CanMakeCheckedPtr {
 public:
     virtual ~PendingScriptClient() = default;
 

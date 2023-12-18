@@ -27,9 +27,11 @@
 #include "TestFeatures.h"
 
 #include "TestCommand.h"
+#include "WPTFunctions.h"
 #include <fstream>
 #include <string>
 #include <wtf/StdFilesystem.h>
+#include <wtf/URL.h>
 
 namespace WTR {
 
@@ -106,20 +108,24 @@ static std::optional<double> overrideDeviceScaleFactorForTest(const std::string&
 
 static bool shouldDumpJSConsoleLogInStdErr(const std::string& pathOrURL)
 {
-    return pathContains(pathOrURL, "localhost:8800/beacon") || pathContains(pathOrURL, "localhost:9443/beacon")
-        || pathContains(pathOrURL, "localhost:8800/cors") || pathContains(pathOrURL, "localhost:9443/cors")
-        || pathContains(pathOrURL, "localhost:8800/fetch") || pathContains(pathOrURL, "localhost:9443/fetch")
-        || pathContains(pathOrURL, "localhost:8800/service-workers") || pathContains(pathOrURL, "localhost:9443/service-workers")
-        || pathContains(pathOrURL, "localhost:8800/streams/writable-streams") || pathContains(pathOrURL, "localhost:9443/streams/writable-streams")
-        || pathContains(pathOrURL, "localhost:8800/streams/piping") || pathContains(pathOrURL, "localhost:9443/streams/piping")
-        || pathContains(pathOrURL, "localhost:8800/xhr") || pathContains(pathOrURL, "localhost:9443/xhr")
-        || pathContains(pathOrURL, "localhost:8800/webrtc") || pathContains(pathOrURL, "localhost:9443/webrtc")
-        || pathContains(pathOrURL, "localhost:8800/websockets") || pathContains(pathOrURL, "localhost:9443/websockets");
+    if (auto url = URL { { }, String::fromUTF8(pathOrURL.c_str()) }; isWebPlatformTestURL(url)) {
+        auto path = url.path();
+        return path.startsWith("/beacon"_s)
+            || path.startsWith("/cors"_s)
+            || path.startsWith("/fetch"_s)
+            || path.startsWith("/service-workers"_s)
+            || path.startsWith("/streams/writable-streams"_s)
+            || path.startsWith("/streams/piping"_s)
+            || path.startsWith("/xhr"_s)
+            || path.startsWith("/webrtc"_s)
+            || path.startsWith("/websockets"_s);
+    }
+    return false;
 }
 
 static bool shouldEnableWebGPU(const std::string& pathOrURL)
 {
-    return pathContains(pathOrURL, "127.0.0.1:8000/webgpu");
+    return pathContains(pathOrURL, "webgpu/");
 }
 
 TestFeatures hardcodedFeaturesBasedOnPathForTest(const TestCommand& command)

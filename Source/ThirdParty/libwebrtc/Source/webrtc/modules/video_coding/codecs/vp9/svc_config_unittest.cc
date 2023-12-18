@@ -265,6 +265,21 @@ TEST(SvcConfig, BitrateThresholdsWithScalabilityMode) {
   }
 }
 
+TEST(SvcConfig, CopiesMinMaxBitrateForSingleSpatialLayer) {
+  VideoCodec codec;
+  codec.codecType = kVideoCodecVP9;
+  codec.SetScalabilityMode(ScalabilityMode::kL1T3);
+  codec.width = 1280;
+  codec.height = 720;
+  codec.minBitrate = 100;
+  codec.maxBitrate = 500;
+
+  std::vector<SpatialLayer> spatial_layers = GetVp9SvcConfig(codec);
+  EXPECT_EQ(spatial_layers[0].minBitrate, 100u);
+  EXPECT_EQ(spatial_layers[0].maxBitrate, 500u);
+  EXPECT_LE(spatial_layers[0].targetBitrate, 500u);
+}
+
 TEST(SvcConfig, ScreenSharing) {
   std::vector<SpatialLayer> spatial_layers =
       GetSvcConfig(1920, 1080, 30, 1, 3, 3, true);

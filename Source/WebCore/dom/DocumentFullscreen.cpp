@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-
-#if ENABLE(FULLSCREEN_API)
 #include "DocumentFullscreen.h"
 
+#if ENABLE(FULLSCREEN_API)
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "EventLoop.h"
 #include "JSDOMPromiseDeferred.h"
@@ -38,16 +38,16 @@ namespace WebCore {
 void DocumentFullscreen::exitFullscreen(Document& document, RefPtr<DeferredPromise>&& promise)
 {
     if (!document.isFullyActive() || !document.fullscreenManager().fullscreenElement()) {
-        promise->reject(Exception { TypeError, "Not in fullscreen"_s });
+        promise->reject(Exception { ExceptionCode::TypeError, "Not in fullscreen"_s });
         return;
     }
-    document.fullscreenManager().exitFullscreen(WTFMove(promise));
+    document.checkedFullscreenManager()->exitFullscreen(WTFMove(promise));
 }
 
 void DocumentFullscreen::webkitExitFullscreen(Document& document)
 {
     if (document.fullscreenManager().fullscreenElement())
-        document.fullscreenManager().exitFullscreen(nullptr);
+        document.checkedFullscreenManager()->exitFullscreen(nullptr);
 }
 
 // https://fullscreen.spec.whatwg.org/#dom-document-fullscreenenabled
@@ -55,7 +55,7 @@ bool DocumentFullscreen::fullscreenEnabled(Document& document)
 {
     if (!document.isFullyActive())
         return false;
-    return document.fullscreenManager().isFullscreenEnabled();
+    return document.checkedFullscreenManager()->isFullscreenEnabled();
 }
 
 } // namespace WebCore

@@ -491,9 +491,11 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
+    replacements.grow(items);
 
     CachedCall cachedCall(globalObject, replaceFunction, argCount);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    size_t replacementIndex = 0;
     for (unsigned cursor = 0; cursor < length; cursor += cachedCount) {
         cachedCall.clearArguments();
         for (unsigned i = 0; i < cachedCount; ++i)
@@ -503,7 +505,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         int32_t start = result->get(cursor + cachedCount - 1).asInt32();
         int32_t end = start + asString(result->get(cursor))->length();
 
-        sourceRanges.uncheckedConstructAndAppend(lastIndex, start);
+        sourceRanges.constructAndAppend(lastIndex, start);
 
         cachedCall.setThis(jsUndefined());
         if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
@@ -515,13 +517,14 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         RETURN_IF_EXCEPTION(scope, nullptr);
         auto string = jsResult.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        replacements.uncheckedAppend(WTFMove(string));
+        replacements[replacementIndex++] = WTFMove(string);
 
         lastIndex = end;
     }
+    ASSERT(replacementIndex == replacements.size());
 
     if (static_cast<unsigned>(lastIndex) < sourceLen)
-        sourceRanges.uncheckedConstructAndAppend(lastIndex, sourceLen);
+        sourceRanges.constructAndAppend(lastIndex, sourceLen);
     RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
@@ -1021,12 +1024,12 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncCharCodeAt, (JSGlobalObject* globalObjec
     return JSValue::encode(jsNaN());
 }
 
-static inline UChar32 codePointAt(const String& string, unsigned position, unsigned length)
+static inline char32_t codePointAt(const String& string, unsigned position, unsigned length)
 {
     RELEASE_ASSERT(position < length);
     if (string.is8Bit())
         return string.characters8()[position];
-    UChar32 character;
+    char32_t character;
     U16_NEXT(string.characters16(), position, length, character);
     return character;
 }
@@ -1275,7 +1278,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     }
 
     auto& result = vm.stringSplitIndice;
-    result.resize(0);
+    result.shrink(0);
 
     auto cacheAndCreateArray = [&]() -> JSArray* {
         if (result.isEmpty())

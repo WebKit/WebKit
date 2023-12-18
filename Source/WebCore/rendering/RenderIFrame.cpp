@@ -47,6 +47,7 @@ using namespace HTMLNames;
 RenderIFrame::RenderIFrame(HTMLIFrameElement& element, RenderStyle&& style)
     : RenderFrameBase(Type::IFrame, element, WTFMove(style))
 {
+    ASSERT(isRenderIFrame());
 }
 
 HTMLIFrameElement& RenderIFrame::iframeElement() const

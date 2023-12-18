@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ExtendableEvent.h"
 #include "ExtendableEventInit.h"
 #include "MessagePort.h"
@@ -87,5 +85,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

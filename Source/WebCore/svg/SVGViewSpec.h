@@ -41,7 +41,7 @@ public:
     void reset();
     void resetContextElement() { m_contextElement = nullptr; }
 
-    SVGElement* viewTarget() const;
+    RefPtr<SVGElement> viewTarget() const;
     const String& viewTargetString() const { return m_viewTargetString; }
 
     String transformString() const { return m_transform->valueAsString(); }

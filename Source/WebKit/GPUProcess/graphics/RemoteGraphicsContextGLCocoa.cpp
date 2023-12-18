@@ -30,8 +30,8 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "IPCUtilities.h"
+#include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
-
 
 #if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeap.h"
@@ -123,7 +123,7 @@ void RemoteGraphicsContextGLCocoa::createEGLSync(WTF::MachSendRight syncEvent, u
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(workQueue());
-    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), ProcessIdentity { m_resourceOwner });
+    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(IPC::Semaphore&& finishedSemaphore, CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

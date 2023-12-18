@@ -65,7 +65,7 @@ public:
 
     static bool elementMatchesIfIdAttributeMatch(const Element&) { return true; }
     static bool elementMatchesIfNameAttributeMatch(const Element&);
-    static bool elementMatches(const Element&, const AtomStringImpl*);
+    static bool elementMatches(const Element&, const AtomString&);
 
 private:
     WindowNameCollection(Document& document, CollectionType type, const AtomString& name)
@@ -89,7 +89,7 @@ public:
     // For CachedHTMLCollection.
     bool elementMatches(const Element& element) const { return elementMatches(element, m_name.impl()); }
 
-    static bool elementMatches(const Element&, const AtomStringImpl*);
+    static bool elementMatches(const Element&, const AtomString&);
 
 private:
     DocumentNameCollection(Document& document, CollectionType type, const AtomString& name)

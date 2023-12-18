@@ -53,6 +53,8 @@ public:
         NoInformation,
         // It's cached as a simple store of some kind.
         Simple,
+        // It's cached for a custom accessor with a possible structure chain.
+        CustomAccessor,
         // It's cached for a megamorphic case.
         Megamorphic,
         // It will likely take the slow path.
@@ -111,10 +113,12 @@ public:
     bool isSet() const { return m_state != NoInformation; }
     bool operator!() const { return m_state == NoInformation; }
     bool isSimple() const { return m_state == Simple; }
+    bool isCustomAccessor() const { return m_state == CustomAccessor; }
     bool isMegamorphic() const { return m_state == Megamorphic; }
     bool takesSlowPath() const
     {
         switch (m_state) {
+        case CustomAccessor:
         case Megamorphic:
         case LikelyTakesSlowPath:
         case ObservedTakesSlowPath:

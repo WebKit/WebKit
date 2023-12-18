@@ -64,9 +64,15 @@ class FrameGeneratorCapturerVideoTrackSource : public VideoTrackSource {
 
   ~FrameGeneratorCapturerVideoTrackSource() = default;
 
-  void Start() { SetState(kLive); }
+  void Start() {
+    SetState(kLive);
+    video_capturer_->Start();
+  }
 
-  void Stop() { SetState(kMuted); }
+  void Stop() {
+    SetState(kMuted);
+    video_capturer_->Stop();
+  }
 
   bool is_screencast() const override { return is_screencast_; }
 

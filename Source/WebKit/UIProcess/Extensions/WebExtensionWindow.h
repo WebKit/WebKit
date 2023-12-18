@@ -45,6 +45,19 @@ class WebExtensionTab;
 struct WebExtensionTabQueryParameters;
 struct WebExtensionWindowParameters;
 
+enum class WebExtensionWindowTypeFilter : uint8_t {
+    Normal = 1 << 0,
+    Popup  = 1 << 1,
+};
+
+static constexpr OptionSet<WebExtensionWindowTypeFilter> allWebExtensionWindowTypeFilters()
+{
+    return {
+        WebExtensionWindowTypeFilter::Normal,
+        WebExtensionWindowTypeFilter::Popup
+    };
+}
+
 class WebExtensionWindow : public RefCounted<WebExtensionWindow>, public CanMakeWeakPtr<WebExtensionWindow> {
     WTF_MAKE_NONCOPYABLE(WebExtensionWindow);
     WTF_MAKE_FAST_ALLOCATED;
@@ -63,12 +76,7 @@ public:
         Popup,
     };
 
-    enum class TypeFilter : uint8_t {
-        None   = 0,
-        Normal = 1 << 0,
-        Popup  = 1 << 1,
-        All    = Normal | Popup,
-    };
+    using TypeFilter = WebExtensionWindowTypeFilter;
 
     enum class State : uint8_t {
         Normal,
@@ -92,6 +100,8 @@ public:
 
     bool matches(OptionSet<TypeFilter>) const;
     bool matches(const WebExtensionTabQueryParameters&, std::optional<WebPageProxyIdentifier> = std::nullopt) const;
+
+    bool extensionHasAccess() const;
 
     TabVector tabs() const;
     RefPtr<WebExtensionTab> activeTab() const;
@@ -128,6 +138,8 @@ private:
     WebExtensionWindowIdentifier m_identifier;
     WeakPtr<WebExtensionContext> m_extensionContext;
     WeakObjCPtr<_WKWebExtensionWindow> m_delegate;
+    mutable bool m_private : 1 { false };
+    mutable bool m_cachedPrivate : 1 { false };
     bool m_respondsToTabs : 1 { false };
     bool m_respondsToActiveTab : 1 { false };
     bool m_respondsToWindowType : 1 { false };
@@ -150,13 +162,11 @@ _WKWebExtensionWindowState toAPI(WebExtensionWindow::State);
 
 namespace WTF {
 
-template<> struct EnumTraits<WebKit::WebExtensionWindow::TypeFilter> {
+template<> struct EnumTraits<WebKit::WebExtensionWindowTypeFilter> {
     using values = EnumValues<
-        WebKit::WebExtensionWindow::TypeFilter,
-        WebKit::WebExtensionWindow::TypeFilter::None,
-        WebKit::WebExtensionWindow::TypeFilter::Normal,
-        WebKit::WebExtensionWindow::TypeFilter::Popup,
-        WebKit::WebExtensionWindow::TypeFilter::All
+        WebKit::WebExtensionWindowTypeFilter,
+        WebKit::WebExtensionWindowTypeFilter::Normal,
+        WebKit::WebExtensionWindowTypeFilter::Popup
     >;
 };
 

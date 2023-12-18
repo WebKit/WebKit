@@ -26,9 +26,8 @@ scriptdir = os.path.abspath(os.path.dirname(__file__))
 SDK_PROJECT_PATH = os.path.join(scriptdir, "..", "buildstream")
 wrapper = os.path.join(scriptdir, "bst-wrapper")
 
-def run_wrapper(args: list, **kw) -> subprocess.CompletedProcess:
-    kw["cwd"] = SDK_PROJECT_PATH
-    return subprocess.run(["make", f"BST={wrapper}",] + args, **kw)
+def run_wrapper(args: list) -> subprocess.CompletedProcess:
+    return subprocess.run(["make", "-C", SDK_PROJECT_PATH, f"BST={wrapper}",] + args)
 
 def main(args: list) -> int:
     parser = argparse.ArgumentParser()

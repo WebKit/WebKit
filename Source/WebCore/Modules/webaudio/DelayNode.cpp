@@ -50,10 +50,10 @@ inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
 ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const DelayOptions& options)
 {
     if (options.maxDelayTime <= 0)
-        return Exception { NotSupportedError, "maxDelayTime should be a positive value"_s };
+        return Exception { ExceptionCode::NotSupportedError, "maxDelayTime should be a positive value"_s };
 
     if (options.maxDelayTime >= maximumAllowedDelayTime || std::isnan(options.maxDelayTime))
-        return Exception { NotSupportedError, makeString("maxDelayTime should be less than ", maximumAllowedDelayTime) };
+        return Exception { ExceptionCode::NotSupportedError, makeString("maxDelayTime should be less than ", maximumAllowedDelayTime) };
 
     auto delayNode = adoptRef(*new DelayNode(context, options.maxDelayTime));
 

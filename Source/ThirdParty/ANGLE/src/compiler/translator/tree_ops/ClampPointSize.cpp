@@ -19,6 +19,7 @@ namespace sh
 
 bool ClampPointSize(TCompiler *compiler,
                     TIntermBlock *root,
+                    float minPointSize,
                     float maxPointSize,
                     TSymbolTable *symbolTable)
 {
@@ -31,19 +32,24 @@ bool ClampPointSize(TCompiler *compiler,
 
     TIntermTyped *pointSizeNode = glPointSize->deepCopy();
 
+    TConstantUnion *minPointSizeConstant = new TConstantUnion();
     TConstantUnion *maxPointSizeConstant = new TConstantUnion();
+    minPointSizeConstant->setFConst(minPointSize);
     maxPointSizeConstant->setFConst(maxPointSize);
+    TIntermConstantUnion *minPointSizeNode =
+        new TIntermConstantUnion(minPointSizeConstant, TType(EbtFloat, EbpHigh, EvqConst));
     TIntermConstantUnion *maxPointSizeNode =
         new TIntermConstantUnion(maxPointSizeConstant, TType(EbtFloat, EbpHigh, EvqConst));
 
-    // min(gl_PointSize, maxPointSize)
-    TIntermSequence minArguments;
-    minArguments.push_back(pointSizeNode->deepCopy());
-    minArguments.push_back(maxPointSizeNode);
+    // clamp(gl_PointSize, minPointSize, maxPointSize)
+    TIntermSequence clampArguments;
+    clampArguments.push_back(pointSizeNode->deepCopy());
+    clampArguments.push_back(minPointSizeNode);
+    clampArguments.push_back(maxPointSizeNode);
     TIntermTyped *clampedPointSize =
-        CreateBuiltInFunctionCallNode("min", &minArguments, *symbolTable, 100);
+        CreateBuiltInFunctionCallNode("clamp", &clampArguments, *symbolTable, 100);
 
-    // gl_PointSize = min(gl_PointSize, maxPointSize)
+    // gl_PointSize = clamp(gl_PointSize, minPointSize, maxPointSize)
     TIntermBinary *assignPointSize = new TIntermBinary(EOpAssign, pointSizeNode, clampedPointSize);
 
     return RunAtTheEndOfShader(compiler, root, assignPointSize, symbolTable);

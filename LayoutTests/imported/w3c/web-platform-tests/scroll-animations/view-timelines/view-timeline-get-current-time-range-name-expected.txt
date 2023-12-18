@@ -1,0 +1,3 @@
+
+FAIL View timeline current time for named range promise_test: Unhandled rejection with value: object "TypeError: timeline.getCurrentTime is not a function. (In 'timeline.getCurrentTime('cover')', 'timeline.getCurrentTime' is undefined)"
+

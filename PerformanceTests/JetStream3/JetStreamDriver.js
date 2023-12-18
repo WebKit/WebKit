@@ -139,7 +139,7 @@ function geomean(values) {
 }
 
 function toScore(timeValue) {
-    return 5000 / timeValue;
+    return 5000 / Math.max(timeValue, 1);
 }
 
 function toTimeValue(score) {

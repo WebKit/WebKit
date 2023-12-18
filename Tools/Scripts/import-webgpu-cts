@@ -109,7 +109,7 @@ def checkoutAndBuildInTemporaryDirectory(continuation):
         checkoutFolder = "CTS"
         checkoutDirectory = os.path.join(temporaryDirectory, checkoutFolder)
         print("Checking out the CTS into " + checkoutDirectory)
-        result = subprocess.run(["git", "clone", "git@github.com:gpuweb/cts.git", checkoutFolder], cwd=temporaryDirectory)
+        result = subprocess.run(["git", "clone", "https://github.com/gpuweb/cts.git", checkoutFolder], cwd=temporaryDirectory)
         if result.returncode != 0:
             print("Could not checkout repository.")
             sys.exit(1)

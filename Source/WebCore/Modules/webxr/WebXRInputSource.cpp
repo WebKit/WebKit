@@ -42,12 +42,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRInputSource);
 
-Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
+Ref<WebXRInputSource> WebXRInputSource::create(Document& document, WebXRSession& session, double timestamp, const PlatformXR::FrameData::InputSource& source)
 {
     return adoptRef(*new WebXRInputSource(document, session, timestamp, source));
 }
 
-WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
+WebXRInputSource::WebXRInputSource(Document& document, WebXRSession& session, double timestamp, const PlatformXR::FrameData::InputSource& source)
     : m_session(session)
     , m_targetRaySpace(WebXRInputSpace::create(document, session, source.pointerOrigin))
     , m_connectTime(timestamp)
@@ -65,7 +65,7 @@ WebXRSession* WebXRInputSource::session()
     return m_session.get();
 }
 
-void WebXRInputSource::update(double timestamp, const PlatformXR::Device::FrameData::InputSource& source)
+void WebXRInputSource::update(double timestamp, const PlatformXR::FrameData::InputSource& source)
 {
     RefPtr session = m_session.get();
     if (!session)
@@ -136,8 +136,11 @@ void WebXRInputSource::pollEvents(Vector<Ref<XRInputSourceEvent>>& events)
     if (!m_connected) {
         // A user agent MUST dispatch a selectend event on an XRSession when one of its XRInputSources ends 
         // when an XRInputSource that has begun a primary select action is disconnected.
-        if (m_selectStarted)
+        if (m_selectStarted) {
+            if (targetRayMode() == PlatformXR::XRTargetRayMode::TransientPointer)
+                events.append(createEvent(eventNames().selectEvent));
             events.append(createEvent(eventNames().selectendEvent));
+        }
 
         // A user agent MUST dispatch a squeezeend event on an XRSession when one of its XRInputSources ends 
         // when an XRInputSource that has begun a primary squeeze action is disconnected.

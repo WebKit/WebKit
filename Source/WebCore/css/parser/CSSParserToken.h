@@ -117,7 +117,7 @@ public:
     void convertToPercentage();
 
     CSSParserTokenType type() const { return static_cast<CSSParserTokenType>(m_type); }
-    StringView value() const { return m_value; }
+    StringView value() const { return { m_valueDataCharRaw, m_valueLength, m_valueIs8Bit }; }
 
     UChar delimiter() const;
     NumericSign numericSign() const;
@@ -137,18 +137,30 @@ public:
 
     void serialize(StringBuilder&, const CSSParserToken* nextToken = nullptr) const;
 
-    void updateString(StringView string) { m_value = string; }
+    template<typename CharacterType>
+    void updateCharacters(const CharacterType* characters, unsigned length);
+
     CSSParserToken copyWithUpdatedString(StringView) const;
 
 private:
-    StringView m_value;
-
+    void initValueFromStringView(StringView string)
+    {
+        m_valueLength = string.length();
+        m_valueIs8Bit = string.is8Bit();
+        m_valueDataCharRaw = string.rawCharacters();
+    }
     unsigned m_type : 6; // CSSParserTokenType
     unsigned m_blockType : 2; // BlockType
     unsigned m_numericValueType : 1; // NumericValueType
     unsigned m_numericSign : 2; // NumericSign
     unsigned m_unit : 7; // CSSUnitType
     unsigned m_nonUnitPrefixLength : 4; // Only for DimensionType, only needs to be long enough for UnicodeRange parsing.
+
+    // m_value... is an unpacked StringView so that we can pack it
+    // tightly with the rest of this object for a smaller object size.
+    bool m_valueIs8Bit : 1;
+    unsigned m_valueLength;
+    const void* m_valueDataCharRaw; // Either LChar* or UChar*.
 
     union {
         UChar m_delimiter;
@@ -157,5 +169,13 @@ private:
         mutable int m_id;
     };
 };
+
+template<typename CharacterType>
+inline void CSSParserToken::updateCharacters(const CharacterType* characters, unsigned length)
+{
+    m_valueLength = length;
+    m_valueIs8Bit = (sizeof(CharacterType) == 1);
+    m_valueDataCharRaw = characters;
+}
 
 } // namespace WebCore

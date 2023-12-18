@@ -31,6 +31,7 @@
 #include "LayerHostingContext.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
 
@@ -61,6 +62,7 @@ public:
     void close();
 
     bool allowsExitUnderMemoryPressure() const;
+    void updateSampleBufferDisplayLayerBoundsAndPosition(SampleBufferDisplayLayerIdentifier, WebCore::FloatRect, std::optional<MachSendRight>&&);
 
 private:
     explicit RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess&);
@@ -72,13 +74,14 @@ private:
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
     using LayerCreationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>&&;
-    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, LayerCreationCallback);
+    void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
 
     GPUConnectionToWebProcess& m_connectionToWebProcess;
     Ref<IPC::Connection> m_connection;
     Ref<WorkQueue> m_queue;
-    HashMap<SampleBufferDisplayLayerIdentifier, std::unique_ptr<RemoteSampleBufferDisplayLayer>> m_layers;
+    mutable Lock m_layersLock;
+    HashMap<SampleBufferDisplayLayerIdentifier, std::unique_ptr<RemoteSampleBufferDisplayLayer>> m_layers WTF_GUARDED_BY_LOCK(m_layersLock);
 };
 
 }

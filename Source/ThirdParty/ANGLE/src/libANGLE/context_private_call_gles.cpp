@@ -770,9 +770,6 @@ void ContextPrivateHint(PrivateState *privateState,
         case GL_FOG_HINT:
             privateState->getMutableGLES1State()->setHint(target, mode);
             break;
-        case GL_TEXTURE_FILTERING_HINT_CHROMIUM:
-            privateState->setTextureFilteringHint(mode);
-            break;
         default:
             UNREACHABLE();
             return;

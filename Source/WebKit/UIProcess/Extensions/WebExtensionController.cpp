@@ -31,12 +31,13 @@
 #include "WebExtensionControllerParameters.h"
 #include "WebExtensionControllerProxyMessages.h"
 #include "WebPageProxy.h"
+#include <wtf/BlockPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
-using namespace WebCore;
+constexpr auto freshlyCreatedTimeout = 5_s;
 
 static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionController>>& webExtensionControllers()
 {
@@ -55,6 +56,17 @@ WebExtensionController::WebExtensionController(Ref<WebExtensionControllerConfigu
 {
     ASSERT(!webExtensionControllers().contains(m_identifier));
     webExtensionControllers().add(m_identifier, this);
+
+    // A freshly created extension controller will be used to determine if the startup event
+    // should be fired for any loaded extensions during a brief time window. Start a timer
+    // when the first extension is about to be loaded.
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(freshlyCreatedTimeout.seconds() * NSEC_PER_SEC)), dispatch_get_main_queue(), makeBlockPtr([this, weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+
+        m_freshlyCreated = false;
+    }).get());
 }
 
 WebExtensionController::~WebExtensionController()

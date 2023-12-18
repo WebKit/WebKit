@@ -6021,8 +6021,6 @@ void main()
 // Tests negative API state change cases with Transform Feedback bindings.
 TEST_P(WebGL2ValidationStateChangeTest, TransformFeedbackNegativeAPI)
 {
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsMac());
-
     // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
@@ -6192,8 +6190,6 @@ void main()
 // Tests that we retain the correct draw mode settings with transform feedback changes.
 TEST_P(ValidationStateChangeTest, TransformFeedbackDrawModes)
 {
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsMac());
-
     std::vector<std::string> tfVaryings = {"gl_Position"};
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, essl3_shaders::vs::Simple(),
                                         essl3_shaders::fs::Red(), tfVaryings,

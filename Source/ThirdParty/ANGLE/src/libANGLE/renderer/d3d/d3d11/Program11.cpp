@@ -20,8 +20,7 @@ Program11::Program11(const gl::ProgramState &programState, Renderer11 *renderer)
 
 Program11::~Program11() = default;
 
-angle::Result Program11::syncState(const gl::Context *context,
-                                   const gl::Program::DirtyBits &dirtyBits)
+angle::Result Program11::syncState(const gl::Context *context)
 {
     Renderer11 *renderer11       = GetImplAs<Context11>(context)->getRenderer();
     StateManager11 *stateManager = renderer11->getStateManager();

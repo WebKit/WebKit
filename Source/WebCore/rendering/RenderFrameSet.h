@@ -118,4 +118,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrameSet, isFrameSet())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrameSet, isRenderFrameSet())

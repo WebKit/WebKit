@@ -18,13 +18,17 @@ namespace webrtc {
 // An abstract factory for creating AsyncResolverInterfaces. This allows
 // client applications to provide WebRTC with their own mechanism for
 // performing DNS resolution.
-class AsyncResolverFactory {
+// TODO(bugs.webrtc.org/12598): Deprecate and remove.
+class [[deprecated("Use AsyncDnsResolverFactory")]] AsyncResolverFactory {
  public:
   AsyncResolverFactory() = default;
   virtual ~AsyncResolverFactory() = default;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // The caller should call Destroy on the returned object to delete it.
   virtual rtc::AsyncResolverInterface* Create() = 0;
+#pragma clang diagnostic pop
 };
 
 }  // namespace webrtc

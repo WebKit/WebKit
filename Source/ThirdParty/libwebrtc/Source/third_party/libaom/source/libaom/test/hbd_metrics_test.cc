@@ -94,7 +94,7 @@ double compute_aomssim(const YV12_BUFFER_CONFIG *source,
 
 class HBDMetricsTestBase {
  public:
-  virtual ~HBDMetricsTestBase() {}
+  virtual ~HBDMetricsTestBase() = default;
 
  protected:
   void RunAccuracyCheck() {
@@ -179,14 +179,13 @@ typedef std::tuple<LBDMetricFunc, HBDMetricFunc, int, int, double>
 class HBDMetricsTest : public HBDMetricsTestBase,
                        public ::testing::TestWithParam<MetricTestTParam> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     lbd_metric_ = GET_PARAM(0);
     hbd_metric_ = GET_PARAM(1);
     input_bit_depth_ = GET_PARAM(2);
     bit_depth_ = GET_PARAM(3);
     threshold_ = GET_PARAM(4);
   }
-  virtual void TearDown() {}
 };
 
 TEST_P(HBDMetricsTest, RunAccuracyCheck) { RunAccuracyCheck(); }

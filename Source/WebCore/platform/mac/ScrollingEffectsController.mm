@@ -187,10 +187,12 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     }
 
     auto momentumPhase = wheelEvent.momentumPhase();
-    
+
+#if HAVE(OS_SIGNPOST)
     if (momentumPhase == PlatformWheelEventPhase::Began)
-        WTFBeginAnimationSignpostAlways(nullptr, "Momentum scroll", "");
-    
+        os_signpost_interval_begin(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, "Momentum scroll", "isAnimation=YES");
+#endif
+
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhase::Began || momentumPhase == PlatformWheelEventPhase::Changed))
         m_momentumScrollInProgress = true;
 
@@ -233,7 +235,9 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     }
 
     if (m_momentumScrollInProgress && momentumPhase == PlatformWheelEventPhase::Ended) {
-        WTFEndSignpostAlways(nullptr, "Momentum scroll");
+#if HAVE(OS_SIGNPOST)
+        os_signpost_interval_end(WTFSignpostLogHandle(), OS_SIGNPOST_ID_EXCLUSIVE, "Momentum scroll");
+#endif
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
         m_lastMomentumScrollTimestamp = { };
@@ -432,14 +436,14 @@ void ScrollingEffectsController::willStartRubberBandAnimation()
 {
     m_isAnimatingRubberBand = true;
     m_client.willStartRubberBandAnimation();
-    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
+    m_client.deferWheelEventTestCompletionForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
 }
 
 void ScrollingEffectsController::didStopRubberBandAnimation()
 {
     m_isAnimatingRubberBand = false;
     m_client.didStopRubberBandAnimation();
-    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::RubberbandInProgress);
+    m_client.removeWheelEventTestCompletionDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::RubberbandInProgress);
 }
 
 void ScrollingEffectsController::startRubberBandAnimationIfNecessary()
@@ -615,7 +619,7 @@ void ScrollingEffectsController::scheduleDiscreteScrollSnap(const FloatSize& del
         discreteSnapTransitionTimerFired();
     });
     m_discreteSnapTransitionTimer->startOneShot(discreteScrollSnapDelay);
-    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
+    startDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason::ScrollSnapInProgress);
 }
 
 void ScrollingEffectsController::discreteSnapTransitionTimerFired()
@@ -646,7 +650,7 @@ void ScrollingEffectsController::discreteSnapTransitionTimerFired()
     if (shouldStartScrollSnapAnimation)
         startScrollSnapAnimation();
     else {
-        stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::ScrollSnapInProgress);
+        stopDeferringWheelEventTestCompletion(WheelEventTestMonitor::DeferReason::ScrollSnapInProgress);
         m_client.didStopScrollSnapAnimation();
     }
 }

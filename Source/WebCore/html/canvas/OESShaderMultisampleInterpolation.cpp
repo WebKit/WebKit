@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESShaderMultisampleInterpolation);
 
 OESShaderMultisampleInterpolation::OESShaderMultisampleInterpolation(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::OESShaderMultisampleInterpolation)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_shader_multisample_interpolation"_s);
 }

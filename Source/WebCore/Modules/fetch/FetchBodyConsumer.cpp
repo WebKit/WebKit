@@ -151,8 +151,8 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
         String header = String::fromUTF8(headerBegin, headerLength);
 
-        constexpr auto contentDispositionCharacters = "Content-Disposition:"_s;
-        size_t contentDispositionBegin = header.find(contentDispositionCharacters);
+        constexpr auto contentDispositionCharacters = "content-disposition:"_s;
+        size_t contentDispositionBegin = header.findIgnoringASCIICase(contentDispositionCharacters);
         if (contentDispositionBegin == notFound)
             return false;
         size_t contentDispositionEnd = header.find("\r\n"_s, contentDispositionBegin);
@@ -170,9 +170,9 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         else {
             String contentType = "text/plain"_s;
 
-            constexpr auto contentTypeCharacters = "Content-Type:"_s;
+            constexpr auto contentTypeCharacters = "content-type:"_s;
             size_t contentTypePrefixLength = contentTypeCharacters.length();
-            size_t contentTypeBegin = header.find(contentTypeCharacters);
+            size_t contentTypeBegin = header.findIgnoringASCIICase(contentTypeCharacters);
             if (contentTypeBegin != notFound) {
                 size_t contentTypeEnd = header.find("\r\n"_s, contentTypeBegin);
                 contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isASCIIWhitespaceWithoutFF<UChar>).toString();
@@ -243,7 +243,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         if (auto formData = FetchBodyConsumer::packageFormData(context.get(), contentType, data, length))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
         return;
     case FetchBodyConsumer::Type::None:
         ASSERT_NOT_REACHED();
@@ -386,7 +386,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         if (auto formData = packageFormData(promise->scriptExecutionContext(), contentType, buffer ? buffer->makeContiguous()->data() : nullptr, buffer ? buffer->size() : 0))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
         return;
     }
     case Type::None:

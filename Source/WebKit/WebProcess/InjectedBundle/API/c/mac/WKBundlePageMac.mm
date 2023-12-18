@@ -34,7 +34,7 @@
 
 WK_EXPORT PDFDocument *WKBundlePageGetPDFDocumentInFrame(WKBundlePageRef, WKBundleFrameRef frame)
 {
-#if !ENABLE(PDFKIT_PLUGIN)
+#if !ENABLE(LEGACY_PDFKIT_PLUGIN)
     UNUSED_PARAM(frame);
     return nil;
 #else

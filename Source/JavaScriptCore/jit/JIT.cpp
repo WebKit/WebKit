@@ -36,6 +36,7 @@
 #include "JITInlines.h"
 #include "JITOperations.h"
 #include "JITSizeStatistics.h"
+#include "JITThunks.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
@@ -49,11 +50,14 @@
 #include "TypeProfilerLog.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/SimpleStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 namespace JITInternal {
 static constexpr const bool verbose = false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JIT);
 
 Seconds totalBaselineCompileTime;
 Seconds totalDFGCompileTime;
@@ -84,12 +88,11 @@ JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, voi
     return result;
 }
 
-std::tuple<BaselineUnlinkedStructureStubInfo*, JITConstantPool::Constant> JIT::addUnlinkedStructureStubInfo()
+std::tuple<BaselineUnlinkedStructureStubInfo*, StructureStubInfoIndex> JIT::addUnlinkedStructureStubInfo()
 {
-    void* unlinkedStubInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedStubInfos.size()));
+    unsigned stubInfoIndex = m_unlinkedStubInfos.size();
     BaselineUnlinkedStructureStubInfo* stubInfo = &m_unlinkedStubInfos.alloc();
-    JITConstantPool::Constant stubInfoIndex = addToConstantPool(JITConstantPool::Type::StructureStubInfo, unlinkedStubInfoIndex);
-    return std::tuple { stubInfo, stubInfoIndex };
+    return std::tuple { stubInfo, StructureStubInfoIndex { stubInfoIndex } };
 }
 
 BaselineUnlinkedCallLinkInfo* JIT::addUnlinkedCallLinkInfo()
@@ -268,7 +271,6 @@ void JIT::privateCompileMainPass()
         DEFINE_SLOW_OP(is_constructor)
         DEFINE_SLOW_OP(typeof)
         DEFINE_SLOW_OP(typeof_is_object)
-        DEFINE_SLOW_OP(typeof_is_function)
         DEFINE_SLOW_OP(strcat)
         DEFINE_SLOW_OP(push_with_scope)
         DEFINE_SLOW_OP(create_lexical_environment)
@@ -350,6 +352,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_instanceof)
         DEFINE_OP(op_is_empty)
         DEFINE_OP(op_typeof_is_undefined)
+        DEFINE_OP(op_typeof_is_function)
         DEFINE_OP(op_is_undefined_or_null)
         DEFINE_OP(op_is_boolean)
         DEFINE_OP(op_is_number)
@@ -626,6 +629,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(get_prototype_of)
         DEFINE_SLOWCASE_SLOW_OP(check_tdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key)
+        DEFINE_SLOWCASE_SLOW_OP(typeof_is_function)
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -730,7 +734,7 @@ void JIT::emitConsistencyCheck()
     m_consistencyCheckLabel = label();
     move(TrustedImm32(-stackPointerOffsetFor(m_unlinkedCodeBlock)), regT0);
     m_bytecodeIndex = BytecodeIndex(0);
-    emitNakedNearTailCall(vm().getCTIStub(consistencyCheckGenerator).retaggedCode<NoPtrTag>());
+    nearTailCallThunk(CodeLocationLabel { vm().getCTIStub(consistencyCheckGenerator).retaggedCode<NoPtrTag>() });
     m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
 }
 #endif
@@ -812,7 +816,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
         ASSERT(!m_bytecodeIndex);
         if (shouldEmitProfiling() && (!m_unlinkedCodeBlock->isConstructor() || m_unlinkedCodeBlock->numParameters() > 1)) {
             emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, regT2);
-            loadPtr(Address(regT2, CodeBlock::offsetOfArgumentValueProfiles() + FixedVector<ValueProfile>::offsetOfStorage()), regT2);
+            loadPtr(Address(regT2, CodeBlock::offsetOfArgumentValueProfiles() + FixedVector<ArgumentValueProfile>::offsetOfStorage()), regT2);
 
             for (unsigned argument = 0; argument < m_unlinkedCodeBlock->numParameters(); ++argument) {
                 // If this is a constructor, then we want to put in a dummy profiling site (to
@@ -821,7 +825,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
                     continue;
                 int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
                 loadValue(Address(callFrameRegister, offset), jsRegT10);
-                storeValue(jsRegT10, Address(regT2, FixedVector<ValueProfile>::Storage::offsetOfData() + argument * sizeof(ValueProfile) + ValueProfile::offsetOfFirstBucket()));
+                storeValue(jsRegT10, Address(regT2, FixedVector<ArgumentValueProfile>::Storage::offsetOfData() + argument * sizeof(ArgumentValueProfile) + ArgumentValueProfile::offsetOfFirstBucket()));
             }
         }
     }
@@ -864,7 +868,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
         getArityPadding(*m_vm, numberOfParameters, regT1, regT0, regT2, regT3, stackOverflow);
 
         move(regT0, GPRInfo::argumentGPR0);
-        emitNakedNearCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
+        nearCallThunk(CodeLocationLabel { m_vm->getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
 
 #if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
@@ -933,19 +937,6 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
         }
     }
 
-    if (!m_exceptionChecks.empty())
-        patchBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
-    if (!m_exceptionChecksWithCallFrameRollback.empty())
-        patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
-
-    for (auto& record : m_nearJumps) {
-        if (record.target)
-            patchBuffer.link(record.from, record.target);
-    }
-    for (auto& record : m_nearCalls) {
-        if (record.callee)
-            patchBuffer.link(record.from, record.callee);
-    }
     for (auto& record : m_farCalls) {
         if (record.callee)
             patchBuffer.link(record.from, record.callee);
@@ -1106,6 +1097,21 @@ HashMap<CString, Seconds> JIT::compileTimeStats()
 Seconds JIT::totalCompileTime()
 {
     return totalBaselineCompileTime + totalDFGCompileTime + totalFTLCompileTime;
+}
+
+void JIT::exceptionCheck(Jump jumpToHandler)
+{
+    jumpToHandler.linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), this);
+}
+
+void JIT::exceptionCheck()
+{
+    exceptionCheck(emitExceptionCheck(vm()));
+}
+
+void JIT::exceptionChecksWithCallFrameRollback(Jump jumpToHandler)
+{
+    jumpToHandler.linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()), this);
 }
 
 } // namespace JSC

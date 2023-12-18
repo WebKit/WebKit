@@ -33,7 +33,6 @@
 #import "CocoaImage.h"
 #import "WebExtension.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
 
 NSErrorDomain const _WKWebExtensionErrorDomain = @"_WKWebExtensionErrorDomain";
 NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWebExtensionErrorsWereUpdated";
@@ -149,8 +148,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtension.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtension->~WebExtension();
 }
@@ -255,6 +253,31 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return _webExtension->backgroundContentIsPersistent();
 }
 
+- (BOOL)hasInjectedContent
+{
+    return _webExtension->hasStaticInjectedContent();
+}
+
+- (BOOL)hasOptionsPage
+{
+    return _webExtension->hasOptionsPage();
+}
+
+- (BOOL)hasOverrideNewTabPage
+{
+    return _webExtension->hasOverrideNewTabPage();
+}
+
+- (BOOL)hasCommands
+{
+    return _webExtension->hasCommands();
+}
+
+- (BOOL)hasContentModificationRules
+{
+    return _webExtension->hasContentModificationRules();
+}
+
 - (BOOL)_backgroundContentIsServiceWorker
 {
     return _webExtension->backgroundContentIsServiceWorker();
@@ -263,13 +286,6 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 - (BOOL)_backgroundContentUsesModules
 {
     return _webExtension->backgroundContentUsesModules();
-}
-
-- (BOOL)_hasStaticInjectedContentForURL:(NSURL *)url
-{
-    NSParameterAssert([url isKindOfClass:NSURL.class]);
-
-    return _webExtension->hasStaticInjectedContentForURL(url);
 }
 
 #pragma mark WKObject protocol implementation
@@ -421,17 +437,37 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
     return NO;
 }
 
+- (BOOL)hasInjectedContent
+{
+    return NO;
+}
+
+- (BOOL)hasOptionsPage
+{
+    return NO;
+}
+
+- (BOOL)hasOverrideNewTabPage
+{
+    return NO;
+}
+
+- (BOOL)hasCommands
+{
+    return NO;
+}
+
+- (BOOL)hasContentModificationRules
+{
+    return NO;
+}
+
 - (BOOL)_backgroundContentIsServiceWorker
 {
     return NO;
 }
 
 - (BOOL)_backgroundContentUsesModules
-{
-    return NO;
-}
-
-- (BOOL)_hasStaticInjectedContentForURL:(NSURL *)url
 {
     return NO;
 }

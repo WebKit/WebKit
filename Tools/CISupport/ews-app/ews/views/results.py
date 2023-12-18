@@ -36,6 +36,7 @@ from ews.config import SUCCESS
 from ews.common.github import GitHubEWS
 from ews.models.build import Build
 from ews.models.step import Step
+import ews.common.util as util
 
 _log = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ class Results(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        if data.get('EWS_API_KEY') != os.getenv('EWS_API_KEY', None):
+        if data.get('EWS_API_KEY') != util.load_password('EWS_API_KEY'):
             _log.error('Incorrect API Key {}. Host: {}. Ignoring data.'.format(data.get('EWS_API_KEY'), data.get('hostname')))
             return HttpResponse('Incorrect API Key received')
 

@@ -59,7 +59,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSA_OAEP::identifier() const
 void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& plainText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Public) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
 
@@ -72,7 +72,7 @@ void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameter
 void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& cipherText, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Private) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
 
@@ -87,7 +87,7 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
     const auto& rsaParameters = downcast<CryptoAlgorithmRsaHashedKeyGenParams>(parameters);
 
     if (usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
@@ -97,7 +97,7 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
         capturedCallback(WTFMove(pair));
     };
     auto failureCallback = [capturedCallback = WTFMove(exceptionCallback)]() {
-        capturedCallback(OperationError);
+        capturedCallback(ExceptionCode::OperationError);
     };
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSA_OAEP, rsaParameters.hashIdentifier, true, rsaParameters.modulusLength, rsaParameters.publicExponentVector(), extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), &context);
 }
@@ -125,12 +125,12 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
         }
         isUsagesAllowed = isUsagesAllowed || !usages;
         if (!isUsagesAllowed) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
 
         if (usages && !key.use.isNull() && key.use != "enc"_s) {
-            exceptionCallback(DataError);
+            exceptionCallback(ExceptionCode::DataError);
             return;
         }
 
@@ -155,7 +155,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
             break;
         }
         if (!isMatched) {
-            exceptionCallback(DataError);
+            exceptionCallback(ExceptionCode::DataError);
             return;
         }
 
@@ -164,7 +164,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
     }
     case CryptoKeyFormat::Spki: {
         if (usages && (usages ^ CryptoKeyUsageEncrypt) && (usages ^ CryptoKeyUsageWrapKey) && (usages ^ (CryptoKeyUsageEncrypt | CryptoKeyUsageWrapKey))) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         // FIXME: <webkit.org/b/165436>
@@ -173,7 +173,7 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
     }
     case CryptoKeyFormat::Pkcs8: {
         if (usages && (usages ^ CryptoKeyUsageDecrypt) && (usages ^ CryptoKeyUsageUnwrapKey) && (usages ^ (CryptoKeyUsageDecrypt | CryptoKeyUsageUnwrapKey))) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         // FIXME: <webkit.org/b/165436>
@@ -181,11 +181,11 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
         break;
     }
     default:
-        exceptionCallback(NotSupportedError);
+        exceptionCallback(ExceptionCode::NotSupportedError);
         return;
     }
     if (!result) {
-        exceptionCallback(DataError);
+        exceptionCallback(ExceptionCode::DataError);
         return;
     }
 
@@ -198,7 +198,7 @@ void CryptoAlgorithmRSA_OAEP::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&&
     const auto& rsaKey = downcast<CryptoKeyRSA>(key.get());
 
     if (!rsaKey.keySizeInBits()) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -249,7 +249,7 @@ void CryptoAlgorithmRSA_OAEP::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&&
         break;
     }
     default:
-        exceptionCallback(NotSupportedError);
+        exceptionCallback(ExceptionCode::NotSupportedError);
         return;
     }
 

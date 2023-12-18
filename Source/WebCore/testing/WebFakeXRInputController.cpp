@@ -32,14 +32,14 @@
 
 namespace WebCore {
 
-using InputSource = PlatformXR::Device::FrameData::InputSource;
-using InputSourceButton = PlatformXR::Device::FrameData::InputSourceButton;
-using InputSourcePose = PlatformXR::Device::FrameData::InputSourcePose;
+using InputSource = PlatformXR::FrameData::InputSource;
+using InputSourceButton = PlatformXR::FrameData::InputSourceButton;
+using InputSourcePose = PlatformXR::FrameData::InputSourcePose;
 using ButtonType = FakeXRButtonStateInit::Type;
 
 #if ENABLE(WEBXR_HANDS)
-using HandJointsVector = PlatformXR::Device::FrameData::HandJointsVector;
-using InputSourceHandJoint = PlatformXR::Device::FrameData::InputSourceHandJoint;
+using HandJointsVector = PlatformXR::FrameData::HandJointsVector;
+using InputSourceHandJoint = PlatformXR::FrameData::InputSourceHandJoint;
 #endif
 
 // https://immersive-web.github.io/webxr-gamepads-module/#xr-standard-gamepad-mapping

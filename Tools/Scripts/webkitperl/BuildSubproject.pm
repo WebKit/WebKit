@@ -198,6 +198,7 @@ if (isAppleCocoaWebKit()) {
     my @additionalSupportOptions = ();
     push @additionalSupportOptions, XcodeCoverageSupportOptions() if $coverageSupport;
     push @additionalSupportOptions, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
+    push @additionalSupportOptions, XcodeExportCompileCommandsOptions() if $exportCompileCommands;
 
     push @options, ($forceCLoop ? "ENABLE_JIT=ENABLE_JIT=0" : "ENABLE_JIT=ENABLE_JIT");
     push @options, ($forceCLoop ? "ENABLE_C_LOOP=ENABLE_C_LOOP" : "ENABLE_C_LOOP=ENABLE_C_LOOP=0");

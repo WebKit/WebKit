@@ -94,6 +94,7 @@ protected:
     bool WARN_UNUSED_RETURN parseVarInt64(int64_t&);
 
     PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, BlockSignature&);
+    PartialResult WARN_UNUSED_RETURN parseReftypeSignature(const ModuleInformation&, BlockSignature&);
     bool WARN_UNUSED_RETURN parseValueType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseRefType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
@@ -121,10 +122,10 @@ protected:
 private:
     const uint8_t* m_source;
     size_t m_sourceLength;
-    // We keep a local reference to the global table so we don't have to fetch it to find thunk types.
-    const TypeInformation& m_typeInformation;
 
 protected:
+    // We keep a local reference to the global table so we don't have to fetch it to find thunk types.
+    const TypeInformation& m_typeInformation;
     // Used to track whether we are in a recursion group and the group's type indices, if any.
     RecursionGroupInformation m_recursionGroupInformation;
 };
@@ -310,9 +311,16 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseVarUInt1(uint8_t& result)
 template<typename SuccessType>
 ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseBlockSignature(const ModuleInformation& info, BlockSignature& result)
 {
-    int8_t typeKind;
-    if (peekInt7(typeKind) && isValidTypeKind(typeKind)) {
-        Type type = { static_cast<TypeKind>(typeKind), 0 };
+    int8_t kindByte;
+    if (peekInt7(kindByte) && isValidTypeKind(kindByte)) {
+        TypeKind typeKind = static_cast<TypeKind>(kindByte);
+
+        if (UNLIKELY(Options::useWebAssemblyTypedFunctionReferences())) {
+            if ((isValidHeapTypeKind(typeKind) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull))
+                return parseReftypeSignature(info, result);
+        }
+
+        Type type = { typeKind, TypeDefinition::invalidIndex };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: ", makeString(type.kind), " is not a value type or Void");
         result = m_typeInformation.thunkFor(type);
         m_offset++;
@@ -324,7 +332,22 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
     WASM_PARSER_FAIL_IF(index < 0, "Block-like instruction signature index is negative");
     WASM_PARSER_FAIL_IF(static_cast<size_t>(index) >= info.typeCount(), "Block-like instruction signature index is out of bounds. Index: ", index, " type index space: ", info.typeCount());
 
-    result = &info.typeSignatures[index].get();
+    const auto& signature = info.typeSignatures[index].get().expand();
+    WASM_PARSER_FAIL_IF(!signature.is<FunctionSignature>(), "Block-like instruction signature index does not refer to a function type definition");
+
+    result = signature.as<FunctionSignature>();
+    return { };
+}
+
+template<typename SuccessType>
+typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseReftypeSignature(const ModuleInformation& info, BlockSignature& result)
+{
+    Type resultType;
+    WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type");
+    Vector<Type, 16> returnTypes { resultType };
+    const auto& typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { }).get();
+    result = &TypeInformation::getFunctionSignature(typeDefinition->index());
+
     return { };
 }
 
@@ -380,7 +403,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
             if (m_recursionGroupInformation.inRecursionGroup && static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start) {
                 ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end);
                 ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_recursionGroupInformation.start);
-                RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForProjection(Projection::PlaceholderGroup, groupIndex);
+                RefPtr<TypeDefinition> def = TypeInformation::getPlaceholderProjection(groupIndex);
                 typeIndex = def->index();
             } else {
                 ASSERT(static_cast<uint32_t>(heapType) < info.typeCount());

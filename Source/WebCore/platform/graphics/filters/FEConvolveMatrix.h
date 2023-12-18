@@ -38,7 +38,7 @@ enum class EdgeModeType {
 
 class FEConvolveMatrix : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEConvolveMatrix> create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
+    WEBCORE_EXPORT static Ref<FEConvolveMatrix> create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEConvolveMatrix&) const;
 
@@ -67,7 +67,7 @@ public:
     bool setPreserveAlpha(bool);
 
 private:
-    FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix);
+    FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEConvolveMatrix>(*this, other); }
 
@@ -104,4 +104,4 @@ template<> struct EnumTraits<WebCore::EdgeModeType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEConvolveMatrix)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEConvolveMatrix)

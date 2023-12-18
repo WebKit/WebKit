@@ -408,8 +408,8 @@ static const bool GreaterThanOrEqual = Zero >= Zero;
 
 TEST(WTF_Time, constexprMonotonicTime)
 {
-    EXPECT_TRUE(std::isnan(NaN));
-    EXPECT_TRUE(std::isinf(Infinity));
+    EXPECT_TRUE(NaN.isNaN());
+    EXPECT_TRUE(Infinity.isInfinity());
     EXPECT_TRUE(Zero.secondsSinceEpoch().value() == 0.0);
     EXPECT_TRUE(One.secondsSinceEpoch().value() == 1.0);
     EXPECT_TRUE(NegativeOne.secondsSinceEpoch().value() == -1.0);

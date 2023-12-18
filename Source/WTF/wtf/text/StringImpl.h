@@ -174,10 +174,10 @@ protected:
 // Or we could say that "const" doesn't make sense at all and use "StringImpl&" and "StringImpl*" everywhere.
 // Right now we use a mix of both, which makes code more confusing and has no benefit.
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 class StringImpl : private StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImpl);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
+    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
 
     friend class AtomStringImpl;
     friend class JSC::LLInt::Data;
@@ -197,6 +197,8 @@ class StringImpl : private StringImplShape {
 
     template<typename> friend struct WTF::BufferFromStaticDataTranslator;
     template<typename> friend struct WTF::HashAndCharactersTranslator;
+
+    friend WTF_EXPORT_PRIVATE bool equal(const StringImpl&, const StringImpl&);
 
 public:
     enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
@@ -306,6 +308,8 @@ public:
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
     ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
     ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit() || isEmpty()); return m_data16; }
+    ALWAYS_INLINE std::span<const LChar> span8() const { return { characters8(), length() }; }
+    ALWAYS_INLINE std::span<const UChar> span16() const { return { characters16(), length() }; }
 
     template<typename CharacterType> const CharacterType* characters() const;
 
@@ -437,7 +441,7 @@ public:
 
     UChar at(unsigned) const;
     UChar operator[](unsigned i) const { return at(i); }
-    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned);
+    WTF_EXPORT_PRIVATE char32_t characterStartingAt(unsigned);
 
     // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
     // Like the non-strict functions above, these return the value when there is trailing garbage.
@@ -1175,7 +1179,7 @@ inline void StringImpl::iterCharacters(jsstring_iterator* iter, unsigned start, 
 
 inline UChar StringImpl::at(unsigned i) const
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
+    RELEASE_ASSERT(i < m_length);
     return is8Bit() ? m_data8[i] : m_data16[i];
 }
 

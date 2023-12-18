@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,7 +49,9 @@
 
 #pragma once
 
+#include "CachedCall.h"
 #include "Error.h"
+#include "InterpreterInlines.h"
 #include "JSArrayBufferViewInlines.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
@@ -60,6 +62,7 @@
 #include "StructureInlines.h"
 #include "TypedArrayAdaptors.h"
 #include "TypedArrayController.h"
+#include "VMEntryScopeInlines.h"
 #include <wtf/StdLibExtras.h>
 
 #if OS(DARWIN)
@@ -704,47 +707,215 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToReversed(VM& vm, JS
     const typename ViewClass::ElementType* from = thisObject->typedVector();
     typename ViewClass::ElementType* to = result->typedVector();
 
-    memmove(to, from, length * ViewClass::elementSize);
+    WTF::copyElements(to, from, length);
     std::reverse(to, to + length);
 
     return JSValue::encode(result);
 }
 
-template<typename ViewClass>
-ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncClone(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+template<typename ElementType, typename Functor>
+static void typedArrayMerge(VM& vm, ElementType* dst, ElementType* src, size_t srcIndex, size_t srcEnd, size_t width, const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    size_t left = srcIndex;
+    size_t leftEnd = std::min<size_t>(left + width, srcEnd);
+    size_t right = leftEnd;
+    size_t rightEnd = std::min<size_t>(right + width, srcEnd);
+
+    for (size_t dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
+        if (right < rightEnd) {
+            if (left >= leftEnd) {
+                dst[dstIndex] = src[right++];
+                continue;
+            }
+            bool result = comparator(src[right], src[left]);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (result) {
+                dst[dstIndex] = src[right++];
+                continue;
+            }
+        }
+
+        dst[dstIndex] = src[left++];
+    }
+}
+
+template<typename ElementType, typename Functor>
+static ElementType* typedArrayMergeSort(VM& vm, Vector<ElementType, 16>& src, Vector<ElementType, 16>& dst, const Functor& comparator)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* to = dst.data();
+    auto* from = src.data();
+    size_t length = src.size();
+    for (size_t width = 1; width < length; width *= 2) {
+        for (size_t srcIndex = 0; srcIndex < length; srcIndex += 2 * width) {
+            typedArrayMerge(vm, to, from, srcIndex, length, width, comparator);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        std::swap(to, from);
+    }
+
+    return from;
+}
+
+template<typename ViewClass>
+static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& vm, JSGlobalObject* globalObject, ViewClass* thisObject, JSValue comparatorValue)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort
+    if (comparatorValue.isUndefined()) {
+        auto sortResult = thisObject->sort();
+        if (UNLIKELY(sortResult != ViewClass::SortResult::Success)) {
+            if (sortResult == ViewClass::SortResult::Failed)
+                return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+
+            ASSERT(sortResult == ViewClass::SortResult::OutOfMemory);
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+        return JSValue::encode(thisObject);
+    }
+
+    auto callData = JSC::getCallData(comparatorValue);
+
+    size_t length = thisObject->length();
+    if (length < 2)
+        return JSValue::encode(thisObject);
+
+    auto* originalArray = thisObject->typedVector();
+
+    Vector<typename ViewClass::ElementType, 16> src;
+    Vector<typename ViewClass::ElementType, 16> dst;
+    if (UNLIKELY(!src.tryGrow(length) || !dst.tryGrow(length))) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
+
+    WTF::copyElements(src.data(), originalArray, length);
+
+    typename ViewClass::ElementType* result = nullptr;
+
+    if (LIKELY(callData.type == CallData::Type::JS)) {
+        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(comparatorValue), 2);
+        RETURN_IF_EXCEPTION(scope, { });
+        result = typedArrayMergeSort(vm, src, dst, [&](auto left, auto right) -> bool {
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
+            cachedCall.clearArguments();
+
+            JSValue leftValue = ViewClass::Adaptor::toJSValue(globalObject, left);
+            RETURN_IF_EXCEPTION(scope, { });
+            JSValue rightValue = ViewClass::Adaptor::toJSValue(globalObject, right);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            cachedCall.appendArgument(leftValue);
+            cachedCall.appendArgument(rightValue);
+            cachedCall.setThis(jsUndefined());
+            if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+
+            JSValue jsResult = cachedCall.call();
+            RETURN_IF_EXCEPTION(scope, { });
+
+            if (LIKELY(jsResult.isInt32()))
+                return jsResult.asInt32() < 0;
+
+            double value = jsResult.toNumber(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            return value < 0;
+        });
+        RETURN_IF_EXCEPTION(scope, { });
+    } else {
+        MarkedArgumentBuffer args;
+        result = typedArrayMergeSort(vm, src, dst, [&](auto left, auto right) -> bool {
+            auto scope = DECLARE_THROW_SCOPE(vm);
+
+            args.clear();
+
+            JSValue leftValue = ViewClass::Adaptor::toJSValue(globalObject, left);
+            RETURN_IF_EXCEPTION(scope, { });
+            JSValue rightValue = ViewClass::Adaptor::toJSValue(globalObject, right);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            args.append(leftValue);
+            args.append(rightValue);
+            if (UNLIKELY(args.hasOverflowed())) {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+
+            JSValue jsResult = call(globalObject, comparatorValue, callData, jsUndefined(), args);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            if (LIKELY(jsResult.isInt32()))
+                return jsResult.asInt32() < 0;
+
+            double value = jsResult.toNumber(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            return value < 0;
+        });
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (UNLIKELY(thisObject->isDetached()))
+        return JSValue::encode(thisObject);
+
+    size_t copyLength = std::min<size_t>(thisObject->length(), length);
+    WTF::copyElements(originalArray, result, copyLength);
+
+    return JSValue::encode(thisObject);
+}
+
+template<typename ViewClass>
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSort(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue comparatorValue = callFrame->argument(0);
+    if (!comparatorValue.isUndefined() && !comparatorValue.isCallable())
+        return throwVMTypeError(globalObject, scope, "TypedArray.prototype.sort requires the comparator argument to be a function or undefined"_s);
+
+    // https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort
+    ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
+    validateTypedArray(globalObject, thisObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, genericTypedArrayViewProtoFuncSortImpl(vm, globalObject, thisObject, comparatorValue));
+}
+
+template<typename ViewClass>
+ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToSorted(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    // https://tc39.es/proposal-change-array-by-copy/#sec-%typedarray%.prototype.toSorted
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue comparatorValue = callFrame->argument(0);
+    if (!comparatorValue.isUndefined() && !comparatorValue.isCallable())
+        return throwVMTypeError(globalObject, scope, "TypedArray.prototype.toSorted requires the comparator argument to be a function or undefined"_s);
 
     ViewClass* thisObject = jsCast<ViewClass*>(callFrame->thisValue());
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
     size_t length = thisObject->length();
+
     bool isResizableOrGrowableShared = false;
     Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, isResizableOrGrowableShared);
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
     RETURN_IF_EXCEPTION(scope, { });
 
-    typename ViewClass::ElementType* from = thisObject->typedVector();
+    const typename ViewClass::ElementType* from = thisObject->typedVector();
     typename ViewClass::ElementType* to = result->typedVector();
-    memmove(to, from, length * ViewClass::elementSize);
-    return JSValue::encode(result);
-}
 
-template<typename ViewClass>
-ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSort(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    WTF::copyElements(to, from, length);
 
-    // 22.2.3.25
-    ViewClass* thisObject = jsCast<ViewClass*>(callFrame->argument(0));
-    validateTypedArray(globalObject, thisObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (UNLIKELY(!thisObject->sort()))
-        return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
-
-    return JSValue::encode(thisObject);
+    RELEASE_AND_RETURN(scope, genericTypedArrayViewProtoFuncSortImpl(vm, globalObject, result, comparatorValue));
 }
 
 template<typename ViewClass>
@@ -1074,7 +1245,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
     } else {
         typename ViewClass::ElementType* from = thisObject->typedVector();
         typename ViewClass::ElementType* to = result->typedVector();
-        memmove(to, from, thisLength * ViewClass::elementSize);
+        WTF::copyElements(to, from, thisLength);
         to[replaceIndex] = nativeValue;
     }
 

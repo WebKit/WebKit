@@ -355,7 +355,6 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"JSON.stringify(result.arguments)"] UTF8String], "[{\"type\":\"String\",\"value\":\"foo\"}]");
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -372,7 +371,6 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
 }
-#endif
 
 TEST(IPCTestingAPI, DescribesArguments)
 {
@@ -641,7 +639,7 @@ TEST(IPCTestingAPI, CGColorInNSSecureCoding)
     EXPECT_TRUE([key isEqual:resultKey]);
     CGColorRef resultValue = static_cast<CGColorRef>(result.allValues[0]);
     ASSERT_EQ(CFGetTypeID(resultValue), CGColorGetTypeID());
-    auto resultValueColorSpace = adoptCF(CGColorGetColorSpace(resultValue));
+    RetainPtr resultValueColorSpace = CGColorGetColorSpace(resultValue);
     auto resultValueColorSpaceName = adoptCF(CGColorSpaceCopyName(resultValueColorSpace.get()));
     EXPECT_NE(CFStringFind(resultValueColorSpaceName.get(), CFSTR("SRGB"), 0).location, kCFNotFound);
     ASSERT_EQ(CGColorGetNumberOfComponents(resultValue), CGColorGetNumberOfComponents(value.get()));

@@ -94,7 +94,7 @@ template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArra
     for (id element in array) {
         constexpr const VectorElementType* typedNull = nullptr;
         if (auto vectorElement = makeVectorElement(typedNull, element))
-            vector.uncheckedAppend(WTFMove(*vectorElement));
+            vector.append(WTFMove(*vectorElement));
     }
     vector.shrinkToFit();
     return vector;
@@ -106,7 +106,7 @@ template<typename MapFunctionType> Vector<typename std::invoke_result_t<MapFunct
     vector.reserveInitialCapacity(array.count);
     for (id element in array) {
         if (auto vectorElement = std::invoke(std::forward<MapFunctionType>(function), element))
-            vector.uncheckedAppend(WTFMove(*vectorElement));
+            vector.append(WTFMove(*vectorElement));
     }
     vector.shrinkToFit();
     return vector;

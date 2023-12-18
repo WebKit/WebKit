@@ -58,7 +58,7 @@ const float emphasisMarkFontSizeMultiplier = 0.5f;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 
-Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
+Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
 {
     return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
 }
@@ -74,7 +74,7 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
     return Font::create(WTFMove(platformData), origin);
 }
 
-Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : m_platformData(platformData)
     , m_attributes({ renderingResourceIdentifier, origin, interstitial, visibility, orientationFallback })
     , m_treatAsFixedPitch(false)
@@ -90,7 +90,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial int
     platformGlyphInit();
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == OrientationFallback::No) {
+    if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == IsOrientationFallback::No) {
         m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
@@ -121,12 +121,12 @@ void Font::platformGlyphInit()
 {
 #if USE(FREETYPE)
     auto* glyphPageZeroWidthSpace = glyphPage(GlyphPage::pageNumberForCodePoint(zeroWidthSpace));
-    UChar32 zeroWidthSpaceCharacter = zeroWidthSpace;
+    char32_t zeroWidthSpaceCharacter = zeroWidthSpace;
 #else
     // Ask for the glyph for 0 to avoid paging in ZERO WIDTH SPACE. Control characters, including 0,
     // are mapped to the ZERO WIDTH SPACE glyph for non FreeType based ports.
     auto* glyphPageZeroWidthSpace = glyphPage(0);
-    UChar32 zeroWidthSpaceCharacter = 0;
+    char32_t zeroWidthSpaceCharacter = 0;
 #endif
 
     if (glyphPageZeroWidthSpace)
@@ -178,7 +178,7 @@ RenderingResourceIdentifier Font::renderingResourceIdentifier() const
     return m_attributes.ensureRenderingResourceIdentifier();
 }
 
-RenderingResourceIdentifier Font::Attributes::ensureRenderingResourceIdentifier() const
+RenderingResourceIdentifier FontInternalAttributes::ensureRenderingResourceIdentifier() const
 {
     if (!renderingResourceIdentifier)
         renderingResourceIdentifier = RenderingResourceIdentifier::generate();
@@ -197,7 +197,7 @@ static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferL
     return hasGlyphs;
 }
 
-static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
+static std::optional<size_t> codePointSupportIndex(char32_t codePoint)
 {
     // FIXME: Consider reordering these so the most common ones are at the front.
     // Doing this could cause the BitVector to fit inside inline storage and therefore
@@ -273,7 +273,7 @@ static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
     }
 
 #ifndef NDEBUG
-    UChar32 codePointOrder[] = {
+    char32_t codePointOrder[] = {
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
         0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
         0x7F,
@@ -411,7 +411,7 @@ const GlyphPage* Font::glyphPage(unsigned pageNumber) const
     return addResult.iterator->value.get();
 }
 
-Glyph Font::glyphForCharacter(UChar32 character) const
+Glyph Font::glyphForCharacter(char32_t character) const
 {
     auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(character));
     if (!page)
@@ -419,7 +419,7 @@ Glyph Font::glyphForCharacter(UChar32 character) const
     return page->glyphForCharacter(character);
 }
 
-GlyphData Font::glyphDataForCharacter(UChar32 character) const
+GlyphData Font::glyphDataForCharacter(char32_t character) const
 {
     auto* page = glyphPage(GlyphPage::pageNumberForCodePoint(character));
     if (!page)
@@ -439,7 +439,7 @@ const Font& Font::verticalRightOrientationFont() const
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.verticalRightOrientationFont) {
         auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, FontOrientation::Horizontal);
-        derivedFontData.verticalRightOrientationFont = create(verticalRightPlatformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
+        derivedFontData.verticalRightOrientationFont = create(verticalRightPlatformData, origin(), IsInterstitial::No, Visibility::Visible, IsOrientationFallback::Yes);
     }
     ASSERT(derivedFontData.verticalRightOrientationFont != this);
     return *derivedFontData.verticalRightOrientationFont;
@@ -449,7 +449,7 @@ const Font& Font::uprightOrientationFont() const
 {
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.uprightOrientationFont)
-        derivedFontData.uprightOrientationFont = create(m_platformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
+        derivedFontData.uprightOrientationFont = create(m_platformData, origin(), IsInterstitial::No, Visibility::Visible, IsOrientationFallback::Yes);
     ASSERT(derivedFontData.uprightOrientationFont != this);
     return *derivedFontData.uprightOrientationFont;
 }
@@ -458,7 +458,7 @@ const Font& Font::invisibleFont() const
 {
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.invisibleFont)
-        derivedFontData.invisibleFont = create(m_platformData, origin(), Interstitial::Yes, Visibility::Invisible);
+        derivedFontData.invisibleFont = create(m_platformData, origin(), IsInterstitial::Yes, Visibility::Invisible);
     ASSERT(derivedFontData.invisibleFont != this);
     return *derivedFontData.invisibleFont;
 }
@@ -498,7 +498,7 @@ const Font& Font::brokenIdeographFont() const
 {
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.brokenIdeographFont) {
-        derivedFontData.brokenIdeographFont = create(m_platformData, origin(), Interstitial::No);
+        derivedFontData.brokenIdeographFont = create(m_platformData, origin(), IsInterstitial::No);
         derivedFontData.brokenIdeographFont->m_isBrokenIdeographFallback = true;
     }
     ASSERT(derivedFontData.brokenIdeographFont != this);
@@ -572,7 +572,7 @@ bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) con
 }
 #endif
 
-bool Font::supportsCodePoint(UChar32 character) const
+bool Font::supportsCodePoint(char32_t character) const
 {
     // This is very similar to static_cast<bool>(glyphForCharacter(character))
     // except that glyphForCharacter() maps certain code points to ZWS (because they

@@ -184,6 +184,10 @@ class NetworkEmulationManager {
       Builder& capacity_Mbps(int link_capacity_Mbps);
       Builder& loss(double loss_rate);
       Builder& packet_queue_length(int max_queue_length_in_packets);
+      Builder& delay_standard_deviation_ms(int delay_standard_deviation_ms);
+      Builder& allow_reordering();
+      Builder& avg_burst_loss_length(int avg_burst_loss_length);
+      Builder& packet_overhead(int packet_overhead);
       SimulatedNetworkNode Build(uint64_t random_seed = 1) const;
       SimulatedNetworkNode Build(NetworkEmulationManager* net,
                                  uint64_t random_seed = 1) const;

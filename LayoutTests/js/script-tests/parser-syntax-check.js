@@ -536,6 +536,19 @@ valid("let: function foo() { }");
 valid("yield: function foo() { }");
 valid("yield: let: function foo() { }");
 invalid("'use strict'; yield: let: function foo() { }");
+valid("if (true) label: undefined");
+valid("if (true) let: {}");
+valid("if (true) async: undefined");
+valid("while (false) label: {}");
+valid("while (false) let: undefined");
+valid("while (false) async: {}");
+invalid("label: async function foo() {}");
+invalid("if (false) async function* foo() {}");
+invalid("if (false) label: async function foo() {}");
+valid("if (false) l\\u0065t: {}");
+valid("if (false) aw\\u0061it: undefined");
+valid("while (false) yi\\u0065ld: {}");
+valid("while (false) l\\u0065t: aw\\u0061it: yi\\u0065ld: undefined");
 
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { return b; } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
 valid("var str = \"'use strict'; function f1(a) { function f2(b) { function f3(c) { return c; } return f3(b); } return f2(a); } return f1(arguments[0]);\"; var foo = new Function(str); foo(5);")
@@ -752,6 +765,7 @@ invalid("(function * (o) { ({ ...{ x: yield } } = o); })()");
 invalid("(function () {'use strict'; ({...eval} = {}); })()");
 invalid("(function () {'use strict'; ({...arguments} = {}); })()");
 invalid("async function foo () { let {...await} = {}; }");
+invalid("(async function* yield() {})");
 invalid("let {...let} = {a: 1, b: 2};");
 invalid("const {...let} = {a: 1, b: 2};");
 invalid("try { throw {a:2} } catch({...foo.a}) {}");

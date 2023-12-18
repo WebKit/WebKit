@@ -68,4 +68,9 @@ void BaseButtonInputType::setValue(const String& sanitizedValue, bool, TextField
     element()->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
 }
 
+bool BaseButtonInputType::dirAutoUsesValue() const
+{
+    return true;
+}
+
 } // namespace WebCore

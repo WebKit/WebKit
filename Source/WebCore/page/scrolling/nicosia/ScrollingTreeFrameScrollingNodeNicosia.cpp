@@ -33,7 +33,7 @@
 
 #include "LocalFrameView.h"
 #include "Logging.h"
-#include "NicosiaPlatformLayer.h"
+#include "NicosiaCompositionLayer.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingTreeScrollingNodeDelegateNicosia.h"
 #include "ThreadedScrollingTree.h"

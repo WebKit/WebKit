@@ -38,6 +38,7 @@ class MachSendRight {
 public:
     WTF_EXPORT_PRIVATE static MachSendRight adopt(mach_port_t);
     WTF_EXPORT_PRIVATE static MachSendRight create(mach_port_t);
+    WTF_EXPORT_PRIVATE static MachSendRight createFromReceiveRight(mach_port_t);
 
     MachSendRight() = default;
     WTF_EXPORT_PRIVATE explicit MachSendRight(const MachSendRight&);

@@ -107,6 +107,20 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric& cue, Inba
     if (inbandCue.highlightColor().isValid())
         cue.setHighlightColor(inbandCue.highlightColor());
 
+    switch (inbandCue.positionAlign()) {
+    case GenericCueData::Alignment::Start:
+        cue.setPositionAlign(VTTCue::PositionAlignSetting::LineLeft);
+        break;
+    case GenericCueData::Alignment::Middle:
+        cue.setPositionAlign(VTTCue::PositionAlignSetting::Center);
+        break;
+    case GenericCueData::Alignment::End:
+        cue.setPositionAlign(VTTCue::PositionAlignSetting::LineRight);
+        break;
+    case GenericCueData::Alignment::None:
+        break;
+    }
+
     if (inbandCue.align() == GenericCueData::Alignment::Start)
         cue.setAlign(VTTCue::AlignSetting::Start);
     else if (inbandCue.align() == GenericCueData::Alignment::Middle)

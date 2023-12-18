@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x542
-      RenderBlock {P} at (0,0) size 784x20
-        RenderInline {A} at (0,0) size 59x19 [color=#0000EE]
-          RenderText {#text} at (0,0) size 59x19
+      RenderBlock {P} at (0,0) size 784x18
+        RenderInline {A} at (0,0) size 59x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 59x17
             text run at (0,0) width 59: "bug 7118"
-        RenderText {#text} at (59,0) size 354x19
+        RenderText {#text} at (59,0) size 354x17
           text run at (59,0) width 354: ": Wrong property values do not get invalidated correctly."
-      RenderBlock {P} at (0,36) size 784x20
-        RenderText {#text} at (0,0) size 379x19
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 379x17
           text run at (0,0) width 379: "The two words \"test\" should look the same, with no outline:"
-      RenderBlock {DIV} at (0,106) size 784x59
-        RenderBlock {P} at (0,0) size 100x59
-          RenderText {#text} at (0,1) size 69x57
+      RenderBlock {DIV} at (0,102) size 784x58
+        RenderBlock {P} at (0,0) size 100x58
+          RenderText {#text} at (0,1) size 69x56
             text run at (0,1) width 69: "test"
-      RenderBlock {P} at (0,215) size 784x59
-        RenderText {#text} at (0,1) size 69x57
+      RenderBlock {P} at (0,210) size 784x58
+        RenderText {#text} at (0,1) size 69x56
           text run at (0,1) width 69: "test"

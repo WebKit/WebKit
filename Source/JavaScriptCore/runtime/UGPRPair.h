@@ -62,7 +62,11 @@ inline void decodeResult(UGPRPair result, size_t& a, size_t& b)
 #else // USE(JSVALUE32_64)
 using UGPRPair = uint64_t;
 
+#if CPU(BIG_ENDIAN)
+constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return static_cast<uint64_t>(first) << 32 | second; }
+#else
 constexpr UGPRPair makeUGPRPair(UCPURegister first, UCPURegister second) { return static_cast<uint64_t>(second) << 32 | first; }
+#endif
 
 typedef union {
     struct {

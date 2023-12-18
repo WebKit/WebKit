@@ -85,17 +85,17 @@ class AVxEncoderParmsGetToDecoder
   AVxEncoderParmsGetToDecoder()
       : EncoderTest(GET_PARAM(0)), encode_parms(GET_PARAM(1)) {}
 
-  virtual ~AVxEncoderParmsGetToDecoder() {}
+  ~AVxEncoderParmsGetToDecoder() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(::libaom_test::kTwoPassGood);
     cfg_.g_lag_in_frames = 25;
     test_video_ = kAV1ParamPassingTestVector;
     cfg_.rc_target_bitrate = test_video_.bitrate;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 3);
       encoder->Control(AV1E_SET_COLOR_PRIMARIES, encode_parms.color_primaries);
@@ -113,8 +113,8 @@ class AVxEncoderParmsGetToDecoder
     }
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     aom_codec_pts_t pts) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             aom_codec_pts_t pts) override {
     (void)pts;
     if (encode_parms.render_size[0] > 0 && encode_parms.render_size[1] > 0) {
       EXPECT_EQ(encode_parms.render_size[0], (int)img.r_w);
@@ -127,14 +127,14 @@ class AVxEncoderParmsGetToDecoder
     EXPECT_EQ(encode_parms.chroma_sample_position, img.csp);
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     if (encode_parms.lossless) {
       EXPECT_EQ(kMaxPsnr, pkt->data.psnr.psnr[0]);
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     return AOM_CODEC_OK == res_dec;
   }

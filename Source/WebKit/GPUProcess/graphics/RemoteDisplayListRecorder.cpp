@@ -32,6 +32,7 @@
 #include "ImageBufferShareableAllocator.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBuffer.h"
+#include "SharedVideoFrame.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
@@ -53,9 +54,6 @@ RemoteDisplayListRecorder::RemoteDisplayListRecorder(ImageBuffer& imageBuffer, R
     : m_imageBuffer(imageBuffer)
     , m_imageBufferIdentifier(imageBufferIdentifier)
     , m_renderingBackend(&renderingBackend)
-#if PLATFORM(COCOA) && ENABLE(VIDEO)
-    , m_sharedVideoFrameReader(Ref { renderingBackend.gpuConnectionToWebProcess().videoFrameObjectHeap() }, renderingBackend.gpuConnectionToWebProcess().webProcessIdentity())
-#endif
 {
 }
 
@@ -126,19 +124,14 @@ void RemoteDisplayListRecorder::concatenateCTM(const AffineTransform& ctm)
     handleItem(DisplayList::ConcatenateCTM(ctm));
 }
 
-void RemoteDisplayListRecorder::setInlineFillColor(DisplayList::SetInlineFillColor&& item)
+void RemoteDisplayListRecorder::setInlineFillColor(DisplayList::SetInlineFillColor&& fillColorItem)
 {
-    handleItem(WTFMove(item));
+    handleItem(WTFMove(fillColorItem));
 }
 
-void RemoteDisplayListRecorder::setInlineStrokeColor(DisplayList::SetInlineStrokeColor&& item)
+void RemoteDisplayListRecorder::setInlineStroke(DisplayList::SetInlineStroke&& strokeItem)
 {
-    handleItem(WTFMove(item));
-}
-
-void RemoteDisplayListRecorder::setStrokeThickness(float thickness)
-{
-    handleItem(DisplayList::SetStrokeThickness(thickness));
+    handleItem(WTFMove(strokeItem));
 }
 
 void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
@@ -197,9 +190,9 @@ void RemoteDisplayListRecorder::setMiterLimit(float limit)
     handleItem(DisplayList::SetMiterLimit(limit));
 }
 
-void RemoteDisplayListRecorder::clearShadow()
+void RemoteDisplayListRecorder::clearDropShadow()
 {
-    handleItem(DisplayList::ClearShadow());
+    handleItem(DisplayList::ClearDropShadow());
 }
 
 void RemoteDisplayListRecorder::clip(const FloatRect& rect)
@@ -331,7 +324,12 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier
     handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier, decomposedGlyphsIdentifier), *font, *decomposedGlyphs);
 }
 
-void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawDisplayListItems(Vector<WebCore::DisplayList::Item>&& items, const FloatPoint& destination)
+{
+    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap());
+}
+
+void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     RefPtr sourceImage = imageBuffer(imageBufferIdentifier);
     if (!sourceImage) {
@@ -342,7 +340,7 @@ void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imag
     handleItem(DisplayList::DrawImageBuffer(imageBufferIdentifier, destinationRect, srcRect, options), *sourceImage);
 }
 
-void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
     if (!image) {
@@ -369,7 +367,7 @@ void RemoteDisplayListRecorder::drawSystemImage(Ref<SystemImage> systemImage, co
     handleItem(DisplayList::DrawSystemImage(systemImage, destinationRect));
 }
 
-void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     auto patternImage = sourceImage(imageIdentifier);
     if (!patternImage) {
@@ -510,20 +508,29 @@ void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identif
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
+SharedVideoFrameReader& RemoteDisplayListRecorder::sharedVideoFrameReader()
+{
+    if (!m_sharedVideoFrameReader)
+        m_sharedVideoFrameReader = makeUnique<SharedVideoFrameReader>(Ref { m_renderingBackend->gpuConnectionToWebProcess().videoFrameObjectHeap() }, m_renderingBackend->gpuConnectionToWebProcess().webProcessIdentity());
+
+    return *m_sharedVideoFrameReader;
+}
+
 void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)
 {
-    if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
+    if (auto videoFrame = sharedVideoFrameReader().read(WTFMove(frame)))
         drawingContext().paintVideoFrame(*videoFrame, destination, shouldDiscardAlpha);
 }
 
+
 void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {
-    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+    sharedVideoFrameReader().setSemaphore(WTFMove(semaphore));
 }
 
 void RemoteDisplayListRecorder::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
 {
-    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
+    sharedVideoFrameReader().setSharedMemory(WTFMove(handle));
 }
 #endif // PLATFORM(COCOA) && ENABLE(VIDEO)
 
@@ -539,10 +546,9 @@ void RemoteDisplayListRecorder::strokeLine(const PathDataLine& line)
     handleItem(DisplayList::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStrokeColor&& color, float thickness)
+void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStroke&& strokeItem)
 {
-    handleItem(WTFMove(color));
-    handleItem(DisplayList::SetStrokeThickness(thickness));
+    handleItem(WTFMove(strokeItem));
     handleItem(DisplayList::StrokeLine(line));
 }
 

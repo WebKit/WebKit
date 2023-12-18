@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2021 Igalia S.A. All rights reserved.
  *
  *
@@ -34,6 +34,7 @@
 #include "ICStatusMap.h"
 #include "SetPrivateBrandVariant.h"
 #include "StubInfoSummary.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -43,7 +44,7 @@ class StructureSet;
 class StructureStubInfo;
 
 class SetPrivateBrandStatus final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SetPrivateBrandStatus);
 public:
     enum State : uint8_t {
         // It's uncached so we have no information.

@@ -27,9 +27,14 @@
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
+namespace WTF {
+class URL;
+}
+
 namespace WTR {
 
 void sendTestRenderedEvent(JSGlobalContextRef);
 bool hasTestWaitAttribute(JSGlobalContextRef);
+bool isWebPlatformTestURL(const WTF::URL&);
 
 }

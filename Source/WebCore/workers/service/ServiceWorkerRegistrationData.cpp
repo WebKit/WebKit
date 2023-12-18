@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerRegistrationData.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
@@ -61,5 +59,3 @@ ServiceWorkerRegistrationData ServiceWorkerRegistrationData::isolatedCopy() &&
 }
 
 } // namespace WTF
-
-#endif // ENABLE(SERVICE_WORKER)

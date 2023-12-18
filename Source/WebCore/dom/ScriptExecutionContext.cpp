@@ -194,12 +194,12 @@ ScriptExecutionContext::~ScriptExecutionContext()
     for (auto& completionHandler : postMessageCompletionHandlers)
         completionHandler();
 
-#if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
-#endif
 
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->contextDestroyed();
+
+    setContentSecurityPolicy(nullptr);
 
 #if ASSERT_ENABLED
     m_inScriptExecutionContextDestructor = false;
@@ -475,14 +475,14 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
 void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject& state, JSC::JSPromise& promise, RefPtr<Inspector::ScriptCallStack>&& callStack)
 {
     Page* page = nullptr;
-    if (is<Document>(this))
-        page = downcast<Document>(this)->page();
+    if (auto* document = dynamicDowncast<Document>(*this))
+        page = document->page();
     // FIXME: allow Workers to mute unhandled promise rejection messages.
 
     if (page && !page->settings().unhandledPromiseRejectionToConsoleEnabled())
         return;
 
-    JSC::VM& vm = state.vm();
+    Ref vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSC::JSValue result = promise.result(vm);
     String resultMessage = retrieveErrorMessage(state, vm, result, scope);
@@ -519,7 +519,7 @@ void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLeve
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript, bool fromModule)
 {
-    auto* target = errorEventTarget();
+    RefPtr target = errorEventTarget();
     if (!target)
         return false;
 
@@ -542,6 +542,11 @@ int ScriptExecutionContext::circularSequentialID()
     if (m_circularSequentialID <= 0)
         m_circularSequentialID = 1;
     return m_circularSequentialID;
+}
+
+Ref<JSC::VM> ScriptExecutionContext::protectedVM()
+{
+    return vm();
 }
 
 PublicURLManager& ScriptExecutionContext::publicURLManager()
@@ -587,13 +592,13 @@ RejectedPromiseTracker* ScriptExecutionContext::ensureRejectedPromiseTrackerSlow
     // When initializing ScriptExecutionContext, vm() is not ready.
 
     ASSERT(!m_rejectedPromiseTracker);
-    if (is<WorkerOrWorkletGlobalScope>(*this)) {
-        auto* scriptController = downcast<WorkerOrWorkletGlobalScope>(*this).script();
+    if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this)) {
+        auto* scriptController = globalScope->script();
         // Do not re-create the promise tracker if we are in a worker / worklet whose execution is terminating.
         if (!scriptController || scriptController->isTerminatingExecution())
             return nullptr;
     }
-    m_rejectedPromiseTracker = makeUnique<RejectedPromiseTracker>(*this, vm());
+    m_rejectedPromiseTracker = makeUnique<RejectedPromiseTracker>(*this, protectedVM());
     return m_rejectedPromiseTracker.get();
 }
 
@@ -621,13 +626,13 @@ bool ScriptExecutionContext::hasPendingActivity() const
 
 JSC::JSGlobalObject* ScriptExecutionContext::globalObject() const
 {
-    if (is<Document>(*this)) {
-        auto frame = downcast<Document>(*this).frame();
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        auto frame = document->frame();
         return frame ? frame->script().globalObject(mainThreadNormalWorld()) : nullptr;
     }
 
-    if (is<WorkerOrWorkletGlobalScope>(*this)) {
-        auto script = downcast<WorkerOrWorkletGlobalScope>(*this).script();
+    if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this)) {
+        auto script = globalScope->script();
         return script ? script->globalScopeWrapper() : nullptr;
     }
 
@@ -649,16 +654,15 @@ String ScriptExecutionContext::domainForCachePartition() const
 bool ScriptExecutionContext::allowsMediaDevices() const
 {
 #if ENABLE(MEDIA_STREAM)
-    if (!is<Document>(*this))
+    auto* document = dynamicDowncast<Document>(*this);
+    if (!document)
         return false;
-    auto page = downcast<Document>(*this).page();
+    auto page = document->page();
     return page ? !page->settings().mediaCaptureRequiresSecureConnection() : false;
 #else
     return false;
 #endif
 }
-
-#if ENABLE(SERVICE_WORKER)
 
 ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
 {
@@ -684,8 +688,8 @@ void ScriptExecutionContext::unregisterServiceWorker(ServiceWorker& serviceWorke
 ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
 {
     NavigatorBase* navigator = nullptr;
-    if (is<Document>(*this)) {
-        if (auto* window = downcast<Document>(*this).domWindow())
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        if (auto* window = document->domWindow())
             navigator = window->optionalNavigator();
     } else
         navigator = downcast<WorkerGlobalScope>(*this).optionalNavigator();
@@ -696,16 +700,14 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
 ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
 {
     NavigatorBase* navigator = nullptr;
-    if (is<Document>(*this)) {
-        if (auto* window = downcast<Document>(*this).domWindow())
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        if (auto* window = document->domWindow())
             navigator = &window->navigator();
     } else
         navigator = &downcast<WorkerGlobalScope>(*this).navigator();
         
     return navigator ? &navigator->serviceWorker() : nullptr;
 }
-
-#endif
 
 void ScriptExecutionContext::setCrossOriginMode(CrossOriginMode crossOriginMode)
 {
@@ -765,17 +767,17 @@ bool ScriptExecutionContext::ensureOnContextThread(ScriptExecutionContextIdentif
 
 void ScriptExecutionContext::postTaskToResponsibleDocument(Function<void(Document&)>&& callback)
 {
-    if (is<Document>(this)) {
-        callback(downcast<Document>(*this));
+    if (auto* document = dynamicDowncast<Document>(*this)) {
+        callback(*document);
         return;
     }
 
-    ASSERT(is<WorkerOrWorkletGlobalScope>(this));
-    if (!is<WorkerOrWorkletGlobalScope>(this))
+    auto* workerOrWorketGlobalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(*this);
+    ASSERT(workerOrWorketGlobalScope);
+    if (!workerOrWorketGlobalScope)
         return;
 
-    auto* thread = downcast<WorkerOrWorkletGlobalScope>(this)->workerOrWorkletThread();
-    if (thread) {
+    if (RefPtr thread = workerOrWorketGlobalScope->workerOrWorkletThread()) {
         thread->workerLoaderProxy().postTaskToLoader([callback = WTFMove(callback)](auto&& context) {
             callback(downcast<Document>(context));
         });
@@ -840,6 +842,11 @@ void ScriptExecutionContext::addDeferredPromise(Ref<DeferredPromise>&& promise)
 RefPtr<DeferredPromise> ScriptExecutionContext::takeDeferredPromise(DeferredPromise* promise)
 {
     return m_deferredPromises.take(promise);
+}
+
+CheckedRef<EventLoopTaskGroup> ScriptExecutionContext::checkedEventLoop()
+{
+    return eventLoop();
 }
 
 WebCoreOpaqueRoot root(ScriptExecutionContext* context)

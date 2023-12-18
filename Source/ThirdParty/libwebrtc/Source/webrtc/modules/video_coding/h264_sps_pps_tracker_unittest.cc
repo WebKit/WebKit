@@ -156,6 +156,48 @@ TEST_F(TestH264SpsPpsTracker, StapAIncorrectSegmentLength) {
             H264SpsPpsTracker::kDrop);
 }
 
+TEST_F(TestH264SpsPpsTracker, ConsecutiveStapA) {
+  // When the GenericFrameDescriptor or DependencyDescriptor RTP header
+  // extensions are used, we may receive a series of StapA packets where only
+  // the first packet has is_first_packet_in_frame = true set.
+  std::vector<uint8_t> data;
+  H264VideoHeader first_header;
+  first_header.h264().packetization_type = kH264StapA;
+  first_header.is_first_packet_in_frame = true;
+
+  // SPS in first packet.
+  data.insert(data.end(), {0});     // First byte is ignored
+  data.insert(data.end(), {0, 2});  // Length of segment
+  AddSps(&first_header, 13, &data);
+  H264SpsPpsTracker::FixedBitstream first_fixed =
+      tracker_.CopyAndFixBitstream(data, &first_header);
+  EXPECT_THAT(first_fixed.action, H264SpsPpsTracker::kInsert);
+
+  H264VideoHeader second_header;
+  second_header.h264().packetization_type = kH264StapA;
+  second_header.is_first_packet_in_frame = false;
+
+  // PPS and IDR in second packet.
+  data.insert(data.end(), {0, 2});  // Length of segment
+  AddPps(&second_header, 13, 27, &data);
+  data.insert(data.end(), {0, 5});  // Length of segment
+  AddIdr(&second_header, 27);
+  data.insert(data.end(), {1, 2, 3, 2, 1});
+
+  H264SpsPpsTracker::FixedBitstream fixed =
+      tracker_.CopyAndFixBitstream(data, &second_header);
+
+  EXPECT_THAT(fixed.action, H264SpsPpsTracker::kInsert);
+  std::vector<uint8_t> expected;
+  expected.insert(expected.end(), start_code, start_code + sizeof(start_code));
+  expected.insert(expected.end(), {H264::NaluType::kSps, 13});
+  expected.insert(expected.end(), start_code, start_code + sizeof(start_code));
+  expected.insert(expected.end(), {H264::NaluType::kPps, 27});
+  expected.insert(expected.end(), start_code, start_code + sizeof(start_code));
+  expected.insert(expected.end(), {1, 2, 3, 2, 1});
+  EXPECT_THAT(Bitstream(fixed), ElementsAreArray(expected));
+}
+
 TEST_F(TestH264SpsPpsTracker, SingleNaluInsertStartCode) {
   uint8_t data[] = {1, 2, 3};
   H264VideoHeader header;

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>ImageCapture getPhotoSettings</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <video controls autoplay width=640 height=480 playsInline id='video'></video>
+    <script>
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            const [track] = stream.getVideoTracks();
+
+            assert_equals(track.readyState, 'live');
+            track.stop();
+            assert_equals(track.readyState, 'ended');
+
+            const imageCapture = new ImageCapture(track);
+            return promise_rejects_dom(test, 'InvalidStateError', imageCapture.getPhotoSettings())
+
+        }, `getPhotoSettings() on an 'ended' track should throw "InvalidStateError"`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            const [track] = stream.getVideoTracks();
+
+            assert_equals(track.readyState, 'live');
+
+            const imageCapture = new ImageCapture(track);
+            const promise = imageCapture.getPhotoSettings();
+            
+            track.stop();
+            assert_equals(track.readyState, 'ended');
+            
+            return promise_rejects_dom(test, 'OperationError', promise);
+
+        }, `"OperationError" should be thrown if the track ends before the promise resolves`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, torch : true } });
+            const [track] = stream.getVideoTracks();
+
+            const imageCapture = new ImageCapture(track);
+            let photoSettings = await imageCapture.getPhotoSettings();
+            const trackSettings = track.getSettings();
+
+            assert_equals(photoSettings.imageHeight, trackSettings.height);
+            assert_equals(photoSettings.imageWidth, trackSettings.width);
+            assert_equals(photoSettings.fillLightMode, 'flash');
+
+            await track.applyConstraints({ torch : false });
+            photoSettings = await imageCapture.getPhotoSettings();
+            assert_equals(photoSettings.fillLightMode, 'off');
+
+        }, `Check getPhotoSettings()`);
+
+    </script>
+</body>
+</html>

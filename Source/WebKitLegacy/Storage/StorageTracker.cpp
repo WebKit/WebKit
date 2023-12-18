@@ -358,7 +358,7 @@ Vector<SecurityOriginData> StorageTracker::origins()
             ASSERT_NOT_REACHED();
             continue;
         }
-        result.uncheckedAppend(origin.value());
+        result.append(origin.value());
     }
     return result;
 }

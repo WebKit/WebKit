@@ -98,7 +98,8 @@ void av1_cdef_fb_row(const AV1_COMMON *const cm, MACROBLOCKD *xd,
                      uint16_t **const linebuf, uint16_t **const colbuf,
                      uint16_t *const src, int fbr,
                      cdef_init_fb_row_t cdef_init_fb_row_fn,
-                     struct AV1CdefSyncData *const cdef_sync);
+                     struct AV1CdefSyncData *const cdef_sync,
+                     struct aom_internal_error_info *error_info);
 void av1_cdef_init_fb_row(const AV1_COMMON *const cm,
                           const MACROBLOCKD *const xd,
                           CdefBlockInfo *const fb_info,

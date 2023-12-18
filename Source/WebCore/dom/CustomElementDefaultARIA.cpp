@@ -47,7 +47,7 @@ void CustomElementDefaultARIA::setValueForAttribute(const QualifiedName& name, c
 
 static bool isElementVisible(const Element& element, const Element& thisElement)
 {
-    return !element.isConnected() || element.isInDocumentTree() || thisElement.isDescendantOrShadowDescendantOf(element.rootNode());
+    return !element.isConnected() || element.isInDocumentTree() || thisElement.isDescendantOrShadowDescendantOf(element.protectedRootNode());
 }
 
 const AtomString& CustomElementDefaultARIA::valueForAttribute(const Element& thisElement, const QualifiedName& name) const
@@ -56,14 +56,14 @@ const AtomString& CustomElementDefaultARIA::valueForAttribute(const Element& thi
     if (it == m_map.end())
         return nullAtom();
 
-    const AtomString* result = &nullAtom();
-    std::visit(WTF::makeVisitor([&](const AtomString& stringValue) {
-        result = &stringValue;
-    }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
+    return std::visit(WTF::makeVisitor([&](const AtomString& stringValue) -> const AtomString& {
+        return stringValue;
+    }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) -> const AtomString& {
         RefPtr elementValue = weakElementValue.get();
         if (elementValue && isElementVisible(*elementValue, thisElement))
-            result = &elementValue->attributeWithoutSynchronization(HTMLNames::idAttr);
-    }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& elements) {
+            return elementValue->attributeWithoutSynchronization(HTMLNames::idAttr);
+        return nullAtom();
+    }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>& elements) -> const AtomString& {
         StringBuilder idList;
         for (auto& weakElement : elements) {
             RefPtr element = weakElement.get();
@@ -73,9 +73,9 @@ const AtomString& CustomElementDefaultARIA::valueForAttribute(const Element& thi
                 idList.append(element->attributeWithoutSynchronization(HTMLNames::idAttr));
             }
         }
+        // FIXME: This should probably be using the idList we just built.
+        return nullAtom();
     }), it->value);
-
-    return *result;
 }
 
 bool CustomElementDefaultARIA::hasAttribute(const QualifiedName& name) const
@@ -83,20 +83,20 @@ bool CustomElementDefaultARIA::hasAttribute(const QualifiedName& name) const
     return m_map.find(name) != m_map.end();
 }
 
-Element* CustomElementDefaultARIA::elementForAttribute(const Element& thisElement, const QualifiedName& name) const
+RefPtr<Element> CustomElementDefaultARIA::elementForAttribute(const Element& thisElement, const QualifiedName& name) const
 {
     auto it = m_map.find(name);
     if (it == m_map.end())
         return nullptr;
 
-    Element* result = nullptr;
+    RefPtr<Element> result;
     std::visit(WTF::makeVisitor([&](const AtomString& stringValue) {
         if (thisElement.isInTreeScope())
             result = thisElement.treeScope().getElementById(stringValue);
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
         RefPtr elementValue = weakElementValue.get();
         if (elementValue && isElementVisible(*elementValue, thisElement))
-            result = elementValue.get();
+            result = WTFMove(elementValue);
     }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>&) {
         RELEASE_ASSERT_NOT_REACHED();
     }), it->value);
@@ -144,7 +144,7 @@ void CustomElementDefaultARIA::setElementsForAttribute(const QualifiedName& name
             elements.append(WeakPtr<Element, WeakPtrImplWithEventTargetData> { *element });
         }
     }
-    m_map.set(name, elements);
+    m_map.set(name, WTFMove(elements));
 }
 
-}; // namespace WebCore
+} // namespace WebCore

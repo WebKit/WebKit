@@ -33,7 +33,9 @@
 #include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"
 #include <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,7 +44,7 @@ class MediaPlayerFactoryMediaSourceMock final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MockMSE; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final { return makeUnique<MockMediaPlayerMediaSource>(player); }
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final { return adoptRef(*new MockMediaPlayerMediaSource(player)); }
 
     void getSupportedTypes(HashSet<String>& types) const final
     {
@@ -119,10 +121,8 @@ void MockMediaPlayerMediaSource::cancelLoad()
 void MockMediaPlayerMediaSource::play()
 {
     m_playing = 1;
-    callOnMainThread([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        advanceCurrentTime();
+    callOnMainThread([protectedThis = Ref { *this }] {
+        protectedThis->advanceCurrentTime();
     });
 }
 
@@ -200,7 +200,13 @@ MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
 
 bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
 {
-    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
+    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime());
+}
+
+void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()
+{
+    if (auto player = m_player.get())
+        player->activeSourceBuffersChanged();
 }
 
 MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
@@ -211,12 +217,13 @@ MediaTime MockMediaPlayerMediaSource::durationMediaTime() const
 void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
 {
     m_seekCompleted = false;
-    m_mediaSourcePrivate->waitForTarget(target, [this, weakThis = WeakPtr { this }](const MediaTime& seekTime) {
-        if (!weakThis || !seekTime.isValid())
+    m_mediaSourcePrivate->waitForTarget(target)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { this }](auto&& result) {
+        if (!weakThis || !result)
             return;
 
-        m_mediaSourcePrivate->seekToTime(seekTime, [this, weakThis, seekTime] {
-            if (!weakThis)
+        m_mediaSourcePrivate->seekToTime(*result)->whenSettled(RunLoop::current(), [this, weakThis, seekTime = *result] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
             m_seekCompleted = true;
             m_currentTime = seekTime;
@@ -227,9 +234,7 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
             }
 
             if (m_playing) {
-                callOnMainThread([this, weakThis = WeakPtr { *this }] {
-                    if (!weakThis)
-                        return;
+                callOnMainThread([this, protectedThis = WTFMove(protectedThis)] {
                     advanceCurrentTime();
                 });
             }

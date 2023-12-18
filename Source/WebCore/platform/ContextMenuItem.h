@@ -43,7 +43,7 @@ enum ContextMenuAction {
     ContextMenuItemTagDownloadImageToDisk,
     ContextMenuItemTagCopyImageToClipboard,
 #if PLATFORM(GTK)
-    ContextMenuItemTagCopyImageUrlToClipboard,
+    ContextMenuItemTagCopyImageURLToClipboard,
 #endif
     ContextMenuItemTagOpenFrameInNewWindow,
     ContextMenuItemTagCopy,
@@ -164,11 +164,11 @@ enum ContextMenuAction {
     ContextMenuItemBaseApplicationTag = 10000
 };
 
-enum ContextMenuItemType {
-    ActionType,
-    CheckableActionType,
-    SeparatorType,
-    SubmenuType
+enum class ContextMenuItemType : uint8_t {
+    Action,
+    CheckableAction,
+    Separator,
+    Submenu,
 };
 
 class ContextMenuItem {
@@ -220,15 +220,5 @@ private:
 namespace WTF {
 
 template<> WEBCORE_EXPORT bool isValidEnum<WebCore::ContextMenuAction, void>(std::underlying_type_t<WebCore::ContextMenuAction>);
-
-template<> struct EnumTraits<WebCore::ContextMenuItemType> {
-    using values = EnumValues<
-        WebCore::ContextMenuItemType,
-        WebCore::ContextMenuItemType::ActionType,
-        WebCore::ContextMenuItemType::CheckableActionType,
-        WebCore::ContextMenuItemType::SeparatorType,
-        WebCore::ContextMenuItemType::SubmenuType
-    >;
-};
 
 } // namespace WTF

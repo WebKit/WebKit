@@ -81,7 +81,7 @@ public:
         *this = next();
     }
     
-    friend bool operator==(Epoch, Epoch) = default;
+    friend bool operator==(const Epoch&, const Epoch&) = default;
     
     bool operator<(const Epoch& other) const
     {

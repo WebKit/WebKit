@@ -76,7 +76,7 @@ TEST(CTRDRBGTest, Large) {
   CTR_DRBG_STATE drbg;
   ASSERT_TRUE(CTR_DRBG_init(&drbg, kSeed, nullptr, 0));
 
-  std::unique_ptr<uint8_t[]> buf(new uint8_t[CTR_DRBG_MAX_GENERATE_LENGTH]);
+  auto buf = std::make_unique<uint8_t[]>(CTR_DRBG_MAX_GENERATE_LENGTH);
   ASSERT_TRUE(CTR_DRBG_generate(&drbg, buf.get(), CTR_DRBG_MAX_GENERATE_LENGTH,
                                 nullptr, 0));
 

@@ -10,7 +10,6 @@
 description("If the destination and previous page have the same origin, then Web Timing should report unload timing.");
 
 window.performance = window.performance || {};
-var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 
 function performTest() {
@@ -28,7 +27,7 @@ function performTest() {
         else
             shouldBeNonZero("timing." + timingProperties[i]);
     }
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     finishJSTest();
 }

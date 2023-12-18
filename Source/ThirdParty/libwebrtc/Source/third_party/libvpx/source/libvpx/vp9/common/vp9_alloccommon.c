@@ -65,6 +65,7 @@ static void free_seg_map(VP9_COMMON *cm) {
     vpx_free(cm->seg_map_array[i]);
     cm->seg_map_array[i] = NULL;
   }
+  cm->seg_map_alloc_size = 0;
 
   cm->current_frame_seg_map = NULL;
   cm->last_frame_seg_map = NULL;
@@ -72,6 +73,8 @@ static void free_seg_map(VP9_COMMON *cm) {
 
 void vp9_free_ref_frame_buffers(BufferPool *pool) {
   int i;
+
+  if (!pool) return;
 
   for (i = 0; i < FRAME_BUFFERS; ++i) {
     if (!pool->frame_bufs[i].released &&
@@ -100,12 +103,13 @@ void vp9_free_postproc_buffers(VP9_COMMON *cm) {
 }
 
 void vp9_free_context_buffers(VP9_COMMON *cm) {
-  cm->free_mi(cm);
+  if (cm->free_mi) cm->free_mi(cm);
   free_seg_map(cm);
   vpx_free(cm->above_context);
   cm->above_context = NULL;
   vpx_free(cm->above_seg_context);
   cm->above_seg_context = NULL;
+  cm->above_context_alloc_cols = 0;
   vpx_free(cm->lf.lfm);
   cm->lf.lfm = NULL;
 }
@@ -131,13 +135,6 @@ int vp9_alloc_context_buffers(VP9_COMMON *cm, int width, int height) {
     cm->free_mi(cm);
     if (cm->alloc_mi(cm, new_mi_size)) goto fail;
   }
-
-  if (cm->seg_map_alloc_size < cm->mi_rows * cm->mi_cols) {
-    // Create the segmentation map structure and set to 0.
-    free_seg_map(cm);
-    if (alloc_seg_map(cm, cm->mi_rows * cm->mi_cols)) goto fail;
-  }
-
   if (cm->above_context_alloc_cols < cm->mi_cols) {
     vpx_free(cm->above_context);
     cm->above_context = (ENTROPY_CONTEXT *)vpx_calloc(
@@ -150,6 +147,12 @@ int vp9_alloc_context_buffers(VP9_COMMON *cm, int width, int height) {
         mi_cols_aligned_to_sb(cm->mi_cols), sizeof(*cm->above_seg_context));
     if (!cm->above_seg_context) goto fail;
     cm->above_context_alloc_cols = cm->mi_cols;
+  }
+
+  if (cm->seg_map_alloc_size < cm->mi_rows * cm->mi_cols) {
+    // Create the segmentation map structure and set to 0.
+    free_seg_map(cm);
+    if (alloc_seg_map(cm, cm->mi_rows * cm->mi_cols)) goto fail;
   }
 
   if (vp9_alloc_loop_filter(cm)) goto fail;

@@ -25,8 +25,6 @@
 
 typedef (BufferSource or USVString) PushMessageDataInit;
 
-[
-    Conditional=SERVICE_WORKER
-] dictionary PushEventInit : ExtendableEventInit {
+dictionary PushEventInit : ExtendableEventInit {
     PushMessageDataInit data;
 };

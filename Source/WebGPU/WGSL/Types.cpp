@@ -64,6 +64,18 @@ void Type::dump(PrintStream& out) const
         [&](const Struct& structure) {
             out.print(structure.structure.name());
         },
+        [&](const PrimitiveStruct& structure) {
+            out.print(structure.name, "<");
+            switch (structure.kind) {
+            case PrimitiveStruct::FrexpResult::kind:
+                out.print(*structure.values[PrimitiveStruct::FrexpResult::fract]);
+                break;
+            case PrimitiveStruct::ModfResult::kind:
+                out.print(*structure.values[PrimitiveStruct::ModfResult::fract]);
+                break;
+            }
+            out.print(">");
+        },
         [&](const Function& function) {
             out.print("(");
             bool first = true;
@@ -190,7 +202,8 @@ ConversionRank conversionRank(const Type* from, const Type* to)
         switch (primitivePair(fromPrimitive->kind, toPrimitive->kind)) {
         case primitivePair(Primitive::AbstractFloat, Primitive::F32):
             return { 1 };
-        // FIXME: AbstractFloat to f16 should return 2
+        case primitivePair(Primitive::AbstractFloat, Primitive::F16):
+            return { 2 };
         case primitivePair(Primitive::AbstractInt, Primitive::I32):
             return { 3 };
         case primitivePair(Primitive::AbstractInt, Primitive::U32):
@@ -199,7 +212,8 @@ ConversionRank conversionRank(const Type* from, const Type* to)
             return { 5 };
         case primitivePair(Primitive::AbstractInt, Primitive::F32):
             return { 6 };
-        // FIXME: AbstractInt to f16 should return 7
+        case primitivePair(Primitive::AbstractInt, Primitive::F16):
+            return { 7 };
         default:
             return std::nullopt;
         }
@@ -234,6 +248,21 @@ ConversionRank conversionRank(const Type* from, const Type* to)
         return conversionRank(fromArray->element, toArray->element);
     }
 
+    if (auto* fromPrimitiveStruct = std::get_if<PrimitiveStruct>(from)) {
+        auto* toPrimitiveStruct = std::get_if<PrimitiveStruct>(to);
+        if (!toPrimitiveStruct)
+            return std::nullopt;
+        auto kind = fromPrimitiveStruct->kind;
+        if (kind != toPrimitiveStruct->kind)
+            return std::nullopt;
+        switch (kind) {
+        case PrimitiveStruct::FrexpResult::kind:
+            return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract], toPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract]);
+        case PrimitiveStruct::ModfResult::kind:
+            return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::ModfResult::fract], toPrimitiveStruct->values[PrimitiveStruct::ModfResult::fract]);
+        }
+    }
+
     // FIXME: add the abstract result conversion rules
     return std::nullopt;
 }
@@ -251,11 +280,14 @@ unsigned Type::size() const
     return WTF::switchOn(*this,
         [&](const Primitive& primitive) -> unsigned {
             switch (primitive.kind) {
+            case Types::Primitive::F16:
+                return 2;
             case Types::Primitive::F32:
             case Types::Primitive::I32:
             case Types::Primitive::U32:
                 return 4;
             case Types::Primitive::Bool:
+                return 1;
             case Types::Primitive::Void:
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
@@ -283,15 +315,10 @@ unsigned Type::size() const
             return array.size.value_or(1) * WTF::roundUpToMultipleOf(array.element->alignment(), array.element->size());
         },
         [&](const Struct& structure) -> unsigned {
-            unsigned alignment = 0;
-            unsigned size = 0;
-            for (auto& [_, field] : structure.fields) {
-                auto fieldAlignment = field->alignment();
-                alignment = std::max(alignment, fieldAlignment);
-                size = WTF::roundUpToMultipleOf(fieldAlignment, size);
-                size += field->size();
-            }
-            return WTF::roundUpToMultipleOf(alignment, size);
+            return structure.structure.size();
+        },
+        [&](const PrimitiveStruct&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -311,8 +338,9 @@ unsigned Type::size() const
         [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Atomic&) -> unsigned {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Atomic& a) -> unsigned {
+            RELEASE_ASSERT(a.element);
+            return a.element->size();
         },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -327,11 +355,14 @@ unsigned Type::alignment() const
     return WTF::switchOn(*this,
         [&](const Primitive& primitive) -> unsigned {
             switch (primitive.kind) {
+            case Types::Primitive::F16:
+                return 2;
             case Types::Primitive::F32:
             case Types::Primitive::I32:
             case Types::Primitive::U32:
                 return 4;
             case Types::Primitive::Bool:
+                return 1;
             case Types::Primitive::Void:
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
@@ -360,10 +391,10 @@ unsigned Type::alignment() const
             return array.element->alignment();
         },
         [&](const Struct& structure) -> unsigned {
-            unsigned alignment = 0;
-            for (auto& [_, field] : structure.fields)
-                alignment = std::max(alignment, field->alignment());
-            return alignment;
+            return structure.structure.alignment();
+        },
+        [&](const PrimitiveStruct&) -> unsigned {
+            RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Function&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
@@ -383,8 +414,9 @@ unsigned Type::alignment() const
         [&](const Pointer&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Atomic&) -> unsigned {
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Atomic& a) -> unsigned {
+            RELEASE_ASSERT(a.element);
+            return a.element->alignment();
         },
         [&](const TypeConstructor&) -> unsigned {
             RELEASE_ASSERT_NOT_REACHED();

@@ -27,6 +27,7 @@
 
 #include "Image.h"
 #include "IntPoint.h"
+#include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
@@ -79,57 +80,70 @@ using PlatformCursor = GRefPtr<GdkCursor>;
 using PlatformCursor = void*;
 #endif
 
+enum class PlatformCursorType : uint8_t {
+    Invalid,
+    Pointer,
+    Cross,
+    Hand,
+    IBeam,
+    Wait,
+    Help,
+    EastResize,
+    NorthResize,
+    NorthEastResize,
+    NorthWestResize,
+    SouthResize,
+    SouthEastResize,
+    SouthWestResize,
+    WestResize,
+    NorthSouthResize,
+    EastWestResize,
+    NorthEastSouthWestResize,
+    NorthWestSouthEastResize,
+    ColumnResize,
+    RowResize,
+    MiddlePanning,
+    EastPanning,
+    NorthPanning,
+    NorthEastPanning,
+    NorthWestPanning,
+    SouthPanning,
+    SouthEastPanning,
+    SouthWestPanning,
+    WestPanning,
+    Move,
+    VerticalText,
+    Cell,
+    ContextMenu,
+    Alias,
+    Progress,
+    NoDrop,
+    Copy,
+    None,
+    NotAllowed,
+    ZoomIn,
+    ZoomOut,
+    Grab,
+    Grabbing,
+    Custom
+};
+
 class Cursor {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum Type {
-        Pointer = 0,
-        Cross,
-        Hand,
-        IBeam,
-        Wait,
-        Help,
-        EastResize,
-        NorthResize,
-        NorthEastResize,
-        NorthWestResize,
-        SouthResize,
-        SouthEastResize,
-        SouthWestResize,
-        WestResize,
-        NorthSouthResize,
-        EastWestResize,
-        NorthEastSouthWestResize,
-        NorthWestSouthEastResize,
-        ColumnResize,
-        RowResize,
-        MiddlePanning,
-        EastPanning,
-        NorthPanning,
-        NorthEastPanning,
-        NorthWestPanning,
-        SouthPanning,
-        SouthEastPanning,
-        SouthWestPanning,
-        WestPanning,
-        Move,
-        VerticalText,
-        Cell,
-        ContextMenu,
-        Alias,
-        Progress,
-        NoDrop,
-        Copy,
-        None,
-        NotAllowed,
-        ZoomIn,
-        ZoomOut,
-        Grab,
-        Grabbing,
-        Custom
+    using Type = PlatformCursorType;
+
+    struct CustomCursorIPCData {
+        Ref<Image> image;
+        IntPoint hotSpot;
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        float scaleFactor { 0 };
+#endif
     };
+    using IPCData = std::variant<Type /* Non custom type */, std::optional<CustomCursorIPCData>>;
 
     Cursor() = default;
+    static std::optional<Cursor> fromIPCData(IPCData&&);
 
     WEBCORE_EXPORT static const Cursor& fromType(Cursor::Type);
 
@@ -141,6 +155,8 @@ public:
 #endif
 
     explicit Cursor(Type);
+
+    IPCData ipcData() const;
 
     Type type() const;
     RefPtr<Image> image() const { return m_image; }
@@ -158,8 +174,7 @@ public:
 private:
     void ensurePlatformCursor() const;
 
-    // The type of -1 indicates an invalid Cursor that should never actually get used.
-    Type m_type { static_cast<Type>(-1) };
+    Type m_type { Type::Invalid };
     RefPtr<Image> m_image;
     IntPoint m_hotSpot;
 
@@ -223,63 +238,47 @@ const Cursor& grabbingCursor();
 
 inline Cursor::Type Cursor::type() const
 {
-    ASSERT(m_type >= 0);
-    ASSERT(m_type <= Custom);
+    ASSERT(m_type > Type::Invalid);
+    ASSERT(m_type <= Type::Custom);
     return m_type;
 }
 
+inline std::optional<Cursor> Cursor::fromIPCData(IPCData&& ipcData)
+{
+    return WTF::switchOn(WTFMove(ipcData), [](Type&& type) -> std::optional<Cursor> {
+        if (type == Type::Invalid || type == Type::Custom)
+            return std::nullopt;
+        auto& cursorReference = Cursor::fromType(type);
+        // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
+        // This will avoid having to re-create the platform cursors over and over.
+        (void)cursorReference.platformCursor();
+        return cursorReference;
+    }, [](std::optional<CustomCursorIPCData>&& imageData) -> std::optional<Cursor> {
+        if (!imageData)
+            return Cursor { &Image::nullImage(), IntPoint() };
+        ASSERT(imageData->image->rect().contains(imageData->hotSpot));
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        return Cursor(imageData->image.ptr(), imageData->hotSpot, imageData->scaleFactor);
+#else
+        return Cursor(imageData->image.ptr(), imageData->hotSpot);
+#endif
+    });
+}
+
+inline auto Cursor::ipcData() const -> IPCData
+{
+    auto type = this->type();
+    if (type != Type::Custom)
+        return type;
+    if (m_image->isNull())
+        return std::nullopt;
+    return CustomCursorIPCData {
+        *m_image
+        , m_hotSpot
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        , m_imageScaleFactor
+#endif
+    };
+}
+
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::Cursor::Type> {
-    using values = EnumValues<
-        WebCore::Cursor::Type,
-        WebCore::Cursor::Type::Pointer,
-        WebCore::Cursor::Type::Cross,
-        WebCore::Cursor::Type::Hand,
-        WebCore::Cursor::Type::IBeam,
-        WebCore::Cursor::Type::Wait,
-        WebCore::Cursor::Type::Help,
-        WebCore::Cursor::Type::EastResize,
-        WebCore::Cursor::Type::NorthResize,
-        WebCore::Cursor::Type::NorthEastResize,
-        WebCore::Cursor::Type::NorthWestResize,
-        WebCore::Cursor::Type::SouthResize,
-        WebCore::Cursor::Type::SouthEastResize,
-        WebCore::Cursor::Type::SouthWestResize,
-        WebCore::Cursor::Type::WestResize,
-        WebCore::Cursor::Type::NorthSouthResize,
-        WebCore::Cursor::Type::EastWestResize,
-        WebCore::Cursor::Type::NorthEastSouthWestResize,
-        WebCore::Cursor::Type::NorthWestSouthEastResize,
-        WebCore::Cursor::Type::ColumnResize,
-        WebCore::Cursor::Type::RowResize,
-        WebCore::Cursor::Type::MiddlePanning,
-        WebCore::Cursor::Type::EastPanning,
-        WebCore::Cursor::Type::NorthPanning,
-        WebCore::Cursor::Type::NorthEastPanning,
-        WebCore::Cursor::Type::NorthWestPanning,
-        WebCore::Cursor::Type::SouthPanning,
-        WebCore::Cursor::Type::SouthEastPanning,
-        WebCore::Cursor::Type::SouthWestPanning,
-        WebCore::Cursor::Type::WestPanning,
-        WebCore::Cursor::Type::Move,
-        WebCore::Cursor::Type::VerticalText,
-        WebCore::Cursor::Type::Cell,
-        WebCore::Cursor::Type::ContextMenu,
-        WebCore::Cursor::Type::Alias,
-        WebCore::Cursor::Type::Progress,
-        WebCore::Cursor::Type::NoDrop,
-        WebCore::Cursor::Type::Copy,
-        WebCore::Cursor::Type::None,
-        WebCore::Cursor::Type::NotAllowed,
-        WebCore::Cursor::Type::ZoomIn,
-        WebCore::Cursor::Type::ZoomOut,
-        WebCore::Cursor::Type::Grab,
-        WebCore::Cursor::Type::Grabbing,
-        WebCore::Cursor::Type::Custom
-    >;
-};
-
-} // namespace WTF

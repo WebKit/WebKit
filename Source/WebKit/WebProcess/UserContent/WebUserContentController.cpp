@@ -417,9 +417,8 @@ void WebUserContentController::addContentRuleLists(Vector<std::pair<WebCompiledC
     for (auto&& pair : contentRuleLists) {
         auto&& contentRuleList = WTFMove(pair.first);
         String identifier = contentRuleList.identifier;
-        auto compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleList));
-
-        m_contentExtensionBackend.addContentExtension(identifier, WTFMove(compiledContentRuleList), WTFMove(pair.second));
+        if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleList)))
+            m_contentExtensionBackend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), WTFMove(pair.second));
     }
 }
 

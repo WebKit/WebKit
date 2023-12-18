@@ -36,7 +36,8 @@ samples utility functions
 // glslang has issues with some specific warnings.
 ANGLE_DISABLE_EXTRA_SEMI_WARNING
 
-#include "SPIRV/GlslangToSpv.h"
+// Pull in upstream glslang header (http://anglebug.com/8412)
+#include "glslang/Public/ShaderLang.h"
 
 ANGLE_REENABLE_EXTRA_SEMI_WARNING
 

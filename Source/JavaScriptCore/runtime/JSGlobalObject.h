@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -261,7 +261,6 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_evalFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_promiseResolveFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_numberProtoToStringFunction;
-    LazyProperty<JSGlobalObject, JSFunction> m_typedArrayProtoSort;
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
@@ -456,6 +455,7 @@ public:
     InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_typedArrayConstructorSpeciesWatchpointSet { IsWatched };
     InlineWatchpointSet m_typedArrayPrototypeIteratorProtocolWatchpointSet { IsWatched };
+    InlineWatchpointSet m_propertyDescriptorFastPathWatchpointSet { ClearWatchpoint };
 #define DECLARE_TYPED_ARRAY_TYPE_SPECIES_WATCHPOINT_SET(name) \
     InlineWatchpointSet m_typedArray ## name ## SpeciesWatchpointSet { ClearWatchpoint }; \
     InlineWatchpointSet m_typedArray ## name ## IteratorProtocolWatchpointSet { ClearWatchpoint };
@@ -498,6 +498,7 @@ public:
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_typedArray ## name ## PrototypeConstructorWatchpoint;
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT)
 #undef DECLARE_TYPED_ARRAY_TYPE_WATCHPOINT
+    Vector<std::unique_ptr<ObjectAdaptiveStructureWatchpoint>> m_missWatchpoints;
 
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayConstructorSpeciesAbsenceWatchpoint(TypedArrayType);
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);
@@ -531,6 +532,7 @@ public:
     inline InlineWatchpointSet& typedArrayIteratorProtocolWatchpointSet(TypedArrayType);
     InlineWatchpointSet& typedArrayConstructorSpeciesWatchpointSet() { return m_typedArrayConstructorSpeciesWatchpointSet; }
     InlineWatchpointSet& typedArrayPrototypeIteratorProtocolWatchpointSet() { return m_typedArrayPrototypeIteratorProtocolWatchpointSet; }
+    InlineWatchpointSet& propertyDescriptorFastPathWatchpointSet() { return m_propertyDescriptorFastPathWatchpointSet; }
 
     bool isArrayPrototypeIteratorProtocolFastAndNonObservable();
     bool isTypedArrayPrototypeIteratorProtocolFastAndNonObservable(TypedArrayType);
@@ -578,11 +580,14 @@ public:
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>> m_customGetterFunctionSet;
-    WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>> m_customSetterFunctionSet;
+    using WeakGCSetJSCustomGetterFunction = WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>>;
+    using WeakGCSetJSCustomSetterFunction = WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>>;
 
-    WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>>& customGetterFunctionSet() { return m_customGetterFunctionSet; }
-    WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>>& customSetterFunctionSet() { return m_customSetterFunctionSet; }
+    WeakGCSetJSCustomGetterFunction m_customGetterFunctionSet;
+    WeakGCSetJSCustomSetterFunction m_customSetterFunctionSet;
+
+    WeakGCSetJSCustomGetterFunction& customGetterFunctionSet() { return m_customGetterFunctionSet; }
+    WeakGCSetJSCustomSetterFunction& customSetterFunctionSet() { return m_customSetterFunctionSet; }
 
     Ref<ImportMap> m_importMap;
 
@@ -704,7 +709,6 @@ public:
     JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSFunction* regExpProtoExecFunction() const;
-    JSFunction* typedArrayProtoSort() const { return m_typedArrayProtoSort.get(this); }
     JSFunction* stringProtoSubstringFunction() const;
     JSFunction* performProxyObjectHasFunction() const;
     JSFunction* performProxyObjectGetFunction() const;
@@ -1076,6 +1080,7 @@ public:
     void installTypedArrayIteratorProtocolWatchpoint(JSObject* prototype, TypedArrayType);
     void installTypedArrayConstructorSpeciesWatchpoint(JSTypedArrayViewConstructor*);
     void installTypedArrayPrototypeIteratorProtocolWatchpoint(JSTypedArrayViewPrototype*);
+    void tryInstallPropertyDescriptorFastPathWatchpoint();
 
     const ImportMap& importMap() const { return m_importMap.get(); }
     ImportMap& importMap() { return m_importMap.get(); }

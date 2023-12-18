@@ -49,6 +49,56 @@ Color::Color(Color&& other)
     *this = WTFMove(other);
 }
 
+Color::Color(std::optional<ColorDataForIPC>&& colorData)
+{
+    if (colorData) {
+        OptionSet<FlagsIncludingPrivate> flags;
+        if (colorData->isSemantic)
+            flags.add(FlagsIncludingPrivate::Semantic);
+        if (colorData->usesFunctionSerialization)
+            flags.add(FlagsIncludingPrivate::UseColorFunctionSerialization);
+
+        WTF::switchOn(colorData->data,
+            [&] (const PackedColor::RGBA& d) { setColor(asSRGBA(d), flags); },
+            [&] (const OutOfLineColorDataForIPC& d) {
+                setOutOfLineComponents(OutOfLineComponents::create({ d.c1, d.c2, d.c3, d.alpha }), d.colorSpace, flags);
+            }
+        );
+    }
+}
+
+std::optional<ColorDataForIPC> Color::data() const
+{
+    if (!isValid())
+        return std::nullopt;
+
+    if (isOutOfLine()) {
+        auto& outOfLineComponents = asOutOfLine();
+        auto [c1, c2, c3, alpha] = outOfLineComponents.unresolvedComponents();
+
+        OutOfLineColorDataForIPC oolcd = {
+            .colorSpace = colorSpace(),
+            .c1 = c1,
+            .c2 = c2,
+            .c3 = c3,
+            .alpha = alpha
+        };
+
+        return { {
+            .isSemantic = flags().contains(FlagsIncludingPrivate::Semantic),
+            .usesFunctionSerialization = flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization),
+            .data = oolcd
+        } };
+
+    } else {
+        return { {
+            .isSemantic = flags().contains(FlagsIncludingPrivate::Semantic),
+            .usesFunctionSerialization = flags().contains(FlagsIncludingPrivate::UseColorFunctionSerialization),
+            .data = asPackedInline()
+        } };
+    };
+};
+
 Color& Color::operator=(const Color& other)
 {
     if (*this == other)

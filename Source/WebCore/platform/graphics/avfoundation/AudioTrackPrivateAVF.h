@@ -35,20 +35,20 @@ class AudioTrackPrivateAVF : public AudioTrackPrivate {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateAVF)
 public:
     Kind kind() const override { return m_kind; }
-    AtomString id() const override { return m_id; }
+    TrackID id() const override { return m_id; }
     AtomString label() const override { return m_label; }
     AtomString language() const override { return m_language; }
     int trackIndex() const override { return m_index; }
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }
-    void setId(const AtomString& newId) { m_id = newId; }
+    void setId(TrackID newId) { m_id = newId; }
     void setLabel(const AtomString& label) { m_label = label; }
     void setLanguage(const AtomString& language) { m_language = language; }
     void setTrackIndex(int index) { m_index = index; }
     
     Kind m_kind { None };
-    AtomString m_id;
+    TrackID m_id;
     AtomString m_label;
     AtomString m_language;
     int m_index { 0 };

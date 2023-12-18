@@ -35,6 +35,7 @@
 #include "JSSourceCode.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "WasmFormat.h"
+#include "WasmTypeDefinition.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
 
@@ -204,11 +205,14 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
         RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toNumber(globalObject)));
     case Wasm::TypeKind::V128:
         RELEASE_ASSERT_NOT_REACHED();
-    default: {
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull:
+    case Wasm::TypeKind::Externref:
+    case Wasm::TypeKind::Funcref: {
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())
                 return throwVMTypeError(globalObject, scope, "Non-null Externref cannot be null"_s);
-        } else if (Wasm::isFuncref(type) || isRefWithTypeIndex(type)) {
+        } else if (Wasm::isFuncref(type) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(type))) {
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
@@ -219,11 +223,18 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
                 if (paramIndex != argIndex)
                     return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
             }
-        } else if (Wasm::isI31ref(type))
-            return throwVMTypeError(globalObject, scope, "I31ref import from JS currently unsupported"_s);
-        else
-            RELEASE_ASSERT_NOT_REACHED();
+        } else {
+            value = Wasm::internalizeExternref(value);
+            if (!Wasm::TypeInformation::castReference(value, type.isNullable(), type.index)) {
+                // FIXME: provide a better error message here
+                // https://bugs.webkit.org/show_bug.cgi?id=247746
+                return throwVMTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+            }
+        }
+        break;
     }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(value));
 }

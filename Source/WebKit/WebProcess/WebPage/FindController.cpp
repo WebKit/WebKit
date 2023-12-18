@@ -36,6 +36,7 @@
 #include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
@@ -71,7 +72,7 @@ FindController::~FindController()
 {
 }
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 PluginView* FindController::mainFramePlugIn()
 {
@@ -86,7 +87,7 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
         --maxMatchCount;
 
     unsigned matchCount;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
     else
@@ -116,7 +117,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     rangesToReplace.reserveInitialCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
     for (auto index : matchIndices) {
         if (index < m_findMatches.size())
-            rangesToReplace.uncheckedAppend(m_findMatches[index]);
+            rangesToReplace.append(m_findMatches[index]);
         if (rangesToReplace.size() >= maximumNumberOfMatchesToReplace)
             break;
     }
@@ -139,14 +140,14 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 {
     RefPtr selectedFrame = frameWithSelection(m_webPage->corePage());
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     auto* pluginView = mainFramePlugIn();
 #endif
 
     bool shouldShowOverlay = false;
 
     if (!found) {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
         if (!pluginView)
 #endif
             m_webPage->corePage()->unmarkAllTextMatches();
@@ -166,7 +167,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         unsigned matchCount = 1;
 
         if (shouldDetermineMatchIndex) {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
             if (pluginView)
                 matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
             else
@@ -178,7 +179,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             if (maxMatchCount == std::numeric_limits<unsigned>::max())
                 --maxMatchCount;
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
             if (pluginView) {
                 if (!shouldDetermineMatchIndex)
                     matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
@@ -222,8 +223,8 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
     }
 
     if (!shouldShowOverlay) {
-        if (m_findPageOverlay)
-            m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
+        if (RefPtr findPageOverlay = m_findPageOverlay)
+            m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
             auto findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
@@ -239,7 +240,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, TriggerImageAnalysis canTriggerImageAnalysis, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     auto* pluginView = mainFramePlugIn();
 #endif
 
@@ -256,7 +257,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     willFindString();
 
     bool foundStringStartsAfterSelection = false;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (!pluginView)
 #endif
     {
@@ -274,7 +275,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 
     bool found;
     DidWrap didWrap = DidWrap::No;
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (pluginView)
         found = pluginView->findString(string, coreOptions, maxMatchCount);
     else
@@ -368,10 +369,10 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
         return;
 
     auto handle = selectionSnapshot->createHandle();
-    if (!handle)
+    if (!handle || !selectionSnapshot->parameters())
         return;
 
-    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), WTFMove(*handle), matchIndex));
+    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(*selectionSnapshot->parameters(), WTFMove(*handle), matchIndex));
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)
@@ -402,10 +403,10 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 void FindController::hideFindUI()
 {
     m_findMatches.clear();
-    if (m_findPageOverlay)
-        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
+    if (RefPtr findPageOverlay = m_findPageOverlay)
+        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
         pluginView->findString(emptyString(), { }, 0);
     else
@@ -522,13 +523,8 @@ void FindController::redraw()
 Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 {
     Vector<FloatRect> rects;
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_webPage->corePage()->mainFrame());
-    if (!localMainFrame)
-        return rects;
-
-    auto* mainFrameView = localMainFrame->view();
-
-    for (RefPtr<Frame> frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+    RefPtr mainFrameView = m_webPage->corePage()->mainFrame().virtualView();
+    for (RefPtr frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
@@ -536,7 +532,7 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
         if (!document)
             continue;
 
-        for (FloatRect rect : document->markers().renderedRectsForMarkers(DocumentMarker::TextMatch)) {
+        for (FloatRect rect : document->markers().renderedRectsForMarkers(DocumentMarker::Type::TextMatch)) {
             if (!localFrame->isMainFrame())
                 rect = mainFrameView->windowToContents(localFrame->view()->contentsToWindow(enclosingIntRect(rect)));
 
@@ -593,7 +589,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     for (auto& path : whiteFramePaths)
         graphicsContext.strokePath(path);
 
-    graphicsContext.clearShadow();
+    graphicsContext.clearDropShadow();
 
     // Clear out the holes.
     graphicsContext.setCompositeOperation(CompositeOperator::Clear);

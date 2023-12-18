@@ -205,7 +205,7 @@ void CacheStorageCache::retrieveRecords(WebCore::RetrieveRecordsOptions&& option
                     return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::CORP));
             }
 
-            result.uncheckedAppend(WTFMove(record));
+            result.append(WTFMove(record));
         }
 
         std::sort(result.begin(), result.end(), [&](auto& a, auto& b) {

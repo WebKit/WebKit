@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -68,6 +66,8 @@ class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
+
+struct ITPThirdPartyData;
 
 using TopFrameDomain = WebCore::RegistrableDomain;
 using SubResourceDomain = WebCore::RegistrableDomain;
@@ -112,31 +112,6 @@ public:
     static Ref<WebResourceLoadStatisticsStore> create(NetworkSession&, const String& resourceLoadStatisticsDirectory, ShouldIncludeLocalhost, ResourceLoadStatistics::IsEphemeral);
 
     ~WebResourceLoadStatisticsStore();
-
-    struct ThirdPartyDataForSpecificFirstParty {
-        WebCore::RegistrableDomain firstPartyDomain;
-        bool storageAccessGranted;
-        Seconds timeLastUpdated;
-
-        String toString() const;
-        void encode(IPC::Encoder&) const;
-        static std::optional<ThirdPartyDataForSpecificFirstParty> decode(IPC::Decoder&);
-
-        // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
-        bool operator==(const ThirdPartyDataForSpecificFirstParty&) const;
-    };
-
-    struct ThirdPartyData {
-        WebCore::RegistrableDomain thirdPartyDomain;
-        Vector<ThirdPartyDataForSpecificFirstParty> underFirstParties;
-
-        String toString() const;
-        void encode(IPC::Encoder&) const;
-        static std::optional<ThirdPartyData> decode(IPC::Decoder&);
-
-        // FIXME: This sorts by number of underFirstParties, so it probably should be a named function, not operator<.
-        bool operator<(const ThirdPartyData&) const;
-    };
 
     void didDestroyNetworkSession(CompletionHandler<void()>&&);
 
@@ -239,7 +214,7 @@ public:
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
-    void aggregatedThirdPartyData(CompletionHandler<void(Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&&)>&&);
+    void aggregatedThirdPartyData(CompletionHandler<void(Vector<ITPThirdPartyData>&&)>&&);
     static void suspend(CompletionHandler<void()>&&);
     static void resume();
     
@@ -285,5 +260,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

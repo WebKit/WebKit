@@ -42,7 +42,7 @@ private:
 
 class SVGPathSegLinetoHorizontalAbs final : public SVGPathSegLinetoHorizontal {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegLinetoHorizontalAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegLinetoHorizontalAbs>;
 private:
     using SVGPathSegLinetoHorizontal::SVGPathSegLinetoHorizontal;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::LineToHorizontalAbs; }
@@ -52,7 +52,7 @@ private:
 
 class SVGPathSegLinetoHorizontalRel final : public SVGPathSegLinetoHorizontal {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegLinetoHorizontalRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegLinetoHorizontalRel>;
 private:
     using SVGPathSegLinetoHorizontal::SVGPathSegLinetoHorizontal;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::LineToHorizontalRel; }
@@ -62,7 +62,7 @@ private:
 
 class SVGPathSegLinetoVerticalAbs final : public SVGPathSegLinetoVertical {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegLinetoVerticalAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegLinetoVerticalAbs>;
 private:
     using SVGPathSegLinetoVertical::SVGPathSegLinetoVertical;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::LineToVerticalAbs; }
@@ -72,7 +72,7 @@ private:
 
 class SVGPathSegLinetoVerticalRel final : public SVGPathSegLinetoVertical {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegLinetoVerticalRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegLinetoVerticalRel>;
 private:
     using SVGPathSegLinetoVertical::SVGPathSegLinetoVertical;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::LineToVerticalRel; }
@@ -82,7 +82,7 @@ private:
 
 class SVGPathSegMovetoAbs final : public SVGPathSegSingleCoordinate {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegMovetoAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegMovetoAbs>;
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::MoveToAbs; }
@@ -92,7 +92,7 @@ private:
 
 class SVGPathSegMovetoRel final : public SVGPathSegSingleCoordinate {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegMovetoRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegMovetoRel>;
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::MoveToRel; }
@@ -102,7 +102,7 @@ private:
 
 class SVGPathSegLinetoAbs final : public SVGPathSegSingleCoordinate {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegLinetoAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegLinetoAbs>;
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::LineToAbs; }
@@ -112,7 +112,7 @@ private:
 
 class SVGPathSegLinetoRel final : public SVGPathSegSingleCoordinate {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegLinetoRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegLinetoRel>;
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::LineToRel; }
@@ -122,7 +122,7 @@ private:
 
 class SVGPathSegCurvetoQuadraticAbs final : public SVGPathSegCurvetoQuadratic {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticAbs>;
 private:
     using SVGPathSegCurvetoQuadratic::SVGPathSegCurvetoQuadratic;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToQuadraticAbs; }
@@ -132,7 +132,7 @@ private:
 
 class SVGPathSegCurvetoQuadraticRel final : public SVGPathSegCurvetoQuadratic {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticRel>;
 private:
     using SVGPathSegCurvetoQuadratic::SVGPathSegCurvetoQuadratic;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToQuadraticRel; }
@@ -142,7 +142,7 @@ private:
 
 class SVGPathSegCurvetoCubicAbs final : public SVGPathSegCurvetoCubic {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicAbs>;
 private:
     using SVGPathSegCurvetoCubic::SVGPathSegCurvetoCubic;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToCubicAbs; }
@@ -152,7 +152,7 @@ private:
 
 class SVGPathSegCurvetoCubicRel final : public SVGPathSegCurvetoCubic {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicRel>;
 private:
     using SVGPathSegCurvetoCubic::SVGPathSegCurvetoCubic;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToCubicRel; }
@@ -162,7 +162,7 @@ private:
 
 class SVGPathSegArcAbs final : public SVGPathSegArc {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegArcAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegArcAbs>;
 private:
     using SVGPathSegArc::SVGPathSegArc;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::ArcAbs; }
@@ -172,7 +172,7 @@ private:
 
 class SVGPathSegArcRel final : public SVGPathSegArc {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegArcRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegArcRel>;
 private:
     using SVGPathSegArc::SVGPathSegArc;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::ArcRel; }
@@ -182,7 +182,7 @@ private:
 
 class SVGPathSegCurvetoQuadraticSmoothAbs final : public SVGPathSegSingleCoordinate {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticSmoothAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticSmoothAbs>;
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToQuadraticSmoothAbs; }
@@ -192,7 +192,7 @@ private:
 
 class SVGPathSegCurvetoQuadraticSmoothRel final : public SVGPathSegSingleCoordinate {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticSmoothRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoQuadraticSmoothRel>;
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToQuadraticSmoothRel; }
@@ -202,7 +202,7 @@ private:
 
 class SVGPathSegCurvetoCubicSmoothAbs final : public SVGPathSegCurvetoCubicSmooth {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicSmoothAbs>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicSmoothAbs>;
 private:
     using SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToCubicSmoothAbs; }
@@ -212,7 +212,7 @@ private:
 
 class SVGPathSegCurvetoCubicSmoothRel final : public SVGPathSegCurvetoCubicSmooth {
 public:
-    constexpr static auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicSmoothRel>;
+    static constexpr auto create = SVGPathSegValue::create<SVGPathSegCurvetoCubicSmoothRel>;
 private:
     using SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth;
     SVGPathSegType pathSegType() const final { return SVGPathSegType::CurveToCubicSmoothRel; }

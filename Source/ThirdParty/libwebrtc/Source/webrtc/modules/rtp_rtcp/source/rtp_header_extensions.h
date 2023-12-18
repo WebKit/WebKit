@@ -197,9 +197,9 @@ class PlayoutDelayLimits {
   // Playout delay in milliseconds. A playout delay limit (min or max)
   // has 12 bits allocated. This allows a range of 0-4095 values which
   // translates to a range of 0-40950 in milliseconds.
-  static constexpr int kGranularityMs = 10;
+  static constexpr TimeDelta kGranularity = TimeDelta::Millis(10);
   // Maximum playout delay value in milliseconds.
-  static constexpr int kMaxMs = 0xfff * kGranularityMs;  // 40950.
+  static constexpr TimeDelta kMax = 0xfff * kGranularity;  // 40950.
 
   static bool Parse(rtc::ArrayView<const uint8_t> data,
                     VideoPlayoutDelay* playout_delay);

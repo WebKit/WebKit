@@ -58,7 +58,7 @@
 #include <WebCore/SubstituteData.h>
 #include <wtf/CompletionHandler.h>
 
-#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 "] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.object().toUInt64(), m_trackingParameters.resourceID.toUInt64(), ##__VA_ARGS__)
+#define WEBRESOURCELOADER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - [webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", durationSeconds=%.3f] WebResourceLoader::" fmt, this, m_trackingParameters.pageID.toUInt64(), m_trackingParameters.frameID.object().toUInt64(), m_trackingParameters.resourceID.toUInt64(), timeSinceLoadStart().value(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -71,7 +71,9 @@ Ref<WebResourceLoader> WebResourceLoader::create(Ref<ResourceLoader>&& coreLoade
 WebResourceLoader::WebResourceLoader(Ref<WebCore::ResourceLoader>&& coreLoader, const TrackingParameters& trackingParameters)
     : m_coreLoader(WTFMove(coreLoader))
     , m_trackingParameters(trackingParameters)
+    , m_loadStart(MonotonicTime::now())
 {
+    WEBRESOURCELOADER_RELEASE_LOG("WebResourceLoader");
 }
 
 WebResourceLoader::~WebResourceLoader()
@@ -112,7 +114,7 @@ MainFrameMainResource WebResourceLoader::mainFrameMainResource() const
     return MainFrameMainResource::Yes;
 }
 
-void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse)
+void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::FormDataReference&& proposedRequestBody, ResourceResponse&& redirectResponse, CompletionHandler<void(ResourceRequest&&, bool)>&& completionHandler)
 {
     Ref<WebResourceLoader> protectedThis(*this);
 
@@ -124,7 +126,7 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
 
     if (m_coreLoader->documentLoader()->applicationCacheHost().maybeLoadFallbackForRedirect(m_coreLoader.get(), proposedRequest, redirectResponse)) {
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because maybeLoadFallbackForRedirect returned false");
-        return;
+        return completionHandler({ }, false);
     }
     
     if (auto* frame = m_coreLoader->frame()) {
@@ -134,14 +136,14 @@ void WebResourceLoader::willSendRequest(ResourceRequest&& proposedRequest, IPC::
         }
     }
 
-    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis)](ResourceRequest&& request) {
+    m_coreLoader->willSendRequest(WTFMove(proposedRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
         if (!m_coreLoader || !m_coreLoader->identifier()) {
             WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: exiting early because no coreloader or identifier");
-            return;
+            return completionHandler({ }, false);
         }
 
         WEBRESOURCELOADER_RELEASE_LOG("willSendRequest: returning ContinueWillSendRequest");
-        send(Messages::NetworkResourceLoader::ContinueWillSendRequest(request, m_coreLoader->isAllowedToAskUserForCredentials()));
+        completionHandler(WTFMove(request), m_coreLoader->isAllowedToAskUserForCredentials());
     });
 }
 
@@ -277,16 +279,12 @@ void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
 
 void WebResourceLoader::serviceWorkerDidNotHandle()
 {
-#if ENABLE(SERVICE_WORKER)
     WEBRESOURCELOADER_RELEASE_LOG("serviceWorkerDidNotHandle:");
 
     ASSERT(m_coreLoader->options().serviceWorkersMode == ServiceWorkersMode::Only);
     auto error = internalError(m_coreLoader->request().url());
     error.setType(ResourceError::Type::Cancellation);
     m_coreLoader->didFail(error);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)

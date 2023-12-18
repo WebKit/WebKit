@@ -228,12 +228,12 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
     NSUInteger insertionPoint = 0;
     HashSet<std::pair<IntRect, InteractionRegion::Type>>dedupeSet;
     for (const WebCore::InteractionRegion& region : node.eventRegion().interactionRegions()) {
-        IntRect rect = region.rectInLayerCoordinates;
+        auto rect = region.rectInLayerCoordinates;
         if (!node.visibleRect() || !node.visibleRect()->intersects(rect))
             continue;
 
         auto interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
-        auto key = std::make_pair(rect, region.type);
+        auto key = std::make_pair(enclosingIntRect(rect), region.type);
         if (dedupeSet.contains(key))
             continue;
         auto reuseKey = std::make_pair(interactionRegionGroupName, region.type);
@@ -276,6 +276,9 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
         if (region.type == InteractionRegion::Type::Interaction) {
             [regionLayer setCornerRadius:region.borderRadius];
+            if (region.borderRadius)
+                [regionLayer setCornerCurve:kCACornerCurveCircular];
+
             constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
             if (region.maskedCorners.isEmpty())
                 [regionLayer setMaskedCorners:allCorners];

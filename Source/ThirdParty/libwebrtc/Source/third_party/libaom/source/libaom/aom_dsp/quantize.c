@@ -11,6 +11,7 @@
 
 #include "aom_dsp/quantize.h"
 #include "aom_mem/aom_mem.h"
+#include "config/aom_dsp_rtcd.h"
 
 #if !CONFIG_REALTIME_ONLY
 void aom_quantize_b_adaptive_helper_c(

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushSubscriptionData.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 PushSubscriptionData PushSubscriptionData::isolatedCopy() const &
@@ -41,5 +39,3 @@ PushSubscriptionData PushSubscriptionData::isolatedCopy() &&
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

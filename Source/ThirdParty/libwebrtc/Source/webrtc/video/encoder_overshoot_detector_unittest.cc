@@ -35,6 +35,8 @@ static std::string CodecTypeToHistogramSuffix(VideoCodecType codec) {
       return "Av1";
     case kVideoCodecH264:
       return "H264";
+    case kVideoCodecH265:
+      return "H265";
     case kVideoCodecGeneric:
       return "Generic";
     case kVideoCodecMultiplex:
@@ -275,6 +277,8 @@ INSTANTIATE_TEST_SUITE_P(
                           {VideoCodecType::kVideoCodecAV1, false},
                           {VideoCodecType::kVideoCodecAV1, true},
                           {VideoCodecType::kVideoCodecH264, false},
-                          {VideoCodecType::kVideoCodecH264, true}}));
+                          {VideoCodecType::kVideoCodecH264, true},
+                          {VideoCodecType::kVideoCodecH265, false},
+                          {VideoCodecType::kVideoCodecH265, true}}));
 
 }  // namespace webrtc

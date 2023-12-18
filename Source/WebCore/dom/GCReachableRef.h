@@ -138,13 +138,15 @@ template<typename P> struct HashTraits<WebCore::GCReachableRef<P>> : SimpleClass
 
 template <typename T, typename U>
 struct GetPtrHelper<WebCore::GCReachableRef<T, U>> {
-    typedef T* PtrType;
+    using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const WebCore::GCReachableRef<T, U>& reference) { return const_cast<T*>(reference.ptr()); }
 };
 
 template <typename T, typename U>
 struct IsSmartPtr<WebCore::GCReachableRef<T, U>> {
     static const bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename P> struct PtrHash<WebCore::GCReachableRef<P>> : PtrHashBase<WebCore::GCReachableRef<P>, IsSmartPtr<WebCore::GCReachableRef<P>>::value> {

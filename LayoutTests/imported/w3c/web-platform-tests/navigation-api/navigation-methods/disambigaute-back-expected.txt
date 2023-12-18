@@ -1,0 +1,4 @@
+
+
+FAIL navigation.back() goes to the nearest back entry null is not an object (evaluating 'navigation.currentEntry.index')
+

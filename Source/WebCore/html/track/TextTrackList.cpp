@@ -54,8 +54,8 @@ unsigned TextTrackList::length() const
 
 int TextTrackList::getTrackIndex(TextTrack& textTrack)
 {
-    if (is<LoadableTextTrack>(textTrack))
-        return downcast<LoadableTextTrack>(textTrack).trackElementIndex();
+    if (auto* loadableTextTrack = dynamicDowncast<LoadableTextTrack>(textTrack))
+        return loadableTextTrack->trackElementIndex();
 
     if (textTrack.trackType() == TextTrack::AddTrack)
         return m_elementTracks.size() + m_addTrackTracks.find(&textTrack);
@@ -123,7 +123,7 @@ TextTrack* TextTrackList::item(unsigned index) const
     return nullptr;
 }
 
-TextTrack* TextTrackList::getTrackById(const AtomString& id)
+TextTrack* TextTrackList::getTrackById(const AtomString& id) const
 {
     // 4.8.10.12.5 Text track API
     // The getTrackById(id) method must return the first TextTrack in the
@@ -136,6 +136,16 @@ TextTrack* TextTrackList::getTrackById(const AtomString& id)
     }
 
     // When no tracks match the given argument, the method must return null.
+    return nullptr;
+}
+
+TextTrack* TextTrackList::getTrackById(TrackID id) const
+{
+    for (unsigned i = 0; i < length(); ++i) {
+        auto& track = *item(i);
+        if (track.trackId() == id)
+            return &track;
+    }
     return nullptr;
 }
 
@@ -175,9 +185,9 @@ void TextTrackList::append(Ref<TextTrack>&& track)
 {
     if (track->trackType() == TextTrack::AddTrack)
         m_addTrackTracks.append(track.ptr());
-    else if (is<LoadableTextTrack>(track)) {
+    else if (auto* textTrack = dynamicDowncast<LoadableTextTrack>(track.get())) {
         // Insert tracks added for <track> element in tree order.
-        size_t index = downcast<LoadableTextTrack>(track.get()).trackElementIndex();
+        size_t index = textTrack->trackElementIndex();
         m_elementTracks.insert(index, track.ptr());
     } else if (track->trackType() == TextTrack::InBand) {
         // Insert tracks added for in-band in the media file order.

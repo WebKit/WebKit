@@ -56,3 +56,29 @@ Object.defineProperty(CanvasRenderingContext2D.prototype, "setPath", {
         return InspectorFrontendHost.setPath(this, path);
     },
 });
+
+if (window.OffscreenCanvasRenderingContext2D) {
+    Object.defineProperty(OffscreenCanvasRenderingContext2D.prototype, "currentX", {
+        get() {
+            return InspectorFrontendHost.getCurrentX(this);
+        },
+    });
+
+    Object.defineProperty(OffscreenCanvasRenderingContext2D.prototype, "currentY", {
+        get() {
+            return InspectorFrontendHost.getCurrentY(this);
+        },
+    });
+
+    Object.defineProperty(OffscreenCanvasRenderingContext2D.prototype, "getPath", {
+        value() {
+            return InspectorFrontendHost.getPath(this);
+        },
+    });
+
+    Object.defineProperty(OffscreenCanvasRenderingContext2D.prototype, "setPath", {
+        value(path) {
+            return InspectorFrontendHost.setPath(this, path);
+        },
+    });
+}

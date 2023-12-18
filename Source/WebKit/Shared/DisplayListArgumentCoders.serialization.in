@@ -20,15 +20,88 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+headers: <WebCore/DisplayListItem.h>
 headers: <WebCore/DisplayListItems.h>
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::Save {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::Restore {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::Translate {
+    float x();
+    float y();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::Rotate {
+    float angle();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::Scale {
+    WebCore::FloatSize amount();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetCTM {
+    WebCore::AffineTransform transform();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ConcatenateCTM {
+    WebCore::AffineTransform transform();
+};
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetState {
     WebCore::GraphicsContextState state();
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::DisplayList::SetInlineFillColor {
+    WebCore::PackedColor::RGBA colorData()
+}
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetInlineStroke {
+    std::optional<WebCore::PackedColor::RGBA> colorData();
+    std::optional<float> thickness();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetLineCap {
+    WebCore::LineCap lineCap();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetLineDash {
     WebCore::DashArray dashArray();
     float dashOffset();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetLineJoin {
+    WebCore::LineJoin lineJoin();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetMiterLimit {
+    float miterLimit();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClearDropShadow {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::Clip {
+    WebCore::FloatRect rect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipRoundedRect {
+    WebCore::FloatRoundedRect rect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipOut {
+    WebCore::FloatRect rect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipOutRoundedRect {
+    WebCore::FloatRoundedRect rect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipToImageBuffer {
+    WebCore::RenderingResourceIdentifier imageBufferIdentifier();
+    WebCore::FloatRect destinationRect();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClipOutToPath {
@@ -40,14 +113,75 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::WindRule windRule();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ResetClip {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawFilteredImageBuffer {
+    std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier();
+    WebCore::FloatRect sourceImageRect();
+    Ref<WebCore::Filter> filter();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawGlyphs {
     WebCore::RenderingResourceIdentifier fontIdentifier();
     WebCore::PositionedGlyphs positionedGlyphs();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDecomposedGlyphs {
+    WebCore::RenderingResourceIdentifier fontIdentifier();
+    WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDisplayListItems {
+    Vector<WebCore::DisplayList::Item> items();
+    WebCore::FloatPoint destination();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawImageBuffer {
+    WebCore::RenderingResourceIdentifier imageBufferIdentifier();
+    WebCore::FloatRect destinationRect();
+    WebCore::FloatRect source();
+    WebCore::ImagePaintingOptions options();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawNativeImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatSize imageSize();
+    WebCore::FloatRect destinationRect();
+    WebCore::FloatRect source();
+    WebCore::ImagePaintingOptions options();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawSystemImage {
     Ref<WebCore::SystemImage> systemImage();
     WebCore::FloatRect destinationRect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawLine {
+    WebCore::FloatPoint point1();
+    WebCore::FloatPoint point2();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawPattern {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatRect destRect();
+    WebCore::FloatRect tileRect();
+    WebCore::AffineTransform patternTransform();
+    WebCore::FloatPoint phase();
+    WebCore::FloatSize spacing();
+    WebCore::ImagePaintingOptions options();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::BeginTransparencyLayer {
+    float opacity();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::EndTransparencyLayer {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawRect {
+    WebCore::FloatRect rect();
+    float borderThickness();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawLinesForText {
@@ -58,6 +192,10 @@ headers: <WebCore/DisplayListItems.h>
     bool isPrinting();
     bool doubleLines();
     WebCore::StrokeStyle style();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawEllipse {
+    WebCore::FloatRect rect();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawPath {
@@ -77,6 +215,10 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::Color color();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRect {
+    WebCore::FloatRect rect();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithColor {
     WebCore::FloatRect rect();
     WebCore::Color color();
@@ -94,22 +236,118 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::BlendMode blendMode();
 };
 
-[CustomHeader] class WebCore::DisplayList::FillRoundedRect {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRoundedRect {
     WebCore::FloatRoundedRect roundedRect();
     WebCore::Color color();
     WebCore::BlendMode blendMode();
 };
 
-[CustomHeader] class WebCore::DisplayList::FillRectWithRoundedHole {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithRoundedHole {
     WebCore::FloatRect rect();
     WebCore::FloatRoundedRect roundedHoleRect();
     WebCore::Color color();
 };
 
-[CustomHeader] class WebCore::DisplayList::FillPath {
+#if ENABLE(INLINE_PATH_DATA)
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillLine {
+    WebCore::PathDataLine line();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillArc {
+    WebCore::PathArc arc();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillQuadCurve {
+    WebCore::PathDataQuadCurve quadCurve();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillBezierCurve {
+    WebCore::PathDataBezierCurve bezierCurve();
+};
+
+#endif // ENABLE(INLINE_PATH_DATA)
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillPathSegment {
+    WebCore::PathSegment segment();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillPath {
     WebCore::Path path();
 };
 
-[CustomHeader] class WebCore::DisplayList::StrokePath {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillEllipse {
+    WebCore::FloatRect rect();
+};
+
+#if ENABLE(VIDEO)
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::PaintFrameForMedia {
+    WebCore::MediaPlayerIdentifier identifier();
+    WebCore::FloatRect destination();
+};
+
+#endif
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeRect {
+    WebCore::FloatRect rect();
+    float lineWidth();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeLine {
+    WebCore::FloatPoint start();
+    WebCore::FloatPoint end();
+};
+
+#if ENABLE(INLINE_PATH_DATA)
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeArc {
+    WebCore::PathArc arc();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeQuadCurve {
+    WebCore::PathDataQuadCurve quadCurve();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeBezierCurve {
+    WebCore::PathDataBezierCurve bezierCurve();
+};
+
+#endif // ENABLE(INLINE_PATH_DATA)
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokePathSegment {
+    WebCore::PathSegment segment();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokePath {
     WebCore::Path path();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::StrokeEllipse {
+    WebCore::FloatRect rect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ClearRect {
+    WebCore::FloatRect rect();
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawControlPart {
+    Ref<WebCore::ControlPart> part();
+    WebCore::FloatRoundedRect borderRect();
+    float deviceScaleFactor();
+    WebCore::ControlStyle style();
+};
+
+#if USE(CG)
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ApplyStrokePattern {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ApplyFillPattern {
+};
+
+#endif
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::ApplyDeviceScaleFactor {
+    float scaleFactor();
 };

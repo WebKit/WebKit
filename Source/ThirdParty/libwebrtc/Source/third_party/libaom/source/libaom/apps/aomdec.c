@@ -381,7 +381,7 @@ static void generate_filename(const char *pattern, char *out, size_t q_len,
         case '7': snprintf(q, q_len - 1, "%07d", frame_in); break;
         case '8': snprintf(q, q_len - 1, "%08d", frame_in); break;
         case '9': snprintf(q, q_len - 1, "%09d", frame_in); break;
-        default: die("Unrecognized pattern %%%c\n", p[1]); break;
+        default: die("Unrecognized pattern %%%c\n", p[1]);
       }
 
       pat_len = strlen(q);

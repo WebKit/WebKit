@@ -29,7 +29,7 @@
 
 #if JSC_OBJC_API_ENABLED
 
-#import <JavaScriptCore/JSCallbackFunction.h>
+#import "JSCallbackFunction.h"
 
 #if defined(__OBJC__)
 @class JSContext;

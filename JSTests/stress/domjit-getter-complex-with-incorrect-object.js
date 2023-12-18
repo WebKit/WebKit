@@ -11,7 +11,7 @@ function shouldThrow(func, errorMessage) {
     }
     if (!errorThrown)
         throw new Error('not thrown');
-    if (String(error) !== errorMessage)
+    if (!String(error).startsWith(errorMessage))
         throw new Error(`bad error: ${String(error)}`);
 }
 
@@ -26,5 +26,5 @@ noInline(access);
 for (var i = 0; i < 1e4; ++i) {
     shouldThrow(() => {
         access(object);
-    }, `TypeError: The DOMJITGetterComplex.customGetter getter can only be used on instances of DOMJITGetterComplex`);
+    }, `TypeError`);
 }

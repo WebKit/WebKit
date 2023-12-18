@@ -45,7 +45,7 @@ struct WebCodecsEncodedVideoChunkMetadata;
 struct WebCodecsVideoEncoderEncodeOptions;
 
 class WebCodecsVideoEncoder
-    : public RefCounted<WebCodecsVideoEncoder>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsVideoEncoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(WebCodecsVideoEncoder);
@@ -70,8 +70,8 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsVideoEncoderConfig&&, Ref<DeferredPromise>&&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
 
 private:
     WebCodecsVideoEncoder(ScriptExecutionContext&, Init&&);

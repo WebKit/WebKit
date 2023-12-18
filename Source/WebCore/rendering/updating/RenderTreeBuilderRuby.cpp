@@ -42,68 +42,14 @@ static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
     return *lineageOfType<RenderRubyRun>(child).first();
 }
 
-static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
-{
-    ASSERT(!object
-        || !isRuby(object->parent())
-        || is<RenderRubyRun>(*object)
-        || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == DisplayType::InlineBlock)
-        || object->isRenderMultiColumnFlow()
-        || object->isRenderMultiColumnSet());
-
-    return object
-        && isRuby(object->parent())
-        && is<RenderBlock>(*object)
-        && !is<RenderRubyRun>(*object);
-}
-
-static inline bool isRubyBeforeBlock(const RenderObject* object)
-{
-    return isAnonymousRubyInlineBlock(object)
-        && !object->previousSibling()
-        && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == PseudoId::Before;
-}
-
-static inline bool isRubyAfterBlock(const RenderObject* object)
-{
-    return isAnonymousRubyInlineBlock(object)
-        && !object->nextSibling()
-        && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == PseudoId::After;
-}
-
 #if ASSERT_ENABLED
 static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
 {
-    return object.isRubyRun()
-    || object.isBeforeContent()
-    || object.isAfterContent()
+    return object.isRenderRubyRun()
     || object.isRenderMultiColumnFlow()
-    || object.isRenderMultiColumnSet()
-    || isAnonymousRubyInlineBlock(&object);
+    || object.isRenderMultiColumnSet();
 }
 #endif // ASSERT_ENABLED
-
-static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->firstChild();
-    return isRubyBeforeBlock(child) ? downcast<RenderBlock>(child) : nullptr;
-}
-
-static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->lastChild();
-    return isRubyAfterBlock(child) ? downcast<RenderBlock>(child) : nullptr;
-}
-
-static auto createAnonymousRubyInlineBlock(RenderObject& ruby)
-{
-    auto newBlock = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), DisplayType::InlineBlock));
-    newBlock->initializeStyle();
-    return newBlock;
-}
 
 RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
     : m_builder(builder)
@@ -187,7 +133,7 @@ void RenderTreeBuilder::Ruby::moveChildrenInternal(RenderRubyBase& from, RenderR
 
 void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (child->isRubyText()) {
+    if (child->isRenderRubyText()) {
         if (!beforeChild) {
             // RenderRuby has already ascertained that we can add the child here.
             ASSERT(!parent.hasRubyText());
@@ -195,7 +141,7 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
             m_builder.blockFlowBuilder().attach(parent, WTFMove(child), parent.firstChild());
             return;
         }
-        if (beforeChild->isRubyText()) {
+        if (beforeChild->isRenderRubyText()) {
             // New text is inserted just before another.
             // In this case the new text takes the place of the old one, and
             // the old text goes into a new run that is inserted as next sibling.
@@ -228,7 +174,7 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
         return;
     }
     // child is not a text -> insert it into the base
-    if (beforeChild && beforeChild->isRubyText()) {
+    if (beforeChild && beforeChild->isRenderRubyText()) {
         // Append it instead if beforeChild is the ruby text.
         beforeChild = nullptr;
     }
@@ -241,46 +187,15 @@ void RenderTreeBuilder::Ruby::attach(RenderRubyRun& parent, RenderPtr<RenderObje
 
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    // Insert :before and :after content before/after the RenderRubyRun(s)
-    if (child.isBeforeContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content in an anonymous inline-block.
-        auto* beforeBlock = rubyBeforeBlock(&parent);
-        if (!beforeBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            beforeBlock = newBlock.get();
-            m_builder.blockFlowBuilder().attach(parent, WTFMove(newBlock), parent.firstChild());
-        }
-        beforeChild = nullptr;
-        return *beforeBlock;
-    }
-
-    if (child.isAfterContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content with an anonymous inline-block.
-        auto* afterBlock = rubyAfterBlock(&parent);
-        if (!afterBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            afterBlock = newBlock.get();
-            m_builder.blockFlowBuilder().attach(parent, WTFMove(newBlock), nullptr);
-        }
-        beforeChild = nullptr;
-        return *afterBlock;
-    }
-
     // If the child is a ruby run, just add it normally.
-    if (child.isRubyRun())
+    if (child.isRenderRubyRun())
         return parent;
 
-    if (beforeChild && !parent.isBeforeOrAfterContent(beforeChild)) {
+    if (beforeChild) {
         // insert child into run
-        ASSERT(!beforeChild->isRubyRun());
+        ASSERT(!beforeChild->isRenderRubyRun());
         auto* run = beforeChild->parent();
-        while (run && !run->isRubyRun())
+        while (run && !run->isRenderRubyRun())
             run = run->parent();
         if (run)
             return *run;
@@ -303,46 +218,15 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
 
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsInline& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    // Insert :before and :after content before/after the RenderRubyRun(s)
-    if (child.isBeforeContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content with an anonymous inline-block.
-        auto* beforeBlock = rubyBeforeBlock(&parent);
-        if (!beforeBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            beforeBlock = newBlock.get();
-            m_builder.inlineBuilder().attach(parent, WTFMove(newBlock), parent.firstChild());
-        }
-        beforeChild = nullptr;
-        return *beforeBlock;
-    }
-
-    if (child.isAfterContent()) {
-        // Add generated inline content normally
-        if (child.isInline())
-            return parent;
-        // Wrap non-inline content with an anonymous inline-block.
-        auto* afterBlock = rubyAfterBlock(&parent);
-        if (!afterBlock) {
-            auto newBlock = createAnonymousRubyInlineBlock(parent);
-            afterBlock = newBlock.get();
-            m_builder.inlineBuilder().attach(parent, WTFMove(newBlock), nullptr);
-        }
-        beforeChild = nullptr;
-        return *afterBlock;
-    }
-
     // If the child is a ruby run, just add it normally.
-    if (child.isRubyRun())
+    if (child.isRenderRubyRun())
         return parent;
 
-    if (beforeChild && !parent.isBeforeOrAfterContent(beforeChild)) {
+    if (beforeChild) {
         // insert child into run
-        ASSERT(!beforeChild->isRubyRun());
+        ASSERT(!beforeChild->isRenderRubyRun());
         auto* run = beforeChild->parent();
-        while (run && !run->isRubyRun())
+        while (run && !run->isRenderRubyRun())
             run = run->parent();
         if (run)
             return *run;
@@ -365,18 +249,25 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
 
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild(RenderElement& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
-    if (!child.isText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
+    if (!child.isRenderText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
         return parent;
+
+    if (parent.style().display() == DisplayType::RubyBlock && parent.firstChild()) {
+        // See if we have an anonymous ruby box already.
+        ASSERT(parent.firstChild()->style().display() == DisplayType::Ruby);
+        return downcast<RenderElement>(*parent.firstChild());
+    }
 
     if (parent.style().display() != DisplayType::Ruby) {
         auto rubyContainer = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Ruby));
+        rubyContainer->initializeStyle();
         WeakPtr newParent = rubyContainer.get();
         m_builder.attach(parent, WTFMove(rubyContainer), beforeChild);
         beforeChild = nullptr;
         return *newParent;
     }
 
-    if (!child.isText() && (child.style().display() == DisplayType::RubyBase || child.style().display() == DisplayType::RubyAnnotation))
+    if (!child.isRenderText() && (child.style().display() == DisplayType::RubyBase || child.style().display() == DisplayType::RubyAnnotation))
         return parent;
 
     if (beforeChild && beforeChild->parent()->style().display() == DisplayType::RubyBase)
@@ -388,11 +279,40 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
         return downcast<RenderElement>(*previous);
     }
 
-    auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
+    auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase);
+    baseStyle.setUnicodeBidi(UnicodeBidi::Isolate);
+
+    auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTFMove(baseStyle));
+    rubyBase->initializeStyle();
     WeakPtr newParent = rubyBase.get();
     m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(rubyBase), beforeChild);
     beforeChild = nullptr;
     return *newParent;
+}
+
+void RenderTreeBuilder::Ruby::attachForStyleBasedRuby(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (parent.style().display() == DisplayType::RubyBlock) {
+        ASSERT(child->style().display() == DisplayType::Ruby);
+        m_builder.attachToRenderElementInternal(parent, WTFMove(child), beforeChild);
+        return;
+    }
+    ASSERT(parent.style().display() == DisplayType::Ruby);
+    ASSERT(child->style().display() == DisplayType::RubyBase || child->style().display() == DisplayType::RubyAnnotation);
+
+    while (beforeChild && beforeChild->parent() && beforeChild->parent() != &parent)
+        beforeChild = beforeChild->parent();
+
+    if (child->style().display() == DisplayType::RubyAnnotation) {
+        // Create an empty anonymous base if it is missing.
+        WeakPtr previous = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+        if (!previous || previous->style().display() != DisplayType::RubyBase) {
+            auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
+            rubyBase->initializeStyle();
+            m_builder.attachToRenderElementInternal(parent, WTFMove(rubyBase), beforeChild);
+        }
+    }
+    m_builder.attachToRenderElementInternal(parent, WTFMove(child), beforeChild);
 }
 
 RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
@@ -408,20 +328,10 @@ RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
 
 RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyAsInline& parent, RenderObject& child)
 {
-    // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
-    // just use the normal remove method.
+    // If the child's parent is *this (must be a ruby run), just use the normal remove method.
     if (child.parent() == &parent) {
         ASSERT(isRubyChildForNormalRemoval(child));
         return m_builder.detachFromRenderElement(parent, child);
-    }
-    // If the child's parent is an anoymous block (must be generated :before/:after content)
-    // just use the block's remove method.
-    if (isAnonymousRubyInlineBlock(child.parent())) {
-        ASSERT(child.isBeforeContent() || child.isAfterContent());
-        auto& parent = *child.parent();
-        auto takenChild = m_builder.detach(parent, child);
-        m_builder.destroy(parent);
-        return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
@@ -430,20 +340,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyAsInline& pare
 
 RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyAsBlock& parent, RenderObject& child)
 {
-    // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
-    // just use the normal remove method.
+    // If the child's parent is *this (must be a ruby run), just use the normal remove method.
     if (child.parent() == &parent) {
         ASSERT(isRubyChildForNormalRemoval(child));
         return m_builder.blockBuilder().detach(parent, child);
-    }
-    // If the child's parent is an anoymous block (must be generated :before/:after content)
-    // just use the block's remove method.
-    if (isAnonymousRubyInlineBlock(child.parent())) {
-        ASSERT(child.isBeforeContent() || child.isAfterContent());
-        auto& parent = *child.parent();
-        auto takenChild = m_builder.detach(parent, child);
-        m_builder.destroy(parent);
-        return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
@@ -454,7 +354,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyRun& parent, R
 {
     // If the child is a ruby text, then merge the ruby base with the base of
     // the right sibling run, if possible.
-    if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed() && child.isRubyText()) {
+    if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed() && child.isRenderRubyText()) {
         RenderRubyBase* base = parent.rubyBase();
         RenderObject* rightNeighbour = parent.nextSibling();
         if (base && is<RenderRubyRun>(rightNeighbour)) {

@@ -3012,7 +3012,7 @@ class GenerateCSSPropertyNames:
         to.newline()
 
     def _generate_css_property_names_h_property_settings(self, *, to):
-        settings_variable_declarations = (f"bool {flag} {{ false }};" for flag in self.properties_and_descriptors.settings_flags)
+        settings_variable_declarations = (f"bool {flag} : 1 {{ false }};" for flag in self.properties_and_descriptors.settings_flags)
 
         to.write(f"struct CSSPropertySettings {{")
         with to.indent():
@@ -3361,7 +3361,7 @@ class GenerateStyleBuilderGenerated:
         to.write(f"if (is<CSSValueList>(value)) {{")
         to.write(f"    // Walk each value and put it into an animation, creating new animations as needed.")
         to.write(f"    for (auto& currentValue : downcast<CSSValueList>(value)) {{")
-        to.write(f"        if (childIndex <= list.size())")
+        to.write(f"        if (childIndex >= list.size())")
         to.write(f"            list.append(Animation::create());")
         to.write(f"        builderState.styleMap().mapAnimation{property.name_for_methods}(list.animation(childIndex), currentValue);")
         to.write(f"        ++childIndex;")
@@ -3428,9 +3428,9 @@ class GenerateStyleBuilderGenerated:
     def _generate_fill_layer_property_value_setter(self, to, property):
         to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
         to.write(f"FillLayer* previousChild = nullptr;")
-        to.write(f"if (is<CSSValueList>(value)) {{")
+        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
         to.write(f"    // Walk each value and put it into a layer, creating new layers as needed.")
-        to.write(f"    for (auto& item : downcast<CSSValueList>(value)) {{")
+        to.write(f"    for (auto& item : *valueList) {{")
         to.write(f"        if (!child) {{")
         to.write(f"            previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
         to.write(f"            child = previousChild->next();")

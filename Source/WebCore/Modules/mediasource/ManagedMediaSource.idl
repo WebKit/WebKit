@@ -31,7 +31,7 @@ enum PreferredQuality {
 
 [
     ActiveDOMObject,
-    Conditional=MANAGED_MEDIA_SOURCE,
+    Conditional=MEDIA_SOURCE,
     EnabledBySetting=ManagedMediaSourceEnabled,
     Exposed=Window
 ] interface ManagedMediaSource : MediaSource {

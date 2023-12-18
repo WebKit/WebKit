@@ -27,6 +27,7 @@
 
 #include "EventTarget.h"
 #include "GlobalWindowIdentifier.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
@@ -34,23 +35,29 @@ namespace WebCore {
 
 class Document;
 class Frame;
+class LocalDOMWindow;
+class Location;
 class SecurityOrigin;
+class WebCoreOpaqueRoot;
+enum class SetLocationLocking : bool { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 
 class DOMWindow : public RefCounted<DOMWindow>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(DOMWindow);
 public:
     virtual ~DOMWindow();
 
-    static HashMap<GlobalWindowIdentifier, DOMWindow*>& allWindows();
-
     const GlobalWindowIdentifier& identifier() const { return m_identifier; }
     virtual Frame* frame() const = 0;
+    RefPtr<Frame> protectedFrame() const;
 
     virtual bool isLocalDOMWindow() const = 0;
     virtual bool isRemoteDOMWindow() const = 0;
 
     using RefCounted::ref;
     using RefCounted::deref;
+
+    WEBCORE_EXPORT Location& location();
+    virtual void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = SetLocationLocking::LockHistoryBasedOnGestureState) = 0;
 
 protected:
     explicit DOMWindow(GlobalWindowIdentifier&&);
@@ -63,6 +70,9 @@ protected:
 
 private:
     GlobalWindowIdentifier m_identifier;
+    RefPtr<Location> m_location;
 };
+
+WebCoreOpaqueRoot root(DOMWindow*);
 
 } // namespace WebCore

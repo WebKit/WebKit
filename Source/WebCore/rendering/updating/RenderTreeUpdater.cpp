@@ -34,6 +34,7 @@
 #include "HTMLSlotElement.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
+#include "LegacyRenderSVGResource.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "NodeRenderStyle.h"
@@ -43,7 +44,6 @@
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
-#include "RenderSVGResource.h"
 #include "RenderStyleConstants.h"
 #include "RenderStyleInlines.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
@@ -83,10 +83,8 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCa
 
 RenderTreeUpdater::~RenderTreeUpdater() = default;
 
-static ContainerNode* findRenderingRoot(ContainerNode& node)
+static Element* findRenderingAncestor(Node& node)
 {
-    if (node.renderer())
-        return &node;
     for (auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
             return &ancestor;
@@ -96,7 +94,14 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
     return nullptr;
 }
 
-void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
+static ContainerNode* findRenderingRoot(ContainerNode& node)
+{
+    if (node.renderer())
+        return &node;
+    return findRenderingAncestor(node);
+}
+
+void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 {
     ASSERT(&m_document == &styleUpdate->document());
 
@@ -106,6 +111,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     TraceScope scope(RenderTreeBuildStart, RenderTreeBuildEnd);
 
     m_styleUpdate = WTFMove(styleUpdate);
+
+    updateRebuildRoots();
 
     updateRenderViewStyle();
 
@@ -124,6 +131,68 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     m_builder.updateAfterDescendants(renderView());
 
     m_styleUpdate = nullptr;
+}
+
+void RenderTreeUpdater::updateRebuildRoots()
+{
+    auto findNewRebuildRoot = [&](auto& root) -> Element* {
+        auto* renderingAncestor = findRenderingAncestor(root);
+        if (!renderingAncestor)
+            return nullptr;
+        if (!RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
+            return nullptr;
+        return renderingAncestor;
+    };
+
+    auto addForRebuild = [&](auto& element) {
+        auto* existingUpdate = m_styleUpdate->elementUpdate(element);
+        if (existingUpdate) {
+            if (existingUpdate->change == Style::Change::Renderer)
+                return false;
+            existingUpdate->change = Style::Change::Renderer;
+            return true;
+        }
+
+        if (!element.renderer())
+            return element.hasDisplayContents();
+
+        auto* parent = composedTreeAncestors(element).first();
+        m_styleUpdate->addElement(element, parent, Style::ElementUpdate {
+            RenderStyle::clonePtr(element.renderer()->style()),
+            Style::Change::Renderer
+        });
+        return true;
+    };
+
+    auto addSubtreeForRebuild = [&](auto& root) {
+        if (!addForRebuild(root))
+            return;
+        auto descendants = composedTreeDescendants(root);
+        auto it = descendants.begin();
+        auto end = descendants.end();
+        while (it != end) {
+            auto& descendant = *it;
+            if (!is<Element>(descendant)) {
+                it.traverseNext();
+                continue;
+            }
+            if (!addForRebuild(downcast<Element>(descendant))) {
+                it.traverseNextSkippingChildren();
+                continue;
+            }
+            it.traverseNext();
+        }
+    };
+
+    while (true) {
+        auto rebuildRoots = m_styleUpdate->takeRebuildRoots();
+        if (rebuildRoots.isEmpty())
+            break;
+        for (auto& rebuildRoot : rebuildRoots) {
+            if (auto* newRebuildRoot = findNewRebuildRoot(*rebuildRoot))
+                addSubtreeForRebuild(*newRebuildRoot);
+        }
+    }
 }
 
 static bool shouldCreateRenderer(const Element& element, const RenderElement& parentRenderer)
@@ -308,8 +377,19 @@ void RenderTreeUpdater::updateSVGRenderer(Element& element)
 {
     ASSERT(element.needsSVGRendererUpdate());
     element.setNeedsSVGRendererUpdate(false);
-    if (element.renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (element.document().settings().layerBasedSVGEngineEnabled()) {
+        renderer->setNeedsLayout();
+        return;
+    }
+#endif
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& elementUpdate)
@@ -446,7 +526,7 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
     if (is<RenderText>(renderingParent.previousChildRenderer))
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
-    if (parentRenderer.isTable() || parentRenderer.isTableRow() || parentRenderer.isTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
+    if (parentRenderer.isRenderTable() || parentRenderer.isRenderTableRow() || parentRenderer.isRenderTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isRenderFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isRenderFlexibleBox() && !parentRenderer.isRenderButton()))
         return false;
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
@@ -553,13 +633,27 @@ void RenderTreeUpdater::updateRenderViewStyle()
         m_document.renderView()->setStyle(RenderStyle::clone(*m_styleUpdate->initialContainingBlockUpdate()));
 }
 
+static void invalidateRebuildRootIfNeeded(Node& node)
+{
+    auto* ancestor = findRenderingAncestor(node);
+    if (!ancestor)
+        return;
+    if (!RenderTreeBuilder::isRebuildRootForChildren(*ancestor->renderer()))
+        return;
+    ancestor->invalidateRenderer();
+}
+
 void RenderTreeUpdater::tearDownRenderers(Element& root)
 {
+    if (!root.renderer() && !root.hasDisplayContents())
+        return;
     auto* view = root.document().renderView();
     if (!view)
         return;
+
     RenderTreeBuilder builder(*view);
     tearDownRenderers(root, TeardownType::Full, builder);
+    invalidateRebuildRootIfNeeded(root);
 }
 
 void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
@@ -570,8 +664,10 @@ void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
     auto* view = host.document().renderView();
     if (!view)
         return;
+
     RenderTreeBuilder builder(*view);
     tearDownRenderers(host, TeardownType::FullAfterSlotChange, builder);
+    invalidateRebuildRootIfNeeded(host);
 }
 
 void RenderTreeUpdater::tearDownRenderer(Text& text)
@@ -579,8 +675,10 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     auto* view = text.document().renderView();
     if (!view)
         return;
+
     RenderTreeBuilder builder(*view);
     tearDownTextRenderer(text, builder);
+    invalidateRebuildRootIfNeeded(text);
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)

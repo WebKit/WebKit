@@ -84,7 +84,7 @@ ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingMaxAge(double max
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-incomingmaxage
     if (std::isnan(maxAge) || maxAge < 0)
-        return Exception { RangeError };
+        return Exception { ExceptionCode::RangeError };
     if (!maxAge)
         maxAge = std::numeric_limits<double>::infinity();
     m_incomingDatagramsExpirationDuration = maxAge;
@@ -95,7 +95,7 @@ ExceptionOr<void> WebTransportDatagramDuplexStream::setOutgoingMaxAge(double max
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-outgoingmaxage
     if (std::isnan(maxAge) || maxAge < 0)
-        return Exception { RangeError };
+        return Exception { ExceptionCode::RangeError };
     if (!maxAge)
         maxAge = std::numeric_limits<double>::infinity();
     m_outgoingDatagramsExpirationDuration = maxAge;
@@ -106,7 +106,7 @@ ExceptionOr<void> WebTransportDatagramDuplexStream::setIncomingHighWaterMark(dou
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-incominghighwatermark
     if (std::isnan(mark) || mark < 0)
-        return Exception { RangeError };
+        return Exception { ExceptionCode::RangeError };
     if (mark < 1)
         mark = 1;
     m_incomingDatagramsHighWaterMark = mark;
@@ -117,7 +117,7 @@ ExceptionOr<void> WebTransportDatagramDuplexStream::setOutgoingHighWaterMark(dou
 {
     // https://www.w3.org/TR/webtransport/#dom-webtransportdatagramduplexstream-outgoinghighwatermark
     if (std::isnan(mark) || mark < 0)
-        return Exception { RangeError };
+        return Exception { ExceptionCode::RangeError };
     if (mark < 1)
         mark = 1;
     m_outgoingDatagramsHighWaterMark = mark;

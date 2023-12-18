@@ -181,7 +181,7 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
   // Based on recent history adjust expectations of bits per macroblock.
   double damp_fac = AOMMAX(5.0, rate_err_tol / 10.0);
   double rate_err_factor = 1.0;
-  const double adj_limit = AOMMAX(0.20, (double)(100 - rate_err_tol) / 200.0);
+  const double adj_limit = AOMMAX(0.2, (double)(100 - rate_err_tol) / 200.0);
   const double min_fac = 1.0 - adj_limit;
   const double max_fac = 1.0 + adj_limit;
 
@@ -255,7 +255,6 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
       rate_err_factor = 1.0 - ((double)(bits_off_target) /
                                AOMMAX(total_actual_bits, bits_left));
     }
-    rate_err_factor = AOMMAX(min_fac, AOMMIN(max_fac, rate_err_factor));
 
     // Adjustment is damped if this is 1 pass with look ahead processing
     // (as there are only ever a few frames of data) and for all but the first
@@ -263,6 +262,7 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
     if ((twopass->bpm_factor != 1.0) || cpi->ppi->lap_enabled) {
       rate_err_factor = 1.0 + ((rate_err_factor - 1.0) / damp_fac);
     }
+    rate_err_factor = AOMMAX(min_fac, AOMMIN(max_fac, rate_err_factor));
   }
 
   // Is the rate control trending in the right direction. Only make
@@ -270,7 +270,12 @@ static void twopass_update_bpm_factor(AV1_COMP *cpi, int rate_err_tol) {
   if ((rate_err_factor < 1.0 && err_estimate >= 0) ||
       (rate_err_factor > 1.0 && err_estimate <= 0)) {
     twopass->bpm_factor *= rate_err_factor;
-    twopass->bpm_factor = AOMMAX(min_fac, AOMMIN(max_fac, twopass->bpm_factor));
+    if (rate_err_tol >= 100) {
+      twopass->bpm_factor =
+          AOMMAX(min_fac, AOMMIN(max_fac, twopass->bpm_factor));
+    } else {
+      twopass->bpm_factor = AOMMAX(0.1, AOMMIN(10.0, twopass->bpm_factor));
+    }
   }
 }
 
@@ -1748,22 +1753,43 @@ static void cleanup_blendings(REGIONS *regions, int *num_regions) {
   cleanup_regions(regions, num_regions);
 }
 
-void av1_identify_regions(const FIRSTPASS_STATS *const stats_start,
-                          int total_frames, int offset, REGIONS *regions,
-                          int *total_regions) {
+static void free_firstpass_stats_buffers(REGIONS *temp_regions,
+                                         double *filt_intra_err,
+                                         double *filt_coded_err,
+                                         double *grad_coded) {
+  aom_free(temp_regions);
+  aom_free(filt_coded_err);
+  aom_free(filt_intra_err);
+  aom_free(grad_coded);
+}
+
+// Identify stable and unstable regions from first pass stats.
+// stats_start points to the first frame to analyze.
+// |offset| is the offset from the current frame to the frame stats_start is
+// pointing to.
+static void identify_regions(const FIRSTPASS_STATS *const stats_start,
+                             int total_frames, int offset, REGIONS *regions,
+                             int *total_regions,
+                             struct aom_internal_error_info *error_info) {
   int k;
   if (total_frames <= 1) return;
 
   // store the initial decisions
   REGIONS *temp_regions =
       (REGIONS *)aom_malloc(total_frames * sizeof(temp_regions[0]));
-  av1_zero_array(temp_regions, total_frames);
   // buffers for filtered stats
   double *filt_intra_err =
       (double *)aom_calloc(total_frames, sizeof(*filt_intra_err));
   double *filt_coded_err =
       (double *)aom_calloc(total_frames, sizeof(*filt_coded_err));
   double *grad_coded = (double *)aom_calloc(total_frames, sizeof(*grad_coded));
+  if (!(temp_regions && filt_intra_err && filt_coded_err && grad_coded)) {
+    free_firstpass_stats_buffers(temp_regions, filt_intra_err, filt_coded_err,
+                                 grad_coded);
+    aom_internal_error(error_info, AOM_CODEC_MEM_ERROR,
+                       "Error allocating buffers in identify_regions");
+  }
+  av1_zero_array(temp_regions, total_frames);
 
   int cur_region = 0, this_start = 0, this_last;
 
@@ -1853,10 +1879,8 @@ void av1_identify_regions(const FIRSTPASS_STATS *const stats_start,
     regions[k].last += offset;
   }
 
-  aom_free(temp_regions);
-  aom_free(filt_coded_err);
-  aom_free(filt_intra_err);
-  aom_free(grad_coded);
+  free_firstpass_stats_buffers(temp_regions, filt_intra_err, filt_coded_err,
+                               grad_coded);
 }
 
 static int find_regions_index(const REGIONS *regions, int num_regions,
@@ -3801,13 +3825,14 @@ void av1_get_second_pass_params(AV1_COMP *cpi,
                            twopass->stats_buf_ctx->stats_in_end);
         av1_estimate_coeff(twopass->stats_buf_ctx->stats_in_start,
                            twopass->stats_buf_ctx->stats_in_end);
-        av1_identify_regions(cpi->twopass_frame.stats_in, rest_frames,
-                             (rc->frames_since_key == 0), p_rc->regions,
-                             &p_rc->num_regions);
+        identify_regions(cpi->twopass_frame.stats_in, rest_frames,
+                         (rc->frames_since_key == 0), p_rc->regions,
+                         &p_rc->num_regions, cpi->common.error);
       } else {
-        av1_identify_regions(
+        identify_regions(
             cpi->twopass_frame.stats_in - (rc->frames_since_key == 0),
-            rest_frames, 0, p_rc->regions, &p_rc->num_regions);
+            rest_frames, 0, p_rc->regions, &p_rc->num_regions,
+            cpi->common.error);
       }
     }
 
@@ -4201,33 +4226,50 @@ void av1_twopass_postencode_update(AV1_COMP *cpi) {
 
   // If the rate control is drifting consider adjustment to min or maxq.
   if ((rc_cfg->mode != AOM_Q) && !cpi->rc.is_src_frame_alt_ref) {
-    int maxq_adj_limit;
     int minq_adj_limit;
-    maxq_adj_limit = rc->worst_quality - rc->active_worst_quality;
+    int maxq_adj_limit;
     minq_adj_limit =
         (rc_cfg->mode == AOM_CQ ? MINQ_ADJ_LIMIT_CQ : MINQ_ADJ_LIMIT);
-    // Undershoot.
-    if (p_rc->rate_error_estimate > rc_cfg->under_shoot_pct) {
-      --twopass->extend_maxq;
-      if (p_rc->rolling_target_bits >= p_rc->rolling_actual_bits)
-        ++twopass->extend_minq;
-      // Overshoot.
-    } else if (p_rc->rate_error_estimate < -rc_cfg->over_shoot_pct) {
-      --twopass->extend_minq;
-      if (p_rc->rolling_target_bits < p_rc->rolling_actual_bits)
-        ++twopass->extend_maxq;
+    maxq_adj_limit = rc->worst_quality - rc->active_worst_quality;
+
+    // Undershoot
+    if ((rc_cfg->under_shoot_pct < 100) &&
+        (p_rc->rolling_actual_bits < p_rc->rolling_target_bits)) {
+      int pct_error =
+          ((p_rc->rolling_target_bits - p_rc->rolling_actual_bits) * 100) /
+          p_rc->rolling_target_bits;
+
+      if ((pct_error >= rc_cfg->under_shoot_pct) &&
+          (p_rc->rate_error_estimate > 0)) {
+        twopass->extend_minq += 1;
+      }
+      twopass->extend_maxq -= 1;
+      // Overshoot
+    } else if ((rc_cfg->over_shoot_pct < 100) &&
+               (p_rc->rolling_actual_bits > p_rc->rolling_target_bits)) {
+      int pct_error =
+          ((p_rc->rolling_actual_bits - p_rc->rolling_target_bits) * 100) /
+          p_rc->rolling_target_bits;
+
+      pct_error = clamp(pct_error, 0, 100);
+      if ((pct_error >= rc_cfg->over_shoot_pct) &&
+          (p_rc->rate_error_estimate < 0)) {
+        twopass->extend_maxq += 1;
+      }
+      twopass->extend_minq -= 1;
     } else {
       // Adjustment for extreme local overshoot.
+      // Only applies when normal adjustment above is not used (e.g.
+      // when threshold is set to 100).
       if (rc->projected_frame_size > (2 * rc->base_frame_target) &&
           rc->projected_frame_size > (2 * rc->avg_frame_bandwidth))
         ++twopass->extend_maxq;
-      // Unwind undershoot or overshoot adjustment.
-      if (p_rc->rolling_target_bits < p_rc->rolling_actual_bits)
-        --twopass->extend_minq;
+      // Unwind extreme overshoot adjustment.
       else if (p_rc->rolling_target_bits > p_rc->rolling_actual_bits)
         --twopass->extend_maxq;
     }
-    twopass->extend_minq = clamp(twopass->extend_minq, 0, minq_adj_limit);
+    twopass->extend_minq =
+        clamp(twopass->extend_minq, -minq_adj_limit, minq_adj_limit);
     twopass->extend_maxq = clamp(twopass->extend_maxq, 0, maxq_adj_limit);
 
     // If there is a big and undexpected undershoot then feed the extra
@@ -4241,19 +4283,6 @@ void av1_twopass_postencode_update(AV1_COMP *cpi) {
             fast_extra_thresh - rc->projected_frame_size;
         p_rc->vbr_bits_off_target_fast = AOMMIN(p_rc->vbr_bits_off_target_fast,
                                                 (4 * rc->avg_frame_bandwidth));
-
-        // Fast adaptation of minQ if necessary to use up the extra bits.
-        if (rc->avg_frame_bandwidth) {
-          twopass->extend_minq_fast = (int)(p_rc->vbr_bits_off_target_fast * 8 /
-                                            rc->avg_frame_bandwidth);
-        }
-        twopass->extend_minq_fast = AOMMIN(
-            twopass->extend_minq_fast, minq_adj_limit - twopass->extend_minq);
-      } else if (p_rc->vbr_bits_off_target_fast) {
-        twopass->extend_minq_fast = AOMMIN(
-            twopass->extend_minq_fast, minq_adj_limit - twopass->extend_minq);
-      } else {
-        twopass->extend_minq_fast = 0;
       }
     }
 
@@ -4264,7 +4293,6 @@ void av1_twopass_postencode_update(AV1_COMP *cpi) {
           p_rc->vbr_bits_off_target_fast;
       cpi->ppi->p_rc.temp_extend_minq = twopass->extend_minq;
       cpi->ppi->p_rc.temp_extend_maxq = twopass->extend_maxq;
-      cpi->ppi->p_rc.temp_extend_minq_fast = twopass->extend_minq_fast;
     }
 #endif
   }

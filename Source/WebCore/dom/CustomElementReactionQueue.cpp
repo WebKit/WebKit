@@ -142,15 +142,15 @@ void CustomElementReactionQueue::tryToUpgradeElement(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());
-    auto* window = element.document().domWindow();
+    RefPtr window = element.document().domWindow();
     if (!window)
         return;
 
-    auto* registry = window->customElementRegistry();
+    RefPtr registry = window->customElementRegistry();
     if (!registry)
         return;
 
-    auto* elementInterface = registry->findInterface(element);
+    RefPtr elementInterface = registry->findInterface(element);
     if (!elementInterface)
         return;
 
@@ -337,8 +337,8 @@ inline void CustomElementQueue::invokeAll()
     // It's possible for more elements to be enqueued if some IDL attributes were missing CEReactions.
     // Invoke callbacks slightly later here instead of crashing / ignoring those cases.
     for (unsigned i = 0; i < m_elements.size(); ++i) {
-        auto& element = m_elements[i].get();
-        auto* queue = element.reactionQueue();
+        Ref element = m_elements[i].get();
+        auto* queue = element->reactionQueue();
         ASSERT(queue);
         queue->invokeAll(element);
     }
@@ -353,7 +353,7 @@ inline void CustomElementQueue::processQueue(JSC::JSGlobalObject* state)
         return;
     }
 
-    auto& vm = state->vm();
+    Ref vm = state->vm();
     JSC::JSLockHolder lock(vm);
 
     JSC::Exception* previousException = nullptr;
@@ -393,9 +393,9 @@ void CustomElementReactionQueue::enqueueElementOnAppropriateElementQueue(Element
         return;
     }
 
-    auto*& queue = CustomElementReactionStack::s_currentProcessingStack->m_queue;
-    if (!queue) // We use a raw pointer to avoid genearing code to delete it in ~CustomElementReactionStack.
-        queue = new CustomElementQueue;
+    auto& queue = CustomElementReactionStack::s_currentProcessingStack->m_queue;
+    if (!queue)
+        queue = makeUnique<CustomElementQueue>();
     queue->add(element);
 }
 
@@ -409,7 +409,6 @@ void CustomElementReactionStack::processQueue(JSC::JSGlobalObject* state)
 {
     ASSERT(m_queue);
     m_queue->processQueue(state);
-    delete m_queue;
     m_queue = nullptr;
 }
 
@@ -418,7 +417,6 @@ Vector<GCReachableRef<Element>, 4> CustomElementReactionStack::takeElements()
     if (!m_queue)
         return { };
     auto elements = m_queue->takeElements();
-    delete m_queue;
     m_queue = nullptr;
     return elements;
 }

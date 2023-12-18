@@ -48,7 +48,7 @@ public:
 
     void yield(JSContextRef, NSString *message);
 
-    void log(JSContextRef, NSString *message);
+    void log(JSContextRef, JSValue *);
 
     void fail(JSContextRef, NSString *message);
     void succeed(JSContextRef, NSString *message);
@@ -66,9 +66,6 @@ public:
     JSValue *assertSafe(JSContextRef, JSValue *function, NSString *message);
 
     JSValue *assertSafeResolve(JSContextRef, JSValue *function, NSString *message);
-
-    WebExtensionAPIWebNavigationEvent& testWebNavigationEvent();
-    void fireTestWebNavigationEvent(NSString *urlString);
 
     WebExtensionAPIEvent& testEvent();
     void fireTestEvent();

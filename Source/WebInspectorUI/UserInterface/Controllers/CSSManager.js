@@ -232,6 +232,8 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::first-letter");
         case CSSManager.PseudoSelectorNames.Highlight:
             return WI.unlocalizedString("::highlight");
+        case CSSManager.PseudoSelectorNames.GrammarError:
+            return WI.unlocalizedString("::grammar-error");
         case CSSManager.PseudoSelectorNames.Marker:
             return WI.unlocalizedString("::marker");
         case CSSManager.PseudoSelectorNames.Before:
@@ -254,8 +256,20 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::scrollbar-track-piece");
         case CSSManager.PseudoSelectorNames.ScrollbarCorner:
             return WI.unlocalizedString("::scrollbar-corner");
+        case CSSManager.PseudoSelectorNames.SpellingError:
+            return WI.unlocalizedString("::spelling-error");
         case CSSManager.PseudoSelectorNames.Resizer:
             return WI.unlocalizedString("::resizer");
+        case CSSManager.PseudoSelectorNames.ViewTransition:
+            return WI.unlocalizedString("::view-transition");
+        case CSSManager.PseudoSelectorNames.ViewTransitionGroup:
+            return WI.unlocalizedString("::view-transition-group");
+        case CSSManager.PseudoSelectorNames.ViewTransitionImagePair:
+            return WI.unlocalizedString("::view-transition-image-pair");
+        case CSSManager.PseudoSelectorNames.ViewTransitionNew:
+            return WI.unlocalizedString("::view-transition-new");
+        case CSSManager.PseudoSelectorNames.ViewTransitionOld:
+            return WI.unlocalizedString("::view-transition-old");
 
         default:
             console.error("Unknown pseudo id", pseudoId);
@@ -871,6 +885,7 @@ WI.CSSManager.PseudoSelectorNames = {
     FirstLetter: "first-letter",
     FirstLine: "first-line",
     Highlight: "highlight",
+    GrammarError: "grammar-error",
     Marker: "marker",
     Resizer: "resizer",
     Scrollbar: "scrollbar",
@@ -880,6 +895,12 @@ WI.CSSManager.PseudoSelectorNames = {
     ScrollbarTrack: "scrollbar-track",
     ScrollbarTrackPiece: "scrollbar-track-piece",
     Selection: "selection",
+    SpellingError: "spelling-error",
+    ViewTransition: "view-transition",
+    ViewTransitionGroup: "view-transition-group",
+    ViewTransitionImagePair: "view-transition-image-pair",
+    ViewTransitionNew: "view-transition-new",
+    ViewTransitionOld: "view-transition-old",
 };
 
 WI.CSSManager.LayoutContextTypeChangedMode = {

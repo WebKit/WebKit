@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/EventTarget.h>
 #include <WebCore/TextTrackRepresentationCocoa.h>
 
 namespace WebCore {

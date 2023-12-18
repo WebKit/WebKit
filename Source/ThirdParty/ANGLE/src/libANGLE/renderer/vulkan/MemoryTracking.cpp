@@ -151,7 +151,7 @@ void LogMemoryHeapStats(RendererVk *renderer, vk::MemoryLogSeverity severity)
         vk::AddToPNextChain(&memoryProperties, &memoryBudgetProperties);
     }
 
-    vkGetPhysicalDeviceMemoryProperties2KHR(renderer->getPhysicalDevice(), &memoryProperties);
+    vkGetPhysicalDeviceMemoryProperties2(renderer->getPhysicalDevice(), &memoryProperties);
 
     // Add memory heap information to the stream.
     outStream << "Memory heap info" << std::endl;

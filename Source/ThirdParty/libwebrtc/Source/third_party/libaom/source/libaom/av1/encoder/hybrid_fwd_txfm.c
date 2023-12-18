@@ -312,17 +312,51 @@ void av1_highbd_fwd_txfm(const int16_t *src_diff, tran_low_t *coeff,
   }
 }
 
+#if CONFIG_AV1_HIGHBITDEPTH
+static INLINE void highbd_wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
+                                       ptrdiff_t src_stride,
+                                       tran_low_t *coeff) {
+  switch (tx_size) {
+    // As the output transform co-efficients of 4x4 Hadamard transform can be
+    // represented using 15 bits (for 12-bit clip) use lowbd variant of
+    // hadamard_4x4.
+    case TX_4X4: aom_hadamard_4x4(src_diff, src_stride, coeff); break;
+    case TX_8X8: aom_highbd_hadamard_8x8(src_diff, src_stride, coeff); break;
+    case TX_16X16:
+      aom_highbd_hadamard_16x16(src_diff, src_stride, coeff);
+      break;
+    case TX_32X32:
+      aom_highbd_hadamard_32x32(src_diff, src_stride, coeff);
+      break;
+    default: assert(0);
+  }
+}
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+
+static INLINE void wht_fwd_txfm(TX_SIZE tx_size, const int16_t *src_diff,
+                                ptrdiff_t src_stride, tran_low_t *coeff) {
+  switch (tx_size) {
+    case TX_4X4: aom_hadamard_4x4(src_diff, src_stride, coeff); break;
+    case TX_8X8: aom_hadamard_8x8(src_diff, src_stride, coeff); break;
+    case TX_16X16: aom_hadamard_16x16(src_diff, src_stride, coeff); break;
+    case TX_32X32: aom_hadamard_32x32(src_diff, src_stride, coeff); break;
+    default: assert(0);
+  }
+}
+
 void av1_quick_txfm(int use_hadamard, TX_SIZE tx_size, BitDepthInfo bd_info,
                     const int16_t *src_diff, int src_stride,
                     tran_low_t *coeff) {
   if (use_hadamard) {
-    switch (tx_size) {
-      case TX_4X4: aom_hadamard_4x4(src_diff, src_stride, coeff); break;
-      case TX_8X8: aom_hadamard_8x8(src_diff, src_stride, coeff); break;
-      case TX_16X16: aom_hadamard_16x16(src_diff, src_stride, coeff); break;
-      case TX_32X32: aom_hadamard_32x32(src_diff, src_stride, coeff); break;
-      default: assert(0);
+#if CONFIG_AV1_HIGHBITDEPTH
+    if (bd_info.use_highbitdepth_buf) {
+      highbd_wht_fwd_txfm(tx_size, src_diff, src_stride, coeff);
+    } else {
+      wht_fwd_txfm(tx_size, src_diff, src_stride, coeff);
     }
+#else
+    wht_fwd_txfm(tx_size, src_diff, src_stride, coeff);
+#endif  // CONFIG_AV1_HIGHBITDEPTH
   } else {
     TxfmParam txfm_param;
     txfm_param.tx_type = DCT_DCT;

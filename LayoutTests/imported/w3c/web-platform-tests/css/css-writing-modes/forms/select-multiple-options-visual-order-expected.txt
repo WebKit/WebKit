@@ -1,8 +1,8 @@
 
 
 PASS select[multiple][style="writing-mode: horizontal-tb"] has visually correct option order
-FAIL select[multiple][style="writing-mode: vertical-lr"] has visually correct option order assert_equals: options are in visually incorrect order expected "Option 1" but got "Option 3"
-FAIL select[multiple][style="writing-mode: vertical-rl"] has visually correct option order assert_equals: options are in visually incorrect order expected "Option 4" but got "Option 3"
-FAIL select[multiple][style="writing-mode: sideways-lr"] has visually correct option order assert_equals: options are in visually incorrect order expected "Option 1" but got "Option 3"
-FAIL select[multiple][style="writing-mode: sideways-rl"] has visually correct option order assert_equals: options are in visually incorrect order expected "Option 4" but got "Option 3"
+PASS select[multiple][style="writing-mode: vertical-lr"] has visually correct option order
+PASS select[multiple][style="writing-mode: vertical-rl"] has visually correct option order
+PASS select[multiple][style="writing-mode: sideways-lr"] has visually correct option order
+PASS select[multiple][style="writing-mode: sideways-rl"] has visually correct option order
 

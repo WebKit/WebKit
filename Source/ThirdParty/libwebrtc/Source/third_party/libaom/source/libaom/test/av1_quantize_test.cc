@@ -183,11 +183,9 @@ class AV1QuantizeTest : public ::testing::TestWithParam<QuantizeFuncParams> {
     }
   }
 
-  virtual void SetUp() { params_ = GetParam(); }
+  void SetUp() override { params_ = GetParam(); }
 
-  virtual void TearDown() {}
-
-  virtual ~AV1QuantizeTest() {}
+  ~AV1QuantizeTest() override = default;
 
  private:
   TX_SIZE getTxSize(int count) {

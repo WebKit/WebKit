@@ -266,21 +266,6 @@ const expectedOpsForZonedRelativeTo = expected.concat([
   "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
 ]);
 
-const expectedOpsForZonedCalendarCompare = [
-  "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
-  // AddZonedDateTime on first argument
-  "get options.relativeTo.calendar.dateAdd",
-  "call options.relativeTo.calendar.dateAdd",
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
-  "call options.relativeTo.timeZone.getPossibleInstantsFor",
-  // AddZonedDateTime on second argument
-  "get options.relativeTo.calendar.dateAdd",
-  "call options.relativeTo.calendar.dateAdd",
-  "get options.relativeTo.timeZone.getPossibleInstantsFor",
-  "call options.relativeTo.timeZone.getPossibleInstantsFor",
-];
-
 const zonedRelativeTo = TemporalHelpers.propertyBagObserver(actual, {
   year: 2001,
   month: 5,
@@ -305,7 +290,16 @@ Temporal.Duration.compare(
 );
 assert.compareArray(
   actual,
-  expectedOpsForZonedRelativeTo.concat(expectedOpsForZonedCalendarCompare),
+  expectedOpsForZonedRelativeTo.concat([
+    "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
+    "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
+    // AddDaysToZonedDateTime on first argument
+    "get options.relativeTo.timeZone.getPossibleInstantsFor",
+    "call options.relativeTo.timeZone.getPossibleInstantsFor",
+    // AddDaysToZonedDateTime on second argument
+    "get options.relativeTo.timeZone.getPossibleInstantsFor",
+    "call options.relativeTo.timeZone.getPossibleInstantsFor",
+  ]),
   "order of operations with ZonedDateTime relativeTo and no calendar units except days"
 );
 actual.splice(0); // clear
@@ -331,7 +325,20 @@ Temporal.Duration.compare(
 );
 assert.compareArray(
   actual,
-  expectedOpsForZonedRelativeTo.concat(expectedOpsForZonedCalendarCompare),
+  expectedOpsForZonedRelativeTo.concat([
+    "get options.relativeTo.timeZone.getOffsetNanosecondsFor",
+    "call options.relativeTo.timeZone.getOffsetNanosecondsFor",
+    // AddZonedDateTime on first argument
+    "get options.relativeTo.calendar.dateAdd",
+    "call options.relativeTo.calendar.dateAdd",
+    "get options.relativeTo.timeZone.getPossibleInstantsFor",
+    "call options.relativeTo.timeZone.getPossibleInstantsFor",
+    // AddZonedDateTime on second argument
+    "get options.relativeTo.calendar.dateAdd",
+    "call options.relativeTo.calendar.dateAdd",
+    "get options.relativeTo.timeZone.getPossibleInstantsFor",
+    "call options.relativeTo.timeZone.getPossibleInstantsFor",
+  ]),
   "order of operations with ZonedDateTime relativeTo and calendar units"
 );
 actual.splice(0); // clear

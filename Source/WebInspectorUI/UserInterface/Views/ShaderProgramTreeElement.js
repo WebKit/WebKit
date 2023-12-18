@@ -33,8 +33,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         super("shader-program", shaderProgram.displayName, subtitle, shaderProgram);
 
         // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
-        let contextType = this.representedObject.canvas.contextType;
-        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2) {
+        if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2) {
             this._disabledImageElement = document.createElement("img");
             this._disabledImageElement.title = WI.UIString("Disable Program");
             this._disabledImageElement.addEventListener("click", this._disabledImageElementClicked.bind(this));
@@ -49,8 +48,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
         super.onattach();
 
         // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
-        let contextType = this.representedObject.canvas.contextType;
-        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2) {
+        if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2) {
             this.representedObject.addEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
 
             this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
@@ -61,8 +59,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
     ondetach()
     {
         // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
-        let contextType = this.representedObject.canvas.contextType;
-        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2)
+        if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2)
             this.representedObject.removeEventListener(WI.ShaderProgram.Event.DisabledChanged, this._handleShaderProgramDisabledChanged, this);
 
         super.ondetach();
@@ -78,8 +75,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
     populateContextMenu(contextMenu, event)
     {
         // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
-        let contextType = this.representedObject.canvas.contextType;
-        if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2) {
+        if (this.representedObject.canvas.isWebGL || this.representedObject.canvas.isWebGL2) {
             let disabled = this.representedObject.disabled;
             contextMenu.appendItem(disabled ? WI.UIString("Enable Program") : WI.UIString("Disable Program"), () => {
                 this.representedObject.disabled = !disabled;

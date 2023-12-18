@@ -2,21 +2,28 @@
 
 <html>
 <head>
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         body {
             height: 5000px;
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        function doTest()
+        async function doTest()
         {
+            await UIHelper.renderingUpdate();
+
             window.scrollTo(0, 3000);
             if (window.internals) {
                 document.getElementById('layers').innerText = internals.scrollingStateTreeAsText();
             }
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         window.addEventListener('load', doTest, false);
     </script>

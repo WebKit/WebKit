@@ -2,7 +2,7 @@
 
 import sys
 
-sys.stdout.write(
+sys.stdout.buffer.write(
     'Content-Type: multipart/x-mixed-replace;boundary=asdf\r\n\r\n'
     '--asdf\n'
     'Content-type: text/html\n'
@@ -12,12 +12,12 @@ sys.stdout.write(
     'if (window.testRunner)\n'
     '    testRunner.dumpAsText();\n'
     '</script>\n'
-    '{}\r\n'.format(' ' * 5000)
+    '{}\r\n'.format(' ' * 5000).encode()
 )
 
 sys.stdout.flush()
 
-sys.stdout.write(
+sys.stdout.buffer.write(
     '--asdf\n'
     'Content-type: text/rtf\n'
     '\n'
@@ -25,5 +25,5 @@ sys.stdout.write(
     'for this load to be ignored. This causes the request to be canceled.\n'
     '\n'
     '{}\r\n'
-    '--asdf--\n'.format(' ' * 5000)
+    '--asdf--\n'.format(' ' * 5000).encode()
 )

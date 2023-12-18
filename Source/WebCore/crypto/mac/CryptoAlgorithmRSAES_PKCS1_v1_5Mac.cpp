@@ -38,7 +38,7 @@ static ExceptionOr<Vector<uint8_t>> encryptRSAES_PKCS1_v1_5(const PlatformRSAKey
     Vector<uint8_t> cipherText(keyLength / 8); // Per Step 3.c of https://tools.ietf.org/html/rfc3447#section-7.2.1
     size_t cipherTextLength = cipherText.size();
     if (CCRSACryptorEncrypt(key, ccPKCS1Padding, data.data(), data.size(), cipherText.data(), &cipherTextLength, 0, 0, kCCDigestNone))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return WTFMove(cipherText);
 }
@@ -48,7 +48,7 @@ static ExceptionOr<Vector<uint8_t>> decryptRSAES_PKCS1_v1_5(const PlatformRSAKey
     Vector<uint8_t> plainText(keyLength / 8); // Per Step 1 of https://tools.ietf.org/html/rfc3447#section-7.2.1
     size_t plainTextLength = plainText.size();
     if (CCRSACryptorDecrypt(key, ccPKCS1Padding, data.data(), data.size(), plainText.data(), &plainTextLength, 0, 0, kCCDigestNone))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     plainText.resize(plainTextLength);
     return WTFMove(plainText);

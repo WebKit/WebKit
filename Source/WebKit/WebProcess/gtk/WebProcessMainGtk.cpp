@@ -32,12 +32,8 @@
 #include <WebCore/GtkVersioning.h>
 #include <libintl.h>
 
-#if PLATFORM(X11)
-#include <X11/Xlib.h>
-#endif
-
 #if USE(GSTREAMER)
-#include <gst/gst.h>
+#include <WebCore/GStreamerCommon.h>
 #endif
 
 #if USE(GCRYPT)
@@ -60,10 +56,6 @@ public:
             g_usleep(30 * G_USEC_PER_SEC);
 #endif
 
-#if (USE(COORDINATED_GRAPHICS) || USE(GSTREAMER_GL)) && PLATFORM(X11)
-        XInitThreads();
-#endif
-
         gtk_init(nullptr, nullptr);
 
         bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
@@ -75,7 +67,7 @@ public:
     void platformFinalize() override
     {
 #if USE(GSTREAMER)
-        gst_deinit();
+        deinitializeGStreamer();
 #endif
     }
 };

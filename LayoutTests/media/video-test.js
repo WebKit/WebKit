@@ -114,6 +114,11 @@ function sleepFor(duration) {
 
 function testExpectedEventually(testFuncString, expected, comparison, timeout)
 {
+    return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, null);
+}
+
+function testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, timeout, work)
+{
     return new Promise(async resolve => {
         var success;
         var observed;
@@ -122,7 +127,7 @@ function testExpectedEventually(testFuncString, expected, comparison, timeout)
             comparison = '==';
         while (timeout === undefined || timeSlept < timeout) {
             try {
-                let {success, observed} = compare(testFuncString, expected, comparison);
+                ({success, observed} = compare(testFuncString, expected, comparison));
                 if (success) {
                     reportExpected(success, testFuncString, comparison, expected, observed);
                     resolve();
@@ -130,6 +135,8 @@ function testExpectedEventually(testFuncString, expected, comparison, timeout)
                 }
                 await sleepFor(1);
                 timeSlept++;
+                if (work)
+                    work();
             } catch (ex) {
                 consoleWrite(ex);
                 resolve();

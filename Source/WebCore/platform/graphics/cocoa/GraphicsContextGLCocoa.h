@@ -88,15 +88,14 @@ public:
     GraphicsContextGLCV* asCV() final;
 #endif
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
+    RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
     void setContextVisibility(bool) final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
 
-    void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>) override;
-    void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>) override;
+    void withBufferAsNativeImage(SurfaceBuffer, Function<void(NativeImage&)>) override;
 
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();
@@ -110,6 +109,7 @@ protected:
 
     // GraphicsContextGLANGLE overrides.
     bool platformInitializeContext() final;
+    bool platformInitializeExtensions() final;
     bool platformInitialize() final;
     void invalidateKnownTextureContent(GCGLuint) final;
     bool reshapeDrawingBuffer() final;
@@ -124,12 +124,17 @@ protected:
     };
     IOSurfacePbuffer& drawingBuffer();
     IOSurfacePbuffer& displayBuffer();
+    IOSurfacePbuffer& surfaceBuffer(SurfaceBuffer);
     bool bindNextDrawingBuffer();
     void freeDrawingBuffers();
 
     // Inserts new fence that will invoke `signal` from a background thread when completed.
     // If not possible, calls the `signal`.
     void insertFinishedSignalOrInvoke(Function<void()> signal);
+#if ENABLE(WEBXR)
+    bool enableRequiredWebXRExtensionsImpl();
+#endif
+
 
     ProcessIdentity m_resourceOwner;
     DestinationColorSpace m_drawingBufferColorSpace;

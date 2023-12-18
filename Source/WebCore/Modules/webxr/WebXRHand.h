@@ -66,7 +66,7 @@ public:
     WebXRSession* session();
 
     bool hasMissingPoses() const { return m_hasMissingPoses; }
-    void updateFromInputSource(const PlatformXR::Device::FrameData::InputSource&);
+    void updateFromInputSource(const PlatformXR::FrameData::InputSource&);
 
 private:
     WebXRHand(const WebXRInputSource&);

@@ -53,6 +53,9 @@ messages -> WebPageProxy {
     RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
     AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
     RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
+#if PLATFORM(IOS_FAMILY)
+    RelayAccessibilityNotification(String notificationName, IPC::DataReference notificationData)
+#endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     ShowValidationMessage(WebCore::IntRect anchorRect, String message)
@@ -112,7 +115,7 @@ messages -> WebPageProxy {
 
     # Frame lifetime messages
     DidCreateMainFrame(WebCore::FrameIdentifier frameID)
-    DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID)
+    DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName)
 
     # Frame load messages
     DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, uint64_t navigationID, URL url, URL unreachableURL, WebKit::UserData userData)
@@ -257,9 +260,7 @@ messages -> WebPageProxy {
     ShowContextMenu(WebKit::ContextMenuContextData contextMenuContextData, WebKit::UserData userData)
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     DidFinishServiceWorkerPageRegistration(bool success)
-#endif
 
     # Database messages
     ExceededDatabaseQuota(WebCore::FrameIdentifier frameID, String originIdentifier, String databaseName, String databaseDisplayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage) -> (uint64_t newQuota) Synchronous
@@ -300,20 +301,12 @@ messages -> WebPageProxy {
     RequestCheckingOfString(WebKit::TextCheckerRequestID requestID, WebCore::TextCheckingRequestData request, int32_t insertionPoint)
 
     # Drag and drop messages
-#if ENABLE(DRAG_SUPPORT)
-    DidPerformDragControllerAction(std::optional<WebCore::DragOperation> dragOperation, enum:uint8_t WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, WebCore::IntRect insertionRect, WebCore::IntRect editableElementRect)
-    DidEndDragging();
-#endif
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
     StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmap::Handle dragImage)
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, String originIdentifier)
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, std::optional<WebKit::ShareableBitmap::Handle> dragImage, WebCore::IntPoint dragImageHotspot)
-#endif
-
-#if ENABLE(DRAG_SUPPORT)
-    DidPerformDragOperation(bool handled)
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
@@ -391,6 +384,7 @@ messages -> WebPageProxy {
     ElementDidFocus(struct WebKit::FocusedElementInformation information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, WebKit::UserData userData)
     ElementDidBlur()
     UpdateInputContextAfterBlurringAndRefocusingElement()
+    UpdateFocusedElementInformation(struct WebKit::FocusedElementInformation information)
     FocusedElementDidChangeInputMode(enum:uint8_t WebCore::InputMode mode)
     ScrollingNodeScrollWillStartScroll(uint64_t nodeID)
     ScrollingNodeScrollDidEndScroll(uint64_t nodeID)
@@ -418,10 +412,6 @@ messages -> WebPageProxy {
     # Search popup menus
     SaveRecentSearches(String name, Vector<WebCore::RecentSearch> searchItems)
     LoadRecentSearches(String name) -> (Vector<WebCore::RecentSearch> result) Synchronous
-
-#if ENABLE(PDFKIT_PLUGIN)
-    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
-#endif
 
     DidUpdateActivityState() CanDispatchOutOfOrder
 
@@ -462,6 +452,8 @@ messages -> WebPageProxy {
     HandleAutoFillButtonClick(WebKit::UserData userData)
 
     DidResignInputElementStrongPasswordAppearance(WebKit::UserData userData)
+
+    PerformSwitchHapticFeedback()
 
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentRuleListNotification(URL url, struct WebCore::ContentRuleListResults results)
@@ -504,8 +496,6 @@ messages -> WebPageProxy {
     DidHandleAcceptedCandidate()
 #endif
 
-    SetIsUsingHighPerformanceWebGL(bool isUsingHighPerformanceWebGL)
-
     StartURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters)
     StopURLSchemeTask(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier)
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, Vector<uint8_t> data) Synchronous
@@ -543,7 +533,11 @@ messages -> WebPageProxy {
     SpeechSynthesisResetState()
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
+    ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem) Synchronous
+#endif
+
+#if ENABLE(PDF_HUD)
     CreatePDFHUD(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
     UpdatePDFHUDLocation(WebKit::PDFPluginIdentifier identifier, WebCore::IntRect boundingBox)
     RemovePDFHUD(WebKit::PDFPluginIdentifier identifier)
@@ -625,8 +619,18 @@ messages -> WebPageProxy {
 
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
 
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    DidAccessWindowProxyPropertyViaOpenerForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData openerOrigin, enum:uint8_t WebCore::WindowProxyProperty property)
+#endif
+
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
     BroadcastFrameRemovalToOtherProcesses(WebCore::FrameIdentifier frameID)
+    BroadcastMainFrameURLChangeToOtherProcesses(URL newURL)
 
     DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
+
+    CloseRemoteFrame(WebCore::FrameIdentifier frameID)
+    FocusRemoteFrame(WebCore::FrameIdentifier frameID)
+    PostMessageToRemote(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
+    RenderTreeAsText(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
 }

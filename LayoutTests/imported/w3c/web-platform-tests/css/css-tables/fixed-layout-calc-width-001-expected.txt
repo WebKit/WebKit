@@ -1,13 +1,5 @@
 Calc width on col is treated as auto, even in fixed tables
 
 
-FAIL #theTable 1 assert_equals:
-<table id="theTable">
-  <colgroup><col style="width:calc(20% + 80px)">
-  </colgroup><tbody><tr>
-    <td data-expected-width="100"></td>
-    <td data-expected-width="100"></td>
-  </tr>
-</tbody></table>
-width expected 100 but got 0
+PASS #theTable 1
 

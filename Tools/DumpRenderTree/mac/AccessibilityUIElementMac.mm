@@ -1123,9 +1123,9 @@ unsigned AccessibilityUIElement::uiElementCountForSearchPredicate(JSContextRef c
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSDictionary *parameterizedAttribute = searchPredicateParameterizedAttributeForSearchCriteria(context, startElement, isDirectionNext, UINT_MAX, searchKey, searchText, visibleOnly, immediateDescendantsOnly);
-    id value = [m_element accessibilityAttributeValue:@"AXUIElementCountForSearchPredicate" forParameter:parameterizedAttribute];
-    if ([value isKindOfClass:[NSNumber class]])
-        return [value unsignedIntValue];
+    id value = [m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameterizedAttribute];
+    if ([value isKindOfClass:[NSArray class]])
+        return [value count];
     END_AX_OBJC_EXCEPTIONS
     
     return 0;

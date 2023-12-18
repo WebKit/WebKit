@@ -29,10 +29,10 @@ class Context;
 
 namespace egl
 {
-class Sync final : public angle::RefCountObject<Display, angle::Result>, public LabeledObject
+class Sync final : public LabeledObject
 {
   public:
-    Sync(rx::EGLImplFactory *factory, const SyncID &id, EGLenum type, const AttributeMap &attribs);
+    Sync(rx::EGLImplFactory *factory, EGLenum type);
     ~Sync() override;
 
     void setLabel(EGLLabelKHR label) override;
@@ -40,9 +40,12 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
 
     const SyncID &id() const { return mId; }
 
-    void onDestroy(const Display *display) override;
+    void onDestroy(const Display *display);
 
-    Error initialize(const Display *display, const gl::Context *context);
+    Error initialize(const Display *display,
+                     const gl::Context *context,
+                     const SyncID &id,
+                     const AttributeMap &attribs);
     Error clientWait(const Display *display,
                      const gl::Context *context,
                      EGLint flags,

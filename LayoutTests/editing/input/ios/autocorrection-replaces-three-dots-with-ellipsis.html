@@ -1,0 +1,47 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    font-size: 18px;
+    font-family: system-ui;
+    line-height: 150%;
+}
+
+#editor {
+    border: 1px solid tomato;
+    box-sizing: border-box;
+    outline: none;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that typing three '.' characters results in the '...' being replaced with a single ellipsis character ('…'). To test manually, focus the red box below and type '...'");
+
+    editor = document.getElementById("editor");
+    await UIHelper.activateElementAndWaitForInputSession(editor);
+
+    for (let character of [..."..."]) {
+        await UIHelper.typeCharacter(character);
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    await shouldBecomeEqual("editor.textContent", "'…'");
+
+    editor.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div contenteditable id="editor"><br></div>
+</body>
+</html>

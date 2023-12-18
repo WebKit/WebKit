@@ -1,0 +1,6 @@
+Click me
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT <a download> click fires navigate event Test timed out
+

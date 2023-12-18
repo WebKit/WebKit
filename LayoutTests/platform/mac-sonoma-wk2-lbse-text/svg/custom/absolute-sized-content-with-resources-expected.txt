@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x460
+  RenderBlock {html} at (0,0) size 800x460
+    RenderBody {body} at (8,16) size 784x436
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 781x18
+          text run at (0,0) width 781: "The svg area contained in the div element (red box), should contain four masked circles, that do not pixelate after resizing"
+      RenderBlock {div} at (0,34) size 402x402 [border: (1px solid #FF0000)]
+        RenderText {#text} at (0,0) size 0x0
+layer at (9,51) size 400x400
+  RenderSVGRoot {svg} at (1,1) size 400x400
+layer at (9,51) size 400x400
+  RenderSVGViewportContainer at (0,0) size 400x400
+layer at (14,51) size 90x80
+  RenderSVGResourceMasker {mask} at (5,0) size 90x80
+layer at (14,51) size 40x40
+  RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=20.00] [r=20.00]
+layer at (14,91) size 40x40
+  RenderSVGEllipse {circle} at (0,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=25.00] [cy=60.00] [r=20.00]
+layer at (64,51) size 40x40
+  RenderSVGEllipse {circle} at (50,0) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=20.00] [r=20.00]
+layer at (64,91) size 40x40
+  RenderSVGEllipse {circle} at (50,40) size 40x40 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=75.00] [cy=60.00] [r=20.00]
+layer at (9,51) size 100x80
+  RenderSVGTransformableContainer {g} at (0,0) size 100x80
+layer at (9,51) size 100x80
+  RenderSVGRect {rect} at (0,0) size 100x80 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]

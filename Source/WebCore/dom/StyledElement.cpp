@@ -86,11 +86,16 @@ StylePropertyMap& StyledElement::ensureAttributeStyleMap()
 MutableStyleProperties& StyledElement::ensureMutableInlineStyle()
 {
     RefPtr<StyleProperties>& inlineStyle = ensureUniqueElementData().m_inlineStyle;
-    if (!inlineStyle)
-        inlineStyle = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
-    else if (!is<MutableStyleProperties>(*inlineStyle))
-        inlineStyle = inlineStyle->mutableCopy();
-    return downcast<MutableStyleProperties>(*inlineStyle);
+    if (!inlineStyle) {
+        Ref mutableProperties = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
+        inlineStyle = mutableProperties.copyRef();
+        return mutableProperties.get();
+    }
+    if (RefPtr mutableProperties = dynamicDowncast<MutableStyleProperties>(*inlineStyle))
+        return *mutableProperties;
+    Ref mutableProperties = inlineStyle->mutableCopy();
+    inlineStyle = mutableProperties.copyRef();
+    return mutableProperties.get();
 }
 
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
@@ -130,27 +135,25 @@ void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
 
     // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
     // This makes wrapperless property sets immutable and so cacheable.
-    if (inlineStyle && !is<MutableStyleProperties>(*inlineStyle))
-        inlineStyle = nullptr;
-
-    if (!inlineStyle)
-        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
+    if (RefPtr mutableStyleProperties = dynamicDowncast<MutableStyleProperties>(inlineStyle))
+        mutableStyleProperties->parseDeclaration(newStyleString, protectedDocument().get());
     else
-        downcast<MutableStyleProperties>(*inlineStyle).parseDeclaration(newStyleString, document());
+        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
 
     if (usesStyleBasedEditability(*inlineStyle))
-        document().setHasElementUsingStyleBasedEditability();
+        protectedDocument()->setHasElementUsingStyleBasedEditability();
 }
 
 void StyledElement::styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason reason)
 {
+    Ref document = this->document();
     auto startLineNumber = OrdinalNumber::beforeFirst();
-    if (document().scriptableDocumentParser() && !document().isInDocumentWrite())
-        startLineNumber = document().scriptableDocumentParser()->textPosition().m_line;
+    if (document->scriptableDocumentParser() && !document->isInDocumentWrite())
+        startLineNumber = document->scriptableDocumentParser()->textPosition().m_line;
 
     if (newStyleString.isNull())
         ensureMutableInlineStyle().clear();
-    else if (reason == AttributeModificationReason::ByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url().string(), startLineNumber, newStyleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree()))
+    else if (reason == AttributeModificationReason::ByCloning || document->checkedContentSecurityPolicy()->allowInlineStyle(document->url().string(), startLineNumber, newStyleString.string(), CheckUnsafeHashes::Yes, *this, nonce(), isInUserAgentShadowTree()))
         setInlineStyleFromString(newStyleString);
 
     elementData()->setStyleAttributeIsDirty(false);
@@ -163,7 +166,7 @@ void StyledElement::invalidateStyleAttribute()
 {
     if (auto* inlineStyle = this->inlineStyle()) {
         if (usesStyleBasedEditability(*inlineStyle))
-            document().setHasElementUsingStyleBasedEditability();
+            protectedDocument()->setHasElementUsingStyleBasedEditability();
     }
 
     elementData()->setStyleAttributeIsDirty(true);
@@ -267,13 +270,32 @@ void StyledElement::removeAllInlineStyleProperties()
 
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
-    auto* inlineStyle = this->inlineStyle();
+    RefPtr inlineStyle = this->inlineStyle();
     if (!inlineStyle)
         return;
     inlineStyle->traverseSubresources([&] (auto& resource) {
         urls.add(resource.url());
         return false;
     });
+}
+
+Attribute StyledElement::replaceURLsInAttributeValue(const Attribute& attribute, const HashMap<String, String>& replacementURLStrings) const
+{
+    if (replacementURLStrings.isEmpty())
+        return attribute;
+
+    if (attribute.name() != styleAttr)
+        return attribute;
+
+    RefPtr properties = this->inlineStyle();
+    if (!properties)
+        return attribute;
+
+    auto mutableProperties = properties->mutableCopy();
+    mutableProperties->setReplacementURLForSubresources(replacementURLStrings);
+    auto inlineStyleString = mutableProperties->asText();
+    mutableProperties->clearReplacementURLForSubresources();
+    return Attribute { styleAttr, AtomString { inlineStyleString } };
 }
 
 const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const

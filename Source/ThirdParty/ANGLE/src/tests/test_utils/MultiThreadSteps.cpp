@@ -17,13 +17,22 @@ namespace angle
 
 void RunLockStepThreads(EGLWindow *window, size_t threadCount, LockStepThreadFunc threadFuncs[])
 {
+    constexpr EGLint kPBufferSize = 256;
+    RunLockStepThreadsWithSize(window, kPBufferSize, kPBufferSize, threadCount, threadFuncs);
+}
+
+void RunLockStepThreadsWithSize(EGLWindow *window,
+                                EGLint width,
+                                EGLint height,
+                                size_t threadCount,
+                                LockStepThreadFunc threadFuncs[])
+{
     EGLDisplay dpy   = window->getDisplay();
     EGLConfig config = window->getConfig();
 
-    constexpr EGLint kPBufferSize = 256;
     // Initialize the pbuffer and context
     EGLint pbufferAttributes[] = {
-        EGL_WIDTH, kPBufferSize, EGL_HEIGHT, kPBufferSize, EGL_NONE, EGL_NONE,
+        EGL_WIDTH, width, EGL_HEIGHT, height, EGL_NONE, EGL_NONE,
     };
 
     std::vector<EGLSurface> surfaces(threadCount);

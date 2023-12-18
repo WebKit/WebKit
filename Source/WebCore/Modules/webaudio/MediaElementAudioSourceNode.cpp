@@ -53,7 +53,7 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::creat
     RELEASE_ASSERT(options.mediaElement);
 
     if (options.mediaElement->audioSourceNode())
-        return Exception { InvalidStateError, "Media element is already associated with an audio source node"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Media element is already associated with an audio source node"_s };
 
     auto node = adoptRef(*new MediaElementAudioSourceNode(context, *options.mediaElement));
 

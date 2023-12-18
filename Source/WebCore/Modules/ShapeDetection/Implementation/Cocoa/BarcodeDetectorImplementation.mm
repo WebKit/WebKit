@@ -164,11 +164,7 @@ void BarcodeDetectorImpl::getSupportedFormats(CompletionHandler<void(Vector<Barc
     for (VNBarcodeSymbology symbology in supportedSymbologies)
         barcodeFormatsSet.add(convertSymbology(symbology));
 
-    Vector<BarcodeFormat> barcodeFormatsVector;
-    barcodeFormatsVector.reserveInitialCapacity(barcodeFormatsSet.size());
-    for (auto barcodeFormat : barcodeFormatsSet)
-        barcodeFormatsVector.uncheckedAppend(barcodeFormat);
-
+    auto barcodeFormatsVector = copyToVector(barcodeFormatsSet);
     std::sort(std::begin(barcodeFormatsVector), std::end(barcodeFormatsVector));
 
     completionHandler(WTFMove(barcodeFormatsVector));
@@ -211,7 +207,7 @@ void BarcodeDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandl
     Vector<DetectedBarcode> results;
     results.reserveInitialCapacity(request.get().results.count);
     for (VNBarcodeObservation *observation in request.get().results) {
-        results.uncheckedAppend({
+        results.append({
             convertRectFromVisionToWeb(nativeImage->size(), observation.boundingBox),
             observation.payloadStringValue,
             convertSymbology(observation.symbology),

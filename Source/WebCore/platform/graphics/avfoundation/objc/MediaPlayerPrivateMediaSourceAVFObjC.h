@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAsset;
@@ -62,12 +63,16 @@ class WebCoreDecompressionSession;
 
 class MediaPlayerPrivateMediaSourceAVFObjC
     : public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
+    , public RefCounted<MediaPlayerPrivateMediaSourceAVFObjC>
     , public MediaPlayerPrivateInterface
     , private LoggerHelper
 {
 public:
     explicit MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -113,9 +118,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     AVSampleBufferDisplayLayer* sampleBufferDisplayLayer() const { return m_sampleBufferDisplayLayer.get(); }
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
+#endif
 
     bool requiresTextTrackRepresentation() const override;
     void setTextTrackRepresentation(TextTrackRepresentation*) override;
@@ -294,6 +301,7 @@ private:
 
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
+    void setShouldMaintainAspectRatio(bool) final;
 
     friend class MediaSourcePrivateAVFObjC;
 
@@ -332,11 +340,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     MediaTime m_lastSeekTime;
     FloatSize m_naturalSize;
-    double m_rate;
-    bool m_playing;
-    bool m_synchronizerSeeking;
+    double m_rate { 1 };
+    bool m_playing { false };
+    bool m_synchronizerSeeking { false };
     SeekState m_seekState { SeekCompleted };
-    mutable bool m_loadingProgressed;
+    mutable bool m_loadingProgressed { false };
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif
@@ -359,6 +367,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     uint64_t m_lastConvertedSampleCount { 0 };
     ProcessIdentity m_resourceOwner;
+    bool m_shouldMaintainAspectRatio { true };
 };
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState);

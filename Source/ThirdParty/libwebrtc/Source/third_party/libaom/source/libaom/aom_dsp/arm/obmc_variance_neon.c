@@ -55,7 +55,7 @@ static INLINE void obmc_variance_8x1_s16_neon(int16x8_t pre_s16,
   *ssev = vmlaq_s32(*ssev, round_s32_hi, round_s32_hi);
 }
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
 
 // Use tbl for doing a double-width zero extension from 8->32 bits since we can
 // do this in one instruction rather than two (indices out of range (255 here)
@@ -140,7 +140,7 @@ static INLINE void obmc_variance_large_neon(const uint8_t *pre, int pre_stride,
   *sum = horizontal_add_s32x4(sumv);
 }
 
-#else  // !defined(__aarch64__)
+#else  // !AOM_ARCH_AARCH64
 
 static INLINE void obmc_variance_large_neon(const uint8_t *pre, int pre_stride,
                                             const int32_t *wsrc,
@@ -180,7 +180,7 @@ static INLINE void obmc_variance_large_neon(const uint8_t *pre, int pre_stride,
   *sum = horizontal_add_s32x4(sumv);
 }
 
-#endif  // defined(__aarch64__)
+#endif  // AOM_ARCH_AARCH64
 
 static INLINE void obmc_variance_neon_128xh(const uint8_t *pre, int pre_stride,
                                             const int32_t *wsrc,

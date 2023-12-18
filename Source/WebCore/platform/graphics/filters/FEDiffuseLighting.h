@@ -30,7 +30,7 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
-    WEBCORE_EXPORT static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+    WEBCORE_EXPORT static Ref<FEDiffuseLighting> create(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEDiffuseLighting& other) const { return FELighting::operator==(other); }
 
@@ -40,11 +40,11 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
 private:
-    FEDiffuseLighting(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+    FEDiffuseLighting(const Color& lightingColor, float surfaceScale, float diffuseConstant, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEDiffuseLighting>(*this, other); }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDiffuseLighting)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEDiffuseLighting)

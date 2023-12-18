@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,13 @@
 #include "JSBigInt.h"
 #include "VM.h"
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorHeapAgent);
 
 InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
     : InspectorAgentBase("Heap"_s)
@@ -286,7 +289,7 @@ void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
         return;
     }
 
-    if (std::isnan(m_gcStartTime)) {
+    if (m_gcStartTime.isNaN()) {
         // We were not enabled when the GC began.
         return;
     }

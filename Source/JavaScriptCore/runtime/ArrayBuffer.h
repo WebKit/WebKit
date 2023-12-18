@@ -37,6 +37,7 @@
 #include <wtf/SharedTask.h>
 #include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -157,6 +158,8 @@ public:
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
 
+    JS_EXPORT_PRIVATE static std::optional<ArrayBufferContents> fromDataSpan(std::span<const uint8_t>);
+
     ArrayBufferContents(ArrayBufferContents&& other)
     {
         swap(other);
@@ -195,6 +198,8 @@ public:
             return m_maxByteLength;
         return std::nullopt;
     }
+
+    std::span<const uint8_t> dataSpan() const { return { static_cast<const uint8_t*>(data()), sizeInBytes() }; }
     
     bool isShared() const { return m_shared; }
     bool isResizableOrGrowableShared() const { return m_hasMaxByteLength; }
@@ -301,6 +306,7 @@ public:
     
     inline void pin();
     inline void unpin();
+    inline bool isDetachable() const;
     inline void pinAndLock();
     inline bool isLocked();
 
@@ -400,6 +406,11 @@ void ArrayBuffer::unpin()
     m_pinCount--;
 }
 
+bool ArrayBuffer::isDetachable() const
+{
+    return !m_pinCount && !m_locked && !isShared();
+}
+
 void ArrayBuffer::pinAndLock()
 {
     m_locked = true;
@@ -420,7 +431,7 @@ JS_EXPORT_PRIVATE ASCIILiteral errorMessageForTransfer(ArrayBuffer*);
 // https://tc39.es/proposal-resizablearraybuffer/#sec-makeidempotentarraybufferbytelengthgetter
 template<std::memory_order order>
 class IdempotentArrayBufferByteLengthGetter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdempotentArrayBufferByteLengthGetter);
 public:
     IdempotentArrayBufferByteLengthGetter() = default;
 

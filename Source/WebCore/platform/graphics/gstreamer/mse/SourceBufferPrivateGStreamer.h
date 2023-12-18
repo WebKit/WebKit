@@ -38,49 +38,46 @@
 
 #include "ContentType.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
+#include "MediaSourceTrackGStreamer.h"
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
 #include "TrackPrivateBaseGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
+#include <optional>
 #include <wtf/LoggerHelper.h>
+#include <wtf/StdUnorderedMap.h>
 
 namespace WebCore {
 
+using TrackID = uint64_t;
+
 class AppendPipeline;
 class MediaSourcePrivateGStreamer;
-class MediaSourceTrackGStreamer;
 
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
 public:
     static bool isContentTypeSupported(const ContentType&);
-    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer*, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
-    virtual ~SourceBufferPrivateGStreamer() = default;
+    static Ref<SourceBufferPrivateGStreamer> create(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
+    ~SourceBufferPrivateGStreamer();
 
-    void clearMediaSource() { m_mediaSource = nullptr; }
+    constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
 
-    void appendInternal(Ref<SharedBuffer>&&) final;
+    Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     void removedFromMediaSource() final;
-    MediaPlayer::ReadyState readyState() const final;
-    void setReadyState(MediaPlayer::ReadyState) final;
 
-    void flush(const AtomString&) final;
-    void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
-    void allSamplesInTrackEnqueued(const AtomString&) final;
-    bool isReadyForMoreSamples(const AtomString&) final;
-    void setActive(bool) final;
-    bool isActive() const final;
+    void flush(TrackID) final;
+    void enqueueSample(Ref<MediaSample>&&, TrackID) final;
+    void allSamplesInTrackEnqueued(TrackID) final;
+    bool isReadyForMoreSamples(TrackID) final;
 
-    void didReceiveInitializationSegment(InitializationSegment&&, CompletionHandler<void(ReceiveResult)>&&);
-    void didReceiveSample(Ref<MediaSample>&&);
+    bool precheckInitializationSegment(const InitializationSegment&) final;
+    void processInitializationSegment(std::optional<InitializationSegment>&&) final;
+
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
-    MediaTime currentMediaTime() const final;
-    MediaTime duration() const final;
-
-    bool hasReceivedInitializationSegment() const { return m_hasReceivedInitializationSegment; }
-    HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>>::ValuesIteratorRange tracks() { return m_tracks.values(); }
+    auto& tracks() const { return m_tracks; }
 
     ContentType type() const { return m_type; }
 
@@ -97,19 +94,18 @@ public:
     size_t platformEvictionThreshold() const final;
 
 private:
-    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer*, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
+    friend class AppendPipeline;
 
-    void notifyClientWhenReadyForMoreSamples(const AtomString&) override;
+    SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
 
-    MediaSourcePrivateGStreamer* m_mediaSource;
-    bool m_isActive { false };
+    void notifyClientWhenReadyForMoreSamples(TrackID) override;
+
     bool m_hasBeenRemovedFromMediaSource { false };
     ContentType m_type;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     UniqueRef<AppendPipeline> m_appendPipeline;
-    AtomString m_trackId;
-    HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
-    bool m_hasReceivedInitializationSegment { false };
+    StdUnorderedMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
+    std::optional<MediaPromise::Producer> m_appendPromise;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
@@ -117,6 +113,10 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SourceBufferPrivateGStreamer)
+static bool isType(const WebCore::SourceBufferPrivate& sourceBuffer) { return sourceBuffer.platformType() == WebCore::MediaPlatformType::GStreamer; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

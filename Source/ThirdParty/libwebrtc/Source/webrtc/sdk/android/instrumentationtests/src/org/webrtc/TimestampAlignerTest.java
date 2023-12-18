@@ -11,12 +11,9 @@
 package org.webrtc;
 
 import androidx.test.filters.SmallTest;
-import org.chromium.base.test.params.BaseJUnit4RunnerDelegate;
-import org.chromium.base.test.params.ParameterAnnotations.UseRunnerDelegate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@UseRunnerDelegate(BaseJUnit4RunnerDelegate.class)
 public class TimestampAlignerTest {
   @BeforeClass
   public static void setUp() {

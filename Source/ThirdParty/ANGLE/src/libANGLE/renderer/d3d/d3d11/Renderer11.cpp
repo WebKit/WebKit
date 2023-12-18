@@ -2851,7 +2851,8 @@ angle::Result Renderer11::copyTexture(const gl::Context *context,
         ASSERT(sourceStorage11);
 
         const d3d11::SharedSRV *sourceSRV = nullptr;
-        ANGLE_TRY(sourceStorage11->getSRVLevels(context, sourceLevel, sourceLevel, &sourceSRV));
+        ANGLE_TRY(
+            sourceStorage11->getSRVLevels(context, sourceLevel, sourceLevel, true, &sourceSRV));
 
         gl::ImageIndex destIndex;
         if (destTarget == gl::TextureTarget::_2D || destTarget == gl::TextureTarget::_3D ||
@@ -3399,7 +3400,7 @@ angle::Result Renderer11::generateMipmapUsingD3D(const gl::Context *context,
 
     const d3d11::SharedSRV *srv = nullptr;
     ANGLE_TRY(storage11->getSRVLevels(context, textureState.getEffectiveBaseLevel(),
-                                      textureState.getEffectiveMaxLevel(), &srv));
+                                      textureState.getEffectiveMaxLevel(), false, &srv));
 
     mDeviceContext->GenerateMips(srv->get());
 
@@ -4269,8 +4270,8 @@ angle::Result Renderer11::dispatchCompute(const gl::Context *context,
 {
     const gl::State &glState                = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
-    if (executable->getActiveShaderStorageBlockCount() > 0 ||
-        executable->getActiveAtomicCounterBufferCount() > 0)
+    if (executable->getShaderStorageBlocks().size() > 0 ||
+        executable->getAtomicCounterBuffers().size() > 0)
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
@@ -4284,8 +4285,8 @@ angle::Result Renderer11::dispatchComputeIndirect(const gl::Context *context, GL
 {
     const auto &glState                     = context->getState();
     const gl::ProgramExecutable *executable = glState.getProgramExecutable();
-    if (executable->getActiveShaderStorageBlockCount() > 0 ||
-        executable->getActiveAtomicCounterBufferCount() > 0)
+    if (executable->getShaderStorageBlocks().size() > 0 ||
+        executable->getAtomicCounterBuffers().size() > 0)
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
@@ -4509,12 +4510,12 @@ angle::Result Renderer11::markTypedBufferUsage(const gl::Context *context)
 
 angle::Result Renderer11::markRawBufferUsage(const gl::Context *context)
 {
-    const gl::State &glState   = context->getState();
-    const gl::Program *program = glState.getProgram();
-    for (size_t blockIndex = 0; blockIndex < program->getActiveShaderStorageBlockCount();
+    const gl::State &glState                = context->getState();
+    const gl::ProgramExecutable *executable = glState.getProgramExecutable();
+    for (size_t blockIndex = 0; blockIndex < executable->getShaderStorageBlocks().size();
          blockIndex++)
     {
-        GLuint binding = program->getShaderStorageBlockBinding(static_cast<GLuint>(blockIndex));
+        GLuint binding = executable->getShaderStorageBlockBinding(static_cast<GLuint>(blockIndex));
         const auto &shaderStorageBuffer = glState.getIndexedShaderStorageBuffer(binding);
         if (shaderStorageBuffer.get() != nullptr)
         {
@@ -4523,9 +4524,9 @@ angle::Result Renderer11::markRawBufferUsage(const gl::Context *context)
         }
     }
 
-    for (const auto &atomicCounterBuffer : program->getState().getAtomicCounterBuffers())
+    for (const auto &atomicCounterBuffer : executable->getAtomicCounterBuffers())
     {
-        GLuint binding     = atomicCounterBuffer.binding;
+        GLuint binding     = atomicCounterBuffer.pod.binding;
         const auto &buffer = glState.getIndexedAtomicCounterBuffer(binding);
 
         if (buffer.get() != nullptr)

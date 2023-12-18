@@ -26,14 +26,13 @@
 #pragma once
 
 #include "RenderSVGResourceMasker.h"
-#include "SVGElementTypeHelpers.h"
 #include "SVGMaskElement.h"
 
 namespace WebCore {
 
 inline SVGMaskElement& RenderSVGResourceMasker::maskElement() const
 {
-    return downcast<SVGMaskElement>(LegacyRenderSVGResourceContainer::element());
+    return downcast<SVGMaskElement>(RenderSVGResourceContainer::element());
 }
 
 SVGUnitTypes::SVGUnitType RenderSVGResourceMasker::maskUnits() const

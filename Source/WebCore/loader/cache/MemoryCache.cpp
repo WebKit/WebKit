@@ -478,7 +478,7 @@ auto MemoryCache::lruListFor(CachedResource& resource) -> LRUList&
 
     m_allResources.reserveCapacity(queueIndex + 1);
     while (m_allResources.size() <= queueIndex)
-        m_allResources.uncheckedAppend(makeUnique<LRUList>());
+        m_allResources.append(makeUnique<LRUList>());
     return *m_allResources[queueIndex];
 }
 

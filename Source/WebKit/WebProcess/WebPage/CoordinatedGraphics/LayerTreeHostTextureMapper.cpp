@@ -39,7 +39,7 @@
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
-#include <WebCore/TextureMapperGL.h>
+#include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperLayer.h>
 
 namespace WebKit {
@@ -94,12 +94,6 @@ void LayerTreeHost::layerFlushTimerFired()
     if (m_isSuspended)
         return;
 
-    if (m_notifyAfterScheduledLayerFlush) {
-        m_webPage.drawingArea()->layerHostDidFlushLayers();
-        m_notifyAfterScheduledLayerFlush = false;
-        return;
-    }
-
     flushAndRenderLayers();
 
     if (!enabled())
@@ -134,18 +128,13 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 
     m_context->makeContextCurrent();
 
-    m_textureMapper = TextureMapperGL::create();
+    m_textureMapper = TextureMapper::create();
 }
 
 LayerTreeHost::~LayerTreeHost() = default;
 
 void LayerTreeHost::setLayerFlushSchedulingEnabled(bool)
 {
-}
-
-void LayerTreeHost::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
-{
-    m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
 }
 
 void LayerTreeHost::scheduleLayerFlush()

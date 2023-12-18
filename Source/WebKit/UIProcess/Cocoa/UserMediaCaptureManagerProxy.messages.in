@@ -25,11 +25,13 @@
 
 messages -> UserMediaCaptureManagerProxy NotRefCounted {
     CreateMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier id, WebCore::CaptureDevice device, struct WebCore::MediaDeviceHashSalts hashSalts, struct WebCore::MediaConstraints constraints, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier pageIdentifier) -> (struct WebCore::CaptureSourceError error, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities) Async
-    StartProducingData(WebCore::RealtimeMediaSourceIdentifier id)
+    StartProducingData(WebCore::RealtimeMediaSourceIdentifier id, WebCore::PageIdentifier pageIdentifier)
     StopProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     RemoveSource(WebCore::RealtimeMediaSourceIdentifier id)
     ApplyConstraints(WebCore::RealtimeMediaSourceIdentifier id, struct WebCore::MediaConstraints constraints)
-    GetPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier sourceID) -> (struct WebCore::PhotoCapabilitiesOrError result) Async
+    TakePhoto(WebCore::RealtimeMediaSourceIdentifier sourceID, struct WebCore::PhotoSettings settings) -> (Expected<std::pair<Vector<uint8_t>, String>, String> result);
+    GetPhotoCapabilities(WebCore::RealtimeMediaSourceIdentifier sourceID) -> (Expected<WebCore::PhotoCapabilities, String> result) Async
+    GetPhotoSettings(WebCore::RealtimeMediaSourceIdentifier sourceID) -> (Expected<WebCore::PhotoSettings, String> result) Async
     Clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID, WebCore::PageIdentifier pageIdentifier)
     EndProducingData(WebCore::RealtimeMediaSourceIdentifier sourceID)
     SetShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier sourceID, bool shouldApplyRotation)

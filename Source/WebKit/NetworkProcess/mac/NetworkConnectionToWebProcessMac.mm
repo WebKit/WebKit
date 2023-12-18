@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkConnectionToWebProcess.h"
 
+#import "CoreIPCAuditToken.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -33,11 +34,11 @@ namespace WebKit {
 
 #if PLATFORM(MAC)
 
-void NetworkConnectionToWebProcess::updateActivePages(const String& overrideDisplayName, const Vector<String>& activePagesOrigins, audit_token_t auditToken)
+void NetworkConnectionToWebProcess::updateActivePages(const String& overrideDisplayName, const Vector<String>& activePagesOrigins, CoreIPCAuditToken&& auditToken)
 {
     // Setting and getting the display name of another process requires a private entitlement.
 #if USE(APPLE_INTERNAL_SDK)
-    auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken));
+    auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken.auditToken()));
     if (!overrideDisplayName)
         _LSSetApplicationInformationItem(kLSDefaultSessionID, asn.get(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activePagesOrigins).get(), nullptr);
     else
@@ -49,10 +50,10 @@ void NetworkConnectionToWebProcess::updateActivePages(const String& overrideDisp
 #endif
 }
 
-void NetworkConnectionToWebProcess::getProcessDisplayName(audit_token_t auditToken, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkConnectionToWebProcess::getProcessDisplayName(CoreIPCAuditToken&& auditToken, CompletionHandler<void(const String&)>&& completionHandler)
 {
 #if USE(APPLE_INTERNAL_SDK)
-    auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken));
+    auto asn = adoptCF(_LSCopyLSASNForAuditToken(kLSDefaultSessionID, auditToken.auditToken()));
     return completionHandler(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, asn.get(), _kLSDisplayNameKey)).get());
 #else
     completionHandler({ });

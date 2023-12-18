@@ -12,20 +12,30 @@
 
 #include <string.h>
 
+#include <cstring>
 #include <string>
 
 #include "rtc_base/buffer.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace rtc {
+namespace {
 
-class RandomTest : public ::testing::Test {};
+using ::testing::_;
+using ::testing::DoAll;
+using ::testing::Invoke;
+using ::testing::IsEmpty;
+using ::testing::Not;
+using ::testing::Return;
+using ::testing::WithArg;
+using ::testing::WithArgs;
 
-TEST_F(RandomTest, TestCreateRandomId) {
+TEST(RandomTest, TestCreateRandomId) {
   CreateRandomId();
 }
 
-TEST_F(RandomTest, TestCreateRandomDouble) {
+TEST(RandomTest, TestCreateRandomDouble) {
   for (int i = 0; i < 100; ++i) {
     double r = CreateRandomDouble();
     EXPECT_GE(r, 0.0);
@@ -33,11 +43,11 @@ TEST_F(RandomTest, TestCreateRandomDouble) {
   }
 }
 
-TEST_F(RandomTest, TestCreateNonZeroRandomId) {
+TEST(RandomTest, TestCreateNonZeroRandomId) {
   EXPECT_NE(0U, CreateRandomNonZeroId());
 }
 
-TEST_F(RandomTest, TestCreateRandomString) {
+TEST(RandomTest, TestCreateRandomString) {
   std::string random = CreateRandomString(256);
   EXPECT_EQ(256U, random.size());
   std::string random2;
@@ -46,7 +56,7 @@ TEST_F(RandomTest, TestCreateRandomString) {
   EXPECT_EQ(256U, random2.size());
 }
 
-TEST_F(RandomTest, TestCreateRandomData) {
+TEST(RandomTest, TestCreateRandomData) {
   static size_t kRandomDataLength = 32;
   std::string random1;
   std::string random2;
@@ -57,7 +67,7 @@ TEST_F(RandomTest, TestCreateRandomData) {
   EXPECT_NE(0, memcmp(random1.data(), random2.data(), kRandomDataLength));
 }
 
-TEST_F(RandomTest, TestCreateRandomStringEvenlyDivideTable) {
+TEST(RandomTest, TestCreateRandomStringEvenlyDivideTable) {
   static std::string kUnbiasedTable("01234567");
   std::string random;
   EXPECT_TRUE(CreateRandomString(256, kUnbiasedTable, &random));
@@ -68,12 +78,12 @@ TEST_F(RandomTest, TestCreateRandomStringEvenlyDivideTable) {
   EXPECT_EQ(0U, random.size());
 }
 
-TEST_F(RandomTest, TestCreateRandomUuid) {
+TEST(RandomTest, TestCreateRandomUuid) {
   std::string random = CreateRandomUuid();
   EXPECT_EQ(36U, random.size());
 }
 
-TEST_F(RandomTest, TestCreateRandomForTest) {
+TEST(RandomTest, TestCreateRandomForTest) {
   // Make sure we get the output we expect.
   SetRandomTestMode(true);
   EXPECT_EQ(2154761789U, CreateRandomId());
@@ -112,4 +122,50 @@ TEST_F(RandomTest, TestCreateRandomForTest) {
   SetRandomTestMode(false);
 }
 
+class MockRandomGenerator : public RandomGenerator {
+ public:
+  MOCK_METHOD(void, Die, ());
+  ~MockRandomGenerator() override { Die(); }
+
+  MOCK_METHOD(bool, Init, (const void* seed, size_t len), (override));
+  MOCK_METHOD(bool, Generate, (void* buf, size_t len), (override));
+};
+
+TEST(RandomTest, TestSetRandomGenerator) {
+  std::unique_ptr<MockRandomGenerator> will_move =
+      std::make_unique<MockRandomGenerator>();
+  MockRandomGenerator* generator = will_move.get();
+  SetRandomGenerator(std::move(will_move));
+
+  EXPECT_CALL(*generator, Init(_, sizeof(int))).WillOnce(Return(true));
+  EXPECT_TRUE(InitRandom(5));
+
+  std::string seed = "seed";
+  EXPECT_CALL(*generator, Init(seed.data(), seed.size()))
+      .WillOnce(Return(true));
+  EXPECT_TRUE(InitRandom(seed.data(), seed.size()));
+
+  uint32_t id = 4658;
+  EXPECT_CALL(*generator, Generate(_, sizeof(uint32_t)))
+      .WillOnce(DoAll(WithArg<0>(Invoke([&id](void* p) {
+                        std::memcpy(p, &id, sizeof(uint32_t));
+                      })),
+                      Return(true)));
+  EXPECT_EQ(CreateRandomId(), id);
+
+  EXPECT_CALL(*generator, Generate)
+      .WillOnce(DoAll(
+          WithArgs<0, 1>([](void* p, size_t len) { std::memset(p, 0, len); }),
+          Return(true)));
+  EXPECT_THAT(CreateRandomUuid(), Not(IsEmpty()));
+
+  // Set the default random generator, and expect that mock generator is
+  // not used beyond this point.
+  EXPECT_CALL(*generator, Die);
+  EXPECT_CALL(*generator, Generate).Times(0);
+  SetDefaultRandomGenerator();
+  EXPECT_THAT(CreateRandomUuid(), Not(IsEmpty()));
+}
+
+}  // namespace
 }  // namespace rtc

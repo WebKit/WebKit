@@ -1,0 +1,10 @@
+No red should be seen below.
+
+1
+2
+3
+4
+5
+
+PASS Table with border spacing
+

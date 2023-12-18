@@ -240,7 +240,6 @@ class DecoderBitstreamFileWriter : public test::FakeDecoder {
   ~DecoderBitstreamFileWriter() override { fclose(file_); }
 
   int32_t Decode(const EncodedImage& encoded_frame,
-                 bool /* missing_frames */,
                  int64_t /* render_time_ms */) override {
     if (fwrite(encoded_frame.data(), 1, encoded_frame.size(), file_) <
         encoded_frame.size()) {
@@ -268,6 +267,8 @@ class DecoderIvfFileWriter : public test::FakeDecoder {
       video_codec_type_ = VideoCodecType::kVideoCodecH264;
     } else if (codec == "AV1") {
       video_codec_type_ = VideoCodecType::kVideoCodecAV1;
+    } else if (codec == "H265") {
+      video_codec_type_ = VideoCodecType::kVideoCodecH265;
     } else {
       RTC_LOG(LS_ERROR) << "Unsupported video codec " << codec;
       RTC_DCHECK_NOTREACHED();
@@ -276,7 +277,6 @@ class DecoderIvfFileWriter : public test::FakeDecoder {
   ~DecoderIvfFileWriter() override { file_writer_->Close(); }
 
   int32_t Decode(const EncodedImage& encoded_frame,
-                 bool /* missing_frames */,
                  int64_t render_time_ms) override {
     if (!file_writer_->WriteFrame(encoded_frame, video_codec_type_)) {
       return WEBRTC_VIDEO_CODEC_ERROR;
@@ -494,10 +494,10 @@ class RtpReplayer final {
             "worker_thread", TaskQueueFactory::Priority::NORMAL));
     rtc::Event event;
     worker_thread_->PostTask([&]() {
-      Call::Config call_config(&event_log_);
+      CallConfig call_config(&event_log_);
       call_config.trials = field_trials_.get();
       call_config.task_queue_factory = task_queue_factory;
-      call_.reset(Call::Create(call_config));
+      call_ = Call::Create(call_config);
 
       // Creation of the streams must happen inside a task queue because it is
       // resued as a worker thread.

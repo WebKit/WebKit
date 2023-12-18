@@ -76,6 +76,18 @@ struct IntegralMarkableTraits {
     }
 };
 
+struct FloatMarkableTraits {
+    constexpr static bool isEmptyValue(float value)
+    {
+        return value != value;
+    }
+
+    constexpr static float emptyValue()
+    {
+        return std::numeric_limits<float>::quiet_NaN();
+    }
+};
+
 // The goal of Markable is offering Optional without sacrificing storage efficiency.
 // Markable takes Traits, which should have isEmptyValue and emptyValue functions. By using
 // one value of T as an empty value, we can remove bool flag in Optional. This strategy is
@@ -128,6 +140,13 @@ public:
 
     constexpr const T& operator*() const& { return m_value; }
     constexpr T& operator*() & { return m_value; }
+
+    template <class U> constexpr T value_or(U&& fallback) const
+    {
+        if (bool(*this))
+            return m_value;
+        return static_cast<T>(std::forward<U>(fallback));
+    }
 
     operator std::optional<T>() &&
     {

@@ -134,7 +134,7 @@ RtpCapabilities PeerConnectionFactory::GetRtpSenderCapabilities(
     }
     case cricket::MEDIA_TYPE_VIDEO: {
       cricket::VideoCodecs cricket_codecs;
-      cricket_codecs = media_engine()->video().send_codecs();
+      cricket_codecs = media_engine()->video().send_codecs(context_->use_rtx());
       auto extensions =
           GetDefaultEnabledRtpHeaderExtensions(media_engine()->video());
       return ToRtpCapabilities(cricket_codecs, extensions);
@@ -224,11 +224,6 @@ PeerConnectionFactory::CreatePeerConnectionOrError(
         configuration.port_allocator_config.flags);
   }
 
-  if (!dependencies.async_resolver_factory) {
-    dependencies.async_resolver_factory =
-        std::make_unique<webrtc::BasicAsyncResolverFactory>();
-  }
-
   if (!dependencies.ice_transport_factory) {
     dependencies.ice_transport_factory =
         std::make_unique<DefaultIceTransportFactory>();
@@ -293,9 +288,9 @@ rtc::scoped_refptr<AudioTrackInterface> PeerConnectionFactory::CreateAudioTrack(
 std::unique_ptr<RtcEventLog> PeerConnectionFactory::CreateRtcEventLog_w() {
   RTC_DCHECK_RUN_ON(worker_thread());
 
-  auto encoding_type = RtcEventLog::EncodingType::Legacy;
-  if (IsTrialEnabled("WebRTC-RtcEventLogNewFormat"))
-    encoding_type = RtcEventLog::EncodingType::NewFormat;
+  auto encoding_type = RtcEventLog::EncodingType::NewFormat;
+  if (field_trials().IsDisabled("WebRTC-RtcEventLogNewFormat"))
+    encoding_type = RtcEventLog::EncodingType::Legacy;
   return event_log_factory_ ? event_log_factory_->Create(encoding_type)
                             : std::make_unique<RtcEventLogNull>();
 }
@@ -306,7 +301,7 @@ std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
     const PeerConnectionInterface::RTCConfiguration& configuration) {
   RTC_DCHECK_RUN_ON(worker_thread());
 
-  webrtc::Call::Config call_config(event_log, network_thread());
+  CallConfig call_config(event_log, network_thread());
   if (!media_engine() || !context_->call_factory()) {
     return nullptr;
   }
@@ -347,8 +342,7 @@ std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
       transport_controller_send_factory_.get();
   call_config.metronome = metronome_.get();
   call_config.pacer_burst_interval = configuration.pacer_burst_interval;
-  return std::unique_ptr<Call>(
-      context_->call_factory()->CreateCall(call_config));
+  return context_->call_factory()->CreateCall(call_config);
 }
 
 bool PeerConnectionFactory::IsTrialEnabled(absl::string_view key) const {

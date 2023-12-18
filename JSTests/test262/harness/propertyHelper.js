@@ -45,19 +45,6 @@ function verifyProperty(obj, name, desc, options) {
     return true;
   }
 
-  var names = Object.getOwnPropertyNames(desc);
-  for (var i = 0; i < names.length; i++) {
-    assert(
-      names[i] === "value" ||
-        names[i] === "writable" ||
-        names[i] === "enumerable" ||
-        names[i] === "configurable" ||
-        names[i] === "get" ||
-        names[i] === "set",
-      "Invalid descriptor field: " + names[i],
-    );
-  }
-
   assert(
     Object.prototype.hasOwnProperty.call(obj, name),
     "obj should have an own property " + nameStr
@@ -75,6 +62,19 @@ function verifyProperty(obj, name, desc, options) {
     "The desc argument should be an object or undefined, " + String(desc)
   );
 
+  var names = Object.getOwnPropertyNames(desc);
+  for (var i = 0; i < names.length; i++) {
+    assert(
+      names[i] === "value" ||
+        names[i] === "writable" ||
+        names[i] === "enumerable" ||
+        names[i] === "configurable" ||
+        names[i] === "get" ||
+        names[i] === "set",
+      "Invalid descriptor field: " + names[i],
+    );
+  }
+
   var failures = [];
 
   if (Object.prototype.hasOwnProperty.call(desc, 'value')) {
@@ -82,7 +82,7 @@ function verifyProperty(obj, name, desc, options) {
       failures.push("descriptor value should be " + desc.value);
     }
     if (!isSameValue(desc.value, obj[name])) {
-      failures.push(failures, "object value should be " + desc.value);
+      failures.push("object value should be " + desc.value);
     }
   }
 

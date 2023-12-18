@@ -43,20 +43,26 @@ class WebExtensionControllerConfiguration : public API::ObjectImpl<API::Object::
 
 public:
     enum class IsPersistent : bool { No, Yes };
+    enum TemporaryTag { Temporary };
 
     static Ref<WebExtensionControllerConfiguration> createDefault() { return adoptRef(*new WebExtensionControllerConfiguration(IsPersistent::Yes)); }
     static Ref<WebExtensionControllerConfiguration> createNonPersistent() { return adoptRef(*new WebExtensionControllerConfiguration(IsPersistent::No)); }
+    static Ref<WebExtensionControllerConfiguration> createTemporary() { return adoptRef(*new WebExtensionControllerConfiguration(Temporary)); }
     static Ref<WebExtensionControllerConfiguration> create(const WTF::UUID& identifier) { return adoptRef(*new WebExtensionControllerConfiguration(identifier)); }
 
     Ref<WebExtensionControllerConfiguration> copy() const;
 
     explicit WebExtensionControllerConfiguration(IsPersistent);
+    explicit WebExtensionControllerConfiguration(TemporaryTag, const String& storageDirectory = nullString());
     explicit WebExtensionControllerConfiguration(const WTF::UUID&);
 
     std::optional<WTF::UUID> identifier() const { return m_identifier; }
 
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
-    String storageDirectory() const { return m_storageDirectory; }
+    bool storageIsTemporary() const { return m_temporary; }
+
+    const String& storageDirectory() const { return m_storageDirectory; }
+    void setStorageDirectory(const String& directory) { m_storageDirectory = directory; }
 
     WKWebViewConfiguration *webViewConfiguration();
     void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
@@ -69,8 +75,10 @@ public:
 
 private:
     static String createStorageDirectoryPath(std::optional<WTF::UUID> = std::nullopt);
+    static String createTemporaryStorageDirectoryPath();
 
     Markable<WTF::UUID> m_identifier;
+    bool m_temporary { false };
     String m_storageDirectory;
     RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
 };

@@ -164,7 +164,7 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<key>MIMEType</key>
 				<string>image/gif</string>
 				<key>URL</key>
-				<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-shift-jis-%88%9F</string>
+				<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-shift-jis-%E4%BA%9C</string>
 				<key>allHeaderFields</key>
 				<dict>
 					<key>Accept-Ranges</key>
@@ -188,7 +188,7 @@ Webarchive fails to save images referenced in CSS&lt;/a&gt;
 				<integer>200</integer>
 			</dict>
 			<key>WebResourceURL</key>
-			<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-shift-jis-%88%9F</string>
+			<string>http://127.0.0.1:8000/webarchive/resources/apple.gif?css-url-shift-jis-%E4%BA%9C</string>
 		</dict>
 		<dict>
 			<key>WebResourceData</key>

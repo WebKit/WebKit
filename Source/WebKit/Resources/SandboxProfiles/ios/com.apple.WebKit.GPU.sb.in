@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -342,6 +342,7 @@
 )
 
 (deny file-map-executable)
+(allow file-map-executable (executable-bundle))
 
 (deny file-write-mount file-write-unmount)
 
@@ -774,6 +775,9 @@
     (deny syscall-unix (with telemetry))
     (deny syscall-unix (with no-report) (syscall-number
         SYS_faccessat))
+    (when (defined? 'SYS_crossarch_trap)
+        (deny syscall-unix (with no-report) (syscall-number
+            SYS_crossarch_trap)))
     (allow syscall-unix (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall

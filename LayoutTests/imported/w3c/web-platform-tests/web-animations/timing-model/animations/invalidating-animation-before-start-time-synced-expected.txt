@@ -1,0 +1,4 @@
+The blue boxes below should stay aligned in the x-axis.
+
+PASS Animation invalidated before startTime is set doesn't affect startTime
+

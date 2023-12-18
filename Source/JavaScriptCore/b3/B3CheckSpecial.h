@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "AirKind.h"
 #include "B3StackmapSpecial.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
@@ -49,6 +50,7 @@ struct Inst;
 // - CheckMul(a, b), which turns into Mul32 b, a but we pass Any for a's ValueRep.
 
 class CheckSpecial final : public StackmapSpecial {
+    WTF_MAKE_TZONE_ALLOCATED(CheckSpecial);
 public:
     // Support for hash consing these things.
     class Key {

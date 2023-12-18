@@ -1,0 +1,4 @@
+
+
+PASS currententrychange does not fire when navigating away from the initial about:blank
+

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CookieListItem.h"
 #include "ExtendableEventInit.h"
 #include <wtf/Vector.h>
@@ -39,5 +37,3 @@ struct ExtendableCookieChangeEventInit : ExtendableEventInit {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

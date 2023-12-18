@@ -119,10 +119,9 @@ EventInterface DeviceOrientationEvent::eventInterface() const
 #if ENABLE(DEVICE_ORIENTATION)
 void DeviceOrientationEvent::requestPermission(Document& document, PermissionPromise&& promise)
 {
-    auto* window = document.domWindow();
-    auto* page = document.page();
-    if (!window || !page)
-        return promise.reject(Exception { InvalidStateError, "No browsing context"_s });
+    RefPtr window = document.domWindow();
+    if (!window || !document.page())
+        return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
 
     String errorMessage;
     if (!window->isAllowedToUseDeviceOrientation(errorMessage)) {
@@ -132,7 +131,7 @@ void DeviceOrientationEvent::requestPermission(Document& document, PermissionPro
 
     document.deviceOrientationAndMotionAccessController().shouldAllowAccess(document, [promise = WTFMove(promise)](PermissionState permissionState) mutable {
         if (permissionState == PermissionState::Prompt)
-            return promise.reject(Exception { NotAllowedError, "Requesting device orientation access requires a user gesture to prompt"_s });
+            return promise.reject(Exception { ExceptionCode::NotAllowedError, "Requesting device orientation access requires a user gesture to prompt"_s });
         promise.resolve(permissionState);
     });
 }

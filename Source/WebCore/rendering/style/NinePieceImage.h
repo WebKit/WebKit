@@ -58,7 +58,7 @@ enum ImagePiece {
 
 inline ImagePiece& operator++(ImagePiece& piece)
 {
-    piece = static_cast<ImagePiece>(static_cast<int>(piece) + 1);
+    piece = static_cast<ImagePiece>(enumToUnderlyingType(piece) + 1);
     return piece;
 }
 
@@ -118,6 +118,7 @@ public:
 
     bool hasImage() const { return m_data->image; }
     StyleImage* image() const { return m_data->image.get(); }
+    RefPtr<StyleImage> protectedImage() const { return image(); }
     void setImage(RefPtr<StyleImage>&& image) { m_data.access().image = WTFMove(image); }
 
     const LengthBox& imageSlices() const { return m_data->imageSlices; }

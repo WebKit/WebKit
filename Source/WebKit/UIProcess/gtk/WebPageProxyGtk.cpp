@@ -139,4 +139,14 @@ OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifier
     return modifiers;
 }
 
+void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
+{
+    if (!hasRunningProcess() || !m_drawingArea) {
+        callback();
+        return;
+    }
+
+    webkitWebViewBaseCallAfterNextPresentationUpdate(WEBKIT_WEB_VIEW_BASE(viewWidget()), WTFMove(callback));
+}
+
 } // namespace WebKit

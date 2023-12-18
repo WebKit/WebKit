@@ -104,7 +104,7 @@ private:
 
     WeakObjCPtr<WebView> m_inspectedWebView;
     RetainPtr<WebNodeHighlighter> m_highlighter;
-    WeakPtr<WebCore::Page> m_frontendPage;
+    SingleThreadWeakPtr<WebCore::Page> m_frontendPage;
     std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
 };
 

@@ -33,7 +33,7 @@ namespace WebCore {
 class CachedResource;
 class NetworkLoadMetrics;
 
-class WEBCORE_EXPORT CachedResourceClient : public CanMakeWeakPtr<CachedResourceClient> {
+class WEBCORE_EXPORT CachedResourceClient : public CanMakeSingleThreadWeakPtr<CachedResourceClient> {
     WTF_MAKE_NONCOPYABLE(CachedResourceClient);
 public:
     enum CachedResourceClientType {

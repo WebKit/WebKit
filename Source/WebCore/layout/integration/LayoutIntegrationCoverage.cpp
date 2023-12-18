@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationCoverage.h"
 
-#include "DeprecatedGlobalSettings.h"
 #include "GapLength.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
@@ -34,6 +33,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFrameSet.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -53,20 +53,10 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-static std::optional<AvoidanceReason> canUseForBlockStyle(const RenderBlockFlow& blockContainer)
-{
-    ASSERT(is<RenderBlockFlow>(blockContainer));
-
-    auto& style = blockContainer.style();
-    if (style.lineSnap() != LineSnap::None)
-        return AvoidanceReason::FlowHasLineSnap;
-    return { };
-}
-
 static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 {
     if (is<RenderText>(child)) {
-        if (child.isSVGInlineText())
+        if (child.isRenderSVGInlineText())
             return AvoidanceReason::ContentIsSVG;
         return { };
     }
@@ -75,11 +65,12 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
         return { };
 
     auto& renderer = downcast<RenderElement>(child);
-    if (renderer.isRubyRun())
+    if (renderer.isRenderRubyRun())
         return AvoidanceReason::ContentIsRuby;
 
     if (is<RenderBlockFlow>(renderer)
         || is<RenderGrid>(renderer)
+        || is<RenderFrameSet>(renderer)
         || is<RenderFlexibleBox>(renderer)
         || is<RenderDeprecatedFlexibleBox>(renderer)
         || is<RenderReplaced>(renderer)
@@ -92,9 +83,9 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
         return { };
 
     if (is<RenderInline>(renderer)) {
-        if (renderer.isSVGInline())
+        if (renderer.isRenderSVGInline())
             return AvoidanceReason::ContentIsSVG;
-        if (renderer.isRubyInline())
+        if (renderer.isRenderRubyAsInline())
             return AvoidanceReason::ContentIsRuby;
         return { };
     }
@@ -105,23 +96,21 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 
 static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow)
 {
-    if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
+    if (!flow.document().settings().inlineFormattingContextIntegrationEnabled())
         return AvoidanceReason::FeatureIsDisabled;
-    if (flow.isRenderView())
-        return AvoidanceReason::FlowIsInitialContainingBlock;
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.
         ASSERT(is<RenderSVGBlock>(flow));
         return AvoidanceReason::ContentIsSVG;
     }
-    if (flow.isRubyText() || flow.isRubyBase())
+    if (flow.isRenderRubyText() || flow.isRenderRubyBase())
         return AvoidanceReason::ContentIsRuby;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
         if (auto childReason = canUseForChild(child))
             return *childReason;
     }
-    return canUseForBlockStyle(flow);
+    return { };
 }
 
 bool canUseForLineLayout(const RenderBlockFlow& flow)
@@ -129,16 +118,11 @@ bool canUseForLineLayout(const RenderBlockFlow& flow)
     return !canUseForLineLayoutWithReason(flow);
 }
 
-bool canUseForLineLayoutAfterBlockStyleChange(const RenderBlockFlow& blockContainer, StyleDifference diff)
-{
-    return diff == StyleDifference::Layout ? canUseForLineLayout(blockContainer) : true;
-}
-
 bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
-        if (renderer.isText())
+        if (renderer.isRenderText())
             continue;
         if (is<RenderLineBreak>(renderer))
             continue;
@@ -192,6 +176,17 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         // FIXME: InlineItemsBuilder needs some work to support paragraph level bidi handling.
         return true;
     }
+    auto hasFirstLetter = [&] {
+        // FIXME: RenderTreeUpdater::updateTextRenderer produces odd values for offset/length when first-letter is present webkit.org/b/263343
+        if (rootBlockContainer.style().hasPseudoStyle(PseudoId::FirstLetter))
+            return true;
+        if (rootBlockContainer.isAnonymous())
+            return rootBlockContainer.containingBlock() && rootBlockContainer.containingBlock()->style().hasPseudoStyle(PseudoId::FirstLetter);
+        return false;
+    };
+    if (hasFirstLetter())
+        return true;
+
     if (lineLayout.isDamaged()) {
         auto previousDamages = lineLayout.damageReasons();
         if (previousDamages && previousDamages != Layout::InlineDamage::Reason::Append) {
@@ -199,7 +194,9 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
             return true;
         }
     }
-    if (rootBlockContainer.style().direction() == TextDirection::RTL || rootBlockContainer.style().textWrap() == TextWrap::Balance)
+
+    bool shouldBalance = rootBlockContainer.style().textWrapMode() == TextWrapMode::Wrap && rootBlockContainer.style().textWrapStyle() == TextWrapStyle::Balance;
+    if (rootBlockContainer.style().direction() == TextDirection::RTL || shouldBalance)
         return true;
 
     auto rootHasNonSupportedRenderer = [&] {
@@ -264,14 +261,14 @@ bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
             return false;
         if (flexItem.isFloating() || flexItem.isOutOfFlowPositioned())
             return false;
-        if (flexItem.isSVGRootOrLegacySVGRoot())
+        if (flexItem.isRenderOrLegacyRenderSVGRoot())
             return false;
         // FIXME: No nested flexbox support.
         if (flexItem.isFlexibleBoxIncludingDeprecated())
             return false;
         if (flexItem.isFieldset() || flexItem.isRenderTextControl())
             return false;
-        if (flexItem.isTable())
+        if (flexItem.isRenderTable())
             return false;
         auto& flexItemStyle = flexItem.style();
         if (!flexItemStyle.isHorizontalWritingMode() || !flexItemStyle.isLeftToRightDirection())

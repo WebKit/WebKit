@@ -28,17 +28,9 @@
 #include "IdentifierTypes.h"
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 struct WebPageGroupData {
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebPageGroupData> decode(IPC::Decoder&);
-
     String identifier;
     PageGroupIdentifier pageGroupID;
 };

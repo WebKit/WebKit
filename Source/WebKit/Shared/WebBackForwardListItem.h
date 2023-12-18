@@ -54,7 +54,7 @@ public:
     virtual ~WebBackForwardListItem();
 
     static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
-    static HashMap<WebCore::BackForwardItemIdentifier, CheckedPtr<WebBackForwardListItem>>& allItems();
+    static HashMap<WebCore::BackForwardItemIdentifier, CheckedRef<WebBackForwardListItem>>& allItems();
 
     const WebCore::BackForwardItemIdentifier& itemID() const { return m_itemState.identifier; }
     const BackForwardListItemState& itemState() { return m_itemState; }

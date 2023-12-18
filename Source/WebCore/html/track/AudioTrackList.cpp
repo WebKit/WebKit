@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
+#include "AudioTrackList.h"
 
 #if ENABLE(VIDEO)
 
-#include "AudioTrackList.h"
-
 #include "AudioTrack.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -79,6 +79,16 @@ AudioTrack* AudioTrackList::getTrackById(const AtomString& id) const
     for (auto& inbandTrack : m_inbandTracks) {
         auto& track = downcast<AudioTrack>(*inbandTrack);
         if (track.id() == id)
+            return &track;
+    }
+    return nullptr;
+}
+
+AudioTrack* AudioTrackList::getTrackById(TrackID id) const
+{
+    for (auto& inbandTrack : m_inbandTracks) {
+        auto& track = downcast<AudioTrack>(*inbandTrack);
+        if (track.trackId() == id)
             return &track;
     }
     return nullptr;

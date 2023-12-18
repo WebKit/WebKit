@@ -79,7 +79,7 @@ void WheelEventTestMonitor::setTestCallbackAndStartMonitoring(bool expectWheelEn
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "  WheelEventTestMonitor::setTestCallbackAndStartMonitoring - expect end/cancel " << expectWheelEndOrCancel << ", expect momentum end " << expectMomentumEnd);
 }
 
-void WheelEventTestMonitor::deferForReason(ScrollableAreaIdentifier identifier, DeferReason reason)
+void WheelEventTestMonitor::deferForReason(ScrollableAreaIdentifier identifier, OptionSet<DeferReason> reason)
 {
     Locker locker { m_lock };
 
@@ -92,7 +92,7 @@ void WheelEventTestMonitor::deferForReason(ScrollableAreaIdentifier identifier, 
     LOG_WITH_STREAM(WheelEventTestMonitor, stream << "      (=) WheelEventTestMonitor::deferForReason: id=" << identifier << ", reason=" << reason);
 }
 
-void WheelEventTestMonitor::removeDeferralForReason(ScrollableAreaIdentifier identifier, DeferReason reason)
+void WheelEventTestMonitor::removeDeferralForReason(ScrollableAreaIdentifier identifier, OptionSet<DeferReason> reason)
 {
     Locker locker { m_lock };
 
@@ -174,15 +174,16 @@ void WheelEventTestMonitor::checkShouldFireCallbacks()
 TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason)
 {
     switch (reason) {
-    case WheelEventTestMonitor::HandlingWheelEvent: ts << "handling wheel event"; break;
-    case WheelEventTestMonitor::HandlingWheelEventOnMainThread: ts << "handling wheel event on main thread"; break;
-    case WheelEventTestMonitor::PostMainThreadWheelEventHandling: ts << "post-main thread event handling"; break;
-    case WheelEventTestMonitor::RubberbandInProgress: ts << "rubberbanding"; break;
-    case WheelEventTestMonitor::ScrollSnapInProgress: ts << "scroll-snapping"; break;
-    case WheelEventTestMonitor::ScrollAnimationInProgress: ts << "scroll animation"; break;
-    case WheelEventTestMonitor::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
-    case WheelEventTestMonitor::ContentScrollInProgress: ts << "content scrolling"; break;
-    case WheelEventTestMonitor::RequestedScrollPosition: ts << "requested scroll position"; break;
+    case WheelEventTestMonitor::DeferReason::HandlingWheelEvent: ts << "handling wheel event"; break;
+    case WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread: ts << "handling wheel event on main thread"; break;
+    case WheelEventTestMonitor::DeferReason::PostMainThreadWheelEventHandling: ts << "post-main thread event handling"; break;
+    case WheelEventTestMonitor::DeferReason::RubberbandInProgress: ts << "rubberbanding"; break;
+    case WheelEventTestMonitor::DeferReason::ScrollSnapInProgress: ts << "scroll-snapping"; break;
+    case WheelEventTestMonitor::DeferReason::ScrollAnimationInProgress: ts << "scroll animation"; break;
+    case WheelEventTestMonitor::DeferReason::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
+    case WheelEventTestMonitor::DeferReason::ContentScrollInProgress: ts << "content scrolling"; break;
+    case WheelEventTestMonitor::DeferReason::RequestedScrollPosition: ts << "requested scroll position"; break;
+    case WheelEventTestMonitor::DeferReason::CommittingTransientZoom: ts << "committing transient zoom"; break;
     }
     return ts;
 }

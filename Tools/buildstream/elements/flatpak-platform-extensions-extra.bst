@@ -2,11 +2,12 @@ kind: flatpak_repo
 
 build-depends:
 - freedesktop-sdk.bst:components/flatpak.bst
-- freedesktop-sdk.bst:flatpak-images/mesa-extra.bst
+- filename:
+  - freedesktop-sdk.bst:flatpak-images/mesa-extra.bst
+  config:
+    flatpak-image: true
 
 config:
-  environment:
-  - components/flatpak.bst
   arch: '%{gcc_arch}'
   branch: '%{sdk-branch-extra}'
   repo-mode: bare-user-only

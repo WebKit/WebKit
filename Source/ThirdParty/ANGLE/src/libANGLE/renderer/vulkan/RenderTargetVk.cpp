@@ -83,9 +83,10 @@ vk::ImageOrBufferViewSubresourceSerial RenderTargetVk::getSubresourceSerialImpl(
     ASSERT(mLayerIndex < std::numeric_limits<uint16_t>::max());
     ASSERT(mLevelIndexGL.get() < std::numeric_limits<uint16_t>::max());
 
-    vk::ImageOrBufferViewSubresourceSerial imageViewSerial = imageViews->getSubresourceSerial(
-        mLevelIndexGL, 1, mLayerIndex, vk::GetLayerMode(*mImage, mLayerCount),
-        vk::SrgbDecodeMode::SkipDecode, gl::SrgbOverride::Default);
+    vk::LayerMode layerMode = vk::GetLayerMode(*mImage, mLayerCount);
+    vk::ImageOrBufferViewSubresourceSerial imageViewSerial =
+        imageViews->getSubresourceSerial(mLevelIndexGL, 1, mLayerIndex, layerMode,
+                                         vk::SrgbDecodeMode::SkipDecode, gl::SrgbOverride::Default);
     return imageViewSerial;
 }
 

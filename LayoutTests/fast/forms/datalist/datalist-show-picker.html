@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+input {
+    width: 300px;
+    height: 50px;
+}
+
+body {
+    margin: 0;
+}
+</style>
+<head>
+<body onload="runTest()">
+<input id="input" list="fruits" type="text"/>
+<datalist id="fruits">
+    <option>Apple</option>
+    <option>Orange</option>
+    <option>Pear</option>
+</datalist>
+<pre>Is showing suggestions? <span id="before"></span></pre>
+<br>
+<div>This test verifies that datalist suggestions UI is shown when calling showPicker.</div>
+</body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+async function runTest() {
+    await UIHelper.activateAt(0, 0);
+
+    input.showPicker();
+
+    before.textContent = await UIHelper.isShowingDataListSuggestions();
+
+    testRunner.notifyDone();
+}
+</script>
+</html>

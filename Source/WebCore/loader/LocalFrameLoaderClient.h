@@ -239,6 +239,8 @@ public:
 
     virtual bool shouldFallBack(const ResourceError&) const = 0;
 
+    virtual void loadStorageAccessQuirksIfNeeded() = 0;
+
     virtual bool canHandleRequest(const ResourceRequest&) const = 0;
     virtual bool canShowMIMEType(const String& MIMEType) const = 0;
     virtual bool canShowMIMETypeAsHTML(const String& MIMEType) const = 0;
@@ -315,9 +317,7 @@ public:
 
     virtual void willInjectUserScript(DOMWrapperWorld&) { }
 
-#if ENABLE(SERVICE_WORKER)
     virtual void didFinishServiceWorkerPageRegistration(bool success) { UNUSED_PARAM(success); }
-#endif
 
 #if ENABLE(WEB_RTC)
     virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }
@@ -348,11 +348,9 @@ public:
     virtual void finishedLoadingApplicationManifest(uint64_t, const std::optional<ApplicationManifest>&) { }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     virtual bool hasFrameSpecificStorageAccess() { return false; }
     virtual void didLoadFromRegistrableDomain(RegistrableDomain&&) { }
     virtual Vector<RegistrableDomain> loadedSubresourceDomains() const { return { }; }
-#endif
 
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }
 
@@ -361,7 +359,7 @@ public:
     virtual void notifyPageOfAppBoundBehavior() { }
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     virtual bool shouldUsePDFPlugin(const String&, StringView) const { return false; }
 #endif
 
@@ -372,8 +370,13 @@ public:
 #endif
 
     virtual void broadcastFrameRemovalToOtherProcesses() = 0;
+    virtual void broadcastMainFrameURLChangeToOtherProcesses(const URL&) = 0;
 
     virtual void dispatchLoadEventToOwnerElementInAnotherProcess() = 0;
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    virtual void didAccessWindowProxyPropertyViaOpener(SecurityOriginData&&, WindowProxyProperty) { }
+#endif
 };
 
 } // namespace WebCore

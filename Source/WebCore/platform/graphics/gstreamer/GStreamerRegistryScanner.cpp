@@ -120,6 +120,15 @@ GStreamerRegistryScanner& GStreamerRegistryScanner::singleton()
     return sharedInstance;
 }
 
+void teardownGStreamerRegistryScanner()
+{
+    if (GStreamerRegistryScanner::singletonNeedsInitialization())
+        return;
+
+    auto& scanner = GStreamerRegistryScanner::singleton();
+    scanner.teardown();
+}
+
 void GStreamerRegistryScanner::getSupportedDecodingTypes(HashSet<String>& types)
 {
     if (isInWebProcess())
@@ -306,10 +315,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     }
 
     gst_plugin_feature_list_free(candidates);
-    // Valid `selectedFactory` ends up stored in the scanner singleton.
-    if (isSupported)
-        GST_OBJECT_FLAG_SET(selectedFactory.get(), GST_OBJECT_FLAG_MAY_BE_LEAKED);
-    else
+    if (!isSupported)
         selectedFactory.clear();
 
     GST_LOG("Lookup result for %s matching caps %" GST_PTR_FORMAT " : isSupported=%s, isUsingHardware=%s", elementFactoryTypeToString(factoryType), caps.get(), boolForPrinting(isSupported), boolForPrinting(isUsingHardware));
@@ -354,6 +360,12 @@ void GStreamerRegistryScanner::refresh()
     for (auto& item : m_encoderCodecMap)
         GST_DEBUG("%s encoder codec pattern registered: %s", item.value ? "Hardware" : "Software", item.key.string().utf8().data());
 #endif
+}
+
+void GStreamerRegistryScanner::teardown()
+{
+    m_decoderCodecMap.clear();
+    m_encoderCodecMap.clear();
 }
 
 const HashSet<String>& GStreamerRegistryScanner::mimeTypeSet(Configuration configuration) const
@@ -748,18 +760,21 @@ bool GStreamerRegistryScanner::supportsFeatures(const String& features) const
 
 MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const
 {
-    static std::optional<VideoDecodingLimits> videoDecodingLimits;
+    VideoDecodingLimits* videoDecodingLimits = nullptr;
 #ifdef VIDEO_DECODING_LIMIT
+    static std::optional<VideoDecodingLimits> videoDecodingLimitsDefaults;
     static std::once_flag onceFlag;
     if (configuration == Configuration::Decoding) {
         std::call_once(onceFlag, [] {
-            videoDecodingLimits = videoDecoderLimitsDefaults();
-            if (!videoDecodingLimits) {
+            videoDecodingLimitsDefaults = videoDecoderLimitsDefaults();
+            if (!videoDecodingLimitsDefaults) {
                 GST_WARNING("Parsing VIDEO_DECODING_LIMIT failed");
                 ASSERT_NOT_REACHED();
                 return;
             }
         });
+        if (videoDecodingLimitsDefaults)
+            videoDecodingLimits = &*videoDecodingLimitsDefaults;
     }
 #endif
 

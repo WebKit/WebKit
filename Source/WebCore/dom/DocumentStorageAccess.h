@@ -25,10 +25,9 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -93,9 +92,11 @@ private:
     void enableTemporaryTimeUserGesture();
     void consumeTemporaryTimeUserGesture();
 
+    Ref<Document> protectedDocument() const;
+
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
     
-    Document& m_document;
+    CheckedRef<Document> m_document;
 
     uint8_t m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 0;
 
@@ -103,5 +104,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(TRACKING_PREVENTION)

@@ -79,7 +79,7 @@ std::vector<RtpSource> SourceTracker::GetSources() const {
     const SourceEntry& entry = pair.second;
 
     sources.emplace_back(
-        entry.timestamp.ms(), key.source, key.source_type, entry.rtp_timestamp,
+        entry.timestamp, key.source, key.source_type, entry.rtp_timestamp,
         RtpSource::Extensions{
             .audio_level = entry.audio_level,
             .absolute_capture_time = entry.absolute_capture_time,

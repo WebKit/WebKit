@@ -60,10 +60,10 @@ public:
     float runWidthSoFar() const { return m_runWidthSoFar; }
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
-    static bool characterCanUseSimplifiedTextMeasuring(UChar, bool whitespaceIsCollapsed);
+    WEBCORE_EXPORT static bool characterCanUseSimplifiedTextMeasuring(char32_t, bool whitespaceIsCollapsed);
 
 private:
-    GlyphData glyphDataForCharacter(UChar32, bool mirror);
+    GlyphData glyphDataForCharacter(char32_t, bool mirror);
     template <typename TextIterator>
     inline void advanceInternal(TextIterator&, GlyphBuffer&);
 
@@ -95,8 +95,8 @@ private:
     bool rtl() const { return m_direction == TextDirection::RTL; }
     bool ltr() const { return m_direction == TextDirection::LTR; }
 
-    const FontCascade& m_font;
-    const TextRun& m_run;
+    CheckedRef<const FontCascade> m_font;
+    CheckedRef<const TextRun> m_run;
     WeakHashSet<const Font>* m_fallbackFonts { nullptr };
 
     std::optional<unsigned> m_lastCharacterIndex;

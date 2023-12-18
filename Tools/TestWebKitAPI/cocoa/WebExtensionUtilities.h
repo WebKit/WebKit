@@ -41,6 +41,7 @@
 @interface TestWebExtensionManager : NSObject
 
 - (instancetype)initForExtension:(_WKWebExtension *)extension;
+- (instancetype)initForExtension:(_WKWebExtension *)extension extensionControllerConfiguration:(_WKWebExtensionControllerConfiguration *)configuration;
 
 @property (nonatomic, strong) _WKWebExtension *extension;
 @property (nonatomic, strong) _WKWebExtensionContext *context;
@@ -53,6 +54,7 @@
 @property (nonatomic, readonly, copy) NSArray<TestWebExtensionWindow *> *windows;
 
 - (TestWebExtensionWindow *)openNewWindow;
+- (TestWebExtensionWindow *)openNewWindowUsingPrivateBrowsing:(BOOL)usesPrivateBrowsing;
 - (void)focusWindow:(TestWebExtensionWindow *)window;
 - (void)closeWindow:(TestWebExtensionWindow *)window;
 
@@ -60,6 +62,7 @@
 
 - (void)load;
 - (void)run;
+- (void)runForTimeInterval:(NSTimeInterval)interval;
 - (void)loadAndRun;
 - (void)done;
 
@@ -67,12 +70,14 @@
 
 @interface TestWebExtensionTab : NSObject <_WKWebExtensionTab>
 
-- (instancetype)initWithWindow:(id<_WKWebExtensionWindow>)window extensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithWindow:(TestWebExtensionWindow *)window extensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, weak) id<_WKWebExtensionWindow> window;
+@property (nonatomic, weak) TestWebExtensionWindow * window;
 @property (nonatomic, strong) WKWebView *mainWebView;
 
-@property (nonatomic, weak) id<_WKWebExtensionTab> parentTab;
+- (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(_WKWebExtensionContext *)context;
+
+@property (nonatomic, weak) TestWebExtensionTab *parentTab;
 
 @property (nonatomic, getter=isPinned) bool pinned;
 @property (nonatomic, getter=isMuted) bool muted;
@@ -86,23 +91,24 @@
 @property (nonatomic, copy) void (^reloadFromOrigin)(void);
 @property (nonatomic, copy) void (^goBack)(void);
 @property (nonatomic, copy) void (^goForward)(void);
-@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *));
+@property (nonatomic, copy) void (^duplicate)(_WKWebExtensionTabCreationOptions *, void (^completionHandler)(TestWebExtensionTab *, NSError *));
 
 @end
 
 @interface TestWebExtensionWindow : NSObject <_WKWebExtensionWindow>
 
-- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithExtensionController:(_WKWebExtensionController *)extensionController usesPrivateBrowsing:(BOOL)usesPrivateBrowsing NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, copy) NSArray<id<_WKWebExtensionTab>> *tabs;
-@property (nonatomic, strong) id<_WKWebExtensionTab> activeTab;
+@property (nonatomic, copy) NSArray<TestWebExtensionTab *> *tabs;
+@property (nonatomic, strong) TestWebExtensionTab * activeTab;
 
 - (TestWebExtensionTab *)openNewTab;
 - (TestWebExtensionTab *)openNewTabAtIndex:(NSUInteger)index;
 
-- (void)closeTab:(id<_WKWebExtensionTab>)tab;
-- (void)replaceTab:(id<_WKWebExtensionTab>)oldTab withTab:(id<_WKWebExtensionTab>)newTab;
-- (void)moveTab:(id<_WKWebExtensionTab>)oldTab toIndex:(NSUInteger)newIndex;
+- (void)closeTab:(TestWebExtensionTab *)tab;
+- (void)closeTab:(TestWebExtensionTab *)tab windowIsClosing:(BOOL)windowIsClosing;
+- (void)replaceTab:(TestWebExtensionTab *)oldTab withTab:(TestWebExtensionTab *)newTab;
+- (void)moveTab:(TestWebExtensionTab *)oldTab toIndex:(NSUInteger)newIndex;
 
 @property (nonatomic) _WKWebExtensionWindowState windowState;
 @property (nonatomic) _WKWebExtensionWindowType windowType;
@@ -110,7 +116,7 @@
 @property (nonatomic) CGRect frame;
 @property (nonatomic) CGRect screenFrame;
 
-@property (nonatomic, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
+@property (nonatomic, readonly, getter=isUsingPrivateBrowsing) BOOL usingPrivateBrowsing;
 
 @property (nonatomic, copy) void (^didFocus)(void);
 @property (nonatomic, copy) void (^didClose)(void);
@@ -133,12 +139,14 @@ namespace TestWebKitAPI::Util {
 inline NSString *constructScript(NSArray *lines) { return [lines componentsJoinedByString:@"\n"]; }
 inline NSString *constructJSArrayOfStrings(NSArray *elements) { return [NSString stringWithFormat:@"['%@']", [elements componentsJoinedByString:@"', '"]]; }
 
+NSData *makePNGData(CGSize, SEL colorSelector);
+
 #endif
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL, _WKWebExtensionControllerConfiguration * = nil);
 
 } // namespace TestWebKitAPI::Util
 

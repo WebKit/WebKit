@@ -2,6 +2,7 @@
 
 <html>
 <head>
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         body {
             height: 1200px;
@@ -21,13 +22,19 @@
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        function doTest()
+        async function doTest()
         {
+            await UIHelper.renderingUpdate();
+
             if (window.internals)
                 document.getElementById('reasons').textContent = window.internals.synchronousScrollingReasons();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         window.addEventListener('load', doTest, false);
     </script>

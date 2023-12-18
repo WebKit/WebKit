@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWRegistrationDatabase.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "Logging.h"
@@ -193,7 +191,7 @@ SQLiteStatementAutoResetScope SWRegistrationDatabase::cachedStatement(StatementT
     ASSERT(m_database);
     ASSERT(type < StatementType::Invalid);
 
-    auto index = static_cast<uint8_t>(type);
+    auto index = enumToUnderlyingType(type);
     if (!m_cachedStatements[index]) {
         if (auto result = m_database->prepareHeapStatement(statementString(type)))
             m_cachedStatements[index] = result.value().moveToUniquePtr();
@@ -517,5 +515,3 @@ void SWRegistrationDatabase::clearAllRegistrations()
 }
 
 } // namespace WebCore
-
-#endif

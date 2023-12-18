@@ -31,7 +31,10 @@ rtc_source_set("scalability_mode_helper") {
     "scalability_mode_helper.cc",
     "scalability_mode_helper.h",
   ]
-  deps = [ "../../modules/video_coding/svc:scalability_mode_util" ]
+  deps = [
+    ":scalability_mode",
+    "../../modules/video_coding/svc:scalability_mode_util",
+  ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -67,6 +70,13 @@ rtc_library("video_codecs_api") {
     "vp9_profile.cc",
     "vp9_profile.h",
   ]
+
+  if (rtc_use_h265) {
+    sources += [
+      "h265_profile_tier_level.cc",
+      "h265_profile_tier_level.h",
+    ]
+  }
 
   deps = [
     ":scalability_mode",
@@ -291,6 +301,7 @@ rtc_library("rtc_software_fallback_wrappers") {
   deps = [
     ":video_codecs_api",
     "..:fec_controller_api",
+    "../../api/transport:field_trial_based_config",
     "../../api/video:video_frame",
     "../../media:rtc_media_base",
     "../../modules/video_coding:video_codec_interface",
@@ -298,6 +309,7 @@ rtc_library("rtc_software_fallback_wrappers") {
     "../../rtc_base:checks",
     "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
+    "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",

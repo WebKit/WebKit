@@ -31,7 +31,7 @@ typedef void (*MinMaxFunc)(const uint8_t *a, int a_stride, const uint8_t *b,
 
 class MinMaxTest : public ::testing::TestWithParam<MinMaxFunc> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     mm_func_ = GetParam();
     rnd_.Reset(ACMRandom::DeterministicSeed());
   }
@@ -226,6 +226,10 @@ INSTANTIATE_TEST_SUITE_P(C, MinMaxTest, ::testing::Values(&aom_minmax_8x8_c));
 #if CONFIG_AV1_HIGHBITDEPTH
 INSTANTIATE_TEST_SUITE_P(C, HBDMinMaxTest,
                          ::testing::Values(&aom_highbd_minmax_8x8_c));
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, HBDMinMaxTest,
+                         ::testing::Values(&aom_highbd_minmax_8x8_neon));
+#endif
 #endif
 
 #if HAVE_SSE2

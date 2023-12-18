@@ -67,7 +67,7 @@ ExceptionOr<void> DOMApplicationCache::update()
 {
     auto* host = applicationCacheHost();
     if (!host || !host->update())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     return { };
 }
 
@@ -75,7 +75,7 @@ ExceptionOr<void> DOMApplicationCache::swapCache()
 {
     auto* host = applicationCacheHost();
     if (!host || !host->swapCache())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
     return { };
 }
 

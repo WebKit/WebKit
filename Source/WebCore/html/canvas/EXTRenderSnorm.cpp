@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTRenderSnorm);
 
 EXTRenderSnorm::EXTRenderSnorm(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTRenderSnorm)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_render_snorm"_s);
 }

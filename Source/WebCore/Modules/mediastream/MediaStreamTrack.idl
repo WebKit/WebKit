@@ -73,7 +73,25 @@ enum MediaStreamTrackState { "live", "ended" };
     DOMString deviceId;
     DOMString groupId;
     DOMString displaySurface;
-    double zoom;
+
     DOMString whiteBalanceMode;
+    // FIXME: add exposureMode;
+    // FIXME: add focusMode;
+    // FIXME: add pointsOfInterest;
+
+    // FIXME: add exposureCompensation;
+    // FIXME: add exposureTime;
+    // FIXME: add colorTemperature;
+    // FIXME: add iso;
+
+    // FIXME: add brightness;
+    // FIXME: add contrast;
+    // FIXME: add saturation;
+    // FIXME: add sharpness;
+
+    // FIXME: add focusDistance;
+    double zoom;
+
+    boolean torch;
 
 };

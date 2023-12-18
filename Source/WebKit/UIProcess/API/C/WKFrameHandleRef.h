@@ -27,6 +27,7 @@
 #define WKFrameHandleRef_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +35,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKFrameHandleGetTypeID();
 
-WK_EXPORT uint64_t WKFrameHandleGetFrameID(WKFrameHandleRef);
+WK_EXPORT uint64_t WKFrameHandleGetFrameID(WKFrameHandleRef) WK_C_API_DEPRECATED_WITH_MESSAGE("With site isolation, this identifier may collide with frame identifiers generated in another process");
 
 #ifdef __cplusplus
 }

@@ -80,8 +80,8 @@ private:
     LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
     LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
     LayoutRect borderBoundingBox() const final { return LayoutRect(LayoutPoint(), linesBoundingBox().size()); }
-    LayoutRect frameRectForStickyPositioning() const final { ASSERT_NOT_REACHED(); return LayoutRect(); }
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final { return LayoutRect(); }
+    LayoutRect frameRectForStickyPositioning() const final { ASSERT_NOT_REACHED(); return { }; }
+    RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final { return { }; }
 
     void updateFromStyle() final;
     bool requiresLayer() const final { return false; }
@@ -93,4 +93,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderLineBreak, isLineBreak())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderLineBreak, isRenderLineBreak())

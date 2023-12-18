@@ -68,11 +68,10 @@ String CSSImportRule::layerName() const
     return stringFromCascadeLayerName(*name);
 }
 
-String CSSImportRule::cssText() const
+String CSSImportRule::cssTextInternal(const String& urlString) const
 {
     StringBuilder builder;
-
-    builder.append("@import ", serializeURL(m_importRule.get().href()));
+    builder.append("@import ", serializeURL(urlString));
 
     if (auto layerName = this->layerName(); !layerName.isNull()) {
         if (layerName.isEmpty())
@@ -87,8 +86,25 @@ String CSSImportRule::cssText() const
     }
 
     builder.append(';');
-
     return builder.toString();
+}
+
+String CSSImportRule::cssText() const
+{
+    return cssTextInternal(m_importRule->href());
+}
+
+String CSSImportRule::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+{
+    if (RefPtr sheet = styleSheet()) {
+        auto urlString = replacementURLStringsForCSSStyleSheet.get(sheet);
+        if (!urlString.isEmpty())
+            return cssTextInternal(urlString);
+    }
+
+    auto urlString = m_importRule->href();
+    auto replacementURLString = replacementURLStrings.get(urlString);
+    return replacementURLString.isEmpty() ? cssTextInternal(urlString) : cssTextInternal(replacementURLString);
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const
@@ -116,5 +132,14 @@ void CSSImportRule::setMediaQueries(MQ::MediaQueryList&& queries)
     m_importRule->setMediaQueries(WTFMove(queries));
 }
 
+void CSSImportRule::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+{
+    RefPtr sheet = styleSheet();
+    if (!sheet)
+        return;
+
+    if (childStyleSheets.add(sheet).isNewEntry)
+        sheet->getChildStyleSheets(childStyleSheets);
+}
 
 } // namespace WebCore

@@ -96,7 +96,7 @@ static NSURLSession *statelessSessionWithoutRedirects()
         configuration.URLCache = nil;
         configuration.HTTPCookieStorage = nil;
         configuration._shouldSkipPreferredClientCertificateLookup = YES;
-        return adoptNS([NSURLSession sessionWithConfiguration:configuration delegate:delegate.get().get() delegateQueue:[NSOperationQueue mainQueue]]);
+        return [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get().get() delegateQueue:[NSOperationQueue mainQueue]];
     }();
     return session.get().get();
 }

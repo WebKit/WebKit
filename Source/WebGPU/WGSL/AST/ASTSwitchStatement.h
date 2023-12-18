@@ -29,15 +29,33 @@
 
 namespace WGSL::AST {
 
+struct SwitchClause {
+    AST::Expression::List selectors;
+    AST::CompoundStatement::Ref body;
+};
+
 class SwitchStatement final : public Statement {
     WGSL_AST_BUILDER_NODE(SwitchStatement);
 public:
     NodeKind kind() const final;
+    Expression& value() { return m_value.get(); }
+    Attribute::List& valueAttributes() { return m_valueAttributes; }
+    Vector<SwitchClause>& clauses() { return m_clauses; }
+    SwitchClause& defaultClause() { return m_defaultClause; }
 
 private:
-    SwitchStatement(SourceSpan span)
+    SwitchStatement(SourceSpan span, AST::Expression::Ref&& value, AST::Attribute::List&& valueAttributes, Vector<SwitchClause>&& clauses, SwitchClause&& defaultClause)
         : Statement(span)
+        , m_value(WTFMove(value))
+        , m_valueAttributes(WTFMove(valueAttributes))
+        , m_clauses(WTFMove(clauses))
+        , m_defaultClause(WTFMove(defaultClause))
     { }
+
+    Expression::Ref m_value;
+    Attribute::List m_valueAttributes;
+    Vector<SwitchClause> m_clauses;
+    SwitchClause m_defaultClause;
 };
 
 } // namespace WGSL::AST

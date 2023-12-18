@@ -81,10 +81,40 @@ static NSString *classToClassString(Class classType, bool plural = false)
     return @"unknown";
 }
 
-static NSString *constructExpectedMessage(NSString *key, NSString *expected, NSString *found)
+static NSString *valueToTypeString(NSObject *value, bool plural = false)
+{
+    if (auto *number = dynamic_objc_cast<NSNumber>(value)) {
+        if (std::isnan(number.doubleValue))
+            return plural ? @"NaN values" : @"NaN";
+
+        if (std::isinf(number.doubleValue))
+            return plural ? @"Infinity values" : @"Infinity";
+    } else if (auto *scriptValue = dynamic_objc_cast<JSValue>(value)) {
+        if (scriptValue.isUndefined)
+            return plural ? @"undefined values" : @"undefined";
+
+        if (scriptValue._isRegularExpression)
+            return plural ? @"regular expressions" : @"a regular expression";
+
+        if (scriptValue._isThenable)
+            return plural ? @"promises" : @"a promise";
+
+        if (scriptValue._isFunction)
+            return plural ? @"functions" : @"a function";
+    }
+
+    return classToClassString(value.class, plural);
+}
+
+static NSString *constructExpectedMessage(NSString *key, NSString *expected, NSString *found, bool inArray = false)
 {
     ASSERT(expected);
     ASSERT(found);
+
+    if (inArray && key.length)
+        return [NSString stringWithFormat:@"'%@' is expected to be %@, but %@ was provided in the array", key, expected, found];
+    if (inArray && !key.length)
+        return [NSString stringWithFormat:@"%@ is expected, but %@ was provided in the array", expected, found];
 
     if (key.length)
         return [NSString stringWithFormat:@"'%@' is expected to be %@, but %@ was provided", key, expected, found];
@@ -99,25 +129,25 @@ static bool validateSingleObject(NSString *key, NSObject *value, id expectedValu
 
     if (number && std::isnan(number.doubleValue)) {
         if (outExceptionString)
-            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), @"NaN");
+            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
         return false;
     }
 
     if (number && std::isinf(number.doubleValue)) {
         if (outExceptionString)
-            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), @"Infinity");
+            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
         return false;
     }
 
     if (![value isKindOfClass:expectedValueType]) {
         if (outExceptionString)
-            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), classToClassString(value.class));
+            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
         return false;
     }
 
     if (number && expectedValueType != @YES.class && [number isKindOfClass:@YES.class]) {
         if (outExceptionString)
-            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), classToClassString(@YES.class));
+            *outExceptionString = constructExpectedMessage(key, classToClassString(expectedValueType), valueToTypeString(value));
         return false;
     }
 
@@ -132,17 +162,14 @@ static bool validateArray(NSString *key, NSObject *value, NSArray<Class> *validC
     NSArray *arrayValue = dynamic_objc_cast<NSArray>(value);
     if (!arrayValue) {
         if (outExceptionString)
-            *outExceptionString = constructExpectedMessage(key, classToClassString(NSArray.class), classToClassString(value.class));
+            *outExceptionString = constructExpectedMessage(key, [NSString stringWithFormat:@"an array of %@", classToClassString(expectedElementType, true)], valueToTypeString(value));
         return false;
     }
 
     for (NSObject *element in arrayValue) {
         if (!validateSingleObject(nil, element, expectedElementType, nullptr)) {
-            if (outExceptionString) {
-                auto *foundString = [element isKindOfClass:NSArray.class] ? @"an array with other values" : classToClassString(element.class);
-                *outExceptionString = constructExpectedMessage(key, [NSString stringWithFormat:@"%@ in an array", classToClassString(expectedElementType, true)], foundString);
-            }
-
+            if (outExceptionString)
+                *outExceptionString = constructExpectedMessage(key, [NSString stringWithFormat:@"an array of %@", classToClassString(expectedElementType, true)], valueToTypeString(element), true);
             return false;
         }
     }
@@ -192,7 +219,7 @@ static bool validateSet(NSString *key, NSObject *value, NSOrderedSet *validClass
     }
 
     if (outExceptionString) {
-        auto *foundString = arrayIsValid && [value isKindOfClass:NSArray.class] ? @"an array with other values" : classToClassString(value.class);
+        auto *foundString = arrayIsValid && [value isKindOfClass:NSArray.class] ? @"an array of other values" : valueToTypeString(value);
         *outExceptionString = constructExpectedMessage(key, expectedValuesString, foundString);
     }
 

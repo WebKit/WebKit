@@ -72,6 +72,7 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 	// versions of the ACVP documents. You can find fragments in
 	// https://github.com/usnistgov/ACVP.)
 	for _, group := range parsed.Groups {
+		group := group
 		response := aeadTestGroupResponse{
 			ID: group.ID,
 		}
@@ -102,6 +103,8 @@ func (a *aead) Process(vectorSet []byte, m Transactable) (any, error) {
 		tagBytes := group.TagBits / 8
 
 		for _, test := range group.Tests {
+			test := test
+
 			if len(test.KeyHex) != keyBytes*2 {
 				return nil, fmt.Errorf("test case %d/%d contains key %q of length %d, but expected %d-bit key", group.ID, test.ID, test.KeyHex, len(test.KeyHex), group.KeyBits)
 			}

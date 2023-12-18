@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'navigation.currentEntry.key')
+
+PASS navigate() with history: 'replace' option
+

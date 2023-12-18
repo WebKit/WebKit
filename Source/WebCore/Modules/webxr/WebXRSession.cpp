@@ -64,7 +64,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_device(device)
     , m_requestedFeatures(WTFMove(requestedFeatures))
     , m_activeRenderState(WebXRRenderState::create(mode))
-    , m_viewerReferenceSpace(makeUnique<WebXRViewerSpace>(document, *this))
+    , m_viewerReferenceSpace(WebXRViewerSpace::create(document, *this))
     , m_timeOrigin(MonotonicTime::now())
     , m_views(device.views(mode))
 {
@@ -108,28 +108,23 @@ const WebXRInputSourceArray& WebXRSession::inputSources() const
     return m_inputSources;
 }
 
-static bool isImmersive(XRSessionMode mode)
-{
-    return mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr;
-}
-
 // https://immersive-web.github.io/webxr/#dom-xrsession-updaterenderstate
 ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newState)
 {
     // 1. Let session be this.
     // 2. If session's ended value is true, throw an InvalidStateError and abort these steps.
     if (m_ended)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 3. If newState's baseLayer was created with an XRSession other than session,
     //    throw an InvalidStateError and abort these steps.
     if (newState.baseLayer && &newState.baseLayer->session() != this)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 4. If newState's inlineVerticalFieldOfView is set and session is an immersive session,
     //    throw an InvalidStateError and abort these steps.
     if (newState.inlineVerticalFieldOfView && isImmersive(m_mode))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 5. If none of newState's depthNear, depthFar, inlineVerticalFieldOfView, baseLayer,
     //    layers are set, abort these steps.
@@ -139,7 +134,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
     // 6. Run update the pending layers state with session and newState.
     // https://immersive-web.github.io/webxr/#update-the-pending-layers-state
     if (newState.layers)
-        return Exception { NotSupportedError };
+        return Exception { ExceptionCode::NotSupportedError };
 
     // 7. Let activeState be session's active render state.
     // 8. If session's pending render state is null, set it to a copy of activeState.
@@ -210,7 +205,7 @@ bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
 void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestReferenceSpacePromise&& promise)
 {
     if (!scriptExecutionContext()) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -223,7 +218,7 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
         // with a NotSupportedError and abort these steps.
         if (!referenceSpaceIsSupported(type)) {
             queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [promise = WTFMove(promise)]() mutable {
-                promise.reject(Exception { NotSupportedError });
+                promise.reject(Exception { ExceptionCode::NotSupportedError });
             });
             return;
         }
@@ -234,7 +229,7 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
         // 2.3. Queue a task to run the following steps:
         queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, type, promise = WTFMove(promise)]() mutable {
             if (!scriptExecutionContext()) {
-                promise.reject(Exception { InvalidStateError });
+                promise.reject(Exception { ExceptionCode::InvalidStateError });
                 return;
             }
             auto& document = downcast<Document>(*scriptExecutionContext());
@@ -320,7 +315,7 @@ bool WebXRSession::supportsViewportScaling() const
     auto device = m_device.get();
     ASSERT(device);
     // Only immersive sessions support viewport scaling.
-    return m_mode == XRSessionMode::ImmersiveVr && device && device->supportsViewportScaling();
+    return isImmersive(m_mode) && device && device->supportsViewportScaling();
 }
 
 bool WebXRSession::isPositionEmulated() const
@@ -402,7 +397,7 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
     Ref protectedThis { *this };
 
     if (m_ended)
-        return Exception { InvalidStateError, "Cannot end a session more than once"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Cannot end a session more than once"_s };
 
     ASSERT(!m_endPromise);
     m_endPromise = makeUnique<EndPromise>(WTFMove(promise));
@@ -427,7 +422,7 @@ void WebXRSession::stop()
 {
 }
 
-void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::Device::FrameData::InputSource>&& inputSources)
+void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::FrameData::InputSource>&& inputSources)
 {
     // https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession
     // 5.4.11 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
@@ -551,7 +546,7 @@ void WebXRSession::requestFrameIfNeeded()
     });
 }
 
-void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
+void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 {
     ASSERT(isMainThread());
 
@@ -591,7 +586,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
         // 6. If the frame should be rendered for session:
         if (frameShouldBeRendered() && m_frameData.shouldRender) {
             // Prepare all layers for render
-            if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
+            if (isImmersive(m_mode) && m_activeRenderState->baseLayer())
                 m_activeRenderState->baseLayer()->startFrame(m_frameData);
 
             // 6.1.Set session’s list of currently running animation frame callbacks to be session’s list of animation frame callbacks.
@@ -628,7 +623,7 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
 
             // Submit current frame layers to the device.
             Vector<PlatformXR::Device::Layer> frameLayers;
-            if (m_mode == XRSessionMode::ImmersiveVr && m_activeRenderState->baseLayer())
+            if (isImmersive(m_mode) && m_activeRenderState->baseLayer())
                 frameLayers.append(m_activeRenderState->baseLayer()->endFrame());
 
             if (auto device = m_device.get())

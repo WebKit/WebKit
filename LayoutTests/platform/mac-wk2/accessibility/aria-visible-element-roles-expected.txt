@@ -194,7 +194,7 @@ This test ensures ARIA visible elements (e.g. those with both `hidden` and `aria
     AXSubrole: AXDetails
 
 <summary hidden="" aria-hidden="false" id="summary"></summary>
-    AXRole: AXButton
+    AXRole: AXDisclosureTriangle
     AXSubrole: AXSummary
 
 <output hidden="" aria-hidden="false" id="output"></output>

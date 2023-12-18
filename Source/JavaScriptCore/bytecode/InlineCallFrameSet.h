@@ -41,12 +41,13 @@ public:
     
     InlineCallFrame* add();
     
-    typedef Bag<InlineCallFrame>::iterator iterator;
+    using FrameBag = Bag<InlineCallFrame, RawPtrTraits<InlineCallFrame>>;
+    typedef FrameBag::iterator iterator;
     iterator begin() { return m_frames.begin(); }
     iterator end() { return m_frames.end(); }
 
 private:
-    Bag<InlineCallFrame> m_frames;
+    FrameBag m_frames;
 };
 
 } // namespace JSC

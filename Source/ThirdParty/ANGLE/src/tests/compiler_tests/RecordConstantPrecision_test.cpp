@@ -141,11 +141,11 @@ TEST_F(RecordConstantPrecisionTest, HigherPrecisionConstantInIndex)
 uniform mediump float u;
 void main()
 {
-    const highp int a = 33000;
-    mediump float b[34000];
+    const highp int a = 330;
+    mediump float b[340];
     gl_FragColor = vec4(b[a]);
 })";
     compile(shaderString);
     ASSERT_FALSE(foundInCode("const highp int s"));
-    ASSERT_TRUE(foundInCode("b[33000]"));
+    ASSERT_TRUE(foundInCode("b[330]"));
 }

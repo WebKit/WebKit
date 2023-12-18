@@ -1,0 +1,26 @@
+<title>X</title>
+<style>
+    @property --v {
+        syntax: "<transform-function>";
+        inherits: false;
+        initial-value: translate(0);
+    }
+    title {
+        --v: perspective(0rem);
+        height: var(--v);
+    }
+</style>
+<div id=t></div>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  /* This test passes if it doesn't crash */
+  onload = async () => {
+    document.createElement('audio').src = 'data:';
+    history.back();
+    if (window.caches)
+        await caches.has('a');
+    document.head.innerHTML += '';
+  };
+</script>

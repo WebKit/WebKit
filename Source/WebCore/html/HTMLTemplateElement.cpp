@@ -96,15 +96,12 @@ const AtomString& HTMLTemplateElement::shadowRootMode() const
         return closed;
     if (equalLettersIgnoringASCIICase(modeString, "open"_s))
         return open;
-    return nullAtom();
+    return emptyAtom();
 }
 
 void HTMLTemplateElement::setShadowRootMode(const AtomString& value)
 {
-    if (value.isNull())
-        removeAttribute(HTMLNames::shadowrootmodeAttr);
-    else
-        setAttribute(HTMLNames::shadowrootmodeAttr, value);
+    setAttribute(HTMLNames::shadowrootmodeAttr, value);
 }
 
 void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
@@ -166,10 +163,10 @@ void HTMLTemplateElement::attachAsDeclarativeShadowRootIfNeeded(Element& host)
     auto importedContent = document().importNode(content(), /* deep */ true).releaseReturnValue();
     for (RefPtr<Node> node = NodeTraversal::next(importedContent), next; node; node = next) {
         next = NodeTraversal::next(*node);
-        if (!is<HTMLTemplateElement>(*node))
-            continue;
-        if (RefPtr parentElement = node->parentElement())
-            downcast<HTMLTemplateElement>(*node).attachAsDeclarativeShadowRootIfNeeded(*parentElement);
+        if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*node)) {
+            if (RefPtr parentElement = node->parentElement())
+                templateElement->attachAsDeclarativeShadowRootIfNeeded(*parentElement);
+        }
     }
 
     Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();

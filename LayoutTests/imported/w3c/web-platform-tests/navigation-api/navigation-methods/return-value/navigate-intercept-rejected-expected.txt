@@ -1,0 +1,3 @@
+
+FAIL navigate() and intercept() with a rejected promise assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+

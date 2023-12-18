@@ -60,7 +60,7 @@
 #include <openssl/base.h>
 
 #include <openssl/bytestring.h>
-#include <openssl/nid.h>
+#include <openssl/nid.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -147,6 +147,10 @@ OPENSSL_EXPORT int OBJ_txt2nid(const char *s);
 // pointer. However, if using functions like |X509_ALGOR_set0|, callers may use
 // a non-const pointer and manage ownership.
 OPENSSL_EXPORT ASN1_OBJECT *OBJ_nid2obj(int nid);
+
+// OBJ_get_undef returns the object for |NID_undef|. Prefer this function over
+// |OBJ_nid2obj| to avoid pulling in the full OID table.
+OPENSSL_EXPORT const ASN1_OBJECT *OBJ_get_undef(void);
 
 // OBJ_nid2sn returns the short name for |nid|, or NULL if |nid| is unknown.
 OPENSSL_EXPORT const char *OBJ_nid2sn(int nid);

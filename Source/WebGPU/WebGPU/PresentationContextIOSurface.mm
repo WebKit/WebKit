@@ -83,13 +83,15 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
 
     m_device = &device;
 
+    auto width = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.width);
+    auto height = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.height);
     WGPUTextureDescriptor wgpuTextureDescriptor = {
         nullptr,
         descriptor.label,
         descriptor.usage,
         WGPUTextureDimension_2D, {
-            descriptor.width,
-            descriptor.height,
+            width,
+            height,
             1,
         },
         descriptor.format,
@@ -109,13 +111,14 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         1,
         WGPUTextureAspect_All,
     };
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:descriptor.width height:descriptor.height mipmapped:NO];
-    textureDescriptor.usage = Texture::usage(descriptor.usage);
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:width height:height mipmapped:NO];
+    textureDescriptor.usage = Texture::usage(descriptor.usage, descriptor.format);
     for (IOSurface *iosurface in m_ioSurfaces) {
         id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
         texture.label = fromAPI(descriptor.label);
         auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
-        m_renderBuffers.append({ Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device), TextureView::create(texture, wgpuTextureViewDescriptor, { { descriptor.width, descriptor.height, 1 } }, device) });
+        auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+        m_renderBuffers.append({ parentTexture, TextureView::create(texture, wgpuTextureViewDescriptor, { { width, height, 1 } }, parentTexture, device) });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
 }

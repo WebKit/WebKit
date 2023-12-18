@@ -42,35 +42,6 @@ FormattingQuirks::FormattingQuirks(const FormattingContext& formattingContext)
 {
 }
 
-LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(const Box& layoutBox) const
-{
-    ASSERT(layoutState().inQuirksMode());
-    // In quirks mode, we go and travers the containing block chain to find a block level box with fixed height value, even if it means leaving
-    // the current formatting context. FIXME: surely we need to do some tricks here when block direction support is added.
-    auto& formattingContext = this->formattingContext();
-    auto bodyAndDocumentVerticalMarginPaddingAndBorder = LayoutUnit { };
-    for (auto& containingBlock : containingBlockChain(layoutBox)) {
-        auto containingBlockHeight = containingBlock.style().logicalHeight();
-        if (containingBlockHeight.isFixed())
-            return LayoutUnit(containingBlockHeight.value() - bodyAndDocumentVerticalMarginPaddingAndBorder);
-
-        // If the only fixed value box we find is the ICB, then ignore the body and the document (vertical) margin, padding and border. So much quirkiness.
-        // -and it's totally insane because now we freely travel across formatting context boundaries and computed margins are nonexistent.
-        if (containingBlock.isBodyBox() || containingBlock.isDocumentBox()) {
-            auto& formattingGeometry = formattingContext.formattingGeometry();
-            auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(FormattingContext::containingBlock(containingBlock), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).horizontal();
-            auto verticalMargin = formattingGeometry.computedVerticalMargin(containingBlock, horizontalConstraints);
-
-            auto& boxGeometry = formattingContext.geometryForBox(containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
-            auto verticalPadding = boxGeometry.paddingBefore().value_or(0) + boxGeometry.paddingAfter().value_or(0);
-            auto verticalBorder = boxGeometry.borderBefore() + boxGeometry.borderAfter();
-            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.value_or(0) + verticalMargin.after.value_or(0) + verticalPadding + verticalBorder;
-        }
-    }
-    // Initial containing block has to have a height.
-    return formattingContext.geometryForBox(FormattingContext::initialContainingBlock(layoutBox), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
-}
-
 }
 }
 

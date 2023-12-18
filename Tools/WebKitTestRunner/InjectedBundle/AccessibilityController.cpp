@@ -165,6 +165,12 @@ RefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x, in
     return uiElement->elementAtPoint(x, y);
 }
 
+void AccessibilityController::announce(JSStringRef message)
+{
+    auto page = InjectedBundle::singleton().page()->page();
+    WKAccessibilityAnnounce(page, toWK(message).get());
+}
+
 #if PLATFORM(COCOA)
 
 // AXThread implementation

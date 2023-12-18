@@ -40,9 +40,9 @@ class WebExtensionAPIPermissions : public WebExtensionAPIObject, public JSWebExt
 public:
 #if PLATFORM(COCOA)
     void getAll(Ref<WebExtensionCallbackHandler>&&);
-    void contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
-    void request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
-    void remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **errorString);
+    void contains(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void request(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void remove(NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     WebExtensionAPIEvent& onAdded();
     WebExtensionAPIEvent& onRemoved();

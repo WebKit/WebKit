@@ -28,7 +28,7 @@ namespace WebCore {
 
 class FESpecularLighting : public FELighting {
 public:
-    WEBCORE_EXPORT static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+    WEBCORE_EXPORT static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FESpecularLighting& other) const { return FELighting::operator==(other); }
 
@@ -41,11 +41,11 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
 private:
-    FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
+    FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FESpecularLighting>(*this, other); }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FESpecularLighting)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FESpecularLighting)

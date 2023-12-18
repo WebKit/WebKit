@@ -130,11 +130,10 @@ static int bn_blinding_create_param(BN_BLINDING *b, const BIGNUM *e,
                                     const BN_MONT_CTX *mont, BN_CTX *ctx);
 
 BN_BLINDING *BN_BLINDING_new(void) {
-  BN_BLINDING *ret = OPENSSL_malloc(sizeof(BN_BLINDING));
+  BN_BLINDING *ret = OPENSSL_zalloc(sizeof(BN_BLINDING));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(BN_BLINDING));
 
   ret->A = BN_new();
   if (ret->A == NULL) {

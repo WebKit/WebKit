@@ -427,7 +427,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         for (size_t i = 0; i < size; ++i) {
             auto item = WKArrayGetItemAtIndex(domainsArray, i);
             if (item && WKGetTypeID(item) == WKStringGetTypeID())
-                domains.uncheckedAppend(toWTFString(static_cast<WKStringRef>(item)));
+                domains.append(toWTFString(static_cast<WKStringRef>(item)));
         }
 
         m_testRunner->callDidReceiveLoadedSubresourceDomainsCallback(WTFMove(domains));
@@ -501,6 +501,13 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "DidGetAndClearReportedWindowProxyAccessDomains")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+        m_testRunner->didGetAndClearReportedWindowProxyAccessDomains(static_cast<WKArrayRef>(messageBody));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "WheelEventMarker")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
@@ -552,6 +559,10 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
 #endif
 #endif
+#if ENABLE(VIDEO)
+    if (!m_captionUserPreferencesTestingModeToken)
+        m_captionUserPreferencesTestingModeToken = WKBundlePageCreateCaptionUserPreferencesTestingModeToken(page()->page());
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     WKBundlePageSetUseTestingViewportConfiguration(page()->page(), !booleanValue(settings, "UseFlexibleViewport"));
@@ -580,7 +591,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     clearResourceLoadStatistics();
 
 #if ENABLE(VIDEO)
-    WKBundleSetCaptionDisplayMode(page()->page(), stringValue(settings, "CaptionDisplayMode"));
+    WKBundlePageSetCaptionDisplayMode(page()->page(), stringValue(settings, "CaptionDisplayMode"));
 #endif
     // [WK2] REGRESSION(r128623): It made layout tests extremely slow
     // https://bugs.webkit.org/show_bug.cgi?id=96862

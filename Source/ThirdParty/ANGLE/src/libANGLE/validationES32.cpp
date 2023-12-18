@@ -468,7 +468,12 @@ bool ValidateGetSamplerParameterIiv(const Context *context,
                                     GLenum pname,
                                     const GLint *params)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
 }
 
 bool ValidateGetSamplerParameterIuiv(const Context *context,
@@ -477,7 +482,12 @@ bool ValidateGetSamplerParameterIuiv(const Context *context,
                                      GLenum pname,
                                      const GLuint *params)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
 }
 
 bool ValidateGetTexParameterIiv(const Context *context,
@@ -486,7 +496,12 @@ bool ValidateGetTexParameterIiv(const Context *context,
                                 GLenum pname,
                                 const GLint *params)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateGetTexParameterBase(context, entryPoint, targetPacked, pname, nullptr);
 }
 
 bool ValidateGetTexParameterIuiv(const Context *context,
@@ -495,7 +510,12 @@ bool ValidateGetTexParameterIuiv(const Context *context,
                                  GLenum pname,
                                  const GLuint *params)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateGetTexParameterBase(context, entryPoint, targetPacked, pname, nullptr);
 }
 
 bool ValidateGetnUniformfv(const Context *context,
@@ -636,7 +656,12 @@ bool ValidateSamplerParameterIiv(const Context *context,
                                  GLenum pname,
                                  const GLint *param)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, param);
 }
 
 bool ValidateSamplerParameterIuiv(const Context *context,
@@ -645,7 +670,12 @@ bool ValidateSamplerParameterIuiv(const Context *context,
                                   GLenum pname,
                                   const GLuint *param)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, param);
 }
 
 bool ValidateTexBuffer(const Context *context,
@@ -687,7 +717,12 @@ bool ValidateTexParameterIiv(const Context *context,
                              GLenum pname,
                              const GLint *params)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateTexParameterBase(context, entryPoint, targetPacked, pname, -1, true, params);
 }
 
 bool ValidateTexParameterIuiv(const Context *context,
@@ -696,7 +731,12 @@ bool ValidateTexParameterIuiv(const Context *context,
                               GLenum pname,
                               const GLuint *params)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateTexParameterBase(context, entryPoint, targetPacked, pname, -1, true, params);
 }
 
 bool ValidateTexStorage3DMultisample(const Context *context,

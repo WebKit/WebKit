@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Buffer.h"
 #import "CommandBuffer.h"
+#import "CommandEncoder.h"
 #import "Device.h"
 #import "IsValidToUseWith.h"
 #import "Texture.h"
@@ -40,6 +41,7 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
     : m_commandQueue(commandQueue)
     , m_device(device)
 {
+    m_pendingCommandBuffers = [NSMutableSet set];
 }
 
 Queue::Queue(Device& device)
@@ -120,7 +122,7 @@ void Queue::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandl
     callbacks.append(WTFMove(completionHandler));
 }
 
-bool Queue::validateSubmit(const Vector<std::reference_wrapper<const CommandBuffer>>& commands) const
+bool Queue::validateSubmit(const Vector<std::reference_wrapper<CommandBuffer>>& commands) const
 {
     for (auto command : commands) {
         if (!isValidToUseWith(command.get(), *this))
@@ -139,6 +141,9 @@ bool Queue::validateSubmit(const Vector<std::reference_wrapper<const CommandBuff
 
 void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 {
+    if (!commandBuffer || commandBuffer.status >= MTLCommandBufferStatusCommitted)
+        return;
+
     ASSERT(commandBuffer.commandQueue == m_commandQueue);
     [commandBuffer addScheduledHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
         protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
@@ -147,22 +152,21 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
                 callback();
         }, CompletionHandlerCallThread::AnyThread));
     }];
-    [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
-        protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
+    [commandBuffer addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer> commandBuffer) {
+        protectedThis->scheduleWork(CompletionHandler<void(void)>([commandBuffer, protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);
+            [protectedThis->m_pendingCommandBuffers removeObject:commandBuffer];
             for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                 callback(WGPUQueueWorkDoneStatus_Success);
         }, CompletionHandlerCallThread::AnyThread));
     }];
 
+    [m_pendingCommandBuffers addObject:commandBuffer];
     [commandBuffer commit];
     ++m_submittedCommandBufferCount;
-
-    if ([MTLCaptureManager sharedCaptureManager].isCapturing)
-        [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
-void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands)
+void Queue::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commands)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
 
@@ -173,8 +177,23 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
 
     finalizeBlitCommandEncoder();
 
-    for (auto commandBuffer : commands)
-        commitMTLCommandBuffer(commandBuffer.get().commandBuffer());
+    NSMutableArray<id<MTLCommandBuffer>> *commandBuffersToSubmit = [NSMutableArray arrayWithCapacity:commands.size()];
+    for (auto commandBuffer : commands) {
+        auto& command = commandBuffer.get();
+        if (id<MTLCommandBuffer> mtlBuffer = command.commandBuffer())
+            [commandBuffersToSubmit addObject:mtlBuffer];
+        else {
+            m_device.generateAValidationError("Command buffer appears twice."_s);
+            return;
+        }
+        command.makeInvalid();
+    }
+
+    for (id<MTLCommandBuffer> commandBuffer in commandBuffersToSubmit)
+        commitMTLCommandBuffer(commandBuffer);
+
+    if ([MTLCaptureManager sharedCaptureManager].isCapturing && m_device.shouldStopCaptureAfterSubmit())
+        [[MTLCaptureManager sharedCaptureManager] stopCapture];
 }
 
 static bool validateWriteBufferInitial(size_t size)
@@ -205,6 +224,13 @@ bool Queue::validateWriteBuffer(const Buffer& buffer, uint64_t bufferOffset, siz
         return false;
 
     return true;
+}
+
+void Queue::waitUntilIdle()
+{
+    finalizeBlitCommandEncoder();
+    for (id<MTLCommandBuffer> commandBuffer in m_pendingCommandBuffers)
+        [commandBuffer waitUntilCompleted];
 }
 
 void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void* data, size_t size)
@@ -246,6 +272,11 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
         }
     }
 
+    writeBuffer(buffer.buffer(), bufferOffset, data, size);
+}
+
+void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, const void* data, size_t size)
+{
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
@@ -258,7 +289,7 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
     [m_blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:0
-        toBuffer:buffer.buffer()
+        toBuffer:buffer
         destinationOffset:static_cast<NSUInteger>(bufferOffset)
         size:static_cast<NSUInteger>(size)];
 }
@@ -300,6 +331,12 @@ static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const 
     return true;
 }
 
+void Queue::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice)
+{
+    ensureBlitCommandEncoder();
+    CommandEncoder::clearTexture(destination, slice, m_device.device(), m_blitCommandEncoder);
+}
+
 void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size)
 {
     if (destination.nextInChain || dataLayout.nextInChain)
@@ -309,7 +346,12 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     auto dataByteSize = dataSize;
 
-    const auto& texture = fromAPI(destination.texture);
+    auto& texture = fromAPI(destination.texture);
+    auto textureFormat = texture.format();
+    if (Texture::isDepthOrStencilFormat(textureFormat))
+        textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
+
+    uint32_t blockSize = Texture::texelBlockSize(textureFormat);
 
     if (!validateWriteTexture(destination, dataLayout, size, dataByteSize, texture)) {
         m_device.generateAValidationError("Validation failure."_s);
@@ -318,6 +360,14 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     if (!dataSize)
         return;
+
+    auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
+    auto widthForMetal = std::min(size.width, logicalSize.width);
+    if (!widthForMetal)
+        return;
+
+    auto heightForMetal = std::min(size.height, logicalSize.height);
+    auto depthForMetal = std::min(size.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
     if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
@@ -342,50 +392,138 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         return;
     }
 
+    id<MTLTexture> mtlTexture = texture.texture();
+    auto textureDimension = texture.dimension();
+    uint32_t sliceCount = textureDimension == WGPUTextureDimension_3D ? 1 : size.depthOrArrayLayers;
+    for (uint32_t layer = 0; layer < sliceCount; ++layer) {
+        NSUInteger destinationSlice = textureDimension == WGPUTextureDimension_3D ? 0 : (destination.origin.z + layer);
+        if (!texture.previouslyCleared(destination.mipLevel, destinationSlice)) {
+            if (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)
+                texture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+            else if (!texture.previouslyCleared(destination.mipLevel, destinationSlice))
+                clearTexture(destination, destinationSlice);
+        }
+        texture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+    }
+
+    NSUInteger maxRowBytes = textureDimension == WGPUTextureDimension_3D ? (2048 * blockSize) : bytesPerRow;
+    bool isCompressed = Texture::isCompressedFormat(textureFormat);
+    auto blockHeight = Texture::texelBlockHeight(textureFormat);
+    auto blockWidth = Texture::texelBlockWidth(textureFormat);
+    if (!isCompressed && (bytesPerRow % blockSize || (bytesPerRow > maxRowBytes))) {
+        WGPUExtent3D newSize {
+            .width = size.width,
+            .height = isCompressed ? blockSize : blockHeight,
+            .depthOrArrayLayers = 1
+        };
+
+        if (textureDimension != WGPUTextureDimension_1D && (heightForMetal > newSize.height || depthForMetal > newSize.depthOrArrayLayers)) {
+            WGPUTextureDataLayout newDataLayout {
+                .nextInChain = nullptr,
+                .offset = 0,
+                .bytesPerRow = std::min<uint32_t>(maxRowBytes, dataLayout.bytesPerRow),
+                .rowsPerImage = newSize.height
+            };
+
+            for (uint32_t z = 0, endZ = std::max<uint32_t>(1, depthForMetal); z < endZ; ++z) {
+                WGPUImageCopyTexture newDestination = destination;
+                newDestination.origin.z = destination.origin.z + z;
+                for (uint32_t y = 0, endY = std::max<uint32_t>(1, heightForMetal); y < endY; y += newSize.height) {
+                    newDestination.origin.y = destination.origin.y + y;
+                    if (newDestination.origin.y + newSize.height > logicalSize.height)
+                        newSize.height = static_cast<uint32_t>(newDestination.origin.y + newSize.height - logicalSize.height);
+
+                    for (uint32_t x = 0; x < widthForMetal; x += maxRowBytes) {
+                        newDestination.origin.x = destination.origin.x + x;
+                        writeTexture(newDestination, static_cast<const uint8_t*>(data) + x + y * bytesPerRow + z * bytesPerImage, bytesPerRow * newSize.height, newDataLayout, newSize);
+                    }
+                }
+            }
+            return;
+        }
+
+        ASSERT(heightForMetal == 1);
+        bytesPerRow = 0;
+        bytesPerImage = 0;
+    }
+
+    Vector<uint8_t> newData;
+    const auto newBytesPerRow = blockSize * ((widthForMetal / blockWidth) + ((widthForMetal % blockWidth) ? 1 : 0));
+    if (isCompressed && newBytesPerRow != bytesPerRow && (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)) {
+
+        auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
+        auto newBytesPerImage = newBytesPerRow * std::max<size_t>(blockHeight, logicalSize.height) / blockHeight;
+        auto maxZ = std::max<size_t>(1, size.depthOrArrayLayers);
+        newData.resize(newBytesPerImage * maxZ);
+        memset(&newData[0], 0, newData.size());
+        for (size_t z = 0; z < maxZ; ++z) {
+            for (size_t y = 0; y < maxY; ++y) {
+                auto sourceBytes = static_cast<const uint8_t*>(data) + y * bytesPerRow + z * bytesPerImage;
+                RELEASE_ASSERT(y * bytesPerRow + z * bytesPerImage + newBytesPerRow <= dataByteSize);
+                auto destBytes = &newData[0] + y * newBytesPerRow + z * newBytesPerImage;
+                memcpy(destBytes, sourceBytes, newBytesPerRow);
+            }
+        }
+
+        bytesPerRow = newBytesPerRow;
+        dataByteSize = newData.size();
+        bytesPerImage = newBytesPerImage;
+        data = &newData[0];
+    }
+
     // FIXME(PERFORMANCE): Instead of checking whether or not the whole queue is idle,
     // we could detect whether this specific resource is idle, if we tracked every resource.
     if (isIdle() && options == MTLBlitOptionNone) {
-        switch (fromAPI(destination.texture).texture().storageMode) {
+        switch (mtlTexture.storageMode) {
         case MTLStorageModeShared:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         case MTLStorageModeManaged:
 #endif
             {
-                switch (texture.dimension()) {
+                switch (textureDimension) {
                 case WGPUTextureDimension_1D: {
-                    auto region = MTLRegionMake1D(destination.origin.x, size.width);
+                    if (!size.width)
+                        return;
+
+                    auto region = MTLRegionMake1D(destination.origin.x, widthForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
                         auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
-                        [fromAPI(destination.texture).texture()
+                        [mtlTexture
                             replaceRegion:region
                             mipmapLevel:destination.mipLevel
                             slice:destinationSlice
                             withBytes:static_cast<const char*>(data) + sourceOffset
-                            bytesPerRow:bytesPerRow
-                            bytesPerImage:bytesPerImage];
+                            bytesPerRow:0
+                            bytesPerImage:0];
                     }
                     break;
                 }
                 case WGPUTextureDimension_2D: {
-                    auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, size.width, size.height);
+                    if (!size.width || !size.height)
+                        return;
+
+                    auto region = MTLRegionMake2D(destination.origin.x, destination.origin.y, widthForMetal, heightForMetal);
                     for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
                         auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset + layer * bytesPerImage);
                         NSUInteger destinationSlice = destination.origin.z + layer;
-                        [fromAPI(destination.texture).texture()
+                        [mtlTexture
                             replaceRegion:region
                             mipmapLevel:destination.mipLevel
                             slice:destinationSlice
                             withBytes:static_cast<const char*>(data) + sourceOffset
                             bytesPerRow:bytesPerRow
-                            bytesPerImage:bytesPerImage];
+                            bytesPerImage:0];
                     }
                     break;
                 }
                 case WGPUTextureDimension_3D: {
-                    auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, size.width, size.height, size.depthOrArrayLayers);
+                    if (!size.width || !size.height || !size.depthOrArrayLayers)
+                        return;
+
+                    auto region = MTLRegionMake3D(destination.origin.x, destination.origin.y, destination.origin.z, widthForMetal, heightForMetal, depthForMetal);
                     auto sourceOffset = static_cast<NSUInteger>(dataLayout.offset);
-                    [fromAPI(destination.texture).texture()
+                    [mtlTexture
                         replaceRegion:region
                         mipmapLevel:destination.mipLevel
                         slice:0
@@ -416,27 +554,26 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     if (!temporaryBuffer)
         return;
 
-    auto logicalSize = fromAPI(destination.texture).logicalMiplevelSpecificTextureExtent(destination.mipLevel);
-    auto widthForMetal = std::min(size.width, logicalSize.width);
-    auto heightForMetal = std::min(size.height, logicalSize.height);
-    auto depthForMetal = std::min(size.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
-
     switch (texture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, 1, 1);
+        if (!widthForMetal)
+            return;
+
         auto destinationOrigin = MTLOriginMake(destination.origin.x, 0, 0);
+
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
             NSUInteger destinationSlice = destination.origin.z + layer;
             [m_blitCommandEncoder
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
-                sourceBytesPerRow:bytesPerRow
-                sourceBytesPerImage:bytesPerImage
+                sourceBytesPerRow:0
+                sourceBytesPerImage:0
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:mtlTexture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
@@ -448,6 +585,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
+        if (!widthForMetal || !heightForMetal)
+            return;
+
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
         for (uint32_t layer = 0; layer < size.depthOrArrayLayers; ++layer) {
             NSUInteger sourceOffset = layer * bytesPerImage;
@@ -456,9 +596,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
                 copyFromBuffer:temporaryBuffer
                 sourceOffset:sourceOffset
                 sourceBytesPerRow:bytesPerRow
-                sourceBytesPerImage:bytesPerImage
+                sourceBytesPerImage:0
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:mtlTexture
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin
@@ -469,6 +609,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
+        if (!widthForMetal || !heightForMetal || !depthForMetal)
+            return;
+
         NSUInteger sourceOffset = 0;
         [m_blitCommandEncoder
             copyFromBuffer:temporaryBuffer
@@ -476,7 +619,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
             sourceBytesPerRow:bytesPerRow
             sourceBytesPerImage:bytesPerImage
             sourceSize:sourceSize
-            toTexture:fromAPI(destination.texture).texture()
+            toTexture:mtlTexture
             destinationSlice:0
             destinationLevel:destination.mipLevel
             destinationOrigin:destinationOrigin
@@ -529,7 +672,7 @@ void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlo
 
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
-    Vector<std::reference_wrapper<const WebGPU::CommandBuffer>> commandsToForward;
+    Vector<std::reference_wrapper<WebGPU::CommandBuffer>> commandsToForward;
     for (uint32_t i = 0; i < commandCount; ++i)
         commandsToForward.append(WebGPU::fromAPI(commands[i]));
     WebGPU::fromAPI(queue).submit(WTFMove(commandsToForward));

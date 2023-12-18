@@ -32,5 +32,10 @@
 ]
 interface GPUQuerySet {
     undefined destroy();
+
+    readonly attribute GPUQueryType type;
+    readonly attribute GPUSize32Out count;
 };
 GPUQuerySet includes GPUObjectBase;
+
+typedef unsigned long GPUSize32Out;

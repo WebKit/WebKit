@@ -32,7 +32,7 @@ void aom_bitstream_queue_set_frame_read(int frame_idx) {
 int aom_bitstream_queue_get_frame_read(void) { return frame_idx_r; }
 
 #if CONFIG_BITSTREAM_DEBUG
-#define QUEUE_MAX_SIZE 2000000
+#define QUEUE_MAX_SIZE 4000000
 static int result_queue[QUEUE_MAX_SIZE];
 static int nsymbs_queue[QUEUE_MAX_SIZE];
 static aom_cdf_prob cdf_queue[QUEUE_MAX_SIZE][16];

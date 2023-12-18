@@ -103,25 +103,8 @@ CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
     return factory.get();
 }
 
-void CoreAudioCaptureSourceFactoryIOS::addExtensiveObserver(ExtensiveObserver& observer)
-{
-    m_observers.add(observer);
-    AVAudioSessionCaptureDeviceManager::singleton().enableAllDevicesQuery();
-}
-
-void CoreAudioCaptureSourceFactoryIOS::removeExtensiveObserver(ExtensiveObserver& observer)
-{
-    m_observers.remove(observer);
-    if (m_observers.isEmptyIgnoringNullReferences())
-        AVAudioSessionCaptureDeviceManager::singleton().disableAllDevicesQuery();
-}
-
 CaptureSourceOrError CoreAudioCaptureSourceFactoryIOS::createAudioCaptureSource(const CaptureDevice& device, MediaDeviceHashSalts&& hashSalts, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
-    // We enable exhaustive query to be sure to start capture with the right device.
-    // FIXME: We should stop the auxiliary session after starting capture.
-    if (m_observers.isEmptyIgnoringNullReferences())
-        AVAudioSessionCaptureDeviceManager::singleton().enableAllDevicesQuery();
     return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalts), constraints, pageIdentifier);
 }
 

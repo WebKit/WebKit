@@ -1,0 +1,2 @@
+some_long_long_long_long_text
+PASS_if_no_crash_or_asserttext

@@ -52,7 +52,7 @@
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-#include "VideoFullscreenModel.h"
+#include "VideoPresentationModel.h"
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -339,7 +339,7 @@ ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
     // Generate an exception if this isn't called in response to a user gesture, or if the 
     // element does not support fullscreen, or the element is changing fullscreen mode.
     if (!mediaSession().fullscreenPermitted() || !supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard) || isChangingVideoFullscreenMode())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     enterFullscreen();
     return { };
@@ -668,6 +668,6 @@ void HTMLVideoElement::mediaPlayerEngineUpdated()
         player()->startVideoFrameMetadataGathering();
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(VIDEO)

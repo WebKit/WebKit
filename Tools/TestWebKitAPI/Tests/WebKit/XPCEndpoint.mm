@@ -26,8 +26,8 @@
 #import "config.h"
 #import "PlatformUtilities.h"
 
-#import <WebKit/XPCEndpoint.h>
-#import <WebKit/XPCEndpointClient.h>
+#import "XPCEndpoint.h"
+#import "XPCEndpointClient.h"
 #import <wtf/text/WTFString.h>
 
 static bool clientConnectedToEndpoint = false;

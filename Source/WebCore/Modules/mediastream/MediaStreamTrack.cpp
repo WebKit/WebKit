@@ -34,11 +34,13 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "FrameLoader.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"
 #include "JSPhotoCapabilities.h"
+#include "JSPhotoSettings.h"
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "MediaConstraints.h"
@@ -58,6 +60,7 @@
 #include "WebAudioSourceProvider.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -276,8 +279,6 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.frameRate = settings.frameRate();
     if (settings.supportsFacingMode())
         result.facingMode = convertEnumerationToString(settings.facingMode());
-    if (settings.supportsWhiteBalanceMode())
-        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsVolume())
         result.volume = settings.volume();
     if (settings.supportsSampleRate())
@@ -292,8 +293,13 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.groupId = m_groupId;
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
+
+    if (settings.supportsWhiteBalanceMode())
+        result.whiteBalanceMode = convertEnumerationToString(settings.whiteBalanceMode());
     if (settings.supportsZoom())
         result.zoom = settings.zoom();
+    if (settings.supportsTorch())
+        result.torch = settings.torch();
 
     return result;
 }
@@ -309,19 +315,78 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
     return result;
 }
 
-void MediaStreamTrack::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&& promise) const
+auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromise>
 {
-    m_private->getPhotoCapabilities([protectedThis = Ref { *this }, promise = WTFMove(promise)](auto&& result) mutable {
-        if (!result) {
-            // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
-            // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
-            // asynchronously), then reject p with a new DOMException whose name is OperationError, and
-            // abort these steps.
-            promise.reject(Exception { OperationError, WTFMove(result.errorMessage) });
-            return;
-        }
+    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
+    // If the readyState of track provided in the constructor is not live, return
+    // a promise rejected with a new DOMException whose name is InvalidStateError,
+    // and abort these steps.
+    if (m_ended)
+        return TakePhotoPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
 
-        promise.resolve(WTFMove(*result.capabilities));
+    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+
+        // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
+        // If the operation cannot be completed for any reason (for example, upon
+        // invocation of multiple takePhoto() method calls in rapid succession),
+        // then reject p with a new DOMException whose name is UnknownError, and
+        // abort these steps.
+        if (!result)
+            return TakePhotoPromise::createAndReject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
+
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
+            return TakePhotoPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+
+        return TakePhotoPromise::createAndResolve(WTFMove(result.value()));
+    });
+}
+
+auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
+{
+    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-getphotocapabilities
+    // If the readyState of track provided in the constructor is not live, return
+    // a promise rejected with a new DOMException whose name is InvalidStateError,
+    // and abort these steps.
+    if (m_ended)
+        return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+
+    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+
+        // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
+        // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+        // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+        // abort these steps.
+        if (!result)
+            return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
+
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
+            return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+
+        return PhotoCapabilitiesPromise::createAndResolve(WTFMove(result.value()));
+    });
+}
+
+auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
+{
+    if (m_ended)
+        return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+
+    return m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+
+        // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
+        // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+        // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+        // abort these steps.
+        if (!result)
+            return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
+
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
+            return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+
+        return PhotoSettingsPromise::createAndResolve(WTFMove(result.value()));
     });
 }
 
@@ -337,15 +402,22 @@ static MediaConstraints createMediaConstraints(const std::optional<MediaTrackCon
 
 void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraints>& constraints, DOMPromiseDeferred<void>&& promise)
 {
-    auto completionHandler = [this, protectedThis = Ref { *this }, constraints, promise = WTFMove(promise)](auto&& error) mutable {
-        if (error) {
-            promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(WTFMove(error->badConstraint), WTFMove(error->message)));
-            return;
-        }
-        promise.resolve();
-        m_constraints = valueOrDefault(constraints);
-    };
-    m_private->applyConstraints(createMediaConstraints(constraints), WTFMove(completionHandler));
+    if (m_ended) {
+        promise.reject(Exception { ExceptionCode::InvalidAccessError, "Track has ended"_s });
+        return;
+    }
+
+    m_private->applyConstraints(createMediaConstraints(constraints), [this, protectedThis = Ref { *this }, constraints, promise = WTFMove(promise)](auto&& error) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [protectedThis = WTFMove(protectedThis), error = WTFMove(error), constraints, promise = WTFMove(promise)]() mutable {
+            if (error) {
+                promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(WTFMove(error->badConstraint), WTFMove(error->message)));
+                return;
+            }
+
+            protectedThis->m_constraints = valueOrDefault(constraints);
+            promise.resolve();
+        });
+    });
 }
 
 void MediaStreamTrack::addObserver(Observer& observer)
@@ -427,6 +499,8 @@ MediaProducerMediaStateFlags MediaStreamTrack::captureState(Document& document)
 
 void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 {
+    RELEASE_LOG_INFO(WebRTC, "MediaStreamTrack::updateCaptureAccordingToMutedState");
+
     for (RefPtr captureTrack : allCaptureTracks()) {
         if (captureTrack->scriptExecutionContext() == &document && !captureTrack->ended())
             captureTrack->updateToPageMutedState();
@@ -435,6 +509,8 @@ void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 
 void MediaStreamTrack::updateVideoCaptureAccordingMicrophoneInterruption(Document& document, bool isMicrophoneInterrupted)
 {
+    RELEASE_LOG_INFO(WebRTC, "MediaStreamTrack::updateVideoCaptureAccordingMicrophoneInterruption %d", isMicrophoneInterrupted);
+
     auto* page = document.page();
     for (RefPtr captureTrack : allCaptureTracks()) {
         RefPtr context = captureTrack->scriptExecutionContext();
@@ -537,7 +613,8 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
 
     // http://w3c.github.io/mediacapture-main/#life-cycle
-    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must queue a task that runs the following steps:
+    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must
+    // queue a task that runs the following steps:
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, muted = m_private->muted()] {
         // 1. If the track's readyState attribute has the value ended already, then abort these steps.
         if (!isAllowedToRunScript() || m_readyState == State::Ended)
@@ -657,6 +734,12 @@ bool MediaStreamTrack::isCapturingAudio() const
 {
     ASSERT(isCaptureTrack() && m_private->isAudio());
     return !ended() && !muted();
+}
+
+bool MediaStreamTrack::wantsToCaptureAudio() const
+{
+    ASSERT(isCaptureTrack() && m_private->isAudio());
+    return !ended() && (!muted() || m_private->interrupted());
 }
 
 #if !RELEASE_LOG_DISABLED

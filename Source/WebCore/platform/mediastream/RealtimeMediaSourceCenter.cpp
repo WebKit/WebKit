@@ -45,7 +45,9 @@
 
 namespace WebCore {
 
+#if !USE(GSTREAMER)
 static const Seconds deviceChangeDebounceTimerInterval { 200_ms };
+#endif
 
 RealtimeMediaSourceCenter& RealtimeMediaSourceCenter::singleton()
 {
@@ -63,11 +65,13 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsAspectRatio(true);
     m_supportedConstraints.setSupportsFrameRate(true);
     m_supportedConstraints.setSupportsFacingMode(true);
-    m_supportedConstraints.setSupportsWhiteBalanceMode(true);
     m_supportedConstraints.setSupportsVolume(true);
     m_supportedConstraints.setSupportsDeviceId(true);
     m_supportedConstraints.setSupportsDisplaySurface(true);
+
+    m_supportedConstraints.setSupportsWhiteBalanceMode(true);
     m_supportedConstraints.setSupportsZoom(true);
+    m_supportedConstraints.setSupportsTorch(true);
 }
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;
@@ -417,6 +421,18 @@ DisplayCaptureFactory& RealtimeMediaSourceCenter::displayCaptureFactory()
 bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
 {
     return false;
+}
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+const String& RealtimeMediaSourceCenter::currentMediaEnvironment() const
+{
+    return m_currentMediaEnvironment;
+}
+
+void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(const String& mediaEnvironment)
+{
+    m_currentMediaEnvironment = mediaEnvironment;
 }
 #endif
 

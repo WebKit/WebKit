@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {html} at (0,0) size 800x0
+    RenderBody {body} at (0,0) size 800x0
+layer at (0,100) size 300x300
+  RenderSVGRoot {svg:svg} at (0,100) size 300x300
+layer at (0,100) size 300x300
+  RenderSVGViewportContainer at (0,0) size 300x300
+layer at (200,300) size 200x200 backgroundClip at (0,100) size 300x300 clip at (0,100) size 300x300
+  RenderSVGEllipse {svg:circle} at (200,200) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [cx=300.00] [cy=300.00] [r=100.00]
+layer at (0,100) size 600x600 backgroundClip at (0,100) size 300x300 clip at (0,100) size 300x300
+  RenderSVGHiddenContainer {svg:defs} at (0,0) size 600x600
+layer at (0,100) size 600x600 backgroundClip at (0,100) size 300x300 clip at (0,100) size 300x300
+  RenderSVGResourceMasker {svg:mask} at (0,0) size 600x600
+layer at (0,100) size 600x600 backgroundClip at (0,100) size 300x300 clip at (0,100) size 300x300
+  RenderSVGRect {svg:rect} at (0,0) size 600x600 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]

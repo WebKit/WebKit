@@ -26,9 +26,9 @@
 #include "AffineTransform.h"
 #include "CommonAtomStrings.h"
 #include "ElementChildIteratorInlines.h"
+#include "LegacyRenderSVGResource.h"
 #include "PathTraversalState.h"
 #include "RenderLayerModelObject.h"
-#include "RenderSVGResource.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SVGMPathElement.h"
@@ -128,7 +128,7 @@ void SVGAnimateMotionElement::updateAnimationPath()
     for (auto& mPath : childrenOfType<SVGMPathElement>(*this)) {
         auto pathElement = mPath.pathElement();
         if (pathElement) {
-            m_animationPath = pathFromGraphicsElement(pathElement.get());
+            m_animationPath = pathFromGraphicsElement(*pathElement);
             foundMPath = true;
             break;
         }

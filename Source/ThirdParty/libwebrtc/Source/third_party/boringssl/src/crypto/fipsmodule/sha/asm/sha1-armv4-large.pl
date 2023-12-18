@@ -132,7 +132,7 @@ ___
 sub BODY_00_15 {
 my ($a,$b,$c,$d,$e)=@_;
 $code.=<<___;
-#if __ARM_ARCH__<7
+#if __ARM_ARCH<7
 	ldrb	$t1,[$inp,#2]
 	ldrb	$t0,[$inp,#3]
 	ldrb	$t2,[$inp,#1]
@@ -296,7 +296,7 @@ $code.=<<___;
 	teq	$inp,$len
 	bne	.Lloop			@ [+18], total 1307
 
-#if __ARM_ARCH__>=5
+#if __ARM_ARCH>=5
 	ldmia	sp!,{r4-r12,pc}
 #else
 	ldmia	sp!,{r4-r12,lr}

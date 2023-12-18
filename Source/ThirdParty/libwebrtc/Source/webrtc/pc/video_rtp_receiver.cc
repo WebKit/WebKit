@@ -78,7 +78,7 @@ RtpParameters VideoRtpReceiver::GetParameters() const {
     return RtpParameters();
   auto current_ssrc = ssrc();
   return current_ssrc.has_value()
-             ? media_channel_->GetRtpReceiveParameters(current_ssrc.value())
+             ? media_channel_->GetRtpReceiverParameters(current_ssrc.value())
              : media_channel_->GetDefaultRtpReceiveParameters();
 }
 

@@ -29,6 +29,28 @@ PASS input.value is "03:03"
 PASS changeEventsFired is 5
 PASS inputEventsFired is 5
 
+Left/Right arrow keys (vertical-lr)
+PASS input.value is "12:59"
+PASS input.value is "13:59"
+PASS input.value is "12:59"
+PASS input.value is "23:59"
+PASS input.value is "11:59"
+PASS input.value is "23:59"
+PASS input.value is "11:59"
+PASS changeEventsFired is 7
+PASS inputEventsFired is 7
+
+Left/Right arrow keys (vertical-rl)
+PASS input.value is "12:59"
+PASS input.value is "13:59"
+PASS input.value is "12:59"
+PASS input.value is "23:59"
+PASS input.value is "11:59"
+PASS input.value is "23:59"
+PASS input.value is "11:59"
+PASS changeEventsFired is 7
+PASS inputEventsFired is 7
+
 Advance field keys
 PASS input.value is "01:03"
 PASS input.value is "01:04"
@@ -49,6 +71,18 @@ PASS input.value is "23:59"
 PASS input.value is "11:59"
 PASS changeEventsFired is 7
 PASS inputEventsFired is 7
+
+Up/Down arrow keys (vertical-lr)
+PASS input.value is "02:02"
+PASS input.value is "03:03"
+PASS changeEventsFired is 5
+PASS inputEventsFired is 5
+
+Up/Down arrow keys (vertical-rl)
+PASS input.value is "02:02"
+PASS input.value is "03:03"
+PASS changeEventsFired is 5
+PASS inputEventsFired is 5
 
 Tab key
 PASS input.value is "02:02"

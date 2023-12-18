@@ -66,7 +66,6 @@
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, newCoords);
 }
 
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
 - (NSString *)download
 {
     WebCore::JSMainThreadNullState state;
@@ -78,7 +77,6 @@
     WebCore::JSMainThreadNullState state;
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::downloadAttr, newDownload);
 }
-#endif
 
 - (NSString *)hreflang
 {

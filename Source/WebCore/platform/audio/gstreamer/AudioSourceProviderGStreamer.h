@@ -24,6 +24,7 @@
 #include "AudioSourceProviderClient.h"
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
+#include "WebAudioSourceProvider.h"
 #include <gst/gst.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
@@ -32,7 +33,6 @@
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerAudioStreamDescription.h"
 #include "MediaStreamTrackPrivate.h"
-#include "WebAudioSourceProvider.h"
 #endif
 
 typedef struct _GstAdapter GstAdapter;
@@ -40,23 +40,20 @@ typedef struct _GstAppSink GstAppSink;
 
 namespace WebCore {
 
-#if ENABLE(MEDIA_STREAM)
 class AudioSourceProviderGStreamer final : public WebAudioSourceProvider {
 public:
+    static Ref<AudioSourceProviderGStreamer> create()
+    {
+        return adoptRef(*new AudioSourceProviderGStreamer());
+    }
+
+#if ENABLE(MEDIA_STREAM)
     static Ref<AudioSourceProviderGStreamer> create(MediaStreamTrackPrivate& source)
     {
         return adoptRef(*new AudioSourceProviderGStreamer(source));
     }
     AudioSourceProviderGStreamer(MediaStreamTrackPrivate&);
-#else
-class AudioSourceProviderGStreamer : public AudioSourceProvider {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(AudioSourceProviderGStreamer);
-public:
 #endif
-
-    AudioSourceProviderGStreamer();
-    ~AudioSourceProviderGStreamer();
 
     void configureAudioBin(GstElement* audioBin, GstElement* audioSink);
 
@@ -72,6 +69,9 @@ public:
     void clearAdapters();
 
 private:
+    AudioSourceProviderGStreamer();
+    ~AudioSourceProviderGStreamer();
+
 #if ENABLE(MEDIA_STREAM)
     WeakPtr<MediaStreamTrackPrivate> m_captureSource;
     RefPtr<MediaStreamPrivate> m_streamPrivate;

@@ -36,10 +36,10 @@
 
 namespace WebKit {
 
-AudioTrackPrivateRemote::AudioTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, AudioTrackPrivateRemoteConfiguration&& configuration)
+AudioTrackPrivateRemote::AudioTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, AudioTrackPrivateRemoteConfiguration&& configuration)
     : m_gpuProcessConnection(gpuProcessConnection)
+    , m_id(configuration.trackId)
     , m_playerIdentifier(playerIdentifier)
-    , m_identifier(identifier)
 {
     updateConfiguration(WTFMove(configuration));
 }
@@ -51,7 +51,7 @@ void AudioTrackPrivateRemote::setEnabled(bool enabled)
         return;
 
     if (enabled != this->enabled())
-        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_identifier, enabled), m_playerIdentifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_id, enabled), m_playerIdentifier);
 
     AudioTrackPrivate::setEnabled(enabled);
 }
@@ -59,9 +59,8 @@ void AudioTrackPrivateRemote::setEnabled(bool enabled)
 void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfiguration&& configuration)
 {
     if (configuration.trackId != m_id) {
-        auto changed = !m_id.isEmpty();
         m_id = configuration.trackId;
-        if (changed && client())
+        if (client())
             client()->idChanged(m_id);
     }
 

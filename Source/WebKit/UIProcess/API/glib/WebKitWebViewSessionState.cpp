@@ -276,8 +276,8 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
                 data.reserveInitialCapacity(dataLength);
                 guchar dataValue;
                 while (g_variant_iter_next(dataIter, "y", &dataValue))
-                    data.uncheckedAppend(dataValue);
-                httpBody.elements.uncheckedAppend({ WTFMove(data) });
+                    data.append(dataValue);
+                httpBody.elements.append({ WTFMove(data) });
             }
             break;
         case WTF::alternativeIndexV<HTTPBody::Element::FileData, HTTPBody::Element::Data>: {
@@ -288,11 +288,11 @@ static inline bool decodeHTTPBody(GVariant* httpBodyVariant, HTTPBody& httpBody)
                 fileData.fileLength = fileLength;
             if (hasFileModificationTime)
                 fileData.expectedFileModificationTime = WallTime::fromRawSeconds(fileModificationTime);
-            httpBody.elements.uncheckedAppend({ WTFMove(fileData) });
+            httpBody.elements.append({ WTFMove(fileData) });
             break;
         }
         case WTF::alternativeIndexV<String, HTTPBody::Element::Data>:
-            httpBody.elements.uncheckedAppend({ String::fromUTF8(blobURLString) });
+            httpBody.elements.append({ String::fromUTF8(blobURLString) });
             break;
         }
     }
@@ -329,7 +329,7 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
         documentState.reserveInitialCapacity(documentStateLength);
         const char* documentStateString;
         while (g_variant_iter_next(documentStateIter.get(), "&s", &documentStateString))
-            documentState.uncheckedAppend(AtomString::fromUTF8(documentStateString));
+            documentState.append(AtomString::fromUTF8(documentStateString));
         frameState.setDocumentState(documentState);
     }
     if (stateObjectDataIter) {
@@ -338,7 +338,7 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
             stateObjectVector.reserveInitialCapacity(stateObjectDataLength);
             guchar stateObjectDataValue;
             while (g_variant_iter_next(stateObjectDataIter.get(), "y", &stateObjectDataValue))
-                stateObjectVector.uncheckedAppend(stateObjectDataValue);
+                stateObjectVector.append(stateObjectDataValue);
         }
         frameState.stateObjectData = WTFMove(stateObjectVector);
     }
@@ -370,7 +370,7 @@ static inline void decodeBackForwardListItemStateV1(GVariantIter* backForwardLis
         state.pageState.title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, state.pageState.mainFrameState);
         state.pageState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
-        backForwardListState.items.uncheckedAppend(WTFMove(state));
+        backForwardListState.items.append(WTFMove(state));
     }
 }
 
@@ -394,7 +394,7 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
         state.pageState.title = String::fromUTF8(title);
         decodeFrameState(frameStateVariant, state.pageState.mainFrameState);
         state.pageState.shouldOpenExternalURLsPolicy = toWebCoreExternalURLsPolicy(shouldOpenExternalURLsPolicy);
-        backForwardListState.items.uncheckedAppend(WTFMove(state));
+        backForwardListState.items.append(WTFMove(state));
     }
 }
 

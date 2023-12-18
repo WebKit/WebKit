@@ -40,9 +40,10 @@
 
 namespace WebCore {
 
-InbandChapterTrackPrivateAVFObjC::InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale> locale)
+InbandChapterTrackPrivateAVFObjC::InbandChapterTrackPrivateAVFObjC(RetainPtr<NSLocale> locale, TrackID trackID)
     : InbandTextTrackPrivate(CueFormat::WebVTT)
     , m_locale(WTFMove(locale))
+    , m_id(trackID)
 {
     setMode(Mode::Hidden);
 }

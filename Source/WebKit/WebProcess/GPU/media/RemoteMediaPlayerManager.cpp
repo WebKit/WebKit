@@ -62,7 +62,7 @@ public:
 
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return m_remoteEngineIdentifier; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
         return m_manager.createRemoteMediaPlayer(player, m_remoteEngineIdentifier);
     }
@@ -103,18 +103,14 @@ private:
     RemoteMediaPlayerManager& m_manager;
 };
 
-RemoteMediaPlayerManager::RemoteMediaPlayerManager(WebProcess&)
+Ref<RemoteMediaPlayerManager> RemoteMediaPlayerManager::create()
 {
+    return adoptRef(*new RemoteMediaPlayerManager);
 }
 
-RemoteMediaPlayerManager::~RemoteMediaPlayerManager()
-{
-}
+RemoteMediaPlayerManager::RemoteMediaPlayerManager() = default;
 
-const char* RemoteMediaPlayerManager::supplementName()
-{
-    return "RemoteMediaPlayerManager";
-}
+RemoteMediaPlayerManager::~RemoteMediaPlayerManager() = default;
 
 using RemotePlayerTypeCache = HashMap<MediaPlayerEnums::MediaEngineIdentifier, std::unique_ptr<RemoteMediaPlayerMIMETypeCache>, WTF::IntHash<MediaPlayerEnums::MediaEngineIdentifier>, WTF::StrongEnumHashTraits<MediaPlayerEnums::MediaEngineIdentifier>>;
 static RemotePlayerTypeCache& mimeCaches()
@@ -146,7 +142,7 @@ void RemoteMediaPlayerManager::initialize(const WebProcessCreationParameters& pa
 #endif
 }
 
-std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlayer(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier)
+Ref<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRemoteMediaPlayer(MediaPlayer* player, MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier)
 {
     RemoteMediaPlayerProxyConfiguration proxyConfiguration;
     proxyConfiguration.referrer = player->referrer();
@@ -189,7 +185,7 @@ std::unique_ptr<MediaPlayerPrivateInterface> RemoteMediaPlayerManager::createRem
     gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::CreateMediaPlayer(identifier, remoteEngineIdentifier, proxyConfiguration), 0);
 
     auto remotePlayer = MediaPlayerPrivateRemote::create(player, remoteEngineIdentifier, identifier, *this);
-    m_players.add(identifier, *remotePlayer);
+    m_players.add(identifier, remotePlayer);
 
     return remotePlayer;
 }

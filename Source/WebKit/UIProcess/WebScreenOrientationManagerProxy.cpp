@@ -105,7 +105,7 @@ static WebCore::ScreenOrientationType resolveScreenOrientationLockType(WebCore::
 void WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType lockType, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
     if (m_currentLockRequest)
-        m_currentLockRequest(WebCore::Exception { WebCore::AbortError, "A new lock request was started"_s });
+        m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "A new lock request was started"_s });
 
     if (auto exception = platformShouldRejectLockRequest()) {
         completionHandler(*exception);
@@ -121,14 +121,14 @@ void WebScreenOrientationManagerProxy::lock(WebCore::ScreenOrientationLockType l
 #if ENABLE(FULLSCREEN_API)
         if (m_page.fullScreenManager() && m_page.fullScreenManager()->isFullScreen()) {
             if (!m_page.fullScreenManager()->lockFullscreenOrientation(resolvedLockedOrientation)) {
-                m_currentLockRequest(WebCore::Exception { WebCore::NotSupportedError, "Screen orientation locking is not supported"_s });
+                m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
                 return;
             }
             didLockOrientation = true;
         }
 #endif
         if (!didLockOrientation && !m_page.uiClient().lockScreenOrientation(m_page, resolvedLockedOrientation)) {
-            m_currentLockRequest(WebCore::Exception { WebCore::NotSupportedError, "Screen orientation locking is not supported"_s });
+            m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Screen orientation locking is not supported"_s });
             return;
         }
     }
@@ -143,7 +143,7 @@ void WebScreenOrientationManagerProxy::unlock()
         return;
 
     if (m_currentLockRequest)
-        m_currentLockRequest(WebCore::Exception { WebCore::AbortError, "Unlock request was received"_s });
+        m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "Unlock request was received"_s });
 
     bool didUnlockOrientation = false;
 #if ENABLE(FULLSCREEN_API)
@@ -168,7 +168,7 @@ void WebScreenOrientationManagerProxy::unlockIfNecessary()
     if (m_currentlyLockedOrientation)
         unlock();
     if (m_currentLockRequest)
-        m_currentLockRequest(WebCore::Exception { WebCore::AbortError, "Screen lock request was aborted"_s });
+        m_currentLockRequest(WebCore::Exception { WebCore::ExceptionCode::AbortError, "Screen lock request was aborted"_s });
 }
 
 #if !PLATFORM(IOS_FAMILY)

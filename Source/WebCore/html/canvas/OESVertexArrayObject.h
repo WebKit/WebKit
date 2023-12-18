@@ -29,13 +29,12 @@
 #include "WebGLRenderingContext.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WebGLVertexArrayObjectOES;
 
-class OESVertexArrayObject final : public RefCounted<OESVertexArrayObject>, public WebGLExtension<WebGLRenderingContext> {
+class OESVertexArrayObject final : public WebGLExtension<WebGLRenderingContext> {
     WTF_MAKE_ISO_ALLOCATED(OESVertexArrayObject);
 public:
     explicit OESVertexArrayObject(WebGLRenderingContext&);

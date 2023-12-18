@@ -95,6 +95,8 @@ public:
     void cancelTouchPoint(int index);
 #endif
 
+    void smartMagnify();
+
 #if ENABLE(MAC_GESTURE_EVENTS)
     void scaleGestureStart(double scale);
     void scaleGestureChange(double scale);

@@ -1,0 +1,46 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-center-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-center-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-center-vlr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-center-vlr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-center-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-center.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-end-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-end-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-end-vlr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-end-vlr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-end-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-left-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-left-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-left-vlr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-left-vlr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-left-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-left.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right-vlr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right-vlr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-right.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start-vlr-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start-vlr-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start-vlr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/text-group-align/text-group-align-start.html

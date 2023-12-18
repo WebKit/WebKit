@@ -29,6 +29,7 @@
 
 #include "MediaStreamTrackPrivate.h"
 #include "VideoTrackPrivate.h"
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 
@@ -47,20 +48,16 @@ public:
 private:
     VideoTrackPrivateMediaStream(MediaStreamTrackPrivate& track)
         : m_streamTrack(track)
-        , m_id(track.id())
-        , m_label(track.label())
     {
     }
 
     Kind kind() const final { return Kind::Main; }
-    AtomString id() const final { return m_id; }
-    AtomString label() const final { return m_label; }
+    std::optional<AtomString> trackUID() const { return AtomString { m_streamTrack->id() }; }
+    AtomString label() const final { return AtomString { m_streamTrack->label() }; }
     AtomString language() const final { return emptyAtom(); }
     int trackIndex() const final { return m_index; }
 
     Ref<MediaStreamTrackPrivate> m_streamTrack;
-    AtomString m_id;
-    AtomString m_label;
     int m_index { 0 };
 };
 

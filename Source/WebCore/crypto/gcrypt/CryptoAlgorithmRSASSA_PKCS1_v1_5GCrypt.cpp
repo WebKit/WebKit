@@ -139,7 +139,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(cons
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!(key.keySizeInBits() % 8));
     auto output = gcryptSign(key.platformKey(), data, key.hashAlgorithmIdentifier(), key.keySizeInBits() / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -147,7 +147,7 @@ ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoK
 {
     auto output = gcryptVerify(key.platformKey(), signature, data, key.hashAlgorithmIdentifier());
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return *output;
 }
 

@@ -169,42 +169,17 @@ BasicPortAllocator::BasicPortAllocator(
     const webrtc::FieldTrialsView* field_trials)
     : field_trials_(field_trials),
       network_manager_(network_manager),
-      socket_factory_(socket_factory) {
-  Init(relay_port_factory);
-  RTC_DCHECK(relay_port_factory_ != nullptr);
-  RTC_DCHECK(network_manager_ != nullptr);
-  RTC_CHECK(socket_factory_ != nullptr);
+      socket_factory_(socket_factory),
+      default_relay_port_factory_(relay_port_factory ? nullptr
+                                                     : new TurnPortFactory()),
+      relay_port_factory_(relay_port_factory
+                              ? relay_port_factory
+                              : default_relay_port_factory_.get()) {
+  RTC_CHECK(socket_factory_);
+  RTC_DCHECK(relay_port_factory_);
+  RTC_DCHECK(network_manager_);
   SetConfiguration(ServerAddresses(), std::vector<RelayServerConfig>(), 0,
                    webrtc::NO_PRUNE, customizer);
-}
-
-BasicPortAllocator::BasicPortAllocator(
-    rtc::NetworkManager* network_manager,
-    std::unique_ptr<rtc::PacketSocketFactory> owned_socket_factory,
-    const webrtc::FieldTrialsView* field_trials)
-    : field_trials_(field_trials),
-      network_manager_(network_manager),
-      socket_factory_(std::move(owned_socket_factory)) {
-  Init(nullptr);
-  RTC_DCHECK(relay_port_factory_ != nullptr);
-  RTC_DCHECK(network_manager_ != nullptr);
-  RTC_CHECK(socket_factory_ != nullptr);
-}
-
-BasicPortAllocator::BasicPortAllocator(
-    rtc::NetworkManager* network_manager,
-    std::unique_ptr<rtc::PacketSocketFactory> owned_socket_factory,
-    const ServerAddresses& stun_servers,
-    const webrtc::FieldTrialsView* field_trials)
-    : field_trials_(field_trials),
-      network_manager_(network_manager),
-      socket_factory_(std::move(owned_socket_factory)) {
-  Init(nullptr);
-  RTC_DCHECK(relay_port_factory_ != nullptr);
-  RTC_DCHECK(network_manager_ != nullptr);
-  RTC_CHECK(socket_factory_ != nullptr);
-  SetConfiguration(stun_servers, std::vector<RelayServerConfig>(), 0,
-                   webrtc::NO_PRUNE, nullptr);
 }
 
 BasicPortAllocator::BasicPortAllocator(
@@ -214,11 +189,12 @@ BasicPortAllocator::BasicPortAllocator(
     const webrtc::FieldTrialsView* field_trials)
     : field_trials_(field_trials),
       network_manager_(network_manager),
-      socket_factory_(socket_factory) {
-  Init(nullptr);
-  RTC_DCHECK(relay_port_factory_ != nullptr);
-  RTC_DCHECK(network_manager_ != nullptr);
-  RTC_CHECK(socket_factory_ != nullptr);
+      socket_factory_(socket_factory),
+      default_relay_port_factory_(new TurnPortFactory()),
+      relay_port_factory_(default_relay_port_factory_.get()) {
+  RTC_CHECK(socket_factory_);
+  RTC_DCHECK(relay_port_factory_);
+  RTC_DCHECK(network_manager_);
   SetConfiguration(stun_servers, std::vector<RelayServerConfig>(), 0,
                    webrtc::NO_PRUNE, nullptr);
 }
@@ -290,15 +266,6 @@ void BasicPortAllocator::AddTurnServerForTesting(
   new_turn_servers.push_back(turn_server);
   SetConfiguration(stun_servers(), new_turn_servers, candidate_pool_size(),
                    turn_port_prune_policy(), turn_customizer());
-}
-
-void BasicPortAllocator::Init(RelayPortFactoryInterface* relay_port_factory) {
-  if (relay_port_factory != nullptr) {
-    relay_port_factory_ = relay_port_factory;
-  } else {
-    default_relay_port_factory_.reset(new TurnPortFactory());
-    relay_port_factory_ = default_relay_port_factory_.get();
-  }
 }
 
 // BasicPortAllocatorSession

@@ -39,15 +39,12 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
-class WeakPtrImplWithEventTargetData;
-class SecurityOriginData;
-
-#if ENABLE(TRACKING_PREVENTION)
 class RegistrableDomain;
-enum class StorageAccessWasGranted : bool;
-#endif
+class SecurityOriginData;
+class WeakPtrImplWithEventTargetData;
 
 enum class IsSyntheticClick : bool;
+enum class StorageAccessWasGranted : bool;
 
 class Quirks {
     WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;
@@ -84,7 +81,6 @@ public:
     bool shouldExposeShowModalDialog() const;
     bool shouldNavigatorPluginsBeEmpty() const;
 
-    WEBCORE_EXPORT bool shouldDisableContentChangeObserver() const;
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
@@ -100,6 +96,10 @@ public:
     WEBCORE_EXPORT bool needsYouTubeMouseOutQuirk() const;
 
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
+    WEBCORE_EXPORT bool shouldAvoidUsingIOS17UserAgentForFacebook() const;
+
+    WEBCORE_EXPORT static void updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&&);
+    WEBCORE_EXPORT String storageAccessUserAgentStringQuirkForDomain(const URL&);
 
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
@@ -113,10 +113,11 @@ public:
     bool shouldBypassBackForwardCache() const;
     bool shouldBypassAsyncScriptDeferring() const;
 
-    static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType, const EventListener&);
+    static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType);
 
 #if ENABLE(MEDIA_STREAM)
     bool shouldEnableLegacyGetUserMediaQuirk() const;
+    bool shouldDisableImageCaptureQuirk() const;
 #endif
 
     bool needsCanPlayAfterSeekedQuirk() const;
@@ -125,7 +126,11 @@ public:
 
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
     enum ShouldDispatchClick : bool { No, Yes };
+
+    void triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&&) const;
     StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
+    void setSubFrameDomainsForStorageAccessQuirk(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTFMove(domains); }
+    const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const { return m_subFrameDomainsForStorageAccessQuirk; }
 
     bool needsVP9FullRangeFlagQuirk() const;
 
@@ -137,11 +142,9 @@ public:
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
     bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const;
 
-#if ENABLE(TRACKING_PREVENTION)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
-#endif
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
@@ -173,6 +176,10 @@ public:
 
     bool shouldStarBeFeaturePolicyDefaultValue() const;
     bool shouldDisableDataURLPaddingValidation() const;
+
+    bool needsDisableDOMPasteAccessQuirk() const;
+
+    bool shouldDisableElementFullscreenQuirk() const;
 
 private:
     bool needsQuirks() const;
@@ -214,6 +221,7 @@ private:
     mutable std::optional<bool> m_requiresUserGestureToLoadInPictureInPicture;
 #if ENABLE(MEDIA_STREAM)
     mutable std::optional<bool> m_shouldEnableLegacyGetUserMediaQuirk;
+    mutable std::optional<bool> m_shouldDisableImageCaptureQuirk;
 #endif
     mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable std::optional<bool> m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
@@ -236,6 +244,11 @@ private:
     bool m_needsToCopyUserSelectNoneQuirk { false };
     mutable std::optional<bool> m_shouldStarBeFeaturePolicyDefaultValueQuirk;
     mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
+    mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
+    mutable std::optional<bool> m_shouldAvoidUsingIOS17UserAgentForFacebook;
+    mutable std::optional<bool> m_shouldDisableElementFullscreen;
+
+    Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };
 
 } // namespace WebCore

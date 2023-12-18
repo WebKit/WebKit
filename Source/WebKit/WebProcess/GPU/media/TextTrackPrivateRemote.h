@@ -30,7 +30,6 @@
 
 #include "DataReference.h"
 #include "TextTrackPrivateRemoteConfiguration.h"
-#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 
@@ -48,9 +47,9 @@ class TextTrackPrivateRemote final : public WebCore::InbandTextTrackPrivate {
     WTF_MAKE_NONCOPYABLE(TextTrackPrivateRemote)
 public:
 
-    static Ref<TextTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, TextTrackPrivateRemoteConfiguration&& configuration)
+    static Ref<TextTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TextTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, identifier, WTFMove(configuration)));
+        return adoptRef(*new TextTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
     }
 
     void addDataCue(MediaTime&& start, MediaTime&& end, IPC::DataReference&&);
@@ -74,7 +73,7 @@ public:
 
     void updateConfiguration(TextTrackPrivateRemoteConfiguration&&);
 
-    AtomString id() const final { return m_id; }
+    WebCore::TrackID id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
@@ -95,17 +94,16 @@ public:
     MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
 private:
-    TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
+    TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    AtomString m_id;
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };
     AtomString m_inBandMetadataTrackDispatchType;
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
+    WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
-    TrackPrivateRemoteIdentifier m_identifier;
 
     TextTrackKind m_kind { TextTrackKind::None };
     bool m_isClosedCaptions { false };

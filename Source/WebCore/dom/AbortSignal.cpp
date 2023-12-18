@@ -52,7 +52,7 @@ Ref<AbortSignal> AbortSignal::abort(JSDOMGlobalObject& globalObject, ScriptExecu
 {
     ASSERT(reason);
     if (reason.isUndefined())
-        reason = toJS(&globalObject, &globalObject, DOMException::create(AbortError));
+        reason = toJS(&globalObject, &globalObject, DOMException::create(ExceptionCode::AbortError));
     return adoptRef(*new AbortSignal(&context, Aborted::Yes, reason));
 }
 
@@ -70,7 +70,7 @@ Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t 
 
         auto& vm = globalObject->vm();
         Locker locker { vm.apiLock() };
-        signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(TimeoutError)));
+        signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(ExceptionCode::TimeoutError)));
     };
     DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), DOMTimer::Type::SingleShot);
     return signal;
@@ -106,7 +106,7 @@ AbortSignal::~AbortSignal() = default;
 void AbortSignal::addSourceSignal(AbortSignal& signal)
 {
     if (signal.isDependent()) {
-        for (auto& sourceSignal : signal.sourceSignals())
+        for (Ref sourceSignal : signal.sourceSignals())
             addSourceSignal(sourceSignal);
         return;
     }
@@ -145,8 +145,8 @@ void AbortSignal::signalAbort(JSC::JSValue reason)
     // 5. Fire an event named abort at signal.
     dispatchEvent(Event::create(eventNames().abortEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
-    for (auto& dependentSignal : std::exchange(m_dependentSignals, { }))
-        Ref { dependentSignal }->signalAbort(reason);
+    for (Ref dependentSignal : std::exchange(m_dependentSignals, { }))
+        dependentSignal->signalAbort(reason);
 }
 
 // https://dom.spec.whatwg.org/#abortsignal-follow
@@ -163,8 +163,8 @@ void AbortSignal::signalFollow(AbortSignal& signal)
     ASSERT(!m_followingSignal);
     m_followingSignal = signal;
     signal.addAlgorithm([weakThis = WeakPtr<AbortSignal, WeakPtrImplWithEventTargetData> { this }](JSC::JSValue reason) {
-        if (weakThis)
-            weakThis->signalAbort(reason);
+        if (RefPtr signal = weakThis.get())
+            signal->signalAbort(reason);
     });
 }
 
@@ -207,7 +207,7 @@ void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
     if (!aborted())
         return;
 
-    auto& vm = lexicalGlobalObject.vm();
+    Ref vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     throwException(&lexicalGlobalObject, scope, m_reason.getValue());
 }

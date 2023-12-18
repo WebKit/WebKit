@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>getDisplayMedia track support of max constraints</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <video id=video autoplay playsinline></video>
+        <script>
+promise_test(async (test) => {
+    const stream = await callGetDisplayMedia({ video: { height: { max: 2000 }, width : { max : 3000 } } });
+    video.srcObject = stream;
+    await video.play();
+
+    const videoFrame1 = await new Promise((resolve, reject) => video.requestVideoFrameCallback(() => {
+        resolve(new VideoFrame(video));
+        setTimeout(() => reject("videoFrame1 timeout"), 5000);
+    }));
+
+    assert_equals(videoFrame1.codedWidth, 1920);
+    assert_equals(videoFrame1.codedHeight, 1080);
+    videoFrame1.close();
+
+    const promise = new Promise((resolve, reject) => {
+        stream.getVideoTracks()[0].onconfigurationchange = resolve;
+        setTimeout(() => reject("configuration change timeout"), 5000);
+    });
+    if (window.testRunner)
+        testRunner.triggerMockCaptureConfigurationChange(false, true);
+    await promise;
+
+    let videoFrame2;
+    let counter = 0;
+    while (counter++ < 100) {
+        if (videoFrame2)
+            videoFrame2.close();
+        videoFrame2 = await new Promise((resolve, reject) => video.requestVideoFrameCallback(() => {
+            resolve(new VideoFrame(video));
+            setTimeout(() => reject("videoFrame2 timeout"), 5000);
+        }));
+        if (videoFrame2.codedWidth > 2000)
+            break;
+    }
+    assert_less_than(counter, 100);
+    assert_equals(videoFrame2.codedWidth, 3000);
+    assert_equals(videoFrame2.codedHeight, 1687);
+    videoFrame2.close();
+}, "Underlying change of resolution should update how the constraints are used");
+        </script>
+    </body>
+</html>

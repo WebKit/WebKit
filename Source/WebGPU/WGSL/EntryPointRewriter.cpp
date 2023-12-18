@@ -38,10 +38,9 @@ namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(ShaderModule&, const AST::Function&, AST::StageAttribute::Stage);
+    EntryPointRewriter(ShaderModule&, const AST::Function&, ShaderStage, Reflection::EntryPointInformation&);
 
     void rewrite();
-    Reflection::EntryPointInformation takeEntryPointInformation();
 
 private:
     struct MemberOrParameter {
@@ -62,7 +61,7 @@ private:
     void visit(Vector<String>& path, MemberOrParameter&&);
     void appendBuiltins();
 
-    AST::StageAttribute::Stage m_stage;
+    ShaderStage m_stage;
     ShaderModule& m_shaderModule;
     const AST::Function& m_function;
 
@@ -72,37 +71,30 @@ private:
     const Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
-    Reflection::EntryPointInformation m_information;
+    Reflection::EntryPointInformation& m_information;
 };
 
-EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, AST::StageAttribute::Stage stage)
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, const AST::Function& function, ShaderStage stage, Reflection::EntryPointInformation& information)
     : m_stage(stage)
     , m_shaderModule(shaderModule)
     , m_function(function)
+    , m_information(information)
 {
     switch (m_stage) {
-    case AST::StageAttribute::Stage::Compute: {
-        unsigned x = 0;
-        unsigned y = 1;
-        unsigned z = 1;
+    case ShaderStage::Compute: {
         for (auto& attribute : function.attributes()) {
             if (!is<AST::WorkgroupSizeAttribute>(attribute))
                 continue;
             auto& workgroupSize = downcast<AST::WorkgroupSizeAttribute>(attribute);
-            x = workgroupSize.x().constantValue()->toInt();
-            if (auto* maybeY = workgroupSize.maybeY())
-                y = maybeY->constantValue()->toInt();
-            if (auto* maybeZ = workgroupSize.maybeZ())
-                z = maybeZ->constantValue()->toInt();
+            m_information.typedEntryPoint = Reflection::Compute { &workgroupSize.x(), workgroupSize.maybeY(), workgroupSize.maybeZ() };
+            break;
         }
-        ASSERT(x);
-        m_information.typedEntryPoint = Reflection::Compute { x, y, z };
         break;
     }
-    case AST::StageAttribute::Stage::Vertex:
+    case ShaderStage::Vertex:
         m_information.typedEntryPoint = Reflection::Vertex { false };
         break;
-    case AST::StageAttribute::Stage::Fragment:
+    case ShaderStage::Fragment:
         m_information.typedEntryPoint = Reflection::Fragment { };
         break;
     }
@@ -133,62 +125,88 @@ void EntryPointRewriter::rewrite()
         m_shaderModule.append(m_function.parameters(), parameter);
     }
 
-    while (m_materializations.size())
-        m_shaderModule.insert(m_function.body().statements(), 0, m_materializations.takeLast());
-}
-
-Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation()
-{
-    return WTFMove(m_information);
+    m_shaderModule.insertVector(m_function.body().statements(), 0, m_materializations);
 }
 
 void EntryPointRewriter::collectParameters()
 {
-    while (m_function.parameters().size()) {
-        AST::Parameter& parameter = m_shaderModule.takeLast(m_function.parameters());
+    for (auto& parameter : m_function.parameters()) {
         Vector<String> path;
-        visit(path, MemberOrParameter { parameter.name(), parameter.typeName(), parameter.attributes() });
+        visit(path, MemberOrParameter { parameter.name(), const_cast<AST::Expression&>(parameter.typeName()), parameter.attributes() });
     }
+    m_shaderModule.clear(m_function.parameters());
 }
 
 void EntryPointRewriter::checkReturnType()
 {
-    if (m_stage == AST::StageAttribute::Stage::Compute)
+    if (m_stage == ShaderStage::Compute)
         return;
 
-    if (auto* maybeReturnType = m_function.maybeReturnType()) {
-        if (!is<AST::IdentifierExpression>(*maybeReturnType))
+    auto* maybeReturnType = m_function.maybeReturnType();
+    if (!maybeReturnType)
+        return;
+    if (!is<AST::IdentifierExpression>(*maybeReturnType))
+        return;
+
+    auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
+    if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
+        const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
+            ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+            String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
+            auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
+                SourceSpan::empty(),
+                AST::Identifier::make(returnStructName),
+                AST::StructureMember::List(structType->structure.members()),
+                AST::Attribute::List { },
+                role
+            );
+            m_shaderModule.append(m_shaderModule.declarations(), returnStruct);
+            auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+                SourceSpan::empty(),
+                AST::Identifier::make(returnStructName)
+            );
+            returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
+            m_shaderModule.replace(namedTypeName, returnType);
+        };
+
+        if (m_stage == ShaderStage::Fragment) {
+            duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
             return;
-
-        auto& namedTypeName = downcast<AST::IdentifierExpression>(*maybeReturnType);
-        if (auto* structType = std::get_if<Types::Struct>(namedTypeName.inferredType())) {
-            const auto& duplicateStruct = [&] (AST::StructureRole role, const char* suffix) {
-                ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
-                String returnStructName = makeString("__", structType->structure.name(), "_", suffix);
-                auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
-                    SourceSpan::empty(),
-                    AST::Identifier::make(returnStructName),
-                    AST::StructureMember::List(structType->structure.members()),
-                    AST::Attribute::List { },
-                    role
-                );
-                m_shaderModule.append(m_shaderModule.structures(), returnStruct);
-                auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
-                    SourceSpan::empty(),
-                    AST::Identifier::make(returnStructName)
-                );
-                returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
-                m_shaderModule.replace(namedTypeName, returnType);
-            };
-
-            if (m_stage == AST::StageAttribute::Stage::Fragment) {
-                duplicateStruct(AST::StructureRole::FragmentOutput, "FragmentOutput");
-                return;
-            }
-
-            duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput");
         }
+
+        duplicateStruct(AST::StructureRole::VertexOutput, "VertexOutput");
+        return;
     }
+
+    if (m_stage != ShaderStage::Fragment || !m_function.returnTypeBuiltin().has_value())
+        return;
+
+    String returnStructName = makeString("__", m_function.name(), "_FragmentOutput");
+    auto& fieldType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+        SourceSpan::empty(),
+        AST::Identifier::make(namedTypeName.identifier())
+    );
+    fieldType.m_inferredType = namedTypeName.inferredType();
+    auto& member = m_shaderModule.astBuilder().construct<AST::StructureMember>(
+        SourceSpan::empty(),
+        AST::Identifier::make("__value"_s),
+        fieldType,
+        AST::Attribute::List(m_function.returnAttributes())
+    );
+    auto& returnStruct = m_shaderModule.astBuilder().construct<AST::Structure>(
+        SourceSpan::empty(),
+        AST::Identifier::make(returnStructName),
+        AST::StructureMember::List({ member }),
+        AST::Attribute::List { },
+        AST::StructureRole::FragmentOutputWrapper
+    );
+    m_shaderModule.append(m_shaderModule.declarations(), returnStruct);
+    auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
+        SourceSpan::empty(),
+        AST::Identifier::make(returnStructName)
+    );
+    returnType.m_inferredType = m_shaderModule.types().structType(returnStruct);
+    m_shaderModule.replace(namedTypeName, returnType);
 }
 
 void EntryPointRewriter::constructInputStruct()
@@ -206,25 +224,26 @@ void EntryPointRewriter::constructInputStruct()
 
     AST::StructureRole role;
     switch (m_stage) {
-    case AST::StageAttribute::Stage::Compute:
+    case ShaderStage::Compute:
         role = AST::StructureRole::ComputeInput;
         break;
-    case AST::StageAttribute::Stage::Vertex:
+    case ShaderStage::Vertex:
         role = AST::StructureRole::VertexInput;
         break;
-    case AST::StageAttribute::Stage::Fragment:
+    case ShaderStage::Fragment:
         role = AST::StructureRole::FragmentInput;
         break;
     }
 
-    m_shaderModule.append(m_shaderModule.structures(), m_shaderModule.astBuilder().construct<AST::Structure>(
+    auto& structure = m_shaderModule.astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structTypeName),
         WTFMove(structMembers),
         AST::Attribute::List { },
         role
-    ));
-    m_structType = m_shaderModule.types().structType(m_shaderModule.structures().last());
+    );
+    m_shaderModule.append(m_shaderModule.declarations(), structure);
+    m_structType = m_shaderModule.types().structType(structure);
 }
 
 void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin)
@@ -334,13 +353,11 @@ void EntryPointRewriter::appendBuiltins()
     }
 }
 
-void rewriteEntryPoints(CallGraph& callGraph, PrepareResult& result)
+void rewriteEntryPoints(CallGraph& callGraph)
 {
     for (auto& entryPoint : callGraph.entrypoints()) {
-        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage);
+        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.function, entryPoint.stage, entryPoint.information);
         rewriter.rewrite();
-        auto addResult = result.entryPoints.add(entryPoint.function.name().id(), rewriter.takeEntryPointInformation());
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 }
 

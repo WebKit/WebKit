@@ -51,6 +51,7 @@ public:
 
     Document* document() { return m_weakDocument.get(); }
     CachedScript& cachedScript() { return *m_cachedScript; }
+    CachedResourceHandle<CachedScript> protectedCachedScript() { return cachedScript(); }
 
     bool load(Document&, const URL&);
     bool isAsync() const { return m_isAsync; }

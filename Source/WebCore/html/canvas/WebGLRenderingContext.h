@@ -37,7 +37,7 @@ class WebGLTimerQueryEXT;
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:
-    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, WebGLContextAttributes&&);
 
     ~WebGLRenderingContext();
 
@@ -50,9 +50,9 @@ public:
 
     long long getInt64Parameter(GCGLenum) final;
 
-    GCGLint getMaxDrawBuffers() final;
-    GCGLint getMaxColorAttachments() final;
-    void initializeVertexArrayObjects() final;
+    GCGLint maxDrawBuffers() final;
+    GCGLint maxColorAttachments() final;
+    void initializeDefaultObjects() final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) final;

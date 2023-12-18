@@ -443,15 +443,6 @@ class RTC_EXPORT PortAllocator : public sigslot::has_slots<> {
   const PortAllocatorSession* GetPooledSession(
       const IceParameters* ice_credentials = nullptr) const;
 
-  // After FreezeCandidatePool is called, changing the candidate pool size will
-  // no longer be allowed, and changing ICE servers will not cause pooled
-  // sessions to be recreated.
-  //
-  // Expected to be called when SetLocalDescription is called on a
-  // PeerConnection. Can be called safely on any thread as long as not
-  // simultaneously with SetConfiguration.
-  void FreezeCandidatePool();
-
   // Discard any remaining pooled sessions.
   void DiscardCandidatePool();
 
@@ -655,7 +646,6 @@ class RTC_EXPORT PortAllocator : public sigslot::has_slots<> {
   std::vector<RelayServerConfig> turn_servers_;
   int candidate_pool_size_ = 0;  // Last value passed into SetConfiguration.
   std::vector<std::unique_ptr<PortAllocatorSession>> pooled_sessions_;
-  bool candidate_pool_frozen_ = false;
   webrtc::PortPrunePolicy turn_port_prune_policy_ = webrtc::NO_PRUNE;
 
   // Customizer for TURN messages.

@@ -31,7 +31,7 @@
 #if ENABLE(ASYNC_SCROLLING) && USE(NICOSIA)
 
 #include "AsyncScrollingCoordinator.h"
-#include "NicosiaPlatformLayer.h"
+#include "NicosiaCompositionLayer.h"
 #include "ScrollingThread.h"
 #include "ScrollingTreeFixedNodeNicosia.h"
 #include "ScrollingTreeFrameHostingNode.h"
@@ -71,6 +71,9 @@ Ref<ScrollingTreeNode> ScrollingTreeNicosia::createScrollingTreeNode(ScrollingNo
         return ScrollingTreeStickyNodeNicosia::create(*this, nodeID);
     case ScrollingNodeType::Positioned:
         return ScrollingTreePositionedNodeNicosia::create(*this, nodeID);
+    case ScrollingNodeType::PluginScrolling:
+    case ScrollingNodeType::PluginHosting:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     RELEASE_ASSERT_NOT_REACHED();

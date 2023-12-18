@@ -62,7 +62,9 @@ static void didFinishLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, 
         return;
     }
     
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     bool isParentFrameCheckSuccessful = childFrame ? WKBundleFrameGetParentFrame(childFrame.get()) == frame : false;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     WKBundlePostMessage(testBundle.get(), Util::toWK("DidCheckParentFrame").get(), adoptWK(WKBooleanCreate(isParentFrameCheckSuccessful)).get());
 }
 

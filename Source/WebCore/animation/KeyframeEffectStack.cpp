@@ -59,12 +59,13 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
     if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
         return false;
 
-    effect.invalidate();
     m_effects.append(effect);
     m_isSorted = false;
 
     if (m_effects.size() > 1 && effect.preventsAcceleration())
         stopAcceleratedAnimations();
+
+    effect.wasAddedToEffectStack();
 
     return true;
 }
@@ -72,12 +73,14 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
 {
     auto removedEffect = m_effects.removeFirst(&effect);
+
+    if (removedEffect)
+        effect.wasRemovedFromEffectStack();
+
     if (!removedEffect || m_effects.isEmpty())
         return;
 
-    if (effect.canBeAccelerated())
-        effect.wasRemovedFromStack();
-    else
+    if (!effect.canBeAccelerated())
         startAcceleratedAnimationsIfPossible();
 }
 
@@ -152,7 +155,7 @@ void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssA
     m_isSorted = false;
 }
 
-OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
 
@@ -259,9 +262,9 @@ void KeyframeEffectStack::lastStyleChangeEventStyleDidChange(const RenderStyle* 
         effect->lastStyleChangeEventStyleDidChange(previousStyle, currentStyle);
 }
 
-void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableProperty>& overriddenProperties, const Document& document)
+void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>& overriddenProperties, const Document& document)
 {
-    HashSet<AnimatableProperty> acceleratedPropertiesOverriddenByCascade;
+    HashSet<AnimatableCSSProperty> acceleratedPropertiesOverriddenByCascade;
     for (auto animatedProperty : overriddenProperties) {
         if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
             acceleratedPropertiesOverriddenByCascade.add(animatedProperty);

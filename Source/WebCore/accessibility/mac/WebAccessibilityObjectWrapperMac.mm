@@ -235,10 +235,6 @@ using namespace WebCore;
 #endif
 
 
-#ifndef NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute
-#define NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute @"AXUIElementCountForSearchPredicate"
-#endif
-
 #ifndef NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute
 #define NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute @"AXUIElementsForSearchPredicate"
 #endif
@@ -294,6 +290,10 @@ using namespace WebCore;
 
 #ifndef NSAccessibilitySelectTextWithCriteriaParameterizedAttribute
 #define NSAccessibilitySelectTextWithCriteriaParameterizedAttribute @"AXSelectTextWithCriteria"
+#endif
+
+#ifndef NSAccessibilityIntersectionWithSelectionRangeAttribute
+#define NSAccessibilityIntersectionWithSelectionRangeAttribute @"AXIntersectionWithSelectionRange"
 #endif
 
 // Text search
@@ -861,7 +861,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (AXObjectCache::isIsolatedTreeEnabled())
         [additional addObject:NSAccessibilityRelativeFrameAttribute];
 #endif
-    
+
     return additional;
 }
 
@@ -1163,6 +1163,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
     }();
+    static NeverDestroyed staticTextAttrs = [] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityIntersectionWithSelectionRangeAttribute];
+        return tempArray;
+    }();
 
     NSArray *objectAttributes = attributes.get().get();
 
@@ -1170,6 +1175,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = secureFieldAttributes.get().get();
     else if (backingObject->isWebArea())
         objectAttributes = webAreaAttrs.get().get();
+    else if (backingObject->isStaticText())
+        objectAttributes = staticTextAttrs.get().get();
     else if (backingObject->isTextControl())
         objectAttributes = textAttrs.get().get();
     else if (backingObject->isLink())
@@ -1291,20 +1298,22 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
 
 - (AXTextMarkerRangeRef)selectedTextMarkerRange
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([protectedSelf = retainPtr(self)] () -> RetainPtr<AXTextMarkerRangeRef> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject)
+        return nil;
 
-        auto selectedVisiblePositionRange = backingObject->selectedVisiblePositionRange();
-        if (selectedVisiblePositionRange.isNull())
-            return nil;
-        return textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), selectedVisiblePositionRange.start, selectedVisiblePositionRange.end);
-    });
+    auto range = backingObject->selectedTextMarkerRange();
+    if (!range.start().isValid() || !range.end().isValid())
+        return nil;
+
+    return range;
 }
 
 - (id)associatedPluginParent
 {
+    if (!self.axBackingObject || !self.axBackingObject->hasApplePDFAnnotationAttribute())
+        return nil;
+
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject || !backingObject->hasApplePDFAnnotationAttribute())
@@ -1626,6 +1635,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             int lineNumber = backingObject->insertionPointLineNumber();
             return lineNumber >= 0 ? @(lineNumber) : nil;
         }
+    }
+
+    if (backingObject->isStaticText()) {
+        if ([attributeName isEqualToString:NSAccessibilityIntersectionWithSelectionRangeAttribute])
+            return [self intersectionWithSelectionRange];
     }
 
     if ([attributeName isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute]) {
@@ -2237,6 +2251,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return nil;
 }
 
+- (NSValue *)intersectionWithSelectionRange
+{
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
+    if (!backingObject)
+        return nil;
+
+    auto objectRange = backingObject->textMarkerRange();
+    auto selectionRange = backingObject->selectedTextMarkerRange();
+
+    auto intersection = selectionRange.intersectionWith(objectRange);
+    if (intersection.has_value()) {
+        auto intersectionCharacterRange = intersection->characterRange();
+        if (intersectionCharacterRange.has_value())
+            return [NSValue valueWithRange:intersectionCharacterRange.value()];
+    }
+
+    return nil;
+}
+
 - (NSString *)accessibilityPlatformMathSubscriptKey
 {
     return NSAccessibilityMathSubscriptAttribute;
@@ -2397,7 +2430,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             AXLengthForTextMarkerRangeAttribute,
             NSAccessibilityBoundsForRangeParameterizedAttribute,
             NSAccessibilityStringForRangeParameterizedAttribute,
-            NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute,
             NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute,
             AXEndTextMarkerForBoundsAttribute,
             AXStartTextMarkerForBoundsAttribute,
@@ -2992,19 +3024,13 @@ enum class TextUnit {
     });
 }
 
-static bool isMatchingPlugin(AXCoreObject* axObject, const AccessibilitySearchCriteria& criteria)
+static bool isMatchingPlugin(AXCoreObject& axObject, const AccessibilitySearchCriteria& criteria)
 {
-    if (!axObject->isWidget())
+    if (!axObject.isPlugin())
         return false;
 
-    return Accessibility::retrieveValueFromMainThread<bool>([&axObject, &criteria] () -> bool {
-        auto* widget = axObject->widget();
-        if (!is<PluginViewBase>(widget))
-            return false;
-
-        return criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
-            && (!criteria.visibleOnly || downcast<PluginViewBase>(widget)->isVisible());
-    });
+    return criteria.searchKeys.contains(AccessibilitySearchKey::AnyType)
+        && (!criteria.visibleOnly || axObject.isVisible());
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -3112,29 +3138,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return createNSArray(operationResult).autorelease();
     }
 
-    if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
-        AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
-        NSUInteger widgetChildrenSize = 0;
-        if (isMatchingPlugin(backingObject.get(), criteria)) {
-            // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
-            // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
-            if (auto* widgetChildren = [self renderWidgetChildren]) {
-                widgetChildrenSize = [widgetChildren count];
-                if (widgetChildrenSize >= criteria.resultsLimit)
-                    return @(std::min(widgetChildrenSize, NSUInteger(criteria.resultsLimit)));
-                criteria.resultsLimit -= widgetChildrenSize;
-            }
-        }
-
-        AccessibilityObject::AccessibilityChildrenVector results;
-        backingObject->findMatchingObjects(&criteria, results);
-        return @(results.size() + widgetChildrenSize);
-    }
-
     if ([attribute isEqualToString:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         NSArray *widgetChildren = nil;
-        if (isMatchingPlugin(backingObject.get(), criteria)) {
+        if (isMatchingPlugin(*backingObject, criteria)) {
             // FIXME: We should also be searching the tree(s) resulting from `renderWidgetChildren` for matches.
             // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=230167.
             if (auto* children = [self renderWidgetChildren]) {
@@ -3597,7 +3604,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 }
 
 // API that AppKit uses for faster access
-- (NSUInteger)accessibilityIndexOfChild:(id)child
+- (NSUInteger)accessibilityIndexOfChild:(id)targetChild
 {
     RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
     if (!backingObject)
@@ -3606,29 +3613,27 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Tree objects return their rows as their children. We can use the original method
     // here, because we won't gain any speed up.
     if (backingObject->isTree())
-        return [super accessibilityIndexOfChild:child];
+        return [super accessibilityIndexOfChild:targetChild];
 
-    NSArray *children = self.childrenVectorArray;
-    if (!children.count) {
+    const auto& children = backingObject->children();
+    if (!children.size()) {
         if (auto *renderWidgetChildren = [self renderWidgetChildren])
-            return [renderWidgetChildren indexOfObject:child];
+            return [renderWidgetChildren indexOfObject:targetChild];
 #if ENABLE(MODEL_ELEMENT)
         if (backingObject->isModel())
-            return backingObject->modelElementChildren().find(child);
+            return backingObject->modelElementChildren().find(targetChild);
 #endif
     }
 
-    NSUInteger count = [children count];
-    for (NSUInteger i = 0; i < count; ++i) {
-        WebAccessibilityObjectWrapper *wrapper = children[i];
-        auto* object = wrapper.axBackingObject;
-        if (!object)
+    size_t childCount = children.size();
+    for (size_t i = 0; i < childCount; i++) {
+        const auto& child = children[i];
+        if (!child)
             continue;
-
-        if (wrapper == child || (object->isAttachment() && [wrapper attachmentView] == child))
+        WebAccessibilityObjectWrapper *childWrapper = child->wrapper();
+        if (childWrapper == targetChild || (child->isAttachment() && [childWrapper attachmentView] == targetChild))
             return i;
     }
-
     return NSNotFound;
 }
 

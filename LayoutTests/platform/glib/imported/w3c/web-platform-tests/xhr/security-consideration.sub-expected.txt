@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8801/xhr/resources/img.jpg due to access control checks.
-
-PASS ProgressEvent: security consideration
-

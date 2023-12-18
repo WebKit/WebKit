@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("`history.scrollRestoration = 'manual'` should not prevent scrolling to a fragment for non-history navigations");
+jsTestIsAsync = true;
+
+onload = () => {
+    debug("* Navigating to fragment URL");
+    w = open("resources/test-page-with-anchor.html#anchor");
+    w.onload = () => {
+        setTimeout(() => {
+            shouldBecomeEqual("w.scrollY > 0", "true", finishJSTest);
+        }, 0);
+    }
+};
+</script>
+</body>
+</html>

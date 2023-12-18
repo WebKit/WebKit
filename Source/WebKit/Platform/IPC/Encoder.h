@@ -27,6 +27,7 @@
 
 #include "Attachment.h"
 #include "MessageNames.h"
+#include <WebCore/PlatformExportMacros.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
@@ -64,6 +65,9 @@ public:
     void setShouldMaintainOrderingWithAsyncMessages();
     bool isAllowedWhenWaitingForSyncReply() const { return messageAllowedWhenWaitingForSyncReply(messageName()) || isFullySynchronousModeForTesting(); }
     bool isAllowedWhenWaitingForUnboundedSyncReply() const { return messageAllowedWhenWaitingForUnboundedSyncReply(messageName()); }
+#if ENABLE(IPC_TESTING_API)
+    void setSyncMessageDeserializationFailure();
+#endif
 
     void wrapForTesting(UniqueRef<Encoder>&&);
 

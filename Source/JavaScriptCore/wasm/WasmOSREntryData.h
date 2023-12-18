@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "B3Type.h"
 #include "B3ValueRep.h"
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace Wasm {
 
@@ -53,7 +54,7 @@ using StackMaps = HashMap<CallSiteIndex, StackMap>;
 
 class OSREntryData {
     WTF_MAKE_NONCOPYABLE(OSREntryData);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(OSREntryData);
 public:
     OSREntryData(uint32_t functionIndex, uint32_t loopIndex, StackMap&& stackMap)
         : m_functionIndex(functionIndex)

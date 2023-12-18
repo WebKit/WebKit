@@ -35,6 +35,7 @@
 #if USE(PTHREADS)
 
 #include <errno.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/StdLibExtras.h>
@@ -372,6 +373,23 @@ void Thread::changePriority(int delta)
 #endif
 }
 
+#if HAVE(THREAD_TIME_CONSTRAINTS)
+void Thread::setThreadTimeConstraints(MonotonicTime period, MonotonicTime nominalComputation, MonotonicTime constraint, bool isPremptable)
+{
+#if OS(DARWIN)
+    thread_time_constraint_policy policy { };
+    policy.period = period.toMachAbsoluteTime();
+    policy.computation = nominalComputation.toMachAbsoluteTime();
+    policy.constraint = constraint.toMachAbsoluteTime();
+    policy.preemptible = isPremptable;
+    if (auto error = thread_policy_set(machThread(), THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&policy, THREAD_TIME_CONSTRAINT_POLICY_COUNT))
+        LOG_ERROR("Thread %p failed to set time constraints with error %d", this, error);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+#endif
+
 int Thread::waitForCompletion()
 {
     pthread_t handle;
@@ -635,7 +653,7 @@ void ThreadCondition::wait(Mutex& mutex)
 
 bool ThreadCondition::timedWait(Mutex& mutex, WallTime absoluteTime)
 {
-    if (std::isinf(absoluteTime)) {
+    if (absoluteTime.isInfinity()) {
         if (absoluteTime == -WallTime::infinity())
             return false;
         wait(mutex);

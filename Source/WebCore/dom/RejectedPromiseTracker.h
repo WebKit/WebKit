@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace JSC {
 class VM;
@@ -44,7 +45,7 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 class UnhandledPromise;
 
-class RejectedPromiseTracker {
+class RejectedPromiseTracker : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RejectedPromiseTracker);
 public:
@@ -60,7 +61,7 @@ private:
     void reportUnhandledRejections(Vector<UnhandledPromise>&&);
     void reportRejectionHandled(Ref<DOMPromise>&&);
 
-    CheckedRef<ScriptExecutionContext> m_context;
+    WeakRef<ScriptExecutionContext> m_context;
     Vector<UnhandledPromise> m_aboutToBeNotifiedRejectedPromises;
     JSC::WeakGCMap<JSC::JSPromise*, JSC::JSPromise> m_outstandingRejectedPromises;
 };

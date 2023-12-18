@@ -1561,7 +1561,7 @@ public:
     // Has no other side-effects.
     virtual bool isExtensionEnabled(const String&) = 0;
 
-    virtual bool enableRequiredWebXRExtensions() { return true; }
+    virtual bool enableRequiredWebXRExtensions() { return false; }
 
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
@@ -1634,30 +1634,18 @@ public:
 
     virtual void prepareForDisplay() = 0;
 
-    // FIXME: should be removed, caller should keep track of changed state.
-    WEBCORE_EXPORT virtual void markContextChanged();
-
-    // FIXME: these should be removed, caller is interested in buffer clear status and
-    // should track that in a variable that the caller holds. Caller should receive
-    // the value from reshape().
-    bool layerComposited() const;
-    void setBuffersToAutoClear(GCGLbitfield);
-    GCGLbitfield getBuffersToAutoClear() const;
-
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
     // the context.
-    virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
-    virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(FlipY) = 0;
-    virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
+    enum class SurfaceBuffer : uint8_t {
+        DrawingBuffer,
+        DisplayBuffer
+    };
+    virtual void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-    virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
+    virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
-
-    // FIXME: this should be removed. The layer should be marked composited by
-    // preparing for display, so that canvas image buffer and the layer agree
-    // on the content.
-    WEBCORE_EXPORT void markLayerComposited();
+    virtual RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY) = 0;
 
     using SimulatedEventForTesting = GraphicsContextGLSimulatedEventForTesting;
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
@@ -1727,11 +1715,6 @@ protected:
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
     Client* m_client { nullptr };
-    // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
-    // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
-    // auto-cleared.
-    GCGLbitfield m_buffersToAutoClear { 0 };
-    bool m_layerComposited { false };
     bool m_contextLost { false };
 
 private:
@@ -1770,5 +1753,17 @@ IMPLEMENT_GCGL_OWNED(Texture)
 #undef IMPLEMENT_GCGL_OWNED
 
 } // namespace WebCore
+
+namespace WTF {
+
+template <> struct EnumTraits<WebCore::GraphicsContextGL::SurfaceBuffer> {
+    using values = EnumValues<
+        WebCore::GraphicsContextGL::SurfaceBuffer,
+        WebCore::GraphicsContextGL::SurfaceBuffer::DrawingBuffer,
+        WebCore::GraphicsContextGL::SurfaceBuffer::DisplayBuffer
+    >;
+};
+
+}
 
 #endif

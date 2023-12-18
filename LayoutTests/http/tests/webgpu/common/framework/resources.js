@@ -1,10 +1,11 @@
 /**
-* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/ /**
+ * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+ **/ /**
  * Base path for resources. The default value is correct for non-worker WPT, but standalone and
  * workers must access resources using a different base path, so this is overridden in
  * `test_worker-worker.ts` and `standalone.ts`.
- */let baseResourcePath = './resources';let crossOriginHost = '';
+ */ let baseResourcePath = './resources';
+let crossOriginHost = '';
 
 function getAbsoluteBaseResourcePath(path) {
   // Path is already an absolute one.
@@ -29,8 +30,8 @@ function getAbsoluteBaseResourcePath(path) {
         break;
       default:
         relparts.push(pathparts[i]);
-        break;}
-
+        break;
+    }
   }
 
   return relparts.join('/');
@@ -56,8 +57,8 @@ export function getCrossOriginResourcePath(pathRelativeToResourcesDir, onlineUrl
       crossOriginHost +
       getAbsoluteBaseResourcePath(baseResourcePath) +
       '/' +
-      pathRelativeToResourcesDir);
-
+      pathRelativeToResourcesDir
+    );
   }
 
   // Using 'localhost' and '127.0.0.1' trick to load cross origin resource. Set cross origin host name
@@ -77,8 +78,8 @@ export function getCrossOriginResourcePath(pathRelativeToResourcesDir, onlineUrl
       location.port +
       getAbsoluteBaseResourcePath(baseResourcePath) +
       '/' +
-      pathRelativeToResourcesDir);
-
+      pathRelativeToResourcesDir
+    );
   }
 
   return onlineUrl;
@@ -108,4 +109,3 @@ export function setBaseResourcePath(path) {
 export function setCrossOriginHost(host) {
   crossOriginHost = host;
 }
-//# sourceMappingURL=resources.js.map

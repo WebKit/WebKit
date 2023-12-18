@@ -130,7 +130,7 @@ public:
     const LegacyInlineBox* firstSelectedBox() const;
     const LegacyInlineBox* lastSelectedBox() const;
 
-    using CleanLineFloatList = Vector<WeakPtr<RenderBox>>;
+    using CleanLineFloatList = Vector<SingleThreadWeakPtr<RenderBox>>;
     void appendFloat(RenderBox& floatingBox)
     {
         ASSERT(!isDirty());
@@ -203,7 +203,7 @@ private:
 
     // Where this line ended. The exact object and the position within that object are stored so that
     // we can create an LegacyInlineIterator beginning just after the end of this line.
-    WeakPtr<RenderObject> m_lineBreakObj;
+    SingleThreadWeakPtr<RenderObject> m_lineBreakObj;
     RefPtr<BidiContext> m_lineBreakContext;
 
     LayoutUnit m_lineTop;
