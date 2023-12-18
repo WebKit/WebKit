@@ -1975,3 +1975,8 @@ webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.h
 webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/266508 [ Monterey+ Release x86_64 ] fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
+
+# rdar://119828743 (REGRESSION (263917@main?): [ Sonoma Debug wk2 x86_64 ] 3 tests in inspector/timeline are flaky crash with ASSERTION FAILED in void WebCore::InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType)
+[ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ]
+[ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerRemove.html [ Pass Crash ]
+[ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerFire.html [ Pass Crash ]
