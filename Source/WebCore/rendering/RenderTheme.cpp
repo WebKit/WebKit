@@ -1406,7 +1406,7 @@ String RenderTheme::attachmentStyleSheet() const
 
 String RenderTheme::colorInputStyleSheet() const
 {
-    return "input[type=\"color\"] { appearance: auto; inline-size: 44px; block-size: 23px; box-sizing: border-box; outline: none; } "_s;
+    return "input[type=\"color\"] { appearance: auto; inline-size: 44px; block-size: 23px; box-sizing: border-box; } "_s;
 }
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
