@@ -973,8 +973,7 @@ TEST(WKWebExtensionAPITabs, UpdatedEvent)
     Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
 }
 
-// FIXME after rdar://115809590 is resolved.
-TEST(WKWebExtensionAPITabs, DISABLED_RemovedEvent)
+TEST(WKWebExtensionAPITabs, RemovedEvent)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const newTab = await browser.tabs.create({})",
