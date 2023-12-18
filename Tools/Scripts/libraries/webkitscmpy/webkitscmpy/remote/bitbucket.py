@@ -23,6 +23,7 @@
 import re
 import sys
 
+from datetime import datetime
 from webkitcorepy import decorators, string_utils, CallByNeed
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
@@ -32,6 +33,7 @@ requests = CallByNeed(lambda: __import__('requests'))
 
 class BitBucket(Scm):
     URL_RE = re.compile(r'\Ahttps?://(?P<domain>\S+)/projects/(?P<project>\S+)/repos/(?P<repository>\S+)\Z')
+    DIFF_CONTEXT = 3
 
     class PRGenerator(Scm.PRGenerator):
         TITLE_CHAR_LIMIT = 254
@@ -347,6 +349,26 @@ class BitBucket(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
+    @classmethod
+    def json_to_diff(cls, data):
+        output = ''
+        for diff in data.get('diffs', []):
+            output += '--- a/{}\n'.format(diff['source']['toString'])
+            output += '+++ b/{}\n'.format(diff['destination']['toString'])
+            for hunk in diff.get('hunks', []):
+                output += '@@ -{},{} +{},{} @@\n'.format(
+                    hunk['sourceLine'], hunk['sourceSpan'],
+                    hunk['destinationLine'], hunk['destinationSpan'],
+                )
+                for segment in hunk.get('segments', []):
+                    leader = dict(
+                        ADDED='+',
+                        REMOVED='-',
+                    ).get(segment['type'], ' ')
+                    for line in segment.get('lines'):
+                        output += '{}{}\n'.format(leader, line['line'])
+        return output
+
     def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         match = self.URL_RE.match(url)
         if not match:
@@ -600,6 +622,59 @@ class BitBucket(Scm):
             message=commit_data['message'] if include_log else None,
         )
 
+    def commits(self, begin=None, end=None, include_log=True, include_identifier=True):
+        begin, end = self._commit_range(begin=begin, end=end, include_identifier=include_identifier, include_log=include_log)
+
+        previous = end
+        cached = [previous]
+        while previous:
+            response = self.request('commits/{}~1'.format(previous.hash))
+            if not response:
+                break
+            branch_point = previous.branch_point
+            identifier = previous.identifier
+            if identifier is not None:
+                identifier -= 1
+            if not identifier:
+                identifier = branch_point
+                branch_point = None
+
+            matches = self.GIT_SVN_REVISION.findall(response['message'])
+            revision = int(matches[-1].split('@')[0]) if matches else None
+
+            email_match = self.EMAIL_RE.match(response['author']['emailAddress'])
+
+            previous = Commit(
+                repository_id=self.id,
+                hash=response['id'],
+                revision=revision,
+                branch=end.branch if identifier and branch_point else self.default_branch,
+                identifier=identifier if include_identifier else None,
+                branch_point=branch_point if include_identifier else None,
+                timestamp=int(response['committerTimestamp'] / 1000),
+                author=self.contributors.create(
+                    response['author']['name'],
+                    email_match.group('email') if email_match else None,
+                ), order=0,
+                message=response['message'] if include_log else None,
+            )
+            if not cached or cached[0].timestamp != previous.timestamp:
+                for c in cached:
+                    yield c
+                cached = [previous]
+            else:
+                for c in cached:
+                    c.order += 1
+                cached.append(previous)
+
+            if previous.hash == begin.hash or previous.timestamp < begin.timestamp:
+                previous = None
+                break
+
+        for c in cached:
+            c.order += begin.order
+            yield c
+
     def find(self, argument, include_log=True, include_identifier=True):
         if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
@@ -625,6 +700,50 @@ class BitBucket(Scm):
         if not commit_data:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['id'], include_log=include_log, include_identifier=include_identifier)
+
+    def diff(self, head='HEAD', base=None, include_log=False):
+        if base:
+            commits = list(self.commits(dict(argument=base), end=dict(argument=head), include_identifier=False))
+        else:
+            commits = [self.find(head, include_identifier=False), None]
+
+        if not commits or not commits[0]:
+            sys.stderr.write('Failed to find commits required to generate diff\n')
+            return
+        commits = commits[:-1]
+
+        patch_count = 1
+        for commit in commits:
+            response = self.request('commits/{}/diff?contextLines={}'.format(commit.hash, self.DIFF_CONTEXT))
+            if not response:
+                sys.stderr.write('Failed to retrieve diff of {} with status code\n'.format(commit))
+                return
+
+            if include_log and commit.message:
+                yield 'From {}'.format(commit.hash)
+                yield 'From: {} <{}>'.format(commit.author.name, commit.author.email)
+                yield 'Date: {}'.format(datetime.fromtimestamp(commit.timestamp).strftime('%a %b %d %H:%M:%S %Y'))
+                if len(commits) <= 1:
+                    subject = 'Subject: [PATCH]'
+                else:
+                    subject = 'Subject: [PATCH {}/{}]'.format(patch_count, len(commits))
+                for line in commit.message.splitlines():
+                    if subject is None:
+                        yield line
+                    elif line:
+                        subject = '{} {}'.format(subject, line)
+                    else:
+                        yield subject
+                        yield line
+                        subject = None
+                if subject:
+                    yield subject
+                yield '---'
+
+            for line in self.json_to_diff(response).splitlines():
+                yield line
+
+            patch_count += 1
 
     def files_changed(self, argument=None):
         if not argument:
