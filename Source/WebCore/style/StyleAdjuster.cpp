@@ -392,40 +392,6 @@ static UnicodeBidi adjustUnicodeBidiForRuby(UnicodeBidi unicodeBidi)
     }
 }
 
-static DisplayType disableStyleBasedRubyIfNeeded(const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element& element)
-{
-    ASSERT(isRubyContainerOrInternalRubyBox(style));
-
-    // FIXME: Reduce this function to nothing.
-    auto shouldDisable = [&] {
-        if (is<RubyElement>(element)) {
-            if (style.textAlign() == TextAlignMode::Justify)
-                return true;
-            // Disables nesting. Making descendants affect element style is not really correct though.
-            if (ancestorsOfType<RubyElement>(element).first() || descendantsOfType<RubyElement>(element).first())
-                return true;
-            return false;
-        }
-        if (is<RubyTextElement>(element))
-            return parentBoxStyle.display() != DisplayType::Ruby && parentBoxStyle.display() != DisplayType::RubyBlock;
-
-        return true;
-    }();
-
-    if (shouldDisable) {
-        switch (style.display()) {
-        case DisplayType::Ruby:
-            return DisplayType::Inline;
-        case DisplayType::RubyBlock:
-        case DisplayType::RubyAnnotation:
-            return DisplayType::Block;
-        default:
-            break;
-        }
-    }
-    return style.display();
-}
-
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -454,7 +420,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
                 style.setEffectiveDisplay(equivalentBlockDisplay(style));
 
             if (isRubyContainerOrInternalRubyBox(style))
-                style.setEffectiveDisplay(disableStyleBasedRubyIfNeeded(style, m_parentBoxStyle, *m_element));
+                style.setEffectiveDisplay(style.display());
         }
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.

@@ -116,10 +116,9 @@ struct SameSizeAsRenderElement : public RenderObject {
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<RenderElementType> typeFlags)
-    : RenderObject(type, elementOrDocument)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<RenderElementType> flags)
+    : RenderObject(type, elementOrDocument, flags)
     , m_firstChild(nullptr)
-    , m_typeFlags(typeFlags.toRaw())
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
     , m_hasPausedImageAnimations(false)
@@ -211,7 +210,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
         return createRenderer<RenderGrid>(element, WTFMove(style));
     case DisplayType::Box:
     case DisplayType::InlineBox:
-        return createRenderer<RenderDeprecatedFlexibleBox>(RenderObject::Type::DeprecatedFlexibleBox, element, WTFMove(style));
+        return createRenderer<RenderDeprecatedFlexibleBox>(element, WTFMove(style));
     case DisplayType::RubyBase:
         return createRenderer<RenderInline>(RenderObject::Type::Inline, element, WTFMove(style));
     case DisplayType::RubyAnnotation:

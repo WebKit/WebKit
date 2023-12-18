@@ -70,8 +70,6 @@ protected:
     void updateCachedBoundaries();
 
 private:
-    bool isLegacyRenderSVGContainer() const final { return true; }
-
     FloatRect m_objectBoundingBox;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;

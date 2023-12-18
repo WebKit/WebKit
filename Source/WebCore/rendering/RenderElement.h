@@ -123,16 +123,6 @@ public:
     const RenderStyle* spellingErrorPseudoStyle() const;
     const RenderStyle* grammarErrorPseudoStyle() const;
 
-    // FIXME: Make these standalone and move to relevant files.
-    bool isRenderLayerModelObject() const;
-    bool isRenderBoxModelObject() const;
-    bool isRenderBlock() const;
-    bool isRenderBlockFlow() const;
-    bool isRenderReplaced() const;
-    bool isRenderInline() const;
-    bool isRenderFlexibleBox() const;
-    bool isRenderTextControl() const;
-
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     void didAttachChild(RenderObject& child, RenderObject* beforeChild);
 
@@ -304,17 +294,6 @@ public:
     void clearNeedsLayoutForDescendants();
 
 protected:
-    enum class RenderElementType {
-        RenderLayerModelObjectFlag  = 1 << 0,
-        RenderBoxModelObjectFlag    = 1 << 1,
-        RenderInlineFlag            = 1 << 2,
-        RenderReplacedFlag          = 1 << 3,
-        RenderBlockFlag             = 1 << 4,
-        RenderBlockFlowFlag         = 1 << 5,
-        RenderFlexibleBoxFlag       = 1 << 6,
-        RenderTextControlFlag       = 1 << 7,
-    };
-
     RenderElement(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
     RenderElement(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
 
@@ -366,7 +345,6 @@ private:
     void isRenderText() const = delete;
     void isRenderElement() const = delete;
 
-    OptionSet<RenderElementType> typeFlags() const { return OptionSet<RenderElementType>::fromRaw(m_typeFlags); }
     RenderObject* firstChildSlow() const final { return firstChild(); }
     RenderObject* lastChildSlow() const final { return lastChild(); }
 
@@ -403,13 +381,14 @@ private:
     const RenderStyle* textSegmentPseudoStyle(PseudoId) const;
 
     SingleThreadPackedWeakPtr<RenderObject> m_firstChild;
-    unsigned m_typeFlags : 8;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
 
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
+
+    // 11 bits free.
 
     SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
 
@@ -424,8 +403,9 @@ private:
 
     unsigned m_isRegisteredForVisibleInViewportCallback : 1;
     unsigned m_visibleInViewportState : 2;
-
     unsigned m_didContributeToVisuallyNonEmptyPixelCount : 1;
+
+    // 3 bits free.
 
     RenderStyle m_style;
 };
@@ -451,45 +431,6 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
         markContainingBlocksForLayout();
 }
 
-inline bool RenderElement::isRenderLayerModelObject() const
-{
-    return typeFlags().contains(RenderElementType::RenderLayerModelObjectFlag);
-}
-
-inline bool RenderElement::isRenderBoxModelObject() const
-{
-    return typeFlags().contains(RenderElementType::RenderBoxModelObjectFlag);
-}
-
-inline bool RenderElement::isRenderBlock() const
-{
-    return typeFlags().contains(RenderElementType::RenderBlockFlag);
-}
-
-inline bool RenderElement::isRenderBlockFlow() const
-{
-    return typeFlags().contains(RenderElementType::RenderBlockFlowFlag);
-}
-
-inline bool RenderElement::isRenderReplaced() const
-{
-    return typeFlags().contains(RenderElementType::RenderReplacedFlag);
-}
-
-inline bool RenderElement::isRenderInline() const
-{
-    return typeFlags().contains(RenderElementType::RenderInlineFlag);
-}
-
-inline bool RenderElement::isRenderFlexibleBox() const
-{
-    return typeFlags().contains(RenderElementType::RenderFlexibleBoxFlag);
-}
-
-inline bool RenderElement::isRenderTextControl() const
-{
-    return typeFlags().contains(RenderElementType::RenderTextControlFlag);
-}
 
 inline Element* RenderElement::generatingElement() const
 {
@@ -499,51 +440,6 @@ inline Element* RenderElement::generatingElement() const
 inline bool RenderElement::canEstablishContainingBlockWithTransform() const
 {
     return isRenderBlock() || (isTablePart() && !isRenderTableCol());
-}
-
-inline bool RenderObject::isRenderLayerModelObject() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderLayerModelObject();
-}
-
-inline bool RenderObject::isRenderBoxModelObject() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderBoxModelObject();
-}
-
-inline bool RenderObject::isRenderBlock() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderBlock();
-}
-
-inline bool RenderObject::isRenderBlockFlow() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderBlockFlow();
-}
-
-inline bool RenderObject::isRenderReplaced() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderReplaced();
-}
-
-inline bool RenderObject::isRenderInline() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderInline();
-}
-
-inline bool RenderObject::isRenderFlexibleBox() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderFlexibleBox();
-}
-
-inline bool RenderObject::isRenderTextControl() const
-{
-    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderTextControl();
-}
-
-inline bool RenderObject::isFlexibleBoxIncludingDeprecated() const
-{
-    return isRenderFlexibleBox() || isRenderDeprecatedFlexibleBox();
 }
 
 inline const RenderStyle& RenderObject::style() const

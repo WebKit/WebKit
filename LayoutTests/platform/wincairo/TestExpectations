@@ -2665,7 +2665,6 @@ fast/text/font-face-fall-off-end.html [ ImageOnlyFailure ]
 fast/text/ipa-tone-letters.html [ Failure ]
 fast/text/newline-width.html [ ImageOnlyFailure ]
 fast/text/otsvg-spacing.html [ ImageOnlyFailure ]
-fast/text/ruby-justify-tatechuyoko.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-fallback-space-glyph.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
 fast/text/tab-stops-with-offset-from-parent.html [ ImageOnlyFailure ]
@@ -2736,3 +2735,6 @@ imported/w3c/web-platform-tests/css/selectors/selectors-4/lang-020.html [ Pass ]
 http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ] # Timeout
 
 webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure ]
+
+fast/css/bidi-override-in-anonymous-block.html [ Failure ]
+fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]

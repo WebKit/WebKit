@@ -896,17 +896,17 @@ CSS3DTransformInteroperabilityEnabled:
 
 CSSBasedRubyEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: css
   humanReadableName: "CSS based Ruby implementation in IFC"
   humanReadableDescription: "CSS based Ruby implementation in IFC"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCascadeLayersEnabled:
   type: bool

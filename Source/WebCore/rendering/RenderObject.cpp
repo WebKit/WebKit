@@ -118,7 +118,9 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
 #endif
     unsigned m_bitfields;
     CheckedRef<Node> node;
-    SingleThreadWeakPtr<RenderObject> pointers[2];
+    SingleThreadWeakPtr<RenderObject> pointers;
+    SingleThreadPackedWeakPtr<RenderObject> m_previous;
+    uint16_t m_renderElementTypes;
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     uint8_t m_type;
     CheckedPtr<Layout::Box> layoutBox;
@@ -135,7 +137,7 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
     renderer->destroy();
 }
 
-RenderObject::RenderObject(Type type, Node& node)
+RenderObject::RenderObject(Type type, Node& node, OptionSet<RenderElementType> typeFlags)
     : CachedImageClient()
 #if ASSERT_ENABLED
     , m_hasAXObject(false)
@@ -143,6 +145,7 @@ RenderObject::RenderObject(Type type, Node& node)
 #endif
     , m_bitfields(node)
     , m_node(node)
+    , m_renderElementTypeFlags(typeFlags)
     , m_type(type)
 {
     if (CheckedPtr renderView = node.document().renderView())

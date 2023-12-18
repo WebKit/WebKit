@@ -83,8 +83,8 @@ public:
     virtual Path computeClipPath(AffineTransform&) const;
 
 protected:
-    RenderSVGModelObject(Type, Document&, RenderStyle&&);
-    RenderSVGModelObject(Type, SVGElement&, RenderStyle&&);
+    RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<RenderElementType> = { });
+    RenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<RenderElementType> = { });
 
     void willBeDestroyed() override;
     void updateFromStyle() override;

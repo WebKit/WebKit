@@ -31,7 +31,7 @@
 #import <wtf/CheckedRef.h>
 #import <wtf/Ref.h>
 
-class WebVisitedLinkStore final : public WebCore::VisitedLinkStore, public CanMakeCheckedPtr {
+class WebVisitedLinkStore final : public WebCore::VisitedLinkStore, public CanMakeWeakPtr<WebVisitedLinkStore> {
 public:
     static Ref<WebVisitedLinkStore> create();
     virtual ~WebVisitedLinkStore();

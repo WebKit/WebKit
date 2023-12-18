@@ -11,23 +11,21 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (0,36) size 0x18
       RenderText {#text} at (0,64) size 158x18
         text run at (0,64) width 158: "<ruby> is defined in the "
-      RenderRuby (inline) {RUBY} at (0,0) size 186x18
-        RenderRubyRun (anonymous) at (157,64) size 186x18
-          RenderRubyText {RT} at (0,-10) size 186x10
-            RenderText {#text} at (77,0) size 31x10
-              text run at (77,0) width 31: "HTML5"
-          RenderRubyBase (anonymous) at (0,0) size 186x18
-            RenderText {#text} at (0,0) size 186x18
-              text run at (0,0) width 186: "Hypertext Markup Language"
+      RenderInline {RUBY} at (0,0) size 186x18
+        RenderInline (generated) at (0,0) size 186x18
+          RenderText {#text} at (157,64) size 186x18
+            text run at (157,64) width 186: "Hypertext Markup Language"
+        RenderBlock {RT} at (157,54) size 186x10
+          RenderText {#text} at (77,0) size 31x10
+            text run at (77,0) width 31: "HTML5"
       RenderText {#text} at (342,64) size 32x18
         text run at (342,64) width 32: " and "
-      RenderRuby (inline) {RUBY} at (0,0) size 76x18
-        RenderRubyRun (anonymous) at (369,64) size 85x18
-          RenderRubyText {RT} at (0,-10) size 84x10
-            RenderText {#text} at (0,0) size 84x10
-              text run at (0,0) width 84: "Cascading Style Sheets"
-          RenderRubyBase (anonymous) at (0,0) size 84x18
-            RenderText {#text} at (23,0) size 38x18
-              text run at (23,0) width 38: "CSS3"
+      RenderInline {RUBY} at (0,0) size 85x18
+        RenderInline (generated) at (0,0) size 85x18
+          RenderText {#text} at (393,64) size 37x18
+            text run at (393,64) width 37: "CSS3"
+        RenderBlock {RT} at (369,54) size 85x10
+          RenderText {#text} at (0,0) size 84x10
+            text run at (0,0) width 84: "Cascading Style Sheets"
       RenderText {#text} at (448,64) size 44x18
         text run at (448,64) width 44: " specs."

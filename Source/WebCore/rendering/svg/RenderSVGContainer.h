@@ -68,9 +68,6 @@ protected:
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
-
-private:
-    bool isRenderSVGContainer() const final { return true; }
 };
 
 } // namespace WebCore

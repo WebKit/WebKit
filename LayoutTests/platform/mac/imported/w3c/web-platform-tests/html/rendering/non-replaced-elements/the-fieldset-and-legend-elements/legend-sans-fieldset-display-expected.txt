@@ -21,6 +21,6 @@ FAIL .td assert_equals: .td display expected "table-cell" but got "block"
 FAIL .li assert_equals: .li width expected "800px" but got "8.890625px"
 FAIL .inline assert_equals: .inline display expected "inline" but got "block"
 FAIL .inline-block assert_equals: .inline-block display expected "inline-block" but got "block"
-FAIL .ruby assert_equals: .ruby display expected "inline" but got "block"
-FAIL .rt assert_equals: .rt width expected "29.328125px" but got "9.78125px"
+FAIL .ruby assert_equals: .ruby display expected "ruby" but got "block"
+FAIL .rt assert_equals: .rt display expected "ruby-text" but got "block"
 

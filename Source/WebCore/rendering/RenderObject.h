@@ -222,9 +222,24 @@ public:
         LegacySVGViewportContainer
     };
 
+    enum class RenderElementType : uint16_t {
+        RenderLayerModelObjectFlag = 1 << 0,
+        RenderBoxModelObjectFlag = 1 << 1,
+        RenderInlineFlag = 1 << 2,
+        RenderReplacedFlag = 1 << 3,
+        RenderBlockFlag = 1 << 4,
+        RenderBlockFlowFlag = 1 << 5,
+        RenderFlexibleBoxFlag = 1 << 6,
+        RenderTextControlFlag = 1 << 7,
+        LegacyRenderSVGContainer = 1 << 8,
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        RenderSVGContainer = 1 << 9,
+#endif
+    };
+
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
-    RenderObject(Type, Node&);
+    RenderObject(Type, Node&, OptionSet<RenderElementType>);
     virtual ~RenderObject();
 
     Type type() const { return m_type; }
@@ -319,12 +334,12 @@ public:
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
     bool isRenderElement() const { return !isRenderText(); }
-    bool isRenderReplaced() const;
-    bool isRenderBoxModelObject() const;
-    bool isRenderBlock() const;
-    bool isRenderBlockFlow() const;
-    bool isRenderInline() const;
-    bool isRenderLayerModelObject() const;
+    bool isRenderReplaced() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderReplacedFlag); }
+    bool isRenderBoxModelObject() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderBoxModelObjectFlag); }
+    bool isRenderBlock() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderBlockFlag); }
+    bool isRenderBlockFlow() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderBlockFlowFlag); }
+    bool isRenderInline() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderInlineFlag); }
+    bool isRenderLayerModelObject() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderLayerModelObjectFlag); }
 
     inline bool isAtomicInlineLevelBox() const;
 
@@ -368,9 +383,9 @@ public:
     bool isRenderTableCol() const { return type() == Type::TableCol; }
     bool isRenderTableCaption() const { return type() == Type::TableCaption; }
     bool isRenderTableSection() const { return type() == Type::TableSection; }
-    inline bool isRenderTextControl() const; // Defined in RenderElement.h.
+    bool isRenderTextControl() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderTextControlFlag); }
     bool isRenderTextControlMultiLine() const { return type() == Type::TextControlMultiLine; }
-    virtual bool isRenderTextControlSingleLine() const { return false; }
+    bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderVideo() const { return type() == Type::Video; }
@@ -449,8 +464,10 @@ public:
     virtual bool isRenderSVGBlock() const { return false; }
     bool isLegacyRenderSVGRoot() const { return type() == Type::LegacySVGRoot; }
     bool isRenderSVGRoot() const { return type() == Type::SVGRoot; }
-    virtual bool isRenderSVGContainer() const { return false; }
-    virtual bool isLegacyRenderSVGContainer() const { return false; }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool isRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGContainer); }
+#endif
+    bool isLegacyRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::LegacyRenderSVGContainer); }
     bool isRenderSVGTransformableContainer() const { return type() == Type::SVGTransformableContainer; }
     bool isLegacyRenderSVGTransformableContainer() const { return type() == Type::LegacySVGTransformableContainer; }
     bool isRenderSVGViewportContainer() const { return type() == Type::SVGViewportContainer; }
@@ -969,10 +986,10 @@ public:
     void destroy();
 
     // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box).
-    virtual bool isRenderDeprecatedFlexibleBox() const { return false; }
+    bool isRenderDeprecatedFlexibleBox() const { return m_type == RenderObject::Type::DeprecatedFlexibleBox; }
     // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flex).
-    inline bool isRenderFlexibleBox() const; // Defined in RenderElement.h.
-    inline bool isFlexibleBoxIncludingDeprecated() const; // Defined in RenderElement.h.
+    inline bool isRenderFlexibleBox() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderFlexibleBoxFlag); }
+    inline bool isFlexibleBoxIncludingDeprecated() const { return isRenderFlexibleBox() || isRenderDeprecatedFlexibleBox(); }
 
     bool isRenderCombineText() const { return type() == Type::CombineText; }
 
@@ -1206,7 +1223,8 @@ private:
     CheckedRef<Node> m_node;
 
     SingleThreadWeakPtr<RenderElement> m_parent;
-    SingleThreadWeakPtr<RenderObject> m_previous;
+    SingleThreadPackedWeakPtr<RenderObject> m_previous;
+    OptionSet<RenderElementType> m_renderElementTypeFlags;
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     Type m_type;
 
