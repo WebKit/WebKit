@@ -337,11 +337,11 @@ static inline std::optional<size_t> lastValidBreakingPosition(const InlineConten
     ASSERT(inlineTextItem.length());
     auto lineBreak = textRun.style.lineBreak();
 
-    auto adjactentTextRunIndex = nextTextRunIndex(runs, textRunIndex);
-    if (!adjactentTextRunIndex)
+    auto adjacentTextRunIndex = nextTextRunIndex(runs, textRunIndex);
+    if (!adjacentTextRunIndex)
         return inlineTextItem.end();
 
-    auto& nextInlineTextItem = downcast<InlineTextItem>(runs[*adjactentTextRunIndex].inlineItem);
+    auto& nextInlineTextItem = downcast<InlineTextItem>(runs[*adjacentTextRunIndex].inlineItem);
     auto canBreakAtRunBoundary = nextInlineTextItem.isWhitespace() ? nextInlineTextItem.style().whiteSpaceCollapse() != WhiteSpaceCollapse::BreakSpaces :
         canBreakBefore(nextInlineTextItem.inlineTextBox().content()[nextInlineTextItem.start()], lineBreak);
     if (canBreakAtRunBoundary)
