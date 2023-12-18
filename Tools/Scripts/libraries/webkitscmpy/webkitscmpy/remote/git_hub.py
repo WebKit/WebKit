@@ -45,6 +45,7 @@ class GitHub(Scm):
     KNOWN_400_MESSAGES = [
         'No commit found for SHA',
     ]
+    DIFF_HEADER = 'application/vnd.github.diff'
 
     class PRGenerator(Scm.PRGenerator):
         SUPPORTS_DRAFTS = True
@@ -710,7 +711,7 @@ class GitHub(Scm):
                 identifier = previous.identifier
                 if commit_data['sha'] == previous.hash:
                     cached = cached[:-1]
-                else:
+                elif identifier is not None:
                     identifier -= 1
 
                 if not identifier:
@@ -782,6 +783,50 @@ class GitHub(Scm):
         if not commit_data:
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['sha'], include_log=include_log, include_identifier=include_identifier)
+
+    def diff(self, head='HEAD', base=None, include_log=False):
+        if base:
+            commits = list(self.commits(dict(argument=base), end=dict(argument=head), include_identifier=False))
+        else:
+            commits = [self.find(head, include_identifier=False), None]
+
+        if not commits or not commits[0]:
+            sys.stderr.write('Failed to find commits required to generate diff\n')
+            return
+        commits = commits[:-1]
+
+        patch_count = 1
+        for commit in commits:
+            response = self.request('commits/{}'.format(commit.hash), headers=dict(Accept=self.DIFF_HEADER))
+            if response.status_code // 100 != 2:
+                sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(commit, response.status_code))
+                return
+
+            if include_log:
+                yield 'From {}'.format(commit.hash)
+                yield 'From: {} <{}>'.format(commit.author.name, commit.author.email)
+                yield 'Date: {}'.format(datetime.fromtimestamp(commit.timestamp).strftime('%a %b %d %H:%M:%S %Y'))
+                if len(commits) <= 1:
+                    subject = 'Subject: [PATCH]'
+                else:
+                    subject = 'Subject: [PATCH {}/{}]'.format(patch_count, len(commits))
+                for line in commit.message.splitlines():
+                    if subject is None:
+                        yield line
+                    elif line:
+                        subject = '{} {}'.format(subject, line)
+                    else:
+                        yield subject
+                        yield line
+                        subject = None
+                if subject:
+                    yield subject
+                yield '---'
+
+            for line in response.text.splitlines():
+                yield line
+
+            patch_count += 1
 
     def files_changed(self, argument=None):
         if not argument:
