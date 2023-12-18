@@ -1501,7 +1501,8 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-import
 imported/w3c/web-platform-tests/fetch/metadata/generated/worker-dedicated-importscripts.sub.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/fetch/private-network-access/service-worker-fetch.https.window.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ DumpJSConsoleLogInStdErr ]
+# Uncomment when webkit.org/b/266280 is fixed
+#imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ DumpJSConsoleLogInStdErr ]
 
 imported/w3c/web-platform-tests/fetch/private-network-access/service-worker-update.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/service-worker-background-fetch.https.window.html [ DumpJSConsoleLogInStdErr ]
@@ -2164,6 +2165,8 @@ webkit.org/b/212741 imported/w3c/web-platform-tests/content-security-policy/navi
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Pass DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/262391 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
 
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 
@@ -3687,7 +3690,6 @@ webkit.org/b/266280 http/tests/xmlhttprequest/logout.html [ Pass Failure Crash ]
 webkit.org/b/266280 http/tests/xmlhttprequest/readystatechange-and-abort.html [ Pass Crash ]
 webkit.org/b/266280 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/html/infrastructure/urls/terminology-0/document-base-url.html [ Pass Crash ]
-# Failure is tracked here webkit.org/b/262391
 webkit.org/b/266280 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-target/form-target-iframe.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-abort.https.any.worker.html [ Pass Crash ]
@@ -3696,6 +3698,9 @@ webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/266280 http/tests/xmlhttprequest/cross-site-denied-response-sync.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ DumpJSConsoleLogInStdErr Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie-store.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/detached-iframe.html [ Pass Crash ]
 
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]
