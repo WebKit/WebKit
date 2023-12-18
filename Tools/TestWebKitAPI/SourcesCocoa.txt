@@ -260,6 +260,7 @@ Tests/WebKitCocoa/UserContentWorld.mm
 Tests/WebKitCocoa/UserInitiatedActionInNavigationAction.mm
 Tests/WebKitCocoa/UserMediaDisabled.mm
 Tests/WebKitCocoa/UserMediaSimulateFailedSandbox.mm
+Tests/WebKitCocoa/VerifyUserGestureFromUIProcess.mm
 Tests/WebKitCocoa/VideoControlsManager.mm
 Tests/WebKitCocoa/VideoQualityDisplayCompositing.mm
 Tests/WebKitCocoa/ViewExposedRect.mm
