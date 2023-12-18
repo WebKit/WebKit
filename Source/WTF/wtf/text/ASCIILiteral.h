@@ -60,7 +60,7 @@ public:
 
     constexpr char characterAt(unsigned index) const { return m_characters[index]; }
 
-#ifdef __OBJC__
+#if defined(__OBJC__) && !USE(BUN_JSC_ADDITIONS)
     // This function convert null strings to empty strings.
     WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSString() const;
 #endif

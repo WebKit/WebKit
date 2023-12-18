@@ -113,7 +113,6 @@ std::atomic<uint64_t> lastTimeZoneID { 1 };
 
 #if HAVE(ICU_C_TIMEZONE_API)
 class OpaqueICUTimeZone {
-    // WTF_MAKE_FAST_ALLOCATED(OpaqueICUTimeZone);
     WTF_MAKE_TZONE_ALLOCATED(OpaqueICUTimeZone);
 public:
     std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> m_calendar;
