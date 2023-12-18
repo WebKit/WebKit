@@ -162,10 +162,10 @@
   <autotools id="libvpx" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --extra-cflags=-fPIC --extra-cxxflags=-fPIC">
     <pkg-config>vpx.pc</pkg-config>
     <branch repo="github-tarball"
-            version="1.10.0"
+            version="1.11.0"
             module="webmproject/libvpx/archive/refs/tags/v${version}.tar.gz"
             checkoutdir="libvpx-${version}"
-            hash="sha256:85803ccbdbdd7a3b03d930187cb055f1353596969c1f92ebec2db839fa4f834a"/>
+            hash="sha256:965e51c91ad9851e2337aebcc0f517440c637c506f3a03948062e3d5ea129a83"/>
   </autotools>
 
   <meson id="glib"
