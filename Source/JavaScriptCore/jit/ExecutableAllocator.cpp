@@ -543,9 +543,36 @@ public:
     RefPtr<ExecutableMemoryHandle> allocate(size_t sizeInBytes)
     {
 #if ENABLE(LIBPAS_JIT_HEAP)
+        Vector<void*, 0> randomAllocations;
+        if (UNLIKELY(Options::useRandomizingExecutableIslandAllocation())) {
+            // Let's fragment the executable memory agressively
+            auto bytesAllocated = m_bytesAllocated.load(std::memory_order_relaxed);
+            uint64_t allocationRoom = (m_reservation.size() - bytesAllocated) * 1 / 100 / sizeInBytes;
+            if (allocationRoom == 0)
+                allocationRoom = 1;
+            int count = cryptographicallyRandomNumber<uint32_t>() % allocationRoom;
+
+            randomAllocations.resize(count);
+
+            for (int i = 0; i < count; ++i) {
+                void* result = jit_heap_try_allocate(sizeInBytes);
+                if (!result) {
+                    // We are running out of memory, so make sure this allocation will succeed.
+                    for (int j = 0; j < i; ++j)
+                        jit_heap_deallocate(randomAllocations[j]);
+                    randomAllocations.resize(0);
+                    break;
+                }
+                randomAllocations[i] = result;
+            }
+        }
         auto result = ExecutableMemoryHandle::createImpl(sizeInBytes);
         if (LIKELY(result))
             m_bytesAllocated.fetch_add(result->sizeInBytes(), std::memory_order_relaxed);
+        if (UNLIKELY(Options::useRandomizingExecutableIslandAllocation())) {
+            for (unsigned i = 0; i < randomAllocations.size(); ++i)
+                jit_heap_deallocate(randomAllocations[i]);
+        }
         return result;
 #elif ENABLE(JUMP_ISLANDS)
         Locker locker { getLock() };
@@ -743,8 +770,12 @@ private:
         delete islands;
     }
 
-    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
+    // Produces a list of islands to get you to target.
+    // Does not patch any code inside them, since allocations should happen outside the jit write critical section.
+    // The last item in the list is target, the first is jumpLocation.
+    Vector<void*> allocateIslandsForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
     {
+        Vector<void*> listOfNewIslands;
         Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
         if (islands) {
             // FIXME: We could create some method of reusing already allocated islands here, but it's
@@ -757,24 +788,21 @@ private:
             m_islandsForJumpSourceLocation.insert(islands);
         }
 
+        listOfNewIslands.append(bitwise_cast<void*>(jumpLocation));
+
         RegionAllocator* allocator = findRegion(jumpLocation > target ? jumpLocation - m_regionSize : jumpLocation);
         RELEASE_ASSERT(allocator);
         void* result = allocator->allocateIsland();
         void* currentIsland = result;
         jumpLocation = bitwise_cast<uintptr_t>(currentIsland);
+
+        listOfNewIslands.append(bitwise_cast<void*>(jumpLocation));
+
         while (true) {
             islands->jumpIslands.append(CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(currentIsland)));
 
-            auto emitJumpTo = [&] (void* target) {
-                RELEASE_ASSERT(Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
-                if (useMemcpy)
-                    Assembler::fillNearTailCall<memcpyWrapper>(currentIsland, target);
-                else
-                    Assembler::fillNearTailCall<performJITMemcpy>(currentIsland, target);
-            };
-
             if (Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), bitwise_cast<void*>(target))) {
-                emitJumpTo(bitwise_cast<void*>(target));
+                listOfNewIslands.append(bitwise_cast<void*>(target));
                 break;
             }
 
@@ -787,12 +815,48 @@ private:
             RegionAllocator* allocator = findRegion(nextIslandRegion);
             RELEASE_ASSERT(allocator);
             void* nextIsland = allocator->allocateIsland();
-            emitJumpTo(nextIsland);
+            listOfNewIslands.append(nextIsland);
             jumpLocation = bitwise_cast<uintptr_t>(nextIsland);
             currentIsland = nextIsland;
         }
 
-        return result;
+        return listOfNewIslands;
+    }
+
+    template <bool useMemcpy>
+    static void emitJumpTo(void* currentIsland, void* target)
+    {
+        if constexpr (useMemcpy)
+            Assembler::fillNearTailCall<memcpyWrapper>(currentIsland, target);
+        else
+            Assembler::fillNearTailCall<performJITMemcpy>(currentIsland, target);
+    }
+
+    template <bool useMemcpy>
+    static void* patchIslandsForJumpLocation(const LockHolder&, Vector<void*>& islandList)
+    {
+        RELEASE_ASSERT(islandList.size() >= 3);
+        for (unsigned i = 1; i + 1 < islandList.size(); ++i) {
+            void* currentIsland = islandList[i];
+            void* nextIsland = islandList[i+1];
+
+            RELEASE_ASSERT(Assembler::canEmitJump(bitwise_cast<void*>(currentIsland), nextIsland));
+            emitJumpTo<useMemcpy>(currentIsland, nextIsland);
+        }
+
+        return islandList[1];
+    }
+
+    friend Vector<void*> ExecutableAllocator::allocateJumpIslandsToButDontPatch(void*, void*);
+    friend void* ExecutableAllocator::patchPreallocatedIslands(Vector<void*>&);
+
+    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
+    {
+        auto islands = allocateIslandsForJumpLocation(locker, jumpLocation, target, concurrently);
+        if (useMemcpy)
+            return patchIslandsForJumpLocation<true>(locker, islands);
+        return patchIslandsForJumpLocation<false>(locker, islands);
+
     }
 #endif // ENABLE(JUMP_ISLANDS)
 
@@ -1202,6 +1266,30 @@ void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDest
     constexpr bool concurrently = true;
     constexpr bool useMemcpy = false;
     return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
+}
+
+Vector<void*> ExecutableAllocator::allocateJumpIslandsToButDontPatch(void* from, void* newDestination)
+{
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        RELEASE_ASSERT_NOT_REACHED();
+
+    Locker locker { allocator->getLock() };
+
+    return allocator->allocateIslandsForJumpLocation(locker,
+        bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), false);
+}
+
+void* ExecutableAllocator::patchPreallocatedIslands(Vector<void*>& islands)
+{
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        RELEASE_ASSERT_NOT_REACHED();
+
+    Locker locker { allocator->getLock() };
+
+    constexpr bool useMemcpy = true;
+    return FixedVMPoolExecutableAllocator::patchIslandsForJumpLocation<useMemcpy>(locker, islands);
 }
 #endif
 

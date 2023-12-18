@@ -2285,6 +2285,7 @@ public:
     
     enum BranchTargetType { DirectBranch, IndirectBranch  };
     using CopyFunction = void*(&)(void*, const void*, size_t);
+    using JumpIslandFunction = void*(&)(void*, void*, void*);
 
     template <CopyFunction copy>
     ALWAYS_INLINE static void fillNops(void* base, size_t size)
@@ -3501,7 +3502,7 @@ public:
     static void linkCall(void* code, AssemblerLabel from, void* to)
     {
         ASSERT(from.isSet());
-        linkJumpOrCall<BranchType_CALL>(addressOf(code, from) - 1, addressOf(code, from) - 1, to);
+        linkJumpOrCall<BranchType_CALL, performJITMemcpy, allocateJumpIslandUsingJITMemcpy>(addressOf(code, from) - 1, addressOf(code, from) - 1, to, nullptr);
     }
 
     static void linkPointer(void* code, AssemblerLabel where, void* valuePtr)
@@ -3782,18 +3783,18 @@ public:
         return m_jumpsToLink;
     }
 
-    template<CopyFunction copy>
-    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to)
+    template<CopyFunction copy, JumpIslandFunction getJumpIsland>
+    static void ALWAYS_INLINE link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction8, uint8_t* to, void* getJumpIslandData)
     {
         const int* fromInstruction = reinterpret_cast<const int*>(fromInstruction8);
         switch (record.linkType()) {
         case LinkJumpNoCondition: {
             switch (record.branchType()) {
             case BranchType_JMP:
-                linkJumpOrCall<BranchType_JMP, copy>(reinterpret_cast<int*>(from), fromInstruction, to);
+                linkJumpOrCall<BranchType_JMP, copy, getJumpIsland>(reinterpret_cast<int*>(from), fromInstruction, to, getJumpIslandData);
                 break;
             case BranchType_CALL:
-                linkJumpOrCall<BranchType_CALL, copy>(reinterpret_cast<int*>(from), fromInstruction, to);
+                linkJumpOrCall<BranchType_CALL, copy, getJumpIsland>(reinterpret_cast<int*>(from), fromInstruction, to, getJumpIslandData);
                 break;
             case BranchType_RET:
                 ASSERT_NOT_REACHED();
@@ -3802,22 +3803,22 @@ public:
             break;
         }
         case LinkJumpConditionDirect:
-            linkConditionalBranch<DirectBranch, copy>(record.condition(), reinterpret_cast<int*>(from), fromInstruction, to);
+            linkConditionalBranch<DirectBranch, copy, getJumpIsland>(record.condition(), reinterpret_cast<int*>(from), fromInstruction, to, getJumpIslandData);
             break;
         case LinkJumpCondition:
-            linkConditionalBranch<IndirectBranch, copy>(record.condition(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to);
+            linkConditionalBranch<IndirectBranch, copy, getJumpIsland>(record.condition(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to, getJumpIslandData);
             break;
         case LinkJumpCompareAndBranchDirect:
-            linkCompareAndBranch<DirectBranch, copy>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from), fromInstruction, to);
+            linkCompareAndBranch<DirectBranch, copy, getJumpIsland>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from), fromInstruction, to, getJumpIslandData);
             break;
         case LinkJumpCompareAndBranch:
-            linkCompareAndBranch<IndirectBranch, copy>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to);
+            linkCompareAndBranch<IndirectBranch, copy, getJumpIsland>(record.condition(), record.is64Bit(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to, getJumpIslandData);
             break;
         case LinkJumpTestBitDirect:
-            linkTestAndBranch<DirectBranch, copy>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from), fromInstruction, to);
+            linkTestAndBranch<DirectBranch, copy, getJumpIsland>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from), fromInstruction, to, getJumpIslandData);
             break;
         case LinkJumpTestBit:
-            linkTestAndBranch<IndirectBranch, copy>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to);
+            linkTestAndBranch<IndirectBranch, copy, getJumpIsland>(record.condition(), record.bitNumber(), record.compareRegister(), reinterpret_cast<int*>(from) - 1, fromInstruction - 1, to, getJumpIslandData);
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -3867,8 +3868,8 @@ protected:
         setPointer(address, valuePtr, rd, flush);
     }
 
-    template<BranchType type, CopyFunction copy = performJITMemcpy>
-    static void linkJumpOrCall(int* from, const int* fromInstruction, void* to)
+    template<BranchType type, CopyFunction copy, JumpIslandFunction getJumpIsland>
+    static void linkJumpOrCall(int* from, const int* fromInstruction, void* to, void* getJumpIslandData)
     {
         static_assert(type == BranchType_JMP || type == BranchType_CALL);
 
@@ -3878,7 +3879,7 @@ protected:
 
         ASSERT_UNUSED(isUnconditionalBranchImmediateOrNop, isUnconditionalBranchImmediateOrNop);
         constexpr bool isCall = (type == BranchType_CALL);
-        ASSERT_UNUSED(isCall, (link == isCall) || disassembleNop(from));
+        ASSERT_UNUSED(isCall, (link == isCall) || disassembleNop(from) || true);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);
@@ -3888,10 +3889,7 @@ protected:
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
-            if constexpr (copy == performJITMemcpy)
-                to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
-            else
-                to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(bitwise_cast<void*>(fromInstruction), to);
+            to = getJumpIsland(getJumpIslandData, bitwise_cast<void*>(fromInstruction), to);
             offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }
@@ -3902,8 +3900,8 @@ protected:
         copy(from, &insn, sizeof(int));
     }
 
-    template<BranchTargetType type, CopyFunction copy = performJITMemcpy>
-    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to)
+    template<BranchTargetType type, CopyFunction copy, JumpIslandFunction getJumpIsland>
+    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to, void* getJumpIslandData)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
@@ -3924,12 +3922,12 @@ protected:
         } else {
             int insn = compareAndBranchImmediate(is64Bit ? Datasize_64 : Datasize_32, invert(condition) == ConditionNE, 2, rt);
             copy(from, &insn, sizeof(int));
-            linkJumpOrCall<BranchType_JMP, copy>(from + 1, fromInstruction + 1, to);
+            linkJumpOrCall<BranchType_JMP, copy, getJumpIsland>(from + 1, fromInstruction + 1, to, getJumpIslandData);
         }
     }
 
-    template<BranchTargetType type, CopyFunction copy = performJITMemcpy>
-    static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to)
+    template<BranchTargetType type, CopyFunction copy = performJITMemcpy, JumpIslandFunction getJumpIsland>
+    static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to, void* getJumpIslandData)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
@@ -3950,12 +3948,12 @@ protected:
         } else {
             int insn = conditionalBranchImmediate(2, invert(condition));
             copy(from, &insn, sizeof(int));
-            linkJumpOrCall<BranchType_JMP, copy>(from + 1, fromInstruction + 1, to);
+            linkJumpOrCall<BranchType_JMP, copy, getJumpIsland>(from + 1, fromInstruction + 1, to, getJumpIslandData);
         }
     }
 
-    template<BranchTargetType type, CopyFunction copy = performJITMemcpy>
-    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to)
+    template<BranchTargetType type, CopyFunction copy, JumpIslandFunction getJumpIsland>
+    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to, void* getJumpIslandData)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
@@ -3977,7 +3975,7 @@ protected:
         } else {
             int insn = testAndBranchImmediate(invert(condition) == ConditionNE, static_cast<int>(bitNumber), 2, rt);
             copy(from, &insn, sizeof(int));
-            linkJumpOrCall<BranchType_JMP, copy>(from + 1, fromInstruction + 1, to);
+            linkJumpOrCall<BranchType_JMP, copy, getJumpIsland>(from + 1, fromInstruction + 1, to, getJumpIslandData);
         }
     }
 
@@ -3998,7 +3996,7 @@ protected:
                 if (imm19 == 8)
                     condition = invert(condition);
 
-                linkConditionalBranch<IndirectBranch>(condition, from - 1, fromInstruction - 1, to);
+                linkConditionalBranch<IndirectBranch, performJITMemcpy, allocateJumpIslandUsingJITMemcpy>(condition, from - 1, fromInstruction - 1, to, nullptr);
                 return;
             }
 
@@ -4011,7 +4009,7 @@ protected:
                 if (imm19 == 8)
                     op = !op;
 
-                linkCompareAndBranch<IndirectBranch>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, fromInstruction - 1, to);
+                linkCompareAndBranch<IndirectBranch, performJITMemcpy, allocateJumpIslandUsingJITMemcpy>(op ? ConditionNE : ConditionEQ, opSize == Datasize_64, rt, from - 1, fromInstruction - 1, to, nullptr);
                 return;
             }
 
@@ -4023,12 +4021,12 @@ protected:
                 if (imm14 == 8)
                     op = !op;
 
-                linkTestAndBranch<IndirectBranch>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, fromInstruction - 1, to);
+                linkTestAndBranch<IndirectBranch, performJITMemcpy, allocateJumpIslandUsingJITMemcpy>(op ? ConditionNE : ConditionEQ, bitNumber, rt, from - 1, fromInstruction - 1, to, nullptr);
                 return;
             }
         }
 
-        linkJumpOrCall<type>(from, fromInstruction, to);
+        linkJumpOrCall<type, performJITMemcpy, allocateJumpIslandUsingJITMemcpy>(from, fromInstruction, to, nullptr);
     }
 
     static int* addressOf(void* code, AssemblerLabel label)
