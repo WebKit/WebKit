@@ -91,7 +91,7 @@ CREATE TABLE builds (
     build_id serial PRIMARY KEY,
     build_builder integer REFERENCES builders ON DELETE CASCADE,
     build_worker integer REFERENCES build_workers ON DELETE CASCADE,
-    build_tag varchar(64) NOT NULL,
+    build_tag varchar(128) NOT NULL,
     build_time timestamp NOT NULL,
     build_latest_revision timestamp,
     CONSTRAINT builder_build_time_tuple_must_be_unique UNIQUE(build_builder, build_tag, build_time));
@@ -203,7 +203,7 @@ CREATE TABLE reports (
     report_id serial PRIMARY KEY,
     report_builder integer NOT NULL REFERENCES builders ON DELETE RESTRICT,
     report_worker integer REFERENCES build_workers ON DELETE RESTRICT,
-    report_build_tag varchar(64),
+    report_build_tag varchar(128),
     report_build integer REFERENCES builds,
     report_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     report_committed_at timestamp,

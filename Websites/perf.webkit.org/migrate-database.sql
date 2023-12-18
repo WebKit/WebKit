@@ -97,4 +97,7 @@ CREATE TABLE IF NOT EXISTS test_parameter_set_items (
 
 ALTER TABLE build_requests ADD COLUMN IF NOT EXISTS request_test_parameter_set integer REFERENCES test_parameter_sets DEFAULT NULL;
 
+ALTER TABLE builds ALTER COLUMN build_tag TYPE varchar(128);
+ALTER TABLE reports ALTER COLUMN report_build_tag TYPE varchar(128);
+
 END$$;
