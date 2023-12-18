@@ -1199,10 +1199,11 @@ imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
+# Uncomment when webkit.org/b/266571 is fixed
+#imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Pass ]
+#imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Pass ]
+#imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
+#imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
 
 http/tests/webcodecs/h264-reordering.html [ Failure ]
 http/tests/webcodecs/hevc-reordering.html [ Failure ]
@@ -3736,6 +3737,11 @@ webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFa
 
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run [ Slow ]
 webkit.org/b/266465 [ Debug ] imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Crash ]
+
+webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Crash ]
+webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Crash ]
+webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Crash ]
+webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Crash ]
 
 # End: Common failures between GTK and WPE.
 
