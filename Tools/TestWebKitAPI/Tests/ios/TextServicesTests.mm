@@ -33,10 +33,6 @@
 #import "UIKitSPIForTesting.h"
 #import <wtf/RetainPtr.h>
 
-@interface WKWebView (TextServices)
-- (void)_lookup:(id)sender;
-@end
-
 namespace TestWebKitAPI {
 
 static bool doneWaitingForLookup = false;
@@ -60,7 +56,7 @@ TEST(TextServicesTests, LookUpPresentationRect)
     [webView waitForNextPresentationUpdate];
 
     doneWaitingForLookup = false;
-    [webView _lookup:nil];
+    [webView defineSelection];
     TestWebKitAPI::Util::run(&doneWaitingForLookup);
 
     EXPECT_EQ(lastLookupRange.location, 0U);
@@ -71,7 +67,7 @@ TEST(TextServicesTests, LookUpPresentationRect)
     [webView waitForNextPresentationUpdate];
 
     doneWaitingForLookup = false;
-    [webView _lookup:nil];
+    [webView defineSelection];
     TestWebKitAPI::Util::run(&doneWaitingForLookup);
 
     EXPECT_EQ(lastLookupRange.location, 0U);

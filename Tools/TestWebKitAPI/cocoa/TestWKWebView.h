@@ -29,12 +29,16 @@
 @class _WKProcessPoolConfiguration;
 
 #if PLATFORM(IOS_FAMILY)
+#import "WKSEDefinitions.h"
 @class _WKActivatedElementInfo;
 @class _WKTextInputContext;
 @protocol UITextInputInternal;
 @protocol UITextInputMultiDocument;
 @protocol UITextInputPrivate;
+@protocol UITextInputTraits_Private;
 @protocol UIWKInteractionViewProtocol_Staging_95652872;
+@protocol WKSETextInput;
+@protocol WKSEExtendedTextInputTraits;
 #endif
 
 @interface WKWebView (AdditionalDeclarations)
@@ -48,11 +52,43 @@
 #endif
 @end
 
+namespace TestWebKitAPI {
+
+struct AutocorrectionContext {
+    String contextBeforeSelection;
+    String selectedText;
+    String contextAfterSelection;
+};
+
+} // namespace TestWebKitAPI
+
 @interface WKWebView (TestWebKitAPI)
 #if PLATFORM(IOS_FAMILY)
-@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol_Staging_95652872, UITextInputTokenizer> *textInputContentView;
-- (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect;
+@property (nonatomic, readonly) CGRect selectionClipRect;
+@property (nonatomic, readonly) BOOL hasAsyncTextInput;
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+@property (nonatomic, readonly) id<WKSETextInput> asyncTextInput;
+@property (nonatomic, readonly) id<WKSEExtendedTextInputTraits> extendedTextInputTraits;
 #endif
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+- (void)synchronouslyAdjustSelectionWithDelta:(NSRange)range;
+#endif
+@property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputInternal, UITextInputMultiDocument, UIWKInteractionViewProtocol_Staging_95652872, UITextInputTokenizer> *textInputContentView;
+@property (nonatomic, readonly) TestWebKitAPI::AutocorrectionContext autocorrectionContext;
+@property (nonatomic, readonly) id<UITextInputTraits_Private> effectiveTextInputTraits;
+- (std::pair<CGRect, CGRect>)autocorrectionRectsForString:(NSString *)string;
+- (NSArray<_WKTextInputContext *> *)synchronouslyRequestTextInputContextsInRect:(CGRect)rect;
+- (void)replaceText:(NSString *)input withText:(NSString *)correction shouldUnderline:(BOOL)shouldUnderline completion:(void(^)())completion;
+- (void)handleKeyEvent:(WebEvent *)event completion:(void (^)(WebEvent *theEvent, BOOL handled))completion;
+- (void)selectTextForContextMenuWithLocationInView:(CGPoint)locationInView completion:(void(^)(BOOL shouldPresent))completion;
+- (void)defineSelection;
+- (void)shareSelection;
+- (void)moveSelectionToStartOfParagraph;
+- (void)extendSelectionToStartOfParagraph;
+- (void)moveSelectionToEndOfParagraph;
+- (void)extendSelectionToEndOfParagraph;
+#endif // PLATFORM(IOS_FAMILY)
+
 @property (nonatomic, readonly) NSUInteger gpuToWebProcessConnectionCount;
 @property (nonatomic, readonly) NSString *contentsAsString;
 @property (nonatomic, readonly) NSArray<NSString *> *tagsInBody;

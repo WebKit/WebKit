@@ -359,6 +359,13 @@ TEST(WKWebViewEditActions, SetFontFamily)
 TEST(WebKit, CanInvokeTranslateWithTextSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
+    auto translateSelector = ^{
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+        if ([webView hasAsyncTextInput])
+            return @selector(translate:);
+#endif
+        return @selector(_translate:);
+    }();
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 
     auto makeTranslationAvailabilityScope = [](BOOL available) -> ClassMethodSwizzler {
@@ -373,19 +380,19 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
 
     {
         auto swizzler = makeTranslationAvailabilityScope(YES);
-        EXPECT_FALSE([webView canPerformAction:@selector(_translate:) withSender:nil]);
+        EXPECT_FALSE([webView canPerformAction:translateSelector withSender:nil]);
 
         [webView collapseToEnd];
         [webView waitForNextPresentationUpdate];
-        EXPECT_FALSE([webView canPerformAction:@selector(_translate:) withSender:nil]);
+        EXPECT_FALSE([webView canPerformAction:translateSelector withSender:nil]);
 
         [webView selectAll:nil];
         [webView waitForNextPresentationUpdate];
-        EXPECT_TRUE([webView canPerformAction:@selector(_translate:) withSender:nil]);
+        EXPECT_TRUE([webView canPerformAction:translateSelector withSender:nil]);
     }
     {
         auto swizzler = makeTranslationAvailabilityScope(NO);
-        EXPECT_FALSE([webView canPerformAction:@selector(_translate:) withSender:nil]);
+        EXPECT_FALSE([webView canPerformAction:translateSelector withSender:nil]);
     }
 }
 

@@ -550,6 +550,8 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (BOOL)clickDriver:(id<_UIClickInteractionDriving>)driver shouldDelayGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 @end
 
+@class UITextInputArrowKeyHistory;
+
 @protocol UITextInputInternal
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
 - (CGRect)_selectionClipRect;
@@ -557,6 +559,8 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @optional
 - (void)addTextAlternatives:(NSTextAlternatives *)alternatives;
 - (void)removeEmojiAlternatives;
+- (UITextInputArrowKeyHistory *)_moveToEndOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history;
+- (UITextInputArrowKeyHistory *)_moveToStartOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history;
 @end
 
 typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
@@ -616,6 +620,13 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @end
 #endif
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+@interface UIKeyEvent (Internal)
+- (instancetype)initWithWebEvent:(WebEvent *)webEvent;
+@property (nonatomic, readonly) WebEvent *webEvent;
+@end
+#endif
+
 @interface UIView (IPI)
 - (void)_updateSafeAreaInsets;
 @end
@@ -637,11 +648,5 @@ typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
 @interface UIApplication (IPI)
 - (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
 @end
-
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
-@protocol UIAsyncTextInput_Staging <UIAsyncTextInput>
-@property (nonatomic, readonly) CGRect selectionClipRect; // Added in <rdar://118189933>.
-@end
-#endif
 
 #endif // PLATFORM(IOS_FAMILY)
