@@ -1570,13 +1570,13 @@ void UIScriptControllerIOS::resignFirstResponder()
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
-id<UIAsyncTextInput_Staging> UIScriptControllerIOS::asyncTextInput() const
+id<WKSETextInput> UIScriptControllerIOS::asyncTextInput() const
 {
-    static BOOL conformsToAsyncTextInput = class_conformsToProtocol(NSClassFromString(@"WKContentView"), @protocol(UIAsyncTextInput));
+    static BOOL conformsToAsyncTextInput = class_conformsToProtocol(NSClassFromString(@"WKContentView"), @protocol(WKSETextInput));
     if (!conformsToAsyncTextInput)
         return nil;
 
-    return (id<UIAsyncTextInput_Staging>)platformContentView();
+    return (id<WKSETextInput>)platformContentView();
 }
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

@@ -91,6 +91,9 @@ private:
 
     void closeWindow() final;
 
+    void rootFrameAdded(const WebCore::LocalFrame&) final { }
+    void rootFrameRemoved(const WebCore::LocalFrame&) final { }
+
     void runJavaScriptAlert(WebCore::LocalFrame&, const String&) override;
     bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) override;
     bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) override;

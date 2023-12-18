@@ -184,8 +184,7 @@ void HTMLDocument::removeWindowNamedItem(const AtomString& name, Element& item)
 bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
 {
     static NeverDestroyed set = [] {
-        // This is the list of attributes in HTML 4.01 with values marked as "[CI]" or case-insensitive
-        // Mozilla treats all other values as case-sensitive, thus so do we.
+        // https://html.spec.whatwg.org/multipage/semantics-other.html#case-sensitivity-of-selectors
         static constexpr std::array names {
             &accept_charsetAttr,
             &acceptAttr,
@@ -202,6 +201,7 @@ bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
             &declareAttr,
             &deferAttr,
             &dirAttr,
+            &directionAttr,
             &disabledAttr,
             &enctypeAttr,
             &faceAttr,
@@ -239,7 +239,7 @@ bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
             set.add(name->get().localName());
         return set;
     }();
-    bool isPossibleHTMLAttr = !attributeName.hasPrefix() && attributeName.namespaceURI().isNull();
+    auto isPossibleHTMLAttr = !attributeName.hasPrefix() && attributeName.namespaceURI().isNull();
     return !isPossibleHTMLAttr || !set.get().contains(attributeName.localName());
 }
 

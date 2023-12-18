@@ -2159,6 +2159,9 @@ static RenderObject* rendererForView(WAKView* view)
 
 - (void)_accessibilitySetFocus:(BOOL)focus
 {
+    if (![self _prepareAccessibilityCall])
+        return;
+
     if (auto* backingObject = self.axBackingObject)
         backingObject->setFocused(focus);
 }

@@ -44,7 +44,7 @@
 {
     [self stringByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('%@').enterKeyHint = '%@'", querySelector, enterKeyHint]];
     [self evaluateJavaScriptAndWaitForInputSessionToChange:[NSString stringWithFormat:@"document.querySelector('%@').focus()", querySelector]];
-    EXPECT_EQ(returnKeyType, [self textInputContentView].textInputTraits.returnKeyType);
+    EXPECT_EQ(returnKeyType, self.effectiveTextInputTraits.returnKeyType);
     [self evaluateJavaScriptAndWaitForInputSessionToChange:@"document.activeElement.blur()"];
 }
 

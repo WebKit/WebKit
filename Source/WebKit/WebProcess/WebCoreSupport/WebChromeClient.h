@@ -107,7 +107,10 @@ private:
     bool runBeforeUnloadConfirmPanel(const String& message, WebCore::LocalFrame&) final;
     
     void closeWindow() final;
-    
+
+    void rootFrameAdded(const WebCore::LocalFrame&) final;
+    void rootFrameRemoved(const WebCore::LocalFrame&) final;
+
     void runJavaScriptAlert(WebCore::LocalFrame&, const String&) final;
     bool runJavaScriptConfirm(WebCore::LocalFrame&, const String&) final;
     bool runJavaScriptPrompt(WebCore::LocalFrame&, const String& message, const String& defaultValue, String& result) final;

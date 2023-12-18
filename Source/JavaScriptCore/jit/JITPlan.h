@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "CompilationResult.h"
+#include "JITCode.h"
 #include "JITCompilationKey.h"
 #include "JITCompilationMode.h"
 #include "JITPlanStage.h"
@@ -62,6 +63,19 @@ public:
 
     enum class Tier { Baseline = 0, DFG = 1, FTL = 2, Count = 3 };
     Tier tier() const;
+    JITType jitType() const
+    {
+        switch (tier()) {
+        case Tier::Baseline:
+            return JITType::BaselineJIT;
+        case Tier::DFG:
+            return JITType::DFGJIT;
+        case Tier::FTL:
+            return JITType::FTLJIT;
+        default:
+            return JITType::None;
+        }
+    }
 
     JITCompilationKey key();
 

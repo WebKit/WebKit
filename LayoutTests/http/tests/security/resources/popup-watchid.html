@@ -1,0 +1,11 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.setGeolocationPermission(false);
+let watchID = navigator.geolocation.watchPosition(function() { });
+window.opener.postMessage(watchID, "*");
+</script>
+</body>
+</html>

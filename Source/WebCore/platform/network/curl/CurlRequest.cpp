@@ -278,7 +278,11 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     static constexpr auto emptyLineLF = "\n"_s;
 
     if (isCompletedOrCancelled())
+#if LIBCURL_VERSION_NUM >= 0x075700
         return CURL_WRITEFUNC_ERROR;
+#else
+        return 0;
+#endif
 
     // libcurl sends all headers that libcurl received to application.
     // So, in digest authentication, a block of response headers are received twice consecutively from libcurl.
@@ -349,7 +353,11 @@ size_t CurlRequest::didReceiveHeader(String&& header)
 size_t CurlRequest::didReceiveData(std::span<const uint8_t> receivedData)
 {
     if (isCompletedOrCancelled())
+#if LIBCURL_VERSION_NUM >= 0x075700
         return CURL_WRITEFUNC_ERROR;
+#else
+        return 0;
+#endif
 
     if (needToInvokeDidReceiveResponse()) {
         // Pause until completeDidReceiveResponse() is called.
@@ -372,7 +380,11 @@ size_t CurlRequest::didReceiveData(std::span<const uint8_t> receivedData)
         if (m_multipartHandle) {
             m_multipartHandle->didReceiveMessage(receivedData);
             if (m_multipartHandle->hasError())
+#if LIBCURL_VERSION_NUM >= 0x075700
                 return CURL_WRITEFUNC_ERROR;
+#else
+                return 0;
+#endif
         } else {
             callClient([buffer = SharedBuffer::create(receivedData)](CurlRequest& request, CurlRequestClient& client) mutable {
                 client.curlDidReceiveData(request, WTFMove(buffer));

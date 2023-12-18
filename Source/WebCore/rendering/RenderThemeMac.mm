@@ -740,19 +740,13 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     switch (appearance) {
     case StyleAppearance::Button:
     case StyleAppearance::Checkbox:
-#if ENABLE(INPUT_TYPE_COLOR)
-    case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::InnerSpinButton:
     case StyleAppearance::PushButton:
     case StyleAppearance::Radio:
-    case StyleAppearance::SquareButton:
-    case StyleAppearance::Switch: {
-        auto states = extractControlStyleStatesForRenderer(renderer);
-        Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), states, rect, renderer.style().effectiveZoom());
+    case StyleAppearance::Switch:
+        Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), rect, renderer.style().effectiveZoom());
         break;
-    }
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().effectiveZoom();
         setPopupButtonCellState(renderer, IntSize(rect.size()));

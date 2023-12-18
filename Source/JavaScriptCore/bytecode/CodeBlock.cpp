@@ -800,7 +800,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
     case FunctionCode:
         // We could have already set it to false because we detected an uninlineable call.
         // Don't override that observation.
-        m_shouldAlwaysBeInlined &= canInline(capabilityLevel()) && DFG::mightInlineFunction(this);
+        m_shouldAlwaysBeInlined &= canInline(capabilityLevel()) && DFG::mightInlineFunction(JITType::FTLJIT, this);
         break;
     }
 
@@ -2138,8 +2138,8 @@ DFG::CapabilityLevel CodeBlock::computeCapabilityLevel()
 
     if (classInfo == FunctionCodeBlock::info()) {
         if (isConstructor())
-            return DFG::functionForConstructCapabilityLevel(this);
-        return DFG::functionForCallCapabilityLevel(this);
+            return DFG::functionForConstructCapabilityLevel(JITType::FTLJIT, this);
+        return DFG::functionForCallCapabilityLevel(JITType::FTLJIT, this);
     }
 
     if (classInfo == EvalCodeBlock::info())
@@ -2349,7 +2349,7 @@ void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
     if (!hasBaselineJITProfiling())
         return;
 
-    if (!DFG::mightInlineFunction(this))
+    if (!DFG::mightInlineFunction(JITType::FTLJIT, this))
         return;
 
     if (!canInline(capabilityLevelState()))

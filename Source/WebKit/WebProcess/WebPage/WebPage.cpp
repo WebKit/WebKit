@@ -495,8 +495,10 @@ static std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClie
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
-    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessPageParameters ? parameters.subframeProcessPageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
     , m_viewSize(parameters.viewSize)
+    , m_layerHostingMode(parameters.layerHostingMode)
+    , m_drawingArea(DrawingArea::create(*this, parameters))
+    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessPageParameters ? parameters.subframeProcessPageParameters->frameTreeParameters.frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
     , m_alwaysShowsVerticalScroller { parameters.alwaysShowsVerticalScroller }
@@ -506,7 +508,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(WEBGL)
     , m_shouldRenderWebGLInGPUProcess { parameters.shouldRenderWebGLInGPUProcess}
 #endif
-    , m_layerHostingMode(parameters.layerHostingMode)
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
     , m_textCheckingControllerProxy(makeUniqueRef<TextCheckingControllerProxy>(*this))
 #endif
@@ -739,6 +740,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     
     m_page = Page::create(WTFMove(pageConfiguration));
 
+    updateAfterDrawingAreaCreation(parameters);
+
     WebStorageNamespaceProvider::incrementUseCount(sessionStorageNamespaceIdentifier());
 
     updatePreferences(parameters.store);
@@ -753,14 +756,11 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // to ensure it's created with the right size.
     m_page->setDeviceScaleFactor(parameters.deviceScaleFactor);
 
-    m_drawingArea = DrawingArea::create(*this, parameters);
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     if (m_drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
         m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 #endif
     // FIXME: Refactor frame construction and remove receivedMainFrameIdentifierFromUIProcess. <rdar://116201135>
-    if (!receivedMainFrameIdentifierFromUIProcess || parameters.openerFrameIdentifier)
-        m_drawingArea->addRootFrame(m_mainFrame->frameID());
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
     if (parameters.isProcessSwap)
@@ -1019,6 +1019,22 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 }
 
+void WebPage::updateAfterDrawingAreaCreation(const WebPageCreationParameters& parameters)
+{
+#if PLATFORM(COCOA)
+    m_page->settings().setForceCompositingMode(true);
+#endif
+#if PLATFORM(MAC)
+    if (parameters.drawingAreaType == DrawingAreaType::TiledCoreAnimation) {
+        if (auto viewExposedRect = parameters.viewExposedRect)
+            m_drawingArea->setViewExposedRect(viewExposedRect);
+    }
+#endif
+#if USE(COORDINATED_GRAPHICS)
+    m_drawingArea->updatePreferences(parameters.store);
+#endif
+}
+
 void WebPage::constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters& treeCreationParameters)
 {
     auto frame = WebFrame::createRemoteSubframe(*this, parent, treeCreationParameters.frameID, treeCreationParameters.frameName);
@@ -1155,6 +1171,17 @@ void WebPage::resumeAllMediaBuffering()
     m_page->resumeAllMediaBuffering();
 }
 
+static void addRootFramesToNewDrawingArea(WebFrame& frame, DrawingArea& drawingArea)
+{
+    if (frame.isRootFrame())
+        drawingArea.addRootFrame(frame.frameID());
+    if (!frame.coreFrame())
+        return;
+    for (RefPtr child = frame.coreFrame()->tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (RefPtr childWebFrame = WebFrame::fromCoreFrame(*child))
+            addRootFramesToNewDrawingArea(*childWebFrame, drawingArea);
+    }
+}
 
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
@@ -1168,12 +1195,13 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         oldDrawingArea->removeMessageReceiverIfNeeded();
 
         m_drawingArea = DrawingArea::create(*this, parameters);
+        updateAfterDrawingAreaCreation(parameters);
+        addRootFramesToNewDrawingArea(m_mainFrame.get(), *m_drawingArea);
+
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
         if (m_drawingArea->enterAcceleratedCompositingModeIfNeeded() && !parameters.isProcessSwap)
             m_drawingArea->sendEnterAcceleratedCompositingModeIfNeeded();
 #endif
-        if (is<WebCore::LocalFrame>(m_mainFrame->coreFrame()))
-            m_drawingArea->addRootFrame(m_mainFrame->frameID());
         m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
         m_drawingArea->updatePreferences(parameters.store);
 

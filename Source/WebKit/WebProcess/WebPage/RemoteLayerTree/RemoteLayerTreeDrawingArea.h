@@ -72,6 +72,7 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() final;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void addRootFrame(WebCore::FrameIdentifier) final;
+    void removeRootFrame(WebCore::FrameIdentifier) final;
     void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;

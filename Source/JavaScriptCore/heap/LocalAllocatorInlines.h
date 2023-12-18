@@ -36,7 +36,7 @@ ALWAYS_INLINE void* LocalAllocator::allocate(JSC::Heap& heap, size_t cellSize, G
     if constexpr (validateDFGDoesGC)
         vm.verifyCanGC();
     return m_freeList.allocateWithCellSize(
-        [&]() -> HeapCell* {
+        [&]() ALWAYS_INLINE_LAMBDA {
             sanitizeStackForVM(vm);
             return static_cast<HeapCell*>(allocateSlowCase(heap, cellSize, deferralContext, failureMode));
         }, cellSize);

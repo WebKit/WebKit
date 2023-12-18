@@ -468,6 +468,10 @@ void CurlHandle::enableHttp()
     if (m_url.protocolIs("https"_s) && (isHttp2Enabled || isHttp3Enabled)) {
         curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, isHttp3Enabled ? CURL_HTTP_VERSION_3 : CURL_HTTP_VERSION_2TLS);
         curl_easy_setopt(m_handle, CURLOPT_PIPEWAIT, 1L);
+#if LIBCURL_VERSION_NUM <= 0x075500
+        curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_ALPN, 1L);
+        curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_NPN, 0L);
+#endif
     } else
         curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 }
