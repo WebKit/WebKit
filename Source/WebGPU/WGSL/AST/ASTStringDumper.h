@@ -45,7 +45,9 @@ public:
 
     // Visitor
     void visit(ShaderModule&) override;
-    void visit(Directive&) override;
+
+    // Directive
+    void visit(DiagnosticDirective&) override;
 
     // Attribute
     void visit(BindingAttribute&) override;
@@ -59,6 +61,7 @@ public:
     void visit(Function&) override;
     void visit(Structure&) override;
     void visit(Variable&) override;
+    void visit(TypeAlias&) override;
 
     // Expression
     void visit(AbstractFloatLiteral&) override;
@@ -68,6 +71,7 @@ public:
     void visit(CallExpression&) override;
     void visit(FieldAccessExpression&) override;
     void visit(Float32Literal&) override;
+    void visit(Float16Literal&) override;
     void visit(IdentifierExpression&) override;
     void visit(IndexAccessExpression&) override;
     void visit(PointerDereferenceExpression&) override;

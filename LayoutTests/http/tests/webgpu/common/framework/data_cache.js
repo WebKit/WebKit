@@ -1,14 +1,6 @@
 /**
-* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/
-
-
-
-
-
-
-
-
+ * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+ **/
 
 /** DataCache is an interface to a data store used to hold cached data */
 export class DataCache {
@@ -95,4 +87,3 @@ export function setIsBuildingDataCache(value = true) {
  * The 'npm run gen_cache' tool will look for module-scope variables of this
  * interface, with the name `d`.
  */
-//# sourceMappingURL=data_cache.js.map

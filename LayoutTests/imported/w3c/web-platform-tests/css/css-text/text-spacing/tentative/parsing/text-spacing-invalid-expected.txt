@@ -1,8 +1,0 @@
-
-PASS e.style['text-spacing'] = "auto none" should not set the property value
-PASS e.style['text-spacing'] = "none auto" should not set the property value
-PASS e.style['text-spacing'] = "none garbage" should not set the property value
-PASS e.style['text-spacing'] = "auto garbage" should not set the property value
-PASS e.style['text-spacing'] = "garbage auto" should not set the property value
-PASS e.style['text-spacing'] = "garbage none" should not set the property value
-

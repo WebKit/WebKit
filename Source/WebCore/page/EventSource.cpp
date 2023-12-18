@@ -68,12 +68,12 @@ ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& contex
 {
     URL fullURL = context.completeURL(url);
     if (!fullURL.isValid())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is resolved.
-    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.contentSecurityPolicy()->allowConnectToSource(fullURL)) {
+    if (!context.shouldBypassMainWorldContentSecurityPolicy() && !context.checkedContentSecurityPolicy()->allowConnectToSource(fullURL)) {
         // FIXME: Should this be throwing an exception?
-        return Exception { SecurityError };
+        return Exception { ExceptionCode::SecurityError };
     }
 
     auto source = adoptRef(*new EventSource(context, fullURL, eventSourceInit));
@@ -136,8 +136,8 @@ void EventSource::scheduleInitialConnect()
 
     auto* context = scriptExecutionContext();
     m_connectTimer = context->eventLoop().scheduleTask(0_s, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
-        if (RefPtr strongThis = weakThis.get())
-            strongThis->connect();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->connect();
     });
 }
 
@@ -147,8 +147,8 @@ void EventSource::scheduleReconnect()
     m_state = CONNECTING;
     auto* context = scriptExecutionContext();
     m_connectTimer = context->eventLoop().scheduleTask(1_ms * m_reconnectDelay, TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
-        if (RefPtr strongThis = weakThis.get())
-            strongThis->connect();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->connect();
     });
     dispatchErrorEvent();
 }

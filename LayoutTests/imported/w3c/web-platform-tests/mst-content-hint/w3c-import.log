@@ -16,4 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html
+/LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationEffect.html
+/LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/RTCRtpSendParameters-degradationPreference.html
 /LayoutTests/imported/w3c/web-platform-tests/mst-content-hint/idlharness.window.js

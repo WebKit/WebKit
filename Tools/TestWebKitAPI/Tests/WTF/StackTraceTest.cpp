@@ -31,7 +31,7 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/unicode/CharacterNames.h>
 
-#if ((PLATFORM(GTK) || PLATFORM(WPE)) && defined(NDEBUG)) || (PLATFORM(WIN) && !defined(NDEBUG))
+#if PLATFORM(WIN) && defined(NDEBUG)
 #define MAYBE(name) DISABLED_##name
 #else
 #define MAYBE(name) name

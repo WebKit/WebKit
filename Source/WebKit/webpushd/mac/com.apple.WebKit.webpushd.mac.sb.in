@@ -45,9 +45,6 @@
     (subpath "/Library/Apple/System")
     (subpath "/Library/Preferences/Logging")      ; Logging Rethink
     (subpath "/System")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
-    (subpath "/private/var/db/dyld")
-#endif
     (subpath "/private/var/db/timezone")
     (subpath "/usr/lib")
     (subpath "/usr/share"))))

@@ -77,4 +77,9 @@ void DocumentParser::resumeScheduledTasks()
 {
 }
 
+RefPtr<Document> DocumentParser::protectedDocument() const
+{
+    return document();
+}
+
 } // namespace WebCore

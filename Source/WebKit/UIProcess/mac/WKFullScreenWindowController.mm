@@ -31,7 +31,7 @@
 #import "AppKitSPI.h"
 #import "LayerTreeContext.h"
 #import "NativeWebMouseEvent.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "WKAPICast.h"
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
@@ -44,7 +44,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/VideoFullscreenInterfaceMac.h>
-#import <WebCore/VideoFullscreenModel.h>
+#import <WebCore/VideoPresentationModel.h>
 #import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -55,7 +55,7 @@
 
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
-@interface WKFullScreenWindowController (VideoFullscreenManagerProxyClient)
+@interface WKFullScreenWindowController (VideoPresentationManagerProxyClient)
 - (void)didEnterPictureInPicture;
 - (void)didExitPictureInPicture;
 @end
@@ -88,7 +88,7 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 }
 
 @implementation WKFullScreenWindowController {
-    std::unique_ptr<WebKit::VideoFullscreenManagerProxy::VideoInPictureInPictureDidChangeObserver> _pipObserver;
+    std::unique_ptr<WebKit::VideoPresentationManagerProxy::VideoInPictureInPictureDidChangeObserver> _pipObserver;
 }
 
 #pragma mark -
@@ -257,7 +257,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // Painting is normally suspended when the WKView is removed from the window, but this is
     // unnecessary in the full-screen animation case, and can cause bugs; see
     // https://bugs.webkit.org/show_bug.cgi?id=88940 and https://bugs.webkit.org/show_bug.cgi?id=88374
-    // We will resume the normal behavior in _startEnterFullScreenAnimationWithDuration:
+    // We will resume the normal behavior in -finishedEnterFullScreenAnimation:
     _page->setSuppressVisibilityUpdates(true);
 
     // Swap the webView placeholder into place.
@@ -265,7 +265,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _webViewPlaceholder = adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
     [_webViewPlaceholder setTarget:nil];
     [_webViewPlaceholder setContents:(__bridge id)webViewContents.get()];
-    self.savedConstraints = _webView.superview.constraints;
+    [self _saveConstraintsOf:_webView.superview];
     [self _replaceView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
@@ -310,7 +310,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [window makeKeyAndOrderFront:self];
     [window setCollectionBehavior:behavior];
 
-    _page->setSuppressVisibilityUpdates(false);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[self window] setAutodisplay:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -333,6 +332,7 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
 
         [self _manager]->didEnterFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
+        _page->setSuppressVisibilityUpdates(false);
 
         [_backgroundView.get().layer removeAllAnimations];
         [[_clipView layer] removeAllAnimations];
@@ -602,29 +602,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
-- (void)clearVideoFullscreenManagerObserver
+- (void)clearVideoPresentationManagerObserver
 {
     _pipObserver = nullptr;
 }
 
-- (void)setVideoFullscreenManagerObserver
+- (void)setVideoPresentationManagerObserver
 {
-    auto* videoFullscreenManager = self._videoFullscreenManager;
-    if (!videoFullscreenManager)
+    RefPtr<WebKit::VideoPresentationManagerProxy> videoPresentationManager = self._videoPresentationManager;
+    if (!videoPresentationManager)
         return;
 
     ASSERT(!_pipObserver);
     if (_pipObserver)
         return;
 
-    _pipObserver = WTF::makeUnique<WebKit::VideoFullscreenManagerProxy::VideoInPictureInPictureDidChangeObserver>([self] (bool inPiP) {
+    _pipObserver = WTF::makeUnique<WebKit::VideoPresentationManagerProxy::VideoInPictureInPictureDidChangeObserver>([self] (bool inPiP) {
         if (inPiP)
             [self didEnterPictureInPicture];
         else
             [self didExitPictureInPicture];
     });
 
-    videoFullscreenManager->addVideoInPictureInPictureDidChangeObserver(*_pipObserver);
+    videoPresentationManager->addVideoInPictureInPictureDidChangeObserver(*_pipObserver);
 }
 
 - (void)didEnterPictureInPicture
@@ -635,7 +635,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)didExitPictureInPicture
 {
-    [self clearVideoFullscreenManagerObserver];
+    [self clearVideoPresentationManagerObserver];
 }
 
 #pragma mark -
@@ -670,21 +670,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedEnterFullScreenAnimation:YES];
-    [self setVideoFullscreenManagerObserver];
+    [self setVideoPresentationManagerObserver];
 }
 
 - (void)windowDidFailToExitFullScreen:(NSWindow *)window
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedExitFullScreenAnimationAndExitImmediately:YES];
-    [self clearVideoFullscreenManagerObserver];
+    [self clearVideoPresentationManagerObserver];
 }
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
     RetainPtr<WKFullScreenWindowController> retain = self;
     [self finishedExitFullScreenAnimationAndExitImmediately:NO];
-    [self clearVideoFullscreenManagerObserver];
+    [self clearVideoPresentationManagerObserver];
 }
 
 - (NSWindow *)destinationWindowToExitFullScreenForWindow:(NSWindow *)window
@@ -703,12 +703,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _page->fullScreenManager();
 }
 
-- (WebKit::VideoFullscreenManagerProxy*)_videoFullscreenManager
+- (WebKit::VideoPresentationManagerProxy*)_videoPresentationManager
 {
     if (!_page)
         return nullptr;
 
-    return _page->videoFullscreenManager();
+    return _page->videoPresentationManager();
 }
 
 - (void)_replaceView:(NSView *)view with:(NSView *)otherView
@@ -721,6 +721,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [[view superview] addSubview:otherView positioned:NSWindowAbove relativeTo:view];
     [view removeFromSuperview];
     [CATransaction commit];
+}
+
+- (void)_saveConstraintsOf:(NSView *)view
+{
+    NSArray<NSLayoutConstraint *> *constraints = view.constraints;
+    NSIndexSet *validConstraints = [constraints indexesOfObjectsPassingTest:^BOOL(NSLayoutConstraint *constraint, NSUInteger, BOOL *) {
+        return ![constraint isKindOfClass:objc_getClass("NSAutoresizingMaskLayoutConstraint")];
+    }];
+    self.savedConstraints = [constraints objectsAtIndexes:validConstraints];
 }
 
 static CAMediaTimingFunction *timingFunctionForDuration(CFTimeInterval duration)

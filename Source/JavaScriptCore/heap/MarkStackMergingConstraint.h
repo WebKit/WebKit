@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MarkingConstraint.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -34,6 +35,7 @@ class AbstractSlotVisitor;
 class SlotVisitor;
 
 class MarkStackMergingConstraint final : public MarkingConstraint {
+    WTF_MAKE_TZONE_ALLOCATED(MarkStackMergingConstraint);
 public:
     MarkStackMergingConstraint(Heap&);
     ~MarkStackMergingConstraint() final;
@@ -46,7 +48,7 @@ private:
     void executeImpl(AbstractSlotVisitor&) final;
     void executeImpl(SlotVisitor&) final;
     
-    Heap& m_heap;
+    JSC::Heap& m_heap;
 };
 
 } // namespace JSC

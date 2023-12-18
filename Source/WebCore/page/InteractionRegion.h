@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ElementIdentifier.h"
-#include "IntRect.h"
+#include "FloatRect.h"
 #include "Region.h"
 
 namespace IPC {
@@ -55,7 +55,7 @@ struct InteractionRegion {
 
     Type type;
     ElementIdentifier elementIdentifier;
-    IntRect rectInLayerCoordinates;
+    FloatRect rectInLayerCoordinates;
     float borderRadius { 0 };
     OptionSet<CornerMask> maskedCorners { };
 
@@ -64,7 +64,7 @@ struct InteractionRegion {
     friend bool operator==(const InteractionRegion&, const InteractionRegion&) = default;
 };
 
-WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);
+WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const FloatRect&);
 WEBCORE_EXPORT bool elementMatchesHoverRules(Element&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);

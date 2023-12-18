@@ -26,7 +26,7 @@
 import dotenv from "dotenv";
 import storage from "node-persist";
 import WebKitBot from "./WebKitBot.mjs";
-import HttpsProxyAgent from "https-proxy-agent";
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import LogLevel from "@slack/web-api";
 import SlackWebAPI from "@slack/web-api";
 

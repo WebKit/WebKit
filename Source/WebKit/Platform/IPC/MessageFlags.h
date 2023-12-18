@@ -32,6 +32,9 @@ enum class MessageFlags : uint8_t {
     DispatchMessageWhenWaitingForUnboundedSyncReply = 1 << 1,
     UseFullySynchronousModeForTesting = 1 << 2,
     MaintainOrderingWithAsyncMessages = 1 << 3,
+#if ENABLE(IPC_TESTING_API)
+    SyncMessageDeserializationFailure = 1 << 4,
+#endif
 };
 
 enum class ShouldDispatchWhenWaitingForSyncReply : uint8_t {
@@ -46,11 +49,14 @@ namespace WTF {
 
 template<> struct EnumTraits<IPC::MessageFlags> {
     using values = EnumValues<
-        IPC::MessageFlags,
-        IPC::MessageFlags::DispatchMessageWhenWaitingForSyncReply,
-        IPC::MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply,
-        IPC::MessageFlags::UseFullySynchronousModeForTesting,
-        IPC::MessageFlags::MaintainOrderingWithAsyncMessages
+        IPC::MessageFlags
+        , IPC::MessageFlags::DispatchMessageWhenWaitingForSyncReply
+        , IPC::MessageFlags::DispatchMessageWhenWaitingForUnboundedSyncReply
+        , IPC::MessageFlags::UseFullySynchronousModeForTesting
+        , IPC::MessageFlags::MaintainOrderingWithAsyncMessages
+#if ENABLE(IPC_TESTING_API)
+        , IPC::MessageFlags::SyncMessageDeserializationFailure
+#endif
     >;
 };
 

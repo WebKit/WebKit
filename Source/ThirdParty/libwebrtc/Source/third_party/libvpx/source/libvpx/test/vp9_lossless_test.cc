@@ -29,15 +29,15 @@ class LosslessTest
       : EncoderTest(GET_PARAM(0)), psnr_(kMaxPsnr), nframes_(0),
         encoding_mode_(GET_PARAM(1)) {}
 
-  virtual ~LosslessTest() {}
+  ~LosslessTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(encoding_mode_);
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       // Only call Control if quantizer > 0 to verify that using quantizer
       // alone will activate lossless
@@ -47,12 +47,12 @@ class LosslessTest
     }
   }
 
-  virtual void BeginPassHook(unsigned int /*pass*/) {
+  void BeginPassHook(unsigned int /*pass*/) override {
     psnr_ = kMaxPsnr;
     nframes_ = 0;
   }
 
-  virtual void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) override {
     if (pkt->data.psnr.psnr[0] < psnr_) psnr_ = pkt->data.psnr.psnr[0];
   }
 

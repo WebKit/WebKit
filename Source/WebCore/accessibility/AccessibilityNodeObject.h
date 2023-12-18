@@ -68,7 +68,7 @@ public:
     bool isChecked() const override;
     bool isEnabled() const override;
     bool isIndeterminate() const override;
-    bool isPressed() const override;
+    bool isPressed() const final;
     bool isRequired() const override;
     bool supportsARIAOwns() const final;
     bool supportsRequiredAttribute() const override;
@@ -121,7 +121,7 @@ public:
     Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
-    Element* popoverTargetElement() const final;
+    RefPtr<Element> popoverTargetElement() const final;
     AccessibilityObject* internalLinkElement() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;
@@ -141,6 +141,7 @@ public:
 
     void increment() override;
     void decrement() override;
+    bool toggleDetailsAncestor() final;
 
     LayoutRect elementRect() const override;
 
@@ -194,12 +195,12 @@ protected:
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;
-    String textForLabelElements(Vector<HTMLLabelElement*>&&) const;
+    String textForLabelElements(Vector<Ref<HTMLLabelElement>>&&) const;
     HTMLLabelElement* labelElementContainer() const;
 
     String ariaAccessibilityDescription() const;
-    Vector<Element*> ariaLabeledByElements() const;
-    String descriptionForElements(Vector<Element*>&&) const;
+    Vector<Ref<Element>> ariaLabeledByElements() const;
+    String descriptionForElements(const Vector<Ref<Element>>&) const;
     LayoutRect boundingBoxRect() const override;
     String ariaDescribedByAttribute() const override;
     
@@ -230,7 +231,7 @@ private:
 
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
 
-    CheckedPtr<Node> m_node;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_node;
 };
 
 } // namespace WebCore

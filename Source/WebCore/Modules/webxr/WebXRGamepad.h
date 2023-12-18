@@ -35,7 +35,7 @@ namespace WebCore {
 
 class WebXRGamepad: public PlatformGamepad {
 public:
-    WebXRGamepad(double timestamp, double connectTime, const PlatformXR::Device::FrameData::InputSource&);
+    WebXRGamepad(double timestamp, double connectTime, const PlatformXR::FrameData::InputSource&);
 
 private:
     const Vector<SharedGamepadValue>& axisValues() const final { return m_axes; }

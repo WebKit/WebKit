@@ -1,10 +1,10 @@
 
 PASS Meta color-scheme initially 'dark'.
-FAIL Removed name attribute from meta color-scheme. assert_equals: expected "light" but got "dark"
+PASS Removed name attribute from meta color-scheme.
 PASS Set meta name to color-scheme.
 PASS Set content attribute of meta color-scheme to empty string.
 PASS Set content attribute of meta color-scheme to an invalid value.
 PASS Set content attribute of meta color-scheme to 'light'.
 PASS Set content attribute of meta color-scheme to 'dark'.
-FAIL Removed the content attribute of meta color-scheme. assert_equals: expected "light" but got "dark"
+PASS Removed the content attribute of meta color-scheme.
 

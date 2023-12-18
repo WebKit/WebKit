@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SERVICE_WORKER,
     ExportMacro=WEBCORE_EXPORT,
 ] enum BackgroundFetchFailureReason {
     // The background fetch has not completed yet, or was successful.

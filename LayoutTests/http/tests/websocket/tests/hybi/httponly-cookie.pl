@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 if ($ENV{"QUERY_STRING"} eq "clear=1") {
     print "Content-Type: text/plain\r\n";

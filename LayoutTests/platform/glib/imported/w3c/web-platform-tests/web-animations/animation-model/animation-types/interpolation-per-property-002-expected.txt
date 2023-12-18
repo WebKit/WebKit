@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 404
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 404
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 404
-CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 404
 
 PASS Setup
 PASS isolation (type: discrete) has testInterpolation function
@@ -266,9 +262,9 @@ PASS text-anchor uses discrete animation when animating between "middle" and "en
 PASS text-anchor uses discrete animation when animating between "middle" and "end" with effect easing
 PASS text-anchor uses discrete animation when animating between "middle" and "end" with keyframe easing
 PASS text-autospace (type: discrete) has testInterpolation function
-PASS text-autospace uses discrete animation when animating between "auto" and "no-autospace" with linear easing
-PASS text-autospace uses discrete animation when animating between "auto" and "no-autospace" with effect easing
-PASS text-autospace uses discrete animation when animating between "auto" and "no-autospace" with keyframe easing
+FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with linear easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with effect easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with keyframe easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
 PASS text-decoration-color (type: color) has testInterpolation function
 PASS text-decoration-color supports animating as color of rgb()
 PASS text-decoration-color supports animating as color of #RGB
@@ -380,6 +376,10 @@ PASS vector-effect (type: discrete) has testInterpolation function
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with linear easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with effect easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with keyframe easing
+PASS view-transition-name (type: discrete) has testInterpolation function
+PASS view-transition-name uses discrete animation when animating between "none" and "header" with linear easing
+PASS view-transition-name uses discrete animation when animating between "none" and "header" with effect easing
+PASS view-transition-name uses discrete animation when animating between "none" and "header" with keyframe easing
 PASS visibility (type: visibility) has testInterpolation function
 PASS visibility uses visibility animation when animating from "visible" to "hidden"
 PASS visibility uses visibility animation when animating from "hidden" to "visible"
@@ -404,6 +404,6 @@ PASS word-spacing supports animating as a percentage
 PASS word-spacing supports animating as combination units "px" and "%"
 PASS word-spacing supports animating as combination units "%" and "em"
 PASS word-spacing supports animating as combination units "em" and "rem"
-FAIL word-spacing supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10% + 10px) at 500ms expected "calc(10% + 10px)" but got "0px"
-FAIL word-spacing supports animating as a calc assert_equals: The value should be calc(15% + 15px) at 500ms expected "calc(15% + 15px)" but got "0px"
+PASS word-spacing supports animating as combination units "px" and "calc"
+PASS word-spacing supports animating as a calc
 

@@ -52,65 +52,59 @@ TEST(SelectionTests, ModifyByParagraphBoundary)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.body.firstChild"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 0);
 
-    UIView *contentView = [webView valueForKeyPath:@"_currentContentView"];
-    SEL moveToEndOfParagraphSelector = NSSelectorFromString(@"_moveToEndOfParagraph:withHistory:");
-    auto moveToEndOfParagraphMethod = (MoveParagraphSelectorType)[contentView methodForSelector:moveToEndOfParagraphSelector];
-    SEL moveToStartOfParagraphSelector = NSSelectorFromString(@"_moveToStartOfParagraph:withHistory:");
-    auto moveToStartOfParagraphMethod = (MoveParagraphSelectorType)[contentView methodForSelector:moveToStartOfParagraphSelector];
-
-    moveToEndOfParagraphMethod(contentView, moveToEndOfParagraphSelector, FALSE, nil);
+    [webView moveSelectionToEndOfParagraph];
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.body.firstChild"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 5);
 
-    moveToEndOfParagraphMethod(contentView, moveToEndOfParagraphSelector, FALSE, nil);
+    [webView moveSelectionToEndOfParagraph];
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.getElementById('blankLine')"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 0);
 
-    moveToEndOfParagraphMethod(contentView, moveToEndOfParagraphSelector, FALSE, nil);
+    [webView moveSelectionToEndOfParagraph];
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.getElementById('lastLine').lastChild"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 5);
 
-    moveToStartOfParagraphMethod(contentView, moveToStartOfParagraphSelector, FALSE, nil);
+    [webView moveSelectionToStartOfParagraph];
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.getElementById('lastLine').firstChild"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 0);
 
-    moveToStartOfParagraphMethod(contentView, moveToStartOfParagraphSelector, FALSE, nil);
+    [webView moveSelectionToStartOfParagraph];
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.getElementById('blankLine')"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 0);
 
-    moveToStartOfParagraphMethod(contentView, moveToStartOfParagraphSelector, FALSE, nil);
+    [webView moveSelectionToStartOfParagraph];
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode == document.body.firstChild"].boolValue);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorOffset"].intValue, 0);
 
-    moveToEndOfParagraphMethod(contentView, moveToEndOfParagraphSelector, TRUE, nil);
+    [webView extendSelectionToEndOfParagraph];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "hello");
 
-    moveToEndOfParagraphMethod(contentView, moveToEndOfParagraphSelector, TRUE, nil);
+    [webView extendSelectionToEndOfParagraph];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "hello\n");
 
-    moveToEndOfParagraphMethod(contentView, moveToEndOfParagraphSelector, TRUE, nil);
+    [webView extendSelectionToEndOfParagraph];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "hello\n\nworld");
 
     [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, document.body.childNodes.length)"];
 
-    moveToStartOfParagraphMethod(contentView, moveToStartOfParagraphSelector, TRUE, nil);
+    [webView extendSelectionToStartOfParagraph];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "world");
 
-    moveToStartOfParagraphMethod(contentView, moveToStartOfParagraphSelector, TRUE, nil);
+    [webView extendSelectionToStartOfParagraph];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "\nworld");
 
-    moveToStartOfParagraphMethod(contentView, moveToStartOfParagraphSelector, TRUE, nil);
+    [webView extendSelectionToStartOfParagraph];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "hello\n\nworld");
 }

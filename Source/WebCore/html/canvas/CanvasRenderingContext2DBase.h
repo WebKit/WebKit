@@ -53,6 +53,7 @@
 
 namespace WebCore {
 
+class ByteArrayPixelBuffer;
 class CachedImage;
 class CanvasGradient;
 class DOMMatrix;
@@ -234,8 +235,6 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
-    const HashSet<uint32_t>& suppliedColors() const { return m_suppliedColors; }
-
     class FontProxy final : public FontSelectorClient {
     public:
         FontProxy() = default;
@@ -310,6 +309,36 @@ protected:
     State& modifiableState() { ASSERT(!m_unrealizedSaveCount || m_stateStack.size() >= MaxSaveCount); return m_stateStack.last(); }
 
     GraphicsContext* drawingContext() const;
+    enum class DidDrawOption {
+        ApplyTransform = 1 << 0,
+        ApplyShadow = 1 << 1,
+        ApplyClip = 1 << 2,
+        ApplyPostProcessing = 1 << 3,
+        PreserveCachedContents = 1 << 4,
+    };
+
+    static constexpr OptionSet<DidDrawOption> defaultDidDrawOptions()
+    {
+        return {
+            DidDrawOption::ApplyTransform,
+            DidDrawOption::ApplyShadow,
+            DidDrawOption::ApplyClip,
+            DidDrawOption::ApplyPostProcessing,
+        };
+    }
+
+    static constexpr OptionSet<DidDrawOption> defaultDidDrawOptionsWithoutPostProcessing()
+    {
+        return {
+            DidDrawOption::ApplyTransform,
+            DidDrawOption::ApplyShadow,
+            DidDrawOption::ApplyClip,
+        };
+    }
+    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = defaultDidDrawOptions());
+    void didDrawEntireCanvas(OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+    void didDraw(bool entireCanvas, const FloatRect&, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
+    template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider, OptionSet<DidDrawOption> options = defaultDidDrawOptions());
 
     static String normalizeSpaces(const String&);
 
@@ -325,30 +354,21 @@ protected:
     OptionSet<ImageBufferOptions> adjustImageBufferOptionsForTesting(OptionSet<ImageBufferOptions>) final;
 
 private:
-    struct CachedImageData {
-        CachedImageData(CanvasRenderingContext2DBase&);
+    struct CachedContentsTransparent {
+    };
+    struct CachedContentsUnknown {
+    };
+    struct CachedContentsImageData {
+        CachedContentsImageData(CanvasRenderingContext2DBase&, Ref<ByteArrayPixelBuffer>);
 
-        RefPtr<ImageData> imageData;
+        Ref<ByteArrayPixelBuffer> imageData;
         DeferrableOneShotTimer evictionTimer;
-        unsigned requestCount = 0;
     };
 
     void applyLineDash() const;
     void setShadow(const FloatSize& offset, float blur, const Color&);
     void applyShadow();
     bool shouldDrawShadows() const;
-
-    enum class DidDrawOption {
-        ApplyTransform = 1 << 0,
-        ApplyShadow = 1 << 1,
-        ApplyClip = 1 << 2,
-        ApplyPostProcessing = 1 << 3,
-        PreserveCachedImageData = 1 << 4,
-    };
-    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip, DidDrawOption::ApplyPostProcessing });
-    void didDrawEntireCanvas();
-    void didDraw(bool entireCanvas, const FloatRect&);
-    template<typename RectProvider> void didDraw(bool entireCanvas, RectProvider);
 
     bool is2dBase() const final { return true; }
     bool needsPreparationForDisplay() const final;
@@ -426,8 +446,8 @@ private:
 
     FloatPoint textOffset(float width, TextDirection);
 
-    bool cacheImageDataIfPossible(ImageData&, const IntPoint& destinationPosition, const IntRect& sourceRect);
-    RefPtr<ImageData> takeCachedImageDataIfPossible(const IntRect& sourceRect, PredefinedColorSpace) const;
+    RefPtr<ByteArrayPixelBuffer> cacheImageDataIfPossible(const ImageData&, const IntRect& sourceRect, const IntPoint& destinationPosition);
+    RefPtr<ImageData> makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace) const;
     void evictCachedImageData();
 
     static constexpr unsigned MaxSaveCount = 1024 * 16;
@@ -435,8 +455,7 @@ private:
     FloatRect m_dirtyRect;
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
-    HashSet<uint32_t> m_suppliedColors;
-    mutable std::optional<CachedImageData> m_cachedImageData;
+    mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
     CanvasRenderingContext2DSettings m_settings;
 };
 

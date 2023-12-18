@@ -42,16 +42,16 @@ class DummyTimebaseVideoSource : public ::libvpx_test::DummyVideoSource {
            (static_cast<double>(framerate_numerator_) / framerate_denominator_);
   }
 
-  virtual vpx_codec_pts_t pts() const {
+  vpx_codec_pts_t pts() const override {
     return static_cast<vpx_codec_pts_t>(frame_ * FrameDuration() +
                                         starting_pts_ + 0.5);
   }
 
-  virtual unsigned long duration() const {
+  unsigned long duration() const override {
     return static_cast<unsigned long>(FrameDuration() + 0.5);
   }
 
-  virtual vpx_rational_t timebase() const { return timebase_; }
+  vpx_rational_t timebase() const override { return timebase_; }
 
   void set_starting_pts(int64_t starting_pts) { starting_pts_ = starting_pts; }
 
@@ -67,9 +67,9 @@ class TimestampTest
       public ::libvpx_test::CodecTestWithParam<libvpx_test::TestMode> {
  protected:
   TimestampTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~TimestampTest() {}
+  ~TimestampTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(GET_PARAM(1));
   }

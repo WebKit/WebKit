@@ -43,7 +43,7 @@ void QueryFramebufferAttachmentParameteriv(const Context *context,
 void QueryBufferParameteriv(const Buffer *buffer, GLenum pname, GLint *params);
 void QueryBufferParameteri64v(const Buffer *buffer, GLenum pname, GLint64 *params);
 void QueryBufferPointerv(const Buffer *buffer, GLenum pname, void **params);
-void QueryProgramiv(Context *context, const Program *program, GLenum pname, GLint *params);
+void QueryProgramiv(Context *context, Program *program, GLenum pname, GLint *params);
 void QueryRenderbufferiv(const Context *context,
                          const Renderbuffer *renderbuffer,
                          GLenum pname,
@@ -152,7 +152,7 @@ void SetFramebufferParameteri(const Context *context,
                               GLenum pname,
                               GLint param);
 
-void SetProgramParameteri(Program *program, GLenum pname, GLint value);
+void SetProgramParameteri(const Context *context, Program *program, GLenum pname, GLint value);
 
 GLint GetUniformResourceProperty(const Program *program, GLuint index, const GLenum prop);
 

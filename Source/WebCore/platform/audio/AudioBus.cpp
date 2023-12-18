@@ -55,12 +55,9 @@ RefPtr<AudioBus> AudioBus::create(unsigned numberOfChannels, size_t length, bool
 AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     : m_length(length)
 {
-    m_channels.reserveInitialCapacity(numberOfChannels);
-
-    for (unsigned i = 0; i < numberOfChannels; ++i) {
-        auto channel = allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>(nullptr, length);
-        m_channels.uncheckedAppend(WTFMove(channel));
-    }
+    m_channels = Vector<std::unique_ptr<AudioChannel>>(numberOfChannels, [&](size_t) {
+        return allocate ? makeUnique<AudioChannel>(length) : makeUnique<AudioChannel>(nullptr, length);
+    });
 
     m_layout = LayoutCanonical; // for now this is the only layout we define
 }
@@ -544,8 +541,8 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBu
     }
 
     // Calculate destination length based on the sample-rates.
-    int sourceLength = resamplerSourceBus->length();
-    int destinationLength = sourceLength / sampleRateRatio;
+    size_t sourceLength = resamplerSourceBus->length();
+    size_t destinationLength = sourceLength / sampleRateRatio;
 
     // Create destination bus with same number of channels.
     unsigned numberOfDestinationChannels = resamplerSourceBus->numberOfChannels();
@@ -553,10 +550,9 @@ RefPtr<AudioBus> AudioBus::createBySampleRateConverting(const AudioBus* sourceBu
 
     // Sample-rate convert each channel.
     for (unsigned i = 0; i < numberOfDestinationChannels; ++i) {
-        const float* source = resamplerSourceBus->channel(i)->data();
-        float* destination = destinationBus->channel(i)->mutableData();
-
-        SincResampler::processBuffer(source, destination, sourceLength, sampleRateRatio);
+        auto* sourceChannel = resamplerSourceBus->channel(i);
+        auto* destinationChannel = destinationBus->channel(i);
+        SincResampler::processBuffer(sourceChannel->span(), destinationChannel->mutableSpan(), sampleRateRatio);
     }
 
     destinationBus->clearSilentFlag();

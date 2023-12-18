@@ -11,6 +11,8 @@
 #ifndef VPX_VP8_DECODER_ONYXD_INT_H_
 #define VPX_VP8_DECODER_ONYXD_INT_H_
 
+#include <assert.h>
+
 #include "vpx_config.h"
 #include "vp8/common/onyxd.h"
 #include "treereader.h"
@@ -132,25 +134,6 @@ int vp8_decode_frame(VP8D_COMP *pbi);
 
 int vp8_create_decoder_instances(struct frame_buffers *fb, VP8D_CONFIG *oxcf);
 int vp8_remove_decoder_instances(struct frame_buffers *fb);
-
-#if CONFIG_DEBUG
-#define CHECK_MEM_ERROR(lval, expr)                                         \
-  do {                                                                      \
-    (lval) = (expr);                                                        \
-    if (!(lval))                                                            \
-      vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR,           \
-                         "Failed to allocate " #lval " at %s:%d", __FILE__, \
-                         __LINE__);                                         \
-  } while (0)
-#else
-#define CHECK_MEM_ERROR(lval, expr)                               \
-  do {                                                            \
-    (lval) = (expr);                                              \
-    if (!(lval))                                                  \
-      vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR, \
-                         "Failed to allocate " #lval);            \
-  } while (0)
-#endif
 
 #ifdef __cplusplus
 }  // extern "C"

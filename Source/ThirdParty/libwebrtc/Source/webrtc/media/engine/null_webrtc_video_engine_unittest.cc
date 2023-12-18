@@ -37,7 +37,7 @@ TEST(NullWebRtcVideoEngineTest, CheckInterface) {
       task_queue_factory.get(), adm.get(),
       webrtc::MockAudioEncoderFactory::CreateUnusedFactory(),
       webrtc::MockAudioDecoderFactory::CreateUnusedFactory(), nullptr,
-      webrtc::AudioProcessingBuilder().Create(), nullptr, trials);
+      webrtc::AudioProcessingBuilder().Create(), nullptr, nullptr, trials);
 
   CompositeMediaEngine engine(std::move(audio_engine),
                               std::make_unique<NullWebRtcVideoEngine>());

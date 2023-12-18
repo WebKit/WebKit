@@ -37,11 +37,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, TextTrackPrivateRemoteConfiguration&& configuration)
+TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, MediaPlayerIdentifier playerIdentifier, TextTrackPrivateRemoteConfiguration&& configuration)
     : WebCore::InbandTextTrackPrivate(configuration.cueFormat)
     , m_gpuProcessConnection(gpuProcessConnection)
+    , m_id(configuration.trackId)
     , m_playerIdentifier(playerIdentifier)
-    , m_identifier(identifier)
 {
     updateConfiguration(WTFMove(configuration));
 }
@@ -55,16 +55,15 @@ void TextTrackPrivateRemote::setMode(TextTrackMode mode)
     if (mode == InbandTextTrackPrivate::mode())
         return;
 
-    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_identifier, mode), m_playerIdentifier);
+    gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::TextTrackSetMode(m_id, mode), m_playerIdentifier);
     InbandTextTrackPrivate::setMode(mode);
 }
 
 void TextTrackPrivateRemote::updateConfiguration(TextTrackPrivateRemoteConfiguration&& configuration)
 {
     if (configuration.trackId != m_id) {
-        auto changed = !m_id.isEmpty();
         m_id = configuration.trackId;
-        if (changed && client())
+        if (client())
             client()->idChanged(m_id);
     }
 

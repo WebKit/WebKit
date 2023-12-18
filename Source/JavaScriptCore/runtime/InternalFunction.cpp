@@ -150,6 +150,12 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
         // Note, Reflect.construct might cause the profile to churn but we don't care.
         JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
+
+        // While very unlikely, if the profile churns becauase of the prototype getter, it would be nice to use the updated profile instead of creating a new one.
+        structure = rareData->internalFunctionAllocationStructure();
+        if (UNLIKELY(structure && structure->classInfoForCells() == baseClass->classInfoForCells() && structure->globalObject() == baseGlobalObject))
+            return structure;
+
         if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue))
             return rareData->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);
     } else {
@@ -161,7 +167,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
             return baseGlobalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseClass);
         }
     }
-    
+
     return baseClass;
 }
 

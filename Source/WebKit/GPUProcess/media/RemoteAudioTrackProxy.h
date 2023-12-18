@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "MessageReceiver.h"
-#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
@@ -50,29 +49,30 @@ class RemoteAudioTrackProxy final
     : public ThreadSafeRefCounted<RemoteAudioTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::AudioTrackPrivateClient {
 public:
-    static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
+    static Ref<RemoteAudioTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, WebCore::AudioTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
-        return adoptRef(*new RemoteAudioTrackProxy(connectionToWebProcess, identifier, trackPrivate, mediaPlayerIdentifier));
+        return adoptRef(*new RemoteAudioTrackProxy(connectionToWebProcess, trackPrivate, mediaPlayerIdentifier));
     }
 
     virtual ~RemoteAudioTrackProxy();
 
-    TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };
+    WebCore::TrackID id() const { return m_trackPrivate->id(); };
     void setEnabled(bool enabled)
     {
         m_enabled = enabled;
         m_trackPrivate->setEnabled(enabled);
     }
+    bool operator==(const WebCore::AudioTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 
 private:
-    RemoteAudioTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::AudioTrackPrivate&, WebCore::MediaPlayerIdentifier);
+    RemoteAudioTrackProxy(GPUConnectionToWebProcess&, WebCore::AudioTrackPrivate&, WebCore::MediaPlayerIdentifier);
 
     // AudioTrackPrivateClient
     void enabledChanged(bool) final;
     void configurationChanged(const WebCore::PlatformAudioTrackConfiguration&) final;
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomString&) final;
+    void idChanged(WebCore::TrackID) final;
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
@@ -81,8 +81,8 @@ private:
     void configurationChanged();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    TrackPrivateRemoteIdentifier m_identifier;
     Ref<WebCore::AudioTrackPrivate> m_trackPrivate;
+    WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
     bool m_enabled { false };
 };

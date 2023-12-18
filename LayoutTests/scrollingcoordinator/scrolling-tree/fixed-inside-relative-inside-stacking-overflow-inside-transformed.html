@@ -1,6 +1,7 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         body {
             height: 5000px;
@@ -56,6 +57,8 @@
         }
 
         window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
             const scroller = document.getElementsByClassName('scroller')[0];
             scroller.scrollTo(0, 50);
             await UIHelper.renderingUpdate();

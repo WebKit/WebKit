@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true allowsInlinePredictions=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body {
+    margin: 0;
+    font-family: system-ui;
+    line-height: 150%;
+}
+
+input {
+    border: 1px solid tomato;
+    box-sizing: border-box;
+    outline: none;
+    font-size: 18px;
+    width: 300px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that typing with inline predictions does not cause the keyboard to incorrectly autocapitalize words. This test requires WebKitTestRunner.");
+
+    input = document.querySelector("input");
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    let characterCountBeforeLongPauseForInlinePredictions = 10;
+    for (let character of [..."to whom it may concern"]) {
+        await UIHelper.typeCharacter(character);
+        await UIHelper.ensurePresentationUpdate();
+        if (!--characterCountBeforeLongPauseForInlinePredictions)
+            await UIHelper.delayFor(500);
+    }
+
+    isAutoShifted = await UIHelper.keyboardIsAutomaticallyShifted();
+    shouldBeFalse("isAutoShifted");
+    shouldBeEqualToString("input.value", "To whom it may concern");
+
+    input.blur();
+    await UIHelper.waitForKeyboardToHide();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <input />
+</body>
+</html>

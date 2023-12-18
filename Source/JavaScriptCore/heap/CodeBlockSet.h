@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -43,7 +44,7 @@ class VM;
 // once they hasOneRef() and nobody is running code from that CodeBlock.
 
 class CodeBlockSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CodeBlockSet);
     WTF_MAKE_NONCOPYABLE(CodeBlockSet);
 public:
     CodeBlockSet();
@@ -51,7 +52,7 @@ public:
 
     void mark(const AbstractLocker&, CodeBlock* candidateCodeBlock);
     
-    void clearCurrentlyExecuting();
+    void clearCurrentlyExecutingAndRemoveDeadCodeBlocks(VM&);
 
     bool contains(const AbstractLocker&, void* candidateCodeBlock);
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }

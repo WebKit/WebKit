@@ -82,7 +82,7 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
     if (!document)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, *document, LogFeaturePolicyFailure::No))
         return { };

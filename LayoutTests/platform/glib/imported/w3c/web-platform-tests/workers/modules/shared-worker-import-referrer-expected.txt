@@ -2,12 +2,12 @@
 PASS Same-origin top-level module script loading with "no-referrer" referrer policy
 PASS Same-origin top-level module script loading with "origin" referrer policy
 PASS Same-origin top-level module script loading with "same-origin" referrer policy
-FAIL Same-origin static import with "no-referrer" referrer policy. assert_equals: expected "" but got "http://web-platform.test:8800/workers/modules/resources/static-import-same-origin-referrer-checker-worker.js"
-FAIL Same-origin static import with "origin" referrer policy. assert_equals: expected "http://web-platform.test:8800/" but got "http://web-platform.test:8800/workers/modules/resources/static-import-same-origin-referrer-checker-worker.js"
+PASS Same-origin static import with "no-referrer" referrer policy.
+PASS Same-origin static import with "origin" referrer policy.
 PASS Same-origin static import with "same-origin" referrer policy.
-FAIL Cross-origin static import with "no-referrer" referrer policy. assert_equals: expected "" but got "http://web-platform.test:8800/"
+PASS Cross-origin static import with "no-referrer" referrer policy.
 PASS Cross-origin static import with "origin" referrer policy.
-FAIL Cross-origin static import with "same-origin" referrer policy. assert_equals: expected "" but got "http://web-platform.test:8800/"
+PASS Cross-origin static import with "same-origin" referrer policy.
 PASS Same-origin dynamic import with "no-referrer" referrer policy.
 PASS Same-origin dynamic import with "origin" referrer policy.
 PASS Same-origin dynamic import with "same-origin" referrer policy.

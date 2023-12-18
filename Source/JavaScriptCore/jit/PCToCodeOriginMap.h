@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ class LinkBuffer;
 class PCToCodeOriginMapBuilder;
 
 class PCToCodeOriginMapBuilder {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PCToCodeOriginMapBuilder);
     WTF_MAKE_NONCOPYABLE(PCToCodeOriginMapBuilder);
     friend class PCToCodeOriginMap;
 
@@ -90,7 +90,7 @@ private:
 
 // FIXME: <rdar://problem/39436658>
 class PCToCodeOriginMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PCToCodeOriginMap);
     WTF_MAKE_NONCOPYABLE(PCToCodeOriginMap);
 public:
     PCToCodeOriginMap(PCToCodeOriginMapBuilder&&, LinkBuffer&);

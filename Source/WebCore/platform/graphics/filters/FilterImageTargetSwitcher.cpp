@@ -56,7 +56,7 @@ GraphicsContext* FilterImageTargetSwitcher::drawingContext(GraphicsContext& cont
     return m_sourceImage ? &m_sourceImage->context() : &context;
 }
 
-void FilterImageTargetSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect)
+void FilterImageTargetSwitcher::beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect&)
 {
     if (auto* context = drawingContext(destinationContext)) {
         context->save();

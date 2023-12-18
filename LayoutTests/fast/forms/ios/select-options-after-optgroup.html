@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select id="select">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+    <optgroup label="Numbers">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+    </optgroup>
+    <option>D</option>
+    <option>E</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that choosing options which have preceding optgroup siblings works as expected.");
+
+    shouldBeEqualToString("select.value", "A");
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(1);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "B");
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(4);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "2");
+
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+    await UIHelper.selectFormAccessoryPickerRow(6);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "D");
+
+    finishJSTest();
+});
+</script>
+</html>

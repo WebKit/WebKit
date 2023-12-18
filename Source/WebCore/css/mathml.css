@@ -22,6 +22,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+ /* https://w3c.github.io/mathml-core/#user-agent-stylesheet */
+
 #if defined(ENABLE_MATHML) && ENABLE_MATHML
 
 @namespace "http://www.w3.org/1998/Math/MathML";
@@ -39,9 +41,14 @@
     outline: auto 5px -webkit-focus-ring-color
 }
 
+/* Universal rules */
+* {
+    writing-mode: horizontal-tb !important;
+}
+
+/* The <math> element */
 math {
     direction: ltr;
-    writing-mode: horizontal-tb !important;
     text-indent: 0;
     letter-spacing: normal;
     line-height: normal;
@@ -148,6 +155,11 @@ ms, mtext, mi, mn, mo, annotation, mtd {
     white-space: nowrap !important;
 }
 
+/* Fractions */
+mfrac {
+    padding-inline: 1px;
+}
+
 mfrac > * {
     math-style: compact;
 }
@@ -175,10 +187,9 @@ mphantom {
 }
 
 /* This is a special style for erroneous markup. */
+/* https://w3c.github.io/mathml-core/#error-message-merror */
 merror {
-    outline: solid thin red;
-    font-weight: bold;
-    font-family: sans-serif;
+    border: 1px solid red;
     background-color: lightYellow;
 }
 

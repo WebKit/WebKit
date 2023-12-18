@@ -313,10 +313,10 @@ static INLINE void vertical_4x4(uint16_t *src, uint8_t *dst, const int stride,
       const __m128i compensated = _mm_add_epi16(sum, round_factor);
       const __m128i shifted = _mm_srai_epi16(compensated, VP8_FILTER_SHIFT);
       __m128i packed = _mm_packus_epi16(shifted, shifted);
-      storeu_uint32(dst, _mm_cvtsi128_si32(packed));
+      storeu_int32(dst, _mm_cvtsi128_si32(packed));
       packed = _mm_srli_si128(packed, 4);
       dst += stride;
-      storeu_uint32(dst, _mm_cvtsi128_si32(packed));
+      storeu_int32(dst, _mm_cvtsi128_si32(packed));
       dst += stride;
       src += 8;
     }

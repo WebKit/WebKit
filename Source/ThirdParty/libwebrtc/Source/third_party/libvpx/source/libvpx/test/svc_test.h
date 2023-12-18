@@ -36,7 +36,7 @@ class OnePassCbrSvc : public ::libvpx_test::EncoderTest {
   }
 
  protected:
-  virtual ~OnePassCbrSvc() {}
+  ~OnePassCbrSvc() override {}
 
   virtual void SetConfig(const int num_temporal_layer) = 0;
 
@@ -46,11 +46,11 @@ class OnePassCbrSvc : public ::libvpx_test::EncoderTest {
   virtual void PreEncodeFrameHookSetup(::libvpx_test::VideoSource *video,
                                        ::libvpx_test::Encoder *encoder);
 
-  virtual void PostEncodeFrameHook(::libvpx_test::Encoder *encoder);
+  void PostEncodeFrameHook(::libvpx_test::Encoder *encoder) override;
 
   virtual void AssignLayerBitrates();
 
-  virtual void MismatchHook(const vpx_image_t *, const vpx_image_t *) {}
+  void MismatchHook(const vpx_image_t *, const vpx_image_t *) override {}
 
   vpx_svc_extra_cfg_t svc_params_;
   int64_t bits_in_buffer_model_[VPX_MAX_LAYERS];

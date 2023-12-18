@@ -364,7 +364,7 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
     page.drawPagesForPrinting(webFrame, printInfo, [printOperation = GRefPtr<WebKitPrintOperation>(printOperation)](std::optional<SharedMemory::Handle>&& data, WebCore::ResourceError&& error) mutable {
         auto* priv = printOperation->priv;
         // When running synchronously, WebPageProxy::printFrame() calls endPrinting().
-        if (priv->printMode == PrintInfo::PrintModeAsync && priv->webView)
+        if (priv->printMode == PrintInfo::PrintMode::Async && priv->webView)
             webkitWebViewGetPage(priv->webView.get()).endPrinting();
 
         if (!data || !error.isNull()) {

@@ -43,37 +43,11 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, RenderBundle::ResourcesContainer* resources, id<MTLRenderPipelineState> renderPipelineState, id<MTLDepthStencilState> depthStencilState, MTLCullMode cullMode, MTLWinding frontFace, MTLDepthClipMode clipMode, Device& device)
-    : m_indirectCommandBuffer(indirectCommandBuffer)
-    , m_device(device)
-    , m_currentPipelineState(renderPipelineState)
-    , m_depthStencilState(depthStencilState)
-    , m_cullMode(cullMode)
-    , m_frontFace(frontFace)
-    , m_depthClipMode(clipMode)
+RenderBundle::RenderBundle(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<RenderBundleEncoder> encoder, Device& device)
+    : m_device(device)
+    , m_renderBundleEncoder(encoder)
 {
-    constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
-    constexpr auto maxStageValue = MTLRenderStageVertex | MTLRenderStageFragment;
-    static_assert(maxResourceUsageValue == 3 && maxStageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3 and MTLRenderStageVertex | MTLRenderStageFragment == 3");
-    Vector<id<MTLResource>> stageResources[maxStageValue][maxResourceUsageValue];
-
-    for (id<MTLResource> r : resources) {
-        ResourceUsageAndRenderStage *usageAndStage = [resources objectForKey:r];
-        stageResources[usageAndStage.renderStages - 1][usageAndStage.renderStages - 1].append(r);
-    }
-
-    for (size_t stage = 0; stage < maxStageValue; ++stage) {
-        for (size_t i = 0; i < maxResourceUsageValue; ++i) {
-            Vector<id<MTLResource>> &v = stageResources[stage][i];
-            if (v.size()) {
-                m_resources.append(BindableResources {
-                    .mtlResources = WTFMove(v),
-                    .usage = static_cast<MTLResourceUsage>(i + 1),
-                    .renderStages = static_cast<MTLRenderStages>(stage + 1)
-                });
-            }
-        }
-    }
+    m_renderBundlesResources = resources;
 }
 
 RenderBundle::RenderBundle(Device& device)
@@ -85,32 +59,25 @@ RenderBundle::~RenderBundle() = default;
 
 void RenderBundle::setLabel(String&& label)
 {
-    m_indirectCommandBuffer.label = label;
+    m_renderBundlesResources.firstObject.indirectCommandBuffer.label = label;
 }
 
-id<MTLRenderPipelineState> RenderBundle::currentPipelineState() const
+void RenderBundle::replayCommands(id<MTLRenderCommandEncoder> commandEncoder) const
 {
-    return m_currentPipelineState;
+    if (m_renderBundleEncoder)
+        m_renderBundleEncoder->replayCommands(commandEncoder);
 }
 
-id<MTLDepthStencilState> RenderBundle::depthStencilState() const
+void RenderBundle::updateMinMaxDepths(float minDepth, float maxDepth)
 {
-    return m_depthStencilState;
-}
+    if (m_minDepth == minDepth && m_maxDepth == maxDepth)
+        return;
 
-MTLCullMode RenderBundle::cullMode() const
-{
-    return m_cullMode;
-}
-
-MTLWinding RenderBundle::frontFace() const
-{
-    return m_frontFace;
-}
-
-MTLDepthClipMode RenderBundle::depthClipMode() const
-{
-    return m_depthClipMode;
+    m_minDepth = minDepth;
+    m_maxDepth = maxDepth;
+    float twoFloats[2] = { m_minDepth, m_maxDepth };
+    for (RenderBundleICBWithResources* icb in m_renderBundlesResources)
+        m_device->getQueue().writeBuffer(icb.fragmentDynamicOffsetsBuffer, 0, twoFloats, sizeof(float) * 2);
 }
 
 } // namespace WebGPU

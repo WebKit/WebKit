@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,10 +89,12 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                     // FIXME: Other browsers have a lower limit for the cell's max width. 
                     const float cCellMaxWidth = 32760;
                     Length cellLogicalWidth = cell->styleOrColLogicalWidth();
-                    if (cellLogicalWidth.value() > cCellMaxWidth)
-                        cellLogicalWidth.setValue(LengthType::Fixed, cCellMaxWidth);
-                    if (cellLogicalWidth.isNegative())
-                        cellLogicalWidth.setValue(LengthType::Fixed, 0);
+                    if (cellLogicalWidth.isFixed()) {
+                        if (cellLogicalWidth.value() > cCellMaxWidth)
+                            cellLogicalWidth.setValue(LengthType::Fixed, cCellMaxWidth);
+                        if (cellLogicalWidth.isNegative())
+                            cellLogicalWidth.setValue(LengthType::Fixed, 0);
+                    }
                     switch (cellLogicalWidth.type()) {
                     case LengthType::Fixed:
                         // ignore width=0
@@ -114,6 +117,9 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
                         m_hasPercent = true;
                         if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.percent() > columnLayout.logicalWidth.percent()))
                             columnLayout.logicalWidth = cellLogicalWidth;
+                        break;
+                    case LengthType::Calculated:
+                        columnLayout.logicalWidth = Length { };
                         break;
                     default:
                         break;
@@ -154,7 +160,8 @@ void AutoTableLayout::fullRecalc()
             groupLogicalWidth = column->style().logicalWidth();
         else {
             Length colLogicalWidth = column->style().logicalWidth();
-            if (colLogicalWidth.isAuto())
+            // FIXME: calc() on tables should be handled consistently with other lengths.
+            if (colLogicalWidth.isCalculated() || colLogicalWidth.isAuto())
                 colLogicalWidth = groupLogicalWidth;
             if ((colLogicalWidth.isFixed() || colLogicalWidth.isPercentOrCalculated()) && colLogicalWidth.isZero())
                 colLogicalWidth = Length();

@@ -41,7 +41,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection);
+    Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -68,10 +68,11 @@ public:
     float enclosingContentLogicalTop() const { return m_enclosingLogicalTopAndBottom.top; }
     float enclosingContentLogicalBottom() const { return m_enclosingLogicalTopAndBottom.bottom; }
 
-    float baseline() const { return m_aligmentBaseline; }
+    float baseline() const { return m_alignmentBaseline; }
     FontBaseline baselineType() const { return m_baselineType; }
 
     bool isHorizontal() const { return m_isHorizontal; }
+    bool isLeftToRightInlineDirection() const { return m_isLeftToRightDirection; }
 
     bool isTruncatedInBlockDirection() const { return m_isTruncatedInBlockDirection; }
 
@@ -119,7 +120,7 @@ private:
     // While the line box usually enclose them as well, its vertical geometry is based on
     // the layout bounds of the inline level boxes which may be different when line-height is present.
     EnclosingTopAndBottom m_enclosingLogicalTopAndBottom;
-    float m_aligmentBaseline { 0.f };
+    float m_alignmentBaseline { 0.f };
     // Content is mostly in flush with the line box edge except for cases like text-align.
     float m_contentLogicalLeft { 0.f };
     float m_contentLogicalLeftIgnoringInlineDirection { 0.f };
@@ -134,12 +135,12 @@ private:
     std::optional<FloatRect> m_ellipsisVisualRect { };
 };
 
-inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
+inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& contentOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float alignmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isLeftToRightDirection, bool isHorizontal, bool isTruncatedInBlockDirection)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_contentOverflow(contentOverflow)
     , m_enclosingLogicalTopAndBottom(enclosingLogicalTopAndBottom)
-    , m_aligmentBaseline(aligmentBaseline)
+    , m_alignmentBaseline(alignmentBaseline)
     , m_contentLogicalLeft(contentLogicalLeft)
     , m_contentLogicalLeftIgnoringInlineDirection(contentLogicalLeftIgnoringInlineDirection)
     , m_contentLogicalWidth(contentLogicalWidth)

@@ -93,15 +93,15 @@ Vector<uint8_t> fromRbsp(const uint8_t* frameData, size_t frameSize)
     size_t i;
     for (i = 0; i < frameSize - 3; ++i) {
         if (frameData[i] == 0 && frameData[i + 1] == 0 && frameData[i + 2] == 3) {
-            buffer.uncheckedAppend(frameData[i]);
-            buffer.uncheckedAppend(frameData[i + 1]);
+            buffer.append(frameData[i]);
+            buffer.append(frameData[i + 1]);
             // Skip next byte which is delimiter.
             i += 2;
         } else
-            buffer.uncheckedAppend(frameData[i]);
+            buffer.append(frameData[i]);
     }
     for (; i < frameSize; ++i)
-        buffer.uncheckedAppend(frameData[i]);
+        buffer.append(frameData[i]);
 
     return buffer;
 }
@@ -134,8 +134,7 @@ SFrameCompatibilityPrefixBuffer computeH264PrefixBuffer(const uint8_t* frameData
         return true;
     });
 
-    Vector<uint8_t> buffer;
-    buffer.resize(spsPpsLength + 2);
+    Vector<uint8_t> buffer(spsPpsLength + 2);
 IGNORE_GCC_WARNINGS_BEGIN("restrict")
     // https://bugs.webkit.org/show_bug.cgi?id=246862
     std::memcpy(buffer.data(), frameData, spsPpsLength);
@@ -179,8 +178,8 @@ void toRbsp(Vector<uint8_t>& frame, size_t offset)
 
     findEscapeRbspPatterns(frame, offset, [data = frame.data(), &newFrame](size_t position, bool shouldBeEscaped) {
         if (shouldBeEscaped)
-            newFrame.uncheckedAppend(3);
-        newFrame.uncheckedAppend(data[position]);
+            newFrame.append(3);
+        newFrame.append(data[position]);
     });
 
     frame = WTFMove(newFrame);

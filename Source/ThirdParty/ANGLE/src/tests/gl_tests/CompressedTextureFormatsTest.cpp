@@ -640,7 +640,7 @@ using CompressedTextureRGTCTest     = _Test<kRGTC,     kEmpty, true, true, true,
 using CompressedTextureBPTCTest     = _Test<kBPTC,     kEmpty, true, true, true, true,  false>;
 
 using CompressedTextureETC1Test    = _Test<kETC1, kEmpty,   false, false, false, false, false>;
-using CompressedTextureETC1SubTest = _Test<kETC1, kETC1Sub, true,  true,  false, false, false>;
+using CompressedTextureETC1SubTest = _Test<kETC1, kETC1Sub, true,  true,  true,  false, false>;
 
 using CompressedTextureEACR11UTest  = _Test<kEACR11U,  kEmpty, true, true, true, false, true>;
 using CompressedTextureEACR11STest  = _Test<kEACR11S,  kEmpty, true, true, true, false, true>;

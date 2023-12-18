@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=ServiceWorker,

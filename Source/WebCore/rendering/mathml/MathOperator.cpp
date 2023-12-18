@@ -61,14 +61,13 @@ static inline float advanceWidthForGlyph(const GlyphData& data)
 
 // FIXME: This hardcoded data can be removed when OpenType MATH font are widely available (http://wkbug/156837).
 struct StretchyCharacter {
-    UChar32 character;
+    char32_t character;
     UChar topChar;
     UChar extensionChar;
     UChar bottomChar;
     UChar middleChar;
 };
-// The first leftRightPairsCount pairs correspond to left/right fences that can easily be mirrored in RTL.
-static const short leftRightPairsCount = 5;
+
 static const StretchyCharacter stretchyCharacters[14] = {
     { 0x28  , 0x239b, 0x239c, 0x239d, 0x0    }, // left parenthesis
     { 0x29  , 0x239e, 0x239f, 0x23a0, 0x0    }, // right parenthesis
@@ -91,7 +90,7 @@ MathOperator::MathOperator()
     m_variantGlyph = 0;
 }
 
-void MathOperator::setOperator(const RenderStyle& style, UChar32 baseCharacter, Type operatorType)
+void MathOperator::setOperator(const RenderStyle& style, char32_t baseCharacter, Type operatorType)
 {
     m_baseCharacter = baseCharacter;
     m_operatorType = operatorType;
@@ -127,7 +126,7 @@ LayoutUnit MathOperator::stretchSize() const
     return m_operatorType == Type::VerticalOperator ? m_ascent + m_descent : m_width;
 }
 
-bool MathOperator::getGlyph(const RenderStyle& style, UChar32 character, GlyphData& glyph) const
+bool MathOperator::getGlyph(const RenderStyle& style, char32_t character, GlyphData& glyph) const
 {
     glyph = style.fontCascade().glyphDataForCharacter(character, !style.isLeftToRightDirection());
     return glyph.font && glyph.font == &style.fontCascade().primaryFont();
@@ -143,7 +142,7 @@ void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
     getAscentAndDescentForGlyph(sizeVariant, m_ascent, m_descent);
 }
 
-static GlyphData glyphDataForCodePointOrFallbackGlyph(const RenderStyle& style, UChar32 codePoint, Glyph fallbackGlyph)
+static GlyphData glyphDataForCodePointOrFallbackGlyph(const RenderStyle& style, char32_t codePoint, Glyph fallbackGlyph)
 {
     if (codePoint)
         return style.fontCascade().glyphDataForCharacter(codePoint, false);
@@ -198,7 +197,7 @@ void MathOperator::setGlyphAssembly(const RenderStyle& style, const GlyphAssembl
 // See https://www.w3.org/TR/MathML/chapter7.html#chars.comb-chars
 // However, many math fonts do not provide constructions for the non-combining equivalent.
 const unsigned maxFallbackPerCharacter = 3;
-static const UChar32 characterFallback[][maxFallbackPerCharacter] = {
+static const char32_t characterFallback[][maxFallbackPerCharacter] = {
     { 0x005E, 0x0302, 0 }, // CIRCUMFLEX ACCENT
     { 0x005F, 0x0332, 0 }, // LOW LINE
     { 0x007E, 0x0303, 0 }, // TILDE
@@ -252,7 +251,7 @@ void MathOperator::calculateDisplayStyleLargeOperator(const RenderStyle& style)
 
     // We choose the first size variant that is larger than the expected displayOperatorMinHeight and otherwise fallback to the largest variant.
     for (auto& sizeVariant : sizeVariants) {
-        GlyphData glyphData(sizeVariant, baseGlyph.font);
+        GlyphData glyphData(sizeVariant, baseGlyph.font.get());
         setSizeVariant(glyphData);
         m_maxPreferredWidth = m_width;
         m_italicCorrection = glyphData.font->mathData()->getItalicCorrection(*glyphData.font, glyphData.glyph);
@@ -386,7 +385,7 @@ void MathOperator::calculateStretchyData(const RenderStyle& style, bool calculat
         getMathVariantsWithFallback(style, isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
         for (auto& sizeVariant : sizeVariants) {
-            GlyphData glyphData(sizeVariant, baseGlyph.font);
+            GlyphData glyphData(sizeVariant, baseGlyph.font.get());
             if (calculateMaxPreferredWidth)
                 m_maxPreferredWidth = std::max(m_maxPreferredWidth, LayoutUnit(advanceWidthForGlyph(glyphData)));
             else {

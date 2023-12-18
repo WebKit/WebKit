@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SERVICE_WORKER,
     CustomToJSObject,
     EnabledBySetting=ServiceWorkersEnabled,
     ExportMacro=WEBCORE_EXPORT,

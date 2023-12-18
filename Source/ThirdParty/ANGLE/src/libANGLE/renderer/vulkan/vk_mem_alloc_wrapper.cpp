@@ -48,21 +48,11 @@ VkResult InitAllocator(VkPhysicalDevice physicalDevice,
     funcs.vkDestroyImage                      = vkDestroyImage;
     funcs.vkCmdCopyBuffer                     = vkCmdCopyBuffer;
     {
-#if !defined(ANGLE_SHARED_LIBVULKAN)
-        // When the vulkan-loader is statically linked, we need to use the extension
-        // functions defined in ANGLE's rx namespace. When it's dynamically linked
-        // with volk, this will default to the function definitions with no namespace
-        using rx::vkBindBufferMemory2KHR;
-        using rx::vkBindImageMemory2KHR;
-        using rx::vkGetBufferMemoryRequirements2KHR;
-        using rx::vkGetImageMemoryRequirements2KHR;
-        using rx::vkGetPhysicalDeviceMemoryProperties2KHR;
-#endif  // !defined(ANGLE_SHARED_LIBVULKAN)
-        funcs.vkGetBufferMemoryRequirements2KHR       = vkGetBufferMemoryRequirements2KHR;
-        funcs.vkGetImageMemoryRequirements2KHR        = vkGetImageMemoryRequirements2KHR;
-        funcs.vkBindBufferMemory2KHR                  = vkBindBufferMemory2KHR;
-        funcs.vkBindImageMemory2KHR                   = vkBindImageMemory2KHR;
-        funcs.vkGetPhysicalDeviceMemoryProperties2KHR = vkGetPhysicalDeviceMemoryProperties2KHR;
+        funcs.vkGetBufferMemoryRequirements2KHR       = vkGetBufferMemoryRequirements2;
+        funcs.vkGetImageMemoryRequirements2KHR        = vkGetImageMemoryRequirements2;
+        funcs.vkBindBufferMemory2KHR                  = vkBindBufferMemory2;
+        funcs.vkBindImageMemory2KHR                   = vkBindImageMemory2;
+        funcs.vkGetPhysicalDeviceMemoryProperties2KHR = vkGetPhysicalDeviceMemoryProperties2;
     }
 
     VmaAllocatorCreateInfo allocatorInfo      = {};

@@ -98,6 +98,10 @@ public:
         return Seconds(std::numeric_limits<double>::quiet_NaN());
     }
     
+    bool isNaN() const { return std::isnan(m_value); }
+    bool isInfinity() const { return std::isinf(m_value); }
+    bool isFinite() const { return std::isfinite(m_value); }
+
     explicit constexpr operator bool() const { return !!m_value; }
     
     constexpr Seconds operator+(Seconds other) const
@@ -228,7 +232,7 @@ WTF_EXPORT_PRIVATE void sleep(Seconds);
 struct Seconds::MarkableTraits {
     static bool isEmptyValue(Seconds seconds)
     {
-        return std::isnan(seconds.value());
+        return seconds.isNaN();
     }
 
     static constexpr Seconds emptyValue()
@@ -316,25 +320,6 @@ WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, Seconds);
 } // namespace WTF
 
 using WTF::sleep;
-
-namespace std {
-
-inline bool isnan(WTF::Seconds seconds)
-{
-    return std::isnan(seconds.value());
-}
-
-inline bool isinf(WTF::Seconds seconds)
-{
-    return std::isinf(seconds.value());
-}
-
-inline bool isfinite(WTF::Seconds seconds)
-{
-    return std::isfinite(seconds.value());
-}
-
-} // namespace std
 
 using namespace WTF::seconds_literals;
 using WTF::Seconds;

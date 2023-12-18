@@ -152,6 +152,7 @@ namespace WebCore {
     macro(CSSRGB) \
     macro(CSSRotate) \
     macro(CSSScale) \
+    macro(CSSScopeRule) \
     macro(CSSSkew) \
     macro(CSSSkewX) \
     macro(CSSSkewY) \
@@ -168,6 +169,7 @@ namespace WebCore {
     macro(CookieStoreManager) \
     macro(CustomElementRegistry) \
     macro(CustomEffect) \
+    macro(CustomStateSet) \
     macro(Database) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \
@@ -242,7 +244,7 @@ namespace WebCore {
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GamepadHapticActuator) \
-    macro(HighlightRegister) \
+    macro(HighlightRegistry) \
     macro(Highlight) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
@@ -271,6 +273,7 @@ namespace WebCore {
     macro(InputEvent) \
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
+    macro(InvokeEvent) \
     macro(KeyframeEffect) \
     macro(Lock) \
     macro(LockManager) \
@@ -299,7 +302,13 @@ namespace WebCore {
     macro(MediaStreamTrack) \
     macro(MerchantValidationEvent) \
     macro(MockRTCRtpTransform) \
+    macro(NavigateEvent) \
+    macro(Navigation) \
+    macro(NavigationCurrentEntryChangeEvent) \
+    macro(NavigationDestination) \
+    macro(NavigationHistoryEntry) \
     macro(NavigationPreloadManager) \
+    macro(NavigationTransition) \
     macro(NavigatorCredentials) \
     macro(NavigatorMediaDevices) \
     macro(NavigatorPermissions) \
@@ -393,6 +402,7 @@ namespace WebCore {
     macro(SQLTransaction) \
     macro(ScreenLuminance) \
     macro(ScreenOrientation) \
+    macro(ScrollTimeline) \
     macro(ServiceWorker) \
     macro(ServiceWorkerContainer) \
     macro(ServiceWorkerGlobalScope) \
@@ -431,6 +441,8 @@ namespace WebCore {
     macro(VideoDecoder) \
     macro(VideoEncoder) \
     macro(VideoFrame) \
+    macro(ViewTimeline) \
+    macro(ViewTransition) \
     macro(VisualViewport) \
     macro(WakeLock) \
     macro(WakeLockSentinel) \
@@ -586,6 +598,7 @@ namespace WebCore {
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
+    macro(navigation) \
     macro(onbackgroundfetchsuccess) \
     macro(onbackgroundfetchfail) \
     macro(onbackgroundfetchabort) \

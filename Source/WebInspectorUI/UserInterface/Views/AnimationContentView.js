@@ -291,6 +291,9 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
                     pathSteps.push((1 - easing.outPoint.y) * (height + adjustEasingHeight)); // y2
                     pathSteps.push(width); // x
                     pathSteps.push(0); // y
+                } else if (easing instanceof WI.LinearTimingFunction) {
+                    for (let point of easing.points)
+                        pathSteps.push("L", width * point.progress, height + adjustEasingHeight - ((height + adjustEasingHeight) * point.value));
                 } else if (easing instanceof WI.StepsTimingFunction) {
                     let goUpFirst = false;
                     let stepStartAdjust = 0;

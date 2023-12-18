@@ -80,9 +80,9 @@ static Vector<bool> capabilityBooleanVector(RealtimeMediaSourceCapabilities::Ech
 {
     Vector<bool> result;
     result.reserveInitialCapacity(2);
-    result.uncheckedAppend(true);
+    result.append(true);
     if (cancellation == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite)
-        result.uncheckedAppend(false);
+        result.append(false);
     return result;
 }
 
@@ -113,11 +113,12 @@ MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabil
         result.groupId = groupId;
     if (capabilities.supportsFocusDistance())
         result.focusDistance = capabilityDoubleRange(capabilities.focusDistance());
-    if (capabilities.supportsZoom())
-        result.zoom = capabilityDoubleRange(capabilities.zoom());
     if (capabilities.supportsWhiteBalanceMode())
         result.whiteBalanceMode = capabilityStringVector(capabilities.whiteBalanceModes());
-
+    if (capabilities.supportsZoom())
+        result.zoom = capabilityDoubleRange(capabilities.zoom());
+    if (capabilities.supportsTorch())
+        result.torch = capabilities.torch();
 
     return result;
 }

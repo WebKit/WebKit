@@ -91,9 +91,9 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
     return m_pixelBufferPool.get();
 }
 
-Ref<VideoFrame> RealtimeIncomingVideoSourceCocoa::createVideoSampleFromCVPixelBuffer(CVPixelBufferRef pixelBuffer, VideoFrame::Rotation rotation, int64_t timeStamp)
+Ref<VideoFrame> RealtimeIncomingVideoSourceCocoa::createVideoSampleFromCVPixelBuffer(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoFrame::Rotation rotation, int64_t timeStamp)
 {
-    return VideoFrameCV::create(MediaTime(timeStamp, 1000000), false, rotation, pixelBuffer);
+    return VideoFrameCV::create(MediaTime(timeStamp, 1000000), false, rotation, WTFMove(pixelBuffer));
 }
 
 RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::VideoFrame& frame, VideoFrame::Rotation rotation)
@@ -115,8 +115,8 @@ RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::
     }
 
     // If we already have a CVPixelBufferRef, use it directly.
-    if (auto pixelBuffer = webrtc::pixelBufferFromFrame(frame))
-        return createVideoSampleFromCVPixelBuffer(pixelBuffer, rotation, frame.timestamp_us());
+    if (auto pixelBuffer = adoptCF(webrtc::copyPixelBufferForFrame(frame)))
+        return createVideoSampleFromCVPixelBuffer(WTFMove(pixelBuffer), rotation, frame.timestamp_us());
 
     // In case of in memory libwebrtc samples, we have non interleaved YUV data, let's lazily create CVPixelBuffers if needed.
     return VideoFrameLibWebRTC::create(MediaTime(frame.timestamp_us(), 1000000), false, rotation, VideoFrameLibWebRTC::colorSpaceFromFrame(frame), frame.video_frame_buffer(), [protectedThis = Ref { *this }, this](auto& buffer) {

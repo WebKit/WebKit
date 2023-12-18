@@ -208,6 +208,27 @@ TEST(FastVector, Resize)
     EXPECT_EQ(2u, vec.size());
 }
 
+// Test resetWithRawData on the vector
+TEST(FastVector, resetWithRawData)
+{
+    FastVector<int, 5> vec;
+    int data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    vec.resetWithRawData(9, reinterpret_cast<uint8_t *>(&data[0]));
+    EXPECT_EQ(9u, vec.size());
+    for (size_t i = 0; i < vec.size(); i++)
+    {
+        EXPECT_EQ(vec[i], data[i]);
+    }
+
+    vec.resetWithRawData(4, reinterpret_cast<uint8_t *>(&data[0]));
+    EXPECT_EQ(4u, vec.size());
+    for (size_t i = 0; i < vec.size(); i++)
+    {
+        EXPECT_EQ(vec[i], data[i]);
+    }
+}
+
 // Test iterating over the vector
 TEST(FastVector, Iteration)
 {

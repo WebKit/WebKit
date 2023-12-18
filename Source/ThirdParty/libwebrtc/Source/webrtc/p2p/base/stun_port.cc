@@ -158,6 +158,7 @@ bool UDPPort::AddressResolver::GetResolvedAddress(
 }
 
 UDPPort::UDPPort(rtc::Thread* thread,
+                 absl::string_view type,
                  rtc::PacketSocketFactory* factory,
                  const rtc::Network* network,
                  rtc::AsyncPacketSocket* socket,
@@ -165,13 +166,7 @@ UDPPort::UDPPort(rtc::Thread* thread,
                  absl::string_view password,
                  bool emit_local_for_anyaddress,
                  const webrtc::FieldTrialsView* field_trials)
-    : Port(thread,
-           LOCAL_PORT_TYPE,
-           factory,
-           network,
-           username,
-           password,
-           field_trials),
+    : Port(thread, type, factory, network, username, password, field_trials),
       request_manager_(
           thread,
           [this](const void* data, size_t size, StunRequest* request) {
@@ -185,6 +180,7 @@ UDPPort::UDPPort(rtc::Thread* thread,
       emit_local_for_anyaddress_(emit_local_for_anyaddress) {}
 
 UDPPort::UDPPort(rtc::Thread* thread,
+                 absl::string_view type,
                  rtc::PacketSocketFactory* factory,
                  const rtc::Network* network,
                  uint16_t min_port,
@@ -194,7 +190,7 @@ UDPPort::UDPPort(rtc::Thread* thread,
                  bool emit_local_for_anyaddress,
                  const webrtc::FieldTrialsView* field_trials)
     : Port(thread,
-           LOCAL_PORT_TYPE,
+           type,
            factory,
            network,
            min_port,
@@ -656,6 +652,7 @@ StunPort::StunPort(rtc::Thread* thread,
                    const ServerAddresses& servers,
                    const webrtc::FieldTrialsView* field_trials)
     : UDPPort(thread,
+              STUN_PORT_TYPE,
               factory,
               network,
               min_port,
@@ -664,8 +661,6 @@ StunPort::StunPort(rtc::Thread* thread,
               password,
               false,
               field_trials) {
-  // UDPPort will set these to local udp, updating these to STUN.
-  set_type(STUN_PORT_TYPE);
   set_server_addresses(servers);
 }
 

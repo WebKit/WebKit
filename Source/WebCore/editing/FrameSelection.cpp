@@ -243,29 +243,13 @@ void FrameSelection::moveTo(const Position& base, const Position& extent, Affini
     setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveWithoutValidationTo(const Position& base, const Position& extent, bool selectionHasDirection, bool shouldSetFocus, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
+void FrameSelection::moveWithoutValidationTo(const Position& base, const Position& extent, bool selectionHasDirection, OptionSet<SetSelectionOption> options, const AXTextStateChangeIntent& intent)
 {
     VisibleSelection newSelection;
     newSelection.setWithoutValidation(base, extent);
     newSelection.setIsDirectional(selectionHasDirection);
     AXTextStateChangeIntent newIntent = intent.type == AXTextStateChangeTypeUnknown ? AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false }) : intent;
-    auto options = defaultSetSelectionOptions();
-    if (!shouldSetFocus)
-        options.add(SetSelectionOption::DoNotSetFocus);
-    switch (revealMode) {
-    case SelectionRevealMode::DoNotReveal:
-        break;
-    case SelectionRevealMode::Reveal:
-        options.add(SetSelectionOption::RevealSelection);
-        break;
-    case SelectionRevealMode::RevealUpToMainFrame:
-        options.add(SetSelectionOption::RevealSelectionUpToMainFrame);
-        break;
-    case SelectionRevealMode::DelegateMainFrameScroll:
-        options.add(SetSelectionOption::DelegateMainFrameScroll);
-        break;
-    }
-    setSelection(newSelection, options, newIntent);
+    setSelection(newSelection, options, newIntent, CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
 }
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
@@ -433,7 +417,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     if (!newSelection.isNone() && !(options & SetSelectionOption::DoNotSetFocus)) {
         RefPtr oldFocusedElement = document->focusedElement();
-        setFocusedElementIfNeeded();
+        setFocusedElementIfNeeded(options);
         if (!document->frame())
             return false;
         // FIXME: Should not be needed.
@@ -1905,11 +1889,17 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     UNUSED_PARAM(node);
-    if (elementStyle.hasAutoCaretColor() && !elementStyle.hasExplicitlySetColor())
+    if (elementStyle.hasAutoCaretColor())
         return { };
     return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
 #elif HAVE(REDESIGNED_TEXT_CURSOR)
-    if (elementStyle.hasAutoCaretColor() && !elementStyle.hasExplicitlySetColor()) {
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    auto appUsesCustomAccentColor = node && node->document().page() && node->document().page()->appUsesCustomAccentColor();
+#else
+    auto appUsesCustomAccentColor = false;
+#endif
+
+    if (elementStyle.hasAutoCaretColor() && (!elementStyle.hasExplicitlySetColor() || appUsesCustomAccentColor)) {
 #if PLATFORM(MAC)
         auto cssColorValue = CSSValueAppleSystemControlAccent;
 #else
@@ -2365,7 +2355,7 @@ static bool isFrameElement(const Node& node)
     return widget && widget->isLocalFrameView();
 }
 
-void FrameSelection::setFocusedElementIfNeeded()
+void FrameSelection::setFocusedElementIfNeeded(OptionSet<SetSelectionOption> options)
 {
     if (isNone() || !isFocused())
         return;
@@ -2386,7 +2376,10 @@ void FrameSelection::setFocusedElementIfNeeded()
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
             if (target->isMouseFocusable() && !isFrameElement(*target)) {
-                CheckedRef(m_document->page()->focusController())->setFocusedElement(target.get(), *m_document->frame());
+                FocusOptions focusOptions;
+                if (options & SetSelectionOption::ForBindings)
+                    focusOptions.trigger = FocusTrigger::Bindings;
+                CheckedRef(m_document->page()->focusController())->setFocusedElement(target.get(), *m_document->frame(), focusOptions);
                 return;
             }
             target = target->parentOrShadowHostElement();
@@ -2515,7 +2508,7 @@ RefPtr<HTMLFormElement> FrameSelection::currentForm() const
     // Start looking either at the active (first responder) node, or where the selection is.
     RefPtr start = m_document->focusedElement();
     if (!start)
-        start = m_selection.start().element();
+        start = m_selection.start().anchorElementAncestor();
     if (!start)
         return nullptr;
 
@@ -2900,12 +2893,12 @@ void FrameSelection::setCaretColor(const Color& caretColor)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool containsEndpoints(const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document, const std::optional<SimpleRange>& range)
+static bool containsEndpoints(const CheckedPtr<Document>& document, const std::optional<SimpleRange>& range)
 {
     return document && range && document->contains(range->start.container) && document->contains(range->end.container);
 }
 
-static bool containsEndpoints(const WeakPtr<Document, WeakPtrImplWithEventTargetData>& document, const Range& liveRange)
+static bool containsEndpoints(const CheckedPtr<Document>& document, const Range& liveRange)
 {
     // Only need to check the start container because live ranges enforce the invariant that start and end have a common ancestor.
     return document && document->contains(liveRange.startContainer());

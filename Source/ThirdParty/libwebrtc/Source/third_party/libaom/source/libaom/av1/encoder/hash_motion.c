@@ -128,7 +128,7 @@ bool av1_hash_table_create(hash_table *p_hash_table) {
   }
   p_hash_table->p_lookup_table =
       (Vector **)aom_calloc(kMaxAddr, sizeof(p_hash_table->p_lookup_table[0]));
-  if (!p_hash_table) return false;
+  if (!p_hash_table->p_lookup_table) return false;
   return true;
 }
 
@@ -141,13 +141,16 @@ static bool hash_table_add_to_table(hash_table *p_hash_table,
     if (p_hash_table->p_lookup_table[hash_value] == NULL) {
       return false;
     }
-    aom_vector_setup(p_hash_table->p_lookup_table[hash_value], 10,
-                     sizeof(curr_block_hash[0]));
-    aom_vector_push_back(p_hash_table->p_lookup_table[hash_value],
-                         curr_block_hash);
+    if (aom_vector_setup(p_hash_table->p_lookup_table[hash_value], 10,
+                         sizeof(curr_block_hash[0])) == VECTOR_ERROR)
+      return false;
+    if (aom_vector_push_back(p_hash_table->p_lookup_table[hash_value],
+                             curr_block_hash) == VECTOR_ERROR)
+      return false;
   } else {
-    aom_vector_push_back(p_hash_table->p_lookup_table[hash_value],
-                         curr_block_hash);
+    if (aom_vector_push_back(p_hash_table->p_lookup_table[hash_value],
+                             curr_block_hash) == VECTOR_ERROR)
+      return false;
   }
   return true;
 }

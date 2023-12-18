@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkSessionCurl.h"
 
+#include "AuthenticationManager.h"
 #include "NetworkProcess.h"
 #include "NetworkSessionCreationParameters.h"
 #include "WebCookieManager.h"
@@ -45,13 +46,11 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const Net
         networkStorageSession()->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
     networkStorageSession()->setProxySettings(parameters.proxySettings);
 
-#if ENABLE(TRACKING_PREVENTION)
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsParameters.directory;
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
     m_enableResourceLoadStatisticsDebugMode = parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
     m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsParameters.manualPrevalentResource;
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-#endif
 }
 
 NetworkSessionCurl::~NetworkSessionCurl()
@@ -64,9 +63,14 @@ void NetworkSessionCurl::clearAlternativeServices(WallTime)
     networkStorageSession()->clearAlternativeServices();
 }
 
-std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, ShouldRelaxThirdPartyCookieBlocking, StoredCredentialsPolicy)
+std::unique_ptr<WebSocketTask> NetworkSessionCurl::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, ShouldRelaxThirdPartyCookieBlocking, StoredCredentialsPolicy)
 {
-    return makeUnique<WebSocketTask>(channel, request, protocol);
+    return makeUnique<WebSocketTask>(channel, webPageProxyID, request, protocol, clientOrigin);
+}
+
+void NetworkSessionCurl::didReceiveChallenge(WebSocketTask& webSocketTask, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& challengeCompletionHandler)
+{
+    networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask.webProxyPageID(), !webSocketTask.topOrigin().isNull() ? &webSocketTask.topOrigin() : nullptr, challenge, NegotiatedLegacyTLS::No, WTFMove(challengeCompletionHandler));
 }
 
 } // namespace WebKit

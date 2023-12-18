@@ -244,11 +244,6 @@ public:
     void setWebPushMachServiceName(String&& name) { m_webPushMachServiceName = WTFMove(name); }
     const String& webPushMachServiceName() const { return m_webPushMachServiceName; }
 
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldAcceptInsecureCertificatesForWebSockets() const { return m_shouldAcceptInsecureCertificatesForWebSockets; }
-    void setShouldAcceptInsecureCertificatesForWebSockets(bool accept) { m_shouldAcceptInsecureCertificatesForWebSockets = accept; }
-#endif
-
 private:
     WebsiteDataStoreConfiguration(const String& baseCacheDirectory, const String& baseDataDirectory);
     static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent, ShouldInitializePaths shouldInitializePaths) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, shouldInitializePaths)); }
@@ -324,9 +319,6 @@ private:
     String m_pcmMachServiceName;
     String m_webPushMachServiceName;
     String m_webPushPartitionString;
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    bool m_shouldAcceptInsecureCertificatesForWebSockets { false };
-#endif
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> m_proxyConfiguration;
 #endif

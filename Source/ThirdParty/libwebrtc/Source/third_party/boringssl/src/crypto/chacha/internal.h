@@ -32,7 +32,14 @@ void CRYPTO_hchacha20(uint8_t out[32], const uint8_t key[32],
      defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64))
 #define CHACHA20_ASM
 
-// ChaCha20_ctr32 is defined in asm/chacha-*.pl.
+// ChaCha20_ctr32 encrypts |in_len| bytes from |in| and writes the result to
+// |out|. If |in| and |out| alias, they must be equal.
+//
+// |counter[0]| is the initial 32-bit block counter, and the remainder is the
+// 96-bit nonce. If the counter overflows, the output is undefined. The function
+// will produce output, but the output may vary by machine and may not be
+// self-consistent. (On some architectures, the assembly implements a mix of
+// 64-bit and 32-bit counters.)
 void ChaCha20_ctr32(uint8_t *out, const uint8_t *in, size_t in_len,
                     const uint32_t key[8], const uint32_t counter[4]);
 #endif

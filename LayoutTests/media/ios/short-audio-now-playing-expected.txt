@@ -1,0 +1,16 @@
+Test playing short audio; should not become now playing
+RUN(audio.src = "../content/short.mp3")
+RUN(audio.load())
+EVENT(canplay)
+RUN(audio.play())
+EVENT(playing)
+EXPECTED (internals.nowPlayingState.registeredAsNowPlayingApplication == 'false') OK
+Test playing long audio; should become now playing
+RUN(audio.src = "../content/silence.mp3")
+RUN(audio.load())
+EVENT(canplay)
+RUN(audio.play())
+EVENT(playing)
+EXPECTED (internals.nowPlayingState.registeredAsNowPlayingApplication == 'true') OK
+END OF TEST
+

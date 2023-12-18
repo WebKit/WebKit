@@ -27,7 +27,6 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
-#include "GPUProcessConnection.h"
 #include "MediaRecorderIdentifier.h"
 #include "SharedCARingBuffer.h"
 #include "SharedVideoFrame.h"
@@ -47,18 +46,15 @@ class WebAudioBufferList;
 
 namespace WebKit {
 
+class MediaRecorderPrivateGPUProcessDidCloseObserver;
+
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
-    , public GPUProcessConnection::Client
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate> {
+    , public CanMakeWeakPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivate();
-
-    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>::ref(); }
-    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivate>::controlBlock(); }
 
 private:
     // WebCore::MediaRecorderPrivate
@@ -71,8 +67,8 @@ private:
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
 
-    // GPUProcessConnection::Client
-    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
+    friend class MediaRecorderPrivateGPUProcessDidCloseObserver;
+    void gpuProcessConnectionDidClose();
 
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
@@ -87,6 +83,7 @@ private:
     bool m_isStopped { false };
     std::optional<WebCore::IntSize> m_blackFrameSize;
 
+    Ref<MediaRecorderPrivateGPUProcessDidCloseObserver> m_gpuProcessDidCloseObserver;
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 };
 

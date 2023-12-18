@@ -66,7 +66,7 @@ void AccessibilityObject::detachFromParent()
         overrideAttachmentParent(nullptr);
 }
 
-void AccessibilityObject::overrideAttachmentParent(AXCoreObject* parent)
+void AccessibilityObject::overrideAttachmentParent(AccessibilityObject* parent)
 {
     if (!isAttachment())
         return;
@@ -137,9 +137,6 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (isMenuListPopup() || isMenuListOption())
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if (roleValue() == AccessibilityRole::Caption && ariaRoleAttribute() == AccessibilityRole::Unknown)
-        return AccessibilityObjectInclusion::IgnoreObject;
-    
     if (roleValue() == AccessibilityRole::Mark)
         return AccessibilityObjectInclusion::IncludeObject;
 
@@ -764,7 +761,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Unknown, NSAccessibilityUnknownRole },
         { AccessibilityRole::Button, NSAccessibilityButtonRole },
         { AccessibilityRole::RadioButton, NSAccessibilityRadioButtonRole },
-        { AccessibilityRole::CheckBox, NSAccessibilityCheckBoxRole },
+        { AccessibilityRole::Checkbox, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::Slider, NSAccessibilitySliderRole },
         { AccessibilityRole::TabGroup, NSAccessibilityTabGroupRole },
         { AccessibilityRole::TextField, NSAccessibilityTextFieldRole },
@@ -781,7 +778,6 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::List, NSAccessibilityListRole },
         { AccessibilityRole::Directory, NSAccessibilityListRole },
         { AccessibilityRole::ScrollBar, NSAccessibilityScrollBarRole },
-        { AccessibilityRole::ValueIndicator, NSAccessibilityValueIndicatorRole },
         { AccessibilityRole::Image, NSAccessibilityImageRole },
         { AccessibilityRole::MenuBar, NSAccessibilityMenuBarRole },
         { AccessibilityRole::Menu, NSAccessibilityMenuRole },
@@ -791,28 +787,14 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Column, NSAccessibilityColumnRole },
         { AccessibilityRole::Row, NSAccessibilityRowRole },
         { AccessibilityRole::Toolbar, NSAccessibilityToolbarRole },
-        { AccessibilityRole::BusyIndicator, NSAccessibilityBusyIndicatorRole },
         { AccessibilityRole::ProgressIndicator, NSAccessibilityProgressIndicatorRole },
         { AccessibilityRole::Meter, NSAccessibilityLevelIndicatorRole },
-        { AccessibilityRole::Window, NSAccessibilityWindowRole },
-        { AccessibilityRole::Drawer, NSAccessibilityDrawerRole },
-        { AccessibilityRole::SystemWide, NSAccessibilitySystemWideRole },
-        { AccessibilityRole::Outline, NSAccessibilityOutlineRole },
         { AccessibilityRole::Incrementor, NSAccessibilityIncrementorRole },
-        { AccessibilityRole::Browser, NSAccessibilityBrowserRole },
         { AccessibilityRole::ComboBox, NSAccessibilityComboBoxRole },
-        { AccessibilityRole::SplitGroup, NSAccessibilitySplitGroupRole },
         { AccessibilityRole::Splitter, NSAccessibilitySplitterRole },
         { AccessibilityRole::Code, NSAccessibilityGroupRole },
         { AccessibilityRole::ColorWell, NSAccessibilityColorWellRole },
-        { AccessibilityRole::GrowArea, NSAccessibilityGrowAreaRole },
-        { AccessibilityRole::Sheet, NSAccessibilitySheetRole },
-        { AccessibilityRole::HelpTag, NSAccessibilityHelpTagRole },
-        { AccessibilityRole::Matte, NSAccessibilityMatteRole },
-        { AccessibilityRole::Ruler, NSAccessibilityRulerRole },
-        { AccessibilityRole::RulerMarker, NSAccessibilityRulerMarkerRole },
         { AccessibilityRole::Link, NSAccessibilityLinkRole },
-        { AccessibilityRole::DisclosureTriangle, NSAccessibilityDisclosureTriangleRole },
         { AccessibilityRole::Grid, NSAccessibilityTableRole },
         { AccessibilityRole::TreeGrid, NSAccessibilityTableRole },
         { AccessibilityRole::WebCoreLink, NSAccessibilityLinkRole },
@@ -888,7 +870,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::RubyRun, NSAccessibilityGroupRole },
         { AccessibilityRole::RubyText, NSAccessibilityGroupRole },
         { AccessibilityRole::Details, NSAccessibilityGroupRole },
-        { AccessibilityRole::Summary, NSAccessibilityButtonRole },
+        { AccessibilityRole::Summary, NSAccessibilityDisclosureTriangleRole },
         { AccessibilityRole::SVGTextPath, NSAccessibilityGroupRole },
         { AccessibilityRole::SVGText, NSAccessibilityGroupRole },
         { AccessibilityRole::SVGTSpan, NSAccessibilityGroupRole },

@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: null is not an object (evaluating 'entry0.index')
+
+Harness Error (FAIL), message = Unhandled rejection: null is not an object (evaluating 'entry0.index')
+
+TIMEOUT entry.getState() behavior after navigating away using the navigation API, then back Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: null is not an object (evaluating 'entry0.index')
+
+TIMEOUT entry.getState() behavior after navigating away using the navigation API, then back Test timed out
+

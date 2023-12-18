@@ -48,10 +48,7 @@ if (angle_enable_vulkan || angle_build_vulkan_system_info) {
   }
 
   angle_source_set("angle_vulkan_headers") {
-    sources = [
-      "vk_google_filtering_precision.h",
-      "vk_headers.h",
-    ]
+    sources = [ "vk_headers.h" ]
     if (angle_shared_libvulkan) {
       public_deps = [ "$angle_root/src/third_party/volk:volk" ]
     } else {

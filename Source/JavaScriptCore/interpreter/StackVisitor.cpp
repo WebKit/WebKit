@@ -486,9 +486,9 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
         return;
     }
 
-    int divot = 0;
-    int unusedStartOffset = 0;
-    int unusedEndOffset = 0;
+    unsigned divot = 0;
+    unsigned unusedStartOffset = 0;
+    unsigned unusedEndOffset = 0;
     unsigned divotLine = 0;
     unsigned divotColumn = 0;
     retrieveExpressionInfo(divot, unusedStartOffset, unusedEndOffset, divotLine, divotColumn);
@@ -500,7 +500,7 @@ void StackVisitor::Frame::computeLineAndColumn(unsigned& line, unsigned& column)
         line = overrideLineNumber.value();
 }
 
-void StackVisitor::Frame::retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const
+void StackVisitor::Frame::retrieveExpressionInfo(unsigned& divot, unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const
 {
     CodeBlock* codeBlock = this->codeBlock();
     codeBlock->unlinkedCodeBlock()->expressionRangeForBytecodeIndex(bytecodeIndex(), divot, startOffset, endOffset, line, column);

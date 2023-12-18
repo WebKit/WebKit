@@ -141,6 +141,8 @@ bool PortAllocator::SetConfiguration(
     webrtc::PortPrunePolicy turn_port_prune_policy,
     webrtc::TurnCustomizer* turn_customizer,
     const absl::optional<int>& stun_candidate_keepalive_interval) {
+  RTC_DCHECK_GE(candidate_pool_size, 0);
+  RTC_DCHECK_LE(candidate_pool_size, static_cast<int>(UINT16_MAX));
   CheckRunOnValidThreadIfInitialized();
   // A positive candidate pool size would lead to the creation of a pooled
   // allocator session and starting getting ports, which we should only do on
@@ -151,20 +153,6 @@ bool PortAllocator::SetConfiguration(
   stun_servers_ = stun_servers;
   turn_servers_ = turn_servers;
   turn_port_prune_policy_ = turn_port_prune_policy;
-
-  if (candidate_pool_frozen_) {
-    if (candidate_pool_size != candidate_pool_size_) {
-      RTC_LOG(LS_ERROR)
-          << "Trying to change candidate pool size after pool was frozen.";
-      return false;
-    }
-    return true;
-  }
-
-  if (candidate_pool_size < 0) {
-    RTC_LOG(LS_ERROR) << "Can't set negative pool size.";
-    return false;
-  }
 
   candidate_pool_size_ = candidate_pool_size;
 
@@ -286,11 +274,6 @@ PortAllocator::FindPooledSession(const IceParameters* ice_credentials) const {
   return pooled_sessions_.end();
 }
 
-void PortAllocator::FreezeCandidatePool() {
-  CheckRunOnValidThreadAndInitialized();
-  candidate_pool_frozen_ = true;
-}
-
 void PortAllocator::DiscardCandidatePool() {
   CheckRunOnValidThreadIfInitialized();
   pooled_sessions_.clear();
@@ -340,9 +323,12 @@ Candidate PortAllocator::SanitizeCandidate(const Candidate& c) const {
   // If the candidate filter doesn't allow reflexive addresses, empty TURN raddr
   // to avoid reflexive address leakage.
   bool filter_turn_related_address = !(candidate_filter_ & CF_REFLEXIVE);
+  // Sanitize related_address when using MDNS.
+  bool filter_prflx_related_address = MdnsObfuscationEnabled();
   bool filter_related_address =
       ((c.type() == STUN_PORT_TYPE && filter_stun_related_address) ||
-       (c.type() == RELAY_PORT_TYPE && filter_turn_related_address));
+       (c.type() == RELAY_PORT_TYPE && filter_turn_related_address) ||
+       (c.type() == PRFLX_PORT_TYPE && filter_prflx_related_address));
   return c.ToSanitizedCopy(use_hostname_address, filter_related_address);
 }
 

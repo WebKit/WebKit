@@ -38,6 +38,7 @@
             "enum": [
                 "first-line",
                 "first-letter",
+                "grammar-error",
                 "highlight",
                 "marker",
                 "before",
@@ -50,7 +51,13 @@
                 "scrollbar-track",
                 "scrollbar-track-piece",
                 "scrollbar-corner",
-                "resizer"
+                "spelling-error",
+                "resizer",
+                "view-transition",
+                "view-transition-group",
+                "view-transition-image-pair",
+                "view-transition-old",
+                "view-transition-new"
             ],
             "description": "Pseudo-style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."
         },

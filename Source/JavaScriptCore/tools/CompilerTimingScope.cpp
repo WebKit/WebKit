@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Options.h"
 #include <wtf/DataLog.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,7 @@ namespace {
 
 class CompilerTimingScopeState {
     WTF_MAKE_NONCOPYABLE(CompilerTimingScopeState);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CompilerTimingScopeState);
 public:
     CompilerTimingScopeState() { }
     
@@ -70,6 +71,8 @@ private:
     Vector<std::tuple<const char*, const char*, Seconds, Seconds>> totals;
     Lock lock;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CompilerTimingScopeState);
 
 CompilerTimingScopeState& compilerTimingScopeState()
 {

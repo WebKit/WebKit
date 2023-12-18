@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createSyncSuite("WI.LinearTimingFunction");
+
+    suite.addTestCase({
+        name: "WI.LinearTimingFunction.fromString.Valid",
+        test() {
+            let test = (inputString, expectedString) => {
+                expectedString ||= inputString;
+                InspectorTest.expectEqual(WI.LinearTimingFunction.fromString(inputString).toString(), expectedString, `Should parse '${inputString}' as '${expectedString}'.`);
+            };
+
+            test("linear");
+            test("linear(0, 1)", "linear");
+            test("linear(0 0%, 1 100%)", "linear");
+            test("linear(0 0%, 0.5 50%, 1 100%)");
+            test("linear(0, 0.25, 1)", "linear(0 0%, 0.25 50%, 1 100%)");
+            test("linear(0 20%, 0.5 10%, 1)", "linear(0 20%, 0.5 20%, 1 100%)");
+            test("linear(0, 0.25 25% 75%, 1)", "linear(0 0%, 0.25 25%, 0.25 75%, 1 100%)");
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.LinearTimingFunction.fromString.Invalid",
+        test() {
+            let test = (inputString) => {
+                InspectorTest.expectNull(WI.LinearTimingFunction.fromString(inputString), `Should not parse invalid '${inputString}'.`);
+            };
+
+            test("linear()");
+            test("linear(0)");
+            test("linear(0 1)");
+            test("linear(0 1 2)");
+            test("linear(\"test\")");
+            test("linear(0 \"test\")");
+            test("linear(0 1 \"test\")");
+            test("linear(0 1 2 \"test\")");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for WI.LinearTimingFunction.</p>
+</body>
+</html>

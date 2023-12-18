@@ -68,8 +68,7 @@ VideoEncoderConfig::~VideoEncoderConfig() = default;
 std::string VideoEncoderConfig::ToString() const {
   char buf[1024];
   rtc::SimpleStringBuilder ss(buf);
-  ss << "{codec_type: ";
-  ss << CodecTypeToPayloadString(codec_type);
+  ss << "{codec_type: " << CodecTypeToPayloadString(codec_type);
   ss << ", content_type: ";
   switch (content_type) {
     case ContentType::kRealtimeVideo:
@@ -100,6 +99,8 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillEncoderSpecificSettings(
   } else if (codec->codecType == kVideoCodecH265) {
     FillVideoCodecH265(codec->H265());
 #endif
+  } else if (codec->codecType == kVideoCodecAV1) {
+    FillVideoCodecAv1(codec->AV1());
   } else {
     RTC_DCHECK_NOTREACHED()
         << "Encoder specifics set/used for unknown codec type.";
@@ -121,14 +122,19 @@ void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecVp9(
   RTC_DCHECK_NOTREACHED();
 }
 
-VideoEncoderConfig::H265EncoderSpecificSettings::H265EncoderSpecificSettings(
-    const VideoCodecH265& specifics)
-    : specifics_(specifics) {}
+void VideoEncoderConfig::EncoderSpecificSettings::FillVideoCodecAv1(
+    VideoCodecAV1* av1_settings) const {
+  RTC_DCHECK_NOTREACHED();
+}
 
 void VideoEncoderConfig::H265EncoderSpecificSettings::FillVideoCodecH265(
     VideoCodecH265* h265_settings) const {
   *h265_settings = specifics_;
 }
+
+VideoEncoderConfig::H265EncoderSpecificSettings::H265EncoderSpecificSettings(
+    const VideoCodecH265& specifics)
+    : specifics_(specifics) {}
 
 VideoEncoderConfig::Vp8EncoderSpecificSettings::Vp8EncoderSpecificSettings(
     const VideoCodecVP8& specifics)
@@ -146,6 +152,15 @@ VideoEncoderConfig::Vp9EncoderSpecificSettings::Vp9EncoderSpecificSettings(
 void VideoEncoderConfig::Vp9EncoderSpecificSettings::FillVideoCodecVp9(
     VideoCodecVP9* vp9_settings) const {
   *vp9_settings = specifics_;
+}
+
+VideoEncoderConfig::Av1EncoderSpecificSettings::Av1EncoderSpecificSettings(
+    const VideoCodecAV1& specifics)
+    : specifics_(specifics) {}
+
+void VideoEncoderConfig::Av1EncoderSpecificSettings::FillVideoCodecAv1(
+    VideoCodecAV1* av1_settings) const {
+  *av1_settings = specifics_;
 }
 
 }  // namespace webrtc

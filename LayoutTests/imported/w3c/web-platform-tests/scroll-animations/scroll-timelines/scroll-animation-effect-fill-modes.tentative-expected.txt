@@ -1,0 +1,30 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Scroll based animation effect fill mode should return 'auto' for getTiming() and should return 'none' for getComputedTiming().
+TIMEOUT Applied effect value before start delay with fill: none Test timed out
+NOTRUN Applied effect value at start delay with fill: none
+NOTRUN Applied effect value at midpoint with fill: none
+NOTRUN Applied effect value at effect end with fill: none
+NOTRUN Applied effect value after effect end with fill: none
+NOTRUN Applied effect value before start delay with fill: backwards
+NOTRUN Applied effect value at start delay with fill: backwards
+NOTRUN Applied effect value at midpoint with fill: backwards
+NOTRUN Applied effect value at effect end with fill: backwards
+NOTRUN Applied effect value after effect end with fill: backwards
+NOTRUN Applied effect value before timeline start with fill: forwards
+NOTRUN Applied effect value at timeline start with fill: forwards
+NOTRUN Applied effect value in timeline range with fill: forwards
+NOTRUN Applied effect value at timeline end with fill: forwards
+NOTRUN Applied effect value after timeline end with fill: forwards
+NOTRUN Applied effect value before timeline start with fill: both
+NOTRUN Applied effect value at timeline start with fill: both
+NOTRUN Applied effect value in timeline range with fill: both
+NOTRUN Applied effect value at timeline end with fill: both
+NOTRUN Applied effect value after timeline end with fill: both
+NOTRUN Applied effect value before timeline start with fill: auto
+NOTRUN Applied effect value at timeline start with fill: auto
+NOTRUN Applied effect value in timeline range with fill: auto
+NOTRUN Applied effect value at timeline end with fill: auto
+NOTRUN Applied effect value after timeline end with fill: auto
+

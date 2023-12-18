@@ -1,9 +1,144 @@
 Tests the #comp_text_node portions of the AccName Name Computation algorithm.
 
+text/element/text nodes, no space
+
+buttonlabel
+headinglabel
+buttonlabel
 headinglabel
 
+linklabel
+text/comment/text nodes, no space
+
+buttonlabel
+headinglabel
+buttonlabel
+headinglabel
+
+linklabel
+text/comment/text nodes, with space
+
+button label
+heading label
+button label
 heading label
 
+link label
+text node, with tab char
 
+button label
+heading label
+button label
+heading label
+
+link label
+text node, with non-breaking space
+
+button label
+heading label
+button label
+heading label
+
+link label
+text node, with extra non-breaking space
+
+button   label
+heading   label
+button   label
+heading   label
+
+link   label
+text node, with leading/trailing non-breaking space
+
+ button label 
+ heading label 
+ button label 
+ heading label 
+
+ link label 
+text node, with mixed space and non-breaking space
+
+button   label
+heading   label
+button   label
+heading   label
+
+link   label
+text nodes, with deeply nested space
+
+button label
+heading label
+button label
+heading label
+
+link label
+text nodes, with single line break
+
+button label
+heading label
+button label
+heading label
+
+link label
+
+FAIL span[role=button] with text/element/text nodes, no space assert_equals: <span role="button" tabindex="0" class="ex" data-expectedlabel="buttonlabel" data-testname="span[role=button] with text/element/text nodes, no space">button<span></span>label</span> expected "buttonlabel" but got "button label"
+FAIL div[role=heading] with text/element/text nodes, no space assert_equals: <div role="heading" class="ex" data-expectedlabel="headinglabel" data-testname="div[role=heading] with text/element/text nodes, no space">heading<span></span>label</div> expected "headinglabel" but got "heading label"
+FAIL button with text/element/text nodes, no space assert_equals: <button class="ex" data-expectedlabel="buttonlabel" data-testname="button with text/element/text nodes, no space">button<span></span>label</button> expected "buttonlabel" but got "button label"
+FAIL heading with text/element/text nodes, no space assert_equals: <h3 class="ex" data-expectedlabel="headinglabel" data-testname="heading with text/element/text nodes, no space">heading<span></span>label</h3> expected "headinglabel" but got "heading label"
+FAIL link with text/element/text nodes, no space assert_equals: <a href="#" class="ex" data-expectedlabel="linklabel" data-testname="link with text/element/text nodes, no space">link<span></span>label</a> expected "linklabel" but got "link label"
+FAIL span[role=button] with text/comment/text nodes, no space assert_equals: <span role="button" tabindex="0" class="ex" data-expectedlabel="buttonlabel" data-testname="span[role=button] with text/comment/text nodes, no space">
+  button<!-- with non-text node splitting concatenated text nodes -->label<!-- [sic] no extra spaces around first comment -->
+</span> expected "buttonlabel" but got "button label"
+FAIL div[role=heading] with text/comment/text nodes, no space assert_equals: <div role="heading" class="ex" data-expectedlabel="headinglabel" data-testname="div[role=heading] with text/comment/text nodes, no space">
+  heading<!-- with non-text node splitting concatenated text nodes -->label<!-- [sic] no extra spaces around first comment -->
+</div> expected "headinglabel" but got "heading label"
+FAIL button with text/comment/text nodes, no space assert_equals: <button class="ex" data-expectedlabel="buttonlabel" data-testname="button with text/comment/text nodes, no space">
+  button<!-- with non-text node splitting concatenated text nodes -->label<!-- [sic] no extra spaces around first comment -->
+</button> expected "buttonlabel" but got "button label"
+FAIL heading with text/comment/text nodes, no space assert_equals: <h3 class="ex" data-expectedlabel="headinglabel" data-testname="heading with text/comment/text nodes, no space">
+  heading<!-- with non-text node splitting concatenated text nodes -->label<!-- [sic] no extra spaces around first comment -->
+</h3> expected "headinglabel" but got "heading label"
+FAIL link with text/comment/text nodes, no space assert_equals: <a href="#" class="ex" data-expectedlabel="linklabel" data-testname="link with text/comment/text nodes, no space">
+  link<!-- with non-text node splitting concatenated text nodes -->label<!-- [sic] no extra spaces around first comment -->
+</a> expected "linklabel" but got "link label"
+PASS span[role=button] with text/comment/text nodes, with space
+PASS div[role=heading] with text/comment/text nodes, with space
+PASS button with text/comment/text nodes, with space
 PASS heading with text/comment/text nodes, with space
+PASS link with text/comment/text nodes, with space
+PASS span[role=button] with text node, with tab char
+PASS div[role=heading] with text node, with tab char
+PASS button with text node, with tab char
+PASS heading with text node, with tab char
+PASS link with text node, with tab char
+PASS span[role=button] with text node, with non-breaking space
+PASS div[role=heading] with text node, with non-breaking space
+PASS button with text node, with non-breaking space
+PASS heading with text node, with non-breaking space
+PASS link with text node, with non-breaking space
+PASS span[role=button] with text node, with extra non-breaking space
+PASS div[role=heading] with text node, with extra non-breaking space
+PASS button with text node, with extra non-breaking space
+PASS heading with text node, with extra non-breaking space
+PASS link with text node, with extra non-breaking space
+PASS span[role=button] with text node, with leading/trailing non-breaking space
+PASS div[role=heading] with text node, with leading/trailing non-breaking space
+PASS button with text node, with leading/trailing non-breaking space
+PASS heading with text node, with leading/trailing non-breaking space
+PASS link with text node, with leading/trailing non-breaking space
+PASS span[role=button] with text node, with mixed space and non-breaking space
+PASS div[role=heading] with text node, with mixed space and non-breaking space
+PASS button with text node, with mixed space and non-breaking space
+PASS heading with text node, with mixed space and non-breaking space
+PASS link with text node, with mixed space and non-breaking space
+PASS span[role=button] with text node, with deeply nested space
+PASS div[role=heading] with text node, with deeply nested space
+PASS button with text node, with deeply nested space
+PASS heading with text node, with deeply nested space
+PASS link with text node, with deeply nested space
+PASS span[role=button] with text node, with single line break
+PASS div[role=heading] with text node, with single line break
+PASS button with text node, with single line break
+PASS heading with text node, with single line break
+PASS link with text node, with single line break
 

@@ -97,6 +97,7 @@ private:
     void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String&, PolicyCheckIdentifier, FramePolicyFunction&&) final;
     void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, const ResourceResponse& redirectResponse, FormState*, PolicyDecisionMode, PolicyCheckIdentifier, FramePolicyFunction&&) final;
     void broadcastFrameRemovalToOtherProcesses() final;
+    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
     void cancelPolicyCheck() final;
 
     void dispatchUnableToImplementPolicy(const ResourceError&) final;
@@ -134,6 +135,8 @@ private:
     ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest&) const final;
     ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const final;
     ResourceError pluginWillHandleLoadError(const ResourceResponse&) const final;
+
+    void loadStorageAccessQuirksIfNeeded() final;
 
     bool shouldFallBack(const ResourceError&) const final;
 
@@ -197,9 +200,7 @@ private:
     RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final;
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final;
-#endif
 
     void dispatchLoadEventToOwnerElementInAnotherProcess() final;
 };

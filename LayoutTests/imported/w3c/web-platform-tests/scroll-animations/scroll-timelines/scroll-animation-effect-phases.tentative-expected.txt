@@ -1,0 +1,34 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Current times and effect phase at start when delay = 0 and endDelay = 0 | Test timed out
+NOTRUN Current times and effect phase in active range when delay = 0 and endDelay = 0 |
+NOTRUN Current times and effect phase at effect end time when delay = 0 and endDelay = 0 |
+NOTRUN Current times and effect phase at timeline start when delay = 500 and endDelay = 0 |
+NOTRUN Current times and effect phase before start delay when delay = 500 and endDelay = 0 |
+NOTRUN Current times and effect phase at start delay when delay = 500 and endDelay = 0 |
+NOTRUN Current times and effect phase in active range when delay = 500 and endDelay = 0 |
+NOTRUN Current times and effect phase at effect end time when delay = 500 and endDelay = 0 |
+NOTRUN Current times and effect phase at timeline start when delay = 0 and endDelay = 500 |
+NOTRUN Current times and effect phase in active range when delay = 0 and endDelay = 500 |
+NOTRUN Current times and effect phase at effect end time when delay = 0 and endDelay = 500 |
+NOTRUN Current times and effect phase after effect end time when delay = 0 and endDelay = 500 |
+NOTRUN Current times and effect phase at timeline boundary when delay = 0 and endDelay = 500 |
+NOTRUN Current times and effect phase at timeline start when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase before start delay when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase at start delay when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase in active range when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase at effect end time when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase after effect end time when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase at timeline boundary when delay = 250 and endDelay = 250 |
+NOTRUN Current times and effect phase at timeline start when delay = -125 and endDelay = -125 |
+NOTRUN Current times and effect phase in active range when delay = -125 and endDelay = -125 |
+NOTRUN Current times and effect phase at timeline end when delay = -125 and endDelay = -125 |
+NOTRUN Playback rate affects whether active phase boundary is inclusive.
+NOTRUN Verify that (play -> pause -> play) doesn't change phase/progress.
+NOTRUN Pause in before phase, scroll timeline into active phase, animation should remain in the before phase
+NOTRUN Pause in before phase, set animation current time to be in active range, animation should become active. Scrolling should have no effect.
+NOTRUN Make scroller inactive, then set current time to an in range time
+NOTRUN Animation effect is still applied after pausing and making timeline inactive.
+NOTRUN Make timeline inactive, force style update then pause the animation. No crashing indicates test success.
+

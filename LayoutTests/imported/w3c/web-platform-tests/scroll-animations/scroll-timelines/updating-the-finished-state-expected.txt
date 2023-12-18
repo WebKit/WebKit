@@ -1,0 +1,29 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Updating the finished state when seeking past end Test timed out
+NOTRUN Updating the finished state when playing exactly to end
+NOTRUN Updating the finished state when seeking exactly to end
+NOTRUN Updating the finished state when playing in reverse past zero
+NOTRUN Updating the finished state when seeking a reversed animation past zero
+NOTRUN Updating the finished state when playing  a reversed animation exactly to zero
+NOTRUN Updating the finished state when seeking a reversed animation exactly to zero
+NOTRUN Updating the finished state when seeking before end
+NOTRUN Updating the finished state when seeking a reversed animation before end
+NOTRUN Updating the finished state when playback rate is zero and the current time is less than zero
+NOTRUN Updating the finished state when playback rate is zero and the current time is less than end
+NOTRUN Updating the finished state when playback rate is zero and the currenttime is greater than end
+NOTRUN Updating the finished state when current time is unresolved
+NOTRUN Updating the finished state when start time is unresolved and did seek = true
+NOTRUN Finish notification steps don't run when the animation seeks to finish and then seeks back again
+NOTRUN Finish notification steps run when the animation completes normally
+NOTRUN Finish notification steps run when an animation without a target effect completes normally
+NOTRUN Finish notification steps run when the animation seeks past finish
+NOTRUN Finish notification steps run when the animation completes with .finish(), even if we then seek away
+NOTRUN Animation finished promise is replaced after seeking back to start
+NOTRUN Animation finished promise is replaced after replaying from start
+TIMEOUT Animation finish event is fired again after seeking back to start Test timed out
+TIMEOUT Animation finish event is fired again after replaying from start Test timed out
+TIMEOUT finish event is not fired at the end of the active interval when the endDelay has not expired Test timed out
+TIMEOUT finish event is fired after the endDelay has expired Test timed out
+

@@ -114,7 +114,6 @@ public:
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink() { return m_assembler.jumpsToLink(); }
     static bool canCompact(JumpType jumpType) { return ARMv7Assembler::canCompact(jumpType); }
-    static JumpLinkType computeJumpType(JumpType jumpType, const uint8_t* from, const uint8_t* to) { return ARMv7Assembler::computeJumpType(jumpType, from, to); }
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return ARMv7Assembler::computeJumpType(record, from, to); }
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return ARMv7Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
@@ -166,6 +165,7 @@ public:
     };
 
     enum ResultCondition {
+        Carry = ARMv7Assembler::ConditionCS,
         Overflow = ARMv7Assembler::ConditionVS,
         Signed = ARMv7Assembler::ConditionMI,
         PositiveOrZero = ARMv7Assembler::ConditionPL,
@@ -534,6 +534,22 @@ public:
         rotateRight32(srcDst, imm, srcDst);
     }
 
+    void rotateLeft32(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.ARM_and(scratch, shift, ARMThumbImmediate::makeEncodedImm(0x1f));
+        m_assembler.sub(scratch, ARMThumbImmediate::makeUInt12(32), scratch);
+        m_assembler.ror(dest, src, scratch);
+    }
+
+    void rotateLeft32(RegisterID src, TrustedImm32 shift, RegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(shift, scratch);
+        m_assembler.ARM_and(scratch, scratch, ARMThumbImmediate::makeEncodedImm(0x1f));
+        m_assembler.sub(scratch, ARMThumbImmediate::makeUInt12(32), scratch);
+        m_assembler.ror(dest, src, scratch);
+    }
     void rshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
@@ -1720,6 +1736,12 @@ public:
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle(), /* toDouble: */ false);
     }
 
+    void convertInt32ToDouble(TrustedImm32 imm, FPRegisterID dest)
+    {
+        move(imm, dataTempRegister);
+        convertInt32ToDouble(dataTempRegister, dest);
+    }
+
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.vmov(fpTempRegister, src, src);
@@ -2170,6 +2192,12 @@ public:
     static void replaceWithJump(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)
     {
         ARMv7Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
+    }
+
+    template<PtrTag startTag>
+    static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
+    {
+        ARMv7Assembler::replaceWithNops(instructionStart.dataLocation(), memoryToFillWithNopsInBytes);
     }
     
     static ptrdiff_t maxJumpReplacementSize()
@@ -2679,7 +2707,14 @@ public:
 
     void breakpoint(uint8_t imm = 0)
     {
-        m_assembler.bkpt(imm);
+        m_assembler.udf(imm);
+    }
+
+    void setCarry(RegisterID dest)
+    {
+        m_assembler.it(ARMv7Assembler::ConditionCS, false);
+        move(TrustedImm32(1), dest);
+        move(TrustedImm32(0), dest);
     }
 
     static bool isBreakpoint(void* address) { return ARMv7Assembler::isBkpt(address); }
@@ -2733,10 +2768,11 @@ public:
     ALWAYS_INLINE Call call(RegisterID target, RegisterID callTag) { return UNUSED_PARAM(callTag), call(target, NoPtrTag); }
     ALWAYS_INLINE Call call(Address address, RegisterID callTag) { return UNUSED_PARAM(callTag), call(address, NoPtrTag); }
 
-    ALWAYS_INLINE void callOperation(const CodePtr<OperationPtrTag> operation)
+    template<PtrTag tag>
+    ALWAYS_INLINE void callOperation(const CodePtr<tag> operation)
     {
         move(TrustedImmPtr(operation.taggedPtr()), addressTempRegister);
-        call(addressTempRegister, OperationPtrTag);
+        call(addressTempRegister, tag);
     }
 
     ALWAYS_INLINE void ret()

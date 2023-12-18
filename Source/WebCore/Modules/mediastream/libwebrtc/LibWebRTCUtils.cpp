@@ -270,16 +270,20 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
         rtcParameters.header_extensions.push_back(fromRTCHeaderExtensionParameters(extension));
     // Codecs parameters are readonly
 
-    switch (parameters.degradationPreference) {
-    case RTCDegradationPreference::MaintainFramerate:
-        rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_FRAMERATE;
-        break;
-    case RTCDegradationPreference::MaintainResolution:
-        rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_RESOLUTION;
-        break;
-    case RTCDegradationPreference::Balanced:
-        rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
-        break;
+    if (!parameters.degradationPreference)
+        rtcParameters.degradation_preference = { };
+    else {
+        switch (*parameters.degradationPreference) {
+        case RTCDegradationPreference::MaintainFramerate:
+            rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_FRAMERATE;
+            break;
+        case RTCDegradationPreference::MaintainResolution:
+            rtcParameters.degradation_preference = webrtc::DegradationPreference::MAINTAIN_RESOLUTION;
+            break;
+        case RTCDegradationPreference::Balanced:
+            rtcParameters.degradation_preference = webrtc::DegradationPreference::BALANCED;
+            break;
+        }
     }
 
     if (parameters.rtcp.reducedSize)
@@ -342,19 +346,19 @@ ExceptionCode toExceptionCode(webrtc::RTCErrorType type)
 {
     switch (type) {
     case webrtc::RTCErrorType::INVALID_PARAMETER:
-        return InvalidAccessError;
+        return ExceptionCode::InvalidAccessError;
     case webrtc::RTCErrorType::INVALID_RANGE:
-        return RangeError;
+        return ExceptionCode::RangeError;
     case webrtc::RTCErrorType::SYNTAX_ERROR:
-        return SyntaxError;
+        return ExceptionCode::SyntaxError;
     case webrtc::RTCErrorType::INVALID_STATE:
-        return InvalidStateError;
+        return ExceptionCode::InvalidStateError;
     case webrtc::RTCErrorType::INVALID_MODIFICATION:
-        return InvalidModificationError;
+        return ExceptionCode::InvalidModificationError;
     case webrtc::RTCErrorType::NETWORK_ERROR:
-        return NetworkError;
+        return ExceptionCode::NetworkError;
     default:
-        return OperationError;
+        return ExceptionCode::OperationError;
     }
 }
 

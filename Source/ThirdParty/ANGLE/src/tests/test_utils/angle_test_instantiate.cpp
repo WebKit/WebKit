@@ -609,10 +609,6 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                 {
                     return false;
                 }
-                if (param.isDisableRequested(Feature::SupportsNegativeViewport))
-                {
-                    return false;
-                }
                 return true;
             default:
                 return false;

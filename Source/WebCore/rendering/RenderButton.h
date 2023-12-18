@@ -76,8 +76,8 @@ private:
 
     bool isFlexibleBoxImpl() const override { return true; }
 
-    WeakPtr<RenderTextFragment> m_buttonText;
-    WeakPtr<RenderBlock> m_inner;
+    SingleThreadWeakPtr<RenderTextFragment> m_buttonText;
+    SingleThreadWeakPtr<RenderBlock> m_inner;
 };
 
 } // namespace WebCore

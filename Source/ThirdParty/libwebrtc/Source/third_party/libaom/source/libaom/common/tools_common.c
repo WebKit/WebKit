@@ -65,8 +65,8 @@ void aom_tools_warn(const char *fmt, ...) { LOG_ERROR("Warning"); }
 void die_codec(aom_codec_ctx_t *ctx, const char *s) {
   const char *detail = aom_codec_error_detail(ctx);
 
-  printf("%s: %s\n", s, aom_codec_error(ctx));
-  if (detail) printf("    %s\n", detail);
+  fprintf(stderr, "%s: %s\n", s, aom_codec_error(ctx));
+  if (detail) fprintf(stderr, "    %s\n", detail);
   exit(EXIT_FAILURE);
 }
 
@@ -309,7 +309,7 @@ static void highbd_img_upshift(aom_image_t *dst, const aom_image_t *src,
     case AOM_IMG_FMT_I42016:
     case AOM_IMG_FMT_I42216:
     case AOM_IMG_FMT_I44416: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -345,7 +345,7 @@ static void lowbd_img_upshift(aom_image_t *dst, const aom_image_t *src,
     case AOM_IMG_FMT_I420:
     case AOM_IMG_FMT_I422:
     case AOM_IMG_FMT_I444: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -386,7 +386,7 @@ void aom_img_truncate_16_to_8(aom_image_t *dst, const aom_image_t *src) {
     case AOM_IMG_FMT_I420:
     case AOM_IMG_FMT_I422:
     case AOM_IMG_FMT_I444: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -420,7 +420,7 @@ static void highbd_img_downshift(aom_image_t *dst, const aom_image_t *src,
     case AOM_IMG_FMT_I42016:
     case AOM_IMG_FMT_I42216:
     case AOM_IMG_FMT_I44416: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -453,7 +453,7 @@ static void lowbd_img_downshift(aom_image_t *dst, const aom_image_t *src,
     case AOM_IMG_FMT_I420:
     case AOM_IMG_FMT_I422:
     case AOM_IMG_FMT_I444: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;

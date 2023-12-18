@@ -27,6 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/StringHash.h>
@@ -34,19 +35,9 @@
 
 namespace WebKit {
 
-struct WebPreferencesStore {
-    WebPreferencesStore();
-
+struct WebPreferencesStore : public CanMakeCheckedPtr {
     using Value = std::variant<String, bool, uint32_t, double>;
     using ValueMap = MemoryCompactRobinHoodHashMap<String, Value>;
-    WebPreferencesStore(ValueMap&& values, ValueMap&& overriddenDefaults)
-        : m_values(WTFMove(values))
-        , m_overriddenDefaults(WTFMove(overriddenDefaults))
-    {
-    }
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebPreferencesStore&);
 
     // NOTE: The getters in this class have non-standard names to aid in the use of the preference macros.
 
@@ -73,11 +64,11 @@ struct WebPreferencesStore {
     static void overrideBoolValueForKey(const String& key, bool value);
     static void removeTestRunnerOverrides();
 
-    ValueMap m_values;
-    ValueMap m_overriddenDefaults;
+    ValueMap m_values { };
+    ValueMap m_overriddenDefaults { };
 
-    WebPreferencesStore isolatedCopy() const & { return { crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults) }; }
-    WebPreferencesStore isolatedCopy() && { return { crossThreadCopy(WTFMove(m_values)), crossThreadCopy(WTFMove(m_overriddenDefaults)) }; }
+    WebPreferencesStore isolatedCopy() const & { return { CanMakeCheckedPtr { }, crossThreadCopy(m_values), crossThreadCopy(m_overriddenDefaults) }; }
+    WebPreferencesStore isolatedCopy() && { return { CanMakeCheckedPtr { }, crossThreadCopy(WTFMove(m_values)), crossThreadCopy(WTFMove(m_overriddenDefaults)) }; }
 
     static ValueMap& defaults();
 };

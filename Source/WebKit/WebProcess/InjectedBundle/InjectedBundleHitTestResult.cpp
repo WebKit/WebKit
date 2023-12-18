@@ -175,11 +175,11 @@ RefPtr<WebImage> InjectedBundleHitTestResult::image() const
     BitmapImage& bitmapImage = downcast<BitmapImage>(*image);
     IntSize size(bitmapImage.size());
     auto webImage = WebImage::create(size, static_cast<ImageOptions>(0), DestinationColorSpace::SRGB());
-    if (!webImage)
+    if (!webImage->context())
         return nullptr;
 
     // FIXME: need to handle EXIF rotation.
-    auto& graphicsContext = webImage->context();
+    auto& graphicsContext = *webImage->context();
     graphicsContext.drawImage(bitmapImage, { { }, size });
 
     return webImage;

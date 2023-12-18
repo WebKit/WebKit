@@ -28,15 +28,18 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "AcceleratedEffect.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-AcceleratedEffectStack::AcceleratedEffectStack()
+WTF_MAKE_ISO_ALLOCATED_IMPL(AcceleratedEffectStack);
+
+Ref<AcceleratedEffectStack> AcceleratedEffectStack::create()
 {
+    return adoptRef(*new AcceleratedEffectStack());
 }
 
-AcceleratedEffectStack::~AcceleratedEffectStack()
+AcceleratedEffectStack::AcceleratedEffectStack()
 {
 }
 
@@ -50,7 +53,7 @@ void AcceleratedEffectStack::setEffects(AcceleratedEffects&& effects)
     m_primaryLayerEffects.clear();
     m_backdropLayerEffects.clear();
 
-    for (auto effect : effects) {
+    for (auto& effect : effects) {
         auto& animatedProperties = effect->animatedProperties();
 
         // If we don't have a keyframe targeting backdrop-filter, we can add the effect

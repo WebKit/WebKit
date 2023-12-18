@@ -24,8 +24,8 @@ var glFails;
 function runTest() {
     glWorks = canvasWorks.getContext("webgl");
     shouldBeNonNull(glWorks);
-    shouldBeTrue('"failPlatformContextCreationForTesting" in glWorks.getContextAttributes()'); // Expects support for "DOM Testing APIs Enabled internal setting"
-    glFails = canvasFails.getContext("webgl", { failPlatformContextCreationForTesting: true });
+    shouldBeTrue('"failContextCreationForTesting" in glWorks.getContextAttributes()'); // Expects support for "DOM Testing APIs Enabled internal setting"
+    glFails = canvasFails.getContext("webgl", { failContextCreationForTesting: "FailPlatformContextCreation" });
     if (!glFails) {
         testPassed("Context was not returned");
         shouldBe("glWorks.NO_ERROR", "glWorks.getError()" );

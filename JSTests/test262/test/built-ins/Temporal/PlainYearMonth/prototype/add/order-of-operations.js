@@ -98,3 +98,79 @@ const options = TemporalHelpers.propertyBagObserver(actual, { overflow: "constra
 
 instance.add(fields, options);
 assert.compareArray(actual, expected, "order of operations");
+
+actual.splice(0); // clear
+
+const noCalendarExpected = [
+  // ToTemporalDuration
+  "get fields.days",
+  "get fields.days.valueOf",
+  "call fields.days.valueOf",
+  "get fields.hours",
+  "get fields.hours.valueOf",
+  "call fields.hours.valueOf",
+  "get fields.microseconds",
+  "get fields.microseconds.valueOf",
+  "call fields.microseconds.valueOf",
+  "get fields.milliseconds",
+  "get fields.milliseconds.valueOf",
+  "call fields.milliseconds.valueOf",
+  "get fields.minutes",
+  "get fields.minutes.valueOf",
+  "call fields.minutes.valueOf",
+  "get fields.months",
+  "get fields.nanoseconds",
+  "get fields.nanoseconds.valueOf",
+  "call fields.nanoseconds.valueOf",
+  "get fields.seconds",
+  "get fields.seconds.valueOf",
+  "call fields.seconds.valueOf",
+  "get fields.weeks",
+  "get fields.years",
+  // CalendarFields
+  "get this.calendar.fields",
+  "call this.calendar.fields",
+  // PrepareTemporalFields on receiver
+  "get this.calendar.monthCode",
+  "call this.calendar.monthCode",
+  "get this.calendar.year",
+  "call this.calendar.year",
+  // CalendarDateFromFields
+  "get this.calendar.dateFromFields",
+  "call this.calendar.dateFromFields",
+  "get this.calendar.dateAdd",
+  // SnapshotOwnProperties
+  "ownKeys options",
+  "getOwnPropertyDescriptor options.overflow",
+  "get options.overflow",
+  // AddDate
+  "get options.overflow",
+  "get options.overflow.toString",
+  "call options.overflow.toString",
+  // PrepareTemporalFields on added date
+  "get this.calendar.monthCode",
+  "call this.calendar.monthCode",
+  "get this.calendar.year",
+  "call this.calendar.year",
+  // CalendarYearMonthFromFields
+  "get this.calendar.yearMonthFromFields",
+  "call this.calendar.yearMonthFromFields",
+  // inside Calendar.p.yearMonthFromFields
+  "get options.overflow.toString",
+  "call options.overflow.toString",
+];
+
+const noCalendarFields = TemporalHelpers.propertyBagObserver(actual, {
+  days: 1,
+  hours: 1,
+  minutes: 1,
+  seconds: 1,
+  milliseconds: 1,
+  microseconds: 1,
+  nanoseconds: 1,
+}, "fields");
+
+instance.add(noCalendarFields, options);
+assert.compareArray(actual, noCalendarExpected, "order of operations with no calendar units");
+
+actual.splice(0); // clear

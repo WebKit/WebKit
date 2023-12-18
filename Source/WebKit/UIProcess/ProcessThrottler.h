@@ -39,7 +39,8 @@ class TextStream;
 }
 
 namespace WebKit {
-    
+
+class AuxiliaryProcessProxy;
 class ProcessThrottler;
 class ProcessThrottlerClient;
 
@@ -128,13 +129,13 @@ public:
 
     using TimedActivity = ProcessThrottlerTimedActivity;
 
-    void didConnectToProcess(ProcessID);
+    void didConnectToProcess(AuxiliaryProcessProxy&);
     void didDisconnectFromProcess();
     bool shouldBeRunnable() const { return !m_foregroundActivities.isEmptyIgnoringNullReferences() || !m_backgroundActivities.isEmptyIgnoringNullReferences(); }
     void setAllowsActivities(bool);
     void setShouldDropNearSuspendedAssertionAfterDelay(bool);
     void setShouldTakeNearSuspendedAssertion(bool);
-    bool isSuspended() const { return m_processID && !m_assertion; }
+    bool isSuspended() const;
     ProcessThrottleState currentState() const { return m_state; }
     bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
 
@@ -168,8 +169,11 @@ private:
     void numberOfPagesAllowedToRunInTheBackgroundChanged();
     void clearAssertion();
 
+    class ProcessAssertionCache;
+
+    UniqueRef<ProcessAssertionCache> m_assertionCache;
     ProcessThrottlerClient& m_process;
-    ProcessID m_processID { 0 };
+    WeakPtr<AuxiliaryProcessProxy> m_processProxy;
     RefPtr<ProcessAssertion> m_assertion;
     RefPtr<ProcessAssertion> m_assertionToClearAfterPrepareToDropLastAssertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
@@ -181,41 +185,10 @@ private:
     ProcessThrottleState m_state { ProcessThrottleState::Suspended };
     PageAllowedToRunInTheBackgroundCounter m_pageAllowedToRunInTheBackgroundCounter;
     bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
-    bool m_shouldTakeUIBackgroundAssertion { false };
+    const bool m_shouldTakeUIBackgroundAssertion { false };
     bool m_shouldTakeNearSuspendedAssertion { true };
     bool m_allowsActivities { true };
 };
-
-#define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler->m_processID, m_throttler.get(), ##__VA_ARGS__)
-
-inline ProcessThrottlerActivity::ProcessThrottlerActivity(ProcessThrottler& throttler, ASCIILiteral name, ProcessThrottlerActivityType type)
-    : m_throttler(&throttler)
-    , m_name(name)
-    , m_type(type)
-{
-    ASSERT(isMainRunLoop());
-    if (!throttler.addActivity(*this)) {
-        m_throttler = nullptr;
-        return;
-    }
-    if (!isQuietActivity()) {
-        PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("Activity: Starting %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
-            type == ProcessThrottlerActivityType::Foreground ? "foreground" : "background", m_name.characters());
-    }
-}
-
-inline void ProcessThrottlerActivity::invalidate()
-{
-    ASSERT(isValid());
-    if (!isQuietActivity()) {
-        PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG("invalidate: Ending %" PUBLIC_LOG_STRING " activity / '%" PUBLIC_LOG_STRING "'",
-            m_type == ProcessThrottlerActivityType::Foreground ? "foreground" : "background", m_name.characters());
-    }
-    m_throttler->removeActivity(*this);
-    m_throttler = nullptr;
-}
-
-#undef PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG
 
 inline auto ProcessThrottler::foregroundActivity(ASCIILiteral name) -> UniqueRef<Activity>
 {

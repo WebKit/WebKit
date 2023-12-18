@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,13 @@
 
 #include "DFGBackwardsDominators.h"
 #include "DFGDominators.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class ControlEquivalenceAnalysis {
     WTF_MAKE_NONCOPYABLE(ControlEquivalenceAnalysis);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ControlEquivalenceAnalysis);
 public:
     ControlEquivalenceAnalysis(Graph& graph)
         : m_dominators(graph.ensureSSADominators())

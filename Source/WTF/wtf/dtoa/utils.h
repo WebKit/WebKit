@@ -369,6 +369,14 @@ inline Dest BitCast(Source* source) {
   return BitCast<Dest>(reinterpret_cast<uintptr_t>(source));
 }
 
+inline constexpr bool validShortestRepresentation(const int exponent, const int decimal_in_shortest_low, const int decimal_in_shortest_high)
+{
+  return (decimal_in_shortest_low <= exponent) && (exponent < decimal_in_shortest_high);
+}
+
+constexpr int default_decimal_in_shortest_low = -6;
+constexpr int default_decimal_in_shortest_high = 21;
+
 }  // namespace double_conversion
 }  // namespace WTF
 

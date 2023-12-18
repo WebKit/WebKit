@@ -31,10 +31,12 @@
 
 #pragma once
 
+#include <wtf/ListHashSet.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
 
+class Element;
 const int UninitializedDescriptor = -1;
 const float DefaultDensityValue = 1.0;
 
@@ -105,5 +107,7 @@ struct ImageCandidate {
 ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, StringView srcAttribute, StringView srcsetAttribute, float sourceSize);
 
 Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute);
+void getURLsFromSrcsetAttribute(const Element&, StringView attribute, ListHashSet<URL>&);
+String replaceURLsInSrcsetAttribute(const Element&, StringView attribute, const HashMap<String, String>& replacementURLStrings);
 
 } // namespace WebCore

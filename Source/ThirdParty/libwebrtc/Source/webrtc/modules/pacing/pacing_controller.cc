@@ -17,6 +17,8 @@
 
 #include "absl/cleanup/cleanup.h"
 #include "absl/strings/match.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "modules/pacing/bitrate_prober.h"
 #include "modules/pacing/interval_budget.h"
 #include "rtc_base/checks.h"
@@ -162,7 +164,6 @@ void PacingController::SetProbingEnabled(bool enabled) {
 
 void PacingController::SetPacingRates(DataRate pacing_rate,
                                       DataRate padding_rate) {
-  static constexpr DataRate kMaxRate = DataRate::KilobitsPerSec(100'000);
   RTC_CHECK_GT(pacing_rate, DataRate::Zero());
   RTC_CHECK_GE(padding_rate, DataRate::Zero());
   if (padding_rate > pacing_rate) {
@@ -172,11 +173,12 @@ void PacingController::SetPacingRates(DataRate pacing_rate,
     padding_rate = pacing_rate;
   }
 
-  if (pacing_rate > kMaxRate || padding_rate > kMaxRate) {
-    RTC_LOG(LS_WARNING) << "Very high pacing rates ( > " << kMaxRate.kbps()
+  if (pacing_rate > max_rate || padding_rate > max_rate) {
+    RTC_LOG(LS_WARNING) << "Very high pacing rates ( > " << max_rate.kbps()
                         << " kbps) configured: pacing = " << pacing_rate.kbps()
                         << " kbps, padding = " << padding_rate.kbps()
                         << " kbps.";
+    max_rate = std::max(pacing_rate, padding_rate) * 1.1;
   }
   pacing_rate_ = pacing_rate;
   padding_rate_ = padding_rate;
@@ -291,9 +293,9 @@ TimeDelta PacingController::UpdateTimeAndGetElapsed(Timestamp now) {
   TimeDelta elapsed_time = now - last_process_time_;
   last_process_time_ = now;
   if (elapsed_time > kMaxElapsedTime) {
-    RTC_LOG(LS_WARNING) << "Elapsed time (" << elapsed_time.ms()
-                        << " ms) longer than expected, limiting to "
-                        << kMaxElapsedTime.ms();
+    RTC_LOG(LS_WARNING) << "Elapsed time (" << ToLogString(elapsed_time)
+                        << ") longer than expected, limiting to "
+                        << ToLogString(kMaxElapsedTime);
     elapsed_time = kMaxElapsedTime;
   }
   return elapsed_time;
@@ -343,9 +345,13 @@ Timestamp PacingController::NextSendTime() const {
     // debt is allowed to grow up to one packet more than what can be sent
     // during 'send_burst_period_'.
     TimeDelta drain_time = media_debt_ / adjusted_media_rate_;
+    // Ensure that a burst of sent packet is not larger than kMaxBurstSize in
+    // order to not risk overfilling socket buffers at high bitrate.
+    TimeDelta send_burst_interval =
+        std::min(send_burst_interval_, kMaxBurstSize / adjusted_media_rate_);
     next_send_time =
         last_process_time_ +
-        ((send_burst_interval_ > drain_time) ? TimeDelta::Zero() : drain_time);
+        ((send_burst_interval > drain_time) ? TimeDelta::Zero() : drain_time);
   } else if (padding_rate_ > DataRate::Zero() && packet_queue_.Empty()) {
     // If we _don't_ have pending packets, check how long until we have
     // bandwidth for padding packets. Both media and padding debts must

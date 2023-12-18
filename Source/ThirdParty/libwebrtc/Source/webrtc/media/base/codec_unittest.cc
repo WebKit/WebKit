@@ -29,8 +29,8 @@ using cricket::VideoCodec;
 class TestCodec : public Codec {
  public:
   TestCodec(int id, const std::string& name, int clockrate)
-      : Codec(id, name, clockrate) {}
-  TestCodec() : Codec() {}
+      : Codec(Type::kAudio, id, name, clockrate) {}
+  TestCodec() : Codec(Type::kAudio) {}
   TestCodec(const TestCodec& c) = default;
   TestCodec& operator=(const TestCodec& c) = default;
 };
@@ -69,23 +69,21 @@ TEST(CodecTest, TestCodecOperators) {
 }
 
 TEST(CodecTest, TestAudioCodecOperators) {
-  AudioCodec c0(96, "A", 44100, 20000, 2);
-  AudioCodec c1(95, "A", 44100, 20000, 2);
-  AudioCodec c2(96, "x", 44100, 20000, 2);
-  AudioCodec c3(96, "A", 48000, 20000, 2);
-  AudioCodec c4(96, "A", 44100, 10000, 2);
-  AudioCodec c5(96, "A", 44100, 20000, 1);
+  AudioCodec c0 = cricket::CreateAudioCodec(96, "A", 44100, 2);
+  AudioCodec c1 = cricket::CreateAudioCodec(95, "A", 44100, 2);
+  AudioCodec c2 = cricket::CreateAudioCodec(96, "x", 44100, 2);
+  AudioCodec c3 = cricket::CreateAudioCodec(96, "A", 48000, 2);
+  AudioCodec c4 = cricket::CreateAudioCodec(96, "A", 44100, 2);
+  c4.bitrate = 10000;
+  AudioCodec c5 = cricket::CreateAudioCodec(96, "A", 44100, 1);
   EXPECT_NE(c0, c1);
   EXPECT_NE(c0, c2);
   EXPECT_NE(c0, c3);
   EXPECT_NE(c0, c4);
   EXPECT_NE(c0, c5);
 
-  AudioCodec c7;
-  AudioCodec c8(0, "", 0, 0, 0);
+  AudioCodec c8 = cricket::CreateAudioCodec(0, "", 0, 0);
   AudioCodec c9 = c0;
-  EXPECT_EQ(c8, c7);
-  EXPECT_NE(c9, c7);
   EXPECT_EQ(c9, c0);
 
   AudioCodec c10(c0);
@@ -107,62 +105,59 @@ TEST(CodecTest, TestAudioCodecOperators) {
 
 TEST(CodecTest, TestAudioCodecMatches) {
   // Test a codec with a static payload type.
-  AudioCodec c0(34, "A", 44100, 20000, 1);
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 44100, 20000, 1)));
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 44100, 20000, 0)));
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 44100, 0, 0)));
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 0, 0, 0)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(96, "A", 44100, 20000, 1)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(96, "", 44100, 20000, 1)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(95, "", 55100, 20000, 1)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(95, "", 44100, 30000, 1)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(95, "", 44100, 20000, 2)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(95, "", 55100, 30000, 2)));
+  AudioCodec c0 = cricket::CreateAudioCodec(34, "A", 44100, 1);
+  EXPECT_TRUE(c0.Matches(cricket::CreateAudioCodec(34, "", 44100, 1)));
+  EXPECT_TRUE(c0.Matches(cricket::CreateAudioCodec(34, "", 44100, 0)));
+  EXPECT_TRUE(c0.Matches(cricket::CreateAudioCodec(34, "", 44100, 0)));
+  EXPECT_TRUE(c0.Matches(cricket::CreateAudioCodec(34, "", 0, 0)));
+  EXPECT_FALSE(c0.Matches(cricket::CreateAudioCodec(96, "A", 44100, 1)));
+  EXPECT_FALSE(c0.Matches(cricket::CreateAudioCodec(96, "", 44100, 1)));
+  EXPECT_FALSE(c0.Matches(cricket::CreateAudioCodec(95, "", 55100, 1)));
+  EXPECT_FALSE(c0.Matches(cricket::CreateAudioCodec(95, "", 44100, 1)));
+  EXPECT_FALSE(c0.Matches(cricket::CreateAudioCodec(95, "", 44100, 2)));
+  EXPECT_FALSE(c0.Matches(cricket::CreateAudioCodec(95, "", 55100, 2)));
 
   // Test a codec with a dynamic payload type.
-  AudioCodec c1(96, "A", 44100, 20000, 1);
-  EXPECT_TRUE(c1.Matches(AudioCodec(96, "A", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(97, "A", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(96, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(97, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(35, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(42, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(65, "a", 0, 0, 0)));
-  EXPECT_FALSE(c1.Matches(AudioCodec(95, "A", 0, 0, 0)));
-  EXPECT_FALSE(c1.Matches(AudioCodec(34, "A", 0, 0, 0)));
-  EXPECT_FALSE(c1.Matches(AudioCodec(96, "", 44100, 20000, 2)));
-  EXPECT_FALSE(c1.Matches(AudioCodec(96, "A", 55100, 30000, 1)));
+  AudioCodec c1 = cricket::CreateAudioCodec(96, "A", 44100, 1);
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(96, "A", 0, 0)));
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(97, "A", 0, 0)));
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(96, "a", 0, 0)));
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(97, "a", 0, 0)));
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(35, "a", 0, 0)));
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(42, "a", 0, 0)));
+  EXPECT_TRUE(c1.Matches(cricket::CreateAudioCodec(65, "a", 0, 0)));
+  EXPECT_FALSE(c1.Matches(cricket::CreateAudioCodec(95, "A", 0, 0)));
+  EXPECT_FALSE(c1.Matches(cricket::CreateAudioCodec(34, "A", 0, 0)));
+  EXPECT_FALSE(c1.Matches(cricket::CreateAudioCodec(96, "", 44100, 2)));
+  EXPECT_FALSE(c1.Matches(cricket::CreateAudioCodec(96, "A", 55100, 1)));
 
   // Test a codec with a dynamic payload type, and auto bitrate.
-  AudioCodec c2(97, "A", 16000, 0, 1);
+  AudioCodec c2 = cricket::CreateAudioCodec(97, "A", 16000, 1);
   // Use default bitrate.
-  EXPECT_TRUE(c2.Matches(AudioCodec(97, "A", 16000, 0, 1)));
-  EXPECT_TRUE(c2.Matches(AudioCodec(97, "A", 16000, 0, 0)));
+  EXPECT_TRUE(c2.Matches(cricket::CreateAudioCodec(97, "A", 16000, 1)));
+  EXPECT_TRUE(c2.Matches(cricket::CreateAudioCodec(97, "A", 16000, 0)));
   // Use explicit bitrate.
-  EXPECT_TRUE(c2.Matches(AudioCodec(97, "A", 16000, 32000, 1)));
+  EXPECT_TRUE(c2.Matches(cricket::CreateAudioCodec(97, "A", 16000, 1)));
   // Backward compatibility with clients that might send "-1" (for default).
-  EXPECT_TRUE(c2.Matches(AudioCodec(97, "A", 16000, -1, 1)));
+  EXPECT_TRUE(c2.Matches(cricket::CreateAudioCodec(97, "A", 16000, 1)));
 
   // Stereo doesn't match channels = 0.
-  AudioCodec c3(96, "A", 44100, 20000, 2);
-  EXPECT_TRUE(c3.Matches(AudioCodec(96, "A", 44100, 20000, 2)));
-  EXPECT_FALSE(c3.Matches(AudioCodec(96, "A", 44100, 20000, 1)));
-  EXPECT_FALSE(c3.Matches(AudioCodec(96, "A", 44100, 20000, 0)));
+  AudioCodec c3 = cricket::CreateAudioCodec(96, "A", 44100, 2);
+  EXPECT_TRUE(c3.Matches(cricket::CreateAudioCodec(96, "A", 44100, 2)));
+  EXPECT_FALSE(c3.Matches(cricket::CreateAudioCodec(96, "A", 44100, 1)));
+  EXPECT_FALSE(c3.Matches(cricket::CreateAudioCodec(96, "A", 44100, 0)));
 }
 
 TEST(CodecTest, TestVideoCodecOperators) {
-  VideoCodec c0(96, "V");
-  VideoCodec c1(95, "V");
-  VideoCodec c2(96, "x");
+  VideoCodec c0 = cricket::CreateVideoCodec(96, "V");
+  VideoCodec c1 = cricket::CreateVideoCodec(95, "V");
+  VideoCodec c2 = cricket::CreateVideoCodec(96, "x");
 
   EXPECT_TRUE(c0 != c1);
   EXPECT_TRUE(c0 != c2);
 
-  VideoCodec c7;
-  VideoCodec c8(0, "");
+  VideoCodec c8 = cricket::CreateVideoCodec(0, "");
   VideoCodec c9 = c0;
-  EXPECT_TRUE(c8 == c7);
-  EXPECT_TRUE(c9 != c7);
   EXPECT_TRUE(c9 == c0);
 
   VideoCodec c10(c0);
@@ -182,21 +177,10 @@ TEST(CodecTest, TestVideoCodecOperators) {
   EXPECT_TRUE(c13 == c10);
 }
 
-TEST(CodecTest, TestVideoCodecIntersectPacketization) {
-  VideoCodec c1;
-  c1.packetization = "raw";
-  VideoCodec c2;
-  c2.packetization = "raw";
-  VideoCodec c3;
-
-  EXPECT_EQ(VideoCodec::IntersectPacketization(c1, c2), "raw");
-  EXPECT_EQ(VideoCodec::IntersectPacketization(c1, c3), absl::nullopt);
-}
-
 TEST(CodecTest, TestVideoCodecEqualsWithDifferentPacketization) {
-  VideoCodec c0(100, cricket::kVp8CodecName);
-  VideoCodec c1(100, cricket::kVp8CodecName);
-  VideoCodec c2(100, cricket::kVp8CodecName);
+  VideoCodec c0 = cricket::CreateVideoCodec(100, cricket::kVp8CodecName);
+  VideoCodec c1 = cricket::CreateVideoCodec(100, cricket::kVp8CodecName);
+  VideoCodec c2 = cricket::CreateVideoCodec(100, cricket::kVp8CodecName);
   c2.packetization = "raw";
 
   EXPECT_EQ(c0, c1);
@@ -207,28 +191,28 @@ TEST(CodecTest, TestVideoCodecEqualsWithDifferentPacketization) {
 
 TEST(CodecTest, TestVideoCodecMatches) {
   // Test a codec with a static payload type.
-  VideoCodec c0(34, "V");
-  EXPECT_TRUE(c0.Matches(VideoCodec(34, "")));
-  EXPECT_FALSE(c0.Matches(VideoCodec(96, "")));
-  EXPECT_FALSE(c0.Matches(VideoCodec(96, "V")));
+  VideoCodec c0 = cricket::CreateVideoCodec(34, "V");
+  EXPECT_TRUE(c0.Matches(cricket::CreateVideoCodec(34, "")));
+  EXPECT_FALSE(c0.Matches(cricket::CreateVideoCodec(96, "")));
+  EXPECT_FALSE(c0.Matches(cricket::CreateVideoCodec(96, "V")));
 
   // Test a codec with a dynamic payload type.
-  VideoCodec c1(96, "V");
-  EXPECT_TRUE(c1.Matches(VideoCodec(96, "V")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(97, "V")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(96, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(97, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(35, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(42, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(65, "v")));
-  EXPECT_FALSE(c1.Matches(VideoCodec(96, "")));
-  EXPECT_FALSE(c1.Matches(VideoCodec(95, "V")));
-  EXPECT_FALSE(c1.Matches(VideoCodec(34, "V")));
+  VideoCodec c1 = cricket::CreateVideoCodec(96, "V");
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(96, "V")));
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(97, "V")));
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(96, "v")));
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(97, "v")));
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(35, "v")));
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(42, "v")));
+  EXPECT_TRUE(c1.Matches(cricket::CreateVideoCodec(65, "v")));
+  EXPECT_FALSE(c1.Matches(cricket::CreateVideoCodec(96, "")));
+  EXPECT_FALSE(c1.Matches(cricket::CreateVideoCodec(95, "V")));
+  EXPECT_FALSE(c1.Matches(cricket::CreateVideoCodec(34, "V")));
 }
 
 TEST(CodecTest, TestVideoCodecMatchesWithDifferentPacketization) {
-  VideoCodec c0(100, cricket::kVp8CodecName);
-  VideoCodec c1(101, cricket::kVp8CodecName);
+  VideoCodec c0 = cricket::CreateVideoCodec(100, cricket::kVp8CodecName);
+  VideoCodec c1 = cricket::CreateVideoCodec(101, cricket::kVp8CodecName);
   c1.packetization = "raw";
 
   EXPECT_TRUE(c0.Matches(c1));
@@ -241,12 +225,13 @@ TEST(CodecTest, TestAV1CodecMatches) {
   const char kProfile1[] = "1";
   const char kProfile2[] = "2";
 
-  VideoCodec c_no_profile(95, cricket::kAv1CodecName);
-  VideoCodec c_profile0(95, cricket::kAv1CodecName);
+  VideoCodec c_no_profile =
+      cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
+  VideoCodec c_profile0 = cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
   c_profile0.params[webrtc::kAV1FmtpProfile] = kProfile0;
-  VideoCodec c_profile1(95, cricket::kAv1CodecName);
+  VideoCodec c_profile1 = cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
   c_profile1.params[webrtc::kAV1FmtpProfile] = kProfile1;
-  VideoCodec c_profile2(95, cricket::kAv1CodecName);
+  VideoCodec c_profile2 = cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
   c_profile2.params[webrtc::kAV1FmtpProfile] = kProfile2;
 
   // An AV1 entry with no profile specified should be treated as profile-0.
@@ -254,20 +239,23 @@ TEST(CodecTest, TestAV1CodecMatches) {
 
   {
     // Two AV1 entries without a profile specified are treated as duplicates.
-    VideoCodec c_no_profile_eq(95, cricket::kAv1CodecName);
+    VideoCodec c_no_profile_eq =
+        cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
     EXPECT_TRUE(c_no_profile.Matches(c_no_profile_eq));
   }
 
   {
     // Two AV1 entries with profile 0 specified are treated as duplicates.
-    VideoCodec c_profile0_eq(95, cricket::kAv1CodecName);
+    VideoCodec c_profile0_eq =
+        cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
     c_profile0_eq.params[webrtc::kAV1FmtpProfile] = kProfile0;
     EXPECT_TRUE(c_profile0.Matches(c_profile0_eq));
   }
 
   {
     // Two AV1 entries with profile 1 specified are treated as duplicates.
-    VideoCodec c_profile1_eq(95, cricket::kAv1CodecName);
+    VideoCodec c_profile1_eq =
+        cricket::CreateVideoCodec(95, cricket::kAv1CodecName);
     c_profile1_eq.params[webrtc::kAV1FmtpProfile] = kProfile1;
     EXPECT_TRUE(c_profile1.Matches(c_profile1_eq));
   }
@@ -286,27 +274,31 @@ TEST(CodecTest, TestVP9CodecMatches) {
   const char kProfile0[] = "0";
   const char kProfile2[] = "2";
 
-  VideoCodec c_no_profile(95, cricket::kVp9CodecName);
-  VideoCodec c_profile0(95, cricket::kVp9CodecName);
+  VideoCodec c_no_profile =
+      cricket::CreateVideoCodec(95, cricket::kVp9CodecName);
+  VideoCodec c_profile0 = cricket::CreateVideoCodec(95, cricket::kVp9CodecName);
   c_profile0.params[webrtc::kVP9FmtpProfileId] = kProfile0;
 
   EXPECT_TRUE(c_profile0.Matches(c_no_profile));
 
   {
-    VideoCodec c_profile0_eq(95, cricket::kVp9CodecName);
+    VideoCodec c_profile0_eq =
+        cricket::CreateVideoCodec(95, cricket::kVp9CodecName);
     c_profile0_eq.params[webrtc::kVP9FmtpProfileId] = kProfile0;
     EXPECT_TRUE(c_profile0.Matches(c_profile0_eq));
   }
 
   {
-    VideoCodec c_profile2(95, cricket::kVp9CodecName);
+    VideoCodec c_profile2 =
+        cricket::CreateVideoCodec(95, cricket::kVp9CodecName);
     c_profile2.params[webrtc::kVP9FmtpProfileId] = kProfile2;
     EXPECT_FALSE(c_profile0.Matches(c_profile2));
     EXPECT_FALSE(c_no_profile.Matches(c_profile2));
   }
 
   {
-    VideoCodec c_no_profile_eq(95, cricket::kVp9CodecName);
+    VideoCodec c_no_profile_eq =
+        cricket::CreateVideoCodec(95, cricket::kVp9CodecName);
     EXPECT_TRUE(c_no_profile.Matches(c_no_profile_eq));
   }
 }
@@ -317,12 +309,12 @@ TEST(CodecTest, TestH264CodecMatches) {
   const char kProfileLevelId1[] = "42e01f";
   const char kProfileLevelId2[] = "42a01e";
 
-  VideoCodec pli_1_pm_0(95, "H264");
+  VideoCodec pli_1_pm_0 = cricket::CreateVideoCodec(95, "H264");
   pli_1_pm_0.params[cricket::kH264FmtpProfileLevelId] = kProfileLevelId1;
   pli_1_pm_0.params[cricket::kH264FmtpPacketizationMode] = "0";
 
   {
-    VideoCodec pli_1_pm_blank(95, "H264");
+    VideoCodec pli_1_pm_blank = cricket::CreateVideoCodec(95, "H264");
     pli_1_pm_blank.params[cricket::kH264FmtpProfileLevelId] = kProfileLevelId1;
     pli_1_pm_blank.params.erase(
         pli_1_pm_blank.params.find(cricket::kH264FmtpPacketizationMode));
@@ -332,7 +324,7 @@ TEST(CodecTest, TestH264CodecMatches) {
   }
 
   {
-    VideoCodec pli_1_pm_1(95, "H264");
+    VideoCodec pli_1_pm_1 = cricket::CreateVideoCodec(95, "H264");
     pli_1_pm_1.params[cricket::kH264FmtpProfileLevelId] = kProfileLevelId1;
     pli_1_pm_1.params[cricket::kH264FmtpPacketizationMode] = "1";
 
@@ -341,7 +333,7 @@ TEST(CodecTest, TestH264CodecMatches) {
   }
 
   {
-    VideoCodec pli_2_pm_0(95, "H264");
+    VideoCodec pli_2_pm_0 = cricket::CreateVideoCodec(95, "H264");
     pli_2_pm_0.params[cricket::kH264FmtpProfileLevelId] = kProfileLevelId2;
     pli_2_pm_0.params[cricket::kH264FmtpPacketizationMode] = "0";
 
@@ -351,7 +343,7 @@ TEST(CodecTest, TestH264CodecMatches) {
 }
 
 TEST(CodecTest, TestSetParamGetParamAndRemoveParam) {
-  AudioCodec codec;
+  AudioCodec codec = cricket::CreateAudioCodec(0, "foo", 22222, 2);
   codec.SetParam("a", "1");
   codec.SetParam("b", "x");
 
@@ -392,22 +384,23 @@ TEST(CodecTest, TestIntersectFeedbackParams) {
 
 TEST(CodecTest, TestGetCodecType) {
   // Codec type comparison should be case insenstive on names.
-  const VideoCodec codec(96, "V");
-  const VideoCodec rtx_codec(96, "rTx");
-  const VideoCodec ulpfec_codec(96, "ulpFeC");
-  const VideoCodec flexfec_codec(96, "FlExFeC-03");
-  const VideoCodec red_codec(96, "ReD");
-  EXPECT_EQ(VideoCodec::CODEC_VIDEO, codec.GetCodecType());
-  EXPECT_EQ(VideoCodec::CODEC_RTX, rtx_codec.GetCodecType());
-  EXPECT_EQ(VideoCodec::CODEC_ULPFEC, ulpfec_codec.GetCodecType());
-  EXPECT_EQ(VideoCodec::CODEC_FLEXFEC, flexfec_codec.GetCodecType());
-  EXPECT_EQ(VideoCodec::CODEC_RED, red_codec.GetCodecType());
+  const VideoCodec codec = cricket::CreateVideoCodec(96, "V");
+  const VideoCodec rtx_codec = cricket::CreateVideoCodec(96, "rTx");
+  const VideoCodec ulpfec_codec = cricket::CreateVideoCodec(96, "ulpFeC");
+  const VideoCodec flexfec_codec = cricket::CreateVideoCodec(96, "FlExFeC-03");
+  const VideoCodec red_codec = cricket::CreateVideoCodec(96, "ReD");
+  EXPECT_TRUE(codec.IsMediaCodec());
+  EXPECT_EQ(codec.GetResiliencyType(), Codec::ResiliencyType::kNone);
+  EXPECT_EQ(rtx_codec.GetResiliencyType(), Codec::ResiliencyType::kRtx);
+  EXPECT_EQ(ulpfec_codec.GetResiliencyType(), Codec::ResiliencyType::kUlpfec);
+  EXPECT_EQ(flexfec_codec.GetResiliencyType(), Codec::ResiliencyType::kFlexfec);
+  EXPECT_EQ(red_codec.GetResiliencyType(), Codec::ResiliencyType::kRed);
 }
 
 TEST(CodecTest, TestCreateRtxCodec) {
-  VideoCodec rtx_codec = VideoCodec::CreateRtxCodec(96, 120);
+  VideoCodec rtx_codec = cricket::CreateVideoRtxCodec(96, 120);
   EXPECT_EQ(96, rtx_codec.id);
-  EXPECT_EQ(VideoCodec::CODEC_RTX, rtx_codec.GetCodecType());
+  EXPECT_EQ(rtx_codec.GetResiliencyType(), Codec::ResiliencyType::kRtx);
   int associated_payload_type;
   ASSERT_TRUE(rtx_codec.GetParam(kCodecParamAssociatedPayloadType,
                                  &associated_payload_type));
@@ -415,7 +408,7 @@ TEST(CodecTest, TestCreateRtxCodec) {
 }
 
 TEST(CodecTest, TestValidateCodecFormat) {
-  const VideoCodec codec(96, "V");
+  const VideoCodec codec = cricket::CreateVideoCodec(96, "V");
   ASSERT_TRUE(codec.ValidateCodecFormat());
 
   // Accept 0-127 as payload types.
@@ -456,7 +449,7 @@ TEST(CodecTest, TestValidateCodecFormat) {
 }
 
 TEST(CodecTest, TestToCodecParameters) {
-  VideoCodec v(96, "V");
+  VideoCodec v = cricket::CreateVideoCodec(96, "V");
   v.SetParam("p1", "v1");
   webrtc::RtpCodecParameters codec_params_1 = v.ToCodecParameters();
   EXPECT_EQ(96, codec_params_1.payload_type);
@@ -468,7 +461,7 @@ TEST(CodecTest, TestToCodecParameters) {
   EXPECT_EQ("p1", codec_params_1.parameters.begin()->first);
   EXPECT_EQ("v1", codec_params_1.parameters.begin()->second);
 
-  AudioCodec a(97, "A", 44100, 20000, 2);
+  AudioCodec a = cricket::CreateAudioCodec(97, "A", 44100, 2);
   a.SetParam("p1", "a1");
   webrtc::RtpCodecParameters codec_params_2 = a.ToCodecParameters();
   EXPECT_EQ(97, codec_params_2.payload_type);

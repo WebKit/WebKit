@@ -48,9 +48,6 @@ std::vector<SdpVideoFormat> InternalDecoderFactory::GetSupportedFormats()
     formats.push_back(format);
   for (const SdpVideoFormat& h264_format : SupportedH264DecoderCodecs())
     formats.push_back(h264_format);
-#ifdef WEBRTC_USE_H265
-  formats.push_back(SdpVideoFormat(cricket::kH265CodecName));
-#endif
 
   if (kDav1dIsIncluded) {
     formats.push_back(SdpVideoFormat(cricket::kAv1CodecName));

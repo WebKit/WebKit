@@ -1759,11 +1759,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKTypeRefWrapper {
-    header "WKTypeRefWrapper.h"
-    export *
-  }
-
   explicit module WKTypes {
     header "WKTypes.h"
     export *
@@ -2581,16 +2576,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module XPCEndpoint {
-    header "XPCEndpoint.h"
-    export *
-  }
-
-  explicit module XPCEndpointClient {
-    header "XPCEndpointClient.h"
-    export *
-  }
-
   explicit module _WKAppHighlight {
     header "_WKAppHighlight.h"
     export *
@@ -2603,6 +2588,16 @@ framework module WebKit_Private [system] {
 
   explicit module _WKApplicationManifest {
     header "_WKApplicationManifest.h"
+    export *
+  }
+
+  explicit module _WKArchiveConfiguration {
+    header "_WKArchiveConfiguration.h"
+    export *
+  }
+
+  explicit module _WKArchiveExclusionRule {
+    header "_WKArchiveExclusionRule.h"
     export *
   }
 
@@ -3031,6 +3026,16 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionCommand {
+    header "_WKWebExtensionCommand.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionCommandPrivate {
+    header "_WKWebExtensionCommandPrivate.h"
+    export *
+  }
+
   explicit module _WKWebExtensionContext {
     header "_WKWebExtensionContext.h"
     export *
@@ -3068,6 +3073,16 @@ framework module WebKit_Private [system] {
 
   explicit module _WKWebExtensionControllerPrivate {
     header "_WKWebExtensionControllerPrivate.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestRule {
+    header "_WKWebExtensionDeclarativeNetRequestRule.h"
+    export *
+  }
+
+  explicit module _WKWebExtensionDeclarativeNetRequestTranslator {
+    header "_WKWebExtensionDeclarativeNetRequestTranslator.h"
     export *
   }
 

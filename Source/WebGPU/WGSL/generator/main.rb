@@ -285,7 +285,7 @@ end
 module DSL
     @context = binding()
     @aliases = {}
-    @operators = {}
+    @entries = {}
     @TypeVariable = VariableKind.new(:TypeVariable)
     @ValueVariable = VariableKind.new(:ValueVariable)
 
@@ -297,22 +297,55 @@ module DSL
         @ValueVariable
     end
 
-    def self.operator(name, map)
+    def self.add_entry(kind, name, map)
         overloads = []
-        map.each do |function, return_type|
-            function.return_type = return_type
-            overloads << function
+        properties = {
+            must_use: false,
+            const: false,
+            stage: [:fragment, :compute, :vertex],
+        }
+        map.each do |key, value|
+            if key.kind_of? FunctionType
+                key.return_type = value
+                overloads << key
+            else
+                properties[key] = value
+            end
         end
 
-        if @operators[name]
-            @operators[name] += overloads
-        else
-            @operators[name] = overloads
+        existing_entry = @entries[name]
+        if !existing_entry
+            @entries[name] = {
+                **properties,
+                kind: kind,
+                overloads: overloads
+            }
+            return
         end
+
+
+        properties.each do |key, value|
+            if existing_entry[key] != value then
+                raise "Incompatible overload: key: #{key}, existing value: #{existing_entry[key]}, new value: #{value}"
+            end
+        end
+        existing_entry[:overloads] += overloads
+    end
+
+    def self.operator(name, map)
+        add_entry(:operator, name, map)
+    end
+
+    def self.constructor(name, map)
+        add_entry(:constructor, name, map)
+    end
+
+    def self.function(name, map)
+        add_entry(:function, name, map)
     end
 
     def self.type_alias(name, type)
-      @aliases[name] = type
+        @aliases[name] = type
     end
 
     def self.to_cpp
@@ -324,12 +357,30 @@ module DSL
 
         out << ""
 
-        @operators.each do |name, overloads|
+        @entries.each do |name, entry|
+            constant_function = case entry[:const]
+            when false
+                "nullptr"
+            when true
+                "constant#{name[0].upcase}#{name[1..]}"
+            else
+                entry[:const]
+            end
+
+            stages = entry[:stage].kind_of?(Array) ? entry[:stage] : [entry[:stage]]
+            visibility = stages.map { |s| "ShaderStage::#{s.to_s.capitalize}" }.join ", "
+
             out << "{"
-            out << "auto result = m_overloadedOperations.add(\"#{name}\"_s, Vector<OverloadCandidate>());"
+            out << "auto result = m_overloadedOperations.add(\"#{name}\"_s, OverloadedDeclaration {"
+            out << "    .kind = OverloadedDeclaration::#{entry[:kind].to_s.capitalize},"
+            out << "    .mustUse = #{entry[:must_use]},"
+            out << "    .constantFunction = #{constant_function},"
+            out << "    .visibility = { #{visibility} },"
+            out << "    .overloads = { }"
+            out << "});"
             out << "ASSERT_UNUSED(result, result.isNewEntry);"
-            overloads.each do |function|
-                out << "result.iterator->value.append(#{function.to_cpp(name)});"
+            entry[:overloads].each do |function|
+                out << "result.iterator->value.overloads.append(#{function.to_cpp(name)});"
             end
             out << "}"
             out << ""
@@ -350,6 +401,7 @@ module DSL
         array = AbstractType.new(:Array)
         ptr = AbstractType.new(:Pointer)
         ref = AbstractType.new(:Reference)
+        atomic = AbstractType.new(:Atomic)
 
         # texture kinds
         Texture1d = Variable.new(:"Types::Texture::Kind::Texture1d", nil)
@@ -397,6 +449,7 @@ module DSL
         i32 = PrimitiveType.new(:I32)
         u32 = PrimitiveType.new(:U32)
         f32 = PrimitiveType.new(:F32)
+        f16 = PrimitiveType.new(:F16)
         sampler = PrimitiveType.new(:Sampler)
         sampler_comparison = PrimitiveType.new(:SamplerComparison)
         texture_external = PrimitiveType.new(:TextureExternal)
@@ -448,6 +501,40 @@ module DSL
         texture_storage_2d = texture_storage[TextureStorage2d]
         texture_storage_2d_array = texture_storage[TextureStorage2dArray]
         texture_storage_3d = texture_storage[TextureStorage3d]
+
+        # primitive structs
+
+        __frexp_result_abstract = Constructor.new(:frexpResult, [abstract_float, abstract_int])
+        __frexp_result_f16 = Constructor.new(:frexpResult, [f16, i32])
+        __frexp_result_f32 = Constructor.new(:frexpResult, [f32, i32])
+
+        __frexp_result_vec2_abstract = Constructor.new(:frexpResult, [vec2[abstract_float], vec2[abstract_int]])
+        __frexp_result_vec2_f16 = Constructor.new(:frexpResult, [vec2[f16], vec2[i32]])
+        __frexp_result_vec2_f32 = Constructor.new(:frexpResult, [vec2[f32], vec2[i32]])
+
+        __frexp_result_vec3_abstract = Constructor.new(:frexpResult, [vec3[abstract_float], vec3[abstract_int]])
+        __frexp_result_vec3_f16 = Constructor.new(:frexpResult, [vec3[f16], vec3[i32]])
+        __frexp_result_vec3_f32 = Constructor.new(:frexpResult, [vec3[f32], vec3[i32]])
+
+        __frexp_result_vec4_abstract = Constructor.new(:frexpResult, [vec4[abstract_float], vec4[abstract_int]])
+        __frexp_result_vec4_f16 = Constructor.new(:frexpResult, [vec4[f16], vec4[i32]])
+        __frexp_result_vec4_f32 = Constructor.new(:frexpResult, [vec4[f32], vec4[i32]])
+
+        __modf_result_abstract = Constructor.new(:modfResult, [abstract_float, abstract_float])
+        __modf_result_f16 = Constructor.new(:modfResult, [f16, f16])
+        __modf_result_f32 = Constructor.new(:modfResult, [f32, f32])
+
+        __modf_result_vec2_abstract = Constructor.new(:modfResult, [vec2[abstract_float], vec2[abstract_float]])
+        __modf_result_vec2_f16 = Constructor.new(:modfResult, [vec2[f16], vec2[f16]])
+        __modf_result_vec2_f32 = Constructor.new(:modfResult, [vec2[f32], vec2[f32]])
+
+        __modf_result_vec3_abstract = Constructor.new(:modfResult, [vec3[abstract_float], vec3[abstract_float]])
+        __modf_result_vec3_f16 = Constructor.new(:modfResult, [vec3[f16], vec3[f16]])
+        __modf_result_vec3_f32 = Constructor.new(:modfResult, [vec3[f32], vec3[f32]])
+
+        __modf_result_vec4_abstract = Constructor.new(:modfResult, [vec4[abstract_float], vec4[abstract_float]])
+        __modf_result_vec4_f16 = Constructor.new(:modfResult, [vec4[f16], vec4[f16]])
+        __modf_result_vec4_f32 = Constructor.new(:modfResult, [vec4[f32], vec4[f32]])
         EOS
     end
 

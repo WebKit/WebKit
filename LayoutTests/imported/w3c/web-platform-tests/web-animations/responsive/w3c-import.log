@@ -46,6 +46,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/to-color-change.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/to-inherited-change.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/to-style-change.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/transform.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/translate.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/verticalAlign.html

@@ -47,6 +47,7 @@
 #include "RenderImage.h"
 #include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
+#include "TreeScopeInlines.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/AtomString.h>
 
@@ -73,7 +74,7 @@ bool hasImageControls(const HTMLElement& element)
     if (!shadowRoot || shadowRoot->mode() != ShadowRootMode::UserAgent)
         return false;
 
-    return shadowRoot->hasElementWithId(*imageControlsElementIdentifier().impl());
+    return shadowRoot->hasElementWithId(imageControlsElementIdentifier());
 }
 
 static RefPtr<HTMLElement> imageControlsHost(const Node& node)
@@ -126,19 +127,19 @@ void createImageControls(HTMLElement& element)
     controlLayer->appendChild(button);
     controlLayer->setPseudo(ShadowPseudoIds::appleAttachmentControlsContainer());
     
-    if (auto* renderObject = element.renderer(); is<RenderImage>(renderObject))
-        downcast<RenderImage>(*renderObject).setHasShadowControls(true);
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer()))
+        renderImage->setHasShadowControls(true);
 }
 
 static Image* imageFromImageElementNode(Node& node)
 {
-    auto* renderer = node.renderer();
-    if (!is<RenderImage>(renderer))
+    CheckedPtr renderer = dynamicDowncast<RenderImage>(node.renderer());
+    if (!renderer)
         return nullptr;
-    auto* image = downcast<RenderImage>(*renderer).cachedImage();
+    CachedResourceHandle image = renderer->cachedImage();
     if (!image || image->errorOccurred())
         return nullptr;
-    return image->imageForRenderer(renderer);
+    return image->imageForRenderer(renderer.get());
 }
 
 bool handleEvent(HTMLElement& element, Event& event)
@@ -150,20 +151,20 @@ bool handleEvent(HTMLElement& element, Event& event)
     if (!frame)
         return false;
 
-    Page* page = element.document().page();
+    RefPtr page = element.document().page();
     if (!page)
         return false;
     
-    if (!is<MouseEvent>(event))
+    RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event);
+    if (!mouseEvent)
         return false;
     
-    auto& mouseEvent = downcast<MouseEvent>(event);
-    if (!is<Node>(mouseEvent.target()))
+    RefPtr node = dynamicDowncast<Node>(mouseEvent->target());
+    if (!node)
         return false;
-    auto& node = downcast<Node>(*mouseEvent.target());
 
-    if (ImageControlsMac::isImageControlsButtonElement(node)) {
-        Ref element = downcast<Element>(node);
+    if (ImageControlsMac::isImageControlsButtonElement(*node)) {
+        Ref element = downcast<Element>(node.releaseNonNull());
         auto* renderer = element->renderer();
         if (!renderer)
             return false;
@@ -174,12 +175,12 @@ bool handleEvent(HTMLElement& element, Event& event)
 
         auto point = view->contentsToWindow(renderer->absoluteBoundingBoxRect()).minXMaxYCorner();
 
-        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(node.shadowHost())) {
-            auto* image = imageFromImageElementNode(*shadowHost);
+        if (RefPtr shadowHost = dynamicDowncast<HTMLImageElement>(element->shadowHost())) {
+            RefPtr image = imageFromImageElementNode(*shadowHost);
             if (!image)
                 return false;
             page->chrome().client().handleImageServiceClick(point, *image, *shadowHost);
-        } else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(node.shadowHost()))
+        } else if (RefPtr shadowHost = dynamicDowncast<HTMLAttachmentElement>(element->shadowHost()))
             page->chrome().client().handlePDFServiceClick(point, *shadowHost);
 
         event.setDefaultHandled();
@@ -236,10 +237,11 @@ void destroyImageControls(HTMLElement& element)
         return;
 
     if (RefPtr node = shadowRoot->firstChild()) {
-        if (!is<HTMLElement>(*node))
+        RefPtr htmlElement = dynamicDowncast<HTMLElement>(node.releaseNonNull());
+        if (!htmlElement)
             return;
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasImageControls(downcast<HTMLElement>(*node)));
-        shadowRoot->removeChild(*node);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasImageControls(*htmlElement));
+        shadowRoot->removeChild(*htmlElement);
     }
 
     auto* renderObject = element.renderer();

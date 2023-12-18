@@ -71,6 +71,7 @@ public:
 #endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
+    void announce(JSStringRef);
 
 #if PLATFORM(COCOA)
     void executeOnAXThreadAndWait(Function<void()>&&);
@@ -89,6 +90,8 @@ public:
     void logAccessibilityEvents() { };
 
     void resetToConsistentState();
+
+    void overrideClient(JSStringRef clientType);
 
 #if !ENABLE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
     RefPtr<AccessibilityUIElement> rootElement() { return nullptr; }

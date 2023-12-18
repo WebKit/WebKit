@@ -62,7 +62,7 @@ RTCRtpParameters LibWebRTCRtpReceiverBackend::getParameters()
 
 static inline void fillRTCRtpContributingSource(RTCRtpContributingSource& source, const webrtc::RtpSource& rtcSource)
 {
-    source.timestamp = rtcSource.timestamp_ms();
+    source.timestamp = rtcSource.timestamp().ms();
     source.rtpTimestamp = rtcSource.rtp_timestamp();
     source.source = rtcSource.source_id();
     if (rtcSource.audio_level())

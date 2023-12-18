@@ -97,7 +97,7 @@ void BitrateProber::CreateProbeCluster(
       (cluster_config.target_data_rate * cluster_config.target_duration)
           .bytes();
   RTC_DCHECK_GE(cluster.pace_info.probe_cluster_min_bytes, 0);
-  cluster.pace_info.send_bitrate_bps = cluster_config.target_data_rate.bps();
+  cluster.pace_info.send_bitrate = cluster_config.target_data_rate;
   cluster.pace_info.probe_cluster_id = cluster_config.id;
   clusters_.push(cluster);
 
@@ -109,7 +109,7 @@ void BitrateProber::CreateProbeCluster(
              probing_state_ == ProbingState::kInactive);
 
   RTC_LOG(LS_INFO) << "Probe cluster (bitrate_bps:min bytes:min packets): ("
-                   << cluster.pace_info.send_bitrate_bps << ":"
+                   << cluster.pace_info.send_bitrate << ":"
                    << cluster.pace_info.probe_cluster_min_bytes << ":"
                    << cluster.pace_info.probe_cluster_min_probes << ", "
                    << (probing_state_ == ProbingState::kInactive ? "Inactive"
@@ -153,8 +153,7 @@ DataSize BitrateProber::RecommendedMinProbeSize() const {
   if (clusters_.empty()) {
     return DataSize::Zero();
   }
-  DataRate send_rate =
-      DataRate::BitsPerSec(clusters_.front().pace_info.send_bitrate_bps);
+  DataRate send_rate = clusters_.front().pace_info.send_bitrate;
   return send_rate * config_.min_probe_delta;
 }
 
@@ -183,14 +182,13 @@ void BitrateProber::ProbeSent(Timestamp now, DataSize size) {
 
 Timestamp BitrateProber::CalculateNextProbeTime(
     const ProbeCluster& cluster) const {
-  RTC_CHECK_GT(cluster.pace_info.send_bitrate_bps, 0);
+  RTC_CHECK_GT(cluster.pace_info.send_bitrate.bps(), 0);
   RTC_CHECK(cluster.started_at.IsFinite());
 
   // Compute the time delta from the cluster start to ensure probe bitrate stays
   // close to the target bitrate. Result is in milliseconds.
   DataSize sent_bytes = DataSize::Bytes(cluster.sent_bytes);
-  DataRate send_bitrate =
-      DataRate::BitsPerSec(cluster.pace_info.send_bitrate_bps);
+  DataRate send_bitrate = cluster.pace_info.send_bitrate;
 
   TimeDelta delta = sent_bytes / send_bitrate;
   return cluster.started_at + delta;

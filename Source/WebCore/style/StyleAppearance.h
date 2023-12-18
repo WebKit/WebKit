@@ -77,7 +77,10 @@ enum class StyleAppearance : uint8_t {
     SearchFieldResultsButton,
     SearchFieldCancelButton,
     SliderThumbHorizontal,
-    SliderThumbVertical
+    SliderThumbVertical,
+    Switch,
+    SwitchThumb,
+    SwitchTrack
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, StyleAppearance);

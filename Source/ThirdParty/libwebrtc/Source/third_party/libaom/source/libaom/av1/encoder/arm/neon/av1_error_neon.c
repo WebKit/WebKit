@@ -11,6 +11,8 @@
 #include <arm_neon.h>
 #include <assert.h>
 
+#include "config/aom_config.h"
+
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_dsp/arm/mem_neon.h"
 
@@ -48,7 +50,7 @@ int64_t av1_block_error_neon(const tran_low_t *coeff, const tran_low_t *dqcoeff,
     block_size -= 8;
   } while (block_size != 0);
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   *ssz = vaddvq_s64(sqcoeff);
   return vaddvq_s64(error);
 #else

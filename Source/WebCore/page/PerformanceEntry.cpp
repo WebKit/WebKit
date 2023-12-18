@@ -31,8 +31,6 @@
 #include "config.h"
 #include "PerformanceEntry.h"
 
-#include "DeprecatedGlobalSettings.h"
-
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PerformanceEntry);
@@ -59,10 +57,8 @@ std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(con
     if (entryType == "resource"_s)
         return std::optional<Type>(Type::Resource);
 
-    if (DeprecatedGlobalSettings::paintTimingEnabled()) {
-        if (entryType == "paint"_s)
-            return std::optional<Type>(Type::Paint);
-    }
+    if (entryType == "paint"_s)
+        return std::optional<Type>(Type::Paint);
 
     return std::nullopt;
 }

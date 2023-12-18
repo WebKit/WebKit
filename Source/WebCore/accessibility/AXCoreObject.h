@@ -110,9 +110,21 @@ enum class AXAncestorFlag : uint8_t {
     // Bits 6 and 7 are free.
 };
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+struct AXTextRun {
+    // The line index of this run within the context of the containing RenderBlockFlow of the main-thread AX object.
+    size_t lineIndex;
+    String text;
+
+    AXTextRun(size_t lineIndex, String&& text)
+        : lineIndex(lineIndex)
+        , text(WTFMove(text))
+    { }
+};
+#endif
+
 enum class AccessibilityRole {
-    Annotation = 1,
-    Application,
+    Application = 1,
     ApplicationAlert,
     ApplicationAlertDialog,
     ApplicationDialog,
@@ -124,13 +136,11 @@ enum class AccessibilityRole {
     ApplicationTimer,
     Audio,
     Blockquote,
-    Browser,
-    BusyIndicator,
     Button,
     Canvas,
     Caption,
     Cell,
-    CheckBox,
+    Checkbox,
     Code,
     ColorWell,
     Column,
@@ -143,13 +153,10 @@ enum class AccessibilityRole {
     DescriptionListTerm,
     Details,
     Directory,
-    DisclosureTriangle,
     Document,
     DocumentArticle,
     DocumentMath,
     DocumentNote,
-    Drawer,
-    EditableText,
     Feed,
     Figure,
     Footer,
@@ -162,9 +169,7 @@ enum class AccessibilityRole {
     Grid,
     GridCell,
     Group,
-    GrowArea,
     Heading,
-    HelpTag,
     HorizontalRule,
     Ignored,
     Inline,
@@ -183,6 +188,7 @@ enum class AccessibilityRole {
     LandmarkRegion,
     LandmarkSearch,
     Legend,
+    LineBreak,
     Link,
     List,
     ListBox,
@@ -191,7 +197,6 @@ enum class AccessibilityRole {
     ListMarker,
     Mark,
     MathElement,
-    Matte,
     Menu,
     MenuBar,
     MenuButton,
@@ -202,7 +207,6 @@ enum class AccessibilityRole {
     MenuListOption,
     Meter,
     Model,
-    Outline,
     Paragraph,
     PopUpButton,
     Pre,
@@ -218,17 +222,13 @@ enum class AccessibilityRole {
     RubyInline,
     RubyRun,
     RubyText,
-    Ruler,
-    RulerMarker,
     ScrollArea,
     ScrollBar,
     SearchField,
-    Sheet,
     Slider,
     SliderThumb,
     SpinButton,
     SpinButtonPart,
-    SplitGroup,
     Splitter,
     StaticText,
     Subscript,
@@ -236,7 +236,6 @@ enum class AccessibilityRole {
     Summary,
     Superscript,
     Switch,
-    SystemWide,
     SVGRoot,
     SVGText,
     SVGTSpan,
@@ -259,12 +258,10 @@ enum class AccessibilityRole {
     Toolbar,
     Unknown,
     UserInterfaceTooltip,
-    ValueIndicator,
     Video,
     WebApplication,
     WebArea,
     WebCoreLink,
-    Window,
 };
 
 using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRole>, WTF::StrongEnumHashTraits<AccessibilityRole>>;
@@ -272,8 +269,6 @@ using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRol
 ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
 {
     switch (role) {
-    case AccessibilityRole::Annotation:
-        return "Annotation"_s;
     case AccessibilityRole::Application:
         return "Application"_s;
     case AccessibilityRole::ApplicationAlert:
@@ -298,10 +293,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Audio"_s;
     case AccessibilityRole::Blockquote:
         return "Blockquote"_s;
-    case AccessibilityRole::Browser:
-        return "Browser"_s;
-    case AccessibilityRole::BusyIndicator:
-        return "BusyIndicator"_s;
     case AccessibilityRole::Button:
         return "Button"_s;
     case AccessibilityRole::Canvas:
@@ -310,8 +301,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Caption"_s;
     case AccessibilityRole::Cell:
         return "Cell"_s;
-    case AccessibilityRole::CheckBox:
-        return "CheckBox"_s;
+    case AccessibilityRole::Checkbox:
+        return "Checkbox"_s;
     case AccessibilityRole::Code:
         return "Code"_s;
     case AccessibilityRole::ColorWell:
@@ -336,8 +327,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Details"_s;
     case AccessibilityRole::Directory:
         return "Directory"_s;
-    case AccessibilityRole::DisclosureTriangle:
-        return "DisclosureTriangle"_s;
     case AccessibilityRole::Document:
         return "Document"_s;
     case AccessibilityRole::DocumentArticle:
@@ -346,10 +335,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "DocumentMath"_s;
     case AccessibilityRole::DocumentNote:
         return "DocumentNote"_s;
-    case AccessibilityRole::Drawer:
-        return "Drawer"_s;
-    case AccessibilityRole::EditableText:
-        return "EditableText"_s;
     case AccessibilityRole::Feed:
         return "Feed"_s;
     case AccessibilityRole::Figure:
@@ -374,12 +359,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "GridCell"_s;
     case AccessibilityRole::Group:
         return "Group"_s;
-    case AccessibilityRole::GrowArea:
-        return "GrowArea"_s;
     case AccessibilityRole::Heading:
         return "Heading"_s;
-    case AccessibilityRole::HelpTag:
-        return "HelpTag"_s;
     case AccessibilityRole::HorizontalRule:
         return "HorizontalRule"_s;
     case AccessibilityRole::Ignored:
@@ -418,6 +399,8 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Legend"_s;
     case AccessibilityRole::Link:
         return "Link"_s;
+    case AccessibilityRole::LineBreak:
+        return "LineBreak"_s;
     case AccessibilityRole::List:
         return "List"_s;
     case AccessibilityRole::ListBox:
@@ -432,8 +415,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Mark"_s;
     case AccessibilityRole::MathElement:
         return "MathElement"_s;
-    case AccessibilityRole::Matte:
-        return "Matte"_s;
     case AccessibilityRole::Menu:
         return "Menu"_s;
     case AccessibilityRole::MenuBar:
@@ -454,8 +435,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Meter"_s;
     case AccessibilityRole::Model:
         return "Model"_s;
-    case AccessibilityRole::Outline:
-        return "Outline"_s;
     case AccessibilityRole::Paragraph:
         return "Paragraph"_s;
     case AccessibilityRole::PopUpButton:
@@ -486,18 +465,12 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "RubyRun"_s;
     case AccessibilityRole::RubyText:
         return "RubyText"_s;
-    case AccessibilityRole::Ruler:
-        return "Ruler"_s;
-    case AccessibilityRole::RulerMarker:
-        return "RulerMarker"_s;
     case AccessibilityRole::ScrollArea:
         return "ScrollArea"_s;
     case AccessibilityRole::ScrollBar:
         return "ScrollBar"_s;
     case AccessibilityRole::SearchField:
         return "SearchField"_s;
-    case AccessibilityRole::Sheet:
-        return "Sheet"_s;
     case AccessibilityRole::Slider:
         return "Slider"_s;
     case AccessibilityRole::SliderThumb:
@@ -506,8 +479,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "SpinButton"_s;
     case AccessibilityRole::SpinButtonPart:
         return "SpinButtonPart"_s;
-    case AccessibilityRole::SplitGroup:
-        return "SplitGroup"_s;
     case AccessibilityRole::Splitter:
         return "Splitter"_s;
     case AccessibilityRole::StaticText:
@@ -522,8 +493,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Superscript"_s;
     case AccessibilityRole::Switch:
         return "Switch"_s;
-    case AccessibilityRole::SystemWide:
-        return "SystemWide"_s;
     case AccessibilityRole::SVGRoot:
         return "SVGRoot"_s;
     case AccessibilityRole::SVGText:
@@ -568,8 +537,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "Unknown"_s;
     case AccessibilityRole::UserInterfaceTooltip:
         return "UserInterfaceTooltip"_s;
-    case AccessibilityRole::ValueIndicator:
-        return "ValueIndicator"_s;
     case AccessibilityRole::Video:
         return "Video"_s;
     case AccessibilityRole::WebApplication:
@@ -578,8 +545,6 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
         return "WebArea"_s;
     case AccessibilityRole::WebCoreLink:
         return "WebCoreLink"_s;
-    case AccessibilityRole::Window:
-        return "Window"_s;
     }
     UNREACHABLE();
     return ""_s;
@@ -615,7 +580,7 @@ enum class AccessibilitySearchKey {
     Blockquote,
     BoldFont,
     Button,
-    CheckBox,
+    Checkbox,
     Control,
     DifferentType,
     FontChange,
@@ -720,6 +685,16 @@ struct AccessibilitySearchTextCriteria {
     { }
 };
 
+struct AccessibilityText {
+    String text;
+    AccessibilityTextSource textSource;
+
+    AccessibilityText(const String& text, const AccessibilityTextSource& source)
+        : text(text)
+        , textSource(source)
+    { }
+};
+
 enum class AccessibilityTextOperationType {
     Select,
     Replace,
@@ -794,7 +769,7 @@ enum class AXRelationType : uint8_t {
     OwnedBy,
     OwnerFor,
 };
-using AXRelations = HashMap<AXRelationType, Vector<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
+using AXRelations = HashMap<AXRelationType, ListHashSet<AXID>, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>>;
 
 enum class SpinButtonType : bool {
     // The spin button is standalone. It has no separate controls, and should receive and perform actions itself.
@@ -851,7 +826,7 @@ public:
     virtual bool isSecureField() const = 0;
     virtual bool isNativeTextControl() const = 0;
     bool isWebArea() const { return roleValue() == AccessibilityRole::WebArea; }
-    bool isCheckbox() const { return roleValue() == AccessibilityRole::CheckBox; }
+    bool isCheckbox() const { return roleValue() == AccessibilityRole::Checkbox; }
     bool isRadioButton() const { return roleValue() == AccessibilityRole::RadioButton; }
     bool isListBox() const { return roleValue() == AccessibilityRole::ListBox; }
     virtual bool isListBoxOption() const = 0;
@@ -867,6 +842,7 @@ public:
     virtual bool isControl() const = 0;
     // lists support (l, ul, ol, dl)
     virtual bool isList() const = 0;
+    virtual bool isFileUploadButton() const = 0;
 
     // Table support.
     virtual bool isTable() const = 0;
@@ -943,6 +919,7 @@ public:
     bool isTreeItem() const { return roleValue() == AccessibilityRole::TreeItem; }
     bool isScrollbar() const { return roleValue() == AccessibilityRole::ScrollBar; }
     bool isButton() const;
+    virtual bool isMeter() const = 0;
 
     virtual HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const = 0;
 
@@ -1090,8 +1067,6 @@ public:
 
     // Called on the root AX object to return the deepest available element.
     virtual AXCoreObject* accessibilityHitTest(const IntPoint&) const = 0;
-    // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
-    virtual AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const = 0;
 
     virtual AXCoreObject* focusedUIElement() const = 0;
 
@@ -1129,6 +1104,9 @@ public:
     virtual void accessibilityText(Vector<AccessibilityText>&) const = 0;
     // A programmatic way to set a name on an AccessibleObject.
     virtual void setAccessibleName(const AtomString&) = 0;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    virtual Vector<AXTextRun> textRuns() { return { }; }
+#endif
 
     virtual String title() const = 0;
     virtual String description() const = 0;
@@ -1209,6 +1187,7 @@ public:
     virtual Widget* widget() const = 0;
     virtual PlatformWidget platformWidget() const = 0;
     virtual Widget* widgetForAttachmentView() const = 0;
+    virtual bool isPlugin() const = 0;
 
     // FIXME: Remove the following methods from the AXCoreObject interface and instead use methods such as axScrollView() if needed.
     virtual Page* page() const = 0;
@@ -1259,7 +1238,7 @@ public:
     bool isDescendantOfObject(const AXCoreObject*) const;
     bool isAncestorOfObject(const AXCoreObject*) const;
 
-    virtual std::optional<String> attributeValue(const String&) const = 0;
+    virtual String nameAttribute() const = 0;
     virtual AtomString tagName() const = 0;
 
     virtual std::optional<SimpleRange> simpleRange() const = 0;
@@ -1277,11 +1256,13 @@ public:
     virtual VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const = 0;
     virtual VisiblePositionRange visiblePositionRangeForRange(const CharacterRange&) const = 0;
     virtual VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const = 0;
-    virtual VisiblePositionRange selectedVisiblePositionRange() const = 0;
 
     virtual std::optional<SimpleRange> rangeForCharacterRange(const CharacterRange&) const = 0;
 #if PLATFORM(COCOA)
     virtual AXTextMarkerRange textMarkerRangeForNSRange(const NSRange&) const = 0;
+#endif
+#if PLATFORM(MAC)
+    virtual AXTextMarkerRange selectedTextMarkerRange() = 0;
 #endif
 
     virtual String stringForRange(const SimpleRange&) const = 0;
@@ -1410,12 +1391,13 @@ public:
     virtual bool preventKeyboardDOMEventDispatch() const = 0;
     virtual void setPreventKeyboardDOMEventDispatch(bool) = 0;
     virtual String speechHintAttributeValue() const = 0;
-    virtual String descriptionAttributeValue() const = 0;
+    virtual bool fileUploadButtonReturnsValueInTitle() const = 0;
+    String descriptionAttributeValue() const;
     bool shouldComputeDescriptionAttributeValue() const;
-    virtual String helpTextAttributeValue() const = 0;
+    String helpTextAttributeValue() const;
     // This should be the visible text that's actually on the screen if possible.
     // If there's alternative text, that can override the title.
-    virtual String titleAttributeValue() const = 0;
+    String titleAttributeValue() const;
     bool shouldComputeTitleAttributeValue() const;
 
     virtual bool hasApplePDFAnnotationAttribute() const = 0;
@@ -1620,6 +1602,18 @@ T* exposedTableAncestor(const T& object, bool includeSelf = false)
     return findAncestor<T>(object, includeSelf, [] (const T& object) {
         return object.isTable() && object.isExposable();
     });
+}
+
+template<typename T, typename F>
+T* findChild(T& object, F&& matches)
+{
+    for (auto child : object.children()) {
+        if (matches(child)) {
+            RELEASE_ASSERT(is<T>(child.get()));
+            return downcast<T>(child.get());
+        }
+    }
+    return nullptr;
 }
 
 void findMatchingObjects(const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);

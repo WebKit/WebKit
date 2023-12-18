@@ -78,12 +78,10 @@ public:
         , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
         , uint64_t navigationID
         , std::optional<WebCore::NavigationRequester>&&
-#if ENABLE(SERVICE_WORKER)
         , WebCore::ServiceWorkersMode
         , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
         , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning>
         , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
-#endif
 #if ENABLE(CONTENT_EXTENSIONS)
         , URL&& mainDocumentURL
         , std::optional<UserContentControllerIdentifier>
@@ -125,12 +123,10 @@ public:
     uint64_t navigationID { 0 };
     std::optional<WebCore::NavigationRequester> navigationRequester;
 
-#if ENABLE(SERVICE_WORKER)
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
-#endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;

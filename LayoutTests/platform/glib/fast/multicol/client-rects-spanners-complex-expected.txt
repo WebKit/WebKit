@@ -187,7 +187,7 @@ layer at (276,217) size 115x48
     RenderMultiColumnSpannerPlaceholder at (10,0) size 0x0
     RenderBlock (anonymous) at (10,0) size 105x48
       RenderBR {BR} at (0,0) size 25x0
-      RenderInline {SPAN} at (0,0) size 80x25
+      RenderInline {SPAN} at (0,0) size 75x25
         RenderText {#text} at (25,0) size 80x25
           text run at (25,0) width 25: "x"
           text run at (55,0) width 25: "y"
@@ -292,7 +292,7 @@ layer at (391,337) size 115x48
     RenderMultiColumnSpannerPlaceholder at (10,0) size 0x0
     RenderBlock (anonymous) at (10,0) size 105x48
       RenderBR {BR} at (0,0) size 25x0
-      RenderInline {SPAN} at (0,0) size 80x25
+      RenderInline {SPAN} at (0,0) size 75x25
         RenderText {#text} at (25,0) size 80x25
           text run at (25,0) width 25: "x"
           text run at (55,0) width 25: "y"

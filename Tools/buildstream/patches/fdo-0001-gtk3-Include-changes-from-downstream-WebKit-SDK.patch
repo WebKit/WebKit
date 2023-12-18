@@ -1,0 +1,51 @@
+From 1cdfc5346594371a0c888ac2bfd0a585143f5f82 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Thu, 14 Dec 2023 11:34:31 +0000
+Subject: [PATCH] gtk3: Include changes from downstream WebKit SDK
+
+---
+ elements/components/gtk3.bst | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/elements/components/gtk3.bst b/elements/components/gtk3.bst
+index d9e6fc7..7dfed47 100644
+--- a/elements/components/gtk3.bst
++++ b/elements/components/gtk3.bst
+@@ -25,6 +25,17 @@ depends:
+ - components/xorg-lib-xinerama.bst
+ - components/xorg-lib-xi.bst
+ 
++variables:
++  meson-local: >-
++    -Ddemos=false
++    -Dbroadway_backend=true
++    -Dinstalled_tests=true
++    -Dtests=false
++    -Dx11_backend=true
++    -Dgtk_doc=false
++    -Dman=false
++    -Dintrospection=true
++
+ public:
+   bst:
+     split-rules:
+@@ -41,10 +52,12 @@ public:
+ 
+     integration-commands:
+     - |
+-      gtk-query-immodules-3.0 --update-cache
+-
+-    - |
+-      gtk-update-icon-cache %{datadir}/icons/hicolor
++      for dir in %{prefix}/share/icons/*; do
++        if test -f $dir/index.theme; then
++          gtk-update-icon-cache --quiet $dir
++        fi
++      done
++    - gtk-query-immodules-3.0 --update-cache
+   cpe:
+     product: gtk+
+ 
+-- 
+2.43.0
+

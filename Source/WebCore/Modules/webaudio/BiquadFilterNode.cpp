@@ -76,7 +76,7 @@ ExceptionOr<void> BiquadFilterNode::getFrequencyResponse(const Ref<Float32Array>
 {
     unsigned length = frequencyHz->length();
     if (magResponse->length() != length || phaseResponse->length() != length)
-        return Exception { InvalidAccessError, "The arrays passed as arguments must have the same length"_s };
+        return Exception { ExceptionCode::InvalidAccessError, "The arrays passed as arguments must have the same length"_s };
 
     if (length)
         biquadProcessor()->getFrequencyResponse(length, frequencyHz->data(), magResponse->data(), phaseResponse->data());

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "ServiceWorkerInternals.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #if PLATFORM(MAC)
 
 #import "JSDOMPromiseDeferred.h"
@@ -41,7 +39,5 @@ String ServiceWorkerInternals::processName() const
 }
 
 } // namespace WebCore
-
-#endif
 
 #endif

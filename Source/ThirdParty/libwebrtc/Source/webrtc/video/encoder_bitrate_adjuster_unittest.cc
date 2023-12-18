@@ -13,11 +13,12 @@
 #include <memory>
 #include <vector>
 
+#include "api/field_trials_view.h"
 #include "api/units/data_rate.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 namespace test {
@@ -67,6 +68,8 @@ class EncoderBitrateAdjusterTest : public ::testing::Test {
         codec_.simulcastStream[si].maxBitrate = 300 * (1 << si);
         codec_.simulcastStream[si].active = true;
         codec_.simulcastStream[si].numberOfTemporalLayers = num_temporal_layers;
+        codec_.spatialLayers[si].width = 320 * (1<<si);
+        codec_.spatialLayers[si].height = 180 * (1<<si);
       }
     }
 
@@ -80,7 +83,8 @@ class EncoderBitrateAdjusterTest : public ::testing::Test {
       }
     }
 
-    adjuster_ = std::make_unique<EncoderBitrateAdjuster>(codec_);
+    adjuster_ =
+        std::make_unique<EncoderBitrateAdjuster>(codec_, scoped_field_trial_);
     adjuster_->OnEncoderInfo(encoder_info_);
     current_adjusted_allocation_ =
         adjuster_->AdjustRateAllocation(VideoEncoder::RateControlParameters(
@@ -232,6 +236,7 @@ class EncoderBitrateAdjusterTest : public ::testing::Test {
   double target_framerate_fps_;
   int tl_pattern_idx_[kMaxSpatialLayers];
   int sequence_idx_[kMaxSpatialLayers][kMaxTemporalStreams];
+  test::ScopedKeyValueConfig scoped_field_trial_;
 
   const std::vector<int> kTlPatterns[kMaxTemporalStreams] = {
       {0},
@@ -420,7 +425,8 @@ TEST_F(EncoderBitrateAdjusterTest, DifferentSpatialOvershoots) {
 TEST_F(EncoderBitrateAdjusterTest, HeadroomAllowsOvershootToMediaRate) {
   // Two streams, both with three temporal layers.
   // Media rate is 1.0, but network rate is higher.
-  ScopedFieldTrials field_trial(
+  test::ScopedKeyValueConfig field_trial(
+      scoped_field_trial_,
       "WebRTC-VideoRateControl/adjuster_use_headroom:true/");
 
   const uint32_t kS0Bitrate = 300000;
@@ -462,7 +468,8 @@ TEST_F(EncoderBitrateAdjusterTest, HeadroomAllowsOvershootToMediaRate) {
 TEST_F(EncoderBitrateAdjusterTest, DontExceedMediaRateEvenWithHeadroom) {
   // Two streams, both with three temporal layers.
   // Media rate is 1.1, but network rate is higher.
-  ScopedFieldTrials field_trial(
+  test::ScopedKeyValueConfig field_trial(
+      scoped_field_trial_,
       "WebRTC-VideoRateControl/adjuster_use_headroom:true/");
 
   const uint32_t kS0Bitrate = 300000;
@@ -500,6 +507,34 @@ TEST_F(EncoderBitrateAdjusterTest, DontExceedMediaRateEvenWithHeadroom) {
     ExpectNear(MultiplyAllocation(current_input_allocation_, 1 / 1.1),
                current_adjusted_allocation_, 0.015);
   }
+}
+
+TEST_F(EncoderBitrateAdjusterTest, HonorMinBitrateSettingFromEncoderInfo) {
+  // Single layer, well behaved encoder.
+  const int high_bitrate = 20000;
+  const int a_lower_min_bitrate = 12000;
+  current_input_allocation_.SetBitrate(0, 0, high_bitrate);
+  VideoBitrateAllocation expected_input_allocation;
+  expected_input_allocation.SetBitrate(0, 0, a_lower_min_bitrate);
+
+  target_framerate_fps_ = 30;
+
+  SetUpAdjuster(1, 1, false);
+
+  auto new_resolution_limit = VideoEncoder::ResolutionBitrateLimits(
+      codec_.spatialLayers[0].width * codec_.spatialLayers[0].height, 15000,
+      a_lower_min_bitrate, 2000000);
+  encoder_info_.resolution_bitrate_limits.push_back(new_resolution_limit);
+  adjuster_->OnEncoderInfo(encoder_info_);
+
+  InsertFrames({{2.0}}, kWindowSizeMs);
+
+  current_adjusted_allocation_ =
+      adjuster_->AdjustRateAllocation(VideoEncoder::RateControlParameters(
+          current_input_allocation_, target_framerate_fps_));
+  // Adjusted allocation near input. Allow 1% error margin due to rounding
+  // errors etc.
+  ExpectNear(expected_input_allocation, current_adjusted_allocation_, 0.01);
 }
 
 }  // namespace test

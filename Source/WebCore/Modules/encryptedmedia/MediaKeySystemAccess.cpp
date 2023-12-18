@@ -85,7 +85,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
         // 2.5. Let instance be a new instance of the Key System implementation represented by this object's cdm implementation value.
         auto instance = m_implementation->createInstance();
         if (!instance) {
-            promise->reject(InvalidStateError);
+            promise->reject(ExceptionCode::InvalidStateError);
             return;
         }
 
@@ -97,7 +97,7 @@ void MediaKeySystemAccess::createMediaKeys(Document& document, Ref<DeferredPromi
 
         instance->initializeWithConfiguration(*m_configuration, allowDistinctiveIdentifiers, allowPersistentState, [weakDocument = WTFMove(weakDocument), sessionTypes = m_configuration->sessionTypes, implementation = m_implementation.copyRef(), useDistinctiveIdentifier, persistentStateAllowed, instance = instance.releaseNonNull(), promise = WTFMove(promise)] (auto successValue) mutable {
             if (successValue == CDMInstance::Failed || !weakDocument) {
-                promise->reject(NotAllowedError);
+                promise->reject(ExceptionCode::NotAllowedError);
                 return;
             }
 

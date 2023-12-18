@@ -32,6 +32,7 @@
 #include "JSLocalDOMWindow.h"
 #include "LocalDOMWindow.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/Exception.h>
@@ -65,9 +66,9 @@ void DeferredPromise::callFunction(JSGlobalObject& lexicalGlobalObject, ResolveM
             handleUncaughtException(scope, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
     });
 
-    if (activeDOMObjectsAreSuspended()) {
+    if (activeDOMObjectsAreSuspended() || !ScriptDisallowedScope::isScriptAllowedInMainThread()) {
         JSC::Strong<JSC::Unknown, ShouldStrongDestructorGrabLock::Yes> strongResolution(lexicalGlobalObject.vm(), resolution);
-        ASSERT(scriptExecutionContext()->eventLoop().isSuspended());
+        ASSERT(!activeDOMObjectsAreSuspended() || scriptExecutionContext()->eventLoop().isSuspended());
         scriptExecutionContext()->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, mode, strongResolution = WTFMove(strongResolution)]() mutable {
             if (shouldIgnoreRequestToFulfill())
                 return;
@@ -156,7 +157,7 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    if (exception.code() == ExistingExceptionError) {
+    if (exception.code() == ExceptionCode::ExistingExceptionError) {
         EXCEPTION_ASSERT(scope.exception());
         auto error = scope.exception()->value();
         bool isTerminating = handleTerminationExceptionIfNeeded(scope, lexicalGlobalObject);
@@ -191,7 +192,7 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    if (ec == ExistingExceptionError) {
+    if (ec == ExceptionCode::ExistingExceptionError) {
         EXCEPTION_ASSERT(scope.exception());
         auto error = scope.exception()->value();
         bool isTerminating = handleTerminationExceptionIfNeeded(scope, lexicalGlobalObject);
@@ -272,7 +273,7 @@ void fulfillPromiseWithJSON(Ref<DeferredPromise>&& promise, const String& data)
 {
     JSC::JSValue value = parseAsJSON(promise->globalObject(), data);
     if (!value)
-        promise->reject(SyntaxError);
+        promise->reject(ExceptionCode::SyntaxError);
     else
         promise->resolve<IDLAny>(value);
 }
@@ -297,8 +298,8 @@ bool DeferredPromise::handleTerminationExceptionIfNeeded(CatchScope& scope, JSDO
     VM& vm = scope.vm();
 
     auto& scriptExecutionContext = *lexicalGlobalObject.scriptExecutionContext();
-    if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-        auto* scriptController = downcast<WorkerGlobalScope>(scriptExecutionContext).script();
+    if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
+        auto* scriptController = globalScope->script();
         bool terminatorCausedException = vm.isTerminationException(exception);
         if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution())) {
             scriptController->forbidExecution();

@@ -254,6 +254,11 @@ Image* CachedImage::image() const
     return &Image::nullImage();
 }
 
+RefPtr<Image> CachedImage::protectedImage() const
+{
+    return image();
+}
+
 Image* CachedImage::imageForRenderer(const RenderObject* renderer)
 {
     if (errorOccurred() && m_shouldPaintBrokenImage) {

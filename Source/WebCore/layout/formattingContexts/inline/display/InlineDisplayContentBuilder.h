@@ -57,14 +57,15 @@ private:
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendHardLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendAtomicInlineLevelDisplayBox(const Line::Run&, const InlineRect& , InlineDisplay::Boxes&);
-    void appendRootInlineBoxDisplayBox(const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
-    void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
-    void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool linehasContent, InlineDisplay::Boxes&);
+    void appendRootInlineBoxDisplayBox(const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
+    void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
+    void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
-    void appendInterlinearRubyAnnotationBox(const Box&, InlineDisplay::Boxes&);
-    void appendIntercharacterRubyAnnotationBox(const Line::Run&, InlineDisplay::Boxes&);
-    void handleInlineBoxEnd(const Line::Run&, const InlineDisplay::Boxes&);
-    void applyRubyOverhang(InlineDisplay::Boxes&);
+    void insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, InlineDisplay::Boxes&);
+
+    size_t processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes&, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation);
+    void processRubyContent(InlineDisplay::Boxes&, const LineLayoutResult&);
+    void applyRubyOverhang(InlineDisplay::Boxes&, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
@@ -72,11 +73,12 @@ private:
 
     InlineRect flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode) const;
     InlineRect flipRootInlineBoxRectToVisualForWritingMode(const InlineRect& rootInlineBoxLogicalRect, WritingMode) const;
-    void setLeftForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
+    template <typename BoxType, typename LayoutUnitType>
+    void setLeftForWritingMode(BoxType&, LayoutUnitType logicalLeft, WritingMode) const;
     void setRightForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
     InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&) const;
-    void setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t> indexList, const LineBox&, const Line::RunList&, const Vector<int32_t>& visualOrderList = { });
+    void setGeometryForBlockLevelOutOfFlowBoxes(const Vector<size_t>& indexList, const LineBox&, const Line::RunList&, const Vector<int32_t>& visualOrderList = { });
 
     bool isLineFullyTruncatedInBlockDirection() const { return m_lineIsFullyTruncatedInBlockDirection; }
 
@@ -95,8 +97,7 @@ private:
     // FIXME: This should take DisplayLine::isTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
-    Vector<WTF::Range<size_t>> m_interlinearRubyColumnRangeList;
-    CheckedPtr<const Box> m_interCharacterRubyBase;
+    bool m_hasSeenRubyBase { false };
 };
 
 }

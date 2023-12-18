@@ -94,7 +94,7 @@ ShadowApplier::~ShadowApplier()
     if (m_onlyDrawsShadow)
         m_context.restore();
     else if (!m_avoidDrawingShadow)
-        m_context.clearShadow();
+        m_context.clearDropShadow();
 }
 
 TextPainter::TextPainter(GraphicsContext& context, const FontCascade& font, const RenderStyle& renderStyle)
@@ -121,10 +121,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
         m_context.drawText(font, textRun, textOrigin, startOffset, endOffset);
     else {
         // Replaying back a whole cached glyph run to the GraphicsContext.
-        m_context.translate(textOrigin);
-        DisplayList::Replayer replayer(m_context, *m_glyphDisplayList);
-        replayer.replay();
-        m_context.translate(-textOrigin);
+        m_context.drawDisplayListItems(m_glyphDisplayList->items(), m_glyphDisplayList->resourceHeap(), textOrigin);
     }
     m_glyphDisplayList = nullptr;
 }

@@ -63,6 +63,18 @@
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#import <UIKit/UIAsyncTextInput.h>
+#import <UIKit/UIAsyncTextInputClient.h>
+#import <UIKit/UIAsyncTextInteraction.h>
+#import <UIKit/UIKeyEventContext.h>
+#endif
+
+#if !__has_include(<UIKit/UIAsyncTextInput_ForWebKitOnly.h>)
+#define UITextDocumentContext UIWKDocumentContext
+#define UITextDocumentRequest UIWKDocumentRequest
+#endif
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebScrollView.h>
@@ -78,6 +90,9 @@ IGNORE_WARNINGS_END
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 #else // USE(APPLE_INTERNAL_SDK)
+
+#define UITextDocumentContext UIWKDocumentContext
+#define UITextDocumentRequest UIWKDocumentRequest
 
 @interface NSTextAlternatives : NSObject
 - (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
@@ -133,7 +148,8 @@ WTF_EXTERN_C_END
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
 @property (nonatomic, readonly) UIColor *insertionPointColor;
 @property (nonatomic, readonly) UIColor *selectionBarColor;
-@property (nonatomic, readwrite) BOOL isSingleLineDocument;
+@property (nonatomic) BOOL isSingleLineDocument;
+@property (nonatomic) BOOL learnsCorrections;
 @end
 
 @interface UITextInputTraits : NSObject <UITextInputTraits, UITextInputTraits_Private, NSCopying>
@@ -150,7 +166,6 @@ WTF_EXTERN_C_END
 @class UITextInputArrowKeyHistory;
 
 @protocol UITextInputPrivate <UITextInput, UITextInputTraits_Private>
-@property (nonatomic, readonly) BOOL supportsImagePaste;
 - (UITextInputTraits *)textInputTraits;
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
@@ -242,6 +257,15 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point;
 - (void)replaceDictatedText:(NSString *)oldText withText:(NSString *)newText;
 - (NSArray<NSTextAlternatives *> *)alternativesForSelectedText;
+
+- (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input shouldUnderline:(BOOL)shouldUnderline withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler;
+
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+- (void)requestDocumentContext:(UITextDocumentRequest *)request completionHandler:(void (^)(UITextDocumentContext *))completionHandler;
+- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
+- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UITextDocumentRequest *)request completionHandler:(void (^)(UITextDocumentContext *))completionHandler;
+#endif
+
 @property (nonatomic, readonly) NSString *selectedText;
 
 @optional
@@ -301,10 +325,6 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 };
 
 @interface UIScrollEvent : UIEvent
-@end
-
-@interface NSObject (UIScrollViewDelegate_ForWebKitOnly)
-- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
 @end
 
 @interface UITextInteractionAssistant : NSObject <UIResponderStandardEditActions>
@@ -500,6 +520,8 @@ typedef enum {
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
 - (BOOL)_shouldSuppressSoftwareKeyboard;
 - (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
+- (void)setInlineCompletionAsMarkedText:(NSAttributedString *)inlineCompletion selectedRange:(NSRange)selectedRange inputString:(NSString *)inputString searchString:(NSString *)searchString;
+@property (nonatomic, readonly) BOOL hasInlineCompletionAsMarkedText;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 
@@ -528,15 +550,28 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (BOOL)clickDriver:(id<_UIClickInteractionDriving>)driver shouldDelayGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;
 @end
 
+@class UITextInputArrowKeyHistory;
+
 @protocol UITextInputInternal
+- (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
 - (CGRect)_selectionClipRect;
 - (void)moveByOffset:(NSInteger)offset;
 @optional
 - (void)addTextAlternatives:(NSTextAlternatives *)alternatives;
 - (void)removeEmojiAlternatives;
+- (UITextInputArrowKeyHistory *)_moveToEndOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history;
+- (UITextInputArrowKeyHistory *)_moveToStartOfParagraph:(BOOL)extending withHistory:(UITextInputArrowKeyHistory *)history;
 @end
 
+typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
+    NSTextBlockPadding  = -1,
+    NSTextBlockBorder   =  0,
+    NSTextBlockMargin   =  1
+};
+
 @interface NSTextBlock : NSObject
+- (CGFloat)widthForLayer:(NSTextBlockLayer)layer edge:(CGRectEdge)edge;
+@property (nonatomic, copy) UIColor *backgroundColor;
 @end
 
 @interface NSTextTable : NSTextBlock
@@ -582,6 +617,13 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 @interface UIWKDocumentContext (Staging_112795757)
 @property (nonatomic, copy) NSArray<NSValue *> *autocorrectedRanges;
+@end
+#endif
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+@interface UIKeyEvent (Internal)
+- (instancetype)initWithWebEvent:(WebEvent *)webEvent;
+@property (nonatomic, readonly) WebEvent *webEvent;
 @end
 #endif
 

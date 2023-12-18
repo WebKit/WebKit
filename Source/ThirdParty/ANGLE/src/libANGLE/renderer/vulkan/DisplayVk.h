@@ -72,7 +72,7 @@ class DisplayVk : public DisplayImpl, public vk::Context
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
 
-    EGLSyncImpl *createSync(const egl::AttributeMap &attribs) override;
+    EGLSyncImpl *createSync() override;
 
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;

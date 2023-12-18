@@ -348,7 +348,7 @@ protected:
     void restartDecodedDataDeletionTimer();
 
     // FIXME: Make the rest of these data members private and use functions in derived classes instead.
-    WeakHashCountedSet<CachedResourceClient> m_clients;
+    SingleThreadWeakHashCountedSet<CachedResourceClient> m_clients;
     std::unique_ptr<ResourceRequest> m_originalRequest; // Needed by Ping loads.
     RefPtr<SubresourceLoader> m_loader;
     RefPtr<FragmentedSharedBuffer> m_data;
@@ -378,7 +378,7 @@ private:
     WallTime m_responseTimestamp { WallTime::now() };
     ResourceLoaderIdentifier m_identifierForLoadWithoutResourceLoader;
 
-    WeakHashMap<CachedResourceClient, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
+    SingleThreadWeakHashMap<CachedResourceClient, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
 
     // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
     HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;

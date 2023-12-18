@@ -80,7 +80,7 @@ static ExceptionOr<Ref<SerializedScriptValue>> createSerializedScriptValue(Scrip
 {
     auto globalObject = context.globalObject();
     if (!globalObject)
-        return Exception { TypeError, "Notification cannot be created without a global object"_s };
+        return Exception { ExceptionCode::TypeError, "Notification cannot be created without a global object"_s };
 
     Vector<RefPtr<MessagePort>> dummyPorts;
     return SerializedScriptValue::create(*globalObject, value, { }, dummyPorts);
@@ -89,7 +89,7 @@ static ExceptionOr<Ref<SerializedScriptValue>> createSerializedScriptValue(Scrip
 ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options)
 {
     if (context.isServiceWorkerGlobalScope())
-        return Exception { TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_s };
+        return Exception { ExceptionCode::TypeError, "Notification cannot be directly created in a ServiceWorkerGlobalScope"_s };
 
     auto dataResult = createSerializedScriptValue(context, options.data);
     if (dataResult.hasException())

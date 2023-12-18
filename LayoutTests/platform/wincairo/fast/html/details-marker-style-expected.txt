@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x477
-  RenderBlock {HTML} at (0,0) size 800x478
-    RenderBody {BODY} at (8,8) size 784x462
-      RenderBlock {DIV} at (0,0) size 784x87
-        RenderBlock {DETAILS} at (0,0) size 784x87
-          RenderBlock {SUMMARY} at (0,0) size 784x87
+layer at (0,0) size 800x475
+  RenderBlock {HTML} at (0,0) size 800x476
+    RenderBody {BODY} at (8,8) size 784x460
+      RenderBlock {DIV} at (0,0) size 784x86
+        RenderBlock {DETAILS} at (0,0) size 784x86
+          RenderBlock {SUMMARY} at (0,0) size 784x86
             RenderDetailsMarker {DIV} at (0,0) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: right
-            RenderText {#text} at (121,59) size 95x27
+            RenderText {#text} at (121,59) size 95x26
               text run at (121,59) width 95: "Summary"
-      RenderBlock {DIV} at (0,87) size 119x184
-        RenderBlock {DETAILS} at (0,0) size 119x184
-          RenderBlock {SUMMARY} at (0,0) size 119x184
+      RenderBlock {DIV} at (0,86) size 118x184
+        RenderBlock {DETAILS} at (0,0) size 118x184
+          RenderBlock {SUMMARY} at (0,0) size 118x184
             RenderDetailsMarker {DIV} at (0,0) size 112x80 [border: (8px solid #00FF00) (16px solid #00FF00) (24px solid #00FF00) (32px solid #00FF00)]: down
-            RenderText {#text} at (91,89) size 27x95
+            RenderText {#text} at (91,89) size 26x95
               text run at (91,89) width 94: "Summary"
-      RenderBlock {DIV} at (0,270) size 784x48
-        RenderBlock {DETAILS} at (0,0) size 784x47
-          RenderBlock {SUMMARY} at (0,0) size 784x47
+      RenderBlock {DIV} at (0,269) size 784x47
+        RenderBlock {DETAILS} at (0,0) size 784x46
+          RenderBlock {SUMMARY} at (0,0) size 784x46
             RenderDetailsMarker {DIV} at (0,0) size 64x40 [border: (8px solid #00FF00)]: right
-            RenderText {#text} at (73,19) size 95x27
+            RenderText {#text} at (73,19) size 95x26
               text run at (73,19) width 95: "Summary"
-      RenderBlock {DIV} at (0,317) size 71x145
-        RenderBlock {DETAILS} at (0,0) size 71x144
-          RenderBlock {SUMMARY} at (0,0) size 71x144
+      RenderBlock {DIV} at (0,315) size 70x145
+        RenderBlock {DETAILS} at (0,0) size 70x144
+          RenderBlock {SUMMARY} at (0,0) size 70x144
             RenderDetailsMarker {DIV} at (0,0) size 64x40 [border: (8px solid #00FF00)]: down
-            RenderText {#text} at (43,49) size 27x95
+            RenderText {#text} at (43,49) size 26x95
               text run at (43,49) width 94: "Summary"

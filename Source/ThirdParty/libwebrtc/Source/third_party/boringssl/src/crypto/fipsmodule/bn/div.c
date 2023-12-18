@@ -711,15 +711,22 @@ int BN_mod_lshift(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
 
 int bn_mod_lshift_consttime(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m,
                             BN_CTX *ctx) {
-  if (!BN_copy(r, a)) {
+  if (!BN_copy(r, a) ||
+      !bn_resize_words(r, m->width)) {
     return 0;
   }
-  for (int i = 0; i < n; i++) {
-    if (!bn_mod_lshift1_consttime(r, r, m, ctx)) {
-      return 0;
+
+  BN_CTX_start(ctx);
+  BIGNUM *tmp = bn_scratch_space_from_ctx(m->width, ctx);
+  int ok = tmp != NULL;
+  if (ok) {
+    for (int i = 0; i < n; i++) {
+      bn_mod_add_words(r->d, r->d, r->d, m->d, tmp->d, m->width);
     }
+    r->neg = 0;
   }
-  return 1;
+  BN_CTX_end(ctx);
+  return ok;
 }
 
 int BN_mod_lshift_quick(BIGNUM *r, const BIGNUM *a, int n, const BIGNUM *m) {

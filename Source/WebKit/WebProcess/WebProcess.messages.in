@@ -49,6 +49,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearResourceLoadStatistics();
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+    UpdateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     SetHasMouseDevice(bool hasMouseDevice)
@@ -159,13 +160,13 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> ()
     SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
     SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
     SendResourceLoadStatisticsDataImmediately() -> ()
-#endif
+
+    UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
 
     GrantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle> assetServicesHandles)
     RevokeAccessToAssetServices()
@@ -216,9 +217,10 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 
     ReleaseMemory() -> ()
 
-    RemotePostMessage(WebCore::FrameIdentifier frameIdentifier, std::optional<WebCore::SecurityOriginData> target, struct WebCore::MessageWithMessagePorts message)
-
-    RenderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
-    
     AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
+
+#if ENABLE(NOTIFYD_BLOCKING_IN_WEBCONTENT)
+    PostNotification(String message)
+    PostObserverNotification(String message)
+#endif
 }

@@ -190,7 +190,7 @@ class BundleCreator(object):
         self._port_binary_preffix = 'WebKit' if self._platform == 'gtk' else 'WPE'
         wk_build_path = os.environ['WEBKIT_OUTPUTDIR'] if 'WEBKIT_OUTPUTDIR' in os.environ else \
                         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'WebKitBuild'))
-        self._buildpath = os.path.join(wk_build_path, self._configuration.capitalize())
+        self._buildpath = os.path.join(wk_build_path, self._platform.upper(), self._configuration.capitalize())
         self._dlopenwrap_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'webkitpy', 'binary_bundling', 'dlopenwrap'))
         if not os.path.isdir(self._dlopenwrap_dir):
             raise RuntimeError("Can't find the dlopenwrap directory at: %s" % self._dlopenwrap_dir)

@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Error: assert_equals: container(target) expected "absolute" but got "static"
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+
+Harness Error (FAIL), message = Unhandled rejection: Type error
+
+TIMEOUT position property of pseudo elements Test timed out
+NOTRUN properties of pseudo elements outside of transition
+

@@ -46,8 +46,6 @@ namespace webrtc {
 
 class Call {
  public:
-  using Config = CallConfig;
-
   struct Stats {
     std::string ToString(int64_t time_ms) const;
 
@@ -58,11 +56,12 @@ class Call {
     int64_t rtt_ms = -1;
   };
 
-  static Call* Create(const Call::Config& config);
-  static Call* Create(const Call::Config& config,
-                      Clock* clock,
-                      std::unique_ptr<RtpTransportControllerSendInterface>
-                          transportControllerSend);
+  static std::unique_ptr<Call> Create(const CallConfig& config);
+  static std::unique_ptr<Call> Create(
+      const CallConfig& config,
+      Clock* clock,
+      std::unique_ptr<RtpTransportControllerSendInterface>
+          transportControllerSend);
 
   virtual AudioSendStream* CreateAudioSendStream(
       const AudioSendStream::Config& config) = 0;

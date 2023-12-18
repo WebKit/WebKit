@@ -42,7 +42,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExec
     return WTF::switchOn(init.value(),
         [&scriptExecutionContext](const String& init) -> ExceptionOr<Ref<DOMMatrix>> {
             if (!scriptExecutionContext.isDocument())
-                return Exception { TypeError };
+                return Exception { ExceptionCode::TypeError };
 
             auto parseResult = parseStringIntoAbstractMatrix(init);
             if (parseResult.hasException())
@@ -64,7 +64,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExec
                     init[12], init[13], init[14], init[15]
                 }, Is2D::No));
             }
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
         }
     );
 }
@@ -99,7 +99,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat32Array(Ref<Float32Array>&& arra
         ), Is2D::No);
     }
 
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat64Array(Ref<Float64Array>&& array64)
@@ -116,7 +116,7 @@ ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromFloat64Array(Ref<Float64Array>&& arra
         ), Is2D::No);
     }
 
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 // https://drafts.fxtf.org/geometry/#dom-dommatrix-multiplyself

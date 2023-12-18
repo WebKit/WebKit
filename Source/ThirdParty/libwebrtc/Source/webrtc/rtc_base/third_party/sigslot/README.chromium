@@ -6,6 +6,7 @@ Date: 2018-07-09
 License: Custom license
 License File: LICENSE
 Security Critical: yes
+Shipped: yes
 
 Description:
 C++ Signal/Slot Library

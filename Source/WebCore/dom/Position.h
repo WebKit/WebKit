@@ -124,7 +124,7 @@ public:
     TreeScope* treeScope() const { return m_anchorNode ? &m_anchorNode->treeScope() : nullptr; }
     Element* rootEditableElement() const
     {
-        Node* container = containerNode();
+        RefPtr container = containerNode();
         return container ? container->rootEditableElement() : nullptr;
     }
 
@@ -137,7 +137,7 @@ public:
     bool isNotNull() const { return m_anchorNode; }
     bool isOrphan() const { return m_anchorNode && !m_anchorNode->isConnected(); }
 
-    Element* element() const;
+    RefPtr<Element> anchorElementAncestor() const;
 
     // Move up or down the DOM by one position.
     // Offsets are computed using render text for nodes that have renderers - but note that even when
@@ -156,7 +156,7 @@ public:
 
     // Returns true if the visually equivalent positions around have different editability
     bool atEditingBoundary() const;
-    Node* parentEditingBoundary() const;
+    RefPtr<Node> parentEditingBoundary() const;
     
     bool atStartOfTree() const;
     bool atEndOfTree() const;
@@ -185,7 +185,7 @@ public:
     static bool hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&);
     static bool nodeIsUserSelectNone(Node*);
     static bool nodeIsUserSelectAll(const Node*);
-    static Node* rootUserSelectAllForNode(Node*);
+    static RefPtr<Node> rootUserSelectAllForNode(Node*);
 
     void debugPosition(const char* msg = "") const;
 
@@ -318,22 +318,22 @@ inline Position positionAfterNode(Node* anchorNode)
 // firstPositionInNode and lastPositionInNode return parent-anchored positions, lastPositionInNode construction is O(n) due to countChildNodes()
 inline Position firstPositionInNode(Node* anchorNode)
 {
-    if (anchorNode->isTextNode())
+    if (anchorNode->isCharacterData())
         return Position(anchorNode, 0, Position::PositionIsOffsetInAnchor);
     return Position(anchorNode, Position::PositionIsBeforeChildren);
 }
 
 inline Position lastPositionInNode(Node* anchorNode)
 {
-    if (anchorNode->isTextNode())
+    if (anchorNode->isCharacterData())
         return Position(anchorNode, anchorNode->length(), Position::PositionIsOffsetInAnchor);
     return Position(anchorNode, Position::PositionIsAfterChildren);
 }
 
 inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
 {
-    if (is<CharacterData>(*anchorNode))
-        return offset < downcast<CharacterData>(*anchorNode).length();
+    if (auto* characterData = dynamicDowncast<CharacterData>(*anchorNode))
+        return offset < characterData->length();
 
     unsigned currentOffset = 0;
     for (Node* node = anchorNode->firstChild(); node && currentOffset < offset; node = node->nextSibling())

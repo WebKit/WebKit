@@ -106,13 +106,11 @@ void WebsiteDataRecord::addAlternativeServicesHostname(const String& hostName)
 #endif
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void WebsiteDataRecord::addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain& domain)
 {
     types.add(WebsiteDataType::ResourceLoadStatistics);
     resourceLoadStatisticsRegistrableDomains.add(domain);
 }
-#endif
 
 static inline bool hostIsInDomain(StringView host, StringView domain)
 {
@@ -167,9 +165,7 @@ WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const &
         crossThreadCopy(cookieHostNames),
         crossThreadCopy(HSTSCacheHostNames),
         crossThreadCopy(alternativeServicesHostNames),
-#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(resourceLoadStatisticsRegistrableDomains),
-#endif
     };
 }
 
@@ -183,9 +179,7 @@ WebsiteDataRecord WebsiteDataRecord::isolatedCopy() &&
         crossThreadCopy(WTFMove(cookieHostNames)),
         crossThreadCopy(WTFMove(HSTSCacheHostNames)),
         crossThreadCopy(WTFMove(alternativeServicesHostNames)),
-#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(WTFMove(resourceLoadStatisticsRegistrableDomains)),
-#endif
     };
 }
 

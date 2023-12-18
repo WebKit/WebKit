@@ -29,8 +29,7 @@ using Ratio = FrameReader::Ratio;
 using RepeatMode = YuvFrameReaderImpl::RepeatMode;
 
 constexpr Resolution kResolution({.width = 1, .height = 1});
-constexpr char kFrameContent[3][3] = {{0, 1, 2}, {1, 2, 3}, {2, 3, 4}};
-constexpr int kNumFrames = sizeof(kFrameContent) / sizeof(kFrameContent[0]);
+constexpr int kDefaultNumFrames = 3;
 }  // namespace
 
 class YuvFrameReaderTest : public ::testing::Test {
@@ -41,39 +40,48 @@ class YuvFrameReaderTest : public ::testing::Test {
   void SetUp() override {
     filepath_ = webrtc::test::TempFilename(webrtc::test::OutputPath(),
                                            "yuv_frame_reader_unittest");
-    FILE* file = fopen(filepath_.c_str(), "wb");
-    fwrite(kFrameContent, 1, sizeof(kFrameContent), file);
-    fclose(file);
-
-    reader_ = CreateYuvFrameReader(filepath_, kResolution);
+    CreateYuvFileAndReader(/*num_frames=*/3, RepeatMode::kSingle);
   }
 
   void TearDown() override { remove(filepath_.c_str()); }
+
+  void CreateYuvFileAndReader(int num_frames, RepeatMode repeat_mode) {
+    FILE* file = fopen(filepath_.c_str(), "wb");
+    for (int i = 0; i < num_frames; ++i) {
+      uint8_t y = static_cast<uint8_t>(i & 255);
+      uint8_t u = static_cast<uint8_t>((i + 1) & 255);
+      uint8_t v = static_cast<uint8_t>((i + 2) & 255);
+      fwrite(&y, 1, 1, file);
+      fwrite(&u, 1, 1, file);
+      fwrite(&v, 1, 1, file);
+    }
+    fclose(file);
+
+    reader_ = CreateYuvFrameReader(filepath_, kResolution, repeat_mode);
+  }
 
   std::string filepath_;
   std::unique_ptr<FrameReader> reader_;
 };
 
 TEST_F(YuvFrameReaderTest, num_frames) {
-  EXPECT_EQ(kNumFrames, reader_->num_frames());
+  EXPECT_EQ(kDefaultNumFrames, reader_->num_frames());
 }
 
 TEST_F(YuvFrameReaderTest, PullFrame_frameContent) {
   rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
-  EXPECT_EQ(kFrameContent[0][0], *buffer->DataY());
-  EXPECT_EQ(kFrameContent[0][1], *buffer->DataU());
-  EXPECT_EQ(kFrameContent[0][2], *buffer->DataV());
+  EXPECT_EQ(0u, *buffer->DataY());
+  EXPECT_EQ(1u, *buffer->DataU());
+  EXPECT_EQ(2u, *buffer->DataV());
 }
 
 TEST_F(YuvFrameReaderTest, ReadFrame_randomOrder) {
-  std::vector<int> expected_frames = {2, 0, 1};
-  std::vector<int> actual_frames;
-  for (int frame_num : expected_frames) {
-    rtc::scoped_refptr<I420BufferInterface> buffer =
-        reader_->ReadFrame(frame_num);
-    actual_frames.push_back(*buffer->DataY());
-  }
-  EXPECT_EQ(expected_frames, actual_frames);
+  rtc::scoped_refptr<I420BufferInterface> buffer = reader_->ReadFrame(2);
+  EXPECT_EQ(2u, *buffer->DataY());
+  buffer = reader_->ReadFrame(0);
+  EXPECT_EQ(0u, *buffer->DataY());
+  buffer = reader_->ReadFrame(1);
+  EXPECT_EQ(1u, *buffer->DataY());
 }
 
 TEST_F(YuvFrameReaderTest, PullFrame_scale) {
@@ -87,30 +95,31 @@ TEST_F(YuvFrameReaderTest, PullFrame_scale) {
 class YuvFrameReaderRepeatModeTest
     : public YuvFrameReaderTest,
       public ::testing::WithParamInterface<
-          std::tuple<RepeatMode, std::vector<int>>> {};
+          std::tuple<int, RepeatMode, std::vector<uint8_t>>> {};
 
 TEST_P(YuvFrameReaderRepeatModeTest, PullFrame) {
-  RepeatMode mode = std::get<0>(GetParam());
-  std::vector<int> expected_frames = std::get<1>(GetParam());
-
-  reader_ = CreateYuvFrameReader(filepath_, kResolution, mode);
-  std::vector<int> read_frames;
-  for (size_t i = 0; i < expected_frames.size(); ++i) {
+  auto [num_frames, repeat_mode, expected_frames] = GetParam();
+  CreateYuvFileAndReader(num_frames, repeat_mode);
+  for (auto expected_frame : expected_frames) {
     rtc::scoped_refptr<I420BufferInterface> buffer = reader_->PullFrame();
-    read_frames.push_back(*buffer->DataY());
+    EXPECT_EQ(expected_frame, *buffer->DataY());
   }
-  EXPECT_EQ(expected_frames, read_frames);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     YuvFrameReaderTest,
     YuvFrameReaderRepeatModeTest,
     ::testing::ValuesIn(
-        {std::make_tuple(RepeatMode::kSingle, std::vector<int>{0, 1, 2}),
-         std::make_tuple(RepeatMode::kRepeat,
-                         std::vector<int>{0, 1, 2, 0, 1, 2}),
-         std::make_tuple(RepeatMode::kPingPong,
-                         std::vector<int>{0, 1, 2, 1, 0, 1, 2})}));
+        {std::make_tuple(3, RepeatMode::kSingle, std::vector<uint8_t>{0, 1, 2}),
+         std::make_tuple(3,
+                         RepeatMode::kRepeat,
+                         std::vector<uint8_t>{0, 1, 2, 0, 1, 2}),
+         std::make_tuple(3,
+                         RepeatMode::kPingPong,
+                         std::vector<uint8_t>{0, 1, 2, 1, 0, 1, 2}),
+         std::make_tuple(1,
+                         RepeatMode::kPingPong,
+                         std::vector<uint8_t>{0, 0})}));
 
 class YuvFrameReaderFramerateScaleTest
     : public YuvFrameReaderTest,
@@ -118,17 +127,13 @@ class YuvFrameReaderFramerateScaleTest
           std::tuple<Ratio, std::vector<int>>> {};
 
 TEST_P(YuvFrameReaderFramerateScaleTest, PullFrame) {
-  Ratio framerate_scale = std::get<0>(GetParam());
-  std::vector<int> expected_frames = std::get<1>(GetParam());
-
-  std::vector<int> actual_frames;
-  for (size_t i = 0; i < expected_frames.size(); ++i) {
+  auto [framerate_scale, expected_frames] = GetParam();
+  for (auto expected_frame : expected_frames) {
     int pulled_frame;
     rtc::scoped_refptr<I420BufferInterface> buffer =
         reader_->PullFrame(&pulled_frame, kResolution, framerate_scale);
-    actual_frames.push_back(pulled_frame);
+    EXPECT_EQ(pulled_frame, expected_frame);
   }
-  EXPECT_EQ(expected_frames, actual_frames);
 }
 
 INSTANTIATE_TEST_SUITE_P(YuvFrameReaderTest,

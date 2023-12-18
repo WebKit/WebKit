@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKDeferringGestureRecognizer.h"
+#import "WKSEDefinitions.h"
 #import "WKWebViewIOS.h"
 #import "WebPage.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -43,7 +44,7 @@
 #import "PepperUICoreSPI.h"
 #endif
 
-@interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
+@interface WKScrollViewDelegateForwarder : NSObject <WKSEScrollViewDelegate>
 
 - (instancetype)initWithInternalDelegate:(WKWebView *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
 
@@ -54,7 +55,7 @@
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
 }
 
-- (instancetype)initWithInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate
+- (instancetype)initWithInternalDelegate:(WKWebView<WKSEScrollViewDelegate> *)internalDelegate externalDelegate:(id<UIScrollViewDelegate>)externalDelegate
 {
     self = [super init];
     if (!self)
@@ -154,7 +155,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 #endif
 }
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
 
@@ -172,6 +173,13 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     self.alwaysBounceVertical = YES;
     self.directionalLockEnabled = YES;
     self.automaticallyAdjustsScrollIndicatorInsets = YES;
+
+#if HAVE(UISCROLLVIEW_ALLOWS_KEYBOARD_SCROLLING)
+    // In iOS 17, the default value of `-[UIScrollView allowsKeyboardScrolling]` is `NO`.
+    // To maintain existing behavior of WKScrollView, this property must be initially set to `YES`.
+    self.allowsKeyboardScrolling = YES;
+#endif
+
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
@@ -229,7 +237,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     if (!externalDelegate)
         [super setDelegate:_internalDelegate];
     else if (!_internalDelegate)
-        [super setDelegate:externalDelegate.get()];
+        [super setDelegate:(id<WKSEScrollViewDelegate>)externalDelegate.get()];
     else {
         _delegateForwarder = adoptNS([[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()]);
         [super setDelegate:_delegateForwarder.get()];
@@ -310,6 +318,17 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
 
+- (BOOL)_contentInsetWasExternallyOverridden
+{
+    return _contentInsetWasExternallyOverridden;
+}
+
+- (void)_resetContentInset
+{
+    super.contentInset = UIEdgeInsetsZero;
+    [_internalDelegate _scheduleVisibleContentRectUpdate];
+}
+
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
@@ -335,6 +354,12 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
         return;
 
     [super setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
+}
+
+- (void)_resetContentInsetAdjustmentBehavior
+{
+    _contentInsetAdjustmentBehaviorWasExternallyOverridden = NO;
+    [self _setContentInsetAdjustmentBehaviorInternal:UIScrollViewContentInsetAdjustmentAutomatic];
 }
 
 #endif
@@ -472,47 +497,6 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 - (void)_updateZoomability
 {
     [super setZoomEnabled:(_zoomEnabledByClient && _zoomEnabledInternal)];
-}
-
-- (void)_sendPinchGestureActionEarlyIfNeeded
-{
-    static BOOL canHandlePinch = NO;
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        canHandlePinch = [UIScrollView instancesRespondToSelector:@selector(handlePinch:)];
-    });
-
-    if (UNLIKELY(!canHandlePinch)) {
-        static BOOL shouldLogFault = YES;
-        if (shouldLogFault) {
-            RELEASE_LOG_FAULT(Scrolling, "UIScrollView no longer responds to -handlePinch:.");
-            shouldLogFault = NO;
-        }
-        return;
-    }
-
-    if (!self.zooming)
-        return;
-
-    auto pinchGesture = self.pinchGestureRecognizer;
-    if (pinchGesture.state != UIGestureRecognizerStateEnded)
-        return;
-
-    auto activeTouchEvent = [pinchGesture _activeEventOfType:UIEventTypeTouches];
-    if (!activeTouchEvent)
-        return;
-
-    if ([pinchGesture _activeTouchesForEvent:activeTouchEvent].count)
-        return;
-
-    [self handlePinch:pinchGesture];
-}
-
-- (void)handlePan:(UIPanGestureRecognizer *)gesture
-{
-    [self _sendPinchGestureActionEarlyIfNeeded];
-
-    [super handlePan:gesture];
 }
 
 #if PLATFORM(WATCHOS)

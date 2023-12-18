@@ -34,7 +34,7 @@ namespace webrtc {
 enum {
   // Timing frames settings. Timing frames are sent every
   // `kDefaultTimingFramesDelayMs`, or if the frame is at least
-  // `kDefaultOutliserFrameSizePercent` in size of average frame.
+  // `kDefaultOutlierFrameSizePercent` in size of average frame.
   kDefaultTimingFramesDelayMs = 200,
   kDefaultOutlierFrameSizePercent = 500,
   // Maximum number of frames for what we store encode start timing information.
@@ -53,7 +53,8 @@ class VCMReceiveCallback {
   virtual int32_t FrameToRender(VideoFrame& videoFrame,  // NOLINT
                                 absl::optional<uint8_t> qp,
                                 TimeDelta decode_time,
-                                VideoContentType content_type) = 0;
+                                VideoContentType content_type,
+                                VideoFrameType frame_type) = 0;
 
   virtual void OnDroppedFrames(uint32_t frames_dropped);
 

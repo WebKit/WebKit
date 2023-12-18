@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ActiveDOMObject.h"
 #include "AddEventListenerOptions.h"
 #include "EventTarget.h"
@@ -169,5 +167,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

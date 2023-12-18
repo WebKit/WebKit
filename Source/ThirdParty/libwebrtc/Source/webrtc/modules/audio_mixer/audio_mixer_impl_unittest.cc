@@ -129,39 +129,6 @@ class CustomRateCalculator : public OutputRateCalculator {
   const int rate_;
 };
 
-// Creates participants from `frames` and `frame_info` and adds them
-// to the mixer. Compares mixed status with `expected_status`
-void MixAndCompare(
-    const std::vector<AudioFrame>& frames,
-    const std::vector<AudioMixer::Source::AudioFrameInfo>& frame_info,
-    const std::vector<bool>& expected_status) {
-  const size_t num_audio_sources = frames.size();
-  RTC_DCHECK(frames.size() == frame_info.size());
-  RTC_DCHECK(frame_info.size() == expected_status.size());
-
-  const auto mixer = AudioMixerImpl::Create();
-  std::vector<MockMixerAudioSource> participants(num_audio_sources);
-
-  for (size_t i = 0; i < num_audio_sources; ++i) {
-    participants[i].fake_frame()->CopyFrom(frames[i]);
-    participants[i].set_fake_info(frame_info[i]);
-  }
-
-  for (size_t i = 0; i < num_audio_sources; ++i) {
-    EXPECT_TRUE(mixer->AddSource(&participants[i]));
-    EXPECT_CALL(participants[i], GetAudioFrameWithInfo(kDefaultSampleRateHz, _))
-        .Times(Exactly(1));
-  }
-
-  mixer->Mix(1, &frame_for_mixing);
-
-  for (size_t i = 0; i < num_audio_sources; ++i) {
-    EXPECT_EQ(expected_status[i],
-              mixer->GetAudioSourceMixabilityStatusForTest(&participants[i]))
-        << "Mixed status of AudioSource #" << i << " wrong.";
-  }
-}
-
 void MixMonoAtGivenNativeRate(int native_sample_rate,
                               AudioFrame* mix_frame,
                               rtc::scoped_refptr<AudioMixer> mixer,
@@ -174,50 +141,8 @@ void MixMonoAtGivenNativeRate(int native_sample_rate,
   mixer->Mix(1, mix_frame);
 }
 
-TEST(AudioMixer, LargestEnergyVadActiveMixed) {
-  constexpr int kAudioSources =
-      AudioMixerImpl::kDefaultNumberOfMixedAudioSources + 3;
-
-  const auto mixer = AudioMixerImpl::Create();
-
-  MockMixerAudioSource participants[kAudioSources];
-
-  for (int i = 0; i < kAudioSources; ++i) {
-    ResetFrame(participants[i].fake_frame());
-
-    // We set the 80-th sample value since the first 80 samples may be
-    // modified by a ramped-in window.
-    participants[i].fake_frame()->mutable_data()[80] = i;
-
-    EXPECT_TRUE(mixer->AddSource(&participants[i]));
-    EXPECT_CALL(participants[i], GetAudioFrameWithInfo(_, _)).Times(Exactly(1));
-  }
-
-  // Last participant gives audio frame with passive VAD, although it has the
-  // largest energy.
-  participants[kAudioSources - 1].fake_frame()->vad_activity_ =
-      AudioFrame::kVadPassive;
-
-  AudioFrame audio_frame;
-  mixer->Mix(1,  // number of channels
-             &audio_frame);
-
-  for (int i = 0; i < kAudioSources; ++i) {
-    bool is_mixed =
-        mixer->GetAudioSourceMixabilityStatusForTest(&participants[i]);
-    if (i == kAudioSources - 1 ||
-        i < kAudioSources - 1 -
-                AudioMixerImpl::kDefaultNumberOfMixedAudioSources) {
-      EXPECT_FALSE(is_mixed)
-          << "Mixing status of AudioSource #" << i << " wrong.";
-    } else {
-      EXPECT_TRUE(is_mixed)
-          << "Mixing status of AudioSource #" << i << " wrong.";
-    }
-  }
-}
-
 TEST(AudioMixer, UpdatesSourceCountHistogram) {
+  metrics::Reset();
   constexpr int kAudioSourcesGroup1 = 5;
   constexpr int kAudioSourcesGroup2 = 3;
 
@@ -369,59 +294,6 @@ TEST(AudioMixer, ParticipantNumberOfChannels) {
   }
 }
 
-// Maximal amount of participants are mixed one iteration, then
-// another participant with higher energy is added.
-TEST(AudioMixer, RampedOutSourcesShouldNotBeMarkedMixed) {
-  constexpr int kAudioSources =
-      AudioMixerImpl::kDefaultNumberOfMixedAudioSources + 1;
-
-  const auto mixer = AudioMixerImpl::Create();
-  MockMixerAudioSource participants[kAudioSources];
-
-  for (int i = 0; i < kAudioSources; ++i) {
-    ResetFrame(participants[i].fake_frame());
-    // Set the participant audio energy to increase with the index
-    // `i`.
-    participants[i].fake_frame()->mutable_data()[0] = 100 * i;
-  }
-
-  // Add all participants but the loudest for mixing.
-  for (int i = 0; i < kAudioSources - 1; ++i) {
-    EXPECT_TRUE(mixer->AddSource(&participants[i]));
-    EXPECT_CALL(participants[i], GetAudioFrameWithInfo(kDefaultSampleRateHz, _))
-        .Times(Exactly(1));
-  }
-
-  // First mixer iteration
-  mixer->Mix(1, &frame_for_mixing);
-
-  // All participants but the loudest should have been mixed.
-  for (int i = 0; i < kAudioSources - 1; ++i) {
-    EXPECT_TRUE(mixer->GetAudioSourceMixabilityStatusForTest(&participants[i]))
-        << "Mixed status of AudioSource #" << i << " wrong.";
-  }
-
-  // Add new participant with higher energy.
-  EXPECT_TRUE(mixer->AddSource(&participants[kAudioSources - 1]));
-  for (int i = 0; i < kAudioSources; ++i) {
-    EXPECT_CALL(participants[i], GetAudioFrameWithInfo(kDefaultSampleRateHz, _))
-        .Times(Exactly(1));
-  }
-
-  mixer->Mix(1, &frame_for_mixing);
-
-  // The most quiet participant should not have been mixed.
-  EXPECT_FALSE(mixer->GetAudioSourceMixabilityStatusForTest(&participants[0]))
-      << "Mixed status of AudioSource #0 wrong.";
-
-  // The loudest participants should have been mixed.
-  for (int i = 1; i < kAudioSources; ++i) {
-    EXPECT_EQ(true,
-              mixer->GetAudioSourceMixabilityStatusForTest(&participants[i]))
-        << "Mixed status of AudioSource #" << i << " wrong.";
-  }
-}
-
 // This test checks that the initialization and participant addition
 // can be done on a different thread.
 TEST(AudioMixer, ConstructFromOtherThread) {
@@ -444,127 +316,6 @@ TEST(AudioMixer, ConstructFromOtherThread) {
 
   // Do one mixer iteration
   mixer->Mix(1, &frame_for_mixing);
-}
-
-TEST(AudioMixer, MutedShouldMixAfterUnmuted) {
-  constexpr int kAudioSources =
-      AudioMixerImpl::kDefaultNumberOfMixedAudioSources + 1;
-
-  std::vector<AudioFrame> frames(kAudioSources);
-  for (auto& frame : frames) {
-    ResetFrame(&frame);
-  }
-
-  std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
-      kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
-  frame_info[0] = AudioMixer::Source::AudioFrameInfo::kMuted;
-  std::vector<bool> expected_status(kAudioSources, true);
-  expected_status[0] = false;
-
-  MixAndCompare(frames, frame_info, expected_status);
-}
-
-TEST(AudioMixer, PassiveShouldMixAfterNormal) {
-  constexpr int kAudioSources =
-      AudioMixerImpl::kDefaultNumberOfMixedAudioSources + 1;
-
-  std::vector<AudioFrame> frames(kAudioSources);
-  for (auto& frame : frames) {
-    ResetFrame(&frame);
-  }
-
-  std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
-      kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
-  frames[0].vad_activity_ = AudioFrame::kVadPassive;
-  std::vector<bool> expected_status(kAudioSources, true);
-  expected_status[0] = false;
-
-  MixAndCompare(frames, frame_info, expected_status);
-}
-
-TEST(AudioMixer, ActiveShouldMixBeforeLoud) {
-  constexpr int kAudioSources =
-      AudioMixerImpl::kDefaultNumberOfMixedAudioSources + 1;
-
-  std::vector<AudioFrame> frames(kAudioSources);
-  for (auto& frame : frames) {
-    ResetFrame(&frame);
-  }
-
-  std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
-      kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
-  frames[0].vad_activity_ = AudioFrame::kVadPassive;
-  int16_t* frame_data = frames[0].mutable_data();
-  std::fill(frame_data, frame_data + kDefaultSampleRateHz / 100,
-            std::numeric_limits<int16_t>::max());
-  std::vector<bool> expected_status(kAudioSources, true);
-  expected_status[0] = false;
-
-  MixAndCompare(frames, frame_info, expected_status);
-}
-
-TEST(AudioMixer, ShouldMixUpToSpecifiedNumberOfSourcesToMix) {
-  constexpr int kAudioSources = 5;
-  constexpr int kSourcesToMix = 2;
-
-  std::vector<AudioFrame> frames(kAudioSources);
-  for (auto& frame : frames) {
-    ResetFrame(&frame);
-  }
-
-  std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
-      kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
-  // Set up to kSourceToMix sources with kVadActive so that they're mixed.
-  const std::vector<AudioFrame::VADActivity> kVadActivities = {
-      AudioFrame::kVadUnknown, AudioFrame::kVadPassive, AudioFrame::kVadPassive,
-      AudioFrame::kVadActive, AudioFrame::kVadActive};
-  // Populate VAD and frame for all sources.
-  for (int i = 0; i < kAudioSources; i++) {
-    frames[i].vad_activity_ = kVadActivities[i];
-  }
-
-  std::vector<MockMixerAudioSource> participants(kAudioSources);
-  for (int i = 0; i < kAudioSources; ++i) {
-    participants[i].fake_frame()->CopyFrom(frames[i]);
-    participants[i].set_fake_info(frame_info[i]);
-  }
-
-  const auto mixer = AudioMixerImpl::Create(kSourcesToMix);
-  for (int i = 0; i < kAudioSources; ++i) {
-    EXPECT_TRUE(mixer->AddSource(&participants[i]));
-    EXPECT_CALL(participants[i], GetAudioFrameWithInfo(kDefaultSampleRateHz, _))
-        .Times(Exactly(1));
-  }
-
-  mixer->Mix(1, &frame_for_mixing);
-
-  std::vector<bool> expected_status = {false, false, false, true, true};
-  for (int i = 0; i < kAudioSources; ++i) {
-    EXPECT_EQ(expected_status[i],
-              mixer->GetAudioSourceMixabilityStatusForTest(&participants[i]))
-        << "Wrong mix status for source #" << i << " is wrong";
-  }
-}
-
-TEST(AudioMixer, UnmutedShouldMixBeforeLoud) {
-  constexpr int kAudioSources =
-      AudioMixerImpl::kDefaultNumberOfMixedAudioSources + 1;
-
-  std::vector<AudioFrame> frames(kAudioSources);
-  for (auto& frame : frames) {
-    ResetFrame(&frame);
-  }
-
-  std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
-      kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
-  frame_info[0] = AudioMixer::Source::AudioFrameInfo::kMuted;
-  int16_t* frame_data = frames[0].mutable_data();
-  std::fill(frame_data, frame_data + kDefaultSampleRateHz / 100,
-            std::numeric_limits<int16_t>::max());
-  std::vector<bool> expected_status(kAudioSources, true);
-  expected_status[0] = false;
-
-  MixAndCompare(frames, frame_info, expected_status);
 }
 
 TEST(AudioMixer, MixingRateShouldBeDecidedByRateCalculator) {
@@ -726,55 +477,6 @@ TEST(AudioMixer, ShouldIncludeRtpPacketInfoFromAllMixedSources) {
   mixer->Mix(/*number_of_channels=*/1, &frame_for_mixing);
 
   EXPECT_THAT(frame_for_mixing.packet_infos_, UnorderedElementsAre(p0, p1, p2));
-}
-
-TEST(AudioMixer, MixerShouldIncludeRtpPacketInfoFromMixedSourcesOnly) {
-  const uint32_t kSsrc0 = 10;
-  const uint32_t kSsrc1 = 11;
-  const uint32_t kSsrc2 = 21;
-  const uint32_t kCsrc0 = 30;
-  const uint32_t kCsrc1 = 31;
-  const uint32_t kCsrc2 = 32;
-  const uint32_t kCsrc3 = 33;
-  const int kAudioLevel0 = 10;
-  const absl::optional<uint32_t> kAudioLevelMissing = absl::nullopt;
-  const uint32_t kRtpTimestamp0 = 300;
-  const uint32_t kRtpTimestamp1 = 400;
-  const Timestamp kReceiveTime0 = Timestamp::Millis(10);
-  const Timestamp kReceiveTime1 = Timestamp::Millis(20);
-
-  RtpPacketInfo p0(kSsrc0, {kCsrc0, kCsrc1}, kRtpTimestamp0, kReceiveTime0);
-  p0.set_audio_level(kAudioLevel0);
-  RtpPacketInfo p1(kSsrc1, {kCsrc2}, kRtpTimestamp1, kReceiveTime1);
-  p1.set_audio_level(kAudioLevelMissing);
-  RtpPacketInfo p2(kSsrc2, {kCsrc3}, kRtpTimestamp1, kReceiveTime1);
-  p2.set_audio_level(kAudioLevelMissing);
-
-  const auto mixer = AudioMixerImpl::Create(/*max_sources_to_mix=*/2);
-
-  MockMixerAudioSource source1;
-  source1.set_packet_infos(RtpPacketInfos({p0}));
-  mixer->AddSource(&source1);
-  ResetFrame(source1.fake_frame());
-  mixer->Mix(1, &frame_for_mixing);
-
-  MockMixerAudioSource source2;
-  source2.set_packet_infos(RtpPacketInfos({p1}));
-  ResetFrame(source2.fake_frame());
-  mixer->AddSource(&source2);
-
-  // The mixer prioritizes kVadActive over kVadPassive.
-  // We limit the number of sources to mix to 2 and set the third source's VAD
-  // activity to kVadPassive so that it will not be added to the mix.
-  MockMixerAudioSource source3;
-  source3.set_packet_infos(RtpPacketInfos({p2}));
-  ResetFrame(source3.fake_frame());
-  source3.fake_frame()->vad_activity_ = AudioFrame::kVadPassive;
-  mixer->AddSource(&source3);
-
-  mixer->Mix(/*number_of_channels=*/1, &frame_for_mixing);
-
-  EXPECT_THAT(frame_for_mixing.packet_infos_, UnorderedElementsAre(p0, p1));
 }
 
 class HighOutputRateCalculator : public OutputRateCalculator {

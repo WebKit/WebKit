@@ -31,6 +31,7 @@
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "Timer.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS_FAMILY)

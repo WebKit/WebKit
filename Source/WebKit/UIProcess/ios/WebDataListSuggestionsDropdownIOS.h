@@ -26,13 +26,15 @@
 #if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKSEDefinitions.h"
 #import "WebDataListSuggestionsDropdown.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
 OBJC_CLASS WKContentView;
 
-@interface WKDataListTextSuggestion : UITextSuggestion
+@interface WKDataListTextSuggestion : WKSETextSuggestion
++ (instancetype)textSuggestionWithInputText:(NSString *)inputText;
 @end
 
 @interface WKDataListSuggestionsControl : NSObject

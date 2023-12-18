@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: error
+
+PASS An exception thrown during a transition shouldn't crash.
+

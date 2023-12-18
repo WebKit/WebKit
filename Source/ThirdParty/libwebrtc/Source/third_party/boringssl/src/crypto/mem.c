@@ -133,47 +133,21 @@ WEAK_SYMBOL_FUNC(void *, OPENSSL_memory_alloc, (size_t size));
 WEAK_SYMBOL_FUNC(void, OPENSSL_memory_free, (void *ptr));
 WEAK_SYMBOL_FUNC(size_t, OPENSSL_memory_get_size, (void *ptr));
 
-// kBoringSSLBinaryTag is a distinctive byte sequence to identify binaries that
-// are linking in BoringSSL and, roughly, what version they are using.
-static const uint8_t kBoringSSLBinaryTag[18] = {
-    // 16 bytes of magic tag.
-    0x8c,
-    0x62,
-    0x20,
-    0x0b,
-    0xd2,
-    0xa0,
-    0x72,
-    0x58,
-    0x44,
-    0xa8,
-    0x96,
-    0x69,
-    0xad,
-    0x55,
-    0x7e,
-    0xec,
-    // Current source iteration. Incremented ~monthly.
-    3,
-    0,
-};
-
 #if defined(BORINGSSL_MALLOC_FAILURE_TESTING)
-static struct CRYPTO_STATIC_MUTEX malloc_failure_lock =
-    CRYPTO_STATIC_MUTEX_INIT;
+static CRYPTO_MUTEX malloc_failure_lock = CRYPTO_MUTEX_INIT;
 static uint64_t current_malloc_count = 0;
 static uint64_t malloc_number_to_fail = 0;
 static int malloc_failure_enabled = 0, break_on_malloc_fail = 0,
            any_malloc_failed = 0;
 
 static void malloc_exit_handler(void) {
-  CRYPTO_STATIC_MUTEX_lock_read(&malloc_failure_lock);
+  CRYPTO_MUTEX_lock_read(&malloc_failure_lock);
   if (any_malloc_failed) {
     // Signal to the test driver that some allocation failed, so it knows to
     // increment the counter and continue.
     _exit(88);
   }
-  CRYPTO_STATIC_MUTEX_unlock_read(&malloc_failure_lock);
+  CRYPTO_MUTEX_unlock_read(&malloc_failure_lock);
 }
 
 static void init_malloc_failure(void) {
@@ -200,11 +174,11 @@ static int should_fail_allocation() {
 
   // We lock just so multi-threaded tests are still correct, but we won't test
   // every malloc exhaustively.
-  CRYPTO_STATIC_MUTEX_lock_write(&malloc_failure_lock);
+  CRYPTO_MUTEX_lock_write(&malloc_failure_lock);
   int should_fail = current_malloc_count == malloc_number_to_fail;
   current_malloc_count++;
   any_malloc_failed = any_malloc_failed || should_fail;
-  CRYPTO_STATIC_MUTEX_unlock_write(&malloc_failure_lock);
+  CRYPTO_MUTEX_unlock_write(&malloc_failure_lock);
 
   if (should_fail && break_on_malloc_fail) {
     raise(SIGTRAP);
@@ -216,9 +190,9 @@ static int should_fail_allocation() {
 }
 
 void OPENSSL_reset_malloc_counter_for_testing(void) {
-  CRYPTO_STATIC_MUTEX_lock_write(&malloc_failure_lock);
+  CRYPTO_MUTEX_lock_write(&malloc_failure_lock);
   current_malloc_count = 0;
-  CRYPTO_STATIC_MUTEX_unlock_write(&malloc_failure_lock);
+  CRYPTO_MUTEX_unlock_write(&malloc_failure_lock);
 }
 
 #else
@@ -241,14 +215,6 @@ void *OPENSSL_malloc(size_t size) {
   }
 
   if (size + OPENSSL_MALLOC_PREFIX < size) {
-    // |OPENSSL_malloc| is a central function in BoringSSL thus a reference to
-    // |kBoringSSLBinaryTag| is created here so that the tag isn't discarded by
-    // the linker. The following is sufficient to stop GCC, Clang, and MSVC
-    // optimising away the reference at the time of writing. Since this
-    // probably results in an actual memory reference, it is put in this very
-    // rare code path.
-    uint8_t unused = *(volatile uint8_t *)kBoringSSLBinaryTag;
-    (void) unused;
     goto err;
   }
 
@@ -266,6 +232,23 @@ void *OPENSSL_malloc(size_t size) {
   // This only works because ERR does not call OPENSSL_malloc.
   OPENSSL_PUT_ERROR(CRYPTO, ERR_R_MALLOC_FAILURE);
   return NULL;
+}
+
+void *OPENSSL_zalloc(size_t size) {
+  void *ret = OPENSSL_malloc(size);
+  if (ret != NULL) {
+    OPENSSL_memset(ret, 0, size);
+  }
+  return ret;
+}
+
+void *OPENSSL_calloc(size_t num, size_t size) {
+  if (size != 0 && num > SIZE_MAX / size) {
+    OPENSSL_PUT_ERROR(CRYPTO, ERR_R_OVERFLOW);
+    return NULL;
+  }
+
+  return OPENSSL_zalloc(num * size);
 }
 
 void OPENSSL_free(void *orig_ptr) {

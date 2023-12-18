@@ -29,6 +29,8 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include <wtf/UniqueRef.h>
+
 #if USE(GSTREAMER)
 #include "AudioEncoderGStreamer.h"
 #endif

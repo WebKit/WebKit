@@ -27,13 +27,7 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
-#include <wtf/ArgumentCoder.h>
 #include <wtf/text/WTFString.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
 
 namespace WebCore {
 class ScrollingStateTree;
@@ -69,12 +63,5 @@ private:
 };
 
 } // namespace WebKit
-
-namespace IPC {
-template<> struct ArgumentCoder<WebCore::ScrollingStateTree> {
-    static void encode(Encoder&, const WebCore::ScrollingStateTree&);
-    static std::optional<WebCore::ScrollingStateTree> decode(Decoder&);
-};
-}
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

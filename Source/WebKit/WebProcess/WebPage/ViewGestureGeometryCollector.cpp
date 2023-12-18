@@ -71,17 +71,17 @@ ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
     WebProcess::singleton().removeMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.identifier());
 }
 
-void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
 {
 #if PLATFORM(MAC)
-    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
 #if PLATFORM(IOS_FAMILY)
-    m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
 }
 
-void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
+void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint gestureLocationInViewCoordinates)
 {
     RefPtr frameView = m_webPage.localMainFrameView();
     if (!frameView)
@@ -110,19 +110,20 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
         else if (currentScale < textLegibilityScales->second - minimumScaleDifferenceForZooming)
             targetScale = textLegibilityScales->second;
 
-        FloatRect targetRectInContentCoordinates { origin, FloatSize() };
+        FloatRect targetRectInContentCoordinates { gestureLocationInViewCoordinates, FloatSize() };
         targetRectInContentCoordinates.inflate(m_webPage.viewportConfiguration().viewLayoutSize() / (2 * targetScale));
 
-        dispatchDidCollectGeometryForSmartMagnificationGesture(origin, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
+        dispatchDidCollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
         return;
     }
 #endif // PLATFORM(IOS_FAMILY)
 
-    IntPoint originInContentsSpace = frameView->windowToContents(roundedIntPoint(origin));
+    IntPoint originInContentsSpace = frameView->windowToContents(roundedIntPoint(gestureLocationInViewCoordinates));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
     if (auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame()))
         mainFrame->document()->hitTest(HitTestRequest(), hitTestResult);
+
     RefPtr node = hitTestResult.innerNode();
     if (!node) {
         dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint(), FloatRect(), FloatRect(), false, 0, 0);
@@ -130,10 +131,10 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     }
 
     bool isReplaced;
-    FloatRect renderRect;
+    FloatRect absoluteBoundingRect;
 
-    computeZoomInformationForNode(*node, origin, renderRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
-    dispatchDidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+    computeZoomInformationForNode(*node, gestureLocationInViewCoordinates, absoluteBoundingRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+    dispatchDidCollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates, absoluteBoundingRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -221,18 +222,18 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
 
 #endif // PLATFORM(IOS_FAMILY)
 
-void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, FloatPoint& origin, FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale)
+void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, FloatPoint& origin, FloatRect& absoluteBoundingRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale)
 {
-    renderRect = node.renderRect(&isReplaced);
+    absoluteBoundingRect = node.absoluteBoundingRect(&isReplaced);
     if (node.document().isImageDocument()) {
         if (HTMLImageElement* imageElement = static_cast<ImageDocument&>(node.document()).imageElement()) {
             if (&node != imageElement) {
-                renderRect = imageElement->renderRect(&isReplaced);
+                absoluteBoundingRect = imageElement->absoluteBoundingRect(&isReplaced);
                 FloatPoint newOrigin = origin;
-                if (origin.x() < renderRect.x() || origin.x() > renderRect.maxX())
-                    newOrigin.setX(renderRect.x() + renderRect.width() / 2);
-                if (origin.y() < renderRect.y() || origin.y() > renderRect.maxY())
-                    newOrigin.setY(renderRect.y() + renderRect.height() / 2);
+                if (origin.x() < absoluteBoundingRect.x() || origin.x() > absoluteBoundingRect.maxX())
+                    newOrigin.setX(absoluteBoundingRect.x() + absoluteBoundingRect.width() / 2);
+                if (origin.y() < absoluteBoundingRect.y() || origin.y() > absoluteBoundingRect.maxY())
+                    newOrigin.setY(absoluteBoundingRect.y() + absoluteBoundingRect.height() / 2);
                 origin = newOrigin;
             }
             isReplaced = true;

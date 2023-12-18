@@ -81,6 +81,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-svg.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-root-element-group-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-root-element-group-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-root-element-group.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-rotated-clip-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-rotated-clip.html
 /LayoutTests/imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-script-expected.html

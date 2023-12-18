@@ -1,7 +1,18 @@
 Tests the #comp_hidden_not_referenced portions of the AccName Name Computation algorithm.
 
-heading label
+hidden, visible to all users   hidden but referenced, visible to all users   hidden, visible to all users  visible to all users, hidden, hidden but referenced,
+visible to all users, un-hidden for all users
 
 
-PASS heading with interior hidden node
+PASS button containing a rendered, unreferenced element that is aria-hidden=true, an unreferenced element with the hidden host language attribute, and an unreferenced element that is unconditionally rendered
+PASS button labelled by element that is aria-hidden=true
+PASS button labelled by element with the hidden host language attribute
+PASS link labelled by elements with assorted visibility and a11y tree exposure
+FAIL heading with name from content, containing element that is visibility:hidden with nested content that is visibility:visible assert_equals: <h2 class="ex" data-testname="heading with name from content, containing element that is visibility:hidden with nested content that is visibility:visible" data-expectedlabel="visible to all users, un-hidden for all users">
+  visible to all users,
+  <span style="visibility: hidden;">
+    hidden from all users,
+    <span style="visibility: visible;">un-hidden for all users</span>
+  </span>
+</h2> expected "visible to all users, un-hidden for all users" but got "visible to all users,"
 

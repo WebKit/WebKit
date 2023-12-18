@@ -48,7 +48,6 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
     parameters.gpuToolsExtensionHandles = createGPUToolsSandboxExtensionHandlesIfNeeded();
     parameters.applicationVisibleName = applicationVisibleName();
-    parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 #if PLATFORM(MAC)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
@@ -78,7 +77,7 @@ void GPUProcessProxy::enablePowerLogging()
     auto handle = SandboxExtension::createHandleForMachLookup("com.apple.powerlog.plxpclogger.xpc"_s, std::nullopt);
     if (!handle)
         return;
-    send(Messages::GPUProcess::EnablePowerLogging(*handle), 0);
+    send(Messages::GPUProcess::EnablePowerLogging(WTFMove(*handle)), 0);
 }
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY)
 

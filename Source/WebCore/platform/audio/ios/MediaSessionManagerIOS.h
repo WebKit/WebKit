@@ -73,8 +73,8 @@ private:
     void sessionWillEndPlayback(PlatformMediaSession&, DelayCallingUpdateNowPlaying) final;
 
     // AudioSession::InterruptionObserver
-    void beginAudioSessionInterruption() final { beginInterruption(PlatformMediaSession::SystemInterruption); }
-    void endAudioSessionInterruption(AudioSession::MayResume mayResume) final { endInterruption(mayResume == AudioSession::MayResume::Yes ? PlatformMediaSession::MayResumePlaying : PlatformMediaSession::NoFlags); }
+    void beginAudioSessionInterruption() final { beginInterruption(PlatformMediaSession::InterruptionType::SystemInterruption); }
+    void endAudioSessionInterruption(AudioSession::MayResume mayResume) final { endInterruption(mayResume == AudioSession::MayResume::Yes ? PlatformMediaSession::EndInterruptionFlags::MayResumePlaying : PlatformMediaSession::EndInterruptionFlags::NoFlags); }
 
     // MediaSessionHelperClient
     void applicationWillEnterForeground(SuspendedUnderLock) final;
@@ -85,6 +85,7 @@ private:
     void activeAudioRouteDidChange(ShouldPause) final;
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) final;
     void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit) final;
+    void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback) final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaSessionManageriOS"; }
 #endif

@@ -105,7 +105,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
         options.add(OptionType::CharacterData);
 
     if (!validateOptions(options))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     node.registerMutationObserver(*this, options, attributeFilter);
 
@@ -192,13 +192,13 @@ void MutationObserver::deliver()
 
     // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
-    Vector<MutationObserverRegistration*, 1> transientRegistrations;
+    Vector<WeakPtr<MutationObserverRegistration>, 1> transientRegistrations;
     Vector<HashSet<GCReachableRef<Node>>, 1> nodesToKeepAlive;
     HashSet<GCReachableRef<Node>> pendingTargets;
     pendingTargets.swap(m_pendingTargets);
     for (auto& registration : m_registrations) {
         if (registration.hasTransientRegistrations())
-            transientRegistrations.append(&registration);
+            transientRegistrations.append(registration);
     }
     for (auto& registration : transientRegistrations)
         nodesToKeepAlive.append(registration->takeTransientRegistrations());
@@ -213,14 +213,19 @@ void MutationObserver::deliver()
 
     // FIXME: Keep mutation observer callback as long as its observed nodes are alive. See https://webkit.org/b/179224.
     if (m_callback->hasCallback()) {
-        auto* context = m_callback->scriptExecutionContext();
+        RefPtr context = m_callback->scriptExecutionContext();
         if (!context)
             return;
 
         InspectorInstrumentation::willFireObserverCallback(*context, "MutationObserver"_s);
-        m_callback->handleEvent(*this, records, *this);
+        protectedCallback()->handleEvent(*this, records, *this);
         InspectorInstrumentation::didFireObserverCallback(*context);
     }
+}
+
+Ref<MutationCallback> MutationObserver::protectedCallback() const
+{
+    return m_callback;
 }
 
 // https://dom.spec.whatwg.org/#notify-mutation-observers

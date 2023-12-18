@@ -52,7 +52,6 @@ public:
 
     std::optional<WebPageProxyIdentifier> webPageProxyID() const;
 
-#if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final { return !!m_frameSpecificStorageAccessIdentifier; }
     
     struct FrameSpecificStorageAccessIdentifier {
@@ -62,7 +61,6 @@ public:
     void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&) final;
     Vector<WebCore::RegistrableDomain> loadedSubresourceDomains() const final;
-#endif
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;
 
@@ -166,9 +164,7 @@ private:
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
 
-#if ENABLE(SERVICE_WORKER)
     void didFinishServiceWorkerPageRegistration(bool success) final;
-#endif
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
@@ -185,6 +181,8 @@ private:
     WebCore::ResourceError httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const final;
     
+    void loadStorageAccessQuirksIfNeeded() final;
+
     bool shouldFallBack(const WebCore::ResourceError&) const final;
     
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
@@ -277,10 +275,15 @@ private:
     inline bool hasPlugInView() const;
 
     void broadcastFrameRemovalToOtherProcesses() final;
+    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    void didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&&, WebCore::WindowProxyProperty) final;
+#endif
 
     ScopeExit<Function<void()>> m_frameInvalidator;
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };
 #endif
@@ -289,16 +292,14 @@ private:
     bool m_frameHasCustomContentProvider { false };
     bool m_frameCameFromBackForwardCache { false };
     bool m_useIconLoadingClient { false };
-#if ENABLE(TRACKING_PREVENTION)
     std::optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
-#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;
     void notifyPageOfAppBoundBehavior() final;
 #endif
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const final;
 #endif
 

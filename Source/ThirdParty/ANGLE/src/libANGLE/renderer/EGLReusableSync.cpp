@@ -14,9 +14,7 @@
 namespace rx
 {
 
-ReusableSync::ReusableSync(const egl::AttributeMap &attribs)
-    : EGLSyncImpl(), mStatus(EGL_UNSIGNALED)
-{}
+ReusableSync::ReusableSync() : EGLSyncImpl(), mStatus(0) {}
 
 void ReusableSync::onDestroy(const egl::Display *display) {}
 
@@ -28,8 +26,11 @@ ReusableSync::~ReusableSync()
 
 egl::Error ReusableSync::initialize(const egl::Display *display,
                                     const gl::Context *context,
-                                    EGLenum type)
+                                    EGLenum type,
+                                    const egl::AttributeMap &attribs)
 {
+    ASSERT(type == EGL_SYNC_REUSABLE_KHR);
+    mStatus = EGL_UNSIGNALED;
     return egl::NoError();
 }
 

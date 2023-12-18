@@ -202,7 +202,7 @@ class Image final : public RefCountObject, public LabeledObject
 
     Error exportVkImage(void *vkImage, void *vkImageCreateInfo);
 
-    ContextMutex *getSharedContextMutex() const { return mSharedContextMutex; }
+    ContextMutex *getContextMutex() const { return mContextMutex; }
 
   private:
     friend class ImageSibling;
@@ -223,7 +223,7 @@ class Image final : public RefCountObject, public LabeledObject
     bool mIsTexturable = false;
     bool mIsRenderable = false;
 
-    ContextMutex *mSharedContextMutex;  // Reference counted
+    ContextMutex *mContextMutex;  // Reference counted
 };
 }  // namespace egl
 

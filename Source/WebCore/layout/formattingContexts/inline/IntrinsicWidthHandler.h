@@ -39,8 +39,8 @@ class IntrinsicWidthHandler {
 public:
     IntrinsicWidthHandler(InlineFormattingContext&, const InlineItemList&, bool mayUseSimplifiedTextOnlyInlineLayout);
 
-    IntrinsicWidthConstraints computedIntrinsicSizes();
-    LayoutUnit maximumContentSize();
+    InlineLayoutUnit minimumContentSize();
+    InlineLayoutUnit maximumContentSize();
 
     struct LineBreakingResult {
         InlineLayoutUnit constraint;
@@ -51,12 +51,13 @@ public:
 private:
     enum class MayCacheLayoutResult : bool { No, Yes };
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&, MayCacheLayoutResult = MayCacheLayoutResult::No);
-    InlineLayoutUnit simplifiedMinimumWidth() const;
+    InlineLayoutUnit simplifiedMinimumWidth(const ElementBox& root) const;
+    InlineLayoutUnit simplifiedMaximumWidth(MayCacheLayoutResult = MayCacheLayoutResult::No);
 
     InlineFormattingContext& formattingContext();
     const InlineFormattingContext& formattingContext() const;
     const InlineContentCache& formattingState() const;
-    const RenderStyle& rootStyle() const;
+    const ElementBox& root() const;
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;

@@ -28,9 +28,8 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 #include "RemoteMediaDescription.h"
-#include "TrackPrivateRemoteIdentifier.h"
+#include <WebCore/TrackBase.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -39,7 +38,7 @@ struct InitializationSegmentInfo {
 
     struct TrackInformation {
         MediaDescriptionInfo description;
-        TrackPrivateRemoteIdentifier identifier;
+        WebCore::TrackID id;
     };
 
     Vector<TrackInformation> audioTracks;

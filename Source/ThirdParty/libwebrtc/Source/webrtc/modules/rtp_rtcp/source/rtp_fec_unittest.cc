@@ -14,7 +14,7 @@
 #include "absl/algorithm/container.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
-#include "modules/rtp_rtcp/source/flexfec_header_reader_writer.h"
+#include "modules/rtp_rtcp/source/flexfec_03_header_reader_writer.h"
 #include "modules/rtp_rtcp/source/forward_error_correction.h"
 #include "modules/rtp_rtcp/source/ulpfec_header_reader_writer.h"
 #include "rtc_base/random.h"
@@ -177,8 +177,8 @@ class FlexfecForwardErrorCorrection : public ForwardErrorCorrection {
 
   FlexfecForwardErrorCorrection()
       : ForwardErrorCorrection(
-            std::unique_ptr<FecHeaderReader>(new FlexfecHeaderReader()),
-            std::unique_ptr<FecHeaderWriter>(new FlexfecHeaderWriter()),
+            std::unique_ptr<FecHeaderReader>(new Flexfec03HeaderReader()),
+            std::unique_ptr<FecHeaderWriter>(new Flexfec03HeaderWriter()),
             kFecSsrc,
             kMediaSsrc) {}
 

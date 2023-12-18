@@ -32,6 +32,8 @@
 
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
+#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLBodyElement.h"
@@ -54,6 +56,8 @@
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RubyElement.h"
+#include "RubyTextElement.h"
 #include "SVGElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
@@ -65,6 +69,8 @@
 #include "StyleUpdate.h"
 #include "Text.h"
 #include "TouchAction.h"
+#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
 
@@ -213,11 +219,6 @@ static DisplayType equivalentInlineDisplay(const RenderStyle& style)
     return DisplayType::Inline;
 }
 
-static bool isOutermostSVGElement(const Element* element)
-{
-    return element && element->isSVGElement() && downcast<SVGElement>(*element).isOutermostSVGSVGElement();
-}
-
 static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const Element* element)
 {
     if (style.isFloating() || style.hasOutOfFlowPosition())
@@ -237,7 +238,7 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
     }();
 
     // Outermost <svg> roots are considered to be atomic inline-level.
-    if (isOutermostSVGElement(element))
+    if (RefPtr svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
         return false;
 
     // There is no other good way to prevent decorations from affecting user agent shadow trees.
@@ -369,6 +370,28 @@ static bool shouldInlinifyForRuby(const RenderStyle& style, const RenderStyle& p
     return hasRubyParent && !style.hasOutOfFlowPosition() && !style.isFloating();
 }
 
+static bool isRubyContainerOrInternalRubyBox(const RenderStyle& style)
+{
+    auto display = style.display();
+    return display == DisplayType::Ruby
+        || display == DisplayType::RubyAnnotation
+        || display == DisplayType::RubyBase;
+}
+
+// https://drafts.csswg.org/css-ruby-1/#bidi
+static UnicodeBidi adjustUnicodeBidiForRuby(UnicodeBidi unicodeBidi)
+{
+    switch (unicodeBidi) {
+    case UnicodeBidi::Normal:
+    case UnicodeBidi::Embed:
+        return UnicodeBidi::Isolate;
+    case UnicodeBidi::Override:
+        return UnicodeBidi::IsolateOverride;
+    default:
+        return unicodeBidi;
+    }
+}
+
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -395,6 +418,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
             if (m_element->hasTagName(legendTag))
                 style.setEffectiveDisplay(equivalentBlockDisplay(style));
+
+            if (isRubyContainerOrInternalRubyBox(style))
+                style.setEffectiveDisplay(style.display());
         }
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
@@ -442,6 +468,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // https://www.w3.org/TR/css-ruby-1/#anon-gen-inlinize
         if (shouldInlinifyForRuby(style, m_parentBoxStyle))
             style.setEffectiveDisplay(equivalentInlineDisplay(style));
+        // https://drafts.csswg.org/css-ruby-1/#bidi
+        if (isRubyContainerOrInternalRubyBox(style))
+            style.setUnicodeBidi(adjustUnicodeBidiForRuby(style.unicodeBidi()));
     }
 
     auto hasAutoZIndex = [](const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element* element) {
@@ -453,7 +482,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // of the value of the position property, with one exception: as for boxes in CSS 2.1, outer ‘svg’ elements
         // must be positioned for z-index to apply to them.
         if (element && element->document().settings().layerBasedSVGEngineEnabled()) {
-            if (auto* svgElement = dynamicDowncast<SVGElement>(element); svgElement && svgElement->isOutermostSVGSVGElement())
+            if (RefPtr svgElement = dynamicDowncast<SVGElement>(*element); svgElement && svgElement->isOutermostSVGSVGElement())
                 return element->renderer() && element->renderer()->style().position() == PositionType::Static;
 
             return false;
@@ -523,7 +552,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setOverflowY(style.overflowY() == Overflow::Visible ? Overflow::Auto : style.overflowY());
         }
 
-        if (is<HTMLInputElement>(*m_element) && downcast<HTMLInputElement>(*m_element).isPasswordField())
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); input && input->isPasswordField())
             style.setTextSecurity(style.inputSecurity() == InputSecurity::Auto ? TextSecurity::Disc : TextSecurity::None);
 
         // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
@@ -539,7 +568,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             // Make horizontal marquees not wrap.
             if (!isVertical) {
                 style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Collapse);
-                style.setTextWrap(TextWrap::NoWrap);
+                style.setTextWrapMode(TextWrapMode::NoWrap);
                 style.setTextAlign(TextAlignMode::Start);
             }
             // Apparently this is the expected legacy behavior.
@@ -610,6 +639,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     style.adjustAnimations();
     style.adjustTransitions();
 
+    // Do the same for scroll-timeline and view-timeline longhands.
+    style.adjustScrollTimelines();
+    style.adjustViewTimelines();
+
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls)) {
         // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
@@ -617,7 +650,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (is<HTMLFormControlElement>(m_element) && style.computedFontSize() >= 11) {
             // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
             // so we have to treat all image buttons as though they were explicitly sized.
-            if (!is<HTMLInputElement>(*m_element) || !downcast<HTMLInputElement>(*m_element).isImageButton())
+            if (RefPtr input = dynamicDowncast<HTMLInputElement>(*m_element); !input || !input->isImageButton())
                 addIntrinsicMargins(style);
         }
     }
@@ -645,8 +678,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         style.setTransformStyleForcedToFlat(forceToFlat);
     }
 
-    if (is<SVGElement>(m_element))
-        adjustSVGElementStyle(style, downcast<SVGElement>(*m_element));
+    if (RefPtr element = dynamicDowncast<SVGElement>(m_element))
+        adjustSVGElementStyle(style, *element);
 
     // If the inherited value of justify-items includes the 'legacy' keyword (plus 'left', 'right' or
     // 'center'), 'legacy' computes to the the inherited value. Otherwise, 'auto' computes to 'normal'.
@@ -656,8 +689,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     style.setEffectiveTouchActions(computeEffectiveTouchActions(style, m_parentStyle.effectiveTouchActions()));
 
     // Counterparts in Element::addToTopLayer/removeFromTopLayer & SharingResolver::canShareStyleWithElement need to match!
-    auto hasInertAttribute = [this] (const Element* element) -> bool {
-        return m_document.settings().inertAttributeEnabled() && is<HTMLElement>(element) && element->hasAttributeWithoutSynchronization(HTMLNames::inertAttr);
+    auto hasInertAttribute = [] (const Element* element) -> bool {
+        return is<HTMLElement>(element) && element->hasAttributeWithoutSynchronization(HTMLNames::inertAttr);
     };
     auto isInertSubtreeRoot = [this, hasInertAttribute] (const Element* element) -> bool {
         if (m_document.activeModalDialog() && element == m_document.documentElement())
@@ -786,10 +819,9 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     // - the "filter" property applies to the element and it has a computed value other than none
     // - a property defined in another specification is applied and that property is defined to establish a stacking context in SVG
     //
-    // Some of the rules above were already enforced in StyleResolver::adjustRenderStyle() - for those cases assertions were added.
+    // Some of the rules above were already enforced in StyleResolver::adjust() - for those cases assertions were added.
     if (svgElement.document().settings().layerBasedSVGEngineEnabled() && style.hasAutoUsedZIndex()) {
-        // adjustRenderStyle() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
-        ASSERT(!style.hasClip());
+        // adjust() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
         ASSERT(!style.clipPath());
         ASSERT(!style.hasFilter());
 
@@ -891,14 +923,13 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     }
 #if ENABLE(VIDEO)
     if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
-        if (is<HTMLDivElement>(m_element) && style.display() == DisplayType::None) {
+        if (RefPtr div = dynamicDowncast<HTMLDivElement>(m_element); div && style.display() == DisplayType::None) {
             static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
-            auto& div = downcast<HTMLDivElement>(*m_element);
-            if (div.hasClass() && div.classNames().contains(instreamNativeVideoDivClass)) {
-                auto* video = div.treeScope().getElementById(videoElementID);
-                if (is<HTMLVideoElement>(video) && downcast<HTMLVideoElement>(*video).isFullscreen())
+            if (div->hasClass() && div->classNames().contains(instreamNativeVideoDivClass)) {
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(div->treeScope().getElementById(videoElementID));
+                if (video && video->isFullscreen())
                     style.setEffectiveDisplay(DisplayType::Block);
             }
         }

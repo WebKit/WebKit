@@ -35,7 +35,6 @@
 #include <atomic>
 #include <dispatch/dispatch.h>
 #include <wtf/HashMap.h>
-#include <wtf/OSObjectPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -58,68 +57,71 @@ public:
 
     bool displayDidRefreshIsPending() const { return m_waitingForBackingStoreSwap; }
 
+    void gpuProcessConnectionWasDestroyed();
+
 protected:
     void updateRendering();
 
 private:
     // DrawingArea
-    void setNeedsDisplay() override;
-    void setNeedsDisplayInRect(const WebCore::IntRect&) override;
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
-    void updateGeometry(const WebCore::IntSize& viewSize, const std::optional<VisibleContentRectUpdateInfo>&, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) override;
+    void setNeedsDisplay() final;
+    void setNeedsDisplayInRect(const WebCore::IntRect&) final;
+    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) final;
+    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) final;
 
-    WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
-    void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
+    WebCore::GraphicsLayerFactory* graphicsLayerFactory() final;
+    void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;
     void addRootFrame(WebCore::FrameIdentifier) final;
-    void triggerRenderingUpdate() override;
+    void removeRootFrame(WebCore::FrameIdentifier) final;
+    void triggerRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;
-    void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
+    void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
 
     void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
-    virtual void willCommitLayerTree(RemoteLayerTreeTransaction&) { };
+    virtual void willCommitLayerTree(RemoteLayerTreeTransaction&) { }
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
     void setPreferredFramesPerSecond(WebCore::FramesPerSecond);
 
-    bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const override;
+    bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const final;
 
-    void updatePreferences(const WebPreferencesStore&) override;
+    void updatePreferences(const WebPreferencesStore&) final;
 
-    bool supportsAsyncScrolling() const override { return true; }
+    bool supportsAsyncScrolling() const final { return true; }
     bool usesDelegatedPageScaling() const override { return true; }
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
-    void setLayerTreeStateIsFrozen(bool) override;
-    bool layerTreeStateIsFrozen() const override { return m_isRenderingSuspended; }
+    void setLayerTreeStateIsFrozen(bool) final;
+    bool layerTreeStateIsFrozen() const final { return m_isRenderingSuspended; }
 
-    void forceRepaint() override;
-    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
+    void forceRepaint() final;
+    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) final;
 
-    void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
-    std::optional<WebCore::FloatRect> viewExposedRect() const override { return m_viewExposedRect; }
+    void setViewExposedRect(std::optional<WebCore::FloatRect>) final;
+    std::optional<WebCore::FloatRect> viewExposedRect() const final { return m_viewExposedRect; }
 
-    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) override;
-    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) override;
+    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime) final;
+    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key) final;
 
-    WebCore::FloatRect exposedContentRect() const override;
-    void setExposedContentRect(const WebCore::FloatRect&) override;
+    WebCore::FloatRect exposedContentRect() const final;
+    void setExposedContentRect(const WebCore::FloatRect&) final;
 
-    void displayDidRefresh() override;
+    void displayDidRefresh() final;
 
-    void setDeviceScaleFactor(float) override;
+    void setDeviceScaleFactor(float) final;
 
     void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
 
-    void activityStateDidChange(OptionSet<WebCore::ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&&) override;
+    void activityStateDidChange(OptionSet<WebCore::ActivityState> changed, ActivityStateChangeID, CompletionHandler<void()>&&) final;
 
-    bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) override;
+    bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) final;
 
     void updateRootLayers();
 
     void addCommitHandlers();
     void startRenderingUpdateTimer();
-    void didCompleteRenderingUpdateDisplay() override;
+    void didCompleteRenderingUpdateDisplay() final;
 
     TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
 
@@ -133,19 +135,22 @@ private:
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:
-        static Ref<BackingStoreFlusher> create(RefPtr<IPC::Connection>&&, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
+        static Ref<BackingStoreFlusher> create(Ref<IPC::Connection>&&);
 
-        void flush();
-        bool hasFlushed() const { return m_hasFlushed; }
+        void flush(UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>&&);
+
+        bool hasPendingFlush() const { return m_hasPendingFlush; }
+        void markHasPendingFlush()
+        {
+            bool hadPendingFlush = m_hasPendingFlush.exchange(true);
+            RELEASE_ASSERT(!hadPendingFlush);
+        }
 
     private:
-        BackingStoreFlusher(RefPtr<IPC::Connection>&&, UniqueRef<IPC::Encoder>&&, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>);
+        explicit BackingStoreFlusher(Ref<IPC::Connection>&&);
 
-        RefPtr<IPC::Connection> m_connection;
-        std::unique_ptr<IPC::Encoder> m_commitEncoder;
-        Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> m_flushers;
-
-        std::atomic<bool> m_hasFlushed;
+        Ref<IPC::Connection> m_connection;
+        std::atomic<bool> m_hasPendingFlush { false };
     };
 
     std::unique_ptr<RemoteLayerTreeContext> m_remoteLayerTreeContext;
@@ -170,8 +175,8 @@ private:
     bool m_waitingForBackingStoreSwap { false };
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
 
-    OSObjectPtr<dispatch_queue_t> m_commitQueue;
-    RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;
+    Ref<WorkQueue> m_commitQueue;
+    RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
 
     TransactionID m_currentTransactionID;
     Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;

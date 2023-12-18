@@ -22,7 +22,7 @@ PASS: Canvas context should be Bitmap Renderer.
 PASS: Removed canvas has expected ID.
 
 -- Running test case: Canvas.CreateContextBitmapRenderer.Offscreen
-PASS: Canvas context should be Bitmap Renderer.
+PASS: Canvas context should be Bitmap Renderer (Offscreen).
   0: getContext - [native code]
   1: createOffscreenCanvas - inspector/canvas/resources/create-context-utilities.js:36:36
   2: Global Code - [program code]
@@ -30,7 +30,7 @@ PASS: Canvas context should be Bitmap Renderer.
 PASS: Removed canvas has expected ID.
 
 -- Running test case: Canvas.CreateContextBitmapRenderer.Worker
-PASS: Canvas context should be Bitmap Renderer.
+PASS: Canvas context should be Bitmap Renderer (Offscreen).
   0: getContext - [native code]
   1: createContext - inspector/canvas/resources/worker.js:4:36
   2: (anonymous function) - inspector/canvas/resources/worker.js:14:21

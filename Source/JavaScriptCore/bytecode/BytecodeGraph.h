@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,14 @@
 #include "BytecodeDumper.h"
 #include <wtf/IndexedContainerIterator.h>
 #include <wtf/IteratorRange.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
 class BytecodeGraph {
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(BytecodeGraph);
+    WTF_MAKE_TZONE_ALLOCATED(BytecodeGraph);
 public:
     using BasicBlockType = JSBytecodeBasicBlock;
     using BasicBlocksVector = typename BasicBlockType::BasicBlockVector;

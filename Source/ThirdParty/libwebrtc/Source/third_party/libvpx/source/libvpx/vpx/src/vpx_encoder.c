@@ -54,6 +54,10 @@ vpx_codec_err_t vpx_codec_enc_init_ver(vpx_codec_ctx_t *ctx,
     res = ctx->iface->init(ctx, NULL);
 
     if (res) {
+      // IMPORTANT: ctx->priv->err_detail must be null or point to a string
+      // that remains valid after ctx->priv is destroyed, such as a C string
+      // literal. This makes it safe to call vpx_codec_error_detail() after
+      // vpx_codec_enc_init_ver() failed.
       ctx->err_detail = ctx->priv ? ctx->priv->err_detail : NULL;
       vpx_codec_destroy(ctx);
     }
@@ -173,7 +177,7 @@ vpx_codec_err_t vpx_codec_enc_config_default(vpx_codec_iface_t *iface,
 #include "vpx_ports/x86.h"
 #define FLOATING_POINT_INIT() \
   do {                        \
-    unsigned short x87_orig_mode = x87_set_double_precision();
+  unsigned short x87_orig_mode = x87_set_double_precision()
 #define FLOATING_POINT_RESTORE()       \
   x87_set_control_word(x87_orig_mode); \
   }                                    \

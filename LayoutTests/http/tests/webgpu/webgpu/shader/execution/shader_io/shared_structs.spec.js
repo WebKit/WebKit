@@ -2,10 +2,10 @@
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ export const description = `Test the shared use of structures containing entry point IO attributes`;
 import { makeTestGroup } from '../../../../common/framework/test_group.js';
-import { GPUTest } from '../../../gpu_test.js';
+import { GPUTest, TextureTestMixin } from '../../../gpu_test.js';
 import { checkElementsEqual } from '../../../util/check_contents.js';
 
-export const g = makeTestGroup(GPUTest);
+export const g = makeTestGroup(TextureTestMixin(GPUTest));
 
 g.test('shared_with_buffer')
   .desc(
@@ -192,35 +192,22 @@ g.test('shared_between_stages')
     // Test a few points to make sure we rendered a half-red/half-green triangle.
     const redPixel = new Uint8Array([255, 0, 0, 255]);
     const greenPixel = new Uint8Array([0, 255, 0, 255]);
-    for (const p of [
-      { x: 16, y: 15 },
-      { x: 16, y: 15 },
-      { x: 22, y: 20 },
-    ]) {
-      t.expectSinglePixelIn2DTexture(renderTarget, 'rgba8unorm', p, {
-        exp: redPixel,
-      });
-    }
-    for (const p of [
-      { x: 14, y: 15 },
-      { x: 14, y: 8 },
-      { x: 8, y: 20 },
-    ]) {
-      t.expectSinglePixelIn2DTexture(renderTarget, 'rgba8unorm', p, {
-        exp: greenPixel,
-      });
-    }
     const blackPixel = new Uint8Array([0, 0, 0, 0]);
-    for (const p of [
-      { x: 2, y: 2 },
-      { x: 2, y: 28 },
-      { x: 28, y: 2 },
-      { x: 28, y: 28 },
-    ]) {
-      t.expectSinglePixelIn2DTexture(renderTarget, 'rgba8unorm', p, {
-        exp: blackPixel,
-      });
-    }
+    t.expectSinglePixelComparisonsAreOkInTexture({ texture: renderTarget }, [
+      // Red pixels
+      { coord: { x: 16, y: 15 }, exp: redPixel },
+      { coord: { x: 16, y: 8 }, exp: redPixel },
+      { coord: { x: 22, y: 20 }, exp: redPixel },
+      // Green pixels
+      { coord: { x: 14, y: 15 }, exp: greenPixel },
+      { coord: { x: 14, y: 8 }, exp: greenPixel },
+      { coord: { x: 8, y: 20 }, exp: greenPixel },
+      // Black pixels
+      { coord: { x: 2, y: 2 }, exp: blackPixel },
+      { coord: { x: 2, y: 28 }, exp: blackPixel },
+      { coord: { x: 28, y: 2 }, exp: blackPixel },
+      { coord: { x: 28, y: 28 }, exp: blackPixel },
+    ]);
   });
 
 g.test('shared_with_non_entry_point_function')
@@ -332,25 +319,17 @@ g.test('shared_with_non_entry_point_function')
 
     // Test a few points to make sure we rendered a red triangle.
     const redPixel = new Uint8Array([255, 0, 0, 255]);
-    for (const p of [
-      { x: 15, y: 15 },
-      { x: 15, y: 8 },
-      { x: 8, y: 20 },
-      { x: 22, y: 20 },
-    ]) {
-      t.expectSinglePixelIn2DTexture(renderTarget, 'rgba8unorm', p, {
-        exp: redPixel,
-      });
-    }
     const blackPixel = new Uint8Array([0, 0, 0, 0]);
-    for (const p of [
-      { x: 2, y: 2 },
-      { x: 2, y: 28 },
-      { x: 28, y: 2 },
-      { x: 28, y: 28 },
-    ]) {
-      t.expectSinglePixelIn2DTexture(renderTarget, 'rgba8unorm', p, {
-        exp: blackPixel,
-      });
-    }
+    t.expectSinglePixelComparisonsAreOkInTexture({ texture: renderTarget }, [
+      // Red pixels
+      { coord: { x: 15, y: 15 }, exp: redPixel },
+      { coord: { x: 15, y: 8 }, exp: redPixel },
+      { coord: { x: 8, y: 20 }, exp: redPixel },
+      { coord: { x: 22, y: 20 }, exp: redPixel },
+      // Black pixels
+      { coord: { x: 2, y: 2 }, exp: blackPixel },
+      { coord: { x: 2, y: 28 }, exp: blackPixel },
+      { coord: { x: 28, y: 2 }, exp: blackPixel },
+      { coord: { x: 28, y: 28 }, exp: blackPixel },
+    ]);
   });

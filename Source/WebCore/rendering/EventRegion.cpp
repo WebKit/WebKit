@@ -45,24 +45,32 @@ EventRegionContext::EventRegionContext(EventRegion& eventRegion)
 
 EventRegionContext::~EventRegionContext() = default;
 
-void EventRegionContext::unite(const Region& region, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegionContext::unite(const FloatRoundedRect& roundedRect, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
-    if (m_transformStack.isEmpty() && m_clipStack.isEmpty()) {
-        m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
+    auto transformAndClipIfNeeded = [&](auto input, auto transform) {
+        if (m_transformStack.isEmpty() && m_clipStack.isEmpty())
+            return input;
+
+        auto transformedAndClippedInput = m_transformStack.isEmpty() ? input : transform(m_transformStack.last(), input);
+        if (!m_clipStack.isEmpty())
+            transformedAndClippedInput.intersect(m_clipStack.last());
+
+        return transformedAndClippedInput;
+    };
+
+    auto region = transformAndClipIfNeeded(approximateAsRegion(roundedRect), [](auto affineTransform, auto region) {
+        return affineTransform.mapRegion(region);
+    });
+    m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
+
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        uniteInteractionRegions(region, renderer);
-#endif
-        return;
-    }
-
-    auto transformedAndClippedRegion = m_transformStack.isEmpty() ? region : m_transformStack.last().mapRegion(region);
-
-    if (!m_clipStack.isEmpty())
-        transformedAndClippedRegion.intersect(m_clipStack.last());
-
-    m_eventRegion.unite(transformedAndClippedRegion, style, overrideUserModifyIsEditable);
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    uniteInteractionRegions(transformedAndClippedRegion, renderer);
+    auto rect = roundedRect.rect();
+    if (is<RenderLayerModelObject>(renderer))
+        rect = snapRectToDevicePixelsIfNeeded(rect, downcast<RenderLayerModelObject>(renderer));
+    auto layerBounds = transformAndClipIfNeeded(rect, [](auto affineTransform, auto rect) {
+        return affineTransform.mapRect(rect);
+    });
+    uniteInteractionRegions(renderer, layerBounds);
 #else
     UNUSED_PARAM(renderer);
 #endif
@@ -78,7 +86,7 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 
-static std::optional<IntRect> guardRectForRegionBounds(const IntRect& regionBounds)
+static std::optional<FloatRect> guardRectForRegionBounds(const FloatRect& regionBounds)
 {
     constexpr int minimumSize = 20;
     constexpr int occlusionMargin = 10;
@@ -101,53 +109,46 @@ static std::optional<IntRect> guardRectForRegionBounds(const IntRect& regionBoun
     return std::nullopt;
 }
 
-void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObject& renderer)
+void EventRegionContext::uniteInteractionRegions(RenderObject& renderer, const FloatRect& layerBounds)
 {
     if (!renderer.page().shouldBuildInteractionRegions())
         return;
 
-    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
-        auto bounds = interactionRegion->rectInLayerCoordinates;
+    if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, layerBounds)) {
+        auto rectForTracking = enclosingIntRect(interactionRegion->rectInLayerCoordinates);
         
         if (interactionRegion->type == InteractionRegion::Type::Occlusion) {
-            if (m_occlusionRects.contains(bounds))
+            if (m_occlusionRects.contains(rectForTracking))
                 return;
-            m_occlusionRects.add(bounds);
+            m_occlusionRects.add(rectForTracking);
             
             m_interactionRegions.append(*interactionRegion);
             return;
         }
         
         
-        if (m_interactionRects.contains(bounds))
+        if (m_interactionRects.contains(rectForTracking))
             return;
 
-        if (shouldConsolidateInteractionRegion(bounds, renderer))
+        if (shouldConsolidateInteractionRegion(renderer, rectForTracking))
             return;
 
-        m_interactionRects.add(bounds);
+        m_interactionRects.add(rectForTracking);
 
         auto regionIterator = m_discoveredRegionsByElement.find(interactionRegion->elementIdentifier);
         if (regionIterator != m_discoveredRegionsByElement.end()) {
             auto discoveredRegion = regionIterator->value;
             
+            // Note: elements with multiple rects still get the `enclosingIntRect` treatment.
+            // Will be fixed in rdar://119259119.
             Region tempRegion;
-            tempRegion.unite(interactionRegion->rectInLayerCoordinates);
+            tempRegion.unite(rectForTracking);
             tempRegion.subtract(discoveredRegion);
             if (tempRegion.isEmpty())
                 return;
             
             discoveredRegion.unite(tempRegion);
             m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
-            
-            auto occlusionRect = guardRectForRegionBounds(tempRegion.bounds());
-            if (occlusionRect) {
-                m_interactionRegions.append({
-                    InteractionRegion::Type::Guard,
-                    interactionRegion->elementIdentifier,
-                    occlusionRect.value()
-                });
-            }
 
             for (auto rect : tempRegion.rects()) {
                 m_interactionRegions.append({
@@ -159,22 +160,24 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
                 });
             }
             return;
-        } else
-            m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
+        }
+
+        m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, rectForTracking);
     
-        auto occlusionRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
-        if (occlusionRect) {
+        auto guardRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
+        if (guardRect) {
             m_interactionRegions.append({
                 InteractionRegion::Type::Guard,
                 interactionRegion->elementIdentifier,
-                occlusionRect.value()
+                guardRect.value()
             });
         }
+
         m_interactionRegions.append(*interactionRegion);
     }
 }
 
-bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, RenderObject& renderer)
+bool EventRegionContext::shouldConsolidateInteractionRegion(RenderObject& renderer, const IntRect& bounds)
 {
     for (auto& ancestor : ancestorsOfType<RenderElement>(renderer)) {
         if (!ancestor.element())
@@ -241,7 +244,7 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
     return false;
 }
 
-// FIXME: switch to `PathUtilities::pathsWithShrinkWrappedRects` once we have rdar://104244712
+// FIXME: (rdar://119259119) switch to `PathUtilities::pathsWithShrinkWrappedRects`
 void EventRegionContext::shrinkWrapInteractionRegions()
 {
     for (auto& region : m_interactionRegions) {
@@ -253,7 +256,8 @@ void EventRegionContext::shrinkWrapInteractionRegions()
             continue;
 
         auto discoveredRegion = regionIterator->value;
-        if (region.rectInLayerCoordinates == discoveredRegion.bounds())
+        auto enclosingRect = enclosingIntRect(region.rectInLayerCoordinates);
+        if (enclosingRect == discoveredRegion.bounds())
             continue;
 
         auto maskedCorners = region.maskedCorners;
@@ -265,10 +269,10 @@ void EventRegionContext::shrinkWrapInteractionRegions()
             maskedCorners.add(InteractionRegion::CornerMask::MaxXMaxYCorner);
         }
 
-        auto horizontallyInflatedRect = region.rectInLayerCoordinates;
+        auto horizontallyInflatedRect = enclosingRect;
         horizontallyInflatedRect.inflateX(1);
         horizontallyInflatedRect.inflateY(-1);
-        auto verticallyInflatedRect = region.rectInLayerCoordinates;
+        auto verticallyInflatedRect = enclosingRect;
         verticallyInflatedRect.inflateY(1);
         verticallyInflatedRect.inflateX(-1);
 
@@ -298,12 +302,45 @@ void EventRegionContext::shrinkWrapInteractionRegions()
     }
 }
 
-void EventRegionContext::copyInteractionRegionsToEventRegion()
+void EventRegionContext::removeSuperfluousInteractionRegions()
 {
     m_interactionRegions.removeAllMatching([&] (auto& region) {
+        if (region.type == InteractionRegion::Type::Guard) {
+            for (auto& entry : m_discoveredRegionsByElement) {
+                // This is the element being guarded.
+                if (entry.key == region.elementIdentifier)
+                    continue;
+
+                auto guardRect = enclosingIntRect(region.rectInLayerCoordinates);
+                auto interactionRegion = entry.value;
+
+                auto intersection = interactionRegion;
+                intersection.intersect(guardRect);
+                if (intersection.isEmpty())
+                    continue;
+
+                // This is an interactive container of the guarded region.
+                if (intersection.contains(guardRect))
+                    continue;
+
+                auto originalBounds = interactionRegion.bounds();
+                auto intersectionBounds = intersection.bounds();
+                bool tooMuchOverlap = originalBounds.width() / 2 < intersectionBounds.width()
+                    || originalBounds.height() / 2 < intersectionBounds.height();
+
+                if (tooMuchOverlap)
+                    return true;
+            }
+            return false;
+        }
+
         return m_containersToRemove.contains(region.elementIdentifier);
     });
+}
 
+void EventRegionContext::copyInteractionRegionsToEventRegion()
+{
+    removeSuperfluousInteractionRegions();
     shrinkWrapInteractionRegions();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }

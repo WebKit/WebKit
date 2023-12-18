@@ -29,9 +29,9 @@
 #include "FloatPoint.h"
 #include "IntRect.h"
 #include "Timer.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WallTime.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ class Page;
 class PageOverlayController;
 class PlatformMouseEvent;
 
-class PageOverlay final : public RefCounted<PageOverlay>, public CanMakeCheckedPtr {
+class PageOverlay final : public RefCounted<PageOverlay>, public CanMakeWeakPtr<PageOverlay> {
     WTF_MAKE_NONCOPYABLE(PageOverlay);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -131,7 +131,7 @@ private:
     void fadeAnimationTimerFired();
 
     Client& m_client;
-    WeakPtr<Page> m_page;
+    SingleThreadWeakPtr<Page> m_page;
 
     Timer m_fadeAnimationTimer;
     WallTime m_fadeAnimationStartTime;

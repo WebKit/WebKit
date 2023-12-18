@@ -49,6 +49,7 @@ typedef struct {
         \
         switch (name ## _header_placement_mode) { \
         case pas_page_header_at_head_of_page: { \
+            PAS_PROFILE(boundary, PAGE_HEADER); \
             return (pas_page_base*)boundary; \
         } \
         \

@@ -45,4 +45,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDetailsMarker, isDetailsMarker())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderDetailsMarker, isRenderDetailsMarker())

@@ -21,7 +21,6 @@
 #include "api/rtp_parameters.h"
 #include "call/rtp_stream_receiver_controller_interface.h"
 #include "modules/rtp_rtcp/include/flexfec_receiver.h"
-#include "modules/rtp_rtcp/include/receive_statistics.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"

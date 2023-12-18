@@ -20,12 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-headers: <pal/cocoa/RevealSoftLink.h>
+webkit_platform_headers: "RevealItem.h" <pal/cocoa/RevealSoftLink.h>
 
 #if ENABLE(REVEAL)
 
+[WebKitPlatform, CustomHeader] struct WebKit::RevealItemRange {
+    NSUInteger location;
+    NSUInteger length;
+}
+
 class WebKit::RevealItem {
-    [SecureCodingAllowed=[PAL::getRVItemClass()]] RetainPtr<RVItem> m_item;
+    String text();
+    WebKit::RevealItemRange selectedRange();
 };
 
 #endif

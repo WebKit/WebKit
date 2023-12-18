@@ -37,10 +37,7 @@ struct StorageEstimate;
 
 namespace WebKit {
 
-#if ENABLE(SERVICE_WORKER)
 class BackgroundFetchStoreManager;
-class ServiceWorkerStorageManager;
-#endif
 class CacheStorageManager;
 class CacheStorageRegistry;
 class FileSystemStorageHandleRegistry;
@@ -48,8 +45,10 @@ class FileSystemStorageManager;
 class IDBStorageManager;
 class IDBStorageRegistry;
 class LocalStorageManager;
+class ServiceWorkerStorageManager;
 class SessionStorageManager;
 class StorageAreaRegistry;
+
 enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
@@ -58,7 +57,7 @@ class OriginStorageManager : public CanMakeWeakPtr<OriginStorageManager> {
 public:
     static String originFileIdentifier();
 
-    OriginStorageManager(uint64_t quota, uint64_t standardReportedQuota, OriginQuotaManager::IncreaseQuotaFunction&&, OriginQuotaManager::NotifySpaceGrantedFunction&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
+    OriginStorageManager(OriginQuotaManager::Parameters&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
     ~OriginStorageManager();
 
     void connectionClosed(IPC::Connection::UniqueID);
@@ -75,10 +74,8 @@ public:
     IDBStorageManager* existingIDBStorageManager();
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager();
-#if ENABLE(SERVICE_WORKER)
     BackgroundFetchStoreManager& backgroundFetchManager(Ref<WTF::WorkQueue>&&);
     ServiceWorkerStorageManager& serviceWorkerStorageManager();
-#endif
     uint64_t cacheStorageSize();
     void closeCacheStorageManager();
     String resolvedPath(WebsiteDataType);
@@ -98,7 +95,7 @@ public:
 #endif
 
 private:
-    Ref<OriginQuotaManager> createQuotaManager();
+    Ref<OriginQuotaManager> createQuotaManager(OriginQuotaManager::Parameters&&);
     enum class StorageBucketMode : bool;
     class StorageBucket;
     StorageBucket& defaultBucket();
@@ -108,11 +105,7 @@ private:
     String m_customLocalStoragePath;
     String m_customIDBStoragePath;
     String m_customCacheStoragePath;
-    uint64_t m_quota;
-    uint64_t m_standardReportedQuota;
-    OriginQuotaManager::IncreaseQuotaFunction m_increaseQuotaFunction;
-    OriginQuotaManager::NotifySpaceGrantedFunction m_notifySpaceGrantedFunction;
-    RefPtr<OriginQuotaManager> m_quotaManager;
+    Ref<OriginQuotaManager> m_quotaManager;
     UnifiedOriginStorageLevel m_level;
     Markable<WallTime> m_originFileCreationTimestamp;
 #if PLATFORM(IOS_FAMILY)

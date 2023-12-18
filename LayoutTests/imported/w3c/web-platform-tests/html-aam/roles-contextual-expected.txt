@@ -1,0 +1,29 @@
+Tests contextual computedrole mappings defined in HTML-AAM, where the returned computed role is expected to change based on the context. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order.
+
+x x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+x
+
+PASS el-a
+PASS el-aside-in-section-with-name
+PASS el-aside-in-section-with-role
+PASS el-aside-ancestorbodymain
+PASS el-footer-ancestorbody
+PASS el-header-ancestorbody
+PASS el-section
+PASS el-a-no-href
+PASS el-aside-in-section-without-name
+PASS el-footer
+PASS el-header
+PASS el-section-no-name
+

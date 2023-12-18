@@ -114,19 +114,20 @@ void vp9_write_prob_diff_update(vpx_writer *w, vpx_prob newp, vpx_prob oldp) {
   encode_term_subexp(w, delp);
 }
 
-int vp9_prob_diff_update_savings_search(const unsigned int *ct, vpx_prob oldp,
-                                        vpx_prob *bestp, vpx_prob upd) {
-  const int old_b = cost_branch256(ct, oldp);
-  int bestsavings = 0;
+int64_t vp9_prob_diff_update_savings_search(const unsigned int *ct,
+                                            vpx_prob oldp, vpx_prob *bestp,
+                                            vpx_prob upd) {
+  const int64_t old_b = cost_branch256(ct, oldp);
+  int64_t bestsavings = 0;
   vpx_prob newp, bestnewp = oldp;
   const int step = *bestp > oldp ? -1 : 1;
   const int upd_cost = vp9_cost_one(upd) - vp9_cost_zero(upd);
 
   if (old_b > upd_cost + (MIN_DELP_BITS << VP9_PROB_COST_SHIFT)) {
     for (newp = *bestp; newp != oldp; newp += step) {
-      const int new_b = cost_branch256(ct, newp);
-      const int update_b = prob_diff_update_cost(newp, oldp) + upd_cost;
-      const int savings = old_b - new_b - update_b;
+      const int64_t new_b = cost_branch256(ct, newp);
+      const int64_t update_b = prob_diff_update_cost(newp, oldp) + upd_cost;
+      const int64_t savings = old_b - new_b - update_b;
       if (savings > bestsavings) {
         bestsavings = savings;
         bestnewp = newp;
@@ -137,15 +138,15 @@ int vp9_prob_diff_update_savings_search(const unsigned int *ct, vpx_prob oldp,
   return bestsavings;
 }
 
-int vp9_prob_diff_update_savings_search_model(const unsigned int *ct,
-                                              const vpx_prob oldp,
-                                              vpx_prob *bestp, vpx_prob upd,
-                                              int stepsize) {
-  int i, old_b, new_b, update_b, savings, bestsavings;
-  int newp;
-  const int step_sign = *bestp > oldp ? -1 : 1;
-  const int step = stepsize * step_sign;
-  const int upd_cost = vp9_cost_one(upd) - vp9_cost_zero(upd);
+int64_t vp9_prob_diff_update_savings_search_model(const unsigned int *ct,
+                                                  const vpx_prob oldp,
+                                                  vpx_prob *bestp, vpx_prob upd,
+                                                  int stepsize) {
+  int64_t i, old_b, new_b, update_b, savings, bestsavings;
+  int64_t newp;
+  const int64_t step_sign = *bestp > oldp ? -1 : 1;
+  const int64_t step = stepsize * step_sign;
+  const int64_t upd_cost = vp9_cost_one(upd) - vp9_cost_zero(upd);
   const vpx_prob *newplist, *oldplist;
   vpx_prob bestnewp;
   oldplist = vp9_pareto8_full[oldp - 1];
@@ -162,14 +163,14 @@ int vp9_prob_diff_update_savings_search_model(const unsigned int *ct,
     for (newp = *bestp; (newp - oldp) * step_sign < 0; newp += step) {
       if (newp < 1 || newp > 255) continue;
       newplist = vp9_pareto8_full[newp - 1];
-      new_b = cost_branch256(ct + 2 * PIVOT_NODE, newp);
+      new_b = cost_branch256(ct + 2 * PIVOT_NODE, (vpx_prob)newp);
       for (i = UNCONSTRAINED_NODES; i < ENTROPY_NODES; ++i)
         new_b += cost_branch256(ct + 2 * i, newplist[i - UNCONSTRAINED_NODES]);
-      update_b = prob_diff_update_cost(newp, oldp) + upd_cost;
+      update_b = prob_diff_update_cost((vpx_prob)newp, oldp) + upd_cost;
       savings = old_b - new_b - update_b;
       if (savings > bestsavings) {
         bestsavings = savings;
-        bestnewp = newp;
+        bestnewp = (vpx_prob)newp;
       }
     }
   }
@@ -182,7 +183,7 @@ void vp9_cond_prob_diff_update(vpx_writer *w, vpx_prob *oldp,
                                const unsigned int ct[2]) {
   const vpx_prob upd = DIFF_UPDATE_PROB;
   vpx_prob newp = get_binary_prob(ct[0], ct[1]);
-  const int savings =
+  const int64_t savings =
       vp9_prob_diff_update_savings_search(ct, *oldp, &newp, upd);
   assert(newp >= 1);
   if (savings > 0) {

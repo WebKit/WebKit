@@ -324,7 +324,7 @@ static void fiat_p256_point_add(fiat_p256_felem x3, fiat_p256_felem y3,
   fiat_p256_limb_t is_nontrivial_double = constant_time_is_zero_w(xneq | yneq) &
                                           ~constant_time_is_zero_w(z1nz) &
                                           ~constant_time_is_zero_w(z2nz);
-  if (is_nontrivial_double) {
+  if (constant_time_declassify_w(is_nontrivial_double)) {
     fiat_p256_point_double(x3, y3, z3, x1, y1, z1);
     return;
   }
@@ -416,7 +416,8 @@ static crypto_word_t fiat_p256_get_bit(const EC_SCALAR *in, int i) {
 static int ec_GFp_nistp256_point_get_affine_coordinates(
     const EC_GROUP *group, const EC_JACOBIAN *point, EC_FELEM *x_out,
     EC_FELEM *y_out) {
-  if (ec_GFp_simple_is_at_infinity(group, point)) {
+  if (constant_time_declassify_int(
+          ec_GFp_simple_is_at_infinity(group, point))) {
     OPENSSL_PUT_ERROR(EC, EC_R_POINT_AT_INFINITY);
     return 0;
   }
@@ -709,12 +710,12 @@ static int ec_GFp_nistp256_cmp_x_coordinate(const EC_GROUP *group,
   // Therefore there is a small possibility, less than 1/2^128, that group_order
   // < p.x < P. in that case we need not only to compare against |r| but also to
   // compare against r+group_order.
-  assert(group->field.width == group->order.width);
-  if (bn_less_than_words(r->words, group->field_minus_order.words,
-                         group->field.width)) {
-    // We can ignore the carry because: r + group_order < p < 2^256.
-    EC_FELEM tmp;
-    bn_add_words(tmp.words, r->words, group->order.d, group->order.width);
+  assert(group->field.N.width == group->order.N.width);
+  EC_FELEM tmp;
+  BN_ULONG carry =
+      bn_add_words(tmp.words, r->words, group->order.N.d, group->field.N.width);
+  if (carry == 0 &&
+      bn_less_than_words(tmp.words, group->field.N.d, group->field.N.width)) {
     fiat_p256_from_generic(r_Z2, &tmp);
     fiat_p256_mul(r_Z2, r_Z2, Z2_mont);
     if (OPENSSL_memcmp(&r_Z2, &X, sizeof(r_Z2)) == 0) {
@@ -726,9 +727,6 @@ static int ec_GFp_nistp256_cmp_x_coordinate(const EC_GROUP *group,
 }
 
 DEFINE_METHOD_FUNCTION(EC_METHOD, EC_GFp_nistp256_method) {
-  out->group_init = ec_GFp_mont_group_init;
-  out->group_finish = ec_GFp_mont_group_finish;
-  out->group_set_curve = ec_GFp_mont_group_set_curve;
   out->point_get_affine_coordinates =
       ec_GFp_nistp256_point_get_affine_coordinates;
   out->add = ec_GFp_nistp256_add;

@@ -20,18 +20,20 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && USE(TEXTURE_MAPPER_GL)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && USE(TEXTURE_MAPPER)
 #include "GStreamerVideoFrameHolder.h"
 
-#include "BitmapTextureGL.h"
+#include "BitmapTexture.h"
 #include "BitmapTexturePool.h"
-#include "TextureMapperContextAttributes.h"
-#include "TextureMapperGL.h"
+#include "TextureMapperFlags.h"
 
 namespace WebCore {
 
-GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, TextureMapperGL::Flags flags, bool gstGLEnabled)
+GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, OptionSet<TextureMapperFlags> flags, bool gstGLEnabled)
     : m_videoDecoderPlatform(videoDecoderPlatform)
+#if USE(GSTREAMER_GL)
+    , m_flags(flags)
+#endif
 {
     RELEASE_ASSERT(GST_IS_SAMPLE(sample));
 
@@ -46,7 +48,8 @@ GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVid
         return;
 
 #if USE(GSTREAMER_GL)
-    m_flags = flags | (m_hasAlphaChannel ? TextureMapperGL::ShouldBlend | TextureMapperGL::ShouldPremultiply : 0);
+    if (m_hasAlphaChannel)
+        m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
 
     GstMemory* memory = gst_buffer_peek_memory(m_buffer.get(), 0);
     if (gst_is_gl_memory(memory))
@@ -98,7 +101,7 @@ void GstVideoFrameHolder::waitForCPUSync()
 }
 #endif // USE(GSTREAMER_GL)
 
-void GstVideoFrameHolder::updateTexture(BitmapTextureGL& texture)
+void GstVideoFrameHolder::updateTexture(BitmapTexture& texture)
 {
     ASSERT(!m_textureID);
     GstVideoGLTextureUploadMeta* meta;

@@ -20,7 +20,7 @@
 #pragma once
 
 #include "LegacyRenderSVGHiddenContainer.h"
-#include "RenderSVGResource.h"
+#include "LegacyRenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include <wtf/WeakHashSet.h>
 
@@ -28,8 +28,7 @@ namespace WebCore {
 
 class RenderLayer;
 
-class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer,
-                                         public RenderSVGResource {
+class LegacyRenderSVGResourceContainer : public LegacyRenderSVGHiddenContainer, public LegacyRenderSVGResource {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceContainer);
 public:
     virtual ~LegacyRenderSVGResourceContainer();
@@ -37,7 +36,7 @@ public:
     void layout() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
-    bool isSVGResourceContainer() const final { return true; }
+    bool isLegacyRenderSVGResourceContainer() const final { return true; }
 
     static float computeTextPaintingScale(const RenderElement&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
@@ -62,6 +61,7 @@ protected:
     virtual bool selfNeedsClientInvalidation() const { return everHadLayout() && selfNeedsLayout(); }
 
     void markAllClientsForInvalidation(InvalidationMode);
+    void markAllClientsForInvalidationIfNeeded(InvalidationMode, SingleThreadWeakHashSet<RenderObject>* visitedRenderers);
     void markClientForInvalidation(RenderObject&, InvalidationMode);
 
 private:
@@ -73,8 +73,8 @@ private:
     void registerResource();
 
     AtomString m_id;
-    WeakHashSet<RenderElement> m_clients;
-    WeakHashSet<RenderLayer> m_clientLayers;
+    SingleThreadWeakHashSet<RenderElement> m_clients;
+    SingleThreadWeakHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };
@@ -84,7 +84,7 @@ inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeS
     if (id.isEmpty())
         return nullptr;
 
-    if (LegacyRenderSVGResourceContainer* renderResource = treeScope.svgResourceById(id))
+    if (LegacyRenderSVGResourceContainer* renderResource = treeScope.lookupLegacySVGResoureById(id))
         return renderResource;
 
     return nullptr;
@@ -93,9 +93,9 @@ inline LegacyRenderSVGResourceContainer* getRenderSVGResourceContainerById(TreeS
 template<typename Renderer>
 Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 {
-    // Using the RenderSVGResource type here avoids ambiguous casts for types that
+    // Using the LegacyRenderSVGResource type here avoids ambiguous casts for types that
     // descend from both RenderObject and LegacyRenderSVGResourceContainer.
-    RenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
+    LegacyRenderSVGResource* container = getRenderSVGResourceContainerById(treeScope, id);
     if (is<Renderer>(container))
         return downcast<Renderer>(container);
 
@@ -104,4 +104,4 @@ Renderer* getRenderSVGResourceById(TreeScope& treeScope, const AtomString& id)
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceContainer, isSVGResourceContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceContainer, isLegacyRenderSVGResourceContainer())

@@ -99,6 +99,7 @@ public:
 #endif
     const IntPoint& clientPosition() const { return m_clientPosition; }
     const IntPoint& globalPosition() const { return m_globalPosition; }
+    void setClientPosition(const IntPoint& clientPosition) { m_clientPosition = clientPosition; }
     OptionSet<DragApplicationFlags> flags() const { return m_applicationFlags; }
     DragDataRef platformData() const { return m_platformDragData; }
     OptionSet<DragOperation> draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }

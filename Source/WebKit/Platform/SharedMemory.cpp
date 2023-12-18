@@ -37,11 +37,7 @@ SharedMemoryHandle::SharedMemoryHandle(SharedMemoryHandle::Type&& handle, size_t
     : m_handle(WTFMove(handle))
     , m_size(size)
 {
-}
-
-bool SharedMemoryHandle::isNull() const
-{
-    return !m_handle;
+    RELEASE_ASSERT(!!m_handle);
 }
 
 RefPtr<SharedMemory> SharedMemory::copyBuffer(const FragmentedSharedBuffer& buffer)

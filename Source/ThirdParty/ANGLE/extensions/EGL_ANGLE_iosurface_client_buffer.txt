@@ -11,6 +11,7 @@ Contributors
     Corentin Wallez
     Geoff Lang
     James Darpinian
+    Le Hoang Quyen
 
 Contacts
 
@@ -114,6 +115,7 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     GL_UNSIGNED_BYTE               GL_RG
     GL_UNSIGNED_SHORT              GL_RG
     GL_UNSIGNED_BYTE               GL_RGB
+    GL_UNSIGNED_BYTE               GL_RGBA
     GL_UNSIGNED_BYTE               GL_BGRA_EXT
     GL_UNSIGNED_INT_2_10_10_10_REV GL_RGB10_A2
     GL_HALF_FLOAT                  GL_RGBA
@@ -153,3 +155,4 @@ Revision History
                             and TEXTURE_2D on iOS
     Version 5, 2020/06/30 - Allow RGB10_A2 internal formats
     Version 6, 2020/08/25 - Allow R16 and RG16 formats for P010 surfaces
+    Version 7, 2023/09/19 - Allow RGBA/RGBX surfaces

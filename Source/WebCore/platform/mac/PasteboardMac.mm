@@ -456,7 +456,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
             nonTranscodedTypes = platformTypesFromItems(*allItems);
     }
 
-    reader.contentOrigin = readOrigin();
+    reader.setContentOrigin(readOrigin());
 
     if (types.contains(WebArchivePboardType)) {
         if (auto buffer = readBufferAtPreferredItemIndex(WebArchivePboardType, itemIndex, strategy, m_pasteboardName, context())) {

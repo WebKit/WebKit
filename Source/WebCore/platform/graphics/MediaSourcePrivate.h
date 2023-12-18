@@ -33,48 +33,88 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayer.h"
+#include "PlatformTimeRanges.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class ContentType;
 class SourceBufferPrivate;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+class LegacyCDMSession;
+#endif
 
-class MediaSourcePrivate : public RefCounted<MediaSourcePrivate> {
+enum class MediaSourcePrivateAddStatus : uint8_t {
+    Ok,
+    NotSupported,
+    ReachedIdLimit
+};
+
+enum class MediaSourcePrivateEndOfStreamStatus : uint8_t {
+    NoError,
+    NetworkError,
+    DecodeError
+};
+
+class WEBCORE_EXPORT MediaSourcePrivate
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSourcePrivate> {
 public:
     typedef Vector<String> CodecsArray;
 
-    MediaSourcePrivate() = default;
-    virtual ~MediaSourcePrivate() = default;
+    using AddStatus = MediaSourcePrivateAddStatus;
+    using EndOfStreamStatus = MediaSourcePrivateEndOfStreamStatus;
 
-    enum class AddStatus : uint8_t {
-        Ok,
-        NotSupported,
-        ReachedIdLimit
-    };
+    MediaSourcePrivate(MediaSourcePrivateClient&);
+    virtual ~MediaSourcePrivate();
+
+    RefPtr<MediaSourcePrivateClient> client() const;
+
+    virtual constexpr MediaPlatformType platformType() const = 0;
     virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;
-    virtual void durationChanged(const MediaTime&) = 0;
-    virtual void bufferedChanged(const PlatformTimeRanges&) { }
-    enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
-    virtual void markEndOfStream(EndOfStreamStatus) = 0;
-    virtual void unmarkEndOfStream() = 0;
-    virtual bool isEnded() const = 0;
+    virtual void removeSourceBuffer(SourceBufferPrivate&);
+    void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
+    virtual void notifyActiveSourceBuffersChanged() = 0;
+    virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides.
+    virtual void bufferedChanged(const PlatformTimeRanges&); // Base class method must be called in overrides.
 
-    virtual MediaPlayer::ReadyState readyState() const = 0;
-    virtual void setReadyState(MediaPlayer::ReadyState) = 0;
+    virtual void markEndOfStream(EndOfStreamStatus) { m_isEnded = true; }
+    virtual void unmarkEndOfStream() { m_isEnded = false; }
+    bool isEnded() const { return m_isEnded; }
 
-    virtual void waitForTarget(const SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) = 0;
-    virtual void seekToTime(const MediaTime&, CompletionHandler<void()>&&) = 0;
+    virtual MediaPlayer::ReadyState mediaPlayerReadyState() const = 0;
+    virtual void setMediaPlayerReadyState(MediaPlayer::ReadyState) = 0;
+
+    virtual MediaTime currentMediaTime() const = 0;
+
+    Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
+    Ref<MediaPromise> seekToTime(const MediaTime&);
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
 
-    bool hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges&) const;
+    const MediaTime& duration() const;
+    const PlatformTimeRanges& buffered() const;
+
+    bool hasFutureTime(const MediaTime& currentTime) const;
+    bool hasAudio() const;
+    bool hasVideo() const;
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void setCDMSession(LegacyCDMSession*);
+#endif
+
+protected:
+    Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
+    Vector<SourceBufferPrivate*> m_activeSourceBuffers;
+    bool m_isEnded { false };
 
 private:
+    MediaTime m_duration { MediaTime::invalidTime() };
+    PlatformTimeRanges m_buffered;
     MediaTime m_timeFudgeFactor;
+    ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;
 };
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus);
@@ -94,30 +134,12 @@ struct LogArgument<WebCore::MediaSourcePrivate::AddStatus> {
     }
 };
 
-template<> struct EnumTraits<WebCore::MediaSourcePrivate::AddStatus> {
-    using values = EnumValues<
-        WebCore::MediaSourcePrivate::AddStatus,
-        WebCore::MediaSourcePrivate::AddStatus::Ok,
-        WebCore::MediaSourcePrivate::AddStatus::NotSupported,
-        WebCore::MediaSourcePrivate::AddStatus::ReachedIdLimit
-    >;
-};
-
 template <>
 struct LogArgument<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
     static String toString(const WebCore::MediaSourcePrivate::EndOfStreamStatus status)
     {
         return convertEnumerationToString(status);
     }
-};
-
-template<> struct EnumTraits<WebCore::MediaSourcePrivate::EndOfStreamStatus> {
-    using values = EnumValues<
-        WebCore::MediaSourcePrivate::EndOfStreamStatus,
-        WebCore::MediaSourcePrivate::EndOfStreamStatus::EosNoError,
-        WebCore::MediaSourcePrivate::EndOfStreamStatus::EosNetworkError,
-        WebCore::MediaSourcePrivate::EndOfStreamStatus::EosDecodeError
-    >;
 };
 
 } // namespace WTF

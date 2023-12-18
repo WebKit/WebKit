@@ -371,7 +371,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                 detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
                 NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
                 detail.guesses = makeVector<String>(guesses);
-                result.details.uncheckedAppend(WTFMove(detail));
+                result.details.append(WTFMove(detail));
             }
             results.append(result);
         } else if (resultType == NSTextCheckingTypeLink && checkingTypes.contains(TextCheckingType::Link)) {
@@ -420,7 +420,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
                     detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
                     NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
                     detail.guesses = makeVector<String>(guesses);
-                    result.details.uncheckedAppend(WTFMove(detail));
+                    result.details.append(WTFMove(detail));
                 }
             }
             results.append(WTFMove(result));

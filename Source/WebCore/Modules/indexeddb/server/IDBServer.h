@@ -27,7 +27,6 @@
 
 #include "IDBConnectionToClient.h"
 #include "IDBDatabaseIdentifier.h"
-#include "StorageQuotaManager.h"
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseManager.h"
@@ -43,7 +42,6 @@ namespace WebCore {
 class IDBCursorInfo;
 class IDBRequestData;
 class IDBValue;
-class StorageQuotaManager;
 
 struct IDBGetRecordData;
 
@@ -51,8 +49,8 @@ namespace IDBServer {
 
 class IDBServer : public UniqueIDBDatabaseManager {
 public:
-    using StorageQuotaManagerSpaceRequester = Function<StorageQuotaManager::Decision(const ClientOrigin&, uint64_t spaceRequested)>;
-    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&, Lock&);
+    using SpaceRequester = Function<bool(const ClientOrigin&, uint64_t spaceRequested)>;
+    WEBCORE_EXPORT IDBServer(const String& databaseDirectoryPath, SpaceRequester&&, Lock&);
     WEBCORE_EXPORT ~IDBServer();
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
@@ -122,7 +120,7 @@ private:
 
     String m_databaseDirectoryPath;
 
-    StorageQuotaManagerSpaceRequester m_spaceRequester;
+    SpaceRequester m_spaceRequester;
 
     Lock& m_lock;
 };

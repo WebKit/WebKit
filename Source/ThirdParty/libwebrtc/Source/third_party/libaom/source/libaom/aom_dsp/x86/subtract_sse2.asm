@@ -40,8 +40,8 @@ cglobal subtract_block, 7, 7, 8, \
 %macro loop16 6
   mova                  m0, [srcq+%1]
   mova                  m4, [srcq+%2]
-  mova                  m1, [predq+%3]
-  mova                  m5, [predq+%4]
+  movu                  m1, [predq+%3]
+  movu                  m5, [predq+%4]
   punpckhbw             m2, m0, m7
   punpckhbw             m3, m1, m7
   punpcklbw             m0, m7

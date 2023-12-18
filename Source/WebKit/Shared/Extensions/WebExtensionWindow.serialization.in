@@ -45,11 +45,9 @@ struct WebKit::WebExtensionWindowParameters {
     Popup,
 };
 
-[Nested, OptionSet] enum class WebKit::WebExtensionWindow::TypeFilter : uint8_t {
-    None,
+[OptionSet] enum class WebKit::WebExtensionWindowTypeFilter : uint8_t {
     Normal,
     Popup,
-    All,
 };
 
 [Nested] enum class WebKit::WebExtensionWindow::State : uint8_t {

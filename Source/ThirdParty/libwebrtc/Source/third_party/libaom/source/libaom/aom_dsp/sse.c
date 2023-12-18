@@ -9,7 +9,12 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-/* Sum the difference between every corresponding element of the buffers. */
+/*
+ * Sum the square of the difference between every corresponding element of the
+ * buffers.
+ */
+
+#include <stdlib.h>
 
 #include "config/aom_config.h"
 #include "config/aom_dsp_rtcd.h"

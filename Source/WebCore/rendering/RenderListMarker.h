@@ -84,11 +84,11 @@ private:
     uint8_t m_textWithoutSuffixLength { 0 };
     bool m_textIsLeftToRightDirection { true };
     RefPtr<StyleImage> m_image;
-    WeakPtr<RenderListItem> m_listItem;
+    SingleThreadWeakPtr<RenderListItem> m_listItem;
     LayoutUnit m_lineOffsetForListItem;
     LayoutUnit m_lineLogicalOffsetForListItem;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListMarker, isListMarker())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListMarker, isRenderListMarker())

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <span>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -55,5 +53,3 @@ WEBCORE_EXPORT Vector<uint8_t> hmacSHA256(std::span<const uint8_t> key, std::spa
 WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAES128GCM(std::span<const uint8_t> key, std::span<const uint8_t> iv, std::span<const uint8_t> cipherTextWithTag);
 
 } // namespace WebCore::PushCrypto
-
-#endif // ENABLE(SERVICE_WORKER)

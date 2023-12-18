@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-ConservativeRoots::ConservativeRoots(Heap& heap)
+ConservativeRoots::ConservativeRoots(JSC::Heap& heap)
     : m_roots(m_inlineRoots)
     , m_size(0)
     , m_capacity(inlineCapacity)

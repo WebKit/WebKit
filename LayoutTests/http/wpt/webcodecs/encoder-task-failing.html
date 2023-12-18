@@ -1,0 +1,65 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+
+function makeOffscreenCanvas(width, height) {
+    let canvas = new OffscreenCanvas(width, height);
+    let ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'rgba(50, 100, 150, 255)';
+    ctx.fillRect(0, 0, width, height);
+    return new VideoFrame(canvas, { timestamp: 1 });
+}
+
+async function doTest(t, codec)
+{
+    const config = {
+        codec,
+        width: 1000,
+        height: 1000,
+        bitrate: 1000000,
+        framerate: 30
+    };
+
+    let errorCount = 0;
+    let frameCount = 0;
+    const encoderInit = {
+        output(chunk, metadata) {
+            ++frameCount;
+        },
+        error(e) {
+            ++errorCount;
+        }
+    };
+
+    const encoder = new VideoEncoder(encoderInit);
+    encoder.configure(config);
+
+    const frame = makeOffscreenCanvas(config.width, config.height);
+    encoder.encode(frame, { keyFrame: true });
+    frame.close();
+
+    const flushPromise = encoder.flush();
+
+    await flushPromise.catch(() => { });
+
+    assert_equals(frameCount + errorCount, 1);
+
+    if (errorCount) {
+        // We use EncodingError since we are not detecting correctly that the config cannot be supported until starting to encode.
+        // When we improve the config checks, we should get a NotSupportedError here.
+        await promise_rejects_dom(t, "EncodingError", flushPromise);
+    }
+}
+
+promise_test(async (t) => {
+    return doTest(t, 'avc1.42001E');
+}, "Test that H264 encoding failure is propagated to JavaScript");
+</script>
+</body>
+</html>

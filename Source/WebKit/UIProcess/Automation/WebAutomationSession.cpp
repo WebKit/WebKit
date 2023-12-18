@@ -304,12 +304,11 @@ void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedT
 void WebAutomationSession::getBrowsingContexts(Ref<GetBrowsingContextsCallback>&& callback)
 {
     Vector<Ref<WebPageProxy>> pages;
-    for (auto& process : protectedProcessPool()->processes()) {
-        for (auto& page : process->pages()) {
-            ASSERT(page);
-            if (!page || !page->isControlledByAutomation())
+    for (Ref process : protectedProcessPool()->processes()) {
+        for (Ref page : process->pages()) {
+            if (!page->isControlledByAutomation())
                 continue;
-            pages.append(page.releaseNonNull());
+            pages.append(WTFMove(page));
         }
     }
 
@@ -961,11 +960,9 @@ void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol:
     if (frameNotFound)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    Vector<String> argumentsVector;
-    argumentsVector.reserveCapacity(arguments->length());
-
-    for (const auto& argument : arguments.get())
-        argumentsVector.uncheckedAppend(argument->asString());
+    auto argumentsVector = WTF::map(arguments.get(), [](auto& argument) {
+        return argument->asString();
+    });
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTFMove(callback));
@@ -2008,7 +2005,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
             if (!virtualKey)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
 
-            actionsToPerform.uncheckedAppend([this, page, interactionType, virtualKey] {
+            actionsToPerform.append([this, page, interactionType, virtualKey] {
                 platformSimulateKeyboardInteraction(*page, interactionType.value(), virtualKey.value());
             });
         }
@@ -2022,7 +2019,7 @@ void WebAutomationSession::performKeyboardInteractions(const Inspector::Protocol
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "An interaction in the 'interactions' parameter has an invalid 'key' value.");
 
             case Inspector::Protocol::Automation::KeyboardInteractionType::InsertByKey:
-                actionsToPerform.uncheckedAppend([this, page, keySequence] {
+                actionsToPerform.append([this, page, keySequence] {
                     platformSimulateKeySequence(*page, keySequence);
                 });
                 break;
@@ -2118,7 +2115,7 @@ static VirtualKey normalizedVirtualKey(VirtualKey key)
 }
 
 #if !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-static std::optional<UChar32> pressedCharKey(const String& pressedCharKeyString)
+static std::optional<char32_t> pressedCharKey(const String& pressedCharKeyString)
 {
     switch (pressedCharKeyString.length()) {
     case 1:
@@ -2243,7 +2240,7 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (!m_inputSources.contains(sourceId))
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "Unknown 'sourceId' specified.");
 
-            SimulatedInputSource& inputSource = *m_inputSources.get(sourceId);
+            Ref inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
 
             auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
@@ -2312,20 +2309,20 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             if (auto duration = stateObject->getInteger("duration"_s))
                 sourceState.duration = Seconds::fromMilliseconds(*duration);
 
-            entries.uncheckedAppend(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource, sourceState });
+            entries.append(std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource, sourceState });
         }
         
         keyFrames.append(SimulatedInputKeyFrame(WTFMove(entries)));
     }
 
-    SimulatedInputDispatcher& inputDispatcher = inputDispatcherForPage(*page);
-    if (inputDispatcher.isActive()) {
+    Ref inputDispatcher = inputDispatcherForPage(*page);
+    if (inputDispatcher->isActive()) {
         ASSERT_NOT_REACHED();
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "A previous interaction is still underway.");
     }
 
     // Delegate the rest of §17.4 Dispatching Actions to the dispatcher.
-    inputDispatcher.run(frameID, WTFMove(keyFrames), m_inputSources, [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
+    inputDispatcher->run(frameID, WTFMove(keyFrames), m_inputSources, [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
         if (error)
             callback->sendFailure(error.value().toProtocolString());
         else
@@ -2351,10 +2348,10 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
     Vector<SimulatedInputKeyFrame> keyFrames({ SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources) });
-    SimulatedInputDispatcher& inputDispatcher = inputDispatcherForPage(*page);
-    inputDispatcher.cancel();
+    Ref inputDispatcher = inputDispatcherForPage(*page);
+    inputDispatcher->cancel();
     
-    inputDispatcher.run(frameID, WTFMove(keyFrames), m_inputSources, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
+    inputDispatcher->run(frameID, WTFMove(keyFrames), m_inputSources, [this, protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<AutomationCommandError> error) {
         if (error)
             callback->sendFailure(error.value().toProtocolString());
         else

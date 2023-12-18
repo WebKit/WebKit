@@ -42,8 +42,11 @@
 #include "ProbeContext.h"
 #include "ThunkGenerators.h"
 #include "VM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCompiler);
 
 JITCompiler::JITCompiler(Graph& dfg)
     : CCallHelpers(dfg.m_codeBlock)
@@ -301,12 +304,6 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(m_jitCode->common.m_callLinkInfos.isEmpty());
     }
 
-
-    if (!m_exceptionChecks.empty())
-        linkBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
-    if (!m_exceptionChecksWithCallFrameRollback.empty())
-        linkBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
-
     if (!m_graph.m_plan.isUnlinked()) {
         MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
         auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
@@ -384,6 +381,11 @@ void JITCompiler::disassemble(LinkBuffer& linkBuffer)
 
     if (UNLIKELY(m_graph.m_plan.compilation()))
         m_disassembler->reportToProfiler(m_graph.m_plan.compilation(), linkBuffer);
+}
+
+void JITCompiler::exceptionJumpWithCallFrameRollback()
+{
+    jumpThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()));
 }
 
 #if USE(JSVALUE32_64)
@@ -499,7 +501,18 @@ void JITCompiler::makeCatchOSREntryBuffer()
 void JITCompiler::loadConstant(LinkerIR::Constant index, GPRReg dest)
 {
 #if USE(JSVALUE64)
-    loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfData() + sizeof(void*) * index), dest);
+    loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfTrailingData() + sizeof(void*) * index), dest);
+#else
+    UNUSED_PARAM(index);
+    UNUSED_PARAM(dest);
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
+}
+
+void JITCompiler::loadStructureStubInfo(StructureStubInfoIndex index, GPRReg dest)
+{
+#if USE(JSVALUE64)
+    subPtr(GPRInfo::jitDataRegister, TrustedImm32(static_cast<uintptr_t>(index.m_index + 1) * sizeof(StructureStubInfo)), dest);
 #else
     UNUSED_PARAM(index);
     UNUSED_PARAM(dest);
@@ -576,16 +589,15 @@ LinkerIR::Constant JITCompiler::addToConstantPool(LinkerIR::Type type, void* pay
     return result.iterator->value;
 }
 
-std::tuple<CompileTimeStructureStubInfo, JITCompiler::LinkableConstant> JITCompiler::addStructureStubInfo()
+std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> JITCompiler::addStructureStubInfo()
 {
     if (m_graph.m_plan.isUnlinked()) {
-        void* unlinkedStubInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedStubInfos.size()));
-        UnlinkedStructureStubInfo* stubInfo = &m_unlinkedStubInfos.alloc();
-        LinkerIR::Constant stubInfoIndex = addToConstantPool(LinkerIR::Type::StructureStubInfo, unlinkedStubInfoIndex);
-        return std::tuple { stubInfo, LinkableConstant(stubInfoIndex) };
+        unsigned index = m_unlinkedStubInfos.size();
+        DFG::UnlinkedStructureStubInfo* stubInfo = &m_unlinkedStubInfos.alloc();
+        return std::tuple { stubInfo, StructureStubInfoIndex { index } };
     }
     StructureStubInfo* stubInfo = jitCode()->common.m_stubInfos.add();
-    return std::tuple { stubInfo, LinkableConstant() };
+    return std::tuple { stubInfo, StructureStubInfoIndex(0) };
 }
 
 std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin)

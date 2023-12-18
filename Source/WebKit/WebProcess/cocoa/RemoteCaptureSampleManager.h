@@ -63,7 +63,7 @@ public:
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     void didUpdateSourceConnection(IPC::Connection&);
-    void setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
+    void setVideoFrameObjectHeapProxy(RefPtr<RemoteVideoFrameObjectHeapProxy>&&);
 
     // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);

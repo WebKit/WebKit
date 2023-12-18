@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 
 #include "PDFPlugin.h"
 #include "ShareableBitmap.h"
@@ -221,7 +221,13 @@ static Ref<PDFPluginBase> createPlugin(HTMLPlugInElement& element)
     if (element.document().settings().unifiedPDFEnabled())
         return UnifiedPDFPlugin::create(element);
 #endif
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     return PDFPlugin::create(element);
+#endif
+    RELEASE_ASSERT_NOT_REACHED();
+
+    RefPtr<PDFPluginBase> nullPluginBase;
+    return nullPluginBase.releaseNonNull();
 }
 
 PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, const String&, bool shouldUseManualLoader, WebPage& page)
@@ -233,7 +239,6 @@ PluginView::PluginView(HTMLPlugInElement& element, const URL& mainResourceURL, c
     , m_pendingResourceRequestTimer(RunLoop::main(), this, &PluginView::pendingResourceRequestTimerFired)
 {
     m_webPage->addPluginView(*this);
-    updateDocumentForPluginSizingBehavior();
 }
 
 PluginView::~PluginView()
@@ -248,16 +253,6 @@ PluginView::~PluginView()
 LocalFrame* PluginView::frame() const
 {
     return m_pluginElement->document().frame();
-}
-
-void PluginView::updateDocumentForPluginSizingBehavior()
-{
-    if (!m_plugin->pluginFillsViewport())
-        return;
-
-    RefPtr documentElement = m_pluginElement->document().documentElement();
-    // The styles in PluginDocumentParser are constructed to respond to this class.
-    documentElement->setAttributeWithoutSynchronization(HTMLNames::classAttr, "plugin-fills-viewport"_s);
 }
 
 void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
@@ -294,6 +289,15 @@ void PluginView::manualLoadDidFinishLoading()
     m_plugin->streamDidFinishLoading();
 }
 
+void PluginView::layerHostingStrategyDidChange()
+{
+    if (!m_isInitialized)
+        return;
+
+    // This ensures that we update RenderLayers and compositing when the result of RenderEmbeddedObject::requiresLayer() changes.
+    Ref { m_pluginElement }->invalidateStyleAndLayerComposition();
+}
+
 void PluginView::manualLoadDidFail()
 {
     if (!m_isInitialized) {
@@ -305,22 +309,37 @@ void PluginView::manualLoadDidFail()
     m_plugin->streamDidFail();
 }
 
-void PluginView::pageScaleFactorDidChange()
-{
-    viewGeometryDidChange();
-}
-
 void PluginView::topContentInsetDidChange()
 {
     viewGeometryDidChange();
 }
 
-void PluginView::setPageScaleFactor(double scaleFactor)
+void PluginView::didBeginMagnificationGesture()
+{
+    if (!m_isInitialized)
+        return;
+
+    m_plugin->didBeginMagnificationGesture();
+}
+
+void PluginView::didEndMagnificationGesture()
+{
+    if (!m_isInitialized)
+        return;
+
+    m_plugin->didEndMagnificationGesture();
+}
+
+void PluginView::setPageScaleFactor(double scaleFactor, std::optional<IntPoint> origin)
 {
     m_pageScaleFactor = scaleFactor;
     m_webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
     m_webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
-    pageScaleFactorDidChange();
+
+    if (!m_isInitialized)
+        return;
+
+    m_plugin->setPageScaleFactor(scaleFactor, origin);
 }
 
 double PluginView::pageScaleFactor() const
@@ -340,7 +359,7 @@ void PluginView::setDeviceScaleFactor(float scaleFactor)
     if (!m_isInitialized)
         return;
 
-    m_plugin->contentsScaleFactorChanged(scaleFactor);
+    m_plugin->deviceScaleFactorChanged(scaleFactor);
 }
 
 id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) const
@@ -378,7 +397,7 @@ void PluginView::initializePlugin()
 #if PLATFORM(COCOA)
     if (m_plugin->isComposited() && frame()) {
         frame()->view()->enterCompositingMode();
-        m_pluginElement->invalidateStyleAndLayerComposition();
+        Ref { m_pluginElement }->invalidateStyleAndLayerComposition();
     }
     m_plugin->visibilityDidChange(isVisible());
 #endif
@@ -391,28 +410,51 @@ void PluginView::initializePlugin()
     }
 }
 
+PluginLayerHostingStrategy PluginView::layerHostingStrategy() const
+{
+    if (!m_isInitialized)
+        return PluginLayerHostingStrategy::None;
+
+    return m_plugin->layerHostingStrategy();
+}
+
 #if PLATFORM(COCOA)
 
 PlatformLayer* PluginView::platformLayer() const
 {
     if (!m_isInitialized)
-        return nil;
+        return nullptr;
 
-    if (is<PDFPlugin>(m_plugin))
-        return downcast<PDFPlugin>(m_plugin)->pluginLayer();
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+    if (m_plugin->layerHostingStrategy() == PluginLayerHostingStrategy::PlatformLayer)
+        return m_plugin->platformLayer();
+#endif
 
     return nullptr;
 }
 
 #endif
 
+GraphicsLayer* PluginView::graphicsLayer() const
+{
+    if (!m_isInitialized)
+        return nullptr;
+
+    if (m_plugin->layerHostingStrategy() == PluginLayerHostingStrategy::GraphicsLayer)
+        return m_plugin->graphicsLayer();
+
+    return nullptr;
+}
+
 bool PluginView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
     if (!m_isInitialized)
         return false;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->scroll(direction, granularity);
+#endif
 
     return false;
 }
@@ -422,8 +464,10 @@ ScrollPosition PluginView::scrollPositionForTesting() const
     if (!m_isInitialized)
         return { };
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->scrollPositionForTesting();
+#endif
 
     return { };
 }
@@ -433,8 +477,10 @@ Scrollbar* PluginView::horizontalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->horizontalScrollbar();
+#endif
 
     return nullptr;
 }
@@ -444,8 +490,10 @@ Scrollbar* PluginView::verticalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
     if (is<PDFPlugin>(m_plugin))
         return downcast<PDFPlugin>(m_plugin)->verticalScrollbar();
+#endif
 
     return nullptr;
 }
@@ -607,6 +655,23 @@ void PluginView::willDetachRenderer()
         return;
 
     m_plugin->willDetachRenderer();
+}
+
+bool PluginView::usesAsyncScrolling() const
+{
+    if (!m_isInitialized)
+        return false;
+
+    return m_plugin->usesAsyncScrolling();
+}
+
+
+ScrollingNodeID PluginView::scrollingNodeID() const
+{
+    if (!m_isInitialized)
+        return 0;
+
+    return m_plugin->scrollingNodeID();
 }
 
 RefPtr<FragmentedSharedBuffer> PluginView::liveResourceData() const
@@ -829,7 +894,7 @@ bool PluginView::shouldCreateTransientPaintingSnapshot() const
         }
     }
 
-    return true;
+    return m_plugin->shouldCreateTransientPaintingSnapshot();
 }
 
 bool PluginView::isBeingDestroyed() const
@@ -870,6 +935,11 @@ CGFloat PluginView::contentScaleFactor() const
 bool PluginView::isUsingUISideCompositing() const
 {
     return m_webPage->isUsingUISideCompositing();
+}
+
+void PluginView::didChangeSettings()
+{
+    m_plugin->didChangeSettings();
 }
 
 } // namespace WebKit

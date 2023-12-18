@@ -1,0 +1,16 @@
+This test ensures that the accessibilityActivate API properly toggles details element open state.
+
+PASS: axCustomSummary.role === 'StaticText'
+PASS: axDefaultSummary.role === 'StaticText'
+PASS: document.getElementById('custom-summary-details').open === false
+PASS: document.getElementById('default-summary-details').open === false
+PASS: document.getElementById('custom-summary-details').open === true
+PASS: document.getElementById('default-summary-details').open === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Custom summary text
+Extra details one
+
+Extra details two

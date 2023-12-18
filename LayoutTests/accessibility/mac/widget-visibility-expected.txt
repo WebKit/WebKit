@@ -1,0 +1,9 @@
+This test ensures that widget visibility status is correctly reported from accessibility via searching.
+
+PASS: searchResultElement.stringAttributeValue('AXSubrole') === 'AXPDFPluginSubrole'
+PASS: searchResultElement === null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

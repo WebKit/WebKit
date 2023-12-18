@@ -28,5 +28,5 @@ kExprEnd,   // @21
   builder.addExport('main', 0);
   assertThrows(
       () => {builder.toModule()}, WebAssembly.CompileError,
-      `WebAssembly.Module doesn't validate: br_table target type mismatch at offset 0 expected: F32 but saw: I32 when targeting block: (I32, I32, I32) -> [I32], in function at index 0 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')`);
+      `WebAssembly.Module doesn't validate: branch's stack type is not a subtype of block's type branch target type. Stack value has type I32 but branch target expects a value of F32 at index 0, in function at index 0 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')`);
 })();

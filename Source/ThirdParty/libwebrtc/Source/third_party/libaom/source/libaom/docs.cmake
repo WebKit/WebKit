@@ -100,7 +100,7 @@ if(CONFIG_AV1_ENCODER)
                                        "Scalable encoder loop.")
 
   set(AOM_DOXYGEN_EXAMPLE_SOURCES ${AOM_DOXYGEN_EXAMPLE_SOURCES}
-                                  "${AOM_ROOT}/examples/svc_encoder_rtc.c")
+                                  "${AOM_ROOT}/examples/svc_encoder_rtc.cc")
 
   set(AOM_DOXYGEN_EXAMPLE_DESCRIPTIONS ${AOM_DOXYGEN_EXAMPLE_DESCRIPTIONS}
                                        "Layered encoder for RTC.")
@@ -223,7 +223,7 @@ function(setup_documentation_targets)
   list(LENGTH AOM_DOXYGEN_EXAMPLE_SOURCES num_sources)
   list(LENGTH AOM_DOXYGEN_EXAMPLE_DESCRIPTIONS num_descs)
   if(NOT ${num_sources} EQUAL ${num_descs})
-    message(FATAL_ERROR "Unqeual example and description totals.")
+    message(FATAL_ERROR "Unequal example and description totals.")
   endif()
 
   # Take the list of examples and produce example_basename.dox for each file in

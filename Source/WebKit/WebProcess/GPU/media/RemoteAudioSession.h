@@ -99,6 +99,7 @@ private:
 
     void beginInterruptionForTesting() final;
     void endInterruptionForTesting() final;
+    void clearInterruptionFlagForTesting() final { m_isInterruptedForTesting = false; }
 
     const RemoteAudioSessionConfiguration& configuration() const;
     RemoteAudioSessionConfiguration& configuration();

@@ -725,6 +725,86 @@ TEST_F(NetEqImplTest, FirstPacketUnknown) {
   }
 }
 
+std::vector<uint8_t> CreateRedPayload(size_t num_payloads,
+                                      int payload_type,
+                                      int payload_size,
+                                      int timestamp_offset) {
+  constexpr int kRedHeaderLength = 4;
+  const size_t size =
+      payload_size + 1 + (num_payloads - 1) * (payload_size + kRedHeaderLength);
+  std::vector<uint8_t> payload(size, 0);
+  uint8_t* payload_ptr = payload.data();
+  for (size_t i = 0; i < num_payloads; ++i) {
+    // Write the RED headers.
+    if (i == num_payloads - 1) {
+      // Special case for last payload.
+      *payload_ptr = payload_type & 0x7F;  // F = 0;
+      ++payload_ptr;
+      break;
+    }
+    *payload_ptr = payload_type & 0x7F;
+    // Not the last block; set F = 1.
+    *payload_ptr |= 0x80;
+    ++payload_ptr;
+    const int this_offset =
+        rtc::checked_cast<int>((num_payloads - i - 1) * timestamp_offset);
+    *payload_ptr = this_offset >> 6;
+    ++payload_ptr;
+    RTC_DCHECK_LE(payload_size, 1023);  // Max length described by 10 bits.
+    *payload_ptr = ((this_offset & 0x3F) << 2) | (payload_size >> 8);
+    ++payload_ptr;
+    *payload_ptr = payload_size & 0xFF;
+    ++payload_ptr;
+  }
+  return payload;
+}
+
+TEST_F(NetEqImplTest, InsertRedPayload) {
+  UseNoMocks();
+  CreateInstance();
+  constexpr int kRedPayloadType = 7;
+  neteq_->RegisterPayloadType(kRedPayloadType, SdpAudioFormat("red", 8000, 1));
+  constexpr int kPayloadType = 8;
+  neteq_->RegisterPayloadType(kPayloadType, SdpAudioFormat("l16", 8000, 1));
+  size_t frame_size = 80;  // 10 ms.
+  size_t payload_size = frame_size * 2;
+  std::vector<uint8_t> payload =
+      CreateRedPayload(3, kPayloadType, payload_size, frame_size);
+  RTPHeader header;
+  header.payloadType = kRedPayloadType;
+  header.sequenceNumber = 0x1234;
+  header.timestamp = 0x12345678;
+  header.ssrc = 0x87654321;
+  AbsoluteCaptureTime capture_time;
+  capture_time.absolute_capture_timestamp = 1234;
+  header.extension.absolute_capture_time = capture_time;
+  header.extension.audioLevel = 12;
+  header.extension.hasAudioLevel = true;
+  header.numCSRCs = 1;
+  header.arrOfCSRCs[0] = 123;
+  neteq_->InsertPacket(header, payload);
+  AudioFrame frame;
+  bool muted;
+  neteq_->GetAudio(&frame, &muted);
+  // TODO(jakobi): Find a better way to test that the correct packet is decoded
+  // than using the timestamp. The fixed NetEq delay is an implementation
+  // detail that should not be tested.
+  constexpr int kNetEqFixedDelay = 5;
+  EXPECT_EQ(frame.timestamp_,
+            header.timestamp - frame_size * 2 - kNetEqFixedDelay);
+  EXPECT_TRUE(frame.packet_infos_.empty());
+  neteq_->GetAudio(&frame, &muted);
+  EXPECT_EQ(frame.timestamp_, header.timestamp - frame_size - kNetEqFixedDelay);
+  EXPECT_TRUE(frame.packet_infos_.empty());
+  neteq_->GetAudio(&frame, &muted);
+  EXPECT_EQ(frame.timestamp_, header.timestamp - kNetEqFixedDelay);
+  EXPECT_EQ(frame.packet_infos_.size(), 1u);
+  EXPECT_EQ(frame.packet_infos_.front().absolute_capture_time(), capture_time);
+  EXPECT_EQ(frame.packet_infos_.front().audio_level(),
+            header.extension.audioLevel);
+  EXPECT_EQ(frame.packet_infos_.front().csrcs()[0], header.arrOfCSRCs[0]);
+}
+
 // This test verifies that audio interruption is not logged for the initial
 // PLC period before the first packet is deocoded.
 // TODO(henrik.lundin) Maybe move this test to neteq_network_stats_unittest.cc.

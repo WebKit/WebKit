@@ -139,6 +139,15 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
     case StyleAppearance::SliderThumbVertical:
         ts << "sliderthumb-vertical";
         break;
+    case StyleAppearance::Switch:
+        ts << "switch";
+        break;
+    case StyleAppearance::SwitchThumb:
+        ts << "switch-thumb";
+        break;
+    case StyleAppearance::SwitchTrack:
+        ts << "switch-track";
+        break;
     }
     return ts;
 }

@@ -7,7 +7,7 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:capnproto/capnproto
-  track: v0.10.2
-  ref: v0.10.2-0-g2e88221d3dde22266bfccf40eaee6ff9b40d113d
+  track: v0.10.4
+  ref: v0.10.4-0-ga91ec65323c2577732224d0cf6f5bf1e79d3a724

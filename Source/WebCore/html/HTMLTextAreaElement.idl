@@ -19,6 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://html.spec.whatwg.org/multipage/form-elements.html#htmltextareaelement
+
 [
     Exposed=Window
 ] interface HTMLTextAreaElement : HTMLElement {
@@ -57,7 +59,7 @@
     undefined setRangeText(DOMString replacement);
     undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
-    undefined setSelectionRange(optional unsigned long start = 0, optional unsigned long end = 0, optional DOMString direction);
+    [ImplementedAs=setSelectionRangeForBindings] undefined setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
 
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
 };

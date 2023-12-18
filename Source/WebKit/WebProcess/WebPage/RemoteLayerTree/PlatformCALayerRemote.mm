@@ -239,10 +239,15 @@ void PlatformCALayerRemote::ensureBackingStore()
 
     ASSERT(m_properties.backingStoreAttached);
 
-    if (!m_properties.backingStoreOrProperties.store)
-        m_properties.backingStoreOrProperties.store = makeUnique<RemoteLayerBackingStore>(this);
+    if (!m_properties.backingStoreOrProperties.store && m_context)
+        m_properties.backingStoreOrProperties.store = m_context->backingStoreCollection().createRemoteLayerBackingStore(this);
 
     updateBackingStore();
+}
+
+bool PlatformCALayerRemote::containsBitmapOnly() const
+{
+    return owner() && owner()->platformCALayerContainsBitmapOnly(this);
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -250,7 +255,7 @@ RemoteLayerBackingStore::IncludeDisplayList PlatformCALayerRemote::shouldInclude
 {
     if (!m_context->useDynamicContentScalingDisplayListsForDOMRendering())
         return RemoteLayerBackingStore::IncludeDisplayList::No;
-    if (owner() && owner()->platformCALayerContainsBitmapOnly(this))
+    if (containsBitmapOnly())
         return RemoteLayerBackingStore::IncludeDisplayList::No;
     return RemoteLayerBackingStore::IncludeDisplayList::Yes;
 }

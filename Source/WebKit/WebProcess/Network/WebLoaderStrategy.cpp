@@ -332,10 +332,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     // WebLocalFrameLoaderClient::applyToDocumentLoader stored the value on. Otherwise, we need to get the
     // value from the main frame's current DocumentLoader.
 
-    RefPtr mainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
-    if (!mainFrame)
-        return;
-
+    Ref mainFrame = frame->mainFrame();
     RefPtr policySourceDocumentLoader = policySourceDocumentLoaderForFrame(*frame, isMainFrameNavigation);
 
     parameters.allowPrivacyProxy = policySourceDocumentLoader ? policySourceDocumentLoader->allowPrivacyProxy() : true;
@@ -415,13 +412,11 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     bool isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
     addParametersShared(frame, loadParameters, isMainFrameNavigation);
 
-#if ENABLE(SERVICE_WORKER)
     loadParameters.serviceWorkersMode = resourceLoader.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No ? resourceLoader.options().serviceWorkersMode : ServiceWorkersMode::None;
     loadParameters.serviceWorkerRegistrationIdentifier = resourceLoader.options().serviceWorkerRegistrationIdentifier;
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
     if (resourceLoader.options().navigationPreloadIdentifier)
         loadParameters.navigationPreloadIdentifier = resourceLoader.options().navigationPreloadIdentifier;
-#endif
 
     auto* document = frame ? frame->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)
@@ -805,11 +800,6 @@ void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
 
     auto& page = *WebPage::fromCorePage(*frame.page());
     networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
-}
-
-bool WebLoaderStrategy::usePingLoad() const
-{
-    return !DeprecatedGlobalSettings::fetchAPIKeepAliveEnabled();
 }
 
 void WebLoaderStrategy::startPingLoad(LocalFrame& frame, ResourceRequest& request, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions& options, ContentSecurityPolicyImposition policyCheck, PingLoadCompletionHandler&& completionHandler)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,11 @@
 #include "Disassembler.h"
 #include "LinkBuffer.h"
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Yarr {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(YarrDisassembler);
 
 static constexpr char s_spaces[] = "                        ";
 static constexpr unsigned s_maxIndent = sizeof(s_spaces) - 1;

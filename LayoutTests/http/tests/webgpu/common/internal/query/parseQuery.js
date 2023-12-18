@@ -1,19 +1,15 @@
 /**
-* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { assert } from '../../util/util.js';import {
-
-badParamValueChars,
-paramKeyIsPublic } from
-'../params_utils.js';
+ * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+ **/ import { assert } from '../../util/util.js';
+import { badParamValueChars, paramKeyIsPublic } from '../params_utils.js';
 
 import { parseParamValue } from './json_param_value.js';
 import {
-
-TestQueryMultiFile,
-TestQueryMultiTest,
-TestQueryMultiCase,
-TestQuerySingleCase } from
-'./query.js';
+  TestQueryMultiFile,
+  TestQueryMultiTest,
+  TestQueryMultiCase,
+  TestQuerySingleCase,
+} from './query.js';
 import { kBigSeparator, kWildcard, kPathSeparator, kParamSeparator } from './separators.js';
 import { validQueryPart } from './validQueryPart.js';
 
@@ -61,9 +57,10 @@ function parseQueryImpl(s) {
   if (testString === undefined) {
     // Query is file-level
     assert(
-    filePathHasWildcard,
-    `File-level query without wildcard ${kWildcard}. Did you want a file-level query \
-(append ${kPathSeparator}${kWildcard}) or test-level query (append ${kBigSeparator}${kWildcard})?`);
+      filePathHasWildcard,
+      `File-level query without wildcard ${kWildcard}. Did you want a file-level query \
+(append ${kPathSeparator}${kWildcard}) or test-level query (append ${kBigSeparator}${kWildcard})?`
+    );
 
     return new TestQueryMultiFile(suite, file);
   }
@@ -74,9 +71,10 @@ function parseQueryImpl(s) {
   if (paramsString === undefined) {
     // Query is test-level
     assert(
-    testPathHasWildcard,
-    `Test-level query without wildcard ${kWildcard}; did you want a test-level query \
-(append ${kPathSeparator}${kWildcard}) or case-level query (append ${kBigSeparator}${kWildcard})?`);
+      testPathHasWildcard,
+      `Test-level query without wildcard ${kWildcard}; did you want a test-level query \
+(append ${kPathSeparator}${kWildcard}) or case-level query (append ${kBigSeparator}${kWildcard})?`
+    );
 
     assert(file.length > 0, 'File part of test-level query was empty (::)');
     return new TestQueryMultiTest(suite, file, test);
@@ -86,9 +84,9 @@ function parseQueryImpl(s) {
   assert(!testPathHasWildcard, `Wildcard ${kWildcard} must be at the end of the query string`);
 
   const { parts: paramsParts, wildcard: paramsHasWildcard } = parseBigPart(
-  paramsString,
-  kParamSeparator);
-
+    paramsString,
+    kParamSeparator
+  );
 
   assert(test.length > 0, 'Test part of case-level query was empty (::)');
 
@@ -110,10 +108,7 @@ const kExampleQueries = `\
 webgpu${kBigSeparator}a${kPathSeparator}b${kPathSeparator}${kWildcard} or \
 webgpu${kBigSeparator}a${kPathSeparator}b${kPathSeparator}c${kBigSeparator}${kWildcard}`;
 
-function parseBigPart(
-s,
-separator)
-{
+function parseBigPart(s, separator) {
   if (s === '') {
     return { parts: [], wildcard: false };
   }
@@ -125,9 +120,9 @@ separator)
       endsWithWildcard = part === kWildcard;
     }
     assert(
-    part.indexOf(kWildcard) === -1 || endsWithWildcard,
-    `Wildcard ${kWildcard} must be complete last part of a path (e.g. ${kExampleQueries})`);
-
+      part.indexOf(kWildcard) === -1 || endsWithWildcard,
+      `Wildcard ${kWildcard} must be complete last part of a path (e.g. ${kExampleQueries})`
+    );
   }
   if (endsWithWildcard) {
     // Remove the last element of the array (which is just the wildcard).
@@ -148,9 +143,9 @@ function parseSingleParam(paramSubstring) {
 
 function parseSingleParamValue(s) {
   assert(
-  !badParamValueChars.test(s),
-  `param value must not match ${badParamValueChars} - was ${s}`);
+    !badParamValueChars.test(s),
+    `param value must not match ${badParamValueChars} - was ${s}`
+  );
 
   return parseParamValue(s);
 }
-//# sourceMappingURL=parseQuery.js.map

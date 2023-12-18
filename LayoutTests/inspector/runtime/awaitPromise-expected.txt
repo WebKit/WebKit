@@ -50,6 +50,14 @@ PASS: The rejected value should be {"a":1,"b":2}
 -- Running test case: Runtime.awaitPromise.Reject.Chain
 PASS: The rejected value should be 3.
 
+-- Running test case: Runtime.awaitPromise.CustomPromise
+PASS: Should produce an error.
+Error: Error: Object with given id is not a Promise
+
+-- Running test case: Runtime.awaitPromise.Thenable
+PASS: Should produce an error.
+Error: Error: Object with given id is not a Promise
+
 -- Running test case: Runtime.awaitPromise.Error.NonPromiseObjectId
 PASS: Should produce an error.
 Error: Error: Object with given id is not a Promise

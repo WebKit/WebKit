@@ -211,11 +211,9 @@ bool CSSValueContainingVector::hasValue(CSSValueID otherValue) const
 
 CSSValueListBuilder CSSValueContainingVector::copyValues() const
 {
-    CSSValueListBuilder builder;
-    builder.reserveInitialCapacity(size());
-    for (auto& value : *this)
-        builder.uncheckedAppend(const_cast<CSSValue&>(value));
-    return builder;
+    return WTF::map<CSSValueListBuilderInlineCapacity>(*this, [](auto& value) -> Ref<CSSValue> {
+        return const_cast<CSSValue&>(value);
+    });
 }
 
 void CSSValueContainingVector::serializeItems(StringBuilder& builder) const
@@ -278,6 +276,18 @@ bool CSSValueContainingVector::customTraverseSubresources(const Function<bool(co
             return true;
     }
     return false;
+}
+
+void CSSValueContainingVector::customSetReplacementURLForSubresources(const HashMap<String, String>& replacementURLStrings)
+{
+    for (auto& value : *this)
+        const_cast<CSSValue&>(value).setReplacementURLForSubresources(replacementURLStrings);
+}
+
+void CSSValueContainingVector::customClearReplacementURLForSubresources()
+{
+    for (auto& value : *this)
+        const_cast<CSSValue&>(value).clearReplacementURLForSubresources();
 }
 
 } // namespace WebCore

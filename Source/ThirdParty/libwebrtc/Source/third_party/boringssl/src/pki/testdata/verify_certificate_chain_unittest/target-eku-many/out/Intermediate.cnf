@@ -1,0 +1,64 @@
+[req]
+encrypt_key = no
+utf8 = yes
+string_mask = utf8only
+prompt = no
+distinguished_name = req_dn
+req_extensions = req_ext
+
+[req_dn]
+commonName = "Intermediate"
+
+[req_ext]
+subjectKeyIdentifier = hash
+keyUsage = critical,keyCertSign,cRLSign
+basicConstraints = critical,CA:true
+
+[ca]
+default_ca = root_ca
+
+[root_ca]
+certificate = out/Intermediate.pem
+new_certs_dir = out
+serial = out/Intermediate.serial
+database = out/Intermediate.db
+unique_subject = no
+default_days = 365
+default_md = sha256
+policy = policy_anything
+email_in_dn = no
+preserve = yes
+name_opt = multiline,-esc_msb,utf8
+cert_opt = ca_default
+copy_extensions = copy
+x509_extensions = signing_ca_ext
+default_crl_days = 30
+crl_extensions = crl_ext
+private_key = keys/Intermediate.key
+
+[policy_anything]
+domainComponent = optional
+countryName = optional
+stateOrProvinceName = optional
+localityName = optional
+organizationName = optional
+organizationalUnitName = optional
+commonName = optional
+emailAddress = optional
+
+[signing_ca_ext]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always
+authorityInfoAccess = @issuer_info
+crlDistributionPoints = @crl_info
+
+[issuer_info]
+caIssuers;URI.0 = http://url-for-aia/Intermediate.cer
+
+[crl_info]
+URI.0 = http://url-for-crl/Intermediate.crl
+
+[crl_ext]
+authorityKeyIdentifier = keyid:always
+authorityInfoAccess = @issuer_info
+

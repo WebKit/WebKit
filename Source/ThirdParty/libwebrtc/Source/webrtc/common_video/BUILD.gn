@@ -37,6 +37,23 @@ rtc_library("common_video") {
     "video_frame_buffer_pool.cc",
   ]
 
+  if (rtc_use_h265) {
+    sources += [
+      "h265/h265_bitstream_parser.cc",
+      "h265/h265_bitstream_parser.h",
+      "h265/h265_common.cc",
+      "h265/h265_common.h",
+      "h265/h265_inline.cc",
+      "h265/h265_inline.h",
+      "h265/h265_pps_parser.cc",
+      "h265/h265_pps_parser.h",
+      "h265/h265_sps_parser.cc",
+      "h265/h265_sps_parser.h",
+      "h265/h265_vps_parser.cc",
+      "h265/h265_vps_parser.h",
+    ]
+  }
+
   deps = [
     "../api:array_view",
     "../api:make_ref_counted",
@@ -71,6 +88,12 @@ rtc_library("common_video") {
     "../system_wrappers:metrics",
     "//third_party/libyuv",
   ]
+  if (rtc_use_h265) {
+    deps += [
+      "../rtc_base:compile_assert_c",
+      "../rtc_base/containers:flat_map",
+    ]
+  }
   absl_deps = [
     "//third_party/abseil-cpp/absl/numeric:bits",
     "//third_party/abseil-cpp/absl/types:optional",
@@ -109,6 +132,15 @@ if (rtc_include_tests && !build_with_chromium) {
       "video_frame_buffer_pool_unittest.cc",
       "video_frame_unittest.cc",
     ]
+
+    if (rtc_use_h265) {
+      sources += [
+        "h265/h265_bitstream_parser_unittest.cc",
+        "h265/h265_pps_parser_unittest.cc",
+        "h265/h265_sps_parser_unittest.cc",
+        "h265/h265_vps_parser_unittest.cc",
+      ]
+    }
 
     deps = [
       ":common_video",

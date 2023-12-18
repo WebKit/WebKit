@@ -37,6 +37,14 @@ class ResourceError;
 WEBCORE_EXPORT extern const ASCIILiteral errorDomainWebKitInternal; // Used for errors that won't be exposed to clients.
 WEBCORE_EXPORT extern const ASCIILiteral errorDomainWebKitServiceWorker; // Used for errors that happen when loading a resource from a service worker.
 
+enum class ResourceErrorBaseType : uint8_t {
+    Null,
+    General,
+    AccessControl,
+    Cancellation,
+    Timeout
+};
+
 class ResourceErrorBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -49,13 +57,8 @@ public:
 
     String sanitizedDescription() const { return m_isSanitized  == IsSanitized::Yes ? m_localizedDescription : "Load failed"_s; }
 
-    enum class Type : uint8_t {
-        Null,
-        General,
-        AccessControl,
-        Cancellation,
-        Timeout
-    };
+    using Type = ResourceErrorBaseType;
+
     enum class IsSanitized : bool { No, Yes };
 
     enum class ErrorRecoveryMethod : bool {
@@ -114,18 +117,3 @@ WEBCORE_EXPORT ResourceError internalError(const URL&);
 inline bool operator==(const ResourceError& a, const ResourceError& b) { return ResourceErrorBase::compare(a, b); }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ResourceErrorBase::Type> {
-    using values = EnumValues<
-        WebCore::ResourceErrorBase::Type,
-        WebCore::ResourceErrorBase::Type::Null,
-        WebCore::ResourceErrorBase::Type::General,
-        WebCore::ResourceErrorBase::Type::AccessControl,
-        WebCore::ResourceErrorBase::Type::Cancellation,
-        WebCore::ResourceErrorBase::Type::Timeout
-    >;
-};
-
-} // namespace WTF

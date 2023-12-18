@@ -27,6 +27,7 @@
 
 #include "Constraints.h"
 #include "TypeStore.h"
+#include "WGSL.h"
 
 namespace WGSL {
 
@@ -48,6 +49,7 @@ struct AbstractChannelFormat;
 struct AbstractReference;
 struct AbstractPointer;
 struct AbstractArray;
+struct AbstractAtomic;
 
 using AbstractTypeImpl = std::variant<
     AbstractVector,
@@ -58,6 +60,7 @@ using AbstractTypeImpl = std::variant<
     AbstractReference,
     AbstractPointer,
     AbstractArray,
+    AbstractAtomic,
     TypeVariable,
     const Type*
 >;
@@ -108,11 +111,30 @@ struct AbstractArray {
     AbstractType element;
 };
 
+struct AbstractAtomic {
+    AbstractType element;
+};
+
 struct OverloadCandidate {
     Vector<TypeVariable, 1> typeVariables;
     Vector<ValueVariable, 2> valueVariables;
     Vector<AbstractType, 2> parameters;
     AbstractType result;
+};
+
+struct OverloadedDeclaration {
+    enum Kind : uint8_t {
+        Operator,
+        Constructor,
+        Function,
+    };
+
+    Kind kind;
+    bool mustUse;
+
+    Expected<ConstantValue, String> (*constantFunction)(const Type*, const FixedVector<ConstantValue>&);
+    OptionSet<ShaderStage> visibility;
+    Vector<OverloadCandidate> overloads;
 };
 
 struct SelectedOverload {

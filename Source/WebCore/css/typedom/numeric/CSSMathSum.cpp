@@ -46,11 +46,11 @@ ExceptionOr<Ref<CSSMathSum>> CSSMathSum::create(FixedVector<CSSNumberish> number
 ExceptionOr<Ref<CSSMathSum>> CSSMathSum::create(Vector<Ref<CSSNumericValue>> values)
 {
     if (values.isEmpty())
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     auto type = CSSNumericType::addTypes(values);
     if (!type)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     return adoptRef(*new CSSMathSum(WTFMove(values), WTFMove(*type)));
 }
@@ -140,7 +140,7 @@ RefPtr<CSSCalcExpressionNode> CSSMathSum::toCalcExpressionNode() const
         auto value = item->toCalcExpressionNode();
         if (!value)
             return nullptr;
-        values.uncheckedAppend(value.releaseNonNull());
+        values.append(value.releaseNonNull());
     }
     return CSSCalcOperationNode::createSum(WTFMove(values));
 }

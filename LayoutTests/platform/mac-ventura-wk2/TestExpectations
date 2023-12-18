@@ -31,3 +31,12 @@ storage/indexeddb/database-transaction-cycle.html [ Pass Failure ]
 webgl/1.0.x/conformance/glsl/misc/shader-with-non-reserved-words-3-of-8.html [ Pass Timeout ]
 
 webkit.org/b/261444 [ Debug x86_64 ] http/tests/security/referrer-policy-header.html [ Pass Timeout ]
+
+# Asserts on pre-Sonoma macOS: rdar://116291539
+[ Debug ] http/tests/site-isolation/window-properties.html [ Skip ]
+
+# webkit.org/b/263955 Twelve css WPTs are failing with async overflow scrolling enabled on macOS
+imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Failure ]
+
+# This feature was introduced in macOS Sonoma.
+http/tests/paymentrequest/paymentrequest-applePayLaterAvailability.https.html [ Skip ]

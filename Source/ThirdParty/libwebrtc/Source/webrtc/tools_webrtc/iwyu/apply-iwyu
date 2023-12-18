@@ -15,6 +15,7 @@
 #
 # To get iwyu on Debian/glinux, do "sudo apt-get install iwyu".
 
+# Debug level, also controlled by the "-d" argument.
 # Set this to 1 to get more debug information.
 # Set this to 2 to also get a dump of the iwyu tool output.
 DEBUG=0
@@ -54,15 +55,17 @@ usage() {
   echo "Arguments:"
   echo " -c compile-commands: Compiler command file"
   echo " -r : Remove non-required includes from .h file"
+  echo " -d <n> : Set debug level to <n>"
   echo " -h : Print this help message"
   echo "(default command file: out/Default/compile_commands.json - this"
   echo "will be generated if not present"
 }
 
-while getopts 'c:rh' opts; do
+while getopts 'c:d:rh' opts; do
   case "${opts}" in
     c) COMPILE_COMMANDS="${OPTARG}" ;;
     r) FIX_INCLUDE_ARGS="${FIX_INCLUDE_ARGS} --nosafe_headers" ;;
+    d) DEBUG=${OPTARG};if [ $DEBUG -gt 0 ]; then set -x; fi  ;;
     h) usage; exit 1 ;;
     *) error "Unexpected option ${opts}" ;;
   esac

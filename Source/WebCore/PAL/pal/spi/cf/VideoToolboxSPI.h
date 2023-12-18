@@ -32,6 +32,7 @@ enum {
     kVTRestrictions_AvoidHardwareDecoders       = 1UL << 1,
     kVTRestrictions_AvoidIOSurfaceBackings      = 1UL << 2,
     kVTRestrictions_AvoidHardwarePixelTransfer  = 1UL << 3,
+    kVTRestrictions_RegisterLimitedSystemDecodersWithoutValidation = 1UL<<6
 };
 typedef uint32_t VTVideoDecoderRestrictions;
 

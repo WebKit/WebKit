@@ -78,12 +78,12 @@ ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     bool quotaException = false;
     m_storageArea->setItem(*frame, key, value, quotaException);
     if (quotaException)
-        return Exception { QuotaExceededError };
+        return Exception { ExceptionCode::QuotaExceededError };
     return { };
 }
 
@@ -91,7 +91,7 @@ ExceptionOr<void> Storage::removeItem(const String& key)
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     m_storageArea->removeItem(*frame, key);
     return { };
@@ -101,7 +101,7 @@ ExceptionOr<void> Storage::clear()
 {
     auto* frame = this->frame();
     if (!frame)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     m_storageArea->clear(*frame);
     return { };
@@ -120,14 +120,14 @@ bool Storage::isSupportedPropertyName(const String& propertyName) const
 Vector<AtomString> Storage::supportedPropertyNames() const
 {
     unsigned length = m_storageArea->length();
+    return Vector<AtomString>(length, [this](size_t i) {
+        return m_storageArea->key(i);
+    });
+}
 
-    Vector<AtomString> result;
-    result.reserveInitialCapacity(length);
-
-    for (unsigned i = 0; i < length; ++i)
-        result.uncheckedAppend(m_storageArea->key(i));
-
-    return result;
+Ref<StorageArea> Storage::protectedArea() const
+{
+    return m_storageArea;
 }
 
 } // namespace WebCore

@@ -23,7 +23,7 @@
 messages -> DownloadProxy {
     DidStart(WebCore::ResourceRequest request, String suggestedFilename)
     DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge, WebKit::AuthenticationChallengeIdentifier challengeID)
-    WillSendRequest(WebCore::ResourceRequest redirectRequest, WebCore::ResourceResponse redirectResponse))
+    WillSendRequest(WebCore::ResourceRequest redirectRequest, WebCore::ResourceResponse redirectResponse) -> (WebCore::ResourceRequest newRequest)
     DecideDestinationWithSuggestedFilename(WebCore::ResourceResponse response, String suggestedFilename) -> (String filename, WebKit::SandboxExtension::Handle handle, enum:bool WebKit::AllowOverwrite allowOverwrite)
 
     DidReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)

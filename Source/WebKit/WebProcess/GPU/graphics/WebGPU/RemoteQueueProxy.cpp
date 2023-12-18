@@ -48,15 +48,14 @@ RemoteQueueProxy::~RemoteQueueProxy()
 
 void RemoteQueueProxy::submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&& commandBuffers)
 {
-    Vector<WebGPUIdentifier> convertedCommandBuffers;
-    convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
-    for (auto commandBuffer : commandBuffers) {
+    auto convertedCommandBuffers = WTF::compactMap(commandBuffers, [&](auto& commandBuffer) -> std::optional<WebGPUIdentifier> {
         auto convertedCommandBuffer = m_convertToBackingContext->convertToBacking(commandBuffer);
         ASSERT(convertedCommandBuffer);
         if (!convertedCommandBuffer)
-            return;
-        convertedCommandBuffers.uncheckedAppend(convertedCommandBuffer);
-    }
+            return std::nullopt;
+        return convertedCommandBuffer;
+    });
+
     auto sendResult = send(Messages::RemoteQueue::Submit(convertedCommandBuffers));
     UNUSED_VARIABLE(sendResult);
 }

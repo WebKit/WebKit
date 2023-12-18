@@ -82,8 +82,9 @@ void IdleCallbackController::removeIdleCallback(int signedIdentifier)
 
 void IdleCallbackController::queueTaskToStartIdlePeriod()
 {
-    m_document->eventLoop().queueTask(TaskSource::IdleTask, [protectedDocument = Ref { *m_document }, this] {
-        RELEASE_ASSERT(protectedDocument->idleCallbackController() == this);
+    Ref document = *m_document;
+    document->eventLoop().queueTask(TaskSource::IdleTask, [this, document] {
+        RELEASE_ASSERT(document->idleCallbackController() == this);
         startIdlePeriod();
     });
 }
@@ -103,8 +104,9 @@ void IdleCallbackController::startIdlePeriod()
 
 void IdleCallbackController::queueTaskToInvokeIdleCallbacks()
 {
-    m_document->eventLoop().queueTask(TaskSource::IdleTask, [protectedDocument = Ref { *m_document }, this] {
-        RELEASE_ASSERT(protectedDocument->idleCallbackController() == this);
+    Ref document = *m_document;
+    document->eventLoop().queueTask(TaskSource::IdleTask, [this, document] {
+        RELEASE_ASSERT(document->idleCallbackController() == this);
         invokeIdleCallbacks();
     });
 }

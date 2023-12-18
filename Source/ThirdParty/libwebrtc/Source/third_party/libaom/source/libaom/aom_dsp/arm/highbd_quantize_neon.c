@@ -11,15 +11,14 @@
 
 #include <arm_neon.h>
 #include <assert.h>
+#include <string.h>
+
+#include "config/aom_config.h"
 
 #include "aom_dsp/quantize.h"
-#include "aom_dsp/arm/mem_neon.h"
-
-#include "av1/common/quant_common.h"
-#include "av1/encoder/av1_quantize.h"
 
 static INLINE uint32_t sum_abs_coeff(const uint32x4_t a) {
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   return vaddvq_u32(a);
 #else
   const uint64x2_t b = vpaddlq_u32(a);
@@ -81,6 +80,7 @@ static INLINE int16x8_t get_max_lane_eob(const int16_t *iscan,
   return vmaxq_s16(v_eobmax, v_nz_iscan);
 }
 
+#if !CONFIG_REALTIME_ONLY
 static INLINE void get_min_max_lane_eob(const int16_t *iscan,
                                         int16x8_t *v_eobmin,
                                         int16x8_t *v_eobmax, uint16x8_t v_mask,
@@ -89,16 +89,17 @@ static INLINE void get_min_max_lane_eob(const int16_t *iscan,
   const int16x8_t v_nz_iscan_max = vbslq_s16(v_mask, v_iscan, vdupq_n_s16(-1));
 #if SKIP_EOB_FACTOR_ADJUST
   const int16x8_t v_nz_iscan_min =
-      vbslq_s16(v_mask, v_iscan, vdupq_n_s16(n_coeffs));
+      vbslq_s16(v_mask, v_iscan, vdupq_n_s16((int16_t)n_coeffs));
   *v_eobmin = vminq_s16(*v_eobmin, v_nz_iscan_min);
 #else
   (void)v_eobmin;
 #endif
   *v_eobmax = vmaxq_s16(*v_eobmax, v_nz_iscan_max);
 }
+#endif  // !CONFIG_REALTIME_ONLY
 
 static INLINE uint16_t get_max_eob(int16x8_t v_eobmax) {
-#ifdef __aarch64__
+#if AOM_ARCH_AARCH64
   return (uint16_t)vmaxvq_s16(v_eobmax);
 #else
   const int16x4_t v_eobmax_3210 =
@@ -115,8 +116,9 @@ static INLINE uint16_t get_max_eob(int16x8_t v_eobmax) {
 #endif
 }
 
+#if SKIP_EOB_FACTOR_ADJUST && !CONFIG_REALTIME_ONLY
 static INLINE uint16_t get_min_eob(int16x8_t v_eobmin) {
-#ifdef __aarch64__
+#if AOM_ARCH_AARCH64
   return (uint16_t)vminvq_s16(v_eobmin);
 #else
   const int16x4_t v_eobmin_3210 =
@@ -132,6 +134,7 @@ static INLINE uint16_t get_min_eob(int16x8_t v_eobmin) {
   return (uint16_t)vget_lane_s16(v_eobmin_final, 0);
 #endif
 }
+#endif  // SKIP_EOB_FACTOR_ADJUST && !CONFIG_REALTIME_ONLY
 
 static void highbd_quantize_b_neon(
     const tran_low_t *coeff_ptr, intptr_t n_coeffs, const int16_t *zbin_ptr,
@@ -296,7 +299,7 @@ static void highbd_quantize_b_adaptive_neon(
   int32x4_t v_zbin_s32 = vmovl_s16(v_zbin);
   uint16x4_t v_mask_lo, v_mask_hi;
   int16x8_t v_eobmax = vdupq_n_s16(-1);
-  int16x8_t v_eobmin = vdupq_n_s16(n_coeffs);
+  int16x8_t v_eobmin = vdupq_n_s16((int16_t)n_coeffs);
 
   assert(n_coeffs > 8);
   // Pre-scan pass

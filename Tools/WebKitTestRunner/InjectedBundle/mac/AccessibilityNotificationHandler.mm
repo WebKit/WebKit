@@ -40,6 +40,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WKBundleFrame.h>
+#import <WebKit/WKBundlePagePrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSObject (WebAccessibilityObjectWrapperAdditions)
@@ -79,6 +80,7 @@
     if (!callback)
         return;
 
+    WKAccessibilityEnable();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 

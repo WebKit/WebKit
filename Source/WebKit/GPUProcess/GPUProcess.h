@@ -151,7 +151,6 @@ private:
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
-    void updatePreferencesForWebProcess(WebCore::ProcessIdentifier, const GPUProcessPreferencesForWebProcess&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
     void updateSandboxAccess(const Vector<SandboxExtension::Handle>&);
@@ -171,7 +170,7 @@ private:
     void setMockMediaDeviceIsEphemeral(const String&, bool);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
-    void triggerMockMicrophoneConfigurationChange();
+    void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);
 #endif
 #if HAVE(SCREEN_CAPTURE_KIT)
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);

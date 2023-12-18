@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 my $val1 = exists($ENV{'HTTP_X_TEST_HEADER1'}) ? $ENV{'HTTP_X_TEST_HEADER1'} : "";
 my $val2 = exists($ENV{'HTTP_X_TEST_HEADER2'}) ? $ENV{'HTTP_X_TEST_HEADER2'} : "";

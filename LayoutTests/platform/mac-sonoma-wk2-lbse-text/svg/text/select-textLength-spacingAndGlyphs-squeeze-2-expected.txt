@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (24.48,0.94) size 7x13
+  RenderSVGTransformableContainer {g} at (24.48,0.94) size 5.75x11.19
+layer at (24.48,0.94) size 1x12
+  RenderSVGPath {svg:line} at (0,0) size 0.02x11.23 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=24.50] [y1=0.95] [x2=24.50] [y2=12.17]
+layer at (30.22,0.94) size 1x12
+  RenderSVGPath {svg:line} at (5.73,0) size 0.02x11.23 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=30.23] [y1=0.95] [x2=30.23] [y2=12.17]
+layer at (24.48,0.94) size 6x12
+  RenderSVGRect {svg:rect} at (0,0) size 5.75x11.19 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=24.50] [y=0.95] [width=5.73] [height=11.17]
+layer at (10,0.94) size 50x11
+  RenderSVGText {text} at (10,0) size 50x13 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 50x12
+      chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 15 width 72.82: "Text to Squeeze"
+selection start: position 3 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection end:   position 4 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

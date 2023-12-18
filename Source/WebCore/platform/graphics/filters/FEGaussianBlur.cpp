@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-Ref<FEGaussianBlur> FEGaussianBlur::create(float x, float y, EdgeModeType edgeMode)
+Ref<FEGaussianBlur> FEGaussianBlur::create(float x, float y, EdgeModeType edgeMode, DestinationColorSpace colorSpace)
 {
-    return adoptRef(*new FEGaussianBlur(x, y, edgeMode));
+    return adoptRef(*new FEGaussianBlur(x, y, edgeMode, colorSpace));
 }
 
-FEGaussianBlur::FEGaussianBlur(float x, float y, EdgeModeType edgeMode)
-    : FilterEffect(FilterEffect::Type::FEGaussianBlur)
+FEGaussianBlur::FEGaussianBlur(float x, float y, EdgeModeType edgeMode, DestinationColorSpace colorSpace)
+    : FilterEffect(FilterEffect::Type::FEGaussianBlur, colorSpace)
     , m_stdX(x)
     , m_stdY(y)
     , m_edgeMode(edgeMode)

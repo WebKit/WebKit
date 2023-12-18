@@ -2,7 +2,7 @@
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ export const description = `Test that variables in the shader are zero initialized`;
 import { makeTestGroup } from '../../../common/framework/test_group.js';
-import { unreachable } from '../../../common/util/util.js';
+import { iterRange, unreachable } from '../../../common/util/util.js';
 import { GPUTest } from '../../gpu_test.js';
 import {
   kVectorContainerTypes,
@@ -39,17 +39,15 @@ function prettyPrint(t) {
 export const g = makeTestGroup(GPUTest);
 g.test('compute,zero_init')
   .desc(
-    `Test that uninitialized variables in workgroup, private, and function storage classes are initialized to zero.
-
-    TODO: Run a shader before the test to attempt to fill memory with garbage`
+    `Test that uninitialized variables in workgroup, private, and function storage classes are initialized to zero.`
   )
   .params(u =>
     u
       // Only workgroup, function, and private variables can be declared without data bound to them.
       // The implementation's shader translator should ensure these values are initialized.
-      .combine('storageClass', ['workgroup', 'private', 'function'])
-      .expand('workgroupSize', ({ storageClass }) => {
-        switch (storageClass) {
+      .combine('addressSpace', ['workgroup', 'private', 'function'])
+      .expand('workgroupSize', ({ addressSpace }) => {
+        switch (addressSpace) {
           case 'workgroup':
             return [
               [1, 1, 1],
@@ -221,6 +219,14 @@ g.test('compute,zero_init')
   )
   .batch(15)
   .fn(t => {
+    const { workgroupSize } = t.params;
+    const { maxComputeInvocationsPerWorkgroup } = t.device.limits;
+    const numWorkgroupInvocations = workgroupSize.reduce((a, b) => a * b);
+    t.skipIf(
+      numWorkgroupInvocations > maxComputeInvocationsPerWorkgroup,
+      `workgroupSize: ${workgroupSize} > maxComputeInvocationsPerWorkgroup: ${maxComputeInvocationsPerWorkgroup}`
+    );
+
     let moduleScope = `
       struct Output {
         failed : atomic<u32>
@@ -283,10 +289,10 @@ g.test('compute,zero_init')
       }
     })('TestType', t.params._type);
 
-    switch (t.params.storageClass) {
+    switch (t.params.addressSpace) {
       case 'workgroup':
       case 'private':
-        moduleScope += `\nvar<${t.params.storageClass}> testVar: ${typeDecl};`;
+        moduleScope += `\nvar<${t.params.addressSpace}> testVar: ${typeDecl};`;
         break;
       case 'function':
         functionScope += `\nvar testVar: ${typeDecl};`;
@@ -382,6 +388,99 @@ g.test('compute,zero_init')
         _ = zero;
       }
     `;
+
+    if (t.params.addressSpace === 'workgroup') {
+      // Populate the maximum amount of workgroup memory with known values to
+      // ensure initialization overrides in another shader.
+      const wg_memory_limits = t.device.limits.maxComputeWorkgroupStorageSize;
+      const wg_x_dim = t.device.limits.maxComputeWorkgroupSizeX;
+
+      const wgsl = `
+      @group(0) @binding(0) var<storage, read> inputs : array<u32>;
+      @group(0) @binding(1) var<storage, read_write> outputs : array<u32>;
+      var<workgroup> wg_mem : array<u32, ${wg_memory_limits} / 4>;
+
+      @compute @workgroup_size(${wg_x_dim})
+      fn fill(@builtin(local_invocation_index) lid : u32) {
+        const num_u32_per_invocation = ${wg_memory_limits} / (4 * ${wg_x_dim});
+
+        for (var i = 0u; i < num_u32_per_invocation; i++) {
+          let idx = num_u32_per_invocation * lid + i;
+          wg_mem[idx] = inputs[idx];
+        }
+        workgroupBarrier();
+        // Copy out to avoid wg_mem being elided.
+        for (var i = 0u; i < num_u32_per_invocation; i++) {
+          let idx = num_u32_per_invocation * lid + i;
+          outputs[idx] = wg_mem[idx];
+        }
+      }
+      `;
+
+      const fillLayout = t.device.createBindGroupLayout({
+        entries: [
+          {
+            binding: 0,
+            visibility: GPUShaderStage.COMPUTE,
+            buffer: { type: 'read-only-storage' },
+          },
+          {
+            binding: 1,
+            visibility: GPUShaderStage.COMPUTE,
+            buffer: { type: 'storage' },
+          },
+        ],
+      });
+
+      const fillPipeline = t.device.createComputePipeline({
+        layout: t.device.createPipelineLayout({ bindGroupLayouts: [fillLayout] }),
+        label: 'Workgroup Fill Pipeline',
+        compute: {
+          module: t.device.createShaderModule({
+            code: wgsl,
+          }),
+          entryPoint: 'fill',
+        },
+      });
+
+      const inputBuffer = t.makeBufferWithContents(
+        new Uint32Array([...iterRange(wg_memory_limits / 4, x => 0xdeadbeef)]),
+        GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST
+      );
+
+      t.trackForCleanup(inputBuffer);
+      const outputBuffer = t.device.createBuffer({
+        size: wg_memory_limits,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+      });
+      t.trackForCleanup(outputBuffer);
+
+      const bg = t.device.createBindGroup({
+        layout: fillPipeline.getBindGroupLayout(0),
+        entries: [
+          {
+            binding: 0,
+            resource: {
+              buffer: inputBuffer,
+            },
+          },
+          {
+            binding: 1,
+            resource: {
+              buffer: outputBuffer,
+            },
+          },
+        ],
+      });
+
+      const e = t.device.createCommandEncoder();
+      const p = e.beginComputePass();
+      p.setPipeline(fillPipeline);
+      p.setBindGroup(0, bg);
+      p.dispatchWorkgroups(1);
+      p.end();
+      t.queue.submit([e.finish()]);
+    }
 
     const pipeline = t.device.createComputePipeline({
       layout: 'auto',

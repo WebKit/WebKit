@@ -30,6 +30,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/SuperFastHash.h>
 
 namespace WTF {
 
@@ -48,6 +49,7 @@ public:
 
     ASCIILiteral() = default;
 
+    unsigned hash() const;
     constexpr bool isNull() const { return !m_characters; }
 
     constexpr const char* characters() const { return m_characters; }
@@ -58,7 +60,7 @@ public:
 
     constexpr char characterAt(unsigned index) const { return m_characters[index]; }
 
-#ifdef __OBJC__
+#if defined(__OBJC__) && !USE(BUN_JSC_ADDITIONS)
     // This function convert null strings to empty strings.
     WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSString() const;
 #endif
@@ -99,6 +101,24 @@ inline constexpr size_t ASCIILiteral::length() const
     }
     return strlen(m_characters);
 }
+
+inline unsigned ASCIILiteral::hash() const
+{
+    if (isNull())
+        return 0;
+    SuperFastHash hasher;
+    hasher.addCharacters(characters(), length());
+    return hasher.hash();
+}
+
+struct ASCIILiteralHash {
+    static unsigned hash(const ASCIILiteral& literal) { return literal.hash(); }
+    static bool equal(const ASCIILiteral& a, const ASCIILiteral& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<ASCIILiteral> : ASCIILiteralHash { };
 
 inline namespace StringLiterals {
 

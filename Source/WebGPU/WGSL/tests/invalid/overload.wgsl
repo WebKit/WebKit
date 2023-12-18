@@ -32,6 +32,9 @@ fn testConstraints() {
 
     // CHECK-L: no matching overload for operator -(vec2<u32>)
     let x8 = -vec2(1u, 1u);
+
+    // CHECK-L: cannot initialize var of type 'u32' with value of type 'i32'
+    const x: u32 = 1i << 1;
 }
 
 fn testBottomOverload() {

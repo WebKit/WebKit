@@ -379,6 +379,9 @@ namespace JSC { namespace DFG {
     macro(CallDirectEval, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(CallWasm, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
+    macro(CallCustomAccessorGetter, NodeResultJS | NodeMustGenerate) \
+    macro(CallCustomAccessorSetter, NodeMustGenerate) \
+    \
     /* Shadow Chicken */\
     macro(LogShadowChickenPrologue, NodeMustGenerate) \
     macro(LogShadowChickenTail, NodeMustGenerate) \

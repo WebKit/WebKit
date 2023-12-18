@@ -54,7 +54,7 @@ int caretWidth()
 #endif
 }
 
-static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& renderer, LayoutUnit width, LayoutUnit textIndentOffset, CaretRectMode caretRectMode)
+static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& renderer, LayoutUnit logicalWidth, LayoutUnit textIndentOffset, CaretRectMode caretRectMode)
 {
     ASSERT(!renderer.firstChild() || renderer.firstChild()->isPseudoElement());
 
@@ -91,8 +91,8 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
         break;
     }
 
-    LayoutUnit x = renderer.borderLeft() + renderer.paddingLeft();
-    LayoutUnit maxX = width - renderer.borderRight() - renderer.paddingRight();
+    LayoutUnit x = renderer.borderAndPaddingLogicalLeft();
+    LayoutUnit maxX = logicalWidth - renderer.borderAndPaddingLogicalRight();
 
     switch (alignment) {
     case AlignLeft:
@@ -116,12 +116,12 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
 
     auto lineHeight = renderer.lineHeight(true, currentStyle.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
     auto height = std::min(lineHeight, LayoutUnit { currentStyle.metricsOfPrimaryFont().height() });
-    auto y = renderer.paddingTop() + renderer.borderTop() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
+    auto y = renderer.borderAndPaddingBefore() + (lineHeight > height ? (lineHeight - height) / 2 : LayoutUnit { });
 
     auto rect = LayoutRect(x, y, caretWidth(), height);
 
     if (caretRectMode == CaretRectMode::ExpandToEndOfLine)
-        rect.shiftMaxXEdgeTo(width);
+        rect.shiftMaxXEdgeTo(logicalWidth);
 
     return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
@@ -276,7 +276,7 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
     LayoutUnit fontHeight = renderer.style().metricsOfPrimaryFont().height();
-    if (fontHeight > rect.height() || (!renderer.isReplacedOrInlineBlock() && !renderer.isTable()))
+    if (fontHeight > rect.height() || (!renderer.isReplacedOrInlineBlock() && !renderer.isRenderTable()))
         rect.setHeight(fontHeight);
 
     // Move to local coords
@@ -302,7 +302,7 @@ static LayoutRect computeCaretRectForBlock(const RenderBlock& renderer, const In
     if (renderer.firstChild() && !renderer.firstChild()->isPseudoElement())
         return computeCaretRectForBox(renderer, boxAndOffset, caretRectMode);
 
-    return computeCaretRectForEmptyElement(renderer, renderer.width(), renderer.textIndentOffset(), caretRectMode);
+    return computeCaretRectForEmptyElement(renderer, renderer.logicalWidth(), renderer.textIndentOffset(), caretRectMode);
 }
 
 static LayoutRect computeCaretRectForInline(const RenderInline& renderer)
@@ -316,7 +316,7 @@ static LayoutRect computeCaretRectForInline(const RenderInline& renderer)
         return { };
     }
 
-    LayoutRect caretRect = computeCaretRectForEmptyElement(renderer, renderer.horizontalBorderAndPaddingExtent(), 0, CaretRectMode::Normal);
+    LayoutRect caretRect = computeCaretRectForEmptyElement(renderer, renderer.borderAndPaddingLogicalWidth(), 0, CaretRectMode::Normal);
 
     if (auto firstInlineBox = InlineIterator::firstInlineBoxFor(renderer))
         caretRect.moveBy(LayoutPoint { firstInlineBox->visualRectIgnoringBlockDirection().location() });

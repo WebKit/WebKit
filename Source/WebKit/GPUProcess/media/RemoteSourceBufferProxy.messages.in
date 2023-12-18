@@ -29,20 +29,18 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetActive(bool active)
     CanSwitchToType(WebCore::ContentType contentType) -> (bool canSwitch) Synchronous
     SetMode(WebCore::SourceBufferAppendMode appendMode)
-    Append(IPC::SharedBufferReference data) -> (std::optional<WebKit::SharedMemory::Handle> remoteData)
+    Append(IPC::SharedBufferReference data) -> (WebCore::MediaPromise::Result result, MediaTime timestampOffset)
     Abort()
     ResetParserState()
     RemovedFromMediaSource()
     SetMediaSourceEnded(bool isEnded)
-    SetReadyState(WebCore::MediaPlayer::ReadyState state)
     StartChangingType()
-    ClientReadyStateChanged(bool sourceIsEnded)
-    AddTrackBuffer(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier)
+    AddTrackBuffer(WebCore::TrackID trackID)
     ResetTrackBuffers()
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
-    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
-    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes) Synchronous
+    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime) -> ()
+    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime) -> (Vector<WebCore::PlatformTimeRanges> trackBuffers, uint64_t extraMemory) Synchronous
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime)
     SetGroupStartTimestamp(MediaTime timestamp)
     SetGroupStartTimestampToEndTimestamp()
@@ -51,14 +49,14 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetTimestampOffset(MediaTime timestampOffset)
     SetAppendWindowStart(MediaTime appendWindowStart)
     SetAppendWindowEnd(MediaTime appendWindowEnd)
-    ComputeSeekTime(struct WebCore::SeekTarget target) -> (MediaTime seekedTime)
+    ComputeSeekTime(struct WebCore::SeekTarget target) -> (WebCore::SourceBufferPrivate::ComputeSeekPromise::Result seekedTime)
     SeekToTime(MediaTime time)
-    UpdateTrackIds(Vector<std::pair<WebKit::TrackPrivateRemoteIdentifier, WebKit::TrackPrivateRemoteIdentifier>> identifierPairs)
-    BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples)
-    EnqueuedSamplesForTrackID(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples)
-    MemoryPressure(uint64_t maximumBufferSize, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
-    SetMaximumQueueDepthForTrackID(AtomString trackID, uint64_t depth)
-    MinimumUpcomingPresentationTimeForTrackID(AtomString trackID) -> (MediaTime time) Synchronous
+    UpdateTrackIds(Vector<std::pair<WebCore::TrackID , WebCore::TrackID >> identifierPairs)
+    BufferedSamplesForTrackId(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
+    EnqueuedSamplesForTrackID(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
+    MemoryPressure(uint64_t maximumBufferSize, MediaTime currentTime)
+    SetMaximumQueueDepthForTrackID(WebCore::TrackID trackID, uint64_t depth)
+    MinimumUpcomingPresentationTimeForTrackID(WebCore::TrackID trackID) -> (MediaTime time) Synchronous
 }
 
 #endif

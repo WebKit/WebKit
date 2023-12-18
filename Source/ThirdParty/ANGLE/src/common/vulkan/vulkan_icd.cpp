@@ -16,8 +16,6 @@
 #include "common/debug.h"
 #include "common/system_utils.h"
 
-#include "common/vulkan/vk_google_filtering_precision.h"
-
 namespace
 {
 void ResetEnvironmentVar(const char *variableName, const Optional<std::string> &value)
@@ -178,12 +176,6 @@ ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableValidationLayers
             ERR() << "Error setting synchronization validation environment for Vulkan validation "
                      "layers init.";
         }
-
-        if (!setCustomExtensionsEnvironment())
-        {
-            ERR() << "Error setting custom list for custom extensions for Vulkan layers init.";
-            mEnableValidationLayers = false;
-        }
     }
 #endif  // !defined(ANGLE_PLATFORM_ANDROID)
 
@@ -231,38 +223,6 @@ bool ScopedVkLoaderEnvironment::setICDEnvironment(const char *icd)
         mICD = vk::ICD::Default;
     }
     return mChangedICDEnv;
-}
-
-bool ScopedVkLoaderEnvironment::setCustomExtensionsEnvironment()
-{
-    struct CustomExtension
-    {
-        VkStructureType type;
-        size_t size;
-    };
-
-    CustomExtension customExtensions[] = {
-
-        {VK_STRUCTURE_TYPE_SAMPLER_FILTERING_PRECISION_GOOGLE,
-         sizeof(VkSamplerFilteringPrecisionGOOGLE)},
-
-    };
-
-    mPreviousCustomExtensionsEnv = angle::GetEnvironmentVar(kValidationLayersCustomSTypeListEnv);
-
-    std::stringstream strstr;
-    for (CustomExtension &extension : customExtensions)
-    {
-        if (strstr.tellp() != std::streampos(0))
-        {
-            strstr << angle::GetPathSeparatorForEnvironmentVar();
-        }
-
-        strstr << extension.type << angle::GetPathSeparatorForEnvironmentVar() << extension.size;
-    }
-
-    return angle::PrependPathToEnvironmentVar(kValidationLayersCustomSTypeListEnv,
-                                              strstr.str().c_str());
 }
 
 void ChoosePhysicalDevice(PFN_vkGetPhysicalDeviceProperties pGetPhysicalDeviceProperties,

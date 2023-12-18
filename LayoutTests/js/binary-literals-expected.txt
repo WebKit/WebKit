@@ -9,7 +9,7 @@ PASS 0B1 is 1
 PASS 0b00000000000000000000000000000000 is 0
 PASS 0B2 threw exception SyntaxError: No binary digits after '0b'.
 PASS 0ba threw exception SyntaxError: No binary digits after '0b'.
-PASS 0b0.0 threw exception SyntaxError: Unexpected number '.0'. Parse error..
+PASS 0b0.0 threw exception SyntaxError: Unexpected number '.0'.
 PASS x=0b1y=42 threw exception SyntaxError: No space between binary literal and identifier.
 PASS 0b1010 is 0xa
 PASS 0b00000001001000110100010101100111 is 0x01234567

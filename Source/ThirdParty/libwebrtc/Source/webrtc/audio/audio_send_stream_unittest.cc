@@ -28,7 +28,7 @@
 #include "modules/audio_mixer/sine_wave_generator.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
-#include "modules/rtp_rtcp/mocks/mock_rtcp_bandwidth_observer.h"
+#include "modules/rtp_rtcp/mocks/mock_network_link_rtcp_observer.h"
 #include "modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
@@ -225,22 +225,17 @@ struct ConfigHelper {
     EXPECT_CALL(*channel_send_,
                 SetSendAudioLevelIndicationStatus(true, kAudioLevelId))
         .Times(1);
-    EXPECT_CALL(rtp_transport_, GetBandwidthObserver())
-        .WillRepeatedly(Return(&bandwidth_observer_));
+    EXPECT_CALL(rtp_transport_, GetRtcpObserver)
+        .WillRepeatedly(Return(&rtcp_observer_));
     if (audio_bwe_enabled) {
       EXPECT_CALL(rtp_rtcp_,
                   RegisterRtpHeaderExtension(TransportSequenceNumber::Uri(),
                                              kTransportSequenceNumberId))
           .Times(1);
-      EXPECT_CALL(*channel_send_,
-                  RegisterSenderCongestionControlObjects(
-                      &rtp_transport_, Eq(&bandwidth_observer_)))
-          .Times(1);
-    } else {
-      EXPECT_CALL(*channel_send_, RegisterSenderCongestionControlObjects(
-                                      &rtp_transport_, Eq(nullptr)))
-          .Times(1);
     }
+    EXPECT_CALL(*channel_send_,
+                RegisterSenderCongestionControlObjects(&rtp_transport_))
+        .Times(1);
     EXPECT_CALL(*channel_send_, ResetSenderCongestionControlObjects()).Times(1);
   }
 
@@ -328,7 +323,7 @@ struct ConfigHelper {
   ::testing::StrictMock<MockChannelSend>* channel_send_ = nullptr;
   rtc::scoped_refptr<MockAudioProcessing> audio_processing_;
   AudioProcessingStats audio_processing_stats_;
-  ::testing::StrictMock<MockRtcpBandwidthObserver> bandwidth_observer_;
+  ::testing::StrictMock<MockNetworkLinkRtcpObserver> rtcp_observer_;
   ::testing::NiceMock<MockRtcEventLog> event_log_;
   ::testing::NiceMock<MockRtpTransportControllerSend> rtp_transport_;
   ::testing::NiceMock<MockRtpRtcpInterface> rtp_rtcp_;
@@ -798,8 +793,7 @@ TEST(AudioSendStreamTest, ReconfigureTransportCcResetsFirst) {
       EXPECT_CALL(*helper.channel_send(), ResetSenderCongestionControlObjects())
           .Times(1);
       EXPECT_CALL(*helper.channel_send(),
-                  RegisterSenderCongestionControlObjects(helper.transport(),
-                                                         Ne(nullptr)))
+                  RegisterSenderCongestionControlObjects(helper.transport()))
           .Times(1);
     }
 

@@ -41,7 +41,7 @@ static INLINE void sse_sum_wd4_sse2(const int16_t *data, int stride, int bh,
   temp_buffer2 = _mm_unpackhi_epi32(regx2_sum, _mm_setzero_si128());
   regx2_sum = _mm_add_epi64(temp_buffer1, temp_buffer2);
   regx2_sum = _mm_add_epi64(regx2_sum, _mm_srli_si128(regx2_sum, 8));
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   *x2_sum += _mm_cvtsi128_si64(regx2_sum);
 #else
   {
@@ -82,7 +82,7 @@ static INLINE void sse_sum_wd8_sse2(const int16_t *data, int stride, int bh,
   temp_buffer2 = _mm_unpackhi_epi32(regx2_sum, _mm_setzero_si128());
   regx2_sum = _mm_add_epi64(temp_buffer1, temp_buffer2);
   regx2_sum = _mm_add_epi64(regx2_sum, _mm_srli_si128(regx2_sum, 8));
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   *x2_sum += _mm_cvtsi128_si64(regx2_sum);
 #else
   {

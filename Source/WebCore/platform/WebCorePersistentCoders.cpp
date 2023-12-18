@@ -154,7 +154,6 @@ std::optional<WebCore::AppHighlightRangeData> Coder<WebCore::AppHighlightRangeDa
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::ImportedScriptAttributes>::encodeForPersistence(Encoder& encoder, const WebCore::ImportedScriptAttributes& instance)
 {
     encoder << instance.responseURL << instance.mimeType;
@@ -212,7 +211,6 @@ std::optional<WebCore::ImageResource> Coder<WebCore::ImageResource>::decodeForPe
         WTFMove(*label)
     } };
 }
-#endif
 
 void Coder<WebCore::ResourceRequest>::encodeForPersistence(Encoder& encoder, const WebCore::ResourceRequest& instance)
 {
@@ -604,7 +602,6 @@ std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decodeF
 #endif
 
 // FIXME: Move persistent coder implementations here and generate IPC coders for these structures.
-#if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::NavigationPreloadState>::encodeForPersistence(Encoder& encoder, const WebCore::NavigationPreloadState& instance)
 {
     encoder << instance.enabled;
@@ -624,7 +621,6 @@ std::optional<WebCore::NavigationPreloadState> Coder<WebCore::NavigationPreloadS
         return { };
     return { { *enabled, WTFMove(*headerValue) } };
 }
-#endif
 
 void Coder<WebCore::CrossOriginEmbedderPolicy>::encodeForPersistence(Encoder& encoder, const WebCore::CrossOriginEmbedderPolicy& instance)
 {
@@ -638,12 +634,45 @@ std::optional<WebCore::CrossOriginEmbedderPolicy> Coder<WebCore::CrossOriginEmbe
 
 void Coder<WebCore::ContentSecurityPolicyResponseHeaders>::encodeForPersistence(Encoder& encoder, const WebCore::ContentSecurityPolicyResponseHeaders& instance)
 {
-    instance.encode(encoder);
+    encoder << static_cast<uint64_t>(instance.headers().size());
+    for (auto& pair : instance.headers()) {
+        encoder << pair.first;
+        encoder << pair.second;
+    }
+    encoder << instance.httpStatusCode();
 }
 
 std::optional<WebCore::ContentSecurityPolicyResponseHeaders> Coder<WebCore::ContentSecurityPolicyResponseHeaders>::decodeForPersistence(Decoder& decoder)
 {
-    return WebCore::ContentSecurityPolicyResponseHeaders::decode(decoder);
+    WebCore::ContentSecurityPolicyResponseHeaders headers;
+
+    std::optional<uint64_t> headersSize;
+    decoder >> headersSize;
+    if (!headersSize)
+        return std::nullopt;
+
+    Vector<std::pair<String, WebCore::ContentSecurityPolicyHeaderType>> headersVector;
+    for (size_t i = 0; i < *headersSize; ++i) {
+        std::optional<String> header;
+        decoder >> header;
+        if (!header)
+            return std::nullopt;
+        std::optional<WebCore::ContentSecurityPolicyHeaderType> headerType;
+        decoder >> headerType;
+        if (!headerType)
+            return std::nullopt;
+        headersVector.append(std::make_pair(WTFMove(*header), WTFMove(*headerType)));
+    }
+    headersVector.shrinkToFit();
+    headers.setHeaders(WTFMove(headersVector));
+
+    std::optional<int> httpStatusCode;
+    decoder >> httpStatusCode;
+    if (!httpStatusCode)
+        return std::nullopt;
+    headers.setHTTPStatusCode(*httpStatusCode);
+
+    return headers;
 }
 
 void Coder<WebCore::ClientOrigin>::encodeForPersistence(Encoder& encoder, const WebCore::ClientOrigin& instance)
@@ -699,15 +728,142 @@ std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::d
 
 void Coder<WebCore::ResourceResponse>::encodeForPersistence(Encoder& encoder, const WebCore::ResourceResponse& instance)
 {
-    instance.encode(encoder);
+    encoder << instance.m_isNull;
+    if (instance.m_isNull)
+        return;
+    instance.lazyInit(WebCore::ResourceResponseBase::AllFields);
+
+    encoder << instance.m_url;
+    encoder << instance.m_mimeType;
+    encoder << static_cast<int64_t>(instance.m_expectedContentLength);
+    encoder << instance.m_textEncodingName;
+    encoder << instance.m_httpStatusText;
+    encoder << instance.m_httpVersion;
+    encoder << instance.m_httpHeaderFields;
+
+    encoder << instance.m_httpStatusCode;
+    encoder << instance.m_certificateInfo;
+    encoder << instance.m_source;
+    encoder << instance.m_type;
+    encoder << instance.m_tainting;
+    encoder << instance.m_isRedirected;
+    WebCore::UsedLegacyTLS usedLegacyTLS = instance.m_usedLegacyTLS;
+    encoder << usedLegacyTLS;
+    WebCore::WasPrivateRelayed wasPrivateRelayed = instance.m_wasPrivateRelayed;
+    encoder << wasPrivateRelayed;
+    encoder << instance.m_isRangeRequested;
 }
 
 std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decodeForPersistence(Decoder& decoder)
 {
     WebCore::ResourceResponse response;
-    if (!WebCore::ResourceResponseBase::decode(decoder, response))
+    ASSERT(response.m_isNull);
+    std::optional<bool> responseIsNull;
+    decoder >> responseIsNull;
+    if (!responseIsNull)
         return std::nullopt;
-    return response;
+    if (*responseIsNull)
+        return { WTFMove(response) };
+
+    response.m_isNull = false;
+
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+    response.m_url = WTFMove(*url);
+
+    std::optional<AtomString> mimeType;
+    decoder >> mimeType;
+    if (!mimeType)
+        return std::nullopt;
+    response.m_mimeType = WTFMove(*mimeType);
+
+    std::optional<int64_t> expectedContentLength;
+    decoder >> expectedContentLength;
+    if (!expectedContentLength)
+        return std::nullopt;
+    response.m_expectedContentLength = *expectedContentLength;
+
+    std::optional<AtomString> textEncodingName;
+    decoder >> textEncodingName;
+    if (!textEncodingName)
+        return std::nullopt;
+    response.m_textEncodingName = WTFMove(*textEncodingName);
+
+    std::optional<AtomString> httpStatusText;
+    decoder >> httpStatusText;
+    if (!httpStatusText)
+        return std::nullopt;
+    response.m_httpStatusText = WTFMove(*httpStatusText);
+
+    std::optional<AtomString> httpVersion;
+    decoder >> httpVersion;
+    if (!httpVersion)
+        return std::nullopt;
+    response.m_httpVersion = WTFMove(*httpVersion);
+
+    std::optional<WebCore::HTTPHeaderMap> httpHeaderFields;
+    decoder >> httpHeaderFields;
+    if (!httpHeaderFields)
+        return std::nullopt;
+    response.m_httpHeaderFields = WTFMove(*httpHeaderFields);
+
+    std::optional<short> httpStatusCode;
+    decoder >> httpStatusCode;
+    if (!httpStatusCode)
+        return std::nullopt;
+    response.m_httpStatusCode = WTFMove(*httpStatusCode);
+
+    std::optional<std::optional<WebCore::CertificateInfo>> certificateInfo;
+    decoder >> certificateInfo;
+    if (!certificateInfo)
+        return std::nullopt;
+    response.m_certificateInfo = WTFMove(*certificateInfo);
+
+    std::optional<WebCore::ResourceResponseBase::Source> source;
+    decoder >> source;
+    if (!source)
+        return std::nullopt;
+    response.m_source = WTFMove(*source);
+
+    std::optional<WebCore::ResourceResponseBase::Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+    response.m_type = WTFMove(*type);
+
+    std::optional<WebCore::ResourceResponseBase::Tainting> tainting;
+    decoder >> tainting;
+    if (!tainting)
+        return std::nullopt;
+    response.m_tainting = WTFMove(*tainting);
+
+    std::optional<bool> isRedirected;
+    decoder >> isRedirected;
+    if (!isRedirected)
+        return std::nullopt;
+    response.m_isRedirected = WTFMove(*isRedirected);
+
+    std::optional<WebCore::UsedLegacyTLS> usedLegacyTLS;
+    decoder >> usedLegacyTLS;
+    if (!usedLegacyTLS)
+        return std::nullopt;
+    response.m_usedLegacyTLS = WTFMove(*usedLegacyTLS);
+
+    std::optional<WebCore::WasPrivateRelayed> wasPrivateRelayed;
+    decoder >> wasPrivateRelayed;
+    if (!wasPrivateRelayed)
+        return std::nullopt;
+    response.m_wasPrivateRelayed = WTFMove(*wasPrivateRelayed);
+
+    std::optional<bool> isRangeRequested;
+    decoder >> isRangeRequested;
+    if (!isRangeRequested)
+        return std::nullopt;
+    response.m_isRangeRequested = WTFMove(*isRangeRequested);
+
+    return { WTFMove(response) };
 }
 
 void Coder<WebCore::FetchOptions>::encodeForPersistence(Encoder& encoder, const WebCore::FetchOptions& instance)

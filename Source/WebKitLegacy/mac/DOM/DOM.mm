@@ -375,8 +375,8 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (Element*)_linkElement
 {
     for (auto* node = core(self); node; node = node->parentNode()) {
-        if (node->isLink())
-            return &downcast<Element>(*node);
+        if (auto* element = dynamicDowncast<Element>(*node); element && element->isLink())
+            return element;
     }
     return nullptr;
 }

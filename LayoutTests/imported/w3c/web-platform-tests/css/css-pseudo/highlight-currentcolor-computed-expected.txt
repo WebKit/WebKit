@@ -3,10 +3,10 @@ PASS getComputedStyle() for ::selection at #target1
 PASS getComputedStyle() for ::selection at #target2
 FAIL getComputedStyle() for ::target-text at #target1 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgb(0, 128, 0)"
 FAIL getComputedStyle() for ::target-text at #target2 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL getComputedStyle() for ::spelling-error at #target1 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgb(0, 128, 0)"
-FAIL getComputedStyle() for ::spelling-error at #target2 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL getComputedStyle() for ::grammar-error at #target1 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgb(0, 128, 0)"
-FAIL getComputedStyle() for ::grammar-error at #target2 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
+PASS getComputedStyle() for ::spelling-error at #target1
+PASS getComputedStyle() for ::spelling-error at #target2
+PASS getComputedStyle() for ::grammar-error at #target1
+PASS getComputedStyle() for ::grammar-error at #target2
 FAIL getComputedStyle() for ::highlight(foo) at #target1 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgb(0, 128, 0)"
 FAIL getComputedStyle() for ::highlight(foo) at #target2 assert_equals: Background color is lime. expected "rgb(0, 255, 0)" but got "rgba(0, 0, 0, 0)"
 

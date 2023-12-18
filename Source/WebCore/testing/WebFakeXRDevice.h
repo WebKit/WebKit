@@ -46,8 +46,8 @@ class GraphicsContextGL;
 class FakeXRView final : public RefCounted<FakeXRView> {
 public:
     static Ref<FakeXRView> create(XREye eye) { return adoptRef(*new FakeXRView(eye)); }
-    using Pose = PlatformXR::Device::FrameData::Pose;
-    using Fov = PlatformXR::Device::FrameData::Fov;
+    using Pose = PlatformXR::FrameData::Pose;
+    using Fov = PlatformXR::FrameData::Fov;
 
     XREye eye() const { return m_eye; }
     const Pose& offset() const { return m_offset; }
@@ -75,10 +75,10 @@ class SimulatedXRDevice final : public PlatformXR::Device {
 public:
     SimulatedXRDevice();
     virtual ~SimulatedXRDevice();
-    void setViews(Vector<FrameData::View>&&);
+    void setViews(Vector<PlatformXR::FrameData::View>&&);
     void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&);
-    void setViewerOrigin(const std::optional<FrameData::Pose>&);
-    void setFloorOrigin(std::optional<FrameData::Pose>&& origin) { m_frameData.floorTransform = WTFMove(origin); }
+    void setViewerOrigin(const std::optional<PlatformXR::FrameData::Pose>&);
+    void setFloorOrigin(std::optional<PlatformXR::FrameData::Pose>&& origin) { m_frameData.floorTransform = WTFMove(origin); }
     void setEmulatedPosition(bool emulated) { m_frameData.isPositionEmulated = emulated; }
     void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
     void setVisibilityState(XRVisibilityState);
@@ -99,7 +99,7 @@ private:
     void stopTimer();
     void frameTimerFired();
 
-    PlatformXR::Device::FrameData m_frameData;
+    PlatformXR::FrameData m_frameData;
     bool m_supportsShutdownNotification { false };
     Timer m_frameTimer;
     RequestFrameCallback m_FrameCallback;
@@ -128,7 +128,7 @@ public:
     void setSupportsShutdownNotification();
     void simulateShutdown();
 
-    static ExceptionOr<PlatformXR::Device::FrameData::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);
+    static ExceptionOr<PlatformXR::FrameData::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);
 
 private:
     WebFakeXRDevice();

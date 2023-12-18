@@ -6,6 +6,7 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
+%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -23,6 +24,7 @@ ALIGN	16
 gcm_gmult_ssse3:
 
 $L$SEH_begin_gcm_gmult_ssse3_1:
+_CET_ENDBR
 	sub	rsp,40
 $L$SEH_prolog_gcm_gmult_ssse3_2:
 	movdqa	XMMWORD[rsp],xmm6
@@ -206,7 +208,7 @@ DB	102,65,15,56,0,210
 	movdqa	xmm6,XMMWORD[rsp]
 	movdqa	xmm10,XMMWORD[16+rsp]
 	add	rsp,40
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_gcm_gmult_ssse3_5:
 
@@ -221,6 +223,7 @@ ALIGN	16
 gcm_ghash_ssse3:
 
 $L$SEH_begin_gcm_ghash_ssse3_1:
+_CET_ENDBR
 	sub	rsp,56
 $L$SEH_prolog_gcm_ghash_ssse3_2:
 	movdqa	XMMWORD[rsp],xmm6
@@ -429,7 +432,7 @@ DB	102,65,15,56,0,194
 	movdqa	xmm10,XMMWORD[16+rsp]
 	movdqa	xmm11,XMMWORD[32+rsp]
 	add	rsp,56
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_gcm_ghash_ssse3_6:
 

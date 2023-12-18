@@ -35,6 +35,34 @@
 
 namespace WebCore {
 
+static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, const RenderStyle* pseudoElementStyle, const PaintInfo& paintInfo)
+{
+    if (!pseudoElementStyle)
+        return;
+
+    style.backgroundColor = pseudoElementStyle->colorResolvingCurrentColor(pseudoElementStyle->backgroundColor());
+    style.textStyles.fillColor = pseudoElementStyle->computedStrokeColor();
+    style.textStyles.strokeColor = pseudoElementStyle->computedStrokeColor();
+    style.textStyles.hasExplicitlySetFillColor = pseudoElementStyle->hasExplicitlySetColor();
+
+    auto color = TextDecorationPainter::decorationColor(*pseudoElementStyle, paintInfo.paintBehavior);
+    auto decorationStyle = pseudoElementStyle->textDecorationStyle();
+    auto decorations = pseudoElementStyle->textDecorationsInEffect();
+
+    if (decorations.contains(TextDecorationLine::Underline)) {
+        style.textDecorationStyles.underline.color = color;
+        style.textDecorationStyles.underline.decorationStyle = decorationStyle;
+    }
+    if (decorations.contains(TextDecorationLine::Overline)) {
+        style.textDecorationStyles.overline.color = color;
+        style.textDecorationStyles.overline.decorationStyle = decorationStyle;
+    }
+    if (decorations.contains(TextDecorationLine::LineThrough)) {
+        style.textDecorationStyles.linethrough.color = color;
+        style.textDecorationStyles.linethrough.decorationStyle = decorationStyle;
+    }
+}
+
 static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, const StyledMarkedText::Style& baseStyle, const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
     auto style = baseStyle;
@@ -45,35 +73,23 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
     case MarkedText::Type::DictationPhraseWithAlternatives:
 #endif
-    case MarkedText::Type::GrammarError:
-    case MarkedText::Type::SpellingError:
     case MarkedText::Type::Unmarked:
         break;
-    case MarkedText::Type::Highlight:
-        if (auto renderStyle = renderer.parent()->getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &renderer.style())) {
-            style.backgroundColor = renderStyle->colorResolvingCurrentColor(renderStyle->backgroundColor());
-            style.textStyles.fillColor = renderStyle->computedStrokeColor();
-            style.textStyles.strokeColor = renderStyle->computedStrokeColor();
-            style.textStyles.hasExplicitlySetFillColor = renderStyle->hasExplicitlySetColor();
-
-            auto color = TextDecorationPainter::decorationColor(*renderStyle.get(), paintInfo.paintBehavior);
-            auto decorationStyle = renderStyle->textDecorationStyle();
-            auto decorations = renderStyle->textDecorationsInEffect();
-
-            if (decorations.contains(TextDecorationLine::Underline)) {
-                style.textDecorationStyles.underline.color = color;
-                style.textDecorationStyles.underline.decorationStyle = decorationStyle;
-            }
-            if (decorations.contains(TextDecorationLine::Overline)) {
-                style.textDecorationStyles.overline.color = color;
-                style.textDecorationStyles.overline.decorationStyle = decorationStyle;
-            }
-            if (decorations.contains(TextDecorationLine::LineThrough)) {
-                style.textDecorationStyles.linethrough.color = color;
-                style.textDecorationStyles.linethrough.decorationStyle = decorationStyle;
-            }
-        }
+    case MarkedText::Type::GrammarError: {
+        auto* renderStyle = renderer.grammarErrorPseudoStyle();
+        computeStyleForPseudoElementStyle(style, renderStyle, paintInfo);
         break;
+    }
+    case MarkedText::Type::Highlight: {
+        auto renderStyle = renderer.parent()->getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &renderer.style());
+        computeStyleForPseudoElementStyle(style, renderStyle.get(), paintInfo);
+        break;
+    }
+    case MarkedText::Type::SpellingError: {
+        auto* renderStyle = renderer.spellingErrorPseudoStyle();
+        computeStyleForPseudoElementStyle(style, renderStyle, paintInfo);
+        break;
+    }
     case MarkedText::Type::FragmentHighlight: {
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
         style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
@@ -258,7 +274,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
     // Compute frontmost overlapping styled marked texts.
     Vector<StyledMarkedText> frontmostMarkedTexts;
     frontmostMarkedTexts.reserveInitialCapacity(markedTexts.size());
-    frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
+    frontmostMarkedTexts.append(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
     for (auto it = markedTexts.begin() + 1, end = markedTexts.end(); it != end; ++it) {
         StyledMarkedText& previousStyledMarkedText = frontmostMarkedTexts.last();
         // Marked texts completely cover each other.
@@ -266,7 +282,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
             previousStyledMarkedText = resolveStyleForMarkedText(*it, previousStyledMarkedText.style, renderer, lineStyle, paintInfo);
             continue;
         }
-        frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(*it, baseStyle, renderer, lineStyle, paintInfo));
+        frontmostMarkedTexts.append(resolveStyleForMarkedText(*it, baseStyle, renderer, lineStyle, paintInfo));
     }
 
     return frontmostMarkedTexts;
@@ -284,14 +300,14 @@ static Vector<StyledMarkedText> coalesceAdjacent(const Vector<StyledMarkedText>&
 
     Vector<StyledMarkedText> styledMarkedTexts;
     styledMarkedTexts.reserveInitialCapacity(textsToCoalesce.size());
-    styledMarkedTexts.uncheckedAppend(textsToCoalesce[0]);
+    styledMarkedTexts.append(textsToCoalesce[0]);
     for (auto it = textsToCoalesce.begin() + 1, end = textsToCoalesce.end(); it != end; ++it) {
         StyledMarkedText& previousStyledMarkedText = styledMarkedTexts.last();
         if (areAdjacentMarkedTextsWithSameStyle(previousStyledMarkedText, *it)) {
             previousStyledMarkedText.endOffset = it->endOffset;
             continue;
         }
-        styledMarkedTexts.uncheckedAppend(*it);
+        styledMarkedTexts.append(*it);
     }
 
     return styledMarkedTexts;

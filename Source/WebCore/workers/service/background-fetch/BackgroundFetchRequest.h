@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "FetchHeadersGuard.h"
 #include "FetchOptions.h"
@@ -50,5 +48,3 @@ struct BackgroundFetchRequest {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

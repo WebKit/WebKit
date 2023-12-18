@@ -1,1 +1,16 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :index_range,explicit_layout:index=0
+PASS :index_range,explicit_layout:index=1
+PASS :index_range,explicit_layout:index=2
+PASS :index_range,explicit_layout:index=3
+PASS :index_range,explicit_layout:index=4
+PASS :index_range,explicit_layout:index=5
+PASS :index_range,auto_layout:index=0
+PASS :index_range,auto_layout:index=1
+PASS :index_range,auto_layout:index=2
+PASS :index_range,auto_layout:index=3
+PASS :index_range,auto_layout:index=4
+PASS :index_range,auto_layout:index=5
+PASS :unique_js_object,auto_layout:
+PASS :unique_js_object,explicit_layout:
+

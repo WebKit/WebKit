@@ -25,6 +25,7 @@
 
 #pragma once
 
+#if ENABLE(CONTEXT_MENUS)
 #include "WebContextMenuItemData.h"
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -49,7 +50,7 @@ public:
     ~WebContextMenuItemGlib();
 
     // We don't use the SubmenuType internally, so check if we have submenu items.
-    WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::SubmenuType; }
+    WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::ContextMenuItemType::Submenu; }
     GAction* gAction() const { return m_gAction.get(); }
     GVariant* gActionTarget() const { return m_gActionTarget.get(); }
     const Vector<WebContextMenuItemGlib>& submenuItems() const { return m_submenuItems; }
@@ -71,3 +72,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

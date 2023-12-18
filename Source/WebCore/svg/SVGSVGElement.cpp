@@ -30,12 +30,12 @@
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "FrameSelection.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGViewportContainer.h"
 #include "LocalFrame.h"
 #include "NodeName.h"
 #include "RenderBoxInlines.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderView.h"
@@ -52,6 +52,7 @@
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"
 #include "StaticNodeList.h"
+#include "TreeScopeInlines.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -686,7 +687,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
     return transform;
 }
 
-SVGViewElement* SVGSVGElement::findViewAnchor(StringView fragmentIdentifier) const
+RefPtr<SVGViewElement> SVGSVGElement::findViewAnchor(StringView fragmentIdentifier) const
 {
     return dynamicDowncast<SVGViewElement>(document().findAnchor(fragmentIdentifier));
 }
@@ -698,14 +699,15 @@ SVGSVGElement* SVGSVGElement::findRootAnchor(const SVGViewElement* viewElement) 
 
 SVGSVGElement* SVGSVGElement::findRootAnchor(StringView fragmentIdentifier) const
 {
-    if (auto* viewElement = findViewAnchor(fragmentIdentifier))
-        return findRootAnchor(viewElement);
+    if (RefPtr viewElement = findViewAnchor(fragmentIdentifier))
+        return findRootAnchor(viewElement.get());
     return nullptr;
 }
 
 bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
 {
-    auto renderer = this->renderer();
+    auto* renderer = downcast<RenderLayerModelObject>(this->renderer());
+
     auto view = m_viewSpec;
     if (view)
         view->reset();
@@ -713,10 +715,21 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     bool hadUseCurrentView = m_useCurrentView;
     m_useCurrentView = false;
 
+    auto invalidateView = [&](RenderElement& renderer) {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
+            renderer.repaint();
+            return;
+        }
+#endif
+
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+    };
+
     if (fragmentIdentifier.startsWith("xpointer("_s)) {
         // FIXME: XPointer references are ignored (https://bugs.webkit.org/show_bug.cgi?id=17491)
         if (renderer && hadUseCurrentView)
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            invalidateView(*renderer);
         return false;
     }
 
@@ -728,7 +741,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
         else
             view->reset();
         if (renderer && (hadUseCurrentView || m_useCurrentView))
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            invalidateView(*renderer);
         return m_useCurrentView;
     }
 
@@ -736,8 +749,8 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     // or MyDrawing.svg#xpointer(id('MyView'))) then the closest ancestor "svg" element is displayed in the viewport.
     // Any view specification attributes included on the given "view" element override the corresponding view specification
     // attributes on the closest ancestor "svg" element.
-    if (auto* viewElement = findViewAnchor(fragmentIdentifier)) {
-        if (auto* rootElement = findRootAnchor(viewElement)) {
+    if (RefPtr viewElement = findViewAnchor(fragmentIdentifier)) {
+        if (auto* rootElement = findRootAnchor(viewElement.get())) {
             if (rootElement->m_currentViewElement) {
                 ASSERT(rootElement->m_currentViewElement->targetElement() == rootElement);
 
@@ -753,7 +766,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
 
             rootElement->inheritViewAttributes(*viewElement);
             if (auto* renderer = rootElement->renderer())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+                invalidateView(*renderer);
             m_currentViewFragmentIdentifier = fragmentIdentifier.toString();
             return true;
         }
@@ -783,8 +796,19 @@ void SVGSVGElement::resetScrollAnchor()
     }
 
     m_useCurrentView = false;
-    if (renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer());
+
+    auto* renderer = this->renderer();
+    if (!renderer)
+        return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        renderer->repaint();
+        return;
+    }
+#endif
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 void SVGSVGElement::inheritViewAttributes(const SVGViewElement& viewElement)
@@ -837,9 +861,9 @@ Element* SVGSVGElement::getElementById(const AtomString& id)
     if (element && element->isDescendantOf(*this))
         return element.get();
     if (treeScope().containsMultipleElementsWithId(id)) {
-        for (auto* element : *treeScope().getAllElementsById(id)) {
+        for (auto& element : *treeScope().getAllElementsById(id)) {
             if (element->isDescendantOf(*this))
-                return element;
+                return element.ptr();
         }
     }
 

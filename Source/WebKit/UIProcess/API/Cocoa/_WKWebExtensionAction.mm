@@ -34,7 +34,6 @@
 #import "WebExtensionAction.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionTab.h"
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 
@@ -42,14 +41,19 @@ NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification = 
 NSNotificationName const _WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification = @"_WKWebExtensionActionPopupWebViewContentSizeDidChange";
 NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification = @"_WKWebExtensionActionPopupWebViewDidClose";
 
+#if USE(APPKIT)
+using CocoaMenuItem = NSMenuItem;
+#else
+using CocoaMenuItem = UIMenuElement;
+#endif
+
 @implementation _WKWebExtensionAction
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionAction.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionAction->~WebExtensionAction();
 }
@@ -85,9 +89,9 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return _webExtensionAction->icon(size);
 }
 
-- (NSString *)displayLabel
+- (NSString *)label
 {
-    return _webExtensionAction->displayLabel();
+    return _webExtensionAction->label();
 }
 
 - (NSString *)badgeText
@@ -100,9 +104,14 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return _webExtensionAction->isEnabled();
 }
 
-- (BOOL)hasPopup
+- (NSArray<CocoaMenuItem *> *)menuItems
 {
-    return _webExtensionAction->hasPopup();
+    return _webExtensionAction->platformMenuItems();
+}
+
+- (BOOL)presentsPopup
+{
+    return _webExtensionAction->presentsPopup();
 }
 
 - (WKWebView *)popupWebView
@@ -144,7 +153,7 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return nil;
 }
 
-- (NSString *)displayLabel
+- (NSString *)label
 {
     return nil;
 }
@@ -159,7 +168,12 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
     return NO;
 }
 
-- (BOOL)hasPopup
+- (NSArray<CocoaMenuItem *> *)menuItems
+{
+    return nil;
+}
+
+- (BOOL)presentsPopup
 {
     return NO;
 }

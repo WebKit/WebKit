@@ -14,6 +14,7 @@
 #include <set>
 #include <utility>
 
+#include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
 #include "api/jsep.h"
 #include "api/media_stream_interface.h"
@@ -44,6 +45,7 @@
 #include "test/pc/e2e/peer_params_preprocessor.h"
 #include "test/pc/e2e/stats_poller.h"
 #include "test/pc/e2e/test_peer_factory.h"
+#include "test/test_flags.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
@@ -384,7 +386,7 @@ void PeerConnectionE2EQualityTest::Run(RunParams run_params) {
   executor_->Start(task_queue_.get());
   Timestamp start_time = Now();
 
-  bool is_quick_test_enabled = field_trial::IsEnabled("WebRTC-QuickPerfTest");
+  bool is_quick_test_enabled = absl::GetFlag(FLAGS_webrtc_quick_perf_test);
   if (is_quick_test_enabled) {
     time_controller_.AdvanceTime(kQuickTestModeRunDuration);
   } else {

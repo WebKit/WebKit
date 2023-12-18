@@ -22,6 +22,4 @@ public class LibaomAv1Encoder extends WrappedNativeVideoEncoder {
   public boolean isHardwareEncoder() {
     return false;
   }
-
-  static native boolean nativeIsSupported();
 }

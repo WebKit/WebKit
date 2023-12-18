@@ -166,82 +166,6 @@ function some(callback /* [, thisArg] */)
     return false;
 }
 
-@linkTimeConstant
-function typedArrayMerge(dst, src, srcIndex, srcEnd, width, comparator)
-{
-    "use strict";
-
-    var left = srcIndex;
-    var leftEnd = @min(left + width, srcEnd);
-    var right = leftEnd;
-    var rightEnd = @min(right + width, srcEnd);
-
-    for (var dstIndex = left; dstIndex < rightEnd; ++dstIndex) {
-        if (right < rightEnd) {
-            if (left >= leftEnd || @toNumber(comparator(src[right], src[left])) < 0) {
-                dst[dstIndex] = src[right++];
-                continue;
-            }
-        }
-
-        dst[dstIndex] = src[left++];
-    }
-}
-
-@linkTimeConstant
-function typedArrayMergeSort(array, valueCount, comparator)
-{
-    "use strict";
-
-    var constructor = @typedArrayGetOriginalConstructor(array);
-    var buffer = new constructor(valueCount);
-    var dst = buffer;
-    var src = array;
-    if (@isResizableOrGrowableSharedTypedArrayView(array)) {
-        src = new constructor(valueCount);
-        for (var i = 0; i < valueCount; ++i)
-            src[i] = array[i];
-    }
-
-    for (var width = 1; width < valueCount; width *= 2) {
-        for (var srcIndex = 0; srcIndex < valueCount; srcIndex += 2 * width)
-            @typedArrayMerge(dst, src, srcIndex, valueCount, width, comparator);
-
-        var tmp = src;
-        src = dst;
-        dst = tmp;
-    }
-
-    if (src != array) {
-        valueCount = @min(@typedArrayLength(array), valueCount);
-        for (var i = 0; i < valueCount; ++i)
-            array[i] = src[i];
-    }
-}
-
-function sort(comparator)
-{
-    "use strict";
-
-    if (comparator !== @undefined && !@isCallable(comparator))
-        @throwTypeError("TypedArray.prototype.sort requires the comparator argument to be a function or undefined");
-
-    var length = @typedArrayLength(this);
-    if (length < 2)
-        return this;
-
-    // typedArraySort is not safe when the other thread is modifying content. So if |this| is SharedArrayBuffer,
-    // use JS-implemented sorting.
-    if (comparator !== @undefined || @isSharedTypedArrayView(this)) {
-        if (comparator === @undefined)
-            comparator = @typedArrayDefaultComparator;
-        @typedArrayMergeSort(this, length, comparator);
-    } else
-        @typedArraySort(this);
-
-    return this;
-}
-
 function reduce(callback /* [, initialValue] */)
 {
     // 22.2.3.19
@@ -384,30 +308,4 @@ function at(index)
         k += length;
 
     return (k >= 0 && k < length) ? this[k] : @undefined;
-}
-
-function toSorted(comparator)
-{
-    "use strict";
-
-    // Step 1.
-    if (comparator !== @undefined && !@isCallable(comparator))
-        @throwTypeError("TypedArray.prototype.toSorted requires the comparator argument to be a function or undefined");
-
-    var result = @typedArrayClone.@call(this);
-
-    var length = @typedArrayLength(result);
-    if (length < 2)
-        return result;
-
-    // typedArraySort is not safe when the other thread is modifying content. So if |result| is SharedArrayBuffer,
-    // use JS-implemented sorting.
-    if (comparator !== @undefined || @isSharedTypedArrayView(result)) {
-        if (comparator === @undefined)
-            comparator = @typedArrayDefaultComparator;
-        @typedArrayMergeSort(result, length, comparator);
-    } else
-        @typedArraySort(result);
-
-    return result;
 }

@@ -51,6 +51,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-load-event-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-load-event.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLStyleElement-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList2.xhtml
@@ -61,6 +64,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/base-uri.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/border-shorthand-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/change-rule-with-layers-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-003.html
@@ -101,6 +106,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-form-controls.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-setter-logical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/declaration-block-all-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/delete-namespace-rule-when-child-rule-exists.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/escape.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/flex-serialization.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/font-family-serialization-001.html
@@ -113,10 +119,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-dynamic-subdoc.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-getter-v-properties.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute-logical-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute-roundtrip.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-fixed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-grid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-multicol-absolute-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-nobox.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-relative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-relpos-inline.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-static.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-sticky-container-for-abspos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-sticky.html
@@ -124,6 +136,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-layout-dependent-replaced-into-ib-split.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-line-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-logical-enumeration.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-margins-roundtrip.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-property-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-resolved-colors.html
@@ -133,6 +146,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/inline-style-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insert-dir-rule-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insert-dir-rule-in-iframe-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insert-invalid-where-rule-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-across-context.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-charset-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script-expected.html
@@ -142,6 +158,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-namespace-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-syntax-error-01.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/invalid-pseudo-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001.html
@@ -174,6 +191,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-attr-update-across-documents.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-dom-mutation-event-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic.html

@@ -1,0 +1,12 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Scroll timeline with percentage range [JavaScript API] Test timed out
+NOTRUN Scroll timeline with px range [JavaScript API]
+NOTRUN Scroll timeline with calculated range [JavaScript API]
+NOTRUN Scroll timeline with EM range [JavaScript API]
+NOTRUN Scroll timeline with percentage range [CSS]
+NOTRUN Scroll timeline with px range [CSS]
+NOTRUN Scroll timeline with calculated range [CSS]
+NOTRUN Scroll timeline with EM range [CSS]
+

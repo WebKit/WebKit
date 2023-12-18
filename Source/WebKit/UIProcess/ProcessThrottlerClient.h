@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProcessThrottlerClient_h
-#define ProcessThrottlerClient_h
+#pragma once
 
 #include <wtf/CompletionHandler.h>
 
@@ -48,6 +47,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // ProcessThrottlerClient_h
-

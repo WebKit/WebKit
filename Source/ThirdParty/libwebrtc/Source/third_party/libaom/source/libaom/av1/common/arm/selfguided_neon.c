@@ -418,16 +418,16 @@ static INLINE void boxsum2(int16_t *src, const int src_stride, int16_t *dst16,
       dst1_32_ptr += 2;
       dst2_ptr += 2;
       load_s16_4x4(src1_ptr, dst_stride_2, &s1, &s2, &s3, &s4);
-      transpose_s16_4x4d(&s1, &s2, &s3, &s4);
+      transpose_elems_inplace_s16_4x4(&s1, &s2, &s3, &s4);
       load_s32_4x4(src2_ptr, dst_stride_2, &d1, &d2, &d3, &d4);
-      transpose_s32_4x4(&d1, &d2, &d3, &d4);
+      transpose_elems_inplace_s32_4x4(&d1, &d2, &d3, &d4);
       do {
         src1_ptr += 4;
         src2_ptr += 4;
         load_s16_4x4(src1_ptr, dst_stride_2, &s5, &s6, &s7, &s8);
-        transpose_s16_4x4d(&s5, &s6, &s7, &s8);
+        transpose_elems_inplace_s16_4x4(&s5, &s6, &s7, &s8);
         load_s32_4x4(src2_ptr, dst_stride_2, &d5, &d6, &d7, &d8);
-        transpose_s32_4x4(&d5, &d6, &d7, &d8);
+        transpose_elems_inplace_s32_4x4(&d5, &d6, &d7, &d8);
         q23 = vaddl_s16(s2, s3);
         q45 = vaddl_s16(s4, s5);
         q67 = vaddl_s16(s6, s7);
@@ -438,7 +438,7 @@ static INLINE void boxsum2(int16_t *src, const int src_stride, int16_t *dst16,
         q34567 = vaddq_s32(q4567, vmovl_s16(s3));
         q45678 = vaddq_s32(q4567, vmovl_s16(s8));
 
-        transpose_s32_4x4(&q12345, &q23456, &q34567, &q45678);
+        transpose_elems_inplace_s32_4x4(&q12345, &q23456, &q34567, &q45678);
         store_s32_4x4(dst1_32_ptr, dst_stride_2, q12345, q23456, q34567,
                       q45678);
         dst1_32_ptr += 4;
@@ -457,7 +457,7 @@ static INLINE void boxsum2(int16_t *src, const int src_stride, int16_t *dst16,
         r34567 = vaddq_s32(r4567, d3);
         r45678 = vaddq_s32(r4567, d8);
 
-        transpose_s32_4x4(&r12345, &r23456, &r34567, &r45678);
+        transpose_elems_inplace_s32_4x4(&r12345, &r23456, &r34567, &r45678);
         store_s32_4x4(dst2_ptr, dst_stride_2, r12345, r23456, r34567, r45678);
         dst2_ptr += 4;
         d1 = d5;
@@ -844,9 +844,9 @@ static INLINE void boxsum1(int16_t *src, const int src_stride, uint16_t *dst1,
       w = width;
 
       load_s16_4x4((int16_t *)src1_ptr, dst_stride, &d1, &d2, &d3, &d4);
-      transpose_s16_4x4d(&d1, &d2, &d3, &d4);
+      transpose_elems_inplace_s16_4x4(&d1, &d2, &d3, &d4);
       load_s32_4x4(src2_ptr, dst_stride, &r1, &r2, &r3, &r4);
-      transpose_s32_4x4(&r1, &r2, &r3, &r4);
+      transpose_elems_inplace_s32_4x4(&r1, &r2, &r3, &r4);
       src1_ptr += 4;
       src2_ptr += 4;
 
@@ -861,9 +861,9 @@ static INLINE void boxsum1(int16_t *src, const int src_stride, uint16_t *dst1,
 
       do {
         load_s16_4x4((int16_t *)src1_ptr, dst_stride, &d5, &d6, &d7, &d8);
-        transpose_s16_4x4d(&d5, &d6, &d7, &d8);
+        transpose_elems_inplace_s16_4x4(&d5, &d6, &d7, &d8);
         load_s32_4x4(src2_ptr, dst_stride, &r5, &r6, &r7, &r8);
-        transpose_s32_4x4(&r5, &r6, &r7, &r8);
+        transpose_elems_inplace_s32_4x4(&r5, &r6, &r7, &r8);
         src1_ptr += 4;
         src2_ptr += 4;
 
@@ -873,7 +873,7 @@ static INLINE void boxsum1(int16_t *src, const int src_stride, uint16_t *dst1,
         q567 = vadd_s16(d7, q56);
         q78 = vadd_s16(d7, d8);
         q678 = vadd_s16(d6, q78);
-        transpose_s16_4x4d(&q234, &q345, &q456, &q567);
+        transpose_elems_inplace_s16_4x4(&q234, &q345, &q456, &q567);
         store_s16_4x4((int16_t *)dst1_ptr, dst_stride, q234, q345, q456, q567);
         dst1_ptr += 4;
 
@@ -887,7 +887,7 @@ static INLINE void boxsum1(int16_t *src, const int src_stride, uint16_t *dst1,
         r567 = vaddq_s32(r7, r56);
         r78 = vaddq_s32(r7, r8);
         r678 = vaddq_s32(r6, r78);
-        transpose_s32_4x4(&r234, &r345, &r456, &r567);
+        transpose_elems_inplace_s32_4x4(&r234, &r345, &r456, &r567);
         store_s32_4x4(dst2_ptr, dst_stride, r234, r345, r456, r567);
         dst2_ptr += 4;
 

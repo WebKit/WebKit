@@ -1808,3 +1808,46 @@ TEST_F(SSLStreamAdapterTestDTLSLegacyProtocols,
   SetupProtocolVersions(rtc::SSL_PROTOCOL_DTLS_10, rtc::SSL_PROTOCOL_DTLS_10);
   TestHandshake(false);
 }
+
+// These tests are a no-op under OpenSSL.
+#ifdef OPENSSL_IS_BORINGSSL
+// TODO(https://bugs.webrtc.org/10261): when removing
+// SSLStreamAdapterTestDTLSLegacyProtocols that this class
+// inherits from move the code to this class.
+class SSLStreamAdapterTestDTLSExtensionPermutation
+    : public SSLStreamAdapterTestDTLSLegacyProtocols {
+ public:
+  SSLStreamAdapterTestDTLSExtensionPermutation()
+      : SSLStreamAdapterTestDTLSLegacyProtocols() {}
+};
+
+// Tests for enabling the (D)TLS extension permutation which randomizes the
+// order of extensions in the client hello.
+TEST_F(SSLStreamAdapterTestDTLSExtensionPermutation,
+       ClientDefaultServerDefault) {
+  ConfigureClient("");
+  ConfigureServer("");
+  TestHandshake();
+}
+
+TEST_F(SSLStreamAdapterTestDTLSExtensionPermutation,
+       ClientDefaultServerPermute) {
+  ConfigureClient("");
+  ConfigureServer("WebRTC-PermuteTlsClientHello/Enabled/");
+  TestHandshake();
+}
+
+TEST_F(SSLStreamAdapterTestDTLSExtensionPermutation,
+       ClientPermuteServerDefault) {
+  ConfigureClient("WebRTC-PermuteTlsClientHello/Enabled/");
+  ConfigureServer("");
+  TestHandshake();
+}
+
+TEST_F(SSLStreamAdapterTestDTLSExtensionPermutation,
+       ClientPermuteServerPermute) {
+  ConfigureClient("WebRTC-PermuteTlsClientHello/Enabled/");
+  ConfigureServer("WebRTC-PermuteTlsClientHello/Enabled/");
+  TestHandshake();
+}
+#endif  // OPENSSL_IS_BORINGSSL

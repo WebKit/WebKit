@@ -125,7 +125,7 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const std::optional<IDBK
             isFirst = false;
             continue;
         }
-        prefetchedRecords.uncheckedAppend(record.record);
+        prefetchedRecords.append(record.record);
     }
     prefetchedRecords.shrinkToFit();
 
@@ -189,9 +189,10 @@ bool SQLiteIDBCursor::createSQLiteStatement(StringView sql)
     ASSERT(!m_currentUpperKey.isNull());
     ASSERT(m_transaction->sqliteTransaction());
 
-    auto statement = m_transaction->sqliteTransaction()->database().prepareHeapStatementSlow(sql);
+    CheckedRef database = m_transaction->sqliteTransaction()->database();
+    auto statement = database->prepareHeapStatementSlow(sql);
     if (!statement) {
-        LOG_ERROR("Could not create cursor statement (prepare/id) - '%s'", m_transaction->sqliteTransaction()->database().lastErrorMsg());
+        LOG_ERROR("Could not create cursor statement (prepare/id) - '%s'", database->lastErrorMsg());
         return false;
     }
     m_statement = statement.value().moveToUniquePtr();
@@ -293,18 +294,18 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
     if (m_currentIndexRecordValue.isNull())
         return true;
 
-    auto& database = m_transaction->sqliteTransaction()->database();
+    CheckedRef database = m_transaction->sqliteTransaction()->database();
     if (!m_preIndexStatement) {
-        auto preIndexStatement = database.prepareHeapStatementSlow(buildPreIndexStatement(isDirectionNext()));
+        auto preIndexStatement = database->prepareHeapStatementSlow(buildPreIndexStatement(isDirectionNext()));
         if (!preIndexStatement) {
-            LOG_ERROR("Could not prepare pre statement - '%s'", database.lastErrorMsg());
+            LOG_ERROR("Could not prepare pre statement - '%s'", database->lastErrorMsg());
             return false;
         }
         m_preIndexStatement = preIndexStatement.value().moveToUniquePtr();
     }
 
     if (m_preIndexStatement->reset() != SQLITE_OK) {
-        LOG_ERROR("Could not reset pre statement - '%s'", database.lastErrorMsg());
+        LOG_ERROR("Could not reset pre statement - '%s'", database->lastErrorMsg());
         return false;
     }
 
@@ -477,7 +478,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
     record.record.value = { };
 
-    auto& database = m_transaction->sqliteTransaction()->database();
+    CheckedRef database = m_transaction->sqliteTransaction()->database();
     SQLiteStatement* statement = nullptr;
 
     int result;
@@ -488,7 +489,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         if (result == SQLITE_ROW)
             statement = m_preIndexStatement.get();
         else if (result != SQLITE_DONE)
-            LOG_ERROR("Error advancing with pre statement - (%i) %s", result, database.lastErrorMsg());
+            LOG_ERROR("Error advancing with pre statement - (%i) %s", result, database->lastErrorMsg());
     }
     
     if (!statement) {
@@ -499,7 +500,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             return FetchResult::Success;
         }
         if (result != SQLITE_ROW) {
-            LOG_ERROR("Error advancing cursor - (%i) %s", result, database.lastErrorMsg());
+            LOG_ERROR("Error advancing cursor - (%i) %s", result, database->lastErrorMsg());
             markAsErrored(record);
             return FetchResult::Failure;
         }
@@ -540,14 +541,14 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
         }
 
         if (!m_cachedObjectStoreStatement || m_cachedObjectStoreStatement->reset() != SQLITE_OK) {
-            if (auto cachedObjectStoreStatement = database.prepareHeapStatement("SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;"_s))
+            if (auto cachedObjectStoreStatement = database->prepareHeapStatement("SELECT value FROM Records WHERE key = CAST(? AS TEXT) and objectStoreID = ?;"_s))
                 m_cachedObjectStoreStatement = cachedObjectStoreStatement.value().moveToUniquePtr();
         }
 
         if (!m_cachedObjectStoreStatement
             || m_cachedObjectStoreStatement->bindBlob(1, keyData) != SQLITE_OK
             || m_cachedObjectStoreStatement->bindInt64(2, m_objectStoreID) != SQLITE_OK) {
-            LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", database.lastError(), database.lastErrorMsg());
+            LOG_ERROR("Could not create index cursor statement into object store records (%i) '%s'", database->lastError(), database->lastErrorMsg());
             markAsErrored(record);
             return FetchResult::Failure;
         }
@@ -561,7 +562,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             // Skip over it.
             return FetchResult::ShouldFetchAgain;
         } else {
-            LOG_ERROR("Could not step index cursor statement into object store records (%i) '%s'", database.lastError(), database.lastErrorMsg());
+            LOG_ERROR("Could not step index cursor statement into object store records (%i) '%s'", database->lastError(), database->lastErrorMsg());
             markAsErrored(record);
             return FetchResult::Failure;
 

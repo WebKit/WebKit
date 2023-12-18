@@ -29,6 +29,7 @@
 #if ENABLE(GAMEPAD)
 
 #include "Document.h"
+#include "FeaturePolicy.h"
 #include "Gamepad.h"
 #include "GamepadManager.h"
 #include "GamepadProvider.h"
@@ -74,13 +75,12 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
     return *m_gamepads[index];
 }
 
-const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator& navigator)
+ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Navigator& navigator)
 {
-    RefPtr domWindow = navigator.window();
-    RefPtr document = domWindow ? domWindow->document() : nullptr;
+    RefPtr document = navigator.document() ? navigator.document() : nullptr;
     if (!document) {
         static NeverDestroyed<Vector<RefPtr<Gamepad>>> emptyGamepads;
-        return emptyGamepads;
+        return { emptyGamepads.get() };
     }
 
     if (!document->isSecureContext()) {
@@ -90,6 +90,9 @@ const Vector<RefPtr<Gamepad>>& NavigatorGamepad::getGamepads(Navigator& navigato
         });
 
     }
+
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Gamepad, *document, LogFeaturePolicyFailure::Yes))
+        return Exception { ExceptionCode::SecurityError, "Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)"_s };
 
     return NavigatorGamepad::from(navigator)->gamepads();
 }

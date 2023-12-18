@@ -76,12 +76,11 @@ class RtxLoopBackTransport : public webrtc::Transport {
     packet_loss_ = 0;
   }
 
-  bool SendRtp(const uint8_t* data,
-               size_t len,
+  bool SendRtp(rtc::ArrayView<const uint8_t> data,
                const PacketOptions& options) override {
     count_++;
     RtpPacketReceived packet;
-    if (!packet.Parse(data, len))
+    if (!packet.Parse(data))
       return false;
     if (packet.Ssrc() == rtx_ssrc_) {
       count_rtx_ssrc_++;
@@ -102,8 +101,8 @@ class RtxLoopBackTransport : public webrtc::Transport {
     return true;
   }
 
-  bool SendRtcp(const uint8_t* data, size_t len) override {
-    module_->IncomingRtcpPacket(rtc::MakeArrayView((const uint8_t*)data, len));
+  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override {
+    module_->IncomingRtcpPacket(data);
     return true;
   }
   int count_;
@@ -210,8 +209,8 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
       video_header.frame_type = VideoFrameType::kVideoFrameDelta;
       EXPECT_TRUE(rtp_sender_video_->SendVideo(
           kPayloadType, VideoCodecType::kVideoCodecGeneric, timestamp,
-          timestamp / 90, payload_data, sizeof(payload_data), video_header, 0,
-          {}));
+          /*capture_time=*/Timestamp::Millis(timestamp / 90), payload_data,
+          sizeof(payload_data), video_header, TimeDelta::Zero(), {}));
       // Min required delay until retransmit = 5 + RTT ms (RTT = 0).
       fake_clock.AdvanceTimeMilliseconds(5);
       int length = BuildNackList(nack_list);
@@ -261,8 +260,8 @@ TEST_F(RtpRtcpRtxNackTest, LongNackList) {
     video_header.frame_type = VideoFrameType::kVideoFrameDelta;
     EXPECT_TRUE(rtp_sender_video_->SendVideo(
         kPayloadType, VideoCodecType::kVideoCodecGeneric, timestamp,
-        timestamp / 90, payload_data, sizeof(payload_data), video_header, 0,
-        {}));
+        Timestamp::Millis(timestamp / 90), payload_data, sizeof(payload_data),
+        video_header, TimeDelta::Zero(), {}));
     // Prepare next frame.
     timestamp += 3000;
     fake_clock.AdvanceTimeMilliseconds(33);

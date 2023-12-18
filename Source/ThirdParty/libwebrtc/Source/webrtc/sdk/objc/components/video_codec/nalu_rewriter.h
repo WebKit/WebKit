@@ -46,6 +46,9 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
                                       CMSampleBufferRef* out_sample_buffer,
                                       CMMemoryPoolRef memory_pool);
 
+uint8_t ComputeH264ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t annexb_buffer_size);
+uint8_t ComputeH264ReorderSizeFromAVC(const uint8_t* avcdata, size_t avcdata_size);
+
 #ifdef WEBRTC_USE_H265
 // Converts a sample buffer emitted from the VideoToolbox encoder into a buffer
 // suitable for RTP. The sample buffer is in avcc format whereas the rtp buffer

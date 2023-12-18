@@ -202,7 +202,7 @@ void vp9_update_noise_estimate(VP9_COMP *const cpi) {
                      VPXMIN(cpi->consec_zero_mv[bl_index1],
                             VPXMIN(cpi->consec_zero_mv[bl_index2],
                                    cpi->consec_zero_mv[bl_index3])));
-          // Only consider blocks that are likely steady background. i.e, have
+          // Only consider blocks that are likely steady background. i.e., have
           // been encoded as zero/low motion x (= thresh_consec_zeromv) frames
           // in a row. consec_zero_mv[] defined for 8x8 blocks, so consider all
           // 4 sub-blocks for 16x16 block. And exclude this frame if

@@ -167,8 +167,8 @@ bool PositionIterator::isCandidate() const
     if (renderer->isBR())
         return Position(*this).isCandidate();
 
-    if (is<RenderText>(*renderer))
-        return !Position::nodeIsUserSelectNone(anchorNode.get()) && downcast<RenderText>(*renderer).containsCaretOffset(m_offsetInAnchor);
+    if (auto* renderText = dynamicDowncast<RenderText>(*renderer))
+        return !Position::nodeIsUserSelectNone(anchorNode.get()) && renderText->containsCaretOffset(m_offsetInAnchor);
 
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(anchorNode->parentNode());

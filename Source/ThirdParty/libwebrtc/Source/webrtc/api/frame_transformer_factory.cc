@@ -25,7 +25,7 @@ std::unique_ptr<TransformableVideoFrameInterface> CreateVideoReceiverFrame() {
   return nullptr;
 }
 
-std::unique_ptr<TransformableFrameInterface> CloneAudioFrame(
+std::unique_ptr<TransformableAudioFrameInterface> CloneAudioFrame(
     TransformableAudioFrameInterface* original) {
   // At the moment, only making sender frames is supported.
   return CloneSenderAudioFrame(original);

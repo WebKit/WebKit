@@ -91,11 +91,18 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     auto scope = makeScopeExit([&rawPixelBuffer] {
         CVPixelBufferUnlockBaseAddress(rawPixelBuffer, 0);
     });
+    ASSERT(span.size() >= height * planeY.sourceWidthBytes);
+    if (span.size() < height * planeY.sourceWidthBytes)
+        return nullptr;
 
     auto* data = span.data();
     data = copyToCVPixelBufferPlane(rawPixelBuffer, 0, data, height, planeY.sourceWidthBytes);
     if (CVPixelBufferGetPlaneCount(rawPixelBuffer) == 2) {
-        if (CVPixelBufferGetWidthOfPlane(rawPixelBuffer, 1) != (width / 2) || CVPixelBufferGetHeightOfPlane(rawPixelBuffer, 1) != (height / 2))
+        const auto heightUV = height / 2;
+        ASSERT(span.data() + span.size() >= data + (heightUV * planeUV.sourceWidthBytes));
+        if (CVPixelBufferGetWidthOfPlane(rawPixelBuffer, 1) != (width / 2)
+            || CVPixelBufferGetHeightOfPlane(rawPixelBuffer, 1) != heightUV
+            || (data + (heightUV * planeUV.sourceWidthBytes) > span.data() + span.size()))
             return nullptr;
         copyToCVPixelBufferPlane(rawPixelBuffer, 1, data, height / 2, planeUV.sourceWidthBytes);
     }
@@ -172,7 +179,7 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> buffer, size_
         offsetLayoutU, layoutU.sourceWidthBytes,
         offsetLayoutV, layoutV.sourceWidthBytes
     };
-    auto pixelBuffer = adoptCF(webrtc::pixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout));
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420Buffer(buffer.data(), buffer.size(), width, height, layout));
 
     if (!pixelBuffer)
         return nullptr;
@@ -204,7 +211,7 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> buffer, size
         },
         offsetLayoutA, layoutA.sourceWidthBytes
     };
-    auto pixelBuffer = adoptCF(webrtc::pixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout));
+    auto pixelBuffer = adoptCF(webrtc::createPixelBufferFromI420ABuffer(buffer.data(), buffer.size(), width, height, layout));
 
     if (!pixelBuffer)
         return nullptr;

@@ -279,7 +279,8 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
 
     resetInsertionModeAppropriately();
 
-    m_tree.setForm(is<HTMLFormElement>(contextElement) ? &downcast<HTMLFormElement>(contextElement) : HTMLFormElement::findClosestFormAncestor(contextElement));
+    auto* formElement = dynamicDowncast<HTMLFormElement>(contextElement);
+    m_tree.setForm(formElement ? formElement : HTMLFormElement::findClosestFormAncestor(contextElement));
 
 #if ASSERT_ENABLED
     m_destructionProhibited = false;
@@ -784,9 +785,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
     case TagName::applet:
     case TagName::embed:
     case TagName::object:
-        if (!pluginContentIsAllowed(m_tree.parserContentPolicy()))
-            return;
-        FALLTHROUGH;
     case TagName::marquee:
         m_tree.reconstructTheActiveFormattingElements();
         if (token.tagName() == TagName::embed) {
@@ -972,8 +970,7 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     if (m_tree.currentStackItem().elementName() != HTML::template_)
         parseError(token);
     m_tree.openElements().popUntil(HTML::template_);
-    RELEASE_ASSERT(is<HTMLTemplateElement>(m_tree.openElements().top()));
-    Ref templateElement = downcast<HTMLTemplateElement>(m_tree.openElements().top());
+    Ref templateElement = checkedDowncast<HTMLTemplateElement>(m_tree.openElements().top());
     m_tree.openElements().pop();
 
     auto& item = adjustedCurrentStackItem();
@@ -2494,13 +2491,17 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
 // Looks at the ancestors of the element to determine whether we're inside an element which disallows parsing phone numbers.
 static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
 {
-    if (node.isLink() || is<HTMLFormControlElement>(node))
+    if (is<HTMLFormControlElement>(node))
         return true;
 
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
-    switch (downcast<Element>(node).elementName()) {
+    if (element->isLink())
+        return true;
+
+    switch (element->elementName()) {
     case HTML::a:
     case HTML::script:
     case HTML::style:

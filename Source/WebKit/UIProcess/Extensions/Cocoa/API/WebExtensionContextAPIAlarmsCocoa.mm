@@ -61,11 +61,9 @@ void WebExtensionContext::alarmsClear(const String& name, CompletionHandler<void
 
 void WebExtensionContext::alarmsGetAll(CompletionHandler<void(Vector<WebExtensionAlarmParameters>&&)>&& completionHandler)
 {
-    Vector<WebExtensionAlarmParameters> alarms;
-    alarms.reserveInitialCapacity(m_alarmMap.size());
-
-    for (auto& alarm : m_alarmMap.values())
-        alarms.uncheckedAppend(alarm->parameters());
+    auto alarms = WTF::map(m_alarmMap.values(), [](auto&& alarm) {
+        return alarm->parameters();
+    });
 
     completionHandler(WTFMove(alarms));
 }

@@ -29,14 +29,16 @@
 #
 # A tool for automating dealing with bugzilla, posting patches, committing patches, etc.
 
-from optparse import make_option
 import threading
+from optparse import make_option
 
+# We need to import the commands, so that when we iterate through all
+# subclasses of Command we find them.
+import webkitpy.tool.commands as _  # noqa: F401
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.common.host import Host
 from webkitpy.common.net.ewsserver import EWSServer
 from webkitpy.tool.multicommandtool import MultiCommandTool
-from webkitpy.tool import commands
 
 
 class WebKitPatch(MultiCommandTool, Host):

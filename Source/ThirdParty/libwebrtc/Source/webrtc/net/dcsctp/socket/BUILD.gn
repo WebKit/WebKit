@@ -244,6 +244,7 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../common:handover_testing",
       "../common:internal_types",
+      "../common:math",
       "../packet:chunk",
       "../packet:error_cause",
       "../packet:parameter",

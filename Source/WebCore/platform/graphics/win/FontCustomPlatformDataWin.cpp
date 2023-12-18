@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+cairo_font_face_t* createCairoDWriteFontFace(HFONT);
+
 FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
     : name(name)
     , creationData(WTFMove(creationData))
@@ -67,7 +69,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
 
     auto hfont = adoptGDIObject(::CreateFontIndirect(&logFont));
 
-    cairo_font_face_t* fontFace = cairo_win32_font_face_create_for_hfont(hfont.get());
+    cairo_font_face_t* fontFace = createCairoDWriteFontFace(hfont.get());
 
     FontPlatformData fontPlatformData(WTFMove(hfont), fontFace, size, bold, italic, this);
 

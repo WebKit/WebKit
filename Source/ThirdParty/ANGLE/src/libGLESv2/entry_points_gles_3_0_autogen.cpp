@@ -408,7 +408,7 @@ GLenum GL_APIENTRY GL_ClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 tim
         GenerateContextLostErrorOnCurrentGlobalContext();
         returnValue = GetDefaultReturnValue<angle::EntryPoint::GLClientWaitSync, GLenum>();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(&returnValue);
     return returnValue;
 }
 
@@ -454,7 +454,7 @@ void GL_APIENTRY GL_CompressedTexImage3D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexSubImage3D(GLenum target,
@@ -501,7 +501,7 @@ void GL_APIENTRY GL_CompressedTexSubImage3D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CopyBufferSubData(GLenum readTarget,
@@ -2444,7 +2444,7 @@ void GL_APIENTRY GL_TexImage3D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY
@@ -2564,7 +2564,7 @@ void GL_APIENTRY GL_TexSubImage3D(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TransformFeedbackVaryings(GLuint program,

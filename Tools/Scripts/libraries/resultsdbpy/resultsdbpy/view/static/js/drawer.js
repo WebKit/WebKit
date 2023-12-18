@@ -116,6 +116,59 @@ function Drawer(controls = [], onCollapseChange) {
         </div>`;
 }
 
+function CommitSearchBar(onSearchAction = null) {
+    const searchInputRef = REF.createRef({
+        onElementUnmount: () => {
+            window.removeEventListener("keypress", searchHotKeyFunction);
+        }
+    });
+    const searchHotKeyFunction = (e) => {
+        if (e.key == "f" && ( e.ctrlKey || e.metaKey )) {
+            e.preventDefault();
+            searchInputRef.element.focus();
+        }
+    };
+    const searchInputEventStream = searchInputRef.fromEvent("keyup");
+    searchInputEventStream.action((e) => {
+        const searchValue = searchInputRef.element.value;
+        if (e.key === "Enter") {
+            if (onSearchAction)
+                onSearchAction(searchValue);
+        }
+    });
+    
+    const searchButtonRef = REF.createRef({});
+    const searchButtonClikEventStream = searchButtonRef.fromEvent("click");
+    searchButtonClikEventStream.action((e) => {
+        const searchValue = searchInputRef.element.value;
+        if (onSearchAction)
+            onSearchAction(searchValue);
+    });
+
+    const clearButtonRef = REF.createRef({});
+    clearButtonRef.fromEvent("click").action(e => {
+        if (onSearchAction)
+            onSearchAction(null);
+    });
+
+    window.addEventListener("keypress", searchHotKeyFunction);
+
+    return `<div class="input">
+        <div class="row">
+            <div class="input col-7">
+                <input type="text" ref="${searchInputRef}" autocomplete="off" autocapitalize="none" required/>
+                <label>Search commit</label>
+            </div>
+            <button class="button col-3 primary" ref="${searchButtonRef}">
+                <img src="library/icons/search.svg" style="height: var(--largeSize); filter: invert(1);">
+            </button>
+            <button class="button col-2" ref="${clearButtonRef}">
+                X
+            </button>
+        </div>
+    </div>`;
+}
+
 let configurations = []
 let configurationsDefinedCallbacks = [];
 function refreshConfigurations() {
@@ -400,4 +453,4 @@ function CommitRepresentation(callback) {
         </div>`;
 }
 
-export {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation};
+export {Drawer, BranchSelector, ConfigurationSelectors, LimitSlider, CommitRepresentation, CommitSearchBar};

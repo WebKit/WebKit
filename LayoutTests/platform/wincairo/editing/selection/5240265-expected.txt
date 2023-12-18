@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x60
-        RenderText {#text} at (0,0) size 780x59
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 780x53
           text run at (0,0) width 758: "This tests to see that clicking on content outside of an editable region with -webkit-user-select: ignore doesn't remove the"
-          text run at (0,20) width 465: "selection from the editable region. To run it manually, click on the button. "
-          text run at (465,20) width 315: "The editable region should not be focused, but the"
-          text run at (0,40) width 216: "text inside of it should be selected."
-      RenderBlock (anonymous) at (0,76) size 784x25
-        RenderButton {INPUT} at (0,0) size 83x25 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-          RenderBlock (anonymous) at (8,4) size 67x16
-            RenderText at (0,0) size 67x16
-              text run at (0,0) width 67: "Click on me"
+          text run at (0,18) width 465: "selection from the editable region. To run it manually, click on the button. "
+          text run at (465,18) width 315: "The editable region should not be focused, but the"
+          text run at (0,36) width 216: "text inside of it should be selected."
+      RenderBlock (anonymous) at (0,70) size 784x24
+        RenderButton {INPUT} at (0,0) size 84x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 68x15
+            RenderText at (0,0) size 68x15
+              text run at (0,0) width 68: "Click on me"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,101) size 784x20
-        RenderText {#text} at (0,0) size 178x19
+      RenderBlock {DIV} at (0,94) size 784x18
+        RenderText {#text} at (0,0) size 178x17
           text run at (0,0) width 178: "This text should be selected."
 selection start: position 0 of child 0 {#text} of child 4 {DIV} of body
 selection end:   position 29 of child 0 {#text} of child 4 {DIV} of body

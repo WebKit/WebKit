@@ -1,6 +1,6 @@
 This tests that a contenteditable region behaves as a proper AXTextArea.
 
-Role: AXRole: AXTextArea
+Role: AXRole: AXGroup
 Value: AXValue: hello
 world
 Value (writable): true

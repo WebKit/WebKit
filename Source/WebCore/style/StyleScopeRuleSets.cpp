@@ -194,6 +194,18 @@ bool ScopeRuleSets::hasContainerQueries() const
     return false;
 }
 
+bool ScopeRuleSets::hasScopeRules() const
+{
+    if (m_authorStyle->hasScopeRules())
+        return true;
+    if (m_userStyle && m_userStyle->hasScopeRules())
+        return true;
+    if (m_userAgentMediaQueryStyle && m_userAgentMediaQueryStyle->hasScopeRules())
+        return true;
+
+    return false;
+}
+
 std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator)
 {
     std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
@@ -294,15 +306,10 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
             }
         }
 
-        auto invalidationRuleSets = makeUnique<Vector<InvalidationRuleSet>>();
-        invalidationRuleSets->reserveInitialCapacity(invalidationRuleSetMap.size());
-
-        for (auto& invalidationRuleSet : invalidationRuleSetMap.values()) {
+        return makeUnique<Vector<InvalidationRuleSet>>(WTF::map(invalidationRuleSetMap.values(), [](auto&& invalidationRuleSet) {
             invalidationRuleSet.ruleSet->shrinkToFit();
-            invalidationRuleSets->uncheckedAppend(WTFMove(invalidationRuleSet));
-        }
-
-        return invalidationRuleSets;
+            return WTFMove(invalidationRuleSet);
+        }));
     }).iterator->value.get();
 }
 

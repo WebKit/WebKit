@@ -26,7 +26,6 @@
 typedef (FetchRequest or USVString) RequestInfo;
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled&BackgroundFetchAPIEnabled,
     Exposed=(Window,Worker)
 ] interface BackgroundFetchManager {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -56,7 +57,7 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-using BlockSignature = const TypeDefinition*;
+using BlockSignature = const FunctionSignature*;
 
 enum class TableElementType : uint8_t {
     Externref,
@@ -73,12 +74,13 @@ inline bool isValueType(Type type)
     case TypeKind::I64:
     case TypeKind::F32:
     case TypeKind::F64:
+        return true;
     case TypeKind::Externref:
     case TypeKind::Funcref:
-        return true;
+        return !Options::useWebAssemblyTypedFunctionReferences();
     case TypeKind::Ref:
     case TypeKind::RefNull:
-        return Options::useWebAssemblyTypedFunctionReferences();
+        return Options::useWebAssemblyTypedFunctionReferences() && type.index != TypeDefinition::invalidIndex;
     case TypeKind::V128:
         return Options::useWebAssemblySIMD();
     default:
@@ -168,7 +170,7 @@ inline bool isNullexternref(Type type)
 
 inline bool isInternalref(Type type)
 {
-    if (!Options::useWebAssemblyGC() || !isRefType(type) || !typeIndexIsType(type.index))
+    if (!Options::useWebAssemblyGC() || !isRefType(type))
         return false;
     if (typeIndexIsType(type.index)) {
         switch (static_cast<TypeKind>(type.index)) {
@@ -287,6 +289,10 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
     if (sub == parent)
         return true;
 
+    // When Wasm GC is off, RTTs are not registered and there is no subtyping on typedefs.
+    if (!Options::useWebAssemblyGC())
+        return false;
+
     auto subRTT = TypeInformation::tryGetCanonicalRTT(sub);
     auto parentRTT = TypeInformation::tryGetCanonicalRTT(parent);
     ASSERT(subRTT.has_value() && parentRTT.has_value());
@@ -296,6 +302,10 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
 
 inline bool isSubtype(Type sub, Type parent)
 {
+    // Before the typed funcref proposal there is no non-trivial subtyping.
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        return sub == parent;
+
     if (sub.isNullable() && !parent.isNullable())
         return false;
 
@@ -316,7 +326,10 @@ inline bool isSubtype(Type sub, Type parent)
             return TypeInformation::get(sub.index).expand().is<FunctionSignature>();
     }
 
-    if ((isAnyref(parent) || isEqref(parent)) && (isI31ref(sub) || isStructref(sub) || isArrayref(sub)))
+    if ((isI31ref(sub) || isStructref(sub) || isArrayref(sub)) && (isAnyref(parent) || isEqref(parent)))
+        return true;
+
+    if (isEqref(sub) && isAnyref(parent))
         return true;
 
     if (isNullref(sub))
@@ -325,8 +338,8 @@ inline bool isSubtype(Type sub, Type parent)
     if (isNullfuncref(sub))
         return isSubtype(parent, funcrefType());
 
-    if (isNullexternref(sub))
-        return sub == parent || isExternref(parent);
+    if (isNullexternref(sub) && isExternref(parent))
+        return true;
 
     if (sub.isRef() && parent.isRefNull())
         return sub.index == parent.index;
@@ -362,6 +375,37 @@ inline bool isValidHeapTypeKind(TypeKind kind)
         break;
     }
     return false;
+}
+
+// FIXME: separating out heap types in wasm.json could be cleaner in the long term.
+inline const char* heapTypeKindAsString(TypeKind kind)
+{
+    ASSERT(isValidHeapTypeKind(kind));
+    switch (kind) {
+    case TypeKind::Funcref:
+        return "func";
+    case TypeKind::Externref:
+        return "extern";
+    case TypeKind::I31ref:
+        return "i31";
+    case TypeKind::Arrayref:
+        return "array";
+    case TypeKind::Structref:
+        return "struct";
+    case TypeKind::Eqref:
+        return "eq";
+    case TypeKind::Anyref:
+        return "any";
+    case TypeKind::Nullref:
+        return "none";
+    case TypeKind::Nullfuncref:
+        return "nofunc";
+    case TypeKind::Nullexternref:
+        return "noextern";
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return "";
+    }
 }
 
 inline bool isDefaultableType(Type type)
@@ -486,7 +530,7 @@ struct FunctionData {
 };
 
 class I32InitExpr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(I32InitExpr);
     enum Type : uint8_t {
         Global,
         Const,
@@ -558,57 +602,69 @@ struct Segment {
 struct Element {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    // nullFuncIndex represents the case when an element segment contains a null element.
-    constexpr static uint32_t nullFuncIndex = UINT32_MAX;
-
     enum class Kind : uint8_t {
         Active,
         Passive,
         Declared,
     };
 
-    Element(Element::Kind kind, TableElementType elementType, std::optional<uint32_t> tableIndex, std::optional<I32InitExpr> initExpr)
+    enum InitializationType : uint8_t {
+        FromGlobal,
+        FromRefFunc,
+        FromRefNull,
+        FromExtendedExpression,
+    };
+
+    Element(Element::Kind kind, Type elementType, std::optional<uint32_t> tableIndex, std::optional<I32InitExpr> initExpr)
         : kind(kind)
         , elementType(elementType)
         , tableIndexIfActive(WTFMove(tableIndex))
         , offsetIfActive(WTFMove(initExpr))
     { }
 
-    Element(Element::Kind kind, TableElementType elemType)
+    Element(Element::Kind kind, Type elemType)
         : Element(kind, elemType, std::nullopt, std::nullopt)
     { }
 
-    uint32_t length() const { return functionIndices.size(); }
+    uint32_t length() const { return initTypes.size(); }
 
     bool isActive() const { return kind == Kind::Active; }
     bool isPassive() const { return kind == Kind::Passive; }
 
-    static bool isNullFuncIndex(uint32_t idx) { return idx == nullFuncIndex; }
-
     Kind kind;
-    TableElementType elementType;
+    Type elementType;
     std::optional<uint32_t> tableIndexIfActive;
     std::optional<I32InitExpr> offsetIfActive;
 
-    // Index may be nullFuncIndex.
-    Vector<uint32_t> functionIndices;
+    Vector<InitializationType> initTypes;
+    Vector<uint64_t> initialBitsOrIndices;
 };
 
 class TableInformation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TableInformation);
 public:
+    enum InitializationType : uint8_t {
+        Default,
+        FromGlobalImport,
+        FromRefFunc,
+        FromRefNull,
+        FromExtendedExpression,
+    };
+
     TableInformation()
     {
         ASSERT(!*this);
     }
 
-    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type, Type wasmType)
+    TableInformation(uint32_t initial, std::optional<uint32_t> maximum, bool isImport, TableElementType type, Type wasmType, InitializationType initType, uint64_t initialBitsOrImportNumber)
         : m_initial(initial)
         , m_maximum(maximum)
         , m_isImport(isImport)
         , m_isValid(true)
         , m_type(type)
         , m_wasmType(wasmType)
+        , m_initType(initType)
+        , m_initialBitsOrImportNumber(initialBitsOrImportNumber)
     {
         ASSERT(*this);
     }
@@ -619,6 +675,8 @@ public:
     std::optional<uint32_t> maximum() const { return m_maximum; }
     TableElementType type() const { return m_type; }
     Type wasmType() const { return m_wasmType; }
+    InitializationType initType() const { return m_initType; }
+    uint64_t initialBitsOrImportNumber() const { return m_initialBitsOrImportNumber; }
 
 private:
     uint32_t m_initial;
@@ -627,6 +685,8 @@ private:
     bool m_isValid { false };
     TableElementType m_type;
     Type m_wasmType;
+    InitializationType m_initType { Default };
+    uint64_t m_initialBitsOrImportNumber;
 };
     
 struct CustomSection {

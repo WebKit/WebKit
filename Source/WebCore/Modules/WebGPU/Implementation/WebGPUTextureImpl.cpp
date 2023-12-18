@@ -51,26 +51,15 @@ Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescript
     CString label = descriptor ? descriptor->label.utf8() : CString("");
 
     WGPUTextureViewDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        descriptor && descriptor->format ? m_convertToBackingContext->convertToBacking(*descriptor->format) : m_convertToBackingContext->convertToBacking(m_format),
-        ([&]() -> WGPUTextureViewDimension {
-            if (descriptor && descriptor->dimension)
-                return m_convertToBackingContext->convertToBacking(*descriptor->dimension);
-            switch (m_dimension) {
-            case TextureDimension::_1d:
-                return WGPUTextureViewDimension_1D;
-            case TextureDimension::_2d:
-                return WGPUTextureViewDimension_2D;
-            case TextureDimension::_3d:
-                return WGPUTextureViewDimension_2D;
-            }
-        })(),
-        descriptor ? descriptor->baseMipLevel : 0,
-        descriptor && descriptor->mipLevelCount ? *descriptor->mipLevelCount : static_cast<uint32_t>(WGPU_MIP_LEVEL_COUNT_UNDEFINED),
-        descriptor ? descriptor->baseArrayLayer : 0,
-        descriptor && descriptor->arrayLayerCount ? *descriptor->arrayLayerCount : static_cast<uint32_t>(WGPU_ARRAY_LAYER_COUNT_UNDEFINED),
-        descriptor ? m_convertToBackingContext->convertToBacking(descriptor->aspect) : WGPUTextureAspect_All,
+        .nextInChain = nullptr,
+        .label = label.data(),
+        .format = descriptor && descriptor->format ? m_convertToBackingContext->convertToBacking(*descriptor->format) : WGPUTextureFormat_Undefined,
+        .dimension = descriptor && descriptor->dimension ? m_convertToBackingContext->convertToBacking(*descriptor->dimension) : WGPUTextureViewDimension_Undefined,
+        .baseMipLevel = descriptor ? descriptor->baseMipLevel : 0,
+        .mipLevelCount = descriptor && descriptor->mipLevelCount ? *descriptor->mipLevelCount : static_cast<uint32_t>(WGPU_MIP_LEVEL_COUNT_UNDEFINED),
+        .baseArrayLayer = descriptor ? descriptor->baseArrayLayer : 0,
+        .arrayLayerCount = descriptor && descriptor->arrayLayerCount ? *descriptor->arrayLayerCount : static_cast<uint32_t>(WGPU_ARRAY_LAYER_COUNT_UNDEFINED),
+        .aspect = descriptor ? m_convertToBackingContext->convertToBacking(descriptor->aspect) : WGPUTextureAspect_All,
     };
 
     return TextureViewImpl::create(adoptWebGPU(wgpuTextureCreateView(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);

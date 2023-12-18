@@ -119,7 +119,7 @@ class WebRtcSessionDescriptionFactory {
   void FailPendingRequests(const std::string& reason);
   void PostCreateSessionDescriptionFailed(
       CreateSessionDescriptionObserver* observer,
-      const std::string& error);
+      RTCError error);
   void PostCreateSessionDescriptionSucceeded(
       CreateSessionDescriptionObserver* observer,
       std::unique_ptr<SessionDescriptionInterface> description);

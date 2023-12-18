@@ -103,7 +103,7 @@ public:
     DeferredCompilationCallback* callback() const { return m_callback.get(); }
     void setCallback(Ref<DeferredCompilationCallback>&& callback) { m_callback = WTFMove(callback); }
 
-    std::unique_ptr<JITData> tryFinalizeJITData(const JITCode&);
+    std::unique_ptr<JITData> tryFinalizeJITData(const DFG::JITCode&);
 
 private:
     CompilationPath compileInThreadImpl() override;

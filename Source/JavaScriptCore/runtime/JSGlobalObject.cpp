@@ -515,12 +515,16 @@ JSC_DEFINE_HOST_FUNCTION(tracePointStop, (JSGlobalObject* globalObject, CallFram
     return JSValue::encode(jsUndefined());
 }
 
+#if HAVE(OS_SIGNPOST)
+
 static String asSignpostString(JSGlobalObject* globalObject, JSValue v)
 {
     if (v.isUndefined())
         return emptyString();
     return v.toWTFString(globalObject);
 }
+
+std::atomic<unsigned> activeJSGlobalObjectSignpostIntervalCount { 0 };
 
 JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -530,7 +534,8 @@ JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject* globalObject, CallFrame
     auto message = asSignpostString(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
 
-    WTFBeginSignpostAlways(globalObject, "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING, message.ascii().data());
+    ++activeJSGlobalObjectSignpostIntervalCount;
+    os_signpost_interval_begin(WTFSignpostLogHandle(), os_signpost_id_make_with_pointer(WTFSignpostLogHandle(), globalObject), "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING, message.ascii().data());
 
     return JSValue::encode(jsUndefined());
 }
@@ -543,10 +548,25 @@ JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject* globalObject, CallFrame*
     auto message = asSignpostString(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, EncodedJSValue());
 
-    WTFEndSignpostAlways(globalObject, "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING, message.ascii().data());
+    os_signpost_interval_end(WTFSignpostLogHandle(), os_signpost_id_make_with_pointer(WTFSignpostLogHandle(), globalObject), "JSGlobalObject signpost", "%" PUBLIC_LOG_STRING, message.ascii().data());
+    --activeJSGlobalObjectSignpostIntervalCount;
 
     return JSValue::encode(jsUndefined());
 }
+
+#else
+
+JSC_DEFINE_HOST_FUNCTION(signpostStart, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(signpostStop, (JSGlobalObject*, CallFrame*))
+{
+    return JSValue::encode(jsUndefined());
+}
+
+#endif // HAVE(OS_SIGNPOST)
 
 JSC_DEFINE_HOST_FUNCTION(enableSuperSampler, (JSGlobalObject*, CallFrame*))
 {
@@ -845,11 +865,6 @@ void JSGlobalObject::init(VM& vm)
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, init.vm.propertyNames->toString.string(), numberProtoFuncToString, ImplementationVisibility::Public, NumberPrototypeToStringIntrinsic));
         });
 
-    m_typedArrayProtoSort.initLater(
-        [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::create(init.vm, typedArrayPrototypeSortCodeGenerator(init.vm), init.owner));
-        });
-
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::stringSubstring)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "substring"_s, stringProtoFuncSubstring, ImplementationVisibility::Public, StringPrototypeSubstringIntrinsic));
         });
@@ -1101,6 +1116,8 @@ void JSGlobalObject::init(VM& vm)
     }
     
     FOR_EACH_LAZY_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_LAZY_TYPE)
+
+#undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
     
     // Constructors
 
@@ -1518,14 +1535,8 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayGetOriginalConstructor)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "typedArrayViewGetOriginalConstructor"_s, typedArrayViewPrivateFuncGetOriginalConstructor, ImplementationVisibility::Private));
         });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayClone)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "typedArrayViewClone"_s, typedArrayViewPrivateFuncClone, ImplementationVisibility::Private));
-        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayContentType)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "typedArrayViewContentType"_s, typedArrayViewPrivateFuncContentType, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArraySort)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "typedArrayViewSort"_s, typedArrayViewPrivateFuncSort, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isTypedArrayView)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsTypedArrayView"_s, typedArrayViewPrivateFuncIsTypedArrayView, ImplementationVisibility::Private, IsTypedArrayViewIntrinsic));
@@ -1539,11 +1550,11 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayFromFast)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "typedArrayViewTypedArrayFromFast"_s, typedArrayViewPrivateFuncTypedArrayFromFast, ImplementationVisibility::Private));
         });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::arrayFromFast)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "arrayFromFast"_s, arrayProtoPrivateFuncFromFast, ImplementationVisibility::Private));
+        });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isDetached)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsDetached"_s, typedArrayViewPrivateFuncIsDetached, ImplementationVisibility::Private));
-        });
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayDefaultComparator)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "typedArrayViewDefaultComparator"_s, typedArrayViewPrivateFuncDefaultComparator, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isBoundFunction)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "isBound"_s, isBoundFunction, ImplementationVisibility::Private));
@@ -1748,11 +1759,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
         FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(CREATE_WEBASSEMBLY_PROTOTYPE)
 
-#undef CREATE_WEBASSEMBLY_CONSTRUCTOR
+#undef CREATE_WEBASSEMBLY_PROTOTYPE
     }
 #endif // ENABLE(WEBASSEMBLY)
-
-#undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
 
     {
         ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, arrayIteratorPrototype, vm.propertyNames->next);
@@ -2484,7 +2493,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_regExpProtoSymbolReplace);
     thisObject->m_throwTypeErrorArgumentsCalleeGetterSetter.visit(visitor);
     thisObject->m_moduleLoader.visit(visitor);
-    thisObject->m_typedArrayProtoSort.visit(visitor);
 
     visitor.append(thisObject->m_objectPrototype);
     visitor.append(thisObject->m_functionPrototype);
@@ -2966,6 +2974,89 @@ void JSGlobalObject::installSetPrototypeWatchpoint(SetPrototype* setPrototype)
     ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, setPrototype, vm.propertyNames->add);
     m_setPrototypeAddWatchpoint = makeUnique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(this, condition, m_setAddWatchpointSet);
     m_setPrototypeAddWatchpoint->install(vm);
+}
+
+void JSGlobalObject::tryInstallPropertyDescriptorFastPathWatchpoint()
+{
+    VM& vm = this->vm();
+
+    DeferTerminationForAWhile deferScope(vm);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+    auto invalidate = [&]() {
+        m_propertyDescriptorFastPathWatchpointSet.invalidate(vm, StringFireDetail("Was not able to set up property descriptor related names watchpoint set."));
+    };
+
+    auto absenceCondition = [&](JSObject* base, PropertyName propertyName) -> std::optional<ObjectPropertyCondition> {
+        PropertySlot slot(base, PropertySlot::InternalMethodType::VMInquiry, &vm);
+        bool result = base->getOwnPropertySlot(base, this, propertyName, slot);
+        if (result)
+            return std::nullopt;
+        catchScope.assertNoException();
+        RELEASE_ASSERT(slot.isUnset());
+        return ObjectPropertyCondition::absence(vm, this, base, propertyName.uid(), nullptr);
+    };
+
+    if (!objectPrototypeChainIsSane()) {
+        invalidate();
+        return;
+    }
+
+    Vector<ObjectPropertyCondition, 8> conditions;
+    {
+        auto condition = absenceCondition(objectPrototype(), vm.propertyNames->get);
+        if (!condition) {
+            invalidate();
+            return;
+        }
+        conditions.append(condition.value());
+    }
+    {
+        auto condition = absenceCondition(objectPrototype(), vm.propertyNames->set);
+        if (!condition) {
+            invalidate();
+            return;
+        }
+        conditions.append(condition.value());
+    }
+    {
+        auto condition = absenceCondition(objectPrototype(), vm.propertyNames->enumerable);
+        if (!condition) {
+            invalidate();
+            return;
+        }
+        conditions.append(condition.value());
+    }
+    {
+        auto condition = absenceCondition(objectPrototype(), vm.propertyNames->configurable);
+        if (!condition) {
+            invalidate();
+            return;
+        }
+        conditions.append(condition.value());
+    }
+    {
+        auto condition = absenceCondition(objectPrototype(), vm.propertyNames->writable);
+        if (!condition) {
+            invalidate();
+            return;
+        }
+        conditions.append(condition.value());
+    }
+
+    for (auto& condition : conditions) {
+        if (!condition.isWatchable(PropertyCondition::EnsureWatchability)) {
+            invalidate();
+            return;
+        }
+    }
+
+    RELEASE_ASSERT(!m_propertyDescriptorFastPathWatchpointSet.isBeingWatched());
+    m_propertyDescriptorFastPathWatchpointSet.touch(vm, "Set up property descriptor fast path watchpoint set.");
+    for (auto& condition : conditions) {
+        m_missWatchpoints.append(makeUnique<ObjectAdaptiveStructureWatchpoint>(this, condition, m_propertyDescriptorFastPathWatchpointSet));
+        m_missWatchpoints.last()->install(vm);
+    }
 }
 
 void slowValidateCell(JSGlobalObject* globalObject)

@@ -1559,17 +1559,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-jsc',
             'jscore-test'
         ],
-        'JSCOnly-Linux-MIPS32el-Release': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'compile-jsc',
-            'jscore-test'
-        ],
         'WPE-Linux-64-bit-Release-Build': [
             'configure-build',
             'configuration',

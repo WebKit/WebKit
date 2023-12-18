@@ -25,19 +25,21 @@
 #include "config.h"
 #include "FEComposite.h"
 
+#include "FECompositeNeonArithmeticApplier.h"
 #include "FECompositeSoftwareApplier.h"
+#include "FECompositeSoftwareArithmeticApplier.h"
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4)
+Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4, DestinationColorSpace colorSpace)
 {
-    return adoptRef(*new FEComposite(type, k1, k2, k3, k4));
+    return adoptRef(*new FEComposite(type, k1, k2, k3, k4, colorSpace));
 }
 
-FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2, float k3, float k4)
-    : FilterEffect(FilterEffect::Type::FEComposite)
+FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2, float k3, float k4, DestinationColorSpace colorSpace)
+    : FilterEffect(FilterEffect::Type::FEComposite, colorSpace)
     , m_type(type)
     , m_k1(k1)
     , m_k2(k2)
@@ -118,7 +120,13 @@ FloatRect FEComposite::calculateImageRect(const Filter& filter, std::span<const 
 
 std::unique_ptr<FilterEffectApplier> FEComposite::createSoftwareApplier() const
 {
-    return FilterEffectApplier::create<FECompositeSoftwareApplier>(*this);
+    if (m_type != FECOMPOSITE_OPERATOR_ARITHMETIC)
+        return FilterEffectApplier::create<FECompositeSoftwareApplier>(*this);
+#if HAVE(ARM_NEON_INTRINSICS)
+    return FilterEffectApplier::create<FECompositeNeonArithmeticApplier>(*this);
+#else
+    return FilterEffectApplier::create<FECompositeSoftwareArithmeticApplier>(*this);
+#endif
 }
 
 static TextStream& operator<<(TextStream& ts, const CompositeOperationType& type)

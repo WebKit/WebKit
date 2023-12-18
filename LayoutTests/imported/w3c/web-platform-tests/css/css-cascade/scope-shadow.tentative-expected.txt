@@ -1,0 +1,8 @@
+
+FAIL @scope can match :host assert_equals: expected "1" but got "auto"
+FAIL @scope can match :host(...) assert_equals: expected "1" but got "auto"
+FAIL :scope matches host via the scoping root assert_equals: expected "1" but got "auto"
+FAIL :scope within :is() matches host via the scoping root assert_equals: expected "1" but got "auto"
+FAIL Implicit @scope as direct child of shadow root assert_equals: expected "1" but got "auto"
+FAIL Implicit @scope in construted stylesheet assert_equals: expected "1" but got "auto"
+

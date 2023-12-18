@@ -722,6 +722,10 @@ StunAttributeValueType StunMessage::GetAttributeValueType(int type) const {
       return STUN_VALUE_BYTE_STRING;
     case STUN_ATTR_GOOG_MISC_INFO:
       return STUN_VALUE_UINT16_LIST;
+    case STUN_ATTR_GOOG_DELTA:
+      return STUN_VALUE_BYTE_STRING;
+    case STUN_ATTR_GOOG_DELTA_ACK:
+      return STUN_VALUE_UINT64;
     default:
       return STUN_VALUE_UNKNOWN;
   }

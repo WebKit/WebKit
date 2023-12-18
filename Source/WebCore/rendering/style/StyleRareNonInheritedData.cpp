@@ -43,9 +43,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , lineClamp(RenderStyle::initialLineClamp())
     , initialLetter(RenderStyle::initialInitialLetter())
     , marquee(StyleMarqueeData::create())
-#if ENABLE(FILTERS_LEVEL_2)
     , backdropFilter(StyleFilterData::create())
-#endif
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
     // clip
@@ -69,6 +67,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , translate(RenderStyle::initialTranslate())
     , offsetPath(RenderStyle::initialOffsetPath())
     // containerNames
+    // viewTransitionName
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
     , offsetDistance(RenderStyle::initialOffsetDistance())
@@ -82,6 +81,13 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollSnapType
     // scrollSnapAlign
     // scrollSnapStop
+    // scrollTimelines
+    // scrollTimelineAxes
+    // scrollTimelineNames
+    // viewTimelines
+    // viewTimelineAxes
+    // viewTimelineInsets
+    // viewTimelineNames
     // scrollbarGutter
     , scrollbarWidth(RenderStyle::initialScrollbarWidth())
     , zoom(RenderStyle::initialZoom())
@@ -127,9 +133,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , lineClamp(o.lineClamp)
     , initialLetter(o.initialLetter)
     , marquee(o.marquee)
-#if ENABLE(FILTERS_LEVEL_2)
     , backdropFilter(o.backdropFilter)
-#endif
     , grid(o.grid)
     , gridItem(o.gridItem)
     , clip(o.clip)
@@ -153,6 +157,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , translate(o.translate)
     , offsetPath(o.offsetPath)
     , containerNames(o.containerNames)
+    , viewTransitionName(o.viewTransitionName)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
     , offsetDistance(o.offsetDistance)
@@ -166,6 +171,13 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollSnapType(o.scrollSnapType)
     , scrollSnapAlign(o.scrollSnapAlign)
     , scrollSnapStop(o.scrollSnapStop)
+    , scrollTimelines(o.scrollTimelines)
+    , scrollTimelineAxes(o.scrollTimelineAxes)
+    , scrollTimelineNames(o.scrollTimelineNames)
+    , viewTimelines(o.viewTimelines)
+    , viewTimelineAxes(o.viewTimelineAxes)
+    , viewTimelineInsets(o.viewTimelineInsets)
+    , viewTimelineNames(o.viewTimelineNames)
     , scrollbarGutter(o.scrollbarGutter)
     , scrollbarWidth(o.scrollbarWidth)
     , zoom(o.zoom)
@@ -218,9 +230,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && lineClamp == o.lineClamp
         && initialLetter == o.initialLetter
         && marquee == o.marquee
-#if ENABLE(FILTERS_LEVEL_2)
         && backdropFilter == o.backdropFilter
-#endif
         && grid == o.grid
         && gridItem == o.gridItem
         && clip == o.clip
@@ -257,6 +267,13 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollSnapType == o.scrollSnapType
         && scrollSnapAlign == o.scrollSnapAlign
         && scrollSnapStop == o.scrollSnapStop
+        && scrollTimelines == o.scrollTimelines
+        && scrollTimelineAxes == o.scrollTimelineAxes
+        && scrollTimelineNames == o.scrollTimelineNames
+        && viewTimelines == o.viewTimelines
+        && viewTimelineAxes == o.viewTimelineAxes
+        && viewTimelineInsets == o.viewTimelineInsets
+        && viewTimelineNames == o.viewTimelineNames
         && scrollbarGutter == o.scrollbarGutter
         && scrollbarWidth == o.scrollbarWidth
         && zoom == o.zoom
@@ -289,6 +306,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && containerType == o.containerType
         && textBoxTrim == o.textBoxTrim
         && overflowAnchor == o.overflowAnchor
+        && viewTransitionName == o.viewTransitionName
         && hasClip == o.hasClip;
 }
 
@@ -310,13 +328,9 @@ OptionSet<Containment> StyleRareNonInheritedData::effectiveContainment() const
     return containment;
 }
 
-#if ENABLE(FILTERS_LEVEL_2)
-
 bool StyleRareNonInheritedData::hasBackdropFilters() const
 {
     return !backdropFilter->operations.isEmpty();
 }
-
-#endif
 
 } // namespace WebCore

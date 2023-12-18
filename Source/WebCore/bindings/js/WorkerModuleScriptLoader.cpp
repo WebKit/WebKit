@@ -56,16 +56,15 @@ WorkerModuleScriptLoader::WorkerModuleScriptLoader(ModuleScriptLoaderClient& cli
 
 WorkerModuleScriptLoader::~WorkerModuleScriptLoader()
 {
-    m_scriptLoader->cancel();
+    protectedScriptLoader()->cancel();
 }
 
 void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourceURL)
 {
     m_sourceURL = WTFMove(sourceURL);
 
-#if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerGlobalScope>(context)) {
-        if (auto* scriptResource = downcast<ServiceWorkerGlobalScope>(context).scriptResource(m_sourceURL)) {
+    if (auto* globalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context)) {
+        if (auto* scriptResource = globalScope->scriptResource(m_sourceURL)) {
             m_script = scriptResource->script;
             m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
@@ -74,7 +73,6 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             return;
         }
     }
-#endif
 
     ResourceRequest request { m_sourceURL };
 
@@ -89,7 +87,7 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     bool cspCheckFailed = false;
     ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
     if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
-        auto* contentSecurityPolicy = context.contentSecurityPolicy();
+        CheckedPtr contentSecurityPolicy = context.contentSecurityPolicy();
         if (fetchOptions.destination == FetchOptions::Destination::Script) {
             cspCheckFailed = contentSecurityPolicy && !contentSecurityPolicy->allowScriptFromSource(m_sourceURL);
             contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
@@ -100,7 +98,7 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     }
 
     if (cspCheckFailed) {
-        m_scriptLoader->notifyError();
+        protectedScriptLoader()->notifyError();
         ASSERT(!m_failed);
         notifyFinished();
         ASSERT(m_failed);
@@ -114,7 +112,12 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             fetchOptions.mode = FetchOptions::Mode::SameOrigin;
     }
 
-    m_scriptLoader->loadAsynchronously(context, WTFMove(request), WorkerScriptLoader::Source::ModuleScript, WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode());
+    protectedScriptLoader()->loadAsynchronously(context, WTFMove(request), WorkerScriptLoader::Source::ModuleScript, WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, *this, taskMode());
+}
+
+Ref<WorkerScriptLoader> WorkerModuleScriptLoader::protectedScriptLoader()
+{
+    return m_scriptLoader;
 }
 
 ReferrerPolicy WorkerModuleScriptLoader::referrerPolicy()

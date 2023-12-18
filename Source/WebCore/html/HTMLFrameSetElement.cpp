@@ -186,10 +186,12 @@ void HTMLFrameSetElement::willAttachRenderers()
 
 void HTMLFrameSetElement::defaultEventHandler(Event& event)
 {
-    if (is<MouseEvent>(event) && !m_noresize && is<RenderFrameSet>(renderer())) {
-        if (downcast<RenderFrameSet>(*renderer()).userResize(downcast<MouseEvent>(event))) {
-            event.setDefaultHandled();
-            return;
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && !m_noresize) {
+        if (CheckedPtr renderFrameSet = dynamicDowncast<RenderFrameSet>(renderer())) {
+            if (renderFrameSet->userResize(*mouseEvent)) {
+                event.setDefaultHandled();
+                return;
+            }
         }
     }
     HTMLElement::defaultEventHandler(event);
@@ -214,11 +216,8 @@ void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, Container
 
 WindowProxy* HTMLFrameSetElement::namedItem(const AtomString& name)
 {
-    RefPtr frameElement = children()->namedItem(name);
-    if (!is<HTMLFrameElement>(frameElement))
-        return nullptr;
-
-    return downcast<HTMLFrameElement>(*frameElement).contentWindow();
+    RefPtr frameElement = dynamicDowncast<HTMLFrameElement>(children()->namedItem(name));
+    return frameElement ? frameElement->contentWindow() : nullptr;
 }
 
 bool HTMLFrameSetElement::isSupportedPropertyName(const AtomString& name)

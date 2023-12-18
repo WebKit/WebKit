@@ -27,15 +27,15 @@ class ActiveMapTest
   static const int kHeight = 144;
 
   ActiveMapTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~ActiveMapTest() {}
+  ~ActiveMapTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(GET_PARAM(1));
     cpu_used_ = GET_PARAM(2);
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
       encoder->Control(AV1E_SET_ALLOW_WARPED_MOTION, 0);

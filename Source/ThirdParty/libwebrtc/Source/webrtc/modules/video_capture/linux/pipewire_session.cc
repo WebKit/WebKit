@@ -10,7 +10,6 @@
 
 #include "modules/video_capture/linux/pipewire_session.h"
 
-#include <gio/gunixfdlist.h>
 #include <spa/monitor/device.h>
 #include <spa/param/format-utils.h>
 #include <spa/param/format.h>
@@ -18,18 +17,13 @@
 #include <spa/pod/parser.h>
 
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "modules/portal/pipewire_utils.h"
-#include "modules/portal/xdg_desktop_portal_utils.h"
 #include "modules/video_capture/device_info_impl.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_to_number.h"
 
 namespace webrtc {
 namespace videocapturemodule {
-
-using xdg_portal::RequestSessionProxy;
-
-constexpr char kCameraInterfaceName[] = "org.freedesktop.portal.Camera";
 
 VideoType PipeWireRawFormatToVideoType(uint32_t id) {
   switch (id) {
@@ -215,6 +209,21 @@ bool PipeWireNode::ParseFormat(const spa_pod* param,
   return cap->videoType != VideoType::kUnknown;
 }
 
+CameraPortalNotifier::CameraPortalNotifier(PipeWireSession* session)
+    : session_(session) {}
+
+void CameraPortalNotifier::OnCameraRequestResult(
+    xdg_portal::RequestResponse result,
+    int fd) {
+  if (result == xdg_portal::RequestResponse::kSuccess) {
+    session_->InitPipeWire(fd);
+  } else if (result == xdg_portal::RequestResponse::kUserCancelled) {
+    session_->Finish(VideoCaptureOptions::Status::DENIED);
+  } else {
+    session_->Finish(VideoCaptureOptions::Status::ERROR);
+  }
+}
+
 PipeWireSession::PipeWireSession()
     : status_(VideoCaptureOptions::Status::UNINITIALIZED) {}
 
@@ -222,174 +231,27 @@ PipeWireSession::~PipeWireSession() {
   Cleanup();
 }
 
-void PipeWireSession::Init(VideoCaptureOptions::Callback* callback) {
-  callback_ = callback;
-  cancellable_ = g_cancellable_new();
-  Scoped<GError> error;
-  RequestSessionProxy(kCameraInterfaceName, OnProxyRequested, cancellable_,
-                      this);
-}
-
-// static
-void PipeWireSession::OnProxyRequested(GObject* gobject,
-                                       GAsyncResult* result,
-                                       gpointer user_data) {
-  PipeWireSession* that = static_cast<PipeWireSession*>(user_data);
-  Scoped<GError> error;
-  GDBusProxy* proxy = g_dbus_proxy_new_finish(result, error.receive());
-  if (!proxy) {
-    // Ignore the error caused by user cancelling the request via `cancellable_`
-    if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-      return;
-    RTC_LOG(LS_ERROR) << "Failed to get a proxy for the portal: "
-                      << error->message;
-    that->Finish(VideoCaptureOptions::Status::DENIED);
-    return;
+void PipeWireSession::Init(VideoCaptureOptions::Callback* callback, int fd) {
+  {
+    webrtc::MutexLock lock(&callback_lock_);
+    callback_ = callback;
   }
 
-  RTC_LOG(LS_VERBOSE) << "Successfully created proxy for the portal.";
-  that->ProxyRequested(proxy);
-}
-
-void PipeWireSession::ProxyRequested(GDBusProxy* proxy) {
-  GVariantBuilder builder;
-  Scoped<char> variant_string;
-  std::string access_handle;
-
-  proxy_ = proxy;
-  connection_ = g_dbus_proxy_get_connection(proxy);
-
-  g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-  variant_string =
-      g_strdup_printf("capture%d", g_random_int_range(0, G_MAXINT));
-  g_variant_builder_add(&builder, "{sv}", "handle_token",
-                        g_variant_new_string(variant_string.get()));
-
-  access_handle =
-      xdg_portal::PrepareSignalHandle(variant_string.get(), connection_);
-  access_request_signal_id_ = xdg_portal::SetupRequestResponseSignal(
-      access_handle.c_str(), OnResponseSignalEmitted, this, connection_);
-
-  RTC_LOG(LS_VERBOSE) << "Requesting camera access from the portal.";
-  g_dbus_proxy_call(proxy_, "AccessCamera", g_variant_new("(a{sv})", &builder),
-                    G_DBUS_CALL_FLAGS_NONE, /*timeout_msec=*/-1, cancellable_,
-                    reinterpret_cast<GAsyncReadyCallback>(OnAccessResponse),
-                    this);
-}
-
-// static
-void PipeWireSession::OnAccessResponse(GDBusProxy* proxy,
-                                       GAsyncResult* result,
-                                       gpointer user_data) {
-  PipeWireSession* that = static_cast<PipeWireSession*>(user_data);
-  RTC_DCHECK(that);
-
-  Scoped<GError> error;
-  Scoped<GVariant> variant(
-      g_dbus_proxy_call_finish(proxy, result, error.receive()));
-  if (!variant) {
-    if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-      return;
-    RTC_LOG(LS_ERROR) << "Failed to access portal:" << error->message;
-    if (that->access_request_signal_id_) {
-      g_dbus_connection_signal_unsubscribe(that->connection_,
-                                           that->access_request_signal_id_);
-      that->access_request_signal_id_ = 0;
-    }
-    that->Finish(VideoCaptureOptions::Status::ERROR);
+  if (fd != kInvalidPipeWireFd) {
+    InitPipeWire(fd);
+  } else {
+    portal_notifier_ = std::make_unique<CameraPortalNotifier>(this);
+    portal_ = std::make_unique<CameraPortal>(portal_notifier_.get());
+    portal_->Start();
   }
 }
 
-// static
-void PipeWireSession::OnResponseSignalEmitted(GDBusConnection* connection,
-                                              const char* sender_name,
-                                              const char* object_path,
-                                              const char* interface_name,
-                                              const char* signal_name,
-                                              GVariant* parameters,
-                                              gpointer user_data) {
-  PipeWireSession* that = static_cast<PipeWireSession*>(user_data);
-  RTC_DCHECK(that);
+void PipeWireSession::InitPipeWire(int fd) {
+  if (!InitializePipeWire())
+    Finish(VideoCaptureOptions::Status::UNAVAILABLE);
 
-  uint32_t portal_response;
-  g_variant_get(parameters, "(u@a{sv})", &portal_response, nullptr);
-  if (portal_response) {
-    RTC_LOG(LS_INFO) << "Camera access denied by the XDG portal.";
-    that->Finish(VideoCaptureOptions::Status::DENIED);
-    return;
-  }
-
-  RTC_LOG(LS_VERBOSE) << "Camera access granted by the XDG portal.";
-
-  GVariantBuilder builder;
-  g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-
-  g_dbus_proxy_call(
-      that->proxy_, "OpenPipeWireRemote", g_variant_new("(a{sv})", &builder),
-      G_DBUS_CALL_FLAGS_NONE, /*timeout_msec=*/-1, that->cancellable_,
-      reinterpret_cast<GAsyncReadyCallback>(OnOpenResponse), that);
-}
-
-void PipeWireSession::OnOpenResponse(GDBusProxy* proxy,
-                                     GAsyncResult* result,
-                                     gpointer user_data) {
-  PipeWireSession* that = static_cast<PipeWireSession*>(user_data);
-  RTC_DCHECK(that);
-
-  Scoped<GError> error;
-  Scoped<GUnixFDList> outlist;
-  Scoped<GVariant> variant(g_dbus_proxy_call_with_unix_fd_list_finish(
-      proxy, outlist.receive(), result, error.receive()));
-  if (!variant) {
-    if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-      return;
-    RTC_LOG(LS_ERROR) << "Failed to open PipeWire remote:" << error->message;
-    if (that->access_request_signal_id_) {
-      g_dbus_connection_signal_unsubscribe(that->connection_,
-                                           that->access_request_signal_id_);
-      that->access_request_signal_id_ = 0;
-    }
-    that->Finish(VideoCaptureOptions::Status::ERROR);
-    return;
-  }
-
-  int32_t index;
-  g_variant_get(variant.get(), "(h)", &index);
-
-  int fd = g_unix_fd_list_get(outlist.get(), index, error.receive());
-
-  if (fd == -1) {
-    RTC_LOG(LS_ERROR) << "Failed to get file descriptor from the list: "
-                      << error->message;
-    that->Finish(VideoCaptureOptions::Status::ERROR);
-    return;
-  }
-
-  if (!InitializePipeWire()) {
-    that->Finish(VideoCaptureOptions::Status::UNAVAILABLE);
-    return;
-  }
-
-  if (!that->StartPipeWire(fd))
-    that->Finish(VideoCaptureOptions::Status::ERROR);
-}
-
-void PipeWireSession::StopDBus() {
-  if (access_request_signal_id_) {
-    g_dbus_connection_signal_unsubscribe(connection_,
-                                         access_request_signal_id_);
-    access_request_signal_id_ = 0;
-  }
-  if (cancellable_) {
-    g_cancellable_cancel(cancellable_);
-    g_object_unref(cancellable_);
-    cancellable_ = nullptr;
-  }
-  if (proxy_) {
-    g_object_unref(proxy_);
-    proxy_ = nullptr;
-    connection_ = nullptr;
-  }
+  if (!StartPipeWire(fd))
+    Finish(VideoCaptureOptions::Status::ERROR);
 }
 
 bool PipeWireSession::StartPipeWire(int fd) {
@@ -498,6 +360,10 @@ void PipeWireSession::OnRegistryGlobal(void* data,
   if (!spa_dict_lookup(props, PW_KEY_NODE_DESCRIPTION))
     return;
 
+  auto node_role = spa_dict_lookup(props, PW_KEY_MEDIA_ROLE);
+  if (!node_role || strcmp(node_role, "Camera"))
+    return;
+
   that->nodes_.emplace_back(that, id, props);
   that->PipeWireSync();
 }
@@ -515,6 +381,8 @@ void PipeWireSession::OnRegistryGlobalRemove(void* data, uint32_t id) {
 }
 
 void PipeWireSession::Finish(VideoCaptureOptions::Status status) {
+  webrtc::MutexLock lock(&callback_lock_);
+
   if (callback_) {
     callback_->OnInitialized(status);
     callback_ = nullptr;
@@ -522,8 +390,10 @@ void PipeWireSession::Finish(VideoCaptureOptions::Status status) {
 }
 
 void PipeWireSession::Cleanup() {
+  webrtc::MutexLock lock(&callback_lock_);
+  callback_ = nullptr;
+
   StopPipeWire();
-  StopDBus();
 }
 
 }  // namespace videocapturemodule

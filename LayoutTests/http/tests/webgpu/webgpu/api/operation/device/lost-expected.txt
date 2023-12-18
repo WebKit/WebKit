@@ -1,1 +1,5 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :not_lost_on_gc:
+PASS :lost_on_destroy:
+PASS :same_object:
+

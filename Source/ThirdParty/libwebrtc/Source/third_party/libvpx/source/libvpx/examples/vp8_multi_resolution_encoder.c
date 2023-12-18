@@ -352,7 +352,7 @@ int main(int argc, char **argv) {
   framerate = (int)strtol(argv[3], NULL, 0);
 
   if (width < 16 || width % 2 || height < 16 || height % 2)
-    die("Invalid resolution: %ldx%ld", width, height);
+    die("Invalid resolution: %dx%d", width, height);
 
   /* Open input video file for encoding */
   if (!(infile = fopen(argv[4], "rb")))
@@ -380,7 +380,7 @@ int main(int argc, char **argv) {
         (int)strtol(argv[2 * NUM_ENCODERS + 5 + i], NULL, 0);
     if (num_temporal_layers[i] < 1 || num_temporal_layers[i] > 3)
       die("Invalid temporal layers: %d, Must be 1, 2, or 3. \n",
-          num_temporal_layers);
+          num_temporal_layers[i]);
   }
 
   /* Open file to write out each spatially downsampled input stream. */
@@ -468,7 +468,7 @@ int main(int argc, char **argv) {
   /* Allocate image for each encoder */
   for (i = 0; i < NUM_ENCODERS; i++)
     if (!vpx_img_alloc(&raw[i], VPX_IMG_FMT_I420, cfg[i].g_w, cfg[i].g_h, 32))
-      die("Failed to allocate image", cfg[i].g_w, cfg[i].g_h);
+      die("Failed to allocate image (%dx%d)", cfg[i].g_w, cfg[i].g_h);
 
   if (raw[0].stride[VPX_PLANE_Y] == (int)raw[0].d_w)
     read_frame_p = mulres_read_frame;

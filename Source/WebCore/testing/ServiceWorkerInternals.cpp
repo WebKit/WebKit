@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerInternals.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "FetchEvent.h"
 #include "FetchRequest.h"
 #include "JSDOMPromiseDeferred.h"
@@ -112,7 +110,7 @@ void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPro
             String description;
             if (auto& error = result.error())
                 description = error->localizedDescription();
-            promise.reject(TypeError, description);
+            promise.reject(ExceptionCode::TypeError, description);
             return;
         }
         promise.resolve(WTFMove(result.value()));
@@ -142,11 +140,9 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
 
 Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& response)
 {
-    Vector<String> headerNames;
-    headerNames.reserveInitialCapacity(response.internalResponseHeaders().size());
-    for (auto keyValue : response.internalResponseHeaders())
-        headerNames.uncheckedAppend(keyValue.key);
-    return headerNames;
+    return WTF::map(response.internalResponseHeaders(), [](auto& keyValue) {
+        return keyValue.key;
+    });
 }
 
 #if !PLATFORM(MAC)
@@ -220,5 +216,3 @@ void ServiceWorkerInternals:: logReportedConsoleMessage(ScriptExecutionContext& 
 }
 
 } // namespace WebCore
-
-#endif

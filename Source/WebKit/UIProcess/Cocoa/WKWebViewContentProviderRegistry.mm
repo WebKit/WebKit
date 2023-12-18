@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKPDFView.h"
+#import "WKPreferencesInternal.h"
 #import "WKUSDPreviewView.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -51,8 +52,10 @@
         return nil;
 
 #if ENABLE(WKPDFVIEW)
-    for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
-        [self registerProvider:[WKPDFView class] forMIMEType:@(type.characters())];
+    if (!configuration.preferences || !configuration.preferences->_preferences->unifiedPDFEnabled()) {
+        for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
+            [self registerProvider:[WKPDFView class] forMIMEType:@(type.characters())];
+    }
 #endif
 
 #if USE(SYSTEM_PREVIEW)

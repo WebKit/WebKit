@@ -13,7 +13,7 @@ short second line.
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (197,-4) width=33 height=27)
+        (interaction (197.27,-4) width=31.99 height=27)
         (borderRadius 8.00),
         (interaction (-4,16) width=117 height=27)
         (borderRadius 8.00)])

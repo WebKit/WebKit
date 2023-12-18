@@ -58,7 +58,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmECDSA::identifier() const
 void CryptoAlgorithmECDSA::sign(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Private) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
 
@@ -71,7 +71,7 @@ void CryptoAlgorithmECDSA::sign(const CryptoAlgorithmParameters& parameters, Ref
 void CryptoAlgorithmECDSA::verify(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& key, Vector<uint8_t>&& signature, Vector<uint8_t>&& data, BoolCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
     if (key->type() != CryptoKeyType::Public) {
-        exceptionCallback(InvalidAccessError);
+        exceptionCallback(ExceptionCode::InvalidAccessError);
         return;
     }
 
@@ -86,7 +86,7 @@ void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& paramete
     const auto& ecParameters = downcast<CryptoAlgorithmEcKeyParams>(parameters);
 
     if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
@@ -113,11 +113,11 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
         JsonWebKey key = WTFMove(std::get<JsonWebKey>(data));
 
         if (usages && ((!key.d.isNull() && (usages ^ CryptoKeyUsageSign)) || (key.d.isNull() && (usages ^ CryptoKeyUsageVerify)))) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         if (usages && !key.use.isNull() && key.use != "sig"_s) {
-            exceptionCallback(DataError);
+            exceptionCallback(ExceptionCode::DataError);
             return;
         }
 
@@ -129,7 +129,7 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
         if (key.crv == P521)
             isMatched = key.alg.isNull() || key.alg == ALG512;
         if (!isMatched) {
-            exceptionCallback(DataError);
+            exceptionCallback(ExceptionCode::DataError);
             return;
         }
 
@@ -138,28 +138,28 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
     }
     case CryptoKeyFormat::Raw:
         if (usages && (usages ^ CryptoKeyUsageVerify)) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         result = CryptoKeyEC::importRaw(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Spki:
         if (usages && (usages ^ CryptoKeyUsageVerify)) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         result = CryptoKeyEC::importSpki(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Pkcs8:
         if (usages && (usages ^ CryptoKeyUsageSign)) {
-            exceptionCallback(SyntaxError);
+            exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
         result = CryptoKeyEC::importPkcs8(ecParameters.identifier, ecParameters.namedCurve, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     }
     if (!result) {
-        exceptionCallback(DataError);
+        exceptionCallback(ExceptionCode::DataError);
         return;
     }
 
@@ -171,7 +171,7 @@ void CryptoAlgorithmECDSA::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& ke
     const auto& ecKey = downcast<CryptoKeyEC>(key.get());
 
     if (!ecKey.keySizeInBits()) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 

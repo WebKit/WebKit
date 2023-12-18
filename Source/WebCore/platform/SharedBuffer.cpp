@@ -126,7 +126,7 @@ Vector<uint8_t> FragmentedSharedBuffer::copyData() const
     Vector<uint8_t> data;
     data.reserveInitialCapacity(size());
     forEachSegment([&data](auto& span) {
-        data.uncheckedAppend(span);
+        data.append(span);
     });
     return data;
 }
@@ -215,11 +215,11 @@ RefPtr<ArrayBuffer> FragmentedSharedBuffer::tryCreateArrayBuffer() const
 void FragmentedSharedBuffer::append(const FragmentedSharedBuffer& data)
 {
     ASSERT(!m_contiguous);
-    m_segments.reserveCapacity(m_segments.size() + data.m_segments.size());
-    for (const auto& element : data.m_segments) {
-        m_segments.uncheckedAppend({ m_size, element.segment.copyRef() });
+    m_segments.appendContainerWithMapping(data.m_segments, [&](auto& element) {
+        DataSegmentVectorEntry entry { m_size, element.segment.copyRef() };
         m_size += element.segment->size();
-    }
+        return entry;
+    });
     ASSERT(internallyConsistent());
 }
 
@@ -253,9 +253,9 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::copy() const
         return m_segments.size() ? SharedBuffer::create(m_segments[0].segment.copyRef()) : SharedBuffer::create();
     Ref<FragmentedSharedBuffer> clone = adoptRef(*new FragmentedSharedBuffer);
     clone->m_size = m_size;
-    clone->m_segments.reserveInitialCapacity(m_segments.size());
-    for (const auto& element : m_segments)
-        clone->m_segments.uncheckedAppend({ element.beginPosition, element.segment.copyRef() });
+    clone->m_segments = WTF::map<1>(m_segments, [](auto& element) {
+        return DataSegmentVectorEntry { element.beginPosition, element.segment.copyRef() };
+    });
     ASSERT(clone->internallyConsistent());
     ASSERT(internallyConsistent());
     return clone;

@@ -79,7 +79,7 @@ static bool shouldDirtyAllStyle(const StyleSheetContents& sheet)
     return false;
 }
 
-static bool shouldDirtyAllStyle(const Vector<CheckedRef<StyleSheetContents>>& sheets)
+static bool shouldDirtyAllStyle(const Vector<Ref<StyleSheetContents>>& sheets)
 {
     for (auto& sheet : sheets) {
         if (shouldDirtyAllStyle(sheet))
@@ -88,7 +88,7 @@ static bool shouldDirtyAllStyle(const Vector<CheckedRef<StyleSheetContents>>& sh
     return false;
 }
 
-Invalidator::Invalidator(const Vector<CheckedRef<StyleSheetContents>>& sheets, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
+Invalidator::Invalidator(const Vector<Ref<StyleSheetContents>>& sheets, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
     : m_ownedRuleSet(RuleSet::create())
     , m_ruleSets({ m_ownedRuleSet })
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))
@@ -159,7 +159,8 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
         invalidateAssignedElements(downcast<HTMLSlotElement>(element));
 
     switch (element.styleValidity()) {
-    case Style::Validity::Valid: {
+    case Validity::Valid:
+    case Validity::AnimationInvalid: {
         for (auto& ruleSet : m_ruleSets) {
             ElementRuleCollector ruleCollector(element, *ruleSet, selectorMatchingState);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
@@ -172,10 +173,9 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
 
         return CheckDescendants::Yes;
     }
-    case Style::Validity::ElementInvalid:
+    case Validity::ElementInvalid:
         return CheckDescendants::Yes;
-    case Style::Validity::SubtreeInvalid:
-    case Style::Validity::SubtreeAndRenderersInvalid:
+    case Validity::SubtreeInvalid:
         return CheckDescendants::No;
     }
     ASSERT_NOT_REACHED();

@@ -42,9 +42,9 @@ class AV1SBMultipassTest
     md5_dec_.clear();
     md5_enc_.clear();
   }
-  virtual ~AV1SBMultipassTest() { delete decoder_; }
+  ~AV1SBMultipassTest() override { delete decoder_; }
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(::libaom_test::kTwoPassGood);
 
     cfg_.g_lag_in_frames = 5;
@@ -56,8 +56,8 @@ class AV1SBMultipassTest
     cfg_.rc_min_quantizer = 0;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       SetTileSize(encoder);
       encoder->Control(AOME_SET_CPUUSED, set_cpu_used_);
@@ -75,7 +75,7 @@ class AV1SBMultipassTest
     encoder->Control(AV1E_SET_TILE_ROWS, 1);
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     size_enc_.push_back(pkt->data.frame.sz);
 
     ::libaom_test::MD5 md5_enc;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
+#if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)
 
 #include "IntSizeHash.h"
 #include "OrientationNotifier.h"
@@ -39,7 +39,11 @@ typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 OBJC_CLASS AVCaptureConnection;
 OBJC_CLASS AVCaptureDevice;
 OBJC_CLASS AVCaptureDeviceFormat;
+OBJC_CLASS AVCapturePhoto;
+OBJC_CLASS AVCapturePhotoOutput;
+OBJC_CLASS AVCapturePhotoSettings;
 OBJC_CLASS AVCaptureOutput;
+OBJC_CLASS AVCaptureResolvedPhotoSettings;
 OBJC_CLASS AVCaptureSession;
 OBJC_CLASS AVCaptureVideoDataOutput;
 OBJC_CLASS AVFrameRateRange;
@@ -71,6 +75,7 @@ public:
     void captureSessionRuntimeError(RetainPtr<NSError>);
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*);
     void captureDeviceSuspendedDidChange();
+    void captureOutputDidFinishProcessingPhoto(RetainPtr<AVCapturePhotoOutput>, RetainPtr<AVCapturePhoto>, RetainPtr<NSError>);
 
 private:
     AVVideoCaptureSource(AVCaptureDevice*, const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
@@ -84,7 +89,9 @@ private:
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
-    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
+    Ref<TakePhotoNativePromise> takePhotoInternal(PhotoSettings&&) final;
+    Ref<PhotoCapabilitiesNativePromise> getPhotoCapabilities() final;
+    Ref<PhotoSettingsNativePromise> getPhotoSettings() final;
     double facingModeFitnessScoreAdjustment() const final;
     void startProducingData() final;
     void stopProducingData() final;
@@ -106,6 +113,7 @@ private:
     bool setPreset(NSString*);
     void computeVideoFrameRotation();
     AVFrameRateRange* frameDurationForFrameRate(double);
+    void stopSession();
 
     // OrientationNotifier::Observer API
     void orientationChanged(IntDegrees orientation) final;
@@ -125,6 +133,7 @@ private:
     void beginConfiguration();
     void commitConfiguration();
     void beginConfigurationForConstraintsIfNeeded();
+    bool lockForConfiguration();
 
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
@@ -133,10 +142,16 @@ private:
     std::optional<double> computeMaxZoom(AVCaptureDeviceFormat*) const;
 
     void updateWhiteBalanceMode();
+    void updateTorch();
+
+    void rejectPendingPhotoRequest(const String&);
+    void resolvePendingPhotoRequest(Vector<uint8_t>&&, const String&);
+    RetainPtr<AVCapturePhotoSettings> photoConfiguration(const PhotoSettings&);
+    IntSize maxPhotoSizeForCurrentPreset(IntSize requestedSize) const;
+    AVCapturePhotoOutput* photoOutput();
 
     RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
-    std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 
     IntDegrees m_sensorOrientation { 0 };
     IntDegrees m_deviceOrientation { 0 };
@@ -149,6 +164,10 @@ private:
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
 
+    RetainPtr<AVCapturePhotoOutput> m_photoOutput WTF_GUARDED_BY_CAPABILITY(RunLoop::main());
+    std::unique_ptr<TakePhotoNativePromise::Producer> m_photoProducer WTF_GUARDED_BY_LOCK(m_photoLock);
+
+    Lock m_photoLock;
     std::optional<VideoPreset> m_currentPreset;
     std::optional<VideoPreset> m_appliedPreset;
     RetainPtr<AVFrameRateRange> m_appliedFrameRateRange;
@@ -168,8 +187,9 @@ private:
     Timer m_verifyCapturingTimer;
     uint64_t m_framesCount { 0 };
     uint64_t m_lastFramesCount { 0 };
+    int64_t m_defaultTorchMode { 0 };
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)

@@ -245,4 +245,18 @@ TEST(WebCoreLayoutUnit, LayoutUnitPixelSnapping)
         ASSERT_FLOAT_EQ(roundToDevicePixel(LayoutUnit(i), 2), i + 0.25);
 }
 
+TEST(WebCoreLayoutUnit, LayoutUnitUnaryMinus)
+{
+    ASSERT_EQ(LayoutUnit(), -LayoutUnit());
+    ASSERT_EQ(LayoutUnit(999), -LayoutUnit(-999));
+    ASSERT_EQ(LayoutUnit(-999), -LayoutUnit(999));
+
+    LayoutUnit negativeMax;
+    negativeMax.setRawValue(LayoutUnit::min().rawValue() + 1);
+    ASSERT_EQ(negativeMax, -LayoutUnit::max());
+    ASSERT_EQ(LayoutUnit::max(), -negativeMax);
+    // -LayoutUnit::min() is saturated to LayoutUnit::max()
+    ASSERT_EQ(LayoutUnit::max(), -LayoutUnit::min());
+}
+
 } // namespace TestWebKitAPI

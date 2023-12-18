@@ -27,10 +27,6 @@
 
 #include <wtf/ArgumentCoder.h>
 
-#if HAVE(AUDIT_TOKEN)
-#include <mach/mach.h>
-#endif
-
 namespace WTF {
 class MachSendRight;
 }
@@ -41,12 +37,5 @@ template<> struct ArgumentCoder<WTF::MachSendRight> {
     static void encode(Encoder&, WTF::MachSendRight&&);
     static std::optional<WTF::MachSendRight> decode(Decoder&);
 };
-
-#if HAVE(AUDIT_TOKEN)
-template<> struct ArgumentCoder<audit_token_t> {
-    static void encode(Encoder&, const audit_token_t&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, audit_token_t&);
-};
-#endif
 
 }

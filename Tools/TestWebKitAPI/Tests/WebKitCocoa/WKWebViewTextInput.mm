@@ -25,14 +25,64 @@
 
 #import "config.h"
 
-#if PLATFORM(MAC)
-
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPIForTesting.h"
+#endif
+
+static void insertText(WKWebView *webView, NSString *text)
+{
+#if PLATFORM(IOS_FAMILY)
+    [[webView textInputContentView] insertText:text];
+#else
+    [webView insertText:text];
+#endif
+}
+
+TEST(WKWebView, InsertTextWithRangedSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)]);
+    [webView synchronouslyLoadHTMLString:@"<div id='editor' contenteditable>foo bar baz</div>"];
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(editor.childNodes[0], 4, editor.childNodes[0], 8)"];
+    EXPECT_WK_STREQ("bar ", [webView selectedText]);
+
+    insertText(webView.get(), @"text ");
+    EXPECT_WK_STREQ("foo text baz", [webView contentsAsString]);
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(editor.childNodes[0], 4, editor.childNodes[0], 9)"];
+    EXPECT_WK_STREQ("text ", [webView selectedText]);
+
+    insertText(webView.get(), @"");
+    EXPECT_WK_STREQ("foo baz", [webView contentsAsString]);
+}
+
+TEST(WKWebView, InsertTextWithCaretSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)]);
+    [webView synchronouslyLoadHTMLString:@"<div id='editor' contenteditable>foo bar baz</div>"];
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(editor.childNodes[0], 3, editor.childNodes[0], 3)"];
+    EXPECT_WK_STREQ("", [webView selectedText]);
+
+    insertText(webView.get(), @" text");
+    EXPECT_WK_STREQ("foo text bar baz", [webView contentsAsString]);
+
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(editor.childNodes[0], 3, editor.childNodes[0], 3)"];
+    EXPECT_WK_STREQ("", [webView selectedText]);
+
+    insertText(webView.get(), @"");
+    EXPECT_WK_STREQ("foo text bar baz", [webView contentsAsString]);
+}
+
+#if PLATFORM(MAC)
 
 TEST(WKWebView, ShouldHaveInputContextForEditableContent)
 {
@@ -43,4 +93,4 @@ TEST(WKWebView, ShouldHaveInputContextForEditableContent)
     EXPECT_NOT_NULL([webView inputContext]);
 }
 
-#endif
+#endif // PLATFORM(MAC)

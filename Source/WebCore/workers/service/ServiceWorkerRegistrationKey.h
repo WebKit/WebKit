@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "SecurityOriginData.h"
 #include <wtf/Hasher.h>
 #include <wtf/URL.h>
@@ -99,5 +97,3 @@ template<> struct HashTraits<WebCore::ServiceWorkerRegistrationKey> : GenericHas
 template<> struct DefaultHash<WebCore::ServiceWorkerRegistrationKey> : ServiceWorkerRegistrationKeyHash { };
 
 } // namespace WTF
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -147,7 +147,7 @@ ExceptionOr<void> WebKitMediaKeySession::update(Ref<Uint8Array>&& key)
     // NOTE: the reference to a "second argument" is a spec bug.
     if (!key->length()) {
         ERROR_LOG(LOGIDENTIFIER, "error: empty key");
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
     }
 
     ALWAYS_LOG(LOGIDENTIFIER);

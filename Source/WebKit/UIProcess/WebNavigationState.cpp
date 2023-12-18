@@ -41,27 +41,27 @@ WebNavigationState::~WebNavigationState()
 {
 }
 
-Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(WebCore::ProcessIdentifier processID, ResourceRequest&& request, WebBackForwardListItem* currentItem)
+Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(WebCore::ProcessIdentifier processID, ResourceRequest&& request, RefPtr<WebBackForwardListItem>&& currentItem)
 {
-    auto navigation = API::Navigation::create(*this, processID, WTFMove(request), currentItem);
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(request), WTFMove(currentItem));
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebCore::ProcessIdentifier processID, WebBackForwardListItem& targetItem, WebBackForwardListItem* currentItem, FrameLoadType frameLoadType)
+Ref<API::Navigation> WebNavigationState::createBackForwardNavigation(WebCore::ProcessIdentifier processID, Ref<WebBackForwardListItem>&& targetItem, RefPtr<WebBackForwardListItem>&& currentItem, FrameLoadType frameLoadType)
 {
-    auto navigation = API::Navigation::create(*this, processID, targetItem, currentItem, frameLoadType);
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(targetItem), WTFMove(currentItem), frameLoadType);
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createReloadNavigation(WebCore::ProcessIdentifier processID, WebBackForwardListItem* currentAndTargetItem)
+Ref<API::Navigation> WebNavigationState::createReloadNavigation(WebCore::ProcessIdentifier processID, RefPtr<WebBackForwardListItem>&& currentAndTargetItem)
 {
-    auto navigation = API::Navigation::create(*this, processID, currentAndTargetItem);
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(currentAndTargetItem));
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
@@ -77,9 +77,9 @@ Ref<API::Navigation> WebNavigationState::createLoadDataNavigation(WebCore::Proce
     return navigation;
 }
 
-Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, std::unique_ptr<API::SubstituteData>&& substituteData, WebBackForwardListItem* currentItem)
+Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(WebCore::ProcessIdentifier processID, WebCore::ResourceRequest&& request, std::unique_ptr<API::SubstituteData>&& substituteData, RefPtr<WebBackForwardListItem>&& currentItem)
 {
-    auto navigation = API::Navigation::create(*this, processID, WTFMove(request), WTFMove(substituteData), currentItem);
+    auto navigation = API::Navigation::create(*this, processID, WTFMove(request), WTFMove(substituteData), WTFMove(currentItem));
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 
@@ -89,8 +89,6 @@ Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(W
 API::Navigation* WebNavigationState::navigation(uint64_t navigationID)
 {
     ASSERT(navigationID);
-    ASSERT(m_navigations.contains(navigationID));
-
     return m_navigations.get(navigationID);
 }
 

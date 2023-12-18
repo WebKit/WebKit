@@ -96,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalDuration, (JSGlobalObject* globalObjec
         if (value.isUndefined())
             continue;
 
-        result[i] = value.toIntegerWithoutRounding(globalObject);
+        result[i] = value.toNumber(globalObject) + 0.0;
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!isInteger(result[i]))

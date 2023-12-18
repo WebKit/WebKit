@@ -57,12 +57,12 @@ LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElemen
 
 LegacyRenderSVGResourceClipper::~LegacyRenderSVGResourceClipper() = default;
 
-void LegacyRenderSVGResourceClipper::removeAllClientsFromCache(bool markForInvalidation)
+void LegacyRenderSVGResourceClipper::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
-    m_clipBoundaries = { };
+    m_clipBoundaries.fill(FloatRect { });
     m_clipperMap.clear();
 
-    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
+    markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
 void LegacyRenderSVGResourceClipper::removeClientFromCache(RenderElement& client, bool markForInvalidation)
@@ -243,7 +243,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
     // - fill is set to the initial fill paint server (solid, black)
     // - stroke is set to the initial stroke paint server (none)
     auto oldBehavior = view().frameView().paintBehavior();
-    view().frameView().setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGMask);
+    view().frameView().setPaintBehavior(oldBehavior | PaintBehavior::RenderingSVGClipOrMask);
 
     // Draw all clipPath children into a global mask.
     for (auto& child : childrenOfType<SVGElement>(clipPathElement())) {
@@ -270,7 +270,7 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
         }
 
         // Only shapes, paths and texts are allowed for clipping.
-        if (!renderer->isSVGShapeOrLegacySVGShape() && !renderer->isSVGText())
+        if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText())
             continue;
 
         maskContext.setFillRule(newClipRule);
@@ -285,21 +285,21 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
     return true;
 }
 
-void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect()
+void LegacyRenderSVGResourceClipper::calculateClipContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
 {
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
     for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
-        if (!renderer->isSVGShapeOrLegacySVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
+        if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
         const RenderStyle& style = renderer->style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
              continue;
-        m_clipBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates()));
+        m_clipBoundaries[repaintRectCalculation].unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates(repaintRectCalculation)));
     }
-    m_clipBoundaries = clipPathElement().animatedLocalTransform().mapRect(m_clipBoundaries);
+    m_clipBoundaries[repaintRectCalculation] = clipPathElement().animatedLocalTransform().mapRect(m_clipBoundaries[repaintRectCalculation]);
 }
 
 bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundingBox, const FloatPoint& nodeAtPoint)
@@ -323,7 +323,7 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
         RenderObject* renderer = childNode->renderer();
         if (!childNode->isSVGElement() || !renderer)
             continue;
-        if (!renderer->isSVGShapeOrLegacySVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
+        if (!renderer->isRenderOrLegacyRenderSVGShape() && !renderer->isRenderSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
 
         IntPoint hitPoint;
@@ -336,7 +336,7 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
     return false;
 }
 
-FloatRect LegacyRenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object)
+FloatRect LegacyRenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
     // Resource was not layouted yet. Give back the boundingBox of the object.
     if (selfNeedsLayout()) {
@@ -346,18 +346,18 @@ FloatRect LegacyRenderSVGResourceClipper::resourceBoundingBox(const RenderObject
         return object.objectBoundingBox();
     }
     
-    if (m_clipBoundaries.isEmpty())
-        calculateClipContentRepaintRect();
+    if (m_clipBoundaries[repaintRectCalculation].isEmpty())
+        calculateClipContentRepaintRect(repaintRectCalculation);
 
     if (clipPathElement().clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         FloatRect objectBoundingBox = object.objectBoundingBox();
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());
-        return transform.mapRect(m_clipBoundaries);
+        return transform.mapRect(m_clipBoundaries[repaintRectCalculation]);
     }
 
-    return m_clipBoundaries;
+    return m_clipBoundaries[repaintRectCalculation];
 }
 
 }

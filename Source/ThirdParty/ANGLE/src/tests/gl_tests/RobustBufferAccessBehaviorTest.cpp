@@ -802,6 +802,106 @@ TEST_P(RobustBufferAccessBehaviorTest, OutOfBoundsArrayBuffers)
     DrawAndVerifyOutOfBoundsArrays(/*first*/ (numberOfQuads - 1) * 6, /*count*/ 6);
 }
 
+// Regression test for glBufferData with slightly increased size. Implementation may decided to
+// reuse the buffer storage if underline storage is big enough (due to alignment, implementation may
+// allocate more storage than data size.) This tests ensure it works correctly when this reuse
+// happens.
+TEST_P(RobustBufferAccessBehaviorTest, BufferDataWithIncreasedSize)
+{
+    ANGLE_SKIP_TEST_IF(!initExtension());
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Green());
+
+    // Clear to red and draw one triangle on the bottom left with green. The right top half should
+    // be red.
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    std::array<float, 2 * 3> quadVertices = {-1, 1, -1, -1, 1, -1};
+    constexpr size_t kBufferSize          = sizeof(quadVertices[0]) * quadVertices.size();
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize, quadVertices.data(), GL_STATIC_DRAW);
+    glUseProgram(drawGreen);
+    const GLint positionLocation = glGetAttribLocation(drawGreen, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+
+    // Clear to blue and call glBufferData with two triangles and draw the entire window with green.
+    // Both bottom left and top right should be green.
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    std::array<float, 2 * 3 * 2> twoQuadVertices = {-1, 1, -1, -1, 1, -1, -1, 1, 1, -1, 1, 1};
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize * 2, twoQuadVertices.data(), GL_STATIC_DRAW);
+    glUseProgram(drawGreen);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to BufferDataWithIncreasedSize. But this time the buffer is bound to two VAOs. The change
+// in the buffer should be picked up by both VAOs.
+TEST_P(RobustBufferAccessBehaviorTest, BufferDataWithIncreasedSizeAndUseWithVAOs)
+{
+    ANGLE_SKIP_TEST_IF(!initExtension());
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Green());
+
+    // Clear to red and draw one triangle with VAO1 on the bottom left with green. The right top
+    // half should be red.
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    std::array<float, 2 * 3> quadVertices = {-1, 1, -1, -1, 1, -1};
+    constexpr size_t kBufferSize          = sizeof(quadVertices[0]) * quadVertices.size();
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize, quadVertices.data(), GL_STATIC_DRAW);
+    glUseProgram(drawGreen);
+    const GLint positionLocation = glGetAttribLocation(drawGreen, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+    GLVertexArray vao1;
+    glBindVertexArray(vao1);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_PIXEL_COLOR_EQ(2, 2, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+
+    // Now use the same buffer on VAO2
+    GLVertexArray vao2;
+    glBindVertexArray(vao2);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_PIXEL_COLOR_EQ(2, 2, GLColor::green);
+    // Clear to blue and call glBufferData with two triangles and draw the entire window with green.
+    // Both bottom left and top right should be green.
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    std::array<float, 2 * 3 * 2> twoQuadVertices = {-1, 1, -1, -1, 1, -1, -1, 1, 1, -1, 1, 1};
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize * 2, twoQuadVertices.data(), GL_STATIC_DRAW);
+    glUseProgram(drawGreen);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(2, 2, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+
+    // Buffer's change should be piked by VAO1 as well. If not, then we should get validation error.
+    glBindVertexArray(vao1);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_PIXEL_COLOR_EQ(2, 2, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Prepare an element array buffer that indexes out-of-bounds beginning with the start index passed
 // in. Ensure that drawElements flags either no error or INVALID_OPERATION. In the case of
 // INVALID_OPERATION, no canvas pixels can be touched.  In the case of NO_ERROR, all written values

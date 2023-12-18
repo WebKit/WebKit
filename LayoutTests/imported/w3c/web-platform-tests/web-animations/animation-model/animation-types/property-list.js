@@ -670,7 +670,7 @@ const gCSSProperties1 = {
   'grid-template-areas': {
     // https://drafts.csswg.org/css-template/#grid-template-areas
     types: [
-      { type: 'discrete', options: [ [ '". . a b" ". .a b"', 'none' ] ] }
+      { type: 'discrete', options: [ [ '". . a b" ". . a b"', 'none' ] ] }
     ]
   },
   'height': {
@@ -753,7 +753,7 @@ const gCSSProperties2 = {
     types: [ 'color' ]
   },
   'line-height': {
-    // https://w3c.github.io/csswg-drafts/css-inline/#line-height-property
+    // https://drafts.csswg.org/css-inline/#line-height-property
     types: [
         { type: 'discrete', options: [ [ 'normal', '10px' ],
                                        [ 'normal', '10', 'normal', '100px' ] ] }
@@ -1286,9 +1286,9 @@ const gCSSProperties2 = {
     ]
   },
   'text-autospace': {
-    // https://www.w3.org/TR/css-text-4/#text-spacing-property
+    // https://drafts.csswg.org/css-text-4/#text-spacing-property
     types: [
-      { type: 'discrete', options: [ [ 'auto', 'no-autospace' ] ] }
+      { type: 'discrete', options: [ [ 'normal', 'no-autospace' ] ] }
     ]
   },
   'text-decoration-color': {
@@ -1433,6 +1433,12 @@ const gCSSProperties2 = {
   'vertical-align': {
     // https://drafts.csswg.org/css21/visudet.html#propdef-vertical-align
     types: [
+    ]
+  },
+  'view-transition-name': {
+    // https://drafts.csswg.org/css-view-transitions/#propdef-view-transition-name
+    types: [
+      { type: 'discrete', options: [ [ 'none', 'header' ] ] },
     ]
   },
   'visibility': {

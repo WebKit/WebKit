@@ -11,6 +11,7 @@
 #include "media/engine/webrtc_media_engine.h"
 
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "media/engine/webrtc_media_engine_defaults.h"

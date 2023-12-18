@@ -1,0 +1,3 @@
+
+FAIL navigate() with an invalid URL and unserializable state throws "SyntaxError", not "DataCloneError" assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
+

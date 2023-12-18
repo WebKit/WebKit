@@ -30,17 +30,19 @@
 
 namespace WebGPU {
 
-TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
+TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
     : m_texture(texture)
     , m_descriptor(descriptor)
     , m_renderExtent(renderExtent)
     , m_device(device)
+    , m_parentTexture(parentTexture)
 {
 }
 
-TextureView::TextureView(Device& device)
+TextureView::TextureView(Texture& texture, Device& device)
     : m_descriptor { }
     , m_device(device)
+    , m_parentTexture(texture)
 {
 }
 
@@ -49,6 +51,51 @@ TextureView::~TextureView() = default;
 void TextureView::setLabel(String&& label)
 {
     m_texture.label = label;
+}
+
+bool TextureView::previouslyCleared() const
+{
+    return m_parentTexture.previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
+}
+
+void TextureView::setPreviouslyCleared()
+{
+    m_parentTexture.setPreviouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
+}
+
+uint32_t TextureView::width() const
+{
+    return static_cast<uint32_t>(m_texture.width);
+}
+
+uint32_t TextureView::height() const
+{
+    return static_cast<uint32_t>(m_texture.height);
+}
+
+WGPUTextureUsageFlags TextureView::usage() const
+{
+    return m_parentTexture.usage();
+}
+
+uint32_t TextureView::sampleCount() const
+{
+    return m_parentTexture.sampleCount();
+}
+
+WGPUTextureFormat TextureView::format() const
+{
+    return m_parentTexture.format();
+}
+
+uint32_t TextureView::mipLevelCount() const
+{
+    return m_parentTexture.mipLevelCount();
+}
+
+bool TextureView::isDestroyed() const
+{
+    return m_parentTexture.isDestroyed();
 }
 
 } // namespace WebGPU

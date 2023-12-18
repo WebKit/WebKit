@@ -1,0 +1,3 @@
+
+FAIL scroll: scroll() should work on a replace navigation promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigate_event.scroll')"
+

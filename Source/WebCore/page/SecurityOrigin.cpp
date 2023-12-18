@@ -178,6 +178,12 @@ inline bool isSafelistedBlobProtocol(const URL& url)
     // except that assert gets hit on certain tests.
     return url.protocolIsInHTTPFamily()
         || url.protocolIsFile()
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        || url.protocolIs("resource"_s)
+#endif
+#if ENABLE(PDFJS)
+        || url.protocolIs("webkit-pdfjs-viewer"_s)
+#endif
         || LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
 }
 

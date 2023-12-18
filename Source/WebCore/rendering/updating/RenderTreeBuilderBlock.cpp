@@ -47,7 +47,7 @@ static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 {
     if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())
         return false;
-    if (anonymousBlock.isRubyRun() || anonymousBlock.isRubyBase())
+    if (anonymousBlock.isRenderRubyRun() || anonymousBlock.isRenderRubyBase())
         return false;
     return true;
 }
@@ -173,7 +173,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
                 m_builder.attach(parent, WTFMove(child), beforeChildContainer);
                 return;
             }
-            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isTable());
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline() || beforeChildContainer->isRenderTable());
 
             // If the requested beforeChild is not one of our children, then this is because
             // there is an anonymous container within this object that contains the beforeChild.
@@ -197,7 +197,7 @@ void RenderTreeBuilder::Block::attachIgnoringContinuation(RenderBlock& parent, R
                 return;
             }
 
-            ASSERT(beforeChildAnonymousContainer->isTable());
+            ASSERT(beforeChildAnonymousContainer->isRenderTable());
 
             if (child->isTablePart()) {
                 // Insert into the anonymous table.

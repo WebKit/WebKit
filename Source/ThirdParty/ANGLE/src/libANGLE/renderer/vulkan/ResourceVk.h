@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_RESOURCEVK_H_
 #define LIBANGLE_RENDERER_VULKAN_RESOURCEVK_H_
 
+#include "common/FixedQueue.h"
 #include "libANGLE/HandleAllocator.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
@@ -148,24 +149,166 @@ class ResourceUse final
 };
 std::ostream &operator<<(std::ostream &os, const ResourceUse &use);
 
-class SharedGarbage
+class SharedGarbage final : angle::NonCopyable
 {
   public:
     SharedGarbage();
     SharedGarbage(SharedGarbage &&other);
-    SharedGarbage(const ResourceUse &use, GarbageList &&garbage);
+    SharedGarbage(const ResourceUse &use, GarbageObjects &&garbage);
     ~SharedGarbage();
     SharedGarbage &operator=(SharedGarbage &&rhs);
 
     bool destroyIfComplete(RendererVk *renderer);
     bool hasResourceUseSubmitted(RendererVk *renderer) const;
+    // This is not being used now.
+    VkDeviceSize getSize() const { return 0; }
 
   private:
     ResourceUse mLifetime;
-    GarbageList mGarbage;
+    GarbageObjects mGarbage;
 };
 
-using SharedGarbageList = std::queue<SharedGarbage>;
+// SharedGarbageList list tracks garbage using angle::FixedQueue. It allows concurrent add (i.e.,
+// enqueue) and cleanup (i.e. dequeue) operations from two threads. Add call from two threads are
+// synchronized using a mutex and cleanup call from two threads are synchronized with a separate
+// mutex.
+template <class T>
+class SharedGarbageList final : angle::NonCopyable
+{
+  public:
+    SharedGarbageList()
+        : mSubmittedQueue(kInitialQueueCapacity),
+          mUnsubmittedQueue(kInitialQueueCapacity),
+          mTotalSubmittedGarbageBytes(0),
+          mTotalUnsubmittedGarbageBytes(0),
+          mTotalGarbageDestroyed(0)
+    {}
+    ~SharedGarbageList()
+    {
+        ASSERT(mSubmittedQueue.empty());
+        ASSERT(mUnsubmittedQueue.empty());
+    }
+
+    void add(RendererVk *renderer, T &&garbage)
+    {
+        VkDeviceSize size = garbage.getSize();
+        if (garbage.destroyIfComplete(renderer))
+        {
+            mTotalGarbageDestroyed += size;
+        }
+        else
+        {
+            std::unique_lock<std::mutex> enqueueLock(mMutex);
+            if (garbage.hasResourceUseSubmitted(renderer))
+            {
+                addGarbageLocked(mSubmittedQueue, std::move(garbage));
+                mTotalSubmittedGarbageBytes += size;
+            }
+            else
+            {
+                addGarbageLocked(mUnsubmittedQueue, std::move(garbage));
+                // We use relaxed ordering here since it is always modified with mMutex. The atomic
+                // is only for the purpose of make tsan happy.
+                mTotalUnsubmittedGarbageBytes.fetch_add(size, std::memory_order_relaxed);
+            }
+        }
+    }
+
+    bool empty() const { return mSubmittedQueue.empty() && mUnsubmittedQueue.empty(); }
+    VkDeviceSize getSubmittedGarbageSize() const
+    {
+        return mTotalSubmittedGarbageBytes.load(std::memory_order_consume);
+    }
+    VkDeviceSize getUnsubmittedGarbageSize() const
+    {
+        return mTotalUnsubmittedGarbageBytes.load(std::memory_order_consume);
+    }
+    VkDeviceSize getDestroyedGarbageSize() const
+    {
+        return mTotalGarbageDestroyed.load(std::memory_order_consume);
+    }
+    void resetDestroyedGarbageSize() { mTotalGarbageDestroyed = 0; }
+
+    // Number of bytes destroyed is returned.
+    void cleanupSubmittedGarbage(RendererVk *renderer)
+    {
+        std::unique_lock<std::mutex> lock(mSubmittedQueueDequeueMutex);
+        VkDeviceSize bytesDestroyed = 0;
+        while (!mSubmittedQueue.empty())
+        {
+            T &garbage        = mSubmittedQueue.front();
+            VkDeviceSize size = garbage.getSize();
+            if (!garbage.destroyIfComplete(renderer))
+            {
+                break;
+            }
+            bytesDestroyed += size;
+            mSubmittedQueue.pop();
+        }
+        mTotalSubmittedGarbageBytes -= bytesDestroyed;
+        mTotalGarbageDestroyed += bytesDestroyed;
+    }
+
+    // Check if pending garbage is still pending submission. If not, move them to the garbage list.
+    // Otherwise move the element to the end of the queue. Note that this call took both locks of
+    // this list. Since this call is only used for pending submission garbage list and that list
+    // only temporary stores garbage, it does not destroy garbage in this list. And moving garbage
+    // around is expected to be cheap in general, so lock contention is not expected.
+    void cleanupUnsubmittedGarbage(RendererVk *renderer)
+    {
+        std::unique_lock<std::mutex> enqueueLock(mMutex);
+        size_t count            = mUnsubmittedQueue.size();
+        VkDeviceSize bytesMoved = 0;
+        for (size_t i = 0; i < count; i++)
+        {
+            T &garbage = mUnsubmittedQueue.front();
+            if (garbage.hasResourceUseSubmitted(renderer))
+            {
+                bytesMoved += garbage.getSize();
+                addGarbageLocked(mSubmittedQueue, std::move(garbage));
+            }
+            else
+            {
+                mUnsubmittedQueue.push(std::move(garbage));
+            }
+            mUnsubmittedQueue.pop();
+        }
+        mTotalUnsubmittedGarbageBytes -= bytesMoved;
+        mTotalSubmittedGarbageBytes += bytesMoved;
+    }
+
+  private:
+    void addGarbageLocked(angle::FixedQueue<T> &queue, T &&garbage)
+    {
+        // Expand the queue storage if we only have one empty space left. That one empty space is
+        // required by cleanupPendingSubmissionGarbage so that we do not need to allocate another
+        // temporary storage.
+        if (queue.size() >= queue.capacity() - 1)
+        {
+            std::unique_lock<std::mutex> dequeueLock(mSubmittedQueueDequeueMutex);
+            size_t newCapacity = queue.capacity() << 1;
+            queue.updateCapacity(newCapacity);
+        }
+        queue.push(std::move(garbage));
+    }
+
+    static constexpr size_t kInitialQueueCapacity = 64;
+    // Protects both enqueue and dequeue of mUnsubmittedQueue, as well as enqueue of
+    // mSubmittedQueue.
+    std::mutex mMutex;
+    // Protect dequeue of mSubmittedQueue, which is expected to be more expensive.
+    std::mutex mSubmittedQueueDequeueMutex;
+    // Holds garbage that all of use has been submitted to renderer.
+    angle::FixedQueue<T> mSubmittedQueue;
+    // Holds garbage with at least one of the queueSerials has not yet submitted to renderer.
+    angle::FixedQueue<T> mUnsubmittedQueue;
+    // Total bytes of garbage in mSubmittedQueue.
+    std::atomic<VkDeviceSize> mTotalSubmittedGarbageBytes;
+    // Total bytes of garbage in mUnsubmittedQueue.
+    std::atomic<VkDeviceSize> mTotalUnsubmittedGarbageBytes;
+    // Total bytes of garbage been destroyed since last resetDestroyedGarbageSize call.
+    std::atomic<VkDeviceSize> mTotalGarbageDestroyed;
+};
 
 // This is a helper class for back-end objects used in Vk command buffers. They keep a record
 // of their use in ANGLE and VkQueues via ResourceUse.

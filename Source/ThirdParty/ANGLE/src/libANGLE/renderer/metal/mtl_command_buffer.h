@@ -44,6 +44,17 @@ class CommandEncoder;
 class RenderCommandEncoder;
 class OcclusionQueryPool;
 
+class AtomicSerial : angle::NonCopyable
+{
+  public:
+    uint64_t load() const { return mValue.load(std::memory_order_consume); }
+    void increment(uint64_t value) { mValue.fetch_add(1, std::memory_order_release); }
+    void storeMaxValue(uint64_t value);
+
+  private:
+    std::atomic<uint64_t> mValue{0};
+};
+
 class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::NonCopyable
 {
   public:
@@ -103,8 +114,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     std::deque<CmdBufferQueueEntry> mMetalCmdBuffers;
 
     uint64_t mQueueSerialCounter = 1;
-    std::atomic<uint64_t> mCommittedBufferSerial{0};
-    std::atomic<uint64_t> mCompletedBufferSerial{0};
+    AtomicSerial mCommittedBufferSerial;
+    AtomicSerial mCompletedBufferSerial;
     uint64_t mRenderEncoderCounter = 1;
 
     // The bookkeeping for TIME_ELAPSED queries must be managed under

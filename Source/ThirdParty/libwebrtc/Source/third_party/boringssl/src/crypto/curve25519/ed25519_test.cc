@@ -35,9 +35,15 @@ TEST(Ed25519Test, TestVectors) {
     ASSERT_TRUE(t->GetBytes(&expected_signature, "SIG"));
     ASSERT_EQ(64u, expected_signature.size());
 
+    // Signing should not leak the private key or the message.
+    CONSTTIME_SECRET(private_key.data(), private_key.size());
+    CONSTTIME_SECRET(message.data(), message.size());
     uint8_t signature[64];
     ASSERT_TRUE(ED25519_sign(signature, message.data(), message.size(),
                              private_key.data()));
+    CONSTTIME_DECLASSIFY(signature, sizeof(signature));
+    CONSTTIME_DECLASSIFY(message.data(), message.size());
+
     EXPECT_EQ(Bytes(expected_signature), Bytes(signature));
     EXPECT_TRUE(ED25519_verify(message.data(), message.size(), signature,
                                public_key.data()));
@@ -114,9 +120,12 @@ TEST(Ed25519Test, KeypairFromSeed) {
 
   uint8_t seed[32];
   OPENSSL_memcpy(seed, private_key1, sizeof(seed));
+  CONSTTIME_SECRET(seed, sizeof(seed));
 
   uint8_t public_key2[32], private_key2[64];
   ED25519_keypair_from_seed(public_key2, private_key2, seed);
+  CONSTTIME_DECLASSIFY(public_key2, sizeof(public_key2));
+  CONSTTIME_DECLASSIFY(private_key2, sizeof(private_key2));
 
   EXPECT_EQ(Bytes(public_key1), Bytes(public_key2));
   EXPECT_EQ(Bytes(private_key1), Bytes(private_key2));

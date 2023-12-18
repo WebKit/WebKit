@@ -651,7 +651,7 @@ EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface su
         ANGLE_CAPTURE_EGL(PrepareSwapBuffersANGLE, true, thread, dpyPacked, surfacePacked,
                           returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
     return returnValue;
 }
 
@@ -909,7 +909,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(SwapBuffersWithFrameTokenANGLE, true, thread, dpyPacked, surfacePacked,
                           frametoken, returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
     return returnValue;
 }
 
@@ -1271,7 +1271,7 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurfaceEXT(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(CreatePlatformWindowSurfaceEXT, true, thread, dpyPacked, configPacked,
                           native_window, attrib_listPacked, returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
     return returnValue;
 }
 
@@ -1422,7 +1422,7 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(ClientWaitSyncKHR, true, thread, dpyPacked, syncPacked, flags, timeout,
                           returnValue);
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(&returnValue);
     return returnValue;
 }
 
@@ -2015,7 +2015,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(SwapBuffersWithDamageKHR, true, thread, dpyPacked, surfacePacked, rects,
                           n_rects, returnValue);
     }
-    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
     return returnValue;
 }
 

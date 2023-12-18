@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ServiceWorkerClient.h"
 #include "VisibilityState.h"
 
@@ -58,5 +56,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ServiceWorkerWindowClient)
     static bool isType(const WebCore::ServiceWorkerClient& client) { return client.type() == WebCore::ServiceWorkerClientType::Window; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // ENABLE(SERVICE_WORKER)

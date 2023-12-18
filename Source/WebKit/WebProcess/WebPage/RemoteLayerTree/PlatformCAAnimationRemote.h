@@ -25,15 +25,11 @@
 
 #pragma once
 
+#include "PlatformCAAnimationRemoteProperties.h"
 #include <WebCore/PlatformCAAnimation.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-
-namespace IPC {
-class Encoder;
-class Decoder;
-};
 
 namespace WTF {
 class TextStream;
@@ -129,57 +125,8 @@ public:
 
     void didStart(CFTimeInterval beginTime) { m_properties.beginTime = beginTime; }
 
-
-    using KeyframeValue = std::variant<float, WebCore::Color, WebCore::FloatPoint3D, WebCore::TransformationMatrix, RefPtr<WebCore::FilterOperation>>;
-
-    struct Properties {
-        Properties()
-            : animationType(Basic)
-            , beginTime(0)
-            , duration(0)
-            , timeOffset(0)
-            , repeatCount(1)
-            , speed(1)
-            , fillMode(NoFillMode)
-            , valueFunction(NoValueFunction)
-            , autoReverses(false)
-            , removedOnCompletion(true)
-            , additive(false)
-            , reverseTimingFunctions(false)
-            , hasExplicitBeginTime(false)
-        {
-        }
-
-        void encode(IPC::Encoder&) const;
-        static std::optional<Properties> decode(IPC::Decoder&);
-
-        String keyPath;
-        PlatformCAAnimation::AnimationType animationType;
-
-        CFTimeInterval beginTime;
-        double duration;
-        double timeOffset;
-        float repeatCount;
-        float speed;
-
-        PlatformCAAnimation::FillModeType fillMode;
-        PlatformCAAnimation::ValueFunctionType valueFunction;
-        RefPtr<WebCore::TimingFunction> timingFunction;
-
-        bool autoReverses;
-        bool removedOnCompletion;
-        bool additive;
-        bool reverseTimingFunctions;
-        bool hasExplicitBeginTime;
-
-        // For basic animations, these vectors have two entries. For keyframe animations, two or more.
-        // timingFunctions has n-1 entries.
-        Vector<KeyframeValue> keyValues;
-        Vector<float> keyTimes;
-        Vector<Ref<WebCore::TimingFunction>> timingFunctions;
-
-        Vector<Properties> animations;
-    };
+    using KeyframeValue = PlatformCAAnimationRemoteProperties::KeyframeValue;
+    using Properties = PlatformCAAnimationRemoteProperties;
 
     const Properties& properties() const { return m_properties; }
 

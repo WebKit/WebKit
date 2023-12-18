@@ -102,6 +102,22 @@ void GPUConnectionToWebProcess::setTCCIdentity()
 #endif // !PLATFORM(MACCATALYST)
 }
 #endif // ENABLE(APP_PRIVACY_REPORT)
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+String GPUConnectionToWebProcess::mediaEnvironment(WebCore::PageIdentifier pageIdentifier)
+{
+    return m_mediaEnvironments.get(pageIdentifier);
+}
+
+void GPUConnectionToWebProcess::setMediaEnvironment(WebCore::PageIdentifier pageIdentifier, const String& mediaEnvironment)
+{
+    if (mediaEnvironment.isEmpty())
+        m_mediaEnvironments.remove(pageIdentifier);
+    else
+        m_mediaEnvironments.set(pageIdentifier, mediaEnvironment);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

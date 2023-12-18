@@ -73,13 +73,20 @@ class ShadowRoot;
 class TouchEvent;
 class WebCoreOpaqueRoot;
 
+}
+
+WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(WebCore::RenderObject);
+WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(WebCore::NodeRareData);
+
+namespace WebCore {
+
 enum class MutationObserverOptionType : uint8_t;
 using MutationObserverOptions = OptionSet<MutationObserverOptionType>;
 using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 using NodeOrString = std::variant<RefPtr<Node>, String>;
 
-class Node : public EventTarget {
+class Node : public EventTarget, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
@@ -154,6 +161,7 @@ public:
     WEBCORE_EXPORT const URL& baseURI() const;
     
     void getSubresourceURLs(ListHashSet<URL>&) const;
+    void getCandidateSubresourceURLs(ListHashSet<URL>&) const;
 
     WEBCORE_EXPORT ExceptionOr<void> insertBefore(Node& newChild, RefPtr<Node>&& refChild);
     WEBCORE_EXPORT ExceptionOr<void> replaceChild(Node& newChild, Node& oldChild);
@@ -203,6 +211,7 @@ public:
 
     bool isElementNode() const { return hasNodeFlag(NodeFlag::IsElement); }
     bool isContainerNode() const { return hasNodeFlag(NodeFlag::IsContainerNode); }
+    bool isCharacterData() const { return hasNodeFlag(NodeFlag::IsCharacterData); }
     bool isTextNode() const { return hasNodeFlag(NodeFlag::IsText); }
     bool isHTMLElement() const { return hasNodeFlag(NodeFlag::IsHTMLElement); }
     bool isSVGElement() const { return hasNodeFlag(NodeFlag::IsSVGElement); }
@@ -272,7 +281,8 @@ public:
     Node* nonBoundaryShadowTreeRootNode();
 
     // Node's parent or shadow tree host.
-    ContainerNode* parentOrShadowHostNode() const; // Defined in ShadowRoot.h
+    inline ContainerNode* parentOrShadowHostNode() const; // Defined in ShadowRoot.h
+    inline RefPtr<ContainerNode> protectedParentOrShadowHostNode() const; // Defined in ShadowRoot.h
     ContainerNode* parentInComposedTree() const;
     Element* parentElementInComposedTree() const;
     Element* parentOrShadowHostElement() const;
@@ -336,8 +346,9 @@ public:
     void setUserActionElement(bool flag) { setNodeFlag(NodeFlag::IsUserActionElement, flag); }
 
     bool inRenderedDocument() const;
-    bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid; }
+    bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
     Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
+    bool hasInvalidRenderer() const { return hasStyleFlag(NodeStyleFlag::HasInvalidRenderer); }
     bool styleResolutionShouldRecompositeLayer() const { return hasStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     bool isEditingText() const { return hasNodeFlag(NodeFlag::IsEditingText); }
@@ -348,9 +359,6 @@ public:
     void clearChildNeedsStyleRecalc();
 
     void setHasValidStyle();
-
-    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
-    void setIsLink(bool flag) { setNodeFlag(NodeFlag::IsLink, flag); }
 
     bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
     void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }
@@ -377,8 +385,8 @@ public:
     WEBCORE_EXPORT Editability computeEditability(UserSelectAllTreatment, ShouldUpdateStyle) const;
     Editability computeEditabilityWithStyle(const RenderStyle*, UserSelectAllTreatment, ShouldUpdateStyle) const;
 
-    WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
-    IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
+    WEBCORE_EXPORT LayoutRect absoluteBoundingRect(bool* isReplaced);
+    IntRect pixelSnappedAbsoluteBoundingRect(bool* isReplaced) { return snappedIntRect(absoluteBoundingRect(isReplaced)); }
 
     WEBCORE_EXPORT unsigned computeNodeIndex() const;
 
@@ -530,6 +538,15 @@ public:
     bool m_adoptionIsRequired { true };
 #endif
 
+    void relaxAdoptionRequirement()
+    {
+#if ASSERT_ENABLED
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_deletionHasBegun);
+        ASSERT(m_adoptionIsRequired);
+        m_adoptionIsRequired = false;
+#endif
+    }
+
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
     void registerMutationObserver(MutationObserver&, MutationObserverOptions, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter);
     void unregisterMutationObserver(MutationObserverRegistration&);
@@ -551,13 +568,13 @@ public:
 #else
     static uint32_t rareDataPointerMask() { return -1; }
 #endif
-    static int32_t flagIsText() { return static_cast<int32_t>(NodeFlag::IsText); }
-    static int32_t flagIsContainer() { return static_cast<int32_t>(NodeFlag::IsContainerNode); }
-    static int32_t flagIsElement() { return static_cast<int32_t>(NodeFlag::IsElement); }
-    static int32_t flagIsShadowRoot() { return static_cast<int32_t>(NodeFlag::IsShadowRoot); }
-    static int32_t flagIsHTML() { return static_cast<int32_t>(NodeFlag::IsHTMLElement); }
-    static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
-    static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
+    static auto flagIsText() { return enumToUnderlyingType(NodeFlag::IsText); }
+    static auto flagIsContainer() { return enumToUnderlyingType(NodeFlag::IsContainerNode); }
+    static auto flagIsElement() { return enumToUnderlyingType(NodeFlag::IsElement); }
+    static auto flagIsShadowRoot() { return enumToUnderlyingType(NodeFlag::IsShadowRoot); }
+    static auto flagIsHTML() { return enumToUnderlyingType(NodeFlag::IsHTMLElement); }
+    static auto flagIsLink() { return enumToUnderlyingType(NodeFlag::IsLink); }
+    static auto flagIsParsingChildrenFinished() { return enumToUnderlyingType(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
 protected:
@@ -641,20 +658,20 @@ protected:
     void setIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildrenFinished); }
     void clearIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildrenFinished); }
 
-    constexpr static auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
-    constexpr static auto CreateOther = DefaultNodeFlags;
-    constexpr static auto CreateCharacterData = DefaultNodeFlags | NodeFlag::IsCharacterData;
-    constexpr static auto CreateText = CreateCharacterData | NodeFlag::IsText;
-    constexpr static auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
-    constexpr static auto CreateElement = CreateContainer | NodeFlag::IsElement;
-    constexpr static auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
-    constexpr static auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
-    constexpr static auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
-    constexpr static auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
-    constexpr static auto CreateSVGElement = CreateElement | NodeFlag::IsSVGElement | NodeFlag::HasCustomStyleResolveCallbacks;
-    constexpr static auto CreateMathMLElement = CreateElement | NodeFlag::IsMathMLElement;
-    constexpr static auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode | NodeFlag::IsConnected;
-    constexpr static auto CreateEditingText = CreateText | NodeFlag::IsEditingText;
+    static constexpr auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
+    static constexpr auto CreateOther = DefaultNodeFlags;
+    static constexpr auto CreateCharacterData = DefaultNodeFlags | NodeFlag::IsCharacterData;
+    static constexpr auto CreateText = CreateCharacterData | NodeFlag::IsText;
+    static constexpr auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
+    static constexpr auto CreateElement = CreateContainer | NodeFlag::IsElement;
+    static constexpr auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
+    static constexpr auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
+    static constexpr auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
+    static constexpr auto CreateSVGElement = CreateElement | NodeFlag::IsSVGElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateMathMLElement = CreateElement | NodeFlag::IsMathMLElement;
+    static constexpr auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode | NodeFlag::IsConnected;
+    static constexpr auto CreateEditingText = CreateText | NodeFlag::IsEditingText;
     using ConstructionType = OptionSet<NodeFlag>;
     Node(Document&, ConstructionType);
 
@@ -665,19 +682,20 @@ protected:
         DescendantNeedsStyleResolution                          = 1 << 0,
         DirectChildNeedsStyleResolution                         = 1 << 1,
         StyleResolutionShouldRecompositeLayer                   = 1 << 2,
+        HasInvalidRenderer                                      = 1 << 3,
 
-        ChildrenAffectedByFirstChildRules                       = 1 << 3,
-        ChildrenAffectedByLastChildRules                        = 1 << 4,
-        AffectsNextSiblingElementStyle                          = 1 << 5,
-        StyleIsAffectedByPreviousSibling                        = 1 << 6,
-        DescendantsAffectedByPreviousSibling                    = 1 << 7,
-        StyleAffectedByEmpty                                    = 1 << 8,
+        ChildrenAffectedByFirstChildRules                       = 1 << 4,
+        ChildrenAffectedByLastChildRules                        = 1 << 5,
+        AffectsNextSiblingElementStyle                          = 1 << 6,
+        StyleIsAffectedByPreviousSibling                        = 1 << 7,
+        DescendantsAffectedByPreviousSibling                    = 1 << 8,
+        StyleAffectedByEmpty                                    = 1 << 9,
         // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
         // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-        ChildrenAffectedByForwardPositionalRules                = 1 << 9,
-        DescendantsAffectedByForwardPositionalRules             = 1 << 10,
-        ChildrenAffectedByBackwardPositionalRules               = 1 << 11,
-        DescendantsAffectedByBackwardPositionalRules            = 1 << 12,
+        ChildrenAffectedByForwardPositionalRules                = 1 << 10,
+        DescendantsAffectedByForwardPositionalRules             = 1 << 11,
+        ChildrenAffectedByBackwardPositionalRules               = 1 << 12,
+        DescendantsAffectedByBackwardPositionalRules            = 1 << 13,
     };
 
     struct StyleBitfields {
@@ -686,7 +704,7 @@ protected:
         uint16_t toRaw() const { return bitwise_cast<uint16_t>(*this); }
 
         Style::Validity styleValidity() const { return static_cast<Style::Validity>(m_styleValidity); }
-        void setStyleValidity(Style::Validity validity) { m_styleValidity = static_cast<uint8_t>(validity); }
+        void setStyleValidity(Style::Validity validity) { m_styleValidity = enumToUnderlyingType(validity); }
 
         OptionSet<NodeStyleFlag> flags() const { return OptionSet<NodeStyleFlag>::fromRaw(m_flags); }
         void setFlag(NodeStyleFlag flag) { m_flags = (flags() | flag).toRaw(); }
@@ -706,6 +724,7 @@ protected:
     ALWAYS_INLINE void clearStyleFlags(OptionSet<NodeStyleFlag>);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
+    virtual void addCandidateSubresourceURLs(ListHashSet<URL>&) const { }
 
     bool hasRareData() const { return !!m_rareDataWithBitfields.pointer(); }
     NodeRareData* rareData() const { return m_rareDataWithBitfields.pointer(); }
@@ -750,7 +769,7 @@ private:
     mutable OptionSet<NodeFlag> m_nodeFlags;
 
     CheckedPtr<ContainerNode> m_parentNode;
-    TreeScope* m_treeScope { nullptr };
+    CheckedPtr<TreeScope> m_treeScope;
     CheckedPtr<Node> m_previous;
     CheckedPtr<Node> m_next;
     CompactPointerTuple<RenderObject*, uint16_t> m_rendererWithStyleFlags;
@@ -869,7 +888,7 @@ inline void Node::setHasValidStyle()
 {
     auto bitfields = styleBitfields();
     bitfields.setStyleValidity(Style::Validity::Valid);
-    bitfields.clearFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
+    bitfields.clearFlags({ NodeStyleFlag::HasInvalidRenderer, NodeStyleFlag::StyleResolutionShouldRecompositeLayer });
     setStyleBitfields(bitfields);
     clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 }
@@ -884,16 +903,18 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
 
 inline void EventTarget::ref()
 {
-    if (LIKELY(isNode()))
-        downcast<Node>(*this).ref();
+    auto* node = dynamicDowncast<Node>(*this);
+    if (LIKELY(node))
+        node->ref();
     else
         refEventTarget();
 }
 
 inline void EventTarget::deref()
 {
-    if (LIKELY(isNode()))
-        downcast<Node>(*this).deref();
+    auto* node = dynamicDowncast<Node>(*this);
+    if (LIKELY(node))
+        node->deref();
     else
         derefEventTarget();
 }

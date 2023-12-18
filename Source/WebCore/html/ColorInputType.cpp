@@ -40,6 +40,7 @@
 #include "Chrome.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include "ColorTypes.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
 #include "Event.h"
@@ -237,10 +238,17 @@ bool ColorInputType::shouldResetOnDocumentActivation()
 void ColorInputType::didChooseColor(const Color& color)
 {
     ASSERT(element());
-    if (element()->isDisabledFormControl() || color == valueAsColor())
+
+    if (element()->isDisabledFormControl())
         return;
+
+    auto sRGBAColor = color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    auto sRGBColor = sRGBAColor.colorWithAlphaByte(255);
+    if (sRGBColor == valueAsColor())
+        return;
+
     EventQueueScope scope;
-    element()->setValueFromRenderer(serializationForHTML(color));
+    element()->setValueFromRenderer(serializationForHTML(sRGBColor));
     updateColorSwatch();
     element()->dispatchFormControlChangeEvent();
 

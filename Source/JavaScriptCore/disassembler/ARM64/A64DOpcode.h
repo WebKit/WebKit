@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,14 @@
 #include <stdint.h>
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
-#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace ARM64Disassembler {
 
 class A64DOpcode {
 private:
     class OpcodeGroup {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(OpcodeGroup);
     public:
         OpcodeGroup(uint32_t opcodeMask, uint32_t opcodePattern, const char* (*format)(A64DOpcode*))
             : m_opcodeMask(opcodeMask)
@@ -81,7 +81,8 @@ public:
         , m_opcode(0)
         , m_bufferOffset(0)
     {
-        init();
+        static std::once_flag once;
+        std::call_once(once, init);
         m_formatBuffer[0] = '\0';
     }
 
@@ -243,8 +244,6 @@ protected:
 
 private:
     static OpcodeGroup* opcodeTable[32];
-
-    static bool s_initialized;
 };
 
 #define DEFINE_STATIC_FORMAT(klass, thisObj) \

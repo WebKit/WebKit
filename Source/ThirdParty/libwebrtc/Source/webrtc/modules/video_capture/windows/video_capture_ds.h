@@ -55,19 +55,20 @@ class VideoCaptureDS : public VideoCaptureImpl {
   int32_t DisconnectGraph();
   HRESULT ConnectDVCamera();
 
-  DeviceInfoDS _dsInfo;
+  DeviceInfoDS _dsInfo RTC_GUARDED_BY(api_checker_);
 
-  IBaseFilter* _captureFilter;
-  IGraphBuilder* _graphBuilder;
-  IMediaControl* _mediaControl;
-  rtc::scoped_refptr<CaptureSinkFilter> sink_filter_;
-  IPin* _inputSendPin;
-  IPin* _outputCapturePin;
+  IBaseFilter* _captureFilter RTC_GUARDED_BY(api_checker_);
+  IGraphBuilder* _graphBuilder RTC_GUARDED_BY(api_checker_);
+  IMediaControl* _mediaControl RTC_GUARDED_BY(api_checker_);
+  rtc::scoped_refptr<CaptureSinkFilter> sink_filter_
+      RTC_GUARDED_BY(api_checker_);
+  IPin* _inputSendPin RTC_GUARDED_BY(api_checker_);
+  IPin* _outputCapturePin RTC_GUARDED_BY(api_checker_);
 
   // Microsoft DV interface (external DV cameras)
-  IBaseFilter* _dvFilter;
-  IPin* _inputDvPin;
-  IPin* _outputDvPin;
+  IBaseFilter* _dvFilter RTC_GUARDED_BY(api_checker_);
+  IPin* _inputDvPin RTC_GUARDED_BY(api_checker_);
+  IPin* _outputDvPin RTC_GUARDED_BY(api_checker_);
 };
 }  // namespace videocapturemodule
 }  // namespace webrtc

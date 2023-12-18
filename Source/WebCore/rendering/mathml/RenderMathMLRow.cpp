@@ -47,6 +47,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLRow);
 RenderMathMLRow::RenderMathMLRow(Type type, MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLBlock(type, element, WTFMove(style))
 {
+    ASSERT(isRenderMathMLRow());
 }
 
 MathMLRowElement& RenderMathMLRow::element() const

@@ -7,8 +7,9 @@
     <style type="text/css">
       .multicol {
         -webkit-columns: 4;
-        -webkit-column-rule: #bbb 1px solid;
+        -webkit-column-gap: 0;
         background-color: #eee;
+        width: 600px;
       }
       p, div {
         margin-top: 1em;
@@ -38,10 +39,10 @@
       Partially <span class="large">big</span> text.
     </p>
     <div class="multicol">
-      <p>Nested block.</p>
+      <p>&nbsp;Nested block.</p>
     </div>
     <div>
-      <p class="multicol">Nested block #2.</p>
+      <p class="multicol">&nbsp;Nested block #2.</p>
     </div>
   </body>
 </html>

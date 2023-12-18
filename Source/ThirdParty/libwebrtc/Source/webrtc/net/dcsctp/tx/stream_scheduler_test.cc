@@ -29,8 +29,8 @@ MATCHER_P(HasDataWithMid, mid, "") {
     return false;
   }
 
-  if (arg->data.message_id != mid) {
-    *result_listener << "the produced data had mid " << *arg->data.message_id
+  if (arg->data.mid != mid) {
+    *result_listener << "the produced data had mid " << *arg->data.mid
                      << " and not the expected " << *mid;
     return false;
   }
@@ -39,11 +39,16 @@ MATCHER_P(HasDataWithMid, mid, "") {
 }
 
 std::function<absl::optional<SendQueue::DataToSend>(TimeMs, size_t)>
-CreateChunk(StreamID sid, MID mid, size_t payload_size = kPayloadSize) {
-  return [sid, mid, payload_size](TimeMs now, size_t max_size) {
-    return SendQueue::DataToSend(Data(
-        sid, SSN(0), mid, FSN(0), PPID(42), std::vector<uint8_t>(payload_size),
-        Data::IsBeginning(true), Data::IsEnd(true), IsUnordered(true)));
+CreateChunk(OutgoingMessageId message_id,
+            StreamID sid,
+            MID mid,
+            size_t payload_size = kPayloadSize) {
+  return [sid, mid, payload_size, message_id](TimeMs now, size_t max_size) {
+    return SendQueue::DataToSend(
+        message_id,
+        Data(sid, SSN(0), mid, FSN(0), PPID(42),
+             std::vector<uint8_t>(payload_size), Data::IsBeginning(true),
+             Data::IsEnd(true), IsUnordered(true)));
   };
 }
 
@@ -76,7 +81,8 @@ class TestStream {
              StreamPriority priority,
              size_t packet_size = kPayloadSize) {
     EXPECT_CALL(producer_, Produce)
-        .WillRepeatedly(CreateChunk(stream_id, MID(0), packet_size));
+        .WillRepeatedly(
+            CreateChunk(OutgoingMessageId(0), stream_id, MID(0), packet_size));
     EXPECT_CALL(producer_, bytes_to_send_in_next_message)
         .WillRepeatedly(Return(packet_size));
     stream_ = scheduler.CreateStream(&producer_, stream_id, priority);
@@ -117,7 +123,8 @@ TEST(StreamSchedulerTest, CanProduceFromSingleStream) {
   StreamScheduler scheduler("", kMtu);
 
   StrictMock<MockStreamProducer> producer;
-  EXPECT_CALL(producer, Produce).WillOnce(CreateChunk(StreamID(1), MID(0)));
+  EXPECT_CALL(producer, Produce)
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(0)));
   EXPECT_CALL(producer, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(0));
@@ -135,9 +142,9 @@ TEST(StreamSchedulerTest, WillRoundRobinBetweenStreams) {
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100)))
-      .WillOnce(CreateChunk(StreamID(1), MID(101)))
-      .WillOnce(CreateChunk(StreamID(1), MID(102)));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100)))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101)))
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102)));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -149,9 +156,9 @@ TEST(StreamSchedulerTest, WillRoundRobinBetweenStreams) {
 
   StrictMock<MockStreamProducer> producer2;
   EXPECT_CALL(producer2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(200)))
-      .WillOnce(CreateChunk(StreamID(2), MID(201)))
-      .WillOnce(CreateChunk(StreamID(2), MID(202)));
+      .WillOnce(CreateChunk(OutgoingMessageId(4), StreamID(2), MID(200)))
+      .WillOnce(CreateChunk(OutgoingMessageId(5), StreamID(2), MID(201)))
+      .WillOnce(CreateChunk(OutgoingMessageId(6), StreamID(2), MID(202)));
   EXPECT_CALL(producer2, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -177,26 +184,29 @@ TEST(StreamSchedulerTest, WillRoundRobinOnlyWhenFinishedProducingChunk) {
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100)))
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100)))
       .WillOnce([](...) {
         return SendQueue::DataToSend(
+            OutgoingMessageId(1),
             Data(StreamID(1), SSN(0), MID(101), FSN(0), PPID(42),
                  std::vector<uint8_t>(4), Data::IsBeginning(true),
                  Data::IsEnd(false), IsUnordered(true)));
       })
       .WillOnce([](...) {
         return SendQueue::DataToSend(
+            OutgoingMessageId(1),
             Data(StreamID(1), SSN(0), MID(101), FSN(0), PPID(42),
                  std::vector<uint8_t>(4), Data::IsBeginning(false),
                  Data::IsEnd(false), IsUnordered(true)));
       })
       .WillOnce([](...) {
         return SendQueue::DataToSend(
+            OutgoingMessageId(1),
             Data(StreamID(1), SSN(0), MID(101), FSN(0), PPID(42),
                  std::vector<uint8_t>(4), Data::IsBeginning(false),
                  Data::IsEnd(true), IsUnordered(true)));
       })
-      .WillOnce(CreateChunk(StreamID(1), MID(102)));
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102)));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -210,9 +220,9 @@ TEST(StreamSchedulerTest, WillRoundRobinOnlyWhenFinishedProducingChunk) {
 
   StrictMock<MockStreamProducer> producer2;
   EXPECT_CALL(producer2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(200)))
-      .WillOnce(CreateChunk(StreamID(2), MID(201)))
-      .WillOnce(CreateChunk(StreamID(2), MID(202)));
+      .WillOnce(CreateChunk(OutgoingMessageId(3), StreamID(2), MID(200)))
+      .WillOnce(CreateChunk(OutgoingMessageId(4), StreamID(2), MID(201)))
+      .WillOnce(CreateChunk(OutgoingMessageId(5), StreamID(2), MID(202)));
   EXPECT_CALL(producer2, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -239,8 +249,8 @@ TEST(StreamSchedulerTest, StreamsCanBeMadeInactive) {
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100)))
-      .WillOnce(CreateChunk(StreamID(1), MID(101)));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100)))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101)));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -264,9 +274,9 @@ TEST(StreamSchedulerTest, SingleStreamCanBeResumed) {
   StrictMock<MockStreamProducer> producer1;
   // Callbacks are setup so that they hint that there is a MID(2) coming...
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100)))
-      .WillOnce(CreateChunk(StreamID(1), MID(101)))
-      .WillOnce(CreateChunk(StreamID(1), MID(102)));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100)))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101)))
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102)));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -293,9 +303,9 @@ TEST(StreamSchedulerTest, WillRoundRobinWithPausedStream) {
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100)))
-      .WillOnce(CreateChunk(StreamID(1), MID(101)))
-      .WillOnce(CreateChunk(StreamID(1), MID(102)));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100)))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101)))
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102)));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -308,9 +318,9 @@ TEST(StreamSchedulerTest, WillRoundRobinWithPausedStream) {
 
   StrictMock<MockStreamProducer> producer2;
   EXPECT_CALL(producer2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(200)))
-      .WillOnce(CreateChunk(StreamID(2), MID(201)))
-      .WillOnce(CreateChunk(StreamID(2), MID(202)));
+      .WillOnce(CreateChunk(OutgoingMessageId(3), StreamID(2), MID(200)))
+      .WillOnce(CreateChunk(OutgoingMessageId(4), StreamID(2), MID(201)))
+      .WillOnce(CreateChunk(OutgoingMessageId(5), StreamID(2), MID(202)));
   EXPECT_CALL(producer2, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -384,9 +394,12 @@ TEST(StreamSchedulerTest, WillDoFairQueuingWithSamePriority) {
 
   StrictMock<MockStreamProducer> callback1;
   EXPECT_CALL(callback1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100), kSmallPacket))
-      .WillOnce(CreateChunk(StreamID(1), MID(101), kSmallPacket))
-      .WillOnce(CreateChunk(StreamID(1), MID(102), kSmallPacket));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100),
+                            kSmallPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101),
+                            kSmallPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102),
+                            kSmallPacket));
   EXPECT_CALL(callback1, bytes_to_send_in_next_message)
       .WillOnce(Return(kSmallPacket))  // When making active
       .WillOnce(Return(kSmallPacket))
@@ -398,9 +411,12 @@ TEST(StreamSchedulerTest, WillDoFairQueuingWithSamePriority) {
 
   StrictMock<MockStreamProducer> callback2;
   EXPECT_CALL(callback2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(200), kLargePacket))
-      .WillOnce(CreateChunk(StreamID(2), MID(201), kLargePacket))
-      .WillOnce(CreateChunk(StreamID(2), MID(202), kLargePacket));
+      .WillOnce(CreateChunk(OutgoingMessageId(3), StreamID(2), MID(200),
+                            kLargePacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(4), StreamID(2), MID(201),
+                            kLargePacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(5), StreamID(2), MID(202),
+                            kLargePacket));
   EXPECT_CALL(callback2, bytes_to_send_in_next_message)
       .WillOnce(Return(kLargePacket))  // When making active
       .WillOnce(Return(kLargePacket))
@@ -432,9 +448,9 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingSameSizeDifferentPriority) {
 
   StrictMock<MockStreamProducer> callback1;
   EXPECT_CALL(callback1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(100)))
-      .WillOnce(CreateChunk(StreamID(1), MID(101)))
-      .WillOnce(CreateChunk(StreamID(1), MID(102)));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100)))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101)))
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102)));
   EXPECT_CALL(callback1, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -447,9 +463,9 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingSameSizeDifferentPriority) {
 
   StrictMock<MockStreamProducer> callback2;
   EXPECT_CALL(callback2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(200)))
-      .WillOnce(CreateChunk(StreamID(2), MID(201)))
-      .WillOnce(CreateChunk(StreamID(2), MID(202)));
+      .WillOnce(CreateChunk(OutgoingMessageId(3), StreamID(2), MID(200)))
+      .WillOnce(CreateChunk(OutgoingMessageId(4), StreamID(2), MID(201)))
+      .WillOnce(CreateChunk(OutgoingMessageId(5), StreamID(2), MID(202)));
   EXPECT_CALL(callback2, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -462,9 +478,9 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingSameSizeDifferentPriority) {
 
   StrictMock<MockStreamProducer> callback3;
   EXPECT_CALL(callback3, Produce)
-      .WillOnce(CreateChunk(StreamID(3), MID(300)))
-      .WillOnce(CreateChunk(StreamID(3), MID(301)))
-      .WillOnce(CreateChunk(StreamID(3), MID(302)));
+      .WillOnce(CreateChunk(OutgoingMessageId(6), StreamID(3), MID(300)))
+      .WillOnce(CreateChunk(OutgoingMessageId(7), StreamID(3), MID(301)))
+      .WillOnce(CreateChunk(OutgoingMessageId(8), StreamID(3), MID(302)));
   EXPECT_CALL(callback3, bytes_to_send_in_next_message)
       .WillOnce(Return(kPayloadSize))  // When making active
       .WillOnce(Return(kPayloadSize))
@@ -510,11 +526,14 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingDifferentSizeAndPriority) {
   StrictMock<MockStreamProducer> callback1;
   EXPECT_CALL(callback1, Produce)
       // virtual finish time ~ 0 + 50 * 80 = 4000
-      .WillOnce(CreateChunk(StreamID(1), MID(100), kMediumPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(100),
+                            kMediumPacket))
       // virtual finish time ~ 4000 + 20 * 80 = 5600
-      .WillOnce(CreateChunk(StreamID(1), MID(101), kSmallPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(101),
+                            kSmallPacket))
       // virtual finish time ~ 5600 + 70 * 80 = 11200
-      .WillOnce(CreateChunk(StreamID(1), MID(102), kLargePacket));
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(1), MID(102),
+                            kLargePacket));
   EXPECT_CALL(callback1, bytes_to_send_in_next_message)
       .WillOnce(Return(kMediumPacket))  // When making active
       .WillOnce(Return(kSmallPacket))
@@ -528,11 +547,14 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingDifferentSizeAndPriority) {
   StrictMock<MockStreamProducer> callback2;
   EXPECT_CALL(callback2, Produce)
       // virtual finish time ~ 0 + 50 * 50 = 2500
-      .WillOnce(CreateChunk(StreamID(2), MID(200), kMediumPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(3), StreamID(2), MID(200),
+                            kMediumPacket))
       // virtual finish time ~ 2500 + 70 * 50 = 6000
-      .WillOnce(CreateChunk(StreamID(2), MID(201), kLargePacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(4), StreamID(2), MID(201),
+                            kLargePacket))
       // virtual finish time ~ 6000 + 20 * 50 = 7000
-      .WillOnce(CreateChunk(StreamID(2), MID(202), kSmallPacket));
+      .WillOnce(CreateChunk(OutgoingMessageId(5), StreamID(2), MID(202),
+                            kSmallPacket));
   EXPECT_CALL(callback2, bytes_to_send_in_next_message)
       .WillOnce(Return(kMediumPacket))  // When making active
       .WillOnce(Return(kLargePacket))
@@ -546,11 +568,14 @@ TEST(StreamSchedulerTest, WillDoWeightedFairQueuingDifferentSizeAndPriority) {
   StrictMock<MockStreamProducer> callback3;
   EXPECT_CALL(callback3, Produce)
       // virtual finish time ~ 0 + 20 * 20 = 400
-      .WillOnce(CreateChunk(StreamID(3), MID(300), kSmallPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(6), StreamID(3), MID(300),
+                            kSmallPacket))
       // virtual finish time ~ 400 + 50 * 20 = 1400
-      .WillOnce(CreateChunk(StreamID(3), MID(301), kMediumPacket))
+      .WillOnce(CreateChunk(OutgoingMessageId(7), StreamID(3), MID(301),
+                            kMediumPacket))
       // virtual finish time ~ 1400 + 70 * 20 = 2800
-      .WillOnce(CreateChunk(StreamID(3), MID(302), kLargePacket));
+      .WillOnce(CreateChunk(OutgoingMessageId(8), StreamID(3), MID(302),
+                            kLargePacket));
   EXPECT_CALL(callback3, bytes_to_send_in_next_message)
       .WillOnce(Return(kSmallPacket))  // When making active
       .WillOnce(Return(kMediumPacket))
@@ -677,8 +702,8 @@ TEST(StreamSchedulerTest, SendLargeMessageWithSmallMtu) {
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(0), 100))
-      .WillOnce(CreateChunk(StreamID(1), MID(0), 100));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(0), 100))
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(1), MID(0), 100));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(200))  // When making active
       .WillOnce(Return(100))
@@ -689,8 +714,8 @@ TEST(StreamSchedulerTest, SendLargeMessageWithSmallMtu) {
 
   StrictMock<MockStreamProducer> producer2;
   EXPECT_CALL(producer2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(1), 100))
-      .WillOnce(CreateChunk(StreamID(2), MID(1), 50));
+      .WillOnce(CreateChunk(OutgoingMessageId(2), StreamID(2), MID(1), 100))
+      .WillOnce(CreateChunk(OutgoingMessageId(3), StreamID(2), MID(1), 50));
   EXPECT_CALL(producer2, bytes_to_send_in_next_message)
       .WillOnce(Return(150))  // When making active
       .WillOnce(Return(50))
@@ -714,7 +739,7 @@ TEST(StreamSchedulerTest, SendLargeMessageWithLargeMtu) {
 
   StrictMock<MockStreamProducer> producer1;
   EXPECT_CALL(producer1, Produce)
-      .WillOnce(CreateChunk(StreamID(1), MID(0), 200));
+      .WillOnce(CreateChunk(OutgoingMessageId(0), StreamID(1), MID(0), 200));
   EXPECT_CALL(producer1, bytes_to_send_in_next_message)
       .WillOnce(Return(200))  // When making active
       .WillOnce(Return(0));
@@ -724,7 +749,7 @@ TEST(StreamSchedulerTest, SendLargeMessageWithLargeMtu) {
 
   StrictMock<MockStreamProducer> producer2;
   EXPECT_CALL(producer2, Produce)
-      .WillOnce(CreateChunk(StreamID(2), MID(1), 150));
+      .WillOnce(CreateChunk(OutgoingMessageId(1), StreamID(2), MID(1), 150));
   EXPECT_CALL(producer2, bytes_to_send_in_next_message)
       .WillOnce(Return(150))  // When making active
       .WillOnce(Return(0));

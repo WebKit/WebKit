@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "api/array_view.h"
 #include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 
@@ -44,10 +45,9 @@ struct PacketOptions {
 
 class Transport {
  public:
-  virtual bool SendRtp(const uint8_t* packet,
-                       size_t length,
+  virtual bool SendRtp(rtc::ArrayView<const uint8_t> packet,
                        const PacketOptions& options) = 0;
-  virtual bool SendRtcp(const uint8_t* packet, size_t length) = 0;
+  virtual bool SendRtcp(rtc::ArrayView<const uint8_t> packet) = 0;
 
  protected:
   virtual ~Transport() {}

@@ -102,6 +102,14 @@ static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeybo
 
 inline KeyboardEvent::KeyboardEvent() = default;
 
+static bool viewIsCompositing(WindowProxy* view)
+{
+    if (!view)
+        return false;
+    auto* window = dynamicDowncast<LocalDOMWindow>(view->window());
+    return window && window->frame() && window->frame()->editor().hasComposition();
+}
+
 inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<WindowProxy>&& view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()), CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
         key.timestamp().approximateMonotonicTime(), view.copyRef(), 0, key.modifiers(), IsTrusted::Yes)
@@ -111,7 +119,7 @@ inline KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, RefPtr<Win
     , m_keyIdentifier(AtomString { key.keyIdentifier() })
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
-    , m_isComposing(view && is<LocalDOMWindow>(view->window()) && downcast<LocalDOMWindow>(*view->window()).frame() && downcast<LocalDOMWindow>(*view->window()).frame()->editor().hasComposition())
+    , m_isComposing(viewIsCompositing(view.get()))
 #if USE(APPKIT) || PLATFORM(IOS_FAMILY)
     , m_handledByInputMethod(key.handledByInputMethod())
 #endif
@@ -205,9 +213,9 @@ int KeyboardEvent::charCode() const
     // Firefox: 0 for keydown/keyup events, character code for keypress
     // We match Firefox, unless in backward compatibility mode, where we always return the character code.
     bool backwardCompatibilityMode = false;
-    auto* window = view() ? view()->window() : nullptr;
-    if (is<LocalDOMWindow>(window) && downcast<LocalDOMWindow>(*window).frame())
-        backwardCompatibilityMode = downcast<LocalDOMWindow>(*window).frame()->eventHandler().needsKeyboardEventDisambiguationQuirks();
+    RefPtr window = dynamicDowncast<LocalDOMWindow>(view() ? view()->window() : nullptr);
+    if (window && window->frame())
+        backwardCompatibilityMode = window->frame()->eventHandler().needsKeyboardEventDisambiguationQuirks();
 
     if (!m_underlyingPlatformEvent || (type() != eventNames().keypressEvent && !backwardCompatibilityMode))
         return 0;

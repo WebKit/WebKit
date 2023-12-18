@@ -90,7 +90,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
         for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-            if (child->renderer().isText() || !child->boxModelObject()->hasSelfPaintingLayer())
+            if (child->renderer().isRenderText() || !child->boxModelObject()->hasSelfPaintingLayer())
                 child->paint(childPaintInfo, paintOffset, lineTop, lineBottom);
         }
 

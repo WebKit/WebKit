@@ -26,14 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
 import unittest
 
-from webkitpy.common.net import resultsjsonparser_unittest
 from webkitpy.common.host_mock import MockHost
-from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
+from webkitpy.common.net import resultsjsonparser_unittest
+from webkitpy.layout_tests.layout_package.json_results_generator import load_jsons
 from webkitpy.port.base import Port
-from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
+from webkitpy.tool.commands.rebaselineserver import RebaselineServer, TestConfig
 from webkitpy.tool.servers import rebaselineserver
 
 
@@ -206,7 +205,7 @@ class RebaselineTestTest(unittest.TestCase):
 
     def test_gather_baselines(self):
         example_json = resultsjsonparser_unittest.ParsedJSONResultsTest._example_full_results_json
-        results_json = json.loads(strip_json_wrapper(example_json))
+        results_json = load_jsons(example_json)
         server = RebaselineServer()
         server._test_config = get_test_config()
         server._gather_baselines(results_json)

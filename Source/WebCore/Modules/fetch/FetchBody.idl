@@ -27,7 +27,6 @@
  */
 
 [
-    EnabledBySetting=FetchAPIEnabled,
     Exposed=(Window,Worker),
     InterfaceName=Body,
 ] interface mixin FetchBody {

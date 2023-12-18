@@ -55,10 +55,11 @@ void RenderSVGRect::updateShapeFromElement()
 {
     // Before creating a new object we need to clear the cached bounding box
     // to avoid using garbage.
-    m_fillBoundingBox = FloatRect();
-    m_innerStrokeRect = FloatRect();
-    m_outerStrokeRect = FloatRect();
     clearPath();
+    m_shapeType = ShapeType::Empty;
+    m_fillBoundingBox = FloatRect();
+    m_strokeBoundingBox = std::nullopt;
+    m_approximateStrokeBoundingBox = std::nullopt;
 
     SVGLengthContext lengthContext(&rectElement());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), SVGLengthMode::Width), lengthContext.valueForLength(style().height(), SVGLengthMode::Height));
@@ -67,34 +68,34 @@ void RenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0 || hasNonScalingStroke()) {
-        // Fall back to RenderSVGShape
-        RenderSVGShape::updateShapeFromElement();
+    auto& svgStyle = style().svgStyle();
+    if (lengthContext.valueForLength(svgStyle.rx(), SVGLengthMode::Width) > 0
+        || lengthContext.valueForLength(svgStyle.ry(), SVGLengthMode::Height) > 0)
+        m_shapeType = ShapeType::RoundedRectangle;
+    else
+        m_shapeType = ShapeType::Rectangle;
+
+    if (m_shapeType != ShapeType::Rectangle || hasNonScalingStroke()) {
+        // Fallback to path-based approach.
+        m_fillBoundingBox = ensurePath().boundingRect();
         return;
     }
 
-    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style().svgStyle().x(), SVGLengthMode::Width),
-        lengthContext.valueForLength(style().svgStyle().y(), SVGLengthMode::Height)),
+    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(svgStyle.x(), SVGLengthMode::Width),
+        lengthContext.valueForLength(svgStyle.y(), SVGLengthMode::Height)),
         boundingBoxSize);
 
-    // To decide if the stroke contains a point we create two rects which represent the inner and
-    // the outer stroke borders. A stroke contains the point, if the point is between them.
-    m_innerStrokeRect = m_fillBoundingBox;
-    m_outerStrokeRect = m_fillBoundingBox;
-
-    if (style().svgStyle().hasStroke()) {
-        float strokeWidth = this->strokeWidth();
-        m_innerStrokeRect.inflate(-strokeWidth / 2);
-        m_outerStrokeRect.inflate(strokeWidth / 2);
-    }
-
-    m_strokeBoundingBox = m_outerStrokeRect;
+    auto strokeBoundingBox = m_fillBoundingBox;
+    if (svgStyle.hasStroke())
+        strokeBoundingBox.inflate(this->strokeWidth() / 2);
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
-    if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
-        m_strokeBoundingBox.inflate(1);
+    if (svgStyle.shapeRendering() == ShapeRendering::CrispEdges)
+        strokeBoundingBox.inflate(1);
 #endif
+
+    m_strokeBoundingBox = strokeBoundingBox;
 }
 
 void RenderSVGRect::fillShape(GraphicsContext& context) const
@@ -109,15 +110,48 @@ void RenderSVGRect::fillShape(GraphicsContext& context) const
     // shadow drawing method, which draws an extra shadow.
     // This is a workaround for switching off the extra shadow.
     // https://bugs.webkit.org/show_bug.cgi?id=68899
-    if (context.hasShadow()) {
+    if (context.hasDropShadow()) {
         GraphicsContextStateSaver stateSaver(context);
-        context.clearShadow();
+        context.clearDropShadow();
         context.fillRect(m_fillBoundingBox);
         return;
     }
 #endif
 
     context.fillRect(m_fillBoundingBox);
+}
+
+bool RenderSVGRect::canUseStrokeHitTestFastPath() const
+{
+    // Non-scaling-stroke needs special handling.
+    if (hasNonScalingStroke())
+        return false;
+
+    // We can compute intersections with simple, continuous strokes on
+    // regular rectangles without using a Path.
+    return m_shapeType == ShapeType::Rectangle && definitelyHasSimpleStroke();
+}
+
+// Returns true if the stroke is continuous and definitely uses miter joins.
+bool RenderSVGRect::definitelyHasSimpleStroke() const
+{
+    // The four angles of a rect are 90 degrees. Using the formula at:
+    // http://www.w3.org/TR/SVG/painting.html#StrokeMiterlimitProperty
+    // when the join style of the rect is "miter", the ratio of the miterLength
+    // to the stroke-width is found to be
+    // miterLength / stroke-width = 1 / sin(45 degrees)
+    //                            = 1 / (1 / sqrt(2))
+    //                            = sqrt(2)
+    //                            = 1.414213562373095...
+    // When sqrt(2) exceeds the miterlimit, then the join style switches to
+    // "bevel". When the miterlimit is greater than or equal to sqrt(2) then
+    // the join style remains "miter".
+    //
+    // An approximation of sqrt(2) is used here because at certain precise
+    // miterlimits, the join style used might not be correct (e.g. a miterlimit
+    // of 1.4142135 should result in bevel joins, but may be drawn using miter
+    // joins).
+    return style().svgStyle().strokeDashArray().isEmpty() && style().joinStyle() == LineJoin::Miter && style().strokeMiterLimit() >= 1.5;
 }
 
 void RenderSVGRect::strokeShape(GraphicsContext& context) const
@@ -135,20 +169,28 @@ void RenderSVGRect::strokeShape(GraphicsContext& context) const
 
 bool RenderSVGRect::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    // The optimized code below does not support non-smooth strokes so we need
-    // to fall back to RenderSVGShape::shapeDependentStrokeContains in these cases.
-    if (!hasSmoothStroke() && !hasPath())
-        RenderSVGShape::updateShapeFromElement();
-
-    if (hasPath())
+    if (!canUseStrokeHitTestFastPath()) {
+        ensurePath();
         return RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace);
+    }
 
-    return m_outerStrokeRect.contains(point, FloatRect::InsideOrOnStroke) && !m_innerStrokeRect.contains(point, FloatRect::InsideButNotOnStroke);
+    auto halfStrokeWidth = strokeWidth() / 2;
+    auto halfWidth = m_fillBoundingBox.width() / 2;
+    auto halfHeight = m_fillBoundingBox.height() / 2;
+
+    auto fillBoundingBoxCenter = FloatPoint(m_fillBoundingBox.x() + halfWidth, m_fillBoundingBox.y() + halfHeight);
+    auto absDeltaX = std::abs(point.x() - fillBoundingBoxCenter.x());
+    auto absDeltaY = std::abs(point.y() - fillBoundingBoxCenter.y());
+
+    if (!(absDeltaX <= halfWidth + halfStrokeWidth && absDeltaY <= halfHeight + halfStrokeWidth))
+        return false;
+
+    return (halfWidth - halfStrokeWidth <= absDeltaX) || (halfHeight - halfStrokeWidth <= absDeltaY);
 }
 
 bool RenderSVGRect::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
 {
-    if (hasPath())
+    if (m_shapeType != ShapeType::Rectangle)
         return RenderSVGShape::shapeDependentFillContains(point, fillRule);
     return m_fillBoundingBox.contains(point.x(), point.y());
 }

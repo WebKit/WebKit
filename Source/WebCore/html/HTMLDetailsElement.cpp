@@ -34,9 +34,11 @@
 #include "MouseEvent.h"
 #include "RenderBlockFlow.h"
 #include "ShadowRoot.h"
+#include "ShouldNotFireMutationEventsScope.h"
 #include "SlotAssignment.h"
 #include "Text.h"
 #include "ToggleEvent.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -70,9 +72,7 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
 
 const AtomString& DetailsSlotAssignment::slotNameForHostChild(const Node& child) const
 {
-    auto& parent = *child.parentNode();
-    ASSERT(is<HTMLDetailsElement>(parent));
-    auto& details = downcast<HTMLDetailsElement>(parent);
+    auto& details = downcast<HTMLDetailsElement>(*child.parentNode());
 
     // The first summary child gets assigned to the summary slot.
     if (is<HTMLSummaryElement>(child)) {
@@ -114,7 +114,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(summarySlot);
 
     m_defaultSlot = HTMLSlotElement::create(slotTag, document());
-    ASSERT(!m_isOpen);
+    ASSERT(!hasAttribute(openAttr));
 }
 
 bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) const
@@ -151,21 +151,15 @@ void HTMLDetailsElement::queueDetailsToggleEventTask(DetailsState oldState, Deta
 void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     if (name == openAttr) {
-        bool oldValue = m_isOpen;
-        m_isOpen = !newValue.isNull();
-        if (oldValue != m_isOpen) {
+        if (oldValue != newValue) {
             RefPtr root = shadowRoot();
             ASSERT(root);
-            if (m_isOpen) {
+            if (!newValue.isNull()) {
                 root->appendChild(*m_defaultSlot);
                 queueDetailsToggleEventTask(DetailsState::Closed, DetailsState::Open);
-                if (auto& name = attributeWithoutSynchronization(nameAttr); document().settings().detailsNameAttributeEnabled() && !name.isEmpty()) {
-                    Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup;
-                    for (auto& detailsElement : descendantsOfType<HTMLDetailsElement>(rootNode())) {
-                        if (&detailsElement != this && detailsElement.attributeWithoutSynchronization(nameAttr) == name)
-                            otherElementsInNameGroup.append(&detailsElement);
-                    }
-                    for (RefPtr otherDetailsElement : otherElementsInNameGroup)
+                if (document().settings().detailsNameAttributeEnabled() && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
+                    ShouldNotFireMutationEventsScope scope(document());
+                    for (auto& otherDetailsElement : otherElementsInNameGroup())
                         otherDetailsElement->removeAttribute(openAttr);
                 }
             } else {
@@ -173,14 +167,44 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
                 queueDetailsToggleEventTask(DetailsState::Open, DetailsState::Closed);
             }
         }
-    } else
+    } else {
+        ensureDetailsExclusivityAfterMutation();
         HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+    }
 }
 
+Node::InsertedIntoAncestorResult HTMLDetailsElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+{
+    ensureDetailsExclusivityAfterMutation();
+    return HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
+}
+
+Vector<RefPtr<HTMLDetailsElement>> HTMLDetailsElement::otherElementsInNameGroup()
+{
+    Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup;
+    for (auto& element : descendantsOfType<HTMLDetailsElement>(rootNode())) {
+        if (&element != this && element.attributeWithoutSynchronization(nameAttr) == attributeWithoutSynchronization(nameAttr))
+            otherElementsInNameGroup.append(&element);
+    }
+    return otherElementsInNameGroup;
+}
+
+void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
+{
+    if (document().settings().detailsNameAttributeEnabled() && hasAttribute(openAttr) && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
+        ShouldNotFireMutationEventsScope scope(document());
+        for (auto& otherDetailsElement : otherElementsInNameGroup()) {
+            if (otherDetailsElement->hasAttribute(openAttr)) {
+                toggleOpen();
+                break;
+            }
+        }
+    }
+}
 
 void HTMLDetailsElement::toggleOpen()
 {
-    setBooleanAttribute(openAttr, !m_isOpen);
+    setBooleanAttribute(openAttr, !hasAttribute(openAttr));
 
     // We need to post to the document because toggling this element will delete it.
     if (AXObjectCache* cache = document().existingAXObjectCache())

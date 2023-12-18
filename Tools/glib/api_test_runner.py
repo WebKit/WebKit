@@ -59,7 +59,7 @@ class TestRunner(object):
             self._build_type = self._port.default_configuration()
         common.set_build_types((self._build_type,))
 
-        self._programs_path = common.binary_build_path()
+        self._programs_path = common.binary_build_path(self._port)
         expectations_file = os.path.join(common.top_level_path(), "Tools", "TestWebKitAPI", "glib", "TestExpectations.json")
         self._expectations = TestExpectations(self._port.name(), expectations_file, self._build_type)
         self._tests = self._get_tests(tests)
@@ -115,7 +115,7 @@ class TestRunner(object):
     def _setup_testing_environment(self):
         self._test_env = self._driver._setup_environ_for_test()
         self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit")
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path(self._port)
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 
     def _tear_down_testing_environment(self):
@@ -178,7 +178,7 @@ class TestRunner(object):
     def _run_test_qt(self, test_program):
         env = self._test_env
         env['XDG_SESSION_TYPE'] = 'wayland'
-        env['QML2_IMPORT_PATH'] = common.library_build_path('qt5', 'qml')
+        env['QML2_IMPORT_PATH'] = common.library_build_path(self._port, 'qt5', 'qml')
 
         name = os.path.basename(test_program)
         if not hasattr(subprocess, 'TimeoutExpired'):
@@ -285,6 +285,9 @@ class TestRunner(object):
         sys.stderr.write("WARNING: %s doesn't seem to be a supported test program.\n" % test_program)
         return {}
 
+    def _has_gpu_available(self):
+        return os.access("/dev/dri/card0", os.R_OK | os.W_OK) and os.access("/dev/dri/renderD128", os.R_OK | os.W_OK)
+
     def run_tests(self):
         if not self._tests:
             sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
@@ -297,6 +300,11 @@ class TestRunner(object):
         # Remove skipped tests now instead of when we find them, because
         # some tests might be skipped while setting up the test environment.
         self._tests = [test for test in self._tests if self._should_run_test_program(test)]
+        # Skip Qt tests if there is no GPU <https://webkit.org/b/264458>
+        number_of_qt_tests = len([test for test in self._tests if self.is_qt_test(test)])
+        if number_of_qt_tests > 0 and not self._has_gpu_available():
+            sys.stderr.write("WARNING: Skipping %d Qt tests because this system doesn't have a working GPU (/dev/dri devices are not available).\n" % number_of_qt_tests)
+            self._tests = [test for test in self._tests if not self.is_qt_test(test)]
         number_of_executed_tests = len(self._tests)
 
         crashed_tests = {}

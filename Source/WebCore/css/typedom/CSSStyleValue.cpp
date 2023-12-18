@@ -52,7 +52,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValue::parse(const Document& document, c
     
     // Returned vector should not be empty. If parsing failed, an exception should be returned.
     if (returnValue.isEmpty())
-        return Exception { SyntaxError, makeString(cssText, " cannot be parsed as a ", property) };
+        return Exception { ExceptionCode::SyntaxError, makeString(cssText, " cannot be parsed as a ", property) };
 
     return WTFMove(returnValue.at(0));
 }

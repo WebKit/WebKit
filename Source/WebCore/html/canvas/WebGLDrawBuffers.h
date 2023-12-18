@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLDrawBuffers final : public RefCounted<WebGLDrawBuffers>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLDrawBuffers final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLDrawBuffers);
 public:
     explicit WebGLDrawBuffers(WebGLRenderingContextBase&);

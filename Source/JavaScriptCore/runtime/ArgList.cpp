@@ -22,10 +22,13 @@
 #include "ArgList.h"
 
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using std::min;
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ArgList);
 
 void MarkedVectorBase::addMarkSet(JSValue v)
 {

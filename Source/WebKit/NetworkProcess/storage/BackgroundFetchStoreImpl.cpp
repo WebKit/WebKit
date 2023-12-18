@@ -26,9 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchStoreImpl.h"
 
-
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchChange.h"
 #include "BackgroundFetchState.h"
 #include "BackgroundFetchStoreManager.h"
@@ -439,5 +436,3 @@ void BackgroundFetchStoreImpl::clickBackgroundFetch(const String& filename, Comp
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

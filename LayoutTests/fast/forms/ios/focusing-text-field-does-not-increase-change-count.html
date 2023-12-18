@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+input {
+    font-size: 18px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    description("This test verifies that the pasteboard changeCount does not increment as a result of focusing an editable field. This test requires WebKitTestRunner.");
+
+    const textField = document.querySelector("input");
+    changeCountBefore = await UIHelper.pasteboardChangeCount();
+    await UIHelper.activateElementAndWaitForInputSession(textField);
+    changeCountAfter = await UIHelper.pasteboardChangeCount();
+
+    shouldBe("changeCountAfter", "changeCountBefore");
+
+    textField.blur();
+    await UIHelper.waitForKeyboardToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<input type="text" />
+</body>
+</html>

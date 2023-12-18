@@ -93,6 +93,7 @@ public:
 
 private:
 #if PLATFORM(COCOA)
+    WebExtensionCallbackHandler(JSValue *callbackFunction);
     WebExtensionCallbackHandler(JSContextRef, JSObjectRef resolveFunction, JSObjectRef rejectFunction);
     WebExtensionCallbackHandler(JSContextRef, JSObjectRef callbackFunction, WebExtensionAPIRuntimeBase&);
     WebExtensionCallbackHandler(JSContextRef, WebExtensionAPIRuntimeBase&);
@@ -182,6 +183,24 @@ inline JSValue *toJSValue(JSContextRef context, JSValueRef value)
         return nil;
 
     return [JSValue valueWithJSValueRef:value inContext:[JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(context)]];
+}
+
+inline JSValue *toWindowObject(JSContextRef context, WebFrame& frame)
+{
+    ASSERT(context);
+
+    auto frameContext = frame.jsContext();
+    if (!frameContext)
+        return nil;
+
+    return toJSValue(context, JSContextGetGlobalObject(frameContext));
+}
+
+inline JSValue *toWindowObject(JSContextRef context, WebPage& page)
+{
+    ASSERT(context);
+
+    return toWindowObject(context, page.mainWebFrame());
 }
 
 inline JSValueRef toJSValueRef(JSContextRef context, id object)

@@ -5,9 +5,11 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
 }
+messagesReceived = 0;
 addEventListener("message", (e) => {
     alert("postMessage received: " + e.data);
-    if (window.testRunner) { testRunner.notifyDone() }
+    messagesReceived = messagesReceived + 1;
+    if (messagesReceived == 3 && window.testRunner) { testRunner.notifyDone() }
 });
 window.customFunction = function() {
     alert("custom function called");

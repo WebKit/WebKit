@@ -59,8 +59,10 @@ public:
 
     void setPreferences(WebPreferences*);
     WebPreferences& preferences() const;
+    Ref<WebPreferences> protectedPreferences() const;
 
     WebUserContentControllerProxy& userContentController();
+    Ref<WebUserContentControllerProxy> protectedUserContentController();
 
 private:
     WebPageGroupData m_data;

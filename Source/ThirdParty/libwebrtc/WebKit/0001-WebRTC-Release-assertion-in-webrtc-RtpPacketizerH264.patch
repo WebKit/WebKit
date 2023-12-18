@@ -1,0 +1,64 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.cc
+index cc8d1bff34b0..e26dcb6a1d94 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.cc
+@@ -94,7 +94,15 @@ bool RtpPacketizerH264::GeneratePackets(
+             return false;
+           ++i;
+         } else {
++#ifdef WEBRTC_WEBKIT_BUILD
++          auto newFragmentIndex = PacketizeStapA(i);
++          if (!newFragmentIndex) {
++            return false;
++          }
++          i = *newFragmentIndex;
++#else
+           i = PacketizeStapA(i);
++#endif
+         }
+         break;
+     }
+@@ -150,7 +158,12 @@ bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
+   return true;
+ }
+ 
+-size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
++#ifdef WEBRTC_WEBKIT_BUILD
++std::optional<size_t> RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
++#else
++size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
++#endif
++{
+   // Aggregate fragments into one packet (STAP-A).
+   size_t payload_size_left = limits_.max_payload_len;
+   if (input_fragments_.size() == 1)
+@@ -178,7 +191,13 @@ size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
+   };
+ 
+   while (payload_size_left >= payload_size_needed()) {
++#ifdef WEBRTC_WEBKIT_BUILD
++    if (fragment.size() == 0) {
++      return std::nullopt;
++    }
++#else
+     RTC_CHECK_GT(fragment.size(), 0);
++#endif
+     packets_.push(PacketUnit(fragment, aggregated_fragments == 0, false, true,
+                              fragment[0]));
+     payload_size_left -= fragment.size();
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.h b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.h
+index f95c3b6c6b73..80709f1f43aa 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.h
+@@ -84,7 +84,11 @@ class RtpPacketizerH264 : public RtpPacketizer {
+ 
+   bool GeneratePackets(H264PacketizationMode packetization_mode);
+   bool PacketizeFuA(size_t fragment_index);
++#ifdef WEBRTC_WEBKIT_BUILD
++  std::optional<size_t> PacketizeStapA(size_t fragment_index);
++#else
+   size_t PacketizeStapA(size_t fragment_index);
++#endif
+   bool PacketizeSingleNalu(size_t fragment_index);
+ 
+   void NextAggregatePacket(RtpPacketToSend* rtp_packet);

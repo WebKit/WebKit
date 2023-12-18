@@ -40,7 +40,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using ExtensionMap = HashMap<CheckedPtr<WebCore::DOMWindowExtension>, CheckedPtr<InjectedBundleDOMWindowExtension>>;
+using ExtensionMap = HashMap<WeakRef<WebCore::DOMWindowExtension>, WeakRef<InjectedBundleDOMWindowExtension>>;
 static ExtensionMap& allExtensions()
 {
     static NeverDestroyed<ExtensionMap> map;
@@ -61,13 +61,13 @@ InjectedBundleDOMWindowExtension* InjectedBundleDOMWindowExtension::get(DOMWindo
 InjectedBundleDOMWindowExtension::InjectedBundleDOMWindowExtension(WebFrame* frame, InjectedBundleScriptWorld* world)
     : m_coreExtension(DOMWindowExtension::create(frame->coreLocalFrame() ? frame->coreLocalFrame()->window() : nullptr, world->coreWorld()))
 {
-    allExtensions().add(m_coreExtension.get(), this);
+    allExtensions().add(m_coreExtension.get(), *this);
 }
 
 InjectedBundleDOMWindowExtension::~InjectedBundleDOMWindowExtension()
 {
-    ASSERT(allExtensions().contains(m_coreExtension.get()));
-    allExtensions().remove(m_coreExtension.get());
+    ASSERT(allExtensions().contains(m_coreExtension));
+    allExtensions().remove(m_coreExtension);
 }
 
 RefPtr<WebFrame> InjectedBundleDOMWindowExtension::frame() const

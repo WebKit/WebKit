@@ -29,7 +29,6 @@
 typedef (FetchRequest or USVString) RequestInfo;
 
 [
-    EnabledBySetting=FetchAPIEnabled,
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
@@ -50,7 +49,7 @@ typedef (FetchRequest or USVString) RequestInfo;
     readonly attribute FetchRequestCache cache;
     readonly attribute FetchRequestRedirect redirect;
     readonly attribute DOMString integrity;
-    [EnabledByDeprecatedGlobalSetting=FetchAPIKeepAliveEnabled] readonly attribute boolean keepalive;
+    readonly attribute boolean keepalive;
     // FIXME: Implement 'isReloadNavigation'.
     // readonly attribute boolean isReloadNavigation;
     // FIXME: Implement 'isHistoryNavigation'.

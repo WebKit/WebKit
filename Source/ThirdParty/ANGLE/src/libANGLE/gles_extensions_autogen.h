@@ -734,9 +734,6 @@ struct Extensions
     // GL_ANGLE_texture_external_update
     bool textureExternalUpdateANGLE = false;
 
-    // GL_CHROMIUM_texture_filtering_hint
-    bool textureFilteringHintCHROMIUM = false;
-
     // GL_ANGLE_texture_multisample
     bool textureMultisampleANGLE = false;
 

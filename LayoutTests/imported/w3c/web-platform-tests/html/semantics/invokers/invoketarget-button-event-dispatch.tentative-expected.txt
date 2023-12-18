@@ -1,0 +1,8 @@
+
+
+PASS event dispatches on click
+PASS event action is set to invokeAction
+PASS event action is set to invokeaction attribute
+PASS event does not dispatch if click:preventDefault is called
+PASS event does not dispatch if invoker is disabled
+

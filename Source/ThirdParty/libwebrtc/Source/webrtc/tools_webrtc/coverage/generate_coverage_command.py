@@ -18,11 +18,10 @@ import sys
 
 TESTS = [
     'video_capture_tests', 'webrtc_nonparallel_tests', 'video_engine_tests',
-    'tools_unittests', 'test_support_unittests',
-    'system_wrappers_unittests', 'rtc_unittests', 'rtc_stats_unittests',
-    'rtc_pc_unittests', 'rtc_media_unittests', 'peerconnection_unittests',
-    'modules_unittests', 'modules_tests', 'low_bandwidth_audio_test',
-    'common_video_unittests', 'common_audio_unittests',
+    'tools_unittests', 'test_support_unittests', 'system_wrappers_unittests',
+    'rtc_unittests', 'rtc_stats_unittests', 'rtc_pc_unittests',
+    'rtc_media_unittests', 'peerconnection_unittests', 'modules_unittests',
+    'modules_tests', 'common_video_unittests', 'common_audio_unittests',
     'audio_decoder_unittests'
 ]
 

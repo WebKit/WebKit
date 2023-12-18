@@ -1,0 +1,4 @@
+
+
+FAIL navigation.activation interaction with initial about:blank assert_equals: expected (object) null but got (undefined) undefined
+

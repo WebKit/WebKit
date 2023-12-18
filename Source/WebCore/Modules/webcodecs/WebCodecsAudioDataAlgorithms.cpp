@@ -100,29 +100,29 @@ ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, cons
 {
     auto platformData = data.data().audioData;
     if (!platformData)
-        return Exception { InvalidAccessError, "Internal AudioData storage is null"_s };
+        return Exception { ExceptionCode::InvalidAccessError, "Internal AudioData storage is null"_s };
 
     auto destFormat = options.format.value_or(platformData->format());
 
     auto isInterleaved = isAudioSampleFormatInterleaved(destFormat);
     if (isInterleaved && options.planeIndex > 0)
-        return Exception { RangeError, "Invalid planeIndex for interleaved format"_s };
+        return Exception { ExceptionCode::RangeError, "Invalid planeIndex for interleaved format"_s };
     if (options.planeIndex >= data.numberOfChannels())
-        return Exception { RangeError, "Invalid planeIndex for planar format"_s };
+        return Exception { ExceptionCode::RangeError, "Invalid planeIndex for planar format"_s };
 
     if (options.format && *options.format != destFormat && destFormat != AudioSampleFormat::F32Planar)
-        return Exception { NotSupportedError, "AudioData currently only supports copy conversion to f32-planar"_s };
+        return Exception { ExceptionCode::NotSupportedError, "AudioData currently only supports copy conversion to f32-planar"_s };
 
     auto frameCount = data.numberOfFrames() / data.numberOfChannels();
     if (options.frameOffset && *options.frameOffset > frameCount)
-        return Exception { RangeError, "frameOffset is too large"_s };
+        return Exception { ExceptionCode::RangeError, "frameOffset is too large"_s };
 
     auto copyFrameCount = frameCount;
     if (options.frameOffset)
         copyFrameCount -= *options.frameOffset;
     if (options.frameCount) {
         if (*options.frameCount > copyFrameCount)
-            return Exception { RangeError, "frameCount is too large"_s };
+            return Exception { ExceptionCode::RangeError, "frameCount is too large"_s };
 
         copyFrameCount = *options.frameCount;
     }
@@ -130,7 +130,7 @@ ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, cons
     if (isInterleaved) {
         size_t aggregatedFrameCount;
         if (!WTF::safeMultiply(copyFrameCount, data.numberOfChannels(), aggregatedFrameCount))
-            return Exception { RangeError, "Provided options are causing an overflow"_s };
+            return Exception { ExceptionCode::RangeError, "Provided options are causing an overflow"_s };
 
         return aggregatedFrameCount;
     }

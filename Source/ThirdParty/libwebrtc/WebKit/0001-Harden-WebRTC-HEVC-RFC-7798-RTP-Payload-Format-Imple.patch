@@ -1,0 +1,147 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
+index e53e2c405b32..521aea7e24f0 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_sps_parser.cc
+@@ -25,6 +25,12 @@ typedef absl::optional<webrtc::H265SpsParser::ShortTermRefPicSet>
+ 
+ namespace webrtc {
+ 
++#if WEBRTC_WEBKIT_BUILD
++const uint32_t kMaxSPSLongTermRefPics = 32;
++const uint32_t kMaxSPSPics = 16;
++const uint32_t kMaxSPSShortTermRefPics = 64;
++#endif
++
+ H265SpsParser::SpsState::SpsState() = default;
+ 
+ H265SpsParser::ShortTermRefPicSet::ShortTermRefPicSet() = default;
+@@ -73,6 +79,13 @@ bool H265SpsParser::ParseScalingListData(BitstreamReader& reader) {
+       }
+     }
+   }
++
++#if WEBRTC_WEBKIT_BUILD
++  if (!reader.Ok()) {
++    return false;
++  }
++#endif
++
+   return true;
+ }
+ 
+@@ -134,6 +147,12 @@ H265SpsParser::ParseShortTermRefPicSet(
+     ref_pic_set.num_negative_pics = reader.ReadExponentialGolomb();
+     // num_positive_pics: ue(v)
+     ref_pic_set.num_positive_pics = reader.ReadExponentialGolomb();
++#if WEBRTC_WEBKIT_BUILD
++    if (!reader.Ok() || ref_pic_set.num_negative_pics > kMaxSPSPics || ref_pic_set.num_positive_pics > kMaxSPSPics
++        || (ref_pic_set.num_negative_pics + ref_pic_set.num_positive_pics) > kMaxSPSPics) {
++      return absl::nullopt;
++    }
++#endif
+ 
+     ref_pic_set.delta_poc_s0_minus1.resize(ref_pic_set.num_negative_pics, 0);
+     ref_pic_set.used_by_curr_pic_s0_flag.resize(ref_pic_set.num_negative_pics,
+@@ -155,6 +174,12 @@ H265SpsParser::ParseShortTermRefPicSet(
+     }
+   }
+ 
++#if WEBRTC_WEBKIT_BUILD
++  if (!reader.Ok()) {
++    return absl::nullopt;
++  }
++#endif
++
+   return OptionalShortTermRefPicSet(ref_pic_set);
+ }
+ 
+@@ -348,6 +373,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
+ 
+   // num_short_term_ref_pic_sets: ue(v)
+   sps.num_short_term_ref_pic_sets = reader.ReadExponentialGolomb();
++#if WEBRTC_WEBKIT_BUILD
++    if (!reader.Ok() || sps.num_short_term_ref_pic_sets > kMaxSPSShortTermRefPics) {
++      return absl::nullopt;
++    }
++#endif
+   sps.short_term_ref_pic_set.resize(sps.num_short_term_ref_pic_sets);
+   for (uint32_t st_rps_idx = 0; st_rps_idx < sps.num_short_term_ref_pic_sets;
+        st_rps_idx++) {
+@@ -367,6 +397,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
+   if (sps.long_term_ref_pics_present_flag) {
+     // num_long_term_ref_pics_sps: ue(v)
+     sps.num_long_term_ref_pics_sps = reader.ReadExponentialGolomb();
++#if WEBRTC_WEBKIT_BUILD
++    if (!reader.Ok() || sps.num_long_term_ref_pics_sps > kMaxSPSLongTermRefPics) {
++      return absl::nullopt;
++    }
++#endif
+     sps.used_by_curr_pic_lt_sps_flag.resize(sps.num_long_term_ref_pics_sps, 0);
+     for (uint32_t i = 0; i < sps.num_long_term_ref_pics_sps; i++) {
+       // lt_ref_pic_poc_lsb_sps: u(v)
+@@ -382,6 +417,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
+   sps.sps_temporal_mvp_enabled_flag = reader.Read<bool>();
+ 
+   // Far enough! We don't use the rest of the SPS.
++#if WEBRTC_WEBKIT_BUILD
++  if (!reader.Ok()) {
++    return absl::nullopt;
++  }
++#endif
+ 
+   sps.vps_id = sps_video_parameter_set_id;
+ 
+@@ -408,9 +448,11 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
+     sps.height -= sub_height_c * (conf_win_top_offset + conf_win_bottom_offset);
+   }
+ 
++#ifndef WEBRTC_WEBKIT_BUILD
+   if (!reader.Ok()) {
+     return absl::nullopt;
+   }
++#endif
+ 
+   return OptionalSps(sps);
+ }
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc
+index 2442d1664eed..bd2b2fb8e932 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/bitstream_reader.cc
+@@ -25,10 +25,17 @@ uint64_t BitstreamReader::ReadBits(int bits) {
+   RTC_DCHECK_LE(bits, 64);
+   set_last_read_is_verified(false);
+ 
++#if WEBRTC_WEBKIT_BUILD
++  if (remaining_bits_ < bits || bits < 0) {
++    Invalidate();
++    return 0;
++  }
++#else
+   if (remaining_bits_ < bits) {
+     remaining_bits_ -= bits;
+     return 0;
+   }
++#endif
+ 
+   int remaining_bits_in_first_byte = remaining_bits_ % 8;
+   remaining_bits_ -= bits;
+@@ -115,11 +122,19 @@ uint32_t BitstreamReader::ReadExponentialGolomb() {
+   // Count the number of leading 0.
+   int zero_bit_count = 0;
+   while (ReadBit() == 0) {
++#if WEBRTC_WEBKIT_BUILD
++    if (++zero_bit_count >= 32 || remaining_bits_ < 0) {
++      // Golob value won't fit into 32 bits of the return value, or we ran out of bits. Fail the parse.
++      Invalidate();
++      return 0;
++    }
++#else
+     if (++zero_bit_count >= 32) {
+       // Golob value won't fit into 32 bits of the return value. Fail the parse.
+       Invalidate();
+       return 0;
+     }
++#endif
+   }
+ 
+   // The bit count of the value is the number of zeros + 1.

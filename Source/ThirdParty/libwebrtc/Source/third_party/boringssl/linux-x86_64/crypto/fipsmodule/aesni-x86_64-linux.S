@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 .extern	OPENSSL_ia32cap_P
 .hidden OPENSSL_ia32cap_P
@@ -20,6 +13,7 @@
 .align	16
 aes_hw_encrypt:
 .cfi_startproc	
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 .extern	BORINGSSL_function_hit
 .hidden BORINGSSL_function_hit
@@ -42,7 +36,7 @@ aes_hw_encrypt:
 	pxor	%xmm1,%xmm1
 	movups	%xmm2,(%rsi)
 	pxor	%xmm2,%xmm2
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	aes_hw_encrypt,.-aes_hw_encrypt
 
@@ -52,6 +46,7 @@ aes_hw_encrypt:
 .align	16
 aes_hw_decrypt:
 .cfi_startproc	
+_CET_ENDBR
 	movups	(%rdi),%xmm2
 	movl	240(%rdx),%eax
 	movups	(%rdx),%xmm0
@@ -69,7 +64,7 @@ aes_hw_decrypt:
 	pxor	%xmm1,%xmm1
 	movups	%xmm2,(%rsi)
 	pxor	%xmm2,%xmm2
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	aes_hw_decrypt, .-aes_hw_decrypt
 .type	_aesni_encrypt2,@function
@@ -100,7 +95,7 @@ _aesni_encrypt2:
 .byte	102,15,56,220,217
 .byte	102,15,56,221,208
 .byte	102,15,56,221,216
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_encrypt2,.-_aesni_encrypt2
 .type	_aesni_decrypt2,@function
@@ -131,7 +126,7 @@ _aesni_decrypt2:
 .byte	102,15,56,222,217
 .byte	102,15,56,223,208
 .byte	102,15,56,223,216
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_decrypt2,.-_aesni_decrypt2
 .type	_aesni_encrypt3,@function
@@ -167,7 +162,7 @@ _aesni_encrypt3:
 .byte	102,15,56,221,208
 .byte	102,15,56,221,216
 .byte	102,15,56,221,224
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_encrypt3,.-_aesni_encrypt3
 .type	_aesni_decrypt3,@function
@@ -203,7 +198,7 @@ _aesni_decrypt3:
 .byte	102,15,56,223,208
 .byte	102,15,56,223,216
 .byte	102,15,56,223,224
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_decrypt3,.-_aesni_decrypt3
 .type	_aesni_encrypt4,@function
@@ -245,7 +240,7 @@ _aesni_encrypt4:
 .byte	102,15,56,221,216
 .byte	102,15,56,221,224
 .byte	102,15,56,221,232
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_encrypt4,.-_aesni_encrypt4
 .type	_aesni_decrypt4,@function
@@ -287,7 +282,7 @@ _aesni_decrypt4:
 .byte	102,15,56,223,216
 .byte	102,15,56,223,224
 .byte	102,15,56,223,232
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_decrypt4,.-_aesni_decrypt4
 .type	_aesni_encrypt6,@function
@@ -343,7 +338,7 @@ _aesni_encrypt6:
 .byte	102,15,56,221,232
 .byte	102,15,56,221,240
 .byte	102,15,56,221,248
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_encrypt6,.-_aesni_encrypt6
 .type	_aesni_decrypt6,@function
@@ -399,7 +394,7 @@ _aesni_decrypt6:
 .byte	102,15,56,223,232
 .byte	102,15,56,223,240
 .byte	102,15,56,223,248
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_decrypt6,.-_aesni_decrypt6
 .type	_aesni_encrypt8,@function
@@ -465,7 +460,7 @@ _aesni_encrypt8:
 .byte	102,15,56,221,248
 .byte	102,68,15,56,221,192
 .byte	102,68,15,56,221,200
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_encrypt8,.-_aesni_encrypt8
 .type	_aesni_decrypt8,@function
@@ -531,7 +526,7 @@ _aesni_decrypt8:
 .byte	102,15,56,223,248
 .byte	102,68,15,56,223,192
 .byte	102,68,15,56,223,200
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_decrypt8,.-_aesni_decrypt8
 .globl	aes_hw_ecb_encrypt
@@ -540,6 +535,7 @@ _aesni_decrypt8:
 .align	16
 aes_hw_ecb_encrypt:
 .cfi_startproc	
+_CET_ENDBR
 	andq	$-16,%rdx
 	jz	.Lecb_ret
 
@@ -876,7 +872,7 @@ aes_hw_ecb_encrypt:
 .Lecb_ret:
 	xorps	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	aes_hw_ecb_encrypt,.-aes_hw_ecb_encrypt
 .globl	aes_hw_ctr32_encrypt_blocks
@@ -885,6 +881,7 @@ aes_hw_ecb_encrypt:
 .align	16
 aes_hw_ctr32_encrypt_blocks:
 .cfi_startproc	
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 	movb	$1,BORINGSSL_function_hit(%rip)
 #endif
@@ -1262,6 +1259,8 @@ aes_hw_ctr32_encrypt_blocks:
 	pxor	%xmm0,%xmm13
 	movdqu	80(%rdi),%xmm15
 	pxor	%xmm0,%xmm14
+	prefetcht0	448(%rdi)
+	prefetcht0	512(%rdi)
 	pxor	%xmm0,%xmm15
 .byte	102,15,56,220,209
 .byte	102,15,56,220,217
@@ -1459,7 +1458,7 @@ aes_hw_ctr32_encrypt_blocks:
 	leaq	(%r11),%rsp
 .cfi_def_cfa_register	%rsp
 .Lctr32_epilogue:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	aes_hw_ctr32_encrypt_blocks,.-aes_hw_ctr32_encrypt_blocks
 .globl	aes_hw_cbc_encrypt
@@ -1468,6 +1467,7 @@ aes_hw_ctr32_encrypt_blocks:
 .align	16
 aes_hw_cbc_encrypt:
 .cfi_startproc	
+_CET_ENDBR
 	testq	%rdx,%rdx
 	jz	.Lcbc_ret
 
@@ -2052,7 +2052,7 @@ aes_hw_cbc_encrypt:
 	leaq	(%r11),%rsp
 .cfi_def_cfa_register	%rsp
 .Lcbc_ret:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	aes_hw_cbc_encrypt,.-aes_hw_cbc_encrypt
 .globl	aes_hw_set_decrypt_key
@@ -2061,6 +2061,7 @@ aes_hw_cbc_encrypt:
 .align	16
 aes_hw_set_decrypt_key:
 .cfi_startproc	
+_CET_ENDBR
 .byte	0x48,0x83,0xEC,0x08
 .cfi_adjust_cfa_offset	8
 	call	__aesni_set_encrypt_key
@@ -2096,7 +2097,7 @@ aes_hw_set_decrypt_key:
 .Ldec_key_ret:
 	addq	$8,%rsp
 .cfi_adjust_cfa_offset	-8
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .LSEH_end_set_decrypt_key:
 .size	aes_hw_set_decrypt_key,.-aes_hw_set_decrypt_key
@@ -2107,6 +2108,7 @@ aes_hw_set_decrypt_key:
 aes_hw_set_encrypt_key:
 __aesni_set_encrypt_key:
 .cfi_startproc	
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 	movb	$1,BORINGSSL_function_hit+3(%rip)
 #endif
@@ -2406,7 +2408,7 @@ __aesni_set_encrypt_key:
 	pxor	%xmm5,%xmm5
 	addq	$8,%rsp
 .cfi_adjust_cfa_offset	-8
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .LSEH_end_set_encrypt_key:
 
@@ -2421,7 +2423,7 @@ __aesni_set_encrypt_key:
 	xorps	%xmm4,%xmm0
 	shufps	$255,%xmm1,%xmm1
 	xorps	%xmm1,%xmm0
-	.byte	0xf3,0xc3
+	ret
 
 .align	16
 .Lkey_expansion_192a:
@@ -2441,7 +2443,7 @@ __aesni_set_encrypt_key:
 	pxor	%xmm1,%xmm0
 	pshufd	$255,%xmm0,%xmm3
 	pxor	%xmm3,%xmm2
-	.byte	0xf3,0xc3
+	ret
 
 .align	16
 .Lkey_expansion_192b:
@@ -2464,7 +2466,7 @@ __aesni_set_encrypt_key:
 	xorps	%xmm4,%xmm0
 	shufps	$255,%xmm1,%xmm1
 	xorps	%xmm1,%xmm0
-	.byte	0xf3,0xc3
+	ret
 
 .align	16
 .Lkey_expansion_256b:
@@ -2477,7 +2479,7 @@ __aesni_set_encrypt_key:
 	xorps	%xmm4,%xmm2
 	shufps	$170,%xmm1,%xmm1
 	xorps	%xmm1,%xmm2
-	.byte	0xf3,0xc3
+	ret
 .size	aes_hw_set_encrypt_key,.-aes_hw_set_encrypt_key
 .size	__aesni_set_encrypt_key,.-__aesni_set_encrypt_key
 .section	.rodata
@@ -2504,8 +2506,4 @@ __aesni_set_encrypt_key:
 .byte	65,69,83,32,102,111,114,32,73,110,116,101,108,32,65,69,83,45,78,73,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	64
 .text	
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

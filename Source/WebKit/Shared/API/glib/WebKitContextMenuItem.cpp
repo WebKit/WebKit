@@ -33,8 +33,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
+#if ENABLE(CONTEXT_MENUS)
 using namespace WebKit;
 using namespace WebCore;
+#endif // ENABLE(CONTEXT_MENUS)
 
 /**
  * WebKitContextMenuItem:
@@ -50,6 +52,7 @@ using namespace WebCore;
  */
 
 struct _WebKitContextMenuItemPrivate {
+#if ENABLE(CONTEXT_MENUS)
     ~_WebKitContextMenuItemPrivate()
     {
         if (subMenu)
@@ -58,6 +61,7 @@ struct _WebKitContextMenuItemPrivate {
 
     std::unique_ptr<WebContextMenuItemGlib> menuItem;
     GRefPtr<WebKitContextMenu> subMenu;
+#endif // ENABLE(CONTEXT_MENUS)
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitContextMenuItem, webkit_context_menu_item, G_TYPE_INITIALLY_UNOWNED, GInitiallyUnowned)
@@ -66,6 +70,7 @@ static void webkit_context_menu_item_class_init(WebKitContextMenuItemClass*)
 {
 }
 
+#if ENABLE(CONTEXT_MENUS)
 static bool checkAndWarnIfMenuHasParentItem(WebKitContextMenu* menu)
 {
     if (menu && webkitContextMenuGetParentItem(menu)) {
@@ -118,11 +123,14 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
     if (item->priv->subMenu) {
         Vector<WebContextMenuItemData> subMenuItems;
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
-        return WebContextMenuItemData(item->priv->menuItem->action(), item->priv->menuItem->title(), item->priv->menuItem->enabled(), subMenuItems);
+        bool checked = false;
+        unsigned indentationLevel = 0;
+        return WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTFMove(subMenuItems));
     }
 
-    return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), item->priv->menuItem->title(), item->priv->menuItem->enabled(), item->priv->menuItem->checked());
+    return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), item->priv->menuItem->checked());
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
 #if PLATFORM(GTK) && !USE(GTK4)
 /**
@@ -140,7 +148,9 @@ WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
     g_return_val_if_fail(GTK_IS_ACTION(action), nullptr);
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
+#if ENABLE(CONTEXT_MENUS)
     item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(action);
+#endif // ENABLE(CONTEXT_MENUS)
 
     return item;
 }
@@ -169,7 +179,9 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_gaction(GAction* action
     g_return_val_if_fail(!target || g_variant_is_of_type(target, g_action_get_parameter_type(action)), nullptr);
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
+#if ENABLE(CONTEXT_MENUS)
     item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(action, String::fromUTF8(label), target);
+#endif // ENABLE(CONTEXT_MENUS)
 
     return item;
 }
@@ -196,8 +208,10 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action(WebKitCont
     g_return_val_if_fail(action > WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION && action < WEBKIT_CONTEXT_MENU_ACTION_CUSTOM, nullptr);
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
-    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? CheckableActionType : ActionType;
+#if ENABLE(CONTEXT_MENUS)
+    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
     item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(type, webkitContextMenuActionGetActionTag(action), webkitContextMenuActionGetLabel(action));
+#endif // ENABLE(CONTEXT_MENUS)
 
     return item;
 }
@@ -219,8 +233,10 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action_with_label
     g_return_val_if_fail(action > WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION && action < WEBKIT_CONTEXT_MENU_ACTION_CUSTOM, nullptr);
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
-    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? CheckableActionType : ActionType;
+#if ENABLE(CONTEXT_MENUS)
+    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
     item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(type, webkitContextMenuActionGetActionTag(action), String::fromUTF8(label));
+#endif // ENABLE(CONTEXT_MENUS)
 
     return item;
 }
@@ -239,13 +255,17 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
     g_return_val_if_fail(label, nullptr);
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU(submenu), nullptr);
 
+#if ENABLE(CONTEXT_MENUS)
     if (checkAndWarnIfMenuHasParentItem(submenu))
         return nullptr;
+#endif // ENABLE(CONTEXT_MENUS)
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
+#if ENABLE(CONTEXT_MENUS)
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
     item->priv->subMenu = submenu;
     webkitContextMenuSetParentItem(submenu, item);
+#endif // ENABLE(CONTEXT_MENUS)
 
     return item;
 }
@@ -260,7 +280,9 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
 WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(SeparatorType, ContextMenuItemTagNoAction, String());
+#if ENABLE(CONTEXT_MENUS)
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Separator, ContextMenuItemTagNoAction, String());
+#endif // ENABLE(CONTEXT_MENUS)
 
     return item;
 }
@@ -281,7 +303,11 @@ GtkAction* webkit_context_menu_item_get_action(WebKitContextMenuItem* item)
 {
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
 
+#if ENABLE(CONTEXT_MENUS)
     return item->priv->menuItem->gtkAction();
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
 }
 #endif
 
@@ -300,7 +326,11 @@ GAction* webkit_context_menu_item_get_gaction(WebKitContextMenuItem* item)
 {
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), nullptr);
 
+#if ENABLE(CONTEXT_MENUS)
     return item->priv->menuItem->gAction();
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
 }
 
 /**
@@ -320,7 +350,11 @@ WebKitContextMenuAction webkit_context_menu_item_get_stock_action(WebKitContextM
 {
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), WEBKIT_CONTEXT_MENU_ACTION_NO_ACTION);
 
+#if ENABLE(CONTEXT_MENUS)
     return webkitContextMenuActionGetForContextMenuItem(*item->priv->menuItem);
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
 }
 
 /**
@@ -335,7 +369,11 @@ gboolean webkit_context_menu_item_is_separator(WebKitContextMenuItem* item)
 {
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), FALSE);
 
-    return item->priv->menuItem->type() == SeparatorType;
+#if ENABLE(CONTEXT_MENUS)
+    return item->priv->menuItem->type() == ContextMenuItemType::Separator;
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
 }
 
 /**
@@ -352,10 +390,12 @@ void webkit_context_menu_item_set_submenu(WebKitContextMenuItem* item, WebKitCon
 {
     g_return_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item));
 
+#if ENABLE(CONTEXT_MENUS)
     if (item->priv->subMenu == submenu)
         return;
 
     webkitContextMenuItemSetSubMenu(item, submenu);
+#endif // ENABLE(CONTEXT_MENUS)
 }
 
 /**
@@ -371,6 +411,10 @@ WebKitContextMenu* webkit_context_menu_item_get_submenu(WebKitContextMenuItem* i
 {
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), 0);
 
+#if ENABLE(CONTEXT_MENUS)
     return item->priv->subMenu.get();
+#else
+    g_assert_not_reached();
+#endif // ENABLE(CONTEXT_MENUS)
 }
 

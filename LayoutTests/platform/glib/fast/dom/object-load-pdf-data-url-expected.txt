@@ -1,0 +1,10 @@
+Tests that loading a data URL with a PDF MIME type inside an does not dispatch an error event.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS No error event dispatched
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

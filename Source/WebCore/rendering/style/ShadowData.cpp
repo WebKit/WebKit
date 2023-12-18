@@ -78,45 +78,64 @@ bool ShadowData::operator==(const ShadowData& o) const
     return true;
 }
 
-static inline void calculateShadowExtent(const ShadowData* shadow, LayoutUnit additionalOutlineSize, LayoutUnit& shadowLeft, LayoutUnit& shadowRight, LayoutUnit& shadowTop, LayoutUnit& shadowBottom)
+LayoutBoxExtent ShadowData::shadowOutsetExtent() const
 {
-    do {
-        LayoutUnit extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value()) + additionalOutlineSize;
-        if (shadow->style() == ShadowStyle::Normal) {
-            shadowLeft = std::min(LayoutUnit(shadow->x().value()) - extentAndSpread, shadowLeft);
-            shadowRight = std::max(LayoutUnit(shadow->x().value()) + extentAndSpread, shadowRight);
-            shadowTop = std::min(LayoutUnit(shadow->y().value()) - extentAndSpread, shadowTop);
-            shadowBottom = std::max(LayoutUnit(shadow->y().value()) + extentAndSpread, shadowBottom);
-        }
+    LayoutUnit top;
+    LayoutUnit right;
+    LayoutUnit bottom;
+    LayoutUnit left;
 
-        shadow = shadow->next();
-    } while (shadow);
+    for (auto* shadow = this; shadow; shadow = shadow->next()) {
+        auto extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value());
+        if (shadow->style() == ShadowStyle::Inset)
+            continue;
+
+        left = std::min(LayoutUnit(shadow->x().value()) - extentAndSpread, left);
+        right = std::max(LayoutUnit(shadow->x().value()) + extentAndSpread, right);
+        top = std::min(LayoutUnit(shadow->y().value()) - extentAndSpread, top);
+        bottom = std::max(LayoutUnit(shadow->y().value()) + extentAndSpread, bottom);
+    }
+
+    return { top, right, bottom, left };
 }
 
-void ShadowData::adjustRectForShadow(LayoutRect& rect, int additionalOutlineSize) const
+LayoutBoxExtent ShadowData::shadowInsetExtent() const
 {
-    LayoutUnit shadowLeft;
-    LayoutUnit shadowRight;
-    LayoutUnit shadowTop;
-    LayoutUnit shadowBottom;
-    calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
+    LayoutUnit top;
+    LayoutUnit right;
+    LayoutUnit bottom;
+    LayoutUnit left;
 
-    rect.move(shadowLeft, shadowTop);
-    rect.setWidth(rect.width() - shadowLeft + shadowRight);
-    rect.setHeight(rect.height() - shadowTop + shadowBottom);
+    for (auto* shadow = this; shadow; shadow = shadow->next()) {
+        if (shadow->style() == ShadowStyle::Normal)
+            continue;
+
+        auto extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value());
+        top = std::max<LayoutUnit>(top, LayoutUnit(shadow->y().value()) + extentAndSpread);
+        right = std::min<LayoutUnit>(right, LayoutUnit(shadow->x().value()) - extentAndSpread);
+        bottom = std::min<LayoutUnit>(bottom, LayoutUnit(shadow->y().value()) - extentAndSpread);
+        left = std::max<LayoutUnit>(left, LayoutUnit(shadow->x().value()) + extentAndSpread);
+    }
+
+    return { top, right, bottom, left };
 }
 
-void ShadowData::adjustRectForShadow(FloatRect& rect, int additionalOutlineSize) const
+void ShadowData::adjustRectForShadow(LayoutRect& rect) const
 {
-    LayoutUnit shadowLeft = 0;
-    LayoutUnit shadowRight = 0;
-    LayoutUnit shadowTop = 0;
-    LayoutUnit shadowBottom = 0;
-    calculateShadowExtent(this, additionalOutlineSize, shadowLeft, shadowRight, shadowTop, shadowBottom);
+    auto shadowExtent = shadowOutsetExtent();
 
-    rect.move(shadowLeft, shadowTop);
-    rect.setWidth(rect.width() - shadowLeft + shadowRight);
-    rect.setHeight(rect.height() - shadowTop + shadowBottom);
+    rect.move(shadowExtent.left(), shadowExtent.top());
+    rect.setWidth(rect.width() - shadowExtent.left() + shadowExtent.right());
+    rect.setHeight(rect.height() - shadowExtent.top() + shadowExtent.bottom());
+}
+
+void ShadowData::adjustRectForShadow(FloatRect& rect) const
+{
+    auto shadowExtent = shadowOutsetExtent();
+
+    rect.move(shadowExtent.left(), shadowExtent.top());
+    rect.setWidth(rect.width() - shadowExtent.left() + shadowExtent.right());
+    rect.setHeight(rect.height() - shadowExtent.top() + shadowExtent.bottom());
 }
 
 TextStream& operator<<(TextStream& ts, const ShadowData& data)

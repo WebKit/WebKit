@@ -155,7 +155,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
         serviceWorkerConnection().didReceiveMessage(connection, decoder);
         return;
@@ -166,7 +165,6 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
             static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
         return;
     }
-#endif
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerObjectConnection::messageReceiverName()) {
         sharedWorkerConnection().didReceiveMessage(connection, decoder);
         return;
@@ -191,14 +189,12 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
 
 bool NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
-#if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
             return static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveSyncMessage(connection, decoder, replyEncoder);
         return false;
     }
-#endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinator::messageReceiverName()) {
@@ -221,10 +217,8 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     if (auto idbConnection = std::exchange(m_webIDBConnection, nullptr))
         idbConnection->connectionToServerLost();
 
-#if ENABLE(SERVICE_WORKER)
     if (auto swConnection = std::exchange(m_swConnection, nullptr))
         swConnection->connectionToServerLost();
-#endif
 }
 
 void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)
@@ -306,14 +300,12 @@ WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
     return *m_webIDBConnection;
 }
 
-#if ENABLE(SERVICE_WORKER)
 WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()
 {
     if (!m_swConnection)
         m_swConnection = WebSWClientConnection::create();
     return *m_swConnection;
 }
-#endif
 
 WebSharedWorkerObjectConnection& NetworkProcessConnection::sharedWorkerConnection()
 {

@@ -1,0 +1,3 @@
+
+PASS scroll: scroll() should throw if invoked on a synthetic event.
+

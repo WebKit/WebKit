@@ -170,9 +170,9 @@ public:
     TransformAnimationValue(const TransformAnimationValue& other)
         : AnimationValue(other)
     {
-        m_value.operations().reserveInitialCapacity(other.m_value.operations().size());
-        for (auto& operation : other.m_value.operations())
-            m_value.operations().uncheckedAppend(operation->clone());
+        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
+            return operation->clone();
+        });
     }
 
     TransformAnimationValue(TransformAnimationValue&&) = default;
@@ -201,9 +201,9 @@ public:
     FilterAnimationValue(const FilterAnimationValue& other)
         : AnimationValue(other)
     {
-        m_value.operations().reserveInitialCapacity(other.m_value.operations().size());
-        for (auto& operation : other.m_value.operations())
-            m_value.operations().uncheckedAppend(operation->clone());
+        m_value.operations().appendContainerWithMapping(other.m_value.operations(), [](auto& operation) {
+            return operation->clone();
+        });
     }
 
     FilterAnimationValue(FilterAnimationValue&&) = default;
@@ -227,9 +227,9 @@ public:
     KeyframeValueList(const KeyframeValueList& other)
         : m_property(other.property())
     {
-        m_values.reserveInitialCapacity(other.m_values.size());
-        for (auto& value : other.m_values)
-            m_values.uncheckedAppend(value->clone());
+        m_values = WTF::map(other.m_values, [](auto& value) -> std::unique_ptr<const AnimationValue> {
+            return value->clone();
+        });
     }
 
     KeyframeValueList(KeyframeValueList&&) = default;
@@ -330,7 +330,7 @@ public:
     WEBCORE_EXPORT virtual bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild);
 
     WEBCORE_EXPORT void removeAllChildren();
-    WEBCORE_EXPORT virtual void removeFromParent();
+    WEBCORE_EXPORT void removeFromParent();
 
     // The parent() of a maskLayer is set to the layer being masked.
     GraphicsLayer* maskLayer() const { return m_maskLayer.get(); }
@@ -523,7 +523,7 @@ public:
     // Return true if the animation is handled by the compositing system.
     virtual bool addAnimation(const KeyframeValueList&, const FloatSize& /*boxSize*/, const Animation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
     virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
-    virtual void removeAnimation(const String& /*animationName*/) { }
+    virtual void removeAnimation(const String& /*animationName*/, std::optional<AnimatedProperty>) { }
     virtual void transformRelatedPropertyDidChange() { }
     WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
     WEBCORE_EXPORT virtual void resumeAnimations();
@@ -697,6 +697,8 @@ protected:
     WEBCORE_EXPORT void willBeDestroyed();
     bool beingDestroyed() const { return m_beingDestroyed; }
 
+    virtual void willModifyChildren() { }
+
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
     // needs to notifiy the change to the platform layer as needed.
@@ -728,7 +730,7 @@ protected:
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    std::unique_ptr<AcceleratedEffectStack> m_effectStack;
+    RefPtr<AcceleratedEffectStack> m_effectStack;
 #endif
 
     GraphicsLayerClient* m_client; // Always non-null.

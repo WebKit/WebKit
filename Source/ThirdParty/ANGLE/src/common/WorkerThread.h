@@ -12,7 +12,9 @@
 #define COMMON_WORKER_THREAD_H_
 
 #include <array>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 #include "common/debug.h"
@@ -77,6 +79,27 @@ class WaitableEventDone final : public WaitableEvent
     bool isReady() override;
 };
 
+// A waitable event that can be completed asynchronously
+class AsyncWaitableEvent final : public WaitableEvent
+{
+  public:
+    AsyncWaitableEvent()           = default;
+    ~AsyncWaitableEvent() override = default;
+
+    void wait() override;
+    bool isReady() override;
+
+    void markAsReady();
+
+  private:
+    // To protect the concurrent accesses from both main thread and background
+    // threads to the member fields.
+    std::mutex mMutex;
+
+    bool mIsReady = false;
+    std::condition_variable mCondition;
+};
+
 // Request WorkerThreads from the WorkerThreadPool. Each pool can keep worker threads around so
 // we avoid the costly spin up and spin down time.
 class WorkerThreadPool : angle::NonCopyable
@@ -95,7 +118,7 @@ class WorkerThreadPool : angle::NonCopyable
 
     // Returns an event to wait on for the task to finish.  If the pool fails to create the task,
     // returns null.  This function is thread-safe.
-    virtual std::shared_ptr<WaitableEvent> postWorkerTask(std::shared_ptr<Closure> task) = 0;
+    virtual std::shared_ptr<WaitableEvent> postWorkerTask(const std::shared_ptr<Closure> &task) = 0;
 
     virtual bool isAsync() = 0;
 

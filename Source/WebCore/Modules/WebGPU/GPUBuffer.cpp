@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUBuffer.h"
 
+#include "GPUDevice.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUBufferMapState.h"
 
@@ -33,15 +34,17 @@ namespace WebCore {
 
 GPUBuffer::~GPUBuffer()
 {
+    m_bufferSize = 0;
     m_backing->destroy();
     m_arrayBuffer = nullptr;
 }
 
-GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation)
+GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation, GPUDevice& device)
     : m_backing(WTFMove(backing))
     , m_bufferSize(bufferSize)
     , m_usage(usage)
     , m_mapState(mappedAtCreation ? GPUBufferMapState::Mapped : GPUBufferMapState::Unmapped)
+    , m_device(device)
 {
 }
 
@@ -63,7 +66,7 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     }
 
     if (m_pendingMapPromise) {
-        promise.reject(Exception { OperationError });
+        promise.reject(Exception { ExceptionCode::OperationError });
         return;
     }
 
@@ -73,8 +76,10 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     m_pendingMapPromise = promise;
     // FIXME: Should this capture a weak pointer to |this| instead?
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTFMove(promise), protectedThis = Ref { *this }](bool success) mutable {
-        if (!protectedThis->m_pendingMapPromise)
+        if (!protectedThis->m_pendingMapPromise) {
+            promise.resolve(nullptr);
             return;
+        }
 
         protectedThis->m_pendingMapPromise = std::nullopt;
         if (success) {
@@ -83,33 +88,45 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
         } else {
             if (protectedThis->m_mapState == GPUBufferMapState::Pending)
                 protectedThis->m_mapState = GPUBufferMapState::Unmapped;
-            promise.reject(Exception { OperationError });
+            promise.reject(Exception { ExceptionCode::OperationError });
         }
     });
+}
+
+static auto makeArrayBuffer(auto source, auto byteLength, auto& cachedArrayBuffer, auto& device, auto& buffer)
+{
+    auto arrayBuffer = ArrayBuffer::create(source, byteLength);
+    cachedArrayBuffer = arrayBuffer.ptr();
+    cachedArrayBuffer->pin();
+    device.addBufferToUnmap(buffer);
+    return arrayBuffer;
 }
 
 ExceptionOr<Ref<JSC::ArrayBuffer>> GPUBuffer::getMappedRange(std::optional<GPUSize64> offset, std::optional<GPUSize64> size)
 {
     if (!m_bufferSize || (size.has_value() && !size.value()))
-        return ArrayBuffer::create(static_cast<size_t>(0U), 1);
+        return makeArrayBuffer(static_cast<size_t>(0U), 1, m_arrayBuffer, m_device, *this);
 
     // size is <= the size of the buffer is validated in WebGPU.framework
     m_mappedRange = m_backing->getMappedRange(offset.value_or(0), size);
     if (!m_mappedRange.source) {
         m_arrayBuffer = nullptr;
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     }
 
-    auto arrayBuffer = ArrayBuffer::create(m_mappedRange.source, m_mappedRange.byteLength);
-    m_arrayBuffer = arrayBuffer.ptr();
-
-    return arrayBuffer;
+    return makeArrayBuffer(m_mappedRange.source, m_mappedRange.byteLength, m_arrayBuffer, m_device, *this);
 }
 
-void GPUBuffer::unmap()
+void GPUBuffer::unmap(ScriptExecutionContext& scriptExecutionContext)
+{
+    internalUnmap(scriptExecutionContext);
+    m_device.removeBufferToUnmap(*this);
+}
+
+void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
 {
     if (m_pendingMapPromise) {
-        m_pendingMapPromise->reject(Exception { AbortError });
+        m_pendingMapPromise->reject(Exception { ExceptionCode::AbortError });
         m_pendingMapPromise = std::nullopt;
     }
 
@@ -117,16 +134,23 @@ void GPUBuffer::unmap()
     if (!m_bufferSize)
         return;
 
-    if (m_arrayBuffer && m_arrayBuffer->data())
+    if (m_arrayBuffer && m_arrayBuffer->data()) {
         memcpy(m_mappedRange.source, m_arrayBuffer->data(), m_mappedRange.byteLength);
+        JSC::ArrayBufferContents emptyBuffer;
+        m_arrayBuffer->unpin();
+        m_arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);
+    }
 
     m_arrayBuffer = nullptr;
     m_backing->unmap();
 }
 
-void GPUBuffer::destroy()
+void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
 {
-    unmap();
+    if (!m_bufferSize)
+        return;
+
+    internalUnmap(scriptExecutionContext);
     m_bufferSize = 0;
     m_backing->destroy();
 }

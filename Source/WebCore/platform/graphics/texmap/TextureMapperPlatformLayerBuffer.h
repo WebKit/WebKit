@@ -27,11 +27,13 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "BitmapTextureGL.h"
+#include "BitmapTexture.h"
+#include "TextureMapperFlags.h"
 #include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayer.h"
 #include <variant>
 #include <wtf/MonotonicTime.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -39,9 +41,9 @@ class TextureMapperPlatformLayerBuffer : public TextureMapperPlatformLayer {
     WTF_MAKE_NONCOPYABLE(TextureMapperPlatformLayerBuffer);
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&&, TextureMapperGL::Flags = 0);
+    TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&&, OptionSet<TextureMapperFlags> = { });
 
-    TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize&, TextureMapperGL::Flags, GLint internalFormat);
+    TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize&, OptionSet<TextureMapperFlags>, GLint internalFormat);
 
     struct RGBTexture {
         GLuint id;
@@ -58,14 +60,14 @@ public:
     };
     using TextureVariant = std::variant<RGBTexture, YUVTexture, ExternalOESTexture>;
 
-    TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, TextureMapperGL::Flags, GLint internalFormat);
+    TextureMapperPlatformLayerBuffer(TextureVariant&&, const IntSize&, OptionSet<TextureMapperFlags>, GLint internalFormat);
 
     virtual ~TextureMapperPlatformLayerBuffer();
 
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
     bool canReuseWithoutReset(const IntSize&, GLint internalFormat);
-    BitmapTextureGL& textureGL() { return static_cast<BitmapTextureGL&>(*m_texture); }
+    BitmapTexture& texture() { return *m_texture; }
 
     inline void markUsed() { m_timeLastUsed = MonotonicTime::now(); }
     MonotonicTime lastUsedTime() const { return m_timeLastUsed; }
@@ -84,7 +86,7 @@ public:
 
     bool hasManagedTexture() const { return m_hasManagedTexture; }
     void setUnmanagedBufferDataHolder(std::unique_ptr<UnmanagedBufferDataHolder> holder) { m_unmanagedBufferDataHolder = WTFMove(holder); }
-    void setExtraFlags(TextureMapperGL::Flags flags) { m_extraFlags = flags; }
+    void setExtraFlags(OptionSet<TextureMapperFlags> flags) { m_extraFlags = flags; }
 
     virtual std::unique_ptr<TextureMapperPlatformLayerBuffer> clone();
 
@@ -109,7 +111,7 @@ private:
 
     IntSize m_size;
     GLint m_internalFormat;
-    TextureMapperGL::Flags m_extraFlags;
+    OptionSet<TextureMapperFlags> m_extraFlags;
     bool m_hasManagedTexture;
     std::unique_ptr<UnmanagedBufferDataHolder> m_unmanagedBufferDataHolder;
     std::unique_ptr<HolePunchClient> m_holePunchClient;

@@ -68,18 +68,18 @@ public:
 };
 
 // Do not make WeakPtrImplWithEventTargetData a derived class of DefaultWeakPtrImpl to catch the bug which uses incorrect impl class.
-class WeakPtrImplWithEventTargetData final : public WTF::WeakPtrImplBase<WeakPtrImplWithEventTargetData> {
+class WeakPtrImplWithEventTargetData final : public WTF::WeakPtrImplBaseSingleThread<WeakPtrImplWithEventTargetData> {
 public:
     EventTargetData& eventTargetData() { return m_eventTargetData; }
     const EventTargetData& eventTargetData() const { return m_eventTargetData; }
 
-    template<typename T> WeakPtrImplWithEventTargetData(T* ptr) : WTF::WeakPtrImplBase<WeakPtrImplWithEventTargetData>(ptr) { }
+    template<typename T> WeakPtrImplWithEventTargetData(T* ptr) : WTF::WeakPtrImplBaseSingleThread<WeakPtrImplWithEventTargetData>(ptr) { }
 
 private:
     EventTargetData m_eventTargetData;
 };
 
-class EventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData>, public CanMakeCheckedPtr {
+class EventTarget : public ScriptWrappable, public CanMakeWeakPtrWithBitField<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
     WTF_MAKE_ISO_ALLOCATED(EventTarget);
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
@@ -109,7 +109,7 @@ public:
     template<typename JSMaybeErrorEventListener>
     void setAttributeEventListener(const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget);
     bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
-    JSEventListener* attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
+    RefPtr<JSEventListener> attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
 
     bool hasEventListeners() const;
     bool hasEventListeners(const AtomString& eventType) const;
@@ -162,13 +162,14 @@ protected:
     WEBCORE_EXPORT virtual ~EventTarget();
 
     enum class EventTargetFlag : uint16_t {
-        HasEventTargetData = 1 << 0,
-        IsNode = 1 << 1,
+        HasEventTargetData                          = 1 << 0,
+        IsNode                                      = 1 << 1,
         // Element bits
-        HasDuplicateAttribute = 1 << 2,
-        HasLangAttr = 1 << 3,
-        HasXMLLangAttr = 1 << 4,
-        EffectiveLangKnownToMatchDocumentElement = 1 << 5,
+        HasDuplicateAttribute                       = 1 << 2,
+        HasLangAttr                                 = 1 << 3,
+        HasXMLLangAttr                              = 1 << 4,
+        EffectiveLangKnownToMatchDocumentElement    = 1 << 5,
+        EverHadSmoothScroll                         = 1 << 6,
     };
 
     EventTargetData& ensureEventTargetData()
@@ -183,7 +184,7 @@ protected:
 
     virtual void eventListenersDidChange() { }
 
-    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & static_cast<uint16_t>(flag); }
+    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & enumToUnderlyingType(flag); }
     void setEventTargetFlag(EventTargetFlag, bool);
 
 private:
@@ -223,9 +224,9 @@ inline void EventTarget::setEventTargetFlag(EventTargetFlag flag, bool value)
 {
     uint16_t bitfield = weakPtrFactory().bitfield();
     if (value)
-        bitfield |= static_cast<uint16_t>(flag);
+        bitfield |= enumToUnderlyingType(flag);
     else
-        bitfield &= ~static_cast<uint16_t>(flag);
+        bitfield &= ~enumToUnderlyingType(flag);
     weakPtrFactory().setBitfield(bitfield);
 }
 

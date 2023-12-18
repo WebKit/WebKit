@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,13 @@
 #include "DFGSlowPathGenerator.h"
 #include "DFGSpeculativeJIT.h"
 #include "DirectArguments.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
 
 // This calls operationCreateDirectArguments but then restores the value of lengthGPR.
 class CallCreateDirectArgumentsSlowPathGenerator final : public JumpingSlowPathGenerator<MacroAssembler::JumpList> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(CallCreateDirectArgumentsSlowPathGenerator);
 public:
     CallCreateDirectArgumentsSlowPathGenerator(
         MacroAssembler::JumpList from, SpeculativeJIT* jit, GPRReg resultGPR, RegisteredStructure structure,

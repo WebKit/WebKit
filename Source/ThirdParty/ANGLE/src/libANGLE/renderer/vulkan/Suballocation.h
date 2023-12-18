@@ -36,13 +36,13 @@ class BufferBlock final : angle::NonCopyable
     ~BufferBlock();
 
     void destroy(RendererVk *renderer);
-    angle::Result init(Context *context,
-                       Buffer &buffer,
-                       uint32_t memoryTypeIndex,
-                       vma::VirtualBlockCreateFlags flags,
-                       DeviceMemory &deviceMemory,
-                       VkMemoryPropertyFlags memoryPropertyFlags,
-                       VkDeviceSize size);
+    VkResult init(Context *context,
+                  Buffer &buffer,
+                  uint32_t memoryTypeIndex,
+                  vma::VirtualBlockCreateFlags flags,
+                  DeviceMemory &deviceMemory,
+                  VkMemoryPropertyFlags memoryPropertyFlags,
+                  VkDeviceSize size);
     void initWithoutVirtualBlock(Context *context,
                                  Buffer &buffer,
                                  MemoryAllocationType memoryAllocationType,
@@ -72,6 +72,7 @@ class BufferBlock final : angle::NonCopyable
     bool hasVirtualBlock() const { return mVirtualBlock.valid(); }
     bool isHostVisible() const;
     bool isCoherent() const;
+    bool isCached() const;
     bool isMapped() const;
     VkResult map(const VkDevice device);
     void unmap(const VkDevice device);
@@ -120,7 +121,55 @@ class BufferBlock final : angle::NonCopyable
     // Manages the descriptorSet cache that created with this BufferBlock.
     DescriptorSetCacheManager mDescriptorSetCacheManager;
 };
-using BufferBlockPointerVector = std::vector<std::unique_ptr<BufferBlock>>;
+using BufferBlockPointer       = std::unique_ptr<BufferBlock>;
+using BufferBlockPointerVector = std::vector<BufferBlockPointer>;
+
+class BufferBlockGarbageList final : angle::NonCopyable
+{
+  public:
+    BufferBlockGarbageList() : mBufferBlockQueue(kInitialQueueCapacity) {}
+    ~BufferBlockGarbageList() { ASSERT(mBufferBlockQueue.empty()); }
+
+    void add(BufferBlock *bufferBlock)
+    {
+        std::unique_lock<std::mutex> lock(mMutex);
+        if (mBufferBlockQueue.full())
+        {
+            size_t newCapacity = mBufferBlockQueue.capacity() << 1;
+            mBufferBlockQueue.updateCapacity(newCapacity);
+        }
+        mBufferBlockQueue.push(bufferBlock);
+    }
+
+    void pruneEmptyBufferBlocks(RendererVk *renderer)
+    {
+        if (!mBufferBlockQueue.empty())
+        {
+            std::unique_lock<std::mutex> lock(mMutex);
+            size_t count = mBufferBlockQueue.size();
+            for (size_t i = 0; i < count; i++)
+            {
+                BufferBlock *block = mBufferBlockQueue.front();
+                mBufferBlockQueue.pop();
+                if (block->isEmpty())
+                {
+                    block->destroy(renderer);
+                }
+                else
+                {
+                    mBufferBlockQueue.push(block);
+                }
+            }
+        }
+    }
+
+    bool empty() const { return mBufferBlockQueue.empty(); }
+
+  private:
+    static constexpr size_t kInitialQueueCapacity = 4;
+    std::mutex mMutex;
+    angle::FixedQueue<BufferBlock *> mBufferBlockQueue;
+};
 
 // BufferSuballocation
 class BufferSuballocation final : angle::NonCopyable
@@ -152,6 +201,7 @@ class BufferSuballocation final : angle::NonCopyable
     VkMemoryMapFlags getMemoryPropertyFlags() const;
     bool isHostVisible() const;
     bool isCoherent() const;
+    bool isCached() const;
     bool isMapped() const;
     uint8_t *getMappedMemory() const;
     void flush(const VkDevice &device);
@@ -179,21 +229,28 @@ class BufferSuballocation final : angle::NonCopyable
     VkDeviceSize mSize;
 };
 
-class SharedBufferSuballocationGarbage
+class BufferSuballocationGarbage
 {
   public:
-    SharedBufferSuballocationGarbage() = default;
-    SharedBufferSuballocationGarbage(SharedBufferSuballocationGarbage &&other)
+    BufferSuballocationGarbage() = default;
+    BufferSuballocationGarbage(BufferSuballocationGarbage &&other)
         : mLifetime(other.mLifetime),
           mSuballocation(std::move(other.mSuballocation)),
           mBuffer(std::move(other.mBuffer))
     {}
-    SharedBufferSuballocationGarbage(const ResourceUse &use,
-                                     BufferSuballocation &&suballocation,
-                                     Buffer &&buffer)
+    BufferSuballocationGarbage &operator=(BufferSuballocationGarbage &&other)
+    {
+        mLifetime      = other.mLifetime;
+        mSuballocation = std::move(other.mSuballocation);
+        mBuffer        = std::move(other.mBuffer);
+        return *this;
+    }
+    BufferSuballocationGarbage(const ResourceUse &use,
+                               BufferSuballocation &&suballocation,
+                               Buffer &&buffer)
         : mLifetime(use), mSuballocation(std::move(suballocation)), mBuffer(std::move(buffer))
     {}
-    ~SharedBufferSuballocationGarbage() = default;
+    ~BufferSuballocationGarbage() = default;
 
     bool destroyIfComplete(RendererVk *renderer);
     bool hasResourceUseSubmitted(RendererVk *renderer) const;
@@ -205,7 +262,6 @@ class SharedBufferSuballocationGarbage
     BufferSuballocation mSuballocation;
     Buffer mBuffer;
 };
-using SharedBufferSuballocationGarbageList = std::queue<SharedBufferSuballocationGarbage>;
 
 // BufferBlock implementation.
 ANGLE_INLINE VkMemoryPropertyFlags BufferBlock::getMemoryPropertyFlags() const
@@ -232,6 +288,11 @@ ANGLE_INLINE bool BufferBlock::isHostVisible() const
 ANGLE_INLINE bool BufferBlock::isCoherent() const
 {
     return (mMemoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) != 0;
+}
+
+ANGLE_INLINE bool BufferBlock::isCached() const
+{
+    return (mMemoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT) != 0;
 }
 
 ANGLE_INLINE bool BufferBlock::isMapped() const
@@ -360,6 +421,10 @@ ANGLE_INLINE bool BufferSuballocation::isHostVisible() const
 ANGLE_INLINE bool BufferSuballocation::isCoherent() const
 {
     return mBufferBlock->isCoherent();
+}
+ANGLE_INLINE bool BufferSuballocation::isCached() const
+{
+    return mBufferBlock->isCached();
 }
 ANGLE_INLINE bool BufferSuballocation::isMapped() const
 {

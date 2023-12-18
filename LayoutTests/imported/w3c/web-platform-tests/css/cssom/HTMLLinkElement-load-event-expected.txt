@@ -1,0 +1,3 @@
+
+PASS Link element load event doesn't block the parser.
+

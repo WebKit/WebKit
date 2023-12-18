@@ -25,25 +25,31 @@
 
 #pragma once
 
+#include "CachedResourceLoader.h"
 #include "ClientOrigin.h"
 #include "Document.h"
+#include "DocumentMarkerController.h"
+#include "DocumentParser.h"
+#include "Element.h"
 #include "FocusOptions.h"
 #include "FrameDestructionObserverInlines.h"
+#include "FullscreenManager.h"
+#include "LocalDOMWindow.h"
 #include "MediaProducer.h"
+#include "ReportingScope.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
+#include "UndoManager.h"
 #include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
 inline PAL::TextEncoding Document::textEncoding() const
 {
-    if (auto* decoder = this->decoder())
+    if (RefPtr decoder = this->decoder())
         return decoder->encoding();
     return PAL::TextEncoding();
 }
-
-inline AtomString Document::encoding() const { return AtomString::fromLatin1(textEncoding().domName()); }
 
 inline String Document::charset() const { return Document::encoding(); }
 
@@ -127,5 +133,82 @@ inline Ref<Document> Node::protectedDocument() const
 {
     return document();
 }
+
+inline RefPtr<LocalDOMWindow> Document::protectedWindow() const
+{
+    return m_domWindow;
+}
+
+inline Ref<CachedResourceLoader> Document::protectedCachedResourceLoader() const
+{
+    return m_cachedResourceLoader;
+}
+
+inline RefPtr<DocumentParser> Document::protectedParser() const
+{
+    return m_parser;
+}
+
+inline RefPtr<Element> Document::protectedDocumentElement() const
+{
+    return m_documentElement;
+}
+
+inline Ref<UndoManager> Document::protectedUndoManager() const
+{
+    return m_undoManager;
+}
+
+inline Ref<ReportingScope> Document::protectedReportingScope() const
+{
+    return m_reportingScope;
+}
+
+inline RefPtr<TextResourceDecoder> Document::protectedDecoder() const
+{
+    return m_decoder;
+}
+
+inline RefPtr<Element> Document::protectedFocusedElement() const
+{
+    return m_focusedElement;
+}
+
+inline DocumentMarkerController& Document::markers()
+{
+    return m_markers.get();
+}
+
+inline const DocumentMarkerController& Document::markers() const
+{
+    return m_markers.get();
+}
+
+inline CheckedRef<DocumentMarkerController> Document::checkedMarkers()
+{
+    return m_markers.get();
+}
+
+inline CheckedRef<const DocumentMarkerController> Document::checkedMarkers() const
+{
+    return m_markers.get();
+}
+
+inline Ref<SecurityOrigin> Document::protectedSecurityOrigin() const
+{
+    return SecurityContext::protectedSecurityOrigin().releaseNonNull();
+}
+
+#if ENABLE(FULLSCREEN_API)
+inline CheckedRef<FullscreenManager> Document::checkedFullscreenManager()
+{
+    return m_fullscreenManager.get();
+}
+
+inline CheckedRef<const FullscreenManager> Document::checkedFullscreenManager() const
+{
+    return m_fullscreenManager.get();
+}
+#endif
 
 } // namespace WebCore

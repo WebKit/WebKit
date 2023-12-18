@@ -26,7 +26,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/gbm"
     "${WEBCORE_DIR}/platform/graphics/gstreamer"
     "${WEBCORE_DIR}/platform/graphics/gtk"
-    "${WEBCORE_DIR}/platform/graphics/libwpe"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wayland"
@@ -49,14 +48,13 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/egl/PlatformDisplaySurfaceless.h
 
+    platform/graphics/gbm/GBMVersioning.h
     platform/graphics/gbm/PlatformDisplayGBM.h
 
     platform/graphics/gtk/GdkCairoUtilities.h
 
     platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
-    platform/graphics/x11/XUniquePtr.h
-    platform/graphics/x11/XUniqueResource.h
 
     platform/gtk/GRefPtrGtk.h
     platform/gtk/GUniquePtrGtk.h
@@ -81,10 +79,6 @@ list(APPEND WebCore_LIBRARIES
     ${HYPHEN_LIBRARIES}
     ${UPOWERGLIB_LIBRARIES}
     ${X11_X11_LIB}
-    ${X11_Xcomposite_LIB}
-    ${X11_Xdamage_LIB}
-    ${X11_Xrender_LIB}
-    ${X11_Xt_LIB}
     GTK::GTK
 )
 
@@ -98,16 +92,11 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 if (ENABLE_WAYLAND_TARGET)
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/wayland/PlatformDisplayWayland.h
-        platform/graphics/wayland/WlUniquePtr.h
-    )
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${WAYLAND_INCLUDE_DIRS}
     )
     list(APPEND WebCore_LIBRARIES
         ${WAYLAND_LIBRARIES}
-        WPE::libwpe
     )
 endif ()
 

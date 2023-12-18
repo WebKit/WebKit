@@ -83,7 +83,7 @@
 - (void)stopSpeaking:(id)sender;
 @end
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 @interface WKPDFMenuTarget : NSObject {
     NSMenuItem *_selectedMenuItem;
 }
@@ -182,13 +182,21 @@ void WebPageProxy::searchTheWeb(const String& string)
 
 void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
-    if (!hasRunningProcess())
-        return;
-
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
     m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, viewFrameInWindowCoordinates, accessibilityViewCoordinates] (FloatRect windowFrameInScreenCoordinates) {
         FloatRect windowFrameInUnflippedScreenCoordinates = pageClient().convertToUserSpace(windowFrameInScreenCoordinates);
-        send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, windowFrameInUnflippedScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates));
+
+        m_viewWindowCoordinates = makeUnique<ViewWindowCoordinates>();
+        auto& coordinates = *m_viewWindowCoordinates;
+        coordinates.windowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
+        coordinates.windowFrameInUnflippedScreenCoordinates = windowFrameInUnflippedScreenCoordinates;
+        coordinates.viewFrameInWindowCoordinates = viewFrameInWindowCoordinates;
+        coordinates.accessibilityViewCoordinates = accessibilityViewCoordinates;
+
+        if (!hasRunningProcess())
+            return;
+
+        send(Messages::WebPage::WindowAndViewFramesChanged(*m_viewWindowCoordinates));
     });
 }
 
@@ -252,7 +260,6 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, SharedM
 {
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(visibleURL);
-    MESSAGE_CHECK(!imageHandle.isNull());
     MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension));
 
     auto sharedMemoryImage = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
@@ -261,12 +268,10 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, SharedM
     auto imageBuffer = sharedMemoryImage->createSharedBuffer(sharedMemoryImage->size());
 
     RefPtr<FragmentedSharedBuffer> archiveBuffer;
-    if (!archiveHandle.isNull()) {
-        auto sharedMemoryArchive = SharedMemory::map(WTFMove(archiveHandle), SharedMemory::Protection::ReadOnly);
-        if (!sharedMemoryArchive)
-            return;
-        archiveBuffer = sharedMemoryArchive->createSharedBuffer(sharedMemoryArchive->size());
-    }
+    auto sharedMemoryArchive = SharedMemory::map(WTFMove(archiveHandle), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryArchive)
+        return;
+    archiveBuffer = sharedMemoryArchive->createSharedBuffer(sharedMemoryArchive->size());
     pageClient().setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), ResourceResponseBase::sanitizeSuggestedFilename(filename), extension, title, url, visibleURL, WTFMove(archiveBuffer), originIdentifier);
 }
 
@@ -505,8 +510,7 @@ void WebPageProxy::savePDFToTemporaryFolderAndOpenWithNativeApplication(const St
     });
 }
 
-
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN)
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(std::optional<int32_t>&&)>&& completionHandler)
 {
     if (!contextMenu.items.size())
@@ -518,16 +522,16 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     for (unsigned i = 0; i < contextMenu.items.size(); i++) {
         auto& item = contextMenu.items[i];
         
-        if (item.separator) {
+        if (item.separator == ContextMenuItemIsSeparator::Yes) {
             [nsMenu insertItem:[NSMenuItem separatorItem] atIndex:i];
             continue;
         }
         
         RetainPtr<NSMenuItem> nsItem = adoptNS([[NSMenuItem alloc] init]);
         [nsItem setTitle:item.title];
-        [nsItem setEnabled:item.enabled];
+        [nsItem setEnabled:item.enabled == ContextMenuItemEnablement::Enabled];
         [nsItem setState:item.state];
-        if (item.hasAction) {
+        if (item.hasAction == ContextMenuItemHasAction::Yes) {
             [nsItem setTarget:menuTarget.get()];
             [nsItem setAction:@selector(contextMenuAction:)];
         }
@@ -658,6 +662,8 @@ RetainPtr<NSView> WebPageProxy::Internals::platformView() const
     return [page.pageClient().platformWindow() contentView];
 }
 
+#if ENABLE(PDF_PLUGIN)
+
 void WebPageProxy::createPDFHUD(PDFPluginIdentifier identifier, const WebCore::IntRect& rect)
 {
     pageClient().createPDFHUD(identifier, rect);
@@ -696,6 +702,8 @@ void WebPageProxy::pdfOpenWithPreview(PDFPluginIdentifier identifier)
         savePDFToTemporaryFolderAndOpenWithNativeApplication(WTFMove(suggestedFilename), WTFMove(frameInfo), data, pdfUUID);
     });
 }
+
+#endif // #if ENABLE(PDF_PLUGIN)
 
 void WebPageProxy::changeUniversalAccessZoomFocus(const WebCore::IntRect& viewRect, const WebCore::IntRect& selectionRect)
 {
@@ -808,7 +816,7 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
     if (!m_activeContextMenu)
         return;
 
-    RetainPtr image = m_activeContextMenu->copySubjectResult();
+    auto image = m_activeContextMenu->imageForCopySubject();
     if (!image)
         return;
 

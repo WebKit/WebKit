@@ -77,8 +77,8 @@ bool ImageSource::ensureDecoderAvailable(FragmentedSharedBuffer* data)
         return false;
 
     m_decoder->setEncodedDataStatusChangeCallback([weakThis = ThreadSafeWeakPtr { *this }] (auto status) {
-        if (RefPtr strongThis = weakThis.get())
-            strongThis->encodedDataStatusChanged(status);
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->encodedDataStatusChanged(status);
     });
 
     if (auto expectedContentSize = expectedContentLength())
@@ -166,16 +166,20 @@ void ImageSource::encodedDataStatusChanged(EncodedDataStatus status)
     if (status >= EncodedDataStatus::SizeAvailable)
         growFrames();
 
-    if (m_image && m_image->imageObserver())
-        m_image->imageObserver()->encodedDataStatusChanged(*m_image, status);
+    if (!m_image)
+        return;
+
+    if (auto observer = m_image->imageObserver())
+        observer->encodedDataStatusChanged(*m_image, status);
 }
 
 void ImageSource::decodedSizeChanged(long long decodedSize)
 {
-    if (!decodedSize || !m_image || !m_image->imageObserver())
+    if (!decodedSize || !m_image)
         return;
 
-    m_image->imageObserver()->decodedSizeChanged(*m_image, decodedSize);
+    if (auto imageObserver = m_image->imageObserver())
+        imageObserver->decodedSizeChanged(*m_image, decodedSize);
 }
 
 void ImageSource::decodedSizeIncreased(unsigned decodedSize)

@@ -94,8 +94,8 @@ struct SameSizeAsRenderBlock : public RenderBox {
 
 static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
 
-using TrackedDescendantsMap = WeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
-using TrackedContainerMap = WeakHashMap<const RenderBox, WeakHashSet<const RenderBlock>>;
+using TrackedDescendantsMap = SingleThreadWeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
+using TrackedContainerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakHashSet<const RenderBlock>>;
 
 static TrackedDescendantsMap* percentHeightDescendantsMap;
 static TrackedContainerMap* percentHeightContainerMap;
@@ -121,7 +121,7 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
         return;
     }
     
-    auto& containerSet = percentHeightContainerMap->add(descendant, WeakHashSet<const RenderBlock>()).iterator->value;
+    auto& containerSet = percentHeightContainerMap->add(descendant, SingleThreadWeakHashSet<const RenderBlock>()).iterator->value;
     ASSERT(!containerSet.contains(container));
     containerSet.add(container);
 }
@@ -229,7 +229,7 @@ public:
 
 private:
     using DescendantsMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<TrackedRendererListHashSet>>;
-    using ContainerMap = WeakHashMap<const RenderBox, WeakPtr<const RenderBlock>>;
+    using ContainerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakPtr<const RenderBlock>>;
     
     DescendantsMap m_descendantsMap;
     ContainerMap m_containerMap;
@@ -241,7 +241,7 @@ static PositionedDescendantsMap& positionedDescendantsMap()
     return mapForPositionedDescendants;
 }
 
-using ContinuationOutlineTableMap = HashMap<CheckedPtr<RenderBlock>, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>>;
+using ContinuationOutlineTableMap = HashMap<SingleThreadWeakRef<RenderBlock>, std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderInline>>>>;
 
 // Allocated only when some of these fields have non-default values
 
@@ -256,7 +256,7 @@ public:
     LayoutUnit m_pageLogicalOffset;
     LayoutUnit m_intrinsicBorderForFieldset;
     
-    std::optional<WeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
+    std::optional<SingleThreadWeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
 };
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
@@ -304,14 +304,16 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlag)
 {
+    ASSERT(isRenderBlock());
 }
 
-RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlag)
 {
+    ASSERT(isRenderBlock());
 }
 
 static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock& block)
@@ -497,7 +499,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // (d) have a min-height
     // (e) have specified that one of our margins can't collapse using a CSS extension
     if (logicalHeight() > 0
-        || isTable() || borderAndPaddingLogicalHeight()
+        || isRenderTable() || borderAndPaddingLogicalHeight()
         || style().logicalMinHeight().isPositive())
         return false;
 
@@ -506,7 +508,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     if (logicalHeightLength.isPercentOrCalculated() && !document().inQuirksMode()) {
         hasAutoHeight = true;
         for (RenderBlock* cb = containingBlock(); cb && !is<RenderView>(*cb); cb = cb->containingBlock()) {
-            if (cb->style().logicalHeight().isFixed() || cb->isTableCell())
+            if (cb->style().logicalHeight().isFixed() || cb->isRenderTableCell())
                 hasAutoHeight = false;
         }
     }
@@ -951,7 +953,7 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
 
 void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    if (isSkippedContentRoot()) {
+    if (isSkippedContentRootForLayout()) {
         r.clearNeedsLayoutForDescendants();
         r.clearNeedsLayout();
         return;
@@ -1237,9 +1239,9 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         auto borderRect = LayoutRect(paintOffset, size());
 
         if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
-            auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion << " event listener types " << style().eventListenerRegionTypes());
-            paintInfo.eventRegionContext()->unite(borderRegion, *this, style(), isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
+            auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
+            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRoundedRect << " event listener types " << style().eventListenerRegionTypes());
+            paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style(), isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
 
         if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))
@@ -1358,11 +1360,11 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     auto* table = continuationOutlineTable();
     auto* continuations = table->get(this);
     if (!continuations) {
-        continuations = new ListHashSet<CheckedPtr<RenderInline>>;
-        table->set(this, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>(continuations));
+        continuations = new ListHashSet<SingleThreadWeakRef<RenderInline>>;
+        table->set(*this, std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderInline>>>(continuations));
     }
     
-    continuations->add(flow);
+    continuations->add(*flow);
 }
 
 bool RenderBlock::paintsContinuationOutline(RenderInline* flow)
@@ -1386,11 +1388,11 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
     // Paint each continuation outline.
     for (auto& flow : *continuations) {
         // Need to add in the coordinates of the intervening blocks.
-        RenderBlock* block = flow.get()->containingBlock();
+        RenderBlock* block = flow->containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
             accumulatedPaintOffset.moveBy(block->location());
         ASSERT(block);
-        flow.get()->paintOutline(info, accumulatedPaintOffset);
+        flow->paintOutline(info, accumulatedPaintOffset);
     }
 }
 
@@ -1406,12 +1408,12 @@ bool RenderBlock::isSelectionRoot() const
     ASSERT(element() || isAnonymous());
         
     // FIXME: Eventually tables should have to learn how to fill gaps between cells, at least in simple non-spanning cases.
-    if (isTable())
+    if (isRenderTable())
         return false;
-        
+
     if (isBody() || isDocumentElementRenderer() || hasNonVisibleOverflow()
         || isPositioned() || isFloating()
-        || isTableCell() || isInlineBlockOrInlineTable()
+        || isRenderTableCell() || isInlineBlockOrInlineTable()
         || isTransformed() || hasReflection() || hasMask() || isWritingModeRoot()
         || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpan::All
         || isFlexItemIncludingDeprecated() || isGridItem())
@@ -1462,7 +1464,7 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
                     LayoutRect localBounds(gapRectsBounds);
                     flipForWritingMode(localBounds);
                     gapRectsBounds = localToContainerQuad(FloatRect(localBounds), &layer->renderer()).enclosingBoundingBox();
-                    if (layer->renderer().isBox())
+                    if (layer->renderer().isRenderBox())
                         gapRectsBounds.moveBy(layer->renderBox()->scrollPosition());
                 }
                 layer->addBlockSelectionGapsBounds(gapRectsBounds);
@@ -1544,7 +1546,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         result = blockSelectionGaps(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, lastLogicalTop, lastLogicalLeft, lastLogicalRight, cache, paintInfo);
 
     // Fill the vertical gap all the way to the bottom of our block if the selection extends past our block.
-    if (&rootBlock == this && (selectionState() != HighlightState::Both && selectionState() != HighlightState::End) && !isRubyBase() && !isRubyText()) {
+    if (&rootBlock == this && (selectionState() != HighlightState::Both && selectionState() != HighlightState::End) && !isRenderRubyBase() && !isRenderRubyText()) {
         result.uniteCenter(blockSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock,
             lastLogicalTop, lastLogicalLeft, lastLogicalRight, logicalHeight(), cache, paintInfo));
     }
@@ -1588,8 +1590,8 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
                 continue;
         }
 
-        bool paintsOwnSelection = curr->shouldPaintSelectionGaps() || curr->isTable(); // FIXME: Eventually we won't special-case table like this.
-        bool fillBlockGaps = (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None)) && !isRubyBase() && !isRubyText();
+        bool paintsOwnSelection = curr->shouldPaintSelectionGaps() || curr->isRenderTable(); // FIXME: Eventually we won't special-case table like this.
+        bool fillBlockGaps = (paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None)) && !isRenderRubyBase() && !isRenderRubyText();
         if (fillBlockGaps) {
             // We need to fill the vertical gap above this object.
             if (childState == HighlightState::End || childState == HighlightState::Inside) {
@@ -2072,7 +2074,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    if (childrenInline() && !isTable())
+    if (childrenInline() && !isRenderTable())
         return hitTestInlineChildren(request, result, locationInContainer, accumulatedOffset, hitTestAction);
 
     // Hit test our children.
@@ -2155,7 +2157,7 @@ static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderFra
 
 VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
-    if (isTable())
+    if (isRenderTable())
         return RenderBox::positionForPoint(point, fragment);
 
     if (isReplacedOrInlineBlock()) {
@@ -2248,7 +2250,7 @@ void RenderBlock::computePreferredLogicalWidths()
 
     const RenderStyle& styleToUse = style();
     const auto& lengthToUse = hasOverridingLogicalWidthLength() ? overridingLogicalWidthLength() : styleToUse.logicalWidth();
-    if (!isTableCell() && lengthToUse.isFixed() && lengthToUse.value() >= 0
+    if (!isRenderTableCell() && lengthToUse.isFixed() && lengthToUse.value() >= 0
         && !(isDeprecatedFlexItem() && !lengthToUse.intValue()))
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(lengthToUse);
     else if (shouldComputeLogicalWidthFromAspectRatio()) {
@@ -2268,7 +2270,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
     ASSERT(!shouldApplyInlineSizeContainment());
 
     const RenderStyle& styleToUse = style();
-    auto nowrap = styleToUse.textWrap() == TextWrap::NoWrap && styleToUse.whiteSpaceCollapse() == WhiteSpaceCollapse::Collapse;
+    auto nowrap = styleToUse.textWrapMode() == TextWrapMode::NoWrap && styleToUse.whiteSpaceCollapse() == WhiteSpaceCollapse::Collapse;
 
     RenderObject* child = firstChild();
     RenderBlock* containingBlock = this->containingBlock();
@@ -2326,7 +2328,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         minLogicalWidth = std::max(w, minLogicalWidth);
 
         // IE ignores tables for calculation of nowrap. Makes some sense.
-        if (nowrap && !child->isTable())
+        if (nowrap && !child->isRenderTable())
             maxLogicalWidth = std::max(w, maxLogicalWidth);
 
         w = childMaxPreferredLogicalWidth + margin;
@@ -2375,7 +2377,7 @@ void RenderBlock::computeChildIntrinsicLogicalWidths(RenderObject& child, Layout
 
 void RenderBlock::computeChildPreferredLogicalWidths(RenderObject& child, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
-    if (child.isBox() && child.isHorizontalWritingMode() != isHorizontalWritingMode()) {
+    if (child.isRenderBox() && child.isHorizontalWritingMode() != isHorizontalWritingMode()) {
         // If the child is an orthogonal flow, child's height determines the width,
         // but the height is not available until layout.
         // http://dev.w3.org/csswg/css-writing-modes-3/#orthogonal-shrink-to-fit
@@ -2451,7 +2453,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
         // We also give up on finding a baseline if we have a vertical scrollbar, or if we are scrolled
         // vertically (e.g., an overflow:hidden block that has had scrollTop moved).
         auto ignoreBaseline = [this, direction]() -> bool {
-            if (isWritingModeRoot() && !isRubyRun())
+            if (isWritingModeRoot() && !isRenderRubyRun())
                 return true;
 
             auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
@@ -2468,7 +2470,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
 
         auto baselinePos = ignoreBaseline() ? std::optional<LayoutUnit>() : inlineBlockBaseline(direction);
         
-        if (isDeprecatedFlexibleBox()) {
+        if (isRenderDeprecatedFlexibleBox()) {
             // Historically, we did this check for all baselines. But we can't
             // remove this code from deprecated flexbox, because it effectively
             // breaks -webkit-line-clamp, which is used in the wild -- we would
@@ -2506,7 +2508,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
     if (shouldApplyLayoutContainment())
         return std::nullopt;
 
-    if (isWritingModeRoot() && !isRubyRun() && !isFlexItem())
+    if (isWritingModeRoot() && !isRenderRubyRun() && !isFlexItem())
         return std::optional<LayoutUnit>();
 
     for (RenderBox* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
@@ -2521,7 +2523,7 @@ std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
     if (shouldApplyLayoutContainment())
         return std::nullopt;
 
-    if (isWritingModeRoot() && !isRubyRun())
+    if (isWritingModeRoot() && !isRenderRubyRun())
         return std::optional<LayoutUnit>();
 
     for (RenderBox* child = lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
@@ -2536,7 +2538,7 @@ std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lin
     if (shouldApplyLayoutContainment())
         return synthesizedBaseline(*this, *parentStyle(), lineDirection, BorderBox) + (lineDirection == HorizontalLine ? marginBottom() : marginLeft());
 
-    if (isWritingModeRoot() && !isRubyRun())
+    if (isWritingModeRoot() && !isRenderRubyRun())
         return std::optional<LayoutUnit>();
 
     bool haveNormalFlowChild = false;

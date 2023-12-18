@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,20 +28,20 @@
 
 #if PLATFORM(COCOA)
 
+#include "AV1UtilitiesCocoa.h"
 #include "HEVCUtilitiesCocoa.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaPlayer.h"
+#include "MediaSessionHelperIOS.h"
+#include "PlatformMediaSessionManager.h"
 #include "VP9UtilitiesCocoa.h"
 #include <pal/avfoundation/OutputContext.h>
 #include <pal/avfoundation/OutputDevice.h>
 #include <wtf/Algorithms.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MediaCapabilitiesAdditions.h>
-#endif
-
 #include "VideoToolboxSoftLink.h"
+#include <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
 
@@ -125,8 +125,15 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
                 return std::nullopt;
             info = *parsedInfo;
 #endif
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MediaCapabilitiesAdditions.cpp>
+#if ENABLE(AV1)
+        } else if (codec.startsWith("av01"_s)) {
+            auto parameters = parseAV1CodecParameters(codec);
+            if (!parameters)
+                return std::nullopt;
+            auto parsedInfo = validateAV1Parameters(*parameters, videoConfiguration);
+            if (!parsedInfo)
+                return std::nullopt;
+            info = *parsedInfo;
 #endif
         } else if (videoCodecType) {
             if (alphaChannel || hdrSupported)
@@ -140,33 +147,27 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
             return std::nullopt;
     }
 
-    if (configuration.audio) {
-        MediaEngineSupportParameters parameters { };
-        parameters.type = ContentType(configuration.audio.value().contentType);
-        parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
-        parameters.allowedMediaContainerTypes = configuration.allowedMediaContainerTypes;
-        parameters.allowedMediaCodecTypes = configuration.allowedMediaCodecTypes;
+    if (!configuration.audio)
+        return info;
 
-        if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
-            return std::nullopt;
+    MediaEngineSupportParameters parameters { };
+    parameters.type = ContentType(configuration.audio.value().contentType);
+    parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
+    parameters.allowedMediaContainerTypes = configuration.allowedMediaContainerTypes;
+    parameters.allowedMediaCodecTypes = configuration.allowedMediaCodecTypes;
 
-        if (configuration.audio->spatialRendering.value_or(false)) {
-            auto context = PAL::OutputContext::sharedAudioPresentationOutputContext();
-            if (!context)
-                return std::nullopt;
+    if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
+        return std::nullopt;
 
-            auto devices = context->outputDevices();
-            if (devices.isEmpty() || !WTF::allOf(devices, [](auto& device) {
-                return device.supportsSpatialAudio();
-            }))
-                return std::nullopt;
+    info.supported = true;
+    if (!configuration.audio->spatialRendering.value_or(false))
+        return info;
 
-            // Only multichannel audio can be spatially rendered.
-            if (!configuration.audio->channels.isNull() && configuration.audio->channels.toDouble() <= 2)
-                return std::nullopt;
-        }
-        info.supported = true;
-    }
+    auto supportsSpatialPlayback = PlatformMediaSessionManager::sharedManager().supportsSpatialAudioPlaybackForConfiguration(configuration);
+    if (!supportsSpatialPlayback.has_value())
+        return std::nullopt;
+
+    info.supported = supportsSpatialPlayback.value();
 
     return info;
 }

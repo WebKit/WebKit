@@ -172,8 +172,9 @@ TEST_F(ChannelReceiveTest, ReceiveReportGeneratedOnTime) {
 
   bool receiver_report_sent = false;
   EXPECT_CALL(transport_, SendRtcp)
-      .WillRepeatedly([&](const uint8_t* packet, size_t length) {
-        if (length >= 2 && packet[1] == rtcp::ReceiverReport::kPacketType) {
+      .WillRepeatedly([&](rtc::ArrayView<const uint8_t> packet) {
+        if (packet.size() >= 2 &&
+            packet[1] == rtcp::ReceiverReport::kPacketType) {
           receiver_report_sent = true;
         }
         return true;
@@ -189,8 +190,8 @@ TEST_F(ChannelReceiveTest, CaptureStartTimeBecomesValid) {
   auto channel = CreateTestChannelReceive();
 
   EXPECT_CALL(transport_, SendRtcp)
-      .WillRepeatedly([&](const uint8_t* packet, size_t length) {
-        HandleGeneratedRtcp(*channel, rtc::MakeArrayView(packet, length));
+      .WillRepeatedly([&](rtc::ArrayView<const uint8_t> packet) {
+        HandleGeneratedRtcp(*channel, packet);
         return true;
       });
   // Before any packets are sent, CaptureStartTime is invalid.

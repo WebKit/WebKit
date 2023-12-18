@@ -11,7 +11,8 @@ PASS: cell2.numberAttributeValue('AXARIARowIndex') === 8
 PASS: cell4.numberAttributeValue('AXARIAColumnIndex') === 3
 PASS: cell2.rowIndexRange() === '{1, 2}'
 PASS: cell5.columnIndexRange() === '{2, 3}'
-PASS: cell3.rowIndexRange() === '{1, 3}'
+PASS: cell3.rowIndexRange() === '{1, 2}'
+PASS: cell8.rowIndexRange() === '{2, 2}'
 PASS: cell6.rowIndexRange() === '{0, 2}'
 PASS: cell7.rowIndexRange() === '{0, 2}'
 PASS: #grid AXARIARowCount dynamically changed to 60.
@@ -30,6 +31,9 @@ Sara James
 Footer 1 Footer 2 Footer 3
 Name Company Address
 Cell Span Cell
+Cell
+Cell Cell
+Cell
 Cell
 January	$100
 February

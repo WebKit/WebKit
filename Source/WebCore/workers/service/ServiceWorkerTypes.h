@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ProcessIdentifier.h"
 #include "ProcessQualified.h"
 #include "ScriptBuffer.h"
@@ -99,5 +97,3 @@ struct ServiceWorkerScripts {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

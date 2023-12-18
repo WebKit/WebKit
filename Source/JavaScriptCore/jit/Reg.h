@@ -137,7 +137,7 @@ public:
             MacroAssembler::firstFPRegister() + (m_index - MacroAssembler::numberOfRegisters()));
     }
 
-    friend constexpr bool operator==(Reg, Reg) = default;
+    friend constexpr bool operator==(const Reg&, const Reg&) = default;
 
     constexpr bool operator<(const Reg& other) const
     {
@@ -188,7 +188,7 @@ public:
                 return *this;
             }
 
-            friend bool operator==(iterator, iterator) = default;
+            friend bool operator==(const iterator&, const iterator&) = default;
 
         private:
             unsigned m_regIndex;

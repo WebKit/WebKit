@@ -100,7 +100,7 @@ ImagePyramid *aom_alloc_pyramid(int width, int height, int n_levels,
 //
 // However, if the input frame has a side of length < MIN_PYRAMID_SIZE,
 // we will still construct the top level.
-void aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
+bool aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
                          ImagePyramid *pyr);
 
 #ifndef NDEBUG

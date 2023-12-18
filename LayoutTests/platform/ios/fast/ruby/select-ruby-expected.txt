@@ -5,35 +5,31 @@ layer at (0,0) size 800x42
     RenderBody {BODY} at (8,8) size 784x26 [color=#0000001A]
       RenderText {#text} at (0,9) size 16x17
         text run at (0,9) width 16: "a"
-      RenderRuby (inline) {RUBY} at (0,0) size 64x17
-        RenderRubyRun (anonymous) at (16,9) size 16x17
-          RenderRubyText {RT} at (0,-9) size 16x9
-            RenderText {#text} at (4,0) size 8x9
-              text run at (4,0) width 8: "1"
-          RenderRubyBase (anonymous) at (0,0) size 16x17
-            RenderText {#text} at (0,0) size 16x17
-              text run at (0,0) width 16: "1"
-        RenderRubyRun (anonymous) at (32,9) size 16x17
-          RenderRubyText {RT} at (0,-9) size 16x9
-            RenderText {#text} at (4,0) size 8x9
-              text run at (4,0) width 8: "2"
-          RenderRubyBase (anonymous) at (0,0) size 16x17
-            RenderText {#text} at (0,0) size 16x17
-              text run at (0,0) width 16: "2"
-        RenderRubyRun (anonymous) at (48,9) size 16x17
-          RenderRubyText {RT} at (0,-9) size 16x9
-            RenderText {#text} at (4,0) size 8x9
-              text run at (4,0) width 8: "3"
-          RenderRubyBase (anonymous) at (0,0) size 16x17
-            RenderText {#text} at (0,0) size 16x17
-              text run at (0,0) width 16: "3"
-        RenderRubyRun (anonymous) at (64,9) size 16x17
-          RenderRubyText {RT} at (0,-9) size 16x9
-            RenderText {#text} at (4,0) size 8x9
-              text run at (4,0) width 8: "4"
-          RenderRubyBase (anonymous) at (0,0) size 16x17
-            RenderText {#text} at (0,0) size 16x17
-              text run at (0,0) width 16: "4"
+      RenderInline {RUBY} at (0,0) size 64x17
+        RenderInline (generated) at (0,0) size 16x17
+          RenderText {#text} at (16,9) size 16x17
+            text run at (16,9) width 16: "1"
+        RenderBlock {RT} at (16,0) size 16x9
+          RenderText {#text} at (4,0) size 8x9
+            text run at (4,0) width 8: "1"
+        RenderInline (generated) at (0,0) size 16x17
+          RenderText {#text} at (32,9) size 16x17
+            text run at (32,9) width 16: "2"
+        RenderBlock {RT} at (32,0) size 16x9
+          RenderText {#text} at (4,0) size 8x9
+            text run at (4,0) width 8: "2"
+        RenderInline (generated) at (0,0) size 16x17
+          RenderText {#text} at (48,9) size 16x17
+            text run at (48,9) width 16: "3"
+        RenderBlock {RT} at (48,0) size 16x9
+          RenderText {#text} at (4,0) size 8x9
+            text run at (4,0) width 8: "3"
+        RenderInline (generated) at (0,0) size 16x17
+          RenderText {#text} at (64,9) size 16x17
+            text run at (64,9) width 16: "4"
+        RenderBlock {RT} at (64,0) size 16x9
+          RenderText {#text} at (4,0) size 8x9
+            text run at (4,0) width 8: "4"
       RenderText {#text} at (80,9) size 16x17
         text run at (80,9) width 16: "b"
       RenderText {#text} at (0,0) size 0x0

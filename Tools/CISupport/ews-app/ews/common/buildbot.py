@@ -53,8 +53,8 @@ class Buildbot():
         'mac-AS-debug-wk2': 'mac-AS-debug',
         'api-gtk': 'gtk',
         'gtk-wk2': 'gtk',
+        'api-wpe': 'wpe',
         'wpe-wk2': 'wpe',
-        'jsc-mips-tests': 'jsc-mips',
         'jsc-armv7-tests': 'jsc-armv7',
     }
 
@@ -168,8 +168,8 @@ class Buildbot():
             return False
 
         build_url = 'https://{}/api/v2/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, builder_id, build_number)
-        username = os.getenv('EWS_ADMIN_USERNAME')
-        password = os.getenv('EWS_ADMIN_PASSWORD')
+        username = util.load_password('EWS_ADMIN_USERNAME')
+        password = util.load_password('EWS_ADMIN_PASSWORD')
         session = requests.Session()
         response = session.head('https://{}/auth/login'.format(config.BUILDBOT_SERVER_HOST), auth=(username, password))
         if (not response) or response.status_code not in (200, 302):

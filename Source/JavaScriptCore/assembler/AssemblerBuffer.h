@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,8 +259,8 @@ namespace JSC {
 
         static ALWAYS_INLINE uint32_t nextValue(uint64_t instruction, uint64_t index, uint32_t currentValue)
         {
-            uint64_t a = tagInt(instruction, makeDiversifier(0x12, index, currentValue));
-            uint64_t b = tagInt(instruction, makeDiversifier(0x13, index, currentValue));
+            uint64_t a = tagInt<PACKeyType::ProcessIndependent>(instruction, makeDiversifier(0x12, index, currentValue));
+            uint64_t b = tagInt<PACKeyType::ProcessIndependent>(instruction, makeDiversifier(0x13, index, currentValue));
             return (a >> 39) ^ (b >> 23);
         }
 
@@ -272,14 +272,14 @@ namespace JSC {
         ALWAYS_INLINE uint32_t currentHash(uint32_t index)
         {
             if constexpr (shouldSign == ShouldSign::Yes)
-                return untagInt(m_hash, makeDiversifier(initializationNamespace, index, pin()));
+                return untagInt<PACKeyType::ProcessIndependent>(m_hash, makeDiversifier(initializationNamespace, index, pin()));
             return m_hash;
         }
 
         ALWAYS_INLINE void setUpdatedHash(uint32_t value, uint32_t index)
         {
             if constexpr (shouldSign == ShouldSign::Yes)
-                m_hash = tagInt(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
+                m_hash = tagInt<PACKeyType::ProcessIndependent>(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
             else
                 m_hash = static_cast<uint64_t>(value);
         }
@@ -319,7 +319,7 @@ namespace JSC {
             threadSpecificData->takeBufferIfLarger(WTFMove(m_storage));
         }
 
-        bool isAvailable(unsigned space)
+        ALWAYS_INLINE bool isAvailable(unsigned space)
         {
             return m_index + space <= m_storage.capacity();
         }
@@ -330,7 +330,7 @@ namespace JSC {
                 outOfLineGrow();
         }
 
-        bool isAligned(int alignment) const
+        ALWAYS_INLINE bool isAligned(int alignment) const
         {
             return !(m_index & (alignment - 1));
         }
@@ -343,10 +343,10 @@ namespace JSC {
         void putInt64Unchecked(int64_t value) { putIntegralUnchecked(value); }
         void putInt64(int64_t value) { putIntegral(value); }
 #endif
-        void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
-        void putInt(int32_t value) { putIntegral(value); }
+        ALWAYS_INLINE void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
+        ALWAYS_INLINE void putInt(int32_t value) { putIntegral(value); }
 
-        size_t codeSize() const
+        ALWAYS_INLINE size_t codeSize() const
         {
             return m_index;
         }
@@ -362,14 +362,14 @@ namespace JSC {
         }
 #endif
 
-        AssemblerLabel label() const
+        ALWAYS_INLINE AssemblerLabel label() const
         {
             return AssemblerLabel(m_index);
         }
 
         unsigned debugOffset() { return m_index; }
 
-        AssemblerData&& releaseAssemblerData()
+        ALWAYS_INLINE AssemblerData&& releaseAssemblerData()
         {
             return WTFMove(m_storage);
         }
@@ -438,12 +438,12 @@ namespace JSC {
 #endif
 
 #if CPU(ARM64E)
-        ARM64EHash<ShouldSign::Yes>& arm64eHash() { return m_hash; }
+        ALWAYS_INLINE ARM64EHash<ShouldSign::Yes>& arm64eHash() { return m_hash; }
 #endif
 
     protected:
         template<typename IntegralType>
-        void putIntegral(IntegralType value)
+        ALWAYS_INLINE void putIntegral(IntegralType value)
         {
             unsigned nextIndex = m_index + sizeof(IntegralType);
             if (UNLIKELY(nextIndex > m_storage.capacity()))
@@ -452,7 +452,7 @@ namespace JSC {
         }
 
         template<typename IntegralType>
-        void putIntegralUnchecked(IntegralType value)
+        ALWAYS_INLINE void putIntegralUnchecked(IntegralType value)
         {
 #if CPU(ARM64)
             static_assert(sizeof(value) == 4);

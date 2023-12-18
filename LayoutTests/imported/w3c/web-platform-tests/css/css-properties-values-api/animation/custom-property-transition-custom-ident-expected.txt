@@ -1,3 +1,3 @@
 
-PASS A custom property of type <custom-ident> cannot yield a CSS Transition
+PASS A custom property of type <custom-ident> can yield a discrete CSS Transition
 

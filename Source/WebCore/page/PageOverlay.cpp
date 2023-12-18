@@ -81,12 +81,7 @@ IntRect PageOverlay::bounds() const
     if (!m_overrideFrame.isEmpty())
         return { { }, m_overrideFrame.size() };
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return IntRect();
-
-    auto* frameView = localMainFrame->view();
-
+    RefPtr frameView = m_page->mainFrame().virtualView();
     if (!frameView)
         return IntRect();
 
@@ -137,8 +132,7 @@ IntSize PageOverlay::viewToOverlayOffset() const
         return IntSize();
 
     case OverlayType::Document: {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+        auto* frameView = m_page->mainFrame().virtualView();
         return frameView ? toIntSize(frameView->viewToContents(IntPoint())) : IntSize();
     }
     }
@@ -189,8 +183,7 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     if (m_overlayType == PageOverlay::OverlayType::Document) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        if (auto* frameView = localMainFrame ? localMainFrame->view() : nullptr) {
+        if (auto* frameView = m_page->mainFrame().virtualView()) {
             auto offset = frameView->scrollOrigin();
             graphicsContext.translate(toFloatSize(offset));
             paintRect.moveBy(-offset);
@@ -204,9 +197,8 @@ bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint mousePositionInOverlayCoordinates(mouseEvent.position());
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (m_overlayType == PageOverlay::OverlayType::Document && localMainFrame)
-        mousePositionInOverlayCoordinates = localMainFrame->view()->windowToContents(mousePositionInOverlayCoordinates);
+    if (m_overlayType == PageOverlay::OverlayType::Document)
+        mousePositionInOverlayCoordinates = m_page->mainFrame().virtualView()->windowToContents(mousePositionInOverlayCoordinates);
     mousePositionInOverlayCoordinates.moveBy(-frame().location());
 
     // Ignore events outside the bounds.

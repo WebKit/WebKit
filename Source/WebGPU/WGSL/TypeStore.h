@@ -49,6 +49,7 @@ public:
         TextureStorage,
         Reference,
         Pointer,
+        PrimitiveStruct,
     };
 
     using EncodedKey = std::tuple<uint8_t, uint8_t, uint16_t, uint32_t, uintptr_t>;
@@ -77,6 +78,7 @@ public:
 
     const Type* abstractFloatType() const { return m_abstractFloat; }
     const Type* f32Type() const { return m_f32; }
+    const Type* f16Type() const { return m_f16; }
     const Type* samplerType() const { return m_sampler; }
     const Type* samplerComparisonType() const { return m_samplerComparison; }
     const Type* textureExternalType() const { return m_textureExternal; }
@@ -101,6 +103,8 @@ public:
     const Type* pointerType(AddressSpace, const Type*, AccessMode);
     const Type* atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
+    const Type* frexpResultType(const Type*, const Type*);
+    const Type* modfResultType(const Type*, const Type*);
 
 private:
     template<typename TypeKind, typename... Arguments>
@@ -117,6 +121,7 @@ private:
     const Type* m_i32;
     const Type* m_u32;
     const Type* m_f32;
+    const Type* m_f16;
     const Type* m_sampler;
     const Type* m_samplerComparison;
     const Type* m_textureExternal;

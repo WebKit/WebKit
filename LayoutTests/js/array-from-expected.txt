@@ -29,7 +29,7 @@ PASS Array.from(undefined) threw exception TypeError: Array.from requires an arr
 Declare wayTooSmall = { length: -1 }
 PASS Array.from(wayTooSmall) is []
 Declare wayTooBig = { length: Infinity }
-PASS Array.from(wayTooBig) threw exception RangeError: Array size is not a small enough positive integer..
+PASS Array.from(wayTooBig) threw exception RangeError: Array length must be a positive integer of safe magnitude..
 
 Mapped construction
 -------

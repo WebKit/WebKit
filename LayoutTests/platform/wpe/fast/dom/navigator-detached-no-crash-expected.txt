@@ -7,6 +7,7 @@ navigator.clearAppBadge() is OK
 navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
+navigator.gpu is OK
 navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
@@ -42,6 +43,7 @@ navigator.clearAppBadge() is OK
 navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
+navigator.gpu is OK
 navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK

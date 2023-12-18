@@ -174,7 +174,7 @@ void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, in
                 Columns::IsEnabled, TRUE,
                 -1);
             // We never need the path for group labels.
-            m_paths.uncheckedAppend(nullptr);
+            m_paths.append(nullptr);
         } else {
             GtkTreeIter iter;
             bool isSelected = selectedIndex && static_cast<unsigned>(selectedIndex) == index;
@@ -190,7 +190,7 @@ void WebPopupMenuProxyGtk::createPopupMenu(const Vector<WebPopupItem>& items, in
                 ASSERT(!m_selectedItem);
                 m_selectedItem = index;
             }
-            m_paths.uncheckedAppend(GUniquePtr<GtkTreePath>(gtk_tree_model_get_path(GTK_TREE_MODEL(model.get()), &iter)));
+            m_paths.append(GUniquePtr<GtkTreePath>(gtk_tree_model_get_path(GTK_TREE_MODEL(model.get()), &iter)));
         }
         index++;
     }

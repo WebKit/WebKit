@@ -103,7 +103,9 @@ private:
             m_description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
             size_t numberOfFrames = m_description->sampleRate() * 2;
             auto& format = m_description->streamDescription();
-            auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, numberOfFrames);
+            auto result = ProducerSharedCARingBuffer::allocate(format, numberOfFrames);
+            RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+            auto [ringBuffer, handle] = WTFMove(*result);
             m_ringBuffer = WTFMove(ringBuffer);
             m_connection->send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::SetStorage(m_identifier, WTFMove(handle), format), 0);
         }

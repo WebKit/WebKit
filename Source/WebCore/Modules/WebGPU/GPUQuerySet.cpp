@@ -25,8 +25,15 @@
 
 #include "config.h"
 #include "GPUQuerySet.h"
+#include "GPUQuerySetDescriptor.h"
 
 namespace WebCore {
+
+GPUQuerySet::GPUQuerySet(Ref<WebGPU::QuerySet>&& backing, const GPUQuerySetDescriptor& descriptor)
+    : m_backing(WTFMove(backing))
+    , m_descriptor(descriptor)
+{
+}
 
 String GPUQuerySet::label() const
 {
@@ -41,6 +48,16 @@ void GPUQuerySet::setLabel(String&& label)
 void GPUQuerySet::destroy()
 {
     m_backing->destroy();
+}
+
+GPUQueryType GPUQuerySet::type() const
+{
+    return m_descriptor.type;
+}
+
+GPUSize32Out GPUQuerySet::count() const
+{
+    return m_descriptor.count;
 }
 
 }

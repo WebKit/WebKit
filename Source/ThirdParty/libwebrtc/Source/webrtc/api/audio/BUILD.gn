@@ -55,24 +55,6 @@ rtc_library("aec3_config") {
   ]
 }
 
-rtc_library("aec3_config_json") {
-  visibility = [ "*" ]
-  allow_poison = [ "rtc_json" ]
-  sources = [
-    "echo_canceller3_config_json.cc",
-    "echo_canceller3_config_json.h",
-  ]
-  deps = [
-    ":aec3_config",
-    "../../rtc_base:checks",
-    "../../rtc_base:logging",
-    "../../rtc_base:rtc_json",
-    "../../rtc_base:stringutils",
-    "../../rtc_base/system:rtc_export",
-  ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
-}
-
 rtc_library("aec3_factory") {
   visibility = [ "*" ]
   configs += [ "../../modules/audio_processing:apm_debug_dump" ]

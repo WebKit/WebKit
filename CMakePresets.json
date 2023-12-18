@@ -9,7 +9,6 @@
         {
             "name": "release",
             "hidden": true,
-            "binaryDir": "WebKitBuild/Release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": {
                     "type": "STRING",
@@ -20,7 +19,6 @@
         {
             "name": "debug",
             "hidden": true,
-            "binaryDir": "WebKitBuild/Debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": {
                     "type": "STRING",
@@ -60,22 +58,57 @@
         {
             "name": "gtk-release",
             "displayName": "GTK Release",
-            "inherits": ["gtk", "release"]
+            "inherits": ["gtk", "release"],
+            "binaryDir": "WebKitBuild/GTK/Release"
         },
         {
             "name": "gtk-debug",
             "displayName": "GTK Debug",
-            "inherits": ["gtk", "debug"]
+            "inherits": ["gtk", "debug"],
+            "binaryDir": "WebKitBuild/GTK/Debug"
         },
         {
             "name": "gtk-dev-release",
             "displayName": "GTK Development Release",
-            "inherits": ["gtk", "dev", "release"]
+            "inherits": ["gtk-release", "dev"]
         },
         {
             "name": "gtk-dev-debug",
             "displayName": "GTK Development Debug",
-            "inherits": ["gtk", "dev", "debug"]
+            "inherits": ["gtk-debug", "dev"]
+        },
+        {
+            "name": "wpe",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "WPE"
+                }
+            }
+        },
+        {
+            "name": "wpe-release",
+            "displayName": "WPE Release",
+            "inherits": ["wpe", "release"],
+            "binaryDir": "WebKitBuild/WPE/Release"
+        },
+        {
+            "name": "wpe-debug",
+            "displayName": "WPE Debug",
+            "inherits": ["wpe", "debug"],
+            "binaryDir": "WebKitBuild/WPE/Debug"
+        },
+        {
+            "name": "wpe-dev-release",
+            "displayName": "WPE Development Release",
+            "inherits": ["wpe-release", "dev"]
+        },
+        {
+            "name": "wpe-dev-debug",
+            "displayName": "WPE Development Debug",
+            "inherits": ["wpe-debug", "dev"]
         }
     ],
     "buildPresets": [
@@ -91,13 +124,33 @@
         },
         {
             "name": "gtk-dev-release",
-            "displayName": "GTK Dev Release",
+            "displayName": "GTK Development Release",
             "configurePreset": "gtk-dev-release"
         },
         {
             "name": "gtk-dev-debug",
-            "displayName": "GTK Dev Debug",
+            "displayName": "GTK Development Debug",
             "configurePreset": "gtk-dev-debug"
+        },
+        {
+            "name": "wpe-release",
+            "displayName": "WPE Release",
+            "configurePreset": "wpe-release"
+        },
+        {
+            "name": "wpe-debug",
+            "displayName": "WPE Debug",
+            "configurePreset": "wpe-debug"
+        },
+        {
+            "name": "wpe-dev-release",
+            "displayName": "WPE Development Release",
+            "configurePreset": "wpe-dev-release"
+        },
+        {
+            "name": "wpe-dev-debug",
+            "displayName": "WPE Development Debug",
+            "configurePreset": "wpe-dev-debug"
         }
     ]
 }

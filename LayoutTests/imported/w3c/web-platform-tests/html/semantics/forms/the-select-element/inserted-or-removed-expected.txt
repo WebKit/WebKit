@@ -4,4 +4,5 @@ PASS The last selected OPTION should win; Inserted by parser
 PASS The last selected OPTION should win; Inserted by DOM API
 PASS The last selected OPTION should win; Inserted by jQuery append()
 PASS The last selected OPTION should win; Inserted by innerHTML
+PASS If an OPTION says it is selected, it should be selected after it is inserted.
 

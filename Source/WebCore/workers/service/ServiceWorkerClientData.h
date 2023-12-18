@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "ProcessQualified.h"
@@ -67,5 +65,3 @@ struct ServiceWorkerClientData {
 using ServiceWorkerClientsMatchAllCallback = CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

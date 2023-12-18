@@ -73,4 +73,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyBase, isRubyBase())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyBase, isRenderRubyBase())

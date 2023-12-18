@@ -1,0 +1,6 @@
+
+PASS @keyframes is unaffected by @scope
+PASS @keyframes is unaffected by non-matching @scope
+PASS @property is unaffected by @scope
+PASS @property is unaffected by non-matching @scope
+

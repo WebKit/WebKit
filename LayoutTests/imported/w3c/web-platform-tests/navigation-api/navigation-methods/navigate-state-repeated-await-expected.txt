@@ -1,0 +1,3 @@
+
+FAIL navigate() with state should work correctly when called repeatedly - with awaits promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.getState')"
+

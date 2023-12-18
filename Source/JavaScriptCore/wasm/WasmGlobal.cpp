@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,11 @@
 #include "JSWebAssemblyRuntimeError.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Global);
 
 JSValue Global::get(JSGlobalObject* globalObject) const
 {
@@ -98,7 +101,10 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
         throwTypeError(globalObject, throwScope, "Cannot set value of v128 global"_s);
         return;
     }
-    default: {
+    case Wasm::TypeKind::Ref:
+    case Wasm::TypeKind::RefNull:
+    case Wasm::TypeKind::Externref:
+    case Wasm::TypeKind::Funcref: {
         if (isExternref(m_type)) {
             RELEASE_ASSERT(m_owner);
             if (!m_type.isNullable() && argument.isNull()) {
@@ -124,21 +130,27 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 }
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
-        } else if (isRefWithTypeIndex(m_type)) {
-            throwTypeError(globalObject, throwScope, "Unsupported use of struct or array type"_s);
-            return;
-        } else if (Wasm::isI31ref(m_type)) {
-            throwTypeError(globalObject, throwScope, "I31ref import from JS currently unsupported"_s);
-            return;
+        } else {
+            JSValue internref = Wasm::internalizeExternref(argument);
+            if (!Wasm::TypeInformation::castReference(internref, m_type.isNullable(), m_type.index)) {
+                // FIXME: provide a better error message here
+                // https://bugs.webkit.org/show_bug.cgi?id=247746
+                throwTypeError(globalObject, throwScope, "Argument value did not match reference type"_s);
+                return;
+            }
+            m_value.m_externref.set(m_owner->vm(), m_owner, internref);
         }
+        break;
     }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
     }
 }
 
 template<typename Visitor>
 void Global::visitAggregateImpl(Visitor& visitor)
 {
-    if (isFuncref(m_type) || isExternref(m_type)) {
+    if (isRefType(m_type)) {
         RELEASE_ASSERT(m_owner);
         visitor.append(m_value.m_externref);
     }

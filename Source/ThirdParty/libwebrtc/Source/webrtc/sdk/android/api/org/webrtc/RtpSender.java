@@ -12,6 +12,7 @@ package org.webrtc;
 
 import androidx.annotation.Nullable;
 import java.util.List;
+import org.webrtc.MediaStreamTrack;
 
 /** Java wrapper for a C++ RtpSenderInterface. */
 public class RtpSender {
@@ -27,8 +28,12 @@ public class RtpSender {
     long nativeTrack = nativeGetTrack(nativeRtpSender);
     cachedTrack = MediaStreamTrack.createMediaStreamTrack(nativeTrack);
 
-    long nativeDtmfSender = nativeGetDtmfSender(nativeRtpSender);
-    dtmfSender = (nativeDtmfSender != 0) ? new DtmfSender(nativeDtmfSender) : null;
+    if (nativeGetMediaType(nativeRtpSender).equalsIgnoreCase(MediaStreamTrack.AUDIO_TRACK_KIND)) {
+      long nativeDtmfSender = nativeGetDtmfSender(nativeRtpSender);
+      dtmfSender = (nativeDtmfSender != 0) ? new DtmfSender(nativeDtmfSender) : null;
+    } else {
+      dtmfSender = null;
+    }
   }
 
   /**
@@ -143,4 +148,6 @@ public class RtpSender {
   private static native String nativeGetId(long rtpSender);
 
   private static native void nativeSetFrameEncryptor(long rtpSender, long nativeFrameEncryptor);
+
+  private static native String nativeGetMediaType(long rtpSender);
 };

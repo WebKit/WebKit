@@ -59,14 +59,14 @@ namespace WebCore {
 class DragImageLoader final : private CachedImageClient {
     WTF_MAKE_NONCOPYABLE(DragImageLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit DragImageLoader(DataTransfer*);
+    explicit DragImageLoader(DataTransfer&);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
     void moveToDataTransfer(DataTransfer&);
 
 private:
     void imageChanged(CachedImage*, const IntRect*) override;
-    DataTransfer* m_dataTransfer;
+    WeakRef<DataTransfer> m_dataTransfer;
 };
 
 #endif
@@ -214,19 +214,19 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/html"_s) {
         if (!document.frame())
             return { };
-        WebContentMarkupReader reader { *document.frame() };
+        WebContentMarkupReader reader { document.protectedFrame().releaseNonNull() };
         m_pasteboard->read(reader, policy);
-        return reader.markup;
+        return reader.takeMarkup();
     }
 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
-        return readURLsFromPasteboardAsString(document.page(), *m_pasteboard, [] (auto&) {
+        return readURLsFromPasteboardAsString(document.protectedPage().get(), *m_pasteboard, [] (auto&) {
             return true;
         });
     }
 
     auto string = m_pasteboard->readString(lowercaseType);
-    if (auto* page = document.page())
+    if (RefPtr page = document.page())
         return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
 
     return string;
@@ -279,7 +279,7 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
         sanitizedData = data; // Nothing to sanitize.
 
     if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
-        if (auto* page = document.page())
+        if (RefPtr page = document.page())
             sanitizedData = page->applyLinkDecorationFiltering(sanitizedData, LinkDecorationFilteringTrigger::Copy);
     }
 
@@ -311,7 +311,7 @@ void DataTransfer::didAddFileToItemList()
 DataTransferItemList& DataTransfer::items(Document& document)
 {
     if (!m_itemList)
-        m_itemList = makeUnique<DataTransferItemList>(document, *this);
+        m_itemList = makeUniqueWithoutRefCountedCheck<DataTransferItemList>(document, *this);
     return *m_itemList;
 }
 
@@ -538,9 +538,9 @@ void DataTransfer::setDragImage(Element& element, int x, int y)
     if (!forDrag() || !canWriteData())
         return;
 
-    CachedImage* image = nullptr;
-    if (is<HTMLImageElement>(element) && !element.isConnected())
-        image = downcast<HTMLImageElement>(element).cachedImage();
+    CachedResourceHandle<CachedImage> image;
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element); imageElement && !imageElement->isConnected())
+        image = imageElement->cachedImage();
 
     m_dragLocation = IntPoint(x, y);
 
@@ -549,7 +549,7 @@ void DataTransfer::setDragImage(Element& element, int x, int y)
     m_dragImage = image;
     if (m_dragImage) {
         if (!m_dragImageLoader)
-            m_dragImageLoader = makeUnique<DragImageLoader>(this);
+            m_dragImageLoader = makeUnique<DragImageLoader>(*this);
         m_dragImageLoader->startLoading(m_dragImage);
     }
 
@@ -585,11 +585,11 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
     location = m_dragLocation;
 
     if (m_dragImage)
-        return createDragImageFromImage(m_dragImage->image(), ImageOrientation::Orientation::None);
+        return createDragImageFromImage(m_dragImage->protectedImage().get(), ImageOrientation::Orientation::None);
 
     if (m_dragImageElement) {
-        if (auto* frame = m_dragImageElement->document().frame())
-            return createDragImageForNode(*frame, *m_dragImageElement);
+        if (RefPtr frame = m_dragImageElement->document().frame())
+            return createDragImageForNode(*frame, dragImageElement().releaseNonNull());
     }
 
     // We do not have enough information to create a drag image, use the default icon.
@@ -598,14 +598,14 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
 
 #endif
 
-DragImageLoader::DragImageLoader(DataTransfer* dataTransfer)
+DragImageLoader::DragImageLoader(DataTransfer& dataTransfer)
     : m_dataTransfer(dataTransfer)
 {
 }
 
 void DragImageLoader::moveToDataTransfer(DataTransfer& newDataTransfer)
 {
-    m_dataTransfer = &newDataTransfer;
+    m_dataTransfer = newDataTransfer;
 }
 
 void DragImageLoader::startLoading(CachedResourceHandle<WebCore::CachedImage>& image)

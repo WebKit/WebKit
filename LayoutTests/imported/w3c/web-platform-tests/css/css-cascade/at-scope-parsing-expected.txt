@@ -1,0 +1,38 @@
+
+PASS @scope (.a) is valid
+PASS @scope (.a + .b) is valid
+PASS @scope (.a:hover) is valid
+PASS @scope (.a:hover, #b, div) is valid
+PASS @scope (:is(div, span)) is valid
+PASS @scope (.a) to (.b) is valid
+PASS @scope (.a)to (.b) is valid
+PASS @scope (.a) to (.b:hover, #c, div) is valid
+PASS @scope is valid
+PASS @scope to (.a) is valid
+PASS @scope (.a) to (&) is valid
+PASS @scope (.a) to (& > &) is valid
+PASS @scope (.a) to (> .b) is valid
+PASS @scope (.a) to (+ .b) is valid
+PASS @scope (.a) to (~ .b) is valid
+PASS @scope (.c <> .d) is valid
+PASS @scope (.a, .c <> .d) is valid
+PASS @scope (.a <> .b, .c) is valid
+PASS @scope (div::before) is valid
+PASS @scope (div::after) is valid
+PASS @scope (slotted(div)) is valid
+PASS @scope (.a) to (div::before) is valid
+PASS @scope (> &) to (>>) is valid
+PASS @scope div is not valid
+PASS @scope (.a) unknown (.c) is not valid
+PASS @scope (.a) to unknown (.c) is not valid
+PASS @scope (.a) 1px (.c) is not valid
+PASS @scope (.a) to unknown(c) is not valid
+PASS @scope unknown(.a) is not valid
+PASS @scope 1px is not valid
+PASS @scope creep is not valid
+PASS @scope ))) is not valid
+PASS @scope ( is not valid
+PASS @scope ( {} is not valid
+PASS @scope to is not valid
+PASS @scope } is not valid
+

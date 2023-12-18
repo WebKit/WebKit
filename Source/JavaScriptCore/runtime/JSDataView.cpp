@@ -55,7 +55,7 @@ JSDataView* JSDataView::create(
 
     ASSERT(byteLength || buffer->isResizableOrGrowableShared());
 
-    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, byteLength.value_or(0), sizeof(uint8_t))) {
+    if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, byteLength.value_or(0), sizeof(uint8_t))) {
         throwRangeError(globalObject, scope, "Length out of range of buffer"_s);
         return nullptr;
     }

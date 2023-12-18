@@ -75,8 +75,8 @@ void NetworkContentRuleListManager::addContentRuleLists(UserContentControllerIde
     for (auto&& pair : contentRuleLists) {
         auto&& contentRuleList = WTFMove(pair.first);
         String identifier = contentRuleList.identifier;
-        auto compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleList));
-        backend.addContentExtension(identifier, WTFMove(compiledContentRuleList), WTFMove(pair.second), ContentExtensions::ContentExtension::ShouldCompileCSS::No);
+        if (RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleList)))
+            backend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), WTFMove(pair.second), ContentExtensions::ContentExtension::ShouldCompileCSS::No);
     }
 
     auto pendingCallbacks = m_pendingCallbacks.take(identifier);

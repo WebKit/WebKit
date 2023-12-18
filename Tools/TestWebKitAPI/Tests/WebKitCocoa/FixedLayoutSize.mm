@@ -37,7 +37,7 @@
 TEST(WebKit, OverrideMinimumLayoutSizeWithNegativeHeight)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(320, -1000) maximumUnobscuredSizeOverride:CGSizeMake(0, 0)];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(320, -1000) minimumUnobscuredSizeOverride:CGSizeZero maximumUnobscuredSizeOverride:CGSizeZero];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><body>Hello</body>"];
     EXPECT_GE([webView _fixedLayoutSize].height, 0);
 }

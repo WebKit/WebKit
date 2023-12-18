@@ -103,7 +103,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:@(self.frameID) forKey:@"frameID"];
+    [coder encodeObject:@(_frameHandle->frameID().object().toUInt64()) forKey:@"frameID"];
     [coder encodeObject:@(_frameHandle->frameID().processIdentifier().toUInt64()) forKey:@"processID"];
 }
 

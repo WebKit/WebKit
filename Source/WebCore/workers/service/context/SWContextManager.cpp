@@ -26,11 +26,11 @@
 #include "config.h"
 #include "SWContextManager.h"
 
-#if ENABLE(SERVICE_WORKER)
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
 #include "NotificationPayload.h"
+#include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
 #include <wtf/WTFProcess.h>
 
@@ -282,6 +282,59 @@ void SWContextManager::setInspectable(bool inspectable)
         serviceWorker->setInspectable(inspectable);
 }
 
-} // namespace WebCore
 
-#endif
+void SWContextManager::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
+{
+    forEachServiceWorker([identifier, state, &serviceWorkerData] {
+        return [identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)] (auto& context) mutable {
+            if (auto* container = context.serviceWorkerContainer())
+                container->updateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
+        };
+    });
+}
+
+void SWContextManager::updateWorkerState(ServiceWorkerIdentifier identifier, ServiceWorkerState state)
+{
+    forEachServiceWorker([identifier, state] {
+        return [identifier, state] (auto& context) {
+            if (auto* container = context.serviceWorkerContainer())
+                container->updateWorkerState(identifier, state);
+        };
+    });
+}
+
+void SWContextManager::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
+{
+    forEachServiceWorker([identifier] {
+        return [identifier] (auto& context) {
+            if (auto* container = context.serviceWorkerContainer())
+                container->queueTaskToFireUpdateFoundEvent(identifier);
+        };
+    });
+}
+
+void SWContextManager::setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
+{
+    forEachServiceWorker([identifier, lastUpdateTime] {
+        return [identifier, lastUpdateTime] (auto& context) {
+            if (auto* container = context.serviceWorkerContainer()) {
+                if (auto* registration = container->registration(identifier))
+                    registration->setLastUpdateTime(lastUpdateTime);
+            }
+        };
+    });
+}
+
+void SWContextManager::setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerUpdateViaCache updateViaCache)
+{
+    forEachServiceWorker([identifier, updateViaCache] {
+        return [identifier, updateViaCache] (auto& context) {
+            if (auto* container = context.serviceWorkerContainer()) {
+                if (auto* registration = container->registration(identifier))
+                    registration->setUpdateViaCache(updateViaCache);
+            }
+        };
+    });
+}
+
+} // namespace WebCore

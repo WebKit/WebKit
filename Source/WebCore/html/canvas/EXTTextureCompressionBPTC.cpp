@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureCompressionBPTC);
 
 EXTTextureCompressionBPTC::EXTTextureCompressionBPTC(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTTextureCompressionBPTC)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_compression_bptc"_s);
 

@@ -89,8 +89,11 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -98,7 +101,9 @@
 
 #include "absl/base/attributes.h"
 #include "absl/base/port.h"
-#include "absl/strings/internal/has_absl_stringify.h"
+#include "absl/meta/type_traits.h"
+#include "absl/strings/has_absl_stringify.h"
+#include "absl/strings/internal/resize_uninitialized.h"
 #include "absl/strings/internal/stringify_sink.h"
 #include "absl/strings/numbers.h"
 #include "absl/strings/string_view.h"
@@ -352,7 +357,7 @@ class AlphaNum {
       : piece_(pc) {}
 
   template <typename T, typename = typename std::enable_if<
-                            strings_internal::HasAbslStringify<T>::value>::type>
+                            HasAbslStringify<T>::value>::type>
   AlphaNum(  // NOLINT(runtime/explicit)
       const T& v ABSL_ATTRIBUTE_LIFETIME_BOUND,
       strings_internal::StringifySink&& sink ABSL_ATTRIBUTE_LIFETIME_BOUND = {})
@@ -374,14 +379,24 @@ class AlphaNum {
   const char* data() const { return piece_.data(); }
   absl::string_view Piece() const { return piece_; }
 
-  // Normal enums are already handled by the integer formatters.
-  // This overload matches only scoped enums.
+  // Match unscoped enums.  Use integral promotion so that a `char`-backed
+  // enum becomes a wider integral type AlphaNum will accept.
   template <typename T,
             typename = typename std::enable_if<
-                std::is_enum<T>{} && !std::is_convertible<T, int>{} &&
-                !strings_internal::HasAbslStringify<T>::value>::type>
+                std::is_enum<T>{} && std::is_convertible<T, int>{} &&
+                !HasAbslStringify<T>::value>::type>
   AlphaNum(T e)  // NOLINT(runtime/explicit)
-      : AlphaNum(static_cast<typename std::underlying_type<T>::type>(e)) {}
+      : AlphaNum(+e) {}
+
+  // This overload matches scoped enums.  We must explicitly cast to the
+  // underlying type, but use integral promotion for the same reason as above.
+  template <typename T,
+            typename std::enable_if<std::is_enum<T>{} &&
+                                        !std::is_convertible<T, int>{} &&
+                                        !HasAbslStringify<T>::value,
+                                    char*>::type = nullptr>
+  AlphaNum(T e)  // NOLINT(runtime/explicit)
+      : AlphaNum(+static_cast<typename std::underlying_type<T>::type>(e)) {}
 
   // vector<bool>::reference and const_reference require special help to
   // convert to `AlphaNum` because it requires two user defined conversions.
@@ -434,10 +449,86 @@ std::string CatPieces(std::initializer_list<absl::string_view> pieces);
 void AppendPieces(std::string* dest,
                   std::initializer_list<absl::string_view> pieces);
 
+template <typename Integer>
+std::string IntegerToString(Integer i) {
+  // Any integer (signed/unsigned) up to 64 bits can be formatted into a buffer
+  // with 22 bytes (including NULL at the end).
+  constexpr size_t kMaxDigits10 = 22;
+  std::string result;
+  strings_internal::STLStringResizeUninitialized(&result, kMaxDigits10);
+  char* start = &result[0];
+  // note: this can be optimized to not write last zero.
+  char* end = numbers_internal::FastIntToBuffer(i, start);
+  auto size = static_cast<size_t>(end - start);
+  assert((size < result.size()) &&
+         "StrCat(Integer) does not fit into kMaxDigits10");
+  result.erase(size);
+  return result;
+}
+template <typename Float>
+std::string FloatToString(Float f) {
+  std::string result;
+  strings_internal::STLStringResizeUninitialized(
+      &result, numbers_internal::kSixDigitsToBufferSize);
+  char* start = &result[0];
+  result.erase(numbers_internal::SixDigitsToBuffer(f, start));
+  return result;
+}
+
+// `SingleArgStrCat` overloads take built-in `int`, `long` and `long long` types
+// (signed / unsigned) to avoid ambiguity on the call side. If we used int32_t
+// and int64_t, then at least one of the three (`int` / `long` / `long long`)
+// would have been ambiguous when passed to `SingleArgStrCat`.
+inline std::string SingleArgStrCat(int x) { return IntegerToString(x); }
+inline std::string SingleArgStrCat(unsigned int x) {
+  return IntegerToString(x);
+}
+// NOLINTNEXTLINE
+inline std::string SingleArgStrCat(long x) { return IntegerToString(x); }
+// NOLINTNEXTLINE
+inline std::string SingleArgStrCat(unsigned long x) {
+  return IntegerToString(x);
+}
+// NOLINTNEXTLINE
+inline std::string SingleArgStrCat(long long x) { return IntegerToString(x); }
+// NOLINTNEXTLINE
+inline std::string SingleArgStrCat(unsigned long long x) {
+  return IntegerToString(x);
+}
+inline std::string SingleArgStrCat(float x) { return FloatToString(x); }
+inline std::string SingleArgStrCat(double x) { return FloatToString(x); }
+
+// As of September 2023, the SingleArgStrCat() optimization is only enabled for
+// libc++. The reasons for this are:
+// 1) The SSO size for libc++ is 23, while libstdc++ and MSSTL have an SSO size
+// of 15. Since IntegerToString unconditionally resizes the string to 22 bytes,
+// this causes both libstdc++ and MSSTL to allocate.
+// 2) strings_internal::STLStringResizeUninitialized() only has an
+// implementation that avoids initialization when using libc++. This isn't as
+// relevant as (1), and the cost should be benchmarked if (1) ever changes on
+// libstc++ or MSSTL.
+#ifdef _LIBCPP_VERSION
+#define ABSL_INTERNAL_STRCAT_ENABLE_FAST_CASE true
+#else
+#define ABSL_INTERNAL_STRCAT_ENABLE_FAST_CASE false
+#endif
+
+template <typename T, typename = std::enable_if_t<
+                          ABSL_INTERNAL_STRCAT_ENABLE_FAST_CASE &&
+                          std::is_arithmetic<T>{} && !std::is_same<T, char>{}>>
+using EnableIfFastCase = T;
+
+#undef ABSL_INTERNAL_STRCAT_ENABLE_FAST_CASE
+
 }  // namespace strings_internal
 
 ABSL_MUST_USE_RESULT inline std::string StrCat() { return std::string(); }
 
+template <typename T>
+ABSL_MUST_USE_RESULT inline std::string StrCat(
+    strings_internal::EnableIfFastCase<T> a) {
+  return strings_internal::SingleArgStrCat(a);
+}
 ABSL_MUST_USE_RESULT inline std::string StrCat(const AlphaNum& a) {
   return std::string(a.data(), a.size());
 }

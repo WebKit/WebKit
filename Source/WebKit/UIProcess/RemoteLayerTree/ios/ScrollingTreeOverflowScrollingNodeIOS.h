@@ -29,7 +29,7 @@
 
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
 
-OBJC_CLASS UIScrollView;
+OBJC_CLASS WKBaseScrollView;
 
 namespace WebKit {
 
@@ -40,7 +40,7 @@ public:
     static Ref<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
 
-    UIScrollView* scrollView() const;
+    WKBaseScrollView *scrollView() const;
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);

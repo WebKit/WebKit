@@ -26,12 +26,11 @@
 #include "config.h"
 #include "Frame.h"
 
-#include "DocumentInlines.h"
 #include "HTMLFrameOwnerElement.h"
-#include "LocalFrame.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
+#include "RenderElement.h"
 #include "WindowProxy.h"
 
 namespace WebCore {
@@ -67,27 +66,8 @@ std::optional<PageIdentifier> Frame::pageID() const
     return std::nullopt;
 }
 
-bool Frame::isRootFrame() const
-{
-    // A root frame is a local frame with a remote frame parent or no parent.
-    // It is the root of its local frame tree in this process but might have
-    // a parent in another process.
-    switch (m_frameType) {
-    case FrameType::Local:
-        if (auto* parent = tree().parent())
-            return is<RemoteFrame>(parent);
-        ASSERT(&m_mainFrame == this);
-        return true;
-    case FrameType::Remote:
-        break;
-    }
-    return false;
-}
-
 void Frame::resetWindowProxy()
 {
-    ASSERT(m_windowProxy->frame() == this);
-    m_windowProxy->detachFromFrame();
     m_windowProxy = WindowProxy::create(*this);
 }
 
@@ -103,9 +83,7 @@ void Frame::disconnectOwnerElement()
         m_ownerElement = nullptr;
     }
 
-    // FIXME: This is a layering violation. Move this code so Frame doesn't do anything with its Document.
-    if (auto* document = is<LocalFrame>(*this) ? downcast<LocalFrame>(*this).document() : nullptr)
-        document->frameWasDisconnectedFromOwner();
+    frameWasDisconnectedFromOwner();
 }
 
 void Frame::takeWindowProxyFrom(Frame& frame)
@@ -113,7 +91,38 @@ void Frame::takeWindowProxyFrom(Frame& frame)
     ASSERT(m_windowProxy->frame() == this);
     m_windowProxy->detachFromFrame();
     m_windowProxy = frame.windowProxy();
+    frame.resetWindowProxy();
     m_windowProxy->replaceFrame(*this);
+}
+
+Ref<WindowProxy> Frame::protectedWindowProxy() const
+{
+    return m_windowProxy;
+}
+
+CheckedRef<NavigationScheduler> Frame::checkedNavigationScheduler() const
+{
+    return m_navigationScheduler.get();
+}
+
+RenderWidget* Frame::ownerRenderer() const
+{
+    RefPtr ownerElement = this->ownerElement();
+    if (!ownerElement)
+        return nullptr;
+    auto* object = ownerElement->renderer();
+    // FIXME: If <object> is ever fixed to disassociate itself from frames
+    // that it has started but canceled, then this can turn into an ASSERT
+    // since ownerElement would be nullptr when the load is canceled.
+    // https://bugs.webkit.org/show_bug.cgi?id=18585
+    if (!is<RenderWidget>(object))
+        return nullptr;
+    return downcast<RenderWidget>(object);
+}
+
+bool Frame::arePluginsEnabled()
+{
+    return settings().arePluginsEnabled();
 }
 
 } // namespace WebCore

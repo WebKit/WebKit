@@ -1,0 +1,38 @@
+<!doctype html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>Test that sending invalid messages via the IPC testing StreamConnectoin API doesn't kill the receiver</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+const defaultTimeout = 1000;
+const bufferSizeLog2 = 9;
+const streamTesterID = 447;
+
+promise_test(async t => {
+    if (!window.IPC)
+        return;
+
+    for (const processTarget of IPC.processTargets) {
+        const [streamConnection, serverConnectionHandle] = IPC.createStreamClientConnection(bufferSizeLog2);
+        streamConnection.open();
+        IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateStreamTester.name, [
+            { type: 'uint64_t', value: streamTesterID },
+            { type: 'StreamServerConnectionHandle', value: serverConnectionHandle },
+        ]);
+        const arguments = streamConnection.waitForMessage(streamTesterID, IPC.messages.IPCStreamTesterProxy_WasCreated.name, defaultTimeout);
+        streamConnection.setSemaphores(arguments[0].value, arguments[1].value);
+
+        // Test starts here.
+        try {
+            assert_throws_js(TypeError,
+            () => { streamConnection.sendSyncMessage(streamTesterID, IPC.messages.IPCStreamTester_SyncMessageEmptyReply.name, defaultTimeout, [  ]) },
+            `failed sync message must throw error`);
+        } finally {
+            IPC.sendSyncMessage(processTarget, 0, IPC.messages.IPCTester_ReleaseStreamTester.name, defaultTimeout, [{ type: 'uint64_t', value: streamTesterID }]);
+            streamConnection.invalidate();
+        }
+    }
+
+}, "Sending sync stream message with incorrect parameters shouldn't crash when IPCTestingAPI is enabled");
+
+</script>

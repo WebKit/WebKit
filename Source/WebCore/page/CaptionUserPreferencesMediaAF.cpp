@@ -132,7 +132,7 @@ CaptionUserPreferencesMediaAF::CaptionUserPreferencesMediaAF(PageGroup& group)
             return;
 
         beginBlockingNotifications();
-        CaptionUserPreferences::setCaptionDisplayMode(Manual);
+        CaptionUserPreferences::setCaptionDisplayMode(CaptionDisplayMode::Manual);
         setUserPrefersCaptions(false);
         setUserPrefersSubtitles(false);
         setUserPrefersTextDescriptions(false);
@@ -158,7 +158,7 @@ CaptionUserPreferencesMediaAF::~CaptionUserPreferencesMediaAF()
 CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::captionDisplayMode() const
 {
     CaptionDisplayMode internalMode = CaptionUserPreferences::captionDisplayMode();
-    if (internalMode == Manual || testingMode() || !MediaAccessibilityLibrary())
+    if (internalMode == CaptionDisplayMode::Manual || testingMode() || !MediaAccessibilityLibrary())
         return internalMode;
 
     if (cachedCaptionDisplayMode().has_value())
@@ -171,13 +171,13 @@ void CaptionUserPreferencesMediaAF::platformSetCaptionDisplayMode(CaptionDisplay
 {
     MACaptionAppearanceDisplayType displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
     switch (mode) {
-    case Automatic:
+    case CaptionDisplayMode::Automatic:
         displayType = kMACaptionAppearanceDisplayTypeAutomatic;
         break;
-    case ForcedOnly:
+    case CaptionDisplayMode::ForcedOnly:
         displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
         break;
-    case AlwaysOn:
+    case CaptionDisplayMode::AlwaysOn:
         displayType = kMACaptionAppearanceDisplayTypeAlwaysOn;
         break;
     default:
@@ -195,7 +195,7 @@ void CaptionUserPreferencesMediaAF::setCaptionDisplayMode(CaptionUserPreferences
         return;
     }
 
-    if (captionDisplayMode() == Manual)
+    if (captionDisplayMode() == CaptionDisplayMode::Manual)
         return;
 
     if (captionPreferencesDelegate()) {
@@ -211,17 +211,17 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMediaAF::platfo
     MACaptionAppearanceDisplayType displayType = MACaptionAppearanceGetDisplayType(kMACaptionAppearanceDomainUser);
     switch (displayType) {
     case kMACaptionAppearanceDisplayTypeForcedOnly:
-        return ForcedOnly;
+        return CaptionDisplayMode::ForcedOnly;
 
     case kMACaptionAppearanceDisplayTypeAutomatic:
-        return Automatic;
+        return CaptionDisplayMode::Automatic;
 
     case kMACaptionAppearanceDisplayTypeAlwaysOn:
-        return AlwaysOn;
+        return CaptionDisplayMode::AlwaysOn;
     }
 
     ASSERT_NOT_REACHED();
-    return ForcedOnly;
+    return CaptionDisplayMode::ForcedOnly;
 }
 
 void CaptionUserPreferencesMediaAF::setCachedCaptionDisplayMode(CaptionDisplayMode captionDisplayMode)
@@ -505,7 +505,7 @@ void CaptionUserPreferencesMediaAF::platformSetPreferredLanguage(const String& l
 
 void CaptionUserPreferencesMediaAF::setPreferredLanguage(const String& language)
 {
-    if (CaptionUserPreferences::captionDisplayMode() == Manual)
+    if (CaptionUserPreferences::captionDisplayMode() == CaptionDisplayMode::Manual)
         return;
 
     if (testingMode() || !MediaAccessibilityLibrary()) {
@@ -848,7 +848,7 @@ Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(
 
         String language = displayNameForLanguageLocale(track->validBCP47Language());
 
-        if (displayMode == Manual) {
+        if (displayMode == CaptionDisplayMode::Manual) {
             LOG(Media, "CaptionUserPreferencesMediaAF::sortedTrackListForMenu - adding '%s' track with language '%s' because selection mode is 'manual'", track->kindKeyword().string().utf8().data(), language.utf8().data());
             tracksForMenu.append(track);
             continue;

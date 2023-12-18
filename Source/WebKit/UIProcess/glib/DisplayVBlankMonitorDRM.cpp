@@ -30,7 +30,10 @@
 
 #include "Logging.h"
 #include <WebCore/PlatformDisplay.h>
+#include <chrono>
+#include <errno.h>
 #include <fcntl.h>
+#include <thread>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <xf86drm.h>
@@ -40,6 +43,10 @@
 #include "ScreenManager.h"
 #include <WebCore/PlatformScreen.h>
 #include <gtk/gtk.h>
+#endif
+
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
 #endif
 
 namespace WebKit {
@@ -159,7 +166,15 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDisplayID displayID)
 {
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    String filename;
+    if (g_type_class_peek(WPE_TYPE_DISPLAY))
+        filename = String::fromUTF8(wpe_render_device());
+    else
+        filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
+#else
     auto filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
+#endif
     if (filename.isEmpty()) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
         return nullptr;
@@ -212,7 +227,19 @@ bool DisplayVBlankMonitorDRM::waitForVBlank() const
     vblank.request.type = static_cast<drmVBlankSeqType>(DRM_VBLANK_RELATIVE | m_crtcBitmask);
     vblank.request.sequence = 1;
     vblank.request.signal = 0;
-    return !drmWaitVBlank(m_fd.value(), &vblank);
+    auto ret = drmWaitVBlank(m_fd.value(), &vblank);
+    if (ret == -EPERM) {
+        // This can happen when the monitor is suspended and the web view hasn't noticed it.
+        // The display link should be stopped in those cases, but since it isn't, we can at
+        // least sleep for a while pretending the monitor is on.
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        return true;
+    }
+    if (ret) {
+        drmError(ret, "DisplayVBlankMonitorDRM");
+        return false;
+    }
+    return true;
 }
 
 } // namespace WebKit

@@ -301,7 +301,7 @@ void ExtractStats(const cricket::VideoReceiverInfo& info,
                   bool use_standard_bytes_stats) {
   ExtractCommonReceiveProperties(info, report);
   report->AddString(StatsReport::kStatsValueNameCodecImplementationName,
-                    info.decoder_implementation_name);
+                    info.decoder_implementation_name.value_or("unknown"));
   int64_t bytes_received = info.payload_bytes_received;
   if (!use_standard_bytes_stats) {
     bytes_received += info.header_and_padding_bytes_received;
@@ -366,7 +366,7 @@ void ExtractStats(const cricket::VideoSenderInfo& info,
   ExtractCommonSendProperties(info, report, use_standard_bytes_stats);
 
   report->AddString(StatsReport::kStatsValueNameCodecImplementationName,
-                    info.encoder_implementation_name);
+                    info.encoder_implementation_name.value_or("unknown"));
   report->AddBoolean(StatsReport::kStatsValueNameBandwidthLimitedResolution,
                      (info.adapt_reason & 0x2) > 0);
   report->AddBoolean(StatsReport::kStatsValueNameCpuLimitedResolution,

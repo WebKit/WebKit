@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 print "Cache-Control: no-store\n";
 

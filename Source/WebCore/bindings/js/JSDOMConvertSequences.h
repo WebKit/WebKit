@@ -95,9 +95,9 @@ struct NumericSequenceConverter {
                 auto indexValue = array->butterfly()->contiguousInt32().at(array, i).get();
                 ASSERT(!indexValue || indexValue.isInt32());
                 if (!indexValue)
-                    result.uncheckedAppend(0);
+                    result.append(0);
                 else
-                    result.uncheckedAppend(indexValue.asInt32());
+                    result.append(indexValue.asInt32());
             }
             return WTFMove(result);
         }
@@ -107,12 +107,12 @@ struct NumericSequenceConverter {
         for (unsigned i = 0; i < length; i++) {
             double doubleValue = array->butterfly()->contiguousDouble().at(array, i);
             if (std::isnan(doubleValue))
-                result.uncheckedAppend(0);
+                result.append(0);
             else {
                 auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, scope, doubleValue);
                 RETURN_IF_EXCEPTION(scope, { });
 
-                result.uncheckedAppend(convertedValue);
+                result.append(convertedValue);
             }
         }
         return WTFMove(result);
@@ -220,7 +220,7 @@ struct SequenceConverter {
                 auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, indexValue);
                 RETURN_IF_EXCEPTION(scope, { });
 
-                result.uncheckedAppend(convertedValue);
+                result.append(convertedValue);
             }
             return result;
         }
@@ -235,7 +235,7 @@ struct SequenceConverter {
             auto convertedValue = Converter<IDLType>::convert(lexicalGlobalObject, indexValue);
             RETURN_IF_EXCEPTION(scope, { });
             
-            result.uncheckedAppend(convertedValue);
+            result.append(convertedValue);
         }
         return result;
     }

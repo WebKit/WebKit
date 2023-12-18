@@ -54,7 +54,7 @@ def _FindAapt():
 
 
 def _RemovePrefix(str, prefix):
-    assert str.startswith(prefix)
+    assert str.startswith(prefix), 'Expected prefix %s, got: %s' % (prefix, str)
     return str[len(prefix):]
 
 
@@ -270,11 +270,23 @@ def _CompareHashes(local_path, device_path):
     return _LocalFileHash(local_path, gz_tail_size) == device_hash
 
 
-def _PrepareTestSuite(suite_name):
-    apk_path = _ApkPath(suite_name)
+def _CheckSameApkInstalled(apk_path):
     device_apk_path = _GetDeviceApkPath()
 
-    if device_apk_path and _CompareHashes(apk_path, device_apk_path):
+    try:
+        if device_apk_path and _CompareHashes(apk_path, device_apk_path):
+            return True
+    except subprocess.CalledProcessError as e:
+        # non-debuggable test apk installed on device breaks run-as
+        logging.warning('_CompareHashes of apk failed: %s' % e)
+
+    return False
+
+
+def _PrepareTestSuite(suite_name):
+    apk_path = _ApkPath(suite_name)
+
+    if _CheckSameApkInstalled(apk_path):
         logging.info('Skipping APK install because host and device hashes match')
     else:
         logging.info('Installing apk path=%s size=%s' % (apk_path, os.path.getsize(apk_path)))
@@ -412,6 +424,31 @@ def _TempLocalFile():
         os.remove(path)
 
 
+def _SetCaptureProps(env, device_out_dir):
+    capture_var_map = {  # src/libANGLE/capture/FrameCapture.cpp
+        'ANGLE_CAPTURE_ENABLED': 'debug.angle.capture.enabled',
+        'ANGLE_CAPTURE_FRAME_START': 'debug.angle.capture.frame_start',
+        'ANGLE_CAPTURE_FRAME_END': 'debug.angle.capture.frame_end',
+        'ANGLE_CAPTURE_TRIGGER': 'debug.angle.capture.trigger',
+        'ANGLE_CAPTURE_LABEL': 'debug.angle.capture.label',
+        'ANGLE_CAPTURE_COMPRESSION': 'debug.angle.capture.compression',
+        'ANGLE_CAPTURE_VALIDATION': 'debug.angle.capture.validation',
+        'ANGLE_CAPTURE_VALIDATION_EXPR': 'debug.angle.capture.validation_expr',
+        'ANGLE_CAPTURE_SOURCE_EXT': 'debug.angle.capture.source_ext',
+        'ANGLE_CAPTURE_SOURCE_SIZE': 'debug.angle.capture.source_size',
+        'ANGLE_CAPTURE_FORCE_SHADOW': 'debug.angle.capture.force_shadow',
+    }
+    empty_value = '""'
+    shell_cmds = [
+        # out_dir is special because the corresponding env var is a host path not a device path
+        'setprop debug.angle.capture.out_dir ' + (device_out_dir or empty_value),
+    ] + [
+        'setprop %s %s' % (v, env.get(k, empty_value)) for k, v in sorted(capture_var_map.items())
+    ]
+
+    _AdbShell('\n'.join(shell_cmds))
+
+
 def _RunInstrumentation(flags):
     assert TEST_PACKAGE_NAME == 'com.android.angle.test'  # inlined below for readability
 
@@ -427,7 +464,18 @@ am instrument -w \
         '''.format(
             out=temp_device_file, flags=r' '.join(flags)).strip()
 
-        _AdbShell(cmd)
+        capture_out_dir = os.environ.get('ANGLE_CAPTURE_OUT_DIR')
+        if capture_out_dir:
+            assert os.path.isdir(capture_out_dir)
+            with _TempDeviceDir() as device_out_dir:
+                _SetCaptureProps(os.environ, device_out_dir)
+                try:
+                    _AdbShell(cmd)
+                finally:
+                    _SetCaptureProps({}, None)  # reset
+                _PullDir(device_out_dir, capture_out_dir)
+        else:
+            _AdbShell(cmd)
         return _ReadDeviceFile(temp_device_file)
 
 

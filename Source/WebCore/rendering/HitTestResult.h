@@ -64,7 +64,7 @@ public:
     void setURLElement(Element*);
     Element* URLElement() const { return m_innerURLElement.get(); }
 
-    void setScrollbar(Scrollbar*);
+    void setScrollbar(RefPtr<Scrollbar>&&);
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
     bool isOverWidget() const { return m_isOverWidget; }
@@ -92,6 +92,7 @@ public:
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
+    WEBCORE_EXPORT LocalFrame* frame() const;
     WEBCORE_EXPORT LocalFrame* targetFrame() const;
     WEBCORE_EXPORT bool isSelected() const;
     WEBCORE_EXPORT String selectedText() const;

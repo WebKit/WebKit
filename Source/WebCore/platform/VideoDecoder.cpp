@@ -70,13 +70,17 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config& con
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
+    if (codecName.startsWith("vp09.02"_s)) {
+        LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::VP9_P2, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        return;
+    }
     if (codecName.startsWith("av01."_s)) {
         LibWebRTCVPXVideoDecoder::create(LibWebRTCVPXVideoDecoder::Type::AV1, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
         return;
     }
 #elif USE(GSTREAMER)
-    if (GStreamerVideoDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback)))
-        return;
+    GStreamerVideoDecoder::create(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+    return;
 #else
     UNUSED_PARAM(codecName);
     UNUSED_PARAM(config);

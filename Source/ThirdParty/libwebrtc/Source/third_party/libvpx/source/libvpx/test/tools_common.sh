@@ -133,7 +133,7 @@ vpx_config_option_enabled() {
   vpx_config_option="${1}"
   vpx_config_file="${LIBVPX_CONFIG_PATH}/vpx_config.h"
   config_line=$(grep "${vpx_config_option}" "${vpx_config_file}")
-  if echo "${config_line}" | egrep -q '1$'; then
+  if echo "${config_line}" | grep -E -q '1$'; then
     echo yes
   fi
 }
@@ -222,7 +222,7 @@ filter_strings() {
 
   if [ -n "${filter}" ]; then
     for s in ${strings}; do
-      if echo "${s}" | egrep -q ${exclude} "${filter}" > /dev/null 2>&1; then
+      if echo "${s}" | grep -E -q ${exclude} "${filter}" > /dev/null 2>&1; then
         filtered_strings="${filtered_strings} ${s}"
       fi
     done

@@ -29,6 +29,7 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelector.h"
+#include "CSSSelectorParser.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComputedStyleExtractor.h"
@@ -55,7 +56,7 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool 
         name = name.substring(1);
     if (name.startsWith(':'))
         name = name.substring(1);
-    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name));
+    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name, CSSSelectorParserContext { element.document() }));
 }
 
 CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;
@@ -72,7 +73,7 @@ String CSSComputedStyleDeclaration::cssText() const
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 // In CSS 2.1 the returned object should actually contain the "used values"
@@ -219,12 +220,12 @@ bool CSSComputedStyleDeclaration::isPropertyImplicit(const String&)
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setProperty(const String&, const String&, const String&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 ExceptionOr<String> CSSComputedStyleDeclaration::removeProperty(const String&)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
     
 String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
@@ -234,7 +235,7 @@ String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID prope
 
 ExceptionOr<void> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool)
 {
-    return Exception { NoModificationAllowedError };
+    return Exception { ExceptionCode::NoModificationAllowedError };
 }
 
 } // namespace WebCore

@@ -30,22 +30,15 @@
 #include "XRDeviceIdentifier.h"
 #include <WebCore/PlatformXR.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 struct XRDeviceInfo {
     XRDeviceIdentifier identifier;
     bool supportsOrientationTracking { false };
     bool supportsStereoRendering { false };
-    PlatformXR::Device::FeatureList features;
+    PlatformXR::Device::FeatureList vrFeatures;
+    PlatformXR::Device::FeatureList arFeatures;
     WebCore::IntSize recommendedResolution { 0, 0 };
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<XRDeviceInfo> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

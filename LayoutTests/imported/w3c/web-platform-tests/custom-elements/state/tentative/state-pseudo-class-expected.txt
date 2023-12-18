@@ -1,9 +1,9 @@
 
-FAIL :--foo parsing passes ':--' is not a valid selector.
-PASS :--foo parsing failures
-FAIL :--foo serialization undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].cssText')
-FAIL :--foo in simple cases ':--foo' is not a valid selector.
-FAIL :--foo and other pseudo classes undefined is not an object (evaluating 'states.add')
-FAIL :--foo and ::part() undefined is not an object (evaluating 'innerStates.add')
-FAIL :--foo and :host() undefined is not an object (evaluating 'outer.i.states.add')
+PASS :state() parsing passes
+PASS :state() parsing failures
+PASS :state(foo) serialization
+PASS :state(foo) in simple cases
+PASS :state(foo) and other pseudo classes
+FAIL :state(foo) and ::part() assert_equals: ::part() followed by :state(innerFoo) expected "0.5" but got "0"
+PASS :state(foo) and :host()
 

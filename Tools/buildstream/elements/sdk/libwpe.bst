@@ -1,6 +1,6 @@
 kind: meson
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:WebPlatformForEmbedded/libwpe
   track: master
   ref: 1.15.1-1-gd7c669ca6f5ec0d544c264016d270669b336c931

@@ -47,3 +47,11 @@ fn testInitializerConcretization() {
   // CHECK-L: vec<unsigned, 2>(0, 0)
   let x2 : vec2<u32> = vec2(0, 0);
 }
+
+@group(0) @binding(0) var<storage, read_write> a: array<atomic<i32>>;
+@compute @workgroup_size(1)
+fn testArrayAccessMaterialization()
+{
+    let i = 0;
+    let x = atomicLoad(&a[i]);
+}

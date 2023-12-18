@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Changing the URL hash of a cross-origin iframe should fire a load event Test timed out
+PASS Changing the URL hash of a cross-origin iframe should fire a load event
 

@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 //@ defaultNoEagerRun
 
 function foo(o) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "Subspace.h"
 #include "SubspaceAccess.h"
 #include <wtf/SinglyLinkedListWithTail.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -40,6 +41,7 @@ class IsoSubspace;
 }
 
 class IsoSubspace : public Subspace {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IsoSubspace, JS_EXPORT_PRIVATE);
 public:
     JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
     JS_EXPORT_PRIVATE ~IsoSubspace() override;
@@ -66,8 +68,8 @@ private:
 
     BlockDirectory m_directory;
     std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
-    SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
-    SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
+    SentinelLinkedList<PreciseAllocation, BasicRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
+    SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
 

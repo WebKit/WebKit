@@ -12,13 +12,13 @@ package org.webrtc;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import org.chromium.testing.local.LocalRobolectricTestRunner;
+import androidx.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.webrtc.IceCandidate;
 
-@RunWith(LocalRobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 @Config(manifest = Config.NONE)
 public class IceCandidateTest {
   @Test

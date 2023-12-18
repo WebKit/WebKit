@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ExtendableEvent.h"
 #include "PushSubscriptionChangeEventInit.h"
 
@@ -51,5 +49,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

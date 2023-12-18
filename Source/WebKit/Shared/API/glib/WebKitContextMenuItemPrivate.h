@@ -19,9 +19,12 @@
 
 #pragma once
 
+#if ENABLE(CONTEXT_MENUS)
 #include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenuItem.h"
 
 WebKitContextMenuItem* webkitContextMenuItemCreate(const WebKit::WebContextMenuItemData&);
 WebKit::WebContextMenuItemGlib webkitContextMenuItemToWebContextMenuItemGlib(WebKitContextMenuItem*);
 WebKit::WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitContextMenuItem*);
+
+#endif // ENABLE(CONTEXT_MENUS)

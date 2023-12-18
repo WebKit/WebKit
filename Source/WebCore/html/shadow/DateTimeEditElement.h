@@ -103,6 +103,7 @@ private:
     bool focusOnPreviousField(const DateTimeFieldElement&) final;
     bool isFieldOwnerDisabled() const final;
     bool isFieldOwnerReadOnly() const final;
+    bool isFieldOwnerHorizontal() const final;
     AtomString localeIdentifier() const final;
     const GregorianDateTime& placeholderDate() const final;
 

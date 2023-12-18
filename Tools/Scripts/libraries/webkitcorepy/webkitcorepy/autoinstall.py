@@ -36,6 +36,7 @@ import time
 import zipfile
 
 from collections import defaultdict
+from contextlib import contextmanager
 from logging import NullHandler
 from webkitcorepy import log
 from webkitcorepy.version import Version
@@ -134,18 +135,22 @@ class Package(object):
                 file = tarfile.open(self.path)
                 # Prevent write-protected files which can't be overwritten by manually setting permissions
                 for tarred in file:
-                    tarred.mode = 0o777 if tarred.isdir() else 0o644
+                    tarred.mode = 0o777 if tarred.isdir() else (0o644 | (tarred.mode & 0o111))
                 try:
                     file.extractall(target)
                 finally:
                     file.close()
             elif self.extension in ['whl', 'zip']:
                 with zipfile.ZipFile(self.path, 'r') as file:
-                    file.extractall(target)
+                    for zip_info in file.infolist():
+                        file_path = file.extract(zip_info, target)
+                        mode = (zip_info.external_attr >> 16) & 0x1FF
+                        mode = 0o777 if getattr(zip_info, 'is_dir', lambda: False)() else (0o644 | (mode & 0o111))
+                        os.chmod(file_path, mode)
             else:
-                raise OSError('{} has an  unrecognized package format'.format(self.path))
+                raise OSError('{} has an unrecognized package format'.format(self.path))
 
-    def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None, implicit_deps=None):
+    def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=None, aliases=None, implicit_deps=None):
         self.name = import_name
         self.version = version
         self._archives = []
@@ -194,18 +199,34 @@ class Package(object):
                 cached_tags = None
 
                 for package in reversed(packages):
-                    if self.wheel:
+                    if self.wheel or self.wheel is None and package['name'].endswith('.whl'):
                         match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', package['name'])
                         if not match:
                             continue
 
-                        from packaging import tags
+                        # Temporarily disable AutoInstall so we don't try to AutoInstall
+                        # packaging via the below import while installing packaging.
+                        with AutoInstall.temporarily_disable():
+                            try:
+                                from packaging import tags
+                            except ImportError:
+                                # This is a subset of compatible tags, but these are the
+                                # only ones that are particularly common; we need these
+                                # to be able to install packaging and its dependencies.
+                                generic_tags = ["py2.py3-none-any", "py3.py2-none-any"]
+                                if sys.version_info >= (3,):
+                                    generic_tags.append("py3-none-any")
+                                else:
+                                    generic_tags.append("py2-none-any")
 
-                        if not cached_tags:
-                            cached_tags = set(AutoInstall.tags())
+                                if match.group(1) not in generic_tags:
+                                    continue
+                            else:
+                                if not cached_tags:
+                                    cached_tags = set(AutoInstall.tags())
 
-                        if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
-                            continue
+                                if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
+                                    continue
 
                         extension = 'whl'
 
@@ -305,6 +326,9 @@ class Package(object):
 
             try:
                 shutil.rmtree(self.location, ignore_errors=True)
+                as_py_file = '{}.py'.format(self.location)
+                if os.path.isfile(as_py_file):
+                    os.remove(as_py_file)
 
                 AutoInstall.log('Downloading {}...'.format(archive))
                 archive.download()
@@ -381,7 +405,12 @@ class Package(object):
                 else:
                     # We might not need setup.py at all, check if we have dist-info and the library in the temporary location
                     to_be_moved = os.listdir(temp_location)
-                    if self.name not in to_be_moved and any(element.endswith('.dist-info') for element in to_be_moved):
+                    if (
+                        archive.extension != 'whl'
+                        or not any(
+                            element.endswith('.dist-info') for element in to_be_moved
+                        )
+                    ):
                         raise OSError('Cannot install {}, could not find setup.py'.format(self.name))
                     for directory in to_be_moved:
                         shutil.rmtree(os.path.join(AutoInstall.directory, directory), ignore_errors=True)
@@ -430,7 +459,7 @@ class AutoInstall(object):
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
     # This list of libraries is required to install other libraries, and must be installed first
-    BASE_LIBRARIES = ['setuptools', 'wheel', 'pyparsing', 'packaging', 'setuptools_scm']
+    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'setuptools_scm']
     if sys.version_info >= (3, 0):
         BASE_LIBRARIES.insert(-1, 'tomli')
 
@@ -451,6 +480,7 @@ class AutoInstall(object):
     _previous_index = None
     _previous_ca_cert_path = None
     _fatal_check = False
+    _temporary_disable = 0
 
     # When sharing an install location, projects may wish to overwrite packages on disk
     # originating from a different index.
@@ -466,9 +496,18 @@ class AutoInstall(object):
 
     @classmethod
     def enabled(cls):
+        if cls._temporary_disable > 0:
+            return False
         if os.environ.get(cls.DISABLE_ENV_VAR) not in ['0', 'FALSE', 'False', 'false', 'NO', 'No', 'no', None]:
             return False
         return True if cls.directory else None
+
+    @classmethod
+    @contextmanager
+    def temporarily_disable(cls):
+        cls._temporary_disable += 1
+        yield
+        cls._temporary_disable -= 1
 
     @classmethod
     def userspace_should_own(cls, path):

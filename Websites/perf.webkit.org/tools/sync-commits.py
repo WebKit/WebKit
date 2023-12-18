@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import argparse
 import json
@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 import time
-import urllib2
+
 
 from datetime import datetime
 from abc import ABCMeta, abstractmethod
@@ -15,10 +15,11 @@ from xml.dom.minidom import parseString as parseXmlString
 from util import load_server_config
 from util import submit_commits
 from util import text_content
+from urllib.request import urlopen
 
 # There are some buggy commit messages:
 # Canonical link: https://commits.webkit.org/https://commits.webkit.org/232477@main
-REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@[\w\.\-]+)\n', flags=re.MULTILINE)
+REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'^Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@(?P<branch_name>[\w\.\-]+))\n', flags=re.MULTILINE)
 REVISION_IN_MSG_RE = re.compile(r'^git-svn-id: https://svn\.webkit\.org/repository/webkit/[\w\W]+@(?P<revision>\d+) [\w\d\-]+\n', flags=re.MULTILINE)
 HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
 REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
@@ -41,9 +42,9 @@ def main(argv):
             try:
                 repository.fetch_commits_and_submit(server_config, args.max_fetch_count, args.max_ancestor_fetch_count)
             except Exception as error:
-                print "Failed to fetch and sync:", error
+                print(f'Failed to fetch and sync: {error}')
 
-        print "Sleeping for %d seconds..." % args.seconds_to_sleep
+        print(f'Sleeping for {args.seconds_to_sleep} seconds...')
         time.sleep(args.seconds_to_sleep)
 
 
@@ -52,7 +53,7 @@ def load_repository(repository):
         return GitRepository(
             name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'],
             git_branch=repository.get('branch'), report_revision_identifier_in_commit_msg=repository.get('reportRevisionIdentifier'),
-            report_svn_revison=repository.get('reportSVNRevision'),
+            report_svn_revision=repository.get('reportSVNRevision'),
             max_revision=repository.get('maxRevision'))
     return SVNRepository(name=repository['name'], svn_url=repository['url'], should_trust_certificate=repository.get('trustCertificate', False),
         use_server_auth=repository.get('useServerAuth', False), account_name_script_path=repository.get('accountNameFinderScript'))
@@ -69,7 +70,7 @@ class Repository(object):
 
     def fetch_commits_and_submit(self, server_config, max_fetch_count, max_ancestor_fetch_count):
         if not self._last_fetched:
-            print "Determining the starting revision for %s" % self._name
+            print(f'Determining the starting revision for {self._name}')
             self._last_fetched = self.determine_last_reported_revision(server_config)
 
         pending_commits = []
@@ -81,12 +82,12 @@ class Repository(object):
             self._last_fetched = commit['revision']
 
         if not pending_commits:
-            print "No new revision found for %s (last fetched: %s)" % (self._name, self.format_revision(self._last_fetched))
+            print(f'No new revision found for {self._name} (last fetched:{self.format_revision(self._last_fetched)})')
             return
 
         for unused in range(max_ancestor_fetch_count):
             revision_list = ', '.join([self.format_revision(commit['revision']) for commit in pending_commits])
-            print "Submitting revisions %s for %s to %s" % (revision_list, self._name, server_config['server']['url'])
+            print(f'Submitting revisions {revision_list} for {self._name} to {server_config["server"]["url"]}')
 
             result = submit_commits(pending_commits, server_config['server']['url'],
                 server_config['worker']['name'], server_config['worker']['password'], ['OK', 'FailedToFindPreviousCommit'])
@@ -95,7 +96,7 @@ class Repository(object):
                 break
 
             if result.get('status') == 'FailedToFindPreviousCommit':
-                print result
+                print(result)
                 previous_commit = self.fetch_commit(server_config, result['commit']['previousCommit'])
                 if not previous_commit:
                     raise Exception('Could not find the previous commit %s of %s' % (result['commit']['previousCommit'], result['commit']['revision']))
@@ -104,8 +105,7 @@ class Repository(object):
         if result.get('status') != 'OK':
             raise Exception(result)
 
-        print "Successfully submitted."
-        print
+        print('Successfully submitted.\n')
 
     @abstractmethod
     def fetch_next_commit(self, server_config, last_fetched):
@@ -125,7 +125,7 @@ class Repository(object):
             return last_reported_revision
 
     def fetch_revision_from_dasbhoard(self, server_config, filter):
-        result = urllib2.urlopen(server_config['server']['url'] + '/api/commits/' + self._name + '/' + filter).read()
+        result = urlopen(server_config['server']['url'] + '/api/commits/' + self._name + '/' + filter).read()
         parsed_result = json.loads(result)
         if parsed_result['status'] != 'OK' and parsed_result['status'] != 'RepositoryNotFound':
             raise Exception(result)
@@ -159,7 +159,7 @@ class SVNRepository(Repository):
             args += ['--trust-server-cert']
 
         try:
-            output = subprocess.check_output(args, stderr=subprocess.STDOUT)
+            output = subprocess.check_output(args, stderr=subprocess.STDOUT, encoding='utf-8')
         except subprocess.CalledProcessError as error:
             if (': No such revision ' + str(revision_to_fetch)) in error.output:
                 return None
@@ -187,9 +187,9 @@ class SVNRepository(Repository):
 
     def _resolve_author_name(self, account):
         try:
-            output = subprocess.check_output(self._account_name_script_path + [account])
+            output = subprocess.check_output(self._account_name_script_path + [account], encoding='utf-8')
         except subprocess.CalledProcessError:
-            print 'Failed to resolve the name for account:', account
+            print(f'Failed to resolve the name for account: {account}')
             return None
 
         match = Repository._name_account_compound_regex.match(output)
@@ -203,7 +203,7 @@ class SVNRepository(Repository):
 
 class GitRepository(Repository):
 
-    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revison=False, max_revision=None):
+    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revision=False, max_revision=None):
         assert(os.path.isdir(git_checkout))
         super(GitRepository, self).__init__(name)
         self._git_checkout = git_checkout
@@ -211,7 +211,7 @@ class GitRepository(Repository):
         self._git_branch = git_branch
         self._tokenized_hashes = []
         self._report_revision_identifier_in_commit_msg = report_revision_identifier_in_commit_msg
-        self._report_svn_revision = report_svn_revison
+        self._report_svn_revision = report_svn_revision
         self._max_revision = max_revision
 
     def fetch_next_commit(self, server_config, last_fetched):
@@ -266,10 +266,13 @@ class GitRepository(Repository):
 
         revision_identifier = None
         if self._report_revision_identifier_in_commit_msg:
-            revision_identifier_match = REVISION_IDENTIFIER_IN_MSG_RE.search(message)
-            if not revision_identifier_match:
+            for revision_identifier_match in REVISION_IDENTIFIER_IN_MSG_RE.finditer(message):
+                if self._git_branch and revision_identifier_match.group('branch_name') != self._git_branch:
+                    continue
+                revision_identifier = revision_identifier_match.group('revision_identifier')
+
+            if not revision_identifier:
                 raise ValueError('Expected commit message to include revision identifier, but cannot find it, will need a history rewrite to fix it')
-            revision_identifier = revision_identifier_match.group('revision_identifier')
 
         current_revision = current_hash
         previous_revision = previous_hash
@@ -321,11 +324,12 @@ class GitRepository(Repository):
                 continue
             match = GIT_LOG_LINE_RE.match(line)
             if not match:
-                raise Exception('Failed to tokenize hash "{}"'.format(line))
-            self._tokenized_hashes.append(filter(None, list(match.groups())))
+                raise Exception(f'Failed to tokenize hash "{line}"')
+            self._tokenized_hashes.append(list(filter(None, list(match.groups()))))
 
     def _run_git_command(self, args):
-        return subprocess.check_output(['git', '-C', self._git_checkout] + args, stderr=subprocess.STDOUT)
+        return subprocess.check_output(['git', '-C', self._git_checkout] + args, stderr=subprocess.STDOUT,
+                                       encoding='utf-8')
 
     def format_revision(self, revision):
         return str(revision)[0:8]

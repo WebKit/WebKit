@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Tests the bounds of the clipping layer for nested clips in non-stacking context overflow</title>
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         #scroller {
             overflow-y: scroll;
@@ -50,13 +51,19 @@
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
             scroller.scrollTo(0, 50);
             if (window.internals)
                 document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
     </script>
 </head>

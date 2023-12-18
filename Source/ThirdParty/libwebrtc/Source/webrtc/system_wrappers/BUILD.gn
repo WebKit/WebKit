@@ -54,7 +54,7 @@ rtc_library("system_wrappers") {
       ]
     } else {
       sources += [ "source/cpu_features_android.cc" ]
-      deps += [ "//third_party/android_sdk:cpu_features" ]
+      deps += [ "//third_party/cpu_features:ndk_compat" ]
     }
 
     libs += [ "log" ]

@@ -442,7 +442,7 @@ TEST(TimerManagerTest, TimerManagerPassesPrecisionToCreateTimeoutMethod) {
   manager.CreateTimer(
       "test_timer", []() { return absl::optional<DurationMs>(); },
       TimerOptions(DurationMs(123), TimerBackoffAlgorithm::kExponential,
-                   absl::nullopt, absl::nullopt,
+                   absl::nullopt, DurationMs::InfiniteDuration(),
                    webrtc::TaskQueueBase::DelayPrecision::kHigh));
   EXPECT_EQ(create_timer_precison,
             webrtc::TaskQueueBase::DelayPrecision::kHigh);
@@ -450,7 +450,7 @@ TEST(TimerManagerTest, TimerManagerPassesPrecisionToCreateTimeoutMethod) {
   manager.CreateTimer(
       "test_timer", []() { return absl::optional<DurationMs>(); },
       TimerOptions(DurationMs(123), TimerBackoffAlgorithm::kExponential,
-                   absl::nullopt, absl::nullopt,
+                   absl::nullopt, DurationMs::InfiniteDuration(),
                    webrtc::TaskQueueBase::DelayPrecision::kLow));
   EXPECT_EQ(create_timer_precison, webrtc::TaskQueueBase::DelayPrecision::kLow);
 }

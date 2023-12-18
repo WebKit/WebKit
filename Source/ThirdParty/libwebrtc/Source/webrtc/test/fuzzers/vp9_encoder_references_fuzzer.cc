@@ -18,6 +18,7 @@
 #include "api/video/video_frame.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
+#include "media/base/media_constants.h"
 #include "modules/video_coding/codecs/interface/libvpx_interface.h"
 #include "modules/video_coding/codecs/vp9/libvpx_vp9_encoder.h"
 #include "modules/video_coding/frame_dependencies_calculator.h"
@@ -529,7 +530,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   LibvpxState state;
 
   // Initialize encoder
-  LibvpxVp9Encoder encoder(cricket::VideoCodec(),
+  LibvpxVp9Encoder encoder(cricket::CreateVideoCodec(cricket::kVp9CodecName),
                            std::make_unique<StubLibvpx>(&state), field_trials);
   VideoCodec codec = CodecSettings(helper);
   if (encoder.InitEncode(&codec, EncoderSettings()) != WEBRTC_VIDEO_CODEC_OK) {

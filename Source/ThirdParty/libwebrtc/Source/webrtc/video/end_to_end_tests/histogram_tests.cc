@@ -66,7 +66,7 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
       }
     }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       if (MinMetricRunTimePassed() && MinNumberOfFramesReceived())
         observation_complete_.Set();
 
@@ -157,9 +157,6 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
 
   const std::string video_prefix =
       screenshare ? "WebRTC.Video.Screenshare." : "WebRTC.Video.";
-  // The content type extension is disabled in non screenshare test,
-  // therefore no slicing on simulcast id should be present.
-  const std::string video_suffix = screenshare ? ".S0" : "";
 
   // Verify that stats have been updated once.
   EXPECT_METRIC_EQ(2, metrics::NumSamples("WebRTC.Call.LifetimeInSeconds"));
@@ -248,17 +245,13 @@ void HistogramTest::VerifyHistogramStats(bool use_rtx,
   EXPECT_METRIC_EQ(1, metrics::NumSamples("WebRTC.Video.CurrentDelayInMs"));
   EXPECT_METRIC_EQ(1, metrics::NumSamples("WebRTC.Video.OnewayDelayInMs"));
 
-  EXPECT_METRIC_EQ(1, metrics::NumSamples(video_prefix + "EndToEndDelayInMs" +
-                                          video_suffix));
+  EXPECT_METRIC_EQ(1, metrics::NumSamples(video_prefix + "EndToEndDelayInMs"));
   EXPECT_METRIC_EQ(1,
-                   metrics::NumSamples(video_prefix + "EndToEndDelayMaxInMs" +
-                                       video_suffix));
-  EXPECT_METRIC_EQ(1, metrics::NumSamples(video_prefix + "InterframeDelayInMs" +
-                                          video_suffix));
+                   metrics::NumSamples(video_prefix + "EndToEndDelayMaxInMs"));
   EXPECT_METRIC_EQ(1,
-                   metrics::NumSamples(video_prefix + "InterframeDelayMaxInMs" +
-                                       video_suffix));
-
+                   metrics::NumSamples(video_prefix + "InterframeDelayInMs"));
+  EXPECT_METRIC_EQ(
+      1, metrics::NumSamples(video_prefix + "InterframeDelayMaxInMs"));
   EXPECT_METRIC_EQ(
       1, metrics::NumSamples("WebRTC.Video.RenderSqrtPixelsPerSecond"));
 

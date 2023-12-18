@@ -1763,11 +1763,6 @@ void GenerateCaps(ID3D11Device *device,
     // D3D11 Feature Level 9_3 doesn't support alpha-to-coverage
     limitations->noSampleAlphaToCoverageSupport = (featureLevel <= D3D_FEATURE_LEVEL_9_3);
 
-    // D3D11 Feature Levels 9_3 and below do not support non-constant loop indexing and require
-    // additional
-    // pre-validation of the shader at compile time to produce a better error message.
-    limitations->shadersRequireIndexedLoopValidation = (featureLevel <= D3D_FEATURE_LEVEL_9_3);
-
     // D3D11 has no concept of separate masks and refs for front and back faces in the depth stencil
     // state.
     limitations->noSeparateStencilRefsAndMasks = true;
@@ -1805,67 +1800,67 @@ void GenerateCaps(ID3D11Device *device,
 namespace gl_d3d11
 {
 
-D3D11_BLEND ConvertBlendFunc(GLenum glBlend, bool isAlpha)
+D3D11_BLEND ConvertBlendFunc(gl::BlendFactorType glBlend, bool isAlpha)
 {
     D3D11_BLEND d3dBlend = D3D11_BLEND_ZERO;
 
     switch (glBlend)
     {
-        case GL_ZERO:
+        case gl::BlendFactorType::Zero:
             d3dBlend = D3D11_BLEND_ZERO;
             break;
-        case GL_ONE:
+        case gl::BlendFactorType::One:
             d3dBlend = D3D11_BLEND_ONE;
             break;
-        case GL_SRC_COLOR:
+        case gl::BlendFactorType::SrcColor:
             d3dBlend = (isAlpha ? D3D11_BLEND_SRC_ALPHA : D3D11_BLEND_SRC_COLOR);
             break;
-        case GL_ONE_MINUS_SRC_COLOR:
+        case gl::BlendFactorType::OneMinusSrcColor:
             d3dBlend = (isAlpha ? D3D11_BLEND_INV_SRC_ALPHA : D3D11_BLEND_INV_SRC_COLOR);
             break;
-        case GL_DST_COLOR:
+        case gl::BlendFactorType::DstColor:
             d3dBlend = (isAlpha ? D3D11_BLEND_DEST_ALPHA : D3D11_BLEND_DEST_COLOR);
             break;
-        case GL_ONE_MINUS_DST_COLOR:
+        case gl::BlendFactorType::OneMinusDstColor:
             d3dBlend = (isAlpha ? D3D11_BLEND_INV_DEST_ALPHA : D3D11_BLEND_INV_DEST_COLOR);
             break;
-        case GL_SRC_ALPHA:
+        case gl::BlendFactorType::SrcAlpha:
             d3dBlend = D3D11_BLEND_SRC_ALPHA;
             break;
-        case GL_ONE_MINUS_SRC_ALPHA:
+        case gl::BlendFactorType::OneMinusSrcAlpha:
             d3dBlend = D3D11_BLEND_INV_SRC_ALPHA;
             break;
-        case GL_DST_ALPHA:
+        case gl::BlendFactorType::DstAlpha:
             d3dBlend = D3D11_BLEND_DEST_ALPHA;
             break;
-        case GL_ONE_MINUS_DST_ALPHA:
+        case gl::BlendFactorType::OneMinusDstAlpha:
             d3dBlend = D3D11_BLEND_INV_DEST_ALPHA;
             break;
-        case GL_CONSTANT_COLOR:
+        case gl::BlendFactorType::ConstantColor:
             d3dBlend = D3D11_BLEND_BLEND_FACTOR;
             break;
-        case GL_ONE_MINUS_CONSTANT_COLOR:
+        case gl::BlendFactorType::OneMinusConstantColor:
             d3dBlend = D3D11_BLEND_INV_BLEND_FACTOR;
             break;
-        case GL_CONSTANT_ALPHA:
+        case gl::BlendFactorType::ConstantAlpha:
             d3dBlend = D3D11_BLEND_BLEND_FACTOR;
             break;
-        case GL_ONE_MINUS_CONSTANT_ALPHA:
+        case gl::BlendFactorType::OneMinusConstantAlpha:
             d3dBlend = D3D11_BLEND_INV_BLEND_FACTOR;
             break;
-        case GL_SRC_ALPHA_SATURATE:
+        case gl::BlendFactorType::SrcAlphaSaturate:
             d3dBlend = D3D11_BLEND_SRC_ALPHA_SAT;
             break;
-        case GL_SRC1_COLOR_EXT:
+        case gl::BlendFactorType::Src1Color:
             d3dBlend = (isAlpha ? D3D11_BLEND_SRC1_ALPHA : D3D11_BLEND_SRC1_COLOR);
             break;
-        case GL_SRC1_ALPHA_EXT:
+        case gl::BlendFactorType::Src1Alpha:
             d3dBlend = D3D11_BLEND_SRC1_ALPHA;
             break;
-        case GL_ONE_MINUS_SRC1_COLOR_EXT:
+        case gl::BlendFactorType::OneMinusSrc1Color:
             d3dBlend = (isAlpha ? D3D11_BLEND_INV_SRC1_ALPHA : D3D11_BLEND_INV_SRC1_COLOR);
             break;
-        case GL_ONE_MINUS_SRC1_ALPHA_EXT:
+        case gl::BlendFactorType::OneMinusSrc1Alpha:
             d3dBlend = D3D11_BLEND_INV_SRC1_ALPHA;
             break;
         default:
@@ -1875,25 +1870,25 @@ D3D11_BLEND ConvertBlendFunc(GLenum glBlend, bool isAlpha)
     return d3dBlend;
 }
 
-D3D11_BLEND_OP ConvertBlendOp(GLenum glBlendOp)
+D3D11_BLEND_OP ConvertBlendOp(gl::BlendEquationType glBlendOp)
 {
     D3D11_BLEND_OP d3dBlendOp = D3D11_BLEND_OP_ADD;
 
     switch (glBlendOp)
     {
-        case GL_FUNC_ADD:
+        case gl::BlendEquationType::Add:
             d3dBlendOp = D3D11_BLEND_OP_ADD;
             break;
-        case GL_FUNC_SUBTRACT:
+        case gl::BlendEquationType::Subtract:
             d3dBlendOp = D3D11_BLEND_OP_SUBTRACT;
             break;
-        case GL_FUNC_REVERSE_SUBTRACT:
+        case gl::BlendEquationType::ReverseSubtract:
             d3dBlendOp = D3D11_BLEND_OP_REV_SUBTRACT;
             break;
-        case GL_MIN:
+        case gl::BlendEquationType::Min:
             d3dBlendOp = D3D11_BLEND_OP_MIN;
             break;
-        case GL_MAX:
+        case gl::BlendEquationType::Max:
             d3dBlendOp = D3D11_BLEND_OP_MAX;
             break;
         default:
@@ -2499,7 +2494,7 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     bool isHaswell         = false;
     bool isIvyBridge       = false;
     bool isAMD             = IsAMD(adapterDesc.VendorId);
-    bool isFeatureLevel9_3 = (deviceCaps.featureLevel <= D3D_FEATURE_LEVEL_9_3);
+    bool isFeatureLevel9_3 = deviceCaps.featureLevel <= D3D_FEATURE_LEVEL_9_3;
 
     IntelDriverVersion capsVersion = IntelDriverVersion(0);
     if (isIntel)
@@ -2595,6 +2590,11 @@ void InitializeFeatures(const Renderer11DeviceCaps &deviceCaps,
     // to work around a slow fxc compile performance issue with dynamic uniform indexing.
     ANGLE_FEATURE_CONDITION(features, allowTranslateUniformBlockToStructuredBuffer,
                             IsWindows10OrLater());
+
+    // D3D11 Feature Levels 9_3 and below do not support non-constant loop indexing and require
+    // additional
+    // pre-validation of the shader at compile time to produce a better error message.
+    ANGLE_FEATURE_CONDITION(features, supportsNonConstantLoopIndexing, !isFeatureLevel9_3);
 }
 
 void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,
@@ -2603,6 +2603,10 @@ void InitializeFrontendFeatures(const DXGI_ADAPTER_DESC &adapterDesc,
     bool isAMD = IsAMD(adapterDesc.VendorId);
 
     ANGLE_FEATURE_CONDITION(features, forceDepthAttachmentInitOnClear, isAMD);
+
+    // The D3D backend's handling of compile and link is thread-safe
+    ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, true);
 }
 
 void InitConstantBufferDesc(D3D11_BUFFER_DESC *constantBufferDescription, size_t byteWidth)

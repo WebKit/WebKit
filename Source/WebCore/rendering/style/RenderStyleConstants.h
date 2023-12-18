@@ -80,13 +80,14 @@ enum class StyleDifferenceContextSensitiveProperty : uint8_t {
 };
 
 // Static pseudo styles. Dynamic ones are produced on the fly.
-enum class PseudoId : uint16_t {
+enum class PseudoId : uint32_t {
     // The order must be None, public IDs, and then internal IDs.
     None,
 
     // Public:
     FirstLine,
     FirstLetter,
+    GrammarError,
     Highlight,
     Marker,
     Before,
@@ -94,6 +95,12 @@ enum class PseudoId : uint16_t {
     Selection,
     Backdrop,
     Scrollbar,
+    SpellingError,
+    ViewTransition,
+    ViewTransitionGroup,
+    ViewTransitionImagePair,
+    ViewTransitionOld,
+    ViewTransitionNew,
 
     // Internal:
     ScrollbarThumb,
@@ -537,7 +544,7 @@ enum class WordBreak : uint8_t {
     BreakAll,
     KeepAll,
     BreakWord,
-    Auto
+    AutoPhrase
 };
 
 enum class OverflowWrap : uint8_t {
@@ -942,12 +949,16 @@ enum class TextOverflow : bool {
     Ellipsis
 };
 
-enum class TextWrap : uint8_t {
+enum class TextWrapMode : bool {
     Wrap,
-    NoWrap,
+    NoWrap
+};
+
+enum class TextWrapStyle : uint8_t {
+    Auto,
     Balance,
-    Stable,
-    Pretty
+    Pretty,
+    Stable
 };
 
 enum class ImageRendering : uint8_t {
@@ -1274,7 +1285,8 @@ WTF::TextStream& operator<<(WTF::TextStream&, TextOverflow);
 WTF::TextStream& operator<<(WTF::TextStream&, TextSecurity);
 WTF::TextStream& operator<<(WTF::TextStream&, TextTransform);
 WTF::TextStream& operator<<(WTF::TextStream&, TextUnderlinePosition);
-WTF::TextStream& operator<<(WTF::TextStream&, TextWrap);
+WTF::TextStream& operator<<(WTF::TextStream&, TextWrapMode);
+WTF::TextStream& operator<<(WTF::TextStream&, TextWrapStyle);
 WTF::TextStream& operator<<(WTF::TextStream&, TextBoxTrim);
 WTF::TextStream& operator<<(WTF::TextStream&, TextBoxEdgeType);
 WTF::TextStream& operator<<(WTF::TextStream&, TextZoom);

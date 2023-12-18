@@ -67,23 +67,20 @@ void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::Media
 void UserMediaCaptureManager::getMediaStreamDevices(bool revealIdsAndLabels, GetMediaStreamDevicesCallback&& completionHandler)
 {
     RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([completionHandler = WTFMove(completionHandler), revealIdsAndLabels](auto&& devices) mutable {
-        Vector<CaptureDeviceWithCapabilities> devicesWithCapabilities;
-
-        devicesWithCapabilities.reserveInitialCapacity(devices.size());
-        for (auto& device : devices) {
+        auto devicesWithCapabilities = WTF::compactMap(devices, [&](auto& device) -> std::optional<CaptureDeviceWithCapabilities> {
             RealtimeMediaSourceCapabilities deviceCapabilities;
 
             if (device.isInputDevice()) {
                 auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
                 if (!capabilities)
-                    continue;
+                    return std::nullopt;
 
                 if (revealIdsAndLabels)
                     deviceCapabilities = *capabilities;
             }
 
-            devicesWithCapabilities.uncheckedAppend({ WTFMove(device), WTFMove(deviceCapabilities) });
-        }
+            return CaptureDeviceWithCapabilities { WTFMove(device), WTFMove(deviceCapabilities) };
+        });
 
         completionHandler(WTFMove(devicesWithCapabilities));
     });

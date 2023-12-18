@@ -53,16 +53,17 @@ bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& ele
         || is<HTMLObjectElement>(element);
 }
 
-bool WindowNameCollection::elementMatches(const Element& element, const AtomStringImpl* name)
+bool WindowNameCollection::elementMatches(const Element& element, const AtomString& name)
 {
     // Find only images, forms, applets, embeds and objects by name, but anything by id.
-    return (elementMatchesIfNameAttributeMatch(element) && element.getNameAttribute().impl() == name)
+    return (elementMatchesIfNameAttributeMatch(element) && element.getNameAttribute() == name)
         || element.getIdAttribute() == name;
 }
 
 static inline bool isObjectElementForDocumentNameCollection(const Element& element)
 {
-    return is<HTMLObjectElement>(element) && downcast<HTMLObjectElement>(element).isExposed();
+    auto* objectElement = dynamicDowncast<HTMLObjectElement>(element);
+    return objectElement && objectElement->isExposed();
 }
 
 bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& element)
@@ -81,12 +82,12 @@ bool DocumentNameCollection::elementMatchesIfNameAttributeMatch(const Element& e
         || is<HTMLImageElement>(element);
 }
 
-bool DocumentNameCollection::elementMatches(const Element& element, const AtomStringImpl* name)
+bool DocumentNameCollection::elementMatches(const Element& element, const AtomString& name)
 {
     // Find images, forms, applets, embeds, objects and iframes by name, applets and object by id, and images by id
     // but only if they have a name attribute (this very strange rule matches IE).
-    return (elementMatchesIfNameAttributeMatch(element) && element.getNameAttribute().impl() == name)
-        || (elementMatchesIfIdAttributeMatch(element) && element.getIdAttribute().impl() == name);
+    return (elementMatchesIfNameAttributeMatch(element) && element.getNameAttribute() == name)
+        || (elementMatchesIfIdAttributeMatch(element) && element.getIdAttribute() == name);
 }
 
 }

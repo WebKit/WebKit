@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTTextureFilterAnisotropic final : public RefCounted<EXTTextureFilterAnisotropic>, public WebGLExtension<WebGLRenderingContextBase> {
+class EXTTextureFilterAnisotropic final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTTextureFilterAnisotropic);
     WTF_MAKE_NONCOPYABLE(EXTTextureFilterAnisotropic);
 public:

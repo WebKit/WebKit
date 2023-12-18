@@ -33,16 +33,93 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "WKWebViewInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionMessagePort.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
+#import "WebPageProxy.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
+#import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
-void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
+void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(std::optional<WebCore::PageIdentifier>, std::optional<String> error)>&& completionHandler)
+{
+    wakeUpBackgroundContentIfNecessary([completionHandler = WTFMove(completionHandler), this, protectedThis = Ref { *this }]() mutable {
+        completionHandler(backgroundPageIdentifier(), std::nullopt);
+    });
+}
+
+void WebExtensionContext::runtimeOpenOptionsPage(CompletionHandler<void(std::optional<String> error)>&& completionHandler)
+{
+    if (!optionsPageURL().isValid()) {
+        completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"no options page is specified in the manifest"));
+        return;
+    }
+
+    auto delegate = extensionController()->delegate();
+
+    bool respondsToOpenOptionsPage = [delegate respondsToSelector:@selector(webExtensionController:openOptionsPageForExtensionContext:completionHandler:)];
+    bool respondsToOpenNewTab = [delegate respondsToSelector:@selector(webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler:)];
+    if (!respondsToOpenOptionsPage && !respondsToOpenNewTab) {
+        completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"it is not implemented"));
+        return;
+    }
+
+    if (respondsToOpenOptionsPage) {
+        [delegate webExtensionController:extensionController()->wrapper() openOptionsPageForExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
+            if (error) {
+                RELEASE_LOG_ERROR(Extensions, "Error opening options page: %{private}@", error);
+                completionHandler(error.localizedDescription);
+                return;
+            }
+
+            completionHandler(std::nullopt);
+        }).get()];
+
+        return;
+    }
+
+    ASSERT(respondsToOpenNewTab);
+
+    auto frontmostWindow = this->frontmostWindow();
+
+    auto *creationOptions = [[_WKWebExtensionTabCreationOptions alloc] _init];
+    creationOptions.shouldActivate = YES;
+    creationOptions.shouldSelect = YES;
+    creationOptions.desiredWindow = frontmostWindow ? frontmostWindow->delegate() : nil;
+    creationOptions.desiredIndex = frontmostWindow ? frontmostWindow->tabs().size() : 0;
+    creationOptions.desiredURL = optionsPageURL();
+
+    [delegate webExtensionController:extensionController()->wrapper() openNewTabWithOptions:creationOptions forExtensionContext:wrapper() completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](id<_WKWebExtensionTab> newTab, NSError *error) mutable {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error opening options page in new tab: %{private}@", error);
+            completionHandler(error.localizedDescription);
+            return;
+        }
+
+        if (!newTab) {
+            completionHandler(toErrorString(@"runtime.openOptionsPage()", nil, @"the options page cound not be opened"));
+            return;
+        }
+
+        THROW_UNLESS([newTab conformsToProtocol:@protocol(_WKWebExtensionTab)], @"Object returned by webExtensionController:openNewTabWithOptions:forExtensionContext:completionHandler: does not conform to the _WKWebExtensionTab protocol");
+
+        completionHandler(std::nullopt);
+    }).get()];
+}
+
+void WebExtensionContext::runtimeReload()
+{
+    reload();
+}
+
+using ReplyCompletionHandlerSignature = void(std::optional<String> replyJSON, std::optional<String> error);
+
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<ReplyCompletionHandlerSignature>&& completionHandler)
 {
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
         completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross-extension messaging is not supported"));
@@ -59,18 +136,13 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
         return;
     }
 
-    bool sentReply = false;
+    auto callbackAggregator = EagerCallbackAggregator<ReplyCompletionHandlerSignature>::create(WTFMove(completionHandler), std::nullopt, std::nullopt);
 
-    auto handleReply = [&sentReply, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }](std::optional<String> replyJSON) mutable {
-        if (sentReply)
-            return;
-
-        sentReply = true;
-        completionHandler(replyJSON, std::nullopt);
-    };
-
-    for (auto& process : mainWorldProcesses)
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), handleReply, identifier());
+    for (auto& process : mainWorldProcesses) {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](std::optional<String> replyJSON) {
+            callbackAggregator.get()(replyJSON, std::nullopt);
+        }, identifier());
+    }
 }
 
 void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)
@@ -170,6 +242,28 @@ void WebExtensionContext::runtimeConnectNative(const String& applicationID, WebE
         protectedThis->firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
         protectedThis->clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
     }).get()];
+}
+
+void WebExtensionContext::fireRuntimeStartupEventIfNeeded()
+{
+    // The background content is assumed to be loaded for this event.
+
+    RELEASE_LOG_DEBUG(Extensions, "Firing startup event");
+
+    constexpr auto type = WebExtensionEventListenerType::RuntimeOnStartup;
+    sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchRuntimeStartupEvent());
+}
+
+void WebExtensionContext::fireRuntimeInstalledEventIfNeeded()
+{
+    ASSERT(m_installReason != InstallReason::None);
+
+    // The background content is assumed to be loaded for this event.
+
+    RELEASE_LOG_DEBUG(Extensions, "Firing installed event");
+
+    constexpr auto type = WebExtensionEventListenerType::RuntimeOnInstalled;
+    sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchRuntimeInstalledEvent(m_installReason, m_previousVersion));
 }
 
 } // namespace WebKit

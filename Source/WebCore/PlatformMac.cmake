@@ -650,6 +650,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ca/cocoa/WebVideoContainerLayer.h
 
     platform/graphics/cg/CGContextStateSaver.h
+    platform/graphics/cg/CGUtilities.h
     platform/graphics/cg/ColorSpaceCG.h
     platform/graphics/cg/GradientRendererCG.h
     platform/graphics/cg/GraphicsContextCG.h

@@ -170,7 +170,7 @@ private:
     void platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
     void platformHidePaymentUI();
 #if PLATFORM(COCOA)
-    RetainPtr<PKPaymentRequest> platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
+    RetainPtr<PKPaymentRequest> platformPaymentRequest(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&);
 #endif
 
     Client& m_client;

@@ -333,7 +333,7 @@ const OpcodeIDWide16SizeWasm = 2 # Wide16 Prefix + OpcodeID(1 byte)
 const OpcodeIDWide32SizeWasm = 2 # Wide32 Prefix + OpcodeID(1 byte)
 
 if X86_64_WIN or C_LOOP_WIN
-    const WTFConfig = _g_wtfConfig
+    const WTFConfig = _g_wtfConfigForLLInt
     const GigacageConfig = _g_gigacageConfig
     const JSCConfig = _g_jscConfig
 else
@@ -623,7 +623,7 @@ const FunctionCode = constexpr FunctionCode
 const ModuleCode = constexpr ModuleCode
 
 # The interpreter steals the tag word of the argument count.
-const LLIntReturnPC = ArgumentCountIncludingThis + TagOffset
+const CallSiteIndex = ArgumentCountIncludingThis + TagOffset
 
 # String flags.
 const isRopeInPointer = constexpr JSString::isRopeInPointer
@@ -781,7 +781,7 @@ end
 if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     const CalleeSaveRegisterCount = 0
 elsif ARMv7
-    const CalleeSaveRegisterCount = 5 + 2 * 1 // 5 32-bit GPRs + 1 64-bit FPR
+    const CalleeSaveRegisterCount = 5 + 2 * 2 // 5 32-bit GPRs + 2 64-bit FPRs
 elsif MIPS
     const CalleeSaveRegisterCount = 3
 elsif X86 or X86_WIN
@@ -801,7 +801,7 @@ macro pushCalleeSaves()
     # callee save in the JIT ABI.
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     elsif ARMv7
-        emit "vpush.64 {d15}"
+        emit "vpush.64 {d14, d15}"
         emit "push {r4-r6, r8-r9}"
     elsif MIPS
         emit "addiu $sp, $sp, -12"
@@ -825,7 +825,7 @@ macro popCalleeSaves()
     if C_LOOP or C_LOOP_WIN or ARM64 or ARM64E or X86_64 or X86_64_WIN or RISCV64
     elsif ARMv7
         emit "pop {r4-r6, r8-r9}"
-        emit "vpop.64 {d15}"
+        emit "vpop.64 {d14, d15}"
     elsif MIPS
         emit "lw $s0, 0($sp)"
         emit "lw $s1, 4($sp)"
@@ -964,7 +964,6 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             stored csfr3, 32[entryFrame]
             stored csfr4, 40[entryFrame]
             stored csfr5, 48[entryFrame]
-            stored csfr6, 56[entryFrame]
         elsif MIPS
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
@@ -1041,7 +1040,6 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadd 32[temp], csfr3
             loadd 40[temp], csfr4
             loadd 48[temp], csfr5
-            loadd 56[temp], csfr6
         elsif MIPS
             loadp [temp], csr0
             loadp 4[temp], csr1
@@ -1357,7 +1355,7 @@ macro getterSetterOSRExitReturnPoint(opName, size)
     defineReturnLabel(opName, size)
 
     restoreStackPointerAfterCall()
-    loadi LLIntReturnPC[cfr], PC
+    loadi CallSiteIndex[cfr], PC
 end
 
 macro arrayProfile(offset, cellAndIndexingType, metadata, scratch)
@@ -1680,23 +1678,23 @@ macro functionInitialization(profileArgSkip)
     addp -profileArgSkip, t0
     assert(macro (ok) bpgteq t0, 0, ok end)
     btpz t0, .argumentProfileDone
-    loadp CodeBlock::m_argumentValueProfiles + ValueProfileFixedVector::m_storage[t1], t3
+    loadp CodeBlock::m_argumentValueProfiles + ArgumentValueProfileFixedVector::m_storage[t1], t3
     btpz t3, .argumentProfileDone # When we can't JIT, we don't allocate any argument value profiles.
-    mulp sizeof ValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
+    mulp sizeof ArgumentValueProfile, t0, t2 # Aaaaahhhh! Need strength reduction!
     lshiftp 3, t0 # offset of last JSValue arguments on the stack.
-    addp (constexpr (ValueProfileFixedVector::Storage::offsetOfData())), t3
+    addp (constexpr (ArgumentValueProfileFixedVector::Storage::offsetOfData())), t3
     addp t2, t3 # pointer to end of ValueProfile array in the value profile array.
 .argumentProfileLoop:
     if JSVALUE64
         loadq ThisArgumentOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        subp sizeof ValueProfile, t3
-        storeq t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets[t3]
+        subp sizeof ArgumentValueProfile, t3
+        storeq t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets[t3]
     else
         loadi ThisArgumentOffset + TagOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        subp sizeof ValueProfile, t3
-        storei t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets + TagOffset[t3]
+        subp sizeof ArgumentValueProfile, t3
+        storei t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + TagOffset[t3]
         loadi ThisArgumentOffset + PayloadOffset - 8 + profileArgSkip * 8[cfr, t0], t2
-        storei t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets + PayloadOffset[t3]
+        storei t2, profileArgSkip * sizeof ArgumentValueProfile + ValueProfile::m_buckets + PayloadOffset[t3]
     end
     baddpnz -8, t0, .argumentProfileLoop
 .argumentProfileDone:
@@ -2166,7 +2164,6 @@ slowPathOp(strcat)
 slowPathOp(throw_static_error)
 slowPathOp(typeof)
 slowPathOp(typeof_is_object)
-slowPathOp(typeof_is_function)
 slowPathOp(unreachable)
 slowPathOp(new_promise)
 slowPathOp(new_generator)
@@ -2381,21 +2378,21 @@ end)
 
 
 # we can't use callOp because we can't pass `call` as the opcode name, since it's an instruction name
-commonCallOp(op_call, _llint_slow_path_call, OpCall, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call, OpCall, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCall, getu)
 end, dispatchAfterRegularCall)
 
-commonCallOp(op_construct, _llint_slow_path_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_construct, OpConstruct, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
 end, dispatchAfterRegularCall)
 
-commonCallOp(op_tail_call, _llint_slow_path_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
+commonCallOp(op_tail_call, OpTailCall, prepareForTailCall, invokeForTailCall, prepareForPolymorphicTailCall, prepareForSlowTailCall, macro (getu, metadata)
     arrayProfileForCall(OpTailCall, getu)
     checkSwitchToJITForEpilogue()
     # reload metadata since checkSwitchToJITForEpilogue() might have trashed t5
     metadata(t5, t0)
 end, dispatchAfterTailCall)
 
-commonCallOp(op_call_ignore_result, _llint_slow_path_call, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
+commonCallOp(op_call_ignore_result, OpCallIgnoreResult, prepareForRegularCall, invokeForRegularCallIgnoreResult, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, macro (getu, metadata)
     arrayProfileForCall(OpCallIgnoreResult, getu)
 end, dispatchAfterRegularCallIgnoreResult)
 
@@ -2754,7 +2751,7 @@ macro notSupported()
         # smallest instructions exist, we should pick the one that is most
         # likely result in execution being halted. Currently that is the break
         # instruction on all architectures we're interested in. (Break is int3
-        # on Intel, which is 1 byte, and bkpt on ARMv7, which is 2 bytes.)
+        # on Intel, which is 1 byte, and udf on ARMv7, which is 2 bytes.)
         break
     end
 end
@@ -2776,9 +2773,7 @@ macro updateBinaryArithProfile(size, opcodeStruct, type, scratch1, scratch2)
     orh type, (constexpr (BinaryArithProfileFixedVector::Storage::offsetOfData())) + BinaryArithProfile::m_bits[scratch2, scratch1, 2]
 end
 
-// FIXME: We should not need the X86_64_WIN condition here, since WEBASSEMBLY should already be false on Windows
-// https://bugs.webkit.org/show_bug.cgi?id=203716
-if WEBASSEMBLY and not X86_64_WIN
+if WEBASSEMBLY
 
 entry(wasm, macro()
     include InitWasm
@@ -2827,7 +2822,7 @@ _wasm_trampoline_wasm_tail_call_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
     crash()
 
-end # WEBASSEMBLY and not X86_64_WIN
+end # WEBASSEMBLY
 
 include? LowLevelInterpreterAdditions
 

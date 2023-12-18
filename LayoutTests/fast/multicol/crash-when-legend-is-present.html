@@ -1,0 +1,16 @@
+<style>
+html {
+  outline-style: auto;
+}
+fieldset {
+  overflow-y: -webkit-paged-y;
+}
+</style>
+<fieldset id=container><legend></legend><label id=child></label></fieldset><script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+document.body.offsetHeight;
+child.innerText = "pass if no crash";
+document.body.offsetHeight;
+container.innerText = "or assert";
+</script>

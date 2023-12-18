@@ -34,6 +34,7 @@ namespace {
 using ::testing::ElementsAre;
 using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
+using SkippedStream = AnyForwardTsnChunk::SkippedStream;
 
 // The default maximum size of the Reassembly Queue.
 static constexpr size_t kBufferSize = 10000;
@@ -194,12 +195,7 @@ TEST_F(ReassemblyQueueTest, ForwardTSNRemoveUnordered) {
 
   EXPECT_FALSE(reasm.HasMessages());
 
-  reasm.Handle(ForwardTsnChunk(TSN(13), {}));
-  EXPECT_EQ(reasm.queued_bytes(), 3u);
-
-  // The lost chunk comes, but too late.
-  reasm.Add(TSN(11), gen_.Unordered({2}));
-  EXPECT_FALSE(reasm.HasMessages());
+  reasm.HandleForwardTsn(TSN(13), std::vector<SkippedStream>());
   EXPECT_EQ(reasm.queued_bytes(), 3u);
 
   // The second lost chunk comes, message is assembled.
@@ -222,8 +218,8 @@ TEST_F(ReassemblyQueueTest, ForwardTSNRemoveOrdered) {
 
   EXPECT_FALSE(reasm.HasMessages());
 
-  reasm.Handle(ForwardTsnChunk(
-      TSN(13), {ForwardTsnChunk::SkippedStream(kStreamID, kSSN)}));
+  reasm.HandleForwardTsn(
+      TSN(13), std::vector<SkippedStream>({SkippedStream(kStreamID, kSSN)}));
   EXPECT_EQ(reasm.queued_bytes(), 0u);
 
   // The lost chunk comes, but too late.
@@ -246,60 +242,14 @@ TEST_F(ReassemblyQueueTest, ForwardTSNRemoveALotOrdered) {
 
   EXPECT_FALSE(reasm.HasMessages());
 
-  reasm.Handle(ForwardTsnChunk(
-      TSN(13), {ForwardTsnChunk::SkippedStream(kStreamID, kSSN)}));
+  reasm.HandleForwardTsn(
+      TSN(13), std::vector<SkippedStream>({SkippedStream(kStreamID, kSSN)}));
   EXPECT_EQ(reasm.queued_bytes(), 0u);
 
   // The lost chunk comes, but too late.
   EXPECT_TRUE(reasm.HasMessages());
   EXPECT_THAT(reasm.FlushMessages(),
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kMessage2Payload)));
-}
-
-TEST_F(ReassemblyQueueTest, ShouldntDeliverMessagesBeforeInitialTsn) {
-  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
-  reasm.Add(TSN(5), gen_.Unordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
-  EXPECT_FALSE(reasm.HasMessages());
-}
-
-TEST_F(ReassemblyQueueTest, ShouldntRedeliverUnorderedMessages) {
-  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
-  reasm.Add(TSN(10), gen_.Unordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
-  EXPECT_TRUE(reasm.HasMessages());
-  EXPECT_THAT(reasm.FlushMessages(),
-              ElementsAre(SctpMessageIs(kStreamID, kPPID, kShortPayload)));
-  reasm.Add(TSN(10), gen_.Unordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
-  EXPECT_FALSE(reasm.HasMessages());
-}
-
-TEST_F(ReassemblyQueueTest, ShouldntRedeliverUnorderedMessagesReallyUnordered) {
-  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
-  reasm.Add(TSN(10), gen_.Unordered({1, 2, 3, 4}, "B"));
-  EXPECT_EQ(reasm.queued_bytes(), 4u);
-
-  EXPECT_FALSE(reasm.HasMessages());
-
-  reasm.Add(TSN(12), gen_.Unordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 4u);
-  EXPECT_TRUE(reasm.HasMessages());
-
-  EXPECT_THAT(reasm.FlushMessages(),
-              ElementsAre(SctpMessageIs(kStreamID, kPPID, kShortPayload)));
-  reasm.Add(TSN(12), gen_.Unordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 4u);
-  EXPECT_FALSE(reasm.HasMessages());
-}
-
-TEST_F(ReassemblyQueueTest, ShouldntDeliverBeforeForwardedTsn) {
-  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
-  reasm.Handle(ForwardTsnChunk(TSN(12), {}));
-
-  reasm.Add(TSN(12), gen_.Unordered({1, 2, 3, 4}, "BE"));
-  EXPECT_EQ(reasm.queued_bytes(), 0u);
-  EXPECT_FALSE(reasm.HasMessages());
 }
 
 TEST_F(ReassemblyQueueTest, NotReadyForHandoverWhenDeliveredTsnsHaveGap) {
@@ -325,46 +275,24 @@ TEST_F(ReassemblyQueueTest, NotReadyForHandoverWhenDeliveredTsnsHaveGap) {
           .Add(
               HandoverUnreadinessReason::kUnorderedStreamHasUnassembledChunks));
 
-  reasm.Handle(ForwardTsnChunk(TSN(13), {}));
+  reasm.HandleForwardTsn(TSN(13), std::vector<SkippedStream>());
   EXPECT_EQ(reasm.GetHandoverReadiness(), HandoverReadinessStatus());
 }
 
 TEST_F(ReassemblyQueueTest, NotReadyForHandoverWhenResetStreamIsDeferred) {
   ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
-  DataGeneratorOptions opts;
-  opts.message_id = MID(0);
-  reasm.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  opts.message_id = MID(1);
-  reasm.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
+  reasm.Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(0)}));
+  reasm.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(1)}));
   EXPECT_THAT(reasm.FlushMessages(), SizeIs(2));
 
-  reasm.ResetStreams(
-      OutgoingSSNResetRequestParameter(
-          ReconfigRequestSN(10), ReconfigRequestSN(3), TSN(13), {StreamID(1)}),
-      TSN(11));
+  reasm.EnterDeferredReset(TSN(12), std::vector<StreamID>({StreamID(1)}));
   EXPECT_EQ(reasm.GetHandoverReadiness(),
             HandoverReadinessStatus().Add(
                 HandoverUnreadinessReason::kStreamResetDeferred));
 
-  opts.message_id = MID(3);
-  opts.ppid = PPID(3);
-  reasm.Add(TSN(13), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm.MaybeResetStreamsDeferred(TSN(11));
+  reasm.Add(TSN(12), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(2)}));
 
-  opts.message_id = MID(2);
-  opts.ppid = PPID(2);
-  reasm.Add(TSN(13), gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm.MaybeResetStreamsDeferred(TSN(15));
-  EXPECT_EQ(reasm.GetHandoverReadiness(),
-            HandoverReadinessStatus().Add(
-                HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap));
-
-  EXPECT_THAT(reasm.FlushMessages(), SizeIs(2));
-  EXPECT_EQ(reasm.GetHandoverReadiness(),
-            HandoverReadinessStatus().Add(
-                HandoverUnreadinessReason::kReassemblyQueueDeliveredTSNsGap));
-
-  reasm.Handle(ForwardTsnChunk(TSN(15), {}));
+  reasm.ResetStreamsAndLeaveDeferredReset(std::vector<StreamID>({StreamID(1)}));
   EXPECT_EQ(reasm.GetHandoverReadiness(), HandoverReadinessStatus());
 }
 
@@ -398,22 +326,6 @@ TEST_F(ReassemblyQueueTest, HandoverAfterHavingAssembedOneMessage) {
 
   reasm2.Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE"));
   EXPECT_THAT(reasm2.FlushMessages(), SizeIs(1));
-}
-
-TEST_F(ReassemblyQueueTest, HandleInconsistentForwardTSN) {
-  // Found when fuzzing.
-  ReassemblyQueue reasm("log: ", TSN(10), kBufferSize);
-  // Add TSN=43, SSN=7. Can't be reassembled as previous SSNs aren't known.
-  reasm.Add(TSN(43), Data(kStreamID, SSN(7), MID(0), FSN(0), kPPID,
-                          std::vector<uint8_t>(10), Data::IsBeginning(true),
-                          Data::IsEnd(true), IsUnordered(false)));
-
-  // Invalid, as TSN=44 have to have SSN>=7, but peer says 6.
-  reasm.Handle(ForwardTsnChunk(
-      TSN(44), {ForwardTsnChunk::SkippedStream(kStreamID, SSN(6))}));
-
-  // Don't assemble SSN=7, as that TSN is skipped.
-  EXPECT_FALSE(reasm.HasMessages());
 }
 
 TEST_F(ReassemblyQueueTest, SingleUnorderedChunkMessageInRfc8260) {
@@ -494,9 +406,8 @@ TEST_F(ReassemblyQueueTest, IForwardTSNRemoveALotOrdered) {
   ASSERT_FALSE(reasm.HasMessages());
   EXPECT_EQ(reasm.queued_bytes(), 7u);
 
-  reasm.Handle(
-      IForwardTsnChunk(TSN(13), {IForwardTsnChunk::SkippedStream(
-                                    IsUnordered(false), kStreamID, MID(0))}));
+  reasm.HandleForwardTsn(TSN(13), std::vector<SkippedStream>({SkippedStream(
+                                      IsUnordered(false), kStreamID, MID(0))}));
   EXPECT_EQ(reasm.queued_bytes(), 0u);
 
   // The lost chunk comes, but too late.

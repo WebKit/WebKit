@@ -125,7 +125,11 @@ template <class T, size_t N, class Storage>
 FixedVector<T, N, Storage>::FixedVector(const FixedVector<T, N, Storage> &other) = default;
 
 template <class T, size_t N, class Storage>
-FixedVector<T, N, Storage>::FixedVector(FixedVector<T, N, Storage> &&other) = default;
+FixedVector<T, N, Storage>::FixedVector(FixedVector<T, N, Storage> &&other)
+    : mStorage(std::move(other.mStorage)), mSize(other.mSize)
+{
+    other.mSize = 0;
+}
 
 template <class T, size_t N, class Storage>
 FixedVector<T, N, Storage>::FixedVector(std::initializer_list<value_type> init)
@@ -140,7 +144,13 @@ FixedVector<T, N, Storage> &FixedVector<T, N, Storage>::operator=(
 
 template <class T, size_t N, class Storage>
 FixedVector<T, N, Storage> &FixedVector<T, N, Storage>::operator=(
-    FixedVector<T, N, Storage> &&other) = default;
+    FixedVector<T, N, Storage> &&other)
+{
+    mStorage    = std::move(other.mStorage);
+    mSize       = other.mSize;
+    other.mSize = 0;
+    return *this;
+}
 
 template <class T, size_t N, class Storage>
 FixedVector<T, N, Storage> &FixedVector<T, N, Storage>::operator=(
@@ -149,7 +159,7 @@ FixedVector<T, N, Storage> &FixedVector<T, N, Storage>::operator=(
     clear();
     ASSERT(init.size() <= N);
     assign_from_initializer_list(init);
-    return this;
+    return *this;
 }
 
 template <class T, size_t N, class Storage>

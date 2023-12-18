@@ -58,9 +58,9 @@ endif()
 # passed to libtool.
 #
 # We set SO_FILE_VERSION = [c-a].a.r
-set(LT_CURRENT 9)
-set(LT_REVISION 1)
-set(LT_AGE 6)
+set(LT_CURRENT 10)
+set(LT_REVISION 0)
+set(LT_AGE 7)
 math(EXPR SO_VERSION "${LT_CURRENT} - ${LT_AGE}")
 set(SO_FILE_VERSION "${SO_VERSION}.${LT_AGE}.${LT_REVISION}")
 unset(LT_CURRENT)
@@ -286,21 +286,14 @@ add_library(aom ${target_objs_aom} $<TARGET_OBJECTS:aom_rtcd>)
 
 if(BUILD_SHARED_LIBS)
   add_library(aom_static STATIC ${target_objs_aom} $<TARGET_OBJECTS:aom_rtcd>)
+  set_target_properties(aom_static PROPERTIES OUTPUT_NAME aom)
   if(MSVC OR (WIN32 AND NOT MINGW))
-    # Fix race condition on the export library file between the two versions.
-    # Affects MSVC in all three flavors (stock, Clang/CL, LLVM-- the latter sets
-    # MSVC and MINGW both to FALSE).
-    set_target_properties(aom PROPERTIES ARCHIVE_OUTPUT_NAME "aom_shared")
+    # Fix race condition between the import library and the static library.
+    # Affects MSVC in all three flavors (stock, clang-cl, LLVM -- the latter
+    # sets MSVC and MINGW both to FALSE).
+    set_target_properties(aom PROPERTIES ARCHIVE_OUTPUT_NAME "aom_dll")
   endif()
-  # Tests and examples rely on having unexported AV1 symbols visible. This is
-  # not the case on Windows platforms due to enforcement of the module
-  # definition file.
-  set(AOM_LIB aom_static)
-else()
-  set(AOM_LIB aom)
-endif()
 
-if(BUILD_SHARED_LIBS)
   if(NOT MSVC)
     # Extract version string and set VERSION/SOVERSION for the aom target.
     extract_version_string("${AOM_CONFIG_DIR}/config/aom_version.h"
@@ -330,7 +323,7 @@ if(NOT WIN32 AND NOT APPLE)
   endif()
 endif()
 
-if(CONFIG_AV1_ENCODER AND NOT CONFIG_REALTIME_ONLY AND NOT BUILD_SHARED_LIBS)
+if(CONFIG_AV1_ENCODER AND NOT BUILD_SHARED_LIBS)
   list(APPEND AOM_AV1_RC_SOURCES "${AOM_ROOT}/av1/ratectrl_rtc.h"
               "${AOM_ROOT}/av1/ratectrl_rtc.cc")
   add_library(aom_av1_rc ${AOM_AV1_RC_SOURCES})
@@ -343,7 +336,7 @@ endif()
 
 # List of object and static library targets.
 set(AOM_LIB_TARGETS ${AOM_LIB_TARGETS} aom_rtcd aom_mem aom_scale aom)
-if(CONFIG_AV1_ENCODER AND NOT CONFIG_REALTIME_ONLY AND NOT BUILD_SHARED_LIBS)
+if(CONFIG_AV1_ENCODER AND NOT BUILD_SHARED_LIBS)
   set(AOM_LIB_TARGETS ${AOM_LIB_TARGETS} aom_av1_rc)
 endif()
 if(BUILD_SHARED_LIBS)
@@ -362,22 +355,19 @@ setup_aom_scale_targets()
 setup_av1_targets()
 
 # Make all library targets depend on aom_rtcd to make sure it builds first.
-foreach(aom_tgt ${AOM_LIB_TARGETS})
-  if(NOT "${aom_tgt}" STREQUAL "aom_rtcd")
-    add_dependencies(${aom_tgt} aom_rtcd)
+foreach(aom_lib ${AOM_LIB_TARGETS})
+  if(NOT "${aom_lib}" STREQUAL "aom_rtcd")
+    add_dependencies(${aom_lib} aom_rtcd)
   endif()
 endforeach()
 
-# Generate C/C++ files containing the function usage_exit(). Users of the
+# Generate a C file containing the function usage_exit(). Users of the
 # aom_common_app_util library must define this function. This is a convenience
 # to allow omission of the function from applications that might want to use
 # other pieces of the util support without defining usage_exit().
 file(WRITE "${AOM_GEN_SRC_DIR}/usage_exit.c"
      "#include <stdlib.h>\n\n#include \"common/tools_common.h\"\n\n"
      "void usage_exit(void) { exit(EXIT_FAILURE); }\n")
-file(WRITE "${AOM_GEN_SRC_DIR}/usage_exit.cc"
-     "#include <stdlib.h>\n\n#include \"common/tools_common.h\"\n\n"
-     "extern \"C\" void usage_exit(void) { exit(EXIT_FAILURE); }\n")
 
 #
 # Application and application support targets.
@@ -395,13 +385,6 @@ if(ENABLE_EXAMPLES OR ENABLE_TESTS OR ENABLE_TOOLS)
     add_library(aom_encoder_app_util OBJECT ${AOM_ENCODER_APP_UTIL_SOURCES})
     set_property(TARGET ${example} PROPERTY FOLDER examples)
   endif()
-endif()
-
-if((CONFIG_AV1_DECODER OR CONFIG_AV1_ENCODER) AND ENABLE_EXAMPLES)
-  add_executable(resize_util "${AOM_ROOT}/examples/resize_util.c"
-                             $<TARGET_OBJECTS:aom_common_app_util>)
-  set_property(TARGET ${example} PROPERTY FOLDER examples)
-  list(APPEND AOM_APP_TARGETS resize_util)
 endif()
 
 if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
@@ -470,7 +453,7 @@ endif()
 if(CONFIG_LIBYUV OR CONFIG_TUNE_BUTTERAUGLI)
   add_library(yuv OBJECT ${AOM_LIBYUV_SOURCES})
   if(NOT MSVC)
-    target_compile_options(yuv PRIVATE -Wno-unused-parameter)
+    target_compile_options(yuv PRIVATE -Wno-shadow)
   endif()
   include_directories("${AOM_ROOT}/third_party/libyuv/include")
 endif()
@@ -504,14 +487,18 @@ if(CONFIG_AV1_ENCODER)
                                     $<TARGET_OBJECTS:aom_common_app_util>
                                     $<TARGET_OBJECTS:aom_encoder_app_util>)
 
-    add_executable(svc_encoder_rtc "${AOM_ROOT}/examples/svc_encoder_rtc.c"
-                                   $<TARGET_OBJECTS:aom_common_app_util>
-                                   $<TARGET_OBJECTS:aom_encoder_app_util>)
-
     # Maintain a list of encoder example targets.
     list(APPEND AOM_ENCODER_EXAMPLE_TARGETS aomenc lossless_encoder noise_model
                 photon_noise_table set_maps simple_encoder scalable_encoder
-                twopass_encoder svc_encoder_rtc)
+                twopass_encoder)
+
+    if(NOT BUILD_SHARED_LIBS)
+      add_executable(svc_encoder_rtc "${AOM_ROOT}/examples/svc_encoder_rtc.cc"
+                                     $<TARGET_OBJECTS:aom_common_app_util>
+                                     $<TARGET_OBJECTS:aom_encoder_app_util>)
+      target_link_libraries(svc_encoder_rtc ${AOM_LIB_LINK_TYPE} aom_av1_rc)
+      list(APPEND AOM_ENCODER_EXAMPLE_TARGETS svc_encoder_rtc)
+    endif()
   endif()
 
   if(ENABLE_TOOLS)
@@ -643,15 +630,15 @@ if(CONFIG_AV1_ENCODER)
     if(PKG_CONFIG_FOUND)
       pkg_check_modules(VMAF REQUIRED libvmaf)
       if(BUILD_SHARED_LIBS)
-        target_link_libraries(aom PRIVATE ${VMAF_LDFLAGS} ${VMAF_LIBRARIES})
-      else()
-        target_link_libraries(aom
-                              PRIVATE ${VMAF_LDFLAGS} ${VMAF_LIBRARIES} -static)
+        target_link_libraries(aom_static
+                              PRIVATE ${VMAF_LDFLAGS} ${VMAF_LIBRARIES})
       endif()
-      target_include_directories(aom PRIVATE ${VMAF_INCLUDE_DIRS})
+      target_link_libraries(aom PRIVATE ${VMAF_LDFLAGS} ${VMAF_LIBRARIES})
       target_include_directories(aom_dsp_encoder PRIVATE ${VMAF_INCLUDE_DIRS})
       if(VMAF_CFLAGS)
-        append_compiler_flag("${VMAF_CFLAGS}")
+        foreach(flag "${VMAF_CFLAGS}")
+          append_compiler_flag("${flag}")
+        endforeach()
       endif()
     else()
       message(FATAL_ERROR "CONFIG_TUNE_VMAF error: pkg-config not found.")
@@ -674,7 +661,7 @@ endif()
 
 if(ENABLE_TOOLS)
   if(CONFIG_AV1_DECODER)
-    add_executable(dump_obu "${AOM_GEN_SRC_DIR}/usage_exit.cc"
+    add_executable(dump_obu "${AOM_GEN_SRC_DIR}/usage_exit.c"
                             "${AOM_ROOT}/tools/dump_obu.cc"
                             "${AOM_ROOT}/tools/obu_parser.cc"
                             "${AOM_ROOT}/tools/obu_parser.h"
@@ -736,7 +723,7 @@ if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODER AND CONFIG_AV1_DECODER)
 endif()
 
 foreach(aom_app ${AOM_APP_TARGETS})
-  target_link_libraries(${aom_app} ${AOM_LIB_LINK_TYPE} ${AOM_LIB})
+  target_link_libraries(${aom_app} ${AOM_LIB_LINK_TYPE} aom)
 endforeach()
 
 if(ENABLE_EXAMPLES OR ENABLE_TESTS OR ENABLE_TOOLS)
@@ -862,7 +849,7 @@ set_user_flags()
 # Aomedia documentation rule.
 set(DOXYGEN_VERSION_VALUE 0)
 if(ENABLE_DOCS)
-  include(FindDoxygen)
+  find_package(Doxygen)
   if(DOXYGEN_FOUND)
     # Check if Doxygen version is >= minimum required version(i.e. 1.8.10).
     set(MINIMUM_DOXYGEN_VERSION 1008010)
@@ -952,7 +939,8 @@ endif()
 get_cmake_property(all_cmake_vars VARIABLES)
 foreach(var ${all_cmake_vars})
   if("${var}" MATCHES "SOURCES$\|_INTRIN_\|_ASM_"
-     AND NOT "${var}" MATCHES "DOXYGEN\|LIBYUV\|_PKG_\|TEST")
+     AND NOT "${var}" MATCHES "DOXYGEN\|LIBYUV\|_PKG_\|TEST"
+     AND NOT "${var}" MATCHES "_ASM_NASM\|_ASM_COMPILER_")
     list(APPEND aom_source_vars ${var})
   endif()
 endforeach()

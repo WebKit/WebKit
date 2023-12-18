@@ -47,6 +47,7 @@ PACKAGES=(
     libevent-dev
     libfile-copy-recursive-perl
     libinput-dev
+    $(aptIfExists libjxl-dev)
     $(aptIfElse libgcrypt20-dev libgcrypt11-dev)
     libgstreamer1.0-dev
     libgstreamer-plugins-bad1.0-dev

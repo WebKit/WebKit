@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "GraphicsContext.h"
+
 namespace WebCore {
 
 class GraphicsContextStateSaver {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// https://w3c.github.io/media-playback-quality/#idl-def-videoplaybackquality
-// FIXME: This is not specified as "LegacyNoInterfaceObject". It should have an interface object.
+// https://w3c.github.io/media-playback-quality/#videoplaybackquality-interface
+
+typedef double DOMHighResTimeStamp;
+
 [
     Conditional=VIDEO,
-    LegacyNoInterfaceObject,
+    Exposed=Window
 ] interface VideoPlaybackQuality {
-    readonly attribute unrestricted double creationTime;
-    readonly attribute unsigned long totalVideoFrames;
+    readonly attribute DOMHighResTimeStamp creationTime;
     readonly attribute unsigned long droppedVideoFrames;
+    readonly attribute unsigned long totalVideoFrames;
+
+    // Deprecated!
     readonly attribute unsigned long corruptedVideoFrames;
+
     [EnabledBySetting=videoQualityIncludesDisplayCompositingEnabled] readonly attribute unsigned long displayCompositedVideoFrames;
     readonly attribute unrestricted double totalFrameDelay;
 };

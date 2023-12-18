@@ -38,7 +38,7 @@ class UserStyleSheet {
 public:
     UserStyleSheet()
         : m_injectedFrames(UserContentInjectedFrames::InjectInAllFrames)
-        , m_level(UserStyleUserLevel)
+        , m_level(UserStyleLevel::User)
     {
     }
 

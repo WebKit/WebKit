@@ -120,8 +120,8 @@ void NetworkDataTask::scheduleFailure(FailureType type)
 {
     m_failureScheduled = true;
     RunLoop::main().dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, type] {
-        auto strongThis = weakThis.get();
-        if (!strongThis || !m_client)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis || !m_client)
             return;
 
         switch (type) {
@@ -205,10 +205,8 @@ NetworkSession* NetworkDataTask::networkSession()
 
 void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if ((m_session->sessionID().isEphemeral() || m_session->isTrackingPreventionEnabled()) && m_session->shouldDowngradeReferrer() && request.isThirdParty())
         request.setExistingHTTPReferrerToOriginString();
-#endif
 }
 
 String NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID)

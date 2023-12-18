@@ -216,7 +216,6 @@ int64_t WebPlatformStrategies::setTypes(const Vector<String>& pasteboardTypes, c
 
 int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
-    SharedMemory::Handle handle;
     // FIXME: Null check prevents crashing, but it is not great that we will have empty pasteboard content for this type,
     // because we've already set the types.
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, pasteboardType, buffer ? RefPtr { buffer } : SharedBuffer::create(), pageIdentifier(context)), 0);

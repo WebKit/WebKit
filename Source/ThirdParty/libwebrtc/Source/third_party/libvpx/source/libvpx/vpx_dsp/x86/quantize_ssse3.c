@@ -16,16 +16,17 @@
 #include "vpx_dsp/x86/bitdepth_conversion_sse2.h"
 #include "vpx_dsp/x86/quantize_sse2.h"
 #include "vpx_dsp/x86/quantize_ssse3.h"
+#include "vp9/common/vp9_scan.h"
+#include "vp9/encoder/vp9_block.h"
 
 void vpx_quantize_b_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                          int skip_block, const int16_t *zbin_ptr,
-                          const int16_t *round_ptr, const int16_t *quant_ptr,
-                          const int16_t *quant_shift_ptr,
+                          const struct macroblock_plane *const mb_plane,
                           tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
                           const int16_t *dequant_ptr, uint16_t *eob_ptr,
-                          const int16_t *scan, const int16_t *iscan) {
+                          const struct ScanOrder *const scan_order) {
   const __m128i zero = _mm_setzero_si128();
   int index = 16;
+  const int16_t *iscan = scan_order->iscan;
 
   __m128i zbin, round, quant, dequant, shift;
   __m128i coeff0, coeff1;
@@ -33,12 +34,7 @@ void vpx_quantize_b_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   __m128i cmp_mask0, cmp_mask1;
   __m128i eob, eob0;
 
-  (void)scan;
-  (void)skip_block;
-  assert(!skip_block);
-
-  load_b_values(zbin_ptr, &zbin, round_ptr, &round, quant_ptr, &quant,
-                dequant_ptr, &dequant, quant_shift_ptr, &shift);
+  load_b_values(mb_plane, &zbin, &round, &quant, dequant_ptr, &dequant, &shift);
 
   // Do DC and first 15 AC.
   coeff0 = load_tran_low(coeff_ptr);
@@ -72,7 +68,7 @@ void vpx_quantize_b_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   dequant = _mm_unpackhi_epi64(dequant, dequant);
   calculate_dqcoeff_and_store(qcoeff1, dequant, dqcoeff_ptr + 8);
 
-  eob = scan_for_eob(&qcoeff0, &qcoeff1, cmp_mask0, cmp_mask1, iscan, 0, zero);
+  eob = scan_for_eob(&qcoeff0, &qcoeff1, iscan, 0, zero);
 
   // AC only loop.
   while (index < n_coeffs) {
@@ -100,8 +96,7 @@ void vpx_quantize_b_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
     calculate_dqcoeff_and_store(qcoeff0, dequant, dqcoeff_ptr + index);
     calculate_dqcoeff_and_store(qcoeff1, dequant, dqcoeff_ptr + index + 8);
 
-    eob0 = scan_for_eob(&qcoeff0, &qcoeff1, cmp_mask0, cmp_mask1, iscan, index,
-                        zero);
+    eob0 = scan_for_eob(&qcoeff0, &qcoeff1, iscan, index, zero);
     eob = _mm_max_epi16(eob, eob0);
 
     index += 16;
@@ -110,17 +105,14 @@ void vpx_quantize_b_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   *eob_ptr = accumulate_eob(eob);
 }
 
-void vpx_quantize_b_32x32_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                                int skip_block, const int16_t *zbin_ptr,
-                                const int16_t *round_ptr,
-                                const int16_t *quant_ptr,
-                                const int16_t *quant_shift_ptr,
+void vpx_quantize_b_32x32_ssse3(const tran_low_t *coeff_ptr,
+                                const struct macroblock_plane *const mb_plane,
                                 tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
                                 const int16_t *dequant_ptr, uint16_t *eob_ptr,
-                                const int16_t *scan, const int16_t *iscan) {
+                                const struct ScanOrder *const scan_order) {
   const __m128i zero = _mm_setzero_si128();
-  const __m128i one = _mm_set1_epi16(1);
   int index;
+  const int16_t *iscan = scan_order->iscan;
 
   __m128i zbin, round, quant, dequant, shift;
   __m128i coeff0, coeff1;
@@ -129,32 +121,8 @@ void vpx_quantize_b_32x32_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   __m128i all_zero;
   __m128i eob = zero, eob0;
 
-  (void)scan;
-  (void)n_coeffs;
-  (void)skip_block;
-  assert(!skip_block);
-
-  // Setup global values.
-  // The 32x32 halves zbin and round.
-  zbin = _mm_load_si128((const __m128i *)zbin_ptr);
-  // Shift with rounding.
-  zbin = _mm_add_epi16(zbin, one);
-  zbin = _mm_srli_epi16(zbin, 1);
-  // x86 has no "greater *or equal*" comparison. Subtract 1 from zbin so
-  // it is a strict "greater" comparison.
-  zbin = _mm_sub_epi16(zbin, one);
-
-  round = _mm_load_si128((const __m128i *)round_ptr);
-  round = _mm_add_epi16(round, one);
-  round = _mm_srli_epi16(round, 1);
-
-  quant = _mm_load_si128((const __m128i *)quant_ptr);
-  dequant = _mm_load_si128((const __m128i *)dequant_ptr);
-  shift = _mm_load_si128((const __m128i *)quant_shift_ptr);
-  // I suspect this is not technically OK because quant_shift can be up
-  // to 1 << 16 and shifting up again will outrange that, but the test is not
-  // comprehensive enough to catch that and "it's been that way forever"
-  shift = _mm_slli_epi16(shift, 1);
+  load_b_values32x32(mb_plane, &zbin, &round, &quant, dequant_ptr, &dequant,
+                     &shift);
 
   // Do DC and first 15 AC.
   coeff0 = load_tran_low(coeff_ptr);
@@ -206,8 +174,7 @@ void vpx_quantize_b_32x32_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
     dequant = _mm_unpackhi_epi64(dequant, dequant);
     calculate_dqcoeff_and_store_32x32(qcoeff1, dequant, zero, dqcoeff_ptr + 8);
 
-    eob =
-        scan_for_eob(&qcoeff0, &qcoeff1, cmp_mask0, cmp_mask1, iscan, 0, zero);
+    eob = scan_for_eob(&qcoeff0, &qcoeff1, iscan, 0, zero);
   }
 
   // AC only loop.
@@ -253,8 +220,7 @@ void vpx_quantize_b_32x32_ssse3(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
     calculate_dqcoeff_and_store_32x32(qcoeff1, dequant, zero,
                                       dqcoeff_ptr + 8 + index);
 
-    eob0 = scan_for_eob(&qcoeff0, &qcoeff1, cmp_mask0, cmp_mask1, iscan, index,
-                        zero);
+    eob0 = scan_for_eob(&qcoeff0, &qcoeff1, iscan, index, zero);
     eob = _mm_max_epi16(eob, eob0);
   }
 

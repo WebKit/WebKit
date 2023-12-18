@@ -45,15 +45,15 @@ inline StyleProperties::StyleProperties(CSSParserMode mode, unsigned immutableAr
 
 inline StyleProperties::PropertyReference StyleProperties::propertyAt(unsigned index) const
 {
-    if (is<MutableStyleProperties>(*this))
-        return downcast<MutableStyleProperties>(*this).propertyAt(index);
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*this))
+        return mutableProperties->propertyAt(index);
     return downcast<ImmutableStyleProperties>(*this).propertyAt(index);
 }
 
 inline unsigned StyleProperties::propertyCount() const
 {
-    if (is<MutableStyleProperties>(*this))
-        return downcast<MutableStyleProperties>(*this).propertyCount();
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*this))
+        return mutableProperties->propertyCount();
     return downcast<ImmutableStyleProperties>(*this).propertyCount();
 }
 
@@ -62,25 +62,25 @@ inline void StyleProperties::deref() const
     if (!derefBase())
         return;
 
-    if (is<MutableStyleProperties>(*this))
-        delete downcast<MutableStyleProperties>(this);
-    else if (is<ImmutableStyleProperties>(*this))
-        delete downcast<ImmutableStyleProperties>(this);
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*this))
+        delete mutableProperties;
+    else if (auto* immutableProperties = dynamicDowncast<ImmutableStyleProperties>(*this))
+        delete immutableProperties;
     else
         RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline int StyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
 {
-    if (is<MutableStyleProperties>(*this))
-        return downcast<MutableStyleProperties>(*this).findPropertyIndex(propertyID);
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*this))
+        return mutableProperties->findPropertyIndex(propertyID);
     return downcast<ImmutableStyleProperties>(*this).findPropertyIndex(propertyID);
 }
 
 inline int StyleProperties::findCustomPropertyIndex(StringView propertyName) const
 {
-    if (is<MutableStyleProperties>(*this))
-        return downcast<MutableStyleProperties>(*this).findCustomPropertyIndex(propertyName);
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*this))
+        return mutableProperties->findCustomPropertyIndex(propertyName);
     return downcast<ImmutableStyleProperties>(*this).findCustomPropertyIndex(propertyName);
 }
 

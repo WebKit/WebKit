@@ -17,6 +17,19 @@
 #include "aom_dsp/x86/mem_sse2.h"
 #include "aom_ports/mem.h"
 
+static INLINE void sign_extend_16bit_to_32bit_sse2(__m128i in, __m128i zero,
+                                                   __m128i *out_lo,
+                                                   __m128i *out_hi) {
+  const __m128i sign_bits = _mm_cmplt_epi16(in, zero);
+  *out_lo = _mm_unpacklo_epi16(in, sign_bits);
+  *out_hi = _mm_unpackhi_epi16(in, sign_bits);
+}
+
+static INLINE __m128i invert_sign_32_sse2(__m128i a, __m128i sign) {
+  a = _mm_xor_si128(a, sign);
+  return _mm_sub_epi32(a, sign);
+}
+
 void aom_minmax_8x8_sse2(const uint8_t *s, int p, const uint8_t *d, int dp,
                          int *min, int *max) {
   __m128i u0, s0, d0, diff, maxabsdiff, minabsdiff, negdiff, absdiff0, absdiff;
@@ -502,6 +515,12 @@ void aom_hadamard_32x32_sse2(const int16_t *src_diff, ptrdiff_t src_stride,
   DECLARE_ALIGNED(32, int16_t, temp_coeff[32 * 32]);
   int16_t *t_coeff = temp_coeff;
   int idx;
+  __m128i coeff0_lo, coeff1_lo, coeff2_lo, coeff3_lo, b0_lo, b1_lo, b2_lo,
+      b3_lo;
+  __m128i coeff0_hi, coeff1_hi, coeff2_hi, coeff3_hi, b0_hi, b1_hi, b2_hi,
+      b3_hi;
+  __m128i b0, b1, b2, b3;
+  const __m128i zero = _mm_setzero_si128();
   for (idx = 0; idx < 4; ++idx) {
     const int16_t *src_ptr =
         src_diff + (idx >> 1) * 16 * src_stride + (idx & 0x01) * 16;
@@ -515,15 +534,38 @@ void aom_hadamard_32x32_sse2(const int16_t *src_diff, ptrdiff_t src_stride,
     __m128i coeff2 = _mm_load_si128((const __m128i *)(t_coeff + 512));
     __m128i coeff3 = _mm_load_si128((const __m128i *)(t_coeff + 768));
 
-    __m128i b0 = _mm_add_epi16(coeff0, coeff1);
-    __m128i b1 = _mm_sub_epi16(coeff0, coeff1);
-    __m128i b2 = _mm_add_epi16(coeff2, coeff3);
-    __m128i b3 = _mm_sub_epi16(coeff2, coeff3);
+    // Sign extend 16 bit to 32 bit.
+    sign_extend_16bit_to_32bit_sse2(coeff0, zero, &coeff0_lo, &coeff0_hi);
+    sign_extend_16bit_to_32bit_sse2(coeff1, zero, &coeff1_lo, &coeff1_hi);
+    sign_extend_16bit_to_32bit_sse2(coeff2, zero, &coeff2_lo, &coeff2_hi);
+    sign_extend_16bit_to_32bit_sse2(coeff3, zero, &coeff3_lo, &coeff3_hi);
 
-    b0 = _mm_srai_epi16(b0, 2);
-    b1 = _mm_srai_epi16(b1, 2);
-    b2 = _mm_srai_epi16(b2, 2);
-    b3 = _mm_srai_epi16(b3, 2);
+    b0_lo = _mm_add_epi32(coeff0_lo, coeff1_lo);
+    b0_hi = _mm_add_epi32(coeff0_hi, coeff1_hi);
+
+    b1_lo = _mm_sub_epi32(coeff0_lo, coeff1_lo);
+    b1_hi = _mm_sub_epi32(coeff0_hi, coeff1_hi);
+
+    b2_lo = _mm_add_epi32(coeff2_lo, coeff3_lo);
+    b2_hi = _mm_add_epi32(coeff2_hi, coeff3_hi);
+
+    b3_lo = _mm_sub_epi32(coeff2_lo, coeff3_lo);
+    b3_hi = _mm_sub_epi32(coeff2_hi, coeff3_hi);
+
+    b0_lo = _mm_srai_epi32(b0_lo, 2);
+    b1_lo = _mm_srai_epi32(b1_lo, 2);
+    b2_lo = _mm_srai_epi32(b2_lo, 2);
+    b3_lo = _mm_srai_epi32(b3_lo, 2);
+
+    b0_hi = _mm_srai_epi32(b0_hi, 2);
+    b1_hi = _mm_srai_epi32(b1_hi, 2);
+    b2_hi = _mm_srai_epi32(b2_hi, 2);
+    b3_hi = _mm_srai_epi32(b3_hi, 2);
+
+    b0 = _mm_packs_epi32(b0_lo, b0_hi);
+    b1 = _mm_packs_epi32(b1_lo, b1_hi);
+    b2 = _mm_packs_epi32(b2_lo, b2_hi);
+    b3 = _mm_packs_epi32(b3_lo, b3_hi);
 
     coeff0 = _mm_add_epi16(b0, b2);
     coeff1 = _mm_add_epi16(b1, b3);
@@ -546,21 +588,14 @@ void aom_hadamard_32x32_sse2(const int16_t *src_diff, ptrdiff_t src_stride,
 int aom_satd_sse2(const tran_low_t *coeff, int length) {
   int i;
   const __m128i zero = _mm_setzero_si128();
-  const __m128i one = _mm_set1_epi16(1);
   __m128i accum = zero;
 
-  for (i = 0; i < length; i += 16) {
-    const __m128i src_line0 = load_tran_low(coeff);
-    const __m128i src_line1 = load_tran_low(coeff + 8);
-    const __m128i inv0 = _mm_sub_epi16(zero, src_line0);
-    const __m128i inv1 = _mm_sub_epi16(zero, src_line1);
-    const __m128i abs0 = _mm_max_epi16(src_line0, inv0);  // abs(src_line)
-    const __m128i abs1 = _mm_max_epi16(src_line1, inv1);  // abs(src_line)
-    const __m128i sum0 = _mm_madd_epi16(abs0, one);
-    const __m128i sum1 = _mm_madd_epi16(abs1, one);
-    accum = _mm_add_epi32(accum, sum0);
-    accum = _mm_add_epi32(accum, sum1);
-    coeff += 16;
+  for (i = 0; i < length; i += 4) {
+    const __m128i src_line = _mm_load_si128((const __m128i *)coeff);
+    const __m128i coeff_sign = _mm_srai_epi32(src_line, 31);
+    const __m128i abs_coeff = invert_sign_32_sse2(src_line, coeff_sign);
+    accum = _mm_add_epi32(accum, abs_coeff);
+    coeff += 4;
   }
 
   {  // cascading summation of accum

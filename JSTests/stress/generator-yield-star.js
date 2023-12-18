@@ -125,7 +125,7 @@ class CallSite {
     shouldBe(g.next(2).value, 2);
     shouldThrow(() => {
         g.throw(42);
-    }, `TypeError: Delegated generator does not have a 'throw' method.`);
+    }, `TypeError: The iterator, to which yield* delegated iteration, does not have a 'throw' method.`);
     shouldThrow(() => {
         g.throw(44);
     }, `44`);
@@ -198,7 +198,7 @@ class CallSite {
     shouldBe(g.next(2).value, 2);
     shouldThrow(() => {
         g.throw(42);
-    }, `TypeError: Delegated generator does not have a 'throw' method.`);
+    }, `TypeError: The iterator, to which yield* delegated iteration, does not have a 'throw' method.`);
     shouldThrow(() => {
         g.throw(44);
     }, `44`);

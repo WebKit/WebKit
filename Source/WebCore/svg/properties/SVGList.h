@@ -157,14 +157,14 @@ protected:
     ExceptionOr<bool> canAlterList() const
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
         return true;
     }
 
     ExceptionOr<bool> canGetItem(unsigned index)
     {
         if (index >= m_items.size())
-            return Exception { IndexSizeError };
+            return Exception { ExceptionCode::IndexSizeError };
         return true;
     }
 
@@ -176,7 +176,7 @@ protected:
         ASSERT(result.releaseReturnValue());
 
         if (index >= m_items.size())
-            return Exception { IndexSizeError };
+            return Exception { ExceptionCode::IndexSizeError };
         return true;
     }
 
@@ -188,7 +188,7 @@ protected:
         ASSERT(result.releaseReturnValue());
 
         if (index >= m_items.size())
-            return Exception { IndexSizeError };
+            return Exception { ExceptionCode::IndexSizeError };
         return true;
     }
 

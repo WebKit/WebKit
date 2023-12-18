@@ -53,7 +53,7 @@
 #include "JITMathICForwards.h"
 #include "JSCast.h"
 #include "JumpTable.h"
-#include "LazyOperandValueProfile.h"
+#include "LazyValueProfile.h"
 #include "MetadataTable.h"
 #include "ModuleProgramExecutable.h"
 #include "ObjectAllocationProfile.h"
@@ -243,8 +243,8 @@ public:
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);
     unsigned lineNumberForBytecodeIndex(BytecodeIndex);
     unsigned columnNumberForBytecodeIndex(BytecodeIndex);
-    void expressionRangeForBytecodeIndex(BytecodeIndex, int& divot,
-        int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
+    void expressionRangeForBytecodeIndex(BytecodeIndex, unsigned& divot,
+        unsigned& startOffset, unsigned& endOffset, unsigned& line, unsigned& column) const;
 
     std::optional<BytecodeIndex> bytecodeIndexFromCallSiteIndex(CallSiteIndex);
 
@@ -282,10 +282,7 @@ public:
 #endif // ENABLE(JIT)
 
     void unlinkIncomingCalls();
-    void linkIncomingCall(CallFrame* callerFrame, CallLinkInfo*);
-#if ENABLE(JIT)
-    void linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode*);
-#endif // ENABLE(JIT)
+    void linkIncomingCall(CallFrame* callerFrame, CallLinkInfoBase*);
 
     const JSInstruction* outOfLineJumpTarget(const JSInstruction* pc);
     int outOfLineJumpOffset(JSInstructionStream::Offset offset)
@@ -322,7 +319,7 @@ public:
     // Exactly equivalent to codeBlock->ownerExecutable()->newReplacementCodeBlockFor(codeBlock->specializationKind())
     CodeBlock* newReplacement();
     
-    void setJITCode(Ref<JITCode>&& code)
+    void setJITCode(Ref<JSC::JITCode>&& code)
     {
         if (!code->isShared())
             heap()->reportExtraMemoryAllocated(this, code->size());
@@ -332,12 +329,12 @@ public:
         m_jitCode = WTFMove(code);
     }
 
-    RefPtr<JITCode> jitCode() { return m_jitCode; }
+    RefPtr<JSC::JITCode> jitCode() { return m_jitCode; }
     static ptrdiff_t jitCodeOffset() { return OBJECT_OFFSETOF(CodeBlock, m_jitCode); }
     JITType jitType() const
     {
-        JITCode* jitCode = m_jitCode.get();
-        JITType result = JITCode::jitTypeFor(jitCode);
+        auto* jitCode = m_jitCode.get();
+        JITType result = JSC::JITCode::jitTypeFor(jitCode);
         return result;
     }
 
@@ -403,19 +400,18 @@ public:
         return m_argumentValueProfiles.size();
     }
 
-    ValueProfile& valueProfileForArgument(unsigned argumentIndex)
+    ArgumentValueProfile& valueProfileForArgument(unsigned argumentIndex)
     {
         ASSERT(Options::useJIT()); // This is only called from the various JIT compilers or places that first check numberOfArgumentValueProfiles before calling this.
         ASSERT(JITCode::isBaselineCode(jitType()));
-        ValueProfile& result = m_argumentValueProfiles[argumentIndex];
-        return result;
+        return m_argumentValueProfiles[argumentIndex];
     }
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset) { return m_metadata->valueProfileForOffset(profileOffset); }
 
     ValueProfile* tryGetValueProfileForBytecodeIndex(BytecodeIndex);
     ValueProfile& valueProfileForBytecodeIndex(BytecodeIndex);
-    SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
+    SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex, JSValue* specFailValue = nullptr);
 
     template<typename Functor> void forEachValueProfile(const Functor&);
     template<typename Functor> void forEachArrayAllocationProfile(const Functor&);
@@ -444,7 +440,7 @@ public:
     // Having code origins implies that there has been some inlining.
     bool hasCodeOrigins()
     {
-        return JITCode::isOptimizingJIT(jitType());
+        return JSC::JITCode::isOptimizingJIT(jitType());
     }
         
     bool canGetCodeOrigin(CallSiteIndex index)
@@ -459,9 +455,9 @@ public:
         return codeOrigins().get(index.bits());
     }
 
-    CompressedLazyOperandValueProfileHolder& lazyOperandValueProfiles(const ConcurrentJSLocker&)
+    CompressedLazyValueProfileHolder& lazyValueProfiles()
     {
-        return m_lazyOperandValueProfiles;
+        return m_lazyValueProfiles;
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -508,7 +504,7 @@ public:
     
     const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
 
-    Heap* heap() const { return &m_vm->heap; }
+    JSC::Heap* heap() const { return &m_vm->heap; }
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
     static ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(CodeBlock, m_globalObject); }
@@ -535,7 +531,7 @@ public:
     }
     BaselineJITData* baselineJITData()
     {
-        if (!JITCode::isOptimizingJIT(jitType()))
+        if (!JSC::JITCode::isOptimizingJIT(jitType()))
             return bitwise_cast<BaselineJITData*>(m_jitData);
         return nullptr;
     }
@@ -550,7 +546,7 @@ public:
 
     DFG::JITData* dfgJITData()
     {
-        if (JITCode::isOptimizingJIT(jitType()))
+        if (JSC::JITCode::isOptimizingJIT(jitType()))
             return bitwise_cast<DFG::JITData*>(m_jitData);
         return nullptr;
     }
@@ -727,7 +723,7 @@ public:
     bool shouldOptimizeNowFromBaseline();
     void updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker&);
     void updateAllLazyValueProfilePredictions(const ConcurrentJSLocker&);
-    void updateAllArrayProfilePredictions(const ConcurrentJSLocker&);
+    void updateAllArrayProfilePredictions();
     void updateAllArrayAllocationProfilePredictions();
     void updateAllPredictions();
 
@@ -956,12 +952,11 @@ private:
     VM* const m_vm;
 
     const void* const m_instructionsRawPointer { nullptr };
-    SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
-#if ENABLE(JIT)
-    SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
-#endif
+    SentinelLinkedList<CallLinkInfoBase, BasicRawSentinelNode<CallLinkInfoBase>> m_incomingCalls;
+    uint16_t m_optimizationDelayCounter { 0 };
+    uint16_t m_reoptimizationRetryCounter { 0 };
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
-    RefPtr<JITCode> m_jitCode;
+    RefPtr<JSC::JITCode> m_jitCode;
 #if ENABLE(JIT)
 public:
     void* m_jitData { nullptr };
@@ -971,13 +966,13 @@ private:
 #if ENABLE(DFG_JIT)
     // This is relevant to non-DFG code blocks that serve as the profiled code block
     // for DFG code blocks.
-    CompressedLazyOperandValueProfileHolder m_lazyOperandValueProfiles;
+    CompressedLazyValueProfileHolder m_lazyValueProfiles;
 #endif
-    FixedVector<ValueProfile> m_argumentValueProfiles;
+    FixedVector<ArgumentValueProfile> m_argumentValueProfiles;
 
     // Constant Pool
     static_assert(sizeof(Register) == sizeof(WriteBarrier<Unknown>), "Register must be same size as WriteBarrier Unknown");
-    // TODO: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
+    // FIXME: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
     // it, so we're stuck with it for now.
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
     FixedVector<WriteBarrier<FunctionExecutable>> m_functionDecls;
@@ -987,11 +982,9 @@ private:
 
     BaselineExecutionCounter m_jitExecuteCounter;
 
-    uint16_t m_optimizationDelayCounter { 0 };
-    uint16_t m_reoptimizationRetryCounter { 0 };
+    float m_previousCounter { 0 };
 
     ApproximateTime m_creationTime;
-    double m_previousCounter { 0 };
 
     std::unique_ptr<RareData> m_rareData;
 
@@ -1002,7 +995,7 @@ private:
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
 #if defined(NDEBUG) && !defined(ASSERT_ENABLED) && COMPILER(GCC_COMPATIBLE)
-static_assert(sizeof(CodeBlock) <= 240, "Keep it small for memory saving");
+static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>

@@ -83,6 +83,10 @@ void WeekInputType::handleDOMActivateEvent(Event&)
 {
 }
 
+void WeekInputType::showPicker()
+{
+}
+
 bool WeekInputType::isValidFormat(OptionSet<DateTimeFormatValidationResults> results) const
 {
     return results.containsAll({ DateTimeFormatValidationResults::HasYear, DateTimeFormatValidationResults::HasWeek });

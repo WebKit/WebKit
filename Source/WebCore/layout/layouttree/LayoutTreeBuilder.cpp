@@ -86,6 +86,22 @@ static std::optional<LayoutSize> accumulatedOffsetForInFlowPositionedContinuatio
     return block.relativePositionOffset();
 }
 
+template<typename CharacterType>
+static bool canUseSimplifiedTextMeasuringForCharacters(std::span<const CharacterType> characters, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
+{
+    auto& primaryFont = fontCascade.primaryFont();
+    auto* rawCharacters = characters.data();
+    for (unsigned i = 0; i < characters.size(); ++i) {
+        auto character = rawCharacters[i]; // Not using characters[i] to bypass the bounds check.
+        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
+            return false;
+        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
+        if (!glyphData.isValid() || glyphData.font != &primaryFont)
+            return false;
+    }
+    return true;
+}
+
 static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade& fontCascade, bool whitespaceIsCollapsed)
 {
     if (fontCascade.codePath(TextRun(content)) == FontCascade::CodePath::Complex)
@@ -94,15 +110,9 @@ static bool canUseSimplifiedTextMeasuring(StringView content, const FontCascade&
     if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
         return false;
 
-    auto& primaryFont = fontCascade.primaryFont();
-    for (unsigned i = 0; i < content.length(); ++i) {
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(content[i], whitespaceIsCollapsed))
-            return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(content[i], false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
-            return false;
-    }
-    return true;
+    if (content.is8Bit())
+        return canUseSimplifiedTextMeasuringForCharacters(content.span8(), fontCascade, whitespaceIsCollapsed);
+    return canUseSimplifiedTextMeasuringForCharacters(content.span16(), fontCascade, whitespaceIsCollapsed);
 }
 
 std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderView& renderView)
@@ -128,9 +138,16 @@ std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes eleme
     return makeUnique<ElementBox>(WTFMove(elementAttributes), WTFMove(replacedAttributes), WTFMove(style));
 }
 
-std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath,  RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath, bool hasPositionDependentContentWidth, RenderStyle&& style)
 {
-    return makeUnique<InlineTextBox>(text, isCombined, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style));
+    auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+    if (canUseSimpleFontCodePath)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
+    if (canUseSimplifiedTextMeasuring)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
+    if (hasPositionDependentContentWidth)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+    return makeUnique<InlineTextBox>(text, isCombined, contentCharacteristic, WTFMove(style));
 }
 
 std::unique_ptr<ElementBox> TreeBuilder::createContainer(Box::ElementAttributes elementAttributes, RenderStyle&& style)
@@ -164,10 +181,13 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
         // RenderText::text() has already applied text-transform and text-security properties.
         String text = textRenderer.text();
         auto useSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring(text, parentContainer.style().fontCascade(), parentContainer.style().collapseWhiteSpace());
+        auto hasPositionDependentContentWidth = textRenderer.hasPositionDependentContentWidth();
+        if (!hasPositionDependentContentWidth)
+            hasPositionDependentContentWidth = TextUtil::hasPositionDependentContentWidth(text);
         if (parentContainer.style().display() == DisplayType::Inline)
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::clone(parentContainer.style()));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, RenderStyle::clone(parentContainer.style()));
         else
-            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
+            childLayoutBox = createTextBox(text, is<RenderCombineText>(childRenderer), useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), *hasPositionDependentContentWidth, RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), DisplayType::Inline));
     } else {
         auto& renderer = downcast<RenderElement>(childRenderer);
         auto displayType = renderer.style().display();
@@ -546,7 +566,7 @@ void showLayoutTree(const InitialContainingBlock& initialContainingBlock)
 
 void printLayoutTreeForLiveDocuments()
 {
-    for (const auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
@@ -555,7 +575,7 @@ void printLayoutTreeForLiveDocuments()
         // FIXME: Need to find a way to output geometry without layout context.
         auto& renderView = *document->renderView();
         auto layoutTree = TreeBuilder::buildLayoutTree(renderView);
-        auto layoutState = LayoutState { *document, layoutTree->root() };
+        auto layoutState = LayoutState { document, layoutTree->root() };
 
         LayoutContext(layoutState).layout(renderView.size());
         showLayoutTree(downcast<InitialContainingBlock>(layoutState.root()), &layoutState);

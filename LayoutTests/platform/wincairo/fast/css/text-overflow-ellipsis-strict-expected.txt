@@ -1,105 +1,105 @@
-layer at (0,0) size 785x770
+layer at (0,0) size 785x740
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x770
-  RenderBlock {HTML} at (0,0) size 785x770
-    RenderBody {BODY} at (8,8) size 769x742
-      RenderBlock (anonymous) at (0,0) size 769x100
-        RenderText {#text} at (0,0) size 557x19
+layer at (0,0) size 785x740
+  RenderBlock {HTML} at (0,0) size 785x740
+    RenderBody {BODY} at (8,8) size 769x712
+      RenderBlock (anonymous) at (0,0) size 769x90
+        RenderText {#text} at (0,0) size 557x17
           text run at (0,0) width 557: "This tests checks that the text-overflow:ellipsis property is handled correctly for bidi text."
-        RenderBR {BR} at (557,0) size 0x19
-        RenderBR {BR} at (0,20) size 0x19
-        RenderText {#text} at (0,40) size 737x19
-          text run at (0,40) width 737: "Pass if the ellipsis do not overlap the text and the underlines for the links are placed under the text and not the ellipsis."
-        RenderBR {BR} at (737,40) size 0x19
-        RenderBR {BR} at (0,60) size 0x19
-        RenderText {#text} at (0,80) size 34x19
-          text run at (0,80) width 34: "RTL:"
-      RenderBlock (anonymous) at (0,142) size 769x20
-        RenderText {#text} at (0,0) size 93x19
+        RenderBR {BR} at (557,0) size 0x17
+        RenderBR {BR} at (0,18) size 0x17
+        RenderText {#text} at (0,36) size 737x17
+          text run at (0,36) width 737: "Pass if the ellipsis do not overlap the text and the underlines for the links are placed under the text and not the ellipsis."
+        RenderBR {BR} at (737,36) size 0x17
+        RenderBR {BR} at (0,54) size 0x17
+        RenderText {#text} at (0,72) size 34x17
+          text run at (0,72) width 34: "RTL:"
+      RenderBlock (anonymous) at (0,132) size 769x18
+        RenderText {#text} at (0,0) size 93x17
           text run at (0,0) width 93: "RTL Override:"
-      RenderBlock (anonymous) at (0,204) size 769x20
-        RenderText {#text} at (0,0) size 61x19
+      RenderBlock (anonymous) at (0,192) size 769x18
+        RenderText {#text} at (0,0) size 61x17
           text run at (0,0) width 61: "RTL link:"
-      RenderBlock (anonymous) at (0,266) size 769x20
-        RenderText {#text} at (0,0) size 132x19
+      RenderBlock (anonymous) at (0,252) size 769x18
+        RenderText {#text} at (0,0) size 132x17
           text run at (0,0) width 132: "RTL with ltr content:"
-      RenderBlock (anonymous) at (0,328) size 769x20
-        RenderText {#text} at (0,0) size 160x19
+      RenderBlock (anonymous) at (0,312) size 769x18
+        RenderText {#text} at (0,0) size 160x17
           text run at (0,0) width 160: "RTL link with ltr content:"
-      RenderBlock (anonymous) at (0,390) size 769x20
-        RenderText {#text} at (0,0) size 61x19
+      RenderBlock (anonymous) at (0,372) size 769x18
+        RenderText {#text} at (0,0) size 61x17
           text run at (0,0) width 61: "LTR link:"
-      RenderBlock (anonymous) at (0,452) size 769x20
-        RenderText {#text} at (0,0) size 33x19
+      RenderBlock (anonymous) at (0,432) size 769x18
+        RenderText {#text} at (0,0) size 33x17
           text run at (0,0) width 33: "LTR:"
-      RenderBlock (anonymous) at (0,514) size 769x20
-        RenderText {#text} at (0,0) size 132x19
+      RenderBlock (anonymous) at (0,492) size 769x18
+        RenderText {#text} at (0,0) size 132x17
           text run at (0,0) width 132: "LTR with rtl content:"
-      RenderBlock (anonymous) at (0,576) size 769x20
-        RenderText {#text} at (0,0) size 176x19
+      RenderBlock (anonymous) at (0,552) size 769x18
+        RenderText {#text} at (0,0) size 176x17
           text run at (0,0) width 176: "LTR with forced rtl content:"
-      RenderBlock (anonymous) at (0,638) size 769x20
-        RenderText {#text} at (0,0) size 160x19
+      RenderBlock (anonymous) at (0,612) size 769x18
+        RenderText {#text} at (0,0) size 160x17
           text run at (0,0) width 160: "LTR link with rtl content:"
-      RenderBlock (anonymous) at (0,700) size 769x20
-        RenderText {#text} at (0,0) size 204x19
+      RenderBlock (anonymous) at (0,672) size 769x18
+        RenderText {#text} at (0,0) size 204x17
           text run at (0,0) width 204: "LTR link with forced rtl content:"
-layer at (8,108) size 182x22 clip at (9,109) size 180x20 scrollX 118 scrollWidth 298
-  RenderBlock {DIV} at (0,100) size 182x22 [border: (1px solid #000000)]
-    RenderText {#text} at (-117,1) size 298x19
+layer at (8,98) size 182x22 clip at (9,99) size 180x20 scrollX 118 scrollWidth 298
+  RenderBlock {DIV} at (0,90) size 182x22 [border: (1px solid #000000)]
+    RenderText {#text} at (-117,1) size 298x17
       text run at (-117,1) width 298 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
-layer at (8,170) size 182x22 clip at (9,171) size 180x20 scrollX 140 scrollWidth 320
-  RenderBlock {DIV} at (0,162) size 182x22 [border: (1px solid #000000)]
-    RenderText {#text} at (-139,1) size 320x19
+layer at (8,158) size 182x22 clip at (9,159) size 180x20 scrollX 140 scrollWidth 320
+  RenderBlock {DIV} at (0,150) size 182x22 [border: (1px solid #000000)]
+    RenderText {#text} at (-139,1) size 320x17
       text run at (-139,1) width 320 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing"
-layer at (8,232) size 182x22 clip at (9,233) size 180x20 scrollX 140 scrollWidth 320
-  RenderBlock {DIV} at (0,224) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 320x19 [color=#0000EE]
-      RenderText {#text} at (-139,1) size 320x19
+layer at (8,218) size 182x22 clip at (9,219) size 180x20 scrollX 140 scrollWidth 320
+  RenderBlock {DIV} at (0,210) size 182x22 [border: (1px solid #000000)]
+    RenderInline {A} at (0,0) size 320x17 [color=#0000EE]
+      RenderText {#text} at (-139,1) size 320x17
         text run at (-139,1) width 320 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,294) size 182x22 clip at (9,295) size 180x20 scrollX 140 scrollWidth 320
-  RenderBlock {DIV} at (0,286) size 182x22 [border: (1px solid #000000)]
-    RenderText {#text} at (-139,1) size 320x19
+layer at (8,278) size 182x22 clip at (9,279) size 180x20 scrollX 140 scrollWidth 320
+  RenderBlock {DIV} at (0,270) size 182x22 [border: (1px solid #000000)]
+    RenderText {#text} at (-139,1) size 320x17
       text run at (-139,1) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing"
-layer at (8,356) size 182x22 clip at (9,357) size 180x20 scrollX 140 scrollWidth 320
-  RenderBlock {DIV} at (0,348) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 320x19 [color=#0000EE]
-      RenderText {#text} at (-139,1) size 320x19
+layer at (8,338) size 182x22 clip at (9,339) size 180x20 scrollX 140 scrollWidth 320
+  RenderBlock {DIV} at (0,330) size 182x22 [border: (1px solid #000000)]
+    RenderInline {A} at (0,0) size 320x17 [color=#0000EE]
+      RenderText {#text} at (-139,1) size 320x17
         text run at (-139,1) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,418) size 182x22 clip at (9,419) size 180x20 scrollWidth 320
-  RenderBlock {DIV} at (0,410) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 320x19 [color=#0000EE]
-      RenderText {#text} at (1,1) size 320x19
+layer at (8,398) size 182x22 clip at (9,399) size 180x20 scrollWidth 320
+  RenderBlock {DIV} at (0,390) size 182x22 [border: (1px solid #000000)]
+    RenderInline {A} at (0,0) size 320x17 [color=#0000EE]
+      RenderText {#text} at (1,1) size 320x17
         text run at (1,1) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,480) size 182x22 clip at (9,481) size 180x20 scrollWidth 320
-  RenderBlock {DIV} at (0,472) size 182x22 [border: (1px solid #000000)]
-    RenderText {#text} at (1,1) size 320x19
+layer at (8,458) size 182x22 clip at (9,459) size 180x20 scrollWidth 320
+  RenderBlock {DIV} at (0,450) size 182x22 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 320x17
       text run at (1,1) width 320: "Lorem ipsum dolor sit amet, consectetur adipiscing"
-layer at (8,542) size 182x22 clip at (9,543) size 180x20 scrollWidth 298
-  RenderBlock {DIV} at (0,534) size 182x22 [border: (1px solid #000000)]
-    RenderText {#text} at (1,1) size 298x19
+layer at (8,518) size 182x22 clip at (9,519) size 180x20 scrollWidth 298
+  RenderBlock {DIV} at (0,510) size 182x22 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 298x17
       text run at (1,1) width 298 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
-layer at (8,604) size 182x22 clip at (9,605) size 180x20 scrollWidth 320
-  RenderBlock {DIV} at (0,596) size 182x22 [border: (1px solid #000000)]
-    RenderInline {SPAN} at (0,0) size 320x19
-      RenderText {#text} at (1,1) size 320x19
+layer at (8,578) size 182x22 clip at (9,579) size 180x20 scrollWidth 320
+  RenderBlock {DIV} at (0,570) size 182x22 [border: (1px solid #000000)]
+    RenderInline {SPAN} at (0,0) size 320x17
+      RenderText {#text} at (1,1) size 320x17
         text run at (1,1) width 320 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,666) size 182x22 clip at (9,667) size 180x20 scrollWidth 298
-  RenderBlock {DIV} at (0,658) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 298x19 [color=#0000EE]
-      RenderText {#text} at (1,1) size 298x19
+layer at (8,638) size 182x22 clip at (9,639) size 180x20 scrollWidth 298
+  RenderBlock {DIV} at (0,630) size 182x22 [border: (1px solid #000000)]
+    RenderInline {A} at (0,0) size 298x17 [color=#0000EE]
+      RenderText {#text} at (1,1) size 298x17
         text run at (1,1) width 298 RTL: "\x{5DB}\x{5E9}\x{5D4}\x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5E8}\x{5D5}\x{5DA} \x{5DE}\x{5D3}\x{5D9} \x{5E0}\x{5E8}\x{5E6}\x{5D4} \x{5DC}\x{5D4}\x{5D5}\x{5E1}\x{5D9}\x{5E3} \x{5D0}\x{5DC}\x{5D9}\x{5E4}\x{5E1}\x{5D5}\x{5EA} \x{5D1}\x{5E1}\x{5D5}\x{5E3} \x{5E9}\x{5D5}\x{5E8}\x{5D4}"
     RenderText {#text} at (0,0) size 0x0
-layer at (8,728) size 182x22 clip at (9,729) size 180x20 scrollWidth 320
-  RenderBlock {DIV} at (0,720) size 182x22 [border: (1px solid #000000)]
-    RenderInline {A} at (0,0) size 320x19 [color=#0000EE]
+layer at (8,698) size 182x22 clip at (9,699) size 180x20 scrollWidth 320
+  RenderBlock {DIV} at (0,690) size 182x22 [border: (1px solid #000000)]
+    RenderInline {A} at (0,0) size 320x17 [color=#0000EE]
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {SPAN} at (0,0) size 320x19
-        RenderText {#text} at (1,1) size 320x19
+      RenderInline {SPAN} at (0,0) size 320x17
+        RenderText {#text} at (1,1) size 320x17
           text run at (1,1) width 320 RTL: "Lorem ipsum dolor sit amet, consectetur adipiscing"
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

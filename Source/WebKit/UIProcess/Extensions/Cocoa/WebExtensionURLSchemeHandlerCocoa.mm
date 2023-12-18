@@ -34,9 +34,13 @@
 
 #import "APIFrameInfo.h"
 #import "WKURLSchemeTaskInternal.h"
+#import "WKWebViewConfigurationPrivate.h"
 #import "WebExtension.h"
 #import "WebExtensionContext.h"
+#import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionController.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import "WebURLSchemeTask.h"
 #import "_WKWebExtensionLocalization.h"
 #import <UniformTypeIdentifiers/UTType.h>
@@ -55,7 +59,7 @@ WebExtensionURLSchemeHandler::WebExtensionURLSchemeHandler(WebExtensionControlle
 
 void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLSchemeTask& task)
 {
-    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, protectedThis = Ref { *this }, protectedTask = Ref { task }]() {
+    auto *operation = [NSBlockOperation blockOperationWithBlock:makeBlockPtr([this, &task, &page, protectedThis = Ref { *this }, protectedTask = Ref { task }, protectedPage = Ref { page }]() {
         // If a frame is loading, the frame request URL will be an empty string, since the request is actually the frame URL being loaded.
         // In this case, consider the firstPartyForCookies() to be the document including the frame. This fails for nested frames, since
         // it is always the main frame URL, not the immediate parent frame.
@@ -80,36 +84,51 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         // FIXME: <https://webkit.org/b/246485> Support devtools' exception to web accessible resources.
 
         if (!protocolHostAndPortAreEqual(frameDocumentURL, requestURL)) {
-            if (!extensionContext->extension().isAccessibleResourcePath(requestURL.path().toString(), frameDocumentURL)) {
+            if (!extensionContext->extension().isWebAccessibleResource(requestURL, frameDocumentURL)) {
                 task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:noPermissionErrorCode userInfo:nil]);
                 return;
             }
         }
 
-        NSData *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString());
+        bool loadingExtensionMainFrame = false;
+        if (task.frameInfo().isMainFrame() && requestURL == frameDocumentURL) {
+            loadingExtensionMainFrame = true;
+
+            auto *requiredBaseURL = page.cocoaView().get().configuration._requiredWebExtensionBaseURL;
+            if (!requiredBaseURL || !extensionContext->isURLForThisExtension(requiredBaseURL)) {
+                task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorResourceUnavailable userInfo:nil]);
+                return;
+            }
+        }
+
+        auto *fileData = extensionContext->extension().resourceDataForPath(requestURL.path().toString());
         if (!fileData) {
             task.didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
             return;
         }
 
-        NSString *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;
+        if (loadingExtensionMainFrame) {
+            if (auto tab = extensionContext->getTab(page.identifier())) {
+                auto window = tab->window();
+                page.process().send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageID(), tab->identifier(), window ? std::optional(window->identifier()) : std::nullopt), extensionContext->identifier());
+            }
+        }
+
+        auto *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;
         if (!mimeType)
             mimeType = @"application/octet-stream";
 
         if ([mimeType isEqualToString:@"text/css"]) {
-            _WKWebExtensionLocalization *localization = extensionContext->extension().localization();
-            if (!localization.uniqueIdentifier)
-                localization.uniqueIdentifier = extensionContext->uniqueIdentifier();
-
             // FIXME: <https://webkit.org/b/252628> Only attempt to localize CSS files if we notice a localization wildcard in the file's NSData.
-            NSString *stylesheetContents = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
+            auto *localization = extensionContext->extension().localization();
+            auto *stylesheetContents = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
             stylesheetContents = [localization localizedStringForString:stylesheetContents];
             fileData = [stylesheetContents dataUsingEncoding:NSUTF8StringEncoding];
         }
 
-        // FIXME: <https://webkit.org/b/246490> Include the Content-Security-Policy header for the extension.
-        NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{
+        auto *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",
+            @"Content-Security-Policy": extensionContext->extension().contentSecurityPolicy(),
             @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],
             @"Content-Type": mimeType
         }];

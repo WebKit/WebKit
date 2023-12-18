@@ -16,7 +16,7 @@ variables:
     --without-man
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:icecc/icecream
-  ref: 1.4
-
+  track: master
+  ref: 1.4rc1-44-g9d397ef13508053802fb5048a92e92b918e5c32e

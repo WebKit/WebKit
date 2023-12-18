@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebServiceWorkerProvider.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
 #include "WebSWClientConnection.h"
@@ -60,7 +58,7 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
 
 WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnection()
 {
-    auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)
         return nullptr;
 
@@ -83,5 +81,3 @@ void WebServiceWorkerProvider::terminateWorkerForTesting(WebCore::ServiceWorkerI
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

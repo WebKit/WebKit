@@ -20,14 +20,7 @@
 #include "DOMParser.h"
 
 #include "DOMImplementation.h"
-#include "DocumentFragment.h"
-#include "FragmentScriptingPermission.h"
-#include "HTMLBodyElement.h"
-#include "HTMLDocumentParserFastPath.h"
-#include "HTMLHeadElement.h"
-#include "HTMLHtmlElement.h"
 #include "SecurityOriginPolicy.h"
-#include "Settings.h"
 
 namespace WebCore {
 
@@ -44,33 +37,14 @@ Ref<DOMParser> DOMParser::create(Document& contextDocument)
     return adoptRef(*new DOMParser(contextDocument));
 }
 
-ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType, ParseFromStringOptions options)
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
 {
     if (contentType != "text/html"_s && contentType != "text/xml"_s && contentType != "application/xml"_s && contentType != "application/xhtml+xml"_s && contentType != "image/svg+xml"_s)
-        return Exception { TypeError };
-    auto document = DOMImplementation::createDocument(contentType, nullptr, m_settings, URL { });
+        return Exception { ExceptionCode::TypeError };
+    Ref document = DOMImplementation::createDocument(contentType, nullptr, m_settings, URL { });
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
-    OptionSet<ParserContentPolicy> parsingOptions;
-    if (options.includeShadowRoots && document->settings().declarativeShadowDOMInDOMParserEnabled())
-        parsingOptions = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::AllowDeclarativeShadowDOM };
-    else
-        parsingOptions = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent };
-    document->setParserContentPolicy(parsingOptions);
-    bool usedFastPath = false;
-    if (contentType == "text/html"_s) {
-        auto body = HTMLBodyElement::create(document);
-        usedFastPath = tryFastParsingHTMLFragment(string, document, body, body, parsingOptions);
-        if (LIKELY(usedFastPath)) {
-            auto html = HTMLHtmlElement::create(document);
-            document->appendChild(html);
-            auto head = HTMLHeadElement::create(document);
-            html->appendChild(head);
-            html->appendChild(body);
-        }
-    }
-    if (!usedFastPath)
-        document->setContent(string);
+    document->parseMarkupUnsafe(string, { });
     if (m_contextDocument) {
         document->setURL(m_contextDocument->url());
         document->setSecurityOriginPolicy(m_contextDocument->securityOriginPolicy());

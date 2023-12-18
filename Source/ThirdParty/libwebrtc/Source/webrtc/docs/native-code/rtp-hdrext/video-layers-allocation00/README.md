@@ -22,6 +22,10 @@ rtp stream (SVC), or independent spatial layers sent on multiple rtp streams
 
 ## RTP header extension format
 
+Note: when including the optional width, height and maximum framerate
+fields, the total data length of the extension can exceed 16 bytes
+and is sent as a two-byte header extension [1]
+
 ### Data layout
 
 ```
@@ -68,7 +72,7 @@ alignment.
 layers. Values are stored in ascending order of spatial id. Zero-padded to byte
 alignment.
 
-Target bitrate in kbps. Values are stored using leb128 encoding [1]. One value per
+Target bitrate in kbps. Values are stored using leb128 encoding [2]. One value per
 temporal layer. Values are stored in (RTP stream id, spatial id, temporal id)
 ascending order. All bitrates are total required bitrate to receive the
 corresponding layer, i.e. in simulcast mode they include only corresponding
@@ -78,9 +82,11 @@ temporal layers are also included.
 Resolution and framerate. Optional. Presence is inferred from the rtp header
 extension size. Encoded (width - 1), 16-bit, (height - 1), 16-bit, max frame
 rate 8-bit per spatial layer per RTP stream. Values are stored in (RTP stream
-id, spatial id) ascending order.
+id, spatial id) ascending order. Only sent when the resolution differs from the
+last values, the framerate changed by more than 5fps and on key frames.
 
 An empty layer allocation (i.e nothing sent on ssrc) is encoded as
 special case with a single 0 byte.
 
-[1] https://aomediacodec.github.io/av1-spec/#leb128
+[1] https://www.rfc-editor.org/rfc/rfc8285#section-4.3
+[2] https://aomediacodec.github.io/av1-spec/#leb128

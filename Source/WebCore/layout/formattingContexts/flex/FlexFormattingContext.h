@@ -46,7 +46,7 @@ public:
     void layout(const ConstraintsForFlexContent&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints();
 
-    const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
+    const FlexFormattingGeometry& formattingGeometry() const { return m_flexFormattingGeometry; }
     const FormattingQuirks& formattingQuirks() const { return m_flexFormattingQuirks; }
 
 private:

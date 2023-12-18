@@ -339,9 +339,6 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
     return false;
   }
 
-  absl::optional<std::string> GetDataMid() const override {
-    return absl::nullopt;
-  }
   RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>> AddTransceiver(
       cricket::MediaType media_type,
       rtc::scoped_refptr<MediaStreamTrackInterface> track,
@@ -358,14 +355,10 @@ class FakePeerConnectionBase : public PeerConnectionInternal {
 
   Call* call_ptr() override { return nullptr; }
   bool SrtpRequired() const override { return false; }
-  absl::optional<std::string> SetupDataChannelTransport_n(
-      absl::string_view mid) override {
-    return absl::nullopt;
+  bool CreateDataChannelTransport(absl::string_view mid) override {
+    return false;
   }
-  void TeardownDataChannelTransport_n(RTCError error) override {}
-  void SetSctpDataInfo(absl::string_view mid,
-                       absl::string_view transport_name) override {}
-  void ResetSctpDataInfo() override {}
+  void DestroyDataChannelTransport(RTCError error) override {}
 
   const FieldTrialsView& trials() const override { return field_trials_; }
 

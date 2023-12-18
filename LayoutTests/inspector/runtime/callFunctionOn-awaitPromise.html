@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/audit-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
+
+const myObject = {a: 2023};
+
+function test()
+{
+    const expectedObject = {a: 2023};
+
+    let suite = InspectorTest.createAsyncSuite("Runtime.callFunction.awaitPromise");
+
+    suite.addTestCase({
+        name: "NoAwaitSyncFunction",
+        description: "Check that callFunctionOn with awaitPromise=false works with a synchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return this; }",
+                awaitPromise: false,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectShallowEqual(result.result.value, expectedObject, "Should return the JSON object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "NoAwaitReturnHandleSyncFunction",
+        description: "Check that callFunctionOn with awaitPromise=false and returnByValue=false works with a synchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return this; }",
+                awaitPromise: false,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
+    suite.addTestCase({
+        name: "NoAwaitSyncFunctionException",
+        description: "Check that callFunctionOn with awaitPromise=false works with a synchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: `function() { throw "My error"; }`,
+                awaitPromise: false,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectTrue(result.wasThrown, "Should throw an error.");
+            InspectorTest.expectEqual(result.result.value, "My error", "Should return the error.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "NoAwaitAsyncFunction",
+        description: "Check that callFunctionOn with awaitPromise=false works with an asynchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "async function() { await new Promise((fulfill, reject) => setTimeout(fulfill, 10)); return this; }",
+                awaitPromise: false,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectShallowEqual(result.result.value, {}, "Should return empty object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "NoAwaitPromiseRejection",
+        description: "Check that callFunctionOn with awaitPromise=false works with an asynchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return new Promise((fulfill, reject) => setTimeout(reject, 10, this)); }",
+                awaitPromise: false,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            InspectorTest.expectShallowEqual(result.result.value, {}, "Should return empty object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "NoAwaitWrongObjectIdError",
+        description: "Check that callFunctionOn returns error string when passed unknown object id.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let parsedId = JSON.parse(thisObject.result.objectId);
+            parsedId.id = undefined;
+            let objectId = JSON.stringify(parsedId);
+            try {
+                await RuntimeAgent.callFunctionOn.invoke({
+                    functionDeclaration: "async function() { await new Promise((fulfill, reject) => setTimeout(fulfill, 10)); return this; }",
+                    awaitPromise: false,
+                    returnByValue: true,
+                    objectId
+                });
+                InspectorTest.fail("Protocol error was not thrown.");
+            } catch (e) {
+                InspectorTest.expectTrue(e.message.includes("Could not find object with given id"), "Received protocol error");
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "NoAwaitNotAFunctionError",
+        description: "Check that callFunctionOn returns error string when passed not a function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            try {
+                await RuntimeAgent.callFunctionOn.invoke({
+                    functionDeclaration: "1 + 2",
+                    awaitPromise: false,
+                    returnByValue: true,
+                    objectId: thisObject.result.objectId
+                });
+                InspectorTest.fail("Protocol error was not thrown.");
+            } catch (e) {
+                InspectorTest.expectTrue(e.message.includes("Given expression does not evaluate to a function"), "Received protocol error");
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitSyncFunction",
+        description: "Check that callFunctionOn with awaitPromise=true works with a synchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return this; }",
+                awaitPromise: true,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectShallowEqual(result.result.value, expectedObject, "Should return the JSON object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitAsyncFunction",
+        description: "Check that callFunctionOn with awaitPromise=true will await asynchronous function.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "async function() { await new Promise((fulfill, reject) => setTimeout(fulfill, 10)); return this; }",
+                awaitPromise: true,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectShallowEqual(result.result.value, expectedObject, "Should return the JSON object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitReturnHandleAsyncFunction",
+        description: "Check that callFunctionOn with awaitPromise=true and returnByValue=false will await promise.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return new Promise((fulfill, reject) => setTimeout(fulfill, 10, this)); }",
+                awaitPromise: true,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitPromiseFromAnotherFrame",
+        description: "Check that callFunctionOn with awaitPromise=true will await promise created in iframe.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return frames[0].iframePromise; }",
+                awaitPromise: true,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectShallowEqual(result.result.value, {b: 2023}, "Should return the JSON object from iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitPromiseRejection",
+        description: "Check that callFunctionOn with awaitPromise=true will await promise rejection.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return new Promise((fulfill, reject) => setTimeout(reject, 10, this)); }",
+                awaitPromise: true,
+                returnByValue: true,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectTrue(result.wasThrown, "Should throw an error.");
+            let thrownValue = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return this; }",
+                awaitPromise: true,
+                returnByValue: true,
+                objectId: result.result.objectId
+            });
+            InspectorTest.expectShallowEqual(thrownValue.result.value, expectedObject, "Should throw the JSON object.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitReturnHandlePromiseRejection",
+        description: "Check that callFunctionOn with awaitPromise=true and returnByValue=false will await promise rejection.",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: "function() { return new Promise((fulfill, reject) => setTimeout(reject, 10, this)); }",
+                awaitPromise: true,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectTrue(result.wasThrown, "Should throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
+
+    suite.addTestCase({
+        name: "AwaitCustomPromise",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: `function() {
+    class Promise {
+        then() { TestPage.log("FAIL: Should not invoke custom promise then."); }
+        catch() { TestPage.log("FAIL: Should not invoke custom promise catch."); }
+    }
+    if (Promise === globalThis.Promise)
+        TestPage.log("FAIL: Using the wrong promise.");
+    return new Promise;
+}`,
+                awaitPromise: true,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitThenable",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: `function() {
+    class Thenable {
+        then() { TestPage.log("FAIL: Should not invoke thenable then."); }
+        catch() { TestPage.log("FAIL: Should not invoke thenable catch."); }
+    }
+    return new Thenable;
+}`,
+                awaitPromise: true,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests functionality of awaitPromise parameter in Runtime.callFunctionOn.</p>
+    <iframe srcdoc="<script>window.iframePromise = Promise.resolve({b: 2023})</script>"></iframe>
+</body>
+</html>

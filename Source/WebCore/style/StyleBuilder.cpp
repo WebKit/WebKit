@@ -81,7 +81,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     return false;
 }
 
-Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, OptionSet<PropertyCascade::PropertyType> includedProperties, const HashSet<AnimatableProperty>* animatedPropertes)
+Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, OptionSet<PropertyCascade::PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* animatedPropertes)
     : m_cascade(matchResult, cascadeLevel, includedProperties, animatedPropertes)
     , m_state(*this, style, WTFMove(context))
 {
@@ -344,7 +344,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
 
     ASSERT(!isInherit || !isInitial); // isInherit -> !isInitial && isInitial -> !isInherit
 
-    if (m_state.applyPropertyToVisitedLinkStyle() && !isValidVisitedLinkProperty(id)) {
+    if (!m_state.applyPropertyToRegularStyle() && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
         return;
     }
@@ -376,7 +376,7 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
     auto variableValue = [&]() -> RefPtr<CSSValue> {
         if (is<CSSPendingSubstitutionValue>(value)) {
             auto& substitution = downcast<CSSPendingSubstitutionValue>(value);
-            return substitution.shorthandValue().resolveSubstitutionValue(m_state, propertyID, substitution.shorthandPropertyId());
+            return substitution.resolveValue(m_state, propertyID);
         }
 
         auto& variableReferenceValue = downcast<CSSVariableReferenceValue>(value);

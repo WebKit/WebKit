@@ -252,7 +252,7 @@
 {
     RefPtr<API::HitTestResult> hitTestResult;
     if (_state == WebKit::ImmediateActionState::Ready)
-        hitTestResult = API::HitTestResult::create(_hitTestResultData);
+        hitTestResult = API::HitTestResult::create(_hitTestResultData, *_page);
     else
         hitTestResult = CheckedPtr { _page }->lastMouseMoveHitTestResult();
 

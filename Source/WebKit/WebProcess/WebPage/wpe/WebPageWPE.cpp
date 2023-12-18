@@ -81,4 +81,13 @@ OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailableP
     return PointerCharacteristics::Fine;
 }
 
+#if USE(GBM) && ENABLE(WPE_PLATFORM)
+void WebPage::preferredBufferFormatsDidChange(Vector<DMABufRendererBufferFormat>&& preferredBufferFormats)
+{
+    m_preferredBufferFormats = WTFMove(preferredBufferFormats);
+    if (m_drawingArea)
+        m_drawingArea->preferredBufferFormatsDidChange();
+}
+#endif
+
 } // namespace WebKit

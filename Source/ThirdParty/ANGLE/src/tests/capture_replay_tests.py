@@ -25,12 +25,12 @@ import argparse
 import difflib
 import distutils.util
 import fnmatch
+import getpass
 import json
 import logging
 import math
 import multiprocessing
 import os
-import psutil
 import queue
 import re
 import shutil
@@ -86,17 +86,6 @@ default_case_with_return_template = """\
 def winext(name, ext):
     return ("%s.%s" % (name, ext)) if sys.platform == "win32" else name
 
-
-def AutodetectGoma():
-    for p in psutil.process_iter():
-        try:
-            if winext('compiler_proxy', 'exe') == p.name():
-                return True
-        except:
-            pass
-    return False
-
-
 class SubProcess():
 
     def __init__(self, command, logger, env=os.environ, pipe_stdout=PIPE_STDOUT):
@@ -136,8 +125,8 @@ class ChildProcessesManager():
         return os.path.join('third_party', 'depot_tools', winext('gn', 'bat'))
 
     @classmethod
-    def _GetNinjaAbsolutePaths(self):
-        return os.path.join('third_party', 'ninja', 'ninja')
+    def _GetAutoNinjaAbsolutePaths(self):
+        return os.path.join('third_party', 'depot_tools', 'autoninja.py')
 
     def __init__(self, args, logger, ninja_lock):
         # a dictionary of Subprocess, with pid as key
@@ -146,8 +135,7 @@ class ChildProcessesManager():
         self.workers = []
 
         self._gn_path = self._GetGnAbsolutePaths()
-        self._ninja_path = self._GetNinjaAbsolutePaths()
-        self._use_goma = AutodetectGoma()
+        self._autoninja_path = self._GetAutoNinjaAbsolutePaths()
         self._logger = logger
         self._ninja_lock = ninja_lock
         self.runtimes = {}
@@ -213,10 +201,8 @@ class ChildProcessesManager():
 
     def RunGNGen(self, build_dir, pipe_stdout, extra_gn_args=[]):
         gn_args = [('angle_with_capture_by_default', 'true')] + extra_gn_args
-        if self._use_goma:
-            gn_args.append(('use_goma', 'true'))
-            if self._args.goma_dir:
-                gn_args.append(('goma_dir', '"%s"' % self._args.goma_dir))
+        if self._args.use_reclient:
+            gn_args.append(('use_remoteexec', 'true'))
         if not self._args.debug:
             gn_args.append(('is_debug', 'false'))
             gn_args.append(('symbol_level', '1'))
@@ -228,30 +214,8 @@ class ChildProcessesManager():
         self._logger.info(' '.join(cmd))
         return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
 
-    def RunNinja(self, build_dir, target, pipe_stdout):
-        cmd = [self._ninja_path]
-
-        # This code is taken from depot_tools/autoninja.py
-        if self._use_goma:
-            num_cores = multiprocessing.cpu_count()
-            cmd.append('-j')
-            core_multiplier = 40
-            j_value = num_cores * core_multiplier
-
-            if sys.platform.startswith('win'):
-                # On windows, j value higher than 1000 does not improve build performance.
-                j_value = min(j_value, 1000)
-            elif sys.platform == 'darwin':
-                # On Mac, j value higher than 500 causes 'Too many open files' error
-                # (crbug.com/936864).
-                j_value = min(j_value, 500)
-
-            cmd.append('%d' % j_value)
-        else:
-            cmd.append('-l')
-            cmd.append('%d' % os.cpu_count())
-
-        cmd += ['-C', build_dir, target]
+    def RunAutoNinja(self, build_dir, target, pipe_stdout):
+        cmd = [sys.executable, self._autoninja_path, '-C', build_dir, target]
         with self._ninja_lock:
             self._logger.info(' '.join(cmd))
             return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
@@ -297,12 +261,16 @@ class GroupedResult():
     Passed = "Pass"
     Failed = "Fail"
     TimedOut = "Timeout"
-    Crashed = "Crashed"
     CompileFailed = "CompileFailed"
+    CaptureFailed = "CaptureFailed"
+    ReplayFailed = "ReplayFailed"
     Skipped = "Skipped"
     FailedToTrace = "FailedToTrace"
 
-    ResultTypes = [Passed, Failed, TimedOut, Crashed, CompileFailed, Skipped, FailedToTrace]
+    ResultTypes = [
+        Passed, Failed, TimedOut, CompileFailed, CaptureFailed, ReplayFailed, Skipped,
+        FailedToTrace
+    ]
 
     def __init__(self, resultcode, message, output, tests):
         self.resultcode = resultcode
@@ -313,11 +281,16 @@ class GroupedResult():
             self.tests.append(test)
 
 
+def BatchName(batch_or_result):
+    return 'batch_%03d' % batch_or_result.batch_index
+
+
 class TestBatchResult():
 
     display_output_lines = 20
 
-    def __init__(self, grouped_results, verbose):
+    def __init__(self, batch_index, grouped_results, verbose):
+        self.batch_index = batch_index
         self.results = {}
         for result_type in GroupedResult.ResultTypes:
             self.results[result_type] = []
@@ -333,6 +306,7 @@ class TestBatchResult():
         return self.repr_str
 
     def GenerateRepresentationString(self, grouped_results, verbose):
+        self.repr_str += BatchName(self) + "\n"
         for grouped_result in grouped_results:
             self.repr_str += grouped_result.resultcode + ": " + grouped_result.message + "\n"
             for test in grouped_result.tests:
@@ -343,7 +317,7 @@ class TestBatchResult():
                 if grouped_result.resultcode == GroupedResult.CompileFailed:
                     self.repr_str += TestBatchResult.ExtractErrors(grouped_result.output)
                 elif grouped_result.resultcode != GroupedResult.Passed:
-                    self.repr_str += TestBatchResult.GetAbbreviatedOutput(grouped_result.output)
+                    self.repr_str += grouped_result.output
 
     def ExtractErrors(output):
         lines = output.splitlines()
@@ -354,17 +328,6 @@ class TestBatchResult():
                 if i + 1 < len(lines):
                     error_lines.append(lines[i + 1] + "\n")
         return "".join(error_lines)
-
-    def GetAbbreviatedOutput(output):
-        # Get all lines after and including the last occurance of "Run".
-        lines = output.splitlines()
-        line_count = 0
-        for line_index in reversed(range(len(lines))):
-            line_count += 1
-            if "[ RUN      ]" in lines[line_index]:
-                break
-
-        return '\n' + '\n'.join(lines[-line_count:]) + '\n'
 
 
 class Test():
@@ -425,11 +388,12 @@ class TestBatch():
 
     CAPTURE_FRAME_END = 100
 
-    def __init__(self, args, logger):
+    def __init__(self, args, logger, batch_index):
         self.args = args
         self.tests = []
         self.results = []
         self.logger = logger
+        self.batch_index = batch_index
 
     def SetWorkerId(self, worker_id):
         self.trace_dir = "%s%d" % (TRACE_FOLDER, worker_id)
@@ -441,6 +405,7 @@ class TestBatch():
         extra_env = {
             'ANGLE_CAPTURE_SERIALIZE_STATE': '1',
             'ANGLE_FEATURE_OVERRIDES_ENABLED': 'forceRobustResourceInit:forceInitShaderVariables',
+            'ANGLE_FEATURE_OVERRIDES_DISABLED': 'supportsHostImageCopy',
             'ANGLE_CAPTURE_ENABLED': '1',
             'ANGLE_CAPTURE_OUT_DIR': self.trace_folder_path,
         }
@@ -477,7 +442,7 @@ class TestBatch():
             self.logger.info("Capture stdout: %s" % output)
 
         if returncode == -1:
-            self.results.append(GroupedResult(GroupedResult.Crashed, "", output, self.tests))
+            self.results.append(GroupedResult(GroupedResult.CaptureFailed, "", output, self.tests))
             return False
         elif returncode == -2:
             self.results.append(GroupedResult(GroupedResult.TimedOut, "", "", self.tests))
@@ -531,8 +496,8 @@ class TestBatch():
                 GroupedResult(GroupedResult.CompileFailed, "Build replay failed at gn generation",
                               output, tests))
             return False
-        returncode, output = child_processes_manager.RunNinja(replay_build_dir, REPLAY_BINARY,
-                                                              True)
+        returncode, output = child_processes_manager.RunAutoNinja(replay_build_dir, REPLAY_BINARY,
+                                                                  True)
         if returncode != 0:
             self.logger.warning('Ninja failure output: %s' % output)
             self.results.append(
@@ -560,7 +525,7 @@ class TestBatch():
         if returncode == -1:
             cmd = replay_exe_path
             self.results.append(
-                GroupedResult(GroupedResult.Crashed, "Replay run crashed (%s)" % cmd, output,
+                GroupedResult(GroupedResult.ReplayFailed, "Replay run failed (%s)" % cmd, output,
                               tests))
             return
         elif returncode == -2:
@@ -667,7 +632,7 @@ class TestBatch():
         return iter(self.tests)
 
     def GetResults(self):
-        return TestBatchResult(self.results, self.args.verbose)
+        return TestBatchResult(self.batch_index, self.results, self.args.verbose)
 
 
 class TestExpectation():
@@ -686,16 +651,14 @@ class TestExpectation():
 
     non_pass_re = {}
 
-    # yapf: disable
-    # we want each pair on one line
-    result_map = { "FAIL" : GroupedResult.Failed,
-                   "TIMEOUT" : GroupedResult.TimedOut,
-                   "CRASH" : GroupedResult.Crashed,
-                   "COMPILE_FAIL" : GroupedResult.CompileFailed,
-                   "NOT_RUN" : GroupedResult.Skipped,
-                   "SKIP_FOR_CAPTURE" : GroupedResult.Skipped,
-                   "PASS" : GroupedResult.Passed}
-    # yapf: enable
+    result_map = {
+        "FAIL": GroupedResult.Failed,
+        "TIMEOUT": GroupedResult.TimedOut,
+        "COMPILE_FAIL": GroupedResult.CompileFailed,
+        "NOT_RUN": GroupedResult.Skipped,
+        "SKIP_FOR_CAPTURE": GroupedResult.Skipped,
+        "PASS": GroupedResult.Passed,
+    }
 
     def __init__(self, args):
         expected_results_filename = "capture_replay_expectations.txt"
@@ -732,7 +695,7 @@ class TestExpectation():
 
         if self._CheckTagsWithConfig(tags, config_tags):
             test_name_regex = re.compile('^' + test_name.replace('*', '.*') + '$')
-            if result_stripped == 'CRASH' or result_stripped == 'COMPILE_FAIL':
+            if result_stripped == 'COMPILE_FAIL':
                 self.run_single[test_name] = self.result_map[result_stripped]
                 self.run_single_re[test_name] = test_name_regex
             if result_stripped == 'SKIP_FOR_CAPTURE' or result_stripped == 'TIMEOUT':
@@ -745,22 +708,13 @@ class TestExpectation():
                 self.non_pass_re[test_name] = test_name_regex
 
     def TestIsSkippedForCapture(self, test_name):
-        for p in self.skipped_for_capture_tests_re.values():
-            m = p.match(test_name)
-            if m is not None:
-                return True
-        return False
+        return any(p.match(test_name) for p in self.skipped_for_capture_tests_re.values())
 
     def TestNeedsToRunSingle(self, test_name):
-        for p in self.run_single_re.values():
-            m = p.match(test_name)
-            if m is not None:
-                return True
-            for p in self.skipped_for_capture_tests_re.values():
-                m = p.match(test_name)
-                if m is not None:
-                    return True
-        return False
+        if any(p.match(test_name) for p in self.run_single_re.values()):
+            return True
+
+        return self.TestIsSkippedForCapture(test_name)
 
     def Filter(self, test_list, run_all_tests):
         result = {}
@@ -807,20 +761,20 @@ def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, nin
     while not job_queue.empty():
         try:
             test_batch = job_queue.get()
-            logger.info('Starting {} tests on worker {}. Unstarted jobs: {}'.format(
-                len(test_batch.tests), worker_id, job_queue.qsize()))
+            logger.info('Starting {} ({} tests) on worker {}. Unstarted jobs: {}'.format(
+                BatchName(test_batch), len(test_batch.tests), worker_id, job_queue.qsize()))
 
             test_batch.SetWorkerId(worker_id)
 
             success = test_batch.RunWithCapture(args, child_processes_manager)
             if not success:
                 result_list.append(test_batch.GetResults())
-                logger.info(str(test_batch.GetResults()))
+                logger.error('Failed RunWithCapture: %s', str(test_batch.GetResults()))
                 continue
             continued_tests = test_batch.RemoveTestsThatDoNotProduceAppropriateTraceFiles()
             if len(continued_tests) == 0:
                 result_list.append(test_batch.GetResults())
-                logger.info(str(test_batch.GetResults()))
+                logger.info('No tests to replay: %s', str(test_batch.GetResults()))
                 continue
             success = test_batch.BuildReplay(replay_build_dir, composite_file_id, continued_tests,
                                              child_processes_manager)
@@ -828,12 +782,12 @@ def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, nin
                 composite_file_id += 1
             if not success:
                 result_list.append(test_batch.GetResults())
-                logger.info(str(test_batch.GetResults()))
+                logger.error('Failed BuildReplay: %s', str(test_batch.GetResults()))
                 continue
             test_batch.RunReplay(args, replay_build_dir, replay_exec_path, child_processes_manager,
                                  continued_tests)
             result_list.append(test_batch.GetResults())
-            logger.info(str(test_batch.GetResults()))
+            logger.info('Finished RunReplay: %s', str(test_batch.GetResults()))
         except KeyboardInterrupt:
             child_processes_manager.KillAll()
             raise
@@ -895,7 +849,7 @@ def main(args):
     logger = multiprocessing.log_to_stderr()
     logger.setLevel(level=args.log.upper())
 
-    is_bot = bool(args.goma_dir)  # flag set in recipes/recipe_modules/angle/api.py
+    is_bot = getpass.getuser() == 'chrome-bot'
     if sys.platform == 'linux' and is_bot:
         logger.warning('Test is currently a no-op https://anglebug.com/6085')
         return EXIT_SUCCESS
@@ -918,8 +872,8 @@ def main(args):
             child_processes_manager.KillAll()
             return EXIT_FAILURE
         # run ninja to build all tests
-        returncode, output = child_processes_manager.RunNinja(capture_build_dir, args.test_suite,
-                                                              False)
+        returncode, output = child_processes_manager.RunAutoNinja(capture_build_dir,
+                                                                  args.test_suite, False)
         if returncode != 0:
             logger.error(output)
             child_processes_manager.KillAll()
@@ -945,15 +899,18 @@ def main(args):
         # timeout, or fail compilation will be run in batches of size one, because a crash or
         # failing to compile brings down the whole batch, so that we would give false negatives if
         # such a batch contains jobs that would otherwise poss or fail differently.
+        batch_index = 0
         while test_index < num_tests:
-            batch = TestBatch(args, logger)
+            batch = TestBatch(args, logger, batch_index)
+            batch_index += 1
 
             while test_index < num_tests and len(batch.tests) < args.batch_count:
                 test_name = test_names[test_index]
                 test_obj = Test(test_name)
 
                 if test_expectation.TestNeedsToRunSingle(test_name):
-                    single_batch = TestBatch(args, logger)
+                    single_batch = TestBatch(args, logger, batch_index)
+                    batch_index += 1
                     single_batch.AddTest(test_obj)
                     job_queue.put(single_batch)
                     test_batch_num += 1
@@ -965,13 +922,6 @@ def main(args):
             if len(batch.tests) > 0:
                 job_queue.put(batch)
                 test_batch_num += 1
-
-        passed_count = 0
-        failed_count = 0
-        timedout_count = 0
-        crashed_count = 0
-        compile_failed_count = 0
-        skipped_count = 0
 
         unexpected_count = {}
         unexpected_test_results = {}
@@ -1025,20 +975,9 @@ def main(args):
 
         flaky_results = []
 
-        regression_error_log = []
-
         for test_batch in result_list:
             test_batch_result = test_batch.results
             logger.debug(str(test_batch_result))
-
-            batch_has_regression = False
-
-            passed_count += len(test_batch_result[GroupedResult.Passed])
-            failed_count += len(test_batch_result[GroupedResult.Failed])
-            timedout_count += len(test_batch_result[GroupedResult.TimedOut])
-            crashed_count += len(test_batch_result[GroupedResult.Crashed])
-            compile_failed_count += len(test_batch_result[GroupedResult.CompileFailed])
-            skipped_count += len(test_batch_result[GroupedResult.Skipped])
 
             for real_result, test_list in test_batch_result.items():
                 for test in test_list:
@@ -1046,35 +985,12 @@ def main(args):
                         flaky_results.append('{} ({})'.format(test, real_result))
                         continue
 
-                    # Passing tests are not in the list
-                    if test not in test_expectation_for_list.keys():
-                        if real_result != GroupedResult.Passed:
-                            batch_has_regression = True
-                            unexpected_count[real_result] += 1
-                            unexpected_test_results[real_result].append(
-                                '{} {} (expected Pass or is new test)'.format(test, real_result))
-                    else:
-                        expected_result = test_expectation_for_list[test]
-                        if real_result != expected_result:
-                            if real_result != GroupedResult.Passed:
-                                batch_has_regression = True
-                            unexpected_count[real_result] += 1
-                            unexpected_test_results[real_result].append(
-                                '{} {} (expected {})'.format(test, real_result, expected_result))
-            if batch_has_regression:
-                regression_error_log.append(str(test_batch))
+                    expected_result = test_expectation_for_list.get(test, GroupedResult.Passed)
 
-        if len(regression_error_log) > 0:
-            logger.info('Logging output of test batches with regressions')
-            logger.info(
-                '==================================================================================================='
-            )
-            for log in regression_error_log:
-                logger.info(log)
-                logger.info(
-                    '---------------------------------------------------------------------------------------------------'
-                )
-                logger.info('')
+                    if real_result not in (GroupedResult.Passed, expected_result):
+                        unexpected_count[real_result] += 1
+                        unexpected_test_results[real_result].append('!= {}: {} {}'.format(
+                            expected_result, BatchName(test_batch), test))
 
         logger.info('')
         logger.info('Elapsed time: %.2lf seconds' % (end_time - start_time))
@@ -1083,15 +999,10 @@ def main(args):
                     '\n'.join('%s: %.2lf seconds' % (k, v) for (k, v) in summed_runtimes.items()))
 
         if len(flaky_results):
-            logger.info("Flaky test(s):")
+            logger.info("Test(s) marked as flaky (not considered a failure):")
             for line in flaky_results:
                 logger.info("    {}".format(line))
             logger.info("")
-
-        logger.info(
-            'Summary: Passed: %d, Comparison Failed: %d, Crashed: %d, CompileFailed %d, Skipped: %d, Timeout: %d'
-            % (passed_count, failed_count, crashed_count, compile_failed_count, skipped_count,
-               timedout_count))
 
         retval = EXIT_SUCCESS
 
@@ -1160,9 +1071,10 @@ if __name__ == '__main__':
         help='Whether to keep the temp files and folders. Off by default')
     parser.add_argument('--purge', help='Purge all build directories on exit.')
     parser.add_argument(
-        '--goma-dir',
-        default='',
-        help='Set custom goma directory. Uses the goma in path by default.')
+        '--use-reclient',
+        default=False,
+        action='store_true',
+        help='Set use_remoteexec=true in args.gn.')
     parser.add_argument(
         '--output-to-file',
         action='store_true',

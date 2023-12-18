@@ -27,10 +27,13 @@
 
 #pragma once
 
-#include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
 #include <wtf/RunLoop.h>
+
+#if !PLATFORM(WPE)
+typedef struct _cairo cairo_t;
+#endif
 
 namespace WebCore {
 class Region;
@@ -38,13 +41,15 @@ class Region;
 
 namespace WebKit {
 
+class BackingStore;
+
 class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
 public:
-    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&);
+    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
 #if !PLATFORM(WPE)
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
+    void paint(cairo_t*, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
@@ -99,17 +104,10 @@ private:
         void start(CompletionHandler<void()>&&);
 
     private:
-        static int webViewDrawCallback(DrawingMonitor*);
-
         void stop();
-        void didDraw();
 
-        MonotonicTime m_startTime;
         CompletionHandler<void()> m_callback;
         RunLoop::Timer m_timer;
-#if PLATFORM(GTK)
-        WebPageProxy& m_webPage;
-#endif
     };
 
     // The current layer tree context.

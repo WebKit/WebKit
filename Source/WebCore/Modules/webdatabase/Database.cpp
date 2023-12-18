@@ -241,7 +241,7 @@ ExceptionOr<void> Database::openAndVerifyVersion(bool setVersionInNewDatabase)
     DatabaseTaskSynchronizer synchronizer;
     auto& thread = databaseThread();
     if (thread.terminationRequested(&synchronizer))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     ExceptionOr<void> result;
     auto task = makeUnique<DatabaseOpenTask>(*this, setVersionInNewDatabase, synchronizer, result);
@@ -338,7 +338,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
     if (!m_sqliteDatabase.open(m_filename))
-        return Exception { InvalidStateError, formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg()) };
+        return Exception { ExceptionCode::InvalidStateError, formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg()) };
     if (!m_sqliteDatabase.turnOnIncrementalAutoVacuum())
         LOG_ERROR("Unable to turn on incremental auto-vacuum (%d %s)", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
 
@@ -361,7 +361,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
             if (!transaction.inProgress()) {
                 String message = formatErrorMessage("unable to open database, failed to start transaction", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 m_sqliteDatabase.close();
-                return Exception { InvalidStateError, WTFMove(message) };
+                return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
             }
 
             if (!m_sqliteDatabase.tableExists(unqualifiedInfoTableName)) {
@@ -371,13 +371,13 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                     String message = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
-                return Exception { InvalidStateError, WTFMove(message) };
+                return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
                 }
             } else if (!getVersionFromDatabase(currentVersion, false)) {
                 String message = formatErrorMessage("unable to open database, failed to read current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 transaction.rollback();
                 m_sqliteDatabase.close();
-                return Exception { InvalidStateError, WTFMove(message) };
+                return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
             }
 
             if (currentVersion.length()) {
@@ -388,7 +388,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                     String message = formatErrorMessage("unable to open database, failed to write current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
-                    return Exception { InvalidStateError, WTFMove(message) };
+                    return Exception { ExceptionCode::InvalidStateError, WTFMove(message) };
                 }
                 currentVersion = m_expectedVersion;
             }
@@ -406,7 +406,7 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
     // If the expected version is the empty string, then we always return with whatever version of the database we have.
     if ((!m_new || shouldSetVersionInNewDatabase) && m_expectedVersion.length() && m_expectedVersion != currentVersion) {
         m_sqliteDatabase.close();
-        return Exception { InvalidStateError, "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'" };
+        return Exception { ExceptionCode::InvalidStateError, "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'" };
     }
 
     m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer.get());

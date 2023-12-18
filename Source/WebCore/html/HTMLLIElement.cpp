@@ -98,9 +98,9 @@ void HTMLLIElement::collectPresentationalHintsForAttribute(const QualifiedName& 
 
 void HTMLLIElement::didAttachRenderers()
 {
-    if (!is<RenderListItem>(renderer()))
+    CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*renderer());
+    if (!listItemRenderer)
         return;
-    auto& listItemRenderer = downcast<RenderListItem>(*renderer());
 
     // Check if there is an enclosing list.
     bool isInList = false;
@@ -114,7 +114,7 @@ void HTMLLIElement::didAttachRenderers()
     // If we are not in a list, tell the renderer so it can position us inside.
     // We don't want to change our style to say "inside" since that would affect nested nodes.
     if (!isInList)
-        listItemRenderer.setNotInList(true);
+        listItemRenderer->setNotInList(true);
 }
 
 }

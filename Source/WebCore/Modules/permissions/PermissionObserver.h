@@ -46,7 +46,7 @@ public:
     virtual const ClientOrigin& origin() const = 0;
     virtual PermissionDescriptor descriptor() const = 0;
     virtual PermissionQuerySource source() const = 0;
-    virtual const WeakPtr<Page>& page() const = 0;
+    virtual const SingleThreadWeakPtr<Page>& page() const = 0;
 };
 
 } // namespace WebCore

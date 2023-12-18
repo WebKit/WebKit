@@ -139,6 +139,7 @@ private:
     std::optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;
     CompletionHandler<void()> m_policyForResponseCompletionHandler;
+    ResourceResponse m_previousPartResponse;
     unsigned m_redirectCount { 0 };
     bool m_loadingMultipartContent { false };
     bool m_inAsyncResponsePolicyCheck { false };

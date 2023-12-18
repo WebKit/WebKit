@@ -85,8 +85,12 @@ template<typename APIType> struct APITypeInfo;
 template<typename ImplType> struct ImplTypeInfo;
 
 #define WK_ADD_API_MAPPING(TheAPIType, TheImplType) \
-    template<> struct APITypeInfo<TheAPIType> { typedef TheImplType ImplType; }; \
-    template<> struct ImplTypeInfo<TheImplType> { typedef TheAPIType APIType; };
+    template<> struct APITypeInfo<TheAPIType> { \
+        using ImplType = TheImplType; \
+    }; \
+    template<> struct ImplTypeInfo<TheImplType> { \
+        using APIType = TheAPIType; \
+    };
 
 WK_ADD_API_MAPPING(WKArrayRef, API::Array)
 WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
@@ -110,8 +114,12 @@ WK_ADD_API_MAPPING(WKURLRequestRef, API::URLRequest)
 WK_ADD_API_MAPPING(WKURLResponseRef, API::URLResponse)
 WK_ADD_API_MAPPING(WKUserContentURLPatternRef, API::UserContentURLPattern)
 
-template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array ImplType; };
-template<> struct APITypeInfo<WKMutableDictionaryRef> { typedef API::Dictionary ImplType; };
+template<> struct APITypeInfo<WKMutableArrayRef> {
+    using ImplType = API::Array;
+};
+template<> struct APITypeInfo<WKMutableDictionaryRef> {
+    using ImplType = API::Dictionary;
+};
 
 #if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)
@@ -396,8 +404,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagPauseAnimation;
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 #if PLATFORM(GTK)
-    case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
-        return kWKContextMenuItemTagCopyImageUrlToClipboard;
+    case WebCore::ContextMenuItemTagCopyImageURLToClipboard:
+        return kWKContextMenuItemTagCopyImageURLToClipboard;
 #endif
     case WebCore::ContextMenuItemTagOpenFrameInNewWindow:
         return kWKContextMenuItemTagOpenFrameInNewWindow;
@@ -611,8 +619,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case kWKContextMenuItemTagOpenFrameInNewWindow:
 #if PLATFORM(GTK)
-    case kWKContextMenuItemTagCopyImageUrlToClipboard:
-        return WebCore::ContextMenuItemTagCopyImageUrlToClipboard;
+    case kWKContextMenuItemTagCopyImageURLToClipboard:
+        return WebCore::ContextMenuItemTagCopyImageURLToClipboard;
 #endif
         return WebCore::ContextMenuItemTagOpenFrameInNewWindow;
     case kWKContextMenuItemTagCopy:
@@ -800,13 +808,13 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
 inline WKContextMenuItemType toAPI(WebCore::ContextMenuItemType type)
 {
     switch(type) {
-    case WebCore::ActionType:
+    case WebCore::ContextMenuItemType::Action:
         return kWKContextMenuItemTypeAction;
-    case WebCore::CheckableActionType:
+    case WebCore::ContextMenuItemType::CheckableAction:
         return kWKContextMenuItemTypeCheckableAction;
-    case WebCore::SeparatorType:
+    case WebCore::ContextMenuItemType::Separator:
         return kWKContextMenuItemTypeSeparator;
-    case WebCore::SubmenuType:
+    case WebCore::ContextMenuItemType::Submenu:
         return kWKContextMenuItemTypeSubmenu;
     default:
         ASSERT_NOT_REACHED();

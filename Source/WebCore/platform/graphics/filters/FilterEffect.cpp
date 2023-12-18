@@ -34,6 +34,12 @@
 
 namespace WebCore {
 
+FilterEffect::FilterEffect(Type type, DestinationColorSpace colorSpace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : FilterFunction(type, renderingResourceIdentifier)
+    , m_operatingColorSpace(colorSpace)
+{
+}
+
 bool FilterEffect::operator==(const FilterEffect& other) const
 {
     if (filterType() != other.filterType())
@@ -52,7 +58,7 @@ FilterImageVector FilterEffect::takeImageInputs(FilterImageVector& stack) const
     inputs.reserveInitialCapacity(inputsSize);
 
     for (; inputsSize; --inputsSize)
-        inputs.uncheckedAppend(stack.takeLast());
+        inputs.append(stack.takeLast());
 
     return inputs;
 }

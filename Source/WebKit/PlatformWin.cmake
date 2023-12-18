@@ -49,8 +49,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
-    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp
@@ -72,7 +70,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
-    UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/WebGrammarDetail.cpp
@@ -88,7 +85,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
     UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp
 
-    UIProcess/cairo/BackingStoreCairo.cpp
+    UIProcess/cairo/BackingStore.cpp
 
     UIProcess/wc/DrawingAreaProxyWC.cpp
 
@@ -144,7 +141,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/API/c/win"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
-    "${WEBKIT_DIR}/Shared/Plugins/win"
     "${WEBKIT_DIR}/Shared/wc"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
@@ -156,6 +152,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Inspector/socket"
     "${WEBKIT_DIR}/UIProcess/Inspector/win"
     "${WEBKIT_DIR}/UIProcess/Plugins/win"
+    "${WEBKIT_DIR}/UIProcess/cairo"
     "${WEBKIT_DIR}/UIProcess/wc"
     "${WEBKIT_DIR}/UIProcess/win"
     "${WEBKIT_DIR}/WebProcess/GPU/graphics/wc"

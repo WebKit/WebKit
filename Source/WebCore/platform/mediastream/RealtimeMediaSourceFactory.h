@@ -50,10 +50,6 @@ public:
     virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
     virtual void computeSpeakerDevices(CompletionHandler<void()>&& callback) const { callback(); }
 
-    class ExtensiveObserver : public CanMakeWeakPtr<ExtensiveObserver> { };
-    virtual void addExtensiveObserver(ExtensiveObserver&) { };
-    virtual void removeExtensiveObserver(ExtensiveObserver&) { };
-
 protected:
     AudioCaptureFactory() = default;
 };

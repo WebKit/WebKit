@@ -31,6 +31,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/TransformationMatrix.h>
+#include <wtf/Markable.h>
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -575,6 +576,17 @@ TEST(FloatPoint, Casting)
     EXPECT_FLOAT_EQ(-22.3f, testCG.x());
     EXPECT_FLOAT_EQ(14.2f, testCG.y());
 #endif
+}
+
+TEST(FloatPoint, Markable)
+{
+    WebCore::FloatPoint point(1024.3f, 768.6f);
+    Markable<WebCore::FloatPoint, WebCore::FloatPoint::MarkableTraits> optional;
+    EXPECT_FALSE(optional) << "nullopt";
+    optional = point;
+    EXPECT_EQ((optional.value_or(WebCore::FloatPoint { })), point) << "retained";
+    optional = WebCore::FloatPoint::nanPoint();
+    EXPECT_FALSE(optional) << "nullopt";
 }
 
 }

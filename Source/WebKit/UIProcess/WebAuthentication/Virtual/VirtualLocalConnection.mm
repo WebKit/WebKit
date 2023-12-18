@@ -81,14 +81,6 @@ void VirtualLocalConnection::verifyUser(SecAccessControlRef, LAContext *, Comple
     });
 }
 
-void VirtualLocalConnection::getAttestation(SecKeyRef, NSData *, NSData *, AttestationCallback&& callback) const
-{
-    // Mock async operations.
-    RunLoop::main().dispatch([callback = WTFMove(callback)]() mutable {
-        callback(NULL, [NSError errorWithDomain:@"WebAuthentication" code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"The operation couldn't complete." }]);
-    });
-}
-
 void VirtualLocalConnection::filterResponses(Vector<Ref<AuthenticatorAssertionResponse>>& responses) const
 {
 }

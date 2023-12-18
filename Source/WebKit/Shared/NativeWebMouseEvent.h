@@ -43,6 +43,10 @@ typedef union _GdkEvent GdkEvent;
 #endif
 #endif
 
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+typedef struct _WPEEvent WPEEvent;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebEvent;
@@ -75,6 +79,9 @@ public:
     NativeWebMouseEvent(const NativeWebMouseEvent&, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ);
 #elif USE(LIBWPE)
     NativeWebMouseEvent(struct wpe_input_pointer_event*, float deviceScaleFactor, WebMouseEventSyntheticClickType = WebMouseEventSyntheticClickType::NoTap);
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    explicit NativeWebMouseEvent(WPEEvent*);
+#endif
 #elif PLATFORM(WIN)
     NativeWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool);
 #endif

@@ -65,6 +65,7 @@ public:
     static constexpr bool is32Bit = false;
 #endif
     static constexpr bool isCompactedType = true;
+    static_assert(::allowCompactPointers<T*>());
 
     ALWAYS_INLINE constexpr CompactPtr() = default;
 
@@ -236,12 +237,14 @@ inline bool operator==(T* a, const CompactPtr<U>& b)
 template <typename T>
 struct GetPtrHelper<CompactPtr<T>> {
     using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const CompactPtr<T>& p) { return const_cast<T*>(p.get()); }
 };
 
 template <typename T>
 struct IsSmartPtr<CompactPtr<T>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template <typename T>

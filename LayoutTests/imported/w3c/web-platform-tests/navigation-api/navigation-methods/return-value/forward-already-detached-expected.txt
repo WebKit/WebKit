@@ -1,0 +1,4 @@
+
+
+FAIL forward() in a detached window assert_equals: expected 1 but got 0
+

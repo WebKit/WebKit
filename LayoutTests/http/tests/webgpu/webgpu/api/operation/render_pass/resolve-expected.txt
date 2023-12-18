@@ -1,1 +1,4 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :render_pass_resolve:storeOperation="discard"
+PASS :render_pass_resolve:storeOperation="store"
+

@@ -47,13 +47,19 @@ static NSString *endEdge = writingDirection == NSWritingDirectionLeftToRight ? @
 
 namespace TestWebKitAPI {
 
-static auto *manifest = @{
+static auto *localizationManifest = @{
     @"manifest_version": @3,
+
+    @"name": @"Localization Test",
+    @"description": @"Localization Test",
+    @"version": @"1",
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
         @"persistent": @NO,
     },
+
     @"default_locale": @"en"
 };
 
@@ -62,6 +68,7 @@ static auto *messages = @{
         @"message": @"Web Extension Test Extension",
         @"description": @"The display name for the extension."
     },
+
     @"extension_description": @{
         @"message": @"This is a Web Extension. Tell us what your extension does here",
         @"description": @"Description of what the extension does."
@@ -95,7 +102,7 @@ TEST(WKWebExtensionAPILocalization, Errors)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
@@ -116,7 +123,6 @@ TEST(WKWebExtensionAPILocalization, i18n)
     auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
 
     auto *backgroundScript = Util::constructScript(@[
-        // Variable setup
         [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
         [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
         [NSString stringWithFormat:@"const textDirection = '%@'", textDirection],
@@ -124,8 +130,8 @@ TEST(WKWebExtensionAPILocalization, i18n)
         [NSString stringWithFormat:@"const startEdge = '%@'", startEdge],
         [NSString stringWithFormat:@"const endEdge = '%@'", endEdge],
 
-        // Test predefined localization
         @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Web Extension Test Extension')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@extension_id'), '76C788B8-3374-400D-8259-40E5B9DF79D3')",
         @"browser.test.assertEq(browser.i18n.getMessage('@@ui_locale'), 'en')",
         @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_dir'), textDirection)",
         @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_reversed_dir'), reversedTextDirection)",
@@ -133,21 +139,185 @@ TEST(WKWebExtensionAPILocalization, i18n)
         @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_end_edge'), endEdge)",
         @"browser.test.assertEq(browser.i18n.getMessage('unknown_message'), '')",
 
-        // FIXME: <https://webkit.org/b/261047> Test getting message with name '@@extension_id'.
-
-        @"browser.test.assertEq(await browser.i18n.getUILanguage(), currentUILanguage)",
+        @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
         @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
 
-        // Test return types
-        @"browser.test.assertEq(typeof browser.i18n.getMessage('extension_name'), 'string')",
-        @"browser.test.assertEq(typeof browser.i18n.getUILanguage(), 'string')",
-        @"browser.test.assertEq(typeof browser.i18n.getAcceptLanguages(), 'object')",
-
-        // Finish
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": messages }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Set a base URL so it is a known value and not the default random one.
+    manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPILocalization, i18nWithFallback)
+{
+    NSArray<NSString *> *preferredLocaleIdentifiers = NSLocale.preferredLanguages;
+    NSMutableOrderedSet<NSString *> *acceptedLanguages = [NSMutableOrderedSet orderedSetWithCapacity:preferredLocaleIdentifiers.count];
+    for (NSString *localeIdentifier in preferredLocaleIdentifiers) {
+        [acceptedLanguages addObject:localeIdentifier];
+        [acceptedLanguages addObject:[NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode];
+    }
+
+    auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+        [NSString stringWithFormat:@"const textDirection = '%@'", textDirection],
+        [NSString stringWithFormat:@"const reversedTextDirection = '%@'", reversedTextDirection],
+        [NSString stringWithFormat:@"const startEdge = '%@'", startEdge],
+        [NSString stringWithFormat:@"const endEdge = '%@'", endEdge],
+
+        @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Web Extension Test Extension')",
+        @"browser.test.assertEq(browser.i18n.getMessage('default_name'), 'Default String')",
+        @"browser.test.assertEq(browser.i18n.getMessage('regional_name'), 'Regional String')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@extension_id'), '76C788B8-3374-400D-8259-40E5B9DF79D3')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@ui_locale'), 'en_US')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_dir'), textDirection)",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_reversed_dir'), reversedTextDirection)",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_start_edge'), startEdge)",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_end_edge'), endEdge)",
+        @"browser.test.assertEq(browser.i18n.getMessage('unknown_message'), '')",
+
+        @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
+        @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Localization Test",
+        @"description": @"Localization Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"default_locale": @"fr"
+    };
+
+    auto *defaultMessages = @{
+        @"default_name": @{
+            @"message": @"Default String",
+            @"description": @"The test name."
+        }
+    };
+
+    auto *regionalMessages = @{
+        @"regional_name": @{
+            @"message": @"Regional String",
+            @"description": @"The regional name."
+        }
+    };
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"_locales/fr/messages.json": defaultMessages,
+        @"_locales/en/messages.json": messages,
+        @"_locales/en_US/messages.json": regionalMessages,
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Set a base URL so it is a known value and not the default random one.
+    manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPILocalization, i18nWithoutMessages)
+{
+    NSArray<NSString *> *preferredLocaleIdentifiers = NSLocale.preferredLanguages;
+    NSMutableOrderedSet<NSString *> *acceptedLanguages = [NSMutableOrderedSet orderedSetWithCapacity:preferredLocaleIdentifiers.count];
+    for (NSString *localeIdentifier in preferredLocaleIdentifiers) {
+        [acceptedLanguages addObject:localeIdentifier];
+        [acceptedLanguages addObject:[NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode];
+    }
+
+    auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+
+        @"browser.test.assertEq(browser.i18n.getMessage('@@extension_id'), '76C788B8-3374-400D-8259-40E5B9DF79D3')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@ui_locale'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_dir'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_reversed_dir'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_start_edge'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_end_edge'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('unknown_message'), '')",
+
+        @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
+        @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Set a base URL so it is a known value and not the default random one.
+    manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPILocalization, i18nWithoutDefaultLocale)
+{
+    NSArray<NSString *> *preferredLocaleIdentifiers = NSLocale.preferredLanguages;
+    NSMutableOrderedSet<NSString *> *acceptedLanguages = [NSMutableOrderedSet orderedSetWithCapacity:preferredLocaleIdentifiers.count];
+    for (NSString *localeIdentifier in preferredLocaleIdentifiers) {
+        [acceptedLanguages addObject:localeIdentifier];
+        [acceptedLanguages addObject:[NSLocale localeWithLocaleIdentifier:localeIdentifier].languageCode];
+    }
+
+    auto *manifestWithoutLocale = @{
+        @"manifest_version": @3,
+
+        @"name": @"Localization Test",
+        @"description": @"Localization Test",
+        @"version": @"1",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        }
+    };
+
+    auto *acceptedLanguagesString = Util::constructJSArrayOfStrings(acceptedLanguages.array);
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const acceptedLanguages = %@", acceptedLanguagesString],
+        [NSString stringWithFormat:@"const currentUILanguage = '%@'", currentLocaleString],
+
+        @"browser.test.assertEq(browser.i18n.getMessage('@@extension_id'), '76C788B8-3374-400D-8259-40E5B9DF79D3')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@ui_locale'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_dir'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_reversed_dir'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_start_edge'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('@@bidi_end_edge'), '')",
+        @"browser.test.assertEq(browser.i18n.getMessage('unknown_message'), '')",
+
+        @"browser.test.assertEq(browser.i18n.getUILanguage(), currentUILanguage)",
+        @"browser.test.assertDeepEq(await browser.i18n.getAcceptLanguages(), acceptedLanguages)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifestWithoutLocale resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.
@@ -256,7 +426,7 @@ TEST(WKWebExtensionAPILocalization, Placeholders)
         @"browser.test.notifyPass()",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": localizationDictionary }]);
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:@{ @"background.js": backgroundScript, @"_locales/en/messages.json": localizationDictionary }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
     // Set a base URL so it is a known value and not the default random one.

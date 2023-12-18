@@ -13,9 +13,11 @@ PACKAGES+=(
     libharfbuzz-dev
     libicu-dev
     $(aptIfExists libopenxr-dev)
-    libwpewebkit-1.0-dev
     libxml2-dev
     pkg-config
+    qtbase5-dev
+    qtbase5-private-dev
+    qtdeclarative5-dev
     unifdef
     wayland-protocols
     zlib1g-dev

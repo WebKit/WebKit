@@ -18,6 +18,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/numerics/samples_stats_counter.h"
+#include "api/test/metrics/metrics_logger.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/test/video_quality_analyzer_interface.h"
@@ -55,6 +56,9 @@ class AnalyzingVideoSink : public rtc::VideoSinkInterface<VideoFrame> {
   void UpdateSubscription(const VideoSubscription& subscription);
 
   void OnFrame(const VideoFrame& frame) override;
+
+  void LogMetrics(webrtc::test::MetricsLogger& metrics_logger,
+                  absl::string_view test_case_name) const;
 
   Stats stats() const;
 

@@ -11,6 +11,7 @@ import("../webrtc.gni")
 if (is_android) {
   import("//build/config/android/config.gni")
   import("//build/config/android/rules.gni")
+  import("//third_party/jni_zero/jni_zero.gni")
 } else if (is_mac) {
   import("//build/config/mac/rules.gni")
 } else if (is_ios) {
@@ -352,7 +353,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:videocapture_objc",
         "../sdk:videocodec_objc",
       ]
-      if (rtc_ios_macos_use_opengl_rendering) {
+      if (rtc_ios_use_opengl_rendering) {
         deps += [ "../sdk:opengl_ui_objc" ]
       }
 
@@ -509,7 +510,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:videotoolbox_objc",
       ]
 
-      if (rtc_ios_macos_use_opengl_rendering) {
+      if (rtc_ios_use_opengl_rendering) {
         deps += [ "../sdk:opengl_ui_objc" ]
       }
     }
@@ -548,7 +549,6 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
         "../sdk:helpers_objc",
         "../sdk:mediaconstraints_objc",
         "../sdk:metal_objc",
-        "../sdk:opengl_ui_objc",
         "../sdk:peerconnectionfactory_base_objc",
         "../sdk:peerconnectionfactory_base_objc",
         "../sdk:videocapture_objc",
@@ -686,6 +686,7 @@ if (is_linux || is_chromeos || is_win) {
     ]
 
     deps = [
+      "../api:async_dns_resolver",
       "../api:audio_options_api",
       "../api:create_peerconnection_factory",
       "../api:libjingle_peerconnection_api",
@@ -703,6 +704,7 @@ if (is_linux || is_chromeos || is_win) {
       "../media:rtc_media_base",
       "../p2p:rtc_p2p",
       "../pc:video_track_source",
+      "../rtc_base:async_dns_resolver",
       "../rtc_base:checks",
       "../rtc_base:logging",
       "../rtc_base:macromagic",

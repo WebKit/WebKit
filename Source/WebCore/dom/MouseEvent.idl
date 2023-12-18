@@ -54,8 +54,8 @@
 
     readonly attribute long offsetX;
     readonly attribute long offsetY;
-    readonly attribute long x;
-    readonly attribute long y;
+    [ImplementedAs=clientX] readonly attribute long x;
+    [ImplementedAs=clientY] readonly attribute long y;
     readonly attribute Node? fromElement;
     readonly attribute Node? toElement;
 };

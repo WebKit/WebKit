@@ -35,6 +35,12 @@ WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(IsPersi
 {
 }
 
+WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(TemporaryTag, const String& storageDirectory)
+    : m_temporary(true)
+    , m_storageDirectory(!storageDirectory.isEmpty() ? storageDirectory : createTemporaryStorageDirectoryPath())
+{
+}
+
 WebExtensionControllerConfiguration::WebExtensionControllerConfiguration(const WTF::UUID& identifier)
     : m_identifier(identifier)
     , m_storageDirectory(createStorageDirectoryPath(identifier))

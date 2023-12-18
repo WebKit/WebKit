@@ -41,6 +41,7 @@
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
+#include "ScrollAxis.h"
 #include "ScrollTypes.h"
 #include "TextFlags.h"
 #include "ThemeTypes.h"
@@ -383,6 +384,9 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
     case StyleAppearance::SearchFieldCancelButton:
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderThumbVertical:
+    case StyleAppearance::Switch:
+    case StyleAppearance::SwitchThumb:
+    case StyleAppearance::SwitchTrack:
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
         return CSSValueNone;
     }
@@ -497,15 +501,11 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-
 #define TYPE BoxDecorationBreak
 #define FOR_EACH(CASE) CASE(Slice) CASE(Clone)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
-
-#endif
 
 #define TYPE Edge
 #define FOR_EACH(CASE) CASE(Top) CASE(Right) CASE(Bottom) CASE(Left)
@@ -1416,7 +1416,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE WordBreak
-#define FOR_EACH(CASE) CASE(Normal) CASE(BreakAll) CASE(KeepAll) CASE(BreakWord) CASE(Auto)
+#define FOR_EACH(CASE) CASE(Normal) CASE(BreakAll) CASE(KeepAll) CASE(BreakWord) CASE(AutoPhrase)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
@@ -1540,43 +1540,37 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-constexpr CSSValueID toCSSValueID(TextWrap wrap)
+constexpr CSSValueID toCSSValueID(TextWrapMode wrap)
 {
     switch (wrap) {
-    case TextWrap::Wrap:
+    case TextWrapMode::Wrap:
         return CSSValueWrap;
-    case TextWrap::NoWrap:
+    case TextWrapMode::NoWrap:
         return CSSValueNowrap;
-    case TextWrap::Balance:
-        return CSSValueBalance;
-    case TextWrap::Stable:
-        return CSSValueStable;
-    case TextWrap::Pretty:
-        return CSSValuePretty;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
 }
 
-template<> constexpr TextWrap fromCSSValueID(CSSValueID valueID)
+template<> constexpr TextWrapMode fromCSSValueID(CSSValueID valueID)
 {
     switch (valueID) {
     case CSSValueWrap:
-        return TextWrap::Wrap;
+        return TextWrapMode::Wrap;
     case CSSValueNowrap:
-        return TextWrap::NoWrap;
-    case CSSValueBalance:
-        return TextWrap::Balance;
-    case CSSValueStable:
-        return TextWrap::Stable;
-    case CSSValuePretty:
-        return TextWrap::Pretty;
+        return TextWrapMode::NoWrap;
     default:
         break;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
-    return TextWrap::Wrap;
+    return TextWrapMode::Wrap;
 }
+
+#define TYPE TextWrapStyle
+#define FOR_EACH(CASE) CASE(Auto) CASE(Balance) CASE(Pretty) CASE(Stable)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 
 #define TYPE TextEmphasisFill
 #define FOR_EACH(CASE) CASE(Filled) CASE(Open)
@@ -2492,6 +2486,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE ContentVisibility
 #define FOR_EACH(CASE) CASE(Visible) CASE(Hidden) CASE(Auto)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
+#define TYPE ScrollAxis
+#define FOR_EACH(CASE) CASE(Block) CASE(Inline) CASE(X) CASE(Y)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

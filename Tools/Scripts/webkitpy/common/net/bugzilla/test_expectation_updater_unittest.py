@@ -581,6 +581,7 @@ class TestExpectationUpdaterTest(unittest.TestCase):
 
     def test_update_test_expectations(self):
         host = MockHost()
+        port = host.port_factory.get()
         host.executive = MockExecutive2(exception=OSError())
         host.filesystem = MockFileSystem(files={
             '/mock-checkout/LayoutTests/platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt': 'e-wk1',
@@ -600,7 +601,8 @@ class TestExpectationUpdaterTest(unittest.TestCase):
         }
 
         with mock.patch('webkitpy.common.net.bugzilla.test_expectation_updater.lookup_ews_results_from_bugzilla', mock.Mock(return_value=ews_results)), mock.patch('requests.get', MockRequestsGet):
-            updater = TestExpectationUpdater(host, "123456", True, False, None)
+            updater = TestExpectationUpdater(port)
+            updater.fetch_from_bugzilla("123456", True, False, None)
             updater.do_update()
             # mac-wk2 expectation
             self.assertTrue(self._is_matching(host, "imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-expected.txt", "a"))

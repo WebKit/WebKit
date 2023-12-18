@@ -118,7 +118,6 @@ class StreamGenerator {
 class DelayBasedBweTest : public ::testing::Test {
  public:
   DelayBasedBweTest();
-  explicit DelayBasedBweTest(absl::string_view field_trial_string);
   ~DelayBasedBweTest() override;
 
  protected:
@@ -181,6 +180,7 @@ class DelayBasedBweTest : public ::testing::Test {
   std::unique_ptr<DelayBasedBwe> bitrate_estimator_;
   std::unique_ptr<test::StreamGenerator> stream_generator_;
   int64_t arrival_time_offset_ms_;
+  int64_t next_sequence_number_;
   bool first_update_;
 };
 

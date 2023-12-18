@@ -1,0 +1,3 @@
+
+FAIL Deleting a @namespace rule when list contains anything other than @import or @namespace rules should throw InvalidStateError. assert_throws_dom: function "() => styleSheet.deleteRule(0)" did not throw
+

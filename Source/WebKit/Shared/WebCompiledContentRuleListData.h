@@ -32,11 +32,6 @@
 #include <variant>
 #include <wtf/RefPtr.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 class WebCompiledContentRuleListData {
@@ -55,11 +50,12 @@ public:
     {
     }
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
+    WebCompiledContentRuleListData(String&& identifier, std::optional<WebKit::SharedMemoryHandle>&& data, size_t actionsOffset, size_t actionsSize, size_t urlFiltersBytecodeOffset, size_t urlFiltersBytecodeSize, size_t topURLFiltersBytecodeOffset, size_t topURLFiltersBytecodeSize, size_t frameURLFiltersBytecodeOffset, size_t frameURLFiltersBytecodeSize);
+
+    std::optional<SharedMemoryHandle> createDataHandle(SharedMemory::Protection = SharedMemory::Protection::ReadOnly) const;
 
     String identifier;
-    Ref<SharedMemory> data;
+    RefPtr<SharedMemory> data;
     size_t actionsOffset { 0 };
     size_t actionsSize { 0 };
     size_t urlFiltersBytecodeOffset { 0 };

@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ArgumentCodersCF.h"
 
-#include "ArgumentCoders.h"
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -395,25 +394,6 @@ std::optional<RetainPtr<CFArrayRef>> ArgumentCoder<RetainPtr<CFArrayRef>>::decod
 }
 
 template<typename Encoder>
-void ArgumentCoder<CFBooleanRef>::encode(Encoder& encoder, CFBooleanRef boolean)
-{
-    encoder << static_cast<bool>(CFBooleanGetValue(boolean));
-}
-
-template void ArgumentCoder<CFBooleanRef>::encode<Encoder>(Encoder&, CFBooleanRef);
-template void ArgumentCoder<CFBooleanRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFBooleanRef);
-
-std::optional<RetainPtr<CFBooleanRef>> ArgumentCoder<RetainPtr<CFBooleanRef>>::decode(Decoder& decoder)
-{
-    std::optional<bool> boolean;
-    decoder >> boolean;
-    if (!boolean)
-        return std::nullopt;
-
-    return adoptCF(*boolean ? kCFBooleanTrue : kCFBooleanFalse);
-}
-
-template<typename Encoder>
 void ArgumentCoder<CFCharacterSetRef>::encode(Encoder& encoder, CFCharacterSetRef characterSet)
 {
     auto data = adoptCF(CFCharacterSetCreateBitmapRepresentation(nullptr, characterSet));
@@ -448,47 +428,6 @@ std::optional<RetainPtr<CFCharacterSetRef>> ArgumentCoder<RetainPtr<CFCharacterS
         return std::nullopt;
 
     return WTFMove(characterSet);
-}
-
-template<typename Encoder>
-void ArgumentCoder<CFDataRef>::encode(Encoder& encoder, CFDataRef data)
-{
-    encoder << IPC::DataReference(CFDataGetBytePtr(data), CFDataGetLength(data));
-}
-
-template void ArgumentCoder<CFDataRef>::encode<Encoder>(Encoder&, CFDataRef);
-template void ArgumentCoder<CFDataRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDataRef);
-
-template<typename Decoder>
-std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode(Decoder& decoder)
-{
-    std::optional<IPC::DataReference> dataReference;
-    decoder >> dataReference;
-    if (!dataReference)
-        return std::nullopt;
-
-    return adoptCF(CFDataCreate(0, dataReference->data(), dataReference->size()));
-}
-
-template std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode<Decoder>(Decoder&);
-
-template<typename Encoder>
-void ArgumentCoder<CFDateRef>::encode(Encoder& encoder, CFDateRef date)
-{
-    encoder << static_cast<double>(CFDateGetAbsoluteTime(date));
-}
-
-template void ArgumentCoder<CFDateRef>::encode<Encoder>(Encoder&, CFDateRef);
-template void ArgumentCoder<CFDateRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDateRef);
-
-std::optional<RetainPtr<CFDateRef>> ArgumentCoder<RetainPtr<CFDateRef>>::decode(Decoder& decoder)
-{
-    std::optional<double> absoluteTime;
-    decoder >> absoluteTime;
-    if (!absoluteTime)
-        return std::nullopt;
-
-    return adoptCF(CFDateCreate(0, *absoluteTime));
 }
 
 template<typename Encoder>
@@ -563,141 +502,6 @@ std::optional<RetainPtr<CFDictionaryRef>> ArgumentCoder<RetainPtr<CFDictionaryRe
     }
 
     return WTFMove(dictionary);
-}
-
-template<typename Encoder>
-void ArgumentCoder<CFNumberRef>::encode(Encoder& encoder, CFNumberRef number)
-{
-    CFNumberType numberType = CFNumberGetType(number);
-
-    Vector<uint8_t> buffer(CFNumberGetByteSize(number));
-    bool result = CFNumberGetValue(number, numberType, buffer.data());
-    ASSERT_UNUSED(result, result);
-
-    encoder << static_cast<uint8_t>(numberType) << IPC::DataReference(buffer);
-}
-
-template void ArgumentCoder<CFNumberRef>::encode<Encoder>(Encoder&, CFNumberRef);
-template void ArgumentCoder<CFNumberRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFNumberRef);
-
-static size_t sizeForNumberType(CFNumberType numberType)
-{
-    switch (numberType) {
-    case kCFNumberSInt8Type:
-        return sizeof(SInt8);
-    case kCFNumberSInt16Type:
-        return sizeof(SInt16);
-    case kCFNumberSInt32Type:
-        return sizeof(SInt32);
-    case kCFNumberSInt64Type:
-        return sizeof(SInt64);
-    case kCFNumberFloat32Type:
-        return sizeof(Float32);
-    case kCFNumberFloat64Type:
-        return sizeof(Float64);
-    case kCFNumberCharType:
-        return sizeof(char);
-    case kCFNumberShortType:
-        return sizeof(short);
-    case kCFNumberIntType:
-        return sizeof(int);
-    case kCFNumberLongType:
-        return sizeof(long);
-    case kCFNumberLongLongType:
-        return sizeof(long long);
-    case kCFNumberFloatType:
-        return sizeof(float);
-    case kCFNumberDoubleType:
-        return sizeof(double);
-    case kCFNumberCFIndexType:
-        return sizeof(CFIndex);
-    case kCFNumberNSIntegerType:
-        return sizeof(long);
-    case kCFNumberCGFloatType:
-        return sizeof(double);
-    }
-
-    return 0;
-}
-
-std::optional<RetainPtr<CFNumberRef>> ArgumentCoder<RetainPtr<CFNumberRef>>::decode(Decoder& decoder)
-{
-    std::optional<uint8_t> numberTypeFromIPC;
-    decoder >> numberTypeFromIPC;
-    if (!numberTypeFromIPC || *numberTypeFromIPC > kCFNumberMaxType)
-        return std::nullopt;
-    auto numberType = static_cast<CFNumberType>(*numberTypeFromIPC);
-
-    std::optional<IPC::DataReference> dataReference;
-    decoder >> dataReference;
-    if (!dataReference)
-        return std::nullopt;
-
-    size_t neededBufferSize = sizeForNumberType(numberType);
-    if (!neededBufferSize || dataReference->size() != neededBufferSize)
-        return std::nullopt;
-
-    ASSERT(dataReference->data());
-    return adoptCF(CFNumberCreate(0, numberType, dataReference->data()));
-}
-
-template<typename Encoder>
-void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef string)
-{
-    if (!string) {
-        encoder << true;
-        return;
-    }
-    encoder << false;
-
-    CFIndex length = CFStringGetLength(string);
-    CFStringEncoding encoding = CFStringGetFastestEncoding(string);
-
-    CFRange range = CFRangeMake(0, length);
-    CFIndex bufferLength = 0;
-
-    CFIndex numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, 0, 0, &bufferLength);
-    ASSERT_UNUSED(numConvertedBytes, numConvertedBytes == length);
-
-    Vector<UInt8, 128> buffer(bufferLength);
-    numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, buffer.data(), buffer.size(), &bufferLength);
-    ASSERT(numConvertedBytes == length);
-
-    encoder << static_cast<uint32_t>(encoding) << IPC::DataReference(buffer);
-}
-
-template void ArgumentCoder<CFStringRef>::encode<Encoder>(Encoder&, CFStringRef);
-template void ArgumentCoder<CFStringRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFStringRef);
-
-std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder)
-{
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return std::nullopt;
-
-    if (*isNull)
-        return { { nullptr } };
-
-    std::optional<uint32_t> encodingFromIPC;
-    decoder >> encodingFromIPC;
-    if (!encodingFromIPC)
-        return std::nullopt;
-    auto encoding = static_cast<CFStringEncoding>(*encodingFromIPC);
-
-    if (!CFStringIsEncodingAvailable(encoding))
-        return std::nullopt;
-    
-    std::optional<IPC::DataReference> dataReference;
-    decoder >> dataReference;
-    if (!dataReference)
-        return std::nullopt;
-
-    auto string = adoptCF(CFStringCreateWithBytes(0, dataReference->data(), dataReference->size(), encoding, false));
-    if (!string)
-        return std::nullopt;
-
-    return WTFMove(string);
 }
 
 template<typename Encoder>
@@ -797,24 +601,6 @@ std::optional<RetainPtr<CGColorSpaceRef>> ArgumentCoder<RetainPtr<CGColorSpaceRe
     if (UNLIKELY(!colorSpace))
         return std::nullopt;
     return colorSpace;
-}
-
-template<typename Encoder>
-void ArgumentCoder<CGColorRef>::encode(Encoder& encoder, CGColorRef color)
-{
-    encoder << WebCore::Color::createAndPreserveColorSpace(color);
-}
-
-template void ArgumentCoder<CGColorRef>::encode<Encoder>(Encoder&, CGColorRef);
-template void ArgumentCoder<CGColorRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CGColorRef);
-
-std::optional<RetainPtr<CGColorRef>> ArgumentCoder<RetainPtr<CGColorRef>>::decode(Decoder& decoder)
-{
-    std::optional<WebCore::Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-    return cachedCGColor(*color);
 }
 
 template<typename Encoder>

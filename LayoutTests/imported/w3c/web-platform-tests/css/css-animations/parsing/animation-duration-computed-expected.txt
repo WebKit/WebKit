@@ -2,4 +2,15 @@
 PASS Property animation-duration value '500ms'
 PASS Property animation-duration value 'calc(2 * 3s)'
 PASS Property animation-duration value '20s, 10s'
+FAIL Property animation-duration value 'auto' assert_true: 'auto' is a supported value for animation-duration. expected true got false
+FAIL Property animation-duration value 'auto, auto' assert_true: 'auto, auto' is a supported value for animation-duration. expected true got false
+FAIL Resolved value of animation-duration:auto with animation-timeline:auto assert_equals: expected "20s, 10s" but got "0s"
+FAIL Resolved value of animation-duration:auto with animation-timeline:auto, auto assert_equals: expected "0s, 0s" but got "auto"
+FAIL Resolved value of animation-duration:auto with animation-timeline:--t assert_equals: expected "0s" but got "auto"
+FAIL Resolved value of animation-duration:auto with animation-timeline:--t, --t2 assert_equals: expected "0s, 0s" but got "auto"
+FAIL Resolved value of animation-duration:auto with animation-timeline:none assert_equals: expected "0s" but got "auto"
+FAIL Resolved value of animation-duration:auto with animation-timeline:scroll() assert_equals: expected "0s" but got "auto"
+FAIL Resolved value of animation-duration:auto with animation-timeline:view() assert_equals: expected "0s" but got "auto"
+PASS Resolved value of animation-duration:0s with animation-timeline:auto
+PASS Resolved value of animation-duration:0s with animation-timeline:auto, auto
 

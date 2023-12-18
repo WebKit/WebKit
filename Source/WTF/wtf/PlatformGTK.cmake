@@ -84,7 +84,7 @@ list(APPEND WTF_LIBRARIES
     ZLIB::ZLIB
 )
 
-if (Journald_FOUND)
+if (ENABLE_JOURNALD_LOG)
     list(APPEND WTF_LIBRARIES Journald::Journald)
 endif ()
 

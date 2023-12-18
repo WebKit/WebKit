@@ -15,8 +15,8 @@ let renderbuffer = null;
 let shader = null;
 let texture = null;
 
-function load() {
-    createProgram("webgl");
+function load({offscreen} = {}) {
+    createProgram("webgl", {offscreen});
     linkProgram("vertex-shader", "fragment-shader");
 
     context.canvas.width = 2;

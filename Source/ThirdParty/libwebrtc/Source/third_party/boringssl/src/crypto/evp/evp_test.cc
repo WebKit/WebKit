@@ -125,7 +125,7 @@ static int GetKeyType(FileTest *t, const std::string &name) {
   return EVP_PKEY_NONE;
 }
 
-static int GetRSAPadding(FileTest *t, int *out, const std::string &name) {
+static bool GetRSAPadding(FileTest *t, int *out, const std::string &name) {
   if (name == "PKCS1") {
     *out = RSA_PKCS1_PADDING;
     return true;
@@ -136,6 +136,10 @@ static int GetRSAPadding(FileTest *t, int *out, const std::string &name) {
   }
   if (name == "OAEP") {
     *out = RSA_PKCS1_OAEP_PADDING;
+    return true;
+  }
+  if (name == "None") {
+    *out = RSA_NO_PADDING;
     return true;
   }
   ADD_FAILURE() << "Unknown RSA padding mode: " << name;

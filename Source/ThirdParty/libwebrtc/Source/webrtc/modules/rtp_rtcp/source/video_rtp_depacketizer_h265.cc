@@ -188,7 +188,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessApOrSingleNalu(
         if (sps) {
           parsed_payload->video_header.width = sps->width;
           parsed_payload->video_header.height = sps->height;
-          nalu.sps_id = sps->id;
+          nalu.sps_id = sps->sps_id;
           nalu.vps_id = sps->vps_id;
         } else {
           RTC_LOG(LS_WARNING)
@@ -287,7 +287,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ParseFuNalu(
     absl::optional<uint32_t> pps_id =
         H265PpsParser::ParsePpsIdFromSliceSegmentLayerRbsp(
             rtp_payload.cdata() + kHevcNalHeaderSize + kHevcFuHeaderSize,
-            rtp_payload.size() - kHevcFuHeaderSize, nalu.type);
+            rtp_payload.size() - kHevcNalHeaderSize - kHevcFuHeaderSize, nalu.type);
     if (pps_id) {
       nalu.pps_id = *pps_id;
     } else {

@@ -103,6 +103,10 @@ class RetransmissionQueue {
   // Returns the next TSN that will be allocated for sent DATA chunks.
   TSN next_tsn() const { return outstanding_data_.next_tsn().Wrap(); }
 
+  TSN last_assigned_tsn() const {
+    return UnwrappedTSN::AddTo(outstanding_data_.next_tsn(), -1).Wrap();
+  }
+
   // Returns the size of the congestion window, in bytes. This is the number of
   // bytes that may be in-flight.
   size_t cwnd() const { return cwnd_; }
@@ -112,6 +116,9 @@ class RetransmissionQueue {
 
   // Returns the current receiver window size.
   size_t rwnd() const { return rwnd_; }
+
+  size_t rtx_packets_count() const { return rtx_packets_count_; }
+  uint64_t rtx_bytes_count() const { return rtx_bytes_count_; }
 
   // Returns the number of bytes of packets that are in-flight.
   size_t outstanding_bytes() const {
@@ -145,9 +152,7 @@ class RetransmissionQueue {
   // to stream resetting.
   void PrepareResetStream(StreamID stream_id);
   bool HasStreamsReadyToBeReset() const;
-  std::vector<StreamID> GetStreamsReadyToBeReset() const {
-    return send_queue_.GetStreamsReadyToBeReset();
-  }
+  std::vector<StreamID> BeginResetStreams();
   void CommitResetStreams();
   void RollbackResetStreams();
 
@@ -241,6 +246,11 @@ class RetransmissionQueue {
   size_t ssthresh_;
   // Partial Bytes Acked. See RFC4960.
   size_t partial_bytes_acked_;
+
+  // See `dcsctp::Metrics`.
+  size_t rtx_packets_count_ = 0;
+  uint64_t rtx_bytes_count_ = 0;
+
   // If set, fast recovery is enabled until this TSN has been cumulative
   // acked.
   absl::optional<UnwrappedTSN> fast_recovery_exit_tsn_ = absl::nullopt;

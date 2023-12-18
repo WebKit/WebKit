@@ -980,11 +980,11 @@ JSCCheckSyntaxResult jsc_context_check_syntax(JSCContext* context, const char* c
     switch (mode) {
     case JSC_CHECK_SYNTAX_MODE_SCRIPT:
         success = !!JSC::parse<JSC::ProgramNode>(vm, source, JSC::Identifier(), JSC::ImplementationVisibility::Public, JSC::JSParserBuiltinMode::NotBuiltin,
-            JSC::JSParserStrictMode::NotStrict, JSC::JSParserScriptMode::Classic, JSC::SourceParseMode::ProgramMode, JSC::SuperBinding::NotNeeded, error);
+            JSC::JSParserStrictMode::NotStrict, JSC::JSParserScriptMode::Classic, JSC::SourceParseMode::ProgramMode, JSC::FunctionMode::None, JSC::SuperBinding::NotNeeded, error);
         break;
     case JSC_CHECK_SYNTAX_MODE_MODULE:
         success = !!JSC::parse<JSC::ModuleProgramNode>(vm, source, JSC::Identifier(), JSC::ImplementationVisibility::Public, JSC::JSParserBuiltinMode::NotBuiltin,
-            JSC::JSParserStrictMode::Strict, JSC::JSParserScriptMode::Module, JSC::SourceParseMode::ModuleAnalyzeMode, JSC::SuperBinding::NotNeeded, error);
+            JSC::JSParserStrictMode::Strict, JSC::JSParserScriptMode::Module, JSC::SourceParseMode::ModuleAnalyzeMode, JSC::FunctionMode::None, JSC::SuperBinding::NotNeeded, error);
         break;
     }
 

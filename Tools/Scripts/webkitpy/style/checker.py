@@ -51,6 +51,7 @@ from webkitpy.style.checkers.jsonchecker import JSONChecker
 from webkitpy.style.checkers.jsonchecker import JSONContributorsChecker
 from webkitpy.style.checkers.jsonchecker import JSONFeaturesChecker
 from webkitpy.style.checkers.jsonchecker import JSONCSSPropertiesChecker
+from webkitpy.style.checkers.jsonchecker import JSONImportExpectationsChecker
 from webkitpy.style.checkers.jstest import JSTestChecker
 from webkitpy.style.checkers.messagesin import MessagesInChecker
 from webkitpy.style.checkers.png import PNGChecker
@@ -175,6 +176,10 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'glib'),
       os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk'),
       os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe'),
+      os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe'),
+      os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'drm'),
+      os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'headless'),
+      os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'wayland'),
       os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'glib'),
       os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk'),
       os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe')],
@@ -339,6 +344,17 @@ _PATH_RULES_SPECIFIER = [
      ["-runtime/wtf_make_unique",
       "-runtime/wtf_move"]),
 
+    ([  # Ignore formatting and whitespace issues in gmock.
+     os.path.join('Source', 'ThirdParty', 'gmock')],
+     ["-build",
+      "-legal/copyright",
+      "-list",
+      "-pep8",
+      "-readability",
+      "-runtime/unsigned",
+      "-runtime/wtf_move",
+      "-whitespace"]),
+
 ]
 
 
@@ -410,6 +426,7 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     re.compile('.*TestExpectations.json$'),
     # Avoid imported WebDriverTests python machinery
     re.compile('(?!WebDriverTests).{0,14}.*.py$'),
+    re.compile('^' + re.escape(os.path.join('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')) + r'$'),
 ]
 
 # Files to skip that are less obvious.
@@ -426,6 +443,10 @@ _SKIPPED_FILES_WITH_WARNING = [
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk4') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'drm') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'headless') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'wayland') + os.path.sep) + r'WPE(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'DOM') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
@@ -435,9 +456,14 @@ _SKIPPED_FILES_WITH_WARNING = [
 
     os.path.join('Source', 'JavaScriptCore', 'API', 'glib', 'jsc.h'),
     os.path.join('Source', 'WebCore', 'platform', 'gtk', 'GtkVersioning.h'),
+    os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gbm', 'GBMVersioning.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'webkit.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'webkit.h'),
+    os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'wpe-platform.h'),
+    os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'drm', 'wpe-drm.h'),
+    os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'headless', 'wpe-headless.h'),
+    os.path.join('Source', 'WebKit', 'WPEPlatform', 'wpe', 'wayland', 'wpe-wayland.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-process-extension.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'webkit-web-process-extension.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'DOM', 'webkitdom.h'),
@@ -486,6 +512,7 @@ def _all_categories():
     """Return the set of all categories used by check-webkit-style."""
     # Take the union across all checkers.
     categories = CommonCategories.union(CppChecker.categories)
+    categories = categories.union(CMakeChecker.categories)
     categories = categories.union(JSChecker.categories)
     categories = categories.union(JSONChecker.categories)
     categories = categories.union(JSTestChecker.categories)
@@ -790,6 +817,8 @@ class CheckerDispatcher(object):
                 checker = JSONFeaturesChecker(file_path, handle_style_error)
             elif basename == 'CSSProperties.json':
                 checker = JSONCSSPropertiesChecker(file_path, handle_style_error)
+            elif basename == 'import-expectations.json':
+                checker = JSONImportExpectationsChecker(file_path, handle_style_error)
             else:
                 checker = JSONChecker(file_path, handle_style_error)
         elif file_type == FileType.PYTHON:

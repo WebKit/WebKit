@@ -35,37 +35,26 @@ namespace WebCore {
 
 class PathStream final : public PathImpl {
 public:
-    static UniqueRef<PathStream> create();
-    static UniqueRef<PathStream> create(PathSegment&&);
-    static UniqueRef<PathStream> create(const Vector<FloatPoint>&);
-    static UniqueRef<PathStream> create(Vector<PathSegment>&&);
+    static Ref<PathStream> create();
+    static Ref<PathStream> create(PathSegment&&);
+    static Ref<PathStream> create(const Vector<FloatPoint>&);
+    static Ref<PathStream> create(Vector<PathSegment>&&);
 
-    PathStream();
-    PathStream(const PathStream&);
-    PathStream(PathSegment&&);
-    PathStream(Vector<PathSegment>&&);
-    PathStream(const Vector<PathSegment>&);
+    Ref<PathImpl> copy() const final;
 
-    UniqueRef<PathImpl> clone() const final;
+    void add(PathMoveTo) final;
+    void add(PathLineTo) final;
+    void add(PathQuadCurveTo) final;
+    void add(PathBezierCurveTo) final;
+    void add(PathArcTo) final;
+    void add(PathArc) final;
+    void add(PathEllipse) final;
+    void add(PathEllipseInRect) final;
+    void add(PathRect) final;
+    void add(PathRoundedRect) final;
+    void add(PathCloseSubpath) final;
 
-    bool operator==(const PathImpl& other) const final;
-
-    void moveTo(const FloatPoint&) final;
-
-    void addLineTo(const FloatPoint&) final;
-    void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint) final;
-    void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint) final;
-    void addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) final;
-
-    void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, RotationDirection) final;
-    void addEllipse(const FloatPoint&, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection) final;
-    void addEllipseInRect(const FloatRect&) final;
-    void addRect(const FloatRect&) final;
-    void addRoundedRect(const FloatRoundedRect&, PathRoundedRect::Strategy) final;
-
-    void closeSubpath() final;
-
-    WEBCORE_EXPORT const Vector<PathSegment>& segments() const;
+    const Vector<PathSegment>& segments() const { return m_segments; }
 
     void applySegments(const PathSegmentApplier&) const final;
     bool applyElements(const PathElementApplier&) const final;
@@ -75,54 +64,19 @@ public:
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
+    bool hasSubpaths() const final;
+
     static FloatRect computeFastBoundingRect(std::span<const PathSegment>);
     static FloatRect computeBoundingRect(std::span<const PathSegment>);
+    static bool computeHasSubpaths(std::span<const PathSegment>);
 
 private:
-    struct SegmentsData : public ThreadSafeRefCounted<SegmentsData> {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    PathStream() = default;
+    PathStream(PathSegment&&);
+    PathStream(Vector<PathSegment>&&);
+    PathStream(const Vector<PathSegment>&);
 
-        static Ref<SegmentsData> create()
-        {
-            return adoptRef(*new SegmentsData);
-        }
-
-        static Ref<SegmentsData> create(PathSegment&& segment)
-        {
-            auto result = adoptRef(*new SegmentsData);
-            result->segments.append(WTFMove(segment));
-            return result;
-        }
-
-        static Ref<SegmentsData> create(Vector<PathSegment>&& segments)
-        {
-            auto result = adoptRef(*new SegmentsData);
-            result->segments = WTFMove(segments);
-            return result;
-        }
-
-        static Ref<SegmentsData> create(const Vector<PathSegment>& segments)
-        {
-            auto result = adoptRef(*new SegmentsData);
-            result->segments = segments;
-            return result;
-        }
-
-        Ref<SegmentsData> copy() const
-        {
-            return create(segments);
-        }
-
-        bool operator==(const SegmentsData& other) const
-        {
-            return segments == other.segments;
-        }
-
-        Vector<PathSegment> segments;
-    };
-
-    static UniqueRef<PathStream> create(const PathStream&);
-    static UniqueRef<PathStream> create(const Vector<PathSegment>&);
+    static Ref<PathStream> create(const Vector<PathSegment>&);
 
     const PathMoveTo* lastIfMoveTo() const;
 
@@ -137,14 +91,14 @@ private:
     std::optional<PathDataQuadCurve> singleQuadCurve() const final;
     std::optional<PathDataBezierCurve> singleBezierCurve() const final;
 
-    bool isEmpty() const final { return m_segmentsData->segments.isEmpty(); }
+    bool isEmpty() const final { return m_segments.isEmpty(); }
 
     bool isClosed() const final;
     FloatPoint currentPoint() const final;
 
-    Vector<PathSegment>& segments() { return m_segmentsData.access().segments; }
+    Vector<PathSegment>& segments() { return m_segments; }
 
-    DataRef<SegmentsData> m_segmentsData;
+    Vector<PathSegment> m_segments;
 };
 
 } // namespace WebCore

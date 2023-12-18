@@ -1,9 +1,7 @@
 /**
-* AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { extractImportantStackTrace } from '../stack.js';
+ * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
+ **/ import { extractImportantStackTrace } from '../stack.js';
 export class LogMessageWithStack extends Error {
-
-
   stackHiddenMessage = undefined;
 
   constructor(name, ex) {
@@ -42,4 +40,3 @@ export class LogMessageWithStack extends Error {
 export function prettyPrintLog(log) {
   return '  - ' + log.toJSON().replace(/\n/g, '\n    ');
 }
-//# sourceMappingURL=log_message.js.map

@@ -1,0 +1,3 @@
+
+FAIL View timeline generates and resolves finish promises and events assert_false: Animation is not finished before starting expected false got true
+

@@ -190,7 +190,7 @@ g.test('offset_alignment')
   });
 
 g.test('overflow')
-  .desc(`Test that clears which may cause arthimetic overflows are invalid.`)
+  .desc(`Test that clears which may cause arithmetic overflows are invalid.`)
   .paramsSubcasesOnly([
     { offset: 0, size: kMaxSafeMultipleOf8 },
     { offset: 16, size: kMaxSafeMultipleOf8 },

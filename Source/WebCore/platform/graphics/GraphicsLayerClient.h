@@ -49,9 +49,7 @@ enum class AnimatedProperty : uint8_t {
     Opacity,
     BackgroundColor,
     Filter,
-#if ENABLE(FILTERS_LEVEL_2)
     WebkitBackdropFilter,
-#endif
 };
 
 enum class GraphicsLayerPaintingPhase {

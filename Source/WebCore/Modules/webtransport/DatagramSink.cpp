@@ -28,6 +28,7 @@
 
 #include "WebTransport.h"
 #include "WebTransportSession.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -44,12 +45,12 @@ void DatagramSink::attachTo(WebTransport& transport)
 void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DOMPromiseDeferred<void>&& promise)
 {
     if (!context.globalObject())
-        return promise.settle(Exception { InvalidStateError });
+        return promise.settle(Exception { ExceptionCode::InvalidStateError });
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
     auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
     auto arrayBufferOrView = convert<IDLUnion<IDLArrayBuffer, IDLArrayBufferView>>(globalObject, value);
     if (scope.exception())
-        return promise.settle(Exception { ExistingExceptionError });
+        return promise.settle(Exception { ExceptionCode::ExistingExceptionError });
 
     WTF::switchOn(arrayBufferOrView, [&](auto& arrayBufferOrView) {
         send({ static_cast<const uint8_t*>(arrayBufferOrView->data()), arrayBufferOrView->byteLength() }, [promise = WTFMove(promise)] () mutable {

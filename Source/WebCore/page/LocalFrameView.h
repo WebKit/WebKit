@@ -26,6 +26,7 @@
 
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
+#include "Document.h"
 #include "FrameView.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
@@ -43,6 +44,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -82,10 +84,6 @@ enum class NullGraphicsContextPaintInvalidationReasons : uint8_t;
 enum class StyleColorOptions : uint8_t;
 enum class TiledBackingScrollability : uint8_t;
 
-namespace Display {
-class View;
-}
-
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumentRect };
@@ -102,19 +100,14 @@ public:
 
     virtual ~LocalFrameView();
 
-    HostWindow* hostWindow() const final;
-    
-    WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
     Type viewType() const final { return Type::Local; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
 
     WEBCORE_EXPORT LocalFrame& frame() const final;
+    Ref<LocalFrame> protectedFrame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
-
-    Display::View* existingDisplayView() const;
-    Display::View& displayView();
 
     int mapFromLayoutToCSSUnits(LayoutUnit) const;
     LayoutUnit mapFromCSSToLayoutUnits(int) const;
@@ -131,6 +124,8 @@ public:
 
     const LocalFrameViewLayoutContext& layoutContext() const { return m_layoutContext; }
     LocalFrameViewLayoutContext& layoutContext() { return m_layoutContext; }
+    CheckedRef<const LocalFrameViewLayoutContext> checkedLayoutContext() const;
+    CheckedRef<LocalFrameViewLayoutContext> checkedLayoutContext();
 
     WEBCORE_EXPORT bool didFirstLayout() const;
 
@@ -165,6 +160,9 @@ public:
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
 
+    // Returns true if a pending compositing layer update was done.
+    bool updateCompositingLayersAfterLayoutIfNeeded();
+
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
     void setNeedsOneShotDrawingSynchronization();
@@ -180,6 +178,8 @@ public:
 
     WEBCORE_EXPORT ScrollingNodeID scrollingNodeID() const override;
     WEBCORE_EXPORT ScrollableArea* scrollableAreaForScrollingNodeID(ScrollingNodeID) const;
+    void setPluginScrollableAreaForScrollingNodeID(ScrollingNodeID nodeID, ScrollableArea& area) { m_scrollingNodeIDToPluginScrollableAreaMap.add(nodeID, &area); }
+    void removePluginScrollableAreaForScrollingNodeID(ScrollingNodeID nodeID) { m_scrollingNodeIDToPluginScrollableAreaMap.remove(nodeID); }
     bool usesAsyncScrolling() const final;
 
     WEBCORE_EXPORT void enterCompositingMode();
@@ -268,8 +268,6 @@ public:
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 
-    float visibleContentScaleFactor() const final;
-
 #if USE(COORDINATED_GRAPHICS)
     WEBCORE_EXPORT void setFixedVisibleContentRect(const IntRect&) final;
 #endif
@@ -349,12 +347,12 @@ public:
     void removeSlowRepaintObject(RenderElement&);
     bool hasSlowRepaintObject(const RenderElement& renderer) const;
     bool hasSlowRepaintObjects() const;
-    WeakHashSet<RenderElement>* slowRepaintObjects() const { return m_slowRepaintObjects.get(); }
+    SingleThreadWeakHashSet<RenderElement>* slowRepaintObjects() const { return m_slowRepaintObjects.get(); }
 
     // Includes fixed- and sticky-position objects.
     void addViewportConstrainedObject(RenderLayerModelObject&);
     void removeViewportConstrainedObject(RenderLayerModelObject&);
-    const WeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
+    const SingleThreadWeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
     WEBCORE_EXPORT bool hasViewportConstrainedObjects() const;
 
     float frameScaleFactor() const;
@@ -443,8 +441,8 @@ public:
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 
     static MonotonicTime currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
-    
-    WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive();
+
+    WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptions> = { });
 
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
@@ -513,22 +511,6 @@ public:
     //    Similar to client coordinates, but affected by page zoom (but not page scale).
     //
 
-    // Methods to convert points and rects between the coordinate space of the renderer, and this view.
-    WEBCORE_EXPORT IntRect convertFromRendererToContainingView(const RenderElement*, const IntRect&) const;
-    WEBCORE_EXPORT IntRect convertFromContainingViewToRenderer(const RenderElement*, const IntRect&) const;
-    WEBCORE_EXPORT FloatRect convertFromContainingViewToRenderer(const RenderElement*, const FloatRect&) const;
-    WEBCORE_EXPORT IntPoint convertFromRendererToContainingView(const RenderElement*, const IntPoint&) const;
-    WEBCORE_EXPORT FloatPoint convertFromRendererToContainingView(const RenderElement*, const FloatPoint&) const;
-    WEBCORE_EXPORT IntPoint convertFromContainingViewToRenderer(const RenderElement*, const IntPoint&) const;
-
-    // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
-    IntRect convertToContainingView(const IntRect&) const final;
-    IntRect convertFromContainingView(const IntRect&) const final;
-    FloatRect convertFromContainingView(const FloatRect&) const final;
-    IntPoint convertToContainingView(const IntPoint&) const final;
-    FloatPoint convertToContainingView(const FloatPoint&) const final;
-    IntPoint convertFromContainingView(const IntPoint&) const final;
-
     float documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
     float absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
 
@@ -580,7 +562,6 @@ public:
     void flushAnyPendingPostLayoutTasks();
 
     bool shouldSuspendScrollAnimations() const final;
-    void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 
     RenderBox* embeddedContentBox() const;
     
@@ -621,9 +602,6 @@ public:
     const Pagination& pagination() const;
     void setPagination(const Pagination&);
 
-    bool isActive() const final;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
-
 #if HAVE(RUBBER_BANDING)
     WEBCORE_EXPORT GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;
     WEBCORE_EXPORT GraphicsLayer* setWantsLayerForBottomOverHangArea(bool) const;
@@ -635,10 +613,6 @@ public:
 
     LayoutPoint scrollPositionRespectingCustomFixedPosition() const;
 
-    WEBCORE_EXPORT int headerHeight() const final;
-    WEBCORE_EXPORT int footerHeight() const final;
-
-    WEBCORE_EXPORT float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const final;
     void topContentInsetDidChange(float newTopContentInset);
 
     void topContentDirectionDidChange();
@@ -672,7 +646,7 @@ public:
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
 
-    const HashSet<CheckedPtr<Widget>>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
+    const HashSet<SingleThreadWeakRef<Widget>>& widgetsInRenderTree() const { return m_widgetsInRenderTree; }
 
     void notifyAllFramesThatContentAreaWillPaint() const;
 
@@ -717,8 +691,6 @@ public:
 
     void renderLayerDidScroll(const RenderLayer&);
 
-    void scrollToPositionWithAnimation(const ScrollPosition&, const ScrollPositionChangeOptions& options = ScrollPositionChangeOptions::createProgrammatic());
-
     bool inUpdateEmbeddedObjects() const { return m_inUpdateEmbeddedObjects; }
 
     String debugDescription() const final;
@@ -736,13 +708,15 @@ public:
     ScrollbarGutter scrollbarGutterStyle() const final;
     ScrollbarWidth scrollbarWidthStyle() const final;
 
-    void updateScrollAnchoringElement() final;
-    void updateScrollPositionForScrollAnchoringController() final;
-    void invalidateScrollAnchoringElement();
-
     void dequeueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
     void queueScrollableAreaForScrollAnchoringUpdate(ScrollableArea&);
+    void updateScrollAnchoringElementsForScrollableAreas();
     void updateScrollAnchoringPositionForScrollableAreas();
+
+    void updateScrollAnchoringElement() final;
+    void updateScrollPositionForScrollAnchoringController() final;
+    void invalidateScrollAnchoringElement() final;
+    ScrollAnchoringController* scrollAnchoringController() { return m_scrollAnchoringController.get(); }
 
 private:
     explicit LocalFrameView(LocalFrame&);
@@ -827,9 +801,6 @@ private:
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
     void scrollTo(const ScrollPosition&) final;
     void setVisibleScrollerThumbRect(const IntRect&) final;
-    ScrollableArea* enclosingScrollableArea() const final;
-    IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
-    bool scrollAnimatorEnabled() const final;
     GraphicsLayer* layerForScrollCorner() const final;
 #if HAVE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const final;
@@ -875,7 +846,7 @@ private:
 
     void updateEmbeddedObjectsTimerFired();
     bool updateEmbeddedObjects();
-    void updateEmbeddedObject(RenderEmbeddedObject&);
+    void updateEmbeddedObject(const SingleThreadWeakPtr<RenderEmbeddedObject>&);
 
     void updateWidgetPositionsTimerFired();
 
@@ -910,8 +881,8 @@ private:
 
     RenderElement* viewportRenderer() const;
     
-    void willDoLayout(WeakPtr<RenderElement> layoutRoot);
-    void didLayout(WeakPtr<RenderElement> layoutRoot);
+    void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
+    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
 
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
@@ -941,11 +912,11 @@ private:
     const Ref<LocalFrame> m_frame;
     LocalFrameViewLayoutContext m_layoutContext;
 
-    std::unique_ptr<Display::View> m_displayView;
+    HashSet<SingleThreadWeakRef<Widget>> m_widgetsInRenderTree;
+    std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
+    std::unique_ptr<SingleThreadWeakHashSet<RenderElement>> m_slowRepaintObjects;
 
-    HashSet<CheckedPtr<Widget>> m_widgetsInRenderTree;
-    std::unique_ptr<ListHashSet<CheckedPtr<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
-    std::unique_ptr<WeakHashSet<RenderElement>> m_slowRepaintObjects;
+    HashMap<ScrollingNodeID, WeakPtr<ScrollableArea>> m_scrollingNodeIDToPluginScrollableAreaMap;
 
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
     RefPtr<ContainerNode> m_scheduledMaintainScrollPositionAnchor;
@@ -1013,7 +984,7 @@ private:
 
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreasForAnimatedScroll;
-    std::unique_ptr<WeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
+    std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 
@@ -1026,8 +997,9 @@ private:
     ViewportRendererType m_viewportRendererType { ViewportRendererType::None };
     ScrollPinningBehavior m_scrollPinningBehavior { ScrollPinningBehavior::DoNotPin };
     SelectionRevealMode m_selectionRevealModeForFocusedElement { SelectionRevealMode::DoNotReveal };
-    std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
     ScrollableAreaSet m_scrollableAreasWithScrollAnchoringControllersNeedingUpdate;
+
+    std::unique_ptr<ScrollAnchoringController> m_scrollAnchoringController;
 
     bool m_shouldUpdateWhileOffscreen { true };
     bool m_overflowStatusDirty { true };
@@ -1071,6 +1043,7 @@ private:
     bool m_didRunAutosize { false };
     bool m_inUpdateEmbeddedObjects { false };
     bool m_scheduledToScrollToAnchor { false };
+    bool m_updateCompositingLayersIsPending { false };
 };
 
 inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
@@ -1091,6 +1064,11 @@ inline void LocalFrameView::incrementVisuallyNonEmptyCharacterCount(const String
         return;
 
     incrementVisuallyNonEmptyCharacterCountSlowCase(inlineText);
+}
+
+inline RefPtr<LocalFrameView> LocalFrame::protectedView() const
+{
+    return m_view;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const LocalFrameView&);

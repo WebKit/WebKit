@@ -218,7 +218,7 @@ ExceptionOr<void> MediaSession::setPlaylist(ScriptExecutionContext& context, Vec
         if (resolvedEntry.hasException())
             return resolvedEntry.releaseException();
         
-        resolvedPlaylist.uncheckedAppend(resolvedEntry.releaseReturnValue());
+        resolvedPlaylist.append(resolvedEntry.releaseReturnValue());
     }
 
     m_playlist = WTFMove(resolvedPlaylist);
@@ -271,7 +271,7 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!callActionHandler(actionDetails, TriggerGestureIndicator::No)) {
-        promise.reject(InvalidStateError);
+        promise.reject(ExceptionCode::InvalidStateError);
         return;
     }
 
@@ -288,7 +288,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
     if (handler) {
         std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
-            maybeGestureIndicator.emplace(ProcessingUserGesture, document());
+            maybeGestureIndicator.emplace(IsProcessingUserGesture::Yes, document());
         handler->handleEvent(actionDetails);
         return true;
     }
@@ -321,7 +321,7 @@ ExceptionOr<void> MediaSession::setPositionState(std::optional<MediaPositionStat
         && state->position <= state->duration
         && std::isfinite(state->playbackRate)
         && state->playbackRate))
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
 
     m_positionState = WTFMove(state);
     m_lastReportedPosition = m_positionState->position;

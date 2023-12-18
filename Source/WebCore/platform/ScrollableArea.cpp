@@ -176,12 +176,23 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
 
+    if (scrollAnimationStatus() == ScrollAnimationStatus::Animating)
+        scrollAnimator().cancelAnimations();
+
+    if (position == scrollPosition())
+        return;
+
+    auto previousScrollType = currentScrollType();
+    setCurrentScrollType(options.type);
+
     bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), { ScrollType::Programmatic, options.clamping, ScrollIsAnimated::Yes, options.snapPointSelectionMethod, options.originalScrollDelta });
     if (!startedAnimation)
         startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, options.clamping);
 
     if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
+
+    setCurrentScrollType(previousScrollType);
 }
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
@@ -236,8 +247,11 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
             verticalScrollbar->invalidate();
     }
 
-    if (scrollPosition() != oldPosition)
+    if (scrollPosition() != oldPosition) {
         scrollbarsController().notifyContentAreaScrolled(scrollPosition() - oldPosition);
+        invalidateScrollAnchoringElement();
+        updateScrollAnchoringElement();
+    }
 }
 
 bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState>)
@@ -950,9 +964,10 @@ LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& vi
         y = visibleBounds.y();
     else if (scrollY == ScrollAlignment::Behavior::AlignBottom)
         y = exposeRect.maxY() - visibleBounds.height();
-    else if (scrollY == ScrollAlignment::Behavior::AlignCenter)
-        y = exposeRect.y() + (exposeRect.height() - visibleBounds.height()) / 2;
-    else
+    else if (scrollY == ScrollAlignment::Behavior::AlignCenter) {
+        auto halfHeight = (exposeRect.height() - visibleBounds.height()) / 2;
+        y = exposeRect.y() + halfHeight.ceil();
+    } else
         y = exposeRect.y();
 
     return LayoutRect(LayoutPoint(x, y), visibleBounds.size());

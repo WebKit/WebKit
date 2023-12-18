@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #include "OESTextureFloat.h"
 
-#include "WebGLExtensionAnyInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESTextureFloat);
 
 OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::OESTextureFloat)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_texture_float"_s);
 

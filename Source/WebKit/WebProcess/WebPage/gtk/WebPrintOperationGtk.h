@@ -103,7 +103,7 @@ private:
 
     GRefPtr<GtkPrintSettings> m_printSettings;
     GRefPtr<GtkPageSetup> m_pageSetup;
-    PrintInfo::PrintMode m_printMode { PrintInfo::PrintMode::PrintModeAsync };
+    PrintInfo::PrintMode m_printMode { PrintInfo::PrintMode::Async };
     WebCore::PrintContext* m_printContext { nullptr };
     CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, WebCore::ResourceError&&)> m_completionHandler;
     RefPtr<cairo_t> m_cairoContext;

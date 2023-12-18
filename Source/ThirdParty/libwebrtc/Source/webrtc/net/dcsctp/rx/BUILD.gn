@@ -95,6 +95,7 @@ rtc_library("reassembly_queue") {
     "../../../api:array_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
+    "../../../rtc_base/containers:flat_set",
     "../common:internal_types",
     "../common:sequence_numbers",
     "../common:str_join",
@@ -109,6 +110,7 @@ rtc_library("reassembly_queue") {
     "reassembly_queue.h",
   ]
   absl_deps = [
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]

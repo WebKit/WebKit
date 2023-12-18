@@ -42,6 +42,8 @@ public:
 
     static std::unique_ptr<DynamicContentScalingImageBufferBackend> create(const Parameters&, const WebCore::ImageBufferCreationContext&);
 
+    DynamicContentScalingImageBufferBackend(const Parameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
+
     WebCore::GraphicsContext& context() final;
     std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
 
@@ -54,8 +56,6 @@ public:
     void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
 protected:
-    DynamicContentScalingImageBufferBackend(const Parameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
-
     unsigned bytesPerRow() const final;
     String debugDescription() const final;
 
@@ -65,16 +65,6 @@ protected:
     mutable std::unique_ptr<WebCore::GraphicsContextCG> m_context;
     RetainPtr<id> m_resourceCache;
     WebCore::RenderingMode m_renderingMode;
-};
-
-class DynamicContentScalingAcceleratedImageBufferBackend final : public DynamicContentScalingImageBufferBackend {
-    WTF_MAKE_ISO_ALLOCATED(DynamicContentScalingAcceleratedImageBufferBackend);
-    WTF_MAKE_NONCOPYABLE(DynamicContentScalingAcceleratedImageBufferBackend);
-public:
-    static std::unique_ptr<DynamicContentScalingAcceleratedImageBufferBackend> create(const DynamicContentScalingImageBufferBackend::Parameters&, const WebCore::ImageBufferCreationContext&);
-
-protected:
-    DynamicContentScalingAcceleratedImageBufferBackend(const Parameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
 };
 
 }

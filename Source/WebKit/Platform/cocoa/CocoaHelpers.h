@@ -49,24 +49,24 @@ class Data;
 
 namespace WebKit {
 
-template<typename T> T *filterObjects(T *container, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
-template<> NSArray *filterObjects<NSArray>(NSArray *, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
-template<> NSDictionary *filterObjects<NSDictionary>(NSDictionary *, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
-template<> NSSet *filterObjects<NSSet>(NSSet *, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
+template<typename T> T *filterObjects(T *container, bool NS_NOESCAPE (^block)(id key, id value));
+template<> NSArray *filterObjects<NSArray>(NSArray *, bool NS_NOESCAPE (^block)(id key, id value));
+template<> NSDictionary *filterObjects<NSDictionary>(NSDictionary *, bool NS_NOESCAPE (^block)(id key, id value));
+template<> NSSet *filterObjects<NSSet>(NSSet *, bool NS_NOESCAPE (^block)(id key, id value));
 
 template<typename T>
-T *filterObjects(const RetainPtr<T>& container, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+T *filterObjects(const RetainPtr<T>& container, bool NS_NOESCAPE (^block)(id key, id value))
 {
     return filterObjects<T>(container.get(), block);
 }
 
-template<typename T> T *mapObjects(T *container, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
-template<> NSArray *mapObjects<NSArray>(NSArray *, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
-template<> NSDictionary *mapObjects<NSDictionary>(NSDictionary *, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
-template<> NSSet *mapObjects<NSSet>(NSSet *, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value));
+template<typename T> T *mapObjects(T *container, id NS_NOESCAPE (^block)(id key, id value));
+template<> NSArray *mapObjects<NSArray>(NSArray *, id NS_NOESCAPE (^block)(id key, id value));
+template<> NSDictionary *mapObjects<NSDictionary>(NSDictionary *, id NS_NOESCAPE (^block)(id key, id value));
+template<> NSSet *mapObjects<NSSet>(NSSet *, id NS_NOESCAPE (^block)(id key, id value));
 
 template<typename T>
-T *mapObjects(const RetainPtr<T>& container, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+T *mapObjects(const RetainPtr<T>& container, id NS_NOESCAPE (^block)(id key, id value))
 {
     return mapObjects<T>(container.get(), block);
 }
@@ -84,6 +84,12 @@ template<typename T>
 T *objectForKey(const RetainPtr<NSDictionary>& dictionary, id key, bool returningNilIfEmpty = true, Class containingObjectsOfClass = Nil)
 {
     return objectForKey<T>(dictionary.get(), key, returningNilIfEmpty, containingObjectsOfClass);
+}
+
+inline bool boolForKey(NSDictionary *dictionary, id key, bool defaultValue)
+{
+    NSNumber *value = dynamic_objc_cast<NSNumber>(dictionary[key]);
+    return value ? value.boolValue : defaultValue;
 }
 
 enum class JSONOptions {
@@ -106,6 +112,8 @@ NSDictionary *mergeDictionaries(NSDictionary *, NSDictionary *);
 NSDictionary *mergeDictionariesAndSetValues(NSDictionary *, NSDictionary *);
 
 NSString *privacyPreservingDescription(NSError *);
+
+NSURL *ensureDirectoryExists(NSURL *directory);
 
 NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 

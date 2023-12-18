@@ -9,6 +9,9 @@
 #   List of generated shaders for inclusion in ANGLE's build process.
 
 angle_vulkan_internal_shaders = [
+  "shaders/gen/Blit3DSrc.frag.00000000.inc",
+  "shaders/gen/Blit3DSrc.frag.00000001.inc",
+  "shaders/gen/Blit3DSrc.frag.00000002.inc",
   "shaders/gen/BlitResolve.frag.00000000.inc",
   "shaders/gen/BlitResolve.frag.00000001.inc",
   "shaders/gen/BlitResolve.frag.00000002.inc",

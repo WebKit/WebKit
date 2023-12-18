@@ -34,12 +34,12 @@ namespace IPC {
 class Timeout {
 public:
     Timeout(Seconds timeDelta)
-        : m_deadline(std::isinf(timeDelta) ? ApproximateTime::infinity() : ApproximateTime::now() + timeDelta)
+        : m_deadline(timeDelta.isInfinity() ? ApproximateTime::infinity() : ApproximateTime::now() + timeDelta)
     {
     }
 
     static constexpr Timeout infinity() { return Timeout { }; }
-    bool isInfinity() const { return std::isinf(m_deadline); }
+    bool isInfinity() const { return m_deadline.isInfinity(); }
     static Timeout now() { return 0_s; }
     Seconds secondsUntilDeadline() const { return std::max(m_deadline - ApproximateTime::now(), 0_s ); }
     constexpr ApproximateTime deadline() const { return m_deadline; }

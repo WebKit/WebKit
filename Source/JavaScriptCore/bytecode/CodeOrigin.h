@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 #if OS(DARWIN)
@@ -204,7 +205,7 @@ private:
     static constexpr uintptr_t s_maskIsBytecodeIndexInvalid = 2;
 
     struct OutOfLineCodeOrigin {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(OutOfLineCodeOrigin);
     public:
         InlineCallFrame* inlineCallFrame;
         BytecodeIndex bytecodeIndex;

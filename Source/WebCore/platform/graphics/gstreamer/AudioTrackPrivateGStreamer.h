@@ -56,13 +56,15 @@ public:
 
     int trackIndex() const final { return m_index; }
 
-    AtomString id() const final { return m_id; }
+    TrackID id() const final { return m_index; }
+    std::optional<AtomString> trackUID() const final { return m_stringId; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
 
+    void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) final;
+
 protected:
-    void updateConfigurationFromCaps(const GRefPtr<GstCaps>&&) override;
-    void updateConfigurationFromTags(const GRefPtr<GstTagList>&&) override;
+    void updateConfigurationFromTags(GRefPtr<GstTagList>&&) final;
 
     void tagsChanged(GRefPtr<GstTagList>&& tags) final { updateConfigurationFromTags(WTFMove(tags)); }
     void capsChanged(const String& streamId, GRefPtr<GstCaps>&&) final;

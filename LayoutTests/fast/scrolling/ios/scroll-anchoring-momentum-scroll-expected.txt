@@ -1,0 +1,11 @@
+Verifies that a scroll anchoring adjustment does not cancel a momentum scroll.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.scrollingElement.scrollTop is > 900
+PASS successfullyParsed is true
+
+TEST COMPLETE
+abc
+def

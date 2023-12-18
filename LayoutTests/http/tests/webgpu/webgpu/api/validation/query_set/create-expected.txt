@@ -1,1 +1,4 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :count:type="occlusion"
+PASS :count:type="timestamp"
+

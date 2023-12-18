@@ -53,6 +53,12 @@
 
 PAS_BEGIN_EXTERN_C;
 
+#if defined(__has_include)
+#if __has_include(<WebKitAdditions/pas_utils_additions.h>)
+#include <WebKitAdditions/pas_utils_additions.h>
+#endif
+#endif
+
 #define PAS_ALWAYS_INLINE_BUT_NOT_INLINE __PAS_ALWAYS_INLINE_BUT_NOT_INLINE
 #define PAS_ALWAYS_INLINE __PAS_ALWAYS_INLINE
 #define PAS_NEVER_INLINE __PAS_NEVER_INLINE
@@ -171,8 +177,13 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_TYPEOF(a) typeof (a)
 #endif
 
+#ifndef PAS_PROFILE
+#define PAS_PROFILE(...)
+#endif
+
 static PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
 {
+    PAS_PROFILE(memory, ZERO_MEMORY);
     memset(memory, 0, size);
 }
 

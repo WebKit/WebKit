@@ -6,6 +6,7 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
+%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -32,6 +33,7 @@ $L$SEH_begin_bn_mul_mont_gather5:
 
 
 
+_CET_ENDBR
 	mov	r9d,r9d
 	mov	rax,rsp
 
@@ -468,7 +470,7 @@ $L$copy:
 $L$mul_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_bn_mul_mont_gather5:
 
@@ -587,7 +589,7 @@ $L$mul4x_body:
 $L$mul4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_bn_mul4x_mont_gather5:
 
@@ -1137,6 +1139,7 @@ $L$SEH_begin_bn_power5:
 
 
 
+_CET_ENDBR
 	mov	rax,rsp
 
 	lea	r11,[OPENSSL_ia32cap_P]
@@ -1266,7 +1269,7 @@ DB	102,72,15,126,226
 $L$power5_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_bn_power5:
 
@@ -1277,6 +1280,7 @@ ALIGN	32
 bn_sqr8x_internal:
 __bn_sqr8x_internal:
 
+_CET_ENDBR
 
 
 
@@ -2050,7 +2054,7 @@ DB	102,73,15,126,217
 
 	cmp	rdi,rdx
 	jb	NEAR $L$8x_reduction_loop
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2106,7 +2110,7 @@ $L$sqr4x_sub_entry:
 
 	mov	r10,r9
 	neg	r9
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2230,7 +2234,7 @@ $L$mulx4x_body:
 $L$mulx4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_bn_mulx4x_mont_gather5:
 
@@ -2805,7 +2809,7 @@ DB	102,72,15,126,226
 $L$powerx5_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_bn_powerx5:
 
@@ -2816,6 +2820,7 @@ ALIGN	32
 bn_sqrx8x_internal:
 __bn_sqrx8x_internal:
 
+_CET_ENDBR
 
 
 
@@ -3426,7 +3431,7 @@ DB	102,72,15,126,213
 	lea	rdi,[64+rcx*1+rdi]
 	cmp	r8,QWORD[((8+8))+rsp]
 	jb	NEAR $L$sqrx8x_reduction_loop
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 ALIGN	32
@@ -3479,7 +3484,7 @@ $L$sqrx4x_sub_entry:
 
 	neg	r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 global	bn_scatter5
@@ -3487,6 +3492,7 @@ global	bn_scatter5
 ALIGN	16
 bn_scatter5:
 
+_CET_ENDBR
 	cmp	edx,0
 	jz	NEAR $L$scatter_epilogue
 
@@ -3507,7 +3513,7 @@ $L$scatter:
 	sub	edx,1
 	jnz	NEAR $L$scatter
 $L$scatter_epilogue:
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -3517,6 +3523,7 @@ ALIGN	32
 bn_gather5:
 
 $L$SEH_begin_bn_gather5:
+_CET_ENDBR
 
 	DB	0x4c,0x8d,0x14,0x24
 
@@ -3675,7 +3682,7 @@ $L$gather:
 
 	lea	rsp,[r10]
 
-	DB	0F3h,0C3h		;repret
+	ret
 $L$SEH_end_bn_gather5:
 
 
@@ -3792,7 +3799,7 @@ $L$common_seh_tail:
 	pop	rbx
 	pop	rdi
 	pop	rsi
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 section	.pdata rdata align=4

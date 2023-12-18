@@ -13,6 +13,9 @@
 #include <assert.h>
 
 #include "config/aom_dsp_rtcd.h"
+
+#include "aom_dsp/arm/blend_neon.h"
+#include "aom_dsp/arm/dist_wtd_avg_neon.h"
 #include "aom_dsp/arm/mem_neon.h"
 #include "aom_dsp/blend.h"
 
@@ -74,6 +77,75 @@ void aom_comp_avg_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
   }
 }
 
+void aom_dist_wtd_comp_avg_pred_neon(uint8_t *comp_pred, const uint8_t *pred,
+                                     int width, int height, const uint8_t *ref,
+                                     int ref_stride,
+                                     const DIST_WTD_COMP_PARAMS *jcp_param) {
+  const uint8x16_t fwd_offset = vdupq_n_u8(jcp_param->fwd_offset);
+  const uint8x16_t bck_offset = vdupq_n_u8(jcp_param->bck_offset);
+
+  if (width > 8) {
+    do {
+      const uint8_t *pred_ptr = pred;
+      const uint8_t *ref_ptr = ref;
+      uint8_t *comp_pred_ptr = comp_pred;
+      int w = width;
+
+      do {
+        const uint8x16_t p = vld1q_u8(pred_ptr);
+        const uint8x16_t r = vld1q_u8(ref_ptr);
+
+        const uint8x16_t wtd_avg =
+            dist_wtd_avg_u8x16(r, p, fwd_offset, bck_offset);
+
+        vst1q_u8(comp_pred_ptr, wtd_avg);
+
+        ref_ptr += 16;
+        pred_ptr += 16;
+        comp_pred_ptr += 16;
+        w -= 16;
+      } while (w != 0);
+
+      ref += ref_stride;
+      pred += width;
+      comp_pred += width;
+    } while (--height != 0);
+  } else if (width == 8) {
+    int h = height / 2;
+
+    do {
+      const uint8x16_t p = vld1q_u8(pred);
+      const uint8x16_t r = load_u8_8x2(ref, ref_stride);
+
+      const uint8x16_t wtd_avg =
+          dist_wtd_avg_u8x16(r, p, fwd_offset, bck_offset);
+
+      vst1q_u8(comp_pred, wtd_avg);
+
+      ref += 2 * ref_stride;
+      pred += 16;
+      comp_pred += 16;
+    } while (--h != 0);
+  } else {
+    int h = height / 2;
+    assert(width == 4);
+
+    do {
+      const uint8x8_t p = vld1_u8(pred);
+      const uint8x8_t r = load_unaligned_u8_4x2(ref, ref_stride);
+
+      const uint8x8_t wtd_avg = dist_wtd_avg_u8x8(r, p, vget_low_u8(fwd_offset),
+                                                  vget_low_u8(bck_offset));
+
+      vst1_u8(comp_pred, wtd_avg);
+
+      ref += 2 * ref_stride;
+      pred += 8;
+      comp_pred += 8;
+    } while (--h != 0);
+  }
+}
+
 void aom_comp_mask_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
                              int height, const uint8_t *ref, int ref_stride,
                              const uint8_t *mask, int mask_stride,
@@ -84,7 +156,6 @@ void aom_comp_mask_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
   const int src_stride1 = invert_mask ? ref_stride : width;
 
   if (width > 8) {
-    const uint8x16_t max_alpha = vdupq_n_u8(AOM_BLEND_A64_MAX_ALPHA);
     do {
       const uint8_t *src0_ptr = src0;
       const uint8_t *src1_ptr = src1;
@@ -97,19 +168,7 @@ void aom_comp_mask_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
         const uint8x16_t s1 = vld1q_u8(src1_ptr);
         const uint8x16_t m0 = vld1q_u8(mask_ptr);
 
-        uint8x16_t m0_inv = vsubq_u8(max_alpha, m0);
-        uint16x8_t blend_u16_lo = vmull_u8(vget_low_u8(s0), vget_low_u8(m0));
-        uint16x8_t blend_u16_hi = vmull_u8(vget_high_u8(s0), vget_high_u8(m0));
-        blend_u16_lo =
-            vmlal_u8(blend_u16_lo, vget_low_u8(s1), vget_low_u8(m0_inv));
-        blend_u16_hi =
-            vmlal_u8(blend_u16_hi, vget_high_u8(s1), vget_high_u8(m0_inv));
-
-        uint8x8_t blend_u8_lo =
-            vrshrn_n_u16(blend_u16_lo, AOM_BLEND_A64_ROUND_BITS);
-        uint8x8_t blend_u8_hi =
-            vrshrn_n_u16(blend_u16_hi, AOM_BLEND_A64_ROUND_BITS);
-        uint8x16_t blend_u8 = vcombine_u8(blend_u8_lo, blend_u8_hi);
+        uint8x16_t blend_u8 = alpha_blend_a64_u8x16(m0, s0, s1);
 
         vst1q_u8(comp_pred_ptr, blend_u8);
 
@@ -126,17 +185,12 @@ void aom_comp_mask_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
       comp_pred += width;
     } while (--height != 0);
   } else if (width == 8) {
-    const uint8x8_t max_alpha = vdup_n_u8(AOM_BLEND_A64_MAX_ALPHA);
-
     do {
       const uint8x8_t s0 = vld1_u8(src0);
       const uint8x8_t s1 = vld1_u8(src1);
       const uint8x8_t m0 = vld1_u8(mask);
 
-      uint8x8_t m0_inv = vsub_u8(max_alpha, m0);
-      uint16x8_t blend_u16 = vmull_u8(s0, m0);
-      blend_u16 = vmlal_u8(blend_u16, s1, m0_inv);
-      uint8x8_t blend_u8 = vrshrn_n_u16(blend_u16, AOM_BLEND_A64_ROUND_BITS);
+      uint8x8_t blend_u8 = alpha_blend_a64_u8x8(m0, s0, s1);
 
       vst1_u8(comp_pred, blend_u8);
 
@@ -146,7 +200,6 @@ void aom_comp_mask_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
       comp_pred += 8;
     } while (--height != 0);
   } else {
-    const uint8x8_t max_alpha = vdup_n_u8(AOM_BLEND_A64_MAX_ALPHA);
     int h = height / 2;
     assert(width == 4);
 
@@ -155,10 +208,7 @@ void aom_comp_mask_pred_neon(uint8_t *comp_pred, const uint8_t *pred, int width,
       const uint8x8_t s1 = load_unaligned_u8(src1, src_stride1);
       const uint8x8_t m0 = load_unaligned_u8(mask, mask_stride);
 
-      uint8x8_t m0_inv = vsub_u8(max_alpha, m0);
-      uint16x8_t blend_u16 = vmull_u8(s0, m0);
-      blend_u16 = vmlal_u8(blend_u16, s1, m0_inv);
-      uint8x8_t blend_u8 = vrshrn_n_u16(blend_u16, AOM_BLEND_A64_ROUND_BITS);
+      uint8x8_t blend_u8 = alpha_blend_a64_u8x8(m0, s0, s1);
 
       vst1_u8(comp_pred, blend_u8);
 

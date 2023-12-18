@@ -54,7 +54,7 @@ MockMediaSessionCoordinator::MockMediaSessionCoordinator(ScriptExecutionContext&
 std::optional<Exception> MockMediaSessionCoordinator::result() const
 {
     if (m_failCommands)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     return std::nullopt;
 }

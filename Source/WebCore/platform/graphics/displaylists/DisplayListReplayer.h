@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "DisplayListItems.h"
+#include "DisplayList.h"
+#include "DisplayListItem.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var unexpectedMouseMove = false;
+var unexpectedMouseUp = false;
+
+function log(msg) {
+    var msgNode = document.createTextNode(msg);
+    var li = document.createElement("li");
+    li.appendChild(msgNode);
+    document.getElementById("log").appendChild(li);
+}
+
+window.onload = function() {
+    try {
+        if (!frames[0] || !frames[0].document || !frames[0].document.getElementById("dragSource")) {
+            log("Window.onload fired before subframe completed load.");
+        }
+        
+        if (!window.testRunner) {
+            log("This test needs to be run in DRT.  To test manually drag from the text 'Drag Me!' out into the other frame.");
+            return;
+        }
+
+        var dragSource = frames[0].document.getElementById("dragSource");
+        var sourceFrame = document.getElementById("sourceFrame");
+        var targetFrame = document.getElementById("targetFrame");
+        var startX = dragSource.offsetLeft + sourceFrame.offsetLeft + 10;
+        var startY = dragSource.offsetTop + sourceFrame.offsetTop + dragSource.offsetHeight / 2;
+        var endX = targetFrame.offsetLeft + 10;
+        var endY = targetFrame.offsetTop + 10;
+        eventSender.mouseMoveTo(startX, startY);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(endX, endY);
+        eventSender.mouseUp();
+    } finally {
+        if (unexpectedMouseUp || unexpectedMouseMove)
+            log("FAIL! Received unexpected mouse event on other frame.");
+        else
+            log("PASS!");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body>
+    <div>This tests that dragging from an element that returns <emph>false</emph> from its mousedown handler will let the subsequent mousemove events be captured by the containing frame, and not by other frames.</div>
+    <iframe id="sourceFrame" style="width: 100px; height: 50px;" src="resources/mouse-drag-from-frame-subframe.html"></iframe>
+    <iframe id="targetFrame" style="width: 100px; height: 50px;" src="resources/mouse-drag-from-frame-target-subframe.html"></iframe>
+    <ul id="log">
+    </ul>
+</body>
+</html>

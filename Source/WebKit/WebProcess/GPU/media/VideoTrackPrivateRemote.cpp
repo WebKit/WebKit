@@ -36,10 +36,10 @@
 
 namespace WebKit {
 
-VideoTrackPrivateRemote::VideoTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, VideoTrackPrivateRemoteConfiguration&& configuration)
+VideoTrackPrivateRemote::VideoTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, VideoTrackPrivateRemoteConfiguration&& configuration)
     : m_gpuProcessConnection(gpuProcessConnection)
+    , m_id(configuration.trackId)
     , m_playerIdentifier(playerIdentifier)
-    , m_identifier(identifier)
 {
     updateConfiguration(WTFMove(configuration));
 }
@@ -51,7 +51,7 @@ void VideoTrackPrivateRemote::setSelected(bool selected)
         return;
 
     if (selected != this->selected())
-        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::VideoTrackSetSelected(m_identifier, selected), m_playerIdentifier);
+        gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::VideoTrackSetSelected(m_id, selected), m_playerIdentifier);
 
     VideoTrackPrivate::setSelected(selected);
 }
@@ -59,9 +59,8 @@ void VideoTrackPrivateRemote::setSelected(bool selected)
 void VideoTrackPrivateRemote::updateConfiguration(VideoTrackPrivateRemoteConfiguration&& configuration)
 {
     if (configuration.trackId != m_id) {
-        auto changed = !m_id.isEmpty();
         m_id = configuration.trackId;
-        if (changed && client())
+        if (client())
             client()->idChanged(m_id);
     }
 

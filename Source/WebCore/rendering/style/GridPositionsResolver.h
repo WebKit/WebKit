@@ -39,7 +39,7 @@ class RenderBox;
 class RenderGrid;
 class RenderStyle;
 
-enum GridTrackSizingDirection {
+enum class GridTrackSizingDirection : uint8_t {
     ForColumns,
     ForRows
 };

@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (47,36) size 304x75
+    RenderSVGContainer {g} at (0,0) size 0x0
+    RenderSVGText {text} at (47,36) size 72x68 contains 1 chunk(s)
+      RenderSVGTextPath {textPath} at (0,0) size 71x30
+        RenderSVGInlineText {#text} at (0,38) size 71x30
+          chunk 1 text run 1 at (54.39,99.27) startOffset 0 endOffset 1 width 8.90: "S"
+          chunk 1 text run 2 at (62.72,97.88) startOffset 1 endOffset 2 width 8.00: "o"
+          chunk 1 text run 3 at (72.81,96.20) startOffset 2 endOffset 3 width 12.45: "m"
+          chunk 1 text run 4 at (82.45,94.59) startOffset 3 endOffset 4 width 7.10: "e"
+          chunk 1 text run 5 at (87.92,93.68) startOffset 4 endOffset 5 width 4.00: " "
+          chunk 1 text run 6 at (92.09,92.99) startOffset 5 endOffset 6 width 4.45: "t"
+          chunk 1 text run 7 at (97.78,92.04) startOffset 6 endOffset 7 width 7.10: "e"
+          chunk 1 text run 8 at (105.23,90.79) startOffset 7 endOffset 8 width 8.00: "x"
+          chunk 1 text run 9 at (111.37,89.77) startOffset 8 endOffset 9 width 4.45: "t"
+          chunk 1 text run 10 at (115.53,89.08) startOffset 9 endOffset 10 width 4.00: "."
+      RenderSVGTextPath {textPath} at (0,0) size 70x31
+        RenderSVGInlineText {#text} at (1,0) size 69x31
+          chunk 1 text run 1 at (56.98,51.40) startOffset 0 endOffset 1 width 14.23: "M"
+          chunk 1 text run 2 at (67.87,53.57) startOffset 1 endOffset 2 width 8.00: "o"
+          chunk 1 text run 3 at (74.41,54.88) startOffset 2 endOffset 3 width 5.33: "r"
+          chunk 1 text run 4 at (80.50,56.10) startOffset 3 endOffset 4 width 7.10: "e"
+          chunk 1 text run 5 at (85.94,57.19) startOffset 4 endOffset 5 width 4.00: " "
+          chunk 1 text run 6 at (90.09,58.02) startOffset 5 endOffset 6 width 4.45: "t"
+          chunk 1 text run 7 at (95.75,59.15) startOffset 6 endOffset 7 width 7.10: "e"
+          chunk 1 text run 8 at (103.15,60.63) startOffset 7 endOffset 8 width 8.00: "x"
+          chunk 1 text run 9 at (109.25,61.85) startOffset 8 endOffset 9 width 4.45: "t"
+          chunk 1 text run 10 at (113.39,62.68) startOffset 9 endOffset 10 width 4.00: "."
+      RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGPath {path} at (49,49) size 302x52 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 50 100 L 350 50"]
+    RenderSVGPath {path} at (49,49) size 302x62 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M 50 50 L 350 110"]

@@ -27,6 +27,7 @@
 
 #include "LayoutBox.h"
 #include <wtf/IsoMalloc.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -35,29 +36,34 @@ namespace Layout {
 class InlineTextBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
-    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool isCombined, bool canUseSimpleFontCodePath, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    enum class ContentCharacteristic : uint8_t {
+        CanUseSimplifiedContentMeasuring         = 1 << 0,
+        CanUseSimpledFontCodepath                = 1 << 1,
+        HasPositionDependentContentWidth         = 1 << 2,
+        HasStrongDirectionalityContent           = 1 << 3,
+    };
+    InlineTextBox(String, bool isCombined, OptionSet<ContentCharacteristic>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     const String& content() const { return m_content; }
     bool isCombined() const { return m_isCombined; }
     // FIXME: This should not be a box's property.
-    bool canUseSimplifiedContentMeasuring() const { return m_canUseSimplifiedContentMeasuring; }
-    bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
+    bool canUseSimplifiedContentMeasuring() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimplifiedContentMeasuring); }
+    bool canUseSimpleFontCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimpledFontCodepath); }
+    bool hasPositionDependentContentWidth() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasPositionDependentContentWidth); }
 
-    void updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring);
+    void updateContent(String newContent, OptionSet<ContentCharacteristic>);
 
 private:
     String m_content;
     bool m_isCombined { false };
-    bool m_canUseSimplifiedContentMeasuring { false };
-    bool m_canUseSimpleFontCodePath { true };
+    OptionSet<ContentCharacteristic> m_contentCharacteristicSet;
 };
 
-inline void InlineTextBox::updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring)
+inline void InlineTextBox::updateContent(String newContent, OptionSet<ContentCharacteristic> contentCharacteristicSet)
 {
     m_content = newContent;
-    m_canUseSimpleFontCodePath = canUseSimpleFontCodePath;
-    m_canUseSimplifiedContentMeasuring = canUseSimplifiedContentMeasuring;
+    m_contentCharacteristicSet = contentCharacteristicSet;
 }
 
 }

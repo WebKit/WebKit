@@ -41,13 +41,13 @@ inline WebCore::UserStyleLevel toWebCoreUserStyleLevel(_WKUserStyleLevel level)
 {
     switch (level) {
     case _WKUserStyleUserLevel:
-        return WebCore::UserStyleUserLevel;
+        return WebCore::UserStyleLevel::User;
     case _WKUserStyleAuthorLevel:
-        return WebCore::UserStyleAuthorLevel;
+        return WebCore::UserStyleLevel::Author;
     }
 
     ASSERT_NOT_REACHED();
-    return WebCore::UserStyleUserLevel;
+    return WebCore::UserStyleLevel::User;
 }
 
 }

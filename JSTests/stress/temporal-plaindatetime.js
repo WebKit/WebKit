@@ -75,7 +75,7 @@ shouldBe(Temporal.PlainDateTime.prototype.getISOFields.length, 0);
 shouldBe(JSON.stringify(pdt.getISOFields()), `{"calendar":"iso8601","isoDay":3,"isoHour":4,"isoMicrosecond":8,"isoMillisecond":7,"isoMinute":5,"isoMonth":2,"isoNanosecond":9,"isoSecond":6,"isoYear":1}`);
 
 shouldBe(Temporal.PlainDateTime.from.length, 1);
-shouldThrow(() => Temporal.PlainDateTime.from(), RangeError);
+shouldThrow(() => Temporal.PlainDateTime.from(), TypeError);
 shouldBe(Temporal.PlainDateTime.from('0001-02-03T04:05:06.007008009').toString(), '0001-02-03T04:05:06.007008009');
 {
     const dateTime = Temporal.PlainDateTime.from('2007-01-09T03:24:30+01:00[Europe/Brussels]');
@@ -278,7 +278,7 @@ shouldBe(pdt.with({ day: 30 }).toString(), '0001-02-28T04:05:06.007008009');
 shouldThrow(() => { pdt.with({ day: 30 }, { overflow: 'reject' }); }, RangeError);
 
 shouldBe(Temporal.PlainDateTime.prototype.withPlainDate.length, 1);
-shouldThrow(() => { pdt.withPlainDate(); }, RangeError);
+shouldThrow(() => { pdt.withPlainDate(); }, TypeError);
 shouldBe(pdt.withPlainDate({ year: 2000, month: 10, day: 30 }).toString(), '2000-10-30T04:05:06.007008009');
 
 shouldBe(Temporal.PlainDateTime.prototype.withPlainTime.length, 0);

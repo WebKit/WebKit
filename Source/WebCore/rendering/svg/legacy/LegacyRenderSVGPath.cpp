@@ -33,6 +33,8 @@
 #include "RenderStyleInlines.h"
 #include "SVGPathElement.h"
 #include "SVGRenderStyle.h"
+#include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -43,25 +45,51 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGPath);
 LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(Type::LegacySVGPath, element, WTFMove(style))
 {
+    ASSERT(isLegacyRenderSVGPath());
 }
 
 LegacyRenderSVGPath::~LegacyRenderSVGPath() = default;
 
 void LegacyRenderSVGPath::updateShapeFromElement()
 {
-    LegacyRenderSVGShape::updateShapeFromElement();
+    clearPath();
+    m_shapeType = ShapeType::Empty;
+    m_fillBoundingBox = ensurePath().boundingRect();
+    m_strokeBoundingBox = std::nullopt;
+    m_approximateStrokeBoundingBox = std::nullopt;
+    processMarkerPositions();
     updateZeroLengthSubpaths();
 
-    m_strokeBoundingBox = calculateUpdatedStrokeBoundingBox();
+    ASSERT(hasPath());
+    if (path().isEmpty())
+        return;
+    if (path().definitelySingleLine())
+        m_shapeType = ShapeType::Line;
+    else
+        m_shapeType = ShapeType::Path;
+
+    // FIXME: This should not exist. However, currently SVG is relying on ordering of calculation of SVG2 strokeBoundingBox via layout() function
+    // for recursive SVGs (markers are pointing to each other recursively). If we move to SVG2 computation, we no longer need this since SVG2 strokeBoundingBox
+    // does not include markers rect (so we do not need to have this in LSBE). Right now, this exists only for RepaintRectCalculation::Accurate, and it should be removed once
+    // 1. We fix checkInsertion / checkEnclosure implementations. Currently they are not aligned to what the spec requires.
+    // 2. We move our RenderTreeAsText to avoid dumping Accurate repaint rect. We should dump strokeBoundingBox or actual repaintBoundingBox instead.
+    // We fall back to path-based eager strokeBoundingBox only when there are markers and it is not SVG2.
+    // There are several cases we use approximate repaintBoundingBox. But only LegacyRenderSVGPath can reference to the other approximate repaintBoundingBox via markers.
+    // The other resources including maskers, clippers etc. are already computing bounding rect via Accurate eagerly. So they do not matter.
+    // https://bugs.webkit.org/show_bug.cgi?id=263348
+    if (!m_markerPositions.isEmpty())
+        strokeBoundingBox();
 }
 
-FloatRect LegacyRenderSVGPath::calculateUpdatedStrokeBoundingBox() const
+FloatRect LegacyRenderSVGPath::adjustStrokeBoundingBoxForMarkersAndZeroLengthLinecaps(RepaintRectCalculation repaintRectCalculation, FloatRect strokeBoundingBox) const
 {
-    FloatRect strokeBoundingBox = m_strokeBoundingBox;
+    float strokeWidth = this->strokeWidth();
+
+    if (!m_markerPositions.isEmpty())
+        strokeBoundingBox.unite(markerRect(repaintRectCalculation, strokeWidth));
 
     if (style().svgStyle().hasStroke()) {
         // FIXME: zero-length subpaths do not respect vector-effect = non-scaling-stroke.
-        float strokeWidth = this->strokeWidth();
         for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i)
             strokeBoundingBox.unite(zeroLengthSubpathRect(m_zeroLengthLinecapLocations[i], strokeWidth));
     }
@@ -171,11 +199,101 @@ void LegacyRenderSVGPath::strokeZeroLengthSubpaths(GraphicsContext& context) con
     }
 }
 
+static inline LegacyRenderSVGResourceMarker* markerForType(SVGMarkerType type, LegacyRenderSVGResourceMarker* markerStart, LegacyRenderSVGResourceMarker* markerMid, LegacyRenderSVGResourceMarker* markerEnd)
+{
+    switch (type) {
+    case StartMarker:
+        return markerStart;
+    case MidMarker:
+        return markerMid;
+    case EndMarker:
+        return markerEnd;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool LegacyRenderSVGPath::shouldGenerateMarkerPositions() const
+{
+    if (!style().svgStyle().hasMarkers())
+        return false;
+
+    if (!graphicsElement().supportsMarkers())
+        return false;
+
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
+    if (!resources)
+        return false;
+
+    return resources->markerStart() || resources->markerMid() || resources->markerEnd();
+}
+
+void LegacyRenderSVGPath::drawMarkers(PaintInfo& paintInfo)
+{
+    if (m_markerPositions.isEmpty())
+        return;
+
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
+    if (!resources)
+        return;
+
+    LegacyRenderSVGResourceMarker* markerStart = resources->markerStart();
+    LegacyRenderSVGResourceMarker* markerMid = resources->markerMid();
+    LegacyRenderSVGResourceMarker* markerEnd = resources->markerEnd();
+    if (!markerStart && !markerMid && !markerEnd)
+        return;
+
+    float strokeWidth = this->strokeWidth();
+    unsigned size = m_markerPositions.size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
+            marker->draw(paintInfo, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth));
+    }
+}
+
+FloatRect LegacyRenderSVGPath::markerRect(RepaintRectCalculation repaintRectCalculation, float strokeWidth) const
+{
+    ASSERT(!m_markerPositions.isEmpty());
+
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
+    ASSERT(resources);
+
+    auto* markerStart = resources->markerStart();
+    auto* markerMid = resources->markerMid();
+    auto* markerEnd = resources->markerEnd();
+    ASSERT(markerStart || markerMid || markerEnd);
+
+    FloatRect boundaries;
+    unsigned size = m_markerPositions.size();
+    for (unsigned i = 0; i < size; ++i) {
+        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
+            boundaries.unite(marker->markerBoundaries(repaintRectCalculation, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth)));
+    }
+    return boundaries;
+}
+
+void LegacyRenderSVGPath::processMarkerPositions()
+{
+    m_markerPositions.clear();
+
+    if (!shouldGenerateMarkerPositions())
+        return;
+
+    ASSERT(hasPath());
+
+    SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
+    path().applyElements([&markerData](const PathElement& pathElement) {
+        SVGMarkerData::updateFromPathElement(markerData, pathElement);
+    });
+    markerData.pathIsDone();
+}
+
 bool LegacyRenderSVGPath::isRenderingDisabled() const
 {
     // For a polygon, polyline or path, rendering is disabled if there is no path data.
     // No path data is possible in the case of a missing or empty 'd' or 'points' attribute.
-    return path().isEmpty();
+    return !hasPath() || path().isEmpty();
 }
 
 }

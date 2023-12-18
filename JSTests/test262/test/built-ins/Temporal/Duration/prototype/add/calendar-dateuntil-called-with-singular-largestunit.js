@@ -46,13 +46,13 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     years: ["year"],
     months: ["month"],
     weeks: ["week"],
-    days: ["day"],
-    hours: ["day"],
-    minutes: ["day"],
-    seconds: ["day"],
-    milliseconds: ["day"],
-    microseconds: ["day"],
-    nanoseconds: ["day"]
+    days: [],
+    hours: [],
+    minutes: [],
+    seconds: [],
+    milliseconds: [],
+    microseconds: [],
+    nanoseconds: []
   }
 );
 
@@ -64,10 +64,10 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     one.add(two, { relativeTo, largestUnit });
   },
   {
-    years: ["year", "day"],
-    months: ["month", "day"],
-    weeks: ["week", "day"],
-    days: ["day", "day"],
+    years: ["year"],
+    months: ["month"],
+    weeks: ["week"],
+    days: [],
     hours: [],
     minutes: [],
     seconds: [],

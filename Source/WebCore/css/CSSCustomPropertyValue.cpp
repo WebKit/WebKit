@@ -40,7 +40,8 @@ namespace WebCore {
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createEmpty(const AtomString& name)
 {
-    return adoptRef(*new CSSCustomPropertyValue(name, std::monostate { }));
+    static NeverDestroyed<Ref<CSSVariableData>> empty { CSSVariableData::create({ }) };
+    return createSyntaxAll(name, Ref { empty.get() });
 }
 
 Ref<CSSCustomPropertyValue> CSSCustomPropertyValue::createWithID(const AtomString& name, CSSValueID id)
@@ -53,9 +54,7 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
 {
     if (m_name != other.m_name || m_value.index() != other.m_value.index())
         return false;
-    return WTF::switchOn(m_value, [&](const std::monostate&) {
-        return true;
-    }, [&](const Ref<CSSVariableReferenceValue>& value) {
+    return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
         auto& otherValue = std::get<Ref<CSSVariableReferenceValue>>(other.m_value);
         return value.ptr() == otherValue.ptr() || value.get() == otherValue.get();
     }, [&](const CSSValueID& value) {
@@ -103,9 +102,7 @@ String CSSCustomPropertyValue::customCSSText() const
     };
 
     auto serialize = [&] {
-        return WTF::switchOn(m_value, [&](const std::monostate&) {
-            return emptyString();
-        }, [&](const Ref<CSSVariableReferenceValue>& value) {
+        return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
             return value->cssText();
         }, [&](const CSSValueID& value) {
             return nameString(value).string();
@@ -135,10 +132,7 @@ const Vector<CSSParserToken>& CSSCustomPropertyValue::tokens() const
 {
     static NeverDestroyed<Vector<CSSParserToken>> emptyTokens;
 
-    return WTF::switchOn(m_value, [&](const std::monostate&) -> const Vector<CSSParserToken>& {
-        // Do nothing.
-        return emptyTokens;
-    }, [&](const Ref<CSSVariableReferenceValue>&) -> const Vector<CSSParserToken>& {
+    return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>&) -> const Vector<CSSParserToken>& {
         ASSERT_NOT_REACHED();
         return emptyTokens;
     }, [&](const CSSValueID&) -> const Vector<CSSParserToken>& {

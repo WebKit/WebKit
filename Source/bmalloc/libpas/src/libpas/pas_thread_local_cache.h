@@ -383,7 +383,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_thread_local_cache_encode_object(
     uintptr_t begin,
     pas_segregated_page_config_kind_and_role kind_and_role)
 {
-    return (begin << PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_NUM_BITS) | (uintptr_t)kind_and_role;
+    return begin | (uintptr_t)kind_and_role << PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_SHIFT;
 }
 
 static PAS_ALWAYS_INLINE void pas_thread_local_cache_append_deallocation(

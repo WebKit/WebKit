@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WGSL.h"
 
+#include "ASTIdentifierExpression.h"
+#include "AttributeValidator.h"
 #include "CallGraph.h"
 #include "EntryPointRewriter.h"
 #include "GlobalSorting.h"
@@ -34,6 +36,7 @@
 #include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
 #include "PhaseTimer.h"
+#include "PointerRewriter.h"
 #include "TypeCheck.h"
 #include "WGSLShaderModule.h"
 
@@ -67,10 +70,10 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
     PhaseTimes phaseTimes;
     auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
 
-    // FIXME: add more validation
     CHECK_PASS(parse);
     CHECK_PASS(reorderGlobals);
     CHECK_PASS(typeCheck);
+    CHECK_PASS(validateAttributes);
 
     Vector<Warning> warnings { };
     return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
@@ -96,10 +99,11 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::o
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
-        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts);
-        RUN_PASS(rewriteEntryPoints, callGraph, result);
-        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts, result);
+        RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast, pipelineLayouts, result);
         RUN_PASS(mangleNames, callGraph, result);
+        RUN_PASS(rewritePointers, callGraph);
+        RUN_PASS(rewriteEntryPoints, callGraph);
+        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
 
         dumpASTAtEndIfNeeded(ast);
 
@@ -124,6 +128,14 @@ PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std
     HashMap<String, std::optional<PipelineLayout>> pipelineLayouts;
     pipelineLayouts.add(entryPointName, pipelineLayout);
     return prepareImpl(ast, pipelineLayouts);
+}
+
+ConstantValue evaluate(const AST::Expression& expression, const HashMap<String, ConstantValue>& constants)
+{
+    if (auto constantValue = expression.constantValue())
+        return *constantValue;
+    ASSERT(is<const AST::IdentifierExpression>(expression));
+    return constants.get(downcast<const AST::IdentifierExpression>(expression).identifier());
 }
 
 }

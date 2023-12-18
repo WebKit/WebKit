@@ -57,9 +57,9 @@ static const Document* blobOwner(const SecurityOrigin& blobOrigin)
     if (!isMainThread())
         return nullptr;
 
-    for (const auto* document : Document::allDocuments()) {
+    for (auto& document : Document::allDocuments()) {
         if (document->securityOrigin().isSameOriginAs(blobOrigin))
-            return document;
+            return document.ptr();
     }
     return nullptr;
 }

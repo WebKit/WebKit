@@ -28,6 +28,14 @@
     .changed {
         border-radius: 20px;
     }
+
+    .default, .explicit {
+        background: transparent;
+        color: black;
+    }
+    .explicit {
+        border-radius: 0;
+    }
 </style>
 <script src="../resources/ui-helper.js"></script>
 <body>
@@ -37,6 +45,8 @@
 <div class="tongue">tongue</div>
 <div class="degenerate">degenerate</div>
 <div class="changing">changing</div>
+<div class="default">default</div>
+<div class="explicit">explicit</div>
 <pre id="results"></pre>
 <script>
 document.body.addEventListener("click", function(e) {

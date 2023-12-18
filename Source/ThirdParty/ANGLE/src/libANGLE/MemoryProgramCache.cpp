@@ -33,6 +33,11 @@ namespace gl
 namespace
 {
 
+// Limit decompressed programs to 10MB. If they're larger then this there is a good chance the data
+// is not what we expect. This limits the amount of memory we will allocate based on a binary blob
+// we believe is compressed data.
+static constexpr size_t kMaxUncompressedProgramSize = 10 * 1024 * 1024;
+
 void WriteProgramBindings(BinaryOutputStream *stream, const ProgramBindings &bindings)
 {
     for (const auto &binding : bindings.getStableIterationMap())
@@ -63,14 +68,18 @@ void MemoryProgramCache::ComputeHash(const Context *context,
 {
     // Compute the program hash. Start with the shader hashes.
     BinaryOutputStream hashStream;
+    ShaderBitSet shaders;
     for (ShaderType shaderType : AllShaderTypes())
     {
         Shader *shader = program->getAttachedShader(shaderType);
         if (shader)
         {
+            shaders.set(shaderType);
             shader->writeShaderKey(&hashStream);
         }
     }
+
+    hashStream.writeInt(shaders.bits());
 
     // Add some ANGLE metadata and Context properties, such as version and back-end.
     hashStream.writeString(angle::GetANGLEShaderProgramVersion());
@@ -113,7 +122,8 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
     ComputeHash(context, program, hashOut);
 
     angle::MemoryBuffer uncompressedData;
-    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), *hashOut, &uncompressedData))
+    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), *hashOut,
+                                        kMaxUncompressedProgramSize, &uncompressedData))
     {
         case egl::BlobCache::GetAndDecompressResult::NotFound:
             return angle::Result::Continue;
@@ -156,7 +166,7 @@ void MemoryProgramCache::remove(const egl::BlobCache::Key &programHash)
 
 angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programHash,
                                              const Context *context,
-                                             const Program *program)
+                                             Program *program)
 {
     // If caching is effectively disabled, don't bother serializing the program.
     if (!mBlobCache.isCachingEnabled())
@@ -190,7 +200,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     return angle::Result::Continue;
 }
 
-angle::Result MemoryProgramCache::updateProgram(const Context *context, const Program *program)
+angle::Result MemoryProgramCache::updateProgram(const Context *context, Program *program)
 {
     egl::BlobCache::Key programHash;
     ComputeHash(context, program, &programHash);

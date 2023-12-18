@@ -28,6 +28,7 @@
 
 #include "APINavigation.h"
 #include "APIWebsitePolicies.h"
+#include "BrowsingContextGroup.h"
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
 #include "GoToBackForwardItemParameters.h"
@@ -104,6 +105,8 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         ASSERT(&suspendedPage->process() == m_process.ptr());
         suspendedPage->unsuspend();
         m_mainFrame = &suspendedPage->mainFrame();
+        m_browsingContextGroup = &suspendedPage->browsingContextGroup();
+        m_remotePageProxyState = suspendedPage->takeRemotePageProxyState();
     }
 
     initializeWebPage(websitePolicies);
@@ -191,26 +194,46 @@ void ProvisionalPageProxy::cancel()
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
 {
-    m_drawingArea = m_page->pageClient().createDrawingAreaProxy();
+    m_drawingArea = m_page->pageClient().createDrawingAreaProxy(m_process.copyRef());
 
+    bool sendPageCreationParameters { true };
     auto parameters = m_page->creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
 
-    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(m_request.url());
         RefPtr openerFrame = m_page->openerFrame();
         if (RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr) {
             parameters.openerFrameIdentifier = openerFrame->frameID();
             parameters.mainFrameIdentifier = m_page->mainFrame()->frameID();
 
-            auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
-            remotePageProxy->injectPageIntoNewProcess();
-            openerPage->addOpenedRemotePageProxy(WTFMove(remotePageProxy));
+            if (auto existingRemotePageProxy = m_page->takeRemotePageProxyInOpenerProcessIfDomainEquals(navigationDomain)) {
+                ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
+                m_webPageID = existingRemotePageProxy->pageID();
+                m_mainFrame = existingRemotePageProxy->page()->mainFrame();
+                m_messageReceiverRegistration.stopReceivingMessages();
+                m_messageReceiverRegistration.transferMessageReceivingFrom(existingRemotePageProxy->messageReceiverRegistration(), *this);
+                LocalFrameCreationParameters localFrameCreationParameters {
+                    std::nullopt
+                };
+                m_process->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, m_page->mainFrame()->frameID()), m_webPageID);
+                sendPageCreationParameters = false;
+            } else if (RefPtr existingRemotePageProxy = openerPage->remotePageProxyForRegistrableDomain(navigationDomain)) {
+                ASSERT(existingRemotePageProxy->process().processID() == m_process->processID());
+                openerPage->addOpenedRemotePageProxy(m_page->identifier(), existingRemotePageProxy.releaseNonNull());
+                m_needsCookieAccessAddedInNetworkProcess = true;
+            } else {
+                auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
+                remotePageProxy->injectPageIntoNewProcess();
+                openerPage->addOpenedRemotePageProxy(m_page->identifier(), WTFMove(remotePageProxy));
+            }
         }
     }
 
     parameters.isProcessSwap = true;
-    m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
-    m_process->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
+    if (sendPageCreationParameters) {
+        m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTFMove(parameters)), 0);
+        m_process->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
+    }
 
     if (m_page->isLayerTreeFrozenDueToSwipeAnimation())
         send(Messages::WebPage::FreezeLayerTreeDueToSwipeAnimation());
@@ -267,9 +290,9 @@ void ProvisionalPageProxy::goToBackForwardItem(API::Navigation& navigation, WebB
 
     GoToBackForwardItemParameters parameters { navigation.navigationID(), item.itemID(), *navigation.backForwardFrameLoadType(), shouldTreatAsContinuingLoad, WTFMove(websitePoliciesData), m_page->lastNavigationWasAppInitiated(), existingNetworkResourceLoadIdentifierToResume, topPrivatelyControlledDomain, WTFMove(sandboxExtensionHandle) };
     if (!m_process->isLaunching() || !itemURL.protocolIsFile())
-        send(Messages::WebPage::GoToBackForwardItem(parameters));
+        send(Messages::WebPage::GoToBackForwardItem(WTFMove(parameters)));
     else
-        send(Messages::WebPage::GoToBackForwardItemWaitingForProcessLaunch(parameters, m_page->identifier()));
+        send(Messages::WebPage::GoToBackForwardItemWaitingForProcessLaunch(WTFMove(parameters), m_page->identifier()));
 
     m_process->startResponsivenessTimer();
 }
@@ -289,7 +312,7 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     ASSERT(!m_mainFrame);
 
     RefPtr<WebFrameProxy> previousMainFrame = m_page->mainFrame();
-    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() && m_page->openerFrame()) {
+    if (m_page->openerFrame() && (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled())) {
         ASSERT(m_page->mainFrame()->frameID() == frameID);
         m_mainFrame = m_page->mainFrame();
     } else
@@ -309,7 +332,12 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     // If we are process swapping in response to a server redirect then that notification will not come from the new WebContent process.
     // In this case we have the UIProcess synthesize the redirect notification at the appropriate time.
     if (m_isServerRedirect) {
-        m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
+        // FIXME: When <rdar://116203552> is fixed we should not need this case here
+        // because main frame redirect messages won't come from the web content process.
+        if (m_page->preferences().siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
+            m_mainFrame->frameLoadState().didReceiveServerRedirectForProvisionalLoad(m_request.url());
+        else
+            m_mainFrame->frameLoadState().didStartProvisionalLoad(m_request.url());
         m_page->didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process.copyRef(), m_mainFrame->frameID(), m_navigationID, WTFMove(m_request), { });
     } else if (previousMainFrame && !previousMainFrame->provisionalURL().isEmpty()) {
         // In case of a process swap after response policy, the didStartProvisionalLoad already happened but the new main frame doesn't know about it
@@ -340,7 +368,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
         return;
 
     // When this is true, we are reusing the main WebFrameProxy and its frame state will be updated in didStartProvisionalLoadForFrameShared.
-    bool isCrossSiteWindowOpen = page().preferences().processSwapOnCrossSiteWindowOpenEnabled() && m_page->openerFrame();
+    bool isCrossSiteWindowOpen = m_page->openerFrame() && (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() || page().preferences().siteIsolationEnabled());
 
     // Clients expect the Page's main frame's expectedURL to be the provisional one when a provisional load is started.
     if (auto* pageMainFrame = m_page->mainFrame(); pageMainFrame && !isCrossSiteWindowOpen)
@@ -373,21 +401,26 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
         return;
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCommitLoadForFrame: frameID=%" PRIu64, frameID.object().toUInt64());
-    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+    auto page = protectedPage();
+    if (page->preferences().processSwapOnCrossSiteWindowOpenEnabled() || page->preferences().siteIsolationEnabled()) {
         RefPtr openerFrame = m_page->openerFrame();
         if (RefPtr openerPage = openerFrame ? openerFrame->page() : nullptr) {
-            auto page = protectedPage();
             RegistrableDomain openerDomain(openerFrame->url());
-            page->send(Messages::WebPage::DidCommitLoadInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
-            page->setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page, openerPage->protectedProcess(), openerDomain, &page->messageReceiverRegistration()));
-            page->mainFrame()->setProcess(m_process.get());
+            RegistrableDomain openedDomain(request.url());
+            if (openerDomain == openedDomain)
+                openerPage->removeOpenedRemotePageProxy(page->identifier());
+            else {
+                page->send(Messages::WebPage::DidCommitLoadInAnotherProcess(page->mainFrame()->frameID(), std::nullopt));
+                page->setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page, openerPage->protectedProcess(), openerDomain, &page->messageReceiverRegistration()));
+                page->mainFrame()->setProcess(m_process.get());
+            }
         }
     }
     m_provisionalLoadURL = { };
     m_messageReceiverRegistration.stopReceivingMessages();
 
     m_wasCommitted = true;
-    m_page->commitProvisionalPage(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
+    page->commitProvisionalPage(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, FrameIdentifier frameID)

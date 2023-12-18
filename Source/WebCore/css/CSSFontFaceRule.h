@@ -42,6 +42,8 @@ private:
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::FontFace; }
     String cssText() const final;
+    String cssTextWithReplacementURLs(const HashMap<String, String>&, const HashMap<RefPtr<CSSStyleSheet>, String>&) const final;
+    String cssTextInternal(const String& declarations) const;
     void reattach(StyleRuleBase&) final;
 
     Ref<StyleRuleFontFace> m_fontFaceRule;

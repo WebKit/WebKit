@@ -27,8 +27,11 @@
 #include "StochasticSpaceTimeMutatorScheduler.h"
 
 #include "JSCInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StochasticSpaceTimeMutatorScheduler);
 
 // The scheduler will often make decisions based on state that is in flux. It will be fine so
 // long as multiple uses of the same value all see the same value. We wouldn't get this for free,
@@ -51,7 +54,7 @@ private:
     double m_bytesAllocatedThisCycle;
 };
 
-StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(Heap& heap)
+StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(JSC::Heap& heap)
     : m_heap(heap)
     , m_minimumPause(Seconds::fromMilliseconds(Options::minimumGCPauseMS()))
     , m_pauseScale(Options::gcPauseScale())

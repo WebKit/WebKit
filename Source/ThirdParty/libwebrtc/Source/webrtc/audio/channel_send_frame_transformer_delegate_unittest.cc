@@ -22,7 +22,10 @@
 namespace webrtc {
 namespace {
 
+using ::testing::_;
+using ::testing::ElementsAre;
 using ::testing::NiceMock;
+using ::testing::Return;
 using ::testing::SaveArg;
 
 class MockChannelSend {
@@ -47,6 +50,18 @@ class MockChannelSend {
     };
   }
 };
+
+std::unique_ptr<MockTransformableAudioFrame> CreateMockReceiverFrame() {
+  const uint8_t mock_data[] = {1, 2, 3, 4};
+  std::unique_ptr<MockTransformableAudioFrame> mock_frame =
+      std::make_unique<MockTransformableAudioFrame>();
+  rtc::ArrayView<const uint8_t> payload(mock_data);
+  ON_CALL(*mock_frame, GetData).WillByDefault(Return(payload));
+  ON_CALL(*mock_frame, GetPayloadType).WillByDefault(Return(0));
+  ON_CALL(*mock_frame, GetDirection)
+      .WillByDefault(Return(TransformableFrameInterface::Direction::kReceiver));
+  return mock_frame;
+}
 
 // Test that the delegate registers itself with the frame transformer on Init().
 TEST(ChannelSendFrameTransformerDelegateTest,
@@ -99,8 +114,38 @@ TEST(ChannelSendFrameTransformerDelegateTest,
           [&callback](std::unique_ptr<TransformableFrameInterface> frame) {
             callback->OnTransformedFrame(std::move(frame));
           });
-  delegate->Transform(AudioFrameType::kEmptyFrame, 0, 0, 0, data, sizeof(data),
-                      0, 0);
+  delegate->Transform(AudioFrameType::kEmptyFrame, 0, 0, data, sizeof(data), 0,
+                      0);
+  channel_queue.WaitForPreviouslyPostedTasks();
+}
+
+// Test that when the delegate receives a Incoming frame from the frame
+// transformer, it passes it to the channel using the SendFrameCallback.
+TEST(ChannelSendFrameTransformerDelegateTest,
+     TransformRunsChannelSendCallbackForIncomingFrame) {
+  TaskQueueForTest channel_queue("channel_queue");
+  rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      rtc::make_ref_counted<NiceMock<MockFrameTransformer>>();
+  MockChannelSend mock_channel;
+  rtc::scoped_refptr<ChannelSendFrameTransformerDelegate> delegate =
+      rtc::make_ref_counted<ChannelSendFrameTransformerDelegate>(
+          mock_channel.callback(), mock_frame_transformer, &channel_queue);
+  rtc::scoped_refptr<TransformedFrameCallback> callback;
+  EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
+      .WillOnce(SaveArg<0>(&callback));
+  delegate->Init();
+  ASSERT_TRUE(callback);
+
+  const uint8_t data[] = {1, 2, 3, 4};
+  EXPECT_CALL(mock_channel, SendFrame).Times(0);
+  EXPECT_CALL(mock_channel, SendFrame(_, 0, 0, ElementsAre(1, 2, 3, 4), _));
+  ON_CALL(*mock_frame_transformer, Transform)
+      .WillByDefault(
+          [&callback](std::unique_ptr<TransformableFrameInterface> frame) {
+            callback->OnTransformedFrame(CreateMockReceiverFrame());
+          });
+  delegate->Transform(AudioFrameType::kEmptyFrame, 0, 0, data, sizeof(data), 0,
+                      0);
   channel_queue.WaitForPreviouslyPostedTasks();
 }
 
@@ -119,7 +164,7 @@ TEST(ChannelSendFrameTransformerDelegateTest,
 
   delegate->Reset();
   EXPECT_CALL(mock_channel, SendFrame).Times(0);
-  delegate->OnTransformedFrame(std::make_unique<MockTransformableFrame>());
+  delegate->OnTransformedFrame(std::make_unique<MockTransformableAudioFrame>());
   channel_queue.WaitForPreviouslyPostedTasks();
 }
 

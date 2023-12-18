@@ -321,7 +321,7 @@ ExceptionOr<std::optional<Seconds>> WebAnimation::validateCSSNumberishValue(cons
             return { Seconds::fromMilliseconds(milliseconds->value()) };
     }
 
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 std::optional<double> WebAnimation::bindingsStartTime() const
@@ -443,7 +443,7 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> se
     if (!seekTime) {
         // 1. If the current time is resolved, then throw a TypeError.
         if (currentTime())
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
         // 2. Abort these steps.
         return { };
     }
@@ -721,8 +721,11 @@ void WebAnimation::cancel()
 
         // 2. Reject the current finished promise with a DOMException named "AbortError".
         // 3. Set the [[PromiseIsHandled]] internal slot of the current finished promise to true.
-        if (!m_finishedPromise->isFulfilled())
-            m_finishedPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
+        if (auto* context = scriptExecutionContext(); context && !m_finishedPromise->isFulfilled()) {
+            context->eventLoop().queueMicrotask([finishedPromise = WTFMove(m_finishedPromise)]() mutable {
+                finishedPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
+            });
+        }
 
         // 4. Let current finished promise be a new (pending) Promise object.
         m_finishedPromise = makeUniqueRef<FinishedPromise>(*this, &WebAnimation::finishedPromiseResolve);
@@ -821,7 +824,11 @@ void WebAnimation::resetPendingTasks()
 
     // 5. Reject animation's current ready promise with a DOMException named "AbortError".
     // 6. Set the [[PromiseIsHandled]] internal slot of animation’s current ready promise to true.
-    m_readyPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
+    if (auto* context = scriptExecutionContext()) {
+        context->eventLoop().queueMicrotask([readyPromise = WTFMove(m_readyPromise)]() mutable {
+            readyPromise->reject(Exception { ExceptionCode::AbortError }, RejectAsHandled::Yes);
+        });
+    }
 
     // 7. Let animation's current ready promise be the result of creating a new resolved Promise object.
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
@@ -839,7 +846,7 @@ ExceptionOr<void> WebAnimation::finish()
     //
     // 1. If animation's effective playback rate is zero, or if animation's effective playback rate > 0 and target effect end is infinity, throw an InvalidStateError and abort these steps.
     if (!effectivePlaybackRate() || (effectivePlaybackRate() > 0 && effectEndTime() == Seconds::infinity()))
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Apply any pending playback rate to animation.
     applyPendingPlaybackRate();
@@ -1072,7 +1079,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
             // Otherwise,
             //     Set seek time to animation's associated effect end.
             if (endTime == Seconds::infinity())
-                return Exception { InvalidStateError };
+                return Exception { ExceptionCode::InvalidStateError };
             seekTime = endTime;
         }
     }
@@ -1230,7 +1237,7 @@ ExceptionOr<void> WebAnimation::pause()
             m_holdTime = 0_s;
         } else if (effectEndTime() == Seconds::infinity()) {
             // Otherwise, if target effect end for animation is positive infinity, throw an InvalidStateError and abort these steps.
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
         } else {
             // Otherwise, let animation's hold time be target effect end.
             m_holdTime = effectEndTime();
@@ -1279,7 +1286,7 @@ ExceptionOr<void> WebAnimation::reverse()
     // 1. If there is no timeline associated with animation, or the associated timeline is inactive
     //    throw an InvalidStateError and abort these steps.
     if (!m_timeline || !m_timeline->currentTime())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2. Let original pending playback rate be animation's pending playback rate.
     auto originalPendingPlaybackRate = m_pendingPlaybackRate;
@@ -1371,7 +1378,7 @@ void WebAnimation::tick()
 void WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
-        updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);
+        updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
     if (auto keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
@@ -1539,7 +1546,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     // 2.1 If target is not an element capable of having a style attribute (for example, it is a pseudo-element or is an element in a
     // document format for which style attributes are not defined) throw a "NoModificationAllowedError" DOMException and abort these steps.
     if (!is<StyledElement>(target) || effect->targetsPseudoElement())
-        return Exception { NoModificationAllowedError };
+        return Exception { ExceptionCode::NoModificationAllowedError };
 
     auto& styledElement = downcast<StyledElement>(*target);
 
@@ -1547,7 +1554,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
     styledElement.document().updateStyleIfNeeded();
     auto* renderer = styledElement.renderer();
     if (!renderer)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // 2.3 Let inline style be the result of getting the CSS declaration block corresponding to target’s style attribute. If target does not have a style
     // attribute, let inline style be a new empty CSS declaration block with the readonly flag unset and owner node set to target.
@@ -1574,7 +1581,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
-    auto commitProperty = [&](AnimatableProperty property) {
+    auto commitProperty = [&](AnimatableCSSProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.
@@ -1613,7 +1620,7 @@ ExceptionOr<void> WebAnimation::commitStyles()
 
     // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one
     // animation effect associated with animation whose effect target is target.
-    HashSet<AnimatableProperty> targetedProperties;
+    HashSet<AnimatableCSSProperty> targetedProperties;
     for (auto property : effect->animatedProperties()) {
         if (std::holds_alternative<CSSPropertyID>(property)) {
             for (auto longhand : shorthandForProperty(std::get<CSSPropertyID>(property)))

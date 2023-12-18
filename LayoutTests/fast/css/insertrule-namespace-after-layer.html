@@ -1,0 +1,12 @@
+<style>
+    @layer x;
+</style>
+<script>
+if(window.testRunner)
+  testRunner.dumpAsText();
+
+onload = () => {
+  console.log(document.styleSheets[0].insertRule(`@namespace url();`, 1));
+};
+</script>
+Test passes if doesn't crash

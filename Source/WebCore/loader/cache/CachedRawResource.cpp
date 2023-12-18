@@ -162,12 +162,11 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
 {
     auto& client = downcast<CachedRawResourceClient>(c);
     size_t redirectCount = m_redirectChain.size();
-    Vector<std::pair<ResourceRequest, ResourceResponse>> redirectsInReverseOrder;
-    redirectsInReverseOrder.reserveInitialCapacity(redirectCount);
-    for (size_t i = 0; i < redirectCount; ++i) {
+    Vector<std::pair<ResourceRequest, ResourceResponse>> redirectsInReverseOrder(redirectCount, [&](size_t i) {
         const auto& pair = m_redirectChain[redirectCount - i - 1];
-        redirectsInReverseOrder.uncheckedAppend(std::make_pair(pair.m_request, pair.m_redirectResponse));
-    }
+        return std::pair<ResourceRequest, ResourceResponse> { pair.m_request, pair.m_redirectResponse };
+    });
+
     iterateRedirects(CachedResourceHandle<CachedRawResource>(this), client, WTFMove(redirectsInReverseOrder), [this, protectedThis = CachedResourceHandle<CachedRawResource>(this), client = WeakPtr { client }] (ResourceRequest&&) mutable {
         if (!client || !hasClient(*client))
             return;

@@ -7,6 +7,24 @@
 if (window.internals)
     window.internals.settings.setUnhandledPromiseRejectionToConsoleEnabled(false);
 
+function createThenable() {
+    class Thenable {
+        then() { TestPage.log("FAIL: Should not invoke thenable then."); }
+        catch() { TestPage.log("FAIL: Should not invoke thenable catch."); }
+    }
+    return new Thenable;
+}
+
+function createCustomPromise() {
+    class Promise {
+        then() { TestPage.log("FAIL: Should not invoke custom promise then."); }
+        catch() { TestPage.log("FAIL: Should not invoke custom promise catch."); }
+    }
+    if (Promise === globalThis.Promise)
+        TestPage.log("FAIL: Using the wrong promise.");
+    return new Promise;
+}
+
 function test()
 {
     let savedResultCount = 0;
@@ -87,6 +105,34 @@ function test()
     addTest("Runtime.awaitPromise.Reject.Chain", `Promise.reject(1).catch(() => Promise.reject(2)).catch(() => Promise.reject(3))`, {}, async (remoteObject, wasThrown) => {
         InspectorTest.assert(wasThrown, "There should be an error.");
         InspectorTest.expectEqual(remoteObject.value, 3, "The rejected value should be 3.");
+    });
+
+    suite.addTestCase({
+        name: "Runtime.awaitPromise.CustomPromise",
+        async test() {
+            let evaluation = await RuntimeAgent.evaluate(`createCustomPromise()`);
+            try {
+                await RuntimeAgent.awaitPromise(evaluation.result.objectId);
+                InspectorTest.fail("Should not be able to call awaitPromise for a non-Promise object.");
+            } catch (error) {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "Runtime.awaitPromise.Thenable",
+        async test() {
+            let evaluation = await RuntimeAgent.evaluate(`createThenable()`);
+            try {
+                await RuntimeAgent.awaitPromise(evaluation.result.objectId);
+                InspectorTest.fail("Should not be able to call awaitPromise for a non-Promise object.");
+            } catch (error) {
+                InspectorTest.expectThat(error, "Should produce an error.");
+                InspectorTest.log("Error: " + error);
+            }
+        },
     });
 
     suite.addTestCase({

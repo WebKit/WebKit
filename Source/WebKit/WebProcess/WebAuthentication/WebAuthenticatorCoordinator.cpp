@@ -38,6 +38,7 @@
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorResponseData.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/MediationRequirement.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <WebCore/Quirks.h>
@@ -66,14 +67,13 @@ WebAuthenticatorCoordinator::WebAuthenticatorCoordinator(WebPage& webPage)
 {
 }
 
-void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::makeCredential(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
     auto webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
         return;
 
-    auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options, isProcessingUserGesture), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::MakeCredential(webFrame->frameID(), webFrame->info(), hash, options), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
@@ -82,8 +82,7 @@ void WebAuthenticatorCoordinator::getAssertion(const LocalFrame& frame, const Se
     if (!webFrame)
         return;
 
-    auto isProcessingUserGesture = processingUserGesture(frame, webFrame->frameID());
-    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, scopeAndCrossOriginParent.second, isProcessingUserGesture), WTFMove(handler));
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, scopeAndCrossOriginParent.second), WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinator::isConditionalMediationAvailable(const SecurityOrigin& origin, QueryCompletionHandler&& handler)
@@ -101,18 +100,9 @@ void WebAuthenticatorCoordinator::cancel()
     m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::Cancel());
 }
 
-bool WebAuthenticatorCoordinator::processingUserGesture(const LocalFrame& frame, const FrameIdentifier& frameID)
+void WebAuthenticatorCoordinator::getClientCapabilities(const SecurityOrigin& origin, CapabilitiesCompletionHandler&& handler)
 {
-    auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
-    bool processingUserGestureOrFreebie = processingUserGesture || !m_requireUserGesture;
-    if (!processingUserGestureOrFreebie)
-        m_webPage.addConsoleMessage(frameID, MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events."_s);
-
-    if (processingUserGesture && m_requireUserGesture)
-        m_requireUserGesture = false;
-    else if (!processingUserGesture)
-        m_requireUserGesture = true;
-    return processingUserGestureOrFreebie;
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetClientCapabilities(origin.data()), WTFMove(handler));
 }
 
 } // namespace WebKit

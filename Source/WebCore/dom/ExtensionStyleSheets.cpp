@@ -57,12 +57,17 @@ ExtensionStyleSheets::ExtensionStyleSheets(Document& document)
 {
 }
 
+Ref<Document> ExtensionStyleSheets::protectedDocument() const
+{
+    return const_cast<Document&>(m_document.get());
+}
+
 static Ref<CSSStyleSheet> createExtensionsStyleSheet(Document& document, URL url, const String& text, UserStyleLevel level)
 {
     auto contents = StyleSheetContents::create(url.string(), CSSParserContext(document, url));
     auto styleSheet = CSSStyleSheet::create(contents.get(), document, true);
 
-    contents->setIsUserStyleSheet(level == UserStyleUserLevel);
+    contents->setIsUserStyleSheet(level == UserStyleLevel::User);
     contents->parseString(text);
 
     return styleSheet;
@@ -73,7 +78,7 @@ CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
     if (m_pageUserSheet)
         return m_pageUserSheet.get();
     
-    Page* owningPage = m_document.page();
+    Page* owningPage = m_document->page();
     if (!owningPage)
         return 0;
     
@@ -81,7 +86,7 @@ CSSStyleSheet* ExtensionStyleSheets::pageUserSheet()
     if (userSheetText.isEmpty())
         return 0;
     
-    m_pageUserSheet = createExtensionsStyleSheet(m_document, m_document.settings().userStyleSheetLocation(), userSheetText, UserStyleUserLevel);
+    m_pageUserSheet = createExtensionsStyleSheet(protectedDocument().get(), m_document->settings().userStyleSheetLocation(), userSheetText, UserStyleLevel::User);
 
     return m_pageUserSheet.get();
 }
@@ -90,7 +95,7 @@ void ExtensionStyleSheets::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = nullptr;
-        m_document.styleScope().didChangeStyleSheetEnvironment();
+        protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
     }
 }
 
@@ -98,7 +103,7 @@ void ExtensionStyleSheets::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        m_document.styleScope().didChangeStyleSheetEnvironment();
+        protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
 }
 
 const Vector<RefPtr<CSSStyleSheet>>& ExtensionStyleSheets::injectedUserStyleSheets() const
@@ -123,12 +128,12 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     m_injectedAuthorStyleSheets.clear();
     m_injectedStyleSheetToSource.clear();
 
-    Page* owningPage = m_document.page();
+    RefPtr owningPage = m_document->page();
     if (!owningPage)
         return;
 
     auto addStyleSheet = [&](const UserStyleSheet& userStyleSheet) {
-        auto sheet = createExtensionsStyleSheet(const_cast<Document&>(m_document), userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
+        Ref sheet = createExtensionsStyleSheet(protectedDocument().get(), userStyleSheet.url(), userStyleSheet.source(), userStyleSheet.level());
 
         m_injectedStyleSheetToSource.set(sheet.copyRef(), userStyleSheet.source());
 
@@ -145,10 +150,10 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
         if (userStyleSheet.pageID())
             return;
 
-        if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && m_document.ownerElement())
+        if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && m_document->ownerElement())
             return;
 
-        if (!UserContentURLPattern::matchesPatterns(m_document.url(), userStyleSheet.allowlist(), userStyleSheet.blocklist()))
+        if (!UserContentURLPattern::matchesPatterns(m_document->url(), userStyleSheet.allowlist(), userStyleSheet.blocklist()))
             return;
 
         addStyleSheet(userStyleSheet);
@@ -174,21 +179,21 @@ void ExtensionStyleSheets::removePageSpecificUserStyleSheet(const UserStyleSheet
 void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
 {
     m_injectedStyleSheetCacheValid = false;
-    m_document.styleScope().didChangeStyleSheetEnvironment();
+    protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
 }
 
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)
 {
     ASSERT(userSheet.get().isUserStyleSheet());
-    m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), m_document));
-    m_document.styleScope().didChangeStyleSheetEnvironment();
+    m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), protectedDocument().get()));
+    protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
 }
 
 void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&& authorSheet)
 {
     ASSERT(!authorSheet.get().isUserStyleSheet());
-    m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), m_document));
-    m_document.styleScope().didChangeStyleSheetEnvironment();
+    m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), protectedDocument().get()));
+    protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -196,12 +201,12 @@ void ExtensionStyleSheets::addDisplayNoneSelector(const String& identifier, cons
 {
     auto result = m_contentExtensionSelectorSheets.add(identifier, nullptr);
     if (result.isNewEntry) {
-        result.iterator->value = ContentExtensionStyleSheet::create(m_document);
+        result.iterator->value = ContentExtensionStyleSheet::create(protectedDocument().get());
         m_userStyleSheets.append(&result.iterator->value->styleSheet());
     }
 
     if (result.iterator->value->addDisplayNoneSelector(selector, selectorID))
-        m_document.styleScope().didChangeStyleSheetEnvironment();
+        protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
 }
 
 void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
@@ -211,10 +216,10 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
     if (m_contentExtensionSheets.contains(identifier))
         return;
 
-    Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, m_document);
+    Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, protectedDocument().get());
     m_contentExtensionSheets.set(identifier, &cssSheet.get());
     m_userStyleSheets.append(adoptRef(cssSheet.leakRef()));
-    m_document.styleScope().didChangeStyleSheetEnvironment();
+    protectedDocument()->checkedStyleScope()->didChangeStyleSheetEnvironment();
 
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)

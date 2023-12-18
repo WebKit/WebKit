@@ -14,7 +14,18 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/async-01.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/composed.window.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/defer-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/defer.js
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/ellipse-hittest.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-events.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/focus-tabindex-default-value.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/log.py
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/module-01.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/rect-hittest-001.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/rect-hittest-002.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/svg-pointer-events-bbox.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/svg-root-border-radius.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/svg-small-big-path.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/interact/scripted/tabindex-focus-flag.svg

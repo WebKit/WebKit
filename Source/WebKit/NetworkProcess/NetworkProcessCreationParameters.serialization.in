@@ -22,7 +22,7 @@
 
 headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameters.h" "CacheModel.h" "WebsiteDataStoreParameters.h"
 
-struct WebKit::NetworkProcessCreationParameters {
+[RValue] struct WebKit::NetworkProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters
 
     WebKit::CacheModel cacheModel
@@ -37,7 +37,6 @@ struct WebKit::NetworkProcessCreationParameters {
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier
     RetainPtr<CFDataRef> networkATSContext
-    bool strictSecureDecodingForAllObjCEnabled
     bool isParentProcessFullWebBrowserOrRunningTest
 #endif
 
@@ -61,4 +60,5 @@ struct WebKit::NetworkProcessCreationParameters {
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 }

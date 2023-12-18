@@ -22,6 +22,6 @@ TemporalHelpers.checkCalendarDateUntilLargestUnitSingular(
     years: ["year"],
     months: ["month"],
     weeks: ["week"],
-    days: ["day"]
+    days: []
   }
 );

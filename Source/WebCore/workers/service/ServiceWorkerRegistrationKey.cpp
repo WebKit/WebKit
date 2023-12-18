@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerRegistrationKey.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ClientOrigin.h"
 #include "RegistrableDomain.h"
 #include "SecurityOrigin.h"
@@ -144,5 +142,3 @@ String ServiceWorkerRegistrationKey::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

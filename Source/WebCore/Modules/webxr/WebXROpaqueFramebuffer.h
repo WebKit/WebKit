@@ -59,7 +59,7 @@ public:
     GCGLint width() const { return m_framebufferSize.width(); }
     GCGLint height() const { return m_framebufferSize.height(); }
 
-    void startFrame(const PlatformXR::Device::FrameData::LayerData&);
+    void startFrame(const PlatformXR::FrameData::LayerData&);
     void endFrame();
 
 private:

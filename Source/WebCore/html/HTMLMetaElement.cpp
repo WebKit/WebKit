@@ -66,6 +66,14 @@ Ref<HTMLMetaElement> HTMLMetaElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLMetaElement(tagName, document));
 }
 
+#if ENABLE(DARK_MODE_CSS)
+static bool isNameColorScheme(const AtomString& nameValue)
+{
+    return equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s);
+}
+#endif
+
+
 bool HTMLMetaElement::mediaAttributeMatches()
 {
     auto& document = this->document();
@@ -102,7 +110,7 @@ void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomStri
 
     switch (name.nodeName()) {
     case AttributeNames::nameAttr:
-        process();
+        process(oldValue);
         if (isInDocumentTree()) {
             if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
                 document().metaElementThemeColorChanged(*this);
@@ -144,16 +152,24 @@ void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode
     if (removalType.disconnectedFromDocument && equalLettersIgnoringASCIICase(name(), "theme-color"_s))
         oldParentOfRemovedTree.document().metaElementThemeColorChanged(*this);
 #if ENABLE(DARK_MODE_CSS)
-    else if (removalType.disconnectedFromDocument && (equalLettersIgnoringASCIICase(name(), "color-scheme"_s) || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"_s)))
+    else if (removalType.disconnectedFromDocument && isNameColorScheme(name()))
         oldParentOfRemovedTree.document().metaElementColorSchemeChanged();
 #endif
 }
 
-void HTMLMetaElement::process()
+void HTMLMetaElement::process(const AtomString& oldValue)
 {
     // Changing a meta tag while it's not in the document tree shouldn't have any effect on the document.
     if (!isInDocumentTree())
         return;
+
+    const AtomString& nameValue = attributeWithoutSynchronization(nameAttr);
+#if ENABLE(DARK_MODE_CSS)
+    if (isNameColorScheme(nameValue) || (!oldValue.isNull() && isNameColorScheme(oldValue)))
+        document().metaElementColorSchemeChanged();
+#else
+    UNUSED_PARAM(oldValue);
+#endif
 
     // https://html.spec.whatwg.org/multipage/semantics.html#the-meta-element
     // All below situations require a content attribute (which can be the empty string).
@@ -168,7 +184,6 @@ void HTMLMetaElement::process()
     if (!httpEquivValue.isNull())
         document().processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document().head()));
     
-    const AtomString& nameValue = attributeWithoutSynchronization(nameAttr);
     if (nameValue.isNull())
         return;
 
@@ -176,10 +191,6 @@ void HTMLMetaElement::process()
         document().processViewport(contentValue, ViewportArguments::Type::ViewportMeta);
     else if (document().settings().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(nameValue, "disabled-adaptations"_s))
         document().processDisabledAdaptations(contentValue);
-#if ENABLE(DARK_MODE_CSS)
-    else if (equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s))
-        document().metaElementColorSchemeChanged();
-#endif
     else if (equalLettersIgnoringASCIICase(nameValue, "theme-color"_s))
         document().metaElementThemeColorChanged(*this);
 #if PLATFORM(IOS_FAMILY)

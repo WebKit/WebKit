@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "CaptureDevice.h"
+#include "FillLightMode.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
@@ -44,6 +45,7 @@
 #include "RealtimeMediaSourceSettings.h"
 #include "VideoFrame.h"
 #include <math.h>
+#include <wtf/NativePromise.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -75,6 +77,66 @@ static ThreadSafeWeakHashSet<MockRealtimeVideoSource>& allMockRealtimeVideoSourc
     return videoSources;
 }
 
+static RunLoop& takePhotoRunLoop()
+{
+    static NeverDestroyed<Ref<RunLoop>> runLoop = RunLoop::create("WebKit::MockRealtimeVideoSource takePhoto runloop");
+    return runLoop.get();
+}
+
+FontCascadeDescription& MockRealtimeVideoSource::DrawingState::fontDescription()
+{
+    if (!m_fontDescription) {
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily("Courier"_s);
+        fontDescription.setWeight(FontSelectionValue(500));
+        m_fontDescription = { fontDescription };
+    }
+
+    return *m_fontDescription;
+}
+
+const FontCascade& MockRealtimeVideoSource::DrawingState::timeFont()
+{
+    if (m_timeFont)
+        return *m_timeFont;
+
+    auto& description = fontDescription();
+    description.setSpecifiedSize(m_baseFontSize);
+    description.setComputedSize(m_baseFontSize);
+    m_timeFont = { FontCascadeDescription { description } };
+    m_timeFont->update(nullptr);
+
+    return *m_timeFont;
+}
+
+const FontCascade& MockRealtimeVideoSource::DrawingState::bipBopFont()
+{
+    if (m_bipBopFont)
+        return *m_bipBopFont;
+
+    auto& description = fontDescription();
+    description.setSpecifiedSize(m_bipBopFontSize);
+    description.setComputedSize(m_bipBopFontSize);
+    m_bipBopFont = { FontCascadeDescription { description } };
+    m_bipBopFont->update(nullptr);
+
+    return *m_bipBopFont;
+}
+
+const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
+{
+    if (m_statsFont)
+        return *m_statsFont;
+
+    auto& description = fontDescription();
+    description.setSpecifiedSize(m_statsFontSize);
+    description.setComputedSize(m_statsFontSize);
+    m_statsFont = { FontCascadeDescription { description } };
+    m_statsFont->update(nullptr);
+
+    return *m_statsFont;
+}
+
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
@@ -86,9 +148,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
     ASSERT(device);
     m_device = *device;
 
-    m_dashWidths.reserveInitialCapacity(2);
-    m_dashWidths.uncheckedAppend(6);
-    m_dashWidths.uncheckedAppend(6);
+    m_dashWidths.appendList({ 6, 6 });
 
     if (mockDisplay()) {
         auto& properties = std::get<MockDisplayProperties>(m_device.properties);
@@ -161,6 +221,12 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
             capabilities.setWhiteBalanceModes(WTFMove(whiteBalanceModes));
             supportedConstraints.setSupportsWhiteBalanceMode(true);
         }
+
+        if (std::get<MockCameraProperties>(m_device.properties).hasTorch) {
+            capabilities.setTorch(true);
+            supportedConstraints.setSupportsTorch(true);
+        }
+
         capabilities.setSupportedConstraints(supportedConstraints);
     } else if (mockDisplay()) {
         capabilities.setWidth(CapabilityRange(72, std::get<MockDisplayProperties>(m_device.properties).defaultSize.width()));
@@ -177,12 +243,24 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
     return m_capabilities.value();
 }
 
-void MockRealtimeVideoSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& completion)
+auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhotoNativePromise>
 {
-    if (m_photoCapabilities) {
-        completion({ *m_photoCapabilities });
-        return;
+    {
+        Locker lock { m_imageBufferLock };
+        invalidateDrawingState();
     }
+
+    return invokeAsync(takePhotoRunLoop(), [this, protectedThis = Ref { *this }] () mutable {
+        if (auto currentImage = generatePhoto())
+            return TakePhotoNativePromise::createAndResolve(std::make_pair(ImageBuffer::toData(*currentImage, "image/png"_s), "image/png"_s));
+        return TakePhotoNativePromise::createAndReject("Failed to capture photo"_s);
+    });
+}
+
+auto MockRealtimeVideoSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNativePromise>
+{
+    if (m_photoCapabilities)
+        return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
 
     auto capabilities = this->capabilities();
     PhotoCapabilities photoCapabilities;
@@ -195,7 +273,21 @@ void MockRealtimeVideoSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& co
 
     m_photoCapabilities = WTFMove(photoCapabilities);
 
-    completion({ *m_photoCapabilities });
+    return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
+}
+
+auto MockRealtimeVideoSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>
+{
+    if (!m_photoSettings) {
+        std::optional<FillLightMode> fillLightMode;
+        if (std::get<MockCameraProperties>(m_device.properties).hasTorch)
+            fillLightMode = { torch() ? FillLightMode::Flash : FillLightMode::Off };
+
+        auto settings = this->settings();
+        m_photoSettings = PhotoSettings { fillLightMode, settings.height(), settings.width(), { } };
+    }
+
+    return PhotoSettingsNativePromise::createAndResolve(*m_photoSettings);
 }
 
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
@@ -250,6 +342,12 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
             supportedConstraints.setSupportsWhiteBalanceMode(true);
             settings.setWhiteBalanceMode(whiteBalanceMode());
         }
+
+        if (std::get<MockCameraProperties>(m_device.properties).hasTorch) {
+            supportedConstraints.setSupportsTorch(true);
+            settings.setTorch(torch());
+        }
+
     } else {
         supportedConstraints.setSupportsDisplaySurface(true);
         supportedConstraints.setSupportsLogicalSurface(true);
@@ -281,15 +379,34 @@ VideoFrameRotation MockRealtimeVideoSource::videoFrameRotation() const
     return m_deviceOrientation;
 }
 
+void MockRealtimeVideoSource::invalidateDrawingState()
+{
+    assertIsHeld(m_imageBufferLock);
+
+    m_imageBuffer = nullptr;
+    m_drawingState = { };
+}
+
+MockRealtimeVideoSource::DrawingState& MockRealtimeVideoSource::drawingState()
+{
+    assertIsHeld(m_imageBufferLock);
+
+    if (!m_drawingState)
+        m_drawingState = { DrawingState(captureSize().height() * .08) };
+
+    return *m_drawingState;
+}
+
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     m_currentSettings = std::nullopt;
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
-        m_baseFontSize = captureSize().height() * .08;
-        m_bipBopFontSize = m_baseFontSize * 2.5;
-        m_statsFontSize = m_baseFontSize * .5;
-        m_imageBuffer = nullptr;
+        Locker lock { m_imageBufferLock };
+        invalidateDrawingState();
     }
+
+    if (settings.contains(RealtimeMediaSourceSettings::Flag::Torch))
+        m_photoSettings = std::nullopt;
 }
 
 void MockRealtimeVideoSource::startCaptureTimer()
@@ -312,7 +429,7 @@ void MockRealtimeVideoSource::stopProducingData()
 
 Seconds MockRealtimeVideoSource::elapsedTime()
 {
-    if (std::isnan(m_startTime))
+    if (m_startTime.isNaN())
         return m_elapsedTime;
 
     return m_elapsedTime + (MonotonicTime::now() - m_startTime);
@@ -402,58 +519,42 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 
 void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 {
+    assertIsHeld(m_imageBufferLock);
+
     unsigned milliseconds = lround(elapsedTime().milliseconds());
     unsigned seconds = milliseconds / 1000 % 60;
     unsigned minutes = seconds / 60 % 60;
     unsigned hours = minutes / 60 % 60;
 
-    FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Courier"_s);
-    fontDescription.setWeight(FontSelectionValue(500));
-
-    fontDescription.setSpecifiedSize(m_baseFontSize);
-    fontDescription.setComputedSize(m_baseFontSize);
-    FontCascade timeFont { FontCascadeDescription { fontDescription }, 0, 0 };
-    timeFont.update(nullptr);
-
-    fontDescription.setSpecifiedSize(m_bipBopFontSize);
-    fontDescription.setComputedSize(m_bipBopFontSize);
-    FontCascade bipBopFont { FontCascadeDescription { fontDescription }, 0, 0 };
-    bipBopFont.update(nullptr);
-
-    fontDescription.setSpecifiedSize(m_statsFontSize);
-    fontDescription.setComputedSize(m_statsFontSize);
-    FontCascade statsFont { WTFMove(fontDescription), 0, 0 };
-    statsFont.update(nullptr);
-
+    auto drawingState = this->drawingState();
     IntSize captureSize = this->captureSize();
     FloatPoint timeLocation(captureSize.width() * .05, captureSize.height() * .15);
     context.setFillColor(Color::white);
     context.setTextDrawingMode(TextDrawingMode::Fill);
     auto string = makeString(pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', 3, milliseconds % 1000));
-    context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
+    context.drawText(drawingState.timeFont(), TextRun((StringView(string))), timeLocation);
 
     string = makeString(pad('0', 6, m_frameNumber++));
-    timeLocation.move(0, m_baseFontSize);
-    context.drawText(timeFont, TextRun((StringView(string))), timeLocation);
+    timeLocation.move(0, drawingState.baseFontSize());
+    context.drawText(drawingState.timeFont(), TextRun((StringView(string))), timeLocation);
 
     FloatPoint statsLocation(captureSize.width() * .45, captureSize.height() * .75);
     string = makeString("Requested frame rate: ", FormattedNumber::fixedWidth(frameRate(), 1), " fps");
-    context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+    context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
 
-    statsLocation.move(0, m_statsFontSize);
+    statsLocation.move(0, drawingState.statsFontSize());
     string = makeString("Observed frame rate: ", FormattedNumber::fixedWidth(observedFrameRate(), 1), " fps");
-    context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+    context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
 
     auto size = this->size();
-    statsLocation.move(0, m_statsFontSize);
+    statsLocation.move(0, drawingState.statsFontSize());
     string = makeString("Size: ", size.width(), " x ", size.height());
-    context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+    context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
 
     if (mockCamera()) {
-        statsLocation.move(0, m_statsFontSize);
+        statsLocation.move(0, drawingState.statsFontSize());
         string = makeString("Preset size: ", captureSize.width(), " x ", captureSize.height());
-        context.drawText(statsFont, TextRun((StringView(string))), statsLocation);
+        context.drawText(drawingState.statsFont(), TextRun((StringView(string))), statsLocation);
 
         const char* camera;
         switch (facingMode()) {
@@ -474,11 +575,11 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
             break;
         }
         string = makeString("Camera: ", camera);
-        statsLocation.move(0, m_statsFontSize);
-        context.drawText(statsFont, TextRun(string), statsLocation);
+        statsLocation.move(0, drawingState.statsFontSize());
+        context.drawText(drawingState.statsFont(), TextRun(string), statsLocation);
     } else if (!name().isNull()) {
-        statsLocation.move(0, m_statsFontSize);
-        context.drawText(statsFont, TextRun { name().string() }, statsLocation);
+        statsLocation.move(0, drawingState.statsFontSize());
+        context.drawText(drawingState.statsFont(), TextRun { name().string() }, statsLocation);
     }
 
     FloatPoint bipBopLocation(captureSize.width() * .6, captureSize.height() * .6);
@@ -486,17 +587,53 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
     if (frameMod <= 15) {
         context.setFillColor(Color::cyan);
         String bip("Bip"_s);
-        context.drawText(bipBopFont, TextRun(StringView(bip)), bipBopLocation);
+        context.drawText(drawingState.bipBopFont(), TextRun(StringView(bip)), bipBopLocation);
     } else if (frameMod > 30 && frameMod <= 45) {
         context.setFillColor(Color::yellow);
         String bop("Bop"_s);
-        context.drawText(bipBopFont, TextRun(StringView(bop)), bipBopLocation);
+        context.drawText(drawingState.bipBopFont(), TextRun(StringView(bop)), bipBopLocation);
     }
 }
 
 void MockRealtimeVideoSource::delaySamples(Seconds delta)
 {
     m_delayUntil = MonotonicTime::now() + delta;
+}
+
+RefPtr<ImageBuffer> MockRealtimeVideoSource::generatePhoto()
+{
+    ASSERT(!isMainThread());
+    ASSERT(!m_drawingState);
+
+    Locker lock { m_imageBufferLock };
+    auto currentImage = generateFrameInternal();
+    invalidateDrawingState();
+
+    return currentImage;
+}
+
+RefPtr<ImageBuffer> MockRealtimeVideoSource::generateFrameInternal()
+{
+    assertIsHeld(m_imageBufferLock);
+
+    RefPtr buffer = imageBufferInternal();
+    if (!buffer)
+        return nullptr;
+
+    GraphicsContext& context = buffer->context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.fillRect(FloatRect(FloatPoint(), captureSize()), zoom() >=  2 ? m_fillColorWithZoom : m_fillColor);
+
+    if (!muted() || mutedForPhotoCapture()) {
+        drawText(context);
+        drawAnimation(context);
+        drawBoxes(context);
+    }
+
+    updateSampleBuffer();
+
+    return imageBufferInternal();
 }
 
 void MockRealtimeVideoSource::generateFrame()
@@ -507,29 +644,20 @@ void MockRealtimeVideoSource::generateFrame()
         m_delayUntil = MonotonicTime();
     }
 
-    RefPtr buffer = imageBuffer();
-    if (!buffer)
-        return;
-
-    GraphicsContext& context = buffer->context();
-    GraphicsContextStateSaver stateSaver(context);
-
-    auto size = this->captureSize();
-    FloatRect frameRect(FloatPoint(), size);
-
-    context.fillRect(FloatRect(FloatPoint(), size), zoom() >=  2 ? m_fillColorWithZoom : m_fillColor);
-
-    if (!muted()) {
-        drawText(context);
-        drawAnimation(context);
-        drawBoxes(context);
-    }
-
-    updateSampleBuffer();
+    Locker lock { m_imageBufferLock };
+    generateFrameInternal();
 }
 
-ImageBuffer* MockRealtimeVideoSource::imageBuffer() const
+ImageBuffer* MockRealtimeVideoSource::imageBuffer()
 {
+    Locker lock { m_imageBufferLock };
+    return imageBufferInternal();
+}
+
+ImageBuffer* MockRealtimeVideoSource::imageBufferInternal()
+{
+    assertIsHeld(m_imageBufferLock);
+
     if (m_imageBuffer)
         return m_imageBuffer.get();
 

@@ -58,12 +58,13 @@ public:
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
     Device& device() const { return m_device; }
+    void makeInvalid();
 
 private:
     CommandBuffer(id<MTLCommandBuffer>, Device&);
     CommandBuffer(Device&);
 
-    const id<MTLCommandBuffer> m_commandBuffer { nil };
+    id<MTLCommandBuffer> m_commandBuffer { nil };
 
     const Ref<Device> m_device;
 };

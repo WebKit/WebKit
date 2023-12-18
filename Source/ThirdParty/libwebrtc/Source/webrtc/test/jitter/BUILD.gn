@@ -1,0 +1,64 @@
+# Copyright (c) 2023 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("delay_variation_calculator") {
+  visibility = [ "*" ]
+  sources = [
+    "delay_variation_calculator.cc",
+    "delay_variation_calculator.h",
+  ]
+  deps = [
+    "../../api/numerics",
+    "../../api/test/metrics:metrics_logger",
+    "../../api/units:data_size",
+    "../../api/units:frequency",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../api/video:video_frame_type",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("logging_delay_variation_calculator") {
+  visibility = [ "*" ]
+  sources = [
+    "logging_delay_variation_calculator.cc",
+    "logging_delay_variation_calculator.h",
+  ]
+  deps = [
+    ":delay_variation_calculator",
+    "../../api/test/metrics:global_metrics_logger_and_exporter",
+    "../../api/units:data_size",
+    "../../api/video:video_frame_type",
+    "../../rtc_base:logging",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("jitter_unittests") {
+    testonly = true
+    sources = [
+      "delay_variation_calculator_unittest.cc",
+      "logging_delay_variation_calculator_unittest.cc",
+    ]
+    deps = [
+      ":delay_variation_calculator",
+      ":logging_delay_variation_calculator",
+      "../../api/numerics",
+      "../../api/test/metrics:metrics_logger",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:test_support",
+    ]
+  }
+}

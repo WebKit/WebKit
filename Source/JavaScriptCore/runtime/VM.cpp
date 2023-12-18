@@ -104,11 +104,13 @@
 #include "SamplingProfiler.h"
 #include "ScopedArguments.h"
 #include "ShadowChicken.h"
+#include "SideDataRepository.h"
 #include "SimpleTypedArrayController.h"
 #include "SourceProviderCache.h"
 #include "StrongInlines.h"
 #include "StructureChainInlines.h"
 #include "StructureInlines.h"
+#include "StructureStubInfo.h"
 #include "SymbolInlines.h"
 #include "SymbolTableInlines.h"
 #include "TestRunnerUtils.h"
@@ -209,7 +211,8 @@ void VM::computeCanUseJIT()
 static bool vmCreationShouldCrash = false;
 
 VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
-    : m_identifier(VMIdentifier::generate())
+    : topCallFrame(CallFrame::noCaller())
+    , m_identifier(VMIdentifier::generate())
     , m_apiLock(adoptRef(new JSLock(this)))
     , m_runLoop(runLoop ? *runLoop : WTF::RunLoop::current())
     , m_random(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber<uint32_t>())
@@ -218,7 +221,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , heap(*this, heapType)
     , clientHeap(heap)
     , vmType(vmType)
-    , topCallFrame(CallFrame::noCaller())
     , deferredWorkTimer(DeferredWorkTimer::create(*this))
     , m_atomStringTable(vmType == Default ? Thread::current().atomStringTable() : new AtomStringTable)
     , emptyList(new ArgList)
@@ -385,11 +387,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
     if (Options::useJIT()) {
         jitStubs = makeUnique<JITThunks>();
+        jitStubs->initialize(*this);
 #if ENABLE(FTL_JIT)
         ftlThunks = makeUnique<FTL::Thunks>();
 #endif // ENABLE(FTL_JIT)
-        getCTIInternalFunctionTrampolineFor(CodeForCall);
-        getCTIInternalFunctionTrampolineFor(CodeForConstruct);
         m_sharedJITStubs = makeUnique<SharedJITStubSet>();
         getBoundFunction(/* isJSFunction */ true);
     }
@@ -436,6 +437,9 @@ VM::~VM()
     m_traps.willDestroyVM();
     m_isInService = false;
     WTF::storeStoreFence();
+
+    if (m_hasSideData)
+        sideDataRepository().deleteAll(this);
 
     // Never GC, ever again.
     heap.incrementDeferralDepth();
@@ -665,10 +669,12 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return imulThunkGenerator;
     case RandomIntrinsic:
         return randomThunkGenerator;
+#if !OS(WINDOWS)
     case BoundFunctionCallIntrinsic:
         return boundFunctionCallGenerator;
     case RemoteFunctionCallIntrinsic:
         return remoteFunctionCallGenerator;
+#endif
     case NumberConstructorIntrinsic:
         return numberConstructorCallThunkGenerator;
     case StringConstructorIntrinsic:
@@ -681,6 +687,11 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 MacroAssemblerCodeRef<JITThunkPtrTag> VM::getCTIStub(ThunkGenerator generator)
 {
     return jitStubs->ctiStub(*this, generator);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> VM::getCTIStub(CommonJITThunkID thunkID)
+{
+    return jitStubs->ctiStub(thunkID);
 }
 
 #endif // ENABLE(JIT)
@@ -791,7 +802,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTILinkCall()
 {
 #if ENABLE(JIT)
     if (Options::useJIT())
-        return getCTIStub(linkCallThunkGenerator).template retagged<JSEntryPtrTag>();
+        return getCTIStub(CommonJITThunkID::LinkCall).template retagged<JSEntryPtrTag>();
 #endif
     return LLInt::getCodeRef<JSEntryPtrTag>(llint_link_call_trampoline);
 }
@@ -800,7 +811,7 @@ MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTIThrowExceptionFromCallSlowPath()
 {
 #if ENABLE(JIT)
     if (Options::useJIT())
-        return getCTIStub(throwExceptionFromCallSlowPathGenerator).template retagged<JSEntryPtrTag>();
+        return getCTIStub(CommonJITThunkID::ThrowExceptionFromCallSlowPath).template retagged<JSEntryPtrTag>();
 #endif
     return LLInt::callToThrow(*this).template retagged<JSEntryPtrTag>();
 }
@@ -808,8 +819,17 @@ MacroAssemblerCodeRef<JSEntryPtrTag> VM::getCTIThrowExceptionFromCallSlowPath()
 MacroAssemblerCodeRef<JITStubRoutinePtrTag> VM::getCTIVirtualCall(CallMode callMode)
 {
 #if ENABLE(JIT)
-    if (Options::useJIT())
-        return virtualThunkFor(*this, callMode);
+    if (Options::useJIT()) {
+        switch (callMode) {
+        case CallMode::Regular:
+            return getCTIStub(CommonJITThunkID::VirtualThunkForRegularCall).template retagged<JITStubRoutinePtrTag>();
+        case CallMode::Tail:
+            return getCTIStub(CommonJITThunkID::VirtualThunkForTailCall).template retagged<JITStubRoutinePtrTag>();
+        case CallMode::Construct:
+            return getCTIStub(CommonJITThunkID::VirtualThunkForConstruct).template retagged<JITStubRoutinePtrTag>();
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 #endif
     switch (callMode) {
     case CallMode::Regular:
@@ -1662,27 +1682,37 @@ void VM::removeDebugger(Debugger& debugger)
 
 void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions> options)
 {
+    constexpr bool verbose = false;
+
+    dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] QUERY");
     JSLockHolder locker { *this };
-    if (deferredWorkTimer->hasAnyPendingWork())
+    if (deferredWorkTimer->hasAnyPendingWork()) {
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: No pending tasks");
         return;
+    }
 
     SetForScope insideOpportunisticTaskScope { heap.m_isInOpportunisticTask, true };
     [&] {
-        if (options.contains(SchedulerOptions::HasImminentlyScheduledWork))
+        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
+        auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
+
+        if (options.contains(SchedulerOptions::HasImminentlyScheduledWork)) {
+            dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: HasImminentlyScheduledWork ", remainingTime);
             return;
+        }
 
         static constexpr auto minimumDelayBeforeOpportunisticFullGC = 30_ms;
         static constexpr auto minimumDelayBeforeOpportunisticEdenGC = 10_ms;
         static constexpr auto extraDurationToAvoidExceedingDeadlineDuringFullGC = 2_ms;
         static constexpr auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = 1_ms;
 
-        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
         auto timeSinceFinishingLastFullGC = secondsSinceEpoch - heap.m_lastFullGCEndTime.secondsSinceEpoch();
-        auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
         if (timeSinceFinishingLastFullGC > minimumDelayBeforeOpportunisticFullGC && heap.m_shouldDoOpportunisticFullCollection && heap.m_totalBytesVisitedAfterLastFullCollect) {
             auto estimatedGCDuration = (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringFullGC < remainingTime) {
+                dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] FULL");
                 heap.collectSync(CollectionScope::Full);
+                heap.m_shouldDoOpportunisticFullCollection = false;
                 return;
             }
         }
@@ -1690,9 +1720,15 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
         auto timeSinceLastGC = secondsSinceEpoch - std::max(heap.m_lastGCEndTime, heap.m_currentGCStartTime).secondsSinceEpoch();
         if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.m_bytesAllocatedThisCycle && heap.m_bytesAllocatedBeforeLastEdenCollect) {
             auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect;
-            if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime)
+            if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime) {
+                dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] EDEN: ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.m_bytesAllocatedThisCycle, " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect);
                 heap.collectSync(CollectionScope::Eden);
+                heap.m_shouldDoOpportunisticFullCollection = false;
+                return;
+            }
         }
+
+        dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: nothing met. ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.m_bytesAllocatedThisCycle, " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.m_bytesAllocatedThisCycle) / heap.m_bytesAllocatedBeforeLastEdenCollect);
     }();
 
     heap.sweeper().doWorkUntil(*this, deadline);

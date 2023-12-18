@@ -6,9 +6,13 @@ list(APPEND WebKitTestRunner_DEPENDENCIES WebKitTestRunner-forwarding-headers)
 list(APPEND WebKitTestRunner_SOURCES
     cairo/TestInvocationCairo.cpp
 
+    libwpe/EventSenderProxyClientLibWPE.cpp
     libwpe/EventSenderProxyLibWPE.cpp
+    libwpe/PlatformWebViewClientLibWPE.cpp
     libwpe/PlatformWebViewLibWPE.cpp
 
+    wpe/EventSenderProxyClientWPE.cpp
+    wpe/PlatformWebViewClientWPE.cpp
     wpe/TestControllerWPE.cpp
     wpe/UIScriptControllerWPE.cpp
     wpe/main.cpp
@@ -16,6 +20,8 @@ list(APPEND WebKitTestRunner_SOURCES
 
 list(APPEND WebKitTestRunner_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
+    ${WebKitTestRunner_DIR}/libwpe
+    ${WebKitTestRunner_DIR}/wpe
     $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>
 )
 
@@ -36,6 +42,12 @@ list(APPEND WebKitTestRunner_LIBRARIES
     Cairo::Cairo
     WebKit::WPEToolingBackends
 )
+
+if (ENABLE_WPE_PLATFORM)
+    list(APPEND WebKitTestRunner_LIBRARIES
+        WPEPlatform-${WPE_API_VERSION}
+    )
+endif ()
 
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${GLIB_LIBRARIES}

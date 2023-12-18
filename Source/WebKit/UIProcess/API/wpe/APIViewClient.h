@@ -55,8 +55,8 @@ public:
     virtual WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() { return nullptr; }
 
 #if ENABLE(FULLSCREEN_API)
-    virtual void enterFullScreen(WKWPE::View&) { };
-    virtual void exitFullScreen(WKWPE::View&) { };
+    virtual bool enterFullScreen(WKWPE::View&) { return false; };
+    virtual bool exitFullScreen(WKWPE::View&) { return false; };
 #endif
 };
 

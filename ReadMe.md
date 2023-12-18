@@ -92,7 +92,7 @@ Tools/Scripts/build-webkit --debug --<platform>-device
 
 where `platform` is `ios`, `tvos` or `watchos`.
 
-### Building the GTK+ Port
+### Building the GTK Port
 
 For production builds:
 
@@ -110,7 +110,7 @@ Tools/Scripts/update-webkitgtk-libs
 Tools/Scripts/build-webkit --gtk --debug
 ```
 
-For more information on building WebKitGTK+, see the [wiki page](https://trac.webkit.org/wiki/BuildingGtk).
+For more information on building WebKitGTK, see the [wiki page](https://trac.webkit.org/wiki/BuildingGtk).
 
 ### Building the WPE Port
 

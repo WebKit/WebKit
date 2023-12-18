@@ -1,0 +1,5 @@
+Transform values should be indentical between the blue box(block element) and red box(inline element)
+
+
+PASS JS test: Inline renderer must return the correct computed transform
+

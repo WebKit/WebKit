@@ -66,6 +66,11 @@ public:
     void compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
     void lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
     void removeContentRuleList(WTF::String&& identifier, CompletionHandler<void(std::error_code)>);
+
+    void compileContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void lookupContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void removeContentRuleListFile(WTF::String&& filePath, CompletionHandler<void(std::error_code)>);
+
     void getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<WTF::String>)>);
 
     // For testing only.
@@ -75,7 +80,7 @@ public:
 
 private:
     WTF::String defaultStorePath();
-    
+
     const WTF::String m_storePath;
     Ref<WTF::ConcurrentWorkQueue> m_compileQueue;
     Ref<WTF::WorkQueue> m_readQueue;

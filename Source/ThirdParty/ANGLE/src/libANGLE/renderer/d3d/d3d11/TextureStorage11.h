@@ -80,6 +80,7 @@ class TextureStorage11 : public TextureStorage
     angle::Result getSRVLevels(const gl::Context *context,
                                GLint baseLevel,
                                GLint maxLevel,
+                               bool forceLinearSampler,
                                const d3d11::SharedSRV **outSRV);
     angle::Result generateSwizzles(const gl::Context *context,
                                    const gl::TextureState &textureState);
@@ -105,6 +106,7 @@ class TextureStorage11 : public TextureStorage
     bool supportsNativeMipmapFunction() const override;
     int getLevelCount() const override;
     bool isUnorderedAccess() const override { return mBindFlags & D3D11_BIND_UNORDERED_ACCESS; }
+    bool requiresTypelessTextureFormat() const;
     angle::Result generateMipmap(const gl::Context *context,
                                  const gl::ImageIndex &sourceIndex,
                                  const gl::ImageIndex &destIndex) override;
@@ -241,7 +243,11 @@ class TextureStorage11 : public TextureStorage
     struct SamplerKey
     {
         SamplerKey();
-        SamplerKey(int baseLevel, int mipLevels, bool swizzle, bool dropStencil);
+        SamplerKey(int baseLevel,
+                   int mipLevels,
+                   bool swizzle,
+                   bool dropStencil,
+                   bool forceLinearSampler);
 
         bool operator<(const SamplerKey &rhs) const;
 
@@ -249,6 +255,7 @@ class TextureStorage11 : public TextureStorage
         int mipLevels;
         bool swizzle;
         bool dropStencil;
+        bool forceLinearSampler;
     };
 
     angle::Result getCachedOrCreateSRVForSampler(const gl::Context *context,

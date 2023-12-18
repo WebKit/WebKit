@@ -49,6 +49,19 @@ void SetVTSessionProperty(VTCompressionSessionRef vtSession, CFStringRef key, in
 }
 
 // Convenience function for setting a VT property.
+void SetVTSessionProperty(VTCompressionSessionRef vtSession, CFStringRef key, double value) {
+  RTC_DCHECK(vtSession);
+  CFNumberRef cfNum =
+      CFNumberCreate(kCFAllocatorDefault, kCFNumberDoubleType, &value);
+  OSStatus status = VTSessionSetProperty(vtSession, key, cfNum);
+  CFRelease(cfNum);
+  if (status != noErr) {
+    std::string key_string = CFStringToString(key);
+    RTC_LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
+                      << " to " << value << ": " << status;
+  }
+}
+
 void SetVTSessionProperty(VTCompressionSessionRef vtSession, CFStringRef key, uint32_t value) {
   RTC_DCHECK(vtSession);
   int64_t value_64 = value;

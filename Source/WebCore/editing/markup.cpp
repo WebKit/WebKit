@@ -183,11 +183,11 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, Function<b
         element->removeAttribute(attribute);
 }
 
-std::unique_ptr<Page> createPageForSanitizingWebContent()
+Ref<Page> createPageForSanitizingWebContent()
 {
     auto pageConfiguration = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
     
-    auto page = makeUnique<Page>(WTFMove(pageConfiguration));
+    Ref page = Page::create(WTFMove(pageConfiguration));
 #if ENABLE(VIDEO)
     page->settings().setMediaEnabled(false);
 #endif
@@ -220,7 +220,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
 
 String sanitizeMarkup(const String& rawHTML, MSOListQuirks msoListQuirks, std::optional<Function<void(DocumentFragment&)>> fragmentSanitizer)
 {
-    auto page = createPageForSanitizingWebContent();
+    Ref page = createPageForSanitizingWebContent();
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return String();
@@ -1182,12 +1182,12 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     return fragment;
 }
 
-String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, Vector<QualifiedName>* tagNamesToSkip, std::optional<SerializationSyntax> serializationSyntax, HashMap<String, String>&& replacementURLStrings)
+String serializeFragment(const Node& node, SerializedNodes root, Vector<Ref<Node>>* nodes, ResolveURLs resolveURLs, std::optional<SerializationSyntax> serializationSyntax, HashMap<String, String>&& replacementURLStrings, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet, ShouldIncludeShadowDOM shouldIncludeShadowDOM, const Vector<MarkupExclusionRule>& exclusionRules)
 {
     if (!serializationSyntax)
         serializationSyntax = node.document().isHTMLDocument() ? SerializationSyntax::HTML : SerializationSyntax::XML;
-    MarkupAccumulator accumulator(nodes, resolveURLs, *serializationSyntax, WTFMove(replacementURLStrings));
-    return accumulator.serializeNodes(const_cast<Node&>(node), root, tagNamesToSkip);
+    MarkupAccumulator accumulator(nodes, resolveURLs, *serializationSyntax, WTFMove(replacementURLStrings), WTFMove(replacementURLStringsForCSSStyleSheet), shouldIncludeShadowDOM, exclusionRules);
+    return accumulator.serializeNodes(const_cast<Node&>(node), root);
 }
 
 static void fillContainerFromString(ContainerNode& paragraph, const String& string)
@@ -1348,20 +1348,20 @@ String urlToMarkup(const URL& url, const String& title)
     return markup.toString();
 }
 
-enum class DocumentFragmentMode { New, ReuseForInnerOuterHTML };
+enum class DocumentFragmentMode : bool { New, ReuseForInnerOuterHTML };
 static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     Ref document = contextElement.hasTagName(templateTag) ? contextElement.document().ensureTemplateDocument() : contextElement.document();
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
-    if (document->isHTMLDocument()) {
+    if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
         fragment->parseHTML(markup, contextElement, parserContentPolicy);
         return fragment;
     }
 
     bool wasValid = fragment->parseXML(markup, &contextElement, parserContentPolicy);
     if (!wasValid)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
     return fragment;
 }
 
@@ -1380,11 +1380,11 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(WTFMove(sourceString), fakeBody, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
+        fragment->parseHTML(WTFMove(sourceString), fakeBody, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
     } else if (sourceMIMEType == textPlainContentTypeAtom())
         fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
     else {
-        bool successfulParse = fragment->parseXML(WTFMove(sourceString), nullptr, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
+        bool successfulParse = fragment->parseXML(WTFMove(sourceString), nullptr, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
         if (!successfulParse)
             return nullptr;
     }

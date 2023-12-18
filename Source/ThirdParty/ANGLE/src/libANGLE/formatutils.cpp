@@ -1781,7 +1781,7 @@ bool InternalFormat::computeRowPitch(GLenum formatType,
     // Compressed images do not use pack/unpack parameters (rowLength).
     if (compressed)
     {
-        return computeCompressedImageSize(Extents(width, 1, 1), resultOut);
+        return computeCompressedImageRowPitch(width, resultOut);
     }
 
     CheckedNumeric<GLuint> checkedWidth(rowLength > 0 ? rowLength : width);
@@ -1799,21 +1799,13 @@ bool InternalFormat::computeDepthPitch(GLsizei height,
                                        GLuint *resultOut) const
 {
     // Compressed images do not use pack/unpack parameters (imageHeight).
-    CheckedNumeric<GLuint> pixelsHeight(!compressed && (imageHeight > 0)
-                                            ? static_cast<GLuint>(imageHeight)
-                                            : static_cast<GLuint>(height));
-
-    CheckedNumeric<GLuint> rowCount;
     if (compressed)
     {
-        CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
-        rowCount = (pixelsHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
-    }
-    else
-    {
-        rowCount = pixelsHeight;
+        return computeCompressedImageDepthPitch(height, rowPitch, resultOut);
     }
 
+    CheckedNumeric<GLuint> rowCount((imageHeight > 0) ? static_cast<GLuint>(imageHeight)
+                                                      : static_cast<GLuint>(height));
     CheckedNumeric<GLuint> checkedRowPitch(rowPitch);
 
     return CheckedMathResult(checkedRowPitch * rowCount, resultOut);
@@ -1833,6 +1825,42 @@ bool InternalFormat::computeDepthPitch(GLenum formatType,
         return false;
     }
     return computeDepthPitch(height, imageHeight, rowPitch, resultOut);
+}
+
+bool InternalFormat::computeCompressedImageRowPitch(GLsizei width, GLuint *resultOut) const
+{
+    ASSERT(compressed);
+
+    CheckedNumeric<GLuint> checkedWidth(width);
+    CheckedNumeric<GLuint> checkedBlockWidth(compressedBlockWidth);
+    const GLuint minBlockWidth = getCompressedImageMinBlocks().first;
+
+    auto numBlocksWide = (checkedWidth + checkedBlockWidth - 1u) / checkedBlockWidth;
+    if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
+    {
+        numBlocksWide = minBlockWidth;
+    }
+    return CheckedMathResult(numBlocksWide * pixelBytes, resultOut);
+}
+
+bool InternalFormat::computeCompressedImageDepthPitch(GLsizei height,
+                                                      GLuint rowPitch,
+                                                      GLuint *resultOut) const
+{
+    ASSERT(compressed);
+    ASSERT(rowPitch > 0 && rowPitch % pixelBytes == 0);
+
+    CheckedNumeric<GLuint> checkedHeight(height);
+    CheckedNumeric<GLuint> checkedRowPitch(rowPitch);
+    CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
+    const GLuint minBlockHeight = getCompressedImageMinBlocks().second;
+
+    auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
+    if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
+    {
+        numBlocksHigh = minBlockHeight;
+    }
+    return CheckedMathResult(numBlocksHigh * checkedRowPitch, resultOut);
 }
 
 bool InternalFormat::computeCompressedImageSize(const Extents &size, GLuint *resultOut) const
@@ -1876,9 +1904,13 @@ bool InternalFormat::computeCompressedImageSize(const Extents &size, GLuint *res
     auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
     auto numBlocksDeep = (checkedDepth + checkedBlockDepth - 1u) / checkedBlockDepth;
     if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
+    {
         numBlocksWide = minBlockWidth;
+    }
     if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
+    {
         numBlocksHigh = minBlockHeight;
+    }
     auto bytes = numBlocksWide * numBlocksHigh * numBlocksDeep * pixelBytes;
     return CheckedMathResult(bytes, resultOut);
 }

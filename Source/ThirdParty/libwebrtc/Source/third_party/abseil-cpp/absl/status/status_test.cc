@@ -16,9 +16,16 @@
 
 #include <errno.h>
 
+#include <array>
+#include <cstddef>
+#include <sstream>
+#include <utility>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "absl/strings/cord.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/str_format.h"
 
 namespace {
 
@@ -129,6 +136,29 @@ TEST(Status, ConstructorWithCodeMessage) {
     EXPECT_FALSE(status.ok());
     EXPECT_EQ(absl::StatusCode::kInternal, status.code());
     EXPECT_EQ("message", status.message());
+  }
+}
+
+TEST(Status, StatusMessageCStringTest) {
+  {
+    absl::Status status = absl::OkStatus();
+    EXPECT_EQ(status.message(), "");
+    EXPECT_STREQ(absl::StatusMessageAsCStr(status), "");
+    EXPECT_EQ(status.message(), absl::StatusMessageAsCStr(status));
+    EXPECT_NE(absl::StatusMessageAsCStr(status), nullptr);
+  }
+  {
+    absl::Status status;
+    EXPECT_EQ(status.message(), "");
+    EXPECT_NE(absl::StatusMessageAsCStr(status), nullptr);
+    EXPECT_STREQ(absl::StatusMessageAsCStr(status), "");
+  }
+  {
+    absl::Status status(absl::StatusCode::kInternal, "message");
+    EXPECT_FALSE(status.ok());
+    EXPECT_EQ(absl::StatusCode::kInternal, status.code());
+    EXPECT_EQ("message", status.message());
+    EXPECT_STREQ("message", absl::StatusMessageAsCStr(status));
   }
 }
 
@@ -276,35 +306,75 @@ TEST(Status, TestForEachPayload) {
 }
 
 TEST(Status, ToString) {
-  absl::Status s(absl::StatusCode::kInternal, "fail");
-  EXPECT_EQ("INTERNAL: fail", s.ToString());
-  s.SetPayload("foo", absl::Cord("bar"));
-  EXPECT_EQ("INTERNAL: fail [foo='bar']", s.ToString());
-  s.SetPayload("bar", absl::Cord("\377"));
-  EXPECT_THAT(s.ToString(),
+  absl::Status status(absl::StatusCode::kInternal, "fail");
+  EXPECT_EQ("INTERNAL: fail", status.ToString());
+  status.SetPayload("foo", absl::Cord("bar"));
+  EXPECT_EQ("INTERNAL: fail [foo='bar']", status.ToString());
+  status.SetPayload("bar", absl::Cord("\377"));
+  EXPECT_THAT(status.ToString(),
               AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
                     HasSubstr("[bar='\\xff']")));
 }
 
 TEST(Status, ToStringMode) {
-  absl::Status s(absl::StatusCode::kInternal, "fail");
-  s.SetPayload("foo", absl::Cord("bar"));
-  s.SetPayload("bar", absl::Cord("\377"));
+  absl::Status status(absl::StatusCode::kInternal, "fail");
+  status.SetPayload("foo", absl::Cord("bar"));
+  status.SetPayload("bar", absl::Cord("\377"));
 
   EXPECT_EQ("INTERNAL: fail",
-            s.ToString(absl::StatusToStringMode::kWithNoExtraData));
+            status.ToString(absl::StatusToStringMode::kWithNoExtraData));
 
-  EXPECT_THAT(s.ToString(absl::StatusToStringMode::kWithPayload),
+  EXPECT_THAT(status.ToString(absl::StatusToStringMode::kWithPayload),
               AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
                     HasSubstr("[bar='\\xff']")));
 
-  EXPECT_THAT(s.ToString(absl::StatusToStringMode::kWithEverything),
+  EXPECT_THAT(status.ToString(absl::StatusToStringMode::kWithEverything),
               AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
                     HasSubstr("[bar='\\xff']")));
 
-  EXPECT_THAT(s.ToString(~absl::StatusToStringMode::kWithPayload),
+  EXPECT_THAT(status.ToString(~absl::StatusToStringMode::kWithPayload),
               AllOf(HasSubstr("INTERNAL: fail"), Not(HasSubstr("[foo='bar']")),
                     Not(HasSubstr("[bar='\\xff']"))));
+}
+
+TEST(Status, OstreamOperator) {
+  absl::Status status(absl::StatusCode::kInternal, "fail");
+  { std::stringstream stream;
+    stream << status;
+    EXPECT_EQ("INTERNAL: fail", stream.str());
+  }
+  status.SetPayload("foo", absl::Cord("bar"));
+  { std::stringstream stream;
+    stream << status;
+    EXPECT_EQ("INTERNAL: fail [foo='bar']", stream.str());
+  }
+  status.SetPayload("bar", absl::Cord("\377"));
+  { std::stringstream stream;
+    stream << status;
+    EXPECT_THAT(stream.str(),
+                AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
+                      HasSubstr("[bar='\\xff']")));
+  }
+}
+
+TEST(Status, AbslStringify) {
+  absl::Status status(absl::StatusCode::kInternal, "fail");
+  EXPECT_EQ("INTERNAL: fail", absl::StrCat(status));
+  EXPECT_EQ("INTERNAL: fail", absl::StrFormat("%v", status));
+  status.SetPayload("foo", absl::Cord("bar"));
+  EXPECT_EQ("INTERNAL: fail [foo='bar']", absl::StrCat(status));
+  status.SetPayload("bar", absl::Cord("\377"));
+  EXPECT_THAT(absl::StrCat(status),
+              AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
+                    HasSubstr("[bar='\\xff']")));
+}
+
+TEST(Status, OstreamEqStringify) {
+  absl::Status status(absl::StatusCode::kUnknown, "fail");
+  status.SetPayload("foo", absl::Cord("bar"));
+  std::stringstream stream;
+  stream << status;
+  EXPECT_EQ(stream.str(), absl::StrCat(status));
 }
 
 absl::Status EraseAndReturn(const absl::Status& base) {

@@ -38,11 +38,11 @@
 
 namespace WebCore {
 
+class BlendingKeyframe;
+class BlendingKeyframes;
 class CSSStyleSheet;
 class Document;
 class Element;
-class KeyframeList;
-class KeyframeValue;
 class RenderStyle;
 class RuleData;
 class RuleSet;
@@ -91,7 +91,7 @@ public:
 
     ResolvedStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&);
+    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, BlendingKeyframes&);
 
     WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
 
@@ -113,7 +113,7 @@ public:
 
     void addCurrentSVGFontFaceRules();
 
-    std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, KeyframeValue&);
+    std::unique_ptr<RenderStyle> styleForKeyframe(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, const StyleRuleKeyframe&, BlendingKeyframe&);
     bool isAnimationNameValid(const String&);
 
     // These methods will give back the set of rules that matched for a given element (or a pseudo-element).

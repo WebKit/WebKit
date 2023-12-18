@@ -745,6 +745,32 @@ void testCheckAdd64()
     CHECK(invoke<double>(*code, 9223372036854775807ll, 42ll) == static_cast<double>(9223372036854775807ll) + 42.0);
 }
 
+void testCheckAdd64Range()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* x0  = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* b1  = root->appendNew<Value>(proc, JSC::B3::BitAnd, Origin(), x0, root->appendNew<Const64Value>(proc, Origin(), 0xffffffff00000000LL));
+    Value* b2  = root->appendNew<Value>(proc, JSC::B3::Sub, Origin(), b1, root->appendNew<Const64Value>(proc, Origin(), 0xffffffff00000000LL));
+    Value* b3  = root->appendNew<Value>(proc, JSC::B3::ZShr, Origin(), b2, root->appendNew<Const32Value>(proc, Origin(), 28));
+    Value* b4  = root->appendNew<Const64Value>(proc, Origin(), 0x7fffffffffffff00LL);
+
+    CheckValue* checkAdd = root->appendNew<CheckValue>(proc, CheckAdd, Origin(), b3, b4);
+    checkAdd->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+            jit.emitFunctionEpilogue();
+            jit.ret();
+        });
+    root->appendNewControlValue(proc, Return, Origin(), checkAdd);
+
+    auto code = compileProc(proc);
+
+    CHECK(invoke<int64_t>(*code, 0x8ffffffe00000000LL) == 42.0);
+}
+
 void testCheckAddFold(int a, int b)
 {
     Procedure proc;

@@ -1,0 +1,7 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS internals.acceleratedAnimationsForElement(element).length became 1
+PASS internals.acceleratedAnimationsForElement(element).length became 2
+PASS internals.acceleratedAnimationsForElement(element).length became 0
+

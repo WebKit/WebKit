@@ -67,7 +67,7 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 
 bool ContentChangeObserver::isContentChangeObserverEnabled()
 {
-    return m_document.settings().contentChangeObserverEnabled() && !m_document.quirks().shouldDisableContentChangeObserver();
+    return m_document.settings().contentChangeObserverEnabled();
 }
 
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
@@ -226,7 +226,7 @@ void ContentChangeObserver::completeDurationBasedContentObservation()
     adjustObservedState(Event::EndedFixedObservationTimeWindow);
 }
 
-static bool isObservedPropertyForTransition(AnimatableProperty property)
+static bool isObservedPropertyForTransition(AnimatableCSSProperty property)
 {
     return WTF::switchOn(property,
         [] (CSSPropertyID propertyId) {

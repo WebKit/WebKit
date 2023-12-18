@@ -136,7 +136,7 @@ ExceptionOr<size_t> CryptoKeyHMAC::getKeyLength(const CryptoAlgorithmParameters&
     if (result)
         return result;
 
-    return Exception { TypeError };
+    return Exception { ExceptionCode::TypeError };
 }
 
 auto CryptoKeyHMAC::algorithm() const -> KeyAlgorithm

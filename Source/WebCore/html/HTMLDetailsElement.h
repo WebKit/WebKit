@@ -44,7 +44,6 @@ public:
 
     void toggleOpen();
 
-    bool isOpen() const { return m_isOpen; }
     bool isActiveSummary(const HTMLSummaryElement&) const;
 
     void queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState);
@@ -56,13 +55,15 @@ public:
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup();
+    void ensureDetailsExclusivityAfterMutation();
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
     bool isInteractiveContent() const final { return true; }
 
-    bool m_isOpen { false };
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_summarySlot;
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
     RefPtr<HTMLSlotElement> m_defaultSlot;

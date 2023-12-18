@@ -27,8 +27,12 @@
 #include "SpaceTimeMutatorScheduler.h"
 
 #include "JSCInlines.h"
+#include <wtf/TZoneMallocInlines.h>
+
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpaceTimeMutatorScheduler);
 
 // The scheduler will often make decisions based on state that is in flux. It will be fine so
 // long as multiple uses of the same value all see the same value. We wouldn't get this for free,
@@ -51,7 +55,7 @@ private:
     double m_bytesAllocatedThisCycle;
 };
 
-SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler(Heap& heap)
+SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler(JSC::Heap& heap)
     : m_heap(heap)
     , m_period(Seconds::fromMilliseconds(Options::concurrentGCPeriodMS()))
 {

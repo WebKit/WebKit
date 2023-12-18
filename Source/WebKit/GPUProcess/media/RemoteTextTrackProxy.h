@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "MessageReceiver.h"
-#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/TrackBase.h>
@@ -50,18 +49,19 @@ class RemoteTextTrackProxy final
     : public ThreadSafeRefCounted<RemoteTextTrackProxy, WTF::DestructionThread::Main>
     , private WebCore::InbandTextTrackPrivateClient {
 public:
-    static Ref<RemoteTextTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, WebCore::InbandTextTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
+    static Ref<RemoteTextTrackProxy> create(GPUConnectionToWebProcess& connectionToWebProcess, WebCore::InbandTextTrackPrivate& trackPrivate, WebCore::MediaPlayerIdentifier mediaPlayerIdentifier)
     {
-        return adoptRef(*new RemoteTextTrackProxy(connectionToWebProcess, identifier, trackPrivate, mediaPlayerIdentifier));
+        return adoptRef(*new RemoteTextTrackProxy(connectionToWebProcess, trackPrivate, mediaPlayerIdentifier));
     }
 
     virtual ~RemoteTextTrackProxy();
 
-    TrackPrivateRemoteIdentifier identifier() const { return m_identifier; }
+    WebCore::TrackID id() const { return m_trackPrivate->id(); }
     void setMode(WebCore::InbandTextTrackPrivate::Mode mode) { m_trackPrivate->setMode(mode); }
+    bool operator==(const WebCore::InbandTextTrackPrivate& track) const { return track == m_trackPrivate.get(); }
 
 private:
-    RemoteTextTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::InbandTextTrackPrivate&, WebCore::MediaPlayerIdentifier);
+    RemoteTextTrackProxy(GPUConnectionToWebProcess&, WebCore::InbandTextTrackPrivate&, WebCore::MediaPlayerIdentifier);
 
     // InbandTextTrackPrivateClient
     virtual void addDataCue(const MediaTime& start, const MediaTime& end, const void*, unsigned);
@@ -81,7 +81,7 @@ private:
     virtual void parseWebVTTCueData(WebCore::ISOWebVTTCue&&);
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomString&) final;
+    void idChanged(WebCore::TrackID) final;
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;
@@ -90,8 +90,8 @@ private:
     void configurationChanged();
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
-    TrackPrivateRemoteIdentifier m_identifier;
     Ref<WebCore::InbandTextTrackPrivate> m_trackPrivate;
+    WebCore::TrackID m_id;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
 };
 

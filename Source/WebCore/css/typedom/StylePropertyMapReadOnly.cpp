@@ -67,21 +67,19 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPt
                 auto styleValue = CSSStyleValueFactory::constructStyleValueForCustomPropertySyntaxValue(listValue);
                 if (!styleValue)
                     return { };
-                result.uncheckedAppend(WTFMove(styleValue));
+                result.append(WTFMove(styleValue));
             }
             return result;
         }
     }
 
-    if (!is<CSSValueList>(*value) || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
+    auto* valueList = dynamicDowncast<CSSValueList>(*value);
+    if (!valueList || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
         return { StylePropertyMapReadOnly::reifyValue(WTFMove(value), propertyID, document) };
 
-    auto& valueList = downcast<CSSValueList>(*value);
-    Vector<RefPtr<CSSStyleValue>> result;
-    result.reserveInitialCapacity(valueList.length());
-    for (auto& item : valueList)
-        result.uncheckedAppend(StylePropertyMapReadOnly::reifyValue(Ref { const_cast<CSSValue&>(item) }, propertyID, document));
-    return result;
+    return WTF::map(*valueList, [&](auto& item) {
+        return StylePropertyMapReadOnly::reifyValue(Ref { const_cast<CSSValue&>(item) }, propertyID, document);
+    });
 }
 
 StylePropertyMapReadOnly::Iterator::Iterator(StylePropertyMapReadOnly& map, ScriptExecutionContext* context)

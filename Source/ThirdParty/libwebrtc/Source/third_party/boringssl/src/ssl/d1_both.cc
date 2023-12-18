@@ -184,11 +184,10 @@ static UniquePtr<hm_fragment> dtls1_hm_fragment_new(
       return nullptr;
     }
     size_t bitmask_len = (msg_hdr->msg_len + 7) / 8;
-    frag->reassembly = (uint8_t *)OPENSSL_malloc(bitmask_len);
+    frag->reassembly = (uint8_t *)OPENSSL_zalloc(bitmask_len);
     if (frag->reassembly == NULL) {
       return nullptr;
     }
-    OPENSSL_memset(frag->reassembly, 0, bitmask_len);
   }
 
   return frag;

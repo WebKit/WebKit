@@ -33,6 +33,7 @@
 #import "APIUIClient.h"
 #import "GlobalFindInPageState.h"
 #import "Logging.h"
+#import "MessageSenderInlines.h"
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
 #import "WKObject.h"
@@ -814,7 +815,9 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         return;
 
     // Disable screen updates to make sure the layers for both views resize in sync.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [inspectorView.window disableScreenUpdatesUntilFlush];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [inspectorView setFrame:newInspectorViewFrame];
     [inspectedView setFrame:inspectedViewFrame];

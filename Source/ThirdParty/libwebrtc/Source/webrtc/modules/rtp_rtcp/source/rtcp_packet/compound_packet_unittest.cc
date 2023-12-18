@@ -52,7 +52,7 @@ TEST(RtcpCompoundPacketTest, AppendPacket) {
 
   rtc::Buffer packet = compound.Build();
   RtcpPacketParser parser;
-  parser.Parse(packet.data(), packet.size());
+  parser.Parse(packet);
   EXPECT_EQ(1, parser.receiver_report()->num_packets());
   EXPECT_EQ(kSenderSsrc, parser.receiver_report()->sender_ssrc());
   EXPECT_EQ(1u, parser.receiver_report()->report_blocks().size());
@@ -80,7 +80,7 @@ TEST(RtcpCompoundPacketTest, AppendPacketWithOwnAppendedPacket) {
 
   rtc::Buffer packet = root.Build();
   RtcpPacketParser parser;
-  parser.Parse(packet.data(), packet.size());
+  parser.Parse(packet);
   EXPECT_EQ(1, parser.sender_report()->num_packets());
   EXPECT_EQ(1, parser.receiver_report()->num_packets());
   EXPECT_EQ(1u, parser.receiver_report()->report_blocks().size());
@@ -108,7 +108,7 @@ TEST(RtcpCompoundPacketTest, BuildWithInputBuffer) {
   EXPECT_CALL(callback, Call(_))
       .WillOnce(Invoke([&](rtc::ArrayView<const uint8_t> packet) {
         RtcpPacketParser parser;
-        parser.Parse(packet.data(), packet.size());
+        parser.Parse(packet);
         EXPECT_EQ(1, parser.receiver_report()->num_packets());
         EXPECT_EQ(1u, parser.receiver_report()->report_blocks().size());
         EXPECT_EQ(1, parser.fir()->num_packets());
@@ -136,14 +136,14 @@ TEST(RtcpCompoundPacketTest, BuildWithTooSmallBuffer_FragmentedSend) {
   EXPECT_CALL(callback, Call(_))
       .WillOnce(Invoke([&](rtc::ArrayView<const uint8_t> packet) {
         RtcpPacketParser parser;
-        parser.Parse(packet.data(), packet.size());
+        parser.Parse(packet);
         EXPECT_EQ(1, parser.receiver_report()->num_packets());
         EXPECT_EQ(1U, parser.receiver_report()->report_blocks().size());
         EXPECT_EQ(0, parser.fir()->num_packets());
       }))
       .WillOnce(Invoke([&](rtc::ArrayView<const uint8_t> packet) {
         RtcpPacketParser parser;
-        parser.Parse(packet.data(), packet.size());
+        parser.Parse(packet);
         EXPECT_EQ(0, parser.receiver_report()->num_packets());
         EXPECT_EQ(0U, parser.receiver_report()->report_blocks().size());
         EXPECT_EQ(1, parser.fir()->num_packets());

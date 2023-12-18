@@ -40,9 +40,9 @@ public:
     PAL_EXPORT TextEncoding(StringView name);
     PAL_EXPORT TextEncoding(const String& name);
 
-    bool isValid() const { return m_name; }
-    const char* name() const { return m_name; }
-    PAL_EXPORT const char* domName() const; // name exposed via DOM
+    bool isValid() const { return !m_name.isNull(); }
+    ASCIILiteral name() const { return m_name; }
+    PAL_EXPORT ASCIILiteral domName() const; // name exposed via DOM
     bool usesVisualOrdering() const;
     bool isJapanese() const;
 
@@ -62,7 +62,7 @@ private:
     bool isNonByteBasedEncoding() const;
     bool isUTF7Encoding() const;
 
-    const char* m_name { nullptr };
+    ASCIILiteral m_name;
     UChar m_backslashAsCurrencySymbol;
 };
 

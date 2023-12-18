@@ -705,6 +705,12 @@ TEST_P(PacketBufferH264ParameterizedTest, OneFrameMaxSeqNum) {
               StartSeqNumsAre(65534));
 }
 
+TEST_P(PacketBufferH264ParameterizedTest, InsertTooOldPackets) {
+  InsertH264(4660, kKeyFrame, kFirst, kNotLast, 1000);
+  InsertH264(37429, kDeltaFrame, kFirst, kNotLast, 1000);
+  InsertH264(4662, kKeyFrame, kFirst, kLast, 1000);
+}
+
 TEST_P(PacketBufferH264ParameterizedTest, ClearMissingPacketsOnKeyframe) {
   InsertH264(0, kKeyFrame, kFirst, kLast, 1000);
   InsertH264(2, kKeyFrame, kFirst, kLast, 3000);

@@ -17,7 +17,7 @@ PASS No cookie returned for partial path match
 PASS No cookie returned for partial path match, return cookie for default path
 PASS Return cookie for path= / (whitespace after equals)
 PASS No cookie returned for case mismatched path
-FAIL Return cookie A on path match, no cookie returned for path mismatch (plus whitespace) assert_equals: The cookie was set as expected. expected "testA=19" but got ""
+PASS Return cookie A on path match, no cookie returned for path mismatch (plus whitespace)
 PASS No cookie returned for mismatched path (after bare path=)
-FAIL Return cookie for bare path= (after mismatched path) assert_equals: The cookie was set as expected. expected "test=21" but got "testA=19; testB=19; test=21"
+PASS Return cookie for bare path= (after mismatched path)
 

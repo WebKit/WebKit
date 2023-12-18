@@ -46,14 +46,14 @@ namespace WebKit {
 void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::TestWithStream::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.connection(), decoder, this, &TestWithStream::sendString);
+        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.protectedConnection(), decoder, this, &TestWithStream::sendString);
     if (decoder.messageName() == Messages::TestWithStream::SendStringAsync::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection.connection(), decoder, this, &TestWithStream::sendStringAsync);
+        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection.protectedConnection(), decoder, this, &TestWithStream::sendStringAsync);
     if (decoder.messageName() == Messages::TestWithStream::CallWithIdentifier::name())
-        return IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection.connection(), decoder, this, &TestWithStream::callWithIdentifier);
+        return IPC::handleMessageAsyncWithReplyID<Messages::TestWithStream::CallWithIdentifier>(connection.protectedConnection(), decoder, this, &TestWithStream::callWithIdentifier);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.connection(), decoder, this, &TestWithStream::sendMachSendRight);
+        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.protectedConnection(), decoder, this, &TestWithStream::sendMachSendRight);
 #endif
     if (decoder.messageName() == Messages::TestWithStream::SendStringSync::name())
         return IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, decoder, this, &TestWithStream::sendStringSync);
@@ -66,7 +66,7 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)
-    if (connection.connection().ignoreInvalidMessageForTesting())
+    if (connection.protectedConnection()->ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());

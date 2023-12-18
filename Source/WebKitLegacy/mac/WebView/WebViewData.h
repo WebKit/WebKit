@@ -33,6 +33,7 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 #import <WebCore/AlternativeTextClient.h>
+#import <WebCore/Page.h>
 #import <WebCore/WebCoreKeyboardUIMode.h>
 #import <wtf/HashMap.h>
 #import <wtf/Lock.h>
@@ -47,7 +48,6 @@
 namespace WebCore {
 class AlternativeTextUIController;
 class HistoryItem;
-class Page;
 class RunLoopObserver;
 class TextIndicatorWindow;
 class ValidationBubble;
@@ -119,7 +119,7 @@ class WebSelectionServiceController;
 // FIXME: This should be renamed to WebViewData.
 @interface WebViewPrivate : NSObject {
 @public
-    WebCore::Page* page;
+    RefPtr<WebCore::Page> page;
     RefPtr<WebViewGroup> group;
 
     id UIDelegate;

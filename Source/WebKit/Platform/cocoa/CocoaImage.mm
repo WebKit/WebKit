@@ -34,6 +34,8 @@
 #import <CoreServices/CoreServices.h>
 #endif
 
+#import <ImageIO/ImageIO.h>
+
 namespace WebKit {
 
 RetainPtr<NSData> transcode(CGImageRef image, CFStringRef typeIdentifier)

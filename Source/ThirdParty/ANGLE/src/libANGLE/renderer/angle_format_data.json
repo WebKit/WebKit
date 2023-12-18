@@ -11,7 +11,7 @@
     "channelStruct": "B8G8R8X8"
   },
   "R8G8B8X8_UNORM": {
-    "glInternalFormat": "GL_RGBA8",
+    "glInternalFormat": "GL_RGBX8_ANGLE",
     "channelStruct": "R8G8B8X8"
   },
   "R9G9B9E5_SHAREDEXP": {

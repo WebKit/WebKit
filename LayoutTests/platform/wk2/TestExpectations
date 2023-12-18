@@ -324,7 +324,6 @@ fast/replaced/applet-disabled-positioned.html
 fast/replaced/applet-rendering-java-disabled.html
 
 # WebKitTestRunner needs testRunner.displayInvalidatedRegion
-compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
 # eventSender.clearKillRing() is unimplemented
@@ -688,12 +687,12 @@ webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-cross-origi
 webkit.org/b/115274 http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.py [ Skip ]
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
-[ Debug ] ipc/restrictedendpoints/deny-access-testOnlyIPC.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-modelElement.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Crash ]
-[ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Crash ]
+# They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
+[ Debug ] ipc/restrictedendpoints/deny-access-testOnlyIPC.html [ Skip ]
+[ Debug ] ipc/restrictedendpoints/deny-access-webGPU.html [ Skip ]
+[ Debug ] ipc/restrictedendpoints/deny-access-attachmentElement.html [ Skip ]
+[ Debug ] ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
+[ Debug ] ipc/restrictedendpoints/deny-access-updateQuotaBasedOnSpaceUsageForTesting.html [ Skip ]
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
@@ -874,20 +873,14 @@ webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.an
 webkit.org/b/253533 imported/w3c/web-platform-tests/fetch/api/basic/status.h2.any.worker.html [ Pass Failure ]
 webkit.org/b/253533 imported/w3c/web-platform-tests/xhr/status.h2.window.html [ Pass Failure ]
 
-webkit.org/b/259409 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Pass Failure ]
-
 webkit.org/b/259482 fast/media/managed-media-source-open-crash.html [ Pass Failure ]
 
-webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-element-with-no-renderer-crash.html [ Pass Failure ]
-
-webkit.org/b/260834 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ Pass Failure ]
-
 webkit.org/b/260926 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-submit-button-click.html [ Pass Failure ]
-
-webkit.org/b/261920 fast/mediastream/video-srcObject-set-twice.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/262088 [ Debug ] imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.https.window.html [ Pass Failure ]
 
 webkit.org/b/262157 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
+
+webkit.org/b/265700 webrtc/multi-video.html [ Pass Failure ]

@@ -1,0 +1,10 @@
+Should be green Should be green Should be green Should be green Should be green Should be green Should be green
+
+PASS CSS Selectors Test: :placeholder-shown matching
+FAIL CSS Selectors Test: :placeholder-shown matching 1 assert_equals: Placeholder attribute without value expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL CSS Selectors Test: :placeholder-shown matching 2 assert_equals: Placeholder attribute - empty string expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS CSS Selectors Test: :placeholder-shown matching 3
+PASS CSS Selectors Test: :placeholder-shown matching 4
+PASS CSS Selectors Test: :placeholder-shown matching 5
+PASS CSS Selectors Test: :placeholder-shown matching 6
+

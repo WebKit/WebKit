@@ -1,24 +1,72 @@
+<!DOCTYPE html>
 <style>
-    div.outer { border-width: 0; border-color: green; border-style: solid; background-color: red; width: 100px; height: 100px; -webkit-column-gap: 0; -webkit-columns: 2; }
-    div.outer div { background-color: green; }
+    .test { position: absolute; }
+    .pos1 { left: 50px; top: 50px;}
+    .pos2 { left: 250px; top: 50px;}
+    .pos3 { left: 50px; top: 300px;}
+    .pos4 { left: 250px; top: 300px;}
+    .multicol {
+        border: 0 solid black;
+        background-color: red;
+        width: 100px;
+        height: 100px;
+        -webkit-column-gap: 0;
+        -webkit-columns: 2;
+    }
+    .multicol > div {
+        background-color: green;
+    }
+    .horizontal_bt {
+        -webkit-writing-mode: horizontal-bt;
+        border-top-width: 50px;
+    }
+    .horizontal_tb {
+        -webkit-writing-mode: horizontal-tb;
+        border-bottom-width: 50px;
+    }
+    .vertical_rl {
+        -webkit-writing-mode: vertical-rl;
+        border-left-width: 50px;
+    }
+    .vertical_lr {
+        -webkit-writing-mode: vertical-lr;
+        border-right-width: 50px;
+    }
+    .horizontal_bt > div, .horizontal_tb > div {
+        height: 100px;
+    }
+    .vertical_lr > div, .vertical_rl > div {
+        width: 100px;
+    }
+    .break_before {
+         -webkit-column-break-before: always;
+    }
 </style>
-
-<div class="outer" style="-webkit-writing-mode: horizontal-bt; border-top-width: 50px;">
-    <div style="height: 100px;"></div>
-    <div style="height: 100px; -webkit-column-break-before: always;"></div>
+<p>
+    There should be four green squares below, plus a large black border on one side, as
+    indicated. There should be no red.
+</p>
+<div class="test pos1">
+    <p>Border above</p>
+    <div class="multicol horizontal_bt">
+        <div></div><div class="break_before"></div>
+    </div>
 </div>
-
-<div class="outer" style="-webkit-writing-mode: horizontal-tb; border-bottom-width: 50px;">
-    <div style="height: 100px;"></div>
-    <div style="height: 100px; -webkit-column-break-before: always;"></div>
+<div class="test pos2">
+    <p>Border below</p>
+    <div class="multicol horizontal_tb">
+        <div></div><div class="break_before"></div>
+    </div>
 </div>
-
-<div class="outer" style="-webkit-writing-mode: vertical-rl; border-left-width: 50px;">
-    <div style="width: 100px;"></div>
-    <div style="width: 100px; -webkit-column-break-before: always;"></div>
+<div class="test pos3">
+    <p>Border left</p>
+    <div class="multicol vertical_rl">
+        <div></div><div class="break_before"></div>
+    </div>
 </div>
-
-<div class="outer" style="-webkit-writing-mode: vertical-lr; border-right-width: 50px;">
-    <div style="width: 100px;"></div>
-    <div style="width: 100px; -webkit-column-break-before: always;"></div>
+<div class="test pos4">
+    <p>Border right</p>
+    <div class="multicol vertical_lr">
+        <div></div><div class="break_before"></div>
+    </div>
 </div>

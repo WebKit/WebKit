@@ -22,6 +22,7 @@ PASS Test that encodingInfo returns supported true for the codec video/H264; lev
 PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=4d001f returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/H264; level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=4d001f returned by RTCRtpSender.getCapabilities()
+PASS Test that encodingInfo returns supported true for the codec video/H265 returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/AV1 returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/VP8 returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec video/VP9; profile-id=0 returned by RTCRtpSender.getCapabilities()

@@ -252,7 +252,7 @@ void InsertParagraphSeparatorCommand::doApply()
         || isTableCell(*startBlock)
         || is<HTMLFormElement>(*startBlock)
         // FIXME: If the node is hidden, we don't have a canonical position so we will do the wrong thing for tables and <hr>. https://bugs.webkit.org/show_bug.cgi?id=40342
-        || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->renderer() && canonicalPos.deprecatedNode()->renderer()->isTable())
+        || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->renderer() && canonicalPos.deprecatedNode()->renderer()->isRenderTable())
         || (!canonicalPos.isNull() && canonicalPos.deprecatedNode()->hasTagName(hrTag))) {
         applyCommandToComposite(InsertLineBreakCommand::create(WTFMove(document)));
         return;

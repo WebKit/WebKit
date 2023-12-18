@@ -193,7 +193,9 @@ OPENSSL_EXPORT int DH_generate_parameters_ex(DH *dh, int prime_bits,
 // Diffie-Hellman operations.
 
 // DH_generate_key generates a new, random, private key and stores it in
-// |dh|. It returns one on success and zero on error.
+// |dh|, if |dh| does not already have a private key. Otherwise, it updates
+// |dh|'s public key to match the private key. It returns one on success and
+// zero on error.
 OPENSSL_EXPORT int DH_generate_key(DH *dh);
 
 // DH_compute_key_padded calculates the shared key between |dh| and |peers_key|
@@ -351,5 +353,6 @@ BSSL_NAMESPACE_END
 #define DH_R_NO_PRIVATE_VALUE 103
 #define DH_R_DECODE_ERROR 104
 #define DH_R_ENCODE_ERROR 105
+#define DH_R_INVALID_PARAMETERS 106
 
 #endif  // OPENSSL_HEADER_DH_H

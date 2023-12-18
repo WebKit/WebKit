@@ -239,11 +239,6 @@ static bool laContextRequested = false;
     return self;
 }
 
-- (void)_webView:(WKWebView *)webView requestWebAuthenticationNoGestureForOrigin:(WKSecurityOrigin *)orgin completionHandler:(void (^)(BOOL))completionHandler
-{
-    completionHandler(webAuthenticationPanelRequestNoGesture);
-}
-
 - (void)_webView:(WKWebView *)webView runWebAuthenticationPanel:(_WKWebAuthenticationPanel *)panel initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(_WKWebAuthenticationPanelResult))completionHandler
 {
     webAuthenticationPanelRan = true;
@@ -1364,23 +1359,6 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
     cleanUpKeychain(emptyString());
 }
 
-TEST(WebAuthenticationPanel, LAMakeCredentialNoMockNoUserGesture)
-{
-    reset();
-    webAuthenticationPanelRequestNoGesture = false;
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-no-mock" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
-    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    [webView focus];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"This request has been cancelled by the user."];
-}
-
 #if PLATFORM(MAC)
 
 TEST(WebAuthenticationPanel, LAGetAssertion)
@@ -1586,11 +1564,11 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
     [options setTimeout:@120];
 
-    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
-    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
-    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
-    auto hybrid = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportHybrid]);
-    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
+    RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
+    RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
+    RetainPtr hybrid = [NSNumber numberWithInt:_WKWebAuthenticationTransportHybrid];
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get(), hybrid.get() ]];
     [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1658,10 +1636,10 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
     [options setTimeout:@120];
 
-    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
-    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
-    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
-    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
+    RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
+    RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
     [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1731,7 +1709,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, NotAllowedError);
+        EXPECT_EQ(error.code, static_cast<long>(WebCore::ExceptionCode::NotAllowedError));
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -1771,7 +1749,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLA)
         EXPECT_WK_STREQ([[NSString alloc] initWithData:response.clientDataJSON encoding:NSUTF8StringEncoding], "{\"type\":\"webauthn.create\",\"challenge\":\"AQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAECAwQ\",\"origin\":\"https://example.com\"}");
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
-        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
+        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAPv8MAcVTk7MjAtuAgVX170AFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -1809,7 +1787,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLAClientDataHashMediation)
         // This is the sha1 hash of the public key of testES256PrivateKeyBase64.
         EXPECT_WK_STREQ([response.rawId base64EncodedStringWithOptions:0], "SMSXHngF7hEOsElA73C3RY+8bR4=");
         EXPECT_NULL(response.extensions);
-        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
+        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAPv8MAcVTk7MjAtuAgVX170AFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -1842,7 +1820,7 @@ TEST(WebAuthenticationPanel, MakeCredentialLAAttestationFalback)
 
         EXPECT_NOT_NULL(response);
         // {"fmt": "none", "attStmt": {}, "authData": ...}
-        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAAAAAAAAAAAAAAAAAAAAAAAAFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
+        EXPECT_WK_STREQ([response.attestationObject base64EncodedStringWithOptions:0], "o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYo3mm9u6vuaVeN4wRgDTidR5oL6ufLTCrE9ISVYbOGUdFAAAAAPv8MAcVTk7MjAtuAgVX170AFEjElx54Be4RDrBJQO9wt0WPvG0epQECAyYgASFYIDj/zxSkzKgaBuS3cdWDF558of8AaIpgFpsjF/Qm1749IlggVBJPgqUIwfhWHJ91nb7UPH76c0+WFOzZKslPyyFse4g=");
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -1893,16 +1871,16 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
     auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
     [options setTimeout:@120];
 
-    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
-    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
-    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
-    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
+    RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
+    RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
     [options setAllowCredentials:@[ credential.get(), credential.get() ]];
 
     [options setUserVerification:_WKUserVerificationRequirementRequired];
 
-    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+    RetainPtr extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
     [extensions setAppid:@"https//www.example.com/fido"];
     [options setExtensions:extensions.get()];
 
@@ -1939,7 +1917,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, NotAllowedError);
+        EXPECT_EQ(error.code, static_cast<long>(WebCore::ExceptionCode::NotAllowedError));
     }];
     Util::run(&webAuthenticationPanelRan);
 }
@@ -2113,7 +2091,7 @@ TEST(WebAuthenticationPanel, GetAssertionCrossPlatform)
 
         EXPECT_NULL(response);
         EXPECT_EQ(error.domain, WKErrorDomain);
-        EXPECT_EQ(error.code, NotAllowedError);
+        EXPECT_EQ(error.code, static_cast<long>(WebCore::ExceptionCode::NotAllowedError));
     }];
     Util::run(&webAuthenticationPanelRan);
 }

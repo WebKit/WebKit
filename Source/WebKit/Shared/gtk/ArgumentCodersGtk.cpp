@@ -195,50 +195,50 @@ static WARN_UNUSED_RETURN bool decodeGKeyFile(Decoder& decoder, GUniquePtr<GKeyF
     return true;
 }
 
-void encode(Encoder& encoder, GtkPrintSettings* settings)
+void ArgumentCoder<GRefPtr<GtkPrintSettings>>::encode(Encoder& encoder, const GRefPtr<GtkPrintSettings>& argument)
 {
-    GRefPtr<GtkPrintSettings> printSettings = settings ? settings : adoptGRef(gtk_print_settings_new());
+    GRefPtr<GtkPrintSettings> printSettings = argument ? argument : adoptGRef(gtk_print_settings_new());
     GUniquePtr<GKeyFile> keyFile(g_key_file_new());
     gtk_print_settings_to_key_file(printSettings.get(), keyFile.get(), "Print Settings");
     encodeGKeyFile(encoder, keyFile.get());
 }
 
-bool decode(Decoder& decoder, GRefPtr<GtkPrintSettings>& printSettings)
+std::optional<GRefPtr<GtkPrintSettings>> ArgumentCoder<GRefPtr<GtkPrintSettings>>::decode(Decoder& decoder)
 {
     GUniquePtr<GKeyFile> keyFile;
     if (!decodeGKeyFile(decoder, keyFile))
-        return false;
+        return std::nullopt;
 
-    printSettings = adoptGRef(gtk_print_settings_new());
+    GRefPtr<GtkPrintSettings> printSettings = adoptGRef(gtk_print_settings_new());
     if (!keyFile)
-        return true;
+        return printSettings;
 
     if (!gtk_print_settings_load_key_file(printSettings.get(), keyFile.get(), "Print Settings", nullptr))
-        printSettings = nullptr;
+        return std::nullopt;
 
     return printSettings;
 }
 
-void encode(Encoder& encoder, GtkPageSetup* setup)
+void ArgumentCoder<GRefPtr<GtkPageSetup>>::encode(Encoder& encoder, const GRefPtr<GtkPageSetup>& argument)
 {
-    GRefPtr<GtkPageSetup> pageSetup = setup ? setup : adoptGRef(gtk_page_setup_new());
+    GRefPtr<GtkPageSetup> pageSetup = argument ? argument : adoptGRef(gtk_page_setup_new());
     GUniquePtr<GKeyFile> keyFile(g_key_file_new());
     gtk_page_setup_to_key_file(pageSetup.get(), keyFile.get(), "Page Setup");
     encodeGKeyFile(encoder, keyFile.get());
 }
 
-bool decode(Decoder& decoder, GRefPtr<GtkPageSetup>& pageSetup)
+std::optional<GRefPtr<GtkPageSetup>> ArgumentCoder<GRefPtr<GtkPageSetup>>::decode(Decoder& decoder)
 {
     GUniquePtr<GKeyFile> keyFile;
     if (!decodeGKeyFile(decoder, keyFile))
-        return false;
+        return std::nullopt;
 
-    pageSetup = adoptGRef(gtk_page_setup_new());
+    GRefPtr<GtkPageSetup> pageSetup = adoptGRef(gtk_page_setup_new());
     if (!keyFile)
-        return true;
+        return pageSetup;
 
     if (!gtk_page_setup_load_key_file(pageSetup.get(), keyFile.get(), "Page Setup", nullptr))
-        pageSetup = nullptr;
+        return std::nullopt;
 
     return pageSetup;
 }

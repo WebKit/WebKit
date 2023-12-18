@@ -71,3 +71,5 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(String);

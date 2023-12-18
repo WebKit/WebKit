@@ -27,7 +27,6 @@
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HTMLAnchorElement.h"
-#include "HTMLFontElement.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineTextBoxStyle.h"
 #include "RenderBlock.h"
@@ -67,6 +66,9 @@ namespace WebCore {
  */
 static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& rect, WavyStrokeParameters wavyStrokeParameters)
 {
+    if (rect.isEmpty() || !wavyStrokeParameters.step)
+        return;
+
     FloatPoint p1 = rect.minXMinYCorner();
     FloatPoint p2 = rect.maxXMinYCorner();
 
@@ -282,9 +284,9 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
         applyShadowIfNeeded();
 
         // FIXME: Add support to handle left/right case
-        if (decorationType.contains(TextDecorationLine::Underline))
+        if (decorationType.contains(TextDecorationLine::Underline) && !underlineRect.isEmpty())
             paintDecoration(TextDecorationLine::Underline, decorationStyle.underline.decorationStyle, decorationStyle.underline.color, underlineRect);
-        if (decorationType.contains(TextDecorationLine::Overline))
+        if (decorationType.contains(TextDecorationLine::Overline) && !overlineRect.isEmpty())
             paintDecoration(TextDecorationLine::Overline, decorationStyle.overline.decorationStyle, decorationStyle.overline.color, overlineRect);
         // We only want to paint the shadow, hence the transparent color, not the actual line-through,
         // which will be painted in paintForegroundDecorations().
@@ -295,7 +297,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
     if (clipping)
         m_context.restore();
     else if (m_shadow)
-        m_context.clearShadow();
+        m_context.clearDropShadow();
 }
 
 void TextDecorationPainter::paintForegroundDecorations(const ForegroundDecorationGeometry& foregroundDecorationGeometry, const Styles& decorationStyle)
@@ -359,7 +361,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         const auto& style = styleForRenderer(*current);
         extractDecorations(style, style.textDecorationLine());
 
-        if (current->isRubyText())
+        if (current->isRenderRubyText() || current->style().display() == DisplayType::RubyAnnotation)
             return;
 
         current = current->parent();
@@ -369,7 +371,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         if (remainingDecorations.isEmpty())
             break;
 
-    } while (current && !is<HTMLAnchorElement>(current->node()) && !is<HTMLFontElement>(current->node()));
+    } while (current && !is<HTMLAnchorElement>(current->node()));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (!remainingDecorations.isEmpty() && current)

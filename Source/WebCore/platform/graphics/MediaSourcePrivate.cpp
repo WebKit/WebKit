@@ -28,15 +28,18 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
+#include "SourceBufferPrivate.h"
 
 namespace WebCore {
 
-bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges& ranges) const
+bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime) const
 {
-    if (currentTime > duration)
+    if (currentTime >= duration())
         return false;
 
+    auto& ranges = buffered();
     MediaTime nearest = ranges.nearest(currentTime);
     if (abs(nearest - currentTime) > timeFudgeFactor())
         return false;
@@ -46,11 +49,109 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const Media
         return false;
 
     MediaTime localEnd = ranges.end(found);
-    if (localEnd == duration)
+    if (localEnd == duration())
         return true;
 
     return localEnd - currentTime > timeFudgeFactor();
 }
+
+MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
+    : m_client(client)
+{
+}
+
+MediaSourcePrivate::~MediaSourcePrivate() = default;
+
+RefPtr<MediaSourcePrivateClient> MediaSourcePrivate::client() const
+{
+    return m_client.get();
+}
+
+const MediaTime& MediaSourcePrivate::duration() const
+{
+    return m_duration;
+}
+
+Ref<MediaTimePromise> MediaSourcePrivate::waitForTarget(const SeekTarget& target)
+{
+    if (RefPtr client = this->client())
+        return client->waitForTarget(target);
+    return MediaTimePromise::createAndReject(PlatformMediaError::ClientDisconnected);
+}
+
+Ref<MediaPromise> MediaSourcePrivate::seekToTime(const MediaTime& time)
+{
+    if (RefPtr client = this->client())
+        return client->seekToTime(time);
+    return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
+}
+
+void MediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)
+{
+    ASSERT(m_sourceBuffers.contains(&sourceBuffer));
+
+    size_t pos = m_activeSourceBuffers.find(&sourceBuffer);
+    if (pos != notFound) {
+        m_activeSourceBuffers.remove(pos);
+        notifyActiveSourceBuffersChanged();
+    }
+    m_sourceBuffers.removeFirst(&sourceBuffer);
+}
+
+void MediaSourcePrivate::sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate& sourceBuffer, bool active)
+{
+    size_t position = m_activeSourceBuffers.find(&sourceBuffer);
+    if (active && position == notFound) {
+        m_activeSourceBuffers.append(&sourceBuffer);
+        notifyActiveSourceBuffersChanged();
+        return;
+    }
+
+    if (active || position == notFound)
+        return;
+
+    m_activeSourceBuffers.remove(position);
+    notifyActiveSourceBuffersChanged();
+}
+
+bool MediaSourcePrivate::hasAudio() const
+{
+    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivate* sourceBuffer) {
+        return sourceBuffer->hasAudio();
+    });
+}
+
+bool MediaSourcePrivate::hasVideo() const
+{
+    return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), [] (SourceBufferPrivate* sourceBuffer) {
+        return sourceBuffer->hasVideo();
+    });
+}
+
+void MediaSourcePrivate::durationChanged(const MediaTime& duration)
+{
+    m_duration = duration;
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->setMediaSourceDuration(duration);
+}
+
+void MediaSourcePrivate::bufferedChanged(const PlatformTimeRanges& buffered)
+{
+    m_buffered = buffered;
+}
+
+const PlatformTimeRanges& MediaSourcePrivate::buffered() const
+{
+    return m_buffered;
+}
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+void MediaSourcePrivate::setCDMSession(LegacyCDMSession* session)
+{
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->setCDMSession(session);
+}
+#endif
 
 } // namespace WebCore
 

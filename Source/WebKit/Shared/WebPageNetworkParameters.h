@@ -39,9 +39,6 @@ public:
     WebPageNetworkParameters(const String& attributedBundleIdentifier)
         : m_attributedBundleIdentifier(attributedBundleIdentifier) { }
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebPageNetworkParameters> decode(IPC::Decoder&);
-
     WebPageNetworkParameters() = default;
     WebPageNetworkParameters(WTF::HashTableDeletedValueType)
         : m_attributedBundleIdentifier(WTF::HashTableDeletedValue) { }

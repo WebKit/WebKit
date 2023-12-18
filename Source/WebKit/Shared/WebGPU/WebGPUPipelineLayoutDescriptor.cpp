@@ -48,7 +48,7 @@ std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBackin
             auto entry = convertToBacking(backingBindGroupLayout);
             if (!entry)
                 return std::nullopt;
-            bindGroupLayouts.uncheckedAppend(entry);
+            bindGroupLayouts.append(entry);
         }
 
         optionalBindGroupLayouts = bindGroupLayouts;
@@ -71,7 +71,7 @@ std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingConte
             auto* entry = convertBindGroupLayoutFromBacking(backingBindGroupLayout);
             if (!entry)
                 return std::nullopt;
-            bindGroupLayouts.uncheckedAppend(*entry);
+            bindGroupLayouts.append(*entry);
         }
 
         optionalBindGroupLayouts = bindGroupLayouts;

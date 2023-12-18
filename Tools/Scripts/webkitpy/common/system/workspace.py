@@ -30,10 +30,6 @@
 # below more complicated objects.
 
 import logging
-import zipfile
-
-from webkitpy.common.system.executive import ScriptError
-
 
 _log = logging.getLogger(__name__)
 
@@ -54,20 +50,3 @@ class Workspace(object):
                 return target_path
         # If we can't find an unused name in search_limit tries, just give up.
         return None
-
-    def create_zip(self, zip_path, source_path, zip_class=zipfile.ZipFile):
-        # It's possible to create zips with Python:
-        # zip_file = ZipFile(zip_path, 'w')
-        # for root, dirs, files in os.walk(source_path):
-        #     for path in files:
-        #         absolute_path = os.path.join(root, path)
-        #         zip_file.write(os.path.relpath(path, source_path))
-        # However, getting the paths, encoding and compression correct could be non-trivial.
-        # So, for now we depend on the environment having "zip" installed (likely fails on Win32)
-        try:
-            self._executive.run_command(['zip', '-9', '-r', zip_path, '.'], cwd=source_path)
-        except ScriptError as e:
-            _log.error("Workspace.create_zip failed in %s:\n%s" % (source_path, e.message_with_output()))
-            return None
-
-        return zip_class(zip_path)

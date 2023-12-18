@@ -49,9 +49,9 @@ layer at (0,0) size 800x420
               text run at (10,9) width 57: "sing to me,"
               text run at (10,19) width 67: "erbarme dich"
       RenderBlock {P} at (5,320) size 480x65 [color=#000000]
-        RenderText {#text} at (0,0) size 470x38
-          text run at (0,0) width 470: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1"
-          text run at (0,13) width 394: "agents should be able to render the document elements above this paragraph"
+        RenderText {#text} at (0,0) size 469x38
+          text run at (0,0) width 469: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1"
+          text run at (0,13) width 393: "agents should be able to render the document elements above this paragraph"
           text run at (0,26) width 206: "indistinguishably (to the pixel) from this "
         RenderInline {A} at (0,0) size 104x12 [color=#0000EE]
           RenderText {#text} at (205,26) size 104x12
@@ -60,9 +60,9 @@ layer at (0,0) size 800x420
           text run at (308,26) width 5: " "
           text run at (312,26) width 150: "(except font rasterization and"
           text run at (0,39) width 463: "form widgets). All discrepancies should be traceable to CSS1 implementation shortcomings."
-          text run at (0,52) width 336: "Once you have finished evaluating this test, you can return to the "
+          text run at (0,52) width 335: "Once you have finished evaluating this test, you can return to the "
         RenderInline {A} at (0,0) size 62x12 [color=#0000EE]
-          RenderText {#text} at (335,52) size 62x12
-            text run at (335,52) width 62: "parent page"
-        RenderText {#text} at (396,52) size 4x12
-          text run at (396,52) width 4: "."
+          RenderText {#text} at (334,52) size 62x12
+            text run at (334,52) width 62: "parent page"
+        RenderText {#text} at (395,52) size 5x12
+          text run at (395,52) width 5: "."

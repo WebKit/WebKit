@@ -60,10 +60,10 @@ TEST_F(RetransmissionEndToEndTest, ReceivesAndRetransmitsNack) {
           nacks_left_(kNumberOfNacksToObserve) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       // Never drop retransmitted packets.
       if (dropped_packets_.find(rtp_packet.SequenceNumber()) !=
@@ -97,10 +97,10 @@ TEST_F(RetransmissionEndToEndTest, ReceivesAndRetransmitsNack) {
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       test::RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(packet, length));
+      EXPECT_TRUE(parser.Parse(packet));
       nacks_left_ -= parser.nack()->num_packets();
       return SEND_PACKET;
     }
@@ -145,9 +145,9 @@ TEST_F(RetransmissionEndToEndTest, ReceivesNackAndRetransmitsAudio) {
     size_t GetNumVideoStreams() const override { return 0; }
     size_t GetNumAudioStreams() const override { return 1; }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       if (!sequence_number_to_retransmit_) {
         sequence_number_to_retransmit_ = rtp_packet.SequenceNumber();
@@ -166,7 +166,7 @@ TEST_F(RetransmissionEndToEndTest, ReceivesNackAndRetransmitsAudio) {
         nack.SetPacketIds(nack_list, 1);
         rtc::Buffer buffer = nack.Build();
 
-        EXPECT_TRUE(receive_transport_->SendRtcp(buffer.data(), buffer.size()));
+        EXPECT_TRUE(receive_transport_->SendRtcp(buffer));
       }
 
       return SEND_PACKET;
@@ -212,9 +212,9 @@ TEST_F(RetransmissionEndToEndTest,
       receive_stream_ = receive_streams[0];
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       test::RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(packet, length));
+      EXPECT_TRUE(parser.Parse(packet));
       if (parser.pli()->num_packets() > 0)
         task_queue_->PostTask([this] { Run(); });
       return SEND_PACKET;
@@ -284,10 +284,10 @@ void RetransmissionEndToEndTest::ReceivesPliAndRecovers(int rtp_history_ms) {
           received_pli_(false) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       // Drop all retransmitted packets to force a PLI.
       if (rtp_packet.Timestamp() <= highest_dropped_timestamp_)
@@ -302,10 +302,10 @@ void RetransmissionEndToEndTest::ReceivesPliAndRecovers(int rtp_history_ms) {
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       test::RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(packet, length));
+      EXPECT_TRUE(parser.Parse(packet));
       if (!nack_enabled_)
         EXPECT_EQ(0, parser.nack()->num_packets());
       if (parser.pli()->num_packets() > 0)
@@ -377,10 +377,10 @@ void RetransmissionEndToEndTest::DecodesRetransmittedFrame(bool enable_rtx,
           retransmitted_timestamp_(0) {}
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       // Ignore padding-only packets over RTX.
       if (rtp_packet.PayloadType() != payload_type_) {

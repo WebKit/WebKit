@@ -23,47 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PDFDocumentLayout.h"
+#import "config.h"
+#import "PDFDocumentLayout.h"
 
 #if ENABLE(UNIFIED_PDF)
 
-#include "Logging.h"
-#include <CoreGraphics/CoreGraphics.h>
-#include <wtf/text/TextStream.h>
+#import "Logging.h"
+#import <wtf/text/TextStream.h>
+
+#import "PDFKitSoftLink.h"
 
 namespace WebKit {
 using namespace WebCore;
 
 static constexpr float minScale = 0.1; // Arbitrarily chosen min scale.
 
-FloatSize PDFDocumentLayout::documentMargin()
-{
-    return { 20, 20 };
-}
-
-FloatSize PDFDocumentLayout::pageMargin()
-{
-    return { 10, 10 };
-}
-
 PDFDocumentLayout::PDFDocumentLayout() = default;
 PDFDocumentLayout::~PDFDocumentLayout() = default;
 
-void PDFDocumentLayout::setPDFDocument(RetainPtr<CGPDFDocumentRef>&& pdfDocument)
+RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
 {
-    m_pdfDocument = WTFMove(pdfDocument);
-}
-
-bool PDFDocumentLayout::hasPDFDocument() const
-{
-    return !!m_pdfDocument;
-}
-
-RetainPtr<CGPDFPageRef> PDFDocumentLayout::pageAtIndex(PageIndex index) const
-{
-    RetainPtr page = CGPDFDocumentGetPage(m_pdfDocument.get(), index + 1); // CG Page index is 1-based
-    return page;
+    return [m_pdfDocument pageAtIndex:index];
 }
 
 void PDFDocumentLayout::updateLayout(IntSize pluginSize)
@@ -94,8 +74,6 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
     float currentRowWidth = 0;
     bool isTwoUpLayout = m_displayMode == DisplayMode::TwoUp || m_displayMode == DisplayMode::TwoUpContinuous;
 
-    auto pageMargin = PDFDocumentLayout::pageMargin();
-
     for (PageIndex i = 0; i < pageCount; ++i) {
         auto page = pageAtIndex(i);
         if (!page) {
@@ -103,8 +81,8 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
             continue;
         }
 
-        auto pageCropBox = FloatRect { CGPDFPageGetBoxRect(page.get(), kCGPDFCropBox) };
-        auto rotation = normalizeRotation(CGPDFPageGetRotationAngle(page.get()));
+        auto pageCropBox = FloatRect { [page boundsForBox:kPDFDisplayBoxCropBox] };
+        auto rotation = normalizeRotation([page rotation]);
 
         LOG_WITH_STREAM(Plugins, stream << "PDFDocumentLayout::updateLayout() - page " << i << " crop box " << pageCropBox << " rotation " << rotation);
 
@@ -125,7 +103,6 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
         m_pageGeometry.append({ pageBounds, rotation });
     }
 
-    auto documentMargin = PDFDocumentLayout::documentMargin();
     maxRowWidth += 2 * documentMargin.width();
 
     layoutPages(pluginSize.width(), maxRowWidth);
@@ -151,9 +128,6 @@ void PDFDocumentLayout::layoutPages(float availableWidth, float maxRowWidth)
 
 void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWidth)
 {
-    auto documentMargin = PDFDocumentLayout::documentMargin();
-    auto pageMargin = PDFDocumentLayout::pageMargin();
-
     float currentYOffset = documentMargin.height();
     auto pageCount = this->pageCount();
 
@@ -175,14 +149,11 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
     currentYOffset += documentMargin.height();
 
     m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
-    m_documentBounds = FloatRect { 0, 0, availableWidth, currentYOffset };
+    m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 }
 
 void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidth)
 {
-    auto documentMargin = PDFDocumentLayout::documentMargin();
-    auto pageMargin = PDFDocumentLayout::pageMargin();
-
     FloatSize currentRowSize;
     float currentYOffset = documentMargin.height();
     auto pageCount = this->pageCount();
@@ -233,15 +204,15 @@ void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidt
     currentYOffset += documentMargin.height();
 
     m_scale = std::max<float>(availableWidth / maxRowWidth, minScale);
-    m_documentBounds = FloatRect { 0, 0, availableWidth, currentYOffset };
+    m_documentBounds = FloatRect { 0, 0, maxRowWidth, currentYOffset };
 }
 
 size_t PDFDocumentLayout::pageCount() const
 {
-    if (!hasPDFDocument())
+    if (!m_pdfDocument)
         return 0;
 
-    return CGPDFDocumentGetNumberOfPages(m_pdfDocument.get());
+    return [m_pdfDocument pageCount];
 }
 
 WebCore::FloatRect PDFDocumentLayout::boundsForPageAtIndex(PageIndex index) const

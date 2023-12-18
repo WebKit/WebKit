@@ -76,7 +76,7 @@ private:
     BlockFlowDirection m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
-    WeakHashSet<RenderBox> m_items;
+    SingleThreadWeakHashSet<RenderBox> m_items;
 };
 
 //

@@ -41,11 +41,12 @@ public:
         , m_lastSeen(lastSeen)
         , m_firstSeen(firstSeen)
         , m_isTransient(true) { }
-    SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen, bool sameSite, bool isAppInitiated, URL&& firstPartyForCookies, WebCore::HTTPHeaderMap&& requestHeaders, WebCore::ResourceLoadPriority priority)
+    SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen, bool isSameSite, bool isAppInitiated, URL&& firstPartyForCookies, WebCore::HTTPHeaderMap&& requestHeaders, WebCore::ResourceLoadPriority priority)
         : m_key(WTFMove(key))
         , m_lastSeen(lastSeen)
         , m_firstSeen(firstSeen)
         , m_isTransient(false)
+        , m_isSameSite(isSameSite)
         , m_isAppInitiated(isAppInitiated)
         , m_firstPartyForCookies(WTFMove(firstPartyForCookies))
         , m_requestHeaders(WTFMove(requestHeaders))

@@ -23,16 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserData_h
-#define UserData_h
+#pragma once
 
 #include "APIObject.h"
 #include <wtf/RefPtr.h>
-
-namespace IPC {
-class Encoder;
-class Decoder;
-}
 
 namespace WebKit {
 
@@ -52,18 +46,8 @@ public:
     API::Object* object() const { return m_object.get(); }
     RefPtr<API::Object> protectedObject() const { return m_object; }
 
-    void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, UserData&) WARN_UNUSED_RETURN;
-
-    static void encode(IPC::Encoder&, const API::Object*);
-    static bool decode(IPC::Decoder&, RefPtr<API::Object>&) WARN_UNUSED_RETURN;
-
 private:
-    static void encode(IPC::Encoder&, const API::Object&);
-
     RefPtr<API::Object> m_object;
 };
 
 } // namespace WebKit
-
-#endif // UserData_h

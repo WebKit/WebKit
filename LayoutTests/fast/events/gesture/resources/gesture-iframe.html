@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+p {
+    text-align: center;
+}
+</style>
+<script>
+
+["wheel", "gesturestart", "gesturechange", "gestureend"].forEach((eventType) => {
+    addEventListener(eventType, (event) => {
+        window.top.postMessage({
+            type: "iframeEvent",
+            data: {
+                eventType: event.type,
+                clientX: event.clientX,
+                clientY: event.clientY
+            }
+        }, "*");
+    }, { once: true });
+});
+
+</script>
+</head>
+<body>
+    <p>Make a gesture here.</p>
+</body>
+</html>

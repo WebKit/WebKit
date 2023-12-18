@@ -121,11 +121,12 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
         collectFromStyleSheetContents(UserAgentStyle::defaultStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::dialogStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::svgStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mediaControlsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::horizontalFormControlsStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::viewTransitionsStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::htmlSwitchControlStyleSheet);
 #if ENABLE(FULLSCREEN_API)
         collectFromStyleSheetContents(UserAgentStyle::fullscreenStyleSheet);
 #endif
@@ -134,9 +135,6 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
         collectFromStyleSheetContents(UserAgentStyle::colorInputStyleSheet);
-#endif
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-        collectFromStyleSheetContents(UserAgentStyle::legacyFormControlsIOSStyleSheet);
 #endif
         collectFromStyleSheetContents(UserAgentStyle::plugInsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mediaQueryStyleSheet);

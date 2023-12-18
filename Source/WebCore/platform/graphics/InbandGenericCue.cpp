@@ -74,6 +74,25 @@ String InbandGenericCue::toJSONString() const
     if (m_cueData.m_position > 0)
         object->setDouble("position"_s, m_cueData.m_position);
 
+    if (m_cueData.m_positionAlign != GenericCueData::Alignment::None) {
+        ASCIILiteral positionAlign = ""_s;
+        switch (m_cueData.m_positionAlign) {
+        case GenericCueData::Alignment::Start:
+            positionAlign = "Start"_s;
+            break;
+        case GenericCueData::Alignment::Middle:
+            positionAlign = "Middle"_s;
+            break;
+        case GenericCueData::Alignment::End:
+            positionAlign = "End"_s;
+            break;
+        case GenericCueData::Alignment::None:
+            positionAlign = "None"_s;
+            break;
+        }
+        object->setString("positionAlign"_s, positionAlign);
+    }
+
     if (m_cueData.m_align != GenericCueData::Alignment::None) {
         ASCIILiteral align = ""_s;
         switch (m_cueData.m_align) {

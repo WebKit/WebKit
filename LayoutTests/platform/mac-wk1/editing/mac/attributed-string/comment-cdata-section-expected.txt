@@ -3,7 +3,7 @@ hello <!-- FAIL1 --><!--[CDATA[ FAIL2 ]]--> world.
 
 Output:
 NSParagraphStyle:
-Alignment 4
+Alignment Natural
     LineSpacing: 0
     ParagraphSpacing: 0
     ParagraphSpacingBefore: 0
@@ -12,14 +12,14 @@ Alignment 4
     FirstLineHeadIndent: 0
     LineHeight: 0/0
     LineHeightMultiple: 0
-    LineBreakMode: 0
+    LineBreakMode: WordWrapping
     Tabs: ()
     DefaultTabInterval: 36
     Blocks: (
 )
     Lists: (
 )
-    BaseWritingDirection: 0
+    BaseWritingDirection: LeftToRight
     HyphenationFactor: 0
     TighteningForTruncation: YES
     HeaderLevel: 0 LineBreakStrategy 0 PresentationIntents (

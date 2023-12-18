@@ -49,14 +49,38 @@ namespace api {
 // It's not valid to create an IsoHeap except in static storage.
 
 #if BUSE(LIBPAS)
-BEXPORT void* isoAllocate(pas_heap_ref& heapRef);
-BEXPORT void* isoTryAllocate(pas_heap_ref& heapRef);
+BEXPORT void* isoAllocate(pas_heap_ref&);
+BEXPORT void* isoTryAllocate(pas_heap_ref&);
+BEXPORT void* isoAllocateCompact(pas_heap_ref&);
+BEXPORT void* isoTryAllocateCompact(pas_heap_ref&);
 BEXPORT void isoDeallocate(void* ptr);
 
 // The name "LibPasBmallocHeapType" is important for the pas_status_reporter to work right.
 template<typename LibPasBmallocHeapType>
-struct IsoHeap {
-    constexpr IsoHeap(const char* = nullptr) { }
+struct IsoHeapBase {
+    constexpr IsoHeapBase(const char* = nullptr) { }
+
+    void scavenge() { }
+    void initialize() { }
+
+    bool isInitialized()
+    {
+        return true;
+    }
+
+    static pas_heap_ref& provideHeap()
+    {
+        static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(sizeof(LibPasBmallocHeapType), alignof(LibPasBmallocHeapType), __PRETTY_FUNCTION__);
+        static pas_heap_ref heap = BMALLOC_HEAP_REF_INITIALIZER(&type);
+        return heap;
+    }
+};
+
+template<typename LibPasBmallocHeapType>
+struct IsoHeap : public IsoHeapBase<LibPasBmallocHeapType> {
+    using IsoHeapBase<LibPasBmallocHeapType>::provideHeap;
+
+    constexpr IsoHeap(const char* name = nullptr): IsoHeapBase<LibPasBmallocHeapType>(name) { }
     
     void* allocate()
     {
@@ -72,36 +96,39 @@ struct IsoHeap {
     {
         isoDeallocate(p);
     }
-    
-    void scavenge()
+};
+
+template<typename LibPasBmallocHeapType>
+struct CompactIsoHeap : public IsoHeapBase<LibPasBmallocHeapType> {
+    using IsoHeapBase<LibPasBmallocHeapType>::provideHeap;
+
+    constexpr CompactIsoHeap(const char* name = nullptr): IsoHeapBase<LibPasBmallocHeapType>(name) { }
+
+    void* allocate()
     {
-    }
-    
-    void initialize()
-    {
-    }
-    
-    bool isInitialized()
-    {
-        return true;
+        return isoAllocateCompact(provideHeap());
     }
 
-    static pas_heap_ref& provideHeap()
+    void* tryAllocate()
     {
-        static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(sizeof(LibPasBmallocHeapType), alignof(LibPasBmallocHeapType), __PRETTY_FUNCTION__);
-        static pas_heap_ref heap = BMALLOC_HEAP_REF_INITIALIZER(&type);
-        return heap;
+        return isoTryAllocateCompact(provideHeap());
+    }
+
+    void deallocate(void* p)
+    {
+        isoDeallocate(p);
     }
 };
+
 #else // BUSE(LIBPAS) -> so !BUSE(LIBPAS)
 template<typename Type>
-struct IsoHeap {
+struct IsoHeapBase {
     typedef IsoConfig<sizeof(Type)> Config;
 
 #if BENABLE_MALLOC_HEAP_BREAKDOWN
-    IsoHeap(const char* = nullptr);
+    IsoHeapBase(const char* = nullptr);
 #else
-    constexpr IsoHeap(const char* = nullptr) { }
+    constexpr IsoHeapBase(const char* = nullptr) { }
 #endif
 
     void* allocate();
@@ -130,12 +157,22 @@ struct IsoHeap {
     malloc_zone_t* m_zone;
 #endif
 };
+
+template<typename Type>
+struct IsoHeap : public IsoHeapBase<Type> {
+    constexpr IsoHeap(const char* name = nullptr): IsoHeapBase<Type>(name) { }
+};
+
+template<typename Type>
+struct CompactIsoHeap : public IsoHeapBase<Type> {
+    constexpr CompactIsoHeap(const char* name = nullptr): IsoHeapBase<Type>(name) { }
+};
 #endif // BUSE(LIBPAS) -> so end of !BUSE(LIBPAS)
 
 // Use this together with MAKE_BISO_MALLOCED_IMPL.
-#define MAKE_BISO_MALLOCED(isoType, exportMacro) \
+#define MAKE_BISO_MALLOCED(isoType, heapType, exportMacro) \
 public: \
-    static exportMacro ::bmalloc::api::IsoHeap<isoType>& bisoHeap(); \
+    static exportMacro ::bmalloc::api::heapType<isoType>& bisoHeap(); \
     \
     void* operator new(size_t, void* p) { return p; } \
     void* operator new[](size_t, void* p) { return p; } \
@@ -145,6 +182,38 @@ public: \
     \
     void* operator new[](size_t size) = delete; \
     void operator delete[](void* p) = delete; \
+    \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
+    \
+    exportMacro static void freeAfterDestruction(void*); \
+    \
+    using webkitFastMalloced = int; \
+private: \
+    using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
+
+// Use this together with MAKE_BISO_MALLOCED_IMPL.
+#define MAKE_BISO_MALLOCED_COMPACT(isoType, heapType, exportMacro) \
+public: \
+    static exportMacro ::bmalloc::api::heapType<isoType>& bisoHeap(); \
+    \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    exportMacro void* operator new(size_t size);\
+    exportMacro void operator delete(void* p);\
+    \
+    void* operator new[](size_t size) = delete; \
+    void operator delete[](void* p) = delete; \
+    \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
     \
     exportMacro static void freeAfterDestruction(void*); \
     \

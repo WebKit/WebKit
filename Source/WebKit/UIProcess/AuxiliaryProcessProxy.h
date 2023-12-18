@@ -29,10 +29,13 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
+#include "ProcessThrottlerClient.h"
 #include "ResponsivenessTimer.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <memory>
 #include <wtf/CheckedRef.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -44,13 +47,21 @@ class SharedBuffer;
 
 namespace WebKit {
 
+class ExtensionCapabilityGrant;
 class ProcessThrottler;
 class ProcessAssertion;
 class SandboxExtensionHandle;
 
 struct AuxiliaryProcessCreationParameters;
 
-class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
+using ExtensionCapabilityGrantMap = HashMap<String, ExtensionCapabilityGrant>;
+
+class AuxiliaryProcessProxy
+    : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
+    , public ResponsivenessTimer::Client
+    , private ProcessLauncher::Client
+    , public IPC::Connection::Client
+    , public ProcessThrottlerClient {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:
@@ -98,6 +109,8 @@ public:
         ASSERT(m_connection);
         return m_connection.get();
     }
+
+    RefPtr<IPC::Connection> protectedConnection() const { return connection(); }
 
     bool hasConnection() const
     {
@@ -173,6 +186,16 @@ public:
     void wakeUpTemporarilyForIPC();
 #endif
 
+#if USE(EXTENSIONKIT)
+    RetainPtr<_SEExtensionProcess> extensionProcess() const;
+    static void setManageProcessesAsExtensions(bool manageProcessesAsExtensions) { s_manageProcessesAsExtensions = manageProcessesAsExtensions; }
+    static bool manageProcessesAsExtensions() { return s_manageProcessesAsExtensions; }
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGrantMap& extensionCapabilityGrants() { return m_extensionCapabilityGrants; }
+#endif
+
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
@@ -184,7 +207,7 @@ protected:
     virtual ASCIILiteral processName() const = 0;
 
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&);
-    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&) { };
+    virtual void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
 
     struct PendingMessage {
         UniqueRef<IPC::Encoder> encoder;
@@ -232,6 +255,12 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
 #endif
+#endif
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
+#endif
+#if USE(EXTENSIONKIT)
+    static bool s_manageProcessesAsExtensions;
 #endif
 };
 

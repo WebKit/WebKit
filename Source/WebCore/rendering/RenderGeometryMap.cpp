@@ -159,7 +159,7 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
         if (current->isRenderFragmentedFlow())
             return false;
 
-        if (current->isLegacySVGRoot())
+        if (current->isLegacyRenderSVGRoot())
             return false;
 
         if (current == &ancestor)

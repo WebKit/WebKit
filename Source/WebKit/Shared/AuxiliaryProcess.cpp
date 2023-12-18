@@ -47,6 +47,10 @@
 #include <wtf/MemoryPressureHandler.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "CoreIPCSecureCoding.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -215,6 +219,9 @@ void AuxiliaryProcess::applyProcessCreationParameters(const AuxiliaryProcessCrea
     WTF::logChannels().initializeLogChannelsIfNecessary(parameters.wtfLoggingChannels);
     WebCore::logChannels().initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
     WebKit::logChannels().initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
+#endif
+#if PLATFORM(COCOA)
+    SecureCoding::applyProcessCreationParameters(parameters);
 #endif
 }
 

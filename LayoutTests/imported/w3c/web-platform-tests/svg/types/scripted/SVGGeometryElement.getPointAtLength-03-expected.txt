@@ -1,0 +1,5 @@
+
+FAIL When SVGGeometryElement.getPointAtLength is called with an element that is not in the document, either succeed or throw exception with SVGPathElement assert_throws_dom: function "function() { pathElement.getPointAtLength(700) }" did not throw
+PASS When SVGGeometryElement.getPointAtLength is called with an element that is not in the document, either succeed or throw exception with SVGRectElement
+PASS When SVGGeometryElement.getPointAtLength is called with an element that is not in the document, either succeed or throw exception with SVGCircleElement
+

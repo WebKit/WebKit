@@ -64,7 +64,7 @@
     'angle_non_clang_x86_debug_bot': ['angle', 'opencl', 'non_clang', 'x86', 'debug'],
     'angle_non_clang_x86_release_bot': ['angle', 'opencl', 'non_clang', 'x86', 'release'],
     'angle_reclient_android_arm64_debug_bot': ['angle', 'opencl', 'reclient', 'android', 'arm64', 'debug'],
-    'angle_reclient_android_arm64_release_bot': ['angle', 'opencl', 'reclient', 'android', 'arm64', 'release'],
+    'angle_reclient_android_arm64_release_bot': ['angle', 'capture', 'opencl', 'reclient', 'android', 'arm64', 'release'],
     'angle_reclient_android_arm_debug_bot': ['angle', 'opencl', 'reclient', 'android', 'arm', 'debug'],
     'angle_reclient_android_arm_release_bot': ['angle', 'opencl', 'reclient', 'android', 'arm', 'release'],
     'angle_reclient_android_perf_bot': ['angle', 'reclient', 'android', 'arm64', 'perf'],

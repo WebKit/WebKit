@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -42,7 +43,7 @@ class SourceProvider;
 class VM;
 
 class Debugger : public DoublyLinkedListNode<Debugger> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(Debugger, JS_EXPORT_PRIVATE);
 public:
     JS_EXPORT_PRIVATE Debugger(VM&);
     JS_EXPORT_PRIVATE virtual ~Debugger();

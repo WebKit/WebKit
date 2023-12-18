@@ -39,14 +39,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, AudioTrackPrivate& trackPrivate, MediaPlayerIdentifier mediaPlayerIdentifier)
+RemoteAudioTrackProxy::RemoteAudioTrackProxy(GPUConnectionToWebProcess& connectionToWebProcess, AudioTrackPrivate& trackPrivate, MediaPlayerIdentifier mediaPlayerIdentifier)
     : m_connectionToWebProcess(connectionToWebProcess)
-    , m_identifier(identifier)
     , m_trackPrivate(trackPrivate)
+    , m_id(trackPrivate.id())
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_trackPrivate->setClient(*this);
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteAudioTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteAudioTrackProxy::~RemoteAudioTrackProxy()
@@ -75,7 +75,7 @@ void RemoteAudioTrackProxy::configurationChanged()
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(m_identifier, configuration()), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::RemoteAudioTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteAudioTrackProxy::willRemove()
@@ -96,7 +96,7 @@ void RemoteAudioTrackProxy::configurationChanged(const PlatformAudioTrackConfigu
     configurationChanged();
 }
 
-void RemoteAudioTrackProxy::idChanged(const AtomString&)
+void RemoteAudioTrackProxy::idChanged(TrackID)
 {
     configurationChanged();
 }

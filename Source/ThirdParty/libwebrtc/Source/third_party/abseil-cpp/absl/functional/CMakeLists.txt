@@ -39,7 +39,7 @@ absl_cc_test(
     "any_invocable_test.cc"
     "internal/any_invocable.h"
   COPTS
-    ${ABSL_DEFAULT_COPTS}
+    ${ABSL_TEST_COPTS}
   DEPS
     absl::any_invocable
     absl::base_internal
@@ -106,5 +106,29 @@ absl_cc_test(
     absl::function_ref
     absl::memory
     absl::test_instance_tracker
+    GTest::gmock_main
+)
+
+absl_cc_library(
+  NAME
+    overload
+  HDRS
+    "overload.h"
+  COPTS
+    ${ABSL_DEFAULT_COPTS}
+  DEPS
+    absl::meta
+  PUBLIC
+)
+
+absl_cc_test(
+  NAME
+    overload_test
+  SRCS
+    "overload_test.cc"
+  COPTS
+    ${ABSL_TEST_COPTS}
+  DEPS
+    absl::strings
     GTest::gmock_main
 )

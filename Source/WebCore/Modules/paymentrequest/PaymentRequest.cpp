@@ -79,7 +79,7 @@ static ExceptionOr<String> checkAndCanonicalizeData(ScriptExecutionContext& cont
         auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
         serializedData = JSONStringify(globalObject, value.data.get(), 0);
         if (scope.exception())
-            return Exception { ExistingExceptionError };
+            return Exception { ExceptionCode::ExistingExceptionError };
         value.data.clear();
     }
     return { WTFMove(serializedData) };
@@ -90,10 +90,10 @@ static ExceptionOr<String> checkAndCanonicalizeData(ScriptExecutionContext& cont
 static ExceptionOr<void> checkAndCanonicalizeAmount(PaymentCurrencyAmount& amount)
 {
     if (!isWellFormedCurrencyCode(amount.currency))
-        return Exception { RangeError, makeString("\"", amount.currency, "\" is not a valid currency code.") };
+        return Exception { ExceptionCode::RangeError, makeString("\"", amount.currency, "\" is not a valid currency code.") };
 
     if (!isValidDecimalMonetaryValue(amount.value))
-        return Exception { TypeError, makeString("\"", amount.value, "\" is not a valid decimal monetary value.") };
+        return Exception { ExceptionCode::TypeError, makeString("\"", amount.value, "\" is not a valid decimal monetary value.") };
 
     amount.currency = amount.currency.convertToASCIIUppercase();
     return { };
@@ -107,7 +107,7 @@ static ExceptionOr<void> checkAndCanonicalizePaymentItem(PaymentItem& item, Nega
         return exception.releaseException();
 
     if (negativeAmountAllowed == NegativeAmountAllowed::No && item.amount.value[0] == '-')
-        return Exception { TypeError, "Total currency values cannot be negative."_s };
+        return Exception { ExceptionCode::TypeError, "Total currency values cannot be negative."_s };
 
     return { };
 }
@@ -217,7 +217,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 
                 auto addResult = seenShippingOptionIDs.add(shippingOption.id);
                 if (!addResult.isNewEntry)
-                    return Exception { TypeError, "Shipping option IDs must be unique."_s };
+                    return Exception { ExceptionCode::TypeError, "Shipping option IDs must be unique."_s };
 
 #if ENABLE(PAYMENT_REQUEST_SELECTED_SHIPPING_OPTION)
                 if (shippingOption.selected)
@@ -245,7 +245,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
             if (isUpdate == IsUpdate::Yes) {
                 auto paymentMethodIdentifier = convertAndValidatePaymentMethodIdentifier(modifier.supportedMethods);
                 if (!paymentMethodIdentifier)
-                    return Exception { RangeError, makeString('"', modifier.supportedMethods, "\" is an invalid payment method identifier.") };
+                    return Exception { ExceptionCode::RangeError, makeString('"', modifier.supportedMethods, "\" is an invalid payment method identifier.") };
             }
 
             if (modifier.total) {
@@ -268,7 +268,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 
                 serializedData = dataResult.releaseReturnValue();
             }
-            serializedModifierData.uncheckedAppend(WTFMove(serializedData));
+            serializedModifierData.append(WTFMove(serializedData));
         }
     } else if (isUpdate == IsUpdate::No)
         details.modifiers = { { } };
@@ -281,7 +281,7 @@ static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const St
     auto scope = DECLARE_THROW_SCOPE(context.vm());
     JSC::JSValue data = JSONParse(context.globalObject(), string);
     if (scope.exception())
-        return Exception { ExistingExceptionError };
+        return Exception { ExceptionCode::ExistingExceptionError };
     return data;
 }
 
@@ -305,7 +305,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         details.id = createVersion4UUIDString();
 
     if (methodData.isEmpty())
-        return Exception { TypeError, "At least one payment method is required."_s };
+        return Exception { ExceptionCode::TypeError, "At least one payment method is required."_s };
 
     Vector<Method> serializedMethodData;
     serializedMethodData.reserveInitialCapacity(methodData.size());
@@ -313,17 +313,17 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     for (auto& paymentMethod : methodData) {
         auto identifier = convertAndValidatePaymentMethodIdentifier(paymentMethod.supportedMethods);
         if (!identifier)
-            return Exception { RangeError, makeString('"', paymentMethod.supportedMethods, "\" is an invalid payment method identifier.") };
+            return Exception { ExceptionCode::RangeError, makeString('"', paymentMethod.supportedMethods, "\" is an invalid payment method identifier.") };
 
         if (!seenMethodIDs.add(stringify(*identifier)))
-            return Exception { RangeError, "Payment method IDs must be unique."_s };
+            return Exception { ExceptionCode::RangeError, "Payment method IDs must be unique."_s };
 
         String serializedData;
         if (paymentMethod.data) {
             auto scope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
             serializedData = JSONStringify(document.globalObject(), paymentMethod.data.get(), 0);
             if (scope.exception())
-                return Exception { ExistingExceptionError };
+                return Exception { ExceptionCode::ExistingExceptionError };
             
             auto parsedDataOrException = parse(document, serializedData);
             if (parsedDataOrException.hasException())
@@ -333,7 +333,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
             if (exception.hasException())
                 return exception.releaseException();
         }
-        serializedMethodData.uncheckedAppend({ WTFMove(*identifier), WTFMove(serializedData) });
+        serializedMethodData.append({ WTFMove(*identifier), WTFMove(serializedData) });
     }
 
     auto totalResult = checkAndCanonicalizeTotal(details.total);
@@ -362,7 +362,7 @@ PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, Pay
 
 PaymentRequest::~PaymentRequest()
 {
-    ASSERT(!hasPendingActivity());
+    ASSERT(!hasPendingActivity() || isContextStopped());
     ASSERT(!m_activePaymentHandler);
 }
 
@@ -370,23 +370,23 @@ PaymentRequest::~PaymentRequest()
 void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&& promise)
 {
     if (!document.frame()) {
-        promise.reject(Exception { AbortError });
+        promise.reject(Exception { ExceptionCode::AbortError });
         return;
     }
 
     RefPtr window = document.frame()->window();
     if (!window || !window->consumeTransientActivation()) {
-        promise.reject(Exception { SecurityError, "show() must be triggered by user activation."_s });
+        promise.reject(Exception { ExceptionCode::SecurityError, "show() must be triggered by user activation."_s });
         return;
     }
 
     if (m_state != State::Created) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     if (PaymentHandler::hasActiveSession(document)) {
-        promise.reject(Exception { AbortError });
+        promise.reject(Exception { ExceptionCode::AbortError });
         m_state = State::Closed;
         return;
     }
@@ -418,7 +418,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
     }
 
     if (!selectedPaymentHandler) {
-        settleShowPromise(Exception { NotSupportedError });
+        settleShowPromise(Exception { ExceptionCode::NotSupportedError });
         return;
     }
 
@@ -471,7 +471,9 @@ void PaymentRequest::closeActivePaymentHandler()
 void PaymentRequest::stop()
 {
     closeActivePaymentHandler();
-    settleShowPromise(Exception { AbortError });
+    queueTaskKeepingObjectAlive(*this, TaskSource::Payment, [this] {
+        settleShowPromise(Exception { ExceptionCode::AbortError });
+    });
 }
 
 void PaymentRequest::suspend(ReasonForSuspension reason)
@@ -492,21 +494,21 @@ void PaymentRequest::suspend(ReasonForSuspension reason)
 void PaymentRequest::abort(AbortPromise&& promise)
 {
     if (m_response && m_response->hasRetryPromise()) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     if (m_state != State::Interactive) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     if (m_activePaymentHandler && !activePaymentHandler()->canAbortSession()) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
-    abortWithException(Exception { AbortError });
+    abortWithException(Exception { ExceptionCode::AbortError });
     promise.resolve();
 }
 
@@ -514,7 +516,7 @@ void PaymentRequest::abort(AbortPromise&& promise)
 void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& promise)
 {
     if (m_state != State::Created) {
-        promise.reject(Exception { InvalidStateError });
+        promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
@@ -577,10 +579,10 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
 ExceptionOr<void> PaymentRequest::updateWith(UpdateReason reason, Ref<DOMPromise>&& promise)
 {
     if (m_state != State::Interactive)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     if (m_isUpdating)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_isUpdating = true;
 
@@ -596,7 +598,7 @@ ExceptionOr<void> PaymentRequest::updateWith(UpdateReason reason, Ref<DOMPromise
 ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<DOMPromise>&& merchantSessionPromise)
 {
     if (m_state != State::Interactive)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -607,7 +609,7 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
             return;
 
         if (m_merchantSessionPromise->status() == DOMPromise::Status::Rejected) {
-            abortWithException(Exception { AbortError });
+            abortWithException(Exception { ExceptionCode::AbortError });
             return;
         }
 
@@ -644,7 +646,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         return;
 
     if (m_isCancelPending || m_detailsPromise->status() == DOMPromise::Status::Rejected) {
-        abortWithException(Exception { AbortError });
+        abortWithException(Exception { ExceptionCode::AbortError });
         return;
     }
 
@@ -654,7 +656,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
     auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
     if (throwScope.exception()) {
-        abortWithException(Exception { ExistingExceptionError });
+        abortWithException(Exception { ExceptionCode::ExistingExceptionError });
         return;
     }
 
@@ -782,7 +784,7 @@ ExceptionOr<void> PaymentRequest::complete(Document& document, std::optional<Pay
 {
     ASSERT(m_state == State::Closed);
     if (!m_activePaymentHandler)
-        return Exception { AbortError };
+        return Exception { ExceptionCode::AbortError };
 
     Ref activePaymentHandler = *this->activePaymentHandler();
     auto exception = activePaymentHandler->complete(document, WTFMove(result), WTFMove(serializedData));
@@ -797,7 +799,7 @@ ExceptionOr<void> PaymentRequest::retry(PaymentValidationErrors&& errors)
 {
     ASSERT(m_state == State::Closed);
     if (!m_activePaymentHandler)
-        return Exception { AbortError };
+        return Exception { ExceptionCode::AbortError };
 
     m_state = State::Interactive;
 
@@ -815,7 +817,7 @@ void PaymentRequest::cancel()
         return;
     }
 
-    abortWithException(Exception { AbortError });
+    abortWithException(Exception { ExceptionCode::AbortError });
 }
 
 } // namespace WebCore

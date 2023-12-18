@@ -20,6 +20,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/call/transport.h"
+#include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_bitrate_allocation.h"
@@ -92,7 +93,7 @@ class RTCPSender final {
 
     uint32_t packets_sent;
     size_t media_bytes_sent;
-    uint32_t send_bitrate;
+    DataRate send_bitrate;
 
     uint32_t remote_sr;
     NtpTime last_rr;
@@ -141,7 +142,7 @@ class RTCPSender final {
   int32_t SetCNAME(absl::string_view cName)
       RTC_LOCKS_EXCLUDED(mutex_rtcp_sender_);
 
-  bool TimeToSendRTCPReport(bool sendKeyframeBeforeRTP = false) const
+  bool TimeToSendRTCPReport(bool send_keyframe_before_rtp = false) const
       RTC_LOCKS_EXCLUDED(mutex_rtcp_sender_);
 
   int32_t SendRTCP(const FeedbackState& feedback_state,
@@ -191,6 +192,9 @@ class RTCPSender final {
       int32_t nack_size,
       const uint16_t* nack_list,
       PacketSender& sender) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_rtcp_sender_);
+
+  TimeDelta ComputeTimeUntilNextReport(DataRate send_bitrate)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_rtcp_sender_);
 
   // Determine which RTCP messages should be sent and setup flags.
   void PrepareReport(const FeedbackState& feedback_state)

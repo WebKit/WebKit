@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (floating) {DIV} at (5,5) size 269x147 [border: (2px solid #000000)]
-        RenderBlock {DIV} at (12,12) size 245x123
-          RenderText {#text} at (0,21) size 101x15
-            text run at (0,21) width 101: "This text should snap"
-          RenderBR {BR} at (101,21) size 0x15
-          RenderText {#text} at (0,64) size 113x15
+      RenderBlock (floating) {DIV} at (5,5) size 269x145 [border: (2px solid #000000)]
+        RenderBlock {DIV} at (12,12) size 245x121
+          RenderText {#text} at (0,22) size 101x14
+            text run at (0,22) width 101: "This text should snap"
+          RenderBR {BR} at (101,22) size 0x14
+          RenderText {#text} at (0,64) size 113x14
             text run at (0,64) width 113: "to a 36px font-size grid."
-          RenderBR {BR} at (113,64) size 0x15
-          RenderText {#text} at (0,107) size 245x15
-            text run at (0,107) width 245: "There should be lots of spacing between these lines."
-      RenderBlock (floating) {DIV} at (284,5) size 369x110 [border: (2px solid #000000)]
-        RenderText {#text} at (12,13) size 307x41
+          RenderBR {BR} at (113,64) size 0x14
+          RenderText {#text} at (0,106) size 245x14
+            text run at (0,106) width 245: "There should be lots of spacing between these lines."
+      RenderBlock (floating) {DIV} at (284,5) size 369x108 [border: (2px solid #000000)]
+        RenderText {#text} at (12,13) size 307x40
           text run at (12,13) width 307: "This text should snap"
-        RenderBR {BR} at (319,12) size 0x41
-        RenderText {#text} at (12,56) size 345x41
-          text run at (12,56) width 345: "to a 36px font-size grid."
-        RenderBR {BR} at (357,55) size 0x41
+        RenderBR {BR} at (319,13) size 0x40
+        RenderText {#text} at (12,55) size 345x40
+          text run at (12,55) width 345: "to a 36px font-size grid."
+        RenderBR {BR} at (357,55) size 0x40

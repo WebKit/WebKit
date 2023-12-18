@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: Origin https://web-platform.test:9443 is not allowed by Access-Control-Allow-Origin. Status code: 200
-CONSOLE MESSAGE: Fetch API cannot load https://www1.web-platform.test:9443/service-workers/service-worker/resources/cors-denied.txt due to access control checks.
-
-PASS global setup
-PASS cross-origin request, no-cors mode
-PASS cross-origin request, cors denied
-PASS cross-origin request, cors approved
-PASS cleanup global state
-

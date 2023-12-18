@@ -62,16 +62,16 @@ class ActiveMapRefreshTest
       public ::libvpx_test::CodecTestWith2Params<libvpx_test::TestMode, int> {
  protected:
   ActiveMapRefreshTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~ActiveMapRefreshTest() {}
+  ~ActiveMapRefreshTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(GET_PARAM(1));
     cpu_used_ = GET_PARAM(2);
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     ::libvpx_test::Y4mVideoSource *y4m_video =
         static_cast<libvpx_test::Y4mVideoSource *>(video);
     if (video->frame() == 0) {

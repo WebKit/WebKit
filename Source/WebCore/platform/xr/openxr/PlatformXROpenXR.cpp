@@ -189,7 +189,7 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
         result = xrBeginFrame(m_session, &frameBeginInfo);
         RETURN_IF_FAILED(result, "xrBeginFrame", m_instance);
 
-        Device::FrameData frameData;
+        FrameData frameData;
         frameData.predictedDisplayTime = m_frameState.predictedDisplayTime;
         frameData.shouldRender = m_frameState.shouldRender;
         frameData.stageParameters = m_stageParameters;
@@ -499,8 +499,8 @@ void OpenXRDevice::endSession()
 
     // Notify did end event
     callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (m_trackingAndRenderingClient)
             m_trackingAndRenderingClient->sessionDidEnd();
@@ -589,8 +589,8 @@ void OpenXRDevice::updateInteractionProfile()
     didNotifyInputInitialization = true;
     auto inputSources = m_input->collectInputSources(m_frameState);
     callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, inputSources = WTFMove(inputSources)]() mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         if (m_trackingAndRenderingClient)
             m_trackingAndRenderingClient->sessionDidInitializeInputSources(WTFMove(inputSources));

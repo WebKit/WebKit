@@ -29,9 +29,8 @@
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;
 #endif
-    bool allowTestOnlyIPC;
 #if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> presentingApplicationAuditToken;
+    std::optional<WebKit::CoreIPCAuditToken> presentingApplicationAuditToken;
 #endif
 #if ENABLE(VP9)
     std::optional<bool> hasVP9HardwareDecoder;

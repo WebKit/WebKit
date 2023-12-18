@@ -1,4 +1,4 @@
 
-FAIL DTLS statistics on transport-stats after setLocalDescription assert_equals: expected (string) "unknown" but got (undefined) undefined
-FAIL ICE statistics on transport-stats after setLocalDescription assert_equals: expected (string) "controlling" but got (undefined) undefined
+PASS DTLS statistics on transport-stats after setLocalDescription
+PASS ICE statistics on transport-stats after setLocalDescription
 

@@ -49,6 +49,8 @@ public:
     HTMLFormElement& form() const { return m_form; }
     const StringPairVector& textFieldValues() const { return m_textFieldValues; }
     Document& sourceDocument() const { return m_sourceDocument; }
+    Ref<Document> protectedSourceDocument() const;
+
     FormSubmissionTrigger formSubmissionTrigger() const { return m_formSubmissionTrigger; }
 
 private:

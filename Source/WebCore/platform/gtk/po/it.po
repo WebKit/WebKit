@@ -542,12 +542,12 @@ msgstr "seleziona"
 msgid "activate"
 msgstr "attiva"
 
-# String AXCheckedCheckBoxActionVerb()
+# String AXCheckedCheckboxActionVerb()
 #: ../LocalizedStrings.cpp:600
 msgid "uncheck"
 msgstr "togli spunta"
 
-# String AXUncheckedCheckBoxActionVerb()
+# String AXUncheckedCheckboxActionVerb()
 #: ../LocalizedStrings.cpp:605
 msgid "check"
 msgstr "metti spunta"

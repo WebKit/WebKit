@@ -27,9 +27,9 @@
 #include "CSSValueKeywords.h"
 #include "DOMPoint.h"
 #include "FrameSelection.h"
+#include "LegacyRenderSVGResource.h"
 #include "LocalFrame.h"
 #include "RenderObject.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
@@ -70,7 +70,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
 {
     unsigned numberOfChars = getNumberOfChars();
     if (charnum >= numberOfChars)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     nchars = std::min(nchars, numberOfChars - charnum);
     return SVGTextQuery(renderer()).subStringLength(charnum, nchars);
@@ -79,7 +79,7 @@ ExceptionOr<float> SVGTextContentElement::getSubStringLength(unsigned charnum, u
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigned charnum)
 {
     if (charnum >= getNumberOfChars())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(renderer()).startPositionOfCharacter(charnum));
 }
@@ -87,7 +87,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getStartPositionOfChar(unsigne
 ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned charnum)
 {
     if (charnum >= getNumberOfChars())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return SVGPoint::create(SVGTextQuery(renderer()).endPositionOfCharacter(charnum));
 }
@@ -95,7 +95,7 @@ ExceptionOr<Ref<SVGPoint>> SVGTextContentElement::getEndPositionOfChar(unsigned 
 ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnum)
 {
     if (charnum >= getNumberOfChars())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return SVGRect::create(SVGTextQuery(renderer()).extentOfCharacter(charnum));
 }
@@ -103,7 +103,7 @@ ExceptionOr<Ref<SVGRect>> SVGTextContentElement::getExtentOfChar(unsigned charnu
 ExceptionOr<float> SVGTextContentElement::getRotationOfChar(unsigned charnum)
 {
     if (charnum >= getNumberOfChars())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return SVGTextQuery(renderer()).rotationOfCharacter(charnum);
 }
@@ -119,7 +119,7 @@ ExceptionOr<void> SVGTextContentElement::selectSubString(unsigned charnum, unsig
 {
     unsigned numberOfChars = getNumberOfChars();
     if (charnum >= numberOfChars)
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     nchars = std::min(nchars, numberOfChars - charnum);
 
@@ -156,7 +156,7 @@ void SVGTextContentElement::collectPresentationalHintsForAttribute(const Qualifi
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValueCollapse);
-        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrapMode, CSSValueNowrap);
         return;
     }
 
@@ -214,7 +214,7 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     if (!renderer)
         return nullptr;
 
-    if (!renderer->isSVGText() && !renderer->isSVGInline())
+    if (!renderer->isRenderSVGText() && !renderer->isRenderSVGInline())
         return nullptr;
 
     SVGElement* element = downcast<SVGElement>(renderer->node());

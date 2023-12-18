@@ -3,14 +3,17 @@ kind: autotools
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
 
+depends:
+- freedesktop-sdk.bst:components/zstd.bst
+
 sources:
-- kind: git
+- kind: git_repo
   url: https://chromium.googlesource.com/breakpad/breakpad
-  ref: d8a7c0548c7b30689df9a65e52b7ab9db37ab9e8
-  track: chrome_99
-- kind: git
+  ref: v2023.01.27-56-gf49c2f1a2023da0cb055874fba050563dfea57db
+  track: main
+- kind: git_repo
   url: https://chromium.googlesource.com/linux-syscall-support
-  ref: e1e7b0ad8ee99a875b272c8e33e308472e897660
+  ref: v2022.10.12-0-g9719c1e1e676814c456b55f5f070eabad6709d31
   track: main
   directory: src/third_party/lss
 

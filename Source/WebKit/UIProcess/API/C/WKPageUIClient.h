@@ -143,7 +143,6 @@ typedef void (*WKPageDidResignInputElementStrongPasswordAppearanceCallback)(WKPa
 typedef bool (*WKPageShouldAllowDeviceOrientationAndMotionAccessCallback)(WKPageRef page, WKSecurityOriginRef securityOrigin, WKFrameInfoRef frame, const void *clientInfo);
 
 typedef void (*WKPageRunWebAuthenticationPanelCallback)(void);
-typedef void (*WKPageRequestWebAuthenticationNoGestureCallback)(void);
 typedef void (*WKPageDecidePolicyForSpeechRecognitionPermissionRequestCallback)(WKPageRef page, WKSecurityOriginRef topOrigin, WKSpeechRecognitionPermissionCallbackRef callback);
 
 typedef void (*WKPageDecidePolicyForMediaKeySystemPermissionRequestCallback)(WKPageRef page, WKSecurityOriginRef topOrigin, WKStringRef keySystem, WKMediaKeySystemPermissionCallbackRef callback);
@@ -1704,8 +1703,6 @@ typedef struct WKPageUIClientV17 {
     // Version 16.
     WKPageDecidePolicyForMediaKeySystemPermissionRequestCallback        decidePolicyForMediaKeySystemPermissionRequest;
 
-    // Version 17.
-    WKPageRequestWebAuthenticationNoGestureCallback                     requestWebAuthenticationNoGesture;
 } WKPageUIClientV17;
 
 typedef struct WKPageUIClientV18 {
@@ -1821,9 +1818,6 @@ typedef struct WKPageUIClientV18 {
     WKPageDecidePolicyForMediaKeySystemPermissionRequestCallback        decidePolicyForMediaKeySystemPermissionRequest;
 
     // Version 17.
-    WKPageRequestWebAuthenticationNoGestureCallback                     requestWebAuthenticationNoGesture;
-
-    // Version 18.
     WKQueryPermissionCallback                                           queryPermission;
 } WKPageUIClientV18;
 
@@ -1940,12 +1934,9 @@ typedef struct WKPageUIClientV19 {
     WKPageDecidePolicyForMediaKeySystemPermissionRequestCallback        decidePolicyForMediaKeySystemPermissionRequest;
 
     // Version 17.
-    WKPageRequestWebAuthenticationNoGestureCallback                     requestWebAuthenticationNoGesture;
-
-    // Version 18.
     WKQueryPermissionCallback                                           queryPermission;
 
-    // Version 19.
+    // Version 18.
     WKLockScreenOrientationCallback                                     lockScreenOrientation;
     WKUnlockScreenOrientationCallback                                   unlockScreenOrientation;
 } WKPageUIClientV19;

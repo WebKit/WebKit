@@ -24,9 +24,9 @@
 
 #define FAST_BARRIER 18
 
-size_t av1_get_corner_list_size() { return sizeof(CornerList); }
+size_t av1_get_corner_list_size(void) { return sizeof(CornerList); }
 
-CornerList *av1_alloc_corner_list() {
+CornerList *av1_alloc_corner_list(void) {
   CornerList *corners = (CornerList *)aom_calloc(1, sizeof(CornerList));
   if (!corners) {
     return NULL;
@@ -39,7 +39,7 @@ CornerList *av1_alloc_corner_list() {
   return corners;
 }
 
-void compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
+static bool compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
   const uint8_t *buf = pyr->layers[0].buffer;
   int width = pyr->layers[0].width;
   int height = pyr->layers[0].height;
@@ -49,14 +49,14 @@ void compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
   int num_corners;
   xy *const frame_corners_xy = aom_fast9_detect_nonmax(
       buf, width, height, stride, FAST_BARRIER, &scores, &num_corners);
+  if (num_corners < 0) return false;
 
-  if (num_corners <= 0) {
-    // Some error occured, so no corners are available
-    corners->num_corners = 0;
-  } else if (num_corners <= MAX_CORNERS) {
+  if (num_corners <= MAX_CORNERS) {
     // Use all detected corners
-    memcpy(corners->corners, frame_corners_xy,
-           sizeof(*frame_corners_xy) * num_corners);
+    if (num_corners != 0) {
+      memcpy(corners->corners, frame_corners_xy,
+             sizeof(*frame_corners_xy) * num_corners);
+    }
     corners->num_corners = num_corners;
   } else {
     // There are more than MAX_CORNERS corners avilable, so pick out a subset
@@ -96,9 +96,10 @@ void compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
 
   free(scores);
   free(frame_corners_xy);
+  return true;
 }
 
-void av1_compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
+bool av1_compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
   assert(corners);
 
 #if CONFIG_MULTITHREAD
@@ -106,13 +107,14 @@ void av1_compute_corner_list(const ImagePyramid *pyr, CornerList *corners) {
 #endif  // CONFIG_MULTITHREAD
 
   if (!corners->valid) {
-    compute_corner_list(pyr, corners);
-    corners->valid = true;
+    corners->valid = compute_corner_list(pyr, corners);
   }
+  bool valid = corners->valid;
 
 #if CONFIG_MULTITHREAD
   pthread_mutex_unlock(&corners->mutex);
 #endif  // CONFIG_MULTITHREAD
+  return valid;
 }
 
 #ifndef NDEBUG

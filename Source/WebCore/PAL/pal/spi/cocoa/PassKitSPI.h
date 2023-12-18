@@ -145,11 +145,10 @@ WTF_EXTERN_C_END
 #endif
 
 #if HAVE(PASSKIT_MODULARIZATION)
-// FIXME: remove this after <rdar://88985220>
-#if __has_include(<PassKitUI/PKPaymentSetupController.h>)
-#import <PassKitUI/PKPaymentSetupController.h>
+#if PLATFORM(MAC)
+#import <PassKitMacHelper/PKPaymentSetupController.h>
 #else
-#import <PassKit/PKPaymentSetupController.h>
+#import <PassKitUI/PKPaymentSetupController.h>
 #endif
 #if PLATFORM(MAC)
 #if HAVE(PASSKIT_MAC_HELPER_TEMP)
@@ -300,6 +299,12 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @end
 #endif
 
+#if HAVE(PKPAYMENTREQUEST_USERAGENT)
+@interface PKPaymentRequest ()
+@property (nonatomic, copy) NSString *userAgent;
+@end
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -335,12 +340,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
-
-#if HAVE(PASSKIT_DEFERRED_PAYMENTS)
-@interface PKDeferredPaymentRequest (Staging_104652810)
-@property (nonatomic, strong, nullable) NSTimeZone *freeCancellationDateTimeZone;
-@end
-#endif
 
 NS_ASSUME_NONNULL_END
 

@@ -1,9 +1,3 @@
-CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://xn--lve-6lad.not-web-platform.test:9443/css/support/a-green.css because it does not appear in the style-src directive of the Content Security Policy.
 
 PASS same-origin report
 PASS same-site report

@@ -23,8 +23,8 @@
 #include "SVGStopElement.h"
 
 #include "Document.h"
+#include "LegacyRenderSVGResource.h"
 #include "RenderSVGGradientStop.h"
-#include "RenderSVGResource.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"

@@ -236,18 +236,9 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
       if (!config.spatial_layers.empty()) {
         // Layering is set explicitly.
         spatial_layers = config.spatial_layers;
-      } else if (scalability_mode.has_value()) {
+      } else if (video_codec.GetScalabilityMode().has_value()) {
         // Layering is set via scalability mode.
         spatial_layers = GetVp9SvcConfig(video_codec);
-        if (spatial_layers.empty())
-          break;
-        // Use codec bitrate limits if spatial layering is not requested.
-        if (video_codec.numberOfSimulcastStreams <= 1 &&
-            ScalabilityModeToNumSpatialLayers(*scalability_mode) == 1) {
-          spatial_layers.back().minBitrate = video_codec.minBitrate;
-          spatial_layers.back().targetBitrate = video_codec.maxBitrate;
-          spatial_layers.back().maxBitrate = video_codec.maxBitrate;
-        }
       } else {
         size_t first_active_layer = 0;
         for (size_t spatial_idx = 0;
@@ -344,6 +335,9 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
                     kMaxTemporalStreams);
       break;
     }
+    case kVideoCodecH265:
+      // TODO(bugs.webrtc.org/13485)
+      break;
     default:
       // TODO(pbos): Support encoder_settings codec-agnostically.
       RTC_DCHECK(!config.encoder_specific_settings)

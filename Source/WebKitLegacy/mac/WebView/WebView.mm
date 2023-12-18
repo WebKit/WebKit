@@ -207,6 +207,7 @@
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/Range.h>
 #import <WebCore/RemoteFrameClient.h>
+#import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/RenderStyleInlines.h>
 #import <WebCore/RenderTheme.h>
 #import <WebCore/RenderView.h>
@@ -788,38 +789,6 @@ static WebCore::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlock
         return WebCore::StorageBlockingPolicy::AllowAll;
     }
 }
-
-namespace WebKit {
-
-class DeferredPageDestructor {
-public:
-    static void createDeferredPageDestructor(std::unique_ptr<WebCore::Page> page)
-    {
-        new DeferredPageDestructor(WTFMove(page));
-    }
-
-private:
-    DeferredPageDestructor(std::unique_ptr<WebCore::Page> page)
-        : m_page(WTFMove(page))
-    {
-        tryDestruction();
-    }
-
-    void tryDestruction()
-    {
-        if (m_page->insideNestedRunLoop()) {
-            m_page->whenUnnested([this] { tryDestruction(); });
-            return;
-        }
-
-        m_page = nullptr;
-        delete this;
-    }
-
-    std::unique_ptr<WebCore::Page> m_page;
-};
-
-} // namespace WebKit
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
 
@@ -1549,19 +1518,19 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
-    _private->page = new WebCore::Page(WTFMove(pageConfiguration));
+    _private->page = WebCore::Page::create(WTFMove(pageConfiguration));
     storageProvider->setPage(*_private->page);
 
     _private->page->setGroupName(groupName);
 
 #if ENABLE(GEOLOCATION)
-    WebCore::provideGeolocationTo(_private->page, *new WebGeolocationClient(self));
+    WebCore::provideGeolocationTo(_private->page.get(), *new WebGeolocationClient(self));
 #endif
 #if ENABLE(NOTIFICATIONS)
-    WebCore::provideNotification(_private->page, new WebNotificationClient(self));
+    WebCore::provideNotification(_private->page.get(), new WebNotificationClient(self));
 #endif
 #if ENABLE(ENCRYPTED_MEDIA)
-    WebCore::provideMediaKeySystemTo(*_private->page, *new WebMediaKeySystemClient());
+    WebCore::provideMediaKeySystemTo(*_private->page.get(), WebMediaKeySystemClient::singleton());
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -1593,7 +1562,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     if ([[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled])
         [self setSmartInsertDeleteEnabled:[[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled]];
 
-    [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView.get()];
+    [WebFrame _createMainFrameWithPage:_private->page.get() frameName:frameName frameView:frameView.get()];
 
 #if PLATFORM(IOS_FAMILY)
     NSRunLoop *runLoop = WebThreadNSRunLoop();
@@ -1800,7 +1769,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
     pageConfiguration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
 
-    _private->page = new WebCore::Page(WTFMove(pageConfiguration));
+    _private->page = WebCore::Page::create(WTFMove(pageConfiguration));
     storageProvider->setPage(*_private->page);
 
     [self setSmartInsertDeleteEnabled:YES];
@@ -1839,7 +1808,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowScreenScaleChanged:) name:WAKWindowScreenScaleDidChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_wakWindowVisibilityChanged:) name:WAKWindowVisibilityDidChangeNotification object:nil];
 
-    [WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:_private->page frameView:frameView.get() style:style];
+    [WebFrame _createMainFrameWithSimpleHTMLDocumentWithPage:_private->page.get() frameView:frameView.get() style:style];
 
     [self _addToAllWebViewsSet];
 
@@ -1928,7 +1897,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (CGRect)_dataInteractionCaretRect
 {
     WebThreadLock();
-    if (auto* page = _private->page)
+    if (RefPtr page = _private->page)
         return page->dragCaretController().caretRectInRootViewCoordinates();
 
     return { };
@@ -1978,23 +1947,35 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (uint64_t)_enteredDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
+    RefPtr localMainFrame = [self _mainCoreFrame];
+    if (!localMainFrame)
+        return 0;
+
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
-    return kit(_private->page->dragController().dragEntered(WTFMove(dragData)));
+    return kit(std::get<std::optional<WebCore::DragOperation>>(_private->page->dragController().dragEnteredOrUpdated(*localMainFrame, WTFMove(dragData))));
 }
 
 - (uint64_t)_updatedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
+    RefPtr localMainFrame = [self _mainCoreFrame];
+    if (!localMainFrame)
+        return 0;
+
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
-    return kit(_private->page->dragController().dragUpdated(WTFMove(dragData)));
+    return kit(std::get<std::optional<WebCore::DragOperation>>(_private->page->dragController().dragEnteredOrUpdated(*localMainFrame, WTFMove(dragData))));
 }
 
 - (void)_exitedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
 {
+    RefPtr localMainFrame = [self _mainCoreFrame];
+    if (!localMainFrame)
+        return;
+
     WebThreadLock();
     auto dragData = [self dragDataForSession:session client:clientPosition global:globalPosition operation:operation];
-    _private->page->dragController().dragExited(WTFMove(dragData));
+    _private->page->dragController().dragExited(*localMainFrame, WTFMove(dragData));
 }
 
 - (void)_performDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation
@@ -2023,7 +2004,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (void)_didConcludeEditDrag
 {
     _private->dataOperationTextIndicator = nullptr;
-    auto* page = _private->page;
+    RefPtr page = _private->page;
     if (!page)
         return;
 
@@ -2463,9 +2444,7 @@ static bool fastDocumentTeardownEnabled()
     // Deleteing the WebCore::Page will clear the back/forward cache so we call destroy on
     // all the plug-ins in the back/forward cache to break any retain cycles.
     // See comment in HistoryItem::releaseAllPendingPageCaches() for more information.
-    auto* page = _private->page;
     _private->page = nullptr;
-    WebKit::DeferredPageDestructor::createDeferredPageDestructor(std::unique_ptr<WebCore::Page>(page));
 
 #if !PLATFORM(IOS_FAMILY)
     if (_private->hasSpellCheckerDocumentTag) {
@@ -2694,7 +2673,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NakedPtr<WebCore::Page>)page
 {
-    return _private->page;
+    return _private->page.get();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3337,7 +3316,7 @@ IGNORE_WARNINGS_END
     if (_private->_didPerformFirstNavigation)
         return;
 
-    auto* page = _private->page;
+    RefPtr page = _private->page;
     if (!page)
         return;
 
@@ -4047,7 +4026,7 @@ IGNORE_WARNINGS_END
 
 - (void)_executeCoreCommandByName:(NSString *)name value:(NSString *)value
 {
-    if (auto* page = _private->page)
+    if (RefPtr page = _private->page)
         page->focusController().focusedOrMainFrame().editor().command(name).execute(value);
 }
 
@@ -4274,7 +4253,7 @@ IGNORE_WARNINGS_END
     if (!world)
         return;
 
-    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleUserLevel);
+    auto styleSheet = makeUnique<WebCore::UserStyleSheet>(source, url, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), injectedFrames == WebInjectInAllFrames ? WebCore::UserContentInjectedFrames::InjectInAllFrames : WebCore::UserContentInjectedFrames::InjectInTopFrameOnly, WebCore::UserStyleLevel::User);
     viewGroup->userContentController().addUserStyleSheet(*core(world), WTFMove(styleSheet), WebCore::InjectInExistingDocuments);
 }
 
@@ -4461,19 +4440,19 @@ IGNORE_WARNINGS_END
     auto pagination = page->pagination();
     switch (paginationMode) {
     case WebPaginationModeUnpaginated:
-        pagination.mode = WebCore::Unpaginated;
+        pagination.mode = WebCore::PaginationMode::Unpaginated;
         break;
     case WebPaginationModeLeftToRight:
-        pagination.mode = WebCore::LeftToRightPaginated;
+        pagination.mode = WebCore::PaginationMode::LeftToRightPaginated;
         break;
     case WebPaginationModeRightToLeft:
-        pagination.mode = WebCore::RightToLeftPaginated;
+        pagination.mode = WebCore::PaginationMode::RightToLeftPaginated;
         break;
     case WebPaginationModeTopToBottom:
-        pagination.mode = WebCore::TopToBottomPaginated;
+        pagination.mode = WebCore::PaginationMode::TopToBottomPaginated;
         break;
     case WebPaginationModeBottomToTop:
-        pagination.mode = WebCore::BottomToTopPaginated;
+        pagination.mode = WebCore::PaginationMode::BottomToTopPaginated;
         break;
     default:
         return;
@@ -4489,15 +4468,15 @@ IGNORE_WARNINGS_END
         return WebPaginationModeUnpaginated;
 
     switch (page->pagination().mode) {
-    case WebCore::Unpaginated:
+    case WebCore::PaginationMode::Unpaginated:
         return WebPaginationModeUnpaginated;
-    case WebCore::LeftToRightPaginated:
+    case WebCore::PaginationMode::LeftToRightPaginated:
         return WebPaginationModeLeftToRight;
-    case WebCore::RightToLeftPaginated:
+    case WebCore::PaginationMode::RightToLeftPaginated:
         return WebPaginationModeRightToLeft;
-    case WebCore::TopToBottomPaginated:
+    case WebCore::PaginationMode::TopToBottomPaginated:
         return WebPaginationModeTopToBottom;
-    case WebCore::BottomToTopPaginated:
+    case WebCore::PaginationMode::BottomToTopPaginated:
         return WebPaginationModeBottomToTop;
     }
 
@@ -6316,11 +6295,15 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
+    RefPtr localMainFrame = [self _mainCoreFrame];
+    if (!localMainFrame)
+        return NSDragOperationNone;
+
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
 
     WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self _applicationFlagsForDrag:draggingInfo], [self actionMaskForDraggingInfo:draggingInfo]);
-    return kit(core(self)->dragController().dragEntered(WTFMove(dragData)));
+    return kit(std::get<std::optional<WebCore::DragOperation>>(core(self)->dragController().dragEnteredOrUpdated(*localMainFrame, WTFMove(dragData))));
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
@@ -6329,11 +6312,15 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!page)
         return NSDragOperationNone;
 
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return NSDragOperationNone;
+
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
 
     WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self _applicationFlagsForDrag:draggingInfo], [self actionMaskForDraggingInfo:draggingInfo]);
-    return kit(page->dragController().dragUpdated(WTFMove(dragData)));
+    return kit(std::get<std::optional<WebCore::DragOperation>>(page->dragController().dragEnteredOrUpdated(*localMainFrame, WTFMove(dragData))));
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
@@ -6342,10 +6329,14 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!page)
         return;
 
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
+
     WebCore::IntPoint client([draggingInfo draggingLocation]);
     WebCore::IntPoint global(WebCore::globalPoint([draggingInfo draggingLocation], [self window]));
     WebCore::DragData dragData(draggingInfo, client, global, coreDragOperationMask([draggingInfo draggingSourceOperationMask]), [self _applicationFlagsForDrag:draggingInfo]);
-    page->dragController().dragExited(WTFMove(dragData));
+    page->dragController().dragExited(*localMainFrame, WTFMove(dragData));
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo
@@ -8824,7 +8815,7 @@ FORWARD(toggleUnderline)
 #if PLATFORM(IOS_FAMILY)
 - (void)_scheduleRenderingUpdateForPendingTileCacheRepaint
 {
-    if (auto* page = _private->page)
+    if (RefPtr page = _private->page)
         page->scheduleRenderingUpdate(WebCore::RenderingUpdateStep::LayerFlush);
 }
 #endif
@@ -9657,7 +9648,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 {
 #if ENABLE(GEOLOCATION)
     if (_private && _private->page)
-        WebCore::GeolocationController::from(_private->page)->positionChanged(core(position));
+        WebCore::GeolocationController::from(_private->page.get())->positionChanged(core(position));
 #endif // ENABLE(GEOLOCATION)
 }
 
@@ -9666,7 +9657,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 #if ENABLE(GEOLOCATION)
     if (_private && _private->page) {
         auto geolocatioError = WebCore::GeolocationError::create(WebCore::GeolocationError::PositionUnavailable, errorMessage);
-        WebCore::GeolocationController::from(_private->page)->errorOccurred(geolocatioError.get());
+        WebCore::GeolocationController::from(_private->page.get())->errorOccurred(geolocatioError.get());
     }
 #endif // ENABLE(GEOLOCATION)
 }
@@ -9718,7 +9709,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 - (NSString *)_notificationIDForTesting:(JSValueRef)jsNotification
 {
 #if ENABLE(NOTIFICATIONS)
-    auto* page = _private->page;
+    RefPtr page = _private->page;
     if (!page)
         return 0;
     JSContextRef context = [[self mainFrame] globalContext];
@@ -9732,7 +9723,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 - (void)_clearNotificationPermissionState
 {
 #if ENABLE(NOTIFICATIONS)
-    auto* page = _private->page;
+    RefPtr page = _private->page;
     if (page)
         static_cast<WebNotificationClient*>(WebCore::NotificationController::clientFrom(*page))->clearNotificationPermissionState();
 #endif

@@ -61,6 +61,17 @@ static inline void fillRTCRTPStreamStats(RTCStatsReport::RtpStreamStats& stats, 
         stats.kind = String::fromLatin1(kind);
 }
 
+static inline void fillSentRTPStreamStats(RTCStatsReport::SentRtpStreamStats& stats, const GstStructure* structure)
+{
+    fillRTCRTPStreamStats(stats, structure);
+
+    uint64_t value;
+    if (gst_structure_get_uint64(structure, "packets-sent", &value))
+        stats.packetsSent = value;
+    if (gst_structure_get_uint64(structure, "bytes-sent", &value))
+        stats.bytesSent = value;
+}
+
 static inline void fillRTCCodecStats(RTCStatsReport::CodecStats& stats, const GstStructure* structure)
 {
     fillRTCStats(stats, structure);
@@ -104,24 +115,9 @@ static inline void fillReceivedRTPStreamStats(RTCStatsReport::ReceivedRtpStreamS
         stats.packetsLost = packetsLost;
 #endif
 
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "packets-repaired", &value))
-        stats.packetsRepaired = value;
-
     double jitter;
     if (gst_structure_get_double(structure, "jitter", &jitter))
         stats.jitter = jitter;
-
-    // FIXME:
-    // stats.burstLossCount
-    // stats.burstDiscardCount
-    // stats.burstLossRate
-    // stats.burstDiscardRate
-    // stats.gapLossRate
-    // stats.gapDiscardRate
-    // stats.framesDropped
-    // stats.partialFramesLost
-    // stats.fullFramesLost
 }
 
 static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
@@ -143,6 +139,26 @@ static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInbound
 
     // FIXME:
     // stats.reportsReceived
+    // stats.roundTripTimeMeasurements
+}
+
+static inline void fillRemoteOutboundRTPStreamStats(RTCStatsReport::RemoteOutboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
+{
+    UNUSED_PARAM(additionalStats);
+
+    fillSentRTPStreamStats(stats, structure);
+
+    double value;
+    if (gst_structure_get_double(structure, "remote-timestamp", &value))
+        stats.remoteTimestamp = value;
+
+    if (const char* localId = gst_structure_get_string(structure, "local-id"))
+        stats.localId = String::fromLatin1(localId);
+
+    // FIXME:
+    // stats.roundTripTime
+    // stats.reportsSent
+    // stats.totalRoundTripTime
     // stats.roundTripTimeMeasurements
 }
 
@@ -207,12 +223,7 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
 static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRtpStreamStats& stats, const GstStructure* structure, const GstStructure* additionalStats)
 {
     fillRTCRTPStreamStats(stats, structure);
-
-    uint64_t value;
-    if (gst_structure_get_uint64(structure, "packets-sent", &value))
-        stats.packetsSent = value;
-    if (gst_structure_get_uint64(structure, "bytes-sent", &value))
-        stats.bytesSent = value;
+    fillSentRTPStreamStats(stats, structure);
 
     unsigned firCount;
     if (gst_structure_get_uint(structure, "fir-count", &firCount))
@@ -232,6 +243,7 @@ static inline void fillOutboundRTPStreamStats(RTCStatsReport::OutboundRtpStreamS
     if (!additionalStats)
         return;
 
+    uint64_t value;
     if (gst_structure_get_uint64(additionalStats, "frames-sent", &value))
         stats.framesSent = value;
     if (gst_structure_get_uint64(additionalStats, "frames-encoded", &value))
@@ -260,19 +272,21 @@ static inline void fillRTCTransportStats(RTCStatsReport::TransportStats& stats, 
     if (const char* selectedCandidatePairId = gst_structure_get_string(structure, "selected-candidate-pair-id"))
         stats.selectedCandidatePairId = String::fromLatin1(selectedCandidatePairId);
 
+    // FIXME: This field is required, GstWebRTC doesn't provide it, so hard-code a value here.
+    stats.dtlsState = RTCDtlsTransportState::Connected;
+
     // FIXME
     // stats.bytesSent =
     // stats.bytesReceived =
     // stats.rtcpTransportStatsId =
     // stats.localCertificateId =
     // stats.remoteCertificateId =
-    // stats.dtlsState =
     // stats.tlsVersion =
     // stats.dtlsCipher =
     // stats.srtpCipher =
 }
 
-static inline std::optional<RTCIceCandidateType> iceCandidateType(const String& type)
+static inline RTCIceCandidateType iceCandidateType(const String& type)
 {
     if (type == "host"_s)
         return RTCIceCandidateType::Host;
@@ -282,8 +296,8 @@ static inline std::optional<RTCIceCandidateType> iceCandidateType(const String& 
         return RTCIceCandidateType::Prflx;
     if (type == "relay"_s)
         return RTCIceCandidateType::Relay;
-
-    return { };
+    ASSERT_NOT_REACHED();
+    return RTCIceCandidateType::Host;
 }
 
 static inline void fillRTCCandidateStats(RTCStatsReport::IceCandidateStats& stats, GstWebRTCStatsType statsType, const GstStructure* structure)
@@ -393,7 +407,9 @@ static gboolean fillReportCallback(GQuark, const GValue* value, gpointer userDat
         break;
     }
     case GST_WEBRTC_STATS_REMOTE_OUTBOUND_RTP: {
-        // FIXME: Remote outbound RTP stats not exposed yet.
+        RTCStatsReport::RemoteOutboundRtpStreamStats stats;
+        fillRemoteOutboundRTPStreamStats(stats, structure, additionalStats);
+        report.set<IDLDOMString, IDLDictionary<RTCStatsReport::RemoteOutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         break;
     }
     case GST_WEBRTC_STATS_CSRC:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "CredentialStorage.h"
 #include "FrameIdentifier.h"
+#include "OrganizationStorageAccessPromptQuirk.h"
 #include "PageIdentifier.h"
 #include "RegistrableDomain.h"
 #include "ShouldRelaxThirdPartyCookieBlocking.h"
@@ -162,8 +163,8 @@ public:
     WEBCORE_EXPORT HTTPCookieAcceptPolicy cookieAcceptPolicy() const;
     WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void setCookies(const Vector<Cookie>&, const URL&, const URL& mainDocumentURL);
-    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, const String&, ShouldRelaxThirdPartyCookieBlocking) const;
-    WEBCORE_EXPORT bool setCookieFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, Cookie&&) const;
+    WEBCORE_EXPORT void setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking) const;
+    WEBCORE_EXPORT bool setCookieFromDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, const Cookie&, ShouldRelaxThirdPartyCookieBlocking) const;
     WEBCORE_EXPORT void deleteCookie(const Cookie&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void deleteCookie(const URL&, const String&, CompletionHandler<void()>&&) const;
     WEBCORE_EXPORT void deleteAllCookies(CompletionHandler<void()>&&);
@@ -188,7 +189,6 @@ public:
     WEBCORE_EXPORT void stopListeningForCookieChangeNotifications(CookieChangeObserver&, const HashSet<String>& hosts);
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     WEBCORE_EXPORT void setTrackingPreventionEnabled(bool);
     WEBCORE_EXPORT bool trackingPreventionEnabled() const;
     WEBCORE_EXPORT void setTrackingPreventionDebugLoggingEnabled(bool);
@@ -222,13 +222,14 @@ public:
     WEBCORE_EXPORT void setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode);
 
     WEBCORE_EXPORT const static HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& storageAccessQuirks();
+    WEBCORE_EXPORT static void updateStorageAccessPromptQuirks(Vector<OrganizationStorageAccessPromptQuirk>&&);
     WEBCORE_EXPORT static bool canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const SubResourceDomain&, const TopFrameDomain&);
     WEBCORE_EXPORT static std::optional<HashSet<RegistrableDomain>> subResourceDomainsInNeedOfStorageAccessForFirstParty(const RegistrableDomain&);
     WEBCORE_EXPORT static bool loginDomainMatchesRequestingDomain(const TopFrameDomain&, const SubResourceDomain&);
     WEBCORE_EXPORT static std::optional<RegistrableDomain> findAdditionalLoginDomain(const TopFrameDomain&, const SubResourceDomain&);
+    WEBCORE_EXPORT static Vector<RegistrableDomain> storageAccessQuirkForTopFrameDomain(const TopFrameDomain&);
+    WEBCORE_EXPORT static std::optional<OrganizationStorageAccessPromptQuirk> storageAccessQuirkForDomainPair(const TopFrameDomain&, const SubResourceDomain&);
 
-#endif
-    
 #if ENABLE(APP_BOUND_DOMAINS)
     WEBCORE_EXPORT void setAppBoundDomains(HashSet<RegistrableDomain>&&);
     WEBCORE_EXPORT void resetAppBoundDomains();
@@ -283,7 +284,6 @@ private:
 
     CredentialStorage m_credentialStorage;
 
-#if ENABLE(TRACKING_PREVENTION)
     bool m_isTrackingPreventionEnabled = false;
     bool m_isTrackingPreventionDebugLoggingEnabled = false;
     std::optional<Seconds> clientSideCookieCap(const TopFrameDomain&, std::optional<PageIdentifier>) const;
@@ -305,7 +305,6 @@ private:
     ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { ThirdPartyCookieBlockingMode::All };
     HashSet<RegistrableDomain> m_appBoundDomains;
     HashSet<RegistrableDomain> m_managedDomains;
-#endif
 
 #if PLATFORM(COCOA)
 public:

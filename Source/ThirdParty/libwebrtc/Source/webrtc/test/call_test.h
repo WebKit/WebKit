@@ -36,6 +36,7 @@
 #include "test/rtp_rtcp_observer.h"
 #include "test/run_loop.h"
 #include "test/scoped_key_value_config.h"
+#include "test/test_video_capturer.h"
 #include "test/video_test_constants.h"
 
 namespace webrtc {
@@ -62,11 +63,11 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   void RunBaseTest(BaseTest* test);
 
   void CreateCalls();
-  void CreateCalls(const Call::Config& sender_config,
-                   const Call::Config& receiver_config);
+  void CreateCalls(const CallConfig& sender_config,
+                   const CallConfig& receiver_config);
   void CreateSenderCall();
-  void CreateSenderCall(const Call::Config& config);
-  void CreateReceiverCall(const Call::Config& config);
+  void CreateSenderCall(const CallConfig& config);
+  void CreateReceiverCall(const CallConfig& config);
   void DestroyCalls();
 
   void CreateVideoSendConfig(VideoSendStream::Config* video_config,
@@ -162,6 +163,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   void ConnectVideoSourcesToStreams();
 
   void Start();
+  void StartVideoSources();
   void StartVideoStreams();
   void Stop();
   void StopVideoStreams();
@@ -210,8 +212,7 @@ class CallTest : public ::testing::Test, public RtpPacketSinkInterface {
   std::vector<FlexfecReceiveStream*> flexfec_receive_streams_;
 
   test::FrameGeneratorCapturer* frame_generator_capturer_;
-  std::vector<std::unique_ptr<rtc::VideoSourceInterface<VideoFrame>>>
-      video_sources_;
+  std::vector<std::unique_ptr<TestVideoCapturer>> video_sources_;
   DegradationPreference degradation_preference_ =
       DegradationPreference::MAINTAIN_FRAMERATE;
 

@@ -13,6 +13,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/packet/data.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_options.h"
@@ -227,8 +228,7 @@ TEST_F(RRSendQueueTest, DiscardPartialPackets) {
   ASSERT_TRUE(chunk_one.has_value());
   EXPECT_FALSE(chunk_one->data.is_end);
   EXPECT_EQ(chunk_one->data.stream_id, kStreamID);
-  buf_.Discard(IsUnordered(false), chunk_one->data.stream_id,
-               chunk_one->data.message_id);
+  buf_.Discard(chunk_one->data.stream_id, chunk_one->message_id);
 
   absl::optional<SendQueue::DataToSend> chunk_two =
       buf_.Produce(kNow, kOneFragmentPacketSize);
@@ -244,8 +244,7 @@ TEST_F(RRSendQueueTest, DiscardPartialPackets) {
   ASSERT_FALSE(buf_.Produce(kNow, kOneFragmentPacketSize));
 
   // Calling it again shouldn't cause issues.
-  buf_.Discard(IsUnordered(false), chunk_one->data.stream_id,
-               chunk_one->data.message_id);
+  buf_.Discard(chunk_one->data.stream_id, chunk_one->message_id);
   ASSERT_FALSE(buf_.Produce(kNow, kOneFragmentPacketSize));
 }
 
@@ -364,6 +363,32 @@ TEST_F(RRSendQueueTest, CommittingResetsSSN) {
       buf_.Produce(kNow, kOneFragmentPacketSize);
   ASSERT_TRUE(chunk_three.has_value());
   EXPECT_EQ(chunk_three->data.ssn, SSN(0));
+}
+
+TEST_F(RRSendQueueTest, CommittingDoesNotResetMessageId) {
+  std::vector<uint8_t> payload(50);
+
+  buf_.Add(kNow, DcSctpMessage(kStreamID, kPPID, payload));
+  ASSERT_HAS_VALUE_AND_ASSIGN(SendQueue::DataToSend chunk1,
+                              buf_.Produce(kNow, kOneFragmentPacketSize));
+  EXPECT_EQ(chunk1.data.ssn, SSN(0));
+  EXPECT_EQ(chunk1.message_id, OutgoingMessageId(0));
+
+  buf_.Add(kNow, DcSctpMessage(kStreamID, kPPID, payload));
+  ASSERT_HAS_VALUE_AND_ASSIGN(SendQueue::DataToSend chunk2,
+                              buf_.Produce(kNow, kOneFragmentPacketSize));
+  EXPECT_EQ(chunk2.data.ssn, SSN(1));
+  EXPECT_EQ(chunk2.message_id, OutgoingMessageId(1));
+
+  buf_.PrepareResetStream(kStreamID);
+  EXPECT_THAT(buf_.GetStreamsReadyToBeReset(), UnorderedElementsAre(kStreamID));
+  buf_.CommitResetStreams();
+
+  buf_.Add(kNow, DcSctpMessage(kStreamID, kPPID, payload));
+  ASSERT_HAS_VALUE_AND_ASSIGN(SendQueue::DataToSend chunk3,
+                              buf_.Produce(kNow, kOneFragmentPacketSize));
+  EXPECT_EQ(chunk3.data.ssn, SSN(0));
+  EXPECT_EQ(chunk3.message_id, OutgoingMessageId(2));
 }
 
 TEST_F(RRSendQueueTest, CommittingResetsSSNForPausedStreamsOnly) {
@@ -859,8 +884,7 @@ TEST_F(RRSendQueueTest, WillSendLifecycleExpireWhenDiscardingExplicitly) {
   EXPECT_CALL(callbacks_, OnLifecycleMessageExpired(LifecycleId(1),
                                                     /*maybe_delivered=*/false));
   EXPECT_CALL(callbacks_, OnLifecycleEnd(LifecycleId(1)));
-  buf_.Discard(IsUnordered(false), chunk_one->data.stream_id,
-               chunk_one->data.message_id);
+  buf_.Discard(chunk_one->data.stream_id, chunk_one->message_id);
 }
 }  // namespace
 }  // namespace dcsctp

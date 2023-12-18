@@ -221,21 +221,21 @@ SECTION .text
 ;   3: If 0, then normal sad, if 2, then skip every other row
 %macro HIGH_SADNXN4D 2-3 0
 %if %3 == 0  ; normal sad
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
 cglobal highbd_sad%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
                               res, ref2, ref3, ref4
 %else
 cglobal highbd_sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
                               ref2, ref3, ref4
-%endif  ; ARCH_X86_64
+%endif  ; AOM_ARCH_X86_64
 %else  ; %3 == 2, downsample
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
 cglobal highbd_sad_skip_%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
                               res, ref2, ref3, ref4
 %else
 cglobal highbd_sad_skip_%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
                               ref2, ref3, ref4
-%endif  ; ARCH_X86_64
+%endif  ; AOM_ARCH_X86_64
 %endif  ; sad/avg/skip
 
 ; set m1

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchRegistration.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchManager.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
@@ -160,7 +158,7 @@ static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, 
 void BackgroundFetchRegistration::match(ScriptExecutionContext& context, RequestInfo&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLInterface<BackgroundFetchRecord>>&& promise)
 {
     if (!recordsAvailable()) {
-        promise.reject(Exception { InvalidStateError, "Records are not available"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_s });
         return;
     }
 
@@ -178,7 +176,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
             return;
 
         if (!results.size()) {
-            promise.reject(Exception { TypeError, "No matching record"_s });
+            promise.reject(Exception { ExceptionCode::TypeError, "No matching record"_s });
             return;
         }
 
@@ -189,7 +187,7 @@ void BackgroundFetchRegistration::match(ScriptExecutionContext& context, Request
 void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std::optional<RequestInfo>&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLSequence<IDLInterface<BackgroundFetchRecord>>>&& promise)
 {
     if (!recordsAvailable()) {
-        promise.reject(Exception { InvalidStateError, "Records are not available"_s });
+        promise.reject(Exception { ExceptionCode::InvalidStateError, "Records are not available"_s });
         return;
     }
 
@@ -249,7 +247,3 @@ bool BackgroundFetchRegistration::virtualHasPendingActivity() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)
-
-

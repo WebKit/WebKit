@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test passes if no download is started.");
+jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.setShouldLogDownloadCallbacks(true);
+
+let frameCount = 0;
+
+['', 'target="_blank" ', 'target="_blank" rel="noopener" ', 'download'].forEach(attributes => {
+    let iframe = document.createElement("iframe");
+    iframe.srcdoc = `<a ${attributes}>Download</a>`;
+    iframe.sandbox = "allow-same-origin allow-popups";
+    iframe.onload = () => {
+        iframe.contentWindow.addEventListener("unload", () => {
+           testFailed("Unexpected frame navigation");
+        });
+        let anchor = iframe.contentDocument.getElementsByTagName('a')[0];
+        anchor.href = 'resources/content-disposition-pass.py';
+        anchor.click();
+        if (++frameCount == 4)
+            setTimeout(finishJSTest, 1000);
+    };
+
+    document.body.appendChild(iframe);
+});
+</script>
+</body>
+</html>

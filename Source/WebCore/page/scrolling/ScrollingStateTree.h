@@ -28,6 +28,7 @@
 #if ENABLE(ASYNC_SCROLLING)
 
 #include "ScrollingStateNode.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/RefPtr.h>
  
 namespace WebCore {
@@ -40,15 +41,16 @@ class ScrollingStateFrameScrollingNode;
 // will be informed and will schedule a timer that will clone the new state tree and send it over to
 // the scrolling thread, avoiding locking. 
 
-class ScrollingStateTree {
+class ScrollingStateTree : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ScrollingStateNode;
 public:
+    WEBCORE_EXPORT static std::optional<ScrollingStateTree> createAfterReconstruction(bool, bool, RefPtr<ScrollingStateFrameScrollingNode>&&);
     WEBCORE_EXPORT ScrollingStateTree(AsyncScrollingCoordinator* = nullptr);
     WEBCORE_EXPORT ScrollingStateTree(ScrollingStateTree&&);
     WEBCORE_EXPORT ~ScrollingStateTree();
 
-    ScrollingStateFrameScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
+    WEBCORE_EXPORT RefPtr<ScrollingStateFrameScrollingNode> rootStateNode() const;
     WEBCORE_EXPORT RefPtr<ScrollingStateNode> stateNodeForID(ScrollingNodeID) const;
 
     ScrollingNodeID createUnparentedNode(ScrollingNodeType, ScrollingNodeID);
@@ -72,7 +74,7 @@ public:
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
-    using StateNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>>;
+    using StateNodeMap = HashMap<ScrollingNodeID, Ref<ScrollingStateNode>>;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
@@ -93,6 +95,8 @@ public:
     String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
 
 private:
+    ScrollingStateTree(bool hasNewRootStateNode, bool hasChangedProperties, RefPtr<ScrollingStateFrameScrollingNode>&&);
+
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
     void addNode(ScrollingStateNode&);
 

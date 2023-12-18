@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            var audio = null;
+            async function start() {
+                audio = mediaElement = document.getElementsByTagName('audio')[0];
+
+                testExpected("audio.canPlayType('audio/webm; codecs=opus')", "probably");
+                waitForEvent('error', failTest);
+                run('audio.src = "content/short.webm"');
+                // make suspend event silent as it could be fired at any time between loadedmetadata and loadeddata.
+                await Promise.all([ waitFor(audio, 'loadedmetadata'), waitFor(audio, 'loadeddata'), waitFor(audio, 'suspend', true)]).then(() => {
+                    testExpected('audio.duration', '0.5', '>=');
+                    testExpected('audio.buffered.length', '1');
+                    endTest();
+                });
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <audio controls></audio>
+        <p>Check that a webm file reports a buffered range.</p>
+    </body>
+</html>

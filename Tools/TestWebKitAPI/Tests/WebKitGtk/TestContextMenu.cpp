@@ -954,7 +954,7 @@ public:
 
         uint32_t item;
         while (g_variant_iter_next(&iter, "u", &item))
-            m_actions.uncheckedAppend(static_cast<WebKitContextMenuAction>(item));
+            m_actions.append(static_cast<WebKitContextMenuAction>(item));
     }
 
     bool contextMenu(WebKitContextMenu* menu, GdkEvent*, WebKitHitTestResult*)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,15 @@
 #include "ShadowChickenInlines.h"
 #include "VMTrapsInlines.h"
 #include <wtf/ListDump.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 namespace ShadowChickenInternal {
 static constexpr bool verbose = false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ShadowChicken);
 
 void ShadowChicken::Packet::dump(PrintStream& out) const
 {
@@ -213,7 +216,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             }
             break;
         }
-        m_stack.resize(shadowIndex);
+        m_stack.shrink(shadowIndex);
         
         if (ShadowChickenInternal::verbose)
             dataLog("    Revised stack: ", listDump(m_stack), "\n");

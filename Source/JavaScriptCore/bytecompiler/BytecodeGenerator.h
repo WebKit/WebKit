@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -55,6 +55,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -243,7 +244,7 @@ namespace JSC {
     };
 
     class ForInContext : public RefCounted<ForInContext> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ForInContext);
         WTF_MAKE_NONCOPYABLE(ForInContext);
     public:
         using GetInst = std::tuple<unsigned, int>;
@@ -337,7 +338,7 @@ namespace JSC {
     };
 
     class BytecodeGenerator : public BytecodeGeneratorBase<JSGeneratorTraits> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(BytecodeGenerator);
         WTF_MAKE_NONCOPYABLE(BytecodeGenerator);
 
         friend class FinallyContext;
@@ -588,18 +589,18 @@ namespace JSC {
             if (m_isBuiltinFunction)
                 return;
 
-            int sourceOffset = m_scopeNode->source().startOffset();
+            unsigned sourceOffset = m_scopeNode->source().startOffset();
             unsigned firstLine = m_scopeNode->source().firstLine().oneBasedInt();
 
-            int divotOffset = divot.offset - sourceOffset;
-            int startOffset = divot.offset - divotStart.offset;
-            int endOffset = divotEnd.offset - divot.offset;
+            unsigned divotOffset = divot.offset - sourceOffset;
+            unsigned startOffset = divot.offset - divotStart.offset;
+            unsigned endOffset = divotEnd.offset - divot.offset;
 
             unsigned line = divot.line;
             ASSERT(line >= firstLine);
             line -= firstLine;
 
-            int lineStart = divot.lineStartOffset;
+            unsigned lineStart = divot.lineStartOffset;
             if (lineStart > sourceOffset)
                 lineStart -= sourceOffset;
             else
@@ -978,7 +979,6 @@ namespace JSC {
         void emitPushCatchScope(VariableEnvironment&, ScopeType);
         void emitPopCatchScope(VariableEnvironment&);
 
-        void emitAwait(RegisterID*);
         void emitGetScope();
         RegisterID* emitPushWithScope(RegisterID* objectScope);
         void emitPopWithScope();
@@ -1023,7 +1023,9 @@ namespace JSC {
 
         void emitGeneratorStateLabel();
         void emitGeneratorStateChange(int32_t state);
-        RegisterID* emitYield(RegisterID* argument, JSAsyncGenerator::AsyncGeneratorSuspendReason = JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
+        RegisterID* emitYield(RegisterID* argument);
+        RegisterID* emitAwait(RegisterID* dst, RegisterID* src);
+        RegisterID* emitAwait(RegisterID* srcDst) { return emitAwait(srcDst, srcDst); }
         RegisterID* emitDelegateYield(RegisterID* argument, ThrowableExpressionData*);
         RegisterID* generatorStateRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::State)]; }
         RegisterID* generatorValueRegister() { return &m_parameters[static_cast<int32_t>(JSGenerator::Argument::Value)]; }
@@ -1171,7 +1173,7 @@ namespace JSC {
             if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() != ConstructorKind::None)
                 constructAbility = ConstructAbility::CanConstruct;
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(optionalVariablesUnderTDZ), WTFMove(parentPrivateNameEnvironment), newDerivedContextType, needsClassFieldInitializer, privateBrandRequirement);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, InlineAttribute::None, scriptMode(), WTFMove(optionalVariablesUnderTDZ), WTFMove(parentPrivateNameEnvironment), newDerivedContextType, needsClassFieldInitializer, privateBrandRequirement);
         }
 
         RefPtr<TDZEnvironmentLink> getVariablesUnderTDZ();
@@ -1302,7 +1304,7 @@ namespace JSC {
         Vector<Ref<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
         unsigned m_yieldPoints { 0 };
-        bool m_isAsync { false };
+        bool m_needsGeneratorification { false };
 
         Strong<SymbolTable> m_generatorFrameSymbolTable;
         int m_generatorFrameSymbolTableIndex { 0 };

@@ -51,6 +51,7 @@ private:
     void scheduleTimer();
     
     BlockDirectory* m_currentDirectory;
+    bool m_lastOpportunisticTaskDidFinishSweeping { false };
     bool m_shouldFreeFastMallocMemoryAfterSweeping { false };
 };
 

@@ -42,15 +42,16 @@ enum class RenderAsTextFlag : uint16_t;
 
 class RemoteFrame final : public Frame {
 public:
-    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame* opener = nullptr);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame& parent);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, std::optional<LayerHostingContextIdentifier>);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;
 
-    void setOpener(Frame* opener) { m_opener = opener; }
-    Frame* opener() const { return m_opener.get(); }
+    void setOpener(Frame* opener) final { m_opener = opener; }
+    Frame* opener() final { return m_opener.get(); }
+    const Frame* opener() const final { return m_opener.get(); }
 
     const RemoteFrameClient& client() const { return m_client.get(); }
     RemoteFrameClient& client() { return m_client.get(); }
@@ -63,15 +64,17 @@ public:
     String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
 
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame*, Markable<LayerHostingContextIdentifier>);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame* parent, Markable<LayerHostingContextIdentifier>, Frame* opener = nullptr);
 
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;
     void changeLocation(FrameLoadRequest&&) final;
     void broadcastFrameRemovalToOtherProcesses() final;
     void didFinishLoadInAnotherProcess() final;
+    bool isRootFrame() const final { return false; }
 
     FrameView* virtualView() const final;
+    void disconnectView() final;
     DOMWindow* virtualWindow() const final;
 
     Ref<RemoteDOMWindow> m_window;

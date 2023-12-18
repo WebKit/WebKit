@@ -499,6 +499,7 @@ void run(const TestConfig* config)
     RUN(testCheckAddImmSomeRegister());
     RUN(testCheckAdd());
     RUN(testCheckAdd64());
+    RUN(testCheckAdd64Range());
     RUN(testCheckAddFold(100, 200));
     RUN(testCheckAddFoldFail(2147483647, 100));
     RUN(testCheckAddArgumentAliasing64());
@@ -785,6 +786,8 @@ void run(const TestConfig* config)
     RUN(testPinRegisters());
     RUN(testReduceStrengthReassociation(true));
     RUN(testReduceStrengthReassociation(false));
+    RUN_BINARY(testReduceStrengthTruncInt64Constant, int64Operands(), int32Operands());
+    RUN_BINARY(testReduceStrengthTruncDoubleConstant, floatingPointOperands<double>(), floatingPointOperands<float>());
     RUN(testAddShl32());
     RUN(testAddShl64());
     RUN(testAddShl65());

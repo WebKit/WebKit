@@ -60,13 +60,14 @@ constexpr unsigned styleIdentifierLength = 5;
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {
     float number;
-    if (!valueScanner.scanFloat(number))
+    bool isNegative = false;
+    if (!valueScanner.scanFloat(number, &isNegative))
         return false;
     // '%' must be present and at the end of the setting value.
     if (!valueScanner.scan('%'))
         return false;
 
-    if (number < 0 || number > 100)
+    if (isNegative || number > 100)
         return false;
 
     percentage = number;
@@ -250,7 +251,7 @@ bool WebVTTParser::hasRequiredFileIdentifier(const String& line)
     // and any number of characters that are not line terminators ...
     if (!line.startsWith(fileIdentifier))
         return false;
-    if (line.length() > fileIdentifierLength && !isASCIIWhitespace(line[fileIdentifierLength]))
+    if (line.length() > fileIdentifierLength && !isTabOrSpace(line[fileIdentifierLength]))
         return false;
     return true;
 }

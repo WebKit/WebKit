@@ -4234,8 +4234,11 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     RegisterID* forLoopSymbolTable = nullptr;
     generator.pushLexicalScope(this, BytecodeGenerator::ScopeType::LetConstScope, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
 
-    if (m_expr1)
+    if (m_expr1) {
         generator.emitNode(generator.ignoredResult(), m_expr1);
+        if (m_initializerContainsClosure)
+            generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
+    }
 
     Ref<Label> topOfLoop = generator.newLabel();
     if (m_expr2)
@@ -5088,8 +5091,6 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     }
 
     case SourceParseMode::AsyncGeneratorBodyMode:
-    case SourceParseMode::AsyncArrowFunctionBodyMode:
-    case SourceParseMode::AsyncFunctionBodyMode:
     case SourceParseMode::GeneratorBodyMode: {
         Ref<Label> generatorBodyLabel = generator.newLabel();
         {
@@ -5105,11 +5106,13 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         }
 
         generator.emitLabel(generatorBodyLabel.get());
+        FALLTHROUGH;
+    }
 
+    case SourceParseMode::AsyncArrowFunctionBodyMode:
+    case SourceParseMode::AsyncFunctionBodyMode: {
         emitStatementsBytecode(generator, generator.ignoredResult());
 
-        Ref<Label> done = generator.newLabel();
-        generator.emitLabel(done.get());
         generator.emitReturn(generator.emitLoad(nullptr, jsUndefined()));
         break;
     }
@@ -5187,7 +5190,7 @@ RegisterID* YieldExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
             generator.emitNode(arg.get(), argument());
         } else
             arg = generator.emitLoad(nullptr, jsUndefined());
-        RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Yield);
+        RefPtr<RegisterID> value = generator.emitYield(arg.get());
         if (dst == generator.ignoredResult())
             return nullptr;
         return generator.move(generator.finalDestination(dst), value.get());
@@ -5206,10 +5209,7 @@ RegisterID* AwaitExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 {
     RefPtr<RegisterID> arg = generator.newTemporary();
     generator.emitNode(arg.get(), argument());
-    RefPtr<RegisterID> value = generator.emitYield(arg.get(), JSAsyncGenerator::AsyncGeneratorSuspendReason::Await);
-    if (dst == generator.ignoredResult())
-        return nullptr;
-    return generator.move(generator.finalDestination(dst), value.get());
+    return generator.emitAwait(dst ? dst : generator.newTemporary(), arg.get());
 }
 
 // ------------------------------ DefineFieldNode ---------------------------------
@@ -5569,18 +5569,17 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
         resultRegister = generator.emitNewArray(generator.newTemporary(), nullptr, 0, ArrayWithUndecided);
     if (m_targetPatterns.size() != elements.size())
         return nullptr;
-    Vector<RefPtr<RegisterID>> registers;
-    registers.reserveInitialCapacity(m_targetPatterns.size());
-    for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        registers.uncheckedAppend(generator.newTemporary());
-        generator.emitNode(registers.last().get(), elements[i]);
+    Vector<RefPtr<RegisterID>> registers(m_targetPatterns.size(), [&](size_t i) {
+        RefPtr newRegister = generator.newTemporary();
+        generator.emitNode(newRegister.get(), elements[i]);
         if (m_targetPatterns[i].defaultValue)
-            assignDefaultValueIfUndefined(generator, registers.last().get(), m_targetPatterns[i].defaultValue);
+            assignDefaultValueIfUndefined(generator, newRegister.get(), m_targetPatterns[i].defaultValue);
         if (resultRegister) {
-            RefPtr<RegisterID> index = generator.emitLoad(nullptr, jsNumber(i));
-            generator.emitDirectPutByVal(resultRegister.get(), index.get(), registers.last().get());
+            RefPtr index = generator.emitLoad(nullptr, jsNumber(i));
+            generator.emitDirectPutByVal(resultRegister.get(), index.get(), newRegister.get());
         }
-    }
+        return newRegister;
+    });
     
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         if (m_targetPatterns[i].pattern)

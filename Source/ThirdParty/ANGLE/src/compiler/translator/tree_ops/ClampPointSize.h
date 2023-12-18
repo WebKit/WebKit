@@ -20,6 +20,7 @@ class TSymbolTable;
 
 [[nodiscard]] bool ClampPointSize(TCompiler *compiler,
                                   TIntermBlock *root,
+                                  float minPointSize,
                                   float maxPointSize,
                                   TSymbolTable *symbolTable);
 

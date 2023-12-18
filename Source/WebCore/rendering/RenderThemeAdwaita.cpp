@@ -34,6 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "MediaControlTextTrackContainerElement.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
@@ -41,7 +42,6 @@
 #include "RenderStyleSetters.h"
 #include "ThemeAdwaita.h"
 #include "TimeRanges.h"
-#include "UserAgentScripts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/Base64.h>
 
@@ -52,6 +52,10 @@
 #if PLATFORM(WIN)
 #include "WebCoreBundleWin.h"
 #include <wtf/FileSystem.h>
+#endif
+
+#if ENABLE(MODERN_MEDIA_CONTROLS)
+#include "UserAgentScripts.h"
 #endif
 
 namespace WebCore {
@@ -70,8 +74,7 @@ static const int menuListButtonFocusOffset = -2;
 static const unsigned menuListButtonPadding = 5;
 static const int menuListButtonBorderSize = 1; // Keep in sync with buttonBorderSize in ThemeAdwaita.
 static const unsigned progressActivityBlocks = 5;
-static const unsigned progressAnimationFrameCount = 75;
-static const Seconds progressAnimationFrameRate = 33_ms; // 30fps.
+static const Seconds progressAnimationDuration = 2475_ms;
 static const unsigned progressBarSize = 6;
 static constexpr auto progressBarBackgroundColorLight = SRGBA<uint8_t> { 0, 0, 0, 40 };
 static constexpr auto progressBarBackgroundColorDark = SRGBA<uint8_t> { 255, 255, 255, 30 };
@@ -90,12 +93,6 @@ static constexpr auto sliderThumbBorderColorDark = SRGBA<uint8_t>  { 0, 0, 0, 50
 static constexpr auto sliderThumbBackgroundColorDark = SRGBA<uint8_t> { 210, 210, 210 };
 static constexpr auto sliderThumbBackgroundHoveredColorDark = SRGBA<uint8_t> { 230, 230, 230 };
 static constexpr auto sliderThumbBackgroundDisabledColorDark = SRGBA<uint8_t> { 150, 150, 150 };
-
-#if ENABLE(VIDEO)
-static constexpr auto mediaSliderTrackBackgroundcolor = SRGBA<uint8_t> { 77, 77, 77 };
-static constexpr auto mediaSliderTrackBufferedColor = SRGBA<uint8_t> { 173, 173, 173 };
-static constexpr auto mediaSliderTrackActiveColor = SRGBA<uint8_t> { 252, 252, 252 };
-#endif
 
 static constexpr auto buttonTextColorLight = SRGBA<uint8_t> { 0, 0, 0, 204 };
 static constexpr auto buttonTextDisabledColorLight = SRGBA<uint8_t> { 0, 0, 0, 102 };
@@ -262,7 +259,6 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
     const bool useDarkAppearance = options.contains(StyleColorOptions::UseDarkAppearance);
 
     switch (cssValueID) {
-    case CSSValueActivecaption:
     case CSSValueActivebuttontext:
     case CSSValueButtontext:
         return useDarkAppearance ? buttonTextColorDark : buttonTextColorLight;
@@ -271,32 +267,18 @@ Color RenderThemeAdwaita::systemColor(CSSValueID cssValueID, OptionSet<StyleColo
         return useDarkAppearance ? buttonTextDisabledColorDark : buttonTextDisabledColorLight;
 
     case CSSValueCanvas:
+        return useDarkAppearance ? SRGBA<uint8_t> { 30, 30, 30 } : Color::white;
+
     case CSSValueField:
 #if HAVE(OS_DARK_MODE_SUPPORT)
     case CSSValueWebkitControlBackground:
 #endif
         return useDarkAppearance ? textFieldBackgroundColorDark : textFieldBackgroundColorLight;
 
-    case CSSValueWindow:
-        return useDarkAppearance ? SRGBA<uint8_t> { 30, 30, 30 } : Color::white;
-
     case CSSValueCanvastext:
-    case CSSValueCaptiontext:
     case CSSValueFieldtext:
-    case CSSValueInactivecaptiontext:
-    case CSSValueInfotext:
     case CSSValueText:
-    case CSSValueWindowtext:
         return useDarkAppearance ? Color::white : Color::black;
-
-    case CSSValueInactiveborder:
-    case CSSValueInactivecaption:
-        return useDarkAppearance ? Color::black : Color::white;
-
-    case CSSValueWebkitFocusRingColor:
-    case CSSValueActiveborder:
-        // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
-        return SRGBA<uint8_t> { 52, 132, 228, static_cast<unsigned char>(255 * focusRingOpacity) };
 
     case CSSValueHighlight:
         // Hardcoded to avoid exposing a user appearance preference to the web for fingerprinting.
@@ -410,7 +392,7 @@ void RenderThemeAdwaita::adjustMenuListButtonStyle(RenderStyle& style, const Ele
     adjustMenuListStyle(style, element);
 }
 
-LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
+LengthBox RenderThemeAdwaita::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.effectiveAppearance() == StyleAppearance::None)
         return { };
@@ -427,15 +409,14 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    OptionSet<ControlStates::States> states;
+    OptionSet<ControlStyle::State> states;
     if (isEnabled(renderObject))
-        states.add(ControlStates::States::Enabled);
+        states.add(ControlStyle::State::Enabled);
     if (isPressed(renderObject))
-        states.add(ControlStates::States::Pressed);
+        states.add(ControlStyle::State::Pressed);
     if (isHovered(renderObject))
-        states.add(ControlStates::States::Hovered);
-    ControlStates controlStates(states);
-    Theme::singleton().paint(StyleAppearance::Button, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
+        states.add(ControlStyle::State::Hovered);
+    Theme::singleton().paint(StyleAppearance::Button, states, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
     auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
     FloatRect fieldRect = rect;
@@ -458,14 +439,14 @@ void RenderThemeAdwaita::paintMenuListButtonDecorations(const RenderBox& renderO
     paintMenuList(renderObject, paintInfo, rect);
 }
 
-Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(const RenderProgress&) const
+Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(const RenderProgress& renderer) const
 {
-    return progressAnimationFrameRate;
+    return renderer.page().preferredRenderingUpdateInterval();
 }
 
-Seconds RenderThemeAdwaita::animationDurationForProgressBar(const RenderProgress&) const
+Seconds RenderThemeAdwaita::animationDurationForProgressBar() const
 {
-    return progressAnimationFrameRate * progressAnimationFrameCount;
+    return progressAnimationDuration;
 }
 
 IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
@@ -475,7 +456,7 @@ IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress&, cons
 
 bool RenderThemeAdwaita::paintProgressBar(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject.isProgress())
+    if (!renderObject.isRenderProgress())
         return true;
 
     auto& graphicsContext = paintInfo.context();

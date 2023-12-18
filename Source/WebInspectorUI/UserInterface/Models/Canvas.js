@@ -87,11 +87,20 @@ WI.Canvas = class Canvas extends WI.Object
         case InspectorBackend.Enum.Canvas.ContextType.BitmapRenderer:
             contextType = WI.Canvas.ContextType.BitmapRenderer;
             break;
+        case InspectorBackend.Enum.Canvas.ContextType.OffscreenBitmapRenderer:
+            contextType = WI.Canvas.ContextType.OffscreenBitmapRenderer;
+            break;
         case InspectorBackend.Enum.Canvas.ContextType.WebGL:
             contextType = WI.Canvas.ContextType.WebGL;
             break;
+        case InspectorBackend.Enum.Canvas.ContextType.OffscreenWebGL:
+            contextType = WI.Canvas.ContextType.OffscreenWebGL;
+            break;
         case InspectorBackend.Enum.Canvas.ContextType.WebGL2:
             contextType = WI.Canvas.ContextType.WebGL2;
+            break;
+        case InspectorBackend.Enum.Canvas.ContextType.OffscreenWebGL2:
+            contextType = WI.Canvas.ContextType.OffscreenWebGL2;
             break;
         case InspectorBackend.Enum.Canvas.ContextType.WebGPU:
             contextType = WI.Canvas.ContextType.WebGPU;
@@ -124,19 +133,25 @@ WI.Canvas = class Canvas extends WI.Object
     {
         switch (contextType) {
         case WI.Canvas.ContextType.Canvas2D:
-            return WI.UIString("2D");
+            return WI.UIString("2D", "2D @ Canvas Context Type", "2D is a type of rendering context associated with a <canvas> element.");
         case WI.Canvas.ContextType.OffscreenCanvas2D:
-            return WI.UIString("Offscreen2D");
+            return WI.UIString("Offscreen2D", "2D @ Offscreen Canvas Context Type", "2D is a type of rendering context associated with a OffscreenCanvas.");
         case WI.Canvas.ContextType.BitmapRenderer:
-            return WI.UIString("Bitmap Renderer", "Canvas Context Type Bitmap Renderer", "Bitmap Renderer is a type of rendering context associated with a <canvas> element");
+            return WI.UIString("Bitmap Renderer", "Bitmap Renderer @ Canvas Context Type", "Bitmap Renderer is a type of rendering context associated with a <canvas> element.");
+        case WI.Canvas.ContextType.OffscreenBitmapRenderer:
+            return WI.UIString("Bitmap Renderer (Offscreen)", "Bitmap Renderer @ Offscreen Canvas Context Type", "Bitmap Renderer is a type of rendering context associated with a OffscreenCanvas.");
         case WI.Canvas.ContextType.WebGL:
-            return WI.unlocalizedString("WebGL");
+            return WI.UIString("WebGL", "WebGL @ Canvas Context Type", "WebGL is a type of rendering context associated with a <canvas> element.");
+        case WI.Canvas.ContextType.OffscreenWebGL:
+            return WI.UIString("WebGL (Offscreen)", "WebGL @ Offscreen Canvas Context Type", "WebGL is a type of rendering context associated with a OffscreenCanvas.");
         case WI.Canvas.ContextType.WebGL2:
-            return WI.unlocalizedString("WebGL2");
+            return WI.UIString("WebGL2", "WebGL2 @ Canvas Context Type", "WebGL2 is a type of rendering context associated with a <canvas> element.");
+        case WI.Canvas.ContextType.OffscreenWebGL2:
+            return WI.UIString("WebGL2 (Offscreen)", "WebGL2 @ Offscreen Canvas Context Type", "WebGL2 is a type of rendering context associated with a OffscreenCanvas.");
         case WI.Canvas.ContextType.WebGPU:
-            return WI.unlocalizedString("Web GPU");
+            return WI.UIString("WebGPU", "WebGPU @ Canvas Context Type", "WebGPU is a type of rendering context associated with a <canvas> element.");
         case WI.Canvas.ContextType.WebMetal:
-            return WI.unlocalizedString("WebMetal");
+            return WI.UIString("WebMetal", "WebMetal @ Canvas Context Type", "WebMetal is a type of rendering context associated with a <canvas> element.");
         }
 
         console.assert(false, "Unknown canvas context type", contextType);
@@ -147,9 +162,9 @@ WI.Canvas = class Canvas extends WI.Object
     {
         switch(colorSpace) {
         case WI.Canvas.ColorSpace.SRGB:
-            return WI.unlocalizedString("sRGB");
+            return WI.UIString("sRGB", "sRGB @ Color Space", "Label for a canvas that uses the sRGB color space.");
         case WI.Canvas.ColorSpace.DisplayP3:
-            return WI.unlocalizedString("Display P3");
+            return WI.UIString("Display P3", "Display P3 @ Color Space", "Label for a canvas that uses the Display P3 color space.");
         }
 
         console.assert(false, "Unknown canvas color space", colorSpace);
@@ -188,6 +203,28 @@ WI.Canvas = class Canvas extends WI.Object
     get recordingFrameCount() { return this._recordingFrames.length; }
     get recordingBufferUsed() { return this._recordingBufferUsed; }
 
+    get supportsRecording()
+    {
+        switch (this._contextType) {
+        case WI.Canvas.ContextType.Canvas2D:
+        case WI.Canvas.ContextType.OffscreenCanvas2D:
+        case WI.Canvas.ContextType.BitmapRenderer:
+        case WI.Canvas.ContextType.OffscreenBitmapRenderer:
+        case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.OffscreenWebGL:
+        case WI.Canvas.ContextType.WebGL2:
+        case WI.Canvas.ContextType.OffscreenWebGL2:
+            return true;
+
+        case WI.Canvas.ContextType.WebGPU:
+        case WI.Canvas.ContextType.WebMetal:
+            return false;
+        }
+
+        console.assert(false, "not reached");
+        return false;
+    }
+
     get recordingActive()
     {
         return this._recordingState !== WI.Canvas.RecordingState.Inactive;
@@ -215,9 +252,24 @@ WI.Canvas = class Canvas extends WI.Object
         return WI.UIString("Canvas %d").format(this._uniqueDisplayNameNumber);
     }
 
-    is2D()
+    get is2D()
     {
         return this._contextType === Canvas.ContextType.Canvas2D || this._contextType === Canvas.ContextType.OffscreenCanvas2D;
+    }
+
+    get isBitmapRender()
+    {
+        return this._contextType === Canvas.ContextType.BitmapRenderer || this._contextType === Canvas.ContextType.OffscreenBitmapRenderer;
+    }
+
+    get isWebGL()
+    {
+        return this._contextType === Canvas.ContextType.WebGL || this._contextType === Canvas.ContextType.OffscreenWebGL;
+    }
+
+    get isWebGL2()
+    {
+        return this._contextType === Canvas.ContextType.WebGL2 || this._contextType === Canvas.ContextType.OffscreenWebGL2;
     }
 
     requestNode()
@@ -479,8 +531,11 @@ WI.Canvas.ContextType = {
     Canvas2D: "canvas-2d",
     OffscreenCanvas2D: "offscreen-canvas-2d",
     BitmapRenderer: "bitmaprenderer",
+    OffscreenBitmapRenderer: "offscreen-bitmaprenderer",
     WebGL: "webgl",
+    OffscreenWebGL: "offscreen-webgl",
     WebGL2: "webgl2",
+    OffscreenWebGL2: "offscreen-webgl2",
     WebGPU: "webgpu",
     WebMetal: "webmetal",
 };

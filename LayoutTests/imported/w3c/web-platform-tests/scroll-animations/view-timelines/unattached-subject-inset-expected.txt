@@ -1,0 +1,5 @@
+
+FAIL Creating a view timeline with a subject that is not attached to the document works as expected assert_equals: Source resolved once attached expected Element node <div id="container">
+    <div class="filler"></div>
+  <di... but got null
+

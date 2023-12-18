@@ -25,7 +25,6 @@
 
 // https://drafts.csswg.org/resize-observer/#resize-observer-entry-interface
 [
-    EnabledBySetting=ResizeObserverEnabled,
     JSCustomMarkFunction,
     Exposed=Window
 ] interface ResizeObserverEntry {

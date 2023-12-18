@@ -57,7 +57,9 @@ RemoteAudioSourceProviderProxy::~RemoteAudioSourceProviderProxy() = default;
 
 std::unique_ptr<WebCore::CARingBuffer> RemoteAudioSourceProviderProxy::configureAudioStorage(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
-    auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(format, frameCount);
+    auto result = ProducerSharedCARingBuffer::allocate(format, frameCount);
+    RELEASE_ASSERT(result); // FIXME(https://bugs.webkit.org/show_bug.cgi?id=262690): Handle allocation failure.
+    auto [ringBuffer, handle] = WTFMove(*result);
     m_connection->send(Messages::RemoteAudioSourceProviderManager::AudioStorageChanged { m_identifier, WTFMove(handle), format }, 0);
     // Use a redundant variable to avoid move in return position and to obtain copy elision. Clang or libc++ does not allow returning covariant of Ts from std::unique_ptr<T>s in this position.
     std::unique_ptr<WebCore::CARingBuffer> caRingBuffer = WTFMove(ringBuffer);  // NOLINT: see above.

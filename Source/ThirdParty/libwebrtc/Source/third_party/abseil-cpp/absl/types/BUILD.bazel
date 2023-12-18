@@ -20,7 +20,14 @@ load(
     "ABSL_TEST_COPTS",
 )
 
-package(default_visibility = ["//visibility:public"])
+package(
+    default_visibility = ["//visibility:public"],
+    features = [
+        "header_modules",
+        "layering_check",
+        "parse_headers",
+    ],
+)
 
 licenses(["notice"])
 
@@ -77,8 +84,9 @@ cc_test(
         ":any",
         "//absl/base:config",
         "//absl/base:exception_testing",
-        "//absl/base:raw_logging_internal",
         "//absl/container:test_instance_tracker",
+        "//absl/log",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -92,6 +100,7 @@ cc_test(
         ":any",
         "//absl/base:config",
         "//absl/base:exception_safety_testing",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -129,6 +138,7 @@ cc_test(
         "//absl/container:inlined_vector",
         "//absl/hash:hash_testing",
         "//absl/strings",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -185,9 +195,10 @@ cc_test(
     deps = [
         ":optional",
         "//absl/base:config",
-        "//absl/base:raw_logging_internal",
+        "//absl/log",
         "//absl/meta:type_traits",
         "//absl/strings",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -203,44 +214,7 @@ cc_test(
         ":optional",
         "//absl/base:config",
         "//absl/base:exception_safety_testing",
-        "@com_google_googletest//:gtest_main",
-    ],
-)
-
-cc_library(
-    name = "conformance_testing",
-    testonly = 1,
-    hdrs = [
-        "internal/conformance_aliases.h",
-        "internal/conformance_archetype.h",
-        "internal/conformance_profile.h",
-        "internal/conformance_testing.h",
-        "internal/conformance_testing_helpers.h",
-        "internal/parentheses.h",
-        "internal/transform_args.h",
-    ],
-    copts = ABSL_TEST_COPTS,
-    linkopts = ABSL_DEFAULT_LINKOPTS,
-    deps = [
-        "//absl/algorithm:container",
-        "//absl/meta:type_traits",
-        "//absl/strings",
-        "//absl/utility",
         "@com_google_googletest//:gtest",
-    ],
-)
-
-cc_test(
-    name = "conformance_testing_test",
-    size = "small",
-    srcs = [
-        "internal/conformance_testing_test.cc",
-    ],
-    copts = ABSL_TEST_COPTS,
-    linkopts = ABSL_DEFAULT_LINKOPTS,
-    deps = [
-        ":conformance_testing",
-        "//absl/meta:type_traits",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -274,6 +248,7 @@ cc_test(
         "//absl/memory",
         "//absl/meta:type_traits",
         "//absl/strings",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -290,6 +265,7 @@ cc_test(
         ":variant",
         "//absl/utility",
         "@com_github_google_benchmark//:benchmark_main",
+        "@com_google_googletest//:gtest",
     ],
 )
 
@@ -306,6 +282,7 @@ cc_test(
         "//absl/base:config",
         "//absl/base:exception_safety_testing",
         "//absl/memory",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -331,6 +308,7 @@ cc_test(
     deps = [
         ":compare",
         "//absl/base",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )

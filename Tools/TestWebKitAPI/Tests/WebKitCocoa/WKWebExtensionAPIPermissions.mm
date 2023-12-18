@@ -79,13 +79,13 @@ TEST(WKWebExtensionAPIPermissions, Errors)
         @"browser.test.assertThrows(() => browser.permissions.contains('string'), /'permissions' value is invalid, because an object is expected/i)",
         @"browser.test.assertThrows(() => browser.permissions.contains(123), /'permissions' value is invalid, because an object is expected/i)",
 
-        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 'notAnArray' }), /'permissions' is expected to be an array, but a string was provided/i)",
-        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: { name: 'storage' } }), /'permissions' is expected to be an array, but an object was provided/i)",
-        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 123 }), /'permissions' is expected to be an array, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 'notAnArray' }), /'permissions' is expected to be an array of strings, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: { name: 'storage' } }), /'permissions' is expected to be an array of strings, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ permissions: 123 }), /'permissions' is expected to be an array of strings, but a number was provided/i)",
 
-        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 'notAnArray' }), /'origins' is expected to be an array, but a string was provided/i)",
-        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: { domain: 'https://example.com/' } }), /'origins' is expected to be an array, but an object was provided/i)",
-        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 123 }), /'origins' is expected to be an array, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 'notAnArray' }), /'origins' is expected to be an array of strings, but a string was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: { domain: 'https://example.com/' } }), /'origins' is expected to be an array of strings, but an object was provided/i)",
+        @"browser.test.assertThrows(() => browser.permissions.contains({ origins: 123 }), /'origins' is expected to be an array of strings, but a number was provided/i)",
 
         @"browser.test.notifyPass()"
     ]);

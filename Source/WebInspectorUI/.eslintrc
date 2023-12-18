@@ -132,6 +132,7 @@
         "createCodeMirrorColorTextMarkers": true,
         "createCodeMirrorCubicBezierTimingFunctionTextMarkers": true,
         "createCodeMirrorGradientTextMarkers": true,
+        "createCodeMirrorLinearTimingFunctionTextMarkers": true,
         "createCodeMirrorSpringTimingFunctionTextMarkers": true,
         "createCodeMirrorStepsTimingFunctionTextMarkers": true,
     },

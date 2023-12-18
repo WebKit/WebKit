@@ -155,10 +155,8 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-#if ENABLE(SERVICE_WORKER)
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
-#endif
 
     stopIndexedDatabase();
 
@@ -190,7 +188,7 @@ bool WorkerGlobalScope::isSecureContext() const
 
 void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
 {
-    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
+    checkedContentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
 }
 
 URL WorkerGlobalScope::completeURL(const String& url, ForceUTF8) const
@@ -245,18 +243,14 @@ void WorkerGlobalScope::suspend()
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, true);
 
-#if ENABLE(SERVICE_WORKER)
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
-#endif
 }
 
 void WorkerGlobalScope::resume()
 {
-#if ENABLE(SERVICE_WORKER)
     if (settingsValues().serviceWorkersEnabled)
         updateServiceWorkerClientData();
-#endif
 
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
@@ -334,7 +328,7 @@ ExceptionOr<int> WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> 
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
+        if (!checkedContentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -352,7 +346,7 @@ ExceptionOr<int> WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction>
 {
     // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
     if (action->type() == ScheduledAction::Type::Code) {
-        if (!contentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
+        if (!checkedContentSecurityPolicy()->allowEval(globalObject(), LogToConsole::Yes, action->code()))
             return 0;
     }
 
@@ -373,20 +367,19 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
     // https://html.spec.whatwg.org/multipage/workers.html#importing-scripts-and-libraries
     // 1. If worker global scope's type is "module", throw a TypeError exception.
     if (m_workerType == WorkerType::Module)
-        return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
+        return Exception { ExceptionCode::TypeError, "importScripts cannot be used if worker type is \"module\""_s };
 
     Vector<URLKeepingBlobAlive> completedURLs;
     completedURLs.reserveInitialCapacity(urls.size());
     for (auto& entry : urls) {
         URL url = completeURL(entry);
         if (!url.isValid())
-            return Exception { SyntaxError };
-        completedURLs.uncheckedAppend({ WTFMove(url), m_topOrigin->data() });
+            return Exception { ExceptionCode::SyntaxError };
+        completedURLs.append({ WTFMove(url), m_topOrigin->data() });
     }
 
     FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
 
-#if ENABLE(SERVICE_WORKER)
     bool isServiceWorkerGlobalScope = is<ServiceWorkerGlobalScope>(*this);
     if (isServiceWorkerGlobalScope) {
         // FIXME: We need to add support for the 'imported scripts updated' flag as per:
@@ -396,13 +389,12 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         if (registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || registration.needsUpdate())
             cachePolicy = FetchOptions::Cache::NoCache;
     }
-#endif
 
     for (auto& url : completedURLs) {
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
         bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
-        if (!shouldBypassMainWorldContentSecurityPolicy && !contentSecurityPolicy()->allowScriptFromSource(url))
-            return Exception { NetworkError };
+        if (!shouldBypassMainWorldContentSecurityPolicy && !checkedContentSecurityPolicy()->allowScriptFromSource(url))
+            return Exception { ExceptionCode::NetworkError };
 
         auto scriptLoader = WorkerScriptLoader::create();
         auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
@@ -422,7 +414,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
             script()->evaluate(sourceCode, exception);
             if (exception) {
                 if (mutedErrors)
-                    return Exception { NetworkError, "Network response is CORS-cross-origin"_s };
+                    return Exception { ExceptionCode::NetworkError, "Network response is CORS-cross-origin"_s };
                 script()->setException(exception);
                 return { };
             }
@@ -530,14 +522,12 @@ MessagePortChannelProvider& WorkerGlobalScope::messagePortChannelProvider()
     return *m_messagePortChannelProvider;
 }
 
-#if ENABLE(SERVICE_WORKER)
 WorkerSWClientConnection& WorkerGlobalScope::swClientConnection()
 {
     if (!m_swClientConnection)
         m_swClientConnection = WorkerSWClientConnection::create(*this);
     return *m_swClientConnection;
 }
-#endif
 
 void WorkerGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
 {
@@ -681,7 +671,6 @@ void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScri
     }
 }
 
-#if ENABLE(SERVICE_WORKER)
 void WorkerGlobalScope::updateServiceWorkerClientData()
 {
     if (!settingsValues().serviceWorkersEnabled)
@@ -691,7 +680,6 @@ void WorkerGlobalScope::updateServiceWorkerClientData()
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
     swClientConnection().registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
 }
-#endif
 
 void WorkerGlobalScope::notifyReportObservers(Ref<Report>&& reports)
 {

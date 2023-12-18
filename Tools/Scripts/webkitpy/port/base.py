@@ -682,6 +682,13 @@ class Port(object):
         return self._webkit_finder.webkit_base()
 
     def path_from_webkit_base(self, *comps):
+        # Ports can override the LayoutTests/PerformanceTests paths from the base, so adjust here.
+        if len(comps) > 0:
+            if comps[0] == "LayoutTests":
+                return self._filesystem.join(self.layout_tests_dir(), *comps[1:])
+            if comps[0] == "PerformanceTests":
+                return self._filesystem.join(self.perf_tests_dir(), *comps[1:])
+
         return self._webkit_finder.path_from_webkit_base(*comps)
 
     def path_to_script(self, script_name):
@@ -690,10 +697,10 @@ class Port(object):
     def layout_tests_dir(self):
         if self._layout_tests_dir:
             return self._layout_tests_dir
-        return self._webkit_finder.layout_tests_dir()
+        return self._filesystem.join(self.webkit_base(), "LayoutTests")
 
     def perf_tests_dir(self):
-        return self._webkit_finder.perf_tests_dir()
+        return self._filesystem.join(self.webkit_base(), "PerformanceTests")
 
     def skipped_layout_tests(self, device_type=None):
         """Returns tests skipped outside of the TestExpectations files."""

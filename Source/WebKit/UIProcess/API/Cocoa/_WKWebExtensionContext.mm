@@ -34,13 +34,15 @@
 #import "WKWebView.h"
 #import "WebExtension.h"
 #import "WebExtensionAction.h"
+#import "WebExtensionCommand.h"
 #import "WebExtensionContext.h"
+#import "_WKWebExtensionCommandInternal.h"
 #import "_WKWebExtensionControllerInternal.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionTab.h"
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URLParser.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 NSErrorDomain const _WKWebExtensionContextErrorDomain = @"_WKWebExtensionContextErrorDomain";
 
@@ -56,6 +58,12 @@ NSNotificationName const _WKWebExtensionContextDeniedPermissionMatchPatternsWere
 
 _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyPermissions = @"permissions";
 _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns = @"matchPatterns";
+
+#if USE(APPKIT)
+using CocoaMenuItem = NSMenuItem;
+#else
+using CocoaMenuItem = UIMenuElement;
+#endif
 
 @implementation _WKWebExtensionContext
 
@@ -82,8 +90,7 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionContext.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionContext->~WebExtensionContext();
 }
@@ -138,6 +145,21 @@ _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotifi
 - (void)setInspectable:(BOOL)inspectable
 {
     _webExtensionContext->setInspectable(inspectable);
+}
+
+- (WKWebViewConfiguration *)webViewConfiguration
+{
+    return _webExtensionContext->webViewConfiguration(WebKit::WebExtensionContext::WebViewPurpose::Tab);
+}
+
+- (NSURL *)optionsPageURL
+{
+    return _webExtensionContext->optionsPageURL();
+}
+
+- (NSURL *)overrideNewTabPageURL
+{
+    return _webExtensionContext->overrideNewTabPageURL();
 }
 
 static inline WallTime toImpl(NSDate *date)
@@ -250,6 +272,16 @@ static inline WebKit::WebExtensionContext::PermissionMatchPatternsMap toImpl(NSD
 - (void)setRequestedOptionalAccessToAllHosts:(BOOL)requested
 {
     return _webExtensionContext->setRequestedOptionalAccessToAllHosts(requested);
+}
+
+- (BOOL)hasAccessInPrivateBrowsing
+{
+    return _webExtensionContext->hasAccessInPrivateBrowsing();
+}
+
+- (void)setHasAccessInPrivateBrowsing:(BOOL)hasAccess
+{
+    return _webExtensionContext->setHasAccessInPrivateBrowsing(hasAccess);
 }
 
 static inline NSSet<_WKWebExtensionPermission> *toAPI(const WebKit::WebExtensionContext::PermissionsMap::KeysConstIteratorRange& permissions)
@@ -469,6 +501,11 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     return _webExtensionContext->hasAccessToAllHosts();
 }
 
+- (BOOL)hasInjectedContent
+{
+    return _webExtensionContext->hasInjectedContent();
+}
+
 - (BOOL)hasInjectedContentForURL:(NSURL *)url
 {
     NSParameterAssert([url isKindOfClass:NSURL.class]);
@@ -490,6 +527,45 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
         NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
 
     _webExtensionContext->performAction(toImplNullable(tab, *_webExtensionContext).get(), WebKit::WebExtensionContext::UserTriggered::Yes);
+}
+
+- (NSArray<_WKWebExtensionCommand *> *)commands
+{
+    return createNSArray(_webExtensionContext->commands(), [](auto& command) {
+        return command->wrapper();
+    }).get();
+}
+
+- (void)performCommand:(_WKWebExtensionCommand *)command
+{
+    NSParameterAssert([command isKindOfClass:_WKWebExtensionCommand.class]);
+
+    _webExtensionContext->performCommand(command._webExtensionCommand, WebKit::WebExtensionContext::UserTriggered::Yes);
+}
+
+#if USE(APPKIT)
+- (BOOL)performCommandForEvent:(NSEvent *)event
+{
+    NSParameterAssert([event isKindOfClass:NSEvent.class]);
+
+    return _webExtensionContext->performCommand(event);
+}
+
+- (_WKWebExtensionCommand *)commandForEvent:(NSEvent *)event
+{
+    NSParameterAssert([event isKindOfClass:NSEvent.class]);
+
+    if (RefPtr result = _webExtensionContext->command(event))
+        return result->wrapper();
+    return nil;
+}
+#endif // USE(APPKIT)
+
+- (NSArray<CocoaMenuItem *> *)menuItemsForTab:(id<_WKWebExtensionTab>)tab
+{
+    NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    return _webExtensionContext->platformMenuItems(toImpl(tab, *_webExtensionContext));
 }
 
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab
@@ -540,7 +616,7 @@ static inline NSArray *toAPI(const WebKit::WebExtensionContext::WindowVector& wi
 
 - (id<_WKWebExtensionWindow>)focusedWindow
 {
-    return toAPI(_webExtensionContext->focusedWindow());
+    return toAPI(_webExtensionContext->focusedWindow(WebKit::WebExtensionContext::IgnoreExtensionAccess::Yes));
 }
 
 static inline NSSet *toAPI(const WebKit::WebExtensionContext::TabMapValueIterator& tabs)
@@ -669,15 +745,13 @@ static inline WebKit::WebExtensionContext::TabSet toImpl(NSSet<id<_WKWebExtensio
 
 static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWebExtensionTabChangedProperties properties)
 {
-    OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
-
     if (properties == _WKWebExtensionTabChangedPropertiesNone)
-        return result;
+        return { };
 
-    if (properties == _WKWebExtensionTabChangedPropertiesAll) {
-        result.add(WebKit::WebExtensionTab::ChangedProperties::All);
-        return result;
-    }
+    if (properties == _WKWebExtensionTabChangedPropertiesAll)
+        return WebKit::WebExtensionTab::allChangedProperties();
+
+    OptionSet<WebKit::WebExtensionTab::ChangedProperties> result;
 
     if (properties & _WKWebExtensionTabChangedPropertiesAudible)
         result.add(WebKit::WebExtensionTab::ChangedProperties::Audible);
@@ -802,6 +876,21 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 {
 }
 
+- (WKWebViewConfiguration *)webViewConfiguration
+{
+    return nil;
+}
+
+- (NSURL *)optionsPageURL
+{
+    return nil;
+}
+
+- (NSURL *)overrideNewTabPageURL
+{
+    return nil;
+}
+
 - (NSDictionary<_WKWebExtensionPermission, NSDate *> *)grantedPermissions
 {
     return nil;
@@ -844,6 +933,15 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 }
 
 - (void)setRequestedOptionalAccessToAllHosts:(BOOL)requested
+{
+}
+
+- (BOOL)hasAccessInPrivateBrowsing
+{
+    return NO;
+}
+
+- (void)setHasAccessInPrivateBrowsing:(BOOL)hasAccess
 {
 }
 
@@ -941,6 +1039,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
     return NO;
 }
 
+- (BOOL)hasInjectedContent
+{
+    return NO;
+}
+
 - (BOOL)hasInjectedContentForURL:(NSURL *)url
 {
     return NO;
@@ -953,6 +1056,32 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 
 - (void)performActionForTab:(id<_WKWebExtensionTab>)tab NS_SWIFT_NAME(performAction(for:))
 {
+}
+
+- (NSArray<_WKWebExtensionCommand *> *)commands
+{
+    return nil;
+}
+
+- (void)performCommand:(_WKWebExtensionCommand *)command
+{
+}
+
+#if USE(APPKIT)
+- (BOOL)performCommandForEvent:(NSEvent *)event
+{
+    return NO;
+}
+
+- (_WKWebExtensionCommand *)commandForEvent:(NSEvent *)event
+{
+    return nil;
+}
+#endif // USE(APPKIT)
+
+- (NSArray<CocoaMenuItem *> *)menuItemsForTab:(id<_WKWebExtensionTab>)tab
+{
+    return nil;
 }
 
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab

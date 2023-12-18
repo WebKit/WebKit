@@ -35,7 +35,7 @@ class SecurityOriginData;
 
 namespace WebKit {
 
-class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider, public CanMakeCheckedPtr {
+class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider, public CanMakeWeakPtr<WebStorageNamespaceProvider> {
 public:
     static Ref<WebStorageNamespaceProvider> create(const String& localStorageDatabasePath);
     virtual ~WebStorageNamespaceProvider();
@@ -58,7 +58,7 @@ private:
     void copySessionStorageNamespace(WebCore::Page&, WebCore::Page&) final;
 
     const String m_localStorageDatabasePath;
-    WeakHashMap<WebCore::Page, HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
+    SingleThreadWeakHashMap<WebCore::Page, HashMap<WebCore::SecurityOriginData, RefPtr<WebCore::StorageNamespace>>> m_sessionStorageNamespaces;
 };
 
 } // namespace WebKit

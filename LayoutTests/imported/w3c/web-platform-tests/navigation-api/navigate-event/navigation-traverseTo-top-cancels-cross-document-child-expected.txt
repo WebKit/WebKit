@@ -1,0 +1,4 @@
+
+
+FAIL navigate.traverseTo() cancelled by top frame cancels cross-document iframe promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'navigation.currentEntry.index')"
+

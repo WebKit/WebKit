@@ -65,7 +65,7 @@ class EncoderWithExpectedError : public ::libvpx_test::Encoder {
     ASSERT_EQ(expected_err, res) << EncoderError();
   }
 
-  virtual vpx_codec_iface_t *CodecInterface() const {
+  vpx_codec_iface_t *CodecInterface() const override {
 #if CONFIG_VP9_ENCODER
     return &vpx_codec_vp9_cx_algo;
 #else
@@ -79,22 +79,22 @@ class VP9FrameSizeTestsLarge : public ::libvpx_test::EncoderTest,
  protected:
   VP9FrameSizeTestsLarge()
       : EncoderTest(&::libvpx_test::kVP9), expected_res_(VPX_CODEC_OK) {}
-  virtual ~VP9FrameSizeTestsLarge() {}
+  ~VP9FrameSizeTestsLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(::libvpx_test::kRealTime);
   }
 
-  virtual bool HandleDecodeResult(const vpx_codec_err_t res_dec,
-                                  const libvpx_test::VideoSource & /*video*/,
-                                  libvpx_test::Decoder *decoder) {
+  bool HandleDecodeResult(const vpx_codec_err_t res_dec,
+                          const libvpx_test::VideoSource & /*video*/,
+                          libvpx_test::Decoder *decoder) override {
     EXPECT_EQ(expected_res_, res_dec) << decoder->DecodeError();
     return !::testing::Test::HasFailure();
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, 7);
       encoder->Control(VP8E_SET_ENABLEAUTOALTREF, 1);
@@ -111,7 +111,7 @@ class VP9FrameSizeTestsLarge : public ::libvpx_test::EncoderTest,
 
     ASSERT_TRUE(passes_ == 1 || passes_ == 2);
     for (unsigned int pass = 0; pass < passes_; pass++) {
-      last_pts_ = 0;
+      vpx_codec_pts_t last_pts = 0;
 
       if (passes_ == 1) {
         cfg_.g_pass = VPX_RC_ONE_PASS;
@@ -144,8 +144,8 @@ class VP9FrameSizeTestsLarge : public ::libvpx_test::EncoderTest,
           again = true;
           switch (pkt->kind) {
             case VPX_CODEC_CX_FRAME_PKT:
-              ASSERT_GE(pkt->data.frame.pts, last_pts_);
-              last_pts_ = pkt->data.frame.pts;
+              ASSERT_GE(pkt->data.frame.pts, last_pts);
+              last_pts = pkt->data.frame.pts;
               FramePktHook(pkt);
               break;
 

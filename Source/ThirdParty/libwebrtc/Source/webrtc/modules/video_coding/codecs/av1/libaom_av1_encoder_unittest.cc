@@ -36,6 +36,7 @@ using ::testing::SizeIs;
 
 VideoCodec DefaultCodecSettings() {
   VideoCodec codec_settings;
+  codec_settings.codecType = kVideoCodecAV1;
   codec_settings.width = 320;
   codec_settings.height = 180;
   codec_settings.maxFramerate = 30;
@@ -396,6 +397,17 @@ TEST(LibaomAv1EncoderTest, AdheresToTargetBitrateDespiteUnevenFrameTiming) {
   EXPECT_NEAR(
       (callback.BytesEncoded() / TimeDelta::Seconds(kRunTimeSeconds)).bps(),
       kTargetBitrateBps, kTargetBitrateBps / 10);
+}
+
+TEST(LibaomAv1EncoderTest, DisableAutomaticResize) {
+  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
+  ASSERT_TRUE(encoder);
+  VideoCodec codec_settings = DefaultCodecSettings();
+  codec_settings.AV1()->automatic_resize_on = false;
+  EXPECT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
+            WEBRTC_VIDEO_CODEC_OK);
+  EXPECT_EQ(encoder->GetEncoderInfo().scaling_settings.thresholds,
+            absl::nullopt);
 }
 
 }  // namespace

@@ -72,7 +72,10 @@ private:
     bool canHaveChildren() const override { return true; }
     void willBeRemovedFromTree(IsInternalMove) override;
     void layout() override;
+
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
+
     bool requiresLayer() const final;
     void paint(PaintInfo&, const LayoutPoint&) override;
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
@@ -129,4 +132,4 @@ inline RenderTableRow* RenderTableSection::lastRow() const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableRow, isTableRow())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderTableRow, isRenderTableRow())

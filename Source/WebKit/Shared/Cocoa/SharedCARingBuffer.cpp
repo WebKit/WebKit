@@ -64,7 +64,7 @@ std::unique_ptr<ConsumerSharedCARingBuffer> ConsumerSharedCARingBuffer::map(uint
     return result;
 }
 
-ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
+std::optional<ProducerSharedCARingBuffer::Pair> ProducerSharedCARingBuffer::allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount)
 {
     frameCount = WTF::roundUpToPowerOfTwo(frameCount);
     auto bytesPerFrame = format.bytesPerFrame();
@@ -73,20 +73,20 @@ ProducerSharedCARingBuffer::Pair ProducerSharedCARingBuffer::allocate(const WebC
     auto checkedSharedMemorySize = computeSizeForBuffers(bytesPerFrame, frameCount, numChannelStreams) + sizeof(TimeBoundsBuffer);
     if (checkedSharedMemorySize.hasOverflowed()) {
         RELEASE_LOG_FAULT(Media, "ProducerSharedCARingBuffer::allocate: Overflowed when trying to compute the storage size");
-        return { nullptr, { } };
+        return std::nullopt;
     }
     auto sharedMemory = SharedMemory::allocate(checkedSharedMemorySize.value());
     if (!sharedMemory)
-        return { nullptr, { } };
+        return std::nullopt;
 
     auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
     if (!handle)
-        return { nullptr, { } };
+        return std::nullopt;
 
     new (NotNull, sharedMemory->data()) TimeBoundsBuffer;
     std::unique_ptr<ProducerSharedCARingBuffer> result { new ProducerSharedCARingBuffer { bytesPerFrame, frameCount, numChannelStreams, sharedMemory.releaseNonNull() } };
     result->initialize();
-    return { WTFMove(result), { WTFMove(*handle), frameCount } };
+    return Pair { WTFMove(result), { WTFMove(*handle), frameCount } };
 }
 
 } // namespace WebKit

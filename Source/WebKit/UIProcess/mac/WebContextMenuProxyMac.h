@@ -59,7 +59,7 @@ public:
     NSWindow *window() const;
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    CGImageRef copySubjectResult() const final { return m_copySubjectResult.get(); }
+    RetainPtr<CGImageRef> imageForCopySubject() const final { return m_copySubjectResult; }
 #endif
 
 private:

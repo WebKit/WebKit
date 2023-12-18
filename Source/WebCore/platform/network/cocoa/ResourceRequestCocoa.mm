@@ -68,6 +68,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setIsAppInitiated(*platformData.m_isAppInitiated);
         setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
         setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
+        setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
     }
 
     setCachePartition(cachePartition);
@@ -125,6 +126,7 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         requester(),
         privacyProxyFailClosedForUnreachableNonMainHosts(),
         useAdvancedPrivacyProtections(),
+        didFilterLinkDecoration(),
     };
 }
 
@@ -193,7 +195,7 @@ void ResourceRequest::doUpdateResourceRequest()
     for (NSNumber *encodingFallback in [m_nsRequest contentDispositionEncodingFallbackArray]) {
         CFStringEncoding encoding = CFStringConvertNSStringEncodingToEncoding([encodingFallback unsignedLongValue]);
         if (encoding != kCFStringEncodingInvalidId)
-            m_requestData.m_responseContentDispositionEncodingFallbackArray.uncheckedAppend(CFStringConvertEncodingToIANACharSetName(encoding));
+            m_requestData.m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
     }
 
     if (m_nsRequest) {

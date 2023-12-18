@@ -32,6 +32,11 @@ for (const [duration, options, descr] of noopRoundingOperations) {
   const result = duration.round(options);
   assert.notSameValue(result, duration, "rounding result should be a new object");
   TemporalHelpers.assertDurationsEqual(result, duration, `rounding should be a no-op with ${descr}`);
+
+  const negDuration = duration.negated();
+  const negResult = negDuration.round(options);
+  assert.notSameValue(negResult, negDuration, "rounding result should be a new object (negative)");
+  TemporalHelpers.assertDurationsEqual(negResult, negDuration, `rounding should be a no-op with ${descr} (negative)`);
 }
 
 // These operations are not no-op rounding operations, but still should not call
@@ -54,6 +59,17 @@ for (const [duration, options, descr] of roundingOperationsNotCallingCalendarMet
     }
   }
   assert(!equal, `round result ${result} should be different from ${duration} with ${descr}`);
+
+  const negDuration = duration.negated();
+  const negResult = negDuration.round(options);
+  equal = true;
+  for (const prop of ['years', 'months', 'weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds', 'microseconds', 'nanoseconds']) {
+    if (negResult[prop] !== negDuration[prop]) {
+      equal = false;
+      break;
+    }
+  }
+  assert(!equal, `round result ${negResult} should be different from ${negDuration} with ${descr} (negative)`);
 }
 
 // These operations should not be short-circuited because they have to call
@@ -66,4 +82,5 @@ const roundingOperationsCallingCalendarMethods = [
 
 for (const [duration, options, descr] of roundingOperationsCallingCalendarMethods) {
   assert.throws(Test262Error, () => duration.round(options), `rounding should not be a no-op with ${descr}`);
+  assert.throws(Test262Error, () => duration.negated().round(options), `rounding should not be a no-op with ${descr} (negative)`);
 }

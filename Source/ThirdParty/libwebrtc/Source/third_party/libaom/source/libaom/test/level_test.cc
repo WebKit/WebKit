@@ -40,9 +40,9 @@ class LevelTest
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         cpu_used_(GET_PARAM(2)), target_level_(31) {}
 
-  virtual ~LevelTest() {}
+  ~LevelTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     if (encoding_mode_ != ::libaom_test::kRealTime) {
       cfg_.g_lag_in_frames = 5;
@@ -53,8 +53,8 @@ class LevelTest
     }
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
       encoder->Control(AV1E_SET_TARGET_SEQ_LEVEL_IDX, target_level_);

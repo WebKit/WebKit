@@ -360,8 +360,8 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
     auto block = makeBlockPtr([this, weakThis = ThreadSafeWeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis) {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis) {
             callback();
             return;
         }
@@ -443,13 +443,13 @@ void MediaRecorderPrivateWriter::stopRecording()
     m_isStopping = true;
     // We hop to the main thread since finishing the video compressor might trigger starting the writer asynchronously.
     callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
-        auto strongThis = weakThis.get();
-        if (!strongThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         auto whenFinished = [this, weakThis] {
-            auto strongThis = weakThis.get();
-            if (!strongThis)
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
             m_isStopping = false;
@@ -472,8 +472,8 @@ void MediaRecorderPrivateWriter::stopRecording()
 
         ASSERT([m_writer status] == AVAssetWriterStatusWriting);
         flushCompressedSampleBuffers([this, weakThis = WTFMove(weakThis), whenFinished = WTFMove(whenFinished)]() mutable {
-            auto strongThis = weakThis.get();
-            if (!strongThis)
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -507,17 +507,17 @@ void MediaRecorderPrivateWriter::fetchData(CompletionHandler<void(RefPtr<Fragmen
     // We hop to the main thread since flushing the video compressor might trigger starting the writer asynchronously.
     callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }]() mutable {
         flushCompressedSampleBuffers([weakThis = WTFMove(weakThis)]() mutable {
-            auto strongThis = weakThis.get();
-            if (!strongThis)
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            [strongThis->m_writer flush];
+            [protectedThis->m_writer flush];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
             callOnMainThread([weakThis = WTFMove(weakThis)] {
-                if (auto strongThis = weakThis.get())
-                    strongThis->completeFetchData();
+                if (auto protectedThis = weakThis.get())
+                    protectedThis->completeFetchData();
             });
         });
     });

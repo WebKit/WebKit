@@ -69,7 +69,7 @@ void TextDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandler<
     Vector<DetectedText> results;
     results.reserveInitialCapacity(request.get().results.count);
     for (VNRecognizedTextObservation *observation in request.get().results) {
-        results.uncheckedAppend({
+        results.append({
             convertRectFromVisionToWeb(nativeImage->size(), observation.boundingBox),
             [observation topCandidates:1][0].string,
             convertCornerPoints(nativeImage->size(), observation),

@@ -45,6 +45,17 @@ static auto *runtimeManifest = @{
         @"persistent": @NO,
     },
 
+    @"action": @{
+        @"default_title": @"Test Action",
+        @"default_popup": @"popup.html",
+        @"default_icon": @{
+            @"16": @"toolbar-16.png",
+            @"32": @"toolbar-32.png",
+        },
+    },
+
+    @"options_page": @"options.html",
+
     @"permissions": @[ @"nativeMessaging" ],
 };
 
@@ -67,6 +78,18 @@ static auto *runtimeContentScriptManifest = @{
     } ],
 
     @"permissions": @[ @"nativeMessaging" ],
+};
+
+static auto *runtimeServiceWorkerManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Runtime Test",
+    @"description": @"Runtime Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"service_worker": @"background.js",
+    },
 };
 
 TEST(WKWebExtensionAPIRuntime, GetURL)
@@ -114,6 +137,114 @@ TEST(WKWebExtensionAPIRuntime, GetURL)
     manager.get().context.baseURL = [NSURL URLWithString:baseURLString];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromBackground)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = async () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+
+        @"browser.test.assertEq(backgroundPage, window, 'Should be able to get the background window from itself')",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+    });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromTab)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())",
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageFromPopup)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"window.notifyTestPass = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.action.openPopup()"
+    ]);
+
+    auto *popupScript = Util::constructScript(@[
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+        @"browser.test.assertSafe(() => backgroundPage.notifyTestPass())"
+    ]);
+
+    auto *popupHTML = @"<script type='module' src='popup.js'></script>";
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": popupHTML,
+        @"popup.js": popupScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.presentPopupForAction = ^(_WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, GetBackgroundPageForServiceWorker)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.tabs.create({ url: 'test.html' })"
+    ]);
+
+    auto *testScript = Util::constructScript(@[
+        @"const backgroundPage = await browser.runtime.getBackgroundPage()",
+        @"browser.test.assertEq(backgroundPage, null, 'Background page should be null for service workers')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *testHTML = @"<script type='module' src='test.js'></script>";
+
+    Util::loadAndRunExtension(runtimeServiceWorkerManifest, @{
+        @"background.js": backgroundScript,
+        @"test.html": testHTML,
+        @"test.js": testScript
+    });
+}
+
+TEST(WKWebExtensionAPIRuntime, SetUninstallURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafeResolve(() => browser.runtime.setUninstallURL('https://example.com/uninstall'))",
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(runtimeManifest, @{
+        @"background.js": backgroundScript,
+    });
 }
 
 TEST(WKWebExtensionAPIRuntime, Id)
@@ -181,6 +312,58 @@ TEST(WKWebExtensionAPIRuntime, GetPlatformInfo)
     ]);
 
     Util::loadAndRunExtension(runtimeManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIRuntime, GetFrameId)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/subframe'></iframe>"_s } },
+        { "/subframe"_s, { { { "Content-Type"_s, "text/html"_s } }, "Subframe Content"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"if (window.top === window) {",
+        @"  let mainFrameId = browser.runtime.getFrameId(window)",
+        @"  browser.test.assertEq(mainFrameId, 0, 'Main frame should have frameId 0')",
+
+        @"  let frameElement = document.querySelector('iframe')",
+        @"  let subFrameElementId = browser.runtime.getFrameId(frameElement)",
+        @"  browser.test.assertTrue(subFrameElementId > 0, 'Subframes should have a positive non-zero frameId')",
+
+        @"  let subFrameWindow = frameElement.contentWindow",
+        @"  let subFrameWindowId = browser.runtime.getFrameId(subFrameWindow)",
+        @"  browser.test.assertTrue(subFrameWindowId > 0, 'Subframes should have a positive non-zero frameId')",
+
+        @"  browser.test.assertEq(subFrameElementId, subFrameWindowId, 'Subframes should have the same frameId from window and element')",
+        @"} else {",
+        @"  let subFrameId = browser.runtime.getFrameId(window)",
+        @"  browser.test.assertTrue(subFrameId > 0, 'Subframes should have a positive non-zero frameId')",
+
+        @"  let topFrameId = browser.runtime.getFrameId(window.top)",
+        @"  browser.test.assertEq(topFrameId, 0, 'The top window in a subframe context should have frameId 0')",
+        @"}",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIRuntime, LastError)
@@ -651,6 +834,118 @@ TEST(WKWebExtensionAPIRuntime, ConnectNative)
     };
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIRuntime, Reload)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.yield('Loaded')",
+        @"browser.runtime.reload()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Loaded");
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Loaded");
+
+    [manager done];
+}
+
+TEST(WKWebExtensionAPIRuntime, StartupEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onStartup.addListener(() => {",
+        @"  browser.test.yield('Startup Event Fired')",
+        @"})",
+
+        @"setTimeout(() => {",
+        @"  browser.test.yield('Startup Event Did Not Fire')",
+        @"}, 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Startup Event Fired");
+
+    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+
+    [manager runForTimeInterval:5];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Startup Event Did Not Fire");
+}
+
+TEST(WKWebExtensionAPIRuntime, InstalledEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onInstalled.addListener((details) => {",
+        @"  browser.test.assertEq(details.reason, 'install')",
+
+        @"  browser.test.yield('Installed Event Fired')",
+        @"})",
+
+        @"setTimeout(() => {",
+        @"  browser.test.yield('Installed Event Did Not Fire')",
+        @"}, 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Wait until after startup event time expires.
+    [manager runForTimeInterval:5];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Installed Event Fired");
+
+    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+
+    [manager runForTimeInterval:1];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Installed Event Fired");
+}
+
+TEST(WKWebExtensionAPIRuntime, OpenOptionsPage)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertSafeResolve(() => browser.runtime.openOptionsPage())"
+    ]);
+
+    auto resources = @{
+        @"background.js": backgroundScript,
+        @"options.html": @"Hello world!"
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:runtimeManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block bool optionsPageOpened = false;
+    manager.get().internalDelegate.openOptionsPage = ^(_WKWebExtensionContext *, void (^completionHandler)(NSError *)) {
+        optionsPageOpened = true;
+
+        EXPECT_NS_EQUAL(manager.get().context.optionsPageURL, [NSURL URLWithString:@"options.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        completionHandler(nil);
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_TRUE(optionsPageOpened);
 }
 
 } // namespace TestWebKitAPI

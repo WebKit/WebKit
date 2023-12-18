@@ -213,6 +213,12 @@ public:
     WTF_EXPORT_PRIVATE static void setGlobalMaxQOSClass(qos_class_t);
 #endif
 
+#if HAVE(THREAD_TIME_CONSTRAINTS)
+    // Set thread timing constraints, which allows the scheduler to demote
+    // threads which exceed their own reported constraints.
+    WTF_EXPORT_PRIVATE void setThreadTimeConstraints(MonotonicTime period, MonotonicTime nominalComputation, MonotonicTime constraint, bool isPremptable);
+#endif
+
     // Called in the thread during initialization.
     // Helpful for platforms where the thread name must be set from within the thread.
     static void initializeCurrentThreadInternal(const char* threadName);

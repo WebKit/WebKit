@@ -15,9 +15,10 @@
 #include "config/aom_dsp_rtcd.h"
 
 #include "aom/aom_integer.h"
+#include "aom_dsp/arm/blend_neon.h"
+#include "aom_dsp/arm/mem_neon.h"
+#include "aom_dsp/arm/sum_neon.h"
 #include "aom_dsp/blend.h"
-#include "mem_neon.h"
-#include "sum_neon.h"
 
 static INLINE uint16x8_t masked_sad_16x1_neon(uint16x8_t sad,
                                               const uint8_t *src,
@@ -29,15 +30,7 @@ static INLINE uint16x8_t masked_sad_16x1_neon(uint16x8_t sad,
   uint8x16_t b0 = vld1q_u8(b);
   uint8x16_t s0 = vld1q_u8(src);
 
-  uint8x16_t m0_inv = vsubq_u8(vdupq_n_u8(AOM_BLEND_A64_MAX_ALPHA), m0);
-  uint16x8_t blend_u16_lo = vmull_u8(vget_low_u8(m0), vget_low_u8(a0));
-  uint16x8_t blend_u16_hi = vmull_u8(vget_high_u8(m0), vget_high_u8(a0));
-  blend_u16_lo = vmlal_u8(blend_u16_lo, vget_low_u8(m0_inv), vget_low_u8(b0));
-  blend_u16_hi = vmlal_u8(blend_u16_hi, vget_high_u8(m0_inv), vget_high_u8(b0));
-
-  uint8x8_t blend_u8_lo = vrshrn_n_u16(blend_u16_lo, AOM_BLEND_A64_ROUND_BITS);
-  uint8x8_t blend_u8_hi = vrshrn_n_u16(blend_u16_hi, AOM_BLEND_A64_ROUND_BITS);
-  uint8x16_t blend_u8 = vcombine_u8(blend_u8_lo, blend_u8_hi);
+  uint8x16_t blend_u8 = alpha_blend_a64_u8x16(m0, a0, b0);
 
   return vpadalq_u8(sad, vabdq_u8(blend_u8, s0));
 }
@@ -164,10 +157,7 @@ static INLINE unsigned masked_sad_8xh_neon(const uint8_t *src, int src_stride,
     uint8x8_t b0 = vld1_u8(b);
     uint8x8_t s0 = vld1_u8(src);
 
-    uint8x8_t m0_inv = vsub_u8(vdup_n_u8(AOM_BLEND_A64_MAX_ALPHA), m0);
-    uint16x8_t blend_u16 = vmull_u8(m0, a0);
-    blend_u16 = vmlal_u8(blend_u16, m0_inv, b0);
-    uint8x8_t blend_u8 = vrshrn_n_u16(blend_u16, AOM_BLEND_A64_ROUND_BITS);
+    uint8x8_t blend_u8 = alpha_blend_a64_u8x8(m0, a0, b0);
 
     sad = vpadal_u8(sad, vabd_u8(blend_u8, s0));
 
@@ -199,10 +189,7 @@ static INLINE unsigned masked_sad_4xh_neon(const uint8_t *src, int src_stride,
     uint8x8_t b0 = load_unaligned_u8(b, b_stride);
     uint8x8_t s0 = load_unaligned_u8(src, src_stride);
 
-    uint8x8_t m0_inv = vsub_u8(vdup_n_u8(AOM_BLEND_A64_MAX_ALPHA), m0);
-    uint16x8_t blend_u16 = vmull_u8(m0, a0);
-    blend_u16 = vmlal_u8(blend_u16, m0_inv, b0);
-    uint8x8_t blend_u8 = vrshrn_n_u16(blend_u16, AOM_BLEND_A64_ROUND_BITS);
+    uint8x8_t blend_u8 = alpha_blend_a64_u8x8(m0, a0, b0);
 
     sad = vpadal_u8(sad, vabd_u8(blend_u8, s0));
 

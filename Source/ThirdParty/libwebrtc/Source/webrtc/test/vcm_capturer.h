@@ -15,6 +15,7 @@
 
 #include "api/scoped_refptr.h"
 #include "modules/video_capture/video_capture.h"
+#include "rtc_base/logging.h"
 #include "test/test_video_capturer.h"
 
 namespace webrtc {
@@ -28,6 +29,15 @@ class VcmCapturer : public TestVideoCapturer,
                              size_t target_fps,
                              size_t capture_device_index);
   virtual ~VcmCapturer();
+
+  void Start() override {
+    RTC_LOG(LS_WARNING) << "Capturer doesn't support resume/pause and always "
+                           "produces the video";
+  }
+  void Stop() override {
+    RTC_LOG(LS_WARNING) << "Capturer doesn't support resume/pause and always "
+                           "produces the video";
+  }
 
   void OnFrame(const VideoFrame& frame) override;
 

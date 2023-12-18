@@ -3136,6 +3136,8 @@ private:
         case GetWebAssemblyInstanceExports:
         case NewBoundFunction:
         case MakeAtomString:
+        case CallCustomAccessorGetter:
+        case CallCustomAccessorSetter:
             break;
 #else // not ASSERT_ENABLED
         default:
@@ -4322,7 +4324,7 @@ private:
             ConcurrentJSLocker locker(profiledBlock->m_lock);
             ArrayProfile* arrayProfile = profiledBlock->getArrayProfile(locker, node->origin.semantic.bytecodeIndex());
             if (arrayProfile) {
-                arrayProfile->computeUpdatedPrediction(locker, profiledBlock);
+                arrayProfile->computeUpdatedPrediction(profiledBlock);
                 arrayMode = ArrayMode::fromObserved(locker, arrayProfile, Array::Read, false);
                 if (arrayMode.type() == Array::Unprofiled) {
                     // For normal array operations, it makes sense to treat Unprofiled

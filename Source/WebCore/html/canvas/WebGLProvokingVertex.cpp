@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLProvokingVertex);
 
 WebGLProvokingVertex::WebGLProvokingVertex(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLProvokingVertex)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_provoking_vertex"_s);
 }

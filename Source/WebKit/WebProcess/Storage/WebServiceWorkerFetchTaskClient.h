@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Connection.h"
 #include <WebCore/FetchEvent.h>
 #include <WebCore/FetchLoader.h>
@@ -102,5 +100,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

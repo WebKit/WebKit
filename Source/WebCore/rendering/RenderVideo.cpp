@@ -55,6 +55,7 @@ RenderVideo::RenderVideo(HTMLVideoElement& element, RenderStyle&& style)
     : RenderMedia(Type::Video, element, WTFMove(style))
 {
     setIntrinsicSize(calculateIntrinsicSize());
+    ASSERT(isRenderVideo());
 }
 
 RenderVideo::~RenderVideo()
@@ -194,7 +195,7 @@ IntRect RenderVideo::videoBox() const
         intrinsicSize = m_cachedImageSize;
 
     auto videoBoxRect = snappedIntRect(replacedContentRect(intrinsicSize));
-    if (inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxRect.size(), page().deviceScaleFactor()))
+    if (!intrinsicSize.isEmpty() && inElementOrVideoFullscreen() && contentSizeAlmostEqualsFrameSize(view().frameView().layoutSize(), videoBoxRect.size(), page().deviceScaleFactor()))
         return snappedIntRect({ contentBoxLocation(), contentSize().fitToAspectRatio(intrinsicSize, AspectRatioFitGrow) });
 
     return videoBoxRect;

@@ -29,6 +29,21 @@
 #if ENABLE(WEBGL)
 
 #include "CachedImage.h"
+#include "EXTBlendFuncExtended.h"
+#include "EXTClipControl.h"
+#include "EXTColorBufferFloat.h"
+#include "EXTColorBufferHalfFloat.h"
+#include "EXTConservativeDepth.h"
+#include "EXTDepthClamp.h"
+#include "EXTDisjointTimerQueryWebGL2.h"
+#include "EXTFloatBlend.h"
+#include "EXTPolygonOffsetClamp.h"
+#include "EXTRenderSnorm.h"
+#include "EXTTextureCompressionBPTC.h"
+#include "EXTTextureCompressionRGTC.h"
+#include "EXTTextureFilterAnisotropic.h"
+#include "EXTTextureMirrorClampToEdge.h"
+#include "EXTTextureNorm16.h"
 #include "EventLoop.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -36,23 +51,47 @@
 #include "ImageBitmap.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "KHRParallelShaderCompile.h"
 #include "Logging.h"
+#include "NVShaderNoperspectiveInterpolation.h"
+#include "OESDrawBuffersIndexed.h"
+#include "OESSampleVariables.h"
+#include "OESShaderMultisampleInterpolation.h"
+#include "OESTextureFloatLinear.h"
 #include "OffscreenCanvas.h"
 #include "RenderBox.h"
 #include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
-#include "WebGLExtensionAnyInlines.h"
+#include "WebGLClipCullDistance.h"
+#include "WebGLCompressedTextureASTC.h"
+#include "WebGLCompressedTextureETC.h"
+#include "WebGLCompressedTextureETC1.h"
+#include "WebGLCompressedTexturePVRTC.h"
+#include "WebGLCompressedTextureS3TC.h"
+#include "WebGLCompressedTextureS3TCsRGB.h"
+#include "WebGLDebugRendererInfo.h"
+#include "WebGLDebugShaders.h"
+#include "WebGLDefaultFramebuffer.h"
+#include "WebGLDrawInstancedBaseVertexBaseInstance.h"
 #include "WebGLFramebuffer.h"
+#include "WebGLLoseContext.h"
+#include "WebGLMultiDraw.h"
+#include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
+#include "WebGLPolygonMode.h"
 #include "WebGLProgram.h"
+#include "WebGLProvokingVertex.h"
 #include "WebGLQuery.h"
+#include "WebGLRenderSharedExponent.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLSampler.h"
+#include "WebGLStencilTexturing.h"
 #include "WebGLSync.h"
 #include "WebGLTexture.h"
 #include "WebGLTransformFeedback.h"
 #include "WebGLUniformLocation.h"
+#include "WebGLUtilities.h"
 #include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
@@ -72,9 +111,9 @@ const GCGLuint64 MaxClientWaitTimeout = 0u;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 
-std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
+std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {
-    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
+    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(attributes)));
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()
@@ -128,8 +167,9 @@ long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
     return m_context->getInteger64(pname);
 }
 
-void WebGL2RenderingContext::initializeVertexArrayObjects()
+void WebGL2RenderingContext::initializeDefaultObjects()
 {
+    WebGLRenderingContextBase::initializeDefaultObjects();
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
     m_boundVertexArrayObject = m_defaultVertexArrayObject;
     if (!m_defaultVertexArrayObject)
@@ -1383,7 +1423,7 @@ void WebGL2RenderingContext::vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint 
     if (isContextLost())
         return;
     m_context->vertexAttribI4i(index, x, y, z, w);
-    if (index < m_maxVertexAttribs) {
+    if (index < m_vertexAttribValue.size()) {
         m_vertexAttribValue[index].type = GraphicsContextGL::INT;
         m_vertexAttribValue[index].iValue[0] = x;
         m_vertexAttribValue[index].iValue[1] = y;
@@ -1407,7 +1447,7 @@ void WebGL2RenderingContext::vertexAttribI4iv(GCGLuint index, Int32List&& list)
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "array too small");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4iv", "index out of range");
         return;
     }
@@ -1421,7 +1461,7 @@ void WebGL2RenderingContext::vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLui
     if (isContextLost())
         return;
     m_context->vertexAttribI4ui(index, x, y, z, w);
-    if (index < m_maxVertexAttribs) {
+    if (index < m_vertexAttribValue.size()) {
         m_vertexAttribValue[index].type = GraphicsContextGL::UNSIGNED_INT;
         m_vertexAttribValue[index].uiValue[0] = x;
         m_vertexAttribValue[index].uiValue[1] = y;
@@ -1445,7 +1485,7 @@ void WebGL2RenderingContext::vertexAttribI4uiv(GCGLuint index, Uint32List&& list
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "array too small");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribI4uiv", "index out of range");
         return;
     }
@@ -1474,7 +1514,7 @@ void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint index, GCGLint size, 
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "vertexAttribIPointer", "invalid type");
         return;
     }
-    if (index >= m_maxVertexAttribs) {
+    if (index >= m_vertexAttribValue.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribIPointer", "index out of range");
         return;
     }
@@ -1547,7 +1587,7 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
     clearIfComposited(CallerTypeDrawOrClear);
 
     {
-        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
+        ScopedInspectorShaderProgramHighlight scopedHighlight { *this };
 
         m_context->drawRangeElements(mode, start, end, count, type, offset);
     }
@@ -1569,7 +1609,7 @@ void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
             continue;
         default:
             if (bufs[i] > GraphicsContextGL::COLOR_ATTACHMENT0
-                && bufs[i] < GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()) {
+                && bufs[i] < GraphicsContextGL::COLOR_ATTACHMENT0 + maxColorAttachments()) {
                 continue;
             }
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "drawBuffers", "invalid buffer");
@@ -1590,7 +1630,7 @@ void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
         m_context->drawBuffers(value);
         setBackDrawBuffer(bufs[0]);
     } else {
-        if (n > getMaxDrawBuffers()) {
+        if (n > maxDrawBuffers()) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "drawBuffers", "more than max draw buffers");
             return;
         }
@@ -2183,7 +2223,8 @@ void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, co
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "transformFeedbackVaryings", "invalid buffer mode");
         return;
     }
-    program.setRequiredTransformFeedbackBufferCount(bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? 1 : varyings.size());
+    program.setRequiredTransformFeedbackBufferCount(
+        bufferMode == GraphicsContextGL::INTERLEAVED_ATTRIBS ? std::min(static_cast<size_t>(1), varyings.size()) : varyings.size());
 
     m_context->transformFeedbackVaryings(program.object(), varyings, bufferMode);
 }
@@ -2259,6 +2300,10 @@ bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, G
 
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
+        if (m_boundTransformFeedback->isActive()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "transform feedback is active");
+            return false;
+        }
         if (index >= m_maxTransformFeedbackSeparateAttribs) {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "index out of range");
             return false;
@@ -2550,14 +2595,14 @@ std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(const Stri
     }
 
     ENABLE_IF_REQUESTED(EXTBlendFuncExtended, m_extBlendFuncExtended, "EXT_blend_func_extended"_s, EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions);
-    ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control"_s, EXTClipControl::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(EXTClipControl, m_extClipControl, "EXT_clip_control"_s, EXTClipControl::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTColorBufferFloat, m_extColorBufferFloat, "EXT_color_buffer_float"_s, EXTColorBufferFloat::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float"_s, EXTColorBufferHalfFloat::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTConservativeDepth, m_extConservativeDepth, "EXT_conservative_depth"_s, EXTConservativeDepth::supported(*m_context) && enableDraftExtensions);
-    ENABLE_IF_REQUESTED(EXTDepthClamp, m_extDepthClamp, "EXT_depth_clamp"_s, EXTDepthClamp::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(EXTDepthClamp, m_extDepthClamp, "EXT_depth_clamp"_s, EXTDepthClamp::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTDisjointTimerQueryWebGL2, m_extDisjointTimerQueryWebGL2, "EXT_disjoint_timer_query_webgl2"_s, EXTDisjointTimerQueryWebGL2::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled);
     ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend"_s, EXTFloatBlend::supported(*m_context));
-    ENABLE_IF_REQUESTED(EXTPolygonOffsetClamp, m_extPolygonOffsetClamp, "EXT_polygon_offset_clamp"_s, EXTPolygonOffsetClamp::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(EXTPolygonOffsetClamp, m_extPolygonOffsetClamp, "EXT_polygon_offset_clamp"_s, EXTPolygonOffsetClamp::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTRenderSnorm, m_extRenderSnorm, "EXT_render_snorm"_s, EXTRenderSnorm::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(EXTTextureCompressionBPTC, m_extTextureCompressionBPTC, "EXT_texture_compression_bptc"_s, EXTTextureCompressionBPTC::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTTextureCompressionRGTC, m_extTextureCompressionRGTC, "EXT_texture_compression_rgtc"_s, EXTTextureCompressionRGTC::supported(*m_context));
@@ -2584,7 +2629,7 @@ std::optional<WebGLExtensionAny> WebGL2RenderingContext::getExtension(const Stri
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context"_s, true);
     ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw"_s, WebGLMultiDraw::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLMultiDrawInstancedBaseVertexBaseInstance, m_webglMultiDrawInstancedBaseVertexBaseInstance, "WEBGL_multi_draw_instanced_base_vertex_base_instance"_s, WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions);
-    ENABLE_IF_REQUESTED(WebGLPolygonMode, m_webglPolygonMode, "WEBGL_polygon_mode"_s, WebGLPolygonMode::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(WebGLPolygonMode, m_webglPolygonMode, "WEBGL_polygon_mode"_s, WebGLPolygonMode::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLProvokingVertex, m_webglProvokingVertex, "WEBGL_provoking_vertex"_s, WebGLProvokingVertex::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLRenderSharedExponent, m_webglRenderSharedExponent, "WEBGL_render_shared_exponent"_s, WebGLRenderSharedExponent::supported(*m_context) && enableDraftExtensions);
     ENABLE_IF_REQUESTED(WebGLStencilTexturing, m_webglStencilTexturing, "WEBGL_stencil_texturing"_s, WebGLStencilTexturing::supported(*m_context) && enableDraftExtensions);
@@ -2605,14 +2650,14 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
         result.append(nameLiteral ## _s);
 
     APPEND_IF_SUPPORTED("EXT_blend_func_extended", EXTBlendFuncExtended::supported(*m_context) && enableDraftExtensions)
-    APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_clip_control", EXTClipControl::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_float", EXTColorBufferFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_conservative_depth", EXTConservativeDepth::supported(*m_context) && enableDraftExtensions)
-    APPEND_IF_SUPPORTED("EXT_depth_clamp", EXTDepthClamp::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_depth_clamp", EXTDepthClamp::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_disjoint_timer_query_webgl2", EXTDisjointTimerQueryWebGL2::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled)
     APPEND_IF_SUPPORTED("EXT_float_blend", EXTFloatBlend::supported(*m_context))
-    APPEND_IF_SUPPORTED("EXT_polygon_offset_clamp", EXTPolygonOffsetClamp::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("EXT_polygon_offset_clamp", EXTPolygonOffsetClamp::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_render_snorm", EXTRenderSnorm::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("EXT_texture_compression_bptc", EXTTextureCompressionBPTC::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_texture_compression_rgtc", EXTTextureCompressionRGTC::supported(*m_context))
@@ -2639,7 +2684,7 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("WEBGL_lose_context", true)
     APPEND_IF_SUPPORTED("WEBGL_multi_draw", WebGLMultiDraw::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_multi_draw_instanced_base_vertex_base_instance", WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions)
-    APPEND_IF_SUPPORTED("WEBGL_polygon_mode", WebGLPolygonMode::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("WEBGL_polygon_mode", WebGLPolygonMode::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_provoking_vertex", WebGLProvokingVertex::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_render_shared_exponent", WebGLRenderSharedExponent::supported(*m_context) && enableDraftExtensions)
     APPEND_IF_SUPPORTED("WEBGL_stencil_texturing", WebGLStencilTexturing::supported(*m_context) && enableDraftExtensions)
@@ -2811,7 +2856,7 @@ bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char*
     case GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT:
         return true;
     default:
-        if (attachment >= GraphicsContextGL::COLOR_ATTACHMENT0 && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
+        if (attachment >= GraphicsContextGL::COLOR_ATTACHMENT0 && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + maxColorAttachments()))
             return true;
     }
 
@@ -2819,14 +2864,14 @@ bool WebGL2RenderingContext::validateNonDefaultFramebufferAttachment(const char*
     return false;
 }
 
-GCGLint WebGL2RenderingContext::getMaxDrawBuffers()
+GCGLint WebGL2RenderingContext::maxDrawBuffers()
 {
     if (!m_maxDrawBuffers)
         m_maxDrawBuffers = m_context->getInteger(GraphicsContextGL::MAX_DRAW_BUFFERS);
     return m_maxDrawBuffers;
 }
 
-GCGLint WebGL2RenderingContext::getMaxColorAttachments()
+GCGLint WebGL2RenderingContext::maxColorAttachments()
 {
     // DrawBuffers requires MAX_COLOR_ATTACHMENTS == MAX_DRAW_BUFFERS
     if (!m_maxColorAttachments)
@@ -3047,7 +3092,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_CLIENT_WAIT_TIMEOUT_WEBGL:
         return static_cast<long long>(MaxClientWaitTimeout);
     case GraphicsContextGL::MAX_COLOR_ATTACHMENTS:
-        return getIntParameter(pname);
+        return maxColorAttachments();
     case GraphicsContextGL::MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_COMBINED_UNIFORM_BLOCKS:
@@ -3055,7 +3100,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_DRAW_BUFFERS:
-        return getIntParameter(pname);
+        return maxDrawBuffers();
     case GraphicsContextGL::MAX_ELEMENT_INDEX:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_ELEMENTS_INDICES:
@@ -3071,7 +3116,7 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::MAX_PROGRAM_TEXEL_OFFSET:
         return getIntParameter(pname);
     case GraphicsContextGL::MAX_SAMPLES:
-        return getIntParameter(pname);
+        return maxSamples();
     case GraphicsContextGL::MAX_SERVER_WAIT_TIMEOUT:
         return getInt64Parameter(pname);
     case GraphicsContextGL::MAX_TEXTURE_LOD_BIAS:
@@ -3528,7 +3573,7 @@ void WebGL2RenderingContext::updateBuffersToAutoClear(ClearBufferCaller caller, 
         return;
     }
 
-    m_context->setBuffersToAutoClear(m_context->getBuffersToAutoClear() & (~buffersToClear));
+    m_defaultFramebuffer->markBuffersClear(buffersToClear);
 }
 
 } // namespace WebCore

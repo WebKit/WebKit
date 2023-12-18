@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebSWRegistrationStore.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "NetworkStorageManager.h"
 #include <WebCore/SWServer.h>
 
@@ -129,5 +127,3 @@ void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callbac
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -27,28 +27,23 @@
 
 #include "ASTAttribute.h"
 #include "ASTBuilder.h"
+#include "WGSLEnums.h"
 
 namespace WGSL::AST {
 
 class StageAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(StageAttribute);
 public:
-    enum class Stage : uint8_t {
-        Compute,
-        Vertex,
-        Fragment
-    };
-
     NodeKind kind() const override;
-    Stage stage() const { return m_stage; }
+    ShaderStage stage() const { return m_stage; }
 
 private:
-    StageAttribute(SourceSpan span, Stage stage)
+    StageAttribute(SourceSpan span, ShaderStage stage)
         : Attribute(span)
         , m_stage(stage)
     { }
 
-    Stage m_stage;
+    ShaderStage m_stage;
 };
 
 } // namespace WGSL::AST

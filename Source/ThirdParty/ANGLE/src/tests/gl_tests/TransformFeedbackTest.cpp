@@ -2851,9 +2851,6 @@ void main() {
 // Test that transform feedback with scissor test enabled works.
 TEST_P(TransformFeedbackTest, RecordAndDrawWithScissorTest)
 {
-    // http://crbug.com/1135841
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsMac());
-
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDepthMask(GL_TRUE);
@@ -4439,7 +4436,8 @@ color = var;
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackTest,
-                               ES3_VULKAN().disable(Feature::SupportsTransformFeedbackExtension));
+                               ES3_VULKAN().disable(Feature::SupportsTransformFeedbackExtension),
+                               ES3_VULKAN().enable(Feature::ForceDelayedDeviceCreationForTesting));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackLifetimeTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackLifetimeTest,

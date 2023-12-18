@@ -44,7 +44,7 @@ WKTypeID WKContextMenuItemGetTypeID()
 WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag tag, WKStringRef title, bool enabled)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return WebKit::toAPI(&WebKit::WebContextMenuItem::create(WebKit::WebContextMenuItemData(WebCore::ActionType, WebKit::toImpl(tag), WebKit::toImpl(title)->string(), enabled, false)).leakRef());
+    return WebKit::toAPI(&WebKit::WebContextMenuItem::create(WebKit::WebContextMenuItemData(WebCore::ContextMenuItemType::Action, WebKit::toImpl(tag), WebKit::toImpl(title)->string(), enabled, false)).leakRef());
 #else
     UNUSED_PARAM(tag);
     UNUSED_PARAM(title);
@@ -56,7 +56,7 @@ WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag tag, W
 WKContextMenuItemRef WKContextMenuItemCreateAsCheckableAction(WKContextMenuItemTag tag, WKStringRef title, bool enabled, bool checked)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return WebKit::toAPI(&WebKit::WebContextMenuItem::create(WebKit::WebContextMenuItemData(WebCore::CheckableActionType, WebKit::toImpl(tag), WebKit::toImpl(title)->string(), enabled, checked)).leakRef());
+    return WebKit::toAPI(&WebKit::WebContextMenuItem::create(WebKit::WebContextMenuItemData(WebCore::ContextMenuItemType::CheckableAction, WebKit::toImpl(tag), WebKit::toImpl(title)->string(), enabled, checked)).leakRef());
 #else
     UNUSED_PARAM(tag);
     UNUSED_PARAM(title);
@@ -103,7 +103,7 @@ WKContextMenuItemType WKContextMenuItemGetType(WKContextMenuItemRef itemRef)
     return WebKit::toAPI(WebKit::toImpl(itemRef)->data().type());
 #else
     UNUSED_PARAM(itemRef);
-    return WebKit::toAPI(WebCore::ActionType);
+    return WebKit::toAPI(WebCore::ContextMenuItemType::Action);
 #endif
 }
 

@@ -22,7 +22,7 @@
 
 namespace WebCore {
 
-enum ExceptionCode {
+enum class ExceptionCode : uint8_t {
     // DOMException error names (https://webidl.spec.whatwg.org/#idl-DOMException-error-names).
     // Those need to be kept in sync with the array in DOMException.cpp.
     IndexSizeError, // Deprecated. Use RangeError instead.
@@ -72,50 +72,3 @@ enum ExceptionCode {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ExceptionCode> {
-    using values = EnumValues<
-    WebCore::ExceptionCode,
-    WebCore::ExceptionCode::IndexSizeError,
-    WebCore::ExceptionCode::HierarchyRequestError,
-    WebCore::ExceptionCode::WrongDocumentError,
-    WebCore::ExceptionCode::InvalidCharacterError,
-    WebCore::ExceptionCode::NoModificationAllowedError,
-    WebCore::ExceptionCode::NotFoundError,
-    WebCore::ExceptionCode::NotSupportedError,
-    WebCore::ExceptionCode::InUseAttributeError,
-    WebCore::ExceptionCode::InvalidStateError,
-    WebCore::ExceptionCode::SyntaxError,
-    WebCore::ExceptionCode::InvalidModificationError,
-    WebCore::ExceptionCode::NamespaceError,
-    WebCore::ExceptionCode::InvalidAccessError,
-    WebCore::ExceptionCode::TypeMismatchError,
-    WebCore::ExceptionCode::SecurityError,
-    WebCore::ExceptionCode::NetworkError,
-    WebCore::ExceptionCode::AbortError,
-    WebCore::ExceptionCode::URLMismatchError,
-    WebCore::ExceptionCode::QuotaExceededError,
-    WebCore::ExceptionCode::TimeoutError,
-    WebCore::ExceptionCode::InvalidNodeTypeError,
-    WebCore::ExceptionCode::DataCloneError,
-    WebCore::ExceptionCode::EncodingError,
-    WebCore::ExceptionCode::NotReadableError,
-    WebCore::ExceptionCode::UnknownError,
-    WebCore::ExceptionCode::ConstraintError,
-    WebCore::ExceptionCode::DataError,
-    WebCore::ExceptionCode::TransactionInactiveError,
-    WebCore::ExceptionCode::ReadonlyError,
-    WebCore::ExceptionCode::VersionError,
-    WebCore::ExceptionCode::OperationError,
-    WebCore::ExceptionCode::NotAllowedError,
-    WebCore::ExceptionCode::RangeError,
-    WebCore::ExceptionCode::TypeError,
-    WebCore::ExceptionCode::JSSyntaxError,
-    WebCore::ExceptionCode::StackOverflowError,
-    WebCore::ExceptionCode::ExistingExceptionError
-    >;
-};
-
-} // namespace WTF

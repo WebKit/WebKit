@@ -38,12 +38,12 @@
 
 namespace WebCore {
 
-Ref<InbandMetadataTextTrackPrivateAVF> InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, const AtomString& id)
+Ref<InbandMetadataTextTrackPrivateAVF> InbandMetadataTextTrackPrivateAVF::create(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, TrackID id)
 {
     return adoptRef(*new InbandMetadataTextTrackPrivateAVF(kind, cueFormat, id));
 }
 
-InbandMetadataTextTrackPrivateAVF::InbandMetadataTextTrackPrivateAVF(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, const AtomString& id)
+InbandMetadataTextTrackPrivateAVF::InbandMetadataTextTrackPrivateAVF(InbandTextTrackPrivate::Kind kind, InbandTextTrackPrivate::CueFormat cueFormat, TrackID id)
     : InbandTextTrackPrivate(cueFormat)
     , m_kind(kind)
     , m_id(id)

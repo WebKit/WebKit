@@ -62,7 +62,7 @@ require "risc"
 # d11 => csfr3
 # d12 => csfr4
 # d13 => csfr5
-# d14 => csfr6
+# d14 => scratch
 # d15 => scratch
 
 class Node
@@ -176,8 +176,6 @@ class FPRegisterID
             "d12"
         when "csfr5"
             "d13"
-        when "csfr6"
-            "d14"
         else
             raise "Bad register #{name} for ARM at #{codeOriginString}"
         end
@@ -833,7 +831,7 @@ class Instruction
                 $asm.puts "blx #{operands[0].armOperand}"
             end
         when "break"
-            $asm.puts "bkpt #0"
+            $asm.puts "udf #0"
         when "ret"
             $asm.puts "bx lr"
         when "cieq", "cpeq", "cbeq"

@@ -28,4 +28,3 @@ INFOPLIST_KEY_CFBundleDisplayName = WebContentCaptivePortalExtension;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContentExtension.CaptivePortal;
 PRODUCT_BUNDLE_EXECUTABLE = WebContentCaptivePortalExtension;
 PRODUCT_BUNDLE_NAME = WebContentCaptivePortalExtension;
-PRODUCT_BUNDLE_VERSION = 1.0;

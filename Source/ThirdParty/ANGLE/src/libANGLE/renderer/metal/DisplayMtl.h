@@ -102,12 +102,14 @@ class DisplayMtl : public DisplayImpl
     gl::Version getMaxConformantESVersion() const override;
     Optional<gl::Version> getMaxSupportedDesktopVersion() const override;
 
-    EGLSyncImpl *createSync(const egl::AttributeMap &attribs) override;
+    EGLSyncImpl *createSync() override;
 
     egl::Error makeCurrent(egl::Display *display,
                            egl::Surface *drawSurface,
                            egl::Surface *readSurface,
                            gl::Context *context) override;
+
+    void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     void populateFeatureList(angle::FeatureList *features) override;
 
@@ -142,6 +144,7 @@ class DisplayMtl : public DisplayImpl
     bool supports32BitFloatFiltering() const;
     bool isAMD() const;
     bool isAMDBronzeDriver() const;
+    bool isAMDFireProDevice() const;
     bool isIntel() const;
     bool isNVIDIA() const;
     bool isSimulator() const;

@@ -117,19 +117,19 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     , m_contextIdentifier(contextIdentifier)
 {
     auto* securityOrigin = globalScope.securityOrigin();
-    auto* contentSecurityPolicy = globalScope.contentSecurityPolicy();
+    CheckedPtr contentSecurityPolicy = globalScope.contentSecurityPolicy();
 
     ASSERT(securityOrigin);
     ASSERT(contentSecurityPolicy);
 
-    auto securityOriginCopy = securityOrigin->isolatedCopy();
+    Ref securityOriginCopy = securityOrigin->isolatedCopy();
     ReportingClient* reportingClient = nullptr;
     if (auto* client = m_loaderProxy.reportingClient())
         reportingClient = client;
     else if (auto* workerScope = dynamicDowncast<WorkerGlobalScope>(globalScope))
         reportingClient = workerScope;
     auto contentSecurityPolicyIsolatedCopy = makeUnique<ContentSecurityPolicy>(globalScope.url().isolatedCopy(), nullptr, reportingClient);
-    contentSecurityPolicyIsolatedCopy->copyStateFrom(contentSecurityPolicy, ContentSecurityPolicy::ShouldMakeIsolatedCopy::Yes);
+    contentSecurityPolicyIsolatedCopy->copyStateFrom(contentSecurityPolicy.get(), ContentSecurityPolicy::ShouldMakeIsolatedCopy::Yes);
     contentSecurityPolicyIsolatedCopy->copyUpgradeInsecureRequestStateFrom(*contentSecurityPolicy, ContentSecurityPolicy::ShouldMakeIsolatedCopy::Yes);
     auto crossOriginEmbedderPolicyCopy = globalScope.crossOriginEmbedderPolicy().isolatedCopy();
 
@@ -139,7 +139,6 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(optionsCopy->options.initiatorContext == InitiatorContext::Document);
     optionsCopy->options.initiatorContext = InitiatorContext::Worker;
 
-#if ENABLE(SERVICE_WORKER)
     if (optionsCopy->options.serviceWorkersMode == ServiceWorkersMode::All) {
         if (is<ServiceWorkerGlobalScope>(globalScope))
             optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::None;
@@ -151,7 +150,6 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
         else
             optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::All;
     }
-#endif
     if (!optionsCopy->options.clientIdentifier)
         optionsCopy->options.clientIdentifier = globalScope.identifier().object();
 

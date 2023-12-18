@@ -24,8 +24,8 @@ import os
 
 import ews.common.util as util
 
-is_test_mode_enabled = os.getenv('EWS_PRODUCTION') is None
-is_dev_instance = (os.getenv('DEV_INSTANCE', '').lower() == 'true')
+is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
+is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
 
 BUG_SERVER_HOST = 'bugs.webkit.org'
 BUG_SERVER_URL = 'https://{}/'.format(BUG_SERVER_HOST)
@@ -42,8 +42,8 @@ BUILDBOT_TRY_HOST = util.load_password('BUILDBOT_TRY_HOST', default=BUILDBOT_SER
 
 BUILDBOT_SERVER_PORT = '5555'
 COMMIT_QUEUE_PORT = '5557'
-BUILDBOT_TRY_USERNAME = os.getenv('BUILDBOT_TRY_USERNAME', 'sampleuser')
-BUILDBOT_TRY_PASSWORD = os.getenv('BUILDBOT_TRY_PASSWORD', 'samplepass')
+BUILDBOT_TRY_USERNAME = util.load_password('BUILDBOT_TRY_USERNAME', default='sampleuser')
+BUILDBOT_TRY_PASSWORD = util.load_password('BUILDBOT_TRY_PASSWORD', default='samplepass')
 
 SUCCESS = 0
 ERR_UNEXPECTED = -1

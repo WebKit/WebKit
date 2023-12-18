@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Operands.h"
 #include <wtf/FastBitVector.h>
 #include <wtf/FixedVector.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -38,7 +39,7 @@ class CodeBlock;
 // Note: Full bytecode liveness does not track any information about the liveness of temps.
 // If you want tmp liveness for a checkpoint ask tmpLivenessForCheckpoint.
 class FullBytecodeLiveness {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FullBytecodeLiveness);
 public:
     explicit FullBytecodeLiveness(size_t size)
         : m_usesBefore(size)

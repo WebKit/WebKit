@@ -91,7 +91,7 @@ static ExceptionOr<JSC::JSValue> invokeTransformStreamFunction(JSC::JSGlobalObje
     auto callData = JSC::getCallData(function);
 
     auto result = call(&globalObject, function, callData, JSC::jsUndefined(), arguments);
-    RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+    RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
 
     return result;
 }

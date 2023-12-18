@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Connection.h"
 #include "DataReference.h"
 #include "IdentifierTypes.h"
@@ -130,6 +128,12 @@ private:
     void navigationPreloadIsReady(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier, WebCore::ResourceResponse&&);
     void navigationPreloadFailed(WebCore::SWServerConnectionIdentifier, WebCore::ServiceWorkerIdentifier, WebCore::FetchIdentifier, WebCore::ResourceError&&);
 
+    void updateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerRegistrationState, const std::optional<WebCore::ServiceWorkerData>&);
+    void updateWorkerState(WebCore::ServiceWorkerIdentifier, WebCore::ServiceWorkerState);
+    void fireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier);
+    void setRegistrationLastUpdateTime(WebCore::ServiceWorkerRegistrationIdentifier, WallTime);
+    void setRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerUpdateViaCache);
+
     Ref<IPC::Connection> m_connectionToNetworkProcess;
     WebCore::RegistrableDomain m_registrableDomain;
     std::optional<WebCore::ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
@@ -149,5 +153,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

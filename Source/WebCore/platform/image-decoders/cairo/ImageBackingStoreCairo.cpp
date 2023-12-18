@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "CairoUtilities.h"
 #include "ImageBackingStore.h"
 
 #include <cairo.h>
@@ -41,6 +42,7 @@ PlatformImagePtr ImageBackingStore::image() const
         static_cast<DataSegment*>(data)->deref();
     });
 
+    attachSurfaceUniqueID(surface.get());
     return surface;
 }
 

@@ -163,6 +163,8 @@ inert
 inputmode
 integrity
 interactive
+invokeaction
+invoketarget
 is
 ismap
 keytype
@@ -401,6 +403,7 @@ step
 style
 subtitle
 summary
+switch
 tabindex
 target
 text

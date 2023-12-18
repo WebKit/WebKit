@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("retryUntil");
+
+    suite.addTestCase({
+        name: "retryUntil.DefaultConfiguration.Success",
+        description: "Retries within the default number of times and succeeds.",
+        async test() {
+            let count = 0;
+            let predicate = () => {
+                count++;
+                return count === 3;
+            }
+
+            let firstResult = predicate();
+            let startTime = performance.now();
+            let result = await retryUntil(predicate);
+
+            InspectorTest.expectGreaterThanOrEqual(performance.now() - startTime, 100, "Waited at least the default 100ms delay between retries.");
+            InspectorTest.expectFalse(firstResult, "Predicate is falsy on first try.");
+            InspectorTest.expectTrue(result, "Success within default number of retries.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "retryUntil.CustomConfiguration.Success",
+        description: "Retries a finite number of times and succeeds.",
+        async test() {
+            let retries = 3;
+            let count = 0;
+            let delay = 0; // Default 100ms. Avoid needlessly taking up test run time.
+            let predicate = () => {
+                count++;
+                return count === retries;
+            }
+
+            let result = await retryUntil(predicate, {retries, delay});
+
+            InspectorTest.expectEqual(count, retries, `Retried ${count} times.`);
+            InspectorTest.expectTrue(result, `Success after ${retries} retries.`);
+        }
+    });
+
+    suite.addTestCase({
+        name: "retryUntil.CustomConfiguration.Fail",
+        description: "Retries a finite number of times and fails.",
+        async test() {
+            async function testFalsy(value) {
+                let retries = 3;
+                let count = 0;
+                let delay = 0; // Default 100ms. Avoid needlessly taking up test run time.
+                let predicate = () => {
+                    count++;
+                    return value;
+                }
+                let result = await retryUntil(predicate, {retries, delay});
+
+                InspectorTest.expectEqual(count, retries, `Retried ${count} times.`);
+                InspectorTest.expectNull(result, `Failure after ${retries} retries for falsy value: ${value}`);
+            }
+
+            await testFalsy(false);
+            await testFalsy(null);
+            await testFalsy(undefined);
+            await testFalsy(0);
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+</body>
+</html>

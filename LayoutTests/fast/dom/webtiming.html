@@ -8,7 +8,6 @@
 description("This test checks that all of the <a href='http://dev.w3.org/2006/webapi/WebTiming/'>Web Timing</a> attributes are available and have reasonable values in the right order.");
 
 window.performance = window.performance || {};
-var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 
 // Get the order of magnitude correct without a chance for flakiness.
@@ -28,7 +27,7 @@ function checkTimingBeforeLoad()
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
@@ -60,7 +59,7 @@ function checkTimingWhileDeferred()
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
@@ -93,7 +92,7 @@ function checkWebTimingOnDOMContentLoaded() {
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
@@ -132,7 +131,7 @@ function checkWebTimingWhileAsync()
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
@@ -166,7 +165,7 @@ function checkWebTimingOnLoad()
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 
@@ -201,7 +200,7 @@ function checkWebTimingAfterLoad()
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
-    shouldBe("navigation.redirectCount", "0");
+    shouldBe("performance.navigation.redirectCount", "0");
 
     shouldBeGreaterThanOrEqual("timing.fetchStart", "timing.navigationStart");
 

@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLDepthTexture final : public RefCounted<WebGLDepthTexture>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLDepthTexture final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLDepthTexture);
 public:
     explicit WebGLDepthTexture(WebGLRenderingContextBase&);

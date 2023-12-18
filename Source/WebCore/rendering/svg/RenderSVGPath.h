@@ -37,11 +37,13 @@ public:
     RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
     virtual ~RenderSVGPath();
 
+    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
+
 private:
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;
-    FloatRect calculateUpdatedStrokeBoundingBox() const;
+    FloatRect adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const override;
 
     void strokeShape(GraphicsContext&) const override;
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
@@ -52,13 +54,18 @@ private:
     void updateZeroLengthSubpaths();
     void strokeZeroLengthSubpaths(GraphicsContext&) const;
 
+    void processMarkerPositions();
+    bool shouldGenerateMarkerPositions() const;
+    void drawMarkers(PaintInfo&) override;
+
     bool isRenderingDisabled() const override;
 
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
+    Vector<MarkerPosition> m_markerPositions;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isSVGPath())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isRenderSVGPath())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

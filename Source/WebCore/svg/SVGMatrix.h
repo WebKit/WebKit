@@ -63,7 +63,7 @@ public:
     ExceptionOr<void> setA(double value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setA(value);
         commitChange();
@@ -78,7 +78,7 @@ public:
     ExceptionOr<void> setB(double value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setB(value);
         commitChange();
@@ -93,7 +93,7 @@ public:
     ExceptionOr<void> setC(double value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setC(value);
         commitChange();
@@ -108,7 +108,7 @@ public:
     ExceptionOr<void> setD(double value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setD(value);
         commitChange();
@@ -123,7 +123,7 @@ public:
     ExceptionOr<void> setE(double value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setE(value);
         commitChange();
@@ -138,7 +138,7 @@ public:
     ExceptionOr<void> setF(double value)
     {
         if (isReadOnly())
-            return Exception { NoModificationAllowedError };
+            return Exception { ExceptionCode::NoModificationAllowedError };
 
         m_value.setF(value);
         commitChange();
@@ -156,7 +156,7 @@ public:
     {
         auto inverse = m_value.inverse();
         if (!inverse)
-            return Exception { InvalidStateError, "Matrix is not invertible"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Matrix is not invertible"_s };
         return SVGMatrix::create(*inverse);
     }
 
@@ -191,7 +191,7 @@ public:
     ExceptionOr<Ref<SVGMatrix>> rotateFromVector(float x, float y) const
     {
         if (!x || !y)
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
 
         auto copy = m_value;
         copy.rotateFromVector(x, y);

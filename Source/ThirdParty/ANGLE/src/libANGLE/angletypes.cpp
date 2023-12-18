@@ -540,18 +540,6 @@ void BlendStateExt::setEquationsIndexed(const size_t index,
     mUsesAdvancedBlendEquationMask.set(index, IsAdvancedBlendEquation(colorEquation));
 }
 
-GLenum BlendStateExt::getEquationColorIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(EquationStorage::GetValueIndexed(index, mEquationColor));
-}
-
-GLenum BlendStateExt::getEquationAlphaIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(EquationStorage::GetValueIndexed(index, mEquationAlpha));
-}
-
 DrawBufferMask BlendStateExt::compareEquations(const EquationStorage::Type color,
                                                const EquationStorage::Type alpha) const
 {
@@ -625,17 +613,12 @@ void BlendStateExt::setFactors(const GLenum srcColor,
 }
 
 void BlendStateExt::setFactorsIndexed(const size_t index,
-                                      const GLenum srcColor,
-                                      const GLenum dstColor,
-                                      const GLenum srcAlpha,
-                                      const GLenum dstAlpha)
+                                      const gl::BlendFactorType srcColorFactor,
+                                      const gl::BlendFactorType dstColorFactor,
+                                      const gl::BlendFactorType srcAlphaFactor,
+                                      const gl::BlendFactorType dstAlphaFactor)
 {
     ASSERT(index < mDrawBufferCount);
-
-    const gl::BlendFactorType srcColorFactor = FromGLenum<BlendFactorType>(srcColor);
-    const gl::BlendFactorType dstColorFactor = FromGLenum<BlendFactorType>(dstColor);
-    const gl::BlendFactorType srcAlphaFactor = FromGLenum<BlendFactorType>(srcAlpha);
-    const gl::BlendFactorType dstAlphaFactor = FromGLenum<BlendFactorType>(dstAlpha);
 
     FactorStorage::SetValueIndexed(index, srcColorFactor, &mSrcColor);
     FactorStorage::SetValueIndexed(index, dstColorFactor, &mDstColor);
@@ -646,6 +629,20 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
         IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
         IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor);
     mUsesExtendedBlendFactorMask.set(index, isExtended);
+}
+
+void BlendStateExt::setFactorsIndexed(const size_t index,
+                                      const GLenum srcColor,
+                                      const GLenum dstColor,
+                                      const GLenum srcAlpha,
+                                      const GLenum dstAlpha)
+{
+    const gl::BlendFactorType srcColorFactor = FromGLenum<BlendFactorType>(srcColor);
+    const gl::BlendFactorType dstColorFactor = FromGLenum<BlendFactorType>(dstColor);
+    const gl::BlendFactorType srcAlphaFactor = FromGLenum<BlendFactorType>(srcAlpha);
+    const gl::BlendFactorType dstAlphaFactor = FromGLenum<BlendFactorType>(dstAlpha);
+
+    setFactorsIndexed(index, srcColorFactor, dstColorFactor, srcAlphaFactor, dstAlphaFactor);
 }
 
 void BlendStateExt::setFactorsIndexed(const size_t index,
@@ -673,30 +670,6 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
         IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
         IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor);
     mUsesExtendedBlendFactorMask.set(index, isExtended);
-}
-
-GLenum BlendStateExt::getSrcColorIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mSrcColor));
-}
-
-GLenum BlendStateExt::getDstColorIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mDstColor));
-}
-
-GLenum BlendStateExt::getSrcAlphaIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mSrcAlpha));
-}
-
-GLenum BlendStateExt::getDstAlphaIndexed(size_t index) const
-{
-    ASSERT(index < mDrawBufferCount);
-    return ToGLenum(FactorStorage::GetValueIndexed(index, mDstAlpha));
 }
 
 DrawBufferMask BlendStateExt::compareFactors(const FactorStorage::Type srcColor,
@@ -1106,12 +1079,19 @@ void UnlockedTailCall::add(CallType &&call)
     mCalls.push_back(std::move(call));
 }
 
-void UnlockedTailCall::runImpl()
+void UnlockedTailCall::runImpl(void *resultOut)
 {
-    for (CallType &call : mCalls)
+    if (mCalls.empty())
     {
-        call();
+        return;
     }
-    mCalls.clear();
+    // Clear `mCalls` before calling, because Android sometimes calls back into ANGLE through EGL
+    // calls which don't expect there to be any pre-existing tail calls.
+    auto calls(std::move(mCalls));
+    ASSERT(mCalls.empty());
+    for (CallType &call : calls)
+    {
+        call(resultOut);
+    }
 }
 }  // namespace angle

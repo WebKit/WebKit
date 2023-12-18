@@ -193,11 +193,11 @@ gboolean webkit_web_form_manager_input_element_is_user_edited(JSCValue* element)
     g_return_val_if_fail(jsc_value_is_object(element), FALSE);
 
     auto* node = nodeForJSCValue(element);
-    if (is<HTMLInputElement>(node))
-        return downcast<HTMLInputElement>(*node).lastChangeWasUserEdit();
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(node))
+        return input->lastChangeWasUserEdit();
 
-    if (is<HTMLTextAreaElement>(node))
-        return downcast<HTMLTextAreaElement>(*node).lastChangeWasUserEdit();
+    if (RefPtr textarea = dynamicDowncast<HTMLTextAreaElement>(node))
+        return textarea->lastChangeWasUserEdit();
 
     return FALSE;
 }
@@ -219,12 +219,12 @@ void webkit_web_form_manager_input_element_auto_fill(JSCValue* element, const ch
     g_return_if_fail(jsc_value_is_object(element));
 
     auto* node = nodeForJSCValue(element);
-    if (!is<WebCore::HTMLInputElement>(node))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node);
+    if (!input)
         return;
 
-    auto& inputElement = downcast<WebCore::HTMLInputElement>(*node);
-    inputElement.setAutoFilled(true);
-    inputElement.setValueForUser(String::fromUTF8(value));
+    input->setAutoFilled(true);
+    input->setValueForUser(String::fromUTF8(value));
 }
 
 /**
@@ -244,5 +244,6 @@ gboolean webkit_web_form_manager_input_element_is_auto_filled(JSCValue* element)
     g_return_val_if_fail(jsc_value_is_object(element), FALSE);
 
     auto* node = nodeForJSCValue(element);
-    return is<WebCore::HTMLInputElement>(node) ? downcast<WebCore::HTMLInputElement>(*node).isAutoFilled() : FALSE;
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node);
+    return input && input->isAutoFilled();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,13 +57,7 @@ public:
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
         jit.prepareCallOperation(compiler.vm());
-
-        CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
-        auto function = m_function;
-        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link<OperationPtrTag>(operationCall, function);
-        });
-
+        jit.callOperation<OperationPtrTag>(m_function);
         jit.setupResults(m_result);
         jit.reclaimSpaceOnStackForCCall();
 

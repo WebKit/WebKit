@@ -19,7 +19,7 @@ Line
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (-4,-4) width=38 height=27)
+        (interaction (-4,-4) width=37.32 height=27)
         (borderRadius 8 8 0 0),
         (interaction (-4,23) width=38 height=20)
         (borderRadius 0.00),
@@ -27,18 +27,14 @@ Line
         (borderRadius 0.00),
         (interaction (-4,63) width=38 height=20)
         (borderRadius 0 0 8 8),
-        (interaction (6,82) width=66 height=27)
+        (interaction (6,82) width=65.34 height=27)
         (borderRadius 8 8 0 0),
         (interaction (72,94) width=41 height=15)
         (borderRadius 0 8 0 0),
         (interaction (6,109) width=107 height=12)
         (borderRadius 0 0 8 0),
-        (guard (6,111) width=71 height=32)
-        (borderRadius 0.00),
         (interaction (6,121) width=71 height=12)
         (borderRadius 0 0 8 0),
-        (guard (6,123) width=38 height=32)
-        (borderRadius 0.00),
         (interaction (6,133) width=38 height=12)
         (borderRadius 0 0 8 8)])
       )

@@ -4183,6 +4183,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
             if (not (_is_javascriptcore_file(filename) and (modified_identifier.find('op_') >= 0 or modified_identifier.find('intrinsic_') >= 0))
                 and not (('gtk' in filename or 'glib' in filename or 'wpe' in filename or 'atk' in filename) and modified_identifier.startswith('webkit_'))
                 and not ('glib' in filename and modified_identifier.startswith('jsc_'))
+                and not ('wpe' in filename and modified_identifier.startswith('wpe_'))
                 and not modified_identifier.startswith('tst_')
                 and not modified_identifier.startswith('webkit_dom_object_')
                 and not modified_identifier.startswith('webkit_soup')

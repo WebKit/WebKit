@@ -48,7 +48,7 @@ class WebExtensionControllerProxy final : public RefCounted<WebExtensionControll
 
 public:
     static RefPtr<WebExtensionControllerProxy> get(WebExtensionControllerIdentifier);
-    static Ref<WebExtensionControllerProxy> getOrCreate(WebExtensionControllerParameters);
+    static Ref<WebExtensionControllerProxy> getOrCreate(const WebExtensionControllerParameters&, WebPage* = nullptr);
 
     ~WebExtensionControllerProxy();
 
@@ -63,7 +63,6 @@ public:
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
     void serviceWorkerGlobalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
 
-    // Web Navigation
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, const URL&);
     void didCommitLoadForFrame(WebPage&, WebFrame&, const URL&);
     void didFinishLoadForFrame(WebPage&, WebFrame&, const URL&);
@@ -72,7 +71,7 @@ public:
 #endif
 
 private:
-    explicit WebExtensionControllerProxy(WebExtensionControllerParameters);
+    explicit WebExtensionControllerProxy(const WebExtensionControllerParameters&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

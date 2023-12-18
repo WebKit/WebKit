@@ -257,32 +257,32 @@ static INLINE unsigned int highbd_sadb(const uint8_t *a8, int a_stride,
            highbd_sad(src, 2 * src_stride, ref, 2 * ref_stride, (m), (n / 2)); \
   }
 
-#define HIGHBD_SAD_MXNX4D(m, n)                                              \
-  void aom_highbd_sad##m##x##n##x4d_c(const uint8_t *src, int src_stride,    \
-                                      const uint8_t *const ref_array[],      \
-                                      int ref_stride, uint32_t *sad_array) { \
-    int i;                                                                   \
-    for (i = 0; i < 4; ++i) {                                                \
-      sad_array[i] = aom_highbd_sad##m##x##n##_c(src, src_stride,            \
-                                                 ref_array[i], ref_stride);  \
-    }                                                                        \
-  }                                                                          \
-  void aom_highbd_sad_skip_##m##x##n##x4d_c(                                 \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[],  \
-      int ref_stride, uint32_t *sad_array) {                                 \
-    int i;                                                                   \
-    for (i = 0; i < 4; ++i) {                                                \
-      sad_array[i] = 2 * highbd_sad(src, 2 * src_stride, ref_array[i],       \
-                                    2 * ref_stride, (m), (n / 2));           \
-    }                                                                        \
+#define HIGHBD_SAD_MXNX4D(m, n)                                                \
+  void aom_highbd_sad##m##x##n##x4d_c(const uint8_t *src, int src_stride,      \
+                                      const uint8_t *const ref_array[4],       \
+                                      int ref_stride, uint32_t sad_array[4]) { \
+    int i;                                                                     \
+    for (i = 0; i < 4; ++i) {                                                  \
+      sad_array[i] = aom_highbd_sad##m##x##n##_c(src, src_stride,              \
+                                                 ref_array[i], ref_stride);    \
+    }                                                                          \
+  }                                                                            \
+  void aom_highbd_sad_skip_##m##x##n##x4d_c(                                   \
+      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4],   \
+      int ref_stride, uint32_t sad_array[4]) {                                 \
+    int i;                                                                     \
+    for (i = 0; i < 4; ++i) {                                                  \
+      sad_array[i] = 2 * highbd_sad(src, 2 * src_stride, ref_array[i],         \
+                                    2 * ref_stride, (m), (n / 2));             \
+    }                                                                          \
   }
 // Call SIMD version of aom_highbd_sad_mxnx4d if the 3d version is unavailable.
-#define HIGHBD_SAD_MXNX3D(m, n)                                              \
-  void aom_highbd_sad##m##x##n##x3d_c(const uint8_t *src, int src_stride,    \
-                                      const uint8_t *const ref_array[],      \
-                                      int ref_stride, uint32_t *sad_array) { \
-    aom_highbd_sad##m##x##n##x4d(src, src_stride, ref_array, ref_stride,     \
-                                 sad_array);                                 \
+#define HIGHBD_SAD_MXNX3D(m, n)                                                \
+  void aom_highbd_sad##m##x##n##x3d_c(const uint8_t *src, int src_stride,      \
+                                      const uint8_t *const ref_array[4],       \
+                                      int ref_stride, uint32_t sad_array[4]) { \
+    aom_highbd_sad##m##x##n##x4d(src, src_stride, ref_array, ref_stride,       \
+                                 sad_array);                                   \
   }
 
 // 128x128

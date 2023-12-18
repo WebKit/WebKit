@@ -169,6 +169,7 @@ class FakeVideoSendStream final
   bool GetVp8Settings(webrtc::VideoCodecVP8* settings) const;
   bool GetVp9Settings(webrtc::VideoCodecVP9* settings) const;
   bool GetH264Settings(webrtc::VideoCodecH264* settings) const;
+  bool GetAv1Settings(webrtc::VideoCodecAV1* settings) const;
 
   int GetNumberOfSwappedFrames() const;
   int GetLastWidth() const;
@@ -188,7 +189,10 @@ class FakeVideoSendStream final
   rtc::VideoSourceInterface<webrtc::VideoFrame>* source() const {
     return source_;
   }
-  void GenerateKeyFrame(const std::vector<std::string>& rids) override {}
+  void GenerateKeyFrame(const std::vector<std::string>& rids);
+  const std::vector<std::string>& GetKeyFramesRequested() const {
+    return keyframes_requested_by_rid_;
+  }
 
  private:
   // rtc::VideoSinkInterface<VideoFrame> implementation.
@@ -223,6 +227,7 @@ class FakeVideoSendStream final
     webrtc::VideoCodecVP8 vp8;
     webrtc::VideoCodecVP9 vp9;
     webrtc::VideoCodecH264 h264;
+    webrtc::VideoCodecAV1 av1;
   } codec_specific_settings_;
   bool resolution_scaling_enabled_;
   bool framerate_scaling_enabled_;
@@ -231,6 +236,7 @@ class FakeVideoSendStream final
   absl::optional<webrtc::VideoFrame> last_frame_;
   webrtc::VideoSendStream::Stats stats_;
   int num_encoder_reconfigurations_ = 0;
+  std::vector<std::string> keyframes_requested_by_rid_;
 };
 
 class FakeVideoReceiveStream final
@@ -347,6 +353,8 @@ class FakeFlexfecReceiveStream final : public webrtc::FlexfecReceiveStream {
   const webrtc::FlexfecReceiveStream::Config& GetConfig() const;
 
   uint32_t remote_ssrc() const { return config_.rtp.remote_ssrc; }
+
+  const webrtc::ReceiveStatistics* GetStats() const override { return nullptr; }
 
  private:
   void OnRtpPacket(const webrtc::RtpPacketReceived& packet) override;

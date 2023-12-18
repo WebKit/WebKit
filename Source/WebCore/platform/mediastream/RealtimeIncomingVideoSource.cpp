@@ -59,7 +59,10 @@ RealtimeIncomingVideoSource::RealtimeIncomingVideoSource(rtc::scoped_refptr<webr
     m_videoTrack->RegisterObserver(this);
 
     m_frameRateMonitor = makeUnique<FrameRateMonitor>([this](auto info) {
-#if !RELEASE_LOG_DISABLED
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(this);
+        UNUSED_PARAM(info);
+#else
         if (!m_enableFrameRatedMonitoringLogging)
             return;
 

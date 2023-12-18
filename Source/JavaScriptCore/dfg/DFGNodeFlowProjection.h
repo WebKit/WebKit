@@ -72,7 +72,7 @@ public:
         return m_word;
     }
     
-    friend bool operator==(NodeFlowProjection, NodeFlowProjection) = default;
+    friend bool operator==(const NodeFlowProjection&, const NodeFlowProjection&) = default;
     
     bool operator<(NodeFlowProjection other) const
     {

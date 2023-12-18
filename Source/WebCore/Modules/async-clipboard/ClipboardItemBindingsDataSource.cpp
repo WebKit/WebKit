@@ -89,20 +89,20 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
     });
 
     if (matchIndex == notFound) {
-        promise->reject(NotFoundError);
+        promise->reject(ExceptionCode::NotFoundError);
         return;
     }
 
     auto itemPromise = m_itemPromises[matchIndex].value;
     itemPromise->whenSettled([itemPromise, promise = WTFMove(promise), type] () mutable {
         if (itemPromise->status() != DOMPromise::Status::Fulfilled) {
-            promise->reject(AbortError);
+            promise->reject(ExceptionCode::AbortError);
             return;
         }
 
         auto result = itemPromise->result();
         if (!result) {
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
             return;
         }
 
@@ -114,14 +114,14 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
         }
 
         if (!result.isObject()) {
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
             return;
         }
 
         if (auto blob = JSBlob::toWrapped(result.getObject()->vm(), result.getObject()))
             promise->resolve<IDLInterface<Blob>>(*blob);
         else
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
     });
 }
 

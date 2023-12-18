@@ -52,4 +52,4 @@ inline RenderFrame* HTMLFrameElement::renderer() const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrame, isFrame())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFrame, isRenderFrame())

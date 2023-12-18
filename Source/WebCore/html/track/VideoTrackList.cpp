@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
+#include "VideoTrackList.h"
 
 #if ENABLE(VIDEO)
 
-#include "VideoTrackList.h"
-
+#include "ScriptExecutionContext.h"
 #include "VideoTrack.h"
 
 namespace WebCore {
@@ -70,6 +70,16 @@ VideoTrack* VideoTrackList::getTrackById(const AtomString& id) const
     for (auto& inbandTracks : m_inbandTracks) {
         auto& track = downcast<VideoTrack>(*inbandTracks);
         if (track.id() == id)
+            return &track;
+    }
+    return nullptr;
+}
+
+VideoTrack* VideoTrackList::getTrackById(TrackID id) const
+{
+    for (auto& inbandTracks : m_inbandTracks) {
+        auto& track = downcast<VideoTrack>(*inbandTracks);
+        if (track.trackId() == id)
             return &track;
     }
     return nullptr;

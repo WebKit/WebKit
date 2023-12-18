@@ -61,26 +61,32 @@ public:
     virtual ~MediaSourcePrivateRemote();
 
     // MediaSourcePrivate overrides
+    constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
     AddStatus addSourceBuffer(const WebCore::ContentType&, bool webMParserEnabled, RefPtr<WebCore::SourceBufferPrivate>&) final;
+    void removeSourceBuffer(WebCore::SourceBufferPrivate&) final { }
+    void notifyActiveSourceBuffersChanged() final { };
     void durationChanged(const MediaTime&) final;
-    void bufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void markEndOfStream(EndOfStreamStatus) final;
     void unmarkEndOfStream() final;
-    bool isEnded() const final;
-    WebCore::MediaPlayer::ReadyState readyState() const final;
-    void setReadyState(WebCore::MediaPlayer::ReadyState) final;
-
-    void waitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(const MediaTime&)>&&) final;
-    void seekToTime(const MediaTime&, CompletionHandler<void()>&&) final;
+    WebCore::MediaPlayer::ReadyState mediaPlayerReadyState() const final;
+    void setMediaPlayerReadyState(WebCore::MediaPlayer::ReadyState) final;
 
     void setTimeFudgeFactor(const MediaTime&) final;
 
-    MediaTime duration() const { return m_client ? m_client->duration() : MediaTime(); }
+    MediaTime currentMediaTime() const final
+    {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     const void* nextSourceBufferLogIdentifier() { return childLogIdentifier(m_logIdentifier, ++m_nextSourceBufferID); }
 #endif
+
+    // IPC Methods
+    void proxyWaitForTarget(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
+    void proxySeekToTime(const MediaTime&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
 
 private:
     MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
@@ -88,15 +94,14 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
     bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection.get(); }
+    void bufferedChanged(const WebCore::PlatformTimeRanges&) final;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
-    WeakPtr<WebCore::MediaSourcePrivateClient> m_client;
-    Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
-    bool m_ended { false };
     bool m_shutdown { false };
+    WebCore::MediaPlayer::ReadyState m_readyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const override { return "MediaSourcePrivateRemote"; }

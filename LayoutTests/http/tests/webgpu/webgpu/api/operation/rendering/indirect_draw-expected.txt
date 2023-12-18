@@ -1,1 +1,4 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :basics:isIndexed=true
+PASS :basics:isIndexed=false
+

@@ -94,19 +94,19 @@ TEST(StringBuilderTest, Append)
     builder2.append("abcd");
     EXPECT_EQ(characters, builder2.characters8());
 
-    // Test appending UChar32 characters to StringBuilder.
+    // Test appending char32_t characters to StringBuilder.
     StringBuilder builderForUChar32Append;
-    UChar32 frakturAChar = 0x1D504;
-    builderForUChar32Append.appendCharacter(frakturAChar); // The fraktur A is not in the BMP, so it's two UTF-16 code units long.
+    char32_t frakturAChar = 0x1D504;
+    builderForUChar32Append.append(frakturAChar); // The fraktur A is not in the BMP, so it's two UTF-16 code units long.
     EXPECT_EQ(2U, builderForUChar32Append.length());
-    builderForUChar32Append.appendCharacter(static_cast<UChar32>('A'));
+    builderForUChar32Append.append(U'A');
     EXPECT_EQ(3U, builderForUChar32Append.length());
     const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
     expectBuilderContent(String(resultArray, std::size(resultArray)), builderForUChar32Append);
     {
         StringBuilder builder;
         StringBuilder builder2;
-        UChar32 frakturAChar = 0x1D504;
+        char32_t frakturAChar = 0x1D504;
         const UChar data[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
         builder2.appendCharacters(data, 2);
         EXPECT_EQ(2U, builder2.length());

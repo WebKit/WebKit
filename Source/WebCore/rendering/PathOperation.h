@@ -35,6 +35,7 @@
 #include "OffsetRotation.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"
+#include "TransformOperationData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -89,7 +90,6 @@ public:
     Ref<PathOperation> clone() const final;
     const String& url() const { return m_url; }
     const AtomString& fragment() const { return m_fragment; }
-    const SVGElement* element() const;
     const std::optional<Path> getPath(const TransformOperationData&) const final { return m_path; }
     const std::optional<Path> path() const { return m_path; }
 private:
@@ -106,7 +106,6 @@ private:
 
     String m_url;
     AtomString m_fragment;
-    RefPtr<SVGElement> m_element;
     std::optional<Path> m_path;
 };
 

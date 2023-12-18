@@ -113,18 +113,17 @@ public:
     void requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&);
     void resetQuotaForTesting(CompletionHandler<void()>&&);
     void resetQuotaUpdatedBasedOnUsageForTesting(WebCore::ClientOrigin&&);
+    void setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
     void notifyBackgroundFetchChange(const String&, BackgroundFetchChange);
     void closeServiceWorkerRegistrationFiles(CompletionHandler<void()>&&);
     void clearServiceWorkerRegistrations(CompletionHandler<void()>&&);
     void importServiceWorkerRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>)>&&);
     void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
-#endif // ENABLE(SERVICE_WORKER)
 
 private:
     NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
@@ -217,11 +216,9 @@ private:
     void cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void cacheStorageRepresentation(CompletionHandler<void(String&&)>&&);
 
-#if ENABLE(SERVICE_WORKER)
     bool shouldManageServiceWorkerRegistrationsByOrigin();
     void migrateServiceWorkerRegistrationsToOrigins();
     Vector<WebCore::ServiceWorkerScripts> updateServiceWorkerRegistrationsByOrigin(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&);
-#endif
 
     void spaceGrantedForOrigin(const WebCore::ClientOrigin&, uint64_t amount);
     void prepareForEviction();
@@ -243,6 +240,7 @@ private:
     };
     void performEviction(HashMap<WebCore::SecurityOriginData, AccessRecord>&&);
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
+    OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
 
     WeakPtr<NetworkProcess> m_process;
     PAL::SessionID m_sessionID;
@@ -262,6 +260,7 @@ private:
     String m_customCacheStoragePath;
     String m_customServiceWorkerStoragePath;
     uint64_t m_defaultOriginQuota;
+    bool m_originQuotaRatioEnabled { true };
     std::optional<double> m_originQuotaRatio;
     std::optional<double> m_totalQuotaRatio;
     std::optional<uint64_t> m_standardVolumeCapacity;
@@ -278,9 +277,8 @@ private:
 #if PLATFORM(IOS_FAMILY)
     Seconds m_backupExclusionPeriod;
 #endif
-#if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerStorageManager> m_sharedServiceWorkerStorageManager WTF_GUARDED_BY_CAPABILITY(workQueue());
-#endif
+    HashMap<WebCore::ClientOrigin, WallTime> m_lastModificationTimes WTF_GUARDED_BY_CAPABILITY(workQueue());
 };
 
 } // namespace WebKit

@@ -2,20 +2,13 @@ This test outputs which WebGL draft extensions are available.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-TEST COMPLETE: 21 PASS, 0 FAIL
+TEST COMPLETE: 13 PASS, 0 FAIL
 
 
 PASS webgl:EXT_blend_func_extended: Not supported
-PASS webgl:EXT_clip_control: Not supported
-PASS webgl:EXT_depth_clamp: Not supported
-PASS webgl:EXT_polygon_offset_clamp: Not supported
 PASS webgl:EXT_texture_mirror_clamp_to_edge: Not supported
-PASS webgl:WEBGL_polygon_mode: Not supported
 PASS webgl2:EXT_blend_func_extended: Not supported
-PASS webgl2:EXT_clip_control: Not supported
 PASS webgl2:EXT_conservative_depth: Not supported
-PASS webgl2:EXT_depth_clamp: Not supported
-PASS webgl2:EXT_polygon_offset_clamp: Not supported
 PASS webgl2:EXT_render_snorm: Not supported
 PASS webgl2:EXT_texture_mirror_clamp_to_edge: Not supported
 PASS webgl2:NV_shader_noperspective_interpolation: Not supported
@@ -23,7 +16,6 @@ PASS webgl2:OES_sample_variables: Not supported
 PASS webgl2:OES_shader_multisample_interpolation: Not supported
 PASS webgl2:WEBGL_draw_instanced_base_vertex_base_instance: Not supported
 PASS webgl2:WEBGL_multi_draw_instanced_base_vertex_base_instance: Not supported
-PASS webgl2:WEBGL_polygon_mode: Not supported
 PASS webgl2:WEBGL_stencil_texturing: Not supported
 PASS successfullyParsed is true
 

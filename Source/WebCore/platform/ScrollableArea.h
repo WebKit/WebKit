@@ -28,6 +28,7 @@
 #include "KeyboardScroll.h"
 #include "RectEdges.h"
 #include "ScrollAlignment.h"
+#include "ScrollAnchoringController.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "ScrollTypes.h"
 #include "Scrollbar.h"
@@ -52,6 +53,7 @@ class ScrollAnimator;
 class ScrollbarsController;
 class GraphicsLayer;
 class TiledBacking;
+class Element;
 
 enum class WheelScrollGestureState : uint8_t;
 
@@ -412,6 +414,7 @@ public:
     virtual bool needsAnimatedScroll() const { return false; }
     virtual void updateScrollAnchoringElement() { }
     virtual void updateScrollPositionForScrollAnchoringController() { }
+    virtual void invalidateScrollAnchoringElement() { }
 
 protected:
     WEBCORE_EXPORT ScrollableArea();

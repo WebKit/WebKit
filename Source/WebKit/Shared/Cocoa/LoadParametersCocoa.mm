@@ -33,20 +33,6 @@
 
 namespace WebKit {
 
-void LoadParameters::platformEncode(IPC::Encoder& encoder) const
-{
-    encoder << dataDetectionReferenceDate;
-}
-
-bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& parameters)
-{
-    auto dataDetectionReferenceDate = decoder.decode<std::optional<double>>();
-    if (!dataDetectionReferenceDate)
-        return false;
-    parameters.dataDetectionReferenceDate = WTFMove(*dataDetectionReferenceDate);
-    return true;
-}
-
 } // namespace WebKit
 
 #endif

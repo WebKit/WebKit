@@ -52,7 +52,7 @@ void* IsoAlignedMemoryAllocator::tryAllocateMemory(size_t size)
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.malloc(size);
 #else
-    return FastMalloc::tryMalloc(size);
+    return FastCompactMalloc::tryMalloc(size);
 #endif
 }
 
@@ -76,7 +76,7 @@ void* IsoAlignedMemoryAllocator::tryMallocBlock()
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.memalign(MarkedBlock::blockSize, MarkedBlock::blockSize, true);
 #else
-    return tryFastAlignedMalloc(MarkedBlock::blockSize, MarkedBlock::blockSize);
+    return tryFastCompactAlignedMalloc(MarkedBlock::blockSize, MarkedBlock::blockSize);
 #endif
 }
 

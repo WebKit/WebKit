@@ -37,7 +37,29 @@
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPIForTesting.h"
 #import <UIKit/UIKit.h>
-#endif
+
+@interface UIColor (TestWebKitAPI_SystemColors)
+
+- (void)expectRed:(uint8_t)expectedRed green:(uint8_t)expectedGreen blue:(uint8_t)expectedBlue alpha:(CGFloat)expectedAlpha;
+
+@end
+
+@implementation UIColor (TestWebKitAPI_SystemColors)
+
+- (void)expectRed:(uint8_t)expectedRed green:(uint8_t)expectedGreen blue:(uint8_t)expectedBlue alpha:(CGFloat)expectedAlpha
+{
+    CGFloat red, green, blue, alpha;
+    [self getRed:&red green:&green blue:&blue alpha:&alpha];
+
+    EXPECT_EQ(static_cast<uint8_t>(red * 255), expectedRed);
+    EXPECT_EQ(static_cast<uint8_t>(green * 255), expectedGreen);
+    EXPECT_EQ(static_cast<uint8_t>(blue * 255), expectedBlue);
+    EXPECT_EQ(alpha, expectedAlpha);
+}
+
+@end
+
+#endif // PLATFORM(IOS_FAMILY)
 
 namespace TestWebKitAPI {
 
@@ -73,16 +95,40 @@ TEST(WebKit, LinkColorWithSystemAppearance)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+
 TEST(WebKit, TintColorAffectsInteractionColor)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto textInput = [webView textInputContentView];
+
     [webView setTintColor:[UIColor greenColor]];
-    [webView synchronouslyLoadHTMLString:@"<body contenteditable></body>"];
-    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
-    UIView<UITextInputTraits_Private> *textInput = (UIView<UITextInputTraits_Private> *) [webView textInputContentView];
-    EXPECT_TRUE([textInput.insertionPointColor isEqual:[UIColor greenColor]]);
-    EXPECT_TRUE([textInput.selectionBarColor isEqual:[UIColor greenColor]]);
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "  <head>"
+        "    <style>div { border: 1px solid tomato; }</style>"
+        "  </head>"
+        "  <body>"
+        "    <div id='default-style' contenteditable></div>"
+        "    <div id='caret-color' style='caret-color: red;' contenteditable></div>"
+        "    <div id='color' style='color: red;' contenteditable></div>"
+        "  </body>"
+        "</html>"];
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('default-style').focus()"];
+    [webView waitForNextPresentationUpdate];
+    [textInput.insertionPointColor expectRed:0 green:255 blue:0 alpha:1];
+    [textInput.selectionBarColor expectRed:0 green:255 blue:0 alpha:1];
+
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('caret-color').focus()"];
+    [webView waitForNextPresentationUpdate];
+    [textInput.insertionPointColor expectRed:255 green:0 blue:0 alpha:1];
+    [textInput.selectionBarColor expectRed:255 green:0 blue:0 alpha:1];
+
+    [webView stringByEvaluatingJavaScript:@"document.getElementById('color').focus()"];
+    [webView waitForNextPresentationUpdate];
+    [textInput.insertionPointColor expectRed:0 green:255 blue:0 alpha:1];
+    [textInput.selectionBarColor expectRed:0 green:255 blue:0 alpha:1];
 }
-#endif
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace TestWebKitAPI

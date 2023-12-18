@@ -39,6 +39,24 @@ static auto *tabsManifest = @{
     @"description": @"Tabs Test",
     @"version": @"1",
 
+    @"options_page": @"options.html",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+};
+
+static auto *tabsManifestV2 = @{
+    @"manifest_version": @2,
+
+    @"name": @"Tabs Test",
+    @"description": @"Tabs Test",
+    @"version": @"1",
+
+    @"permissions": @[ @"*://localhost/*" ],
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
@@ -65,20 +83,36 @@ static auto *tabsContentScriptManifest = @{
     } ],
 };
 
+static auto *activeTabManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Tabs Test",
+    @"description": @"Tabs Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"permissions": @[ @"activeTab" ],
+};
+
 TEST(WKWebExtensionAPITabs, Errors)
 {
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.assertThrows(() => browser.tabs.get('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabID' value is invalid, because it is not a tab identifier/i)",
-        @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.get('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabId' value is invalid, because it is not a tab identifier/i)",
+        @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabId' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.remove('bad'), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but a string was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but an array with other values was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but an array of other values was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.reload('bad'), /an unknown argument was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.getZoom('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.detectLanguage('bad'), /'tabID' value is invalid, because a number is expected/i)",
-        @"browser.test.assertThrows(() => browser.tabs.toggleReaderMode('bad'), /'tabID' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.getZoom('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.detectLanguage('bad'), /'tabId' value is invalid, because a number is expected/i)",
+        @"browser.test.assertThrows(() => browser.tabs.toggleReaderMode('bad'), /'tabId' value is invalid, because a number is expected/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.setZoom('bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.setZoom(1, 'bad'), /'zoomFactor' value is invalid, because a number is expected/i)",
@@ -94,7 +128,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.query({ status: 'bad' }), /'status' value is invalid, because it must specify either 'loading' or 'complete'/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.query({ url: 12345 }), /'info' value is invalid, because 'url' is expected to be a string or an array of strings, but a number was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string or an array of strings, but an array with other values was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string or an array of strings, but an array of other values was provided/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.query({ windowId: 'bad' }), /'windowId' is expected to be a number, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.query({ windowId: -5 }), /'windowId' value is invalid, because '-5' is not a window identifier/i)",
@@ -127,6 +161,52 @@ TEST(WKWebExtensionAPITabs, Errors)
     ]);
 
     Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+
+    backgroundScript = Util::constructScript(@[
+        @"browser.test.assertThrows(() => browser.tabs.executeScript(), /a required argument is missing/i)",
+
+        @"await browser.test.assertRejects(browser.tabs.executeScript(9999, { code: 'code to execute' }), /tab not found/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ code: 'code to execute', file: 'path/to/file.js' }), /it cannot specify both 'file' and 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ }), /it must specify either 'file' or 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 0, frameId: 0 }), /'file' is expected to be a string, but a number was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.tabs.executeScript({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS(), /a required argument is missing./i)",
+
+        @"await browser.test.assertRejects(browser.tabs.insertCSS(9999, { code: 'code to execute' }), /tab not found/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ code: 'code to execute', file: 'path/to/file.js' }), /it cannot specify both 'file' and 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ }), /it must specify either 'file' or 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: '0' }), /'frameId' is expected to be a number, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.insertCSS({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS(), /a required argument is missing./i)",
+
+        @"await browser.test.assertRejects(browser.tabs.removeCSS(9999, { code: 'code to execute' }), /tab not found/i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ code: 'code to execute', file: 'path/to/file.js' }), /it cannot specify both 'file' and 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ }), /it must specify either 'file' or 'code'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 0, frameId: 0 }), /'file' is expected to be a string, but a number was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ code: 'code to execute', frameId: 0, allFrames: true }), /it cannot specify both 'allFrames' and 'frameId'./i)",
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', allFrames: 'true' }), /'allFrames' is expected to be a boolean, but a string was provided./i)",
+
+        @"browser.test.assertThrows(() => browser.tabs.removeCSS({ file: 'path/to/file.js', frameId: -1 }), /it is not a frame identifier./i)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifestV2, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPITabs, Create)
@@ -221,6 +301,32 @@ TEST(WKWebExtensionAPITabs, CreateWithSpecifiedOptions)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPITabs, CreateWithRelativeURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const newTab = await browser.tabs.create({",
+        @"  url: 'test.html'",
+        @"})",
+
+        @"browser.test.assertEq(newTab.url, browser.runtime.getURL('test.html'), 'The new tab should have the correct URL')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript, @"test.html": @"Hello world!" }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto originalOpenNewTab = manager.get().internalDelegate.openNewTab;
+
+    manager.get().internalDelegate.openNewTab = ^(_WKWebExtensionTabCreationOptions *options, _WKWebExtensionContext *context, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+        EXPECT_NS_EQUAL(options.desiredURL, [NSURL URLWithString:@"test.html" relativeToURL:manager.get().context.baseURL].absoluteURL);
+
+        originalOpenNewTab(options, context, completionHandler);
+    };
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPITabs, Duplicate)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -244,7 +350,7 @@ TEST(WKWebExtensionAPITabs, Duplicate)
     auto *tab = manager.get().defaultTab;
     auto originalDuplicate = tab.duplicate;
 
-    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
         EXPECT_NS_EQUAL(options.desiredWindow, window);
         EXPECT_EQ(options.desiredIndex, window.tabs.count);
 
@@ -290,7 +396,7 @@ TEST(WKWebExtensionAPITabs, DuplicateWithOptions)
     auto *tab = manager.get().defaultTab;
     auto originalDuplicate = tab.duplicate;
 
-    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(id<_WKWebExtensionTab>, NSError *)) {
+    tab.duplicate = ^(_WKWebExtensionTabCreationOptions *options, void (^completionHandler)(TestWebExtensionTab *, NSError *)) {
         EXPECT_NS_EQUAL(options.desiredWindow, window);
         EXPECT_EQ(options.desiredIndex, 1lu);
 
@@ -384,12 +490,13 @@ TEST(WKWebExtensionAPITabs, Get)
     [manager loadAndRun];
 }
 
-TEST(WKWebExtensionAPITabs, GetCurrent)
+TEST(WKWebExtensionAPITabs, GetCurrentFromBackgroundPage)
 {
     auto *backgroundScript = Util::constructScript(@[
+        @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
         @"const tab = await browser.tabs.getCurrent()",
 
-        @"browser.test.assertEq(tab, undefined, 'The current tab should be undefined in the background page')",
+        @"browser.test.assertDeepEq(tab, currentTab, 'The current tab should be')",
 
         @"browser.test.notifyPass()"
     ]);
@@ -402,6 +509,44 @@ TEST(WKWebExtensionAPITabs, GetCurrent)
     EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, GetCurrentFromOptionsPage)
+{
+    auto *optionsScript = Util::constructScript(@[
+        @"const tab = await browser.tabs.getCurrent()",
+
+        @"browser.test.assertEq(typeof tab, 'object', 'The tab should be')",
+        @"browser.test.assertTrue(tab.active, 'The current tab should be active')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// Not Used",
+        @"options.html": @"<script type='module' src='options.js'></script>",
+        @"options.js": optionsScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager load];
+
+    [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
+
+    auto *optionsPageURL = manager.get().context.optionsPageURL;
+    EXPECT_NOT_NULL(optionsPageURL);
+
+    auto *defaultTab = manager.get().defaultTab;
+    EXPECT_NOT_NULL(defaultTab);
+
+    [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
+    [defaultTab.mainWebView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPITabs, Query)
@@ -449,16 +594,85 @@ TEST(WKWebExtensionAPITabs, Query)
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager openNewWindow];
+    auto *windowOne = manager.get().defaultWindow;
+    [windowOne openNewTab];
 
-    EXPECT_EQ(manager.get().windows.count, 2lu);
+    auto *windowTwo = [manager openNewWindow];
+    [windowTwo openNewTab];
+    [windowTwo openNewTab];
 
-    [manager.get().defaultWindow openNewTab];
-    [manager.get().windows.lastObject openNewTab];
-    [manager.get().windows.lastObject openNewTab];
+    auto *windowThree = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [windowThree openNewTab];
 
-    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
-    EXPECT_EQ(manager.get().windows.lastObject.tabs.count, 3lu);
+    EXPECT_EQ(manager.get().windows.count, 3lu);
+    EXPECT_EQ(windowOne.tabs.count, 2lu);
+    EXPECT_EQ(windowTwo.tabs.count, 3lu);
+    EXPECT_EQ(windowThree.tabs.count, 2lu);
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, QueryWithPrivateAccess)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const allWindows = await browser.windows.getAll({ populate: true })",
+        @"const windowIdOne = allWindows[0].id",
+        @"const windowIdTwo = allWindows[1].id",
+
+        @"const tabIdOne = allWindows[0].tabs[0].id",
+        @"const tabIdTwo = allWindows[0].tabs[1].id",
+        @"const tabIdThree = allWindows[1].tabs[0].id",
+        @"const tabIdFour = allWindows[1].tabs[1].id",
+        @"const tabIdFive = allWindows[1].tabs[2].id",
+
+        @"const tabsInWindowOne = await browser.tabs.query({ windowId: windowIdOne })",
+        @"const tabsInWindowTwo = await browser.tabs.query({ windowId: windowIdTwo })",
+        @"browser.test.assertEq(tabsInWindowOne.length, 2, 'There should be 2 tabs in the first window')",
+        @"browser.test.assertEq(tabsInWindowTwo.length, 3, 'There should be 3 tabs in the second window')",
+
+        @"const thirdTab = await browser.tabs.query({ index: 0, windowId: windowIdTwo })",
+        @"browser.test.assertEq(thirdTab[0].id, tabIdThree, 'Third tab ID should match the first tab of the second window')",
+
+        @"const activeTabs = await browser.tabs.query({ active: true })",
+        @"browser.test.assertEq(activeTabs.length, 3, 'There should be 3 active tabs across all windows')",
+
+        @"const hiddenTabs = await browser.tabs.query({ hidden: true })",
+        @"browser.test.assertEq(hiddenTabs.length, 4, 'There should be 4 hidden tabs across all windows')",
+
+        @"const lastFocusedTabs = await browser.tabs.query({ lastFocusedWindow: true })",
+        @"browser.test.assertEq(lastFocusedTabs.length, 2, 'There should be 2 tabs in the last focused window')",
+
+        @"const pinnedTabs = await browser.tabs.query({ pinned: true })",
+        @"browser.test.assertEq(pinnedTabs.length, 0, 'There should be no pinned tabs')",
+
+        @"const loadingTabs = await browser.tabs.query({ status: 'loading' })",
+        @"browser.test.assertEq(loadingTabs.length, 0, 'There should be no tabs loading')",
+
+        @"const completeTabs = await browser.tabs.query({ status: 'complete' })",
+        @"browser.test.assertEq(completeTabs.length, 7, 'There should be 7 tabs with loading complete')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+
+    auto *windowOne = manager.get().defaultWindow;
+    [windowOne openNewTab];
+
+    auto *windowTwo = [manager openNewWindow];
+    [windowTwo openNewTab];
+    [windowTwo openNewTab];
+
+    auto *windowThree = [manager openNewWindowUsingPrivateBrowsing:YES];
+    [windowThree openNewTab];
+
+    EXPECT_EQ(manager.get().windows.count, 3lu);
+    EXPECT_EQ(windowOne.tabs.count, 2lu);
+    EXPECT_EQ(windowTwo.tabs.count, 3lu);
+    EXPECT_EQ(windowThree.tabs.count, 2lu);
 
     [manager loadAndRun];
 }
@@ -1325,6 +1539,280 @@ TEST(WKWebExtensionAPITabs, PortDisconnectWithMultipleListeners)
     [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, ExecuteScript)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *javaScript = @"document.body.style.background = 'pink'";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (changeInfo.url) {",
+        @"    let results = await browser.tabs.executeScript(tabId, { allFrames: false, file: 'executeScript.js' })",
+        @"    browser.test.assertEq(results[0], 'pink')",
+
+        @"    results = await browser.tabs.executeScript(tabId, { frameId: 0, file: 'executeScript.js' })",
+        @"    browser.test.assertEq(results[0], 'pink')",
+
+        @"    results = await browser.tabs.executeScript(tabId, { allFrames: true, file: 'executeScript.js' })",
+        @"    browser.test.assertEq(results[0], 'pink')",
+        @"    browser.test.assertEq(results[1], 'pink')",
+
+        @"    results = await browser.tabs.executeScript(tabId, { allFrames: false, code: \"document.body.style.background = 'pink'\" })",
+        @"    browser.test.assertEq(results[0], 'pink')",
+
+        @"    browser.test.notifyPass()",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Load Tab')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"executeScript.js": javaScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInMainFrame)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *css = @"body { background-color: pink !important }";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+        @"const transparentValue = 'rgba(0, 0, 0, 0)'",
+
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"await browser.tabs.insertCSS(tabId, { allFrames: false, file: 'styles.css' })",
+        @"let result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], pinkValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { allFrames: false, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], transparentValue)",
+
+        @"await browser.tabs.insertCSS(tabId, { frameId: 0, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], pinkValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { frameId: 0, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], transparentValue)",
+
+        @"await browser.tabs.insertCSS(tabId, { frameId: 0, code: 'body { background-color: blue !important }' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], blueValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { frameId: 0, code: 'body { background-color: blue !important }' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], transparentValue)",
+
+        // Stylesheet being removed should match the one inserted.
+        @"await browser.tabs.insertCSS(tabId, { frameId: 0, code: 'body { background-color: blue !important }' })",
+        @"await browser.tabs.removeCSS(tabId, { allFrames: true, code: 'body { background-color: blue !important }' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: false })",
+        @"browser.test.assertEq(result[0], blueValue)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"styles.css": css }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInAllFrames)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body><iframe src='/frame.html'/></body>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    static auto *css = @"body { background-color: pink !important }";
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+        @"const transparentValue = 'rgba(0, 0, 0, 0)'",
+
+        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"const tabId = tabs[0].id",
+
+        @"await browser.tabs.insertCSS(tabId, { allFrames: true, file: 'styles.css' })",
+
+        @"let result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: true })",
+
+        @"browser.test.assertEq(result[0], pinkValue)",
+        @"browser.test.assertEq(result[1], pinkValue)",
+
+        @"await browser.tabs.removeCSS(tabId, { allFrames: true, file: 'styles.css' })",
+        @"result = await browser.tabs.executeScript(tabId, { code: \"window.getComputedStyle(document.body).getPropertyValue('background-color')\", allFrames: true })",
+
+        @"browser.test.assertEq(result[0], transparentValue)",
+        @"browser.test.assertEq(result[1], blueValue)",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsManifestV2 resources:@{ @"background.js": backgroundScript, @"styles.css": css }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+    auto *matchPattern = [_WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, UnsupportedMV3APIs)
+{
+    // Manifest v3 deprecates executeScript(), insertCSS() and removeCSS(), so they should be an undefined property.
+
+    static auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(typeof browser.tabs.insertCSS, 'undefined')",
+        @"browser.test.assertEq(browser.tabs.insertCSS, undefined)",
+
+        @"browser.test.assertEq(typeof browser.tabs.removeCSS, 'undefined')",
+        @"browser.test.assertEq(browser.tabs.removeCSS, undefined)",
+
+        @"browser.test.assertEq(typeof browser.tabs.executeScript, 'undefined')",
+        @"browser.test.assertEq(browser.tabs.executeScript, undefined)",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(tabsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPITabs, ActiveTab)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<head><title>Test Title</title></head>"_s } },
+        { "/next.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<head><title>Next Title</title></head>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const [currentTab] = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"let updateCount = 0",
+
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  browser.test.assertEq(tabId, currentTab.id, 'Only the tab we expect should be changing')",
+
+        @"  if ('url' in changeInfo) {",
+        @"    ++updateCount",
+
+        @"    if (updateCount === 1) {",
+        @"      browser.test.assertEq(changeInfo.url, '', 'URL should be empty before user gesture')",
+        @"      browser.test.assertEq(changeInfo.title, '', 'Title should be empty before user gesture')",
+
+        @"      browser.test.yield('Perform User Gesture')",
+        @"    } else if (updateCount === 2) {",
+        @"      browser.test.assertTrue(changeInfo.url.includes('localhost'), 'URL should be localhost after user gesture')",
+        @"      browser.test.assertEq(changeInfo.title, 'Test Title', 'Title should be provided after user gesture')",
+
+        @"      browser.test.yield('Load Next Page')",
+        @"    } else if (updateCount === 3) {",
+        @"      browser.test.assertTrue(changeInfo.url.includes('localhost'), 'URL should be localhost after same site navigation')",
+        @"      browser.test.assertEq(changeInfo.title, 'Next Title', 'Title should be provided after same site navigation')",
+
+        @"      browser.test.yield('Load IP Address')",
+        @"    } else {",
+        @"      browser.test.assertEq(updateCount, 4, 'Update count should be')",
+        @"      browser.test.assertEq(changeInfo.url, '', 'URL should be empty after navigation without permission')",
+        @"      browser.test.assertEq(changeInfo.title, '', 'Title should be empty after navigation without permission')",
+
+        @"      browser.test.notifyPass()",
+        @"    }",
+        @"  }",
+        @"})",
+
+        @"browser.test.yield('Load Localhost')",
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:activeTabManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionActiveTab];
+
+    auto *localhostRequest = server.requestWithLocalhost();
+    auto *addressRequest = server.request();
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Localhost");
+
+    [manager.get().defaultTab.mainWebView loadRequest:localhostRequest];
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform User Gesture");
+
+    EXPECT_FALSE([manager.get().context hasPermission:_WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
+
+    [manager.get().context userGesturePerformedInTab:manager.get().defaultTab];
+
+    EXPECT_TRUE([manager.get().context hasPermission:_WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
+    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Next Page");
+
+    EXPECT_TRUE([manager.get().context hasPermission:_WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
+    EXPECT_TRUE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
+
+    [manager.get().defaultTab.mainWebView loadRequest:server.requestWithLocalhost("/next.html"_s)];
+
+    [manager run];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load IP Address");
+
+    [manager.get().defaultTab.mainWebView loadRequest:addressRequest];
+
+    [manager run];
+
+    EXPECT_FALSE([manager.get().context hasPermission:_WKWebExtensionPermissionTabs inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:localhostRequest.URL inTab:manager.get().defaultTab]);
+    EXPECT_FALSE([manager.get().context hasAccessToURL:addressRequest.URL inTab:manager.get().defaultTab]);
 }
 
 } // namespace TestWebKitAPI

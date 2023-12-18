@@ -26,11 +26,13 @@
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 #include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 #include "modules/congestion_controller/goog_cc/send_side_bandwidth_estimation.h"
 #include "rtc_base/experiments/field_trial_parser.h"
@@ -128,10 +130,10 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   DataRate last_loss_based_target_rate_;
   DataRate last_pushback_target_rate_;
   DataRate last_stable_target_rate_;
+  LossBasedState last_loss_base_state_;
 
   absl::optional<uint8_t> last_estimated_fraction_loss_ = 0;
   TimeDelta last_estimated_round_trip_time_ = TimeDelta::PlusInfinity();
-  Timestamp last_packet_received_time_ = Timestamp::MinusInfinity();
 
   double pacing_factor_;
   DataRate min_total_allocated_bitrate_;

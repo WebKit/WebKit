@@ -473,6 +473,35 @@ class IOSurfaceClientBufferTest : public ANGLETest<>
     EGLDisplay mDisplay;
 };
 
+// Test using RGBA8888 IOSurfaces for rendering
+TEST_P(IOSurfaceClientBufferTest, RenderToRGBA8888IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
+
+    GLColor color(1, 2, 3, 4);
+    doClearTest(ioSurface, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, color);
+}
+
+// Test reading from RGBA8888 IOSurfaces
+TEST_P(IOSurfaceClientBufferTest, ReadFromRGBA8888IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
+
+    GLColor color(1, 2, 3, 4);
+    doSampleTest(ioSurface, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &color, sizeof(color),
+                 R | G | B | A);
+}
+
 // Test using BGRA8888 IOSurfaces for rendering
 TEST_P(IOSurfaceClientBufferTest, RenderToBGRA8888IOSurface)
 {
@@ -494,6 +523,34 @@ TEST_P(IOSurfaceClientBufferTest, ReadFromBGRA8888IOSurface)
     GLColor color(3, 2, 1, 4);
     doSampleTest(ioSurface, 1, 1, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &color, sizeof(color),
                  R | G | B | A);
+}
+
+// Test using RGBX8888 IOSurfaces for rendering
+TEST_P(IOSurfaceClientBufferTest, RenderToRGBX8888IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
+
+    GLColor color(1, 2, 3, 255);
+    doClearTest(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, color);
+}
+
+// Test reading from RGBX8888 IOSurfaces
+TEST_P(IOSurfaceClientBufferTest, ReadFromRGBX8888IOSurface)
+{
+    ANGLE_SKIP_TEST_IF(!hasIOSurfaceExt());
+
+    // DesktopOpenGL doesn't support RGBA IOSurface.
+    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL());
+
+    ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'RGBA', 4);
+
+    GLColor color(1, 2, 3, 255);
+    doSampleTest(ioSurface, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &color, sizeof(color), R | G | B);
 }
 
 // Test using BGRX8888 IOSurfaces for rendering
@@ -569,9 +626,6 @@ TEST_P(IOSurfaceClientBufferTest, RenderToR16IOSurface)
 
     // This test only works on ES3 since it requires an integer texture.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
-
-    // TODO(http://anglebug.com/7445): Fails with Metal backend.
-    ANGLE_SKIP_TEST_IF(IsMetal());
 
     // HACK(cwallez@chromium.org) 'L016' doesn't seem to be an official pixel format but it works
     // sooooooo let's test using it
@@ -1158,7 +1212,7 @@ TEST_P(IOSurfaceClientBufferTest, NegativeValidationBadAttributes)
             EGL_TEXTURE_TARGET,                getTextureTarget(),
             EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_RGBA,
             EGL_TEXTURE_FORMAT,                EGL_TEXTURE_RGBA,
-            EGL_TEXTURE_TYPE_ANGLE,            GL_UNSIGNED_BYTE,
+            EGL_TEXTURE_TYPE_ANGLE,            GL_FLOAT,
             EGL_NONE,                          EGL_NONE,
         };
         // clang-format on

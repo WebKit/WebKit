@@ -29,9 +29,9 @@
 #include "FloatConversion.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "LegacyRenderSVGResourcePattern.h"
 #include "NodeName.h"
 #include "PatternAttributes.h"
-#include "RenderSVGResourcePattern.h"
 #include "SVGElementInlines.h"
 #include "SVGFitToViewBox.h"
 #include "SVGGraphicsElement.h"
@@ -142,7 +142,7 @@ void SVGPatternElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourcePattern>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourcePattern>(*this, WTFMove(style));
 }
 
 void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const

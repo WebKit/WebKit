@@ -58,7 +58,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SessionStateCoding.h"
 #import "UIDelegate.h"
-#import "VideoFullscreenManagerProxy.h"
+#import "VideoPresentationManagerProxy.h"
 #import "ViewGestureController.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
@@ -105,6 +105,8 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
 #import "_WKAppHighlightInternal.h"
+#import "_WKArchiveConfiguration.h"
+#import "_WKArchiveExclusionRule.h"
 #import "_WKDataTaskInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
@@ -134,6 +136,7 @@
 #import <WebCore/JSDOMExceptionHandling.h>
 #import <WebCore/LegacySchemeRegistry.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MarkupExclusionRule.h>
 #import <WebCore/Pagination.h>
 #import <WebCore/Permissions.h>
 #import <WebCore/PlatformScreen.h>
@@ -579,7 +582,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setLegacyEncryptedMediaAPIEnabled(!![_configuration _legacyEncryptedMediaAPIEnabled]);
 #endif
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(SERVICE_WORKER)
+#if PLATFORM(IOS_FAMILY)
     bool hasServiceWorkerEntitlement = (WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers"_s) || WTF::processHasEntitlement("com.apple.developer.web-browser"_s)) && ![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting;
     if (!hasServiceWorkerEntitlement && ![_configuration limitsNavigationsToAppBoundDomains])
         pageConfiguration->preferences()->setServiceWorkersEnabled(false);
@@ -769,7 +772,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     THROW_IF_SUSPENDED;
     if (_page->isServiceWorkerPage())
         [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
-    return wrapper(_page->loadRequest(request));
+    return wrapper(_page->loadRequest(request)).autorelease();
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -784,7 +787,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (![readAccessURL isFileURL])
         [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", readAccessURL];
 
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString)).autorelease();
 }
 
 - (WKNavigation *)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
@@ -801,7 +804,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (_page->isServiceWorkerPage())
         [NSException raise:NSInternalInconsistencyException format:@"The WKWebView was used to load a service worker"];
 
-    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString));
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString)).autorelease();
 }
 
 - (void)startDownloadUsingRequest:(NSURLRequest *)request completionHandler:(void(^)(WKDownload *))completionHandler
@@ -838,7 +841,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 - (WKNavigation *)goToBackForwardListItem:(WKBackForwardListItem *)item
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->goToBackForwardItem(item._item));
+    return wrapper(_page->goToBackForwardItem(item._item)).autorelease();
 }
 
 - (NSString *)title
@@ -891,13 +894,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     THROW_IF_SUSPENDED;
     if (self._safeBrowsingWarning)
         return [self reload];
-    return wrapper(_page->goBack());
+    return wrapper(_page->goBack()).autorelease();
 }
 
 - (WKNavigation *)goForward
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->goForward());
+    return wrapper(_page->goForward()).autorelease();
 }
 
 - (WKNavigation *)reload
@@ -907,13 +910,13 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
-    return wrapper(_page->reload(reloadOptions));
+    return wrapper(_page->reload(reloadOptions)).autorelease();
 }
 
 - (WKNavigation *)reloadFromOrigin
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->reload(WebCore::ReloadOption::FromOrigin));
+    return wrapper(_page->reload(WebCore::ReloadOption::FromOrigin)).autorelease();
 }
 
 - (void)stopLoading
@@ -990,8 +993,8 @@ static bool validateArgument(id argument)
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
 
 #if ENABLE(FULLSCREEN_API)
-    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        videoFullscreenManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
+    if (auto videoPresentationManager = _page->videoPresentationManager()) {
+        videoPresentationManager->forEachSession([callbackAggregator] (auto& model, auto& interface) mutable {
             model.requestCloseAllMediaPresentations(false, [callbackAggregator] { });
         });
     }
@@ -1175,10 +1178,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     }
     
     std::optional<WebCore::FrameIdentifier> frameID;
-    if (frame) {
-        if (frame._handle.frameID)
-            frameID = frame._handle->_frameHandle->frameID();
-    }
+    if (frame && frame._handle && frame._handle->_frameHandle->frameID())
+        frameID = frame._handle->_frameHandle->frameID();
 
     auto removeTransientActivation = WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
     _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, JSC::SourceTaintedOrigin::Untainted, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture, removeTransientActivation }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
@@ -1897,7 +1898,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 - (WKNavigation *)loadSimulatedRequest:(NSURLRequest *)request response:(NSURLResponse *)response responseData:(NSData *)data
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length }));
+    return wrapper(_page->loadSimulatedRequest(request, response, { static_cast<const uint8_t*>(data.bytes), data.length })).autorelease();
 }
 
 // FIXME(223658): Remove this once adopters have moved to the final API.
@@ -1939,7 +1940,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     isAppInitiated = request.attribution == NSURLRequestAttributionDeveloper;
 #endif
 
-    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated));
+    return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString, isAppInitiated)).autorelease();
 }
 
 - (WebCore::CocoaColor *)themeColor
@@ -2151,7 +2152,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (_WKFrameHandle *)_mainFrame
 {
     if (auto* frame = _page->mainFrame())
-        return wrapper(API::FrameHandle::create(frame->frameID()));
+        return wrapper(API::FrameHandle::create(frame->frameID())).autorelease();
     return nil;
 }
 
@@ -2168,7 +2169,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler
 {
     _page->getAllFrames([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (WebKit::FrameTreeNodeData&& data) {
-        completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())));
+        completionHandler(wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())).get());
     });
 }
 
@@ -2177,7 +2178,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _page->getAllFrameTrees([completionHandler = makeBlockPtr(completionHandler), page = Ref { *_page.get() }] (Vector<WebKit::FrameTreeNodeData>&& vector) {
         auto set = adoptNS([[NSMutableSet alloc] initWithCapacity:vector.size()]);
         for (auto& data : vector)
-            [set addObject:wrapper(API::FrameTreeNode::create(WTFMove(data), page.get()))];
+            [set addObject:wrapper(API::FrameTreeNode::create(WTFMove(data), page.get())).get()];
         completionHandler(set.get());
     });
 }
@@ -2363,9 +2364,7 @@ static WebCore::TextManipulationTokenIdentifier coreTextManipulationTokenIdentif
     for (_WKTextManipulationToken *wkToken in item.tokens)
         tokens.append(WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
 
-    Vector<WebCore::TextManipulationItem> coreItems;
-    coreItems.reserveInitialCapacity(1);
-    coreItems.uncheckedAppend(WebCore::TextManipulationItem { identifiers->frameID, false, false, identifiers->itemID, WTFMove(tokens) });
+    Vector<WebCore::TextManipulationItem> coreItems({ WebCore::TextManipulationItem { identifiers->frameID, false, false, identifiers->itemID, WTFMove(tokens) } });
     _page->completeTextManipulation(coreItems, [capturedCompletionBlock = makeBlockPtr(completionHandler)] (bool allFailed, auto& failures) {
         capturedCompletionBlock(!allFailed && failures.isEmpty());
     });
@@ -2425,10 +2424,10 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     Vector<WebCore::TextManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(items.count);
     for (_WKTextManipulationItem *wkItem in items) {
-        Vector<WebCore::TextManipulationToken> coreTokens;
-        coreTokens.reserveInitialCapacity(wkItem.tokens.count);
-        for (_WKTextManipulationToken *wkToken in wkItem.tokens)
-            coreTokens.uncheckedAppend(WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
+        Vector<WebCore::TextManipulationToken> coreTokens(wkItem.tokens.count, [&](size_t i) {
+            _WKTextManipulationToken *wkToken = wkItem.tokens[i];
+            return WebCore::TextManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt };
+        });
         auto identifiers = coreTextManipulationItemIdentifierFromString(wkItem.identifier);
         WebCore::FrameIdentifier frameID;
         WebCore::TextManipulationItemIdentifier itemID;
@@ -2436,7 +2435,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
             frameID = identifiers->frameID;
             itemID = identifiers->itemID;
         }
-        coreItems.uncheckedAppend(WebCore::TextManipulationItem { frameID, false, false, itemID, WTFMove(coreTokens) });
+        coreItems.append(WebCore::TextManipulationItem { frameID, false, false, itemID, WTFMove(coreTokens) });
     }
 
     RetainPtr<NSArray<_WKTextManipulationItem *>> retainedItems = items;
@@ -2728,7 +2727,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType characterEncodingName:(NSString *)characterEncodingName baseURL:(NSURL *)baseURL userData:(id)userData
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr()));
+    return wrapper(_page->loadData({ static_cast<const uint8_t*>(data.bytes), data.length }, MIMEType, characterEncodingName, baseURL.absoluteString, WebKit::ObjCObjectGraph::create(userData).ptr())).autorelease();
 }
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request shouldOpenExternalURLs:(BOOL)shouldOpenExternalURLs
@@ -2753,7 +2752,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         policy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemesButNotAppLinks;
         break;
     }
-    return wrapper(_page->loadRequest(request, policy));
+    return wrapper(_page->loadRequest(request, policy)).autorelease();
 }
 
 - (void)_loadServiceWorker:(NSURL *)url usingModules:(BOOL)usingModules completionHandler:(void (^)(BOOL success))completionHandler
@@ -2942,13 +2941,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_reloadWithoutContentBlockers
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers));
+    return wrapper(_page->reload(WebCore::ReloadOption::DisableContentBlockers)).autorelease();
 }
 
 - (WKNavigation *)_reloadExpiredOnly
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->reload(WebCore::ReloadOption::ExpiredOnly));
+    return wrapper(_page->reload(WebCore::ReloadOption::ExpiredOnly)).autorelease();
 }
 
 - (void)_killWebContentProcessAndResetState
@@ -2986,7 +2985,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (NSData *)_sessionStateData
 {
     // FIXME: This should not use the legacy session state encoder.
-    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState()));
+    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState())).autorelease();
 }
 
 - (_WKSessionState *)_sessionState
@@ -3020,7 +3019,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (WKNavigation *)_restoreSessionState:(_WKSessionState *)sessionState andNavigate:(BOOL)navigate
 {
     THROW_IF_SUSPENDED;
-    return wrapper(_page->restoreFromSessionState(sessionState ? sessionState->_sessionState : WebKit::SessionState { }, navigate));
+    return wrapper(_page->restoreFromSessionState(sessionState ? sessionState->_sessionState : WebKit::SessionState { }, navigate)).autorelease();
 }
 
 - (void)_close
@@ -3194,9 +3193,9 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
 #if ENABLE(FULLSCREEN_API)
     bool hasOpenMediaPresentations = false;
-    if (auto videoFullscreenManager = _page->videoFullscreenManager()) {
-        hasOpenMediaPresentations = videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
-            || videoFullscreenManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    if (auto videoPresentationManager = _page->videoPresentationManager()) {
+        hasOpenMediaPresentations = videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture)
+            || videoPresentationManager->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     }
 
     if (!hasOpenMediaPresentations && _page->fullScreenManager() && _page->fullScreenManager()->isFullScreen())
@@ -3326,7 +3325,36 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (void)_saveResources:(NSURL *)directory suggestedFileName:(NSString *)name completionHandler:(void (^)(NSError *error))completionHandler
 {
     THROW_IF_SUSPENDED;
-    _page->saveResources(_page->mainFrame(), directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+    _page->saveResources(_page->mainFrame(), { }, directory.path, name, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()) }]);
+
+        completionHandler(nil);
+    });
+}
+
+- (void)_archiveWithConfiguration:(_WKArchiveConfiguration*)configuration completionHandler:(void (^)(NSError *error))completionHandler
+{
+    THROW_IF_SUSPENDED;
+
+    if (!configuration)
+        [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
+
+    Vector<WebCore::MarkupExclusionRule> markupExclusionRules;
+    for (_WKArchiveExclusionRule *rule in configuration.exclusionRules) {
+        if (!rule.elementLocalName && (!rule.attributeLocalNames || !rule.attributeLocalNames.count))
+            continue;
+        Vector<std::pair<AtomString, AtomString>> attibutes;
+        for (unsigned index = 0; index < rule.attributeLocalNames.count; ++index) {
+            NSString *attributeLocalName = [rule.attributeLocalNames objectAtIndex:index];
+            NSString *attributeValue = [rule.attributeValues objectAtIndex:index];
+            if (attributeLocalName && !attributeLocalName.length)
+                attibutes.append({ AtomString { attributeLocalName }, attributeValue });
+        }
+        markupExclusionRules.append(WebCore::MarkupExclusionRule { AtomString { rule.elementLocalName }, WTFMove(attibutes) });
+    }
+
+    _page->saveResources(_page->mainFrame(), WTFMove(markupExclusionRules), configuration.directory.path, configuration.suggestedFileName, [completionHandler = makeBlockPtr(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedDescriptionKey: WebCore::errorDescription(result.error()) }]);
 
@@ -3413,15 +3441,15 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 - (_WKPaginationMode)_paginationMode
 {
     switch (_page->paginationMode()) {
-    case WebCore::Unpaginated:
+    case WebCore::PaginationMode::Unpaginated:
         return _WKPaginationModeUnpaginated;
-    case WebCore::LeftToRightPaginated:
+    case WebCore::PaginationMode::LeftToRightPaginated:
         return _WKPaginationModeLeftToRight;
-    case WebCore::RightToLeftPaginated:
+    case WebCore::PaginationMode::RightToLeftPaginated:
         return _WKPaginationModeRightToLeft;
-    case WebCore::TopToBottomPaginated:
+    case WebCore::PaginationMode::TopToBottomPaginated:
         return _WKPaginationModeTopToBottom;
-    case WebCore::BottomToTopPaginated:
+    case WebCore::PaginationMode::BottomToTopPaginated:
         return _WKPaginationModeBottomToTop;
     }
 
@@ -3435,19 +3463,19 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
     WebCore::Pagination::Mode mode;
     switch (paginationMode) {
     case _WKPaginationModeUnpaginated:
-        mode = WebCore::Unpaginated;
+        mode = WebCore::PaginationMode::Unpaginated;
         break;
     case _WKPaginationModeLeftToRight:
-        mode = WebCore::LeftToRightPaginated;
+        mode = WebCore::PaginationMode::LeftToRightPaginated;
         break;
     case _WKPaginationModeRightToLeft:
-        mode = WebCore::RightToLeftPaginated;
+        mode = WebCore::PaginationMode::RightToLeftPaginated;
         break;
     case _WKPaginationModeTopToBottom:
-        mode = WebCore::TopToBottomPaginated;
+        mode = WebCore::PaginationMode::TopToBottomPaginated;
         break;
     case _WKPaginationModeBottomToTop:
-        mode = WebCore::BottomToTopPaginated;
+        mode = WebCore::PaginationMode::BottomToTopPaginated;
         break;
     default:
         return;

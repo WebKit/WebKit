@@ -33,10 +33,6 @@
 #include "PlatformImage.h"
 #include "RenderingResource.h"
 
-#if USE(CAIRO)
-#include "PixelBuffer.h"
-#endif
-
 namespace WebCore {
 
 class GraphicsContext;
@@ -47,9 +43,6 @@ public:
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
     // Creates a NativeImage that is intended to be drawn once or only few times. Signals the platform to avoid generating any caches for the image.
     static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
-#if USE(CAIRO)
-    static RefPtr<NativeImage> create(Ref<PixelBuffer>&&, bool premultipliedAlpha);
-#endif
 
     WEBCORE_EXPORT void setPlatformImage(PlatformImagePtr&&);
     const PlatformImagePtr& platformImage() const { return m_platformImage; }
@@ -59,21 +52,15 @@ public:
     Color singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
 
-    void draw(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
+    void draw(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();
 
 private:
     NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier);
-#if USE(CAIRO)
-    NativeImage(PlatformImagePtr&&, RenderingResourceIdentifier, Ref<PixelBuffer>&&);
-#endif
 
     bool isNativeImage() const final { return true; }
 
     PlatformImagePtr m_platformImage;
-#if USE(CAIRO)
-    RefPtr<PixelBuffer> m_pixelBuffer;
-#endif
 };
 
 } // namespace WebCore

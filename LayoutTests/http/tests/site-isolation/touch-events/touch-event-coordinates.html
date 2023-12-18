@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Verifies that the iframe receives touch events with the expected coordinates.");
+jsTestIsAsync = true;
+
+let events = [];
+addEventListener("message", (event) => {
+    events.push(event.data);
+    if (events.length == 3) {
+        shouldBe("events[0]", "'touchstart 40,10'");
+        shouldBe("events[1]", "'touchmove 140,60'");
+        shouldBe("events[2]", "'touchend 140,60'");
+        finishJSTest();
+    }
+});
+
+addEventListener("touchstart", () => { testFailed("This event listener should not be called.") });
+
+function onLoad() {
+    UIHelper.dragFromPointToPoint(50, 100, 150, 150);
+}
+</script>
+<iframe onload="onLoad()" width="300" height="300" src="http://localhost:8000/site-isolation/touch-events/resources/post-message-coordinates.html"></iframe>

@@ -58,10 +58,8 @@ public:
     AVStreamDataParser* streamDataParser() const { return m_parser.get(); }
 
     Type type() const { return Type::AVFObjC; }
-    void appendData(Segment&&, CompletionHandler<void()>&&, AppendFlags = AppendFlags::None) final;
+    Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
-    void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
-    bool shouldProvideMediadataForTrackID(uint64_t) final;
     void resetParserState() final;
     void invalidate() final;
 #if !RELEASE_LOG_DISABLED
@@ -87,6 +85,7 @@ private:
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
     bool m_parserStateWasReset { false };
+    std::optional<int> m_lastErrorCode;
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;

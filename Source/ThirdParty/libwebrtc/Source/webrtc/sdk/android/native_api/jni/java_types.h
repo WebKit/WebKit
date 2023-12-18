@@ -57,6 +57,9 @@ class Iterable {
 
   ~Iterable();
 
+  Iterable(const Iterable&) = delete;
+  Iterable& operator=(const Iterable&) = delete;
+
   class Iterator {
    public:
     // Creates an iterator representing the end of any collection.
@@ -70,6 +73,9 @@ class Iterable {
     Iterator(Iterator&& other);
 
     ~Iterator();
+
+    Iterator(const Iterator&) = delete;
+    Iterator& operator=(const Iterator&) = delete;
 
     // Move assignment should not be used.
     Iterator& operator=(Iterator&&) = delete;
@@ -96,8 +102,6 @@ class Iterable {
     ScopedJavaLocalRef<jobject> iterator_;
     ScopedJavaLocalRef<jobject> value_;
     SequenceChecker thread_checker_;
-
-    RTC_DISALLOW_COPY_AND_ASSIGN(Iterator);
   };
 
   Iterable::Iterator begin() { return Iterable::Iterator(jni_, iterable_); }
@@ -106,8 +110,6 @@ class Iterable {
  private:
   JNIEnv* jni_;
   ScopedJavaLocalRef<jobject> iterable_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Iterable);
 };
 
 // Returns true if `obj` == null in Java.
@@ -240,6 +242,8 @@ std::vector<int8_t> JavaToNativeByteArray(JNIEnv* env,
                                           const JavaRef<jbyteArray>& jarray);
 std::vector<int32_t> JavaToNativeIntArray(JNIEnv* env,
                                           const JavaRef<jintArray>& jarray);
+std::vector<float> JavaToNativeFloatArray(JNIEnv* env,
+                                          const JavaRef<jfloatArray>& jarray);
 
 ScopedJavaLocalRef<jobjectArray> NativeToJavaBooleanArray(
     JNIEnv* env,
@@ -322,7 +326,7 @@ ScopedJavaLocalRef<jobject> NativeToJavaStringMap(JNIEnv* env,
 // Return a `jlong` that will correctly convert back to `ptr`.  This is needed
 // because the alternative (of silently passing a 32-bit pointer to a vararg
 // function expecting a 64-bit param) picks up garbage in the high 32 bits.
-jlong NativeToJavaPointer(void* ptr);
+jlong NativeToJavaPointer(const void* ptr);
 
 // ------------------------
 // -- Deprecated methods --

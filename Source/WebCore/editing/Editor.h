@@ -43,6 +43,7 @@
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
 #include <memory>
+#include <wtf/CheckedRef.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSAttributedString;
@@ -170,7 +171,7 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor {
+class Editor : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Editor(Document&);
@@ -503,7 +504,7 @@ public:
     enum class MatchStyle : bool { No, Yes };
     WEBCORE_EXPORT void replaceSelectionWithFragment(DocumentFragment&, SelectReplacement, SmartReplace, MatchStyle, EditAction = EditAction::Insert, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     WEBCORE_EXPORT void replaceSelectionWithText(const String&, SelectReplacement, SmartReplace, EditAction = EditAction::Insert);
-    WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
+    WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarker::Type, int from, int length) const;
     void updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionAtWordBoundary);
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString);
     
@@ -550,6 +551,9 @@ public:
     WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
+
+    static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
+    static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
 
 #if PLATFORM(MAC)
@@ -643,8 +647,6 @@ private:
     String selectionInHTMLFormat();
     RefPtr<SharedBuffer> imageInWebArchiveFormat(Element&);
     static String userVisibleString(const URL&);
-    static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
-    static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
 
     void scheduleEditorUIUpdate();

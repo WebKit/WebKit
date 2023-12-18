@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,12 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeDefinition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeInformation);
 
 String TypeDefinition::toString() const
 {
@@ -118,8 +122,11 @@ StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const Fi
         const auto& fieldType = fieldTypes[fieldIndex];
         hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
         getField(fieldIndex) = fieldType;
+
+        const auto& fieldStorageType = field(fieldIndex).type;
+        currentFieldOffset = WTF::roundUpToMultipleOf(typeAlignmentInBytes(fieldStorageType), currentFieldOffset);
         *offsetOfField(fieldIndex) = currentFieldOffset;
-        currentFieldOffset += typeSizeInBytes(field(fieldIndex).type);
+        currentFieldOffset += typeSizeInBytes(fieldStorageType);
     }
 
     m_instancePayloadSize = WTF::roundUpToMultipleOf<sizeof(uint64_t)>(currentFieldOffset);
@@ -324,7 +331,7 @@ unsigned TypeDefinition::hash() const
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCount returnCount, FunctionArgCount argumentCount)
 {
-    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    // We use WTF_MAKE_TZONE_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedFunctionSize(returnCount, argumentCount));
     void* memory = nullptr;
     if (!result.getValue(memory))
@@ -335,7 +342,7 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateFunctionSignature(FunctionArgCou
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateStructType(StructFieldCount fieldCount, const FieldType* fields)
 {
-    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    // We use WTF_MAKE_TZONE_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedStructSize(fieldCount));
     void* memory = nullptr;
     if (!result.getValue(memory))
@@ -346,7 +353,7 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateStructType(StructFieldCount fiel
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateArrayType()
 {
-    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    // We use WTF_MAKE_TZONE_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedArraySize());
     void* memory = nullptr;
     if (!result.getValue(memory))
@@ -357,7 +364,7 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateArrayType()
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateRecursionGroup(RecursionGroupCount typeCount)
 {
-    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    // We use WTF_MAKE_TZONE_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedRecursionGroupSize(typeCount));
     void* memory = nullptr;
     if (!result.getValue(memory))
@@ -368,7 +375,7 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateRecursionGroup(RecursionGroupCou
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
 {
-    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    // We use WTF_MAKE_TZONE_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedProjectionSize());
     void* memory = nullptr;
     if (!result.getValue(memory))
@@ -379,7 +386,7 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateProjection()
 
 RefPtr<TypeDefinition> TypeDefinition::tryCreateSubtype(SupertypeCount count, bool isFinal)
 {
-    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    // We use WTF_MAKE_TZONE_ALLOCATED for this class.
     auto result = tryFastMalloc(allocatedSubtypeSize());
     void* memory = nullptr;
     if (!result.getValue(memory))
@@ -491,7 +498,7 @@ const TypeDefinition& TypeDefinition::unroll() const
                 return TypeInformation::get(*cachedUnrolling);
 
             const TypeDefinition& unrolled = underlyingType.replacePlaceholders(projectee.index());
-            TypeInformation::addCachedUnrolling(index(), unrolled.index());
+            TypeInformation::addCachedUnrolling(index(), &unrolled);
             return unrolled;
         }
 
@@ -579,13 +586,13 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
     case LLIntBuiltin::ElemDrop:
         return *singleton().m_Void_I32;
     case LLIntBuiltin::RefTest:
-        return *singleton().m_I32_RefI32I32;
+        return *singleton().m_I32_RefI32I32I32;
     case LLIntBuiltin::RefCast:
         return *singleton().m_Ref_RefI32I32;
     case LLIntBuiltin::ArrayNewData:
     case LLIntBuiltin::ArrayNewElem:
         return *singleton().m_Arrayref_I32I32I32I32;
-    case LLIntBuiltin::ExternInternalize:
+    case LLIntBuiltin::AnyConvertExtern:
         return *singleton().m_Anyref_Externref;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -855,7 +862,7 @@ TypeInformation::TypeInformation()
             sig->as<FunctionSignature>()->getReturnType(0) = Types::type;                  \
             if (Types::type.isV128())                                                      \
                 sig->as<FunctionSignature>()->setArgumentsOrResultsIncludeV128(true);      \
-            thunkTypes[linearizeType(TypeKind::type)] = sig.get();                         \
+            thunkTypes[linearizeType(TypeKind::type)] = sig->as<FunctionSignature>();      \
             m_typeSet.add(TypeHash { sig.releaseNonNull() });                              \
         }                                                                                  \
     } while (false);
@@ -866,7 +873,7 @@ TypeInformation::TypeInformation()
     {
         RefPtr<TypeDefinition> sig = TypeDefinition::tryCreateFunctionSignature(0, 0);
         sig->ref();
-        thunkTypes[linearizeType(TypeKind::Void)] = sig.get();
+        thunkTypes[linearizeType(TypeKind::Void)] = sig->as<FunctionSignature>();
         m_typeSet.add(TypeHash { sig.releaseNonNull() });
     }
     m_I64_Void = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I64 }, { } }).iterator->key;
@@ -877,9 +884,8 @@ TypeInformation::TypeInformation()
     m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
     if (!Options::useWebAssemblyGC())
         return;
-    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_I32_RefI32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
-    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Arrayref_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { arrayrefType(false) }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Anyref_Externref = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { externrefType() } }).iterator->key;
 }
@@ -942,12 +948,27 @@ RefPtr<TypeDefinition> TypeInformation::typeDefinitionForSubtype(const Vector<Ty
     return addResult.iterator->key;
 }
 
-void TypeInformation::addCachedUnrolling(TypeIndex type, TypeIndex unrolled)
+RefPtr<TypeDefinition> TypeInformation::getPlaceholderProjection(ProjectionIndex index)
+{
+    TypeInformation& info = singleton();
+    auto projection = typeDefinitionForProjection(Projection::PlaceholderGroup, index);
+
+    {
+        Locker locker { info.m_lock };
+
+        if (!info.m_placeholders.contains(projection))
+            info.m_placeholders.add(projection);
+    }
+
+    return projection;
+}
+
+void TypeInformation::addCachedUnrolling(TypeIndex type, const TypeDefinition* unrolled)
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
-    info.m_unrollingCache.add(type, unrolled);
+    info.m_unrollingCache.add(type, RefPtr { unrolled });
 }
 
 std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
@@ -958,7 +979,7 @@ std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
     const auto iterator = info.m_unrollingCache.find(type);
     if (iterator == info.m_unrollingCache.end())
         return std::nullopt;
-    return std::optional<TypeIndex>(iterator->value);
+    return std::optional<TypeIndex>(iterator->value->index());
 }
 
 void TypeInformation::registerCanonicalRTTForType(TypeIndex type)
@@ -1063,8 +1084,8 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
         auto signatureRTT = TypeInformation::getCanonicalRTT(typeIndex);
         if (signature.expand().is<FunctionSignature>()) {
             WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
-            // Static type-checking should ensure this jsDynamicCast always succeeds.
-            ASSERT(funcRef);
+            if (!funcRef)
+                return false;
             auto funcRTT = funcRef->rtt();
             if (funcRTT.get() == signatureRTT.get())
                 return true;

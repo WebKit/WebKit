@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServerRegistration.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "HTTPParsers.h"
 #include "Logging.h"
 #include "SWServer.h"
@@ -388,7 +386,7 @@ void SWServerRegistration::scheduleSoftUpdate(IsAppInitiated isAppInitiated)
 std::optional<ExceptionData> SWServerRegistration::enableNavigationPreload()
 {
     if (!m_activeWorker)
-        return ExceptionData { InvalidStateError, "No active worker"_s };
+        return ExceptionData { ExceptionCode::InvalidStateError, "No active worker"_s };
 
     m_preloadState.enabled = true;
     m_server.storeRegistrationForWorker(*m_activeWorker);
@@ -399,7 +397,7 @@ std::optional<ExceptionData> SWServerRegistration::enableNavigationPreload()
 std::optional<ExceptionData> SWServerRegistration::disableNavigationPreload()
 {
     if (!m_activeWorker)
-        return ExceptionData { InvalidStateError, "No active worker"_s };
+        return ExceptionData { ExceptionCode::InvalidStateError, "No active worker"_s };
 
     m_preloadState.enabled = false;
     m_server.storeRegistrationForWorker(*m_activeWorker);
@@ -410,9 +408,9 @@ std::optional<ExceptionData> SWServerRegistration::disableNavigationPreload()
 std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderValue(String&& headerValue)
 {
     if (!isValidHTTPHeaderValue(headerValue))
-        return ExceptionData { TypeError, "Invalid header value"_s };
+        return ExceptionData { ExceptionCode::TypeError, "Invalid header value"_s };
     if (!m_activeWorker)
-        return ExceptionData { InvalidStateError, "No active worker"_s };
+        return ExceptionData { ExceptionCode::InvalidStateError, "No active worker"_s };
 
     m_preloadState.headerValue = WTFMove(headerValue);
     m_server.storeRegistrationForWorker(*m_activeWorker);
@@ -420,5 +418,3 @@ std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderVal
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

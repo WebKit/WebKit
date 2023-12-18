@@ -11,6 +11,8 @@
 #ifndef API_TEST_VIDEO_TEST_VIDEO_TRACK_SOURCE_H_
 #define API_TEST_VIDEO_TEST_VIDEO_TRACK_SOURCE_H_
 
+#include <string>
+
 #include "absl/types/optional.h"
 #include "api/media_stream_interface.h"
 #include "api/notifier.h"
@@ -28,7 +30,9 @@ namespace test {
 // Video source that can be used as input for tests.
 class TestVideoTrackSource : public Notifier<VideoTrackSourceInterface> {
  public:
-  explicit TestVideoTrackSource(bool remote);
+  explicit TestVideoTrackSource(
+      bool remote,
+      absl::optional<std::string> stream_label = absl::nullopt);
   ~TestVideoTrackSource() override = default;
 
   void SetState(SourceState new_state);
@@ -72,10 +76,15 @@ class TestVideoTrackSource : public Notifier<VideoTrackSourceInterface> {
                                      int height,
                                      const absl::optional<int>& max_fps) {}
 
+  // Returns stream label for this video source if present. Implementations
+  // may override this method to increase debugability and testability.
+  virtual absl::optional<std::string> GetStreamLabel() { return stream_label_; }
+
  protected:
   virtual rtc::VideoSourceInterface<VideoFrame>* source() = 0;
 
  private:
+  const absl::optional<std::string> stream_label_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_thread_checker_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker signaling_thread_checker_;
   SourceState state_ RTC_GUARDED_BY(&signaling_thread_checker_);

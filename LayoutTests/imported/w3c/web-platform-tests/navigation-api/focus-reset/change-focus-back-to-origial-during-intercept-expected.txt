@@ -1,0 +1,3 @@
+
+FAIL change-focus-back-to-origial-during-intercept promise_test: Unhandled rejection with value: object "TypeError: intercept_resolve is not a function. (In 'intercept_resolve()', 'intercept_resolve' is undefined)"
+

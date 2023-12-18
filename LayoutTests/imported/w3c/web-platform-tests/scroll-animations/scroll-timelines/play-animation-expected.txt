@@ -1,0 +1,20 @@
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Playing an animations aligns the start time with the start of the active range Test timed out
+NOTRUN Playing an animations with a negative playback rate aligns the start time with the end of the active range
+NOTRUN Start time set while play pending is preserved.
+NOTRUN Current time set while play pending is preserved.
+NOTRUN Playing a running animation resets a sticky start time
+NOTRUN Playing a finished animation restarts the animation aligned at the start
+NOTRUN Playing a finished and reversed animation restarts the animation aligned at the end
+NOTRUN Playing a pause-pending but previously finished animation realigns with the scroll position
+NOTRUN Playing a finished animation clears the start time
+NOTRUN The ready promise should be replaced if the animation is not already pending
+NOTRUN A pending ready promise should be resolved and not replaced when the animation enters the running state
+NOTRUN Resuming an animation from paused realigns with scroll position.
+NOTRUN If a pause operation is interrupted, the ready promise is reused
+NOTRUN A pending playback rate is used when determining timeline range alignment
+NOTRUN Playing a canceled animation sets the start time
+NOTRUN Playing a canceled animation backwards sets the start time
+

@@ -12,48 +12,64 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <deque>
 #include <limits>
 #include <map>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/functional/bind_front.h"
 #include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+#include "api/dtls_transport_interface.h"
 #include "api/function_view.h"
+#include "api/media_types.h"
 #include "api/network_state_predictor.h"
-#include "api/transport/field_trial_based_config.h"
+#include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtp_headers.h"
 #include "api/transport/goog_cc_factory.h"
-#include "call/audio_receive_stream.h"
-#include "call/audio_send_stream.h"
-#include "call/call.h"
-#include "call/video_receive_stream.h"
-#include "call/video_send_stream.h"
+#include "api/transport/network_control.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_received.h"
+#include "logging/rtc_event_log/events/rtc_event_generic_packet_sent.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair.h"
+#include "logging/rtc_event_log/events/rtc_event_ice_candidate_pair_config.h"
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_processor.h"
-#include "logging/rtc_event_log/rtc_stream_config.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
-#include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
-#include "modules/congestion_controller/goog_cc/bitrate_estimator.h"
-#include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 #include "modules/congestion_controller/rtp/transport_feedback_adapter.h"
+#include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/source/rtcp_packet.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/common_header.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/remb.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/report_block.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/target_bitrate.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
-#include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/network/sent_packet.h"
 #include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
 #include "rtc_tools/rtc_event_log_visualizer/log_simulation.h"
+#include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
+#include "system_wrappers/include/clock.h"
 #include "test/explicit_key_value_config.h"
 
 namespace webrtc {
@@ -406,6 +422,12 @@ RtpPacketReceived RtpPacketForBWEFromHeader(const RTPHeader& header) {
   return rtp_packet;
 }
 
+struct PacketLossSummary {
+  size_t num_packets = 0;
+  size_t num_lost_packets = 0;
+  Timestamp base_time = Timestamp::MinusInfinity();
+};
+
 }  // namespace
 
 EventLogAnalyzer::EventLogAnalyzer(const ParsedRtcEventLog& log,
@@ -621,23 +643,25 @@ void EventLogAnalyzer::CreateTotalPacketRateGraph(PacketDirection direction,
     Timestamp log_time_;
   };
   std::vector<LogTime> packet_times;
-  auto handle_rtp = [&](const LoggedRtpPacket& packet) {
+  auto handle_rtp = [&packet_times](const LoggedRtpPacket& packet) {
     packet_times.emplace_back(packet.log_time());
   };
   RtcEventProcessor process;
   for (const auto& stream : parsed_log_.rtp_packets_by_ssrc(direction)) {
-    process.AddEvents(stream.packet_view, handle_rtp);
+    process.AddEvents(stream.packet_view, handle_rtp, direction);
   }
   if (direction == kIncomingPacket) {
-    auto handle_incoming_rtcp = [&](const LoggedRtcpPacketIncoming& packet) {
-      packet_times.emplace_back(packet.log_time());
-    };
+    auto handle_incoming_rtcp =
+        [&packet_times](const LoggedRtcpPacketIncoming& packet) {
+          packet_times.emplace_back(packet.log_time());
+        };
     process.AddEvents(parsed_log_.incoming_rtcp_packets(),
                       handle_incoming_rtcp);
   } else {
-    auto handle_outgoing_rtcp = [&](const LoggedRtcpPacketOutgoing& packet) {
-      packet_times.emplace_back(packet.log_time());
-    };
+    auto handle_outgoing_rtcp =
+        [&packet_times](const LoggedRtcpPacketOutgoing& packet) {
+          packet_times.emplace_back(packet.log_time());
+        };
     process.AddEvents(parsed_log_.outgoing_rtcp_packets(),
                       handle_outgoing_rtcp);
   }
@@ -1296,6 +1320,100 @@ void EventLogAnalyzer::CreateGoogCcSimulationGraph(Plot* plot) {
   plot->SetTitle("Simulated BWE behavior");
 }
 
+void EventLogAnalyzer::CreateOutgoingTWCCLossRateGraph(Plot* plot) {
+  TimeSeries loss_rate_series("Loss rate (from packet feedback)",
+                              LineStyle::kLine, PointStyle::kHighlight);
+  TimeSeries average_loss_rate_series("Average loss rate last 5s",
+                                      LineStyle::kLine, PointStyle::kHighlight);
+  TimeSeries missing_feedback_series("Missing feedback", LineStyle::kNone,
+                                     PointStyle::kHighlight);
+  PacketLossSummary window_summary;
+  Timestamp last_observation_receive_time = Timestamp::Zero();
+
+  // Use loss based bwe 2 observation duration and observation window size.
+  constexpr TimeDelta kObservationDuration = TimeDelta::Millis(250);
+  constexpr uint32_t kObservationWindowSize = 20;
+  std::deque<PacketLossSummary> observations;
+  SeqNumUnwrapper<uint16_t> unwrapper;
+  int64_t last_acked = 1;
+  if (!parsed_log_.transport_feedbacks(kIncomingPacket).empty()) {
+    last_acked =
+        unwrapper.Unwrap(parsed_log_.transport_feedbacks(kIncomingPacket)[0]
+                             .transport_feedback.GetBaseSequence());
+  }
+  for (auto& feedback : parsed_log_.transport_feedbacks(kIncomingPacket)) {
+    const rtcp::TransportFeedback& transport_feedback =
+        feedback.transport_feedback;
+    size_t base_seq_num =
+        unwrapper.Unwrap(transport_feedback.GetBaseSequence());
+    // Collect packets that do not have feedback, which are from the last acked
+    // packet, to the current base packet.
+    for (size_t seq_num = last_acked; seq_num < base_seq_num; ++seq_num) {
+      missing_feedback_series.points.emplace_back(
+          config_.GetCallTimeSec(feedback.timestamp),
+          100 + seq_num - last_acked);
+    }
+    last_acked = base_seq_num + transport_feedback.GetPacketStatusCount();
+
+    // Compute loss rate from the transport feedback.
+    auto loss_rate =
+        static_cast<float>((transport_feedback.GetPacketStatusCount() -
+                            transport_feedback.GetReceivedPackets().size()) *
+                           100.0 / transport_feedback.GetPacketStatusCount());
+    loss_rate_series.points.emplace_back(
+        config_.GetCallTimeSec(feedback.timestamp), loss_rate);
+
+    // Compute loss rate in a window of kObservationWindowSize.
+    if (window_summary.num_packets == 0) {
+      window_summary.base_time = feedback.log_time();
+    }
+    window_summary.num_packets += transport_feedback.GetPacketStatusCount();
+    window_summary.num_lost_packets +=
+        transport_feedback.GetPacketStatusCount() -
+        transport_feedback.GetReceivedPackets().size();
+
+    const Timestamp last_received_time = feedback.log_time();
+    const TimeDelta observation_duration =
+        window_summary.base_time == Timestamp::Zero()
+            ? TimeDelta::Zero()
+            : last_received_time - window_summary.base_time;
+    if (observation_duration > kObservationDuration) {
+      last_observation_receive_time = last_received_time;
+      observations.push_back(window_summary);
+      if (observations.size() > kObservationWindowSize) {
+        observations.pop_front();
+      }
+
+      // Compute average loss rate in a number of windows.
+      int total_packets = 0;
+      int total_loss = 0;
+      for (const auto& observation : observations) {
+        total_loss += observation.num_lost_packets;
+        total_packets += observation.num_packets;
+      }
+      if (total_packets > 0) {
+        float average_loss_rate = total_loss * 100.0 / total_packets;
+        average_loss_rate_series.points.emplace_back(
+            config_.GetCallTimeSec(feedback.timestamp), average_loss_rate);
+      } else {
+        average_loss_rate_series.points.emplace_back(
+            config_.GetCallTimeSec(feedback.timestamp), 0);
+      }
+      window_summary = PacketLossSummary();
+    }
+  }
+  // Add the data set to the plot.
+  plot->AppendTimeSeriesIfNotEmpty(std::move(loss_rate_series));
+  plot->AppendTimeSeriesIfNotEmpty(std::move(average_loss_rate_series));
+  plot->AppendTimeSeriesIfNotEmpty(std::move(missing_feedback_series));
+
+  plot->SetXAxis(config_.CallBeginTimeSec(), config_.CallEndTimeSec(),
+                 "Time (s)", kLeftMargin, kRightMargin);
+  plot->SetSuggestedYAxis(0, 100, "Loss rate (percent)", kBottomMargin,
+                          kTopMargin);
+  plot->SetTitle("Outgoing loss rate (from TWCC feedback)");
+}
+
 void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
   using RtpPacketType = LoggedRtpPacketOutgoing;
   using TransportFeedbackType = LoggedRtcpPacketTransportFeedback;
@@ -1362,16 +1480,15 @@ void EventLogAnalyzer::CreateSendSideBweSimulationGraph(Plot* plot) {
 
   RateStatistics raw_acked_bitrate(750, 8000);
   test::ExplicitKeyValueConfig throughput_config(
-      "WebRTC-Bwe-RobustThroughputEstimatorSettings/"
-      "enabled:true,required_packets:10,"
-      "window_packets:25,window_duration:1000ms,unacked_weight:1.0/");
+      "WebRTC-Bwe-RobustThroughputEstimatorSettings/enabled:true/");
   std::unique_ptr<AcknowledgedBitrateEstimatorInterface>
       robust_throughput_estimator(
           AcknowledgedBitrateEstimatorInterface::Create(&throughput_config));
-  FieldTrialBasedConfig field_trial_config;
+  test::ExplicitKeyValueConfig acked_bitrate_config(
+      "WebRTC-Bwe-RobustThroughputEstimatorSettings/enabled:false/");
   std::unique_ptr<AcknowledgedBitrateEstimatorInterface>
       acknowledged_bitrate_estimator(
-          AcknowledgedBitrateEstimatorInterface::Create(&field_trial_config));
+          AcknowledgedBitrateEstimatorInterface::Create(&acked_bitrate_config));
   int64_t time_us =
       std::min({NextRtpTime(), NextRtcpTime(), NextProcessTime()});
   int64_t last_update_us = 0;

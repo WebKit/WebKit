@@ -38,16 +38,16 @@ struct GPUDepthStencilState {
     WebGPU::DepthStencilState convertToBacking() const
     {
         return {
-            WebCore::convertToBacking(format),
-            depthWriteEnabled,
-            WebCore::convertToBacking(depthCompare),
-            stencilFront.convertToBacking(),
-            stencilBack.convertToBacking(),
-            stencilReadMask ? std::optional { *stencilReadMask } : std::nullopt,
-            stencilWriteMask ? std::optional { *stencilWriteMask } : std::nullopt,
-            depthBias,
-            depthBiasSlopeScale,
-            depthBiasClamp,
+            .format = WebCore::convertToBacking(format),
+            .depthWriteEnabled = depthWriteEnabled,
+            .depthCompare = WebCore::convertToBacking(depthCompare),
+            .stencilFront = stencilFront.convertToBacking(),
+            .stencilBack = stencilBack.convertToBacking(),
+            .stencilReadMask = stencilReadMask ? std::optional { *stencilReadMask } : std::nullopt,
+            .stencilWriteMask = stencilWriteMask ? std::optional { *stencilWriteMask } : std::nullopt,
+            .depthBias = depthBias,
+            .depthBiasSlopeScale = depthBiasSlopeScale,
+            .depthBiasClamp = depthBiasClamp,
         };
     }
 

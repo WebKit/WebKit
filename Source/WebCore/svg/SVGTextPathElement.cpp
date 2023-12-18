@@ -22,8 +22,8 @@
 #include "config.h"
 #include "SVGTextPathElement.h"
 
+#include "LegacyRenderSVGResource.h"
 #include "NodeName.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInlines.h"

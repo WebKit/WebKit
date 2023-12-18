@@ -37,6 +37,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include "WebResourceLoadObserver.h"
+#include "WebSWServerToContextConnection.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/FrameIdentifier.h>
@@ -54,6 +55,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include <optional>
+#include <wtf/HashCountedSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/URLHash.h>
@@ -103,6 +105,7 @@ class WebSWServerToContextConnection;
 class WebSharedWorkerServerConnection;
 class WebSharedWorkerServerToContextConnection;
 
+struct CoreIPCAuditToken;
 struct NetworkProcessConnectionParameters;
 struct WebTransportSessionIdentifierType;
 
@@ -121,6 +124,8 @@ class NetworkConnectionToWebProcess
 #endif
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     , public WebCore::CookieChangeObserver
+#else
+    , public CanMakeCheckedPtr
 #endif
     , public IPC::Connection::Client {
 public:
@@ -194,11 +199,9 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
-#if ENABLE(SERVICE_WORKER)
     void serviceWorkerServerToContextConnectionNoLongerNeeded();
     WebSWServerConnection* swConnection();
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
-#endif
     void sharedWorkerServerToContextConnectionIsNoLongerNeeded();
 
     WebSharedWorkerServerConnection* sharedWorkerConnection();
@@ -225,6 +228,8 @@ public:
 #if ENABLE(WEB_RTC)
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
 #endif
+
+    WeakPtr<WebSWServerToContextConnection> swContextConnection() { return m_swContextConnection.get(); }
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
@@ -261,14 +266,14 @@ private:
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
     void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
-    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::ApplyTrackingPrevention, const String&, WebCore::ShouldRelaxThirdPartyCookieBlocking);
+    void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::ApplyTrackingPrevention, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
     void cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void getRawCookies(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
     void setRawCookie(const WebCore::Cookie&);
     void deleteCookie(const URL&, const String& cookieName, CompletionHandler<void()>&&);
 
     void cookiesForDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::CookieStoreGetOptions&&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
-    void setCookieFromDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::ApplyTrackingPrevention, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::Cookie&&, CompletionHandler<void(bool)>&&);
+    void setCookieFromDOMAsync(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::ApplyTrackingPrevention, WebCore::Cookie&&, WebCore::ShouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(bool)>&&);
 
     void registerInternalFileBlobURL(const URL&, const String& path, const String& replacementPath, SandboxExtension::Handle&&, const String& contentType);
     void registerInternalBlobURL(const URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
@@ -289,12 +294,10 @@ private:
     void establishSharedWorkerServerConnection();
     void unregisterSharedWorkerConnection();
 
-#if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();
     void establishSWContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
-#endif
 
     void establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
     void closeSharedWorkerContextConnection();
@@ -315,8 +318,8 @@ private:
     void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
 
 #if PLATFORM(MAC)
-    void updateActivePages(const String& name, const Vector<String>& activePagesOrigins, audit_token_t);
-    void getProcessDisplayName(audit_token_t, CompletionHandler<void(const String&)>&&);
+    void updateActivePages(const String& name, const Vector<String>& activePagesOrigins, CoreIPCAuditToken&&);
+    void getProcessDisplayName(CoreIPCAuditToken&&, CompletionHandler<void(const String&)>&&);
 #endif
 
 #if USE(LIBWEBRTC)
@@ -331,15 +334,14 @@ private:
 
     void clearPageSpecificData(WebCore::PageIdentifier);
 
-#if ENABLE(TRACKING_PREVENTION)
     void removeStorageAccessForFrame(WebCore::FrameIdentifier, WebCore::PageIdentifier);
 
     void logUserInteraction(RegistrableDomain&&);
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&&, CompletionHandler<void()>&&);
     void hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
+    void storageAccessQuirkForTopFrameDomain(WebCore::RegistrableDomain&&, CompletionHandler<void(Vector<RegistrableDomain>)>&&);
     void requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain);
-#endif
 
     void addOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessAllowListEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
@@ -445,10 +447,8 @@ private:
 
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
-#if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerConnection> m_swConnection;
     std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
-#endif
     WeakPtr<WebSharedWorkerServerConnection> m_sharedWorkerConnection;
     std::unique_ptr<WebSharedWorkerServerToContextConnection> m_sharedWorkerContextConnection;
 

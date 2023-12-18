@@ -26,7 +26,6 @@
 // https://www.w3.org/TR/push-api/#pushsubscription-interface
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     SecureContext,

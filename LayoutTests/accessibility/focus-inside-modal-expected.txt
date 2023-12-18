@@ -1,0 +1,13 @@
+Tests that focus is tracked correctly when set inside a modal dialog.
+
+Click the show button to open dialog.
+attemptFocus successsful ? true
+PASS: accessibilityController.focusedElement.domIdentifier === 'textfield'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show dialog
+Just an example.
+
+  OK

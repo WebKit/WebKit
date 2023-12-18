@@ -86,6 +86,7 @@ public:
     LayoutUnit contentBoxRight() const { return contentBoxLeft() + contentBoxWidth(); }
     LayoutUnit contentBoxHeight() const;
     LayoutUnit contentBoxWidth() const;
+    LayoutSize contentBoxSize() const { return { contentBoxWidth(), contentBoxHeight() }; }
 
     LayoutUnit paddingBoxTop() const { return borderBefore(); }
     LayoutUnit paddingBoxLeft() const { return borderStart(); }
@@ -140,7 +141,10 @@ public:
     void setVerticalMargin(VerticalMargin);
 
     void setBorder(Layout::Edges);
+    void setHorizontalBorder(Layout::HorizontalEdges);
+    void setVerticalBorder(Layout::VerticalEdges);
 
+    void setHorizontalPadding(Layout::HorizontalEdges);
     void setVerticalPadding(Layout::VerticalEdges);
     void setPadding(std::optional<Layout::Edges>);
 
@@ -325,12 +329,36 @@ inline void BoxGeometry::setBorder(Layout::Edges border)
     m_border = border;
 }
 
+inline void BoxGeometry::setHorizontalBorder(Layout::HorizontalEdges horizontalBorder)
+{
+#if ASSERT_ENABLED
+    setHasValidBorder();
+#endif
+    m_border.horizontal = horizontalBorder;
+}
+
+inline void BoxGeometry::setVerticalBorder(Layout::VerticalEdges verticalBorder)
+{
+#if ASSERT_ENABLED
+    setHasValidBorder();
+#endif
+    m_border.vertical = verticalBorder;
+}
+
 inline void BoxGeometry::setPadding(std::optional<Layout::Edges> padding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
 #endif
     m_padding = padding;
+}
+
+inline void BoxGeometry::setHorizontalPadding(Layout::HorizontalEdges horizontalPadding)
+{
+#if ASSERT_ENABLED
+    setHasValidPadding();
+#endif
+    m_padding = Layout::Edges { horizontalPadding, m_padding ? m_padding->vertical : Layout::VerticalEdges() };
 }
 
 inline void BoxGeometry::setVerticalPadding(Layout::VerticalEdges verticalPadding)

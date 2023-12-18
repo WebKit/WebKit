@@ -92,7 +92,7 @@ WebKitOptionMenu* webkitOptionMenuCreate(WebKitPopupMenu& popupMenu, const Vecto
     menu->priv->popupMenu = &popupMenu;
     menu->priv->items.reserveInitialCapacity(items.size());
     for (const auto& item : items)
-        menu->priv->items.uncheckedAppend(WebKitOptionMenuItem(item));
+        menu->priv->items.append(WebKitOptionMenuItem(item));
     if (selectedIndex >= 0) {
         ASSERT(static_cast<unsigned>(selectedIndex) < menu->priv->items.size());
         menu->priv->items[selectedIndex].isSelected = true;

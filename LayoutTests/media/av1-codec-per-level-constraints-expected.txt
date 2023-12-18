@@ -1,0 +1,30 @@
+Level 2.0
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00M.08", makeVideoConfiguration(426, 240, 1000, 30)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00M.08", makeVideoConfiguration(2048, 72, 1000, 30)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00M.08", makeVideoConfiguration(128, 1152, 1000, 30)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00M.08", makeVideoConfiguration(640, 480, 1000, 30)) == 'false') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00M.08", makeVideoConfiguration(426, 240, 1000, 60)) == 'false') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00M.08", makeVideoConfiguration(426, 240, 2000000, 30)) == 'false') OK
+Level 2.0 has no High Tier
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.00H.08", makeVideoConfiguration(426, 240, 1000, 30)) == 'false') OK
+Level 2.1
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.01M.08", makeVideoConfiguration(640, 360, 1000, 30)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.01M.08", makeVideoConfiguration(2816, 99, 1000, 30)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.01M.08", makeVideoConfiguration(176, 1584, 1000, 30)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.01M.08", makeVideoConfiguration(854, 480, 1000, 30)) == 'false') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.01M.08", makeVideoConfiguration(640, 360, 1000, 60)) == 'false') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.01M.08", makeVideoConfiguration(640, 360, 4000000, 30)) == 'false') OK
+Level 2.2 is undefined
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.02M.08", makeVideoConfiguration(640, 360, 1000, 30)) == 'false') OK
+Level 6.1
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17M.08", makeVideoConfiguration(7680, 4320, 1000, 60)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17M.08", makeVideoConfiguration(16384, 2176, 1000, 60)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17M.08", makeVideoConfiguration(4096, 8704, 1000, 60)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17M.08", makeVideoConfiguration(15360, 8640, 1000, 60)) == 'false') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17M.08", makeVideoConfiguration(7680, 4320, 200000000, 60)) == 'false') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17H.08", makeVideoConfiguration(7680, 4320, 200000000, 60)) == 'true') OK
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.17H.08", makeVideoConfiguration(7680, 4320, 1000000000, 60)) == 'false') OK
+Level 7.0 is undefined
+EXPECTED (internals.validateAV1PerLevelConstraints("av01.0.20M.08", makeVideoConfiguration(7680, 4320, 1000, 60)) == 'false') OK
+END OF TEST
+

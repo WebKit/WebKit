@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <climits>
 #include <vector>
 #include "config/aom_config.h"
 #include "third_party/googletest/src/googletest/include/gtest/gtest.h"
@@ -45,22 +46,22 @@ class DatarateTestSVC
   }
 
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(GET_PARAM(1));
     ResetModel();
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     aom_codec_pts_t pts) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             aom_codec_pts_t pts) override {
     frame_info_list_.push_back(FrameInfo(pts, img.d_w, img.d_h));
     ++decoded_nframes_;
   }
 
   std::vector<FrameInfo> frame_info_list_;
 
-  virtual int GetNumSpatialLayers() { return number_spatial_layers_; }
+  int GetNumSpatialLayers() override { return number_spatial_layers_; }
 
-  virtual void ResetModel() {
+  void ResetModel() override {
     DatarateTest::ResetModel();
     layer_frame_cnt_ = 0;
     superframe_cnt_ = 0;
@@ -94,10 +95,11 @@ class DatarateTestSVC
     rps_recovery_frame_ = 0;
     user_define_frame_qp_ = 0;
     set_speed_per_layer_ = false;
+    simulcast_mode_ = false;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     int spatial_layer_id = 0;
     current_video_frame_ = video->frame();
     // video->frame() is called every superframe, so we should condition
@@ -116,7 +118,15 @@ class DatarateTestSVC
       encoder->Control(AV1E_SET_ENABLE_TPL_MODEL, 0);
       encoder->Control(AV1E_SET_DELTAQ_MODE, 0);
       if (cfg_.g_threads > 1) {
-        encoder->Control(AV1E_SET_TILE_COLUMNS, cfg_.g_threads >> 1);
+        if (cfg_.g_threads == 4) {
+          encoder->Control(AV1E_SET_TILE_COLUMNS, 2);
+          encoder->Control(AV1E_SET_TILE_ROWS, 2);
+        } else if (cfg_.g_threads == 8) {
+          encoder->Control(AV1E_SET_TILE_COLUMNS, 4);
+          encoder->Control(AV1E_SET_TILE_ROWS, 2);
+        } else {
+          encoder->Control(AV1E_SET_TILE_COLUMNS, cfg_.g_threads >> 1);
+        }
         encoder->Control(AV1E_SET_ROW_MT, 1);
       }
       if (screen_mode_) {
@@ -136,7 +146,7 @@ class DatarateTestSVC
         video->frame(), &layer_id_, &ref_frame_config_, &ref_frame_comp_pred_,
         spatial_layer_id, multi_ref_, comp_pred_,
         (video->frame() % cfg_.kf_max_dist) == 0, dynamic_enable_disable_mode_,
-        rps_mode_, rps_recovery_frame_);
+        rps_mode_, rps_recovery_frame_, simulcast_mode_);
     if (intra_only_ == 1 && frame_sync_ > 0) {
       // Set an Intra-only frame on SL0 at frame_sync_.
       // In order to allow decoding to start on SL0 in mid-sequence we need to
@@ -219,7 +229,7 @@ class DatarateTestSVC
     }
   }
 
-  virtual void PostEncodeFrameHook(::libaom_test::Encoder *encoder) {
+  void PostEncodeFrameHook(::libaom_test::Encoder *encoder) override {
     int num_operating_points;
     encoder->Control(AV1E_GET_NUM_OPERATING_POINTS, &num_operating_points);
     ASSERT_EQ(num_operating_points,
@@ -234,7 +244,7 @@ class DatarateTestSVC
     }
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     const size_t frame_size_in_bits = pkt->data.frame.sz * 8;
     // Update the layer cumulative  bitrate.
     for (int i = layer_id_.temporal_layer_id; i < number_temporal_layers_;
@@ -246,36 +256,50 @@ class DatarateTestSVC
       last_pts_ = pkt->data.frame.pts;
       superframe_cnt_++;
     }
+    // For simulcast mode: verify that for first frame to start decoding,
+    // for SL > 0, are Intra-only frames (not Key), whereas SL0 is Key.
+    if (simulcast_mode_ && superframe_cnt_ == (int)frame_to_start_decoding_) {
+      if (layer_id_.spatial_layer_id > 0) {
+        EXPECT_NE(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+      } else if (layer_id_.spatial_layer_id == 0) {
+        EXPECT_EQ(pkt->data.frame.flags & AOM_FRAME_IS_KEY, AOM_FRAME_IS_KEY);
+      }
+    }
   }
 
-  virtual void EndPassHook() {
+  void EndPassHook() override {
     duration_ = ((last_pts_ + 1) * timebase_);
     for (int i = 0; i < number_temporal_layers_ * number_spatial_layers_; i++) {
       effective_datarate_tl[i] = (effective_datarate_tl[i] / 1000) / duration_;
     }
   }
 
-  virtual bool DoDecode() const {
+  bool DoDecode() const override {
     if (drop_frames_ > 0) {
       for (unsigned int i = 0; i < drop_frames_; ++i) {
         if (drop_frames_list_[i] == (unsigned int)superframe_cnt_) {
           std::cout << "             Skipping decoding frame: "
                     << drop_frames_list_[i] << "\n";
-          return 0;
+          return false;
         }
       }
     } else if (intra_only_ == 1) {
       // Only start decoding at frames_to_start_decoding_.
-      if (current_video_frame_ < frame_to_start_decoding_) return 0;
+      if (current_video_frame_ < frame_to_start_decoding_) return false;
       // Only decode base layer for 3SL, for layer_to_decode_ = 0.
       if (layer_to_decode_ == 0 && frame_sync_ > 0 &&
           (layer_frame_cnt_ - 1) % 3 != 0)
-        return 0;
+        return false;
+    } else if (simulcast_mode_) {
+      // Only start decoding at frames_to_start_decoding_ and only
+      // for top spatial layer SL2 (layer_to_decode_).
+      if (current_video_frame_ < frame_to_start_decoding_) return false;
+      if (layer_id_.spatial_layer_id < (int)layer_to_decode_) return false;
     }
-    return 1;
+    return true;
   }
 
-  virtual void MismatchHook(const aom_image_t *img1, const aom_image_t *img2) {
+  void MismatchHook(const aom_image_t *img1, const aom_image_t *img2) override {
     double mismatch_psnr = compute_psnr(img1, img2);
     mismatch_psnr_ += mismatch_psnr;
     ++mismatch_nframes_;
@@ -337,13 +361,301 @@ class DatarateTestSVC
     }
   }
 
+  // Simulcast mode for 3 spatial and 3 temporal layers.
+  // No inter-layer predicton, only prediction is temporal and single
+  // reference (LAST).
+  // No overlap in buffer slots between spatial layers. So for example,
+  // SL0 only uses slots 0 and 1.
+  // SL1 only uses slots 2 and 3.
+  // SL2 only uses slots 4 and 5.
+  // All 7 references for each inter-frame must only access buffer slots
+  // for that spatial layer.
+  // On key (super)frames: SL1 and SL2 must have no references set
+  // and must refresh all the slots for that layer only (so 2 and 3
+  // for SL1, 4 and 5 for SL2). The base SL0 will be labelled internally
+  // as a Key frame (refresh all slots). SL1/SL2 will be labelled
+  // internally as Intra-only frames that allow that stream to be decoded.
+  // These conditions will allow for each spatial stream to be
+  // independently decodeable.
+  static void ref_config_simulcast3SL3TL(
+      aom_svc_ref_frame_config_t *ref_frame_config,
+      aom_svc_layer_id_t *layer_id, int is_key_frame, int superframe_cnt) {
+    int i;
+    // Initialize all references to 0 (don't use reference).
+    for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+      ref_frame_config->reference[i] = 0;
+    // Initialize as no refresh/update for all slots.
+    for (i = 0; i < REF_FRAMES; i++) ref_frame_config->refresh[i] = 0;
+    for (i = 0; i < INTER_REFS_PER_FRAME; i++) ref_frame_config->ref_idx[i] = 0;
+
+    if (is_key_frame) {
+      if (layer_id->spatial_layer_id == 0) {
+        // Assign LAST/GOLDEN to slot 0/1.
+        // Refesh slots 0 and 1 for SL0.
+        // SL0: this will get set to KEY frame internally.
+        ref_frame_config->ref_idx[0] = 0;
+        ref_frame_config->ref_idx[3] = 1;
+        ref_frame_config->refresh[0] = 1;
+        ref_frame_config->refresh[1] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {
+        // Assign LAST/GOLDEN to slot 2/3.
+        // Refesh slots 2 and 3 for SL1.
+        // This will get set to Intra-only frame internally.
+        ref_frame_config->ref_idx[0] = 2;
+        ref_frame_config->ref_idx[3] = 3;
+        ref_frame_config->refresh[2] = 1;
+        ref_frame_config->refresh[3] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {
+        // Assign LAST/GOLDEN to slot 4/5.
+        // Refresh slots 4 and 5 for SL2.
+        // This will get set to Intra-only frame internally.
+        ref_frame_config->ref_idx[0] = 4;
+        ref_frame_config->ref_idx[3] = 5;
+        ref_frame_config->refresh[4] = 1;
+        ref_frame_config->refresh[5] = 1;
+      }
+    } else if (superframe_cnt % 4 == 0) {
+      // Base temporal layer: TL0
+      layer_id->temporal_layer_id = 0;
+      if (layer_id->spatial_layer_id == 0) {  // SL0
+        // Reference LAST. Assign all references to either slot
+        // 0 or 1. Here we assign LAST to slot 0, all others to 1.
+        // Update slot 0 (LAST).
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 1;
+        ref_frame_config->ref_idx[0] = 0;
+        ref_frame_config->refresh[0] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {  // SL1
+        // Reference LAST. Assign all references to either slot
+        // 2 or 3. Here we assign LAST to slot 2, all others to 3.
+        // Update slot 2 (LAST).
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 3;
+        ref_frame_config->ref_idx[0] = 2;
+        ref_frame_config->refresh[2] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {  // SL2
+        // Reference LAST. Assign all references to either slot
+        // 4 or 5. Here we assign LAST to slot 4, all others to 5.
+        // Update slot 4 (LAST).
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 5;
+        ref_frame_config->ref_idx[0] = 4;
+        ref_frame_config->refresh[4] = 1;
+      }
+    } else if ((superframe_cnt - 1) % 4 == 0) {
+      // First top temporal enhancement layer: TL2
+      layer_id->temporal_layer_id = 2;
+      if (layer_id->spatial_layer_id == 0) {  // SL0
+        // Reference LAST (slot 0). Assign other references to slot 1.
+        // No update/refresh on any slots.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 1;
+        ref_frame_config->ref_idx[0] = 0;
+      } else if (layer_id->spatial_layer_id == 1) {  // SL1
+        // Reference LAST (slot 2). Assign other references to slot 3.
+        // No update/refresh on any slots.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 3;
+        ref_frame_config->ref_idx[0] = 2;
+      } else if (layer_id->spatial_layer_id == 2) {  // SL2
+        // Reference LAST (slot 4). Assign other references to slot 4.
+        // No update/refresh on any slots.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 5;
+        ref_frame_config->ref_idx[0] = 4;
+      }
+    } else if ((superframe_cnt - 2) % 4 == 0) {
+      // Middle temporal enhancement layer: TL1
+      layer_id->temporal_layer_id = 1;
+      if (layer_id->spatial_layer_id == 0) {  // SL0
+        // Reference LAST (slot 0).
+        // Set GOLDEN to slot 1 and update slot 1.
+        // This will be used as reference for next TL2.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 1;
+        ref_frame_config->ref_idx[0] = 0;
+        ref_frame_config->refresh[1] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {  // SL1
+        // Reference LAST (slot 2).
+        // Set GOLDEN to slot 3 and update slot 3.
+        // This will be used as reference for next TL2.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 3;
+        ref_frame_config->ref_idx[0] = 2;
+        ref_frame_config->refresh[3] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {  // SL2
+        // Reference LAST (slot 4).
+        // Set GOLDEN to slot 5 and update slot 5.
+        // This will be used as reference for next TL2.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 5;
+        ref_frame_config->ref_idx[0] = 4;
+        ref_frame_config->refresh[5] = 1;
+      }
+    } else if ((superframe_cnt - 3) % 4 == 0) {
+      // Second top temporal enhancement layer: TL2
+      layer_id->temporal_layer_id = 2;
+      if (layer_id->spatial_layer_id == 0) {  // SL0
+        // Reference LAST (slot 1). Assign other references to slot 0.
+        // No update/refresh on any slots.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[0] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {  // SL1
+        // Reference LAST (slot 3). Assign other references to slot 2.
+        // No update/refresh on any slots.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 2;
+        ref_frame_config->ref_idx[0] = 3;
+      } else if (layer_id->spatial_layer_id == 2) {  // SL2
+        // Reference LAST (slot 5). Assign other references to slot 4.
+        // No update/refresh on any slots.
+        ref_frame_config->reference[0] = 1;
+        for (i = 0; i < INTER_REFS_PER_FRAME; i++)
+          ref_frame_config->ref_idx[i] = 4;
+        ref_frame_config->ref_idx[0] = 5;
+      }
+    }
+  }
+
+  // 3 spatial and 3 temporal layer.
+  // Overlap in the buffer slot updates: the slots 3 and 4 updated by
+  // first TL2 are reused for update in TL1 superframe.
+  static void ref_config_3SL3TL(aom_svc_ref_frame_config_t *ref_frame_config,
+                                aom_svc_layer_id_t *layer_id, int is_key_frame,
+                                int superframe_cnt) {
+    if (superframe_cnt % 4 == 0) {
+      // Base temporal layer.
+      layer_id->temporal_layer_id = 0;
+      if (layer_id->spatial_layer_id == 0) {
+        // Reference LAST, update LAST.
+        // Set all buffer_idx to 0.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->refresh[0] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 1,
+        // GOLDEN (and all other refs) to slot 0.
+        // Update slot 1 (LAST).
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[0] = 1;
+        ref_frame_config->refresh[1] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 2,
+        // GOLDEN (and all other refs) to slot 1.
+        // Update slot 2 (LAST).
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 1;
+        ref_frame_config->ref_idx[0] = 2;
+        ref_frame_config->refresh[2] = 1;
+      }
+    } else if ((superframe_cnt - 1) % 4 == 0) {
+      // First top temporal enhancement layer.
+      layer_id->temporal_layer_id = 2;
+      if (layer_id->spatial_layer_id == 0) {
+        // Reference LAST (slot 0).
+        // Set GOLDEN to slot 3 and update slot 3.
+        // Set all other buffer_idx to slot 0.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[3] = 3;
+        ref_frame_config->refresh[3] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 1,
+        // GOLDEN (and all other refs) to slot 3.
+        // Set LAST2 to slot 4 and Update slot 4.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 3;
+        ref_frame_config->ref_idx[0] = 1;
+        ref_frame_config->ref_idx[1] = 4;
+        ref_frame_config->refresh[4] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 2,
+        // GOLDEN (and all other refs) to slot 4.
+        // No update.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 4;
+        ref_frame_config->ref_idx[0] = 2;
+      }
+    } else if ((superframe_cnt - 2) % 4 == 0) {
+      // Middle temporal enhancement layer.
+      layer_id->temporal_layer_id = 1;
+      if (layer_id->spatial_layer_id == 0) {
+        // Reference LAST.
+        // Set all buffer_idx to 0.
+        // Set GOLDEN to slot 3 and update slot 3.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[3] = 3;
+        ref_frame_config->refresh[3] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 1,
+        // GOLDEN (and all other refs) to slot 3.
+        // Set LAST2 to slot 4 and update slot 4.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 3;
+        ref_frame_config->ref_idx[0] = 1;
+        ref_frame_config->ref_idx[2] = 4;
+        ref_frame_config->refresh[4] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 2,
+        // GOLDEN (and all other refs) to slot 4.
+        // Set LAST2 to slot 5 and update slot 5.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 4;
+        ref_frame_config->ref_idx[0] = 2;
+        ref_frame_config->ref_idx[2] = 5;
+        ref_frame_config->refresh[5] = 1;
+      }
+    } else if ((superframe_cnt - 3) % 4 == 0) {
+      // Second top temporal enhancement layer.
+      layer_id->temporal_layer_id = 2;
+      if (layer_id->spatial_layer_id == 0) {
+        // Set LAST to slot 3 and reference LAST.
+        // Set GOLDEN to slot 3 and update slot 3.
+        // Set all other buffer_idx to 0.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[0] = 3;
+        ref_frame_config->ref_idx[3] = 3;
+        ref_frame_config->refresh[3] = 1;
+      } else if (layer_id->spatial_layer_id == 1) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 4,
+        // GOLDEN to slot 3. Set LAST2 to slot 4 and update slot 4.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[0] = 4;
+        ref_frame_config->ref_idx[3] = 3;
+        ref_frame_config->ref_idx[1] = 4;
+        ref_frame_config->refresh[4] = 1;
+      } else if (layer_id->spatial_layer_id == 2) {
+        // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 5,
+        // GOLDEN to slot 4. No update.
+        for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
+        ref_frame_config->ref_idx[0] = 5;
+        ref_frame_config->ref_idx[3] = 4;
+      }
+    }
+    if (layer_id->spatial_layer_id > 0) {
+      // Always reference GOLDEN (inter-layer prediction).
+      ref_frame_config->reference[3] = 1;
+      if (is_key_frame && layer_id->spatial_layer_id > 0) {
+        // On superframes whose base is key: remove LAST since GOLDEN
+        // is used as reference.
+        ref_frame_config->reference[0] = 0;
+      }
+    }
+  }
+
   // Layer pattern configuration.
   virtual int set_layer_pattern(
       int frame_cnt, aom_svc_layer_id_t *layer_id,
       aom_svc_ref_frame_config_t *ref_frame_config,
       aom_svc_ref_frame_comp_pred_t *ref_frame_comp_pred, int spatial_layer,
       int multi_ref, int comp_pred, int is_key_frame,
-      int dynamic_enable_disable_mode, int rps_mode, int rps_recovery_frame) {
+      int dynamic_enable_disable_mode, int rps_mode, int rps_recovery_frame,
+      int simulcast_mode) {
     int lag_index = 0;
     int base_count = frame_cnt >> 2;
     layer_id->spatial_layer_id = spatial_layer;
@@ -374,10 +686,10 @@ class DatarateTestSVC
       //    1    3    5
       //  0    2    4
       // Keep golden fixed at slot 3.
-      int base_count = frame_cnt >> 1;
+      base_count = frame_cnt >> 1;
       ref_frame_config->ref_idx[3] = 3;
       // Cyclically refresh slots 5, 6, 7, for lag alt ref.
-      int lag_index = 5;
+      lag_index = 5;
       if (base_count > 0) {
         lag_index = 5 + (base_count % 3);
         if (frame_cnt % 2 != 0) lag_index = 5 + ((base_count + 1) % 3);
@@ -403,8 +715,7 @@ class DatarateTestSVC
         ref_frame_config->reference[3] = 1;
         ref_frame_config->reference[6] = 1;
       }
-    }
-    if (number_temporal_layers_ == 3 && number_spatial_layers_ == 1) {
+    } else if (number_temporal_layers_ == 3 && number_spatial_layers_ == 1) {
       // 3-layer:
       //   1    3   5    7
       //     2        6
@@ -499,128 +810,21 @@ class DatarateTestSVC
       // Reference GOLDEN.
       if (layer_id->spatial_layer_id > 0) ref_frame_config->reference[3] = 1;
     } else if (number_temporal_layers_ == 3 && number_spatial_layers_ == 3) {
-      // 3 spatial and 3 temporal layer.
-      // Overlap in the buffer slot updates: the slots 3 and 4 updated by
-      // first TL2 are reused for update in TL1 superframe.
-      if (superframe_cnt_ % 4 == 0) {
-        // Base temporal layer.
-        layer_id->temporal_layer_id = 0;
-        if (layer_id->spatial_layer_id == 0) {
-          // Reference LAST, update LAST.
-          // Set all buffer_idx to 0.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->refresh[0] = 1;
-        } else if (layer_id->spatial_layer_id == 1) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 1,
-          // GOLDEN (and all other refs) to slot 0.
-          // Update slot 1 (LAST).
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->ref_idx[0] = 1;
-          ref_frame_config->refresh[1] = 1;
-        } else if (layer_id->spatial_layer_id == 2) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 2,
-          // GOLDEN (and all other refs) to slot 1.
-          // Update slot 2 (LAST).
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 1;
-          ref_frame_config->ref_idx[0] = 2;
-          ref_frame_config->refresh[2] = 1;
+      if (simulcast_mode) {
+        ref_config_simulcast3SL3TL(ref_frame_config, layer_id, is_key_frame,
+                                   superframe_cnt_);
+      } else {
+        ref_config_3SL3TL(ref_frame_config, layer_id, is_key_frame,
+                          superframe_cnt_);
+        // Allow for top spatial layer to use additional temporal reference.
+        // Additional reference is only updated on base temporal layer, every
+        // 10 TL0 frames here.
+        if (multi_ref && layer_id->spatial_layer_id == 2) {
+          ref_frame_config->ref_idx[6] = 7;
+          if (!is_key_frame) ref_frame_config->reference[6] = 1;
+          if (base_count % 10 == 0 && layer_id->temporal_layer_id == 0)
+            ref_frame_config->refresh[7] = 1;
         }
-      } else if ((superframe_cnt_ - 1) % 4 == 0) {
-        // First top temporal enhancement layer.
-        layer_id->temporal_layer_id = 2;
-        if (layer_id->spatial_layer_id == 0) {
-          // Reference LAST (slot 0).
-          // Set GOLDEN to slot 3 and update slot 3.
-          // Set all other buffer_idx to slot 0.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->ref_idx[3] = 3;
-          ref_frame_config->refresh[3] = 1;
-        } else if (layer_id->spatial_layer_id == 1) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 1,
-          // GOLDEN (and all other refs) to slot 3.
-          // Set LAST2 to slot 4 and Update slot 4.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 3;
-          ref_frame_config->ref_idx[0] = 1;
-          ref_frame_config->ref_idx[1] = 4;
-          ref_frame_config->refresh[4] = 1;
-        } else if (layer_id->spatial_layer_id == 2) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 2,
-          // GOLDEN (and all other refs) to slot 4.
-          // No update.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 4;
-          ref_frame_config->ref_idx[0] = 2;
-        }
-      } else if ((superframe_cnt_ - 2) % 4 == 0) {
-        // Middle temporal enhancement layer.
-        layer_id->temporal_layer_id = 1;
-        if (layer_id->spatial_layer_id == 0) {
-          // Reference LAST.
-          // Set all buffer_idx to 0.
-          // Set GOLDEN to slot 3 and update slot 3.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->ref_idx[3] = 3;
-          ref_frame_config->refresh[3] = 1;
-        } else if (layer_id->spatial_layer_id == 1) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 1,
-          // GOLDEN (and all other refs) to slot 3.
-          // Set LAST2 to slot 4 and update slot 4.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 3;
-          ref_frame_config->ref_idx[0] = 1;
-          ref_frame_config->ref_idx[2] = 4;
-          ref_frame_config->refresh[4] = 1;
-        } else if (layer_id->spatial_layer_id == 2) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 2,
-          // GOLDEN (and all other refs) to slot 4.
-          // Set LAST2 to slot 5 and update slot 5.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 4;
-          ref_frame_config->ref_idx[0] = 2;
-          ref_frame_config->ref_idx[2] = 5;
-          ref_frame_config->refresh[5] = 1;
-        }
-      } else if ((superframe_cnt_ - 3) % 4 == 0) {
-        // Second top temporal enhancement layer.
-        layer_id->temporal_layer_id = 2;
-        if (layer_id->spatial_layer_id == 0) {
-          // Set LAST to slot 3 and reference LAST.
-          // Set GOLDEN to slot 3 and update slot 3.
-          // Set all other buffer_idx to 0.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->ref_idx[0] = 3;
-          ref_frame_config->ref_idx[3] = 3;
-          ref_frame_config->refresh[3] = 1;
-        } else if (layer_id->spatial_layer_id == 1) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 4,
-          // GOLDEN to slot 3. Set LAST2 to slot 4 and update slot 4.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->ref_idx[0] = 4;
-          ref_frame_config->ref_idx[3] = 3;
-          ref_frame_config->ref_idx[1] = 4;
-          ref_frame_config->refresh[4] = 1;
-        } else if (layer_id->spatial_layer_id == 2) {
-          // Reference LAST and GOLDEN. Set buffer_idx for LAST to slot 5,
-          // GOLDEN to slot 4. No update.
-          for (int i = 0; i < 7; i++) ref_frame_config->ref_idx[i] = 0;
-          ref_frame_config->ref_idx[0] = 5;
-          ref_frame_config->ref_idx[3] = 4;
-        }
-      }
-      if (layer_id->spatial_layer_id > 0) {
-        // Always reference GOLDEN (inter-layer prediction).
-        ref_frame_config->reference[3] = 1;
-        if (is_key_frame && layer_id->spatial_layer_id > 0) {
-          // On superframes whose base is key: remove LAST since GOLDEN
-          // is used as reference.
-          ref_frame_config->reference[0] = 0;
-        }
-      }
-      // Allow for top spatial layer to use additional temporal reference.
-      // Additional reference is only updated on base temporal layer, every
-      // 10 TL0 frames here.
-      if (multi_ref && layer_id->spatial_layer_id == 2) {
-        ref_frame_config->ref_idx[6] = 7;
-        if (!is_key_frame) ref_frame_config->reference[6] = 1;
-        if (base_count % 10 == 0 && layer_id->temporal_layer_id == 0)
-          ref_frame_config->refresh[7] = 1;
       }
     }
     // If the top spatial layer is first-time encoded in mid-sequence
@@ -805,6 +1009,44 @@ class DatarateTestSVC
     // We use LE for screen since loopfilter level can become very small
     // or zero and then the frame is not a mismatch.
     EXPECT_LE((int)GetMismatchFrames(), 30);
+  }
+
+  virtual void BasicRateTargetingSVC2TL1SLScreenDropFrameTest() {
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_buf_optimal_sz = 500;
+    cfg_.rc_buf_sz = 1000;
+    cfg_.rc_dropframe_thresh = 30;
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 52;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.g_lag_in_frames = 0;
+    cfg_.g_error_resilient = 0;
+
+    ::libaom_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352,
+                                         288, 30, 1, 0, 300);
+
+    const int bitrate_array[2] = { 60, 100 };
+    cfg_.rc_target_bitrate = bitrate_array[GET_PARAM(4)];
+    ResetModel();
+    screen_mode_ = 1;
+    number_temporal_layers_ = 2;
+    number_spatial_layers_ = 1;
+    target_layer_bitrate_[0] = 60 * cfg_.rc_target_bitrate / 100;
+    target_layer_bitrate_[1] = cfg_.rc_target_bitrate;
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    for (int i = 0; i < number_temporal_layers_ * number_spatial_layers_; i++) {
+      ASSERT_GE(effective_datarate_tl[i], target_layer_bitrate_[i] * 0.75)
+          << " The datarate for the file is lower than target by too much!";
+      ASSERT_LE(effective_datarate_tl[i], target_layer_bitrate_[i] * 1.5)
+          << " The datarate for the file is greater than target by too much!";
+    }
+    // Top temporal layers are non_reference, so exlcude them from
+    // mismatch count, since loopfilter/cdef is not applied for these on
+    // encoder side, but is always applied on decoder.
+    // This means 300 = #frames(300) - #TL2_frames(150).
+    // We use LE for screen since loopfilter level can become very small
+    // or zero and then the frame is not a mismatch.
+    EXPECT_LE((int)GetMismatchFrames(), 150);
   }
 
   virtual void BasicRateTargetingSVC1TL3SLScreenTest() {
@@ -1043,6 +1285,60 @@ class DatarateTestSVC
     // All 3 spatial layers are decoded, starting at frame 0, so there are
     // and there 300/2 = 150 non-reference frames, so mismatch is 150.
     EXPECT_EQ((int)GetMismatchFrames(), 150);
+  }
+
+  virtual void BasicRateTargetingSVC3TL3SLSimulcast() {
+    cfg_.rc_buf_initial_sz = 500;
+    cfg_.rc_buf_optimal_sz = 500;
+    cfg_.rc_buf_sz = 1000;
+    cfg_.rc_dropframe_thresh = 0;
+    cfg_.rc_min_quantizer = 0;
+    cfg_.rc_max_quantizer = 56;
+    cfg_.rc_end_usage = AOM_CBR;
+    cfg_.g_lag_in_frames = 0;
+    cfg_.g_error_resilient = 0;
+    cfg_.kf_max_dist = 150;
+    cfg_.kf_min_dist = 150;
+    int num_frames = 300;
+    ::libaom_test::I420VideoSource video("hantro_collage_w352h288.yuv", 352,
+                                         288, 30, 1, 0, num_frames);
+    const int bitrate_array[2] = { 500, 1000 };
+    cfg_.rc_target_bitrate = bitrate_array[GET_PARAM(4)];
+    ResetModel();
+    simulcast_mode_ = 1;
+    frame_to_start_decoding_ = cfg_.kf_max_dist;
+    layer_to_decode_ = 2;  // SL2
+    number_temporal_layers_ = 3;
+    number_spatial_layers_ = 3;
+    // SL0
+    const int bitrate_sl0 = 1 * cfg_.rc_target_bitrate / 8;
+    target_layer_bitrate_[0] = 50 * bitrate_sl0 / 100;
+    target_layer_bitrate_[1] = 70 * bitrate_sl0 / 100;
+    target_layer_bitrate_[2] = bitrate_sl0;
+    // SL1
+    const int bitrate_sl1 = 3 * cfg_.rc_target_bitrate / 8;
+    target_layer_bitrate_[3] = 50 * bitrate_sl1 / 100;
+    target_layer_bitrate_[4] = 70 * bitrate_sl1 / 100;
+    target_layer_bitrate_[5] = bitrate_sl1;
+    // SL2
+    const int bitrate_sl2 = 4 * cfg_.rc_target_bitrate / 8;
+    target_layer_bitrate_[6] = 50 * bitrate_sl2 / 100;
+    target_layer_bitrate_[7] = 70 * bitrate_sl2 / 100;
+    target_layer_bitrate_[8] = bitrate_sl2;
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    // Only SL2 layer is decoded.
+    for (int tl = 0; tl < number_temporal_layers_; tl++) {
+      int i = layer_to_decode_ * number_temporal_layers_ + tl;
+      ASSERT_GE(effective_datarate_tl[i], target_layer_bitrate_[i] * 0.6)
+          << " The datarate for the file is lower than target by too much!";
+      ASSERT_LE(effective_datarate_tl[i], target_layer_bitrate_[i] * 1.7)
+          << " The datarate for the file is greater than target by too much!";
+    }
+    // Only top spatial layer (SL2) is decoded, starting at frame 150
+    // (frame_to_start_decoding_), so there (300 - 150) / 2 = 75
+    // non-reference frames, so mismatch is 75.
+    int num_mismatch = (num_frames - frame_to_start_decoding_) / 2;
+    EXPECT_EQ((int)GetMismatchFrames(), num_mismatch);
   }
 
   virtual void BasicRateTargetingSVC1TL2SLIntraOnlyTest() {
@@ -2088,6 +2384,7 @@ class DatarateTestSVC
   int screen_mode_;
   int rps_mode_;
   int rps_recovery_frame_;
+  int simulcast_mode_;
 
   int user_define_frame_qp_;
   int frame_qp_;
@@ -2111,6 +2408,11 @@ TEST_P(DatarateTestSVC, BasicRateTargetingSVC3TL1SLScreen) {
   BasicRateTargetingSVC3TL1SLScreenTest();
 }
 
+// Check basic rate targeting for CBR, for 2 temporal layers, 1 spatial
+// for screen mode, with frame dropper on at low bitrates
+TEST_P(DatarateTestSVC, BasicRateTargetingSVC2TL1SLScreenDropFrame) {
+  BasicRateTargetingSVC2TL1SLScreenDropFrameTest();
+}
 // Check basic rate targeting for CBR, for 3 spatial layers, 1 temporal
 // for screen mode.
 TEST_P(DatarateTestSVC, BasicRateTargetingSVC1TL3SLScreen) {
@@ -2147,6 +2449,14 @@ TEST_P(DatarateTestSVC, BasicRateTargetingSVC3TL3SLIntraStartDecodeBaseMidSeq) {
 // decode all frames and layers with no mismatch.
 TEST_P(DatarateTestSVC, BasicRateTargetingSVC3TL3SLIntraMidSeqDecodeAll) {
   BasicRateTargetingSVC3TL3SLIntraMidSeqDecodeAll();
+}
+
+// Check simulcast mode for 3 spatial layers, 3 temporal,
+// Key frame is inserted on base SLO in mid-stream, and verify that the
+// top spatial layer (SL2) case be decoded, starting with an Intra-only frame.
+// Verify that we can decode all frames for SL2 with no mismatch.
+TEST_P(DatarateTestSVC, BasicRateTargetingSVC3TL3SLSimulcast) {
+  BasicRateTargetingSVC3TL3SLSimulcast();
 }
 
 // Check basic rate targeting for CBR, for 2 spatial layers, 1 temporal,
@@ -2321,6 +2631,39 @@ TEST_P(DatarateTestSVC, BasicRateTargetingSVC1TL3SLDynDisEnabl) {
 // and continue decoding successfully.
 TEST_P(DatarateTestSVC, BasicRateTargetingRPS1TL1SLDropFrames) {
   BasicRateTargetingRPS1TL1SLDropFramesTest();
+}
+
+TEST(SvcParams, BitrateOverflow) {
+  uint8_t buf[6] = { 0 };
+  aom_image_t img;
+  aom_codec_ctx_t enc;
+  aom_codec_enc_cfg_t cfg;
+
+  EXPECT_EQ(&img, aom_img_wrap(&img, AOM_IMG_FMT_I420, 1, 1, 1, buf));
+
+  aom_codec_iface_t *const iface = aom_codec_av1_cx();
+  EXPECT_EQ(aom_codec_enc_config_default(iface, &cfg, AOM_USAGE_REALTIME),
+            AOM_CODEC_OK);
+  cfg.g_w = 1;
+  cfg.g_h = 1;
+  ASSERT_EQ(aom_codec_enc_init(&enc, iface, &cfg, 0), AOM_CODEC_OK);
+
+  aom_svc_params_t svc_params = {};
+  svc_params.framerate_factor[0] = 1;
+  svc_params.framerate_factor[1] = 2;
+  svc_params.number_spatial_layers = 1;
+  svc_params.number_temporal_layers = 2;
+  svc_params.layer_target_bitrate[0] = INT_MAX;
+  svc_params.layer_target_bitrate[1] = INT_MAX;
+  EXPECT_EQ(aom_codec_control(&enc, AV1E_SET_SVC_PARAMS, &svc_params),
+            AOM_CODEC_OK);
+  EXPECT_EQ(
+      aom_codec_encode(&enc, &img, /*pts=*/0, /*duration=*/1, /*flags=*/0),
+      AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_encode(&enc, /*img=*/nullptr, /*pts=*/0, /*duration=*/0,
+                             /*flags=*/0),
+            AOM_CODEC_OK);
+  EXPECT_EQ(aom_codec_destroy(&enc), AOM_CODEC_OK);
 }
 
 AV1_INSTANTIATE_TEST_SUITE(DatarateTestSVC,

@@ -187,7 +187,7 @@ void VMTraps::invalidateCodeBlocksOnStack(Locker<Lock>&, CallFrame* topCallFrame
 
     while (callFrame) {
         CodeBlock* codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
-        if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()))
+        if (codeBlock && JSC::JITCode::isOptimizingJIT(codeBlock->jitType()))
             codeBlock->jettison(Profiler::JettisonDueToVMTraps);
         callFrame = callFrame->callerFrame(entryFrame);
     }

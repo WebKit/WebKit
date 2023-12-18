@@ -314,7 +314,7 @@ struct DerefObserver {
 
 TEST(WTF_RobinHoodHashSet, RefPtrNotZeroedBeforeDeref)
 {
-    auto observer = makeUnique<DerefObserver>();
+    auto observer = makeUniqueWithoutRefCountedCheck<DerefObserver>();
 
     MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<DerefObserver>, RobinHoodHash<RefPtr<DerefObserver>>> set;
     set.add(adoptRef(observer.get()));

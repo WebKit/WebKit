@@ -55,7 +55,7 @@ public:
 
     constexpr MediaTime();
     constexpr MediaTime(int64_t value, uint32_t scale, uint8_t flags = Valid);
-    MediaTime(const MediaTime& rhs);
+    MediaTime(const MediaTime&) = default;
 
     static MediaTime createWithFloat(float floatTime);
     static MediaTime createWithFloat(float floatTime, uint32_t timeScale);
@@ -65,7 +65,7 @@ public:
     float toFloat() const;
     double toDouble() const;
 
-    MediaTime& operator=(const MediaTime& rhs);
+    MediaTime& operator=(const MediaTime&) = default;
     MediaTime& operator+=(const MediaTime& rhs) { return *this = *this + rhs; }
     MediaTime& operator-=(const MediaTime& rhs) { return *this = *this - rhs; }
     MediaTime operator+(const MediaTime& rhs) const;

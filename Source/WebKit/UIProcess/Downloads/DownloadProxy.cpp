@@ -114,7 +114,7 @@ void DownloadProxy::publishProgress(const URL& URL)
     if (!handle)
         return;
 
-    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, *handle), 0);
+    m_dataStore->networkProcess().send(Messages::NetworkProcess::PublishDownloadProgress(m_downloadID, URL, WTFMove(*handle)), 0);
 }
 #endif // PLATFORM(COCOA)
 
@@ -140,14 +140,11 @@ void DownloadProxy::didReceiveAuthenticationChallenge(AuthenticationChallenge&& 
     m_client->didReceiveAuthenticationChallenge(*this, authenticationChallengeProxy.get());
 }
 
-void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const ResourceResponse& redirectResponse)
+void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    m_client->willSendRequest(*this, WTFMove(proposedRequest), redirectResponse, [this, protectedThis = Ref { *this }](ResourceRequest&& newRequest) {
+    m_client->willSendRequest(*this, WTFMove(proposedRequest), redirectResponse, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& newRequest) mutable {
         m_redirectChain.append(newRequest.url());
-        if (!protectedThis->m_dataStore)
-            return;
-        Ref networkProcessProxy = protectedThis->m_dataStore->networkProcess();
-        networkProcessProxy->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
+        completionHandler(WTFMove(newRequest));
     });
 }
 

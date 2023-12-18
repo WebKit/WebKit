@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 
 .extern	OPENSSL_ia32cap_P
@@ -21,6 +14,7 @@
 .align	16
 sha512_block_data_order:
 .cfi_startproc	
+_CET_ENDBR
 	leaq	OPENSSL_ia32cap_P(%rip),%r11
 	movl	0(%r11),%r9d
 	movl	4(%r11),%r10d
@@ -1733,7 +1727,7 @@ sha512_block_data_order:
 	leaq	(%rsi),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha512_block_data_order,.-sha512_block_data_order
 .section	.rodata
@@ -2987,11 +2981,7 @@ sha512_block_data_order_avx:
 	leaq	(%rsi),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue_avx:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha512_block_data_order_avx,.-sha512_block_data_order_avx
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

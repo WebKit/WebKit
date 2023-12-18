@@ -30,7 +30,5 @@ struct WebKit::WebsiteData {
     Vector<WebKit::WebsiteData::Entry> entries;
     HashSet<String> hostNamesWithCookies;
     HashSet<String> hostNamesWithHSTSCache;
-#if ENABLE(TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
-#endif
 };

@@ -150,11 +150,6 @@ TEST_F(PortAllocatorTest, SetConfigurationUpdatesCandidatePoolSize) {
   EXPECT_EQ(4, allocator_->candidate_pool_size());
 }
 
-// A negative pool size should just be treated as zero.
-TEST_F(PortAllocatorTest, SetConfigurationWithNegativePoolSizeFails) {
-  SetConfigurationWithPoolSizeExpectFailure(-1);
-}
-
 // Test that if the candidate pool size is nonzero, pooled sessions are
 // created, and StartGettingPorts is called on them.
 TEST_F(PortAllocatorTest, SetConfigurationCreatesPooledSessions) {
@@ -210,33 +205,6 @@ TEST_F(PortAllocatorTest,
   EXPECT_EQ(turn_servers_2, session_1->turn_servers());
   EXPECT_EQ(stun_servers_2, session_2->stun_servers());
   EXPECT_EQ(turn_servers_2, session_2->turn_servers());
-  EXPECT_EQ(0, GetAllPooledSessionsReturnCount());
-}
-
-// According to JSEP, after SetLocalDescription, setting different ICE servers
-// will not cause the pool to be refilled. This is implemented by the
-// PeerConnection calling FreezeCandidatePool when a local description is set.
-TEST_F(PortAllocatorTest,
-       SetConfigurationDoesNotRecreatePooledSessionsAfterFreezeCandidatePool) {
-  cricket::ServerAddresses stun_servers_1 = {stun_server_1};
-  std::vector<cricket::RelayServerConfig> turn_servers_1 = {turn_server_1};
-  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1,
-                               webrtc::NO_PRUNE);
-  EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
-  EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
-
-  // Update with a different set of servers, but first freeze the pool.
-  allocator_->FreezeCandidatePool();
-  cricket::ServerAddresses stun_servers_2 = {stun_server_2};
-  std::vector<cricket::RelayServerConfig> turn_servers_2 = {turn_server_2};
-  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2,
-                               webrtc::NO_PRUNE);
-  EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
-  EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
-  auto session = TakePooledSession();
-  ASSERT_NE(nullptr, session.get());
-  EXPECT_EQ(stun_servers_1, session->stun_servers());
-  EXPECT_EQ(turn_servers_1, session->turn_servers());
   EXPECT_EQ(0, GetAllPooledSessionsReturnCount());
 }
 
@@ -355,6 +323,21 @@ TEST_F(PortAllocatorTest, SanitizePrflxCandidateMdnsObfuscationEnabled) {
   cricket::Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_NE(kIpv4AddressWithPort, output.address().ToString());
   EXPECT_EQ("", output.address().ipaddr().ToString());
+}
+
+TEST_F(PortAllocatorTest,
+       SanitizePrflxCandidateMdnsObfuscationEnabledRelatedAddress) {
+  allocator_->SetMdnsObfuscationEnabledForTesting(true);
+  // Create the candidate from an IP literal. This populates the hostname.
+  cricket::Candidate input(1, "udp", rtc::SocketAddress(kIpv4Address, 443), 1,
+                           "username", "password", cricket::PRFLX_PORT_TYPE, 1,
+                           "foundation", 1, 1);
+
+  cricket::Candidate output = allocator_->SanitizeCandidate(input);
+  EXPECT_NE(kIpv4AddressWithPort, output.address().ToString());
+  EXPECT_EQ("", output.address().ipaddr().ToString());
+  EXPECT_NE(kIpv4AddressWithPort, output.related_address().ToString());
+  EXPECT_EQ("", output.related_address().ipaddr().ToString());
 }
 
 TEST_F(PortAllocatorTest, SanitizeIpv4NonLiteralMdnsObfuscationEnabled) {

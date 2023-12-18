@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WebSocketTaskCocoa.h"
 
-#if HAVE(NSURLSESSION_WEBSOCKET)
-
 #import "NetworkSessionCocoa.h"
 #import "NetworkSocketChannel.h"
 #import <Foundation/NSURLSession.h>
@@ -57,7 +55,6 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     if (clientOrigin.topOrigin == clientOrigin.clientOrigin)
         m_topOrigin = clientOrigin.topOrigin;
 
-#if ENABLE(TRACKING_PREVENTION)
     bool shouldBlockCookies = storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
     if (auto* networkStorageSession = networkSession() ? networkSession()->networkStorageSession() : nullptr) {
         if (!shouldBlockCookies)
@@ -65,7 +62,6 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     }
     if (shouldBlockCookies)
         blockCookies();
-#endif
 
     readNextMessage();
     m_channel.didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
@@ -183,4 +179,3 @@ NSURLSessionTask* WebSocketTask::task() const
 }
 
 }
-#endif

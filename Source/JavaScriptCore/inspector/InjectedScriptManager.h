@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/NakedPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -48,7 +49,7 @@ class InjectedScriptHost;
 
 class JS_EXPORT_PRIVATE InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InjectedScriptManager);
 public:
     InjectedScriptManager(InspectorEnvironment&, Ref<InjectedScriptHost>&&);
     virtual ~InjectedScriptManager();

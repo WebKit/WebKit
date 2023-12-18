@@ -49,7 +49,9 @@ struct WebKit::WebHitTestResultData {
     bool isTextNode;
     bool isOverTextInsideFormControlElement;
     bool isDownloadableMedia;
+    bool mediaIsInFullscreen;
     WebKit::WebHitTestResultData::ElementType elementType;
+    std::optional<WebKit::FrameInfoData> frameInfo;
     String lookupText;
     String toolTipText;
     String imageText;

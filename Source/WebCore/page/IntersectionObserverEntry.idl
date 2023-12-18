@@ -28,7 +28,6 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    EnabledBySetting=IntersectionObserverEnabled,
     JSCustomMarkFunction,
     Exposed=Window
 ] interface IntersectionObserverEntry {

@@ -1,0 +1,4 @@
+
+
+FAIL The url of a document with no-referrer referrer policy is censored in NavigationHistoryEntry assert_equals: expected 2 but got 0
+

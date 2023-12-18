@@ -31,7 +31,6 @@
 
 namespace WGSL::AST {
 
-// FIXME: Perhaps this class is not needed if we have spanned identifier?
 class VariableQualifier final : public Node {
     WGSL_AST_BUILDER_NODE(VariableQualifier);
 public:

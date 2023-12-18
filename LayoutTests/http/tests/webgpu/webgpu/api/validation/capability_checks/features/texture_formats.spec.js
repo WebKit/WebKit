@@ -5,7 +5,7 @@ Tests for capability checking for features enabling optional texture formats.
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
 import { assert } from '../../../../../common/util/util.js';
-import { kAllTextureFormats, kTextureFormatInfo } from '../../../../capability_info.js';
+import { kAllTextureFormats, kTextureFormatInfo } from '../../../../format_info.js';
 import { kAllCanvasTypes, createCanvas } from '../../../../util/create_elements.js';
 import { ValidationTest } from '../../validation_test.js';
 
@@ -234,7 +234,7 @@ g.test('storage_texture_binding_layout')
   .params(u =>
     u
       .combine('format', kOptionalTextureFormats)
-      .filter(t => kTextureFormatInfo[t.format].storage)
+      .filter(t => !!kTextureFormatInfo[t.format].color?.storage)
       .combine('enable_required_feature', [true, false])
   )
   .beforeAllSubcases(t => {
@@ -275,7 +275,7 @@ g.test('color_target_state')
   .params(u =>
     u
       .combine('format', kOptionalTextureFormats)
-      .filter(t => kTextureFormatInfo[t.format].renderable && kTextureFormatInfo[t.format].color)
+      .filter(t => !!kTextureFormatInfo[t.format].colorRender)
       .combine('enable_required_feature', [true, false])
   )
   .beforeAllSubcases(t => {
@@ -327,11 +327,7 @@ g.test('depth_stencil_state')
   .params(u =>
     u
       .combine('format', kOptionalTextureFormats)
-      .filter(
-        t =>
-          kTextureFormatInfo[t.format].renderable &&
-          (kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil)
-      )
+      .filter(t => !!(kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil))
       .combine('enable_required_feature', [true, false])
   )
   .beforeAllSubcases(t => {
@@ -360,6 +356,8 @@ g.test('depth_stencil_state')
         },
         depthStencil: {
           format,
+          depthCompare: 'always',
+          depthWriteEnabled: false,
         },
         fragment: {
           module: t.device.createShaderModule({
@@ -388,7 +386,7 @@ g.test('render_bundle_encoder_descriptor_color_format')
   .params(u =>
     u
       .combine('format', kOptionalTextureFormats)
-      .filter(t => kTextureFormatInfo[t.format].renderable && kTextureFormatInfo[t.format].color)
+      .filter(t => !!kTextureFormatInfo[t.format].colorRender)
       .combine('enable_required_feature', [true, false])
   )
   .beforeAllSubcases(t => {
@@ -419,11 +417,7 @@ g.test('render_bundle_encoder_descriptor_depth_stencil_format')
   .params(u =>
     u
       .combine('format', kOptionalTextureFormats)
-      .filter(
-        t =>
-          kTextureFormatInfo[t.format].renderable &&
-          (kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil)
-      )
+      .filter(t => !!(kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil))
       .combine('enable_required_feature', [true, false])
   )
   .beforeAllSubcases(t => {

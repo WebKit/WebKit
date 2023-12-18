@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,10 +31,13 @@
 #include "SimpleMarkingConstraint.h"
 #include "SuperSampler.h"
 #include <wtf/Function.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
-MarkingConstraintSet::MarkingConstraintSet(Heap& heap)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MarkingConstraintSet);
+
+MarkingConstraintSet::MarkingConstraintSet(JSC::Heap& heap)
     : m_heap(heap)
 {
 }

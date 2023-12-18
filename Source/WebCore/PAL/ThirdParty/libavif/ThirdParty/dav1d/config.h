@@ -61,7 +61,7 @@
 
 #define CONFIG_8BPC 1
 
-#define CONFIG_LOG 1
+#define CONFIG_LOG 0
 
 #define ENDIANNESS_BIG 0
 

@@ -49,6 +49,8 @@ if (window.accessibilityController) {
         domVideo = document.getElementById("video-with-src-attribute");
         video = accessibilityController.accessibleElementById(domVideo.id);
         output += await expectAsync("video.url.includes(baseVideoPath)", "true");
+        domVideo.setAttribute("src", "resources/foo-bar.mp4");
+        output += await expectAsync("video.url.includes('foo-bar.mp4')", "true");
 
         domVideo = document.getElementById("video-with-source-element");
         video = accessibilityController.accessibleElementById(domVideo.id);

@@ -308,8 +308,8 @@ def _CheckExportValidity(input_api, output_api):
             subprocess.check_output(['gn', 'gen', outdir], shell=use_shell)
         except subprocess.CalledProcessError as e:
             return [
-                output_api.PresubmitError(
-                    'Unable to run gn gen for export_targets.py: %s' % e.output)
+                output_api.PresubmitError('Unable to run gn gen for export_targets.py: %s' %
+                                          e.output.decode())
             ]
         export_target_script = os.path.join(input_api.PresubmitLocalPath(), 'scripts',
                                             'export_targets.py')
@@ -320,11 +320,13 @@ def _CheckExportValidity(input_api, output_api):
                 shell=use_shell)
         except subprocess.CalledProcessError as e:
             if input_api.is_committing:
-                return [output_api.PresubmitError('export_targets.py failed: %s' % e.output)]
+                return [
+                    output_api.PresubmitError('export_targets.py failed: %s' % e.output.decode())
+                ]
             return [
                 output_api.PresubmitPromptWarning(
                     'export_targets.py failed, this may just be due to your local checkout: %s' %
-                    e.output)
+                    e.output.decode())
             ]
         return []
     finally:

@@ -28,7 +28,7 @@
 
 #if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
+#import "CompactContextMenuPresenter.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPeripheral.h"
@@ -72,16 +72,24 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 - (void)reloadData;
 @end
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
 #if USE(UICONTEXTMENU)
 @interface WKDataListSuggestionsDropdown : WKDataListSuggestionsControl <UIContextMenuInteractionDelegate>
 #else
 @interface WKDataListSuggestionsDropdown : WKDataListSuggestionsControl
 #endif
 @end
-#endif
 
 @implementation WKDataListTextSuggestion
+
++ (instancetype)textSuggestionWithInputText:(NSString *)inputText
+{
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    return [[[super alloc] initWithInputText:inputText] autorelease];
+#else
+    return [super textSuggestionWithInputText:inputText];
+#endif
+}
+
 @end
 
 #pragma mark - WebDataListSuggestionsDropdownIOS
@@ -108,13 +116,11 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
 
     WebCore::DataListSuggestionActivationType type = information.activationType;
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (m_contentView._shouldUseContextMenusForFormControls) {
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsDropdown alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
         [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
         return;
     }
-#endif
 
     if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsPicker alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
@@ -233,7 +239,7 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
     [_pickerView setControl:self];
 
     CGRect frame = [_pickerView frame];
-    frame.size = [UIKeyboard defaultSizeForInterfaceOrientation:view.interfaceOrientation];
+    frame.size = view.sizeForLegacyFormControlPickerViews;
     [_pickerView setFrame:frame];
 
     return self;
@@ -299,6 +305,10 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 }
 
 - (void)controlBeginEditing
+{
+}
+
+- (void)controlUpdateEditing
 {
 }
 
@@ -401,14 +411,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-
 #pragma mark - WKDataListSuggestionsDropdown
 
 @implementation WKDataListSuggestionsDropdown {
 #if USE(UICONTEXTMENU)
     RetainPtr<NSArray<UIMenuElement *>> _suggestionsMenuElements;
-    RetainPtr<UIContextMenuInteraction> _suggestionsContextMenuInteraction;
+    std::unique_ptr<WebKit::CompactContextMenuPresenter> _suggestionsContextMenuPresenter;
 #endif
 }
 
@@ -467,22 +475,31 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     [self _updateSuggestionsMenuElements];
 
-    if (!_suggestionsContextMenuInteraction) {
-        _suggestionsContextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
-        [self.view addInteraction:_suggestionsContextMenuInteraction.get()];
-
+    if (!_suggestionsContextMenuPresenter) {
+        _suggestionsContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(self.view, self);
         [self.view doAfterEditorStateUpdateAfterFocusingElement:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self)] {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)
                 return;
 
-            auto view = [strongSelf view];
-            [view presentContextMenu:strongSelf->_suggestionsContextMenuInteraction.get() atLocation:[view lastInteractionLocation]];
+            if (strongSelf->_suggestionsContextMenuPresenter) {
+                strongSelf->_suggestionsContextMenuPresenter->present([&] {
+                    RetainPtr contentView = [strongSelf view];
+                    auto elementRect = [contentView focusedElementInformation].interactionRect;
+                    if (elementRect.isEmpty()) {
+                        elementRect = WebCore::IntRect {
+                            WebCore::IntPoint([contentView lastInteractionLocation]),
+                            WebCore::IntSize { }
+                        };
+                    }
+                    return elementRect;
+                }());
+            }
         }];
     } else {
-        [_suggestionsContextMenuInteraction updateVisibleMenuWithBlock:[&](UIMenu *visibleMenu) -> UIMenu * {
+        _suggestionsContextMenuPresenter->updateVisibleMenu(^UIMenu *(UIMenu *visibleMenu) {
             return [visibleMenu menuByReplacingChildren:_suggestionsMenuElements.get()];
-        }];
+        });
     }
 #endif
 }
@@ -515,11 +532,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_removeContextMenuInteraction
 {
-    if (!_suggestionsContextMenuInteraction)
+    if (!_suggestionsContextMenuPresenter)
         return;
 
-    [self.view removeInteraction:_suggestionsContextMenuInteraction.get()];
-    _suggestionsContextMenuInteraction = nil;
+    _suggestionsContextMenuPresenter->dismiss();
+    _suggestionsContextMenuPresenter = nullptr;
     [self.view _removeContextMenuHintContainerIfPossible];
     [self.view.webView _didDismissContextMenu];
 }
@@ -541,32 +558,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _removeContextMenuInteraction];
 }
 
-- (UIEdgeInsets)_preferredEdgeInsetsForSuggestionsMenu
-{
-    CGRect windowBounds = self.view.textEffectsWindow.bounds;
-    CGRect elementFrameInWindowCoordinates = [self.view convertRect:self.view.focusedElementInformation.interactionRect toView:nil];
-
-    if (CGRectGetMidY(elementFrameInWindowCoordinates) > CGRectGetMidY(windowBounds))
-        return UIEdgeInsetsMake(0, 0, CGRectGetMaxY(windowBounds) - CGRectGetMinY(elementFrameInWindowCoordinates), 0);
-
-    // Use MinY rather than MaxY to account for the hint preview.
-    return UIEdgeInsetsMake(CGRectGetMinY(elementFrameInWindowCoordinates), 0, 0, 0);
-}
-
 #pragma mark UIContextMenuInteractionDelegate
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
-    return [self.view _createTargetedContextMenuHintPreviewForFocusedElement];
-}
-
-- (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-{
-    _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
-    style.preferredLayout = _UIContextMenuLayoutCompactMenu;
-    style.preferredEdgeInsets = [self _preferredEdgeInsetsForSuggestionsMenu];
-
-    return style;
+    return [self.view _createTargetedContextMenuHintPreviewForFocusedElement:WebKit::TargetedPreviewPositioning::LeadingOrTrailingEdge];
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
@@ -601,7 +597,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // USE(UICONTEXTMENU)
 
 @end
-
-#endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 #endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)

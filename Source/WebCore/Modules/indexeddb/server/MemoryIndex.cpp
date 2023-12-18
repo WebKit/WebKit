@@ -208,7 +208,7 @@ IDBError MemoryIndex::putIndexKey(const IDBKeyData& valueKey, const IndexKey& in
     if (m_info.unique()) {
         for (auto& key : keys) {
             if (m_records->contains(key))
-                return IDBError(ConstraintError);
+                return IDBError(ExceptionCode::ConstraintError);
         }
     }
 

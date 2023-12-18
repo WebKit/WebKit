@@ -43,10 +43,10 @@ public:
     bool useDefaultPosition() const { return m_useDefaultPosition; }
 
     double baseFontSizeRelativeToVideoHeight() const { return m_baseFontSizeRelativeToVideoHeight; }
-    void setBaseFontSizeRelativeToVideoHeight(double size) { m_baseFontSizeRelativeToVideoHeight = size; }
+    void setBaseFontSizeRelativeToVideoHeight(double);
 
     double fontSizeMultiplier() const { return m_fontSizeMultiplier; }
-    void setFontSizeMultiplier(double size) { m_fontSizeMultiplier = size; }
+    void setFontSizeMultiplier(double);
 
     const String& fontName() const { return m_fontName; }
     void setFontName(const String& name) { m_fontName = name; }
@@ -59,8 +59,6 @@ public:
     
     const Color& highlightColor() const { return m_highlightColor; }
     void setHighlightColor(const Color& color) { m_highlightColor = color; }
-
-    void setFontSize(int, bool important) final;
 
 private:
     TextTrackCueGeneric(Document&, const MediaTime& start, const MediaTime& end, const String&);

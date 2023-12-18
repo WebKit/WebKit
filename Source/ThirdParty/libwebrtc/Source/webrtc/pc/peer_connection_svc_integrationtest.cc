@@ -139,7 +139,7 @@ TEST_F(PeerConnectionSVCIntegrationTest, SetParametersRejectsL3T3WithVP8) {
   parameters.encodings[0].scalability_mode = "L3T3";
   auto result = transceiver->sender()->SetParameters(parameters);
   EXPECT_FALSE(result.ok());
-  EXPECT_EQ(result.type(), webrtc::RTCErrorType::UNSUPPORTED_OPERATION);
+  EXPECT_EQ(result.type(), webrtc::RTCErrorType::INVALID_MODIFICATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest,
@@ -212,7 +212,7 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   parameters.encodings[0].scalability_mode = "L3T3";
   auto result = transceiver->sender()->SetParameters(parameters);
   EXPECT_FALSE(result.ok());
-  EXPECT_EQ(result.type(), webrtc::RTCErrorType::UNSUPPORTED_OPERATION);
+  EXPECT_EQ(result.type(), webrtc::RTCErrorType::INVALID_MODIFICATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest,
@@ -237,7 +237,7 @@ TEST_F(PeerConnectionSVCIntegrationTest,
   parameters.encodings[0].scalability_mode = "FOOBAR";
   auto result = transceiver->sender()->SetParameters(parameters);
   EXPECT_FALSE(result.ok());
-  EXPECT_EQ(result.type(), webrtc::RTCErrorType::UNSUPPORTED_OPERATION);
+  EXPECT_EQ(result.type(), webrtc::RTCErrorType::INVALID_MODIFICATION);
 }
 
 TEST_F(PeerConnectionSVCIntegrationTest, FallbackToL1Tx) {

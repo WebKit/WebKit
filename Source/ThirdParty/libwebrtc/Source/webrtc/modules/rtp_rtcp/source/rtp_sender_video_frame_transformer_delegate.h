@@ -19,6 +19,8 @@
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "api/video/video_layers_allocation.h"
 #include "rtc_base/synchronization/mutex.h"
 
@@ -28,16 +30,15 @@ namespace webrtc {
 // have been applied.
 class RTPVideoFrameSenderInterface {
  public:
-  virtual bool SendVideo(
-      int payload_type,
-      absl::optional<VideoCodecType> codec_type,
-      uint32_t rtp_timestamp,
-      int64_t capture_time_ms,
-      rtc::ArrayView<const uint8_t> payload,
-      size_t encoder_output_size,
-      RTPVideoHeader video_header,
-      absl::optional<int64_t> expected_retransmission_time_ms,
-      std::vector<uint32_t> csrcs) = 0;
+  virtual bool SendVideo(int payload_type,
+                         absl::optional<VideoCodecType> codec_type,
+                         uint32_t rtp_timestamp,
+                         Timestamp capture_time,
+                         rtc::ArrayView<const uint8_t> payload,
+                         size_t encoder_output_size,
+                         RTPVideoHeader video_header,
+                         TimeDelta expected_retransmission_time,
+                         std::vector<uint32_t> csrcs) = 0;
 
   virtual void SetVideoStructureAfterTransformation(
       const FrameDependencyStructure* video_structure) = 0;
@@ -57,7 +58,6 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
       RTPVideoFrameSenderInterface* sender,
       rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
       uint32_t ssrc,
-      std::vector<uint32_t> csrcs,
       TaskQueueFactory* send_transport_queue);
 
   void Init();
@@ -68,7 +68,7 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
                       uint32_t rtp_timestamp,
                       const EncodedImage& encoded_image,
                       RTPVideoHeader video_header,
-                      absl::optional<int64_t> expected_retransmission_time_ms);
+                      TimeDelta expected_retransmission_time);
 
   // Implements TransformedFrameCallback. Can be called on any thread. Posts
   // the transformed frame to be sent on the `encoder_queue_`.
@@ -104,7 +104,6 @@ class RTPSenderVideoFrameTransformerDelegate : public TransformedFrameCallback {
   RTPVideoFrameSenderInterface* sender_ RTC_GUARDED_BY(sender_lock_);
   rtc::scoped_refptr<FrameTransformerInterface> frame_transformer_;
   const uint32_t ssrc_;
-  std::vector<uint32_t> csrcs_;
   // Used when the encoded frames arrives without a current task queue. This can
   // happen if a hardware encoder was used.
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> transformation_queue_;

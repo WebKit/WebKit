@@ -102,21 +102,20 @@ class SendTransport : public Transport,
 
   void SetRtpRtcpModule(ModuleRtpRtcpImpl2* receiver) { receiver_ = receiver; }
   void SimulateNetworkDelay(TimeDelta delay) { delay_ = delay; }
-  bool SendRtp(const uint8_t* data,
-               size_t len,
+  bool SendRtp(rtc::ArrayView<const uint8_t> data,
                const PacketOptions& options) override {
-    EXPECT_TRUE(last_packet_.Parse(data, len));
+    EXPECT_TRUE(last_packet_.Parse(data));
     ++rtp_packets_sent_;
     return true;
   }
-  bool SendRtcp(const uint8_t* data, size_t len) override {
+  bool SendRtcp(rtc::ArrayView<const uint8_t> data) override {
     test::RtcpPacketParser parser;
-    parser.Parse(data, len);
+    parser.Parse(data);
     last_nack_list_ = parser.nack()->packet_ids();
     Timestamp current_time = time_controller_->GetClock()->CurrentTime();
     Timestamp delivery_time = current_time + delay_;
     rtcp_packets_.push_back(
-        Packet{delivery_time, std::vector<uint8_t>(data, data + len)});
+        Packet{delivery_time, std::vector<uint8_t>(data.begin(), data.end())});
     ++rtcp_packets_sent_;
     RunReady(current_time);
     return true;
@@ -162,10 +161,10 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
                       public SendPacketObserver {
  public:
   struct SentPacket {
-    SentPacket(uint16_t packet_id, int64_t capture_time_ms, uint32_t ssrc)
-        : packet_id(packet_id), capture_time_ms(capture_time_ms), ssrc(ssrc) {}
+    SentPacket(uint16_t packet_id, Timestamp capture_time, uint32_t ssrc)
+        : packet_id(packet_id), capture_time(capture_time), ssrc(ssrc) {}
     uint16_t packet_id;
-    int64_t capture_time_ms;
+    Timestamp capture_time;
     uint32_t ssrc;
   };
 
@@ -197,10 +196,12 @@ class RtpRtcpModule : public RtcpPacketTypeCounterObserver,
     counter_map_[ssrc] = packet_counter;
   }
 
-  void OnSendPacket(uint16_t packet_id,
-                    int64_t capture_time_ms,
+  void OnSendPacket(absl::optional<uint16_t> packet_id,
+                    Timestamp capture_time,
                     uint32_t ssrc) override {
-    last_sent_packet_.emplace(packet_id, capture_time_ms, ssrc);
+    if (packet_id.has_value()) {
+      last_sent_packet_.emplace(*packet_id, capture_time, ssrc);
+    }
   }
 
   absl::optional<SentPacket> last_sent_packet() const {
@@ -350,7 +351,6 @@ class RtpRtcpImpl2Test : public ::testing::Test {
     rtp_video_header.height = kHeight;
     rtp_video_header.rotation = kVideoRotation_0;
     rtp_video_header.content_type = VideoContentType::UNSPECIFIED;
-    rtp_video_header.playout_delay = {-1, -1};
     rtp_video_header.is_first_packet_in_frame = true;
     rtp_video_header.simulcastIdx = 0;
     rtp_video_header.codec = kVideoCodecVP8;
@@ -360,9 +360,10 @@ class RtpRtcpImpl2Test : public ::testing::Test {
     const uint8_t payload[100] = {0};
     bool success = module->impl_->OnSendingRtpFrame(0, 0, kPayloadType, true);
 
-    success &= sender->SendVideo(kPayloadType, VideoCodecType::kVideoCodecVP8,
-                                 rtp_timestamp, capture_time_ms, payload,
-                                 sizeof(payload), rtp_video_header, 0, {});
+    success &= sender->SendVideo(
+        kPayloadType, VideoCodecType::kVideoCodecVP8, rtp_timestamp,
+        Timestamp::Millis(capture_time_ms), payload, sizeof(payload),
+        rtp_video_header, TimeDelta::Zero(), {});
     return success;
   }
 
@@ -442,10 +443,10 @@ TEST_F(RtpRtcpImpl2Test, Rtt) {
 }
 
 TEST_F(RtpRtcpImpl2Test, RttForReceiverOnly) {
-  // Receiver module should send a Receiver time reference report (RTRR).
+  // Receiver module should send a Receiver reference time report block (RRTR).
   EXPECT_EQ(0, receiver_.impl_->SendRTCP(kRtcpReport));
 
-  // Sender module should send a response to the last received RTRR (DLRR).
+  // Sender module should send a response to the last received RRTR (DLRR).
   AdvanceTime(TimeDelta::Millis(1000));
   // Send Frame before sending a SR.
   EXPECT_TRUE(SendFrame(&sender_, sender_video_.get(), kBaseLayerTid));
@@ -494,8 +495,8 @@ TEST_F(RtpRtcpImpl2Test, RtcpPacketTypeCounter_Nack) {
 
 TEST_F(RtpRtcpImpl2Test, AddStreamDataCounters) {
   StreamDataCounters rtp;
-  const int64_t kStartTimeMs = 1;
-  rtp.first_packet_time_ms = kStartTimeMs;
+  const Timestamp kStartTime = Timestamp::Seconds(1);
+  rtp.first_packet_time = kStartTime;
   rtp.transmitted.packets = 1;
   rtp.transmitted.payload_bytes = 1;
   rtp.transmitted.header_bytes = 2;
@@ -505,7 +506,6 @@ TEST_F(RtpRtcpImpl2Test, AddStreamDataCounters) {
                                               rtp.transmitted.padding_bytes);
 
   StreamDataCounters rtp2;
-  rtp2.first_packet_time_ms = -1;
   rtp2.transmitted.packets = 10;
   rtp2.transmitted.payload_bytes = 10;
   rtp2.retransmitted.header_bytes = 4;
@@ -516,7 +516,7 @@ TEST_F(RtpRtcpImpl2Test, AddStreamDataCounters) {
 
   StreamDataCounters sum = rtp;
   sum.Add(rtp2);
-  EXPECT_EQ(kStartTimeMs, sum.first_packet_time_ms);
+  EXPECT_EQ(sum.first_packet_time, kStartTime);
   EXPECT_EQ(11U, sum.transmitted.packets);
   EXPECT_EQ(11U, sum.transmitted.payload_bytes);
   EXPECT_EQ(2U, sum.transmitted.header_bytes);
@@ -530,9 +530,9 @@ TEST_F(RtpRtcpImpl2Test, AddStreamDataCounters) {
             rtp.transmitted.TotalBytes() + rtp2.transmitted.TotalBytes());
 
   StreamDataCounters rtp3;
-  rtp3.first_packet_time_ms = kStartTimeMs + 10;
+  rtp3.first_packet_time = kStartTime + TimeDelta::Millis(10);
   sum.Add(rtp3);
-  EXPECT_EQ(kStartTimeMs, sum.first_packet_time_ms);  // Holds oldest time.
+  EXPECT_EQ(sum.first_packet_time, kStartTime);  // Holds oldest time.
 }
 
 TEST_F(RtpRtcpImpl2Test, SendsInitialNackList) {
@@ -984,16 +984,15 @@ TEST_F(RtpRtcpImpl2Test, AssignsTransmissionTimeOffset) {
 TEST_F(RtpRtcpImpl2Test, PropagatesSentPacketInfo) {
   sender_.RegisterHeaderExtension(TransportSequenceNumber::Uri(),
                                   kTransportSequenceNumberExtensionId);
-  int64_t now_ms = time_controller_.GetClock()->TimeInMilliseconds();
+  Timestamp now = time_controller_.GetClock()->CurrentTime();
   EXPECT_TRUE(SendFrame(&sender_, sender_video_.get(), kBaseLayerTid));
-  EXPECT_THAT(
-      sender_.last_sent_packet(),
-      Optional(
-          AllOf(Field(&RtpRtcpModule::SentPacket::packet_id,
-                      Eq(sender_.last_packet()
-                             .GetExtension<TransportSequenceNumber>())),
-                Field(&RtpRtcpModule::SentPacket::capture_time_ms, Eq(now_ms)),
-                Field(&RtpRtcpModule::SentPacket::ssrc, Eq(kSenderSsrc)))));
+  EXPECT_THAT(sender_.last_sent_packet(),
+              Optional(AllOf(
+                  Field(&RtpRtcpModule::SentPacket::packet_id,
+                        Eq(sender_.last_packet()
+                               .GetExtension<TransportSequenceNumber>())),
+                  Field(&RtpRtcpModule::SentPacket::capture_time, Eq(now)),
+                  Field(&RtpRtcpModule::SentPacket::ssrc, Eq(kSenderSsrc)))));
 }
 
 TEST_F(RtpRtcpImpl2Test, GeneratesFlexfec) {
@@ -1077,10 +1076,10 @@ TEST_F(RtpRtcpImpl2Test, RtpStateReflectsCurrentState) {
   EXPECT_TRUE(SendFrame(&sender_, sender_video_.get(), kBaseLayerTid));
 
   // Simulate an RTCP receiver report in order to populate `ssrc_has_acked`.
-  RTCPReportBlock ack;
-  ack.source_ssrc = kSenderSsrc;
-  ack.extended_highest_sequence_number = kSeq;
-  sender_.impl_->OnReceivedRtcpReportBlocks({ack});
+  ReportBlockData ack[1];
+  ack[0].set_source_ssrc(kSenderSsrc);
+  ack[0].set_extended_highest_sequence_number(kSeq);
+  sender_.impl_->OnReceivedRtcpReportBlocks(ack);
 
   RtpState state = sender_.impl_->GetRtpState();
   EXPECT_EQ(state.sequence_number, kSeq);
@@ -1125,10 +1124,10 @@ TEST_F(RtpRtcpImpl2Test, RtxRtpStateReflectsCurrentState) {
   EXPECT_EQ(rtx_packet.Ssrc(), kRtxSenderSsrc);
 
   // Simulate an RTCP receiver report in order to populate `ssrc_has_acked`.
-  RTCPReportBlock ack;
-  ack.source_ssrc = kRtxSenderSsrc;
-  ack.extended_highest_sequence_number = rtx_packet.SequenceNumber();
-  sender_.impl_->OnReceivedRtcpReportBlocks({ack});
+  ReportBlockData ack[1];
+  ack[0].set_source_ssrc(kRtxSenderSsrc);
+  ack[0].set_extended_highest_sequence_number(rtx_packet.SequenceNumber());
+  sender_.impl_->OnReceivedRtcpReportBlocks(ack);
 
   RtpState rtp_state = sender_.impl_->GetRtpState();
   RtpState rtx_state = sender_.impl_->GetRtxState();

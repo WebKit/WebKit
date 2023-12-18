@@ -422,10 +422,8 @@ void ImageDocument::imageClicked(int x, int y)
 
 void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    if (event.type() == eventNames().clickEvent && is<MouseEvent>(event)) {
-        MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-        m_document.imageClicked(mouseEvent.offsetX(), mouseEvent.offsetY());
-    }
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames().clickEvent)
+        m_document.imageClicked(mouseEvent->offsetX(), mouseEvent->offsetY());
 }
 
 bool ImageEventListener::operator==(const EventListener& other) const

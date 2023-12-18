@@ -83,6 +83,8 @@ void CachedFont::finishLoading(const FragmentedSharedBuffer* data, const Network
     if (data) {
         auto dataContiguous = data->makeContiguous();
         if (!shouldAllowCustomFont(dataContiguous)) {
+            // fonts are blocked, we set a flag to signal it in CachedFontLoadRequest.h
+            m_didRefuseToLoadCustomFont = true;
             setErrorAndDeleteData();
             return;
         }

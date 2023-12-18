@@ -82,3 +82,37 @@ class TestResultWriterTest(unittest.TestCase):
         fs = host.filesystem
         writer = test_result_writer.TestResultWriter(fs, port, port.results_directory(), 'svg/W3C-SVG-1.1/animate-elem-02-t.svg')
         self.assertEqual(fs.join(port.results_directory(), 'svg/W3C-SVG-1.1/animate-elem-02-t-diff.txt'), writer.output_filename('-diff.txt'))
+
+    def test_expected_filename(self):
+        host = MockHost()
+        port = TestPort(host)
+        fs = host.filesystem
+
+        expected = test_result_writer.TestResultWriter.expected_filename(
+            "fast/dom/foo.html", fs
+        )
+        self.assertEqual("fast/dom/foo-expected.txt", expected)
+
+        expected = test_result_writer.TestResultWriter.expected_filename(
+            "template_test/pbkdf2.https.any.worker.html?1-1000", fs
+        )
+        self.assertEqual(
+            "template_test/pbkdf2.https.any.worker_1-1000-expected.txt", expected
+        )
+
+    def test_actual_filename(self):
+        host = MockHost()
+        port = TestPort(host)
+        fs = host.filesystem
+
+        actual = test_result_writer.TestResultWriter.actual_filename(
+            "fast/dom/foo.html", fs
+        )
+        self.assertEqual("fast/dom/foo-actual.txt", actual)
+
+        actual = test_result_writer.TestResultWriter.actual_filename(
+            "template_test/pbkdf2.https.any.worker.html?1-1000", fs
+        )
+        self.assertEqual(
+            "template_test/pbkdf2.https.any.worker_1-1000-actual.txt", actual
+        )

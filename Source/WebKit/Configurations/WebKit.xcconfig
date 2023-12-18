@@ -31,8 +31,9 @@ PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 INFOPLIST_FILE = Info.plist;
 
 DEFINES_MODULE = YES;
-CLANG_MODULES_ENABLE_VERIFIER_TOOL = $(CLANG_MODULES_ENABLE_VERIFIER_TOOL_$(USE_INTERNAL_SDK));
-CLANG_MODULES_ENABLE_VERIFIER_TOOL_YES = $(WK_NOT_$(WK_XCODE_VERSION_BEFORE_14_3_$(XCODE_VERSION_MAJOR)));
+ENABLE_MODULE_VERIFIER = $(USE_INTERNAL_SDK);
+OTHER_MODULE_VERIFIER_FLAGS = $(OTHER_MODULE_VERIFIER_FLAGS_$(WK_EMPTY_$(WK_OVERRIDE_FRAMEWORKS_DIR)));
+OTHER_MODULE_VERIFIER_FLAGS_ = -- -iframework $(WK_PRIVATE_SDK_DIR)$(WK_OVERRIDE_FRAMEWORKS_DIR) -isystem $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH);
 
 MODULEMAP_FILE = $(MODULEMAP_FILE_$(WK_COCOA_TOUCH)_$(WK_IS_CATALYST));
 MODULEMAP_FILE_cocoatouch_NO = Modules/iOS.modulemap;
@@ -96,7 +97,7 @@ WK_GRAPHICS_SERVICES_LDFLAGS_cocoatouch = -framework GraphicsServices;
 
 WK_LIBWEBRTC_LDFLAGS = $(WK_LIBWEBRTC_LDFLAGS_$(ENABLE_WEB_RTC));
 WK_LIBWEBRTC_LDFLAGS_ = ;
-WK_LIBWEBRTC_LDFLAGS_ENABLE_WEB_RTC = -weak-lwebrtc -Xlinker --no-demangle;
+WK_LIBWEBRTC_LDFLAGS_ENABLE_WEB_RTC = -weak-lwebrtc;
 
 WK_MOBILE_CORE_SERVICES_LDFLAGS = $(WK_MOBILE_CORE_SERVICES_LDFLAGS_$(WK_COCOA_TOUCH));
 WK_MOBILE_CORE_SERVICES_LDFLAGS_cocoatouch = -framework MobileCoreServices;
@@ -205,8 +206,17 @@ WK_NETWORK_EXTENSION_LDFLAGS_macosx = -weak_framework NetworkExtension;
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=macosx*] = -framework AppServerSupport
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
 
-FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework IOSurface -framework WebKitLegacy -lnetwork -framework Metal $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_ACCESSIBILITY_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPLE_PUSH_SERVICE_LDFLAGS) $(WK_BACKBOARD_SERVICES_LDFLAGS) $(WK_RUNNINGBOARD_SERVICES_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CONTACTS_LDFLAGS) $(WK_CORE_PREDICTION_LDFLAGS) $(WK_CORE_SERVICES_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_LIBNETWORKEXTENSION_LDFLAGS) $(WK_LIBSANDBOX_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_PROTOTYPE_TOOLS_LDFLAGS) $(WK_SAFE_BROWSING_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_UIKIT_LDFLAGS) $(WK_MRUIKIT_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(WK_COORDINATOR_LDFLAGS) $(WK_INSTALL_COORDINATION_LDFLAGS) $(WK_APP_STORE_DAEMON_LDFLAGS) $(WK_POWERLOG_LDFLAGS) $(WK_FRONTBOARDSERVICES_LDFLAGS) $(WK_LIBBSM_LDFLAGS) $(WK_NETWORK_EXTENSION_LDFLAGS);
+WK_SERVICE_EXTENSIONS_LDFLAGS =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=iphone*] = -framework ServiceExtensions
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=iphone*17.0*] =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=iphone*17.1*] =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=iphone*17.2*] =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=iphone*17.3*] =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=appletv*] =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=watch*] =
+WK_SERVICE_EXTENSIONS_LDFLAGS[sdk=xr*] =
 
+FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework ImageIO -framework IOKit -framework IOSurface -framework WebKitLegacy -lnetwork -framework Metal $(WK_APPSERVERSUPPORT_LDFLAGS) $(WK_ACCESSIBILITY_LDFLAGS) $(WK_APPKIT_LDFLAGS) $(WK_APPLE_PUSH_SERVICE_LDFLAGS) $(WK_BACKBOARD_SERVICES_LDFLAGS) $(WK_RUNNINGBOARD_SERVICES_LDFLAGS) $(WK_AUTHKIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CONTACTS_LDFLAGS) $(WK_CORE_PREDICTION_LDFLAGS) $(WK_CORE_SERVICES_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_LIBNETWORKEXTENSION_LDFLAGS) $(WK_LIBSANDBOX_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_PROTOTYPE_TOOLS_LDFLAGS) $(WK_SAFE_BROWSING_LDFLAGS) $(WK_SECURITY_INTERFACE_LDFLAGS) $(WK_UIKIT_LDFLAGS) $(WK_MRUIKIT_LDFLAGS) $(WK_UNIFORM_TYPE_IDENTIFIERS_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS) $(WK_WEBINSPECTORUI_LDFLAGS) $(WK_COORDINATOR_LDFLAGS) $(WK_INSTALL_COORDINATION_LDFLAGS) $(WK_APP_STORE_DAEMON_LDFLAGS) $(WK_POWERLOG_LDFLAGS) $(WK_FRONTBOARDSERVICES_LDFLAGS) $(WK_LIBBSM_LDFLAGS) $(WK_NETWORK_EXTENSION_LDFLAGS) $(WK_SERVICE_EXTENSIONS_LDFLAGS);
 
 // Prevent C++ standard library basic_stringstream, operator new, delete and their related exception types from being exported as weak symbols.
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol -Wl,__ZTVNSt3__117bad_function_callE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE;
@@ -218,12 +228,14 @@ WK_NO_STATIC_INITIALIZERS_Release_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INIT
 WK_NO_STATIC_INITIALIZERS_Production__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 
-OTHER_LDFLAGS = $(inherited) -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
+OTHER_LDFLAGS = $(inherited) -lsqlite3 -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
 
 REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
+// Needed for bincompat (rdar://117360317)
+REEXPORTED_LIBRARY_NAMES[sdk=macosx*] = objc;
 
 // FIXME: Remove -reexport_install_name once rdar://problem/30820233 is fixed.
-OTHER_TAPI_FLAGS = $(inherited) -reexport_install_name $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebKitLegacy.framework/$(WK_FRAMEWORK_VERSION_PREFIX)WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
+OTHER_TAPI_FLAGS = $(inherited) -reexport_install_name $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebKitLegacy.framework/$(WK_FRAMEWORK_VERSION_PREFIX)WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-private-header $(SRCROOT)/Shared/Cocoa/XPCEndpoint.h -extra-private-header $(SRCROOT)/Shared/Cocoa/XPCEndpointClient.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
 // Workaround for rdar://104248994.
 OTHER_TAPI_FLAGS_SRCROOT_YES = -Xparser -include -Xparser config.h;
 
@@ -234,7 +246,17 @@ WK_EXCLUDED_WEBPUSHD_SANDBOX = $(WK_EXCLUDED_WEBPUSHD_SANDBOX_$(WK_RELOCATABLE_W
 WK_EXCLUDED_WEBPUSHD_SANDBOX_NO = com.apple.WebKit.webpushd.relocatable.mac.sb
 WK_EXCLUDED_WEBPUSHD_SANDBOX_YES = com.apple.WebKit.webpushd.mac.sb
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_PRODUCT_DEPENDENCY_NAMES) $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH)) $(WK_EXCLUDED_WEBPUSHD_SANDBOX);
+EXCLUDED_EXTENSION_SOURCE_FILE_NAMES = Shared/AuxiliaryProcessExtensions/*;
+
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*] = Shared/AuxiliaryProcessExtensions/*;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.0.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.1.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.2.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.3.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*18.0.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=xr*] = ;
+
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_PRODUCT_DEPENDENCY_NAMES) $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH)) $(WK_EXCLUDED_WEBPUSHD_SANDBOX) $(EXCLUDED_EXTENSION_SOURCE_FILE_NAMES);
 
 // These are only available in internal builds, so they must be explicitly ignored for the open-source build to succeed.
 EXCLUDED_PRODUCT_DEPENDENCY_NAMES = libWebKitAdditions.a AuthenticationServicesCore.framework;
@@ -243,7 +265,7 @@ EXCLUDED_IOS_RESOURCE_FILE_NAMES[sdk=iphone*] = ;
 EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_YES = WebDynamicScrollBarsView.h WebEventRegion.h WebIconDatabase.h WebJavaScriptTextInputPanel.h WebNSEventExtras.h WebNSPasteboardExtras.h WebNSWindowExtras.h WebPanelAuthenticationHandler.h WebStringTruncator.h;
 EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_NO = AbstractPasteboard.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h KeyEventCodesIOS.h WAKAppKitStubs.h WAKResponder.h WAKView.h WAKWindow.h WebCaretChangeListener.h WebCoreThread.h WebCoreThreadMessage.h WebCoreThreadRun.h WebEvent.h WebEventRegion.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebItemProviderPasteboard.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h WKContentObservation.h WKGraphics.h WKTypes.h;
 
-INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
+INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS)) $(INCLUDED_EXTENSION_SOURCE_FILE_NAMES_$(USE_INTERNAL_SDK));
 // WebEventRegion.h is migrated when building for an iOS family target with an internal SDK...
 INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
 // ...or when --ios-touch-events was passed to build-webkit manually.

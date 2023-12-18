@@ -75,9 +75,9 @@ PageClientImpl::PageClientImpl(GtkWidget* viewWidget)
 }
 
 // PageClient's pure virtual functions
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
-    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)));
+    return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), webProcessProxy);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
@@ -286,17 +286,21 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& pag
     return WebPopupMenuProxyGtk::create(m_viewWidget, page.popupMenuClient());
 }
 
+#if ENABLE(CONTEXT_MENUS)
 Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
 {
     return WebContextMenuProxyGtk::create(m_viewWidget, page, WTFMove(context), userData);
 }
+#endif // ENABLE(CONTEXT_MENUS)
 
+#if ENABLE(INPUT_TYPE_COLOR)
 RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect& rect, Vector<WebCore::Color>&&)
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
         return WebKitColorChooser::create(*page, color, rect);
     return WebColorPickerGtk::create(*page, color, rect);
 }
+#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 RefPtr<WebDateTimePicker> PageClientImpl::createDateTimePicker(WebPageProxy& page)
@@ -597,13 +601,6 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
 
     return false;
 }
-
-#if USE(WPE_RENDERER)
-UnixFileDescriptor PageClientImpl::hostFileDescriptor()
-{
-    return { webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), UnixFileDescriptor::Adopt };
-}
-#endif
 
 void PageClientImpl::didChangeWebPageID() const
 {

@@ -35,7 +35,7 @@
         initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]);
         run('sourceBuffer.appendBuffer(initSegment)');
 
-        waitForEvent('pause', handlePause);
+        waitFor(video, 'pause', false).then(handlePause);
         video.play().catch(function(error) {
             failTest();
         });
@@ -53,7 +53,7 @@
             makeASample(7, 7, 1, 1, 1, SAMPLE_FLAG.SYNC),
         ]);
 
-        waitForEventOn(sourceBuffer, 'updateend', updateEnd, false, true);
+        waitFor(sourceBuffer, 'updateend', false).then(updateEnd);
         run('sourceBuffer.appendBuffer(samples)');
     }
 

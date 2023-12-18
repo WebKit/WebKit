@@ -35,7 +35,7 @@ namespace WebKit {
 
 class WebCompiledContentRuleList final : public WebCore::ContentExtensions::CompiledContentExtension {
 public:
-    static Ref<WebCompiledContentRuleList> create(WebCompiledContentRuleListData&&);
+    static RefPtr<WebCompiledContentRuleList> create(WebCompiledContentRuleListData&&);
     virtual ~WebCompiledContentRuleList();
 
     const WebCompiledContentRuleListData& data() const { return m_data; }

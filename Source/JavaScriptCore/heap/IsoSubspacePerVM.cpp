@@ -41,7 +41,7 @@ IsoSubspacePerVM::~IsoSubspacePerVM()
     UNREACHABLE_FOR_PLATFORM();
 }
 
-IsoSubspace& IsoSubspacePerVM::isoSubspaceforHeap(LockHolder&, Heap& heap)
+IsoSubspace& IsoSubspacePerVM::isoSubspaceforHeap(LockHolder&, JSC::Heap& heap)
 {
     auto result = m_subspacePerHeap.add(&heap, nullptr);
     if (result.isNewEntry) {
@@ -68,7 +68,7 @@ GCClient::IsoSubspace& IsoSubspacePerVM::clientIsoSubspaceforVM(VM& vm)
     return *result.iterator->value;
 }
 
-void IsoSubspacePerVM::releaseIsoSubspace(Heap& heap)
+void IsoSubspacePerVM::releaseIsoSubspace(JSC::Heap& heap)
 {
     IsoSubspace* subspace;
     {

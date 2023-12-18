@@ -1,43 +1,289 @@
 // RUN: %wgslc
 
-fn testAdd() {
-  {
-    _ = 1 + 2;
-    _ = 1i + 1;
-    _ = 1 + 1i;
-    _ = 1u + 1;
-    _ = 1 + 1u;
-    _ = 1.0 + 2;
-    _ = 1 + 2.0;
-    _ = 1.0 + 2.0;
-  }
+// 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
+// RUN: %metal-compile testLogicalNegation
+@compute @workgroup_size(1)
+fn testLogicalNegation()
+{
+    var t = true;
 
-  {
-    _ = vec2<f32>(0, 0) + 1;
-    _ = vec3<f32>(0, 0, 0) + 1;
-    _ = vec4<f32>(0, 0, 0, 0) + 1;
-  }
+    // [].(Bool) => Bool,
+    { const x: bool = !true; }
+    { const x : bool = !false; }
+    { let x : bool = !t; }
 
-  {
-    _ = 1 + vec2<f32>(0, 0);
-    _ = 1 + vec3<f32>(0, 0, 0);
-    _ = 1 + vec4<f32>(0, 0, 0, 0);
-  }
+    // [N].(Vector[Bool, N]) => Vector[Bool, N],
+    { const x: vec2<bool> = !vec2(true); }
+    { const x: vec3<bool> = !vec3(true); }
+    { const x: vec4<bool> = !vec4(true); }
 
-  {
-    _ = vec2<f32>(0, 0) + vec2<f32>(1, 1);
-    _ = vec3<f32>(0, 0, 0) + vec3<f32>(1, 1, 1);
-    _ = vec4<f32>(0, 0, 0, 0) + vec4<f32>(1, 1, 1, 1);
-  }
+    { const x: vec2<bool> = !vec2(false); }
+    { const x: vec3<bool> = !vec3(false); }
+    { const x: vec4<bool> = !vec4(false); }
 
-  {
-    _ = mat2x2<f32>(0, 0, 0, 0) + mat2x2<f32>(1, 1, 1, 1);
-    _ = mat2x3<f32>(0, 0, 0, 0, 0, 0) + mat2x3<f32>(1, 1, 1, 1, 1, 1);
-    _ = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0) + mat2x4<f32>(1, 1, 1, 1, 1, 1, 1, 1);
-  }
+    { let x: vec2<bool> = !vec2(t); }
+    { let x: vec3<bool> = !vec3(t); }
+    { let x: vec4<bool> = !vec4(t); }
 }
 
+// RUN: %metal-compile testShortCircuitingOr
+@compute @workgroup_size(1)
+fn testShortCircuitingOr()
+{
+    var t = true;
+    // [].(Bool, Bool) => Bool,
+    { const x: bool = false || false; }
+    { const x: bool = true || false; }
+    { const x: bool = false || true; }
+    { const x: bool = true || true; }
+    { let x: bool = t || t; }
+}
+
+// RUN: %metal-compile testShortCircuitingAnd
+@compute @workgroup_size(1)
+fn testShortCircuitingAnd()
+{
+    var t = true;
+    // [].(Bool, Bool) => Bool,
+    { const x: bool = false && false; }
+    { const x: bool = true && false; }
+    { const x: bool = false && true; }
+    { const x: bool = true && true; }
+    { let x: bool = t && t; }
+}
+
+// RUN: %metal-compile testLogicalOr
+@compute @workgroup_size(1)
+fn testLogicalOr()
+{
+    var t = true;
+
+    // [].(Bool, Bool) => Bool,
+    { const x: bool = false | false; }
+    { const x: bool = true | false; }
+    { const x: bool = false | true; }
+    { const x: bool = true | true; }
+    { let x: bool = t | t; }
+
+    // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+    { const x: vec2<bool> = vec2(false) | vec2(false); }
+    { const x: vec2<bool> = vec2( true) | vec2(false); }
+    { const x: vec2<bool> = vec2(false) | vec2( true); }
+    { const x: vec2<bool> = vec2( true) | vec2( true); }
+    { const x: vec3<bool> = vec3(false) | vec3(false); }
+    { const x: vec3<bool> = vec3( true) | vec3(false); }
+    { const x: vec3<bool> = vec3(false) | vec3( true); }
+    { const x: vec3<bool> = vec3( true) | vec3( true); }
+    { const x: vec4<bool> = vec4(false) | vec4(false); }
+    { const x: vec4<bool> = vec4( true) | vec4(false); }
+    { const x: vec4<bool> = vec4(false) | vec4( true); }
+    { const x: vec4<bool> = vec4( true) | vec4( true); }
+
+    { let x: vec2<bool> = vec2(t) | vec2(t); }
+    { let x: vec3<bool> = vec3(t) | vec3(t); }
+    { let x: vec4<bool> = vec4(t) | vec4(t); }
+}
+
+// RUN: %metal-compile testLogicalAnd
+@compute @workgroup_size(1)
+fn testLogicalAnd()
+{
+    var t = true;
+
+    // [].(Bool, Bool) => Bool,
+    { const x: bool = false & false; }
+    { const x: bool = true & false; }
+    { const x: bool = false & true; }
+    { const x: bool = true & true; }
+    { let x: bool = t & t; }
+
+    // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
+    { const x: vec2<bool> = vec2(false) & vec2(false); }
+    { const x: vec2<bool> = vec2( true) & vec2(false); }
+    { const x: vec2<bool> = vec2(false) & vec2( true); }
+    { const x: vec2<bool> = vec2( true) & vec2( true); }
+    { const x: vec3<bool> = vec3(false) & vec3(false); }
+    { const x: vec3<bool> = vec3( true) & vec3(false); }
+    { const x: vec3<bool> = vec3(false) & vec3( true); }
+    { const x: vec3<bool> = vec3( true) & vec3( true); }
+    { const x: vec4<bool> = vec4(false) & vec4(false); }
+    { const x: vec4<bool> = vec4( true) & vec4(false); }
+    { const x: vec4<bool> = vec4(false) & vec4( true); }
+    { const x: vec4<bool> = vec4( true) & vec4( true); }
+
+    { let x: vec2<bool> = vec2(t) & vec2(t); }
+    { let x: vec3<bool> = vec3(t) & vec3(t); }
+    { let x: vec4<bool> = vec4(t) & vec4(t); }
+}
+
+// 8.7. Arithmetic Expressions (https://www.w3.org/TR/WGSL/#arithmetic-expr)
+
+// RUN: %metal-compile testUnaryMinus
+@compute @workgroup_size(1)
+fn testUnaryMinus()
+{
+    let x1: i32 = -1;
+    let x2: i32 = -x1;
+    let x3: f32 = -1;
+    let x4: f16 = -1;
+    let x5: i32 = -1i;
+    let x6: f32 = -1f;
+    let x7: f16 = -1h;
+    _ = -x3;
+    _ = -x4;
+
+    let x8: vec2<i32> = -vec2(1);
+    let x9: vec2<i32> = -x8;
+    let x10: vec2<f32> = -vec2(1);
+    let x11: vec2<f16> = -vec2(1);
+    let x12: vec2<i32> = -vec2(1i);
+    let x13: vec2<f32> = -vec2(1f);
+    let x14: vec2<f16> = -vec2(1h);
+    _ = -x10;
+    _ = -x11;
+}
+
+// RUN: %metal-compile testBinaryMinus
+@compute @workgroup_size(1)
+fn testBinaryMinus()
+{
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+    var v2i = vec2i(0);
+    var v2u = vec2u(0);
+    var v2f = vec2f(0);
+    var v2h = vec2h(0);
+    var m2f = mat2x2f(0, 0, 0, 0);
+    var m2h = mat2x2h(0, 0, 0, 0);
+
+    { let x: u32 = 2 - 1; }
+    { let x: i32 = 2 - 1; }
+    { let x: f32 = 2 - 1; }
+    { let x: f16 = 2 - 1; }
+
+    { let x: i32 = 1i - 1; }
+    { let x: i32 = i - 1; }
+
+    { let x: u32 = 1u - 1; }
+    { let x: u32 = u - 1; }
+
+    { let x: f32 = 1.0 - 2; }
+    { let x: f16 = 1.0 - 2; }
+
+    { let x: f32 = 2.0f - 1; }
+    { let x: f32 = f - 1; }
+
+    { let x: f16 = 2.0h - 1; }
+    { let x: f16 = h - 1; }
+
+    { let x: vec2<i32> = vec2(1, 1) - 1; }
+    { let x: vec2<i32> = 1 - vec2(1, 1); }
+    { let x: vec2<i32> = vec2(1, 1) - vec2(1, 1); }
+    { let x: vec2<i32> = v2i - 1; }
+    { let x: vec2<i32> = 1 - v2i; }
+    { let x: vec2<i32> = v2i - v2i; }
+
+    { let x: vec2<u32> = vec2(1, 1) - 1; }
+    { let x: vec2<u32> = 1 - vec2(1, 1); }
+    { let x: vec2<u32> = vec2(1, 1) - vec2(1, 1); }
+    { let x: vec2<u32> = v2u - 1; }
+    { let x: vec2<u32> = 1 - v2u; }
+    { let x: vec2<u32> = v2u - v2u; }
+
+    { let x: vec2<f32> = vec2(1, 1) - 1; }
+    { let x: vec2<f32> = 1 - vec2(1, 1); }
+    { let x: vec2<f32> = vec2(1, 1) - vec2(1, 1); }
+    { let x: vec2<f32> = v2f - 1; }
+    { let x: vec2<f32> = 1 - v2f; }
+    { let x: vec2<f32> = v2f - v2f; }
+
+    { let x: vec2<f16> = vec2(1, 1) - 1; }
+    { let x: vec2<f16> = 1 - vec2(1, 1); }
+    { let x: vec2<f16> = vec2(1, 1) - vec2(1, 1); }
+    { let x: vec2<f16> = v2h - 1; }
+    { let x: vec2<f16> = 1 - v2h; }
+    { let x: vec2<f16> = v2h - v2h; }
+
+    { let x: mat2x2<f32> = mat2x2(2, 2, 2, 2) - mat2x2(1, 1, 1, 1); }
+    { let x: mat2x2<f32> = m2f - m2f; }
+    { let x: mat2x2<f16> = mat2x2(2, 2, 2, 2) - mat2x2(1, 1, 1, 1); }
+    { let x: mat2x2<f16> = m2h - m2h; }
+}
+
+// RUN: %metal-compile testAdd
+@compute @workgroup_size(1)
+fn testAdd()
+{
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+    var v2i = vec2i(0);
+    var v2u = vec2u(0);
+    var v2f = vec2f(0);
+    var v2h = vec2h(0);
+    var m2f = mat2x2f(0, 0, 0, 0);
+    var m2h = mat2x2h(0, 0, 0, 0);
+
+    { let x: u32 = 2 + 1; }
+    { let x: i32 = 2 + 1; }
+    { let x: f32 = 2 + 1; }
+    { let x: f16 = 2 + 1; }
+
+    { let x: i32 = 1i + 1; }
+    { let x: i32 = i + 1; }
+
+    { let x: u32 = 1u + 1; }
+    { let x: u32 = u + 1; }
+
+    { let x: f32 = 1.0 + 2; }
+    { let x: f16 = 1.0 + 2; }
+
+    { let x: f32 = 2.0f + 1; }
+    { let x: f32 = f + 1; }
+
+    { let x: f16 = 2.0h + 1; }
+    { let x: f16 = h + 1; }
+
+    { let x: vec2<i32> = vec2(1, 1) + 1; }
+    { let x: vec2<i32> = 1 + vec2(1, 1); }
+    { let x: vec2<i32> = vec2(1, 1) + vec2(1, 1); }
+    { let x: vec2<i32> = v2i + 1; }
+    { let x: vec2<i32> = 1 + v2i; }
+    { let x: vec2<i32> = v2i + v2i; }
+
+    { let x: vec2<u32> = vec2(1, 1) + 1; }
+    { let x: vec2<u32> = 1 + vec2(1, 1); }
+    { let x: vec2<u32> = vec2(1, 1) + vec2(1, 1); }
+    { let x: vec2<u32> = v2u + 1; }
+    { let x: vec2<u32> = 1 + v2u; }
+    { let x: vec2<u32> = v2u + v2u; }
+
+    { let x: vec2<f32> = vec2(1, 1) + 1; }
+    { let x: vec2<f32> = 1 + vec2(1, 1); }
+    { let x: vec2<f32> = vec2(1, 1) + vec2(1, 1); }
+    { let x: vec2<f32> = v2f + 1; }
+    { let x: vec2<f32> = 1 + v2f; }
+    { let x: vec2<f32> = v2f + v2f; }
+
+    { let x: vec2<f16> = vec2(1, 1) + 1; }
+    { let x: vec2<f16> = 1 + vec2(1, 1); }
+    { let x: vec2<f16> = vec2(1, 1) + vec2(1, 1); }
+    { let x: vec2<f16> = v2h + 1; }
+    { let x: vec2<f16> = 1 + v2h; }
+    { let x: vec2<f16> = v2h + v2h; }
+
+    { let x: mat2x2<f32> = mat2x2(2, 2, 2, 2) + mat2x2(1, 1, 1, 1); }
+    { let x: mat2x2<f32> = m2f + m2f; }
+    { let x: mat2x2<f16> = mat2x2(2, 2, 2, 2) + mat2x2(1, 1, 1, 1); }
+    { let x: mat2x2<f16> = m2h + m2h; }
+}
+
+// RUN: %metal-compile testAddEq
+@compute @workgroup_size(1)
 fn testAddEq() {
   {
     var x = 0;
@@ -45,146 +291,503 @@ fn testAddEq() {
   }
 }
 
-fn testMultiply() {
-  {
-    _ = 0 * 0;
-    _ = 0i * 0i;
-    _ = 0u * 0u;
-    _ = 0.0 * 0.0;
-    _ = 0.0f * 0.0f;
-  }
+// RUN: %metal-compile testMultiply
+@compute @workgroup_size(1)
+fn testMultiply()
+{
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+    var v2i = vec2i(0);
+    var v2u = vec2u(0);
+    var v2f = vec2f(0);
+    var v2h = vec2h(0);
+    var v4f = vec4f(0);
+    var v4h = vec4h(0);
+    var m2f = mat2x2f(0, 0, 0, 0);
+    var m2h = mat2x2h(0, 0, 0, 0);
+    var m24f = mat2x4f(0, 0, 0, 0, 0, 0, 0, 0);
+    var m24h = mat2x4h(0, 0, 0, 0, 0, 0, 0, 0);
 
-  let v2 = vec2<f32>(0, 0);
-  let v4 = vec4<f32>(0, 0, 0, 0);
-  let m = mat2x4<f32>(0, 0, 0, 0, 0, 0, 0, 0);
-  _ = m * v2;
-  _ = v4 * m;
-  _ = vec2(1, 1) * 1;
-  _ = 1 * vec2(1, 1);
-  _ = vec2(1, 1) * vec2(1, 1);
+    { let x: u32 = 2 * 1; }
+    { let x: i32 = 2 * 1; }
+    { let x: f32 = 2 * 1; }
+    { let x: f16 = 2 * 1; }
 
-  _ = mat2x2(0, 0, 0, 0) * mat2x2(0, 0, 0, 0);
-  _ = mat2x2(0, 0, 0, 0) * mat3x2(0, 0, 0, 0, 0, 0);
-  _ = mat2x2(0, 0, 0, 0) * mat4x2(0, 0, 0, 0, 0, 0, 0, 0);
+    { let x: i32 = 1i * 1; }
+    { let x: i32 = i * 1; }
+
+    { let x: u32 = 1u * 1; }
+    { let x: u32 = u * 1; }
+
+    { let x: f32 = 1.0 * 2; }
+    { let x: f16 = 1.0 * 2; }
+
+    { let x: f32 = 2.0f * 1; }
+    { let x: f32 = f * 1; }
+
+    { let x: f16 = 2.0h * 1; }
+    { let x: f16 = h * 1; }
+
+    { let x: vec2<i32> = vec2(1, 1) * 1; }
+    { let x: vec2<i32> = 1 * vec2(1, 1); }
+    { let x: vec2<i32> = vec2(1, 1) * vec2(1, 1); }
+    { let x: vec2<i32> = v2i * 1; }
+    { let x: vec2<i32> = 1 * v2i; }
+    { let x: vec2<i32> = v2i * v2i; }
+
+    { let x: vec2<u32> = vec2(1, 1) * 1; }
+    { let x: vec2<u32> = 1 * vec2(1, 1); }
+    { let x: vec2<u32> = vec2(1, 1) * vec2(1, 1); }
+    { let x: vec2<u32> = v2u * 1; }
+    { let x: vec2<u32> = 1 * v2u; }
+    { let x: vec2<u32> = v2u * v2u; }
+
+    { let x: vec2<f32> = vec2(1, 1) * 1; }
+    { let x: vec2<f32> = 1 * vec2(1, 1); }
+    { let x: vec2<f32> = vec2(1, 1) * vec2(1, 1); }
+    { let x: vec2<f32> = v2f * 1; }
+    { let x: vec2<f32> = 1 * v2f; }
+    { let x: vec2<f32> = v2f * v2f; }
+
+    { let x: vec2<f16> = vec2(1, 1) * 1; }
+    { let x: vec2<f16> = 1 * vec2(1, 1); }
+    { let x: vec2<f16> = vec2(1, 1) * vec2(1, 1); }
+    { let x: vec2<f16> = v2h * 1; }
+    { let x: vec2<f16> = 1 * v2h; }
+    { let x: vec2<f16> = v2h * v2h; }
+
+    { let x: vec4f = mat2x4f(0, 0, 0, 0, 0, 0, 0, 0) * vec2f(0); }
+    { let x: vec2f = vec4f(0) * mat2x4f(0, 0, 0, 0, 0, 0, 0, 0); }
+    { let x: mat2x4f = mat2x4f(0, 0, 0, 0, 0, 0, 0, 0) * 2; }
+    { let x: mat2x4f = 2 * mat2x4f(0, 0, 0, 0, 0, 0, 0, 0); };
+    { let x: mat2x2f = mat2x2f(0, 0, 0, 0) * mat2x2f(0, 0, 0, 0); };
+    { let x: mat2x4f = mat2x4f(0, 0, 0, 0, 0, 0, 0, 0) * mat2x2f(0, 0, 0, 0); };
+
+    { let x: vec4f = m24f * v2f; }
+    { let x: vec2f = v4f * m24f; }
+    { let x: mat2x4f = m24f * 2; }
+    { let x: mat2x4f = 2 * m24f; };
+    { let x: mat2x2f = m2f * m2f; };
+    { let x: mat2x4f = m24f * m2f; };
+
+    { let x: vec4h = mat2x4h(0, 0, 0, 0, 0, 0, 0, 0) * vec2h(0); }
+    { let x: vec2h = vec4h(0) * mat2x4h(0, 0, 0, 0, 0, 0, 0, 0); }
+    { let x: mat2x4h = mat2x4h(0, 0, 0, 0, 0, 0, 0, 0) * 2; }
+    { let x: mat2x4h = 2 * mat2x4h(0, 0, 0, 0, 0, 0, 0, 0); };
+    { let x: mat2x2h = mat2x2h(0, 0, 0, 0) * mat2x2h(0, 0, 0, 0); };
+    { let x: mat2x4h = mat2x4h(0, 0, 0, 0, 0, 0, 0, 0) * mat2x2h(0, 0, 0, 0); };
+
+    { let x: vec4h = m24h * v2h; }
+    { let x: vec2h = v4h * m24h; }
+    { let x: mat2x4h = m24h * 2; }
+    { let x: mat2x4h = 2 * m24h; };
+    { let x: mat2x2h = m2h * m2h; };
+    { let x: mat2x4h = m24h * m2h; };
+
+    v2f *= v2f;
+    v2f *= 2;
+    m2f *= m2f;
+    // FIXME: this requires type checking compound assignment
+    // m2f *= 2;
+
+    v2h *= v2h;
+    v2h *= 2;
+    m2h *= m2h;
+    // hIXME: this requires type checking compound assignment
+    // m2h *= 2;
+
 }
 
-fn testDivision() {
-   _ = 0 / 1;
-   _ = 0i / 1i;
-   _ = 0u / 1u;
-   _ = 0.0 / 1.0;
-   _ = 0.0f / 1.0f;
-   _ = vec2(0.0) / 1.0;
-   _ = 0.0 / vec2(1.0, 1.0);
-   _ = vec2(0.0, 0.0) / vec2(1.0, 1.0);
+// RUN: %metal-compile testDivision
+@compute @workgroup_size(1)
+fn testDivision()
+{
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+    var v2i = vec2i(0);
+    var v2u = vec2u(0);
+    var v2f = vec2f(0);
+    var v2h = vec2h(0);
+    var v4f = vec4f(0);
+    var v4h = vec4h(0);
+
+    { let x: u32 = 2 / 1; }
+    { let x: i32 = 2 / 1; }
+    { let x: f32 = 2 / 1; }
+    { let x: f16 = 2 / 1; }
+
+    { let x: i32 = 1i / 1; }
+    { let x: i32 = i / 1; }
+
+    { let x: u32 = 1u / 1; }
+    { let x: u32 = u / 1; }
+
+    { let x: f32 = 1.0 / 2; }
+    { let x: f16 = 1.0 / 2; }
+
+    { let x: f32 = 2.0f / 1; }
+    { let x: f32 = f / 1; }
+
+    { let x: f16 = 2.0h / 1; }
+    { let x: f16 = h / 1; }
+
+    { let x: vec2<i32> = vec2(1, 1) / 1; }
+    { let x: vec2<i32> = 1 / vec2(1, 1); }
+    { let x: vec2<i32> = vec2(1, 1) / vec2(1, 1); }
+    { let x: vec2<i32> = v2i / 1; }
+    { let x: vec2<i32> = 1 / v2i; }
+    { let x: vec2<i32> = v2i / v2i; }
+
+    { let x: vec2<u32> = vec2(1, 1) / 1; }
+    { let x: vec2<u32> = 1 / vec2(1, 1); }
+    { let x: vec2<u32> = vec2(1, 1) / vec2(1, 1); }
+    { let x: vec2<u32> = v2u / 1; }
+    { let x: vec2<u32> = 1 / v2u; }
+    { let x: vec2<u32> = v2u / v2u; }
+
+    { let x: vec2<f32> = vec2(1, 1) / 1; }
+    { let x: vec2<f32> = 1 / vec2(1, 1); }
+    { let x: vec2<f32> = vec2(1, 1) / vec2(1, 1); }
+    { let x: vec2<f32> = v2f / 1; }
+    { let x: vec2<f32> = 1 / v2f; }
+    { let x: vec2<f32> = v2f / v2f; }
+
+    { let x: vec2<f16> = vec2(1, 1) / 1; }
+    { let x: vec2<f16> = 1 / vec2(1, 1); }
+    { let x: vec2<f16> = vec2(1, 1) / vec2(1, 1); }
+    { let x: vec2<f16> = v2h / 1; }
+    { let x: vec2<f16> = 1 / v2h; }
+    { let x: vec2<f16> = v2h / v2h; }
 }
 
-fn testModulo() {
-   _ = 0 % 1;
-   _ = 0i % 1i;
-   _ = 0u % 1u;
-   _ = 0.0 % 1.0;
-   _ = 0.0f % 1.0f;
-   _ = vec2(0.0) % 1.0;
-   _ = 0.0 % vec2(1.0, 1.0);
-   _ = vec2(0.0, 0.0) % vec2(1.0, 1.0);
+// RUN: %metal-compile testModulo
+@compute @workgroup_size(1)
+fn testModulo()
+{
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+    var v2i = vec2i(0);
+    var v2u = vec2u(0);
+    var v2f = vec2f(0);
+    var v2h = vec2h(0);
+    var v4f = vec4f(0);
+    var v4h = vec4h(0);
+
+    { let x: u32 = 2 % 1; }
+    { let x: i32 = 2 % 1; }
+    { let x: f32 = 2 % 1; }
+    { let x: f16 = 2 % 1; }
+
+    { let x: i32 = 1i % 1; }
+    { let x: i32 = i % 1; }
+
+    { let x: u32 = 1u % 1; }
+    { let x: u32 = u % 1; }
+
+    { let x: f32 = 1.0 % 2; }
+    { let x: f16 = 1.0 % 2; }
+
+    { let x: f32 = 2.0f % 1; }
+    { let x: f32 = f % 1; }
+
+    { let x: f16 = 2.0h % 1; }
+    { let x: f16 = h % 1; }
+
+    { let x: vec2<i32> = vec2(1, 1) % 1; }
+    { let x: vec2<i32> = 1 % vec2(1, 1); }
+    { let x: vec2<i32> = vec2(1, 1) % vec2(1, 1); }
+    { let x: vec2<i32> = v2i % 1; }
+    { let x: vec2<i32> = 1 % v2i; }
+    { let x: vec2<i32> = v2i % v2i; }
+
+    { let x: vec2<u32> = vec2(1, 1) % 1; }
+    { let x: vec2<u32> = 1 % vec2(1, 1); }
+    { let x: vec2<u32> = vec2(1, 1) % vec2(1, 1); }
+    { let x: vec2<u32> = v2u % 1; }
+    { let x: vec2<u32> = 1 % v2u; }
+    { let x: vec2<u32> = v2u % v2u; }
+
+    { let x: vec2<f32> = vec2(1, 1) % 1; }
+    { let x: vec2<f32> = 1 % vec2(1, 1); }
+    { let x: vec2<f32> = vec2(1, 1) % vec2(1, 1); }
+    { let x: vec2<f32> = v2f % 1; }
+    { let x: vec2<f32> = 1 % v2f; }
+    { let x: vec2<f32> = v2f % v2f; }
+
+    { let x: vec2<f16> = vec2(1, 1) % 1; }
+    { let x: vec2<f16> = 1 % vec2(1, 1); }
+    { let x: vec2<f16> = vec2(1, 1) % vec2(1, 1); }
+    { let x: vec2<f16> = v2h % 1; }
+    { let x: vec2<f16> = 1 % v2h; }
+    { let x: vec2<f16> = v2h % v2h; }
 }
 
-fn testUnaryMinus() {
-  let x = 1;
-  _ = -x;
-  _ = -vec2(1, 1);
+// 8.8. Comparison Expressions (https://www.w3.org/TR/WGSL/#comparison-expr)
+
+// RUN: %metal-compile testComparison
+@compute @workgroup_size(1)
+fn testComparison()
+{
+    let b = false;
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+    var v2i = vec2i(0);
+    var v2u = vec2u(0);
+    var v2f = vec2f(0);
+    var v2h = vec2h(0);
+    var v2b = vec2(true);
+
+    {
+        _ = false == true;
+        _ = b == true;
+        _ = 0 == 1;
+        _ = 0i == 1i;
+        _ = i == 1;
+        _ = 0u == 1u;
+        _ = u == 1;
+        _ = 0.0 == 1.0;
+        _ = 0.0f == 1.0f;
+        _ = f == 1.0;
+        _ = 0.0h == 1.0h;
+        _ = h == 1.0;
+        _ = vec2(false) == vec2(true);
+        _ = v2b == vec2(true);
+        _ = vec2(0) == vec2(1);
+        _ = vec2(0i) == vec2(1i);
+        _ = v2i == vec2(1);
+        _ = vec2(0u) == vec2(1u);
+        _ = v2u == vec2(1);
+        _ = vec2(0.0) == vec2(1.0);
+        _ = vec2(0.0f) == vec2(1.0f);
+        _ = v2f == vec2(1.0);
+        _ = vec2(0.0h) == vec2(1.0h);
+        _ = v2h == vec2(1.0);
+    }
+
+    {
+        _ = false != true;
+        _ = b != true;
+        _ = 0 != 1;
+        _ = 0i != 1i;
+        _ = i != 1;
+        _ = 0u != 1u;
+        _ = u != 1;
+        _ = 0.0 != 1.0;
+        _ = 0.0f != 1.0f;
+        _ = f != 1.0;
+        _ = 0.0h != 1.0h;
+        _ = h != 1.0;
+        _ = vec2(false) != vec2(true);
+        _ = v2b != vec2(true);
+        _ = vec2(0) != vec2(1);
+        _ = vec2(0i) != vec2(1i);
+        _ = v2i != vec2(1);
+        _ = vec2(0u) != vec2(1u);
+        _ = v2u != vec2(1);
+        _ = vec2(0.0) != vec2(1.0);
+        _ = vec2(0.0f) != vec2(1.0f);
+        _ = v2f != vec2(1.0);
+        _ = vec2(0.0h) != vec2(1.0h);
+        _ = v2h != vec2(1.0);
+    }
+
+    {
+        _ = 0 > 1;
+        _ = 0i > 1i;
+        _ = i > 1;
+        _ = 0u > 1u;
+        _ = u > 1;
+        _ = 0.0 > 1.0;
+        _ = 0.0f > 1.0f;
+        _ = f > 1.0;
+        _ = 0.0h > 1.0h;
+        _ = h > 1.0;
+        _ = vec2(0) > vec2(1);
+        _ = vec2(0i) > vec2(1i);
+        _ = v2i > vec2(1);
+        _ = vec2(0u) > vec2(1u);
+        _ = v2u > vec2(1);
+        _ = vec2(0.0) > vec2(1.0);
+        _ = vec2(0.0f) > vec2(1.0f);
+        _ = v2f > vec2(1.0);
+        _ = vec2(0.0h) > vec2(1.0h);
+        _ = v2h > vec2(1.0);
+    }
+
+    {
+        _ = 0 >= 1;
+        _ = 0i >= 1i;
+        _ = i >= 1;
+        _ = 0u >= 1u;
+        _ = u >= 1;
+        _ = 0.0 >= 1.0;
+        _ = 0.0f >= 1.0f;
+        _ = f >= 1.0;
+        _ = 0.0h >= 1.0h;
+        _ = h >= 1.0;
+        _ = vec2(0) >= vec2(1);
+        _ = vec2(0i) >= vec2(1i);
+        _ = v2i >= vec2(1);
+        _ = vec2(0u) >= vec2(1u);
+        _ = v2u >= vec2(1);
+        _ = vec2(0.0) >= vec2(1.0);
+        _ = vec2(0.0f) >= vec2(1.0f);
+        _ = v2f >= vec2(1.0);
+        _ = vec2(0.0h) >= vec2(1.0h);
+        _ = v2h >= vec2(1.0);
+    }
+
+    {
+        _ = 0 < 1;
+        _ = 0i < 1i;
+        _ = i < 1;
+        _ = 0u < 1u;
+        _ = u < 1;
+        _ = 0.0 < 1.0;
+        _ = 0.0f < 1.0f;
+        _ = f < 1.0;
+        _ = 0.0h < 1.0h;
+        _ = h < 1.0;
+        _ = vec2(0) < vec2(1);
+        _ = vec2(0i) < vec2(1i);
+        _ = v2i < vec2(1);
+        _ = vec2(0u) < vec2(1u);
+        _ = v2u < vec2(1);
+        _ = vec2(0.0) < vec2(1.0);
+        _ = vec2(0.0f) < vec2(1.0f);
+        _ = v2f < vec2(1.0);
+        _ = vec2(0.0h) < vec2(1.0h);
+        _ = v2h < vec2(1.0);
+    }
+
+    {
+        _ = 0 <= 1;
+        _ = 0i <= 1i;
+        _ = i <= 1;
+        _ = 0u <= 1u;
+        _ = u <= 1;
+        _ = 0.0 <= 1.0;
+        _ = 0.0f <= 1.0f;
+        _ = f <= 1.0;
+        _ = 0.0h <= 1.0h;
+        _ = h <= 1.0;
+        _ = vec2(0) <= vec2(1);
+        _ = vec2(0i) <= vec2(1i);
+        _ = v2i <= vec2(1);
+        _ = vec2(0u) <= vec2(1u);
+        _ = v2u <= vec2(1);
+        _ = vec2(0.0) <= vec2(1.0);
+        _ = vec2(0.0f) <= vec2(1.0f);
+        _ = v2f <= vec2(1.0);
+        _ = vec2(0.0h) <= vec2(1.0h);
+        _ = v2h <= vec2(1.0);
+    }
 }
 
-fn testBinaryMinus() {
-  _ = vec2(1, 1) - 1;
-  _ = 1 - vec2(1, 1);
-  _ = vec2(1, 1) - vec2(1, 1);
+// 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
+
+// RUN: %metal-compile testBitwise
+@compute @workgroup_size(1)
+fn testBitwise()
+{
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = ~(-1);
+        const x2: i32 = ~1i;
+        const x3: u32 = ~1u;
+        const x4: vec2<u32> = ~vec2(-1);
+        const x5: vec2<i32> = ~vec2(0i);
+        const x6: vec2<u32> = ~vec2(0u);
+        let x7: i32 = ~i;
+        let x8: u32 = ~u;
+    }
+
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 0 & 1;
+        const x2: i32 = 0i & 1i;
+        const x3: u32 = 0u & 1u;
+        const x4: vec2<u32> = vec2(0) & vec2(1);
+        const x5: vec2<i32> = vec2(0i) & vec2(1i);
+        const x6: vec2<u32> = vec2(0u) & vec2(1u);
+        let x7: i32 = i & 1;
+        let x8: u32 = u & 1;
+        i &= 1;
+        u &= 1;
+    }
+
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 0 | 1;
+        const x2: i32 = 0i | 1i;
+        const x3: u32 = 0u | 1u;
+        const x4: vec2<u32> = vec2(0) | vec2(1);
+        const x5: vec2<i32> = vec2(0i) | vec2(1);
+        const x6: vec2<u32> = vec2(0u) | vec2(1);
+        let x7: i32 = i | 1;
+        let x8: u32 = u | 1;
+        i |= 1;
+        u |= 1;
+    }
+
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 0 ^ 1;
+        const x2: i32 = 0i ^ 1i;
+        const x3: u32 = 0u ^ 1u;
+        const x4: vec2<u32> = vec2(0) ^ vec2(1);
+        const x5: vec2<i32> = vec2(0i) ^ vec2(1i);
+        const x6: vec2<u32> = vec2(0u) ^ vec2(1u);
+        let x7: i32 = i ^ 1;
+        let x8: u32 = u ^ 1;
+        i ^= 1;
+        u ^= 1;
+    }
+
+    {
+        var i = 0i;
+        var u = 0u;
+        const x1: u32 = 1 << 2;
+        const x2: i32 = 1i << 2u;
+        const x3: u32 = 1u << 2u;
+        const x4: vec2<u32> = vec2(1) << vec2(2);
+        const x5: vec2<i32> = vec2(1i) << vec2(2u);
+        const x6: vec2<u32> = vec2(1u) << vec2(2u);
+        let x7: i32 = i << 1;
+        let x8: u32 = u << 1;
+        i <<= 1;
+        u <<= 1;
+    }
+
+    {
+        var i = 0i;
+        var u = 0u;
+        const x: u32 = 1 >> 2;
+        const x2: i32 = 1i >> 2u;
+        const x3: u32 = 1u >> 2u;
+        const x4: vec2<u32> = vec2(1) >> vec2(2);
+        const x5: vec2<i32> = vec2(1i) >> vec2(2u);
+        const x6: vec2<u32> = vec2(1u) >> vec2(2u);
+        let x7: i32 = i >> 1;
+        let x8: u32 = u >> 1;
+        i >>= 1;
+        u >>= 1;
+    }
 }
 
-fn testComparison() {
-  {
-    _ = false == true;
-    _ = 0 == 1;
-    _ = 0i == 1i;
-    _ = 0u == 1u;
-    _ = 0.0 == 1.0;
-    _ = 0.0f == 1.0f;
-    _ = vec2(false) == vec2(true);
-    _ = vec2(0) == vec2(1);
-    _ = vec2(0i) == vec2(1i);
-    _ = vec2(0u) == vec2(1u);
-    _ = vec2(0.0) == vec2(1.0);
-    _ = vec2(0.0f) == vec2(1.0f);
-  }
-
-  {
-    _ = false != true;
-    _ = 0 != 1;
-    _ = 0i != 1i;
-    _ = 0u != 1u;
-    _ = 0.0 != 1.0;
-    _ = 0.0f != 1.0f;
-    _ = vec2(false) != vec2(true);
-    _ = vec2(0) != vec2(1);
-    _ = vec2(0i) != vec2(1i);
-    _ = vec2(0u) != vec2(1u);
-    _ = vec2(0.0) != vec2(1.0);
-    _ = vec2(0.0f) != vec2(1.0f);
-  }
-
-  {
-    _ = 0 > 1;
-    _ = 0i > 1i;
-    _ = 0u > 1u;
-    _ = 0.0 > 1.0;
-    _ = 0.0f > 1.0f;
-    _ = vec2(0) > vec2(1);
-    _ = vec2(0i) > vec2(1i);
-    _ = vec2(0u) > vec2(1u);
-    _ = vec2(0.0) > vec2(1.0);
-    _ = vec2(0.0f) > vec2(1.0f);
-  }
-
-  {
-    _ = 0 >= 1;
-    _ = 0i >= 1i;
-    _ = 0u >= 1u;
-    _ = 0.0 >= 1.0;
-    _ = 0.0f >= 1.0f;
-    _ = vec2(0) >= vec2(1);
-    _ = vec2(0i) >= vec2(1i);
-    _ = vec2(0u) >= vec2(1u);
-    _ = vec2(0.0) >= vec2(1.0);
-    _ = vec2(0.0f) >= vec2(1.0f);
-  }
-
-  {
-    _ = 0 < 1;
-    _ = 0i < 1i;
-    _ = 0u < 1u;
-    _ = 0.0 < 1.0;
-    _ = 0.0f < 1.0f;
-    _ = vec2(0) < vec2(1);
-    _ = vec2(0i) < vec2(1i);
-    _ = vec2(0u) < vec2(1u);
-    _ = vec2(0.0) < vec2(1.0);
-    _ = vec2(0.0f) < vec2(1.0f);
-  }
-
-  {
-    _ = 0 <= 1;
-    _ = 0i <= 1i;
-    _ = 0u <= 1u;
-    _ = 0.0 <= 1.0;
-    _ = 0.0f <= 1.0f;
-    _ = vec2(0) <= vec2(1);
-    _ = vec2(0i) <= vec2(1i);
-    _ = vec2(0u) <= vec2(1u);
-    _ = vec2(0.0) <= vec2(1.0);
-    _ = vec2(0.0f) <= vec2(1.0f);
-  }
-}
+// 8.13. Address-Of Expression (https://www.w3.org/TR/WGSL/#address-of-expr)
 
 fn testAddressOf()
 {
@@ -198,131 +801,11 @@ fn testAddressOf()
     testPointerDeference(z);
 }
 
+// 8.14. Indirection Expression (https://www.w3.org/TR/WGSL/#indirection-expr)
+
 fn testPointerDeference(x: ptr<function, i32>) -> i32
 {
     return *x;
-}
-
-// 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
-
-fn testLogicalNegation()
-{
-    // [].(Bool) => Bool,
-    _ = !true;
-    _ = !false;
-
-    // [N].(Vector[Bool, N]) => Vector[Bool, N],
-    _ = !vec2(true);
-    _ = !vec3(true);
-    _ = !vec4(true);
-    _ = !vec2(false);
-    _ = !vec3(false);
-    _ = !vec4(false);
-}
-
-fn testShortCircuitingOr()
-{
-    // [].(Bool, Bool) => Bool,
-    _ = false || false;
-    _ = true || false;
-    _ = false || true;
-    _ = true || true;
-}
-
-fn testShortCircuitingAnd()
-{
-    // [].(Bool, Bool) => Bool,
-    _ = false && false;
-    _ = true && false;
-    _ = false && true;
-    _ = true && true;
-}
-
-fn testLogicalOr()
-{
-    // [].(Bool, Bool) => Bool,
-    _ = false | false;
-    _ = true | false;
-    _ = false | true;
-    _ = true | true;
-
-    // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
-    _ = vec2(false) | vec2(false);
-    _ = vec2( true) | vec2(false);
-    _ = vec2(false) | vec2( true);
-    _ = vec2( true) | vec2( true);
-    _ = vec3(false) | vec3(false);
-    _ = vec3( true) | vec3(false);
-    _ = vec3(false) | vec3( true);
-    _ = vec3( true) | vec3( true);
-    _ = vec4(false) | vec4(false);
-    _ = vec4( true) | vec4(false);
-    _ = vec4(false) | vec4( true);
-    _ = vec4( true) | vec4( true);
-}
-
-fn testLogicalAnd()
-{
-    // [].(Bool, Bool) => Bool,
-    _ = false & false;
-    _ = true & false;
-    _ = false & true;
-    _ = true & true;
-
-    // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
-    _ = vec2(false) & vec2(false);
-    _ = vec2( true) & vec2(false);
-    _ = vec2(false) & vec2( true);
-    _ = vec2( true) & vec2( true);
-    _ = vec3(false) & vec3(false);
-    _ = vec3( true) & vec3(false);
-    _ = vec3(false) & vec3( true);
-    _ = vec3( true) & vec3( true);
-    _ = vec4(false) & vec4(false);
-    _ = vec4( true) & vec4(false);
-    _ = vec4(false) & vec4( true);
-    _ = vec4( true) & vec4( true);
-}
-
-// 8.9. Bit Expressions (https://www.w3.org/TR/WGSL/#bit-expr)
-
-fn testBitwise()
-{
-  {
-    _ = ~0;
-    _ = ~0i;
-    _ = ~0u;
-  }
-
-  {
-    _ = 0 & 1;
-    _ = 0i & 1i;
-    _ = 0u & 1u;
-  }
-
-  {
-    _ = 0 | 1;
-    _ = 0i | 1i;
-    _ = 0u | 1u;
-  }
-
-  {
-    _ = 0 ^ 1;
-    _ = 0i ^ 1i;
-    _ = 0u ^ 1u;
-  }
-
-  {
-    _ = 1  << 2;
-    _ = 1i << 2i;
-    _ = 1u << 2u;
-  }
-
-  {
-    _ = 1  >> 2;
-    _ = 1i >> 2i;
-    _ = 1u >> 2u;
-  }
 }
 
 // 16.1. Constructor Built-in Functions
@@ -335,6 +818,7 @@ fn testZeroValueBuiltInFunctions()
     _ = i32();
     _ = u32();
     _ = f32();
+    _ = f16();
 
     _ = vec2<f32>();
     _ = vec3<f32>();
@@ -371,10 +855,20 @@ fn testBool()
     _ = bool(0u);
     _ = bool(0.0);
     _ = bool(0f);
+    _ = bool(0h);
 }
 
-// 16.1.2.3. f16
-// FIXME: add support for f16
+// 16.1.2.3.
+fn testF16()
+{
+    _ = f16(true);
+    _ = f16(0);
+    _ = f16(0i);
+    _ = f16(0u);
+    _ = f16(0.0);
+    _ = f16(0f);
+    _ = f16(0h);
+}
 
 // 16.1.2.4.
 fn testF32()
@@ -385,6 +879,7 @@ fn testF32()
     _ = f32(0u);
     _ = f32(0.0);
     _ = f32(0f);
+    _ = f32(0h);
 }
 
 // 16.1.2.5.
@@ -396,6 +891,8 @@ fn testI32()
     _ = i32(0u);
     _ = i32(0.0);
     _ = i32(0f);
+    _ = i32(0h);
+    _ = i32(4294967295u);
 }
 
 // 16.1.2.6 - 14: matCxR
@@ -403,6 +900,7 @@ fn testMatrix()
 {
   {
     _ = mat2x2<f32>(mat2x2(0.0, 0.0, 0.0, 0.0));
+    _ = mat2x2<f32>(mat2x2<f16>(0.0, 0.0, 0.0, 0.0));
     _ = mat2x2(mat2x2(0.0, 0.0, 0.0, 0.0));
     _ = mat2x2(0.0, 0.0, 0.0, 0.0);
     _ = mat2x2(vec2(0.0, 0.0), vec2(0.0, 0.0));
@@ -410,6 +908,7 @@ fn testMatrix()
 
   {
     _ = mat2x3<f32>(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x3<f32>(mat2x3<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat2x3(mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat2x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat2x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
@@ -417,6 +916,7 @@ fn testMatrix()
 
   {
     _ = mat2x4<f32>(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat2x4<f32>(mat2x4<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat2x4(mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat2x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat2x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
@@ -424,6 +924,7 @@ fn testMatrix()
 
   {
     _ = mat3x2<f32>(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x2<f32>(mat3x2<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat3x2(mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat3x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat3x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
@@ -431,6 +932,7 @@ fn testMatrix()
 
   {
     _ = mat3x3<f32>(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x3<f32>(mat3x3<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat3x3(mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat3x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat3x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
@@ -438,6 +940,7 @@ fn testMatrix()
 
   {
     _ = mat3x4<f32>(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat3x4<f32>(mat3x4<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat3x4(mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat3x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat3x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
@@ -445,6 +948,7 @@ fn testMatrix()
 
   {
     _ = mat4x2<f32>(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x2<f32>(mat4x2<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x2(mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x2(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat4x2(vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0), vec2(0.0, 0.0));
@@ -452,6 +956,7 @@ fn testMatrix()
 
   {
     _ = mat4x3<f32>(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x3<f32>(mat4x3<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x3(mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     _ = mat4x3(vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0), vec3(0.0, 0.0, 0.0));
@@ -459,6 +964,7 @@ fn testMatrix()
 
   {
     _ = mat4x4<f32>(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+    _ = mat4x4<f32>(mat4x4<f16>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x4(mat4x4(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
     _ = mat4x4(vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0), vec4(0.0, 0.0, 0.0, 0.0));
@@ -518,9 +1024,74 @@ fn testVec4() {
   _ = vec4(0, vec3(0, 0, 0));
 }
 
-// 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
+// 16.2. Bit Reinterpretation Built-in Functions (https://www.w3.org/TR/WGSL/#bitcast-builtin)
+// RUN: %metal-compile testBitcast
+@compute @workgroup_size(1)
+fn testBitcast()
+{
+    let u = 0u;
+    let i = 0i;
+    let f = 0f;
 
-// 17.3.1
+    // [T < Concrete32BitNumber, S < Concrete32BitNumber].(S) => T
+    { let x: u32 = bitcast<u32>(u); }
+    { let x: u32 = bitcast<u32>(i); }
+    { let x: u32 = bitcast<u32>(f); }
+
+    { let x: i32 = bitcast<i32>(u); }
+    { let x: i32 = bitcast<i32>(i); }
+    { let x: i32 = bitcast<i32>(f); }
+
+    { let x: f32 = bitcast<f32>(u); }
+    { let x: f32 = bitcast<f32>(i); }
+    { let x: f32 = bitcast<f32>(f); }
+
+    // [T < Concrete32BitNumber, S < Concrete32BitNumber, N].(vec[N][S]) => vec[N][T]
+    // vec2
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(u)); }
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(i)); }
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(f)); }
+
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(u)); }
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(i)); }
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(f)); }
+
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(u)); }
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(i)); }
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(f)); }
+
+    // vec3
+    { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(u)); }
+    { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(i)); }
+    { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(f)); }
+
+    { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(u)); }
+    { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(i)); }
+    { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(f)); }
+
+    { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(u)); }
+    { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(i)); }
+    { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(f)); }
+
+    // vec4
+    { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(u)); }
+    { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(i)); }
+    { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(f)); }
+
+    { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(u)); }
+    { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(i)); }
+    { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(f)); }
+
+    { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(u)); }
+    { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(i)); }
+    { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(f)); }
+
+    // FIXME: add f16 overloads
+}
+
+// 16.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
+
+// 16.3.1
 fn testAll()
 {
     // [N].(Vector[Bool, N]) => Bool,
@@ -533,7 +1104,7 @@ fn testAll()
     _ = all(false);
 }
 
-// 17.3.2
+// 16.3.2
 fn testAny()
 {
     // [N].(Vector[Bool, N]) => Bool,
@@ -546,7 +1117,7 @@ fn testAny()
     _ = any(false);
 }
 
-// 17.3.3
+// 16.3.3
 fn testSelect()
 {
     // [T < Scalar].(T, T, Bool) => T,
@@ -620,7 +1191,7 @@ fn testArrayLength()
     _ = arrayLength(&a2);
 }
 
-// 17.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
+// 16.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
 
 // Trigonometric
 fn testTrigonometric()
@@ -671,10 +1242,10 @@ fn testTrigonometric()
 fn testTrigonometricHyperbolic()
 {
   {
-    _ = acosh(0.0);
-    _ = acosh(vec2(0.0, 0.0));
-    _ = acosh(vec3(0.0, 0.0, 0.0));
-    _ = acosh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = acosh(1.0);
+    _ = acosh(vec2(1.0, 1.0));
+    _ = acosh(vec3(1.0, 1.0, 1.0));
+    _ = acosh(vec4(1.0, 1.0, 1.0, 1.0));
   }
 
   {
@@ -714,7 +1285,7 @@ fn testTrigonometricHyperbolic()
 }
 
 
-// 17.5.1
+// 16.5.1
 fn testAbs()
 {
     // [T < Float].(T) => T,
@@ -743,15 +1314,15 @@ fn testAbs()
     }
 }
 
-// 17.5.2. acos
-// 17.5.3. acosh
-// 17.5.4. asin
-// 17.5.5. asinh
-// 17.5.6. atan
-// 17.5.7. atanh
+// 16.5.2. acos
+// 16.5.3. acosh
+// 16.5.4. asin
+// 16.5.5. asinh
+// 16.5.6. atan
+// 16.5.7. atanh
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
-// 17.5.8
+// 16.5.8
 fn testAtan2() {
     // [T < Float].(T, T) => T,
     {
@@ -777,7 +1348,7 @@ fn testAtan2() {
     }
 }
 
-// 17.5.9
+// 16.5.9
 fn testCeil()
 {
     // [T < Float].(T) => T,
@@ -805,7 +1376,7 @@ fn testCeil()
     }
 }
 
-// 17.5.10
+// 16.5.10
 fn testClamp()
 {
     // [T < Number].(T, T, T) => T,
@@ -840,57 +1411,87 @@ fn testClamp()
     }
 }
 
-// 17.5.11. cos
-// 17.5.12. cosh
+// 16.5.11. cos
+// 16.5.12. cosh
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
-// 17.5.13-15 (Bit counting)
+// 16.5.13-15 (Bit counting)
+// RUN: %metal-compile testBitCounting
+@compute @workgroup_size(1)
 fn testBitCounting()
 {
     // [T < ConcreteInteger].(T) => T,
     {
+        let i = 1i;
+        let u = 1u;
         _ = countLeadingZeros(1);
         _ = countLeadingZeros(1i);
         _ = countLeadingZeros(1u);
+        let r1: i32 = countLeadingZeros(i);
+        let r2: u32 = countLeadingZeros(u);
     }
     {
+        let i = 1i;
+        let u = 1u;
         _ = countOneBits(1);
         _ = countOneBits(1i);
         _ = countOneBits(1u);
+        let r1: i32 = countOneBits(i);
+        let r2: u32 = countOneBits(u);
     }
     {
+        let i = 1i;
+        let u = 1u;
         _ = countTrailingZeros(1);
         _ = countTrailingZeros(1i);
         _ = countTrailingZeros(1u);
+        let r1: i32 = countTrailingZeros(i);
+        let r2: u32 = countTrailingZeros(u);
     }
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
+        let vi = vec2(1i);
+        let vu = vec2(1u);
         _ = countLeadingZeros(vec2(1, 1));
         _ = countLeadingZeros(vec2(1i, 1i));
         _ = countLeadingZeros(vec2(1u, 1u));
+        let r1: vec2i = countLeadingZeros(vi);
+        let r2: vec2u = countLeadingZeros(vu);
     }
     {
+        let vi = vec3(1i);
+        let vu = vec3(1u);
         _ = countOneBits(vec3(1, 1, 1));
         _ = countOneBits(vec3(1i, 1i, 1i));
         _ = countOneBits(vec3(1u, 1u, 1u));
+        let r1: vec3i = countOneBits(vi);
+        let r2: vec3u = countOneBits(vu);
     }
     {
+        let vi = vec4(1i);
+        let vu = vec4(1u);
         _ = countTrailingZeros(vec4(1, 1, 1, 1));
         _ = countTrailingZeros(vec4(1i, 1i, 1i, 1i));
         _ = countTrailingZeros(vec4(1u, 1u, 1u, 1u));
+        let r1: vec4i = countTrailingZeros(vi);
+        let r2: vec4u = countTrailingZeros(vu);
     }
 }
 
-// 17.5.16
+// 16.5.16
 fn testCross()
 {
     // [T < Float].(Vector[T, 3], Vector[T, 3]) => Vector[T, 3],
     _ = cross(vec3(1, 1, 1), vec3(1f, 2f, 3f));
     _ = cross(vec3(1.0, 1.0, 1.0), vec3(1f, 2f, 3f));
     _ = cross(vec3(1f, 1f, 1f), vec3(1f, 2f, 3f));
+
+    _ = cross(vec3(1, 1, 1), vec3(1h, 2h, 3h));
+    _ = cross(vec3(1.0, 1.0, 1.0), vec3(1h, 2h, 3h));
+    _ = cross(vec3(1h, 1h, 1h), vec3(1h, 2h, 3h));
 }
 
-// 17.5.17
+// 16.5.17
 fn testDegress()
 {
     // [T < Float].(T) => T,
@@ -917,19 +1518,31 @@ fn testDegress()
     }
 }
 
-// 17.5.18
+// 16.5.18
 fn testDeterminant()
 {
     // [T < Float, C].(Matrix[T, C, C]) => T,
     _ = determinant(mat2x2(1, 1, 1, 1));
     _ = determinant(mat3x3(1, 1, 1, 1, 1, 1, 1, 1, 1));
     _ = determinant(mat4x4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+
+    _ = determinant(mat2x2(1f, 1f, 1f, 1f));
+    _ = determinant(mat3x3(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f));
+    _ = determinant(mat4x4(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f));
+
+    _ = determinant(mat2x2(1h, 1h, 1h, 1h));
+    _ = determinant(mat3x3(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
+    _ = determinant(mat4x4(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
 }
 
-// 17.5.19
+// 16.5.19
+// RUN: %metal-compile testDistance
+@compute @workgroup_size(1)
 fn testDistance()
 {
     // [T < Float].(T, T) => T,
+    var a = 1.f;
+    let b = 2.f;
     {
         _ = distance(0, 1);
         _ = distance(0, 1.0);
@@ -937,6 +1550,7 @@ fn testDistance()
         _ = distance(0.0, 1.0);
         _ = distance(1.0, 2f);
         _ = distance(1f, 2f);
+        _ = distance(a, b);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => T,
     {
@@ -946,6 +1560,7 @@ fn testDistance()
         _ = distance(vec2(0.0), vec2(0.0));
         _ = distance(vec2(0.0), vec2(0f) );
         _ = distance(vec2(1f),  vec2(1f) );
+        _ = distance(vec2(a), vec2(b));
     }
     {
         _ = distance(vec3(0),   vec3(1)  );
@@ -954,6 +1569,7 @@ fn testDistance()
         _ = distance(vec3(0.0), vec3(0.0));
         _ = distance(vec3(0.0), vec3(0f) );
         _ = distance(vec3(1f),  vec3(1f) );
+        _ = distance(vec3(a), vec3(b));
     }
     {
         _ = distance(vec4(0),   vec4(1)  );
@@ -962,10 +1578,11 @@ fn testDistance()
         _ = distance(vec4(0.0), vec4(0.0));
         _ = distance(vec4(0.0), vec4(0f) );
         _ = distance(vec4(1f),  vec4(1f) );
+        _ = distance(vec4(a), vec4(b));
     }
 }
 
-// 17.5.20
+// 16.5.20
 fn testDot()
 {
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => T,
@@ -1007,7 +1624,7 @@ fn testDot()
     }
 }
 
-// 17.5.21 & 17.5.22
+// 16.5.21 & 16.5.22
 fn testExpAndExp2() {
     // [T < Float].(T) => T,
     {
@@ -1055,81 +1672,107 @@ fn testExpAndExp2() {
     }
 }
 
-// 17.5.23 & 17.5.24
+// 16.5.23 & 16.5.24
+// RUN: %metal-compile testExtractBits
+@compute @workgroup_size(1)
 fn testExtractBits()
 {
     // signed
     // [].(I32, U32, U32) => I32,
     {
+        let i = 0i;
         _ = extractBits(0, 1, 1);
         _ = extractBits(0i, 1, 1);
         _ = extractBits(0i, 1u, 1u);
+        let r: i32 = extractBits(i, 1u, 1u);
     }
     // [N].(Vector[I32, N], U32, U32) => Vector[I32, N],
     {
+        let vi = vec2(0i);
         _ = extractBits(vec2(0), 1, 1);
         _ = extractBits(vec2(0i), 1, 1);
         _ = extractBits(vec2(0i), 1u, 1u);
+        let r: vec2i = extractBits(vi, 1u, 1u);
     }
     {
+        let vi = vec3(0i);
         _ = extractBits(vec3(0), 1, 1);
         _ = extractBits(vec3(0i), 1, 1);
         _ = extractBits(vec3(0i), 1u, 1u);
+        let r: vec3i = extractBits(vi, 1u, 1u);
     }
     {
+        let vi = vec4(0i);
         _ = extractBits(vec4(0), 1, 1);
         _ = extractBits(vec4(0i), 1, 1);
         _ = extractBits(vec4(0i), 1u, 1u);
+        let r: vec4i = extractBits(vi, 1u, 1u);
     }
 
     // unsigned
     // [].(U32, U32, U32) => U32,
     {
+        let u = 0u;
         _ = extractBits(0, 1, 1);
         _ = extractBits(0u, 1, 1);
         _ = extractBits(0u, 1u, 1u);
+        let r: u32 = extractBits(u, 1u, 1u);
     }
 
     // [N].(Vector[U32, N], U32, U32) => Vector[U32, N],
     {
+        let vu = vec2(0u);
         _ = extractBits(vec2(0), 1, 1);
         _ = extractBits(vec2(0u), 1, 1);
         _ = extractBits(vec2(0u), 1u, 1u);
+        let r: vec2u = extractBits(vu, 1u, 1u);
     }
     {
+        let vu = vec3(0u);
         _ = extractBits(vec3(0), 1, 1);
         _ = extractBits(vec3(0u), 1, 1);
         _ = extractBits(vec3(0u), 1u, 1u);
+        let r: vec3u = extractBits(vu, 1u, 1u);
     }
     {
+        let vu = vec4(0u);
         _ = extractBits(vec4(0), 1, 1);
         _ = extractBits(vec4(0u), 1, 1);
         _ = extractBits(vec4(0u), 1u, 1u);
+        let r: vec4u = extractBits(vu, 1u, 1u);
     }
 }
 
-// 17.5.25
+// 16.5.25
+// RUN: %metal-compile testFaceForward
+@compute @workgroup_size(1)
 fn testFaceForward()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
+        let vf = vec2(2f);
         _ = faceForward(vec2(0), vec2(1),   vec2(2));
         _ = faceForward(vec2(0), vec2(1),   vec2(2.0));
         _ = faceForward(vec2(0), vec2(1.0), vec2(2f));
+        let r: vec2f = faceForward(vf, vf, vf);
     }
     {
+        let vf = vec3(2f);
         _ = faceForward(vec3(0), vec3(1),   vec3(2));
         _ = faceForward(vec3(0), vec3(1),   vec3(2.0));
         _ = faceForward(vec3(0), vec3(1.0), vec3(2f));
+        let r: vec3f = faceForward(vf, vf, vf);
     }
     {
+        let vf = vec4(2f);
         _ = faceForward(vec4(0), vec4(1),   vec4(2));
         _ = faceForward(vec4(0), vec4(1),   vec4(2.0));
         _ = faceForward(vec4(0), vec4(1.0), vec4(2f));
+        let r: vec4f = faceForward(vf, vf, vf);
     }
 }
 
-// 17.5.26 & 17.5.27
+// 16.5.26 & 16.5.27
 fn testFirstLeadingBit()
 {
     // signed
@@ -1174,7 +1817,7 @@ fn testFirstLeadingBit()
     }
 }
 
-// 17.5.28
+// 16.5.28
 fn testFirstTrailingBit()
 {
     // [T < ConcreteInteger].(T) => T,
@@ -1202,7 +1845,7 @@ fn testFirstTrailingBit()
     }
 }
 
-// 17.5.29
+// 16.5.29
 fn testFloor()
 {
     // [T < Float].(T) => T,
@@ -1230,7 +1873,7 @@ fn testFloor()
     }
 }
 
-// 17.5.30
+// 16.5.30
 fn testFma()
 {
     // [T < Float].(T, T, T) => T,
@@ -1257,7 +1900,7 @@ fn testFma()
     }
 }
 
-// 17.5.31
+// 16.5.31
 fn testFract()
 {
     // [T < Float].(T) => T,
@@ -1285,17 +1928,61 @@ fn testFract()
     }
 }
 
-// 17.5.32
+// 16.5.32
 fn testFrexp()
 {
-    // FIXME: this needs the special return types __frexp_result_*
+    {
+      let x: f32 = 1.5;
+      let y: f16 = 1.5;
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(1.5);
+      let r4 = frexp(1.5f);
+      let r5 = frexp(1.5h);
+    }
+
+    {
+      let x: vec2<f32> = vec2(1.5);
+      let y: vec2<f16> = vec2(1.5);
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(vec2(1.5));
+      let r4 = frexp(vec2(1.5f));
+      let r5 = frexp(vec2(1.5h));
+    }
+
+    {
+      let x: vec3<f32> = vec3(1.5);
+      let y: vec3<f16> = vec3(1.5);
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(vec3(1.5));
+      let r4 = frexp(vec3(1.5f));
+      let r5 = frexp(vec3(1.5h));
+    }
+
+    {
+      let x: vec4<f32> = vec4(1.5);
+      let y: vec4<f16> = vec4(1.5);
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(vec4(1.5));
+      let r4 = frexp(vec4(1.5f));
+      let r5 = frexp(vec4(1.5h));
+    }
 }
 
-// 17.5.33
+// 16.5.33
+// RUN: %metal-compile testInsertBits
+@compute @workgroup_size(1)
 fn testInsertBits()
 {
     // [T < ConcreteInteger].(T, T, U32, U32) => T,
     {
+        let i = 0i;
+        let u = 0u;
+        let r1: i32 = insertBits(i, i, 0, 0);
+        let r2: u32 = insertBits(u, u, 0, 0);
         _ = insertBits(0, 0, 0, 0);
         _ = insertBits(0, 0i, 0, 0);
         _ = insertBits(0, 0u, 0, 0);
@@ -1303,51 +1990,70 @@ fn testInsertBits()
 
     // [T < ConcreteInteger, N].(Vector[T, N], Vector[T, N], U32, U32) => Vector[T, N],
     {
+        let vi = vec2(0i);
+        let vu = vec2(0u);
         _ = insertBits(vec2(0), vec2(0), 0, 0);
         _ = insertBits(vec2(0), vec2(0i), 0, 0);
         _ = insertBits(vec2(0), vec2(0u), 0, 0);
+        let r1: vec2i = insertBits(vi, vi, 0, 0);
+        let r2: vec2u = insertBits(vu, vu, 0, 0);
     }
     {
+        let vi = vec3(0i);
+        let vu = vec3(0u);
         _ = insertBits(vec3(0), vec3(0), 0, 0);
         _ = insertBits(vec3(0), vec3(0i), 0, 0);
         _ = insertBits(vec3(0), vec3(0u), 0, 0);
+        let r1: vec3i = insertBits(vi, vi, 0, 0);
+        let r2: vec3u = insertBits(vu, vu, 0, 0);
     }
     {
+        let vi = vec4(0i);
+        let vu = vec4(0u);
         _ = insertBits(vec4(0), vec4(0), 0, 0);
         _ = insertBits(vec4(0), vec4(0i), 0, 0);
         _ = insertBits(vec4(0), vec4(0u), 0, 0);
+        let r1: vec4i = insertBits(vi, vi, 0, 0);
+        let r2: vec4u = insertBits(vu, vu, 0, 0);
     }
 }
 
-// 17.5.34
+// 16.5.34
+// RUN: %metal-compile testInverseSqrt
+@compute @workgroup_size(1)
 fn testInverseSqrt()
 {
     // [T < Float].(T) => T,
+    let x = 2.f;
     {
-        _ = inverseSqrt(0);
-        _ = inverseSqrt(0.0);
-        _ = inverseSqrt(1f);
+        _ = inverseSqrt(2);
+        _ = inverseSqrt(2.0);
+        _ = inverseSqrt(2f);
+        _ = inverseSqrt(x);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = inverseSqrt(vec2(0));
-        _ = inverseSqrt(vec2(0.0));
-        _ = inverseSqrt(vec2(1f));
+        _ = inverseSqrt(vec2(2));
+        _ = inverseSqrt(vec2(2.0));
+        _ = inverseSqrt(vec2(2f));
+        _ = inverseSqrt(vec2(x));
     }
     {
-        _ = inverseSqrt(vec3(-1));
-        _ = inverseSqrt(vec3(-1.0));
-        _ = inverseSqrt(vec3(-1f));
+        _ = inverseSqrt(vec3(2));
+        _ = inverseSqrt(vec3(2.0));
+        _ = inverseSqrt(vec3(2f));
+        _ = inverseSqrt(vec3(x));
     }
     {
-        _ = inverseSqrt(vec4(-1));
-        _ = inverseSqrt(vec4(-1.0));
-        _ = inverseSqrt(vec4(-1f));
+        _ = inverseSqrt(vec4(2));
+        _ = inverseSqrt(vec4(2.0));
+        _ = inverseSqrt(vec4(2f));
+        _ = inverseSqrt(vec4(x));
     }
 }
 
-// 17.5.35
+// 16.5.35
 fn testLdexp()
 {
     // [T < ConcreteFloat].(T, I32) => T,
@@ -1377,7 +2083,7 @@ fn testLdexp()
     }
 }
 
-// 17.5.36
+// 16.5.36
 fn testLength()
 {
     // [T < Float].(T) => T,
@@ -1405,62 +2111,62 @@ fn testLength()
     }
 }
 
-// 17.5.37
+// 16.5.37
 fn testLog()
 {
     // [T < Float].(T) => T,
     {
-        _ = log(0);
-        _ = log(0.0);
+        _ = log(2);
+        _ = log(1.0);
         _ = log(1f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = log(vec2(0));
-        _ = log(vec2(0.0));
-        _ = log(vec2(1f));
+        _ = log(vec2(2));
+        _ = log(vec2(2.0));
+        _ = log(vec2(2f));
     }
     {
-        _ = log(vec3(-1));
-        _ = log(vec3(-1.0));
-        _ = log(vec3(-1f));
+        _ = log(vec3(2));
+        _ = log(vec3(2.0));
+        _ = log(vec3(2f));
     }
     {
-        _ = log(vec4(-1));
-        _ = log(vec4(-1.0));
-        _ = log(vec4(-1f));
+        _ = log(vec4(2));
+        _ = log(vec4(2.0));
+        _ = log(vec4(2f));
     }
 }
 
-// 17.5.38
+// 16.5.38
 fn testLog2() {
     // [T < Float].(T) => T,
     {
-        _ = log2(0);
-        _ = log2(0.0);
-        _ = log2(1f);
+        _ = log2(2);
+        _ = log2(2.0);
+        _ = log2(2f);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = log2(vec2(0));
-        _ = log2(vec2(0.0));
-        _ = log2(vec2(1f));
+        _ = log2(vec2(2));
+        _ = log2(vec2(2.0));
+        _ = log2(vec2(2f));
     }
     {
-        _ = log2(vec3(-1));
-        _ = log2(vec3(-1.0));
-        _ = log2(vec3(-1f));
+        _ = log2(vec3(2));
+        _ = log2(vec3(2.0));
+        _ = log2(vec3(2f));
     }
     {
-        _ = log2(vec4(-1));
-        _ = log2(vec4(-1.0));
-        _ = log2(vec4(-1f));
+        _ = log2(vec4(2));
+        _ = log2(vec4(2.0));
+        _ = log2(vec4(2f));
     }
 }
 
-// 17.5.39
+// 16.5.39
 fn testMax()
 {
     // [T < Number].(T, T) => T,
@@ -1495,7 +2201,7 @@ fn testMax()
     }
 }
 
-// 17.5.40
+// 16.5.40
 fn testMin()
 {
     // [T < Number].(T, T) => T,
@@ -1530,7 +2236,7 @@ fn testMin()
     }
 }
 
-// 17.5.41
+// 16.5.41
 fn testMix()
 {
     // [T < Float].(T, T, T) => T,
@@ -1573,19 +2279,87 @@ fn testMix()
     }
 }
 
-// 17.5.42
+// 16.5.42
+// RUN: %metal-compile testModf
+@compute @workgroup_size(1)
 fn testModf()
 {
-    // FIXME: this needs the special return types __modf_result_*
+    {
+      let x: f32 = 1.5;
+      let y: f16 = 1.5;
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(1.5);
+      const r4 = modf(1.5f);
+      const r5 = modf(1.5h);
+
+      let r6: f32 = modf(x).fract;
+      let r7: f16 = modf(y).whole;
+      const r8: f32 = modf(1.5).fract;
+      const r9: f16 = modf(1.5).whole;
+      const r10: f32 = modf(1.5f).fract;
+      const r11: f16 = modf(1.5h).whole;
+    }
+
+    {
+      let x: vec2<f32> = vec2(1.5);
+      let y: vec2<f16> = vec2(1.5);
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(vec2(1.5));
+      const r4 = modf(vec2(1.5f));
+      const r5 = modf(vec2(1.5h));
+
+      let r6: vec2<f32> = modf(x).fract;
+      let r7: vec2<f16> = modf(y).whole;
+      const r8: vec2<f32> = modf(vec2(1.5)).fract;
+      const r9: vec2<f16> = modf(vec2(1.5)).whole;
+      const r10: vec2<f32> = modf(vec2(1.5f)).fract;
+      const r11: vec2<f16> = modf(vec2(1.5h)).whole;
+    }
+
+    {
+      let x: vec3<f32> = vec3(1.5);
+      let y: vec3<f16> = vec3(1.5);
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(vec3(1.5));
+      const r4 = modf(vec3(1.5f));
+      const r5 = modf(vec3(1.5h));
+
+      let r6: vec3<f32> = modf(x).fract;
+      let r7: vec3<f16> = modf(y).whole;
+      const r8: vec3<f32> = modf(vec3(1.5)).fract;
+      const r9: vec3<f16> = modf(vec3(1.5)).whole;
+      const r10: vec3<f32> = modf(vec3(1.5f)).fract;
+      const r11: vec3<f16> = modf(vec3(1.5h)).whole;
+    }
+
+    {
+      let x: vec4<f32> = vec4(1.5);
+      let y: vec4<f16> = vec4(1.5);
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(vec4(1.5));
+      const r4 = modf(vec4(1.5f));
+      const r5 = modf(vec4(1.5h));
+
+      let r6: vec4<f32> = modf(x).fract;
+      let r7: vec4<f16> = modf(y).whole;
+      const r8: vec4<f32> = modf(vec4(1.5)).fract;
+      const r9: vec4<f16> = modf(vec4(1.5)).whole;
+      const r10: vec4<f32> = modf(vec4(1.5f)).fract;
+      const r11: vec4<f16> = modf(vec4(1.5h)).whole;
+    }
 }
 
-// 17.5.43
+// 16.5.43
 fn testNormalize()
 {
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
-        _ = normalize(vec2(0));
-        _ = normalize(vec2(0.0));
+        _ = normalize(vec2(1));
+        _ = normalize(vec2(1.0));
         _ = normalize(vec2(1f));
     }
     {
@@ -1600,7 +2374,7 @@ fn testNormalize()
     }
 }
 
-// 17.5.44
+// 16.5.44
 fn testPow()
 {
     // [T < Float].(T, T) => T,
@@ -1639,34 +2413,45 @@ fn testPow()
     }
 }
 
-// 17.5.45
+// 16.5.45
 fn testQuantizeToF16() {
     // [].(F32) => F32,
+    // FIXME: we don't support this as constant yet, since there's no f16 implementation.
+    // In order to avoid constant evaluation we use a non-const argument. We
+    // should re-enable the commented-out tests below once we implement f16.
     {
-        _ = quantizeToF16(0);
-        _ = quantizeToF16(0.0);
-        _ = quantizeToF16(0f);
+        let x = 0f;
+        _ = quantizeToF16(x);
+        // _ = quantizeToF16(0);
+        // _ = quantizeToF16(0.0);
+        // _ = quantizeToF16(0f);
     }
 
     // [N].(Vector[F32, N]) => Vector[F32, N],
     {
-        _ = quantizeToF16(vec2(0));
-        _ = quantizeToF16(vec2(0.0));
-        _ = quantizeToF16(vec2(0f));
+        let x = vec2(0f);
+        _ = quantizeToF16(x);
+        // _ = quantizeToF16(vec2(0));
+        // _ = quantizeToF16(vec2(0.0));
+        // _ = quantizeToF16(vec2(0f));
     }
     {
-        _ = quantizeToF16(vec3(0));
-        _ = quantizeToF16(vec3(0.0));
-        _ = quantizeToF16(vec3(0f));
+        let x = vec3(0f);
+        _ = quantizeToF16(x);
+        // _ = quantizeToF16(vec3(0));
+        // _ = quantizeToF16(vec3(0.0));
+        // _ = quantizeToF16(vec3(0f));
     }
     {
-        _ = quantizeToF16(vec4(0));
-        _ = quantizeToF16(vec4(0.0));
-        _ = quantizeToF16(vec4(0f));
+        let x = vec4(0f);
+        _ = quantizeToF16(x);
+        // _ = quantizeToF16(vec4(0));
+        // _ = quantizeToF16(vec4(0.0));
+        // _ = quantizeToF16(vec4(0f));
     }
 }
 
-// 17.5.46
+// 16.5.46
 fn testRadians()
 {
     // [T < Float].(T) => T,
@@ -1694,7 +2479,7 @@ fn testRadians()
     }
 }
 
-// 17.5.47
+// 16.5.47
 fn testReflect()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
@@ -1724,7 +2509,7 @@ fn testReflect()
     }
 }
 
-// 17.5.48
+// 16.5.48
 fn testRefract()
 {
     // [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
@@ -1745,34 +2530,52 @@ fn testRefract()
     }
 }
 
-// 17.5.49
+// 16.5.49
+// RUN: %metal-compile testReverseBits
+@compute @workgroup_size(1)
 fn testReverseBits()
 {
     // [T < ConcreteInteger].(T) => T,
     {
+        let i = 0i;
+        let u = 0u;
         _ = reverseBits(0);
         _ = reverseBits(0i);
         _ = reverseBits(0u);
+        let r1: i32 = reverseBits(i);
+        let r2: u32 = reverseBits(u);
     }
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
     {
+        let vi = vec2(0i);
+        let vu = vec2(0u);
         _ = reverseBits(vec2(0));
         _ = reverseBits(vec2(0i));
         _ = reverseBits(vec2(0u));
+        let r1: vec2i = reverseBits(vi);
+        let r2: vec2u = reverseBits(vu);
     }
     {
+        let vi = vec3(0i);
+        let vu = vec3(0u);
         _ = reverseBits(vec3(0));
         _ = reverseBits(vec3(0i));
         _ = reverseBits(vec3(0u));
+        let r1: vec3i = reverseBits(vi);
+        let r2: vec3u = reverseBits(vu);
     }
     {
+        let vi = vec4(0i);
+        let vu = vec4(0u);
         _ = reverseBits(vec4(0));
         _ = reverseBits(vec4(0i));
         _ = reverseBits(vec4(0u));
+        let r1: vec4i = reverseBits(vi);
+        let r2: vec4u = reverseBits(vu);
     }
 }
 
-// 17.5.50
+// 16.5.50
 fn testRound()
 {
     // [T < Float].(T) => T,
@@ -1800,7 +2603,7 @@ fn testRound()
     }
 }
 
-// 17.5.51
+// 16.5.51
 fn testSaturate()
 {
     // [T < Float].(T) => T,
@@ -1828,7 +2631,7 @@ fn testSaturate()
     }
 }
 
-// 17.5.52
+// 16.5.52
 fn testSign()
 {
     // [T < SignedNumber].(T) => T,
@@ -1860,11 +2663,11 @@ fn testSign()
     }
 }
 
-// 17.5.53. sin
-// 17.5.54. sinh
+// 16.5.53. sin
+// 16.5.54. sinh
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
-// 17.5.55
+// 16.5.55
 fn testSmoothstep()
 {
     // [T < Float].(T, T, T) => T,
@@ -1875,23 +2678,23 @@ fn testSmoothstep()
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
-        _ = smoothstep(vec2(0), vec2(0), vec2(0));
-        _ = smoothstep(vec2(0), vec2(0), vec2(0.0));
-        _ = smoothstep(vec2(0), vec2(0), vec2(0f));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1.0));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1f));
     }
     {
-        _ = smoothstep(vec3(0), vec3(0), vec3(0));
-        _ = smoothstep(vec3(0), vec3(0), vec3(0.0));
-        _ = smoothstep(vec3(0), vec3(0), vec3(0f));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1.0));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1f));
     }
     {
-        _ = smoothstep(vec4(0), vec4(0), vec4(0));
-        _ = smoothstep(vec4(0), vec4(0), vec4(0.0));
-        _ = smoothstep(vec4(0), vec4(0), vec4(0f));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1.0));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1f));
     }
 }
 
-// 17.5.56
+// 16.5.56
 fn testSqrt()
 {
     // [T < Float].(T) => T,
@@ -1908,18 +2711,18 @@ fn testSqrt()
         _ = sqrt(vec2(1f));
     }
     {
-        _ = sqrt(vec3(-1));
-        _ = sqrt(vec3(-1.0));
-        _ = sqrt(vec3(-1f));
+        _ = sqrt(vec3(1));
+        _ = sqrt(vec3(1.0));
+        _ = sqrt(vec3(1f));
     }
     {
-        _ = sqrt(vec4(-1));
-        _ = sqrt(vec4(-1.0));
-        _ = sqrt(vec4(-1f));
+        _ = sqrt(vec4(1));
+        _ = sqrt(vec4(1.0));
+        _ = sqrt(vec4(1f));
     }
 }
 
-// 17.5.57
+// 16.5.57
 fn testStep()
 {
     // [T < Float].(T, T) => T,
@@ -1946,11 +2749,11 @@ fn testStep()
     }
 }
 
-// 17.5.58. tan
-// 17.5.59. tanh
+// 16.5.58. tan
+// 16.5.59. tanh
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
-// 17.5.60
+// 16.5.60
 fn testTranspose()
 {
     // [T < Float, C, R].(Matrix[T, C, R]) => Matrix[T, R, C],
@@ -1992,7 +2795,7 @@ fn testTranspose()
     }
 }
 
-// 17.5.61
+// 16.5.61
 fn testTrunc()
 {
     // [T < Float].(T) => T,
@@ -2018,6 +2821,70 @@ fn testTrunc()
         _ = trunc(vec4(-1.0));
         _ = trunc(vec4(-1f));
     }
+}
+
+// 16.6. Derivative Built-in Functions (https://www.w3.org/TR/WGSL/#derivative-builtin-functions)
+// RUN: %metal-compile testDerivativeFunctions
+@fragment
+fn testDerivativeFunctions()
+{
+    // All have the same signatures:
+    //   [].(f32) => f32,
+    //   [N].(vec[N][f32]) => vec[N][f32],
+
+    // 16.6.1 dpdx
+    _ = dpdx(2.0);
+    _ = dpdx(vec2(2.0));
+    _ = dpdx(vec3(2.0));
+    _ = dpdx(vec4(2.0));
+
+    // 16.6.2 dpdxCoarse
+    _ = dpdxCoarse(2.0);
+    _ = dpdxCoarse(vec2(2.0));
+    _ = dpdxCoarse(vec3(2.0));
+    _ = dpdxCoarse(vec4(2.0));
+
+    // 16.6.3 dpdxFine
+    _ = dpdxFine(2.0);
+    _ = dpdxFine(vec2(2.0));
+    _ = dpdxFine(vec3(2.0));
+    _ = dpdxFine(vec4(2.0));
+
+    // 16.6.4 dpdy
+    _ = dpdy(2.0);
+    _ = dpdy(vec2(2.0));
+    _ = dpdy(vec3(2.0));
+    _ = dpdy(vec4(2.0));
+
+    // 16.6.5 dpdyCoarse
+    _ = dpdyCoarse(2.0);
+    _ = dpdyCoarse(vec2(2.0));
+    _ = dpdyCoarse(vec3(2.0));
+    _ = dpdyCoarse(vec4(2.0));
+
+    // 16.6.6 dpdyFine
+    _ = dpdyFine(2.0);
+    _ = dpdyFine(vec2(2.0));
+    _ = dpdyFine(vec3(2.0));
+    _ = dpdyFine(vec4(2.0));
+
+    // 16.6.7 fwidth
+    _ = fwidth(2.0);
+    _ = fwidth(vec2(2.0));
+    _ = fwidth(vec3(2.0));
+    _ = fwidth(vec4(2.0));
+
+    // 16.6.8 fwidthCoarse
+    _ = fwidthCoarse(2.0);
+    _ = fwidthCoarse(vec2(2.0));
+    _ = fwidthCoarse(vec3(2.0));
+    _ = fwidthCoarse(vec4(2.0));
+
+    // 16.6.9 fwidthFine
+    _ = fwidthFine(2.0);
+    _ = fwidthFine(vec2(2.0));
+    _ = fwidthFine(vec3(2.0));
+    _ = fwidthFine(vec4(2.0));
 }
 
 // 16.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
@@ -2130,6 +2997,8 @@ fn testTextureDimensions()
 }
 
 // 16.7.2
+// RUN: %metal-compile testTextureGather
+@compute @workgroup_size(1)
 fn testTextureGather()
 {
     // [T < ConcreteInteger, S < Concrete32BitNumber].(T, Texture[S, Texture2d], Sampler, Vector[F32, 2]) => Vector[S, 4],
@@ -2170,6 +3039,8 @@ fn testTextureGather()
 }
 
 // 16.7.3 textureGatherCompare
+// RUN: %metal-compile testTextureGatherCompare
+@compute @workgroup_size(1)
 fn testTextureGatherCompare()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => vec4[f32],
@@ -2196,22 +3067,26 @@ fn testTextureGatherCompare()
 @compute @workgroup_size(1)
 fn testTextureLoad()
 {
+    let x: i32 = 0;
     // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
     {
         {
             _ = textureLoad(t1d, 0, 0);
             _ = textureLoad(t1d, 0i, 0u);
             _ = textureLoad(t1d, 0u, 0i);
+            _ = textureLoad(t1d, 0u, x);
         }
         {
             _ = textureLoad(t1di, 0, 0);
             _ = textureLoad(t1di, 0i, 0u);
             _ = textureLoad(t1di, 0u, 0i);
+            _ = textureLoad(t1di, 0u, x);
         }
         {
             _ = textureLoad(t1du, 0, 0);
             _ = textureLoad(t1du, 0i, 0u);
             _ = textureLoad(t1du, 0u, 0i);
+            _ = textureLoad(t1du, 0u, x);
         }
     }
 
@@ -2221,16 +3096,19 @@ fn testTextureLoad()
             _ = textureLoad(t2d, vec2(0), 0);
             _ = textureLoad(t2d, vec2(0i), 0u);
             _ = textureLoad(t2d, vec2(0u), 0i);
+            _ = textureLoad(t2d, vec2(0u), x);
         }
         {
             _ = textureLoad(t2di, vec2(0), 0);
             _ = textureLoad(t2di, vec2(0i), 0u);
             _ = textureLoad(t2di, vec2(0u), 0i);
+            _ = textureLoad(t2di, vec2(0u), x);
         }
         {
             _ = textureLoad(t2du, vec2(0), 0);
             _ = textureLoad(t2du, vec2(0i), 0u);
             _ = textureLoad(t2du, vec2(0u), 0i);
+            _ = textureLoad(t2du, vec2(0u), x);
         }
     }
 
@@ -2240,16 +3118,19 @@ fn testTextureLoad()
             _ = textureLoad(t2da, vec2(0), 0, 0);
             _ = textureLoad(t2da, vec2(0i), 0u, 0i);
             _ = textureLoad(t2da, vec2(0u), 0i, 0u);
+            _ = textureLoad(t2da, vec2(0u), x, x);
         }
         {
             _ = textureLoad(t2dai, vec2(0), 0, 0);
             _ = textureLoad(t2dai, vec2(0i), 0u, 0i);
             _ = textureLoad(t2dai, vec2(0u), 0i, 0u);
+            _ = textureLoad(t2dau, vec2(0u), x, x);
         }
         {
             _ = textureLoad(t2dau, vec2(0), 0, 0);
             _ = textureLoad(t2dau, vec2(0i), 0u, 0i);
             _ = textureLoad(t2dau, vec2(0u), 0i, 0u);
+            _ = textureLoad(t2dau, vec2(0u), x, x);
         }
     }
 
@@ -2278,16 +3159,19 @@ fn testTextureLoad()
             _ = textureLoad(tm2d, vec2(0), 0);
             _ = textureLoad(tm2d, vec2(0i), 0u);
             _ = textureLoad(tm2d, vec2(0u), 0i);
+            _ = textureLoad(tm2d, vec2(0u), x);
         }
         {
             _ = textureLoad(tm2di, vec2(0), 0);
             _ = textureLoad(tm2di, vec2(0i), 0u);
             _ = textureLoad(tm2di, vec2(0u), 0i);
+            _ = textureLoad(tm2di, vec2(0u), x);
         }
         {
             _ = textureLoad(tm2du, vec2(0), 0);
             _ = textureLoad(tm2du, vec2(0i), 0u);
             _ = textureLoad(tm2du, vec2(0u), 0i);
+            _ = textureLoad(tm2du, vec2(0u), x);
         }
     }
 
@@ -2303,6 +3187,7 @@ fn testTextureLoad()
         _ = textureLoad(td2d, vec2(0), 0);
         _ = textureLoad(td2d, vec2(0i), 0i);
         _ = textureLoad(td2d, vec2(0u), 0u);
+        _ = textureLoad(td2d, vec2(0u), x);
     }
 
     // [T < ConcreteInteger, S < ConcreteInteger, U < ConcreteInteger].(texture_depth_2d_array, Vector[T, 2], S, U) => F32,
@@ -2310,6 +3195,7 @@ fn testTextureLoad()
         _ = textureLoad(td2da, vec2(0), 0, 0);
         _ = textureLoad(td2da, vec2(0i), 0i, 0i);
         _ = textureLoad(td2da, vec2(0u), 0u, 0u);
+        _ = textureLoad(td2da, vec2(0u), x, x);
     }
 
     // [T < ConcreteInteger, U < ConcreteInteger].(texture_depth_multisampled_2d, Vector[T, 2], U) => F32,
@@ -2317,10 +3203,13 @@ fn testTextureLoad()
         _ = textureLoad(tdms2d, vec2(0), 0);
         _ = textureLoad(tdms2d, vec2(0i), 0i);
         _ = textureLoad(tdms2d, vec2(0u), 0u);
+        _ = textureLoad(tdms2d, vec2(0u), x);
     }
 }
 
 // 16.7.5
+// RUN: %metal-compile testTextureNumLayers
+@compute @workgroup_size(1)
 fn testTextureNumLayers()
 {
     // [S < Concrete32BitNumber].(Texture[S, Texture2dArray]) => U32,
@@ -2376,6 +3265,8 @@ fn testTextureNumLevels()
 }
 
 // 16.7.7
+// RUN: %metal-compile testTextureNumSamples
+@compute @workgroup_size(1)
 fn testTextureNumSamples()
 {
     // [S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d]) => U32,
@@ -2386,6 +3277,8 @@ fn testTextureNumSamples()
 }
 
 // 16.7.8
+// RUN: %metal-compile testTextureSample
+@compute @workgroup_size(1)
 fn testTextureSample()
 {
     // [].(Texture[F32, Texture1d], Sampler, F32) => Vector[F32, 4],
@@ -2436,6 +3329,8 @@ fn testTextureSample()
 
 
 // 16.7.9
+// RUN: %metal-compile testTextureSampleBias
+@compute @workgroup_size(1)
 fn testTextureSampleBias()
 {
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
@@ -2488,6 +3383,8 @@ fn testTextureSampleCompare()
 }
 
 // 16.7.11
+// RUN: %metal-compile testTextureSampleCompareLevel
+@compute @workgroup_size(1)
 fn testTextureSampleCompareLevel()
 {
     // [].(texture_depth_2d, sampler_comparison, vec2[f32], f32) => f32,
@@ -2510,6 +3407,8 @@ fn testTextureSampleCompareLevel()
 }
 
 // 16.7.12
+// RUN: %metal-compile testTextureSampleGrad
+@compute @workgroup_size(1)
 fn testTextureSampleGrad()
 {
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], Vector[F32, 2], Vector[F32, 2]) => Vector[F32, 4],
@@ -2542,8 +3441,6 @@ fn testTextureSampleGrad()
 @compute @workgroup_size(1)
 fn testTextureSampleLevel()
 {
-    // FIXME: add declarations for texture depth
-
     // [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2], F32) => Vector[F32, 4],
     _ = textureSampleLevel(t2d, s, vec2f(0), 0);
 
@@ -2588,7 +3485,10 @@ fn testTextureSampleLevel()
 }
 
 // 16.7.14
-fn testTextureSampleBaseClampToEdge() {
+// RUN: %metal-compile testTextureSampleBaseClampToEdge
+@compute @workgroup_size(1)
+fn testTextureSampleBaseClampToEdge()
+{
     // [].(TextureExternal, Sampler, Vector[F32, 2]) => Vector[F32, 4],
     _ = textureSampleBaseClampToEdge(te, s, vec2f(0));
 
@@ -2613,6 +3513,54 @@ fn testTextureStore()
     // [F, T < ConcreteInteger].(texture_storage_3d[F, write], vec3[T], vec4[ChannelFormat[F]]) => void,
     textureStore(ts3d, vec3(0), vec4f(0));
 }
+
+// 16.8. Atomic Built-in Functions (https://www.w3.org/TR/WGSL/#atomic-builtin-functions)
+var<workgroup> x: atomic<i32>;
+
+// RUN: %metal-compile testAtomicFunctions
+@compute @workgroup_size(1)
+fn testAtomicFunctions()
+{
+    testAtomicLoad();
+    testAtomicStore();
+    testAtomicReadWriteModify();
+}
+
+// 16.8.1
+fn testAtomicLoad()
+{
+    // [AS, T].(ptr[AS, atomic[T], read_write]) => T,
+    _ = atomicLoad(&x);
+}
+
+// 16.8.2
+fn testAtomicStore()
+{
+    /*[AS, T].(ptr[AS, atomic[T], read_write], T) => void,*/
+    atomicStore(&x, 42);
+}
+
+// 16.8.3. Atomic Read-modify-write (this spec entry contains several functions)
+fn testAtomicReadWriteModify()
+{
+    // [AS, T].(ptr[AS, atomic[T], read_write], T) => T,
+    _ = atomicAdd(&x, 42);
+    _ = atomicSub(&x, 42);
+    _ = atomicMax(&x, 42);
+    _ = atomicMin(&x, 42);
+    _ = atomicAnd(&x, 42);
+    _ = atomicOr(&x, 42);
+    _ = atomicXor(&x, 42);
+    _ = atomicExchange(&x, 42);
+}
+
+// FIXME: Implement atomicCompareExchangeWeak (which depends on the result struct that is not currently supported)
+
+// 16.9. Data Packing Built-in Functions (https://www.w3.org/TR/WGSL/#pack-builtin-functions)
+// FIXME: implement
+
+// 16.10. Data Unpacking Built-in Functions (https://www.w3.org/TR/WGSL/#unpack-builtin-functions)
+// FIXME: implement
 
 // 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 

@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/field_trials_view.h"
 #include "api/test/create_simulcast_test_fixture.h"
 #include "api/test/simulcast_test_fixture.h"
 #include "api/test/video/function_video_decoder_factory.h"
@@ -29,9 +30,9 @@
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/utility/simulcast_test_fixture_impl.h"
 #include "rtc_base/checks.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 using ::testing::_;
 using ::testing::Return;
@@ -402,17 +403,20 @@ class TestSimulcastEncoderAdapterFakeHelper {
  public:
   explicit TestSimulcastEncoderAdapterFakeHelper(
       bool use_fallback_factory,
-      const SdpVideoFormat& video_format)
+      const SdpVideoFormat& video_format,
+      const FieldTrialsView& field_trials)
       : primary_factory_(new MockVideoEncoderFactory()),
         fallback_factory_(use_fallback_factory ? new MockVideoEncoderFactory()
                                                : nullptr),
-        video_format_(video_format) {}
+        video_format_(video_format),
+        field_trials_(field_trials) {}
 
   // Can only be called once as the SimulcastEncoderAdapter will take the
   // ownership of `factory_`.
   VideoEncoder* CreateMockEncoderAdapter() {
     return new SimulcastEncoderAdapter(primary_factory_.get(),
-                                       fallback_factory_.get(), video_format_);
+                                       fallback_factory_.get(), video_format_,
+                                       field_trials_);
   }
 
   MockVideoEncoderFactory* factory() { return primary_factory_.get(); }
@@ -424,6 +428,7 @@ class TestSimulcastEncoderAdapterFakeHelper {
   std::unique_ptr<MockVideoEncoderFactory> primary_factory_;
   std::unique_ptr<MockVideoEncoderFactory> fallback_factory_;
   SdpVideoFormat video_format_;
+  const FieldTrialsView& field_trials_;
 };
 
 static const int kTestTemporalLayerProfile[3] = {3, 2, 1};
@@ -441,7 +446,8 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
 
   void SetUp() override {
     helper_.reset(new TestSimulcastEncoderAdapterFakeHelper(
-        use_fallback_factory_, SdpVideoFormat("VP8", sdp_video_parameters_)));
+        use_fallback_factory_, SdpVideoFormat("VP8", sdp_video_parameters_),
+        field_trials_));
     adapter_.reset(helper_->CreateMockEncoderAdapter());
     last_encoded_image_width_ = absl::nullopt;
     last_encoded_image_height_ = absl::nullopt;
@@ -464,7 +470,7 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
     last_encoded_image_height_ = encoded_image._encodedHeight;
     last_encoded_image_simulcast_index_ = encoded_image.SimulcastIndex();
 
-    return Result(Result::OK, encoded_image.Timestamp());
+    return Result(Result::OK, encoded_image.RtpTimestamp());
   }
 
   bool GetLastEncodedImageInfo(absl::optional<int>* out_width,
@@ -581,6 +587,7 @@ class TestSimulcastEncoderAdapterFake : public ::testing::Test,
   std::unique_ptr<SimulcastRateAllocator> rate_allocator_;
   bool use_fallback_factory_;
   SdpVideoFormat::Parameters sdp_video_parameters_;
+  test::ScopedKeyValueConfig field_trials_;
 };
 
 TEST_F(TestSimulcastEncoderAdapterFake, InitEncode) {
@@ -1435,12 +1442,14 @@ TEST_F(TestSimulcastEncoderAdapterFake,
 TEST_F(
     TestSimulcastEncoderAdapterFake,
     EncoderInfoFromFieldTrialDoesNotOverrideExistingBitrateLimitsInSinglecast) {
-  test::ScopedFieldTrials field_trials(
+  test::ScopedKeyValueConfig field_trials(
+      field_trials_,
       "WebRTC-SimulcastEncoderAdapter-GetEncoderInfoOverride/"
       "frame_size_pixels:123|456|789,"
       "min_start_bitrate_bps:11000|22000|33000,"
       "min_bitrate_bps:44000|55000|66000,"
       "max_bitrate_bps:77000|88000|99000/");
+  SetUp();
 
   std::vector<VideoEncoder::ResolutionBitrateLimits> bitrate_limits;
   bitrate_limits.push_back(
@@ -1463,7 +1472,8 @@ TEST_F(
 }
 
 TEST_F(TestSimulcastEncoderAdapterFake, EncoderInfoFromFieldTrial) {
-  test::ScopedFieldTrials field_trials(
+  test::ScopedKeyValueConfig field_trials(
+      field_trials_,
       "WebRTC-SimulcastEncoderAdapter-GetEncoderInfoOverride/"
       "requested_resolution_alignment:8,"
       "apply_alignment_to_all_simulcast_layers/");
@@ -1483,7 +1493,8 @@ TEST_F(TestSimulcastEncoderAdapterFake, EncoderInfoFromFieldTrial) {
 
 TEST_F(TestSimulcastEncoderAdapterFake,
        EncoderInfoFromFieldTrialForSingleStream) {
-  test::ScopedFieldTrials field_trials(
+  test::ScopedKeyValueConfig field_trials(
+      field_trials_,
       "WebRTC-SimulcastEncoderAdapter-GetEncoderInfoOverride/"
       "requested_resolution_alignment:9,"
       "frame_size_pixels:123|456|789,"
@@ -1798,8 +1809,8 @@ TEST_F(TestSimulcastEncoderAdapterFake,
   // Normally SEA reuses encoders. But, when TL-based SW fallback is enabled,
   // the encoder which served the lowest stream should be recreated before it
   // can be used to process an upper layer and vice-versa.
-  test::ScopedFieldTrials field_trials(
-      "WebRTC-Video-PreferTemporalSupportOnBaseLayer/Enabled/");
+  test::ScopedKeyValueConfig field_trials(
+      field_trials_, "WebRTC-Video-PreferTemporalSupportOnBaseLayer/Enabled/");
   use_fallback_factory_ = true;
   ReSetUp();
 

@@ -32,10 +32,12 @@
 
 namespace WebCore {
 
+using TrackID = uint64_t;
+
 class TrackPrivateBaseClient : public CanMakeWeakPtr<TrackPrivateBaseClient> {
 public:
     virtual ~TrackPrivateBaseClient() = default;
-    virtual void idChanged(const AtomString&) = 0;
+    virtual void idChanged(TrackID) = 0;
     virtual void labelChanged(const AtomString&) = 0;
     virtual void languageChanged(const AtomString&) = 0;
     virtual void willRemove() = 0;

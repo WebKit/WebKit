@@ -29,13 +29,13 @@
 #if ENABLE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)
 
 #import "AccessibilityObject.h"
-#import "WebAccessibilityObjectWrapperIOS.h"
+#import "Chrome.h"
 #import "RenderObject.h"
-
+#import "WebAccessibilityObjectWrapperIOS.h"
 #import <wtf/RetainPtr.h>
 
 namespace WebCore {
-    
+
 void AXObjectCache::attachWrapper(AccessibilityObject* object)
 {
     RetainPtr<AccessibilityObjectWrapper> wrapper = adoptNS([[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:object]);
@@ -83,6 +83,9 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     case AXSortDirectionChanged:
         name = "AXSortDirectionChanged"_s;
         break;
+    case AXAnnouncementRequested:
+        name = "AXAnnouncementRequested"_s;
+        break;
     default:
         break;
     }
@@ -90,24 +93,40 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
     return name;
 }
 
+void AXObjectCache::relayNotification(const String& notificationName, RetainPtr<NSData> notificationData)
+{
+    if (auto* page = document().page())
+        page->chrome().relayAccessibilityNotification(notificationName, notificationData);
+}
+
 void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotification notification)
 {
     if (!object)
         return;
 
-    // iOS notifications must ultimately call UIKit UIAccessibilityPostNotification.
-    // But WebCore is not linked with UIKit. So a workaround is to override the wrapper's
-    // postNotification method in the system WebKitAccessibility bundle that does link UIKit.
-    auto notificationName = notificationPlatformName(notification);
-    if (notificationName.isNull())
+    auto stringNotification = notificationPlatformName(notification);
+    if (stringNotification.isEmpty())
         return;
 
-    auto nsNotificationName = notificationName.createNSString();
-    [object->wrapper() postNotification:nsNotificationName.get()];
+    auto notificationName = stringNotification.createNSString();
+    [object->wrapper() accessibilityOverrideProcessNotification:notificationName.get()];
 
     // To simulate AX notifications for LayoutTests on the simulator, call
     // the wrapper's accessibilityPostedNotification.
-    [object->wrapper() accessibilityPostedNotification:nsNotificationName.get()];
+    [object->wrapper() accessibilityPostedNotification:notificationName.get()];
+}
+
+void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
+{
+    auto notificationName = notificationPlatformName(AXAnnouncementRequested).createNSString();
+    NSString *nsMessage = static_cast<NSString *>(message);
+    if (RefPtr root = getOrCreate(m_document->view())) {
+        [root->wrapper() accessibilityOverrideProcessNotification:notificationName.get() notificationData:[nsMessage dataUsingEncoding:NSUTF8StringEncoding]];
+
+        // To simulate AX notifications for LayoutTests on the simulator, call
+        // the wrapper's accessibilityPostedNotification.
+        [root->wrapper() accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : nsMessage }];
+    }
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)

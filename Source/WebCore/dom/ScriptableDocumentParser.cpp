@@ -38,9 +38,6 @@ ScriptableDocumentParser::ScriptableDocumentParser(Document& document, OptionSet
     , m_parserContentPolicy(parserContentPolicy)
     , m_scriptsWaitingForStylesheetsExecutionTimer(*this, &ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired)
 {
-    if (!pluginContentIsAllowed(m_parserContentPolicy))
-        m_parserContentPolicy = allowPluginContent(m_parserContentPolicy);
-
     if (scriptingContentIsAllowed(m_parserContentPolicy) && !document.allowsContentJavaScript())
         m_parserContentPolicy = disallowScriptingContent(m_parserContentPolicy);
 }
@@ -61,13 +58,14 @@ void ScriptableDocumentParser::scriptsWaitingForStylesheetsExecutionTimerFired()
 {
     ASSERT(!isDetached());
 
-    Ref<ScriptableDocumentParser> protectedThis(*this);
+    Ref protectedThis { *this };
 
-    if (!document()->styleScope().hasPendingSheets())
+    RefPtr document = this->document();
+    if (!document->styleScope().hasPendingSheets())
         executeScriptsWaitingForStylesheets();
 
     if (!isDetached())
-        document()->checkCompleted();
+        document->checkCompleted();
 }
 
 void ScriptableDocumentParser::detach()

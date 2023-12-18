@@ -1,3 +1,7 @@
+if (ENABLE_WPE_PLATFORM)
+    add_subdirectory(${WEBKIT_DIR}/WPEPlatform)
+endif ()
+
 include(GNUInstallDirs)
 include(GLibMacros)
 include(InspectorGResources.cmake)
@@ -19,6 +23,11 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_JSC_DIR})
+
+if (ENABLE_WPE_PLATFORM)
+    set(WPE_PLATFORM_PC_REQUIRES wpe-platform-${WPE_API_VERSION})
+    set(WPE_PLATFORM_PC_UNINSTALLED_REQUIRES wpe-platform-${WPE_API_VERSION}-uninstalled)
+endif ()
 
 configure_file(Shared/glib/BuildRevision.h.in ${FORWARDING_HEADERS_WPE_DIR}/BuildRevision.h)
 configure_file(UIProcess/API/wpe/WebKitVersion.h.in ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h)
@@ -89,7 +98,15 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesWPE.txt"
 )
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
+
 list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)
+
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/glib/DMABufRendererBufferMode.serialization.in
+    Shared/glib/InputMethodState.serialization.in
+    Shared/glib/UserMessage.serialization.in
+)
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
@@ -358,6 +375,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/libwpe"
     "${WEBKIT_DIR}/Shared/soup"
+    "${WEBKIT_DIR}/Shared/wpe"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/glib"
     "${WEBKIT_DIR}/UIProcess/API/C/wpe"
@@ -379,6 +397,8 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
+    "${WEBKIT_DIR}/WebProcess/WebPage/dmabuf"
+    "${WEBKIT_DIR}/WebProcess/WebPage/glib"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
     "${WEBKIT_DIR}/WebProcess/glib"
@@ -441,6 +461,23 @@ if (USE_LIBDRM)
     )
     list(APPEND WebKit_LIBRARIES
         ${LIBDRM_LIBRARIES}
+    )
+endif ()
+
+if (ENABLE_WPE_PLATFORM)
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+        "${WPEPlatform_DERIVED_SOURCES_DIR}"
+        "${WEBKIT_DIR}/WPEPlatform"
+    )
+
+    list(APPEND WebKit_PRIVATE_LIBRARIES
+        WPEPlatform-${WPE_API_VERSION}
+    )
+
+    list(APPEND WebKit_MESSAGES_IN_FILES
+        UIProcess/dmabuf/AcceleratedBackingStoreDMABuf
+
+        WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf
     )
 endif ()
 
@@ -611,11 +648,30 @@ set(WPE_SOURCES_FOR_INTROSPECTION
     UIProcess/API/wpe/WebKitWebViewWPE.cpp
  )
 
- if (ENABLE_2022_GLIB_API)
-     list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE2.cpp)
- else ()
-     list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE1.cpp)
- endif ()
+if (ENABLE_2022_GLIB_API)
+    list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE2.cpp)
+else ()
+    list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE1.cpp)
+endif ()
+
+set(WPE_LIBRARIES_FOR_INTROSPECTION
+    WPEJavaScriptCore
+    Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+)
+
+set(WPE_INCLUDE_DIRS_FOR_INTROSPECTION
+    -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+    -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+)
+
+if (ENABLE_WPE_PLATFORM)
+    list(APPEND WPE_LIBRARIES_FOR_INTROSPECTION WPEPlatform)
+
+    list(APPEND WPE_INCLUDE_DIRS_FOR_INTROSPECTION
+        -I${WPEPlatform_DERIVED_SOURCES_DIR}
+        -I${WEBKIT_DIR}/WPEPlatform
+    )
+endif ()
 
 GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
     TARGET WebKit
@@ -623,11 +679,9 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
     IDENTIFIER_PREFIX WebKit
     SYMBOL_PREFIX webkit
     DEPENDENCIES
-        WPEJavaScriptCore
-        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+        ${WPE_LIBRARIES_FOR_INTROSPECTION}
     OPTIONS
-        -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
-        -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+        ${WPE_INCLUDE_DIRS_FOR_INTROSPECTION}
     SOURCES
         ${WPE_API_INSTALLED_HEADERS}
         Shared/API/glib

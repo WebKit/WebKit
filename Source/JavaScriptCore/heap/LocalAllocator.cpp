@@ -109,7 +109,7 @@ void LocalAllocator::stopAllocatingForGood()
     reset();
 }
 
-void* LocalAllocator::allocateSlowCase(Heap& heap, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* LocalAllocator::allocateSlowCase(JSC::Heap& heap, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     SuperSamplerScope superSamplerScope(false);
     ASSERT(heap.vm().currentThreadIsHoldingAPILock());
@@ -250,7 +250,7 @@ void* LocalAllocator::tryAllocateIn(MarkedBlock::Handle* block, size_t cellSize)
     return result;
 }
 
-void LocalAllocator::doTestCollectionsIfNeeded(Heap& heap, GCDeferralContext* deferralContext)
+void LocalAllocator::doTestCollectionsIfNeeded(JSC::Heap& heap, GCDeferralContext* deferralContext)
 {
     if (LIKELY(!Options::slowPathAllocsBetweenGCs()))
         return;

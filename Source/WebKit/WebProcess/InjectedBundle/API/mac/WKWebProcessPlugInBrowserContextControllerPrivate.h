@@ -41,7 +41,7 @@
 @property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 
 @property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
-@property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
+@property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macos(10.12.4), ios(10.3));
 
 @property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading WK_API_DEPRECATED("No longer supported", macos(10.10, 10.15), ios(8.0, 13.0));
 

@@ -11,41 +11,36 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x28
         RenderText {#text} at (0,10) size 158x18
           text run at (0,10) width 158: "<ruby> is defined in the "
-        RenderRuby (inline) {RUBY} at (0,0) size 121x18
-          RenderRubyRun (anonymous) at (152,10) size 24x18
-            RenderRubyText {RT} at (0,-10) size 23x10
-              RenderText {#text} at (0,0) size 23x10
-                text run at (0,0) width 23: "Hyper"
-            RenderRubyBase (anonymous) at (0,0) size 23x18
-              RenderText {#text} at (5,0) size 13x18
-                text run at (5,0) width 13: "H"
-          RenderRubyRun (anonymous) at (175,10) size 17x18
-            RenderRubyText {RT} at (0,-10) size 16x10
-              RenderText {#text} at (0,0) size 16x10
-                text run at (0,0) width 16: "Text"
-            RenderRubyBase (anonymous) at (0,0) size 16x18
-              RenderText {#text} at (3,0) size 10x18
-                text run at (3,0) width 10: "T"
-          RenderRubyRun (anonymous) at (191,10) size 29x18
-            RenderRubyText {RT} at (0,-10) size 29x10
-              RenderText {#text} at (0,0) size 29x10
-                text run at (0,0) width 29: "Markup"
-            RenderRubyBase (anonymous) at (0,0) size 29x18
-              RenderText {#text} at (7,0) size 15x18
-                text run at (7,0) width 15: "M"
-          RenderRubyRun (anonymous) at (219,10) size 36x18
-            RenderRubyText {RT} at (0,-10) size 36x10
-              RenderText {#text} at (0,0) size 36x10
-                text run at (0,0) width 36: "Language"
-            RenderRubyBase (anonymous) at (0,0) size 36x18
-              RenderText {#text} at (12,0) size 11x18
-                text run at (12,0) width 11: "L"
-          RenderRubyRun (anonymous) at (255,10) size 28x18
-            RenderRubyText {RT} at (0,-10) size 28x10
-              RenderText {#text} at (0,0) size 28x10
-                text run at (0,0) width 28: "Level 5"
-            RenderRubyBase (anonymous) at (0,0) size 28x18
-              RenderText {#text} at (9,0) size 9x18
-                text run at (9,0) width 9: "5"
+        RenderInline {RUBY} at (0,0) size 130x18
+          RenderInline (generated) at (0,0) size 23x18
+            RenderText {#text} at (158,10) size 12x18
+              text run at (158,10) width 12: "H"
+          RenderBlock {RT} at (152,0) size 24x10
+            RenderText {#text} at (0,0) size 23x10
+              text run at (0,0) width 23: "Hyper"
+          RenderInline (generated) at (0,0) size 17x18
+            RenderText {#text} at (178,10) size 10x18
+              text run at (178,10) width 10: "T"
+          RenderBlock {RT} at (175,0) size 16x10
+            RenderText {#text} at (0,0) size 16x10
+              text run at (0,0) width 16: "Text"
+          RenderInline (generated) at (0,0) size 30x18
+            RenderText {#text} at (198,10) size 15x18
+              text run at (198,10) width 15: "M"
+          RenderBlock {RT} at (191,0) size 29x10
+            RenderText {#text} at (0,0) size 29x10
+              text run at (0,0) width 29: "Markup"
+          RenderInline (generated) at (0,0) size 36x18
+            RenderText {#text} at (232,10) size 11x18
+              text run at (232,10) width 11: "L"
+          RenderBlock {RT} at (219,0) size 36x10
+            RenderText {#text} at (0,0) size 36x10
+              text run at (0,0) width 36: "Language"
+          RenderInline (generated) at (0,0) size 28x18
+            RenderText {#text} at (264,10) size 9x18
+              text run at (264,10) width 9: "5"
+          RenderBlock {RT} at (255,0) size 28x10
+            RenderText {#text} at (0,0) size 28x10
+              text run at (0,0) width 28: "Level 5"
         RenderText {#text} at (277,10) size 44x18
           text run at (277,10) width 44: " specs."

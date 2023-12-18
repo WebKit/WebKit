@@ -91,8 +91,11 @@ inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 }
 
 struct GlyphDisplayListCacheEntryHash {
+    static unsigned hash(const GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
     static unsigned hash(const CheckedPtr<GlyphDisplayListCacheEntry>& entry) { return computeHash(*entry); }
-    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& a, const CheckedPtr<GlyphDisplayListCacheEntry>& b) { return a.get() == b.get(); }
+    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& a, const CheckedPtr<GlyphDisplayListCacheEntry>& b) { return a == b; }
+    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& a, const GlyphDisplayListCacheEntry* b) { return a == b; }
+    static bool equal(const GlyphDisplayListCacheEntry* a, const CheckedPtr<GlyphDisplayListCacheEntry>& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 

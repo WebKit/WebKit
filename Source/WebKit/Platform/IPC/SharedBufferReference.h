@@ -35,9 +35,6 @@
 
 namespace IPC {
 
-class Decoder;
-class Encoder;
-
 class SharedBufferReference {
 public:
     SharedBufferReference() = default;
@@ -58,6 +55,14 @@ public:
         : m_size(buffer.size())
         , m_buffer(const_cast<WebCore::FragmentedSharedBuffer*>(&buffer)) { }
 
+#if !USE(UNIX_DOMAIN_SOCKETS)
+    struct SerializableBuffer {
+        size_t size;
+        std::optional<WebKit::SharedMemory::Handle> handle;
+    };
+    SharedBufferReference(std::optional<SerializableBuffer>&&);
+#endif
+
     SharedBufferReference(const SharedBufferReference&) = default;
     SharedBufferReference(SharedBufferReference&&) = default;
     SharedBufferReference& operator=(const SharedBufferReference&) = default;
@@ -67,15 +72,18 @@ public:
     bool isEmpty() const { return !size(); }
     bool isNull() const { return isEmpty() && !m_buffer; }
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+    RefPtr<WebCore::FragmentedSharedBuffer> buffer() const { return m_buffer; }
+#else
+    std::optional<SerializableBuffer> serializableBuffer() const;
+#endif
+
     // The following method must only be used on the receiver's IPC side.
     // It relies on an implementation detail that makes m_buffer become a contiguous SharedBuffer
     // once it's deserialised over IPC.
     RefPtr<WebCore::SharedBuffer> unsafeBuffer() const;
     const uint8_t* data() const;
     RefPtr<WebKit::SharedMemory> sharedCopy() const;
-
-    void encode(Encoder&) const;
-    static WARN_UNUSED_RETURN std::optional<SharedBufferReference> decode(Decoder&);
 
 private:
     SharedBufferReference(Ref<WebKit::SharedMemory>&& memory, size_t size)

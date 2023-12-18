@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,11 @@
 #include "JSCJSValueInlines.h"
 #include "Options.h"
 #include "StructureRareDataInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace FTL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AbstractHeap);
 
 AbstractHeap::AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset)
     : m_offset(offset)

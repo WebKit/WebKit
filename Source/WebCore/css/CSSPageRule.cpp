@@ -66,7 +66,7 @@ void CSSPageRule::setSelectorText(const String& selectorText)
 {
     CSSParser parser(parserContext());
     auto* sheet = parentStyleSheet();
-    auto selectorList = parser.parseSelector(selectorText, sheet ? &sheet->contents() : nullptr);
+    auto selectorList = parser.parseSelectorList(selectorText, sheet ? &sheet->contents() : nullptr);
     if (!selectorList)
         return;
 

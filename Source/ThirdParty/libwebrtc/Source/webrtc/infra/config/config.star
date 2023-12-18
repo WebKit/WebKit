@@ -13,7 +13,7 @@ lucicfg.check_version("1.30.9")
 WEBRTC_GIT = "https://webrtc.googlesource.com/src"
 WEBRTC_GERRIT = "https://webrtc-review.googlesource.com/src"
 WEBRTC_TROOPER_EMAIL = "webrtc-troopers-robots@google.com"
-WEBRTC_XCODE13 = "13c100"
+WEBRTC_XCODE14 = "14c18"
 DEFAULT_CPU = "x86-64"
 
 # Helpers:
@@ -677,10 +677,10 @@ def normal_builder_factory(**common_kwargs):
 # Mixins:
 
 ios_builder, ios_try_job = normal_builder_factory(
-    properties = {"xcode_build_version": WEBRTC_XCODE13},
+    properties = {"xcode_build_version": WEBRTC_XCODE14},
     caches = [swarming.cache(
-        name = "xcode_ios_" + WEBRTC_XCODE13,
-        path = "xcode_ios_" + WEBRTC_XCODE13 + ".app",
+        name = "xcode_ios_" + WEBRTC_XCODE14,
+        path = "xcode_ios_" + WEBRTC_XCODE14 + ".app",
     )],
 )
 
@@ -693,14 +693,12 @@ ci_builder("Android32", "Android|arm|rel")
 try_builder("android_arm_rel")
 ci_builder("Android32 Builder arm", "Android|arm|size", perf_cat = "Android|arm|Builder|", prioritized = True)
 try_builder("android_compile_arm_rel")
-perf_builder("Perf Android32 (O Pixel2)", "Android|arm|Tester|O Pixel2", triggered_by = ["Android32 Builder arm"])
 perf_builder("Perf Android32 (R Pixel5)", "Android|arm|Tester|R Pixel5", triggered_by = ["Android32 Builder arm"])
 try_builder("android_compile_arm64_dbg", cq = None)
 try_builder("android_arm64_dbg", cq = None)
 ci_builder("Android64", "Android|arm64|rel")
 try_builder("android_arm64_rel")
 ci_builder("Android64 Builder arm64", "Android|arm64|size", perf_cat = "Android|arm64|Builder|", prioritized = True)
-perf_builder("Perf Android64 (O Pixel2)", "Android|arm64|Tester|O Pixel2", triggered_by = ["Android64 Builder arm64"])
 perf_builder("Perf Android64 (R Pixel5)", "Android|arm64|Tester|R Pixel5", triggered_by = ["Android64 Builder arm64"])
 try_builder("android_compile_arm64_rel")
 ci_builder("Android64 Builder x64 (dbg)", "Android|x64|dbg")
@@ -832,7 +830,6 @@ lkgr_config = {
     "status_url": "https://webrtc-status.appspot.com",
     "allowed_lag": 9,  # hours (up to 10x during low commit volume periods)
     "allowed_gap": 150,  # commits behind
-    "error_recipients": WEBRTC_TROOPER_EMAIL,
     "buckets": {
         "webrtc/ci": {
             # bucket alias: luci.webrtc.ci

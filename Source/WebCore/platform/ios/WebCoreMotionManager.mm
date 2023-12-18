@@ -216,11 +216,7 @@ static const double kGravity = 9.80665;
     WebThreadRun(^{
         CMAcceleration accel = newAcceleration.acceleration;
 
-        Vector<WeakPtr<WebCore::MotionManagerClient>> motionClients;
-        motionClients.reserveInitialCapacity(m_deviceMotionClients.computeSize());
-        for (auto& client : m_deviceMotionClients)
-            motionClients.uncheckedAppend(client);
-
+        auto motionClients = copyToVector(m_deviceMotionClients);
         for (auto& client : motionClients) {
             if (client)
                 client->motionChanged(0, 0, 0, accel.x * kGravity, accel.y * kGravity, accel.z * kGravity, std::nullopt, std::nullopt, std::nullopt);
@@ -241,11 +237,7 @@ static const double kGravity = 9.80665;
 
         CMRotationRate rotationRate = newMotion.rotationRate;
 
-        Vector<WeakPtr<WebCore::MotionManagerClient>> motionClients;
-        motionClients.reserveInitialCapacity(m_deviceMotionClients.computeSize());
-        for (auto& client : m_deviceMotionClients)
-            motionClients.uncheckedAppend(client);
-        
+        auto motionClients = copyToVector(m_deviceMotionClients);
         for (auto& client : motionClients) {
             if (client)
                 client->motionChanged(userAccel.x * kGravity, userAccel.y * kGravity, userAccel.z * kGravity, totalAccel.x * kGravity, totalAccel.y * kGravity, totalAccel.z * kGravity, rad2deg(rotationRate.x), rad2deg(rotationRate.y), rad2deg(rotationRate.z));
@@ -253,10 +245,7 @@ static const double kGravity = 9.80665;
 
         CMAttitude* attitude = newMotion.attitude;
 
-        Vector<WeakPtr<WebCore::MotionManagerClient>> orientationClients;
-        orientationClients.reserveInitialCapacity(m_deviceOrientationClients.computeSize());
-        for (auto& client : m_deviceOrientationClients)
-            orientationClients.uncheckedAppend(client);
+        auto orientationClients = copyToVector(m_deviceOrientationClients);
         
         // Compose the raw motion data to an intermediate ZXY-based 3x3 rotation
         // matrix (R) where [z=attitude.yaw, x=attitude.pitch, y=attitude.roll]
@@ -329,9 +318,9 @@ static const double kGravity = 9.80665;
         double heading = (m_headingAvailable && newHeading) ? newHeading.magneticHeading : 0;
         double headingAccuracy = (m_headingAvailable && newHeading) ? newHeading.headingAccuracy : -1;
 
-        for (size_t i = 0; i < orientationClients.size(); ++i) {
-            if (orientationClients[i])
-                orientationClients[i]->orientationChanged(alpha, beta, gamma, heading, headingAccuracy);
+        for (auto& orientationClient : orientationClients) {
+            if (orientationClient)
+                orientationClient->orientationChanged(alpha, beta, gamma, heading, headingAccuracy);
         }
     });
 }

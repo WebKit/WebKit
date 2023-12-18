@@ -56,7 +56,7 @@ ScrollingTreeScrollingNodeDelegateIOS* ScrollingTreeFrameScrollingNodeRemoteIOS:
     return static_cast<ScrollingTreeScrollingNodeDelegateIOS*>(m_delegate.get());
 }
 
-UIScrollView *ScrollingTreeFrameScrollingNodeRemoteIOS::scrollView() const
+WKBaseScrollView *ScrollingTreeFrameScrollingNodeRemoteIOS::scrollView() const
 {
     return m_delegate ? delegate()->scrollView() : nil;
 }

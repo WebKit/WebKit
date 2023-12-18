@@ -82,8 +82,8 @@ void WebGamepadProvider::gamepadConnected(const GamepadData& gamepadData, EventM
 
     auto oldGamepadsSize = m_gamepads.size();
     if (m_gamepads.size() <= gamepadData.index()) {
-        m_gamepads.resize(gamepadData.index() + 1);
-        m_rawGamepads.resize(gamepadData.index() + 1);
+        m_gamepads.grow(gamepadData.index() + 1);
+        m_rawGamepads.grow(gamepadData.index() + 1);
     }
     WP_MESSAGE_CHECK((!m_gamepads[gamepadData.index()]), oldGamepadsSize, gamepadData.index(), m_gamepads.size());
 

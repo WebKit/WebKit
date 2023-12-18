@@ -1506,7 +1506,7 @@ void DynamicHLSL::GenerateAttributeConversionHLSL(angle::FormatID vertexFormatID
 void DynamicHLSL::GetPixelShaderOutputKey(RendererD3D *renderer,
                                           const gl::Caps &caps,
                                           const gl::Version &clientVersion,
-                                          const gl::ProgramState &programData,
+                                          const gl::ProgramExecutable &executable,
                                           const ProgramD3DMetadata &metadata,
                                           std::vector<PixelShaderOutputVariable> *outPixelShaderKey)
 {
@@ -1561,10 +1561,10 @@ void DynamicHLSL::GetPixelShaderOutputKey(RendererD3D *renderer,
         const auto &shaderOutputVars = fragmentShader->activeOutputVariables;
 
         for (size_t outputLocationIndex = 0u;
-             outputLocationIndex < programData.getOutputLocations().size(); ++outputLocationIndex)
+             outputLocationIndex < executable.getOutputLocations().size(); ++outputLocationIndex)
         {
             const VariableLocation &outputLocation =
-                programData.getOutputLocations().at(outputLocationIndex);
+                executable.getOutputLocations().at(outputLocationIndex);
             if (!outputLocation.used())
             {
                 continue;
@@ -1591,11 +1591,11 @@ void DynamicHLSL::GetPixelShaderOutputKey(RendererD3D *renderer,
 
         // Now generate any secondary outputs...
         for (size_t outputLocationIndex = 0u;
-             outputLocationIndex < programData.getSecondaryOutputLocations().size();
+             outputLocationIndex < executable.getSecondaryOutputLocations().size();
              ++outputLocationIndex)
         {
             const VariableLocation &outputLocation =
-                programData.getSecondaryOutputLocations().at(outputLocationIndex);
+                executable.getSecondaryOutputLocations().at(outputLocationIndex);
             if (!outputLocation.used())
             {
                 continue;

@@ -62,7 +62,6 @@ public:
     class Client {
     public:
         virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) = 0;
-        virtual void notifyFlushRequired() = 0;
         virtual void commitSceneState(const RefPtr<Nicosia::Scene>&) = 0;
         virtual void updateScene() = 0;
     };
@@ -75,15 +74,15 @@ public:
     void setRootCompositingLayer(WebCore::GraphicsLayer*);
     void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
     void sizeDidChange(const WebCore::IntSize&);
-    void deviceOrPageScaleFactorChanged();
 
     void setVisibleContentsRect(const WebCore::FloatRect&);
-    void renderNextFrame();
 
     WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
     WebCore::GraphicsLayer* rootCompositingLayer() const { return m_rootCompositingLayer; }
 
-    void forceFrameSync() { m_shouldSyncFrame = true; }
+#if !HAVE(DISPLAY_LINK)
+    void forceFrameSync() { m_forceFrameSync = true; }
+#endif
 
     bool flushPendingLayerChanges(OptionSet<WebCore::FinalizeRenderingUpdateFlags>);
     void syncDisplayState();
@@ -91,11 +90,6 @@ public:
     double nextAnimationServiceTime() const;
 
 private:
-    // GraphicsLayerClient
-    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
-    float deviceScaleFactor() const override;
-    float pageScaleFactor() const override;
-
     // CoordinatedGraphicsLayerClient
     bool isFlushingLayerChanges() const override { return m_isFlushingLayerChanges; }
     WebCore::FloatRect visibleContentsRect() const override;
@@ -103,7 +97,6 @@ private:
     void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     Nicosia::PaintingEngine& paintingEngine() override;
     RefPtr<Nicosia::ImageBackingStore> imageBackingStore(uint64_t, Function<RefPtr<Nicosia::Buffer>()>) override;
-    void syncLayerState() override;
 
     // GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -111,7 +104,7 @@ private:
     // Nicosia::SceneIntegration::Client
     void requestUpdate() override;
 
-    void initializeRootCompositingLayerIfNeeded();
+    bool initializeRootCompositingLayerIfNeeded();
 
     void purgeBackingStores();
 
@@ -138,12 +131,14 @@ private:
     // We don't send the messages related to releasing resources to renderer during purging, because renderer already had removed all resources.
     bool m_isPurging { false };
     bool m_isFlushingLayerChanges { false };
-    bool m_shouldSyncFrame { false };
     bool m_didInitializeRootCompositingLayer { false };
 
     WebCore::FloatRect m_visibleContentsRect;
 
     double m_lastAnimationServiceTime { 0 };
+#if !HAVE(DISPLAY_LINK)
+    bool m_forceFrameSync { false };
+#endif
 };
 
 }

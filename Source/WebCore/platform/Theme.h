@@ -25,20 +25,18 @@
 
 #pragma once
 
+#include "ControlStyle.h"
 #include "ThemeTypes.h"
 #include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class Color;
-class ControlStates;
 class FloatRect;
 class FloatSize;
 class FontCascade;
 class FontCascadeDescription;
 class GraphicsContext;
-class LengthBox;
 class ScrollView;
 
 struct LengthSize;
@@ -47,17 +45,11 @@ class Theme {
 public:
     static Theme& singleton();
 
-    // A function to obtain the baseline position adjustment for a "leaf" control. This will be used if a baseline
-    // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
-    // controls that need to do this. The adjustment is an offset that adds to the baseline, e.g., marginTop() + height() + |offset|.
-    // The offset is not zoomed.
-    virtual int baselinePositionAdjustment(StyleAppearance) const;
-
     // The font description result should have a zoomed font size.
-    virtual std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const;
+    virtual std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float) const;
 
     // The size here is in zoomed coordinates already. If a new size is returned, it also needs to be in zoomed coordinates.
-    virtual LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float zoomFactor) const;
+    virtual LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const;
 
     // Returns the minimum size for a control in zoomed coordinates.
     LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoomFactor) const;
@@ -67,22 +59,24 @@ public:
     virtual LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
 
     // Whether or not whitespace: pre should be forced on always.
-    virtual bool controlRequiresPreWhiteSpace(StyleAppearance) const;
+    virtual bool controlRequiresPreWhiteSpace(StyleAppearance) const { return false; }
 
-    // Method for painting a control. The rect is in zoomed coordinates.
-    // FIXME: <https://webkit.org/b/231637> Move parameters to a struct.
-    virtual void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor);
+#if USE(THEME_ADWAITA)
+    // FIXME: Merge this into RenderThemeAdwaita.
+    virtual void paint(StyleAppearance, OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&) { }
+#endif
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
     // The rect passed in is in zoomed coordinates, so the inflation should take that into account and make sure the inflation
     // amount is also scaled by the zoomFactor.
-    virtual void inflateControlPaintRect(StyleAppearance, const ControlStates&, FloatRect& zoomedRect, float zoomFactor) const;
+    virtual void inflateControlPaintRect(StyleAppearance, FloatRect&, float) const { }
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
 
-    virtual bool userPrefersContrast() const;
-    virtual bool userPrefersReducedMotion() const;
+    virtual bool userPrefersContrast() const { return false; }
+    virtual bool userPrefersReducedMotion() const { return false; }
+    virtual bool userPrefersOnOffLabels() const { return false; }
 
 protected:
     Theme() = default;

@@ -31,6 +31,7 @@
 #include "MediaPlayerPrivate.h"
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -38,7 +39,10 @@ namespace WebCore {
 class MediaSource;
 class MockMediaSourcePrivate;
 
-class MockMediaPlayerMediaSource final : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
+class MockMediaPlayerMediaSource final
+    : public MediaPlayerPrivateInterface
+    , public RefCounted<MockMediaPlayerMediaSource>
+    , public CanMakeWeakPtr<MockMediaPlayerMediaSource> {
 public:
     explicit MockMediaPlayerMediaSource(MediaPlayer*);
 
@@ -49,9 +53,13 @@ public:
 
     virtual ~MockMediaPlayerMediaSource();
 
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
+
     void advanceCurrentTime();
     MediaTime currentMediaTime() const override;
     bool currentMediaTimeMayProgress() const override;
+    void notifyActiveSourceBuffersChanged() final;
     void updateDuration(const MediaTime&);
 
     MediaPlayer::ReadyState readyState() const override;

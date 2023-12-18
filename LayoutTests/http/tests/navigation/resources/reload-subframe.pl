@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+binmode STDOUT;
 
 print "Content-type: text/html\r\n";
 

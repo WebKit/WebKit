@@ -20,12 +20,14 @@
 #include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/common/handover_testing.h"
 #include "net/dcsctp/common/internal_types.h"
+#include "net/dcsctp/packet/chunk/forward_tsn_common.h"
 #include "net/dcsctp/packet/chunk/reconfig_chunk.h"
 #include "net/dcsctp/packet/parameter/incoming_ssn_reset_request_parameter.h"
 #include "net/dcsctp/packet/parameter/outgoing_ssn_reset_request_parameter.h"
 #include "net/dcsctp/packet/parameter/parameter.h"
 #include "net/dcsctp/packet/parameter/reconfiguration_response_parameter.h"
 #include "net/dcsctp/public/dcsctp_message.h"
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/rx/data_tracker.h"
 #include "net/dcsctp/rx/reassembly_queue.h"
 #include "net/dcsctp/socket/mock_context.h"
@@ -42,10 +44,12 @@ namespace dcsctp {
 namespace {
 using ::testing::IsEmpty;
 using ::testing::NiceMock;
+using ::testing::Property;
 using ::testing::Return;
 using ::testing::SizeIs;
 using ::testing::UnorderedElementsAre;
 using ResponseResult = ReconfigurationResponseParameter::Result;
+using SkippedStream = AnyForwardTsnChunk::SkippedStream;
 
 constexpr TSN kMyInitialTsn = MockContext::MyInitialTsn();
 constexpr ReconfigRequestSN kMyInitialReqSn = ReconfigRequestSN(*kMyInitialTsn);
@@ -289,61 +293,187 @@ TEST_F(StreamResetHandlerTest, ResetStreamsNotDeferred) {
 }
 
 TEST_F(StreamResetHandlerTest, ResetStreamsDeferred) {
-  DataGeneratorOptions opts;
-  opts.message_id = MID(0);
-  reasm_->Add(kPeerInitialTsn, gen_.Ordered({1, 2, 3, 4}, "BE", opts));
+  constexpr StreamID kStreamId = StreamID(1);
+  data_tracker_->Observe(TSN(10));
+  reasm_->Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(0)}));
 
-  opts.message_id = MID(1);
-  reasm_->Add(AddTo(kPeerInitialTsn, 1),
-              gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-
-  data_tracker_->Observe(kPeerInitialTsn);
-  data_tracker_->Observe(AddTo(kPeerInitialTsn, 1));
-  EXPECT_THAT(reasm_->FlushMessages(),
-              UnorderedElementsAre(
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload),
-                  SctpMessageIs(StreamID(1), PPID(53), kShortPayload)));
-
-  Parameters::Builder builder;
-  builder.Add(OutgoingSSNResetRequestParameter(
-      kPeerInitialReqSn, ReconfigRequestSN(3), AddTo(kPeerInitialTsn, 3),
-      {StreamID(1)}));
-
-  std::vector<ReconfigurationResponseParameter> responses =
-      HandleAndCatchResponse(ReConfigChunk(builder.Build()));
-  EXPECT_THAT(responses, SizeIs(1));
-  EXPECT_EQ(responses[0].result(), ResponseResult::kInProgress);
-
-  opts.message_id = MID(1);
-  opts.ppid = PPID(5);
-  reasm_->Add(AddTo(kPeerInitialTsn, 5),
-              gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm_->MaybeResetStreamsDeferred(AddTo(kPeerInitialTsn, 1));
-
-  opts.message_id = MID(0);
-  opts.ppid = PPID(4);
-  reasm_->Add(AddTo(kPeerInitialTsn, 4),
-              gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm_->MaybeResetStreamsDeferred(AddTo(kPeerInitialTsn, 1));
-
-  opts.message_id = MID(3);
-  opts.ppid = PPID(3);
-  reasm_->Add(AddTo(kPeerInitialTsn, 3),
-              gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm_->MaybeResetStreamsDeferred(AddTo(kPeerInitialTsn, 1));
-
-  opts.message_id = MID(2);
-  opts.ppid = PPID(2);
-  reasm_->Add(AddTo(kPeerInitialTsn, 2),
-              gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm_->MaybeResetStreamsDeferred(AddTo(kPeerInitialTsn, 5));
+  data_tracker_->Observe(TSN(11));
+  reasm_->Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE", {.mid = MID(1)}));
 
   EXPECT_THAT(
       reasm_->FlushMessages(),
-      UnorderedElementsAre(SctpMessageIs(StreamID(1), PPID(2), kShortPayload),
-                           SctpMessageIs(StreamID(1), PPID(3), kShortPayload),
-                           SctpMessageIs(StreamID(1), PPID(4), kShortPayload),
-                           SctpMessageIs(StreamID(1), PPID(5), kShortPayload)));
+      UnorderedElementsAre(SctpMessageIs(kStreamId, PPID(53), kShortPayload),
+                           SctpMessageIs(kStreamId, PPID(53), kShortPayload)));
+
+  Parameters::Builder builder;
+  builder.Add(OutgoingSSNResetRequestParameter(
+      ReconfigRequestSN(10), ReconfigRequestSN(3), TSN(13), {kStreamId}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kInProgress)));
+
+  data_tracker_->Observe(TSN(15));
+  reasm_->Add(TSN(15), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.mid = MID(1), .ppid = PPID(5)}));
+
+  data_tracker_->Observe(TSN(14));
+  reasm_->Add(TSN(14), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.mid = MID(0), .ppid = PPID(4)}));
+
+  data_tracker_->Observe(TSN(13));
+  reasm_->Add(TSN(13), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.mid = MID(3), .ppid = PPID(3)}));
+
+  data_tracker_->Observe(TSN(12));
+  reasm_->Add(TSN(12), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.mid = MID(2), .ppid = PPID(2)}));
+
+  builder.Add(OutgoingSSNResetRequestParameter(
+      ReconfigRequestSN(11), ReconfigRequestSN(4), TSN(13), {kStreamId}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kSuccessPerformed)));
+
+  EXPECT_THAT(
+      reasm_->FlushMessages(),
+      UnorderedElementsAre(SctpMessageIs(kStreamId, PPID(2), kShortPayload),
+                           SctpMessageIs(kStreamId, PPID(3), kShortPayload),
+                           SctpMessageIs(kStreamId, PPID(4), kShortPayload),
+                           SctpMessageIs(kStreamId, PPID(5), kShortPayload)));
+}
+
+TEST_F(StreamResetHandlerTest, ResetStreamsDeferredOnlySelectedStreams) {
+  // This test verifies the receiving behavior of receiving messages on
+  // streams 1, 2 and 3, and receiving a reset request on stream 1, 2, causing
+  // deferred reset processing.
+
+  // Reset stream 1,2 with "last assigned TSN=12"
+  Parameters::Builder builder;
+  builder.Add(OutgoingSSNResetRequestParameter(ReconfigRequestSN(10),
+                                               ReconfigRequestSN(3), TSN(12),
+                                               {StreamID(1), StreamID(2)}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kInProgress)));
+
+  // TSN 10, SID 1 - before TSN 12 -> deliver
+  data_tracker_->Observe(TSN(10));
+  reasm_->Add(TSN(10), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(1),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1001)}));
+
+  // TSN 11, SID 2 - before TSN 12 -> deliver
+  data_tracker_->Observe(TSN(11));
+  reasm_->Add(TSN(11), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(2),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1002)}));
+
+  // TSN 12, SID 3 - at TSN 12 -> deliver
+  data_tracker_->Observe(TSN(12));
+  reasm_->Add(TSN(12), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(3),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1003)}));
+
+  // TSN 13, SID 1 - after TSN 12 and SID=1 -> defer
+  data_tracker_->Observe(TSN(13));
+  reasm_->Add(TSN(13), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(1),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1004)}));
+
+  // TSN 14, SID 2 - after TSN 12 and SID=2 -> defer
+  data_tracker_->Observe(TSN(14));
+  reasm_->Add(TSN(14), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(2),
+                                     .mid = MID(0),
+                                     .ppid = PPID(1005)}));
+
+  // TSN 15, SID 3 - after TSN 12, but SID 3 is not reset -> deliver
+  data_tracker_->Observe(TSN(15));
+  reasm_->Add(TSN(15), gen_.Ordered({1, 2, 3, 4}, "BE",
+                                    {.stream_id = StreamID(3),
+                                     .mid = MID(1),
+                                     .ppid = PPID(1006)}));
+
+  EXPECT_THAT(reasm_->FlushMessages(),
+              UnorderedElementsAre(
+                  SctpMessageIs(StreamID(1), PPID(1001), kShortPayload),
+                  SctpMessageIs(StreamID(2), PPID(1002), kShortPayload),
+                  SctpMessageIs(StreamID(3), PPID(1003), kShortPayload),
+                  SctpMessageIs(StreamID(3), PPID(1006), kShortPayload)));
+
+  builder.Add(OutgoingSSNResetRequestParameter(ReconfigRequestSN(11),
+                                               ReconfigRequestSN(3), TSN(13),
+                                               {StreamID(1), StreamID(2)}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kSuccessPerformed)));
+
+  EXPECT_THAT(reasm_->FlushMessages(),
+              UnorderedElementsAre(
+                  SctpMessageIs(StreamID(1), PPID(1004), kShortPayload),
+                  SctpMessageIs(StreamID(2), PPID(1005), kShortPayload)));
+}
+
+TEST_F(StreamResetHandlerTest, ResetStreamsDefersForwardTsn) {
+  // This test verifies that FORWARD-TSNs are deferred if they want to move
+  // the cumulative ack TSN point past sender's last assigned TSN.
+  static constexpr StreamID kStreamId = StreamID(42);
+
+  // Simulate sender sends:
+  // * TSN 10 (SSN=0, BE, lost),
+  // * TSN 11 (SSN=1, BE, lost),
+  // * TSN 12 (SSN=2, BE, lost)
+  // * RESET THE STREAM
+  // * TSN 13 (SSN=0, B, received)
+  // * TSN 14 (SSN=0, E, lost),
+  // * TSN 15 (SSN=1, BE, received)
+  Parameters::Builder builder;
+  builder.Add(OutgoingSSNResetRequestParameter(
+      ReconfigRequestSN(10), ReconfigRequestSN(3), TSN(12), {kStreamId}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kInProgress)));
+
+  // TSN 13, B, after TSN=12 -> defer
+  data_tracker_->Observe(TSN(13));
+  reasm_->Add(TSN(13),
+              gen_.Ordered(
+                  {1, 2, 3, 4}, "B",
+                  {.stream_id = kStreamId, .mid = MID(0), .ppid = PPID(1004)}));
+
+  // TSN 15, BE, after TSN=12 -> defer
+  data_tracker_->Observe(TSN(15));
+  reasm_->Add(TSN(15),
+              gen_.Ordered(
+                  {1, 2, 3, 4}, "BE",
+                  {.stream_id = kStreamId, .mid = MID(1), .ppid = PPID(1005)}));
+
+  // Time passes, sender decides to send FORWARD-TSN up to the RESET.
+  data_tracker_->HandleForwardTsn(TSN(12));
+  reasm_->HandleForwardTsn(
+      TSN(12), std::vector<SkippedStream>({SkippedStream(kStreamId, SSN(2))}));
+
+  // The receiver sends a SACK in response to that. The stream hasn't been
+  // reset yet, but the sender now decides that TSN=13-14 is to be skipped.
+  // As this has a TSN 14, after TSN=12 -> defer it.
+  data_tracker_->HandleForwardTsn(TSN(14));
+  reasm_->HandleForwardTsn(
+      TSN(14), std::vector<SkippedStream>({SkippedStream(kStreamId, SSN(0))}));
+
+  // Reset the stream -> deferred TSNs should be re-added.
+  builder.Add(OutgoingSSNResetRequestParameter(
+      ReconfigRequestSN(11), ReconfigRequestSN(3), TSN(12), {kStreamId}));
+  EXPECT_THAT(HandleAndCatchResponse(ReConfigChunk(builder.Build())),
+              ElementsAre(Property(&ReconfigurationResponseParameter::result,
+                                   ResponseResult::kSuccessPerformed)));
+
+  EXPECT_THAT(reasm_->FlushMessages(),
+              UnorderedElementsAre(
+                  SctpMessageIs(kStreamId, PPID(1005), kShortPayload)));
 }
 
 TEST_F(StreamResetHandlerTest, SendOutgoingRequestDirectly) {
@@ -765,9 +895,8 @@ TEST_F(StreamResetHandlerTest, PerformCloseAfterOneFirstFailing) {
 
   // Let the socket receive the TSN.
   DataGeneratorOptions opts;
-  opts.message_id = MID(0);
+  opts.mid = MID(0);
   reasm_->Add(kPeerInitialTsn, gen_.Ordered({1, 2, 3, 4}, "BE", opts));
-  reasm_->MaybeResetStreamsDeferred(kPeerInitialTsn);
   data_tracker_->Observe(kPeerInitialTsn);
 
   // And emulate that time has passed, and the peer retries the stream reset,

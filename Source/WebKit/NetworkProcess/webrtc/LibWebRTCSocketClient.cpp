@@ -49,7 +49,7 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
 
     m_socket->SignalReadPacket.connect(this, &LibWebRTCSocketClient::signalReadPacket);
     m_socket->SignalSentPacket.connect(this, &LibWebRTCSocketClient::signalSentPacket);
-    m_socket->SubscribeClose(this, [this](rtc::AsyncPacketSocket* socket, int error) {
+    m_socket->SubscribeCloseEvent(this, [this](rtc::AsyncPacketSocket* socket, int error) {
         signalClose(socket, error);
     });
 

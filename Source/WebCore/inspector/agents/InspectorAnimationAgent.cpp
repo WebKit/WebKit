@@ -28,6 +28,7 @@
 
 #include "AnimationEffect.h"
 #include "AnimationEffectPhase.h"
+#include "BlendingKeyframes.h"
 #include "CSSAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSTransition.h"
@@ -43,7 +44,6 @@
 #include "JSExecState.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
-#include "KeyframeList.h"
 #include "LocalFrame.h"
 #include "MutableStyleProperties.h"
 #include "Page.h"
@@ -132,7 +132,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
             auto& style = *blendingKeyframe.style();
 
             auto keyframePayload = Protocol::Animation::Keyframe::create()
-                .setOffset(blendingKeyframe.key())
+                .setOffset(blendingKeyframe.offset())
                 .release();
 
             RefPtr<TimingFunction> timingFunction;

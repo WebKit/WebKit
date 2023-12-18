@@ -1732,49 +1732,6 @@ private:
     }
 };
 
-#if PLATFORM(IOS_FAMILY)
-@interface WAKView (UIKitSecretsWebKitKnowsAboutSeeUIWebPlugInView)
-- (PlatformLayer *)pluginLayer;
-- (BOOL)willProvidePluginLayer;
-- (void)attachPluginLayer;
-- (void)detachPluginLayer;
-@end
-
-class PluginWidgetIOS : public PluginWidget {
-public:
-    PluginWidgetIOS(WAKView *view)
-        : PluginWidget(view)
-    {
-    }
-
-    virtual PlatformLayer* platformLayer() const
-    {
-        if (![platformWidget() respondsToSelector:@selector(pluginLayer)])
-            return nullptr;
-
-        return [platformWidget() pluginLayer];   
-    }
-
-    virtual bool willProvidePluginLayer() const
-    {
-        return [platformWidget() respondsToSelector:@selector(willProvidePluginLayer)]
-            && [platformWidget() willProvidePluginLayer];
-    }
-
-    virtual void attachPluginLayer()
-    {
-        if ([platformWidget() respondsToSelector:@selector(attachPluginLayer)])
-            [platformWidget() attachPluginLayer];
-    }
-
-    virtual void detachPluginLayer()
-    {
-        if ([platformWidget() respondsToSelector:@selector(detachPluginLayer)])
-            [platformWidget() detachPluginLayer];
-    }
-};
-#endif // PLATFORM(IOS_FAMILY)
-
 static bool shouldBlockPlugin(WebBasePluginPackage *)
 {
     return true;
@@ -1876,11 +1833,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
     }
     
     ASSERT(view);
-#if PLATFORM(IOS_FAMILY)
-    return adoptRef(new PluginWidgetIOS(view));
-#else
     return adoptRef(new PluginWidget(view));
-#endif
 
     END_BLOCK_OBJC_EXCEPTIONS
 

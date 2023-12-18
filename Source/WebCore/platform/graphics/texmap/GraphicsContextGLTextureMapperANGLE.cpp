@@ -37,14 +37,17 @@
 #include "PlatformDisplay.h"
 #include "PlatformLayerDisplayDelegate.h"
 
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+#include "VideoFrame.h"
+#if USE(GSTREAMER)
+#include "VideoFrameGStreamer.h"
+#endif
+#endif
+
 #if USE(NICOSIA)
 #include "NicosiaGCGLANGLELayer.h"
 #else
 #include "TextureMapperGCGLPlatformLayer.h"
-#endif
-
-#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
-#include "VideoFrameGStreamer.h"
 #endif
 
 #if USE(ANGLE_GBM)
@@ -154,7 +157,7 @@ bool GraphicsContextGLTextureMapperANGLE::copyTextureFromMedia(MediaPlayer&, Pla
 #endif
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::paintCompositedResultsToVideoFrame()
+RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::surfaceBufferToVideoFrame(SurfaceBuffer)
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())
@@ -166,7 +169,7 @@ RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::paintCompositedResultsTo
 
 bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 {
-    m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+    m_isForWebGL2 = contextAttributes().isWebGL2;
 
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
     m_displayObj = sharedDisplay.angleEGLDisplay();
@@ -264,9 +267,6 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 
 bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 {
-    if (m_isForWebGL2)
-        GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
-
 #if USE(NICOSIA)
     m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
@@ -275,36 +275,9 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
 #endif
 
-    bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
-
-    Vector<ASCIILiteral, 4> requiredExtensions;
-    if (m_isForWebGL2) {
-        // For WebGL 2.0 occlusion queries to work.
-        requiredExtensions.append("GL_EXT_occlusion_query_boolean"_s);
-        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
-    }
-
-    for (auto& extension : requiredExtensions) {
-        if (!supportsExtension(extension)) {
-            LOG(WebGL, "Missing required extension. %s", extension.characters());
-            return false;
-        }
-        ensureExtensionEnabled(extension);
-    }
-
-    validateAttributes();
-    auto attributes = contextAttributes(); // They may have changed during validation.
-
     GLenum textureTarget = drawingBufferTextureTarget();
-    // Create a texture to render into.
-    GL_GenTextures(1, &m_texture);
-    GL_BindTexture(textureTarget, m_texture);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #if USE(NICOSIA)
+    GL_BindTexture(textureTarget, m_texture);
     m_textureID = setupCurrentTexture();
 #endif
 
@@ -317,69 +290,13 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 #if USE(NICOSIA)
     m_compositorTextureID = setupCurrentTexture();
 #endif
-
     GL_BindTexture(textureTarget, 0);
 
-    // Create an FBO.
-    GL_GenFramebuffers(1, &m_fbo);
-
-    ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
-    if (attributes.antialias) {
-        // Create a multisample FBO.
-        GL_GenFramebuffers(1, &m_multisampleFBO);
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-        m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
-        GL_GenRenderbuffers(1, &m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth)
-            GL_GenRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-    } else {
-        // Bind canvas FBO.
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-        m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
-
-        if (attributes.stencil || attributes.depth)
-            GL_GenRenderbuffers(1, &m_depthStencilBuffer);
-
-        if (attributes.preserveDrawingBuffer) {
-            // Create another texture to handle preserveDrawingBuffer:true without antialiasing.
-            GL_GenTextures(1, &m_preserveDrawingBufferTexture);
-            GL_BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
-            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            GL_BindTexture(GL_TEXTURE_2D, 0);
-            // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
-            GL_GenFramebuffers(1, &m_preserveDrawingBufferFBO);
-        }
-    }
-
-    GL_ClearColor(0, 0, 0, 0);
-    return GraphicsContextGLANGLE::platformInitialize();
+    return true;
 }
 
-void GraphicsContextGLTextureMapperANGLE::prepareTexture()
+void GraphicsContextGLTextureMapperANGLE::swapCompositorTexture()
 {
-    ASSERT(!m_layerComposited);
-
-    if (contextAttributes().antialias)
-        resolveMultisamplingIfNecessary();
-
-    if (m_preserveDrawingBufferTexture) {
-        // Blit m_preserveDrawingBufferTexture into m_texture.
-        ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
-        ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
-        GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, m_preserveDrawingBufferFBO);
-        GL_BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, m_fbo);
-        GL_BlitFramebufferANGLE(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-        if (m_isForWebGL2) {
-            GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_state.boundDrawFBO);
-            GL_BindFramebuffer(GL_READ_FRAMEBUFFER, m_state.boundReadFBO);
-        } else
-            GL_BindFramebuffer(GL_FRAMEBUFFER, m_state.boundDrawFBO);
-    }
-
     std::swap(m_texture, m_compositorTexture);
 #if USE(NICOSIA)
     std::swap(m_textureID, m_compositorTextureID);
@@ -429,11 +346,11 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
 
 void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 {
-    if (m_layerComposited || !makeContextCurrent())
+    if (!makeContextCurrent())
         return;
 
     prepareTexture();
-    markLayerComposited();
+    swapCompositorTexture();
 }
 
 } // namespace WebCore

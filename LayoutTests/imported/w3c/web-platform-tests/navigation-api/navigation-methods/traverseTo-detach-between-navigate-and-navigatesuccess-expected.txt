@@ -1,0 +1,4 @@
+
+
+FAIL Detach a window between when a traverseTo() fires navigate and navigatesuccess undefined is not an object (evaluating 'i.contentWindow.navigation.navigate("#1").finished.then')
+

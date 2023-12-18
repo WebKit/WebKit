@@ -245,13 +245,13 @@ IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
     }();
 IGNORE_GCC_WARNINGS_END
 
-    auto resolvedProperty = [&] (AnimatableProperty property) -> AnimatableProperty {
+    auto resolvedProperty = [&] (AnimatableCSSProperty property) -> AnimatableCSSProperty {
         if (std::holds_alternative<CSSPropertyID>(property))
             return CSSProperty::resolveDirectionAwareProperty(std::get<CSSPropertyID>(property), style.direction(), style.writingMode());
         return property;
     };
 
-    HashSet<AnimatableProperty> propertiesToMatch;
+    HashSet<AnimatableCSSProperty> propertiesToMatch;
     for (auto property : keyframeEffect.animatedProperties())
         propertiesToMatch.add(resolvedProperty(property));
 
@@ -480,7 +480,7 @@ unsigned DocumentTimeline::numberOfAnimationTimelineInvalidationsForTesting() co
 ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallback>&& callback, std::optional<std::variant<double, CustomAnimationOptions>>&& options)
 {
     if (!m_document)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     String id = emptyString();
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;

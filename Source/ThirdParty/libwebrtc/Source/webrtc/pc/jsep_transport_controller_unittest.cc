@@ -2727,4 +2727,20 @@ TEST_F(JsepTransportControllerTest, BundleOnlySectionDoesNotNeedRtcpMux) {
           .ok());
 }
 
+// Test that with max-bundle a single unbundled m-line is accepted.
+TEST_F(JsepTransportControllerTest,
+       MaxBundleDoesNotRequireBundleForFirstMline) {
+  auto config = JsepTransportController::Config();
+  config.bundle_policy = PeerConnectionInterface::kBundlePolicyMaxBundle;
+  CreateJsepTransportController(std::move(config));
+
+  auto offer = std::make_unique<cricket::SessionDescription>();
+  AddAudioSection(offer.get(), kAudioMid1, kIceUfrag1, kIcePwd1,
+                  cricket::ICEMODE_FULL, cricket::CONNECTIONROLE_ACTPASS,
+                  nullptr);
+  EXPECT_TRUE(
+      transport_controller_->SetRemoteDescription(SdpType::kOffer, offer.get())
+          .ok());
+}
+
 }  // namespace webrtc

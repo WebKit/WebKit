@@ -89,7 +89,7 @@ private:
     HashSet<RefPtr<MutationObserver>> m_activeObservers;
     HashSet<RefPtr<MutationObserver>> m_suspendedObservers;
 
-    WeakHashMap<Page, MonotonicTime> m_pagesWithRenderingOpportunity;
+    SingleThreadWeakHashMap<Page, MonotonicTime> m_pagesWithRenderingOpportunity;
 
     std::unique_ptr<CustomElementQueue> m_customElementQueue;
     bool m_processingBackupElementQueue { false };

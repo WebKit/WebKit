@@ -6,31 +6,19 @@
 
 
 PASS .item 1
-FAIL .item 2 assert_equals:
-<div data-offset-y="85" class="item last">
-        <span></span><br><span></span>
-      </div>
-offsetTop expected 85 but got 93
-FAIL .item 3 assert_equals:
-<div data-offset-y="163" class="item first">
-        <span></span><br><span></span>
-      </div>
-offsetTop expected 163 but got 171
+PASS .item 2
+PASS .item 3
 FAIL .item 4 assert_equals:
 <div data-offset-y="218" class="item last">
         <span></span><br><span></span>
       </div>
-offsetTop expected 218 but got 233
-FAIL .item 5 assert_equals:
-<div data-offset-y="308" class="item first">
-      <span></span><br><span></span>
-    </div>
-offsetTop expected 308 but got 313
+offsetTop expected 218 but got 225
+PASS .item 5
 FAIL .item 6 assert_equals:
 <div data-offset-y="360" class="item last">
       <span></span><br><span></span>
     </div>
-offsetTop expected 360 but got 375
+offsetTop expected 360 but got 370
 FAIL .item 7 assert_equals:
 <div data-offset-y="41" class="item small first"></div>
 offsetTop expected 41 but got 3

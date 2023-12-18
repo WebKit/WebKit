@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,9 @@ public:
 
     enum class SupportsAirPlayVideo : bool { No, Yes };
     virtual void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) = 0;
+
+    enum class SupportsSpatialAudioPlayback : bool { No, Yes };
+    virtual void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback) = 0;
 };
 
 class WEBCORE_EXPORT MediaSessionHelper : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSessionHelper> {
@@ -90,6 +93,7 @@ public:
     using ShouldPause = MediaSessionHelperClient::ShouldPause;
     using SupportsAirPlayVideo = MediaSessionHelperClient::SupportsAirPlayVideo;
     using SuspendedUnderLock = MediaSessionHelperClient::SuspendedUnderLock;
+    using SupportsSpatialAudioPlayback = MediaSessionHelperClient::SupportsSpatialAudioPlayback;
 
     void activeAudioRouteDidChange(ShouldPause);
     void applicationWillEnterForeground(SuspendedUnderLock);
@@ -97,10 +101,14 @@ public:
     void applicationWillBecomeInactive();
     void applicationDidBecomeActive();
 
+    void setActiveAudioRouteSupportsSpatialPlayback(bool);
+    void updateActiveAudioRouteSupportsSpatialPlayback();
+
 protected:
     void externalOutputDeviceAvailableDidChange(HasAvailableTargets);
     void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit);
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&);
+    void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback);
 
 private:
     virtual void startMonitoringWirelessRoutesInternal() = 0;
@@ -111,6 +119,7 @@ private:
     uint32_t m_monitoringWirelessRoutesCount { 0 };
     bool m_activeVideoRouteSupportsAirPlayVideo { false };
     bool m_isPlayingToAutomotiveHeadUnit { false };
+    SupportsSpatialAudioPlayback m_activeAudioRouteSupportsSpatialPlayback { SupportsSpatialAudioPlayback::No };
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
 };
 

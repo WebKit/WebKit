@@ -141,3 +141,8 @@ template<> struct EnumTraits<WebCore::FilterFunction::Type> {
 };
 
 } // namespace WTF
+
+#define SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(ClassName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ClassName) \
+    static bool isType(const WebCore::FilterFunction& filter) { return filter.filterType() == WebCore::FilterFunction::Type::ClassName; } \
+SPECIALIZE_TYPE_TRAITS_END()

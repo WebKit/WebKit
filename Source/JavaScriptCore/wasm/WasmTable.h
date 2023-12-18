@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "WriteBarrier.h"
 #include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -46,7 +47,7 @@ class FuncRefTable;
 
 class Table : public ThreadSafeRefCounted<Table> {
     WTF_MAKE_NONCOPYABLE(Table);
-    WTF_MAKE_FAST_ALLOCATED(Table);
+    WTF_MAKE_TZONE_ALLOCATED(Table);
 public:
     static RefPtr<Table> tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType, Type);
 
@@ -105,6 +106,7 @@ protected:
 };
 
 class ExternRefTable final : public Table {
+    WTF_MAKE_TZONE_ALLOCATED(ExternRefTable);
 public:
     friend class Table;
 
@@ -119,6 +121,7 @@ private:
 };
 
 class FuncRefTable final : public Table {
+    WTF_MAKE_TZONE_ALLOCATED(FuncRefTable);
 public:
     friend class Table;
 

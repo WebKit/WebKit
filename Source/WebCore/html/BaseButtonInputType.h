@@ -41,6 +41,7 @@ protected:
         : BaseClickableWithKeyInputType(type, element)
     {
     }
+    bool dirAutoUsesValue() const override;
 
 private:
     bool shouldSaveAndRestoreFormControlState() const final;

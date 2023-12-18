@@ -1372,8 +1372,8 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
 
     if (attachment && mState.id() == context->getState().getDrawFramebuffer()->id())
     {
-        stateManager->updateMultiviewBaseViewLayerIndexUniform(context->getState().getProgram(),
-                                                               getState());
+        stateManager->updateMultiviewBaseViewLayerIndexUniform(
+            context->getState().getProgramExecutable(), getState());
     }
 
     return angle::Result::Continue;

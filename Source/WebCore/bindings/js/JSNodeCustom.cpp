@@ -106,13 +106,13 @@ static ALWAYS_INLINE JSValue createWrapperInline(JSGlobalObject* lexicalGlobalOb
     JSDOMObject* wrapper;    
     switch (node->nodeType()) {
         case Node::ELEMENT_NODE:
-            if (is<HTMLElement>(node))
-                wrapper = createJSHTMLWrapper(globalObject, downcast<HTMLElement>(WTFMove(node)));
-            else if (is<SVGElement>(node))
-                wrapper = createJSSVGWrapper(globalObject, downcast<SVGElement>(WTFMove(node)));
+            if (auto* htmlElement = dynamicDowncast<HTMLElement>(node.get()))
+                wrapper = createJSHTMLWrapper(globalObject, *htmlElement);
+            else if (auto* svgElement = dynamicDowncast<SVGElement>(node.get()))
+                wrapper = createJSSVGWrapper(globalObject, *svgElement);
 #if ENABLE(MATHML)
-            else if (is<MathMLElement>(node))
-                wrapper = createJSMathMLWrapper(globalObject, downcast<MathMLElement>(WTFMove(node)));
+            else if (auto* mathmlElement = dynamicDowncast<MathMLElement>(node.get()))
+                wrapper = createJSMathMLWrapper(globalObject, *mathmlElement);
 #endif
             else
                 wrapper = createWrapper<Element>(globalObject, WTFMove(node));

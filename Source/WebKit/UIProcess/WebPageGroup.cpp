@@ -129,7 +129,17 @@ WebPreferences& WebPageGroup::preferences() const
     return *m_preferences;
 }
 
+Ref<WebPreferences> WebPageGroup::protectedPreferences() const
+{
+    return preferences();
+}
+
 WebUserContentControllerProxy& WebPageGroup::userContentController()
+{
+    return m_userContentController;
+}
+
+Ref<WebUserContentControllerProxy> WebPageGroup::protectedUserContentController()
 {
     return m_userContentController;
 }

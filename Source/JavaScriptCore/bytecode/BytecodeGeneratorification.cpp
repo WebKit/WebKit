@@ -78,7 +78,7 @@ public:
                 auto bytecode = instruction->as<OpYield>();
                 unsigned liveCalleeLocalsIndex = bytecode.m_yieldPoint;
                 if (liveCalleeLocalsIndex >= m_yields.size())
-                    m_yields.resize(liveCalleeLocalsIndex + 1);
+                    m_yields.grow(liveCalleeLocalsIndex + 1);
                 YieldData& data = m_yields[liveCalleeLocalsIndex];
                 data.point = instruction.offset();
                 data.argument = bytecode.m_argument;
@@ -147,7 +147,7 @@ private:
         // It means that, the register can be retrieved even if the immediate previous op_save does not save it.
 
         if (m_storages.size() <= index)
-            m_storages.resize(index + 1);
+            m_storages.grow(index + 1);
         if (std::optional<Storage> storage = m_storages[index])
             return *storage;
 

@@ -127,10 +127,9 @@ TEST(WGSLLexerTests, SingleTokens)
     checkSingleLiteral("042e0f"_s, TokenType::FloatLiteral, 42);
     checkSingleToken("042f"_s, TokenType::Invalid);
     checkSingleLiteral("0123.f"_s, TokenType::FloatLiteral, 123);
-    checkSingleLiteral(".456f"_s, TokenType::FloatLiteral, 0.456);
+    checkSingleLiteral(".456f"_s, TokenType::FloatLiteral, 0.456f);
     checkSingleLiteral("42e-3"_s, TokenType::AbstractFloatLiteral, 42e-3);
-    checkSingleLiteral("42e-3f"_s, TokenType::FloatLiteral, 42e-3);
-    checkSingleLiteral("42e-a"_s, TokenType::IntegerLiteral, 42);
+    checkSingleLiteral("42e-3f"_s, TokenType::FloatLiteral, 42e-3f);
 }
 
 TEST(WGSLLexerTests, KeywordTokens)

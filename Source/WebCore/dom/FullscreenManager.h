@@ -32,6 +32,7 @@
 #include "GCReachableRef.h"
 #include "LayoutRect.h"
 #include "Page.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
@@ -40,7 +41,7 @@ namespace WebCore {
 class DeferredPromise;
 class RenderStyle;
 
-class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager> {
+class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FullscreenManager(Document&);
@@ -110,6 +111,7 @@ private:
 #endif
 
     Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
+    Ref<Document> protectedTopDocument();
 
     CheckedRef<Document> m_document;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;

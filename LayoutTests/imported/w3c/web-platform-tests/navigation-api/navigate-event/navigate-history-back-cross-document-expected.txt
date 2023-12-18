@@ -1,0 +1,4 @@
+
+
+FAIL navigate event for history.back() - cross-document null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.key')
+

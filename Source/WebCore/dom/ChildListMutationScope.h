@@ -60,6 +60,8 @@ private:
     bool isAddedNodeInOrder(Node&);
     bool isRemovedNodeInOrder(Node&);
 
+    Ref<ContainerNode> protectedTarget() const;
+
     Ref<ContainerNode> m_target;
 
     Vector<Ref<Node>> m_removedNodes;

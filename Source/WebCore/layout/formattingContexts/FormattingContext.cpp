@@ -78,12 +78,6 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
     UNUSED_PARAM(escapeReason);
 #if ASSERT_ENABLED
     auto isOkToAccessBoxGeometry = [&] {
-        if (layoutBox.isOutOfFlowPositioned() && isInlineFormattingContext()) {
-            // This is the non-escape case of accessing a box's geometry information within the same formatting context when
-            // computing static position for out-of-flow boxes.
-            return true;
-        }
-
         if (!is<InitialContainingBlock>(layoutBox) && &formattingContextRoot(layoutBox) == &root()) {
             // This is the non-escape case of accessing a box's geometry information within the same formatting context.
             return true;
@@ -93,9 +87,6 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             // Any geometry access outside of the formatting context without a valid reason is considered an escape.
             return false;
         }
-
-        if (*escapeReason == EscapeReason::InkOverflowNeedsInitialContiningBlockForStrokeWidth)
-            return true;
 
         if (*escapeReason == EscapeReason::DocumentBoxStretchesToViewportQuirk) {
             ASSERT(layoutState().inQuirksMode());
@@ -169,8 +160,8 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
 
 const InitialContainingBlock& FormattingContext::initialContainingBlock(const Box& layoutBox)
 {
-    if (is<InitialContainingBlock>(layoutBox))
-        return downcast<InitialContainingBlock>(layoutBox);
+    if (auto* initialContainingBlock = dynamicDowncast<InitialContainingBlock>(layoutBox))
+        return *initialContainingBlock;
 
     auto* ancestor = &layoutBox.parent();
     for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }

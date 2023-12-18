@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 100x100
-    RenderSVGContainer {g} at (0,0) size 0x0
-    RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=objectBoundingBox]
-      RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.25] [cy=0.25] [r=0.25]
-    RenderSVGRect {rect} at (0,0) size 100x100 [transform={m=((20.00,0.00)(0.00,20.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-      [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (0,0) size 5x5

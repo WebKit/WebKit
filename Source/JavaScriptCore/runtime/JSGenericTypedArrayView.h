@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,8 @@ public:
     static inline ElementType toAdaptorNativeFromValue(JSGlobalObject*, JSValue);
     static inline std::optional<ElementType> toAdaptorNativeFromValueWithoutCoercion(JSValue);
 
-    inline bool sort();
+    enum class SortResult { Success, OutOfMemory, Failed };
+    inline SortResult sort();
 
     inline bool canAccessRangeQuickly(size_t offset, size_t length);
     
@@ -207,7 +208,7 @@ protected:
     // For NaN, we normalize the NaN to a peticular representation; the sign bit is 0, all exponential bits
     // are 1 and only the MSB of the mantissa is 1. So, NaN is recognized as the largest integral numbers.
 
-    template<typename IntegralType> inline bool sortFloat();
+    template<typename IntegralType> inline void sortFloat(ElementType* begin, ElementType* end);
 };
 
 template<typename PassedAdaptor>

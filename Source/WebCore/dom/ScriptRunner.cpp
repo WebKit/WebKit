@@ -44,17 +44,17 @@ ScriptRunner::~ScriptRunner()
 {
     for (auto& pendingScript : m_scriptsToExecuteSoon) {
         UNUSED_PARAM(pendingScript);
-        m_document.decrementLoadEventDelayCount();
+        m_document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_scriptsToExecuteInOrder) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document.decrementLoadEventDelayCount();
+        m_document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_pendingAsyncScripts) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document.decrementLoadEventDelayCount();
+        m_document->decrementLoadEventDelayCount();
     }
 }
 
@@ -62,9 +62,9 @@ void ScriptRunner::queueScriptForExecution(ScriptElement& scriptElement, Loadabl
 {
     ASSERT(scriptElement.element().isConnected());
 
-    m_document.incrementLoadEventDelayCount();
+    m_document->incrementLoadEventDelayCount();
 
-    auto pendingScript = PendingScript::create(scriptElement, loadableScript);
+    Ref pendingScript = PendingScript::create(scriptElement, loadableScript);
     switch (executionType) {
     case ASYNC_EXECUTION:
         m_pendingAsyncScripts.add(pendingScript.copyRef());
@@ -83,7 +83,7 @@ void ScriptRunner::suspend()
 
 void ScriptRunner::resume()
 {
-    if (hasPendingScripts() && !m_document.hasActiveParserYieldToken())
+    if (hasPendingScripts() && !m_document->hasActiveParserYieldToken())
         m_timer.startOneShot(0_s);
 }
 
@@ -101,17 +101,17 @@ void ScriptRunner::notifyFinished(PendingScript& pendingScript)
         m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript).releaseNonNull());
     pendingScript.clearClient();
 
-    if (!m_document.hasActiveParserYieldToken())
+    if (!m_document->hasActiveParserYieldToken())
         m_timer.startOneShot(0_s);
 }
 
 void ScriptRunner::timerFired()
 {
-    Ref<Document> protect(m_document);
+    Ref document = m_document.get();
 
     Vector<RefPtr<PendingScript>> scripts;
 
-    if (m_document.shouldDeferAsynchronousScriptsUntilParsingFinishes()) {
+    if (document->shouldDeferAsynchronousScriptsUntilParsingFinishes()) {
         // Scripts not added by the parser are executed asynchronously and yet do not have the 'async' attribute set.
         // We only want to delay scripts that were explicitly marked as 'async' by the developer.
         m_scriptsToExecuteSoon.removeAllMatching([&](auto& pendingScript) {
@@ -130,14 +130,14 @@ void ScriptRunner::timerFired()
         m_scriptsToExecuteInOrder.remove(0, numInOrderScriptsToExecute);
 
     for (auto& currentScript : scripts) {
-        auto script = WTFMove(currentScript);
+        RefPtr script = WTFMove(currentScript);
         ASSERT(script);
         // Paper over https://bugs.webkit.org/show_bug.cgi?id=144050
         if (!script)
             continue;
         ASSERT(script->needsLoading());
-        script->element().executePendingScript(*script);
-        m_document.decrementLoadEventDelayCount();
+        script->protectedElement()->executePendingScript(*script);
+        document->decrementLoadEventDelayCount();
     }
 }
 

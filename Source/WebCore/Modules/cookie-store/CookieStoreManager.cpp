@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CookieStoreManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CookieStoreGetOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Ref.h>
@@ -46,19 +44,17 @@ CookieStoreManager::~CookieStoreManager() = default;
 
 void CookieStoreManager::subscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    promise->reject(ExceptionCode::NotSupportedError);
 }
 
 void CookieStoreManager::getSubscriptions(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    promise->reject(ExceptionCode::NotSupportedError);
 }
 
 void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&&, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    promise->reject(ExceptionCode::NotSupportedError);
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

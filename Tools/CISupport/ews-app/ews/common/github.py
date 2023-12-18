@@ -30,11 +30,15 @@ from ews.common.buildbot import Buildbot
 from ews.models.patch import Change
 from ews.views.statusbubble import StatusBubble
 import ews.config as config
+import ews.common.util as util
 
 _log = logging.getLogger(__name__)
 
 GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
+
+is_test_mode_enabled = util.load_password('EWS_PRODUCTION') is None
+is_dev_instance = (util.load_password('DEV_INSTANCE', default='').lower() == 'true')
 
 
 class GitHub(object):
@@ -195,20 +199,21 @@ class GitHubEWS(GitHub):
     ICON_BUILD_FAIL = u'\U0000274C'
     ICON_BUILD_WAITING = u'\U000023F3'
     ICON_BUILD_ONGOING = u'![loading](https://user-images.githubusercontent.com/3098702/171232313-daa606f1-8fd6-4b0f-a20b-2cb93c43d19b.png)'
-    ICON_BUILD_ONGOING_WITH_FAILURES = ICON_BUILD_ONGOING  # FIXME: Update icon for this case
+    ICON_BUILD_ONGOING_WITH_FAILURES = u'![loading-orange](https://github-production-user-asset-6210df.s3.amazonaws.com/3098702/291015173-08c448be-ac0a-4fd6-92a3-8165057445b7.png)'
+    # FIXME: Make ICON_BUILD_ONGOING_WITH_FAILURES more accessible
     ICON_BUILD_ERROR = u'\U0001F4A5'
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
     STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'wincairo'],  # FIXME: generate this list dynamically to have merge queue show up on top
                           ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', ''],
-                          ['webkitperl', 'ios-wk2', 'api-mac', 'gtk', ''],
-                          ['webkitpy', 'ios-wk2-wpt', 'mac-wk1', 'gtk-wk2', ''],
-                          ['jsc', 'api-ios', 'mac-wk2', 'api-gtk', ''],
-                          ['jsc-arm64', 'tv', 'mac-AS-debug-wk2', 'jsc-armv7', ''],
-                          ['services', 'tv-sim', 'mac-wk2-stress', 'jsc-armv7-tests', ''],
-                          ['merge', 'watch', '', 'jsc-mips', ''],
-                          ['unsafe-merge', 'watch-sim', '', 'jsc-mips-tests', '']]
+                          ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
+                          ['webkitpy', 'ios-wk2-wpt', 'mac-wk1', 'gtk', ''],
+                          ['jsc', 'api-ios', 'mac-wk2', 'gtk-wk2', ''],
+                          ['jsc-arm64', 'tv', 'mac-AS-debug-wk2', 'api-gtk', ''],
+                          ['services', 'tv-sim', 'mac-wk2-stress', 'jsc-armv7', ''],
+                          ['merge', 'watch', '', 'jsc-armv7-tests', ''],
+                          ['unsafe-merge', 'watch-sim', '', '', '']]
 
     @classmethod
     def generate_updated_pr_description(self, description, ews_comment):
@@ -338,6 +343,10 @@ class GitHubEWS(GitHub):
     def add_or_update_comment_for_change_id(self, sha, pr_id, pr_project=None, allow_new_comment=False):
         if not pr_id or pr_id == -1:
             _log.error('Invalid pr_id: {}'.format(pr_id))
+            return -1
+
+        if is_test_mode_enabled or is_dev_instance:
+            _log.info('Skipped updating GitHub PR since this is not production instance.')
             return -1
 
         repository_url = GITHUB_URL + pr_project if pr_project else None

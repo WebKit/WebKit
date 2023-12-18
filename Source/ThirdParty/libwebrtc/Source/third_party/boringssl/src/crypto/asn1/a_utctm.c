@@ -60,6 +60,7 @@
 #include <openssl/mem.h>
 #include <openssl/time.h>
 
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -83,11 +84,14 @@ int ASN1_UTCTIME_check(const ASN1_UTCTIME *d) {
 }
 
 int ASN1_UTCTIME_set_string(ASN1_UTCTIME *s, const char *str) {
+  // Although elsewhere we allow timezone offsets with UTCTime, to be compatible
+  // with some existing misissued certificates, this function is used to
+  // construct new certificates and can be stricter.
   size_t len = strlen(str);
   CBS cbs;
   CBS_init(&cbs, (const uint8_t *)str, len);
   if (!CBS_parse_utc_time(&cbs, /*out_tm=*/NULL,
-                          /*allow_timezone_offset=*/1)) {
+                          /*allow_timezone_offset=*/0)) {
     return 0;
   }
   if (s != NULL) {
@@ -121,9 +125,12 @@ ASN1_UTCTIME *ASN1_UTCTIME_adj(ASN1_UTCTIME *s, int64_t posix_time, int offset_d
   }
 
   char buf[14];
-  BIO_snprintf(buf, sizeof(buf), "%02d%02d%02d%02d%02d%02dZ",
-               data.tm_year % 100, data.tm_mon + 1, data.tm_mday, data.tm_hour,
-               data.tm_min, data.tm_sec);
+  int ret = snprintf(buf, sizeof(buf), "%02d%02d%02d%02d%02d%02dZ",
+                     data.tm_year % 100, data.tm_mon + 1, data.tm_mday,
+                     data.tm_hour, data.tm_min, data.tm_sec);
+  if (ret != (int)(sizeof(buf) - 1)) {
+    abort();  // |snprintf| should neither truncate nor write fewer bytes.
+  }
 
   int free_s = 0;
   if (s == NULL) {

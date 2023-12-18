@@ -33,6 +33,11 @@ if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
 
+# Honor the GTest_ROOT variable if specified
+if (POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif (POLICY CMP0074)
+
 # option() honor variables
 if (POLICY CMP0077)
   cmake_policy(SET CMP0077 NEW)
@@ -47,6 +52,11 @@ endif (POLICY CMP0091)
 if (POLICY CMP0067)
   cmake_policy(SET CMP0067 NEW)
 endif (POLICY CMP0067)
+
+# Allow the user to specify the CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+if (POLICY CMP0141)
+  cmake_policy(SET CMP0141 NEW)
+endif (POLICY CMP0141)
 
 project(absl LANGUAGES CXX)
 include(CTest)

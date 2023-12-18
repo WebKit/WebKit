@@ -677,8 +677,8 @@ end
 //baseline
 
 // CSS_PROP_BOX_DECORATION_BREAK
-clone enable-if=ENABLE_CSS_BOX_DECORATION_BREAK
-slice enable-if=ENABLE_CSS_BOX_DECORATION_BREAK
+clone
+slice
 
 // CSS_PROP_BOX_DIRECTION
 // normal
@@ -700,7 +700,7 @@ block-axis
 single
 multiple
 
-// align-content / align-tracks
+// align-content
 flex-start
 flex-end
 // center
@@ -718,7 +718,7 @@ first-baseline
 last-baseline
 // stretch
 
-// justify-content / justify-tracks
+// justify-content
 // start
 // end
 // flex-start
@@ -855,6 +855,7 @@ skip-white-space
 //
 // CSS_PROP_WORD_BREAK
 //
+auto-phrase
 break-all
 keep-all
 
@@ -1052,6 +1053,17 @@ jump-both
 // add
 accumulate
 replace
+
+//
+// animation-timeline
+//
+// auto
+// none
+// scroll
+nearest
+root
+self
+view
 
 //
 // CSS_PROP_ZOOM
@@ -1458,7 +1470,7 @@ sign
 mod
 rem
 to-zero
-nearest
+// nearest
 infinity
 -infinity id=NegativeInfinity
 NaN
@@ -1732,3 +1744,7 @@ no-autospace
 // auto
 // stable
 both-edges
+
+// transition-behavior
+// normal
+allow-discrete

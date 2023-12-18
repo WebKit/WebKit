@@ -84,6 +84,13 @@ class CMakeChecker(object):
         'break',
     ]
 
+    categories = [
+        'list/duplicate',
+        'list/emptyline',
+        'list/order',
+        'list/parentheses',
+    ]
+
     def __init__(self, file_path, handle_style_error):
         self._handle_style_error = handle_style_error
         self._tab_checker = TabChecker(file_path, handle_style_error)

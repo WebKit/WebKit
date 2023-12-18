@@ -40,6 +40,7 @@
 #include <WebCore/HitTestRequest.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
+#include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -55,7 +56,7 @@ namespace WebCore {
 class CertificateInfo;
 class Frame;
 class HTMLFrameOwnerElement;
-class HandleMouseEventResult;
+class HandleUserInputEventResult;
 class IntPoint;
 class IntRect;
 class LocalFrame;
@@ -83,7 +84,7 @@ class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public 
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
     static Ref<WebFrame> createSubframe(WebPage&, WebFrame& parent, const AtomString& frameName, WebCore::HTMLFrameOwnerElement&);
-    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier);
+    static Ref<WebFrame> createRemoteSubframe(WebPage&, WebFrame& parent, WebCore::FrameIdentifier, const String& frameName);
     ~WebFrame();
 
     void initWithCoreMainFrame(WebPage&, WebCore::Frame&, bool receivedMainFrameIdentifierFromUIProcess);
@@ -93,6 +94,7 @@ public:
     ScopeExit<Function<void()>> makeInvalidator();
 
     WebPage* page() const;
+    RefPtr<WebPage> protectedPage() const;
 
     static RefPtr<WebFrame> fromCoreFrame(const WebCore::Frame&);
     WebCore::LocalFrame* coreLocalFrame() const;
@@ -190,7 +192,7 @@ public:
     void setTextDirection(const String&);
     void updateRemoteFrameSize(WebCore::IntSize);
 
-    void documentLoaderDetached(uint64_t navigationID);
+    void documentLoaderDetached(uint64_t navigationID, bool loadWillContinueInAnotherProcess);
 
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener : public CanMakeWeakPtr<LoadListener> {
@@ -205,7 +207,7 @@ public:
     
 #if PLATFORM(COCOA)
     typedef bool (*FrameFilterFunction)(WKBundleFrameRef, WKBundleFrameRef subframe, void* context);
-    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const String& mainResourceFileName = { });
+    RetainPtr<CFDataRef> webArchiveData(FrameFilterFunction, void* context, const Vector<WebCore::MarkupExclusionRule>& exclusionRules = { }, const String& mainResourceFileName = { });
 #endif
 
     RefPtr<WebImage> createSelectionSnapshot() const;
@@ -230,7 +232,7 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
 
     bool handleContextMenuEvent(const WebCore::PlatformMouseEvent&);
-    WebCore::HandleMouseEventResult handleMouseEvent(const WebMouseEvent&);
+    WebCore::HandleUserInputEventResult handleMouseEvent(const WebMouseEvent&);
     bool handleKeyEvent(const WebKeyboardEvent&);
 
     bool isFocused() const;

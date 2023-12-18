@@ -39,14 +39,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connectionToWebProcess, TrackPrivateRemoteIdentifier identifier, VideoTrackPrivate& trackPrivate, MediaPlayerIdentifier mediaPlayerIdentifier)
+RemoteVideoTrackProxy::RemoteVideoTrackProxy(GPUConnectionToWebProcess& connectionToWebProcess, VideoTrackPrivate& trackPrivate, MediaPlayerIdentifier mediaPlayerIdentifier)
     : m_connectionToWebProcess(connectionToWebProcess)
-    , m_identifier(identifier)
     , m_trackPrivate(trackPrivate)
+    , m_id(trackPrivate.id())
     , m_mediaPlayerIdentifier(mediaPlayerIdentifier)
 {
     m_trackPrivate->setClient(*this);
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(m_identifier, configuration()), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::AddRemoteVideoTrack(configuration()), m_mediaPlayerIdentifier);
 }
 
 RemoteVideoTrackProxy::~RemoteVideoTrackProxy()
@@ -75,7 +75,7 @@ void RemoteVideoTrackProxy::updateConfiguration()
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(m_identifier, configuration()), m_mediaPlayerIdentifier);
+    m_connectionToWebProcess->connection().send(Messages::MediaPlayerPrivateRemote::RemoteVideoTrackConfigurationChanged(std::exchange(m_id, m_trackPrivate->id()), configuration()), m_mediaPlayerIdentifier);
 }
 
 void RemoteVideoTrackProxy::willRemove()
@@ -91,7 +91,7 @@ void RemoteVideoTrackProxy::selectedChanged(bool selected)
     updateConfiguration();
 }
 
-void RemoteVideoTrackProxy::idChanged(const AtomString&)
+void RemoteVideoTrackProxy::idChanged(TrackID)
 {
     updateConfiguration();
 }

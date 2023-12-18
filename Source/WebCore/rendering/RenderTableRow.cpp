@@ -48,17 +48,19 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableRow);
 
 RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
-    : RenderBox(Type::TableRow, element, WTFMove(style), 0)
+    : RenderBox(Type::TableRow, element, WTFMove(style), { })
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
+    ASSERT(isRenderTableRow());
 }
 
 RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
-    : RenderBox(Type::TableRow, document, WTFMove(style), 0)
+    : RenderBox(Type::TableRow, document, WTFMove(style), { })
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
+    ASSERT(isRenderTableRow());
 }
 
 void RenderTableRow::willBeRemovedFromTree(IsInternalMove isInternalMove)
@@ -176,8 +178,8 @@ LayoutRect RenderTableRow::clippedOverflowRect(const RenderLayerModelObject* rep
     // Rows and cells are in the same coordinate space. We need to both compute our overflow rect (which
     // will accommodate a row outline and any visual effects on the row itself), but we also need to add in
     // the repaint rects of cells.
-    LayoutRect result = RenderBox::clippedOverflowRect(repaintContainer, context);
-    for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
+    auto result = RenderBox::clippedOverflowRect(repaintContainer, context);
+    for (auto* cell = firstCell(); cell; cell = cell->nextCell()) {
         // Even if a cell is a repaint container, it's the row that paints the background behind it.
         // So we don't care if a cell is a repaintContainer here.
         result.uniteIfNonZero(cell->clippedOverflowRect(repaintContainer, context));
@@ -185,7 +187,15 @@ LayoutRect RenderTableRow::clippedOverflowRect(const RenderLayerModelObject* rep
     return result;
 }
 
-// Hit Testing
+auto RenderTableRow::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
+{
+    auto rects = RepaintRects { clippedOverflowRect(repaintContainer, visibleRectContextForRepaint()) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = outlineBoundsForRepaint(repaintContainer);
+
+    return rects;
+}
+
 bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.

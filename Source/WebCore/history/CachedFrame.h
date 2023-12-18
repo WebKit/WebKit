@@ -48,19 +48,19 @@ public:
     void restore();
 
     Document* document() const { return m_document.get(); }
-    LocalFrameView* view() const { return m_view.get(); }
+    FrameView* view() const { return m_view.get(); }
     const URL& url() const { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
-    CachedFrameBase(LocalFrame&);
+    CachedFrameBase(Frame&);
     ~CachedFrameBase();
 
     void pruneDetachedChildFrames();
 
     RefPtr<Document> m_document;
     RefPtr<DocumentLoader> m_documentLoader;
-    RefPtr<LocalFrameView> m_view;
+    RefPtr<FrameView> m_view;
     URL m_url;
     std::unique_ptr<ScriptCachedFrameData> m_cachedFrameScriptData;
     std::unique_ptr<CachedFramePlatformData> m_cachedFramePlatformData;
@@ -72,7 +72,7 @@ protected:
 class CachedFrame : private CachedFrameBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit CachedFrame(LocalFrame&);
+    explicit CachedFrame(Frame&);
 
     void open();
     void clear();

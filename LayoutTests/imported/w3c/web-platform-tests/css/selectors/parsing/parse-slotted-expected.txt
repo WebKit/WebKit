@@ -1,0 +1,20 @@
+
+PASS "::slotted(bar)" should be a valid selector
+PASS "::slotted([attr=\"foo\"])" should be a valid selector
+PASS "::slotted(*)" should be a valid selector
+PASS "::slotted(.class)" should be a valid selector
+PASS "::slotted(:not(foo))" should be a valid selector
+PASS "::slotted(:not(:nth-last-of-type(2)):not([slot=\"foo\"]))" should be a valid selector
+PASS "::slotted(:first-child)" should be a valid selector
+PASS "::slotted(:hover)" should be a valid selector
+PASS "::slotted" should be an invalid selector
+PASS "::slotted()" should be an invalid selector
+PASS "::slotted(0)" should be an invalid selector
+PASS ":slotted(foo)" should be an invalid selector
+PASS "::slotted(foo):first-child" should be an invalid selector
+PASS "::slotted(foo):hover" should be an invalid selector
+PASS "::slotted(foo):focus" should be an invalid selector
+PASS "::slotted(foo):lang(en)" should be an invalid selector
+PASS "::slotted(foo):dir(ltr)" should be an invalid selector
+PASS "::slotted(foo) + ::slotted(bar)" should be an invalid selector
+

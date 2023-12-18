@@ -34,25 +34,28 @@
 
 namespace WebCore {
 
-inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& fileName)
+inline ArchiveResource::ArchiveResource(Ref<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& relativeFilePath)
     : SubstituteResource(URL { url }, ResourceResponse { response }, WTFMove(data))
     , m_mimeType(mimeType)
     , m_textEncoding(textEncoding)
     , m_frameName(frameName)
-    , m_fileName(fileName)
+    , m_relativeFilePath(relativeFilePath)
     , m_shouldIgnoreWhenUnarchiving(false)
 {
 }
 
-RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& fileName)
+RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response, const String& relativeFilePath)
 {
     if (!data)
         return nullptr;
     if (response.isNull()) {
-        unsigned dataSize = data->size();
-        return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, ResourceResponse(url, mimeType, dataSize, textEncoding), fileName));
+        ResourceResponse syntheticResponse(url, mimeType, data->size(), textEncoding);
+        // Provide a valid HTTP status code for http URLs since we have logic in WebCore that validates it.
+        if (url.protocolIsInHTTPFamily())
+            syntheticResponse.setHTTPStatusCode(200);
+        return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, WTFMove(syntheticResponse), relativeFilePath));
     }
-    return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, response, fileName));
+    return adoptRef(*new ArchiveResource(data.releaseNonNull(), url, mimeType, textEncoding, frameName, response, relativeFilePath));
 }
 
 RefPtr<ArchiveResource> ArchiveResource::create(RefPtr<FragmentedSharedBuffer>&& data, const URL& url, const ResourceResponse& response)
@@ -64,10 +67,10 @@ Expected<String, ArchiveError> ArchiveResource::saveToDisk(const String& directo
 {
     ASSERT(!RunLoop::isMain());
 
-    if (directory.isEmpty() || m_fileName.isEmpty())
+    if (directory.isEmpty() || m_relativeFilePath.isEmpty())
         return makeUnexpected(ArchiveError::InvalidFilePath);
 
-    auto filePath = FileSystem::pathByAppendingComponent(directory, m_fileName);
+    auto filePath = FileSystem::pathByAppendingComponent(directory, m_relativeFilePath);
     FileSystem::makeAllDirectories(FileSystem::parentPath(filePath));
     auto fileData = data().extractData();
     int bytesWritten = FileSystem::overwriteEntireFile(filePath, { fileData.data(), fileData.size() });

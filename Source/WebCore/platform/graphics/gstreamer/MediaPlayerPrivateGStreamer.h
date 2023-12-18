@@ -45,6 +45,8 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/OptionSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
@@ -59,10 +61,9 @@ typedef struct _GstMpegtsSection GstMpegtsSection;
 #undef GST_USE_UNSTABLE_API
 #endif
 
-#if USE(TEXTURE_MAPPER_GL)
-#include "TextureMapperGL.h"
+#if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
-#include "NicosiaContentLayerTextureMapperImpl.h"
+#include "NicosiaContentLayer.h"
 #else
 #include "TextureMapperPlatformLayerProxyProvider.h"
 #endif
@@ -77,14 +78,14 @@ typedef struct _GstVideoInfo GstVideoInfo;
 
 namespace WebCore {
 
-class BitmapTextureGL;
+class BitmapTexture;
 class GLContext;
 class GraphicsContext;
 class GraphicsContextGL;
 class IntSize;
 class IntRect;
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 class TextureMapperPlatformLayerProxy;
 #endif
 
@@ -102,17 +103,21 @@ class VideoTrackPrivateGStreamer;
 class GBMBufferSwapchain;
 #endif
 
+enum class TextureMapperFlags : uint16_t;
+
 void registerWebKitGStreamerElements();
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
-class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
+class MediaPlayerPrivateGStreamer
+    : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateGStreamer, WeakPtrFactoryInitialization::Eager>
+    , public RefCounted<MediaPlayerPrivateGStreamer>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
-    , public Nicosia::ContentLayerTextureMapperImpl::Client
+    , public Nicosia::ContentLayer::Client
 #else
     , public PlatformLayer
 #endif
@@ -122,6 +127,9 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
 public:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
@@ -187,7 +195,7 @@ public:
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) override;
     void isLoopingChanged() final;
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
     PlatformLayer* platformLayer() const override;
 #if PLATFORM(WIN)
     // FIXME: Accelerated rendering has not been implemented for WinCairo yet.
@@ -285,7 +293,7 @@ protected:
     GstElement* createVideoSinkGL();
 #endif
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
     void pushTextureToCompositor();
 #if USE(NICOSIA)
     void swapBuffersIfNeeded() final;
@@ -316,7 +324,7 @@ protected:
     static void volumeChangedCallback(MediaPlayerPrivateGStreamer*);
     static void muteChangedCallback(MediaPlayerPrivateGStreamer*);
 
-    void readyTimerFired();
+    void pausedTimerFired();
 
     template <typename TrackPrivateType> void notifyPlayerOfTrack();
 
@@ -333,14 +341,17 @@ protected:
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
     void loadStateChanged();
 
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
     void updateTextureMapperFlags();
 #endif
+
+    void setCachedPosition(const MediaTime&) const;
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
-    mutable std::optional<MediaTime> m_cachedPosition;
+    mutable MediaTime m_cachedPosition;
+    mutable bool m_isCachedPositionValid { false };
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };
     bool m_isChangingRate { false };
@@ -373,8 +384,8 @@ protected:
     GRefPtr<GstElement> m_source { nullptr };
     bool m_areVolumeAndMuteInitialized { false };
 
-#if USE(TEXTURE_MAPPER_GL)
-    TextureMapperGL::Flags m_textureMapperFlags { TextureMapperGL::NoFlag };
+#if USE(TEXTURE_MAPPER)
+    OptionSet<TextureMapperFlags> m_textureMapperFlags;
 #endif
 
     GRefPtr<GstStreamVolume> m_volumeElement;
@@ -473,7 +484,7 @@ private:
 
     virtual void updateStates();
     void finishSeek();
-    virtual void asyncStateChangeDone() { }
+    virtual void didPreroll() { }
 
     void createGSTPlayBin(const URL&);
 
@@ -543,8 +554,8 @@ private:
     Condition m_drawCondition;
     Lock m_drawLock;
     RunLoop::Timer m_drawTimer WTF_GUARDED_BY_LOCK(m_drawLock);
-    RunLoop::Timer m_readyTimerHandler;
-#if USE(TEXTURE_MAPPER_GL)
+    RunLoop::Timer m_pausedTimerHandler;
+#if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
     RefPtr<Nicosia::ContentLayer> m_nicosiaLayer;
 #else
@@ -578,7 +589,7 @@ private:
     AtomString m_requestedTextStreamId;
 
 #if ENABLE(WEB_AUDIO)
-    std::unique_ptr<AudioSourceProviderGStreamer> m_audioSourceProvider;
+    RefPtr<AudioSourceProviderGStreamer> m_audioSourceProvider;
 #endif
     GRefPtr<GstElement> m_downloadBuffer;
 
@@ -614,6 +625,7 @@ private:
     String m_errorMessage;
 
 #if USE(TEXTURE_MAPPER_DMABUF)
+    HashSet<GRefPtr<GstMemory>> m_dmabufMemory;
     RefPtr<GBMBufferSwapchain> m_swapchain;
 #endif
 
@@ -631,7 +643,8 @@ private:
     MediaTime m_pausedTime;
 
     void setupCodecProbe(GstElement*);
-    HashMap<String, String> m_codecs;
+    Lock m_codecsLock;
+    HashMap<String, String> m_codecs WTF_GUARDED_BY_LOCK(m_codecsLock);
 
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
 

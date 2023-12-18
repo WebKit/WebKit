@@ -53,7 +53,6 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
-    void addItemsToFirstTrack(); 
     void placeItemsUsingOrderModifiedDocumentOrder(); 
     void placeItemsWithDefiniteGridAxisPosition();
     void placeItemsWithIndefiniteGridAxisPosition();
@@ -70,7 +69,7 @@ private:
     bool hasDefiniteGridAxisPosition(const RenderBox& child, GridTrackSizingDirection masonryDirection) const;
     static bool itemGridAreaStartsAtFirstLine(const GridArea& area, GridTrackSizingDirection masonryDirection)
     {
-        return !(masonryDirection == ForRows ? area.rows.startLine() : area.columns.startLine());
+        return !(masonryDirection == GridTrackSizingDirection::ForRows ? area.rows.startLine() : area.columns.startLine());
     }
     GridArea masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan gridAxisSpanFromArea(const GridArea&) const;
@@ -78,7 +77,6 @@ private:
 
     unsigned m_gridAxisTracksCount;
 
-    HashMap<RenderBox*, GridArea> m_firstTrackItems;
     Vector<RenderBox*> m_itemsWithDefiniteGridAxisPosition;
     Vector<RenderBox*> m_itemsWithIndefiniteGridAxisPosition;
 

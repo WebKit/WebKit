@@ -24,7 +24,6 @@
  */
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled&BackgroundFetchAPIEnabled,
     Exposed=ServiceWorker
 ] interface BackgroundFetchEvent : ExtendableEvent {

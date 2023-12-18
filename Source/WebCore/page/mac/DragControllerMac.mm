@@ -100,10 +100,9 @@ void DragController::cleanupAfterSystemDrag()
     // call it anyway to be on the safe side.
     // We don't want to do this for WebKit2, since the client call to start the drag
     // is asynchronous.
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame())) {
-        if (localMainFrame->view()->platformWidget())
-            dragEnded();
-    }
+
+    if (m_page.mainFrame().virtualView()->platformWidget())
+        dragEnded();
 #endif
 }
 

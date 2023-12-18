@@ -39,6 +39,7 @@
 #include "JSInterfaceJIT.h"
 #include "LLIntData.h"
 #include "PCToCodeOriginMap.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace JSC {
@@ -149,6 +150,8 @@ namespace JSC {
     };
 
     class JIT final : public JSInterfaceJIT {
+        WTF_MAKE_TZONE_ALLOCATED(JIT);
+
         friend class JITSlowPathCall;
         friend class JITStubCall;
         friend class JITThunks;
@@ -235,6 +238,7 @@ namespace JSC {
 
     public:
         void loadConstant(unsigned constantIndex, GPRReg);
+        void loadStructureStubInfo(StructureStubInfoIndex, GPRReg);
         static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
     private:
         void loadGlobalObject(GPRReg);
@@ -242,6 +246,7 @@ namespace JSC {
         // Assuming s_constantsGPR is available.
         static void loadGlobalObject(CCallHelpers&, GPRReg);
         static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
+        static void loadStructureStubInfo(CCallHelpers&, StructureStubInfoIndex, GPRReg);
 
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
@@ -249,15 +254,9 @@ namespace JSC {
         void loadCodeBlockConstantTag(VirtualRegister, RegisterID);
 #endif
 
-        void exceptionCheck(Jump jumpToHandler)
-        {
-            m_exceptionChecks.append(jumpToHandler);
-        }
-
-        void exceptionCheck()
-        {
-            m_exceptionChecks.append(emitExceptionCheck(vm()));
-        }
+        void exceptionCheck(Jump jumpToHandler);
+        void exceptionCheck();
+        void exceptionChecksWithCallFrameRollback(Jump jumpToHandler);
 
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
@@ -433,6 +432,7 @@ namespace JSC {
         void emit_op_instanceof(const JSInstruction*);
         void emit_op_is_empty(const JSInstruction*);
         void emit_op_typeof_is_undefined(const JSInstruction*);
+        void emit_op_typeof_is_function(const JSInstruction*);
         void emit_op_is_undefined_or_null(const JSInstruction*);
         void emit_op_is_boolean(const JSInstruction*);
         void emit_op_is_number(const JSInstruction*);
@@ -662,9 +662,6 @@ namespace JSC {
         template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
         void emitMathICSlow(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
 
-    public:
-        static MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
-
     private:
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
@@ -823,7 +820,7 @@ namespace JSC {
             setupArguments<OperationType>(args...);
             updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
             MacroAssembler::Call call = appendCall(operation);
-            m_exceptionChecksWithCallFrameRollback.append(jump());
+            exceptionChecksWithCallFrameRollback(jump());
             return call;
         }
 
@@ -839,10 +836,6 @@ namespace JSC {
         void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);
 
         void updateTopCallFrame();
-
-        Call emitNakedNearCall(CodePtr<NoPtrTag> function = { });
-        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = { });
-        Jump emitNakedNearJump(CodePtr<JITThunkPtrTag> function = { });
 
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
@@ -894,12 +887,10 @@ namespace JSC {
         void resetSP();
 
         JITConstantPool::Constant addToConstantPool(JITConstantPool::Type, void* payload = nullptr);
-        std::tuple<BaselineUnlinkedStructureStubInfo*, JITConstantPool::Constant> addUnlinkedStructureStubInfo();
+        std::tuple<BaselineUnlinkedStructureStubInfo*, StructureStubInfoIndex> addUnlinkedStructureStubInfo();
         BaselineUnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
 
         Vector<FarCallRecord> m_farCalls;
-        Vector<NearCallRecord> m_nearCalls;
-        Vector<NearJumpRecord> m_nearJumps;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
         HashMap<BytecodeIndex, Label> m_fastPathResumeLabels;
@@ -922,8 +913,6 @@ namespace JSC {
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
 
-        JumpList m_exceptionChecks;
-        JumpList m_exceptionChecksWithCallFrameRollback;
 #if ASSERT_ENABLED
         Label m_consistencyCheckLabel;
         Vector<Call> m_consistencyCheckCalls;

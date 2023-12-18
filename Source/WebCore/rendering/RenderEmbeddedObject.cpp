@@ -86,6 +86,7 @@ RenderEmbeddedObject::RenderEmbeddedObject(HTMLFrameOwnerElement& element, Rende
     , m_unavailablePluginIndicatorIsPressed(false)
     , m_mouseDownWasInUnavailablePluginIndicator(false)
 {
+    ASSERT(isRenderEmbeddedObject());
 }
 
 RenderEmbeddedObject::~RenderEmbeddedObject()
@@ -99,22 +100,31 @@ void RenderEmbeddedObject::willBeDestroyed()
     RenderWidget::willBeDestroyed();
 }
 
-bool RenderEmbeddedObject::requiresLayer() const
+bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
 {
-    if (RenderWidget::requiresLayer())
+    if (RenderWidget::requiresAcceleratedCompositing())
         return true;
-    
-    return allowsAcceleratedCompositing();
+
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return false;
+    return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
 }
 
-bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
+bool RenderEmbeddedObject::usesAsyncScrolling() const
 {
-#if PLATFORM(IOS_FAMILY)
-    // The timing of layer creation is different on the phone, since the plugin can only be manipulated from the main thread.
-    return is<PluginViewBase>(widget()) && downcast<PluginViewBase>(*widget()).willProvidePluginLayer();
-#else
-    return is<PluginViewBase>(widget()) && downcast<PluginViewBase>(*widget()).platformLayer();
-#endif
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return false;
+    return pluginViewBase->usesAsyncScrolling();
+}
+
+ScrollingNodeID RenderEmbeddedObject::scrollingNodeID() const
+{
+    auto* pluginViewBase = dynamicDowncast<PluginViewBase>(widget());
+    if (!pluginViewBase)
+        return false;
+    return pluginViewBase->scrollingNodeID();
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -310,7 +320,7 @@ void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     fontDescription.setOneFamily(SystemFontDatabase::singleton().systemFontShorthandFamily(SystemFontDatabase::FontShorthand::WebkitSmallControl));
     fontDescription.setWeight(boldWeightValue());
     fontDescription.setComputedSize(12);
-    font = FontCascade(WTFMove(fontDescription), 0, 0);
+    font = FontCascade(WTFMove(fontDescription));
     font.update(nullptr);
 
     run = TextRun(m_unavailablePluginReplacementText);

@@ -30,15 +30,14 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     Scale(WebCore::FloatSize scale) StreamBatched
     SetCTM(WebCore::AffineTransform ctm) StreamBatched
     ConcatenateCTM(WebCore::AffineTransform ctm) StreamBatched
-    SetInlineFillColor(WebCore::DisplayList::SetInlineFillColor item) StreamBatched
-    SetInlineStrokeColor(WebCore::DisplayList::SetInlineStrokeColor item) StreamBatched
-    SetStrokeThickness(float thickness) StreamBatched
+    SetInlineFillColor(WebCore::DisplayList::SetInlineFillColor fillColorItem) StreamBatched
+    SetInlineStroke(WebCore::DisplayList::SetInlineStroke strokeItem) StreamBatched
     SetState(WebCore::DisplayList::SetState item) StreamBatched
     SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
     SetLineDash(WebCore::DisplayList::SetLineDash item) StreamBatched
     SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
     SetMiterLimit(float limit) StreamBatched
-    ClearShadow()
+    ClearDropShadow()
     Clip(WebCore::FloatRect rect)
     ClipRoundedRect(WebCore::FloatRoundedRect rect)
     ClipOut(WebCore::FloatRect rect)
@@ -49,6 +48,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ResetClip()
     DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
+    DrawDisplayListItems(Vector<WebCore::DisplayList::Item> items, WebCore::FloatPoint destination)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
     DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatSize imageSize, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
@@ -85,7 +85,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
     StrokeLine(struct WebCore::PathDataLine line) StreamBatched
-    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
+    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStroke strokeItem) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
     StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
     StrokeBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched

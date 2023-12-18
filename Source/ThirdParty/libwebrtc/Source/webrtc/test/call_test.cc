@@ -97,7 +97,7 @@ void CallTest::RunBaseTest(BaseTest* test) {
     num_audio_streams_ = test->GetNumAudioStreams();
     num_flexfec_streams_ = test->GetNumFlexfecStreams();
     RTC_DCHECK(num_video_streams_ > 0 || num_audio_streams_ > 0);
-    Call::Config send_config(send_event_log_.get());
+    CallConfig send_config(send_event_log_.get());
     test->ModifySenderBitrateConfig(&send_config.bitrate_config);
     if (num_audio_streams_ > 0) {
       CreateFakeAudioDevices(test->CreateCapturer(), test->CreateRenderer());
@@ -117,7 +117,7 @@ void CallTest::RunBaseTest(BaseTest* test) {
     }
     CreateSenderCall(send_config);
     if (test->ShouldCreateReceivers()) {
-      Call::Config recv_config(recv_event_log_.get());
+      CallConfig recv_config(recv_event_log_.get());
       test->ModifyReceiverBitrateConfig(&recv_config.bitrate_config);
       if (num_audio_streams_ > 0) {
         AudioState::Config audio_state_config;
@@ -207,35 +207,35 @@ void CallTest::RunBaseTest(BaseTest* test) {
 }
 
 void CallTest::CreateCalls() {
-  CreateCalls(Call::Config(send_event_log_.get()),
-              Call::Config(recv_event_log_.get()));
+  CreateCalls(CallConfig(send_event_log_.get()),
+              CallConfig(recv_event_log_.get()));
 }
 
-void CallTest::CreateCalls(const Call::Config& sender_config,
-                           const Call::Config& receiver_config) {
+void CallTest::CreateCalls(const CallConfig& sender_config,
+                           const CallConfig& receiver_config) {
   CreateSenderCall(sender_config);
   CreateReceiverCall(receiver_config);
 }
 
 void CallTest::CreateSenderCall() {
-  CreateSenderCall(Call::Config(send_event_log_.get()));
+  CreateSenderCall(CallConfig(send_event_log_.get()));
 }
 
-void CallTest::CreateSenderCall(const Call::Config& config) {
+void CallTest::CreateSenderCall(const CallConfig& config) {
   auto sender_config = config;
   sender_config.task_queue_factory = task_queue_factory_.get();
   sender_config.network_state_predictor_factory =
       network_state_predictor_factory_.get();
   sender_config.network_controller_factory = network_controller_factory_.get();
   sender_config.trials = &field_trials_;
-  sender_call_.reset(Call::Create(sender_config));
+  sender_call_ = Call::Create(sender_config);
 }
 
-void CallTest::CreateReceiverCall(const Call::Config& config) {
+void CallTest::CreateReceiverCall(const CallConfig& config) {
   auto receiver_config = config;
   receiver_config.task_queue_factory = task_queue_factory_.get();
   receiver_config.trials = &field_trials_;
-  receiver_call_.reset(Call::Create(receiver_config));
+  receiver_call_ = Call::Create(receiver_config);
 }
 
 void CallTest::DestroyCalls() {
@@ -634,7 +634,14 @@ void CallTest::Start() {
     audio_recv_stream->Start();
 }
 
+void CallTest::StartVideoSources() {
+  for (size_t i = 0; i < video_sources_.size(); ++i) {
+    video_sources_[i]->Start();
+  }
+}
+
 void CallTest::StartVideoStreams() {
+  StartVideoSources();
   for (size_t i = 0; i < video_send_streams_.size(); ++i) {
     std::vector<bool> active_rtp_streams(
         video_send_configs_[i].rtp.ssrcs.size(), true);

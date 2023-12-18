@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,9 +130,9 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
         return;
     }
 
-    int divot = 0;
-    int unusedStartOffset = 0;
-    int unusedEndOffset = 0;
+    unsigned divot = 0;
+    unsigned unusedStartOffset = 0;
+    unsigned unusedEndOffset = 0;
     m_codeBlock->expressionRangeForBytecodeIndex(m_bytecodeIndex, divot, unusedStartOffset, unusedEndOffset, line, column);
 
     ScriptExecutable* executable = m_codeBlock->ownerExecutable();

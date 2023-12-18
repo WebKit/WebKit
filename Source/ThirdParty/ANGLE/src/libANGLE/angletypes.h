@@ -717,8 +717,16 @@ class BlendStateExt final
     void setEquationsIndexed(const size_t index,
                              const size_t otherIndex,
                              const BlendStateExt &other);
-    GLenum getEquationColorIndexed(size_t index) const;
-    GLenum getEquationAlphaIndexed(size_t index) const;
+    BlendEquationType getEquationColorIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return EquationStorage::GetValueIndexed(index, mEquationColor);
+    }
+    BlendEquationType getEquationAlphaIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return EquationStorage::GetValueIndexed(index, mEquationAlpha);
+    }
     DrawBufferMask compareEquations(const EquationStorage::Type color,
                                     const EquationStorage::Type alpha) const;
     DrawBufferMask compareEquations(const BlendStateExt &other) const
@@ -739,15 +747,36 @@ class BlendStateExt final
                     const GLenum srcAlpha,
                     const GLenum dstAlpha);
     void setFactorsIndexed(const size_t index,
+                           const gl::BlendFactorType srcColorFactor,
+                           const gl::BlendFactorType dstColorFactor,
+                           const gl::BlendFactorType srcAlphaFactor,
+                           const gl::BlendFactorType dstAlphaFactor);
+    void setFactorsIndexed(const size_t index,
                            const GLenum srcColor,
                            const GLenum dstColor,
                            const GLenum srcAlpha,
                            const GLenum dstAlpha);
     void setFactorsIndexed(const size_t index, const size_t otherIndex, const BlendStateExt &other);
-    GLenum getSrcColorIndexed(size_t index) const;
-    GLenum getDstColorIndexed(size_t index) const;
-    GLenum getSrcAlphaIndexed(size_t index) const;
-    GLenum getDstAlphaIndexed(size_t index) const;
+    BlendFactorType getSrcColorIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mSrcColor);
+    }
+    BlendFactorType getDstColorIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mDstColor);
+    }
+    BlendFactorType getSrcAlphaIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mSrcAlpha);
+    }
+    BlendFactorType getDstAlphaIndexed(size_t index) const
+    {
+        ASSERT(index < mDrawBufferCount);
+        return FactorStorage::GetValueIndexed(index, mDstAlpha);
+    }
     DrawBufferMask compareFactors(const FactorStorage::Type srcColor,
                                   const FactorStorage::Type dstColor,
                                   const FactorStorage::Type srcAlpha,
@@ -947,6 +976,9 @@ template <typename T>
 using RenderToTextureImageMap = angle::PackedEnumMap<RenderToTextureImageIndex, T>;
 
 constexpr size_t kCubeFaceCount = 6;
+
+template <typename T>
+using CubeFaceArray = std::array<T, kCubeFaceCount>;
 
 template <typename T>
 using TextureTypeMap = angle::PackedEnumMap<TextureType, T>;
@@ -1158,27 +1190,33 @@ namespace angle
 // Since the function is called without any locks, care must be taken to minimize the amount of work
 // in such calls and ensure thread safety (for example by using fine grained locks inside the call
 // itself).
+//
+// Some entry points pass a void pointer argument to UnlockedTailCall::run method intended to
+// contain the return value filled by the backend, the rest of the entry points pass in a
+// nullptr.  Regardless, Display::terminate runs pending tail calls passing in a nullptr, so
+// the tail calls that return a value in the argument still have to guard against a nullptr
+// parameter.
 class UnlockedTailCall final : angle::NonCopyable
 {
   public:
-    using CallType = std::function<void(void)>;
+    using CallType = std::function<void(void *)>;
 
     UnlockedTailCall();
     ~UnlockedTailCall();
 
     void add(CallType &&call);
-    ANGLE_INLINE void run()
+    ANGLE_INLINE void run(void *resultOut)
     {
         if (!mCalls.empty())
         {
-            runImpl();
+            runImpl(resultOut);
         }
     }
 
     bool any() const { return !mCalls.empty(); }
 
   private:
-    void runImpl();
+    void runImpl(void *resultOut);
 
     // Typically, there is only one tail call.  It is possible to end up with 2 tail calls currently
     // with unMakeCurrent destroying both the read and draw surfaces, each adding a tail call in the
@@ -1188,6 +1226,22 @@ class UnlockedTailCall final : angle::NonCopyable
     // the max count is surpassed.
     static constexpr size_t kMaxCallCount = 2;
     angle::FixedVector<CallType, kMaxCallCount> mCalls;
+};
+
+enum class JobThreadSafety
+{
+    Safe,
+    Unsafe,
+};
+
+enum class JobResultExpectancy
+{
+    // Whether the compile or link job's results are immediately needed.  This is the case for GLES1
+    // programs for example, or shader compilation in glCreateShaderProgramv.
+    Immediate,
+    // Whether the compile or link job's results are needed after the end of the current entry point
+    // call.  In this case, the job may be done in an unlocked tail call.
+    Future,
 };
 
 // Zero-based for better array indexing

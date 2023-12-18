@@ -69,7 +69,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const Crypto
 {
     auto output = cryptWrapKey(key.key(), data);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -77,7 +77,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const Cryp
 {
     auto output = cryptUnwrapKey(key.key(), data);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

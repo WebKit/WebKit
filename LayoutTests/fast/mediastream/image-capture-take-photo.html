@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>ImageCapture takePhoto</title>
+    <script src='../../resources/testharness.js'></script>
+    <script src='../../resources/testharnessreport.js'></script>
+</head>
+<body>
+    <script>
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            const [track] = stream.getVideoTracks();
+
+            assert_equals(track.readyState, 'live');
+            track.stop();
+            assert_equals(track.readyState, 'ended');
+
+            const imageCapture = new ImageCapture(track);
+            return promise_rejects_dom(test, 'InvalidStateError', imageCapture.takePhoto())
+
+        }, `'takePhoto()' on an 'ended' track should throw "InvalidStateError"`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            const [track] = stream.getVideoTracks();
+
+            assert_equals(track.readyState, 'live');
+
+            const imageCapture = new ImageCapture(track);
+            const promise = imageCapture.takePhoto();
+
+            track.stop();
+            assert_equals(track.readyState, 'ended');
+
+            return promise_rejects_dom(test, 'OperationError', promise);
+
+        }, `"OperationError" should be thrown if the track ends before the 'takePhoto()' promise resolves`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 640 } });
+            const [track] = stream.getVideoTracks();
+
+            const imageCapture = new ImageCapture(track);
+            let photoSettings = await imageCapture.getPhotoSettings();
+
+            const blob = await imageCapture.takePhoto();
+            const image = new Image();
+            image.src = URL.createObjectURL(blob);
+            await new Promise(resolve => { image.onload = resolve; });
+
+            assert_greater_than_equal(image.width, photoSettings.imageWidth, "image width is at least as big as photoSettings().imageWidth");
+            assert_greater_than_equal(image.height, photoSettings.imageHeight, "image height is at least as big as photoSettings().imageHeight");
+
+        }, `The image returned by 'takePhoto()' should be at least as big as { photoSettings.imageHeight, photoSettings.imageWidth }`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            const [track] = stream.getVideoTracks();
+            const { width: originalWidth, height: originalHeight } = track.getSettings();
+
+            const mutePromise = new Promise(resolve => { track.onmute = resolve; });
+            const unmutePromise = new Promise(resolve => { track.onunmute = resolve; });
+
+            const imageCapture = new ImageCapture(track);
+            const blob = await imageCapture.takePhoto({ imageWidth: 1280, imageHeight: 720});
+            const image = new Image();
+            image.src = URL.createObjectURL(blob);
+            await new Promise(resolve => { image.onload = resolve; });
+
+            assert_greater_than_equal(image.width, 1280, "image width is at least as big as requested width");
+            assert_greater_than_equal(image.height, 720, "image height is at least as big as requested height");
+
+            await Promise.all([mutePromise, unmutePromise]);
+
+            const trackSettings = track.getSettings();
+            assert_equals(track.readyState, 'live');
+            assert_equals(trackSettings.width, originalWidth, "track width restored after 'takePhoto' resolves");
+            assert_equals(trackSettings.height, originalHeight, "track height restored after 'takePhoto' resolves");
+
+        }, `If 'takePhoto()' has to reconfigure capture track, 'mute' and 'unmute' should fire and track size should be restored`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            const [track] = stream.getVideoTracks();
+            const imageCapture = new ImageCapture(track);
+
+            let blob;
+            await Promise.all([
+                new Promise(async (resolve) => { blob = await imageCapture.takePhoto({ imageWidth: 1280, imageHeight: 720}); resolve(); }),
+                track.applyConstraints({ width: 640, height: 480 }),
+            ]);
+ 
+            const image = new Image();
+            image.src = URL.createObjectURL(blob);
+            await new Promise(resolve => { image.onload = resolve; });
+
+            assert_greater_than_equal(image.width, 1280, "image width is at least as big as requested width");
+            assert_greater_than_equal(image.height, 720, "image height is at least as big as requested height");
+
+            const trackSettings = track.getSettings();
+            assert_equals(track.readyState, 'live');
+            assert_equals(trackSettings.width, 640, "track width changed by applyConstraints");
+            assert_equals(trackSettings.height, 480, "track height changed by applyConstraints");
+
+        }, `'applyConstraints()' should not run until 'takePhoto()' has completed`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            const [track] = stream.getVideoTracks();
+            const imageCapture = new ImageCapture(track);
+
+            let resolveCallback;
+            let resolvedCount = 0;
+            let errorCount = 0;
+            let takePhotoCount = 0;
+            for (takePhotoCount = 0; takePhotoCount <= 20; takePhotoCount++) {
+                let pair = new Promise(async (resolve, reject) => {
+                    try {
+                        const ip = imageCapture.takePhoto({ imageWidth: 1280, imageHeight: 720});
+                        const ap = track.applyConstraints({ width : 320 });
+                        await Promise.all([ip, ap]);
+                        if (++resolvedCount === 5)
+                            track.stop();
+                    } catch (error) {
+                        ++errorCount;
+                        if (errorCount + resolvedCount === takePhotoCount)
+                            resolveCallback();
+                    }
+                });
+            }
+
+            return new Promise((resolve, reject) => {
+                resolveCallback = resolve;
+                setTimeout(() => reject("Test timed out"), 5000);
+            });
+
+        }, `All queued 'takePhoto()' and 'applyConstraints()' calls should resolve or reject`);
+
+    </script>
+</body>
+</html>

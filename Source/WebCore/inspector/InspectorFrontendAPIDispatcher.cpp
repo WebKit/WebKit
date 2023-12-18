@@ -199,14 +199,14 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
         if (!weakThis)
             return;
 
-        Ref strongThis = { *weakThis };
-        if (!strongThis->m_pendingResponses.size())
+        Ref protectedThis = { *weakThis };
+        if (!protectedThis->m_pendingResponses.size())
             return;
 
-        EvaluationResultHandler resultHandler = strongThis->m_pendingResponses.take(promise);
+        EvaluationResultHandler resultHandler = protectedThis->m_pendingResponses.take(promise);
         ASSERT(resultHandler);
         
-        JSDOMGlobalObject* globalObject = strongThis->frontendGlobalObject();
+        JSDOMGlobalObject* globalObject = protectedThis->frontendGlobalObject();
         if (!globalObject) {
             resultHandler(makeUnexpected(EvaluationError::ContextDestroyed));
             return;

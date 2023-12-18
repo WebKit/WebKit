@@ -1,0 +1,5 @@
+
+
+PASS InvokeEvent propagates across shadow boundaries retargeting invoker
+PASS cross shadow InvokeEvent retargets invoker to host element
+

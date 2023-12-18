@@ -86,12 +86,16 @@ private:
     const AffineTransform& localToParentTransform() const override;
 
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const override { return m_strokeBoundingBox; }
-    FloatRect repaintRectInLocalCoordinates() const override { return m_repaintBoundingBox; }
+    FloatRect strokeBoundingBox() const override;
+    FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
+
+    LayoutRect localClippedOverflowRect(RepaintRectCalculation) const;
+
     std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const override;
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
@@ -110,11 +114,12 @@ private:
     FloatRect m_objectBoundingBox;
     bool m_objectBoundingBoxValid { false };
     bool m_inLayout { false };
-    FloatRect m_strokeBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
+    mutable Markable<FloatRect, FloatRect::MarkableTraits> m_accurateRepaintBoundingBox;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
-    WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
     bool m_hasBoxDecorations : 1;
@@ -122,4 +127,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGRoot, isLegacySVGRoot())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGRoot, isLegacyRenderSVGRoot())

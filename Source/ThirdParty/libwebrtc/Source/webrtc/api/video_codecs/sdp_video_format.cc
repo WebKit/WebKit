@@ -15,6 +15,9 @@
 #include "api/array_view.h"
 #include "api/video_codecs/av1_profile.h"
 #include "api/video_codecs/h264_profile_level_id.h"
+#ifdef RTC_ENABLE_H265
+#include "api/video_codecs/h265_profile_tier_level.h"
+#endif
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "rtc_base/checks.h"
@@ -61,6 +64,10 @@ bool IsSameCodecSpecific(const SdpVideoFormat& format1,
       return VP9IsSameProfile(format1.parameters, format2.parameters);
     case kVideoCodecAV1:
       return AV1IsSameProfile(format1.parameters, format2.parameters);
+#ifdef RTC_ENABLE_H265
+    case kVideoCodecH265:
+      return H265IsSameProfileTierLevel(format1.parameters, format2.parameters);
+#endif
     default:
       return true;
   }

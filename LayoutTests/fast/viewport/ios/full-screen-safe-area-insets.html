@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>full-screen-safe-area-insets</title>
+    <script src="../../../fullscreen/full-screen-test.js"></script>
+    <script src="resources/viewport-test-utils.js"></script>
+    <script>
+    function setSafeAreaInsets(left, top) {
+        const script = `(function() {
+            uiController.setSafeAreaInsets(${top}, 0, 0, ${left});
+            uiController.doAfterVisibleContentRectUpdate(() => {
+                uiController.uiScriptComplete();
+            })
+        })();`;
+        return new Promise(resolve => {
+            testRunner.runUIScript(script, () => {
+                resolve();
+            });
+        });
+    }
+
+    function getVisibleRect() {
+        const script = `(function() {
+            return JSON.stringify(uiController.contentVisibleRect);
+        })();`
+        return new Promise(resolve => {
+            testRunner.runUIScript(script, value => {
+                var result = JSON.parse(value);
+                resolve(result);
+            })
+        });
+    }
+
+    async function enterFullscreen() {
+        return new Promise(resolve => {
+            internals.withUserGesture(() => {
+                frame.contentDocument.documentElement.requestFullscreen().then(resolve, resolve);
+            });
+        });
+    }
+
+    async function exitFullscreen() {
+        return new Promise(resolve => {
+            internals.withUserGesture(() => {
+                frame.contentDocument.exitFullscreen().then(resolve, resolve);
+            });
+        });
+    }
+
+    async function testExpectedVisibleRect(left, top) {
+        window.scrollTo(0, 0);
+        // await sleepFor(100);
+        window.visibleRect = await getVisibleRect();
+        testExpected('visibleRect.left', left)
+        testExpected('visibleRect.top', top)
+    }
+
+    async function runTest() {
+        consoleDiv = document.getElementById('console');
+        consoleWrite('Set main frame viewport-fit=contain and test iframes')
+        window.metaViewport = document.querySelector('meta[name="viewport"]');
+        run('metaViewport.content = "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=contain"')
+        await run('setSafeAreaInsets(100, 50)');
+        await testExpectedVisibleRect(-100, -50);
+
+        consoleWrite('')
+
+        consoleWrite('Test that fullscreen within an iframe with viewport-fit-cover has viewport-fit-cover behavior:')
+        run('frame.src = "resources/viewport-fit-cover.html"');
+        await waitFor(frame, 'load');
+
+        await run('enterFullscreen()');
+
+        await testExpectedVisibleRect(0, 0);
+
+        await run('exitFullscreen()');
+        consoleWrite('')
+
+        consoleWrite('Test that fullscreen within an iframe with viewport-fit-contain has viewport-fit-contain behavior:')
+        run('frame.src = "resources/viewport-fit-contain.html"');
+        await waitFor(frame, 'load');
+        await run('enterFullscreen()');
+        await testExpectedVisibleRect(-100, -50);
+        await run('exitFullscreen()');
+        consoleWrite('')
+
+        consoleWrite('Set main frame viewport-fit=cover and re-test iframes')
+        run('metaViewport.content = "width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"')
+        await testExpectedVisibleRect(0, 0);
+        consoleWrite('')
+
+        run('frame.src = "resources/viewport-fit-cover.html"');
+        await waitFor(frame, 'load');
+
+        consoleWrite('Test that fullscreen within an iframe with viewport-fit-cover has viewport-fit-cover behavior:')
+        await run('enterFullscreen()');
+        await testExpectedVisibleRect(0, 0);
+        await run('exitFullscreen()');
+        consoleWrite('')
+
+        consoleWrite('Test that fullscreen within an iframe with viewport-fit-contain has viewport-fit-contain behavior:')
+        run('frame.src = "resources/viewport-fit-contain.html"');
+        await waitFor(frame, 'load');
+        await run('enterFullscreen()');
+        await testExpectedVisibleRect(-100, -50);
+        await run('exitFullscreen()');
+        consoleWrite('')
+
+        await run('setSafeAreaInsets(0, 0)');
+    }
+
+    window.addEventListener('load', event => {
+        if (!window.internals) {
+            consoleWrite('This test requires internals; please run in WKTR/DRT.');
+            return;
+        }
+        runTest().finally(endTest);
+    })
+    </script>
+    <style>
+        #console { height: 200px; overflow: scroll; }
+    </style>
+</head>
+<body>
+    <iframe id=frame width=100 height=50></iframe>
+    <div id=console></div>
+</body>
+</html>

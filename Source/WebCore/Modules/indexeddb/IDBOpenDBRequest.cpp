@@ -108,8 +108,8 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
     ASSERT(hasPendingActivity());
 
-    IDBError idbError(AbortError);
-    m_domError = DOMException::create(AbortError);
+    IDBError idbError(ExceptionCode::AbortError);
+    m_domError = DOMException::create(ExceptionCode::AbortError);
     setResultToUndefined();
 
     m_transaction->addRequest(*this);
@@ -246,7 +246,7 @@ void IDBOpenDBRequest::setIsContextSuspended(bool isContextSuspended)
     if (m_isBlocked) {
         IDBRequestData requestData(connectionProxy(), *this);
         connectionProxy().openDBRequestCancelled(requestData);
-        auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError { UnknownError, "Blocked open request on cached page is aborted to unblock other requests"_s });
+        auto result = IDBResultData::error(requestData.requestIdentifier(), IDBError { ExceptionCode::UnknownError, "Blocked open request on cached page is aborted to unblock other requests"_s });
         requestCompleted(result);
     }
 }

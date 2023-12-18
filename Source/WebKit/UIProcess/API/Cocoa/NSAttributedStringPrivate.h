@@ -32,9 +32,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*!
  @abstract Indicates additional local paths WebKit can read from when loading content.
+ The value is an NSArray containing one or more NSURLs.
 */
 WK_EXTERN NSAttributedStringDocumentReadingOptionKey const _WKReadAccessFileURLsOption
     NS_SWIFT_NAME(readAccessPaths) WK_API_AVAILABLE(macos(13.1), ios(16.2));
+
+/*!
+ @abstract Whether to allow loads over the network (including subresources).
+ The value is an NSNumber, which is interpreted as a BOOL.
+*/
+WK_EXTERN NSAttributedStringDocumentReadingOptionKey const _WKAllowNetworkLoadsOption
+    NS_SWIFT_NAME(allowNetworkLoads) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*!
  @discussion Private extension of @link //apple_ref/occ/NSAttributedString NSAttributedString @/link to

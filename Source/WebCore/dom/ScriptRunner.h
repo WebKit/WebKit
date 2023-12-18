@@ -28,6 +28,7 @@
 
 #include "PendingScriptClient.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
@@ -37,7 +38,7 @@ class Document;
 class ScriptElement;
 class LoadableScript;
 
-class ScriptRunner : private PendingScriptClient {
+class ScriptRunner : public PendingScriptClient {
     WTF_MAKE_NONCOPYABLE(ScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ScriptRunner(Document&);
@@ -62,7 +63,7 @@ private:
 
     void notifyFinished(PendingScript&) override;
 
-    Document& m_document;
+    CheckedRef<Document> m_document;
     Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
     Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
     HashSet<Ref<PendingScript>> m_pendingAsyncScripts;

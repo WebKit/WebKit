@@ -28,9 +28,9 @@
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
-#import "DynamicContentScalingDisplayList.h"
 #import "Logging.h"
 #import <CoreRE/RECGCommandsContext.h>
+#import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/PixelBuffer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -63,8 +63,6 @@ public:
     }
 
     bool canUseShadowBlur() const final { return false; }
-
-    bool needsCachedNativeImageInvalidationWorkaround(WebCore::RenderingMode) override { return true; }
 };
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicContentScalingImageBufferBackend);
@@ -116,7 +114,7 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
         });
     }
 
-    return DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
+    return WebCore::DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
 }
 
 WebCore::GraphicsContext& DynamicContentScalingImageBufferBackend::context()
@@ -165,23 +163,6 @@ String DynamicContentScalingImageBufferBackend::debugDescription() const
     TextStream stream;
     stream << "DynamicContentScalingImageBufferBackend " << this;
     return stream.release();
-}
-
-#pragma mark - DynamicContentScalingAcceleratedImageBufferBackend
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicContentScalingAcceleratedImageBufferBackend);
-
-std::unique_ptr<DynamicContentScalingAcceleratedImageBufferBackend> DynamicContentScalingAcceleratedImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext)
-{
-    if (parameters.backendSize.isEmpty())
-        return nullptr;
-
-    return std::unique_ptr<DynamicContentScalingAcceleratedImageBufferBackend>(new DynamicContentScalingAcceleratedImageBufferBackend(parameters, creationContext, WebCore::RenderingMode::Accelerated));
-}
-
-DynamicContentScalingAcceleratedImageBufferBackend::DynamicContentScalingAcceleratedImageBufferBackend(const Parameters& parameters, const WebCore::ImageBufferCreationContext& creationContext, WebCore::RenderingMode renderingMode)
-    : DynamicContentScalingImageBufferBackend(parameters, creationContext, renderingMode)
-{
 }
 
 }

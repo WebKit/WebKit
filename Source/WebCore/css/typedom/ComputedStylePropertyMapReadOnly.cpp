@@ -96,14 +96,14 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
 
     ComputedStyleExtractor extractor { m_element.ptr() };
-    for (auto propertyID : exposedComputedCSSPropertyIDs) {
+    values.appendContainerWithMapping(exposedComputedCSSPropertyIDs, [&](auto propertyID) {
         auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
-        values.uncheckedAppend(makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), propertyID, document)));
-    }
+        return makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), propertyID, document));
+    });
 
     for (auto* map : { &nonInheritedCustomProperties, &inheritedCustomProperties }) {
         map->forEach([&](auto& it) {
-            values.uncheckedAppend(makeKeyValuePair(it.key, StylePropertyMapReadOnly::reifyValueToVector(const_cast<CSSCustomPropertyValue*>(it.value.get()), std::nullopt, document)));
+            values.append(makeKeyValuePair(it.key, StylePropertyMapReadOnly::reifyValueToVector(const_cast<CSSCustomPropertyValue*>(it.value.get()), std::nullopt, document)));
             return IterationStatus::Continue;
         });
     }

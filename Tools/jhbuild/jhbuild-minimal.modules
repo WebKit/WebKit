@@ -17,6 +17,8 @@
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
       <dep package="libsoup"/>
+      <dep package="wayland"/>
+      <dep package="wayland-protocols"/>
     </dependencies>
   </metamodule>
 
@@ -32,6 +34,8 @@
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
       <dep package="libsoup"/>
+      <dep package="wayland"/>
+      <dep package="wayland-protocols"/>
     </dependencies>
   </metamodule>
 
@@ -58,20 +62,27 @@
       href="http://xmlsoft.org"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
-  <repository type="git" name="freedesktop-git"
-      href="http://anongit.freedesktop.org/git"/>
  <repository type="tarball" name="dri.freedesktop.org"
       href="https://dri.freedesktop.org"/>
   <repository type="tarball" name="mesa.freedesktop.org"
       href="https://mesa.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="https://gitlab.freedesktop.org"/>
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
   <repository type="tarball" name="webkitgtk-jhbuild-mirror"
       href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
+
+  <!-- meson 0.62.0  required to build gstreamer-1.22.7 -->
+  <distutils id="meson" python3="1">
+    <branch module="mesonbuild/meson"
+            version="0.62.2"
+            tag="0.62.2"
+            checkoutdir="meson-${version}"
+            repo="github.com"/>
+  </distutils>
 
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
@@ -137,15 +148,6 @@
             version="0.2.4"
             hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
   </meson>
-
-  <!-- meson 0.56.2+ required to build atk 2.38 -->
-  <distutils id="meson" python3="1">
-    <branch repo="github-tarball"
-            version="0.61.5"
-            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
-            checkoutdir="meson-${version}"
-            hash="sha256:5e9a0d65c1a51936362b9686d1c5e9e184a6fd245d57e7269750ce50c20f5d9a"/>
-  </distutils>
 
   <!-- OpenXR required for WebXR support -->
   <cmake id="openxr">
@@ -248,5 +250,23 @@
       <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
     </branch>
   </cmake>
+
+  <meson id="wayland" mesonargs="-Ddocumentation=false -Ddtd_validation=false -Dtests=false">
+    <pkg-config>wayland-server.pc</pkg-config>
+    <branch module="wayland/wayland"
+            version="1.20.0"
+            tag="1.20.0"
+            checkoutdir="wayland"
+            repo="git.freedesktop.org" />
+  </meson>
+
+  <meson id="wayland-protocols">
+    <pkg-config>wayland-protocols.pc</pkg-config>
+    <branch module="wayland/wayland-protocols"
+            version="1.24"
+            tag="1.24"
+            checkoutdir="wayland-protocols"
+            repo="git.freedesktop.org" />
+  </meson>
 
 </moduleset>

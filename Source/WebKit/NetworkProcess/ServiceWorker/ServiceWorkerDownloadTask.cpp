@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerDownloadTask.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DownloadManager.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -279,5 +277,3 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

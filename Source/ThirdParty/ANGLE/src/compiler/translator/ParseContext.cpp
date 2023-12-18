@@ -167,6 +167,61 @@ constexpr bool IsValidWithPixelLocalStorage(TLayoutImageInternalFormat internalF
             return false;
     }
 }
+
+bool UsesDerivatives(TIntermAggregate *functionCall)
+{
+    const TOperator op = functionCall->getOp();
+    if (BuiltInGroup::IsDerivativesFS(op))
+    {
+        return true;
+    }
+    switch (op)
+    {
+        // TextureFirstVersions with implicit LOD
+        case EOpTexture2D:
+        case EOpTexture2DProj:
+        case EOpTextureCube:
+        case EOpTexture1D:
+        case EOpTexture1DProj:
+        case EOpTexture3D:
+        case EOpTexture3DProj:
+        case EOpShadow1D:
+        case EOpShadow1DProj:
+        case EOpShadow2D:
+        case EOpShadow2DProj:
+        case EOpShadow2DEXT:
+        case EOpShadow2DProjEXT:
+        // TextureFirstVersionsBias
+        case EOpTexture2DBias:
+        case EOpTexture2DProjBias:
+        case EOpTextureCubeBias:
+        case EOpTexture3DBias:
+        case EOpTexture3DProjBias:
+        case EOpTexture1DBias:
+        case EOpTexture1DProjBias:
+        case EOpShadow1DBias:
+        case EOpShadow1DProjBias:
+        case EOpShadow2DBias:
+        case EOpShadow2DProjBias:
+        // TextureNoBias
+        case EOpTexture:
+        case EOpTextureProj:
+        // TextureBias
+        case EOpTextureBias:
+        case EOpTextureProjBias:
+        // TextureQueryLod
+        case EOpTextureQueryLod:
+        // TextureOffsetNoBias
+        case EOpTextureOffset:
+        case EOpTextureProjOffset:
+        // TextureOffsetBias
+        case EOpTextureOffsetBias:
+        case EOpTextureProjOffsetBias:
+            return true;
+        default:
+            return false;
+    }
+}
 }  // namespace
 
 // This tracks each binding point's current default offset for inheritance of subsequent
@@ -230,6 +285,7 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mPositionRedeclaredForSeparateShaderObject(false),
       mPointSizeRedeclaredForSeparateShaderObject(false),
       mPositionOrPointSizeUsedForSeparateShaderObject(false),
+      mUsesDerivatives(false),
       mDefaultUniformMatrixPacking(EmpColumnMajor),
       mDefaultUniformBlockStorage(sh::IsWebGLBasedSpec(spec) ? EbsStd140 : EbsShared),
       mDefaultBufferMatrixPacking(EmpColumnMajor),
@@ -4726,6 +4782,11 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
     const TVector<unsigned int> *arraySizes,
     const TSourceLoc &arraySizesLine)
 {
+    checkDoesNotHaveTooManyFields(blockName, fieldList, nameLine);
+
+    // Ensure there are no duplicate field names
+    checkDoesNotHaveDuplicateFieldNames(fieldList, nameLine);
+
     const bool isGLPerVertex = blockName == "gl_PerVertex";
     // gl_PerVertex is allowed to be redefined and therefore not reserved
     if (!isGLPerVertex)
@@ -6274,28 +6335,40 @@ TDeclarator *TParseContext::parseStructArrayDeclarator(const ImmutableString &id
     return new TDeclarator(identifier, arraySizes, loc);
 }
 
-void TParseContext::checkDoesNotHaveDuplicateFieldName(const TFieldList::const_iterator begin,
-                                                       const TFieldList::const_iterator end,
-                                                       const ImmutableString &name,
-                                                       const TSourceLoc &location)
+void TParseContext::checkDoesNotHaveDuplicateFieldNames(const TFieldList *fields,
+                                                        const TSourceLoc &location)
 {
-    for (auto fieldIter = begin; fieldIter != end; ++fieldIter)
+    TUnorderedMap<ImmutableString, uint32_t, ImmutableString::FowlerNollVoHash<sizeof(size_t)>>
+        fieldNames;
+    for (TField *field : *fields)
     {
-        if ((*fieldIter)->name() == name)
+        // Note: operator[] adds this name to the map if it doesn't already exist, and initializes
+        // its value to 0.
+        uint32_t count = ++fieldNames[field->name()];
+        if (count != 1)
         {
-            error(location, "duplicate field name in structure", name);
+            error(location, "Duplicate field name in structure", field->name());
         }
+    }
+}
+
+void TParseContext::checkDoesNotHaveTooManyFields(const ImmutableString &name,
+                                                  const TFieldList *fields,
+                                                  const TSourceLoc &location)
+{
+    // Check that there are not too many fields.  SPIR-V has a limit of 16383 fields, and it would
+    // be reasonable to apply that limit to all outputs.  For example, it was observed that 32768
+    // fields cause the Nvidia GL driver to fail compilation, so such a limit is not too specific to
+    // SPIR-V.
+    constexpr size_t kMaxFieldCount = 16383;
+    if (fields->size() > kMaxFieldCount)
+    {
+        error(location, "Too many fields in the struct (limit is 16383)", name);
     }
 }
 
 TFieldList *TParseContext::addStructFieldList(TFieldList *fields, const TSourceLoc &location)
 {
-    for (TFieldList::const_iterator fieldIter = fields->begin(); fieldIter != fields->end();
-         ++fieldIter)
-    {
-        checkDoesNotHaveDuplicateFieldName(fields->begin(), fieldIter, (*fieldIter)->name(),
-                                           location);
-    }
     return fields;
 }
 
@@ -6303,12 +6376,8 @@ TFieldList *TParseContext::combineStructFieldLists(TFieldList *processedFields,
                                                    const TFieldList *newlyAddedFields,
                                                    const TSourceLoc &location)
 {
-    for (TField *field : *newlyAddedFields)
-    {
-        checkDoesNotHaveDuplicateFieldName(processedFields->begin(), processedFields->end(),
-                                           field->name(), location);
-        processedFields->push_back(field);
-    }
+    processedFields->insert(processedFields->end(), newlyAddedFields->begin(),
+                            newlyAddedFields->end());
     return processedFields;
 }
 
@@ -6401,7 +6470,12 @@ TTypeSpecifierNonArray TParseContext::addStructure(const TSourceLoc &structLine,
         }
     }
 
-    // ensure we do not specify any storage qualifiers on the struct members
+    checkDoesNotHaveTooManyFields(structName, fieldList, structLine);
+
+    // Ensure there are no duplicate field names
+    checkDoesNotHaveDuplicateFieldNames(fieldList, structLine);
+
+    // Ensure we do not specify any storage qualifiers on the struct members
     for (unsigned int typeListIndex = 0; typeListIndex < fieldList->size(); typeListIndex++)
     {
         TField &field              = *(*fieldList)[typeListIndex];
@@ -7664,6 +7738,11 @@ TIntermTyped *TParseContext::addNonConstructorFunctionCall(TFunctionLookup *fnCa
             TIntermAggregate *callNode =
                 TIntermAggregate::CreateBuiltInFunctionCall(*fnCandidate, &fnCall->arguments());
             callNode->setLine(loc);
+
+            if (UsesDerivatives(callNode))
+            {
+                mUsesDerivatives = true;
+            }
 
             checkAtomicMemoryBuiltinFunctions(callNode);
             checkTextureOffset(callNode);

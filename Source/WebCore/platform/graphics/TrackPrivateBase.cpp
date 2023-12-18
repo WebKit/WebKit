@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-std::optional<uint64_t> TrackPrivateBase::trackUID() const
+std::optional<AtomString> TrackPrivateBase::trackUID() const
 {
     return std::nullopt;
 }

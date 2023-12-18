@@ -56,8 +56,8 @@ list(APPEND WebCore_SOURCES
     platform/playstation/MIMETypeRegistryPlayStation.cpp
     platform/playstation/PlatformScreenPlayStation.cpp
     platform/playstation/ScrollbarThemePlayStation.cpp
+    platform/playstation/ThemePlayStation.cpp
     platform/playstation/UserAgentPlayStation.cpp
-    platform/playstation/WidgetPlayStation.cpp
 
     platform/text/Hyphenation.cpp
     platform/text/LocaleICU.cpp
@@ -74,6 +74,10 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 list(APPEND WebCore_LIBRARIES
     WPE::libwpe
     WebKitRequirements::WebKitResources
+)
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/libwpe/PlatformDisplayLibWPE.h
 )
 
 if (ENABLE_GAMEPAD)

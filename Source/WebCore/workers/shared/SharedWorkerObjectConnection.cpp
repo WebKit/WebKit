@@ -28,6 +28,7 @@
 
 #include "ActiveDOMObject.h"
 #include "ErrorEvent.h"
+#include "EventNames.h"
 #include "Logging.h"
 #include "ScriptBuffer.h"
 #include "SharedWorker.h"

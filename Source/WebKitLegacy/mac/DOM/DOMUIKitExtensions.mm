@@ -208,7 +208,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     return renderer
         && renderer->childrenInline()
         && (is<RenderBlock>(*renderer) && !downcast<RenderBlock>(*renderer).inlineContinuation())
-        && !renderer->isTable();
+        && !renderer->isRenderTable();
 }
 
 - (BOOL)isSelectableBlock
@@ -261,7 +261,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
     RenderObject * renderer = core(self)->renderer();
     if (renderer) {
         if (renderer->isFloatingOrOutOfFlowPositioned() ||
-            renderer->isWidget()) {
+            renderer->isRenderWidget()) {
             result = INT_MAX;
         } else if (!renderer->firstChildSlow()) {
             result = 0;

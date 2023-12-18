@@ -49,9 +49,9 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 
     bool skipContentSecurityPolicyCheck = false;
     if (m_resourceType == CachedResource::Type::Script)
-        skipContentSecurityPolicyCheck = document.contentSecurityPolicy()->allowScriptWithNonce(m_nonceAttribute);
+        skipContentSecurityPolicyCheck = document.checkedContentSecurityPolicy()->allowScriptWithNonce(m_nonceAttribute);
     else if (m_resourceType == CachedResource::Type::CSSStyleSheet)
-        skipContentSecurityPolicyCheck = document.contentSecurityPolicy()->allowStyleWithNonce(m_nonceAttribute);
+        skipContentSecurityPolicyCheck = document.checkedContentSecurityPolicy()->allowStyleWithNonce(m_nonceAttribute);
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     if (skipContentSecurityPolicyCheck)

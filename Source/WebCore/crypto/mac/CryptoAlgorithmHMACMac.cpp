@@ -57,7 +57,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHM
 {
     auto algorithm = commonCryptoHMACAlgorithm(key.hashAlgorithmIdentifier());
     if (!algorithm)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return calculateHMACSignature(*algorithm, key.key(), data.data(), data.size());
 }
@@ -66,7 +66,7 @@ ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, 
 {
     auto algorithm = commonCryptoHMACAlgorithm(key.hashAlgorithmIdentifier());
     if (!algorithm)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     auto expectedSignature = calculateHMACSignature(*algorithm, key.key(), data.data(), data.size());
     // Using a constant time comparison to prevent timing attacks.

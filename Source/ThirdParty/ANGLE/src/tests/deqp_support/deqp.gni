@@ -1589,6 +1589,10 @@ deqp_framework_xexml_sources = [
 ]
 
 deqp_framework_opengl_sources = [
+  "$deqp_path/framework/egl/wrapper/eglwDefs.hpp",
+  "$deqp_path/framework/egl/wrapper/eglwEnums.hpp",
+  "$deqp_path/framework/egl/wrapper/eglwEnums.inl",
+  "$deqp_path/framework/egl/wrapper/eglwTypes.inl",
   "$deqp_path/framework/opengl/gluCallLogUtil.inl",
   "$deqp_path/framework/opengl/gluCallLogWrapper.cpp",
   "$deqp_path/framework/opengl/gluCallLogWrapper.hpp",

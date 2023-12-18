@@ -29,13 +29,15 @@ class SVGElement;
 
 // This class is for containers which are never drawn, but do need to support style
 // <defs>, <linearGradient>, <radialGradient> are all good examples
-class RenderSVGHiddenContainer final : public RenderSVGContainer {
+class RenderSVGHiddenContainer : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
 public:
-    RenderSVGHiddenContainer(SVGElement&, RenderStyle&&);
+    RenderSVGHiddenContainer(Type, SVGElement&, RenderStyle&&);
 
 protected:
     void layout() override;
+
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
 private:
     ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
@@ -43,21 +45,20 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final { }
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject*, VisibleRectContext) const final { return { }; }
-    std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject*, VisibleRectContext) const final { return std::make_optional(rect); }
+    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject*, VisibleRectContext) const final { return rects; }
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint&) const final { }
     void absoluteQuads(Vector<FloatQuad>&, bool*) const final { }
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&, const RenderLayerModelObject* = nullptr) const final { }
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { return false; }
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const final { }
-    void updateFromStyle() final { }
-    bool needsHasSVGTransformFlags() const final { return false; }
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const override { }
+    void updateFromStyle() override { }
+    bool needsHasSVGTransformFlags() const override { return false; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGHiddenContainer, isSVGHiddenContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGHiddenContainer, isRenderSVGHiddenContainer())
 
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)

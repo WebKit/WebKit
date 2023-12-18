@@ -33,10 +33,7 @@
 #if PLATFORM(X11)
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
-#include <X11/extensions/Xcomposite.h>
 #if PLATFORM(GTK)
-#include <X11/Xutil.h>
-#include <X11/extensions/Xdamage.h>
 #if USE(GTK4)
 #include <gdk/x11/gdkx.h>
 #else
@@ -117,6 +114,10 @@ EGLDisplay PlatformDisplayX11::gtkEGLDisplay()
     if (m_eglDisplay != EGL_NO_DISPLAY) {
         m_eglDisplayOwned = false;
         PlatformDisplay::initializeEGLDisplay();
+#if ENABLE(WEBGL)
+        m_anglePlatform = EGL_PLATFORM_X11_KHR;
+        m_angleNativeDisplay = m_display;
+#endif
         return m_eglDisplay;
     }
 #endif
@@ -141,66 +142,13 @@ void PlatformDisplayX11::initializeEGLDisplay()
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();
+
+#if ENABLE(WEBGL)
+    m_anglePlatform = EGL_PLATFORM_X11_KHR;
+    m_angleNativeDisplay = m_display;
+#endif
 }
 #endif // USE(EGL)
-
-bool PlatformDisplayX11::supportsXComposite() const
-{
-    if (!m_supportsXComposite) {
-        if (m_display) {
-            int eventBase, errorBase;
-            m_supportsXComposite = XCompositeQueryExtension(m_display, &eventBase, &errorBase);
-        } else
-            m_supportsXComposite = false;
-    }
-    return m_supportsXComposite.value();
-}
-
-bool PlatformDisplayX11::supportsXDamage(std::optional<int>& damageEventBase, std::optional<int>& damageErrorBase) const
-{
-    if (!m_supportsXDamage) {
-        m_supportsXDamage = false;
-#if PLATFORM(GTK)
-        if (m_display) {
-            int eventBase, errorBase;
-            m_supportsXDamage = XDamageQueryExtension(m_display, &eventBase, &errorBase);
-            if (m_supportsXDamage.value()) {
-                m_damageEventBase = eventBase;
-                m_damageErrorBase = errorBase;
-            }
-        }
-#endif
-    }
-
-    damageEventBase = m_damageEventBase;
-    damageErrorBase = m_damageErrorBase;
-    return m_supportsXDamage.value();
-}
-
-void* PlatformDisplayX11::visual() const
-{
-    if (m_visual)
-        return m_visual;
-
-    XVisualInfo visualTemplate;
-    visualTemplate.screen = DefaultScreen(m_display);
-
-    int visualCount = 0;
-    XVisualInfo* visualInfo = XGetVisualInfo(m_display, VisualScreenMask, &visualTemplate, &visualCount);
-    for (int i = 0; i < visualCount; ++i) {
-        auto& info = visualInfo[i];
-        if (info.depth == 32 && info.red_mask == 0xff0000 && info.green_mask == 0x00ff00 && info.blue_mask == 0x0000ff) {
-            m_visual = info.visual;
-            break;
-        }
-    }
-    XFree(visualInfo);
-
-    if (!m_visual)
-        m_visual = DefaultVisual(m_display, DefaultScreen(m_display));
-
-    return m_visual;
-}
 
 #if USE(LCMS)
 cmsHPROFILE PlatformDisplayX11::colorProfile() const

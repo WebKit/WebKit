@@ -153,13 +153,13 @@ MediaTime TrackBuffer::findSeekTimeForTargetTime(const MediaTime& targetTime, co
 
     auto futureSeekTime = MediaTime::positiveInfiniteTime();
     if (futureSyncSampleIterator != upperBound) {
-        RefPtr<MediaSample>& sample = futureSyncSampleIterator->second;
+        auto& sample = futureSyncSampleIterator->second;
         futureSeekTime = sample->presentationTime();
     }
 
     auto pastSeekTime = MediaTime::negativeInfiniteTime();
     if (pastSyncSampleIterator != lowerBound) {
-        RefPtr<MediaSample>& sample = pastSyncSampleIterator->second;
+        auto& sample = pastSyncSampleIterator->second;
         pastSeekTime = sample->presentationTime();
     }
 
@@ -184,14 +184,14 @@ PlatformTimeRanges TrackBuffer::removeSamples(const DecodeOrderSampleMap::MapTyp
         uint64_t startBufferSize = m_samples.sizeInBytes();
 #endif
 
-        const RefPtr<MediaSample>& sample = sampleIt.second;
+        Ref sample = sampleIt.second;
 
 #if !RELEASE_LOG_DISABLED
-        DEBUG_LOG_IF(m_logger, logId, "removing sample ", *sampleIt.second);
+        DEBUG_LOG_IF(m_logger, logId, "removing sample ", sampleIt.second.get());
 #endif
 
         // Remove the erased samples from the TrackBuffer sample map.
-        m_samples.removeSample(sample.get());
+        m_samples.removeSample(sample);
 
         // Also remove the erased samples from the TrackBuffer decodeQueue.
         m_decodeQueue.erase(decodeKey);
@@ -220,7 +220,7 @@ PlatformTimeRanges TrackBuffer::removeSamples(const DecodeOrderSampleMap::MapTyp
         if (startIterator == m_samples.presentationOrder().rend())
             additionalErasedRanges.add(MediaTime::zeroTime(), erasedStart);
         else {
-            auto& previousSample = *startIterator->second;
+            auto& previousSample = startIterator->second.get();
             if (previousSample.presentationTime() + previousSample.duration() < erasedStart)
                 additionalErasedRanges.add(previousSample.presentationTime() + previousSample.duration(), erasedStart);
         }
@@ -229,7 +229,7 @@ PlatformTimeRanges TrackBuffer::removeSamples(const DecodeOrderSampleMap::MapTyp
         if (endIterator == m_samples.presentationOrder().end())
             additionalErasedRanges.add(erasedEnd, MediaTime::positiveInfiniteTime());
         else {
-            auto& nextSample = *endIterator->second;
+            auto& nextSample = endIterator->second.get();
             if (nextSample.presentationTime() > erasedEnd)
                 additionalErasedRanges.add(erasedEnd, nextSample.presentationTime());
         }
@@ -267,7 +267,7 @@ bool TrackBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end
         auto sampleIterator = m_samples.presentationOrder().findSampleContainingPresentationTime(time);
         if (sampleIterator == m_samples.presentationOrder().end())
             return;
-        RefPtr<MediaSample> sample = sampleIterator->second;
+        Ref sample = sampleIterator->second;
         if (!sample->isDivisable())
             return;
         MediaTime microsecond(1, 1000000);
@@ -275,10 +275,10 @@ bool TrackBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end
         std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> replacementSamples = sample->divide(roundedTime);
         if (!replacementSamples.first || !replacementSamples.second)
             return;
-        DEBUG_LOG_IF(m_logger, LOGIDENTIFIER, "splitting sample ", *sample, " into ", *replacementSamples.first, " and ", *replacementSamples.second);
-        m_samples.removeSample(sample.get());
-        m_samples.addSample(*replacementSamples.first);
-        m_samples.addSample(*replacementSamples.second);
+        DEBUG_LOG_IF(m_logger, LOGIDENTIFIER, "splitting sample ", sample.get(), " into ", *replacementSamples.first, " and ", *replacementSamples.second);
+        m_samples.removeSample(sample);
+        m_samples.addSample(replacementSamples.first.releaseNonNull());
+        m_samples.addSample(replacementSamples.second.releaseNonNull());
     };
     divideSampleIfPossibleAtPresentationTime(start);
     divideSampleIfPossibleAtPresentationTime(end);
@@ -294,14 +294,14 @@ bool TrackBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& end
     // and the next sync sample frame are removed. But we must start from the first sample in decode order, not
     // presentation order.
     auto minmaxDecodeTimeIterPair = std::minmax_element(removePresentationStart, removePresentationEnd, decodeTimeComparator);
-    auto& firstSample = *minmaxDecodeTimeIterPair.first->second;
-    auto& lastSample = *minmaxDecodeTimeIterPair.second->second;
+    auto& firstSample = minmaxDecodeTimeIterPair.first->second.get();
+    auto& lastSample = minmaxDecodeTimeIterPair.second->second.get();
     auto removeDecodeStart = m_samples.decodeOrder().findSampleWithDecodeKey({ firstSample.decodeTime(), firstSample.presentationTime() });
     auto removeDecodeLast = m_samples.decodeOrder().findSampleWithDecodeKey({ lastSample.decodeTime(), lastSample.presentationTime() });
     auto removeDecodeEnd = m_samples.decodeOrder().findSyncSampleAfterDecodeIterator(removeDecodeLast);
 
     DecodeOrderSampleMap::MapType erasedSamples(removeDecodeStart, removeDecodeEnd);
-    
+
     PlatformTimeRanges erasedRanges = removeSamples(erasedSamples, "removeCodedFrames");
 
     // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly

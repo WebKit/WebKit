@@ -34,6 +34,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "HTMLEntityParser.h"
 #include "MarkupTokenizerInlines.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -46,6 +47,13 @@ namespace WebCore {
         m_preprocessor.advance(m_input);                    \
         character = m_preprocessor.nextInputCharacter();    \
         goto stateName;                                     \
+    } while (false)
+#define WEBVTT_SWITCH_TO(stateName)                         \
+    do { \
+        ASSERT(!m_input.isEmpty()); \
+        m_preprocessor.peek(m_input); \
+        character = m_preprocessor.nextInputCharacter(); \
+        goto stateName; \
     } while (false)
 
 template<unsigned charactersCount> ALWAYS_INLINE bool equalLiteral(const StringBuilder& s, const char (&characters)[charactersCount])
@@ -82,6 +90,17 @@ WebVTTTokenizer::WebVTTTokenizer(const String& input)
     m_input.close();
 }
 
+static void ProcessEntity(SegmentedString& source, StringBuilder& result, UChar additionalAllowedCharacter = 0)
+{
+    auto decoded = consumeHTMLEntity(source, additionalAllowedCharacter);
+    if (decoded.failed() || decoded.notEnoughCharacters())
+        result.append('&');
+    else {
+        for (auto character : decoded.span())
+            result.append(character);
+    }
+}
+
 bool WebVTTTokenizer::nextToken(WebVTTToken& token)
 {
     if (m_input.isEmpty() || !m_preprocessor.peek(m_input))
@@ -100,8 +119,7 @@ bool WebVTTTokenizer::nextToken(WebVTTToken& token)
 // 4.8.10.13.4 WebVTT cue text tokenizer
 DataState:
     if (character == '&') {
-        buffer.append('&');
-        WEBVTT_ADVANCE_TO(EscapeState);
+        WEBVTT_ADVANCE_TO(HTMLCharacterReferenceInDataState);
     } else if (character == '<') {
         if (result.isEmpty())
             WEBVTT_ADVANCE_TO(TagState);
@@ -113,47 +131,6 @@ DataState:
     } else if (character == kEndOfFileMarker)
         return advanceAndEmitToken(m_input, token, WebVTTToken::StringToken(result.toString()));
     else {
-        result.append(character);
-        WEBVTT_ADVANCE_TO(DataState);
-    }
-
-EscapeState:
-    if (character == ';') {
-        if (equalLiteral(buffer, "&amp"))
-            result.append('&');
-        else if (equalLiteral(buffer, "&lt"))
-            result.append('<');
-        else if (equalLiteral(buffer, "&gt"))
-            result.append('>');
-        else if (equalLiteral(buffer, "&lrm"))
-            result.append(leftToRightMark);
-        else if (equalLiteral(buffer, "&rlm"))
-            result.append(rightToLeftMark);
-        else if (equalLiteral(buffer, "&nbsp"))
-            result.append(noBreakSpace);
-        else {
-            buffer.append(character);
-            result.append(buffer);
-        }
-        buffer.clear();
-        WEBVTT_ADVANCE_TO(DataState);
-    } else if (isASCIIAlphanumeric(character)) {
-        buffer.append(character);
-        WEBVTT_ADVANCE_TO(EscapeState);
-    } else if (character == '<') {
-        result.append(buffer);
-        return emitToken(token, WebVTTToken::StringToken(result.toString()));
-    } else if (character == kEndOfFileMarker) {
-        result.append(buffer);
-        return advanceAndEmitToken(m_input, token, WebVTTToken::StringToken(result.toString()));
-    } else {
-        result.append(buffer);
-        buffer.clear();
-
-        if (character == '&') {
-            buffer.append('&');
-            WEBVTT_ADVANCE_TO(EscapeState);
-        }
         result.append(character);
         WEBVTT_ADVANCE_TO(DataState);
     }
@@ -209,7 +186,9 @@ StartTagClassState:
     }
 
 StartTagAnnotationState:
-    if (character == '>' || character == kEndOfFileMarker)
+    if (character == '&')
+        WEBVTT_ADVANCE_TO(HTMLCharacterReferenceInAnnotationState);
+    else if (character == '>' || character == kEndOfFileMarker)
         return advanceAndEmitToken(m_input, token, WebVTTToken::StartTag(result.toString(), classes.toAtomString(), buffer.toAtomString()));
     buffer.append(character);
     WEBVTT_ADVANCE_TO(StartTagAnnotationState);
@@ -225,6 +204,14 @@ TimestampTagState:
         return advanceAndEmitToken(m_input, token, WebVTTToken::TimestampTag(result.toString()));
     result.append(character);
     WEBVTT_ADVANCE_TO(TimestampTagState);
+
+HTMLCharacterReferenceInDataState:
+    ProcessEntity(m_input, result);
+    WEBVTT_SWITCH_TO(DataState);
+
+HTMLCharacterReferenceInAnnotationState:
+    ProcessEntity(m_input, result, '>');
+    WEBVTT_SWITCH_TO(StartTagAnnotationState);
 }
 
 }

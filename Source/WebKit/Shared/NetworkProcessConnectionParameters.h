@@ -29,6 +29,9 @@ namespace WebKit {
 
 struct NetworkProcessConnectionParameters {
     bool allowTestOnlyIPC { false };
+#if ENABLE(IPC_TESTING_API)
+    bool ignoreInvalidMessageForTesting { false };
+#endif
 };
 
 }; // namespace WebKit

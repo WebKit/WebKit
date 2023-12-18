@@ -13,7 +13,7 @@ compositing
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (107,76) width=83 height=27)
+        (interaction (107.98,76) width=81.77 height=27)
         (borderRadius 8.00)])
       )
       (children 2

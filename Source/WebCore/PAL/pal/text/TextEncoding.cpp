@@ -62,7 +62,7 @@ TextEncoding::TextEncoding(const String& name)
 
 String TextEncoding::decode(const char* data, size_t length, bool stopOnError, bool& sawError) const
 {
-    if (!m_name)
+    if (m_name.isNull())
         return String();
 
     return newTextCodec(*this)->decode(data, length, true, stopOnError, sawError);
@@ -70,7 +70,7 @@ String TextEncoding::decode(const char* data, size_t length, bool stopOnError, b
 
 Vector<uint8_t> TextEncoding::encode(StringView string, PAL::UnencodableHandling handling, NFCNormalize normalize) const
 {
-    if (!m_name || string.isEmpty())
+    if (m_name.isNull() || string.isEmpty())
         return { };
 
     // FIXME: What's the right place to do normalization?
@@ -81,7 +81,7 @@ Vector<uint8_t> TextEncoding::encode(StringView string, PAL::UnencodableHandling
     return newTextCodec(*this)->encode(string, handling);
 }
 
-const char* TextEncoding::domName() const
+ASCIILiteral TextEncoding::domName() const
 {
     if (noExtendedTextEncodingNameUsed())
         return m_name;
@@ -93,9 +93,9 @@ const char* TextEncoding::domName() const
     // FIXME: This is not thread-safe. At the moment, this function is
     // only accessed in a single thread, but eventually has to be made
     // thread-safe along with usesVisualOrdering().
-    static const char* const a = atomCanonicalTextEncodingName("windows-949");
-    if (m_name == a)
-        return "EUC-KR";
+    static const ASCIILiteral windows949 = atomCanonicalTextEncodingName("windows-949");
+    if (m_name == windows949)
+        return "EUC-KR"_s;
     return m_name;
 }
 
@@ -104,8 +104,8 @@ bool TextEncoding::usesVisualOrdering() const
     if (noExtendedTextEncodingNameUsed())
         return false;
 
-    static const char* const a = atomCanonicalTextEncodingName("ISO-8859-8");
-    return m_name == a;
+    static const ASCIILiteral iso88598 = atomCanonicalTextEncodingName("ISO-8859-8");
+    return m_name == iso88598;
 }
 
 bool TextEncoding::isJapanese() const

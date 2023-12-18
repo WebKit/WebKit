@@ -495,7 +495,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
                 auto element = decoder.template decode<T>();
                 if (!element)
                     return std::nullopt;
-                vector.uncheckedAppend(WTFMove(*element));
+                vector.append(WTFMove(*element));
             }
             return vector;
         }

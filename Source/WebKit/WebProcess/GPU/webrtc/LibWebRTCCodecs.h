@@ -60,6 +60,7 @@ struct WebKitEncodedFrameInfo;
 
 namespace WebCore {
 enum class VideoFrameRotation : uint16_t;
+struct VideoEncoderActiveConfiguration;
 }
 
 namespace WebKit {
@@ -83,6 +84,13 @@ public:
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        struct EncodedFrame {
+            int64_t timeStamp { 0 };
+            Vector<uint8_t> data;
+            uint16_t width { 0 };
+            uint16_t height { 0 };
+        };
+
         VideoDecoderIdentifier identifier;
         VideoCodecType type;
         String codec;
@@ -91,6 +99,7 @@ public:
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
+        Vector<EncodedFrame> pendingFrames;
         Deque<Function<void()>> flushCallbacks WTF_GUARDED_BY_LOCK(flushCallbacksLock);
         Lock flushCallbacksLock;
     };
@@ -106,7 +115,7 @@ public:
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
     using DescriptionCallback = Function<void(WebCore::VideoEncoderActiveConfiguration&&)>;
-    using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)>;
+    using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex)>;
     struct EncoderInitializationData {
         uint16_t width;
         uint16_t height;
@@ -132,15 +141,14 @@ public:
         bool hasSentInitialEncodeRates { false };
         bool useAnnexB { true };
         bool isRealtime { true };
-        Deque<Function<void()>> flushCallbacks WTF_GUARDED_BY_LOCK(flushCallbacksLock);
-        Lock flushCallbacksLock;
+        WebCore::VideoEncoderScalabilityMode scalabilityMode { WebCore::VideoEncoderScalabilityMode::L1T1 };
     };
 
     Encoder* createEncoder(VideoCodecType, const std::map<std::string, std::string>&);
     void createEncoderAndWaitUntilInitialized(VideoCodecType, const String& codec, const std::map<std::string, std::string>&, const WebCore::VideoEncoder::Config&, Function<void(Encoder*)>&&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
-    int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, int64_t timestamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame);
+    int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, int64_t timestamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, Function<void(bool)>&&);
     int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);
     void flushEncoder(Encoder&, Function<void()>&&);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
@@ -191,8 +199,8 @@ private:
     WorkQueue& workQueue() const { return m_queue; }
 
     Decoder* createDecoderInternal(VideoCodecType, const String& codec, Function<void(Decoder(*))>&&);
-    Encoder* createEncoderInternal(VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder*)>&&);
-    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
+    Encoder* createEncoderInternal(VideoCodecType, const String& codec, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, Function<void(Encoder*)>&&);
+    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration, Function<void(bool)>&&);
     void initializeEncoderInternal(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
 
 private:

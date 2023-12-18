@@ -1,5 +1,4 @@
 add_subdirectory(fipsmodule)
-add_subdirectory(test)
 
 if(FIPS_DELOCATE OR FIPS_SHARED)
   SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES EXTERNAL_OBJECT true)
@@ -17,6 +16,10 @@ set(
   curve25519/asm/x25519-asm-arm.S
   hrss/asm/poly_rq_mul.S
   poly1305/poly1305_arm_asm.S
+  ../third_party/fiat/asm/fiat_curve25519_adx_mul.S
+  ../third_party/fiat/asm/fiat_curve25519_adx_square.S
+  ../third_party/fiat/asm/fiat_p256_adx_mul.S
+  ../third_party/fiat/asm/fiat_p256_adx_sqr.S
 )
 perlasm(CRYPTO_SOURCES aarch64 chacha/chacha-armv8 chacha/asm/chacha-armv8.pl)
 perlasm(CRYPTO_SOURCES aarch64 cipher_extra/chacha20_poly1305_armv8 cipher_extra/asm/chacha20_poly1305_armv8.pl)
@@ -95,6 +98,7 @@ add_library(
   bio/bio.c
   bio/bio_mem.c
   bio/connect.c
+  bio/errno.c
   bio/fd.c
   bio/file.c
   bio/hexdump.c
@@ -125,18 +129,17 @@ add_library(
   cipher_extra/tls_cbc.c
   conf/conf.c
   cpu_aarch64_apple.c
-  cpu_aarch64_freebsd.c
   cpu_aarch64_openbsd.c
   cpu_aarch64_fuchsia.c
   cpu_aarch64_linux.c
+  cpu_aarch64_sysreg.c
   cpu_aarch64_win.c
   cpu_arm_freebsd.c
-  cpu_arm_openbsd.c
   cpu_arm_linux.c
-  cpu_arm.c
   cpu_intel.c
   crypto.c
   curve25519/curve25519.c
+  curve25519/curve25519_64_adx.c
   curve25519/spake25519.c
   des/des.c
   dh_extra/params.c
@@ -172,7 +175,7 @@ add_library(
   ex_data.c
   hpke/hpke.c
   hrss/hrss.c
-  kyber/keccak.c
+  keccak/keccak.c
   kyber/kyber.c
   lhash/lhash.c
   mem.c
@@ -197,13 +200,14 @@ add_library(
   pool/pool.c
   rand_extra/deterministic.c
   rand_extra/forkunsafe.c
-  rand_extra/fuchsia.c
+  rand_extra/getentropy.c
+  rand_extra/ios.c
   rand_extra/passive.c
   rand_extra/rand_extra.c
+  rand_extra/trusty.c
   rand_extra/windows.c
   rc4/rc4.c
-  refcount_c11.c
-  refcount_lock.c
+  refcount.c
   rsa_extra/rsa_asn1.c
   rsa_extra/rsa_crypt.c
   rsa_extra/rsa_print.c
@@ -343,88 +347,3 @@ endif()
 if(USE_CUSTOM_LIBCXX)
   target_link_libraries(crypto libcxx)
 endif()
-
-# urandom_test is a separate binary because it needs to be able to observe the
-# PRNG initialisation, which means that it can't have other tests running before
-# it does.
-add_executable(
-  urandom_test
-
-  fipsmodule/rand/urandom_test.cc
-)
-target_link_libraries(urandom_test test_support_lib boringssl_gtest crypto)
-add_dependencies(all_tests urandom_test)
-
-add_executable(
-  crypto_test
-
-  abi_self_test.cc
-  asn1/asn1_test.cc
-  base64/base64_test.cc
-  bio/bio_test.cc
-  blake2/blake2_test.cc
-  buf/buf_test.cc
-  bytestring/bytestring_test.cc
-  chacha/chacha_test.cc
-  cipher_extra/aead_test.cc
-  cipher_extra/cipher_test.cc
-  compiler_test.cc
-  conf/conf_test.cc
-  constant_time_test.cc
-  cpu_arm_linux_test.cc
-  crypto_test.cc
-  curve25519/ed25519_test.cc
-  curve25519/spake25519_test.cc
-  curve25519/x25519_test.cc
-  ecdh_extra/ecdh_test.cc
-  dh_extra/dh_test.cc
-  digest_extra/digest_test.cc
-  dsa/dsa_test.cc
-  err/err_test.cc
-  evp/evp_extra_test.cc
-  evp/evp_test.cc
-  evp/pbkdf_test.cc
-  evp/scrypt_test.cc
-  fipsmodule/aes/aes_test.cc
-  fipsmodule/bn/bn_test.cc
-  fipsmodule/cmac/cmac_test.cc
-  fipsmodule/ec/ec_test.cc
-  fipsmodule/ec/p256-nistz_test.cc
-  fipsmodule/ecdsa/ecdsa_test.cc
-  fipsmodule/hkdf/hkdf_test.cc
-  fipsmodule/md5/md5_test.cc
-  fipsmodule/modes/gcm_test.cc
-  fipsmodule/rand/ctrdrbg_test.cc
-  fipsmodule/rand/fork_detect_test.cc
-  fipsmodule/service_indicator/service_indicator_test.cc
-  fipsmodule/sha/sha_test.cc
-  hpke/hpke_test.cc
-  hmac_extra/hmac_test.cc
-  hrss/hrss_test.cc
-  impl_dispatch_test.cc
-  kyber/kyber_test.cc
-  lhash/lhash_test.cc
-  obj/obj_test.cc
-  pem/pem_test.cc
-  pkcs7/pkcs7_test.cc
-  pkcs8/pkcs8_test.cc
-  pkcs8/pkcs12_test.cc
-  poly1305/poly1305_test.cc
-  pool/pool_test.cc
-  rand_extra/rand_test.cc
-  refcount_test.cc
-  rsa_extra/rsa_test.cc
-  self_test.cc
-  stack/stack_test.cc
-  siphash/siphash_test.cc
-  test/file_test_gtest.cc
-  thread_test.cc
-  trust_token/trust_token_test.cc
-  x509/x509_test.cc
-  x509/x509_time_test.cc
-  x509v3/tab_test.cc
-
-  $<TARGET_OBJECTS:crypto_test_data>
-)
-target_link_libraries(crypto_test test_support_lib boringssl_gtest_main crypto)
-add_dependencies(all_tests crypto_test)

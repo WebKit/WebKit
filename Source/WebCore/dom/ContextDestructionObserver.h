@@ -26,6 +26,9 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
+
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -34,7 +37,8 @@ class ContextDestructionObserver {
 public:
     WEBCORE_EXPORT virtual void contextDestroyed();
 
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const; // Defined in ContextDestructionObserverInlines.h.
+    RefPtr<ScriptExecutionContext> protectedScriptExecutionContext() const;
 
 protected:
     WEBCORE_EXPORT explicit ContextDestructionObserver(ScriptExecutionContext*);
@@ -42,7 +46,7 @@ protected:
     void observeContext(ScriptExecutionContext*);
 
 private:
-    ScriptExecutionContext* m_scriptExecutionContext;
+    WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;
 };
 
 } // namespace WebCore

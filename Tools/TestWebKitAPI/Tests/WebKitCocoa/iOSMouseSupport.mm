@@ -73,10 +73,6 @@
 
 @end
 
-@interface WKContentView ()
-- (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler;
-@end
-
 @interface WKTestingTouch : UITouch
 @end
 
@@ -130,7 +126,6 @@
 
 @protocol WKMouseInteractionForTesting<UIGestureRecognizerDelegate>
 @property (readonly, nonatomic, getter=isEnabled) BOOL enabled;
-- (void)_updateMouseTouches:(NSSet<UITouch *> *)touches;
 - (void)_hoverGestureRecognized:(UIHoverGestureRecognizer *)gestureRecognizer;
 @end
 
@@ -212,7 +207,7 @@ public:
     {
         auto contentView = m_webView.wkContentView;
         for (id<UIInteraction> interaction in contentView.interactions) {
-            if ([interaction respondsToSelector:@selector(_updateMouseTouches:)] && [interaction respondsToSelector:@selector(_hoverGestureRecognized:)]) {
+            if ([interaction respondsToSelector:@selector(_hoverGestureRecognized:)]) {
                 m_mouseInteraction = static_cast<id<WKMouseInteractionForTesting>>(interaction);
                 break;
             }
@@ -220,14 +215,15 @@ public:
 
         for (UIGestureRecognizer *gestureRecognizer in contentView.gestureRecognizers) {
             auto hoverGestureRecognizer = dynamic_objc_cast<UIHoverGestureRecognizer>(gestureRecognizer);
-            if ([hoverGestureRecognizer.allowedTouchTypes containsObject:@(UITouchTypeIndirectPointer)]) {
+            if ([hoverGestureRecognizer.allowedTouchTypes containsObject:@(UITouchTypeIndirectPointer)])
                 m_hoverGestureRecognizer = hoverGestureRecognizer;
-                break;
-            }
+            else if ([gestureRecognizer.name isEqualToString:@"WKMouseTouch"])
+                m_mouseTouchGestureRecognizer = gestureRecognizer;
         }
 
         RELEASE_ASSERT(m_mouseInteraction);
         RELEASE_ASSERT(m_hoverGestureRecognizer);
+        RELEASE_ASSERT(m_mouseTouchGestureRecognizer);
 
         auto overrideLocationInView = imp_implementationWithBlock([&](UIGestureRecognizer *) {
             return m_locationInRootView;
@@ -237,12 +233,14 @@ public:
         m_gestureButtonMaskSwizzler = makeUnique<InstanceMethodSwizzler>(UIGestureRecognizer.class, @selector(buttonMask), imp_implementationWithBlock([&](UIGestureRecognizer *) {
             return m_buttonMask;
         }));
+        m_unusedEvent = adoptNS([UIEvent new]);
     }
 
     MouseEventTestHarness() = delete;
 
     void mouseMove(CGFloat x, CGFloat y)
     {
+        // FIXME(262757): This test helper should handle mouse drags.
         if (!m_activeTouch) {
             m_activeTouch = adoptNS([[WKTestingTouch alloc] init]);
             EXPECT_TRUE([m_mouseInteraction gestureRecognizer:m_hoverGestureRecognizer shouldReceiveTouch:m_activeTouch.get()]);
@@ -260,9 +258,10 @@ public:
     void mouseDown(UIEventButtonMask buttons = UIEventButtonMaskPrimary)
     {
         [m_activeTouch setPhase:UITouchPhaseBegan];
-        m_buttonMask = buttons;
         [m_activeTouch setTapCount:1];
-        [m_mouseInteraction _updateMouseTouches:[NSSet setWithObject:m_activeTouch.get()]];
+        m_buttonMask = buttons;
+        [m_mouseTouchGestureRecognizer touchesBegan:activeTouches() withEvent:m_unusedEvent.get()];
+        EXPECT_EQ(m_mouseTouchGestureRecognizer.state, UIGestureRecognizerStateBegan);
     }
 
     void mouseUp()
@@ -270,7 +269,8 @@ public:
         [m_activeTouch setPhase:UITouchPhaseEnded];
         [m_activeTouch setTapCount:0];
         m_buttonMask = 0;
-        [m_mouseInteraction _updateMouseTouches:[NSSet setWithObject:m_activeTouch.get()]];
+        [m_mouseTouchGestureRecognizer touchesEnded:activeTouches() withEvent:m_unusedEvent.get()];
+        EXPECT_EQ(m_mouseTouchGestureRecognizer.state, UIGestureRecognizerStateEnded);
     }
 
     void mouseCancel()
@@ -278,9 +278,11 @@ public:
         [m_activeTouch setPhase:UITouchPhaseCancelled];
         [m_activeTouch setTapCount:0];
         m_buttonMask = 0;
-        [m_mouseInteraction _updateMouseTouches:[NSSet setWithObject:m_activeTouch.get()]];
+        [m_mouseTouchGestureRecognizer touchesCancelled:activeTouches() withEvent:m_unusedEvent.get()];
+        EXPECT_EQ(m_mouseTouchGestureRecognizer.state, UIGestureRecognizerStateCancelled);
     }
 
+    NSSet *activeTouches() const { return [NSSet setWithObject:m_activeTouch.get()]; }
     TestWKWebView *webView() const { return m_webView; }
     id<WKMouseInteractionForTesting> mouseInteraction() const { return m_mouseInteraction; }
 
@@ -289,7 +291,9 @@ private:
     std::unique_ptr<InstanceMethodSwizzler> m_hoverGestureLocationSwizzler;
     std::unique_ptr<InstanceMethodSwizzler> m_gestureButtonMaskSwizzler;
     RetainPtr<WKTestingTouch> m_activeTouch;
-    __weak UIHoverGestureRecognizer *m_hoverGestureRecognizer;
+    RetainPtr<UIEvent> m_unusedEvent;
+    __weak UIHoverGestureRecognizer *m_hoverGestureRecognizer { nil };
+    __weak UIGestureRecognizer *m_mouseTouchGestureRecognizer { nil };
     __weak id<WKMouseInteractionForTesting> m_mouseInteraction;
     __weak TestWKWebView *m_webView { nil };
     CGPoint m_locationInRootView { CGPointZero };
@@ -327,10 +331,8 @@ TEST(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
     [webView synchronouslyLoadTestPageNamed:@"emptyTable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('target'))"];
 
-    auto contentView = [webView wkContentView];
-
     __block bool done = false;
-    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 10) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 10) completion:^(BOOL) {
         NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.getSelection().isCollapsed"];
         EXPECT_FALSE([result boolValue]);
         done = true;
@@ -352,7 +354,7 @@ TEST(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
     testHarness.mouseUp();
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(10, 10) completionHandler:^(BOOL shouldPresentMenu, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(10, 10) completion:^(BOOL shouldPresentMenu) {
         EXPECT_FALSE(shouldPresentMenu);
 
         NSNumber *didContextMenu = [webView objectByEvaluatingJavaScript:@"window.didContextMenu"];
@@ -505,10 +507,9 @@ TEST(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView objectByEvaluatingJavaScript:@"document.body.setAttribute('contenteditable','');"];
 
-    auto contentView = [webView wkContentView];
     [webView _simulateSelectionStart];
     __block bool done = false;
-    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointZero completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointZero completion:^(BOOL) {
         EXPECT_TRUE(selectionUpdated);
         done = true;
     }];
@@ -527,7 +528,7 @@ TEST(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingContext
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 100) completion:^(BOOL) {
         done = true;
     }];
 
@@ -542,7 +543,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 100) completion:^(BOOL) {
         done = true;
     }];
 
@@ -557,7 +558,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 100) completion:^(BOOL) {
         done = true;
     }];
 
@@ -569,7 +570,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
 static void simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint location)
 {
     __block bool done = false;
-    [webView.textInputContentView prepareSelectionForContextMenuWithLocationInView:location completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:location completion:^(BOOL) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

@@ -37,7 +37,7 @@ class HTMLAreaElement final : public HTMLAnchorElement {
 public:
     static Ref<HTMLAreaElement> create(const QualifiedName&, Document&);
 
-    bool isDefault() const { return m_shape == Default; }
+    bool isDefault() const { return m_shape == Shape::Default; }
 
     bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
 
@@ -47,7 +47,7 @@ public:
     Path computePathForFocusRing(const LayoutSize& elementSize) const;
 
     // The parent map's image.
-    WEBCORE_EXPORT HTMLImageElement* imageElement() const;
+    WEBCORE_EXPORT RefPtr<HTMLImageElement> imageElement() const;
     
 private:
     HTMLAreaElement(const QualifiedName&, Document&);
@@ -61,14 +61,14 @@ private:
     RefPtr<Element> focusAppearanceUpdateTarget() final;
     void setFocus(bool, FocusVisibility = FocusVisibility::Invisible) final;
 
-    enum Shape { Default, Poly, Rect, Circle, Unknown };
+    enum class Shape : uint8_t { Default, Poly, Rect, Circle };
     Path getRegion(const LayoutSize&) const;
     void invalidateCachedRegion();
 
     std::unique_ptr<Path> m_region;
     Vector<double> m_coords;
-    LayoutSize m_lastSize;
-    Shape m_shape;
+    LayoutSize m_lastSize { -1, -1 };
+    Shape m_shape { Shape::Rect };
 };
 
 } //namespace

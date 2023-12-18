@@ -141,7 +141,7 @@ Ref<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
         m_convertToBackingContext->convertToBacking(descriptor.mipmapFilter),
         descriptor.lodMinClamp,
         descriptor.lodMaxClamp,
-        descriptor.compare ? m_convertToBackingContext->convertToBacking(*descriptor.compare) : WGPUCompareFunction_Always,
+        descriptor.compare ? m_convertToBackingContext->convertToBacking(*descriptor.compare) : WGPUCompareFunction_Undefined,
         descriptor.maxAnisotropy,
     };
 
@@ -176,45 +176,36 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
 {
     auto label = descriptor.label.utf8();
 
-    auto backingExternalTextureEntries = descriptor.entries.map([](const auto&) {
-        return WGPUExternalTextureBindGroupLayoutEntry {
-            {
-                nullptr,
-                static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture),
-            }, {
-                nullptr,
-            },
-        };
-    });
-
-    Vector<WGPUBindGroupLayoutEntry> backingEntries;
-    backingEntries.reserveInitialCapacity(descriptor.entries.size());
-    for (size_t i = 0; i < descriptor.entries.size(); ++i) {
-        const auto& entry = descriptor.entries[i];
-        backingEntries.uncheckedAppend({
-            entry.externalTexture ? &backingExternalTextureEntries[i].chain : nullptr,
-            entry.binding,
-            m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility), {
+    auto backingEntries = WTF::map(descriptor.entries, [&](auto& entry) {
+        return WGPUBindGroupLayoutEntry {
+            .nextInChain = nullptr,
+            .binding = entry.binding,
+            .metalBinding = entry.binding,
+            .visibility = m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility),
+            .buffer = {
                 nullptr,
                 entry.buffer ? m_convertToBackingContext->convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
                 entry.buffer ? entry.buffer->hasDynamicOffset : false,
                 entry.buffer ? entry.buffer->minBindingSize : 0,
-            }, {
+            },
+            .sampler = {
                 nullptr,
                 entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
-            }, {
+            },
+            .texture = {
                 nullptr,
-                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined,
-                entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
-                entry.texture ? entry.texture->multisampled : false,
-            }, {
+                entry.externalTexture ? static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture) : (entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined),
+                (!entry.externalTexture && entry.texture) ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
+                (!entry.externalTexture && entry.texture) ? entry.texture->multisampled : false,
+            },
+            .storageTexture = {
                 nullptr,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->viewDimension) : WGPUTextureViewDimension_Undefined,
             },
-        });
-    }
+        };
+    });
 
     WGPUBindGroupLayoutDescriptor backingDescriptor {
         nullptr,
@@ -262,13 +253,13 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
             .externalTexture = externalTexture,
         });
         return WGPUBindGroupEntry {
-            externalTexture ? reinterpret_cast<WGPUChainedStruct*>(&chainedEntries.last()) : nullptr,
-            bindGroupEntry.binding,
-            std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
-            std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).offset : 0,
-            std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).size.value_or(WGPU_WHOLE_SIZE) : 0,
-            std::holds_alternative<std::reference_wrapper<Sampler>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<Sampler>>(bindGroupEntry.resource).get()) : nullptr,
-            std::holds_alternative<std::reference_wrapper<TextureView>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<TextureView>>(bindGroupEntry.resource).get()) : nullptr,
+            .nextInChain = externalTexture ? reinterpret_cast<WGPUChainedStruct*>(&chainedEntries.last()) : nullptr,
+            .binding = bindGroupEntry.binding,
+            .buffer = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
+            .offset = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).offset : 0,
+            .size = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).size.value_or(WGPU_WHOLE_SIZE) : 0,
+            .sampler = std::holds_alternative<std::reference_wrapper<Sampler>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<Sampler>>(bindGroupEntry.resource).get()) : nullptr,
+            .textureView = std::holds_alternative<std::reference_wrapper<TextureView>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<TextureView>>(bindGroupEntry.resource).get()) : nullptr,
         };
     });
 
@@ -333,16 +324,14 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
         return constant.key.utf8();
     });
 
-    Vector<WGPUConstantEntry> backingConstantEntries;
-    backingConstantEntries.reserveInitialCapacity(descriptor.compute.constants.size());
-    for (size_t i = 0; i < descriptor.compute.constants.size(); ++i) {
+    Vector<WGPUConstantEntry> backingConstantEntries(descriptor.compute.constants.size(), [&](size_t i) {
         const auto& constant = descriptor.compute.constants[i];
-        backingConstantEntries.uncheckedAppend(WGPUConstantEntry {
+        return WGPUConstantEntry {
             nullptr,
             constantNames[i].data(),
             constant.value
-        });
-    }
+        };
+    });
 
     WGPUComputePipelineDescriptor backingDescriptor {
         nullptr,
@@ -377,16 +366,14 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
         return constant.key.utf8();
     });
 
-    Vector<WGPUConstantEntry> vertexConstantEntries;
-    vertexConstantEntries.reserveInitialCapacity(descriptor.vertex.constants.size());
-    for (size_t i = 0; i < descriptor.vertex.constants.size(); ++i) {
+    Vector<WGPUConstantEntry> vertexConstantEntries(descriptor.vertex.constants.size(), [&](size_t i) {
         const auto& constant = descriptor.vertex.constants[i];
-        vertexConstantEntries.uncheckedAppend(WGPUConstantEntry {
+        return WGPUConstantEntry {
             nullptr,
             vertexConstantNames[i].data(),
-            constant.value,
-        });
-    }
+            constant.value
+        };
+    });
 
     auto backingAttributes = descriptor.vertex.buffers.map([&convertToBackingContext](const auto& buffer) -> Vector<WGPUVertexAttribute> {
         if (buffer) {
@@ -401,38 +388,38 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
             return { };
     });
 
-    Vector<WGPUVertexBufferLayout> backingBuffers;
-    backingBuffers.reserveInitialCapacity(descriptor.vertex.buffers.size());
-    for (size_t i = 0; i < descriptor.vertex.buffers.size(); ++i) {
+    Vector<WGPUVertexBufferLayout> backingBuffers(descriptor.vertex.buffers.size(), [&](size_t i) {
         const auto& buffer = descriptor.vertex.buffers[i];
-        backingBuffers.uncheckedAppend(WGPUVertexBufferLayout {
+        return WGPUVertexBufferLayout {
             buffer ? buffer->arrayStride : WGPU_COPY_STRIDE_UNDEFINED,
             buffer ? convertToBackingContext.convertToBacking(buffer->stepMode) : WGPUVertexStepMode_Vertex,
             static_cast<uint32_t>(backingAttributes[i].size()),
             backingAttributes[i].data(),
-        });
-    }
+        };
+    });
 
     WGPUDepthStencilState depthStencilState {
-        nullptr,
-        descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->format) : WGPUTextureFormat_Undefined,
-        descriptor.depthStencil ? descriptor.depthStencil->depthWriteEnabled : false,
-        descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->depthCompare) : WGPUCompareFunction_Undefined, {
+        .nextInChain = nullptr,
+        .format = descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->format) : WGPUTextureFormat_Undefined,
+        .depthWriteEnabled = descriptor.depthStencil ? descriptor.depthStencil->depthWriteEnabled : false,
+        .depthCompare = descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->depthCompare) : WGPUCompareFunction_Undefined,
+        .stencilFront = {
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilFront.compare) : WGPUCompareFunction_Undefined,
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilFront.failOp) : WGPUStencilOperation_Keep,
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilFront.depthFailOp) : WGPUStencilOperation_Keep,
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilFront.passOp) : WGPUStencilOperation_Keep,
-        }, {
+        },
+        .stencilBack = {
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilBack.compare) : WGPUCompareFunction_Undefined,
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilBack.failOp) : WGPUStencilOperation_Keep,
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilBack.depthFailOp) : WGPUStencilOperation_Keep,
             descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilBack.passOp) : WGPUStencilOperation_Keep,
         },
-        descriptor.depthStencil && descriptor.depthStencil->stencilReadMask ? *descriptor.depthStencil->stencilReadMask : 0,
-        descriptor.depthStencil && descriptor.depthStencil->stencilWriteMask ? *descriptor.depthStencil->stencilWriteMask : 0,
-        descriptor.depthStencil ? descriptor.depthStencil->depthBias : 0,
-        descriptor.depthStencil ? descriptor.depthStencil->depthBiasSlopeScale : 0,
-        descriptor.depthStencil ? descriptor.depthStencil->depthBiasClamp : 0,
+        .stencilReadMask = descriptor.depthStencil && descriptor.depthStencil->stencilReadMask ? *descriptor.depthStencil->stencilReadMask : 0,
+        .stencilWriteMask = descriptor.depthStencil && descriptor.depthStencil->stencilWriteMask ? *descriptor.depthStencil->stencilWriteMask : 0,
+        .depthBias = descriptor.depthStencil ? descriptor.depthStencil->depthBias : 0,
+        .depthBiasSlopeScale = descriptor.depthStencil ? descriptor.depthStencil->depthBiasSlopeScale : 0,
+        .depthBiasClamp = descriptor.depthStencil ? descriptor.depthStencil->depthBiasClamp : 0,
     };
 
     auto fragmentEntryPoint = descriptor.fragment ? descriptor.fragment->entryPoint.utf8() : CString("");
@@ -446,15 +433,14 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
 
     Vector<WGPUConstantEntry> fragmentConstantEntries;
     if (descriptor.fragment) {
-        fragmentConstantEntries.reserveInitialCapacity(descriptor.fragment->constants.size());
-        for (size_t i = 0; i < descriptor.fragment->constants.size(); ++i) {
+        fragmentConstantEntries = Vector<WGPUConstantEntry>(descriptor.fragment->constants.size(), [&](size_t i) {
             const auto& constant = descriptor.fragment->constants[i];
-            fragmentConstantEntries.uncheckedAppend(WGPUConstantEntry {
+            return WGPUConstantEntry {
                 nullptr,
                 fragmentConstantNames[i].data(),
                 constant.value,
-            });
-        }
+            };
+        });
     }
 
     Vector<std::optional<WGPUBlendState>> blendStates;
@@ -479,24 +465,22 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
 
     Vector<WGPUColorTargetState> colorTargets;
     if (descriptor.fragment) {
-        colorTargets.reserveInitialCapacity(descriptor.fragment->targets.size());
-        for (size_t i = 0; i < descriptor.fragment->targets.size(); ++i) {
-            if (const auto& target = descriptor.fragment->targets[i]) {
-                colorTargets.uncheckedAppend(WGPUColorTargetState {
+        colorTargets = Vector<WGPUColorTargetState>(descriptor.fragment->targets.size(), [&](size_t i) {
+            if (auto& target = descriptor.fragment->targets[i]) {
+                return WGPUColorTargetState {
                     nullptr,
                     convertToBackingContext.convertToBacking(target->format),
                     blendStates[i] ? &*blendStates[i] : nullptr,
                     convertToBackingContext.convertColorWriteFlagsToBacking(target->writeMask),
-                });
-            } else {
-                colorTargets.uncheckedAppend(WGPUColorTargetState {
-                    nullptr,
+                };
+            }
+            return WGPUColorTargetState {
+                nullptr,
                     WGPUTextureFormat_Undefined,
                     nullptr,
                     WGPUMapMode_None,
-                });
-            }
-        }
+            };
+        });
     }
 
     WGPUFragmentState fragmentState {
@@ -639,8 +623,6 @@ Ref<QuerySet> DeviceImpl::createQuerySet(const QuerySetDescriptor& descriptor)
         label.data(),
         m_convertToBackingContext->convertToBacking(descriptor.type),
         descriptor.count,
-        nullptr,
-        0,
     };
 
     return QuerySetImpl::create(adoptWebGPU(wgpuDeviceCreateQuerySet(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
@@ -684,6 +666,21 @@ void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&
         callback(WTFMove(error));
     });
     wgpuDevicePopErrorScope(m_backing.get(), &popErrorScopeCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in popErrorScopeCallback().
+}
+
+void DeviceImpl::resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&& callback)
+{
+    wgpuDeviceSetDeviceLostCallbackWithBlock(m_backing.get(), makeBlockPtr([callback = WTFMove(callback)](WGPUDeviceLostReason reason, const char*) mutable {
+        switch (reason) {
+        case WGPUDeviceLostReason_Undefined:
+        case WGPUDeviceLostReason_Force32:
+            callback(WebCore::WebGPU::DeviceLostReason::Unknown);
+            return;
+        case WGPUDeviceLostReason_Destroyed:
+            callback(WebCore::WebGPU::DeviceLostReason::Destroyed);
+            return;
+        }
+    }).get());
 }
 
 void DeviceImpl::setLabelInternal(const String& label)

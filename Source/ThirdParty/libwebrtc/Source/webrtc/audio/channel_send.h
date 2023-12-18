@@ -71,8 +71,7 @@ class ChannelSendInterface {
   virtual void SetRTCP_CNAME(absl::string_view c_name) = 0;
   virtual void SetSendAudioLevelIndicationStatus(bool enable, int id) = 0;
   virtual void RegisterSenderCongestionControlObjects(
-      RtpTransportControllerSendInterface* transport,
-      RtcpBandwidthObserver* bandwidth_observer) = 0;
+      RtpTransportControllerSendInterface* transport) = 0;
   virtual void ResetSenderCongestionControlObjects() = 0;
   virtual std::vector<ReportBlockData> GetRemoteRTCPReportBlocks() const = 0;
   virtual ANAStats GetANAStatistics() const = 0;
@@ -126,7 +125,7 @@ std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    TransportFeedbackObserver* feedback_observer,
+    RtpTransportControllerSendInterface* transport_controller,
     const FieldTrialsView& field_trials);
 
 }  // namespace voe

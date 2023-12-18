@@ -99,9 +99,9 @@ struct EditorState {
 #if PLATFORM(IOS_FAMILY)
         String markedText;
         String wordAtSelection;
-        UChar32 characterAfterSelection { 0 };
-        UChar32 characterBeforeSelection { 0 };
-        UChar32 twoCharacterBeforeSelection { 0 };
+        char32_t characterAfterSelection { 0 };
+        char32_t characterBeforeSelection { 0 };
+        char32_t twoCharacterBeforeSelection { 0 };
 #if USE(DICTATION_ALTERNATIVES)
         Vector<WebCore::DictationContext> dictationContextsForSelection;
 #endif
@@ -111,6 +111,7 @@ struct EditorState {
         bool insideFixedPosition { false };
         bool hasPlainText { false };
         WebCore::Color caretColor; // FIXME: Maybe this should be on VisualData?
+        bool hasCaretColorAuto { false };
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
@@ -155,13 +156,12 @@ struct EditorState {
 
     bool hasVisualData() const { return !!visualData; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, EditorState&);
-
     bool hasPostLayoutAndVisualData() const { return hasPostLayoutData() && hasVisualData(); }
 
     std::optional<PostLayoutData> postLayoutData;
     std::optional<VisualData> visualData;
+
+    void clipOwnedRectExtentsToNumericLimits();
 
 private:
     friend TextStream& operator<<(TextStream&, const EditorState&);

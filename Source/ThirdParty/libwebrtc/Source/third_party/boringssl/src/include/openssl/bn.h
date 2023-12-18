@@ -160,14 +160,12 @@ extern "C" {
 typedef uint64_t BN_ULONG;
 #define BN_BITS2 64
 #define BN_DEC_FMT1 "%" PRIu64
-#define BN_DEC_FMT2 "%019" PRIu64
 #define BN_HEX_FMT1 "%" PRIx64
 #define BN_HEX_FMT2 "%016" PRIx64
 #elif defined(OPENSSL_32_BIT)
 typedef uint32_t BN_ULONG;
 #define BN_BITS2 32
 #define BN_DEC_FMT1 "%" PRIu32
-#define BN_DEC_FMT2 "%09" PRIu32
 #define BN_HEX_FMT1 "%" PRIx32
 #define BN_HEX_FMT2 "%08" PRIx32
 #else
@@ -256,11 +254,11 @@ OPENSSL_EXPORT BIGNUM *BN_bin2bn(const uint8_t *in, size_t len, BIGNUM *ret);
 // |in| is secret, use |BN_bn2bin_padded| instead.
 OPENSSL_EXPORT size_t BN_bn2bin(const BIGNUM *in, uint8_t *out);
 
-// BN_le2bn sets |*ret| to the value of |len| bytes from |in|, interpreted as
+// BN_lebin2bn sets |*ret| to the value of |len| bytes from |in|, interpreted as
 // a little-endian number, and returns |ret|. If |ret| is NULL then a fresh
 // |BIGNUM| is allocated and returned. It returns NULL on allocation
 // failure.
-OPENSSL_EXPORT BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret);
+OPENSSL_EXPORT BIGNUM *BN_lebin2bn(const uint8_t *in, size_t len, BIGNUM *ret);
 
 // BN_bn2le_padded serialises the absolute value of |in| to |out| as a
 // little-endian integer, which must have |len| of space available, padding
@@ -974,6 +972,12 @@ OPENSSL_EXPORT int BN_MONT_CTX_set(BN_MONT_CTX *mont, const BIGNUM *mod,
 // Use |BN_bn2bin_padded| instead. It is |size_t|-clean.
 OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
 
+// BN_bn2lebinpad behaves like |BN_bn2le_padded|, but it returns |len| on
+// success and -1 on error.
+//
+// Use |BN_bn2le_padded| instead. It is |size_t|-clean.
+OPENSSL_EXPORT int BN_bn2lebinpad(const BIGNUM *in, uint8_t *out, int len);
+
 // BN_prime_checks is a deprecated alias for |BN_prime_checks_for_validation|.
 // Use |BN_prime_checks_for_generation| or |BN_prime_checks_for_validation|
 // instead. (This defaults to the |_for_validation| value in order to be
@@ -982,6 +986,9 @@ OPENSSL_EXPORT int BN_bn2binpad(const BIGNUM *in, uint8_t *out, int len);
 
 // BN_secure_new calls |BN_new|.
 OPENSSL_EXPORT BIGNUM *BN_secure_new(void);
+
+// BN_le2bn calls |BN_lebin2bn|.
+OPENSSL_EXPORT BIGNUM *BN_le2bn(const uint8_t *in, size_t len, BIGNUM *ret);
 
 
 // Private functions

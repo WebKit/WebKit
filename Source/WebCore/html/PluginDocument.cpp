@@ -75,13 +75,7 @@ Ref<HTMLStyleElement> PluginDocumentParser::createStyleElement(Document& documen
 {
     auto styleElement = HTMLStyleElement::create(document);
 
-    constexpr auto styleSheetContents = R"CONTENTS(
-html.plugin-fills-viewport, html.plugin-fills-viewport body, html.plugin-fills-viewport embed { width: 100%; height: 100%; }
-html.plugin-fills-viewport body { overflow: hidden; }
-body { margin: 0; }
-embed { width: 100%; }
-)CONTENTS"_s;
-
+    constexpr auto styleSheetContents = "html, body, embed { width: 100%; height: 100%; }\nbody { margin: 0; overflow: hidden; }\n"_s;
 #if PLATFORM(IOS_FAMILY)
     constexpr auto bodyBackgroundColorStyle = "body { background-color: rgb(217, 224, 233) }"_s;
 #else
@@ -196,19 +190,6 @@ void PluginDocument::detachFromPluginElement()
 {
     // Release the plugin Element so that we don't have a circular reference.
     m_pluginElement = nullptr;
-}
-
-void PluginDocument::cancelManualPluginLoad()
-{
-    // PluginDocument::cancelManualPluginLoad should only be called once, but there are issues
-    // with how many times we call beforeload on object elements. <rdar://problem/8441094>.
-    if (!shouldLoadPluginManually())
-        return;
-
-    auto& frameLoader = frame()->loader();
-    if (auto documentLoader = frameLoader.activeDocumentLoader())
-        documentLoader->cancelMainResourceLoad(frameLoader.cancelledError(documentLoader->request()));
-    m_shouldLoadPluginManually = false;
 }
 
 }

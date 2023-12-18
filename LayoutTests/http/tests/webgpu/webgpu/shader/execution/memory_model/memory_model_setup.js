@@ -3,6 +3,18 @@
  **/ import { checkElementsPassPredicate } from '../../../util/check_contents.js';
 /* All buffer sizes are counted in units of 4-byte words. */
 
+/**
+ * The value type loaded and stored from memory.
+ * This is what the WGSL spec calls 'store type' for the locations being accessed.
+ * The GPU buffers are sized assuming this type is at most 4 bytes.
+ *
+ * 'u32' is the default case; it can be atomically loaded and stored.
+ * 'f16' is interesting because it is not 32-bits, and can't be the store type
+ * for atomic accesses.
+ */
+
+export const kAccessValueTypes = ['f16', 'u32'];
+
 /* Parameter values are set heuristically, typically by a time-intensive search. */
 
 /** The number of memory locations accessed by a test. Currently, only tests with up to 2 memory locations are supported. */
@@ -35,19 +47,61 @@ const memLocationOffsetIndex = 11;
 const bytesPerWord = 4;
 
 /**
+ * Returns the shader preamble based on the access value type:
+ *  - enable directives, if necessary
+ *  - the type alias for AccessValueType
+ */
+function shaderPreamble(accessValueType) {
+  if (accessValueType === 'f16') {
+    return 'enable f16;\nalias AccessValueTy = f16;\n';
+  }
+  return `alias AccessValueTy = ${accessValueType};\n`;
+}
+
+/**
  * Implements setup code necessary to run a memory model test. A test consists of two parts:
  *  1.) A test shader that runs a specified memory model litmus test and attempts to reveal a weak (disallowed) behavior.
  *      At a high level, a test shader consists of a set of testing workgroups where every invocation executes the litmus test
  *      on a set of test locations, and a set of stressing workgroups where every invocation accesses a specified memory location
  *      in a random pattern.
+ *
+ *      The main buffer variables are:
+ *
+ *        `test_locations`: invocations access entries in this array, trying to
+ *          evoke weak behaviours.
+ *
+ *          This is array<AccessValueTy> or array<atomic<u32>>.
+ *          AccessValueTy is either f16 or u32.
+ *          Note that atomic<u32> is only used when AccessValueTy is u32.
+ *
+ *        `results`: holds the observed values, which is where we can see
+ *          whether a weak behaviour was observed.
+ *
+ *          This is an array<atomic<u32>>.
+ *
+ *      The others are used to parameterize and stress the main activity.
+ *
  *  2.) A result shader that takes the output of the test shader, which consists of the memory locations accessed during the test
  *      and the results of any reads made during the test, and aggregate the results based on the possible behaviors of the test.
+ *
+ *      The first two buffer variables are the same buffers as for the test shader:
+ *
+ *        `test_locations` is the same as `test_locations` from the test shader,
+ *        but is mapped as array<AccessValueTy>.
+ *
+ *        `read_results` is the same buffer as `results` from the test shader.
+ *
+ *      The other variables are used to accumulate a summary that counts the weak behaviours stimulated and recorded by the
+ *      test shader.
  */
 export class MemoryModelTester {
   /** Sets up a memory model test by initializing buffers and pipeline layouts. */
-  constructor(t, params, testShader, resultShader) {
+  constructor(t, params, testShader, resultShader, accessValueType = 'u32') {
     this.test = t;
     this.params = params;
+
+    testShader = shaderPreamble(accessValueType) + testShader;
+    resultShader = shaderPreamble(accessValueType) + resultShader;
 
     // set up buffers
     const testingThreads = this.params.workgroupSize * this.params.testingWorkgroups;
@@ -481,11 +535,15 @@ export class MemoryModelTester {
 /** Defines common data structures used in memory model test shaders. */
 const shaderMemStructures = `
   struct Memory {
-    value: array<u32>
+    value: array<AccessValueTy>
   };
 
   struct AtomicMemory {
     value: array<atomic<u32>>
+  };
+
+  struct IndexMemory {
+    value: array<u32>
   };
 
   struct ReadResult {
@@ -545,10 +603,10 @@ const twoBehaviorTestResultStructure = `
 /** Common bindings used in the test shader phase of a test. */
 const commonTestShaderBindings = `
   @group(0) @binding(1) var<storage, read_write> results : ReadResults;
-  @group(0) @binding(2) var<storage, read> shuffled_workgroups : Memory;
+  @group(0) @binding(2) var<storage, read> shuffled_workgroups : IndexMemory;
   @group(0) @binding(3) var<storage, read_write> barrier : AtomicMemory;
-  @group(0) @binding(4) var<storage, read_write> scratchpad : Memory;
-  @group(0) @binding(5) var<storage, read_write> scratch_locations : Memory;
+  @group(0) @binding(4) var<storage, read_write> scratchpad : IndexMemory;
+  @group(0) @binding(5) var<storage, read_write> scratch_locations : IndexMemory;
   @group(0) @binding(6) var<uniform> stress_params : StressParamsMemory;
 `;
 
@@ -570,7 +628,7 @@ const nonAtomicTestShaderBindings = [
 
 /** Bindings used in the result aggregation phase of the test. */
 const resultShaderBindings = `
-  @group(0) @binding(0) var<storage, read_write> test_locations : AtomicMemory;
+  @group(0) @binding(0) var<storage, read_write> test_locations : Memory;
   @group(0) @binding(1) var<storage, read_write> read_results : ReadResults;
   @group(0) @binding(2) var<storage, read_write> test_results : TestResults;
   @group(0) @binding(3) var<uniform> stress_params : StressParamsMemory;
@@ -591,7 +649,7 @@ const atomicWorkgroupMemory = `
  * is large enough to accommodate the maximum memory size needed per workgroup for testing.
  */
 const nonAtomicWorkgroupMemory = `
-  var<workgroup> wg_test_locations: array<u32, 3584>;
+  var<workgroup> wg_test_locations: array<AccessValueTy, 3584>;
 `;
 
 /**
@@ -780,11 +838,16 @@ const testShaderCommonFooter = `
 /**
  * All result shaders must calculate memory locations used in the test. Not all these locations are
  * used in every result shader, but no result shader uses more than these locations.
+ *
+ * Each value read from test_locations is converted from AccessValueTy to u32
+ * before storing it in the read result.  This assumes u32(AccessValueTy)
+ * is either an identity function u32(u32) or a value-converting overload such
+ * as u32(f16).
  */
 const resultShaderCommonCalculations = `
   let id_0 = workgroup_id[0] * workgroupXSize + local_invocation_id[0];
   let x_0 = id_0 * stress_params.mem_stride * 2u;
-  let mem_x_0 = atomicLoad(&test_locations.value[x_0]);
+  let mem_x_0 = u32(test_locations.value[x_0]);
   let r0 = atomicLoad(&read_results.value[id_0].r0);
   let r1 = atomicLoad(&read_results.value[id_0].r1);
 `;
@@ -795,7 +858,7 @@ const interWorkgroupResultShaderCode = [
   `
   let total_ids = workgroupXSize * stress_params.testing_workgroups;
   let y_0 = permute_id(id_0, stress_params.permute_second, total_ids) * stress_params.mem_stride * 2u + stress_params.location_offset;
-  let mem_y_0 = atomicLoad(&test_locations.value[y_0]);
+  let mem_y_0 = u32(test_locations.value[y_0]);
 `,
 ].join('\n');
 
@@ -805,7 +868,7 @@ const intraWorkgroupResultShaderCode = [
   `
   let total_ids = workgroupXSize;
   let y_0 = (workgroup_id[0] * workgroupXSize + permute_id(local_invocation_id[0], stress_params.permute_second, total_ids)) * stress_params.mem_stride * 2u + stress_params.location_offset;
-  let mem_y_0 = atomicLoad(&test_locations.value[y_0]);
+  let mem_y_0 = u32(test_locations.value[y_0]);
 `,
 ].join('\n');
 

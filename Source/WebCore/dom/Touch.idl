@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/touch-events/#touch-interface
+
 [
     Conditional=TOUCH_EVENTS,
     Exposed=Window
@@ -34,7 +36,7 @@
     readonly attribute long                pageX;
     readonly attribute long                pageY;
     readonly attribute EventTarget         target;
-    readonly attribute unsigned long       identifier;
+    readonly attribute long                identifier;
     readonly attribute long                webkitRadiusX;
     readonly attribute long               webkitRadiusY;
     readonly attribute unrestricted float webkitRotationAngle;

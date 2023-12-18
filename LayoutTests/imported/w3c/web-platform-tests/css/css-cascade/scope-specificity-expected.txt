@@ -1,0 +1,10 @@
+
+PASS @scope (#main) { .b {  } }
+PASS @scope (#main) to (.b) { .a {  } }
+PASS @scope (#main, .foo, .bar) { #a {  } }
+PASS @scope (#main) { div.b {  } }
+PASS @scope (#main) { :scope .b {  } }
+PASS @scope (#main) { & .b {  } }
+PASS @scope (#main) { div .b {  } }
+PASS @scope (#main) { @scope (.a) { .b {  } } }
+

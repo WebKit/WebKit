@@ -66,7 +66,7 @@ public:
 
     // SampleBufferDisplayLayer.
     PlatformLayer* rootLayer() final;
-    void initialize(bool hideRootLayer, IntSize, CompletionHandler<void(bool didSucceed)>&&) final;
+    void initialize(bool hideRootLayer, IntSize, bool shouldMaintainAspectRatio, CompletionHandler<void(bool didSucceed)>&&) final;
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&& logIdentifier) final { m_logIdentifier = WTFMove(logIdentifier); }
 #endif
@@ -84,6 +84,7 @@ public:
     void enqueueVideoFrame(VideoFrame&) final;
     void clearVideoFrames() final;
     void setRenderPolicy(RenderPolicy) final;
+    void setShouldMaintainAspectRatio(bool) final;
 
 private:
     void enqueueBufferInternal(CVPixelBufferRef, MediaTime);
@@ -100,10 +101,6 @@ private:
 private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayerForQueue WTF_GUARDED_BY_CAPABILITY(workQueue());
-    bool m_isReconfiguring WTF_GUARDED_BY_CAPABILITY(workQueue()) { false };
-    RetainPtr<CVPixelBufferRef> m_lastPixelBuffer WTF_GUARDED_BY_CAPABILITY(workQueue());
-    MediaTime m_lastPresentationTime WTF_GUARDED_BY_CAPABILITY(workQueue());
     RetainPtr<PlatformLayer> m_rootLayer;
     RenderPolicy m_renderPolicy { RenderPolicy::TimingInfo };
 

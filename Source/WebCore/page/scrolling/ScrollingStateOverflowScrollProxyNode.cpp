@@ -34,9 +34,10 @@
 
 namespace WebCore {
 
-Ref<ScrollingStateOverflowScrollProxyNode> ScrollingStateOverflowScrollProxyNode::create(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)
+ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode(ScrollingNodeID nodeID, Vector<Ref<ScrollingStateNode>>&& children, OptionSet<ScrollingStateNodeProperty> changedProperties, std::optional<PlatformLayerIdentifier> layerID, ScrollingNodeID overflowScrollingNode)
+    : ScrollingStateNode(ScrollingNodeType::OverflowProxy, nodeID, WTFMove(children), changedProperties, layerID)
+    , m_overflowScrollingNodeID(overflowScrollingNode)
 {
-    return adoptRef(*new ScrollingStateOverflowScrollProxyNode(stateTree, nodeID));
 }
 
 ScrollingStateOverflowScrollProxyNode::ScrollingStateOverflowScrollProxyNode(ScrollingStateTree& stateTree, ScrollingNodeID nodeID)

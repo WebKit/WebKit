@@ -284,15 +284,10 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
     return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
 }
 
-void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
+void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Ref<DeferredPromise>&& promise)
 {
-    decodeAudioData(WTFMove(audioData), WTFMove(successCallback), WTFMove(errorCallback), std::nullopt);
-}
-
-void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, std::optional<Ref<DeferredPromise>>&& promise)
-{
-    if (promise && (!document() || !document()->isFullyActive())) {
-        promise.value()->reject(Exception { InvalidStateError, "Document is not fully active"_s });
+    if (!document() || !document()->isFullyActive()) {
+        promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active"_s });
         return;
     }
 
@@ -300,18 +295,16 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
 
     auto p = m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate());
-    p->whenSettled(RunLoop::main(), [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
+    p->whenSettled(RunLoop::current(), [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)] (DecodingTaskPromise::Result&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (!result) {
-                if (promise)
-                    promise.value()->reject(Exception { result.error(), "Decoding failed"_s });
+                promise->reject(WTFMove(result.error()));
                 if (errorCallback)
                     errorCallback->handleEvent(nullptr);
                 return;
             }
             auto audioBuffer = WTFMove(result.value());
-            if (promise)
-                promise.value()->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
+            promise->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
             if (successCallback)
                 successCallback->handleEvent(audioBuffer.ptr());
         });
@@ -357,7 +350,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     case 16384:
         break;
     default:
-        return Exception { IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
+        return Exception { ExceptionCode::IndexSizeError, "Unsupported buffer size for ScriptProcessorNode"_s };
     }
 
     // An IndexSizeError exception must be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels
@@ -365,19 +358,19 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     // In this case an IndexSizeError must be thrown.
 
     if (!numberOfInputChannels && !numberOfOutputChannels)
-        return Exception { IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels and numberOfOutputChannels cannot both be 0"_s };
 
     // This parameter [numberOfInputChannels] determines the number of channels for this node's input. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfInputChannels > maxNumberOfChannels)
-        return Exception { IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfInputChannels exceeds maximum number of channels"_s };
 
     // This parameter [numberOfOutputChannels] determines the number of channels for this node's output. Values of
     // up to 32 must be supported. A NotSupportedError must be thrown if the number of channels is not supported.
 
     if (numberOfOutputChannels > maxNumberOfChannels)
-        return Exception { IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_s };
+        return Exception { ExceptionCode::IndexSizeError, "numberOfOutputChannels exceeds maximum number of channels"_s };
 
     return ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
 }

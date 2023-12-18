@@ -5,7 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS timing.redirectStart is >= timing.navigationStart
 PASS timing.redirectEnd is >= timing.redirectStart
-PASS navigation.redirectCount is 2
+PASS performance.navigation.redirectCount is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

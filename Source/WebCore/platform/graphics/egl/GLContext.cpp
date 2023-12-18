@@ -27,24 +27,13 @@
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(LIBEPOXY)
-#include "EpoxyEGL.h"
+#include <epoxy/egl.h>
+#include <epoxy/gl.h>
 #else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
-#endif
-
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#else
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#endif
-
-#if PLATFORM(X11)
-#include "PlatformDisplayX11.h"
-#include "XUniquePtr.h"
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
 #endif
 
 namespace WebCore {
@@ -90,11 +79,8 @@ const char* GLContext::lastErrorString()
     return errorString(eglGetError());
 }
 
-bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config, EGLSurfaceType surfaceType, Function<bool(int)>&& checkCompatibleVisuals)
+bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config, EGLSurfaceType surfaceType)
 {
-#if !PLATFORM(X11)
-    UNUSED_PARAM(checkCompatibleVisuals);
-#endif
     std::array<EGLint, 4> rgbaSize = { 8, 8, 8, 8 };
     if (const char* environmentVariable = getenv("WEBKIT_EGL_PIXEL_LAYOUT")) {
         if (!strcmp(environmentVariable, "RGB565"))
@@ -153,16 +139,6 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
         eglGetConfigAttrib(display, value, EGL_GREEN_SIZE, &greenSize);
         eglGetConfigAttrib(display, value, EGL_BLUE_SIZE, &blueSize);
         eglGetConfigAttrib(display, value, EGL_ALPHA_SIZE, &alphaSize);
-#if PLATFORM(X11)
-        if (checkCompatibleVisuals) {
-            EGLint visualid;
-            if (!eglGetConfigAttrib(display, value, EGL_NATIVE_VISUAL_ID, &visualid))
-                return false;
-
-            if (!checkCompatibleVisuals(visualid))
-                return false;
-        }
-#endif
         return redSize == rgbaSize[0] && greenSize == rgbaSize[1]
             && blueSize == rgbaSize[2] && alphaSize == rgbaSize[3];
     });
@@ -178,41 +154,8 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
 
 std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
-    Function<bool(int)> checkCompatibleVisuals = nullptr;
-#if PLATFORM(X11)
-    if (platformDisplay.type() == PlatformDisplay::Type::X11) {
-        Display* x11Display = downcast<PlatformDisplayX11>(platformDisplay).native();
-        XWindowAttributes attributes;
-        if (!XGetWindowAttributes(x11Display, static_cast<Window>(window), &attributes))
-            return nullptr;
-
-        auto visualInfoForID = [x11Display](VisualID visualID) -> XUniquePtr<XVisualInfo> {
-            XVisualInfo templateVisualInfo;
-            templateVisualInfo.visualid = visualID;
-            int visualInfoCount;
-            return XUniquePtr<XVisualInfo>(XGetVisualInfo(x11Display, VisualIDMask, &templateVisualInfo, &visualInfoCount));
-        };
-
-        XUniquePtr<XVisualInfo> visualInfo(visualInfoForID(XVisualIDFromVisual(attributes.visual)));
-        if (!visualInfo)
-            return nullptr;
-
-        checkCompatibleVisuals = [visualInfo = WTFMove(visualInfo), visualInfoForID = WTFMove(visualInfoForID)](unsigned long configVisualID) {
-            auto configVisualInfo = visualInfoForID(configVisualID);
-            return configVisualInfo
-                && visualInfo->c_class == configVisualInfo->c_class
-                && visualInfo->depth >= configVisualInfo->depth
-                && visualInfo->red_mask == configVisualInfo->red_mask
-                && visualInfo->green_mask == configVisualInfo->green_mask
-                && visualInfo->blue_mask == configVisualInfo->blue_mask
-                && visualInfo->colormap_size == configVisualInfo->colormap_size
-                && visualInfo->bits_per_rgb == configVisualInfo->bits_per_rgb;
-        };
-    }
-#endif
-
     EGLConfig config;
-    if (!getEGLConfig(platformDisplay, &config, WindowSurface, WTFMove(checkCompatibleVisuals))) {
+    if (!getEGLConfig(platformDisplay, &config, WindowSurface)) {
         RELEASE_LOG_INFO(Compositing, "Cannot obtain EGL window context configuration: %s\n", lastErrorString());
         return nullptr;
     }
@@ -226,16 +169,14 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
     EGLDisplay display = platformDisplay.eglDisplay();
     EGLSurface surface = EGL_NO_SURFACE;
     switch (platformDisplay.type()) {
-#if PLATFORM(X11)
-    case PlatformDisplay::Type::X11:
-        surface = createWindowSurfaceX11(display, config, window);
-        break;
-#endif
 #if USE(WPE_RENDERER)
     case PlatformDisplay::Type::WPE:
         surface = createWindowSurfaceWPE(display, config, window);
         break;
 #endif // USE(WPE_RENDERER)
+#if PLATFORM(X11)
+    case PlatformDisplay::Type::X11:
+#endif
 #if PLATFORM(WAYLAND)
     case PlatformDisplay::Type::Wayland:
 #endif
@@ -359,15 +300,13 @@ std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformD
     auto context = createSurfacelessContext(platformDisplay, eglSharingContext);
     if (!context) {
         switch (platformDisplay.type()) {
-#if PLATFORM(X11)
-        case PlatformDisplay::Type::X11:
-            context = createPixmapContext(platformDisplay, eglSharingContext);
-            break;
-#endif
 #if USE(WPE_RENDERER)
         case PlatformDisplay::Type::WPE:
             context = createWPEContext(platformDisplay, eglSharingContext);
             break;
+#endif
+#if PLATFORM(X11)
+        case PlatformDisplay::Type::X11:
 #endif
 #if PLATFORM(WAYLAND)
         case PlatformDisplay::Type::Wayland:
@@ -408,15 +347,13 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
     auto context = createSurfacelessContext(platformDisplay);
     if (!context) {
         switch (platformDisplay.type()) {
-#if PLATFORM(X11)
-        case PlatformDisplay::Type::X11:
-            context = createPixmapContext(platformDisplay);
-            break;
-#endif
 #if USE(WPE_RENDERER)
         case PlatformDisplay::Type::WPE:
             context = createWPEContext(platformDisplay);
             break;
+#endif
+#if PLATFORM(X11)
+        case PlatformDisplay::Type::X11:
 #endif
 #if PLATFORM(WAYLAND)
         case PlatformDisplay::Type::Wayland:
@@ -574,6 +511,17 @@ unsigned GLContext::version()
             + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).value_or(0) * 10;
     }
     return m_version;
+}
+
+const GLContext::GLExtensions& GLContext::glExtensions() const
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this] {
+        const char* extensionsString = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+        m_glExtensions.OES_texture_npot = isExtensionSupported(extensionsString, "GL_OES_texture_npot");
+        m_glExtensions.EXT_unpack_subimage = isExtensionSupported(extensionsString, "GL_EXT_unpack_subimage");
+    });
+    return m_glExtensions;
 }
 
 GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context)

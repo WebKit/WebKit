@@ -52,7 +52,9 @@
 namespace WebCore {
 
 using LayerAndPoint = std::pair<CALayer *, FloatPoint>;
-WEBCORE_EXPORT void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint, const std::function<bool(CALayer *, CGPoint localPoint)>& pointInLayerFunction);
+WEBCORE_EXPORT void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CALayer *parent, CGPoint, const std::function<bool(CALayer *, CGPoint localPoint)>& pointInLayerFunction = { });
+
+WEBCORE_EXPORT Vector<LayerAndPoint, 16> layersAtPointToCheckForScrolling(std::function<bool(CALayer*, CGPoint)> layerEventRegionContainsPoint, std::function<uint64_t(CALayer*)> scrollingNodeIDForLayer, CALayer*, const FloatPoint&, bool& hasAnyNonInteractiveScrollingLayers);
 
 } // namespace WebCore
 

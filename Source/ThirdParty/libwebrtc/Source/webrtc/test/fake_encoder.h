@@ -17,6 +17,7 @@
 #include <memory>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/fec_controller_override.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -42,6 +43,9 @@ class FakeEncoder : public VideoEncoder {
   void SetMaxBitrate(int max_kbps) RTC_LOCKS_EXCLUDED(mutex_);
   void SetQp(int qp) RTC_LOCKS_EXCLUDED(mutex_);
 
+  void SetImplementationName(absl::string_view implementation_name)
+      RTC_LOCKS_EXCLUDED(mutex_);
+
   void SetFecControllerOverride(
       FecControllerOverride* fec_controller_override) override;
 
@@ -55,13 +59,13 @@ class FakeEncoder : public VideoEncoder {
   int32_t Release() override;
   void SetRates(const RateControlParameters& parameters)
       RTC_LOCKS_EXCLUDED(mutex_) override;
-  EncoderInfo GetEncoderInfo() const override;
+  EncoderInfo GetEncoderInfo() const RTC_LOCKS_EXCLUDED(mutex_) override;
 
   int GetConfiguredInputFramerate() const RTC_LOCKS_EXCLUDED(mutex_);
   int GetNumInitializations() const RTC_LOCKS_EXCLUDED(mutex_);
   const VideoCodec& config() const RTC_LOCKS_EXCLUDED(mutex_);
 
-  static const char* kImplementationName;
+  static constexpr char kImplementationName[] = "fake_encoder";
 
  protected:
   struct FrameInfo {
@@ -108,6 +112,7 @@ class FakeEncoder : public VideoEncoder {
   mutable Mutex mutex_;
   bool used_layers_[kMaxSimulcastStreams];
   absl::optional<int> qp_ RTC_GUARDED_BY(mutex_);
+  absl::optional<std::string> implementation_name_ RTC_GUARDED_BY(mutex_);
 
   // Current byte debt to be payed over a number of frames.
   // The debt is acquired by keyframes overshooting the bitrate target.

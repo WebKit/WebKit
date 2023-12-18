@@ -457,10 +457,10 @@ ExceptionOr<std::unique_ptr<Expression>> Parser::parseStatement(const String& st
     int parseError = xpathyyparse(parser);
 
     if (parser.m_sawNamespaceError)
-        return Exception { NamespaceError };
+        return Exception { ExceptionCode::NamespaceError };
 
     if (parseError)
-        return Exception { SyntaxError };
+        return Exception { ExceptionCode::SyntaxError };
 
     return WTFMove(parser.m_result);
 }

@@ -214,8 +214,8 @@ PASS text-anchor (type: discrete) has testAccumulation function
 PASS text-anchor: "end" onto "middle"
 PASS text-anchor: "middle" onto "end"
 PASS text-autospace (type: discrete) has testAccumulation function
-PASS text-autospace: "no-autospace" onto "auto"
-PASS text-autospace: "auto" onto "no-autospace"
+PASS text-autospace: "no-autospace" onto "normal"
+FAIL text-autospace: "normal" onto "no-autospace" assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
 PASS text-decoration-color (type: color) has testAccumulation function
 PASS text-decoration-color supports animating as color of rgb() with overflowed  from and to values
 PASS text-decoration-color supports animating as color of #RGB
@@ -304,6 +304,9 @@ PASS scale
 PASS vector-effect (type: discrete) has testAccumulation function
 PASS vector-effect: "non-scaling-stroke" onto "none"
 PASS vector-effect: "none" onto "non-scaling-stroke"
+PASS view-transition-name (type: discrete) has testAccumulation function
+PASS view-transition-name: "header" onto "none"
+PASS view-transition-name: "none" onto "header"
 PASS visibility (type: visibility) has testAccumulation function
 PASS visibility: onto "visible"
 PASS visibility: onto "hidden"
@@ -326,6 +329,6 @@ PASS word-spacing: units "rem" onto "%"
 PASS word-spacing: units "%" onto "rem"
 PASS word-spacing: units "rem" onto "em"
 PASS word-spacing: units "em" onto "rem"
-FAIL word-spacing: units "calc" onto "px" assert_equals: The value should be calc(20% + 30px) at 0ms expected "calc(20% + 30px)" but got "20px"
-FAIL word-spacing: calc assert_equals: The value should be calc(30% + 30px) at 0ms expected "calc(30% + 30px)" but got "0px"
+PASS word-spacing: units "calc" onto "px"
+PASS word-spacing: calc
 

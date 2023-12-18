@@ -1,0 +1,28 @@
+When text-wrap-style is disabled, the following should not parse:
+
+
+PASS e.style['text-wrap-style'] = "auto" should not set the property value
+PASS e.style['text-wrap-style'] = "balance" should not set the property value
+PASS e.style['text-wrap-style'] = "stable" should not set the property value
+PASS e.style['text-wrap-style'] = "pretty" should not set the property value
+PASS e.style['text-wrap'] = "auto" should not set the property value
+PASS e.style['text-wrap'] = "balance" should not set the property value
+PASS e.style['text-wrap'] = "stable" should not set the property value
+PASS e.style['text-wrap'] = "pretty" should not set the property value
+PASS e.style['text-wrap'] = "wrap auto" should not set the property value
+PASS e.style['text-wrap'] = "wrap balance" should not set the property value
+PASS e.style['text-wrap'] = "wrap pretty" should not set the property value
+PASS e.style['text-wrap'] = "wrap stable" should not set the property value
+PASS e.style['text-wrap'] = "auto wrap" should not set the property value
+PASS e.style['text-wrap'] = "balance wrap" should not set the property value
+PASS e.style['text-wrap'] = "pretty wrap" should not set the property value
+PASS e.style['text-wrap'] = "stable wrap" should not set the property value
+PASS e.style['text-wrap'] = "nowrap auto" should not set the property value
+PASS e.style['text-wrap'] = "nowrap balance" should not set the property value
+PASS e.style['text-wrap'] = "nowrap pretty" should not set the property value
+PASS e.style['text-wrap'] = "nowrap stable" should not set the property value
+PASS e.style['text-wrap'] = "auto nowrap" should not set the property value
+PASS e.style['text-wrap'] = "balance nowrap" should not set the property value
+PASS e.style['text-wrap'] = "pretty nowrap" should not set the property value
+PASS e.style['text-wrap'] = "stable nowrap" should not set the property value
+

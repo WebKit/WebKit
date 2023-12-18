@@ -56,7 +56,7 @@ public:
     void finishLayout();
 
 private:
-    void updateCharacerPositionIfNeeded(float& x, float& y);
+    void updateCharacterPositionIfNeeded(float& x, float& y);
     void updateCurrentTextPosition(float x, float y, float glyphAdvance);
     void updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 

@@ -74,9 +74,6 @@ String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<Realtim
         case RealtimeMediaSourceSettings::FacingMode:
             builder.append("FacingMode");
             break;
-        case RealtimeMediaSourceSettings::WhiteBalanceMode:
-            builder.append("WhiteBalanceMode");
-            break;
         case RealtimeMediaSourceSettings::Volume:
             builder.append("Volume");
             break;
@@ -104,8 +101,14 @@ String RealtimeMediaSourceSettings::convertFlagsToString(const OptionSet<Realtim
         case RealtimeMediaSourceSettings::LogicalSurface:
             builder.append("LogicalSurface");
             break;
+        case RealtimeMediaSourceSettings::WhiteBalanceMode:
+            builder.append("WhiteBalanceMode");
+            break;
         case RealtimeMediaSourceSettings::Zoom:
             builder.append("Zoom");
+            break;
+        case RealtimeMediaSourceSettings::Torch:
+            builder.append("Torch");
             break;
         }
     }
@@ -144,8 +147,12 @@ OptionSet<RealtimeMediaSourceSettings::Flag> RealtimeMediaSourceSettings::differ
         difference.add(RealtimeMediaSourceSettings::DisplaySurface);
     if (logicalSurface() != that.logicalSurface())
         difference.add(RealtimeMediaSourceSettings::LogicalSurface);
+    if (whiteBalanceMode() != that.whiteBalanceMode())
+        difference.add(RealtimeMediaSourceSettings::WhiteBalanceMode);
     if (zoom() != that.zoom())
         difference.add(RealtimeMediaSourceSettings::Zoom);
+    if (torch() != that.torch())
+        difference.add(RealtimeMediaSourceSettings::Torch);
 
     return difference;
 }

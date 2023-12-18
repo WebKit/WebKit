@@ -31,12 +31,13 @@
 #include <stdio.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/CString.h>
 
 namespace JSC {
 
 class PerfLog {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PerfLog);
     WTF_MAKE_NONCOPYABLE(PerfLog);
     friend class LazyNeverDestroyed<PerfLog>;
 public:

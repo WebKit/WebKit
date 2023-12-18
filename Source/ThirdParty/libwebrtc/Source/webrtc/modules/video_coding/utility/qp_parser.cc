@@ -36,6 +36,8 @@ absl::optional<uint32_t> QpParser::Parse(VideoCodecType codec_type,
     }
   } else if (codec_type == kVideoCodecH264) {
     return h264_parsers_[spatial_idx].Parse(frame_data, frame_size);
+  } else if (codec_type == kVideoCodecH265) {
+    // TODO(bugs.webrtc.org/13485)
   }
 
   return absl::nullopt;

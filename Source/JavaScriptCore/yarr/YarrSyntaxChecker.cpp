@@ -36,13 +36,13 @@ public:
     void assertionBOL() { }
     void assertionEOL() { }
     void assertionWordBoundary(bool) { }
-    void atomPatternCharacter(UChar32) { }
+    void atomPatternCharacter(char32_t) { }
     void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
     void atomCharacterClassBegin(bool = false) { }
     void atomCharacterClassAtom(UChar) { }
     void atomCharacterClassRange(UChar, UChar) { }
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
-    void atomClassStringDisjunction(Vector<Vector<UChar32>>&) { }
+    void atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
     void atomCharacterClassSetOp(CharacterClassSetOp) { }
     void atomCharacterClassPushNested() { }
     void atomCharacterClassPopNested() { }

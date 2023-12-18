@@ -1,0 +1,9 @@
+
+
+PASS valid: created normally
+PASS valid: created using another iframe's parseHTMLUnsafe from this frame
+PASS valid: created using another iframe's parseHTMLUnsafe from that frame
+PASS invalid XML: created normally
+PASS invalid XML: created using another iframe's parseHTMLUnsafe from this frame
+PASS invalid XML: created using another iframe's parseHTMLUnsafe from that frame
+

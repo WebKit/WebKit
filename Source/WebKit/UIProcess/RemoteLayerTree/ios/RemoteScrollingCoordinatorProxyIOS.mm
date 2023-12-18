@@ -32,19 +32,23 @@
 #import "RemoteLayerTreeNode.h"
 #import "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
+#import "ScrollingTreePluginScrollingNodeIOS.h"
+#import "WKBaseScrollView.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import <UIKit/UIView.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
+#import <WebCore/ScrollingStatePluginScrollingNode.h>
 #import <WebCore/ScrollingStatePositionedNode.h>
 #import <WebCore/ScrollingStateTree.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreeOverflowScrollingNode.h>
+#import <WebCore/ScrollingTreePluginScrollingNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <tuple>
 
@@ -80,19 +84,17 @@ UIScrollView *RemoteScrollingCoordinatorProxyIOS::scrollViewForScrollingNodeID(S
 {
     auto* treeNode = scrollingTree()->nodeForID(nodeID);
 
-    if (is<ScrollingTreeOverflowScrollingNode>(treeNode)) {
-        auto* overflowScrollingNode = downcast<ScrollingTreeOverflowScrollingNode>(treeNode);
+    // All ScrollingTreeOverflowScrollingNodes are ScrollingTreeOverflowScrollingNodeIOS on iOS.
+    if (RefPtr overflowScrollingNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(treeNode))
+        return static_cast<ScrollingTreeOverflowScrollingNodeIOS*>(overflowScrollingNode.get())->scrollView();
 
-        // All ScrollingTreeOverflowScrollingNodes are ScrollingTreeOverflowScrollingNodeIOS on iOS.
-        return static_cast<ScrollingTreeOverflowScrollingNodeIOS*>(overflowScrollingNode)->scrollView();
-    }
+    // All ScrollingTreeFrameScrollingNodes are ScrollingTreeFrameScrollingNodeRemoteIOS on iOS.
+    if (RefPtr frameScrollingNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(treeNode))
+        return static_cast<ScrollingTreeFrameScrollingNodeRemoteIOS*>(frameScrollingNode.get())->scrollView();
 
-    if (is<ScrollingTreeFrameScrollingNode>(treeNode)) {
-        auto* frameScrollingNode = downcast<ScrollingTreeFrameScrollingNode>(treeNode);
-
-        // All ScrollingTreeFrameScrollingNodes are ScrollingTreeFrameScrollingNodeRemoteIOS on iOS.
-        return static_cast<ScrollingTreeFrameScrollingNodeRemoteIOS*>(frameScrollingNode)->scrollView();
-    }
+    // All ScrollingTreePluginScrollingNodes are ScrollingTreePluginScrollingNodeIOS on iOS.
+    if (RefPtr pluginScrollingNode = dynamicDowncast<ScrollingTreePluginScrollingNode>(treeNode))
+        return static_cast<ScrollingTreePluginScrollingNodeIOS*>(pluginScrollingNode.get())->scrollView();
 
     return nil;
 }
@@ -123,7 +125,7 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
 
         switch (currNode->nodeType()) {
         case ScrollingNodeType::Overflow: {
-            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(*currNode);
+            ScrollingStateOverflowScrollingNode& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(currNode);
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = PlatformLayerID { scrollingStateNode.scrollContainerLayer() };
@@ -138,7 +140,7 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
         };
         case ScrollingNodeType::MainFrame:
         case ScrollingNodeType::Subframe: {
-            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
+            ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(currNode);
 
             if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
                 auto platformLayerID = PlatformLayerID { scrollingStateNode.scrollContainerLayer() };
@@ -161,8 +163,23 @@ void RemoteScrollingCoordinatorProxyIOS::connectStateNodeLayers(ScrollingStateTr
                 scrollingStateNode.setFooterLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.footerLayer() }));
             break;
         }
+        case ScrollingNodeType::PluginScrolling: {
+            ScrollingStatePluginScrollingNode& scrollingStateNode = downcast<ScrollingStatePluginScrollingNode>(currNode);
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer)) {
+                auto platformLayerID = PlatformLayerID { scrollingStateNode.scrollContainerLayer() };
+                auto remoteLayerTreeNode = layerTreeHost.nodeForID(platformLayerID);
+                if (remoteLayerTreeNode)
+                    scrollingStateNode.setScrollContainerLayer(remoteLayerTreeNode->layer());
+            }
+
+            if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrolledContentsLayer))
+                scrollingStateNode.setScrolledContentsLayer(layerTreeHost.layerForID(PlatformLayerID { scrollingStateNode.scrolledContentsLayer() }));
+            break;
+        }
         case ScrollingNodeType::OverflowProxy:
         case ScrollingNodeType::FrameHosting:
+        case ScrollingNodeType::PluginHosting:
         case ScrollingNodeType::Fixed:
         case ScrollingNodeType::Sticky:
         case ScrollingNodeType::Positioned:
@@ -351,6 +368,18 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
 
     return activePoint;
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    m_animatedNodeLayerIDs.add(node.layerID());
+}
+
+void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    m_animatedNodeLayerIDs.remove(node.layerID());
+}
+#endif
 
 } // namespace WebKit
 

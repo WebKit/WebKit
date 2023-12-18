@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Domain is malformed!
+Blocked access to external URL http://www.localhost:8800/cookies/attributes/resources/domain-child.sub.html
 
-Harness Error (FAIL), message = Domain is malformed!
+Harness Error (TIMEOUT), message = null
 
 PASS Test cookie domain attribute parsing
 

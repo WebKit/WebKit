@@ -59,7 +59,6 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
     RetainPtr<CFDataRef> networkATSContext;
-    bool strictSecureDecodingForAllObjCEnabled { false };
     bool isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
 
@@ -83,6 +82,7 @@ struct NetworkProcessCreationParameters {
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 };
 
 } // namespace WebKit

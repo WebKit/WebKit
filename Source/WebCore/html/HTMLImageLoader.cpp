@@ -91,8 +91,10 @@ void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& 
         }
     }
 
-    if (loadError && is<HTMLObjectElement>(element()))
-        downcast<HTMLObjectElement>(element()).renderFallbackContent();
+    if (loadError) {
+        if (RefPtr objectElement = dynamicDowncast<HTMLObjectElement>(element()))
+            objectElement->renderFallbackContent();
+    }
 }
 
 }

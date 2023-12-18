@@ -24,6 +24,7 @@ import calendar
 import os
 import re
 import sys
+import time
 
 from datetime import datetime
 from webkitbugspy import User
@@ -39,8 +40,11 @@ HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBa
 
 class GitHub(Scm):
     URL_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
-    EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
     ACCEPT_HEADER = Tracker.ACCEPT_HEADER
+    KNOWN_400_MESSAGES = [
+        'No commit found for SHA',
+    ]
+    DIFF_HEADER = 'application/vnd.github.diff'
 
     class PRGenerator(Scm.PRGenerator):
         SUPPORTS_DRAFTS = True
@@ -346,11 +350,25 @@ class GitHub(Scm):
             if comment and pull_request._comments:
                 pull_request._comments.append(PullRequest.Comment(
                     author=me,
-                    timestamp=time.time(),
+                    timestamp=int(time.time()),
                     content=comment,
                 ))
 
             return pull_request
+
+        def statuses(self, pull_request):
+            statuses = self.repository.request(
+                'commits/{ref}/statuses'.format(
+                    ref=pull_request.hash,
+                )
+            )
+            for status in statuses or []:
+                yield PullRequest.Status(
+                    name=status.get('context'),
+                    url=status.get('target_url'),
+                    status=status.get('state', 'error'),
+                    description=status.get('description'),
+                )
 
 
     @classmethod
@@ -436,6 +454,9 @@ class GitHub(Scm):
         if response.status_code not in [200, 201]:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
             message = response.json().get('message') if is_json_response else ''
+            message_header = message.split(':')[0]
+            if message_header in self.KNOWN_400_MESSAGES:
+                return None
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
             if auth:
@@ -689,7 +710,7 @@ class GitHub(Scm):
                 identifier = previous.identifier
                 if commit_data['sha'] == previous.hash:
                     cached = cached[:-1]
-                else:
+                elif identifier is not None:
                     identifier -= 1
 
                 if not identifier:
@@ -762,9 +783,53 @@ class GitHub(Scm):
             raise ValueError("'{}' is not an argument recognized by git".format(argument))
         return self.commit(hash=commit_data['sha'], include_log=include_log, include_identifier=include_identifier)
 
+    def diff(self, head='HEAD', base=None, include_log=False):
+        if base:
+            commits = list(self.commits(dict(argument=base), end=dict(argument=head), include_identifier=False))
+        else:
+            commits = [self.find(head, include_identifier=False), None]
+
+        if not commits or not commits[0]:
+            sys.stderr.write('Failed to find commits required to generate diff\n')
+            return
+        commits = commits[:-1]
+
+        patch_count = 1
+        for commit in commits:
+            response = self.request('commits/{}'.format(commit.hash), headers=dict(Accept=self.DIFF_HEADER))
+            if response.status_code // 100 != 2:
+                sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(commit, response.status_code))
+                return
+
+            if include_log:
+                yield 'From {}'.format(commit.hash)
+                yield 'From: {} <{}>'.format(commit.author.name, commit.author.email)
+                yield 'Date: {}'.format(datetime.fromtimestamp(commit.timestamp).strftime('%a %b %d %H:%M:%S %Y'))
+                if len(commits) <= 1:
+                    subject = 'Subject: [PATCH]'
+                else:
+                    subject = 'Subject: [PATCH {}/{}]'.format(patch_count, len(commits))
+                for line in commit.message.splitlines():
+                    if subject is None:
+                        yield line
+                    elif line:
+                        subject = '{} {}'.format(subject, line)
+                    else:
+                        yield subject
+                        yield line
+                        subject = None
+                if subject:
+                    yield subject
+                yield '---'
+
+            for line in response.text.splitlines():
+                yield line
+
+            patch_count += 1
+
     def files_changed(self, argument=None):
         if not argument:
-            return self.modified()
+            raise ValueError('No argument provided')
         if not Commit.HASH_RE.match(argument):
             commit = self.find(argument, include_log=False, include_identifier=False)
             if not commit:

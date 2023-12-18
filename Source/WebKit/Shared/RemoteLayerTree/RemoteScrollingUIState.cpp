@@ -32,43 +32,12 @@
 
 namespace WebKit {
 
-void RemoteScrollingUIState::encode(IPC::Encoder& encoder) const
+RemoteScrollingUIState::RemoteScrollingUIState(OptionSet<RemoteScrollingUIStateChanges> changes, HashSet<WebCore::ScrollingNodeID>&& nodesWithActiveScrollSnap, HashSet<WebCore::ScrollingNodeID>&& nodesWithActiveUserScrolls, HashSet<WebCore::ScrollingNodeID>&& nodesWithActiveRubberband)
+    : m_changes(changes)
+    , m_nodesWithActiveScrollSnap(WTFMove(nodesWithActiveScrollSnap))
+    , m_nodesWithActiveUserScrolls(WTFMove(nodesWithActiveUserScrolls))
+    , m_nodesWithActiveRubberband(WTFMove(nodesWithActiveRubberband))
 {
-    encoder << m_changes;
-
-    if (m_changes.contains(Changes::ScrollSnapNodes))
-        encoder << m_nodesWithActiveScrollSnap;
-
-    if (m_changes.contains(Changes::UserScrollNodes))
-        encoder << m_nodesWithActiveUserScrolls;
-
-    if (m_changes.contains(Changes::RubberbandingNodes))
-        encoder << m_nodesWithActiveRubberband;
-}
-
-std::optional<RemoteScrollingUIState> RemoteScrollingUIState::decode(IPC::Decoder& decoder)
-{
-    RemoteScrollingUIState uiState;
-
-    if (!decoder.decode(uiState.m_changes))
-        return std::nullopt;
-
-    if (uiState.m_changes.contains(Changes::ScrollSnapNodes)) {
-        if (!decoder.decode(uiState.m_nodesWithActiveScrollSnap))
-            return std::nullopt;
-    }
-
-    if (uiState.m_changes.contains(Changes::UserScrollNodes)) {
-        if (!decoder.decode(uiState.m_nodesWithActiveUserScrolls))
-            return std::nullopt;
-    }
-
-    if (uiState.m_changes.contains(Changes::RubberbandingNodes)) {
-        if (!decoder.decode(uiState.m_nodesWithActiveRubberband))
-            return std::nullopt;
-    }
-
-    return uiState;
 }
 
 void RemoteScrollingUIState::reset()

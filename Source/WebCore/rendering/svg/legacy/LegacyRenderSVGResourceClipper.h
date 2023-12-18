@@ -22,6 +22,7 @@
 #include "LegacyRenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
 
+#include <wtf/EnumeratedArray.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -64,7 +65,7 @@ public:
 
     inline SVGClipPathElement& clipPathElement() const;
 
-    void removeAllClientsFromCache(bool markForInvalidation = true) override;
+    void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) override;
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) override;
 
     bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) override;
@@ -74,7 +75,7 @@ public:
     // objectBoundingBox ia used to compute clip path geometry when clipPathUnits="objectBoundingBox".
     // clippedContentBounds is the bounds of the content to which clipping is being applied.
     bool applyClippingToContext(GraphicsContext&, RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom = 1);
-    FloatRect resourceBoundingBox(const RenderObject&) override;
+    FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) override;
 
     RenderSVGResourceType resourceType() const override { return ClipperResourceType; }
     
@@ -92,15 +93,15 @@ private:
     ClipperData::Inputs computeInputs(const GraphicsContext&, const RenderElement&, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom);
     bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom);
     bool drawContentIntoMaskImage(ImageBuffer&, const FloatRect& objectBoundingBox, float effectiveZoom);
-    void calculateClipContentRepaintRect();
+    void calculateClipContentRepaintRect(RepaintRectCalculation);
 
-    FloatRect m_clipBoundaries;
+    EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_clipBoundaries;
     HashMap<const RenderObject*, std::unique_ptr<ClipperData>> m_clipperMap;
 };
 
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceClipper)
-static bool isType(const WebCore::RenderObject& renderer) { return renderer.isSVGResourceClipper(); }
-static bool isType(const WebCore::RenderSVGResource& resource) { return resource.resourceType() == WebCore::ClipperResourceType; }
+static bool isType(const WebCore::RenderObject& renderer) { return renderer.isLegacyRenderSVGResourceClipper(); }
+static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::ClipperResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -50,6 +50,16 @@ WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(const LChar** sourceStart, const LCh
 WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, const char* targetEnd, bool strict = true);
 WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length);
 
+// Like the other functions above, the computeUTFLengths function is strict.
+// The result can only be Success, SourceExhausted, or SourceIllegal.
+struct ComputeUTFLengthsResult {
+    ConversionResult result { ConversionResult::Success };
+    size_t lengthUTF8 { 0 };
+    size_t lengthUTF16 { 0 };
+    bool isAllASCII { false };
+};
+WTF_EXPORT_PRIVATE ComputeUTFLengthsResult computeUTFLengths(const char* sourceStart, const char* sourceEnd);
+
 // Callers of these functions must check that the lengths are the same; accordingly we omit an end argument for UTF-16 and Latin-1.
 bool equalUTF16WithUTF8(const UChar* stringInUTF16, const char* stringInUTF8, const char* stringInUTF8End);
 bool equalLatin1WithUTF8(const LChar* stringInLatin1, const char* stringInUTF8, const char* stringInUTF8End);

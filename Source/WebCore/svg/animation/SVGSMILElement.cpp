@@ -559,9 +559,9 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
     animationAttributeChanged();
 }
 
-inline Element* SVGSMILElement::eventBaseFor(const Condition& condition)
+inline RefPtr<Element> SVGSMILElement::eventBaseFor(const Condition& condition)
 {
-    return condition.m_baseID.isEmpty() ? targetElement() : treeScope().getElementById(condition.m_baseID);
+    return condition.m_baseID.isEmpty() ? RefPtr<Element> { targetElement() } : treeScope().getElementById(condition.m_baseID);
 }
 
 void SVGSMILElement::connectConditions()

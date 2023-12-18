@@ -1,0 +1,4 @@
+
+
+FAIL NavigationHistoryEntry properties after detach null is not an object (evaluating 'i_entry.sameDocument')
+

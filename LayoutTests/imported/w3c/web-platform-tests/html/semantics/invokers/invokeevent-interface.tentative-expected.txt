@@ -1,0 +1,25 @@
+
+
+PASS action is a readonly defaulting to 'auto'
+PASS invoker is readonly defaulting to null
+PASS action reflects initialized attribute
+PASS action set to undefined
+PASS action set to null
+PASS action set to false
+PASS action explicitly set to empty string
+PASS action set to true
+PASS action set to a number
+PASS action set to []
+PASS action set to [1, 2, 3]
+PASS action set to an object
+PASS action set to an object with a toString function
+PASS InvokeEventInit properties set value
+PASS InvokeEventInit properties set value 2
+PASS InvokeEventInit properties set value 3
+PASS invoker set to undefined
+PASS invoker set to null
+PASS invoker set to false
+PASS invoker set to true
+PASS invoker set to {}
+PASS invoker set to non-Element EventTarget
+

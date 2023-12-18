@@ -44,17 +44,20 @@ class WgcCaptureSession final {
   HRESULT StartCapture(const DesktopCaptureOptions& options);
 
   // Returns a frame from the local frame queue, if any are present.
-  bool GetFrame(std::unique_ptr<DesktopFrame>* output_frame);
+  bool GetFrame(std::unique_ptr<DesktopFrame>* output_frame,
+                bool source_should_be_capturable);
 
   bool IsCaptureStarted() const {
     RTC_DCHECK_RUN_ON(&sequence_checker_);
     return is_capture_started_;
   }
 
-  // We only keep 1 buffer in the internal frame pool to reduce the latency as
-  // much as possible.
+  // We keep 2 buffers in the frame pool since it results in a good compromise
+  // between latency/capture-rate and the rate at which
+  // Direct3D11CaptureFramePool.TryGetNextFrame returns NULL and we have to fall
+  // back to providing a copy from our external queue instead.
   // We make this public for tests.
-  static constexpr int kNumBuffers = 1;
+  static constexpr int kNumBuffers = 2;
 
  private:
   // Initializes `mapped_texture_` with the properties of the `src_texture`,
@@ -80,6 +83,8 @@ class WgcCaptureSession final {
   HRESULT ProcessFrame();
 
   void RemoveEventHandler();
+
+  bool FrameContentCanBeCompared();
 
   bool allow_zero_hertz() const { return allow_zero_hertz_; }
 

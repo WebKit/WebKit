@@ -74,4 +74,6 @@ private:
     std::optional<IntSize> m_sizeForDrawing;
 };
 
+TextStream& operator<<(TextStream&, DecodingMode);
+
 } // namespace WebCore

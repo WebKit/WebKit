@@ -19,6 +19,10 @@ if (rtc_include_tests) {
       "video_encoder_software_fallback_wrapper_unittest.cc",
     ]
 
+    if (rtc_use_h265) {
+      sources += [ "h265_profile_tier_level_unittest.cc" ]
+    }
+
     deps = [
       ":video_decoder_factory_template_tests",
       ":video_encoder_factory_template_tests",
@@ -35,6 +39,7 @@ if (rtc_include_tests) {
       "../../../modules/video_coding:webrtc_vp8",
       "../../../rtc_base:checks",
       "../../../rtc_base:rtc_base_tests_utils",
+      "../../../test:fake_video_codecs",
       "../../../test:field_trial",
       "../../../test:test_support",
       "../../../test:video_test_common",

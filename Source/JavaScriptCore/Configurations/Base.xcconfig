@@ -27,6 +27,7 @@ ALWAYS_SEARCH_USER_PATHS = NO;
 
 CLANG_CXX_LANGUAGE_STANDARD = c++2a;
 CLANG_CXX_LIBRARY = libc++;
+CLANG_ENABLE_EXPLICIT_MODULES = NO;
 CLANG_ENABLE_OBJC_WEAK = YES;
 CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 CLANG_WARN_BOOL_CONVERSION = YES;
@@ -155,3 +156,29 @@ WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_thin);
 
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
 WK_USE_RESTRICTED_ENTITLEMENTS = $(USE_INTERNAL_SDK);
+
+// Shared variables used for dynamic or static linking of JavaScriptCore and jsc.
+
+// Tomorrow me will be smart enough to figure out how to do this properly.
+JSC_SEC_LD_FLAGS[sdk=iphoneos*] = -weak_framework ServiceExtensionsCore;
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.0*] = ;
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.1*] = ;
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.2*] = ;
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*] = ;
+JSC_SEC_LD_FLAGS[sdk=iphoneos17.3*] = ;
+JSC_SEC_LD_FLAGS[sdk=appletv*] = ;
+JSC_SEC_LD_FLAGS[sdk=watch*] = ;
+JSC_SEC_LD_FLAGS[sdk=xr*] = ;
+
+OTHER_LDFLAGS_JAVASCRIPTCORE_DEPS = $(JSC_SEC_LD_FLAGS) -fobjc-link-runtime -licucore -framework Security;
+
+WTF_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libWTF.a;
+WTF_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/libWTF.a;
+
+BMALLOC_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libbmalloc.a;
+BMALLOC_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/libbmalloc.a;
+
+LIBPAS_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libpas.a;
+LIBPAS_ARCHIVE[config=Production] = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH)/libpas.a;
+
+LIBJAVASCRIPTCORE_ARCHIVE = $(BUILT_PRODUCTS_DIR)/libJavaScriptCore.a;

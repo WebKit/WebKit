@@ -35,6 +35,7 @@
 #include "GlyphBuffer.h"
 #include "GraphicsContextCG.h"
 #include "ImageBuffer.h"
+#include "PathCG.h"
 
 #include <CoreText/CoreText.h>
 #include <wtf/Vector.h>
@@ -71,6 +72,13 @@ static CGError drawImage(CGContextDelegateRef delegate, CGRenderingStateRef rsta
     return kCGErrorSuccess;
 }
 
+static CGError drawPath(CGContextDelegateRef delegate, CGRenderingStateRef rstate, CGGStateRef gstate, CGPathDrawingMode drawingMode, CGPathRef path)
+{
+    DrawGlyphsRecorder& recorder = *static_cast<DrawGlyphsRecorder*>(CGContextDelegateGetInfo(delegate));
+    recorder.recordDrawPath(rstate, gstate, drawingMode, path);
+    return kCGErrorSuccess;
+}
+
 UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
 {
     auto contextDelegate = adoptCF(CGContextDelegateCreate(this));
@@ -78,6 +86,7 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     CGContextDelegateSetCallback(contextDelegate.get(), deEndLayer, reinterpret_cast<CGContextDelegateCallback>(&endLayer));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::drawGlyphs));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawImage, reinterpret_cast<CGContextDelegateCallback>(&drawImage));
+    CGContextDelegateSetCallback(contextDelegate.get(), deDrawPath, reinterpret_cast<CGContextDelegateCallback>(&drawPath));
 #if HAVE(CORE_TEXT_FIX_FOR_RADAR_93925620)
     auto contextType = kCGContextTypeUnknown;
 #else
@@ -121,7 +130,7 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     if (m_originalState.dropShadow)
         m_internalContext->setDropShadow(*m_originalState.dropShadow);
     else
-        m_internalContext->clearShadow();
+        m_internalContext->clearDropShadow();
 
     m_internalContext->setTextDrawingMode(contextState.textDrawingMode());
 }
@@ -208,7 +217,7 @@ void DrawGlyphsRecorder::updateShadow(const std::optional<GraphicsDropShadow>& d
     if (dropShadow)
         m_owner.setDropShadow(*dropShadow);
     else
-        m_owner.clearShadow();
+        m_owner.clearDropShadow();
 
     m_owner.setShadowsIgnoreTransforms(shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
 }
@@ -260,9 +269,9 @@ static AdvancesAndInitialPosition computeHorizontalAdvancesFromPositions(const C
         auto nextPosition = positions[i + 1];
         auto currentPosition = positions[i];
         auto advance = CGSizeMake(nextPosition.x - currentPosition.x, nextPosition.y - currentPosition.y);
-        result.advances.uncheckedAppend(CGSizeApplyAffineTransform(advance, textMatrix));
+        result.advances.append(CGSizeApplyAffineTransform(advance, textMatrix));
     }
-    result.advances.uncheckedConstructAndAppend(CGSizeZero);
+    result.advances.constructAndAppend(CGSizeZero);
     return result;
 }
 
@@ -288,10 +297,10 @@ static AdvancesAndInitialPosition computeVerticalAdvancesFromPositions(const CGS
 
     for (size_t i = 1; i < count; ++i) {
         auto currentPosition = transformPoint(positions[i], translations[i]);
-        result.advances.uncheckedConstructAndAppend(CGSizeMake(currentPosition.x - previousPosition.x, currentPosition.y - previousPosition.y));
+        result.advances.constructAndAppend(CGSizeMake(currentPosition.x - previousPosition.x, currentPosition.y - previousPosition.y));
         previousPosition = currentPosition;
     }
-    result.advances.uncheckedAppend(CGSizeZero);
+    result.advances.append(CGSizeZero);
     return result;
 }
 
@@ -377,6 +386,48 @@ void DrawGlyphsRecorder::recordDrawImage(CGRenderingStateRef, CGGStateRef gstate
     // Undo the above y-flip to restore the context.
     m_owner.scale(FloatSize(1, -1));
     m_owner.translate(0, -(rect.size.height + 2 * rect.origin.y));
+}
+
+void DrawGlyphsRecorder::recordDrawPath(CGRenderingStateRef, CGGStateRef gstate, CGPathDrawingMode drawingMode, CGPathRef coreGraphicsPath)
+{
+    auto* ctm = CGGStateGetCTM(gstate);
+    if (!ctm)
+        return;
+    updateCTM(*ctm);
+    // The path we get has already CTM applied to it but we should serialize the non-transformed version to correctly apply line width.
+    CGAffineTransform invertTransform = CGAffineTransformInvert(*ctm);
+    auto localPath = adoptCF(CGPathCreateMutableCopyByTransformingPath(coreGraphicsPath, &invertTransform));
+    Path path { PathCG::create(WTFMove(localPath)) };
+
+    updateShadow(CGGStateGetStyle(gstate));
+
+    switch (drawingMode) {
+    case CGPathDrawingMode::kCGPathEOFill:
+        updateFillColor(CGGStateGetFillColor(gstate));
+        m_owner.setFillRule(WindRule::EvenOdd);
+        m_owner.fillPath(path);
+        break;
+    case CGPathDrawingMode::kCGPathFill:
+        updateFillColor(CGGStateGetFillColor(gstate));
+        m_owner.setFillRule(WindRule::NonZero);
+        m_owner.fillPath(path);
+        break;
+    case CGPathDrawingMode::kCGPathStroke:
+        updateStrokeColor(CGGStateGetStrokeColor(gstate));
+        m_owner.strokePath(path);
+        break;
+    case CGPathDrawingMode::kCGPathFillStroke:
+        updateStrokeColor(CGGStateGetStrokeColor(gstate));
+        updateFillColor(CGGStateGetFillColor(gstate));
+        m_owner.setFillRule(WindRule::NonZero);
+        m_owner.drawPath(path);
+        break;
+    case CGPathDrawingMode::kCGPathEOFillStroke:
+        updateStrokeColor(CGGStateGetStrokeColor(gstate));
+        m_owner.setFillRule(WindRule::EvenOdd);
+        m_owner.drawPath(path);
+        break;
+    }
 }
 
 void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)

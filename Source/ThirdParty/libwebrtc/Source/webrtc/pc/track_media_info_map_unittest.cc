@@ -202,45 +202,18 @@ TEST_F(TrackMediaInfoMapTest, SingleSenderReceiverPerTrackWithOneSsrc) {
   AddRtpSenderWithSsrcs({3}, local_video_track_.get());
   AddRtpReceiverWithSsrcs({4}, remote_video_track_.get());
   InitializeMap();
-
-  // Local audio track <-> RTP audio sender
-  ASSERT_TRUE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_THAT(*map_.GetVoiceSenderInfos(*local_audio_track_),
-              ElementsAre(&map_.voice_media_info()->senders[0]));
+  // RTP audio sender -> local audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[0]),
             local_audio_track_.get());
-
-  // Remote audio track <-> RTP audio receiver
-  EXPECT_EQ(map_.GetVoiceReceiverInfo(*remote_audio_track_),
-            &map_.voice_media_info()->receivers[0]);
+  // RTP audio receiver -> remote audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->receivers[0]),
             remote_audio_track_.get());
-
-  // Local video track <-> RTP video sender
-  ASSERT_TRUE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_THAT(*map_.GetVideoSenderInfos(*local_video_track_),
-              ElementsAre(&map_.video_media_info()->senders[0]));
+  // RTP video sender -> local video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[0]),
             local_video_track_.get());
-
-  // Remote video track <-> RTP video receiver
-  EXPECT_EQ(map_.GetVideoReceiverInfo(*remote_video_track_),
-            &map_.video_media_info()->receivers[0]);
+  // RTP video receiver -> remote video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->receivers[0]),
             remote_video_track_.get());
-}
-
-TEST_F(TrackMediaInfoMapTest, SingleSenderReceiverPerTrackWithMissingSsrc) {
-  AddRtpSenderWithSsrcs({}, local_audio_track_.get());
-  AddRtpSenderWithSsrcs({}, local_video_track_.get());
-  AddRtpReceiverWithSsrcs({}, remote_audio_track_.get());
-  AddRtpReceiverWithSsrcs({}, remote_video_track_.get());
-  InitializeMap();
-
-  EXPECT_FALSE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_FALSE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_FALSE(map_.GetVoiceReceiverInfo(*remote_audio_track_));
-  EXPECT_FALSE(map_.GetVideoReceiverInfo(*remote_video_track_));
 }
 
 TEST_F(TrackMediaInfoMapTest,
@@ -250,30 +223,16 @@ TEST_F(TrackMediaInfoMapTest,
   AddRtpSenderWithSsrcs({1}, local_video_track_.get());
   AddRtpReceiverWithSsrcs({2}, remote_video_track_.get());
   InitializeMap();
-
-  // Local audio track <-> RTP audio sender
-  ASSERT_TRUE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_THAT(*map_.GetVoiceSenderInfos(*local_audio_track_),
-              ElementsAre(&map_.voice_media_info()->senders[0]));
+  // RTP audio sender -> local audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[0]),
             local_audio_track_.get());
-
-  // Remote audio track <-> RTP audio receiver
-  EXPECT_EQ(map_.GetVoiceReceiverInfo(*remote_audio_track_),
-            &map_.voice_media_info()->receivers[0]);
+  // RTP audio receiver -> remote audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->receivers[0]),
             remote_audio_track_.get());
-
-  // Local video track <-> RTP video sender
-  ASSERT_TRUE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_THAT(*map_.GetVideoSenderInfos(*local_video_track_),
-              ElementsAre(&map_.video_media_info()->senders[0]));
+  // RTP video sender -> local video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[0]),
             local_video_track_.get());
-
-  // Remote video track <-> RTP video receiver
-  EXPECT_EQ(map_.GetVideoReceiverInfo(*remote_video_track_),
-            &map_.video_media_info()->receivers[0]);
+  // RTP video receiver -> remote video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->receivers[0]),
             remote_video_track_.get());
 }
@@ -282,18 +241,10 @@ TEST_F(TrackMediaInfoMapTest, SingleMultiSsrcSenderPerTrack) {
   AddRtpSenderWithSsrcs({1, 2}, local_audio_track_.get());
   AddRtpSenderWithSsrcs({3, 4}, local_video_track_.get());
   InitializeMap();
-
-  // Local audio track <-> RTP audio senders
-  ASSERT_TRUE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_THAT(*map_.GetVoiceSenderInfos(*local_audio_track_),
-              ElementsAre(&map_.voice_media_info()->senders[0]));
+  // RTP audio senders -> local audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[0]),
             local_audio_track_.get());
-
-  // Local video track <-> RTP video senders
-  ASSERT_TRUE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_THAT(*map_.GetVideoSenderInfos(*local_video_track_),
-              ElementsAre(&map_.video_media_info()->senders[0]));
+  // RTP video senders -> local video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[0]),
             local_video_track_.get());
 }
@@ -304,22 +255,12 @@ TEST_F(TrackMediaInfoMapTest, MultipleOneSsrcSendersPerTrack) {
   AddRtpSenderWithSsrcs({3}, local_video_track_.get());
   AddRtpSenderWithSsrcs({4}, local_video_track_.get());
   InitializeMap();
-
-  // Local audio track <-> RTP audio senders
-  ASSERT_TRUE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_THAT(*map_.GetVoiceSenderInfos(*local_audio_track_),
-              ElementsAre(&map_.voice_media_info()->senders[0],
-                          &map_.voice_media_info()->senders[1]));
+  // RTP audio senders -> local audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[0]),
             local_audio_track_.get());
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[1]),
             local_audio_track_.get());
-
-  // Local video track <-> RTP video senders
-  ASSERT_TRUE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_THAT(*map_.GetVideoSenderInfos(*local_video_track_),
-              ElementsAre(&map_.video_media_info()->senders[0],
-                          &map_.video_media_info()->senders[1]));
+  // RTP video senders -> local video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[0]),
             local_video_track_.get());
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[1]),
@@ -332,22 +273,12 @@ TEST_F(TrackMediaInfoMapTest, MultipleMultiSsrcSendersPerTrack) {
   AddRtpSenderWithSsrcs({5, 6}, local_video_track_.get());
   AddRtpSenderWithSsrcs({7, 8}, local_video_track_.get());
   InitializeMap();
-
-  // Local audio track <-> RTP audio senders
-  ASSERT_TRUE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_THAT(*map_.GetVoiceSenderInfos(*local_audio_track_),
-              ElementsAre(&map_.voice_media_info()->senders[0],
-                          &map_.voice_media_info()->senders[1]));
+  // RTP audio senders -> local audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[0]),
             local_audio_track_.get());
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[1]),
             local_audio_track_.get());
-
-  // Local video track <-> RTP video senders
-  ASSERT_TRUE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_THAT(*map_.GetVideoSenderInfos(*local_video_track_),
-              ElementsAre(&map_.video_media_info()->senders[0],
-                          &map_.video_media_info()->senders[1]));
+  // RTP video senders -> local video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[0]),
             local_video_track_.get());
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[1]),
@@ -361,30 +292,16 @@ TEST_F(TrackMediaInfoMapTest, SingleSenderReceiverPerTrackWithSsrcNotUnique) {
   AddRtpSenderWithSsrcs({2}, local_video_track_.get());
   AddRtpReceiverWithSsrcs({2}, remote_video_track_.get());
   InitializeMap();
-
-  // Local audio track <-> RTP audio senders
-  ASSERT_TRUE(map_.GetVoiceSenderInfos(*local_audio_track_));
-  EXPECT_THAT(*map_.GetVoiceSenderInfos(*local_audio_track_),
-              ElementsAre(&map_.voice_media_info()->senders[0]));
+  // RTP audio senders -> local audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->senders[0]),
             local_audio_track_.get());
-
-  // Remote audio track <-> RTP audio receiver
-  EXPECT_EQ(map_.GetVoiceReceiverInfo(*remote_audio_track_),
-            &map_.voice_media_info()->receivers[0]);
+  // RTP audio receiver -> remote audio track
   EXPECT_EQ(map_.GetAudioTrack(map_.voice_media_info()->receivers[0]),
             remote_audio_track_.get());
-
-  // Local video track <-> RTP video senders
-  ASSERT_TRUE(map_.GetVideoSenderInfos(*local_video_track_));
-  EXPECT_THAT(*map_.GetVideoSenderInfos(*local_video_track_),
-              ElementsAre(&map_.video_media_info()->senders[0]));
+  // RTP video senders -> local video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->senders[0]),
             local_video_track_.get());
-
-  // Remote video track <-> RTP video receiver
-  EXPECT_EQ(map_.GetVideoReceiverInfo(*remote_video_track_),
-            &map_.video_media_info()->receivers[0]);
+  // RTP video receiver -> remote video track
   EXPECT_EQ(map_.GetVideoTrack(map_.video_media_info()->receivers[0]),
             remote_video_track_.get());
 }
@@ -411,33 +328,5 @@ TEST_F(TrackMediaInfoMapTest, GetAttachmentIdByTrack) {
   EXPECT_EQ(absl::nullopt,
             map_.GetAttachmentIdByTrack(local_video_track_.get()));
 }
-
-// Death tests.
-// Disabled on Android because death tests misbehave on Android, see
-// base/test/gtest_util.h.
-#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-
-class TrackMediaInfoMapDeathTest : public TrackMediaInfoMapTest {
- public:
-  TrackMediaInfoMapDeathTest() : TrackMediaInfoMapTest(false) {}
-};
-
-TEST_F(TrackMediaInfoMapDeathTest, MultipleOneSsrcReceiversPerTrack) {
-  AddRtpReceiverWithSsrcs({1}, remote_audio_track_.get());
-  AddRtpReceiverWithSsrcs({2}, remote_audio_track_.get());
-  AddRtpReceiverWithSsrcs({3}, remote_video_track_.get());
-  AddRtpReceiverWithSsrcs({4}, remote_video_track_.get());
-  EXPECT_DEATH(InitializeMap(), "");
-}
-
-TEST_F(TrackMediaInfoMapDeathTest, MultipleMultiSsrcReceiversPerTrack) {
-  AddRtpReceiverWithSsrcs({1, 2}, remote_audio_track_.get());
-  AddRtpReceiverWithSsrcs({3, 4}, remote_audio_track_.get());
-  AddRtpReceiverWithSsrcs({5, 6}, remote_video_track_.get());
-  AddRtpReceiverWithSsrcs({7, 8}, remote_video_track_.get());
-  EXPECT_DEATH(InitializeMap(), "");
-}
-
-#endif  // RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 
 }  // namespace webrtc

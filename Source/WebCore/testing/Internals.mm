@@ -122,7 +122,7 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
 {
     auto* document = contextDocument();
     if (!document || !document->frame())
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
 

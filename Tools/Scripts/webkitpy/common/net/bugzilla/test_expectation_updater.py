@@ -29,14 +29,16 @@
 import argparse
 import io
 import logging
+import sys
 import zipfile
 
 import requests
+from webkitscmpy import local
 
 from webkitpy.common.host import Host
-from webkitpy.common.net.bugzilla import bugzilla
 from webkitpy.common.net.bugzilla.results_fetcher import (
     lookup_ews_results_from_bugzilla,
+    lookup_ews_results_from_repo_via_pr,
 )
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.webkit_finder import WebKitFinder
@@ -44,7 +46,15 @@ from webkitpy.layout_tests.controllers.test_result_writer import TestResultWrite
 from webkitpy.layout_tests.models import test_expectations
 
 # Buildbot status codes referenced from https://github.com/buildbot/buildbot/blob/master/master/buildbot/process/results.py
-EWS_STATECODES = {'SUCCESS': 0, 'WARNINGS': 1, 'FAILURE': 2, 'SKIPPED': 3, 'EXCEPTION': 4, 'RETRY': 5, 'CANCELLED': 6}
+EWS_STATECODES = {
+    "SUCCESS": 0,
+    "WARNINGS": 1,
+    "FAILURE": 2,
+    "SKIPPED": 3,
+    "EXCEPTION": 4,
+    "RETRY": 5,
+    "CANCELLED": 6,
+}
 
 
 _log = logging.getLogger(__name__)
@@ -52,7 +62,6 @@ _log = logging.getLogger(__name__)
 
 def configure_logging(debug=False):
     class LogHandler(logging.StreamHandler):
-
         def format(self, record):
             if record.levelno > logging.INFO:
                 return "%s: %s" % (record.levelname, record.getMessage())
@@ -67,28 +76,63 @@ def configure_logging(debug=False):
     return handler
 
 
-def argument_parser():
-    description = """Update expected.txt files from patches submitted by EWS bots on bugzilla. Given id refers to a bug id by default."""
-    parser = argparse.ArgumentParser(description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('-a', '--is-attachment-id', dest='is_bug_id', action='store_false', default=True, help='Whether the given id is a bugzilla attachment and not a bug id')
-    parser.add_argument('-b', '--bot-filter', dest='bot_filter_name', action='store', default=None, help='Only process EWS results for bots where BOT_FILTER_NAME its part of the name')
-    parser.add_argument('-d', '--debug', dest='debug', action='store_true', default=False, help='Log debug messages')
-    parser.add_argument('bugzilla_id', help='Bugzilla ID to lookup')
+def argument_parser(prog=None):
+    description = "Update test baselines from CI."
+    parser = argparse.ArgumentParser(
+        description=description,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog=prog,
+    )
+
+    parser.add_argument(
+        "-d",
+        "--debug",
+        dest="debug",
+        action="store_true",
+        default=False,
+        help="Log debug messages",
+    )
+
+    if sys.version_info >= (3, 7):
+        subparsers = parser.add_subparsers(
+            title="Subcommands", dest="subcommand", required=True
+        )
+    else:
+        subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
+
+    bugzilla_parser = subparsers.add_parser(
+        "bugzilla", help="Update from Bugzilla patch, from EWS bots"
+    )
+
+    bugzilla_parser.add_argument(
+        "-a",
+        "--is-attachment-id",
+        dest="is_bug_id",
+        action="store_false",
+        default=True,
+        help="Search by attachment id (rather than bug id)",
+    )
+    bugzilla_parser.add_argument(
+        "-b",
+        "--bot-filter",
+        dest="bot_filter_name",
+        action="store",
+        default=None,
+        help="Only process results for bots where BOT_FILTER_NAME is a substring of the bot name",
+    )
+    bugzilla_parser.add_argument("bugzilla_id", help="Bugzilla bug ID to lookup")
+
+    github_pr_parser = subparsers.add_parser(
+        "github-pr", help="Update from GitHub PR, from EWS bots"
+    )
+
     return parser
 
 
 class TestExpectationUpdater(object):
-
-    def __init__(self, host, bugzilla_id, is_bug_id=True, bot_filter_name=None, attachment_fetcher=None):
-        self.attachment_fetcher = bugzilla.Bugzilla() if attachment_fetcher is None else attachment_fetcher
-
-        self.filesystem = host.filesystem
-        self.bot_filter_name = bot_filter_name
-        self.bugzilla_id = bugzilla_id
-        self.is_bug_id = is_bug_id
-
-        self.layout_test_repository = WebKitFinder(self.filesystem).path_from_webkit_base("LayoutTests")
-
+    def __init__(self, port):
+        self.filesystem = port.host.filesystem
+        self.layout_test_repository = port.path_from_webkit_base("LayoutTests")
         self.ews_results = None
 
     def _tests_to_update(self, platform_name):
@@ -132,14 +176,20 @@ class TestExpectationUpdater(object):
                 _log.info("Updating " + test_name + " for " + platform_name + " ( REMOVED: " + expected_filename + ")")
                 self.filesystem.remove(expected_filename)
 
-    def do_update(self):
+    def fetch_from_bugzilla(
+        self, bugzilla_id, is_bug_id=True, bot_filter_name=None, attachment_fetcher=None
+    ):
         self.ews_results = lookup_ews_results_from_bugzilla(
-            self.bugzilla_id,
-            self.is_bug_id,
-            self.attachment_fetcher,
-            self.bot_filter_name,
+            bugzilla_id,
+            is_bug_id,
+            attachment_fetcher,
+            bot_filter_name,
         )
 
+    def fetch_from_github_pr(self, repository):
+        self.ews_results = lookup_ews_results_from_repo_via_pr(repository)
+
+    def do_update(self):
         if len(self.ews_results) == 0:
             if self.bot_filter_name:
                 msg = (
@@ -167,11 +217,28 @@ class TestExpectationUpdater(object):
             self._update_for_platform_specific_bot(platform_name)
 
 
-def main(_argv, _stdout, _stderr):
-    parser = argument_parser()
+def main(_argv, _stdout, _stderr, prog=None):
+    parser = argument_parser(prog=prog)
     options = parser.parse_args(_argv)
 
     configure_logging(options.debug)
 
-    updater = TestExpectationUpdater(Host(), options.bugzilla_id, options.is_bug_id, options.bot_filter_name)
+    host = Host()
+    port = host.port_factory.get()
+
+    updater = TestExpectationUpdater(port)
+
+    if options.subcommand == "bugzilla":
+        updater.fetch_from_bugzilla(
+            options.bugzilla_id, options.is_bug_id, options.bot_filter_name
+        )
+    elif options.subcommand == "github-pr":
+        repo_path = WebKitFinder(host.filesystem).webkit_base()
+        repository = local.Scm.from_path(
+            path=repo_path,
+        )
+        updater.fetch_from_github_pr(repository)
+    else:
+        raise NotImplementedError("unreachable")
+
     updater.do_update()

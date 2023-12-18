@@ -39,7 +39,7 @@ class Page;
 class RenderImageResource;
 
 template<typename T, typename Counter> class EventSender;
-using ImageEventSender = EventSender<ImageLoader, WTF::DefaultWeakPtrImpl>;
+using ImageEventSender = EventSender<ImageLoader, SingleThreadWeakPtrImpl>;
 
 enum class RelevantMutation : bool { No, Yes };
 enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };
@@ -74,7 +74,7 @@ public:
 
     // FIXME: Delete this code. beforeload event no longer exists.
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
-    bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
+    bool hasPendingActivity() const;
 
     void dispatchPendingEvent(ImageEventSender*, const AtomString& eventType);
 

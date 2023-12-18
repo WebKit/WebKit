@@ -45,9 +45,6 @@ typedef struct HBITMAP__* HBITMAP;
 #include "RefPtrCairo.h"
 #endif
 
-// We need to #define YOffset as it needs to be shared with WebKit
-#define DragLabelBorderYOffset 2
-
 namespace WebCore {
 
 class Element;
@@ -103,15 +100,20 @@ public:
     WEBCORE_EXPORT DragImage(DragImage&&);
     WEBCORE_EXPORT ~DragImage();
 
+    DragImage(std::optional<TextIndicatorData>&& indicatorData, std::optional<Path>&& visiblePath)
+        : m_indicatorData(WTFMove(indicatorData))
+        , m_visiblePath(WTFMove(visiblePath))
+    { }
+
     WEBCORE_EXPORT DragImage& operator=(DragImage&&);
 
     void setIndicatorData(const TextIndicatorData& data) { m_indicatorData = data; }
     bool hasIndicatorData() const { return !!m_indicatorData; }
-    std::optional<TextIndicatorData> indicatorData() const { return m_indicatorData; }
+    const std::optional<TextIndicatorData>& indicatorData() const { return m_indicatorData; }
 
     void setVisiblePath(const Path& path) { m_visiblePath = path; }
     bool hasVisiblePath() const { return !!m_visiblePath; }
-    std::optional<Path> visiblePath() const { return m_visiblePath; }
+    const std::optional<Path>& visiblePath() const { return m_visiblePath; }
 
     explicit operator bool() const { return !!m_dragImageRef; }
     DragImageRef get() const { return m_dragImageRef; }

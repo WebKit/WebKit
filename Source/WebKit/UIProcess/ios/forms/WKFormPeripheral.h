@@ -29,6 +29,7 @@
 @protocol WKFormPeripheral
 - (BOOL)isEditing;
 - (void)beginEditing;
+- (void)updateEditing;
 - (void)endEditing;
 - (UIView *)assistantView;
 @optional
@@ -39,6 +40,7 @@
 @protocol WKFormControl
 - (UIView *)controlView;
 - (void)controlBeginEditing;
+- (void)controlUpdateEditing;
 - (void)controlEndEditing;
 @optional
 - (BOOL)controlHandleKeyEvent:(UIEvent *)event;

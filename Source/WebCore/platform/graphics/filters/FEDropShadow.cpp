@@ -29,13 +29,13 @@
 
 namespace WebCore {
 
-Ref<FEDropShadow> FEDropShadow::create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
+Ref<FEDropShadow> FEDropShadow::create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace colorSpace)
 {
-    return adoptRef(*new FEDropShadow(stdX, stdY, dx, dy, shadowColor, shadowOpacity));
+    return adoptRef(*new FEDropShadow(stdX, stdY, dx, dy, shadowColor, shadowOpacity, colorSpace));
 }
 
-FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
-    : FilterEffect(FilterEffect::Type::FEDropShadow)
+FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace colorSpace)
+    : FilterEffect(FilterEffect::Type::FEDropShadow, colorSpace)
     , m_stdX(stdX)
     , m_stdY(stdY)
     , m_dx(dx)

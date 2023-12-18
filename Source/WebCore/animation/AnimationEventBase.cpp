@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AnimationEventBase.h"
 
+#include "ScriptExecutionContext.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>

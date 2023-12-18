@@ -466,11 +466,11 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
     RELEASE_ASSERT(canCurrentThreadAccessThreadLocalData(m_thread) || shouldSuppressThreadSafetyCheck());
-    bool timerHasBeenDeleted = std::isnan(m_unalignedNextFireTime);
+    bool timerHasBeenDeleted = m_unalignedNextFireTime.isNaN();
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!timerHasBeenDeleted);
 
     if (m_unalignedNextFireTime != newTime) {
-        RELEASE_ASSERT(!std::isnan(newTime));
+        RELEASE_ASSERT(!newTime.isNaN());
         m_unalignedNextFireTime = newTime;
     }
 
@@ -518,7 +518,7 @@ Seconds TimerBase::nextUnalignedFireInterval() const
 {
     ASSERT(isActive());
     auto result = std::max(m_unalignedNextFireTime - MonotonicTime::now(), 0_s);
-    RELEASE_ASSERT(std::isfinite(result));
+    RELEASE_ASSERT(result.isFinite());
     return result;
 }
 

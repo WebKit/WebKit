@@ -239,7 +239,7 @@ static Vector<unsigned, 128> offsetMapping(const String& text)
 
     Vector<unsigned, 128> offsets;
     SurrogatePairAwareTextIterator iterator(text.characters16(), 0, text.length(), text.length());
-    UChar32 character;
+    char32_t character;
     unsigned clusterLength = 0;
     unsigned i;
     for (i = 0; iterator.consume(character, clusterLength); iterator.advance(clusterLength), ++i) {

@@ -26,6 +26,8 @@
 #pragma once
 
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
+#import <wtf/HashSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -74,12 +76,13 @@ public:
     static bool isValidDepthStencilCopySource(WGPUTextureFormat, WGPUTextureAspect);
     static bool isValidDepthStencilCopyDestination(WGPUTextureFormat, WGPUTextureAspect);
     static bool validateLinearTextureData(const WGPUTextureDataLayout&, uint64_t, WGPUTextureFormat, WGPUExtent3D);
-    static MTLTextureUsage usage(WGPUTextureUsageFlags);
+    static MTLTextureUsage usage(WGPUTextureUsageFlags, WGPUTextureFormat);
     static MTLPixelFormat pixelFormat(WGPUTextureFormat);
     static std::optional<MTLPixelFormat> depthOnlyAspectMetalFormat(WGPUTextureFormat);
     static std::optional<MTLPixelFormat> stencilOnlyAspectMetalFormat(WGPUTextureFormat);
     static WGPUTextureFormat removeSRGBSuffix(WGPUTextureFormat);
     static std::optional<WGPUTextureFormat> resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
+    static bool isCompressedFormat(WGPUTextureFormat);
 
     WGPUExtent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
@@ -97,13 +100,18 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
+    void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice);
+    bool isDestroyed() const;
+    static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
+
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
     Texture(Device&);
 
     std::optional<WGPUTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
     uint32_t arrayLayerCount() const;
-    bool validateCreateView(const WGPUTextureViewDescriptor&) const;
+    NSString* errorValidatingTextureViewCreation(const WGPUTextureViewDescriptor&) const;
 
     id<MTLTexture> m_texture { nil };
 
@@ -119,6 +127,10 @@ private:
     const Vector<WGPUTextureFormat> m_viewFormats;
 
     const Ref<Device> m_device;
+    using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    ClearedToZeroContainer m_clearedToZero;
+    bool m_destroyed { false };
 };
 
 } // namespace WebGPU

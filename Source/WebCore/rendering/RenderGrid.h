@@ -47,7 +47,7 @@ public:
     LayoutUnit distributionOffset;
 };
 
-enum GridAxisPosition {GridAxisStart, GridAxisEnd, GridAxisCenter};
+enum class GridAxisPosition : uint8_t { GridAxisStart, GridAxisEnd, GridAxisCenter };
 
 class RenderGrid final : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderGrid);
@@ -98,18 +98,18 @@ public:
     bool isSubgrid(GridTrackSizingDirection) const;
     bool isSubgridRows() const
     {
-        return isSubgrid(ForRows);
+        return isSubgrid(GridTrackSizingDirection::ForRows);
     }
     bool isSubgridColumns() const
     {
-        return isSubgrid(ForColumns);
+        return isSubgrid(GridTrackSizingDirection::ForColumns);
     }
     bool isSubgridInParentDirection(GridTrackSizingDirection parentDirection) const;
 
     // Returns true if this grid is inheriting subgridded tracks for
     // the given direction from the specified ancestor. This handles
     // nested subgrids, where ancestor may not be our direct parent.
-    bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor);
+    bool isSubgridOf(GridTrackSizingDirection, const RenderGrid& ancestor) const;
 
     bool isMasonry() const;
     bool isMasonry(GridTrackSizingDirection) const;
@@ -173,7 +173,7 @@ private:
 
     static bool itemGridAreaIsWithinImplicitGrid(const GridArea& area, unsigned gridAxisLinesCount, GridTrackSizingDirection gridAxisDirection)
     {
-        auto itemSpan = gridAxisDirection == ForColumns ? area.columns : area.rows;
+        auto itemSpan = gridAxisDirection == GridTrackSizingDirection::ForColumns ? area.columns : area.rows;
         return itemSpan.startLine() <  gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
     }
 
@@ -232,7 +232,7 @@ private:
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
     std::optional<LayoutUnit> firstLineBaseline() const final;
     std::optional<LayoutUnit> lastLineBaseline() const final;
-    WeakPtr<RenderBox> getBaselineChild(ItemPosition alignment) const;
+    SingleThreadWeakPtr<RenderBox> getBaselineChild(ItemPosition alignment) const;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const final;
     bool isInlineBaselineAlignedChild(const RenderBox&) const;
 

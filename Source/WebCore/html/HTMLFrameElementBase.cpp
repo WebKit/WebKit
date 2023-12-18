@@ -97,13 +97,21 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
         frameName = getIdAttribute();
 
-    if (shouldLoadFrameLazily()) {
-        parentFrame->loader().subframeLoader().createFrameIfNecessary(*this, frameName);
-        return;
-    }
+    auto completeURL = document().completeURL(m_frameURL);
+    auto finishOpeningURL = [this, weakThis = WeakPtr { *this }, frameName, lockHistory, lockBackForwardList, parentFrame = WTFMove(parentFrame), completeURL] {
+        if (!weakThis)
+            return;
+        Ref protectedThis { *this };
+        if (shouldLoadFrameLazily()) {
+            parentFrame->loader().subframeLoader().createFrameIfNecessary(protectedThis.get(), frameName);
+            return;
+        }
 
-    document().willLoadFrameElement(document().completeURL(m_frameURL));
-    parentFrame->loader().subframeLoader().requestFrame(*this, m_frameURL, frameName, lockHistory, lockBackForwardList);
+        document().willLoadFrameElement(completeURL);
+        parentFrame->loader().subframeLoader().requestFrame(*this, m_frameURL, frameName, lockHistory, lockBackForwardList);
+    };
+
+    document().quirks().triggerOptionalStorageAccessIframeQuirk(completeURL, WTFMove(finishOpeningURL));
 }
 
 void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -161,8 +169,8 @@ void HTMLFrameElementBase::didFinishInsertingNode()
 void HTMLFrameElementBase::didAttachRenderers()
 {
     if (RenderWidget* part = renderWidget()) {
-        if (RefPtr frame = dynamicDowncast<LocalFrame>(contentFrame()))
-            part->setWidget(frame->view());
+        if (RefPtr frame = contentFrame())
+            part->setWidget(frame->virtualView());
     }
 }
 

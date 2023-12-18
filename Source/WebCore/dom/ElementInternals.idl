@@ -44,6 +44,8 @@
 
     readonly attribute NodeList labels;
 
+    [EnabledBySetting=CustomStateSetEnabled, SameObject] readonly attribute CustomStateSet states;
+
     [Reflect, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? role;
     [Reflect=aria_activedescendant, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute Element? ariaActiveDescendantElement;
     [Reflect=aria_atomic, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaAtomic;

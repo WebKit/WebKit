@@ -1,7 +1,8 @@
 
-PASS e.style['word-break'] = "auto" should set the property value
 PASS e.style['word-break'] = "normal" should set the property value
-PASS e.style['word-break'] = "keep-all" should set the property value
 PASS e.style['word-break'] = "break-all" should set the property value
+PASS e.style['word-break'] = "keep-all" should set the property value
+FAIL e.style['word-break'] = "manual" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['word-break'] = "auto-phrase" should set the property value
 PASS e.style['word-break'] = "break-word" should set the property value
 

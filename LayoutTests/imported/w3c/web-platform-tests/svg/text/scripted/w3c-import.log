@@ -14,4 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getextentofchar.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getrotationofchar.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getstartpositionofchar-dominant-baseline.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/getsubstringlength-emoji-ligatures.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/lengthadjust.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/reattach-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textlength-inconsistent.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/textpath-textlength-text-anchor-001.tentative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/text/scripted/transform-dynamic-update.html

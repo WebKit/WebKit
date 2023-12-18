@@ -116,6 +116,7 @@ class GraphicsLayerFactory;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLMediaElement;
+class HTMLSelectElement;
 class HTMLVideoElement;
 class HitTestResult;
 class IntRect;
@@ -153,6 +154,8 @@ enum class CookieConsentDecisionResult : uint8_t;
 enum class ModalContainerControlType : uint8_t;
 enum class ModalContainerDecision : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
+
+enum class DidFilterLinkDecoration : bool { No, Yes };
 
 class ChromeClient {
 public:
@@ -205,6 +208,9 @@ public:
 
     virtual void closeWindow() = 0;
 
+    virtual void rootFrameAdded(const LocalFrame&) = 0;
+    virtual void rootFrameRemoved(const LocalFrame&) = 0;
+
     virtual void runJavaScriptAlert(LocalFrame&, const String&) = 0;
     virtual bool runJavaScriptConfirm(LocalFrame&, const String&) = 0;
     virtual bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result) = 0;
@@ -225,6 +231,9 @@ public:
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
+#if PLATFORM(IOS_FAMILY)
+    virtual void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const = 0;
+#endif
 
     virtual void didFinishLoadingImageForElement(HTMLImageElement&) = 0;
 
@@ -359,6 +368,7 @@ public:
     virtual void elementDidRefocus(Element&, const FocusOptions&) { }
 
     virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
+    virtual void focusedSelectElementDidChangeOptions(const HTMLSelectElement&) { }
 
     virtual bool shouldPaintEntireContents() const { return false; }
     virtual bool hasStablePageScaleFactor() const { return true; }
@@ -555,14 +565,17 @@ public:
     virtual void handlePDFServiceClick(const IntPoint&, HTMLAttachmentElement&) { }
 #endif
 
-    virtual URL applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger) const { return url; }
+    virtual std::pair<URL, DidFilterLinkDecoration> applyLinkDecorationFilteringWithResult(const URL& url, LinkDecorationFilteringTrigger) const { return { url, DidFilterLinkDecoration::No }; };
+    URL applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger) const { return applyLinkDecorationFilteringWithResult(url, trigger).first; }
     virtual URL allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const { return url; }
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
 
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
-    virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { };
+    virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { }
+
+    virtual void performSwitchHapticFeedback() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }
@@ -581,11 +594,9 @@ public:
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
-#if ENABLE(TRACKING_PREVENTION)
     virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, LocalFrame&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame&, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler) { completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, WTFMove(topFrameDomain), WTFMove(subFrameDomain) }); }
     virtual bool hasPageLevelStorageAccess(const RegistrableDomain& /*topLevelDomain*/, const RegistrableDomain& /*resourceDomain*/) const { return false; }
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     virtual void shouldAllowDeviceOrientationAndMotionAccess(LocalFrame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }

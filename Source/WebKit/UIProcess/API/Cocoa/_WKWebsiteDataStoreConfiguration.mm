@@ -714,20 +714,12 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
 
 - (BOOL)_shouldAcceptInsecureCertificatesForWebSockets
 {
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    return _configuration->shouldAcceptInsecureCertificatesForWebSockets();
-#else
     return false;
-#endif
 }
 
 - (void)_setShouldAcceptInsecureCertificatesForWebSockets:(BOOL)accept
 {
-#if !HAVE(NSURLSESSION_WEBSOCKET)
-    _configuration->setShouldAcceptInsecureCertificatesForWebSockets(accept);
-#else
     UNUSED_PARAM(accept);
-#endif
 }
 
 - (void)setProxyConfiguration:(NSDictionary *)configuration

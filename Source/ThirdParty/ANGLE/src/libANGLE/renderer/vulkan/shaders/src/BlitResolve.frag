@@ -7,6 +7,8 @@
 
 #version 450 core
 
+#extension GL_GOOGLE_include_directive : require
+
 #define MAKE_SRC_RESOURCE(prefix, type) prefix ## type
 
 #if BlitColorFloat
@@ -57,8 +59,6 @@
 #extension GL_ARB_shader_stencil_export : require
 #endif
 
-#define MAKE_SRC_RESOURCE(prefix, type) prefix ## type
-
 #define DEPTH_SRC_RESOURCE(type) type
 #define STENCIL_SRC_RESOURCE(type) MAKE_SRC_RESOURCE(u, type)
 
@@ -96,22 +96,6 @@
 
 #endif  // IsResolve
 
-layout(push_constant) uniform PushConstants {
-    // Translation from source to destination coordinates.
-    CoordType offset;
-    vec2 stretch;
-    vec2 invSrcExtent;
-    int srcLayer;
-    int samples;
-    float invSamples;
-    // Mask to output only to color attachments that are actually present.
-    int outputMask;
-    // Flip control.
-    bool flipX;
-    bool flipY;
-    bool rotateXY;
-} params;
-
 #if IsBlitColor
 layout(set = 0, binding = 0) uniform COLOR_SRC_RESOURCE(SRC_RESOURCE_NAME) color;
 
@@ -135,54 +119,11 @@ layout(set = 0, binding = 1) uniform STENCIL_SRC_RESOURCE(SRC_RESOURCE_NAME) ste
 layout(set = 0, binding = 2) uniform sampler blitSampler;
 #endif
 
+#include "BlitResolve.inc"
+
 void main()
 {
-    // Assume only one direction; x.  We are blitting from source to destination either flipped or
-    // not, with a stretch factor of T.  If resolving, T == 1.  Note that T here is:
-    //
-    //     T = SrcWidth / DstWidth
-    //
-    // Assume the blit offset in source is S and in destination D.  If flipping, S has the
-    // coordinates of the opposite size of the rectangle.  In this shader, we have the fragment
-    // coordinates, X, which is a point in the destination buffer.  We need to map this to the
-    // source buffer to know where to sample from.
-    //
-    // If there's no flipping:
-    //
-    //     S Y             D    X
-    //     +-x----+   ->   +----x-----------+
-    //
-    //        Y = S + (X - D) * T
-    //     => Y = TX - (DT - S)
-    //
-    // If there's flipping:
-    //
-    //          Y S        D    X
-    //     +----x-+   ->   +----x-----------+
-    //
-    //        Y = S - (X - D) * T
-    //     => Y = -(TX - (DT + S))
-    //
-    // The above can be implemented as:
-    //
-    //     !Flip: Y = TX - O      where O = DT-S
-    //      Flip: Y = -(TX - O)   where O = DT+S
-    //
-    // Note that T is params.stretch and O is params.offset.
-
-    CoordType srcImageCoords = CoordType(gl_FragCoord.xy);  // X
-#if !IsResolve
-    srcImageCoords *= params.stretch;                       // TX
-#endif
-    srcImageCoords -= params.offset;                        // TX - O
-
-    // If flipping, negate the coordinates.
-    if (params.flipX)
-        srcImageCoords.x = -srcImageCoords.x;
-    if (params.flipY)
-        srcImageCoords.y = -srcImageCoords.y;
-    if (params.rotateXY)
-        srcImageCoords.xy = srcImageCoords.yx;
+    CoordType srcImageCoords = getSrcImageCoords();
 
 #if IsBlitColor
 #if IsResolve
@@ -201,40 +142,7 @@ void main()
     ColorType colorValue = COLOR_TEXEL_FETCH(color, srcImageCoords, 0);
 #endif
 
-    // Note: not exporting to render targets that are not present optimizes the number of export
-    // instructions, which would have otherwise been a likely bottleneck.
-    if ((params.outputMask & (1 << 0)) != 0)
-    {
-        colorOut0 = colorValue;
-    }
-    if ((params.outputMask & (1 << 1)) != 0)
-    {
-        colorOut1 = colorValue;
-    }
-    if ((params.outputMask & (1 << 2)) != 0)
-    {
-        colorOut2 = colorValue;
-    }
-    if ((params.outputMask & (1 << 3)) != 0)
-    {
-        colorOut3 = colorValue;
-    }
-    if ((params.outputMask & (1 << 4)) != 0)
-    {
-        colorOut4 = colorValue;
-    }
-    if ((params.outputMask & (1 << 5)) != 0)
-    {
-        colorOut5 = colorValue;
-    }
-    if ((params.outputMask & (1 << 6)) != 0)
-    {
-        colorOut6 = colorValue;
-    }
-    if ((params.outputMask & (1 << 7)) != 0)
-    {
-        colorOut7 = colorValue;
-    }
+    broadcastColor(colorValue);
 #endif  // IsBlitColor
 
     // Note: always resolve depth/stencil using sample 0.  GLES3 gives us freedom in choosing how

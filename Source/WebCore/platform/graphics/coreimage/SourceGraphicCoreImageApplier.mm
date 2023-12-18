@@ -29,7 +29,6 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterImage.h"
-#import "IOSurfaceImageBuffer.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CIFilter.h>
 #import <CoreImage/CoreImage.h>
@@ -45,8 +44,8 @@ bool SourceGraphicCoreImageApplier::apply(const Filter&, const FilterImageVector
         return false;
 
     RetainPtr<CIImage> image;
-    if (is<IOSurfaceImageBuffer>(*sourceImage))
-        image = [CIImage imageWithIOSurface:downcast<IOSurfaceImageBuffer>(*sourceImage).surface().surface()];
+    if (auto surface = sourceImage->surface())
+        image = [CIImage imageWithIOSurface:surface->surface()];
     else
         image = [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
 

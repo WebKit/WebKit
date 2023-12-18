@@ -138,11 +138,9 @@ std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(WebPagePr
 #endif
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     bool shouldBlockCookies = networkStorageSession()->shouldBlockCookies(request, frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
     if (shouldBlockCookies)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
-#endif
 
     return makeUnique<WebSocketTask>(channel, request, soupSession(), soupMessage.get(), protocol);
 }

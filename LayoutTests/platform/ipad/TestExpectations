@@ -57,7 +57,7 @@ webkit.org/b/194234 media/modern-media-controls/media-documents/background-color
 
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
 
-# webkit.org/b/237689 These tests are constantly failing on iPad 
+# webkit.org/b/237689 These tests are constantly failing on iPad
 webkit.org/b/237689 svg/filters/big-height-filter.svg [ Failure ]
 webkit.org/b/237689 svg/filters/big-sized-off-viewport-filter.svg [ Failure ]
 webkit.org/b/237689 svg/filters/big-width-filter.svg [ Failure ]
@@ -93,8 +93,8 @@ webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
 
-media/media-source/media-managedmse-airplay.html [ Fail ] # This test must fail on all platform but iPhone.
 http/tests/media/media-source/mediasource-rvfc.html [ Pass ]
+media/media-source/media-managedmse-resume-after-stall.html [ Pass ]
 
 webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
 
@@ -109,7 +109,6 @@ webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
 # These fail due to color space issues in the specific iPad simulator used <rdar://84527732>
 webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
 webkit.org/b/292090 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
-webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
 webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
 webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
 webkit.org/b/292090 media/video-canvas-createPattern.html [ Failure ]

@@ -31,9 +31,7 @@
 // clang-format off
 /*This is mechanically generated code*/
 #include <stdlib.h>
-
-typedef struct { int x, y; } xy;
-typedef unsigned char byte;
+#include "fast.h"
 
 int aom_fast9_corner_score(const byte* p, const int pixel[], int bstart)
 {
@@ -2988,7 +2986,7 @@ static void make_offsets(int pixel[], int row_stride)
 
 
 
-int* aom_fast9_score(const byte* i, int stride, xy* corners, int num_corners, int b)
+int* aom_fast9_score(const byte* i, int stride, const xy* corners, int num_corners, int b)
 {
   int* scores = (int*)malloc(sizeof(int)* num_corners);
   int n;
@@ -5927,8 +5925,13 @@ xy* aom_fast9_detect(const byte* im, int xsize, int ysize, int stride, int b, in
       if(num_corners == rsize)
       {
         rsize*=2;
-        ret_corners = (xy*)realloc(ret_corners, sizeof(xy)*rsize);
-        if(!ret_corners) return NULL;
+        xy* new_ret_corners = (xy*)realloc(ret_corners, sizeof(xy)*rsize);
+        if(!new_ret_corners)
+        {
+          free(ret_corners);
+          return NULL;
+        }
+        ret_corners = new_ret_corners;
       }
       ret_corners[num_corners].x = x;
       ret_corners[num_corners].y = y;

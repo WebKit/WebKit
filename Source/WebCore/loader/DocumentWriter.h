@@ -71,6 +71,7 @@ public:
 private:
     Ref<Document> createDocument(const URL&, ScriptExecutionContextIdentifier);
     void clear();
+    RefPtr<DocumentParser> protectedParser() const;
 
     WeakPtr<LocalFrame> m_frame;
 

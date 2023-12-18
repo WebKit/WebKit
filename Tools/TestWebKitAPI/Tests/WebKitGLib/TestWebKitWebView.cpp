@@ -731,14 +731,6 @@ static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
     g_assert_false(webkit_web_view_can_show_mime_type(test->m_webView, "text/vcard"));
     g_assert_false(webkit_web_view_can_show_mime_type(test->m_webView, "application/zip"));
     g_assert_false(webkit_web_view_can_show_mime_type(test->m_webView, "application/octet-stream"));
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    // Plugins are only supported when enabled.
-    webkit_web_context_set_additional_plugins_directory(webkit_web_view_get_context(test->m_webView), WEBKIT_TEST_PLUGIN_DIR);
-    g_assert_true(webkit_web_view_can_show_mime_type(test->m_webView, "application/x-webkit-test-netscape"));
-    webkit_settings_set_enable_plugins(webkit_web_view_get_settings(test->m_webView), FALSE);
-    g_assert_false(webkit_web_view_can_show_mime_type(test->m_webView, "application/x-webkit-test-netscape"));
-#endif
 }
 
 #if PLATFORM(GTK)

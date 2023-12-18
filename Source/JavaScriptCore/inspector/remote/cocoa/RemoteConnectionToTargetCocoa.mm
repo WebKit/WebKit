@@ -164,7 +164,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
 
     auto targetIdentifier = this->targetIdentifier().value_or(0);
 
-    dispatchAsyncOnTarget([this, targetIdentifier, isAutomaticInspection, automaticallyPause, strongThis = Ref { *this }]() {
+    dispatchAsyncOnTarget([this, targetIdentifier, isAutomaticInspection, automaticallyPause, protectedThis = Ref { *this }]() {
         Locker locker { m_targetMutex };
 
         if (!m_target || !m_target->remoteControlAllowed()) {
@@ -202,7 +202,7 @@ void RemoteConnectionToTarget::close()
     if (auto* automationTarget = dynamicDowncast<RemoteAutomationTarget>(m_target))
         automationTarget->setIsPendingTermination();
     
-    dispatchAsyncOnTarget([this, targetIdentifier, strongThis = Ref { *this }]() {
+    dispatchAsyncOnTarget([this, targetIdentifier, protectedThis = Ref { *this }]() {
         Locker locker { m_targetMutex };
         if (m_target) {
             if (m_connected)
@@ -217,7 +217,7 @@ void RemoteConnectionToTarget::close()
 
 void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
 {
-    dispatchAsyncOnTarget([this, strongMessage = retainPtr(message), strongThis = Ref { *this }]() {
+    dispatchAsyncOnTarget([this, strongMessage = retainPtr(message), protectedThis = Ref { *this }]() {
         RemoteControllableTarget* target = nullptr;
         {
             Locker locker { m_targetMutex };

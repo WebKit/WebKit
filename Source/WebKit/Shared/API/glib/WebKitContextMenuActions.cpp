@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitContextMenuActions.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "WebKitContextMenuActionsPrivate.h"
 #include <WebCore/LocalizedStrings.h>
 #include <wtf/text/WTFString.h>
@@ -61,7 +62,7 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagCopyImageToClipboard;
 #if PLATFORM(GTK)
     case WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD:
-        return ContextMenuItemTagCopyImageUrlToClipboard;
+        return ContextMenuItemTagCopyImageURLToClipboard;
 #endif
     case WEBKIT_CONTEXT_MENU_ACTION_OPEN_FRAME_IN_NEW_WINDOW:
         return ContextMenuItemTagOpenFrameInNewWindow;
@@ -164,7 +165,7 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
     case ContextMenuItemTagCopyImageToClipboard:
         return WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD;
 #if PLATFORM(GTK)
-    case ContextMenuItemTagCopyImageUrlToClipboard:
+    case ContextMenuItemTagCopyImageURLToClipboard:
         return WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD;
 #endif
     case ContextMenuItemTagOpenFrameInNewWindow:
@@ -267,7 +268,7 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagCopyImageToClipboard();
 #if PLATFORM(GTK)
     case WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD:
-        return contextMenuItemTagCopyImageUrlToClipboard();
+        return contextMenuItemTagCopyImageURLToClipboard();
 #endif
     case WEBKIT_CONTEXT_MENU_ACTION_OPEN_FRAME_IN_NEW_WINDOW:
         return contextMenuItemTagOpenFrameInNewWindow();
@@ -353,3 +354,5 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
 
     return String();
 }
+
+#endif // ENABLE(CONTEXT_MENUS)

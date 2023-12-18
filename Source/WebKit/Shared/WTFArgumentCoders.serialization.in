@@ -22,7 +22,7 @@
 
 webkit_platform_headers: "StreamConnectionEncoder.h"
 
-[WebKitPlatform] class WTF::URL {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::URL {
     String string()
 }
 
@@ -47,6 +47,11 @@ webkit_platform_headers: "StreamConnectionEncoder.h"
 header: <wtf/text/AtomString.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::AtomString {
     String string()
+}
+
+header: <wtf/CheckedRef.h>
+[CustomHeader, Nested] class WTF::CanMakeCheckedPtr {
+    [NotSerialized] uint32_t ptrCount();
 }
 
 [WebKitPlatform] class WTF::UUID {
@@ -100,11 +105,11 @@ template: enum class WebKit::ShapeDetectionIdentifierType
 template: enum class WebKit::StorageAreaImplIdentifierType
 template: enum class WebKit::StorageAreaMapIdentifierType
 template: enum class WebKit::StorageNamespaceIdentifierType
-template: enum class WebKit::TrackPrivateRemoteIdentifierType
 template: enum class WebKit::WCLayerTreeHostIdentifierType
 template: enum class WebKit::WebExtensionControllerIdentifierType
 template: enum class WebKit::XRDeviceIdentifierType
 template: struct WebCore::AttributedStringTextListIDType
+template: struct WebCore::AttributedStringTextTableBlockIDType
 template: struct WebCore::AttributedStringTextTableIDType
 template: struct WebCore::BackForwardItemIdentifierType
 template: struct WebCore::DictationContextType
@@ -132,6 +137,7 @@ template: struct WebKit::NetworkResourceLoadIdentifierType
 template: struct WebKit::PDFPluginIdentifierType
 template: struct WebKit::PageGroupIdentifierType
 template: struct WebKit::RemoteAudioDestinationIdentifierType
+template: struct WebKit::RemoteImageBufferSetIdentifierType
 template: struct WebKit::TapIdentifierType
 template: struct WebKit::TextCheckerRequestType
 template: struct WebKit::UserContentControllerIdentifierType

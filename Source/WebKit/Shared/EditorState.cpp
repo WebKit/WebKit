@@ -97,6 +97,8 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
             ts.dumpProperty("insideFixedPosition", editorState.postLayoutData->insideFixedPosition);
         if (editorState.postLayoutData->caretColor.isValid())
             ts.dumpProperty("caretColor", editorState.postLayoutData->caretColor);
+        if (editorState.postLayoutData->hasCaretColorAuto)
+            ts.dumpProperty("hasCaretColorAuto", editorState.postLayoutData->hasCaretColorAuto);
 #endif
 #if PLATFORM(MAC)
         if (editorState.postLayoutData->selectionBoundingRect != IntRect())
@@ -142,6 +144,35 @@ TextStream& operator<<(TextStream& ts, const EditorState& editorState)
 #endif
     }
     return ts;
+}
+
+void EditorState::clipOwnedRectExtentsToNumericLimits()
+{
+    auto sanitizePostLayoutData = [](auto& postLayoutData) {
+#if PLATFORM(MAC)
+        postLayoutData.selectionBoundingRect = postLayoutData.selectionBoundingRect.toRectWithExtentsClippedToNumericLimits();
+#else
+        UNUSED_PARAM(postLayoutData);
+#endif
+    };
+    if (hasPostLayoutData())
+        sanitizePostLayoutData(*postLayoutData);
+
+    auto sanitizeVisualData = [](auto& visualData) {
+#if PLATFORM(IOS_FAMILY)
+        visualData.selectionClipRect = visualData.selectionClipRect.toRectWithExtentsClippedToNumericLimits();
+        visualData.caretRectAtEnd = visualData.caretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
+        visualData.markedTextCaretRectAtStart = visualData.markedTextCaretRectAtStart.toRectWithExtentsClippedToNumericLimits();
+        visualData.markedTextCaretRectAtEnd = visualData.markedTextCaretRectAtEnd.toRectWithExtentsClippedToNumericLimits();
+#endif
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+        visualData.caretRectAtStart = visualData.caretRectAtStart.toRectWithExtentsClippedToNumericLimits();
+#else
+        UNUSED_PARAM(visualData);
+#endif
+    };
+    if (hasVisualData())
+        sanitizeVisualData(*visualData);
 }
 
 } // namespace WebKit

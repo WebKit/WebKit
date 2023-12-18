@@ -768,6 +768,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ConstructForwardVarargs:
     case CallDirectEval:
     case CallWasm:
+    case CallCustomAccessorGetter:
+    case CallCustomAccessorSetter:
     case ToPrimitive:
     case ToPropertyKey:
     case InByVal:
@@ -1500,7 +1502,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         unsigned identifierNumber = node->storageAccessData().identifierNumber;
         AbstractHeap heap(NamedProperties, identifierNumber);
         read(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node));
+
+        // Since LICM might break the uniqueness assumption of HeapLocation for
+        // *byOffset nodes. Then, the HeapLocation constructor with an extra state
+        // is introduced and applied in this phase in order to resolve the potential
+        // HeapLocation collisions for *byteOffset nodes after LICM phase. Note
+        // that the constructor with an extra state should be used only after LICM
+        // since it might affect performance.
+        if (graph.m_planStage >= PlanStage::LICMAndLater)
+            def(HeapLocation(NamedPropertyLoc, heap, node->child2(), &node->storageAccessData()), LazyNode(node));
+        else
+            def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node));
         return;
     }
 
@@ -1509,7 +1521,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSObject_butterfly);
         AbstractHeap heap(NamedProperties, node->multiGetByOffsetData().identifierNumber);
         read(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node));
+        if (graph.m_planStage >= PlanStage::LICMAndLater)
+            def(HeapLocation(NamedPropertyLoc, heap, node->child1(), &node->multiGetByOffsetData()), LazyNode(node));
+        else
+            def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node));
         return;
     }
         
@@ -1522,7 +1537,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(JSCell_structureID);
         if (node->multiPutByOffsetData().reallocatesStorage())
             write(JSObject_butterfly);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node->child2().node()));
+        if (graph.m_planStage >= PlanStage::LICMAndLater)
+            def(HeapLocation(NamedPropertyLoc, heap, node->child1(), &node->multiPutByOffsetData()), LazyNode(node->child2().node()));
+        else
+            def(HeapLocation(NamedPropertyLoc, heap, node->child1()), LazyNode(node->child2().node()));
         return;
     }
 
@@ -1544,7 +1562,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         unsigned identifierNumber = node->storageAccessData().identifierNumber;
         AbstractHeap heap(NamedProperties, identifierNumber);
         write(heap);
-        def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node->child3().node()));
+        if (graph.m_planStage >= PlanStage::LICMAndLater)
+            def(HeapLocation(NamedPropertyLoc, heap, node->child2(), &node->storageAccessData()), LazyNode(node->child3().node()));
+        else
+            def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node->child3().node()));
         return;
     }
         

@@ -59,36 +59,6 @@ void vp8_bilinear_predict8x8_c(unsigned char* src_ptr,
                                int dst_pitch);
 #define vp8_bilinear_predict8x8 vp8_bilinear_predict8x8_c
 
-void vp8_blend_b_c(unsigned char* y,
-                   unsigned char* u,
-                   unsigned char* v,
-                   int y_1,
-                   int u_1,
-                   int v_1,
-                   int alpha,
-                   int stride);
-#define vp8_blend_b vp8_blend_b_c
-
-void vp8_blend_mb_inner_c(unsigned char* y,
-                          unsigned char* u,
-                          unsigned char* v,
-                          int y_1,
-                          int u_1,
-                          int v_1,
-                          int alpha,
-                          int stride);
-#define vp8_blend_mb_inner vp8_blend_mb_inner_c
-
-void vp8_blend_mb_outer_c(unsigned char* y,
-                          unsigned char* u,
-                          unsigned char* v,
-                          int y_1,
-                          int u_1,
-                          int v_1,
-                          int alpha,
-                          int stride);
-#define vp8_blend_mb_outer vp8_blend_mb_outer_c
-
 int vp8_block_error_c(short* coeff, short* dqcoeff);
 #define vp8_block_error vp8_block_error_c
 
@@ -204,17 +174,6 @@ void vp8_filter_by_weight8x8_c(unsigned char* src,
                                int dst_stride,
                                int src_weight);
 #define vp8_filter_by_weight8x8 vp8_filter_by_weight8x8_c
-
-int vp8_full_search_sad_c(struct macroblock* x,
-                          struct block* b,
-                          struct blockd* d,
-                          union int_mv* ref_mv,
-                          int sad_per_bit,
-                          int distance,
-                          struct variance_vtable* fn_ptr,
-                          int* mvcost[2],
-                          union int_mv* center_mv);
-#define vp8_full_search_sad vp8_full_search_sad_c
 
 void vp8_loop_filter_bh_c(unsigned char* y_ptr,
                           unsigned char* u_ptr,

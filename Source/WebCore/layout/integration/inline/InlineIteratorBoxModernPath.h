@@ -65,6 +65,7 @@ public:
     unsigned start() const { return box().text().start(); }
     unsigned end() const { return box().text().end(); }
     unsigned length() const { return box().text().length(); }
+    size_t lineIndex() const { return box().lineIndex(); }
 
     TextBoxSelectableRange selectableRange() const
     {

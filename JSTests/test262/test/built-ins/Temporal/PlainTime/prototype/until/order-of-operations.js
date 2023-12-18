@@ -74,3 +74,19 @@ const options = TemporalHelpers.propertyBagObserver(actual, {
 
 const result = instance.until(other, options);
 assert.compareArray(actual, expected, "order of operations");
+
+actual.splice(0); // clear
+
+// short-circuit does not skip reading options
+const identicalPropertyBag = TemporalHelpers.propertyBagObserver(actual, {
+  hour: 12,
+  minute: 34,
+  second: 56,
+  millisecond: 987,
+  microsecond: 654,
+  nanosecond: 321,
+}, "other");
+instance.until(identicalPropertyBag, options);
+assert.compareArray(actual, expected, "order of operations with identical times");
+
+actual.splice(0); // clear

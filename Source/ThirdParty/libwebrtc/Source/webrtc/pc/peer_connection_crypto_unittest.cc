@@ -199,7 +199,7 @@ SdpContentPredicate HaveSdesGcmCryptos(size_t num_crypto_suites) {
     }
     for (size_t i = 0; i < cryptos.size(); ++i) {
       if (cryptos[i].key_params.size() == 67U &&
-          cryptos[i].cipher_suite == "AEAD_AES_256_GCM")
+          cryptos[i].crypto_suite == "AEAD_AES_256_GCM")
         return true;
     }
     return false;

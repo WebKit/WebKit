@@ -57,7 +57,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using DOMRangeHandleCache = HashMap<CheckedPtr<WebCore::Range>, CheckedPtr<InjectedBundleRangeHandle>>;
+using DOMRangeHandleCache = HashMap<SingleThreadWeakRef<WebCore::Range>, CheckedPtr<InjectedBundleRangeHandle>>;
 
 static DOMRangeHandleCache& domRangeHandleCache()
 {
@@ -74,7 +74,7 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(WebCore
 {
     if (!range)
         return nullptr;
-    auto result = domRangeHandleCache().add(range, nullptr);
+    auto result = domRangeHandleCache().add(*range, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value.get();
     auto rangeHandle = adoptRef(*new InjectedBundleRangeHandle(*range));
@@ -89,7 +89,7 @@ InjectedBundleRangeHandle::InjectedBundleRangeHandle(WebCore::Range& range)
 
 InjectedBundleRangeHandle::~InjectedBundleRangeHandle()
 {
-    domRangeHandleCache().remove(m_range.ptr());
+    domRangeHandleCache().remove(m_range.get());
 }
 
 WebCore::Range& InjectedBundleRangeHandle::coreRange() const
@@ -141,10 +141,10 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     backingStoreSize.scale(scaleFactor);
 
     auto snapshot = WebImage::create(backingStoreSize, snapshotOptionsToImageOptions(options | SnapshotOptionsShareable), DestinationColorSpace::SRGB());
-    if (!snapshot)
+    if (!snapshot->context())
         return nullptr;
 
-    auto& graphicsContext = snapshot->context();
+    auto& graphicsContext = *snapshot->context();
     graphicsContext.scale(scaleFactor);
 
     paintRect.move(frameView->frameRect().x(), frameView->frameRect().y());

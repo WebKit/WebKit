@@ -107,6 +107,7 @@ public:
     bool isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor&) const;
 
     MutationCallback& callback() const { return m_callback.get(); }
+    Ref<MutationCallback> protectedCallback() const;
 
     static void enqueueSlotChangeEvent(HTMLSlotElement&);
 

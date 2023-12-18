@@ -1,5 +1,5 @@
 2d.text.font.parse.family
 
 
-FAIL OffscreenCanvas test: 2d.text.font.parse.family assert_equals: ctx.font === '20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, "QuotedFont\\\\\\","' (got 20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, QuotedFont\",[string], expected 20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, "QuotedFont\\\","[string]) expected "20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, \"QuotedFont\\\\\\\",\"" but got "20px cursive, fantasy, monospace, sans-serif, serif, UnquotedFont, QuotedFont\\\","
+PASS OffscreenCanvas test: 2d.text.font.parse.family
 

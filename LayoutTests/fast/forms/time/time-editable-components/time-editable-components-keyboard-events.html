@@ -24,9 +24,10 @@ function onInputEvent() {
     inputEventsFired++;
 }
 
-function beginTest(title, value) {
+function beginTest(title, value, style) {
     debug("\n" + title);
     input.value = value || "";
+    input.style = style || "";
     input.blur();
     input.focus();
 
@@ -93,6 +94,46 @@ addEventListener("load", async () => {
     shouldBe("changeEventsFired", "5");
     shouldBe("inputEventsFired", "5");
 
+    beginTest("Left/Right arrow keys (vertical-lr)", "23:59", "writing-mode: vertical-lr");              // [11]:59 PM
+    UIHelper.keyDown("rightArrow");                                                                      // -> [12]:59 PM
+    shouldBeEqualToString("input.value", "12:59");
+    UIHelper.keyDown("rightArrow");                                                                      // -> [01]:59 PM
+    shouldBeEqualToString("input.value", "13:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> [12]:59 PM
+    shouldBeEqualToString("input.value", "12:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> [11]:59 PM
+    shouldBeEqualToString("input.value", "23:59");
+    UIHelper.keyDown("downArrow");                                                                       // -> 11:[59] PM
+    UIHelper.keyDown("downArrow");                                                                       // -> 11:59 [PM]
+    UIHelper.keyDown("rightArrow");                                                                      // -> 11:59 [AM]
+    shouldBeEqualToString("input.value", "11:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> 11:59 [PM]
+    shouldBeEqualToString("input.value", "23:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> 11:59 [AM]
+    shouldBeEqualToString("input.value", "11:59");
+    shouldBe("changeEventsFired", "7");
+    shouldBe("inputEventsFired", "7");
+
+    beginTest("Left/Right arrow keys (vertical-rl)", "23:59", "writing-mode: vertical-rl");              // [11]:59 PM
+    UIHelper.keyDown("rightArrow");                                                                      // -> [12]:59 PM
+    shouldBeEqualToString("input.value", "12:59");
+    UIHelper.keyDown("rightArrow");                                                                      // -> [01]:59 PM
+    shouldBeEqualToString("input.value", "13:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> [12]:59 PM
+    shouldBeEqualToString("input.value", "12:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> [11]:59 PM
+    shouldBeEqualToString("input.value", "23:59");
+    UIHelper.keyDown("downArrow");                                                                       // -> 11:[59] PM
+    UIHelper.keyDown("downArrow");                                                                       // -> 11:59 [PM]
+    UIHelper.keyDown("rightArrow");                                                                      // -> 11:59 [AM]
+    shouldBeEqualToString("input.value", "11:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> 11:59 [PM]
+    shouldBeEqualToString("input.value", "23:59");
+    UIHelper.keyDown("leftArrow");                                                                       // -> 11:59 [AM]
+    shouldBeEqualToString("input.value", "11:59");
+    shouldBe("changeEventsFired", "7");
+    shouldBe("inputEventsFired", "7");
+
     beginTest("Advance field keys", "01:28");              // [01]:28 AM
     UIHelper.keyDown("/");                                 // -> 01:[28] AM
     UIHelper.keyDown("3");                                 // -> 01:[03] AM
@@ -139,6 +180,36 @@ addEventListener("load", async () => {
     shouldBeEqualToString("input.value", "11:59");
     shouldBe("changeEventsFired", "7");
     shouldBe("inputEventsFired", "7");
+
+    beginTest("Up/Down arrow keys (vertical-lr)", "15:27", "writing-mode: vertical-lr");           // [03]:27 PM
+    UIHelper.keyDown("2");                                                                         // -> [02]:27 PM
+    UIHelper.keyDown("downArrow");                                                                 // -> 02:[27] PM
+    UIHelper.keyDown("2");                                                                         // -> 02:[02] PM
+    UIHelper.keyDown("downArrow");                                                                 // -> 02:02 [PM]
+    UIHelper.keyDown("A");                                                                         // -> 02:02 [AM]
+    shouldBeEqualToString("input.value", "02:02");
+    UIHelper.keyDown("upArrow");                                                                   // -> 02:[02] AM
+    UIHelper.keyDown("3");                                                                         // -> 02:[03] AM
+    UIHelper.keyDown("upArrow");                                                                   // -> [02]:03 AM
+    UIHelper.keyDown("3");                                                                         // -> [03]:03 AM
+    shouldBeEqualToString("input.value", "03:03");
+    shouldBe("changeEventsFired", "5");
+    shouldBe("inputEventsFired", "5");
+
+    beginTest("Up/Down arrow keys (vertical-rl)", "15:27", "writing-mode: vertical-rl");           // [03]:27 PM
+    UIHelper.keyDown("2");                                                                         // -> [02]:27 PM
+    UIHelper.keyDown("downArrow");                                                                 // -> 02:[27] PM
+    UIHelper.keyDown("2");                                                                         // -> 02:[02] PM
+    UIHelper.keyDown("downArrow");                                                                 // -> 02:02 [PM]
+    UIHelper.keyDown("A");                                                                         // -> 02:02 [AM]
+    shouldBeEqualToString("input.value", "02:02");
+    UIHelper.keyDown("upArrow");                                                                   // -> 02:[02] AM
+    UIHelper.keyDown("3");                                                                         // -> 02:[03] AM
+    UIHelper.keyDown("upArrow");                                                                   // -> [02]:03 AM
+    UIHelper.keyDown("3");                                                                         // -> [03]:03 AM
+    shouldBeEqualToString("input.value", "03:03");
+    shouldBe("changeEventsFired", "5");
+    shouldBe("inputEventsFired", "5");
 
     beginTest("Tab key");                                  // [hh]:mm tt
     UIHelper.keyDown("2");                                 // -> [02]:mm tt

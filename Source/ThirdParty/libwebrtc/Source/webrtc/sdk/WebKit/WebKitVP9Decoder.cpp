@@ -213,7 +213,7 @@ static OSStatus decodeVP9DecoderFrameFromContiguousBlock(WebKitVP9Decoder& decod
     image.SetEncodedData(WebKitEncodedImageBufferWrapper::create(reinterpret_cast<uint8_t*>(data), size));
     // We set those values as VP9DecoderImpl checks for getting a full key frame as first frame.
     image._frameType = VideoFrameType::kVideoFrameKey;
-    auto error = decoder.m_instance->Decode(image, false, 0);
+    auto error = decoder.m_instance->Decode(image, 0);
     if (error)
         return decoder.m_receiver->decoderFailed(error);
 

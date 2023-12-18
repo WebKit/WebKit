@@ -162,7 +162,7 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(proto, protoJSR);
 
     auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-    loadConstant(stubInfoIndex, stubInfoGPR);
+    loadStructureStubInfo(stubInfoIndex, stubInfoGPR);
 
     // Check that proto are cells. baseVal must be a cell - this is checked by the get_by_id for Symbol.hasInstance.
     emitJumpSlowCaseIfNotJSCell(valueJSR, value);
@@ -193,7 +193,7 @@ void JIT::emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::it
     JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
@@ -239,6 +239,20 @@ void JIT::emit_op_typeof_is_undefined(const JSInstruction* currentInstruction)
     notMasqueradesAsUndefined.link(this);
     done.link(this);
     boxBoolean(regT0, jsRegT10);
+    emitPutVirtualRegister(dst, jsRegT10);
+}
+
+void JIT::emit_op_typeof_is_function(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpTypeofIsFunction>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister value = bytecode.m_operand;
+
+    emitGetVirtualRegister(value, jsRegT10);
+    auto isNotCell = branchIfNotCell(jsRegT10);
+    addSlowCase(branchIfObject(jsRegT10.payloadGPR()));
+    isNotCell.link(this);
+    moveTrustedValue(jsBoolean(false), jsRegT10);
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
@@ -444,7 +458,7 @@ void JIT::emit_op_jfalse(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::JFalse::valueJSR;
 
     emitGetVirtualRegister(bytecode.m_condition, valueJSR);
-    emitNakedNearCall(vm().getCTIStub(valueIsFalseyGenerator).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsFalseyGenerator).retaggedCode<NoPtrTag>() });
     addJump(branchTest32(NonZero, regT0), target);
 }
 
@@ -630,7 +644,7 @@ void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::JTrue::valueJSR;
 
     emitGetVirtualRegister(bytecode.m_condition, valueJSR);
-    emitNakedNearCall(vm().getCTIStub(valueIsTruthyGenerator).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { vm().getCTIStub(valueIsTruthyGenerator).retaggedCode<NoPtrTag>() });
     addJump(branchTest32(NonZero, regT0), target);
 }
 
@@ -699,7 +713,7 @@ void JIT::emit_op_throw(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(bytecode.m_value, thrownValueJSR);
     move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-    emitNakedNearJump(vm().getCTIStub(op_throw_handlerGenerator).code());
+    jumpThunk(CodeLocationLabel { vm().getCTIStub(op_throw_handlerGenerator).retaggedCode<NoPtrTag>() });
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
@@ -1238,7 +1252,7 @@ void JIT::emit_op_enter(const JSInstruction*)
 
     move(TrustedImm32(canBeOptimized()), canBeOptimizedGPR);
     move(TrustedImm32(localsToInit), localsToInitGPR);
-    emitNakedNearCall(vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { vm().getCTIStub(op_enter_handlerGenerator).retaggedCode<NoPtrTag>() });
 
     emitGetScope(m_profiledCodeBlock->scopeRegister());
     emitCheckTraps();
@@ -1583,7 +1597,7 @@ void JIT::emitSlow_op_check_traps(const JSInstruction*, Vector<SlowCaseEntry>::i
     using BaselineJITRegisters::CheckTraps::bytecodeOffsetGPR;
 
     move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-    emitNakedNearCall(vm().getCTIStub(op_check_traps_handlerGenerator).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { vm().getCTIStub(op_check_traps_handlerGenerator).retaggedCode<NoPtrTag>() });
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& vm)
@@ -1601,16 +1615,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& v
     jit.prepareCallOperation(vm);
     loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<decltype(operationHandleTraps)>(globalObjectGPR);
-    CCallHelpers::Call operation = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationHandleTraps);
 
     jit.emitCTIThunkEpilogue();
 
     // Tail call to exception check thunk
-    Jump exceptionCheck = jit.jump();
+    jit.jumpThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>() });
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link<OperationPtrTag>(operation, operationHandleTraps);
-    patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_check_traps_handler");
 }
 

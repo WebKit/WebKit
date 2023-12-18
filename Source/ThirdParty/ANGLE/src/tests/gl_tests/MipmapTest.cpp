@@ -1978,7 +1978,7 @@ TEST_P(MipmapTestES3, BaseLevelTextureBug)
     // Regression in 10.12.4 needing workaround -- crbug.com/705865.
     // Seems to be passing on AMD GPUs. Definitely not NVIDIA.
     // Probably not Intel.
-    ANGLE_SKIP_TEST_IF(IsMac() && (IsNVIDIA() || IsIntel()));
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA());
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
     ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());

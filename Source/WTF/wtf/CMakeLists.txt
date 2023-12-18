@@ -24,6 +24,7 @@ set(WTF_PUBLIC_HEADERS
     Brigand.h
     BubbleSort.h
     BumpPointerAllocator.h
+    ButterflyArray.h
     ByteOrder.h
     CPUTime.h
     CagedPtr.h
@@ -256,6 +257,7 @@ set(WTF_PUBLIC_HEADERS
     SignedPtr.h
     SimpleStats.h
     SingleRootGraph.h
+    SingleThreadIntegralWrapper.h
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
     SixCharacterHash.h
@@ -289,6 +291,8 @@ set(WTF_PUBLIC_HEADERS
     SystemFree.h
     SystemMalloc.h
     SystemTracing.h
+    TZoneMalloc.h
+    TZoneMallocInlines.h
     TaggedArrayStoragePtr.h
     ThreadAssertions.h
     ThreadGroup.h
@@ -338,11 +342,26 @@ set(WTF_PUBLIC_HEADERS
     WeakPtr.h
     WeakRandom.h
     WeakRandomNumber.h
+    WeakRef.h
     WindowsExtras.h
     WordLock.h
     WorkQueue.h
     WorkerPool.h
     dtoa.h
+
+    dragonbox/dragonbox.h
+    dragonbox/dragonbox_to_chars.h
+    dragonbox/ieee754_format.h
+
+    dragonbox/detail/bits.h
+    dragonbox/detail/cache_holder.h
+    dragonbox/detail/decimal_fp.h
+    dragonbox/detail/div.h
+    dragonbox/detail/log.h
+    dragonbox/detail/policy.h
+    dragonbox/detail/policy_holder.h
+    dragonbox/detail/util.h
+    dragonbox/detail/wuint.h
 
     dtoa/bignum-dtoa.h
     dtoa/bignum.h
@@ -381,6 +400,7 @@ set(WTF_PUBLIC_HEADERS
     text/ConversionMode.h
     text/EscapedFormsForJSON.h
     text/ExternalStringImpl.h
+    text/FastCharacterComparison.h
     text/IntegerToStringConversion.h
     text/LChar.h
     text/LineEnding.h
@@ -531,6 +551,8 @@ set(WTF_SOURCES
     WorkQueue.cpp
     WorkerPool.cpp
     dtoa.cpp
+
+    dragonbox/dragonbox_to_chars.cpp
 
     dtoa/bignum-dtoa.cc
     dtoa/bignum.cc

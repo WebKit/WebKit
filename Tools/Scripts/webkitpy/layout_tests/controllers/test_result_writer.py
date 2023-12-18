@@ -63,15 +63,36 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_IMAGE_DIFFS_HTML = "-diffs.html"
     PROCESS_NAME_RE = re.compile(r'(com\.apple|org\.WebKit)\..+')
 
-    @staticmethod
-    def expected_filename(test_name, filesystem, port_name=None, suffix='txt'):
-        if not port_name:
-            return filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + '.' + suffix
-        return filesystem.join("platform", port_name, filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + '.' + suffix)
+    @classmethod
+    def _modified_filename(cls, test_name, filesystem, modifier):
+        variant = ''
+        if '?' in test_name:
+            (test_name, variant) = test_name.split('?', 1)
+        if '#' in test_name:
+            (test_name, variant) = test_name.split('#', 1)
 
-    @staticmethod
-    def actual_filename(test_name, filesystem, suffix='txt'):
-        return filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_ACTUAL + '.' + suffix
+        # Test names that are actually process names are treated like they don't have any extension
+        if cls.PROCESS_NAME_RE.match(filesystem.basename(test_name)):
+            ext_parts = (test_name, '', '')
+        else:
+            ext_parts = filesystem.splitext(test_name)
+        output_basename = ext_parts[0]
+
+        if len(variant):
+            output_basename += "_" + re.sub(r'[|* <>:]', '_', variant)
+
+        return output_basename + modifier
+
+    @classmethod
+    def expected_filename(cls, test_name, filesystem, port_name=None, suffix='txt'):
+        expected = cls._modified_filename(test_name, filesystem, TestResultWriter.FILENAME_SUFFIX_EXPECTED + '.' + suffix)
+        if not port_name:
+            return expected
+        return filesystem.join("platform", port_name, expected)
+
+    @classmethod
+    def actual_filename(cls, test_name, filesystem, suffix='txt'):
+        return cls._modified_filename(test_name, filesystem, TestResultWriter.FILENAME_SUFFIX_ACTUAL + '.' + suffix)
 
     def __init__(self, filesystem, port, root_output_dir, test_name):
         self._filesystem = filesystem
@@ -98,25 +119,7 @@ class TestResultWriter(object):
           The absolute path to the output filename
         """
         fs = self._filesystem
-
-        test_name = self._test_name
-        variant = ''
-        if '?' in test_name:
-            (test_name, variant) = test_name.split('?', 1)
-        if '#' in test_name:
-            (test_name, variant) = test_name.split('#', 1)
-
-        # Test names that are actually process names are treated like they don't have any extension
-        if self.PROCESS_NAME_RE.match(fs.basename(test_name)):
-            ext_parts = (test_name, '', '')
-        else:
-            ext_parts = fs.splitext(test_name)
-        output_basename = ext_parts[0]
-
-        if len(variant):
-            output_basename += "_" + re.sub(r'[|* <>:]', '_', variant)
-
-        return fs.join(self._root_output_dir, output_basename) + modifier
+        return fs.join(self._root_output_dir, self._modified_filename(self._test_name, self._filesystem, modifier))
 
     def _write_binary_file(self, path, contents):
         if contents is not None:

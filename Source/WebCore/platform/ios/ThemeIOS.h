@@ -33,8 +33,9 @@ namespace WebCore {
 
 class ThemeIOS final : public ThemeCocoa {
 private:
-    bool userPrefersReducedMotion() const final;
     bool userPrefersContrast() const final;
+    bool userPrefersReducedMotion() const final;
+    bool userPrefersOnOffLabels() const final;
 };
 
 } // namespace WebCore

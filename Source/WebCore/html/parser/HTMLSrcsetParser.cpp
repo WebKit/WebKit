@@ -32,8 +32,12 @@
 #include "config.h"
 #include "HTMLSrcsetParser.h"
 
+#include "Element.h"
 #include "HTMLParserIdioms.h"
 #include "ParsingUtilities.h"
+#include <wtf/ListHashSet.h>
+#include <wtf/URL.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -217,6 +221,46 @@ Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attrib
         return parseImageCandidatesFromSrcsetAttribute<LChar>(attribute.characters8(), attribute.length());
     else
         return parseImageCandidatesFromSrcsetAttribute<UChar>(attribute.characters16(), attribute.length());
+}
+
+void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, ListHashSet<URL>& urls)
+{
+    if (attribute.isEmpty())
+        return;
+
+    for (auto& candidate : parseImageCandidatesFromSrcsetAttribute(attribute)) {
+        if (candidate.isEmpty())
+            continue;
+        URL url { element.resolveURLStringIfNeeded(candidate.string.toString()) };
+        if (!url.isNull())
+            urls.add(url);
+    }
+}
+
+String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const HashMap<String, String>& replacementURLStrings)
+{
+    if (replacementURLStrings.isEmpty())
+        return attribute.toString();
+
+    auto imageCandidates = parseImageCandidatesFromSrcsetAttribute(attribute);
+    StringBuilder result;
+    for (const auto& candidate : imageCandidates) {
+        if (&candidate != &imageCandidates[0])
+            result.append(", ");
+
+        auto resolvedURLString = element.resolveURLStringIfNeeded(candidate.string.toString());
+        auto replacementURLString = replacementURLStrings.get(resolvedURLString);
+        if (!replacementURLString.isEmpty())
+            result.append(replacementURLString);
+        else
+            result.append(candidate.string.toString());
+        if (candidate.density != UninitializedDescriptor)
+            result.append(' ', candidate.density, 'x');
+        if (candidate.resourceWidth != UninitializedDescriptor)
+            result.append(' ', candidate.resourceWidth, 'w');
+    }
+
+    return result.toString();
 }
 
 static ImageCandidate pickBestImageCandidate(float deviceScaleFactor, Vector<ImageCandidate>& imageCandidates, float sourceSize)

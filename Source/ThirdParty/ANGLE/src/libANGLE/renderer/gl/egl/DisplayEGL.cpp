@@ -99,9 +99,9 @@ ImageImpl *DisplayEGL::createImage(const egl::ImageState &state,
     return new ImageEGL(state, context, target, attribs, mEGL);
 }
 
-EGLSyncImpl *DisplayEGL::createSync(const egl::AttributeMap &attribs)
+EGLSyncImpl *DisplayEGL::createSync()
 {
-    return new SyncEGL(attribs, mEGL);
+    return new SyncEGL(mEGL);
 }
 
 const char *DisplayEGL::getEGLPath() const

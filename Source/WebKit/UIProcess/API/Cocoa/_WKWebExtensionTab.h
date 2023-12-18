@@ -68,6 +68,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebExtensionTabChangedProperties) {
     _WKWebExtensionTabChangedPropertiesAll        = NSUIntegerMax,
 } WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
+/*! @abstract A class conforming to the `WKWebExtensionTab` protocol represents a tab to web extensions. */
 WK_API_AVAILABLE(macos(13.3), ios(16.4))
 @protocol _WKWebExtensionTab <NSObject>
 @optional
@@ -285,7 +286,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  the detected locale (or \c nil if the locale is unknown) and an error, which should be provided if any errors occurred.
  @discussion No action is performed if not implemented.
  */
-- (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale * _Nullable locale, NSError * _Nullable error))completionHandler;
+- (void)detectWebpageLocaleForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSLocale * WK_NULLABLE_RESULT locale, NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called to capture the visible area of the current webpage as an image.
@@ -295,9 +296,9 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @discussion Defaults to capturing the visible area for the main web view if not implemented.
  */
 #if TARGET_OS_IPHONE
-- (void)captureVisibleWebpageForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(UIImage * _Nullable visibleWebpageImage, NSError * _Nullable error))completionHandler;
+- (void)captureVisibleWebpageForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(UIImage * WK_NULLABLE_RESULT visibleWebpageImage, NSError * _Nullable error))completionHandler;
 #else
-- (void)captureVisibleWebpageForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSImage * _Nullable visibleWebpageImage, NSError * _Nullable error))completionHandler;
+- (void)captureVisibleWebpageForWebExtensionContext:(_WKWebExtensionContext *)context completionHandler:(void (^)(NSImage * WK_NULLABLE_RESULT visibleWebpageImage, NSError * _Nullable error))completionHandler;
 #endif
 
 /*!
@@ -400,7 +401,7 @@ WK_API_AVAILABLE(macos(13.3), ios(16.4))
  @discussion This is equivalent to the user selecting to duplicate the tab through a menu item, with the specified options.
  No action is performed if not implemented.
  */
-- (void)duplicateForWebExtensionContext:(_WKWebExtensionContext *)context withOptions:(_WKWebExtensionTabCreationOptions *)options completionHandler:(void (^)(id <_WKWebExtensionTab> _Nullable duplicatedTab, NSError * _Nullable error))completionHandler;
+- (void)duplicateForWebExtensionContext:(_WKWebExtensionContext *)context withOptions:(_WKWebExtensionTabCreationOptions *)options completionHandler:(void (^)(id <_WKWebExtensionTab> WK_NULLABLE_RESULT duplicatedTab, NSError * _Nullable error))completionHandler;
 
 /*!
  @abstract Called to close the tab.

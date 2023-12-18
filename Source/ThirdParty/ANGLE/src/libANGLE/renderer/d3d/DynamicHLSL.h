@@ -199,7 +199,7 @@ class DynamicHLSL : angle::NonCopyable
     static void GetPixelShaderOutputKey(RendererD3D *renderer,
                                         const gl::Caps &caps,
                                         const gl::Version &clientVersion,
-                                        const gl::ProgramState &programData,
+                                        const gl::ProgramExecutable &executable,
                                         const ProgramD3DMetadata &metadata,
                                         std::vector<PixelShaderOutputVariable> *outPixelShaderKey);
 

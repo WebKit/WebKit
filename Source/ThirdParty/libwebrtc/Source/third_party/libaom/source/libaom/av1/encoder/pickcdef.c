@@ -515,8 +515,12 @@ static INLINE uint64_t get_filt_error(
 //   fbc: Column index in units of 64x64 block
 // Returns:
 //   Nothing will be returned. Contents of cdef_search_ctx will be modified.
-void av1_cdef_mse_calc_block(CdefSearchCtx *cdef_search_ctx, int fbr, int fbc,
-                             int sb_count) {
+void av1_cdef_mse_calc_block(CdefSearchCtx *cdef_search_ctx,
+                             struct aom_internal_error_info *error_info,
+                             int fbr, int fbc, int sb_count) {
+  // TODO(aomedia:3276): Pass error_info to the low-level functions as required
+  // in future to handle error propagation.
+  (void)error_info;
   const CommonModeInfoParams *const mi_params = cdef_search_ctx->mi_params;
   const YV12_BUFFER_CONFIG *ref = cdef_search_ctx->ref;
   const int coeff_shift = cdef_search_ctx->coeff_shift;
@@ -614,14 +618,15 @@ void av1_cdef_mse_calc_block(CdefSearchCtx *cdef_search_ctx, int fbr, int fbc,
 //   CDEF search context.
 // Returns:
 //   Nothing will be returned. Contents of cdef_search_ctx will be modified.
-static void cdef_mse_calc_frame(CdefSearchCtx *cdef_search_ctx) {
+static void cdef_mse_calc_frame(CdefSearchCtx *cdef_search_ctx,
+                                struct aom_internal_error_info *error_info) {
   // Loop over each sb.
   for (int fbr = 0; fbr < cdef_search_ctx->nvfb; ++fbr) {
     for (int fbc = 0; fbc < cdef_search_ctx->nhfb; ++fbc) {
       // Checks if cdef processing can be skipped for particular sb.
       if (cdef_sb_skip(cdef_search_ctx->mi_params, fbr, fbc)) continue;
       // Calculate mse for each sb and store the relevant sb index.
-      av1_cdef_mse_calc_block(cdef_search_ctx, fbr, fbc,
+      av1_cdef_mse_calc_block(cdef_search_ctx, error_info, fbr, fbc,
                               cdef_search_ctx->sb_count);
       cdef_search_ctx->sb_count++;
     }
@@ -634,24 +639,17 @@ static void cdef_mse_calc_frame(CdefSearchCtx *cdef_search_ctx) {
 //   related to CDEF search context.
 // Returns:
 //   Nothing will be returned. Contents of cdef_search_ctx will be modified.
-static AOM_INLINE bool cdef_alloc_data(CdefSearchCtx *cdef_search_ctx) {
+static void cdef_alloc_data(AV1_COMMON *cm, CdefSearchCtx *cdef_search_ctx) {
   const int nvfb = cdef_search_ctx->nvfb;
   const int nhfb = cdef_search_ctx->nhfb;
-  cdef_search_ctx->sb_index =
-      aom_malloc(nvfb * nhfb * sizeof(cdef_search_ctx->sb_index));
+  CHECK_MEM_ERROR(
+      cm, cdef_search_ctx->sb_index,
+      aom_malloc(nvfb * nhfb * sizeof(cdef_search_ctx->sb_index[0])));
   cdef_search_ctx->sb_count = 0;
-  cdef_search_ctx->mse[0] =
-      aom_malloc(sizeof(**cdef_search_ctx->mse) * nvfb * nhfb);
-  cdef_search_ctx->mse[1] =
-      aom_malloc(sizeof(**cdef_search_ctx->mse) * nvfb * nhfb);
-  if (!(cdef_search_ctx->sb_index && cdef_search_ctx->mse[0] &&
-        cdef_search_ctx->mse[1])) {
-    aom_free(cdef_search_ctx->sb_index);
-    aom_free(cdef_search_ctx->mse[0]);
-    aom_free(cdef_search_ctx->mse[1]);
-    return false;
-  }
-  return true;
+  CHECK_MEM_ERROR(cm, cdef_search_ctx->mse[0],
+                  aom_malloc(sizeof(**cdef_search_ctx->mse) * nvfb * nhfb));
+  CHECK_MEM_ERROR(cm, cdef_search_ctx->mse[1],
+                  aom_malloc(sizeof(**cdef_search_ctx->mse) * nvfb * nhfb));
 }
 
 // Deallocates the memory allocated for members of CdefSearchCtx.
@@ -660,10 +658,15 @@ static AOM_INLINE bool cdef_alloc_data(CdefSearchCtx *cdef_search_ctx) {
 //   related to CDEF search context.
 // Returns:
 //   Nothing will be returned.
-static AOM_INLINE void cdef_dealloc_data(CdefSearchCtx *cdef_search_ctx) {
-  aom_free(cdef_search_ctx->mse[0]);
-  aom_free(cdef_search_ctx->mse[1]);
-  aom_free(cdef_search_ctx->sb_index);
+void av1_cdef_dealloc_data(CdefSearchCtx *cdef_search_ctx) {
+  if (cdef_search_ctx) {
+    aom_free(cdef_search_ctx->mse[0]);
+    cdef_search_ctx->mse[0] = NULL;
+    aom_free(cdef_search_ctx->mse[1]);
+    cdef_search_ctx->mse[1] = NULL;
+    aom_free(cdef_search_ctx->sb_index);
+    cdef_search_ctx->sb_index = NULL;
+  }
 }
 
 // Initialize the parameters related to CDEF search context.
@@ -728,8 +731,8 @@ static AOM_INLINE void cdef_params_init(const YV12_BUFFER_CONFIG *frame,
 #endif
 }
 
-static void pick_cdef_from_qp(AV1_COMMON *const cm, int skip_cdef,
-                              int is_screen_content) {
+void av1_pick_cdef_from_qp(AV1_COMMON *const cm, int skip_cdef,
+                           int is_screen_content) {
   const int bd = cm->seq_params->bit_depth;
   const int q =
       av1_ac_quant_QTX(cm->quant_params.base_qindex, 0, bd) >> (bd - 8);
@@ -807,6 +810,8 @@ static void pick_cdef_from_qp(AV1_COMMON *const cm, int skip_cdef,
   const int nvfb = (mi_params->mi_rows + MI_SIZE_64X64 - 1) / MI_SIZE_64X64;
   const int nhfb = (mi_params->mi_cols + MI_SIZE_64X64 - 1) / MI_SIZE_64X64;
   MB_MODE_INFO **mbmi = mi_params->mi_grid_base;
+  // mbmi is NULL when real-time rate control library is used.
+  if (!mbmi) return;
   for (int r = 0; r < nvfb; ++r) {
     for (int c = 0; c < nhfb; ++c) {
       MB_MODE_INFO *current_mbmi = mbmi[MI_SIZE_64X64 * c];
@@ -816,13 +821,12 @@ static void pick_cdef_from_qp(AV1_COMMON *const cm, int skip_cdef,
   }
 }
 
-void av1_cdef_search(MultiThreadInfo *mt_info, const YV12_BUFFER_CONFIG *frame,
-                     const YV12_BUFFER_CONFIG *ref, AV1_COMMON *cm,
-                     MACROBLOCKD *xd, CDEF_PICK_METHOD pick_method, int rdmult,
-                     int skip_cdef_feature, CDEF_CONTROL cdef_control,
-                     const int is_screen_content, int non_reference_frame) {
+void av1_cdef_search(AV1_COMP *cpi) {
+  AV1_COMMON *cm = &cpi->common;
+  CDEF_CONTROL cdef_control = cpi->oxcf.tool_cfg.cdef_control;
+
   assert(cdef_control != CDEF_NONE);
-  if (cdef_control == CDEF_REFERENCE && non_reference_frame) {
+  if (cdef_control == CDEF_REFERENCE && cpi->ppi->rtc_ref.non_reference_frame) {
     CdefInfo *const cdef_info = &cm->cdef_info;
     cdef_info->nb_cdef_strengths = 1;
     cdef_info->cdef_bits = 0;
@@ -831,8 +835,21 @@ void av1_cdef_search(MultiThreadInfo *mt_info, const YV12_BUFFER_CONFIG *frame,
     return;
   }
 
+  // Indicate if external RC is used for testing
+  const int rtc_ext_rc = cpi->rc.rtc_external_ratectrl;
+  if (rtc_ext_rc) {
+    av1_pick_cdef_from_qp(cm, 0, 0);
+    return;
+  }
+  CDEF_PICK_METHOD pick_method = cpi->sf.lpf_sf.cdef_pick_method;
   if (pick_method == CDEF_PICK_FROM_Q) {
-    pick_cdef_from_qp(cm, skip_cdef_feature, is_screen_content);
+    const int use_screen_content_model =
+        cm->quant_params.base_qindex >
+            AOMMAX(cpi->sf.rt_sf.screen_content_cdef_filter_qindex_thresh,
+                   cpi->rc.best_quality + 5) &&
+        cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN;
+    av1_pick_cdef_from_qp(cm, cpi->sf.rt_sf.skip_cdef_sb,
+                          use_screen_content_model);
     return;
   }
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
@@ -840,33 +857,33 @@ void av1_cdef_search(MultiThreadInfo *mt_info, const YV12_BUFFER_CONFIG *frame,
   const int fast = (pick_method >= CDEF_FAST_SEARCH_LVL1 &&
                     pick_method <= CDEF_FAST_SEARCH_LVL5);
   const int num_planes = av1_num_planes(cm);
-  CdefSearchCtx cdef_search_ctx;
+  MACROBLOCKD *xd = &cpi->td.mb.e_mbd;
+
+  if (!cpi->cdef_search_ctx)
+    CHECK_MEM_ERROR(cm, cpi->cdef_search_ctx,
+                    aom_malloc(sizeof(*cpi->cdef_search_ctx)));
+  CdefSearchCtx *cdef_search_ctx = cpi->cdef_search_ctx;
+
   // Initialize parameters related to CDEF search context.
-  cdef_params_init(frame, ref, cm, xd, &cdef_search_ctx, pick_method);
+  cdef_params_init(&cm->cur_frame->buf, cpi->source, cm, xd, cdef_search_ctx,
+                   pick_method);
   // Allocate CDEF search context buffers.
-  if (!cdef_alloc_data(&cdef_search_ctx)) {
-    CdefInfo *const cdef_info = &cm->cdef_info;
-    cdef_info->nb_cdef_strengths = 0;
-    cdef_info->cdef_bits = 0;
-    cdef_info->cdef_strengths[0] = 0;
-    cdef_info->cdef_uv_strengths[0] = 0;
-    return;
-  }
+  cdef_alloc_data(cm, cdef_search_ctx);
   // Frame level mse calculation.
-  if (mt_info->num_workers > 1) {
-    av1_cdef_mse_calc_frame_mt(cm, mt_info, &cdef_search_ctx);
+  if (cpi->mt_info.num_workers > 1) {
+    av1_cdef_mse_calc_frame_mt(cpi);
   } else {
-    cdef_mse_calc_frame(&cdef_search_ctx);
+    cdef_mse_calc_frame(cdef_search_ctx, cm->error);
   }
 
   /* Search for different number of signaling bits. */
   int nb_strength_bits = 0;
   uint64_t best_rd = UINT64_MAX;
   CdefInfo *const cdef_info = &cm->cdef_info;
-  int sb_count = cdef_search_ctx.sb_count;
+  int sb_count = cdef_search_ctx->sb_count;
   uint64_t(*mse[2])[TOTAL_STRENGTHS];
-  mse[0] = cdef_search_ctx.mse[0];
-  mse[1] = cdef_search_ctx.mse[1];
+  mse[0] = cdef_search_ctx->mse[0];
+  mse[1] = cdef_search_ctx->mse[1];
   /* Calculate the maximum number of bits required to signal CDEF strengths at
    * block level */
   const int total_strengths = nb_cdef_strengths[pick_method];
@@ -874,6 +891,7 @@ void av1_cdef_search(MultiThreadInfo *mt_info, const YV12_BUFFER_CONFIG *frame,
       num_planes > 1 ? total_strengths * total_strengths : total_strengths;
   const int max_signaling_bits =
       joint_strengths == 1 ? 0 : get_msb(joint_strengths - 1) + 1;
+  int rdmult = cpi->td.mb.rdmult;
   for (int i = 0; i <= 3; i++) {
     if (i > max_signaling_bits) break;
     int best_lev0[CDEF_MAX_STRENGTHS];
@@ -918,7 +936,7 @@ void av1_cdef_search(MultiThreadInfo *mt_info, const YV12_BUFFER_CONFIG *frame,
         best_mse = curr;
       }
     }
-    mi_params->mi_grid_base[cdef_search_ctx.sb_index[i]]->cdef_strength =
+    mi_params->mi_grid_base[cdef_search_ctx->sb_index[i]]->cdef_strength =
         best_gi;
   }
   if (fast) {
@@ -936,5 +954,5 @@ void av1_cdef_search(MultiThreadInfo *mt_info, const YV12_BUFFER_CONFIG *frame,
 
   cdef_info->cdef_damping = damping;
   // Deallocate CDEF search context buffers.
-  cdef_dealloc_data(&cdef_search_ctx);
+  av1_cdef_dealloc_data(cdef_search_ctx);
 }

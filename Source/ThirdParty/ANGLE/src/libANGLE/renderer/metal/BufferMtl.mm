@@ -386,7 +386,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
 {
     for (UniformConversionBufferMtl &buffer : mUniformConversionBuffers)
     {
-        if (buffer.offset.first == offset.first)
+        if (buffer.offset.first == offset.first && buffer.uniformBufferBlockSize == stdSize)
         {
             if (buffer.offset.second <= offset.second &&
                 (offset.second - buffer.offset.second) % buffer.uniformBufferBlockSize == 0)

@@ -600,7 +600,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (Instance* instance, Enco
     return static_cast<float>(JSValue::decode(v).toNumber(globalObject));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance* instance, EncodedJSValue v))
+JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance* instance, const TypeDefinition* type, EncodedJSValue v))
 {
     CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
     VM& vm = instance->vm();
@@ -615,7 +615,39 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (Instance* i
         throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
         return { };
     }
+
+    const FunctionSignature* signature = type->as<FunctionSignature>();
+    ASSERT(signature->returnCount() == 1);
+    Type resultType = signature->returnType(0);
+
+    if (isRefWithTypeIndex(resultType) && !value.isNull()) {
+        Wasm::TypeIndex paramIndex = resultType.index;
+        Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
+        if (paramIndex != argIndex)
+            return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
+    }
     return v;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (Instance* instance, const TypeDefinition* type, EncodedJSValue v))
+{
+    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
+    VM& vm = instance->vm();
+    JSGlobalObject* globalObject = instance->globalObject();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    const FunctionSignature* signature = type->as<FunctionSignature>();
+    ASSERT(signature->returnCount() == 1);
+    Type resultType = signature->returnType(0);
+
+    JSValue value = JSValue::decode(v);
+    value = Wasm::internalizeExternref(value);
+    if (UNLIKELY(!Wasm::TypeInformation::castReference(value, resultType.isNullable(), resultType.index))) {
+        throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+        return { };
+    }
+    return JSValue::encode(value);
 }
 
 JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (Instance* instance, EncodedWasmValue value))
@@ -683,15 +715,32 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (Instance* instance, con
             unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
             break;
         default: {
-            if (isExternref(returnType))
-                ASSERT(returnType.isNullable());
-            else if (isFuncref(returnType)) {
-                ASSERT(returnType.isNullable());
-                WebAssemblyFunction* wasmFunction = nullptr;
-                WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-                if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
-                    throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
-                    return;
+            if (Wasm::isRefType(returnType)) {
+                if (isExternref(returnType))
+                    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), returnType.isNullable());
+                else if (isFuncref(returnType) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(returnType))) {
+                    ASSERT_IMPLIES(!Options::useWebAssemblyTypedFunctionReferences(), returnType.isNullable());
+                    WebAssemblyFunction* wasmFunction = nullptr;
+                    WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
+                    if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
+                        throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
+                        return;
+                    }
+                    if (Wasm::isRefWithTypeIndex(returnType) && !value.isNull()) {
+                        Wasm::TypeIndex paramIndex = returnType.index;
+                        Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
+                        if (paramIndex != argIndex) {
+                            throwTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
+                            return;
+                        }
+                    }
+                } else {
+                    ASSERT(Options::useWebAssemblyGC());
+                    value = Wasm::internalizeExternref(value);
+                    if (UNLIKELY(!Wasm::TypeInformation::castReference(value, returnType.isNullable(), returnType.index))) {
+                        throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+                        return;
+                    }
                 }
             } else
                 RELEASE_ASSERT_NOT_REACHED();
@@ -840,7 +889,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmStructNewEmpty, EncodedJSValue, (Instance*
     JSWebAssemblyInstance* jsInstance = instance->owner();
     JSGlobalObject* globalObject = instance->globalObject();
     auto structRTT = instance->module().moduleInformation().rtts[typeIndex];
-    return JSValue::encode(JSWebAssemblyStruct::tryCreate(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT));
+    return JSValue::encode(JSWebAssemblyStruct::create(globalObject, globalObject->webAssemblyStructStructure(), jsInstance, typeIndex, structRTT));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmStructGet, EncodedJSValue, (EncodedJSValue encodedStructReference, uint32_t fieldIndex))
@@ -1092,20 +1141,22 @@ JSC_DEFINE_JIT_OPERATION(operationWasmIsSubRTT, bool, (RTT* maybeSubRTT, RTT* ta
     return maybeSubRTT->isSubRTT(*targetRTT);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmExternInternalize, EncodedJSValue, (EncodedJSValue reference))
+JSC_DEFINE_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (EncodedJSValue reference))
 {
     return externInternalize(reference);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))
+JSC_DEFINE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType, bool shouldNegate))
 {
     Wasm::TypeIndex typeIndex;
     if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)))
         typeIndex = static_cast<Wasm::TypeIndex>(heapType);
     else
         typeIndex = instance->module().moduleInformation().typeSignatures[heapType]->index();
+    int32_t truth = shouldNegate ? 0 : 1;
+    int32_t falsity = shouldNegate ? 1 : 0;
     // Explicitly return 1 or 0 because bool in C++ only reqiures that the bottom bit match the other bits can be anything.
-    return Wasm::refCast(reference, static_cast<bool>(allowNull), typeIndex) ? 1 : 0;
+    return Wasm::refCast(reference, static_cast<bool>(allowNull), typeIndex) ? truth : falsity;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmRefCast, EncodedJSValue, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))

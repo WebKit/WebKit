@@ -43,6 +43,7 @@
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowControllerIOS.h"
+#import "WKSEDefinitions.h"
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntDegrees.h>
 #import <WebCore/LengthBox.h>
@@ -51,7 +52,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#define WK_WEB_VIEW_PROTOCOLS <UIScrollViewDelegate>
+#define WK_WEB_VIEW_PROTOCOLS <WKSEScrollViewDelegate>
 #endif
 
 #if PLATFORM(MAC)
@@ -213,11 +214,6 @@ struct PerWebProcessState {
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
-
-    // Only used with UI-side compositing.
-    RetainPtr<WKScrollView> _scrollView;
-    RetainPtr<WKContentView> _contentView;
-
 #if HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
     BlockPtr<void()> _windowSnapshotReadinessHandler;
 #endif

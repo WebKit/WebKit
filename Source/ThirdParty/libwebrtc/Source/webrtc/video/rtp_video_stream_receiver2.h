@@ -207,6 +207,7 @@ class RtpVideoStreamReceiver2 : public LossNotificationSender,
   void SetProtectionPayloadTypes(int red_payload_type, int ulpfec_payload_type);
 
   absl::optional<int64_t> LastReceivedPacketMs() const;
+  absl::optional<uint32_t> LastReceivedFrameRtpTimestamp() const;
   absl::optional<int64_t> LastReceivedKeyframePacketMs() const;
 
  private:

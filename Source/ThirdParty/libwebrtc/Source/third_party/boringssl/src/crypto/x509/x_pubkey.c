@@ -128,7 +128,7 @@ error:
 // |X509_PUBKEY| objects. Really |X509_PUBKEY| should have a |CRYPTO_once_t|
 // inside it for this, but |CRYPTO_once_t| is private and |X509_PUBKEY| is
 // not.
-static struct CRYPTO_STATIC_MUTEX g_pubkey_lock = CRYPTO_STATIC_MUTEX_INIT;
+static CRYPTO_MUTEX g_pubkey_lock = CRYPTO_MUTEX_INIT;
 
 EVP_PKEY *X509_PUBKEY_get(X509_PUBKEY *key) {
   EVP_PKEY *ret = NULL;
@@ -138,13 +138,13 @@ EVP_PKEY *X509_PUBKEY_get(X509_PUBKEY *key) {
     goto error;
   }
 
-  CRYPTO_STATIC_MUTEX_lock_read(&g_pubkey_lock);
+  CRYPTO_MUTEX_lock_read(&g_pubkey_lock);
   if (key->pkey != NULL) {
-    CRYPTO_STATIC_MUTEX_unlock_read(&g_pubkey_lock);
+    CRYPTO_MUTEX_unlock_read(&g_pubkey_lock);
     EVP_PKEY_up_ref(key->pkey);
     return key->pkey;
   }
-  CRYPTO_STATIC_MUTEX_unlock_read(&g_pubkey_lock);
+  CRYPTO_MUTEX_unlock_read(&g_pubkey_lock);
 
   // Re-encode the |X509_PUBKEY| to DER and parse it.
   int spki_len = i2d_X509_PUBKEY(key, &spki);
@@ -160,14 +160,14 @@ EVP_PKEY *X509_PUBKEY_get(X509_PUBKEY *key) {
   }
 
   // Check to see if another thread set key->pkey first
-  CRYPTO_STATIC_MUTEX_lock_write(&g_pubkey_lock);
+  CRYPTO_MUTEX_lock_write(&g_pubkey_lock);
   if (key->pkey) {
-    CRYPTO_STATIC_MUTEX_unlock_write(&g_pubkey_lock);
+    CRYPTO_MUTEX_unlock_write(&g_pubkey_lock);
     EVP_PKEY_free(ret);
     ret = key->pkey;
   } else {
     key->pkey = ret;
-    CRYPTO_STATIC_MUTEX_unlock_write(&g_pubkey_lock);
+    CRYPTO_MUTEX_unlock_write(&g_pubkey_lock);
   }
 
   OPENSSL_free(spki);

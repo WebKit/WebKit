@@ -1,0 +1,3 @@
+
+FAIL :only-child should always match for ::view-transition-image-pair promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
+

@@ -35,9 +35,27 @@ class RenderBox;
 class RenderElement;
 class RenderGrid;
 
-enum GridAxis {
+enum class GridAxis : uint8_t {
     GridRowAxis = 1 << 0,
     GridColumnAxis = 1 << 1
+};
+
+struct ExtraMarginsFromSubgrids {
+    inline LayoutUnit extraTrackStartMargin() const { return m_extraMargins.first; }
+    inline LayoutUnit extraTrackEndMargin() const { return m_extraMargins.second; }
+    inline LayoutUnit extraTotalMargin() const { return m_extraMargins.first + m_extraMargins.second; }
+
+    ExtraMarginsFromSubgrids& operator+=(const ExtraMarginsFromSubgrids& rhs)
+    {
+        m_extraMargins.first += rhs.extraTrackStartMargin();
+        m_extraMargins.second += rhs.extraTrackEndMargin();
+        return *this;
+    }
+
+    void addTrackStartMargin(LayoutUnit extraMargin) { m_extraMargins.first += extraMargin; }
+    void addTrackEndMargin(LayoutUnit extraMargin) { m_extraMargins.second += extraMargin; }
+
+    std::pair<LayoutUnit, LayoutUnit> m_extraMargins;
 };
 
 namespace GridLayoutFunctions {
@@ -51,10 +69,11 @@ GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const Ren
 GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid&, const RenderElement& parent, GridTrackSizingDirection);
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
+bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection);
 
 bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
 bool isSubgridReversedDirection(const RenderGrid&, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid);
-LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection, const RenderBox& child);
+ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(GridTrackSizingDirection, const RenderBox& child);
 
 unsigned alignmentContextForBaselineAlignment(const GridSpan&, const ItemPosition& alignment);
 

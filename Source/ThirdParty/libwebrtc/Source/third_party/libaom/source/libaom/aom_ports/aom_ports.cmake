@@ -24,8 +24,10 @@ list(APPEND AOM_PORTS_ASM_X86 "${AOM_ROOT}/aom_ports/float.asm")
 
 list(APPEND AOM_PORTS_INCLUDES_X86 "${AOM_ROOT}/aom_ports/x86_abi_support.asm")
 
-list(APPEND AOM_PORTS_SOURCES_ARM "${AOM_ROOT}/aom_ports/arm.h"
-            "${AOM_ROOT}/aom_ports/arm_cpudetect.c")
+list(APPEND AOM_PORTS_SOURCES_AARCH32
+            "${AOM_ROOT}/aom_ports/aarch32_cpudetect.c")
+list(APPEND AOM_PORTS_SOURCES_AARCH64
+            "${AOM_ROOT}/aom_ports/aarch64_cpudetect.c")
 
 if(CONFIG_RUNTIME_CPU_DETECT AND ANDROID_NDK)
   include_directories(${ANDROID_NDK}/sources/android/cpufeatures)
@@ -57,8 +59,11 @@ function(setup_aom_ports_targets)
   elseif(WIN32 AND "${AOM_TARGET_CPU}" STREQUAL "x86_64")
     add_asm_library("aom_ports" "AOM_PORTS_ASM_X86")
     set(aom_ports_has_symbols 1)
+  elseif("${AOM_TARGET_CPU}" STREQUAL "arm64")
+    add_library(aom_ports OBJECT ${AOM_PORTS_SOURCES_AARCH64})
+    set(aom_ports_has_symbols 1)
   elseif("${AOM_TARGET_CPU}" MATCHES "arm")
-    add_library(aom_ports OBJECT ${AOM_PORTS_SOURCES_ARM})
+    add_library(aom_ports OBJECT ${AOM_PORTS_SOURCES_AARCH32})
     set(aom_ports_has_symbols 1)
   elseif("${AOM_TARGET_CPU}" MATCHES "ppc")
     add_library(aom_ports OBJECT ${AOM_PORTS_SOURCES_PPC})

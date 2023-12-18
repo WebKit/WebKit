@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DataReference.h"
+#include "NetworkSessionCurl.h"
 #include "WebSocketTask.h"
 #include <WebCore/CurlStream.h>
 #include <WebCore/ResourceRequest.h>
@@ -34,9 +35,11 @@
 #include <WebCore/WebSocketFrame.h>
 
 namespace WebCore {
+class CertificateInfo;
 class CurlStreamScheduler;
 class SharedBuffer;
 class WebSocketHandshake;
+struct ClientOrigin;
 }
 
 namespace WebKit {
@@ -47,7 +50,7 @@ struct SessionSet;
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask>, public WebCore::CurlStream::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol);
+    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&);
     virtual ~WebSocketTask();
 
     void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
@@ -57,7 +60,12 @@ public:
     void cancel();
     void resume();
 
+    NetworkSessionCurl* networkSession();
     SessionSet* sessionSet() { return nullptr; }
+
+    WebPageProxyIdentifier webProxyPageID() const { return m_webProxyPageID; }
+
+    const WebCore::SecurityOriginData& topOrigin() const { return m_topOrigin; }
 
 private:
     enum class State : uint8_t {
@@ -71,7 +79,9 @@ private:
     void didOpen(WebCore::CurlStreamID) final;
     void didSendData(WebCore::CurlStreamID, size_t) final { };
     void didReceiveData(WebCore::CurlStreamID, const WebCore::SharedBuffer&) final;
-    void didFail(WebCore::CurlStreamID, CURLcode) final;
+    void didFail(WebCore::CurlStreamID, CURLcode, WebCore::CertificateInfo&&) final;
+
+    void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&, String&&);
 
     bool appendReceivedBuffer(const WebCore::SharedBuffer&);
     void skipReceivedBuffer(size_t len);
@@ -90,8 +100,10 @@ private:
     void destructStream();
 
     NetworkSocketChannel& m_channel;
+    WebPageProxyIdentifier m_webProxyPageID;
     WebCore::ResourceRequest m_request;
     String m_protocol;
+    WebCore::SecurityOriginData m_topOrigin;
 
     WebCore::CurlStreamScheduler& m_scheduler;
     WebCore::CurlStreamID m_streamID { WebCore::invalidCurlStreamID };

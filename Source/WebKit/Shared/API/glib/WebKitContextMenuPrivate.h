@@ -19,6 +19,7 @@
 
 #pragma once
 
+#if ENABLE(CONTEXT_MENUS)
 #include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenu.h"
 
@@ -39,3 +40,4 @@ void webkitContextMenuSetEvent(WebKitContextMenu*, GRefPtr<GdkEvent>&&);
 void webkitContextMenuSetEvent(WebKitContextMenu*, GUniquePtr<GdkEvent>&&);
 #endif
 #endif
+#endif // ENABLE(CONTEXT_MENUS)

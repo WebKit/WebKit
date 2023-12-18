@@ -44,7 +44,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCalcOperationNode);
 
 // This is the result of the "To add two types type1 and type2, perform the following steps:" rules.
 
-static const CalculationCategory addSubtractResult[static_cast<unsigned>(CalculationCategory::Angle)][static_cast<unsigned>(CalculationCategory::Angle)] = {
+static const CalculationCategory addSubtractResult[enumToUnderlyingType(CalculationCategory::Angle)][enumToUnderlyingType(CalculationCategory::Angle)] = {
 //    CalculationCategory::Number         CalculationCategory::Length         CalculationCategory::Percent        CalculationCategory::PercentNumber  CalculationCategory::PercentLength
     { CalculationCategory::Number,        CalculationCategory::Other,         CalculationCategory::PercentNumber, CalculationCategory::PercentNumber, CalculationCategory::Other }, //         CalculationCategory::Number
     { CalculationCategory::Other,         CalculationCategory::Length,        CalculationCategory::PercentLength, CalculationCategory::Other,         CalculationCategory::PercentLength }, // CalculationCategory::Length
@@ -69,7 +69,7 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
     case CalcOperator::Add:
     case CalcOperator::Subtract:
         if (leftCategory < CalculationCategory::Angle && rightCategory < CalculationCategory::Angle)
-            return addSubtractResult[static_cast<unsigned>(leftCategory)][static_cast<unsigned>(rightCategory)];
+            return addSubtractResult[enumToUnderlyingType(leftCategory)][enumToUnderlyingType(rightCategory)];
         if (leftCategory == rightCategory)
             return leftCategory;
         return CalculationCategory::Other;
@@ -123,7 +123,7 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
             // At a + or - sub-expression, attempt to add the types of the left and right arguments.
             // If this returns failure, the entire calculation’s type is failure. Otherwise, the sub-expression’s type is the returned type.
             if (currentCategory < CalculationCategory::Angle && nextCategory < CalculationCategory::Angle)
-                currentCategory = addSubtractResult[static_cast<unsigned>(currentCategory)][static_cast<unsigned>(nextCategory)];
+                currentCategory = addSubtractResult[enumToUnderlyingType(currentCategory)][enumToUnderlyingType(nextCategory)];
             else if (currentCategory != nextCategory)
                 return CalculationCategory::Other;
             break;
@@ -221,8 +221,8 @@ static SortingCategory sortingCategoryForType(CSSUnitType unitType)
         SortingCategory::Other,         // UOther
     };
 
-    static_assert(ARRAY_SIZE(sortOrder) == static_cast<unsigned>(CalculationCategory::Other) + 1, "sortOrder size should match UnitCategory");
-    return sortOrder[static_cast<unsigned>(calcUnitCategory(unitType))];
+    static_assert(ARRAY_SIZE(sortOrder) == enumToUnderlyingType(CalculationCategory::Other) + 1, "sortOrder size should match UnitCategory");
+    return sortOrder[enumToUnderlyingType(calcUnitCategory(unitType))];
 }
 
 static SortingCategory sortingCategory(const CSSCalcExpressionNode& node)
@@ -348,7 +348,7 @@ static void sortChildren(Vector<Ref<CSSCalcExpressionNode>>& children)
             return codePointCompareLessThan(firstUnitString, secondUnitString);
         }
 
-        return static_cast<unsigned>(firstCategory) < static_cast<unsigned>(secondCategory);
+        return enumToUnderlyingType(firstCategory) < enumToUnderlyingType(secondCategory);
     });
 }
 
@@ -595,7 +595,8 @@ void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 
     auto hasChildWithOperator = [&] (CalcOperator op) {
         for (auto& child : m_children) {
-            if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op)
+            auto* operationNode = dynamicDowncast<CSSCalcOperationNode>(child.get());
+            if (operationNode && operationNode->calcOperator() == op)
                 return true;
         }
         return false;
@@ -606,8 +607,9 @@ void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 
     Vector<Ref<CSSCalcExpressionNode>> newChildren;
     for (auto& child : m_children) {
-        if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op)
-            newChildren.appendVector(downcast<CSSCalcOperationNode>(child.get()).children());
+        auto* operationNode = dynamicDowncast<CSSCalcOperationNode>(child.get());
+        if (operationNode && operationNode->calcOperator() == op)
+            newChildren.appendVector(operationNode->children());
         else
             newChildren.append(WTFMove(child));
     }
@@ -690,7 +692,7 @@ void CSSCalcOperationNode::combineChildren()
             remainingChildren.add(child.ptr());
 
         while (!remainingChildren.isEmpty()) {
-            newChildren.uncheckedAppend(Ref { *remainingChildren.takeFirst() });
+            newChildren.append(Ref { *remainingChildren.takeFirst() });
             CSSUnitType previousType = primitiveTypeForCombination(newChildren.last());
             for (auto it = remainingChildren.begin(); it != remainingChildren.end();) {
                 auto currentIterator = it;
@@ -738,7 +740,7 @@ void CSSCalcOperationNode::combineChildren()
             ASSERT(lastNonNumberNode);
             auto multiplicandCategory = calcUnitCategory(primitiveTypeForCombination(*lastNonNumberNode));
             if (multiplicandCategory != CalculationCategory::Other) {
-                newChildren.uncheckedAppend(Ref { *lastNonNumberNode });
+                newChildren.append(Ref { *lastNonNumberNode });
                 downcast<CSSCalcPrimitiveValueNode>(newChildren[0].get()).multiply(multiplier);
                 didMultiply = true;
             } else if (auto* sumNode = dynamicDowncast<CSSCalcOperationNode>(*lastNonNumberNode); sumNode && sumNode->calcOperator() == CalcOperator::Add) {
@@ -768,12 +770,12 @@ void CSSCalcOperationNode::combineChildren()
         if (!didMultiply) {
             if (numberNodeCount) {
                 auto multiplierNode = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(multiplier));
-                newChildren.uncheckedAppend(WTFMove(multiplierNode));
+                newChildren.append(WTFMove(multiplierNode));
             }
 
             for (auto& child : m_children) {
                 if (primitiveTypeForCombination(child) != CSSUnitType::CSS_NUMBER)
-                    newChildren.uncheckedAppend(child.copyRef());
+                    newChildren.append(child.copyRef());
             }
         }
 
@@ -832,28 +834,24 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplify(Ref<CSSCalcExpressionN
 
 Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyRecursive(Ref<CSSCalcExpressionNode>&& rootNode, int depth)
 {
-    if (is<CSSCalcOperationNode>(rootNode)) {
-        auto& operationNode = downcast<CSSCalcOperationNode>(rootNode.get());
-        
-        auto& children = operationNode.children();
+    if (auto* operationNode = dynamicDowncast<CSSCalcOperationNode>(rootNode.get())) {
+        auto& children = operationNode->children();
         for (unsigned i = 0; i < children.size(); ++i) {
             auto child = children[i].copyRef();
             auto newNode = simplifyRecursive(WTFMove(child), depth + 1);
             if (newNode.ptr() != children[i].ptr())
                 children[i] = WTFMove(newNode);
         }
-    } else if (is<CSSCalcNegateNode>(rootNode)) {
-        auto& negateNode = downcast<CSSCalcNegateNode>(rootNode.get());
-        Ref<CSSCalcExpressionNode> child = negateNode.child();
+    } else if (auto* negateNode = dynamicDowncast<CSSCalcNegateNode>(rootNode.get())) {
+        Ref<CSSCalcExpressionNode> child = negateNode->child();
         auto newNode = simplifyRecursive(WTFMove(child), depth + 1);
-        if (newNode.ptr() != &negateNode.child())
-            negateNode.setChild(WTFMove(newNode));
-    } else if (is<CSSCalcInvertNode>(rootNode)) {
-        auto& invertNode = downcast<CSSCalcInvertNode>(rootNode.get());
-        Ref<CSSCalcExpressionNode> child = invertNode.child();
+        if (newNode.ptr() != &negateNode->child())
+            negateNode->setChild(WTFMove(newNode));
+    } else if (auto* invertNode = dynamicDowncast<CSSCalcInvertNode>(rootNode.get())) {
+        Ref<CSSCalcExpressionNode> child = invertNode->child();
         auto newNode = simplifyRecursive(WTFMove(child), depth + 1);
-        if (newNode.ptr() != &invertNode.child())
-            invertNode.setChild(WTFMove(newNode));
+        if (newNode.ptr() != &invertNode->child())
+            invertNode->setChild(WTFMove(newNode));
     }
 
     return simplifyNode(WTFMove(rootNode), depth);
@@ -868,37 +866,35 @@ inline void CSSCalcOperationNode::makeTopLevelCalc()
 
 Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpressionNode>&& rootNode, int depth)
 {
-    if (is<CSSCalcPrimitiveValueNode>(rootNode)) {
+    if (auto* primitiveValueNode = dynamicDowncast<CSSCalcPrimitiveValueNode>(rootNode.get())) {
         // If root is a percentage that will be resolved against another value, and there is enough information
         // available to resolve it, do so, and express the resulting numeric value in the appropriate canonical
         // unit. Return the value.
 
         // If root is a dimension that is not expressed in its canonical unit, and there is enough information
         // available to convert it to the canonical unit, do so, and return the value.
-        auto& primitiveValueNode = downcast<CSSCalcPrimitiveValueNode>(rootNode.get());
-        primitiveValueNode.canonicalizeUnit();
+        primitiveValueNode->canonicalizeUnit();
         return WTFMove(rootNode);
     }
 
     // If root is an operator node that’s not one of the calc-operator nodes, and all of its children are numeric values
     // with enough information to computed the operation root represents, return the result of running root’s operation
     // using its children, expressed in the result’s canonical unit.
-    if (is<CSSCalcOperationNode>(rootNode)) {
-        auto& calcOperationNode = downcast<CSSCalcOperationNode>(rootNode.get());
+    if (auto* calcOperationNode = dynamicDowncast<CSSCalcOperationNode>(rootNode.get())) {
         // Identity nodes have only one child and perform no operation on their child.
-        if (calcOperationNode.isIdentity() && depth)
-            return WTFMove(calcOperationNode.children()[0]);
+        if (calcOperationNode->isIdentity() && depth)
+            return WTFMove(calcOperationNode->children()[0]);
         
-        if (calcOperationNode.isCalcSumNode()) {
-            calcOperationNode.hoistChildrenWithOperator(CalcOperator::Add);
+        if (calcOperationNode->isCalcSumNode()) {
+            calcOperationNode->hoistChildrenWithOperator(CalcOperator::Add);
         }
 
-        if (calcOperationNode.isCalcProductNode()) {
-            calcOperationNode.hoistChildrenWithOperator(CalcOperator::Multiply);
+        if (calcOperationNode->isCalcProductNode()) {
+            calcOperationNode->hoistChildrenWithOperator(CalcOperator::Multiply);
         }
         
-        if (calcOperationNode.isNonCalcFunction() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode())
-            calcOperationNode.combineChildren();
+        if (calcOperationNode->isNonCalcFunction() || calcOperationNode->isCalcProductNode() || calcOperationNode->isCalcSumNode())
+            calcOperationNode->combineChildren();
 
         // If only one child remains, return the child (except at the root).
         auto shouldCombineParentWithOnlyChild = [](CSSCalcOperationNode& parent, int depth)
@@ -916,8 +912,8 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
                     return false;
             }
 
-            auto& child = parent.children().first();
-            if (!is<CSSCalcOperationNode>(child))
+            auto* child = dynamicDowncast<CSSCalcOperationNode>(parent.children().first().get());
+            if (!child)
                 return false;
 
             // At the root, calc(otherFunction()) should always collapse to otherFunction().
@@ -926,42 +922,42 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
                 return true;
 
             // At the root, preserve the root function by merging nodes with the same function.
-            auto childFunction = functionFromOperator(downcast<CSSCalcOperationNode>(child.get()).calcOperator());
+            auto childFunction = functionFromOperator(child->calcOperator());
             return childFunction == parentFunction;
         };
 
-        if (shouldCombineParentWithOnlyChild(calcOperationNode, depth))
-            return WTFMove(calcOperationNode.children().first());
+        if (shouldCombineParentWithOnlyChild(*calcOperationNode, depth))
+            return WTFMove(calcOperationNode->children().first());
 
         return WTFMove(rootNode);
     }
 
-    if (is<CSSCalcNegateNode>(rootNode)) {
-        auto& childNode = downcast<CSSCalcNegateNode>(rootNode.get()).child();
+    if (auto* negateNode = dynamicDowncast<CSSCalcNegateNode>(rootNode.get())) {
+        auto& childNode = negateNode->child();
         // If root’s child is a numeric value, return an equivalent numeric value, but with the value negated (0 - value).
-        if (is<CSSCalcPrimitiveValueNode>(childNode) && downcast<CSSCalcPrimitiveValueNode>(childNode).isNumericValue()) {
-            downcast<CSSCalcPrimitiveValueNode>(childNode).negate();
+        if (auto* primitiveValue = dynamicDowncast<CSSCalcPrimitiveValueNode>(childNode); primitiveValue && primitiveValue->isNumericValue()) {
+            primitiveValue->negate();
             return childNode;
         }
         
         // If root’s child is a Negate node, return the child’s child.
-        if (is<CSSCalcNegateNode>(childNode))
-            return downcast<CSSCalcNegateNode>(childNode).child();
+        if (auto* negateNode = dynamicDowncast<CSSCalcNegateNode>(childNode))
+            return negateNode->child();
         
         return WTFMove(rootNode);
     }
 
-    if (is<CSSCalcInvertNode>(rootNode)) {
-        auto& childNode = downcast<CSSCalcInvertNode>(rootNode.get()).child();
+    if (auto* invertNode = dynamicDowncast<CSSCalcInvertNode>(rootNode.get())) {
+        auto& childNode = invertNode->child();
         // If root’s child is a number (not a percentage or dimension) return the reciprocal of the child’s value.
-        if (is<CSSCalcPrimitiveValueNode>(childNode) && downcast<CSSCalcPrimitiveValueNode>(childNode).isNumericValue()) {
-            downcast<CSSCalcPrimitiveValueNode>(childNode).invert();
+        if (auto* primitiveValue = dynamicDowncast<CSSCalcPrimitiveValueNode>(childNode); primitiveValue && primitiveValue->isNumericValue()) {
+            primitiveValue->invert();
             return childNode;
         }
 
         // If root’s child is an Invert node, return the child’s child.
-        if (is<CSSCalcInvertNode>(childNode))
-            return downcast<CSSCalcInvertNode>(childNode).child();
+        if (auto* invertNode = dynamicDowncast<CSSCalcInvertNode>(childNode))
+            return invertNode->child();
 
         return WTFMove(rootNode);
     }
@@ -1020,7 +1016,7 @@ std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(c
         auto node = child->createCalcExpression(conversionData);
         if (!node)
             return nullptr;
-        nodes.uncheckedAppend(WTFMove(node));
+        nodes.append(WTFMove(node));
     }
 
     // Reverse the operation we did when creating this node, recovering a suitable destination category for otherwise-ambiguous min/max/clamp nodes.
@@ -1068,10 +1064,8 @@ void CSSCalcOperationNode::collectComputedStyleDependencies(ComputedStyleDepende
 void CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode& node, StringBuilder& builder)
 {
     auto shouldOutputEnclosingCalc = [](const CSSCalcExpressionNode& rootNode) {
-        if (is<CSSCalcOperationNode>(rootNode)) {
-            auto& operationNode = downcast<CSSCalcOperationNode>(rootNode);
-            return operationNode.isCalcSumNode() || operationNode.isCalcProductNode();
-        }
+        if (auto* operationNode = dynamicDowncast<CSSCalcOperationNode>(rootNode))
+            return operationNode->isCalcSumNode() || operationNode->isCalcProductNode();
         return !is<CSSCalcPrimitiveValueNode>(rootNode);
     };
     
@@ -1127,21 +1121,18 @@ static const char* functionPrefixForOperator(CalcOperator op)
 void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& node, StringBuilder& builder, GroupingParens parens)
 {
     // If root is a numeric value, or a non-math function, serialize root per the normal rules for it and return the result.
-    if (is<CSSCalcPrimitiveValueNode>(node)) {
-        auto& valueNode = downcast<CSSCalcPrimitiveValueNode>(node);
-        builder.append(valueNode.customCSSText());
+    if (auto* valueNode = dynamicDowncast<CSSCalcPrimitiveValueNode>(node)) {
+        builder.append(valueNode->customCSSText());
         return;
     }
 
-    if (is<CSSCalcOperationNode>(node)) {
-        auto& operationNode = downcast<CSSCalcOperationNode>(node);
-
-        if (operationNode.isCalcSumNode()) {
+    if (auto* operationNode = dynamicDowncast<CSSCalcOperationNode>(node)) {
+        if (operationNode->isCalcSumNode()) {
             // If root is a Sum node, let s be a string initially containing "(".
             if (parens == GroupingParens::Include)
                 builder.append('(');
 
-            auto children = operationNode.children();
+            auto children = operationNode->children();
             sortChildren(children);
             ASSERT(children.size());
             // Serialize root’s first child, and append it to s.
@@ -1153,19 +1144,18 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
             // Otherwise, append " + " to s, then serialize child and append the result to s.
             for (unsigned i = 1; i < children.size(); ++i) {
                 auto& child = children[i];
-                if (is<CSSCalcNegateNode>(child)) {
+                if (auto* negateNode = dynamicDowncast<CSSCalcNegateNode>(child.get())) {
                     builder.append(" - ");
-                    buildCSSTextRecursive(downcast<CSSCalcNegateNode>(child.get()).child(), builder);
+                    buildCSSTextRecursive(negateNode->child(), builder);
                     continue;
                 }
                 
-                if (is<CSSCalcPrimitiveValueNode>(child)) {
-                    auto& primitiveValueNode = downcast<CSSCalcPrimitiveValueNode>(child.get());
-                    if (primitiveValueNode.isNegative()) {
+                if (auto* primitiveValueNode = dynamicDowncast<CSSCalcPrimitiveValueNode>(child.get())) {
+                    if (primitiveValueNode->isNegative()) {
                         builder.append(" - ");
                         // Serialize the negation of child.
-                        auto unitType = primitiveValueNode.value().primitiveType();
-                        builder.append(0 - primitiveValueNode.value().doubleValue(), CSSPrimitiveValue::unitTypeString(unitType));
+                        auto unitType = primitiveValueNode->value().primitiveType();
+                        builder.append(0 - primitiveValueNode->value().doubleValue(), CSSPrimitiveValue::unitTypeString(unitType));
                         continue;
                     }
                 }
@@ -1179,12 +1169,12 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
             return;
         }
         
-        if (operationNode.isCalcProductNode()) {
+        if (operationNode->isCalcProductNode()) {
             // If root is a Product node, let s be a string initially containing "(".
             if (parens == GroupingParens::Include)
                 builder.append('(');
 
-            auto children = operationNode.children();
+            auto children = operationNode->children();
             sortChildren(children);
             ASSERT(children.size());
             // Serialize root’s first child, and append it to s.
@@ -1195,9 +1185,9 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
             // Otherwise, append " * " to s, then serialize child and append the result to s.
             for (unsigned i = 1; i < children.size(); ++i) {
                 auto& child = children[i];
-                if (is<CSSCalcInvertNode>(child)) {
+                if (auto* invertNode = dynamicDowncast<CSSCalcInvertNode>(child.get())) {
                     builder.append(" / ");
-                    buildCSSTextRecursive(downcast<CSSCalcInvertNode>(child.get()).child(), builder);
+                    buildCSSTextRecursive(invertNode->child(), builder);
                     continue;
                 }
 
@@ -1213,9 +1203,9 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
         // If root is anything but a Sum, Negate, Product, or Invert node, serialize a math function for the
         // function corresponding to the node type, treating the node’s children as the function’s
         // comma-separated calculation arguments, and return the result.
-        builder.append(functionPrefixForOperator(operationNode.calcOperator()));
+        builder.append(functionPrefixForOperator(operationNode->calcOperator()));
 
-        auto& children = operationNode.children();
+        auto& children = operationNode->children();
         ASSERT(children.size());
         buildCSSTextRecursive(children.first(), builder, GroupingParens::Omit);
 
@@ -1228,19 +1218,17 @@ void CSSCalcOperationNode::buildCSSTextRecursive(const CSSCalcExpressionNode& no
         return;
     }
     
-    if (is<CSSCalcNegateNode>(node)) {
-        auto& negateNode = downcast<CSSCalcNegateNode>(node);
+    if (auto* negateNode = dynamicDowncast<CSSCalcNegateNode>(node)) {
         // If root is a Negate node, let s be a string initially containing "(-1 * ".
         builder.append("-1 *");
-        buildCSSTextRecursive(negateNode.child(), builder);
+        buildCSSTextRecursive(negateNode->child(), builder);
         return;
     }
     
-    if (is<CSSCalcInvertNode>(node)) {
-        auto& invertNode = downcast<CSSCalcInvertNode>(node);
+    if (auto* invertNode = dynamicDowncast<CSSCalcInvertNode>(node)) {
         // If root is an Invert node, let s be a string initially containing "(1 / ".
         builder.append("1 / ");
-        buildCSSTextRecursive(invertNode.child(), builder);
+        buildCSSTextRecursive(invertNode->child(), builder);
         return;
     }
 }

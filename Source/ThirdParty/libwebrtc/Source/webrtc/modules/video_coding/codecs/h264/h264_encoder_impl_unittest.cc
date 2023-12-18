@@ -39,7 +39,7 @@ void SetDefaultSettings(VideoCodec* codec_settings) {
 }
 
 TEST(H264EncoderImplTest, CanInitializeWithDefaultParameters) {
-  H264EncoderImpl encoder(cricket::VideoCodec("H264"));
+  H264EncoderImpl encoder(cricket::CreateVideoCodec("H264"));
   VideoCodec codec_settings;
   SetDefaultSettings(&codec_settings);
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
@@ -49,7 +49,7 @@ TEST(H264EncoderImplTest, CanInitializeWithDefaultParameters) {
 }
 
 TEST(H264EncoderImplTest, CanInitializeWithNonInterleavedModeExplicitly) {
-  cricket::VideoCodec codec("H264");
+  cricket::VideoCodec codec = cricket::CreateVideoCodec("H264");
   codec.SetParam(cricket::kH264FmtpPacketizationMode, "1");
   H264EncoderImpl encoder(codec);
   VideoCodec codec_settings;
@@ -61,7 +61,7 @@ TEST(H264EncoderImplTest, CanInitializeWithNonInterleavedModeExplicitly) {
 }
 
 TEST(H264EncoderImplTest, CanInitializeWithSingleNalUnitModeExplicitly) {
-  cricket::VideoCodec codec("H264");
+  cricket::VideoCodec codec = cricket::CreateVideoCodec("H264");
   codec.SetParam(cricket::kH264FmtpPacketizationMode, "0");
   H264EncoderImpl encoder(codec);
   VideoCodec codec_settings;
@@ -73,7 +73,7 @@ TEST(H264EncoderImplTest, CanInitializeWithSingleNalUnitModeExplicitly) {
 }
 
 TEST(H264EncoderImplTest, CanInitializeWithRemovedParameter) {
-  cricket::VideoCodec codec("H264");
+  cricket::VideoCodec codec = cricket::CreateVideoCodec("H264");
   codec.RemoveParam(cricket::kH264FmtpPacketizationMode);
   H264EncoderImpl encoder(codec);
   VideoCodec codec_settings;

@@ -121,6 +121,11 @@ public:
 #endif
 #if USE(GBM)
     struct gbm_device* gbmDevice();
+    struct DMABufFormat {
+        uint32_t fourcc { 0 };
+        Vector<uint64_t, 1> modifiers;
+    };
+    const Vector<DMABufFormat>& dmabufFormats();
 #endif
 
 #if PLATFORM(GTK)
@@ -144,6 +149,10 @@ public:
 
 #if USE(ATSPI)
     const String& accessibilityBusAddress() const;
+#endif
+
+#if PLATFORM(WPE)
+    static void setUseDMABufForRendering(bool useDMABufForRendering) { s_useDMABufForRendering = useDMABufForRendering; }
 #endif
 
 protected:
@@ -209,13 +218,18 @@ private:
     mutable EGLDisplay m_angleEGLDisplay { nullptr };
     EGLContext m_angleSharingGLContext { nullptr };
 #endif
+#if USE(GBM)
+    Vector<DMABufFormat> m_dmabufFormats;
+#endif
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
-    bool tryEnsureGstGLContext() const;
-
     mutable GRefPtr<GstGLDisplay> m_gstGLDisplay;
     mutable GRefPtr<GstGLContext> m_gstGLContext;
+#endif
+
+#if PLATFORM(WPE)
+    static bool s_useDMABufForRendering;
 #endif
 };
 

@@ -1,0 +1,8 @@
+
+PASS Switch control does not match :indeterminate
+PASS Checkbox that is no longer a switch control does match :indeterminate
+PASS Checkbox that becomes a switch control does not match :indeterminate
+PASS Parent of a checkbox that becomes a switch control does not match :has(:indeterminate)
+PASS Parent of a switch control that becomes a checkbox continues to match :has(:checked)
+PASS A switch control that becomes a checkbox in a roundabout way
+

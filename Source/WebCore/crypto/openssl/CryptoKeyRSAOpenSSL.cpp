@@ -261,16 +261,16 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 {
     if (type() != CryptoKeyType::Public)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     int len = i2d_PUBKEY(platformKey(), nullptr);
     if (len < 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> keyData(len);
     auto ptr = keyData.data();
     if (i2d_PUBKEY(platformKey(), &ptr) < 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return keyData;
 }
@@ -278,20 +278,20 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 {
     if (type() != CryptoKeyType::Private)
-        return Exception { InvalidAccessError };
+        return Exception { ExceptionCode::InvalidAccessError };
 
     auto p8inf = PKCS8PrivKeyInfoPtr(EVP_PKEY2PKCS8(platformKey()));
     if (!p8inf)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     int len = i2d_PKCS8_PRIV_KEY_INFO(p8inf.get(), nullptr);
     if (len < 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     Vector<uint8_t> keyData(len);
     auto ptr = keyData.data();
     if (i2d_PKCS8_PRIV_KEY_INFO(p8inf.get(), &ptr) < 0)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return keyData;
 }

@@ -15,13 +15,11 @@
 
 #include "common/android_util.h"
 
-#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 26
+#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 29
 #    define ANGLE_AHARDWARE_BUFFER_SUPPORT
 // NDK header file for access to Android Hardware Buffers
 #    include <android/hardware_buffer.h>
-#    if __ANDROID_API__ >= 29
-#        define ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
-#    endif
+#    define ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
 #endif
 
 #if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 33
@@ -667,18 +665,24 @@ void main()
     };
 
 #if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
-    void writeAHBData(AHardwareBuffer *aHardwareBuffer,
+    bool writeAHBData(AHardwareBuffer *aHardwareBuffer,
                       size_t width,
                       size_t height,
                       size_t depth,
                       bool isYUV,
                       const std::vector<AHBPlaneData> &data)
     {
+        ASSERT(!data.empty());
 #    if defined(ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT)
         AHardwareBuffer_Planes planeInfo;
         int res = AHardwareBuffer_lockPlanes(
             aHardwareBuffer, AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY, -1, nullptr, &planeInfo);
-        EXPECT_EQ(res, 0);
+        if (res != 0)
+        {
+            WARN() << "AHardwareBuffer_lockPlanes failed";
+            return false;
+        }
+
         EXPECT_EQ(data.size(), planeInfo.planeCount);
 
         for (size_t planeIdx = 0; planeIdx < data.size(); planeIdx++)
@@ -743,6 +747,7 @@ void main()
         res = AHardwareBuffer_unlock(aHardwareBuffer, nullptr);
         EXPECT_EQ(res, 0);
 #    endif
+        return true;
     }
 #endif
 
@@ -895,7 +900,11 @@ void main()
             angle::android::ClientBufferToANativeWindowBuffer(eglClientBuffer));
         if (!data.empty())
         {
-            writeAHBData(pAHardwareBuffer, width, height, depth, false, data);
+            bool success = writeAHBData(pAHardwareBuffer, width, height, depth, false, data);
+            if (!success)
+            {
+                return;
+            }
         }
 #endif  // ANGLE_AHARDWARE_BUFFER_SUPPORT
 
@@ -2979,6 +2988,67 @@ TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSample)
     eglDestroyImageKHR(window->getDisplay(), image);
 }
 
+// Similar to SourceYUVTextureTargetExternalRGBSampleYUVSample, but added swizzle after
+// __samplerExternal2DY2YEXT from texture.
+TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSampleWithSwizzle)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasYUVInternalFormatExt() || !hasYUVTargetExt());
+
+    // Create source YUV texture
+    GLTexture yuvTexture;
+    GLubyte yuvColor[6]      = {7, 51, 197, 231, 128, 192};
+    constexpr size_t kWidth  = 2;
+    constexpr size_t kHeight = 2;
+
+    glBindTexture(GL_TEXTURE_2D, yuvTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                    GL_UNSIGNED_BYTE, yuvColor);
+    ASSERT_GL_NO_ERROR();
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the Image
+    EGLWindow *window = getEGLWindow();
+    EGLImageKHR image =
+        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+                          reinterpretHelper<EGLClientBuffer>(yuvTexture.get()), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create a texture target to bind the egl image
+    GLTexture target;
+    createEGLImageTargetTextureExternal(image, target);
+
+    // Draw quad with program that samples raw YUV data and then swizzle
+    const char *fragmentShaderSource = R"(#version 300 es
+#extension GL_EXT_YUV_target : require
+precision highp float;
+uniform __samplerExternal2DY2YEXT tex;
+in vec2 texcoord;
+out vec4 color;
+
+void main()
+{
+    color = vec4(texture(tex, texcoord).zyx, 1.0);
+})";
+    ANGLE_GL_PROGRAM(textureYUVProgram, getVSESSL3(), fragmentShaderSource);
+    ASSERT_NE(0u, textureYUVProgram) << "shader compilation failed.";
+    glUseProgram(textureYUVProgram);
+    GLint uniformLocation = glGetUniformLocation(textureYUVProgram, "tex");
+    ASSERT_NE(-1, uniformLocation);
+    glUniform1i(uniformLocation, 0);
+    drawQuad(textureYUVProgram, "position", 0.5f);
+    // Expect that the rendered quad's color matches the raw YUV data after component swizzle
+    EXPECT_PIXEL_NEAR(0, 0, yuvColor[5], yuvColor[4], yuvColor[2], 255, 1);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+}
+
 // Test interaction between GL_ANGLE_yuv_internal_format and EXT_yuv_target when a program has
 // both __samplerExternal2DY2YEXT and samplerExternalOES samplers.
 TEST_P(ImageTestES3, ProgramWithBothExternalY2YAndExternalOESSampler)
@@ -3161,10 +3231,6 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleInitData)
 // sampling even if we can't verify the results.
 TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleNoData)
 {
-    // Multiple issues sampling AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420 in the Vulkan backend:
-    // http://issuetracker.google.com/172649538
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     EGLWindow *window = getEGLWindow();
 
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
@@ -3893,6 +3959,37 @@ TEST_P(ImageTestES3, AHBDrawFlushAndSwitchToDefaultFBOBeforeReadBack)
     destroyAndroidHardwareBuffer(ahb);
 }
 
+// Test that texture swizzle parameters work with EGL image-backed textures
+TEST_P(ImageTestES3, AHBTextureSwizzleParameters)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    // Create the Image
+    AHardwareBuffer *ahb;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM,
+                                              kDefaultAHBUsage, kDefaultAttribs,
+                                              {{kLinearColor, 4}}, &ahb, &ahbImage);
+
+    GLTexture ahbTexture;
+    createEGLImageTargetTexture2D(ahbImage, ahbTexture);
+
+    glBindTexture(GL_TEXTURE_2D, ahbTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_GREEN);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_BLUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_RED);
+
+    GLubyte expectedColor[] = {kLinearColor[1], kLinearColor[2], kLinearColor[0], kLinearColor[3]};
+    verifyResults2D(ahbTexture, expectedColor);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahb);
+}
+
 // Test that RGBX data are preserved when importing from AHB.  Regression test for a bug in the
 // Vulkan backend where the image was cleared due to format emulation.
 TEST_P(ImageTestES3, RGBXAHBImportPreservesData)
@@ -4241,7 +4338,11 @@ TEST_P(ImageTestES3, RGBXAHBImportMultipleLayers)
     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
 
-    constexpr size_t kLayerCount = 3;
+    // Limit the test to singke layer for now. writeAHBData is assuming alignment between layers
+    // being 4096 which may not true on some GPUs. There is no API to retrieve such alignment from
+    // driver. For now just limit to single layer so that we can still test single layer behavior
+    // here.
+    constexpr size_t kLayerCount = 1;
 
     ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
         1, 1, kLayerCount, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage));
@@ -4815,10 +4916,14 @@ TEST_P(ImageTestES31, SourceAHBCubeArrayTargetCubeArray)
                        !IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
 
+    constexpr size_t kDepth = kCubeFaceCount * 2;
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+        kDefaultAHBUsage | kAHBUsageGPUCubeMap));
+
     // Create the Image
     AHardwareBuffer *source;
     EGLImageKHR image;
-    constexpr size_t kDepth = kCubeFaceCount * 2;
     createEGLImageAndroidHardwareBufferSource(1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
                                               kDefaultAHBUsage | kAHBUsageGPUCubeMap,
                                               kDefaultAttribs, {}, &source, &image);
@@ -5130,9 +5235,12 @@ void ImageTest::SourceNativeClientBufferTargetRenderbuffer_helper(const EGLint *
 
     // Create an Image backed by a native client buffer allocated using
     // EGL_ANDROID_create_native_client_buffer API
-    EGLImageKHR image;
+    EGLImageKHR image = EGL_NO_IMAGE_KHR;
     createEGLImageANWBClientBufferSource(1, 1, 1, kNativeClientBufferAttribs_RGBA8_Renderbuffer,
                                          attribs, {{kLinearColor, 4}}, &image);
+    // We are locking AHB to initialize AHB with data. The lock is allowed to fail, and may fail if
+    // driver decided to allocate with framebuffer compression enabled.
+    ANGLE_SKIP_TEST_IF(image == EGL_NO_IMAGE_KHR);
 
     // Create the target
     GLRenderbuffer target;

@@ -23,6 +23,7 @@
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
+#include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -63,6 +64,10 @@ class PeerConnectionTestWrapper
   rtc::scoped_refptr<webrtc::DataChannelInterface> CreateDataChannel(
       const std::string& label,
       const webrtc::DataChannelInit& init);
+
+  absl::optional<webrtc::RtpCodecCapability> FindFirstSendCodecWithName(
+      cricket::MediaType media_type,
+      const std::string& name) const;
 
   void WaitForNegotiation();
 

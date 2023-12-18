@@ -59,8 +59,8 @@ const int kCountTestBlock = 1000;
 
 class PartialIDctTest : public ::testing::TestWithParam<PartialInvTxfmParam> {
  public:
-  virtual ~PartialIDctTest() {}
-  virtual void SetUp() {
+  ~PartialIDctTest() override = default;
+  void SetUp() override {
     rnd_.Reset(ACMRandom::DeterministicSeed());
     fwd_txfm_ = GET_PARAM(0);
     full_inv_txfm_ = GET_PARAM(1);
@@ -76,7 +76,7 @@ class PartialIDctTest : public ::testing::TestWithParam<PartialInvTxfmParam> {
       case TX_8X8: size_ = 8; break;
       case TX_16X16: size_ = 16; break;
       case TX_32X32: size_ = 32; break;
-      default: FAIL() << "Wrong Size!"; break;
+      default: FAIL() << "Wrong Size!";
     }
 
     // Randomize stride_ to a value less than or equal to 1024
@@ -100,7 +100,7 @@ class PartialIDctTest : public ::testing::TestWithParam<PartialInvTxfmParam> {
         vpx_memalign(16, pixel_size_ * output_block_size_));
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     vpx_free(input_block_);
     input_block_ = nullptr;
     vpx_free(output_block_);
@@ -953,6 +953,20 @@ const PartialInvTxfmParam msa_partial_idct_tests[] = {
 INSTANTIATE_TEST_SUITE_P(MSA, PartialIDctTest,
                          ::testing::ValuesIn(msa_partial_idct_tests));
 #endif  // HAVE_MSA && !CONFIG_VP9_HIGHBITDEPTH
+
+#if HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH
+const PartialInvTxfmParam lsx_partial_idct_tests[] = {
+  make_tuple(&vpx_fdct32x32_c, &wrapper<vpx_idct32x32_1024_add_c>,
+             &wrapper<vpx_idct32x32_1024_add_lsx>, TX_32X32, 1024, 8, 1),
+  make_tuple(&vpx_fdct32x32_c, &wrapper<vpx_idct32x32_34_add_c>,
+             &wrapper<vpx_idct32x32_34_add_lsx>, TX_32X32, 34, 8, 1),
+  make_tuple(&vpx_fdct32x32_c, &wrapper<vpx_idct32x32_1_add_c>,
+             &wrapper<vpx_idct32x32_1_add_lsx>, TX_32X32, 1, 8, 1),
+};
+
+INSTANTIATE_TEST_SUITE_P(LSX, PartialIDctTest,
+                         ::testing::ValuesIn(lsx_partial_idct_tests));
+#endif  // HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH
 
 #endif  // !CONFIG_EMULATE_HARDWARE
 

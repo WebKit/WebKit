@@ -41,23 +41,28 @@ const int nonCharacter = -1;
 void TextCodecUTF8::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     // From https://encoding.spec.whatwg.org.
-    registrar("UTF-8", "UTF-8");
-    registrar("utf8", "UTF-8");
-    registrar("unicode-1-1-utf-8", "UTF-8");
+    registrar("UTF-8"_s, "UTF-8"_s);
+    registrar("utf8"_s, "UTF-8"_s);
+    registrar("unicode-1-1-utf-8"_s, "UTF-8"_s);
 
     // Additional aliases that originally were present in the encoding
     // table in WebKit on Macintosh, and subsequently added by
     // TextCodecICU. Perhaps we can prove some are not used on the web
     // and remove them.
-    registrar("unicode11utf8", "UTF-8");
-    registrar("unicode20utf8", "UTF-8");
-    registrar("x-unicode20utf8", "UTF-8");
+    registrar("unicode11utf8"_s, "UTF-8"_s);
+    registrar("unicode20utf8"_s, "UTF-8"_s);
+    registrar("x-unicode20utf8"_s, "UTF-8"_s);
+}
+
+std::unique_ptr<TextCodecUTF8> TextCodecUTF8::codec()
+{
+    return makeUnique<TextCodecUTF8>();
 }
 
 void TextCodecUTF8::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("UTF-8", [] {
-        return makeUnique<TextCodecUTF8>();
+    registrar("UTF-8"_s, [] {
+        return codec();
     });
 }
 

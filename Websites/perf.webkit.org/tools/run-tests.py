@@ -18,7 +18,12 @@ def main():
         if not os.path.isdir(target_dir):
             subprocess.call(['npm', 'install', package_name], cwd=node_modules_dir)
 
-    mocha_path = os.path.join(node_modules_dir, 'mocha/bin/mocha')
+    possible_mocha_paths = [
+        os.path.join(node_modules_dir, 'mocha/bin/_mocha'),
+        os.path.join(node_modules_dir, 'mocha/bin/mocha'),
+    ]
+    mocha_path = next((mocha for mocha in possible_mocha_paths if os.path.exists(mocha)), None)
+    assert mocha_path, 'Mocha CLI was not found.'
     test_paths = sys.argv[1:] or ['unit-tests', 'server-tests']
     return subprocess.call([mocha_path] + test_paths)
 

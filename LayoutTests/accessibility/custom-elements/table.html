@@ -111,16 +111,15 @@ else {
     shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").role', 'AXRole: AXCell');
     shouldBe('accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIARowIndex")', '8');
     shouldBe('accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIAColumnIndex")', '2');
-    shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").rowIndexRange()', '{4, 1}');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").rowIndexRange()', '{2, 1}');
     shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").columnIndexRange()', '{0, 2}');
 
     shouldBeEqualToString('accessibilityController.accessibleElementById("row-3").role', 'AXRole: AXRow');
     shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").role', 'AXRole: AXCell');
     shouldBe('accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIARowIndex")', '9');
     shouldBe('accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIAColumnIndex")', '2');
-    shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").rowIndexRange()', '{5, 1}');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").rowIndexRange()', '{3, 1}');
     shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").columnIndexRange()', '{0, 3}');
-
 }
 
 </script>

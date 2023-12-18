@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function log(msg) {
+    var msgNode = document.createTextNode(msg);
+    var li = document.createElement("li");
+    li.appendChild(msgNode);
+    document.getElementById("log").appendChild(li);
+}
+var dragging = false;
+var waitingForUp = false;
+function dragStarted() {
+    if (dragging || waitingForUp) {
+        log("Unexpected drag start");
+        return;
+    }
+    log("Drag started");
+    dragging = true;
+}
+
+window.onmousemove = function() {
+    if (!dragging || waitingForUp)
+        return;
+    log("Root frame received mouse move");
+    waitingForUp = true;
+}
+
+window.onmouseup = function() {
+    if (!waitingForUp) {
+        log("Unexpected mouseup");
+        return;
+    }
+    log("Root frame received mouseup event");
+    log("PASS!");
+}
+
+window.onload = function() {
+    try {
+        if (!frames[0] || !frames[0].document) {
+            log("Window.onload fired before subframe completed load.");
+        }
+        
+        if (!window.testRunner) {
+            log("This test needs to be run in DRT.  To test manually drag from the text 'Drag Me!' out into the child frame.");
+            return;
+        }
+        var dragSource = document.getElementById("dragSource");
+        var targetFrame = document.getElementById("targetFrame");
+        var startX = dragSource.offsetLeft + 10;
+        var startY = dragSource.offsetTop + dragSource.offsetHeight / 2;
+        var endX = targetFrame.offsetLeft + 10;
+        var endY = targetFrame.offsetTop + 10;
+        eventSender.mouseMoveTo(startX, startY);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(endX, endY);
+        eventSender.mouseUp();
+    } finally {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body>
+    <div>This tests that dragging from an element that returns <emph>false</emph> from its mousedown handler will let the subsequent mousemove events be captured by the containing frame, and not by other frames.</div>
+    <div id="dragSource" onmousedown="parent.dragStarted(); return false;">Drag Me!</div>
+    <iframe id="targetFrame" style="width: 100px; height: 50px;" src="resources/mouse-drag-from-frame-target-subframe.html"></iframe>
+    <ul id="log">
+    </ul>
+</body>
+</html>

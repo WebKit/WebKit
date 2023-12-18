@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "AirLiveness.h"
 #include "AirTmpMap.h"
 #include <wtf/Nonmovable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { 
 
@@ -40,7 +41,7 @@ namespace B3 { namespace Air {
 class Code;
 
 class GenerateAndAllocateRegisters {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GenerateAndAllocateRegisters);
     WTF_MAKE_NONMOVABLE(GenerateAndAllocateRegisters);
 
     struct TmpData {

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "GridPositionsResolver.h"
 
+#include "AncestorSubgridIterator.h"
 #include "GridArea.h"
 #include "RenderBox.h"
 #include "RenderGrid.h"
@@ -42,17 +43,17 @@ namespace WebCore {
 
 static inline bool isColumnSide(GridPositionSide side)
 {
-    return side == ColumnStartSide || side == ColumnEndSide;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide;
 }
 
 static inline bool isStartSide(GridPositionSide side)
 {
-    return side == ColumnStartSide || side == RowStartSide;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::RowStartSide;
 }
 
 static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
 {
-    return side == ColumnStartSide || side == ColumnEndSide ? ForColumns : ForRows;
+    return side == GridPositionSide::ColumnStartSide || side == GridPositionSide::ColumnEndSide ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
 }
 
 static const String implicitNamedGridLineForSide(const String& lineName, GridPositionSide side)
@@ -68,10 +69,10 @@ static unsigned explicitGridSizeForSide(const RenderGrid& gridContainer, GridPos
 static inline GridPositionSide transposedSide(GridPositionSide side)
 {
     switch (side) {
-    case ColumnStartSide: return RowStartSide;
-    case ColumnEndSide: return RowEndSide;
-    case RowStartSide: return ColumnStartSide;
-    default: return ColumnEndSide;
+    case GridPositionSide::ColumnStartSide: return GridPositionSide::RowStartSide;
+    case GridPositionSide::ColumnEndSide: return GridPositionSide::RowEndSide;
+    case GridPositionSide::RowStartSide: return GridPositionSide::ColumnStartSide;
+    default: return GridPositionSide::ColumnEndSide;
     }
 }
 
@@ -94,7 +95,7 @@ NamedLineCollectionBase::NamedLineCollectionBase(const RenderGrid& initialGrid, 
     auto direction = directionFromSide(side);
     const auto* grid = &initialGrid;
     const auto* gridContainerStyle = &grid->style();
-    bool isRowAxis = direction == ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
 
     m_lastLine = explicitGridSizeForSide(*grid, side);
 
@@ -233,70 +234,69 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const St
     auto currentSide = side;
     auto direction = directionFromSide(currentSide);
     bool initialFlipped = GridLayoutFunctions::isFlippedDirection(initialGrid, direction);
-    const RenderGrid* grid = &initialGrid;
-    bool isRowAxis = direction == ForColumns;
+    bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
 
     // If we're a subgrid, we want to inherit the line names from any ancestor grids.
-    while (isRowAxis ? grid->isSubgridColumns() : grid->isSubgridRows()) {
-        const auto* parent = downcast<RenderGrid>(grid->parent());
+    if (initialGrid.isSubgrid(direction)) {
+        for (auto& currentAncestorSubgrid : AncestorSubgridIterator(initialGrid, direction)) {
+            const auto* currentAncestorSubgridParent = downcast<RenderGrid>(currentAncestorSubgrid.parent());
 
-        // auto-placed subgrids inside a masonry grid do not inherit any line names
-        if ((parent->areMasonryRows() && (grid->style().gridItemColumnStart().isAuto() || grid->style().gridItemColumnStart().isSpan())) || (parent->areMasonryColumns() && (grid->style().gridItemRowStart().isAuto() || grid->style().gridItemRowStart().isSpan())))
-            return; 
-        // Translate our explicit grid set of lines into the coordinate space of the
-        // parent grid, adjusting direction/side as needed.
-        if (grid->isHorizontalWritingMode() != parent->isHorizontalWritingMode()) {
-            isRowAxis = !isRowAxis;
-            currentSide = transposedSide(currentSide);
-        }
-        direction = directionFromSide(currentSide);
-
-        auto span = parent->gridSpanForChild(*grid, direction);
-        search.translateTo(span, GridLayoutFunctions::isSubgridReversedDirection(*parent, direction, *grid));
-
-        auto convertToInitialSpace = [&](unsigned i) {
-            ASSERT(i >= search.startLine());
-            i -= search.startLine();
-            if (GridLayoutFunctions::isFlippedDirection(*parent, direction) != initialFlipped) {
-                ASSERT(m_lastLine >= i);
-                i = m_lastLine - i;
+            // auto-placed subgrids inside a masonry grid do not inherit any line names
+            if ((currentAncestorSubgridParent->areMasonryRows() && (currentAncestorSubgrid.style().gridItemColumnStart().isAuto() || currentAncestorSubgrid.style().gridItemColumnStart().isSpan())) || (currentAncestorSubgridParent->areMasonryColumns() && (currentAncestorSubgrid.style().gridItemRowStart().isAuto() || currentAncestorSubgrid.style().gridItemRowStart().isSpan())))
+                return;
+            // Translate our explicit grid set of lines into the coordinate space of the
+            // parent grid, adjusting direction/side as needed.
+            if (currentAncestorSubgrid.isHorizontalWritingMode() != currentAncestorSubgridParent->isHorizontalWritingMode()) {
+                isRowAxis = !isRowAxis;
+                currentSide = transposedSide(currentSide);
             }
-            return i;
-        };
+            direction = directionFromSide(currentSide);
 
-        // Create a line collection for the parent grid, and check to see if any of our lines
-        // are present. If we find any, add them to a locally stored line name list (with numbering
-        // relative to our grid).
-        bool appended = false;
-        NamedLineCollectionBase parentCollection(*parent, name, currentSide, nameIsAreaName);
-        if (parentCollection.hasNamedLines()) {
-            for (unsigned i = search.startLine(); i <= search.endLine(); i++) {
-                if (parentCollection.contains(i)) {
-                    ensureInheritedNamedIndices();
-                    appended = true;
-                    m_inheritedNamedLinesIndices.append(convertToInitialSpace(i));
+            auto span = currentAncestorSubgridParent->gridSpanForChild(currentAncestorSubgrid, direction);
+            search.translateTo(span, GridLayoutFunctions::isSubgridReversedDirection(*currentAncestorSubgridParent, direction, currentAncestorSubgrid));
+
+            auto convertToInitialSpace = [&](unsigned i) {
+                ASSERT(i >= search.startLine());
+                i -= search.startLine();
+                if (GridLayoutFunctions::isFlippedDirection(*currentAncestorSubgridParent, direction) != initialFlipped) {
+                    ASSERT(m_lastLine >= i);
+                    i = m_lastLine - i;
+                }
+                return i;
+            };
+
+            // Create a line collection for the parent grid, and check to see if any of our lines
+            // are present. If we find any, add them to a locally stored line name list (with numbering
+            // relative to our grid).
+            bool appended = false;
+            NamedLineCollectionBase parentCollection(*currentAncestorSubgridParent, name, currentSide, nameIsAreaName);
+            if (parentCollection.hasNamedLines()) {
+                for (unsigned i = search.startLine(); i <= search.endLine(); i++) {
+                    if (parentCollection.contains(i)) {
+                        ensureInheritedNamedIndices();
+                        appended = true;
+                        m_inheritedNamedLinesIndices.append(convertToInitialSpace(i));
+                    }
                 }
             }
-        }
 
-        if (nameIsAreaName) {
-            // We now need to look at the grid areas for the parent (not the implicit
-            // lines for the parent!), and insert the ones that intersect as implicit
-            // lines (but in our single combined list).
-            auto implicitLine = clampedImplicitLineForArea(parent->style(), name, search.startLine(), search.endLine(), isRowAxis, isStartSide(side));
-            if (implicitLine) {
-                ensureInheritedNamedIndices();
-                appended = true;
-                m_inheritedNamedLinesIndices.append(convertToInitialSpace(*implicitLine));
+            if (nameIsAreaName) {
+                // We now need to look at the grid areas for the parent (not the implicit
+                // lines for the parent!), and insert the ones that intersect as implicit
+                // lines (but in our single combined list).
+                auto implicitLine = clampedImplicitLineForArea(currentAncestorSubgridParent->style(), name, search.startLine(), search.endLine(), isRowAxis, isStartSide(side));
+                if (implicitLine) {
+                    ensureInheritedNamedIndices();
+                    appended = true;
+                    m_inheritedNamedLinesIndices.append(convertToInitialSpace(*implicitLine));
+                }
+            }
+
+            if (appended) {
+                // Re-sort m_inheritedNamedLinesIndices
+                std::sort(m_inheritedNamedLinesIndices.begin(), m_inheritedNamedLinesIndices.end());
             }
         }
-
-        if (appended) {
-            // Re-sort m_inheritedNamedLinesIndices
-            std::sort(m_inheritedNamedLinesIndices.begin(), m_inheritedNamedLinesIndices.end());
-        }
-
-        grid = parent;
     }
 }
 
@@ -360,7 +360,7 @@ static bool isIndefiniteSpan(GridPosition& initialPosition, GridPosition& finalP
 
 static void adjustGridPositionsFromStyle(const RenderBox& gridItem, GridTrackSizingDirection direction, GridPosition& initialPosition, GridPosition& finalPosition)
 {
-    bool isForColumns = direction == ForColumns;
+    bool isForColumns = direction == GridTrackSizingDirection::ForColumns;
     initialPosition = isForColumns ? gridItem.style().gridItemColumnStart() : gridItem.style().gridItemRowStart();
     finalPosition = isForColumns ? gridItem.style().gridItemColumnEnd() : gridItem.style().gridItemRowEnd();
 
@@ -393,20 +393,20 @@ unsigned GridPositionsResolver::explicitGridColumnCount(const RenderGrid& gridCo
 {
     if (gridContainer.isSubgridColumns()) {
         const RenderGrid& parent = *downcast<RenderGrid>(gridContainer.parent());
-        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, ForColumns);
+        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, GridTrackSizingDirection::ForColumns);
         return parent.gridSpanForChild(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(ForColumns), gridContainer.style().namedGridAreaColumnCount()), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridColumnTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForColumns), gridContainer.style().namedGridAreaColumnCount()), GridPosition::max());
 }
 
 unsigned GridPositionsResolver::explicitGridRowCount(const RenderGrid& gridContainer)
 {
     if (gridContainer.isSubgridRows()) {
         const RenderGrid& parent = *downcast<RenderGrid>(gridContainer.parent());
-        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, ForRows);
+        GridTrackSizingDirection direction = GridLayoutFunctions::flowAwareDirectionForChild(parent, gridContainer, GridTrackSizingDirection::ForRows);
         return parent.gridSpanForChild(gridContainer, direction).integerSpan();
     }
-    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(ForRows), gridContainer.style().namedGridAreaRowCount()), GridPosition::max());
+    return std::min<unsigned>(std::max(gridContainer.style().gridRowTrackSizes().size() + gridContainer.autoRepeatCountForDirection(GridTrackSizingDirection::ForRows), gridContainer.style().namedGridAreaRowCount()), GridPosition::max());
 }
 
 static unsigned lookAheadForNamedGridLine(int start, unsigned numberOfLines, NamedLineCollection& linesCollection)
@@ -463,7 +463,7 @@ static int resolveNamedGridLinePositionFromStyle(const RenderGrid& gridContainer
 static GridSpan definiteGridSpanWithNamedLineSpanAgainstOpposite(int oppositeLine, const GridPosition& position, GridPositionSide side, NamedLineCollection& linesCollection)
 {
     int start, end;
-    if (side == RowStartSide || side == ColumnStartSide) {
+    if (side == GridPositionSide::RowStartSide || side == GridPositionSide::ColumnStartSide) {
         start = lookBackForNamedGridLine(oppositeLine - 1, position.spanPosition(), linesCollection);
         end = oppositeLine;
     } else {
@@ -512,12 +512,12 @@ static GridSpan resolveGridPositionAgainstOppositePosition(const RenderGrid& gri
 
 GridPositionSide GridPositionsResolver::initialPositionSide(GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? ColumnStartSide : RowStartSide;
+    return direction == GridTrackSizingDirection::ForColumns ? GridPositionSide::ColumnStartSide : GridPositionSide::RowStartSide;
 }
 
 GridPositionSide GridPositionsResolver::finalPositionSide(GridTrackSizingDirection direction)
 {
-    return direction == ForColumns ? ColumnEndSide : RowEndSide;
+    return direction == GridTrackSizingDirection::ForColumns ? GridPositionSide::ColumnEndSide : GridPositionSide::RowEndSide;
 }
 
 unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderBox& gridItem, GridTrackSizingDirection direction)
@@ -541,7 +541,7 @@ unsigned GridPositionsResolver::spanSizeForAutoPlacedItem(const RenderBox& gridI
 static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const GridPosition& position, GridPositionSide side)
 {
     switch (position.type()) {
-    case ExplicitPosition: {
+    case GridPositionType::ExplicitPosition: {
         ASSERT(position.integerPosition());
 
         if (!position.namedGridLine().isNull())
@@ -556,7 +556,7 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
 
         return endOfTrack - resolvedPosition;
     }
-    case NamedGridAreaPosition:
+    case GridPositionType::NamedGridAreaPosition:
     {
         // First attempt to match the grid area's edge to a named grid area: if there is a named line with the name
         // ''<custom-ident>-start (for grid-*-start) / <custom-ident>-end'' (for grid-*-end), contributes the first such
@@ -577,8 +577,8 @@ static int resolveGridPositionFromStyle(const RenderGrid& gridContainer, const G
         // If none of the above works specs mandate to assume that all the lines in the implicit grid have this name.
         return explicitGridSizeForSide(gridContainer, side) + 1;
     }
-    case AutoPosition:
-    case SpanPosition:
+    case GridPositionType::AutoPosition:
+    case GridPositionType::SpanPosition:
         // 'auto' and span depend on the opposite position for resolution (e.g. grid-row: auto / 1 or grid-column: span 3 / "myHeader").
         ASSERT_NOT_REACHED();
         return 0;

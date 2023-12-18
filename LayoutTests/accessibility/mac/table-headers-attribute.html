@@ -33,7 +33,7 @@
         window.jsTestIsAsync = true;
 
         var table, cell1, colHeaders, cell2;
-        setTimeout(function() {
+        setTimeout(async function() {
             table = accessibilityController.accessibleElementById("table");
 
             // The first cell references header1 header3 header5.
@@ -53,7 +53,7 @@
 
             testOutput += "\nChanging `headers` attribute of #cell2 to be 'header1'.\n";
             document.getElementById("cell2").setAttribute("headers", "header1");
-            testOutput += expect("cell2.columnHeaders()[0].isEqual(table.cellForColumnAndRow(0, 0))", "true");
+            testOutput += await expectAsync("cell2.columnHeaders()[0].isEqual(table.cellForColumnAndRow(0, 0))", "true");
 
             debug(testOutput);
             finishJSTest();

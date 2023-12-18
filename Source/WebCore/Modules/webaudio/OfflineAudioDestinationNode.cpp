@@ -111,10 +111,10 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
     ASSERT(isMainThread());
     ASSERT(m_renderTarget.get());
     if (!m_renderTarget.get())
-        return completionHandler(Exception { InvalidStateError, "OfflineAudioContextNode has no rendering buffer"_s });
+        return completionHandler(Exception { ExceptionCode::InvalidStateError, "OfflineAudioContextNode has no rendering buffer"_s });
     
     if (m_startedRendering)
-        return completionHandler(Exception { InvalidStateError, "Already started rendering"_s });
+        return completionHandler(Exception { ExceptionCode::InvalidStateError, "Already started rendering"_s });
 
     m_startedRendering = true;
     Ref protectedThis { *this };

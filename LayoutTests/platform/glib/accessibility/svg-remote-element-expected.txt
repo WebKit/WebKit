@@ -15,8 +15,8 @@ NoseX: 193
 NoseY: 206
 Mouth AXRole: AXButton
 Mouth AXTitle: smile
-MouthX: 116
-MouthY: 275
+MouthX: 101
+MouthY: 260
 
 PASS successfullyParsed is true
 

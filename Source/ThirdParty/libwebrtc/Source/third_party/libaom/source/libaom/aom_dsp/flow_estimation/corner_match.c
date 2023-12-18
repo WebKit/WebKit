@@ -147,13 +147,13 @@ static void improve_correspondence(const unsigned char *src,
   }
 }
 
-int aom_determine_correspondence(const unsigned char *src,
-                                 const int *src_corners, int num_src_corners,
-                                 const unsigned char *ref,
-                                 const int *ref_corners, int num_ref_corners,
-                                 int width, int height, int src_stride,
-                                 int ref_stride,
-                                 Correspondence *correspondences) {
+static int determine_correspondence(const unsigned char *src,
+                                    const int *src_corners, int num_src_corners,
+                                    const unsigned char *ref,
+                                    const int *ref_corners, int num_ref_corners,
+                                    int width, int height, int src_stride,
+                                    int ref_stride,
+                                    Correspondence *correspondences) {
   // TODO(sarahparker) Improve this to include 2-way match
   int i, j;
   int num_correspondences = 0;
@@ -202,7 +202,8 @@ int aom_determine_correspondence(const unsigned char *src,
 
 bool av1_compute_global_motion_feature_match(
     TransformationType type, YV12_BUFFER_CONFIG *src, YV12_BUFFER_CONFIG *ref,
-    int bit_depth, MotionModel *motion_models, int num_motion_models) {
+    int bit_depth, MotionModel *motion_models, int num_motion_models,
+    bool *mem_alloc_failed) {
   int num_correspondences;
   Correspondence *correspondences;
   ImagePyramid *src_pyramid = src->y_pyramid;
@@ -211,10 +212,22 @@ bool av1_compute_global_motion_feature_match(
   CornerList *ref_corners = ref->corners;
 
   // Precompute information we will need about each frame
-  aom_compute_pyramid(src, bit_depth, src_pyramid);
-  av1_compute_corner_list(src_pyramid, src_corners);
-  aom_compute_pyramid(ref, bit_depth, ref_pyramid);
-  av1_compute_corner_list(ref_pyramid, ref_corners);
+  if (!aom_compute_pyramid(src, bit_depth, src_pyramid)) {
+    *mem_alloc_failed = true;
+    return false;
+  }
+  if (!av1_compute_corner_list(src_pyramid, src_corners)) {
+    *mem_alloc_failed = true;
+    return false;
+  }
+  if (!aom_compute_pyramid(ref, bit_depth, ref_pyramid)) {
+    *mem_alloc_failed = true;
+    return false;
+  }
+  if (!av1_compute_corner_list(src_pyramid, src_corners)) {
+    *mem_alloc_failed = true;
+    return false;
+  }
 
   const uint8_t *src_buffer = src_pyramid->layers[0].buffer;
   const int src_width = src_pyramid->layers[0].width;
@@ -229,14 +242,17 @@ bool av1_compute_global_motion_feature_match(
   // find correspondences between the two images
   correspondences = (Correspondence *)aom_malloc(src_corners->num_corners *
                                                  sizeof(*correspondences));
-  if (!correspondences) return false;
-  num_correspondences = aom_determine_correspondence(
+  if (!correspondences) {
+    *mem_alloc_failed = true;
+    return false;
+  }
+  num_correspondences = determine_correspondence(
       src_buffer, src_corners->corners, src_corners->num_corners, ref_buffer,
       ref_corners->corners, ref_corners->num_corners, src_width, src_height,
       src_stride, ref_stride, correspondences);
 
   bool result = ransac(correspondences, num_correspondences, type,
-                       motion_models, num_motion_models);
+                       motion_models, num_motion_models, mem_alloc_failed);
 
   aom_free(correspondences);
   return result;

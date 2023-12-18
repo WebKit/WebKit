@@ -186,6 +186,7 @@ class BitrateEstimatorTest : public test::CallTest {
               test::VideoTestConstants::kDefaultFramerate,
               *test->task_queue_factory_);
       frame_generator_capturer_->Init();
+      frame_generator_capturer_->Start();
       send_stream_->SetSource(frame_generator_capturer_.get(),
                               DegradationPreference::MAINTAIN_FRAMERATE);
       send_stream_->Start();

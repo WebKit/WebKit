@@ -913,17 +913,31 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     checkOffsetConsistency();
     ASSERT(isDictionary());
     ASSERT(object->structure() == this);
-    
+
+    Locker<JSCellLock> cellLocker(NoLockingNecessary);
+
+    PropertyTable* table = nullptr;
+    size_t beforeOutOfLineCapacity = this->outOfLineCapacity();
+    size_t afterOutOfLineCapacity = beforeOutOfLineCapacity;
+    if (isUncacheableDictionary()) {
+        table = propertyTableOrNull();
+        ASSERT(table);
+        PropertyOffset maxOffset = invalidOffset;
+        if (unsigned propertyCount = table->size())
+            maxOffset = offsetForPropertyNumber(propertyCount - 1, m_inlineCapacity);
+        afterOutOfLineCapacity = outOfLineCapacity(maxOffset);
+    }
+
+    // This is the only case we shrink butterfly in this function. We should take a cell lock to protect against concurrent access to the butterfly.
+    if (beforeOutOfLineCapacity != afterOutOfLineCapacity)
+        cellLocker = Locker { object->cellLock() };
+
     GCSafeConcurrentJSLocker locker(m_lock, vm);
-    
+
     object->setStructureIDDirectly(id().nuke());
     WTF::storeStoreFence();
 
-    size_t beforeOutOfLineCapacity = this->outOfLineCapacity();
     if (isUncacheableDictionary()) {
-        PropertyTable* table = propertyTableOrNull();
-        ASSERT(table);
-
         size_t propertyCount = table->size();
 
         // Holds our values compacted by insertion order. This is OK since GC is deferred.
@@ -955,7 +969,7 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     setDictionaryKind(NoneDictionaryKind);
     setHasBeenFlattenedBefore(true);
 
-    size_t afterOutOfLineCapacity = this->outOfLineCapacity();
+    ASSERT(this->outOfLineCapacity() == afterOutOfLineCapacity);
 
     if (object->butterfly() && beforeOutOfLineCapacity != afterOutOfLineCapacity) {
         ASSERT(beforeOutOfLineCapacity > afterOutOfLineCapacity);

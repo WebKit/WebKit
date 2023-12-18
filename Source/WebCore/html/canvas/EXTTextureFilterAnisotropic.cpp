@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureFilterAnisotropic);
 
 EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTTextureFilterAnisotropic)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_filter_anisotropic"_s);
 }

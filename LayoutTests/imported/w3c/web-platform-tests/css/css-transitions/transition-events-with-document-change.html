@@ -7,15 +7,17 @@
 <iframe src="about:blank"></iframe>
 <script>
 promise_test(async () => {
+    await new Promise(r => window.addEventListener("load", r));
+
     const target = document.getElementById("target");
     target.style.transition = "margin-left 100ms";
-    
+
     const transitionMarginLeft = async value => {
         getComputedStyle(target).marginLeft;
         target.style.marginLeft = value;
         await target.getAnimations()[0].ready;
     }
-    
+
     // start an initial transition.
     await transitionMarginLeft("100px");
 

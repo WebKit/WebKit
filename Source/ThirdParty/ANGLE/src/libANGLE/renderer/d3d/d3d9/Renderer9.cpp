@@ -3111,7 +3111,14 @@ void Renderer9::initializeFeatures(angle::FeaturesD3D *features) const
     }
 }
 
-void Renderer9::initializeFrontendFeatures(angle::FrontendFeatures *features) const {}
+void Renderer9::initializeFrontendFeatures(angle::FrontendFeatures *features) const
+{
+    ApplyFeatureOverrides(features, mDisplay->getState());
+    if (!mDisplay->getState().featuresAllDisabled)
+    {
+        d3d9::InitializeFrontendFeatures(features, mAdapterIdentifier.VendorId);
+    }
+}
 
 DeviceImpl *Renderer9::createEGLDevice()
 {

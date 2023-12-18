@@ -17,6 +17,7 @@
 
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "common_video/h264/sps_parser.h"
 
 namespace webrtc {
 
@@ -376,8 +377,8 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
   // TODO(tkchin): figure out how to use a pool.
   CMBlockBufferRef block_buffer = nullptr;
   OSStatus status = CMBlockBufferCreateWithMemoryBlock(
-      nullptr, nullptr, reader.BytesRemaining(), nullptr, nullptr, 0,
-      reader.BytesRemaining(), kCMBlockBufferAssureMemoryNowFlag,
+      nullptr, nullptr, reader.BytesRemainingForAVC(), nullptr, nullptr, 0,
+      reader.BytesRemainingForAVC(), kCMBlockBufferAssureMemoryNowFlag,
       &block_buffer);
   if (status != kCMBlockBufferNoErr) {
     RTC_LOG(LS_ERROR) << "Failed to create block buffer.";
@@ -410,9 +411,9 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
     CFRelease(contiguous_buffer);
     return false;
   }
-  RTC_DCHECK(block_buffer_size == reader.BytesRemaining());
+  RTC_DCHECK(block_buffer_size == reader.BytesRemainingForAVC());
 
-  // Write Avcc NALUs into block buffer memory.
+  // Write Hvcc NALUs into block buffer memory.
   AvccBufferWriter writer(reinterpret_cast<uint8_t*>(data_ptr),
                           block_buffer_size);
   while (reader.BytesRemaining() > 0) {
@@ -465,6 +466,296 @@ CMVideoFormatDescriptionRef CreateVideoFormatDescription(
     return nullptr;
   }
   return description;
+}
+
+class SpsAndVuiParser : private SpsParser {
+public:
+    struct State : SpsState {
+      explicit State(const SpsState& spsState)
+        : SpsState(spsState)
+      {
+      }
+
+      uint8_t profile_idc { 0 };
+      uint8_t level_idc { 0 };
+      bool constraint_set3_flag { false };
+      bool bitstream_restriction_flag { false };
+      uint64_t max_num_reorder_frames { 0 };
+    };
+    static absl::optional<State> Parse(const std::vector<uint8_t>& unpacked_buffer)
+    {
+      BitstreamReader reader(unpacked_buffer);
+      auto spsState = ParseSpsUpToVui(reader);
+      if (!spsState) {
+          return { };
+      }
+      State result { *spsState };
+
+      {
+        // We are restarting parsing for some values we need and that ParseSpsUpToVui is not giving us.
+        BitstreamReader reader2(unpacked_buffer);
+        result.profile_idc = reader2.Read<uint8_t>();
+        // constraint_set0_flag, constraint_set1_flag, constraint_set2_flag
+        reader2.ConsumeBits(3);
+        result.constraint_set3_flag = reader2.Read<bool>();
+        // constraint_set4_flag, constraint_set5_flag and reserved bits (2)
+        reader2.ConsumeBits(4);
+        result.level_idc = reader2.Read<uint8_t>();
+        if (!reader2.Ok()) {
+          return { };
+        }
+      }
+
+      if (!spsState->vui_params_present) {
+        return result;
+      }
+      // Based on ANNEX VUI parameters syntax.
+
+      // aspect_ratio_info_present_flag
+      if (reader.Read<bool>()) {
+        // aspect_ratio_idc
+        auto aspect_ratio_idc = reader.Read<uint8_t>();
+        // FIXME Extended_SAR
+        constexpr uint64_t extendedSar = 255;
+        if (aspect_ratio_idc == extendedSar) {
+          // sar_width
+          reader.ConsumeBits(16);
+          // sar_height
+          reader.ConsumeBits(16);
+        }
+      }
+      // overscan_info_present_flag
+      if (reader.Read<bool>()) {
+        // overscan_appropriate_flag
+        reader.ConsumeBits(1);
+      }
+      // video_signal_type_present_flag
+      if (reader.Read<bool>()) {
+        // video_format
+        reader.ConsumeBits(3);
+        // video_full_range_flag
+        reader.ConsumeBits(1);
+        // colour_description_present_flag
+        if (reader.Read<bool>()) {
+          // colour_primaries
+          reader.ConsumeBits(8);
+          // transfer_characteristics
+          reader.ConsumeBits(8);
+          // matrix_coefficients
+          reader.ConsumeBits(8);
+        }
+      }
+      // chroma_loc_info_present_flag
+      if (reader.Read<bool>()) {
+          // chroma_sample_loc_type_top_field
+          reader.ReadExponentialGolomb();
+          // chroma_sample_loc_type_bottom_field
+          reader.ReadExponentialGolomb();
+      }
+      // timing_info_present_flag
+      if (reader.Read<bool>()) {
+        // num_units_in_tick
+        reader.ConsumeBits(32);
+        // time_scale
+        reader.ConsumeBits(32);
+        // fixed_frame_rate_flag
+        reader.ConsumeBits(1);
+      }
+      // nal_hrd_parameters_present_flag
+      bool nal_hrd_parameters_present_flag = reader.Read<bool>();
+      if (nal_hrd_parameters_present_flag) {
+        // hrd_parameters
+        skipHRDParameters(reader);
+      }
+      // vcl_hrd_parameters_present_flag
+      bool vcl_hrd_parameters_present_flag = reader.Read<bool>();
+      if (vcl_hrd_parameters_present_flag) {
+        // hrd_parameters
+        skipHRDParameters(reader);
+      }
+      if (nal_hrd_parameters_present_flag || vcl_hrd_parameters_present_flag) {
+        // low_delay_hrd_flag
+        reader.ConsumeBits(1);
+      }
+      // pic_struct_present_flag
+      reader.ConsumeBits(1);
+      // bitstream_restriction_flag
+      result.bitstream_restriction_flag = reader.Read<bool>();
+      if (result.bitstream_restriction_flag) {
+        // motion_vectors_over_pic_boundaries_flag
+        reader.ConsumeBits(1);
+        // max_bytes_per_pic_denom
+        reader.ReadExponentialGolomb();
+        // max_bits_per_mb_denom
+        reader.ReadExponentialGolomb();
+        // log2_max_mv_length_horizontal
+        reader.ReadExponentialGolomb();
+        // log2_max_mv_length_vertical
+        reader.ReadExponentialGolomb();
+        // max_num_reorder_frames
+        result.max_num_reorder_frames = reader.ReadExponentialGolomb();
+        // max_dec_frame_buffering
+        reader.ReadExponentialGolomb();
+      }
+
+      if (!reader.Ok()) {
+          return { };
+      }
+      return result;
+    }
+
+    static void skipHRDParameters(BitstreamReader& reader)
+    {
+        // cpb_cnt_minus1
+        auto cpb_cnt_minus1 = reader.ReadExponentialGolomb();
+        // bit_rate_scale
+        // cpb_size_scale
+        reader.ConsumeBits(8);
+        for (size_t cptr = 0; cptr < cpb_cnt_minus1; ++cptr) {
+            // bit_rate_value_minus1
+            reader.ReadExponentialGolomb();
+            // cpb_size_value_minus1
+            reader.ReadExponentialGolomb();
+            // cbr_flag
+            reader.ConsumeBits(1);
+        }
+        // initial_cpb_removal_delay_length_minus1
+        // cpb_removal_delay_length_minus1
+        // dpb_output_delay_length_minus1
+        // time_offset_length
+        reader.ConsumeBits(20);
+    }
+};
+
+// Table A-1 of H.264 spec
+static size_t maxDpbMbsFromLevelNumber(uint8_t profile_idc, uint8_t level_idc, bool constraint_set3_flag)
+{
+  if ((profile_idc == 66 || profile_idc == 77) && level_idc == 11 && constraint_set3_flag) {
+    // level1b
+    return 396;
+  }
+  H264Level level_casted = static_cast<H264Level>(level_idc);
+
+  switch (level_casted) {
+  case H264Level::kLevel1:
+    return 396;
+  case H264Level::kLevel1_1:
+    return 900;
+  case H264Level::kLevel1_2:
+  case H264Level::kLevel1_3:
+  case H264Level::kLevel2:
+    return 2376;
+  case H264Level::kLevel2_1:
+    return 4752;
+  case H264Level::kLevel2_2:
+  case H264Level::kLevel3:
+    return 8100;
+  case H264Level::kLevel3_1:
+    return 18000;
+  case H264Level::kLevel3_2:
+    return 20480;
+  case H264Level::kLevel4:
+    return 32768;
+  case H264Level::kLevel4_1:
+    return 32768;
+  case H264Level::kLevel4_2:
+    return 34816;
+  case H264Level::kLevel5:
+    return 110400;
+  case H264Level::kLevel5_1:
+    return 184320;
+  case H264Level::kLevel5_2:
+    return 184320;
+  default:
+    RTC_LOG(LS_ERROR) << "Wrong maxDpbMbsFromLevelNumber";
+    return 0;
+  }
+}
+
+static uint8_t ComputeH264ReorderSizeFromSPS(const SpsAndVuiParser::State& state) {
+  if (state.pic_order_cnt_type == 2) {
+    return 0;
+  }
+
+  uint64_t max_dpb_mbs = maxDpbMbsFromLevelNumber(state.profile_idc, state.level_idc, state.constraint_set3_flag);
+  uint64_t max_dpb_frames_from_sps = max_dpb_mbs / ((state.width / 16) * (state.height / 16));
+  // We use a max value of 16.
+  auto max_dpb_frames = static_cast<uint8_t>(std::min(max_dpb_frames_from_sps, 16ull));
+
+  if (state.bitstream_restriction_flag) {
+    if (state.max_num_reorder_frames < max_dpb_frames) {
+      return static_cast<uint8_t>(state.max_num_reorder_frames);
+    } else {
+      return max_dpb_frames;
+    }
+  }
+  if (state.constraint_set3_flag && (state.profile_idc == 44 || state.profile_idc == 86 || state.profile_idc == 100 || state.profile_idc == 110 || state.profile_idc == 122 || state.profile_idc == 244)) {
+    return 0;
+  }
+  return max_dpb_frames;
+}
+
+uint8_t ComputeH264ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t annexb_buffer_size) {
+  AnnexBBufferReader reader(annexb_buffer, annexb_buffer_size);
+  if (!reader.SeekToNextNaluOfType(kSps)) {
+    return 0;
+  }
+  const uint8_t* spsData;
+  size_t spsDataSize;
+
+  if (!reader.ReadNalu(&spsData, &spsDataSize)) {
+    return 0;
+  }
+
+  std::vector<uint8_t> unpacked_buffer = H264::ParseRbsp(spsData, spsDataSize);
+  auto spsAndVui = SpsAndVuiParser::Parse(unpacked_buffer);
+  if (!spsAndVui) {
+    RTC_LOG(LS_ERROR) << "Failed to parse sps.";
+    return 0;
+  }
+
+  return ComputeH264ReorderSizeFromSPS(*spsAndVui);
+}
+
+uint8_t ComputeH264ReorderSizeFromAVC(const uint8_t* avcData, size_t avcDataSize) {
+  std::vector<uint8_t> unpacked_buffer { avcData, avcData + avcDataSize };
+  BitstreamReader reader(unpacked_buffer);
+
+  // configurationVersion
+  reader.ConsumeBits(8);
+  // AVCProfileIndication;
+  reader.ConsumeBits(8);
+  // profile_compatibility;
+  reader.ConsumeBits(8);
+  // AVCLevelIndication;
+  reader.ConsumeBits(8);
+  // bit(6) reserved = '111111'b;
+  // unsigned int(2) lengthSizeMinusOne;
+  reader.ConsumeBits(8);
+  // bit(3) reserved = '111'b;
+  // unsigned int(5) numOfSequenceParameterSets;
+  auto numOfSequenceParameterSets = 0x1F & reader.Read<uint8_t>();
+
+  if (!reader.Ok()) {
+    return 0;
+  }
+
+  size_t offset = 6;
+  if (numOfSequenceParameterSets) {
+    auto size = reader.Read<uint16_t>();
+    offset += 2;
+
+    reader.ConsumeBits(8 * (size + H264::kNaluTypeSize));
+    if (!reader.Ok()) {
+      return 0;
+    }
+
+    auto spsAndVui = SpsAndVuiParser::Parse({ avcData + offset + H264::kNaluTypeSize, avcData + offset + size });
+    if (spsAndVui) {
+      return ComputeH264ReorderSizeFromSPS(*spsAndVui);
+    }
+  }
+  return 0;
 }
 
 #ifndef DISABLE_H265
@@ -585,6 +876,7 @@ AvccBufferWriter::AvccBufferWriter(uint8_t* const avcc_buffer, size_t length)
 bool AvccBufferWriter::WriteNalu(const uint8_t* data, size_t data_size) {
   // Check if we can write this length of data.
   if (data_size + kAvccHeaderByteSize > BytesRemaining()) {
+    RTC_LOG(LS_ERROR) << "AvccBufferWriter::WriteNalu failed.";
     return false;
   }
   // Write length header, which needs to be big endian.

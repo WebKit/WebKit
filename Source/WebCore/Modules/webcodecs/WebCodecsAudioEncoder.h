@@ -46,7 +46,7 @@ class WebCodecsAudioData;
 struct WebCodecsEncodedAudioChunkMetadata;
 
 class WebCodecsAudioEncoder
-    : public RefCounted<WebCodecsAudioEncoder>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioEncoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(WebCodecsAudioEncoder);
@@ -71,8 +71,8 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsAudioEncoderConfig&&, Ref<DeferredPromise>&&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
 
 private:
     WebCodecsAudioEncoder(ScriptExecutionContext&, Init&&);

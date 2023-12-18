@@ -158,11 +158,21 @@
     border-top-color: hsl(40, 100%, 90%);
 }
 
-.console-item::before {
+.console-item::before,
+.console-group::before {
     position: absolute;
     left: 4px;
     height: 12px;
     width: 12px;
+    z-index: 1;
+}
+
+.console-group::before {
+    top: 4px;
+}
+
+.console-group:is(.console-warning-level, .console-error-level, .console-log-level, .console-info-level, .console-debug-level) {
+    padding-inline-start: 16px;
 }
 
 .console-item.selected::after {
@@ -218,6 +228,18 @@
     inset-inline-start: 4px;
     width: 13px;
     height: 13px;
+}
+
+.console-group-title > .console-error-level {
+    display: inline-block;
+    margin-inline-end: 4px;
+    height: 12px;
+    width: 12px;    
+}
+
+.console-group-title > .console-error-level::before {
+    position: relative;
+    top: 2px;
 }
 
 body[dir=rtl] .console-group-title::before {
@@ -389,6 +411,10 @@ body[dir=rtl] .console-group-title::before {
 
     .console-warning-level:not(.filtered-out, .filtered-out-by-search), .console-warning-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
         border-top-color: var(--border-color-warning);
+    }
+    
+    .console-group-sourcemap-errors {
+        background-color: var(--error-background-color-secondary);
     }
 
     .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {

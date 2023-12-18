@@ -39,6 +39,7 @@
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionAPIPort.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionFrameIdentifier.h"
 #import "WebExtensionMessageSenderParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
@@ -51,6 +52,8 @@ static NSString * const tabKey = @"tab";
 static NSString * const urlKey = @"url";
 static NSString * const originKey = @"origin";
 static NSString * const nameKey = @"name";
+static NSString * const reasonKey = @"reason";
+static NSString * const previousVersionKey = @"previousVersion";
 
 namespace WebKit {
 
@@ -122,24 +125,31 @@ bool WebExtensionAPIRuntime::isPropertyAllowed(ASCIILiteral name, WebPage*)
     return false;
 }
 
-NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **errorString)
+NSURL *WebExtensionAPIRuntime::getURL(NSString *resourcePath, NSString **outExceptionString)
 {
-    URL baseURL = extensionContext().baseURL();
-    return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getURL
+
+    return URL { extensionContext().baseURL(), resourcePath };
 }
 
 NSDictionary *WebExtensionAPIRuntime::getManifest()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getManifest
+
     return extensionContext().manifest();
 }
 
 NSString *WebExtensionAPIRuntime::runtimeIdentifier()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/id
+
     return extensionContext().uniqueIdentifier();
 }
 
 void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& callback)
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getPlatformInfo
+
 #if PLATFORM(MAC)
     static NSString * const osValue = @"mac";
 #elif PLATFORM(IOS_FAMILY)
@@ -164,8 +174,84 @@ void WebExtensionAPIRuntime::getPlatformInfo(Ref<WebExtensionCallbackHandler>&& 
     callback->call(platformInfo);
 }
 
+void WebExtensionAPIRuntime::getBackgroundPage(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBackgroundPage
+
+    if (auto backgroundPage = extensionContext().backgroundPage()) {
+        callback->call(toWindowObject(callback->globalContext(), *backgroundPage));
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeGetBackgroundPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebCore::PageIdentifier> pageIdentifier, std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        if (!pageIdentifier) {
+            callback->call(NSNull.null);
+            return;
+        }
+
+        auto* page = WebProcess::singleton().webPage(pageIdentifier.value());
+        if (!page) {
+            callback->call(NSNull.null);
+            return;
+        }
+
+        callback->call(toWindowObject(callback->globalContext(), *page));
+    }, extensionContext().identifier());
+}
+
+double WebExtensionAPIRuntime::getFrameId(JSValue *target)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getFrameId
+
+    if (!target)
+        return WebExtensionFrameConstants::None;
+
+    auto frame = WebFrame::contentFrameForWindowOrFrameElement(target.context.JSGlobalContextRef, target.JSValueRef);
+    if (!frame)
+        return WebExtensionFrameConstants::None;
+
+    return toWebAPI(toWebExtensionFrameIdentifier(*frame));
+}
+
+void WebExtensionAPIRuntime::setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/setUninstallURL
+
+    // FIXME: rdar://58000001 Consider implementing runtime.setUninstallURL(), matching the behavior of other browsers.
+
+    callback->call();
+}
+
+void WebExtensionAPIRuntime::openOptionsPage(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/openOptionsPage
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::RuntimeOpenOptionsPage(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPIRuntime::reload()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/reload
+
+    WebProcess::singleton().send(Messages::WebExtensionContext::RuntimeReload(), extensionContext().identifier());
+}
+
 JSValue *WebExtensionAPIRuntime::lastError()
 {
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/lastError
+
     m_lastErrorAccessed = true;
 
     return m_lastError.get();
@@ -292,6 +378,26 @@ WebExtensionAPIEvent& WebExtensionAPIRuntime::onConnect()
         m_onConnect = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnConnect);
 
     return *m_onConnect;
+}
+
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onInstalled()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onInstalled
+
+    if (!m_onInstalled)
+        m_onInstalled = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnInstalled);
+
+    return *m_onInstalled;
+}
+
+WebExtensionAPIEvent& WebExtensionAPIRuntime::onStartup()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onStartup
+
+    if (!m_onStartup)
+        m_onStartup = WebExtensionAPIEvent::create(forMainWorld(), runtime(), extensionContext(), WebExtensionEventListenerType::RuntimeOnStartup);
+
+    return *m_onStartup;
 }
 
 NSDictionary *toWebAPI(const WebExtensionMessageSenderParameters& parameters)
@@ -443,6 +549,45 @@ void WebExtensionContextProxy::dispatchRuntimeConnectEvent(WebExtensionContentWo
         ASSERT_NOT_REACHED();
         return;
     }
+}
+
+inline NSString *toWebAPI(WebExtensionContext::InstallReason installReason)
+{
+    switch (installReason) {
+    case WebExtensionContext::InstallReason::None:
+        ASSERT_NOT_REACHED();
+        return nil;
+
+    case WebExtensionContext::InstallReason::ExtensionInstall:
+        return @"install";
+
+    case WebExtensionContext::InstallReason::ExtensionUpdate:
+        return @"update";
+
+    case WebExtensionContext::InstallReason::BrowserUpdate:
+        return @"browser_update";
+    }
+}
+
+void WebExtensionContextProxy::dispatchRuntimeInstalledEvent(WebExtensionContext::InstallReason installReason, String previousVersion)
+{
+    NSDictionary *details;
+
+    if (installReason == WebExtensionContext::InstallReason::ExtensionUpdate)
+        details = @{ reasonKey: toWebAPI(installReason), previousVersionKey: (NSString *)previousVersion };
+    else
+        details = @{ reasonKey: toWebAPI(installReason) };
+
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.runtime().onInstalled().invokeListenersWithArgument(details);
+    });
+}
+
+void WebExtensionContextProxy::dispatchRuntimeStartupEvent()
+{
+    enumerateNamespaceObjects([&](auto& namespaceObject) {
+        namespaceObject.runtime().onStartup().invokeListeners();
+    });
 }
 
 } // namespace WebKit

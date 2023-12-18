@@ -42,7 +42,7 @@ std::optional<VertexBufferLayout> ConvertToBackingContext::convertToBacking(cons
         auto convertedAttribute = convertToBacking(attribute);
         if (!convertedAttribute)
             return std::nullopt;
-        attributes.uncheckedAppend(WTFMove(*convertedAttribute));
+        attributes.append(WTFMove(*convertedAttribute));
     }
 
     return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTFMove(attributes) } };
@@ -56,7 +56,7 @@ std::optional<WebCore::WebGPU::VertexBufferLayout> ConvertFromBackingContext::co
         auto attribute = convertFromBacking(backingAttribute);
         if (!attribute)
             return std::nullopt;
-        attributes.uncheckedAppend(WTFMove(*attribute));
+        attributes.append(WTFMove(*attribute));
     }
 
     return { { vertexBufferLayout.arrayStride, vertexBufferLayout.stepMode, WTFMove(attributes) } };

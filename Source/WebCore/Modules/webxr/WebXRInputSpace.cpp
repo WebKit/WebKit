@@ -39,12 +39,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRInputSpace);
 
 // WebXRInputSpace
 
-Ref<WebXRInputSpace> WebXRInputSpace::create(Document& document, WebXRSession& session, const PlatformXR::Device::FrameData::InputSourcePose& pose)
+Ref<WebXRInputSpace> WebXRInputSpace::create(Document& document, WebXRSession& session, const PlatformXR::FrameData::InputSourcePose& pose)
 {
     return adoptRef(*new WebXRInputSpace(document, session, pose));
 }
 
-WebXRInputSpace::WebXRInputSpace(Document& document, WebXRSession& session, const PlatformXR::Device::FrameData::InputSourcePose& pose)
+WebXRInputSpace::WebXRInputSpace(Document& document, WebXRSession& session, const PlatformXR::FrameData::InputSourcePose& pose)
     : WebXRSpace(document, WebXRRigidTransform::create())
     , m_session(session)
     , m_pose(pose)

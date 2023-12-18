@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,59 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "MessageSenderInlines.h"
+#import "WebExtensionAPITabs.h"
+#import "WebExtensionAPIWindows.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionUtilities.h"
+#import "WebPage.h"
+#import "WebProcess.h"
+
+static NSString * const typeKey = @"type";
+static NSString * const tabIdKey = @"tabId";
+static NSString * const windowIdKey = @"windowId";
+
+static NSString * const popupKey = @"popup";
+static NSString * const tabKey = @"tab";
+
 namespace WebKit {
+
+bool WebExtensionAPIExtension::parseViewFilters(NSDictionary *filter, std::optional<ViewType>& viewType, std::optional<WebExtensionTabIdentifier>& tabIdentifier, std::optional<WebExtensionWindowIdentifier>& windowIdentifier, NSString *sourceKey, NSString **outExceptionString)
+{
+    static NSDictionary<NSString *, id> *types = @{
+        typeKey: NSString.class,
+        tabIdKey: NSNumber.class,
+        windowIdKey: NSNumber.class,
+    };
+
+    if (!validateDictionary(filter, sourceKey, nil, types, outExceptionString))
+        return false;
+
+    if (NSString *typeString = filter[typeKey]) {
+        if ([typeString isEqualToString:popupKey])
+            viewType = ViewType::Popup;
+        else if ([typeString isEqualToString:tabKey])
+            viewType = ViewType::Tab;
+        else {
+            *outExceptionString = toErrorString(nil, typeKey, @"it must specify either 'popup' or 'tab'");
+            return false;
+        }
+    }
+
+    if (NSNumber *tabID = filter[tabIdKey]) {
+        tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
+        if (!isValid(tabIdentifier, outExceptionString))
+            return false;
+    }
+
+    if (NSNumber *windowID = filter[windowIdKey]) {
+        windowIdentifier = toWebExtensionWindowIdentifier(windowID.doubleValue);
+        if (!isValid(windowIdentifier, outExceptionString))
+            return false;
+    }
+
+    return true;
+}
 
 bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
 {
@@ -44,12 +96,86 @@ bool WebExtensionAPIExtension::isPropertyAllowed(ASCIILiteral name, WebPage*)
     return false;
 }
 
-NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **errorString)
+NSURL *WebExtensionAPIExtension::getURL(NSString *resourcePath, NSString **outExceptionString)
 {
-    // Documentation: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getURL
 
-    URL baseURL = extensionContext().baseURL();
-    return resourcePath.length ? URL { baseURL, resourcePath } : baseURL;
+    return URL { extensionContext().baseURL(), resourcePath };
+}
+
+JSValue *WebExtensionAPIExtension::getBackgroundPage(JSContextRef context)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getBackgroundPage
+
+    auto backgroundPage = extensionContext().backgroundPage();
+    if (!backgroundPage)
+        return nil;
+
+    return toWindowObject(context, *backgroundPage);
+}
+
+NSArray *WebExtensionAPIExtension::getViews(JSContextRef context, NSDictionary *filter, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/getViews
+
+    std::optional<ViewType> viewType;
+    std::optional<WebExtensionTabIdentifier> tabIdentifier;
+    std::optional<WebExtensionWindowIdentifier> windowIdentifier;
+    if (!parseViewFilters(filter, viewType, tabIdentifier, windowIdentifier, @"filter", outExceptionString))
+        return nil;
+
+    bool anyFiltersSpecified = viewType || tabIdentifier || windowIdentifier;
+
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Only include the background page if there aren't any filters specified.
+    // Any of the filters (type, tabId, or windowId) would preclude the background page.
+    if (!anyFiltersSpecified) {
+        if (auto backgroundPage = extensionContext().backgroundPage()) {
+            if (auto *windowObject = toWindowObject(context, *backgroundPage))
+                [result addObject:windowObject];
+        }
+    }
+
+    if (!viewType || viewType == ViewType::Popup) {
+        for (auto& page : extensionContext().popupPages(tabIdentifier, windowIdentifier)) {
+            if (auto *windowObject = toWindowObject(context, page))
+                [result addObject:windowObject];
+        }
+    }
+
+    if (!viewType || viewType == ViewType::Tab) {
+        for (auto& page : extensionContext().tabPages(tabIdentifier, windowIdentifier)) {
+            if (auto *windowObject = toWindowObject(context, page))
+                [result addObject:windowObject];
+        }
+    }
+
+    return [result copy];
+}
+
+bool WebExtensionAPIExtension::isInIncognitoContext(WebPage* page)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/inIncognitoContext
+
+    return page->usesEphemeralSession();
+}
+
+void WebExtensionAPIExtension::isAllowedFileSchemeAccess(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/isAllowedFileSchemeAccess
+    // FIXME: rdar://problem/58428135 Consider allowing file URL access if the user opted in explicitly in some way.
+
+    callback->call(@NO);
+}
+
+void WebExtensionAPIExtension::isAllowedIncognitoAccess(Ref<WebExtensionCallbackHandler>&& callback)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension/isAllowedIncognitoAccess
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ExtensionIsAllowedIncognitoAccess(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](bool result) {
+        callback->call(@(result));
+    }, extensionContext().identifier());
 }
 
 } // namespace WebKit

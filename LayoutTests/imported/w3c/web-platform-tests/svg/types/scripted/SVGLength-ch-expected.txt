@@ -1,0 +1,5 @@
+
+FAIL ch unit in SVGLength undefined is not an object (evaluating 'ch_length.unitType')
+FAIL Convert back to ch from new user unit value undefined is not an object (evaluating 'ch_length.value = ref_width * 4')
+FAIL upright vertical ch unit in SVGLength undefined is not an object (evaluating 'ch_length.value')
+

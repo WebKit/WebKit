@@ -56,12 +56,12 @@ class MetadataEncodeTest
  protected:
   MetadataEncodeTest() : EncoderTest(GET_PARAM(0)) {}
 
-  virtual ~MetadataEncodeTest() {}
+  ~MetadataEncodeTest() override = default;
 
-  virtual void SetUp() { InitializeConfig(GET_PARAM(1)); }
+  void SetUp() override { InitializeConfig(GET_PARAM(1)); }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder * /*encoder*/) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder * /*encoder*/) override {
     aom_image_t *current_frame = video->img();
     if (current_frame) {
       if (current_frame->metadata) aom_img_remove_metadata(current_frame);
@@ -95,7 +95,7 @@ class MetadataEncodeTest
     }
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     if (pkt->kind == AOM_CODEC_CX_FRAME_PKT) {
       const size_t bitstream_size = pkt->data.frame.sz;
       const uint8_t *bitstream =
@@ -138,8 +138,8 @@ class MetadataEncodeTest
     }
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     aom_codec_pts_t /*pts*/) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             aom_codec_pts_t /*pts*/) override {
     ASSERT_NE(img.metadata, nullptr);
 
     ASSERT_EQ(img.metadata->sz, 3u);

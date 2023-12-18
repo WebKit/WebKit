@@ -48,21 +48,44 @@ class TestDownloader(object):
         return options
 
     @staticmethod
-    def load_test_repositories(filesystem=FileSystem()):
-        webkit_finder = WebKitFinder(filesystem)
-        test_repositories_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'TestRepositories')
-        return json.loads(filesystem.read_text_file(test_repositories_path))
+    def load_test_repositories(filesystem=None):
+        return [
+            {
+                "name": "web-platform-tests",
+                "url": "https://github.com/web-platform-tests/wpt.git",
+                "revision": "0313d9f",
+                "paths_to_skip": [
+                    "conformance-checkers",
+                    "docs",
+                    "old-tests",
+                    "resources/testharness.css",
+                    "resources/testharnessreport.js",
+                ],
+                "paths_to_import": [
+                    "common",
+                    "config.default.json",
+                    "fonts",
+                    "images",
+                    "resources",
+                    "serve.py",
+                ],
+                "import_options": ["generate_init_py"],
+            }
+        ]
 
-    def __init__(self, repository_directory, host, options):
+    def __init__(self, repository_directory, port, options):
         self._options = options
-        self._host = host
-        self._filesystem = host.filesystem
+        self._port = port
+        self._host = port.host
+        self._filesystem = port.host.filesystem
         self._test_suites = []
 
         self.repository_directory = repository_directory
+        self.upstream_revision = None
 
         self.test_repositories = self.load_test_repositories(self._filesystem)
 
+        self.paths_to_skip_new_directories = []
         self.paths_to_skip = []
         self.paths_to_import = []
         for test_repository in self.test_repositories:
@@ -70,7 +93,7 @@ class TestDownloader(object):
             self.paths_to_import.extend([self._filesystem.join(test_repository['name'], path) for path in test_repository['paths_to_import']])
 
         webkit_finder = WebKitFinder(self._filesystem)
-        self.import_expectations_path = webkit_finder.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
+        self.import_expectations_path = port.path_from_webkit_base('LayoutTests', 'imported', 'w3c', 'resources', 'import-expectations.json')
         if not self._filesystem.isfile(self.import_expectations_path):
             _log.warning('Unable to read import expectation file: %s' % self.import_expectations_path)
         if not self._options.import_all:
@@ -93,61 +116,42 @@ class TestDownloader(object):
             git = self.git(directory)
         _log.info('Checking out revision ' + revision)
         git.checkout(revision, not self._options.verbose)
+        self.upstream_revision = git.rev_parse('HEAD')
 
     def _init_paths_from_expectations(self):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
         for path, policy in import_lines.items():
-            if policy == 'skip':
+            if policy == 'skip-new-directories':
+                self.paths_to_skip_new_directories.append(path)
+            elif policy == 'skip':
                 self.paths_to_skip.append(path)
             elif policy == 'import':
                 self.paths_to_import.append(path)
             else:
                 _log.warning('Problem reading import lines ' + path)
 
-    def update_import_expectations(self, test_paths):
+    def update_import_expectations(self, test_paths, to_skip_new_directories=None):
+        to_skip_new_directories = set() if to_skip_new_directories is None else to_skip_new_directories
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
         for path in test_paths:
-            import_lines[path.rstrip(self._filesystem.sep)] = 'import'
-        self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')))
+            stripped_path = path.rstrip(self._filesystem.sep)
+            path_segs = stripped_path.split("/")
 
-    def _git_submodules_description(self, test_repository):
-        directory = self._filesystem.join(self.repository_directory, test_repository['name'])
+            already_imported = False
+            for i in range(len(path_segs) - 1, 1, -1):
+                parent = path_segs[:i]
+                parent_expectation = import_lines.get("/".join(parent))
+                if parent_expectation == "import":
+                    already_imported = True
+                if parent_expectation:
+                    break
+            if not already_imported:
+                import_lines[stripped_path] = "import"
 
-        git = self.git(directory)
-        git.init_submodules()
+        for path in to_skip_new_directories:
+            import_lines[path] = "skip"
 
-        submodules = []
-        submodules_status = [line.strip().split(' ') for line in git.submodules_status().splitlines()]
-        for status in submodules_status:
-            version = status[0]
-            path = status[1].split('/')
-
-            url = self.git(self._filesystem.join(directory, status[1])).origin_url()
-            if not url.startswith('https://github.com/'):
-                _log.warning('Submodule %s (%s) is not hosted on github' % (status[1], url))
-                _log.warning('Please ensure that generated URL points to an archive of the module or manually edit its value after the import')
-            url = url[:-4]  # to remove .git
-
-            submodule = {}
-            submodule['path'] = path
-            submodule['url'] = url + '/archive/' + version + '.tar.gz'
-            submodule['url_subpath'] = url.split('/').pop() + '-' + version
-            submodules.append(submodule)
-
-        git.deinit_submodules()
-        return submodules
-
-    def generate_git_submodules_description(self, test_repository, filepath):
-        self._filesystem.write_text_file(filepath, json.dumps(self._git_submodules_description(test_repository), sort_keys=True, indent=4))
-
-    def generate_gitignore(self, test_repository, destination_directory):
-        rules = []
-        for submodule in self._git_submodules_description(test_repository):
-            path = list(submodule['path'])
-            path.insert(0, '')
-            rules.append('/'.join(path[:-1]) + '/' + path[-1] + '/')
-            rules.append('/'.join(path[:-1]) + '/.' + path[-1] + '.url')
-        self._filesystem.write_text_file(self._filesystem.join(destination_directory, test_repository['name'], '.gitignore'), '\n'.join(rules))
+        self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')) + "\n")
 
     def clone_tests(self, use_tip_of_tree=False):
         for test_repository in self.test_repositories:

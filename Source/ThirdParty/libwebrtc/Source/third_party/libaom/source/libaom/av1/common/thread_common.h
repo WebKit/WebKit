@@ -54,6 +54,10 @@ typedef struct AV1LfSyncData {
   AV1LfMTInfo *job_queue;
   int jobs_enqueued;
   int jobs_dequeued;
+
+  // Initialized to false, set to true by the worker thread that encounters an
+  // error in order to abort the processing of other worker threads.
+  bool lf_mt_exit;
 } AV1LfSync;
 
 typedef struct AV1LrMTInfo {
@@ -71,6 +75,7 @@ typedef struct LoopRestorationWorkerData {
   void *rlbs;
   void *lr_ctxt;
   int do_extend_border;
+  struct aom_internal_error_info error_info;
 } LRWorkerData;
 
 // Looprestoration row synchronization
@@ -98,6 +103,9 @@ typedef struct AV1LrSyncData {
   AV1LrMTInfo *job_queue;
   int jobs_enqueued;
   int jobs_dequeued;
+  // Initialized to false, set to true by the worker thread that encounters
+  // an error in order to abort the processing of other worker threads.
+  bool lr_mt_exit;
 } AV1LrSync;
 
 typedef struct AV1CdefWorker {
@@ -108,6 +116,7 @@ typedef struct AV1CdefWorker {
   uint16_t *linebuf[MAX_MB_PLANE];
   cdef_init_fb_row_t cdef_init_fb_row_fn;
   int do_extend_border;
+  struct aom_internal_error_info error_info;
 } AV1CdefWorkerData;
 
 typedef struct AV1CdefRowSync {
@@ -132,6 +141,9 @@ typedef struct AV1CdefSyncData {
   int fbr;
   // Column index in units of 64x64 block
   int fbc;
+  // Initialized to false, set to true by the worker thread that encounters
+  // an error in order to abort the processing of other worker threads.
+  bool cdef_mt_exit;
 } AV1CdefSync;
 
 void av1_cdef_frame_mt(AV1_COMMON *const cm, MACROBLOCKD *const xd,
@@ -164,6 +176,9 @@ void av1_loop_filter_dealloc(AV1LfSync *lf_sync);
 void av1_loop_filter_alloc(AV1LfSync *lf_sync, AV1_COMMON *cm, int rows,
                            int width, int num_workers);
 
+void av1_set_vert_loop_filter_done(AV1_COMMON *cm, AV1LfSync *lf_sync,
+                                   int num_mis_in_lpf_unit_height_log2);
+
 void av1_loop_filter_frame_mt(YV12_BUFFER_CONFIG *frame, struct AV1Common *cm,
                               struct macroblockd *xd, int plane_start,
                               int plane_end, int partial_frame,
@@ -175,7 +190,7 @@ void av1_loop_restoration_filter_frame_mt(YV12_BUFFER_CONFIG *frame,
                                           int optimized_lr, AVxWorker *workers,
                                           int num_workers, AV1LrSync *lr_sync,
                                           void *lr_ctxt, int do_extend_border);
-void av1_loop_restoration_dealloc(AV1LrSync *lr_sync, int num_workers);
+void av1_loop_restoration_dealloc(AV1LrSync *lr_sync);
 void av1_loop_restoration_alloc(AV1LrSync *lr_sync, AV1_COMMON *cm,
                                 int num_workers, int num_rows_lr,
                                 int num_planes, int width);
@@ -185,11 +200,11 @@ void av1_thread_loop_filter_rows(
     const YV12_BUFFER_CONFIG *const frame_buffer, AV1_COMMON *const cm,
     struct macroblockd_plane *planes, MACROBLOCKD *xd, int mi_row, int plane,
     int dir, int lpf_opt_level, AV1LfSync *const lf_sync,
+    struct aom_internal_error_info *error_info,
     AV1_DEBLOCKING_PARAMETERS *params_buf, TX_SIZE *tx_buf, int mib_size_log2);
 
-static AOM_FORCE_INLINE bool skip_loop_filter_plane(const int planes_to_lf[3],
-                                                    int plane,
-                                                    int lpf_opt_level) {
+static AOM_FORCE_INLINE bool skip_loop_filter_plane(
+    const int planes_to_lf[MAX_MB_PLANE], int plane, int lpf_opt_level) {
   // If LPF_PICK_METHOD is LPF_PICK_FROM_Q, we have the option to filter both
   // chroma planes together
   if (lpf_opt_level == 2) {
@@ -212,7 +227,7 @@ static AOM_FORCE_INLINE bool skip_loop_filter_plane(const int planes_to_lf[3],
 }
 
 static AOM_INLINE void enqueue_lf_jobs(AV1LfSync *lf_sync, int start, int stop,
-                                       const int planes_to_lf[3],
+                                       const int planes_to_lf[MAX_MB_PLANE],
                                        int lpf_opt_level,
                                        int num_mis_in_lpf_unit_height) {
   int mi_row, plane, dir;
@@ -225,7 +240,7 @@ static AOM_INLINE void enqueue_lf_jobs(AV1LfSync *lf_sync, int start, int stop,
   // partially reconstructed row by row.
   for (dir = 0; dir < 2; ++dir) {
     for (mi_row = start; mi_row < stop; mi_row += num_mis_in_lpf_unit_height) {
-      for (plane = 0; plane < 3; ++plane) {
+      for (plane = 0; plane < MAX_MB_PLANE; ++plane) {
         if (skip_loop_filter_plane(planes_to_lf, plane, lpf_opt_level)) {
           continue;
         }
@@ -242,9 +257,9 @@ static AOM_INLINE void enqueue_lf_jobs(AV1LfSync *lf_sync, int start, int stop,
 }
 
 static AOM_INLINE void loop_filter_frame_mt_init(
-    AV1_COMMON *cm, int start_mi_row, int end_mi_row, const int planes_to_lf[3],
-    int num_workers, AV1LfSync *lf_sync, int lpf_opt_level,
-    int num_mis_in_lpf_unit_height_log2) {
+    AV1_COMMON *cm, int start_mi_row, int end_mi_row,
+    const int planes_to_lf[MAX_MB_PLANE], int num_workers, AV1LfSync *lf_sync,
+    int lpf_opt_level, int num_mis_in_lpf_unit_height_log2) {
   // Number of superblock rows
   const int sb_rows =
       CEIL_POWER_OF_TWO(cm->mi_params.mi_rows, num_mis_in_lpf_unit_height_log2);
@@ -271,7 +286,7 @@ static AOM_INLINE AV1LfMTInfo *get_lf_job_info(AV1LfSync *lf_sync) {
 #if CONFIG_MULTITHREAD
   pthread_mutex_lock(lf_sync->job_mutex);
 
-  if (lf_sync->jobs_dequeued < lf_sync->jobs_enqueued) {
+  if (!lf_sync->lf_mt_exit && lf_sync->jobs_dequeued < lf_sync->jobs_enqueued) {
     cur_job_info = lf_sync->job_queue + lf_sync->jobs_dequeued;
     lf_sync->jobs_dequeued++;
   }

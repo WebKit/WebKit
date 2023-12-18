@@ -53,6 +53,7 @@ static constexpr auto gClosingBraceChar = ")"_s;
 RenderMathMLFenced::RenderMathMLFenced(MathMLRowElement& element, RenderStyle&& style)
     : RenderMathMLRow(Type::MathMLFenced, element, WTFMove(style))
 {
+    ASSERT(isRenderMathMLFenced());
 }
 
 void RenderMathMLFenced::updateFromElement()

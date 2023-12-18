@@ -83,10 +83,10 @@ class RtcpXrObserver : public test::EndToEndTest {
 
  private:
   // Receive stream should send RR packets (and RRTR packets if enabled).
-  Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+  Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
     MutexLock lock(&mutex_);
     test::RtcpPacketParser parser;
-    EXPECT_TRUE(parser.Parse(packet, length));
+    EXPECT_TRUE(parser.Parse(packet));
 
     sent_rtcp_rr_ += parser.receiver_report()->num_packets();
     EXPECT_EQ(0, parser.sender_report()->num_packets());
@@ -100,10 +100,10 @@ class RtcpXrObserver : public test::EndToEndTest {
     return SEND_PACKET;
   }
   // Send stream should send SR packets (and DLRR packets if enabled).
-  Action OnSendRtcp(const uint8_t* packet, size_t length) override {
+  Action OnSendRtcp(rtc::ArrayView<const uint8_t> packet) override {
     MutexLock lock(&mutex_);
     test::RtcpPacketParser parser;
-    EXPECT_TRUE(parser.Parse(packet, length));
+    EXPECT_TRUE(parser.Parse(packet));
 
     if (parser.sender_ssrc() == test::VideoTestConstants::kVideoSendSsrcs[1] &&
         enable_zero_target_bitrate_) {

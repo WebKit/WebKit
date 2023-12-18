@@ -152,7 +152,6 @@ void AccessibilityObjectAtspi::elementDestroyed()
 static Atspi::Role atspiRole(AccessibilityRole role)
 {
     switch (role) {
-    case AccessibilityRole::Annotation:
     case AccessibilityRole::ApplicationAlert:
         return Atspi::Role::Notification;
     case AccessibilityRole::ApplicationAlertDialog:
@@ -174,7 +173,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::ToggleButton;
     case AccessibilityRole::RadioButton:
         return Atspi::Role::RadioButton;
-    case AccessibilityRole::CheckBox:
+    case AccessibilityRole::Checkbox:
         return Atspi::Role::CheckBox;
     case AccessibilityRole::Slider:
         return Atspi::Role::Slider;
@@ -187,7 +186,6 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::Entry;
     case AccessibilityRole::StaticText:
         return Atspi::Role::Static;
-    case AccessibilityRole::Outline:
     case AccessibilityRole::Tree:
         return Atspi::Role::Tree;
     case AccessibilityRole::TreeItem:
@@ -213,16 +211,11 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::ToolBar;
     case AccessibilityRole::Meter:
         return Atspi::Role::LevelBar;
-    case AccessibilityRole::BusyIndicator:
     case AccessibilityRole::ProgressIndicator:
         return Atspi::Role::ProgressBar;
-    case AccessibilityRole::Window:
-        return Atspi::Role::Window;
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::ComboBox:
         return Atspi::Role::ComboBox;
-    case AccessibilityRole::SplitGroup:
-        return Atspi::Role::SplitPane;
     case AccessibilityRole::Splitter:
         return Atspi::Role::Separator;
     case AccessibilityRole::ColorWell:
@@ -358,16 +351,10 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::DirectoryPane;
     case AccessibilityRole::Mark:
         return Atspi::Role::Mark;
-    case AccessibilityRole::Browser:
     case AccessibilityRole::Details:
-    case AccessibilityRole::DisclosureTriangle:
-    case AccessibilityRole::Drawer:
-    case AccessibilityRole::EditableText:
-    case AccessibilityRole::GrowArea:
-    case AccessibilityRole::HelpTag:
     case AccessibilityRole::Ignored:
     case AccessibilityRole::Incrementor:
-    case AccessibilityRole::Matte:
+    case AccessibilityRole::LineBreak:
     case AccessibilityRole::Model:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::RowGroup:
@@ -376,15 +363,10 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::RubyInline:
     case AccessibilityRole::RubyRun:
     case AccessibilityRole::RubyText:
-    case AccessibilityRole::Ruler:
-    case AccessibilityRole::RulerMarker:
-    case AccessibilityRole::Sheet:
     case AccessibilityRole::SliderThumb:
     case AccessibilityRole::SpinButtonPart:
     case AccessibilityRole::Summary:
-    case AccessibilityRole::SystemWide:
     case AccessibilityRole::TableHeaderContainer:
-    case AccessibilityRole::ValueIndicator:
     case AccessibilityRole::Suggestion:
         return Atspi::Role::Unknown;
     // Add most new roles above. The release assert is for roles that are handled specially.
@@ -605,13 +587,11 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::childAt(unsigned index) cons
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::wrapperVector(const Vector<RefPtr<AXCoreObject>>& elements) const
 {
-    Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
-    wrappers.reserveInitialCapacity(elements.size());
-    for (const auto& element : elements) {
-        if (auto* wrapper = element->wrapper())
-            wrappers.uncheckedAppend(wrapper);
-    }
-    return wrappers;
+    return WTF::compactMap(elements, [&](auto& element) -> std::optional<RefPtr<AccessibilityObjectAtspi>> {
+        if (RefPtr wrapper = element->wrapper())
+            return wrapper;
+        return std::nullopt;
+    });
 }
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::children() const

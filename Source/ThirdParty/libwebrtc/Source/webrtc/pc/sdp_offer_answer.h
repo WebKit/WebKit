@@ -166,8 +166,8 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   // See also `InternalDataChannelInit::fallback_ssl_role`.
   absl::optional<rtc::SSLRole> GuessSslRole() const;
 
-  // Destroys all BaseChannels and destroys the SCTP data channel, if present.
-  void DestroyAllChannels();
+  // Destroys all media BaseChannels.
+  void DestroyMediaChannels();
 
   rtc::scoped_refptr<StreamCollectionInterface> local_streams();
   rtc::scoped_refptr<StreamCollectionInterface> remote_streams();
@@ -359,9 +359,9 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
 
   // Either creates or destroys the local data channel according to the given
   // media section.
-  RTCError UpdateDataChannel(cricket::ContentSource source,
-                             const cricket::ContentInfo& content,
-                             const cricket::ContentGroup* bundle_group)
+  RTCError UpdateDataChannelTransport(cricket::ContentSource source,
+                                      const cricket::ContentInfo& content,
+                                      const cricket::ContentGroup* bundle_group)
       RTC_RUN_ON(signaling_thread());
   // Check if a call to SetLocalDescription is acceptable with a session
   // description of the given type.
@@ -525,12 +525,6 @@ class SdpOfferAnswerHandler : public SdpStateProvider {
   // the BUNDLE option, this method will disable BUNDLE in PortAllocator.
   // This method will also delete any existing media channels before creating.
   RTCError CreateChannels(const cricket::SessionDescription& desc);
-
-  bool CreateDataChannel(const std::string& mid);
-
-  // Destroys the RTP data channel transport and/or the SCTP data channel
-  // transport and clears it.
-  void DestroyDataChannelTransport(RTCError error);
 
   // Generates MediaDescriptionOptions for the `session_opts` based on existing
   // local description or remote description.

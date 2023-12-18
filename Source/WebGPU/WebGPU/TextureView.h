@@ -41,13 +41,13 @@ class Texture;
 class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
+    static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
     {
-        return adoptRef(*new TextureView(texture, descriptor, renderExtent, device));
+        return adoptRef(*new TextureView(texture, descriptor, renderExtent, parentTexture, device));
     }
-    static Ref<TextureView> createInvalid(Device& device)
+    static Ref<TextureView> createInvalid(Texture& texture, Device& device)
     {
-        return adoptRef(*new TextureView(device));
+        return adoptRef(*new TextureView(texture, device));
     }
 
     ~TextureView();
@@ -61,10 +61,19 @@ public:
     const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }
 
     Device& device() const { return m_device; }
+    bool previouslyCleared() const;
+    void setPreviouslyCleared();
+    uint32_t width() const;
+    uint32_t height() const;
+    WGPUTextureUsageFlags usage() const;
+    uint32_t sampleCount() const;
+    WGPUTextureFormat format() const;
+    uint32_t mipLevelCount() const;
+    bool isDestroyed() const;
 
 private:
-    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Device&);
-    TextureView(Device&);
+    TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
+    TextureView(Texture&, Device&);
 
     const id<MTLTexture> m_texture { nil };
 
@@ -72,6 +81,7 @@ private:
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
+    Texture& m_parentTexture;
 };
 
 } // namespace WebGPU

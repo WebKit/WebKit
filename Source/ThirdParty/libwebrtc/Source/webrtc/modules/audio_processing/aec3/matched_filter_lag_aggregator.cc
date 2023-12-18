@@ -162,7 +162,8 @@ void MatchedFilterLagAggregator::PreEchoLagAggregator::Aggregate(
     float penalization_per_delay = 1.0f;
     float max_histogram_value = -1.0f;
     for (auto it = histogram_.begin();
-         it + kMatchedFilterWindowSizeSubBlocks <= histogram_.end();
+         std::distance(it, histogram_.end()) >=
+         static_cast<int>(kMatchedFilterWindowSizeSubBlocks);
          it = it + kMatchedFilterWindowSizeSubBlocks) {
       auto it_max_element =
           std::max_element(it, it + kMatchedFilterWindowSizeSubBlocks);

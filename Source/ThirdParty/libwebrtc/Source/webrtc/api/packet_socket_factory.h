@@ -76,7 +76,9 @@ class RTC_EXPORT PacketSocketFactory {
   // to switch to the AsyncDnsResolverInterface.
   // TODO(bugs.webrtc.org/12598): Remove once all downstream users
   // are converted.
-  virtual AsyncResolverInterface* CreateAsyncResolver() {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  [[deprecated]] virtual AsyncResolverInterface* CreateAsyncResolver() {
     // Default implementation, so that downstream users can remove this
     // immediately after changing to CreateAsyncDnsResolver
     RTC_DCHECK_NOTREACHED();
@@ -89,6 +91,7 @@ class RTC_EXPORT PacketSocketFactory {
     return std::make_unique<webrtc::WrappingAsyncDnsResolver>(
         CreateAsyncResolver());
   }
+#pragma clang diagnostic pop
 
  private:
   PacketSocketFactory(const PacketSocketFactory&) = delete;

@@ -86,8 +86,8 @@ void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
     if (!m_cachedBytes && !newCachedBytes)
         return;
 
-    if (imageObserver())
-        imageObserver()->decodedSizeChanged(*this, -static_cast<long long>(m_cachedBytes) + newCachedBytes);
+    if (auto observer = imageObserver())
+        observer->decodedSizeChanged(*this, -static_cast<long long>(m_cachedBytes) + newCachedBytes);
 
     m_cachedBytes = newCachedBytes;
 }
@@ -106,7 +106,7 @@ bool PDFDocumentImage::mustDrawFromCachedSubimage(GraphicsContext& context) cons
     return !context.hasPlatformContext();
 }
 
-std::unique_ptr<CachedSubimage> PDFDocumentImage::createCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+std::unique_ptr<CachedSubimage> PDFDocumentImage::createCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     ASSERT(shouldDrawFromCachedSubimage(context));
 
@@ -130,7 +130,7 @@ std::unique_ptr<CachedSubimage> PDFDocumentImage::createCachedSubimage(GraphicsC
     return nullptr;
 }
 
-ImageDrawResult PDFDocumentImage::drawPDFDocument(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+ImageDrawResult PDFDocumentImage::drawPDFDocument(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     ASSERT(context.hasPlatformContext());
 
@@ -154,13 +154,13 @@ ImageDrawResult PDFDocumentImage::drawPDFDocument(GraphicsContext& context, cons
     context.scale({ 1, -1 });
     drawPDFPage(context);
 
-    if (imageObserver())
-        imageObserver()->didDraw(*this);
+    if (auto observer = imageObserver())
+        observer->didDraw(*this);
 
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult PDFDocumentImage::drawFromCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+ImageDrawResult PDFDocumentImage::drawFromCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     if (!shouldDrawFromCachedSubimage(context))
         return ImageDrawResult::DidNothing;
@@ -189,7 +189,7 @@ ImageDrawResult PDFDocumentImage::drawFromCachedSubimage(GraphicsContext& contex
     return ImageDrawResult::DidDraw;
 }
 
-ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
     auto result = drawFromCachedSubimage(context, destination, source, options);
     if (result != ImageDrawResult::DidNothing)

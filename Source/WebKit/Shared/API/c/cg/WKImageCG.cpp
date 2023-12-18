@@ -57,8 +57,9 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     auto nativeImage = WebCore::NativeImage::create(imageRef);
     WebCore::IntSize imageSize = nativeImage->size();
     auto webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB());
-
-    auto& graphicsContext = webImage->context();
+    if (!webImage->context())
+        return nullptr;
+    auto& graphicsContext = *webImage->context();
 
     WebCore::FloatRect rect(WebCore::FloatPoint(0, 0), imageSize);
 

@@ -44,15 +44,17 @@ protected:
     Ref<SharedMemory> m_storage;
 };
 
+struct ConsumerSharedCARingBufferHandle {
+    SharedMemory::Handle memory;
+    size_t frameCount { 0 };
+
+    void takeOwnershipOfMemory(MemoryLedger ledger) { memory.takeOwnershipOfMemory(ledger); }
+};
+
 class ConsumerSharedCARingBuffer final : public SharedCARingBufferBase {
 public:
-    struct Handle {
-        SharedMemory::Handle memory;
-        size_t frameCount;
-        void takeOwnershipOfMemory(MemoryLedger ledger) { memory.takeOwnershipOfMemory(ledger); }
-        template <typename Encoder> void encode(Encoder&) &&;
-        template <typename Decoder> static std::optional<Handle> decode(Decoder&);
-    };
+    using Handle = ConsumerSharedCARingBufferHandle;
+
     // FIXME: Remove this deprecated constructor.
     static std::unique_ptr<ConsumerSharedCARingBuffer> map(const WebCore::CAAudioStreamDescription& format, Handle&& handle)
     {
@@ -69,26 +71,10 @@ public:
         std::unique_ptr<ProducerSharedCARingBuffer> producer;
         ConsumerSharedCARingBuffer::Handle consumer;
     };
-    static Pair allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
+    static std::optional<Pair> allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
 protected:
     using SharedCARingBufferBase::SharedCARingBufferBase;
 };
-
-template <typename Encoder>
-void ConsumerSharedCARingBuffer::Handle::encode(Encoder& encoder) &&
-{
-    encoder << WTFMove(memory) << frameCount;
-}
-
-template <typename Decoder>
-std::optional<ConsumerSharedCARingBuffer::Handle> ConsumerSharedCARingBuffer::Handle::decode(Decoder& decoder)
-{
-    auto memory = decoder.template decode<SharedMemory::Handle>();
-    auto frameCount = decoder.template decode<size_t>();
-    if (UNLIKELY(!decoder.isValid()))
-        return std::nullopt;
-    return Handle { WTFMove(*memory), *frameCount };
-}
 
 }
 

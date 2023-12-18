@@ -641,7 +641,7 @@ LRESULT WebView::onMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     ContextMenuAction action = static_cast<ContextMenuAction>(menuItemInfo.wID);
     bool enabled = !(menuItemInfo.fState & MFS_DISABLED);
     bool checked = menuItemInfo.fState & MFS_CHECKED;
-    WebContextMenuItemData item(ContextMenuItemType::ActionType, action, title, enabled, checked);
+    WebContextMenuItemData item(ContextMenuItemType::Action, action, WTFMove(title), enabled, checked);
     m_page->contextMenuItemSelected(item);
 
     handled = true;

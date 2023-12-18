@@ -2,7 +2,7 @@
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Renata Hodovan (hodovan@inf.u-szeged.hu)
  * All rights reserved.
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #include "Weak.h"
 #include <array>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -42,7 +43,7 @@ enum class Flags : uint16_t;
 }
 
 class RegExpCache final : private WeakHandleOwner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RegExpCache);
 
     friend class RegExp;
     typedef MemoryCompactRobinHoodHashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;

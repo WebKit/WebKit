@@ -53,6 +53,11 @@ SecurityOrigin* SecurityContext::securityOrigin() const
     return &m_securityOriginPolicy->origin();
 }
 
+RefPtr<SecurityOrigin> SecurityContext::protectedSecurityOrigin() const
+{
+    return securityOrigin();
+}
+
 void SecurityContext::setContentSecurityPolicy(std::unique_ptr<ContentSecurityPolicy>&& contentSecurityPolicy)
 {
     m_contentSecurityPolicy = WTFMove(contentSecurityPolicy);
@@ -85,7 +90,8 @@ bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
     static constexpr ASCIILiteral supportedPolicies[] = {
         "allow-top-navigation-to-custom-protocols"_s, "allow-forms"_s, "allow-same-origin"_s, "allow-scripts"_s,
         "allow-top-navigation"_s, "allow-pointer-lock"_s, "allow-popups"_s, "allow-popups-to-escape-sandbox"_s,
-        "allow-top-navigation-by-user-activation"_s, "allow-modals"_s, "allow-storage-access-by-user-activation"_s
+        "allow-top-navigation-by-user-activation"_s, "allow-modals"_s, "allow-storage-access-by-user-activation"_s,
+        "allow-downloads"_s
     };
 
     for (auto supportedPolicy : supportedPolicies) {
@@ -118,6 +124,8 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
         auto sandboxToken = policy.substring(start, end - start);
         if (equalLettersIgnoringASCIICase(sandboxToken, "allow-same-origin"_s))
             flags &= ~SandboxOrigin;
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-downloads"_s))
+            flags &= ~SandboxDownloads;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-forms"_s))
             flags &= ~SandboxForms;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-scripts"_s)) {
@@ -189,10 +197,15 @@ void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyCo
     if (!contentSecurityPolicy())
         setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { }, nullptr, nullptr));
 
-    contentSecurityPolicy()->inheritHeadersFrom(policyContainer.contentSecurityPolicyResponseHeaders);
+    checkedContentSecurityPolicy()->inheritHeadersFrom(policyContainer.contentSecurityPolicyResponseHeaders);
     setCrossOriginOpenerPolicy(policyContainer.crossOriginOpenerPolicy);
     setCrossOriginEmbedderPolicy(policyContainer.crossOriginEmbedderPolicy);
     setReferrerPolicy(policyContainer.referrerPolicy);
+}
+
+CheckedPtr<ContentSecurityPolicy> SecurityContext::checkedContentSecurityPolicy()
+{
+    return m_contentSecurityPolicy.get();
 }
 
 }

@@ -633,7 +633,6 @@
     /* GL_CHROMIUM_framebuffer_mixed_samples */                                                    \
     /* GL_CHROMIUM_lose_context */                                                                 \
     void loseContext(GraphicsResetStatus currentPacked, GraphicsResetStatus otherPacked);          \
-    /* GL_CHROMIUM_sync_query */                                                                   \
-    /* GL_CHROMIUM_texture_filtering_hint */
+    /* GL_CHROMIUM_sync_query */
 
 #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,10 +133,12 @@ public:
     template<typename T>
     static IntRange rangeForMask(T mask)
     {
-        if (!(mask + 1))
+        if (mask == static_cast<T>(-1))
             return top<T>();
-        if (mask < 0)
-            return IntRange(INT_MIN & mask, mask & INT_MAX);
+        if constexpr (std::is_signed_v<T>) {
+            if (mask < 0)
+                return IntRange(std::numeric_limits<T>::min() & mask, mask & std::numeric_limits<T>::max());
+        }
         return IntRange(0, mask);
     }
 
@@ -1192,7 +1194,7 @@ private:
                 && m_value->child(1)->hasInt()) {
                 uint64_t shiftAmount = m_value->child(0)->child(1)->asInt();
                 uint64_t maskShift = m_value->child(1)->asInt();
-                uint64_t maskShiftAmount = WTF::countTrailingZeros(maskShift);
+                uint64_t maskShiftAmount = WTF::ctz(maskShift);
                 uint64_t mask = maskShift >> maskShiftAmount;
                 uint64_t width = WTF::bitCount(mask);
                 uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
@@ -1600,7 +1602,7 @@ private:
                 && m_value->child(1)->asInt() >= 0) {
                 uint64_t shiftAmount = m_value->child(1)->asInt();
                 uint64_t maskShift = m_value->child(0)->child(1)->asInt();
-                uint64_t maskShiftAmount = WTF::countTrailingZeros(maskShift);
+                uint64_t maskShiftAmount = WTF::ctz(maskShift);
                 uint64_t mask = maskShift >> maskShiftAmount;
                 uint64_t width = WTF::bitCount(mask);
                 uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
@@ -1979,11 +1981,18 @@ private:
             break;
 
         case Trunc:
-            // Turn this: Trunc(constant)
-            // Into this: static_cast<int32_t>(constant)
-            if (m_value->child(0)->hasInt64() || m_value->child(0)->hasDouble()) {
-                replaceWithNewValue(
-                    m_proc.addIntConstant(m_value, static_cast<int32_t>(m_value->child(0)->asInt64())));
+            // Turn this: Trunc(int64Constant)
+            // Into this: static_cast<int32_t>(int64Constant)
+            if (m_value->child(0)->hasInt64()) {
+                replaceWithNewValue(m_proc.addIntConstant(m_value, static_cast<int32_t>(m_value->child(0)->asInt64())));
+                break;
+            }
+
+            // Turn this: Trunc(doubleConstant)
+            // Into this: bitwise_cast<float>(static_cast<int32_t>(bitwise_cast<int64_t>(doubleConstant)))
+            if (m_value->child(0)->hasDouble()) {
+                double value = m_value->child(0)->asDouble();
+                replaceWithNewValue(m_proc.addConstant(m_value->origin(), m_value->type(), bitwise_cast<int64_t>(value)));
                 break;
             }
 
@@ -3099,7 +3108,7 @@ private:
         cloneValue(m_value);
 
         // Remove the values from the predecessor.
-        predecessor->values().resize(startIndex);
+        predecessor->values().shrink(startIndex);
         
         predecessor->appendNew<Value>(m_proc, Branch, source->origin(), predicate);
         predecessor->setSuccessors(FrequentedBlock(cases[0]), FrequentedBlock(cases[1]));

@@ -1678,6 +1678,12 @@ void ScalePlaneVertical(int src_height,
     }
   }
 #endif
+#if defined(HAS_INTERPOLATEROW_RVV)
+  if (TestCpuFlag(kCpuHasRVV)) {
+    InterpolateRow = InterpolateRow_RVV;
+  }
+#endif
+
   for (j = 0; j < dst_height; ++j) {
     int yi;
     int yf;

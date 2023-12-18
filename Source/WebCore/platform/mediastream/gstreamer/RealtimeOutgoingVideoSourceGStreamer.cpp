@@ -87,7 +87,7 @@ void RealtimeOutgoingVideoSourceGStreamer::updateStats(GstBuffer*)
     if (m_encoder) {
         uint32_t bitrate;
         g_object_get(m_encoder.get(), "bitrate", &bitrate, nullptr);
-        gst_structure_set(m_stats.get(), "bitrate", G_TYPE_DOUBLE, static_cast<double>(bitrate * 1024), nullptr);
+        gst_structure_set(m_stats.get(), "bitrate", G_TYPE_DOUBLE, static_cast<double>(bitrate * 1000), nullptr);
     }
 
     gst_structure_set(m_stats.get(), "frames-sent", G_TYPE_UINT64, framesSent, "frames-encoded", G_TYPE_UINT64, framesSent, nullptr);
@@ -348,7 +348,8 @@ void RealtimeOutgoingVideoSourceGStreamer::setParameters(GUniquePtr<GstStructure
     gst_structure_get(structure, "max-bitrate", G_TYPE_ULONG, &maxBitrate, nullptr);
 
     // maxBitrate is expessed in bits/s but the encoder property is in Kbit/s.
-    g_object_set(m_encoder.get(), "bitrate", static_cast<unsigned>(maxBitrate / 1024), nullptr);
+    if (maxBitrate >= 1000)
+        g_object_set(m_encoder.get(), "bitrate", static_cast<uint32_t>(maxBitrate / 1000), nullptr);
 }
 
 void RealtimeOutgoingVideoSourceGStreamer::fillEncodingParameters(const GUniquePtr<GstStructure>& encodingParameters)
@@ -368,11 +369,11 @@ void RealtimeOutgoingVideoSourceGStreamer::fillEncodingParameters(const GUniqueP
         gst_structure_set(encodingParameters.get(), "max-framerate", G_TYPE_DOUBLE, maxFrameRate, nullptr);
     }
 
-    unsigned long maxBitrate = 2048 * 1024;
+    unsigned long maxBitrate = 2048 * 1000;
     if (m_encoder) {
         uint32_t bitrate;
         g_object_get(m_encoder.get(), "bitrate", &bitrate, nullptr);
-        maxBitrate = bitrate * 1024;
+        maxBitrate = bitrate * 1000;
     }
 
     gst_structure_set(encodingParameters.get(), "max-bitrate", G_TYPE_ULONG, maxBitrate, nullptr);

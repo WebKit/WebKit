@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
     WEBCORE_EXPORT bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild) override;
 
-    WEBCORE_EXPORT void removeFromParent() override;
+    WEBCORE_EXPORT void willModifyChildren() override;
 
     WEBCORE_EXPORT void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
     WEBCORE_EXPORT void setReplicatedLayer(GraphicsLayer*) override;
@@ -146,7 +146,7 @@ public:
 
     WEBCORE_EXPORT bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
-    WEBCORE_EXPORT void removeAnimation(const String& animationName) override;
+    WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;
     WEBCORE_EXPORT void transformRelatedPropertyDidChange() override;
     WEBCORE_EXPORT void setContentsToImage(Image*) override;
 #if PLATFORM(IOS_FAMILY)

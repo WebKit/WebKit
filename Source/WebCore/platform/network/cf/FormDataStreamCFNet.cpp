@@ -207,10 +207,11 @@ static void* formCreate(CFReadStreamRef stream, void* context)
     });
 
     // Append in reverse order since we remove elements from the end.
-    size_t size = newInfo->data.data().elements().size();
-    newInfo->remainingElements.reserveInitialCapacity(size);
-    for (size_t i = 0; i < size; ++i)
-        newInfo->remainingElements.uncheckedAppend(newInfo->data.data().elements()[size - i - 1]);
+    auto& elements = newInfo->data.data().elements();
+    size_t size = elements.size();
+    newInfo->remainingElements = Vector<FormDataElement>(size, [&](size_t i) {
+        return elements[size - i - 1];
+    });
 
     return newInfo;
 }

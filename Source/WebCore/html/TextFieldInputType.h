@@ -73,7 +73,7 @@ protected:
 
     virtual bool needsContainer() const;
     void createShadowSubtree() override;
-    void destroyShadowSubtree() override;
+    void removeShadowSubtree() override;
     void attributeChanged(const QualifiedName&) override;
     void disabledStateChanged() final;
     void readOnlyStateChanged() final;
@@ -132,13 +132,13 @@ private:
     void displaySuggestions(DataListSuggestionActivationType);
     void closeSuggestions();
 
+    void showPicker() override;
+
     // DataListSuggestionsClient
     IntRect elementRectInRootViewCoordinates() const final;
     Vector<DataListSuggestion> suggestions() final;
     void didSelectDataListOption(const String&) final;
     void didCloseSuggestions() final;
-
-    bool shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited() const;
 
     void dataListButtonElementWasClicked() final;
     bool m_isFocusingWithDataListDropdown { false };

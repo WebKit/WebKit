@@ -46,7 +46,6 @@ class FloatRect;
 namespace WebKit {
 class DrawingAreaProxy;
 class RemoteLayerTreeTransaction;
-class VisibleContentRectUpdateInfo;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
@@ -74,18 +73,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(NakedRef<WebKit::WebProcessPool>)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
 
-- (std::optional<WebKit::VisibleContentRectUpdateInfo>)createVisibleContentRectUpdateInfoFromVisibleRect:(CGRect)visibleContentRect
-    unobscuredRect:(CGRect)unobscuredContentRect
-    contentInsets:(UIEdgeInsets)contentInsets
-    unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
-    obscuredInsets:(UIEdgeInsets)obscuredInsets
-    unobscuredSafeAreaInsets:(UIEdgeInsets)unobscuredSafeAreaInsets
-    inputViewBounds:(CGRect)inputViewBounds
-    scale:(CGFloat)zoomScale minimumScale:(CGFloat)minimumScale
-    viewStability:(OptionSet<WebKit::ViewStabilityFlag>)viewStability
-    enclosedInScrollableAncestorView:(BOOL)enclosedInScrollableAncestorView
-    sendEvenIfUnchanged:(BOOL)sendEvenIfUnchanged;
-
 - (void)didUpdateVisibleRect:(CGRect)visibleRect
     unobscuredRect:(CGRect)unobscuredRect
     contentInsets:(UIEdgeInsets)contentInsets
@@ -108,7 +95,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebView *)webView;
 - (UIView *)rootContentView;
 
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)webProcessProxy;
 - (void)_processDidExit;
 #if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessDidExit;

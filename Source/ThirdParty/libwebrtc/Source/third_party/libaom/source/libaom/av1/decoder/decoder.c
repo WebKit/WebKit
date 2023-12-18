@@ -217,7 +217,7 @@ void av1_decoder_remove(AV1Decoder *pbi) {
 
   if (pbi->num_workers > 0) {
     av1_loop_filter_dealloc(&pbi->lf_row_sync);
-    av1_loop_restoration_dealloc(&pbi->lr_row_sync, pbi->num_workers);
+    av1_loop_restoration_dealloc(&pbi->lr_row_sync);
     av1_dealloc_dec_jobs(&pbi->tile_mt_info);
   }
 

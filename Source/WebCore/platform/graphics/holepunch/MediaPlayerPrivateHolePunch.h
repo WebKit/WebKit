@@ -24,6 +24,7 @@
 
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,7 +38,10 @@ namespace WebCore {
 
 class TextureMapperPlatformLayerProxy;
 
-class MediaPlayerPrivateHolePunch : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
+class MediaPlayerPrivateHolePunch
+    : public MediaPlayerPrivateInterface
+    , public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
+    , public RefCounted<MediaPlayerPrivateHolePunch>
 #if USE(NICOSIA)
     , public Nicosia::ContentLayerTextureMapperImpl::Client
 #else
@@ -48,6 +52,9 @@ class MediaPlayerPrivateHolePunch : public MediaPlayerPrivateInterface, public C
 public:
     MediaPlayerPrivateHolePunch(MediaPlayer*);
     ~MediaPlayerPrivateHolePunch();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -70,9 +77,10 @@ public:
     bool hasVideo() const final { return false; };
     bool hasAudio() const final { return false; };
 
-    void setPageIsVisible(bool) final { };
+    void setPageIsVisible(bool, String&&) final { };
 
     bool seeking() const final { return false; }
+    void seekToTarget(const SeekTarget&) final { }
 
     bool paused() const final { return false; };
 
@@ -111,7 +119,7 @@ private:
     IntSize m_size;
     RunLoop::Timer m_readyTimer;
     MediaPlayer::NetworkState m_networkState;
-#if USE(TEXTURE_MAPPER_GL)
+#if USE(TEXTURE_MAPPER)
 #if USE(NICOSIA)
     Ref<Nicosia::ContentLayer> m_nicosiaLayer;
 #else

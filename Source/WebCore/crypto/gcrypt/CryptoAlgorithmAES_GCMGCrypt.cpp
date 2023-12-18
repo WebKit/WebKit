@@ -183,7 +183,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(const Crypt
 {
     auto output = gcryptEncrypt(key.key(), parameters.ivVector(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 
@@ -191,7 +191,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(const Crypt
 {
     auto output = gcryptDecrypt(key.key(), parameters.ivVector(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
     if (!output)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return WTFMove(*output);
 }
 

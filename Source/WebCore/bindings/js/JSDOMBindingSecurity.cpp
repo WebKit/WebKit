@@ -109,6 +109,16 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalG
     return target && shouldAllowAccessToDOMWindow(lexicalGlobalObject, *target, reportingOption);
 }
 
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow* window, SecurityReportingOption reportingOption)
+{
+    return shouldAllowAccessToDOMWindow(lexicalGlobalObject, dynamicDowncast<LocalDOMWindow>(window), reportingOption);
+}
+
+bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject& lexicalGlobalObject, DOMWindow* window, String& message)
+{
+    return shouldAllowAccessToDOMWindow(lexicalGlobalObject, dynamicDowncast<LocalDOMWindow>(window), message);
+}
+
 bool BindingSecurity::shouldAllowAccessToFrame(JSC::JSGlobalObject* lexicalGlobalObject, LocalFrame* target, SecurityReportingOption reportingOption)
 {
     return target && canAccessDocument(lexicalGlobalObject, target->document(), reportingOption);

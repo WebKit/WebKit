@@ -47,11 +47,7 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
     if (!imageBuffer)
         return nullptr;
 
-    auto* backend = imageBuffer->backend();
-    if (!backend)
-        return nullptr;
-
-    auto* sharing = backend->toBackendSharing();
+    auto* sharing = imageBuffer->toBackendSharing();
     ASSERT(is<ImageBufferBackendHandleSharing>(sharing));
 
     auto bitmap = downcast<ImageBufferBackendHandleSharing>(*sharing).bitmap();

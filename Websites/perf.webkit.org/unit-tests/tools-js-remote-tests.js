@@ -43,7 +43,7 @@ describe('RemoteAPI', function () {
             assert.throws(function () { remote.configure({scheme: 'http', host: 'build.webkit.org', port: 80, auth: 1}); });
         });
 
-        it('should accept a configuration with auth', function () {
+        it('should accept a configuration with basic auth username and password', function () {
             let remote = new RemoteAPI();
             assert.doesNotThrow(function () {
                 remote.configure({
@@ -58,7 +58,7 @@ describe('RemoteAPI', function () {
             });
         });
 
-        it('should reject auth without username or password or when either is not a string', function () {
+        it('should reject basic auth without username or password or when either is not a string', function () {
             let remote = new RemoteAPI();
             assert.throws(function () { remote.configure({scheme: 'http', host: 'build.webkit.org', port: 80, auth: {}}); });
             assert.throws(function () { remote.configure({scheme: 'http', host: 'build.webkit.org', port: 80, auth: {username: 'a'}}); });
@@ -66,6 +66,68 @@ describe('RemoteAPI', function () {
             assert.throws(function () { remote.configure({scheme: 'http', host: 'build.webkit.org', port: 80, auth: {username: 1, password: 'a'}}); });
             assert.throws(function () { remote.configure({scheme: 'http', host: 'build.webkit.org', port: 80, auth: {username: 'a', password: 1}}); });
         });
+
+        it('should accept a configuration with basic auth defined as auth.scheme and auth.parameter', function () {
+            let remote = new RemoteAPI();
+            assert.doesNotThrow(function () {
+                remote.configure({
+                    scheme: 'https',
+                    host: 'build.webkit.org',
+                    auth: {
+                        'scheme': 'Basic',
+                        'parameter': 'webkitten:super-secret',
+                    },
+                });
+            });
+        });
+
+        it('should accept a configuration with arbitrary auth.scheme and auth.parameter', function () {
+            let remote = new RemoteAPI();
+            assert.doesNotThrow(function () {
+                remote.configure({
+                    scheme: 'https',
+                    host: 'build.webkit.org',
+                    auth: {
+                        'scheme': 'Arbitrary',
+                        'parameter': 'arbitrary0=ZERO,arbitrary1=3.1459',
+                    },
+                });
+            });
+        });
+
+        it('should set expected Authorization value with valid server auth objects', function () {
+            let remote = new RemoteAPI();
+            remote.configure({
+                scheme: 'https',
+                host: 'build.webkit.org',
+                auth: {
+                    'username': 'webkitten',
+                    'password': 'super-secret',
+                },
+            });
+            assert.equal(remote._server.auth, 'Basic webkitten:super-secret');
+
+            remote.configure({
+                scheme: 'https',
+                host: 'build.webkit.org',
+                auth: {
+                    'scheme': 'Bearer',
+                    'parameter': 'not-very-random-text',
+                },
+            });
+            assert.equal(remote._server.auth, 'Bearer not-very-random-text');
+        });
+
+        it('should reject auth values without expected paired string properties (scheme and parameter, username and password)', function () {
+            let remote = new RemoteAPI();
+            assert.throws(function () { remote.configure({scheme: 'https', host: 'build.webkit.org', auth: {}}); });
+            assert.throws(function () { remote.configure({scheme: 'https', host: 'build.webkit.org', auth: {username: ''}}); });
+            assert.throws(function () { remote.configure({scheme: 'https', host: 'build.webkit.org', auth: {password: ''}}); });
+            assert.throws(function () { remote.configure({scheme: 'https', host: 'build.webkit.org', auth: {scheme: ''}}); });
+            assert.throws(function () { remote.configure({scheme: 'https', host: 'build.webkit.org', auth: {parameter: ''}}); });
+            assert.throws(function () { remote.configure({scheme: 'https', host: 'build.webkit.org', auth: {username: '', scheme: ''}}); });
+        });
+
     });
 
     describe('url', function () {

@@ -25,14 +25,16 @@
 
 #include "CollectionIndexCache.h"
 #include "NodeList.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class ContainerNode;
 
-class EmptyNodeList final : public NodeList {
+class EmptyNodeList final : public NodeList, public CanMakeSingleThreadWeakPtr<EmptyNodeList> {
     WTF_MAKE_ISO_ALLOCATED(EmptyNodeList);
 public:
     static Ref<EmptyNodeList> create(Node& owner)
@@ -55,7 +57,7 @@ private:
     Ref<Node> m_owner;
 };
 
-class ChildNodeList final : public NodeList {
+class ChildNodeList final : public NodeList, public CanMakeSingleThreadWeakPtr<ChildNodeList> {
     WTF_MAKE_ISO_ALLOCATED(ChildNodeList);
 public:
     static Ref<ChildNodeList> create(ContainerNode& parent)

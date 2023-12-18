@@ -50,13 +50,13 @@ static ExceptionOr<CSSPerspectiveValue> checkLength(CSSPerspectiveValue length)
     auto checkKeywordValue = [] (RefPtr<CSSKeywordValue> value) -> ExceptionOr<CSSPerspectiveValue> {
         RELEASE_ASSERT(value);
         if (!equalLettersIgnoringASCIICase(value->value(), "none"_s))
-            return Exception { TypeError };
+            return Exception { ExceptionCode::TypeError };
         return { WTFMove(value) };
     };
     return WTF::switchOn(WTFMove(length),
         [] (RefPtr<CSSNumericValue> value) -> ExceptionOr<CSSPerspectiveValue> {
             if (value && !value->type().matches<CSSNumericBaseType::Length>())
-                return Exception { TypeError };
+                return Exception { ExceptionCode::TypeError };
             return { WTFMove(value) };
         }, [&] (String value) {
             return checkKeywordValue(CSSKeywordValue::rectifyKeywordish(WTFMove(value)));
@@ -80,7 +80,7 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFun
 
     if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
         ASSERT_NOT_REACHED();
-        return Exception { TypeError, "Unexpected number of values."_s };
+        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
     }
 
     auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
@@ -88,11 +88,11 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFun
         return keywordOrNumeric.releaseException();
     auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();
     return [&]() -> ExceptionOr<Ref<CSSPerspective>> {
-        if (is<CSSKeywordValue>(keywordOrNumericValue))
-            return CSSPerspective::create(&downcast<CSSKeywordValue>(keywordOrNumericValue));
-        if (is<CSSNumericValue>(keywordOrNumericValue))
-            return CSSPerspective::create(&downcast<CSSNumericValue>(keywordOrNumericValue));
-        return Exception { TypeError, "Expected a CSSNumericValue."_s };
+        if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(keywordOrNumericValue))
+            return CSSPerspective::create(keywordValue);
+        if (auto* numericValue = dynamicDowncast<CSSNumericValue>(keywordOrNumericValue))
+            return CSSPerspective::create(numericValue);
+        return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
     }();
 }
 
@@ -144,13 +144,13 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
     if (!std::holds_alternative<RefPtr<CSSNumericValue>>(m_length))
         return { DOMMatrix::create({ }, DOMMatrixReadOnly::Is2D::Yes) };
 
-    auto length = std::get<RefPtr<CSSNumericValue>>(m_length);
-    if (!is<CSSUnitValue>(length))
-        return Exception { TypeError };
+    RefPtr length = dynamicDowncast<CSSUnitValue>(std::get<RefPtr<CSSNumericValue>>(m_length));
+    if (!length)
+        return Exception { ExceptionCode::TypeError };
 
-    auto valuePx = downcast<CSSUnitValue>(*length).convertTo(CSSUnitType::CSS_PX);
+    auto valuePx = length->convertTo(CSSUnitType::CSS_PX);
     if (!valuePx)
-        return Exception { TypeError, "Length unit is not compatible with 'px'"_s };
+        return Exception { ExceptionCode::TypeError, "Length unit is not compatible with 'px'"_s };
 
     TransformationMatrix matrix { };
     matrix.applyPerspective(valuePx->value());

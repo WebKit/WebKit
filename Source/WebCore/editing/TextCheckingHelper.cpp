@@ -163,7 +163,7 @@ ExceptionOr<uint64_t> TextCheckingParagraph::offsetTo(const Position& position) 
 {
     auto range = makeSimpleRange(paragraphRange().start, position);
     if (!range)
-        return Exception { TypeError };
+        return Exception { ExceptionCode::TypeError };
     return characterCount(*range);
 }
 
@@ -260,7 +260,7 @@ auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::
         auto misspellingRange = resolveCharacterRange(m_range, CharacterRange(currentChunkOffset + misspellingLocation, misspellingLength));
 
         if (operation == Operation::MarkAll)
-            addMarker(misspellingRange, DocumentMarker::Spelling);
+            addMarker(misspellingRange, DocumentMarker::Type::Spelling);
 
         if (first.first.word.isNull()) {
             first = {
@@ -289,7 +289,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
     if (!unifiedTextCheckerEnabled())
         return { };
 
-    if (platformDrivenTextCheckerEnabled())
+    if (platformOrClientDrivenTextCheckerEnabled())
         return { };
 
     std::variant<MisspelledWord, UngrammaticalPhrase> firstFoundItem;
@@ -432,7 +432,7 @@ int TextCheckingHelper::findUngrammaticalPhrases(Operation operation, const Vect
         
         if (operation == Operation::MarkAll) {
             auto badGrammarRange = resolveCharacterRange(m_range, { badGrammarPhraseLocation - startOffset + detail->range.location, detail->range.length });
-            addMarker(badGrammarRange, DocumentMarker::Grammar, detail->userDescription);
+            addMarker(badGrammarRange, DocumentMarker::Type::Grammar, detail->userDescription);
         }
         
         // Remember this detail only if it's earlier than our current candidate (the details aren't in a guaranteed order)
@@ -499,7 +499,7 @@ TextCheckingGuesses TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalP
     if (!unifiedTextCheckerEnabled())
         return { };
 
-    if (platformDrivenTextCheckerEnabled())
+    if (platformOrClientDrivenTextCheckerEnabled())
         return { };
 
     if (m_range.collapsed())
@@ -608,6 +608,15 @@ bool platformDrivenTextCheckerEnabled()
 #else
     return false;
 #endif
+}
+
+bool platformOrClientDrivenTextCheckerEnabled()
+{
+#if ENABLE(ACCESSIBILITY) && PLATFORM(MAC)
+    if (!AXObjectCache::shouldSpellCheck())
+        return true;
+#endif
+    return platformDrivenTextCheckerEnabled();
 }
 
 }

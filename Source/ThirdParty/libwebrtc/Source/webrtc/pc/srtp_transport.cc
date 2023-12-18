@@ -43,24 +43,24 @@ RTCError SrtpTransport::SetSrtpSendKey(const cricket::CryptoParams& params) {
         webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
         "Setting the SRTP send key twice is currently unsupported.");
   }
-  if (recv_params_ && recv_params_->cipher_suite != params.cipher_suite) {
+  if (recv_params_ && recv_params_->crypto_suite != params.crypto_suite) {
     LOG_AND_RETURN_ERROR(
         webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
         "The send key and receive key must have the same cipher suite.");
   }
 
-  send_cipher_suite_ = rtc::SrtpCryptoSuiteFromName(params.cipher_suite);
-  if (*send_cipher_suite_ == rtc::kSrtpInvalidCryptoSuite) {
+  send_crypto_suite_ = rtc::SrtpCryptoSuiteFromName(params.crypto_suite);
+  if (*send_crypto_suite_ == rtc::kSrtpInvalidCryptoSuite) {
     return RTCError(RTCErrorType::INVALID_PARAMETER,
                     "Invalid SRTP crypto suite");
   }
 
   int send_key_len, send_salt_len;
-  if (!rtc::GetSrtpKeyAndSaltLengths(*send_cipher_suite_, &send_key_len,
+  if (!rtc::GetSrtpKeyAndSaltLengths(*send_crypto_suite_, &send_key_len,
                                      &send_salt_len)) {
     return RTCError(RTCErrorType::INVALID_PARAMETER,
                     "Could not get lengths for crypto suite(s):"
-                    " send cipher_suite ");
+                    " send crypto_suite ");
   }
 
   send_key_ = rtc::ZeroOnFreeBuffer<uint8_t>(send_key_len + send_salt_len);
@@ -83,24 +83,24 @@ RTCError SrtpTransport::SetSrtpReceiveKey(const cricket::CryptoParams& params) {
         webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
         "Setting the SRTP send key twice is currently unsupported.");
   }
-  if (send_params_ && send_params_->cipher_suite != params.cipher_suite) {
+  if (send_params_ && send_params_->crypto_suite != params.crypto_suite) {
     LOG_AND_RETURN_ERROR(
         webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
         "The send key and receive key must have the same cipher suite.");
   }
 
-  recv_cipher_suite_ = rtc::SrtpCryptoSuiteFromName(params.cipher_suite);
-  if (*recv_cipher_suite_ == rtc::kSrtpInvalidCryptoSuite) {
+  recv_crypto_suite_ = rtc::SrtpCryptoSuiteFromName(params.crypto_suite);
+  if (*recv_crypto_suite_ == rtc::kSrtpInvalidCryptoSuite) {
     return RTCError(RTCErrorType::INVALID_PARAMETER,
                     "Invalid SRTP crypto suite");
   }
 
   int recv_key_len, recv_salt_len;
-  if (!rtc::GetSrtpKeyAndSaltLengths(*recv_cipher_suite_, &recv_key_len,
+  if (!rtc::GetSrtpKeyAndSaltLengths(*recv_crypto_suite_, &recv_key_len,
                                      &recv_salt_len)) {
     return RTCError(RTCErrorType::INVALID_PARAMETER,
                     "Could not get lengths for crypto suite(s):"
-                    " recv cipher_suite ");
+                    " recv crypto_suite ");
   }
 
   recv_key_ = rtc::ZeroOnFreeBuffer<uint8_t>(recv_key_len + recv_salt_len);
@@ -244,7 +244,7 @@ void SrtpTransport::OnRtcpPacketReceived(rtc::CopyOnWriteBuffer packet,
     return;
   }
   packet.SetSize(len);
-  SignalRtcpPacketReceived(&packet, packet_time_us);
+  SendRtcpPacketReceived(&packet, packet_time_us);
 }
 
 void SrtpTransport::OnNetworkRouteChanged(
@@ -257,19 +257,19 @@ void SrtpTransport::OnNetworkRouteChanged(
     }
     network_route->packet_overhead += srtp_overhead;
   }
-  SignalNetworkRouteChanged(network_route);
+  SendNetworkRouteChanged(network_route);
 }
 
 void SrtpTransport::OnWritableState(
     rtc::PacketTransportInternal* packet_transport) {
-  SignalWritableState(IsWritable(/*rtcp=*/false) && IsWritable(/*rtcp=*/true));
+  SendWritableState(IsWritable(/*rtcp=*/false) && IsWritable(/*rtcp=*/true));
 }
 
-bool SrtpTransport::SetRtpParams(int send_cs,
+bool SrtpTransport::SetRtpParams(int send_crypto_suite,
                                  const uint8_t* send_key,
                                  int send_key_len,
                                  const std::vector<int>& send_extension_ids,
-                                 int recv_cs,
+                                 int recv_crypto_suite,
                                  const uint8_t* recv_key,
                                  int recv_key_len,
                                  const std::vector<int>& recv_extension_ids) {
@@ -284,36 +284,38 @@ bool SrtpTransport::SetRtpParams(int send_cs,
     new_sessions = true;
   }
   bool ret = new_sessions
-                 ? send_session_->SetSend(send_cs, send_key, send_key_len,
-                                          send_extension_ids)
-                 : send_session_->UpdateSend(send_cs, send_key, send_key_len,
-                                             send_extension_ids);
+                 ? send_session_->SetSend(send_crypto_suite, send_key,
+                                          send_key_len, send_extension_ids)
+                 : send_session_->UpdateSend(send_crypto_suite, send_key,
+                                             send_key_len, send_extension_ids);
   if (!ret) {
     ResetParams();
     return false;
   }
 
-  ret = new_sessions ? recv_session_->SetRecv(recv_cs, recv_key, recv_key_len,
-                                              recv_extension_ids)
-                     : recv_session_->UpdateRecv(
-                           recv_cs, recv_key, recv_key_len, recv_extension_ids);
+  ret = new_sessions
+            ? recv_session_->SetRecv(recv_crypto_suite, recv_key, recv_key_len,
+                                     recv_extension_ids)
+            : recv_session_->UpdateRecv(recv_crypto_suite, recv_key,
+                                        recv_key_len, recv_extension_ids);
   if (!ret) {
     ResetParams();
     return false;
   }
 
   RTC_LOG(LS_INFO) << "SRTP " << (new_sessions ? "activated" : "updated")
-                   << " with negotiated parameters: send cipher_suite "
-                   << send_cs << " recv cipher_suite " << recv_cs;
+                   << " with negotiated parameters: send crypto_suite "
+                   << send_crypto_suite << " recv crypto_suite "
+                   << recv_crypto_suite;
   MaybeUpdateWritableState();
   return true;
 }
 
-bool SrtpTransport::SetRtcpParams(int send_cs,
+bool SrtpTransport::SetRtcpParams(int send_crypto_suite,
                                   const uint8_t* send_key,
                                   int send_key_len,
                                   const std::vector<int>& send_extension_ids,
-                                  int recv_cs,
+                                  int recv_crypto_suite,
                                   const uint8_t* recv_key,
                                   int recv_key_len,
                                   const std::vector<int>& recv_extension_ids) {
@@ -325,20 +327,21 @@ bool SrtpTransport::SetRtcpParams(int send_cs,
   }
 
   send_rtcp_session_.reset(new cricket::SrtpSession(field_trials_));
-  if (!send_rtcp_session_->SetSend(send_cs, send_key, send_key_len,
+  if (!send_rtcp_session_->SetSend(send_crypto_suite, send_key, send_key_len,
                                    send_extension_ids)) {
     return false;
   }
 
   recv_rtcp_session_.reset(new cricket::SrtpSession(field_trials_));
-  if (!recv_rtcp_session_->SetRecv(recv_cs, recv_key, recv_key_len,
+  if (!recv_rtcp_session_->SetRecv(recv_crypto_suite, recv_key, recv_key_len,
                                    recv_extension_ids)) {
     return false;
   }
 
   RTC_LOG(LS_INFO) << "SRTCP activated with negotiated parameters:"
-                      " send cipher_suite "
-                   << send_cs << " recv cipher_suite " << recv_cs;
+                      " send crypto_suite "
+                   << send_crypto_suite << " recv crypto_suite "
+                   << recv_crypto_suite;
   MaybeUpdateWritableState();
   return true;
 }
@@ -472,13 +475,13 @@ bool SrtpTransport::IsExternalAuthActive() const {
 }
 
 bool SrtpTransport::MaybeSetKeyParams() {
-  if (!send_cipher_suite_ || !recv_cipher_suite_) {
+  if (!send_crypto_suite_ || !recv_crypto_suite_) {
     return true;
   }
 
-  return SetRtpParams(*send_cipher_suite_, send_key_.data(),
+  return SetRtpParams(*send_crypto_suite_, send_key_.data(),
                       static_cast<int>(send_key_.size()), std::vector<int>(),
-                      *recv_cipher_suite_, recv_key_.data(),
+                      *recv_crypto_suite_, recv_key_.data(),
                       static_cast<int>(recv_key_.size()), std::vector<int>());
 }
 
@@ -512,7 +515,7 @@ void SrtpTransport::MaybeUpdateWritableState() {
   // Only fire the signal if the writable state changes.
   if (writable_ != writable) {
     writable_ = writable;
-    SignalWritableState(writable_);
+    SendWritableState(writable_);
   }
 }
 

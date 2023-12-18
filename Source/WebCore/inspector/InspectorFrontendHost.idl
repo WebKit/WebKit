@@ -118,6 +118,11 @@
     float getCurrentY(CanvasRenderingContext2D context);
     [NewObject] Path2D getPath(CanvasRenderingContext2D context);
     undefined setPath(CanvasRenderingContext2D context, Path2D path);
+
+    [Conditional=OFFSCREEN_CANVAS] float getCurrentX(OffscreenCanvasRenderingContext2D context);
+    [Conditional=OFFSCREEN_CANVAS] float getCurrentY(OffscreenCanvasRenderingContext2D context);
+    [Conditional=OFFSCREEN_CANVAS, NewObject] Path2D getPath(OffscreenCanvasRenderingContext2D context);
+    [Conditional=OFFSCREEN_CANVAS] undefined setPath(OffscreenCanvasRenderingContext2D context, Path2D path);
 };
 
 // Keep in sync with `WI.FileUtilities.SaveMode` and `InspectorFrontendClient::SaveMode`.

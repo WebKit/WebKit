@@ -29,8 +29,8 @@
 #include "Document.h"
 #include "FEImage.h"
 #include "Image.h"
+#include "LegacyRenderSVGResource.h"
 #include "RenderObject.h"
-#include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
@@ -175,7 +175,12 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     if (!parentRenderer)
         return;
 
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // FIXME: [LBSE] Implement filters.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return;
+#endif
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
 std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect(const GraphicsContext& destinationContext) const

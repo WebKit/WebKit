@@ -1,16 +1,17 @@
-From d528e843e3f952b443137786a8def7bc3a17ae37 Mon Sep 17 00:00:00 2001
+From 9f9917cc945f5650a9949411e36e6cfc09dd380c Mon Sep 17 00:00:00 2001
 From: ChangSeok Oh <changseok@gnome.org>
-Date: Sat, 4 Feb 2023 02:14:01 -0800
+Date: Sun, 8 Oct 2023 16:30:01 +0100
 Subject: [PATCH] Enable soundtouch
 
 ---
  elements/components/gstreamer-plugins-bad.bst |  2 ++
  elements/components/libsoundtouch.bst         | 12 ++++++++++++
- 2 files changed, 14 insertions(+)
+ include/_private/aliases.yml                  |  1 +
+ 3 files changed, 15 insertions(+)
  create mode 100644 elements/components/libsoundtouch.bst
 
 diff --git a/elements/components/gstreamer-plugins-bad.bst b/elements/components/gstreamer-plugins-bad.bst
-index 90314b0e2..b3d0ab932 100644
+index b19759ca..997214f4 100644
 --- a/elements/components/gstreamer-plugins-bad.bst
 +++ b/elements/components/gstreamer-plugins-bad.bst
 @@ -12,6 +12,7 @@ depends:
@@ -31,7 +32,7 @@ index 90314b0e2..b3d0ab932 100644
      -Dwayland=enabled
 diff --git a/elements/components/libsoundtouch.bst b/elements/components/libsoundtouch.bst
 new file mode 100644
-index 000000000..b62b20fe8
+index 00000000..51b6ebf1
 --- /dev/null
 +++ b/elements/components/libsoundtouch.bst
 @@ -0,0 +1,12 @@
@@ -45,8 +46,20 @@ index 000000000..b62b20fe8
 +
 +sources:
 +- kind: tar
-+  url: https://codeberg.org/soundtouch/soundtouch/archive/2.3.2.tar.gz
++  url: codeberg:soundtouch/soundtouch/archive/2.3.2.tar.gz
 +  ref: ed714f84a3e748de87b24f385ec69d3bdc51ca47b7f4710d2048b84b2761e7ff
+diff --git a/include/_private/aliases.yml b/include/_private/aliases.yml
+index e9bcccab..5bc04deb 100644
+--- a/include/_private/aliases.yml
++++ b/include/_private/aliases.yml
+@@ -32,6 +32,7 @@ sourceforge_git: https://git.code.sf.net/p/
+ sourceware: https://sourceware.org/git/
+ tukaani: https://git.tukaani.org/
+ xiph: https://gitlab.xiph.org/xiph/
++codeberg: https://codeberg.org/
+ 
+ #Generic aliases (because mirroring requires some sort of alias)
+ git_https: https://
 -- 
-2.39.1
+2.41.0
 

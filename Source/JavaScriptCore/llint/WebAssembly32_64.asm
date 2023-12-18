@@ -1015,7 +1015,6 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         mload2i(ctx, m_value, t6, t2)
         emitCheckAndPreparePointerAddingOffset(t3, t5, 1)
         fnb(t1, t0, t6, t2, [t3], t7, t5)
-        andi 0xff, t0 # FIXME: ZeroExtend8To64
         assert(macro(ok) bibeq t0, 0xff, .ok end)
         assert(macro(ok) bieq t1, 0, .ok end)
         return2i(ctx, t1, t0)
@@ -1027,7 +1026,6 @@ macro wasmAtomicCompareExchangeOps(lowerCaseOpcode, upperCaseOpcode, fnb, fnh, f
         mload2i(ctx, m_value, t6, t2)
         emitCheckAndPreparePointerAddingOffsetWithAlignmentCheck(t3, t5, 2)
         fnh(t1, t0, t6, t2, [t3], t7, t5)
-        andi 0xffff, t0 # FIXME: ZeroExtend16To64
         assert(macro(ok) bibeq t0, 0xffff, .ok end)
         assert(macro(ok) bieq t1, 0, .ok end)
         return2i(ctx, t1, t0)
@@ -1060,10 +1058,11 @@ if ARMv7
 wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
     macro(expMsw, expLsw, valMsw, valLsw, mem, scratch, resLsw)
             fence
+        andi 0xff, expLsw
+        move 0, expMsw
         .loop:
             loadlinkb mem, resLsw
             bineq expLsw, resLsw, .fail
-            bineq expMsw, 0, .fail
             storecondb scratch, valLsw, mem
             bieq scratch, 0, .done
             jmp .loop
@@ -1074,14 +1073,14 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         .done:
             fence
             move resLsw, expLsw
-            move 0, expMsw
     end,
     macro(expMsw, expLsw, valMsw, valLsw, mem, scratch, resLsw)
             fence
+        andi 0xffff, expLsw
+        move 0, expMsw
         .loop:
             loadlinkh mem, resLsw
             bineq expLsw, resLsw, .fail
-            bineq expMsw, 0, .fail
             storecondh scratch, valLsw, mem
             bieq scratch, 0, .done
             jmp .loop
@@ -1092,14 +1091,13 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         .done:
             fence
             move resLsw, expLsw
-            move 0, expMsw
     end,
     macro(expMsw, expLsw, valMsw, valLsw, mem, scratch, resLsw)
             fence
+        move 0, expMsw
         .loop:
             loadlinki mem, resLsw
             bineq expLsw, resLsw, .fail
-            bineq expMsw, 0, .fail
             storecondi scratch, valLsw, mem
             bieq scratch, 0, .done
             jmp .loop
@@ -1110,7 +1108,6 @@ wasmAtomicCompareExchangeOps(_cmpxchg, Cmpxchg,
         .done:
             fence
             move resLsw, expLsw
-            move 0, expMsw
     end,
     macro(expMsw, expLsw, valMsw, valLsw, mem, scratch, resMsw, resLsw)
             fence
@@ -1134,9 +1131,10 @@ end
 
 # GC ops
 
-wasmOp(i31_new, WasmI31New, macro(ctx)
+wasmOp(ref_i31, WasmRefI31, macro(ctx)
     mloadi(ctx, m_value, t0)
-    andi 0x7fffffff, t0
+    lshifti 0x1, t0
+    rshifti 0x1, t0
     move Int32Tag, t1
     return2i(ctx, t1, t0)
 end)
@@ -1145,10 +1143,9 @@ wasmOp(i31_get, WasmI31Get, macro(ctx)
     mload2i(ctx, m_ref, t1, t0)
     bieq t1, NullTag, .throw
     wgetu(ctx, m_isSigned, t1)
-    btiz t1, .unsigned
-    lshifti 0x1, t0
-    rshifti 0x1, t0
-.unsigned:
+    btinz t1, .signed
+    andi 0x7fffffff, t0
+.signed:
     returni(ctx, t0)
 
 .throw:
@@ -1165,7 +1162,7 @@ wasmOp(array_len, WasmArrayLen, macro(ctx)
     throwException(NullArrayLen)
 end)
 
-wasmOp(extern_externalize, WasmExternExternalize, macro(ctx)
+wasmOp(extern_convert_any, WasmExternConvertAny, macro(ctx)
     mload2i(ctx, m_reference, t1, t0)
     return2i(ctx, t1, t0)
 end)

@@ -16,36 +16,16 @@ import androidx.annotation.Nullable;
 import androidx.test.filters.SmallTest;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 /** Unit tests for {@link DefaultVideoEncoderFactory}. */
-@RunWith(BaseJUnit4ClassRunner.class)
 public class DefaultVideoEncoderFactoryTest {
   static class CustomHardwareVideoEncoderFactory implements VideoEncoderFactory {
-    private ArrayList<VideoCodecInfo> codecs = new ArrayList<>();
+    private VideoCodecInfo supportedCodec;
 
-    public CustomHardwareVideoEncoderFactory(boolean includeVP8, boolean includeH264High) {
-      if (includeVP8) {
-        codecs.add(new VideoCodecInfo("VP8", new HashMap<>()));
-      }
-      codecs.add(new VideoCodecInfo("VP9", new HashMap<>()));
-
-      HashMap<String, String> baselineParams = new HashMap<String, String>();
-      baselineParams.put("profile-level-id", "42e01f");
-      baselineParams.put("level-asymmetry-allowed", "1");
-      baselineParams.put("packetization-mode", "1");
-      codecs.add(new VideoCodecInfo("H264", baselineParams));
-
-      if (includeH264High) {
-        HashMap<String, String> highParams = new HashMap<String, String>();
-        highParams.put("profile-level-id", "640c1f");
-        highParams.put("level-asymmetry-allowed", "1");
-        highParams.put("packetization-mode", "1");
-        codecs.add(new VideoCodecInfo("H264", highParams));
-      }
+    public CustomHardwareVideoEncoderFactory(VideoCodecInfo supportedCodec) {
+      this.supportedCodec = supportedCodec;
     }
 
     @Override
@@ -55,7 +35,7 @@ public class DefaultVideoEncoderFactoryTest {
 
     @Override
     public VideoCodecInfo[] getSupportedCodecs() {
-      return codecs.toArray(new VideoCodecInfo[codecs.size()]);
+      return new VideoCodecInfo[] {supportedCodec};
     }
   }
 
@@ -66,47 +46,32 @@ public class DefaultVideoEncoderFactoryTest {
 
   @SmallTest
   @Test
-  public void testGetSupportedCodecsWithHardwareH264HighProfile() {
-    VideoEncoderFactory hwFactory = new CustomHardwareVideoEncoderFactory(true, true);
-    DefaultVideoEncoderFactory dvef = new DefaultVideoEncoderFactory(hwFactory);
-    VideoCodecInfo[] videoCodecs = dvef.getSupportedCodecs();
-    assertEquals(5, videoCodecs.length);
-    assertEquals("VP8", videoCodecs[0].name);
-    assertEquals("VP9", videoCodecs[1].name);
-    assertEquals("AV1", videoCodecs[2].name);
-    assertEquals("H264", videoCodecs[3].name);
-    assertEquals("42e01f", videoCodecs[3].params.get("profile-level-id"));
-    assertEquals("H264", videoCodecs[4].name);
-    assertEquals("640c1f", videoCodecs[4].params.get("profile-level-id"));
+  public void getSupportedCodecs_hwVp8SameParamsAsSwVp8_oneVp8() {
+    VideoCodecInfo hwVp8Encoder = new VideoCodecInfo("VP8", new HashMap<>());
+    VideoEncoderFactory hwFactory = new CustomHardwareVideoEncoderFactory(hwVp8Encoder);
+    DefaultVideoEncoderFactory defFactory = new DefaultVideoEncoderFactory(hwFactory);
+    VideoCodecInfo[] supportedCodecs = defFactory.getSupportedCodecs();
+    assertEquals(3, supportedCodecs.length);
+    assertEquals("VP8", supportedCodecs[0].name);
+    assertEquals("AV1", supportedCodecs[1].name);
+    assertEquals("VP9", supportedCodecs[2].name);
   }
 
   @SmallTest
   @Test
-  public void testGetSupportedCodecsWithoutHardwareH264HighProfile() {
-    VideoEncoderFactory hwFactory = new CustomHardwareVideoEncoderFactory(true, false);
-    DefaultVideoEncoderFactory dvef = new DefaultVideoEncoderFactory(hwFactory);
-    VideoCodecInfo[] videoCodecs = dvef.getSupportedCodecs();
-    assertEquals(4, videoCodecs.length);
-    assertEquals("VP8", videoCodecs[0].name);
-    assertEquals("VP9", videoCodecs[1].name);
-    assertEquals("AV1", videoCodecs[2].name);
-    assertEquals("H264", videoCodecs[3].name);
-    assertEquals("42e01f", videoCodecs[3].params.get("profile-level-id"));
-  }
-
-  @SmallTest
-  @Test
-  public void testGetSupportedCodecsWithoutHardwareVP8() {
-    VideoEncoderFactory hwFactory = new CustomHardwareVideoEncoderFactory(false, true);
-    DefaultVideoEncoderFactory dvef = new DefaultVideoEncoderFactory(hwFactory);
-    VideoCodecInfo[] videoCodecs = dvef.getSupportedCodecs();
-    assertEquals(5, videoCodecs.length);
-    assertEquals("VP8", videoCodecs[0].name);
-    assertEquals("VP9", videoCodecs[1].name);
-    assertEquals("AV1", videoCodecs[2].name);
-    assertEquals("H264", videoCodecs[3].name);
-    assertEquals("42e01f", videoCodecs[3].params.get("profile-level-id"));
-    assertEquals("H264", videoCodecs[4].name);
-    assertEquals("640c1f", videoCodecs[4].params.get("profile-level-id"));
+  public void getSupportedCodecs_hwVp8WithDifferentParams_twoVp8() {
+    VideoCodecInfo hwVp8Encoder = new VideoCodecInfo("VP8", new HashMap<String, String>() {
+      { put("param", "value"); }
+    });
+    VideoEncoderFactory hwFactory = new CustomHardwareVideoEncoderFactory(hwVp8Encoder);
+    DefaultVideoEncoderFactory defFactory = new DefaultVideoEncoderFactory(hwFactory);
+    VideoCodecInfo[] supportedCodecs = defFactory.getSupportedCodecs();
+    assertEquals(4, supportedCodecs.length);
+    assertEquals("VP8", supportedCodecs[0].name);
+    assertEquals("AV1", supportedCodecs[1].name);
+    assertEquals("VP9", supportedCodecs[2].name);
+    assertEquals("VP8", supportedCodecs[3].name);
+    assertEquals(1, supportedCodecs[3].params.size());
+    assertEquals("value", supportedCodecs[3].params.get("param"));
   }
 }

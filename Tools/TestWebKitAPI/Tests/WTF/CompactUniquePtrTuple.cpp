@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
 namespace CompactUniquePtrTupleTest {
 
 class A {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_COMPACT_ALLOCATED;
 
 public:
     A() { ++s_constructorCallCount; }

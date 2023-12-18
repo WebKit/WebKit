@@ -62,10 +62,11 @@ public:
     rtc::AsyncPacketSocket* createClientTcpSocket(WebCore::ScriptExecutionContextIdentifier, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions&, WebPageProxyIdentifier, bool isFirstParty, bool isRelayDisabled, const WebCore::RegistrableDomain&);
     rtc::AsyncPacketSocket* createNewConnectionSocket(LibWebRTCSocket&, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier, const rtc::SocketAddress&);
 
-    LibWebRTCResolver* resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
-    std::unique_ptr<LibWebRTCResolver> takeResolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.take(identifier); }
-    rtc::AsyncResolverInterface* createAsyncResolver();
-    
+    WeakPtr<LibWebRTCResolver> resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
+    void removeResolver(LibWebRTCResolverIdentifier identifier) { m_resolvers.remove(identifier); }
+
+    std::unique_ptr<LibWebRTCResolver> createAsyncDnsResolver();
+
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
     void setConnection(RefPtr<IPC::Connection>&&);
@@ -74,9 +75,8 @@ public:
 private:
     // We cannot own sockets, clients of the factory are responsible to free them.
     HashMap<WebCore::LibWebRTCSocketIdentifier, CheckedPtr<LibWebRTCSocket>> m_sockets;
-    
-    // We can own resolvers as we control their Destroy method.
-    HashMap<LibWebRTCResolverIdentifier, std::unique_ptr<LibWebRTCResolver>> m_resolvers;
+
+    HashMap<LibWebRTCResolverIdentifier, WeakPtr<LibWebRTCResolver>> m_resolvers;
     bool m_disableNonLocalhostConnections { false };
 
     RefPtr<IPC::Connection> m_connection;

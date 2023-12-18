@@ -43,18 +43,15 @@
 #import "Icon.h"
 #import "Image.h"
 #import "ImageControlsButtonMac.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "LocalizedStrings.h"
-#import "Page.h"
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
 #import "RenderMedia.h"
 #import "RenderMeter.h"
-#import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderStyleSetters.h"
 #import "RenderView.h"
@@ -82,8 +79,6 @@
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
-
-constexpr Seconds progressAnimationRepeatInterval = 33_ms; // 30 fps
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 @end
@@ -172,6 +167,8 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
     case StyleAppearance::SliderThumbVertical:
     case StyleAppearance::SliderHorizontal:
     case StyleAppearance::SliderVertical:
+    case StyleAppearance::SwitchThumb:
+    case StyleAppearance::SwitchTrack:
     case StyleAppearance::SquareButton:
     case StyleAppearance::TextArea:
     case StyleAppearance::TextField:
@@ -216,7 +213,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == StyleAppearance::SliderThumbVertical
         || type == StyleAppearance::SliderHorizontal
         || type == StyleAppearance::SliderVertical
-        || type == StyleAppearance::SquareButton;
+        || type == StyleAppearance::SquareButton
+        || type == StyleAppearance::SwitchThumb
+        || type == StyleAppearance::SwitchTrack;
 }
 
 bool RenderThemeMac::canCreateControlPartForBorderOnly(const RenderObject& renderer) const
@@ -232,6 +231,15 @@ bool RenderThemeMac::canCreateControlPartForDecorations(const RenderObject& rend
     return renderer.style().effectiveAppearance() == StyleAppearance::MenulistButton;
 }
 
+int RenderThemeMac::baselinePosition(const RenderBox& renderer) const
+{
+    auto appearance = renderer.style().effectiveAppearance();
+    auto baseline = RenderTheme::baselinePosition(renderer);
+    if ((appearance == StyleAppearance::Checkbox || appearance == StyleAppearance::Radio) && renderer.isHorizontalWritingMode())
+        return baseline - (2 * renderer.style().effectiveZoom());
+    return baseline;
+}
+
 bool RenderThemeMac::useFormSemanticContext() const
 {
     return ThemeMac::useFormSemanticContext();
@@ -242,11 +250,10 @@ bool RenderThemeMac::supportsLargeFormControls() const
     return ThemeMac::supportsLargeFormControls();
 }
 
-NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
+NSView *RenderThemeMac::documentViewFor(const RenderObject& renderer) const
 {
-    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
-    ControlStates states(extractControlStatesForRenderer(o));
-    return ThemeMac::ensuredView(&o.view().frameView(), states);
+    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance());
+    return ThemeMac::ensuredView(&renderer.view().frameView(), extractControlStyleStatesForRenderer(renderer));
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
@@ -257,13 +264,8 @@ Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColo
 
 Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromCocoaColor([NSColor unemphasizedSelectedTextBackgroundColor]);
-#else
-    UNUSED_PARAM(options);
-    return colorFromCocoaColor([NSColor unemphasizedSelectedContentBackgroundColor]);
-#endif
 }
 
 Color RenderThemeMac::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColorOptions> options) const
@@ -294,37 +296,21 @@ Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColo
 
 Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
         return colorFromCocoaColor([NSColor unemphasizedSelectedTextColor]);
     return { };
-#else
-    UNUSED_PARAM(options);
-    return { };
-#endif
 }
 
 Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
-#else
-    UNUSED_PARAM(options);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return colorFromCocoaColor([NSColor alternateSelectedControlColor]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 }
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-#else
-    UNUSED_PARAM(options);
-#endif
     return colorFromCocoaColor([NSColor unemphasizedSelectedContentBackgroundColor]);
 
 }
@@ -337,13 +323,8 @@ Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<St
 
 Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromCocoaColor([NSColor unemphasizedSelectedTextColor]);
-#else
-    UNUSED_PARAM(options);
-    return colorFromCocoaColor([NSColor selectedControlTextColor]);
-#endif
 }
 
 inline static Color defaultFocusRingColor(OptionSet<StyleColorOptions> options)
@@ -477,13 +458,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
             return focusRingColor(options);
 
         case CSSValueAppleSystemControlAccent:
-#if HAVE(OS_DARK_MODE_SUPPORT)
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            return systemAppearanceColor(cache.systemControlAccentColor, @selector(alternateSelectedControlColor));
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 
         case CSSValueAppleSystemSelectedContentBackground:
             return activeListBoxSelectionBackgroundColor(options);
@@ -504,7 +479,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     ASSERT(!forVisitedLink);
 
-    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options, useDarkAppearance] () -> Color {
+    auto it = cache.systemStyleColors.find(cssValueID);
+    if (it != cache.systemStyleColors.end())
+        return it->value;
+
+    auto color = [this, cssValueID, options, useDarkAppearance]() -> Color {
         LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
 
         auto selectCocoaColor = [cssValueID] () -> SEL {
@@ -572,9 +551,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             case CSSValueAppleSystemTextBackground:
                 return @selector(textBackgroundColor);
             case CSSValueAppleSystemControlBackground:
-#if HAVE(OS_DARK_MODE_SUPPORT)
             case CSSValueWebkitControlBackground:
-#endif
                 return @selector(controlBackgroundColor);
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
@@ -583,28 +560,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             case CSSValueAppleSystemSelectedText:
                 return @selector(selectedTextColor);
             case CSSValueAppleSystemUnemphasizedSelectedText:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextColor);
-#else
-                return @selector(textColor);
-#endif
             case CSSValueAppleSystemUnemphasizedSelectedTextBackground:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextBackgroundColor);
-#else
-                return @selector(unemphasizedSelectedContentBackgroundColor);
-#endif
             case CSSValueAppleSystemPlaceholderText:
                 return @selector(placeholderTextColor);
             case CSSValueAppleSystemFindHighlightBackground:
                 return @selector(findHighlightColor);
             case CSSValueAppleSystemContainerBorder:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(containerBorderColor);
-#else
-                // Handled below.
-                return nullptr;
-#endif
             case CSSValueAppleSystemLabel:
                 return @selector(labelColor);
             case CSSValueAppleSystemSecondaryLabel:
@@ -624,11 +588,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             case CSSValueAppleSystemGrid:
                 return @selector(gridColor);
             case CSSValueAppleSystemSeparator:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(separatorColor);
-#else
-                return @selector(gridColor);
-#endif
             case CSSValueAppleWirelessPlaybackTargetActive:
             case CSSValueAppleSystemBlue:
                 return @selector(systemBlueColor);
@@ -697,27 +657,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 return { SRGBA<uint8_t> { 63, 99, 139, 204 }, Color::Flags::Semantic };
             return { SRGBA<uint8_t> { 128, 188, 254, 153 }, Color::Flags::Semantic };
 
-#if !HAVE(OS_DARK_MODE_SUPPORT)
-        case CSSValueAppleSystemContainerBorder:
-            return SRGBA<uint8_t> { 197, 197, 197 };
-#endif
-
         case CSSValueAppleSystemEvenAlternatingContentBackground: {
-#if HAVE(OS_DARK_MODE_SUPPORT)
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
-#else
-            NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
-#endif
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(alternateColors[0]);
         }
 
         case CSSValueAppleSystemOddAlternatingContentBackground: {
-#if HAVE(OS_DARK_MODE_SUPPORT)
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
-#else
-            NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
-#endif
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(alternateColors[1]);
         }
@@ -735,12 +682,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         default:
             return RenderTheme::systemColor(cssValueID, options);
         }
-    }).iterator->value;
+    }();
+
+    cache.systemStyleColors.add(cssValueID, color);
+    return color;
 }
 
 bool RenderThemeMac::usesTestModeFocusRingColor() const
 {
     return WebCore::usesTestModeFocusRingColor();
+}
+
+bool RenderThemeMac::searchFieldShouldAppearAsTextField(const RenderStyle& style) const
+{
+    return !style.isHorizontalWritingMode();
 }
 
 bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle& userAgentStyle) const
@@ -749,11 +704,12 @@ bool RenderThemeMac::isControlStyled(const RenderStyle& style, const RenderStyle
     if (appearance == StyleAppearance::TextField || appearance == StyleAppearance::TextArea || appearance == StyleAppearance::SearchField || appearance == StyleAppearance::Listbox)
         return style.border() != userAgentStyle.border();
 
-    // FIXME: This is horrible, but there is not much else that can be done.  Menu lists cannot draw properly when
+    // FIXME: This is horrible, but there is not much else that can be done. Menu lists cannot draw properly when
     // scaled.  They can't really draw properly when transformed either.  We can't detect the transform case at style
     // adjustment time so that will just have to stay broken.  We can however detect that we're zooming.  If zooming
-    // is in effect we treat it like the control is styled.
-    if (appearance == StyleAppearance::Menulist && style.effectiveZoom() != 1.0f)
+    // is in effect we treat it like the control is styled. Additionally, treat the control like it is styled when
+    // using a vertical writing mode, since the AppKit control is not height resizable.
+    if (appearance == StyleAppearance::Menulist && (style.effectiveZoom() != 1.0f || !style.isHorizontalWritingMode()))
         return true;
 
     return RenderTheme::isControlStyled(style, userAgentStyle);
@@ -781,32 +737,27 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
 {
     auto appearance = renderer.style().effectiveAppearance();
 
-#if USE(NEW_THEME)
     switch (appearance) {
-    case StyleAppearance::Checkbox:
-    case StyleAppearance::Radio:
-    case StyleAppearance::PushButton:
-    case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
-    case StyleAppearance::ColorWell:
-#endif
-    case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
+    case StyleAppearance::Checkbox:
+    case StyleAppearance::DefaultButton:
     case StyleAppearance::InnerSpinButton:
-            return RenderTheme::adjustRepaintRect(renderer, rect);
-    default:
-            break;
-    }
-#endif
-
-    float zoomLevel = renderer.style().effectiveZoom();
-
-    if (appearance == StyleAppearance::Menulist) {
+    case StyleAppearance::PushButton:
+    case StyleAppearance::Radio:
+    case StyleAppearance::Switch:
+        Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), rect, renderer.style().effectiveZoom());
+        break;
+    case StyleAppearance::Menulist: {
+        auto zoomLevel = renderer.style().effectiveZoom();
         setPopupButtonCellState(renderer, IntSize(rect.size()));
-        IntSize size = popupButtonSizes()[[popupButton() controlSize]];
+        auto size = popupButtonSizes()[[popupButton() controlSize]];
         size.setHeight(size.height() * zoomLevel);
         size.setWidth(rect.width());
         rect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
+        break;
+    }
+    default:
+        break;
     }
 }
 
@@ -832,14 +783,6 @@ void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject& o)
     bool enabled = isEnabled(o);
     if (enabled != oldEnabled)
         [cell setEnabled:enabled];
-}
-
-void RenderThemeMac::updateFocusedState(NSCell *cell, const RenderObject* o)
-{
-    bool oldFocused = [cell showsFirstResponder];
-    bool focused = o && isFocused(*o) && o->style().outlineStyleIsAuto() == OutlineIsAuto::On;
-    if (focused != oldFocused)
-        [cell setShowsFirstResponder:focused];
 }
 
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
@@ -967,10 +910,7 @@ NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style)
 void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) const
 {
     // Add a margin to place the button at end of the input field.
-    if (style.isLeftToRightDirection())
-        style.setMarginRight(Length(-4, LengthType::Fixed));
-    else
-        style.setMarginLeft(Length(-4, LengthType::Fixed));
+    style.setMarginEnd(Length(-4, LengthType::Fixed));
 }
 
 #endif
@@ -1038,7 +978,7 @@ FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, con
     return control->sizeForBounds(bounds, controlStyle);
 }
 
-bool RenderThemeMac::supportsMeter(StyleAppearance appearance, const HTMLMeterElement&) const
+bool RenderThemeMac::supportsMeter(StyleAppearance appearance) const
 {
     return appearance == StyleAppearance::Meter;
 }
@@ -1051,11 +991,6 @@ IntRect RenderThemeMac::progressBarRectForBounds(const RenderProgress& renderPro
 
     auto controlStyle = extractControlStyleForRenderer(renderProgress);
     return IntRect(control->rectForBounds(bounds, controlStyle));
-}
-
-Seconds RenderThemeMac::animationRepeatIntervalForProgressBar(const RenderProgress&) const
-{
-    return progressAnimationRepeatInterval;
 }
 
 void RenderThemeMac::adjustProgressBarStyle(RenderStyle&, const Element*) const
@@ -1091,7 +1026,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
 
     // White-space is locked to pre
     style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-    style.setTextWrap(TextWrap::NoWrap);
+    style.setTextWrapMode(TextWrapMode::NoWrap);
 
     // Set the button's vertical size.
     setSizeFromFont(style, menuListButtonSizes());
@@ -1104,7 +1039,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
     style.setBoxShadow(nullptr);
 }
 
-LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
+LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.effectiveAppearance() == StyleAppearance::Menulist) {
         const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);
@@ -1270,8 +1205,14 @@ const int emptyResultsOffset = 9;
 void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width() - emptyResultsOffset, LengthType::Fixed));
-    style.setHeight(Length(size.height(), LengthType::Fixed));
+    int widthOffset = 0;
+    int heightOffset = 0;
+    if (style.isHorizontalWritingMode())
+        widthOffset = emptyResultsOffset;
+    else
+        heightOffset = emptyResultsOffset;
+    style.setWidth(Length(size.width() - widthOffset, LengthType::Fixed));
+    style.setHeight(Length(size.height() - heightOffset, LengthType::Fixed));
     style.setBoxShadow(nullptr);
 }
 
@@ -1591,21 +1532,20 @@ static void paintAttachmentPlaceholderBorder(const RenderAttachment& attachment,
 
 bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
-    if (!is<RenderAttachment>(renderer))
+    auto* attachment = dynamicDowncast<RenderAttachment>(renderer);
+    if (!attachment)
         return false;
 
-    const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
-
-    if (attachment.paintWideLayoutAttachmentOnly(paintInfo, paintRect.location()))
+    if (attachment->paintWideLayoutAttachmentOnly(paintInfo, paintRect.location()))
         return true;
 
-    HTMLAttachmentElement& element = attachment.attachmentElement();
+    HTMLAttachmentElement& element = attachment->attachmentElement();
 
     auto layoutStyle = AttachmentLayoutStyle::NonSelected;
-    if (attachment.selectionState() != RenderObject::HighlightState::None && paintInfo.phase != PaintPhase::Selection)
+    if (attachment->selectionState() != RenderObject::HighlightState::None && paintInfo.phase != PaintPhase::Selection)
         layoutStyle = AttachmentLayoutStyle::Selected;
 
-    AttachmentLayout layout(attachment, layoutStyle);
+    AttachmentLayout layout(*attachment, layoutStyle);
 
     auto& progressString = element.attributeWithoutSynchronization(progressAttr);
     bool validProgress = false;
@@ -1614,7 +1554,6 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         progress = progressString.toFloat(&validProgress);
 
     GraphicsContext& context = paintInfo.context();
-    LocalCurrentGraphicsContext localContext(context);
     GraphicsContextStateSaver saver(context);
 
     context.translate(toFloatSize(paintRect.location()));
@@ -1622,21 +1561,21 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     bool usePlaceholder = validProgress && !progress;
 
-    paintAttachmentIconBackground(attachment, context, layout);
+    paintAttachmentIconBackground(*attachment, context, layout);
 
     if (usePlaceholder)
-        paintAttachmentIconPlaceholder(attachment, context, layout);
+        paintAttachmentIconPlaceholder(*attachment, context, layout);
     else
-        paintAttachmentIcon(attachment, context, layout);
+        paintAttachmentIcon(*attachment, context, layout);
 
-    paintAttachmentTitleBackground(attachment, context, layout);
+    paintAttachmentTitleBackground(*attachment, context, layout);
     paintAttachmentText(context, &layout);
 
     if (validProgress && progress)
-        paintAttachmentProgress(attachment, context, layout, progress);
+        paintAttachmentProgress(*attachment, context, layout, progress);
 
     if (usePlaceholder)
-        paintAttachmentPlaceholderBorder(attachment, context, layout);
+        paintAttachmentPlaceholderBorder(*attachment, context, layout);
 
     return true;
 }

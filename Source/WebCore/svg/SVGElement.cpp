@@ -37,10 +37,9 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "JSEventListener.h"
+#include "LegacyRenderSVGResourceContainer.h"
 #include "NodeName.h"
 #include "RenderAncestorIterator.h"
-#include "RenderSVGResourceFilter.h"
-#include "RenderSVGResourceMasker.h"
 #include "ResolvedStyle.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementRareData.h"
@@ -449,12 +448,14 @@ static inline bool isSVGLayerAwareElement(const SVGElement& element)
     case SVG::a:
     case SVG::altGlyph:
     case SVG::circle:
+    case SVG::clipPath:
     case SVG::defs:
     case SVG::ellipse:
     case SVG::foreignObject:
     case SVG::g:
     case SVG::image:
     case SVG::line:
+    case SVG::mask:
     case SVG::path:
     case SVG::polygon:
     case SVG::polyline:
@@ -1162,7 +1163,7 @@ bool SVGElement::hasAssociatedSVGLayoutBox() const
         return false;
 
     // Legacy SVG engine specific condition.
-    if (renderer()->isLegacySVGRoot())
+    if (renderer()->isLegacyRenderSVGRoot())
         return false;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

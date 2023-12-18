@@ -57,6 +57,11 @@ bool ControlMac::userPrefersContrast()
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
 }
 
+bool ControlMac::userPrefersWithoutColorDifferentiation()
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldDifferentiateWithoutColor];
+}
+
 FloatRect ControlMac::inflatedRect(const FloatRect& bounds, const FloatSize& size, const IntOutsets& outsets, const ControlStyle& style)
 {
     auto scaledOutsets = FloatBoxExtent {
@@ -384,8 +389,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     if (!comboBoxImageBuffer)
         return;
 
-    ContextContainer cgContextContainer(comboBoxImageBuffer->context());
-    CGContextRef cgContext = cgContextContainer.context();
+    CGContextRef cgContext = comboBoxImageBuffer->context().platformContext();
 
     NSString *coreUIState;
     if (style.states.containsAny({ ControlStyle::State::Presenting, ControlStyle::State::ListButtonPressed }))
@@ -410,12 +414,20 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     comboBoxButtonContext.translate(comboBoxButtonInset.scaled(-1));
     comboBoxButtonContext.drawConsumingImageBuffer(WTFMove(comboBoxImageBuffer), FloatPoint::zero(), ImagePaintingOptions { ImageOrientation::Orientation::OriginBottomRight });
 
+    auto isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
+
+    auto logicalRect = isVerticalWritingMode ? rect.transposedRect() : rect;
+    auto desiredComboBoxButtonLogicalSize = isVerticalWritingMode ? desiredComboBoxButtonSize.transposedSize() : desiredComboBoxButtonSize;
+
     FloatPoint listButtonLocation;
-    float listButtonY = rect.center().y() - desiredComboBoxButtonSize.height() / 2;
+    float listButtonLogicalTop = logicalRect.center().y() - desiredComboBoxButtonLogicalSize.height() / 2;
     if (style.states.contains(ControlStyle::State::RightToLeft))
-        listButtonLocation = { rect.x() + desiredComboBoxInset, listButtonY };
+        listButtonLocation = { logicalRect.x() + desiredComboBoxInset, listButtonLogicalTop };
     else
-        listButtonLocation = { rect.maxX() - desiredComboBoxButtonSize.width() - desiredComboBoxInset, listButtonY };
+        listButtonLocation = { logicalRect.maxX() - desiredComboBoxButtonLogicalSize.width() - desiredComboBoxInset, listButtonLogicalTop };
+
+    if (isVerticalWritingMode)
+        listButtonLocation = listButtonLocation.transposedPoint();
 
     context.drawConsumingImageBuffer(WTFMove(comboBoxButtonImageBuffer), listButtonLocation);
 }

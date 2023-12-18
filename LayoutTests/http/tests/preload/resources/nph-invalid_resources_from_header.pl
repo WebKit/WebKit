@@ -1,5 +1,6 @@
 #!/usr/bin/perl -wT
 use strict;
+binmode STDOUT;
 
 print <<"EOL";
 HTTP/1.1 200 OK

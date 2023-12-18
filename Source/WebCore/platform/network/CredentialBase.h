@@ -25,17 +25,16 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class Credential;
 
-enum CredentialPersistence {
-    CredentialPersistenceNone,
-    CredentialPersistenceForSession,
-    CredentialPersistencePermanent
+enum class CredentialPersistence : uint8_t {
+    None,
+    ForSession,
+    Permanent
 };
 
 class CredentialBase {
@@ -69,16 +68,3 @@ private:
 inline bool operator==(const Credential& a, const Credential& b) { return CredentialBase::compare(a, b); }
     
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CredentialPersistence> {
-    using values = EnumValues<
-        WebCore::CredentialPersistence,
-        WebCore::CredentialPersistence::CredentialPersistenceNone,
-        WebCore::CredentialPersistence::CredentialPersistenceForSession,
-        WebCore::CredentialPersistence::CredentialPersistencePermanent
-    >;
-};
-
-} // namespace WTF

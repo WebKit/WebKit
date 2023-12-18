@@ -26,7 +26,6 @@
 // https://www.w3.org/TR/push-api/#pushsubscriptionoptions-interface
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=PushAPIEnabled,
     SecureContext,
     Exposed=(Window,Worker),

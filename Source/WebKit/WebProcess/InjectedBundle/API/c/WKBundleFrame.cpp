@@ -149,7 +149,7 @@ void WKBundleFrameClearOpener(WKBundleFrameRef frameRef)
 {
     auto* coreFrame = WebKit::toImpl(frameRef)->coreLocalFrame();
     if (coreFrame)
-        coreFrame->loader().setOpener(0);
+        coreFrame->loader().setOpener(nullptr);
 }
 
 void WKBundleFrameStopLoading(WKBundleFrameRef frameRef)

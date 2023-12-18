@@ -45,7 +45,7 @@ enum CreateTag { Create };
 
 template<typename T> class COMPtr {
 public:
-    typedef T* PtrType;
+    using PtrType = T*;
     COMPtr() : m_ptr(nullptr) { }
     COMPtr(T* ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->AddRef(); }
     COMPtr(AdoptCOMTag, T* ptr) : m_ptr(ptr) { }
@@ -245,6 +245,7 @@ namespace WTF {
 
 template<typename P> struct IsSmartPtr<COMPtr<P>> {
     static const bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename P> struct HashTraits<COMPtr<P> > : SimpleClassHashTraits<COMPtr<P>> {

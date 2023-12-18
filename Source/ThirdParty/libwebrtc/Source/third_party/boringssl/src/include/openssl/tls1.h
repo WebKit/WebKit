@@ -244,7 +244,8 @@ extern "C" {
 
 // ExtensionType value from draft-vvv-tls-alps. This is not an IANA defined
 // extension number.
-#define TLSEXT_TYPE_application_settings 17513
+#define TLSEXT_TYPE_application_settings_old 17513
+#define TLSEXT_TYPE_application_settings 17613
 
 // ExtensionType values from draft-ietf-tls-esni-13. This is not an IANA defined
 // extension number.

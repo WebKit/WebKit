@@ -54,20 +54,14 @@ void VideoTrackPrivateWebM::setFormatDescription(Ref<VideoInfo>&& formatDescript
     updateConfiguration();
 }
 
-AtomString VideoTrackPrivateWebM::id() const
-{
-    if (m_trackID.isNull()) {
-        auto uid = trackUID();
-        m_trackID = uid ? AtomString::number(*uid) : emptyAtom();
-    }
-    return m_trackID;
-}
-
-std::optional<uint64_t> VideoTrackPrivateWebM::trackUID() const
+TrackID VideoTrackPrivateWebM::id() const
 {
     if (m_track.track_uid.is_present())
         return m_track.track_uid.value();
-    return std::nullopt;
+    if (m_track.track_number.is_present())
+        return m_track.track_number.value();
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 std::optional<bool> VideoTrackPrivateWebM::defaultEnabled() const

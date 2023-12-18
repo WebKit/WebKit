@@ -27,12 +27,12 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LegacyInlineFlowBox.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
-#include "RenderSVGResourceSolidColor.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "SVGInlineTextBoxInlines.h"
@@ -264,7 +264,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             selectionStyle = &style;
     }
 
-    if (renderer().view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGMask)) {
+    if (renderer().view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask)) {
         hasFill = true;
         hasVisibleStroke = false;
     }
@@ -329,9 +329,9 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
 
     Color fallbackColor;
     if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
-        m_paintingResource = RenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
+        m_paintingResource = LegacyRenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
     else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
-        m_paintingResource = RenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
+        m_paintingResource = LegacyRenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
     else {
         // We're either called for stroking or filling.
         ASSERT_NOT_REACHED();
@@ -346,7 +346,7 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
             return false;
         }
         
-        RenderSVGResourceSolidColor* fallbackResource = RenderSVGResource::sharedSolidPaintingResource();
+        LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
         fallbackResource->setColor(fallbackColor);
 
         m_paintingResource = fallbackResource;
@@ -411,31 +411,19 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTe
 
 bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
+    unsigned startFragment = fragment.characterOffset - start();
+    unsigned endFragment = startFragment + fragment.length;
+
+    // Find intersection between the intervals: [startFragment..endFragment) and [startPosition..endPosition)
+    startPosition = std::max(startFragment, startPosition);
+    endPosition = std::min(endFragment, endPosition);
+
     if (startPosition >= endPosition)
         return false;
 
-    ASSERT(fragment.characterOffset >= start());
-    unsigned offset = fragment.characterOffset - start();
-    unsigned length = fragment.length;
+    startPosition -= startFragment;
+    endPosition -= startFragment;
 
-    if (startPosition >= offset + length || endPosition <= offset)
-        return false;
-
-    if (startPosition < offset)
-        startPosition = 0;
-    else {
-        ASSERT(startPosition >= offset);
-        startPosition -= offset;
-    }
-
-    if (endPosition > offset + length)
-        endPosition = length;
-    else {
-        ASSERT(endPosition >= offset);
-        endPosition -= offset;
-    }
-
-    ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     return true;
 }
 

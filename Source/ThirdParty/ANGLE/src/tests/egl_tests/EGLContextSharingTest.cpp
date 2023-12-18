@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 
+#include "common/tls.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
 #include "test_utils/angle_test_configs.h"
@@ -766,6 +767,137 @@ TEST_P(EGLContextSharingTest, DeleteReaderOfSharedTexture)
         eglDestroySurface(dpy, surface[t]);
         eglDestroyContext(dpy, ctx[t]);
     }
+}
+
+// Tests that Context will be destroyed in thread cleanup callback and it is safe to call GLES APIs.
+TEST_P(EGLContextSharingTest, ThreadCleanupCallback)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    EGLConfig config  = window->getConfig();
+
+    EGLContext context = window->createContext(EGL_NO_CONTEXT, nullptr);
+    EXPECT_NE(context, EGL_NO_CONTEXT);
+
+    EGLint pbufferAttributes[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface surface         = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
+    EXPECT_NE(surface, EGL_NO_SURFACE);
+
+    auto registerThreadCleanupCallback = []() {
+#if defined(ANGLE_PLATFORM_ANDROID)
+        static pthread_once_t once = PTHREAD_ONCE_INIT;
+        static TLSIndex tlsIndex   = TLS_INVALID_INDEX;
+
+        auto createThreadCleanupTLSIndex = []() {
+            auto threadCleanupCallback = [](void *) {
+                // From the point of view of this test Context is still current.
+                glFinish();
+                // Test expects that Context will be destroyed here.
+                eglReleaseThread();
+            };
+            tlsIndex = CreateTLSIndex(threadCleanupCallback);
+        };
+        pthread_once(&once, createThreadCleanupTLSIndex);
+        ASSERT(tlsIndex != TLS_INVALID_INDEX);
+
+        // Set any non nullptr value.
+        SetTLSValue(tlsIndex, &once);
+#endif
+    };
+
+    std::thread thread([&]() {
+        registerThreadCleanupCallback();
+
+        eglMakeCurrent(dpy, surface, surface, context);
+        ASSERT_EGL_SUCCESS();
+
+        // Clear and read back to make sure thread uses context.
+        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+
+        // Destroy context and surface while still current.
+        eglDestroyContext(dpy, context);
+        ASSERT_EGL_SUCCESS();
+        eglDestroySurface(dpy, surface);
+        ASSERT_EGL_SUCCESS();
+    });
+
+    thread.join();
+
+    // Check if context was actually destroyed.
+    EGLint val;
+    EXPECT_EGL_FALSE(eglQueryContext(dpy, context, EGL_CONTEXT_CLIENT_TYPE, &val));
+    EXPECT_EQ(eglGetError(), EGL_BAD_CONTEXT);
+}
+
+// Tests that Context will be automatically unmade from current on thread exit.
+TEST_P(EGLContextSharingTest, UnmakeFromCurrentOnThreadExit)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    EGLConfig config  = window->getConfig();
+
+    EGLContext context = window->createContext(EGL_NO_CONTEXT, nullptr);
+    EXPECT_NE(context, EGL_NO_CONTEXT);
+
+    EGLint pbufferAttributes[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface surface         = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
+    EXPECT_NE(surface, EGL_NO_SURFACE);
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+    enum class Step
+    {
+        Start,
+        ThreadMakeCurrent,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+    ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+    std::thread thread([&]() {
+        eglMakeCurrent(dpy, surface, surface, context);
+        ASSERT_EGL_SUCCESS();
+
+        threadSynchronization.nextStep(Step::ThreadMakeCurrent);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+
+        // Clear and read back to make sure thread uses context.
+        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+    });
+
+    // Wait while Context is made current in the thread.
+    ASSERT_TRUE(threadSynchronization.waitForStep(Step::ThreadMakeCurrent));
+
+    // This should fail because context is already current in other thread.
+    eglMakeCurrent(dpy, surface, surface, context);
+    EXPECT_EQ(eglGetError(), EGL_BAD_ACCESS);
+
+    // Finish the thread.
+    threadSynchronization.nextStep(Step::Finish);
+    thread.join();
+
+    // This should succeed, because thread is finished so context is no longer current.
+    eglMakeCurrent(dpy, surface, surface, context);
+    EXPECT_EGL_SUCCESS();
+    eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    ASSERT_EGL_SUCCESS();
+
+    // Destroy context and surface.
+    eglDestroyContext(dpy, context);
+    ASSERT_EGL_SUCCESS();
+    eglDestroySurface(dpy, surface);
+    ASSERT_EGL_SUCCESS();
 }
 
 // Test that an inactive but alive thread doesn't prevent memory cleanup.

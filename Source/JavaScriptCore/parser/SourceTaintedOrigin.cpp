@@ -26,7 +26,9 @@
 #include "config.h"
 #include "SourceTaintedOrigin.h"
 
+#include "CodeBlock.h"
 #include "StackVisitor.h"
+#include "VM.h"
 
 namespace JSC {
 

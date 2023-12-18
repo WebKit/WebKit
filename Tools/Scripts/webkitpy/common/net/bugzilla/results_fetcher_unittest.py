@@ -28,12 +28,12 @@
 import json
 import unittest
 
+from mock import mock
+from webkitcorepy.testing import PathTestCase
+from webkitscmpy import PullRequest, local, mocks, remote
+
+from webkitpy.common.net.bugzilla import results_fetcher
 from webkitpy.common.net.bugzilla.attachment import Attachment
-from webkitpy.common.net.bugzilla.results_fetcher import (
-    _is_relevant_results,
-    lookup_ews_results_from_bugzilla,
-)
-from webkitpy.thirdparty import mock
 
 
 class MockAttachment(Attachment):
@@ -120,7 +120,7 @@ class ResultsFetcherTest(unittest.TestCase):
     def test_is_relevant_results(self):
         # Incomplete.
         self.assertFalse(
-            _is_relevant_results(
+            results_fetcher._is_relevant_results(
                 "foo",
                 {
                     "buildid": 588706,
@@ -140,7 +140,7 @@ class ResultsFetcherTest(unittest.TestCase):
 
         # Completed, failures.
         self.assertTrue(
-            _is_relevant_results(
+            results_fetcher._is_relevant_results(
                 "foo",
                 {
                     "buildid": 588183,
@@ -169,7 +169,7 @@ class ResultsFetcherTest(unittest.TestCase):
 
         # Completed with failures, but re-run.
         self.assertFalse(
-            _is_relevant_results(
+            results_fetcher._is_relevant_results(
                 "foo",
                 {
                     "buildid": 588183,
@@ -198,7 +198,7 @@ class ResultsFetcherTest(unittest.TestCase):
 
         # Complete with warnings.
         self.assertTrue(
-            _is_relevant_results(
+            results_fetcher._is_relevant_results(
                 "foo",
                 {
                     "buildid": 588085,
@@ -227,7 +227,7 @@ class ResultsFetcherTest(unittest.TestCase):
 
     def test_lookup_ews_results_from_bugzilla(self):
         with mock.patch("requests.Session.get", MockRequestsGet), mock.patch("requests.get", MockRequestsGet):
-            actual = lookup_ews_results_from_bugzilla("123456", True, MockBugzilla())
+            actual = results_fetcher.lookup_ews_results_from_bugzilla("123456", True, MockBugzilla())
             expected = {
                 "mac-wk1": [
                     "https://ews-build.webkit.org/results/mac-wk1/r12345.zip",
@@ -238,3 +238,166 @@ class ResultsFetcherTest(unittest.TestCase):
                 "win": ["https://ews-build.webkit.org/results/win/r12345.zip"],
             }
             self.assertEqual(expected, actual)
+
+
+class ResultsFetcherGitHubTest(PathTestCase):
+    basepath = "dir"
+
+    @classmethod
+    def webserver(cls):
+        result = mocks.remote.GitHub()
+        result.users.create("Eager Reviewer", "ereviewer", ["ereviewer@webkit.org"])
+        result.users.create("Reluctant Reviewer", "rreviewer", ["rreviewer@webkit.org"])
+        result.users.create(
+            "Suspicious Reviewer", "sreviewer", ["sreviewer@webkit.org"]
+        )
+        result.users.create(
+            "Tim Contributor", "tcontributor", ["tcontributor@webkit.org"]
+        )
+        result.issues = {
+            1: {
+                "number": 1,
+                "opened": True,
+                "title": "Example Change",
+                "description": "?",
+                "creator": result.users.create(
+                    name="Tim Contributor", username="tcontributor"
+                ),
+                "timestamp": 1639536160,
+                "assignee": None,
+                "comments": [],
+            },
+        }
+        result.pull_requests = [
+            {
+                "number": 1,
+                "state": "open",
+                "title": "Example Change",
+                "user": {"login": "tcontributor"},
+                "body": """#### 95507e3a1a4a919d1a156abbc279fdf6d24b13f5
+<pre>
+Example Change
+<a href="https://bugs.webkit.org/show_bug.cgi?id=1234">https://bugs.webkit.org/show_bug.cgi?id=1234</a>
+
+Reviewed by NOBODY (OOPS!).
+
+* Source/file.cpp:
+</pre>
+""",
+                "head": {
+                    "ref": "branch-a",
+                    "sha": "95507e3a1a4a919d1a156abbc279fdf6d24b13f5",
+                },
+                "base": {"ref": "main"},
+                "requested_reviews": [{"login": "rreviewer"}],
+                "reviews": [
+                    {"user": {"login": "ereviewer"}, "state": "APPROVED"},
+                    {"user": {"login": "sreviewer"}, "state": "CHANGES_REQUESTED"},
+                ],
+                "_links": {
+                    "issue": {"href": "https://{}/issues/1".format(result.api_remote)},
+                },
+                "draft": False,
+            }
+        ]
+
+        result.statuses["95507e3a1a4a"] = PullRequest.Status.Encoder().default(
+            [
+                PullRequest.Status(
+                    name="test-webkitpy",
+                    status="pending",
+                    description="Running...",
+                    url="http://example.com/1",
+                ),
+                PullRequest.Status(
+                    name="test-webkitcorepy",
+                    status="success",
+                    description="Finished!",
+                    url="http://example.com/2",
+                ),
+                PullRequest.Status(
+                    name="test-webkitscmpy",
+                    status="failure",
+                    description="Failed webkitscmpy.test.pull_request_unittest.TestNetworkPullRequestGitHub.test_status",
+                    url="http://example.com/3",
+                ),
+            ]
+        )
+
+        return result
+
+    def test_lookup_ews_results_from_pr(self):
+        with self.webserver():
+            repo = remote.GitHub("https://github.example.com/WebKit/WebKit")
+            pr = repo.pull_requests.get(1)
+
+            with mock.patch(
+                "webkitpy.common.net.bugzilla.results_fetcher.lookup_ews_results"
+            ) as m:
+                results_fetcher.lookup_ews_results_from_pr(pr)
+                m.assert_called_once_with(
+                    [
+                        "http://example.com/1",
+                        "http://example.com/2",
+                        "http://example.com/3",
+                    ]
+                )
+
+    def test_lookup_ews_results_from_pr_no_status(self):
+        remote_mock = self.webserver()
+        remote_mock.statuses = {}
+        with remote_mock:
+            repo = remote.GitHub("https://github.example.com/WebKit/WebKit")
+            pr = repo.pull_requests.get(1)
+
+            with mock.patch(
+                "webkitpy.common.net.bugzilla.results_fetcher.lookup_ews_results"
+            ) as m:
+                results_fetcher.lookup_ews_results_from_pr(pr)
+                m.assert_called_once_with([])
+
+    def test_lookup_ews_results_from_repo_via_pr(self):
+        with self.webserver() as remote_mock_repo, mocks.local.Git(
+            self.path,
+            remote="https://{}".format(remote_mock_repo.remote),
+            remotes={
+                "fork": "https://{}/Contributor/WebKit".format(
+                    remote_mock_repo.hosts[0]
+                )
+            },
+            default_branch="branch-a",
+        ), mock.patch(
+            "webkitpy.common.net.bugzilla.results_fetcher.lookup_ews_results_from_pr"
+        ) as m:
+            remote_repo = remote.GitHub("https://github.example.com/WebKit/WebKit")
+            pr = remote_repo.pull_requests.get(1)
+            local_repo = local.Git(self.path)
+            results_fetcher.lookup_ews_results_from_repo_via_pr(local_repo)
+            m.assert_called_once()
+            args, kwargs = m.call_args
+            self.assertEqual(len(args), 1)
+            self.assertEqual(kwargs, {})
+            called_pr = args[0]
+            # PullRequest objects don't implement ==, so use the URL as a substitute to
+            # check we have the same PR.
+            self.assertEqual(pr.url, called_pr.url)
+
+    def test_lookup_ews_results_from_repo_via_pr_missing_pr(self):
+        with self.webserver() as remote_mock_repo, mocks.local.Git(
+            self.path,
+            remote="https://{}".format(remote_mock_repo.remote),
+            remotes={
+                "fork": "https://{}/Contributor/WebKit".format(
+                    remote_mock_repo.hosts[0]
+                )
+            },
+            default_branch="main",
+        ), mock.patch(
+            "webkitpy.common.net.bugzilla.results_fetcher.lookup_ews_results_from_pr"
+        ) as m:
+            remote_repo = remote.GitHub("https://github.example.com/WebKit/WebKit")
+            remote_repo.pull_requests.get(1)
+            local_repo = local.Git(self.path)
+            with self.assertRaises(ValueError, msg="No PR found for current branch"):
+                results_fetcher.lookup_ews_results_from_repo_via_pr(local_repo)
+            m.assert_not_called()

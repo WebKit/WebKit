@@ -83,7 +83,6 @@ struct PluginInfo;
 struct PrewarmInformation;
 class SecurityOriginData;
 enum class PermissionName : uint8_t;
-enum class RenderAsTextFlag : uint16_t;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
@@ -114,6 +113,7 @@ class WebProcessPool;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 struct BackForwardListItemState;
+struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
 struct UserMessage;
 struct WebNavigationDataStore;
@@ -142,9 +142,9 @@ using WebProcessWithMediaStreamingCounter = RefCounter<WebProcessWithMediaStream
 using WebProcessWithMediaStreamingToken = WebProcessWithMediaStreamingCounter::Token;
 enum class CheckBackForwardList : bool { No, Yes };
 
-class WebProcessProxy : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
+class WebProcessProxy : public AuxiliaryProcessProxy {
 public:
-    using WebPageProxyMap = HashMap<WebPageProxyIdentifier, WeakPtr<WebPageProxy>>;
+    using WebPageProxyMap = HashMap<WebPageProxyIdentifier, CheckedRef<WebPageProxy>>;
     using UserInitiatedActionByAuthorizationTokenMap = HashMap<WTF::UUID, RefPtr<API::UserInitiatedAction>>;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
@@ -156,16 +156,13 @@ public:
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&);
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    static Ref<WebProcessProxy> createForWebContentCrashy(WebProcessPool&);
-#endif
-
     ~WebProcessProxy();
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, const Function<void(WebPageProxy&)>&);
     static Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies();
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
+    RefPtr<WebConnection> protectedWebConnection() const { return m_webConnection; }
 
     unsigned suspendedPageCount() const { return m_suspendedPages.computeSize(); }
     void addSuspendedPageProxy(SuspendedPageProxy&);
@@ -173,6 +170,11 @@ public:
 
     WebProcessPool* processPoolIfExists() const;
     WebProcessPool& processPool() const;
+    Ref<WebProcessPool> protectedProcessPool() const;
+
+#if ENABLE(GPU_PROCESS)
+    const std::optional<GPUProcessPreferencesForWebProcess>& preferencesForGPUProcess() const { return m_preferencesForGPUProcess; }
+#endif
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
     WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
@@ -186,6 +188,7 @@ public:
     void disableRemoteWorkers(OptionSet<RemoteWorkerType>);
 
     WebsiteDataStore* websiteDataStore() const { ASSERT(m_websiteDataStore); return m_websiteDataStore.get(); }
+    RefPtr<WebsiteDataStore> protectedWebsiteDataStore() const;
     void setWebsiteDataStore(WebsiteDataStore&);
     
     PAL::SessionID sessionID() const;
@@ -212,10 +215,12 @@ public:
     void addRemotePageProxy(RemotePageProxy&);
     void removeRemotePageProxy(RemotePageProxy&);
 
-    Vector<RefPtr<WebPageProxy>> pages() const;
+    Vector<Ref<WebPageProxy>> pages() const;
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned provisionalPageCount() const { return m_provisionalPages.computeSize(); }
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
+
+    Vector<WeakPtr<RemotePageProxy>> remotePages() const;
 
     void activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&&); // This is what is reported to ActivityMonitor.
 
@@ -226,10 +231,6 @@ public:
     bool isRunningWorkers() const { return m_sharedWorkerInformation || m_serviceWorkerInformation; }
 
     bool isDummyProcessProxy() const;
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    bool isCrashyProcess() const { return m_isWebContentCrashyProcess; }
-#endif
 
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
@@ -275,14 +276,12 @@ public:
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
 
-#if ENABLE(TRACKING_PREVENTION)
     static void notifyPageStatisticsAndDataRecordsProcessed();
 
     static void notifyWebsiteDataDeletionForRegistrableDomainsFinished();
     static void notifyWebsiteDataScanForRegistrableDomainsFinished();
 
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
-#endif
 
     void enableSuddenTermination();
     void disableSuddenTermination();
@@ -391,6 +390,8 @@ public:
     void sendAudioComponentRegistrations();
 #endif
 
+    bool hasSameGPUProcessPreferencesAs(const API::PageConfiguration&) const;
+
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     void enableRemoteInspectorIfNeeded();
 #endif
@@ -408,13 +409,11 @@ public:
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
     void updateRemoteWorkerProcessAssertion(RemoteWorkerType);
-#if ENABLE(SERVICE_WORKER)
     bool hasServiceWorkerPageProxy(WebPageProxyIdentifier pageProxyID) { return m_serviceWorkerInformation && m_serviceWorkerInformation->remoteWorkerPageProxyID == pageProxyID; }
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
     void startServiceWorkerBackgroundProcessing();
     void endServiceWorkerBackgroundProcessing();
-#endif
     void setThrottleStateForTesting(ProcessThrottleState);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -521,16 +520,14 @@ protected:
 
     void validateFreezerStatus();
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    void setIsCrashyProcess() { m_isWebContentCrashyProcess = true; }
-#endif
-
 private:
-    using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, WeakPtr<WebProcessProxy>>;
+    using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
     static WebProcessProxyMap& allProcessMap();
-    static Vector<RefPtr<WebProcessProxy>> allProcesses();
+    static Vector<Ref<WebProcessProxy>> allProcesses();
     static WebPageProxyMap& globalPageMap();
-    static Vector<RefPtr<WebPageProxy>> globalPages();
+    static Vector<Ref<WebPageProxy>> globalPages();
+
+    void initializePreferencesForGPUProcess(const WebPageProxy&);
 
     void reportProcessDisassociatedWithPageIfNecessary(WebPageProxyIdentifier);
     bool isAssociatedWithPage(WebPageProxyIdentifier) const;
@@ -542,8 +539,6 @@ private:
     void updateBackForwardItem(const BackForwardListItemState&);
     void didDestroyFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(uint64_t);
-    void postMessageToRemote(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
-    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
 
     bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(CompletionHandler<void(bool)>&&);
@@ -562,13 +557,6 @@ private:
     static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& platformPathsWithAssumedReadAccess();
 
     void updateBackgroundResponsivenessTimer();
-
-    void updateBlobRegistryPartitioningState() const;
-
-#if ENABLE(GPU_PROCESS)
-    GPUProcessPreferencesForWebProcess computePreferencesForGPUProcess() const;
-#endif
-    void updatePreferencesForGPUProcess();
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
@@ -610,7 +598,7 @@ private:
     void systemBeep();
     
 #if PLATFORM(MAC)
-    void isAXAuthenticated(audit_token_t, CompletionHandler<void(bool)>&&);
+    void isAXAuthenticated(CoreIPCAuditToken&&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if PLATFORM(COCOA)
@@ -696,9 +684,6 @@ private:
 
     VisibleWebPageCounter m_visiblePageCounter;
     RefPtr<WebsiteDataStore> m_websiteDataStore;
-#if PLATFORM(COCOA)
-    RefPtr<NetworkProcessProxy> m_networkProcessToKeepAliveUntilDataStoreIsCreated;
-#endif
 
     bool m_isUnderMemoryPressure { false };
 
@@ -713,10 +698,6 @@ private:
     WebCore::CrossOriginMode m_crossOriginMode { WebCore::CrossOriginMode::Shared };
 #if PLATFORM(COCOA)
     bool m_hasNetworkExtensionSandboxAccess { false };
-#endif
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    bool m_isWebContentCrashyProcess { false };
 #endif
 
 #if PLATFORM(WATCHOS)
@@ -771,7 +752,7 @@ private:
 #endif
     mutable String m_environmentIdentifier;
 #if ENABLE(GPU_PROCESS)
-    std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
+    mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
 #endif
 };
 

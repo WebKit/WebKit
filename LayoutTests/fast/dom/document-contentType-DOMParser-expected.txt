@@ -6,6 +6,13 @@ PASS new DOMParser().parseFromString(xslContent, "text/xsl").contentType threw e
 PASS new DOMParser().parseFromString(xmlContent, "text/dummy+xml").contentType threw exception TypeError: Type error.
 PASS new DOMParser().parseFromString(xmlContent, "text/XML").contentType threw exception TypeError: Type error.
 PASS new DOMParser().parseFromString(htmlContent, "TEXT/html").contentType threw exception TypeError: Type error.
+PASS parsedContent.body.firstChild.nodeName is "DIV"
+PASS parsedContent.body.childNodes.length is 2
+PASS parsedContent.body.childNodes[1].nodeName is "#text"
+PASS div.firstChild.nodeName is "#text"
+PASS div.childNodes.length is 3
+PASS div.childNodes[2].nodeName is "#text"
+PASS new DOMParser().parseFromString(htmlContentWithJustSpaces, "text/html").body.childNodes.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

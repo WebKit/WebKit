@@ -148,7 +148,7 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
     _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     NSError *error;
     EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
@@ -158,19 +158,19 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
     TestWebKitAPI::Util::runFor(4_s);
 
     // No errors means success.
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
     EXPECT_NULL(error);
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     manifest[@"background"] = @{ @"service_worker": @"background.js" };
 
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
     EXPECT_NULL(error);
@@ -179,12 +179,12 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
     TestWebKitAPI::Util::runFor(4_s);
 
     // No errors means success.
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
     EXPECT_NULL(error);
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     testContext.baseURL = [NSURL URLWithString:@"test-extension://aaabbbcccddd"];
 
@@ -195,12 +195,12 @@ TEST(WKWebExtensionController, BackgroundPageLoading)
     TestWebKitAPI::Util::runFor(4_s);
 
     // No errors means success.
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
     EXPECT_NULL(error);
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 }
 
 TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
@@ -216,7 +216,7 @@ TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
     _WKWebExtensionContext *testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
     _WKWebExtensionController *testController = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     NSError *error;
     EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
@@ -226,19 +226,19 @@ TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
     TestWebKitAPI::Util::runFor(4_s);
 
     // No errors means success.
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     EXPECT_TRUE([testController unloadExtensionContext:testContext error:&error]);
     EXPECT_NULL(error);
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     manifest[@"background"] = @{ @"service_worker": @"main.js", @"type": @"module" };
 
     testExtension = [[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources];
     testContext = [[_WKWebExtensionContext alloc] initForExtension:testExtension];
 
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     EXPECT_TRUE([testController loadExtensionContext:testContext error:&error]);
     EXPECT_NULL(error);
@@ -247,7 +247,7 @@ TEST(WKWebExtensionController, BackgroundPageWithModulesLoading)
     TestWebKitAPI::Util::runFor(4_s);
 
     // No errors means success.
-    EXPECT_EQ(testExtension.errors.count, 0ul);;
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 }
 
 TEST(WKWebExtensionController, ContentScriptLoading)
@@ -292,6 +292,167 @@ TEST(WKWebExtensionController, ContentScriptLoading)
     webView.get().navigationDelegate = navigationDelegate.get();
 
     [webView loadRequest:server.requestWithLocalhost()];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionController, ContentSecurityPolicyV2BlockingImageLoad)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/image.svg"_s, { { { "Content-Type"_s, "image/svg+xml"_s } }, "<svg xmlns='http://www.w3.org/2000/svg'></svg>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"var img = document.createElement('img')",
+        [NSString stringWithFormat:@"img.src = '%@image.svg'", urlRequest.URL.absoluteString],
+
+        @"img.onerror = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"img.onload = () => {",
+        @"  browser.test.notifyFail('The image should not load')",
+        @"}",
+
+        @"document.body.appendChild(img)"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @2,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_security_policy": @"script-src 'self'; img-src 'none'"
+    };
+
+    Util::loadAndRunExtension(manifest, @{
+        @"background.js": backgroundScript
+    });
+}
+
+TEST(WKWebExtensionController, ContentSecurityPolicyV3BlockingImageLoad)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/image.svg"_s, { { { "Content-Type"_s, "image/svg+xml"_s } }, "<svg xmlns='http://www.w3.org/2000/svg'></svg>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"var img = document.createElement('img')",
+        [NSString stringWithFormat:@"img.src = '%@image.svg'", urlRequest.URL.absoluteString],
+
+        @"img.onerror = () => {",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"img.onload = () => {",
+        @"  browser.test.notifyFail('The image should not load')",
+        @"}",
+
+        @"document.body.appendChild(img)"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+
+        @"content_security_policy": @{
+            @"extension_pages": @"script-src 'self'; img-src 'none'"
+        }
+    };
+
+    Util::loadAndRunExtension(manifest, @{
+        @"background.js": backgroundScript
+    });
+}
+
+TEST(WKWebExtensionController, WebAccessibleResources)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *contentScript = Util::constructScript(@[
+        @"var imgGood = document.createElement('img')",
+        @"imgGood.src = browser.runtime.getURL('good.svg')",
+
+        @"var imgBad = document.createElement('img')",
+        @"imgBad.src = browser.runtime.getURL('bad.svg')",
+
+        @"var goodLoaded = false",
+        @"var badFailed = false",
+
+        @"imgGood.onload = () => {",
+        @"  goodLoaded = true",
+        @"  if (badFailed)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"imgGood.onerror = () => {",
+        @"  browser.test.notifyFail('The good image should load')",
+        @"}",
+
+        @"imgBad.onload = () => {",
+        @"  browser.test.notifyFail('The bad image should not load')",
+        @"}",
+
+        @"imgBad.onerror = () => {",
+        @"  badFailed = true",
+        @"  if (goodLoaded)",
+        @"    browser.test.notifyPass()",
+        @"}",
+
+        @"document.body.appendChild(imgGood)",
+        @"document.body.appendChild(imgBad)"
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"js": @[ @"content.js" ],
+            @"matches": @[ @"*://localhost/*" ],
+        } ],
+
+        @"web_accessible_resources": @[ @{
+            @"resources": @[ @"g*.svg" ],
+            @"matches": @[ @"*://localhost/*" ]
+        } ]
+    };
+
+    auto *resources = @{
+        @"content.js": contentScript,
+        @"good.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>",
+        @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
 
     [manager loadAndRun];
 }

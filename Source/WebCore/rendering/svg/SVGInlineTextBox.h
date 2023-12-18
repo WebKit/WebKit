@@ -22,13 +22,13 @@
 #pragma once
 
 #include "LegacyInlineTextBox.h"
-#include "RenderSVGResource.h"
+#include "LegacyRenderSVGResource.h"
 #include "SVGTextFragment.h"
 
 namespace WebCore {
 
+class LegacyRenderSVGResource;
 class RenderSVGInlineText;
-class RenderSVGResource;
 class SVGRootInlineBox;
 
 class SVGInlineTextBox final : public LegacyInlineTextBox {
@@ -89,7 +89,7 @@ private:
     float m_logicalHeight { 0 };
     unsigned m_paintingResourceMode : 4; // RenderSVGResourceMode
     unsigned m_startsNewTextChunk : 1;
-    RenderSVGResource* m_paintingResource { nullptr };
+    LegacyRenderSVGResource* m_paintingResource { nullptr };
     Vector<SVGTextFragment> m_textFragments;
 };
 

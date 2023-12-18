@@ -29,6 +29,7 @@
 #include "ClientOrigin.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "FeaturePolicy.h"
 #include "FrameDestructionObserverInlines.h"
 #include "Page.h"
 #include "SpeechRecognitionError.h"
@@ -66,17 +67,22 @@ void SpeechRecognition::suspend(ReasonForSuspension)
 ExceptionOr<void> SpeechRecognition::startRecognition()
 {
     if (m_state != State::Inactive)
-        return Exception { InvalidStateError, "Recognition is being started or already started"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Recognition is being started or already started"_s };
 
     if (!m_connection)
-        return Exception { UnknownError, "Recognition does not have a valid connection"_s };
+        return Exception { ExceptionCode::UnknownError, "Recognition does not have a valid connection"_s };
 
     Ref document = downcast<Document>(*scriptExecutionContext());
     RefPtr frame = document->frame();
     if (!frame)
-        return Exception { UnknownError, "Recognition is not in a valid frame"_s };
+        return Exception { ExceptionCode::UnknownError, "Recognition is not in a valid frame"_s };
 
     auto optionalFrameIdentifier = document->frameID();
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document.get(), LogFeaturePolicyFailure::No)) {
+        didError({ SpeechRecognitionErrorType::NotAllowed, "Permission is denied"_s });
+        return { };
+    }
+
     auto frameIdentifier = optionalFrameIdentifier ? *optionalFrameIdentifier : FrameIdentifier { };
     m_connection->start(identifier(), m_lang, m_continuous, m_interimResults, m_maxAlternatives, ClientOrigin { document->topOrigin().data(), document->securityOrigin().data() }, frameIdentifier);
     m_state = State::Starting;

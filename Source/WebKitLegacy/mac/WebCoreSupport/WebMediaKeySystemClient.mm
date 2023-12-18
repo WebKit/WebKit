@@ -29,8 +29,15 @@
 
 #import <WebCore/MediaKeySystemRequest.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
+
+WebMediaKeySystemClient& WebMediaKeySystemClient::singleton()
+{
+    static NeverDestroyed<WebMediaKeySystemClient> client;
+    return client;
+}
 
 void WebMediaKeySystemClient::requestMediaKeySystem(MediaKeySystemRequest& request)
 {

@@ -45,12 +45,11 @@ RetainPtr<PKDeferredPaymentRequest> platformDeferredPaymentRequest(const ApplePa
         managementURL:[NSURL URLWithString:webDeferredPaymentRequest.managementURL]]);
     if (auto& billingAgreement = webDeferredPaymentRequest.billingAgreement; !billingAgreement.isNull())
         [pkDeferredPaymentRequest setBillingAgreement:billingAgreement];
-    if (auto& freeCancellationDate = webDeferredPaymentRequest.freeCancellationDate; !std::isnan(freeCancellationDate)) {
+    if (auto& freeCancellationDate = webDeferredPaymentRequest.freeCancellationDate; !freeCancellationDate.isNaN()) {
         if (auto& freeCancellationDateTimeZone = webDeferredPaymentRequest.freeCancellationDateTimeZone; !freeCancellationDateTimeZone.isNull()) {
             if (auto timeZone = [NSTimeZone timeZoneWithName:freeCancellationDateTimeZone]) {
                 [pkDeferredPaymentRequest setFreeCancellationDate:[NSDate dateWithTimeIntervalSince1970:freeCancellationDate.secondsSinceEpoch().value()]];
-                if ([pkDeferredPaymentRequest respondsToSelector:@selector(setFreeCancellationDateTimeZone:)])
-                    [pkDeferredPaymentRequest setFreeCancellationDateTimeZone:timeZone];
+                [pkDeferredPaymentRequest setFreeCancellationDateTimeZone:timeZone];
             }
         }
     }

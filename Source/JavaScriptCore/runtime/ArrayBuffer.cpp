@@ -425,9 +425,7 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
         return true;
     }
 
-    bool isDetachable = !m_pinCount && !m_locked;
-
-    if (!isDetachable) {
+    if (!isDetachable()) {
         m_contents.copyTo(result);
         if (!result.m_data)
             return false;
@@ -652,6 +650,17 @@ ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
     if (buffer->isWasmMemory())
         return "Cannot transfer a WebAssembly.Memory"_s;
     return "Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API"_s;
+}
+
+std::optional<ArrayBufferContents> ArrayBufferContents::fromDataSpan(std::span<const uint8_t> data)
+{
+    void* buffer = Gigacage::tryMalloc(Gigacage::Primitive, data.size_bytes());
+    if (!buffer)
+        return std::nullopt;
+
+    memcpy(buffer, data.data(), data.size_bytes());
+
+    return ArrayBufferContents { buffer, data.size_bytes(), std::nullopt, ArrayBuffer::primitiveGigacageDestructor() };
 }
 
 } // namespace JSC

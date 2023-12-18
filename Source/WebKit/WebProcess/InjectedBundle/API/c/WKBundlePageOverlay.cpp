@@ -210,7 +210,7 @@ private:
         for (size_t k = 0; k < count; k++) {
             WKTypeRef item = WKArrayGetItemAtIndex(wkNames, k);
             if (WebKit::toImpl(item)->type() == API::String::APIType)
-                names.uncheckedAppend(WebKit::toWTFString(static_cast<WKStringRef>(item)));
+                names.append(WebKit::toWTFString(static_cast<WKStringRef>(item)));
         }
         names.shrinkToFit();
 

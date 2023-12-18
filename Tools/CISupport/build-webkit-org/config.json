@@ -568,11 +568,6 @@
                     "workernames": ["jsconly-linux-igalia-bot-3"]
                   },
                   {
-                    "name": "JSCOnly-Linux-MIPS32el-Release", "factory": "BuildAndJSCTestsFactory",
-                    "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
-                    "workernames": ["jsconly-linux-igalia-bot-1"]
-                  },
-                  {
                     "name": "WPE-Linux-64-bit-Release-Build", "factory": "BuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "triggers": ["wpe-linux-64-release-tests", "wpe-linux-64-release-tests-js", "wpe-linux-64-release-tests-webdriver"],
@@ -694,7 +689,7 @@
                                      "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build",
                                      "JSCOnly-Linux-AArch64-Release",
                                      "JSCOnly-Linux-ARMv7-Thumb2-Release",
-                                     "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
+                                     "PlayStation-Release-Build", "PlayStation-Debug-Build",
                                      "WinCairo-64-bit-Release-Build", "WinCairo-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",
@@ -817,10 +812,10 @@
                   { "type": "PlatformSpecificScheduler", "platform": "tvos-simulator-17", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-tvOS-Simulator-17-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-9", "branch": "main", "treeStableTimer": 45.0,
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-10", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-watchOS-10-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-9", "branch": "main", "treeStableTimer": 45.0,
+                  { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-10", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-watchOS-Simulator-10-Release-Build"]
                   },
                   { "type": "Triggerable", "name": "ios-simulator-17-release-tests-wk2",

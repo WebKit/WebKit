@@ -52,7 +52,7 @@ template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOn
 enum class TrailingZerosPolicy : bool { Keep, Truncate };
 
 class String final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_COMPACT_ALLOCATED;
 public:
     // Construct a null string, distinguishable from an empty string.
     String() = default;
@@ -167,10 +167,10 @@ public:
     size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(literal, start) : notFound; }
     size_t reverseFind(StringView, unsigned start = MaxLength) const;
 
-    WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
-    WTF_EXPORT_PRIVATE Vector<UChar> charactersWithoutNullTermination() const;
+    WTF_EXPORT_PRIVATE Expected<Vector<UChar>, UTF8ConversionError> charactersWithNullTermination() const;
+    WTF_EXPORT_PRIVATE Expected<Vector<UChar>, UTF8ConversionError> charactersWithoutNullTermination() const;
 
-    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const;
+    WTF_EXPORT_PRIVATE char32_t characterStartingAt(unsigned) const;
 
     bool contains(UChar character) const { return find(character) != notFound; }
     bool contains(ASCIILiteral literal) const { return find(literal) != notFound; }
@@ -284,7 +284,7 @@ public:
     WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const LChar*, size_t);
     static String fromUTF8WithLatin1Fallback(const char* characters, size_t length) { return fromUTF8WithLatin1Fallback(reinterpret_cast<const LChar*>(characters), length); }
 
-    WTF_EXPORT_PRIVATE static String fromCodePoint(UChar32 codePoint);
+    WTF_EXPORT_PRIVATE static String fromCodePoint(char32_t codePoint);
 
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     std::optional<UCharDirection> defaultWritingDirection() const;
@@ -472,7 +472,7 @@ inline UChar String::characterAt(unsigned index) const
 {
     if (!m_impl || index >= m_impl->length())
         return 0;
-    return (*m_impl)[index];
+    return m_impl->is8Bit() ? m_impl->characters8()[index] : m_impl->characters16()[index];
 }
 
 inline String WARN_UNUSED_RETURN makeStringByReplacingAll(const String& string, UChar target, UChar replacement)

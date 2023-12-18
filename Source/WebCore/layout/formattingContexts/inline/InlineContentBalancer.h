@@ -27,7 +27,7 @@
 
 #include "FormattingConstraints.h"
 #include "InlineFormattingContext.h"
-#include "InlineFormattingGeometry.h"
+#include "InlineFormattingUtils.h"
 #include "InlineItem.h"
 #include "InlineLineBuilder.h"
 #include "InlineTextItem.h"

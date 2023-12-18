@@ -200,7 +200,7 @@ SECTION .text
 %define use_loop (use_ref_offset || %2 > 4)
 
 %if %3 == 1  ; skip rows
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
 %if use_ref_offset
 cglobal sad_skip_%1x%2x4d, 5, 10, 8, src, src_stride, ref1, ref_stride, res, \
                                      ref2, ref3, ref4, cnt, ref_offset
@@ -227,7 +227,7 @@ cglobal sad_skip_%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, ref2, \
 %endif
 %endif
 %else ; normal sad
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
 %if use_ref_offset
 cglobal sad%1x%2x4d, 5, 10, 8, src, src_stride, ref1, ref_stride, res, ref2, \
                                ref3, ref4, cnt, ref_offset

@@ -1,0 +1,6 @@
+
+FAIL Fixed-length left property value should roundtrip assert_equals: expected "20.7px" but got "20.700001px"
+FAIL Fixed-length right property value should roundtrip assert_equals: expected "20.7px" but got "20.700001px"
+FAIL Fixed-length top property value should roundtrip assert_equals: expected "20.7px" but got "20.700001px"
+FAIL Fixed-length bottom property value should roundtrip assert_equals: expected "20.7px" but got "20.700001px"
+

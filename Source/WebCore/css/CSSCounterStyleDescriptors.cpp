@@ -70,11 +70,11 @@ CSSCounterStyleDescriptors::Ranges rangeFromCSSValue(Ref<CSSValue> value)
 
 static CSSCounterStyleDescriptors::Symbol symbolFromCSSValue(const CSSValue* value)
 {
-    if (!value || !value->isPrimitiveValue())
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    if (!primitiveValue)
         return { };
 
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    return { primitiveValue.isCustomIdent(), primitiveValue.stringValue() };
+    return { primitiveValue->isCustomIdent(), primitiveValue->stringValue() };
 }
 
 CSSCounterStyleDescriptors::Symbol symbolFromCSSValue(RefPtr<CSSValue> value)
@@ -84,10 +84,11 @@ CSSCounterStyleDescriptors::Symbol symbolFromCSSValue(RefPtr<CSSValue> value)
 
 static CSSCounterStyleDescriptors::Name nameFromCSSValue(Ref<CSSValue> value)
 {
-    if (!value->isPrimitiveValue())
+    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(WTFMove(value));
+    if (!primitiveValue)
         return { };
 
-    return makeAtomString(downcast<CSSPrimitiveValue>(WTFMove(value))->stringValue());
+    return makeAtomString(primitiveValue->stringValue());
 }
 
 static CSSCounterStyleDescriptors::AdditiveSymbols additiveSymbolsFromStyleProperties(const StyleProperties& properties)

@@ -14,11 +14,68 @@
 #ifndef COMMON_MATRIX_UTILS_H_
 #define COMMON_MATRIX_UTILS_H_
 
+#include <array>
 #include <vector>
 
 #include "common/debug.h"
 #include "common/mathutil.h"
 #include "common/vector_utils.h"
+
+namespace
+{
+template <typename T4x4>
+void CofactorTransposed(const T4x4 &mat, T4x4 &coft)
+{
+    coft(0, 0) = mat(1, 1) * mat(2, 2) * mat(3, 3) + mat(2, 1) * mat(3, 2) * mat(1, 3) +
+                 mat(3, 1) * mat(1, 2) * mat(2, 3) - mat(1, 1) * mat(3, 2) * mat(2, 3) -
+                 mat(2, 1) * mat(1, 2) * mat(3, 3) - mat(3, 1) * mat(2, 2) * mat(1, 3);
+    coft(1, 0) = -(mat(1, 0) * mat(2, 2) * mat(3, 3) + mat(2, 0) * mat(3, 2) * mat(1, 3) +
+                   mat(3, 0) * mat(1, 2) * mat(2, 3) - mat(1, 0) * mat(3, 2) * mat(2, 3) -
+                   mat(2, 0) * mat(1, 2) * mat(3, 3) - mat(3, 0) * mat(2, 2) * mat(1, 3));
+    coft(2, 0) = mat(1, 0) * mat(2, 1) * mat(3, 3) + mat(2, 0) * mat(3, 1) * mat(1, 3) +
+                 mat(3, 0) * mat(1, 1) * mat(2, 3) - mat(1, 0) * mat(3, 1) * mat(2, 3) -
+                 mat(2, 0) * mat(1, 1) * mat(3, 3) - mat(3, 0) * mat(2, 1) * mat(1, 3);
+    coft(3, 0) = -(mat(1, 0) * mat(2, 1) * mat(3, 2) + mat(2, 0) * mat(3, 1) * mat(1, 2) +
+                   mat(3, 0) * mat(1, 1) * mat(2, 2) - mat(1, 0) * mat(3, 1) * mat(2, 2) -
+                   mat(2, 0) * mat(1, 1) * mat(3, 2) - mat(3, 0) * mat(2, 1) * mat(1, 2));
+    coft(0, 1) = -(mat(0, 1) * mat(2, 2) * mat(3, 3) + mat(2, 1) * mat(3, 2) * mat(0, 3) +
+                   mat(3, 1) * mat(0, 2) * mat(2, 3) - mat(0, 1) * mat(3, 2) * mat(2, 3) -
+                   mat(2, 1) * mat(0, 2) * mat(3, 3) - mat(3, 1) * mat(2, 2) * mat(0, 3));
+    coft(1, 1) = mat(0, 0) * mat(2, 2) * mat(3, 3) + mat(2, 0) * mat(3, 2) * mat(0, 3) +
+                 mat(3, 0) * mat(0, 2) * mat(2, 3) - mat(0, 0) * mat(3, 2) * mat(2, 3) -
+                 mat(2, 0) * mat(0, 2) * mat(3, 3) - mat(3, 0) * mat(2, 2) * mat(0, 3);
+    coft(2, 1) = -(mat(0, 0) * mat(2, 1) * mat(3, 3) + mat(2, 0) * mat(3, 1) * mat(0, 3) +
+                   mat(3, 0) * mat(0, 1) * mat(2, 3) - mat(0, 0) * mat(3, 1) * mat(2, 3) -
+                   mat(2, 0) * mat(0, 1) * mat(3, 3) - mat(3, 0) * mat(2, 1) * mat(0, 3));
+    coft(3, 1) = mat(0, 0) * mat(2, 1) * mat(3, 2) + mat(2, 0) * mat(3, 1) * mat(0, 2) +
+                 mat(3, 0) * mat(0, 1) * mat(2, 2) - mat(0, 0) * mat(3, 1) * mat(2, 2) -
+                 mat(2, 0) * mat(0, 1) * mat(3, 2) - mat(3, 0) * mat(2, 1) * mat(0, 2);
+    coft(0, 2) = mat(0, 1) * mat(1, 2) * mat(3, 3) + mat(1, 1) * mat(3, 2) * mat(0, 3) +
+                 mat(3, 1) * mat(0, 2) * mat(1, 3) - mat(0, 1) * mat(3, 2) * mat(1, 3) -
+                 mat(1, 1) * mat(0, 2) * mat(3, 3) - mat(3, 1) * mat(1, 2) * mat(0, 3);
+    coft(1, 2) = -(mat(0, 0) * mat(1, 2) * mat(3, 3) + mat(1, 0) * mat(3, 2) * mat(0, 3) +
+                   mat(3, 0) * mat(0, 2) * mat(1, 3) - mat(0, 0) * mat(3, 2) * mat(1, 3) -
+                   mat(1, 0) * mat(0, 2) * mat(3, 3) - mat(3, 0) * mat(1, 2) * mat(0, 3));
+    coft(2, 2) = mat(0, 0) * mat(1, 1) * mat(3, 3) + mat(1, 0) * mat(3, 1) * mat(0, 3) +
+                 mat(3, 0) * mat(0, 1) * mat(1, 3) - mat(0, 0) * mat(3, 1) * mat(1, 3) -
+                 mat(1, 0) * mat(0, 1) * mat(3, 3) - mat(3, 0) * mat(1, 1) * mat(0, 3);
+    coft(3, 2) = -(mat(0, 0) * mat(1, 1) * mat(3, 2) + mat(1, 0) * mat(3, 1) * mat(0, 2) +
+                   mat(3, 0) * mat(0, 1) * mat(1, 2) - mat(0, 0) * mat(3, 1) * mat(1, 2) -
+                   mat(1, 0) * mat(0, 1) * mat(3, 2) - mat(3, 0) * mat(1, 1) * mat(0, 2));
+    coft(0, 3) = -(mat(0, 1) * mat(1, 2) * mat(2, 3) + mat(1, 1) * mat(2, 2) * mat(0, 3) +
+                   mat(2, 1) * mat(0, 2) * mat(1, 3) - mat(0, 1) * mat(2, 2) * mat(1, 3) -
+                   mat(1, 1) * mat(0, 2) * mat(2, 3) - mat(2, 1) * mat(1, 2) * mat(0, 3));
+    coft(1, 3) = mat(0, 0) * mat(1, 2) * mat(2, 3) + mat(1, 0) * mat(2, 2) * mat(0, 3) +
+                 mat(2, 0) * mat(0, 2) * mat(1, 3) - mat(0, 0) * mat(2, 2) * mat(1, 3) -
+                 mat(1, 0) * mat(0, 2) * mat(2, 3) - mat(2, 0) * mat(1, 2) * mat(0, 3);
+    coft(2, 3) = -(mat(0, 0) * mat(1, 1) * mat(2, 3) + mat(1, 0) * mat(2, 1) * mat(0, 3) +
+                   mat(2, 0) * mat(0, 1) * mat(1, 3) - mat(0, 0) * mat(2, 1) * mat(1, 3) -
+                   mat(1, 0) * mat(0, 1) * mat(2, 3) - mat(2, 0) * mat(1, 1) * mat(0, 3));
+    coft(3, 3) = mat(0, 0) * mat(1, 1) * mat(2, 2) + mat(1, 0) * mat(2, 1) * mat(0, 2) +
+                 mat(2, 0) * mat(0, 1) * mat(1, 2) - mat(0, 0) * mat(2, 1) * mat(1, 2) -
+                 mat(1, 0) * mat(0, 1) * mat(2, 2) - mat(2, 0) * mat(1, 1) * mat(0, 2);
+}
+}  // namespace
 
 namespace angle
 {
@@ -251,77 +308,30 @@ class Matrix
     {
         ASSERT(rows() == columns());
 
-        Matrix<T> cof(std::vector<T>(mElements.size()), rows(), columns());
+        Matrix<T> coft(std::vector<T>(mElements.size()), rows(), columns());
         switch (size())
         {
             case 2:
-                cof(0, 0) = at(1, 1);
-                cof(0, 1) = -at(1, 0);
-                cof(1, 0) = -at(0, 1);
-                cof(1, 1) = at(0, 0);
+                coft(0, 0) = at(1, 1);
+                coft(1, 0) = -at(1, 0);
+                coft(0, 1) = -at(0, 1);
+                coft(1, 1) = at(0, 0);
                 break;
 
             case 3:
-                cof(0, 0) = at(1, 1) * at(2, 2) - at(2, 1) * at(1, 2);
-                cof(0, 1) = -(at(1, 0) * at(2, 2) - at(2, 0) * at(1, 2));
-                cof(0, 2) = at(1, 0) * at(2, 1) - at(2, 0) * at(1, 1);
-                cof(1, 0) = -(at(0, 1) * at(2, 2) - at(2, 1) * at(0, 2));
-                cof(1, 1) = at(0, 0) * at(2, 2) - at(2, 0) * at(0, 2);
-                cof(1, 2) = -(at(0, 0) * at(2, 1) - at(2, 0) * at(0, 1));
-                cof(2, 0) = at(0, 1) * at(1, 2) - at(1, 1) * at(0, 2);
-                cof(2, 1) = -(at(0, 0) * at(1, 2) - at(1, 0) * at(0, 2));
-                cof(2, 2) = at(0, 0) * at(1, 1) - at(1, 0) * at(0, 1);
+                coft(0, 0) = at(1, 1) * at(2, 2) - at(2, 1) * at(1, 2);
+                coft(1, 0) = -(at(1, 0) * at(2, 2) - at(2, 0) * at(1, 2));
+                coft(2, 0) = at(1, 0) * at(2, 1) - at(2, 0) * at(1, 1);
+                coft(0, 1) = -(at(0, 1) * at(2, 2) - at(2, 1) * at(0, 2));
+                coft(1, 1) = at(0, 0) * at(2, 2) - at(2, 0) * at(0, 2);
+                coft(2, 1) = -(at(0, 0) * at(2, 1) - at(2, 0) * at(0, 1));
+                coft(0, 2) = at(0, 1) * at(1, 2) - at(1, 1) * at(0, 2);
+                coft(1, 2) = -(at(0, 0) * at(1, 2) - at(1, 0) * at(0, 2));
+                coft(2, 2) = at(0, 0) * at(1, 1) - at(1, 0) * at(0, 1);
                 break;
 
             case 4:
-                cof(0, 0) = at(1, 1) * at(2, 2) * at(3, 3) + at(2, 1) * at(3, 2) * at(1, 3) +
-                            at(3, 1) * at(1, 2) * at(2, 3) - at(1, 1) * at(3, 2) * at(2, 3) -
-                            at(2, 1) * at(1, 2) * at(3, 3) - at(3, 1) * at(2, 2) * at(1, 3);
-                cof(0, 1) = -(at(1, 0) * at(2, 2) * at(3, 3) + at(2, 0) * at(3, 2) * at(1, 3) +
-                              at(3, 0) * at(1, 2) * at(2, 3) - at(1, 0) * at(3, 2) * at(2, 3) -
-                              at(2, 0) * at(1, 2) * at(3, 3) - at(3, 0) * at(2, 2) * at(1, 3));
-                cof(0, 2) = at(1, 0) * at(2, 1) * at(3, 3) + at(2, 0) * at(3, 1) * at(1, 3) +
-                            at(3, 0) * at(1, 1) * at(2, 3) - at(1, 0) * at(3, 1) * at(2, 3) -
-                            at(2, 0) * at(1, 1) * at(3, 3) - at(3, 0) * at(2, 1) * at(1, 3);
-                cof(0, 3) = -(at(1, 0) * at(2, 1) * at(3, 2) + at(2, 0) * at(3, 1) * at(1, 2) +
-                              at(3, 0) * at(1, 1) * at(2, 2) - at(1, 0) * at(3, 1) * at(2, 2) -
-                              at(2, 0) * at(1, 1) * at(3, 2) - at(3, 0) * at(2, 1) * at(1, 2));
-                cof(1, 0) = -(at(0, 1) * at(2, 2) * at(3, 3) + at(2, 1) * at(3, 2) * at(0, 3) +
-                              at(3, 1) * at(0, 2) * at(2, 3) - at(0, 1) * at(3, 2) * at(2, 3) -
-                              at(2, 1) * at(0, 2) * at(3, 3) - at(3, 1) * at(2, 2) * at(0, 3));
-                cof(1, 1) = at(0, 0) * at(2, 2) * at(3, 3) + at(2, 0) * at(3, 2) * at(0, 3) +
-                            at(3, 0) * at(0, 2) * at(2, 3) - at(0, 0) * at(3, 2) * at(2, 3) -
-                            at(2, 0) * at(0, 2) * at(3, 3) - at(3, 0) * at(2, 2) * at(0, 3);
-                cof(1, 2) = -(at(0, 0) * at(2, 1) * at(3, 3) + at(2, 0) * at(3, 1) * at(0, 3) +
-                              at(3, 0) * at(0, 1) * at(2, 3) - at(0, 0) * at(3, 1) * at(2, 3) -
-                              at(2, 0) * at(0, 1) * at(3, 3) - at(3, 0) * at(2, 1) * at(0, 3));
-                cof(1, 3) = at(0, 0) * at(2, 1) * at(3, 2) + at(2, 0) * at(3, 1) * at(0, 2) +
-                            at(3, 0) * at(0, 1) * at(2, 2) - at(0, 0) * at(3, 1) * at(2, 2) -
-                            at(2, 0) * at(0, 1) * at(3, 2) - at(3, 0) * at(2, 1) * at(0, 2);
-                cof(2, 0) = at(0, 1) * at(1, 2) * at(3, 3) + at(1, 1) * at(3, 2) * at(0, 3) +
-                            at(3, 1) * at(0, 2) * at(1, 3) - at(0, 1) * at(3, 2) * at(1, 3) -
-                            at(1, 1) * at(0, 2) * at(3, 3) - at(3, 1) * at(1, 2) * at(0, 3);
-                cof(2, 1) = -(at(0, 0) * at(1, 2) * at(3, 3) + at(1, 0) * at(3, 2) * at(0, 3) +
-                              at(3, 0) * at(0, 2) * at(1, 3) - at(0, 0) * at(3, 2) * at(1, 3) -
-                              at(1, 0) * at(0, 2) * at(3, 3) - at(3, 0) * at(1, 2) * at(0, 3));
-                cof(2, 2) = at(0, 0) * at(1, 1) * at(3, 3) + at(1, 0) * at(3, 1) * at(0, 3) +
-                            at(3, 0) * at(0, 1) * at(1, 3) - at(0, 0) * at(3, 1) * at(1, 3) -
-                            at(1, 0) * at(0, 1) * at(3, 3) - at(3, 0) * at(1, 1) * at(0, 3);
-                cof(2, 3) = -(at(0, 0) * at(1, 1) * at(3, 2) + at(1, 0) * at(3, 1) * at(0, 2) +
-                              at(3, 0) * at(0, 1) * at(1, 2) - at(0, 0) * at(3, 1) * at(1, 2) -
-                              at(1, 0) * at(0, 1) * at(3, 2) - at(3, 0) * at(1, 1) * at(0, 2));
-                cof(3, 0) = -(at(0, 1) * at(1, 2) * at(2, 3) + at(1, 1) * at(2, 2) * at(0, 3) +
-                              at(2, 1) * at(0, 2) * at(1, 3) - at(0, 1) * at(2, 2) * at(1, 3) -
-                              at(1, 1) * at(0, 2) * at(2, 3) - at(2, 1) * at(1, 2) * at(0, 3));
-                cof(3, 1) = at(0, 0) * at(1, 2) * at(2, 3) + at(1, 0) * at(2, 2) * at(0, 3) +
-                            at(2, 0) * at(0, 2) * at(1, 3) - at(0, 0) * at(2, 2) * at(1, 3) -
-                            at(1, 0) * at(0, 2) * at(2, 3) - at(2, 0) * at(1, 2) * at(0, 3);
-                cof(3, 2) = -(at(0, 0) * at(1, 1) * at(2, 3) + at(1, 0) * at(2, 1) * at(0, 3) +
-                              at(2, 0) * at(0, 1) * at(1, 3) - at(0, 0) * at(2, 1) * at(1, 3) -
-                              at(1, 0) * at(0, 1) * at(2, 3) - at(2, 0) * at(1, 1) * at(0, 3));
-                cof(3, 3) = at(0, 0) * at(1, 1) * at(2, 2) + at(1, 0) * at(2, 1) * at(0, 2) +
-                            at(2, 0) * at(0, 1) * at(1, 2) - at(0, 0) * at(2, 1) * at(1, 2) -
-                            at(1, 0) * at(0, 1) * at(2, 2) - at(2, 0) * at(1, 1) * at(0, 2);
+                CofactorTransposed(*this, coft);
                 break;
 
             default:
@@ -331,12 +341,11 @@ class Matrix
 
         // The inverse of A is the transpose of the cofactor matrix times the reciprocal of the
         // determinant of A.
-        Matrix<T> adjugateMatrix(cof.transpose());
         T det = determinant();
         Matrix<T> result(std::vector<T>(mElements.size()), rows(), columns());
         for (unsigned int i = 0; i < rows(); i++)
             for (unsigned int j = 0; j < columns(); j++)
-                result(i, j) = (det != static_cast<T>(0)) ? adjugateMatrix(i, j) / det : T();
+                result(i, j) = (det != static_cast<T>(0)) ? coft(i, j) / det : T();
 
         return result;
     }
@@ -383,7 +392,8 @@ class Matrix
     unsigned int mCols;
 };
 
-class Mat4 : public Matrix<float>
+// Not derived from Matrix<float>: fixed-size std::array instead, to avoid malloc
+class Mat4
 {
   public:
     Mat4();
@@ -417,6 +427,75 @@ class Mat4 : public Matrix<float>
     Mat4 product(const Mat4 &m);
     Vector4 product(const Vector4 &b);
     void dump();
+
+    float *data() { return mElements.data(); }
+    const float *constData() const { return mElements.data(); }
+
+    float operator()(const unsigned int rowIndex, const unsigned int columnIndex) const
+    {
+        ASSERT(rowIndex < 4);
+        ASSERT(columnIndex < 4);
+        return mElements[rowIndex * 4 + columnIndex];
+    }
+
+    float &operator()(const unsigned int rowIndex, const unsigned int columnIndex)
+    {
+        ASSERT(rowIndex < 4);
+        ASSERT(columnIndex < 4);
+        return mElements[rowIndex * 4 + columnIndex];
+    }
+
+    float at(const unsigned int rowIndex, const unsigned int columnIndex) const
+    {
+        ASSERT(rowIndex < 4);
+        ASSERT(columnIndex < 4);
+        return operator()(rowIndex, columnIndex);
+    }
+
+    bool operator==(const Mat4 &m) const { return mElements == m.elements(); }
+
+    bool nearlyEqual(float epsilon, const Mat4 &m) const
+    {
+        const auto &otherElts = m.elements();
+        for (size_t i = 0; i < otherElts.size(); i++)
+        {
+            if ((mElements[i] - otherElts[i] > epsilon) && (otherElts[i] - mElements[i] > epsilon))
+                return false;
+        }
+        return true;
+    }
+
+    const std::array<float, 4 * 4> &elements() const { return mElements; }
+
+    Mat4 transpose() const
+    {
+        Mat4 result;
+        for (unsigned int i = 0; i < 4; i++)
+            for (unsigned int j = 0; j < 4; j++)
+                result(i, j) = at(j, i);
+
+        return result;
+    }
+
+    Mat4 inverse() const
+    {
+        Mat4 coft;
+        CofactorTransposed(*this, coft);
+
+        float det = at(0, 0) * coft(0, 0) + at(0, 1) * coft(1, 0) + at(0, 2) * coft(2, 0) +
+                    at(0, 3) * coft(3, 0);
+
+        Mat4 result = coft;
+        for (int i = 0; i < 16; i++)
+        {
+            result.data()[i] /= det;
+        }
+
+        return result;
+    }
+
+  private:
+    std::array<float, 4 * 4> mElements;
 };
 
 }  // namespace angle

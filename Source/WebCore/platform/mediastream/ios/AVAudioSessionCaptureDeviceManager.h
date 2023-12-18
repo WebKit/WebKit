@@ -44,7 +44,7 @@ class CaptureDevice;
 class AVAudioSessionCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<AVAudioSessionCaptureDeviceManager>;
 public:
-    static AVAudioSessionCaptureDeviceManager& singleton();
+    WEBCORE_EXPORT static AVAudioSessionCaptureDeviceManager& singleton();
 
     const Vector<CaptureDevice>& captureDevices() final;
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
@@ -67,7 +67,6 @@ private:
     ~AVAudioSessionCaptureDeviceManager();
 
     void createAudioSession();
-    void activateAudioSession();
     void refreshAudioCaptureDevices();
     Vector<AVAudioSessionCaptureDevice> retrieveAudioSessionCaptureDevices() const;
     void setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&&);
@@ -82,7 +81,6 @@ private:
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
     Ref<WorkQueue> m_dispatchQueue;
-    AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
     String m_preferredAudioDeviceUID;
     bool m_recomputeDevices { true };
     mutable RetainPtr<AVAudioSessionPortDescription> m_lastDefaultMicrophone;

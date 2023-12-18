@@ -51,6 +51,7 @@ class Attribute;
 class AttributeIteratorAccessor;
 class CustomElementDefaultARIA;
 class CustomElementReactionQueue;
+class CustomStateSet;
 class DatasetDOMStringMap;
 class DOMRect;
 class DOMRectList;
@@ -89,9 +90,11 @@ enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
 enum class FullscreenNavigationUI : uint8_t;
 enum class IsSyntheticClick : bool { No, Yes };
+enum class ParserContentPolicy : uint8_t;
 enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
 
+struct CheckVisibilityOptions;
 struct FullscreenOptions;
 struct GetAnimationsOptions;
 struct IntersectionObserverData;
@@ -143,7 +146,7 @@ public:
     WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
     WEBCORE_EXPORT unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
-    WEBCORE_EXPORT Element* getElementAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
     WEBCORE_EXPORT std::optional<Vector<RefPtr<Element>>> getElementsArrayAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& value);
@@ -198,6 +201,8 @@ public:
     inline unsigned findAttributeIndexByName(const QualifiedName&) const;
     inline unsigned findAttributeIndexByName(const AtomString&, bool shouldIgnoreAttributeCase) const;
 
+    bool checkVisibility(const CheckVisibilityOptions&);
+
     WEBCORE_EXPORT void scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg);
     WEBCORE_EXPORT void scrollIntoView(bool alignToTop = true);
     WEBCORE_EXPORT void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -223,7 +228,7 @@ public:
 
     // FIXME: Replace uses of offsetParent in the platform with calls
     // to the render layer and merge bindingsOffsetParent and offsetParent.
-    WEBCORE_EXPORT Element* offsetParentForBindings();
+    WEBCORE_EXPORT RefPtr<Element> offsetParentForBindings();
 
     inline const Element* rootElement() const;
 
@@ -245,7 +250,7 @@ public:
     // This does not update layout, and uses absoluteBoundingBoxRect().
     WEBCORE_EXPORT IntRect boundingBoxInRootViewCoordinates() const;
 
-    WEBCORE_EXPORT std::optional<std::pair<RenderObject*, FloatRect>> boundingAbsoluteRectWithoutLayout() const;
+    WEBCORE_EXPORT std::optional<std::pair<CheckedPtr<RenderObject>, FloatRect>> boundingAbsoluteRectWithoutLayout() const;
 
     WEBCORE_EXPORT FloatRect boundingClientRect();
 
@@ -269,7 +274,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> removeAttributeNode(Attr&);
 
     RefPtr<Attr> attrIfExists(const QualifiedName&);
-    RefPtr<Attr> attrIfExists(const AtomString& localName, bool shouldIgnoreAttributeCase);
     Ref<Attr> ensureAttr(const QualifiedName&);
 
     const Vector<RefPtr<Attr>>& attrNodeList();
@@ -350,7 +354,7 @@ public:
     virtual bool rendererIsEverNeeded() { return true; }
 
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
-    ShadowRoot* shadowRootForBindings(JSC::JSGlobalObject&) const;
+    RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
 
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
     ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, bool delegatesFocus);
@@ -368,6 +372,7 @@ public:
     CustomElementReactionQueue* reactionQueue() const;
 
     CustomElementDefaultARIA& customElementDefaultARIA();
+    CheckedRef<CustomElementDefaultARIA> checkedCustomElementDefaultARIA();
     CustomElementDefaultARIA* customElementDefaultARIAIfExists();
 
     // FIXME: This should not be virtual. Please do not add additional overrides of this function.
@@ -457,6 +462,7 @@ public:
     virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
     String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
+    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const HashMap<String, String>&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;
@@ -478,6 +484,8 @@ public:
     virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);
     virtual void blur();
     virtual void runFocusingStepsForAutofocus();
+
+    ExceptionOr<void> setHTMLUnsafe(const String&);
 
     WEBCORE_EXPORT String innerHTML() const;
     WEBCORE_EXPORT String outerHTML() const;
@@ -520,7 +528,6 @@ public:
     virtual bool matchesDefaultPseudoClass() const;
     WEBCORE_EXPORT ExceptionOr<bool> matches(const String& selectors);
     WEBCORE_EXPORT ExceptionOr<Element*> closest(const String& selectors);
-    virtual bool shouldAppearIndeterminate() const;
 
     WEBCORE_EXPORT DOMTokenList& classList();
 
@@ -563,26 +570,31 @@ public:
     bool hasKeyframeEffects(PseudoId) const;
 
     const AnimationCollection* animations(PseudoId) const;
-    bool hasCompletedTransitionForProperty(PseudoId, const AnimatableProperty&) const;
-    bool hasRunningTransitionForProperty(PseudoId, const AnimatableProperty&) const;
+    bool hasCompletedTransitionForProperty(PseudoId, const AnimatableCSSProperty&) const;
+    bool hasRunningTransitionForProperty(PseudoId, const AnimatableCSSProperty&) const;
     bool hasRunningTransitions(PseudoId) const;
     AnimationCollection& ensureAnimations(PseudoId);
 
-    const AnimatablePropertyToTransitionMap* completedTransitionsByProperty(PseudoId) const;
-    const AnimatablePropertyToTransitionMap* runningTransitionsByProperty(PseudoId) const;
+    const AnimatableCSSPropertyToTransitionMap* completedTransitionsByProperty(PseudoId) const;
+    const AnimatableCSSPropertyToTransitionMap* runningTransitionsByProperty(PseudoId) const;
 
-    AnimatablePropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
-    AnimatablePropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
+    AnimatableCSSPropertyToTransitionMap& ensureCompletedTransitionsByProperty(PseudoId);
+    AnimatableCSSPropertyToTransitionMap& ensureRunningTransitionsByProperty(PseudoId);
     CSSAnimationCollection& animationsCreatedByMarkup(PseudoId);
     void setAnimationsCreatedByMarkup(PseudoId, CSSAnimationCollection&&);
 
     const RenderStyle* lastStyleChangeEventStyle(PseudoId) const;
     void setLastStyleChangeEventStyle(PseudoId, std::unique_ptr<const RenderStyle>&&);
+    bool hasPropertiesOverridenAfterAnimation(PseudoId) const;
+    void setHasPropertiesOverridenAfterAnimation(PseudoId, bool);
 
     void cssAnimationsDidUpdate(PseudoId);
     void keyframesRuleDidChange(PseudoId);
     bool hasPendingKeyframesUpdate(PseudoId) const;
     // FIXME: do we need a counter style didChange here? (rdar://103018993).
+
+    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
+    void setIsLink(bool flag);
 
     bool isInTopLayer() const { return hasNodeFlag(NodeFlag::IsInTopLayer); }
     void addToTopLayer();
@@ -617,10 +629,13 @@ public:
     inline bool hasName() const;
     inline const SpaceSplitString& classNames() const;
 
-    IntPoint savedLayerScrollPosition() const;
-    void setSavedLayerScrollPosition(const IntPoint&);
+    ScrollPosition savedLayerScrollPosition() const;
+    void setSavedLayerScrollPosition(const ScrollPosition&);
 
-    bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick isSyntethicClick = IsSyntheticClick::No);
+    enum class EventIsDefaultPrevented : bool { No, Yes };
+    enum class EventIsDispatched : bool { No, Yes };
+    using DispatchMouseEventResult = std::pair<EventIsDispatched, EventIsDefaultPrevented>;
+    DispatchMouseEventResult dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const AtomString& eventType, int clickCount = 0, Element* relatedTarget = nullptr, IsSyntheticClick = IsSyntheticClick::No);
     bool dispatchWheelEvent(const PlatformWheelEvent&, OptionSet<EventHandling>&, EventIsCancelable = EventIsCancelable::Yes);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
@@ -686,8 +701,10 @@ public:
     // custom (not style based) renderers. This is expensive and should be avoided.
     // Elements newly added to the tree are also in this state.
     void invalidateStyleAndRenderersForSubtree();
+    void invalidateRenderer();
 
     void invalidateStyleInternal();
+    void invalidateStyleForAnimation();
     void invalidateStyleForSubtreeInternal();
     void invalidateForQueryContainerSizeChange();
     void invalidateForResumingQueryContainerResolution();
@@ -717,7 +734,7 @@ public:
     void setLastRememberedLogicalHeight(LayoutUnit);
     void clearLastRememberedLogicalHeight();
 
-    Element* findAnchorElementForLink(String& outAnchorName);
+    RefPtr<Element> findAnchorElementForLink(String& outAnchorName);
 
     ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations(std::optional<GetAnimationsOptions>);
@@ -743,6 +760,9 @@ public:
     std::optional<OptionSet<ContentRelevancy>> contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
 
+    bool hasCustomState(const AtomString& state) const;
+    CustomStateSet& ensureCustomStateSet();
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -758,6 +778,8 @@ protected:
     void partAttributeChanged(const AtomString& newValue);
 
     void addShadowRoot(Ref<ShadowRoot>&&);
+
+    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 
@@ -824,7 +846,7 @@ private:
     void addAttributeInternal(const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
     void removeAttributeInternal(unsigned index, InSynchronizationOfLazyAttribute);
 
-    void setSavedLayerScrollPositionSlow(const IntPoint&);
+    void setSavedLayerScrollPositionSlow(const ScrollPosition&);
     void clearBeforePseudoElementSlow();
     void clearAfterPseudoElementSlow();
 
@@ -891,13 +913,16 @@ private:
     bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
     bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
 
+    bool hasEverHadSmoothScroll() const { return hasEventTargetFlag(EventTargetFlag::EverHadSmoothScroll); }
+    void setHasEverHadSmoothScroll(bool value) { return setEventTargetFlag(EventTargetFlag::EverHadSmoothScroll, value); }
+
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
 };
 
-inline void Element::setSavedLayerScrollPosition(const IntPoint& position)
+inline void Element::setSavedLayerScrollPosition(const ScrollPosition& position)
 {
     if (position.isZero() && !hasRareData())
         return;
@@ -939,5 +964,9 @@ inline bool isInTopLayerOrBackdrop(const RenderStyle&, const Element*);
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Element)
     static bool isType(const WebCore::Node& node) { return node.isElementNode(); }
-    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
+    static bool isType(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && isType(*node);
+    }
 SPECIALIZE_TYPE_TRAITS_END()

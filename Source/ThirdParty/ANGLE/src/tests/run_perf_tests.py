@@ -304,6 +304,13 @@ def _skipped_or_glmark2(test, test_status):
     return False
 
 
+def _maybe_log_system_temps():
+    if logging.getLogger().isEnabledFor(logging.DEBUG) and sys.platform == 'linux':
+        out = subprocess.check_output('cat /sys/class/hwmon/hwmon*/temp*_input', shell=True)
+        logging.debug('hwmon temps: %s',
+                      ','.join([str(int(n) // 1000) for n in out.decode().split('\n') if n]))
+
+
 def _run_tests(tests, args, extra_flags, env):
     if args.split_shard_samples and args.shard_index is not None:
         test_suffix = Results('_shard%d' % args.shard_index)
@@ -349,6 +356,7 @@ def _run_tests(tests, args, extra_flags, env):
         test_histogram_set = histogram_set.HistogramSet()
         for sample in range(args.samples_per_test):
             try:
+                _maybe_log_system_temps()
                 test_status, sample_metrics, sample_histogram = _run_perf(
                     args, common_args, env, steps_per_trial)
             except RuntimeError as e:

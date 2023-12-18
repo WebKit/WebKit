@@ -267,7 +267,7 @@ class TurnPort : public Port {
   void HandleRefreshError();
   bool SetAlternateServer(const rtc::SocketAddress& address);
   void ResolveTurnAddress(const rtc::SocketAddress& address);
-  void OnResolveResult(rtc::AsyncResolverInterface* resolver);
+  void OnResolveResult(const webrtc::AsyncDnsResolverResult& result);
 
   void AddRequestAuthInfo(StunMessage* msg);
   void OnSendStunPacket(const void* data, size_t size, StunRequest* request);

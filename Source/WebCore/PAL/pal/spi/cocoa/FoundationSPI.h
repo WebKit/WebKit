@@ -26,6 +26,18 @@
 
 #import <Foundation/Foundation.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <Foundation/NSGeometry.h>
+#elif !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
+#define NSEDGEINSETS_DEFINED 1
+typedef struct NS_SWIFT_SENDABLE NSEdgeInsets {
+    CGFloat top;
+    CGFloat left;
+    CGFloat bottom;
+    CGFloat right;
+} NSEdgeInsets;
+#endif
+
 @interface NSTextCheckingResult ()
 - (NSDictionary *)detail;
 @end

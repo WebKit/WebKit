@@ -134,16 +134,17 @@ namespace WTF {
 
     template <typename T>
     struct PtrHashBase<T, true /* isSmartPtr */> {
-        typedef typename GetPtrHelper<T>::PtrType PtrType; 
+        typedef typename GetPtrHelper<T>::PtrType PtrType;
+        typedef typename GetPtrHelper<T>::UnderlyingType UnderlyingType;
 
-        static unsigned hash(PtrType key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key)); }
-        static bool equal(PtrType a, PtrType b) { return a == b; }
+        static unsigned hash(std::add_const_t<UnderlyingType>* key) { return IntHash<uintptr_t>::hash(reinterpret_cast<uintptr_t>(key)); }
+        static bool equal(std::add_const_t<UnderlyingType>* a, std::add_const_t<UnderlyingType>* b) { return a == b; }
         static constexpr bool safeToCompareToEmptyOrDeleted = true;
 
         static unsigned hash(const T& key) { return hash(getPtr(key)); }
         static bool equal(const T& a, const T& b) { return getPtr(a) == getPtr(b); }
-        static bool equal(PtrType a, const T& b) { return a == getPtr(b); }
-        static bool equal(const T& a, PtrType b) { return getPtr(a) == b; }
+        static bool equal(std::add_const_t<UnderlyingType>* a, const T& b) { return a == getPtr(b); }
+        static bool equal(const T& a, std::add_const_t<UnderlyingType>* b) { return getPtr(a) == b; }
     };
 
     template<typename T> struct PtrHash : PtrHashBase<T, IsSmartPtr<T>::value> {
@@ -205,13 +206,7 @@ namespace WTF {
             return DefaultHash<IthTupleElementType>::equal(std::get<I>(a), std::get<I>(b));
         }
 
-        // We should use safeToCompareToEmptyOrDeleted = DefaultHash<Types>::safeToCompareToEmptyOrDeleted &&... whenever
-        // we switch to C++17. We can't do anything better here right now because GCC can't do C++.
-        template<typename BoolType>
-        static constexpr bool allTrue(BoolType value) { return value; }
-        template<typename BoolType, typename... BoolTypes>
-        static constexpr bool allTrue(BoolType value, BoolTypes... values) { return value && allTrue(values...); }
-        static constexpr bool safeToCompareToEmptyOrDeleted = allTrue(DefaultHash<Types>::safeToCompareToEmptyOrDeleted...);
+        static constexpr bool safeToCompareToEmptyOrDeleted = (DefaultHash<Types>::safeToCompareToEmptyOrDeleted && ...);
     };
 
     // make IntHash the default hash function for many integer types

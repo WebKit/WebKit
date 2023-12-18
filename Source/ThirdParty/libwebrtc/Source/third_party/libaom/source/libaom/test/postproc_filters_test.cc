@@ -30,13 +30,13 @@ class PostprocFiltersTest
       : EncoderTest(GET_PARAM(0)), set_skip_postproc_filtering_(false),
         frame_number_(0), cpu_used_(GET_PARAM(1)), bd_(GET_PARAM(2)) {}
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(::libaom_test::kAllIntra);
     cfg_.g_input_bit_depth = bd_;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     frame_number_ = video->frame();
     if (frame_number_ == 0) {
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
@@ -53,14 +53,14 @@ class PostprocFiltersTest
     }
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     ::libaom_test::MD5 md5_enc;
     md5_enc.Add(reinterpret_cast<uint8_t *>(pkt->data.frame.buf),
                 pkt->data.frame.sz);
     md5_enc_.push_back(md5_enc.Get());
   }
 
-  virtual void PostEncodeFrameHook(::libaom_test::Encoder *encoder) {
+  void PostEncodeFrameHook(::libaom_test::Encoder *encoder) override {
     const aom_image_t *img_enc = encoder->GetPreviewFrame();
     if (!set_skip_postproc_filtering_) {
       ASSERT_NE(img_enc, nullptr);

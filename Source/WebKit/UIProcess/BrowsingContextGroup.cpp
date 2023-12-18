@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BrowsingContextGroup.h"
 
+#include "WebProcessProxy.h"
+
 namespace WebKit {
 
 BrowsingContextGroup::BrowsingContextGroup() = default;

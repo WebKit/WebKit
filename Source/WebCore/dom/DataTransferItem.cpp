@@ -89,12 +89,12 @@ void DataTransferItem::getAsString(Document& document, RefPtr<StringCallback>&& 
     if (!callback || !m_list || m_file)
         return;
 
-    auto& dataTransfer = m_list->dataTransfer();
-    if (!dataTransfer.canReadData())
+    Ref dataTransfer = m_list->dataTransfer();
+    if (!dataTransfer->canReadData())
         return;
 
     // FIXME: Make this async.
-    callback->scheduleCallback(document, dataTransfer.getDataForItem(document, m_type));
+    callback->scheduleCallback(document, dataTransfer->getDataForItem(document, m_type));
 }
 
 RefPtr<File> DataTransferItem::getAsFile() const

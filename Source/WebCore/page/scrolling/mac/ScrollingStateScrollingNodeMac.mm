@@ -43,9 +43,9 @@ void ScrollingStateScrollingNode::setScrollerImpsFromScrollbars(Scrollbar* verti
     ScrollbarThemeMac& macTheme = static_cast<ScrollbarThemeMac&>(scrollbarTheme);
 
     NSScrollerImp *verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme.painterForScrollbar(*verticalScrollbar) : nullptr;
+        ? macTheme.scrollerImpForScrollbar(*verticalScrollbar) : nullptr;
     NSScrollerImp *horizontalPainter = horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme.painterForScrollbar(*horizontalScrollbar) : nullptr;
+        ? macTheme.scrollerImpForScrollbar(*horizontalScrollbar) : nullptr;
 
     if (m_verticalScrollerImp == verticalPainter && m_horizontalScrollerImp == horizontalPainter)
         return;

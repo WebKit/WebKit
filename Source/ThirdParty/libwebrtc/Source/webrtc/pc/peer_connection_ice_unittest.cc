@@ -149,6 +149,7 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
 
   explicit PeerConnectionIceBaseTest(SdpSemantics sdp_semantics)
       : vss_(new rtc::VirtualSocketServer()),
+        socket_factory_(new rtc::BasicPacketSocketFactory(vss_.get())),
         main_(vss_.get()),
         sdp_semantics_(sdp_semantics) {
 #ifdef WEBRTC_ANDROID
@@ -174,8 +175,7 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
   WrapperPtr CreatePeerConnection(const RTCConfiguration& config) {
     auto* fake_network = NewFakeNetwork();
     auto port_allocator = std::make_unique<cricket::BasicPortAllocator>(
-        fake_network,
-        std::make_unique<rtc::BasicPacketSocketFactory>(vss_.get()));
+        fake_network, socket_factory_.get());
     port_allocator->set_flags(cricket::PORTALLOCATOR_DISABLE_TCP |
                               cricket::PORTALLOCATOR_DISABLE_RELAY);
     port_allocator->set_step_delay(cricket::kMinimumStepDelay);
@@ -330,6 +330,7 @@ class PeerConnectionIceBaseTest : public ::testing::Test {
   }
 
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
+  std::unique_ptr<rtc::BasicPacketSocketFactory> socket_factory_;
   rtc::AutoSocketServerThread main_;
   rtc::scoped_refptr<PeerConnectionFactoryInterface> pc_factory_;
   std::vector<std::unique_ptr<rtc::FakeNetworkManager>> fake_networks_;

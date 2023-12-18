@@ -1,0 +1,8 @@
+
+PASS 'takePhoto()' on an 'ended' track should throw "InvalidStateError"
+PASS "OperationError" should be thrown if the track ends before the 'takePhoto()' promise resolves
+PASS The image returned by 'takePhoto()' should be at least as big as { photoSettings.imageHeight, photoSettings.imageWidth }
+PASS If 'takePhoto()' has to reconfigure capture track, 'mute' and 'unmute' should fire and track size should be restored
+PASS 'applyConstraints()' should not run until 'takePhoto()' has completed
+PASS All queued 'takePhoto()' and 'applyConstraints()' calls should resolve or reject
+

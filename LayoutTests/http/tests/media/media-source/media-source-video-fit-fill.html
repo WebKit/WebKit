@@ -1,0 +1,156 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useRemoteLayerTree=true ] -->
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<div>
+<video muted id="video" width=300 height=30 autoplay playsinline></video>
+<br>
+<image id='image'></image>
+<script>
+function getPixel(x, y, canvas, data)
+{
+    const position = 4 * (x * canvas.width + y);
+    return {r: data[position], g: data[position+1], b: data[position+2]};
+}
+
+function isPixelRed(x, y, canvas, data)
+{
+   const pixel = getPixel(x, y, canvas, data);
+   return pixel.r === 255 && pixel.g === 0 && pixel.b === 0;
+}
+
+function computeWidth(canvas, data)
+{
+    // We inspect the horizontal line at pixel 20. We should get red, then green, then red.
+    const horizontalLine = 20;
+    let j = 0;
+
+    if (!isPixelRed(horizontalLine, j, canvas, data))
+        return -1;
+    while (isPixelRed(horizontalLine, ++j, canvas, data) && j < canvas.height) { };
+
+    const startGreen = j;
+    while (!isPixelRed(horizontalLine, ++j, canvas, data) && j < canvas.height) { };
+    const endGreen = j;
+
+    return endGreen - startGreen;
+}
+
+function computeHeight(canvas, data)
+{
+    // We inspect the vertical line at pixel 50. We should get red, then green, then red.
+    const verticalLine = 50;
+    let i = 0;
+
+    if (!isPixelRed(i, verticalLine, canvas, data))
+        return -1;
+    while (isPixelRed(++i, verticalLine, canvas, data) && i < canvas.width) { };
+
+    const startGreen = i;
+    while (!isPixelRed(++i, verticalLine, canvas, data) && i < canvas.width) { };
+    const endGreen = i;
+
+    return endGreen - startGreen;
+}
+
+async function testAspectRatio(aspectRatioCallback)
+{
+    if (!window.testRunner || !testRunner.takeViewPortSnapshot)
+        return true;
+
+    const dataURL = await new Promise((resolve, reject) => {
+        testRunner.takeViewPortSnapshot(resolve);
+        setTimeout(() => reject("testRunner.takeViewPortSnapshot timed out"), 5000);
+    });
+
+    const loadPromise = new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = reject;
+        setTimeout(() => reject("image load timed out"), 2000);
+    });
+    image.src = dataURL;
+    await loadPromise;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    canvas.getContext('2d').drawImage(image, 0, 0);
+    const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+
+    const width = computeWidth(canvas, data);
+    const height = computeHeight(canvas, data);
+
+    return aspectRatioCallback(width / height);
+}
+
+var mediaSource = new MediaSource();
+function startMSE(mediaURL)
+{
+    video.src = URL.createObjectURL(mediaSource);
+    mediaSource.addEventListener('sourceopen', () => sourceOpen(mediaURL));
+}
+
+async function sourceOpen(mediaURL)
+{
+  const response = await fetch(mediaURL);
+  const buffer = await response.arrayBuffer();
+  const mimeCodec = 'video/mp4; codecs="avc1.4d401f"';
+  const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+  sourceBuffer.addEventListener('updateend', () => {
+    mediaSource.endOfStream();
+    video.play();
+  });
+  sourceBuffer.appendBuffer(buffer);
+}
+
+promise_test(async (t) => {
+    document.body.style.backgroundColor = "red";
+    t.add_cleanup(async () => document.body.style.backgroundColor = "");
+
+    video.style.objectFit = "";
+    startMSE("/media-resources/media-source/content/test-green-6s-320x240.mp4");
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    let counter = 0;
+    let aspectRatioResult = false;
+    while (counter++ < 50 && !aspectRatioResult) {
+        await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+        try {
+            // aspect ratio should be 10 with object-fit fill and 4/3 without.
+            aspectRatioResult = await testAspectRatio((aspectRatio) => aspectRatio < 3);
+        } catch (e) {
+            console.log(e);
+            break;
+        }
+    }
+    assert_true(aspectRatioResult);
+}, "Validate video element is not object-fit fill")
+
+promise_test(async (t) => {
+    document.body.style.backgroundColor = "red";
+    t.add_cleanup(async () => document.body.style.backgroundColor = "");
+
+    video.style.objectFit = "fill";
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    let counter = 0;
+    let aspectRatioResult = false;
+    while (counter++ < 50 && !aspectRatioResult) {
+        await new Promise(resolve => video.requestVideoFrameCallback(resolve));
+        try {
+            // aspect ratio should be 10 with object-fit fill and 1.5 without.
+            aspectRatioResult = await testAspectRatio((aspectRatio) => aspectRatio > 5);
+        } catch (e) {
+            console.log(e);
+            break;
+        }
+    }
+    assert_true(aspectRatioResult);
+    image.parentNode.removeChild(image);
+}, "Validate video element is object-fit fill")
+</script>
+</body>
+</html>

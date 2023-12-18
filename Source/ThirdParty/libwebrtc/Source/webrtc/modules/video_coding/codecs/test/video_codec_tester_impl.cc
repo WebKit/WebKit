@@ -255,7 +255,7 @@ class TesterDecoder {
 
   void Decode(const EncodedImage& input_frame) {
     Timestamp timestamp =
-        Timestamp::Micros((input_frame.Timestamp() / k90kHz).us());
+        Timestamp::Micros((input_frame.RtpTimestamp() / k90kHz).us());
 
     task_queue_.PostScheduledTask(
         [this, input_frame] {

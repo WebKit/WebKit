@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
@@ -38,5 +36,3 @@ enum class PushPermissionState : uint8_t {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

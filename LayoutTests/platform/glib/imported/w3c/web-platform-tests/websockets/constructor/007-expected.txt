@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Wrong protocol for WebSocket 'a\u0000b'
-
-PASS WebSockets: new WebSocket(url, null char)
-

@@ -35,6 +35,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakHashSet.h>
 
+OBJC_CLASS AVContentKey;
 OBJC_CLASS AVContentKeyReportGroup;
 OBJC_CLASS AVContentKeyRequest;
 OBJC_CLASS AVContentKeySession;
@@ -55,6 +56,7 @@ namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
 class CDMPrivateFairPlayStreaming;
+class MediaSampleAVFObjC;
 struct CDMMediaCapability;
 
 class AVContentKeySessionDelegateClient : public CanMakeWeakPtr<AVContentKeySessionDelegateClient> {
@@ -70,6 +72,7 @@ public:
     virtual void sessionIdentifierChanged(NSData*) = 0;
     virtual void groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData*) = 0;
     virtual void outputObscuredDueToInsufficientExternalProtectionChanged(bool) = 0;
+    virtual void externalProtectionStatusDidChangeForContentKey(AVContentKey *) = 0;
     virtual void externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*) = 0;
 
 #if !RELEASE_LOG_DISABLED
@@ -121,11 +124,13 @@ public:
     void sessionIdentifierChanged(NSData*) final;
     void groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData*) final;
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
+    void externalProtectionStatusDidChangeForContentKey(AVContentKey *) final;
     void externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*) final;
 
     using Keys = Vector<Ref<SharedBuffer>>;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKeyIDs(const Keys&) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForGroup(WebAVContentKeyGrouping *) const;
+    CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForKey(AVContentKey *) const;
     CDMInstanceSessionFairPlayStreamingAVFObjC* sessionForRequest(AVContentKeyRequest *) const;
 
     bool isAnyKeyUsable(const Keys&) const;
@@ -134,6 +139,8 @@ public:
     void addKeyStatusesChangedObserver(const KeyStatusesChangedObserver&);
 
     void sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&);
+
+    void attachContentKeyToSample(const MediaSampleAVFObjC&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
@@ -190,6 +197,7 @@ public:
     void sessionIdentifierChanged(NSData*) final;
     void groupSessionIdentifierChanged(AVContentKeyReportGroup*, NSData*) final;
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
+    void externalProtectionStatusDidChangeForContentKey(AVContentKey *) final;
     void externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest*) final;
 
     using Keys = CDMInstanceFairPlayStreamingAVFObjC::Keys;
@@ -203,20 +211,30 @@ public:
         friend bool operator==(const Request&, const Request&) = default;
     };
 
+    bool hasKey(AVContentKey *) const;
     bool hasRequest(AVContentKeyRequest*) const;
+    bool isAnyKeyUsable(const Keys&) const;
 
     const KeyStatusVector& keyStatuses() const { return m_keyStatuses; }
     KeyStatusVector copyKeyStatuses() const;
+
+    void attachContentKeyToSample(const MediaSampleAVFObjC&);
 
 private:
     bool ensureSessionOrGroup(KeyGroupingStrategy);
     bool isLicenseTypeSupported(LicenseType) const;
 
-    void updateKeyStatuses(std::optional<PlatformDisplayID> = std::nullopt);
+    void updateKeyStatuses();
     void nextRequest();
-    AVContentKeyRequest* lastKeyRequest() const;
 
-    std::optional<CDMKeyStatus> protectionStatusForDisplayID(AVContentKeyRequest *, std::optional<PlatformDisplayID>) const;
+    AVContentKeyRequest* lastKeyRequest() const;
+    Vector<RetainPtr<AVContentKey>> contentKeys() const;
+    Vector<RetainPtr<AVContentKeyRequest>> contentKeyRequests() const;
+
+    std::optional<CDMKeyStatus> protectionStatusForRequest(AVContentKeyRequest *) const;
+    void updateProtectionStatus();
+
+    AVContentKey *contentKeyForSample(const MediaSampleAVFObjC&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
@@ -224,8 +242,6 @@ private:
     const void* logIdentifier() const { return m_logIdentifier; }
     const char* logClassName() const { return "CDMInstanceSessionFairPlayStreamingAVFObjC"; }
 #endif
-
-    void updateProtectionStatusForDisplayID(PlatformDisplayID);
 
     // ContentKeyGroupDataSource
     Vector<RetainPtr<AVContentKey>> contentKeyGroupDataSourceKeys() const final;
@@ -251,6 +267,7 @@ private:
 
     Vector<Request> m_pendingRequests;
     Vector<Request> m_requests;
+    std::optional<Request> m_renewingRequest;
 
     LicenseCallback m_requestLicenseCallback;
     LicenseUpdateCallback m_updateLicenseCallback;

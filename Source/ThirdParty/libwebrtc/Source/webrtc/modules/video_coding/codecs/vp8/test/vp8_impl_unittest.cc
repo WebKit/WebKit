@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 
+#include <algorithm>
 #include <memory>
 
 #include "api/test/create_frame_generator.h"
@@ -259,7 +260,7 @@ TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
   CodecSpecificInfo codec_specific_info;
   EncodeAndWaitForFrame(input_frame, &encoded_frame, &codec_specific_info);
 
-  EXPECT_EQ(kInitialTimestampRtp, encoded_frame.Timestamp());
+  EXPECT_EQ(kInitialTimestampRtp, encoded_frame.RtpTimestamp());
   EXPECT_EQ(kWidth, static_cast<int>(encoded_frame._encodedWidth));
   EXPECT_EQ(kHeight, static_cast<int>(encoded_frame._encodedHeight));
   ASSERT_TRUE(encoded_frame.CaptureTimeIdentifier().has_value());
@@ -286,7 +287,7 @@ TEST_F(TestVp8Impl, DecodedQpEqualsEncodedQp) {
 
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, -1));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, -1));
   std::unique_ptr<VideoFrame> decoded_frame;
   absl::optional<uint8_t> decoded_qp;
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
@@ -501,7 +502,7 @@ TEST_F(TestVp8Impl, MAYBE_AlignedStrideEncodeDecode) {
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
   encoded_frame.ntp_time_ms_ = kTestNtpTimeMs;
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, -1));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, -1));
 
   std::unique_ptr<VideoFrame> decoded_frame;
   absl::optional<uint8_t> decoded_qp;
@@ -836,6 +837,146 @@ TEST_F(TestVp8Impl, GetEncoderInfoFpsAllocationSimulcastVideo) {
   EXPECT_THAT(encoder_->GetEncoderInfo().fps_allocation,
               ::testing::ElementsAreArray(expected_fps_allocation));
 }
+
+class TestVp8ImplWithMaxFrameDropTrial
+    : public TestVp8Impl,
+      public ::testing::WithParamInterface<
+          std::tuple<std::string, TimeDelta, TimeDelta>> {
+ public:
+  TestVp8ImplWithMaxFrameDropTrial()
+      : TestVp8Impl(), trials_(std::get<0>(GetParam())) {}
+
+ protected:
+  test::ScopedFieldTrials trials_;
+};
+
+TEST_P(TestVp8ImplWithMaxFrameDropTrial, EnforcesMaxFrameDropInterval) {
+  static constexpr int kFps = 5;
+  auto [trial_string, max_interval_config, min_expected_interval] = GetParam();
+
+  // Allow one frame interval over the configured max frame drop interval.
+  TimeDelta max_frame_delta =
+      max_interval_config + (TimeDelta::Seconds(1) / kFps);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+
+  // Set up low-bitrate screenshare stream.
+  codec_settings_.numberOfSimulcastStreams = 1;
+  codec_settings_.legacy_conference_mode = false;
+  codec_settings_.mode = VideoCodecMode::kScreensharing;
+  codec_settings_.maxFramerate = kFps;
+  codec_settings_.width = 2880;
+  codec_settings_.height = 1800;
+  codec_settings_.minBitrate = 30;
+  codec_settings_.maxBitrate = 420;
+  codec_settings_.SetFrameDropEnabled(true);
+
+  codec_settings_.simulcastStream[0].active = true;
+  codec_settings_.simulcastStream[0].minBitrate = codec_settings_.minBitrate;
+  codec_settings_.simulcastStream[0].targetBitrate = codec_settings_.maxBitrate;
+  codec_settings_.simulcastStream[0].maxBitrate = codec_settings_.maxBitrate;
+  codec_settings_.simulcastStream[0].numberOfTemporalLayers = 2;
+  codec_settings_.simulcastStream[0].width = codec_settings_.width;
+  codec_settings_.simulcastStream[0].height = codec_settings_.height;
+  codec_settings_.simulcastStream[0].maxFramerate =
+      codec_settings_.maxFramerate;
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            encoder_->InitEncode(&codec_settings_, kSettings));
+
+  // Allocate a very constained amount of bitrate to increase risk of frame
+  // drops.
+  VideoBitrateAllocation bitrate_allocation;
+  bitrate_allocation.SetBitrate(0, 0, 50'000);
+  bitrate_allocation.SetBitrate(0, 1, 50'000);
+  encoder_->SetRates(
+      VideoEncoder::RateControlParameters(bitrate_allocation, 5.0));
+
+  EncodedImage encoded_frame;
+  CodecSpecificInfo codec_specific_info;
+  // Create a low-complexity 1 square test sequence.
+  input_frame_generator_ = test::CreateSquareFrameGenerator(
+      codec_settings_.width, codec_settings_.height,
+      test::FrameGeneratorInterface::OutputType::kI420,
+      /*num_squares=*/1);
+
+  class Callback : public EncodedImageCallback {
+   public:
+    Callback() : last_callback_(Timestamp::MinusInfinity()) {}
+
+    const std::vector<TimeDelta>& GetCallbackDeltas() const {
+      return callback_deltas_;
+    }
+    void ClearCallbackDeltas() { callback_deltas_.clear(); }
+
+   protected:
+    Result OnEncodedImage(const EncodedImage& encoded_image,
+                          const CodecSpecificInfo* codec_specific_info) {
+      Timestamp timestamp =
+          Timestamp::Millis(encoded_image.RtpTimestamp() / 90);
+      if (last_callback_.IsFinite()) {
+        callback_deltas_.push_back(timestamp - last_callback_);
+      }
+      last_callback_ = timestamp;
+      return Result(Result::Error::OK);
+    }
+
+   private:
+    std::vector<TimeDelta> callback_deltas_;
+    Timestamp last_callback_;
+  } callback;
+
+  encoder_->RegisterEncodeCompleteCallback(&callback);
+  std::vector<VideoFrameType> frame_types = {VideoFrameType::kVideoFrameKey};
+  EXPECT_EQ(encoder_->Encode(NextInputFrame(), &frame_types),
+            WEBRTC_VIDEO_CODEC_OK);
+  frame_types[0] = VideoFrameType::kVideoFrameDelta;
+
+  // Encode a couple of frames and verify reasonable frame spacing.
+  for (uint32_t i = 0; i < codec_settings_.maxFramerate * 10; ++i) {
+    EXPECT_EQ(encoder_->Encode(NextInputFrame(), &frame_types),
+              WEBRTC_VIDEO_CODEC_OK);
+  }
+  auto deltas = callback.GetCallbackDeltas();
+  ASSERT_FALSE(deltas.empty());
+  EXPECT_LE(*std::max_element(deltas.begin(), deltas.end()), max_frame_delta);
+
+  // Switch to a much more complex input. Verify time deltas are still OK.
+  input_frame_generator_ = test::CreateSquareFrameGenerator(
+      codec_settings_.width, codec_settings_.height,
+      test::FrameGeneratorInterface::OutputType::kI420,
+      /*num_squares=*/5000);
+  callback.ClearCallbackDeltas();
+  for (uint32_t i = 0; i < codec_settings_.maxFramerate * 10; ++i) {
+    EXPECT_EQ(encoder_->Encode(NextInputFrame(), &frame_types),
+              WEBRTC_VIDEO_CODEC_OK);
+  }
+  deltas = callback.GetCallbackDeltas();
+  ASSERT_FALSE(deltas.empty());
+  EXPECT_LE(*std::max_element(deltas.begin(), deltas.end()), max_frame_delta);
+
+  // Check that encoder is causing the expected long frame drop intervals.
+  EXPECT_GT(*std::max_element(deltas.begin(), deltas.end()),
+            min_expected_interval);
+
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, encoder_->Release());
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    All,
+    TestVp8ImplWithMaxFrameDropTrial,
+    ::testing::Values(
+        // Tuple of {
+        //  trial string,
+        //  configured max frame interval,
+        //  lower bound on expected frame drop intervals
+        // }
+        std::make_tuple("WebRTC-VP8-MaxFrameInterval/Disabled/",
+                        TimeDelta::PlusInfinity(),
+                        TimeDelta::Seconds(2)),
+        std::make_tuple("WebRTC-VP8-MaxFrameInterval/interval:1s/",
+                        TimeDelta::Seconds(1),
+                        TimeDelta::Seconds(0)),
+        std::make_tuple("", TimeDelta::Seconds(2), TimeDelta::Seconds(1))));
 
 class TestVp8ImplForPixelFormat
     : public TestVp8Impl,

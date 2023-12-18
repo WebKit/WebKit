@@ -33,7 +33,7 @@
 #import "PictureInPictureSupport.h"
 #import "PlaybackSessionInterfaceMac.h"
 #import "TimeRanges.h"
-#import "VideoFullscreenModel.h"
+#import "VideoPresentationModel.h"
 #import "WebAVPlayerLayer.h"
 #import "WebPlaybackControlsManager.h"
 #import <AVFoundation/AVTime.h>
@@ -59,23 +59,17 @@ SOFT_LINK_CLASS_OPTIONAL(PIP, PIPViewController)
 
 @end
 
-using WebCore::VideoFullscreenModel;
+using WebCore::VideoPresentationModel;
 using WebCore::HTMLMediaElementEnums;
 using WebCore::MediaPlayerEnums;
 using WebCore::VideoFullscreenInterfaceMac;
 using WebCore::PlaybackSessionModel;
 
-@interface WebVideoViewContainer : NSView {
-    __unsafe_unretained id <WebVideoViewContainerDelegate> _videoViewContainerDelegate;
-}
-
-@property (nonatomic, assign) id <WebVideoViewContainerDelegate> videoViewContainerDelegate;
-
+@interface WebVideoViewContainer : NSView
+@property (nonatomic, weak) id<WebVideoViewContainerDelegate> videoViewContainerDelegate;
 @end
 
 @implementation WebVideoViewContainer
-
-@synthesize videoViewContainerDelegate = _videoViewContainerDelegate;
 
 - (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize
 {
@@ -199,7 +193,7 @@ enum class PIPState {
     [_pipViewController setUserCanResize:YES];
     [_pipViewController setPlaying:_playing];
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
-    auto model = _videoFullscreenInterfaceMac ? _videoFullscreenInterfaceMac->videoFullscreenModel() : nullptr;
+    auto model = _videoFullscreenInterfaceMac ? _videoFullscreenInterfaceMac->videoPresentationModel() : nullptr;
     if (model)
         model->setVideoLayerGravity(MediaPlayerEnums::VideoGravity::ResizeAspectFill);
 
@@ -212,7 +206,7 @@ enum class PIPState {
     _playerLayer = adoptNS([[WebAVPlayerLayer alloc] init]);
     [[_videoViewContainer layer] addSublayer:_playerLayer.get()];
     [_playerLayer setFrame:[_videoViewContainer layer].bounds];
-    [_playerLayer setFullscreenModel:model.get()];
+    [_playerLayer setPresentationModel:model.get()];
     [_playerLayer setVideoSublayer:videoView.layer];
     [_playerLayer setVideoDimensions:_videoDimensions];
     [_playerLayer setAutoresizingMask:(kCALayerWidthSizable | kCALayerHeightSizable)];
@@ -275,7 +269,7 @@ enum class PIPState {
         // as an indication that entering picture-in-picture is completed.
         _pipState = PIPState::InPIP;
 
-        if (auto model = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
+        if (auto model = _videoFullscreenInterfaceMac->videoPresentationModel()) {
             model->didEnterPictureInPicture();
             model->didEnterFullscreen((WebCore::FloatSize)[_videoViewContainer bounds].size);
         }
@@ -306,7 +300,7 @@ enum class PIPState {
     if (!_videoFullscreenInterfaceMac)
         return YES;
     
-    if (auto model = _videoFullscreenInterfaceMac->videoFullscreenModel())
+    if (auto model = _videoFullscreenInterfaceMac->videoPresentationModel())
         model->fullscreenMayReturnToInline();
 
     _videoFullscreenInterfaceMac->requestHideAndExitPiP();
@@ -327,7 +321,7 @@ enum class PIPState {
         [self pipActionStop:pip];
     }
 
-    if (auto model = _videoFullscreenInterfaceMac->videoFullscreenModel()) {
+    if (auto model = _videoFullscreenInterfaceMac->videoPresentationModel()) {
         if (_videoViewContainer && _returningWindow && !NSEqualRects(_returningRect, NSZeroRect)) {
             [NSAnimationContext runAnimationGroup:^(NSAnimationContext *context) {
                 context.allowsImplicitAnimation = NO;
@@ -394,15 +388,15 @@ VideoFullscreenInterfaceMac::~VideoFullscreenInterfaceMac()
 {
     if (auto* model = m_playbackSessionInterface->playbackSessionModel())
         model->removeClient(*this);
-    if (auto model = videoFullscreenModel())
+    if (auto model = videoPresentationModel())
         model->removeClient(*this);
 }
 
-void VideoFullscreenInterfaceMac::setVideoFullscreenModel(VideoFullscreenModel* model)
+void VideoFullscreenInterfaceMac::setVideoPresentationModel(VideoPresentationModel* model)
 {
-    if (auto model = videoFullscreenModel())
+    if (auto model = videoPresentationModel())
         model->removeClient(*this);
-    m_videoFullscreenModel = model;
+    m_videoPresentationModel = model;
     if (model)
         model->addClient(*this);
 }
@@ -414,7 +408,7 @@ void VideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreen
         return;
 
     m_mode = newMode;
-    if (auto model = videoFullscreenModel())
+    if (auto model = videoPresentationModel())
         model->fullscreenModeChanged(m_mode);
 }
 
@@ -425,7 +419,7 @@ void VideoFullscreenInterfaceMac::clearMode(HTMLMediaElementEnums::VideoFullscre
         return;
 
     m_mode = newMode;
-    if (auto model = videoFullscreenModel())
+    if (auto model = videoPresentationModel())
         model->fullscreenModeChanged(m_mode);
 }
 
@@ -459,7 +453,7 @@ void VideoFullscreenInterfaceMac::setupFullscreen(NSView& layerHostedView, const
     [videoFullscreenInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
 
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
-        if (auto model = videoFullscreenModel())
+        if (auto model = videoPresentationModel())
             model->didSetupFullscreen();
     });
 }
@@ -469,7 +463,7 @@ void VideoFullscreenInterfaceMac::enterFullscreen()
     LOG(Fullscreen, "VideoFullscreenInterfaceMac::enterFullscreen(%p)", this);
 
     if (mode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
-        if (auto model = videoFullscreenModel())
+        if (auto model = videoPresentationModel())
             model->willEnterPictureInPicture();
         [m_webVideoFullscreenInterfaceObjC enterPIP];
 
@@ -504,7 +498,7 @@ void VideoFullscreenInterfaceMac::exitFullscreenWithoutAnimationToMode(HTMLMedia
 #endif
 
     bool isExitingToStandardFullscreen = mode == HTMLMediaElementEnums::VideoFullscreenModeStandard;
-    // On Mac, standard fullscreen is handled by the Fullscreen API and not by VideoFullscreenManager.
+    // On Mac, standard fullscreen is handled by the Fullscreen API and not by VideoPresentationManager.
     // Just update m_mode directly to HTMLMediaElementEnums::VideoFullscreenModeStandard in that case to keep
     // m_mode in sync with the fullscreen mode in HTMLMediaElement.
     if (isExitingToStandardFullscreen)
@@ -521,7 +515,7 @@ void VideoFullscreenInterfaceMac::cleanupFullscreen()
     [m_webVideoFullscreenInterfaceObjC exitPIP];
     [m_webVideoFullscreenInterfaceObjC invalidateFullscreenState];
 
-    if (auto model = videoFullscreenModel())
+    if (auto model = videoPresentationModel())
         model->didCleanupFullscreen();
 }
 
@@ -529,7 +523,7 @@ void VideoFullscreenInterfaceMac::invalidate()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceMac::invalidate(%p)", this);
 
-    m_videoFullscreenModel = nullptr;
+    m_videoPresentationModel = nullptr;
 
     cleanupFullscreen();
 
@@ -539,7 +533,7 @@ void VideoFullscreenInterfaceMac::invalidate()
 
 void VideoFullscreenInterfaceMac::requestHideAndExitPiP()
 {
-    auto model = videoFullscreenModel();
+    auto model = videoPresentationModel();
     if (!model)
         return;
 
@@ -615,4 +609,4 @@ bool supportsPictureInPicture()
 
 }
 
-#endif
+#endif // PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)

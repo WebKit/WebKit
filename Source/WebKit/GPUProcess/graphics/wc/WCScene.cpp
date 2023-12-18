@@ -34,6 +34,8 @@
 #include "WCRemoteFrameHostLayerManager.h"
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
+#include <WebCore/BitmapTexture.h>
+#include <WebCore/TextureMapper.h>
 #include <WebCore/TextureMapperGLHeaders.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
@@ -154,7 +156,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
                         auto bitmap = tileUpdate.backingStore.bitmap();
                         if (bitmap) {
                             auto image = bitmap->createImage();
-                            backingStore.updateContents(*m_textureMapper, tileUpdate.index, *image, tileUpdate.dirtyRect);
+                            backingStore.updateContents(tileUpdate.index, *image, tileUpdate.dirtyRect);
                         }
                     }
                 }
@@ -245,16 +247,16 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
 
     if (update.remoteContextHostedIdentifier) {
         showFPS = false;
-        texture = m_textureMapper->acquireTextureFromPool(windowSize);
+        texture = m_textureMapper->acquireTextureFromPool(windowSize, { WebCore::BitmapTexture::Flags::SupportsAlpha });
         surface = texture.get();
     } else if (m_usesOffscreenRendering) {
         readPixel = true;
-        texture = m_textureMapper->acquireTextureFromPool(windowSize);
+        texture = m_textureMapper->acquireTextureFromPool(windowSize, { WebCore::BitmapTexture::Flags::SupportsAlpha });
         surface = texture.get();
     } else
         glViewport(0, 0, windowSize.width(), windowSize.height());
 
-    m_textureMapper->beginPainting(0, surface);
+    m_textureMapper->beginPainting(WebCore::TextureMapper::FlipY::No, surface);
     rootLayer->paint(*m_textureMapper);
     if (showFPS)
         m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);

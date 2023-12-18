@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -38,5 +36,3 @@ enum class ServiceWorkerUpdateViaCache : uint8_t {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -67,6 +67,13 @@ public:
     NSURL *getURL(NSString *resourcePath, NSString **outExceptionString);
     NSDictionary *getManifest();
     void getPlatformInfo(Ref<WebExtensionCallbackHandler>&&);
+    void getBackgroundPage(Ref<WebExtensionCallbackHandler>&&);
+    double getFrameId(JSValue *);
+
+    void setUninstallURL(URL, Ref<WebExtensionCallbackHandler>&&);
+
+    void openOptionsPage(Ref<WebExtensionCallbackHandler>&&);
+    void reload();
 
     NSString *runtimeIdentifier();
 
@@ -79,13 +86,17 @@ public:
     RefPtr<WebExtensionAPIPort> connectNative(WebFrame*, JSContextRef, NSString *applicationID);
 
     WebExtensionAPIEvent& onConnect();
+    WebExtensionAPIEvent& onInstalled();
     WebExtensionAPIEvent& onMessage();
+    WebExtensionAPIEvent& onStartup();
 
 private:
     static bool parseConnectOptions(NSDictionary *, std::optional<String>& name, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onConnect;
+    RefPtr<WebExtensionAPIEvent> m_onInstalled;
     RefPtr<WebExtensionAPIEvent> m_onMessage;
+    RefPtr<WebExtensionAPIEvent> m_onStartup;
 #endif
 };
 

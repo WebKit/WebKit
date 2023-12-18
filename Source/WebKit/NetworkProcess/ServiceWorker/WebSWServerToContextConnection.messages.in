@@ -20,8 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(SERVICE_WORKER)
-
 messages -> WebSWServerToContextConnection NotRefCounted {
     # When possible, these messages can be implemented directly by WebCore::SWServerToContextConnection
 
@@ -45,5 +43,3 @@ messages -> WebSWServerToContextConnection NotRefCounted {
     OpenWindow(WebCore::ServiceWorkerIdentifier identifier, URL url) -> (Expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData> newClientData)
     ReportConsoleMessage(WebCore::ServiceWorkerIdentifier identifier, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, unsigned long requestIdentifier);
 }
-
-#endif // ENABLE(SERVICE_WORKER)

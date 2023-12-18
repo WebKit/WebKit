@@ -1,0 +1,3 @@
+
+FAIL A custom property of type <transform-list> yields a CSS Transition using the mix function for a box size dependent matrix interpolation assert_equals: Element has the expected animated value expected "mix(50%; translateX(50%); scale(4))" but got "matrix(2.5, 0, 0, 2.5, 0, 0)"
+

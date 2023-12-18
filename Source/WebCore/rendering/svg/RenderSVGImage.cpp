@@ -28,7 +28,6 @@
 #include "RenderSVGImage.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "AXObjectCache.h"
 #include "BitmapImage.h"
 #include "DocumentInlines.h"
@@ -36,13 +35,12 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResource.h"
 #include "PointerEventsHitRules.h"
 #include "RenderElementInlines.h"
 #include "RenderImageResource.h"
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
-#include "RenderSVGResource.h"
-#include "RenderSVGResourceFilter.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SVGRenderStyle.h"
@@ -60,6 +58,7 @@ RenderSVGImage::RenderSVGImage(SVGImageElement& element, RenderStyle&& style)
     : RenderSVGModelObject(Type::SVGImage, element, WTFMove(style))
     , m_imageResource(makeUnique<RenderImageResource>())
 {
+    ASSERT(isRenderSVGImage());
     imageResource().initialize(*this);
 }
 
@@ -132,15 +131,13 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     if (paintInfo.phase == PaintPhase::ClippingMask) {
-        // FIXME: [LBSE] Upstream SVGRenderSupport changes
-        // SVGRenderSupport::paintSVGClippingMask(*this, paintInfo);
+        paintSVGClippingMask(paintInfo);
         return;
     }
 
     auto adjustedPaintOffset = paintOffset + currentSVGLayoutLocation();
     if (paintInfo.phase == PaintPhase::Mask) {
-        // FIXME: [LBSE] Upstream SVGRenderSupport changes
-        // SVGRenderSupport::paintSVGMask(*this, paintInfo, adjustedPaintOffset);
+        paintSVGMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
@@ -179,7 +176,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     if (is<BitmapImage>(image))
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
-    ImagePaintingOptions options = {
+    ImagePaintingOptions options {
         CompositeOperator::SourceOver,
         DecodingMode::Synchronous,
         imageOrientation(),
@@ -345,13 +342,26 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (renderTreeBeingDestroyed())
         return;
 
-    // The image resource defaults to nullImage until the resource arrives.
-    // This empty image may be cached by SVG resources which must be invalidated.
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this))
-        resources->removeClientFromCache(*this);
+    bool invalidateLegacyResources = true;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    invalidateLegacyResources = !document().settings().layerBasedSVGEngineEnabled();
+#endif
 
-    // Eventually notify parent resources, that we've changed.
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
+    if (invalidateLegacyResources) {
+        // The image resource defaults to nullImage until the resource arrives.
+        // This empty image may be cached by SVG resources which must be invalidated.
+        if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this))
+            resources->removeClientFromCache(*this);
+
+        // Eventually notify parent resources, that we've changed.
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
+    }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // For LBSE it is sufficient to trigger repainting of all resources that make use of this image.
+    if (!invalidateLegacyResources)
+        repaintClientsOfReferencedSVGResources();
+#endif
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
         RenderSVGModelObject::imageChanged(newImage, rect);

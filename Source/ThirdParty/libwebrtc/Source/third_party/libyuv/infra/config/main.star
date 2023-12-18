@@ -209,9 +209,9 @@ luci.bucket(
 
 def get_os_dimensions(os):
     if os == "android":
-        return {"device_type": "bullhead"}
+        return {"device_type": "walleye"}
     if os == "ios" or os == "mac":
-        return {"os": "Mac-10.15", "cpu": "x86-64"}
+        return {"os": "Mac-12", "cpu": "x86-64"}
     elif os == "win":
         return {"os": "Windows-10", "cores": "8", "cpu": "x86-64"}
     elif os == "linux":

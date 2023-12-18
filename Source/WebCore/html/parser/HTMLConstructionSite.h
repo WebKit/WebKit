@@ -27,9 +27,9 @@
 #pragma once
 
 #include "Document.h"
-#include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
+#include "ParserContentPolicy.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Noncopyable.h>
@@ -224,14 +224,16 @@ private:
     Ref<Document> protectedDocument() const;
     Ref<ContainerNode> protectedAttachmentRoot() const;
 
+    // m_head has to be destroyed after destroying CheckedRef of m_document and m_attachmentRoot
+    HTMLStackItem m_head;
+
     CheckedRef<Document> m_document;
     
     // This is the root ContainerNode to which the parser attaches all newly
     // constructed nodes. It points to a DocumentFragment when parsing fragments
     // and a Document in all other cases.
-    CheckedRef<ContainerNode> m_attachmentRoot;
+    WeakRef<ContainerNode, WeakPtrImplWithEventTargetData> m_attachmentRoot;
     
-    HTMLStackItem m_head;
     RefPtr<HTMLFormElement> m_form;
     mutable HTMLElementStack m_openElements;
     mutable HTMLFormattingElementList m_activeFormattingElements;

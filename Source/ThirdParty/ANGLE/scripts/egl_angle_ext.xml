@@ -180,7 +180,6 @@
                 <command name="eglReleaseExternalContextANGLE"/>
                 <enum name="EGL_EXTERNAL_CONTEXT_ANGLE"/>
                 <enum name="EGL_EXTERNAL_SURFACE_ANGLE"/>
-                <enum name="EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_stream_producer_d3d_texture" supported="egl">
@@ -584,9 +583,6 @@
         <!-- NOTE: More duplicates!. -->
         <enum value="0x348F" name="EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE"/>
         <enum value="0x348F" name="EGL_EXTERNAL_SURFACE_ANGLE"/>
-    </enums>
-    <enums namespace="EGL" start="0x3490" end="0x349F" vendor="ANGLE">
-        <enum value="0x3490" name="EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE"/>
     </enums>
     <enums namespace="EGL" start="0x34A0" end="0x34AF" vendor="ANGLE">
         <enum value="0x34A0" name="EGL_PLATFORM_ANGLE_D3D_LUID_HIGH_ANGLE"/>

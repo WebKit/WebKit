@@ -30,21 +30,17 @@
 #include "IDBResultData.h"
 #include "Logging.h"
 #include "MemoryIDBBackingStore.h"
-#include "SQLiteDatabase.h"
-#include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteIDBBackingStore.h"
-#include "SQLiteStatement.h"
 #include "SecurityOrigin.h"
-#include "StorageQuotaManager.h"
-#include <wtf/CrossThreadCopier.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 namespace IDBServer {
 
-IDBServer::IDBServer(const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester, Lock& lock)
+IDBServer::IDBServer(const String& databaseDirectoryPath, SpaceRequester&& spaceRequester, Lock& lock)
     : m_spaceRequester(WTFMove(spaceRequester))
     , m_lock(lock)
 {
@@ -743,14 +739,12 @@ void IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize, Comp
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    StorageQuotaManager::Decision result = StorageQuotaManager::Decision::Deny;
-
     // Release lock because space requesting could be blocked.
     m_lock.unlock();
-    result = m_spaceRequester(origin, taskSize);
+    bool result = m_spaceRequester(origin, taskSize);
     m_lock.lock();
 
-    completionHandler(result == StorageQuotaManager::Decision::Grant);
+    completionHandler(result);
 }
 
 uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin)

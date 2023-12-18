@@ -34,6 +34,7 @@ namespace
 #define SOURCE_IDX_IS_U32_CONSTANT_NAME @"kSourceIndexIsU32"
 #define PREMULTIPLY_ALPHA_CONSTANT_NAME @"kPremultiplyAlpha"
 #define UNMULTIPLY_ALPHA_CONSTANT_NAME @"kUnmultiplyAlpha"
+#define TRANSFORM_LINEAR_TO_SRGB_CONSTANT_NAME @"kTransformLinearToSrgb"
 #define SOURCE_TEXTURE_TYPE_CONSTANT_NAME @"kSourceTextureType"
 #define SOURCE_TEXTURE2_TYPE_CONSTANT_NAME @"kSourceTexture2Type"
 #define COPY_FORMAT_TYPE_CONSTANT_NAME @"kCopyFormatType"
@@ -51,14 +52,12 @@ struct ClearParamsUniform
 // See libANGLE/renderer/metal/shaders/blit.metal
 struct BlitParamsUniform
 {
-    // 0: lower left, 1: lower right, 2: upper left
-    float srcTexCoords[3][2];
+    // 0: lower left, 1: upper right
+    float srcTexCoords[2][2];
     int srcLevel         = 0;
     int srcLayer         = 0;
-    uint8_t dstFlipX     = 0;
-    uint8_t dstFlipY     = 0;
     uint8_t dstLuminance = 0;  // dest texture is luminace
-    uint8_t padding[13];
+    uint8_t padding[7];
 };
 
 struct BlitStencilToBufferParamsUniform
@@ -629,10 +628,11 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
                                   const BlitParams &params,
                                   bool isColorBlit)
 {
+    // To ensure consistent texture coordinate interpolation on Apple silicon, a two-triangle quad
+    // with the common edge going from upper-left to lower-right must be used. Any other primitive,
+    // e.g., a clipped triangle, would produce various texture sampling artifacts on that hardware.
 
     BlitParamsUniform uniformParams;
-    uniformParams.dstFlipX = params.dstFlipX ? 1 : 0;
-    uniformParams.dstFlipY = params.dstFlipY ? 1 : 0;
     uniformParams.srcLevel = params.srcLevel.get();
     uniformParams.srcLayer = params.srcLayer;
     if (isColorBlit)
@@ -645,20 +645,25 @@ void SetupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder,
     GetBlitTexCoords(params.srcNormalizedCoords, params.srcYFlipped, params.unpackFlipX,
                      params.unpackFlipY, &u0, &v0, &u1, &v1);
 
-    float du = u1 - u0;
-    float dv = v1 - v0;
+    if (params.dstFlipX)
+    {
+        std::swap(u0, u1);
+    }
+
+    // If viewport is not flipped, we have to flip Y in normalized device coordinates
+    // since NDC has Y in the opposite direction of viewport coodrinates.
+    // To keep the common edge properly oriented, swap the texture coordinates instead.
+    if (!params.dstFlipY)
+    {
+        std::swap(v0, v1);
+    }
 
     // lower left
     uniformParams.srcTexCoords[0][0] = u0;
     uniformParams.srcTexCoords[0][1] = v0;
-
-    // lower right
-    uniformParams.srcTexCoords[1][0] = u1 + du;
-    uniformParams.srcTexCoords[1][1] = v0;
-
-    // upper left
-    uniformParams.srcTexCoords[2][0] = u0;
-    uniformParams.srcTexCoords[2][1] = v1 + dv;
+    // upper right
+    uniformParams.srcTexCoords[1][0] = u1;
+    uniformParams.srcTexCoords[1][1] = v1;
 
     cmdEncoder->setVertexData(uniformParams, 0);
     cmdEncoder->setFragmentData(uniformParams, 0);
@@ -1046,6 +1051,18 @@ angle::Result RenderUtils::expandVertexFormatComponentsVS(const gl::Context *con
                                                              params);
 }
 
+angle::Result RenderUtils::linearizeBlocks(ContextMtl *contextMtl,
+                                           const BlockLinearizationParams &params)
+{
+    return mBlockLinearizationUtils.linearizeBlocks(contextMtl, params);
+}
+
+angle::Result RenderUtils::saturateDepth(ContextMtl *contextMtl,
+                                         const DepthSaturationParams &params)
+{
+    return mDepthSaturationUtils.saturateDepth(contextMtl, params);
+}
+
 // ClearUtils implementation
 ClearUtils::ClearUtils(const std::string &fragmentShaderName)
     : mFragmentShaderName(fragmentShaderName)
@@ -1303,6 +1320,9 @@ angle::Result ColorBlitUtils::ensureShadersInitialized(
             [funcConstants setConstantValue:&key.premultiplyAlpha
                                        type:MTLDataTypeBool
                                    withName:PREMULTIPLY_ALPHA_CONSTANT_NAME];
+            [funcConstants setConstantValue:&key.transformLinearToSrgb
+                                       type:MTLDataTypeBool
+                                   withName:TRANSFORM_LINEAR_TO_SRGB_CONSTANT_NAME];
 
             // We create blit shader pipeline cache for each number of color outputs.
             // So blit k color outputs will use mBlitRenderPipelineCache[k-1] for example:
@@ -1351,8 +1371,9 @@ angle::Result ColorBlitUtils::getColorBlitRenderPipelineState(
     pipelineDesc.inputPrimitiveTopology = kPrimitiveTopologyClassTriangle;
 
     ShaderKey key;
-    key.numColorAttachments = renderPassDesc.numColorAttachments;
-    key.sourceTextureType   = GetShaderTextureType(params.src);
+    key.numColorAttachments   = renderPassDesc.numColorAttachments;
+    key.sourceTextureType     = GetShaderTextureType(params.src);
+    key.transformLinearToSrgb = params.transformLinearToSrgb;
     if (params.unpackPremultiplyAlpha != params.unpackUnmultiplyAlpha)
     {
         key.unmultiplyAlpha  = params.unpackUnmultiplyAlpha;
@@ -1412,8 +1433,8 @@ angle::Result ColorBlitUtils::blitColorWithDraw(const gl::Context *context,
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
         ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
-        // Draw the screen aligned triangle
-        cmdEncoder->draw(MTLPrimitiveTypeTriangle, 0, 3);
+        // Draw the screen aligned quad
+        cmdEncoder->draw(MTLPrimitiveTypeTriangleStrip, 0, 4);
     }
 
     // Invalidate current context's state
@@ -1652,8 +1673,8 @@ angle::Result DepthStencilBlitUtils::blitDepthStencilWithDraw(const gl::Context 
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
         ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
-        // Draw the screen aligned triangle
-        cmdEncoder->draw(MTLPrimitiveTypeTriangle, 0, 3);
+        // Draw the screen aligned quad
+        cmdEncoder->draw(MTLPrimitiveTypeTriangleStrip, 0, 4);
     }
 
     // Invalidate current context's state
@@ -2661,7 +2682,10 @@ angle::Result VertexFormatConversionUtils::convertVertexFormatToFloatCS(
     const angle::Format &srcAngleFormat,
     const VertexFormatConvertParams &params)
 {
-    ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
+    // Since vertex buffer doesn't depend on previous render commands we don't
+    // need to end the current render encoder.
+    ComputeCommandEncoder *cmdEncoder =
+        contextMtl->getComputeCommandEncoderWithoutEndingRenderEncoder();
     ASSERT(cmdEncoder);
 
     AutoObjCPtr<id<MTLComputePipelineState>> pipeline;
@@ -2737,7 +2761,10 @@ angle::Result VertexFormatConversionUtils::expandVertexFormatComponentsCS(
     const angle::Format &srcAngleFormat,
     const VertexFormatConvertParams &params)
 {
-    ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
+    // Since vertex buffer doesn't depend on previous render commands we don't
+    // need to end the current render encoder.
+    ComputeCommandEncoder *cmdEncoder =
+        contextMtl->getComputeCommandEncoderWithoutEndingRenderEncoder();
     ASSERT(cmdEncoder);
 
     AutoObjCPtr<id<MTLComputePipelineState>> pipeline;
@@ -2921,6 +2948,84 @@ angle::Result VertexFormatConversionUtils::getFloatConverstionRenderPipeline(
             contextMtl, mConvertToFloatVertexShaders[formatIDValue], nullptr, pipelineDesc,
             outPipelineState);
     }
+}
+
+angle::Result BlockLinearizationUtils::linearizeBlocks(ContextMtl *contextMtl,
+                                                       const BlockLinearizationParams &params)
+{
+    ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
+    ASSERT(cmdEncoder);
+
+    AutoObjCPtr<id<MTLComputePipelineState>> pipeline;
+    ANGLE_TRY(getBlockLinearizationComputePipeline(contextMtl, &pipeline));
+    cmdEncoder->setComputePipelineState(pipeline);
+
+    // Block layout
+    ASSERT(params.blocksWide >= 2 && params.blocksHigh >= 2);
+    const uint32_t dimensions[2] = {params.blocksWide, params.blocksHigh};
+    cmdEncoder->setData(dimensions, 0);
+
+    // Buffer with original PVRTC1 blocks
+    cmdEncoder->setBuffer(params.srcBuffer, params.srcBufferOffset, 1);
+
+    // Buffer to hold linearized PVRTC1 blocks
+    cmdEncoder->setBufferForWrite(params.dstBuffer, 0, 2);
+
+    NSUInteger w                  = pipeline.get().threadExecutionWidth;
+    NSUInteger h                  = pipeline.get().maxTotalThreadsPerThreadgroup / w;
+    MTLSize threadsPerThreadgroup = MTLSizeMake(w, h, 1);
+    MTLSize threads               = MTLSizeMake(params.blocksWide, params.blocksHigh, 1);
+    DispatchCompute(contextMtl, cmdEncoder,
+                    /** allowNonUniform */ true, threads, threadsPerThreadgroup);
+    return angle::Result::Continue;
+}
+
+angle::Result BlockLinearizationUtils::getBlockLinearizationComputePipeline(
+    ContextMtl *contextMtl,
+    AutoObjCPtr<id<MTLComputePipelineState>> *outPipelineState)
+{
+    ANGLE_TRY(EnsureComputeShaderInitialized(contextMtl, @"linearizeBlocks",
+                                             &mLinearizeBlocksComputeShader));
+    return contextMtl->getPipelineCache().getComputePipeline(
+        contextMtl, mLinearizeBlocksComputeShader, outPipelineState);
+}
+
+angle::Result DepthSaturationUtils::saturateDepth(ContextMtl *contextMtl,
+                                                  const DepthSaturationParams &params)
+{
+    ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
+    ASSERT(cmdEncoder);
+
+    AutoObjCPtr<id<MTLComputePipelineState>> pipeline;
+    ANGLE_TRY(getDepthSaturationComputePipeline(contextMtl, &pipeline));
+    cmdEncoder->setComputePipelineState(pipeline);
+
+    // Image layout
+    ASSERT(params.dstWidth > 0 && params.dstHeight > 0);
+    ASSERT(params.srcPitch >= params.dstWidth);
+    const uint32_t dimensions[4] = {params.dstWidth, params.dstHeight, params.srcPitch, 0};
+    cmdEncoder->setData(dimensions, 0);
+
+    cmdEncoder->setBuffer(params.srcBuffer, params.srcBufferOffset, 1);
+    cmdEncoder->setBuffer(params.dstBuffer, 0, 2);
+
+    NSUInteger w                  = pipeline.get().threadExecutionWidth;
+    NSUInteger h                  = pipeline.get().maxTotalThreadsPerThreadgroup / w;
+    MTLSize threadsPerThreadgroup = MTLSizeMake(w, h, 1);
+    MTLSize threads               = MTLSizeMake(params.dstWidth, params.dstHeight, 1);
+    DispatchCompute(contextMtl, cmdEncoder,
+                    /** allowNonUniform */ true, threads, threadsPerThreadgroup);
+    return angle::Result::Continue;
+}
+
+angle::Result DepthSaturationUtils::getDepthSaturationComputePipeline(
+    ContextMtl *contextMtl,
+    AutoObjCPtr<id<MTLComputePipelineState>> *outPipelineState)
+{
+    ANGLE_TRY(
+        EnsureComputeShaderInitialized(contextMtl, @"saturateDepth", &mSaturateDepthComputeShader));
+    return contextMtl->getPipelineCache().getComputePipeline(
+        contextMtl, mSaturateDepthComputeShader, outPipelineState);
 }
 
 }  // namespace mtl

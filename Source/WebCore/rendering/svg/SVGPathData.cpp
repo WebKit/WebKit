@@ -20,6 +20,7 @@
 #include "config.h"
 #include "SVGPathData.h"
 
+#include "NodeName.h"
 #include "Path.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
@@ -37,6 +38,7 @@
 #include "SVGPolylineElement.h"
 #include "SVGRectElement.h"
 #include "SVGRenderStyle.h"
+#include "SVGUseElement.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -182,26 +184,48 @@ static Path pathFromRectElement(const SVGElement& element)
     return path;
 }
 
-Path pathFromGraphicsElement(const SVGElement* element)
+static Path pathFromUseElement(const SVGElement& element)
 {
-    ASSERT(element);
+    const auto& useElement = downcast<SVGUseElement>(element);
 
-    typedef Path (*PathFromFunction)(const SVGElement&);
-    static HashMap<AtomStringImpl*, PathFromFunction>* map = 0;
-    if (!map) {
-        map = new HashMap<AtomStringImpl*, PathFromFunction>;
-        map->set(SVGNames::circleTag->localName().impl(), pathFromCircleElement);
-        map->set(SVGNames::ellipseTag->localName().impl(), pathFromEllipseElement);
-        map->set(SVGNames::lineTag->localName().impl(), pathFromLineElement);
-        map->set(SVGNames::pathTag->localName().impl(), pathFromPathElement);
-        map->set(SVGNames::polygonTag->localName().impl(), pathFromPolygonElement);
-        map->set(SVGNames::polylineTag->localName().impl(), pathFromPolylineElement);
-        map->set(SVGNames::rectTag->localName().impl(), pathFromRectElement);
+    RefPtr clipChildElement = useElement.clipChild();
+    if (!clipChildElement)
+        return { };
+
+    SVGLengthContext lengthContext(&element);
+    auto x = useElement.x().value(lengthContext);
+    auto y = useElement.y().value(lengthContext);
+
+    auto path = pathFromGraphicsElement(*clipChildElement.get());
+    if (x || y)
+        path.translate(FloatSize(x, y));
+
+    return path;
+}
+
+Path pathFromGraphicsElement(const SVGElement& element)
+{
+    switch (element.tagQName().nodeName()) {
+    case ElementNames::SVG::circle:
+        return pathFromCircleElement(element);
+    case ElementNames::SVG::ellipse:
+        return pathFromEllipseElement(element);
+    case ElementNames::SVG::line:
+        return pathFromLineElement(element);
+    case ElementNames::SVG::path:
+        return pathFromPathElement(element);
+    case ElementNames::SVG::polygon:
+        return pathFromPolygonElement(element);
+    case ElementNames::SVG::polyline:
+        return pathFromPolylineElement(element);
+    case ElementNames::SVG::rect:
+        return pathFromRectElement(element);
+    case ElementNames::SVG::use:
+        return pathFromUseElement(element);
+    default:
+        break;
     }
 
-    if (PathFromFunction pathFromFunction = map->get(element->localName().impl()))
-        return (*pathFromFunction)(*element);
-    
     return { };
 }
 

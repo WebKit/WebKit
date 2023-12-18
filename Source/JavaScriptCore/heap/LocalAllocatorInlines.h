@@ -30,13 +30,13 @@
 
 namespace JSC {
 
-ALWAYS_INLINE void* LocalAllocator::allocate(Heap& heap, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+ALWAYS_INLINE void* LocalAllocator::allocate(JSC::Heap& heap, size_t cellSize, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     VM& vm = heap.vm();
     if constexpr (validateDFGDoesGC)
         vm.verifyCanGC();
     return m_freeList.allocateWithCellSize(
-        [&]() -> HeapCell* {
+        [&]() ALWAYS_INLINE_LAMBDA {
             sanitizeStackForVM(vm);
             return static_cast<HeapCell*>(allocateSlowCase(heap, cellSize, deferralContext, failureMode));
         }, cellSize);

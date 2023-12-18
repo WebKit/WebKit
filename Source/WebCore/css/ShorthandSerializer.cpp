@@ -108,6 +108,7 @@ private:
     String serializeQuad() const;
 
     String serializeLayered() const;
+    String serializeCoordinatingListPropertyGroup() const;
 
     String serializeBorder(unsigned sectionLength) const;
     String serializeBorderImage() const;
@@ -123,6 +124,7 @@ private:
     String serializeGridTemplate() const;
     String serializeOffset() const;
     String serializePageBreak() const;
+    String serializeTextWrap() const;
     String serializeWhiteSpace() const;
 
     StylePropertyShorthand m_shorthand;
@@ -396,11 +398,16 @@ String ShorthandSerializer::serialize()
         return serializeLonghandValue(0);
     case CSSPropertyTransformOrigin:
         return serializeLonghandsOmittingTrailingInitialValue();
+    case CSSPropertyTextWrap:
+        return serializeTextWrap();
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
         return serializeColumnBreak();
     case CSSPropertyWhiteSpace:
         return serializeWhiteSpace();
+    case CSSPropertyScrollTimeline:
+    case CSSPropertyViewTimeline:
+        return serializeCoordinatingListPropertyGroup();
     default:
         ASSERT_NOT_REACHED();
         return String();
@@ -569,12 +576,51 @@ private:
     RefPtr<const CSSValue> m_values[maxShorthandLength];
 };
 
+String ShorthandSerializer::serializeCoordinatingListPropertyGroup() const
+{
+    ASSERT(length() > 1);
+
+    // https://drafts.csswg.org/css-values-4/#linked-properties
+
+    // First, figure out the number of items in the coordinating list base property,
+    // which we'll need to match for all coordinated longhands, thus possibly trimming
+    // or expanding.
+    unsigned numberOfItemsForCoordinatingListBaseProperty = 1;
+    if (auto* valueList = dynamicDowncast<CSSValueList>(longhandValue(0)))
+        numberOfItemsForCoordinatingListBaseProperty = std::max(valueList->length(), numberOfItemsForCoordinatingListBaseProperty);
+
+    // Now go through all longhands and ensure we repeat items earlier in the list
+    // should there not be a specified value.
+    StringBuilder result;
+    for (unsigned listItemIndex = 0; listItemIndex < numberOfItemsForCoordinatingListBaseProperty; ++listItemIndex) {
+        LayerValues layerValues { m_shorthand };
+        for (unsigned longhandIndex = 0; longhandIndex < length(); ++longhandIndex) {
+            auto& value = longhandValue(longhandIndex);
+            if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
+                auto* valueInList = [&]() -> const CSSValue* {
+                    if (auto* specifiedValue = valueList->item(listItemIndex))
+                        return specifiedValue;
+                    if (auto numberOfItemsInList = valueList->size())
+                        return valueList->item(listItemIndex % numberOfItemsInList);
+                    return nullptr;
+                }();
+                layerValues.set(longhandIndex, valueInList);
+            } else
+                layerValues.set(longhandIndex, &value);
+        }
+        // The coordinating list base property must never be skipped.
+        layerValues.skip(0) = false;
+        layerValues.serialize(result);
+    }
+    return result.toString();
+}
+
 String ShorthandSerializer::serializeLayered() const
 {
     unsigned numLayers = 1;
     for (auto& value : longhandValues()) {
-        if (is<CSSValueList>(value))
-            numLayers = std::max(downcast<CSSValueList>(value).length(), numLayers);
+        if (auto* valueList = dynamicDowncast<CSSValueList>(value))
+            numLayers = std::max(valueList->length(), numLayers);
     }
 
     StringBuilder result;
@@ -583,8 +629,8 @@ String ShorthandSerializer::serializeLayered() const
 
         for (unsigned j = 0; j < length(); j++) {
             auto& value = longhandValue(j);
-            if (is<CSSValueList>(value))
-                layerValues.set(j, downcast<CSSValueList>(value).item(i));
+            if (auto* valueList = dynamicDowncast<CSSValueList>(value))
+                layerValues.set(j, valueList->item(i));
             else {
                 // Color is only in the last layer. Other singletons are only in the first.
                 auto singletonLayer = longhandProperty(j) == CSSPropertyBackgroundColor ? numLayers - 1 : 0;
@@ -594,6 +640,13 @@ String ShorthandSerializer::serializeLayered() const
 
         for (unsigned j = 0; j < length(); j++) {
             auto longhand = longhandProperty(j);
+
+            // We always want to force the serialization of the transition longhands,
+            // except for transition-behavior which should only serialize if non-default.
+            if (m_shorthand.id() == CSSPropertyTransition) {
+                if (longhand != CSSPropertyTransitionBehavior)
+                    layerValues.skip(j) = false;
+            }
 
             // A single box value sets both background-origin and background-clip.
             // A single geometry-box value sets both mask-origin and mask-clip.
@@ -980,11 +1033,10 @@ String ShorthandSerializer::serializeFontVariant() const
 
 static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 {
-    if (is<CSSValueList>(value)) {
-        auto& valueList = downcast<CSSValueList>(value);
-        if (valueList.size() != 1)
+    if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
+        if (valueList->size() != 1)
             return false;
-        auto* item = valueList.item(0);
+        auto* item = valueList->item(0);
         return item && isValueID(*item, id);
     }
     return isValueID(value, id);
@@ -992,8 +1044,8 @@ static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
 
 static bool gridAutoFlowContains(CSSValue& autoFlow, CSSValueID id)
 {
-    if (is<CSSValueList>(autoFlow)) {
-        for (auto& currentValue : downcast<CSSValueList>(autoFlow)) {
+    if (auto* valueList = dynamicDowncast<CSSValueList>(autoFlow)) {
+        for (auto& currentValue : *valueList) {
             if (isValueID(currentValue, id))
                 return true;
         }
@@ -1050,7 +1102,8 @@ String ShorthandSerializer::serializeGrid() const
 
 static bool isCustomIdentValue(const CSSValue& value)
 {
-    return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isCustomIdent();
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    return primitiveValue && primitiveValue->isCustomIdent();
 }
 
 static bool canOmitTrailingGridAreaValue(CSSValue& value, CSSValue& trailing)
@@ -1108,12 +1161,12 @@ String ShorthandSerializer::serializeGridTemplate() const
         return false;
     };
     auto isValidExplicitTrackList = [&] (const CSSValue& value) {
-        if (!value.isValueList())
+        const auto* values = dynamicDowncast<CSSValueList>(value);
+        if (!values)
             return isValidTrackSize(value);
 
-        const auto& values = downcast<CSSValueList>(value);
         auto hasAtLeastOneTrackSize = false;
-        for (const auto& value : values) {
+        for (const auto& value : *values) {
             if (isValidTrackSize(value))
                 hasAtLeastOneTrackSize = true;
             else if (!value.isGridLineNamesValue())
@@ -1206,28 +1259,41 @@ String ShorthandSerializer::serializePageBreak() const
     }
 }
 
+String ShorthandSerializer::serializeTextWrap() const
+{
+    auto mode = longhandValueID(0);
+    auto style = longhandValueID(1);
+
+    if (style == CSSValueAuto)
+        return nameString(mode);
+    if (mode == CSSValueWrap)
+        return nameString(style);
+
+    return makeString(nameLiteral(mode), ' ', nameLiteral(style));
+}
+
 String ShorthandSerializer::serializeWhiteSpace() const
 {
     auto whiteSpaceCollapse = longhandValueID(0);
-    auto textWrap = longhandValueID(1);
+    auto textWrapMode = longhandValueID(1);
 
     // Convert to backwards-compatible keywords if possible.
-    if (whiteSpaceCollapse == CSSValueCollapse && textWrap == CSSValueWrap)
+    if (whiteSpaceCollapse == CSSValueCollapse && textWrapMode == CSSValueWrap)
         return nameString(CSSValueNormal);
-    if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueNowrap)
+    if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueNowrap)
         return nameString(CSSValuePre);
-    if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueWrap)
+    if (whiteSpaceCollapse == CSSValuePreserve && textWrapMode == CSSValueWrap)
         return nameString(CSSValuePreWrap);
-    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrap == CSSValueWrap)
+    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrapMode == CSSValueWrap)
         return nameString(CSSValuePreLine);
 
     // Omit default longhand values.
     if (whiteSpaceCollapse == CSSValueCollapse)
-        return nameString(textWrap);
-    if (textWrap == CSSValueWrap)
+        return nameString(textWrapMode);
+    if (textWrapMode == CSSValueWrap)
         return nameString(whiteSpaceCollapse);
 
-    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrap));
+    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrapMode));
 }
 
 String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID shorthand)

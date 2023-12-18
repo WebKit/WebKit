@@ -15,6 +15,7 @@
 #include <string>
 
 #include "api/media_types.h"
+#include "media/base/codec.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -87,7 +88,7 @@ TEST(RtpParametersConversionTest, ToAudioCodec) {
   codec.num_channels.emplace(6);
   codec.parameters["foo"] = "bar";
   codec.rtcp_feedback.emplace_back(RtcpFeedbackType::TRANSPORT_CC);
-  auto result = ToCricketCodec<cricket::AudioCodec>(codec);
+  auto result = ToCricketCodec(codec);
   ASSERT_TRUE(result.ok());
 
   EXPECT_EQ("AuDiO", result.value().name);
@@ -113,7 +114,7 @@ TEST(RtpParametersConversionTest, ToVideoCodec) {
   codec.rtcp_feedback.emplace_back(RtcpFeedbackType::TRANSPORT_CC);
   codec.rtcp_feedback.emplace_back(RtcpFeedbackType::NACK,
                                    RtcpFeedbackMessageType::PLI);
-  auto result = ToCricketCodec<cricket::VideoCodec>(codec);
+  auto result = ToCricketCodec(codec);
   ASSERT_TRUE(result.ok());
 
   EXPECT_EQ("coolcodec", result.value().name);
@@ -146,18 +147,18 @@ TEST(RtpParametersConversionTest, ToCricketCodecInvalidKind) {
   video_codec.payload_type = 102;
   video_codec.clock_rate.emplace(90000);
 
-  auto audio_result = ToCricketCodec<cricket::AudioCodec>(audio_codec);
+  auto audio_result = ToCricketCodec(audio_codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, audio_result.error().type());
 
-  auto video_result = ToCricketCodec<cricket::VideoCodec>(video_codec);
+  auto video_result = ToCricketCodec(video_codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, video_result.error().type());
 
   // Sanity check that if the kind is correct, the conversion succeeds.
   audio_codec.kind = cricket::MEDIA_TYPE_AUDIO;
   video_codec.kind = cricket::MEDIA_TYPE_VIDEO;
-  audio_result = ToCricketCodec<cricket::AudioCodec>(audio_codec);
+  audio_result = ToCricketCodec(audio_codec);
   EXPECT_TRUE(audio_result.ok());
-  video_result = ToCricketCodec<cricket::VideoCodec>(video_codec);
+  video_result = ToCricketCodec(video_codec);
   EXPECT_TRUE(video_result.ok());
 }
 
@@ -168,28 +169,28 @@ TEST(RtpParametersConversionTest, ToAudioCodecInvalidParameters) {
   codec.kind = cricket::MEDIA_TYPE_AUDIO;
   codec.payload_type = 111;
   codec.clock_rate.emplace(48000);
-  auto result = ToCricketCodec<cricket::AudioCodec>(codec);
+  auto result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Negative number of channels.
   codec.num_channels.emplace(-1);
-  result = ToCricketCodec<cricket::AudioCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.error().type());
 
   // Missing clock rate.
   codec.num_channels.emplace(2);
   codec.clock_rate.reset();
-  result = ToCricketCodec<cricket::AudioCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Negative clock rate.
   codec.clock_rate.emplace(-48000);
-  result = ToCricketCodec<cricket::AudioCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.error().type());
 
   // Sanity check that conversion succeeds if these errors are fixed.
   codec.clock_rate.emplace(48000);
-  result = ToCricketCodec<cricket::AudioCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_TRUE(result.ok());
 }
 
@@ -199,23 +200,23 @@ TEST(RtpParametersConversionTest, ToVideoCodecInvalidParameters) {
   codec.name = "VP8";
   codec.kind = cricket::MEDIA_TYPE_VIDEO;
   codec.payload_type = 102;
-  auto result = ToCricketCodec<cricket::VideoCodec>(codec);
+  auto result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Invalid clock rate.
   codec.clock_rate.emplace(48000);
-  result = ToCricketCodec<cricket::VideoCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Channels set (should be unset).
   codec.clock_rate.emplace(90000);
   codec.num_channels.emplace(2);
-  result = ToCricketCodec<cricket::VideoCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Sanity check that conversion succeeds if these errors are fixed.
   codec.num_channels.reset();
-  result = ToCricketCodec<cricket::VideoCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_TRUE(result.ok());
 }
 
@@ -226,17 +227,17 @@ TEST(RtpParametersConversionTest, ToCricketCodecInvalidPayloadType) {
   codec.clock_rate.emplace(90000);
 
   codec.payload_type = -1000;
-  auto result = ToCricketCodec<cricket::VideoCodec>(codec);
+  auto result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.error().type());
 
   // Max payload type is 127.
   codec.payload_type = 128;
-  result = ToCricketCodec<cricket::VideoCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_RANGE, result.error().type());
 
   // Sanity check that conversion succeeds with a valid payload type.
   codec.payload_type = 127;
-  result = ToCricketCodec<cricket::VideoCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_TRUE(result.ok());
 }
 
@@ -251,12 +252,12 @@ TEST(RtpParametersConversionTest, ToCricketCodecInvalidRtcpFeedback) {
   codec.rtcp_feedback.emplace_back(RtcpFeedbackType::CCM,
                                    RtcpFeedbackMessageType::PLI);
 
-  auto result = ToCricketCodec<cricket::VideoCodec>(codec);
+  auto result = ToCricketCodec(codec);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Sanity check that conversion succeeds without invalid feedback.
   codec.rtcp_feedback.clear();
-  result = ToCricketCodec<cricket::VideoCodec>(codec);
+  result = ToCricketCodec(codec);
   EXPECT_TRUE(result.ok());
 }
 
@@ -273,7 +274,7 @@ TEST(RtpParametersConversionTest, ToCricketCodecs) {
   codec.payload_type = 100;
   codecs.push_back(codec);
 
-  auto result = ToCricketCodecs<cricket::VideoCodec>(codecs);
+  auto result = ToCricketCodecs(codecs);
   ASSERT_TRUE(result.ok());
   ASSERT_EQ(2u, result.value().size());
   EXPECT_EQ("VP8", result.value()[0].name);
@@ -295,12 +296,12 @@ TEST(RtpParametersConversionTest, ToCricketCodecsDuplicatePayloadType) {
   codec.payload_type = 99;
   codecs.push_back(codec);
 
-  auto result = ToCricketCodecs<cricket::VideoCodec>(codecs);
+  auto result = ToCricketCodecs(codecs);
   EXPECT_EQ(RTCErrorType::INVALID_PARAMETER, result.error().type());
 
   // Sanity check that this succeeds without the duplicate payload type.
   codecs[1].payload_type = 120;
-  result = ToCricketCodecs<cricket::VideoCodec>(codecs);
+  result = ToCricketCodecs(codecs);
   EXPECT_TRUE(result.ok());
 }
 
@@ -396,11 +397,8 @@ TEST(RtpParametersConversionTest, ToRtcpFeedbackErrors) {
 }
 
 TEST(RtpParametersConversionTest, ToAudioRtpCodecCapability) {
-  cricket::AudioCodec cricket_codec;
-  cricket_codec.name = "foo";
-  cricket_codec.id = 50;
-  cricket_codec.clockrate = 22222;
-  cricket_codec.channels = 4;
+  cricket::AudioCodec cricket_codec =
+      cricket::CreateAudioCodec(50, "foo", 22222, 4);
   cricket_codec.params["foo"] = "bar";
   cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
   RtpCodecCapability codec = ToRtpCodecCapability(cricket_codec);
@@ -418,9 +416,7 @@ TEST(RtpParametersConversionTest, ToAudioRtpCodecCapability) {
 }
 
 TEST(RtpParametersConversionTest, ToVideoRtpCodecCapability) {
-  cricket::VideoCodec cricket_codec;
-  cricket_codec.name = "VID";
-  cricket_codec.id = 101;
+  cricket::VideoCodec cricket_codec = cricket::CreateVideoCodec(101, "VID");
   cricket_codec.clockrate = 80000;
   cricket_codec.params["foo"] = "bar";
   cricket_codec.params["ANOTHER"] = "param";
@@ -468,11 +464,8 @@ TEST(RtpParametersConversionTest, ToRtpEncodingsWithMultipleStreamParams) {
 }
 
 TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {
-  cricket::AudioCodec cricket_codec;
-  cricket_codec.name = "foo";
-  cricket_codec.id = 50;
-  cricket_codec.clockrate = 22222;
-  cricket_codec.channels = 4;
+  cricket::AudioCodec cricket_codec =
+      cricket::CreateAudioCodec(50, "foo", 22222, 4);
   cricket_codec.params["foo"] = "bar";
   cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
   RtpCodecParameters codec = ToRtpCodecParameters(cricket_codec);
@@ -490,9 +483,7 @@ TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {
 }
 
 TEST(RtpParametersConversionTest, ToVideoRtpCodecParameters) {
-  cricket::VideoCodec cricket_codec;
-  cricket_codec.name = "VID";
-  cricket_codec.id = 101;
+  cricket::VideoCodec cricket_codec = cricket::CreateVideoCodec(101, "VID");
   cricket_codec.clockrate = 80000;
   cricket_codec.params["foo"] = "bar";
   cricket_codec.params["ANOTHER"] = "param";
@@ -518,11 +509,8 @@ TEST(RtpParametersConversionTest, ToVideoRtpCodecParameters) {
 
 // An unknown feedback param should just be ignored.
 TEST(RtpParametersConversionTest, ToRtpCodecCapabilityUnknownFeedbackParam) {
-  cricket::AudioCodec cricket_codec;
-  cricket_codec.name = "foo";
-  cricket_codec.id = 50;
-  cricket_codec.clockrate = 22222;
-  cricket_codec.channels = 4;
+  cricket::AudioCodec cricket_codec =
+      cricket::CreateAudioCodec(50, "foo", 22222, 4);
   cricket_codec.params["foo"] = "bar";
   cricket_codec.feedback_params.Add({"unknown", "param"});
   cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
@@ -537,38 +525,24 @@ TEST(RtpParametersConversionTest, ToRtpCodecCapabilityUnknownFeedbackParam) {
 // test that the result of ToRtpCodecCapability ends up in the result, and that
 // the "fec" list is assembled correctly.
 TEST(RtpParametersConversionTest, ToRtpCapabilities) {
-  cricket::VideoCodec vp8;
-  vp8.name = "VP8";
-  vp8.id = 101;
+  cricket::VideoCodec vp8 = cricket::CreateVideoCodec(101, "VP8");
   vp8.clockrate = 90000;
 
-  cricket::VideoCodec red;
-  red.name = "red";
-  red.id = 102;
+  cricket::VideoCodec red = cricket::CreateVideoCodec(102, "red");
   red.clockrate = 90000;
 
-  cricket::VideoCodec ulpfec;
-  ulpfec.name = "ulpfec";
-  ulpfec.id = 103;
+  cricket::VideoCodec ulpfec = cricket::CreateVideoCodec(103, "ulpfec");
   ulpfec.clockrate = 90000;
 
-  cricket::VideoCodec flexfec;
-  flexfec.name = "flexfec-03";
-  flexfec.id = 102;
+  cricket::VideoCodec flexfec = cricket::CreateVideoCodec(102, "flexfec-03");
   flexfec.clockrate = 90000;
 
-  cricket::VideoCodec rtx;
-  rtx.name = "rtx";
-  rtx.id = 104;
-  rtx.params.insert({"apt", "101"});
+  cricket::VideoCodec rtx = cricket::CreateVideoRtxCodec(014, 101);
 
-  cricket::VideoCodec rtx2;
-  rtx2.name = "rtx";
-  rtx2.id = 105;
-  rtx2.params.insert({"apt", "109"});
+  cricket::VideoCodec rtx2 = cricket::CreateVideoRtxCodec(105, 109);
 
-  RtpCapabilities capabilities = ToRtpCapabilities<cricket::VideoCodec>(
-      {vp8, ulpfec, rtx, rtx2}, {{"uri", 1}, {"uri2", 3}});
+  RtpCapabilities capabilities =
+      ToRtpCapabilities({vp8, ulpfec, rtx, rtx2}, {{"uri", 1}, {"uri2", 3}});
   ASSERT_EQ(3u, capabilities.codecs.size());
   EXPECT_EQ("VP8", capabilities.codecs[0].name);
   EXPECT_EQ("ulpfec", capabilities.codecs[1].name);
@@ -581,34 +555,28 @@ TEST(RtpParametersConversionTest, ToRtpCapabilities) {
   EXPECT_EQ(3, capabilities.header_extensions[1].preferred_id);
   EXPECT_EQ(0u, capabilities.fec.size());
 
-  capabilities = ToRtpCapabilities<cricket::VideoCodec>(
-      {vp8, red, ulpfec, rtx}, cricket::RtpHeaderExtensions());
+  capabilities = ToRtpCapabilities({vp8, red, ulpfec, rtx},
+                                   cricket::RtpHeaderExtensions());
   EXPECT_EQ(4u, capabilities.codecs.size());
   EXPECT_THAT(
       capabilities.fec,
       UnorderedElementsAre(FecMechanism::RED, FecMechanism::RED_AND_ULPFEC));
 
-  capabilities = ToRtpCapabilities<cricket::VideoCodec>(
-      {vp8, red, flexfec}, cricket::RtpHeaderExtensions());
+  capabilities =
+      ToRtpCapabilities({vp8, red, flexfec}, cricket::RtpHeaderExtensions());
   EXPECT_EQ(3u, capabilities.codecs.size());
   EXPECT_THAT(capabilities.fec,
               UnorderedElementsAre(FecMechanism::RED, FecMechanism::FLEXFEC));
 }
 
 TEST(RtpParametersConversionTest, ToRtpParameters) {
-  cricket::VideoCodec vp8;
-  vp8.name = "VP8";
-  vp8.id = 101;
+  cricket::VideoCodec vp8 = cricket::CreateVideoCodec(101, "VP8");
   vp8.clockrate = 90000;
 
-  cricket::VideoCodec red;
-  red.name = "red";
-  red.id = 102;
+  cricket::VideoCodec red = cricket::CreateVideoCodec(102, "red");
   red.clockrate = 90000;
 
-  cricket::VideoCodec ulpfec;
-  ulpfec.name = "ulpfec";
-  ulpfec.id = 103;
+  cricket::VideoCodec ulpfec = cricket::CreateVideoCodec(103, "ulpfec");
   ulpfec.clockrate = 90000;
 
   cricket::StreamParamsVec streams;
@@ -616,8 +584,8 @@ TEST(RtpParametersConversionTest, ToRtpParameters) {
   stream.ssrcs.push_back(1234u);
   streams.push_back(stream);
 
-  RtpParameters rtp_parameters = ToRtpParameters<cricket::VideoCodec>(
-      {vp8, red, ulpfec}, {{"uri", 1}, {"uri2", 3}}, streams);
+  RtpParameters rtp_parameters =
+      ToRtpParameters({vp8, red, ulpfec}, {{"uri", 1}, {"uri2", 3}}, streams);
   ASSERT_EQ(3u, rtp_parameters.codecs.size());
   EXPECT_EQ("VP8", rtp_parameters.codecs[0].name);
   EXPECT_EQ("red", rtp_parameters.codecs[1].name);

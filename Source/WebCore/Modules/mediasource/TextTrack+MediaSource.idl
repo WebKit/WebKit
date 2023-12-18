@@ -24,10 +24,13 @@
  */
 
 // https://w3c.github.io/media-source/#text-track-extensions
+// FIXME: Extend this interface to 'DedicatedWorker' in future.
+
 [
     Conditional=MEDIA_SOURCE,
     EnabledBySetting=MediaSourceEnabled|ManagedMediaSourceEnabled,
-    ImplementedBy=TextTrackMediaSource
+    ImplementedBy=TextTrackMediaSource,
+    Exposed=Window
 ] partial interface TextTrack {
     readonly attribute SourceBuffer? sourceBuffer;
 };

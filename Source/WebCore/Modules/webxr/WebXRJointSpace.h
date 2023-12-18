@@ -45,7 +45,7 @@ class WebXRSession;
 class WebXRJointSpace final: public RefCounted<WebXRJointSpace>, public WebXRSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRJointSpace);
 public:
-    static Ref<WebXRJointSpace> create(Document&, WebXRHand&, XRHandJoint, std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint>&& = std::nullopt);
+    static Ref<WebXRJointSpace> create(Document&, WebXRHand&, XRHandJoint, std::optional<PlatformXR::FrameData::InputSourceHandJoint>&& = std::nullopt);
     virtual ~WebXRJointSpace();
 
     using RefCounted<WebXRJointSpace>::ref;
@@ -54,13 +54,13 @@ public:
     XRHandJoint jointName() const { return m_jointName; }
 
     float radius() const { return m_joint ? m_joint->radius : 0; }
-    void updateFromJoint(const std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint>&);
+    void updateFromJoint(const std::optional<PlatformXR::FrameData::InputSourceHandJoint>&);
     bool handHasMissingPoses() const;
 
     WebXRSession* session() const final;
 
 private:
-    WebXRJointSpace(Document&, WebXRHand&, XRHandJoint, std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint>&&);
+    WebXRJointSpace(Document&, WebXRHand&, XRHandJoint, std::optional<PlatformXR::FrameData::InputSourceHandJoint>&&);
 
     std::optional<TransformationMatrix> nativeOrigin() const final;
 
@@ -71,7 +71,7 @@ private:
 
     WeakPtr<WebXRHand> m_hand;
     XRHandJoint m_jointName { XRHandJoint::Wrist };
-    std::optional<PlatformXR::Device::FrameData::InputSourceHandJoint> m_joint;
+    std::optional<PlatformXR::FrameData::InputSourceHandJoint> m_joint;
 };
 
 }

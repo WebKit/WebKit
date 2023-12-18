@@ -1,0 +1,114 @@
+Tests the computedrole mappings defined in HTML-AAM. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order, and include all HTML tagnames. If a tag is not tested here, include a pointer to the file where it is tested, such as: <!-- caption -> ./table-roles.html -->
+
+x
+x
+x
+x x
+x
+x
+x
+x
+x
+x
+x
+x x
+
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+x
+
+                   x
+x
+x
+x
+x
+x
+x
+x
+
+x
+x
+x
+  x
+x
+
+ x
+x
+ x x x x
+x
+x
+
+PASS el-address
+PASS el-article
+PASS el-blockquote
+PASS el-button
+PASS el-code
+FAIL el-dd assert_equals: <dd data-testname="el-dd" data-expectedrole="definition" class="ex">x</dd> expected "definition" but got ""
+PASS el-del
+FAIL el-details assert_equals: <details data-testname="el-details" data-expectedrole="group" class="ex"><summary>x</summary>x</details> expected "group" but got ""
+FAIL el-dfn assert_equals: <dfn data-testname="el-dfn" data-expectedrole="term" class="ex">x</dfn> expected "term" but got "definition"
+FAIL el-dt assert_equals: <dt data-testname="el-dt" data-expectedrole="term" class="ex">x</dt> expected "term" but got ""
+FAIL el-em assert_equals: <em data-testname="el-em" data-expectedrole="emphasis" class="ex">x</em> expected "emphasis" but got ""
+PASS el-fieldset
+PASS el-figure
+PASS el-form
+PASS el-h1
+PASS el-h2
+PASS el-h3
+PASS el-h4
+PASS el-h5
+PASS el-h6
+FAIL el-hgroup assert_equals: <hgroup data-testname="el-hgroup" data-expectedrole="group" class="ex"><h1>x</h1></hgroup> expected "group" but got ""
+PASS el-hr
+PASS el-img
+PASS el-input-button
+PASS el-input-checkbox
+PASS el-input-email
+PASS el-input-radio
+PASS el-input-range
+PASS el-input-reset
+PASS el-input-search
+PASS el-input-submit
+PASS el-input-tel
+PASS el-input-text
+PASS el-input-url
+PASS el-ins
+PASS el-li-in-ul
+PASS el-li-in-ol
+PASS el-main
+PASS el-mark
+PASS el-menu
+PASS el-meter
+PASS el-nav
+PASS el-ol
+FAIL el-option assert_equals: <option data-testname="el-option" data-expectedrole="option" class="ex">x</option> expected "option" but got ""
+PASS el-output
+PASS el-p
+PASS el-progress
+FAIL el-s assert_equals: <s data-testname="el-s" data-expectedrole="deletion" class="ex">x</s> expected "deletion" but got ""
+PASS el-search
+PASS el-select-listbox
+FAIL el-strong assert_equals: <strong data-testname="el-strong" data-expectedrole="strong" class="ex">x</strong> expected "strong" but got ""
+PASS el-sub
+PASS el-sup
+PASS el-time
+PASS el-textarea
+PASS el-ul
+PASS el-img-alt-no-value
+PASS el-img-empty-alt
+

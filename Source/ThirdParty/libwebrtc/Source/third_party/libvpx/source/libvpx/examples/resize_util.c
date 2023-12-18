@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
   uint8_t *inbuf_v, *outbuf_v;
   int f, frames;
   int width, height, target_width, target_height;
+  int failed = 0;
 
   exec_name = argv[0];
 
@@ -82,6 +83,7 @@ int main(int argc, char *argv[]) {
   }
   fpout = fopen(fout, "wb");
   if (fpout == NULL) {
+    fclose(fpin);
     printf("Can't open file %s to write\n", fout);
     usage();
     return 1;
@@ -100,6 +102,11 @@ int main(int argc, char *argv[]) {
 
   inbuf = (uint8_t *)malloc(width * height * 3 / 2);
   outbuf = (uint8_t *)malloc(target_width * target_height * 3 / 2);
+  if (!(inbuf && outbuf)) {
+    printf("Failed to allocate buffers.\n");
+    failed = 1;
+    goto Error;
+  }
   inbuf_u = inbuf + width * height;
   inbuf_v = inbuf_u + width * height / 4;
   outbuf_u = outbuf + target_width * target_height;
@@ -114,10 +121,11 @@ int main(int argc, char *argv[]) {
     f++;
   }
   printf("%d frames processed\n", f);
+Error:
   fclose(fpin);
   fclose(fpout);
 
   free(inbuf);
   free(outbuf);
-  return 0;
+  return failed;
 }

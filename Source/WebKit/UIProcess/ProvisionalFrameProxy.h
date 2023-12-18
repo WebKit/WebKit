@@ -44,7 +44,8 @@ public:
     ProvisionalFrameProxy(WebFrameProxy&, WebProcessProxy&, RefPtr<RemotePageProxy>&&);
     ~ProvisionalFrameProxy();
 
-    WebProcessProxy& process() { return m_process.get(); }
+    WebProcessProxy& process() const { return m_process.get(); }
+    Ref<WebProcessProxy> protectedProcess() const;
     RefPtr<RemotePageProxy> takeRemotePageProxy();
 
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }

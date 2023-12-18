@@ -37,7 +37,7 @@ interface GPUDevice : EventTarget {
 
     [SameObject] readonly attribute GPUQueue queue;
 
-    undefined destroy();
+    [CallWith=CurrentScriptExecutionContext] undefined destroy();
 
     GPUBuffer createBuffer(GPUBufferDescriptor descriptor);
     GPUTexture createTexture(GPUTextureDescriptor descriptor);

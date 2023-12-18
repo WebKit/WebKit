@@ -211,6 +211,9 @@ class Issue(object):
             self.tracker.populate(self, 'keywords')
         return self._keywords
 
+    def set_keywords(self, keywords):
+        return self.tracker.set(self, keywords=keywords)
+
     @property
     def classification(self):
         if self._classification is None:

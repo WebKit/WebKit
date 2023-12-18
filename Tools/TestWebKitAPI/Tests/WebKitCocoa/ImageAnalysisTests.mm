@@ -347,7 +347,7 @@ static BOOL simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint lo
 {
     __block BOOL result;
     __block bool done = false;
-    [webView.textInputContentView prepareSelectionForContextMenuWithLocationInView:location completionHandler:^(BOOL shouldPresent, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:location completion:^(BOOL shouldPresent) {
         result = shouldPresent;
         done = true;
     }];

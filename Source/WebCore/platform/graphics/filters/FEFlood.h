@@ -29,7 +29,7 @@ namespace WebCore {
 
 class FEFlood : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEFlood> create(const Color& floodColor, float floodOpacity);
+    WEBCORE_EXPORT static Ref<FEFlood> create(const Color& floodColor, float floodOpacity, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEFlood&) const;
 
@@ -46,7 +46,7 @@ public:
 #endif
 
 private:
-    FEFlood(const Color& floodColor, float floodOpacity);
+    FEFlood(const Color& floodColor, float floodOpacity, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEFlood>(*this, other); }
 
@@ -64,4 +64,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEFlood)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEFlood)

@@ -274,7 +274,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         // data.
         RefPtr<SourceBufferPrivateAVFObjC> protectedSourceBuffer;
         for (auto& sourceBuffer : m_sourceBuffers) {
-            if (sourceBuffer->protectedTrackID() != notFound) {
+            if (sourceBuffer->protectedTrackID()) {
                 protectedSourceBuffer = sourceBuffer;
                 break;
             }
@@ -313,14 +313,22 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
 
         errorCode = MediaPlayer::NoError;
         systemCode = 0;
-        NSError* error = nil;
         NSData* nsIdentifier = m_identifier ? [NSData dataWithBytes:m_identifier->data() length:m_identifier->length()] : contentKeyRequest.get().identifier;
 
-        NSData* requestData = [contentKeyRequest contentKeyRequestDataForApp:certificateData.get() contentIdentifier:nsIdentifier options:options.get() error:&error];
+        RetainPtr<NSError> error;
+        RetainPtr<NSData> requestData;
+        Semaphore keyRequestCompleted { 0 };
+        [contentKeyRequest makeStreamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:nsIdentifier options:options.get() completionHandler:[&] (NSData *outRequestData, NSError *outError) {
+            error = outError;
+            requestData = outRequestData;
+            keyRequestCompleted.signal();
+        }];
+        keyRequestCompleted.wait();
+
         if (error) {
             errorCode = LegacyCDM::DomainError;
-            systemCode = mediaKeyErrorSystemCode(error);
-            ERROR_LOG(LOGIDENTIFIER, "error: ", error);
+            systemCode = mediaKeyErrorSystemCode(error.get());
+            ERROR_LOG(LOGIDENTIFIER, "error: ", error.get());
             return false;
         }
 

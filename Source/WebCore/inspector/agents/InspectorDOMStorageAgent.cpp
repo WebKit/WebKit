@@ -127,7 +127,7 @@ Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::setDOMStorageItem(Ref<JS
     bool quotaException = false;
     storageArea->setItem(*frame, key, value, quotaException);
     if (quotaException)
-        return makeUnexpected(DOMException::name(QuotaExceededError));
+        return makeUnexpected(DOMException::name(ExceptionCode::QuotaExceededError));
 
     return { };
 }

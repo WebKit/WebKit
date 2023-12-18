@@ -64,17 +64,17 @@ ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturing
     // 1. If the pointerId provided as the method's argument does not match any of the active pointers, then throw a DOMException with the name NotFoundError.
     RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     if (!capturingData)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     // 2. If the Element on which this method is invoked is not connected, throw an exception with the name InvalidStateError.
     if (!capturingTarget->isConnected())
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
 #if ENABLE(POINTER_LOCK)
     // 3. If this method is invoked while the document has a locked element, throw an exception with the name InvalidStateError.
     if (auto* page = capturingTarget->document().page()) {
         if (page->pointerLockController().isLocked())
-            return Exception { InvalidStateError };
+            return Exception { ExceptionCode::InvalidStateError };
     }
 #endif
 
@@ -98,7 +98,7 @@ ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* captu
     // being invoked as a result of the implicit release of pointer capture, then throw a DOMException with the name NotFoundError.
     RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
     if (!capturingData)
-        return Exception { NotFoundError };
+        return Exception { ExceptionCode::NotFoundError };
 
     // 2. If hasPointerCapture is false for the Element with the specified pointerId, then terminate these steps.
     if (!hasPointerCapture(capturingTarget, pointerId))

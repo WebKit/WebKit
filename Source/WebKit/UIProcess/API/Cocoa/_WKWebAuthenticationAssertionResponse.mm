@@ -55,7 +55,7 @@
 
 - (NSData *)userHandle
 {
-    return wrapper(_response->userHandle());
+    return wrapper(_response->userHandle()).autorelease();
 }
 
 - (BOOL)synchronizable
@@ -70,7 +70,7 @@
 
 - (NSData *)credentialID
 {
-    return wrapper(_response->credentialID());
+    return wrapper(_response->credentialID()).autorelease();
 }
 
 - (NSString *)accessGroup

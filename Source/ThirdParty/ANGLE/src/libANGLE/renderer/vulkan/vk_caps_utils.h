@@ -73,6 +73,9 @@ namespace vk
 {
 // Functions that determine support for a feature or extension, used both to advertise support for
 // an extension, and to determine if a context version can be supported.
+bool CanSupportTransformFeedbackExtension(
+    const VkPhysicalDeviceTransformFeedbackFeaturesEXT &xfbFeatures);
+bool CanSupportTransformFeedbackEmulation(const VkPhysicalDeviceFeatures &features);
 bool CanSupportGPUShader5EXT(const VkPhysicalDeviceFeatures &features);
 }  // namespace vk
 

@@ -57,6 +57,7 @@ private:
 
         NodePointer() = default;
         NodePointer(Node&, bool);
+        RefPtr<Node> protectedNode() const { return node; }
 
         void clear();
         bool moveToNext(Node& root);

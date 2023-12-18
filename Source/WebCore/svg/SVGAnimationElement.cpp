@@ -228,9 +228,12 @@ void SVGAnimationElement::animationAttributeChanged()
     setInactive();
 }
 
-float SVGAnimationElement::getStartTime() const
+ExceptionOr<float> SVGAnimationElement::getStartTime() const
 {
-    return narrowPrecisionToFloat(intervalBegin().value());
+    auto intervalBegin = this->intervalBegin();
+    if (!intervalBegin.isFinite())
+        return Exception { ExceptionCode::InvalidStateError, "The animation element does not have a current interval."_s };
+    return narrowPrecisionToFloat(intervalBegin.value());
 }
 
 float SVGAnimationElement::getCurrentTime() const
@@ -238,9 +241,12 @@ float SVGAnimationElement::getCurrentTime() const
     return narrowPrecisionToFloat(elapsed().value());
 }
 
-float SVGAnimationElement::getSimpleDuration() const
+ExceptionOr<float> SVGAnimationElement::getSimpleDuration() const
 {
-    return narrowPrecisionToFloat(simpleDuration().value());
+    auto simpleDuration = this->simpleDuration();
+    if (!simpleDuration.isFinite())
+        return Exception { ExceptionCode::NotSupportedError, "The simple duration is not determined on the given element."_s };
+    return narrowPrecisionToFloat(simpleDuration.value());
 }    
     
 void SVGAnimationElement::beginElement()

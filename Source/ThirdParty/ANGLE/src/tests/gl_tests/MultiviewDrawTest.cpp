@@ -398,6 +398,12 @@ class MultiviewRenderDualViewTest : public MultiviewRenderTest
     GLuint mProgram;
 };
 
+class MultiviewRenderDualViewTestNoWebGL : public MultiviewRenderDualViewTest
+{
+  protected:
+    MultiviewRenderDualViewTestNoWebGL() { setWebGLCompatibilityEnabled(false); }
+};
+
 // Base class for tests that care mostly about draw call validity and not rendering results.
 class MultiviewDrawValidationTest : public MultiviewTest
 {
@@ -928,6 +934,116 @@ TEST_P(MultiviewRenderDualViewTest, DrawArrays)
     ASSERT_GL_NO_ERROR();
 
     checkOutput();
+}
+
+// The test checks that glDrawArrays can be used to render into two views, after the program
+// executable has been installed and the program relinked (with a failing link, and using a
+// different number of views).
+TEST_P(MultiviewRenderDualViewTestNoWebGL, DrawArraysAfterFailedRelink)
+{
+    ANGLE_SKIP_TEST_IF(!requestMultiviewExtension(isMultisampled()));
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D());
+
+    std::string ext =
+        GetParam().mMultiviewExtension == multiview ? "GL_OVR_multiview" : "GL_OVR_multiview2";
+
+    const std::string kVS = R"(#version 300 es
+#extension )" + ext + R"( : require
+layout(num_views = 2) in;
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(1.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 1.0); break;
+        case 3: pos = vec2(1.0, 1.0); break;
+    };
+    pos.x = gl_ViewID_OVR == 0u ? pos.x * 0.5 + 0.5 : pos.x * 0.5 - 0.5;
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const std::string kFS = R"(#version 300 es
+#extension )" + ext + R"( : require
+precision mediump float;
+out vec4 col;
+void main()
+{
+    col = vec4(0, 1, 0, 1);
+})";
+
+    const std::string kBadVS = R"(#version 300 es
+#extension )" + ext + R"( : require
+layout(num_views = 4) in;
+out vec4 linkError;
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(1.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 1.0); break;
+        case 3: pos = vec2(1.0, 1.0); break;
+    };
+    pos.x = gl_ViewID_OVR == 0u ? pos.x * 0.5 + 0.5 : pos.x * 0.5 - 0.5;
+    gl_Position = vec4(pos, 0.0, 1.0);
+    linkError = vec4(0);
+})";
+
+    const std::string kBadFS = R"(#version 300 es
+#extension )" + ext + R"( : require
+precision mediump float;
+flat in uvec4 linkError;
+out vec4 col;
+void main()
+{
+    col = vec4(linkError);
+})";
+
+    // First, create a good program
+    GLuint program = glCreateProgram();
+    GLuint vs      = CompileShader(GL_VERTEX_SHADER, kVS.c_str());
+    GLuint fs      = CompileShader(GL_FRAGMENT_SHADER, kFS.c_str());
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+
+    glLinkProgram(program);
+    CheckLinkStatusAndReturnProgram(program, true);
+
+    // Detach the shaders for the sake of DrawArraysAfterFailedRelink
+    glDetachShader(program, vs);
+    glDetachShader(program, fs);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    // Install the executable
+    glUseProgram(program);
+
+    // Relink the program but in an erroneous way
+    GLuint badVs = CompileShader(GL_VERTEX_SHADER, kBadVS.c_str());
+    GLuint badFs = CompileShader(GL_FRAGMENT_SHADER, kBadFS.c_str());
+
+    glAttachShader(program, badVs);
+    glAttachShader(program, badFs);
+
+    glLinkProgram(program);
+
+    glDeleteShader(badVs);
+    glDeleteShader(badFs);
+    ASSERT_GL_NO_ERROR();
+
+    // Issue a draw and make sure everything works.
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // drawQuad(mProgram, "vPosition", 0.0f, 1.0f, true);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    ASSERT_GL_NO_ERROR();
+
+    checkOutput();
+
+    glDeleteProgram(program);
 }
 
 // The test checks that glDrawElements can be used to render into two views.
@@ -2374,6 +2490,11 @@ ANGLE_INSTANTIATE_TEST(MultiviewDrawValidationTest, ALL_VERTEX_SHADER_CONFIGS(1)
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewRenderDualViewTest);
 ANGLE_INSTANTIATE_TEST(MultiviewRenderDualViewTest,
+                       ALL_SINGLESAMPLE_CONFIGS(),
+                       ALL_MULTISAMPLE_CONFIGS());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiviewRenderDualViewTestNoWebGL);
+ANGLE_INSTANTIATE_TEST(MultiviewRenderDualViewTestNoWebGL,
                        ALL_SINGLESAMPLE_CONFIGS(),
                        ALL_MULTISAMPLE_CONFIGS());
 

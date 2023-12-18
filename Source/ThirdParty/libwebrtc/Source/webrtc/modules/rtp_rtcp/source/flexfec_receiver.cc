@@ -149,7 +149,12 @@ void FlexfecReceiver::ProcessReceivedPacket(
   RTC_DCHECK_RUN_ON(&sequence_checker_);
 
   // Decode.
-  erasure_code_->DecodeFec(received_packet, &recovered_packets_);
+  ForwardErrorCorrection::DecodeFecResult decode_result =
+      erasure_code_->DecodeFec(received_packet, &recovered_packets_);
+
+  if (decode_result.num_recovered_packets == 0) {
+    return;
+  }
 
   // Return recovered packets through callback.
   for (const auto& recovered_packet : recovered_packets_) {
@@ -184,6 +189,8 @@ void FlexfecReceiver::ProcessReceivedPacket(
                        << parsed_packet.Ssrc() << " seq "
                        << parsed_packet.SequenceNumber() << " recovered length "
                        << recovered_packet->pkt->data.size()
+                       << " received length "
+                       << received_packet.pkt->data.size()
                        << " from FlexFEC stream with SSRC: " << ssrc_;
       if (should_log_periodically) {
         last_recovered_packet_ = now;

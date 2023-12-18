@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SERVICE_WORKER,
-] dictionary BackgroundFetchUIOptions {
+dictionary BackgroundFetchUIOptions {
     sequence<ImageResource> icons;
     DOMString title;
 };

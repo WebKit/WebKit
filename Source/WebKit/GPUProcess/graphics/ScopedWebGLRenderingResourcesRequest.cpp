@@ -37,7 +37,9 @@
 namespace WebKit {
 
 std::atomic<unsigned> ScopedWebGLRenderingResourcesRequest::s_requests;
+#if !USE(GRAPHICS_LAYER_WC)
 static constexpr Seconds freeWebGLRenderingResourcesTimeout = 1_s;
+#endif
 static bool didScheduleFreeWebGLRenderingResources;
 
 void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()

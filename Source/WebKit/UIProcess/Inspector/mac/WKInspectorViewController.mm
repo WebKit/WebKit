@@ -145,6 +145,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
         if ([_delegate inspectorViewControllerInspectorIsUnderTest:self]) {
             preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
             preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;
+            preferences.inactiveSchedulingPolicy = WKInactiveSchedulingPolicyNone;
         }
     }
 
@@ -228,7 +229,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
         case kWKContextMenuItemTagOpenImageInNewWindow:
         case kWKContextMenuItemTagOpenFrameInNewWindow:
         case kWKContextMenuItemTagOpenMediaInNewWindow:
-        case kWKContextMenuItemTagCopyImageUrlToClipboard:
+        case kWKContextMenuItemTagCopyImageURLToClipboard:
         case kWKContextMenuItemTagCopyImageToClipboard:
         case kWKContextMenuItemTagDownloadLinkToDisk:
         case kWKContextMenuItemTagDownloadImageToDisk:

@@ -33,7 +33,7 @@ public:
     static Ref<HTMLDivElement> create(const QualifiedName&, Document&);
 
 protected:
-    constexpr static auto CreateHTMLDivElement = CreateHTMLElement;
+    static constexpr auto CreateHTMLDivElement = CreateHTMLElement;
     HTMLDivElement(const QualifiedName&, Document&, ConstructionType = CreateHTMLDivElement);
 
 private:

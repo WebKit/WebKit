@@ -94,13 +94,15 @@ void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::F
     prepopulateRectForZoom(totalScale, origin);
 }
 
-void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::FloatPoint origin)
+void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&& completionHandler)
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::commitTransientZoom - scale " << scale << " origin " << origin);
 
     scale *= m_webPage->viewScaleFactor();
     
     applyTransientZoomToPage(scale, origin);
+
+    completionHandler();
 }
 
 void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
@@ -110,13 +112,13 @@ void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransacti
     if (!frameView)
         return;
 
-    auto* renderViewGraphicsLayer = frameView->graphicsLayerForPageScale();
+    RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForPageScale();
     if (!renderViewGraphicsLayer)
         return;
 
     transaction.setPageScalingLayerID(renderViewGraphicsLayer->primaryLayerID());
 
-    auto* scrolledContentsLayer = frameView->graphicsLayerForScrolledContents();
+    RefPtr scrolledContentsLayer = frameView->graphicsLayerForScrolledContents();
     if (!scrolledContentsLayer)
         return;
 

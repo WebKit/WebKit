@@ -141,6 +141,34 @@ function testSimpleTryCatchValue(){
     assert.eq(instance.exports.call(), 2, "catching an exported wasm tag thrown from JS should be possible");
 }
 
+function testSimpleTryCatchValue2(){
+    const b = new Builder();
+    b.Type().End()
+        .Function().End()
+        .Exception().Signature({ params: ["i32", "i32"]}).End()
+        .Export().Function("call")
+            .Exception("foo", 0)
+        .End()
+        .Code()
+            .Function("call", { params: [], ret: "i32" })
+            .Try("i32")
+                .I32Const(0)
+                .I32Const(42)
+                .Throw(0)
+            .Catch(0)
+                .I32DivU()
+            .End()
+            .End()
+        .End()
+
+
+    const bin = b.WebAssembly().get();
+    const module = new WebAssembly.Module(bin);
+    const instance = new WebAssembly.Instance(module, { });
+
+    assert.eq(instance.exports.call(), 0, "catching an exported wasm tag thrown from JS should be possible");
+}
+
 function testCallTryCatchValue(){
     const b = new Builder();
     b.Type().End()
@@ -368,7 +396,7 @@ function testUnifyTryNoCatch() {
     assert.eq(instance.exports.call(), 2, "catching an exported wasm tag thrown from JS should be possible");
 }
 
-function testNestedCatch (){
+function testNestedCatch() {
     const b = new Builder();
     b.Type().End()
         .Function().End()
@@ -400,6 +428,7 @@ function testNestedCatch (){
 testSimpleTryCatch();
 testSimpleTryCatchAll();
 testSimpleTryCatchValue();
+testSimpleTryCatchValue2();
 testCallTryCatch();
 testCallTryCatchAll();
 testCallTryCatchValue();

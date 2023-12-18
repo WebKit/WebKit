@@ -23,6 +23,7 @@ typedef struct EncWorkerData {
   struct AV1_COMP *cpi;
   struct ThreadData *td;
   struct ThreadData *original_td;
+  struct aom_internal_error_info error_info;
   AV1LfSync *lf_sync;
   LFWorkerData *lf_data;
   int start;
@@ -53,8 +54,6 @@ void av1_accumulate_frame_counts(struct FRAME_COUNTS *acc_counts,
 void av1_row_mt_mem_dealloc(AV1_COMP *cpi);
 
 void av1_global_motion_estimation_mt(AV1_COMP *cpi);
-
-void av1_gm_dealloc(AV1GlobalMotionSync *gm_sync_data);
 
 #if !CONFIG_REALTIME_ONLY
 void av1_tpl_row_mt_sync_read_dummy(AV1TplRowMultiThreadSync *tpl_mt_sync,
@@ -99,13 +98,12 @@ void av1_init_lr_mt_buffers(AV1_COMP *cpi);
 void av1_init_mt_sync(AV1_COMP *cpi, int is_first_pass);
 #endif  // CONFIG_MULTITHREAD
 
-int av1_get_num_mod_workers_for_alloc(PrimaryMultiThreadInfo *const p_mt_info,
+int av1_get_num_mod_workers_for_alloc(const PrimaryMultiThreadInfo *p_mt_info,
                                       MULTI_THREADED_MODULES mod_name);
 
 void av1_init_tile_thread_data(AV1_PRIMARY *ppi, int is_first_pass);
 
-void av1_cdef_mse_calc_frame_mt(AV1_COMMON *cm, MultiThreadInfo *mt_info,
-                                CdefSearchCtx *cdef_search_ctx);
+void av1_cdef_mse_calc_frame_mt(AV1_COMP *cpi);
 
 void av1_cdef_mt_dealloc(AV1CdefSync *cdef_sync);
 
@@ -116,7 +114,7 @@ void av1_write_tile_obu_mt(
     unsigned int *max_tile_size, uint32_t *const obu_header_size,
     uint8_t **tile_data_start, const int num_workers);
 
-int av1_compute_num_enc_workers(AV1_COMP *cpi, int max_workers);
+int av1_compute_num_enc_workers(const AV1_COMP *cpi, int max_workers);
 
 int av1_compute_num_fp_contexts(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf);
 

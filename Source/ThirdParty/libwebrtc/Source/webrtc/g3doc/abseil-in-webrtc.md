@@ -29,6 +29,7 @@ will generate a shared library.
 * `absl::bind_front`
 * `absl::Cleanup`
 * `absl::InlinedVector`
+* `absl::Nonnull` and `absl::Nullable`
 * `absl::WrapUnique`
 * `absl::optional` and related stuff from `absl/types/optional.h`.
 * `absl::string_view`

@@ -105,6 +105,9 @@ public:
     IntPoint accessibilityScreenToRootView(const IntPoint&) const override;
     IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
     PlatformPageClient platformPageClient() const override;
+#if PLATFORM(IOS_FAMILY)
+    void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const override;
+#endif
     void setCursor(const Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
 

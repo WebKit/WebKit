@@ -72,8 +72,8 @@ bool HTMLProgressElement::childShouldCreateRenderer(const Node& child) const
 
 RenderProgress* HTMLProgressElement::renderProgress() const
 {
-    if (is<RenderProgress>(renderer()))
-        return downcast<RenderProgress>(renderer());
+    if (auto* renderProgress = dynamicDowncast<RenderProgress>(renderer()))
+        return renderProgress;
     return downcast<RenderProgress>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
 }
 
@@ -159,7 +159,7 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     inner->appendChild(bar);
 }
 
-bool HTMLProgressElement::shouldAppearIndeterminate() const
+bool HTMLProgressElement::matchesIndeterminatePseudoClass() const
 {
     return !isDeterminate();
 }

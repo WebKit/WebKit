@@ -51,7 +51,7 @@ void DocumentPictureInPicture::exitPictureInPicture(Document& document, Ref<Defe
     auto element = document.pictureInPictureElement();
 
     if (!element) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 

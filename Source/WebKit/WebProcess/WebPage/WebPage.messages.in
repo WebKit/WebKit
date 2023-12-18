@@ -48,7 +48,7 @@ messages -> WebPage LegacyReceiver {
 
     ExecuteEditCommandWithCallback(String name, String argument) -> ()
     KeyEvent(WebCore::FrameIdentifier frameID, WebKit::WebKeyboardEvent event) -> (std::optional<WebKit::WebEventType> eventType, bool handled)
-    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions) -> (std::optional<WebKit::WebEventType> eventType, bool handled, struct std::optional<WebCore::RemoteMouseEventData> remoteMouseEventData)
+    MouseEvent(WebCore::FrameIdentifier frameID, WebKit::WebMouseEvent event, std::optional<Vector<WebKit::SandboxExtension::Handle>> sandboxExtensions) -> (std::optional<WebKit::WebEventType> eventType, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
 
 #if ENABLE(NOTIFICATIONS)
     ClearNotificationPermissionState()
@@ -89,7 +89,6 @@ messages -> WebPage LegacyReceiver {
     BeginSelectionInDirection(enum:uint8_t WebCore::SelectionDirection direction) -> (bool endIsMoving)
     UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor) -> (bool endIsMoving)
     UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement) -> (bool endIsMoving)
-    RequestDictationContext() -> (String selectedText, String textBefore, String textAfter)
 #if ENABLE(REVEAL)
     RequestRVItemInCurrentSelectedRange() -> (WebKit::RevealItem item)
     PrepareSelectionForContextMenuWithLocationInView(WebCore::IntPoint point) -> (bool shouldShowMenu, WebKit::RevealItem item)
@@ -195,13 +194,14 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadSimulatedRequestAndResponse(struct WebKit::LoadParameters loadParameters, WebCore::ResourceResponse simulatedResponse)
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
-    CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID)
+    CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, String frameName)
 
-    GetFrameInfo(WebCore::FrameIdentifier frameID) -> (struct WebKit::FrameInfoData data)
+    GetFrameInfo(WebCore::FrameIdentifier frameID) -> (std::optional<WebKit::FrameInfoData> data)
     GetFrameTree() -> (struct WebKit::FrameTreeNodeData data)
     DidCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
+    MainFrameURLChangedInAnotherProcess(URL newURL)
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
@@ -237,7 +237,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetSelectionAsWebArchiveData() -> (std::optional<IPC::SharedBufferReference> data)
     GetSourceForFrame(WebCore::FrameIdentifier frameID) -> (String string)
     GetWebArchiveOfFrame(WebCore::FrameIdentifier frameID) -> (std::optional<IPC::SharedBufferReference> dataReference)
-    GetWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, String fileName) -> (std::optional<IPC::SharedBufferReference> dataReference)
+    GetWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, Vector<WebCore::MarkupExclusionRule> markupExclusionRules, String fileName) -> (std::optional<IPC::SharedBufferReference> dataReference)
 
     RunJavaScriptInFrameInScriptWorld(struct WebCore::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, std::pair<WebKit::ContentWorldIdentifier, String> world) -> (IPC::DataReference resultData, std::optional<WebCore::ExceptionDetails> details)
 
@@ -319,7 +319,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
 
-    SetPaginationMode(uint32_t mode)
+    SetPaginationMode(WebCore::Pagination::Mode mode)
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
     SetPageLength(double pageLength)
     SetGapBetweenPages(double gap)
@@ -354,14 +354,15 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Drag and drop.
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData selection, OptionSet<WebCore::DragApplicationFlags> flags)
+    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData selection, OptionSet<WebCore::DragApplicationFlags> flags) -> (std::optional<WebCore::DragOperation> dragOperation, enum:uint8_t WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, WebCore::IntRect insertionRect, WebCore::IntRect editableElementRect, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
 #endif
 #if !PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    PerformDragControllerAction(enum:uint8_t WebKit::DragControllerAction action, WebCore::DragData dragData, WebKit::SandboxExtension::Handle sandboxExtensionHandle, Vector<WebKit::SandboxExtension::Handle> sandboxExtensionsForUpload)
+    PerformDragControllerAction(std::optional<WebCore::FrameIdentifier> frameID, enum:uint8_t WebKit::DragControllerAction action, WebCore::DragData dragData) -> (std::optional<WebCore::DragOperation> dragOperation, enum:uint8_t WebCore::DragHandlingMethod dragHandlingMethod, bool mouseIsOverFileInput, unsigned numberOfItemsToBeAccepted, WebCore::IntRect insertionRect, WebCore::IntRect editableElementRect, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
+    PerformDragOperation(WebCore::DragData dragData, WebKit::SandboxExtension::Handle sandboxExtensionHandle, Vector<WebKit::SandboxExtension::Handle> sandboxExtensionsForUpload) -> (bool handled)
 #endif
 #if ENABLE(DRAG_SUPPORT)
     DidStartDrag()
-    DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask)
+    DragEnded(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragOperation> dragOperationMask) -> (struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     DragCancelled()
 #endif
 
@@ -389,7 +390,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     # Open panel.
 #if PLATFORM(IOS_FAMILY)
-    DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, IPC::DataReference iconData, WebKit::SandboxExtension::Handle machBootstrapHandle, WebKit::SandboxExtension::Handle frontboardServicesSandboxExtension, WebKit::SandboxExtension::Handle iconServicesSandboxExtension)
+    DidChooseFilesForOpenPanelWithDisplayStringAndIcon(Vector<String> fileURLs, String displayString, IPC::DataReference iconData, WebKit::SandboxExtension::Handle machBootstrapHandle, WebKit::SandboxExtension::Handle iconServicesSandboxExtension)
 #endif
     DidChooseFilesForOpenPanel(Vector<String> fileURLs, Vector<String> replacementURLs)
     DidCancelForOpenPanel()
@@ -484,7 +485,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if PLATFORM(COCOA)
-    WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
+    WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates)
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
     GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
@@ -566,6 +567,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetHeaderBannerHeight(int height)
     SetFooterBannerHeight(int height)
 
+    DidBeginMagnificationGesture()
     DidEndMagnificationGesture()
 #endif
 
@@ -635,7 +637,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetDefersLoading(bool defersLoading)
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
     ZoomPDFIn(WebKit::PDFPluginIdentifier identifier)
     ZoomPDFOut(WebKit::PDFPluginIdentifier identifier)
     SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, URL url, IPC::DataReference data)
@@ -653,11 +655,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     SetCanShowPlaceholder(struct WebCore::ElementContext context, bool canShowPlaceholder)
 
-#if ENABLE(TRACKING_PREVENTION)
     WasLoadedWithDataTransferFromPrevalentResource()
     ClearLoadedSubresourceDomains()
     GetLoadedSubresourceDomains() -> (Vector<WebCore::RegistrableDomain> domains)
-#endif
 
 #if USE(SYSTEM_PREVIEW)
     SystemPreviewActionTriggered(struct WebCore::SystemPreviewInfo previewInfo, String message)
@@ -666,6 +666,10 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
     SendMessageToWebProcessExtensionWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
+#endif
+
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
+    PreferredBufferFormatsDidChange(Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats)
 #endif
 
     StartTextManipulations(Vector<WebCore::TextManipulationController::ExclusionRule> exclusionRules, bool includeSubframes) -> ()
@@ -688,7 +692,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
-    HandleWheelEvent(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled)
+    HandleWheelEvent(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (uint64_t scrollingNodeID, std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
 #if PLATFORM(IOS_FAMILY)
     DispatchWheelEventWithoutScrolling(WebCore::FrameIdentifier frameID, WebKit::WebWheelEvent event) -> (bool handled)
 #endif
@@ -706,7 +710,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     ScrollToRect(WebCore::FloatRect targetRect, WebCore::FloatPoint origin)
 
-    NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (bool result)
+    NavigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, URL url) -> (enum:uint8_t WebCore::ScheduleLocationChangeResult result)
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
     ModelInlinePreviewDidLoad(WebCore::PlatformLayerIdentifier layerID)
@@ -740,4 +744,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 
     FrameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
+
+    RemotePostMessage(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
+    RenderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    SetMediaEnvironment(String mediaEnvironment)
+#endif
 }

@@ -21,11 +21,7 @@ variables:
     -DBUILD_SHARED_LIBS=ON
 
 sources:
-- kind: git_tag
+- kind: git_repo
   url: github_com:oneapi-src/oneTBB.git
-  checkout-submodules: false
-  track-tags: true
-  track: master
-  ref: v2021.5.0-g3df08fe234f23e732a122809b40eb129ae22733f
-- kind: patch
-  path: patches/tbb-Retry-if-pthread_create-fails-with-EAGAIN.patch
+  track: v2021.*
+  ref: v2021.11.0-src-rc1-0-gcb6cc0ec55353b7f48b19c45586f4736b89c4eac

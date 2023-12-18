@@ -135,33 +135,3 @@ template<typename T, typename Functor> constexpr decltype(auto) callWithColorTyp
 
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ColorSpace> {
-    using values = EnumValues<
-        WebCore::ColorSpace,
-        WebCore::ColorSpace::A98RGB,
-        WebCore::ColorSpace::DisplayP3,
-        WebCore::ColorSpace::ExtendedA98RGB,
-        WebCore::ColorSpace::ExtendedDisplayP3,
-        WebCore::ColorSpace::ExtendedLinearSRGB,
-        WebCore::ColorSpace::ExtendedProPhotoRGB,
-        WebCore::ColorSpace::ExtendedRec2020,
-        WebCore::ColorSpace::ExtendedSRGB,
-        WebCore::ColorSpace::HSL,
-        WebCore::ColorSpace::HWB,
-        WebCore::ColorSpace::LCH,
-        WebCore::ColorSpace::Lab,
-        WebCore::ColorSpace::LinearSRGB,
-        WebCore::ColorSpace::OKLCH,
-        WebCore::ColorSpace::OKLab,
-        WebCore::ColorSpace::ProPhotoRGB,
-        WebCore::ColorSpace::Rec2020,
-        WebCore::ColorSpace::SRGB,
-        WebCore::ColorSpace::XYZ_D50,
-        WebCore::ColorSpace::XYZ_D65
-    >;
-};
-
-}

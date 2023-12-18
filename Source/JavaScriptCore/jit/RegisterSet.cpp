@@ -196,7 +196,6 @@ RegisterSet RegisterSetBuilder::vmCalleeSaveRegisters()
     result.add(FPRInfo::fpRegCS3, IgnoreVectors);
     result.add(FPRInfo::fpRegCS4, IgnoreVectors);
     result.add(FPRInfo::fpRegCS5, IgnoreVectors);
-    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
 #elif CPU(MIPS)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
@@ -448,6 +447,9 @@ RegisterSet RegisterSetBuilder::wasmPinnedRegisters()
         result.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors);
     if constexpr (GPRInfo::wasmBoundsCheckingSizeRegister != InvalidGPRReg)
         result.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+#if OS(WINDOWS)
+    result.add(GPRInfo::wasmScratchCSR0, IgnoreVectors);
+#endif
     return result;
 }
 #endif

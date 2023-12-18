@@ -63,6 +63,7 @@ public:
     
     void dirtyLineBoxes();
     void dirtyLinesFromChangedChild(RenderBoxModelObject& parent, RenderObject& child);
+    void shiftLinesBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
     void paint(RenderBoxModelObject*, PaintInfo&, const LayoutPoint&) const;
     bool hitTest(RenderBoxModelObject*, const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) const;

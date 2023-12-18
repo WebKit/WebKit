@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # Simple script to generate a 302 HTTP redirect with http-equiv=refresh
+binmode STDOUT;
 
 print "Status: 302 Found\r\n";
 print "Content-type: text/html\r\n";

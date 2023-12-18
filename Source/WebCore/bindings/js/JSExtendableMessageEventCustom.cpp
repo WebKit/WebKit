@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(SERVICE_WORKER)
 #include "JSExtendableMessageEvent.h"
 
 #include "JSDOMConstructor.h"
@@ -87,5 +86,3 @@ JSValue JSExtendableMessageEvent::data(JSGlobalObject& lexicalGlobalObject) cons
 }
 
 }
-
-#endif // ENABLE(SERVICE_WORKER)

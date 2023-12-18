@@ -36,17 +36,61 @@
 #include <limits.h>
 #include <wtf/Vector.h>
 
+#if CPU(X86_SSE2)
+#include <immintrin.h>
+#endif
+
+#if HAVE(ARM_NEON_INTRINSICS)
+#include <arm_neon.h>
+#endif
+
 namespace WebCore {
 
-static bool hasConstantValue(float* values, size_t framesToProcess)
+static bool hasConstantValue(float* values, int framesToProcess)
 {
-    if (framesToProcess <= 1)
-        return true;
+    // Load the initial value
+    const float value = values[0];
+    // This initialization ensures that we correctly handle the first frame and
+    // start the processing from the second frame onwards, effectively excluding
+    // the first frame from the subsequent comparisons in the non-SIMD paths
+    // it guarantees that we don't redundantly compare the first frame again
+    // during the loop execution.
+    int processedFrames = 1;
 
-    float constant = values[0];
-    for (size_t i = 1; i < framesToProcess; ++i) {
-        if (values[i] != constant)
+#if CPU(X86_SSE2)
+    // Process 4 floats at a time using SIMD.
+    __m128 valueVec = _mm_set1_ps(value);
+    // Start at 0 for byte alignment
+    for (processedFrames = 0; processedFrames < framesToProcess - 3; processedFrames += 4) {
+        // Load 4 floats from memory.
+        __m128 inputVec = _mm_loadu_ps(&values[processedFrames]);
+        // Compare the 4 floats with the value.
+        __m128 cmpVec = _mm_cmpneq_ps(inputVec, valueVec);
+        // Check if any of the floats are not equal to the value.
+        if (_mm_movemask_ps(cmpVec))
             return false;
+    }
+#elif HAVE(ARM_NEON_INTRINSICS)
+    // Process 4 floats at a time using SIMD.
+    float32x4_t valueVec = vdupq_n_f32(value);
+    // Start at 0 for byte alignment.
+    for (processedFrames = 0; processedFrames < framesToProcess - 3; processedFrames += 4) {
+        // Load 4 floats from memory.
+        float32x4_t inputVec = vld1q_f32(&values[processedFrames]);
+        // Compare the 4 floats with the value.
+        uint32x4_t cmpVec = vceqq_f32(inputVec, valueVec);
+        // Accumulate the elements of the cmpVec vector using bitwise AND.
+        uint32x2_t cmpReduced32 = vand_u32(vget_low_u32(cmpVec), vget_high_u32(cmpVec));
+        // Check if any of the floats are not equal to the value.
+        if (!vget_lane_u32(vpmin_u32(cmpReduced32, cmpReduced32), 0))
+            return false;
+    }
+#endif
+    // Fallback implementation without SIMD optimization.
+    while (processedFrames < framesToProcess) {
+        if (values[processedFrames] != value)
+            return false;
+        ++processedFrames;
     }
     return true;
 }

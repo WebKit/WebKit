@@ -1,12 +1,12 @@
 
-FAIL 00B1  PLUS-MINUS SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL 20AC  EURO SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL 2116  NUMERO SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL FE69  SMALL DOLLAR SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL FF04  FULLWIDTH DOLLAR SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL FFE1  FULLWIDTH POUND SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL FFE5  FULLWIDTH YEN SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
-FAIL FFE6  FULLWIDTH WON SIGN may NOT appear at line start if ja and normal assert_true: expected true got false
+FAIL 00B1  PLUS-MINUS SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 88.91999816894531 +/- 1 but got 58.91999816894531
+FAIL 20AC  EURO SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 90.9000015258789 +/- 1 but got 60.900001525878906
+FAIL 2116  NUMERO SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 99 +/- 1 but got 69
+FAIL FE69  SMALL DOLLAR SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 99 +/- 1 but got 69
+FAIL FF04  FULLWIDTH DOLLAR SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 99 +/- 1 but got 69
+FAIL FFE1  FULLWIDTH POUND SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 99 +/- 1 but got 69
+FAIL FFE5  FULLWIDTH YEN SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 99 +/- 1 but got 69
+FAIL FFE6  FULLWIDTH WON SIGN may NOT appear at line start if ja and normal assert_approx_equals: expected 99 +/- 1 but got 69
 00B1
 文文文文文文±字字
 文文文文文

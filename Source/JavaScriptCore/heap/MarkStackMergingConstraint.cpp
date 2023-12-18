@@ -28,10 +28,13 @@
 
 #include "GCSegmentedArrayInlines.h"
 #include "JSCInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
-MarkStackMergingConstraint::MarkStackMergingConstraint(Heap& heap)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MarkStackMergingConstraint);
+
+MarkStackMergingConstraint::MarkStackMergingConstraint(JSC::Heap& heap)
     : MarkingConstraint("Msm", "Mark Stack Merging", ConstraintVolatility::GreyedByExecution)
     , m_heap(heap)
 {

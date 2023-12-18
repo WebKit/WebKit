@@ -1,0 +1,24 @@
+Test that <select multiple> with a vertical writing mode can be scrolled by dragging a horizontal scrollbar
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state
+PASS select.scrollTop is 0
+PASS select.scrollLeft is 0
+
+
+Attempt to drag as if vertical scrollbar was present
+PASS select.scrollTop is 0
+PASS select.scrollLeft is 0
+
+
+Drag horizontal scrollbar
+PASS select.scrollTop is 0
+PASS select.scrollLeft is > 0
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

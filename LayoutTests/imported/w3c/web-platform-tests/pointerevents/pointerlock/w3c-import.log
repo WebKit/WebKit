@@ -15,10 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html
-/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_getCoalescedEvents_when_pointerlocked.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_getCoalescedEvents_when_pointerlocked.https.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerlock_after_pointercapture.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerlock_supercedes_capture.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_in_pointerlock.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointermove_on_chorded_mouse_button_when_locked.html
-/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerrawupdate_in_pointerlock.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_pointerrawupdate_in_pointerlock.https.html

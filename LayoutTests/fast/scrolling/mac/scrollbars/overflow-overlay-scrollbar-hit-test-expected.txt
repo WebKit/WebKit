@@ -1,0 +1,16 @@
+sticky
+Test hit-testing the overlay scrollbar with a composited element inside the scroller
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial state
+enabled
+Hovering horizontal scrollbar should show expanded scrollbar
+PASS Scrollbar is enabled and expanded
+Attempting to drag the scrollbar
+PASS Scrolled by dragging the scrollbar
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

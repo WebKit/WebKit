@@ -69,4 +69,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGViewportContainer, isLegacySVGViewportContainer())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGViewportContainer, isLegacyRenderSVGViewportContainer())

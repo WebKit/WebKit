@@ -58,9 +58,7 @@ class FeatureDefinesSearch(object):
     def _search_file(self, matcher, path):
         with open(path, encoding="latin-1") as contents:
             for line in contents:
-                value = matcher(line)
-
-                if value:
+                for value in matcher(line):
                     flag = value.flag
 
                     if flag not in self._defines:
@@ -71,8 +69,8 @@ class FeatureDefinesSearch(object):
     def _search_directory(self, matcher, path, patterns):
         for root, __, files in os.walk(path):
             for file in files:
-                for patten in patterns:
-                    if fnmatch.fnmatch(file, patten):
+                for pattern in patterns:
+                    if fnmatch.fnmatch(file, pattern):
                         self._search_file(matcher, os.path.join(root, file))
 
     @classmethod
@@ -122,13 +120,35 @@ class FeatureDefinesPerl(FeatureDefinesSearch):
         self._search_file(matcher, path)
 
 
+class FeatureDefinesUsagePreferences(FeatureDefinesSearch):
+    """ Find feature defines in UnifiedWebPreferences.yaml. """
+
+    def search(self, root, macro='ENABLE'):
+        matcher = usage_matcher(macro)
+        path = os.path.join(root, "Source", "WTF", "Scripts", "Preferences", "UnifiedWebPreferences.yaml")
+
+        self._search_file(matcher, path)
+
+
+class FeatureDefinesUsageSandbox(FeatureDefinesSearch):
+    """ Find feature defines in sandbox files. """
+
+    def search(self, root, macro='ENABLE'):
+        matcher = usage_matcher(macro)
+        directories = FeatureDefinesSearch._source_directories(root)
+        patterns = ['*.sb.in']
+
+        for directory in directories:
+            self._search_directory(matcher, directory, patterns)
+
+
 class FeatureDefinesUsageNativeCode(FeatureDefinesSearch):
     """ Find feature defines in native source code. """
 
     def search(self, root, macro='ENABLE'):
         matcher = usage_matcher(macro)
         directories = FeatureDefinesSearch._source_directories(root)
-        patterns = ['*.h', '*.c', '*.cpp', '*.mm', '*.messages.in']
+        patterns = ['*.h', '*.c', '*.cpp', '*.mm', '*.messages.in', '*.serialization.in']
 
         for directory in directories:
             self._search_directory(matcher, directory, patterns)

@@ -27,6 +27,7 @@
 
 #include "MarkingConstraint.h"
 #include "MarkingConstraintExecutorPair.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -34,6 +35,7 @@ namespace JSC {
 // downside is that this makes it hard for constraints to override any functions in MarkingConstraint
 // other than executeImpl. In those cases, just subclass MarkingConstraint.
 class SimpleMarkingConstraint final : public MarkingConstraint {
+    WTF_MAKE_TZONE_ALLOCATED(SimpleMarkingConstraint);
 public:
     JS_EXPORT_PRIVATE SimpleMarkingConstraint(
         CString abbreviatedName, CString name,

@@ -138,6 +138,7 @@ public:
     }
 
     enum ResultCondition {
+        Carry, // <- not implemented
         Overflow,
         Signed,
         PositiveOrZero,
@@ -677,6 +678,8 @@ public:
 
     void lshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.slliInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
     }
 
@@ -726,6 +729,8 @@ public:
 
     void rshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.sraiInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
     }
 
@@ -775,6 +780,8 @@ public:
 
     void urshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.srliInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
     }
 
@@ -1930,6 +1937,12 @@ public:
         Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
     }
 
+    template<PtrTag startTag>
+    static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
+    {
+        Assembler::replaceWithNops(instructionStart.dataLocation(), memoryToFillWithNopsInBytes);
+    }
+
     static ptrdiff_t maxJumpReplacementSize()
     {
         return Assembler::maxJumpReplacementSize();
@@ -3058,7 +3071,8 @@ public:
     Call call(RegisterID target, RegisterID callTag) { UNUSED_PARAM(callTag); return call(target, NoPtrTag); }
     Call call(Address address, RegisterID callTag) { UNUSED_PARAM(callTag); return call(address, NoPtrTag); }
 
-    void callOperation(const CodePtr<OperationPtrTag> operation)
+    template<PtrTag tag>
+    void callOperation(const CodePtr<tag> operation)
     {
         auto temp = temps<Data>();
         loadImmediate(TrustedImmPtr(operation.taggedPtr()), temp.data());
@@ -4214,6 +4228,7 @@ private:
     Jump branchTestFinalize(ResultCondition cond, RegisterID src)
     {
         switch (cond) {
+        case Carry:
         case Overflow:
             break;
         case Signed:

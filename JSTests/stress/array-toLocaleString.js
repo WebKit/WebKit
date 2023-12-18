@@ -43,4 +43,8 @@ shouldBe([ undefined, undefined ].toLocaleString(), ',');
 
 // Test that parameters are passed through properly.
 shouldThrow(() => [ new Date ].toLocaleString('i'), RangeError);
-shouldBeOneOf([ new Date(NaN), new Date(0) ].toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [ 'Invalid Date,一九七〇/一/一 〇〇:〇〇:〇〇', 'Invalid Date,一九七〇/一/一 上午一二:〇〇:〇〇' ]);
+shouldBeOneOf([ new Date(NaN), new Date(0) ].toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [
+    'Invalid Date,一九七〇/一/一 〇:〇〇:〇〇',
+    'Invalid Date,一九七〇/一/一 〇〇:〇〇:〇〇',
+    'Invalid Date,一九七〇/一/一 上午一二:〇〇:〇〇'
+]);

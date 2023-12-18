@@ -22,7 +22,7 @@
 
 headers: "ArgumentCoders.h"
 
-struct WebKit::WebPageCreationParameters {
+[RValue] struct WebKit::WebPageCreationParameters {
     WebCore::IntSize viewSize;
 
     OptionSet<WebCore::ActivityState> activityState;
@@ -108,6 +108,7 @@ struct WebKit::WebPageCreationParameters {
     bool useFormSemanticContext;
     int headerBannerHeight;
     int footerBannerHeight;
+    std::optional<WebKit::ViewWindowCoordinates> viewWindowCoordinates;
 #endif
 #if ENABLE(META_VIEWPORT)
     bool ignoresViewportScaleLimits;
@@ -139,6 +140,9 @@ struct WebKit::WebPageCreationParameters {
 #endif
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor;
+#endif
+#if HAVE(APP_ACCENT_COLORS) && PLATFORM(MAC)
+    bool appUsesCustomAccentColor;
 #endif
 #if USE(WPE_RENDERER)
     UnixFileDescriptor hostFileDescriptor;
@@ -230,7 +234,7 @@ struct WebKit::WebPageCreationParameters {
 
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
-    std::optional<WebKit::FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    std::optional<WebKit::WebPageCreationParameters::SubframeProcessPageParameters> subframeProcessPageParameters;
     std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
@@ -242,4 +246,13 @@ struct WebKit::WebPageCreationParameters {
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
     WebKit::SandboxExtension::Handle machBootstrapHandle;
 #endif
+
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+    Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
+#endif
+}
+
+[Nested] struct WebKit::WebPageCreationParameters::SubframeProcessPageParameters {
+    URL initialMainDocumentURL;
+    WebKit::FrameTreeCreationParameters frameTreeParameters;
 }

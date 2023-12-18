@@ -217,7 +217,15 @@ float NumericLexFloat32OutOfRangeToInfinity(const std::string &str)
     {
         return std::numeric_limits<float>::infinity();
     }
-    else if (exponentLong < std::numeric_limits<float>::min_exponent10)
+    // In 32-bit float, min_exponent10 is -37 but min() is
+    // 1.1754943E-38. 10^-37 may be the "minimum negative integer such
+    // that 10 raised to that power is a normalized float", but being
+    // constrained to powers of ten it's above min() (which is 2^-126).
+    // Values below min() are flushed to zero near the end of this
+    // function anyway so (AFAICT) this comparison is only done to ensure
+    // that the exponent will not make the pow() call (below) overflow.
+    // Comparing against -38 (min_exponent10 - 1) will do the trick.
+    else if (exponentLong < std::numeric_limits<float>::min_exponent10 - 1)
     {
         return 0.0f;
     }
@@ -233,7 +241,7 @@ float NumericLexFloat32OutOfRangeToInfinity(const std::string &str)
     {
         return std::numeric_limits<float>::infinity();
     }
-    if (value < static_cast<double>(std::numeric_limits<float>::min()))
+    if (static_cast<float>(value) < std::numeric_limits<float>::min())
     {
         return 0.0f;
     }

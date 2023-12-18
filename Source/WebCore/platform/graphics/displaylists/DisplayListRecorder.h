@@ -77,15 +77,14 @@ protected:
     virtual void recordScale(const FloatSize&) = 0;
     virtual void recordSetCTM(const AffineTransform&) = 0;
     virtual void recordConcatenateCTM(const AffineTransform&) = 0;
-    virtual void recordSetInlineFillColor(SRGBA<uint8_t>) = 0;
-    virtual void recordSetInlineStrokeColor(SRGBA<uint8_t>) = 0;
-    virtual void recordSetStrokeThickness(float) = 0;
+    virtual void recordSetInlineFillColor(PackedColor::RGBA) = 0;
+    virtual void recordSetInlineStroke(SetInlineStroke&&) = 0;
     virtual void recordSetState(const GraphicsContextState&) = 0;
     virtual void recordSetLineCap(LineCap) = 0;
     virtual void recordSetLineDash(const DashArray&, float dashOffset) = 0;
     virtual void recordSetLineJoin(LineJoin) = 0;
     virtual void recordSetMiterLimit(float) = 0;
-    virtual void recordClearShadow() = 0;
+    virtual void recordClearDropShadow() = 0;
     virtual void recordResetClip() = 0;
     virtual void recordClip(const FloatRect&) = 0;
     virtual void recordClipRoundedRect(const FloatRoundedRect&) = 0;
@@ -97,10 +96,10 @@ protected:
     virtual void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) = 0;
     virtual void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) = 0;
     virtual void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) = 0;
-    virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
-    virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
+    virtual void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
+    virtual void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) = 0;
     virtual void recordDrawSystemImage(SystemImage&, const FloatRect&) = 0;
-    virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
+    virtual void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) = 0;
     virtual void recordBeginTransparencyLayer(float) = 0;
     virtual void recordEndTransparencyLayer() = 0;
     virtual void recordDrawRect(const FloatRect&, float) = 0;
@@ -133,7 +132,7 @@ protected:
     virtual void recordStrokeRect(const FloatRect&, float) = 0;
 #if ENABLE(INLINE_PATH_DATA)
     virtual void recordStrokeLine(const PathDataLine&) = 0;
-    virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SRGBA<uint8_t>, float thickness) = 0;
+    virtual void recordStrokeLineWithColorAndThickness(const PathDataLine&, SetInlineStroke&&) = 0;
     virtual void recordStrokeArc(const PathArc&) = 0;
     virtual void recordStrokeQuadCurve(const PathDataQuadCurve&) = 0;
     virtual void recordStrokeBezierCurve(const PathDataBezierCurve&) = 0;
@@ -144,6 +143,8 @@ protected:
     virtual void recordClearRect(const FloatRect&) = 0;
 
     virtual void recordDrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) = 0;
+
+    virtual void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) = 0;
 
 #if USE(CG)
     virtual void recordApplyStrokePattern() = 0;
@@ -233,12 +234,14 @@ private:
     WEBCORE_EXPORT void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) override;
     WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
 
-    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) final;
-    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) final;
-    WEBCORE_EXPORT void drawNativeImageInternal(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
+    WEBCORE_EXPORT void drawDisplayListItems(const Vector<Item>&, const ResourceHeap&, const FloatPoint& destination) final;
+
+    WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
+    WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
+    WEBCORE_EXPORT void drawNativeImageInternal(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     WEBCORE_EXPORT void drawSystemImage(SystemImage&, const FloatRect&) final;
-    WEBCORE_EXPORT void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
-    WEBCORE_EXPORT void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) final;
+    WEBCORE_EXPORT void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
+    WEBCORE_EXPORT void drawPattern(ImageBuffer&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions) final;
 
     WEBCORE_EXPORT void drawRect(const FloatRect&, float borderThickness) final;
     WEBCORE_EXPORT void drawLine(const FloatPoint&, const FloatPoint&) final;
@@ -286,6 +289,8 @@ private:
 
     void appendStateChangeItemIfNecessary();
     void appendStateChangeItem(const GraphicsContextState&);
+
+    SetInlineStroke buildSetInlineStroke(const GraphicsContextState&);
 
     const AffineTransform& ctm() const;
 

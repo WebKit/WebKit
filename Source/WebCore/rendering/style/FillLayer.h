@@ -70,6 +70,7 @@ public:
     ~FillLayer();
 
     StyleImage* image() const { return m_image.get(); }
+    RefPtr<StyleImage> protectedImage() const { return m_image; }
     const Length& xPosition() const { return m_xPosition; }
     const Length& yPosition() const { return m_yPosition; }
     Edge backgroundXOrigin() const { return static_cast<Edge>(m_backgroundXOrigin); }

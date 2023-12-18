@@ -1470,6 +1470,158 @@ bool ValidateImportSemaphoreFdEXT(const Context *context,
     return true;
 }
 
+bool ValidateGetTexParameterIivOES(const Context *context,
+                                   angle::EntryPoint entryPoint,
+                                   TextureType target,
+                                   GLenum pname,
+                                   const GLint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    return ValidateGetTexParameterBase(context, entryPoint, target, pname, nullptr);
+}
+
+bool ValidateGetTexParameterIuivOES(const Context *context,
+                                    angle::EntryPoint entryPoint,
+                                    TextureType target,
+                                    GLenum pname,
+                                    const GLuint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+    }
+    return ValidateGetTexParameterBase(context, entryPoint, target, pname, nullptr);
+}
+
+bool ValidateTexParameterIivOES(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                TextureType target,
+                                GLenum pname,
+                                const GLint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    return ValidateTexParameterBase(context, entryPoint, target, pname, -1, true, params);
+}
+
+bool ValidateTexParameterIuivOES(const Context *context,
+                                 angle::EntryPoint entryPoint,
+                                 TextureType target,
+                                 GLenum pname,
+                                 const GLuint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateTexParameterBase(context, entryPoint, target, pname, -1, true, params);
+}
+
+bool ValidateGetSamplerParameterIivOES(const Context *context,
+                                       angle::EntryPoint entryPoint,
+                                       SamplerID sampler,
+                                       GLenum pname,
+                                       const GLint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
+}
+
+bool ValidateGetSamplerParameterIuivOES(const Context *context,
+                                        angle::EntryPoint entryPoint,
+                                        SamplerID sampler,
+                                        GLenum pname,
+                                        const GLuint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
+}
+
+bool ValidateSamplerParameterIivOES(const Context *context,
+                                    angle::EntryPoint entryPoint,
+                                    SamplerID sampler,
+                                    GLenum pname,
+                                    const GLint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, params);
+}
+
+bool ValidateSamplerParameterIuivOES(const Context *context,
+                                     angle::EntryPoint entryPoint,
+                                     SamplerID sampler,
+                                     GLenum pname,
+                                     const GLuint *params)
+{
+    if (context->getClientMajorVersion() < 3)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+    return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, params);
+}
+
 bool ValidateGetSamplerParameterIivEXT(const Context *context,
                                        angle::EntryPoint entryPoint,
                                        SamplerID samplerPacked,
@@ -1479,6 +1631,11 @@ bool ValidateGetSamplerParameterIivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateGetSamplerParameterBase(context, entryPoint, samplerPacked, pname, nullptr);
@@ -1493,6 +1650,11 @@ bool ValidateGetSamplerParameterIuivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateGetSamplerParameterBase(context, entryPoint, samplerPacked, pname, nullptr);
@@ -1507,6 +1669,11 @@ bool ValidateGetTexParameterIivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateGetTexParameterBase(context, entryPoint, targetPacked, pname, nullptr);
@@ -1521,6 +1688,11 @@ bool ValidateGetTexParameterIuivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateGetTexParameterBase(context, entryPoint, targetPacked, pname, nullptr);
@@ -1535,6 +1707,11 @@ bool ValidateSamplerParameterIivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateSamplerParameterBase(context, entryPoint, samplerPacked, pname, -1, true, param);
@@ -1549,6 +1726,11 @@ bool ValidateSamplerParameterIuivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateSamplerParameterBase(context, entryPoint, samplerPacked, pname, -1, true, param);
@@ -1563,6 +1745,11 @@ bool ValidateTexParameterIivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateTexParameterBase(context, entryPoint, targetPacked, pname, -1, true, params);
@@ -1577,6 +1764,11 @@ bool ValidateTexParameterIuivEXT(const Context *context,
     if (context->getClientMajorVersion() < 3)
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
+    }
+
+    if (!context->getExtensions().textureBorderClampEXT)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
     return ValidateTexParameterBase(context, entryPoint, targetPacked, pname, -1, true, params);
@@ -1737,7 +1929,7 @@ bool ValidatePLSTextureType(const Context *context,
 
 bool ValidatePLSActiveBlendFunc(const Context *context,
                                 angle::EntryPoint entryPoint,
-                                GLenum blendFunc)
+                                gl::BlendFactorType blendFunc)
 {
     // INVALID_OPERATION is generated if BLEND_DST_ALPHA, BLEND_DST_RGB, BLEND_SRC_ALPHA, or
     // BLEND_SRC_RGB, for any draw buffer, is a blend function requiring the secondary color input,
@@ -1745,10 +1937,10 @@ bool ValidatePLSActiveBlendFunc(const Context *context,
     ASSERT(context->getState().getExtensions().blendFuncExtendedEXT);
     switch (blendFunc)
     {
-        case GL_SRC1_COLOR_EXT:
-        case GL_ONE_MINUS_SRC1_COLOR_EXT:
-        case GL_SRC1_ALPHA_EXT:
-        case GL_ONE_MINUS_SRC1_ALPHA_EXT:
+        case gl::BlendFactorType::Src1Color:
+        case gl::BlendFactorType::OneMinusSrc1Color:
+        case gl::BlendFactorType::Src1Alpha:
+        case gl::BlendFactorType::OneMinusSrc1Alpha:
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPLSSecondaryBlendEnabled);
             return false;
         default:
@@ -1757,28 +1949,28 @@ bool ValidatePLSActiveBlendFunc(const Context *context,
 }
 bool ValidatePLSActiveBlendEquation(const Context *context,
                                     angle::EntryPoint entryPoint,
-                                    GLenum blendEquation)
+                                    gl::BlendEquationType blendEquation)
 {
     // INVALID_OPERATION is generated if BLEND_EQUATION_RGB and/or BLEND_EQUATION_ALPHA is an
     // advanced blend equation defined in KHR_blend_equation_advanced.
     ASSERT(context->getState().getExtensions().blendEquationAdvancedKHR);
     switch (blendEquation)
     {
-        case GL_MULTIPLY_KHR:
-        case GL_SCREEN_KHR:
-        case GL_OVERLAY_KHR:
-        case GL_DARKEN_KHR:
-        case GL_LIGHTEN_KHR:
-        case GL_COLORDODGE_KHR:
-        case GL_COLORBURN_KHR:
-        case GL_HARDLIGHT_KHR:
-        case GL_SOFTLIGHT_KHR:
-        case GL_DIFFERENCE_KHR:
-        case GL_EXCLUSION_KHR:
-        case GL_HSL_HUE_KHR:
-        case GL_HSL_SATURATION_KHR:
-        case GL_HSL_COLOR_KHR:
-        case GL_HSL_LUMINOSITY_KHR:
+        case gl::BlendEquationType::Multiply:
+        case gl::BlendEquationType::Screen:
+        case gl::BlendEquationType::Overlay:
+        case gl::BlendEquationType::Darken:
+        case gl::BlendEquationType::Lighten:
+        case gl::BlendEquationType::Colordodge:
+        case gl::BlendEquationType::Colorburn:
+        case gl::BlendEquationType::Hardlight:
+        case gl::BlendEquationType::Softlight:
+        case gl::BlendEquationType::Difference:
+        case gl::BlendEquationType::Exclusion:
+        case gl::BlendEquationType::HslHue:
+        case gl::BlendEquationType::HslSaturation:
+        case gl::BlendEquationType::HslColor:
+        case gl::BlendEquationType::HslLuminosity:
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPLSAdvancedBlendEnabled);
             return false;
         default:

@@ -64,6 +64,15 @@ GStreamerVideoCaptureDeviceManager& GStreamerVideoCaptureDeviceManager::singleto
     return manager;
 }
 
+void teardownGStreamerCaptureDeviceManagers()
+{
+    auto& audioManager = GStreamerAudioCaptureDeviceManager::singleton();
+    audioManager.teardown();
+
+    auto& videoManager = GStreamerVideoCaptureDeviceManager::singleton();
+    videoManager.teardown();
+}
+
 GStreamerCaptureDeviceManager::GStreamerCaptureDeviceManager()
 {
     ensureGStreamerInitialized();
@@ -79,8 +88,17 @@ GStreamerCaptureDeviceManager::GStreamerCaptureDeviceManager()
 
 GStreamerCaptureDeviceManager::~GStreamerCaptureDeviceManager()
 {
+    teardown();
+}
+
+void GStreamerCaptureDeviceManager::teardown()
+{
+    GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Tearing down");
+    m_isTearingDown = true;
     stopMonitor();
     RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(*this);
+    m_devices.clear();
+    m_gstreamerDevices.clear();
 }
 
 void GStreamerCaptureDeviceManager::stopMonitor()
@@ -148,7 +166,7 @@ std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDe
 
 const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()
 {
-    if (m_devices.isEmpty())
+    if (m_devices.isEmpty() && !m_isTearingDown)
         refreshCaptureDevices();
 
     return m_devices;
@@ -208,8 +226,12 @@ void GStreamerCaptureDeviceManager::removeDevice(GRefPtr<GstDevice>&& gstDevice)
 
 void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 {
+    GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Refreshing capture devices");
     m_devices.clear();
     m_gstreamerDevices.clear();
+    if (m_isTearingDown)
+        return;
+
     if (!m_deviceMonitor) {
         m_deviceMonitor = adoptGRef(gst_device_monitor_new());
 

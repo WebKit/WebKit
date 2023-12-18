@@ -34,6 +34,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "RemoteDisplayListRecorderMessages.h"
+#include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteResourceCacheProxy.h"
@@ -66,8 +67,10 @@ namespace WebKit {
 class WebPage;
 class RemoteImageBufferProxy;
 class RemoteSerializedImageBufferProxy;
+class RemoteLayerBackingStore;
 
 class RemoteImageBufferProxyFlushState;
+class RemoteImageBufferSetProxy;
 
 class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, SerialFunctionDispatcher {
@@ -107,7 +110,11 @@ public:
     void releaseAllDrawingResources();
     void releaseAllImageResources();
     void releaseRenderingResource(WebCore::RenderingResourceIdentifier);
-    void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
+    void markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
+    RefPtr<RemoteImageBufferSetProxy> createRemoteImageBufferSet();
+    void releaseRemoteImageBufferSet(RemoteImageBufferSetProxy&);
+
+    std::unique_ptr<RemoteDisplayListRecorderProxy> createDisplayListRecorder(WebCore::RenderingResourceIdentifier, const WebCore::FloatSize&, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, OptionSet<WebCore::ImageBufferOptions>);
 
     struct BufferSet {
         RefPtr<WebCore::ImageBuffer> front;
@@ -116,18 +123,22 @@ public:
     };
 
     struct LayerPrepareBuffersData {
-        BufferSet buffers;
+        RefPtr<RemoteImageBufferSetProxy> bufferSet;
+        WebCore::Region dirtyRegion;
         bool supportsPartialRepaint { true };
         bool hasEmptyDirtyRegion { false };
+        bool requiresClearedPixels { true };
     };
 
 #if PLATFORM(COCOA)
     struct SwapBuffersResult {
-        BufferSet buffers;
+        std::optional<ImageBufferBackendHandle> backendHandle;
         SwapBuffersDisplayRequirement displayRequirement;
+        BufferIdentifierSet cacheIdentifiers;
     };
 
-    Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
+    void prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&&, CompletionHandler<void(Vector<SwapBuffersResult>&&)>);
+    void ensurePrepareCompleted();
 #endif
 
     void finalizeRenderingUpdate();
@@ -175,7 +186,7 @@ private:
     // Messages to be received.
     void didCreateImageBufferBackend(ImageBufferBackendHandle&&, WebCore::RenderingResourceIdentifier);
     void didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID);
-    void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayerAsVolatile);
+    void didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>>, bool didMarkAllLayerAsVolatile);
 
     // SerialFunctionDispatcher
     void dispatch(Function<void()>&& function) final { m_dispatcher.dispatch(WTFMove(function)); }
@@ -186,11 +197,15 @@ private:
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
+    MarkSurfacesAsVolatileRequestIdentifier m_currentVolatilityRequest;
     HashMap<MarkSurfacesAsVolatileRequestIdentifier, CompletionHandler<void(bool)>> m_markAsVolatileRequests;
+    HashMap<RemoteImageBufferSetIdentifier, WeakPtr<RemoteImageBufferSetProxy>> m_bufferSets;
     SerialFunctionDispatcher& m_dispatcher;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
+
+    IPC::Connection::AsyncReplyID m_prepareReply;
 };
 
 } // namespace WebKit

@@ -52,14 +52,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLBlock);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMathMLTable);
 
 RenderMathMLBlock::RenderMathMLBlock(Type type, MathMLPresentationElement& container, RenderStyle&& style)
-    : RenderBlock(type, container, WTFMove(style), 0)
+    : RenderBlock(type, container, WTFMove(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderMathMLBlock::RenderMathMLBlock(Type type, Document& document, RenderStyle&& style)
-    : RenderBlock(type, document, WTFMove(style), 0)
+    : RenderBlock(type, document, WTFMove(style), { })
     , m_mathMLStyle(MathMLStyle::create())
 {
     setChildrenInline(false); // All of our children must be block-level.

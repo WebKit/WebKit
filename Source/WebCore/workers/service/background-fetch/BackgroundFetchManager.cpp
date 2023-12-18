@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRequest.h"
 #include "ContentSecurityPolicy.h"
@@ -55,7 +53,7 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
         if (result.hasException())
             return result.releaseException();
         if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
-            return Exception { TypeError, "Request has no-cors mode"_s };
+            return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
         return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
     }, [&context] (String&& url) -> ExceptionOr<Vector<Ref<FetchRequest>>> {
         auto result = FetchRequest::create(context, WTFMove(url), { });
@@ -71,13 +69,13 @@ static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(Scrip
             if (result.hasException())
                 return result.releaseException();
             if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
-                return Exception { TypeError, "Request has no-cors mode"_s };
+                return Exception { ExceptionCode::TypeError, "Request has no-cors mode"_s };
             
             // FIXME: Add support for readable stream bodies
             if (result.returnValue()->isReadableStreamBody())
-                return Exception { NotSupportedError, "ReadableStream uploading is not supported"_s };
+                return Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s };
             
-            requests.uncheckedAppend(result.releaseReturnValue());
+            requests.append(result.releaseReturnValue());
         }
         return requests;
     });
@@ -105,14 +103,14 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
     }
 
     if (!generatedRequests.returnValue().size()) {
-        promise.reject(Exception { TypeError, "No requests"_s });
+        promise.reject(Exception { ExceptionCode::TypeError, "No requests"_s });
         return;
     }
 
     auto requests = map(generatedRequests.releaseReturnValue(), [&](auto&& fetchRequest) -> BackgroundFetchRequest {
         Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> responseHeaders;
         if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
-            if (auto* policy = context.contentSecurityPolicy())
+            if (CheckedPtr policy = context.contentSecurityPolicy())
                 responseHeaders = policy->responseHeaders();
         }
         return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer(), WTFMove(responseHeaders) };
@@ -129,7 +127,7 @@ void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String
                 return;
             }
             if (result.returnValue().identifier.isNull()) {
-                promise.reject(Exception { TypeError, "An internal error occured"_s });
+                promise.reject(Exception { ExceptionCode::TypeError, "An internal error occured"_s });
                 return;
             }
 
@@ -176,5 +174,3 @@ void BackgroundFetchManager::getIds(ScriptExecutionContext& context, DOMPromiseD
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

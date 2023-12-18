@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <WebCore/SWRegistrationStore.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/Timer.h>
@@ -64,5 +62,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

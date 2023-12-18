@@ -7,6 +7,8 @@ PASS: accessibilityController.accessibleElementById('img').url.indexOf('url-test
 
 Changing href of #anchor to 'foobar.html'
 PASS: accessibilityController.accessibleElementById('anchor').url.indexOf('foobar.html') !== -1 === true
+PASS: accessibilityController.accessibleElementById('input').url.includes('foo-bar.html') === true
+PASS: accessibilityController.accessibleElementById('img').url.includes('foo-bar.png') === true
 
 PASS successfullyParsed is true
 

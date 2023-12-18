@@ -10,6 +10,44 @@ function debugEscaped(message) {
     debug(escapeHTML(message));
 }
 
+// Dumps the AX table by using the table cellForColumnAndRow API (which is what some ATs use).
+function dumpAXTable(axElement, options) {
+    let output = "";
+    const rowCount = axElement.rowCount;
+    const columnCount = axElement.columnCount;
+
+    for (let row = 0; row < rowCount; row++) {
+        for (let column = 0; column < columnCount; column++)
+            output += `#${axElement.domIdentifier} cellForColumnAndRow(${column}, ${row}).domIdentifier is ${axElement.cellForColumnAndRow(column, row).domIdentifier}\n`;
+    }
+    return output;
+}
+
+// Dumps the result of a traversal via the UI element search API (which is what some ATs use).
+function dumpAXSearchTraversal(axElement) {
+    let output = "";
+    function elementDescription(axElement) {
+        if (!axElement)
+            return "null";
+
+        const role = axElement.role;
+        const id = axElement.domIdentifier;
+        let result = `${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText"))
+            result += ` ${accessibilityController.platformName === "ios" ? axElement.description : axElement.stringValue}`;
+        return result;
+    }
+
+    let searchResult = null;
+    while (true) {
+        searchResult = axElement.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        output += `\n{${elementDescription(searchResult)}}\n`;
+    }
+    return output;
+}
+
 // Dumps the accessibility tree hierarchy for the given accessibilityObject into
 // an element with id="tree", e.g., <pre id="tree"></pre>. In addition, it
 // returns a two element array with the first element [0] being false if the

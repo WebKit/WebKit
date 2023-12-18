@@ -1,0 +1,6 @@
+Green
+Green
+
+PASS Unknown declaration does not consume subsequent declaration
+PASS Unknown declaration with blocks does not consume subsequent declaration
+

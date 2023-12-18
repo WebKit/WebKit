@@ -197,10 +197,9 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
 
 - (void)contactPicker:(CNContactPickerViewController *)picker didSelectContacts:(NSArray<CNContact*> *)contacts
 {
-    Vector<WebCore::ContactInfo> info;
-    info.reserveInitialCapacity(contacts.count);
-    for (CNContact *contact in contacts)
-        info.uncheckedAppend([self _contactInfoFromCNContact:contact]);
+    Vector<WebCore::ContactInfo> info(contacts.count, [&](size_t i) {
+        return WebCore::ContactInfo { [self _contactInfoFromCNContact:contacts[i]] };
+    });
     [self _contactPickerDidDismissWithContactInfo:WTFMove(info)];
 }
 

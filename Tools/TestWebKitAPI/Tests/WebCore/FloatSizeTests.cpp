@@ -28,6 +28,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <wtf/Markable.h>
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -327,6 +328,17 @@ TEST(FloatSize, Rounded)
 
     EXPECT_EQ(1025, expandedSize.width());
     EXPECT_EQ(769, expandedSize.height());
+}
+
+TEST(FloatSize, Markable)
+{
+    WebCore::FloatSize size(1024.3f, 768.6f);
+    Markable<WebCore::FloatSize, WebCore::FloatSize::MarkableTraits> optional;
+    EXPECT_FALSE(optional) << "nullopt";
+    optional = size;
+    EXPECT_EQ((optional.value_or(WebCore::FloatSize { })), size) << "retained";
+    optional = WebCore::FloatSize::nanSize();
+    EXPECT_FALSE(optional) << "nullopt";
 }
 
 }

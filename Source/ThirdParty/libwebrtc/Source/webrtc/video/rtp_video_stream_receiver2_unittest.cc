@@ -1174,17 +1174,23 @@ TEST_F(RtpVideoStreamReceiver2Test, TransformFrame) {
 }
 
 // Test default behavior and when playout delay is overridden by field trial.
-const VideoPlayoutDelay kTransmittedPlayoutDelay = {100, 200};
-const VideoPlayoutDelay kForcedPlayoutDelay = {70, 90};
+VideoPlayoutDelay TransmittedPlayoutDelay() {
+  return {TimeDelta::Millis(100), TimeDelta::Millis(200)};
+}
+VideoPlayoutDelay ForcedPlayoutDelay() {
+  return {TimeDelta::Millis(70), TimeDelta::Millis(90)};
+}
 struct PlayoutDelayOptions {
   std::string field_trial;
   VideoPlayoutDelay expected_delay;
 };
-const PlayoutDelayOptions kDefaultBehavior = {
-    /*field_trial=*/"", /*expected_delay=*/kTransmittedPlayoutDelay};
-const PlayoutDelayOptions kOverridePlayoutDelay = {
-    /*field_trial=*/"WebRTC-ForcePlayoutDelay/min_ms:70,max_ms:90/",
-    /*expected_delay=*/kForcedPlayoutDelay};
+PlayoutDelayOptions DefaultBehavior() {
+  return {.field_trial = "", .expected_delay = TransmittedPlayoutDelay()};
+}
+PlayoutDelayOptions OverridePlayoutDelay() {
+  return {.field_trial = "WebRTC-ForcePlayoutDelay/min_ms:70,max_ms:90/",
+          .expected_delay = ForcedPlayoutDelay()};
+}
 
 class RtpVideoStreamReceiver2TestPlayoutDelay
     : public RtpVideoStreamReceiver2Test,
@@ -1196,7 +1202,7 @@ class RtpVideoStreamReceiver2TestPlayoutDelay
 
 INSTANTIATE_TEST_SUITE_P(PlayoutDelay,
                          RtpVideoStreamReceiver2TestPlayoutDelay,
-                         Values(kDefaultBehavior, kOverridePlayoutDelay));
+                         Values(DefaultBehavior(), OverridePlayoutDelay()));
 
 TEST_P(RtpVideoStreamReceiver2TestPlayoutDelay, PlayoutDelay) {
   rtc::CopyOnWriteBuffer payload_data({'1', '2', '3', '4'});
@@ -1208,7 +1214,7 @@ TEST_P(RtpVideoStreamReceiver2TestPlayoutDelay, PlayoutDelay) {
 
   // Set playout delay on outgoing packet.
   EXPECT_TRUE(packet_to_send.SetExtension<PlayoutDelayLimits>(
-      kTransmittedPlayoutDelay));
+      TransmittedPlayoutDelay()));
   uint8_t* payload = packet_to_send.AllocatePayload(payload_data.size());
   memcpy(payload, payload_data.data(), payload_data.size());
 
@@ -1224,7 +1230,7 @@ TEST_P(RtpVideoStreamReceiver2TestPlayoutDelay, PlayoutDelay) {
   EXPECT_CALL(mock_on_complete_frame_callback_, DoOnCompleteFrame(_))
       .WillOnce(Invoke([expected_playout_delay =
                             GetParam().expected_delay](EncodedFrame* frame) {
-        EXPECT_EQ(frame->EncodedImage().playout_delay_, expected_playout_delay);
+        EXPECT_EQ(frame->EncodedImage().PlayoutDelay(), expected_playout_delay);
       }));
   rtp_video_stream_receiver_->OnReceivedPayloadData(
       received_packet.PayloadBuffer(), received_packet, video_header);

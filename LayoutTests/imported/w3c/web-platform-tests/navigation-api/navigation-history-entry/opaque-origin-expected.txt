@@ -1,0 +1,4 @@
+
+
+PASS navigation.currentEntry/entries()/canGoBack/canGoForward in an opaque origin iframe
+

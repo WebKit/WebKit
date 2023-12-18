@@ -117,7 +117,7 @@ ExceptionOr<size_t> CryptoKeyAES::getKeyLength(const CryptoAlgorithmParameters& 
 {
     auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
     if (!lengthIsValid(aesParameters.length))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     return aesParameters.length;
 }
 

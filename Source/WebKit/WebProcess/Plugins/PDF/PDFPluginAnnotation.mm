@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginAnnotation.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "PDFKitSoftLink.h"
 #import "PDFLayerControllerSPI.h"
@@ -132,4 +132,4 @@ void PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent(ScriptEx
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

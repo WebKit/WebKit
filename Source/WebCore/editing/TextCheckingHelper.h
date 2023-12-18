@@ -116,5 +116,6 @@ void checkTextOfParagraph(TextCheckerClient&, StringView, OptionSet<TextChecking
 
 bool unifiedTextCheckerEnabled(const LocalFrame*);
 bool platformDrivenTextCheckerEnabled();
+bool platformOrClientDrivenTextCheckerEnabled();
 
 } // namespace WebCore

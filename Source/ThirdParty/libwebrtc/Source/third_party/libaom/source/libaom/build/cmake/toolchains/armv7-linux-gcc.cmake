@@ -44,6 +44,3 @@ set(AOM_AS_FLAGS --defsym ARCHITECTURE=7 -march=armv7-a -mfpu=neon
 set(CMAKE_SYSTEM_PROCESSOR "armv7")
 
 set(AOM_NEON_INTRIN_FLAG "-mfpu=neon ${AOM_EXTRA_TOOLCHAIN_FLAGS}")
-
-# No runtime cpu detect for armv7-linux-gcc.
-set(CONFIG_RUNTIME_CPU_DETECT 0 CACHE STRING "")

@@ -300,13 +300,13 @@ private:
 
 static ImageDecoderAVFObjCSample* toSample(const PresentationOrderSampleMap::value_type& pair)
 {
-    return (ImageDecoderAVFObjCSample*)pair.second.get();
+    return (ImageDecoderAVFObjCSample*)pair.second.ptr();
 }
 
 template <typename Iterator>
 ImageDecoderAVFObjCSample* toSample(Iterator iter)
 {
-    return (ImageDecoderAVFObjCSample*)iter->second.get();
+    return (ImageDecoderAVFObjCSample*)iter->second.ptr();
 }
 
 #pragma mark - ImageDecoderAVFObjC
@@ -572,8 +572,8 @@ Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
         return { };
 
     return WTF::map(m_sampleData.presentationOrder(), [](auto& sample) {
-        auto* imageSample = (ImageDecoderAVFObjCSample*)sample.second.get();
-        return ImageDecoder::FrameInfo { imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble()) };
+        auto& imageSample = static_cast<ImageDecoderAVFObjCSample&>(sample.second.get());
+        return ImageDecoder::FrameInfo { imageSample.hasAlpha(), Seconds(imageSample.duration().toDouble()) };
     });
 }
 

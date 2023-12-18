@@ -23,7 +23,7 @@ static INLINE __m128i xx_loadh_64(__m128i a, const void *b) {
 }
 
 static INLINE uint64_t xx_cvtsi128_si64(__m128i a) {
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   return (uint64_t)_mm_cvtsi128_si64(a);
 #else
   {

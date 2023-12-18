@@ -30,15 +30,20 @@
 #import "config.h"
 #import "APIData.h"
 #import "CocoaHelpers.h"
+#import "Logging.h"
 #import "WKNSData.h"
+#import <wtf/FileSystem.h>
 
 namespace WebKit {
 
 static NSString * const privacyPreservingDescriptionKey = @"privacyPreservingDescription";
 
 template<>
-NSArray *filterObjects<NSArray>(NSArray *array, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+NSArray *filterObjects<NSArray>(NSArray *array, bool NS_NOESCAPE (^block)(id key, id value))
 {
+    if (!array)
+        return nil;
+
     switch (array.count) {
     case 0:
         return @[ ];
@@ -54,8 +59,11 @@ NSArray *filterObjects<NSArray>(NSArray *array, bool NS_NOESCAPE (^block)(__kind
 }
 
 template<>
-NSDictionary *filterObjects<NSDictionary>(NSDictionary *dictionary, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+NSDictionary *filterObjects<NSDictionary>(NSDictionary *dictionary, bool NS_NOESCAPE (^block)(id key, id value))
 {
+    if (!dictionary)
+        return nil;
+
     if (!dictionary.count)
         return @{ };
 
@@ -70,8 +78,11 @@ NSDictionary *filterObjects<NSDictionary>(NSDictionary *dictionary, bool NS_NOES
 }
 
 template<>
-NSSet *filterObjects<NSSet>(NSSet *set, bool NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+NSSet *filterObjects<NSSet>(NSSet *set, bool NS_NOESCAPE (^block)(id key, id value))
 {
+    if (!set)
+        return nil;
+
     if (!set.count)
         return [NSSet set];
 
@@ -81,8 +92,11 @@ NSSet *filterObjects<NSSet>(NSSet *set, bool NS_NOESCAPE (^block)(__kindof id ke
 }
 
 template<>
-NSArray *mapObjects<NSArray>(NSArray *array, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+NSArray *mapObjects<NSArray>(NSArray *array, id NS_NOESCAPE (^block)(id key, id value))
 {
+    if (!array)
+        return nil;
+
     switch (array.count) {
     case 0:
         return @[ ];
@@ -106,8 +120,11 @@ NSArray *mapObjects<NSArray>(NSArray *array, __kindof id NS_NOESCAPE (^block)(__
 }
 
 template<>
-NSDictionary *mapObjects<NSDictionary>(NSDictionary *dictionary, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+NSDictionary *mapObjects<NSDictionary>(NSDictionary *dictionary, id NS_NOESCAPE (^block)(id key, id value))
 {
+    if (!dictionary)
+        return nil;
+
     if (!dictionary.count)
         return @{ };
 
@@ -122,8 +139,11 @@ NSDictionary *mapObjects<NSDictionary>(NSDictionary *dictionary, __kindof id NS_
 }
 
 template<>
-NSSet *mapObjects<NSSet>(NSSet *set, __kindof id NS_NOESCAPE (^block)(__kindof id key, __kindof id value))
+NSSet *mapObjects<NSSet>(NSSet *set, id NS_NOESCAPE (^block)(id key, id value))
 {
+    if (!set)
+        return nil;
+
     switch (set.count) {
     case 0:
         return [NSSet set];
@@ -222,7 +242,7 @@ bool isValidJSONObject(id object, JSONOptionSet options)
 
 id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
 {
-    if (!json)
+    if (!json.length)
         return nil;
 
     id result = [NSJSONSerialization JSONObjectWithData:json options:toReadingImpl(options) error:error];
@@ -234,6 +254,9 @@ id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
 
 id parseJSON(NSString *json, JSONOptionSet options, NSError **error)
 {
+    if (!json.length)
+        return nil;
+
     return parseJSON([json dataUsingEncoding:NSUTF8StringEncoding], options, error);
 }
 
@@ -336,6 +359,17 @@ NSString *privacyPreservingDescription(NSError *error)
     return [NSError errorWithDomain:error.domain ?: @"" code:error.code userInfo:nil].description;
 }
 
+NSURL *ensureDirectoryExists(NSURL *directory)
+{
+    ASSERT(directory.isFileURL);
+    if (!FileSystem::makeAllDirectories(directory.path)) {
+        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", (NSString *)directory);
+        return nil;
+    }
+
+    return directory;
+}
+
 NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscape)
 {
     ASSERT(string);
@@ -365,10 +399,10 @@ NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscap
 
 NSDate *toAPI(const WallTime& time)
 {
-    if (std::isnan(time))
+    if (time.isNaN())
         return nil;
 
-    if (std::isinf(time))
+    if (time.isInfinity())
         return NSDate.distantFuture;
 
     return [NSDate dateWithTimeIntervalSince1970:time.secondsSinceEpoch().value()];
@@ -405,13 +439,9 @@ NSArray *toAPIArray(HashSet<String>& set)
 
 Vector<String> toImpl(NSArray *array)
 {
-    Vector<String> result;
-    result.reserveInitialCapacity(array.count);
-
-    for (NSString *element in array)
-        result.uncheckedAppend(element);
-
-    return result;
+    return Vector<String>(array.count, [array](size_t i) {
+        return (NSString *)array[i];
+    });
 }
 
 HashSet<String> toImplSet(NSArray *array)

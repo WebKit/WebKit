@@ -1,0 +1,4 @@
+
+PASS Browser sends Referer header in nested iframe request when location.replace is called on an iframe
+PASS Browser sends Referer header in nested iframe request when location.assign is called on an iframe
+

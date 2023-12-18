@@ -50,14 +50,14 @@ RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensio
     return webExtensionControllerProxies().get(identifier).get();
 }
 
-Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExtensionControllerParameters parameters)
+Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(const WebExtensionControllerParameters& parameters, WebPage* newPage)
 {
     auto updateProperties = [&](WebExtensionControllerProxy& controller) {
         WebExtensionContextProxySet contexts;
         WebExtensionContextProxyBaseURLMap baseURLMap;
 
         for (auto& contextParameters : parameters.contextParameters) {
-            auto context = WebExtensionContextProxy::getOrCreate(contextParameters);
+            auto context = WebExtensionContextProxy::getOrCreate(contextParameters, newPage);
             baseURLMap.add(contextParameters.baseURL.protocolHostAndPort(), context);
             contexts.add(context);
         }
@@ -76,7 +76,7 @@ Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(WebExt
     return result.releaseNonNull();
 }
 
-WebExtensionControllerProxy::WebExtensionControllerProxy(WebExtensionControllerParameters parameters)
+WebExtensionControllerProxy::WebExtensionControllerProxy(const WebExtensionControllerParameters& parameters)
     : m_identifier(parameters.identifier)
 {
     ASSERT(!webExtensionControllerProxies().contains(m_identifier));

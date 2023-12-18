@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-struct WebKit::GPUProcessSessionParameters {
+[RValue] struct WebKit::GPUProcessSessionParameters {
     String mediaCacheDirectory;
     WebKit::SandboxExtension::Handle mediaCacheDirectorySandboxExtensionHandle;
 

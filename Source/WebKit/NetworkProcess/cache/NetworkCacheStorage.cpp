@@ -684,15 +684,12 @@ void Storage::remove(const Vector<Key>& keys, CompletionHandler<void()>&& comple
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<Key> keysToRemove;
-    keysToRemove.reserveInitialCapacity(keys.size());
-
-    for (auto& key : keys) {
+    auto keysToRemove = WTF::compactMap(keys, [&](auto& key) -> std::optional<Key> {
         if (!mayContain(key))
-            continue;
+            return std::nullopt;
         removeFromPendingWriteOperations(key);
-        keysToRemove.uncheckedAppend(key);
-    }
+        return key;
+    });
 
     serialBackgroundIOQueue().dispatch([this, protectedThis = Ref { *this }, keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
         for (auto& key : keysToRemove)
@@ -740,7 +737,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
 
     bool shouldGetBodyBlob = mayContainBlob(readOperation.key);
 
-    ioQueue().dispatch([this, &readOperation, shouldGetBodyBlob] {
+    protectedIOQueue()->dispatch([this, &readOperation, shouldGetBodyBlob] {
         auto recordPath = recordPathForKey(readOperation.key);
 
         ++readOperation.activeCount;
@@ -750,7 +747,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
         readOperation.timings.recordIOStartTime = MonotonicTime::now();
 
         auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), ioQueue(), [this, &readOperation](const Data& fileData, int error) {
+        channel->read(0, std::numeric_limits<size_t>::max(), protectedIOQueue(), [this, &readOperation](const Data& fileData, int error) {
             readOperation.timings.recordIOEndTime = MonotonicTime::now();
             if (!error)
                 readRecord(readOperation, fileData);

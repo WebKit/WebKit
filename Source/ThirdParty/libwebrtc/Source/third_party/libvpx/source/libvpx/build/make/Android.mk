@@ -8,6 +8,8 @@
 ##  be found in the AUTHORS file in the root of the source tree.
 ##
 
+# Ignore this file during non-NDK builds.
+ifdef NDK_ROOT
 #
 # This file is to be used for compiling libvpx for Android using the NDK.
 # In an Android project place a libvpx checkout in the jni directory.
@@ -166,6 +168,9 @@ LOCAL_CFLAGS += \
     -I$(ASM_CNV_PATH)/libvpx
 
 LOCAL_MODULE := libvpx
+LOCAL_LICENSE_KINDS := SPDX-license-identifier-BSD
+LOCAL_LICENSE_CONDITIONS := notice
+LOCAL_NOTICE_FILE := $(LOCAL_PATH)/../../LICENSE $(LOCAL_PATH)/../../PATENTS
 
 ifeq ($(CONFIG_RUNTIME_CPU_DETECT),yes)
   LOCAL_STATIC_LIBRARIES := cpufeatures
@@ -209,3 +214,4 @@ endif
 ifeq ($(CONFIG_RUNTIME_CPU_DETECT),yes)
 $(call import-module,android/cpufeatures)
 endif
+endif  # NDK_ROOT

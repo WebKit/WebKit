@@ -239,6 +239,7 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
                 createCodeMirrorColorTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Color));
                 createCodeMirrorGradientTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.Gradient));
                 createCodeMirrorCubicBezierTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.CubicBezierTimingFunction));
+                createCodeMirrorLinearTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.LinearTimingFunction));
                 createCodeMirrorSpringTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.SpringTimingFunction));
                 createCodeMirrorStepsTimingFunctionTextMarkers(codeMirror, range, optionsForType(WI.InlineSwatch.Type.StepsTimingFunction));
 

@@ -105,7 +105,6 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
     if (authenticatorData.size() < credentialIdLengthOffset + credentialIdLengthLength + credentialIdLength)
         return { };
     Vector<uint8_t> credentialId;
-    credentialId.reserveInitialCapacity(credentialIdLength);
     auto beginIt = authenticatorData.begin() + credentialIdLengthOffset + credentialIdLengthLength;
     credentialId.appendRange(beginIt, beginIt + credentialIdLength);
     return credentialId;
@@ -145,7 +144,7 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         // The reason why we can't directly pass authenticatorData/format/attStmt to buildAttestationObject
         // is that they are CBORValue instead of the raw type.
         // Also, format and attStmt are omitted as they are not useful in none attestation.
-        attestationObject = buildAttestationObject(Vector<uint8_t>(authenticatorData.getByteString()), String { emptyString() }, { }, attestation);
+        attestationObject = buildAttestationObject(Vector<uint8_t>(authenticatorData.getByteString()), String { emptyString() }, { }, attestation, ShouldZeroAAGUID::Yes);
     } else {
         CBOR::MapValue attestationObjectMap;
         attestationObjectMap[CBOR("authData")] = WTFMove(authenticatorData);

@@ -47,8 +47,10 @@ class LegacyRenderSVGModelObject : public RenderElement {
     WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGModelObject);
 public:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
+
     std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
-    LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const final;
+    LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* = nullptr) const final;
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
@@ -63,7 +65,7 @@ public:
     SVGElement& element() const { return downcast<SVGElement>(nodeForNonAnonymous()); }
 
 protected:
-    LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&);
+    LegacyRenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<RenderElementType> = { });
 
     void willBeDestroyed() override;
 

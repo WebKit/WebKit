@@ -150,12 +150,14 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
         endMagnificationGesture();
 }
 
-void ViewGestureController::handleSmartMagnificationGesture(FloatPoint origin)
+void ViewGestureController::handleSmartMagnificationGesture(FloatPoint gestureLocationInViewCoordinates)
 {
     if (m_activeGestureType != ViewGestureType::None)
         return;
 
-    m_webPageProxy.send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin));
+    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::handleSmartMagnificationGesture - gesture location " << gestureLocationInViewCoordinates);
+
+    m_webPageProxy.send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates));
 }
 
 static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)
@@ -163,15 +165,17 @@ static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)
     return std::max(std::abs(a.x() - b.x()), std::max(std::abs(a.y() - b.y()), std::max(std::abs(a.width() - b.width()), std::abs(a.height() - b.height()))));
 }
 
-void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect renderRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint gestureLocationInViewCoordinates, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
 {
     double currentScaleFactor = m_webPageProxy.pageScaleFactor();
 
-    FloatRect unscaledTargetRect = renderRect;
+    LOG_WITH_STREAM(ViewGestures, stream << "ViewGestureController::didCollectGeometryForSmartMagnificationGesture - gesture location " << gestureLocationInViewCoordinates << " absoluteTargetRect " << absoluteTargetRect);
+
+    auto unscaledTargetRect = absoluteTargetRect;
 
     // If there was no usable element under the cursor, we'll scale towards the cursor instead.
     if (unscaledTargetRect.isEmpty())
-        unscaledTargetRect.setLocation(origin);
+        unscaledTargetRect.setLocation(gestureLocationInViewCoordinates);
 
     unscaledTargetRect.scale(1 / currentScaleFactor);
     unscaledTargetRect.inflateX(unscaledTargetRect.width() * smartMagnificationElementPadding);
@@ -179,15 +183,15 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
 
     double targetMagnification = visibleContentRect.width() / unscaledTargetRect.width();
 
-    FloatRect unscaledVisibleContentRect = visibleContentRect;
+    auto unscaledVisibleContentRect = visibleContentRect;
     unscaledVisibleContentRect.scale(1 / currentScaleFactor);
-    FloatRect viewportConstrainedUnscaledTargetRect = unscaledTargetRect;
+    auto viewportConstrainedUnscaledTargetRect = unscaledTargetRect;
     viewportConstrainedUnscaledTargetRect.intersect(unscaledVisibleContentRect);
 
     if (unscaledTargetRect.width() > viewportConstrainedUnscaledTargetRect.width())
-        viewportConstrainedUnscaledTargetRect.setX(unscaledVisibleContentRect.x() + (origin.x() / currentScaleFactor) - viewportConstrainedUnscaledTargetRect.width() / 2);
+        viewportConstrainedUnscaledTargetRect.setX(unscaledVisibleContentRect.x() + (gestureLocationInViewCoordinates.x() / currentScaleFactor) - viewportConstrainedUnscaledTargetRect.width() / 2);
     if (unscaledTargetRect.height() > viewportConstrainedUnscaledTargetRect.height())
-        viewportConstrainedUnscaledTargetRect.setY(unscaledVisibleContentRect.y() + (origin.y() / currentScaleFactor) - viewportConstrainedUnscaledTargetRect.height() / 2);
+        viewportConstrainedUnscaledTargetRect.setY(unscaledVisibleContentRect.y() + (gestureLocationInViewCoordinates.y() / currentScaleFactor) - viewportConstrainedUnscaledTargetRect.height() / 2);
 
     // For replaced elements like images, we want to fit the whole element
     // in the view, so scale it down enough to make both dimensions fit if possible.
@@ -202,23 +206,26 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
         if (maximumRectangleComponentDelta(m_lastSmartMagnificationUnscaledTargetRect, unscaledTargetRect) < smartMagnificationPanScrollThreshold)
             targetMagnification = 1;
 
-        if (m_lastSmartMagnificationOrigin == origin)
+        if (m_lastSmartMagnificationOrigin == gestureLocationInViewCoordinates)
             targetMagnification = 1;
     }
 
-    FloatRect targetRect(viewportConstrainedUnscaledTargetRect);
+    auto targetRect = viewportConstrainedUnscaledTargetRect;
     targetRect.scale(targetMagnification);
-    FloatPoint targetOrigin(visibleContentRect.center());
-    targetOrigin.moveBy(-targetRect.center());
+
+    auto targetOrigin = visibleContentRect.center();
+    auto targetCenter = targetRect.center();
+    targetOrigin.moveBy(-targetCenter);
 
     m_initialMagnification = m_webPageProxy.pageScaleFactor();
-    m_initialMagnificationOrigin = FloatPoint();
+    m_initialMagnificationOrigin = { };
 
-    m_webPageProxy.drawingArea()->adjustTransientZoom(m_webPageProxy.pageScaleFactor(), scaledMagnificationOrigin(FloatPoint(), m_webPageProxy.pageScaleFactor()));
+    auto pageScaleFactor = m_webPageProxy.pageScaleFactor();
+    m_webPageProxy.drawingArea()->adjustTransientZoom(pageScaleFactor, scaledMagnificationOrigin(FloatPoint(), pageScaleFactor));
     m_webPageProxy.drawingArea()->commitTransientZoom(targetMagnification, targetOrigin);
 
     m_lastSmartMagnificationUnscaledTargetRect = unscaledTargetRect;
-    m_lastSmartMagnificationOrigin = origin;
+    m_lastSmartMagnificationOrigin = gestureLocationInViewCoordinates;
 
     m_lastMagnificationGestureWasSmartMagnification = true;
 }

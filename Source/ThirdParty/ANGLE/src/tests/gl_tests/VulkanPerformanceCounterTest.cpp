@@ -411,6 +411,10 @@ class VulkanPerformanceCounterTest : public ANGLETest<>
     {
         return isFeatureEnabled(Feature::SupportsImagelessFramebuffer);
     }
+    bool hasSupportsHostImageCopy() const
+    {
+        return isFeatureEnabled(Feature::SupportsHostImageCopy);
+    }
 
     CounterNameToIndexMap mIndexMap;
 };
@@ -637,6 +641,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotCollec
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 
+    // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
+    // submissions.
+    ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
     uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
     uint64_t submitCommandsCount     = getPerfCounters().vkQueueSubmitCallsTotal;
 
@@ -727,6 +735,10 @@ TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferDoesNotCollec
 // endRenderPass works correctly.
 TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferTriggersEndRenderPass)
 {
+    // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
+    // submissions.
+    ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
     const int width                  = getWindowWidth();
     const int height                 = getWindowHeight();
     uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
@@ -801,6 +813,28 @@ TEST_P(VulkanPerformanceCounterTest, MutableTextureCompatibleMipLevelsInit)
     EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
 }
 
+// Tests that a single-level mutable texture is uploaded with appropriate attributes.
+TEST_P(VulkanPerformanceCounterTest, MutableTextureCompatibleSingleMipLevelInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded + 1;
+
+    std::vector<GLColor> mip0Color(4 * 4, GLColor::red);
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
+}
+
 // Tests that mutable texture is uploaded with appropriate mip level attributes, even with unequal
 // dimensions.
 TEST_P(VulkanPerformanceCounterTest, MutableTextureCompatibleMipLevelsNonSquareInit)
@@ -818,6 +852,52 @@ TEST_P(VulkanPerformanceCounterTest, MutableTextureCompatibleMipLevelsNonSquareI
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
     glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, 2, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip1Color.data());
     glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip2Color.data());
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
+}
+
+// Tests that a mutable texture is not uploaded if there are no data or updates for it.
+TEST_P(VulkanPerformanceCounterTest, MutableTextureSingleLevelWithNoDataNoInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded;
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
+}
+
+// Tests that mutable texture is not uploaded with more than one updates in a single mip level.
+TEST_P(VulkanPerformanceCounterTest, MutableTextureSingleLevelWithMultipleUpdatesNoInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded;
+
+    std::vector<GLColor> mip0Color(4 * 4, GLColor::red);
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 2, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 2, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 2, 2, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, mip0Color.data());
     EXPECT_GL_NO_ERROR();
 
     GLTexture texture2;
@@ -1083,6 +1163,70 @@ TEST_P(VulkanPerformanceCounterTest, MutableTextureCubemapCompatibleMipLevelsIni
                      GL_UNSIGNED_BYTE, mip1Color.data());
     }
     EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
+}
+
+// Tests that mutable cubemap texture is not uploaded with no data or updates.
+TEST_P(VulkanPerformanceCounterTest, MutableTextureCubemapWithNoDataNoInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded;
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture1);
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 4, 4, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 1, GL_RGBA, 2, 2, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+    }
+    EXPECT_GL_NO_ERROR();
+
+    GLTexture texture2;
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::green.data());
+    EXPECT_GL_NO_ERROR();
+    EXPECT_EQ(getPerfCounters().mutableTexturesUploaded, expectedMutableTexturesUploaded);
+}
+
+// Tests that mutable cubemap texture is not uploaded with more than one update in a cube face.
+TEST_P(VulkanPerformanceCounterTest, MutableTextureCubemapMultipleUpdatesForOneFaceNoInit)
+{
+    ANGLE_SKIP_TEST_IF(!hasMutableMipmapTextureUpload());
+
+    uint32_t expectedMutableTexturesUploaded = getPerfCounters().mutableTexturesUploaded;
+
+    std::vector<GLColor> mip0Color(4 * 4, GLColor::red);
+    std::vector<GLColor> mip1Color(2 * 2, GLColor::red);
+
+    GLTexture texture1;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture1);
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 4, 4, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 1, GL_RGBA, 2, 2, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+    }
+    EXPECT_GL_NO_ERROR();
+    for (size_t i = 0; i < 6; i++)
+    {
+        glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, 0, 0, 4, 4, GL_RGBA,
+                        GL_UNSIGNED_BYTE, mip0Color.data());
+        glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 1, 0, 0, 2, 2, GL_RGBA,
+                        GL_UNSIGNED_BYTE, mip1Color.data());
+    }
+    glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 1, 1, 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                    GLColor::red.data());
 
     GLTexture texture2;
     glBindTexture(GL_TEXTURE_2D, texture2);
@@ -7572,6 +7716,10 @@ class VulkanPerformanceCounterTest_AsyncCQ : public VulkanPerformanceCounterTest
 // "asyncCommandQueue" enabled, properly updates old command buffer with the new one.
 TEST_P(VulkanPerformanceCounterTest_AsyncCQ, SubmittingOutsideCommandBufferAssertIsOpen)
 {
+    // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
+    // submissions.
+    ANGLE_SKIP_TEST_IF(hasSupportsHostImageCopy());
+
     uint64_t submitCommandsCount = getPerfCounters().vkQueueSubmitCallsTotal;
 
     ANGLE_GL_PROGRAM(textureProgram, essl1_shaders::vs::Texture2D(),

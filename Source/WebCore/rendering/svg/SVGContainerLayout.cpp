@@ -55,7 +55,6 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged();
     bool transformChanged = transformToRootChanged(&m_container);
-    WeakHashSet<RenderElement> elementsThatDidNotReceiveLayout;
 
     m_positionedChildren.clear();
     for (auto& child : childrenOfType<RenderObject>(m_container)) {
@@ -96,28 +95,17 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
         if (needsLayout)
             child.setNeedsLayout(MarkOnlyThis);
 
-        bool childNeededLayout = child.needsLayout();
         if (is<RenderElement>(child)) {
             auto& element = downcast<RenderElement>(child);
-            if (childNeededLayout) {
-                layoutDifferentRootIfNeeded(element);
+            if (element.needsLayout())
                 element.layout();
-            } else if (layoutSizeChanged)
-                elementsThatDidNotReceiveLayout.add(element);
 
             if (!childEverHadLayout && element.checkForRepaintDuringLayout())
-                child.repaint();
+                element.repaint();
         }
 
         ASSERT(!child.needsLayout());
     }
-
-    if (layoutSizeChanged) {
-        // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
-        for (auto& element : elementsThatDidNotReceiveLayout)
-            invalidateResourcesOfChildren(element);
-    } else
-        ASSERT(elementsThatDidNotReceiveLayout.isEmptyIgnoringNullReferences());
 }
 
 void SVGContainerLayout::positionChildrenRelativeToContainer()
@@ -128,8 +116,8 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
     auto verifyPositionedChildRendererExpectation = [](RenderObject& renderer) {
 #if !defined(NDEBUG)
         ASSERT(renderer.isSVGLayerAwareRenderer()); // Pre-condition to enter m_positionedChildren
-        ASSERT(!renderer.isSVGRoot()); // There is only one outermost RenderSVGRoot object
-        ASSERT(!renderer.isSVGInline()); // Inlines are only allowed within a RenderSVGText tree
+        ASSERT(!renderer.isRenderSVGRoot()); // There is only one outermost RenderSVGRoot object
+        ASSERT(!renderer.isRenderSVGInline()); // Inlines are only allowed within a RenderSVGText tree
 
         if (is<RenderSVGModelObject>(renderer) || is<RenderSVGBlock>(renderer))
             return;
@@ -172,13 +160,13 @@ void SVGContainerLayout::positionChildrenRelativeToContainer()
 
 void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelObject& renderer)
 {
-    if (renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot()) {
+    if (renderer.isSVGLayerAwareRenderer() && !renderer.isRenderSVGRoot()) {
         auto currentLayoutLocation = renderer.currentSVGLayoutLocation();
 
         auto expectedLayoutLocation = currentLayoutLocation;
         for (auto& ancestor : ancestorsOfType<RenderLayerModelObject>(renderer)) {
             ASSERT(ancestor.isSVGLayerAwareRenderer());
-            if (ancestor.isSVGRoot())
+            if (ancestor.isRenderSVGRoot())
                 break;
             expectedLayoutLocation.moveBy(ancestor.currentSVGLayoutLocation());
         }
@@ -209,30 +197,11 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelO
     }
 
 #if !defined(NDEBUG)
-    if (renderer.isSVGRoot()) {
+    if (renderer.isRenderSVGRoot()) {
         LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName().characters() << ")"
             << " - verifyLayoutLocationConsistency() end");
     }
 #endif
-}
-
-void SVGContainerLayout::layoutDifferentRootIfNeeded(const RenderElement& renderer)
-{
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-        auto* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
-        ASSERT(svgRoot);
-        resources->layoutDifferentRootIfNeeded(svgRoot);
-    }
-}
-
-void SVGContainerLayout::invalidateResourcesOfChildren(RenderElement& renderer)
-{
-    ASSERT(!renderer.needsLayout());
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
-        resources->removeClientFromCache(renderer, false);
-
-    for (auto& child : childrenOfType<RenderElement>(renderer))
-        invalidateResourcesOfChildren(child);
 }
 
 bool SVGContainerLayout::layoutSizeOfNearestViewportChanged() const

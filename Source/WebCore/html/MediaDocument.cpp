@@ -158,30 +158,33 @@ Ref<DocumentParser> MediaDocument::createParser()
 
 static inline HTMLVideoElement* descendantVideoElement(ContainerNode& node)
 {
-    if (is<HTMLVideoElement>(node))
-        return downcast<HTMLVideoElement>(&node);
+    if (auto* video = dynamicDowncast<HTMLVideoElement>(node))
+        return video;
 
     return descendantsOfType<HTMLVideoElement>(node).first();
 }
 
+#if !ENABLE(MODERN_MEDIA_CONTROLS)
 static inline HTMLVideoElement* ancestorVideoElement(Node* node)
 {
-    while (node && !is<HTMLVideoElement>(*node))
-        node = node->parentOrShadowHostNode();
-
-    return downcast<HTMLVideoElement>(node);
+    for (; node; node = node->parentOrShadowHostNode()) {
+        if (auto* video = dynamicDowncast<HTMLVideoElement>(node))
+            return video;
+    }
+    return nullptr;
 }
+#endif
 
 void MediaDocument::defaultEventHandler(Event& event)
 {
 #if !ENABLE(MODERN_MEDIA_CONTROLS)
     // Match the default Quicktime plugin behavior to allow
     // clicking and double-clicking to pause and play the media.
-    if (!is<Node>(event.target()))
+    auto* targetNode = dynamicDowncast<Node>(*event.target());
+    if (!targetNode)
         return;
-    auto& targetNode = downcast<Node>(*event.target());
 
-    if (RefPtr video = ancestorVideoElement(&targetNode)) {
+    if (RefPtr video = ancestorVideoElement(targetNode)) {
         if (event.type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
                 video->pause();
@@ -195,23 +198,22 @@ void MediaDocument::defaultEventHandler(Event& event)
         }
     }
 
-    if (!is<ContainerNode>(targetNode))
+    auto* targetContainer = dynamicDowncast<ContainerNode>(*targetNode);
+    if (!targetContainer)
         return;
-    auto& targetContainer = downcast<ContainerNode>(targetNode);
 
-    if (event.type() == eventNames().keydownEvent && is<KeyboardEvent>(event)) {
-        RefPtr video = descendantVideoElement(targetContainer);
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && event.type() == eventNames().keydownEvent) {
+        RefPtr video = descendantVideoElement(*targetContainer);
         if (!video)
             return;
 
-        auto& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.keyIdentifier() == "U+0020"_s) { // space
+        if (keyboardEvent->keyIdentifier() == "U+0020"_s) { // space
             if (video->paused()) {
                 if (video->canPlay())
                     video->play();
             } else
                 video->pause();
-            keyboardEvent.setDefaultHandled();
+            keyboardEvent->setDefaultHandled();
         }
     }
 #else // !ENABLE(MODERN_MEDIA_CONTROLS)

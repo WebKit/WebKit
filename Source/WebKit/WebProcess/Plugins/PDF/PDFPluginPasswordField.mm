@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PDFPluginPasswordField.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #import "PDFLayerControllerSPI.h"
 #import "PDFPlugin.h"
@@ -80,4 +80,4 @@ bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
     
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

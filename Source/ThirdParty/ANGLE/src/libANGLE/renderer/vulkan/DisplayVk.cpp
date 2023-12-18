@@ -350,9 +350,9 @@ StreamProducerImpl *DisplayVk::createStreamProducerD3DTexture(
     return static_cast<StreamProducerImpl *>(0);
 }
 
-EGLSyncImpl *DisplayVk::createSync(const egl::AttributeMap &attribs)
+EGLSyncImpl *DisplayVk::createSync()
 {
-    return new EGLSyncVk(attribs);
+    return new EGLSyncVk();
 }
 
 gl::Version DisplayVk::getMaxSupportedESVersion() const

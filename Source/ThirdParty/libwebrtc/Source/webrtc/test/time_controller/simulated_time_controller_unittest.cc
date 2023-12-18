@@ -13,6 +13,7 @@
 #include <atomic>
 #include <memory>
 
+#include "api/units/time_delta.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue.h"
 #include "rtc_base/task_queue_for_test.h"
@@ -144,6 +145,20 @@ TEST(SimulatedTimeControllerTest, ThreadYeildsOnSynchronousCall) {
   EXPECT_FALSE(task_has_run);
   sim.AdvanceTime(TimeDelta::Seconds(1));
   ASSERT_TRUE(task_has_run);
+}
+
+TEST(SimulatedTimeControllerTest, SkipsDelayedTaskForward) {
+  GlobalSimulatedTimeController sim(kStartTime);
+  auto main_thread = sim.GetMainThread();
+  constexpr auto duration_during_which_nothing_runs = TimeDelta::Seconds(2);
+  constexpr auto shorter_duration = TimeDelta::Seconds(1);
+  MockFunction<void()> fun;
+  EXPECT_CALL(fun, Call).WillOnce(Invoke([&] {
+    ASSERT_EQ(sim.GetClock()->CurrentTime(),
+              kStartTime + duration_during_which_nothing_runs);
+  }));
+  main_thread->PostDelayedTask(fun.AsStdFunction(), shorter_duration);
+  sim.SkipForwardBy(duration_during_which_nothing_runs);
 }
 
 }  // namespace webrtc

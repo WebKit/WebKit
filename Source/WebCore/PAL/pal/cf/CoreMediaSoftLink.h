@@ -396,7 +396,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioDeviceClockCreate, OSStatus
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBaseObjectGetDerivedStorage, void*, (CMBaseObjectRef baseObject), (baseObject))
 #define CMBaseObjectGetDerivedStorage softLink_CoreMedia_CMBaseObjectGetDerivedStorage
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBaseObjectGetVTable, const CMBaseVTable*, (CMBaseObjectRef baseObject), (baseObject))
-#define CMBaseObjectGetVTable softLink_CoreMedia_CMBaseObjectGetVTable
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMDerivedObjectCreate, OSStatus, (CFAllocatorRef allocator, const CMBaseVTable* vTable, CMBaseClassID classID, CMBaseObjectRef* baseObject), (allocator, vTable, classID, baseObject))
 #define CMDerivedObjectCreate softLink_CoreMedia_CMDerivedObjectCreate
 

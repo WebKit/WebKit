@@ -41,6 +41,8 @@ def load_forward_table(path):
 def load_inverse_table(path):
     pairs = load_json(path)
     reject_duplicate_keys(pairs)
+    for x in range(0, 8):
+        pairs.append(("GL_NONE", "EXTERNAL" + str(x)))
     return {angle: gl for gl, angle in pairs}
 
 
@@ -87,6 +89,8 @@ def get_component_type(format_id):
         return "unorm"
     elif "TYPELESS" in format_id:
         return "unorm"
+    elif "EXTERNAL" in format_id:
+        return "unorm"
     elif format_id == "R9G9B9E5_SHAREDEXP":
         return "float"
     else:
@@ -94,6 +98,8 @@ def get_component_type(format_id):
 
 
 def get_channel_tokens(format_id):
+    if 'EXTERNAL' in format_id:
+        return ['R8', 'G8', 'B8', 'A8']
     r = re.compile(r'([' + kChannels + '][\d]+)')
     return list(filter(r.match, r.split(format_id)))
 

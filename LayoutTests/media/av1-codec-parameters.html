@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="video-test.js"></script>
+    <script>
+    function AV1ParameterSetToString(set) {
+        if (!set)
+            return '{ null }';
+        return `{ ${set.codecName}, ${set.profile}, ${set.level}, ${set.tier}, ${set.bitDepth}, ${set.monochrome}, ${set.chromaSubsampling}, ${set.colorPrimaries}, ${set.transferCharacteristics}, ${set.matrixCoefficients}, videoFullRangeFlag:${set.videoFullRangeFlag} }`;
+    }
+    function isEqualAV1ParameterSet(setA, setB) {
+        if ((setA === null) != (setB === null))
+            return false;
+
+        return setA.codecName === setB.codecName
+            && setA.profile === setB.profile
+            && setA.level === setB.level
+            && setA.tier === setB.tier
+            && setA.bitDepth === setB.bitDepth
+            && setA.monochrome === setB.monochrome
+            && setA.chromaSubsampling === setB.chromaSubsampling
+            && setA.colorPrimaries === setB.colorPrimaries
+            && setA.transferCharacteristics === setB.transferCharacteristics
+            && setA.matrixCoefficients === setB.matrixCoefficients
+            && setA.videoFullRangeFlag === setB.videoFullRangeFlag;
+    }
+    function makeAV1ParameterSet(codecName, profile, level, tier, bitDepth, monochrome, chromaSubsampling, colorPrimaries, transferCharacteristics, matrixCoefficients, videoFullRangeFlag)
+    {
+        return {
+            codecName: codecName,
+            profile: profile,
+            level: level,
+            tier: tier,
+            bitDepth: bitDepth,
+            monochrome: monochrome,
+            chromaSubsampling: chromaSubsampling,
+            colorPrimaries: colorPrimaries,
+            transferCharacteristics: transferCharacteristics,
+            matrixCoefficients: matrixCoefficients,
+            videoFullRangeFlag: videoFullRangeFlag
+        };
+    }
+    function testExpectedAV1ParameterSet(testFuncString, expected)
+    {
+        let observed = eval(testFuncString);
+        let success = isEqualAV1ParameterSet(observed, expected);
+        reportExpected(success, testFuncString, '===', AV1ParameterSetToString(expected), AV1ParameterSetToString(observed));
+    }
+    window.addEventListener('load', event => {
+        testExpected('internals.parseAV1CodecParameters("bad-parameter")', null);
+        testExpected('internals.parseAV1CodecParameters("av01")', null);
+        testExpectedAV1ParameterSet('internals.parseAV1CodecParameters("av01.0.01M.08")', 
+            makeAV1ParameterSet('av01', "Main", "Level_2_1", "Main", 8, 0, 110, 1, 1, 1, "VideoRange"));
+        testExpectedAV1ParameterSet('internals.parseAV1CodecParameters("av01.0.04M.10.0.112.09.16.09.0")',
+            makeAV1ParameterSet('av01', "Main", "Level_3_0", "Main", 10, 0, 112, 9, 16, 9, "VideoRange"));
+        testExpected('internals.parseAV1CodecParameters("av01.4.01M.08")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.24M.08")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01V.08")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.13")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.10.2.112.09.16.09.0")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.10.0.101.09.16.09.0")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.10.0.112.03.16.09.0")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.10.0.112.09.03.09.0")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.10.0.112.09.16.03.0")', null);
+        testExpected('internals.parseAV1CodecParameters("av01.0.01M.10.0.112.09.16.09.2")', null);
+
+        endTest();
+    }, { once: true });
+    </script>
+</head>
+<body>
+</body>
+</html>

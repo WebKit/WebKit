@@ -67,7 +67,7 @@ static void okButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
 #endif
 
     WebCore::CredentialPersistence persistence = rememberPassword && priv->credentialStorageMode == AllowPersistentStorage ?
-        WebCore::CredentialPersistencePermanent : WebCore::CredentialPersistenceForSession;
+        WebCore::CredentialPersistence::Permanent : WebCore::CredentialPersistence::ForSession;
 
     // FIXME: Use a stack allocated WebKitCredential.
     WebKitCredential* credential = webkitCredentialCreate(WebCore::Credential(String::fromUTF8(username), String::fromUTF8(password), persistence));

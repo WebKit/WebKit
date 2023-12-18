@@ -129,13 +129,12 @@ public:
         ReadWrite = 1,
     };
     
-    RealtimeMediaSourceCapabilities(CapabilityRange&& width, CapabilityRange&& height, CapabilityRange&& aspectRatio, CapabilityRange&& frameRate, Vector<VideoFacingMode>&& facingMode, Vector<MeteringMode>&& whiteBalanceModes, CapabilityRange&& volume, CapabilityRange&& sampleRate, CapabilityRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityRange&& focusDistance, CapabilityRange&& zoom, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+    RealtimeMediaSourceCapabilities(CapabilityRange&& width, CapabilityRange&& height, CapabilityRange&& aspectRatio, CapabilityRange&& frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityRange&& volume, CapabilityRange&& sampleRate, CapabilityRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, CapabilityRange&& focusDistance, Vector<MeteringMode>&& whiteBalanceModes, CapabilityRange&& zoom, bool torch, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
         : m_width(WTFMove(width))
         , m_height(WTFMove(height))
         , m_aspectRatio(WTFMove(aspectRatio))
         , m_frameRate(WTFMove(frameRate))
         , m_facingMode(WTFMove(facingMode))
-        , m_whiteBalanceModes(whiteBalanceModes)
         , m_volume(WTFMove(volume))
         , m_sampleRate(WTFMove(sampleRate))
         , m_sampleSize(WTFMove(sampleSize))
@@ -143,7 +142,9 @@ public:
         , m_deviceId(WTFMove(deviceId))
         , m_groupId(WTFMove(groupId))
         , m_focusDistance(WTFMove(focusDistance))
+        , m_whiteBalanceModes(whiteBalanceModes)
         , m_zoom(WTFMove(zoom))
+        , m_torch(torch)
         , m_supportedConstraints(WTFMove(supportedConstraints))
     {
     }
@@ -171,10 +172,6 @@ public:
     bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
     const Vector<VideoFacingMode>& facingMode() const { return m_facingMode; }
     void addFacingMode(VideoFacingMode mode) { m_facingMode.append(mode); }
-
-    bool supportsWhiteBalanceMode() const { return m_supportedConstraints.supportsWhiteBalanceMode(); }
-    const Vector<MeteringMode>& whiteBalanceModes() const { return m_whiteBalanceModes; }
-    void setWhiteBalanceModes(Vector<MeteringMode>&& modes) { m_whiteBalanceModes = WTFMove(modes); }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
     const CapabilityRange& aspectRatio() const { return m_aspectRatio; }
@@ -208,9 +205,17 @@ public:
     const CapabilityRange& focusDistance() const { return m_focusDistance; }
     void setFocusDistance(const CapabilityRange& focusDistance) { m_focusDistance = focusDistance; }
 
+    bool supportsWhiteBalanceMode() const { return m_supportedConstraints.supportsWhiteBalanceMode(); }
+    const Vector<MeteringMode>& whiteBalanceModes() const { return m_whiteBalanceModes; }
+    void setWhiteBalanceModes(Vector<MeteringMode>&& modes) { m_whiteBalanceModes = WTFMove(modes); }
+
     bool supportsZoom() const { return m_supportedConstraints.supportsZoom(); }
     const CapabilityRange& zoom() const { return m_zoom; }
     void setZoom(const CapabilityRange& zoom) { m_zoom = zoom; }
+
+    bool supportsTorch() const { return m_supportedConstraints.supportsTorch(); }
+    bool torch() const { return m_torch; }
+    void setTorch(bool torch) { m_torch = torch; }
 
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
@@ -221,7 +226,6 @@ private:
     CapabilityRange m_aspectRatio;
     CapabilityRange m_frameRate;
     Vector<VideoFacingMode> m_facingMode;
-    Vector<MeteringMode> m_whiteBalanceModes;
     CapabilityRange m_volume;
     CapabilityRange m_sampleRate;
     CapabilityRange m_sampleSize;
@@ -229,7 +233,10 @@ private:
     AtomString m_deviceId;
     AtomString m_groupId;
     CapabilityRange m_focusDistance;
+
+    Vector<MeteringMode> m_whiteBalanceModes;
     CapabilityRange m_zoom;
+    bool m_torch { false };
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };

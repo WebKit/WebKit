@@ -44,6 +44,15 @@ const char ESSL300_FragColorShader[] =
         fragColor = texture(uSampler, vec2(0.0));
     })";
 
+// Shader that samples the texture and swizzle and writes to FragColor.
+const char ESSL300_textureSwizzleFragColorShader[] =
+    R"(precision mediump float;
+    uniform __samplerExternal2DY2YEXT uSampler;
+    layout(yuv) out vec4 fragColor;
+    void main() {
+        fragColor = vec4(texture(uSampler, vec2(0.0)).zyx, 1.0);
+    })";
+
 // Shader that specifies yuv layout qualifier multiple times.
 const char ESSL300_YUVQualifierMultipleTimesShader[] =
     R"(precision mediump float;
@@ -376,7 +385,8 @@ TEST_P(EXTYUVTargetCompileSuccessTest, CompileSucceeds)
 // Test that YUV built-in emulation works on Vulkan
 TEST_P(EXTYUVTargetCompileSuccessTest, CompileSucceedsWithExtensionAndPragmaOnVulkan)
 {
-    mResources.EXT_YUV_target = 1;
+    mResources.EXT_YUV_target   = 1;
+    mCompileOptions.validateAST = 1;
     InitializeCompiler(SH_SPIRV_VULKAN_OUTPUT);
     EXPECT_TRUE(TestShaderCompile(EXTYTPragma));
 }
@@ -387,6 +397,7 @@ INSTANTIATE_TEST_SUITE_P(CorrectESSL300Shaders,
                          Combine(Values(SH_GLES3_SPEC),
                                  Values(sh::ESSLVersion300),
                                  Values(ESSL300_FragColorShader,
+                                        ESSL300_textureSwizzleFragColorShader,
                                         ESSL300_YUVQualifierMultipleTimesShader,
                                         ESSL300_YuvCscStandardEXTShader,
                                         ESSL300_BuiltInFunctionsShader,

@@ -8,6 +8,7 @@
 <body>
     <script>
 if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     // Log user interaction for this domain to avoid deleting its
     // website data (including caches) when a frame navigation occurs.
     testRunner.setStatisticsHasHadUserInteraction("https://127.0.0.1:9443", true);

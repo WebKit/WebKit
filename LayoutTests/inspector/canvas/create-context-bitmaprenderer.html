@@ -25,13 +25,13 @@ function test() {
     InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Offscreen",
         expression: `createOffscreenCanvas("bitmaprenderer")`,
-        contextType: WI.Canvas.ContextType.BitmapRenderer,
+        contextType: WI.Canvas.ContextType.OffscreenBitmapRenderer,
     });
 
     InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Worker",
         expression: `worker.postMessage({name: "createContext", args: ["bitmaprenderer"]})`,
-        contextType: WI.Canvas.ContextType.BitmapRenderer,
+        contextType: WI.Canvas.ContextType.OffscreenBitmapRenderer,
         skipDestroy: true,
     });
 

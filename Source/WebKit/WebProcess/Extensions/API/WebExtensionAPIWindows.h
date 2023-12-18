@@ -75,7 +75,7 @@ private:
     static bool parseWindowTypesFilter(NSDictionary *, OptionSet<WindowTypeFilter>&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseWindowTypeFilter(NSString *, OptionSet<WindowTypeFilter>&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseWindowGetOptions(NSDictionary *, PopulateTabs&, OptionSet<WindowTypeFilter>&, NSString *sourceKey, NSString **outExceptionString);
-    static bool parseWindowCreateOptions(NSDictionary *, WebExtensionWindowParameters&, NSString *sourceKey, NSString **outExceptionString);
+    bool parseWindowCreateOptions(NSDictionary *, WebExtensionWindowParameters&, NSString *sourceKey, NSString **outExceptionString);
     static bool parseWindowUpdateOptions(NSDictionary *, WebExtensionWindowParameters&, NSString *sourceKey, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIWindowsEvent> m_onCreated;

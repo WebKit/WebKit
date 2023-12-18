@@ -1,4 +1,4 @@
 content
 
-FAIL Dynamically styling 'overflow-anchor: none' on the scroller element should prevent scroll anchoring assert_equals: expected 150 but got 100
+PASS Dynamically styling 'overflow-anchor: none' on the scroller element should prevent scroll anchoring
 

@@ -62,7 +62,9 @@ GPU* WorkerNavigator::gpu()
         auto scriptExecutionContext = this->scriptExecutionContext();
         if (scriptExecutionContext->isWorkerGlobalScope()) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(*scriptExecutionContext);
-            RELEASE_ASSERT(workerGlobalScope.graphicsClient());
+            if (!workerGlobalScope.graphicsClient())
+                return nullptr;
+
             auto gpu = workerGlobalScope.graphicsClient()->createGPUForWebGPU();
             if (!gpu)
                 return nullptr;
@@ -101,7 +103,7 @@ void WorkerNavigator::setAppBadge(std::optional<unsigned long long> badge, Ref<D
 
     auto* scope = downcast<WorkerGlobalScope>(scriptExecutionContext());
     if (!scope) {
-        promise->reject(InvalidStateError);
+        promise->reject(ExceptionCode::InvalidStateError);
         return;
     }
 

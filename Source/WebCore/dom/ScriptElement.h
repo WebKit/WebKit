@@ -81,8 +81,8 @@ public:
 
     JSC::SourceTaintedOrigin sourceTaintedOrigin() const { return m_taintedOrigin; }
 
-    void ref();
-    void deref();
+    void ref() const;
+    void deref() const;
 
     static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true);
 
@@ -128,7 +128,7 @@ private:
 
     virtual bool isScriptPreventedByAttributes() const { return false; }
 
-    CheckedRef<Element> m_element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };
     JSC::SourceTaintedOrigin m_taintedOrigin;
     ParserInserted m_parserInserted : bitWidthOfParserInserted;

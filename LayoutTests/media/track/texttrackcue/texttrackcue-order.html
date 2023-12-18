@@ -1,0 +1,68 @@
+<!doctype html>
+<title>VTTCue order</title>
+<script src=../../../resources/testharness.js></script>
+<script src=../../../resources/testharnessreport.js></script>
+<div>  </div>
+<script>
+function make_vtt_track(contents, test) {
+    var track_blob = new Blob([contents], { type: 'text/vtt' });
+    var track_url = URL.createObjectURL(track_blob);
+    test.add_cleanup(function() {
+        URL.revokeObjectURL(track_url);
+    });
+    return track_url;
+}
+
+setup(function(){
+    window.internals.setCaptionDisplayMode("automatic");
+    window.video = document.createElement('video');
+    window.t1 = video.addTextTrack('subtitles');
+    document.body.appendChild(video);
+});
+
+var t_parsed = async_test(document.title+', cue order should change only when start time or end time is changed');
+t_parsed.step(function(){
+    var t = document.createElement('track');
+    t.onload = this.step_func(function(){
+        assert_equals(t.track.cues[0].id, '0');
+        assert_equals(t.track.cues[1].id, '1');
+        assert_equals(t.track.cues[2].id, '2');
+        assert_equals(t.track.cues[3].id, '3');
+
+        t.track.cues[1].line = 10;
+        t.track.cues[1].snapToLines = false;
+        t.track.cues[1].size = 50;
+        t.track.cues[1].align = 'right';
+        t.track.cues[1].position = 10;
+        t.track.cues[1].positionAlign = "center";
+        assert_equals(t.track.cues[0].id, '0');
+        assert_equals(t.track.cues[1].id, '1');
+        assert_equals(t.track.cues[2].id, '2');
+        assert_equals(t.track.cues[3].id, '3');
+
+        t.track.cues[1].startTime = 1;
+        assert_equals(t.track.cues[0].id, '0');
+        assert_equals(t.track.cues[1].id, '2');
+        assert_equals(t.track.cues[2].id, '3');
+        assert_equals(t.track.cues[3].id, '1');
+
+        t.track.cues[2].endTime = 2;
+        assert_equals(t.track.cues[0].id, '3');
+        assert_equals(t.track.cues[1].id, '0');
+        assert_equals(t.track.cues[2].id, '2');
+        assert_equals(t.track.cues[3].id, '1');
+
+        this.done();
+    });
+    t.onerror = this.step_func(function() {
+      assert_unreached('got error event');
+    });
+    t.src = make_vtt_track('WEBVTT\n\n'+
+                            '0\n00:00:00.000 --> 00:00:00.001\ntest\n\n'+
+                            '1\n00:00:00.000 --> 00:00:00.001\ntest\n\n'+
+                            '2\n00:00:00.000 --> 00:00:00.001\ntest\n\n'+
+                            '3\n00:00:00.000 --> 00:00:00.001\ntest', this);
+    t.track.mode = 'showing';
+    video.appendChild(t);
+});
+</script>

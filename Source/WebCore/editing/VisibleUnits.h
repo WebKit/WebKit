@@ -106,7 +106,7 @@ WEBCORE_EXPORT std::optional<SimpleRange> enclosingTextUnitOfGranularity(const V
 WEBCORE_EXPORT std::ptrdiff_t distanceBetweenPositions(const VisiblePosition&, const VisiblePosition&);
 WEBCORE_EXPORT std::optional<SimpleRange> wordRangeFromPosition(const VisiblePosition&);
 WEBCORE_EXPORT VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position);
-WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore);
+WEBCORE_EXPORT void charactersAroundPosition(const VisiblePosition&, char32_t& oneAfter, char32_t& oneBefore, char32_t& twoBefore);
 WEBCORE_EXPORT std::optional<SimpleRange> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
 WEBCORE_EXPORT std::optional<SimpleRange> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition&, int numberOfCharactersToExpand, SelectionDirection);
 enum class WithinWordBoundary : bool { No, Yes };
@@ -123,7 +123,7 @@ unsigned suffixLengthForRange(const SimpleRange&, Vector<UChar, 1024>&);
 unsigned prefixLengthForRange(const SimpleRange&, Vector<UChar, 1024>&);
 unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
 unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
-Node* findStartOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
-Node* findEndOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
+RefPtr<Node> findStartOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
+RefPtr<Node> findEndOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 
 } // namespace WebCore

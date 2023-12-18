@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 300x300
+  RenderSVGTransformableContainer {g} at (0,0) size 300x300
+layer at (0,0) size 300x300
+  RenderSVGPath {polygon} at (0,0) size 300x300 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#ADD8E6]}] [points="0 0 300 0 300 300 0 300"]
+layer at (10,10) size 280x280
+  RenderSVGForeignObject {foreignObject} at (10,10) size 280x280
+    RenderInline {html:b} at (0,0) size 109x18
+      RenderText {#text} at (0,0) size 109x18
+        text run at (0,0) width 109: "Absolute Lineto"
+    RenderBR {html:br} at (108,0) size 1x18
+    RenderText {#text} at (0,18) size 246x36
+      text run at (0,18) width 246: "<path d=\"M50,80 L250,80 150,280 z\""
+      text run at (0,36) width 193: "style=\"fill:red; stroke:blue;\"/>"
+layer at (50,80) size 200x200
+  RenderSVGPath {path} at (50,80) size 200x200 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 50 80 L 250 80 L 150 280 Z"]
+caret: position 66 of child 3 {#text} of child 5 {foreignObject} of child 3 {g} of child 1 {svg} of document

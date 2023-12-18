@@ -96,17 +96,3 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
 WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CrossOriginOpenerPolicyValue> {
-    using values = EnumValues<
-    WebCore::CrossOriginOpenerPolicyValue,
-    WebCore::CrossOriginOpenerPolicyValue::UnsafeNone,
-    WebCore::CrossOriginOpenerPolicyValue::SameOrigin,
-    WebCore::CrossOriginOpenerPolicyValue::SameOriginPlusCOEP,
-    WebCore::CrossOriginOpenerPolicyValue::SameOriginAllowPopups
-    >;
-};
-
-} // namespace WTF

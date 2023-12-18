@@ -46,16 +46,25 @@ header: <WebCore/ResourceRequest.h>
     std::optional<WebCore::ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
     bool m_useAdvancedPrivacyProtections;
+    bool m_didFilterLinkDecoration;
 };
 
 [Nested] struct WebCore::AttributedString::ParagraphStyleWithTableAndListIDs {
     RetainPtr<NSParagraphStyle> style
-    Vector<std::optional<WebCore::AttributedString::TextTableID>> tableIDs
+    Vector<std::optional<WebCore::AttributedString::TableBlockAndTableIDPair>> tableBlockAndTableIDs
     Vector<WebCore::AttributedString::TextListID> listIDs
 }
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
-    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, RetainPtr<PlatformColor>, RetainPtr<CGColorRef>> value;
+    std::variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::AttributedString::ParagraphStyleWithTableAndListIDs, RetainPtr<NSPresentationIntent>, RetainPtr<NSTextAttachment>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor> value;
+}
+
+[Nested] struct WebCore::AttributedString::ColorFromPlatformColor {
+    WebCore::Color color
+}
+
+[Nested] struct WebCore::AttributedString::ColorFromCGColor {
+    WebCore::Color color
 }
 
 [Nested] struct WebCore::AttributedString::Range {
@@ -80,4 +89,64 @@ struct WebCore::MediaRecorderPrivateOptions {
 
 [Nested] class WebCore::ProtectionSpace::PlatformData {
     RetainPtr<NSURLProtectionSpace> nsSpace;
+};
+
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+header: <WebCore/ApplePayLaterAvailability.h>
+enum class WebCore::ApplePayLaterAvailability : uint8_t {
+    Available,
+    UnavailableItemIneligible,
+    UnavailableRecurringTransaction,
+};
+#endif
+
+#if ENABLE(APPLE_PAY)
+header: <WebCore/ApplePaySessionPaymentRequest.h>
+enum class WebCore::ApplePaySessionPaymentRequestShippingType : uint8_t {
+    Shipping,
+    Delivery,
+    StorePickup,
+    ServicePickup,
+};
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+header: <WebCore/ApplePayShippingContactEditingMode.h>
+enum class WebCore::ApplePayShippingContactEditingMode : uint8_t {
+    Available,
+    Enabled,
+    StorePickup,
+};
+#endif
+
+header: <WebCore/PlatformCAAnimation.h>
+enum class WebCore::PlatformCAAnimationType : uint8_t {
+    Basic,
+    Group,
+    Keyframe,
+    Spring
+};
+
+header: <WebCore/PlatformCAAnimation.h>
+enum class WebCore::PlatformCAAnimationFillModeType : uint8_t {
+    NoFillMode,
+    Forwards,
+    Backwards,
+    Both
+};
+
+header: <WebCore/PlatformCAAnimation.h>
+enum class WebCore::PlatformCAAnimationValueFunctionType : uint8_t {
+    NoValueFunction,
+    RotateX,
+    RotateY,
+    RotateZ,
+    ScaleX,
+    ScaleY,
+    ScaleZ,
+    Scale,
+    TranslateX,
+    TranslateY,
+    TranslateZ,
+    Translate
 };

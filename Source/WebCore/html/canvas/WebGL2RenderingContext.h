@@ -45,7 +45,7 @@ class WebGLVertexArrayObject;
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGL2RenderingContext);
 public:
-    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, WebGLContextAttributes&&);
 
     ~WebGL2RenderingContext();
 
@@ -272,14 +272,14 @@ private:
     long long getInt64Parameter(GCGLenum) final;
     Vector<bool> getIndexedBooleanArrayParameter(GCGLenum pname, GCGLuint index);
 
-    void initializeVertexArrayObjects() final;
+    void initializeDefaultObjects() final;
     bool validateBufferTarget(const char* functionName, GCGLenum target) final;
     bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;
     WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
     bool validateAndCacheBufferBinding(const AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*) final;
-    GCGLint getMaxDrawBuffers() final;
-    GCGLint getMaxColorAttachments() final;
+    GCGLint maxDrawBuffers() final;
+    GCGLint maxColorAttachments() final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
     bool validateCapability(const char* functionName, GCGLenum cap) final;
     template<typename T, typename TypedArrayType>
@@ -342,6 +342,8 @@ private:
     GCGLint m_max3DTextureSize { 0 };
     GCGLint m_max3DTextureLevel { 0 };
     GCGLint m_maxArrayTextureLayers { 0 };
+
+    friend class ScopedWebGLRestoreFramebuffer;
 };
 
 } // namespace WebCore

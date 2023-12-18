@@ -483,7 +483,7 @@ static bool is_probably_jdk11_with_tls13(const SSL_CLIENT_HELLO *client_hello) {
   while (CBS_len(&supported_groups) > 0) {
     uint16_t group;
     if (!CBS_get_u16(&supported_groups, &group) ||
-        group == SSL_CURVE_X25519) {
+        group == SSL_GROUP_X25519) {
       return false;
     }
   }

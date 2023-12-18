@@ -83,7 +83,7 @@ void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
 void UIScriptControllerCocoa::doAfterPresentationUpdate(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, strongThis = Ref { *this }, callbackID] {
+    [webView() _doAfterNextPresentationUpdate:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -192,7 +192,7 @@ NSUndoManager *UIScriptControllerCocoa::platformUndoManager() const
 void UIScriptControllerCocoa::setDidShowContextMenuCallback(JSValueRef callback)
 {
     UIScriptController::setDidShowContextMenuCallback(callback);
-    webView().didShowContextMenuCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
+    webView().didShowContextMenuCallback = makeBlockPtr([this, protectedThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidShowContextMenu);
@@ -202,7 +202,7 @@ void UIScriptControllerCocoa::setDidShowContextMenuCallback(JSValueRef callback)
 void UIScriptControllerCocoa::setDidDismissContextMenuCallback(JSValueRef callback)
 {
     UIScriptController::setDidDismissContextMenuCallback(callback);
-    webView().didDismissContextMenuCallback = makeBlockPtr([this, strongThis = Ref { *this }] {
+    webView().didDismissContextMenuCallback = makeBlockPtr([this, protectedThis = Ref { *this }] {
         if (!m_context)
             return;
         m_context->fireCallback(CallbackTypeDidDismissContextMenu);
@@ -309,6 +309,11 @@ unsigned long UIScriptControllerCocoa::countOfUpdatesWithLayerChanges() const
 uint64_t UIScriptControllerCocoa::currentImageAnalysisRequestID() const
 {
     return TestController::currentImageAnalysisRequestID();
+}
+
+void UIScriptControllerCocoa::installFakeMachineReadableCodeResultsForImageAnalysis()
+{
+    TestController::singleton().installFakeMachineReadableCodeResultsForImageAnalysis();
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

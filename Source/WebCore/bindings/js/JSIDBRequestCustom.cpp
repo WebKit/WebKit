@@ -86,7 +86,7 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
                     return jsNull();
                 list.append(result.value());
                 if (UNLIKELY(list.hasOverflowed())) {
-                    propagateException(lexicalGlobalObject, throwScope, Exception(UnknownError));
+                    propagateException(lexicalGlobalObject, throwScope, Exception(ExceptionCode::UnknownError));
                     return jsNull();
                 }
             }

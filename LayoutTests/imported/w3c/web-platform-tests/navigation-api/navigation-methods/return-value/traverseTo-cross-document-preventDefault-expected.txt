@@ -1,0 +1,4 @@
+
+
+FAIL traverseTo() promise never settle when preventDefault()ing the navigate event (cross-document) assert_equals: expected 1 but got 0
+

@@ -62,9 +62,6 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
 
     intlInstance->m_minimumIntegerDigits = minimumIntegerDigits;
 
-    IntlRoundingPriority roundingPriority = intlOption<IntlRoundingPriority>(globalObject, options, vm.propertyNames->roundingPriority, { { "auto"_s, IntlRoundingPriority::Auto }, { "morePrecision"_s, IntlRoundingPriority::MorePrecision }, { "lessPrecision"_s, IntlRoundingPriority::LessPrecision } }, "roundingPriority must be either \"auto\", \"morePrecision\", or \"lessPrecision\""_s, IntlRoundingPriority::Auto);
-    RETURN_IF_EXCEPTION(scope, void());
-
     unsigned roundingIncrement = intlNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1, 5000, 1);
     RETURN_IF_EXCEPTION(scope, void());
     static constexpr const unsigned roundingIncrementCandidates[] = {
@@ -89,6 +86,9 @@ void setNumberFormatDigitOptions(JSGlobalObject* globalObject, IntlType* intlIns
             { "halfTrunc"_s, RoundingMode::HalfTrunc },
             { "halfEven"_s, RoundingMode::HalfEven }
         }, "roundingMode must be either \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, RoundingMode::HalfExpand);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    IntlRoundingPriority roundingPriority = intlOption<IntlRoundingPriority>(globalObject, options, vm.propertyNames->roundingPriority, { { "auto"_s, IntlRoundingPriority::Auto }, { "morePrecision"_s, IntlRoundingPriority::MorePrecision }, { "lessPrecision"_s, IntlRoundingPriority::LessPrecision } }, "roundingPriority must be either \"auto\", \"morePrecision\", or \"lessPrecision\""_s, IntlRoundingPriority::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
     IntlTrailingZeroDisplay trailingZeroDisplay = intlOption<IntlTrailingZeroDisplay>(globalObject, options, vm.propertyNames->trailingZeroDisplay, { { "auto"_s, IntlTrailingZeroDisplay::Auto }, { "stripIfInteger"_s, IntlTrailingZeroDisplay::StripIfInteger } }, "trailingZeroDisplay must be either \"auto\" or \"stripIfInteger\""_s, IntlTrailingZeroDisplay::Auto);
@@ -326,7 +326,7 @@ inline IntlNumberFormat* IntlNumberFormat::unwrapForOldFunctions(JSGlobalObject*
     return unwrapForLegacyIntlConstructor<IntlNumberFormat>(globalObject, thisValue, globalObject->numberFormatConstructor());
 }
 
-// https://tc39.es/proposal-intl-numberformat-v3/out/numberformat/diff.html#sec-tointlmathematicalvalue
+// https://tc39.es/ecma402/#sec-tointlmathematicalvalue
 inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
@@ -364,19 +364,7 @@ inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObjec
     String string = asString(primitive)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSValue bigInt = JSBigInt::stringToBigInt(globalObject, string);
-    if (bigInt) {
-        // If it is -0, we cannot handle it in JSBigInt. Reparse the string as double.
-#if USE(BIGINT32)
-        if (bigInt.isBigInt32() && !value.bigInt32AsInt32())
-            return IntlMathematicalValue { jsToNumber(string) };
-#endif
-        if (bigInt.isHeapBigInt() && !asHeapBigInt(bigInt)->length())
-            return IntlMathematicalValue { jsToNumber(string) };
-        RELEASE_AND_RETURN(scope, bigIntToIntlMathematicalValue(globalObject, bigInt));
-    }
-
-    return IntlMathematicalValue { jsToNumber(string) };
+    RELEASE_AND_RETURN(scope, IntlMathematicalValue::parseString(globalObject, WTFMove(string)));
 }
 
 } // namespace JSC

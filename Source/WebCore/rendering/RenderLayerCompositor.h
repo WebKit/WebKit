@@ -91,7 +91,8 @@ enum class ScrollCoordinationRole {
     Scrolling           = 1 << 1,
     ScrollingProxy      = 1 << 2,
     FrameHosting        = 1 << 3,
-    Positioning         = 1 << 4,
+    PluginHosting       = 1 << 4,
+    Positioning         = 1 << 5,
 };
 
 static constexpr OptionSet<ScrollCoordinationRole> allScrollCoordinationRoles()
@@ -101,6 +102,7 @@ static constexpr OptionSet<ScrollCoordinationRole> allScrollCoordinationRoles()
         ScrollCoordinationRole::ScrollingProxy,
         ScrollCoordinationRole::ViewportConstrained,
         ScrollCoordinationRole::FrameHosting,
+        ScrollCoordinationRole::PluginHosting,
         ScrollCoordinationRole::Positioning
     };
 }
@@ -134,8 +136,8 @@ private:
 
     ChromeClient& m_chromeClient;
 
-    WeakHashSet<RenderLayer> m_scrollingLayers;
-    WeakHashSet<RenderLayer> m_viewportConstrainedLayers;
+    SingleThreadWeakHashSet<RenderLayer> m_scrollingLayers;
+    SingleThreadWeakHashSet<RenderLayer> m_viewportConstrainedLayers;
 
     const bool m_coordinateViewportConstrainedLayers;
 };
@@ -213,7 +215,7 @@ public:
 
     // Returns the ScrollingNodeID for the containing async-scrollable layer that scrolls this renderer's border box.
     // May return 0 for position-fixed content.
-    static ScrollingNodeID asyncScrollableContainerNodeID(const RenderObject&);
+    WEBCORE_EXPORT static ScrollingNodeID asyncScrollableContainerNodeID(const RenderObject&);
 
     // Whether layer's backing needs a graphics layer to clip z-order children of the given layer.
     static bool clipsCompositingDescendants(const RenderLayer&);
@@ -294,10 +296,12 @@ public:
     // to know if there is non-affine content, e.g. for drawing into an image.
     bool has3DContent() const;
     
-    static bool isCompositedSubframeRenderer(const RenderObject&);
+    static bool hasCompositedWidgetContents(const RenderObject&);
+    static bool isCompositedPlugin(const RenderObject&);
+
     static RenderLayerCompositor* frameContentsCompositor(RenderWidget&);
-    // Return true if the layers changed.
-    bool parentFrameContentLayers(RenderWidget&);
+    // Returns true the widget contents layer was parented.
+    bool attachWidgetContentLayers(RenderWidget&);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeLocation(const IntPoint& contentsOffset);
@@ -347,6 +351,7 @@ public:
     bool useCoordinatedScrollingForLayer(const RenderLayer&) const;
     ScrollPositioningBehavior computeCoordinatedPositioningForLayer(const RenderLayer&, const RenderLayer* compositingAncestor) const;
     bool isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer&) const;
+    bool isLayerForPluginWithScrollCoordinatedContents(const RenderLayer&) const;
 
     ScrollableArea* scrollableAreaForScrollingNodeID(ScrollingNodeID) const;
 
@@ -522,6 +527,7 @@ private:
     ScrollingNodeID updateScrollingNodeForScrollingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
     ScrollingNodeID updateScrollingNodeForScrollingProxyRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
     ScrollingNodeID updateScrollingNodeForFrameHostingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
+    ScrollingNodeID updateScrollingNodeForPluginHostingRole(RenderLayer&, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
     ScrollingNodeID updateScrollingNodeForPositioningRole(RenderLayer&, const RenderLayer* compositingAncestor, struct ScrollingTreeState&, OptionSet<ScrollingNodeChangeFlags>);
 
     void updateScrollingNodeLayers(ScrollingNodeID, RenderLayer&, ScrollingCoordinator&);
@@ -634,8 +640,8 @@ private:
     Color m_viewBackgroundColor;
     Color m_rootExtendedBackgroundColor;
 
-    HashMap<ScrollingNodeID, WeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
-    WeakHashSet<RenderLayer> m_layersWithUnresolvedRelations;
+    HashMap<ScrollingNodeID, SingleThreadWeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
+    SingleThreadWeakHashSet<RenderLayer> m_layersWithUnresolvedRelations;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<LegacyWebKitScrollingLayerCoordinator> m_legacyScrollingLayerCoordinator;
 #endif

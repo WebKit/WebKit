@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class DictationCommand : public TextInsertionBaseCommand, public CanMakeCheckedPtr {
+class DictationCommand : public TextInsertionBaseCommand {
     friend class DictationCommandLineOperation;
 public:
     static void insertText(Ref<Document>&&, const String&, const Vector<DictationAlternative>& alternatives, const VisibleSelection&);

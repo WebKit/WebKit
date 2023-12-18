@@ -3,7 +3,6 @@ PASS accent-color
 PASS align-content
 PASS align-items
 PASS align-self
-PASS align-tracks
 PASS alignment-baseline
 PASS alt
 PASS animation-composition
@@ -14,6 +13,7 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
+PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
 PASS aspect-ratio
@@ -102,6 +102,7 @@ PASS contain-intrinsic-width
 PASS container-name
 PASS container-type
 PASS content
+PASS content-visibility
 PASS counter-increment
 PASS counter-reset
 PASS counter-set
@@ -139,6 +140,7 @@ PASS font-synthesis-weight
 PASS font-variant-alternates
 PASS font-variant-caps
 PASS font-variant-east-asian
+PASS font-variant-emoji
 PASS font-variant-ligatures
 PASS font-variant-numeric
 PASS font-variant-position
@@ -172,7 +174,6 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
-PASS justify-tracks
 PASS kerning
 PASS left
 PASS letter-spacing
@@ -190,6 +191,7 @@ PASS margin-inline-start
 PASS margin-left
 PASS margin-right
 PASS margin-top
+PASS margin-trim
 PASS marker-end
 PASS marker-mid
 PASS marker-start
@@ -276,6 +278,8 @@ PASS scroll-padding-top
 PASS scroll-snap-align
 PASS scroll-snap-stop
 PASS scroll-snap-type
+PASS scroll-timeline-axis
+PASS scroll-timeline-name
 PASS scrollbar-color
 PASS scrollbar-gutter
 PASS scrollbar-width
@@ -318,13 +322,15 @@ PASS text-shadow
 PASS text-transform
 PASS text-underline-offset
 PASS text-underline-position
-PASS text-wrap
+PASS text-wrap-mode
+PASS text-wrap-style
 PASS top
 PASS touch-action
 PASS transform
 PASS transform-box
 PASS transform-origin
 PASS transform-style
+PASS transition-behavior
 PASS transition-delay
 PASS transition-duration
 PASS transition-property
@@ -333,6 +339,10 @@ PASS translate
 PASS unicode-bidi
 PASS vector-effect
 PASS vertical-align
+PASS view-timeline-axis
+PASS view-timeline-inset
+PASS view-timeline-name
+PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
 PASS widows

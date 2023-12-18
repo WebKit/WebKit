@@ -19,12 +19,16 @@
 extern "C" {
 #endif
 
-/*ARMv5TE "Enhanced DSP" instructions.*/
-#define HAS_EDSP 0x01
-/*ARMv6 "Parallel" or "Media" instructions.*/
-#define HAS_MEDIA 0x02
-/*ARMv7 optional NEON instructions.*/
-#define HAS_NEON 0x04
+// Armv7-A optional Neon instructions, mandatory from Armv8.0-A.
+#define HAS_NEON (1 << 0)
+// Armv8.0-A optional CRC32 instructions, mandatory from Armv8.1-A.
+#define HAS_ARM_CRC32 (1 << 1)
+// Armv8.2-A optional Neon dot-product instructions, mandatory from Armv8.4-A.
+#define HAS_NEON_DOTPROD (1 << 2)
+// Armv8.2-A optional Neon i8mm instructions, mandatory from Armv8.6-A.
+#define HAS_NEON_I8MM (1 << 3)
+// Armv8.2-A optional SVE instructions, mandatory from Armv9.0-A.
+#define HAS_SVE (1 << 4)
 
 int aom_arm_cpu_caps(void);
 

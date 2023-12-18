@@ -100,7 +100,7 @@ void MediaKeySystemRequest::deny(const String& message)
     if (!scriptExecutionContext())
         return;
 
-    ExceptionCode code = NotSupportedError;
+    ExceptionCode code = ExceptionCode::NotSupportedError;
     if (!message.isEmpty())
         m_promise->reject(code, message);
     else

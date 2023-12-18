@@ -120,7 +120,7 @@ class MockRtpRtcpInterface : public RtpRtcpInterface {
   MOCK_METHOD(void, SetRTCPStatus, (RtcpMode method), (override));
   MOCK_METHOD(int32_t, SetCNAME, (absl::string_view cname), (override));
   MOCK_METHOD(absl::optional<TimeDelta>, LastRtt, (), (const, override));
-  MOCK_METHOD(int64_t, ExpectedRetransmissionTimeMs, (), (const, override));
+  MOCK_METHOD(TimeDelta, ExpectedRetransmissionTime, (), (const, override));
   MOCK_METHOD(int32_t, SendRTCP, (RTCPPacketType packet_type), (override));
   MOCK_METHOD(void,
               GetSendStreamDataCounters,

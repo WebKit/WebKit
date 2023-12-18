@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ import { assert, unreachable } from '../../../../../common/util/util.js';
-import { kTextureFormatInfo } from '../../../../capability_info.js';
+import { kTextureFormatInfo } from '../../../../format_info.js';
 import { virtualMipSize } from '../../../../util/texture/base.js';
 import {
   kTexelRepresentationInfo,

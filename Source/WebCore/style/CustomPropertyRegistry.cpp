@@ -83,16 +83,8 @@ bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& prope
 
 void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Descriptor& descriptor)
 {
-    // "The inherits descriptor is required for the @property rule to be valid; if it’s missing, the @property rule is invalid."
-    // https://drafts.css-houdini.org/css-properties-values-api/#inherits-descriptor
-    if (!descriptor.inherits)
-        return;
-
-    // "If the provided string is not a valid syntax string, the descriptor is invalid and must be ignored."
-    // https://drafts.css-houdini.org/css-properties-values-api/#the-syntax-descriptor
     auto syntax = CSSCustomPropertySyntax::parse(descriptor.syntax);
-    if (!syntax)
-        return;
+    ASSERT(syntax);
 
     auto& document = m_scope.document();
 
@@ -116,8 +108,11 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
         //  If omitted, the initial value of the property is the guaranteed-invalid value."
         // https://drafts.css-houdini.org/css-properties-values-api/#initial-value-descriptor
         initialValue = CSSCustomPropertyValue::createWithID(descriptor.name, CSSValueInvalid);
-    } else
+    } else {
+        // Should have been discarded at parse-time.
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     auto property = CSSRegisteredCustomProperty {
         AtomString { descriptor.name },

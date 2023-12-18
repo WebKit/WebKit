@@ -29,6 +29,7 @@
 #include "config.h"
 
 #include <limits>
+#include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>
 
@@ -337,5 +338,12 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime::createWithFloat(-999).toTimeScale(0), MediaTime::negativeInfiniteTime());
 }
 
+TEST(WTF, MediaTimeInExpected)
+{
+    using Test = Expected<MediaTime, int>;
+    Test test1;
+    Test test2;
+    test1 = WTFMove(test2);
 }
 
+}

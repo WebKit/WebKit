@@ -61,16 +61,9 @@ MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample)
     commonInit();
 }
 
-MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, AtomString trackID)
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, TrackID trackID)
     : m_sample(sample)
     , m_id(trackID)
-{
-    commonInit();
-}
-
-MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
-    : m_sample(sample)
-    , m_id(AtomString::number(trackID))
 {
     commonInit();
 }
@@ -342,9 +335,12 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
     const CFStringRef attachmentKey = isAudio ? PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart : PAL::kCMSampleAttachmentKey_DoNotDisplay;
 
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
-    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, attachmentKey, kCFBooleanTrue);
+    ASSERT(attachmentsArray);
+    if (attachmentsArray) {
+        for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
+            CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+            CFDictionarySetValue(attachments, attachmentKey, kCFBooleanTrue);
+        }
     }
 
     return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);
@@ -415,7 +411,7 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
         CMSampleBufferRef rawSample = nullptr;
         if (PAL::CMSampleBufferCopySampleBufferForRange(kCFAllocatorDefault, m_sample.get(), range, &rawSample) != noErr || !rawSample)
             return { };
-        samples.uncheckedAppend(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
+        samples.append(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
     }
     return samples;
 }

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
@@ -109,8 +107,8 @@ void ServiceWorkerSoftUpdateLoader::loadWithCacheEntry(NetworkCache::Entry& entr
         return;
     }
 
-    if (entry.buffer())
-        didReceiveBuffer(*entry.buffer(), 0);
+    if (RefPtr buffer = entry.buffer())
+        didReceiveBuffer(*buffer, 0);
     didFinishLoading({ });
 }
 
@@ -130,9 +128,10 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
 #endif
 }
 
-void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&)
+void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     fail(ResourceError { ResourceError::Type::Cancellation });
+    completionHandler({ }); // May deallocate this ServiceWorkerSoftUpdateLoader.
 }
 
 void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
@@ -209,5 +208,3 @@ void ServiceWorkerSoftUpdateLoader::didComplete()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

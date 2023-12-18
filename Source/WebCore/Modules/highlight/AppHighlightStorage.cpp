@@ -36,7 +36,7 @@
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "HTMLBodyElement.h"
-#include "HighlightRegister.h"
+#include "HighlightRegistry.h"
 #include "Node.h"
 #include "Position.h"
 #include "RenderedDocumentMarker.h"
@@ -264,7 +264,7 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     if (!range)
         return false;
     
-    strongDocument->appHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(*range));
+    strongDocument->appHighlightRegistry().addAnnotationHighlightWithRange(StaticRange::create(*range));
     
     if (scroll == ScrollToHighlight::Yes) {
         auto textIndicator = TextIndicator::createWithRange(range.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010-2012, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "YarrErrorCode.h"
 #include "YarrFlags.h"
 #include "YarrPattern.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 class BumpPointerAllocator;
@@ -43,10 +44,10 @@ struct ByteTerm {
     union {
         struct {
             union {
-                UChar32 patternCharacter;
+                char32_t patternCharacter;
                 struct {
-                    UChar32 lo;
-                    UChar32 hi;
+                    char32_t lo;
+                    char32_t hi;
                 } casedCharacter;
                 CharacterClass* characterClass;
                 struct {
@@ -120,7 +121,7 @@ struct ByteTerm {
     MatchDirection m_matchDirection : 1;
     unsigned inputPosition { 0 };
 
-    ByteTerm(UChar32 ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(char32_t ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -147,7 +148,7 @@ struct ByteTerm {
         }
     }
 
-    ByteTerm(UChar32 lo, UChar32 hi, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(char32_t lo, char32_t hi, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -439,7 +440,7 @@ struct ByteTerm {
 };
 
 class ByteDisjunction {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ByteDisjunction);
 public:
     ByteDisjunction(unsigned numSubpatterns, unsigned frameSize)
         : m_numSubpatterns(numSubpatterns)
@@ -455,7 +456,7 @@ public:
 };
 
 struct BytecodePattern {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BytecodePattern);
 public:
     BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator, ConcurrentJSLock* lock, unsigned offsetVectorBaseForNamedCaptures, unsigned offsetsSize)
         : m_body(WTFMove(body))

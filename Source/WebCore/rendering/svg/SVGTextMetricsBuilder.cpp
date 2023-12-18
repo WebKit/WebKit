@@ -165,9 +165,9 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, Measu
         data->lastCharacter = currentCharacter;
     }
 
-    if (m_simpleWidthIterator) {
+    if (auto simpleWidthIterator = std::exchange(m_simpleWidthIterator, nullptr)) {
         GlyphBuffer glyphBuffer;
-        m_simpleWidthIterator->finalize(glyphBuffer);
+        simpleWidthIterator->finalize(glyphBuffer);
     }
 
     if (!data->allCharactersMap)
@@ -197,14 +197,10 @@ void SVGTextMetricsBuilder::walkTree(RenderElement& start, RenderSVGInlineText* 
     }
 }
 
-void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text)
+void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGText& textRoot, RenderSVGInlineText* stopAtLeaf)
 {
-    auto* textRoot = RenderSVGText::locateRenderSVGTextAncestor(text);
-    if (!textRoot)
-        return;
-
     MeasureTextData data(nullptr);
-    walkTree(*textRoot, &text, &data);
+    walkTree(textRoot, stopAtLeaf, &data);
 }
 
 void SVGTextMetricsBuilder::buildMetricsAndLayoutAttributes(RenderSVGText& textRoot, RenderSVGInlineText* stopAtLeaf, SVGCharacterDataMap& allCharactersMap)

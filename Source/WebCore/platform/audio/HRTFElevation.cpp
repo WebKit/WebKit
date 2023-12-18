@@ -44,6 +44,7 @@
 
 namespace WebCore {
 
+#if USE(CONCATENATED_IMPULSE_RESPONSES)
 // Total number of components of an HRTF database.
 constexpr size_t TotalNumberOfResponses = 240;
 
@@ -54,7 +55,6 @@ constexpr size_t ResponseFrameSize = 256;
 // The impulse responses may be resampled to a different sample-rate (depending on the audio hardware) when they are loaded.
 constexpr float ResponseSampleRate = 44100;
 
-#if USE(CONCATENATED_IMPULSE_RESPONSES)
 static Lock audioBusMapLock;
 static HashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
 {
@@ -99,33 +99,6 @@ void HRTFElevation::clearCache()
     Locker locker { audioBusMapLock };
     concatenatedImpulseResponsesMap().clear();
 #endif
-}
-
-// Takes advantage of the symmetry and creates a composite version of the two measured versions.  For example, we have both azimuth 30 and -30 degrees
-// where the roles of left and right ears are reversed with respect to each other.
-bool HRTFElevation::calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
-                                                                 RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR)
-{
-    RefPtr<HRTFKernel> kernelL1;
-    RefPtr<HRTFKernel> kernelR1;
-    bool success = calculateKernelsForAzimuthElevation(azimuth, elevation, sampleRate, subjectName, kernelL1, kernelR1);
-    if (!success)
-        return false;
-        
-    // And symmetric version
-    int symmetricAzimuth = !azimuth ? 0 : 360 - azimuth;
-                                                              
-    RefPtr<HRTFKernel> kernelL2;
-    RefPtr<HRTFKernel> kernelR2;
-    success = calculateKernelsForAzimuthElevation(symmetricAzimuth, elevation, sampleRate, subjectName, kernelL2, kernelR2);
-    if (!success)
-        return false;
-        
-    // Notice L/R reversal in symmetric version.
-    kernelL = HRTFKernel::createInterpolatedKernel(kernelL1.get(), kernelR2.get(), 0.5f);
-    kernelR = HRTFKernel::createInterpolatedKernel(kernelR1.get(), kernelL2.get(), 0.5f);
-    
-    return true;
 }
 
 bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #pragma once
 
 #include "UnlinkedCodeBlock.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -34,7 +35,7 @@ namespace JSC {
 // FIXME: Create UnlinkedCodeBlock inside UnlinkedCodeBlockGenerator.
 // https://bugs.webkit.org/show_bug.cgi?id=207212
 class UnlinkedCodeBlockGenerator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UnlinkedCodeBlockGenerator);
     WTF_MAKE_NONCOPYABLE(UnlinkedCodeBlockGenerator)
 public:
     UnlinkedCodeBlockGenerator(VM& vm, UnlinkedCodeBlock* codeBlock)
@@ -76,7 +77,7 @@ public:
     void setNumParameters(unsigned newValue) { m_codeBlock->setNumParameters(newValue); }
 
     UnlinkedMetadataTable& metadata() { return m_codeBlock->metadata(); }
-    void addExpressionInfo(unsigned instructionOffset, int divot, int startOffset, int endOffset, unsigned line, unsigned column);
+    void addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned column);
     void addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot);
     void addOpProfileControlFlowBytecodeOffset(JSInstructionStream::Offset offset)
     {
@@ -189,8 +190,6 @@ public:
     }
 
     size_t metadataSizeInBytes() { return m_codeBlock->metadataSizeInBytes(); }
-
-    void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
 
     void applyModification(BytecodeRewriter&, JSInstructionStreamWriter&);
 

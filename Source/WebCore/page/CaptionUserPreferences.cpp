@@ -54,7 +54,7 @@ Ref<CaptionUserPreferences> CaptionUserPreferences::create(PageGroup& group)
 
 CaptionUserPreferences::CaptionUserPreferences(PageGroup& group)
     : m_pageGroup(group)
-    , m_displayMode(ForcedOnly)
+    , m_displayMode(CaptionDisplayMode::ForcedOnly)
     , m_timer(*this, &CaptionUserPreferences::timerFired)
 {
 }
@@ -95,7 +95,7 @@ CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferences::captionDispla
 void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
 {
     m_displayMode = mode;
-    if (testingMode() && mode != AlwaysOn) {
+    if (testingMode() && mode != CaptionDisplayMode::AlwaysOn) {
         setUserPrefersCaptions(false);
         setUserPrefersSubtitles(false);
     }
@@ -322,10 +322,10 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
     CaptionDisplayMode displayMode = captionDisplayMode();
     auto kind = track->kind();
     auto prefersTextDescriptions = kind == TextTrack::Kind::Descriptions && userPrefersTextDescriptions();
-    if (displayMode == Manual && !prefersTextDescriptions)
+    if (displayMode == CaptionDisplayMode::Manual && !prefersTextDescriptions)
         return 0;
 
-    if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions()))
+    if (displayMode == CaptionDisplayMode::AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions()))
         return 0;
 
     if (kind != TextTrack::Kind::Captions && kind != TextTrack::Kind::Subtitles && kind != TextTrack::Kind::Forced && !prefersTextDescriptions)
@@ -334,12 +334,12 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
         return 0;
 
     bool trackHasOnlyForcedSubtitles = track->containsOnlyForcedSubtitles();
-    if (((trackHasOnlyForcedSubtitles && displayMode != ForcedOnly) || (!trackHasOnlyForcedSubtitles && displayMode == ForcedOnly)))
+    if (((trackHasOnlyForcedSubtitles && displayMode != CaptionDisplayMode::ForcedOnly) || (!trackHasOnlyForcedSubtitles && displayMode == CaptionDisplayMode::ForcedOnly)))
         return 0;
 
     Vector<String> userPreferredCaptionLanguages = preferredLanguages();
 
-    if ((displayMode == Automatic) || trackHasOnlyForcedSubtitles || prefersTextDescriptions) {
+    if ((displayMode == CaptionDisplayMode::Automatic) || trackHasOnlyForcedSubtitles || prefersTextDescriptions) {
 
         String textTrackLanguage = track->validBCP47Language();
         if (textTrackLanguage.isEmpty())

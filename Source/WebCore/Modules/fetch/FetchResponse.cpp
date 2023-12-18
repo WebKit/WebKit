@@ -70,11 +70,11 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     // https://fetch.spec.whatwg.org/#initialize-a-response
     // 1. If init["status"] is not in the range 200 to 599, inclusive, then throw a RangeError.
     if (init.status < 200 || init.status > 599)
-        return Exception { RangeError, "Status must be between 200 and 599"_s };
+        return Exception { ExceptionCode::RangeError, "Status must be between 200 and 599"_s };
 
     // 2. If init["statusText"] does not match the reason-phrase token production, then throw a TypeError.
     if (!isValidReasonPhrase(init.statusText))
-        return Exception { TypeError, "Status text must be a valid reason-phrase."_s };
+        return Exception { ExceptionCode::TypeError, "Status text must be a valid reason-phrase."_s };
 
     // Both uses of "initialize a response" (the Response constructor and Response.json) create the
     // Response object with the "response" header guard.
@@ -94,7 +94,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
         // 6.1 If response’s status is a null body status, then throw a TypeError.
         //     (NOTE: 101 and 103 are included in null body status due to their use elsewhere. It does not affect this step.)
         if (isNullBodyStatus(init.status))
-            return Exception { TypeError, "Response cannot have a body with the given status."_s };
+            return Exception { ExceptionCode::TypeError, "Response cannot have a body with the given status."_s };
 
         // 6.2 Set response’s body to body’s body.
         body = WTFMove(bodyWithType->body);
@@ -151,11 +151,11 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
 {
     URL requestURL = context.completeURL(url, ScriptExecutionContext::ForceUTF8::Yes);
     if (!requestURL.isValid())
-        return Exception { TypeError, makeString("Redirection URL '", requestURL.string(), "' is invalid") };
+        return Exception { ExceptionCode::TypeError, makeString("Redirection URL '", requestURL.string(), "' is invalid") };
     if (requestURL.hasCredentials())
-        return Exception { TypeError, "Redirection URL contains credentials"_s };
+        return Exception { ExceptionCode::TypeError, "Redirection URL contains credentials"_s };
     if (!ResourceResponse::isRedirectionStatusCode(status))
-        return Exception { RangeError, makeString("Status code ", status, "is not a redirection status code") };
+        return Exception { ExceptionCode::RangeError, makeString("Status code ", status, "is not a redirection status code") };
     auto redirectResponse = adoptRef(*new FetchResponse(&context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     redirectResponse->suspendIfNeeded();
     redirectResponse->m_internalResponse.setHTTPStatusCode(status);
@@ -168,11 +168,11 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::jsonForBindings(ScriptExecutionCo
 {
     auto* globalObject = context.globalObject();
     if (!globalObject)
-        return Exception { InvalidStateError, "Context is stopped"_s };
+        return Exception { ExceptionCode::InvalidStateError, "Context is stopped"_s };
 
     String jsonString = JSC::JSONStringify(globalObject, data, 0);
     if (jsonString.isNull())
-        return Exception { TypeError, "Value doesn't have a JSON representation"_s };
+        return Exception { ExceptionCode::TypeError, "Value doesn't have a JSON representation"_s };
 
     FetchBodyWithType body { FetchBody(WTFMove(jsonString)), "application/json"_s };
     return FetchResponse::create(context, WTFMove(body), WTFMove(init));
@@ -187,7 +187,7 @@ FetchResponse::FetchResponse(ScriptExecutionContext* context, std::optional<Fetc
 ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 {
     if (isDisturbedOrLocked())
-        return Exception { TypeError, "Body is disturbed or locked"_s };
+        return Exception { ExceptionCode::TypeError, "Body is disturbed or locked"_s };
 
     // If loading, let's create a stream so that data is teed on both clones.
     if (isLoading() && !m_readableStreamSource) {
@@ -195,7 +195,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone()
 
         auto* globalObject = context ? context->globalObject() : nullptr;
         if (!globalObject)
-            return Exception { InvalidStateError, "Context is stopped"_s };
+            return Exception { ExceptionCode::InvalidStateError, "Context is stopped"_s };
 
         auto voidOrException = createReadableStream(*globalObject);
         if (UNLIKELY(voidOrException.hasException()))
@@ -225,14 +225,14 @@ void FetchResponse::addAbortSteps(Ref<AbortSignal>&& signal)
 
         m_abortSignal = nullptr;
 
-        setLoadingError(Exception { AbortError, "Fetch is aborted"_s });
+        setLoadingError(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
 
         if (m_loader) {
             if (auto callback = m_loader->takeNotificationCallback())
-                callback(Exception { AbortError, "Fetch is aborted"_s });
+                callback(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
 
             if (auto callback = m_loader->takeConsumeDataCallback())
-                callback(Exception { AbortError, "Fetch is aborted"_s });
+                callback(Exception { ExceptionCode::AbortError, "Fetch is aborted"_s });
         }
 
         if (m_readableStreamSource) {
@@ -266,7 +266,7 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback, const String& initiator)
 {
     if (request.isReadableStreamBody()) {
-        responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported"_s });
+        responseCallback(Exception { ExceptionCode::NotSupportedError, "ReadableStream uploading is not supported"_s });
         return;
     }
 
@@ -517,7 +517,7 @@ void FetchResponse::closeStream()
 void FetchResponse::cancelStream()
 {
     if (isAllowedToRunScript() && hasReadableStreamBody()) {
-        body().readableStream()->cancel(Exception { AbortError, "load is cancelled"_s });
+        body().readableStream()->cancel(Exception { ExceptionCode::AbortError, "load is cancelled"_s });
         return;
     }
     cancel();

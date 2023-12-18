@@ -1,0 +1,8 @@
+Tests the computedrole mappings defined in HTML-AAM. Most test names correspond to a unique ID defined in the spec.
+
+These should remain in alphabetical order, and include all HTML tagnames. If a tag is not tested here, include a pointer to the file where it is tested, such as: <!-- caption -> ./table-roles.html -->
+
+
+
+PASS el-input-checkbox-switch
+

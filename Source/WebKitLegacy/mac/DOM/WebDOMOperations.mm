@@ -146,7 +146,7 @@ using namespace JSC;
 
 - (NSRect)_renderRect:(bool *)isReplaced
 {
-    return NSRect(core(self)->pixelSnappedRenderRect(isReplaced));
+    return NSRect(core(self)->pixelSnappedAbsoluteBoundingRect(isReplaced));
 }
 
 @end

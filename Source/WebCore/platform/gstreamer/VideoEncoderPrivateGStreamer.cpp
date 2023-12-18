@@ -36,7 +36,7 @@ using namespace WebCore;
 GST_DEBUG_CATEGORY(video_encoder_debug);
 #define GST_CAT_DEFAULT video_encoder_debug
 
-#define KBIT_TO_BIT 1024
+#define KBIT_TO_BIT 1000
 
 // FIXME: Make this configurable at runtime?
 #define NUMBER_OF_THREADS 4

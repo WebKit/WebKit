@@ -217,8 +217,6 @@ bool isSelfPositionKeyword(CSSValueID);
 bool isSelfPositionOrLeftOrRightKeyword(CSSValueID);
 bool isGridBreadthIdent(CSSValueID);
 
-RefPtr<CSSValueList> consumeAlignTracks(CSSParserTokenRange&);
-RefPtr<CSSValueList> consumeJustifyTracks(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange&);
@@ -274,8 +272,8 @@ RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
 bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
-enum class ConsumeRay { Include, Exclude };
-RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, ConsumeRay);
+enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 };
+RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, OptionSet<PathParsingOption>);
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange&, IsPositionKeyword);
 RefPtr<CSSValue> consumeJustifyContent(CSSParserTokenRange&);
@@ -319,6 +317,12 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 

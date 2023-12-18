@@ -109,7 +109,7 @@ void LibWebRTCSocket::signalUsedInterface(String&& name)
 
 int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAddress& address, const rtc::PacketOptions& options)
 {
-    auto* connection = m_factory.connection();
+    RefPtr connection = m_factory.connection();
     if (!connection)
         return -1;
 

@@ -76,6 +76,8 @@ public:
     void getAll(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
     void set(CookieInit&& options, Cookie&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
 
+    void detach() { m_cookieStore = nullptr; }
+
 private:
     explicit MainThreadBridge(CookieStore&);
 
@@ -126,7 +128,7 @@ void CookieStore::MainThreadBridge::get(CookieStoreGetOptions&& options, Functio
         WeakPtr page = document->page();
         if (!page) {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler)](CookieStore& cookieStore) mutable {
-                completionHandler(cookieStore, Exception { SecurityError });
+                completionHandler(cookieStore, Exception { ExceptionCode::SecurityError });
             });
             return;
         }
@@ -135,7 +137,7 @@ void CookieStore::MainThreadBridge::get(CookieStoreGetOptions&& options, Functio
         auto resultHandler = [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (std::optional<Vector<Cookie>>&& cookies) mutable {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler), cookies = crossThreadCopy(WTFMove(cookies))](CookieStore& cookieStore) mutable {
                 if (!cookies)
-                    completionHandler(cookieStore, Exception { TypeError });
+                    completionHandler(cookieStore, Exception { ExceptionCode::TypeError });
                 else
                     completionHandler(cookieStore, WTFMove(*cookies));
             });
@@ -156,7 +158,7 @@ void CookieStore::MainThreadBridge::getAll(CookieStoreGetOptions&& options, URL&
         WeakPtr page = document->page();
         if (!page) {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler)](CookieStore& cookieStore) mutable {
-                completionHandler(cookieStore, Exception { SecurityError });
+                completionHandler(cookieStore, Exception { ExceptionCode::SecurityError });
             });
             return;
         }
@@ -165,7 +167,7 @@ void CookieStore::MainThreadBridge::getAll(CookieStoreGetOptions&& options, URL&
         auto resultHandler = [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (std::optional<Vector<Cookie>>&& cookies) mutable {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler), cookies = crossThreadCopy(WTFMove(cookies))](CookieStore& cookieStore) mutable {
                 if (!cookies)
-                    completionHandler(cookieStore, Exception { TypeError });
+                    completionHandler(cookieStore, Exception { ExceptionCode::TypeError });
                 else
                     completionHandler(cookieStore, WTFMove(*cookies));
             });
@@ -186,7 +188,7 @@ void CookieStore::MainThreadBridge::set(CookieInit&& options, Cookie&& cookie, F
         WeakPtr page = document->page();
         if (!page) {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler)](CookieStore& cookieStore) mutable {
-                completionHandler(cookieStore, Exception { SecurityError });
+                completionHandler(cookieStore, Exception { ExceptionCode::SecurityError });
             });
             return;
         }
@@ -195,12 +197,13 @@ void CookieStore::MainThreadBridge::set(CookieInit&& options, Cookie&& cookie, F
         auto resultHandler = [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] (bool setSuccessfully) mutable {
             ensureOnContextThread([completionHandler = WTFMove(completionHandler), setSuccessfully](CookieStore& cookieStore) mutable {
                 if (!setSuccessfully)
-                    completionHandler(cookieStore, Exception { TypeError });
+                    completionHandler(cookieStore, Exception { ExceptionCode::TypeError });
                 else
                     completionHandler(cookieStore, std::nullopt);
             });
         };
 
+        document->invalidateDOMCookieCache();
         cookieJar.setCookieAsync(document, document->url(), cookie, WTFMove(resultHandler));
     };
 
@@ -220,7 +223,10 @@ CookieStore::CookieStore(ScriptExecutionContext* context)
 {
 }
 
-CookieStore::~CookieStore() = default;
+CookieStore::~CookieStore()
+{
+    m_mainThreadBridge->detach();
+}
 
 void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
 {
@@ -231,18 +237,18 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     RefPtr origin = context->securityOrigin();
     if (!origin) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
         return;
     }
 
@@ -278,18 +284,18 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     RefPtr origin = context->securityOrigin();
     if (!origin) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
         return;
     }
 
@@ -297,12 +303,12 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
     if (!options.url.isNull()) {
         auto parsed = context->completeURL(options.url);
         if (context->isDocument() && parsed != url) {
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
             return;
         }
 
         if (!origin->isSameOriginDomain(SecurityOrigin::create(parsed))) {
-            promise->reject(TypeError);
+            promise->reject(ExceptionCode::TypeError);
             return;
         }
         url = WTFMove(parsed);
@@ -337,18 +343,18 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     RefPtr origin = context->securityOrigin();
     if (!origin) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
         return;
     }
 
@@ -365,18 +371,18 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     cookie.domain = options.domain.isNull() ? domain : WTFMove(options.domain);
     if (!cookie.domain.isNull()) {
         if (cookie.domain.startsWith('.')) {
-            promise->reject(Exception { TypeError, "The domain must not begin with a '.'"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "The domain must not begin with a '.'"_s });
             return;
         }
 
         if (!host.endsWith(cookie.domain) || (host.length() > cookie.domain.length() && !StringView(host).substring(0, host.length() - cookie.domain.length()).endsWith('.'))) {
-            promise->reject(Exception { TypeError, "The domain must be a part of the current host"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "The domain must be a part of the current host"_s });
             return;
         }
 
         // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
         if (cookie.domain.utf8().length() > maximumAttributeValueSize) {
-            promise->reject(Exception { TypeError, makeString("The size of the domain must not be greater than ", maximumAttributeValueSize, " bytes") });
+            promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the domain must not be greater than ", maximumAttributeValueSize, " bytes") });
             return;
         }
     }
@@ -384,7 +390,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     cookie.path = WTFMove(options.path);
     if (!cookie.path.isNull()) {
         if (!cookie.path.startsWith('/')) {
-            promise->reject(Exception { TypeError, "The path must begin with a '/'"_s });
+            promise->reject(Exception { ExceptionCode::TypeError, "The path must begin with a '/'"_s });
             return;
         }
 
@@ -393,7 +399,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
 
         // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
         if (cookie.path.utf8().length() > maximumAttributeValueSize) {
-            promise->reject(Exception { TypeError, makeString("The size of the path must not be greater than ", maximumAttributeValueSize, " bytes") });
+            promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the path must not be greater than ", maximumAttributeValueSize, " bytes") });
             return;
         }
     }
@@ -437,18 +443,18 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
 {
     RefPtr context = scriptExecutionContext();
     if (!context) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     RefPtr origin = context->securityOrigin();
     if (!origin) {
-        promise->reject(SecurityError);
+        promise->reject(ExceptionCode::SecurityError);
         return;
     }
 
     if (origin->isOpaque()) {
-        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        promise->reject(Exception { ExceptionCode::SecurityError, "The origin is opaque"_s });
         return;
     }
 

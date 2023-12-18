@@ -1,0 +1,26 @@
+[library]
+description = "The WPE platform DRM implementation library"
+license = "BSD"
+authors = "Igalia S.L."
+version = "@PROJECT_VERSION@"
+repository_url = "https://github.com/WebKit/WebKit"
+website_url = "https://wpewebkit.org"
+dependencies = ["WPEPlatform-@WPE_API_VERSION@"]
+devhelp = true
+search_index = true
+
+[dependencies."WPEPlatform-@WPE_API_VERSION@"]
+name = "WPEPlatform"
+description = "The WPE platform library"
+docs_url = "../wpe-platform-@WPE_API_VERSION@/index.html"
+
+[theme]
+name = "basic"
+show_index_summary = true
+show_class_hierarchy = true
+
+[source-location]
+base_url = "https://github.com/WebKit/WebKit/tree/main"
+
+[extra]
+urlmap_file = "urlmap.js"

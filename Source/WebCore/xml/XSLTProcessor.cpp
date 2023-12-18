@@ -91,8 +91,10 @@ Ref<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString
             result->setFirstPartyForCookies(oldDocument->firstPartyForCookies());
             result->setSiteForCookies(oldDocument->siteForCookies());
             result->setStrictMixedContentMode(oldDocument->isStrictMixedContentMode());
-            result->contentSecurityPolicy()->copyStateFrom(oldDocument->contentSecurityPolicy());
-            result->contentSecurityPolicy()->copyUpgradeInsecureRequestStateFrom(*oldDocument->contentSecurityPolicy());
+            CheckedRef resultCSP = *result->contentSecurityPolicy();
+            CheckedRef oldDocumentCSP = *oldDocument->contentSecurityPolicy();
+            resultCSP->copyStateFrom(oldDocumentCSP.ptr());
+            resultCSP->copyUpgradeInsecureRequestStateFrom(oldDocumentCSP);
         }
 
         frame->setDocument(result.copyRef());

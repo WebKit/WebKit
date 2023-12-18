@@ -5,9 +5,11 @@ PASS ':disabled' should also match elements whose disabled attribute has been se
 PASS ':disabled' should also match elements whose disabled attribute has been set twice
 PASS ':disabled' should also match disabled elements whose type has changed
 PASS ':disabled' should not match elements not in the document
+PASS ':disabled' should match elements that are appended to a disabled fieldset dynamically
 button1 button2
 Name on card:
 
 Card number:
 
+  button nested
 

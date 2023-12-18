@@ -39,7 +39,7 @@ class RenderText;
 struct BidiRun;
 struct PaintInfo;
 
-using TrackedRendererListHashSet = WeakListHashSet<RenderBox>;
+using TrackedRendererListHashSet = SingleThreadWeakListHashSet<RenderBox>;
 
 enum CaretType { CursorCaret, DragCaret };
 enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
@@ -59,8 +59,8 @@ public:
     virtual ~RenderBlock();
 
 protected:
-    RenderBlock(Type, Element&, RenderStyle&&, BaseTypeFlags);
-    RenderBlock(Type, Document&, RenderStyle&&, BaseTypeFlags);
+    RenderBlock(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderBlock(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
 
 public:
     // These two functions are overridden for inline-block.

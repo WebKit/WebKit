@@ -68,10 +68,9 @@ void Clipboard::formats(CompletionHandler<void(Vector<String>&&)>&& completionHa
     gsize mimeTypesCount;
     const char* const* mimeTypes = gdk_content_formats_get_mime_types(gdk_clipboard_get_formats(m_clipboard), &mimeTypesCount);
 
-    Vector<String> result;
-    result.reserveInitialCapacity(mimeTypesCount);
-    for (size_t i = 0; i < mimeTypesCount; ++i)
-        result.uncheckedAppend(String::fromUTF8(mimeTypes[i]));
+    Vector<String> result(mimeTypesCount, [&](size_t i) {
+        return String::fromUTF8(mimeTypes[i]);
+    });
     completionHandler(WTFMove(result));
 }
 

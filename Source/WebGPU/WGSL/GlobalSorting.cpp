@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GlobalSorting.h"
 
+#include "ASTFunction.h"
 #include "ASTIdentifierExpression.h"
 #include "ASTVariableStatement.h"
 #include "ASTVisitor.h"
@@ -34,40 +35,20 @@
 #include <wtf/DataLog.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
 
-template<typename ASTNode>
+constexpr bool shouldLogGlobalSorting = false;
+
 class Graph {
 public:
     class Edge;
+    class Node;
     struct EdgeHash;
     struct EdgeHashTraits;
-    using EdgeSet = HashSet<Edge, EdgeHash, EdgeHashTraits>;
-
-    class Node {
-    public:
-        Node()
-            : m_astNode(nullptr)
-        {
-        }
-
-        Node(ASTNode& astNode)
-            : m_astNode(&astNode)
-        {
-        }
-
-        ASTNode& astNode() const { return *m_astNode; }
-        EdgeSet& incomingEdges() { return m_incomingEdges; }
-        EdgeSet& outgoingEdges() { return m_outgoingEdges; }
-
-    private:
-        ASTNode* m_astNode;
-        EdgeSet m_incomingEdges;
-        EdgeSet m_outgoingEdges;
-    };
+    using EdgeSet = ListHashSet<Edge, EdgeHash>;
 
     class Edge {
         friend EdgeHash;
@@ -83,13 +64,6 @@ public:
             : m_source(&source)
             , m_target(&target)
         {
-        }
-
-        void remove(Graph& graph)
-        {
-            m_source->outgoingEdges().remove(*this);
-            m_target->incomingEdges().remove(*this);
-            graph.edges().remove(*this);
         }
 
         Node& source() const { return *m_source; }
@@ -123,18 +97,44 @@ public:
         static constexpr bool safeToCompareToEmptyOrDeleted = true;
     };
 
+    class Node {
+    public:
+        Node()
+            : m_astNode(nullptr)
+        {
+        }
+
+        Node(unsigned index, AST::Declaration& astNode)
+            : m_index(index)
+            , m_astNode(&astNode)
+        {
+        }
+
+        unsigned index() const { return m_index; }
+        AST::Declaration& astNode() const { return *m_astNode; }
+        EdgeSet& incomingEdges() { return m_incomingEdges; }
+        EdgeSet& outgoingEdges() { return m_outgoingEdges; }
+
+    private:
+        unsigned m_index;
+        AST::Declaration* m_astNode;
+        EdgeSet m_incomingEdges;
+        EdgeSet m_outgoingEdges;
+    };
+
+
     Graph(size_t capacity)
         : m_nodes(capacity)
     {
     }
 
     FixedVector<Node>& nodes() { return m_nodes; }
-    Node* addNode(unsigned index, ASTNode& astNode)
+    Node* addNode(unsigned index, AST::Declaration& astNode)
     {
         if (m_nodeMap.find(astNode.name()) != m_nodeMap.end())
             return nullptr;
 
-        m_nodes[index] = Node(astNode);
+        m_nodes[index] = Node(index, astNode);
         auto* node = &m_nodes[index];
         m_nodeMap.add(astNode.name(), node);
         return node;
@@ -150,6 +150,7 @@ public:
     EdgeSet& edges() { return m_edges; }
     void addEdge(Node& source, Node& target)
     {
+        dataLogLnIf(shouldLogGlobalSorting, "addEdge: source: ", source.astNode().name(), ", target: ", target.astNode().name());
         auto result = m_edges.add(Edge(source, target));
         Edge& edge = *result.iterator;
         source.outgoingEdges().add(edge);
@@ -166,10 +167,9 @@ private:
 
 struct Empty { };
 
-template<typename ASTNode>
 class GraphBuilder : public AST::Visitor, public ContextProvider<Empty> {
 public:
-    static void visit(Graph<ASTNode>&, typename Graph<ASTNode>::Node&);
+    static void visit(Graph&, Graph::Node&);
 
     using AST::Visitor::visit;
 
@@ -180,30 +180,27 @@ public:
     void visit(AST::IdentifierExpression&) override;
 
 private:
-    GraphBuilder(Graph<ASTNode>&, typename Graph<ASTNode>::Node&);
+    GraphBuilder(Graph&, Graph::Node&);
 
     void introduceVariable(AST::Identifier&);
     void readVariable(AST::Identifier&) const;
 
-    Graph<ASTNode>& m_graph;
-    typename Graph<ASTNode>::Node& m_currentNode;
+    Graph& m_graph;
+    Graph::Node& m_currentNode;
 };
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(Graph<ASTNode>& graph, typename Graph<ASTNode>::Node& node)
+void GraphBuilder::visit(Graph& graph, Graph::Node& node)
 {
     GraphBuilder(graph, node).visit(node.astNode());
 }
 
-template<typename ASTNode>
-GraphBuilder<ASTNode>::GraphBuilder(Graph<ASTNode>& graph, typename Graph<ASTNode>::Node& node)
+GraphBuilder::GraphBuilder(Graph& graph, Graph::Node& node)
     : m_graph(graph)
     , m_currentNode(node)
 {
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(AST::Function& function)
+void GraphBuilder::visit(AST::Function& function)
 {
     ContextScope functionScope(this);
 
@@ -218,54 +215,47 @@ void GraphBuilder<ASTNode>::visit(AST::Function& function)
         AST::Visitor::visit(*function.maybeReturnType());
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(AST::VariableStatement& variable)
+void GraphBuilder::visit(AST::VariableStatement& variable)
 {
     introduceVariable(variable.variable().name());
     AST::Visitor::visit(variable);
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(AST::CompoundStatement& statement)
+void GraphBuilder::visit(AST::CompoundStatement& statement)
 {
     ContextScope blockScope(this);
     AST::Visitor::visit(statement);
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(AST::ForStatement& statement)
+void GraphBuilder::visit(AST::ForStatement& statement)
 {
     ContextScope forScope(this);
     AST::Visitor::visit(statement);
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::visit(AST::IdentifierExpression& identifier)
+void GraphBuilder::visit(AST::IdentifierExpression& identifier)
 {
     readVariable(identifier.identifier());
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::introduceVariable(AST::Identifier& name)
+void GraphBuilder::introduceVariable(AST::Identifier& name)
 {
     ContextProvider::introduceVariable(name, { });
 }
 
-template<typename ASTNode>
-void GraphBuilder<ASTNode>::readVariable(AST::Identifier& name) const
+void GraphBuilder::readVariable(AST::Identifier& name) const
 {
     if (ContextProvider::readVariable(name))
         return;
     if (auto* node = m_graph.getNode(name))
-        m_graph.addEdge(*node, m_currentNode);
+        m_graph.addEdge(m_currentNode, *node);
 }
 
 
-template<typename T>
-std::optional<FailedCheck> reorder(typename T::List& list)
+static std::optional<FailedCheck> reorder(AST::Declaration::List& list)
 {
-    Graph<T> graph(list.size());
-    Vector<typename Graph<T>::Node*> graphNodeList;
+    Graph graph(list.size());
+    Vector<Graph::Node*> graphNodeList;
     graphNodeList.reserveCapacity(list.size());
     unsigned index = 0;
     for (auto& node : list) {
@@ -282,30 +272,36 @@ std::optional<FailedCheck> reorder(typename T::List& list)
     }
 
     for (auto* graphNode : graphNodeList)
-        GraphBuilder<T>::visit(graph, *graphNode);
+        GraphBuilder::visit(graph, *graphNode);
 
     list.clear();
-    Deque<typename Graph<T>::Node> queue;
-    for (auto& node : graph.nodes()) {
-        if (node.incomingEdges().isEmpty())
-            queue.append(node);
-    }
-    while (!queue.isEmpty()) {
-        auto node = queue.takeFirst();
+    Deque<Graph::Node> queue;
+
+    std::function<void(Graph::Node&, unsigned)> processNode;
+    processNode = [&](Graph::Node& node, unsigned currentIndex) {
+        dataLogLnIf(shouldLogGlobalSorting, "Process: ", node.astNode().name());
         list.append(node.astNode());
-        for (auto edge : node.outgoingEdges()) {
-            auto& target = edge.target();
-            edge.remove(graph);
-            if (target.incomingEdges().isEmpty())
-                queue.append(target);
+        for (auto edge : node.incomingEdges()) {
+            auto& source = edge.source();
+            source.outgoingEdges().remove(edge);
+            graph.edges().remove(edge);
+            if (source.outgoingEdges().isEmpty() && source.index() < currentIndex)
+                processNode(source, currentIndex);
         }
+    };
+
+    for (auto& node : graph.nodes()) {
+        if (node.outgoingEdges().isEmpty())
+            processNode(node, node.index());
     }
+
     if (graph.edges().isEmpty())
         return std::nullopt;
 
-    typename Graph<T>::Node* cycleNode = nullptr;
+    dataLogLnIf(shouldLogGlobalSorting, "=== CYCLE ===");
+    Graph::Node* cycleNode = nullptr;
     for (auto& node : graph.nodes()) {
-        if (!node.incomingEdges().isEmpty()) {
+        if (!node.outgoingEdges().isEmpty()) {
             cycleNode = &node;
             break;
         }
@@ -313,11 +309,12 @@ std::optional<FailedCheck> reorder(typename T::List& list)
     ASSERT(cycleNode);
     StringBuilder error;
     auto* node = cycleNode;
-    HashSet<typename Graph<T>::Node*> visited;
+    HashSet<Graph::Node*> visited;
     while (true) {
-        ASSERT(!node->incomingEdges().isEmpty());
+        dataLogLnIf(shouldLogGlobalSorting, "cycle node: ", node->astNode().name());
+        ASSERT(!node->outgoingEdges().isEmpty());
         visited.add(node);
-        node = &node->incomingEdges().random()->source();
+        node = &node->outgoingEdges().first().target();
         if (visited.contains(node)) {
             cycleNode = node;
             break;
@@ -325,8 +322,8 @@ std::optional<FailedCheck> reorder(typename T::List& list)
     }
     error.append("encountered a dependency cycle: ", cycleNode->astNode().name());
     do {
-        ASSERT(!node->incomingEdges().isEmpty());
-        node = &node->incomingEdges().random()->source();
+        ASSERT(!node->outgoingEdges().isEmpty());
+        node = &node->outgoingEdges().first().target();
         error.append(" -> ", node->astNode().name());
     } while (node != cycleNode);
     return FailedCheck { Vector<Error> { Error(error.toString(), cycleNode->astNode().span()) }, { } };
@@ -334,11 +331,7 @@ std::optional<FailedCheck> reorder(typename T::List& list)
 
 std::optional<FailedCheck> reorderGlobals(ShaderModule& module)
 {
-    if (auto maybeError = reorder<AST::Structure>(module.structures()))
-        return *maybeError;
-    if (auto maybeError = reorder<AST::Variable>(module.variables()))
-        return *maybeError;
-    if (auto maybeError = reorder<AST::Function>(module.functions()))
+    if (auto maybeError = reorder(module.declarations()))
         return *maybeError;
     return std::nullopt;
 }

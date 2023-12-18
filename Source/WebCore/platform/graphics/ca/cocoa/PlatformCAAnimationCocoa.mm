@@ -51,10 +51,10 @@ void setHasExplicitBeginTime(CAAnimation *animation, bool value)
 NSString* toCAFillModeType(PlatformCAAnimation::FillModeType type)
 {
     switch (type) {
-    case PlatformCAAnimation::NoFillMode:
-    case PlatformCAAnimation::Forwards: return kCAFillModeForwards;
-    case PlatformCAAnimation::Backwards: return kCAFillModeBackwards;
-    case PlatformCAAnimation::Both: return kCAFillModeBoth;
+    case PlatformCAAnimation::FillModeType::NoFillMode:
+    case PlatformCAAnimation::FillModeType::Forwards: return kCAFillModeForwards;
+    case PlatformCAAnimation::FillModeType::Backwards: return kCAFillModeBackwards;
+    case PlatformCAAnimation::FillModeType::Both: return kCAFillModeBoth;
     }
     return @"";
 }
@@ -62,29 +62,29 @@ NSString* toCAFillModeType(PlatformCAAnimation::FillModeType type)
 static PlatformCAAnimation::FillModeType fromCAFillModeType(NSString* string)
 {
     if ([string isEqualToString:kCAFillModeBackwards])
-        return PlatformCAAnimation::Backwards;
+        return PlatformCAAnimation::FillModeType::Backwards;
 
     if ([string isEqualToString:kCAFillModeBoth])
-        return PlatformCAAnimation::Both;
+        return PlatformCAAnimation::FillModeType::Both;
 
-    return PlatformCAAnimation::Forwards;
+    return PlatformCAAnimation::FillModeType::Forwards;
 }
 
 NSString* toCAValueFunctionType(PlatformCAAnimation::ValueFunctionType type)
 {
     switch (type) {
-    case PlatformCAAnimation::NoValueFunction: return @"";
-    case PlatformCAAnimation::RotateX: return kCAValueFunctionRotateX;
-    case PlatformCAAnimation::RotateY: return kCAValueFunctionRotateY;
-    case PlatformCAAnimation::RotateZ: return kCAValueFunctionRotateZ;
-    case PlatformCAAnimation::ScaleX: return kCAValueFunctionScaleX;
-    case PlatformCAAnimation::ScaleY: return kCAValueFunctionScaleY;
-    case PlatformCAAnimation::ScaleZ: return kCAValueFunctionScaleZ;
-    case PlatformCAAnimation::Scale: return kCAValueFunctionScale;
-    case PlatformCAAnimation::TranslateX: return kCAValueFunctionTranslateX;
-    case PlatformCAAnimation::TranslateY: return kCAValueFunctionTranslateY;
-    case PlatformCAAnimation::TranslateZ: return kCAValueFunctionTranslateZ;
-    case PlatformCAAnimation::Translate: return kCAValueFunctionTranslate;
+    case PlatformCAAnimation::ValueFunctionType::NoValueFunction: return @"";
+    case PlatformCAAnimation::ValueFunctionType::RotateX: return kCAValueFunctionRotateX;
+    case PlatformCAAnimation::ValueFunctionType::RotateY: return kCAValueFunctionRotateY;
+    case PlatformCAAnimation::ValueFunctionType::RotateZ: return kCAValueFunctionRotateZ;
+    case PlatformCAAnimation::ValueFunctionType::ScaleX: return kCAValueFunctionScaleX;
+    case PlatformCAAnimation::ValueFunctionType::ScaleY: return kCAValueFunctionScaleY;
+    case PlatformCAAnimation::ValueFunctionType::ScaleZ: return kCAValueFunctionScaleZ;
+    case PlatformCAAnimation::ValueFunctionType::Scale: return kCAValueFunctionScale;
+    case PlatformCAAnimation::ValueFunctionType::TranslateX: return kCAValueFunctionTranslateX;
+    case PlatformCAAnimation::ValueFunctionType::TranslateY: return kCAValueFunctionTranslateY;
+    case PlatformCAAnimation::ValueFunctionType::TranslateZ: return kCAValueFunctionTranslateZ;
+    case PlatformCAAnimation::ValueFunctionType::Translate: return kCAValueFunctionTranslate;
     }
     return @"";
 }
@@ -92,39 +92,39 @@ NSString* toCAValueFunctionType(PlatformCAAnimation::ValueFunctionType type)
 static PlatformCAAnimation::ValueFunctionType fromCAValueFunctionType(NSString* string)
 {
     if ([string isEqualToString:kCAValueFunctionRotateX])
-        return PlatformCAAnimation::RotateX;
+        return PlatformCAAnimation::ValueFunctionType::RotateX;
 
     if ([string isEqualToString:kCAValueFunctionRotateY])
-        return PlatformCAAnimation::RotateY;
+        return PlatformCAAnimation::ValueFunctionType::RotateY;
 
     if ([string isEqualToString:kCAValueFunctionRotateZ])
-        return PlatformCAAnimation::RotateZ;
+        return PlatformCAAnimation::ValueFunctionType::RotateZ;
 
     if ([string isEqualToString:kCAValueFunctionScaleX])
-        return PlatformCAAnimation::ScaleX;
+        return PlatformCAAnimation::ValueFunctionType::ScaleX;
 
     if ([string isEqualToString:kCAValueFunctionScaleY])
-        return PlatformCAAnimation::ScaleY;
+        return PlatformCAAnimation::ValueFunctionType::ScaleY;
 
     if ([string isEqualToString:kCAValueFunctionScaleZ])
-        return PlatformCAAnimation::ScaleZ;
+        return PlatformCAAnimation::ValueFunctionType::ScaleZ;
 
     if ([string isEqualToString:kCAValueFunctionScale])
-        return PlatformCAAnimation::Scale;
+        return PlatformCAAnimation::ValueFunctionType::Scale;
 
     if ([string isEqualToString:kCAValueFunctionTranslateX])
-        return PlatformCAAnimation::TranslateX;
+        return PlatformCAAnimation::ValueFunctionType::TranslateX;
 
     if ([string isEqualToString:kCAValueFunctionTranslateY])
-        return PlatformCAAnimation::TranslateY;
+        return PlatformCAAnimation::ValueFunctionType::TranslateY;
 
     if ([string isEqualToString:kCAValueFunctionTranslateZ])
-        return PlatformCAAnimation::TranslateZ;
+        return PlatformCAAnimation::ValueFunctionType::TranslateZ;
 
     if ([string isEqualToString:kCAValueFunctionTranslate])
-        return PlatformCAAnimation::Translate;
+        return PlatformCAAnimation::ValueFunctionType::Translate;
 
-    return PlatformCAAnimation::NoValueFunction;
+    return PlatformCAAnimation::ValueFunctionType::NoValueFunction;
 }
 
 CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction& timingFunction, bool reverse)
@@ -164,16 +164,16 @@ PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(AnimationType type, const Str
     : PlatformCAAnimation(type)
 {
     switch (type) {
-    case Basic:
+    case AnimationType::Basic:
         m_animation = [CABasicAnimation animationWithKeyPath:keyPath];
         break;
-    case Group:
+    case AnimationType::Group:
         m_animation = [CAAnimationGroup animation];
         break;
-    case Keyframe:
+    case AnimationType::Keyframe:
         m_animation = [CAKeyframeAnimation animationWithKeyPath:keyPath];
         break;
-    case Spring:
+    case AnimationType::Spring:
         m_animation = [CASpringAnimation animationWithKeyPath:keyPath];
         break;
     }
@@ -184,13 +184,13 @@ PlatformCAAnimationCocoa::PlatformCAAnimationCocoa(PlatformAnimationRef animatio
     auto caAnimation = static_cast<CAAnimation *>(animation);
     if ([caAnimation isKindOfClass:[CABasicAnimation class]]) {
         if ([caAnimation isKindOfClass:[CASpringAnimation class]])
-            setType(Spring);
+            setType(AnimationType::Spring);
         else
-            setType(Basic);
+            setType(AnimationType::Basic);
     } else if ([caAnimation isKindOfClass:[CAKeyframeAnimation class]])
-        setType(Keyframe);
+        setType(AnimationType::Keyframe);
     else if ([caAnimation isKindOfClass:[CAAnimationGroup class]])
-        setType(Group);
+        setType(AnimationType::Group);
     else {
         ASSERT_NOT_REACHED();
         return;
@@ -222,7 +222,7 @@ Ref<PlatformCAAnimation> PlatformCAAnimationCocoa::copy() const
     setHasExplicitBeginTime(downcast<PlatformCAAnimationCocoa>(animation.get()).platformAnimation(), hasExplicitBeginTime(platformAnimation()));
     
     // Copy the specific Basic or Keyframe values.
-    if (animationType() == Keyframe) {
+    if (animationType() == AnimationType::Keyframe) {
         animation->copyValuesFrom(*this);
         animation->copyKeyTimesFrom(*this);
         animation->copyTimingFunctionsFrom(*this);
@@ -241,7 +241,7 @@ PlatformAnimationRef PlatformCAAnimationCocoa::platformAnimation() const
 
 String PlatformCAAnimationCocoa::keyPath() const
 {
-    if (animationType() == Group)
+    if (animationType() == AnimationType::Group)
         return emptyString();
 
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
@@ -329,11 +329,11 @@ void PlatformCAAnimationCocoa::setTimingFunction(const TimingFunction* timingFun
 {
     ASSERT(timingFunction);
     switch (animationType()) {
-    case Basic:
-    case Keyframe:
+    case AnimationType::Basic:
+    case AnimationType::Keyframe:
         [m_animation setTimingFunction:toCAMediaTimingFunction(*timingFunction, reverse)];
         break;
-    case Spring:
+    case AnimationType::Spring:
         if (timingFunction->isSpringTimingFunction()) {
             // FIXME: Handle reverse.
             auto& function = *static_cast<const SpringTimingFunction*>(timingFunction);
@@ -344,7 +344,7 @@ void PlatformCAAnimationCocoa::setTimingFunction(const TimingFunction* timingFun
             springAnimation.initialVelocity = function.initialVelocity();
         }
         break;
-    case Group:
+    case AnimationType::Group:
         break;
     }
 }
@@ -366,7 +366,7 @@ void PlatformCAAnimationCocoa::setRemovedOnCompletion(bool value)
 
 bool PlatformCAAnimationCocoa::isAdditive() const
 {
-    if (animationType() == Group)
+    if (animationType() == AnimationType::Group)
         return false;
 
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
@@ -375,7 +375,7 @@ bool PlatformCAAnimationCocoa::isAdditive() const
 
 void PlatformCAAnimationCocoa::setAdditive(bool value)
 {
-    if (animationType() == Group)
+    if (animationType() == AnimationType::Group)
         return;
 
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
@@ -384,8 +384,8 @@ void PlatformCAAnimationCocoa::setAdditive(bool value)
 
 PlatformCAAnimation::ValueFunctionType PlatformCAAnimationCocoa::valueFunction() const
 {
-    if (animationType() == Group)
-        return NoValueFunction;
+    if (animationType() == AnimationType::Group)
+        return ValueFunctionType::NoValueFunction;
 
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
     return fromCAValueFunctionType([[static_cast<CAPropertyAnimation *>(m_animation.get()) valueFunction] name]);
@@ -393,7 +393,7 @@ PlatformCAAnimation::ValueFunctionType PlatformCAAnimationCocoa::valueFunction()
 
 void PlatformCAAnimationCocoa::setValueFunction(ValueFunctionType value)
 {
-    if (animationType() == Group)
+    if (animationType() == AnimationType::Group)
         return;
 
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAPropertyAnimation class]]);
@@ -491,7 +491,7 @@ void PlatformCAAnimationCocoa::copyToValueFrom(const PlatformCAAnimation& value)
 // Keyframe-animation properties.
 void PlatformCAAnimationCocoa::setValues(const Vector<float>& value)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(value, [] (float number) {
@@ -501,7 +501,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<float>& value)
 
 void PlatformCAAnimationCocoa::setValues(const Vector<TransformationMatrix>& value)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(value, [] (auto& matrix) {
@@ -511,7 +511,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<TransformationMatrix>& val
 
 void PlatformCAAnimationCocoa::setValues(const Vector<FloatPoint3D>& value)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(value, [] (auto& point) {
@@ -521,7 +521,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<FloatPoint3D>& value)
 
 void PlatformCAAnimationCocoa::setValues(const Vector<Color>& value)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(value, [] (auto& color) {
@@ -532,7 +532,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<Color>& value)
 
 void PlatformCAAnimationCocoa::setValues(const Vector<RefPtr<FilterOperation>>& values)
 {
-    if (animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe)
         return;
 
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setValues:createNSArray(values, [&] (auto& value) {
@@ -542,7 +542,7 @@ void PlatformCAAnimationCocoa::setValues(const Vector<RefPtr<FilterOperation>>& 
 
 void PlatformCAAnimationCocoa::copyValuesFrom(const PlatformCAAnimation& value)
 {
-    if (animationType() != Keyframe || value.animationType() != Keyframe)
+    if (animationType() != AnimationType::Keyframe || value.animationType() != AnimationType::Keyframe)
         return;
 
     auto otherAnimation = static_cast<CAKeyframeAnimation *>(downcast<PlatformCAAnimationCocoa>(value).m_animation.get());
@@ -577,7 +577,7 @@ void PlatformCAAnimationCocoa::copyTimingFunctionsFrom(const PlatformCAAnimation
 
 void PlatformCAAnimationCocoa::setAnimations(const Vector<RefPtr<PlatformCAAnimation>>& value)
 {
-    ASSERT(animationType() == Group);
+    ASSERT(animationType() == AnimationType::Group);
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAAnimationGroup class]]);
 
     [static_cast<CAAnimationGroup *>(m_animation.get()) setAnimations:createNSArray(value, [&] (auto& animation) -> CAAnimation * {
@@ -589,8 +589,8 @@ void PlatformCAAnimationCocoa::setAnimations(const Vector<RefPtr<PlatformCAAnima
 
 void PlatformCAAnimationCocoa::copyAnimationsFrom(const PlatformCAAnimation& value)
 {
-    ASSERT(animationType() == Group);
-    ASSERT(value.animationType() == Group);
+    ASSERT(animationType() == AnimationType::Group);
+    ASSERT(value.animationType() == AnimationType::Group);
     ASSERT([static_cast<CAAnimation *>(m_animation.get()) isKindOfClass:[CAAnimationGroup class]]);
     ASSERT([static_cast<CAAnimation *>(downcast<PlatformCAAnimationCocoa>(value).m_animation.get()) isKindOfClass:[CAAnimationGroup class]]);
 

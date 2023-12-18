@@ -72,25 +72,15 @@ void StringDumper::visit(ShaderModule& shaderModule)
     if (!shaderModule.directives().isEmpty())
         m_out.print("\n\n");
 
-    for (auto& structure : shaderModule.structures())
-        visit(structure);
-    if (!shaderModule.structures().isEmpty())
-        m_out.printf("\n\n");
-
-    for (auto& variable : shaderModule.variables())
-        visit(variable);
-    if (!shaderModule.variables().isEmpty())
-        m_out.printf("\n\n");
-
-    for (auto& function : shaderModule.functions())
-        visit(function);
-    if (!shaderModule.functions().isEmpty())
-        m_out.printf("\n\n");
+    for (auto& declaration : shaderModule.declarations()) {
+        AST::Visitor::visit(declaration);
+        m_out.print("\n");
+    }
 }
 
-void StringDumper::visit(Directive& directive)
+void StringDumper::visit(DiagnosticDirective&)
 {
-    m_out.print(m_indent, "enable ", directive.name(), ";");
+    // FIXME: we still don't do anything with diagnostics
 }
 
 // Attribute
@@ -103,7 +93,7 @@ void StringDumper::visit(BindingAttribute& binding)
 
 void StringDumper::visit(BuiltinAttribute& builtin)
 {
-    m_out.print("@builtin(", builtin.name(), ")");
+    m_out.print("@builtin(", builtin.builtin(), ")");
 }
 
 void StringDumper::visit(GroupAttribute& group)
@@ -122,17 +112,7 @@ void StringDumper::visit(LocationAttribute& location)
 
 void StringDumper::visit(StageAttribute& stage)
 {
-    switch (stage.stage()) {
-    case StageAttribute::Stage::Compute:
-        m_out.print("@compute");
-        break;
-    case StageAttribute::Stage::Fragment:
-        m_out.print("@fragment");
-        break;
-    case StageAttribute::Stage::Vertex:
-        m_out.print("@vertex");
-        break;
-    }
+    m_out.print("@", stage.stage());
 }
 
 void StringDumper::visit(WorkgroupSizeAttribute& workgroupSize)
@@ -218,6 +198,14 @@ void StringDumper::visit(Variable& variable)
     m_out.print(";");
 }
 
+void StringDumper::visit(TypeAlias& alias)
+{
+    m_out.print(m_indent);
+    m_out.print("alias ", alias.name(), " = ");
+    visit(alias.type());
+    m_out.print(";");
+}
+
 // Expression
 void StringDumper::visit(AbstractFloatLiteral& literal)
 {
@@ -256,6 +244,11 @@ void StringDumper::visit(CallExpression& expression)
 void StringDumper::visit(Float32Literal& literal)
 {
     m_out.print(literal.value(), "f");
+}
+
+void StringDumper::visit(Float16Literal& literal)
+{
+    m_out.print(String::number(literal.value()), "h");
 }
 
 void StringDumper::visit(IdentifierExpression& identifier)

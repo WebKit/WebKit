@@ -70,7 +70,7 @@ void MetadataTable::destroy(MetadataTable* table)
 
 size_t MetadataTable::sizeInBytesForGC()
 {
-    return linkingData().unlinkedMetadata->sizeInBytesForGC(*this);
+    return unlinkedMetadata().sizeInBytesForGC(*this);
 }
 
 void MetadataTable::validate() const

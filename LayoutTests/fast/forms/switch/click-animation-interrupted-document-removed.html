@@ -1,0 +1,15 @@
+<!doctype html>
+<html class="reftest-wait">
+<iframe srcdoc="<input type=checkbox switch onclick=parent.end()>"></iframe>
+<script>
+window.onload = () => {
+    window.eventSender.mouseMoveTo(20, 20);
+    window.eventSender.scheduleAsynchronousClick();
+}
+function end() {
+    setTimeout(() => {
+        document.querySelector("iframe").remove();
+        document.documentElement.removeAttribute("class");
+    }, 50);
+}
+</script>

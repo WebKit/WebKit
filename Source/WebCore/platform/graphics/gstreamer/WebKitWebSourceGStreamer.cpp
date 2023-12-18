@@ -58,12 +58,10 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
 public:
-    CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&, unsigned requestNumber);
+    CachedResourceStreamingClient(const WebKitWebSrc&, ResourceRequest&&, unsigned requestNumber);
     virtual ~CachedResourceStreamingClient();
 
     const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
-
-    void setSourceElement(WebKitWebSrc* src) { m_src = GST_ELEMENT_CAST(src); }
 
 private:
     void checkUpdateBlocksize(unsigned bytesRead);
@@ -86,7 +84,7 @@ private:
     int m_increaseBlocksizeCount { 0 };
     unsigned m_requestNumber;
 
-    GRefPtr<GstElement> m_src;
+    const GstElement* m_src;
     ResourceRequest m_request;
     HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
@@ -706,7 +704,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
         PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
         members->resource = members->loader->requestResource(ResourceRequest(request), loadOptions);
         if (members->resource) {
-            members->resource->setClient(adoptRef(*new CachedResourceStreamingClient(protector.get(), ResourceRequest(request), requestNumber)));
+            members->resource->setClient(adoptRef(*new CachedResourceStreamingClient(*protector.get(), ResourceRequest(request), requestNumber)));
             GST_DEBUG_OBJECT(protector.get(), "Started request R%u", requestNumber);
         } else {
             GST_ERROR_OBJECT(protector.get(), "Failed to setup streaming client to handle R%u", requestNumber);
@@ -820,8 +818,8 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
     // If we have a network resource request open, we ask the main thread to close it.
     if (members->resource) {
         GST_DEBUG_OBJECT(src, "Resource request R%u will be stopped", members->requestNumber);
-        RunLoop::main().dispatch([protector = WTF::ensureGRef(src), resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
-            GST_DEBUG_OBJECT(protector.get(), "Stopping resource request R%u", requestNumber);
+        RunLoop::main().dispatch([resource = WTFMove(members->resource), requestNumber = members->requestNumber] {
+            GST_DEBUG("Stopping resource request R%u", requestNumber);
             resource->stop();
             resource->setClient(nullptr);
         });
@@ -944,9 +942,9 @@ bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)
     return members->didPassAccessControlCheck;
 }
 
-CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, ResourceRequest&& request, unsigned requestNumber)
+CachedResourceStreamingClient::CachedResourceStreamingClient(const WebKitWebSrc& src, ResourceRequest&& request, unsigned requestNumber)
     : m_requestNumber(requestNumber)
-    , m_src(GST_ELEMENT(src))
+    , m_src(GST_ELEMENT_CAST(&src))
     , m_request(WTFMove(request))
 {
 }
@@ -956,7 +954,7 @@ CachedResourceStreamingClient::~CachedResourceStreamingClient() = default;
 void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     GstBaseSrc* baseSrc = GST_BASE_SRC_CAST(src);
     WebKitWebSrcPrivate* priv = src->priv;
 
@@ -993,7 +991,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
 void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
     DataMutexLocker members { priv->dataMutex };
     if (members->requestNumber != m_requestNumber) {
@@ -1104,7 +1102,7 @@ void CachedResourceStreamingClient::redirectReceived(PlatformMediaResource&, Res
 void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const SharedBuffer& data)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     WebKitWebSrcPrivate* priv = src->priv;
 
     DataMutexLocker members { priv->dataMutex };
@@ -1114,7 +1112,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     // Rough bandwidth calculation. We ignore here the first data package because we would have to reset the counters when we issue the request and
     // that first package delivery would include the time of sending out the request and getting the data back. Since we can't distinguish the
     // sending time from the receiving time, it is better to ignore it.
-    if (!std::isnan(members->downloadStartTime)) {
+    if (!members->downloadStartTime.isNaN()) {
         members->totalDownloadedBytes += data.size();
         double timeSinceStart = (WallTime::now() - members->downloadStartTime).seconds();
         GST_TRACE_OBJECT(src, "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart
@@ -1143,7 +1141,7 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
 void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;
@@ -1156,7 +1154,7 @@ void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResour
 void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const ResourceError& error)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;
@@ -1174,7 +1172,7 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
 void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;

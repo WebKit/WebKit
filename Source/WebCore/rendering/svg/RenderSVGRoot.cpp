@@ -26,10 +26,10 @@
 #include "RenderSVGRoot.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -40,8 +40,6 @@
 #include "RenderIterator.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
-#include "RenderSVGResource.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderSVGText.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderTreeBuilder.h"
@@ -70,6 +68,7 @@ const int defaultHeight = 150;
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     : RenderReplaced(Type::SVGRoot, element, WTFMove(style))
 {
+    ASSERT(isRenderSVGRoot());
     LayoutSize intrinsicSize(calculateIntrinsicSize());
     if (!intrinsicSize.width())
         intrinsicSize.setWidth(defaultWidth);
@@ -141,7 +140,7 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
 {
     // If our frame has an owner renderer, we're embedded through eg. object/embed/iframe,
     // but we only negotiate if we're in an SVG document inside object/embed, not iframe.
-    if (!frame().ownerRenderer() || !frame().ownerRenderer()->isEmbeddedObject() || !isDocumentElementRenderer())
+    if (!frame().ownerRenderer() || !frame().ownerRenderer()->isRenderEmbeddedObject() || !isDocumentElementRenderer())
         return false;
     return frame().document()->isSVGDocument();
 }
@@ -236,15 +235,15 @@ void RenderSVGRoot::layout()
 void RenderSVGRoot::layoutChildren()
 {
     SVGContainerLayout containerLayout(*this);
-    containerLayout.layoutChildren(selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(*this));
+    containerLayout.layoutChildren(selfNeedsLayout());
 
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
+    m_strokeBoundingBox = std::nullopt;
 
     constexpr auto objectBoundingBoxDecorationWithoutTransformations = SVGBoundingBoxComputation::objectBoundingBoxDecoration | SVGBoundingBoxComputation::DecorationOption::IgnoreTransformations;
     m_objectBoundingBoxWithoutTransformations = boundingBoxComputation.computeDecoratedBoundingBox(objectBoundingBoxDecorationWithoutTransformations);
 
-    m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     containerLayout.positionChildrenRelativeToContainer();
 
     if (!m_resourcesNeedingToInvalidateClients.isEmptyIgnoringNullReferences()) {
@@ -257,6 +256,17 @@ void RenderSVGRoot::layoutChildren()
         SetForScope clearLayoutSizeChanged(m_isLayoutSizeChanged, false);
         containerLayout.layoutChildren(false);
     }
+}
+
+FloatRect RenderSVGRoot::strokeBoundingBox() const
+{
+    if (!m_strokeBoundingBox) {
+        // Initialize m_strokeBoundingBox before calling computeDecoratedBoundingBox, since recursively referenced markers can cause us to re-enter here.
+        m_strokeBoundingBox = FloatRect { };
+        SVGBoundingBoxComputation boundingBoxComputation(*this);
+        m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
+    }
+    return *m_strokeBoundingBox;
 }
 
 bool RenderSVGRoot::shouldApplyViewportClip() const
@@ -315,14 +325,12 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto adjustedPaintOffset = paintOffset + location();
     if (paintInfo.phase == PaintPhase::Mask && style().visibility() == Visibility::Visible) {
-        // FIXME: [LBSE] Upstream SVGRenderSupport changes
-        // SVGRenderSupport::paintSVGMask(*this, paintInfo, adjustedPaintOffset);
+        paintSVGMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
     if (paintInfo.phase == PaintPhase::ClippingMask && style().visibility() == Visibility::Visible) {
-        // FIXME: [LBSE] Upstream SVGRenderSupport changes
-        // SVGRenderSupport::paintSVGClippingMask(*this, paintInfo);
+        paintSVGClippingMask(paintInfo);
         return;
     }
 
@@ -332,7 +340,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
     GraphicsContext& context = paintInfo.context();
     if (context.detectingContentfulPaint()) {
         for (auto& current : childrenOfType<RenderObject>(*this)) {
-            if (!current.isSVGHiddenContainer()) {
+            if (!current.isRenderSVGHiddenContainer()) {
                 context.setContentfulPaintDetected();
                 return;
             }
@@ -342,6 +350,12 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     // Don't paint if we don't have kids, except if we have filters we should paint those.
     if (!firstChild()) {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        // FIXME: [LBSE] Missing filter support
+        if (document().settings().layerBasedSVGEngineEnabled())
+            return;
+#endif
+
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (paintInfo.phase == PaintPhase::Foreground)
@@ -462,14 +476,6 @@ void RenderSVGRoot::updateLayerTransform()
     // An empty viewBox disables the rendering -- dirty the visible descendant status!
     if (svgSVGElement().hasAttribute(SVGNames::viewBoxAttr) && svgSVGElement().hasEmptyViewBox())
         layer()->dirtyVisibleContentStatus();
-}
-
-LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
-{
-    if (isInsideEntirelyHiddenLayer())
-        return { };
-
-    return computeRect(borderBoxRect(), repaintContainer, context);
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

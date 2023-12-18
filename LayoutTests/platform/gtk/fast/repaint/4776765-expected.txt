@@ -4,10 +4,8 @@
 (repaint rects
   (rect 1 37 798 32)
   (rect 8 44 784 18)
-  (rect 1 37 798 32)
-  (rect 8 44 784 18)
   (rect 1 51 798 18)
-  (rect 1 44 798 7)
+  (rect 8 37 784 14)
   (rect 1 19 15 31)
   (rect 8 26 1 17)
   (rect 1 37 15 31)

@@ -1,0 +1,12 @@
+prefix=@CMAKE_BINARY_DIR@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}
+
+Name: WPE Platform
+Description: Platform implementation for WPE WebKit
+URL: https://wpewebkit.org
+Version: @PROJECT_VERSION@
+Requires: glib-2.0 gobject-2.0 gio-2.0
+Libs: -L${libdir} -lWPEPlatform-@WPE_API_VERSION@
+Cflags: -I@WEBKIT_DIR@/WPEPlatform -I${includedir}/DerivedSources/WPEPlatform

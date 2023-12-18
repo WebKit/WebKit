@@ -171,7 +171,7 @@ void av1_update_noise_estimate(AV1_COMP *const cpi) {
     unsigned int max_bin = 0;
     unsigned int max_bin_count = 0;
     unsigned int bin_cnt;
-    int bsize = BLOCK_16X16;
+    BLOCK_SIZE bsize = BLOCK_16X16;
     // Loop over sub-sample of 16x16 blocks of frame, and for blocks that have
     // been encoded as zero/small mv at least x consecutive frames, compute
     // the variance to update estimate of noise in the source.

@@ -25,6 +25,7 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/disassembler/zydis/Zydis"
     "${JAVASCRIPTCORE_DIR}/domjit"
     "${JAVASCRIPTCORE_DIR}/ftl"
+    "${JAVASCRIPTCORE_DIR}/fuzzilli"
     "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/inspector"
@@ -287,10 +288,20 @@ list(APPEND JavaScriptCore_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
 )
 
-if(WIN32)
-    set(OFFLINE_ASM_BACKEND "X86_WIN, X86_64_WIN, C_LOOP_WIN")
-else()
-    if(WTF_CPU_X86)
+if (WIN32)
+    if (WTF_CPU_X86)
+        set(OFFLINE_ASM_BACKEND "X86_WIN")
+    elseif (WTF_CPU_X86_64)
+        set(OFFLINE_ASM_BACKEND "X86_64_WIN")
+    endif ()
+
+    if (NOT ENABLE_JIT)
+        if (ENABLE_C_LOOP)
+            set(OFFLINE_ASM_BACKEND "C_LOOP_WIN")
+        endif ()
+    endif ()
+else ()
+    if (WTF_CPU_X86)
         set(OFFLINE_ASM_BACKEND "X86")
     elseif(WTF_CPU_X86_64)
         set(OFFLINE_ASM_BACKEND "X86_64")
@@ -650,6 +661,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/BytecodeIntrinsicRegistry.h
     bytecode/CallEdge.h
     bytecode/CallLinkInfo.h
+    bytecode/CallLinkInfoBase.h
     bytecode/CallMode.h
     bytecode/CallVariant.h
     bytecode/CallVariantInlines.h
@@ -679,6 +691,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/JumpTable.h
     bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h
     bytecode/LazyOperandValueProfile.h
+    bytecode/LazyValueProfile.h
     bytecode/LinkTimeConstant.h
     bytecode/MetadataTable.h
     bytecode/ObjectAllocationProfile.h
@@ -751,9 +764,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/DeferGCInlines.h
     heap/DeleteAllCodeEffort.h
     heap/DestructionMode.h
+    heap/EdenGCActivityCallback.h
     heap/FastMallocAlignedMemoryAllocator.h
     heap/FreeList.h
     heap/FreeListInlines.h
+    heap/FullGCActivityCallback.h
     heap/GCActivityCallback.h
     heap/GCAssertions.h
     heap/GCConductor.h
@@ -1079,6 +1094,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IndexingType.h
     runtime/InferredValue.h
     runtime/InitializeThreading.h
+    runtime/InlineAttribute.h
     runtime/Int16Array.h
     runtime/Int32Array.h
     runtime/Int8Array.h
@@ -1231,6 +1247,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ScriptFetchParameters.h
     runtime/ScriptFetcher.h
     runtime/ShadowRealmObject.h
+    runtime/SideDataRepository.h
     runtime/SlowPathFunction.h
     runtime/SmallStrings.h
     runtime/SourceOrigin.h
@@ -1313,6 +1330,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmFunctionCodeBlockGenerator.h
     wasm/WasmFunctionIPIntMetadataGenerator.h
     wasm/WasmHandlerInfo.h
+    wasm/WasmIPIntTierUpCounter.h
     wasm/WasmIPIntGenerator.h
     wasm/WasmIndexOrName.h
     wasm/WasmJS.h

@@ -205,6 +205,16 @@ void MediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supports
         client.activeVideoRouteDidChange(supportsAirPlayVideo, *m_playbackTarget);
 }
 
+void MediaSessionHelper::activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback supportsSpatialPlayback)
+{
+    if (m_activeAudioRouteSupportsSpatialPlayback == supportsSpatialPlayback)
+        return;
+
+    m_activeAudioRouteSupportsSpatialPlayback = supportsSpatialPlayback;
+    for (auto& client : m_clients)
+        client.activeAudioRouteSupportsSpatialPlaybackDidChange(supportsSpatialPlayback);
+}
+
 void MediaSessionHelper::startMonitoringWirelessRoutes()
 {
     if (m_monitoringWirelessRoutesCount++)
@@ -222,6 +232,26 @@ void MediaSessionHelper::stopMonitoringWirelessRoutes()
     if (--m_monitoringWirelessRoutesCount)
         return;
     stopMonitoringWirelessRoutesInternal();
+}
+
+void MediaSessionHelper::updateActiveAudioRouteSupportsSpatialPlayback()
+{
+#if HAVE(AVAUDIOSESSION)
+    AVAudioSession* audioSession = [PAL::getAVAudioSessionClass() sharedInstance];
+    for (AVAudioSessionPortDescription* output in audioSession.currentRoute.outputs) {
+        if (output.spatialAudioEnabled) {
+            setActiveAudioRouteSupportsSpatialPlayback(true);
+            return;
+        }
+    }
+#endif // HAVE(AVAUDIOSESSION)
+
+    setActiveAudioRouteSupportsSpatialPlayback(false);
+}
+
+void MediaSessionHelper::setActiveAudioRouteSupportsSpatialPlayback(bool supports)
+{
+    activeAudioRouteSupportsSpatialPlaybackDidChange(supports ? SupportsSpatialAudioPlayback::Yes : SupportsSpatialAudioPlayback::No);
 }
 
 MediaSessionHelperIOS::MediaSessionHelperIOS()
@@ -350,6 +380,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:PAL::get_UIKit_UIApplicationDidEnterBackgroundNotification() object:nil];
     [center addObserver:self selector:@selector(applicationDidEnterBackground:) name:WebUIApplicationDidEnterBackgroundNotification object:nil];
     [center addObserver:self selector:@selector(activeOutputDeviceDidChange:) name:PAL::get_AVFoundation_AVAudioSessionRouteChangeNotification() object:nil];
+    [center addObserver:self selector:@selector(spatialPlaybackCapabilitiesChanged:) name:PAL::get_AVFoundation_AVAudioSessionSpatialPlaybackCapabilitiesChangedNotification() object:nil];
 
 #if HAVE(CELESTIAL)
     if (canLoadAVSystemController_ServerConnectionDiedNotification())
@@ -542,6 +573,14 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
     });
 }
 
+- (void)spatialPlaybackCapabilitiesChanged:(NSNotification *)notification
+{
+    LOG(Media, "-[WebMediaSessionHelper spatialPlaybackCapabilitiesChanged:]");
+    callOnWebThreadOrDispatchAsyncOnMainThread([self, protectedSelf = retainPtr(self)]() {
+        if (auto callback = _callback.get())
+            callback->updateActiveAudioRouteSupportsSpatialPlayback();
+    });
+}
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

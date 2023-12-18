@@ -52,8 +52,8 @@ g.test('after_func_decl')
 g.test('after_type_alias_decl')
   .desc(`Test that a semicolon must be placed after an type alias declaration.`)
   .fn(t => {
-    t.expectCompileResult(/* pass */ true, `type T = i32;`);
-    t.expectCompileResult(/* pass */ false, `type T = i32`);
+    t.expectCompileResult(/* pass */ true, `alias T = i32;`);
+    t.expectCompileResult(/* pass */ false, `alias T = i32`);
   });
 
 g.test('after_return')
@@ -119,11 +119,11 @@ g.test('after_assignment')
     t.expectCompileResult(/* pass */ false, `fn f() { var v = 1; v = 2 }`);
   });
 
-g.test('after_fn_static_assert')
+g.test('after_fn_const_assert')
   .desc(`Test that a semicolon must be placed after an function-scope static assert.`)
   .fn(t => {
-    t.expectCompileResult(/* pass */ true, `fn f() { static_assert(true); }`);
-    t.expectCompileResult(/* pass */ false, `fn f() { static_assert(true) }`);
+    t.expectCompileResult(/* pass */ true, `fn f() { const_assert(true); }`);
+    t.expectCompileResult(/* pass */ false, `fn f() { const_assert(true) }`);
   });
 
 g.test('function_body_single')

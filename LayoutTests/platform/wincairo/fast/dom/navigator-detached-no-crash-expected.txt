@@ -3,6 +3,7 @@ This tests that the navigator object of a deleted frame is disconnected properly
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
+navigator.clearAppBadge() is OK
 navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
@@ -10,19 +11,31 @@ navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
+navigator.maxTouchPoints is OK
+navigator.mediaCapabilities is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
+navigator.pdfViewerEnabled is OK
+navigator.permissions is OK
 navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
 navigator.productSub is OK
+navigator.sendBeacon() threw err TypeError: Not enough arguments
+navigator.serviceWorker is OK
+navigator.setAppBadge() is OK
+navigator.storage is OK
+navigator.userActivation is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
+navigator.wakeLock is OK
 navigator.webdriver is OK
 navigator.appCodeName is OK
 navigator.appName is OK
 navigator.appVersion is OK
+navigator.clearAppBadge() is OK
 navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
@@ -30,14 +43,25 @@ navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.languages is OK
+navigator.locks is OK
+navigator.maxTouchPoints is OK
+navigator.mediaCapabilities is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
+navigator.pdfViewerEnabled is OK
+navigator.permissions is OK
 navigator.platform is OK
 navigator.plugins is OK
 navigator.product is OK
 navigator.productSub is OK
+navigator.sendBeacon() threw err TypeError: Not enough arguments
+navigator.serviceWorker is OK
+navigator.setAppBadge() is OK
+navigator.storage is OK
+navigator.userActivation is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
+navigator.wakeLock is OK
 navigator.webdriver is OK
 

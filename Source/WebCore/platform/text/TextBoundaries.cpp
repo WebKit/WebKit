@@ -38,7 +38,7 @@ unsigned endOfFirstWordBoundaryContext(StringView text)
     unsigned length = text.length();
     for (unsigned i = 0; i < length; ) {
         unsigned first = i;
-        UChar32 ch;
+        char32_t ch;
         U16_NEXT(text, i, length, ch);
         if (!requiresContextForWordBoundary(ch))
             return first;
@@ -51,7 +51,7 @@ unsigned startOfLastWordBoundaryContext(StringView text)
     unsigned length = text.length();
     for (unsigned i = length; i > 0; ) {
         unsigned last = i;
-        UChar32 ch;
+        char32_t ch;
         U16_PREV(text, 0, i, ch);
         if (!requiresContextForWordBoundary(ch))
             return last;

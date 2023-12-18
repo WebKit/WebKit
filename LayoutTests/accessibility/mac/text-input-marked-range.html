@@ -2,25 +2,30 @@
 <html>
 <head>
     <script src="../../resources/js-test.js"></script>
+	<script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
-    <input id="editable" type="text"></input>
-    <script type="text/javascript">
-        description("This test ensures that the input method marked range is available to accessibility clients.");
-        editable.focus();
-        if (window.textInputController && window.accessibilityController) {
-            var element = accessibilityController.accessibleElementById("editable");
-            shouldBeTrue("!element.textInputMarkedRange");
-            
-            textInputController.setMarkedText("test", 1, 0);
-            shouldBe("element.textInputMarkedRange", "'{0, 4}'");
-            
-            textInputController.insertText("t");
-            shouldBeTrue("!element.textInputMarkedRange");
-            
-            textInputController.setMarkedText("test2", 1, 0);
-            shouldBe("element.textInputMarkedRange", "'{1, 5}'");
-        }
-    </script>
+<input id="editable" type="text"></input>
+<script type="text/javascript">
+let output = "This test ensures that the input method marked range is available to accessibility clients.\n\n";
+editable.focus();
+if (window.textInputController && window.accessibilityController) {
+    window.jsTestIsAsync = true;
+	textInputController.setMarkedText("test", 1, 0);
+    var element = accessibilityController.accessibleElementById("editable");
+	output += expect("element.textInputMarkedRange", "'{0, 4}'");
+
+    setTimeout(async function() {
+        textInputController.insertText("t");
+        output += await expectAsync("!element.textInputMarkedRange", "true");
+
+        textInputController.setMarkedText("test2", 1, 0);
+        output += await expectAsync("element.textInputMarkedRange", "'{1, 5}'");
+
+        debug(output);
+        finishJSTest();
+    });
+}
+</script>
 </body>
 </html>

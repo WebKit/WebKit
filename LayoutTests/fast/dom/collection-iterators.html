@@ -56,8 +56,10 @@ checkHasIterator("HTMLOptionsCollection", document.createElement("select").optio
 checkHasIterator("HTMLSelectElement", document.createElement("select"));
 checkHasIterator("MediaList", document.getElementsByTagName("style")[0].sheet.media);
 checkHasIterator("NamedNodeMap", document.body.attributes);
-if ('SourceBufferList' in window)
+if ('MediaSource' in window)
     checkHasIterator("SourceBufferList", (new MediaSource()).sourceBuffers);
+else if ('ManagedMediaSource' in window)
+    checkHasIterator("SourceBufferList", (new ManagedMediaSource()).sourceBuffers);
 checkHasIterator("StyleSheetList", document.styleSheets);
 checkHasIterator("TextTrackCueList", document.createElement("video").addTextTrack("subtitles").cues);
 checkHasIterator("TextTrackList", media.textTracks);

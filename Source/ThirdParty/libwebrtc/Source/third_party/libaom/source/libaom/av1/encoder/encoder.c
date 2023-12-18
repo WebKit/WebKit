@@ -152,8 +152,8 @@ int av1_set_active_map(AV1_COMP *cpi, unsigned char *new_map_16x16, int rows,
     unsigned char *const active_map_4x4 = cpi->active_map.map;
     const int mi_rows = mi_params->mi_rows;
     const int mi_cols = mi_params->mi_cols;
-    const int row_scale = mi_size_high[BLOCK_16X16] == 2 ? 1 : 2;
-    const int col_scale = mi_size_wide[BLOCK_16X16] == 2 ? 1 : 2;
+    const int row_scale = mi_size_high_log2[BLOCK_16X16];
+    const int col_scale = mi_size_wide_log2[BLOCK_16X16];
     cpi->active_map.update = 0;
     assert(mi_rows % 2 == 0);
     assert(mi_cols % 2 == 0);
@@ -185,8 +185,8 @@ int av1_get_active_map(AV1_COMP *cpi, unsigned char *new_map_16x16, int rows,
     unsigned char *const seg_map_8x8 = cpi->enc_seg.map;
     const int mi_rows = mi_params->mi_rows;
     const int mi_cols = mi_params->mi_cols;
-    const int row_scale = mi_size_high[BLOCK_16X16] == 2 ? 1 : 2;
-    const int col_scale = mi_size_wide[BLOCK_16X16] == 2 ? 1 : 2;
+    const int row_scale = mi_size_high_log2[BLOCK_16X16];
+    const int col_scale = mi_size_wide_log2[BLOCK_16X16];
     assert(mi_rows % 2 == 0);
     assert(mi_cols % 2 == 0);
 
@@ -362,9 +362,9 @@ void av1_update_frame_size(AV1_COMP *cpi) {
 static INLINE int does_level_match(int width, int height, double fps,
                                    int lvl_width, int lvl_height,
                                    double lvl_fps, int lvl_dim_mult) {
-  const int64_t lvl_luma_pels = lvl_width * lvl_height;
+  const int64_t lvl_luma_pels = (int64_t)lvl_width * lvl_height;
   const double lvl_display_sample_rate = lvl_luma_pels * lvl_fps;
-  const int64_t luma_pels = width * height;
+  const int64_t luma_pels = (int64_t)width * height;
   const double display_sample_rate = luma_pels * fps;
   return luma_pels <= lvl_luma_pels &&
          display_sample_rate <= lvl_display_sample_rate &&
@@ -820,7 +820,11 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
 
   if (has_no_stats_stage(cpi) && (rc_cfg->mode == AOM_Q)) {
     p_rc->baseline_gf_interval = FIXED_GF_INTERVAL;
-  } else {
+  } else if (!is_one_pass_rt_params(cpi) ||
+             cm->current_frame.frame_number == 0) {
+    // For rtc mode: logic for setting the baseline_gf_interval is done
+    // in av1_get_one_pass_rt_params(), and it should not be reset here in
+    // change_config(), unless after init_config (first frame).
     p_rc->baseline_gf_interval = (MIN_GF_INTERVAL + MAX_GF_INTERVAL) / 2;
   }
 
@@ -903,18 +907,16 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
   cm->width = frm_dim_cfg->width;
   cm->height = frm_dim_cfg->height;
 
-  if (initial_dimensions->width || is_sb_size_changed) {
-    if (cm->width > initial_dimensions->width ||
-        cm->height > initial_dimensions->height || is_sb_size_changed) {
-      av1_free_context_buffers(cm);
-      av1_free_shared_coeff_buffer(&cpi->td.shared_coeff_buf);
-      av1_free_sms_tree(&cpi->td);
-      av1_free_pmc(cpi->td.firstpass_ctx, av1_num_planes(cm));
-      cpi->td.firstpass_ctx = NULL;
-      alloc_compressor_data(cpi);
-      realloc_segmentation_maps(cpi);
-      initial_dimensions->width = initial_dimensions->height = 0;
-    }
+  if (cm->width > initial_dimensions->width ||
+      cm->height > initial_dimensions->height || is_sb_size_changed) {
+    av1_free_context_buffers(cm);
+    av1_free_shared_coeff_buffer(&cpi->td.shared_coeff_buf);
+    av1_free_sms_tree(&cpi->td);
+    av1_free_pmc(cpi->td.firstpass_ctx, av1_num_planes(cm));
+    cpi->td.firstpass_ctx = NULL;
+    alloc_compressor_data(cpi);
+    realloc_segmentation_maps(cpi);
+    initial_dimensions->width = initial_dimensions->height = 0;
   }
   av1_update_frame_size(cpi);
 
@@ -942,7 +944,7 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
 #else
   if (oxcf->tool_cfg.enable_global_motion) {
     cpi->image_pyramid_levels =
-        global_motion_pyr_levels[oxcf->global_motion_method];
+        global_motion_pyr_levels[default_global_motion_method];
   } else {
     cpi->image_pyramid_levels = 0;
   }
@@ -1276,7 +1278,7 @@ AV1_PRIMARY *av1_create_primary_compressor(
     enc_set_mb_mi(&mi_params, oxcf->frm_dim_cfg.width, oxcf->frm_dim_cfg.height,
                   BLOCK_4X4);
 
-    const int bsize = BLOCK_16X16;
+    const BLOCK_SIZE bsize = BLOCK_16X16;
     const int w = mi_size_wide[bsize];
     const int h = mi_size_high[bsize];
     const int num_cols = (mi_params.mi_cols + w - 1) / w;
@@ -1406,6 +1408,8 @@ AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi, const AV1EncoderConfig *oxcf,
   init_frame_index_set(&cpi->frame_index_set);
 
   cm->current_frame.frame_number = 0;
+  cpi->rc.frame_number_encoded = 0;
+  cpi->rc.prev_frame_is_dropped = 0;
   cm->current_frame_id = -1;
   cpi->tile_data = NULL;
   cpi->last_show_frame_buf = NULL;
@@ -1480,16 +1484,18 @@ AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi, const AV1EncoderConfig *oxcf,
     max_mi_rows = size_in_mi(oxcf->frm_dim_cfg.forced_max_frame_height);
   }
 
-  CHECK_MEM_ERROR(cm, cpi->consec_zero_mv,
-                  aom_calloc((max_mi_rows * max_mi_cols) >> 2,
-                             sizeof(*cpi->consec_zero_mv)));
+  const int consec_zero_mv_alloc_size = (max_mi_rows * max_mi_cols) >> 2;
+  CHECK_MEM_ERROR(
+      cm, cpi->consec_zero_mv,
+      aom_calloc(consec_zero_mv_alloc_size, sizeof(*cpi->consec_zero_mv)));
+  cpi->consec_zero_mv_alloc_size = consec_zero_mv_alloc_size;
 
   cpi->mb_weber_stats = NULL;
   cpi->mb_delta_q = NULL;
   cpi->palette_pixel_num = 0;
 
   {
-    const int bsize = BLOCK_16X16;
+    const BLOCK_SIZE bsize = BLOCK_16X16;
     const int w = mi_size_wide[bsize];
     const int h = mi_size_high[bsize];
     const int num_cols = (max_mi_cols + w - 1) / w;
@@ -1504,7 +1510,7 @@ AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi, const AV1EncoderConfig *oxcf,
 
 #if CONFIG_TUNE_VMAF
   {
-    const int bsize = BLOCK_64X64;
+    const BLOCK_SIZE bsize = BLOCK_64X64;
     const int w = mi_size_wide[bsize];
     const int h = mi_size_high[bsize];
     const int num_cols = (mi_params->mi_cols + w - 1) / w;
@@ -1617,40 +1623,6 @@ static AOM_INLINE void terminate_worker_data(AV1_PRIMARY *ppi) {
   }
 }
 
-// Deallocate allocated thread_data.
-static AOM_INLINE void free_thread_data(AV1_PRIMARY *ppi) {
-  PrimaryMultiThreadInfo *const p_mt_info = &ppi->p_mt_info;
-  for (int t = 1; t < p_mt_info->num_workers; ++t) {
-    EncWorkerData *const thread_data = &p_mt_info->tile_thr_data[t];
-    thread_data->td = thread_data->original_td;
-    aom_free(thread_data->td->tctx);
-    aom_free(thread_data->td->palette_buffer);
-    aom_free(thread_data->td->tmp_conv_dst);
-    release_compound_type_rd_buffers(&thread_data->td->comp_rd_buffer);
-    for (int j = 0; j < 2; ++j) {
-      aom_free(thread_data->td->tmp_pred_bufs[j]);
-    }
-    aom_free(thread_data->td->pixel_gradient_info);
-    aom_free(thread_data->td->src_var_info_of_4x4_sub_blocks);
-    release_obmc_buffers(&thread_data->td->obmc_buffer);
-    aom_free(thread_data->td->vt64x64);
-
-    for (int x = 0; x < 2; x++) {
-      for (int y = 0; y < 2; y++) {
-        aom_free(thread_data->td->hash_value_buffer[x][y]);
-        thread_data->td->hash_value_buffer[x][y] = NULL;
-      }
-    }
-    aom_free(thread_data->td->counts);
-    av1_free_pmc(thread_data->td->firstpass_ctx,
-                 ppi->seq_params.monochrome ? 1 : MAX_MB_PLANE);
-    thread_data->td->firstpass_ctx = NULL;
-    av1_free_shared_coeff_buffer(&thread_data->td->shared_coeff_buf);
-    av1_free_sms_tree(thread_data->td);
-    aom_free(thread_data->td);
-  }
-}
-
 void av1_remove_primary_compressor(AV1_PRIMARY *ppi) {
   if (!ppi) return;
 #if !CONFIG_REALTIME_ONLY
@@ -1727,6 +1699,7 @@ void av1_remove_compressor(AV1_COMP *cpi) {
   pthread_mutex_t *const enc_row_mt_mutex_ = mt_info->enc_row_mt.mutex_;
   pthread_cond_t *const enc_row_mt_cond_ = mt_info->enc_row_mt.cond_;
   pthread_mutex_t *const gm_mt_mutex_ = mt_info->gm_sync.mutex_;
+  pthread_mutex_t *const tpl_error_mutex_ = mt_info->tpl_row_mt.mutex_;
   pthread_mutex_t *const pack_bs_mt_mutex_ = mt_info->pack_bs_sync.mutex_;
   if (enc_row_mt_mutex_ != NULL) {
     pthread_mutex_destroy(enc_row_mt_mutex_);
@@ -1740,6 +1713,10 @@ void av1_remove_compressor(AV1_COMP *cpi) {
     pthread_mutex_destroy(gm_mt_mutex_);
     aom_free(gm_mt_mutex_);
   }
+  if (tpl_error_mutex_ != NULL) {
+    pthread_mutex_destroy(tpl_error_mutex_);
+    aom_free(tpl_error_mutex_);
+  }
   if (pack_bs_mt_mutex_ != NULL) {
     pthread_mutex_destroy(pack_bs_mt_mutex_);
     aom_free(pack_bs_mt_mutex_);
@@ -1751,10 +1728,7 @@ void av1_remove_compressor(AV1_COMP *cpi) {
     av1_loop_filter_dealloc(&mt_info->lf_row_sync);
     av1_cdef_mt_dealloc(&mt_info->cdef_sync);
 #if !CONFIG_REALTIME_ONLY
-    int num_lr_workers =
-        av1_get_num_mod_workers_for_alloc(&cpi->ppi->p_mt_info, MOD_LR);
-    av1_loop_restoration_dealloc(&mt_info->lr_row_sync, num_lr_workers);
-    av1_gm_dealloc(&mt_info->gm_sync);
+    av1_loop_restoration_dealloc(&mt_info->lr_row_sync);
     av1_tf_mt_dealloc(&mt_info->tf_sync);
 #endif
   }
@@ -2088,10 +2062,7 @@ static void set_restoration_unit_size(int width, int height, int sx, int sy,
   int s = 0;
 #endif  // !COUPLED_CHROMA_FROM_LUMA_RESTORATION
 
-  if (width * height > 352 * 288)
-    rst[0].restoration_unit_size = RESTORATION_UNITSIZE_MAX;
-  else
-    rst[0].restoration_unit_size = (RESTORATION_UNITSIZE_MAX >> 1);
+  rst[0].restoration_unit_size = RESTORATION_UNITSIZE_MAX;
   rst[1].restoration_unit_size = rst[0].restoration_unit_size >> s;
   rst[2].restoration_unit_size = rst[1].restoration_unit_size;
 }
@@ -2340,17 +2311,8 @@ static void cdef_restoration_frame(AV1_COMP *cpi, AV1_COMMON *cm,
     start_timing(cpi, cdef_time);
 #endif
     const int num_workers = cpi->mt_info.num_mod_workers[MOD_CDEF];
-    const int use_screen_content_model =
-        cm->quant_params.base_qindex >
-            AOMMAX(cpi->sf.rt_sf.screen_content_cdef_filter_qindex_thresh,
-                   cpi->rc.best_quality + 5) &&
-        cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN;
     // Find CDEF parameters
-    av1_cdef_search(&cpi->mt_info, &cm->cur_frame->buf, cpi->source, cm, xd,
-                    cpi->sf.lpf_sf.cdef_pick_method, cpi->td.mb.rdmult,
-                    cpi->sf.rt_sf.skip_cdef_sb, cpi->oxcf.tool_cfg.cdef_control,
-                    use_screen_content_model,
-                    cpi->ppi->rtc_ref.non_reference_frame);
+    av1_cdef_search(cpi);
 
     // Apply the filter
     if ((skip_apply_postproc_filters & SKIP_APPLY_CDEF) == 0) {
@@ -2544,7 +2506,8 @@ static int encode_without_recode(AV1_COMP *cpi) {
   av1_set_size_dependent_vars(cpi, &q, &bottom_index, &top_index);
   av1_set_mv_search_params(cpi);
 
-  if (cm->current_frame.frame_number == 0 && cpi->ppi->use_svc &&
+  if (cm->current_frame.frame_number == 0 &&
+      (cpi->ppi->use_svc || cpi->oxcf.rc_cfg.drop_frames_water_mark > 0) &&
       cpi->svc.temporal_layer_id == 0) {
     const SequenceHeader *seq_params = cm->seq_params;
     if (aom_alloc_frame_buffer(
@@ -2602,9 +2565,18 @@ static int encode_without_recode(AV1_COMP *cpi) {
       cm, unscaled, &cpi->scaled_source, filter_scaler, phase_scaler, true,
       false, cpi->oxcf.border_in_pixels, cpi->image_pyramid_levels);
   if (frame_is_intra_only(cm) || resize_pending != 0) {
-    memset(cpi->consec_zero_mv, 0,
-           ((cm->mi_params.mi_rows * cm->mi_params.mi_cols) >> 2) *
-               sizeof(*cpi->consec_zero_mv));
+    const int current_size =
+        (cm->mi_params.mi_rows * cm->mi_params.mi_cols) >> 2;
+    if (cpi->consec_zero_mv &&
+        (cpi->consec_zero_mv_alloc_size < current_size)) {
+      aom_free(cpi->consec_zero_mv);
+      cpi->consec_zero_mv_alloc_size = 0;
+      CHECK_MEM_ERROR(cm, cpi->consec_zero_mv,
+                      aom_malloc(current_size * sizeof(*cpi->consec_zero_mv)));
+      cpi->consec_zero_mv_alloc_size = current_size;
+    }
+    assert(cpi->consec_zero_mv != NULL);
+    memset(cpi->consec_zero_mv, 0, current_size * sizeof(*cpi->consec_zero_mv));
   }
 
   if (cpi->unscaled_last_source != NULL) {
@@ -2651,16 +2623,9 @@ static int encode_without_recode(AV1_COMP *cpi) {
 #endif  // CONFIG_FPMT_TEST
   if (scale_references ||
       cpi->ppi->gf_group.frame_parallel_level[cpi->gf_frame_index] == 0) {
-    // For SVC the inter-layer/spatial prediction is not done for newmv
-    // (zero_mode is forced), and since the scaled references are only
-    // use for newmv search, we can avoid scaling here when
-    // force_zero_mode_spatial_ref is set for SVC mode.
-    // Also add condition for dynamic_resize: for dynamic_resize we always
-    // check for scaling references for now.
-    if (!frame_is_intra_only(cm) &&
-        (!cpi->ppi->use_svc || !cpi->svc.force_zero_mode_spatial_ref ||
-         cpi->oxcf.resize_cfg.resize_mode == RESIZE_DYNAMIC))
+    if (!frame_is_intra_only(cm)) {
       av1_scale_references(cpi, filter_scaler, phase_scaler, 1);
+    }
   }
 
   av1_set_quantizer(cm, q_cfg->qm_minlevel, q_cfg->qm_maxlevel, q,
@@ -3070,7 +3035,7 @@ static int encode_with_recode_loop(AV1_COMP *cpi, size_t *size, uint8_t *dest) {
              rc->projected_frame_size, psnr.sse[0]);
       ++rd_command->frame_index;
       if (rd_command->frame_index == rd_command->frame_count) {
-        exit(0);
+        return AOM_CODEC_ERROR;
       }
 #endif  // CONFIG_RD_COMMAND
 
@@ -3145,15 +3110,21 @@ static void set_grain_syn_params(AV1_COMMON *cm) {
   film_grain_params->scaling_points_y[0][0] = 128;
   film_grain_params->scaling_points_y[0][1] = 100;
 
-  film_grain_params->num_cb_points = 1;
-  film_grain_params->scaling_points_cb[0][0] = 128;
-  film_grain_params->scaling_points_cb[0][1] = 100;
+  if (!cm->seq_params->monochrome) {
+    film_grain_params->num_cb_points = 1;
+    film_grain_params->scaling_points_cb[0][0] = 128;
+    film_grain_params->scaling_points_cb[0][1] = 100;
 
-  film_grain_params->num_cr_points = 1;
-  film_grain_params->scaling_points_cr[0][0] = 128;
-  film_grain_params->scaling_points_cr[0][1] = 100;
+    film_grain_params->num_cr_points = 1;
+    film_grain_params->scaling_points_cr[0][0] = 128;
+    film_grain_params->scaling_points_cr[0][1] = 100;
+  } else {
+    film_grain_params->num_cb_points = 0;
+    film_grain_params->num_cr_points = 0;
+  }
 
   film_grain_params->chroma_scaling_from_luma = 0;
+
   film_grain_params->scaling_shift = 1;
   film_grain_params->ar_coeff_lag = 0;
   film_grain_params->ar_coeff_shift = 1;
@@ -3598,10 +3569,6 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
   start_timing(cpi, encode_frame_to_data_rate_time);
 #endif
 
-  if (frame_is_intra_only(cm)) {
-    av1_set_screen_content_options(cpi, features);
-  }
-
 #if !CONFIG_REALTIME_ONLY
   calculate_frame_avg_haar_energy(cpi);
 #endif
@@ -3749,17 +3716,14 @@ static int encode_frame_to_data_rate(AV1_COMP *cpi, size_t *size,
     cpi->num_tg = DEFAULT_MAX_NUM_TG;
   }
 
-  // For 1 pass CBR, check if we are dropping this frame.
-  // Never drop on key frame.
-  if (has_no_stats_stage(cpi) && oxcf->rc_cfg.mode == AOM_CBR &&
-      current_frame->frame_type != KEY_FRAME) {
-    FRAME_UPDATE_TYPE update_type =
-        cpi->ppi->gf_group.update_type[cpi->gf_frame_index];
-    (void)update_type;
-    assert(
-        IMPLIES(cpi->is_dropped_frame, (update_type == OVERLAY_UPDATE ||
-                                        update_type == INTNL_OVERLAY_UPDATE)));
-    if (av1_rc_drop_frame(cpi)) {
+  // For 1 pass CBR mode: check if we are dropping this frame.
+  if (has_no_stats_stage(cpi) && oxcf->rc_cfg.mode == AOM_CBR) {
+    // Always drop for spatial enhancement layer if layer bandwidth is 0.
+    // Otherwise check for frame-dropping based on buffer level in
+    // av1_rc_drop_frame().
+    if ((cpi->svc.spatial_layer_id > 0 &&
+         cpi->oxcf.rc_cfg.target_bandwidth == 0) ||
+        av1_rc_drop_frame(cpi)) {
       cpi->is_dropped_frame = true;
     }
     if (cpi->is_dropped_frame) {
@@ -4141,10 +4105,10 @@ int av1_receive_raw_frame(AV1_COMP *cpi, aom_enc_frame_flags_t frame_flags,
       // No noise synthesis if source is very clean.
       // Uses a low edge threshold to focus on smooth areas.
       // Increase output noise setting a little compared to measured value.
-      cpi->oxcf.noise_level =
-          (float)(av1_estimate_noise_from_single_plane(
-                      sd, 0, cm->seq_params->bit_depth, 16) -
-                  0.1);
+      double y_noise_level = 0.0;
+      av1_estimate_noise_level(sd, &y_noise_level, AOM_PLANE_Y, AOM_PLANE_Y,
+                               cm->seq_params->bit_depth, 16);
+      cpi->oxcf.noise_level = (float)(y_noise_level - 0.1);
       cpi->oxcf.noise_level = (float)AOMMAX(0.0, cpi->oxcf.noise_level);
       if (cpi->oxcf.noise_level > 0.0) {
         cpi->oxcf.noise_level += (float)0.5;
@@ -4449,10 +4413,8 @@ void print_internal_stats(AV1_PRIMARY *ppi) {
 
     fclose(f);
 
-    if (ppi->ssim_vars != NULL) {
-      aom_free(ppi->ssim_vars);
-      ppi->ssim_vars = NULL;
-    }
+    aom_free(ppi->ssim_vars);
+    ppi->ssim_vars = NULL;
   }
 }
 #endif  // CONFIG_INTERNAL_STATS

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "JITSubGenerator.h"
 #include "LinkBuffer.h"
 #include "Repatch.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -55,7 +56,7 @@ struct MathICGenerationState {
 
 template <typename GeneratorType, typename ArithProfileType>
 class JITMathIC {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(JITMathIC);
 public:
     JITMathIC(ArithProfileType* arithProfile)
         : m_arithProfile(arithProfile)
@@ -124,13 +125,10 @@ public:
     {
         auto linkJumpToOutOfLineSnippet = [&] () {
             CCallHelpers jit(codeBlock);
-            auto jump = jit.jump();
-            // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
-            bool needsBranchCompaction = false;
+            jit.jumpThunk(CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
             RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(MacroAssembler::differenceBetweenCodePtr(m_inlineStart, m_inlineEnd)));
-            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
+            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed);
             RELEASE_ASSERT(linkBuffer.isValid());
-            linkBuffer.link(jump, CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
             FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");
         };
 
@@ -142,7 +140,7 @@ public:
 #endif
         };
 
-        bool shouldEmitProfiling = !JITCode::isOptimizingJIT(codeBlock->jitType());
+        bool shouldEmitProfiling = !JSC::JITCode::isOptimizingJIT(codeBlock->jitType());
 
         if (m_generateFastPathOnRepatch) {
 
@@ -154,13 +152,11 @@ public:
             m_generateFastPathOnRepatch = false;
 
             if (generatedInline) {
-                auto jumpToDone = jit.jump();
+                jit.jumpThunk(doneLocation());
+                generationState.slowPathJumps.linkThunk(slowPathStartLocation(), &jit);
 
                 LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
                 if (!linkBuffer.didFailToAllocate()) {
-                    linkBuffer.link(generationState.slowPathJumps, slowPathStartLocation());
-                    linkBuffer.link(jumpToDone, doneLocation());
-
                     m_code = FINALIZE_CODE_FOR(
                         codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line fast IC snippet");
 
@@ -195,13 +191,13 @@ public:
             if (!emittedFastPath)
                 return;
             endJumpList.append(jit.jump());
+            endJumpList.linkThunk(doneLocation(), &jit);
+            slowPathJumpList.linkThunk(slowPathStartLocation(), &jit);
 
             LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
             if (linkBuffer.didFailToAllocate())
                 return;
 
-            linkBuffer.link(endJumpList, doneLocation());
-            linkBuffer.link(slowPathJumpList, slowPathStartLocation());
 
             m_code = FINALIZE_CODE_FOR(
                 codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line IC snippet");

@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-change-history-scroll-restoration-during-promise.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-explicit-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-intercept-handler-modifies.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-push.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reject.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-immediate-scroll.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-dispatch.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-after-resolve.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-before-after-transition-commit.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-fragment-does-not-exist.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-push.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-repeated.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-resets-when-no-fragment.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-after-preventDefault.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html
+/LayoutTests/imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html

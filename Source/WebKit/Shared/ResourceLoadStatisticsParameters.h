@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
 #include "SandboxExtension.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/RegistrableDomain.h>
@@ -34,7 +33,6 @@
 namespace WebKit {
 
 struct ResourceLoadStatisticsParameters {
-
     String directory;
     SandboxExtension::Handle directoryExtensionHandle;
     bool enabled { false };
@@ -42,129 +40,13 @@ struct ResourceLoadStatisticsParameters {
     bool enableLogTestingEvent { false };
     bool shouldIncludeLocalhost { true };
     bool enableDebugMode { false };
-#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
-#endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
     HashSet<WebCore::RegistrableDomain> managedDomains;
     WebCore::RegistrableDomain manualPrevalentResource;
-    
-    void encode(IPC::Encoder& encoder) const
-    {
-        encoder << directory;
-        encoder << directoryExtensionHandle;
-        encoder << enabled;
-        encoder << isTrackingPreventionStateExplicitlySet;
-        encoder << enableLogTestingEvent;
-        encoder << shouldIncludeLocalhost;
-        encoder << enableDebugMode;
-#if ENABLE(TRACKING_PREVENTION)
-        encoder << thirdPartyCookieBlockingMode;
-        encoder << sameSiteStrictEnforcementEnabled;
-#endif
-        encoder << firstPartyWebsiteDataRemovalMode;
-        encoder << standaloneApplicationDomain;
-        encoder << appBoundDomains;
-        encoder << managedDomains;
-        encoder << manualPrevalentResource;
-    }
-
-    static std::optional<ResourceLoadStatisticsParameters> decode(IPC::Decoder& decoder)
-    {
-        std::optional<String> directory;
-        decoder >> directory;
-        if (!directory)
-            return std::nullopt;
-        
-        std::optional<SandboxExtension::Handle> directoryExtensionHandle;
-        decoder >> directoryExtensionHandle;
-        if (!directoryExtensionHandle)
-            return std::nullopt;
-
-        std::optional<bool> enabled;
-        decoder >> enabled;
-        if (!enabled)
-            return std::nullopt;
-
-        std::optional<bool> isTrackingPreventionStateExplicitlySet;
-        decoder >> isTrackingPreventionStateExplicitlySet;
-        if (!isTrackingPreventionStateExplicitlySet)
-            return std::nullopt;
-
-        std::optional<bool> enableLogTestingEvent;
-        decoder >> enableLogTestingEvent;
-        if (!enableLogTestingEvent)
-            return std::nullopt;
-
-        std::optional<bool> shouldIncludeLocalhost;
-        decoder >> shouldIncludeLocalhost;
-        if (!shouldIncludeLocalhost)
-            return std::nullopt;
-
-        std::optional<bool> enableDebugMode;
-        decoder >> enableDebugMode;
-        if (!enableDebugMode)
-            return std::nullopt;
-
-#if ENABLE(TRACKING_PREVENTION)
-        std::optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
-        decoder >> thirdPartyCookieBlockingMode;
-        if (!thirdPartyCookieBlockingMode)
-            return std::nullopt;
-
-        std::optional<WebCore::SameSiteStrictEnforcementEnabled> sameSiteStrictEnforcementEnabled;
-        decoder >> sameSiteStrictEnforcementEnabled;
-        if (!sameSiteStrictEnforcementEnabled)
-            return std::nullopt;
-#endif
-
-        std::optional<WebCore::FirstPartyWebsiteDataRemovalMode> firstPartyWebsiteDataRemovalMode;
-        decoder >> firstPartyWebsiteDataRemovalMode;
-        if (!firstPartyWebsiteDataRemovalMode)
-            return std::nullopt;
-
-        std::optional<WebCore::RegistrableDomain> standaloneApplicationDomain;
-        decoder >> standaloneApplicationDomain;
-        if (!standaloneApplicationDomain)
-            return std::nullopt;
-
-        std::optional<HashSet<WebCore::RegistrableDomain>> appBoundDomains;
-        decoder >> appBoundDomains;
-        if (!appBoundDomains)
-            return std::nullopt;
-
-        std::optional<HashSet<WebCore::RegistrableDomain>> managedDomains;
-        decoder >> managedDomains;
-        if (!managedDomains)
-            return std::nullopt;
-
-        std::optional<WebCore::RegistrableDomain> manualPrevalentResource;
-        decoder >> manualPrevalentResource;
-        if (!manualPrevalentResource)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*directory),
-            WTFMove(*directoryExtensionHandle),
-            WTFMove(*enabled),
-            WTFMove(*isTrackingPreventionStateExplicitlySet),
-            WTFMove(*enableLogTestingEvent),
-            WTFMove(*shouldIncludeLocalhost),
-            WTFMove(*enableDebugMode),
-#if ENABLE(TRACKING_PREVENTION)
-            WTFMove(*thirdPartyCookieBlockingMode),
-            WTFMove(*sameSiteStrictEnforcementEnabled),
-#endif
-            WTFMove(*firstPartyWebsiteDataRemovalMode),
-            WTFMove(*standaloneApplicationDomain),
-            WTFMove(*appBoundDomains),
-            WTFMove(*managedDomains),
-            WTFMove(*manualPrevalentResource),
-        }};
-    }
 };
 
 } // namespace WebKit

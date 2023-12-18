@@ -1058,7 +1058,7 @@ static INLINE void highbd_12_obmc_variance(const uint8_t *pre8, int pre_stride,
 }
 
 #define HIGHBD_OBMC_VAR(W, H)                                              \
-  unsigned int aom_highbd_obmc_variance##W##x##H##_c(                      \
+  unsigned int aom_highbd_8_obmc_variance##W##x##H##_c(                    \
       const uint8_t *pre, int pre_stride, const int32_t *wsrc,             \
       const int32_t *mask, unsigned int *sse) {                            \
     int sum;                                                               \
@@ -1087,7 +1087,7 @@ static INLINE void highbd_12_obmc_variance(const uint8_t *pre8, int pre_stride,
   }
 
 #define HIGHBD_OBMC_SUBPIX_VAR(W, H)                                           \
-  unsigned int aom_highbd_obmc_sub_pixel_variance##W##x##H##_c(                \
+  unsigned int aom_highbd_8_obmc_sub_pixel_variance##W##x##H##_c(              \
       const uint8_t *pre, int pre_stride, int xoffset, int yoffset,            \
       const int32_t *wsrc, const int32_t *mask, unsigned int *sse) {           \
     uint16_t fdata3[(H + 1) * W];                                              \
@@ -1098,8 +1098,8 @@ static INLINE void highbd_12_obmc_variance(const uint8_t *pre8, int pre_stride,
     aom_highbd_var_filter_block2d_bil_second_pass(                             \
         fdata3, temp2, W, W, H, W, bilinear_filters_2t[yoffset]);              \
                                                                                \
-    return aom_highbd_obmc_variance##W##x##H##_c(CONVERT_TO_BYTEPTR(temp2), W, \
-                                                 wsrc, mask, sse);             \
+    return aom_highbd_8_obmc_variance##W##x##H##_c(CONVERT_TO_BYTEPTR(temp2),  \
+                                                   W, wsrc, mask, sse);        \
   }                                                                            \
                                                                                \
   unsigned int aom_highbd_10_obmc_sub_pixel_variance##W##x##H##_c(             \

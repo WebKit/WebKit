@@ -13,7 +13,7 @@ promise_test(async (t) => {
     const mediaRecorder = new MediaRecorder(stream)
     mediaRecorder.start(10);
 
-    setTimeout(() => {
+    setInterval(() => {
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = 'green';
         ctx.fillRect(10, 10, 150, 100);

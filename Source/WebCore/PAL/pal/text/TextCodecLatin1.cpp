@@ -71,28 +71,28 @@ static const UChar latin1ConversionTable[256] = {
 void TextCodecLatin1::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     // From https://encoding.spec.whatwg.org.
-    registrar("windows-1252", "windows-1252");
-    registrar("ansi_x3.4-1968", "windows-1252");
-    registrar("ascii", "windows-1252");
-    registrar("cp1252", "windows-1252");
-    registrar("cp819", "windows-1252");
-    registrar("csisolatin1", "windows-1252");
-    registrar("ibm819", "windows-1252");
-    registrar("iso-8859-1", "windows-1252");
-    registrar("iso-ir-100", "windows-1252");
-    registrar("iso8859-1", "windows-1252");
-    registrar("iso88591", "windows-1252");
-    registrar("iso_8859-1", "windows-1252");
-    registrar("iso_8859-1:1987", "windows-1252");
-    registrar("l1", "windows-1252");
-    registrar("latin1", "windows-1252");
-    registrar("us-ascii", "windows-1252");
-    registrar("x-cp1252", "windows-1252");
+    registrar("windows-1252"_s, "windows-1252"_s);
+    registrar("ansi_x3.4-1968"_s, "windows-1252"_s);
+    registrar("ascii"_s, "windows-1252"_s);
+    registrar("cp1252"_s, "windows-1252"_s);
+    registrar("cp819"_s, "windows-1252"_s);
+    registrar("csisolatin1"_s, "windows-1252"_s);
+    registrar("ibm819"_s, "windows-1252"_s);
+    registrar("iso-8859-1"_s, "windows-1252"_s);
+    registrar("iso-ir-100"_s, "windows-1252"_s);
+    registrar("iso8859-1"_s, "windows-1252"_s);
+    registrar("iso88591"_s, "windows-1252"_s);
+    registrar("iso_8859-1"_s, "windows-1252"_s);
+    registrar("iso_8859-1:1987"_s, "windows-1252"_s);
+    registrar("l1"_s, "windows-1252"_s);
+    registrar("latin1"_s, "windows-1252"_s);
+    registrar("us-ascii"_s, "windows-1252"_s);
+    registrar("x-cp1252"_s, "windows-1252"_s);
 }
 
 void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 {
-    registrar("windows-1252", [] {
+    registrar("windows-1252"_s, [] {
         return makeUnique<TextCodecLatin1>();
     });
 }

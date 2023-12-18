@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLProvokingVertex final : public RefCounted<WebGLProvokingVertex>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLProvokingVertex final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLProvokingVertex);
     WTF_MAKE_NONCOPYABLE(WebGLProvokingVertex);
 public:

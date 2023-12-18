@@ -16,6 +16,7 @@ vars = {
   'chromium_git': 'https://chromium.googlesource.com',
 
   'checkout_clang': False,
+  'checkout_fuzzer': False,
   'checkout_sde': False,
   'checkout_nasm': False,
   'checkout_libcxx': False,
@@ -25,20 +26,30 @@ vars = {
   #  cipd describe PACKAGE_NAME -version latest
 
   # infra/3pp/tools/cmake/linux-amd64
-  'cmake_version': 'version:2@3.26.3.chromium.7',
+  'cmake_version': 'version:2@3.27.7.chromium.8',
   # infra/3pp/tools/go/linux-amd64
-  'go_version': 'version:2@1.20.4',
+  'go_version': 'version:2@1.21.2',
   # infra/3pp/tools/perl/windows-amd64
   'perl_version': 'version:2@5.32.1.1',
 
   # Update the following from
   # https://chromium.googlesource.com/chromium/src/+/main/DEPS
-  'android_sdk_platform-tools_version': 'RSI3iwryh7URLGRgJHsCvUxj092woTPnKt4pwFcJ6L8C',
-  'android_ndk_revision': '8388a2be5421311dc75c5f937aae13d821a27f3d',
-  'libfuzzer_revision': 'debe7d2d1982e540fbd6bd78604bf001753f9e74',
-  'libcxx_revision': 'f8279b01085b800724f5c5629dc365b9f040dc53',
-  'libcxxabi_revision': 'd5e79e117ce9adfdcfdc5dde56ee8cddd7742854',
+  'android_sdk_platform-tools_version': 'HWVsGs2HCKgSVv41FsOcsfJbNcB0UFiNrF6Tc4yRArYC',
+  'libfuzzer_revision': '758bd21f103a501b362b1ca46fa8fcb692eaa303',
+  'libcxx_revision': '8fc17971d629c19a17b006d0c4fc41e721cc2f7f',
+  'libcxxabi_revision': 'db9800c042df3ee2691031a58b5e37e89a7356a3',
   'ninja_version': 'version:2@1.11.1.chromium.6',
+
+  # The Android NDK cannot be updated on CI for two reasons:
+  #
+  # Until https://crbug.com/boringssl/454 is fixed, we rely on an older NDK to
+  # test building without NEON instructions as the baseline.
+  #
+  # Until https://crbug.com/boringssl/653 is fixed, we cannot update past
+  # Chromium's version:2@r25c.cr0 package. Chromium has since switched building
+  # minimal CIPD packages which do not contain all the NDK files we need. We'll
+  # probably need to make our own NDK package.
+  'android_ndk_revision': '310956bd122ec2b96049f8d7398de6b717f3452e',
 }
 
 deps = {
@@ -82,7 +93,7 @@ deps = {
   },
 
   'boringssl/util/bot/libFuzzer': {
-    'url': Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + Var('libfuzzer_revision'),
+    'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer.git' +'@' + Var('libfuzzer_revision'),
     'condition': 'checkout_fuzzer',
   },
 

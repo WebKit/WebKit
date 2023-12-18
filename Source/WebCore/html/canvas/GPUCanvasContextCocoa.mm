@@ -136,11 +136,7 @@ GPUCanvasContextCocoa::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas()
 {
     if (auto* c = htmlCanvas())
         return c;
-
-    auto& base = canvasBase();
-    RELEASE_ASSERT(is<OffscreenCanvas>(base));
-
-    return &downcast<OffscreenCanvas>(base);
+    return &checkedDowncast<OffscreenCanvas>(canvasBase());
 }
 
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
@@ -176,13 +172,9 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
     }
 }
 
-void GPUCanvasContextCocoa::prepareForDisplayWithPaint()
+void GPUCanvasContextCocoa::drawBufferToCanvas(SurfaceBuffer)
 {
-    prepareForDisplay();
-}
-
-void GPUCanvasContextCocoa::paintRenderingResultsToCanvas()
-{
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
     auto& base = canvasBase();
     base.clearCopiedImage();
     if (auto buffer = base.buffer()) {

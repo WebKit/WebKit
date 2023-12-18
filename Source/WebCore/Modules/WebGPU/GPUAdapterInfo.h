@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ASCIICType.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -38,16 +39,17 @@ public:
         return adoptRef(*new GPUAdapterInfo(WTFMove(name)));
     }
 
-    String vendor() const { auto v = m_name.split(' '); return v.size() ? v[0] : ""_s; }
-    String architecture() const { return ""_s; }
-    String device() const { return m_name; }
-    String description() const { return ""_s; }
+    String vendor() const { auto v = m_name.split(' '); return v.size() ? normalizedIdentifier(v[0]) : ""_s; }
+    String architecture() const { return normalizedIdentifier(m_name); }
+    String device() const { return normalizedIdentifier(m_name); }
+    String description() const { return normalizedIdentifier(m_name); }
 
 private:
     GPUAdapterInfo(String&& name)
         : m_name(name)
     {
     }
+    static String normalizedIdentifier(const String& s) { return s.convertToLowercaseWithoutLocale().removeCharacters([](auto c) { return !isASCIIAlphanumeric(c); }); }
 
     String m_name;
 };

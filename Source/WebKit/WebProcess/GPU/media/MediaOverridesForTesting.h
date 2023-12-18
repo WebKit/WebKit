@@ -38,53 +38,6 @@ struct MediaOverridesForTesting {
     std::optional<bool> vp9HardwareDecoderDisabled;
     std::optional<bool> vp9DecoderDisabled;
     std::optional<WebCore::ScreenDataOverrides> vp9ScreenSizeAndScale;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << systemHasAC;
-        encoder << systemHasBattery;
-        encoder << vp9HardwareDecoderDisabled;
-        encoder << vp9DecoderDisabled;
-        encoder << vp9ScreenSizeAndScale;
-    }
-
-    template <class Decoder>
-    static std::optional<MediaOverridesForTesting> decode(Decoder& decoder)
-    {
-        std::optional<std::optional<bool>> systemHasAC;
-        decoder >> systemHasAC;
-        if (!systemHasAC)
-            return std::nullopt;
-
-        std::optional<std::optional<bool>> systemHasBattery;
-        decoder >> systemHasBattery;
-        if (!systemHasBattery)
-            return std::nullopt;
-
-        std::optional<std::optional<bool>> vp9HardwareDecoderDisabled;
-        decoder >> vp9HardwareDecoderDisabled;
-        if (!vp9HardwareDecoderDisabled)
-            return std::nullopt;
-        
-        std::optional<std::optional<bool>> vp9DecoderDisabled;
-        decoder >> vp9DecoderDisabled;
-        if (!vp9DecoderDisabled)
-            return std::nullopt;
-
-        std::optional<std::optional<WebCore::ScreenDataOverrides>> vp9ScreenSizeAndScale;
-        decoder >> vp9ScreenSizeAndScale;
-        if (!vp9ScreenSizeAndScale)
-            return std::nullopt;
-
-        return {{
-            *systemHasAC,
-            *systemHasBattery,
-            *vp9HardwareDecoderDisabled,
-            *vp9DecoderDisabled,
-            *vp9ScreenSizeAndScale,
-        }};
-    }
 };
 
 } // namespace WebKit

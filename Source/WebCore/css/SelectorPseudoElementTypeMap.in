@@ -6,6 +6,7 @@ cue
 #endif
 first-letter
 first-line
+grammar-error
 highlight
 marker
 part
@@ -22,3 +23,11 @@ placeholder, PseudoElementWebKitCustom
 -webkit-scrollbar-track-piece
 selection
 slotted
+spelling-error
+thumb, PseudoElementWebKitCustom
+track, PseudoElementWebKitCustom
+view-transition
+view-transition-group
+view-transition-image-pair
+view-transition-old
+view-transition-new

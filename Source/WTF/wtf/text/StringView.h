@@ -28,7 +28,6 @@
 #include <limits.h>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
-#include <wtf/Packed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
@@ -68,6 +67,7 @@ public:
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
     StringView(const char*, unsigned length);
+    StringView(const void*, unsigned length, bool is8bit);
     StringView(ASCIILiteral);
     ALWAYS_INLINE StringView(std::span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
     ALWAYS_INLINE StringView(std::span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
@@ -95,6 +95,7 @@ public:
     bool is8Bit() const;
     const LChar* characters8() const;
     const UChar* characters16() const;
+    const void* rawCharacters() const { return m_characters; }
     std::span<const LChar> span8() const { return { characters8(), length() }; }
     std::span<const UChar> span16() const { return { characters16(), length() }; }
 
@@ -199,9 +200,12 @@ private:
     // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
     explicit StringView(const char*);
 
+    UChar unsafeCharacterAt(unsigned index) const;
+
     friend bool equal(StringView, StringView);
     friend bool equal(StringView, StringView, unsigned length);
     friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
+    friend size_t findCommon(StringView haystack, StringView needle, unsigned start);
 
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
@@ -229,13 +233,13 @@ private:
 
     void clear();
 
+    const void* m_characters { nullptr };
+    unsigned m_length { 0 };
+    bool m_is8Bit { true };
+
 #if CHECK_STRINGVIEW_LIFETIME
     UnderlyingString* m_underlyingString { nullptr };
 #endif
-
-    PackedPtr<const void> m_characters;
-    bool m_is8Bit { true };
-    unsigned m_length { 0 };
 };
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>&, StringView);
@@ -309,8 +313,8 @@ inline StringView::~StringView()
 
 inline StringView::StringView(StringView&& other)
     : m_characters(other.m_characters)
-    , m_is8Bit(other.m_is8Bit)
     , m_length(other.m_length)
+    , m_is8Bit(other.m_is8Bit)
 {
     ASSERT(other.underlyingStringIsValid());
 
@@ -322,8 +326,8 @@ inline StringView::StringView(StringView&& other)
 
 inline StringView::StringView(const StringView& other)
     : m_characters(other.m_characters)
-    , m_is8Bit(other.m_is8Bit)
     , m_length(other.m_length)
+    , m_is8Bit(other.m_is8Bit)
 {
     ASSERT(other.underlyingStringIsValid());
 
@@ -395,6 +399,13 @@ inline StringView::StringView(const char* characters, unsigned length)
     initialize(reinterpret_cast<const LChar*>(characters), length);
 }
 
+inline StringView::StringView(const void* characters, unsigned length, bool is8bit)
+    : m_characters(characters)
+    , m_length(length)
+    , m_is8Bit(is8bit)
+{
+}
+
 inline StringView::StringView(ASCIILiteral string)
 {
     initialize(string.characters8(), string.length());
@@ -451,14 +462,14 @@ inline const LChar* StringView::characters8() const
 {
     ASSERT(is8Bit());
     ASSERT(underlyingStringIsValid());
-    return static_cast<const LChar*>(m_characters.get());
+    return static_cast<const LChar*>(m_characters);
 }
 
 inline const UChar* StringView::characters16() const
 {
     ASSERT(!is8Bit() || isEmpty());
     ASSERT(underlyingStringIsValid());
-    return static_cast<const UChar*>(m_characters.get());
+    return static_cast<const UChar*>(m_characters);
 }
 
 inline unsigned StringView::hash() const
@@ -550,6 +561,14 @@ inline StringView StringView::substring(unsigned start, unsigned length) const
 
 inline UChar StringView::characterAt(unsigned index) const
 {
+    RELEASE_ASSERT(index < length());
+    if (is8Bit())
+        return characters8()[index];
+    return characters16()[index];
+}
+
+inline UChar StringView::unsafeCharacterAt(unsigned index) const
+{
     ASSERT(index < length());
     if (is8Bit())
         return characters8()[index];
@@ -605,7 +624,7 @@ inline StringView::UpconvertedCharacters::UpconvertedCharacters(StringView strin
     }
     const LChar* characters8 = string.characters8();
     unsigned length = string.m_length;
-    m_upconvertedCharacters.resize(length);
+    m_upconvertedCharacters.grow(length);
     StringImpl::copyCharacters(m_upconvertedCharacters.data(), characters8, length);
     m_characters = m_upconvertedCharacters.data();
 }
@@ -874,7 +893,7 @@ class StringView::CodePoints::Iterator {
 public:
     Iterator(StringView, unsigned index);
 
-    UChar32 operator*() const;
+    char32_t operator*() const;
     Iterator& operator++();
 
     bool operator==(const Iterator&) const;
@@ -972,7 +991,7 @@ inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
     return *this;
 }
 
-inline UChar32 StringView::CodePoints::Iterator::operator*() const
+inline char32_t StringView::CodePoints::Iterator::operator*() const
 {
 #if CHECK_STRINGVIEW_LIFETIME
     ASSERT(m_stringView.underlyingStringIsValid());
@@ -980,7 +999,7 @@ inline UChar32 StringView::CodePoints::Iterator::operator*() const
     ASSERT(m_current < m_end);
     if (m_is8Bit)
         return *static_cast<const LChar*>(m_current);
-    UChar32 codePoint;
+    char32_t codePoint;
     size_t length = static_cast<const UChar*>(m_end) - static_cast<const UChar*>(m_current);
     U16_GET(static_cast<const UChar*>(m_current), 0, 0, length, codePoint);
     return codePoint;
@@ -1025,7 +1044,7 @@ inline auto StringView::CodeUnits::Iterator::operator++() -> Iterator&
 
 inline UChar StringView::CodeUnits::Iterator::operator*() const
 {
-    return m_stringView[m_index];
+    return m_stringView.unsafeCharacterAt(m_index);
 }
 
 inline bool StringView::CodeUnits::Iterator::operator==(const Iterator& other) const
@@ -1168,9 +1187,10 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
     unsigned needleLength = needle.length();
 
     if (needleLength == 1) {
+        UChar firstCharacter = needle.unsafeCharacterAt(0);
         if (haystack.is8Bit())
-            return WTF::find(haystack.characters8(), haystack.length(), needle[0], start);
-        return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
+            return WTF::find(haystack.characters8(), haystack.length(), firstCharacter, start);
+        return WTF::find(haystack.characters16(), haystack.length(), firstCharacter, start);
     }
 
     if (start > haystack.length())

@@ -26,12 +26,13 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKVelocityTrackingScrollView.h"
 
 @class WKWebView;
 
-@interface WKScrollView : UIScrollView
+@interface WKScrollView : WKVelocityTrackingScrollView
 
-@property (nonatomic, assign) WKWebView <UIScrollViewDelegate> *internalDelegate;
+@property (nonatomic, assign) WKWebView <WKSEScrollViewDelegate> *internalDelegate;
 
 - (void)_setBackgroundColorInternal:(UIColor *)backgroundColor;
 - (void)_setIndicatorStyleInternal:(UIScrollViewIndicatorStyle)indicatorStyle;
@@ -42,10 +43,14 @@
 - (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets;
 - (void)_setDecelerationRateInternal:(UIScrollViewDecelerationRate)rate;
 
+- (void)_resetContentInset;
+@property (nonatomic, readonly) BOOL _contentInsetWasExternallyOverridden;
+
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 @property (nonatomic, assign, readonly) BOOL _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 - (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior;
+- (void)_resetContentInsetAdjustmentBehavior;
 #endif
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)

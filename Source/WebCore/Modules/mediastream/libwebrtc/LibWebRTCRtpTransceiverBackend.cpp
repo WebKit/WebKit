@@ -89,7 +89,7 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
     else if (codec.mimeType.startsWith("audio/"_s))
         rtcCodec.kind = cricket::MEDIA_TYPE_AUDIO;
     else
-        return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
+        return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
 
     rtcCodec.name = StringView(codec.mimeType).substring(6).utf8().toStdString();
     rtcCodec.clock_rate = codec.clockRate;
@@ -99,7 +99,7 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
     for (auto parameter : StringView(codec.sdpFmtpLine).split(';')) {
         auto position = parameter.find('=');
         if (position == notFound)
-            return Exception { InvalidModificationError, "RTCRtpCodecCapability sdpFmtLine badly formated"_s };
+            return Exception { ExceptionCode::InvalidModificationError, "RTCRtpCodecCapability sdpFmtLine badly formated"_s };
         rtcCodec.parameters.emplace(parameter.left(position).utf8().data(), parameter.substring(position + 1).utf8().data());
     }
 

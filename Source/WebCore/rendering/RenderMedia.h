@@ -55,7 +55,7 @@ private:
     bool canHaveChildren() const final { return true; }
 
     ASCIILiteral renderName() const override { return "RenderMedia"_s; }
-    bool isMedia() const final { return true; }
+    bool isRenderMedia() const final { return true; }
     bool isImage() const final { return false; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 };
@@ -67,6 +67,6 @@ inline RenderMedia* HTMLMediaElement::renderer() const
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMedia, isMedia())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMedia, isRenderMedia())
 
 #endif // ENABLE(VIDEO)

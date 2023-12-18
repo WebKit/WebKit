@@ -26,7 +26,7 @@
 #ifndef PDFPluginTextAnnotation_h
 #define PDFPluginTextAnnotation_h
 
-#if ENABLE(PDFKIT_PLUGIN)
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #include "PDFPluginAnnotation.h"
 
@@ -67,6 +67,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 
-#endif // ENABLE(PDFKIT_PLUGIN)
+#endif // ENABLE(LEGACY_PDFKIT_PLUGIN)
 
 #endif // PDFPluginTextAnnotation_h

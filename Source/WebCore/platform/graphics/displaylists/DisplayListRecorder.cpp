@@ -74,14 +74,10 @@ void Recorder::appendStateChangeItem(const GraphicsContextState& state)
     
     if (state.containsOnlyInlineChanges()) {
         if (state.changes().contains(GraphicsContextState::Change::FillBrush))
-            recordSetInlineFillColor(*fillColor().tryGetAsSRGBABytes());
+            recordSetInlineFillColor(*fillColor().tryGetAsPackedInline());
 
-        if (state.changes().contains(GraphicsContextState::Change::StrokeBrush))
-            recordSetInlineStrokeColor(*strokeColor().tryGetAsSRGBABytes());
-
-        if (state.changes().contains(GraphicsContextState::Change::StrokeThickness))
-            recordSetStrokeThickness(strokeThickness());
-
+        if (state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }))
+            recordSetInlineStroke(buildSetInlineStroke(state));
         return;
     }
 
@@ -119,6 +115,21 @@ void Recorder::appendStateChangeItemIfNecessary()
     appendStateChangeItem(state);
     state.didApplyChanges();
     currentState().lastDrawingState = state;
+}
+
+SetInlineStroke Recorder::buildSetInlineStroke(const GraphicsContextState& state)
+{
+    ASSERT(state.containsOnlyInlineChanges());
+    ASSERT(state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }));
+
+    if (!state.changes().contains(GraphicsContextState::Change::StrokeBrush))
+        return SetInlineStroke(strokeThickness());
+
+    ASSERT(strokeColor().tryGetAsPackedInline());
+    if (!state.changes().contains(GraphicsContextState::Change::StrokeThickness))
+        return SetInlineStroke(*strokeColor().tryGetAsPackedInline());
+
+    return SetInlineStroke(*strokeColor().tryGetAsPackedInline(), strokeThickness());
 }
 
 const GraphicsContextState& Recorder::state() const
@@ -225,7 +236,39 @@ void Recorder::drawGlyphsAndCacheResources(const Font& font, const GlyphBufferGl
     recordDrawGlyphs(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
 }
 
-void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawDisplayListItems(const Vector<Item>& items, const ResourceHeap& resourceHeap, const FloatPoint& destination)
+{
+    appendStateChangeItemIfNecessary();
+
+    for (auto& resource : resourceHeap.resources().values()) {
+        WTF::switchOn(resource,
+            [](std::monostate) {
+                RELEASE_ASSERT_NOT_REACHED();
+            }, [&](const Ref<ImageBuffer>& imageBuffer) {
+                recordResourceUse(imageBuffer);
+            }, [&](const Ref<RenderingResource>& renderingResource) {
+                if (auto* image = dynamicDowncast<NativeImage>(renderingResource.ptr()))
+                    recordResourceUse(*image);
+                else if (auto* filter = dynamicDowncast<Filter>(renderingResource.ptr()))
+                    recordResourceUse(*filter);
+                else if (auto* decomposedGlyphs = dynamicDowncast<DecomposedGlyphs>(renderingResource.ptr()))
+                    recordResourceUse(*decomposedGlyphs);
+                else if (auto* gradient = dynamicDowncast<Gradient>(renderingResource.ptr()))
+                    recordResourceUse(*gradient);
+                else
+                    RELEASE_ASSERT_NOT_REACHED();
+            }, [&](const Ref<Font>& font) {
+                recordResourceUse(font);
+            }, [&](const Ref<FontCustomPlatformData>&) {
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        );
+    }
+
+    recordDrawDisplayListItems(items, destination);
+}
+
+void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
 
@@ -236,7 +279,7 @@ void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRe
 
     recordDrawImageBuffer(imageBuffer, destRect, srcRect, options);
 }
-void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     // ImageBuffer draws are recorded as ImageBuffer draws, not as NativeImage draws. So for consistency,
     // record this too. This should be removed once NativeImages are the only image types drawn from.
@@ -245,7 +288,7 @@ void Recorder::drawConsumingImageBuffer(RefPtr<ImageBuffer> imageBuffer, const F
     drawImageBuffer(*imageBuffer, destRect, srcRect, options);
 }
 
-void Recorder::drawNativeImageInternal(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawNativeImageInternal(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
     recordResourceUse(image);
@@ -268,14 +311,14 @@ void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destin
     recordDrawSystemImage(systemImage, destinationRect);
 }
 
-void Recorder::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void Recorder::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
     recordResourceUse(image);
     recordDrawPattern(image.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
-void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void Recorder::drawPattern(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     appendStateChangeItemIfNecessary();
 
@@ -502,7 +545,7 @@ void Recorder::strokePath(const Path& path)
     auto& state = currentState().state;
     if (state.containsOnlyInlineStrokeChanges()) {
         if (auto line = path.singleDataLine()) {
-            recordStrokeLineWithColorAndThickness(*line, *strokeColor().tryGetAsSRGBABytes(), strokeThickness());
+            recordStrokeLineWithColorAndThickness(*line, buildSetInlineStroke(state));
             state.didApplyChanges();
             currentState().lastDrawingState = state;
             return;

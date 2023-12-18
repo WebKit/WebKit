@@ -17,6 +17,7 @@
 #include "api/media_stream_interface.h"
 #include "api/scoped_refptr.h"
 #include "modules/video_capture/video_capture.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 #include "test/test_video_capturer.h"
 
@@ -31,6 +32,15 @@ class MacCapturer : public TestVideoCapturer,
                              size_t target_fps,
                              size_t capture_device_index);
   ~MacCapturer() override;
+
+  void Start() override {
+    RTC_LOG(LS_WARNING) << "Capturer doesn't support resume/pause and always "
+                           "produces the video";
+  }
+  void Stop() override {
+    RTC_LOG(LS_WARNING) << "Capturer doesn't support resume/pause and always "
+                           "produces the video";
+  }
 
   void OnFrame(const VideoFrame& frame) override;
 

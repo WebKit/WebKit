@@ -295,6 +295,24 @@ template<> void derefGPtr<GstBufferPool>(GstBufferPool* ptr)
         gst_object_unref(ptr);
 }
 
+template<> GRefPtr<GstMemory> adoptGRef(GstMemory* ptr)
+{
+    return GRefPtr<GstMemory>(ptr, GRefPtrAdopt);
+}
+
+template<> GstMemory* refGPtr<GstMemory>(GstMemory* ptr)
+{
+    if (ptr)
+        gst_memory_ref(ptr);
+    return ptr;
+}
+
+template<> void derefGPtr<GstMemory>(GstMemory* ptr)
+{
+    if (ptr)
+        gst_memory_unref(ptr);
+}
+
 template<> GRefPtr<GstSample> adoptGRef(GstSample* ptr)
 {
     return GRefPtr<GstSample>(ptr, GRefPtrAdopt);

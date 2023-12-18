@@ -121,3 +121,11 @@ class FinderTest(unittest.TestCase):
 
         # Names that don't exist are caught later, at load time.
         self.check_names(['bar.notexist_unittest'], ['bar.notexist_unittest'])
+
+    def test_non_package(self):
+        finder = Finder(self.fs)
+        finder.add_tree('/foo/bar', '')
+        expected_names = ['baz_unittest']
+        self.assertEqual(finder.find_names([], True), expected_names)
+        self.assertEqual(finder.find_names([], False), expected_names)
+        self.assertEqual(finder.find_names(['baz_unittest'], False), expected_names)

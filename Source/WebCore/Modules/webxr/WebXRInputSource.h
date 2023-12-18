@@ -56,8 +56,8 @@ class WebXRInputSpace;
 class WebXRInputSource : public RefCounted<WebXRInputSource>, public CanMakeWeakPtr<WebXRInputSource> {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSource);
 public:
-    using InputSource = PlatformXR::Device::FrameData::InputSource;
-    using InputSourceButton = PlatformXR::Device::FrameData::InputSourceButton;
+    using InputSource = PlatformXR::FrameData::InputSource;
+    using InputSourceButton = PlatformXR::FrameData::InputSourceButton;
 
     static Ref<WebXRInputSource> create(Document&, WebXRSession&, double timestamp, const InputSource&);
     ~WebXRInputSource();

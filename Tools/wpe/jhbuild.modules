@@ -24,6 +24,7 @@
       <dep package="libxml2"/>
       <dep package="openjpeg"/>
       <dep package="shared-mime-info"/>
+      <dep package="wayland"/>
       <dep package="wayland-protocols"/>
       <dep package="wpebackend-fdo"/>
       <dep package="xdg-dbus-proxy"/>
@@ -43,8 +44,8 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="https://gitlab.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
@@ -219,17 +220,28 @@
     </dependencies>
   </autotools>
 
-  <autotools id="libepoxy" autogen-sh="configure">
-    <branch module="anholt/libepoxy/releases/download/1.4.3/libepoxy-1.4.3.tar.xz"
-            version="1.4.3" repo="github-tarball"/>
-  </autotools>
+  <meson id="libepoxy">
+    <branch module="anholt/libepoxy/releases/download/1.5.4/libepoxy-1.5.4.tar.xz"
+            version="1.5.4" repo="github-tarball"/>
+  </meson>
 
-  <autotools id="wayland-protocols" autogen-sh="configure">
-    <branch module="releases/wayland-protocols-${version}.tar.xz"
-            version="1.12"
-	    repo="wayland.freedesktop.org"
-	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
-  </autotools>
+  <meson id="wayland" mesonargs="-Ddocumentation=false -Ddtd_validation=false -Dtests=false">
+    <pkg-config>wayland-server.pc</pkg-config>
+    <branch module="wayland/wayland"
+            version="1.20.0"
+            tag="1.20.0"
+            checkoutdir="wayland"
+            repo="git.freedesktop.org" />
+  </meson>
+
+  <meson id="wayland-protocols">
+   <pkg-config>wayland-protocols.pc</pkg-config>
+   <branch module="wayland/wayland-protocols"
+           version="1.24"
+           tag="1.24"
+           checkoutdir="wayland-protocols"
+           repo="git.freedesktop.org" />
+  </meson>
 
   <meson id="graphene">
     <branch repo="github.com"
@@ -250,10 +262,10 @@
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
-            version="0.59.0"
+            version="1.3.0"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
-            hash="sha256:e376c298df64b643dfe01eccb2d7b6f1e02e95aa38c19f19d120d129612ce476"/>
+            hash="sha256:4ba253ef60e454e23234696119cbafa082a0aead0bd3bbf6991295054795f5dc"/>
     <dependencies>
       <dep package="ninja"/>
     </dependencies>

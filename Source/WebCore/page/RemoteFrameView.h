@@ -44,16 +44,10 @@ private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);
 
     bool isRemoteFrameView() const final { return true; }
-    void invalidateRect(const IntRect&) final;
-    bool isActive() const final;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
-    ScrollableArea* enclosingScrollableArea() const final;
     bool isScrollableOrRubberbandable() final;
     bool hasScrollableOrRubberbandableAncestor() final;
-    IntRect scrollableAreaBoundingBox(bool*) const final;
     bool shouldPlaceVerticalScrollbarOnLeft() const final;
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
-    HostWindow* hostWindow() const final;
     IntRect windowClipRect() const final;
     void paintContents(GraphicsContext&, const IntRect& damageRect, SecurityOriginPaintPolicy, RegionContext*) final;
     void addedOrRemovedScrollbar() final;

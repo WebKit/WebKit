@@ -60,6 +60,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #endif
+#include "RemoteImageBufferSetIdentifier.h"
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "RemoteLegacyCDMIdentifier.h"
 #endif
@@ -79,7 +80,6 @@
 #include "StorageAreaImplIdentifier.h"
 #include "StorageAreaMapIdentifier.h"
 #include "StorageNamespaceIdentifier.h"
-#include "TrackPrivateRemoteIdentifier.h"
 #include "TransactionID.h"
 #include "UserContentControllerIdentifier.h"
 #include "VideoDecoderIdentifier.h"
@@ -502,6 +502,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioSessionIdentifier));
 #endif
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteImageBufferSetIdentifier));
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteCDMIdentifier));
 #endif
@@ -531,7 +532,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaMapIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageNamespaceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TapIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::TrackPrivateRemoteIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TransactionID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
@@ -609,6 +609,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
         "WebKit::RemoteAudioSessionIdentifier"_s,
 #endif
+        "WebKit::RemoteImageBufferSetIdentifier"_s,
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
         "WebKit::RemoteCDMIdentifier"_s,
 #endif
@@ -638,7 +639,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::StorageAreaMapIdentifier"_s,
         "WebKit::StorageNamespaceIdentifier"_s,
         "WebKit::TapIdentifier"_s,
-        "WebKit::TrackPrivateRemoteIdentifier"_s,
         "WebKit::TransactionID"_s,
         "WebKit::UserContentControllerIdentifier"_s,
         "WebKit::VideoDecoderIdentifier"_s,

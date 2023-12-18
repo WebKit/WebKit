@@ -10,6 +10,8 @@
  * parameters they are called with see testharness.js
  */
 
+(function(){
+
 // Setup for WebKit JavaScript tests
 if (self.testRunner) {
     testRunner.dumpAsText();
@@ -57,10 +59,20 @@ if (self.testRunner) {
     */
     setup({"output": false, "explicit_timeout": true});
 
+    // window.opener is a configurable property, so store it before we run anything.
+    const orig_opener = window.opener;
+
     /*  Using a callback function, test results will be added to the page in a
     *   manner that allows dumpAsText to produce readable test results
     */
     add_completion_callback(function (tests, harness_status) {
+        // Only pay attention to results at the top-level window.
+        // Ideally testharness.js would allow us to only attach a completion handler in this case:
+        // https://github.com/web-platform-tests/rfcs/pull/168
+        if (window !== window.top || (orig_opener !== null && orig_opener !== window)) {
+            return;
+        }
+
         var resultStr = "\n";
 
         // Sanitizes the given text for display in test results.
@@ -140,3 +152,5 @@ if (self.testRunner) {
         }, 0);
     });
 }
+
+})();

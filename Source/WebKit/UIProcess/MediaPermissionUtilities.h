@@ -70,9 +70,7 @@ bool checkUsageDescriptionStringForSpeechRecognition();
 NSString *applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData&);
 NSString *applicationVisibleName();
 void alertForPermission(WebPageProxy&, MediaPermissionReason, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&&);
-#endif
 
-#if HAVE(AVCAPTUREDEVICE)
 void requestAVCaptureAccessForType(MediaPermissionType, CompletionHandler<void(bool authorized)>&&);
 MediaPermissionResult checkAVCaptureAccessForType(MediaPermissionType);
 #endif

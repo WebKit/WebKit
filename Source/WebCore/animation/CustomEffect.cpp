@@ -27,6 +27,7 @@
 #include "CustomEffect.h"
 
 #include "CustomEffectCallback.h"
+#include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Exception.h>
 #include <wtf/IsoMallocInlines.h>
 

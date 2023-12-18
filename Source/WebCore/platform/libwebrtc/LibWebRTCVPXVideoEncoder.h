@@ -41,6 +41,7 @@ public:
     enum class Type {
         VP8,
         VP9,
+        VP9_P2,
         AV1
     };
     static void create(Type, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);

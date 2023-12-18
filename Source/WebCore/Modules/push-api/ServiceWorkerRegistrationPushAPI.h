@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Supplementable.h"
 #include <wtf/Forward.h>
 
@@ -53,5 +51,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(SERVICE_WORKER)

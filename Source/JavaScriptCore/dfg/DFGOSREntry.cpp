@@ -94,7 +94,7 @@ void OSREntryData::dump(PrintStream& out) const
 SUPPRESS_ASAN
 void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex)
 {
-    ASSERT(JITCode::isOptimizingJIT(codeBlock->jitType()));
+    ASSERT(JSC::JITCode::isOptimizingJIT(codeBlock->jitType()));
     ASSERT(codeBlock->alternative());
     ASSERT(codeBlock->alternative()->jitType() == JITType::BaselineJIT);
     ASSERT(codeBlock->jitCode()->dfgCommon()->isStillValid());

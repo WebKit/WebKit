@@ -77,6 +77,9 @@ interface EventSendingController {
     undefined cancelTouchPoint(long index);
 #endif
 
+    // Two finger trackpad tap on macOS.
+    undefined smartMagnify();
+
 #if defined(ENABLE_MAC_GESTURE_EVENTS) && ENABLE_MAC_GESTURE_EVENTS
     // Gesture events.
     undefined scaleGestureStart(double scale);

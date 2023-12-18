@@ -1,3 +1,4 @@
+Item
 
 PASS Resolution of width is correct for ::before and ::after pseudo-elements
 PASS Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements
@@ -8,4 +9,5 @@ FAIL Item-based blockification of nonexistent pseudo-elements assert_equals: Pse
 PASS display: contents on pseudo-elements
 PASS Dynamically change to display: contents on pseudo-elements
 FAIL Unknown pseudo-elements assert_true: Should return an empty style for unknown pseudo-elements starting with double-colon expected true got false
+FAIL Unknown pseudo-element with a known string (ex: marker) assert_true: Should return an empty style for :marker expected true got false
 

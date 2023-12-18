@@ -28,10 +28,16 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
+#include "Blob.h"
 #include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediaStreamTrack.h"
 #include "PhotoCapabilities.h"
+#include "PhotoSettings.h"
+
+namespace WTF {
+class Logger;
+}
 
 namespace WebCore {
 
@@ -42,18 +48,28 @@ public:
 
     ~ImageCapture();
 
-    using PhotoCapabilitiesPromise = DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>;
-    void getPhotoCapabilities(PhotoCapabilitiesPromise&&);
+    void takePhoto(PhotoSettings&&, DOMPromiseDeferred<IDLInterface<Blob>>&&);
+    void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&);
+    void getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&&);
 
     Ref<MediaStreamTrack> track() const { return m_track; }
 
 private:
     ImageCapture(Document&, Ref<MediaStreamTrack>);
 
+    const Logger& logger() const { return m_logger.get(); }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "ImageCapture"; }
+    WTFLogChannel& logChannel() const;
+
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const final;
 
     Ref<MediaStreamTrack> m_track;
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 }

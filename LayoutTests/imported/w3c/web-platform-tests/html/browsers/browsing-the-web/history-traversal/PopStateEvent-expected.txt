@@ -1,5 +1,7 @@
 
+PASS PopStateEvent constructor called as normal function
 PASS initPopStateEvent
 PASS Initial value of PopStateEvent.state must be null
+PASS Initial value of PopStateEvent.hasUAVisualTransition must be false
 PASS Dispatching a synthetic PopStateEvent
 

@@ -85,6 +85,13 @@ struct LineLayoutResult {
         bool isLastLineWithInlineContent { true };
     };
     IsFirstLast isFirstLast { };
+
+    struct Ruby {
+        HashMap<const Box*, InlineLayoutUnit> baseAlignmentOffsetList { };
+        InlineLayoutUnit annotationAlignmentOffset { 0.f };
+    };
+    Ruby ruby { };
+
     // Misc
     bool endsWithHyphen { false };
     size_t nonSpanningInlineLevelBoxCount { 0 };

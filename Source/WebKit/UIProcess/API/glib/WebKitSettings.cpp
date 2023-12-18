@@ -50,10 +50,6 @@
 #include "HardwareAccelerationManager.h"
 #endif
 
-#if PLATFORM(WAYLAND)
-#include <WebCore/PlatformDisplay.h>
-#endif
-
 using namespace WebKit;
 
 struct _WebKitSettingsPrivate {

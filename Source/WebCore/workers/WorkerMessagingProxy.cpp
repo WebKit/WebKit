@@ -144,9 +144,7 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
     m_scriptURL = scriptURL;
 
     WorkerParameters params { scriptURL, m_scriptExecutionContext->url(), name, identifier, WTFMove(initializationData.userAgent), isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, m_scriptExecutionContext->settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
-#if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
-#endif
         initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { }),
         m_scriptExecutionContext->noiseInjectionHashSalt()
     };

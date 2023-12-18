@@ -36,6 +36,8 @@
 
 namespace JSC {
 
+const ASCIILiteral ArrayInvalidLengthError { "Array length must be a positive integer of safe magnitude."_s };
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ArrayConstructor);
 
 const ClassInfo ArrayConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &arrayConstructorTable, nullptr, CREATE_METHOD_TABLE(ArrayConstructor) };
@@ -79,7 +81,7 @@ JSArray* constructArrayWithSizeQuirk(JSGlobalObject* globalObject, ArrayAllocati
     
     uint32_t n = length.toUInt32(globalObject);
     if (n != length.toNumber(globalObject)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+        throwException(globalObject, scope, createRangeError(globalObject, ArrayInvalidLengthError));
         return nullptr;
     }
     RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, profile, n, newTarget));

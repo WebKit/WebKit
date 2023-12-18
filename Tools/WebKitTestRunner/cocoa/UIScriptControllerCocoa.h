@@ -83,6 +83,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS)
     uint64_t currentImageAnalysisRequestID() const final;
+    void installFakeMachineReadableCodeResultsForImageAnalysis() final;
 #endif
 
     void setSpellCheckerResults(JSValueRef) final;

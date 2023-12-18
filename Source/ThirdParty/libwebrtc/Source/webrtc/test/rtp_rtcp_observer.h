@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/flags/flag.h"
 #include "api/array_view.h"
 #include "api/test/simulated_network.h"
 #include "api/units/time_delta.h"
@@ -25,10 +26,7 @@
 #include "system_wrappers/include/field_trial.h"
 #include "test/direct_transport.h"
 #include "test/gtest.h"
-
-namespace {
-constexpr webrtc::TimeDelta kShortTimeout = webrtc::TimeDelta::Millis(500);
-}
+#include "test/test_flags.h"
 
 namespace webrtc {
 namespace test {
@@ -45,26 +43,26 @@ class RtpRtcpObserver {
   virtual ~RtpRtcpObserver() {}
 
   virtual bool Wait() {
-    if (field_trial::IsEnabled("WebRTC-QuickPerfTest")) {
-      observation_complete_.Wait(kShortTimeout);
+    if (absl::GetFlag(FLAGS_webrtc_quick_perf_test)) {
+      observation_complete_.Wait(TimeDelta::Millis(500));
       return true;
     }
     return observation_complete_.Wait(timeout_);
   }
 
-  virtual Action OnSendRtp(const uint8_t* packet, size_t length) {
+  virtual Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) {
     return SEND_PACKET;
   }
 
-  virtual Action OnSendRtcp(const uint8_t* packet, size_t length) {
+  virtual Action OnSendRtcp(rtc::ArrayView<const uint8_t> packet) {
     return SEND_PACKET;
   }
 
-  virtual Action OnReceiveRtp(const uint8_t* packet, size_t length) {
+  virtual Action OnReceiveRtp(rtc::ArrayView<const uint8_t> packet) {
     return SEND_PACKET;
   }
 
-  virtual Action OnReceiveRtcp(const uint8_t* packet, size_t length) {
+  virtual Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) {
     return SEND_PACKET;
   }
 
@@ -100,16 +98,15 @@ class PacketTransport : public test::DirectTransport {
         transport_type_(transport_type) {}
 
  private:
-  bool SendRtp(const uint8_t* packet,
-               size_t length,
+  bool SendRtp(rtc::ArrayView<const uint8_t> packet,
                const PacketOptions& options) override {
-    EXPECT_TRUE(IsRtpPacket(rtc::MakeArrayView(packet, length)));
+    EXPECT_TRUE(IsRtpPacket(packet));
     RtpRtcpObserver::Action action = RtpRtcpObserver::SEND_PACKET;
     if (observer_) {
       if (transport_type_ == kSender) {
-        action = observer_->OnSendRtp(packet, length);
+        action = observer_->OnSendRtp(packet);
       } else {
-        action = observer_->OnReceiveRtp(packet, length);
+        action = observer_->OnReceiveRtp(packet);
       }
     }
     switch (action) {
@@ -117,19 +114,19 @@ class PacketTransport : public test::DirectTransport {
         // Drop packet silently.
         return true;
       case RtpRtcpObserver::SEND_PACKET:
-        return test::DirectTransport::SendRtp(packet, length, options);
+        return test::DirectTransport::SendRtp(packet, options);
     }
     return true;  // Will never happen, makes compiler happy.
   }
 
-  bool SendRtcp(const uint8_t* packet, size_t length) override {
-    EXPECT_TRUE(IsRtcpPacket(rtc::MakeArrayView(packet, length)));
+  bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override {
+    EXPECT_TRUE(IsRtcpPacket(packet));
     RtpRtcpObserver::Action action = RtpRtcpObserver::SEND_PACKET;
     if (observer_) {
       if (transport_type_ == kSender) {
-        action = observer_->OnSendRtcp(packet, length);
+        action = observer_->OnSendRtcp(packet);
       } else {
-        action = observer_->OnReceiveRtcp(packet, length);
+        action = observer_->OnReceiveRtcp(packet);
       }
     }
     switch (action) {
@@ -137,7 +134,7 @@ class PacketTransport : public test::DirectTransport {
         // Drop packet silently.
         return true;
       case RtpRtcpObserver::SEND_PACKET:
-        return test::DirectTransport::SendRtcp(packet, length);
+        return test::DirectTransport::SendRtcp(packet);
     }
     return true;  // Will never happen, makes compiler happy.
   }

@@ -8,18 +8,11 @@
             will-change: transform;
         }
     </style>
-    <script src="resources/filter-helpers.js"></script>
 </head>
 <body>
-    <script>
-        const filters = [
-            'blur(0)',
-            'blur(2px)',
-            'blur(3px)',
-            'blur(10px)',
-        ];
-
-        buildCSSFilteredBoxes(filters);
-    </script>
+    <img src="resources/reference.png" style="filter: blur(0)">
+    <img src="resources/reference.png" style="filter: blur(2px)">
+    <img src="resources/reference.png" style="filter: blur(3px)">
+    <img src="resources/reference.png" style="filter: blur(10px)"> 
 </body>
 </html>

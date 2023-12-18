@@ -1,4 +1,4 @@
 
 
-FAIL Lazyload images can load immediately from the list of available images promise_test: Unhandled rejection with value: object "Error: The `loading=lazy` image should load immediately from the list of available images, beating this timeout promise."
+PASS Lazyload images can load immediately from the list of available images
 

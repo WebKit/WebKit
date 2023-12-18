@@ -167,12 +167,12 @@ void av1_tile_set_col(TileInfo *tile, const AV1_COMMON *cm, int col) {
   assert(tile->mi_col_end > tile->mi_col_start);
 }
 
-int av1_get_sb_rows_in_tile(AV1_COMMON *cm, const TileInfo *tile) {
+int av1_get_sb_rows_in_tile(const AV1_COMMON *cm, const TileInfo *tile) {
   return CEIL_POWER_OF_TWO(tile->mi_row_end - tile->mi_row_start,
                            cm->seq_params->mib_size_log2);
 }
 
-int av1_get_sb_cols_in_tile(AV1_COMMON *cm, const TileInfo *tile) {
+int av1_get_sb_cols_in_tile(const AV1_COMMON *cm, const TileInfo *tile) {
   return CEIL_POWER_OF_TWO(tile->mi_col_end - tile->mi_col_start,
                            cm->seq_params->mib_size_log2);
 }

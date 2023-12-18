@@ -25,31 +25,13 @@
 
 namespace WebCore {
 
-StylePropertyShorthand animationShorthandForParsing()
-{
-    // Animation-name must come last, so that keywords for other properties in the shorthand
-    // preferentially match those properties.
-    static const CSSPropertyID animationPropertiesForParsing[] = {
-        CSSPropertyAnimationDuration,
-        CSSPropertyAnimationTimingFunction,
-        CSSPropertyAnimationDelay,
-        CSSPropertyAnimationIterationCount,
-        CSSPropertyAnimationDirection,
-        CSSPropertyAnimationFillMode,
-        CSSPropertyAnimationPlayState,
-        CSSPropertyAnimationName
-    };
-
-    return StylePropertyShorthand(CSSPropertyAnimation, animationPropertiesForParsing);
-}
-
 StylePropertyShorthand transitionShorthandForParsing()
 {
     // Similar to animations, we have property after timing-function and delay after
     // duration.
     static const CSSPropertyID transitionProperties[] = {
         CSSPropertyTransitionDuration, CSSPropertyTransitionTimingFunction,
-        CSSPropertyTransitionDelay, CSSPropertyTransitionProperty};
+        CSSPropertyTransitionDelay, CSSPropertyTransitionBehavior, CSSPropertyTransitionProperty };
     return StylePropertyShorthand(CSSPropertyTransition, transitionProperties);
 }
 

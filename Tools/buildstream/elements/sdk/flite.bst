@@ -8,10 +8,15 @@ depends:
 - freedesktop-sdk.bst:components/alsa-lib.bst
 
 sources:
-- kind: tar
-  url: github_com:festvox/flite/archive/refs/tags/v2.2.tar.gz
-  ref: ab1555fe5adc3f99f1d4a1a0eb1596d329fd6d74f1464a0097c81f53c0cf9e5c
+- kind: git_repo
+  url: github_com:festvox/flite
+  track: master
+  ref: v2.2-45-g6c9f20dc915b17f5619340069889db0aa007fcdc
+- kind: patch
+  path: patches/flite-fix-voice-list-build.patch
 
 variables:
   conf-local: |
     --enable-shared
+  make: |
+    make -j1

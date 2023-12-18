@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 # Simple script to generate a 302 HTTP redirect
+binmode STDOUT;
 
 print "Status: 302 Moved Temporarily\r\n";
 print "Location: success200.html\r\n";

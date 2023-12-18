@@ -33,6 +33,8 @@
                 finishJSTest();                
                 return;
             }
+
+            await UIHelper.renderingUpdate();
             
             const scroller = document.querySelector('.scroller');
             const scrollerBounds = scroller.getBoundingClientRect();

@@ -42,20 +42,34 @@ void LibWebRTCRtpTransformBackend::clearTransformableFrameCallback()
     setInputCallback({ });
 }
 
-void LibWebRTCRtpTransformBackend::setOutputCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>&& callback)
+void LibWebRTCRtpTransformBackend::addOutputCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback>&& callback, uint32_t ssrc)
 {
-    Locker locker { m_outputCallbackLock };
-    m_outputCallback = WTFMove(callback);
+    Locker locker { m_outputCallbacksLock };
+    m_outputCallbacks.insert_or_assign(ssrc, WTFMove(callback));
+}
+
+void LibWebRTCRtpTransformBackend::removeOutputCallback(uint32_t ssrc)
+{
+    Locker locker { m_outputCallbacksLock };
+    m_outputCallbacks.erase(ssrc);
+}
+
+void LibWebRTCRtpTransformBackend::sendFrameToOutput(std::unique_ptr<webrtc::TransformableFrameInterface>&& rtcFrame)
+{
+    Locker locker { m_outputCallbacksLock };
+    if (m_outputCallbacks.size() == 1) {
+        m_outputCallbacks.begin()->second->OnTransformedFrame(WTFMove(rtcFrame));
+        return;
+    }
+    auto iterator = m_outputCallbacks.find(rtcFrame->GetSsrc());
+    if (iterator != m_outputCallbacks.end())
+        iterator->second->OnTransformedFrame(WTFMove(rtcFrame));
 }
 
 void LibWebRTCRtpTransformBackend::processTransformedFrame(RTCRtpTransformableFrame& frame)
 {
-    auto rtcFrame = static_cast<LibWebRTCRtpTransformableFrame&>(frame).takeRTCFrame();
-    if (!rtcFrame)
-        return;
-    Locker locker { m_outputCallbackLock };
-    if (m_outputCallback)
-        m_outputCallback->OnTransformedFrame(WTFMove(rtcFrame));
+    if (auto rtcFrame = static_cast<LibWebRTCRtpTransformableFrame&>(frame).takeRTCFrame())
+        sendFrameToOutput(WTFMove(rtcFrame));
 }
 
 void LibWebRTCRtpTransformBackend::Transform(std::unique_ptr<webrtc::TransformableFrameInterface> rtcFrame)
@@ -68,29 +82,27 @@ void LibWebRTCRtpTransformBackend::Transform(std::unique_ptr<webrtc::Transformab
         }
     }
     // In case of no input callback, make the transform a no-op.
-    Locker locker { m_outputCallbackLock };
-    if (m_outputCallback)
-        m_outputCallback->OnTransformedFrame(WTFMove(rtcFrame));
+    sendFrameToOutput(WTFMove(rtcFrame));
 }
 
 void LibWebRTCRtpTransformBackend::RegisterTransformedFrameCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback> callback)
 {
-    setOutputCallback(WTFMove(callback));
+    addOutputCallback(WTFMove(callback), 0);
 }
 
-void LibWebRTCRtpTransformBackend::RegisterTransformedFrameSinkCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback> callback, uint32_t /* ssrc */)
+void LibWebRTCRtpTransformBackend::RegisterTransformedFrameSinkCallback(rtc::scoped_refptr<webrtc::TransformedFrameCallback> callback, uint32_t ssrc)
 {
-    RegisterTransformedFrameCallback(WTFMove(callback));
+    addOutputCallback(WTFMove(callback), ssrc);
 }
 
 void LibWebRTCRtpTransformBackend::UnregisterTransformedFrameCallback()
 {
-    setOutputCallback(nullptr);
+    removeOutputCallback(0);
 }
 
-void LibWebRTCRtpTransformBackend::UnregisterTransformedFrameSinkCallback(uint32_t /* ssrc */)
+void LibWebRTCRtpTransformBackend::UnregisterTransformedFrameSinkCallback(uint32_t ssrc)
 {
-    UnregisterTransformedFrameCallback();
+    removeOutputCallback(ssrc);
 }
 
 } // namespace WebCore

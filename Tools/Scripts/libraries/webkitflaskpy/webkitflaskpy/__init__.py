@@ -50,7 +50,10 @@ AutoInstall.register(Package('flask', Version(1, 1, 2)))
 AutoInstall.register(Package('hiredis', Version(1, 1, 0)))
 AutoInstall.register(Package('itsdangerous', Version(1, 1, 0)))
 AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
-AutoInstall.register(Package('lupa', Version(1, 13)))
+if sys.version_info > (3, 10):
+    AutoInstall.register(Package('lupa', Version(2, 0)))
+else:
+    AutoInstall.register(Package('lupa', Version(1, 13)))
 AutoInstall.register(Package('markupsafe', Version(1, 1, 1)))
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
 AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))

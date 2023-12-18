@@ -33,16 +33,22 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-static bool testFinished = false;
+static bool navigationSucceeded = false;
+static bool didCrash = false;
 
 @interface LoadInvalidSchemeDelegate : NSObject <WKNavigationDelegate>
 @end
 
 @implementation LoadInvalidSchemeDelegate
 
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    testFinished = true;
+    navigationSucceeded = true;
+}
+
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    didCrash = true;
 }
 
 // This selector is needed so the URL "ht'tp://www.webkit.org" isn't given to LSAppLink
@@ -74,8 +80,10 @@ TEST(WebKit2CustomProtocolsTest, LoadInvalidScheme)
     webView.get().navigationDelegate = loadDelegate.get();
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ht'tp://www.webkit.org"]]];
+    Util::runFor(50_ms);
     
-    Util::run(&testFinished);
+    EXPECT_FALSE(didCrash);
+    EXPECT_FALSE(navigationSucceeded);
 }
 
 } // namespace TestWebKitAPI

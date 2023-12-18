@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
+#include "SharedMemory.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
@@ -46,6 +47,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioDestination;
+class SharedMemoryHandle;
 
 class RemoteAudioDestinationManager : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -61,7 +63,7 @@ public:
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    void createAudioDestination(RemoteAudioDestinationIdentifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, SharedMemory::Handle&&);
+    void createAudioDestination(RemoteAudioDestinationIdentifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, SharedMemoryHandle&&);
     void deleteAudioDestination(RemoteAudioDestinationIdentifier);
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);

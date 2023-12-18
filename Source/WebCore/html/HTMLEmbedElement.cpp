@@ -67,8 +67,8 @@ static inline RenderWidget* findWidgetRenderer(const Node* node)
 {
     if (!node->renderer())
         node = ancestorsOfType<HTMLObjectElement>(*node).first();
-    if (node && is<RenderWidget>(node->renderer()))
-        return downcast<RenderWidget>(node->renderer());
+    if (node)
+        return dynamicDowncast<RenderWidget>(node->renderer());
     return nullptr;
 }
 
@@ -190,12 +190,11 @@ bool HTMLEmbedElement::rendererIsNeeded(const RenderStyle& style)
 
     // If my parent is an <object> and is not set to use fallback content, I
     // should be ignored and not get a renderer.
-    RefPtr<ContainerNode> parent = parentNode();
-    if (is<HTMLObjectElement>(parent)) {
-        if (!parent->renderer())
+    if (RefPtr parentObject = dynamicDowncast<HTMLObjectElement>(parentNode())) {
+        if (!parentObject->renderer())
             return false;
-        if (!downcast<HTMLObjectElement>(*parent).useFallbackContent()) {
-            ASSERT(!parent->renderer()->isEmbeddedObject());
+        if (!parentObject->useFallbackContent()) {
+            ASSERT(!parentObject->renderer()->isRenderEmbeddedObject());
             return false;
         }
     }

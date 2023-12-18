@@ -34,10 +34,10 @@ namespace WebCore {
 TextStream& operator<<(TextStream& ts, PlatformCAAnimation::AnimationType type)
 {
     switch (type) {
-    case PlatformCAAnimation::Basic: ts << "basic"; break;
-    case PlatformCAAnimation::Group: ts << "group"; break;
-    case PlatformCAAnimation::Keyframe: ts << "keyframe"; break;
-    case PlatformCAAnimation::Spring: ts << "spring"; break;
+    case PlatformCAAnimation::AnimationType::Basic: ts << "basic"; break;
+    case PlatformCAAnimation::AnimationType::Group: ts << "group"; break;
+    case PlatformCAAnimation::AnimationType::Keyframe: ts << "keyframe"; break;
+    case PlatformCAAnimation::AnimationType::Spring: ts << "spring"; break;
     }
     return ts;
 }
@@ -45,10 +45,10 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::AnimationType type)
 TextStream& operator<<(TextStream& ts, PlatformCAAnimation::FillModeType fillMode)
 {
     switch (fillMode) {
-    case PlatformCAAnimation::NoFillMode: ts << "none"; break;
-    case PlatformCAAnimation::Forwards: ts << "forwards"; break;
-    case PlatformCAAnimation::Backwards: ts << "backwards"; break;
-    case PlatformCAAnimation::Both: ts << "both"; break;
+    case PlatformCAAnimation::FillModeType::NoFillMode: ts << "none"; break;
+    case PlatformCAAnimation::FillModeType::Forwards: ts << "forwards"; break;
+    case PlatformCAAnimation::FillModeType::Backwards: ts << "backwards"; break;
+    case PlatformCAAnimation::FillModeType::Both: ts << "both"; break;
     }
     return ts;
 }
@@ -56,34 +56,32 @@ TextStream& operator<<(TextStream& ts, PlatformCAAnimation::FillModeType fillMod
 TextStream& operator<<(TextStream& ts, PlatformCAAnimation::ValueFunctionType valueFunctionType)
 {
     switch (valueFunctionType) {
-    case PlatformCAAnimation::NoValueFunction: ts << "none"; break;
-    case PlatformCAAnimation::RotateX: ts << "rotateX"; break;
-    case PlatformCAAnimation::RotateY: ts << "rotateY"; break;
-    case PlatformCAAnimation::RotateZ: ts << "rotateX"; break;
-    case PlatformCAAnimation::ScaleX: ts << "scaleX"; break;
-    case PlatformCAAnimation::ScaleY: ts << "scaleY"; break;
-    case PlatformCAAnimation::ScaleZ: ts << "scaleX"; break;
-    case PlatformCAAnimation::Scale: ts << "scale"; break;
-    case PlatformCAAnimation::TranslateX: ts << "translateX"; break;
-    case PlatformCAAnimation::TranslateY: ts << "translateY"; break;
-    case PlatformCAAnimation::TranslateZ: ts << "translateZ"; break;
-    case PlatformCAAnimation::Translate: ts << "translate"; break;
+    case PlatformCAAnimation::ValueFunctionType::NoValueFunction: ts << "none"; break;
+    case PlatformCAAnimation::ValueFunctionType::RotateX: ts << "rotateX"; break;
+    case PlatformCAAnimation::ValueFunctionType::RotateY: ts << "rotateY"; break;
+    case PlatformCAAnimation::ValueFunctionType::RotateZ: ts << "rotateZ"; break;
+    case PlatformCAAnimation::ValueFunctionType::ScaleX: ts << "scaleX"; break;
+    case PlatformCAAnimation::ValueFunctionType::ScaleY: ts << "scaleY"; break;
+    case PlatformCAAnimation::ValueFunctionType::ScaleZ: ts << "scaleZ"; break;
+    case PlatformCAAnimation::ValueFunctionType::Scale: ts << "scale"; break;
+    case PlatformCAAnimation::ValueFunctionType::TranslateX: ts << "translateX"; break;
+    case PlatformCAAnimation::ValueFunctionType::TranslateY: ts << "translateY"; break;
+    case PlatformCAAnimation::ValueFunctionType::TranslateZ: ts << "translateZ"; break;
+    case PlatformCAAnimation::ValueFunctionType::Translate: ts << "translate"; break;
     }
     return ts;
 }
 
 bool PlatformCAAnimation::isBasicAnimation() const
 {
-    return animationType() == Basic || animationType() == Spring;
+    return animationType() == AnimationType::Basic || animationType() == AnimationType::Spring;
 }
 
 static constexpr auto transformKeyPath = "transform"_s;
 static constexpr auto opacityKeyPath = "opacity"_s;
 static constexpr auto backgroundColorKeyPath = "backgroundColor"_s;
 static constexpr auto filterKeyPathPrefix = "filters.filter_"_s;
-#if ENABLE(FILTERS_LEVEL_2)
 static constexpr auto backdropFiltersKeyPath = "backdropFilters"_s;
-#endif
 
 String PlatformCAAnimation::makeGroupKeyPath()
 {
@@ -104,10 +102,8 @@ String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, Filte
         return backgroundColorKeyPath;
     case AnimatedProperty::Filter:
         return makeString(filterKeyPathPrefix, index, ".", PlatformCAFilters::animatedFilterPropertyName(filterOperationType));
-#if ENABLE(FILTERS_LEVEL_2)
     case AnimatedProperty::WebkitBackdropFilter:
         return backdropFiltersKeyPath;
-#endif
     case AnimatedProperty::Invalid:
         ASSERT_NOT_REACHED();
         return emptyString();
@@ -145,10 +141,8 @@ bool PlatformCAAnimation::isValidKeyPath(const String& keyPath, AnimationType ty
         || keyPath == backgroundColorKeyPath)
         return true;
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (keyPath == backdropFiltersKeyPath)
         return true;
-#endif
 
     if (isValidFilterKeyPath(keyPath))
         return true;

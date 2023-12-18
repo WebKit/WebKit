@@ -22,72 +22,153 @@
 
 namespace rx
 {
+namespace
+{
+const std::map<std::string, unsigned int> &GetUniformRegisterMap(
+    const std::map<std::string, unsigned int> *uniformRegisterMap)
+{
+    ASSERT(uniformRegisterMap);
+    return *uniformRegisterMap;
+}
 
-class TranslateTaskD3D : public angle::Closure
+const std::set<std::string> &GetSlowCompilingUniformBlockSet(
+    const std::set<std::string> *slowCompilingUniformBlockSet)
+{
+    ASSERT(slowCompilingUniformBlockSet);
+    return *slowCompilingUniformBlockSet;
+}
+
+const std::set<std::string> &GetUsedImage2DFunctionNames(
+    const std::set<std::string> *usedImage2DFunctionNames)
+{
+    ASSERT(usedImage2DFunctionNames);
+    return *usedImage2DFunctionNames;
+}
+
+class ShaderTranslateTaskD3D final : public ShaderTranslateTask
 {
   public:
-    TranslateTaskD3D(ShHandle handle,
-                     const ShCompileOptions &options,
-                     const std::string &source,
-                     const std::string &sourcePath)
-        : mHandle(handle),
-          mOptions(options),
-          mSource(source),
-          mSourcePath(sourcePath),
-          mResult(false)
+    ShaderTranslateTaskD3D(const SharedCompiledShaderStateD3D &shader, std::string &&sourcePath)
+        : mSourcePath(std::move(sourcePath)), mShader(shader)
     {}
+    ~ShaderTranslateTaskD3D() override = default;
 
-    void operator()() override
+    bool translate(ShHandle compiler,
+                   const ShCompileOptions &options,
+                   const std::string &source) override
     {
-        ANGLE_TRACE_EVENT1("gpu.angle", "TranslateTask::run", "source", mSource);
-        std::vector<const char *> srcStrings;
+        ANGLE_TRACE_EVENT1("gpu.angle", "ShaderTranslateTaskD3D::run", "source", source);
+        angle::FixedVector<const char *, 2> srcStrings;
         if (!mSourcePath.empty())
         {
             srcStrings.push_back(mSourcePath.c_str());
         }
-        srcStrings.push_back(mSource.c_str());
+        srcStrings.push_back(source.c_str());
 
-        mResult = sh::Compile(mHandle, &srcStrings[0], srcStrings.size(), mOptions);
+        return sh::Compile(compiler, srcStrings.data(), srcStrings.size(), options);
     }
 
-    bool getResult() { return mResult; }
-
-  private:
-    ShHandle mHandle;
-    ShCompileOptions mOptions;
-    std::string mSource;
-    std::string mSourcePath;
-    bool mResult;
-};
-
-using PostTranslateFunctor =
-    std::function<bool(gl::ShCompilerInstance *compiler, std::string *infoLog)>;
-
-class WaitableCompileEventD3D final : public WaitableCompileEvent
-{
-  public:
-    WaitableCompileEventD3D(std::shared_ptr<angle::WaitableEvent> waitableEvent,
-                            gl::ShCompilerInstance *compilerInstance,
-                            PostTranslateFunctor &&postTranslateFunctor,
-                            std::shared_ptr<TranslateTaskD3D> translateTask)
-        : WaitableCompileEvent(waitableEvent),
-          mCompilerInstance(compilerInstance),
-          mPostTranslateFunctor(std::move(postTranslateFunctor)),
-          mTranslateTask(translateTask)
-    {}
-
-    bool getResult() override { return mTranslateTask->getResult(); }
-
-    bool postTranslate(std::string *infoLog) override
+    void postTranslate(ShHandle compiler, const gl::CompiledShaderState &compiledState) override
     {
-        return mPostTranslateFunctor(mCompilerInstance, infoLog);
+        const std::string &translatedSource = compiledState.translatedSource;
+        CompiledShaderStateD3D *state       = mShader.get();
+
+        // Note: We shouldn't need to cache this.
+        state->compilerOutputType = sh::GetShaderOutputType(compiler);
+
+        state->usesMultipleRenderTargets =
+            translatedSource.find("GL_USES_MRT") != std::string::npos;
+        state->usesFragColor = translatedSource.find("GL_USES_FRAG_COLOR") != std::string::npos;
+        state->usesFragData  = translatedSource.find("GL_USES_FRAG_DATA") != std::string::npos;
+        state->usesSecondaryColor =
+            translatedSource.find("GL_USES_SECONDARY_COLOR") != std::string::npos;
+        state->usesFragCoord   = translatedSource.find("GL_USES_FRAG_COORD") != std::string::npos;
+        state->usesFrontFacing = translatedSource.find("GL_USES_FRONT_FACING") != std::string::npos;
+        state->usesSampleID    = translatedSource.find("GL_USES_SAMPLE_ID") != std::string::npos;
+        state->usesSamplePosition =
+            translatedSource.find("GL_USES_SAMPLE_POSITION") != std::string::npos;
+        state->usesSampleMaskIn =
+            translatedSource.find("GL_USES_SAMPLE_MASK_IN") != std::string::npos;
+        state->usesSampleMask =
+            translatedSource.find("GL_USES_SAMPLE_MASK_OUT") != std::string::npos;
+        state->usesHelperInvocation =
+            translatedSource.find("GL_USES_HELPER_INVOCATION") != std::string::npos;
+        state->usesPointSize  = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
+        state->usesPointCoord = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
+        state->usesDepthRange = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
+        state->hasMultiviewEnabled =
+            translatedSource.find("GL_MULTIVIEW_ENABLED") != std::string::npos;
+        state->usesVertexID = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;
+        state->usesViewID   = translatedSource.find("GL_USES_VIEW_ID") != std::string::npos;
+        state->usesDiscardRewriting =
+            translatedSource.find("ANGLE_USES_DISCARD_REWRITING") != std::string::npos;
+        state->usesNestedBreak =
+            translatedSource.find("ANGLE_USES_NESTED_BREAK") != std::string::npos;
+        state->requiresIEEEStrictCompiling =
+            translatedSource.find("ANGLE_REQUIRES_IEEE_STRICT_COMPILING") != std::string::npos;
+
+        if (translatedSource.find("GL_USES_FRAG_DEPTH_GREATER") != std::string::npos)
+        {
+            state->fragDepthUsage = FragDepthUsage::Greater;
+        }
+        else if (translatedSource.find("GL_USES_FRAG_DEPTH_LESS") != std::string::npos)
+        {
+            state->fragDepthUsage = FragDepthUsage::Less;
+        }
+        else if (translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos)
+        {
+            state->fragDepthUsage = FragDepthUsage::Any;
+        }
+        state->clipDistanceSize   = sh::GetClipDistanceArraySize(compiler);
+        state->cullDistanceSize   = sh::GetCullDistanceArraySize(compiler);
+        state->uniformRegisterMap = GetUniformRegisterMap(sh::GetUniformRegisterMap(compiler));
+        state->readonlyImage2DRegisterIndex = sh::GetReadonlyImage2DRegisterIndex(compiler);
+        state->image2DRegisterIndex         = sh::GetImage2DRegisterIndex(compiler);
+        state->usedImage2DFunctionNames =
+            GetUsedImage2DFunctionNames(sh::GetUsedImage2DFunctionNames(compiler));
+
+        for (const sh::InterfaceBlock &interfaceBlock : compiledState.uniformBlocks)
+        {
+            if (interfaceBlock.active)
+            {
+                unsigned int index = static_cast<unsigned int>(-1);
+                bool blockRegisterResult =
+                    sh::GetUniformBlockRegister(compiler, interfaceBlock.name, &index);
+                ASSERT(blockRegisterResult);
+                bool useStructuredBuffer =
+                    sh::ShouldUniformBlockUseStructuredBuffer(compiler, interfaceBlock.name);
+
+                state->uniformBlockRegisterMap[interfaceBlock.name] = index;
+                state->uniformBlockUseStructuredBufferMap[interfaceBlock.name] =
+                    useStructuredBuffer;
+            }
+        }
+
+        state->slowCompilingUniformBlockSet =
+            GetSlowCompilingUniformBlockSet(sh::GetSlowCompilingUniformBlockSet(compiler));
+
+        for (const sh::InterfaceBlock &interfaceBlock : compiledState.shaderStorageBlocks)
+        {
+            if (interfaceBlock.active)
+            {
+                unsigned int index = static_cast<unsigned int>(-1);
+                bool blockRegisterResult =
+                    sh::GetShaderStorageBlockRegister(compiler, interfaceBlock.name, &index);
+                ASSERT(blockRegisterResult);
+
+                state->shaderStorageBlockRegisterMap[interfaceBlock.name] = index;
+            }
+        }
+
+        state->debugInfo +=
+            "// INITIAL HLSL BEGIN\n\n" + translatedSource + "\n// INITIAL HLSL END\n\n\n";
     }
 
   private:
-    gl::ShCompilerInstance *mCompilerInstance;
-    PostTranslateFunctor mPostTranslateFunctor;
-    std::shared_ptr<TranslateTaskD3D> mTranslateTask;
+    std::string mSourcePath;
+    SharedCompiledShaderStateD3D mShader;
 };
+}  // anonymous namespace
 
 CompiledShaderStateD3D::CompiledShaderStateD3D()
     : compilerOutputType(SH_ESSL_OUTPUT),
@@ -204,30 +285,8 @@ const std::set<std::string> &CompiledShaderStateD3D::getSlowCompilingUniformBloc
     return slowCompilingUniformBlockSet;
 }
 
-const std::map<std::string, unsigned int> &GetUniformRegisterMap(
-    const std::map<std::string, unsigned int> *uniformRegisterMap)
-{
-    ASSERT(uniformRegisterMap);
-    return *uniformRegisterMap;
-}
-
-const std::set<std::string> &GetSlowCompilingUniformBlockSet(
-    const std::set<std::string> *slowCompilingUniformBlockSet)
-{
-    ASSERT(slowCompilingUniformBlockSet);
-    return *slowCompilingUniformBlockSet;
-}
-
-const std::set<std::string> &GetUsedImage2DFunctionNames(
-    const std::set<std::string> *usedImage2DFunctionNames)
-{
-    ASSERT(usedImage2DFunctionNames);
-    return *usedImage2DFunctionNames;
-}
-
-std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *context,
-                                                         gl::ShCompilerInstance *compilerInstance,
-                                                         ShCompileOptions *options)
+std::shared_ptr<ShaderTranslateTask> ShaderD3D::compile(const gl::Context *context,
+                                                        ShCompileOptions *options)
 {
     // Create a new compiled shader state.  Currently running program link jobs will use the
     // previous state.
@@ -294,117 +353,19 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
         options->pls = mRenderer->getNativePixelLocalStorageOptions();
     }
 
-    auto postTranslateFunctor = [this](gl::ShCompilerInstance *compiler, std::string *infoLog) {
-        const std::string &translatedSource = mState.getCompiledState()->translatedSource;
-        CompiledShaderStateD3D *state       = mCompiledState.get();
+    // D3D11 Feature Level 9_3 and below do not support non-constant loop indexes in fragment
+    // shaders.  Shader compilation will fail.  To provide a better error message we can instruct
+    // the compiler to pre-validate.
+    if (!features.supportsNonConstantLoopIndexing.enabled)
+    {
+        options->validateLoopIndexing = true;
+    }
 
-        // TODO(jmadill): We shouldn't need to cache this.
-        state->compilerOutputType = compiler->getShaderOutputType();
+    // The D3D translations are not currently validation-error-free
+    options->validateAST = false;
 
-        state->usesMultipleRenderTargets =
-            translatedSource.find("GL_USES_MRT") != std::string::npos;
-        state->usesFragColor = translatedSource.find("GL_USES_FRAG_COLOR") != std::string::npos;
-        state->usesFragData  = translatedSource.find("GL_USES_FRAG_DATA") != std::string::npos;
-        state->usesSecondaryColor =
-            translatedSource.find("GL_USES_SECONDARY_COLOR") != std::string::npos;
-        state->usesFragCoord   = translatedSource.find("GL_USES_FRAG_COORD") != std::string::npos;
-        state->usesFrontFacing = translatedSource.find("GL_USES_FRONT_FACING") != std::string::npos;
-        state->usesSampleID    = translatedSource.find("GL_USES_SAMPLE_ID") != std::string::npos;
-        state->usesSamplePosition =
-            translatedSource.find("GL_USES_SAMPLE_POSITION") != std::string::npos;
-        state->usesSampleMaskIn =
-            translatedSource.find("GL_USES_SAMPLE_MASK_IN") != std::string::npos;
-        state->usesSampleMask =
-            translatedSource.find("GL_USES_SAMPLE_MASK_OUT") != std::string::npos;
-        state->usesHelperInvocation =
-            translatedSource.find("GL_USES_HELPER_INVOCATION") != std::string::npos;
-        state->usesPointSize  = translatedSource.find("GL_USES_POINT_SIZE") != std::string::npos;
-        state->usesPointCoord = translatedSource.find("GL_USES_POINT_COORD") != std::string::npos;
-        state->usesDepthRange = translatedSource.find("GL_USES_DEPTH_RANGE") != std::string::npos;
-        state->hasMultiviewEnabled =
-            translatedSource.find("GL_MULTIVIEW_ENABLED") != std::string::npos;
-        state->usesVertexID = translatedSource.find("GL_USES_VERTEX_ID") != std::string::npos;
-        state->usesViewID   = translatedSource.find("GL_USES_VIEW_ID") != std::string::npos;
-        state->usesDiscardRewriting =
-            translatedSource.find("ANGLE_USES_DISCARD_REWRITING") != std::string::npos;
-        state->usesNestedBreak =
-            translatedSource.find("ANGLE_USES_NESTED_BREAK") != std::string::npos;
-        state->requiresIEEEStrictCompiling =
-            translatedSource.find("ANGLE_REQUIRES_IEEE_STRICT_COMPILING") != std::string::npos;
-
-        ShHandle compilerHandle = compiler->getHandle();
-
-        if (translatedSource.find("GL_USES_FRAG_DEPTH_GREATER") != std::string::npos)
-        {
-            state->fragDepthUsage = FragDepthUsage::Greater;
-        }
-        else if (translatedSource.find("GL_USES_FRAG_DEPTH_LESS") != std::string::npos)
-        {
-            state->fragDepthUsage = FragDepthUsage::Less;
-        }
-        else if (translatedSource.find("GL_USES_FRAG_DEPTH") != std::string::npos)
-        {
-            state->fragDepthUsage = FragDepthUsage::Any;
-        }
-        state->clipDistanceSize = sh::GetClipDistanceArraySize(compilerHandle);
-        state->cullDistanceSize = sh::GetCullDistanceArraySize(compilerHandle);
-        state->uniformRegisterMap =
-            GetUniformRegisterMap(sh::GetUniformRegisterMap(compilerHandle));
-        state->readonlyImage2DRegisterIndex = sh::GetReadonlyImage2DRegisterIndex(compilerHandle);
-        state->image2DRegisterIndex         = sh::GetImage2DRegisterIndex(compilerHandle);
-        state->usedImage2DFunctionNames =
-            GetUsedImage2DFunctionNames(sh::GetUsedImage2DFunctionNames(compilerHandle));
-
-        for (const sh::InterfaceBlock &interfaceBlock : mState.getCompiledState()->uniformBlocks)
-        {
-            if (interfaceBlock.active)
-            {
-                unsigned int index = static_cast<unsigned int>(-1);
-                bool blockRegisterResult =
-                    sh::GetUniformBlockRegister(compilerHandle, interfaceBlock.name, &index);
-                ASSERT(blockRegisterResult);
-                bool useStructuredBuffer =
-                    sh::ShouldUniformBlockUseStructuredBuffer(compilerHandle, interfaceBlock.name);
-
-                state->uniformBlockRegisterMap[interfaceBlock.name] = index;
-                state->uniformBlockUseStructuredBufferMap[interfaceBlock.name] =
-                    useStructuredBuffer;
-            }
-        }
-
-        state->slowCompilingUniformBlockSet =
-            GetSlowCompilingUniformBlockSet(sh::GetSlowCompilingUniformBlockSet(compilerHandle));
-
-        for (const sh::InterfaceBlock &interfaceBlock :
-             mState.getCompiledState()->shaderStorageBlocks)
-        {
-            if (interfaceBlock.active)
-            {
-                unsigned int index = static_cast<unsigned int>(-1);
-                bool blockRegisterResult =
-                    sh::GetShaderStorageBlockRegister(compilerHandle, interfaceBlock.name, &index);
-                ASSERT(blockRegisterResult);
-
-                state->shaderStorageBlockRegisterMap[interfaceBlock.name] = index;
-            }
-        }
-
-        state->debugInfo += std::string("// ") + gl::GetShaderTypeString(mState.getShaderType()) +
-                            " SHADER BEGIN\n";
-        state->debugInfo += "\n// GLSL BEGIN\n\n" + mState.getSource() + "\n\n// GLSL END\n\n\n";
-        state->debugInfo +=
-            "// INITIAL HLSL BEGIN\n\n" + translatedSource + "\n// INITIAL HLSL END\n\n\n";
-        // Successive steps will append more info
-        return true;
-    };
-
-    auto workerThreadPool = context->getShaderCompileThreadPool();
-    auto translateTask = std::make_shared<TranslateTaskD3D>(compilerInstance->getHandle(), *options,
-                                                            source, sourcePath);
-
-    return std::make_shared<WaitableCompileEventD3D>(
-        workerThreadPool->postWorkerTask(translateTask), compilerInstance,
-        std::move(postTranslateFunctor), translateTask);
+    return std::shared_ptr<ShaderTranslateTask>(
+        new ShaderTranslateTaskD3D(mCompiledState, std::move(sourcePath)));
 }
 
 bool CompiledShaderStateD3D::hasUniform(const std::string &name) const

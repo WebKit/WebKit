@@ -28,10 +28,12 @@
 #if ENABLE(DFG_JIT)
 
 #include "AdaptiveInferredPropertyValueWatchpointBase.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class AdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
+    WTF_MAKE_TZONE_ALLOCATED(AdaptiveInferredPropertyValueWatchpoint);
 public:
     typedef AdaptiveInferredPropertyValueWatchpointBase Base;
     AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, CodeBlock*);

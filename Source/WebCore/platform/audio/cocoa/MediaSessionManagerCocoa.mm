@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import "DeprecatedGlobalSettings.h"
 #import "HTMLMediaElement.h"
 #import "Logging.h"
+#import "MediaConfiguration.h"
 #import "MediaPlayer.h"
 #import "MediaStrategy.h"
 #import "NowPlayingInfo.h"
@@ -40,6 +41,7 @@
 #import "SharedBuffer.h"
 #import "VP9UtilitiesCocoa.h"
 #import <pal/SessionID.h>
+#import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Function.h>
 #import <wtf/MathExtras.h>
@@ -59,7 +61,7 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 #endif // !PLATFORM(MAC)
 
 MediaSessionManagerCocoa::MediaSessionManagerCocoa()
-    : m_nowPlayingManager(platformStrategies()->mediaStrategy().createNowPlayingManager())
+    : m_nowPlayingManager(hasPlatformStrategies() ? platformStrategies()->mediaStrategy().createNowPlayingManager() : nullptr)
     , m_defaultBufferSize(AudioSession::sharedSession().preferredBufferSize())
     , m_delayCategoryChangeTimer(RunLoop::main(), this, &MediaSessionManagerCocoa::possiblyChangeAudioCategory)
 {
@@ -148,9 +150,9 @@ void MediaSessionManagerCocoa::updateSessionState()
 
         if (!hasAudibleAudioOrVideoMediaType) {
             bool isPotentiallyAudible = session.isPlayingToWirelessPlaybackTarget()
-                || ((type == PlatformMediaSession::MediaType::VideoAudio || type == PlatformMediaSession::MediaType::Audio)
-                    && session.isAudible()
-                    && (session.isPlaying() || session.preparingToPlay() || session.hasPlayedAudiblySinceLastInterruption()));
+            || ((type == PlatformMediaSession::MediaType::VideoAudio || type == PlatformMediaSession::MediaType::Audio)
+                && session.isAudible()
+                && (session.isPlaying() || session.preparingToPlay() || session.hasPlayedAudiblySinceLastInterruption()));
             if (isPotentiallyAudible) {
                 hasAudibleAudioOrVideoMediaType = true;
                 hasAudibleVideoMediaType |= type == PlatformMediaSession::MediaType::VideoAudio;
@@ -336,6 +338,21 @@ void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& sess
             updateNowPlayingInfo();
         });
     }
+
+#if USE(AUDIO_SESSION)
+    // De-activate the audio session if the last playing session is:
+    // * An audio presentation
+    // * Is in the ended state
+    // * Has a short duration
+    // This allows other applications to resume playback after an "alert-like" audio
+    // is played by web content.
+
+    if (!anyOfSessions([] (auto& session) { return session.state() == PlatformMediaSession::State::Playing; })
+        && session.presentationType() == PlatformMediaSession::MediaType::Audio
+        && session.isEnded()
+        && session.isLongEnoughForMainContent())
+        maybeDeactivateAudioSession();
+#endif
 }
 
 void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession& session, bool)
@@ -528,6 +545,51 @@ void MediaSessionManagerCocoa::audioOutputDeviceChanged()
     AudioSession::sharedSession().audioOutputDeviceChanged();
     updateSessionState();
 }
+
+#if PLATFORM(MAC)
+std::optional<bool> MediaSessionManagerCocoa::supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration& configuration)
+{
+    ASSERT(configuration.audio);
+    if (!configuration.audio)
+        return { false };
+
+    auto supportsSpatialAudioPlayback = this->supportsSpatialAudioPlayback();
+    if (supportsSpatialAudioPlayback.has_value())
+        return supportsSpatialAudioPlayback;
+
+    auto calculateSpatialAudioSupport = [] (const MediaConfiguration& configuration) {
+        if (!PAL::canLoad_AudioToolbox_AudioGetDeviceSpatialPreferencesForContentType())
+            return false;
+
+        SpatialAudioPreferences spatialAudioPreferences { };
+        auto contentType = configuration.video ? kAudioSpatialContentType_Audiovisual : kAudioSpatialContentType_AudioOnly;
+
+        if (noErr != PAL::AudioGetDeviceSpatialPreferencesForContentType(nullptr, static_cast<SpatialContentTypeID>(contentType), &spatialAudioPreferences))
+            return false;
+
+        if (!spatialAudioPreferences.spatialAudioSourceCount)
+            return false;
+
+        auto channelCount = configuration.audio->channels.toDouble();
+        if (channelCount <= 0)
+            return true;
+
+        for (uint32_t i = 0; i < spatialAudioPreferences.spatialAudioSourceCount; ++i) {
+            auto& source = spatialAudioPreferences.spatialAudioSources[i];
+            if (source == kSpatialAudioSource_Multichannel && channelCount > 2)
+                return true;
+            if (source == kSpatialAudioSource_MonoOrStereo && channelCount >= 1)
+                return true;
+        }
+
+        return false;
+    };
+
+    setSupportsSpatialAudioPlayback(calculateSpatialAudioSupport(configuration));
+
+    return this->supportsSpatialAudioPlayback();
+}
+#endif
 
 } // namespace WebCore
 

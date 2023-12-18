@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Play pending task doesn't run when the timeline is inactive. assert_equals: The current time is null when the timeline is inactive. expected (object) null but got (number) 0
+TIMEOUT Animation start and current times are correct if scroll timeline is activated after animation.play call. Test timed out
+NOTRUN Animation start and current times are correct if scroll timeline is activated after setting start time.
+NOTRUN Animation current time is correct when the timeline becomes newly inactive and then active again.
+

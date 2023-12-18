@@ -41,9 +41,10 @@
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePagePrivate.h>
 
+#import <pal/spi/mac/HIServicesSPI.h>
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <pal/spi/cocoa/AccessibilitySupportSPI.h>
-#import <pal/spi/mac/HIServicesSPI.h>
 #endif
 
 namespace WTR {
@@ -153,6 +154,15 @@ void AccessibilityController::updateIsolatedTreeMode()
     _AXSSetIsolatedTreeMode(m_accessibilityIsolatedTreeMode ? AXSIsolatedTreeModeSecondaryThread : AXSIsolatedTreeModeOff);
 }
 #endif
+
+void AccessibilityController::overrideClient(JSStringRef clientType)
+{
+    NSString *clientString = [NSString stringWithJSStringRef:clientType];
+    if ([clientString caseInsensitiveCompare:@"voiceover"] == NSOrderedSame)
+        _AXSetClientIdentificationOverride(kAXClientTypeVoiceOver);
+    else
+        _AXSetClientIdentificationOverride(kAXClientTypeNoActiveRequestFound);
+}
 
 // AXThread implementation
 

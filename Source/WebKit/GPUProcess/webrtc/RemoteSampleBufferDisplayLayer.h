@@ -57,13 +57,14 @@ public:
     using WebCore::SampleBufferDisplayLayer::Client::WeakPtrImplType;
 
     using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
-    void initialize(bool hideRootLayer, WebCore::IntSize, LayerInitializationCallback&&);
+    void initialize(bool hideRootLayer, WebCore::IntSize, bool shouldMaintainAspectRatio, LayerInitializationCallback&&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     CGRect bounds() const;
-    
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
+
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
 
@@ -71,7 +72,6 @@ private:
     void setLogIdentifier(String&&);
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
-    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
     void flush();
     void flushAndRemoveImage();
     void play();
@@ -80,6 +80,7 @@ private:
     void clearVideoFrames();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setShouldMaintainAspectRatio(bool shouldMaintainAspectRatio);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
@@ -91,7 +92,6 @@ private:
     GPUConnectionToWebProcess& m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
-    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;

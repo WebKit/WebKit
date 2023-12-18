@@ -31,6 +31,7 @@
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
+#include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -86,7 +87,7 @@ void AudioTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<Gst
     setConfiguration(WTFMove(configuration));
 }
 
-void AudioTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTagList>&& tags)
+void AudioTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>&& tags)
 {
     ASSERT(isMainThread());
     GST_DEBUG_OBJECT(objectForLogging(), "Updating audio configuration from %" GST_PTR_FORMAT, tags.get());
@@ -103,7 +104,7 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTa
     setConfiguration(WTFMove(configuration));
 }
 
-void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCaps>&& caps)
+void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
     if (!caps || !gst_caps_is_fixed(caps.get()))
@@ -114,6 +115,12 @@ void AudioTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCa
     auto scopeExit = makeScopeExit([&] {
         setConfiguration(WTFMove(configuration));
     });
+
+#if GST_CHECK_VERSION(1, 20, 0)
+    GUniquePtr<char> mimeCodec(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    if (mimeCodec)
+        configuration.codec = makeString(mimeCodec.get());
+#endif
 
     if (areEncryptedCaps(caps.get())) {
         int sampleRate, numberOfChannels;

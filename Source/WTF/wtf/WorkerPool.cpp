@@ -107,11 +107,11 @@ WorkerPool::~WorkerPool()
 
 bool WorkerPool::shouldSleep(const AbstractLocker&)
 {
-    if (m_timeout > 0_s && std::isinf(m_timeout))
+    if (m_timeout > 0_s && m_timeout.isInfinity())
         return false;
 
     MonotonicTime currentTime = MonotonicTime::now();
-    if (std::isnan(m_lastTimeoutTime) || (currentTime >= (m_lastTimeoutTime  + m_timeout))) {
+    if (m_lastTimeoutTime.isNaN() || (currentTime >= (m_lastTimeoutTime  + m_timeout))) {
         m_lastTimeoutTime = currentTime;
         return true;
     }

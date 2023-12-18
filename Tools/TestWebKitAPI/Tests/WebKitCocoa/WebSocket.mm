@@ -61,12 +61,12 @@ TEST(WebSocket, LongMessageNoDeflate)
 
                 Vector<uint8_t> bytesToSend;
                 bytesToSend.reserveInitialCapacity(twoMegabytes + headerSizeWithLargePayloadLength);
-                bytesToSend.uncheckedAppend(fin | textFrame);
-                bytesToSend.uncheckedAppend(payloadLengthIndicatingLargeExtendedPayloadLength);
+                bytesToSend.append(fin | textFrame);
+                bytesToSend.append(payloadLengthIndicatingLargeExtendedPayloadLength);
                 for (size_t i = 0; i < 8; i++)
-                    bytesToSend.uncheckedAppend((twoMegabytes >> (8 * (7 - i))) & 0xFF);
+                    bytesToSend.append((twoMegabytes >> (8 * (7 - i))) & 0xFF);
                 for (size_t i = 0; i < twoMegabytes; i++)
-                    bytesToSend.uncheckedAppend('x');
+                    bytesToSend.append('x');
 
                 connection.send(WTFMove(bytesToSend));
             }, expectedReceiveSize);
@@ -127,7 +127,6 @@ TEST(WebSocket, PageWithAttributedBundleIdentifierDestroyed)
     EXPECT_EQ(originalNetworkProcessPID, configuration.get().websiteDataStore._networkProcessIdentifier);
 }
 
-#if HAVE(NSURLSESSION_WEBSOCKET)
 TEST(WebSocket, CloseCode)
 {
     bool receivedWebSocketClose { false };
@@ -208,7 +207,6 @@ TEST(WebSocket, CloseCode)
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 }
-#endif // HAVE(NSURLSESSION_WEBSOCKET)
 
 TEST(WebSocket, BlockedWithSubresources)
 {

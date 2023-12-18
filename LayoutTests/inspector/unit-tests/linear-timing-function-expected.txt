@@ -1,0 +1,23 @@
+Tests for WI.LinearTimingFunction.
+
+
+== Running test suite: WI.LinearTimingFunction
+-- Running test case: WI.LinearTimingFunction.fromString.Valid
+PASS: Should parse 'linear' as 'linear'.
+PASS: Should parse 'linear(0, 1)' as 'linear'.
+PASS: Should parse 'linear(0 0%, 1 100%)' as 'linear'.
+PASS: Should parse 'linear(0 0%, 0.5 50%, 1 100%)' as 'linear(0 0%, 0.5 50%, 1 100%)'.
+PASS: Should parse 'linear(0, 0.25, 1)' as 'linear(0 0%, 0.25 50%, 1 100%)'.
+PASS: Should parse 'linear(0 20%, 0.5 10%, 1)' as 'linear(0 20%, 0.5 20%, 1 100%)'.
+PASS: Should parse 'linear(0, 0.25 25% 75%, 1)' as 'linear(0 0%, 0.25 25%, 0.25 75%, 1 100%)'.
+
+-- Running test case: WI.LinearTimingFunction.fromString.Invalid
+PASS: Should not parse invalid 'linear()'.
+PASS: Should not parse invalid 'linear(0)'.
+PASS: Should not parse invalid 'linear(0 1)'.
+PASS: Should not parse invalid 'linear(0 1 2)'.
+PASS: Should not parse invalid 'linear("test")'.
+PASS: Should not parse invalid 'linear(0 "test")'.
+PASS: Should not parse invalid 'linear(0 1 "test")'.
+PASS: Should not parse invalid 'linear(0 1 2 "test")'.
+

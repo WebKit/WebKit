@@ -49,15 +49,15 @@ class AV1SubtractBlockTestBase : public ::testing::Test {
     func_ = func;
     ref_func_ = ref_func;
     if (bit_depth == -1) {
-      hbd_ = 0;
+      hbd_ = false;
       bit_depth_ = AOM_BITS_8;
     } else {
-      hbd_ = 1;
+      hbd_ = true;
       bit_depth_ = static_cast<aom_bit_depth_t>(bit_depth);
     }
   }
 
-  virtual void SetUp() {
+  void SetUp() override {
     rnd_.Reset(ACMRandom::DeterministicSeed());
 
     const size_t max_width = 128;
@@ -82,7 +82,7 @@ class AV1SubtractBlockTestBase : public ::testing::Test {
     ASSERT_NE(diff_, nullptr);
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     if (hbd_) {
       aom_free(CONVERT_TO_SHORTPTR(src_));
       aom_free(CONVERT_TO_SHORTPTR(pred_));

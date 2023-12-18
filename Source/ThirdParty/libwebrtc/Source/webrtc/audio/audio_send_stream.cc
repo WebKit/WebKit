@@ -110,29 +110,28 @@ AudioSendStream::AudioSendStream(
     RtcpRttStats* rtcp_rtt_stats,
     const absl::optional<RtpState>& suspended_rtp_state,
     const FieldTrialsView& field_trials)
-    : AudioSendStream(
-          clock,
-          config,
-          audio_state,
-          task_queue_factory,
-          rtp_transport,
-          bitrate_allocator,
-          event_log,
-          suspended_rtp_state,
-          voe::CreateChannelSend(clock,
-                                 task_queue_factory,
-                                 config.send_transport,
-                                 rtcp_rtt_stats,
-                                 event_log,
-                                 config.frame_encryptor.get(),
-                                 config.crypto_options,
-                                 config.rtp.extmap_allow_mixed,
-                                 config.rtcp_report_interval_ms,
-                                 config.rtp.ssrc,
-                                 config.frame_transformer,
-                                 rtp_transport->transport_feedback_observer(),
-                                 field_trials),
-          field_trials) {}
+    : AudioSendStream(clock,
+                      config,
+                      audio_state,
+                      task_queue_factory,
+                      rtp_transport,
+                      bitrate_allocator,
+                      event_log,
+                      suspended_rtp_state,
+                      voe::CreateChannelSend(clock,
+                                             task_queue_factory,
+                                             config.send_transport,
+                                             rtcp_rtt_stats,
+                                             event_log,
+                                             config.frame_encryptor.get(),
+                                             config.crypto_options,
+                                             config.rtp.extmap_allow_mixed,
+                                             config.rtcp_report_interval_ms,
+                                             config.rtp.ssrc,
+                                             config.frame_transformer,
+                                             rtp_transport,
+                                             field_trials),
+                      field_trials) {}
 
 AudioSendStream::AudioSendStream(
     Clock* clock,
@@ -284,8 +283,6 @@ void AudioSendStream::ConfigureStream(
       channel_send_->ResetSenderCongestionControlObjects();
     }
 
-    RtcpBandwidthObserver* bandwidth_observer = nullptr;
-
     if (!allocate_audio_without_feedback_ &&
         new_ids.transport_sequence_number != 0) {
       rtp_rtcp_module_->RegisterRtpHeaderExtension(
@@ -298,10 +295,8 @@ void AudioSendStream::ConfigureStream(
       if (enable_audio_alr_probing_) {
         rtp_transport_->EnablePeriodicAlrProbing(true);
       }
-      bandwidth_observer = rtp_transport_->GetBandwidthObserver();
     }
-    channel_send_->RegisterSenderCongestionControlObjects(rtp_transport_,
-                                                          bandwidth_observer);
+    channel_send_->RegisterSenderCongestionControlObjects(rtp_transport_);
   }
   // MID RTP header extension.
   if ((first_time || new_ids.mid != old_ids.mid ||

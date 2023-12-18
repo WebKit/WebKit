@@ -12,11 +12,13 @@ PASS Math.round(selectionRects[0].width) is 250
 PASS Math.round(selectionRects[0].height) is 167
 PASS Math.round(startGrabberRect.left) is 0
 PASS Math.round(startGrabberRect.top) is 3
-PASS Math.round(startGrabberRect.width) is 2
+PASS Math.round(startGrabberRect) is <= Math.round(selectionRects[0].left)
+PASS Math.round(startGrabberRect.left + startGrabberRect.width) is > Math.round(selectionRects[0].left)
 PASS Math.round(startGrabberRect.height) is 167
 PASS Math.round(endGrabberRect.left) is 249
 PASS Math.round(endGrabberRect.top) is 3
-PASS Math.round(endGrabberRect.width) is 2
+PASS Math.round(endGrabberRect.left) is <= Math.round(selectionRects[0].left + selectionRects[0].width)
+PASS Math.round(endGrabberRect.left + endGrabberRect.width) is > Math.round(selectionRects[0].left + selectionRects[0].width)
 PASS Math.round(endGrabberRect.height) is 167
 PASS observedTouchEnd became true
 PASS successfullyParsed is true

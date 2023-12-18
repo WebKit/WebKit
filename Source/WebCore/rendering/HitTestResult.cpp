@@ -169,9 +169,9 @@ void HitTestResult::setURLElement(Element* n)
     m_innerURLElement = n; 
 }
 
-void HitTestResult::setScrollbar(Scrollbar* s)
+void HitTestResult::setScrollbar(RefPtr<Scrollbar>&& scrollbar)
 {
-    m_scrollbar = s;
+    m_scrollbar = WTFMove(scrollbar);
 }
 
 LocalFrame* HitTestResult::innerNodeFrame() const
@@ -181,6 +181,14 @@ LocalFrame* HitTestResult::innerNodeFrame() const
     if (m_innerNode)
         return m_innerNode->document().frame();
     return 0;
+}
+
+LocalFrame* HitTestResult::frame() const
+{
+    if (m_innerNonSharedNode)
+        return m_innerNonSharedNode->document().frame();
+
+    return nullptr;
 }
 
 LocalFrame* HitTestResult::targetFrame() const
@@ -239,11 +247,11 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document().markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Grammar);
+    WeakPtr marker = m_innerNonSharedNode->document().markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Grammar);
     if (!marker)
         return String();
 
-    if (auto renderer = m_innerNonSharedNode->renderer())
+    if (CheckedPtr renderer = m_innerNonSharedNode->renderer())
         dir = renderer->style().direction();
     return marker->description();
 }
@@ -255,7 +263,7 @@ String HitTestResult::replacedString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document().markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Replacement);
+    WeakPtr marker = m_innerNonSharedNode->document().markers().markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Replacement);
     if (!marker)
         return String();
     
@@ -460,7 +468,7 @@ HTMLMediaElement* HitTestResult::mediaElement() const
     if (!m_innerNonSharedNode)
         return nullptr;
 
-    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isMedia()))
+    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isRenderMedia()))
         return nullptr;
 
     if (is<HTMLMediaElement>(*m_innerNonSharedNode))
@@ -516,7 +524,7 @@ void HitTestResult::toggleMediaFullscreenState() const
 #if ENABLE(VIDEO)
     if (HTMLMediaElement* mediaElement = this->mediaElement()) {
         if (mediaElement->isVideo() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-            UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
             mediaElement->toggleStandardFullscreenState();
         }
     }
@@ -530,7 +538,7 @@ void HitTestResult::enterFullscreenForVideo() const
     if (is<HTMLVideoElement>(mediaElement)) {
         HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
         if (!videoElement.isFullscreen() && mediaElement->supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
-            UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
+            UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
             videoElement.webkitEnterFullscreen();
         }
     }
@@ -774,11 +782,11 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!m_innerNonSharedNode)
         return Vector<String>();
 
-    auto* marker = m_innerNonSharedNode->document().markers().markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::DictationAlternatives);
+    WeakPtr marker = m_innerNonSharedNode->document().markers().markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::Type::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 
-    auto* frame = innerNonSharedNode()->document().frame();
+    RefPtr frame = innerNonSharedNode()->document().frame();
     if (!frame)
         return Vector<String>();
 
@@ -855,7 +863,7 @@ void HitTestResult::toggleEnhancedFullscreenForVideo() const
         return;
 
     HTMLVideoElement& videoElement = downcast<HTMLVideoElement>(*mediaElement);
-    UserGestureIndicator indicator(ProcessingUserGesture, &mediaElement->document());
+    UserGestureIndicator indicator(IsProcessingUserGesture::Yes, &mediaElement->document());
     if (videoElement.webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::PictureInPicture)
         videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::Inline);
     else

@@ -68,12 +68,12 @@ SelectionGeometryGatherer::Notifier::Notifier(SelectionGeometryGatherer& gathere
 
 SelectionGeometryGatherer::Notifier::~Notifier()
 {
-    auto page = m_gatherer.m_renderView.view().frame().page();
+    RefPtr page = m_gatherer.m_renderView->view().frame().page();
     if (!page)
         return;
 
     page->servicesOverlayController().selectionRectsDidChange(m_gatherer.boundingRects(), m_gatherer.m_gapRects, m_gatherer.isTextOnly());
-    page->imageOverlayController().selectionQuadsDidChange(m_gatherer.m_renderView.frame(), m_gatherer.m_quads);
+    page->imageOverlayController().selectionQuadsDidChange(m_gatherer.m_renderView->frame(), m_gatherer.m_quads);
 }
 
 Vector<LayoutRect> SelectionGeometryGatherer::boundingRects() const

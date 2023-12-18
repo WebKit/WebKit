@@ -140,6 +140,10 @@ OPENSSL_EXPORT void EVP_HPKE_KEY_free(EVP_HPKE_KEY *key);
 OPENSSL_EXPORT int EVP_HPKE_KEY_copy(EVP_HPKE_KEY *dst,
                                      const EVP_HPKE_KEY *src);
 
+// EVP_HPKE_KEY_move sets |out|, which must be initialized or in the zero state,
+// to the key in |in|. |in| is mutated and left in the zero state.
+OPENSSL_EXPORT void EVP_HPKE_KEY_move(EVP_HPKE_KEY *out, EVP_HPKE_KEY *in);
+
 // EVP_HPKE_KEY_init decodes |priv_key| as a private key for |kem| and
 // initializes |key| with the result. It returns one on success and zero if
 // |priv_key| was invalid. On success, the caller must call
@@ -389,8 +393,8 @@ using ScopedEVP_HPKE_CTX =
     internal::StackAllocated<EVP_HPKE_CTX, void, EVP_HPKE_CTX_zero,
                              EVP_HPKE_CTX_cleanup>;
 using ScopedEVP_HPKE_KEY =
-    internal::StackAllocated<EVP_HPKE_KEY, void, EVP_HPKE_KEY_zero,
-                             EVP_HPKE_KEY_cleanup>;
+    internal::StackAllocatedMovable<EVP_HPKE_KEY, void, EVP_HPKE_KEY_zero,
+                                    EVP_HPKE_KEY_cleanup, EVP_HPKE_KEY_move>;
 
 BORINGSSL_MAKE_DELETER(EVP_HPKE_CTX, EVP_HPKE_CTX_free)
 BORINGSSL_MAKE_DELETER(EVP_HPKE_KEY, EVP_HPKE_KEY_free)

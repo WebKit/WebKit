@@ -31,10 +31,10 @@ partial interface LocalDOMWindow {
     [SameObject, Replaceable] readonly attribute Screen screen;
 
     // browsing context
-    undefined moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
-    undefined moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
-    undefined resizeTo(optional unrestricted float width = NaN, optional unrestricted float height = NaN); // Parameters should be mandatory and of type long.
-    undefined resizeBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: Parameters should be mandatory and of type long.
+    undefined moveTo(long x, long y);
+    undefined moveBy(long x, long y);
+    undefined resizeTo(long width, long height);
+    undefined resizeBy(long x, long y);
 
     // viewport
     [Replaceable] readonly attribute long innerWidth;

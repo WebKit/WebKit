@@ -46,10 +46,7 @@ PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
 
 HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
 {
-    auto& base = canvasBase();
-    if (!is<HTMLCanvasElement>(base))
-        return nullptr;
-    return &downcast<HTMLCanvasElement>(base);
+    return dynamicDowncast<HTMLCanvasElement>(canvasBase());
 }
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>media-garbage-collection</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script src=../resources/gc.js></script>
+    <script>
+        class WeakVideoRef {
+            #weakRef;
+
+            constructor(video) {
+                this.#weakRef = new WeakRef(video);
+            }
+
+            get wasCollected() { return !this.#weakRef.deref(); }
+            get video() { return this.#weakRef.deref() }
+
+            waitFor(event) { return waitFor(this.video, event); }
+            addEventListener(event, callback) { return this.video.addEventListener(event, callback); } 
+            unload() {
+                if (this.wasCollected)
+                    return;
+                this.video.pause();
+                this.video.src = '';
+                this.video.load();
+            }
+        };
+        var weakVideo;
+
+        function testExpectedEventuallyWhileGCing(testFuncString, expected, comparison) {
+            return testExpectedEventuallyWhileRunningBetweenTests(testFuncString, expected, comparison, 1000, gc);
+        }
+
+        let tests = [
+            async () => {
+                consoleWrite('Test that a never loaded media element can be collected');
+                weakVideo = new WeakVideoRef(document.createElement('video'));
+                await sleepFor(1);
+
+                gc();
+
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', true, '==');
+            },
+            async () => {
+                consoleWrite('Test that the media element is not collected between load() and "loadstart"')
+                var video = document.createElement("video");
+                video.src = "null";
+                video.load();
+                weakVideo = new WeakVideoRef(video);
+                video = null;
+
+                let loadstartPromise = weakVideo.waitFor('loadstart');
+                await sleepFor(1);
+
+                gc();
+
+                video = (await loadstartPromise).target;
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', false, '==');
+            },
+            async () => {
+                consoleWrite('Test that the media element is not collected during playback')
+                var video = document.createElement("video");
+                video.src = findMediaFile('video', 'content/test');
+                video.muted = true;
+                video.play();
+                await waitFor(video, 'playing');
+                weakVideo = new WeakVideoRef(video);
+                video = null;
+
+                let timeupdatePromise = weakVideo.waitFor('timeupdate');
+                await sleepFor(1);
+
+                gc();
+
+                video = (await timeupdatePromise).target;
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', false, '==');
+            },
+            async () => {
+                consoleWrite('Test that a paused media element will be collected, even if it has an event listener')
+
+                video = document.createElement("video");
+                video.src = findMediaFile('video', 'content/test');
+                video.muted = true;
+                await waitFor(video, 'suspend'),
+                weakVideo = new WeakVideoRef(video);
+                video = null;
+
+                weakVideo.addEventListener('ended', () => { });
+                await sleepFor(1);
+
+                gc();
+
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', true, '==');
+            },
+            async () => {
+                consoleWrite('Test that an ended media element will be collected, even if it has an event listener')
+
+                video = document.createElement("video");
+                video.src = findMediaFile('video', 'content/test');
+                await waitFor(video, 'canplay');
+                video.currentTime = video.duration - 0.1;
+                await waitFor(video, 'seeked');
+                video.play();
+                await waitFor(video, 'ended');
+                weakVideo = new WeakVideoRef(video);
+                video = null;
+
+                weakVideo.addEventListener('playing', () => { });
+                await sleepFor(1);
+
+                gc();
+
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', true, '==');
+            },
+            async () => {
+                consoleWrite('Test that an interrupted media element will not be collected')
+
+                video = document.createElement("video");
+                video.src = findMediaFile('video', 'content/test');
+                await waitFor(video, 'canplay');
+                video.play();
+                await waitFor(video, 'timeupdate');
+
+                run('internals.beginMediaSessionInterruption("System")');
+                await waitFor(video, 'pause')
+                weakVideo = new WeakVideoRef(video);
+                video = null;
+
+                weakVideo.addEventListener('playing', () => { });
+                await sleepFor(1);
+
+                gc();
+
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', false, '==');
+                run('internals.endMediaSessionInterruption("System")');
+            },
+            async () => {
+                consoleWrite('Test that a media element will be collected after it is unloaded')
+
+                video = document.createElement("video");
+                video.src = findMediaFile('video', 'content/test');
+                await waitFor(video, 'canplay');
+                video.src = '';
+                video.load();
+                await waitFor(video, 'emptied');
+
+                weakVideo = new WeakVideoRef(video);
+                video = null;
+
+                weakVideo.addEventListener('playing', () => { });
+                await sleepFor(1);
+
+                gc();
+
+                await testExpectedEventuallyWhileGCing('weakVideo.wasCollected', true, '==');
+            },
+        ];
+
+        async function runTests() {
+            let index = 0;
+            for (test of tests) {
+                consoleWrite(`Test ${++index}:`)
+                try {
+                    await test();
+                    video = null;
+                    weakVideo.unload();
+                    weakVideo = null;
+                } catch(e) { logResult(Failed, e); }
+                consoleWrite('')
+            };
+        }
+
+        window.addEventListener('load', event => {
+            runTests().then(endTest).catch(failTest);
+        })
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,11 @@
 #if ENABLE(DFG_JIT)
 
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FlowIndexing);
 
 FlowIndexing::FlowIndexing(Graph& graph)
     : m_graph(graph)

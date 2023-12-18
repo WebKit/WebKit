@@ -23,9 +23,9 @@
 #include "SVGGElement.h"
 
 #include "LegacyRenderSVGHiddenContainer.h"
+#include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGHiddenContainer.h"
-#include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
@@ -57,7 +57,7 @@ RenderPtr<RenderElement> SVGGElement::createElementRenderer(RenderStyle&& style,
     // FIXME: [LBSE] Support hidden containers
     if (document().settings().layerBasedSVGEngineEnabled()) {
         if (style.display() == DisplayType::None)
-            return createRenderer<RenderSVGHiddenContainer>(*this, WTFMove(style));
+            return createRenderer<RenderSVGHiddenContainer>(RenderObject::Type::SVGHiddenContainer, *this, WTFMove(style));
         return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
     }
 #endif

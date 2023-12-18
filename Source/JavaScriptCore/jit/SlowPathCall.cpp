@@ -47,7 +47,7 @@ void JITSlowPathCall::call()
     ASSERT(BytecodeIndex(bytecodeOffset) == m_jit->m_bytecodeIndex);
 
     m_jit->move(JIT::TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-    m_jit->emitNakedNearCall(vm.jitStubs->ctiSlowPathFunctionStub(vm, m_slowPathFunction).retaggedCode<NoPtrTag>());
+    m_jit->nearCallThunk(CodeLocationLabel { vm.jitStubs->ctiSlowPathFunctionStub(vm, m_slowPathFunction).retaggedCode<NoPtrTag>() });
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, SlowPathFunction slowPathFunction)
@@ -79,7 +79,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     jit.loadPtr(CCallHelpers::Address(pcArgGPR, CodeBlock::offsetOfInstructionsRawPointer()), pcArgGPR);
     jit.addPtr(bytecodeOffsetGPR, pcArgGPR);
 
-    CCallHelpers::Call call = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(slowPathFunction);
 
 #if OS(WINDOWS) && CPU(X86_64)
     jit.pop(GPRInfo::returnValueGPR); // pc
@@ -89,11 +89,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITSlowPathCall::generateThunk(VM& vm, Slo
     jit.emitCTIThunkEpilogue();
 
     // Tail call to exception check thunk
-    CCallHelpers::Jump exceptionCheck = jit.jump();
+    jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link<OperationPtrTag>(call, slowPathFunction);
-    patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "SlowPathCall");
 }
 

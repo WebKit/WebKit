@@ -141,6 +141,7 @@ private:
     String m_calendar;
     String m_numberingSystem;
     String m_timeZone;
+    String m_timeZoneForICU;
     HourCycle m_hourCycle { HourCycle::None };
     Weekday m_weekday { Weekday::None };
     Era m_era { Era::None };

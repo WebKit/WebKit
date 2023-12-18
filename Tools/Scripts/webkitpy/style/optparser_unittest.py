@@ -26,38 +26,8 @@ import unittest
 
 from webkitpy.common.system.logtesting import LoggingTestCase
 from webkitpy.style.optparser import ArgumentParser
-from webkitpy.style.optparser import ArgumentPrinter
 from webkitpy.style.optparser import CommandOptionValues as ProcessorOptions
 from webkitpy.style.optparser import DefaultCommandOptionValues
-
-
-class ArgumentPrinterTest(unittest.TestCase):
-
-    """Tests the ArgumentPrinter class."""
-
-    _printer = ArgumentPrinter()
-
-    def _create_options(self,
-                        output_format='emacs',
-                        min_confidence=3,
-                        filter_rules=[],
-                        git_commit=None):
-        return ProcessorOptions(filter_rules=filter_rules,
-                                git_commit=git_commit,
-                                min_confidence=min_confidence,
-                                output_format=output_format)
-
-    def test_to_flag_string(self):
-        options = self._create_options('vs7', 5, ['+foo', '-bar'], 'git')
-        self.assertEqual('--filter=+foo,-bar --git-commit=git '
-                          '--min-confidence=5 --output=vs7',
-                          self._printer.to_flag_string(options))
-
-        # This is to check that --filter and --git-commit do not
-        # show up when not user-specified.
-        options = self._create_options()
-        self.assertEqual('--min-confidence=3 --output=emacs',
-                          self._printer.to_flag_string(options))
 
 
 class ArgumentParserTest(LoggingTestCase):

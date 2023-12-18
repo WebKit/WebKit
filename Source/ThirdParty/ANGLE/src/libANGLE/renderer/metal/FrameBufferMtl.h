@@ -180,23 +180,6 @@ class FramebufferMtl : public FramebufferImpl
                                            const gl::FramebufferAttachment *attachment,
                                            RenderTargetMtl **cachedRenderTarget);
 
-    // This function either returns the render target's texture itself if the texture is readable
-    // or create a copy of that texture that is readable if not. This function is typically used
-    // for packed depth stencil where reading stencil requires a stencil view. However if a texture
-    // has both render target, pixel format view & shader readable usage flags, there will be
-    // some glitches happen in Metal framework.
-    // So the solution is creating a depth stencil texture without pixel format view flag but has
-    // render target flag, then during blitting process, this texture is copied to another
-    // intermidiate texture having pixel format view flag, but not render target flag.
-    angle::Result getReadableViewForRenderTarget(const gl::Context *context,
-                                                 const RenderTargetMtl &rtt,
-                                                 const gl::Rectangle &readArea,
-                                                 mtl::TextureRef *readableDepthView,
-                                                 mtl::TextureRef *readableStencilView,
-                                                 uint32_t *readableViewLevel,
-                                                 uint32_t *readableViewLayer,
-                                                 gl::Rectangle *readableViewArea);
-
     angle::Result readPixelsToPBO(const gl::Context *context,
                                   const gl::Rectangle &area,
                                   const PackPixelsParams &packPixelsParams,

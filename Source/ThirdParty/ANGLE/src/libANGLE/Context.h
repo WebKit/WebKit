@@ -37,16 +37,17 @@
 #include "libANGLE/RefCountObject.h"
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/ResourceMap.h"
-#include "libANGLE/SharedContextMutex.h"
 #include "libANGLE/State.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/angletypes.h"
 
 namespace angle
 {
+class Closure;
 class FrameCapture;
 class FrameCaptureShared;
 struct FrontendFeatures;
+class WaitableEvent;
 }  // namespace angle
 
 namespace rx
@@ -534,7 +535,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool isTransformFeedbackGenerated(TransformFeedbackID transformFeedback) const;
 
     bool isExternal() const { return mIsExternal; }
-    bool saveAndRestoreState() const { return mSaveAndRestoreState; }
 
     void getBooleanvImpl(GLenum pname, GLboolean *params) const;
     void getFloatvImpl(GLenum pname, GLfloat *params) const;
@@ -699,6 +699,14 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     // GL_KHR_parallel_shader_compile
     std::shared_ptr<angle::WorkerThreadPool> getShaderCompileThreadPool() const;
+    std::shared_ptr<angle::WorkerThreadPool> getLinkSubTaskThreadPool() const;
+    std::shared_ptr<angle::WaitableEvent> postCompileLinkTask(
+        const std::shared_ptr<angle::Closure> &task,
+        angle::JobThreadSafety safety,
+        angle::JobResultExpectancy resultExpectancy) const;
+
+    // Single-threaded pool; runs everything instantly
+    std::shared_ptr<angle::WorkerThreadPool> getSingleThreadPool() const;
 
     // Generic multithread pool.
     std::shared_ptr<angle::WorkerThreadPool> getWorkerThreadPool() const;
@@ -752,28 +760,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     egl::ShareGroup *getShareGroup() const { return mState.getShareGroup(); }
 
-    // Note: mutex may be changed during the API call, including from other thread.
-    egl::ContextMutex *getContextMutex() const
-    {
-        return mState.mContextMutex.load(std::memory_order_relaxed);
-    }
-
-    // For debugging purposes. "ContextMutex" MUST be locked during this call.
-    bool isSharedContextMutexActive() const;
-    // For debugging purposes. "ContextMutex" MUST be locked during this call.
-    bool isContextMutexStateConsistent() const;
-
-    // Important note:
-    //   It is possible that this Context will continue to use "SingleContextMutex" in its current
-    //   thread after this call. Probability of that is controlled by the "kActivationDelayMicro"
-    //   constant. If problem happens or extra safety is critical - increase the
-    //   "kActivationDelayMicro".
-    //   For absolute 100% safety "SingleContextMutex" should not be used.
-    egl::ScopedContextMutexLock lockAndActivateSharedContextMutex();
-
-    // "SharedContextMutex" MUST be locked and active during this call.
-    // Merges "SharedContextMutex" of the Context with other "ShareContextMutex".
-    void mergeSharedContextMutexes(egl::ContextMutex *otherMutex);
+    // Warning! When need to store pointer to the mutex in other object use `getRoot()` pointer, do
+    // NOT get pointer of the `getContextMutex()` reference.
+    egl::ContextMutex &getContextMutex() const { return mState.mContextMutex; }
 
     bool supportsGeometryOrTesselation() const;
     void dirtyAllState();
@@ -971,7 +960,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     OverlayType mOverlay;
 
     const bool mIsExternal;
-    const bool mSaveAndRestoreState;
 
     bool mIsDestroyed;
 

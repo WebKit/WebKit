@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ManagedMediaSource.h"
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 
 #include "Event.h"
 #include "EventNames.h"
@@ -94,7 +94,7 @@ bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
     ASSERT(ranges.length() == 1);
 
-    auto bufferedRanges = buffered();
+    auto bufferedRanges = m_private->buffered();
     if (!bufferedRanges.length())
         return false;
     bufferedRanges.intersectWith(ranges);
@@ -182,5 +182,6 @@ bool ManagedMediaSource::isOpen() const
 #endif
 }
 
-}
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SOURCE)

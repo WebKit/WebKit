@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebPluginInfoProvider.h"
 
-#if ENABLE(PDFKIT_PLUGIN)
-#include "PDFPlugin.h"
+#if ENABLE(PDF_PLUGIN)
+#include "PDFPluginBase.h"
 #endif
 
 namespace WebKit {
@@ -44,8 +44,8 @@ void WebPluginInfoProvider::refreshPlugins()
 
 static Vector<WebCore::PluginInfo> pluginInfoVector()
 {
-#if ENABLE(PDFKIT_PLUGIN)
-    return { PDFPlugin::pluginInfo() };
+#if ENABLE(PDF_PLUGIN)
+    return { PDFPluginBase::pluginInfo() };
 #else
     return { };
 #endif

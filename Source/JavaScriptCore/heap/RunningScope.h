@@ -31,7 +31,7 @@ namespace JSC {
 
 class RunningScope {
 public:
-    RunningScope(Heap& heap)
+    RunningScope(JSC::Heap& heap)
         : m_heap(heap)
         , m_oldState(m_heap.m_mutatorState)
     {
@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     MutatorState m_oldState;
 };
 

@@ -1,0 +1,75 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-animatable-interface-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-animatable-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-delay-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-display-none-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-offsets-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-overflow-hidden-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-overflow-hidden-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-overflow-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-root-scroller-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-root-scroller-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-root-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-transform-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-transform.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/cancel-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor-no-document.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/current-time-nan.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/current-time-root-scroller.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/current-time-writing-modes.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/effect-updateTiming.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/finish-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/intrinsic-iteration-duration.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/null-scroll-source-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/pause-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/play-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/reverse-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-fill-modes.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-effect-phases.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation-inactive-timeline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-in-removed-iframe-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-range.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/set-current-time-before-play.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-current-time.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-playback-rate.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-start-time.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/source-quirks-mode.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/testcommon.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/update-playback-rate.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html

@@ -38,14 +38,14 @@ static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentif
 {
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
     if (!cryptoDigestAlgorithm)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     digest->addBytes(data.data(), data.size());
     auto digestData = digest->computeHash();
 
@@ -54,7 +54,7 @@ static ExceptionOr<Vector<uint8_t>> signRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentif
 
     CCCryptorStatus status = CCRSACryptorSign(key, ccPKCS1Padding, digestData.data(), digestData.size(), digestAlgorithm, 0, signature.data(), &signatureSize);
     if (status)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     return WTFMove(signature);
 }
@@ -63,14 +63,14 @@ static ExceptionOr<bool> verifyRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash,
 {
     CCDigestAlgorithm digestAlgorithm;
     if (!getCommonCryptoDigestAlgorithm(hash, digestAlgorithm))
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
 
     auto cryptoDigestAlgorithm = WebCore::cryptoDigestAlgorithm(hash);
     if (!cryptoDigestAlgorithm)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     auto digest = PAL::CryptoDigest::create(*cryptoDigestAlgorithm);
     if (!digest)
-        return Exception { OperationError };
+        return Exception { ExceptionCode::OperationError };
     digest->addBytes(data.data(), data.size());
     auto digestData = digest->computeHash();
 
@@ -80,7 +80,7 @@ static ExceptionOr<bool> verifyRSASSA_PKCS1_v1_5(CryptoAlgorithmIdentifier hash,
     if (status == kCCDecodeError)
         return false;
 
-    return Exception { OperationError };
+    return Exception { ExceptionCode::OperationError };
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoKeyRSA& key, const Vector<uint8_t>& data)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "FuzzerAgent.h"
 #include "Opcode.h"
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -35,9 +36,9 @@ class VM;
 
 struct PredictionTarget {
     BytecodeIndex bytecodeIndex;
-    int divot;
-    int startOffset;
-    int endOffset;
+    unsigned divot;
+    unsigned startOffset;
+    unsigned endOffset;
     unsigned line;
     unsigned column;
     OpcodeID opcodeId;
@@ -46,7 +47,7 @@ struct PredictionTarget {
 };
 
 class FileBasedFuzzerAgentBase : public FuzzerAgent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FileBasedFuzzerAgentBase);
 
 public:
     FileBasedFuzzerAgentBase(VM&);

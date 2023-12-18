@@ -150,4 +150,5 @@ PASS animate() with a non-null invalid pseudoElement 'before' throws a SyntaxErr
 PASS animate() with a non-null invalid pseudoElement ':abc' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement '::abc' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement '::placeholder' throws a SyntaxError
+PASS Finished fill animation doesn't replace animation on a different pseudoElement
 

@@ -74,6 +74,7 @@ class RoundedRect;
 class SVGLengthValue;
 class SVGRenderStyle;
 class ScaleTransformOperation;
+class ScrollTimeline;
 class ShadowData;
 class ShapeValue;
 class StyleColor;
@@ -92,14 +93,14 @@ class TextSizeAdjustment;
 class TextUnderlineOffset;
 class TransformOperations;
 class TransformationMatrix;
-class TransformOperationData;
 class TranslateTransformOperation;
+class ViewTimeline;
 class WillChangeData;
 
 enum CSSPropertyID : uint16_t;
 enum GridAutoFlow : uint8_t;
 enum PageSizeType : uint8_t;
-enum PaginationMode : uint8_t;
+enum class PaginationMode : uint8_t;
 
 enum class ApplePayButtonStyle : uint8_t;
 enum class ApplePayButtonType : uint8_t;
@@ -182,11 +183,12 @@ enum class PaintType : uint8_t;
 enum class PointerEvents : uint8_t;
 enum class PositionType : uint8_t;
 enum class PrintColorAdjust : bool;
-enum class PseudoId : uint16_t;
+enum class PseudoId : uint32_t;
 enum class QuoteType : uint8_t;
 enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class SVGPaintType : uint8_t;
+enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
 enum class ScrollbarWidth : uint8_t;
 enum class SpeakAs : uint8_t;
@@ -214,7 +216,8 @@ enum class TextOverflow : bool;
 enum class TextSecurity : uint8_t;
 enum class TextTransform : uint8_t;
 enum class TextUnderlinePosition : uint8_t;
-enum class TextWrap : uint8_t;
+enum class TextWrapMode : bool;
+enum class TextWrapStyle : uint8_t;
 enum class TextZoom : bool;
 enum class TouchAction : uint8_t;
 enum class TransformBox : uint8_t;
@@ -253,11 +256,13 @@ struct ScrollSnapAlign;
 struct ScrollSnapType;
 struct ScrollbarGutter;
 struct ScrollbarColor;
+struct ViewTimelineInsets;
 
 struct TabSize;
 struct TextAutospace;
 struct TextBoxEdge;
 struct TextSpacingTrim;
+struct TransformOperationData;
 
 template<typename> class FontTaggedSettings;
 template<typename> class RectEdges;
@@ -272,9 +277,10 @@ class CustomPropertyRegistry;
 struct ScopedName;
 }
 
-constexpr auto PublicPseudoIDBits = 9;
+constexpr auto PublicPseudoIDBits = 16;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
+constexpr auto StyleTypeBits = 5;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 struct PseudoStyleCache {
@@ -504,7 +510,7 @@ public:
     inline OverscrollBehavior overscrollBehaviorY() const;
     
     Visibility visibility() const { return static_cast<Visibility>(m_inheritedFlags.visibility); }
-    VerticalAlign verticalAlign() const { return static_cast<VerticalAlign>(m_nonInheritedFlags.verticalAlign); }
+    VerticalAlign verticalAlign() const;
     const Length& verticalAlignLength() const;
 
     inline const Length& clipLeft() const;
@@ -556,8 +562,10 @@ public:
 
     inline OptionSet<MarginTrimType> marginTrim() const;
 
-    const Length& wordSpacing() const;
-    float letterSpacing() const;
+    const Length& computedLetterSpacing() const;
+    const Length& computedWordSpacing() const;
+    inline float letterSpacing() const;
+    inline float wordSpacing() const;
     TextSpacingTrim textSpacingTrim() const;
     TextAutospace textAutospace() const;
 
@@ -568,7 +576,7 @@ public:
 
     TextDirection direction() const { return static_cast<TextDirection>(m_inheritedFlags.direction); }
     inline bool isLeftToRightDirection() const;
-    bool hasExplicitlySetDirection() const { return m_nonInheritedFlags.hasExplicitlySetDirection; }
+    inline bool hasExplicitlySetDirection() const;
 
     const Length& specifiedLineHeight() const;
     WEBCORE_EXPORT const Length& lineHeight() const;
@@ -576,7 +584,6 @@ public:
     int computeLineHeight(const Length&) const;
 
     WhiteSpace whiteSpace() const;
-    static constexpr bool autoWrap(WhiteSpace);
     inline bool autoWrap() const;
     static constexpr bool preserveNewline(WhiteSpace);
     inline bool preserveNewline() const;
@@ -587,7 +594,8 @@ public:
     inline bool breakWords() const;
 
     WhiteSpaceCollapse whiteSpaceCollapse() const { return static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse); }
-    TextWrap textWrap() const { return static_cast<TextWrap>(m_inheritedFlags.textWrap); }
+    TextWrapMode textWrapMode() const { return static_cast<TextWrapMode>(m_inheritedFlags.textWrapMode); }
+    TextWrapStyle textWrapStyle() const { return static_cast<TextWrapStyle>(m_inheritedFlags.textWrapStyle); }
 
     inline FillRepeatXY backgroundRepeat() const;
     inline FillAttachment backgroundAttachment() const;
@@ -598,7 +606,8 @@ public:
     inline FillSizeType backgroundSizeType() const;
     inline const LengthSize& backgroundSizeLength() const;
     inline FillLayer& ensureBackgroundLayers();
-    inline const FillLayer& backgroundLayers() const;
+    inline const FillLayer& backgroundLayers() const; // Defined in RenderStyleInlines.h.
+    inline Ref<const FillLayer> protectedBackgroundLayers() const; // Defined in RenderStyleInlines.h.
     inline BlendMode backgroundBlendMode() const;
 
     inline StyleImage* maskImage() const;
@@ -611,7 +620,8 @@ public:
     inline FillSizeType maskSizeType() const;
     inline const LengthSize& maskSizeLength() const;
     inline FillLayer& ensureMaskLayers();
-    inline const FillLayer& maskLayers() const;
+    inline const FillLayer& maskLayers() const; // Defined in RenderStyleInlines.h.
+    inline Ref<const FillLayer> protectedMaskLayers() const; // Defined in RenderStyleInlines.h.
     inline const NinePieceImage& maskBorder() const;
     inline StyleImage* maskBorderSource() const;
 
@@ -770,8 +780,6 @@ public:
     inline size_t namedGridAreaRowCount() const;
     inline size_t namedGridAreaColumnCount() const;
     inline GridAutoFlow gridAutoFlow() const;
-    inline const Vector<StyleContentAlignmentData>& alignTracks() const;
-    inline const Vector<StyleContentAlignmentData>& justifyTracks() const;
     inline MasonryAutoFlow masonryAutoFlow() const;
     inline bool gridSubgridRows() const;
     inline bool gridSubgridColumns() const;
@@ -797,9 +805,7 @@ public:
     inline void getBoxShadowInlineDirectionExtent(LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const;
     inline void getBoxShadowBlockDirectionExtent(LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const;
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     inline BoxDecorationBreak boxDecorationBreak() const;
-#endif
 
     inline StyleReflection* boxReflect() const;
     inline BoxSizing boxSizing() const;
@@ -867,8 +873,8 @@ public:
 
 #if ENABLE(DARK_MODE_CSS)
     inline StyleColorScheme colorScheme() const;
-    void setHasExplicitlySetColorScheme(bool v) { m_nonInheritedFlags.hasExplicitlySetColorScheme = v; }
-    bool hasExplicitlySetColorScheme() const { return m_nonInheritedFlags.hasExplicitlySetColorScheme; };
+    inline void setHasExplicitlySetColorScheme();
+    inline bool hasExplicitlySetColorScheme() const;
 #endif
 
     inline TextOrientation textOrientation() const;
@@ -924,6 +930,21 @@ public:
 
     PointerEvents pointerEvents() const { return static_cast<PointerEvents>(m_inheritedFlags.pointerEvents); }
     inline PointerEvents effectivePointerEvents() const;
+
+    inline const Vector<Ref<ScrollTimeline>>& scrollTimelines() const;
+    inline const Vector<ScrollAxis>& scrollTimelineAxes() const;
+    inline const Vector<AtomString>& scrollTimelineNames() const;
+    inline void setScrollTimelineAxes(const Vector<ScrollAxis>&);
+    inline void setScrollTimelineNames(const Vector<AtomString>&);
+
+    inline const Vector<Ref<ViewTimeline>>& viewTimelines() const;
+    inline const Vector<ScrollAxis>& viewTimelineAxes() const;
+    inline const Vector<ViewTimelineInsets>& viewTimelineInsets() const;
+    inline const Vector<AtomString>& viewTimelineNames() const;
+    inline void setViewTimelineAxes(const Vector<ScrollAxis>&);
+    inline void setViewTimelineInsets(const Vector<ViewTimelineInsets>&);
+    inline void setViewTimelineNames(const Vector<AtomString>&);
+
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;
 
@@ -1037,13 +1058,9 @@ public:
     inline const FilterOperations& appleColorFilter() const;
     inline bool hasAppleColorFilter() const;
 
-#if ENABLE(FILTERS_LEVEL_2)
     inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
-#else
-    bool hasBackdropFilter() const { return false; };
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     inline void setBlendMode(BlendMode);
@@ -1070,6 +1087,8 @@ public:
 
     inline MathStyle mathStyle() const;
 
+    inline std::optional<Style::ScopedName> viewTransitionName() const;
+
     void setDisplay(DisplayType value)
     {
         m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(value);
@@ -1094,6 +1113,11 @@ public:
     inline void setMaxWidth(Length&&);
     inline void setMinHeight(Length&&);
     inline void setMaxHeight(Length&&);
+
+    inline void setLogicalMinWidth(Length&&);
+    inline void setLogicalMaxWidth(Length&&);
+    inline void setLogicalMinHeight(Length&&);
+    inline void setLogicalMaxHeight(Length&&);
 
     inline void resetBorder();
     inline void resetBorderExceptRadius();
@@ -1171,7 +1195,7 @@ public:
     inline void setOverscrollBehaviorX(OverscrollBehavior);
     inline void setOverscrollBehaviorY(OverscrollBehavior);
     void setVisibility(Visibility v) { m_inheritedFlags.visibility = static_cast<unsigned>(v); }
-    void setVerticalAlign(VerticalAlign v) { m_nonInheritedFlags.verticalAlign = static_cast<unsigned>(v); }
+    void setVerticalAlign(VerticalAlign);
     void setVerticalAlignLength(Length&&);
 
     inline void setHasClip(bool = true);
@@ -1214,7 +1238,7 @@ public:
     inline void setTextUnderlineOffset(TextUnderlineOffset);
     inline void setTextDecorationThickness(TextDecorationThickness);
     void setDirection(TextDirection v) { m_inheritedFlags.direction = static_cast<unsigned>(v); }
-    void setHasExplicitlySetDirection(bool v) { m_nonInheritedFlags.hasExplicitlySetDirection = v; }
+    inline void setHasExplicitlySetDirection();
     void setLineHeight(Length&&);
     bool setZoom(float);
     void setZoomWithoutReturnValue(float f) { setZoom(f); }
@@ -1238,13 +1262,13 @@ public:
     inline void setImageRendering(ImageRendering);
 
     void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
-    void setTextWrap(TextWrap v) { m_inheritedFlags.textWrap = static_cast<unsigned>(v); }
 
-    void setWordSpacing(Length&&);
+    void setTextWrapMode(TextWrapMode v) { m_inheritedFlags.textWrapMode = static_cast<unsigned>(v); }
+    void setTextWrapStyle(TextWrapStyle v) { m_inheritedFlags.textWrapStyle = static_cast<unsigned>(v); }
 
     // If letter-spacing is nonzero, we disable ligatures, which means this property affects font preparation.
-    void setLetterSpacing(float);
-    void setLetterSpacingWithoutUpdatingFontDescription(float);
+    void setLetterSpacing(Length&&);
+    void setWordSpacing(Length&&);
 
     inline void clearBackgroundLayers();
     inline void inheritBackgroundLayers(const FillLayer& parent);
@@ -1298,6 +1322,8 @@ public:
     inline void setMarginRight(Length&&);
     void setMarginStart(Length&&);
     void setMarginEnd(Length&&);
+    void setMarginBefore(Length&&);
+    void setMarginAfter(Length&&);
 
     inline void resetPadding();
     inline void setPaddingBox(LengthBox&&);
@@ -1379,9 +1405,7 @@ public:
     inline void setJustifySelf(const StyleSelfAlignmentData&);
     inline void setJustifySelfPosition(ItemPosition);
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     inline void setBoxDecorationBreak(BoxDecorationBreak);
-#endif
 
     inline void setGridColumnList(const GridTrackList&);
     inline void setGridRowList(const GridTrackList&);
@@ -1398,8 +1422,6 @@ public:
     inline void setGridItemRowStart(const GridPosition&);
     inline void setGridItemRowEnd(const GridPosition&);
 
-    inline void setAlignTracks(Vector<StyleContentAlignmentData>);
-    inline void setJustifyTracks(Vector<StyleContentAlignmentData>);
     inline void setMasonryAutoFlow(MasonryAutoFlow);
 
     inline void setMarqueeIncrement(Length&&);
@@ -1469,9 +1491,7 @@ public:
     inline void setFilter(const FilterOperations&);
     inline void setAppleColorFilter(const FilterOperations&);
 
-#if ENABLE(FILTERS_LEVEL_2)
     inline void setBackdropFilter(const FilterOperations&);
-#endif
 
     inline void setTabSize(const TabSize&);
 
@@ -1492,6 +1512,9 @@ public:
 
     void adjustAnimations();
     void adjustTransitions();
+
+    void adjustScrollTimelines();
+    void adjustViewTimelines();
 
     inline void setTransformStyle3D(TransformStyle3D);
     inline void setTransformStyleForcedToFlat(bool);
@@ -1655,7 +1678,8 @@ public:
     inline void setKerning(SVGLengthValue);
 
     inline void setShapeOutside(RefPtr<ShapeValue>&&);
-    inline ShapeValue* shapeOutside() const;
+    inline ShapeValue* shapeOutside() const; // Defined in RenderStyleInlines.h.
+    inline RefPtr<ShapeValue> protectedShapeOutside() const; // Defined in RenderStyleInlines.h.
     static ShapeValue* initialShapeOutside() { return nullptr; }
 
     inline const Length& shapeMargin() const;
@@ -1692,6 +1716,8 @@ public:
     inline QuotesData* quotes() const;
     void setQuotes(RefPtr<QuotesData>&&);
 
+    inline void setViewTransitionName(std::optional<Style::ScopedName>);
+
     inline WillChangeData* willChange() const;
     void setWillChange(RefPtr<WillChangeData>&&);
 
@@ -1727,8 +1753,8 @@ public:
 
     inline bool setWritingMode(WritingMode);
 
-    bool hasExplicitlySetWritingMode() const { return m_nonInheritedFlags.hasExplicitlySetWritingMode; }
-    void setHasExplicitlySetWritingMode(bool v) { m_nonInheritedFlags.hasExplicitlySetWritingMode = v; }
+    inline bool hasExplicitlySetWritingMode() const;
+    inline void setHasExplicitlySetWritingMode();
 
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return m_nonInheritedFlags.isUnique; }
@@ -1796,8 +1822,8 @@ public:
     static constexpr ListStylePosition initialListStylePosition();
     static inline ListStyleType initialListStyleType();
     static constexpr OptionSet<TextTransform> initialTextTransform();
+    static inline std::optional<Style::ScopedName> initialViewTransitionName();
     static constexpr Visibility initialVisibility();
-    static constexpr WhiteSpace initialWhiteSpace();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
     static float initialHorizontalBorderSpacing() { return 0; }
     static float initialVerticalBorderSpacing() { return 0; }
@@ -1809,7 +1835,7 @@ public:
     static float initialBorderWidth() { return 3; }
     static unsigned short initialColumnRuleWidth() { return 3; }
     static float initialOutlineWidth() { return 3; }
-    static float initialLetterSpacing() { return 0; }
+    static inline Length initialLetterSpacing();
     static inline Length initialWordSpacing();
     static inline Length initialSize();
     static inline Length initialMinSize();
@@ -1836,7 +1862,7 @@ public:
     static constexpr TextDecorationSkipInk initialTextDecorationSkipInk();
     static constexpr TextUnderlinePosition initialTextUnderlinePosition();
     static constexpr TextUnderlineOffset initialTextUnderlineOffset();
-    static constexpr TextDecorationThickness initialTextDecorationThickness();
+    static inline TextDecorationThickness initialTextDecorationThickness();
     static float initialZoom() { return 1.0f; }
     static constexpr TextZoom initialTextZoom();
     static float initialOutlineOffset() { return 0; }
@@ -1871,7 +1897,8 @@ public:
     static constexpr UserDrag initialUserDrag();
     static constexpr UserSelect initialUserSelect();
     static constexpr TextOverflow initialTextOverflow();
-    static constexpr TextWrap initialTextWrap();
+    static constexpr TextWrapMode initialTextWrapMode();
+    static constexpr TextWrapStyle initialTextWrapStyle();
     static constexpr WordBreak initialWordBreak();
     static constexpr OverflowWrap initialOverflowWrap();
     static constexpr NBSPMode initialNBSPMode();
@@ -1967,6 +1994,13 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
+    static Vector<ScrollAxis> initialScrollTimelineAxes() { return { }; }
+    static Vector<AtomString> initialScrollTimelineNames() { return { }; }
+
+    static Vector<ScrollAxis> initialViewTimelineAxes() { return { }; }
+    static Vector<ViewTimelineInsets> initialViewTimelineInsets();
+    static Vector<AtomString> initialViewTimelineNames() { return { }; }
+
     static inline std::optional<ScrollbarColor> initialScrollbarColor();
     static ScrollbarGutter initialScrollbarGutter();
     static ScrollbarWidth initialScrollbarWidth();
@@ -1984,8 +2018,6 @@ public:
     static constexpr AutoRepeatType initialGridAutoRepeatType();
 
     static constexpr GridAutoFlow initialGridAutoFlow();
-    static inline Vector<StyleContentAlignmentData> initialAlignTracks();
-    static inline Vector<StyleContentAlignmentData> initialJustifyTracks();
     static constexpr MasonryAutoFlow initialMasonryAutoFlow();
 
     static inline Vector<GridTrackSize> initialGridAutoColumns();
@@ -2033,9 +2065,7 @@ public:
     static inline FilterOperations initialFilter();
     static inline FilterOperations initialAppleColorFilter();
 
-#if ENABLE(FILTERS_LEVEL_2)
     static inline FilterOperations initialBackdropFilter();
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     static constexpr BlendMode initialBlendMode();
@@ -2135,6 +2165,8 @@ public:
     static constexpr BlockStepInsert initialBlockStepInsert();
     inline BlockStepInsert blockStepInsert() const;
     inline void setBlockStepInsert(BlockStepInsert);
+    bool scrollAnchoringSuppressionStyleDidChange(const RenderStyle*) const;
+    bool outOfFlowPositionStyleDidChange(const RenderStyle*) const;
 
 private:
     struct NonInheritedFlags {
@@ -2150,32 +2182,26 @@ private:
         unsigned originalDisplay : 5; // DisplayType
         unsigned overflowX : 3; // Overflow
         unsigned overflowY : 3; // Overflow
-        unsigned verticalAlign : 4; // VerticalAlign
         unsigned clear : 3; // Clear
         unsigned position : 3; // PositionType
         unsigned unicodeBidi : 3; // UnicodeBidi
         unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType
-        unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
 
-        unsigned hasExplicitlySetDirection : 1;
-        unsigned hasExplicitlySetWritingMode : 1;
-#if ENABLE(DARK_MODE_CSS)
-        unsigned hasExplicitlySetColorScheme : 1;
-#endif
         unsigned usesViewportUnits : 1;
         unsigned usesContainerUnits : 1;
+        unsigned isUnique : 1; // Style cannot be shared.
+        unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         unsigned disallowsFastPathInheritance : 1;
         unsigned hasContentNone : 1;
-        unsigned isUnique : 1; // Style cannot be shared.
 
         // Non-property related state bits.
         unsigned emptyState : 1;
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
         unsigned isLink : 1;
-        unsigned styleType : 4; // PseudoId
+        unsigned styleType : StyleTypeBits; // PseudoId
         unsigned pseudoBits : PublicPseudoIDBits;
 
         // If you add more style bits here, you will also need to update RenderStyle::NonInheritedFlags::copyNonInheritedFrom().
@@ -2197,7 +2223,8 @@ private:
 #endif
         unsigned direction : 1; // TextDirection
         unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
-        unsigned textWrap : 3; // TextWrap
+        unsigned textWrapMode : 1; // TextWrapMode
+        unsigned textWrapStyle : 2; // TextWrapStyle
         // 33 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
@@ -2239,8 +2266,6 @@ private:
     static constexpr bool isDisplayListItemType(DisplayType);
     static constexpr bool isDisplayTableOrTablePart(DisplayType);
 
-    static LayoutBoxExtent shadowExtent(const ShadowData*);
-    static LayoutBoxExtent shadowInsetExtent(const ShadowData*);
     static void getShadowHorizontalExtent(const ShadowData*, LayoutUnit& left, LayoutUnit& right);
     static void getShadowVerticalExtent(const ShadowData*, LayoutUnit& top, LayoutUnit& bottom);
 

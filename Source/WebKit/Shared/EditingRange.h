@@ -86,16 +86,3 @@ struct EditingRange {
 };
 
 }
-
-namespace IPC {
-template<> struct ArgumentCoder<WebKit::EditingRange> {
-    static void encode(Encoder&, const WebKit::EditingRange&);
-    static std::optional<WebKit::EditingRange> decode(Decoder&);
-};
-}
-
-namespace WTF {
-template<> struct EnumTraits<WebKit::EditingRangeIsRelativeTo> {
-    using values = EnumValues<WebKit::EditingRangeIsRelativeTo, WebKit::EditingRangeIsRelativeTo::EditableRoot, WebKit::EditingRangeIsRelativeTo::Paragraph>;
-};
-}

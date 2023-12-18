@@ -35,7 +35,7 @@ constexpr float kAbsEpsilon = 5e-3f;
 class FastSoftmaxTest : public ::testing::TestWithParam<FastSoftmaxTestParams> {
  public:
   FastSoftmaxTest() : target_fn_(GET_PARAM(0)), num_classes_(GET_PARAM(1)) {}
-  virtual void SetUp() {
+  void SetUp() override {
     ref_buf_.reset(new (std::nothrow) float[num_classes_]());
     ASSERT_NE(ref_buf_, nullptr);
     dst_buf_.reset(new (std::nothrow) float[num_classes_]());

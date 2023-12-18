@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+struct CSSSelectorParserContext;
+
 enum class CSSParserSelectorCombinator {
     Child,
     DescendantSpace,
@@ -36,7 +38,7 @@ class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView);
-    static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView);
+    static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView, const CSSSelectorParserContext&);
     static std::unique_ptr<CSSParserSelector> parsePagePseudoSelector(StringView);
 
     CSSParserSelector();
@@ -83,6 +85,7 @@ public:
     bool isHostPseudoSelector() const;
 
     bool hasExplicitNestingParent() const;
+    bool hasExplicitPseudoClassScope() const;
 
     // FIXME-NEWPARSER: "slotted" was removed here for now, since it leads to a combinator
     // connection of ShadowDescendant, and the current shadow DOM code doesn't expect this. When
@@ -92,11 +95,14 @@ public:
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     CSSParserSelector* leftmostSimpleSelector();
+    const CSSParserSelector* leftmostSimpleSelector() const;
+    bool startsWithExplicitCombinator() const;
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
     void insertTagHistory(CSSSelector::RelationType before, std::unique_ptr<CSSParserSelector>, CSSSelector::RelationType after);
     void appendTagHistory(CSSSelector::RelationType, std::unique_ptr<CSSParserSelector>);
     void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
+    void appendTagHistoryAsRelative(std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
     std::unique_ptr<CSSParserSelector> releaseTagHistory();
 

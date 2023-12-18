@@ -1,0 +1,4 @@
+
+
+FAIL navigation.entries() behavior after forward-pruning due to cross-document navs assert_array_equals: lengths differ, expected array ["", "?fork"] length 2, got [] length 0
+

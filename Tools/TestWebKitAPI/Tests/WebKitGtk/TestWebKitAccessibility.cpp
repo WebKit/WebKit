@@ -382,11 +382,19 @@ static void testAccessibleChildrenChanged(AccessibilityTest* test, gconstpointer
     child = nullptr;
     events = { };
 
-    // Changing role causes an internal detach + attach that shouldn't be exposed to ATs.
+    // Set a role. It causes removing and recreating the node with the new role.
     test->startEventMonitor(documentWeb.get(), { "object:children-changed:add", "object:children-changed:remove" });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('parent').children[0].role='button'", nullptr);
-    events = test->stopEventMonitor(0, 0.5_s);
-    g_assert_cmpuint(events.size(), ==, 0);
+    events = test->stopEventMonitor(2);
+    g_assert_cmpuint(events.size(), ==, 2);
+    g_assert_cmpstr(events[0]->type, ==, "object:children-changed:remove");
+    g_assert_true(G_VALUE_HOLDS_OBJECT(&events[0]->any_data));
+    g_assert_true(g_value_get_object(&events[0]->any_data) == bar.get());
+    set = adoptGRef(atspi_accessible_get_state_set(bar.get()));
+    g_assert_true(atspi_state_set_contains(set.get(), ATSPI_STATE_DEFUNCT));
+    g_assert_cmpstr(events[1]->type, ==, "object:children-changed:add");
+    g_assert_cmpuint(events[1]->detail1, ==, 0);
+    bar = adoptGRef(static_cast<AtspiAccessible*>(g_value_dup_object(&events[1]->any_data)));
     g_assert_cmpint(atspi_accessible_get_role(bar.get(), nullptr), ==, ATSPI_ROLE_PUSH_BUTTON);
     events = { };
 

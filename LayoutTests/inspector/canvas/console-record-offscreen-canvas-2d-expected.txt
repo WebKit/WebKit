@@ -1,8 +1,8 @@
 Test that CanvasManager is able to record actions made to offscreen 2D canvas contexts.
 
 
-== Running test suite: Canvas.recording2D
--- Running test case: Canvas.recording2D.Console.OffscreenCanvas2D
+== Running test suite: Canvas.recordingOffscreen2D
+-- Running test case: Canvas.recordingOffscreen2D.Console
 PASS: The recording should have the name "TEST".
 PASS: The recording should have one frame.
 PASS: The first frame should have one action.

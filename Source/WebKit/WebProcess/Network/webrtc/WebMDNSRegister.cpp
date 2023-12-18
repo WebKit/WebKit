@@ -53,8 +53,8 @@ void WebMDNSRegister::unregisterMDNSNames(ScriptExecutionContextIdentifier ident
     if (m_registeringDocuments.take(identifier).isEmpty())
         return;
 
-    auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.send(Messages::NetworkMDNSRegister::UnregisterMDNSNames { identifier }, 0);
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection->send(Messages::NetworkMDNSRegister::UnregisterMDNSNames { identifier }, 0);
 }
 
 void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifier, const String& ipAddress, CompletionHandler<void(const String&, std::optional<MDNSRegisterError>)>&& callback)

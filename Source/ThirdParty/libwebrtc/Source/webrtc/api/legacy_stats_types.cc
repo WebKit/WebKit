@@ -362,6 +362,11 @@ bool StatsReport::Value::bool_val() const {
   return value_.bool_;
 }
 
+const StatsReport::Id& StatsReport::Value::id_val() const {
+  RTC_DCHECK_EQ(type_, kId);
+  return *value_.id_;
+}
+
 const char* StatsReport::Value::display_name() const {
   switch (name) {
     case kStatsValueNameAecDivergentFilterFraction:

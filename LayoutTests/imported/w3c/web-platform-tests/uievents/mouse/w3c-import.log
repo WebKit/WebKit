@@ -21,3 +21,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseenter-mouseleave-on-drag.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html
 /LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/mousemove_prevent_default_action.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html

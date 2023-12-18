@@ -56,6 +56,8 @@ private:
 
     void paintFileUploadIconDecorations(const RenderObject& inputRenderer, const RenderObject& buttonRenderer, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) override;
 
+    Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
+
 #if ENABLE(APPLE_PAY)
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
 #endif

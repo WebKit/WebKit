@@ -34,6 +34,7 @@
 #import "ScrollAnimator.h"
 #import "ScrollableArea.h"
 #import "Scrollbar.h"
+#import "ScrollbarMac.h"
 #import "ScrollbarThemeMac.h"
 #import "TimingFunction.h"
 #import "WheelEventTestMonitor.h" // FIXME: This is  layering violation.
@@ -53,7 +54,7 @@ static ScrollbarThemeMac* macScrollbarTheme()
 
 static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 {
-    return ScrollbarThemeMac::painterForScrollbar(scrollbar);
+    return ScrollbarThemeMac::scrollerImpForScrollbar(scrollbar);
 }
 
 } // namespace WebCore
@@ -288,7 +289,7 @@ using WebCore::LogOverlayScrollbars;
         break;
     }
 
-    if (!_scrollbar->supportsUpdateOnSecondaryThread())
+    if (_scrollbar && !_scrollbar->supportsUpdateOnSecondaryThread())
         _scrollbar->invalidate();
 }
 
@@ -313,7 +314,7 @@ using WebCore::LogOverlayScrollbars;
 @end
 
 @interface WebScrollerImpDelegate : NSObject<NSAnimationDelegate, NSScrollerImpDelegate> {
-    WebCore::Scrollbar* _scrollbar;
+    SingleThreadWeakPtr<WebCore::Scrollbar> _scrollbar;
 
     RetainPtr<WebScrollbarPartAnimation> _knobAlphaAnimation;
     RetainPtr<WebScrollbarPartAnimation> _trackAlphaAnimation;
@@ -458,7 +459,7 @@ using WebCore::LogOverlayScrollbars;
             [self scrollbarsController]->setVisibleScrollerThumbRect({ });
     }
 
-    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar
+    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
                                                                        featureToAnimate:part == WebCore::ThumbPart ? ThumbAlpha : TrackAlpha
                                                                             animateFrom:part == WebCore::ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
                                                                               animateTo:newAlpha
@@ -515,7 +516,7 @@ using WebCore::LogOverlayScrollbars;
         [scrollerImp setUsePresentationValue:NO];
 
     if (!_uiStateTransitionAnimation) {
-        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar
+        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
             featureToAnimate:UIStateTransition
             animateFrom:[scrollerImp uiStateTransitionProgress]
             animateTo:1.0
@@ -540,7 +541,7 @@ using WebCore::LogOverlayScrollbars;
     [scrollerImp setExpansionTransitionProgress:1 - [scrollerImp expansionTransitionProgress]];
 
     if (!_expansionTransitionAnimation) {
-        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar
+        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar.get()
             featureToAnimate:ExpansionTransition
             animateFrom:[scrollerImp expansionTransitionProgress]
             animateTo:1.0
@@ -755,7 +756,7 @@ void ScrollbarsControllerMac::didBeginScrollGesture()
     [m_scrollerImpPair beginScrollGesture];
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 
     ScrollbarsController::didBeginScrollGesture();
 }
@@ -770,7 +771,7 @@ void ScrollbarsControllerMac::didEndScrollGesture()
     [m_scrollerImpPair endScrollGesture];
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 
     ScrollbarsController::didEndScrollGesture();
 }
@@ -954,11 +955,10 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         verticalScrollbar->invalidate();
 
         NSScrollerImp *oldVerticalPainter = [m_scrollerImpPair verticalScrollerImp];
-        auto newVerticalPainter = retainPtr([NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)verticalScrollbar->widthStyle() horizontal:NO replacingScrollerImp:oldVerticalPainter]);
+        auto* verticalScrollbarMac = dynamicDowncast<ScrollbarMac>(verticalScrollbar);
+        verticalScrollbarMac->createScrollerImp(WTFMove(oldVerticalPainter));
 
-        [m_scrollerImpPair setVerticalScrollerImp:newVerticalPainter.get()];
-        macTheme->setNewPainterForScrollbar(*verticalScrollbar, WTFMove(newVerticalPainter));
-        macTheme->didCreateScrollerImp(*verticalScrollbar);
+        [m_scrollerImpPair setVerticalScrollerImp:verticalScrollbarMac->scrollerImp()];
 
         // The different scrollbar styles have different thicknesses, so we must re-set the
         // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -972,11 +972,10 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         horizontalScrollbar->invalidate();
 
         NSScrollerImp *oldHorizontalPainter = [m_scrollerImpPair horizontalScrollerImp];
-        auto newHorizontalPainter = retainPtr([NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)horizontalScrollbar->widthStyle() horizontal:YES replacingScrollerImp:oldHorizontalPainter]);
+        auto* horizontalScrollbarMac = dynamicDowncast<ScrollbarMac>(horizontalScrollbar);
+        horizontalScrollbarMac->createScrollerImp(WTFMove(oldHorizontalPainter));
 
-        [m_scrollerImpPair setHorizontalScrollerImp:newHorizontalPainter.get()];
-        macTheme->setNewPainterForScrollbar(*horizontalScrollbar, WTFMove(newHorizontalPainter));
-        macTheme->didCreateScrollerImp(*horizontalScrollbar);
+        [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->scrollerImp()];
 
         // The different scrollbar styles have different thicknesses, so we must re-set the
         // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -1023,7 +1022,7 @@ void ScrollbarsControllerMac::sendContentAreaScrolledTimerFired()
     m_contentAreaScrolledTimerScrollDelta = { };
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->removeDeferralForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 }
 
 void ScrollbarsControllerMac::sendContentAreaScrolledSoon(const FloatSize& delta)
@@ -1034,7 +1033,7 @@ void ScrollbarsControllerMac::sendContentAreaScrolledSoon(const FloatSize& delta
         m_sendContentAreaScrolledTimer.startOneShot(0_s);
 
     if (auto* monitor = wheelEventTestMonitor())
-        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::ContentScrollInProgress);
+        monitor->deferForReason(reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(this), WheelEventTestMonitor::DeferReason::ContentScrollInProgress);
 }
 
 void ScrollbarsControllerMac::sendContentAreaScrolled(const FloatSize& delta)

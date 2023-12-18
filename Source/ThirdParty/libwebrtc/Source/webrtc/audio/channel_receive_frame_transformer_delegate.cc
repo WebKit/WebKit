@@ -33,14 +33,33 @@ class TransformableIncomingAudioFrame
     payload_.SetData(data.data(), data.size());
   }
 
+  void SetRTPTimestamp(uint32_t timestamp) override {
+    header_.timestamp = timestamp;
+  }
+
   uint8_t GetPayloadType() const override { return header_.payloadType; }
   uint32_t GetSsrc() const override { return ssrc_; }
   uint32_t GetTimestamp() const override { return header_.timestamp; }
-  const RTPHeader& GetHeader() const override { return header_; }
   rtc::ArrayView<const uint32_t> GetContributingSources() const override {
     return rtc::ArrayView<const uint32_t>(header_.arrOfCSRCs, header_.numCSRCs);
   }
   Direction GetDirection() const override { return Direction::kReceiver; }
+
+  const absl::optional<uint16_t> SequenceNumber() const override {
+    return header_.sequenceNumber;
+  }
+
+  absl::optional<uint64_t> AbsoluteCaptureTimestamp() const override {
+    // This could be extracted from received header extensions + extrapolation,
+    // if required in future, eg for being able to re-send received frames.
+    return absl::nullopt;
+  }
+  const RTPHeader& Header() const { return header_; }
+
+  FrameType Type() const override {
+    return header_.extension.voiceActivity ? FrameType::kAudioFrameSpeech
+                                           : FrameType::kAudioFrameCN;
+  }
 
  private:
   rtc::Buffer payload_;
@@ -93,11 +112,30 @@ void ChannelReceiveFrameTransformerDelegate::ReceiveFrame(
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   if (!receive_frame_callback_)
     return;
-  RTC_CHECK_EQ(frame->GetDirection(),
-               TransformableFrameInterface::Direction::kReceiver);
-  auto* transformed_frame =
-      static_cast<TransformableIncomingAudioFrame*>(frame.get());
-  receive_frame_callback_(transformed_frame->GetData(),
-                          transformed_frame->GetHeader());
+
+  RTPHeader header;
+  if (frame->GetDirection() ==
+      TransformableFrameInterface::Direction::kSender) {
+    auto* transformed_frame =
+        static_cast<TransformableAudioFrameInterface*>(frame.get());
+    header.payloadType = transformed_frame->GetPayloadType();
+    header.timestamp = transformed_frame->GetTimestamp();
+    header.ssrc = transformed_frame->GetSsrc();
+    if (transformed_frame->AbsoluteCaptureTimestamp().has_value()) {
+      header.extension.absolute_capture_time = AbsoluteCaptureTime();
+      header.extension.absolute_capture_time->absolute_capture_timestamp =
+          transformed_frame->AbsoluteCaptureTimestamp().value();
+    }
+  } else {
+    auto* transformed_frame =
+        static_cast<TransformableIncomingAudioFrame*>(frame.get());
+    header = transformed_frame->Header();
+  }
+
+  // TODO(crbug.com/1464860): Take an explicit struct with the required
+  // information rather than the RTPHeader to make it easier to
+  // construct the required information when injecting transformed frames not
+  // originally from this receiver.
+  receive_frame_callback_(frame->GetData(), header);
 }
 }  // namespace webrtc

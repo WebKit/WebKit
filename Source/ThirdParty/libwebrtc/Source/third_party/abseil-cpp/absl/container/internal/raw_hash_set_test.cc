@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <deque>
 #include <functional>
@@ -40,7 +41,6 @@
 #include "absl/base/attributes.h"
 #include "absl/base/config.h"
 #include "absl/base/internal/cycleclock.h"
-#include "absl/base/internal/raw_logging.h"
 #include "absl/base/prefetch.h"
 #include "absl/container/flat_hash_map.h"
 #include "absl/container/flat_hash_set.h"
@@ -48,6 +48,7 @@
 #include "absl/container/internal/hash_function_defaults.h"
 #include "absl/container/internal/hash_policy_testing.h"
 #include "absl/container/internal/hashtable_debug.h"
+#include "absl/container/internal/test_allocator.h"
 #include "absl/log/log.h"
 #include "absl/strings/string_view.h"
 
@@ -59,6 +60,10 @@ struct RawHashSetTestOnlyAccess {
   template <typename C>
   static auto GetSlots(const C& c) -> decltype(c.slot_array()) {
     return c.slot_array();
+  }
+  template <typename C>
+  static size_t CountTombstones(const C& c) {
+    return c.common().TombstonesCount();
   }
 };
 
@@ -405,14 +410,14 @@ struct StringTable
 };
 
 struct IntTable
-    : raw_hash_set<IntPolicy, container_internal::hash_default_hash<int64_t>,
+    : raw_hash_set<IntPolicy, hash_default_hash<int64_t>,
                    std::equal_to<int64_t>, std::allocator<int64_t>> {
   using Base = typename IntTable::raw_hash_set;
   using Base::Base;
 };
 
 struct Uint8Table
-    : raw_hash_set<Uint8Policy, container_internal::hash_default_hash<uint8_t>,
+    : raw_hash_set<Uint8Policy, hash_default_hash<uint8_t>,
                    std::equal_to<uint8_t>, std::allocator<uint8_t>> {
   using Base = typename Uint8Table::raw_hash_set;
   using Base::Base;
@@ -431,10 +436,39 @@ struct CustomAlloc : std::allocator<T> {
 };
 
 struct CustomAllocIntTable
-    : raw_hash_set<IntPolicy, container_internal::hash_default_hash<int64_t>,
+    : raw_hash_set<IntPolicy, hash_default_hash<int64_t>,
                    std::equal_to<int64_t>, CustomAlloc<int64_t>> {
   using Base = typename CustomAllocIntTable::raw_hash_set;
   using Base::Base;
+};
+
+struct MinimumAlignmentUint8Table
+    : raw_hash_set<Uint8Policy, hash_default_hash<uint8_t>,
+                   std::equal_to<uint8_t>, MinimumAlignmentAlloc<uint8_t>> {
+  using Base = typename MinimumAlignmentUint8Table::raw_hash_set;
+  using Base::Base;
+};
+
+// Allows for freezing the allocator to expect no further allocations.
+template <typename T>
+struct FreezableAlloc : std::allocator<T> {
+  explicit FreezableAlloc(bool* f) : frozen(f) {}
+
+  template <typename U>
+  explicit FreezableAlloc(const FreezableAlloc<U>& other)
+      : frozen(other.frozen) {}
+
+  template <class U>
+  struct rebind {
+    using other = FreezableAlloc<U>;
+  };
+
+  T* allocate(size_t n) {
+    EXPECT_FALSE(*frozen);
+    return std::allocator<T>::allocate(n);
+  }
+
+  bool* frozen;
 };
 
 struct BadFastHash {
@@ -442,6 +476,13 @@ struct BadFastHash {
   size_t operator()(const T&) const {
     return 0;
   }
+};
+
+struct BadHashFreezableIntTable
+    : raw_hash_set<IntPolicy, BadFastHash, std::equal_to<int64_t>,
+                   FreezableAlloc<int64_t>> {
+  using Base = typename BadHashFreezableIntTable::raw_hash_set;
+  using Base::Base;
 };
 
 struct BadTable : raw_hash_set<IntPolicy, BadFastHash, std::equal_to<int>,
@@ -456,19 +497,10 @@ TEST(Table, EmptyFunctorOptimization) {
   static_assert(std::is_empty<std::allocator<int>>::value, "");
 
   struct MockTable {
-    void* infoz;
     void* ctrl;
     void* slots;
     size_t size;
     size_t capacity;
-    size_t growth_left;
-  };
-  struct MockTableInfozDisabled {
-    void* ctrl;
-    void* slots;
-    size_t size;
-    size_t capacity;
-    size_t growth_left;
   };
   struct StatelessHash {
     size_t operator()(absl::string_view) const { return 0; }
@@ -479,6 +511,7 @@ TEST(Table, EmptyFunctorOptimization) {
 
   struct GenerationData {
     size_t reserved_growth;
+    size_t reservation_size;
     GenerationType* generation;
   };
 
@@ -488,9 +521,7 @@ TEST(Table, EmptyFunctorOptimization) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunreachable-code"
 #endif
-  constexpr size_t mock_size = std::is_empty<HashtablezInfoHandle>()
-                                   ? sizeof(MockTableInfozDisabled)
-                                   : sizeof(MockTable);
+  constexpr size_t mock_size = sizeof(MockTable);
   constexpr size_t generation_size =
       SwisstableGenerationsEnabled() ? sizeof(GenerationData) : 0;
 #if defined(__clang__)
@@ -1060,6 +1091,14 @@ TEST(Table, EraseMaintainsValidIterator) {
   EXPECT_EQ(num_erase_calls, kNumElements);
 }
 
+TEST(Table, EraseBeginEnd) {
+  IntTable t;
+  for (int i = 0; i < 10; ++i) t.insert(i);
+  EXPECT_EQ(t.size(), 10);
+  t.erase(t.begin(), t.end());
+  EXPECT_EQ(t.size(), 0);
+}
+
 // Collect N bad keys by following algorithm:
 // 1. Create an empty table and reserve it to 2 * N.
 // 2. Insert N random elements.
@@ -1280,7 +1319,7 @@ ExpectedStats XorSeedExpectedStats() {
                 {{0.95, 0}, {0.99, 1}, {0.999, 4}, {0.9999, 10}}};
       }
   }
-  ABSL_RAW_LOG(FATAL, "%s", "Unknown Group width");
+  LOG(FATAL) << "Unknown Group width";
   return {};
 }
 
@@ -1376,7 +1415,7 @@ ExpectedStats LinearTransformExpectedStats() {
                 {{0.95, 0}, {0.99, 1}, {0.999, 6}, {0.9999, 10}}};
       }
   }
-  ABSL_RAW_LOG(FATAL, "%s", "Unknown Group width");
+  LOG(FATAL) << "Unknown Group width";
   return {};
 }
 
@@ -1563,7 +1602,7 @@ TEST(Table, CopyConstructWithAlloc) {
 }
 
 struct ExplicitAllocIntTable
-    : raw_hash_set<IntPolicy, container_internal::hash_default_hash<int64_t>,
+    : raw_hash_set<IntPolicy, hash_default_hash<int64_t>,
                    std::equal_to<int64_t>, Alloc<int64_t>> {
   ExplicitAllocIntTable() = default;
 };
@@ -1639,6 +1678,14 @@ TEST(Table, MoveAssign) {
   u = std::move(t);
   EXPECT_EQ(1, u.size());
   EXPECT_THAT(*u.find("a"), Pair("a", "b"));
+}
+
+TEST(Table, MoveSelfAssign) {
+  StringTable t;
+  t.emplace("a", "b");
+  EXPECT_EQ(1, t.size());
+  t = std::move(*&t);
+  // As long as we don't crash, it's fine.
 }
 
 TEST(Table, Equality) {
@@ -1819,11 +1866,9 @@ TEST(Table, HeterogeneousLookupOverloads) {
   EXPECT_FALSE((VerifyResultOf<CallPrefetch, NonTransparentTable>()));
   EXPECT_FALSE((VerifyResultOf<CallCount, NonTransparentTable>()));
 
-  using TransparentTable = raw_hash_set<
-      StringPolicy,
-      absl::container_internal::hash_default_hash<absl::string_view>,
-      absl::container_internal::hash_default_eq<absl::string_view>,
-      std::allocator<int>>;
+  using TransparentTable =
+      raw_hash_set<StringPolicy, hash_default_hash<absl::string_view>,
+                   hash_default_eq<absl::string_view>, std::allocator<int>>;
 
   EXPECT_TRUE((VerifyResultOf<CallFind, TransparentTable>()));
   EXPECT_TRUE((VerifyResultOf<CallErase, TransparentTable>()));
@@ -2045,16 +2090,6 @@ TEST(Table, UnstablePointers) {
   EXPECT_NE(old_ptr, addr(0));
 }
 
-bool IsAssertEnabled() {
-  // Use an assert with side-effects to figure out if they are actually enabled.
-  bool assert_enabled = false;
-  assert([&]() {  // NOLINT
-    assert_enabled = true;
-    return true;
-  }());
-  return assert_enabled;
-}
-
 TEST(TableDeathTest, InvalidIteratorAsserts) {
   if (!IsAssertEnabled() && !SwisstableGenerationsEnabled())
     GTEST_SKIP() << "Assertions not enabled.";
@@ -2081,7 +2116,7 @@ TEST(TableDeathTest, InvalidIteratorAsserts) {
 // use-of-uninitialized-value in msan, or invalidated iterator assertions.
 constexpr const char* kInvalidIteratorDeathMessage =
     "heap-use-after-free|use-of-uninitialized-value|invalidated "
-    "iterator|Invalid iterator";
+    "iterator|Invalid iterator|invalid iterator";
 
 // MSVC doesn't support | in regex.
 #if defined(_MSC_VER)
@@ -2129,10 +2164,14 @@ TEST(TableDeathTest, IteratorInvalidAssertsEqualityOperator) {
   for (int i = 0; i < 10; ++i) t1.insert(i);
   // There should have been a rehash in t1.
   if (kMsvc) return;  // MSVC doesn't support | in regex.
+
+  // NOTE(b/293887834): After rehashing, iterators will contain pointers to
+  // freed memory, which may be detected by ThreadSanitizer.
   const char* const kRehashedDeathMessage =
       SwisstableGenerationsEnabled()
           ? kInvalidIteratorDeathMessage
-          : "Invalid iterator comparison.*might have rehashed.*config=asan";
+          : "Invalid iterator comparison.*might have rehashed.*config=asan"
+            "|ThreadSanitizer: heap-use-after-free";
   EXPECT_DEATH_IF_SUPPORTED(void(iter1 == t1.begin()), kRehashedDeathMessage);
 }
 
@@ -2248,11 +2287,17 @@ TEST(Sanitizer, PoisoningOnErase) {
 }
 #endif  // ABSL_HAVE_ADDRESS_SANITIZER
 
-TEST(Table, AlignOne) {
+template <typename T>
+class AlignOneTest : public ::testing::Test {};
+using AlignOneTestTypes =
+    ::testing::Types<Uint8Table, MinimumAlignmentUint8Table>;
+TYPED_TEST_SUITE(AlignOneTest, AlignOneTestTypes);
+
+TYPED_TEST(AlignOneTest, AlignOne) {
   // We previously had a bug in which we were copying a control byte over the
   // first slot when alignof(value_type) is 1. We test repeated
   // insertions/erases and verify that the behavior is correct.
-  Uint8Table t;
+  TypeParam t;
   std::unordered_set<uint8_t> verifier;  // NOLINT
 
   // Do repeated insertions/erases from the table.
@@ -2325,6 +2370,19 @@ TEST(Iterator, InvalidUseWithReserveCrashesWithSanitizers) {
 #endif
 }
 
+TEST(Iterator, InvalidUseWithMoveCrashesWithSanitizers) {
+  if (!SwisstableGenerationsEnabled()) GTEST_SKIP() << "Generations disabled.";
+  if (kMsvc) GTEST_SKIP() << "MSVC doesn't support | in regexp.";
+
+  IntTable t1, t2;
+  t1.insert(1);
+  auto it = t1.begin();
+  t2 = std::move(t1);
+  EXPECT_DEATH_IF_SUPPORTED(*it, kInvalidIteratorDeathMessage);
+  EXPECT_DEATH_IF_SUPPORTED(void(it == t2.begin()),
+                            kInvalidIteratorDeathMessage);
+}
+
 TEST(Table, ReservedGrowthUpdatesWhenTableDoesntGrow) {
   IntTable t;
   for (int i = 0; i < 8; ++i) t.insert(i);
@@ -2338,6 +2396,30 @@ TEST(Table, ReservedGrowthUpdatesWhenTableDoesntGrow) {
   t.insert(200);
   // `it` shouldn't have been invalidated.
   EXPECT_EQ(*it, 0);
+}
+
+TEST(Table, EraseBeginEndResetsReservedGrowth) {
+  bool frozen = false;
+  BadHashFreezableIntTable t{FreezableAlloc<int64_t>(&frozen)};
+  t.reserve(100);
+  const size_t cap = t.capacity();
+  frozen = true;  // no further allocs allowed
+
+  for (int i = 0; i < 10; ++i) {
+    // Create a long run (hash function returns constant).
+    for (int j = 0; j < 100; ++j) t.insert(j);
+    // Erase elements from the middle of the long run, which creates tombstones.
+    for (int j = 30; j < 60; ++j) t.erase(j);
+    EXPECT_EQ(t.size(), 70);
+    EXPECT_EQ(t.capacity(), cap);
+    ASSERT_EQ(RawHashSetTestOnlyAccess::CountTombstones(t), 30);
+
+    t.erase(t.begin(), t.end());
+
+    EXPECT_EQ(t.size(), 0);
+    EXPECT_EQ(t.capacity(), cap);
+    ASSERT_EQ(RawHashSetTestOnlyAccess::CountTombstones(t), 0);
+  }
 }
 
 TEST(Table, GenerationInfoResetsOnClear) {
@@ -2400,6 +2482,12 @@ TEST(Iterator, InvalidComparisonDifferentTables) {
   EXPECT_DEATH_IF_SUPPORTED(void(t1.begin() == t2.begin()),
                             "Invalid iterator comparison.*non-end");
 }
+
+template <typename Alloc>
+using RawHashSetAlloc = raw_hash_set<IntPolicy, hash_default_hash<int64_t>,
+                                     std::equal_to<int64_t>, Alloc>;
+
+TEST(Table, AllocatorPropagation) { TestAllocPropagation<RawHashSetAlloc>(); }
 
 }  // namespace
 }  // namespace container_internal

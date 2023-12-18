@@ -11,10 +11,10 @@
 
 #include <stdbool.h>
 #include <assert.h>
-#include <pmmintrin.h>
 
 #include "config/av1_rtcd.h"
 #include "av1/encoder/ml.h"
+#include "av1/encoder/x86/ml_sse3.h"
 
 // In order to avoid the high-latency of swapping between FPU and SIMD
 // operations, we keep the result in a 128-bit register even though we only
@@ -41,9 +41,9 @@ static void nn_propagate_8to1(const float *const inputs,
   *output = _mm_add_ps(*output, hadd2);
 }
 
-static void nn_propagate_4to1(const float *const inputs,
-                              const float *const weights,
-                              __m128 *const output) {
+void av1_nn_propagate_4to1_sse3(const float *const inputs,
+                                const float *const weights,
+                                __m128 *const output) {
   const __m128 inputs128 = _mm_loadu_ps(inputs);
 
   const __m128 weights128 = _mm_loadu_ps(weights);
@@ -58,9 +58,9 @@ static void nn_propagate_4to1(const float *const inputs,
   *output = _mm_add_ps(*output, hadd2);
 }
 
-static void nn_propagate_4to4(const float *const inputs,
-                              const float *const weights, __m128 *const outputs,
-                              const int num_inputs) {
+void av1_nn_propagate_4to4_sse3(const float *const inputs,
+                                const float *const weights,
+                                __m128 *const outputs, const int num_inputs) {
   const __m128 inputs128 = _mm_loadu_ps(inputs);
 
   __m128 hadd[2];
@@ -80,9 +80,9 @@ static void nn_propagate_4to4(const float *const inputs,
   *outputs = _mm_add_ps(*outputs, hh);
 }
 
-static void nn_propagate_4to8(const float *const inputs,
-                              const float *const weights, __m128 *const out_h,
-                              __m128 *const out_l, const int num_inputs) {
+void av1_nn_propagate_4to8_sse3(const float *const inputs,
+                                const float *const weights, __m128 *const out_h,
+                                __m128 *const out_l, const int num_inputs) {
   const __m128 inputs128 = _mm_loadu_ps(inputs);
 
   __m128 hadd[4];
@@ -171,9 +171,9 @@ void av1_nn_predict_sse3(const float *input_nodes,
         __m128 out_h = _mm_loadu_ps(&layer_bias[out + 4]);
         __m128 out_l = _mm_loadu_ps(&layer_bias[out]);
         for (int in = 0; in < num_inputs; in += 4) {
-          nn_propagate_4to8(&input_nodes[in],
-                            &layer_weights[out * num_inputs + in], &out_h,
-                            &out_l, num_inputs);
+          av1_nn_propagate_4to8_sse3(&input_nodes[in],
+                                     &layer_weights[out * num_inputs + in],
+                                     &out_h, &out_l, num_inputs);
         }
         if (!output_layer) nn_activate8(&out_h, &out_l);
         _mm_storeu_ps(&output_nodes[out + 4], out_h);
@@ -194,9 +194,9 @@ void av1_nn_predict_sse3(const float *input_nodes,
       for (int out = 0; out < num_outputs; out += 4) {
         __m128 outputs = _mm_loadu_ps(&layer_bias[out]);
         for (int in = 0; in < num_inputs; in += 4) {
-          nn_propagate_4to4(&input_nodes[in],
-                            &layer_weights[out * num_inputs + in], &outputs,
-                            num_inputs);
+          av1_nn_propagate_4to4_sse3(&input_nodes[in],
+                                     &layer_weights[out * num_inputs + in],
+                                     &outputs, num_inputs);
         }
         if (!output_layer) nn_activate4(&outputs);
         _mm_storeu_ps(&output_nodes[out], outputs);
@@ -215,8 +215,8 @@ void av1_nn_predict_sse3(const float *input_nodes,
       for (int out = 0; out < num_outputs; out++) {
         __m128 total = _mm_load1_ps(&layer_bias[out]);
         for (int in = 0; in < num_inputs; in += 4) {
-          nn_propagate_4to1(&input_nodes[in],
-                            &layer_weights[out * num_inputs + in], &total);
+          av1_nn_propagate_4to1_sse3(
+              &input_nodes[in], &layer_weights[out * num_inputs + in], &total);
         }
         if (!output_layer) nn_activate4(&total);
         output_nodes[out] = _mm_cvtss_f32(total);

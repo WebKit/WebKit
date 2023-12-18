@@ -123,6 +123,16 @@ webrtc_fuzzer_test("h264_bitstream_parser_fuzzer") {
   ]
 }
 
+if (rtc_use_h265) {
+  webrtc_fuzzer_test("h265_bitstream_parser_fuzzer") {
+    sources = [ "h265_bitstream_parser_fuzzer.cc" ]
+    deps = [
+      "../../common_video",
+      "../../modules/video_coding/",
+    ]
+  }
+}
+
 webrtc_fuzzer_test("forward_error_correction_fuzzer") {
   sources = [ "forward_error_correction_fuzzer.cc" ]
   deps = [
@@ -509,7 +519,7 @@ webrtc_fuzzer_test("aec3_config_json_fuzzer") {
   deps = [
     ":fuzz_data_helper",
     "../../api/audio:aec3_config",
-    "../../api/audio:aec3_config_json",
+    "../../modules/audio_processing:aec3_config_json",
   ]
   dict = "//testing/libfuzzer/fuzzers/dicts/json.dict"
   seed_corpus = "corpora/aec3-config-json-corpus"
@@ -657,6 +667,7 @@ if (rtc_build_libvpx) {
       "../../api:field_trials_view",
       "../../api/video:video_frame",
       "../../api/video_codecs:video_codecs_api",
+      "../../media:media_constants",
       "../../modules/video_coding:frame_dependencies_calculator",
       "../../modules/video_coding:webrtc_libvpx_interface",
       "../../modules/video_coding:webrtc_vp9",

@@ -63,7 +63,6 @@ function addScript(url)
 }
 addScript("resources/cache-mode-hard-reload-serviceworker.py?second-script-dynamic");
 setTimeout(() => addScript("resources/cache-mode-hard-reload-serviceworker.py?third-script-async"), 100);
-setTimeout(() => addScript("resources/cache-mode-hard-reload-serviceworker.py?sixth-script-async"), 1000);
 onload = () => {
     addScript("resources/cache-mode-hard-reload-serviceworker.py?fourth-script-during-onload");
     setTimeout(() => {
@@ -101,9 +100,6 @@ function expectedCacheMode(url)
         return "default";
     if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?fifth-script-just-after-onload")
         return "default";
-    if (url === "http://localhost:8800/WebKit/service-workers/resources/cache-mode-hard-reload-serviceworker.py?sixth-script-async")
-        return "default";
-
 }
 
 function validateResults(results)

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TextInsertionBaseCommand.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 

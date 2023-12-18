@@ -268,6 +268,7 @@ interface UIScriptController {
     readonly attribute boolean isShowingMenu;
     readonly attribute object menuRect;
     readonly attribute object contextMenuRect;
+    readonly attribute object contextMenuPreviewRect;
     object rectForMenuAction(DOMString action);
     undefined chooseMenuAction(DOMString action, object callback);
     undefined dismissMenu();
@@ -296,6 +297,7 @@ interface UIScriptController {
 
     undefined copyText(DOMString text);
     undefined paste();
+    readonly attribute long long pasteboardChangeCount;
 
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;
@@ -364,6 +366,8 @@ interface UIScriptController {
     undefined removeViewFromWindow(object callback);
     undefined addViewToWindow(object callback);
 
+    undefined resizeWindowTo(unsigned long width, unsigned long height);
+
     undefined installTapGestureOnWindow(object callback);
 
     undefined overridePreference(DOMString preference, DOMString value);
@@ -381,6 +385,9 @@ interface UIScriptController {
 
     undefined setWebViewEditable(boolean editable);
 
+    // Only affects macOS.
+    undefined setWebViewAllowsMagnification(boolean allowsMagnification);
+
     object attachmentInfo(DOMString attachmentIdentifier);
     undefined insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);
 
@@ -395,4 +402,8 @@ interface UIScriptController {
     readonly attribute unsigned long countOfUpdatesWithLayerChanges;
 
     readonly attribute unsigned long long currentImageAnalysisRequestID;
+    undefined installFakeMachineReadableCodeResultsForImageAnalysis();
+
+    undefined setInlinePrediction(DOMString completion);
+    undefined acceptInlinePrediction();
 };

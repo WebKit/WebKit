@@ -105,8 +105,7 @@ HTTPParser::Process HTTPParser::abortProcess(const char* message)
 
     m_phase = Phase::Error;
 
-    if (!m_buffer.isEmpty())
-        m_buffer.resize(0);
+    m_buffer.shrink(0);
 
     return Process::Suspend;
 }

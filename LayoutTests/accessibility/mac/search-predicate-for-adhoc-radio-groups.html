@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body id="body" role="group">
-    
+
 <p>Shape</p>
 <div>
   <input type="radio" id="circle" name="shape" value="circle">
@@ -44,18 +44,14 @@
   <label for="small">Small</label>
 </div>
 
-<p>
-  Unrelated content separating ad-hoc radio group items
-</p>
+<p>Unrelated content separating ad-hoc radio group items</p>
 
 <div>
   <input type="radio" id="medium" name="size" value="medium">
   <label for="medium">Medium</label>
 </div>
 
-<p>
-  Unrelated content separating ad-hoc radio group items
-</p>
+<p>Unrelated content separating ad-hoc radio group items</p>
 
 <div>
   <input type="radio" id="large" name="size" value="large">
@@ -63,40 +59,69 @@
 </div>
 
 <script>
-    description("This test ensures WebKit can search for ad-hoc radiogroups. An ad-hoc radiogroup is a set of radiobuttons connected by `name` attribute alone, without an appropriate `role=\"radiogroup\"` container.")
+var output = "This test ensures WebKit can search for ad-hoc radiogroups. An ad-hoc radiogroup is a set of radiobuttons connected by `name` attribute alone, without an appropriate `role=\"radiogroup\"` container.\n\n";
 
-    if (window.accessibilityController) {
-        window.containerElement = accessibilityController.accessibleElementById("body");
-        
-        startElement = containerElement.childAtIndex(0);
-        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
-        shouldBe("resultElement.domIdentifier", "'circle'");
-        
-        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
-        shouldBe("resultElement.domIdentifier", "'red'");
-        
-        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
-        shouldBe("resultElement.domIdentifier", "'small'");
-        
-        // Now search backwards up the ad-hoc radiogroups.
-        
-        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
-        shouldBe("resultElement.domIdentifier", "'green'");
-        
-        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
-        shouldBe("resultElement.domIdentifier", "'triangle'");
-        
-        // And finally search forward once more.
-        
-        startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false, false);
-        shouldBe("resultElement.role", "'AXRole: AXRadioButton'");
-        shouldBe("resultElement.domIdentifier", "'red'");
-    }
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    window.containerElement = accessibilityController.accessibleElementById("body");
+
+    startElement = containerElement.childAtIndex(0);
+    startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXRadioButton'");
+    output += expect("resultElement.domIdentifier", "'circle'");
+
+    startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXRadioButton'");
+    output += expect("resultElement.domIdentifier", "'red'");
+
+    startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXRadioButton'");
+    output += expect("resultElement.domIdentifier", "'small'");
+
+    // Now search backwards up the ad-hoc radiogroups.
+    startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXRadioButton'");
+    output += expect("resultElement.domIdentifier", "'green'");
+
+    startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
+    output += expect("resultElement.role", "'AXRole: AXRadioButton'");
+    output += expect("resultElement.domIdentifier", "'triangle'");
+
+    // And finally search forward once more.
+    startElement = resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false, false);
+    output += expect("resultElement.role", "'AXRole: AXRadioButton'");
+    output += expect("resultElement.domIdentifier", "'red'");
+
+    // Dynamically change radiobutton name and ensure uiElementForSearchPredicate still behaves correctly.
+    document.getElementById("small").setAttribute("name", "color");
+    setTimeout(async function() {
+        startElement = accessibilityController.accessibleElementById("green");
+        await waitFor(() => {
+            resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "", false, false);
+            return resultElement && resultElement.domIdentifier === "medium";
+        });
+        // #small became part of the same radiogroup as #green, so the above search for the next radiogroup should give us #medium.
+        output += expect("resultElement.domIdentifier", "'medium'");
+
+        // Searching backwards from #medium should give us #small because it's part of the name="color" radiogroup now.
+        startElement = resultElement;
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
+        output += expect("resultElement.domIdentifier", "'small'");
+        startElement = resultElement;
+
+        // Remove #green's name attribute entirely, which should cause it to be considered to be in a different radiogroup.
+        document.getElementById("green").removeAttribute("name");
+        await waitFor(() => {
+            resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "AXRadioGroupSearchKey", "", false);
+            return resultElement && resultElement.domIdentifier === "green";
+        });
+        output += expect("resultElement.domIdentifier", "'green'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>
+

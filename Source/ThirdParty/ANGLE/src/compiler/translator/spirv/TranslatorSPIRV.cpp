@@ -36,12 +36,14 @@
 #include "compiler/translator/tree_ops/spirv/EmulateFramebufferFetch.h"
 #include "compiler/translator/tree_ops/spirv/EmulateYUVBuiltIns.h"
 #include "compiler/translator/tree_ops/spirv/FlagSamplersWithTexelFetch.h"
+#include "compiler/translator/tree_ops/spirv/ReswizzleYUVOps.h"
 #include "compiler/translator/tree_ops/spirv/RewriteInterpolateAtOffset.h"
 #include "compiler/translator/tree_ops/spirv/RewriteR32fImages.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/DriverUniform.h"
 #include "compiler/translator/tree_util/FindFunction.h"
 #include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/ReplaceClipCullDistanceVariable.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
@@ -1026,8 +1028,9 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 }
             }
 
-            bool hasGLSampleMask        = false;
-            bool hasGLSecondaryFragData = false;
+            bool hasGLSampleMask           = false;
+            bool hasGLSecondaryFragData    = false;
+            const TIntermSymbol *yuvOutput = nullptr;
 
             for (const ShaderVariable &outputVar : mOutputVariables)
             {
@@ -1041,6 +1044,13 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 {
                     ASSERT(!hasGLSecondaryFragData);
                     hasGLSecondaryFragData = true;
+                    continue;
+                }
+                if (outputVar.yuv)
+                {
+                    // We can only have one yuv output
+                    ASSERT(yuvOutput == nullptr);
+                    yuvOutput = FindSymbolNode(root, ImmutableString(outputVar.name));
                     continue;
                 }
             }
@@ -1161,6 +1171,11 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
             if (IsExtensionEnabled(getExtensionBehavior(), TExtension::EXT_YUV_target))
             {
                 if (!EmulateYUVBuiltIns(this, root, &getSymbolTable()))
+                {
+                    return false;
+                }
+
+                if (!ReswizzleYUVOps(this, root, &getSymbolTable(), yuvOutput))
                 {
                     return false;
                 }

@@ -32,5 +32,6 @@ enum class WebCore::WebGPU::FeatureName : uint8_t {
     ShaderF16,
     Rg11b10ufloatRenderable,
     Bgra8unormStorage,
+    Float32Filterable,
 };
 #endif

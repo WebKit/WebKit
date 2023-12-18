@@ -49,7 +49,10 @@ struct MediaEngineDependencies {
   rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory;
   rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer;
   rtc::scoped_refptr<webrtc::AudioProcessing> audio_processing;
+  // TODO(bugs.webrtc.org/15111):
+  //   Remove the raw AudioFrameProcessor pointer in the follow-up.
   webrtc::AudioFrameProcessor* audio_frame_processor = nullptr;
+  std::unique_ptr<webrtc::AudioFrameProcessor> owned_audio_frame_processor;
 
   std::unique_ptr<webrtc::VideoEncoderFactory> video_encoder_factory;
   std::unique_ptr<webrtc::VideoDecoderFactory> video_decoder_factory;

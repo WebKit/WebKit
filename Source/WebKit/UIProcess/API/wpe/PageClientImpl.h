@@ -30,6 +30,7 @@
 
 struct wpe_view_backend;
 typedef struct _AtkObject AtkObject;
+typedef struct _WPEView WPEView;
 
 namespace WKWPE {
 class View;
@@ -57,6 +58,9 @@ public:
     virtual ~PageClientImpl();
 
     struct wpe_view_backend* viewBackend();
+#if ENABLE(WPE_PLATFORM)
+    WPEView* wpeView() const;
+#endif
 
 #if ENABLE(ACCESSIBILITY)
     AtkObject* accessible();
@@ -67,7 +71,7 @@ public:
 
 private:
     // PageClient
-    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
     void setViewNeedsDisplay(const WebCore::Region&) override;
     void requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, WebCore::ScrollIsAnimated) override;
     WebCore::FloatPoint viewScrollPosition() override;

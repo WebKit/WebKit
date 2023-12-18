@@ -839,7 +839,7 @@ void GL_APIENTRY GL_TexImage2DMultisample(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_TexImage3DMultisample(GLenum target,
@@ -881,7 +881,7 @@ void GL_APIENTRY GL_TexImage3DMultisample(GLenum target,
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 // GL 3.3

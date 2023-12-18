@@ -8,7 +8,8 @@
     <script>
     var loader;
     var source;
-    var sourceBuffer;
+    var sourceBuffer1;
+    var sourceBuffer2;
     var bufferedChangeEvent;
     var sourceElement;
 
@@ -21,6 +22,12 @@
             samples.push(makeASample(time, time, 1, 1, 1, (time - start) % stepSync == 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
         return concatenateSamples(samples);
     }
+
+    function bufferedChange(e) {
+        consoleWrite('onbufferedchange called.')
+        consoleWrite(`e.addedRanges = ${ timeRangesToString(e.addedRanges) }`);
+        consoleWrite(`e.removedRanges = ${ timeRangesToString(e.removedRanges) }`);
+    };
 
     window.addEventListener('load', async event => {
         findMediaElement();
@@ -38,74 +45,99 @@
         run('video.appendChild(sourceElement)');
         await waitFor(source, 'sourceopen');
 
-        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
-        sourceBuffer.onbufferedchange = (e) => {
-            consoleWrite('onbufferedchange called.')
-            consoleWrite(`e.addedRanges = ${ timeRangesToString(e.addedRanges) }`);
-            consoleWrite(`e.removedRanges = ${ timeRangesToString(e.removedRanges) }`);
-        };
+        run('sourceBuffer1 = source.addSourceBuffer("video/mock; codecs=mock")');
+        sourceBuffer1.onbufferedchange = bufferedChange;
 
         initSegment = makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
 
-        run('sourceBuffer.appendBuffer(initSegment)');
-        await waitFor(sourceBuffer, 'updateend');
+        run('sourceBuffer1.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer1, 'updateend');
 
-        run('sourceBuffer.appendBuffer(syncSampleRun(5, 10))');
-        await waitFor(sourceBuffer, 'update');
-        testExpected('sourceBuffer.buffered.length', '1');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(5, 10))');
+        await waitFor(sourceBuffer1, 'update');
+        testExpected('sourceBuffer1.buffered.length', '1');
 
-        run('sourceBuffer.appendBuffer(syncSampleRun(0, 5))');
-        await waitFor(sourceBuffer, 'update');
-        testExpected('sourceBuffer.buffered.length', '1');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(0, 5))');
+        await waitFor(sourceBuffer1, 'update');
+        testExpected('sourceBuffer1.buffered.length', '1');
 
         consoleWrite('Clean sourcebuffer of all content.');
-        run('sourceBuffer.remove(0, sourceBuffer.buffered.end(0))');
-        await waitFor(sourceBuffer, 'update');
-        testExpected('sourceBuffer.buffered.length', '0');
+        run('sourceBuffer1.remove(0, sourceBuffer1.buffered.end(0))');
+        await waitFor(sourceBuffer1, 'update');
+        testExpected('sourceBuffer1.buffered.length', '0');
 
-        run('sourceBuffer.appendBuffer(syncSampleRun(0, 3))');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(syncSampleRun(3, 6))');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.appendBuffer(syncSampleRun(6, 9))');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(0, 3))');
+        await waitFor(sourceBuffer1, 'update');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(3, 6))');
+        await waitFor(sourceBuffer1, 'update');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(6, 9))');
+        await waitFor(sourceBuffer1, 'update');
 
         consoleWrite('Re-adding the same samples does not update the buffer');
-        run('sourceBuffer.appendBuffer(syncSampleRun(0, 3))');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(0, 3))');
+        await waitFor(sourceBuffer1, 'update');
 
         consoleWrite('Removing first sync sample, remove the first 3 seconds block');
-        run('sourceBuffer.remove(0, 1)');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.remove(0, 1)');
+        await waitFor(sourceBuffer1, 'update');
 
         consoleWrite('Removing from 8 to infinity, remove to the end of existing buffer');
-        run('sourceBuffer.remove(8, Infinity)');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.remove(8, Infinity)');
+        await waitFor(sourceBuffer1, 'update');
 
         consoleWrite('Removing from empty range, does not update the buffer');
-        run('sourceBuffer.remove(0, 2)');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.remove(0, 2)');
+        await waitFor(sourceBuffer1, 'update');
 
         consoleWrite('Removing from non-sync sample');
-        run('sourceBuffer.remove(4, 5)');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.remove(4, 5)');
+        await waitFor(sourceBuffer1, 'update');
 
         consoleWrite('Overriding sync sample, remove following block and only update buffer for missing samples');
-        consoleWrite(`before: ${ timeRangesToString(sourceBuffer.buffered) }`);
-        run('sourceBuffer.appendBuffer(syncSampleRun(5, 7))');
-        await waitFor(sourceBuffer, 'update');
-        consoleWrite(`after: ${ timeRangesToString(sourceBuffer.buffered) }`);
+        consoleWrite(`before: ${ timeRangesToString(sourceBuffer1.buffered) }`);
+        run('sourceBuffer1.appendBuffer(syncSampleRun(5, 7))');
+        await waitFor(sourceBuffer1, 'update');
+        consoleWrite(`after: ${ timeRangesToString(sourceBuffer1.buffered) }`);
 
         consoleWrite('Only report samples added in missing intervals');
-        run('sourceBuffer.appendBuffer(syncSampleRun(0, 10, 2))');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.appendBuffer(syncSampleRun(0, 10, 2))');
+        await waitFor(sourceBuffer1, 'update');
 
-        run('sourceBuffer.remove(2, 4)');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.remove(6, 8)');
-        await waitFor(sourceBuffer, 'update');
-        run('sourceBuffer.remove(0, 10)');
-        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer1.remove(2, 4)');
+        await waitFor(sourceBuffer1, 'update');
+        run('sourceBuffer1.remove(6, 8)');
+        await waitFor(sourceBuffer1, 'update');
+        run('sourceBuffer1.remove(0, 10)');
+        await waitFor(sourceBuffer1, 'update');
+
+        run('sourceBuffer1.appendBuffer(syncSampleRun(0, 5))');
+        await waitFor(sourceBuffer1, 'update');
+        testExpected('sourceBuffer1.buffered.length', '1');
+
+        consoleWrite(`video.buffered: ${ timeRangesToString(video.buffered) }`);
+
+        run('sourceBuffer2 = source.addSourceBuffer("audio/mock; codecs=mock")');
+        sourceBuffer2.onbufferedchange = bufferedChange;
+
+        initSegment = makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]);
+
+        consoleWrite(`video.buffered: ${ timeRangesToString(source.buffered) }`);
+
+        // Adding an empty new sourceBuffer will cause the buffered range to be zero.
+        run('sourceBuffer2.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer2, 'updateend');
+
+        consoleWrite(`video.buffered: ${ timeRangesToString(video.buffered) }`);
+
+        run('sourceBuffer2.appendBuffer(syncSampleRun(0, 6))');
+        await waitFor(sourceBuffer2, 'update');
+        testExpected('sourceBuffer2.buffered.length', '1');
+
+        consoleWrite(`video.buffered: ${ timeRangesToString(video.buffered) }`);
+
+        run('source.endOfStream()');
+
+        consoleWrite(`video.buffered: ${ timeRangesToString(video.buffered) }`);
 
         endTest();
     });

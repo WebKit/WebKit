@@ -1009,8 +1009,6 @@ JSC_DEFINE_JIT_OPERATION(operationHasAttachment, bool, (const Element& element))
 JSC_DEFINE_JIT_OPERATION(operationMatchesDir, bool, (const Element& element, uint32_t direction))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesDir);
-    if (!element.document().settings().dirPseudoEnabled())
-        return false;
     return element.effectiveTextDirection() == static_cast<TextDirection>(direction);
 }
 
@@ -1231,6 +1229,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassType::Drag:
     case CSSSelector::PseudoClassType::Has:
     case CSSSelector::PseudoClassType::HasScope:
+    case CSSSelector::PseudoClassType::State:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.
@@ -1258,10 +1257,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassType::Scope:
-        if (selectorContext != SelectorContext::QuerySelector) {
-            fragment.pseudoClasses.add(CSSSelector::PseudoClassType::Root);
-            return FunctionType::SimpleSelectorChecker;
-        }
         fragment.pseudoClasses.add(CSSSelector::PseudoClassType::Scope);
         return FunctionType::SelectorCheckerWithCheckingContext;
 
@@ -1485,6 +1480,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementBefore:
             case CSSSelector::PseudoElementFirstLetter:
             case CSSSelector::PseudoElementFirstLine:
+            case CSSSelector::PseudoElementGrammarError:
             case CSSSelector::PseudoElementMarker:
             case CSSSelector::PseudoElementResizer:
             case CSSSelector::PseudoElementScrollbar:
@@ -1494,6 +1490,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementScrollbarTrack:
             case CSSSelector::PseudoElementScrollbarTrackPiece:
             case CSSSelector::PseudoElementSelection:
+            case CSSSelector::PseudoElementSpellingError:
+            case CSSSelector::PseudoElementViewTransition:
             case CSSSelector::PseudoElementWebKitCustom:
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
                 ASSERT(!fragment->pseudoElementSelector);
@@ -1508,6 +1506,10 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementHighlight:
             case CSSSelector::PseudoElementPart:
             case CSSSelector::PseudoElementSlotted:
+            case CSSSelector::PseudoElementViewTransitionGroup:
+            case CSSSelector::PseudoElementViewTransitionImagePair:
+            case CSSSelector::PseudoElementViewTransitionOld:
+            case CSSSelector::PseudoElementViewTransitionNew:
                 return FunctionType::CannotCompile;
             }
 
@@ -2280,7 +2282,7 @@ inline void SelectorCodeGenerator::generateEpilogue(StackAllocator& stackAllocat
 
 inline void SelectorCodeGenerator::generateReturn()
 {
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage()) {
         m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&JSC::vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
         return;
@@ -3998,10 +4000,11 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
 JSC_DEFINE_JIT_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown, bool, (const Element* element, SelectorChecker::CheckingContext* checkingContext))
 {
     COUNT_SELECTOR_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlaceholderShown);
-    if (is<HTMLTextFormControlElement>(*element) && element->isTextField()) {
+    auto* formControl = dynamicDowncast<HTMLTextFormControlElement>(*element);
+    if (formControl && element->isTextField()) {
         if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
             checkingContext->styleRelations.append({ *element, Style::Relation::Unique, 1 });
-        return downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
+        return formControl->isPlaceholderVisible();
     }
     return false;
 }
@@ -4009,7 +4012,8 @@ JSC_DEFINE_JIT_OPERATION(operationMakeContextStyleUniqueIfNecessaryAndTestIsPlac
 JSC_DEFINE_JIT_OPERATION(operationIsPlaceholderShown, bool, (const Element* element))
 {
     COUNT_SELECTOR_OPERATION(operationIsPlaceholderShown);
-    return is<HTMLTextFormControlElement>(*element) && downcast<HTMLTextFormControlElement>(*element).isPlaceholderVisible();
+    auto* formControl = dynamicDowncast<HTMLTextFormControlElement>(*element);
+    return formControl && formControl->isPlaceholderVisible();
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSynchronizeStyleAttributeInternal, void, (StyledElement* styledElement))
@@ -4168,13 +4172,11 @@ void SelectorCodeGenerator::generateElementIsNthChild(Assembler::JumpList& failu
 {
     generateNthChildRelationUpdate(fragment);
 
-    Vector<std::pair<int, int>, 32> validSubsetFilters;
-    validSubsetFilters.reserveInitialCapacity(fragment.nthChildFilters.size());
-    for (const auto& slot : fragment.nthChildFilters) {
+    auto validSubsetFilters = WTF::compactMap<32>(fragment.nthChildFilters, [&](auto& slot) -> std::optional<std::pair<int, int>> {
         if (nthFilterIsAlwaysSatisified(slot.first, slot.second))
-            continue;
-        validSubsetFilters.uncheckedAppend(slot);
-    }
+            return std::nullopt;
+        return slot;
+    });
     if (validSubsetFilters.isEmpty())
         return;
 
@@ -4296,13 +4298,11 @@ void SelectorCodeGenerator::generateElementIsNthLastChild(Assembler::JumpList& f
 {
     generateNthLastChildParentCheckAndRelationUpdate(failureCases, fragment);
 
-    Vector<std::pair<int, int>, 32> validSubsetFilters;
-    validSubsetFilters.reserveInitialCapacity(fragment.nthLastChildFilters.size());
-    for (const auto& slot : fragment.nthLastChildFilters) {
+    auto validSubsetFilters = WTF::compactMap<32>(fragment.nthLastChildFilters, [&](auto& slot) -> std::optional<std::pair<int, int>> {
         if (nthFilterIsAlwaysSatisified(slot.first, slot.second))
-            continue;
-        validSubsetFilters.uncheckedAppend(slot);
-    }
+            return std::nullopt;
+        return slot;
+    });
     if (validSubsetFilters.isEmpty())
         return;
 
@@ -4332,18 +4332,16 @@ void SelectorCodeGenerator::generateElementIsNthLastChildOf(Assembler::JumpList&
 {
     generateNthLastChildParentCheckAndRelationUpdate(failureCases, fragment);
 
-    Vector<const NthChildOfSelectorInfo*> validSubsetFilters;
-    validSubsetFilters.reserveInitialCapacity(fragment.nthLastChildOfFilters.size());
-
     // The initial element must match the selector list.
     for (const NthChildOfSelectorInfo& nthLastChildOfSelectorInfo : fragment.nthLastChildOfFilters)
         generateElementMatchesSelectorList(failureCases, elementAddressRegister, nthLastChildOfSelectorInfo.selectorList);
     
-    for (const NthChildOfSelectorInfo& nthLastChildOfSelectorInfo : fragment.nthLastChildOfFilters) {
+    auto validSubsetFilters = WTF::compactMap(fragment.nthLastChildOfFilters, [](auto& nthLastChildOfSelectorInfo) -> std::optional<const NthChildOfSelectorInfo*> {
         if (nthFilterIsAlwaysSatisified(nthLastChildOfSelectorInfo.a, nthLastChildOfSelectorInfo.b))
-            continue;
-        validSubsetFilters.uncheckedAppend(&nthLastChildOfSelectorInfo);
-    }
+            return std::nullopt;
+        return &nthLastChildOfSelectorInfo;
+    });
+
     if (validSubsetFilters.isEmpty())
         return;
 
@@ -4445,8 +4443,6 @@ void SelectorCodeGenerator::generateElementIsRoot(Assembler::JumpList& failureCa
 
 void SelectorCodeGenerator::generateElementIsScopeRoot(Assembler::JumpList& failureCases)
 {
-    ASSERT(m_selectorContext == SelectorContext::QuerySelector);
-
     LocalRegister scope(m_registerAllocator);
     loadCheckingContext(scope);
     m_assembler.loadPtr(Assembler::Address(scope, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, scope)), scope);

@@ -31,9 +31,17 @@
 #import <WebKit/_WKWebExtensionPermission.h>
 #import <WebKit/_WKWebExtensionTab.h>
 
+@class WKWebViewConfiguration;
 @class _WKWebExtension;
 @class _WKWebExtensionAction;
+@class _WKWebExtensionCommand;
 @class _WKWebExtensionController;
+
+#if TARGET_OS_IPHONE
+@class UIMenuElement;
+#else
+@class NSMenuItem;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -162,12 +170,10 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, copy) NSURL *baseURL;
 
 /*!
- @abstract An unique identifier used to distinguish the extension from other extensions and target it for messages.
+ @abstract A unique identifier used to distinguish the extension from other extensions and target it for messages.
  @discussion The default value is a unique value that matches the host in the default base URL. The identifier can be any
- value that is unique. Setting is only allowed when the context is not loaded.
-
- This value is accessible by the extension via `browser.runtime.id` and is used for messaging the extension as the first
- argument of `browser.runtime.sendMessage(extensionId, message, options)`.
+ value that is unique. Setting is only allowed when the context is not loaded. This value is accessible by the extension via
+ `browser.runtime.id` and is used for messaging the extension via `browser.runtime.sendMessage()`.
  */
 @property (nonatomic, copy) NSString *uniqueIdentifier;
 
@@ -179,10 +185,39 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, getter=isInspectable) BOOL inspectable;
 
 /*!
+ @abstract The web view configuration to use for web views that load pages from this extension.
+ @discussion Returns a customized copy of the configuration, originally set in the web extension controller configuration, for this extension.
+ The app must use this configuration when initializing web views intended to navigate to a URL originating from this extension's base URL.
+ The app must also swap web views in tabs when navigating to and from web extension URLs. This property returns `nil` if the context isn't
+ associated with a web extension controller. The returned configuration copy can be customized prior to web view initialization.
+ @note Navigations will fail if a web view using this configuration attempts to navigate to a URL that doesn't originate from this extension's
+ base URL. Similarly, navigations will be canceled if a web view not configured with this configuration attempts to navigate to a URL that does
+ originate from this extension's base URL.
+ */
+@property (nonatomic, readonly, copy, nullable) WKWebViewConfiguration *webViewConfiguration;
+
+/*!
+ @abstract The URL of the extension's options page, if the extension has one.
+ @discussion This property holds the URL for the dedicated options page, if provided by the extension; otherwise `nil` if no page is defined.
+ The app should provide access to this page through a user interface element.
+ @note Navigation to the options page is only possible after this extension has been loaded.
+ @seealso webViewConfiguration
+ */
+@property (nonatomic, readonly, copy, nullable) NSURL *optionsPageURL;
+
+/*!
+ @abstract The URL to use as an alternative to the default new tab page, if the extension has one.
+ @discussion This property holds the URL for a new tab page, if provided by the extension; otherwise `nil` if no page is defined.
+ The app should prompt the user for permission to use the extension's new tab page as the default.
+ @note Navigation to the override new tab page is only possible after this extension has been loaded.
+ @seealso webViewConfiguration
+ */
+@property (nonatomic, readonly, copy, nullable) NSURL *overrideNewTabPageURL;
+
+/*!
  @abstract The currently granted permissions and their expiration dates.
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Permissions in this dictionary should be explicitly granted by the user before being added. Any permissions in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forPermission:
@@ -194,7 +229,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract The currently granted permission match patterns and their expiration dates.
  @discussion Match patterns that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Match patterns in this dictionary should be explicitly granted by the user before being added. Any match pattern in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forMatchPattern:
@@ -206,7 +240,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract The currently denied permissions and their expiration dates.
  @discussion Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Permissions in this dictionary should be explicitly denied by the user before being added. Any match pattern in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forPermission:
@@ -218,7 +251,6 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @abstract The currently denied permission match patterns and their expiration dates.
  @discussion Match patterns that don't expire will have a distant future date. This will never include expired entries at time of access.
  Setting this property will replace all existing entries. Use this property for saving and restoring permission status in bulk.
-
  Match patterns in this dictionary should be explicitly denied by the user before being added. Any match pattern in this collection will not be
  presented for approval again until they expire.
  @seealso setPermissionStatus:forMatchPattern:
@@ -232,6 +264,16 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  and future permission checks will present discrete hosts for approval as being implicitly requested. This value should be saved and restored as needed.
  */
 @property (nonatomic) BOOL requestedOptionalAccessToAllHosts;
+
+/*!
+ @abstract A Boolean value indicating if the extension has access to private browsing windows and tabs.
+ @discussion When this value is `YES`, the extension is granted permission to interact with private browsing windows and tabs.
+ This value should be saved and restored as needed. Access to private browsing should be explicitly allowed by the user before setting this property.
+ @note To ensure proper isolation between private and non-private browsing, web views associated with private browsing windows must
+ use a different `WKUserContentController`. Likewise, to be identified as a private web view and to ensure that cookies and other
+ website data is not shared, private web views must be configured to use a non-persistent `WKWebsiteDataStore`.
+ */
+@property (nonatomic) BOOL hasAccessInPrivateBrowsing;
 
 /*!
  @abstract The currently granted permissions that have not expired.
@@ -294,7 +336,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 - (BOOL)hasAccessToURL:(NSURL *)url inTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(hasAccess(to:in:));
 
 /*!
- @abstract Checks if the currently granted permission match patterns set contains the `<all_urls>` pattern.
+ @abstract A Boolean value indicating if the currently granted permission match patterns set contains the `<all_urls>` pattern.
  @discussion This does not check for any `*` host patterns. In most cases you should use the broader `hasAccessToAllHosts`.
  @seealso currentPermissionMatchPatterns
  @seealso hasAccessToAllHosts
@@ -302,11 +344,18 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly) BOOL hasAccessToAllURLs;
 
 /*!
- @abstract Checks if the currently granted permission match patterns set contains the `<all_urls>` pattern or any `*` host patterns.
+ @abstract A Boolean value indicating if the currently granted permission match patterns set contains the `<all_urls>` pattern or any `*` host patterns.
  @seealso currentPermissionMatchPatterns
  @seealso hasAccessToAllURLs
  */
 @property (nonatomic, readonly) BOOL hasAccessToAllHosts;
+
+/*!
+ @abstract A Boolean value indicating whether the extension has script or stylesheet content that can be injected into webpages.
+ @discussion If this property is `YES`, the extension has content that can be injected by matching against the extension's requested match patterns.
+ @seealso hasInjectedContentForURL:
+ */
+@property (nonatomic, readonly) BOOL hasInjectedContent;
 
 /*!
  @abstract Checks if the extension has script or stylesheet content that can be injected into the specified URL.
@@ -453,8 +502,9 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @param tab The tab for which to retrieve the extension action, or `nil` to get the default action.
  @discussion The returned object represents the action specific to the tab when provided; otherwise, it returns the default action. The default
  action is useful when the context is unrelated to a specific tab. When possible, specify the tab to get the most context-relevant action.
+ @seealso performActionForTab:
  */
-- (_WKWebExtensionAction *)actionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:));
+- (nullable _WKWebExtensionAction *)actionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(action(for:));
 
 /*!
  @abstract Performs the extension action associated with the specified tab or performs the default action if `nil` is passed.
@@ -465,6 +515,55 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  no action is performed for popup actions.
  */
 - (void)performActionForTab:(nullable id <_WKWebExtensionTab>)tab NS_SWIFT_NAME(performAction(for:));
+
+/*!
+ @abstract An array of commands associated with the extension context.
+ @discussion This property holds an array of all the commands currently available within the extension context. It allows for inspection of the
+ commands that have been registered and their current configuration.
+ @seealso performCommand:
+ */
+@property (nonatomic, readonly, copy) NSArray<_WKWebExtensionCommand *> *commands;
+
+/*!
+ @abstract Performs the specified command, triggering events specific to this extension.
+ @param command The command to be performed.
+ @discussion This method performs the given command as if it was triggered by a user gesture within the context of the focused window and active tab.
+ */
+- (void)performCommand:(_WKWebExtensionCommand *)command;
+
+#if TARGET_OS_OSX
+/*!
+ @abstract Performs the command associated with the given event.
+ @discussion This method checks for a command corresponding to the provided event and performs it, if available. The app should use this method to perform
+ any extension commands at an appropriate time in the app's event handling, like in `sendEvent:` of `NSApplication` or `NSWindow` subclasses.
+ @param event The event representing the user input.
+ @result Returns `YES` if a command corresponding to the event was found and performed, `NO` otherwise.
+ */
+- (BOOL)performCommandForEvent:(NSEvent *)event;
+
+/*!
+ @abstract Retrieves the command associated with the given event without performing it.
+ @discussion This method returns the command that corresponds to the provided event, if such a command exists. This provides a way to programmatically
+ determine what action would occur for a given event, without triggering the command.
+ @param event The event for which to retrieve the corresponding command.
+ @result The command associated with the event, or `nil` if there is no such command.
+ */
+- (nullable _WKWebExtensionCommand *)commandForEvent:(NSEvent *)event;
+#endif // TARGET_OS_OSX
+
+/*!
+ @abstract Retrieves an array of menu items for a given tab.
+ @param tab The tab for which to retrieve the menu items.
+ @discussion This method returns an array of menu items provided by the extension, allowing the user to perform extension-defined actions on the tab.
+ The app is responsible for displaying these menu items, typically in a context menu or a long-press menu on the tab.
+ @note The properties of the menu items, including the items themselves, can change dynamically. Therefore, the app should fetch the menu items immediately
+ before showing them, to ensure that the most current and relevant items are presented.
+ */
+#if TARGET_OS_IPHONE
+- (NSArray<UIMenuElement *> *)menuItemsForTab:(id <_WKWebExtensionTab>)tab;
+#else
+- (NSArray<NSMenuItem *> *)menuItemsForTab:(id <_WKWebExtensionTab>)tab;
+#endif
 
 /*!
  @abstract Should be called by the app when a user gesture is performed in a specific tab.
@@ -506,7 +605,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, readonly, copy) NSArray<id <_WKWebExtensionWindow>> *openWindows;
 
 /*!
- @abstract The window that currently has focus.
+ @abstract The window that currently has focus for this extension.
  @discussion This property holds the window object that currently has focus, as set by the `didFocusWindow:` method.
  It will be \c nil if no window has focus or if a window has focus that is not visible to the extension.  Initially populated by the window
  returned by the extension controller delegate method `webExtensionController:focusedWindowForExtensionContext:`.

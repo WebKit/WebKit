@@ -60,7 +60,7 @@ public:
     
 private:
     // PageClient
-    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
     void setViewNeedsDisplay(const WebCore::Region&) override;
     void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, WebCore::ScrollIsAnimated) override;
     WebCore::FloatPoint viewScrollPosition() override;
@@ -113,6 +113,7 @@ private:
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
+    void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) override;
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 #if ENABLE(TOUCH_EVENTS)
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
@@ -181,6 +182,7 @@ private:
 
     void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, API::Object* userData) override;
     void updateInputContextAfterBlurringAndRefocusingElement() final;
+    void updateFocusedElementInformation(const FocusedElementInformation&) final;
     void elementDidBlur() override;
     void focusedElementDidChangeInputMode(WebCore::InputMode) override;
     void didUpdateEditorState() override;
@@ -282,6 +284,8 @@ private:
     void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
 #endif
 
+    void performSwitchHapticFeedback() final;
+
     void handleAutocorrectionContext(const WebAutocorrectionContext&) final;
 
     void setMouseEventPolicy(WebCore::MouseEventPolicy) final;
@@ -300,7 +304,7 @@ private:
     void showDictationAlternativeUI(const WebCore::FloatRect&, WebCore::DictationContext) final;
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
+    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
 #endif
 
     WebCore::Color contentViewBackgroundColor() final;
@@ -323,8 +327,6 @@ private:
     void didEnterFullscreen() final;
     void didExitFullscreen() final;
 #endif
-
-    std::optional<WebKit::VisibleContentRectUpdateInfo> createVisibleContentRectUpdateInfo() override;
 
     RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
 

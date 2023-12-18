@@ -24,7 +24,7 @@ static INLINE int32_t xx_hsum_epi32_si32(__m128i v_d) {
 
 static INLINE int64_t xx_hsum_epi64_si64(__m128i v_q) {
   v_q = _mm_add_epi64(v_q, _mm_srli_si128(v_q, 8));
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   return _mm_cvtsi128_si64(v_q);
 #else
   {

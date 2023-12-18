@@ -74,7 +74,7 @@ void VideoQualityMetricsReporter::OnStatsReports(
     if (!s->kind.is_defined()) {
       continue;
     }
-    if (!(*s->kind == RTCMediaStreamTrackKind::kVideo)) {
+    if (!(*s->kind == "video")) {
       continue;
     }
     if (s->timestamp() > sample.sample_time) {

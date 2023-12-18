@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSStyleSheet.h"
 #include "Element.h"
 #include "markup.h"
 #include <wtf/HashMap.h>
@@ -35,6 +36,7 @@ namespace WebCore {
 class Attribute;
 class DocumentType;
 class Element;
+class LocalFrame;
 class Node;
 class Range;
 
@@ -64,10 +66,10 @@ constexpr auto EntityMaskInHTMLAttributeValue = { EntityMask::Amp, EntityMask::Q
 class MarkupAccumulator {
     WTF_MAKE_NONCOPYABLE(MarkupAccumulator);
 public:
-    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { });
+    MarkupAccumulator(Vector<Ref<Node>>*, ResolveURLs, SerializationSyntax, HashMap<String, String>&& replacementURLStrings = { }, HashMap<RefPtr<CSSStyleSheet>, String>&& replacementURLStringsForCSSStyleSheet = { }, ShouldIncludeShadowDOM = ShouldIncludeShadowDOM::No, const Vector<MarkupExclusionRule>& exclusionRules = { });
     virtual ~MarkupAccumulator();
 
-    String serializeNodes(Node& targetNode, SerializedNodes, Vector<QualifiedName>* tagNamesToSkip = nullptr);
+    String serializeNodes(Node& targetNode, SerializedNodes);
 
     static void appendCharactersReplacingEntities(StringBuilder&, const String&, unsigned, unsigned, OptionSet<EntityMask>);
 
@@ -86,6 +88,7 @@ protected:
     virtual void appendEndTag(StringBuilder&, const Element&);
     virtual void appendCustomAttributes(StringBuilder&, const Element&, Namespaces*);
     virtual void appendText(StringBuilder&, const Text&);
+    virtual bool appendContentsForNode(StringBuilder& result, const Node&);
 
     void appendOpenTag(StringBuilder&, const Element&, Namespaces*);
     void appendCloseTag(StringBuilder&, const Element&);
@@ -102,22 +105,32 @@ protected:
 private:
     void appendNamespace(StringBuilder&, const AtomString& prefix, const AtomString& namespaceURI, Namespaces&, bool allowEmptyDefaultNS = false);
     String resolveURLIfNeeded(const Element&, const String&) const;
-    void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*, Vector<QualifiedName>* tagNamesToSkip);
+    void serializeNodesWithNamespaces(Node& targetNode, SerializedNodes, const Namespaces*);
     bool inXMLFragmentSerialization() const { return m_serializationSyntax == SerializationSyntax::XML; }
     void generateUniquePrefix(QualifiedName&, const Namespaces&);
     QualifiedName xmlAttributeSerialization(const Attribute&, Namespaces*);
+    LocalFrame* frameForAttributeReplacement(const Element&) const;
+    Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
+    void appendURLAttributeIfNecessary(StringBuilder&, const Element&, Namespaces*);
+    RefPtr<Element> replacementElement(const Node&);
+    bool shouldExcludeElement(const Element&);
 
     StringBuilder m_markup;
     const ResolveURLs m_resolveURLs;
     const SerializationSyntax m_serializationSyntax;
     unsigned m_prefixLevel { 0 };
     HashMap<String, String> m_replacementURLStrings;
+    HashMap<RefPtr<CSSStyleSheet>, String> m_replacementURLStringsForCSSStyleSheet;
+    bool m_shouldIncludeShadowDOM { false };
+    Vector<MarkupExclusionRule> m_exclusionRules;
 };
 
 inline void MarkupAccumulator::endAppendingNode(const Node& node)
 {
     if (is<Element>(node))
         appendEndTag(m_markup, downcast<Element>(node));
+    else if (auto element = replacementElement(node))
+        appendEndTag(m_markup, *element);
 }
 
 } // namespace WebCore

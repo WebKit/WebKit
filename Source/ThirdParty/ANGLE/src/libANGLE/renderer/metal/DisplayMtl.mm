@@ -28,10 +28,12 @@
 #include "mtl_command_buffer.h"
 #include "platform/PlatformMethods.h"
 
-#if TARGET_OS_SIMULATOR && !ANGLE_METAL_XCODE_BUILDS_SHADERS
-#    include "libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h"
-#else
+#if ANGLE_METAL_XCODE_BUILDS_SHADERS
 #    include "libANGLE/renderer/metal/shaders/mtl_internal_shaders_metallib.h"
+#elif ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS
+#    include "mtl_internal_shaders_metallib.h"
+#else
+#    include "libANGLE/renderer/metal/shaders/mtl_internal_shaders_src_autogen.h"
 #endif
 
 #include "EGL/eglext.h"
@@ -464,9 +466,9 @@ Optional<gl::Version> DisplayMtl::getMaxSupportedDesktopVersion() const
     return Optional<gl::Version>::Invalid();
 }
 
-EGLSyncImpl *DisplayMtl::createSync(const egl::AttributeMap &attribs)
+EGLSyncImpl *DisplayMtl::createSync()
 {
-    return new EGLSyncMtl(attribs);
+    return new EGLSyncMtl();
 }
 
 egl::Error DisplayMtl::makeCurrent(egl::Display *display,
@@ -518,6 +520,18 @@ void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
 void DisplayMtl::generateCaps(egl::Caps *outCaps) const
 {
     outCaps->textureNPOT = true;
+}
+
+void DisplayMtl::initializeFrontendFeatures(angle::FrontendFeatures *features) const
+{
+    // The Metal backend's handling of compile is thread-safe
+    ANGLE_FEATURE_CONDITION(features, compileJobIsThreadSafe, true);
+
+    // The link job in this backend references gl::Context and ContextMtl, and thread-safety is not
+    // guaranteed.  The link subtasks are safe however, they are still parallelized.
+    //
+    // Once the link jobs are made thread-safe and using mtl::Context, this feature can be removed.
+    ANGLE_FEATURE_CONDITION(features, linkJobIsThreadSafe, false);
 }
 
 void DisplayMtl::populateFeatureList(angle::FeatureList *features)
@@ -1300,6 +1314,8 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateAlphaToCoverage,
                             isSimulator || !supportsAppleGPUFamily(1));
 
+    ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask, supportsAppleGPUFamily(1));
+
     ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
     ANGLE_FEATURE_CONDITION((&mFeatures), copyIOSurfaceToNonIOSurfaceForReadOptimization,
                             isIntel() || isAMD());
@@ -1350,17 +1366,32 @@ void DisplayMtl::initializeFeatures()
 
     // anglebug.com/8258 Builtin shaders currently require MSL 2.1
     ANGLE_FEATURE_CONDITION((&mFeatures), requireMsl21, true);
+
+    // http://anglebug.com/8311: Rescope global variables which are only used in one function to be
+    // function local. Disabled on AMD FirePro devices: http://anglebug.com/8317
+    ANGLE_FEATURE_CONDITION((&mFeatures), rescopeGlobalVariables, !isAMDFireProDevice());
+
+    // Apple-specific pre-transform for explicit cubemap derivatives
+    ANGLE_FEATURE_CONDITION((&mFeatures), preTransformTextureCubeGradDerivatives,
+                            supportsAppleGPUFamily(1));
+
+    // On tile-based GPUs, always resolving MSAA render buffers to single-sampled
+    // is preferred. Because it would save bandwidth by avoiding the cost of storing the MSAA
+    // textures to memory. Traditional desktop GPUs almost always store MSAA textures to memory
+    // anyway, so this feature would have no benefit besides adding additional resolve step and
+    // memory overhead of the hidden single-sampled textures.
+    ANGLE_FEATURE_CONDITION((&mFeatures), alwaysResolveMultisampleRenderBuffers, isARM);
 }
 
 angle::Result DisplayMtl::initializeShaderLibrary()
 {
     mtl::AutoObjCPtr<NSError *> err = nil;
-#if TARGET_OS_SIMULATOR && !ANGLE_METAL_XCODE_BUILDS_SHADERS
-    mDefaultShaders = mtl::CreateShaderLibrary(getMetalDevice(), gDefaultMetallibSrc,
-                                               std::size(gDefaultMetallibSrc), &err);
-#else
+#if ANGLE_METAL_XCODE_BUILDS_SHADERS || ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS
     mDefaultShaders = mtl::CreateShaderLibraryFromBinary(getMetalDevice(), gDefaultMetallib,
                                                          std::size(gDefaultMetallib), &err);
+#else
+    mDefaultShaders = mtl::CreateShaderLibrary(getMetalDevice(), gDefaultMetallibSrc,
+                                               std::size(gDefaultMetallibSrc), &err);
 #endif
 
     if (err)
@@ -1478,6 +1509,16 @@ bool DisplayMtl::isAMDBronzeDriver() const
 
     mComputedAMDBronze = true;
     return mIsAMDBronze;
+}
+
+bool DisplayMtl::isAMDFireProDevice() const
+{
+    if (!isAMD())
+    {
+        return false;
+    }
+
+    return [[mMetalDevice name] containsString:@"FirePro"];
 }
 
 bool DisplayMtl::isIntel() const

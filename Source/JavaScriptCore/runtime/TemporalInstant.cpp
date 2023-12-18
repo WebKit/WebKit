@@ -141,6 +141,11 @@ TemporalInstant* TemporalInstant::toInstant(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (!itemValue.isObject() && !itemValue.isString()) {
+        throwTypeError(globalObject, scope, "can only convert to Instant from object or string values"_s);
+        return nullptr;
+    }
+
     if (itemValue.inherits<TemporalInstant>())
         return jsCast<TemporalInstant*>(itemValue);
 

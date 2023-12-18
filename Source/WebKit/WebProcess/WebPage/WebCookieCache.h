@@ -30,6 +30,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCounter.h>
 
 namespace WebCore {
 struct Cookie;
@@ -38,6 +39,9 @@ enum class ShouldRelaxThirdPartyCookieBlocking : bool;
 }
 
 namespace WebKit {
+
+enum PendingCookieUpdateCounterType { };
+using PendingCookieUpdateCounter = RefCounter<PendingCookieUpdateCounterType>;
 
 class WebCookieCache : public WebCore::CookieChangeListener {
 public:
@@ -48,6 +52,9 @@ public:
     String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
 
+    PendingCookieUpdateCounter::Token WARN_UNUSED_RETURN willSetCookieFromDOM();
+    void didSetCookieFromDOM(PendingCookieUpdateCounter::Token, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const WebCore::Cookie&, WebCore::ShouldRelaxThirdPartyCookieBlocking);
+
     void allCookiesDeleted();
 
     void clear();
@@ -56,6 +63,7 @@ public:
 private:
     WebCore::NetworkStorageSession& inMemoryStorageSession();
     void pruneCacheIfNecessary();
+    bool cacheMayBeOutOfSync() const;
 
     // CookieChangeListener
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&) final;
@@ -63,6 +71,8 @@ private:
 
     HashSet<String> m_hostsWithInMemoryStorage;
     std::unique_ptr<WebCore::NetworkStorageSession> m_inMemoryStorageSession;
+
+    PendingCookieUpdateCounter m_pendingCookieUpdateCounter;
 };
 
 } // namespace WebKit

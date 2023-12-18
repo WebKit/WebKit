@@ -16,7 +16,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />

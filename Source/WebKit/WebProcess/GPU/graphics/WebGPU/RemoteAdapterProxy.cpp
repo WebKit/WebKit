@@ -102,7 +102,9 @@ void RemoteAdapterProxy::requestDevice(const WebCore::WebGPU::DeviceDescriptor& 
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension
     );
-    callback(RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier, queueIdentifier));
+    auto result = RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier, queueIdentifier);
+    result->setLabel(WTFMove(convertedDescriptor->label));
+    callback(WTFMove(result));
 }
 
 } // namespace WebKit::WebGPU

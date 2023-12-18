@@ -34,6 +34,3 @@ endif()
 if(NOT CMAKE_RANLIB)
   set(CMAKE_RANLIB ${CROSS}ranlib CACHE FILEPATH Indexer)
 endif()
-
-# No runtime cpu detect for arm64-mingw-gcc.
-set(CONFIG_RUNTIME_CPU_DETECT 0 CACHE STRING "")

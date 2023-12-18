@@ -58,7 +58,7 @@ class IvfFileReaderTest : public ::testing::Test {
       if (use_capture_tims_ms) {
         frame.capture_time_ms_ = i;
       } else {
-        frame.SetTimestamp(i);
+        frame.SetRtpTimestamp(i);
       }
       if (!file_writer->WriteFrame(frame, codec_type))
         return false;
@@ -86,9 +86,9 @@ class IvfFileReaderTest : public ::testing::Test {
     EXPECT_EQ(frame->SpatialIndex(), spatial_layers_count - 1);
     if (use_capture_tims_ms) {
       EXPECT_EQ(frame->capture_time_ms_, static_cast<int64_t>(frame_index));
-      EXPECT_EQ(frame->Timestamp(), static_cast<int64_t>(90 * frame_index));
+      EXPECT_EQ(frame->RtpTimestamp(), static_cast<int64_t>(90 * frame_index));
     } else {
-      EXPECT_EQ(frame->Timestamp(), static_cast<int64_t>(frame_index));
+      EXPECT_EQ(frame->RtpTimestamp(), static_cast<int64_t>(frame_index));
     }
     ASSERT_EQ(frame->size(), sizeof(kDummyPayload) * spatial_layers_count);
     for (int i = 0; i < spatial_layers_count; ++i) {

@@ -19,5 +19,9 @@
 	<true/>
 	<key>com.apple.private.xpc.launchd.job-manager</key>
 	<string>TestWebKitAPI</string>
+	<key>com.apple.CommCenter.fine-grained</key>
+	<array>
+		<string>public-cellular-plan</string>
+	</array>
 </dict>
 </plist>

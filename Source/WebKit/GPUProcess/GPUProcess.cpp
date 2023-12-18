@@ -118,12 +118,6 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     didReceiveGPUProcessMessage(connection, decoder);
 }
 
-void GPUProcess::updatePreferencesForWebProcess(WebCore::ProcessIdentifier processIdentifier, const GPUProcessPreferencesForWebProcess& preferences)
-{
-    if (auto* connection = m_webProcessConnections.get(processIdentifier))
-        connection->updatePreferences(preferences);
-}
-
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
@@ -280,9 +274,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 
     m_applicationVisibleName = WTFMove(parameters.applicationVisibleName);
-#if PLATFORM(COCOA)
-    IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
-#endif
 
     // Match the QoS of the UIProcess since the GPU process is doing rendering on its behalf.
     WTF::Thread::setCurrentThreadIsUserInteractive(0);
@@ -471,9 +462,9 @@ void GPUProcess::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
     MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 }
 
-void GPUProcess::triggerMockMicrophoneConfigurationChange()
+void GPUProcess::triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay)
 {
-    MockRealtimeMediaSourceCenter::singleton().triggerMockMicrophoneConfigurationChange();
+    MockRealtimeMediaSourceCenter::singleton().triggerMockCaptureConfigurationChange(forMicrophone, forDisplay);
 }
 #endif // ENABLE(MEDIA_STREAM)
 

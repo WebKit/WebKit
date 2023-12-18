@@ -22,16 +22,15 @@ import android.os.HandlerThread;
 import androidx.test.filters.SmallTest;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.chromium.base.test.params.BaseJUnit4RunnerDelegate;
-import org.chromium.base.test.params.ParameterAnnotations.ClassParameter;
-import org.chromium.base.test.params.ParameterAnnotations.UseRunnerDelegate;
-import org.chromium.base.test.params.ParameterSet;
-import org.chromium.base.test.params.ParameterizedRunner;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.webrtc.VideoFrame;
 
 /**
@@ -40,21 +39,16 @@ import org.webrtc.VideoFrame;
  * GlRectDrawer and we are testing the full chain I420 -> OES/RGB texture -> I420, with and without
  * cropping in the middle. Reading textures back to I420 also exercises the YuvConverter code.
  */
-@RunWith(ParameterizedRunner.class)
-@UseRunnerDelegate(BaseJUnit4RunnerDelegate.class)
+@RunWith(Parameterized.class)
 public class VideoFrameBufferTest {
   /**
    * These tests are parameterized on this enum which represents the different VideoFrame.Buffers.
    */
   private static enum BufferType { I420_JAVA, I420_NATIVE, RGB_TEXTURE, OES_TEXTURE, NV21, NV12 }
 
-  @ClassParameter private static List<ParameterSet> CLASS_PARAMS = new ArrayList<>();
-
-  static {
-    for (BufferType bufferType : BufferType.values()) {
-      // The parameterization framework can not send Enums, so we pass it as a string instead.
-      CLASS_PARAMS.add(new ParameterSet().value(bufferType.name()).name(bufferType.name()));
-    }
+  @Parameters(name = "{0}")
+  public static Collection<BufferType> parameters() {
+    return Arrays.asList(BufferType.values());
   }
 
   @BeforeClass
@@ -65,9 +59,8 @@ public class VideoFrameBufferTest {
 
   private final BufferType bufferType;
 
-  public VideoFrameBufferTest(String bufferTypeName) {
-    // Parse the string back to an enum.
-    bufferType = BufferType.valueOf(bufferTypeName);
+  public VideoFrameBufferTest(BufferType bufferType) {
+    this.bufferType = bufferType;
   }
 
   /**

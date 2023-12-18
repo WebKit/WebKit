@@ -1,0 +1,4 @@
+
+
+FAIL navigate event for navigation.back() - same-document in an iframe promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'i.contentWindow.navigation.currentEntry.key')"
+

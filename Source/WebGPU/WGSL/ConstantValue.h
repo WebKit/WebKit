@@ -27,8 +27,33 @@
 #pragma once
 
 #include <wtf/FixedVector.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL {
+
+#if HAVE(FP16_HALF_SUPPORT)
+using half = __fp16;
+#else
+struct half {
+    half()
+    {
+    }
+
+    half(auto val)
+        : value(static_cast<float>(val))
+    {
+    }
+
+    operator float() const
+    {
+        return static_cast<float>(value);
+    }
+
+    __fp16 value { 0.f };
+};
+#endif
 
 // A constant value might be:
 // - a scalar
@@ -49,6 +74,9 @@ struct ConstantArray {
     {
     }
 
+    size_t upperBound() { return elements.size(); }
+    ConstantValue operator[](unsigned);
+
     FixedVector<ConstantValue> elements;
 };
 
@@ -63,10 +91,41 @@ struct ConstantVector {
     {
     }
 
+    size_t upperBound() { return elements.size(); }
+    ConstantValue operator[](unsigned);
+
     FixedVector<ConstantValue> elements;
 };
 
-using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVector>;
+struct ConstantMatrix {
+    ConstantMatrix(uint32_t columns, uint32_t rows)
+        : columns(columns)
+        , rows(rows)
+        , elements(columns * rows)
+    {
+    }
+
+    ConstantMatrix(uint32_t columns, uint32_t rows, const FixedVector<ConstantValue>& elements)
+        : columns(columns)
+        , rows(rows)
+        , elements(elements)
+    {
+        RELEASE_ASSERT(elements.size() == columns * rows);
+    }
+
+    size_t upperBound() { return columns; }
+    ConstantVector operator[](unsigned);
+
+    uint32_t columns;
+    uint32_t rows;
+    FixedVector<ConstantValue> elements;
+};
+
+struct ConstantStruct {
+    HashMap<String, ConstantValue> fields;
+};
+
+using BaseValue = std::variant<float, half, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 
@@ -74,24 +133,67 @@ struct ConstantValue : BaseValue {
 
     void dump(PrintStream&) const;
 
-    bool isInt() const { return std::holds_alternative<int64_t>(*this); }
-    bool isNumber() const { return isInt() || std::holds_alternative<double>(*this); }
+    bool isBool() const { return std::holds_alternative<bool>(*this); }
+    bool isVector() const { return std::holds_alternative<ConstantVector>(*this); }
+    bool isMatrix() const { return std::holds_alternative<ConstantMatrix>(*this); }
+    bool isArray() const { return std::holds_alternative<ConstantArray>(*this); }
 
     bool toBool() const { return std::get<bool>(*this); }
-    int64_t toInt() const
+
+    int64_t integerValue() const
     {
-        ASSERT(isNumber());
-        if (auto* i = std::get_if<int64_t>(this))
-            return *i;
-        return static_cast<int64_t>(std::get<double>(*this));
+        if (auto* i32 = std::get_if<int32_t>(this))
+            return *i32;
+        if (auto* u32 = std::get_if<uint32_t>(this))
+            return *u32;
+        if (auto* abstractInt = std::get_if<int64_t>(this))
+            return *abstractInt;
+        RELEASE_ASSERT_NOT_REACHED();
     }
-    double toDouble() const
+
+    const ConstantVector& toVector() const
     {
-        ASSERT(isNumber());
-        if (auto* d = std::get_if<double>(this))
-            return *d;
-        return static_cast<double>(std::get<int64_t>(*this));
+        return std::get<ConstantVector>(*this);
     }
 };
+
+template<typename To, typename From>
+std::optional<To> convertInteger(From value)
+{
+    auto result = Checked<To, RecordOverflow>(value);
+    if (UNLIKELY(result.hasOverflowed()))
+        return std::nullopt;
+    return { result.value() };
+}
+
+template<typename To, typename From>
+std::optional<To> convertFloat(From value)
+{
+    static_assert(std::is_floating_point<To>::value || std::is_same<To, half>::value, "Result type is expected to be a floating point type: double, float, or half");
+
+    static To max;
+    static To lowest;
+    static To min;
+    if constexpr (std::is_floating_point<To>::value) {
+        max = std::numeric_limits<To>::max();
+        lowest = std::numeric_limits<To>::lowest();
+        min = std::numeric_limits<To>::min();
+    } else {
+        max = 0x1.ffcp15;
+        lowest = -max;
+        min = 0x1.0p-14;
+    }
+
+    if (value > max)
+        return std::nullopt;
+    if (value < lowest)
+        return std::nullopt;
+    if (std::isnan(value))
+        return std::nullopt;
+    if (std::abs(value) < min)
+        return { 0 };
+
+    return { value };
+}
 
 } // namespace WGSL

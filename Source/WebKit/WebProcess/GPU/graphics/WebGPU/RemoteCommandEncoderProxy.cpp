@@ -61,7 +61,9 @@ Ref<WebCore::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPa
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginRenderPass(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+    result->setLabel(WTFMove(convertedDescriptor->label));
+    return result;
 }
 
 Ref<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>& descriptor)
@@ -79,7 +81,9 @@ Ref<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginCompute
     auto sendResult = send(Messages::RemoteCommandEncoder::BeginComputePass(convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+    auto result = RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
+    result->setLabel(WTFMove(convertedDescriptor->label));
+    return result;
 }
 
 void RemoteCommandEncoderProxy::copyBufferToBuffer(
@@ -227,7 +231,9 @@ Ref<WebCore::WebGPU::CommandBuffer> RemoteCommandEncoderProxy::finish(const WebC
     auto sendResult = send(Messages::RemoteCommandEncoder::Finish(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return RemoteCommandBufferProxy::create(m_parent, m_convertToBackingContext, identifier);
+    auto result = RemoteCommandBufferProxy::create(m_parent, m_convertToBackingContext, identifier);
+    result->setLabel(WTFMove(convertedDescriptor->label));
+    return result;
 }
 
 void RemoteCommandEncoderProxy::setLabelInternal(const String& label)

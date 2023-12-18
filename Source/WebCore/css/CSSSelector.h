@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSParserContext.h"
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
 #include <wtf/EnumTraits.h>
@@ -29,6 +30,7 @@
 namespace WebCore {
 
 class CSSSelectorList;
+struct CSSSelectorParserContext;
 
 struct PossiblyQuotedIdentifier {
     AtomString identifier;
@@ -64,6 +66,7 @@ struct PossiblyQuotedIdentifier {
         bool visitAllSimpleSelectors(auto& apply) const;
 
         bool hasExplicitNestingParent() const;
+        bool hasExplicitPseudoClassScope() const;
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
         void replaceNestingParentByPseudoClassScope();
 
@@ -149,6 +152,7 @@ struct PossiblyQuotedIdentifier {
             Not,
             Root,
             Scope,
+            State,
             HasScope, // for internal use, matches the :has() scope
             WindowInactive,
             CornerPresent,
@@ -208,6 +212,7 @@ struct PossiblyQuotedIdentifier {
 #endif
             PseudoElementFirstLetter,
             PseudoElementFirstLine,
+            PseudoElementGrammarError,
             PseudoElementHighlight,
             PseudoElementMarker,
             PseudoElementPart,
@@ -220,6 +225,12 @@ struct PossiblyQuotedIdentifier {
             PseudoElementScrollbarTrackPiece,
             PseudoElementSelection,
             PseudoElementSlotted,
+            PseudoElementSpellingError,
+            PseudoElementViewTransition,
+            PseudoElementViewTransitionGroup,
+            PseudoElementViewTransitionImagePair,
+            PseudoElementViewTransitionOld,
+            PseudoElementViewTransitionNew,
             PseudoElementWebKitCustom,
 
             // WebKitCustom that appeared in an old prefixed form
@@ -252,7 +263,7 @@ struct PossiblyQuotedIdentifier {
             RightBottomMarginBox,
         };
 
-        static PseudoElementType parsePseudoElementType(StringView);
+        static PseudoElementType parsePseudoElementType(StringView, const CSSSelectorParserContext&);
         static PseudoId pseudoId(PseudoElementType);
 
         // Selectors are kept in an array by CSSSelectorList.
@@ -325,9 +336,13 @@ struct PossiblyQuotedIdentifier {
         bool isForPage() const { return m_isForPage; }
         void setForPage() { m_isForPage = true; }
 
+        void setImplicit() { m_isImplicit = true; }
+        // Implicit means that this selector is not author/UA written.
+        bool isImplicit() const { return m_isImplicit; }
+
     private:
-        unsigned m_relation : 4 { static_cast<unsigned>(RelationType::DescendantSpace) }; // enum RelationType.
-        mutable unsigned m_match : 5 { static_cast<unsigned>(Match::Unknown) }; // enum Match.
+        unsigned m_relation : 4 { enumToUnderlyingType(RelationType::DescendantSpace) }; // enum RelationType.
+        mutable unsigned m_match : 5 { enumToUnderlyingType(Match::Unknown) }; // enum Match.
         mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
         // 17 bits
         unsigned m_isLastInSelectorList : 1 { false };
@@ -337,7 +352,8 @@ struct PossiblyQuotedIdentifier {
         unsigned m_isForPage : 1 { false };
         unsigned m_tagIsForNamespaceRule : 1 { false };
         unsigned m_caseInsensitiveAttributeValueMatching : 1 { false };
-        // 24 bits
+        unsigned m_isImplicit : 1 { false };
+        // 25 bits
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         unsigned m_destructorHasBeenCalled : 1 { false };
 #endif
@@ -501,7 +517,7 @@ inline CSSSelector::~CSSSelector()
     } else if (match() == Match::Tag) {
         m_data.tagQName->deref();
         m_data.tagQName = nullptr;
-        m_match = static_cast<unsigned>(Match::Unknown);
+        m_match = enumToUnderlyingType(Match::Unknown);
     } else if (m_data.value) {
         m_data.value->deref();
         m_data.value = nullptr;
@@ -580,12 +596,12 @@ inline void CSSSelector::setPagePseudoType(PagePseudoClassType pagePseudoType)
 
 inline void CSSSelector::setRelation(RelationType relation)
 {
-    m_relation = static_cast<unsigned>(relation);
+    m_relation = enumToUnderlyingType(relation);
 }
 
 inline void CSSSelector::setMatch(Match match)
 {
-    m_match = static_cast<unsigned>(match);
+    m_match = enumToUnderlyingType(match);
 }
 
 } // namespace WebCore

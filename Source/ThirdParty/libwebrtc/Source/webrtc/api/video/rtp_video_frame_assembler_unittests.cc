@@ -89,6 +89,9 @@ class PacketBuilder {
       case PayloadFormat::kAv1: {
         return kVideoCodecAV1;
       }
+      case PayloadFormat::kH265: {
+        return kVideoCodecH265;
+      }
       case PayloadFormat::kGeneric: {
         return kVideoCodecGeneric;
       }

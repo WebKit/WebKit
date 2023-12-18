@@ -57,7 +57,7 @@ void WebContextMenuClient::searchWithGoogle(const WebCore::LocalFrame* frame)
     searchString = makeStringByReplacingAll(encodeWithURLEscapeSequences(searchString), "%20"_s, "+"_s);
     auto searchURL = URL { "https://www.google.com/search?q=" + searchString + "&ie=UTF-8&oe=UTF-8" };
 
-    WebCore::UserGestureIndicator indicator { WebCore::ProcessingUserGesture };
+    WebCore::UserGestureIndicator indicator { WebCore::IsProcessingUserGesture::Yes };
     auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return;

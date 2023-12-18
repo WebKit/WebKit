@@ -148,14 +148,15 @@ class SyncMtl : public SyncImpl
 class EGLSyncMtl final : public EGLSyncImpl
 {
   public:
-    EGLSyncMtl(const egl::AttributeMap &attribs);
+    EGLSyncMtl();
     ~EGLSyncMtl() override;
 
     void onDestroy(const egl::Display *display) override;
 
     egl::Error initialize(const egl::Display *display,
                           const gl::Context *context,
-                          EGLenum type) override;
+                          EGLenum type,
+                          const egl::AttributeMap &attribs) override;
     egl::Error clientWait(const egl::Display *display,
                           const gl::Context *context,
                           EGLint flags,
@@ -171,10 +172,6 @@ class EGLSyncMtl final : public EGLSyncImpl
 
   private:
     mtl::Sync mSync;
-    id<MTLSharedEvent> mSharedEvent;
-    Optional<uint64_t> mSignalValue;
-    EGLenum mType;
-    EGLenum mCondition;
 };
 
 }  // namespace rx

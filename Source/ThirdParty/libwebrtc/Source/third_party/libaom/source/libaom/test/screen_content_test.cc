@@ -29,9 +29,9 @@ class ScreenContentToolsTestLarge
     is_screen_content_violated_ = true;
     tune_content_ = AOM_CONTENT_DEFAULT;
   }
-  virtual ~ScreenContentToolsTestLarge() {}
+  ~ScreenContentToolsTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -42,10 +42,10 @@ class ScreenContentToolsTestLarge
     cfg_.g_profile = 0;
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
@@ -53,8 +53,8 @@ class ScreenContentToolsTestLarge
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       aom_codec_ctx_t *ctx_dec = decoder->GetDecoder();

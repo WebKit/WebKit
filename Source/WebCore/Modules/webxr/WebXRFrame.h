@@ -71,7 +71,7 @@ public:
     bool isActive() const { return m_active; }
     bool isAnimationFrame() const { return m_isAnimationFrame; }
 
-    static TransformationMatrix matrixFromPose(const PlatformXR::Device::FrameData::Pose&);
+    static TransformationMatrix matrixFromPose(const PlatformXR::FrameData::Pose&);
 
 private:
     WebXRFrame(WebXRSession&, IsAnimationFrame);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,8 @@
 #include "ObjectPropertyCondition.h"
 #include "Watchpoint.h"
 #include <wtf/Bag.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -42,7 +42,7 @@ class WatchpointsOnStructureStubInfo;
 
 class StructureTransitionStructureStubClearingWatchpoint final : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureTransitionStructureStubClearingWatchpoint);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StructureTransitionStructureStubClearingWatchpoint);
 public:
     StructureTransitionStructureStubClearingWatchpoint(const ObjectPropertyCondition& key, WatchpointsOnStructureStubInfo& holder)
         : Watchpoint(Watchpoint::Type::StructureTransitionStructureStubClearing)
@@ -54,14 +54,14 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
+    WatchpointsOnStructureStubInfo* m_holder;
     ObjectPropertyCondition m_key;
 };
 
 class AdaptiveValueStructureStubClearingWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
     using Base = AdaptiveInferredPropertyValueWatchpointBase;
     WTF_MAKE_NONCOPYABLE(AdaptiveValueStructureStubClearingWatchpoint);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AdaptiveValueStructureStubClearingWatchpoint);
 
     void handleFire(VM&, const FireDetail&) final;
 
@@ -75,12 +75,12 @@ public:
 
 
 private:
-    PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
+    WatchpointsOnStructureStubInfo* m_holder;
 };
 
 class WatchpointsOnStructureStubInfo final {
     WTF_MAKE_NONCOPYABLE(WatchpointsOnStructureStubInfo);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(WatchpointsOnStructureStubInfo);
 public:
     WatchpointsOnStructureStubInfo(CodeBlock* codeBlock, StructureStubInfo* stubInfo)
         : m_codeBlock(codeBlock)

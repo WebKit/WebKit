@@ -96,7 +96,7 @@ elsif ARMv7
 else
 end
 
-const WasmCodeBlock = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
+const UnboxedWasmCalleeStackSlot = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegisters * SlotSize - MachineRegisterSize
 
 ##########
 # Macros #
@@ -104,8 +104,11 @@ const WasmCodeBlock = CallerFrame - constexpr Wasm::numberOfIPIntCalleeSaveRegis
 
 # Callee Save
 
+# FIXME: This happens to work because UnboxedWasmCalleeStackSlot sits in the extra space we should be more precise in case we want to use an even number of callee saves in the future.
+const IPIntCalleeSaveSpaceStackAligned = 2*CalleeSaveSpaceStackAligned
+
 macro saveIPIntRegisters()
-    subp 2*CalleeSaveSpaceStackAligned, sp
+    subp IPIntCalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
         storepairq PM, PB, -16[cfr]
         storeq wasmInstance, -24[cfr]
@@ -127,7 +130,7 @@ macro restoreIPIntRegisters()
         loadp -0x18[cfr], wasmInstance
     else
     end
-    addp 2*CalleeSaveSpaceStackAligned, sp
+    addp IPIntCalleeSaveSpaceStackAligned, sp
 end
 
 # Get IPIntCallee object at startup
@@ -140,7 +143,7 @@ end
     leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
     loadp [ws1], ws1
     addp ws1, ws0
-    storep ws0, WasmCodeBlock[cfr]
+    storep ws0, UnboxedWasmCalleeStackSlot[cfr]
 end
 
 # Tail-call dispatch
@@ -395,7 +398,9 @@ macro ipintReloadMemory()
         loadp Wasm::Instance::m_cachedMemory[wasmInstance], memoryBase
         loadp Wasm::Instance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
     end
-    cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, t2, t3)
+    if not ARMv7
+        cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, t2, t3)
+    end
 end
 
 # Operation Calls
@@ -413,6 +418,8 @@ macro operationCall(fn)
 end
 
 macro operationCallMayThrow(fn)
+    storei PC, CallSiteIndex[cfr]
+
     move wasmInstance, a0
     push PC, MC
     push PL, ws0
@@ -444,7 +451,7 @@ end
 
 macro ipintPrologueOSR(increment)
 if JIT
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
     subq (NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPRs) * 8, sp
@@ -518,14 +525,14 @@ end
     end
 
 .recover:
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
 .continue:
 end
 end
 
 macro ipintLoopOSR(increment)
 if JIT
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
     move cfr, a1
@@ -548,14 +555,14 @@ if JIT
     end
 
 .recover:
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
 .continue:
 end
 end
 
 macro ipintEpilogueOSR(increment)
 if JIT
-    loadp WasmCodeBlock[cfr], ws0
+    loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::LLIntTierUpCounter::m_counter[ws0], .continue
 
     move cfr, a1
@@ -625,8 +632,14 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
 
-    # Allocate space for locals
-    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+    # Allocate space for locals and rethrow values
+    if ARM64 or ARM64E
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
+    else
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
+    end
+    addq csr3, csr0
     mulq LocalSize, csr0
     move sp, csr3
     subq csr0, sp
@@ -702,8 +715,14 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     storep wasmInstance, CodeBlock[cfr]
     getIPIntCallee()
 
-    # Allocate space for locals
-    loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+    # Allocate space for locals and rethrow values
+    if ARM64 or ARM64E
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0, csr3
+    else
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], csr0
+        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], csr3
+    end
+    addq csr3, csr0
     mulq LocalSize, csr0
     move sp, csr3
     subq csr0, sp
@@ -755,6 +774,75 @@ const argumINTSrc = csr2
     nextIPIntInstruction()
 else
     ret
+end
+
+macro ipintCatchCommon()
+    getVMFromCallFrame(t3, t0)
+    restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
+
+    loadp VM::callFrameForCatch[t3], cfr
+    storep 0, VM::callFrameForCatch[t3]
+
+    loadp VM::targetInterpreterPCForThrow[t3], PC
+    loadp VM::targetInterpreterMetadataPCForThrow[t3], MC
+
+    getIPIntCallee()
+
+    loadp CodeBlock[cfr], wasmInstance
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_unreachable, IB
+    end
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
+    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
+
+    # Recompute PL
+    if ARM64 or ARM64E
+        loadpairi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t0, t1
+    else
+        loadi Wasm::IPIntCallee::m_localSizeToAlloc[ws0], t0
+        loadi Wasm::IPIntCallee::m_numRethrowSlotsToAlloc[ws0], t1
+    end
+    addq t1, t0
+    # FIXME: Can this be an leaq?
+    mulq LocalSize, t0
+    addq IPIntCalleeSaveSpaceStackAligned, t0
+    subq cfr, t0, PL
+
+    loadi [PM, MC], t0
+    # 1 << 4 == StackValueSize
+    lshiftq 4, t0
+    addq IPIntCalleeSaveSpaceStackAligned, t0
+    subp cfr, t0, sp
+end
+
+global _ipint_catch_entry
+_ipint_catch_entry:
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    move cfr, a1
+    move sp, a2
+    move PL, a3
+    operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
+
+    ipintReloadMemory()
+    advanceMC(4)
+    nextIPIntInstruction()
+end
+
+global _ipint_catch_all_entry
+_ipint_catch_all_entry:
+if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
+    ipintCatchCommon()
+
+    move cfr, a1
+    move 0, a2
+    move PL, a3
+    operationCall(macro() cCall4(_ipint_extern_retrieve_and_clear_exception) end)
+
+    ipintReloadMemory()
+    advanceMC(4)
+    nextIPIntInstruction()
 end
 
 if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
@@ -810,10 +898,45 @@ instructionLabel(_else)
     loadi 4[PM, MC], MC
     nextIPIntInstruction()
 
-reservedOpcode(0x06)
-reservedOpcode(0x07)
-reservedOpcode(0x08)
-reservedOpcode(0x09)
+instructionLabel(_try)
+    loadb [PM, MC], t0
+    advancePCByReg(t0)
+    advanceMC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_catch)
+    # Counterintuitively, like else, we only run this instruction
+    # if no exception was thrown during the preceeding try or catch block.
+    loadi [PM, MC], PC
+    loadi 4[PM, MC], MC
+    nextIPIntInstruction()
+
+instructionLabel(_throw)
+    storei PC, CallSiteIndex[cfr]
+
+    loadp Wasm::Instance::m_vm[wasmInstance], t0
+    loadp VM::topEntryFrame[t0], t0
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t0)
+
+    move cfr, a1
+    move sp, a2
+    loadi [PM, MC], a3
+    operationCall(macro() cCall4(_ipint_extern_throw_exception) end)
+    jumpToException()
+
+instructionLabel(_rethrow)
+    storei PC, CallSiteIndex[cfr]
+
+    loadp Wasm::Instance::m_vm[wasmInstance], t0
+    loadp VM::topEntryFrame[t0], t0
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(t0)
+
+    move cfr, a1
+    move PL, a2
+    loadi [PM, MC], a3
+    operationCall(macro() cCall4(_ipint_extern_rethrow_exception) end)
+    jumpToException()
+
 reservedOpcode(0x0a)
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
@@ -933,10 +1056,14 @@ instructionLabel(_return)
     jmp .ipint_end_ret
 
 instructionLabel(_call)
+    storei PC, CallSiteIndex[cfr]
+
     # call
     jmp _ipint_call_impl
 
 instructionLabel(_call_indirect)
+    storei PC, CallSiteIndex[cfr]
+
     # Get ref
     # Load pre-computed values from metadata
     popInt32(t0, t1)
@@ -963,8 +1090,20 @@ reservedOpcode(0x14)
 reservedOpcode(0x15)
 reservedOpcode(0x16)
 reservedOpcode(0x17)
-reservedOpcode(0x18)
-reservedOpcode(0x19)
+
+instructionLabel(_delegate)
+    # Counterintuitively, like else, we only run this instruction
+    # if no exception was thrown during the preceeding try or catch block.
+    loadi [PM, MC], PC
+    loadi 4[PM, MC], MC
+    nextIPIntInstruction()
+
+instructionLabel(_catch_all)
+    # Counterintuitively, like else, we only run this instruction
+    # if no exception was thrown during the preceeding try or catch block.
+    loadi [PM, MC], PC
+    loadi 4[PM, MC], MC
+    nextIPIntInstruction()
 
 instructionLabel(_drop)
     addq StackValueSize, sp
@@ -4138,7 +4277,7 @@ instructionLabel(_memory_atomic_notify)
 
     move wasmInstance, a0
     operationCall(macro() cCall4(_ipint_extern_memory_atomic_notify) end)
-    bib r0, 0, .atomic_notify_throw
+    bilt r0, 0, .atomic_notify_throw
 
     pushInt32(r0)
     loadb [PM, MC], t0
@@ -4163,7 +4302,7 @@ instructionLabel(_memory_atomic_wait32)
 
     move wasmInstance, a0
     operationCall(macro() cCall4(_ipint_extern_memory_atomic_wait32) end)
-    bib r0, 0, .atomic_wait32_throw
+    bilt r0, 0, .atomic_wait32_throw
 
     pushInt32(r0)
     loadb [PM, MC], t0
@@ -4188,7 +4327,7 @@ instructionLabel(_memory_atomic_wait64)
 
     move wasmInstance, a0
     operationCall(macro() cCall4(_ipint_extern_memory_atomic_wait64) end)
-    bib r0, 0, .atomic_wait64_throw
+    bilt r0, 0, .atomic_wait64_throw
 
     pushInt32(r0)
     loadb [PM, MC], t0
@@ -5391,13 +5530,9 @@ instructionLabel(_i64_atomic_rmw_cmpxchg)
 
 instructionLabel(_i32_atomic_rmw8_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck1, macro(mem, value, expected, scratch2)
+        andq 0xff, expected
         if ARM64E or X86_64
-            bqa expected , 0xff, .fail
             atomicweakcasb expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadb [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeByte(mem, value, expected, scratch2)
         else
@@ -5408,13 +5543,9 @@ instructionLabel(_i32_atomic_rmw8_cmpxchg_u)
 
 instructionLabel(_i32_atomic_rmw16_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck2, macro(mem, value, expected, scratch2)
+        andq 0xffff, expected
         if ARM64E or X86_64
-            bqa expected , 0xffff, .fail
             atomicweakcash expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadh [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeHalf(mem, value, expected, scratch2)
         else
@@ -5425,13 +5556,9 @@ instructionLabel(_i32_atomic_rmw16_cmpxchg_u)
 
 instructionLabel(_i64_atomic_rmw8_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck1, macro(mem, value, expected, scratch2)
+        andq 0xff, expected
         if ARM64E or X86_64
-            bqa expected , 0xff, .fail
             atomicweakcasb expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadb [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeByte(mem, value, expected, scratch2)
         else
@@ -5442,13 +5569,9 @@ instructionLabel(_i64_atomic_rmw8_cmpxchg_u)
 
 instructionLabel(_i64_atomic_rmw16_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck2, macro(mem, value, expected, scratch2)
+        andq 0xffff, expected
         if ARM64E or X86_64
-            bqa expected , 0xffff, .fail
             atomicweakcash expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadh [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeHalf(mem, value, expected, scratch2)
         else
@@ -5459,13 +5582,9 @@ instructionLabel(_i64_atomic_rmw16_cmpxchg_u)
 
 instructionLabel(_i64_atomic_rmw32_cmpxchg_u)
     atomicCmpxchgOp(ipintCheckMemoryBoundWithAlignmentCheck4, macro(mem, value, expected, scratch2)
+        andq 0xffffffff, expected
         if ARM64E or X86_64
-            bqa expected , 0xffffffff, .fail
             atomicweakcasi expected, value, [mem]
-            jmp .done
-        .fail:
-            atomicloadi [mem], expected
-        .done:
         elsif ARM64
             weakCASExchangeInt(mem, value, expected, scratch2)
         else
@@ -5477,24 +5596,6 @@ instructionLabel(_i64_atomic_rmw32_cmpxchg_u)
     ##################################
     ## "Out of line" logic for call ##
     ##################################
-
-_ipint_call_impl:
-    # 0 - 3: function index
-    # 4 - 7: PC post call
-    # 8 - 9: length of mint bytecode
-    # 10 - : mint bytecode
-
-    # function index
-    loadi 1[PM, MC], t0
-
-    loadb [PM, MC], t1
-    advancePCByReg(t1)
-    advanceMC(5)
-
-    # Get function data
-    move t0, a1
-    move wasmInstance, a0
-    operationCall(macro() cCall2(_ipint_extern_call) end)
 
 # FIXME: switch offlineasm unalignedglobal to take alignment and optionally pad with breakpoint instructions (rdar://113594783)
 macro mintAlign()
@@ -5548,6 +5649,24 @@ elsif X86_64
     emit "jmp *(%r13)"
 end
 end
+
+_ipint_call_impl:
+    # 0 - 3: function index
+    # 4 - 7: PC post call
+    # 8 - 9: length of mint bytecode
+    # 10 - : mint bytecode
+
+    # function index
+    loadi 1[PM, MC], t0
+
+    loadb [PM, MC], t1
+    advancePCByReg(t1)
+    advanceMC(5)
+
+    # Get function data
+    move t0, a1
+    move wasmInstance, a0
+    operationCall(macro() cCall2(_ipint_extern_call) end)
 
 .ipint_call_common:
     # wasmInstance = csr0
@@ -5982,10 +6101,10 @@ unimplementedInstruction(_block)
 unimplementedInstruction(_loop)
 unimplementedInstruction(_if)
 unimplementedInstruction(_else)
-reservedOpcode(0x06)
-reservedOpcode(0x07)
-reservedOpcode(0x08)
-reservedOpcode(0x09)
+unimplementedInstruction(_try)
+unimplementedInstruction(_catch)
+unimplementedInstruction(_throw)
+unimplementedInstruction(_rethrow)
 reservedOpcode(0x0a)
 unimplementedInstruction(_end)
 unimplementedInstruction(_br)
@@ -6000,8 +6119,8 @@ reservedOpcode(0x14)
 reservedOpcode(0x15)
 reservedOpcode(0x16)
 reservedOpcode(0x17)
-reservedOpcode(0x18)
-reservedOpcode(0x19)
+unimplementedInstruction(_delegate)
+unimplementedInstruction(_catch_all)
 unimplementedInstruction(_drop)
 unimplementedInstruction(_select)
 unimplementedInstruction(_select_t)

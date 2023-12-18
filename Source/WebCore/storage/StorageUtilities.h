@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+class SecurityOriginData;
 struct ClientOrigin;
 
 namespace StorageUtilities {

@@ -1,4 +1,0 @@
-
-PASS e.style['text-spacing-trim'] = "auto" should set the property value
-PASS e.style['text-spacing-trim'] = "space-all" should set the property value
-

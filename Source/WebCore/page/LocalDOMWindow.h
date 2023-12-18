@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Base64Utilities.h"
-#include "ContextDestructionObserver.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMWindow.h"
 #include "ExceptionOr.h"
 #include "ImageBitmap.h"
@@ -72,6 +72,7 @@ class IdleRequestCallback;
 class LocalDOMWindowProperty;
 class Location;
 class MediaQueryList;
+class Navigation;
 class Navigator;
 class Node;
 class NodeList;
@@ -100,7 +101,6 @@ struct ImageBitmapOptions;
 struct MessageWithMessagePorts;
 struct WindowFeatures;
 
-enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
 enum class IncludeTargetOrigin : bool { No, Yes };
 
 class LocalDOMWindow final
@@ -143,8 +143,9 @@ public:
     void resumeFromBackForwardCache();
 
     WEBCORE_EXPORT LocalFrame* frame() const final;
+    RefPtr<LocalFrame> protectedFrame() const;
 
-    RefPtr<MediaQueryList> matchMedia(const String&);
+    RefPtr<WebCore::MediaQueryList> matchMedia(const String&);
 
     WEBCORE_EXPORT unsigned pendingUnloadEventListeners() const;
 
@@ -178,9 +179,6 @@ public:
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
-
-    WEBCORE_EXPORT Location& location();
-    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking = LockHistoryBasedOnGestureState);
 
     DOMSelection* getSelection();
 
@@ -241,6 +239,7 @@ public:
     // DOM Level 2 AbstractView Interface
 
     WEBCORE_EXPORT Document* document() const;
+    WEBCORE_EXPORT RefPtr<Document> protectedDocument() const;
 
     // CSSOM View Module
 
@@ -259,6 +258,7 @@ public:
     RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
 
     PageConsoleClient* console() const;
+    CheckedPtr<PageConsoleClient> checkedConsole() const;
 
     void printErrorMessage(const String&) const;
 
@@ -269,7 +269,7 @@ public:
     {
         return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
     }
-    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts&);
+    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, RefPtr<WindowProxy>&& source, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
 
     void languagesChanged();
 
@@ -278,11 +278,11 @@ public:
     void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt) const;
     void scrollTo(double x, double y, ScrollClamping = ScrollClamping::Clamped) const;
 
-    void moveBy(float x, float y) const;
-    void moveTo(float x, float y) const;
+    void moveBy(int x, int y) const;
+    void moveTo(int x, int y) const;
 
-    void resizeBy(float x, float y) const;
-    void resizeTo(float width, float height) const;
+    void resizeBy(int x, int y) const;
+    void resizeTo(int width, int height) const;
 
     VisualViewport& visualViewport();
 
@@ -347,6 +347,8 @@ public:
 #endif
 
     Performance& performance() const;
+    Ref<Performance> protectedPerformance() const;
+
     WEBCORE_EXPORT ReducedResolutionSeconds nowTimestamp() const;
     void freezeNowTimestamp();
     void unfreezeNowTimestamp();
@@ -382,6 +384,9 @@ public:
     WebKitNamespace* webkitNamespace();
 #endif
 
+    // Navigation API
+    Navigation& navigation();
+
     // FIXME: When this LocalDOMWindow is no longer the active LocalDOMWindow (i.e.,
     // when its document is no longer the document that is displayed in its
     // frame), we would like to zero out m_frame to avoid being confused
@@ -404,6 +409,8 @@ public:
     bool mayReuseForNavigation() const { return m_mayReuseForNavigation; }
 
     Page* page() const;
+    RefPtr<Page> protectedPage() const;
+
     WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(LocalDOMWindow&)>&);
 
     CookieStore& cookieStore();
@@ -416,6 +423,7 @@ private:
     bool isLocalDOMWindow() const final { return true; }
     bool isRemoteDOMWindow() const final { return false; }
     void eventListenersDidChange() final;
+    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, SetLocationLocking) final;
 
     bool allowedToChangeWindowGeometry() const;
 
@@ -435,7 +443,7 @@ private:
     void decrementGamepadEventListenerCount();
 #endif
 
-    void processPostMessage(JSC::JSGlobalObject&, RefPtr<Document>&&, const MessageWithMessagePorts&, RefPtr<WindowProxy>&&, RefPtr<SecurityOrigin>&&);
+    void processPostMessage(JSC::JSGlobalObject&, const String& origin, const MessageWithMessagePorts&, RefPtr<WindowProxy>&&, RefPtr<SecurityOrigin>&&);
     bool m_shouldPrintWhenFinishedLoading { false };
     bool m_suspendedForDocumentSuspension { false };
     bool m_isSuspendingObservers { false };
@@ -455,8 +463,8 @@ private:
     mutable RefPtr<DOMSelection> m_selection;
     mutable RefPtr<BarProp> m_statusbar;
     mutable RefPtr<BarProp> m_toolbar;
-    mutable RefPtr<Location> m_location;
     mutable RefPtr<VisualViewport> m_visualViewport;
+    mutable RefPtr<Navigation> m_navigation;
 
     String m_status;
 
@@ -502,8 +510,6 @@ inline String LocalDOMWindow::status() const
 {
     return m_status;
 }
-
-WebCoreOpaqueRoot root(LocalDOMWindow*);
 
 } // namespace WebCore
 

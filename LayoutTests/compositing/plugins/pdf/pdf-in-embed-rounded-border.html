@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        embed {
+            width: 300px;
+            height: 300px;
+            border: 2px solid gray;
+            box-sizing: border-box;
+            border-radius: 0 100%;
+        }
+        
+        .cover {
+            position: absolute;
+            background-color: gray;
+            left: 0px;
+            top: 0px;
+            width: 302px;
+            height: 302px;
+        }
+        
+        .cover1 {
+            width: 220px;
+        }
+        
+        .cover2 {
+            top: 82px;
+            height: 220px;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+            testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <embed src="../../../fast/images/resources/green_rectangle.pdf">
+    <div class="cover cover1"></div>
+    <div class="cover cover2"></div>
+</body>
+</html>

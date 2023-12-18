@@ -19,10 +19,9 @@ again.
 
 All submissions, including submissions by project members, require review. We
 use a [Gerrit](https://www.gerritcodereview.com) instance hosted at
-https://chromium-review.googlesource.com for this purpose.
-
-See https://www.webmproject.org/code/contribute/submitting-patches for an
-example of a typical gerrit workflow.
+https://chromium-review.googlesource.com for this purpose. See the
+[WebM Project page](https://www.webmproject.org/code/contribute/submitting-patches/)
+for additional details.
 
 ## Community Guidelines
 

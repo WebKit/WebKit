@@ -36,11 +36,10 @@ class GStreamerAudioEncoder : public AudioEncoder {
 public:
     static void create(const String& codecName, const Config&, CreateCallback&&, DescriptionCallback&&, OutputCallback&&, PostTaskCallback&&);
 
-    GStreamerAudioEncoder(const String& codecName, DescriptionCallback&&,  OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
+    GStreamerAudioEncoder(DescriptionCallback&&,  OutputCallback&&, PostTaskCallback&&, GRefPtr<GstElement>&&);
     ~GStreamerAudioEncoder();
 
 private:
-    String initialize(const AudioEncoder::Config&);
     void encode(RawFrame&&, EncodeCallback&&) final;
     void flush(Function<void()>&&) final;
     void reset() final;

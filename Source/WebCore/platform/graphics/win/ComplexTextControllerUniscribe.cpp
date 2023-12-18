@@ -261,8 +261,8 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                 offsetY = roundf(offsetY);
             }
 
-            baseAdvances.uncheckedAppend({ advance, 0 });
-            origins.uncheckedAppend({ offsetX, offsetY });
+            baseAdvances.append({ advance, 0 });
+            origins.append({ offsetX, offsetY });
         }
         bool ltr = !item.a.fRTL;
         auto stringIndices = stringIndicesFromClusters(clusters, StringView(str, length), item.iCharPos, glyphs.size(), ltr);

@@ -109,7 +109,7 @@ void RTCDataChannel::setBinaryType(BinaryType binaryType)
 ExceptionOr<void> RTCDataChannel::send(const String& data)
 {
     if (m_readyState != RTCDataChannelState::Open)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     // FIXME: We might want to use strict conversion like WebSocket.
     auto utf8 = data.utf8();
@@ -121,7 +121,7 @@ ExceptionOr<void> RTCDataChannel::send(const String& data)
 ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
 {
     if (m_readyState != RTCDataChannelState::Open)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_bufferedAmount += data.byteLength();
     m_messageQueue.enqueue(data, 0, data.byteLength());
@@ -131,7 +131,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBuffer& data)
 ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
 {
     if (m_readyState != RTCDataChannelState::Open)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_bufferedAmount += data.byteLength();
     m_messageQueue.enqueue(*data.unsharedBuffer(), data.byteOffset(), data.byteLength());
@@ -141,7 +141,7 @@ ExceptionOr<void> RTCDataChannel::send(ArrayBufferView& data)
 ExceptionOr<void> RTCDataChannel::send(Blob& blob)
 {
     if (m_readyState != RTCDataChannelState::Open)
-        return Exception { InvalidStateError };
+        return Exception { ExceptionCode::InvalidStateError };
 
     m_bufferedAmount += blob.size();
     m_messageQueue.enqueue(blob);

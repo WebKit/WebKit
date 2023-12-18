@@ -27,9 +27,11 @@
 
 #include "ASTForward.h"
 #include "WGSLEnums.h"
+#include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Markable.h>
 #include <wtf/PrintStream.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -45,6 +47,7 @@ namespace Types {
     f(I32, "i32") \
     f(U32, "u32") \
     f(AbstractFloat, "<AbstractFloat>") \
+    f(F16, "f16") \
     f(F32, "f32") \
     f(Void, "void") \
     f(Bool, "bool") \
@@ -126,6 +129,50 @@ struct Struct {
     HashMap<String, const Type*> fields { };
 };
 
+struct PrimitiveStruct {
+private:
+    enum Kind : uint8_t {
+        FrexpResult,
+        ModfResult,
+    };
+
+public:
+    struct FrexpResult {
+        static constexpr Kind kind = Kind::FrexpResult;
+        static constexpr unsigned fract = 0;
+        static constexpr unsigned exp = 1;
+
+        static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
+            { "exp", exp },
+            { "fract", fract },
+        };
+
+        static constexpr SortedArrayMap map { mapEntries };
+    };
+
+    struct ModfResult {
+        static constexpr Kind kind = Kind::ModfResult;
+        static constexpr unsigned fract = 0;
+        static constexpr unsigned whole = 1;
+
+        static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
+            { "fract", fract },
+            { "whole", whole },
+        };
+
+        static constexpr SortedArrayMap map { mapEntries };
+    };
+
+    static constexpr SortedArrayMap<std::pair<ComparableASCIILiteral, unsigned>[2]> keys[] {
+        FrexpResult::map,
+        ModfResult::map,
+    };
+
+    String name;
+    Kind kind;
+    FixedVector<const Type*> values;
+};
+
 struct Function {
     WTF::Vector<const Type*> parameters;
     const Type* result;
@@ -163,6 +210,7 @@ struct Type : public std::variant<
     Types::Matrix,
     Types::Array,
     Types::Struct,
+    Types::PrimitiveStruct,
     Types::Function,
     Types::Texture,
     Types::TextureStorage,
@@ -179,6 +227,7 @@ struct Type : public std::variant<
         Types::Matrix,
         Types::Array,
         Types::Struct,
+        Types::PrimitiveStruct,
         Types::Function,
         Types::Texture,
         Types::TextureStorage,

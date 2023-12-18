@@ -450,7 +450,7 @@ void main()
     {
         glClipControlEXT(origin, GL_NEGATIVE_ONE_TO_ONE_EXT);
 
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         glFrontFace(GL_CCW);
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
@@ -477,6 +477,44 @@ void main()
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     }
+}
+
+// Test that clip origin does not affect readPixels
+TEST_P(ClipControlTest, OriginReadPixels)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_clip_control"));
+
+    const char kFS[] = R"(precision mediump float;
+uniform float blue;
+varying vec4 v_position;
+void main()
+{
+    gl_FragColor = (v_position.y > 0.0) ? vec4(1.0, 0.0, blue, 1.0) : vec4(0.0, 1.0, blue, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), kFS);
+    const GLint blueUniformLocation = glGetUniformLocation(program, "blue");
+    glUseProgram(program);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glUniform1f(blueUniformLocation, 0.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
+    EXPECT_PIXEL_RECT_EQ(0, h / 2 + 2, w, h / 2 - 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h / 2 - 2, GLColor::green);
+
+    // Update clip origin and make a draw call that fails the depth test to
+    // ensure that the backend is synced while the framebuffer is unchanged.
+    glClipControlEXT(GL_UPPER_LEFT_EXT, GL_NEGATIVE_ONE_TO_ONE_EXT);
+    glUniform1f(blueUniformLocation, 1.0f);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 1.0);
+
+    // Check that the second draw call has failed the depth test and
+    // reading from the framebuffer returns the same values as before.
+    EXPECT_PIXEL_RECT_EQ(0, h / 2 + 2, w, h / 2 - 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(0, 0, w, h / 2 - 2, GLColor::green);
 }
 
 // Test that changing only the clip depth mode syncs the state correctly
@@ -619,5 +657,8 @@ void main()
     }
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ClipControlTest);
-ANGLE_INSTANTIATE_TEST_ES3(ClipControlTestES3);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(ClipControlTest,
+                                       ES2_OPENGLES().enable(Feature::EmulateClipOrigin),
+                                       ES3_OPENGLES().enable(Feature::EmulateClipOrigin));
+ANGLE_INSTANTIATE_TEST_ES3_AND(ClipControlTestES3,
+                               ES3_OPENGLES().enable(Feature::EmulateClipOrigin));

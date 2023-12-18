@@ -211,7 +211,7 @@ Description: Abseil ${_NAME} library\n\
 URL: https://abseil.io/\n\
 Version: ${PC_VERSION}\n\
 Requires:${PC_DEPS}\n\
-Libs: -L\${libdir} ${PC_LINKOPTS} $<$<NOT:$<BOOL:${ABSL_CC_LIB_IS_INTERFACE}>>:${LNK_LIB}>\n\
+Libs: -L\${libdir} $<$<NOT:$<BOOL:${ABSL_CC_LIB_IS_INTERFACE}>>:${LNK_LIB}> ${PC_LINKOPTS}\n\
 Cflags: -I\${includedir}${PC_CFLAGS}\n")
     INSTALL(FILES "${CMAKE_BINARY_DIR}/lib/pkgconfig/absl_${_NAME}.pc"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
@@ -412,6 +412,10 @@ function(absl_cc_test)
     absl_internal_dll_targets(
       DEPS ${ABSL_CC_TEST_DEPS}
       OUTPUT ABSL_CC_TEST_DEPS
+    )
+    absl_internal_dll_targets(
+      DEPS ${ABSL_CC_TEST_LINKOPTS}
+      OUTPUT ABSL_CC_TEST_LINKOPTS
     )
   else()
     target_compile_definitions(${_NAME}

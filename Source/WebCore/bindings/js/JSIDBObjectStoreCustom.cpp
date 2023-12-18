@@ -30,7 +30,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSIDBObjectStore.h"
-
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 using namespace JSC;

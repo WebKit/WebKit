@@ -25,9 +25,7 @@
 
 // https://www.w3.org/TR/push-api/#pushencryptionkeyname-enumeration
 
-[
-    Conditional=SERVICE_WORKER,
-] enum PushEncryptionKeyName {
+enum PushEncryptionKeyName {
     "p256dh",
     "auth"
 };

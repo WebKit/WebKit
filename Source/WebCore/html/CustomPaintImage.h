@@ -51,12 +51,12 @@ private:
 
     ImageDrawResult doCustomPaint(GraphicsContext&, const FloatSize&);
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
+    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
 
     WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;
     Vector<AtomString> m_inputProperties;
-    WeakPtr<const RenderElement> m_element;
+    SingleThreadWeakPtr<const RenderElement> m_element;
     Vector<String> m_arguments;
 };
 

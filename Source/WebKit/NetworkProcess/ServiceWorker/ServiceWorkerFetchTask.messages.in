@@ -20,8 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(SERVICE_WORKER)
-
 messages -> ServiceWorkerFetchTask NotRefCounted {
     DidNotHandle()
     DidFail(WebCore::ResourceError error)
@@ -32,5 +30,3 @@ messages -> ServiceWorkerFetchTask NotRefCounted {
     DidFinish(WebCore::NetworkLoadMetrics metrics)
     UsePreload()
 }
-
-#endif // ENABLE(SERVICE_WORKER)

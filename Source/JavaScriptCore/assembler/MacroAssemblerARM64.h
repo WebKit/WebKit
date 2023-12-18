@@ -32,6 +32,7 @@
 #include "JITOperationValidation.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -39,6 +40,7 @@ using Assembler = TARGET_ASSEMBLER;
 class Reg;
 
 class MacroAssemblerARM64 : public AbstractMacroAssembler<Assembler> {
+    WTF_MAKE_TZONE_ALLOCATED(MacroAssemblerARM64);
 public:
     static constexpr unsigned numGPRs = 32;
     static constexpr unsigned numFPRs = 32;
@@ -70,7 +72,7 @@ protected:
     static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS + 1) * INSTRUCTION_SIZE);
 
 public:
-    MacroAssemblerARM64()
+    ALWAYS_INLINE MacroAssemblerARM64()
         : m_dataMemoryTempRegister(this, dataTempRegister)
         , m_cachedMemoryTempRegister(this, memoryTempRegister)
         , m_makeJumpPatchable(false)
@@ -86,15 +88,14 @@ public:
     static constexpr Assembler::JumpType DefaultJump = Assembler::JumpNoConditionFixedSize;
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink() { return m_assembler.jumpsToLink(); }
-    static bool canCompact(JumpType jumpType) { return Assembler::canCompact(jumpType); }
-    static JumpLinkType computeJumpType(JumpType jumpType, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(jumpType, from, to); }
-    static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
-    static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
+    ALWAYS_INLINE static bool canCompact(JumpType jumpType) { return Assembler::canCompact(jumpType); }
+    ALWAYS_INLINE static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
+    ALWAYS_INLINE static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
     template <Assembler::CopyFunction copy>
     ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<copy>(record, from, fromInstruction, to); }
 
-    static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
+    ALWAYS_INLINE static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
         // This is the largest 32-bit access allowed, aligned to 64-bit boundary.
         return !(value & ~0x3ff8);
@@ -114,6 +115,7 @@ public:
     };
 
     enum ResultCondition {
+        Carry = Assembler::ConditionCS,
         Overflow = Assembler::ConditionVS,
         Signed = Assembler::ConditionMI,
         PositiveOrZero = Assembler::ConditionPL,
@@ -904,6 +906,8 @@ public:
 
     void lshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.lsl<64>(dest, src, imm.m_value & 0x3f);
     }
 
@@ -1229,6 +1233,8 @@ public:
 
     void rotateRight64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.ror<64>(dest, src, imm.m_value & 63);
     }
 
@@ -1269,6 +1275,8 @@ public:
     
     void rshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.asr<64>(dest, src, imm.m_value & 0x3f);
     }
     
@@ -1431,6 +1439,8 @@ public:
     
     void urshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
+        if (UNLIKELY(!imm.m_value))
+            return move(src, dest);
         m_assembler.lsr<64>(dest, src, imm.m_value & 0x3f);
     }
 
@@ -4234,15 +4244,21 @@ public:
     Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID scratch1, RegisterID dest)
     {
         ASSERT(cond != Signed);
+        ASSERT(src1 != scratch1);
+        ASSERT(src2 != scratch1);
 
-        // This is a signed multiple of two 64-bit values, producing a 64-bit result.
-        m_assembler.mul<64>(dest, src1, src2);
-
-        if (cond != Overflow)
+        // mul<64> does a signed multiple of two 64-bit values, producing a 64-bit result.
+        if (cond != Overflow) {
+            m_assembler.mul<64>(dest, src1, src2);
             return branchTest64(cond, dest);
+        }
 
         // Compute bits 127..64 of the result into scratch1.
         m_assembler.smulh(scratch1, src1, src2);
+        // dest may equal src1 or src2. So, we should always compute dest after we've
+        // computed the smulh result in scratch1 so as not to corrupt src1 and src2.
+        m_assembler.mul<64>(dest, src1, src2);
+
         // Splat bit 63 of the result to bits 63..0 of scratch1.
         m_assembler.cmp<64>(scratch1, dest, Assembler::ASR, 63);
         // Check that bits 31..63 of the original result were all equal.
@@ -4252,11 +4268,6 @@ public:
     Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         return branchMul64(cond, src1, src2, getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    Jump branchMul64(ResultCondition cond, RegisterID src, RegisterID dest)
-    {
-        return branchMul64(cond, dest, src, dest);
     }
 
     Jump branchNeg32(ResultCondition cond, RegisterID dest)
@@ -4390,11 +4401,12 @@ public:
     ALWAYS_INLINE Call call(RegisterID target, RegisterID callTag) { return UNUSED_PARAM(callTag), call(target, NoPtrTag); }
     ALWAYS_INLINE Call call(Address address, RegisterID callTag) { return UNUSED_PARAM(callTag), call(address, NoPtrTag); }
 
-    ALWAYS_INLINE void callOperation(const CodePtr<OperationPtrTag> operation)
+    template<PtrTag tag>
+    ALWAYS_INLINE void callOperation(const CodePtr<tag> operation)
     {
         auto tmp = getCachedDataTempRegisterIDAndInvalidate();
         move(TrustedImmPtr(operation.taggedPtr()), tmp);
-        call(tmp, OperationPtrTag);
+        call(tmp, tag);
     }
 
     ALWAYS_INLINE Jump jump()
@@ -5936,7 +5948,13 @@ public:
     {
         Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
     }
-    
+
+    template<PtrTag startTag>
+    static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
+    {
+        Assembler::replaceWithNops(instructionStart.dataLocation(), memoryToFillWithNopsInBytes);
+    }
+
     static ptrdiff_t maxJumpReplacementSize()
     {
         return Assembler::maxJumpReplacementSize();

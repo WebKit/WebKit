@@ -66,12 +66,12 @@
 
 - (NSArray *)backList
 {
-    return WebKit::wrapper(_list->backList());
+    return WebKit::wrapper(_list->backList()).autorelease();
 }
 
 - (NSArray *)forwardList
 {
-    return WebKit::wrapper(_list->forwardList());
+    return WebKit::wrapper(_list->forwardList()).autorelease();
 }
 
 #pragma mark WKObject protocol implementation

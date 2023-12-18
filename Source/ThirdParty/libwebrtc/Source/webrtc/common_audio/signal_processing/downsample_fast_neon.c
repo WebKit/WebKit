@@ -8,9 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <arm_neon.h>
+
 #include "common_audio/signal_processing/include/signal_processing_library.h"
 
-#include <arm_neon.h>
+#include "rtc_base/checks.h"
 
 // NEON intrinsics version of WebRtcSpl_DownsampleFast()
 // for ARM 32-bit/64-bit platforms.
@@ -22,18 +24,23 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
                                  size_t coefficients_length,
                                  int factor,
                                  size_t delay) {
-  size_t i = 0;
-  size_t j = 0;
+  // Using signed indexes to be able to compute negative i-j that
+  // is used to index data_in.
+  int i = 0;
+  int j = 0;
   int32_t out_s32 = 0;
-  size_t endpos = delay + factor * (data_out_length - 1) + 1;
+  int endpos = delay + factor * (data_out_length - 1) + 1;
   size_t res = data_out_length & 0x7;
-  size_t endpos1 = endpos - factor * res;
+  int endpos1 = endpos - factor * res;
 
   // Return error if any of the running conditions doesn't meet.
   if (data_out_length == 0 || coefficients_length == 0
-                           || data_in_length < endpos) {
+                           || (int)data_in_length < endpos) {
     return -1;
   }
+
+  RTC_DCHECK_GE(endpos, 0);
+  RTC_DCHECK_GE(endpos1, 0);
 
   // First part, unroll the loop 8 times, with 3 subcases
   // (factor == 2, 4, others).
@@ -46,7 +53,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
 
 #if defined(WEBRTC_ARCH_ARM64)
         // Unroll the loop 2 times.
-        for (j = 0; j < coefficients_length - 1; j += 2) {
+        for (j = 0; j < (int)coefficients_length - 1; j += 2) {
           int32x2_t coeff32 = vld1_dup_s32((int32_t*)&coefficients[j]);
           int16x4_t coeff16x4 = vreinterpret_s16_s32(coeff32);
           int16x8x2_t in16x8x2 = vld2q_s16(&data_in[i - j - 1]);
@@ -68,7 +75,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
           out32x4_1 = vmlal_lane_s16(out32x4_1, in16x4_3, coeff16x4, 0);
         }
 
-        for (; j < coefficients_length; j++) {
+        for (; j < (int)coefficients_length; j++) {
           int16x4_t coeff16x4 = vld1_dup_s16(&coefficients[j]);
           int16x8x2_t in16x8x2 = vld2q_s16(&data_in[i - j]);
 
@@ -87,7 +94,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
 #else
         // On ARMv7, the loop unrolling 2 times results in performance
         // regression.
-        for (j = 0; j < coefficients_length; j++) {
+        for (j = 0; j < (int)coefficients_length; j++) {
           int16x4_t coeff16x4 = vld1_dup_s16(&coefficients[j]);
           int16x8x2_t in16x8x2 = vld2q_s16(&data_in[i - j]);
 
@@ -114,7 +121,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
         int32x4_t out32x4_1 = vdupq_n_s32(2048);
 
         // Unroll the loop 4 times.
-        for (j = 0; j < coefficients_length - 3; j += 4) {
+        for (j = 0; j < (int)coefficients_length - 3; j += 4) {
           int16x4_t coeff16x4 = vld1_s16(&coefficients[j]);
           int16x8x4_t in16x8x4 = vld4q_s16(&data_in[i - j - 3]);
 
@@ -143,7 +150,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
           out32x4_1 = vmlal_lane_s16(out32x4_1, in16x4_7, coeff16x4, 0);
         }
 
-        for (; j < coefficients_length; j++) {
+        for (; j < (int)coefficients_length; j++) {
           int16x4_t coeff16x4 = vld1_dup_s16(&coefficients[j]);
           int16x8x4_t in16x8x4 = vld4q_s16(&data_in[i - j]);
 
@@ -174,7 +181,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
         int32x4_t out32x4_0 = vdupq_n_s32(2048);
         int32x4_t out32x4_1 = vdupq_n_s32(2048);
 
-        for (j = 0; j < coefficients_length; j++) {
+        for (j = 0; j < (int)coefficients_length; j++) {
           int16x4_t coeff16x4 = vld1_dup_s16(&coefficients[j]);
           int16x4_t in16x4_0 = vld1_dup_s16(&data_in[i - j]);
           in16x4_0 = vld1_lane_s16(&data_in[i + factor - j], in16x4_0, 1);
@@ -204,7 +211,7 @@ int WebRtcSpl_DownsampleFastNeon(const int16_t* data_in,
   for (; i < endpos; i += factor) {
     out_s32 = 2048;  // Round value, 0.5 in Q12.
 
-    for (j = 0; j < coefficients_length; j++) {
+    for (j = 0; j < (int)coefficients_length; j++) {
       out_s32 = WebRtc_MulAccumW16(coefficients[j], data_in[i - j], out_s32);
     }
 

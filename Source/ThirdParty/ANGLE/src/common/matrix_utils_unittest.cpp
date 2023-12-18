@@ -46,7 +46,7 @@ struct FrustumArgs
     float f;
 };
 
-void CheckMat4ExactlyEq(const Matrix<float> &a, const Matrix<float> &b)
+void CheckMat4ExactlyEq(const Mat4 &a, const Mat4 &b)
 {
     for (unsigned int i = 0; i < 4; i++)
     {
@@ -204,7 +204,7 @@ TEST(MatrixUtilsTest, 3x3MatrixInverseTest)
 TEST(MatrixUtilsTest, 4x4MatrixInverseTest)
 {
     float inputElements[]    = {29.0f, 43.0f, 61.0f, 79.0f, 31.0f, 47.0f, 67.0f, 83.0f,
-                             37.0f, 53.0f, 71.0f, 89.0f, 41.0f, 59.0f, 73.0f, 97.0f};
+                                37.0f, 53.0f, 71.0f, 89.0f, 41.0f, 59.0f, 73.0f, 97.0f};
     unsigned int numElements = 16;
     std::vector<float> input(inputElements, inputElements + numElements);
     Matrix<float> inputMatrix(input, 4);
@@ -2410,9 +2410,10 @@ TEST(MatrixUtilsTest, Mat4Mult)
 // Tests exact equality.
 TEST(MatrixUtilsTest, ExactEquality)
 {
-    Mat4 a, b;
+    Matrix<float> a(std::vector<float>(16), 4, 4);
+    Matrix<float> b(std::vector<float>(16), 4, 4);
     EXPECT_EQ(a, b);
-    Mat4 c;
+    Matrix<float> c(std::vector<float>(16), 4, 4);
     c(0, 0) += 0.000001f;
     EXPECT_NE(a, c);
 }
@@ -2420,7 +2421,8 @@ TEST(MatrixUtilsTest, ExactEquality)
 // Tests near equality.
 TEST(MatrixUtilsTest, NearEquality)
 {
-    Mat4 a, b;
+    Matrix<float> a(std::vector<float>(16), 4, 4);
+    Matrix<float> b(std::vector<float>(16), 4, 4);
 
     float *bData = b.data();
     for (int i = 0; i < 16; i++)

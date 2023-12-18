@@ -154,7 +154,7 @@
         if (!url.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", url];
 
-        paths.uncheckedAppend(String::fromUTF8(url.fileSystemRepresentation));
+        paths.append(String::fromUTF8(url.fileSystemRepresentation));
     }
 
     _processPoolConfiguration->setAdditionalReadAccessAllowedPaths(WTFMove(paths));

@@ -290,7 +290,7 @@ void ApplyReferenceFilter(
 class YUVTemporalFilterTest
     : public ::testing::TestWithParam<TemporalFilterWithBd> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     filter_func_ = GetParam().temporal_filter;
     bd_ = GetParam().bd;
     use_highbd_ = (bd_ != 8);
@@ -674,8 +674,8 @@ TEST_P(YUVTemporalFilterTest, DISABLED_Speed) {
          v_count);                                                            \
   }
 
-WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_c, 10);
-WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_c, 12);
+WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_c, 10)
+WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_c, 12)
 
 INSTANTIATE_TEST_SUITE_P(
     C, YUVTemporalFilterTest,
@@ -683,8 +683,8 @@ INSTANTIATE_TEST_SUITE_P(
         TemporalFilterWithBd(&wrap_vp9_highbd_apply_temporal_filter_c_10, 10),
         TemporalFilterWithBd(&wrap_vp9_highbd_apply_temporal_filter_c_12, 12)));
 #if HAVE_SSE4_1
-WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_sse4_1, 10);
-WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_sse4_1, 12);
+WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_sse4_1, 10)
+WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_sse4_1, 12)
 
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, YUVTemporalFilterTest,
@@ -694,6 +694,18 @@ INSTANTIATE_TEST_SUITE_P(
         TemporalFilterWithBd(&wrap_vp9_highbd_apply_temporal_filter_sse4_1_12,
                              12)));
 #endif  // HAVE_SSE4_1
+#if HAVE_NEON
+WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_neon, 10)
+WRAP_HIGHBD_FUNC(vp9_highbd_apply_temporal_filter_neon, 12)
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON, YUVTemporalFilterTest,
+    ::testing::Values(
+        TemporalFilterWithBd(&wrap_vp9_highbd_apply_temporal_filter_neon_10,
+                             10),
+        TemporalFilterWithBd(&wrap_vp9_highbd_apply_temporal_filter_neon_12,
+                             12)));
+#endif  // HAVE_NEON
 #else
 INSTANTIATE_TEST_SUITE_P(
     C, YUVTemporalFilterTest,
@@ -704,5 +716,11 @@ INSTANTIATE_TEST_SUITE_P(SSE4_1, YUVTemporalFilterTest,
                          ::testing::Values(TemporalFilterWithBd(
                              &vp9_apply_temporal_filter_sse4_1, 8)));
 #endif  // HAVE_SSE4_1
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, YUVTemporalFilterTest,
+                         ::testing::Values(TemporalFilterWithBd(
+                             &vp9_apply_temporal_filter_neon, 8)));
+#endif  // HAVE_NEON
 #endif  // CONFIG_VP9_HIGHBITDEPTH
+
 }  // namespace

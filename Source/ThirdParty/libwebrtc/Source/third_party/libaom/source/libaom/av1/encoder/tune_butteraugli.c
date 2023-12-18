@@ -220,8 +220,11 @@ void av1_setup_butteraugli_source(AV1_COMP *cpi) {
         cm->seq_params->use_highbitdepth, cpi->oxcf.border_in_pixels,
         cm->features.byte_alignment, 0, 0);
   }
-  av1_resize_and_extend_frame_nonnormative(cpi->source, resized_dst, bit_depth,
-                                           av1_num_planes(cm));
+  if (!av1_resize_and_extend_frame_nonnormative(
+          cpi->source, resized_dst, bit_depth, av1_num_planes(cm))) {
+    aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+                       "Error allocating buffers during resize");
+  }
 
   zero_img(cpi->source);
   copy_img(resized_dst, cpi->source, width / resize_factor,

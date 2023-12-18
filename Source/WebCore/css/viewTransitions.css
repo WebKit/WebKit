@@ -1,0 +1,76 @@
+/*
+ * Copyright (C) 2023 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* https://drafts.csswg.org/css-view-transitions/#ua-styles */
+
+:root {
+    view-transition-name: root;
+}
+
+:root::view-transition {
+    position: fixed;
+    inset: 0;
+}
+
+:root::view-transition-group(*) {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    animation-duration: 0.25s;
+    animation-fill-mode: both;
+}
+
+:root::view-transition-image-pair(*) {
+    position: absolute;
+    inset: 0;
+
+    animation-duration: inherit;
+    animation-fill-mode: inherit;
+}
+
+:root::view-transition-old(*),
+:root::view-transition-new(*) {
+    position: absolute;
+    inset-block-start: 0;
+    inline-size: 100%;
+    block-size: auto;
+
+    animation-duration: inherit;
+    animation-fill-mode: inherit;
+}
+
+/* Default cross-fade transition */
+@keyframes -ua-view-transition-fade-out {
+    to { opacity: 0; }
+}
+@keyframes -ua-view-transition-fade-in {
+    from { opacity: 0; }
+}
+
+/* Keyframes for blending when there are 2 images */
+@keyframes -ua-mix-blend-mode-plus-lighter {
+    from { mix-blend-mode: plus-lighter }
+    to { mix-blend-mode: plus-lighter }
+}

@@ -825,7 +825,7 @@ void WebSocketChannel::abortOutgoingFrameQueue()
     m_outgoingFrameQueueStatus = OutgoingFrameQueueClosed;
     if (m_blobLoaderStatus == BlobLoaderStarted) {
         m_blobLoader->cancel();
-        didFail(AbortError);
+        didFail(ExceptionCode::AbortError);
     }
 }
 

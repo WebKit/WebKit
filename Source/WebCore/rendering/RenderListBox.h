@@ -43,6 +43,16 @@ class HTMLSelectElement;
 class RenderListBox final : public RenderBlockFlow, public ScrollableArea {
     WTF_MAKE_ISO_ALLOCATED(RenderListBox);
 public:
+    // Resolve ambiguity for CanMakeCheckedPtr.
+    void incrementPtrCount() const { static_cast<const RenderBlockFlow*>(this)->incrementPtrCount(); }
+    void decrementPtrCount() const { static_cast<const RenderBlockFlow*>(this)->decrementPtrCount(); }
+#if CHECKED_POINTER_DEBUG
+    void registerCheckedPtr(const void* pointer) const { static_cast<const RenderBlockFlow*>(this)->registerCheckedPtr(pointer); }
+    void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const RenderBlockFlow*>(this)->copyCheckedPtr(source, destination); }
+    void moveCheckedPtr(const void* source, const void* destination) const { static_cast<const RenderBlockFlow*>(this)->moveCheckedPtr(source, destination); }
+    void unregisterCheckedPtr(const void* pointer) const { static_cast<const RenderBlockFlow*>(this)->unregisterCheckedPtr(pointer); }
+#endif // CHECKED_POINTER_DEBUG
+
     RenderListBox(HTMLSelectElement&, RenderStyle&&);
     virtual ~RenderListBox();
 
@@ -85,6 +95,8 @@ private:
 
     bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr) override;
 
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
+
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
@@ -102,12 +114,16 @@ private:
     void panScroll(const IntPoint&) override;
 
     int verticalScrollbarWidth() const override;
+    int horizontalScrollbarHeight() const override;
     int scrollLeft() const override;
     int scrollTop() const override;
     int scrollWidth() const override;
     int scrollHeight() const override;
     void setScrollLeft(int, const ScrollPositionChangeOptions&) override;
     void setScrollTop(int, const ScrollPositionChangeOptions&) override;
+
+    int logicalScrollTop() const;
+    void setLogicalScrollTop(int);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
@@ -129,7 +145,8 @@ private:
     IntRect convertFromContainingViewToScrollbar(const Scrollbar&, const IntRect&) const final;
     IntPoint convertFromScrollbarToContainingView(const Scrollbar&, const IntPoint&) const final;
     IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const final;
-    Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
+    Scrollbar* verticalScrollbar() const final;
+    Scrollbar* horizontalScrollbar() const final;
     IntSize contentsSize() const final;
     IntSize visibleSize() const final { return IntSize(width(), height()); }
     IntPoint lastKnownMousePositionInView() const final;
@@ -152,8 +169,8 @@ private:
     using PaintFunction = Function<void(PaintInfo&, const LayoutPoint&, int listItemIndex)>;
     void paintItem(PaintInfo&, const LayoutPoint&, const PaintFunction&);
 
-    void setHasVerticalScrollbar(bool hasScrollbar);
-    Ref<Scrollbar> createScrollbar();
+    void setHasScrollbar(ScrollbarOrientation);
+    Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
     void destroyScrollbar();
 
     int maximumNumberOfItemsThatFitInPaddingAfterArea() const;
@@ -174,10 +191,14 @@ private:
 
     float deviceScaleFactor() const final;
 
-    void paintScrollbar(PaintInfo&, const LayoutPoint&);
+    LayoutRect rectForScrollbar(const Scrollbar&) const;
+
+    void paintScrollbar(PaintInfo&, const LayoutPoint&, Scrollbar&);
     void paintItemForeground(PaintInfo&, const LayoutPoint&, int listIndex);
     void paintItemBackground(PaintInfo&, const LayoutPoint&, int listIndex);
     void scrollToRevealSelection();
+
+    ScrollbarOrientation scrollbarOrientationForWritingMode() const;
 
     bool shouldPlaceVerticalScrollbarOnLeft() const final { return RenderBlockFlow::shouldPlaceVerticalScrollbarOnLeft(); }
 
@@ -188,7 +209,7 @@ private:
     bool m_inAutoscroll { false };
     int m_optionsLogicalWidth { 0 };
 
-    RefPtr<Scrollbar> m_vBar;
+    RefPtr<Scrollbar> m_scrollbar;
 
     // Note: This is based on item index rather than a pixel offset.
     ScrollPosition m_scrollPosition;
@@ -201,6 +222,6 @@ private:
 } // namepace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderListBox)
-    static bool isType(const WebCore::RenderObject& widget) { return widget.isListBox(); }
+    static bool isType(const WebCore::RenderObject& renderer) { return renderer.isRenderListBox(); }
     static bool isType(const WebCore::ScrollableArea& area) { return area.isListBox(); }
 SPECIALIZE_TYPE_TRAITS_END()

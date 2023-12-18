@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTBlendFuncExtended);
 
 EXTBlendFuncExtended::EXTBlendFuncExtended(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTBlendFuncExtended)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_blend_func_extended"_s);
 }

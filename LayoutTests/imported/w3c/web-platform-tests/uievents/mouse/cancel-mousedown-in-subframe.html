@@ -57,8 +57,8 @@
           let mouseup_message   = await mouseup_promise;
 
           assert_equals(mousedown_message.param, mousedown_msg, "Child frame canceled mousedown?");
-          // assert_false(top_frame_mousedown, "Top frame received mousedown?");
-          // assert_false(top_frame_mouseup,   "Top frame received mouseup?");
+          assert_false(top_frame_mousedown, "Top frame received mousedown?");
+          assert_false(top_frame_mouseup,   "Top frame received mouseup?");
       }, "Child frame receives mousedown/mouseup when mousedown is " + mousedown_msg);
   });
 </script>

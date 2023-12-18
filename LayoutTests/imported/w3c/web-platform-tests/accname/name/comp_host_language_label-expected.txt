@@ -85,7 +85,7 @@ PASS html: label[for] input[type=week]
 PASS html: label input[type=checkbox] encapsulation
 PASS html: label input[type=color] encapsulation
 FAIL html: label input[type=date] encapsulation assert_equals: <input type="date" data-expectedlabel="date label" data-testname="html: label input[type=date] encapsulation" class="ex"> expected "date label" but got "month / day / year date label"
-FAIL html: label input[type=datetime-local] encapsulation assert_equals: <input type="datetime-local" data-expectedlabel="datetime-local label" data-testname="html: label input[type=datetime-local] encapsulation" class="ex"> expected "datetime-local label" but got "month / day / year , 12 : 30 PM datetime-local label"
+FAIL html: label input[type=datetime-local] encapsulation assert_equals: <input type="datetime-local" data-expectedlabel="datetime-local label" data-testname="html: label input[type=datetime-local] encapsulation" class="ex"> expected "datetime-local label" but got "month / day / year , 12 : 30   PM datetime-local label"
 PASS html: label input[type=email] encapsulation
 FAIL html: label input[type=month] encapsulation assert_equals: <input type="month" data-expectedlabel="month label" data-testname="html: label input[type=month] encapsulation" class="ex"> expected "month label" but got "month / year month label"
 PASS html: label input[type=number] encapsulation
@@ -95,7 +95,7 @@ FAIL html: label input[type=range] encapsulation assert_equals: <input type="ran
 FAIL html: label input[type=search] encapsulation assert_equals: <input type="search" data-expectedlabel="search label" data-testname="html: label input[type=search] encapsulation" class="ex"> expected "search label" but got "cancel search label"
 PASS html: label input[type=tel] encapsulation
 PASS html: label[for] input[type=text] encapsulation
-FAIL html: label input[type=time] encapsulation assert_equals: <input type="time" data-expectedlabel="time label" data-testname="html: label input[type=time] encapsulation" class="ex"> expected "time label" but got "12 : 30 PM time label"
+FAIL html: label input[type=time] encapsulation assert_equals: <input type="time" data-expectedlabel="time label" data-testname="html: label input[type=time] encapsulation" class="ex"> expected "time label" but got "12 : 30   PM time label"
 PASS html: label input[type=url] encapsulation
 PASS html: label input[type=week] encapsulation
 PASS html: select for/id

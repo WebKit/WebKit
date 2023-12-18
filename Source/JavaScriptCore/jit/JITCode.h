@@ -53,6 +53,14 @@ class Signature;
 class TrackedReferences;
 class VM;
 
+struct StructureStubInfoIndex {
+    explicit StructureStubInfoIndex(unsigned index)
+        : m_index(index)
+    { }
+
+    unsigned m_index { 0 };
+};
+
 enum class JITType : uint8_t {
     None = 0b000,
     HostCallThunk = 0b001,
@@ -64,7 +72,74 @@ enum class JITType : uint8_t {
 static constexpr unsigned widthOfJITType = 3;
 static_assert(WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<JITType>>(JITType::FTLJIT)) + 1 == widthOfJITType);
 
-class JITCode : public ThreadSafeRefCounted<JITCode> {
+#if USE(JSVALUE64)
+template<typename ByteSizedEnumType>
+class JITConstant {
+    static_assert(sizeof(ByteSizedEnumType) == 1);
+    static constexpr uint64_t typeShift = 48;
+    static constexpr uint64_t typeMask = 0xffull << typeShift;
+    uint64_t m_encodedPointer;
+
+    inline uint64_t encode(void* pointer, ByteSizedEnumType type)
+    {
+        uint64_t pointerBits = bitwise_cast<uint64_t>(pointer);
+        return pointerBits | static_cast<uint64_t>(type) << 48;
+    }
+public:
+    inline JITConstant()
+        : m_encodedPointer(0)
+    { }
+
+    inline JITConstant(void* pointer, ByteSizedEnumType type)
+        : m_encodedPointer(encode(pointer, type))
+    { }
+
+    template<typename OtherPointerType>
+    JITConstant(CompactPointerTuple<OtherPointerType, ByteSizedEnumType> other)
+        : m_encodedPointer(encode(other.pointer(), other.type()))
+    { }
+
+    inline uint32_t hash() const { return computeHash(m_encodedPointer); }
+    inline void* pointer() const { return bitwise_cast<void*>(m_encodedPointer & ~typeMask); }
+    void setPointer(void* pointer) { m_encodedPointer = encode(pointer, type()); }
+    inline ByteSizedEnumType type() const { return static_cast<ByteSizedEnumType>((m_encodedPointer & typeMask) >> typeShift); }
+    void setType(ByteSizedEnumType type) { m_encodedPointer = encode(pointer(), type); }
+
+    friend bool operator==(const JITConstant&, const JITConstant&) = default;
+};
+#else
+template<typename ByteSizedEnumType>
+class JITConstant {
+    void* m_pointer;
+    ByteSizedEnumType m_type;
+public:
+    inline JITConstant()
+        : m_pointer(nullptr)
+    { }
+
+    inline JITConstant(void* pointer, ByteSizedEnumType type)
+        : m_pointer(pointer)
+        , m_type(type)
+    { }
+
+    template<typename OtherPointerType>
+    JITConstant(CompactPointerTuple<OtherPointerType, ByteSizedEnumType> other)
+        : m_pointer(other.pointer())
+        , m_type(other.type())
+    { }
+
+    inline uint32_t hash() const { return computeHash(m_pointer) * 31 + computeHash((unsigned)m_type); }
+    inline void* pointer() const { return m_pointer; }
+    void setPointer(void* pointer) { m_pointer = pointer; }
+    inline ByteSizedEnumType type() const { return m_type; }
+    void setType(ByteSizedEnumType type) { m_type = type; }
+
+    friend bool operator==(const JITConstant&, const JITConstant&) = default;
+};
+#endif
+
+
+class JITCode : public ThreadSafeRefCounted<JSC::JITCode> {
 public:
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -226,7 +301,7 @@ public:
 
     const RegisterAtOffsetList* calleeSaveRegisters() const;
 
-    static ptrdiff_t offsetOfJITType() { return OBJECT_OFFSETOF(JITCode, m_jitType); }
+    static ptrdiff_t offsetOfJITType() { return OBJECT_OFFSETOF(JSC::JITCode, m_jitType); }
 
 private:
     const JITType m_jitType;
@@ -236,7 +311,7 @@ protected:
     CodePtr<JSEntryPtrTag> m_addressForCall;
 };
 
-class JITCodeWithCodeRef : public JITCode {
+class JITCodeWithCodeRef : public JSC::JITCode {
 protected:
     JITCodeWithCodeRef(JITType);
     JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType, JITCode::ShareAttribute);

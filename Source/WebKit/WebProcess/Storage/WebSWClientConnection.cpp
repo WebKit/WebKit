@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebSWClientConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
@@ -417,5 +415,3 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

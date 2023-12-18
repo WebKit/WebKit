@@ -53,9 +53,9 @@ const char *BlockLayoutTypeToString(BlockLayoutType type);
 // Interface Blocks, see section 4.3.9 of the ESSL 3.10 spec
 enum class BlockType
 {
-    BLOCK_UNIFORM,
-    BLOCK_BUFFER,
-    PIXEL_LOCAL_EXT,  // GL_EXT_shader_pixel_local_storage.
+    kBlockUniform,
+    kBlockBuffer,
+    kPixelLocalExt,  // GL_EXT_shader_pixel_local_storage.
 };
 
 const char *BlockTypeToString(BlockType type);

@@ -53,7 +53,9 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     {
         switch (contextType) {
         case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.OffscreenWebGL:
         case WI.Canvas.ContextType.WebGL2:
+        case WI.Canvas.ContextType.OffscreenWebGL2:
             return programType === ShaderProgram.ProgramType.Render;
 
         case WI.Canvas.ContextType.WebGPU:
@@ -93,7 +95,9 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
         let format = null;
         switch (this._canvas.contextType) {
         case WI.Canvas.ContextType.WebGL:
+        case WI.Canvas.ContextType.OffscreenWebGL:
         case WI.Canvas.ContextType.WebGL2:
+        case WI.Canvas.ContextType.OffscreenWebGL2:
             format = WI.UIString("Program %d");
             break;
         case WI.Canvas.ContextType.WebGPU:
@@ -121,7 +125,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     set disabled(disabled)
     {
         console.assert(this._programType === ShaderProgram.ProgramType.Render);
-        console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
+        console.assert(this._canvas.isWebGL || this._canvas.isWebGL2);
 
         if (this._canvas.contextType === WI.Canvas.ContextType.WebGPU)
             return;
@@ -164,7 +168,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     showHighlight()
     {
         console.assert(this._programType === ShaderProgram.ProgramType.Render);
-        console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
+        console.assert(this._canvas.isWebGL || this._canvas.isWebGL2);
 
         this._target.CanvasAgent.setShaderProgramHighlighted(this._identifier, true);
     }
@@ -172,7 +176,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
     hideHighlight()
     {
         console.assert(this._programType === ShaderProgram.ProgramType.Render);
-        console.assert(this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2);
+        console.assert(this._canvas.isWebGL || this._canvas.isWebGL2);
 
         this._target.CanvasAgent.setShaderProgramHighlighted(this._identifier, false);
     }

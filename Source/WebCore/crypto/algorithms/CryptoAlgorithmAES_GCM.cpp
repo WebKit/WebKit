@@ -79,22 +79,22 @@ void CryptoAlgorithmAES_GCM::encrypt(const CryptoAlgorithmParameters& parameters
 
 #if CPU(ADDRESS64)
     if (plainText.size() > PlainTextMaxLength) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
     if (aesParameters.ivVector().size() > UINT64_MAX) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
     if (aesParameters.additionalDataVector().size() > UINT64_MAX) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 #endif
 
     aesParameters.tagLength = aesParameters.tagLength ? aesParameters.tagLength : DefaultTagLength;
     if (!tagLengthIsValid(*(aesParameters.tagLength))) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -112,21 +112,21 @@ void CryptoAlgorithmAES_GCM::decrypt(const CryptoAlgorithmParameters& parameters
 
     aesParameters.tagLength = aesParameters.tagLength ? aesParameters.tagLength : DefaultTagLength;
     if (!tagLengthIsValid(*(aesParameters.tagLength))) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
     if (cipherText.size() < *(aesParameters.tagLength) / 8) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
 #if CPU(ADDRESS64)
     if (aesParameters.ivVector().size() > UINT64_MAX) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
     if (aesParameters.additionalDataVector().size() > UINT64_MAX) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 #endif
@@ -142,13 +142,13 @@ void CryptoAlgorithmAES_GCM::generateKey(const CryptoAlgorithmParameters& parame
     const auto& aesParameters = downcast<CryptoAlgorithmAesKeyParams>(parameters);
 
     if (usagesAreInvalidForCryptoAlgorithmAES_GCM(usages)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
     auto result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_GCM, aesParameters.length, extractable, usages);
     if (!result) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -160,7 +160,7 @@ void CryptoAlgorithmAES_GCM::importKey(CryptoKeyFormat format, KeyData&& data, c
     using namespace CryptoAlgorithmAES_GCMInternal;
 
     if (usagesAreInvalidForCryptoAlgorithmAES_GCM(usages)) {
-        exceptionCallback(SyntaxError);
+        exceptionCallback(ExceptionCode::SyntaxError);
         return;
     }
 
@@ -185,11 +185,11 @@ void CryptoAlgorithmAES_GCM::importKey(CryptoKeyFormat format, KeyData&& data, c
         break;
     }
     default:
-        exceptionCallback(NotSupportedError);
+        exceptionCallback(ExceptionCode::NotSupportedError);
         return;
     }
     if (!result) {
-        exceptionCallback(DataError);
+        exceptionCallback(ExceptionCode::DataError);
         return;
     }
 
@@ -202,7 +202,7 @@ void CryptoAlgorithmAES_GCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
     const auto& aesKey = downcast<CryptoKeyAES>(key.get());
 
     if (aesKey.key().isEmpty()) {
-        exceptionCallback(OperationError);
+        exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
@@ -230,7 +230,7 @@ void CryptoAlgorithmAES_GCM::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
         break;
     }
     default:
-        exceptionCallback(NotSupportedError);
+        exceptionCallback(ExceptionCode::NotSupportedError);
         return;
     }
 

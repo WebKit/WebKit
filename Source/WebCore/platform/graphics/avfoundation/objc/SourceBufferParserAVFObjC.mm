@@ -245,7 +245,7 @@ SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
     [m_delegate invalidate];
 }
 
-void SourceBufferParserAVFObjC::appendData(Segment&& segment, CompletionHandler<void()>&& completionHandler, AppendFlags flags)
+Expected<void, PlatformMediaError> SourceBufferParserAVFObjC::appendData(Segment&& segment, AppendFlags flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     auto sharedBuffer = segment.takeSharedBuffer();
@@ -255,27 +255,16 @@ void SourceBufferParserAVFObjC::appendData(Segment&& segment, CompletionHandler<
     else
         [m_parser appendStreamData:nsData.get()];
     m_parserStateWasReset = false;
-    completionHandler();
+
+    if (m_lastErrorCode)
+        return makeUnexpected(PlatformMediaError::ParsingError);
+    return { };
 }
 
 void SourceBufferParserAVFObjC::flushPendingMediaData()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     [m_parser providePendingMediaData];
-}
-
-void SourceBufferParserAVFObjC::setShouldProvideMediaDataForTrackID(bool should, uint64_t trackID)
-{
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "should = ", should, ", trackID = ", trackID);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_parser setShouldProvideMediaData:should forTrackID:trackID];
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
-bool SourceBufferParserAVFObjC::shouldProvideMediadataForTrackID(uint64_t trackID)
-{
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "trackID = ", trackID);
-    return [m_parser shouldProvideMediaDataForTrackID:trackID];
 }
 
 void SourceBufferParserAVFObjC::resetParserState()
@@ -304,7 +293,7 @@ void SourceBufferParserAVFObjC::setLogger(const Logger& newLogger, const void* n
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, asset);
-    m_callOnClientThreadCallback([this, strongThis = Ref { *this }, asset = retainPtr(asset)] {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, asset = retainPtr(asset)] {
         if (!m_didParseInitializationDataCallback)
             return;
 
@@ -344,17 +333,14 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error)
 {
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, error);
-    m_callOnClientThreadCallback([this, strongThis = Ref { *this }, error = retainPtr(error)] {
-        if (m_didEncounterErrorDuringParsingCallback)
-            m_didEncounterErrorDuringParsingCallback(error.get().code);
-    });
+    m_lastErrorCode.emplace([error code]);
 }
 
-void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
+void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(TrackID trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "trackID = ", trackID, ", mediaType = ", mediaType);
     UNUSED_PARAM(flags);
-    m_callOnClientThreadCallback([this, strongThis = Ref { *this }, sampleBuffer = retainPtr(sampleBuffer), trackID, mediaType = mediaType] {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, sampleBuffer = retainPtr(sampleBuffer), trackID, mediaType = mediaType] {
         if (!m_didProvideMediaDataCallback)
             return;
 
@@ -385,7 +371,7 @@ void SourceBufferParserAVFObjC::didProvideContentKeyRequestInitializationDataFor
 void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(NSData* nsInitData, uint64_t trackID)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "trackID = ", trackID);
-    m_callOnClientThreadCallback([this, strongThis = Ref { *this }, nsInitData = retainPtr(nsInitData), trackID] {
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, nsInitData = retainPtr(nsInitData), trackID] {
         m_didProvideContentKeyRequestIdentifierForTrackIDCallback(SharedBuffer::create(nsInitData.get()), trackID);
     });
 }

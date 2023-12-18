@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *
  *  This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include "ParserTokens.h"
 #include "SourceCode.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -46,7 +47,7 @@ bool isLexerKeyword(const Identifier&);
 template <typename T>
 class Lexer {
     WTF_MAKE_NONCOPYABLE(Lexer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Lexer);
 
 public:
     Lexer(VM&, JSParserBuiltinMode, JSParserScriptMode);
@@ -132,11 +133,12 @@ private:
     void append8(const T*, size_t);
     void record16(int);
     void record16(T);
-    void recordUnicodeCodePoint(UChar32);
+    void recordUnicodeCodePoint(char32_t);
     void append16(const LChar*, size_t);
     void append16(const UChar* characters, size_t length) { m_buffer16.append(characters, length); }
 
-    UChar32 currentCodePoint() const;
+    static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
+    char32_t currentCodePoint() const;
     ALWAYS_INLINE void shift();
     ALWAYS_INLINE bool atEnd() const;
     ALWAYS_INLINE T peek(int offset) const;

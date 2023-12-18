@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# Set this to be the location of a chromium checkout, and 
+# apply the patches in ./patches with "git am" first 
+# before running this script.
+CHROMIUM_SRC=~/chromium/src
+
+mkdir -p ./testdata
+cp $CHROMIUM_SRC/net/test/test_certificate_data.h ./testdata
+
+tar -C $CHROMIUM_SRC/net/third_party -cf -  nist-pkits | tar -C ./testdata -xf - 
+tar -C $CHROMIUM_SRC/net/data -cf -  cert_issuer_source_static_unittest \
+    ssl/certificates \
+    certificate_policies_unittest \
+    name_constraints_unittest \
+    ocsp_unittest \
+    crl_unittest \
+    parse_certificate_unittest \
+    path_builder_unittest \
+    verify_certificate_chain_unittest \
+    verify_name_match_unittest \
+    verify_signed_data_unittest | tar -C ./testdata -xf -
+
+go run ./import_tool.go -spec import_spec.json --source-base $CHROMIUM_SRC -dest-base .
+
+sed -i "s/#include \"/#include \"..\/pki\//g" *fuzzer.cc
+mv *fuzzer.cc ../fuzz
+
+
+

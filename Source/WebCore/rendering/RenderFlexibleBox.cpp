@@ -81,14 +81,16 @@ struct RenderFlexibleBox::LineState {
 };
 
 RenderFlexibleBox::RenderFlexibleBox(Type type, Element& element, RenderStyle&& style)
-    : RenderBlock(type, element, WTFMove(style), RenderFlexibleBoxFlag)
+    : RenderBlock(type, element, WTFMove(style), RenderElementType::RenderFlexibleBoxFlag)
 {
+    ASSERT(isRenderFlexibleBox());
     setChildrenInline(false); // All of our children must be block-level.
 }
 
 RenderFlexibleBox::RenderFlexibleBox(Type type, Document& document, RenderStyle&& style)
-    : RenderBlock(type, document, WTFMove(style), RenderFlexibleBoxFlag)
+    : RenderBlock(type, document, WTFMove(style), RenderElementType::RenderFlexibleBoxFlag)
 {
+    ASSERT(isRenderFlexibleBox());
     setChildrenInline(false); // All of our children must be block-level.
 }
 
@@ -233,9 +235,20 @@ private:
     std::optional<LayoutUnit> m_overridingHeight;
 };
 
+static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox& flexItem)
+{
+    if (flexItem.isOutOfFlowPositioned())
+        return;
+
+    // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
+    // an auto value. Add a method to determine this, so that we can avoid the relayout.
+    if (relayoutFlexItem || flexItem.hasRelativeLogicalHeight())
+        flexItem.setChildNeedsLayout(MarkOnlyThis);
+}
+
 void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& childObject, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
-    ASSERT(childObject.isBox());
+    ASSERT(childObject.isRenderBox());
     RenderBox& child = downcast<RenderBox>(childObject);
 
     // If the item cross size should use the definite container cross size then set the overriding size now so
@@ -358,15 +371,19 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
     if (!oldStyle || diff != StyleDifference::Layout)
         return;
 
-    if (oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch) {
+    auto oldStyleAlignItemsIsStrecth = oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch;
+    for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
+        if (flexItem.needsPreferredWidthsRecalculation())
+            flexItem.setPreferredLogicalWidthsDirty(true, MarkingBehavior::MarkOnlyThis);
+
         // Flex items that were previously stretching need to be relayed out so we
         // can compute new available cross axis space. This is only necessary for
         // stretching since other alignment values don't change the size of the
         // box.
-        for (auto& child : childrenOfType<RenderBox>(*this)) {
-            ItemPosition previousAlignment = child.style().resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
-            if (previousAlignment == ItemPosition::Stretch && previousAlignment != child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position())
-                child.setChildNeedsLayout(MarkOnlyThis);
+        if (oldStyleAlignItemsIsStrecth) {
+            ItemPosition previousAlignment = flexItem.style().resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
+            if (previousAlignment == ItemPosition::Stretch && previousAlignment != flexItem.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position())
+                flexItem.setChildNeedsLayout(MarkOnlyThis);
         }
     }
 }
@@ -690,7 +707,7 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
 // plus this extra check. See wkb.ug/231955.
 static bool isSVGRootWithIntrinsicAspectRatio(const RenderBox& child)
 {
-    if (!child.isSVGRootOrLegacySVGRoot())
+    if (!child.isRenderOrLegacyRenderSVGRoot())
         return false;
     // It's common for some replaced elements, such as SVGs, to have intrinsic aspect ratios but no intrinsic sizes.
     // That's why it isn't enough just to check for intrinsic sizes in those cases.
@@ -1084,7 +1101,7 @@ LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBo
 
     double ratio;
     LayoutUnit borderAndPadding;
-    if (child.isSVGRootOrLegacySVGRoot())
+    if (child.isRenderOrLegacyRenderSVGRoot())
         ratio = downcast<RenderReplaced>(child).computeIntrinsicAspectRatio();
     else {
         auto childIntrinsicSize = child.intrinsicSize();
@@ -1558,7 +1575,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
     if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child))) {
         auto minExtent = computeMainAxisExtentForChild(child, MinSize, min).value_or(0_lu);
         // We must never return a min size smaller than the min preferred size for tables.
-        if (child.isTable() && mainAxisIsChildInlineAxis(child))
+        if (child.isRenderTable() && mainAxisIsChildInlineAxis(child))
             minExtent = std::max(minExtent, child.minPreferredLogicalWidth());
         return { minExtent, maxExtent.value_or(LayoutUnit::max()) };
     }
@@ -2205,7 +2222,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Flex
             // So, redo it here.
             forceChildRelayout = true;
         }
-        updateBlockChildDirtyBitsBeforeLayout(forceChildRelayout, child);
+        updateFlexItemDirtyBitsBeforeLayout(forceChildRelayout, child);
         if (!child.needsLayout())
             child.markForPaginationRelayoutIfNeeded();
         if (child.needsLayout())

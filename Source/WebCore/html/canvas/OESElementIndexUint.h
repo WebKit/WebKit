@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESElementIndexUint final : public RefCounted<OESElementIndexUint>, public WebGLExtension<WebGLRenderingContextBase> {
+class OESElementIndexUint final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESElementIndexUint);
 public:
     explicit OESElementIndexUint(WebGLRenderingContextBase&);

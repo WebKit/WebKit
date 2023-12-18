@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,11 +34,23 @@
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction browserAction;
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPICookies cookies;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPICommands commands;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus contextMenus;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIDeclarativeNetRequest declarativeNetRequest;
+
     readonly attribute WebExtensionAPIExtension extension;
 
     readonly attribute WebExtensionAPILocalization i18n;
 
     readonly attribute WebExtensionAPIRuntime runtime;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus menus;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIAction pageAction;
 

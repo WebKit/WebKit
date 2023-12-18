@@ -116,7 +116,7 @@ bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheel
     if (wasInMomentumPhase != m_inMomentumPhase)
         m_scrollerPair->setUsePresentationValues(m_inMomentumPhase);
 
-    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { scrollingTree(), scrollingNode().scrollingNodeID(), WheelEventTestMonitor::HandlingWheelEvent };
+    auto deferrer = ScrollingTreeWheelEventTestMonitorCompletionDeferrer { scrollingTree(), scrollingNode().scrollingNodeID(), WheelEventTestMonitor::DeferReason::HandlingWheelEvent };
 
     updateUserScrollInProgressForEvent(wheelEvent);
 

@@ -4,8 +4,10 @@
 var test_url = 'https://example.com/foo';
 var test_body = 'Hello world!';
 
-if (window.testRunner)
+if (window.testRunner) {
+    testRunner.setOriginQuotaRatioEnabled(false);
     testRunner.setAllowStorageQuotaIncrease(false);
+}
 
 function getResponseBodySizeWithPadding(response)
 {

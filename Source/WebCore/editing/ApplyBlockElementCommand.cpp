@@ -298,20 +298,25 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagraphSplittingTextNodesIf
     splitTextNode(*text, 1);
     RefPtr previousSiblingOfText { text->previousSibling() };
 
-    if (text == start.containerNode() && previousSiblingOfText && is<Text>(previousSiblingOfText)) {
-        ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
-        start = Position(downcast<Text>(text->previousSibling()), start.offsetInContainerNode());
+    if (text == start.containerNode() && previousSiblingOfText) {
+        if (auto* previousText = dynamicDowncast<Text>(*previousSiblingOfText)) {
+            ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
+            start = Position(previousText, start.offsetInContainerNode());
+        }
     }
-    if (text == end.containerNode() && previousSiblingOfText && is<Text>(previousSiblingOfText)) {
-        ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
-        end = Position(downcast<Text>(text->previousSibling()), end.offsetInContainerNode());
+    if (text == end.containerNode() && previousSiblingOfText) {
+        if (auto* previousText = dynamicDowncast<Text>(*previousSiblingOfText)) {
+            ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
+            end = Position(previousText, end.offsetInContainerNode());
+        }
     }
     if (text == m_endOfLastParagraph.containerNode()) {
         if (m_endOfLastParagraph.offsetInContainerNode() < position.offsetInContainerNode()) {
             // We can only fix endOfLastParagraph if the previous node was still text and hasn't been modified by script.
-            if (previousSiblingOfText && is<Text>(previousSiblingOfText)
-                && static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= downcast<Text>(text->previousSibling())->length())
-                m_endOfLastParagraph = Position(downcast<Text>(text->previousSibling()), m_endOfLastParagraph.offsetInContainerNode());
+            if (auto* previousText = dynamicDowncast<Text>(previousSiblingOfText.get())) {
+                if (static_cast<unsigned>(m_endOfLastParagraph.offsetInContainerNode()) <= previousText->length())
+                    m_endOfLastParagraph = Position(previousText, m_endOfLastParagraph.offsetInContainerNode());
+            }
         } else
             m_endOfLastParagraph = Position(text.get(), m_endOfLastParagraph.offsetInContainerNode() - 1);
     }

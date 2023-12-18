@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextEncodingRegistry.h"
 
+#include "Logging.h"
 #include "TextCodecCJK.h"
 #include "TextCodecICU.h"
 #include "TextCodecLatin1.h"
@@ -45,6 +46,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 namespace PAL {
 
@@ -80,77 +82,87 @@ struct TextEncodingNameHash {
                 return h;
             }
             h += toASCIILower(c);
-            h += (h << 10); 
-            h ^= (h >> 6); 
+            h += (h << 10);
+            h ^= (h >> 6);
         }
     }
 
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-using TextEncodingNameMap = HashMap<const char*, const char*, TextEncodingNameHash>;
-using TextCodecMap = HashMap<const char*, NewTextCodecFunction>;
+struct HashTranslatorTextEncodingName {
+    static unsigned hash(const char* literal)
+    {
+        return TextEncodingNameHash::hash(literal);
+    }
+
+    static bool equal(const ASCIILiteral& a, const char* b)
+    {
+        return TextEncodingNameHash::equal(a.characters(), b);
+    }
+};
+
+using TextEncodingNameMap = HashMap<ASCIILiteral, ASCIILiteral, TextEncodingNameHash>;
+using TextCodecMap = HashMap<ASCIILiteral, NewTextCodecFunction>;
 
 static Lock encodingRegistryLock;
 
 static TextEncodingNameMap* textEncodingNameMap WTF_GUARDED_BY_LOCK(encodingRegistryLock);
 static TextCodecMap* textCodecMap WTF_GUARDED_BY_LOCK(encodingRegistryLock);
 static bool didExtendTextCodecMaps;
-static HashSet<const char*>* japaneseEncodings;
-static HashSet<const char*>* nonBackslashEncodings;
+static HashSet<ASCIILiteral>* japaneseEncodings;
+static HashSet<ASCIILiteral>* nonBackslashEncodings;
 
-static const char* const textEncodingNameBlocklist[] = { "UTF-7", "BOCU-1", "SCSU" };
+static constexpr ASCIILiteral textEncodingNameBlocklist[] = { "UTF-7"_s, "BOCU-1"_s, "SCSU"_s };
 
-static bool isUndesiredAlias(const char* alias)
+static bool isUndesiredAlias(ASCIILiteral alias)
 {
     // Reject aliases with version numbers that are supported by some back-ends (such as "ISO_2022,locale=ja,version=0" in ICU).
-    for (const char* p = alias; *p; ++p) {
-        if (*p == ',')
-            return true;
-    }
+    if (strchr(alias.characters(), ','))
+        return true;
     // 8859_1 is known to (at least) ICU, but other browsers don't support this name - and having it caused a compatibility
     // problem, see bug 43554.
-    if (!strcmp(alias, "8859_1"))
+    if (alias == "8859_1"_s)
         return true;
     return false;
 }
 
-static void addToTextEncodingNameMap(const char* alias, const char* name) WTF_REQUIRES_LOCK(encodingRegistryLock)
+static void addToTextEncodingNameMap(ASCIILiteral alias, ASCIILiteral name) WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
     ASSERT(strlen(alias) <= maxEncodingNameLength);
     if (isUndesiredAlias(alias))
         return;
-    const char* atomName = textEncodingNameMap->get(name);
-    ASSERT(!strcmp(alias, name) || atomName);
-    if (!atomName)
+    ASCIILiteral atomName = textEncodingNameMap->get(name);
+    ASSERT((alias == name) || !atomName.isNull());
+    if (atomName.isNull())
         atomName = name;
 
-    ASSERT_WITH_MESSAGE(!textEncodingNameMap->get(alias), "Duplicate text encoding name %s for %s (previously registered as %s)", alias, atomName, textEncodingNameMap->get(alias));
+    ASSERT_WITH_MESSAGE(textEncodingNameMap->get(alias).isNull(), "Duplicate text encoding name %s for %s (previously registered as %s)", alias.characters(), atomName.characters(), textEncodingNameMap->get(alias).characters());
 
     textEncodingNameMap->add(alias, atomName);
 }
 
-static void addToTextCodecMap(const char* name, NewTextCodecFunction&& function) WTF_REQUIRES_LOCK(encodingRegistryLock)
+static void addToTextCodecMap(ASCIILiteral name, NewTextCodecFunction&& function) WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
-    const char* atomName = textEncodingNameMap->get(name);
-    ASSERT(atomName);
+    ASCIILiteral atomName = textEncodingNameMap->get(name);
+    ASSERT(!atomName.isNull());
     textCodecMap->add(atomName, WTFMove(function));
 }
 
 static void pruneBlocklistedCodecs() WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
     for (auto& nameFromBlocklist : textEncodingNameBlocklist) {
-        auto* atomName = textEncodingNameMap->get(nameFromBlocklist);
-        if (!atomName)
+        ASCIILiteral atomName = textEncodingNameMap->get(nameFromBlocklist);
+        if (atomName.isNull())
             continue;
 
-        Vector<const char*> names;
+        Vector<ASCIILiteral> names;
         for (auto& entry : *textEncodingNameMap) {
             if (entry.value == atomName)
                 names.append(entry.key);
         }
 
-        for (auto* name : names)
+        for (auto& name : names)
             textEncodingNameMap->remove(name);
 
         textCodecMap->remove(atomName);
@@ -178,12 +190,12 @@ static void buildBaseTextCodecMaps() WTF_REQUIRES_LOCK(encodingRegistryLock)
     TextCodecUserDefined::registerCodecs(addToTextCodecMap);
 }
 
-static void addEncodingName(HashSet<const char*>* set, const char* name) WTF_REQUIRES_LOCK(encodingRegistryLock)
+static void addEncodingName(HashSet<ASCIILiteral>& set, ASCIILiteral name) WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
     // We must not use atomCanonicalTextEncodingName() because this function is called in it.
-    const char* atomName = textEncodingNameMap->get(name);
-    if (atomName)
-        set->add(atomName);
+    ASCIILiteral atomName = textEncodingNameMap->get(name);
+    if (!atomName.isNull())
+        set.add(atomName);
 }
 
 static void buildQuirksSets() WTF_REQUIRES_LOCK(encodingRegistryLock)
@@ -194,41 +206,41 @@ static void buildQuirksSets() WTF_REQUIRES_LOCK(encodingRegistryLock)
     ASSERT(!japaneseEncodings);
     ASSERT(!nonBackslashEncodings);
 
-    japaneseEncodings = new HashSet<const char*>;
-    addEncodingName(japaneseEncodings, "EUC-JP");
-    addEncodingName(japaneseEncodings, "ISO-2022-JP");
-    addEncodingName(japaneseEncodings, "ISO-2022-JP-1");
-    addEncodingName(japaneseEncodings, "ISO-2022-JP-2");
-    addEncodingName(japaneseEncodings, "ISO-2022-JP-3");
-    addEncodingName(japaneseEncodings, "JIS_C6226-1978");
-    addEncodingName(japaneseEncodings, "JIS_X0201");
-    addEncodingName(japaneseEncodings, "JIS_X0208-1983");
-    addEncodingName(japaneseEncodings, "JIS_X0208-1990");
-    addEncodingName(japaneseEncodings, "JIS_X0212-1990");
-    addEncodingName(japaneseEncodings, "Shift_JIS");
-    addEncodingName(japaneseEncodings, "Shift_JIS_X0213-2000");
-    addEncodingName(japaneseEncodings, "cp932");
-    addEncodingName(japaneseEncodings, "x-mac-japanese");
+    japaneseEncodings = new HashSet<ASCIILiteral>;
+    addEncodingName(*japaneseEncodings, "EUC-JP"_s);
+    addEncodingName(*japaneseEncodings, "ISO-2022-JP"_s);
+    addEncodingName(*japaneseEncodings, "ISO-2022-JP-1"_s);
+    addEncodingName(*japaneseEncodings, "ISO-2022-JP-2"_s);
+    addEncodingName(*japaneseEncodings, "ISO-2022-JP-3"_s);
+    addEncodingName(*japaneseEncodings, "JIS_C6226-1978"_s);
+    addEncodingName(*japaneseEncodings, "JIS_X0201"_s);
+    addEncodingName(*japaneseEncodings, "JIS_X0208-1983"_s);
+    addEncodingName(*japaneseEncodings, "JIS_X0208-1990"_s);
+    addEncodingName(*japaneseEncodings, "JIS_X0212-1990"_s);
+    addEncodingName(*japaneseEncodings, "Shift_JIS"_s);
+    addEncodingName(*japaneseEncodings, "Shift_JIS_X0213-2000"_s);
+    addEncodingName(*japaneseEncodings, "cp932"_s);
+    addEncodingName(*japaneseEncodings, "x-mac-japanese"_s);
 
-    nonBackslashEncodings = new HashSet<const char*>;
+    nonBackslashEncodings = new HashSet<ASCIILiteral>;
     // The text encodings below treat backslash as a currency symbol for IE compatibility.
     // See http://blogs.msdn.com/michkap/archive/2005/09/17/469941.aspx for more information.
-    addEncodingName(nonBackslashEncodings, "x-mac-japanese");
-    addEncodingName(nonBackslashEncodings, "ISO-2022-JP");
-    addEncodingName(nonBackslashEncodings, "EUC-JP");
+    addEncodingName(*nonBackslashEncodings, "x-mac-japanese"_s);
+    addEncodingName(*nonBackslashEncodings, "ISO-2022-JP"_s);
+    addEncodingName(*nonBackslashEncodings, "EUC-JP"_s);
     // Shift_JIS_X0213-2000 is not the same encoding as Shift_JIS on Mac. We need to register both of them.
-    addEncodingName(nonBackslashEncodings, "Shift_JIS");
-    addEncodingName(nonBackslashEncodings, "Shift_JIS_X0213-2000");
+    addEncodingName(*nonBackslashEncodings, "Shift_JIS"_s);
+    addEncodingName(*nonBackslashEncodings, "Shift_JIS_X0213-2000"_s);
 }
 
-bool isJapaneseEncoding(const char* canonicalEncodingName)
+bool isJapaneseEncoding(ASCIILiteral canonicalEncodingName)
 {
-    return canonicalEncodingName && japaneseEncodings && japaneseEncodings->contains(canonicalEncodingName);
+    return !canonicalEncodingName.isNull() && japaneseEncodings && japaneseEncodings->contains(canonicalEncodingName);
 }
 
-bool shouldShowBackslashAsCurrencySymbolIn(const char* canonicalEncodingName)
+bool shouldShowBackslashAsCurrencySymbolIn(ASCIILiteral canonicalEncodingName)
 {
-    return canonicalEncodingName && nonBackslashEncodings && nonBackslashEncodings->contains(canonicalEncodingName);
+    return !canonicalEncodingName.isNull() && nonBackslashEncodings && nonBackslashEncodings->contains(canonicalEncodingName);
 }
 
 static void extendTextCodecMaps() WTF_REQUIRES_LOCK(encodingRegistryLock)
@@ -254,48 +266,59 @@ std::unique_ptr<TextCodec> newTextCodec(const TextEncoding& encoding)
     Locker locker { encodingRegistryLock };
 
     ASSERT(textCodecMap);
+    if (!encoding.isValid()) {
+        RELEASE_LOG_ERROR(TextEncoding, "Trying to create new text codec with invalid (null) encoding name. Will default to UTF-8.");
+        return TextCodecUTF8::codec();
+    }
     auto result = textCodecMap->find(encoding.name());
-    ASSERT(result != textCodecMap->end());
+    if (result == textCodecMap->end()) {
+        RELEASE_LOG_ERROR(TextEncoding, "Can't find codec for valid encoding %" PUBLIC_LOG_STRING ". Will default to UTF-8.", encoding.name().characters());
+        return TextCodecUTF8::codec();
+    }
+    if (!result->value) {
+        RELEASE_LOG_ERROR(TextEncoding, "Codec for encoding %" PUBLIC_LOG_STRING " is null. Will default to UTF-8", encoding.name().characters());
+        return TextCodecUTF8::codec();
+    }
     return result->value();
 }
 
-const char* atomCanonicalTextEncodingName(const char* name)
+ASCIILiteral atomCanonicalTextEncodingName(const char* name)
 {
     if (!name || !name[0])
-        return nullptr;
+        return { };
 
     Locker locker { encodingRegistryLock };
 
     if (!textEncodingNameMap)
         buildBaseTextCodecMaps();
 
-    if (const char* atomName = textEncodingNameMap->get(name))
+    if (ASCIILiteral atomName = textEncodingNameMap->get<HashTranslatorTextEncodingName>(name))
         return atomName;
     if (didExtendTextCodecMaps)
-        return nullptr;
+        return { };
 
     extendTextCodecMaps();
     didExtendTextCodecMaps = true;
-    return textEncodingNameMap->get(name);
+    return textEncodingNameMap->get<HashTranslatorTextEncodingName>(name);
 }
 
-template<typename CharacterType> static const char* atomCanonicalTextEncodingName(const CharacterType* characters, size_t length)
+template<typename CharacterType> static ASCIILiteral atomCanonicalTextEncodingName(const CharacterType* characters, size_t length)
 {
     char buffer[maxEncodingNameLength + 1];
     size_t j = 0;
     for (size_t i = 0; i < length; ++i) {
         if (j == maxEncodingNameLength)
-            return nullptr;
+            return { };
         buffer[j++] = characters[i];
     }
     buffer[j] = 0;
     return atomCanonicalTextEncodingName(buffer);
 }
 
-const char* atomCanonicalTextEncodingName(StringView alias)
+ASCIILiteral atomCanonicalTextEncodingName(StringView alias)
 {
     if (alias.isEmpty() || !alias.containsOnlyASCII())
-        return nullptr;
+        return { };
 
     if (alias.is8Bit())
         return atomCanonicalTextEncodingName(alias.characters8(), alias.length());

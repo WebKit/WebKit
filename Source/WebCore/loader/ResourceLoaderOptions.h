@@ -214,9 +214,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         this->mode = mode;
     }
 
-#if ENABLE(SERVICE_WORKER)
     Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits> serviceWorkerRegistrationIdentifier;
-#endif
     Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 
@@ -249,17 +247,3 @@ struct ResourceLoaderOptions : public FetchOptions {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PreflightPolicy> {
-    using values = EnumValues<
-        WebCore::PreflightPolicy,
-        WebCore::PreflightPolicy::Consider,
-        WebCore::PreflightPolicy::Force,
-        WebCore::PreflightPolicy::Prevent
-    >;
-};
-
-
-} // namespace WTF

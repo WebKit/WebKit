@@ -43,14 +43,16 @@ class PipelineLayout;
 // https://gpuweb.github.io/gpuweb/#gpushadermodule
 class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule> {
     WTF_MAKE_FAST_ALLOCATED;
+
+    using CheckResult = std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
 public:
     static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     {
         return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, device));
     }
-    static Ref<ShaderModule> createInvalid(Device& device)
+    static Ref<ShaderModule> createInvalid(Device& device, CheckResult&& checkResult = std::monostate { })
     {
-        return adoptRef(*new ShaderModule(device));
+        return adoptRef(*new ShaderModule(device, WTFMove(checkResult)));
     }
 
     ~ShaderModule();
@@ -58,7 +60,7 @@ public:
     void getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
     void setLabel(String&&);
 
-    bool isValid() const { return !std::holds_alternative<std::monostate>(m_checkResult); }
+    bool isValid() const { return std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult); }
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label);
@@ -70,12 +72,14 @@ public:
     id<MTLLibrary> library() const { return m_library; }
 
     Device& device() const { return m_device; }
+    const String& defaultVertexEntryPoint() const;
+    const String& defaultFragmentEntryPoint() const;
+    const String& defaultComputeEntryPoint() const;
 
 private:
     ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
-    ShaderModule(Device&);
+    ShaderModule(Device&, CheckResult&&);
 
-    using CheckResult = std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
     CheckResult convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&);
 
     const CheckResult m_checkResult;
@@ -86,6 +90,10 @@ private:
     const Ref<Device> m_device;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
     HashMap<String, String> m_constantIdentifiersToNames;
+
+    String m_defaultVertexEntryPoint;
+    String m_defaultFragmentEntryPoint;
+    String m_defaultComputeEntryPoint;
 };
 
 } // namespace WebGPU

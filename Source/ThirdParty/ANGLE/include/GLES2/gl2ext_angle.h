@@ -601,11 +601,6 @@ GL_APICALL void GL_APIENTRY glReleaseTexturesANGLE(GLuint numTexture, const GLui
 #endif
 #endif /* GL_ANGLE_vulkan_image */
 
-#ifndef GL_CHROMIUM_texture_filtering_hint
-#define GL_CHROMIUM_texture_filtering_hint
-#define GL_TEXTURE_FILTERING_HINT_CHROMIUM 0x8AF0
-#endif /* GL_CHROMIUM_texture_filtering_hint */
-
 #ifndef GL_NV_robustness_video_memory
 #define GL_NV_robustness_video_memory
 #define GL_PURGED_CONTEXT_RESET_NV 0x92BB

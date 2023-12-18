@@ -203,7 +203,6 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
 
     TriState ignorePunctuation = intlBooleanOption(globalObject, options, vm.propertyNames->ignorePunctuation);
     RETURN_IF_EXCEPTION(scope, void());
-    m_ignorePunctuation = (ignorePunctuation == TriState::True);
 
     // UCollator does not offer an option to configure "usage" via ucol_setAttribute. So we need to pass this option via locale.
     CString dataLocaleWithExtensions;
@@ -266,12 +265,19 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
 
     // FIXME: Setting UCOL_ALTERNATE_HANDLING to UCOL_SHIFTED causes punctuation and whitespace to be
     // ignored. There is currently no way to ignore only punctuation.
-    ucol_setAttribute(m_collator.get(), UCOL_ALTERNATE_HANDLING, m_ignorePunctuation ? UCOL_SHIFTED : UCOL_DEFAULT, &status);
+    if (ignorePunctuation != TriState::Indeterminate)
+        ucol_setAttribute(m_collator.get(), UCOL_ALTERNATE_HANDLING, ignorePunctuation == TriState::True ? UCOL_SHIFTED : UCOL_NON_IGNORABLE, &status);
 
     // "The method is required to return 0 when comparing Strings that are considered canonically
     // equivalent by the Unicode standard."
     ucol_setAttribute(m_collator.get(), UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
     ASSERT(U_SUCCESS(status));
+
+    {
+        auto result = ucol_getAttribute(m_collator.get(), UCOL_ALTERNATE_HANDLING, &status);
+        ASSERT(U_SUCCESS(status));
+        m_ignorePunctuation = (result == UCOL_SHIFTED);
+    }
 }
 
 // https://tc39.es/ecma402/#sec-collator-comparestrings

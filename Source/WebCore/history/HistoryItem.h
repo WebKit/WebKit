@@ -35,8 +35,8 @@
 #include "PolicyContainer.h"
 #include "SerializedScriptValue.h"
 #include <memory>
-#include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -67,7 +67,7 @@ protected:
     HistoryItemClient() = default;
 };
 
-class HistoryItem : public RefCounted<HistoryItem>, public CanMakeCheckedPtr {
+class HistoryItem : public RefCounted<HistoryItem>, public CanMakeWeakPtr<HistoryItem> {
     friend class BackForwardCache;
 
 public:

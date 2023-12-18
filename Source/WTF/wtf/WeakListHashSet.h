@@ -172,9 +172,8 @@ public:
     iterator find(const U& value)
     {
         increaseOperationCountSinceLastCleanup();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return WeakListHashSetIterator(*this, m_set.find(*pointer));
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return WeakListHashSetIterator(*this, m_set.find(*impl));
         return end();
     }
 
@@ -182,9 +181,8 @@ public:
     const_iterator find(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return WeakListHashSetConstIterator(*this, m_set.find(*pointer));
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return WeakListHashSetConstIterator(*this, m_set.find(*impl));
         return end();
     }
 
@@ -192,9 +190,8 @@ public:
     bool contains(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return m_set.contains(*pointer);
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return m_set.contains(*impl);
         return false;
     }
 
@@ -245,9 +242,8 @@ public:
     bool remove(const U& value)
     {
         amortizedCleanupIfNeeded();
-        auto& weakPtrImpl = value.weakPtrFactory().m_impl;
-        if (auto* pointer = weakPtrImpl.pointer(); pointer && *pointer)
-            return m_set.remove(*pointer);
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return m_set.remove(*impl);
         return false;
     }
 
@@ -388,15 +384,8 @@ private:
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
-template<typename MapFunction, typename DestinationVectorType, typename T, typename WeakMapImpl>
-struct Mapper<MapFunction, DestinationVectorType, const WeakListHashSet<T, WeakMapImpl> &, void> {
-    static void map(DestinationVectorType& result, const WeakListHashSet<T, WeakMapImpl>& source, const MapFunction& mapFunction)
-    {
-        result.reserveInitialCapacity(source.computeSize());
-        for (auto& item : source)
-            result.unsafeAppendWithoutCapacityCheck(mapFunction(item));
-    }
-};
+template<typename T, typename WeakMapImpl>
+size_t containerSize(const WeakListHashSet<T, WeakMapImpl>& container) { return container.computeSize(); }
 
 template<typename T, typename WeakMapImpl>
 inline auto copyToVector(const WeakListHashSet<T, WeakMapImpl>& collection) -> Vector<WeakPtr<T, WeakMapImpl>> {

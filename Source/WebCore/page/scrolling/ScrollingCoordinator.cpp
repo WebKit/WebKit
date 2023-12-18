@@ -141,11 +141,11 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
     for (auto& widget : frameView->widgetsInRenderTree()) {
-        if (!is<PluginViewBase>(*widget))
+        if (!is<PluginViewBase>(widget))
             continue;
-        if (!downcast<PluginViewBase>(*widget).wantsWheelEvents())
+        if (!downcast<PluginViewBase>(widget.get()).wantsWheelEvents())
             continue;
-        auto* renderWidget = RenderWidget::find(*widget);
+        auto* renderWidget = RenderWidget::find(widget);
         if (!renderWidget)
             continue;
         nonFastScrollableRegion.unite(renderWidget->absoluteBoundingBoxRect());
@@ -359,11 +359,7 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
 
 bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const LocalFrameView& frameView) const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    if (&frameView == localMainFrame->view())
+    if (&frameView == m_page->mainFrame().virtualView())
         return !synchronousScrollingReasons(frameView.scrollingNodeID()).isEmpty();
     
     return true;

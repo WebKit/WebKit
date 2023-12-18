@@ -32,6 +32,7 @@ struct ProgramPreludeConfig
     ProgramPreludeConfig() {}
     explicit ProgramPreludeConfig(MetalShaderType shaderType) : shaderType(shaderType) {}
     bool hasStructEq           = false;
+    bool usesDerivatives       = false;
     MetalShaderType shaderType = MetalShaderType::None;
 };
 

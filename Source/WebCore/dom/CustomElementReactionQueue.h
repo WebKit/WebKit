@@ -28,6 +28,7 @@
 #include "CustomElementFormValue.h"
 #include "GCReachableRef.h"
 #include "QualifiedName.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -99,7 +100,7 @@ class CustomElementQueue {
     WTF_MAKE_NONCOPYABLE(CustomElementQueue);
 public:
     CustomElementQueue();
-    ~CustomElementQueue();
+    WEBCORE_EXPORT ~CustomElementQueue();
 
     void add(Element&);
     void processQueue(JSC::JSGlobalObject*);
@@ -113,7 +114,7 @@ private:
     bool m_invoking { false };
 };
 
-class CustomElementReactionQueue {
+class CustomElementReactionQueue : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CustomElementReactionQueue);
 public:
@@ -233,7 +234,7 @@ public:
 private:
     WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
 
-    CustomElementQueue* m_queue { nullptr }; // Use raw pointer to avoid generating delete in the destructor.
+    std::unique_ptr<CustomElementQueue> m_queue;
     CustomElementReactionStack* const m_previousProcessingStack;
     JSC::JSGlobalObject* const m_state;
 

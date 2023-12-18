@@ -325,9 +325,9 @@ int PrintContext::pageNumberForElement(Element* element, const FloatSize& pageSi
 
 void PrintContext::collectLinkedDestinations(Document& document)
 {
-    for (Element* child = document.documentElement(); child; child = ElementTraversal::next(*child)) {
+    for (RefPtr child = document.documentElement(); child; child = ElementTraversal::next(*child)) {
         String outAnchorName;
-        if (Element* element = child->findAnchorElementForLink(outAnchorName))
+        if (RefPtr element = child->findAnchorElementForLink(outAnchorName))
             m_linkedDestinations->add(outAnchorName, *element);
     }
 }

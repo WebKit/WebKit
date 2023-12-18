@@ -44,20 +44,20 @@ ExceptionOr<UniqueRef<LoggedInStatus>> LoggedInStatus::create(const RegistrableD
 ExceptionOr<UniqueRef<LoggedInStatus>> LoggedInStatus::create(const RegistrableDomain& domain, const String& username, CredentialTokenType tokenType, AuthenticationType authType, Seconds timeToLive)
 {
     if (domain.isEmpty())
-        return Exception { SecurityError, "IsLoggedIn status can only be set for origins with a registrable domain."_s };
+        return Exception { ExceptionCode::SecurityError, "IsLoggedIn status can only be set for origins with a registrable domain."_s };
 
     if (username.isEmpty())
-        return Exception { SyntaxError, "IsLoggedIn requires a non-empty username."_s };
+        return Exception { ExceptionCode::SyntaxError, "IsLoggedIn requires a non-empty username."_s };
 
     unsigned length = username.length();
     if (length > UsernameMaxLength)
-        return Exception { SyntaxError, makeString("IsLoggedIn usernames cannot be longer than ", UsernameMaxLength) };
+        return Exception { ExceptionCode::SyntaxError, makeString("IsLoggedIn usernames cannot be longer than ", UsernameMaxLength) };
 
     auto spaceOrNewline = username.find([](UChar ch) {
         return deprecatedIsSpaceOrNewline(ch);
     });
     if (spaceOrNewline != notFound)
-        return Exception { InvalidCharacterError, "IsLoggedIn usernames cannot contain whitespace or newlines."_s };
+        return Exception { ExceptionCode::InvalidCharacterError, "IsLoggedIn usernames cannot contain whitespace or newlines."_s };
 
     return makeUniqueRef<LoggedInStatus>(*new LoggedInStatus(domain, username, tokenType, authType, timeToLive));
 }

@@ -1,5 +1,5 @@
 
 PASS setRemoteDescription with a codec in the range 96-127 works
 PASS setRemoteDescription with a codec in the range 35-63 works
-FAIL setRemoteDescription with a codec in the range 64-95 throws an InvalidAccessError assert_unreached: Should have rejected: Failed to reject on PT 64 Reached unreachable code
+PASS setRemoteDescription with a codec in the range 64-95 throws an InvalidAccessError
 

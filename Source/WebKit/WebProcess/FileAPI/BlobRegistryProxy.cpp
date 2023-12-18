@@ -48,7 +48,7 @@ void BlobRegistryProxy::registerInternalFileBlobURL(const URL& url, Ref<BlobData
     }
 
     String replacementPath = path == file->path() ? nullString() : file->path();
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterInternalFileBlobURL(url, path, replacementPath, extensionHandle, contentType), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterInternalFileBlobURL(url, path, replacementPath, WTFMove(extensionHandle), contentType), 0);
 }
 
 void BlobRegistryProxy::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)

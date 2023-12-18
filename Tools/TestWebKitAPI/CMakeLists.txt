@@ -44,6 +44,7 @@ set(TestWTF_SOURCES
     Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
+    Tests/WTF/DragonBoxTest.cpp
     Tests/WTF/EmbeddedFixedVector.cpp
     Tests/WTF/EnumTraits.cpp
     Tests/WTF/Expected.cpp
@@ -202,6 +203,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/KeyedCoding.cpp
         Tests/WebCore/LayoutUnitTests.cpp
         Tests/WebCore/MIMETypeRegistry.cpp
+        Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/PublicSuffix.cpp

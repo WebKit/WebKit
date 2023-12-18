@@ -183,7 +183,11 @@ Node::InsertedIntoAncestorResult HTMLBodyElement::insertedIntoAncestor(Insertion
 
 void HTMLBodyElement::didFinishInsertingNode()
 {
-    ASSERT(is<HTMLFrameElementBase>(document().ownerElement()));
+    // A DOM mutation could have happened in between the call to insertedIntoAncestor() and the
+    // call to didFinishInsertingNode().
+    if (!is<HTMLFrameElementBase>(document().ownerElement()))
+        return;
+
     Ref ownerElement = *document().ownerElement();
 
     // FIXME: It's surprising this is web compatible since it means marginwidth and marginheight attributes

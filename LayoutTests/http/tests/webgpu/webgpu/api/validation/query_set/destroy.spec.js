@@ -14,3 +14,21 @@ g.test('twice').fn(t => {
   qset.destroy();
   qset.destroy();
 });
+
+g.test('invalid_queryset')
+  .desc('Test that invalid querysets may be destroyed without generating validation errors.')
+  .fn(async t => {
+    t.device.pushErrorScope('validation');
+
+    const invalidQuerySet = t.device.createQuerySet({
+      type: 'occlusion',
+      count: 4097, // 4096 is the limit
+    });
+
+    // Expect error because it's invalid.
+    const error = await t.device.popErrorScope();
+    t.expect(!!error);
+
+    // This line should not generate an error
+    invalidQuerySet.destroy();
+  });

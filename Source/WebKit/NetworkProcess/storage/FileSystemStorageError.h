@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/ExceptionOr.h>
-#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 
@@ -45,24 +44,24 @@ inline WebCore::Exception convertToException(FileSystemStorageError error)
 {
     switch (error) {
     case FileSystemStorageError::AccessHandleActive:
-        return WebCore::Exception { WebCore::InvalidStateError, "Some AccessHandle is active"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::InvalidStateError, "Some AccessHandle is active"_s };
     case FileSystemStorageError::BackendNotSupported:
-        return WebCore::Exception { WebCore::NotSupportedError, "Backend does not support this operation"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::NotSupportedError, "Backend does not support this operation"_s };
     case FileSystemStorageError::FileNotFound:
-        return WebCore::Exception { WebCore::NotFoundError };
+        return WebCore::Exception { WebCore::ExceptionCode::NotFoundError };
     case FileSystemStorageError::InvalidModification:
-        return WebCore::Exception { WebCore::InvalidModificationError };
+        return WebCore::Exception { WebCore::ExceptionCode::InvalidModificationError };
     case FileSystemStorageError::InvalidName:
-        return WebCore::Exception { WebCore::TypeError, "Name is invalid"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Name is invalid"_s };
     case FileSystemStorageError::InvalidState:
-        return WebCore::Exception { WebCore::InvalidStateError };
+        return WebCore::Exception { WebCore::ExceptionCode::InvalidStateError };
     case FileSystemStorageError::TypeMismatch:
-        return WebCore::Exception { WebCore::TypeMismatchError, "File type is incompatible with handle type"_s };
+        return WebCore::Exception { WebCore::ExceptionCode::TypeMismatchError, "File type is incompatible with handle type"_s };
     case FileSystemStorageError::Unknown:
         break;
     }
 
-    return WebCore::Exception { WebCore::UnknownError };
+    return WebCore::Exception { WebCore::ExceptionCode::UnknownError };
 }
 
 inline WebCore::ExceptionOr<void> convertToExceptionOr(std::optional<FileSystemStorageError> error)
@@ -74,21 +73,3 @@ inline WebCore::ExceptionOr<void> convertToExceptionOr(std::optional<FileSystemS
 }
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::FileSystemStorageError> {
-    using values = EnumValues<
-        WebKit::FileSystemStorageError,
-        WebKit::FileSystemStorageError::AccessHandleActive,
-        WebKit::FileSystemStorageError::BackendNotSupported,
-        WebKit::FileSystemStorageError::FileNotFound,
-        WebKit::FileSystemStorageError::InvalidModification,
-        WebKit::FileSystemStorageError::InvalidName,
-        WebKit::FileSystemStorageError::InvalidState,
-        WebKit::FileSystemStorageError::TypeMismatch,
-        WebKit::FileSystemStorageError::Unknown
-    >;
-};
-
-} // namespace WTF

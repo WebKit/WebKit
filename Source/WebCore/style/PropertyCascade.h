@@ -49,7 +49,7 @@ public:
     };
     static constexpr OptionSet<PropertyType> allProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
 
-    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableProperty>* = nullptr);
+    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -78,7 +78,7 @@ public:
     std::span<const CSSPropertyID> deferredPropertyIDs() const;
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
-    const HashSet<AnimatableProperty> overriddenAnimatedProperties() const;
+    const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
 
 private:
     void buildCascade();
@@ -104,10 +104,10 @@ private:
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
 
     struct AnimationLayer {
-        AnimationLayer(const HashSet<AnimatableProperty>&);
+        AnimationLayer(const HashSet<AnimatableCSSProperty>&);
 
-        const HashSet<AnimatableProperty>& properties;
-        HashSet<AnimatableProperty> overriddenProperties;
+        const HashSet<AnimatableCSSProperty>& properties;
+        HashSet<AnimatableCSSProperty> overriddenProperties;
         bool hasCustomProperties { false };
         bool hasFontSize { false };
         bool hasLineHeight { false };

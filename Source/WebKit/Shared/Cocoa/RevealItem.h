@@ -27,24 +27,44 @@
 
 #if ENABLE(REVEAL)
 
-#import "ArgumentCoders.h"
-
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS RVItem;
 
+typedef struct _NSRange NSRange;
+typedef unsigned long NSUInteger;
+
 namespace WebKit {
 
+struct RevealItemRange {
+    RevealItemRange() = default;
+    RevealItemRange(NSRange);
+    RevealItemRange(NSUInteger loc, NSUInteger len)
+        : location(loc)
+        , length(len)
+    {
+    }
+
+    NSUInteger location { 0 };
+    NSUInteger length { 0 };
+};
+
 class RevealItem {
-    
 public:
     RevealItem() = default;
-    RevealItem(RetainPtr<RVItem>&&);
-    
-    RVItem *item() const { return m_item.get(); }
+    RevealItem(const String& text, RevealItemRange selectedRange);
+
+    const String& text() const { return m_text; }
+    const RevealItemRange& selectedRange() const { return m_selectedRange; }
+    NSRange highlightRange() const;
+
+    RVItem *item() const;
+
 private:
-    friend struct IPC::ArgumentCoder<RevealItem, void>;
-    RetainPtr<RVItem> m_item;
+    String m_text;
+    RevealItemRange m_selectedRange;
+
+    mutable RetainPtr<RVItem> m_item;
 };
 
 }

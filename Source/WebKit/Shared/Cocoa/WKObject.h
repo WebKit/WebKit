@@ -76,12 +76,12 @@ template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::Wrapp
     return wrapper(object.get());
 }
 
-template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(Ref<ObjectClass>&& object)
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> wrapper(Ref<ObjectClass>&& object)
 {
-    return adoptNS(wrapper(object.leakRef())).autorelease();
+    return wrapper(object.get());
 }
 
-template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(RefPtr<ObjectClass>&& object)
+template<typename ObjectClass> inline RetainPtr<typename WrapperTraits<ObjectClass>::WrapperClass> wrapper(RefPtr<ObjectClass>&& object)
 {
     return object ? wrapper(object.releaseNonNull()) : nil;
 }

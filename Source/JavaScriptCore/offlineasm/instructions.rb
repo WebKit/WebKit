@@ -449,7 +449,9 @@ ARM64_INSTRUCTIONS =
      "atomicloadi",
      "atomicloadq",
      "loadpairq",
+     "loadpairi",
      "storepairq",
+     "storepairi",
      "loadpaird",
      "storepaird",
     ]

@@ -196,17 +196,17 @@ static GradientColorStops alphaTransformStopsToEmulateAlphaPremultiplication(con
         case AlphaType::Opaque:
         case AlphaType::PartiallyTransparent:
             // ACTION (stop1): Default.
-            result.uncheckedAppend(stop1);
+            result.append(stop1);
 
             switch (stop2AlphaType) {
             case AlphaType::Opaque:
             case AlphaType::PartiallyTransparent:
                 // ACTION (stop2): Default.
-                result.uncheckedAppend(stop2);
+                result.append(stop2);
                 break;
             case AlphaType::FullyTransparent:
                 // ACTION (stop2): Steal previous.
-                result.uncheckedAppend({ stop2.offset, stop1.color.colorWithAlpha(0.0f) });
+                result.append({ stop2.offset, stop1.color.colorWithAlpha(0.0f) });
                 break;
             }
 
@@ -217,15 +217,15 @@ static GradientColorStops alphaTransformStopsToEmulateAlphaPremultiplication(con
             case AlphaType::Opaque:
             case AlphaType::PartiallyTransparent:
                 // ACTION (stop1): Steal next.
-                result.uncheckedAppend({ stop1.offset, stop2.color.colorWithAlpha(0.0f) });
+                result.append({ stop1.offset, stop2.color.colorWithAlpha(0.0f) });
                 break;
             case AlphaType::FullyTransparent:
                 // ACTION (stop1): Default.
-                result.uncheckedAppend(stop1);
+                result.append(stop1);
                 break;
             }
             // ACTION (stop2): Default.
-            result.uncheckedAppend(stop2);
+            result.append(stop2);
             break;
         }
 
@@ -486,12 +486,9 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         if (hasOnlyBoundedSRGBColorStops(stops)) {
             for (const auto& stop : stops) {
                 auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
-                colorComponents.uncheckedAppend(r);
-                colorComponents.uncheckedAppend(g);
-                colorComponents.uncheckedAppend(b);
-                colorComponents.uncheckedAppend(a);
+                colorComponents.appendList({ r, g, b, a });
 
-                locations.uncheckedAppend(stop.offset);
+                locations.append(stop.offset);
             }
             return cachedCGColorSpace<ColorSpaceFor<SRGBA<float>>>();
         }
@@ -499,12 +496,9 @@ GradientRendererCG::Strategy GradientRendererCG::makeGradient(ColorInterpolation
         using OutputSpaceColorType = std::conditional_t<HasCGColorSpaceMapping<ColorSpace::ExtendedSRGB>, ExtendedSRGBA<float>, SRGBA<float>>;
         for (const auto& stop : stops) {
             auto [r, g, b, a] = stop.color.toColorTypeLossy<OutputSpaceColorType>().resolved();
-            colorComponents.uncheckedAppend(r);
-            colorComponents.uncheckedAppend(g);
-            colorComponents.uncheckedAppend(b);
-            colorComponents.uncheckedAppend(a);
+            colorComponents.appendList({ r, g, b, a });
 
-            locations.uncheckedAppend(stop.offset);
+            locations.append(stop.offset);
         }
         return cachedCGColorSpace<ColorSpaceFor<OutputSpaceColorType>>();
     }();
@@ -599,13 +593,14 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
         convertedStops.reserveInitialCapacity(totalNumberOfStops);
 
         if (!hasZero)
-            convertedStops.uncheckedAppend({ 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });
+            convertedStops.append({ 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } });
 
-        for (const auto& stop : stops)
-            convertedStops.uncheckedAppend({ stop.offset, convertColorToColorInterpolationSpace(stop.color, colorInterpolationMethod) });
+        convertedStops.appendContainerWithMapping(stops, [&](auto& stop) {
+            return ColorConvertedToInterpolationColorSpaceStop { stop.offset, convertColorToColorInterpolationSpace(stop.color, colorInterpolationMethod) };
+        });
 
         if (!hasOne)
-            convertedStops.uncheckedAppend({ 1.0f, convertedStops.last().colorComponents });
+            convertedStops.append({ 1.0f, convertedStops.last().colorComponents });
 
         if (!hasZero)
             convertedStops[0].colorComponents = convertedStops[1].colorComponents;

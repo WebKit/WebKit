@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-ALWAYS_INLINE Heap& MarkedSpace::heap() const
+ALWAYS_INLINE JSC::Heap& MarkedSpace::heap() const
 {
     return *bitwise_cast<Heap*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(Heap, m_objectSpace));
 }
@@ -89,18 +89,19 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
         {
         }
 
-        void drain(Vector<WeakBlock*, batchSize>& results)
+        std::span<WeakBlock*> drain(std::array<WeakBlock*, batchSize>& results)
         {
             Locker locker { m_lock };
+            size_t resultsSize = 0;
             while (true) {
                 if (m_current) {
                     auto* block = m_current;
                     m_current = m_current->next();
                     if (block->isEmpty())
                         continue;
-                    results.uncheckedAppend(block);
-                    if (results.size() == batchSize)
-                        return;
+                    results[resultsSize++] = block;
+                    if (resultsSize == batchSize)
+                        return std::span { results.data(), resultsSize };
                     continue;
                 }
 
@@ -115,20 +116,19 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel()
                     ++m_activeCursor;
                     continue;
                 }
-                return;
+                return std::span { results.data(), resultsSize };
             }
         }
 
         void run(Visitor& visitor) final
         {
-            Vector<WeakBlock*, batchSize> results;
+            std::array<WeakBlock*, batchSize> resultsStorage;
             while (true) {
-                drain(results);
-                if (results.isEmpty())
+                auto results = drain(resultsStorage);
+                if (!results.size())
                     return;
-                for (WeakBlock* block : results)
-                    block->visit(visitor);
-                results.clear();
+                for (auto* result : results)
+                    result->visit(visitor);
             }
         }
 

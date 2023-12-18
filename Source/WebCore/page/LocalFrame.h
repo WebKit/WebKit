@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
 #include <wtf/UniqueRef.h>
 
@@ -96,6 +97,8 @@ class SecurityOrigin;
 class VisiblePosition;
 class Widget;
 
+enum class WindowProxyProperty : uint8_t;
+
 struct SimpleRange;
 
 #if PLATFORM(IOS_FAMILY)
@@ -138,22 +141,36 @@ public:
     WEBCORE_EXPORT void willDetachPage();
 
     Document* document() const;
+    RefPtr<Document> protectedDocument() const;
     LocalFrameView* view() const;
+    inline RefPtr<LocalFrameView> protectedView() const; // Defined in LocalFrameView.h.
 
     Editor& editor() { return document()->editor(); }
     const Editor& editor() const { return document()->editor(); }
+    CheckedRef<Editor> checkedEditor();
+    CheckedRef<const Editor> checkedEditor() const;
+
     EventHandler& eventHandler() { return m_eventHandler; }
     const EventHandler& eventHandler() const { return m_eventHandler; }
+    CheckedRef<EventHandler> checkedEventHandler();
+    CheckedRef<const EventHandler> checkedEventHandler() const;
+
     const FrameLoader& loader() const { return m_loader.get(); }
     FrameLoader& loader() { return m_loader.get(); }
+    CheckedRef<const FrameLoader> checkedLoader() const;
+    CheckedRef<FrameLoader> checkedLoader();
+
     FrameSelection& selection() { return document()->selection(); }
     const FrameSelection& selection() const { return document()->selection(); }
     ScriptController& script() { return m_script; }
     const ScriptController& script() const { return m_script; }
+    CheckedRef<ScriptController> checkedScript();
+    CheckedRef<const ScriptController> checkedScript() const;
     void resetScript();
 
+    WEBCORE_EXPORT bool isRootFrame() const final;
+
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
-    WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
     bool documentIsBeingReplaced() const { return m_documentIsBeingReplaced; }
 
@@ -283,7 +300,14 @@ public:
     void selfOnlyRef();
     void selfOnlyDeref();
 
-    WEBCORE_EXPORT bool arePluginsEnabled();
+    void documentURLDidChange(const URL&);
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    void didAccessWindowProxyPropertyViaOpener(WindowProxyProperty);
+#endif
+
+protected:
+    void frameWasDisconnectedFromOwner() const final;
 
 private:
     friend class NavigationDisabler;
@@ -299,7 +323,11 @@ private:
     void didFinishLoadInAnotherProcess() final;
 
     FrameView* virtualView() const final;
+    void disconnectView() final;
     DOMWindow* virtualWindow() const final;
+    void setOpener(Frame*) final;
+    const Frame* opener() const final;
+    Frame* opener();
 
     WeakHashSet<FrameDestructionObserver> m_destructionObservers;
 
@@ -339,6 +367,11 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
+    const bool m_isRootFrame { false };
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    OptionSet<WindowProxyProperty> m_accessedWindowProxyPropertiesViaOpener;
+#endif
 
     FloatSize m_overrideScreenSize;
 
@@ -353,6 +386,11 @@ inline LocalFrameView* LocalFrame::view() const
 inline Document* LocalFrame::document() const
 {
     return m_doc.get();
+}
+
+inline RefPtr<Document> LocalFrame::protectedDocument() const
+{
+    return document();
 }
 
 inline LocalFrameView* Document::view() const

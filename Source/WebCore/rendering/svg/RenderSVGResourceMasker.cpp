@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
- * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2021, 2022, 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,14 +21,23 @@
 #include "config.h"
 #include "RenderSVGResourceMasker.h"
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "Element.h"
-#include "ElementChildIteratorInlines.h"
+#include "ElementIterator.h"
 #include "FloatPoint.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "IntRect.h"
+#include "RenderLayer.h"
+#include "RenderLayerInlines.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
+#include "SVGContainerLayout.h"
+#include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
+#include "SVGResources.h"
+#include "SVGResourcesCache.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -36,174 +45,131 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceMasker);
 
 RenderSVGResourceMasker::RenderSVGResourceMasker(SVGMaskElement& element, RenderStyle&& style)
-    : LegacyRenderSVGResourceContainer(Type::SVGResourceMasker, element, WTFMove(style))
+    : RenderSVGResourceContainer(Type::SVGResourceMasker, element, WTFMove(style))
 {
 }
 
 RenderSVGResourceMasker::~RenderSVGResourceMasker() = default;
 
-void RenderSVGResourceMasker::removeAllClientsFromCache(bool markForInvalidation)
+static RefPtr<ImageBuffer> createImageBuffer(const FloatRect& targetRect, const AffineTransform& absoluteTransform, const DestinationColorSpace& colorSpace, const GraphicsContext* context)
 {
-    m_maskContentBoundaries = FloatRect();
-    m_masker.clear();
+    IntRect paintRect = enclosingIntRect(absoluteTransform.mapRect(targetRect));
+    // Don't create empty ImageBuffers.
+    if (paintRect.isEmpty())
+        return nullptr;
 
-    markAllClientsForInvalidation(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation);
+    FloatSize scale;
+    FloatSize clampedSize = ImageBuffer::clampedSize(paintRect.size(), scale);
+
+    UNUSED_PARAM(context);
+    auto imageBuffer = ImageBuffer::create(clampedSize, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return nullptr;
+
+    AffineTransform transform;
+    transform.scale(scale).translate(-paintRect.location()).multiply(absoluteTransform);
+
+    auto& imageContext = imageBuffer->context();
+    imageContext.concatCTM(transform);
+
+    return imageBuffer;
 }
 
-void RenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool markForInvalidation)
+void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerModelObject& targetRenderer, const LayoutPoint& adjustedPaintOffset)
 {
-    m_masker.remove(&client);
+    ASSERT(hasLayer());
+    ASSERT(layer()->isSelfPaintingLayer());
+    ASSERT(targetRenderer.hasLayer());
 
-    markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
-}
+    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+        return;
 
-bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
-{
-    ASSERT(context);
-    ASSERT_UNUSED(resourceMode, !resourceMode);
-
-    bool missingMaskerData = !m_masker.contains(&renderer);
-    if (missingMaskerData)
-        m_masker.set(&renderer, makeUnique<MaskerData>());
-
-    MaskerData* maskerData = m_masker.get(&renderer);
-    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
-    FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
-
-    // Ignore 2D rotation, as it doesn't affect the size of the mask.
-    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
-
-    // Determine scale factor for the mask. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
-    ImageBuffer::sizeNeedsClamping(repaintRect.size(), scale);
-
-    if (!maskerData->maskImage && !repaintRect.isEmpty()) {
-        auto maskColorSpace = DestinationColorSpace::SRGB();
-        auto drawColorSpace = DestinationColorSpace::SRGB();
-
-#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        const SVGRenderStyle& svgStyle = style().svgStyle();
-        if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
-#if USE(CG)
-            maskColorSpace = DestinationColorSpace::LinearSRGB();
-#endif
-            drawColorSpace = DestinationColorSpace::LinearSRGB();
-        }
-#endif
-        // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
-        maskerData->maskImage = context->createScaledImageBuffer(repaintRect, scale, maskColorSpace, RenderingMode::Unaccelerated);
-        if (!maskerData->maskImage)
-            return false;
-
-        if (!drawContentIntoMaskImage(maskerData, drawColorSpace, &renderer))
-            maskerData->maskImage = nullptr;
-    }
-
-    if (!maskerData->maskImage)
-        return false;
-
-    SVGRenderingContext::clipToImageBuffer(*context, repaintRect, scale, maskerData->maskImage, missingMaskerData);
-    return true;
-}
-
-bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const DestinationColorSpace& colorSpace, RenderObject* object)
-{
-    auto& maskImageContext = maskerData->maskImage->context();
-    auto objectBoundingBox = object->objectBoundingBox();
-
-    if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
-        return false;
-
-#if !USE(CG)
-    maskerData->maskImage->transformToColorSpace(colorSpace);
-#else
-    UNUSED_PARAM(colorSpace);
-#endif
-
-    // Create the luminance mask.
-    if (style().svgStyle().maskType() == MaskType::Luminance)
-        maskerData->maskImage->convertToLuminanceMask();
-
-    return true;
-}
-
-bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& objectBoundingBox)
-{
-    // Eventually adjust the mask image context according to the target objectBoundingBox.
-    AffineTransform maskContentTransformation;
-
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        maskContentTransformation.translate(objectBoundingBox.location());
-        maskContentTransformation.scale(objectBoundingBox.size());
-        context.concatCTM(maskContentTransformation);
-    }
-
-    // Draw the content into the ImageBuffer.
-    for (auto& child : childrenOfType<SVGElement>(maskElement())) {
-        auto renderer = child.renderer();
-        if (!renderer)
-            continue;
-        if (renderer->needsLayout())
-            return false;
-        const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
-            continue;
-        SVGRenderingContext::renderSubtreeToContext(context, *renderer, maskContentTransformation);
-    }
-
-    return true;
-}
-
-bool RenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
-{
+    auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    context.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    auto objectBoundingBox = targetRenderer.objectBoundingBox();
+    auto boundingBoxTopLeftCorner = flooredLayoutPoint(objectBoundingBox.minXMinYCorner());
+    auto coordinateSystemOriginTranslation = adjustedPaintOffset - boundingBoxTopLeftCorner;
+    if (!coordinateSystemOriginTranslation.isZero())
+        context.translate(coordinateSystemOriginTranslation);
 
-    context.translate(destinationRect.location());
-
-    if (destinationRect.size() != sourceRect.size())
-        context.scale(destinationRect.size() / sourceRect.size());
-
-    context.translate(-sourceRect.location());
-
-    return drawContentIntoContext(context, { { }, destinationRect.size() });
-}
-
-void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
-{
-    for (Node* childNode = maskElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
-        RenderObject* renderer = childNode->renderer();
-        if (!childNode->isSVGElement() || !renderer)
-            continue;
-        const RenderStyle& style = renderer->style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
-             continue;
-        m_maskContentBoundaries.unite(renderer->localToParentTransform().mapRect(renderer->repaintRectInLocalCoordinates()));
-    }
-}
-
-FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object)
-{
-    FloatRect objectBoundingBox = object.objectBoundingBox();
-    FloatRect maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement(), maskElement().maskUnits(), objectBoundingBox);
-
-    // Resource was not layouted yet. Give back clipping rect of the mask.
-    if (selfNeedsLayout())
-        return maskBoundaries;
-
-    if (m_maskContentBoundaries.isEmpty())
-        calculateMaskContentRepaintRect();
-
-    FloatRect maskRect = m_maskContentBoundaries;
-    if (maskElement().maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        AffineTransform transform;
-        transform.translate(objectBoundingBox.location());
-        transform.scale(objectBoundingBox.size());
-        maskRect = transform.mapRect(maskRect);
+    AffineTransform contentTransform;
+    auto& maskElement = this->maskElement();
+    if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        contentTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
+        contentTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     }
 
+    auto repaintBoundingBox = targetRenderer.repaintRectInLocalCoordinates();
+    auto absoluteTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+
+    auto maskColorSpace = DestinationColorSpace::SRGB();
+    auto drawColorSpace = DestinationColorSpace::SRGB();
+
+    const auto& svgStyle = style().svgStyle();
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
+    if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
+#if USE(CG)
+        maskColorSpace = DestinationColorSpace::LinearSRGB();
+#endif
+        drawColorSpace = DestinationColorSpace::LinearSRGB();
+    }
+#endif
+
+    // FIXME: try to use GraphicsContext::createScaledImageBuffer instead.
+    auto maskImage = createImageBuffer(repaintBoundingBox, absoluteTransform, maskColorSpace, &context);
+    if (!maskImage)
+        return;
+
+    context.setCompositeOperation(CompositeOperator::DestinationIn);
+    context.beginTransparencyLayer(1);
+
+    auto& maskImageContext = maskImage->context();
+    layer()->paintSVGResourceLayer(maskImageContext, stateSaver, contentTransform);
+
+#if !USE(CG)
+    maskImage->transformToColorSpace(drawColorSpace);
+#else
+    UNUSED_PARAM(drawColorSpace);
+#endif
+
+    if (svgStyle.maskType() == MaskType::Luminance)
+        maskImage->convertToLuminanceMask();
+
+    context.setCompositeOperation(CompositeOperator::SourceOver);
+
+    // The mask image has been created in the absolute coordinate space, as the image should not be scaled.
+    // So the actual masking process has to be done in the absolute coordinate space as well.
+    FloatRect absoluteTargetRect = enclosingIntRect(absoluteTransform.mapRect(repaintBoundingBox));
+    context.concatCTM(absoluteTransform.inverse().value_or(AffineTransform()));
+    context.drawConsumingImageBuffer(WTFMove(maskImage), absoluteTargetRect);
+    context.endTransparencyLayer();
+}
+
+FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
+{
+    auto targetBoundingBox = object.objectBoundingBox();
+
+    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+        return targetBoundingBox;
+
+    SVGHitTestCycleDetectionScope queryScope(*this);
+
+    auto& maskElement = this->maskElement();
+
+    auto maskRect = maskElement.calculateMaskContentRepaintRect(repaintRectCalculation);
+    if (maskElement.maskContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        AffineTransform contentTransform;
+        contentTransform.translate(targetBoundingBox.location());
+        contentTransform.scale(targetBoundingBox.size());
+        maskRect = contentTransform.mapRect(maskRect);
+    }
+
+    auto maskBoundaries = SVGLengthContext::resolveRectangle<SVGMaskElement>(&maskElement, maskElement.maskUnits(), targetBoundingBox);
     maskRect.intersect(maskBoundaries);
     return maskRect;
 }
 
-} // namespace WebCore
+}
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

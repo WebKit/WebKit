@@ -46,7 +46,7 @@ public:
 
 private:
     // Create a new drawing area proxy for the given page.
-    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy() override;
+    std::unique_ptr<DrawingAreaProxy> createDrawingAreaProxy(WebProcessProxy&) override;
 
     // Tell the view to invalidate the given region. The region is in view coordinates.
     void setViewNeedsDisplay(const WebCore::Region&) override;

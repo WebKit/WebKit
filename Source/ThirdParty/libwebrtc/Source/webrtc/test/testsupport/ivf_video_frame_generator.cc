@@ -16,6 +16,7 @@
 #include "api/video/i420_buffer.h"
 #include "api/video_codecs/video_codec.h"
 #include "media/base/media_constants.h"
+#include "modules/video_coding/codecs/av1/dav1d_decoder.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
@@ -78,8 +79,7 @@ FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
   RTC_CHECK(image);
   // Last parameter is undocumented and there is no usage of it found.
   RTC_CHECK_EQ(WEBRTC_VIDEO_CODEC_OK,
-               video_decoder_->Decode(*image, /*missing_frames=*/false,
-                                      /*render_time_ms=*/0));
+               video_decoder_->Decode(*image, /*render_time_ms=*/0));
   bool decoded = next_frame_decoded_.Wait(kMaxNextFrameWaitTimeout);
   RTC_CHECK(decoded) << "Failed to decode next frame in "
                      << kMaxNextFrameWaitTimeout << ". Can't continue";
@@ -144,6 +144,12 @@ std::unique_ptr<VideoDecoder> IvfVideoFrameGenerator::CreateVideoDecoder(
   }
   if (codec_type == VideoCodecType::kVideoCodecH264) {
     return H264Decoder::Create();
+  }
+  if (codec_type == VideoCodecType::kVideoCodecAV1) {
+    return CreateDav1dDecoder();
+  }
+  if (codec_type == VideoCodecType::kVideoCodecH265) {
+    // TODO(bugs.webrtc.org/13485): implement H265 decoder
   }
   return nullptr;
 }

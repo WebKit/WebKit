@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+binmode STDOUT;
 
 print "Content-type: text/plain\n"; 
 print "Content-Length: 0\n";

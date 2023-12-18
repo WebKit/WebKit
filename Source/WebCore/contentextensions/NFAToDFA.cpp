@@ -75,9 +75,8 @@ static inline void epsilonClosureExcludingSelf(const SerializedNFA& nfa, unsigne
 
 static NFANodeClosures resolveEpsilonClosures(const SerializedNFA& nfa)
 {
-    NFANodeClosures nfaNodeClosures;
     unsigned nfaGraphSize = nfa.nodes().size();
-    nfaNodeClosures.resize(nfaGraphSize);
+    NFANodeClosures nfaNodeClosures(nfaGraphSize);
 
     for (unsigned nodeId = 0; nodeId < nfaGraphSize; ++nodeId)
         epsilonClosureExcludingSelf(nfa, nodeId, nfaNodeClosures[nodeId]);

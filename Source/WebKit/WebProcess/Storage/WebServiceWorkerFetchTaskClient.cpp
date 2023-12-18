@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebServiceWorkerFetchTaskClient.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerDownloadTaskMessages.h"
@@ -119,7 +117,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
     }
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, blobURL = WTFMove(blobURL).isolatedCopy()] () {
-        auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
+        RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
         if (!serviceWorkerThreadProxy) {
             didFail(internalError(blobURL));
             return;
@@ -309,5 +307,3 @@ void WebServiceWorkerFetchTaskClient::cleanup()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

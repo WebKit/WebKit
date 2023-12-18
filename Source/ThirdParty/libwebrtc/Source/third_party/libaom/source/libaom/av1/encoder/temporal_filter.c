@@ -9,6 +9,7 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <float.h>
 #include <math.h>
 #include <limits.h>
 
@@ -33,6 +34,7 @@
 #include "av1/encoder/extend.h"
 #include "av1/encoder/firstpass.h"
 #include "av1/encoder/gop_structure.h"
+#include "av1/encoder/intra_mode_search_utils.h"
 #include "av1/encoder/mcomp.h"
 #include "av1/encoder/motion_search_facade.h"
 #include "av1/encoder/pass2_strategy.h"
@@ -48,6 +50,39 @@
 // Forward Declaration.
 static void tf_determine_block_partition(const MV block_mv, const int block_mse,
                                          MV *subblock_mvs, int *subblock_mses);
+
+// This function returns the minimum and maximum log variances for 4x4 sub
+// blocks in the current block.
+static INLINE void get_log_var_4x4sub_blk(
+    AV1_COMP *cpi, const YV12_BUFFER_CONFIG *const frame_to_filter, int mb_row,
+    int mb_col, BLOCK_SIZE block_size, double *blk_4x4_var_min,
+    double *blk_4x4_var_max, int is_hbd) {
+  const int mb_height = block_size_high[block_size];
+  const int mb_width = block_size_wide[block_size];
+  int var_min = INT_MAX;
+  int var_max = 0;
+
+  // Derive the source buffer.
+  const int src_stride = frame_to_filter->y_stride;
+  const int y_offset = mb_row * mb_height * src_stride + mb_col * mb_width;
+  const uint8_t *src_buf = frame_to_filter->y_buffer + y_offset;
+
+  for (int i = 0; i < mb_height; i += MI_SIZE) {
+    for (int j = 0; j < mb_width; j += MI_SIZE) {
+      // Calculate the 4x4 sub-block variance.
+      const int var = av1_calc_normalized_variance(
+          cpi->ppi->fn_ptr[BLOCK_4X4].vf, src_buf + (i * src_stride) + j,
+          src_stride, is_hbd);
+
+      // Record min and max for over-arching block
+      var_min = AOMMIN(var_min, var);
+      var_max = AOMMAX(var_max, var);
+    }
+  }
+
+  *blk_4x4_var_min = log1p(var_min / 16.0);
+  *blk_4x4_var_max = log1p(var_max / 16.0);
+}
 
 /*!\endcond */
 /*!\brief Does motion search for blocks in temporal filtering. This is
@@ -68,19 +103,22 @@ static void tf_determine_block_partition(const MV block_mv, const int block_mse,
  *       the entire block.
  *
  * \ingroup src_frame_proc
- * \param[in]   cpi             Top level encoder instance structure
- * \param[in]   mb              Pointer to macroblock
- * \param[in]   frame_to_filter Pointer to the frame to be filtered
- * \param[in]   ref_frame       Pointer to the reference frame
- * \param[in]   block_size      Block size used for motion search
- * \param[in]   mb_row          Row index of the block in the frame
- * \param[in]   mb_col          Column index of the block in the frame
- * \param[in]   ref_mv          Reference motion vector, which is commonly
- *                              inherited from the motion search result of
- *                              previous frame.
- * \param[out]  subblock_mvs    Pointer to the motion vectors for 4 sub-blocks
- * \param[out]  subblock_mses   Pointer to the search errors (MSE) for 4
- *                              sub-blocks
+ * \param[in]   cpi                   Top level encoder instance structure
+ * \param[in]   mb                    Pointer to macroblock
+ * \param[in]   frame_to_filter       Pointer to the frame to be filtered
+ * \param[in]   ref_frame             Pointer to the reference frame
+ * \param[in]   block_size            Block size used for motion search
+ * \param[in]   mb_row                Row index of the block in the frame
+ * \param[in]   mb_col                Column index of the block in the frame
+ * \param[in]   ref_mv                Reference motion vector, which is commonly
+ *                                    inherited from the motion search result of
+ *                                    previous frame.
+ * \param[in]   allow_me_for_sub_blks Flag to indicate whether motion search at
+ *                                    16x16 sub-block level is needed or not.
+ * \param[out]  subblock_mvs          Pointer to the motion vectors for
+ *                                    4 sub-blocks
+ * \param[out]  subblock_mses         Pointer to the search errors (MSE) for
+ *                                    4 sub-blocks
  *
  * \remark Nothing will be returned. Results are saved in subblock_mvs and
  *         subblock_mses
@@ -89,7 +127,8 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
                              const YV12_BUFFER_CONFIG *frame_to_filter,
                              const YV12_BUFFER_CONFIG *ref_frame,
                              const BLOCK_SIZE block_size, const int mb_row,
-                             const int mb_col, MV *ref_mv, MV *subblock_mvs,
+                             const int mb_col, MV *ref_mv,
+                             bool allow_me_for_sub_blks, MV *subblock_mvs,
                              int *subblock_mses) {
   // Frame information
   const int min_frame_size = AOMMIN(cpi->common.width, cpi->common.height);
@@ -99,7 +138,10 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
   const int mb_width = block_size_wide[block_size];
   const int mb_pels = mb_height * mb_width;
   const int y_stride = frame_to_filter->y_stride;
+  const int src_width = frame_to_filter->y_width;
+  const int ref_width = ref_frame->y_width;
   assert(y_stride == ref_frame->y_stride);
+  assert(src_width == ref_width);
   const int y_offset = mb_row * mb_height * y_stride + mb_col * mb_width;
 
   // Save input state.
@@ -127,8 +169,10 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
   // Setup.
   mb->plane[0].src.buf = frame_to_filter->y_buffer + y_offset;
   mb->plane[0].src.stride = y_stride;
+  mb->plane[0].src.width = src_width;
   mbd->plane[0].pre[0].buf = ref_frame->y_buffer + y_offset;
   mbd->plane[0].pre[0].stride = y_stride;
+  mbd->plane[0].pre[0].width = ref_width;
 
   const SEARCH_METHODS search_method = NSTEP;
   const search_site_config *search_site_cfg =
@@ -141,14 +185,15 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
 
   // Do motion search.
   int_mv best_mv;  // Searched motion vector.
+  FULLPEL_MV_STATS best_mv_stats;
   int block_mse = INT_MAX;
   MV block_mv = kZeroMv;
   const int q = av1_get_q(cpi);
 
   av1_make_default_fullpel_ms_params(&full_ms_params, cpi, mb, block_size,
-                                     &baseline_mv, search_site_cfg,
+                                     &baseline_mv, start_mv, search_site_cfg,
+                                     search_method,
                                      /*fine_search_interval=*/0);
-  av1_set_mv_search_method(&full_ms_params, search_site_cfg, search_method);
   full_ms_params.run_mesh_search = 1;
   full_ms_params.mv_cost_params.mv_cost_type = mv_cost_type;
 
@@ -160,7 +205,7 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
 
   av1_full_pixel_search(start_mv, &full_ms_params, step_param,
                         cond_cost_list(cpi, cost_list), &best_mv.as_fullmv,
-                        NULL);
+                        &best_mv_stats, NULL);
 
   if (force_integer_mv == 1) {  // Only do full search on the entire block.
     const int mv_row = best_mv.as_mv.row;
@@ -181,63 +226,66 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
     // Since we are merely refining the result from full pixel search, we don't
     // need regularization for subpel search
     ms_params.mv_cost_params.mv_cost_type = MV_COST_NONE;
+    best_mv_stats.err_cost = 0;
 
     MV subpel_start_mv = get_mv_from_fullmv(&best_mv.as_fullmv);
     assert(av1_is_subpelmv_in_range(&ms_params.mv_limits, subpel_start_mv));
     error = cpi->mv_search_params.find_fractional_mv_step(
-        &mb->e_mbd, &cpi->common, &ms_params, subpel_start_mv, &best_mv.as_mv,
-        &distortion, &sse, NULL);
+        &mb->e_mbd, &cpi->common, &ms_params, subpel_start_mv, &best_mv_stats,
+        &best_mv.as_mv, &distortion, &sse, NULL);
     block_mse = DIVIDE_AND_ROUND(error, mb_pels);
     block_mv = best_mv.as_mv;
     *ref_mv = best_mv.as_mv;
-    // On 4 sub-blocks.
-    const BLOCK_SIZE subblock_size = av1_ss_size_lookup[block_size][1][1];
-    const int subblock_height = block_size_high[subblock_size];
-    const int subblock_width = block_size_wide[subblock_size];
-    const int subblock_pels = subblock_height * subblock_width;
-    start_mv = get_fullmv_from_mv(ref_mv);
 
-    int subblock_idx = 0;
-    for (int i = 0; i < mb_height; i += subblock_height) {
-      for (int j = 0; j < mb_width; j += subblock_width) {
-        const int offset = i * y_stride + j;
-        mb->plane[0].src.buf = frame_to_filter->y_buffer + y_offset + offset;
-        mbd->plane[0].pre[0].buf = ref_frame->y_buffer + y_offset + offset;
-        av1_make_default_fullpel_ms_params(&full_ms_params, cpi, mb,
-                                           subblock_size, &baseline_mv,
-                                           search_site_cfg,
-                                           /*fine_search_interval=*/0);
-        av1_set_mv_search_method(&full_ms_params, search_site_cfg,
-                                 search_method);
-        full_ms_params.run_mesh_search = 1;
-        full_ms_params.mv_cost_params.mv_cost_type = mv_cost_type;
+    if (allow_me_for_sub_blks) {
+      // On 4 sub-blocks.
+      const BLOCK_SIZE subblock_size = av1_ss_size_lookup[block_size][1][1];
+      const int subblock_height = block_size_high[subblock_size];
+      const int subblock_width = block_size_wide[subblock_size];
+      const int subblock_pels = subblock_height * subblock_width;
+      start_mv = get_fullmv_from_mv(ref_mv);
 
-        if (cpi->sf.mv_sf.prune_mesh_search == PRUNE_MESH_SEARCH_LVL_1) {
-          // Enable prune_mesh_search based on q for PRUNE_MESH_SEARCH_LVL_1.
-          full_ms_params.prune_mesh_search = (q <= 20) ? 0 : 1;
-          full_ms_params.mesh_search_mv_diff_threshold = 2;
+      int subblock_idx = 0;
+      for (int i = 0; i < mb_height; i += subblock_height) {
+        for (int j = 0; j < mb_width; j += subblock_width) {
+          const int offset = i * y_stride + j;
+          mb->plane[0].src.buf = frame_to_filter->y_buffer + y_offset + offset;
+          mbd->plane[0].pre[0].buf = ref_frame->y_buffer + y_offset + offset;
+          av1_make_default_fullpel_ms_params(
+              &full_ms_params, cpi, mb, subblock_size, &baseline_mv, start_mv,
+              search_site_cfg, search_method,
+              /*fine_search_interval=*/0);
+          full_ms_params.run_mesh_search = 1;
+          full_ms_params.mv_cost_params.mv_cost_type = mv_cost_type;
+
+          if (cpi->sf.mv_sf.prune_mesh_search == PRUNE_MESH_SEARCH_LVL_1) {
+            // Enable prune_mesh_search based on q for PRUNE_MESH_SEARCH_LVL_1.
+            full_ms_params.prune_mesh_search = (q <= 20) ? 0 : 1;
+            full_ms_params.mesh_search_mv_diff_threshold = 2;
+          }
+          av1_full_pixel_search(start_mv, &full_ms_params, step_param,
+                                cond_cost_list(cpi, cost_list),
+                                &best_mv.as_fullmv, &best_mv_stats, NULL);
+
+          av1_make_default_subpel_ms_params(&ms_params, cpi, mb, subblock_size,
+                                            &baseline_mv, cost_list);
+          ms_params.forced_stop = EIGHTH_PEL;
+          ms_params.var_params.subpel_search_type = subpel_search_type;
+          // Since we are merely refining the result from full pixel search, we
+          // don't need regularization for subpel search
+          ms_params.mv_cost_params.mv_cost_type = MV_COST_NONE;
+          best_mv_stats.err_cost = 0;
+
+          subpel_start_mv = get_mv_from_fullmv(&best_mv.as_fullmv);
+          assert(
+              av1_is_subpelmv_in_range(&ms_params.mv_limits, subpel_start_mv));
+          error = cpi->mv_search_params.find_fractional_mv_step(
+              &mb->e_mbd, &cpi->common, &ms_params, subpel_start_mv,
+              &best_mv_stats, &best_mv.as_mv, &distortion, &sse, NULL);
+          subblock_mses[subblock_idx] = DIVIDE_AND_ROUND(error, subblock_pels);
+          subblock_mvs[subblock_idx] = best_mv.as_mv;
+          ++subblock_idx;
         }
-
-        av1_full_pixel_search(start_mv, &full_ms_params, step_param,
-                              cond_cost_list(cpi, cost_list),
-                              &best_mv.as_fullmv, NULL);
-
-        av1_make_default_subpel_ms_params(&ms_params, cpi, mb, subblock_size,
-                                          &baseline_mv, cost_list);
-        ms_params.forced_stop = EIGHTH_PEL;
-        ms_params.var_params.subpel_search_type = subpel_search_type;
-        // Since we are merely refining the result from full pixel search, we
-        // don't need regularization for subpel search
-        ms_params.mv_cost_params.mv_cost_type = MV_COST_NONE;
-
-        subpel_start_mv = get_mv_from_fullmv(&best_mv.as_fullmv);
-        assert(av1_is_subpelmv_in_range(&ms_params.mv_limits, subpel_start_mv));
-        error = cpi->mv_search_params.find_fractional_mv_step(
-            &mb->e_mbd, &cpi->common, &ms_params, subpel_start_mv,
-            &best_mv.as_mv, &distortion, &sse, NULL);
-        subblock_mses[subblock_idx] = DIVIDE_AND_ROUND(error, subblock_pels);
-        subblock_mvs[subblock_idx] = best_mv.as_mv;
-        ++subblock_idx;
       }
     }
   }
@@ -247,9 +295,16 @@ static void tf_motion_search(AV1_COMP *cpi, MACROBLOCK *mb,
   mbd->plane[0].pre[0] = ori_pre_buf;
 
   // Make partition decision.
-  tf_determine_block_partition(block_mv, block_mse, subblock_mvs,
-                               subblock_mses);
-
+  if (allow_me_for_sub_blks) {
+    tf_determine_block_partition(block_mv, block_mse, subblock_mvs,
+                                 subblock_mses);
+  } else {
+    // Copy 32X32 block mv and mse values to sub blocks
+    for (int i = 0; i < 4; ++i) {
+      subblock_mvs[i] = block_mv;
+      subblock_mses[i] = block_mse;
+    }
+  }
   // Do not pass down the reference motion vector if error is too large.
   const int thresh = (min_frame_size >= 720) ? 12 : 3;
   if (block_mse > (thresh << (mbd->bd - 8))) {
@@ -842,6 +897,26 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
     memset(count, 0, num_pels * sizeof(count[0]));
     MV ref_mv = kZeroMv;  // Reference motion vector passed down along frames.
                           // Perform temporal filtering frame by frame.
+
+    // Decide whether to perform motion search at 16x16 sub-block level or not
+    // based on 4x4 sub-blocks source variance. Allow motion search for split
+    // partition only if the difference between max and min source variance of
+    // 4x4 blocks is greater than a threshold (which is derived empirically).
+    bool allow_me_for_sub_blks = true;
+    if (cpi->sf.hl_sf.allow_sub_blk_me_in_tf) {
+      const int is_hbd = is_frame_high_bitdepth(frame_to_filter);
+      // Initialize minimum variance to a large value and maximum variance to 0.
+      double blk_4x4_var_min = DBL_MAX;
+      double blk_4x4_var_max = 0;
+      get_log_var_4x4sub_blk(cpi, frame_to_filter, mb_row, mb_col,
+                             TF_BLOCK_SIZE, &blk_4x4_var_min, &blk_4x4_var_max,
+                             is_hbd);
+      // TODO(sanampudi.venkatarao@ittiam.com): Experiment and adjust the
+      // threshold for high bit depth.
+      if ((blk_4x4_var_max - blk_4x4_var_min) <= 4.0)
+        allow_me_for_sub_blks = false;
+    }
+
     for (int frame = 0; frame < num_frames; frame++) {
       if (frames[frame] == NULL) continue;
 
@@ -855,7 +930,8 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
         ref_mv.col *= -1;
       } else {  // Other reference frames.
         tf_motion_search(cpi, mb, frame_to_filter, frames[frame], block_size,
-                         mb_row, mb_col, &ref_mv, subblock_mvs, subblock_mses);
+                         mb_row, mb_col, &ref_mv, allow_me_for_sub_blks,
+                         subblock_mvs, subblock_mses);
       }
 
       // Perform weighted averaging.
@@ -887,8 +963,9 @@ void av1_tf_do_filtering_row(AV1_COMP *cpi, ThreadData *td, int mb_row) {
                 filter_strength, weight_calc_level_in_tf, pred, accum, count);
 #if CONFIG_AV1_HIGHBITDEPTH
           }
-#endif            // CONFIG_AV1_HIGHBITDEPTH
-        } else {  // for 8-bit
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+        } else {
+          // for 8-bit
           if (TF_BLOCK_SIZE == BLOCK_32X32 && TF_WINDOW_LENGTH == 5) {
             av1_apply_temporal_filter(
                 frame_to_filter, mbd, block_size, mb_row, mb_col, num_planes,
@@ -1008,11 +1085,9 @@ static void tf_setup_filtering_buffer(AV1_COMP *cpi,
   const YV12_BUFFER_CONFIG *to_filter_frame = &to_filter_buf->img;
   const int num_planes = av1_num_planes(&cpi->common);
   double *noise_levels = tf_ctx->noise_levels;
-  for (int plane = 0; plane < num_planes; ++plane) {
-    noise_levels[plane] = av1_estimate_noise_from_single_plane(
-        to_filter_frame, plane, cpi->common.seq_params->bit_depth,
-        NOISE_ESTIMATION_EDGE_THRESHOLD);
-  }
+  av1_estimate_noise_level(to_filter_frame, noise_levels, AOM_PLANE_Y,
+                           num_planes - 1, cpi->common.seq_params->bit_depth,
+                           NOISE_ESTIMATION_EDGE_THRESHOLD);
   // Get quantization factor.
   const int q = av1_get_q(cpi);
   // Get correlation estimates from first-pass;
@@ -1049,10 +1124,32 @@ static void tf_setup_filtering_buffer(AV1_COMP *cpi,
   // change the number of frames for key frame filtering, which is to avoid
   // visual quality drop.
   int adjust_num = 6;
+  const int adjust_num_frames_for_arf_filtering =
+      cpi->sf.hl_sf.adjust_num_frames_for_arf_filtering;
   if (num_frames == 1) {  // `arnr_max_frames = 1` is used to disable filtering.
     adjust_num = 0;
   } else if ((update_type == KF_UPDATE) && q <= 10) {
     adjust_num = 0;
+  } else if (adjust_num_frames_for_arf_filtering > 0 &&
+             update_type != KF_UPDATE && (cpi->rc.frames_since_key > 0)) {
+    // Since screen content detection happens after temporal filtering,
+    // 'frames_since_key' check is added to ensure the sf is disabled for the
+    // first alt-ref frame.
+    // Adjust number of frames to be considered for filtering based on noise
+    // level of the current frame. For low-noise frame, use more frames to
+    // filter such that the filtered frame can provide better predictions for
+    // subsequent frames and vice versa.
+    const uint8_t av1_adjust_num_using_noise_lvl[2][3] = { { 6, 4, 2 },
+                                                           { 4, 2, 0 } };
+    const uint8_t *adjust_num_frames =
+        av1_adjust_num_using_noise_lvl[adjust_num_frames_for_arf_filtering - 1];
+
+    if (noise_levels[AOM_PLANE_Y] < 0.5)
+      adjust_num = adjust_num_frames[0];
+    else if (noise_levels[AOM_PLANE_Y] < 1.0)
+      adjust_num = adjust_num_frames[1];
+    else
+      adjust_num = adjust_num_frames[2];
   }
   num_frames = AOMMIN(num_frames + adjust_num, lookahead_depth);
 
@@ -1067,10 +1164,6 @@ static void tf_setup_filtering_buffer(AV1_COMP *cpi,
 
     num_frames = AOMMIN(num_frames, gfu_boost / 150);
     num_frames += !(num_frames & 1);  // Make the number odd.
-
-    // Limit the number of frames if noise levels are low and high quantizers.
-    if (noise_levels[AOM_PLANE_Y] < 1.9 && cpi->ppi->p_rc.arf_q > 40)
-      num_frames = AOMMIN(num_frames, cpi->sf.hl_sf.num_frames_used_in_tf);
 
     // Only use 2 neighbours for the second ARF.
     if (update_type == INTNL_ARF_UPDATE) num_frames = AOMMIN(num_frames, 3);
@@ -1121,21 +1214,50 @@ static void tf_setup_filtering_buffer(AV1_COMP *cpi,
 
 /*!\cond */
 
-// A constant number, sqrt(pi / 2),  used for noise estimation.
-static const double SQRT_PI_BY_2 = 1.25331413732;
+double av1_estimate_noise_from_single_plane_c(const uint8_t *src, int height,
+                                              int width, int stride,
+                                              int edge_thresh) {
+  int64_t accum = 0;
+  int count = 0;
 
-double av1_estimate_noise_from_single_plane(const YV12_BUFFER_CONFIG *frame,
-                                            const int plane,
-                                            const int bit_depth,
-                                            const int edge_thresh) {
-  const int is_y_plane = (plane == 0);
-  const int height = frame->crop_heights[is_y_plane ? 0 : 1];
-  const int width = frame->crop_widths[is_y_plane ? 0 : 1];
-  const int stride = frame->strides[is_y_plane ? 0 : 1];
-  const uint8_t *src = frame->buffers[plane];
-  const uint16_t *src16 = CONVERT_TO_SHORTPTR(src);
-  const int is_high_bitdepth = is_frame_high_bitdepth(frame);
+  for (int i = 1; i < height - 1; ++i) {
+    for (int j = 1; j < width - 1; ++j) {
+      // Setup a small 3x3 matrix.
+      const int center_idx = i * stride + j;
+      int mat[3][3];
+      for (int ii = -1; ii <= 1; ++ii) {
+        for (int jj = -1; jj <= 1; ++jj) {
+          const int idx = center_idx + ii * stride + jj;
+          mat[ii + 1][jj + 1] = src[idx];
+        }
+      }
+      // Compute sobel gradients.
+      const int Gx = (mat[0][0] - mat[0][2]) + (mat[2][0] - mat[2][2]) +
+                     2 * (mat[1][0] - mat[1][2]);
+      const int Gy = (mat[0][0] - mat[2][0]) + (mat[0][2] - mat[2][2]) +
+                     2 * (mat[0][1] - mat[2][1]);
+      const int Ga = ROUND_POWER_OF_TWO(abs(Gx) + abs(Gy), 0);
+      // Accumulate Laplacian.
+      if (Ga < edge_thresh) {  // Only count smooth pixels.
+        const int v = 4 * mat[1][1] -
+                      2 * (mat[0][1] + mat[2][1] + mat[1][0] + mat[1][2]) +
+                      (mat[0][0] + mat[0][2] + mat[2][0] + mat[2][2]);
+        accum += ROUND_POWER_OF_TWO(abs(v), 0);
+        ++count;
+      }
+    }
+  }
 
+  // Return -1.0 (unreliable estimation) if there are too few smooth pixels.
+  return (count < 16) ? -1.0 : (double)accum / (6 * count) * SQRT_PI_BY_2;
+}
+
+#if CONFIG_AV1_HIGHBITDEPTH
+double av1_highbd_estimate_noise_from_single_plane_c(const uint16_t *src16,
+                                                     int height, int width,
+                                                     const int stride,
+                                                     int bit_depth,
+                                                     int edge_thresh) {
   int64_t accum = 0;
   int count = 0;
   for (int i = 1; i < height - 1; ++i) {
@@ -1146,7 +1268,7 @@ double av1_estimate_noise_from_single_plane(const YV12_BUFFER_CONFIG *frame,
       for (int ii = -1; ii <= 1; ++ii) {
         for (int jj = -1; jj <= 1; ++jj) {
           const int idx = center_idx + ii * stride + jj;
-          mat[ii + 1][jj + 1] = is_high_bitdepth ? src16[idx] : src[idx];
+          mat[ii + 1][jj + 1] = src16[idx];
         }
       }
       // Compute sobel gradients.
@@ -1168,6 +1290,35 @@ double av1_estimate_noise_from_single_plane(const YV12_BUFFER_CONFIG *frame,
 
   // Return -1.0 (unreliable estimation) if there are too few smooth pixels.
   return (count < 16) ? -1.0 : (double)accum / (6 * count) * SQRT_PI_BY_2;
+}
+#endif
+
+void av1_estimate_noise_level(const YV12_BUFFER_CONFIG *frame,
+                              double *noise_level, int plane_from, int plane_to,
+                              int bit_depth, int edge_thresh) {
+  for (int plane = plane_from; plane <= plane_to; plane++) {
+    const bool is_uv_plane = (plane != AOM_PLANE_Y);
+    const int height = frame->crop_heights[is_uv_plane];
+    const int width = frame->crop_widths[is_uv_plane];
+    const int stride = frame->strides[is_uv_plane];
+    const uint8_t *src = frame->buffers[plane];
+
+#if CONFIG_AV1_HIGHBITDEPTH
+    const uint16_t *src16 = CONVERT_TO_SHORTPTR(src);
+    const int is_high_bitdepth = is_frame_high_bitdepth(frame);
+    if (is_high_bitdepth) {
+      noise_level[plane] = av1_highbd_estimate_noise_from_single_plane(
+          src16, height, width, stride, bit_depth, edge_thresh);
+    } else {
+      noise_level[plane] = av1_estimate_noise_from_single_plane(
+          src, height, width, stride, edge_thresh);
+    }
+#else
+    (void)bit_depth;
+    noise_level[plane] = av1_estimate_noise_from_single_plane(
+        src, height, width, stride, edge_thresh);
+#endif
+  }
 }
 
 // Initializes the members of TemporalFilterCtx

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/touch-events/#touchevent-interface
+
 [
     Conditional=TOUCH_EVENTS,
     Exposed=Window
@@ -36,20 +38,6 @@
     readonly attribute boolean shiftKey;
     readonly attribute boolean altKey;
     readonly attribute boolean metaKey;
-
-    undefined initTouchEvent(optional TouchList? touches = null,
-                        optional TouchList? targetTouches = null,
-                        optional TouchList? changedTouches = null,
-                        optional [AtomString] DOMString type,
-                        optional WindowProxy? view = null,
-                        optional long screenX = 0,
-                        optional long screenY = 0,
-                        optional long clientX = 0,
-                        optional long clientY = 0,
-                        optional boolean ctrlKey = false,
-                        optional boolean altKey = false,
-                        optional boolean shiftKey = false,
-                        optional boolean metaKey = false);
 };
 
 dictionary TouchEventInit : UIEventInit {

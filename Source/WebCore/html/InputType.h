@@ -176,6 +176,7 @@ public:
     // scattered code with special cases for various types.
 
     bool isCheckbox() const { return m_type == Type::Checkbox; }
+    bool isSwitch() const { return isCheckbox() && m_element && m_element->hasSwitchAttribute(); }
     bool isColorControl() const { return m_type == Type::Color; }
     bool isDateField() const { return m_type == Type::Date; }
     bool isDateTimeLocalField() const { return m_type == Type::DateTimeLocal; }
@@ -208,8 +209,12 @@ public:
     bool isInteractiveContent() const;
     bool isLabelable() const;
     bool isEnumeratable() const;
-    bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type); }
+    bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type) || isSwitch(); }
     bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
+
+#if ENABLE(TOUCH_EVENTS)
+    bool hasTouchEventHandler() const;
+#endif
 
     // Form value functions.
 
@@ -269,11 +274,12 @@ public:
 
     // Event handlers.
 
-    virtual void handleClickEvent(MouseEvent&);
-    virtual void handleMouseDownEvent(MouseEvent&);
-    virtual void willDispatchClick(InputElementClickState&);
-    virtual void didDispatchClick(Event&, const InputElementClickState&);
-    virtual void handleDOMActivateEvent(Event&);
+    virtual void handleClickEvent(MouseEvent&) { }
+    virtual void handleMouseDownEvent(MouseEvent&) { }
+    virtual void handleMouseMoveEvent(MouseEvent&) { }
+    virtual void willDispatchClick(InputElementClickState&) { }
+    virtual void didDispatchClick(Event&, const InputElementClickState&) { }
+    virtual void handleDOMActivateEvent(Event&) { }
 
     virtual bool allowsShowPickerAcrossFrames();
     virtual void showPicker();
@@ -287,7 +293,7 @@ public:
     virtual void forwardEvent(Event&);
 
 #if ENABLE(TOUCH_EVENTS)
-    virtual void handleTouchEvent(TouchEvent&);
+    virtual void handleTouchEvent(TouchEvent&) { }
 #endif
 
     // Helpers for event handlers.
@@ -306,15 +312,11 @@ public:
 
     virtual void elementDidBlur() { }
 
-#if ENABLE(TOUCH_EVENTS)
-    virtual bool hasTouchEventHandler() const;
-#endif
-
     // Shadow tree handling.
 
     void createShadowSubtreeIfNeeded();
     virtual void createShadowSubtree();
-    virtual void destroyShadowSubtree();
+    virtual void removeShadowSubtree();
 
     virtual HTMLElement* containerElement() const { return nullptr; }
     virtual HTMLElement* innerBlockElement() const { return nullptr; }
@@ -358,14 +360,13 @@ public:
     virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
     virtual bool matchesIndeterminatePseudoClass() const;
-    virtual bool shouldAppearIndeterminate() const;
     virtual bool isPresentingAttachedView() const;
     virtual bool supportsSelectionAPI() const;
     virtual bool dirAutoUsesValue() const;
 #if ENABLE(DATALIST_ELEMENT)
     virtual bool isFocusingWithDataListDropdown() const { return false; };
 #endif
-    virtual void willUpdateCheckedness(bool /*nowChecked*/) { }
+    virtual void willUpdateCheckedness(bool /*nowChecked*/, WasSetByJavaScript) { }
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

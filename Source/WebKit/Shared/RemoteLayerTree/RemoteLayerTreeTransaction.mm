@@ -34,6 +34,7 @@
 #import <WebCore/EventRegion.h>
 #import <WebCore/LengthFunctions.h>
 #import <WebCore/Model.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>
@@ -343,13 +344,13 @@ HashSet<Ref<PlatformCALayerRemote>>& RemoteLayerTreeTransaction::changedLayers()
 
 const LayerPropertiesMap& RemoteLayerTreeTransaction::changedLayerProperties() const
 {
-    ASSERT(!isInAuxiliaryProcess());
+    ASSERT(!WebCore::isInAuxiliaryProcess());
     return m_changedLayers.changedLayerProperties;
 }
 
 LayerPropertiesMap& RemoteLayerTreeTransaction::changedLayerProperties()
 {
-    ASSERT(!isInAuxiliaryProcess());
+    ASSERT(!WebCore::isInAuxiliaryProcess());
     return m_changedLayers.changedLayerProperties;
 }
 

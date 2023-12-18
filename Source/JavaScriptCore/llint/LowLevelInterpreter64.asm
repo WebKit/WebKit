@@ -24,11 +24,11 @@
 
 # Utilities.
 macro storePC()
-    storei PC, LLIntReturnPC[cfr]
+    storei PC, CallSiteIndex[cfr]
 end
 
 macro loadPC()
-    loadi LLIntReturnPC[cfr], PC
+    loadi CallSiteIndex[cfr], PC
 end
 
 macro getuOperandNarrow(opcodeStruct, fieldName, dst)
@@ -240,22 +240,22 @@ macro doVMEntry(makeCall)
 
     checkStackPointerAlignment(t4, 0xbad0dc01)
 
-    loadi VM::disallowVMEntryCount[vm], t4
-    btinz t4, .checkVMEntryPermission
-
     storep vm, VMEntryRecord::m_vm[sp]
-    loadp VM::topCallFrame[vm], t4
-    storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
-    loadp VM::topEntryFrame[vm], t4
-    storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
-    loadp ProtoCallFrame::calleeValue[protoCallFrame], t4
-    storep t4, VMEntryRecord::m_callee[sp]
+    if (ARM64 or ARM64E) and ADDRESS64
+        loadpairq VM::topCallFrame[vm], t4, t3
+        storepairq t4, t3, VMEntryRecord::m_prevTopCallFrame[sp]
+    else
+        loadp VM::topCallFrame[vm], t4
+        storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
+        loadp VM::topEntryFrame[vm], t4
+        storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
+    end
 
     loadi ProtoCallFrame::paddedArgCount[protoCallFrame], t4
     addp CallFrameHeaderSlots, t4, t4
     lshiftp 3, t4
     subp sp, t4, t3
-    bqbeq sp, t3, .throwStackOverflow
+    bqbeq sp, t3, _llint_throw_stack_overflow_error_from_vm_entry
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
@@ -273,21 +273,31 @@ macro doVMEntry(makeCall)
 .stackCheckFailed:
         move t4, entry
         move t5, vm
-        jmp .throwStackOverflow
-    else
-        bpb t3, VM::m_softStackLimit[vm], .throwStackOverflow
-    end
-
+        jmp  _llint_throw_stack_overflow_error_from_vm_entry
 .stackHeightOK:
-    move t3, sp
-    move (constexpr ProtoCallFrame::numberOfRegisters), t3
+        move t3, sp
+    else
+        bpb t3, VM::m_softStackLimit[vm],  _llint_throw_stack_overflow_error_from_vm_entry
+        move t3, sp
+    end
 
 .copyHeaderLoop:
     # Copy the CodeBlock/Callee/ArgumentCountIncludingThis/|this| from protoCallFrame into the callee frame.
-    subi 1, t3
-    loadq [protoCallFrame, t3, 8], extraTempReg
-    storeq extraTempReg, CodeBlock[sp, t3, 8]
-    btinz t3, .copyHeaderLoop
+    if ARM64 or ARM64E
+        loadpairq (8 * 0)[protoCallFrame], extraTempReg, t3
+        storepairq extraTempReg, t3, CodeBlock + (8 * 0)[sp]
+        loadpairq (8 * 2)[protoCallFrame], extraTempReg, t3
+        storepairq extraTempReg, t3, CodeBlock + (8 * 2)[sp]
+    else
+        loadq (8 * 0)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 0)[sp]
+        loadq (8 * 1)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 1)[sp]
+        loadq (8 * 2)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 2)[sp]
+        loadq (8 * 3)[protoCallFrame], extraTempReg
+        storeq extraTempReg, CodeBlock + (8 * 3)[sp]
+    end
 
     loadi PayloadOffset + ProtoCallFrame::argCountAndCodeOriginValue[protoCallFrame], t4
     subi 1, t4
@@ -314,11 +324,16 @@ macro doVMEntry(makeCall)
 .copyArgsDone:
     if ARM64 or ARM64E
         move sp, t4
-        storep t4, VM::topCallFrame[vm]
+        if ADDRESS64
+            storepairq t4, cfr, VM::topCallFrame[vm]
+        else
+            storep t4, VM::topCallFrame[vm]
+            storep cfr, VM::topEntryFrame[vm]
+        end
     else
         storep sp, VM::topCallFrame[vm]
+        storep cfr, VM::topEntryFrame[vm]
     end
-    storep cfr, VM::topEntryFrame[vm]
 
     checkStackPointerAlignment(extraTempReg, 0xbad0dc02)
 
@@ -332,18 +347,28 @@ macro doVMEntry(makeCall)
     vmEntryRecord(cfr, t4)
 
     loadp VMEntryRecord::m_vm[t4], vm
-    loadp VMEntryRecord::m_prevTopCallFrame[t4], t2
-    storep t2, VM::topCallFrame[vm]
-    loadp VMEntryRecord::m_prevTopEntryFrame[t4], t2
-    storep t2, VM::topEntryFrame[vm]
+    if (ARM64 or ARM64E) and ADDRESS64
+        loadpairq VMEntryRecord::m_prevTopCallFrame[t4], t4, t2
+        storepairq t4, t2, VM::topCallFrame[vm]
+    else
+        loadp VMEntryRecord::m_prevTopCallFrame[t4], t2
+        storep t2, VM::topCallFrame[vm]
+        loadp VMEntryRecord::m_prevTopEntryFrame[t4], t2
+        storep t2, VM::topEntryFrame[vm]
+    end
 
     subp cfr, CalleeRegisterSaveSize, sp
 
     popCalleeSaves()
     functionEpilogue()
     ret
+end
 
-.throwStackOverflow:
+_llint_throw_stack_overflow_error_from_vm_entry:
+    const entry = a0
+    const vm = a1
+    const protoCallFrame = a2
+
     move vm, a0
     move protoCallFrame, a1
     cCall2(_llint_throw_stack_overflow_error)
@@ -362,18 +387,6 @@ macro doVMEntry(makeCall)
     popCalleeSaves()
     functionEpilogue()
     ret
-
-.checkVMEntryPermission:
-    move vm, a0
-    move protoCallFrame, a1
-    cCall2(_llint_check_vm_entry_permission)
-    move ValueUndefined, r0
-
-    subp cfr, CalleeRegisterSaveSize, sp
-    popCalleeSaves()
-    functionEpilogue()
-    ret
-end
 
 # a0, a2, t3, t4
 macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
@@ -503,7 +516,7 @@ macro callTrapHandler(throwHandler)
     move PC, a1
     cCall2(_llint_slow_path_handle_traps)
     btpnz r0, throwHandler
-    loadi LLIntReturnPC[cfr], PC
+    loadi CallSiteIndex[cfr], PC
 end
 
 if JIT
@@ -1575,6 +1588,18 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
     return(t0)
 end)
 
+llintOpWithReturn(op_typeof_is_function, OpTypeofIsFunction, macro (size, get, dispatch, return)
+    get(m_operand, t1)
+    loadConstantOrVariable(size, t1, t0)
+    btqnz t0, notCellMask, .opTypeOfIsFunctionIsImm
+    bbaeq JSCell::m_type[t0], ObjectType, .opTypeOfIsFunctionSlowCase
+.opTypeOfIsFunctionIsImm:
+    move ValueFalse, t0
+    return(t0)
+.opTypeOfIsFunctionSlowCase:
+    callSlowPath(_slow_path_typeof_is_function)
+    dispatch()
+end)
 
 llintOpWithReturn(op_is_boolean, OpIsBoolean, macro (size, get, dispatch, return)
     get(m_operand, t1)
@@ -2522,7 +2547,7 @@ macro arrayProfileForCall(opcodeStruct, getu)
 end
 
 # t5 holds metadata.
-macro callHelper(opcodeName, slowPath, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCountIncludingThis)
+macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCountIncludingThis)
     getCallee(t1)
 
     loadConstantOrVariable(size, t1, t0)
@@ -2571,7 +2596,7 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, dispatchAfterCall, valuePro
     callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
 end
 
-macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, prologue, dispatchAfterCall)
+macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, prologue, dispatchAfterCall)
     llintOpWithMetadata(opcodeName, opcodeStruct, macro (size, get, dispatch, metadata, return)
         metadata(t5, t0)
 
@@ -2592,7 +2617,7 @@ macro commonCallOp(opcodeName, slowPath, opcodeStruct, prepareCall, invokeCall, 
         end
 
         # t5 holds metadata
-        callHelper(opcodeName, slowPath, opcodeStruct, dispatchAfterCall, m_valueProfile, m_dst, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCount)
+        callHelper(opcodeName, opcodeStruct, dispatchAfterCall, m_valueProfile, m_dst, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCount)
     end)
 end
 
@@ -3286,7 +3311,7 @@ llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch
     loadi JSCell::m_structureID[t0], t3
     storei t3, OpIteratorOpen::Metadata::m_arrayProfile.m_lastSeenStructureID[t5]
     .done:
-    callHelper(op_iterator_open, _llint_slow_path_iterator_open_call, OpIteratorOpen, dispatchAfterRegularCall, m_iteratorValueProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
+    callHelper(op_iterator_open, OpIteratorOpen, dispatchAfterRegularCall, m_iteratorValueProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getByIdStart:
     macro storeNextAndDispatch(value)
@@ -3344,7 +3369,7 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
     # Use m_value slot as a tmp since we are going to write to it later.
     metadata(t5, t0)
-    callHelper(op_iterator_next, _llint_slow_path_iterator_next_call, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
+    callHelper(op_iterator_next, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getDoneStart:
     macro storeDoneAndJmpToGetValue(doneValue)

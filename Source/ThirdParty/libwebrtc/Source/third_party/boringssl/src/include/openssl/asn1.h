@@ -1355,6 +1355,11 @@ OPENSSL_EXPORT ASN1_GENERALIZEDTIME *ASN1_TIME_to_generalizedtime(
 // GeneralizedTime. If |str| is neither, it returns zero.
 OPENSSL_EXPORT int ASN1_TIME_set_string(ASN1_TIME *s, const char *str);
 
+// ASN1_TIME_set_string_X509 behaves like |ASN1_TIME_set_string| except it
+// additionally converts GeneralizedTime to UTCTime if it is in the range where
+// UTCTime is used. See RFC 5280, section 4.1.2.5.
+OPENSSL_EXPORT int ASN1_TIME_set_string_X509(ASN1_TIME *s, const char *str);
+
 // ASN1_TIME_to_time_t converts |t| to a time_t value in |out|. On
 // success, one is returned. On failure zero is returned. This function
 // will fail if the time can not be represented in a time_t.

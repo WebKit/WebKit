@@ -51,16 +51,13 @@ class JSGlobalObject;
     v(makeTypeError, nullptr) \
     v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
-    v(typedArrayClone, nullptr) \
     v(typedArrayContentType, nullptr) \
     v(typedArrayGetOriginalConstructor, nullptr) \
-    v(typedArraySort, nullptr) \
     v(isTypedArrayView, nullptr) \
     v(isSharedTypedArrayView, nullptr) \
     v(isResizableOrGrowableSharedTypedArrayView, nullptr) \
     v(typedArrayFromFast, nullptr) \
     v(isDetached, nullptr) \
-    v(typedArrayDefaultComparator, nullptr) \
     v(isBoundFunction, nullptr) \
     v(hasInstanceBoundFunction, nullptr) \
     v(instanceOf, nullptr) \
@@ -122,6 +119,7 @@ class JSGlobalObject;
     v(sentinelString, nullptr) \
     v(createRemoteFunction, nullptr) \
     v(isRemoteFunction, nullptr) \
+    v(arrayFromFast, nullptr) \
     v(arraySort, nullptr) \
     v(jsonParse, nullptr) \
     v(jsonStringify, nullptr) \

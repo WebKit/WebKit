@@ -17,6 +17,7 @@
 #include <string>
 
 #include "api/function_view.h"
+#include "api/neteq/neteq.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"

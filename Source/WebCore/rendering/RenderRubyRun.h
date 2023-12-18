@@ -88,4 +88,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyRun, isRubyRun())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRubyRun, isRenderRubyRun())

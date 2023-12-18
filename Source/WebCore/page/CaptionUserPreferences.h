@@ -44,18 +44,20 @@ class AudioTrackList;
 class TextTrackList;
 struct MediaSelectionOption;
 
+enum class CaptionUserPreferencesDisplayMode : uint8_t {
+    Automatic,
+    ForcedOnly,
+    AlwaysOn,
+    Manual,
+};
+
 class CaptionUserPreferences : public RefCounted<CaptionUserPreferences>, public CanMakeWeakPtr<CaptionUserPreferences> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<CaptionUserPreferences> create(PageGroup&);
     virtual ~CaptionUserPreferences();
 
-    enum CaptionDisplayMode {
-        Automatic,
-        ForcedOnly,
-        AlwaysOn,
-        Manual,
-    };
+    using CaptionDisplayMode = CaptionUserPreferencesDisplayMode;
     virtual CaptionDisplayMode captionDisplayMode() const;
     virtual void setCaptionDisplayMode(CaptionDisplayMode);
 
@@ -160,14 +162,6 @@ private:
 namespace WTF {
 
 template<> struct EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode> {
-    using values = EnumValues<
-        WebCore::CaptionUserPreferences::CaptionDisplayMode,
-        WebCore::CaptionUserPreferences::CaptionDisplayMode::Automatic,
-        WebCore::CaptionUserPreferences::CaptionDisplayMode::ForcedOnly,
-        WebCore::CaptionUserPreferences::CaptionDisplayMode::AlwaysOn,
-        WebCore::CaptionUserPreferences::CaptionDisplayMode::Manual
-    >;
-
     static std::optional<WebCore::CaptionUserPreferences::CaptionDisplayMode> fromString(const String& mode)
     {
         if (equalLettersIgnoringASCIICase(mode, "forcedonly"_s))

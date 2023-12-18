@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (10,16.05) size 529x69
+  RenderSVGTransformableContainer {g} at (10,16.05) size 528.28x68.95
+layer at (10,16.05) size 528x69
+  RenderSVGText {text} at (0,0) size 529x69 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 529x69
+      chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 19 width 528.28: "Clipped. INVISIBLE."
+layer at (0,0) size 200x201
+  RenderSVGResourceClipper {clipPath} at (-10,-16.05) size 200x200
+layer at (0,0) size 200x200
+  RenderSVGPath {path} at (0,0) size 200x200 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 200 0 L 200 200 L 0 200 Z"]

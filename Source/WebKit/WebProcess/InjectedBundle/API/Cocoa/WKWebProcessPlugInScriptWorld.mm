@@ -34,7 +34,7 @@
 
 + (WKWebProcessPlugInScriptWorld *)world
 {
-    return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::create());
+    return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::create()).autorelease();
 }
 
 + (WKWebProcessPlugInScriptWorld *)normalWorld

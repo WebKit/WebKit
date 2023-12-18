@@ -34,7 +34,7 @@ const float epsilon = 1e-3f;  // Error threshold for functional equivalence
 
 class NnPredictTest : public ::testing::TestWithParam<NnPredictTestParam> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     const int MAX_NODES2 = NN_MAX_NODES_PER_LAYER * NN_MAX_NODES_PER_LAYER;
     // Allocate two massive buffers on the heap for edge weights and node bias
     // Then set-up the double-dimension arrays pointing into the big buffers
@@ -51,7 +51,7 @@ class NnPredictTest : public ::testing::TestWithParam<NnPredictTestParam> {
     }
     target_func_ = GET_PARAM(0);
   }
-  virtual void TearDown() {
+  void TearDown() override {
     aom_free(weights_buf);
     aom_free(bias_buf);
   }
@@ -65,8 +65,8 @@ class NnPredictTest : public ::testing::TestWithParam<NnPredictTestParam> {
  private:
   NnPredict_Func target_func_;
   libaom_test::ACMRandom rng_;
-  float *weights[NN_MAX_HIDDEN_LAYERS + 1] = { 0 };
-  float *bias[NN_MAX_HIDDEN_LAYERS + 1] = { 0 };
+  float *weights[NN_MAX_HIDDEN_LAYERS + 1] = {};
+  float *bias[NN_MAX_HIDDEN_LAYERS + 1] = {};
   float *weights_buf = nullptr, *bias_buf = nullptr;
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(NnPredictTest);
@@ -175,14 +175,16 @@ void NnPredictTest::RunNnPredictSpeedTest(const NN_CONFIG *const shape,
 // This is all the neural network shapes observed executed in a few different
 // runs of the encoder.  It also conveniently covers all the kernels
 // implemented.
-static const NN_CONFIG shapes[] = {
-  { 10, 16, 1, { 64 }, { 0 }, { 0 } }, { 12, 1, 1, { 12 }, { 0 }, { 0 } },
-  { 12, 1, 1, { 24 }, { 0 }, { 0 } },  { 12, 1, 1, { 32 }, { 0 }, { 0 } },
-  { 18, 4, 1, { 24 }, { 0 }, { 0 } },  { 18, 4, 1, { 32 }, { 0 }, { 0 } },
-  { 4, 1, 1, { 16 }, { 0 }, { 0 } },   { 8, 1, 1, { 16 }, { 0 }, { 0 } },
-  { 8, 4, 1, { 16 }, { 0 }, { 0 } },   { 8, 1, 1, { 24 }, { 0 }, { 0 } },
-  { 8, 1, 1, { 32 }, { 0 }, { 0 } },   { 8, 1, 1, { 64 }, { 0 }, { 0 } },
-  { 9, 3, 1, { 32 }, { 0 }, { 0 } },   { 4, 4, 1, { 8 }, { 0 }, { 0 } },
+static const NN_CONFIG kShapes[] = {
+  { 37, 1, 2, { 16, 24 }, {}, {} }, { 24, 24, 1, { 12 }, {}, {} },
+  { 10, 16, 1, { 64 }, {}, {} },    { 12, 1, 1, { 12 }, {}, {} },
+  { 12, 1, 1, { 24 }, {}, {} },     { 12, 1, 1, { 32 }, {}, {} },
+  { 18, 4, 1, { 24 }, {}, {} },     { 18, 4, 1, { 32 }, {}, {} },
+  { 4, 1, 1, { 16 }, {}, {} },      { 8, 1, 0, { 0 }, {}, {} },
+  { 8, 4, 1, { 16 }, {}, {} },      { 8, 1, 1, { 32 }, {}, {} },
+  { 9, 3, 1, { 32 }, {}, {} },      { 8, 4, 0, { 0 }, {}, {} },
+  { 8, 8, 0, { 0 }, {}, {} },       { 4, 4, 1, { 8 }, {}, {} },
+  { 4, 3, 0, { 64 }, {}, {} },
 };
 
 void NnPredictTest::RunNnPredictTest_all(const NN_CONFIG *const shapes,
@@ -198,21 +200,29 @@ void NnPredictTest::RunNnPredictSpeedTest_all(const NN_CONFIG *const shapes,
 }
 
 TEST_P(NnPredictTest, RandomValues) {
-  RunNnPredictTest_all(shapes, sizeof(shapes) / sizeof(*shapes));
+  RunNnPredictTest_all(kShapes, sizeof(kShapes) / sizeof(kShapes[0]));
 }
 
 TEST_P(NnPredictTest, DISABLED_Speed) {
-  RunNnPredictSpeedTest_all(shapes, sizeof(shapes) / sizeof(*shapes), 10000000);
+  RunNnPredictSpeedTest_all(kShapes, sizeof(kShapes) / sizeof(kShapes[0]),
+                            10000000);
 }
 
-#if HAVE_SSE3 && !CONFIG_EXCLUDE_SIMD_MISMATCH
+#if !CONFIG_EXCLUDE_SIMD_MISMATCH
+#if HAVE_SSE3
 INSTANTIATE_TEST_SUITE_P(SSE3, NnPredictTest,
                          ::testing::Values(av1_nn_predict_sse3));
+#endif
+
+#if HAVE_AVX2
+INSTANTIATE_TEST_SUITE_P(AVX2, NnPredictTest,
+                         ::testing::Values(av1_nn_predict_avx2));
 #endif
 
 #if HAVE_NEON
 INSTANTIATE_TEST_SUITE_P(NEON, NnPredictTest,
                          ::testing::Values(av1_nn_predict_neon));
 #endif
+#endif  // !CONFIG_EXCLUDE_SIMD_MISMATCH
 
 }  // namespace

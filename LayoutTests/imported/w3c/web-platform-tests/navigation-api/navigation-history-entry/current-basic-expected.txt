@@ -1,0 +1,3 @@
+
+FAIL Basic tests for navigation.currentEntry null is not an object (evaluating 'first_entry.index')
+

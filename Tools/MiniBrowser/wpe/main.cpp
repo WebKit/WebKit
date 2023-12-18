@@ -55,6 +55,9 @@ static const char* featureList = nullptr;
 static gboolean enableITP;
 static gboolean printVersion;
 static GHashTable* openViews;
+#if ENABLE_WPE_PLATFORM
+static gboolean useWPEPlatformAPI;
+#endif
 
 static const GOptionEntry commandLineOptions[] =
 {
@@ -71,6 +74,9 @@ static const GOptionEntry commandLineOptions[] =
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", nullptr },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "features", 'F', 0, G_OPTION_ARG_STRING, &featureList, "Enable or disable WebKit features (hint: pass 'help' for a list)", "FEATURE-LIST" },
+#if ENABLE_WPE_PLATFORM
+    { "use-wpe-platform-api", 0, 0, G_OPTION_ARG_NONE, &useWPEPlatformAPI, "Use the WPE platform API", nullptr },
+#endif
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
@@ -114,6 +120,44 @@ private:
     WebKitWebView* m_webView { nullptr };
 };
 
+#if ENABLE_WPE_PLATFORM
+static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebView* webView)
+{
+    if (wpe_event_get_event_type(event) != WPE_EVENT_KEYBOARD_KEY_DOWN)
+        return FALSE;
+
+    auto modifiers = wpe_event_get_modifiers(event);
+    auto keyval = wpe_event_keyboard_get_keyval(event);
+
+    if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL && keyval == WPE_KEY_q) {
+        g_application_quit(g_application_get_default());
+        return TRUE;
+    }
+
+    if (modifiers & WPE_MODIFIER_KEYBOARD_ALT) {
+        if ((keyval == WPE_KEY_Left || keyval == WPE_KEY_KP_Left) && webkit_web_view_can_go_back(webView)) {
+            webkit_web_view_go_back(webView);
+            return TRUE;
+        }
+
+        if ((keyval == WPE_KEY_Right || keyval == WPE_KEY_KP_Right) && webkit_web_view_can_go_forward(webView)) {
+            webkit_web_view_go_forward(webView);
+            return TRUE;
+        }
+    }
+
+    if (keyval == WPE_KEY_F11) {
+        if (wpe_view_get_state(view) & WPE_VIEW_STATE_FULLSCREEN)
+            wpe_view_unfullscreen(view);
+        else
+            wpe_view_fullscreen(view);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+#endif
+
 static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession*, WebKitWebView* view)
 {
     return view;
@@ -139,6 +183,11 @@ static gboolean decidePermissionRequest(WebKitWebView *, WebKitPermissionRequest
 
 static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32_t width, uint32_t height)
 {
+#if ENABLE_WPE_PLATFORM
+    if (useWPEPlatformAPI)
+        return nullptr;
+#endif
+
     if (headlessMode)
         return std::make_unique<WPEToolingBackends::HeadlessViewBackend>(width, height);
     return std::make_unique<WPEToolingBackends::WindowViewBackend>(width, height);
@@ -166,15 +215,19 @@ static void webViewClose(WebKitWebView* webView, gpointer user_data)
 
 static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationAction*, gpointer user_data)
 {
-    auto backend = createViewBackend(1280, 720);
-    struct wpe_view_backend* wpeBackend = backend->backend();
-    if (!wpeBackend)
-        return nullptr;
 
-    auto* viewBackend = webkit_web_view_backend_new(wpeBackend,
-        [](gpointer data) {
-            delete static_cast<WPEToolingBackends::ViewBackend*>(data);
-        }, backend.release());
+    auto backend = createViewBackend(1280, 720);
+    WebKitWebViewBackend* viewBackend = nullptr;
+    if (backend) {
+        struct wpe_view_backend* wpeBackend = backend->backend();
+        if (!wpeBackend)
+            return nullptr;
+
+        viewBackend = webkit_web_view_backend_new(wpeBackend,
+            [](gpointer data) {
+                delete static_cast<WPEToolingBackends::ViewBackend*>(data);
+            }, backend.release());
+    }
 
     auto* newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", viewBackend,
@@ -331,9 +384,9 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         }
     }
 
-    auto* viewBackend = webkit_web_view_backend_new(backend->backend(), [](gpointer data) {
+    auto* viewBackend = backend ? webkit_web_view_backend_new(backend->backend(), [](gpointer data) {
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
-    }, backend);
+    }, backend) : nullptr;
 
     auto* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", viewBackend,
@@ -347,11 +400,18 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
         nullptr));
     g_object_unref(settings);
 
-    backend->setInputClient(std::make_unique<InputClient>(application, webView));
+    if (backend) {
+        backend->setInputClient(std::make_unique<InputClient>(application, webView));
 #if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
-    auto* accessible = wpe_view_backend_dispatch_get_accessible(backend->backend());
-    if (ATK_IS_OBJECT(accessible))
-        backend->setAccessibleChild(ATK_OBJECT(accessible));
+        auto* accessible = wpe_view_backend_dispatch_get_accessible(backend->backend());
+        if (ATK_IS_OBJECT(accessible))
+            backend->setAccessibleChild(ATK_OBJECT(accessible));
+#endif
+    }
+
+#if ENABLE_WPE_PLATFORM
+    if (auto* wpeView = webkit_web_view_get_wpe_view(webView))
+        g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
 #endif
 
     openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);
@@ -443,10 +503,12 @@ int main(int argc, char *argv[])
     }
 
     auto backend = createViewBackend(1280, 720);
-    struct wpe_view_backend* wpeBackend = backend->backend();
-    if (!wpeBackend) {
-        g_warning("Failed to create WPE view backend");
-        return 1;
+    if (backend) {
+        struct wpe_view_backend* wpeBackend = backend->backend();
+        if (!wpeBackend) {
+            g_warning("Failed to create WPE view backend");
+            return 1;
+        }
     }
 
     GApplication* application = g_application_new("org.wpewebkit.MiniBrowser", G_APPLICATION_NON_UNIQUE);

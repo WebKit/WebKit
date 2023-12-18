@@ -34,7 +34,7 @@ class AffineTransform;
 class FloatRect;
 class RenderElement;
 class RenderObject;
-class RenderSVGResourceFilter;
+class LegacyRenderSVGResourceFilter;
 
 class SVGRenderingContext {
 public:
@@ -90,7 +90,7 @@ private:
     RenderElement* m_renderer { nullptr };
     PaintInfo* m_paintInfo { nullptr };
     GraphicsContext* m_savedContext  { nullptr };
-    RenderSVGResourceFilter* m_filter  { nullptr };
+    LegacyRenderSVGResourceFilter* m_filter  { nullptr };
     LayoutRect m_savedPaintRect;
     int m_renderingFlags { 0 };
 };

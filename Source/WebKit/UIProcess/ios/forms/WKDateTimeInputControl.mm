@@ -250,6 +250,10 @@ static constexpr auto yearAndMonthDatePickerMode = static_cast<UIDatePickerMode>
     [self showDateTimePicker];
 }
 
+- (void)controlUpdateEditing
+{
+}
+
 - (void)controlEndEditing
 {
     [_view stopRelinquishingFirstResponderToFocusedElement];

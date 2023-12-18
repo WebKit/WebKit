@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,9 +64,9 @@ void loadIDNAllowedScriptList()
 
 #endif // !PLATFORM(COCOA)
 
-template<UScriptCode> bool isLookalikeCharacterOfScriptType(UChar32);
+template<UScriptCode> bool isLookalikeCharacterOfScriptType(char32_t);
 
-template<> bool isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(UChar32 codePoint)
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x0548: /* ARMENIAN CAPITAL LETTER VO */
@@ -83,7 +83,7 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_ARMENIAN>(UChar32 codeP
     }
 }
 
-template<> bool isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(UChar32 codePoint)
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x0BE6: /* TAMIL DIGIT ZERO */
@@ -93,7 +93,7 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_TAMIL>(UChar32 codePoin
     }
 }
 
-template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(UChar32 codePoint)
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x146D: /* CANADIAN SYLLABICS KI */
@@ -117,7 +117,7 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_CANADIAN_ABORIGINAL>(UC
     }
 }
 
-template<> bool isLookalikeCharacterOfScriptType<USCRIPT_THAI>(UChar32 codePoint)
+template<> bool isLookalikeCharacterOfScriptType<USCRIPT_THAI>(char32_t codePoint)
 {
     switch (codePoint) {
     case 0x0E01: // THAI CHARACTER KO KAI
@@ -128,7 +128,7 @@ template<> bool isLookalikeCharacterOfScriptType<USCRIPT_THAI>(UChar32 codePoint
 }
 
 template <UScriptCode ScriptType>
-bool isOfScriptType(UChar32 codePoint)
+bool isOfScriptType(char32_t codePoint)
 {
     UErrorCode error = U_ZERO_ERROR;
     UScriptCode script = uscript_getScript(codePoint, &error);
@@ -162,7 +162,7 @@ template<typename CharacterType> inline bool isASCIIDigitOrValidHostCharacter(Ch
 }
 
 template <UScriptCode ScriptType>
-bool isLookalikeSequence(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
+bool isLookalikeSequence(const std::optional<char32_t>& previousCodePoint, char32_t codePoint)
 {
     if (!previousCodePoint || *previousCodePoint == '/')
         return false;
@@ -175,12 +175,12 @@ bool isLookalikeSequence(const std::optional<UChar32>& previousCodePoint, UChar3
 }
 
 template <>
-bool isLookalikeSequence<USCRIPT_ARABIC>(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
+bool isLookalikeSequence<USCRIPT_ARABIC>(const std::optional<char32_t>& previousCodePoint, char32_t codePoint)
 {
-    auto isArabicDiacritic = [](UChar32 codePoint) {
+    auto isArabicDiacritic = [](char32_t codePoint) {
         return 0x064B <= codePoint && codePoint <= 0x065F;
     };
-    auto isArabicCodePoint = [](const std::optional<UChar32>& codePoint) {
+    auto isArabicCodePoint = [](const std::optional<char32_t>& codePoint) {
         if (!codePoint)
             return false;
         return ublock_getCode(*codePoint) == UBLOCK_ARABIC;
@@ -188,7 +188,7 @@ bool isLookalikeSequence<USCRIPT_ARABIC>(const std::optional<UChar32>& previousC
     return isArabicDiacritic(codePoint) && !isArabicCodePoint(previousCodePoint);
 }
 
-static bool isLookalikeCharacter(const std::optional<UChar32>& previousCodePoint, UChar32 codePoint)
+static bool isLookalikeCharacter(const std::optional<char32_t>& previousCodePoint, char32_t codePoint)
 {
     // This function treats the following as unsafe, lookalike characters:
     // any non-printable character, any character considered as whitespace,
@@ -402,9 +402,9 @@ static bool allCharactersInAllowedIDNScriptList(const UChar* buffer, int32_t len
 {
     loadIDNAllowedScriptList();
     int32_t i = 0;
-    std::optional<UChar32> previousCodePoint;
+    std::optional<char32_t> previousCodePoint;
     while (i < length) {
-        UChar32 c;
+        char32_t c;
         U16_NEXT(buffer, i, length, c);
         UErrorCode error = U_ZERO_ERROR;
         UScriptCode script = uscript_getScript(c, &error);
@@ -648,8 +648,11 @@ std::optional<String> mapHostName(const String& hostName, URLDecodeFunction deco
 
     unsigned length = string.length();
 
-    auto sourceBuffer = string.charactersWithNullTermination();
-    
+    auto expectedSourceBuffer = string.charactersWithNullTermination();
+    if (!expectedSourceBuffer)
+        return std::nullopt;
+    auto sourceBuffer = expectedSourceBuffer.value();
+
     UChar destinationBuffer[URLParser::hostnameBufferLength];
     UErrorCode uerror = U_ZERO_ERROR;
     UIDNAInfo processingDetails = UIDNA_INFO_INITIALIZER;
@@ -831,11 +834,11 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
 {
     unsigned length = sourceBuffer.length();
 
-    std::optional<UChar32> previousCodePoint;
+    std::optional<char32_t> previousCodePoint;
 
     unsigned i;
     for (i = 0; i < length; ) {
-        UChar32 c = sourceBuffer.characterStartingAt(i);
+        char32_t c = sourceBuffer.characterStartingAt(i);
         if (isLookalikeCharacter(previousCodePoint, sourceBuffer.characterStartingAt(i)))
             break;
         previousCodePoint = c;
@@ -854,7 +857,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
         StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.characters16(), i);
 
     for (; i < length; ) {
-        UChar32 c = sourceBuffer.characterStartingAt(i);
+        char32_t c = sourceBuffer.characterStartingAt(i);
         unsigned characterLength = U16_LENGTH(c);
         if (isLookalikeCharacter(previousCodePoint, c)) {
             uint8_t utf8Buffer[4];

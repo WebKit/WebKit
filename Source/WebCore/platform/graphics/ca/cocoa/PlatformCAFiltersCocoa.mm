@@ -140,7 +140,6 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             const auto& blurOperation = downcast<BlurFilterOperation>(filterOperation);
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
-#if ENABLE(FILTERS_LEVEL_2)
             if ([layer isKindOfClass:[CABackdropLayer class]]) {
                 // If the backdrop is transparent, we need `normalizeEdgesTransparent`
                 // in order to render correctly. That's hard to determine from this code,
@@ -148,7 +147,6 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
                 [filter setValue:@YES forKey:@"inputNormalizeEdgesTransparent"];
                 [filter setValue:@YES forKey:@"inputNormalizeEdges"];
             }
-#endif
             [filter setName:filterName];
             return filter;
         }

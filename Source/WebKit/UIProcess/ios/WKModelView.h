@@ -26,6 +26,7 @@
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
 
 #import "RemoteLayerTreeViews.h"
+#import <WebCore/PlatformLayerIdentifier.h>
 
 namespace WebCore {
 class Model;

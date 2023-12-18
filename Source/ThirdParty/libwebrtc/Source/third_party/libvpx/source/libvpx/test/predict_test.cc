@@ -43,7 +43,7 @@ class PredictTestBase : public AbstractBench,
       : width_(GET_PARAM(0)), height_(GET_PARAM(1)), predict_(GET_PARAM(2)),
         src_(nullptr), padded_dst_(nullptr), dst_(nullptr), dst_c_(nullptr) {}
 
-  virtual void SetUp() {
+  void SetUp() override {
     src_ = new uint8_t[kSrcSize];
     ASSERT_NE(src_, nullptr);
 
@@ -64,7 +64,7 @@ class PredictTestBase : public AbstractBench,
     memset(dst_c_, 0, 16 * 16);
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     delete[] src_;
     src_ = nullptr;
     vpx_free(padded_dst_);
@@ -209,7 +209,7 @@ class PredictTestBase : public AbstractBench,
     }
   }
 
-  void Run() {
+  void Run() override {
     for (int xoffset = 0; xoffset < 8; ++xoffset) {
       for (int yoffset = 0; yoffset < 8; ++yoffset) {
         if (xoffset == 0 && yoffset == 0) {
@@ -348,6 +348,14 @@ INSTANTIATE_TEST_SUITE_P(
                       make_tuple(8, 8, &vp8_sixtap_predict8x8_mmi),
                       make_tuple(8, 4, &vp8_sixtap_predict8x4_mmi),
                       make_tuple(4, 4, &vp8_sixtap_predict4x4_mmi)));
+#endif
+
+#if HAVE_LSX
+INSTANTIATE_TEST_SUITE_P(
+    LSX, SixtapPredictTest,
+    ::testing::Values(make_tuple(16, 16, &vp8_sixtap_predict16x16_lsx),
+                      make_tuple(8, 8, &vp8_sixtap_predict8x8_lsx),
+                      make_tuple(4, 4, &vp8_sixtap_predict4x4_lsx)));
 #endif
 
 class BilinearPredictTest : public PredictTestBase {};

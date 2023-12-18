@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,11 @@
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SlotVisitor);
 
 #if ENABLE(GC_VALIDATION)
 static void validate(JSCell* cell)
@@ -75,7 +78,7 @@ static void validate(JSCell* cell)
 }
 #endif
 
-SlotVisitor::SlotVisitor(Heap& heap, CString codeName)
+SlotVisitor::SlotVisitor(JSC::Heap& heap, CString codeName)
     : Base(heap, codeName, heap.m_opaqueRoots)
     , m_markingVersion(MarkedSpace::initialVersion)
 #if ASSERT_ENABLED

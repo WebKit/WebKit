@@ -37,7 +37,7 @@
 #include "SpeechSynthesisUtterance.h"
 #include "TextTrackCue.h"
 #include "VTTRegion.h"
-#include <wtf/EnumTraits.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -58,6 +58,9 @@ enum class VTTDirectionSetting : uint8_t {
     EmptyString = Horizontal,
     Rl = VerticalGrowingLeft,
     Lr = VerticalGrowingRight,
+
+    // For static-assert convenience.
+    MaxValue = VerticalGrowingRight,
 };
 
 enum class VTTLineAlignSetting : uint8_t {
@@ -79,6 +82,9 @@ enum class VTTAlignSetting : uint8_t {
     End,
     Left,
     Right,
+
+    // For static-assert convenience.
+    MaxValue = Right,
 };
 
 // ----------------------------
@@ -91,23 +97,23 @@ public:
     void applyCSSProperties() override;
     void applyCSSPropertiesWithRegion();
 
-    void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
-
 protected:
     VTTCueBox(Document&, VTTCue&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    int fontSizeFromCaptionUserPrefs() const { return m_fontSizeFromCaptionUserPrefs; }
-
 private:
     WeakPtr<VTTCue> m_cue;
-    int m_fontSizeFromCaptionUserPrefs;
 };
 
 // ----------------------------
 
-class VTTCue : public TextTrackCue {
+class VTTCue
+    : public TextTrackCue
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
     WTF_MAKE_ISO_ALLOCATED(VTTCue);
 public:
     static Ref<VTTCue> create(Document&, double start, double end, String&& content);
@@ -199,7 +205,7 @@ public:
     CueType cueType() const override { return WebVTT; }
     bool isRenderable() const final { return !m_content.isEmpty(); }
 
-    void didChange() final;
+    void didChange(bool = false) final;
 
     double calculateComputedTextPosition() const;
     PositionAlignSetting calculateComputedPositionAlignment() const;
@@ -252,6 +258,13 @@ private:
     void pauseSpeaking() final;
     void cancelSpeaking() final;
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return *m_logger; }
+    const void* logIdentifier() const final;
+    WTFLogChannel& logChannel() const final;
+    const char* logClassName() const final { return "VTTCue"; }
+#endif
+
     String m_content;
     String m_settings;
     std::optional<double> m_linePosition;
@@ -294,6 +307,11 @@ private:
     LineAndPositionSetting m_top { Auto };
     LineAndPositionSetting m_width { Auto };
     LineAndPositionSetting m_height { Auto };
+
+#if !RELEASE_LOG_DISABLED
+    mutable RefPtr<Logger> m_logger;
+    mutable const void* m_logIdentifier { nullptr };
+#endif
 };
 
 } // namespace WebCore
@@ -301,45 +319,6 @@ private:
 namespace WTF {
 
 template<> struct LogArgument<WebCore::VTTCue> : LogArgument<WebCore::TextTrackCue> { };
-
-template<> struct EnumTraits<WebCore::VTTCue::DirectionSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::DirectionSetting,
-        WebCore::VTTCue::DirectionSetting::Horizontal,
-        WebCore::VTTCue::DirectionSetting::VerticalGrowingLeft,
-        WebCore::VTTCue::DirectionSetting::VerticalGrowingRight
-    >;
-};
-
-template<> struct EnumTraits<WebCore::VTTCue::LineAlignSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::LineAlignSetting,
-        WebCore::VTTCue::LineAlignSetting::Start,
-        WebCore::VTTCue::LineAlignSetting::Center,
-        WebCore::VTTCue::LineAlignSetting::End
-    >;
-};
-
-template<> struct EnumTraits<WebCore::VTTCue::PositionAlignSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::PositionAlignSetting,
-        WebCore::VTTCue::PositionAlignSetting::LineLeft,
-        WebCore::VTTCue::PositionAlignSetting::Center,
-        WebCore::VTTCue::PositionAlignSetting::LineRight,
-        WebCore::VTTCue::PositionAlignSetting::Auto
-    >;
-};
-
-template<> struct EnumTraits<WebCore::VTTCue::AlignSetting> {
-    using values = EnumValues<
-        WebCore::VTTCue::AlignSetting,
-        WebCore::VTTCue::AlignSetting::Start,
-        WebCore::VTTCue::AlignSetting::Center,
-        WebCore::VTTCue::AlignSetting::End,
-        WebCore::VTTCue::AlignSetting::Left,
-        WebCore::VTTCue::AlignSetting::Right
-    >;
-};
 
 }
 

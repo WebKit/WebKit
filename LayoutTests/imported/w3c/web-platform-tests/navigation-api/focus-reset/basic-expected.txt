@@ -1,0 +1,10 @@
+
+FAIL Invalid values for focusReset throw assert_true: expected true got false
+FAIL Does not reset the focus when no navigate handler is present promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL Resets the focus when no focusReset option is provided promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL Resets the focus when focusReset is explicitly set to undefined promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL Resets the focus when no focusReset option is provided (nontrivial fulfilled promise) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL Resets the focus when no focusReset option is provided (rejected promise) promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL Resets the focus when focusReset is explicitly set to 'after-transition' promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+FAIL Does not reset the focus when focusReset is set to 'manual' promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'finished.catch')"
+

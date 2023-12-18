@@ -426,6 +426,43 @@ TEST_P(RobustResourceInitTest, BufferDataZeroSize)
     glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
 }
 
+// Test robust initialization of PVRTC1 textures.
+TEST_P(RobustResourceInitTest, CompressedTexImagePVRTC1)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_IMG_texture_compression_pvrtc"));
+
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(testProgram);
+
+    std::vector<std::pair<GLenum, GLColor>> formats = {
+        {GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG, GLColor::black},
+        {GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG, GLColor::black},
+        {GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG, GLColor::transparentBlack},
+        {GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG, GLColor::transparentBlack}};
+
+    if (IsGLExtensionEnabled("GL_EXT_pvrtc_sRGB"))
+    {
+        formats.insert(formats.end(),
+                       {{GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT, GLColor::black},
+                        {GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT, GLColor::black},
+                        {GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT, GLColor::transparentBlack},
+                        {GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT, GLColor::transparentBlack}});
+    }
+
+    for (auto format : formats)
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glCompressedTexImage2D(GL_TEXTURE_2D, 0, format.first, 8, 8, 0, 32, nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        drawQuad(testProgram, essl1_shaders::PositionAttrib(), 0.0f);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, format.second);
+    }
+}
+
 // Regression test for images being recovered from storage not re-syncing to storage after being
 // initialized
 TEST_P(RobustResourceInitTestES3, D3D11RecoverFromStorageBug)
@@ -1399,9 +1436,6 @@ TEST_P(RobustResourceInitTestES3, GenerateMipmapCubeMap)
 TEST_P(RobustResourceInitTestES3, BlitFramebufferOutOfBounds)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
-
-    // http://anglebug.com/2408
-    ANGLE_SKIP_TEST_IF(IsMac() && IsAMD());
 
     // Initiate data to read framebuffer
     constexpr int size                = 8;

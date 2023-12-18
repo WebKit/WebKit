@@ -62,7 +62,7 @@ public:
     // Additional DOM Operations
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds();
-    WebCore::IntRect renderRect(bool*);
+    WebCore::IntRect absoluteBoundingRect(bool*);
     RefPtr<WebImage> renderedImage(SnapshotOptions, bool shouldExcludeOverflow, const std::optional<float>& bitmapWidth = std::nullopt);
     RefPtr<InjectedBundleRangeHandle> visibleRange();
     void setHTMLInputElementValueForUser(const String&);

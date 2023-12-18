@@ -138,6 +138,11 @@ class GlobalSimulatedTimeController : public TimeController {
 
   void AdvanceTime(TimeDelta duration) override;
 
+  // Advances time by `duration`and do not run delayed tasks in the meantime.
+  // Runs any pending tasks at the end.
+  // Useful for simulating contention on destination queues.
+  void SkipForwardBy(TimeDelta duration);
+
   // Makes the simulated time controller aware of a custom
   // SimulatedSequenceRunner.
   // TODO(bugs.webrtc.org/11581): remove method once the ModuleRtpRtcpImpl2 unit

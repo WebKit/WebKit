@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -44,8 +45,8 @@ public:
     using TimerNotificationCallback = RefPtr<WTF::SharedTask<TimerNotificationType>>;
 
     class Manager {
-        WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Manager);
+        WTF_MAKE_TZONE_ALLOCATED(Manager);
         void timerDidFireCallback();
 
         Manager() = default;
@@ -83,7 +84,7 @@ public:
     JS_EXPORT_PRIVATE virtual ~JSRunLoopTimer();
     virtual void doWork(VM&) = 0;
 
-    void setTimeUntilFire(Seconds intervalInSeconds);
+    JS_EXPORT_PRIVATE void setTimeUntilFire(Seconds intervalInSeconds);
     void cancelTimer();
     bool isScheduled() const { return m_isScheduled; }
 

@@ -1,6 +1,6 @@
 kind: manual
 sources:
-- kind: git_tag
+- kind: git_repo
   ref: 3.0.4
   url: github_com:SCons/scons.git
 

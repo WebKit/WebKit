@@ -59,8 +59,8 @@ public:
     friend bool operator==(const RenderRange&, const RenderRange&) = default;
 
 private:
-    WeakPtr<RenderObject> m_start;
-    WeakPtr<RenderObject> m_end;
+    SingleThreadWeakPtr<RenderObject> m_start;
+    SingleThreadWeakPtr<RenderObject> m_end;
     unsigned m_startOffset { 0 };
     unsigned m_endOffset { 0 };
 };

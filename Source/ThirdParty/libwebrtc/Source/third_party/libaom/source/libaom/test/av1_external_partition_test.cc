@@ -247,9 +247,9 @@ class ExternalPartitionTestAPI
   ExternalPartitionTestAPI()
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         cpu_used_(GET_PARAM(2)), psnr_(0.0), nframes_(0) {}
-  virtual ~ExternalPartitionTestAPI() {}
+  ~ExternalPartitionTestAPI() override {}
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -260,14 +260,14 @@ class ExternalPartitionTestAPI
     init_flags_ = AOM_CODEC_USE_PSNR;
   }
 
-  virtual bool DoDecode() const { return false; }
+  bool DoDecode() const override { return false; }
 
-  virtual void BeginPassHook(unsigned int) {
+  void BeginPassHook(unsigned int) override {
     psnr_ = 0.0;
     nframes_ = 0;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
@@ -287,8 +287,8 @@ class ExternalPartitionTestAPI
     decision_mode_ = mode;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       if (decision_mode_ == AOM_EXT_PART_WHOLE_TREE) {
         aom_ext_part_funcs_t ext_part_funcs;
@@ -559,9 +559,9 @@ class ExternalPartitionTestDfsAPI
   ExternalPartitionTestDfsAPI()
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         cpu_used_(GET_PARAM(2)), psnr_(0.0), nframes_(0) {}
-  virtual ~ExternalPartitionTestDfsAPI() {}
+  ~ExternalPartitionTestDfsAPI() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -572,14 +572,14 @@ class ExternalPartitionTestDfsAPI
     init_flags_ = AOM_CODEC_USE_PSNR;
   }
 
-  virtual bool DoDecode() const { return false; }
+  bool DoDecode() const override { return false; }
 
-  virtual void BeginPassHook(unsigned int) {
+  void BeginPassHook(unsigned int) override {
     psnr_ = 0.0;
     nframes_ = 0;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
@@ -597,8 +597,8 @@ class ExternalPartitionTestDfsAPI
     test_send_features_ = test_send_features;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       aom_ext_part_funcs_t ext_part_funcs;
       ext_part_funcs.priv = reinterpret_cast<void *>(&test_data_);

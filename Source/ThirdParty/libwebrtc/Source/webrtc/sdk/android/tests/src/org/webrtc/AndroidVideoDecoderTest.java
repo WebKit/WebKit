@@ -27,10 +27,10 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaFormat;
 import android.os.Handler;
+import androidx.test.runner.AndroidJUnit4;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import org.chromium.testing.local.LocalRobolectricTestRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +39,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.robolectric.annotation.Config;
 import org.webrtc.EncodedImage.FrameType;
 import org.webrtc.FakeMediaCodecWrapper.State;
@@ -46,7 +47,7 @@ import org.webrtc.VideoDecoder.DecodeInfo;
 import org.webrtc.VideoFrame.I420Buffer;
 import org.webrtc.VideoFrame.TextureBuffer.Type;
 
-@RunWith(LocalRobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 @Config(manifest = Config.NONE)
 public class AndroidVideoDecoderTest {
   private static final VideoDecoder.Settings TEST_DECODER_SETTINGS =
@@ -193,7 +194,7 @@ public class AndroidVideoDecoderTest {
   @Mock private EglBase.Context mockEglBaseContext;
   @Mock private SurfaceTextureHelper mockSurfaceTextureHelper;
   @Mock private VideoDecoder.Callback mockDecoderCallback;
-  private FakeMediaCodecWrapper fakeMediaCodecWrapper;
+  @Spy private FakeMediaCodecWrapper fakeMediaCodecWrapper;
   private FakeDecoderCallback fakeDecoderCallback;
 
   @Before
@@ -201,9 +202,6 @@ public class AndroidVideoDecoderTest {
     MockitoAnnotations.initMocks(this);
     when(mockSurfaceTextureHelper.getSurfaceTexture())
         .thenReturn(new SurfaceTexture(/*texName=*/0));
-    MediaFormat outputFormat = new MediaFormat();
-    // TODO(sakal): Add more details to output format as needed.
-    fakeMediaCodecWrapper = spy(new FakeMediaCodecWrapper(outputFormat));
     fakeDecoderCallback = new FakeDecoderCallback();
   }
 
@@ -282,7 +280,7 @@ public class AndroidVideoDecoderTest {
             /* presentationTimeUs= */ anyLong(),
             /* flags= */ eq(0));
 
-    ByteBuffer inputBuffer = fakeMediaCodecWrapper.getInputBuffers()[indexCaptor.getValue()];
+    ByteBuffer inputBuffer = fakeMediaCodecWrapper.getInputBuffer(indexCaptor.getValue());
     CodecTestHelper.assertEqualContents(
         ENCODED_TEST_DATA, inputBuffer, offsetCaptor.getValue(), sizeCaptor.getValue());
   }

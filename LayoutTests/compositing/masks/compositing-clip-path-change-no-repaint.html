@@ -25,28 +25,27 @@
             -webkit-clip-path: inset(0 70px);
         }
     </style>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.waitUntilDone();
             testRunner.dumpAsText();
         }
 
-        function doTest()
+        async function doTest()
         {
-            window.setTimeout(function() {
-                window.setTimeout(function() {
-                    if (window.internals)
-                        window.internals.startTrackingRepaints();
+            await UIHelper.renderingUpdate();
 
-                    document.body.classList.add('changed');
+            if (window.internals)
+                window.internals.startTrackingRepaints();
 
-                    if (window.internals)
-                        document.getElementById('repaintRects').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+            document.body.classList.add('changed');
 
-                    if (window.testRunner)
-                        testRunner.notifyDone();
-                }, 0)
-            }, 0)
+            if (window.internals)
+                document.getElementById('repaintRects').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         window.addEventListener('load', doTest, false);
     </script>

@@ -64,11 +64,9 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::Credentials:
         return WebsiteDataProcessType::Network;
-#if ENABLE(SERVICE_WORKER)
     case WebsiteDataType::ServiceWorkerRegistrations:
     case WebsiteDataType::BackgroundFetchStorage:
         return WebsiteDataProcessType::Network;
-#endif
     case WebsiteDataType::DOMCache:
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::DeviceIdHashSalt:
@@ -103,9 +101,7 @@ WebsiteData WebsiteData::isolatedCopy() const &
         crossThreadCopy(entries),
         crossThreadCopy(hostNamesWithCookies),
         crossThreadCopy(hostNamesWithHSTSCache),
-#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
-#endif
     };
 }
 
@@ -115,9 +111,7 @@ WebsiteData WebsiteData::isolatedCopy() &&
         crossThreadCopy(WTFMove(entries)),
         crossThreadCopy(WTFMove(hostNamesWithCookies)),
         crossThreadCopy(WTFMove(hostNamesWithHSTSCache)),
-#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(WTFMove(registrableDomainsWithResourceLoadStatistics)),
-#endif
     };
 }
 

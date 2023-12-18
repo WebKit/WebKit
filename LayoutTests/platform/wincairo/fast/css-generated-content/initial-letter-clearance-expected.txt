@@ -3,20 +3,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-      RenderBlock {DIV} at (16,0) size 400x60
-        RenderBlock (floating) at (2,3) size 37x73
-          RenderText at (0,-13) size 37x108
-            text run at (0,-13) width 37: "J"
-        RenderText {#text} at (41,40) size 288x19
-          text run at (41,40) width 288: "ust an example of first-letter. Short paragraph!"
-      RenderBlock {DIV} at (16,76) size 400x160
-        RenderBlock (floating) at (2,3) size 37x73
-          RenderText at (0,-13) size 37x108
-            text run at (0,-13) width 37: "J"
-        RenderText {#text} at (41,40) size 400x119
-          text run at (41,40) width 336: "ust an example of first-letter. This letter should span 3"
-          text run at (41,60) width 353: "lines of text, and so it should align itself cleanly with the"
-          text run at (0,80) width 400: "cap-height of the J lining up with the cap-height of the first line,"
-          text run at (0,100) width 394: "and the baseline of the J lining up with the baseline of the third"
-          text run at (0,120) width 389: "line. The descender of the J is still avoided by following lines."
-          text run at (0,140) width 273: "This paragraph cleared the short paragraph."
+      RenderBlock {DIV} at (16,0) size 400x54
+        RenderBlock (floating) at (2,1) size 34x70
+          RenderText at (0,-9) size 34x95
+            text run at (0,-9) width 34: "J"
+        RenderText {#text} at (37,36) size 289x17
+          text run at (37,36) width 289: "ust an example of first-letter. Short paragraph!"
+      RenderBlock {DIV} at (16,70) size 400x145
+        RenderBlock (floating) at (2,2) size 34x70
+          RenderText at (0,-9) size 34x95
+            text run at (0,-9) width 34: "J"
+        RenderText {#text} at (37,37) size 400x107
+          text run at (37,37) width 337: "ust an example of first-letter. This letter should span 3"
+          text run at (37,55) width 354: "lines of text, and so it should align itself cleanly with the"
+          text run at (0,73) width 400: "cap-height of the J lining up with the cap-height of the first line,"
+          text run at (0,91) width 394: "and the baseline of the J lining up with the baseline of the third"
+          text run at (0,109) width 389: "line. The descender of the J is still avoided by following lines."
+          text run at (0,127) width 273: "This paragraph cleared the short paragraph."

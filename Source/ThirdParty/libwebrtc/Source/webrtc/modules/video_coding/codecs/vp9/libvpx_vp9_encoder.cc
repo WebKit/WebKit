@@ -47,6 +47,11 @@
 #include "vpx/vp8cx.h"
 #include "vpx/vpx_encoder.h"
 
+#if (defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)) && \
+    (defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS))
+#define MOBILE_ARM
+#endif
+
 namespace webrtc {
 
 namespace {
@@ -201,13 +206,12 @@ vpx_svc_ref_frame_config_t Vp9References(
 }
 
 bool AllowDenoising() {
-  // Do not enable the denoiser on ARM since optimization is pending.
-  // Denoiser is on by default on other platforms.
-#if !defined(WEBRTC_ARCH_ARM) && !defined(WEBRTC_ARCH_ARM64) && \
-    !defined(ANDROID)
-  return true;
-#else
+#ifdef MOBILE_ARM
+  // Keep the denoiser disabled on mobile ARM devices. It increases encode time
+  // by up to 16%.
   return false;
+#else
+  return true;
 #endif
 }
 
@@ -766,9 +770,8 @@ int LibvpxVp9Encoder::NumberOfThreads(int width,
   } else if (width * height >= 640 * 360 && number_of_cores > 2) {
     return 2;
   } else {
-// Use 2 threads for low res on ARM.
-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || \
-    defined(WEBRTC_ANDROID)
+// Use 2 threads for low res on mobile ARM.
+#ifdef MOBILE_ARM
     if (width * height >= 320 * 180 && number_of_cores > 2) {
       return 2;
     }
@@ -1733,7 +1736,7 @@ void LibvpxVp9Encoder::GetEncodedLayerFrame(const vpx_codec_cx_pkt* pkt) {
   UpdateReferenceBuffers(*pkt, pics_since_key_);
 
   TRACE_COUNTER1("webrtc", "EncodedFrameSize", encoded_image_.size());
-  encoded_image_.SetTimestamp(input_image_->timestamp());
+  encoded_image_.SetRtpTimestamp(input_image_->timestamp());
   encoded_image_.SetCaptureTimeIdentifier(
       input_image_->capture_time_identifier());
   encoded_image_.SetColorSpace(input_image_->color_space());
@@ -1768,7 +1771,7 @@ void LibvpxVp9Encoder::DeliverBufferedFrame(bool end_of_picture) {
     if (codec_.mode == VideoCodecMode::kScreensharing) {
       const uint8_t spatial_idx = encoded_image_.SpatialIndex().value_or(0);
       const uint32_t frame_timestamp_ms =
-          1000 * encoded_image_.Timestamp() / kVideoPayloadTypeFrequency;
+          1000 * encoded_image_.RtpTimestamp() / kVideoPayloadTypeFrequency;
       framerate_controller_[spatial_idx].AddFrame(frame_timestamp_ms);
 
       const size_t steady_state_size = SteadyStateSize(
@@ -1998,7 +2001,7 @@ LibvpxVp9Encoder::PerformanceFlags
 LibvpxVp9Encoder::GetDefaultPerformanceFlags() {
   PerformanceFlags flags;
   flags.use_per_layer_speed = true;
-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || defined(ANDROID)
+#ifdef MOBILE_ARM
   // Speed 8 on all layers for all resolutions.
   flags.settings_by_resolution[0] = {.base_layer_speed = 8,
                                      .high_layer_speed = 8,

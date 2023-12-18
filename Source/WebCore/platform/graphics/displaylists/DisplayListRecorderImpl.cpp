@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DisplayListRecorder.h"
+#include "DisplayListRecorderImpl.h"
 
 #include "DisplayList.h"
 #include "DisplayListDrawingContext.h"
@@ -89,19 +89,14 @@ void RecorderImpl::recordConcatenateCTM(const AffineTransform& transform)
     append(ConcatenateCTM(transform));
 }
 
-void RecorderImpl::recordSetInlineFillColor(SRGBA<uint8_t> inlineColor)
+void RecorderImpl::recordSetInlineFillColor(PackedColor::RGBA inlineColor)
 {
     append(SetInlineFillColor(inlineColor));
 }
 
-void RecorderImpl::recordSetInlineStrokeColor(SRGBA<uint8_t> inlineColor)
+void RecorderImpl::recordSetInlineStroke(SetInlineStroke&& strokeItem)
 {
-    append(SetInlineStrokeColor(inlineColor));
-}
-
-void RecorderImpl::recordSetStrokeThickness(float thickness)
-{
-    append(SetStrokeThickness(thickness));
+    append(strokeItem);
 }
 
 void RecorderImpl::recordSetState(const GraphicsContextState& state)
@@ -129,9 +124,9 @@ void RecorderImpl::recordSetMiterLimit(float limit)
     append(SetMiterLimit(limit));
 }
 
-void RecorderImpl::recordClearShadow()
+void RecorderImpl::recordClearDropShadow()
 {
-    append(ClearShadow());
+    append(ClearDropShadow());
 }
 
 void RecorderImpl::recordResetClip()
@@ -192,12 +187,17 @@ void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const Decomposed
     append(DrawDecomposedGlyphs(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier()));
 }
 
-void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void RecorderImpl::recordDrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
+{
+    append(DrawDisplayListItems(items, destination));
+}
+
+void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
-void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     append(DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options));
 }
@@ -207,7 +207,7 @@ void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRe
     append(DrawSystemImage(systemImage, destinationRect));
 }
 
-void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
     append(DrawPattern(imageIdentifier, destRect, tileRect, transform, phase, spacing, options));
 }
@@ -334,7 +334,7 @@ void RecorderImpl::recordFillEllipse(const FloatRect& rect)
 #if ENABLE(VIDEO)
 void RecorderImpl::recordPaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
-    append(PaintFrameForMedia(player, destination));
+    append(PaintFrameForMedia(player.identifier(), destination));
 }
 
 void RecorderImpl::recordPaintVideoFrame(VideoFrame&, const FloatRect&, bool /* shouldDiscardAlpha */)
@@ -355,10 +355,9 @@ void RecorderImpl::recordStrokeLine(const PathDataLine& line)
     append(StrokeLine(line));
 }
 
-void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SRGBA<uint8_t> color, float thickness)
+void RecorderImpl::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SetInlineStroke&& strokeItem)
 {
-    append(SetInlineStrokeColor(color));
-    append(SetStrokeThickness(thickness));
+    append(strokeItem);
     append(StrokePathSegment(PathSegment { line }));
 }
 

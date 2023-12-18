@@ -222,11 +222,9 @@ bool GraphicsLayerWC::replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&&
     return false;
 }
 
-void GraphicsLayerWC::removeFromParent()
+void GraphicsLayerWC::willModifyChildren()
 {
-    if (m_parent)
-        static_cast<GraphicsLayerWC*>(m_parent)->noteLayerPropertyChanged(WCLayerChange::Children);
-    GraphicsLayer::removeFromParent();
+    noteLayerPropertyChanged(WCLayerChange::Children);
 }
 
 void GraphicsLayerWC::setMaskLayer(RefPtr<GraphicsLayer>&& layer)

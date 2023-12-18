@@ -40,4 +40,4 @@ Object::Object()
     WebKit::InitializeWebKit2();
 }
 
-} // namespace WebKit
+} // namespace API

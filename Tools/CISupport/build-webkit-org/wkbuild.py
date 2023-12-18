@@ -106,7 +106,6 @@ def _should_file_trigger_build(target_platform, file):
         (r"/CMake.*", []),
         (r"/LICENSE[^/]+$", []),
         (r"ARM(?:v7)?\.(?:cpp|h)$", []),
-        (r"MIPS\.(?:cpp|h)$", []),
         (r"\.(?:bkl|mk)$", []),
 
         # Patterns that should trigger builds on only some bots.

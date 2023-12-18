@@ -60,6 +60,7 @@ enum class VertexFormat : uint8_t {
     Sint32x2,
     Sint32x3,
     Sint32x4,
+    Unorm10_10_10_2,
 };
 
 } // namespace WebCore::WebGPU

@@ -65,7 +65,6 @@ RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state
     size_t length = this->length();
 
     Vector<ImageWithScale> images(length, [&](size_t i) {
-        ASSERT(is<CSSImageSetOptionValue>(item(i)));
         auto option = downcast<CSSImageSetOptionValue>(item(i));
         return ImageWithScale { state.createStyleImage(option->image()), option->resolution()->floatValue(CSSUnitType::CSS_DPPX), option->type() };
     });

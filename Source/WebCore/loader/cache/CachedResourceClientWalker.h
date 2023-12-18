@@ -61,7 +61,7 @@ public:
 
 private:
     CachedResourceHandle<CachedResource> m_resource;
-    FixedVector<WeakPtr<CachedResourceClient>> m_clientVector;
+    FixedVector<SingleThreadWeakPtr<CachedResourceClient>> m_clientVector;
     size_t m_index { 0 };
 };
 

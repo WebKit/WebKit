@@ -87,7 +87,7 @@ TEST(CFBTest, TestVectors) {
     SCOPED_TRACE(test_num);
 
     const size_t input_len = sizeof(test.plaintext);
-    std::unique_ptr<uint8_t[]> out(new uint8_t[input_len]);
+    auto out = std::make_unique<uint8_t[]>(input_len);
 
     for (size_t stride = 1; stride <= input_len; stride++) {
       bssl::ScopedEVP_CIPHER_CTX ctx;
@@ -134,7 +134,7 @@ TEST(CFBTest, TestVectors) {
                                      nullptr, test.key, test.iv));
     }
 
-    std::unique_ptr<uint8_t[]> plaintext(new uint8_t[input_len]);
+    auto plaintext = std::make_unique<uint8_t[]>(input_len);
     int num_bytes;
     ASSERT_TRUE(EVP_DecryptUpdate(decrypt_ctx.get(), plaintext.get(),
                                   &num_bytes, out.get(), input_len));

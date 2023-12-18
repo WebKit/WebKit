@@ -15,7 +15,9 @@ function addCompositedLayer()
     document.body.offsetWidth;
 
     requestAnimationFrame(() => {
-        TestPage.dispatchEventToFrontend("TestPageDidAppendChild");
+        setTimeout(() => {
+            TestPage.dispatchEventToFrontend("TestPageDidAppendChild");
+        }, 0);
     });
 };
 

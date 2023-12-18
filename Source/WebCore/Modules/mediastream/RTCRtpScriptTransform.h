@@ -28,11 +28,11 @@
 #if ENABLE(WEB_RTC)
 
 #include "ActiveDOMObject.h"
-#include "EventTarget.h"
 #include "RTCRtpScriptTransformer.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -44,8 +44,7 @@ class Worker;
 
 class RTCRtpScriptTransform final
     : public ThreadSafeRefCounted<RTCRtpScriptTransform, WTF::DestructionThread::Main>
-    , public ActiveDOMObject
-    , public EventTarget {
+    , public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpScriptTransform);
 public:
     static ExceptionOr<Ref<RTCRtpScriptTransform>> create(JSC::JSGlobalObject&, Worker&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&&);
@@ -59,9 +58,6 @@ public:
     void willClearBackend(RTCRtpTransformBackend&);
     void backendTransferedToNewTransform() { clear(RTCRtpScriptTransformer::ClearCallback::No); }
 
-    using ThreadSafeRefCounted::ref;
-    using ThreadSafeRefCounted::deref;
-
 private:
     RTCRtpScriptTransform(ScriptExecutionContext&, Ref<Worker>&&);
 
@@ -71,12 +67,6 @@ private:
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "RTCRtpScriptTransform"; }
-
-    // EventTarget
-    EventTargetInterface eventTargetInterface() const final { return RTCRtpScriptTransformEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
 
     Ref<Worker> m_worker;
 

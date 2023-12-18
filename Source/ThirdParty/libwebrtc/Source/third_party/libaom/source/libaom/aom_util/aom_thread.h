@@ -37,6 +37,7 @@ extern "C" {
 #include <process.h>  // NOLINT
 #include <windows.h>  // NOLINT
 typedef HANDLE pthread_t;
+typedef int pthread_attr_t;
 typedef CRITICAL_SECTION pthread_mutex_t;
 
 #if _WIN32_WINNT < 0x0600
@@ -60,7 +61,18 @@ typedef CONDITION_VARIABLE pthread_cond_t;
 #define THREADFN unsigned int __stdcall
 #define THREAD_RETURN(val) (unsigned int)((DWORD_PTR)val)
 
-static INLINE int pthread_create(pthread_t *const thread, const void *attr,
+static INLINE int pthread_attr_init(pthread_attr_t *attr) {
+  (void)attr;
+  return 0;
+}
+
+static INLINE int pthread_attr_destroy(pthread_attr_t *attr) {
+  (void)attr;
+  return 0;
+}
+
+static INLINE int pthread_create(pthread_t *const thread,
+                                 const pthread_attr_t *attr,
                                  unsigned int(__stdcall *start)(void *),
                                  void *arg) {
   (void)attr;

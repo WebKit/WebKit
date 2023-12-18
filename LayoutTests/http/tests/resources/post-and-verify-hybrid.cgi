@@ -1,6 +1,8 @@
 #!/usr/bin/perl -w
 
 use Config;
+binmode STDIN;
+binmode STDOUT;
 
 print "Content-type: text/plain\n\n";
 

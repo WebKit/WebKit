@@ -44,14 +44,15 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CharacterData);
 
 CharacterData::~CharacterData()
 {
+    // Unable to ref the document as it may have started destruction.
     willBeDeletedFrom(document());
 }
 
 static bool canUseSetDataOptimization(const CharacterData& node)
 {
-    auto& document = node.document();
-    return !document.hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document.hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
-        && !document.hasListenerType(Document::ListenerType::DOMSubtreeModified) && !is<HTMLStyleElement>(node.parentNode());
+    Ref document = node.document();
+    return !document->hasListenerType(Document::ListenerType::DOMCharacterDataModified) && !document->hasMutationObserversOfType(MutationObserverOptionType::CharacterData)
+        && !document->hasListenerType(Document::ListenerType::DOMSubtreeModified) && !is<HTMLStyleElement>(node.parentNode());
 }
 
 void CharacterData::setData(const String& data)
@@ -60,8 +61,9 @@ void CharacterData::setData(const String& data)
     unsigned oldLength = length();
 
     if (m_data == nonNullData && canUseSetDataOptimization(*this)) {
-        document().textRemoved(*this, 0, oldLength);
-        if (auto* frame = document().frame())
+        Ref document = this->document();
+        document->textRemoved(*this, 0, oldLength);
+        if (RefPtr frame = document->frame())
             frame->selection().textWasReplaced(*this, 0, oldLength, oldLength);
         return;
     }
@@ -73,7 +75,7 @@ void CharacterData::setData(const String& data)
 ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     return m_data.substring(offset, count);
 }
@@ -83,8 +85,8 @@ static ContainerNode::ChildChange makeChildChange(CharacterData& characterData, 
     return {
         ContainerNode::ChildChange::Type::TextChanged,
         nullptr,
-        ElementTraversal::previousSibling(characterData),
-        ElementTraversal::nextSibling(characterData),
+        RefPtr { ElementTraversal::previousSibling(characterData) }.get(),
+        RefPtr { ElementTraversal::nextSibling(characterData) }.get(),
         source,
         ContainerNode::ChildChange::AffectsElements::No
     };
@@ -94,7 +96,7 @@ void CharacterData::parserAppendData(StringView string)
 {
     auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::Parser);
     std::optional<Style::ChildChangeInvalidation> styleInvalidation;
-    if (auto* parent = parentNode())
+    if (RefPtr parent = parentNode())
         styleInvalidation.emplace(*parent, childChange);
 
     String oldData = m_data;
@@ -119,7 +121,7 @@ void CharacterData::appendData(const String& data)
 ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     auto newData = makeStringByInserting(m_data, data, offset);
     setDataAndUpdate(WTFMove(newData), offset, 0, data.length());
@@ -130,7 +132,7 @@ ExceptionOr<void> CharacterData::insertData(unsigned offset, const String& data)
 ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     count = std::min(count, length() - offset);
 
@@ -143,7 +145,7 @@ ExceptionOr<void> CharacterData::deleteData(unsigned offset, unsigned count)
 ExceptionOr<void> CharacterData::replaceData(unsigned offset, unsigned count, const String& data)
 {
     if (offset > length())
-        return Exception { IndexSizeError };
+        return Exception { ExceptionCode::IndexSizeError };
 
     count = std::min(count, length() - offset);
 
@@ -171,16 +173,17 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     String oldData = WTFMove(m_data);
     {
         std::optional<Style::ChildChangeInvalidation> styleInvalidation;
-        if (auto* parent = parentNode())
+        if (RefPtr parent = parentNode())
             styleInvalidation.emplace(*parent, childChange);
 
         m_data = newData;
     }
 
+    Ref document = this->document();
     if (oldLength && shouldUpdateLiveRanges != UpdateLiveRanges::No)
-        document().textRemoved(*this, offsetOfReplacedData, oldLength);
+        document->textRemoved(*this, offsetOfReplacedData, oldLength);
     if (newLength && shouldUpdateLiveRanges != UpdateLiveRanges::No)
-        document().textInserted(*this, offsetOfReplacedData, newLength);
+        document->textInserted(*this, offsetOfReplacedData, newLength);
 
     ASSERT(!renderer() || is<Text>(*this));
     if (auto text = dynamicDowncast<Text>(*this))
@@ -188,7 +191,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
     else if (auto processingIntruction = dynamicDowncast<ProcessingInstruction>(*this))
         processingIntruction->checkStyleSheet();
 
-    if (auto* frame = document().frame())
+    if (RefPtr frame = document->frame())
         frame->selection().textWasReplaced(*this, offsetOfReplacedData, oldLength, newLength);
 
     notifyParentAfterChange(childChange);
@@ -200,10 +203,11 @@ void CharacterData::notifyParentAfterChange(const ContainerNode::ChildChange& ch
 {
     document().incDOMTreeVersion();
 
-    if (!parentNode())
+    RefPtr parentNode = this->parentNode();
+    if (!parentNode)
         return;
 
-    parentNode()->childrenChanged(childChange);
+    parentNode->childrenChanged(childChange);
 }
 
 void CharacterData::dispatchModifiedEvent(const String& oldData)
@@ -217,7 +221,7 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         dispatchSubtreeModifiedEvent();
     }
 
-    InspectorInstrumentation::characterDataModified(document(), *this);
+    InspectorInstrumentation::characterDataModified(protectedDocument(), *this);
 }
 
 } // namespace WebCore

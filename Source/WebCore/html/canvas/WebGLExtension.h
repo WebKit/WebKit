@@ -28,10 +28,82 @@
 #if ENABLE(WEBGL)
 
 #include <atomic>
-
+#include <wtf/RefCounted.h>
 namespace WebCore {
 
 class WebCoreOpaqueRoot;
+
+// Manual variant discriminator for any WebGL extension. Used for downcasting the WebGLExtensionBase pointers
+// to the concrete type.
+enum class WebGLExtensionName {
+    ANGLEInstancedArrays,
+    EXTBlendFuncExtended,
+    EXTBlendMinMax,
+    EXTClipControl,
+    EXTColorBufferFloat,
+    EXTColorBufferHalfFloat,
+    EXTConservativeDepth,
+    EXTDepthClamp,
+    EXTDisjointTimerQuery,
+    EXTDisjointTimerQueryWebGL2,
+    EXTFloatBlend,
+    EXTFragDepth,
+    EXTPolygonOffsetClamp,
+    EXTRenderSnorm,
+    EXTShaderTextureLOD,
+    EXTTextureCompressionBPTC,
+    EXTTextureCompressionRGTC,
+    EXTTextureFilterAnisotropic,
+    EXTTextureMirrorClampToEdge,
+    EXTTextureNorm16,
+    EXTsRGB,
+    KHRParallelShaderCompile,
+    NVShaderNoperspectiveInterpolation,
+    OESDrawBuffersIndexed,
+    OESElementIndexUint,
+    OESFBORenderMipmap,
+    OESSampleVariables,
+    OESShaderMultisampleInterpolation,
+    OESStandardDerivatives,
+    OESTextureFloat,
+    OESTextureFloatLinear,
+    OESTextureHalfFloat,
+    OESTextureHalfFloatLinear,
+    OESVertexArrayObject,
+    WebGLClipCullDistance,
+    WebGLColorBufferFloat,
+    WebGLCompressedTextureASTC,
+    WebGLCompressedTextureETC,
+    WebGLCompressedTextureETC1,
+    WebGLCompressedTexturePVRTC,
+    WebGLCompressedTextureS3TC,
+    WebGLCompressedTextureS3TCsRGB,
+    WebGLDebugRendererInfo,
+    WebGLDebugShaders,
+    WebGLDepthTexture,
+    WebGLDrawBuffers,
+    WebGLDrawInstancedBaseVertexBaseInstance,
+    WebGLLoseContext,
+    WebGLMultiDraw,
+    WebGLMultiDrawInstancedBaseVertexBaseInstance,
+    WebGLPolygonMode,
+    WebGLProvokingVertex,
+    WebGLRenderSharedExponent,
+    WebGLStencilTexturing
+};
+
+class WebGLExtensionBase : public RefCounted<WebGLExtensionBase> {
+public:
+    WebGLExtensionName name() const { return m_name; }
+
+protected:
+    WebGLExtensionBase(WebGLExtensionName name)
+        : m_name(name)
+    {
+    }
+protected:
+    const WebGLExtensionName m_name;
+};
 
 // Mixin class for WebGL extension implementations.
 // All functions should start with preamble:
@@ -40,7 +112,7 @@ class WebCoreOpaqueRoot;
 // auto& context = this->context();
 // context.drawSomething(...);
 template<typename T>
-class WebGLExtension {
+class WebGLExtension : public WebGLExtensionBase {
 public:
     void loseParentContext() { m_context = nullptr; }
     T& context() { ASSERT(!isContextLost()); return *m_context.load(std::memory_order::relaxed); }
@@ -50,8 +122,9 @@ public:
     T* opaqueRoot() const { return m_context.load(); }
 
 protected:
-    WebGLExtension(T& context)
-        : m_context(&context)
+    WebGLExtension(T& context, WebGLExtensionName name)
+        : WebGLExtensionBase(name)
+        , m_context(&context)
     {
     }
     bool isContextLost() const { return !m_context.load(std::memory_order::relaxed); }

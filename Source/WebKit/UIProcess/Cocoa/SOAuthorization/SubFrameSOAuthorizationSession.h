@@ -62,6 +62,9 @@ private:
     void appendRequestToLoad(URL&&, Supplement&&);
     void loadRequestToFrame();
 
+    bool shouldInterruptLoadForXFrameOptions(Vector<RefPtr<WebCore::SecurityOrigin>>&& frameAncestorOrigins, const String& xFrameOptions, const URL&);
+    bool shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(const WebCore::ResourceResponse&) final;
+
     WebCore::FrameIdentifier m_frameID;
     Deque<std::pair<URL, Supplement>> m_requestsToLoad;
 };

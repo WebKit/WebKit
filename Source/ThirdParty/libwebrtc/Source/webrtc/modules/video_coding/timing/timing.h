@@ -31,13 +31,15 @@ class VCMTiming {
  public:
   struct VideoDelayTimings {
     size_t num_decoded_frames;
-    // Delay added to smooth out frame delay variation ("jitter") caused by
-    // the network.
-    TimeDelta jitter_delay;
+    // Pre-decode delay added to smooth out frame delay variation ("jitter")
+    // caused by the network. The target delay will be no smaller than this
+    // delay, thus it is called `minimum_delay`.
+    TimeDelta minimum_delay;
     // Estimated time needed to decode a video frame. Obtained as the 95th
     // percentile decode time over a recent time window.
     TimeDelta estimated_max_decode_time;
-    // Estimated time needed to render a frame. Set to a constant.
+    // Post-decode delay added to smooth out frame delay variation caused by
+    // decoding and rendering. Set to a constant.
     TimeDelta render_delay;
     // Minimum total delay used when determining render time for a frame.
     // Obtained from API, `playout-delay` RTP header extension, or A/V sync.
@@ -45,9 +47,9 @@ class VCMTiming {
     // Maximum total delay used when determining render time for a frame.
     // Obtained from `playout-delay` RTP header extension.
     TimeDelta max_playout_delay;
-    // Target delay. Obtained from all the elements above.
+    // Target total delay. Obtained from all the elements above.
     TimeDelta target_delay;
-    // Current delay. Obtained by smoothing out the target delay.
+    // Current total delay. Obtained by smoothening the `target_delay`.
     TimeDelta current_delay;
   };
 
@@ -133,6 +135,8 @@ class VCMTiming {
   Timestamp RenderTimeInternal(uint32_t frame_timestamp, Timestamp now) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   TimeDelta TargetDelayInternal() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  TimeDelta StatsTargetDelayInternal() const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   bool UseLowLatencyRendering() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   mutable Mutex mutex_;

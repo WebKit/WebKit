@@ -46,7 +46,7 @@ public:
     RenderTreeUpdater(Document&, Style::PostResolutionCallbackDisabler&);
     ~RenderTreeUpdater();
 
-    void commit(std::unique_ptr<const Style::Update>);
+    void commit(std::unique_ptr<Style::Update>);
 
     static void tearDownRenderers(Element&);
     static void tearDownRenderersAfterSlotChange(Element& host);
@@ -96,10 +96,12 @@ private:
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);
     static void tearDownLeftoverPaginationRenderersIfNeeded(Element&, RenderTreeBuilder&);
 
+    void updateRebuildRoots();
+
     RenderView& renderView();
 
     Document& m_document;
-    std::unique_ptr<const Style::Update> m_styleUpdate;
+    std::unique_ptr<Style::Update> m_styleUpdate;
 
     Vector<Parent> m_parentStack;
 

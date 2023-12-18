@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class GestureType : uint8_t {
@@ -65,7 +63,7 @@ enum class SheetAction : uint8_t {
     PlayAnimation
 };
 
-enum SelectionFlags : uint8_t {
+enum class SelectionFlags : uint8_t {
     WordIsNearTap = 1 << 0,
     SelectionFlipped = 1 << 1,
     PhraseBoundaryChanged = 1 << 2,
@@ -74,54 +72,3 @@ enum SelectionFlags : uint8_t {
 enum class RespectSelectionAnchor : bool { No, Yes };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::GestureRecognizerState> {
-    using values = EnumValues<
-        WebKit::GestureRecognizerState,
-        WebKit::GestureRecognizerState::Possible,
-        WebKit::GestureRecognizerState::Began,
-        WebKit::GestureRecognizerState::Changed,
-        WebKit::GestureRecognizerState::Ended,
-        WebKit::GestureRecognizerState::Cancelled,
-        WebKit::GestureRecognizerState::Failed
-    >;
-};
-
-template<> struct EnumTraits<WebKit::GestureType> {
-    using values = EnumValues<
-        WebKit::GestureType,
-        WebKit::GestureType::Loupe,
-        WebKit::GestureType::OneFingerTap,
-        WebKit::GestureType::TapAndAHalf,
-        WebKit::GestureType::DoubleTap,
-        WebKit::GestureType::OneFingerDoubleTap,
-        WebKit::GestureType::OneFingerTripleTap,
-        WebKit::GestureType::TwoFingerSingleTap,
-        WebKit::GestureType::PhraseBoundary
-    >;
-};
-
-template<> struct EnumTraits<WebKit::SelectionFlags> {
-    using values = EnumValues<
-        WebKit::SelectionFlags,
-        WebKit::SelectionFlags::WordIsNearTap,
-        WebKit::SelectionFlags::SelectionFlipped,
-        WebKit::SelectionFlags::PhraseBoundaryChanged
-    >;
-};
-
-template<> struct EnumTraits<WebKit::SelectionTouch> {
-    using values = EnumValues<
-        WebKit::SelectionTouch,
-        WebKit::SelectionTouch::Started,
-        WebKit::SelectionTouch::Moved,
-        WebKit::SelectionTouch::Ended,
-        WebKit::SelectionTouch::EndedMovingForward,
-        WebKit::SelectionTouch::EndedMovingBackward,
-        WebKit::SelectionTouch::EndedNotMoving
-    >;
-};
-
-} // namespace WTF
