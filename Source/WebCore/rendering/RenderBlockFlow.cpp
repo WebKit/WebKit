@@ -3982,8 +3982,6 @@ static bool hasSimpleStaticPositionForOutOfFlowChildren(const RenderBlockFlow& r
     if (root.hasLineIfEmpty())
         return false;
     auto& rootStyle = root.style();
-    if (rootStyle.display() == DisplayType::TableCell && rootStyle.verticalAlign() != VerticalAlign::Baseline)
-        return false;
     if (rootStyle.textAlign() != TextAlignMode::Start)
         return false;
     if (rootStyle.textIndent() != RenderStyle::zeroLength())
