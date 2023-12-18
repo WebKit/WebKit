@@ -1059,6 +1059,7 @@ sub printNodeNameHeaderFile
     print F "\n";
     print F "#include \"Namespace.h\"\n";
     print F "#include \"TagName.h\"\n";
+    print F "#include <wtf/EnumTraits.h>\n";
     print F "#include <wtf/Forward.h>\n";
     print F "\n";
     print F "namespace WebCore {\n";
