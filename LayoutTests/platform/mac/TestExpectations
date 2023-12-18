@@ -2190,6 +2190,9 @@ webkit.org/b/231463 fast/css/accent-color/range.html [ ImageOnlyFailure ]
 [ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 [ Monterey+ ] imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Pass ]
 
+# Encoder specific behavior that is not covered for Monterey.
+[ Monterey ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
+
 webkit.org/b/229521 pointer-lock/lock-already-locked.html [ Pass Failure ]
 
 webkit.org/b/228176 [ BigSur Monterey ] fast/text/variable-system-font-2.html [ Pass ]
@@ -2592,8 +2595,6 @@ webkit.org/b/264607 [ Sonoma+ ] css1/box_properties/acid_test.html [ Pass Timeou
 # webkit.org/b/265536 ([ macOS ] 2 tests in inspector/layers are flaky failures)
 inspector/layers/layers-compositing-reasons.html [ Pass Failure ]
 inspector/layers/layers-blending-compositing-reasons.html [ Pass Failure ]
-
-webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
 
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]

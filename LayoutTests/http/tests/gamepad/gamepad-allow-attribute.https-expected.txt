@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Feature policy 'Gamepad' check failed for iframe with origin 'https://localhost:8443' and allow attribute 'gamepad 'none''.
+CONSOLE MESSAGE: Feature policy 'Gamepad' check failed for iframe with origin 'https://127.0.0.1:8443' and allow attribute 'gamepad 'none''.
+CONSOLE MESSAGE: Feature policy 'Gamepad' check failed for iframe with origin 'https://localhost:8443' and allow attribute 'gamepad 'self''.
+CONSOLE MESSAGE: Feature policy 'Gamepad' check failed for iframe with origin 'https://127.0.0.1:8443' and allow attribute 'gamepad https://localhost:8443'.
+PASS iframe src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html" with allow="" is allowed to call getGamepads().
+PASS iframe src: "https://127.0.0.1:8443/gamepad/resources/gamepad-postmessage.html" with allow="" is allowed to call getGamepads().
+PASS iframe src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad" is allowed to call getGamepads().
+PASS iframe src: "https://127.0.0.1:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad" is allowed to call getGamepads().
+PASS iframe src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad *" is allowed to call getGamepads().
+PASS iframe src: "https://127.0.0.1:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad *" is allowed to call getGamepads().
+PASS iframe src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad 'none'" MUST NOT be allowed to call getGamepads(). SecurityError Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)
+PASS iframe src: "https://127.0.0.1:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad 'none'" MUST NOT be allowed to call getGamepads(). SecurityError Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)
+PASS iframe src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad 'self'" MUST NOT be allowed to call getGamepads(). SecurityError Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)
+PASS iframe src: "https://127.0.0.1:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad 'self'" is allowed to call getGamepads().
+PASS iframe src: "https://localhost:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad https://localhost:8443" is allowed to call getGamepads().
+PASS iframe src: "https://127.0.0.1:8443/gamepad/resources/gamepad-postmessage.html" with allow="gamepad https://localhost:8443" MUST NOT be allowed to call getGamepads(). SecurityError Third-party iframes are not allowed to call getGamepads() unless explicitly allowed via Feature-Policy (gamepad)
+

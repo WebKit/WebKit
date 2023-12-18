@@ -54,7 +54,9 @@ void LegacyDisplayRefreshMonitorMac::stop()
 {
     DisplayRefreshMonitor::stop();
     LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::stop for dipslay " << displayID() << " destroying display link");
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CVDisplayLinkRelease(m_displayLink);
+ALLOW_DEPRECATED_DECLARATIONS_END
     m_displayLink = nullptr;
 }
 
@@ -81,7 +83,9 @@ void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpda
 
 WebCore::FramesPerSecond LegacyDisplayRefreshMonitorMac::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
+ALLOW_DEPRECATED_DECLARATIONS_END
     return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
@@ -90,11 +94,15 @@ bool LegacyDisplayRefreshMonitorMac::ensureDisplayLink()
     if (m_displayLink)
         return true;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (error)
         return false;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (error)
         return false;
         
@@ -111,7 +119,9 @@ bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
     if (!m_displayLinkIsActive) {
         LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::startNotificationMechanism for display " << displayID() << " starting display link");
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         auto error = CVDisplayLinkStart(m_displayLink);
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (error)
             return false;
         
@@ -129,7 +139,9 @@ void LegacyDisplayRefreshMonitorMac::stopNotificationMechanism()
 
     if (m_displayLink) {
         LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::stopNotificationMechanism for display " << displayID() << " stopping display link");
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         CVDisplayLinkStop(m_displayLink);
+ALLOW_DEPRECATED_DECLARATIONS_END
     }
         
     m_displayLinkIsActive = false;

@@ -186,9 +186,6 @@ private:
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
 
-    bool m_isSliderThumbHorizontalPressed { false };
-    bool m_isSliderThumbVerticalPressed { false };
-
     RetainPtr<WebCoreRenderThemeNotificationObserver> m_notificationObserver;
 };
 

@@ -122,24 +122,27 @@ void EntryPlan::prepare()
     m_unlinkedWasmToWasmCalls.resize(functions.size());
 
 #if ENABLE(JIT)
+    m_wasmToWasmExitStubs.resize(m_moduleInformation->importFunctionTypeIndices.size());
+    unsigned importFunctionIndex = 0;
     for (unsigned importIndex = 0; importIndex < m_moduleInformation->imports.size(); ++importIndex) {
         Import* import = &m_moduleInformation->imports[importIndex];
         if (import->kind != ExternalKind::Function)
             continue;
-        unsigned importFunctionIndex = m_wasmToWasmExitStubs.size();
         dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
         auto binding = wasmToWasm(importFunctionIndex);
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
             case BindingFailure::OutOfMemory: {
                 Locker locker { m_lock };
+                m_wasmToWasmExitStubs.resize(importFunctionIndex);
                 return fail(makeString("Out of executable memory at import "_s, importIndex));
             }
             }
             RELEASE_ASSERT_NOT_REACHED();
         }
-        m_wasmToWasmExitStubs.unsafeAppendWithoutCapacityCheck(binding.value());
+        m_wasmToWasmExitStubs[importFunctionIndex++] = binding.value();
     }
+    ASSERT(importFunctionIndex == m_wasmToWasmExitStubs.size());
 #endif
 
     const uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();

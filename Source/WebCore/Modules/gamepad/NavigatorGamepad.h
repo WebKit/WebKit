@@ -36,6 +36,7 @@ namespace WebCore {
 class Gamepad;
 class Navigator;
 class PlatformGamepad;
+template<typename> class ExceptionOr;
 
 class NavigatorGamepad : public Supplement<Navigator>, public CanMakeWeakPtr<NavigatorGamepad> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,7 +48,7 @@ public:
 
     // The array of Gamepads might be sparse.
     // Null checking each entry is necessary.
-    static const Vector<RefPtr<Gamepad>>& getGamepads(Navigator&);
+    static ExceptionOr<const Vector<RefPtr<Gamepad>>&> getGamepads(Navigator&);
 
     void gamepadConnected(PlatformGamepad&);
     void gamepadDisconnected(PlatformGamepad&);

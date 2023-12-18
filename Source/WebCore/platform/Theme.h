@@ -70,7 +70,7 @@ public:
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
     // The rect passed in is in zoomed coordinates, so the inflation should take that into account and make sure the inflation
     // amount is also scaled by the zoomFactor.
-    virtual void inflateControlPaintRect(StyleAppearance, OptionSet<ControlStyle::State>, FloatRect&, float) const { }
+    virtual void inflateControlPaintRect(StyleAppearance, FloatRect&, float) const { }
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
 

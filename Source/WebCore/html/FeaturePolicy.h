@@ -43,6 +43,7 @@ public:
         Microphone,
         SpeakerSelection,
         DisplayCapture,
+        Gamepad,
         Geolocation,
         Payment,
         ScreenWakeLock,
@@ -74,6 +75,7 @@ private:
     AllowRule m_microphoneRule;
     AllowRule m_speakerSelectionRule;
     AllowRule m_displayCaptureRule;
+    AllowRule m_gamepadRule;
     AllowRule m_geolocationRule;
     AllowRule m_paymentRule;
     AllowRule m_syncXHRRule;

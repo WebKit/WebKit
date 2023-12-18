@@ -163,9 +163,10 @@ void AccessibilityRenderObject::detachRemoteParts(AccessibilityDetachmentType de
     m_renderer = nullptr;
 }
 
-static inline bool isInlineWithContinuation(RenderObject& object)
+static inline bool isInlineWithContinuation(RenderObject& renderer)
 {
-    return is<RenderInline>(object) && downcast<RenderInline>(object).continuation();
+    auto* renderInline = dynamicDowncast<RenderInline>(renderer);
+    return renderInline && renderInline->continuation();
 }
 
 static inline RenderObject* firstChildInContinuation(RenderInline& renderer)
@@ -250,15 +251,15 @@ AccessibilityObject* AccessibilityRenderObject::lastChild() const
 
 static inline RenderInline* startOfContinuations(RenderObject& renderer)
 {
-    if (!is<RenderElement>(renderer))
+    auto* renderElement = dynamicDowncast<RenderElement>(renderer);
+    if (!renderElement)
         return nullptr;
-    auto& renderElement = downcast<RenderElement>(renderer);
-    if (is<RenderInline>(renderElement) && renderElement.isContinuation() && is<RenderInline>(renderElement.element()->renderer()))
+    if (is<RenderInline>(*renderElement) && renderElement->isContinuation() && is<RenderInline>(renderElement->element()->renderer()))
         return downcast<RenderInline>(renderer.node()->renderer());
 
     // Blocks with a previous continuation always have a next continuation
-    if (is<RenderBlock>(renderElement) && downcast<RenderBlock>(renderElement).inlineContinuation())
-        return downcast<RenderInline>(downcast<RenderBlock>(renderElement).inlineContinuation()->element()->renderer());
+    if (auto* renderBlock = dynamicDowncast<RenderBlock>(*renderElement); renderBlock && renderBlock->inlineContinuation())
+        return downcast<RenderInline>(renderBlock->inlineContinuation()->element()->renderer());
 
     return nullptr;
 }
@@ -307,8 +308,8 @@ static inline RenderObject* childBeforeConsideringContinuations(RenderInline* re
 
 static inline bool firstChildIsInlineContinuation(RenderElement& renderer)
 {
-    RenderObject* child = renderer.firstChild();
-    return is<RenderInline>(child) && downcast<RenderInline>(*child).isContinuation();
+    auto* renderInline = dynamicDowncast<RenderInline>(renderer.firstChild());
+    return renderInline && renderInline->isContinuation();
 }
 
 AccessibilityObject* AccessibilityRenderObject::previousSibling() const
@@ -1542,29 +1543,32 @@ URL AccessibilityRenderObject::url() const
 
 bool AccessibilityRenderObject::setValue(const String& string)
 {
-    if (!m_renderer || !is<Element>(m_renderer->node()))
+    if (!m_renderer)
         return false;
 
-    Element& element = downcast<Element>(*m_renderer->node());
-    RenderObject& renderer = *m_renderer;
+    auto& renderer = *m_renderer;
+
+    RefPtr element = dynamicDowncast<Element>(renderer.node());
+    if (!element)
+        return false;
 
     // We should use the editor's insertText to mimic typing into the field.
     // Also only do this when the field is in editing mode.
     if (auto* frame = renderer.document().frame()) {
-        Editor& editor = frame->editor();
-        if (element.shouldUseInputMethod()) {
+        auto& editor = frame->editor();
+        if (element->shouldUseInputMethod()) {
             editor.clearText();
             editor.insertText(string, nullptr);
             return true;
         }
     }
     // FIXME: Do we want to do anything here for ARIA textboxes?
-    if (renderer.isRenderTextControlSingleLine() && is<HTMLInputElement>(element)) {
-        downcast<HTMLInputElement>(element).setValue(string);
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && renderer.isRenderTextControlSingleLine()) {
+        input->setValue(string);
         return true;
     }
-    if (renderer.isRenderTextControlMultiLine() && is<HTMLTextAreaElement>(element)) {
-        downcast<HTMLTextAreaElement>(element).setValue(string);
+    if (RefPtr textarea = dynamicDowncast<HTMLTextAreaElement>(*element); element && renderer.isRenderTextControlMultiLine()) {
+        textarea->setValue(string);
         return true;
     }
 
@@ -1585,7 +1589,8 @@ bool AccessibilityRenderObject::isWidget() const
 
 Widget* AccessibilityRenderObject::widget() const
 {
-    return is<RenderWidget>(m_renderer.get()) ? downcast<RenderWidget>(*m_renderer).widget() : nullptr;
+    auto* renderWidget = dynamicDowncast<RenderWidget>(renderer());
+    return renderWidget ? renderWidget->widget() : nullptr;
 }
 
 AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const
@@ -1620,8 +1625,8 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
                 result.append(axObject);
         } else {
             auto* parent = current->parentNode();
-            if (is<HTMLAreaElement>(*current) && is<HTMLMapElement>(parent)) {
-                RefPtr parentImage = downcast<HTMLMapElement>(parent)->imageElement();
+            if (auto* parentMap = dynamicDowncast<HTMLMapElement>(parent); parentMap && is<HTMLAreaElement>(*current)) {
+                RefPtr parentImage = parentMap->imageElement();
                 auto* parentImageRenderer = parentImage ? parentImage->renderer() : nullptr;
                 if (auto* parentImageAxObject = document.axObjectCache()->getOrCreate(parentImageRenderer)) {
                     for (const auto& child : parentImageAxObject->children()) {
@@ -1632,10 +1637,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
                     // We couldn't retrieve the already existing image-map links from the parent image, so create a new one.
                     ASSERT_NOT_REACHED("Unexpectedly missing image-map link parent AX object.");
                     auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
-                    auto& map = downcast<HTMLMapElement>(*parent);
                     areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(current));
-                    areaObject.setHTMLMapElement(&map);
-                    areaObject.setParent(accessibilityParentForImageMap(&map));
+                    areaObject.setHTMLMapElement(parentMap);
+                    areaObject.setParent(accessibilityParentForImageMap(parentMap));
                     result.append(&areaObject);
                 }
             }
@@ -2002,11 +2006,11 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
         node = shadowAncestorNode;
     ASSERT(node);
 
-    if (is<HTMLAreaElement>(*node))
-        return accessibilityImageMapHitTest(downcast<HTMLAreaElement>(node), point);
+    if (auto* textarea = dynamicDowncast<HTMLAreaElement>(*node))
+        return accessibilityImageMapHitTest(textarea, point);
     
-    if (is<HTMLOptionElement>(*node))
-        node = downcast<HTMLOptionElement>(*node).ownerSelectElement();
+    if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*node))
+        node = option->ownerSelectElement();
     
     auto* renderer = node->renderer();
     if (!renderer)
@@ -2039,15 +2043,15 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
         return true;
     
     // AX clients will listen for AXSelectedChildrenChanged on listboxes.
-    Node* node = renderer.node();
+    auto* node = renderer.node();
     if (!node)
         return false;
     
-    if (nodeHasRole(node, "listbox"_s) || (is<RenderBoxModelObject>(renderer) && downcast<RenderBoxModelObject>(renderer).isRenderListBox()))
+    if (auto* renderBox = dynamicDowncast<RenderBoxModelObject>(renderer); (renderBox && renderBox->isRenderListBox()) || nodeHasRole(node, "listbox"_s))
         return true;
 
     // Textboxes should send out notifications.
-    if (nodeHasRole(node, "textbox"_s) || (is<Element>(*node) && contentEditableAttributeIsEnabled(downcast<Element>(node))))
+    if (auto* element = dynamicDowncast<Element>(*node); (element && contentEditableAttributeIsEnabled(element)) || nodeHasRole(node, "textbox"_s))
         return true;
     
     return false;
@@ -2118,7 +2122,7 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isBR())
         return AccessibilityRole::LineBreak;
 #endif
-    if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(*node).hasAttributeWithoutSynchronization(usemapAttr))
+    if (RefPtr img = dynamicDowncast<HTMLImageElement>(node); img && img->hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
     if (m_renderer->isImage()) {
         if (is<HTMLInputElement>(node))
@@ -2134,8 +2138,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (m_renderer->isRenderView())
         return AccessibilityRole::WebArea;
     if (m_renderer->isRenderTextControlSingleLine()) {
-        if (is<HTMLInputElement>(node))
-            return downcast<HTMLInputElement>(*node).isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(node))
+            return input->isSearchField() ? AccessibilityRole::SearchField : AccessibilityRole::TextField;
     }
     if (m_renderer->isRenderTextControlMultiLine())
         return AccessibilityRole::TextArea;
@@ -2234,16 +2238,17 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     }
 
     for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
-        if (!is<AccessibilityRenderObject>(*parent))
+        auto* accessibilityRenderer = dynamicDowncast<AccessibilityRenderObject>(*parent);
+        if (!accessibilityRenderer)
             continue;
 
-        Node* node = downcast<AccessibilityRenderObject>(*parent).node();
-        if (!is<Element>(node))
+        RefPtr node = dynamicDowncast<Element>(accessibilityRenderer->node());
+        if (!node)
             continue;
 
         // If native tag of the parent element matches an acceptable name, then return
         // based on its presentational status.
-        auto& name = downcast<Element>(*node).tagQName();
+        auto& name = node->tagQName();
         if (std::any_of(parentTags.begin(), parentTags.end(), [&name] (auto* possibleName) { return possibleName->get() == name; }))
             return parent->roleValue() == AccessibilityRole::Presentational;
     }
@@ -2253,7 +2258,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     
 void AccessibilityRenderObject::addImageMapChildren()
 {
-    auto* renderImage = dynamicDowncast<RenderImage>(m_renderer.get());
+    auto* renderImage = dynamicDowncast<RenderImage>(renderer());
     if (!renderImage)
         return;
 
@@ -2278,16 +2283,16 @@ void AccessibilityRenderObject::addImageMapChildren()
 
 void AccessibilityRenderObject::addTextFieldChildren()
 {
-    Node* node = this->node();
-    if (!is<HTMLInputElement>(node))
+    RefPtr node = dynamicDowncast<HTMLInputElement>(this->node());
+    if (!node)
         return;
     
-    HTMLElement* spinButtonElement = downcast<HTMLInputElement>(*node).innerSpinButtonElement();
-    if (!is<SpinButtonElement>(spinButtonElement))
+    auto* spinButtonElement = dynamicDowncast<SpinButtonElement>(node->innerSpinButtonElement());
+    if (!spinButtonElement)
         return;
 
     auto& axSpinButton = downcast<AccessibilitySpinButton>(*axObjectCache()->create(AccessibilityRole::SpinButton));
-    axSpinButton.setSpinButtonElement(downcast<SpinButtonElement>(spinButtonElement));
+    axSpinButton.setSpinButtonElement(spinButtonElement);
     axSpinButton.setParent(this);
     addChild(&axSpinButton);
 }
@@ -2305,18 +2310,19 @@ void AccessibilityRenderObject::detachRemoteSVGRoot()
 
 AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationChoice createIfNecessary) const
 {
-    if (!is<RenderImage>(m_renderer))
+    auto* renderImage = dynamicDowncast<RenderImage>(renderer());
+    if (!renderImage)
         return nullptr;
 
-    CachedImage* cachedImage = downcast<RenderImage>(*m_renderer).cachedImage();
+    auto* cachedImage = renderImage->cachedImage();
     if (!cachedImage)
         return nullptr;
 
-    Image* image = cachedImage->image();
-    if (!is<SVGImage>(image))
+    auto* svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
+    if (!svgImage)
         return nullptr;
 
-    auto* frameView = downcast<SVGImage>(*image).frameView();
+    auto* frameView = svgImage->frameView();
     if (!frameView)
         return nullptr;
 
@@ -2409,7 +2415,8 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
         return;
 
     auto nodeHasDisplayContents = [] (Node& node) {
-        return is<Element>(node) && downcast<Element>(node).hasDisplayContents();
+        RefPtr element = dynamicDowncast<Element>(node);
+        return element && element->hasDisplayContents();
     };
     // First do a quick run through to determine if we have any interesting nodes (most often we will not).
     // If we do have any interesting nodes, we need to determine where to insert them so they match DOM order as close as possible.
@@ -2568,8 +2575,8 @@ void AccessibilityRenderObject::setAccessibleName(const AtomString& name)
     else
         node = m_renderer->node();
 
-    if (is<Element>(node))
-        downcast<Element>(*node).setAttribute(aria_labelAttr, name);
+    if (RefPtr element = dynamicDowncast<Element>(node))
+        element->setAttribute(aria_labelAttr, name);
 }
 
 bool AccessibilityRenderObject::hasBoldFont() const
@@ -2677,29 +2684,23 @@ ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
             return nullptr;
     }
 
-    if (!is<RenderBox>(renderer()))
+    auto* box = dynamicDowncast<RenderBox>(renderer());
+    if (!box || !box->canBeScrolledAndHasScrollableArea() || !box->layer())
         return nullptr;
 
-    auto& box = downcast<RenderBox>(*m_renderer);
-    if (!box.canBeScrolledAndHasScrollableArea())
-        return nullptr;
-
-    return box.layer() ? box.layer()->scrollableArea() : nullptr;
+    return box->layer()->scrollableArea();
 }
 
 void AccessibilityRenderObject::scrollTo(const IntPoint& point) const
 {
-    if (!is<RenderBox>(renderer()))
-        return;
-
-    auto& box = downcast<RenderBox>(*m_renderer);
-    if (!box.canBeScrolledAndHasScrollableArea())
+    auto* box = dynamicDowncast<RenderBox>(renderer());
+    if (!box || !box->canBeScrolledAndHasScrollableArea())
         return;
 
     // FIXME: is point a ScrollOffset or ScrollPosition? Test in RTL overflow.
-    ASSERT(box.layer());
-    ASSERT(box.layer()->scrollableArea());
-    box.layer()->scrollableArea()->scrollToOffset(point);
+    ASSERT(box->layer());
+    ASSERT(box->layer()->scrollableArea());
+    box->layer()->scrollableArea()->scrollToOffset(point);
 }
 
 #if ENABLE(MATHML)

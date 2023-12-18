@@ -54,7 +54,7 @@ private:
 
     bool controlRequiresPreWhiteSpace(StyleAppearance appearance) const final { return appearance == StyleAppearance::PushButton; }
 
-    void inflateControlPaintRect(StyleAppearance, OptionSet<ControlStyle::State>, FloatRect&, float zoomFactor) const final;
+    void inflateControlPaintRect(StyleAppearance, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersContrast() const final;
     bool userPrefersReducedMotion() const final;
