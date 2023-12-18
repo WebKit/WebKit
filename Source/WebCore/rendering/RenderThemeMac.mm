@@ -1064,21 +1064,21 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
     return { 0, 0, 0, 0 };
 }
 
-PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& style, IntRect& rect) const
+PopupMenuStyle::Size RenderThemeMac::popupMenuSize(const RenderStyle& style, IntRect& rect) const
 {
     NSPopUpButtonCell* popupButton = this->popupButton();
     NSControlSize size = controlSizeForCell(popupButton, popupButtonSizes(), rect.size(), style.effectiveZoom());
     switch (size) {
     case NSControlSizeRegular:
-        return PopupMenuStyle::PopupMenuSizeNormal;
+        return PopupMenuStyle::Size::Normal;
     case NSControlSizeSmall:
-        return PopupMenuStyle::PopupMenuSizeSmall;
+        return PopupMenuStyle::Size::Small;
     case NSControlSizeMini:
-        return PopupMenuStyle::PopupMenuSizeMini;
+        return PopupMenuStyle::Size::Mini;
     case NSControlSizeLarge:
-        return ThemeMac::supportsLargeFormControls() ? PopupMenuStyle::PopupMenuSizeLarge : PopupMenuStyle::PopupMenuSizeNormal;
+        return ThemeMac::supportsLargeFormControls() ? PopupMenuStyle::Size::Large : PopupMenuStyle::Size::Normal;
     default:
-        return PopupMenuStyle::PopupMenuSizeNormal;
+        return PopupMenuStyle::Size::Normal;
     }
 }
 

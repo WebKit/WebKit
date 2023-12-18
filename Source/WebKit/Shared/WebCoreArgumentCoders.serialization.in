@@ -7212,3 +7212,10 @@ enum class WebCore::ContextMenuItemType : uint8_t {
     Separator,
     Submenu,
 };
+
+[Nested] enum class WebCore::PopupMenuStyle::Size : uint8_t {
+    Normal,
+    Small,
+    Mini,
+    Large,
+};
