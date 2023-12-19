@@ -1180,6 +1180,8 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     // If we have a state object, we cannot also be a new navigation.
     ASSERT(!stateObject || (stateObject && !isNewNavigation));
 
+    m_errorOccurredInLoading = false;
+
     RefPtr document = m_frame->document();
     // Update the data source's request with the new URL to fake the URL change
     URL oldURL = document->url();
@@ -1316,6 +1318,8 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadFrameRequest: frame load started");
 
+    m_errorOccurredInLoading = false;
+
     // Protect frame from getting blown away inside dispatchBeforeLoadEvent in loadWithDocumentLoader.
     Ref frame = m_frame.get();
 
@@ -1413,6 +1417,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURL: frame load started");
     ASSERT(frameLoadRequest.resourceRequest().httpMethod() == "GET"_s);
+
+    m_errorOccurredInLoading = false;
 
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
     if (m_inStopAllLoaders || m_inClearProvisionalLoadForPolicyCheck)
@@ -1532,6 +1538,8 @@ void FrameLoader::load(FrameLoadRequest&& request)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (FrameLoadRequest): frame load started");
 
+    m_errorOccurredInLoading = false;
+
     if (m_inStopAllLoaders || m_inClearProvisionalLoadForPolicyCheck)
         return;
 
@@ -1583,6 +1591,8 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithNavigationAction: frame load started");
 
+    m_errorOccurredInLoading = false;
+
     if (request.url().protocolIsJavaScript() && !action.isInitialFrameSrcLoad()) {
         executeJavaScriptURL(request.url(), action);
         return completionHandler();
@@ -1605,6 +1615,8 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
 void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* requesterOrigin)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (DocumentLoader): frame load started");
+
+    m_errorOccurredInLoading = false;
 
     ResourceRequest& r = newDocumentLoader.request();
     // FIXME: Using m_loadType seems wrong here.
@@ -1648,6 +1660,8 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, CompletionHandler<void()>&& completionHandler)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader: frame load started");
+
+    m_errorOccurredInLoading = false;
 
     Ref frame = m_frame.get();
 
@@ -2570,6 +2584,7 @@ CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
 void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError& error, WillInternallyHandleFailure willInternallyHandleFailure)
 {
     m_provisionalLoadErrorBeingHandledURL = provisionalDocumentLoader.url();
+    m_errorOccurredInLoading = true;
 
 #if ENABLE(CONTENT_FILTERING)
     auto contentFilterWillContinueLoading = false;
@@ -2731,6 +2746,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load with error (isTimeout = %d, isCancellation = %d, errorCode = %d)", error.isTimeout(), error.isCancellation(), error.errorCode());
             m_client->dispatchDidFailLoad(error);
             loadingEvent = AXObjectCache::AXLoadingFailed;
+            m_errorOccurredInLoading = true;
         } else {
             FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load");
 #if ENABLE(DATA_DETECTION)
@@ -3237,6 +3253,8 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
 void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& referrer, FrameLoadType loadType, Event* event, RefPtr<FormState>&& formState, CompletionHandler<void()>&& completionHandler)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadPostRequest: frame load started");
+
+    m_errorOccurredInLoading = false;
 
     Ref frame = m_frame.get();
     auto frameName = request.frameName();

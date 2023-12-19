@@ -35,6 +35,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKErrorPrivate.h>
+#import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
@@ -147,6 +148,7 @@ TEST(WKNavigation, UserAgentAndAccept)
 
 @interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForNavigations:(size_t)count;
+- (void)clearState;
 @property (nonatomic, readonly) NSArray<NSURLRequest *> *requests;
 @property (nonatomic, readonly) NSArray<WKFrameInfo *> *frames;
 @property (nonatomic, readonly) NSArray<NSString *> *callbacks;
@@ -180,6 +182,14 @@ TEST(WKNavigation, UserAgentAndAccept)
     return _callbacks.get();
 }
 
+- (void)clearState
+{
+    _requests = nullptr;
+    _frames = nullptr;
+    _callbacks = nullptr;
+    _navigationCount = 0;
+}
+
 - (void)_webView:(WKWebView *)webView didStartProvisionalLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
 {
     if (!_requests)
@@ -197,6 +207,8 @@ TEST(WKNavigation, UserAgentAndAccept)
 
 - (void)_webView:(WKWebView *)webView didFailProvisionalLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame withError:(NSError *)error
 {
+    EXPECT_TRUE(frame._errorOccurred);
+
     [_requests addObject:request];
     [_frames addObject:frame];
     [_callbacks addObject:@"fail provisional"];
@@ -212,6 +224,8 @@ TEST(WKNavigation, UserAgentAndAccept)
 
 - (void)_webView:(WKWebView *)webView didFailLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame withError:(NSError *)error
 {
+    EXPECT_TRUE(frame._errorOccurred);
+
     [_requests addObject:request];
     [_frames addObject:frame];
     [_callbacks addObject:@"fail"];
@@ -220,6 +234,8 @@ TEST(WKNavigation, UserAgentAndAccept)
 
 - (void)_webView:(WKWebView *)webView didFinishLoadWithRequest:(NSURLRequest *)request inFrame:(WKFrameInfo *)frame
 {
+    EXPECT_FALSE(frame._errorOccurred);
+
     [_requests addObject:request];
     [_frames addObject:frame];
     [_callbacks addObject:@"finish"];
@@ -241,7 +257,8 @@ TEST(WKNavigation, Frames)
         else if ([task.request.URL.absoluteString isEqualToString:@"frame://host3/"]) {
             [task didFailWithError:[NSError errorWithDomain:@"testErrorDomain" code:42 userInfo:nil]];
             return;
-        }
+        } else if ([task.request.URL.absoluteString isEqualToString:@"frame://host4/"])
+            responseString = @"<p>Hello World</p>";
 
         ASSERT(responseString);
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil]);
@@ -253,17 +270,17 @@ TEST(WKNavigation, Frames)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     auto delegate = adoptNS([FrameNavigationDelegate new]);
-        webView.get().navigationDelegate = delegate.get();
+    webView.get().navigationDelegate = delegate.get();
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/"]]];
     [delegate waitForNavigations:3];
-    
+
     struct ExpectedStrings {
         const char* callback;
         const char* frameRequest;
         const char* frameSecurityOriginHost;
         const char* request;
     };
-    
+
     auto checkCallbacks = [delegate] (Vector<ExpectedStrings> expectedVector) {
         NSArray<NSURLRequest *> *requests = delegate.get().requests;
         NSArray<WKFrameInfo *> *frames = delegate.get().frames;
@@ -271,18 +288,18 @@ TEST(WKNavigation, Frames)
         EXPECT_EQ(requests.count, expectedVector.size());
         EXPECT_EQ(frames.count, expectedVector.size());
         EXPECT_EQ(callbacks.count, expectedVector.size());
-        
+
         auto checkCallback = [] (NSString *callback, WKFrameInfo *frame, NSURLRequest *request, const ExpectedStrings& expected) {
             EXPECT_WK_STREQ(callback, expected.callback);
             EXPECT_WK_STREQ(frame.request.URL.absoluteString, expected.frameRequest);
             EXPECT_WK_STREQ(frame.securityOrigin.host, expected.frameSecurityOriginHost);
             EXPECT_WK_STREQ(request.URL.absoluteString, expected.request);
         };
-        
+
         for (size_t i = 0; i < expectedVector.size(); ++i)
             checkCallback(callbacks[i], frames[i], requests[i], expectedVector[i]);
     };
-    
+
     checkCallbacks({
         {
             "start provisional",
@@ -324,6 +341,30 @@ TEST(WKNavigation, Frames)
             "frame://host2/",
             "host2",
             "frame://host3/"
+        }
+    });
+
+    // After the failed navigation, perform another successful navigation that will clear the errorOccurred state.
+    [delegate clearState];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host4/"]]];
+    [delegate waitForNavigations:1];
+
+    checkCallbacks({
+        {
+            "start provisional",
+            "frame://host1/",
+            "host1",
+            "frame://host4/"
+        }, {
+            "commit",
+            "frame://host4/",
+            "host4",
+            "frame://host4/"
+        }, {
+            "finish",
+            "frame://host4/",
+            "host4",
+            "frame://host4/"
         }
     });
 }
