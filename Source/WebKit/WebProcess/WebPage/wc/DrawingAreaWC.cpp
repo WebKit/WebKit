@@ -53,7 +53,6 @@ using namespace WebCore;
 DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaType::WC, parameters.drawingAreaIdentifier, webPage)
     , m_remoteWCLayerTreeHostProxy(makeUniqueWithoutRefCountedCheck<RemoteWCLayerTreeHostProxy>(webPage, parameters.usesOffscreenRendering))
-    , m_flusher(webPage.ensureRemoteRenderingBackendProxy().createRemoteImageBufferSet())
     , m_layerFactory(*this)
     , m_updateRenderingTimer(*this, &DrawingAreaWC::updateRendering)
     , m_commitQueue(WorkQueue::create("DrawingAreaWC CommitQueue"_s))
@@ -244,6 +243,9 @@ void DrawingAreaWC::updateRendering()
     webPage->didUpdateRendering();
 
     willStartRenderingUpdateDisplay();
+
+    if (!m_flusher)
+        m_flusher = webPage->ensureRemoteRenderingBackendProxy().createRemoteImageBufferSet();
 
     if (isCompositingMode())
         sendUpdateAC();
