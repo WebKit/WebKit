@@ -1678,7 +1678,7 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
         @"const tabId = tabs[0].id",
 
         @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
-        @"  if ('url' in changeInfo) {",
+        @"  if (tab.status === 'complete') {",
         @"    let results = await browser.tabs.executeScript(tabId, { allFrames: false, file: 'executeScript.js' })",
         @"    browser.test.assertEq(results[0], 'pink')",
 
