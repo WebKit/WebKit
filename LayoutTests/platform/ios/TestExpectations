@@ -4675,3 +4675,5 @@ webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 # webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
+
+webkit.org/b/266652 imported/w3c/web-platform-tests/css/css-cascade/scope-hover.html [ Failure ]
