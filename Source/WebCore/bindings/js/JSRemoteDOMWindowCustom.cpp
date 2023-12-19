@@ -135,6 +135,21 @@ bool JSRemoteDOMWindow::defineOwnProperty(JSC::JSObject*, JSC::JSGlobalObject* l
     return false;
 }
 
+JSValue JSRemoteDOMWindow::self(JSC::JSGlobalObject&) const
+{
+    return globalThis();
+}
+
+JSValue JSRemoteDOMWindow::window(JSC::JSGlobalObject&) const
+{
+    return globalThis();
+}
+
+JSValue JSRemoteDOMWindow::frames(JSC::JSGlobalObject&) const
+{
+    return globalThis();
+}
+
 JSValue JSRemoteDOMWindow::getPrototype(JSObject*, JSGlobalObject*)
 {
     return jsNull();

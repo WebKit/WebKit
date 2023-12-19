@@ -1744,6 +1744,7 @@ public:
     constexpr bool isDisplayInlineType() const;
     constexpr bool isOriginalDisplayInlineType() const;
     constexpr bool isDisplayFlexibleOrGridBox() const;
+    constexpr bool isDisplayDeprecatedFlexibleBox() const;
     constexpr bool isDisplayFlexibleBoxIncludingDeprecatedOrGridBox() const;
     constexpr bool isDisplayRegionType() const;
     constexpr bool isDisplayBlockLevel() const;

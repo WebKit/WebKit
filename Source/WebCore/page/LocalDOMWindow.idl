@@ -46,8 +46,6 @@
     Exposed=Window
 ] interface LocalDOMWindow : EventTarget {
     // the current browsing context
-    [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;
-    [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy self;
     [LegacyUnforgeable] readonly attribute Document document;
     attribute [AtomString] DOMString name;
     readonly attribute History history;
@@ -60,15 +58,9 @@
     [Replaceable] readonly attribute BarProp statusbar;
     [Replaceable] readonly attribute BarProp toolbar;
     attribute DOMString status;
-    [DoNotCheckSecurity] readonly attribute boolean closed;
     undefined stop();
-    [DoNotCheckSecurity] undefined blur();
 
     // other browsing contexts
-    [Replaceable, DoNotCheckSecurityOnGetter, CustomGetter] readonly attribute WindowProxy frames;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
-    [DoNotCheckSecurityOnGetter, LegacyUnforgeable] readonly attribute WindowProxy? top;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute WindowProxy? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
     [CallWith=ActiveWindow&FirstWindow] WindowProxy? open(optional USVString url = "", optional [AtomString] DOMString target = "_blank", optional [LegacyNullToEmptyString] DOMString features = "");
 

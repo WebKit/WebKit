@@ -36,13 +36,30 @@
 
 namespace WebCore {
 
+IntSize PlatformImageNativeImageBackend::size() const
+{
+    return IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get()));
+}
+
+bool PlatformImageNativeImageBackend::hasAlpha() const
+{
+    CGImageAlphaInfo info = CGImageGetAlphaInfo(m_platformImage.get());
+    return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
+}
+
+DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
+{
+    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+}
+
 RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (!image)
         return nullptr;
     if (CGImageGetWidth(image.get()) > std::numeric_limits<int>::max() || CGImageGetHeight(image.get()) > std::numeric_limits<int>::max())
         return nullptr;
-    return adoptRef(*new NativeImage(WTFMove(image), renderingResourceIdentifier));
+    UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(image)) };
+    return adoptRef(*new NativeImage(WTFMove(backend), renderingResourceIdentifier));
 }
 
 RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier)
@@ -60,17 +77,6 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, Rende
     return create(WTFMove(transientImage), identifier);
 }
 
-IntSize NativeImage::size() const
-{
-    return IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get()));
-}
-
-bool NativeImage::hasAlpha() const
-{
-    CGImageAlphaInfo info = CGImageGetAlphaInfo(m_platformImage.get());
-    return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
-}
-
 Color NativeImage::singlePixelSolidColor() const
 {
     if (size() != IntSize(1, 1))
@@ -83,17 +89,12 @@ Color NativeImage::singlePixelSolidColor() const
         return Color();
 
     CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
-    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), m_platformImage.get());
+    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, 1, 1), platformImage().get());
 
     if (!pixel[3])
         return Color::transparentBlack;
 
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
-}
-
-DestinationColorSpace NativeImage::colorSpace() const
-{
-    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 
 void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
@@ -159,7 +160,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 void NativeImage::clearSubimages()
 {
 #if CACHE_SUBIMAGES
-    CGSubimageCacheWithTimer::clearImage(m_platformImage.get());
+    CGSubimageCacheWithTimer::clearImage(platformImage().get());
 #endif
 }
 

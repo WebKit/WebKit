@@ -25,11 +25,9 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace WebKit {
     
-enum class WebsiteAutoplayPolicy {
+enum class WebsiteAutoplayPolicy : uint8_t {
     Default,
     Allow,
     AllowWithoutSound,
@@ -37,17 +35,3 @@ enum class WebsiteAutoplayPolicy {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteAutoplayPolicy> {
-    using values = EnumValues<
-        WebKit::WebsiteAutoplayPolicy,
-        WebKit::WebsiteAutoplayPolicy::Default,
-        WebKit::WebsiteAutoplayPolicy::Allow,
-        WebKit::WebsiteAutoplayPolicy::AllowWithoutSound,
-        WebKit::WebsiteAutoplayPolicy::Deny
-    >;
-};
-
-} // namespace WTF

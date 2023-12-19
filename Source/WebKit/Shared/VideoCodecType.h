@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class VideoCodecType : uint8_t {
@@ -37,18 +35,3 @@ enum class VideoCodecType : uint8_t {
 };
 
 } // namespace WebKit
-
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::VideoCodecType> {
-    using values = EnumValues<
-        WebKit::VideoCodecType,
-        WebKit::VideoCodecType::H264,
-        WebKit::VideoCodecType::H265,
-        WebKit::VideoCodecType::VP9,
-        WebKit::VideoCodecType::AV1
-    >;
-};
-
-}

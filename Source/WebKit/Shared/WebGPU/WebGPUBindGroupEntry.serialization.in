@@ -21,6 +21,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
+
+[Nested] enum class WebKit::WebGPU::BindingResourceType : uint8_t {
+    Sampler,
+    TextureView,
+    BufferBinding,
+    ExternalTexture,
+}
+
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::BindGroupEntry {
     WebCore::WebGPU::Index32 binding
     WebKit::WebGPU::BufferBinding bufferBinding

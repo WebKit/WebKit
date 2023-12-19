@@ -83,8 +83,8 @@ public:
     virtual Path computeClipPath(AffineTransform&) const;
 
 protected:
-    RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<RenderElementType> = { });
-    RenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<RenderElementType> = { });
+    RenderSVGModelObject(Type, Document&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
+    RenderSVGModelObject(Type, SVGElement&, RenderStyle&&, OptionSet<SVGModelObjectFlag> = { });
 
     void willBeDestroyed() override;
     void updateFromStyle() override;
@@ -109,7 +109,6 @@ protected:
     bool applyCachedClipAndScrollPosition(RepaintRects&, const RenderLayerModelObject* container, VisibleRectContext) const final;
 
 private:
-    bool isRenderSVGModelObject() const final { return true; }
     LayoutSize cachedSizeForOverflowClip() const;
 
     LayoutRect m_layoutRect;

@@ -154,6 +154,9 @@ static void wpeDisplayWaylandDispose(GObject* object)
         priv->eventSource = nullptr;
     }
 
+    priv->wlSeat = nullptr;
+    priv->wlCursor = nullptr;
+    priv->wlOutputs.clear();
     g_clear_pointer(&priv->linuxDMABuf, zwp_linux_dmabuf_v1_destroy);
     g_clear_pointer(&priv->wlSHM, wl_shm_destroy);
     g_clear_pointer(&priv->xdgWMBase, xdg_wm_base_destroy);

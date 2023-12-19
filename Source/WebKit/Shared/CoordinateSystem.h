@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace WebKit {
 
 enum class CoordinateSystem : uint8_t {
@@ -35,15 +33,3 @@ enum class CoordinateSystem : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::CoordinateSystem> {
-    using values = EnumValues<
-    WebKit::CoordinateSystem,
-    WebKit::CoordinateSystem::Page,
-    WebKit::CoordinateSystem::LayoutViewport
-    >;
-};
-
-} // namespace WTF

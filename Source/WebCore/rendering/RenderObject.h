@@ -234,11 +234,22 @@ public:
         RenderImageFlag = 1 << 8,
         RenderMediaFlag = 1 << 9,
         RenderWidgetFlag = 1 << 10,
-        LegacyRenderSVGContainerFlag = 1 << 11,
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        RenderSVGContainerFlag = 1 << 12,
-#endif
+        RenderSVGModelObjectFlag = 1 << 11,
+        RenderSVGBlockFlag = 1 << 12,
+    };
 
+    // Type Specific Flags
+
+    enum class LineBreakFlag : uint8_t {
+        IsWBR = 1 << 0,
+    };
+
+    enum class SVGModelObjectFlag : uint8_t {
+        IsLegacy = 1 << 0,
+        IsContainer = 1 << 1,
+        IsHiddenContainer = 1 << 2,
+        IsResourceContainer = 1 << 3,
+        IsShape = 1 << 4,
     };
 
     // Anonymous objects should pass the document as their node, and they will then automatically be
@@ -462,26 +473,32 @@ public:
     bool isRenderMathMLUnderOver() const { return type() == Type::MathMLUnderOver; }
 #endif // ENABLE(MATHML)
 
-    virtual bool isLegacyRenderSVGModelObject() const { return false; }
-    virtual bool isRenderSVGModelObject() const { return false; }
-    virtual bool isRenderSVGBlock() const { return false; }
+    bool isLegacyRenderSVGModelObject() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGModelObjectFlag) && svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool isRenderSVGModelObject() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGModelObjectFlag) && !svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
+#endif
+    OptionSet<SVGModelObjectFlag> svgFlags() const { ASSERT(m_renderElementTypeFlags.contains(RenderElementType::RenderSVGModelObjectFlag)); return OptionSet<SVGModelObjectFlag>::fromRaw(m_typeSpecificFlags); }
+    void setSVGFlags(OptionSet<SVGModelObjectFlag> flags) { ASSERT(m_renderElementTypeFlags.contains(RenderElementType::RenderSVGModelObjectFlag)); m_typeSpecificFlags = flags.toRaw(); }
+    bool isRenderSVGBlock() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGBlockFlag); }
     bool isLegacyRenderSVGRoot() const { return type() == Type::LegacySVGRoot; }
     bool isRenderSVGRoot() const { return type() == Type::SVGRoot; }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGContainerFlag); }
+    bool isRenderSVGContainer() const { return isRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsContainer); }
 #endif
-    bool isLegacyRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::LegacyRenderSVGContainerFlag); }
+    bool isLegacyRenderSVGContainer() const { return isLegacyRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsContainer); }
     bool isRenderSVGTransformableContainer() const { return type() == Type::SVGTransformableContainer; }
     bool isLegacyRenderSVGTransformableContainer() const { return type() == Type::LegacySVGTransformableContainer; }
     bool isRenderSVGViewportContainer() const { return type() == Type::SVGViewportContainer; }
     bool isLegacyRenderSVGViewportContainer() const { return type() == Type::LegacySVGViewportContainer; }
     bool isRenderSVGGradientStop() const { return type() == Type::SVGGradientStop; }
-    virtual bool isLegacyRenderSVGHiddenContainer() const { return false; }
+    bool isLegacyRenderSVGHiddenContainer() const { return type() == Type::LegacySVGHiddenContainer || isLegacyRenderSVGResourceContainer(); }
     bool isRenderSVGHiddenContainer() const { return type() == Type::SVGHiddenContainer || isRenderSVGResourceContainer(); }
     bool isLegacyRenderSVGPath() const { return type() == Type::LegacySVGPath; }
     bool isRenderSVGPath() const { return type() == Type::SVGPath; }
-    virtual bool isRenderSVGShape() const { return false; }
-    virtual bool isLegacyRenderSVGShape() const { return false; }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool isRenderSVGShape() const { return isRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsShape); }
+#endif
+    bool isLegacyRenderSVGShape() const { return isLegacyRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsShape); }
     bool isRenderSVGText() const { return type() == Type::SVGText; }
     bool isRenderSVGTextPath() const { return type() == Type::SVGTextPath; }
     bool isRenderSVGTSpan() const { return type() == Type::SVGTSpan; }
@@ -491,8 +508,10 @@ public:
     bool isRenderSVGImage() const { return type() == Type::SVGImage; }
     bool isLegacyRenderSVGForeignObject() const { return type() == Type::LegacySVGForeignObject; }
     bool isRenderSVGForeignObject() const { return type() == Type::SVGForeignObject; }
-    virtual bool isLegacyRenderSVGResourceContainer() const { return false; }
-    bool isRenderSVGResourceContainer() const { return type() == Type::SVGResourceClipper || type() == Type::SVGResourceMasker; }
+    bool isLegacyRenderSVGResourceContainer() const { return isLegacyRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    bool isRenderSVGResourceContainer() const { return isRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
+#endif
     bool isRenderSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
     bool isLegacyRenderSVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
     bool isLegacyRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
@@ -574,6 +593,7 @@ public:
     bool isRenderText() const { return m_bitfields.hasFlag(RenderObjectFlag::IsRenderText); }
     bool isRenderLineBreak() const { return type() == Type::LineBreak; }
     bool isBR() const { return isRenderLineBreak() && !isWBR(); }
+    bool isWBR() const { return isRenderLineBreak() && lineBreakFlags().contains(LineBreakFlag::IsWBR); }
     bool isLineBreakOpportunity() const { return isRenderLineBreak() && isWBR(); }
     bool isRenderTextOrLineBreak() const { return isRenderText() || isRenderLineBreak(); }
     bool isRenderBox() const { return m_bitfields.hasFlag(RenderObjectFlag::IsRenderBox); }
@@ -1054,6 +1074,9 @@ protected:
     //////////////////////////////////////////
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node.get(); }
 
+    OptionSet<LineBreakFlag> lineBreakFlags() const { ASSERT(isRenderLineBreak()); return OptionSet<LineBreakFlag>::fromRaw(m_typeSpecificFlags); }
+    void setLineBreakFlags(OptionSet<LineBreakFlag> flags) { ASSERT(isRenderLineBreak()); m_typeSpecificFlags = flags.toRaw(); }
+
     virtual void willBeDestroyed();
 
     void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NeedsPositionedMovementLayout, b); }
@@ -1091,8 +1114,6 @@ private:
     Node* generatingPseudoHostElement() const;
 
     void propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const;
-
-    virtual bool isWBR() const { ASSERT_NOT_REACHED(); return false; }
 
     void setEverHadLayout() { m_bitfields.setFlag(RenderObjectFlag::EverHadLayout); }
 
@@ -1205,6 +1226,7 @@ private:
     OptionSet<RenderElementType> m_renderElementTypeFlags;
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     Type m_type;
+    uint8_t m_typeSpecificFlags { 0 }; // Depends on values of m_type and/or m_renderElementTypeFlags
 
     CheckedPtr<Layout::Box> m_layoutBox;
 

@@ -26,7 +26,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <wtf/Forward.h>
 
 namespace WebKit {
 
@@ -52,16 +51,4 @@ public:
     uint64_t contextID { 0 };
 };
 
-}
-
-namespace WTF {
-template<> struct EnumTraits<WebKit::LayerHostingMode> {
-    using values = EnumValues<
-        WebKit::LayerHostingMode,
-#if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
-        WebKit::LayerHostingMode::OutOfProcess,
-#endif
-        WebKit::LayerHostingMode::InProcess
-    >;
-};
 }

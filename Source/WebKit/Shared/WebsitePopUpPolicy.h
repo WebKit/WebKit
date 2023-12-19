@@ -25,28 +25,12 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace WebKit {
 
-enum class WebsitePopUpPolicy {
+enum class WebsitePopUpPolicy : uint8_t {
     Default,
     Allow,
     Block,
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsitePopUpPolicy> {
-    using values = EnumValues<
-        WebKit::WebsitePopUpPolicy,
-        WebKit::WebsitePopUpPolicy::Default,
-        WebKit::WebsitePopUpPolicy::Allow,
-        WebKit::WebsitePopUpPolicy::Block
-    >;
-};
-
-} // namespace WTF
-

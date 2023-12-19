@@ -36,8 +36,6 @@ public:
     void layout() override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
-    bool isLegacyRenderSVGResourceContainer() const final { return true; }
-
     static float computeTextPaintingScale(const RenderElement&);
     static AffineTransform transformOnNonScalingStroke(RenderObject*, const AffineTransform& resourceTransform);
 

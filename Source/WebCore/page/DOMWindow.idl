@@ -24,10 +24,18 @@
  */
 
 interface mixin DOMWindow {
-    [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
-    [CallWith=CurrentGlobalObject&IncumbentWindow, DoNotCheckSecurity] undefined postMessage(any message, optional WindowPostMessageOptions options);
-    [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
     [DoNotCheckSecurity, CallWith=IncumbentDocument] undefined close();
+    [DoNotCheckSecurity] readonly attribute boolean closed;
     [DoNotCheckSecurity, CallWith=IncumbentWindow] undefined focus();
+    [DoNotCheckSecurity] undefined blur();
+    [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, USVString targetOrigin, optional sequence<object> transfer = []);
+    [DoNotCheckSecurity, CallWith=CurrentGlobalObject&IncumbentWindow] undefined postMessage(any message, optional WindowPostMessageOptions options);
+    [DoNotCheckSecurity, PutForwards=href, LegacyUnforgeable] readonly attribute Location location;
+    [DoNotCheckSecurity, LegacyUnforgeable, CustomGetter] readonly attribute WindowProxy window;
+    [DoNotCheckSecurityOnGetter, Replaceable, CustomGetter] readonly attribute WindowProxy self;
     [DoNotCheckSecurityOnGetter, CustomSetter] attribute WindowProxy? opener;
+    [DoNotCheckSecurityOnGetter, Replaceable, CustomGetter] readonly attribute WindowProxy frames;
+    [DoNotCheckSecurityOnGetter, Replaceable] readonly attribute unsigned long length;
+    [DoNotCheckSecurityOnGetter, LegacyUnforgeable] readonly attribute WindowProxy? top;
+    [DoNotCheckSecurityOnGetter, Replaceable] readonly attribute WindowProxy? parent;
 };

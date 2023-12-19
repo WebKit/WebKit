@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class BackgroundFetchChange : uint8_t {
@@ -36,18 +34,3 @@ enum class BackgroundFetchChange : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-    
-template<> struct EnumTraits<WebKit::BackgroundFetchChange> {
-    using values = EnumValues<
-    WebKit::BackgroundFetchChange,
-    WebKit::BackgroundFetchChange::Addition,
-    WebKit::BackgroundFetchChange::Removal,
-    WebKit::BackgroundFetchChange::Update
-    >;
-};
-    
-} // namespace WTF
-
-

@@ -4525,6 +4525,21 @@
 		2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteTiledBacking.cpp; sourceTree = "<group>"; };
 		2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteTiledBacking.h; sourceTree = "<group>"; };
 		2D922D8A26E990FC00EC1A59 /* WindowKind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowKind.h; sourceTree = "<group>"; };
+		2D9BECF22B30925300D0AE99 /* AuthenticationChallengeDisposition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuthenticationChallengeDisposition.serialization.in; sourceTree = "<group>"; };
+		2D9BECF32B3092CE00D0AE99 /* CacheModel.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheModel.serialization.in; sourceTree = "<group>"; };
+		2D9BECF42B3092FE00D0AE99 /* BackgroundFetchChange.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = BackgroundFetchChange.serialization.in; sourceTree = "<group>"; };
+		2D9BECF52B30931B00D0AE99 /* CoordinateSystem.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoordinateSystem.serialization.in; sourceTree = "<group>"; };
+		2D9BECF62B30936400D0AE99 /* DragControllerAction.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = DragControllerAction.serialization.in; sourceTree = "<group>"; };
+		2D9BECF72B309B5A00D0AE99 /* InspectorExtensionTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = InspectorExtensionTypes.serialization.in; sourceTree = "<group>"; };
+		2D9BECF82B309E6E00D0AE99 /* MediaPlaybackState.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaPlaybackState.serialization.in; sourceTree = "<group>"; };
+		2D9BECF92B30A57800D0AE99 /* SyntheticEditingCommandType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SyntheticEditingCommandType.serialization.in; sourceTree = "<group>"; };
+		2D9BECFA2B30A5F600D0AE99 /* TextRecognitionUpdateResult.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextRecognitionUpdateResult.serialization.in; sourceTree = "<group>"; };
+		2D9BECFB2B30AF0400D0AE99 /* UndoOrRedo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UndoOrRedo.serialization.in; sourceTree = "<group>"; };
+		2D9BECFC2B30AF1600D0AE99 /* VideoCodecType.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoCodecType.serialization.in; sourceTree = "<group>"; };
+		2D9BECFD2B30B16200D0AE99 /* WebsiteAutoplayPolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsiteAutoplayPolicy.serialization.in; sourceTree = "<group>"; };
+		2D9BECFE2B30B17C00D0AE99 /* WebsiteAutoplayQuirk.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsiteAutoplayQuirk.serialization.in; sourceTree = "<group>"; };
+		2D9BECFF2B30B19800D0AE99 /* WebsitePopUpPolicy.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsitePopUpPolicy.serialization.in; sourceTree = "<group>"; };
+		2D9BED002B30B44600D0AE99 /* UnifiedOriginStorageLevel.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnifiedOriginStorageLevel.serialization.in; sourceTree = "<group>"; };
 		2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextCheckingControllerProxy.messages.in; sourceTree = "<group>"; };
 		2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckingControllerProxy.mm; sourceTree = "<group>"; };
 		2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextCheckingControllerProxy.h; sourceTree = "<group>"; };
@@ -8569,6 +8584,7 @@
 				5157ADF42B22C8F400C0E095 /* AuxiliaryProcessCreationParameters.serialization.in */,
 				290F4271172A0C7400939FF0 /* AuxiliaryProcessSupplement.h */,
 				413E5C9329B0EDF3002F4987 /* BackgroundFetchChange.h */,
+				2D9BECF42B3092FE00D0AE99 /* BackgroundFetchChange.serialization.in */,
 				413E5C8E29B0C5F4002F4987 /* BackgroundFetchState.h */,
 				413E5C8F29B0C8EA002F4987 /* BackgroundFetchState.serialization.in */,
 				E164A2EF191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.cpp */,
@@ -8576,6 +8592,7 @@
 				4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */,
 				BCF18637167D071E00A1A85A /* CacheModel.cpp */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
+				2D9BECF32B3092CE00D0AE99 /* CacheModel.serialization.in */,
 				9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */,
 				86BAAFD729A3D29B0013F9A9 /* CallbackID.serialization.in */,
 				CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */,
@@ -8584,6 +8601,7 @@
 				5106D7C018BDBE73000AB166 /* ContextMenuContextData.h */,
 				46EA625A2B1FE13200DC5E39 /* ContextMenuContextData.serialization.in */,
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
+				2D9BECF52B30931B00D0AE99 /* CoordinateSystem.serialization.in */,
 				5C2C6FA627C958FC00CCDA9E /* DataTaskIdentifier.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
 				99036AE723A970870000B06A /* DebuggableInfoData.h */,
@@ -8593,6 +8611,7 @@
 				2D7FD191223C7310007887F1 /* DocumentEditingContext.mm */,
 				F488B9142AD09C9C00792C16 /* DocumentEditingContext.serialization.in */,
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
+				2D9BECF62B30936400D0AE99 /* DragControllerAction.serialization.in */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
 				F4C8A13A2AC6289900B94BA6 /* DrawingAreaInfo.serialization.in */,
 				2D9CD5EE21FA75EE0029ACFA /* EditingRange.cpp */,
@@ -8622,6 +8641,7 @@
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */,
 				99BE3B1625433B9400C6551C /* InspectorExtensionTypes.h */,
+				2D9BECF72B309B5A00D0AE99 /* InspectorExtensionTypes.serialization.in */,
 				7BBA63DD280E93B600B04823 /* IPCConnectionTester.cpp */,
 				7BBA63DE280E93B600B04823 /* IPCConnectionTester.h */,
 				7BBA63DC280E93B500B04823 /* IPCConnectionTesterIdentifier.h */,
@@ -8644,6 +8664,7 @@
 				1ADC269329E8AD96005990CA /* LocalFrameCreationParameters.serialization.in */,
 				462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */,
 				49917DB0252E30750050313F /* MediaPlaybackState.h */,
+				2D9BECF82B309E6E00D0AE99 /* MediaPlaybackState.serialization.in */,
 				869055832912C6B000B5ECD3 /* Model.serialization.in */,
 				71E9650F2745682E00ADCF43 /* ModelIdentifier.h */,
 				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
@@ -8724,8 +8745,10 @@
 				86DD518B28EF028500DF2A58 /* TextFlags.serialization.in */,
 				86890B81294B6FD900DB95CE /* TextRecognitionResult.serialization.in */,
 				F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */,
+				2D9BECFA2B30A5F600D0AE99 /* TextRecognitionUpdateResult.serialization.in */,
 				0F11781422E39BE6008BD570 /* TransactionID.h */,
 				5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */,
+				2D9BECFB2B30AF0400D0AE99 /* UndoOrRedo.serialization.in */,
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
 				5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */,
 				46738A512B02C26200F91E59 /* URLSchemeTaskParameters.serialization.in */,
@@ -8737,6 +8760,7 @@
 				FA39AE4E2B22DA68008F93CD /* UserData.serialization.in */,
 				2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */,
 				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
+				2D9BECFC2B30AF1600D0AE99 /* VideoCodecType.serialization.in */,
 				9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */,
 				9B38009C2AEA2D8A0011A892 /* ViewWindowCoordinates.serialization.in */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
@@ -8820,7 +8844,9 @@
 				517B5F96275EC5E5002DC22D /* WebPushMessage.h */,
 				5CABE07A28F60E8A00D83FD9 /* WebPushMessage.serialization.in */,
 				5C8DD37F1FE4519200F2A556 /* WebsiteAutoplayPolicy.h */,
+				2D9BECFD2B30B16200D0AE99 /* WebsiteAutoplayPolicy.serialization.in */,
 				5C8DD3811FE455CA00F2A556 /* WebsiteAutoplayQuirk.h */,
+				2D9BECFE2B30B17C00D0AE99 /* WebsiteAutoplayQuirk.serialization.in */,
 				511F7D401EB1BCEE00E47B83 /* WebsiteDataStoreParameters.h */,
 				511F7D3F1EB1BCEE00E47B83 /* WebsiteDataStoreParameters.serialization.in */,
 				711725A8228D563A00018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h */,
@@ -8830,6 +8856,7 @@
 				5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */,
 				86D1967329A4E4950083B077 /* WebsitePoliciesData.serialization.in */,
 				0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */,
+				2D9BECFF2B30B19800D0AE99 /* WebsitePopUpPolicy.serialization.in */,
 				71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */,
 				8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */,
 				8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */,
@@ -9072,6 +9099,7 @@
 			children = (
 				93B631F227ABAD7F00443A44 /* QuotaIncreaseRequestIdentifier.h */,
 				93D1EEF429669D73009B31D6 /* UnifiedOriginStorageLevel.h */,
+				2D9BED002B30B44600D0AE99 /* UnifiedOriginStorageLevel.serialization.in */,
 				1A4832D41A9CDF96008B4DFE /* WebsiteData.cpp */,
 				1A4832D51A9CDF96008B4DFE /* WebsiteData.h */,
 				86D1968029A511490083B077 /* WebsiteData.serialization.in */,
@@ -10338,6 +10366,7 @@
 				1C9EBA5B2087E74E00054429 /* NativeWebMouseEventIOS.mm */,
 				2DA944981884E4F000ED86DB /* NativeWebTouchEventIOS.mm */,
 				4459984122833E6000E61373 /* SyntheticEditingCommandType.h */,
+				2D9BECF92B30A57800D0AE99 /* SyntheticEditingCommandType.serialization.in */,
 				F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */,
 				F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */,
 				86BAAFD529A3CD160013F9A9 /* WebAutocorrectionContext.serialization.in */,
@@ -11717,6 +11746,7 @@
 			children = (
 				57B4B45C20B5048B00D4AD79 /* cocoa */,
 				5CADDE0D2151AA010067D309 /* AuthenticationChallengeDisposition.h */,
+				2D9BECF22B30925300D0AE99 /* AuthenticationChallengeDisposition.serialization.in */,
 				518E8EF316B2091C00E91429 /* AuthenticationManager.cpp */,
 				518E8EF416B2091C00E91429 /* AuthenticationManager.h */,
 				518E8EF516B2091C00E91429 /* AuthenticationManager.messages.in */,
