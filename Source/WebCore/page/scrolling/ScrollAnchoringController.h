@@ -60,6 +60,7 @@ private:
     CandidateExaminationResult examineAnchorCandidate(Element&);
     bool didFindPriorityCandidate(Document&);
     FloatPoint computeOffsetFromOwningScroller(RenderObject& candidate);
+    FloatSize computeAdjustment(RenderElement& renderer);
     LocalFrameView& frameView();
 
     ScrollableArea& m_owningScrollableArea;
