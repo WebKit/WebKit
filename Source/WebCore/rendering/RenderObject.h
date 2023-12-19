@@ -1177,10 +1177,10 @@ private:
 
     private:
         uint32_t m_flags : 21 { 0 };
-        uint8_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
-        uint8_t m_selectionState : 3 { HighlightState::None }; // HighlightState
-        uint8_t m_fragmentedFlowState : 1 { NotInsideFragmentedFlow }; // FragmentedFlowState
-        uint8_t m_boxDecorationState : 2 { NoBoxDecorations }; // BoxDecorationState
+        uint32_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
+        uint32_t m_selectionState : 3 { HighlightState::None }; // HighlightState
+        uint32_t m_fragmentedFlowState : 1 { NotInsideFragmentedFlow }; // FragmentedFlowState
+        uint32_t m_boxDecorationState : 2 { NoBoxDecorations }; // BoxDecorationState
         // 3 bits left
 
     public:
