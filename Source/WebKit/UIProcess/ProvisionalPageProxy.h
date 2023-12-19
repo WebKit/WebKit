@@ -182,7 +182,7 @@ private:
     void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
     bool validateInput(WebCore::FrameIdentifier, const std::optional<uint64_t>& navigationID = std::nullopt);
 
-    CheckedRef<WebPageProxy> m_page;
+    WeakRef<WebPageProxy> m_page;
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     // Keep WebsiteDataStore alive for provisional page load.

@@ -157,7 +157,7 @@ private:
 @end
 
 @implementation WKTextFinderClient {
-    CheckedPtr<WebKit::WebPageProxy> _page;
+    WeakPtr<WebKit::WebPageProxy> _page;
     NSView *_view;
     Deque<WTF::Function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
     Deque<WTF::Function<void(NSImage *)>> _imageReplyCallbacks;

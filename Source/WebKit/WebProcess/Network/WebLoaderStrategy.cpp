@@ -563,7 +563,7 @@ void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
 
 void WebLoaderStrategy::addURLSchemeTaskProxy(WebURLSchemeTaskProxy& task)
 {
-    auto result = m_urlSchemeTasks.add(task.identifier(), &task);
+    auto result = m_urlSchemeTasks.add(task.identifier(), task);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 

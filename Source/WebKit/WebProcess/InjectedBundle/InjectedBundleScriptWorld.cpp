@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using WorldMap = HashMap<SingleThreadWeakRef<DOMWrapperWorld>, CheckedPtr<InjectedBundleScriptWorld>>;
+using WorldMap = HashMap<SingleThreadWeakRef<DOMWrapperWorld>, WeakRef<InjectedBundleScriptWorld>>;
 
 static WorldMap& allWorlds()
 {
@@ -66,7 +66,7 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapper
     if (&world == &mainThreadNormalWorld())
         return normalWorld();
 
-    if (auto existingWorld = allWorlds().get(&world))
+    if (auto existingWorld = allWorlds().get(world))
         return *existingWorld;
 
     return adoptRef(*new InjectedBundleScriptWorld(world, uniqueWorldName()));
@@ -76,7 +76,7 @@ InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
 {
     for (auto& world : allWorlds().values()) {
         if (world->name() == name)
-            return world.get();
+            return world.ptr();
     }
     return nullptr;
 }
@@ -91,8 +91,8 @@ InjectedBundleScriptWorld::InjectedBundleScriptWorld(DOMWrapperWorld& world, con
     : m_world(world)
     , m_name(name)
 {
-    ASSERT(!allWorlds().contains(m_world.get()));
-    allWorlds().add(m_world.get(), this);
+    ASSERT(!allWorlds().contains(world));
+    allWorlds().add(world, *this);
 }
 
 InjectedBundleScriptWorld::~InjectedBundleScriptWorld()

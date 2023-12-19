@@ -175,9 +175,9 @@ Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& config
     return adoptRef(*new WebProcessPool(configuration));
 }
 
-static Vector<CheckedRef<WebProcessPool>>& processPools()
+static Vector<WeakRef<WebProcessPool>>& processPools()
 {
-    static NeverDestroyed<Vector<CheckedRef<WebProcessPool>>> processPools;
+    static NeverDestroyed<Vector<WeakRef<WebProcessPool>>> processPools;
     return processPools;
 }
 

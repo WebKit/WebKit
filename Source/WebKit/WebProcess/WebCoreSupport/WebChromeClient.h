@@ -27,7 +27,7 @@
 #pragma once
 
 #include <WebCore/ChromeClient.h>
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 class HTMLImageElement;
@@ -502,7 +502,7 @@ private:
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
 
-    CheckedRef<WebPage> m_page;
+    WeakRef<WebPage> m_page;
 };
 
 class AXRelayProcessSuspendedNotification {
@@ -514,7 +514,7 @@ public:
 
     void sendProcessSuspendMessage(bool suspended);
 private:
-    CheckedRef<WebPage> m_page;
+    WeakRef<WebPage> m_page;
     AutomaticallySend m_automaticallySend;
 };
 

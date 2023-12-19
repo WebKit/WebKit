@@ -129,7 +129,7 @@ void LibWebRTCSocketFactory::addSocket(LibWebRTCSocket& socket)
 {
     ASSERT(!WTF::isMainRunLoop());
     ASSERT(!m_sockets.contains(socket.identifier()));
-    m_sockets.add(socket.identifier(), &socket);
+    m_sockets.add(socket.identifier(), socket);
 }
 
 void LibWebRTCSocketFactory::removeSocket(LibWebRTCSocket& socket)
@@ -144,7 +144,7 @@ void LibWebRTCSocketFactory::forSocketInGroup(ScriptExecutionContextIdentifier c
     ASSERT(!WTF::isMainRunLoop());
     for (auto& socket : m_sockets.values()) {
         if (socket->contextIdentifier() == contextIdentifier)
-            callback(*socket);
+            callback(socket);
     }
 }
 
@@ -153,7 +153,7 @@ std::unique_ptr<LibWebRTCResolver> LibWebRTCSocketFactory::createAsyncDnsResolve
     auto resolver = makeUnique<LibWebRTCResolver>();
 
     ASSERT(!m_resolvers.contains(resolver->identifier()));
-    m_resolvers.add(resolver->identifier(), resolver.get());
+    m_resolvers.add(resolver->identifier(), *resolver);
 
     return resolver;
 }

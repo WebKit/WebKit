@@ -28,7 +28,6 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
-#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -51,7 +50,7 @@ public:
     WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
 private:
-    CheckedRef<WebFrameProxy> m_frame;
+    WeakRef<WebFrameProxy> m_frame;
     Ref<WebProcessProxy> m_process;
     RefPtr<RemotePageProxy> m_remotePageProxy;
     Ref<VisitedLinkStore> m_visitedLinkStore;

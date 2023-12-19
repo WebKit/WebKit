@@ -135,7 +135,7 @@ void NetworkMDNSRegister::registerMDNSName(WebCore::ScriptExecutionContextIdenti
     }
 
     auto identifier = PendingRegistrationRequestIdentifier::generate();
-    CheckedRef connection = m_connection;
+    Ref connection = m_connection.get();
     auto pendingRequest = makeUnique<PendingRegistrationRequest>(connection.get(), WTFMove(name), sessionID(), WTFMove(completionHandler));
     auto addResult = pendingRegistrationRequestMap().add(identifier, WTFMove(pendingRequest));
     DNSRecordRef record { nullptr };

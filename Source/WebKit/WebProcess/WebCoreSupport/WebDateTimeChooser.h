@@ -28,7 +28,7 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 #include <WebCore/DateTimeChooser.h>
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 class DateTimeChooserClient;
@@ -51,7 +51,7 @@ private:
     void showChooser(const WebCore::DateTimeChooserParameters&) final;
 
     WebCore::DateTimeChooserClient& m_client;
-    CheckedRef<WebPage> m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

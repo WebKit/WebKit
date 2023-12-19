@@ -111,7 +111,7 @@
 - (void)_clearImmediateActionState
 {
     if (_page)
-        CheckedPtr { _page }->clearTextIndicator();
+        RefPtr { _page.get() }->clearTextIndicator();
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
@@ -148,7 +148,7 @@
 
 - (void)dismissContentRelativeChildWindows
 {
-    CheckedPtr { _page }->setMaintainsInactiveSelection(false);
+    RefPtr { _page.get() }->setMaintainsInactiveSelection(false);
     [_currentQLPreviewMenuItem close];
 }
 
@@ -168,12 +168,12 @@
 
     CheckedPtr { _viewImpl }->dismissContentRelativeChildWindowsWithAnimation(true);
 
-    CheckedPtr { _page }->setMaintainsInactiveSelection(true);
+    RefPtr { _page.get() }->setMaintainsInactiveSelection(true);
 
     _state = WebKit::ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
 
-    CheckedPtr { _page }->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
+    RefPtr { _page.get() }->performImmediateActionHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view]);
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -189,8 +189,8 @@
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == WebKit::ImmediateActionState::Pending) {
-        if (auto* connection = CheckedPtr { _page }->process().connection()) {
-            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(CheckedPtr { _page }->webPageID(), 500_ms) == IPC::Error::NoError;
+        if (auto* connection = RefPtr { _page.get() }->process().connection()) {
+            bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(RefPtr { _page.get() }->webPageID(), 500_ms) == IPC::Error::NoError;
             if (!receivedReply)
                 _state = WebKit::ImmediateActionState::TimedOut;
         }
@@ -215,11 +215,11 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    CheckedPtr { _page }->immediateActionDidUpdate();
+    RefPtr { _page.get() }->immediateActionDidUpdate();
     if (_contentPreventsDefault)
         return;
 
-    CheckedPtr { _page }->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
+    RefPtr { _page.get() }->setTextIndicatorAnimationProgress([immediateActionRecognizer animationProgress]);
 }
 
 - (void)immediateActionRecognizerDidCancelAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -227,13 +227,13 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    CheckedPtr { _page }->immediateActionDidCancel();
+    RefPtr { _page.get() }->immediateActionDidCancel();
 
     CheckedPtr { _viewImpl }->cancelImmediateActionAnimation();
 
-    CheckedPtr { _page }->setTextIndicatorAnimationProgress(0);
+    RefPtr { _page.get() }->setTextIndicatorAnimationProgress(0);
     [self _clearImmediateActionState];
-    CheckedPtr { _page }->setMaintainsInactiveSelection(false);
+    RefPtr { _page.get() }->setMaintainsInactiveSelection(false);
 }
 
 - (void)immediateActionRecognizerDidCompleteAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -241,11 +241,11 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    CheckedPtr { _page }->immediateActionDidComplete();
+    RefPtr { _page.get() }->immediateActionDidComplete();
 
     CheckedPtr { _viewImpl }->completeImmediateActionAnimation();
 
-    CheckedPtr { _page }->setTextIndicatorAnimationProgress(1);
+    RefPtr { _page.get() }->setTextIndicatorAnimationProgress(1);
 }
 
 - (RefPtr<API::HitTestResult>)_webHitTestResult
@@ -254,7 +254,7 @@
     if (_state == WebKit::ImmediateActionState::Ready)
         hitTestResult = API::HitTestResult::create(_hitTestResultData, *_page);
     else
-        hitTestResult = CheckedPtr { _page }->lastMouseMoveHitTestResult();
+        hitTestResult = RefPtr { _page.get() }->lastMouseMoveHitTestResult();
 
     return hitTestResult;
 }
@@ -297,7 +297,7 @@
             _currentQLPreviewMenuItem = item;
 
             if (auto textIndicator = _hitTestResultData.linkTextIndicator.get())
-                CheckedPtr { _page }->setTextIndicator(textIndicator->data());
+                RefPtr { _page.get() }->setTextIndicator(textIndicator->data());
 
             return (id<NSImmediateActionAnimationController>)item;
         }
@@ -335,7 +335,7 @@
         return;
     }
 
-    id customClientAnimationController = CheckedPtr { _page }->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData);
+    id customClientAnimationController = RefPtr { _page.get() }->immediateActionAnimationControllerForHitTestResult(hitTestResult, _type, _userData);
     if (customClientAnimationController == [NSNull null]) {
         [self _cancelImmediateAction];
         return;

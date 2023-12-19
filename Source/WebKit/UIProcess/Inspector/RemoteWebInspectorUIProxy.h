@@ -30,10 +30,10 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorFrontendClient.h>
-#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -167,7 +167,7 @@ private:
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
     CheckedPtr<RemoteWebInspectorUIProxyClient> m_client;
-    CheckedPtr<WebPageProxy> m_inspectorPage;
+    WeakPtr<WebPageProxy> m_inspectorPage;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     RefPtr<WebInspectorUIExtensionControllerProxy> m_extensionController;
