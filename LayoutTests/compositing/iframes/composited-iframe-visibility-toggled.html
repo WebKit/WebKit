@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        iframe {
+            will-change: transform;
+            display: block;
+            overflow: hidden;
+            border: none;
+        }
+        .container {
+            visibility: hidden;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        body.changed .container {
+            visibility: visible;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.add('changed');
+               testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <iframe scrolling="no" srcdoc="
+            <style>
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: silver;
+            }
+            </style>
+            <div class='box' style='transform: translateZ(0);'>&nbsp;</div>
+            <div class='box'>&nbsp;</div>
+            "></iframe>
+    </div>
+</body>
+</html>
