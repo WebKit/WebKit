@@ -1,5 +1,7 @@
 /*
  * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,7 +48,8 @@ public:
     explicit SVGTextLayoutAttributes(RenderSVGInlineText&);
 
     void clear();
-    static float emptyValue();
+    static float emptyValue() { return std::numeric_limits<float>::max() - 1; }
+    static bool isEmptyValue(float value) { return std::isnan(value); }
 
     RenderSVGInlineText& context() { return m_context; }
     const RenderSVGInlineText& context() const { return m_context; }

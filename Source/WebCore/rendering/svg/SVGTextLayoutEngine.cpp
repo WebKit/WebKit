@@ -51,10 +51,10 @@ void SVGTextLayoutEngine::updateCharacterPositionIfNeeded(float& x, float& y)
 
     // Replace characters x/y position, with the current text position plus any
     // relative adjustments, if it doesn't specify an absolute position itself.
-    if (x == SVGTextLayoutAttributes::emptyValue()) 
+    if (SVGTextLayoutAttributes::isEmptyValue(x))
         x = m_x + m_dx;
 
-    if (y == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(y))
         y = m_y + m_dy;
 
     m_dx = 0;
@@ -76,12 +76,12 @@ void SVGTextLayoutEngine::updateCurrentTextPosition(float x, float y, float glyp
 void SVGTextLayoutEngine::updateRelativePositionAdjustmentsIfNeeded(float dx, float dy)
 {
     // Update relative positioning information.
-    if (dx == SVGTextLayoutAttributes::emptyValue() && dy == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(dx) && SVGTextLayoutAttributes::isEmptyValue(dy))
         return;
 
-    if (dx == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(dx))
         dx = 0;
-    if (dy == SVGTextLayoutAttributes::emptyValue())
+    if (SVGTextLayoutAttributes::isEmptyValue(dy))
         dy = 0;
 
     if (m_inPathLayout) {
@@ -464,10 +464,10 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
                 return;
 
             if (m_isVerticalText) {
-                if (y != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(y))
                     return;
             } else {
-                if (x != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(x))
                     return;
             }
 
@@ -512,7 +512,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
             textBox.setStartsNewTextChunk(startsNewTextChunk);
         }
 
-        float angle = data.rotate == SVGTextLayoutAttributes::emptyValue() ? 0 : data.rotate;
+        float angle = SVGTextLayoutAttributes::isEmptyValue(data.rotate) ? 0 : data.rotate;
 
         // Calculate glyph orientation angle.
         const UChar* currentCharacter = characters + m_visualCharacterOffset;
@@ -537,7 +537,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
             float scaledGlyphAdvance = glyphAdvance * m_textPathScaling;
             if (m_isVerticalText) {
                 // If there's an absolute y position available, it marks the beginning of a new position along the path.
-                if (y != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(y))
                     m_textPathCurrentOffset = y + m_textPathStartOffset;
 
                 m_textPathCurrentOffset += m_dy;
@@ -548,7 +548,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
                 yOrientationShift -= scaledGlyphAdvance / 2;
             } else {
                 // If there's an absolute x position available, it marks the beginning of a new position along the path.
-                if (x != SVGTextLayoutAttributes::emptyValue())
+                if (!SVGTextLayoutAttributes::isEmptyValue(x))
                     m_textPathCurrentOffset = x + m_textPathStartOffset;
 
                 m_textPathCurrentOffset += m_dx;
