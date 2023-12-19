@@ -453,11 +453,15 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             || style.display() == DisplayType::TableCell)
             style.setWritingMode(m_parentStyle.writingMode());
 
-        // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
-        // of block-flow to anything other than WritingMode::HorizontalTb.
-        // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-        if (style.writingMode() != WritingMode::HorizontalTb && (style.display() == DisplayType::Box || style.display() == DisplayType::InlineBox))
+        if (style.isDisplayDeprecatedFlexibleBox()) {
+            // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
+            // of block-flow to anything other than WritingMode::HorizontalTb.
+            // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
             style.setWritingMode(WritingMode::HorizontalTb);
+        }
+
+        if (m_parentBoxStyle.isDisplayDeprecatedFlexibleBox())
+            style.setFloating(Float::None);
 
         // https://www.w3.org/TR/css-display/#transformations
         // "A parent with a grid or flex display value blockifies the box’s display type."
