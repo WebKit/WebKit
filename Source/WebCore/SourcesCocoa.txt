@@ -220,6 +220,7 @@ loader/mac/DocumentLoaderMac.cpp
 loader/mac/LoaderNSURLExtras.mm
 loader/mac/ResourceLoaderMac.mm
 page/CaptionUserPreferencesMediaAF.cpp
+page/mac/CorrectionIndicator.mm
 page/cocoa/CaptionUserPreferencesMediaAFCocoa.mm
 page/cocoa/EventHandlerCocoa.mm
 page/cocoa/MemoryReleaseCocoa.mm
