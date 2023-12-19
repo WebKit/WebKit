@@ -122,15 +122,13 @@ void MediaKeySystemPermissionRequestManager::mediaCanStart(Document& document)
         sendMediaKeySystemRequest(pendingRequest);
 }
 
-void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier requestID, CompletionHandler<void()>&& completionHandler)
+void MediaKeySystemPermissionRequestManager::mediaKeySystemWasGranted(MediaKeySystemRequestIdentifier requestID)
 {
     auto request = m_ongoingMediaKeySystemRequests.take(requestID);
-    if (!request) {
-        completionHandler();
+    if (!request)
         return;
-    }
 
-    request->allow(WTFMove(completionHandler));
+    request->allow();
 }
 
 void MediaKeySystemPermissionRequestManager::mediaKeySystemWasDenied(MediaKeySystemRequestIdentifier requestID, String&& message)
