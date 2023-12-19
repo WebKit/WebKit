@@ -349,8 +349,10 @@ class Driver(object):
     WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = "http/wpt/"
     WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
 
-    def is_http_test(self, test_name):
-        return test_name.startswith(self.HTTP_DIR) and not test_name.startswith(self.HTTP_LOCAL_DIR)
+    def is_http_test(self, driver_input):
+        if driver_input.self_comparison_header and "runInCrossOriginIFrame=true" in driver_input.self_comparison_header:
+            return True
+        return driver_input.test_name.startswith(self.HTTP_DIR) and not driver_input.test_name.startswith(self.HTTP_LOCAL_DIR)
 
     def is_webkit_specific_web_platform_test(self, test_name):
         return test_name.startswith(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
@@ -385,17 +387,19 @@ class Driver(object):
     def http_base_url(self, secure=None):
         return "%s://127.0.0.1:%d/" % (('https', 8443) if secure else ('http', 8000))
 
-    def test_to_uri(self, test_name):
+    def test_to_uri(self, driver_input):
         """Convert a test name to a URI."""
+        test_name = driver_input.test_name
         if self.is_web_platform_test(test_name):
             return self.wpt_test_path_to_uri(test_name[len(self.web_platform_test_server_doc_root):])
         if self.is_webkit_specific_web_platform_test(test_name):
             return self.wpt_webkit_test_path_to_uri(self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):])
 
-        if not self.is_http_test(test_name):
+        if not self.is_http_test(driver_input):
             return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
-
-        return self.http_test_path_to_uri(test_name[len(self.HTTP_DIR):])
+        if self.HTTP_DIR in test_name:
+            return self.http_test_path_to_uri(test_name[len(self.HTTP_DIR):])
+        return self.http_test_path_to_uri("root/" + test_name)
 
     def uri_to_test(self, uri):
         """Return the base layout test name for a given URI.
@@ -419,6 +423,9 @@ class Driver(object):
         if uri.startswith(self.web_platform_test_server_base_https_url):
             return uri.replace(self.web_platform_test_server_base_https_url, self.web_platform_test_server_doc_root)
         if uri.startswith("http://"):
+            base_url = self.http_base_url(secure=False)
+            if base_url + "root/" in uri:
+                return uri.replace(base_url + "root/", "")
             return uri.replace(self.http_base_url(secure=False), self.HTTP_DIR)
         if uri.startswith("https://"):
             return uri.replace(self.http_base_url(secure=True), self.HTTP_DIR)
@@ -651,8 +658,8 @@ class Driver(object):
         # FIXME: performance tests pass in full URLs instead of test names.
         if driver_input.test_name.startswith('http://') or driver_input.test_name.startswith('https://')  or driver_input.test_name == ('about:blank'):
             command = driver_input.test_name
-        elif self.is_web_platform_test(driver_input.test_name) or self.is_webkit_specific_web_platform_test(driver_input.test_name) or self.is_http_test(driver_input.test_name):
-            command = self.test_to_uri(driver_input.test_name)
+        elif self.is_web_platform_test(driver_input.test_name) or self.is_webkit_specific_web_platform_test(driver_input.test_name) or self.is_http_test(driver_input):
+            command = self.test_to_uri(driver_input)
             command += "'--absolutePath'"
             absPath = self._port.abspath_for_test(driver_input.test_name, self._target_host)
             if sys.platform == 'cygwin':
@@ -850,8 +857,8 @@ class DriverProxy(object):
         return self._driver._target_host
 
     # FIXME: this should be a @classmethod (or implemented on Port instead).
-    def is_http_test(self, test_name):
-        return self._driver.is_http_test(test_name)
+    def is_http_test(self, driver_input):
+        return self._driver.is_http_test(driver_input)
 
     def is_web_platform_test(self, test_name):
         return self._driver.is_web_platform_test(test_name)
@@ -860,8 +867,8 @@ class DriverProxy(object):
         return self._driver.is_webkit_specific_web_platform_test(test_name)
 
     # FIXME: this should be a @classmethod (or implemented on Port instead).
-    def test_to_uri(self, test_name):
-        return self._driver.test_to_uri(test_name)
+    def test_to_uri(self, driver_input):
+        return self._driver.test_to_uri(driver_input)
 
     # FIXME: this should be a @classmethod (or implemented on Port instead).
     def uri_to_test(self, uri):
