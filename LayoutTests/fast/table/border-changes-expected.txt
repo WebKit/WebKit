@@ -113,12 +113,12 @@ PASS getComputedStyle(table, '').borderTopColor is yellow
 PASS getComputedStyle(table, '').borderBottomColor is yellow
 PASS getComputedStyle(cell, '').borderLeftWidth is '0px'
 PASS getComputedStyle(cell, '').borderRightWidth is '0px'
-FAIL getComputedStyle(cell, '').borderTopWidth should be 0px. Was 1px.
-FAIL getComputedStyle(cell, '').borderBottomWidth should be 0px. Was 1px.
+PASS getComputedStyle(cell, '').borderTopWidth is '0px'
+PASS getComputedStyle(cell, '').borderBottomWidth is '0px'
 PASS getComputedStyle(cell, '').borderLeftStyle is 'none'
 PASS getComputedStyle(cell, '').borderRightStyle is 'none'
-FAIL getComputedStyle(cell, '').borderTopStyle should be none. Was solid.
-FAIL getComputedStyle(cell, '').borderBottomStyle should be none. Was solid.
+PASS getComputedStyle(cell, '').borderTopStyle is 'none'
+PASS getComputedStyle(cell, '').borderBottomStyle is 'none'
 PASS getComputedStyle(cell, '').borderLeftColor is red
 PASS getComputedStyle(cell, '').borderRightColor is red
 PASS getComputedStyle(cell, '').borderTopColor is red
@@ -136,7 +136,6 @@ PASS getComputedStyle(table, '').borderRightColor is yellow
 PASS getComputedStyle(table, '').borderTopColor is yellow
 PASS getComputedStyle(table, '').borderBottomColor is yellow
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 
