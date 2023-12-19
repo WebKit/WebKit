@@ -123,6 +123,7 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
     uint16_t m_renderElementTypes;
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     uint8_t m_type;
+    uint8_t m_typeSpecificFlags;
     CheckedPtr<Layout::Box> layoutBox;
 };
 

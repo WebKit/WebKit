@@ -115,7 +115,6 @@ private:
     const AffineTransform& localToParentTransform() const final { return m_localTransform; }
     AffineTransform localTransform() const final { return m_localTransform; }
 
-    bool isLegacyRenderSVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
     ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
 

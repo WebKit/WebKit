@@ -53,8 +53,9 @@ RenderLineBreak::RenderLineBreak(HTMLElement& element, RenderStyle&& style)
     : RenderBoxModelObject(Type::LineBreak, element, WTFMove(style), { })
     , m_inlineBoxWrapper(nullptr)
     , m_cachedLineHeight(invalidLineHeight)
-    , m_isWBR(is<HTMLWBRElement>(element))
 {
+    if (is<HTMLWBRElement>(element))
+        setLineBreakFlags(LineBreakFlag::IsWBR);
     ASSERT(isRenderLineBreak());
 }
 

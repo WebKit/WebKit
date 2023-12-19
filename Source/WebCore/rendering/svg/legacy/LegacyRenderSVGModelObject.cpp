@@ -46,9 +46,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGModelObject);
 
-LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<RenderElementType> typeFlags)
-    : RenderElement(type, element, WTFMove(style), typeFlags)
+LegacyRenderSVGModelObject::LegacyRenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+    : RenderElement(type, element, WTFMove(style), { RenderElementType::RenderSVGModelObjectFlag })
 {
+    setSVGFlags(typeFlags | SVGModelObjectFlag::IsLegacy);
+    ASSERT(isLegacyRenderSVGModelObject());
 }
 
 LayoutRect LegacyRenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
