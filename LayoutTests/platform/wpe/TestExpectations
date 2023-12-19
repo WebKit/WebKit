@@ -1690,6 +1690,7 @@ webkit.org/b/266573 webgl/2.0.0/conformance2/textures/image_bitmap_from_video/te
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte.html [ Failure Crash ]
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb16f-rgb-float.html [ Failure Crash ]
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgba16f-rgba-half_float.html [ Failure Crash ]
+webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb9_e5-rgb-half_float.html [ Failure Crash ]
 
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r11f_g11f_b10f-rgb-half_float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rg8-rg-unsigned_byte.html [ Failure Crash ]
@@ -1697,6 +1698,7 @@ webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb5_a1-rgba-
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb565-rgb-unsigned_short_5_6_5.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb9_e5-rgb-half_float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba16f-rgba-float.html [ Failure Crash ]
+# Also webkit.org/b/266573
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r11f_g11f_b10f-rgb-float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r32f-red-float.html [ Failure Crash ]
