@@ -4681,3 +4681,8 @@ webkit.org/b/266652 imported/w3c/web-platform-tests/css/css-cascade/scope-hover.
 # webkit.org/b/266660 [GARDENING] NEW-TEST(270986@main):[ iOS17 ] 2X imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen are constant ImageOnlyFailures
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
+
+# webkit.org/b/266661 RE-IMPORT(271918@main) 3X imported/w3c/web-platform-tests/css/selectors (layout-tests) are constant text failures
+imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure ]
+imported/w3c/web-platform-tests/css/selectors/user-invalid.html [ Failure ]
+imported/w3c/web-platform-tests/css/selectors/valid-invalid-form-fieldset.html [ Failure ]
