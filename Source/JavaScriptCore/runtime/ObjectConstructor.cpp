@@ -893,8 +893,11 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
             if (descriptor.setter())
                 markBuffer.append(descriptor.setter());
         }
-        if (UNLIKELY(!withoutSideEffect)) // Bail out to the slow code.
+        if (UNLIKELY(!withoutSideEffect)) {
+            // Bail out to the slow code.
+            index += 1;
             break;
+        }
     }
 
     if (UNLIKELY(index < numProperties)) {
