@@ -147,7 +147,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
     case XFrameOptionsDisposition::SameOrigin: {
         auto origin = SecurityOrigin::create(url);
         for (auto& ancestorOrigin : frameAncestorOrigins) {
-            if (!origin->isSameSchemeHostPort(*ancestorOrigin))
+            if (!ancestorOrigin || !origin->isSameSchemeHostPort(*ancestorOrigin))
                 return true;
         }
         return false;
