@@ -4688,3 +4688,5 @@ imported/w3c/web-platform-tests/css/selectors/user-invalid.html [ Failure ]
 imported/w3c/web-platform-tests/css/selectors/valid-invalid-form-fieldset.html [ Failure ]
 
 webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
+
+webkit.org/b/266665 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html [ Failure ]
