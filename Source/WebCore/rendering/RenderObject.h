@@ -423,14 +423,14 @@ public:
     static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
     static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
 
-    bool beingDestroyed() const { return m_bitfields.beingDestroyed(); }
+    bool beingDestroyed() const { return m_bitfields.hasFlag(RenderObjectFlag::BeingDestroyed); }
 
-    bool everHadLayout() const { return m_bitfields.everHadLayout(); }
+    bool everHadLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::EverHadLayout); }
 
     static ScrollAnchoringController* findScrollAnchoringControllerForRenderer(const RenderObject&);
 
-    bool childrenInline() const { return m_bitfields.childrenInline(); }
-    virtual void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
+    bool childrenInline() const { return m_bitfields.hasFlag(RenderObjectFlag::ChildrenInline); }
+    virtual void setChildrenInline(bool b) { m_bitfields.setFlag(RenderObjectFlag::ChildrenInline, b); }
     
     enum FragmentedFlowState {
         NotInsideFragmentedFlow = 0,
@@ -556,11 +556,11 @@ public:
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
     virtual bool hasIntrinsicAspectRatio() const { return isReplacedOrInlineBlock() && (isImage() || isRenderVideo() || isRenderHTMLCanvas()); }
-    bool isAnonymous() const { return m_bitfields.isAnonymous(); }
+    bool isAnonymous() const { return m_bitfields.hasFlag(RenderObjectFlag::IsAnonymous); }
     bool isAnonymousBlock() const;
     bool isBlockContainer() const;
 
-    bool isFloating() const { return m_bitfields.floating(); }
+    bool isFloating() const { return m_bitfields.hasFlag(RenderObjectFlag::Floating); }
 
     bool isPositioned() const { return m_bitfields.isPositioned(); }
     bool isInFlowPositioned() const { return m_bitfields.isRelativelyPositioned() || m_bitfields.isStickilyPositioned(); }
@@ -571,34 +571,34 @@ public:
     bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
     bool shouldUsePositionedClipping() const { return isAbsolutelyPositioned() || isRenderSVGForeignObject(); }
 
-    bool isRenderText() const { return m_bitfields.isRenderText(); }
+    bool isRenderText() const { return m_bitfields.hasFlag(RenderObjectFlag::IsRenderText); }
     bool isRenderLineBreak() const { return type() == Type::LineBreak; }
     bool isBR() const { return isRenderLineBreak() && !isWBR(); }
     bool isLineBreakOpportunity() const { return isRenderLineBreak() && isWBR(); }
     bool isRenderTextOrLineBreak() const { return isRenderText() || isRenderLineBreak(); }
-    bool isRenderBox() const { return m_bitfields.isRenderBox(); }
+    bool isRenderBox() const { return m_bitfields.hasFlag(RenderObjectFlag::IsRenderBox); }
     bool isRenderTableRow() const { return type() == Type::TableRow; }
     bool isRenderView() const  { return type() == Type::View; }
-    bool isInline() const { return m_bitfields.isInline(); } // inline object
-    bool isReplacedOrInlineBlock() const { return m_bitfields.isReplacedOrInlineBlock(); }
-    bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
+    bool isInline() const { return !m_bitfields.hasFlag(RenderObjectFlag::IsBlock); } // inline object
+    bool isReplacedOrInlineBlock() const { return m_bitfields.hasFlag(RenderObjectFlag::IsReplacedOrInlineBlock); }
+    bool isHorizontalWritingMode() const { return !m_bitfields.hasFlag(RenderObjectFlag::VerticalWritingMode); }
 
-    bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
-    bool isRenderFragmentedFlow() const { return m_bitfields.hasRareData() && rareData().isRenderFragmentedFlow(); }
-    bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
-    bool paintContainmentApplies() const { return m_bitfields.hasRareData() && rareData().paintContainmentApplies(); }
+    bool hasReflection() const { return hasRareData() && rareData().hasReflection(); }
+    bool isRenderFragmentedFlow() const { return hasRareData() && rareData().isRenderFragmentedFlow(); }
+    bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor(); }
+    bool paintContainmentApplies() const { return hasRareData() && rareData().paintContainmentApplies(); }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool hasSVGTransform() const { return m_bitfields.hasRareData() && rareData().hasSVGTransform(); }
+    bool hasSVGTransform() const { return hasRareData() && rareData().hasSVGTransform(); }
 #else
     bool hasSVGTransform() const { return false; }
 #endif
 
-    bool isExcludedFromNormalLayout() const { return m_bitfields.isExcludedFromNormalLayout(); }
-    void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setIsExcludedFromNormalLayout(excluded); }
+    bool isExcludedFromNormalLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::IsExcludedFromNormalLayout); }
+    void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setFlag(RenderObjectFlag::IsExcludedFromNormalLayout, excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
 
-    bool hasLayer() const { return m_bitfields.hasLayer(); }
+    bool hasLayer() const { return m_bitfields.hasFlag(RenderObjectFlag::HasLayer); }
 
     enum BoxDecorationState {
         NoBoxDecorations,
@@ -610,24 +610,24 @@ public:
     bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
 
     bool needsLayout() const;
-    bool selfNeedsLayout() const { return m_bitfields.needsLayout(); }
-    bool needsPositionedMovementLayout() const { return m_bitfields.needsPositionedMovementLayout(); }
+    bool selfNeedsLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NeedsLayout); }
+    bool needsPositionedMovementLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NeedsPositionedMovementLayout); }
     bool needsPositionedMovementLayoutOnly() const;
 
-    bool posChildNeedsLayout() const { return m_bitfields.posChildNeedsLayout(); }
-    bool needsSimplifiedNormalFlowLayout() const { return m_bitfields.needsSimplifiedNormalFlowLayout(); }
+    bool posChildNeedsLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::PosChildNeedsLayout); }
+    bool needsSimplifiedNormalFlowLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NeedsSimplifiedNormalFlowLayout); }
     bool needsSimplifiedNormalFlowLayoutOnly() const;
-    bool normalChildNeedsLayout() const { return m_bitfields.normalChildNeedsLayout(); }
+    bool normalChildNeedsLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NormalChildNeedsLayout); }
     
-    bool preferredLogicalWidthsDirty() const { return m_bitfields.preferredLogicalWidthsDirty(); }
+    bool preferredLogicalWidthsDirty() const { return m_bitfields.hasFlag(RenderObjectFlag::PreferredLogicalWidthsDirty); }
 
     bool isSelectionBorder() const;
 
-    bool hasNonVisibleOverflow() const { return m_bitfields.hasNonVisibleOverflow(); }
+    bool hasNonVisibleOverflow() const { return m_bitfields.hasFlag(RenderObjectFlag::HasNonVisibleOverflow); }
 
     bool hasPotentiallyScrollableOverflow() const;
 
-    bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
+    bool hasTransformRelatedProperty() const { return m_bitfields.hasFlag(RenderObjectFlag::HasTransformRelatedProperty); } // Transform, perspective or transform-style: preserve-3d.
     inline bool isTransformed() const;
     inline bool hasTransformOrPerspective() const;
 
@@ -683,20 +683,20 @@ public:
     void setPositionState(PositionType);
     void clearPositionedState() { m_bitfields.clearPositionedState(); }
 
-    void setFloating(bool b = true) { m_bitfields.setFloating(b); }
-    void setInline(bool b = true) { m_bitfields.setIsInline(b); }
+    void setFloating(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::Floating, b); }
+    void setInline(bool b) { m_bitfields.setFlag(RenderObjectFlag::IsBlock, !b); }
 
     void setHasVisibleBoxDecorations(bool = true);
     void invalidateBackgroundObscurationStatus();
     virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint&) { return false; }
 
-    void setIsRenderText() { ASSERT(!isRenderBox()); m_bitfields.setIsRenderText(true); }
-    void setIsRenderBox() { m_bitfields.setIsRenderBox(true); }
-    void setReplacedOrInlineBlock(bool b = true) { m_bitfields.setIsReplacedOrInlineBlock(b); }
-    void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
-    void setHasNonVisibleOverflow(bool b = true) { m_bitfields.setHasNonVisibleOverflow(b); }
-    void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
-    void setHasTransformRelatedProperty(bool b = true) { m_bitfields.setHasTransformRelatedProperty(b); }
+    void setIsRenderText() { ASSERT(!isRenderBox()); m_bitfields.setFlag(RenderObjectFlag::IsRenderText); }
+    void setIsRenderBox() { ASSERT(!isRenderText()); m_bitfields.setFlag(RenderObjectFlag::IsRenderBox); }
+    void setReplacedOrInlineBlock(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::IsReplacedOrInlineBlock, b); }
+    void setHorizontalWritingMode(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::VerticalWritingMode, !b); }
+    void setHasNonVisibleOverflow(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::HasNonVisibleOverflow, b); }
+    void setHasLayer(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::HasLayer, b); }
+    void setHasTransformRelatedProperty(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::HasTransformRelatedProperty, b); }
 
     void setHasReflection(bool = true);
     void setIsRenderFragmentedFlow(bool = true);
@@ -1056,10 +1056,10 @@ protected:
 
     virtual void willBeDestroyed();
 
-    void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
-    void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }
-    void setPosChildNeedsLayoutBit(bool b) { m_bitfields.setPosChildNeedsLayout(b); }
-    void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
+    void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NeedsPositionedMovementLayout, b); }
+    void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NormalChildNeedsLayout, b); }
+    void setPosChildNeedsLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::PosChildNeedsLayout, b); }
+    void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NeedsSimplifiedNormalFlowLayout, b); }
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
 
@@ -1094,10 +1094,9 @@ private:
 
     virtual bool isWBR() const { ASSERT_NOT_REACHED(); return false; }
 
-    void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
+    void setEverHadLayout() { m_bitfields.setFlag(RenderObjectFlag::EverHadLayout); }
 
-    bool hasRareData() const { return m_bitfields.hasRareData(); }
-    void setHasRareData(bool b) { m_bitfields.setHasRareData(b); }
+    bool hasRareData() const { return m_bitfields.hasFlag(RenderObjectFlag::HasRareData); }
 
 #if ASSERT_ENABLED
     void setNeedsLayoutIsForbidden(bool flag) const { m_setNeedsLayoutForbidden = flag; }
@@ -1123,6 +1122,30 @@ private:
         Type name() const { return static_cast<Type>(m_##name); }\
         void set##Name(Type name) { m_##name = static_cast<unsigned>(name); }\
 
+    enum class RenderObjectFlag : uint32_t {
+        IsAnonymous = 1 << 0,
+        IsRenderText = 1 << 1,
+        IsRenderBox = 1 << 2,
+        IsBlock = 1 << 3,
+        IsReplacedOrInlineBlock = 1 << 4,
+        BeingDestroyed = 1 << 5,
+        NeedsLayout = 1 << 6,
+        NeedsPositionedMovementLayout = 1 << 7,
+        NormalChildNeedsLayout = 1 << 8,
+        PosChildNeedsLayout = 1 << 9,
+        NeedsSimplifiedNormalFlowLayout = 1 << 10,
+        EverHadLayout = 1 << 11,
+        IsExcludedFromNormalLayout = 1 << 12,
+        Floating = 1 << 13,
+        VerticalWritingMode = 1 << 14,
+        PreferredLogicalWidthsDirty = 1 << 15,
+        HasRareData = 1 << 16,
+        HasLayer = 1 << 17,
+        HasNonVisibleOverflow = 1 << 18,
+        HasTransformRelatedProperty = 1 << 19,
+        ChildrenInline = 1 << 20,
+    };
+
     class RenderObjectBitfields {
         enum PositionedState {
             IsStaticallyPositioned = 0,
@@ -1131,74 +1154,26 @@ private:
             IsStickilyPositioned = 3
         };
 
-    public:
-        RenderObjectBitfields(const Node& node)
-            : m_hasRareData(false)
-            , m_beingDestroyed(false)
-            , m_needsLayout(false)
-            , m_needsPositionedMovementLayout(false)
-            , m_normalChildNeedsLayout(false)
-            , m_posChildNeedsLayout(false)
-            , m_needsSimplifiedNormalFlowLayout(false)
-            , m_preferredLogicalWidthsDirty(false)
-            , m_floating(false)
-            , m_isAnonymous(node.isDocumentNode())
-            , m_isRenderText(false)
-            , m_isRenderBox(false)
-            , m_isInline(true)
-            , m_isReplacedOrInlineBlock(false)
-            , m_horizontalWritingMode(true)
-            , m_hasLayer(false)
-            , m_hasNonVisibleOverflow(false)
-            , m_hasTransformRelatedProperty(false)
-            , m_everHadLayout(false)
-            , m_childrenInline(false)
-            , m_isExcludedFromNormalLayout(false)
-            , m_positionedState(IsStaticallyPositioned)
-            , m_selectionState(HighlightState::None)
-            , m_fragmentedFlowState(NotInsideFragmentedFlow)
-            , m_boxDecorationState(NoBoxDecorations)
-        {
-        }
-
-        ADD_BOOLEAN_BITFIELD(hasRareData, HasRareData);
-        
-        ADD_BOOLEAN_BITFIELD(beingDestroyed, BeingDestroyed);
-        ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
-        ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
-        ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);
-        ADD_BOOLEAN_BITFIELD(posChildNeedsLayout, PosChildNeedsLayout);
-        ADD_BOOLEAN_BITFIELD(needsSimplifiedNormalFlowLayout, NeedsSimplifiedNormalFlowLayout);
-        ADD_BOOLEAN_BITFIELD(preferredLogicalWidthsDirty, PreferredLogicalWidthsDirty);
-        ADD_BOOLEAN_BITFIELD(floating, Floating);
-
-        ADD_BOOLEAN_BITFIELD(isAnonymous, IsAnonymous);
-        ADD_BOOLEAN_BITFIELD(isRenderText, IsRenderText);
-        ADD_BOOLEAN_BITFIELD(isRenderBox, IsRenderBox);
-        ADD_BOOLEAN_BITFIELD(isInline, IsInline);
-        ADD_BOOLEAN_BITFIELD(isReplacedOrInlineBlock, IsReplacedOrInlineBlock);
-        ADD_BOOLEAN_BITFIELD(horizontalWritingMode, HorizontalWritingMode);
-
-        ADD_BOOLEAN_BITFIELD(hasLayer, HasLayer);
-        ADD_BOOLEAN_BITFIELD(hasNonVisibleOverflow, HasNonVisibleOverflow); // Set in the case of overflow:auto/scroll/hidden
-        ADD_BOOLEAN_BITFIELD(hasTransformRelatedProperty, HasTransformRelatedProperty);
-
-        ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);
-
-        // from RenderBlock
-        ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
-        
-        ADD_BOOLEAN_BITFIELD(isExcludedFromNormalLayout, IsExcludedFromNormalLayout);
-
-        // 3 bits remaining.
-
     private:
-        unsigned m_positionedState : 2; // PositionedState
-        unsigned m_selectionState : 3; // HighlightState
-        unsigned m_fragmentedFlowState : 1; // FragmentedFlowState
-        unsigned m_boxDecorationState : 2; // BoxDecorationState
+        uint32_t m_flags : 21 { 0 };
+        uint8_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
+        uint8_t m_selectionState : 3 { HighlightState::None }; // HighlightState
+        uint8_t m_fragmentedFlowState : 1 { NotInsideFragmentedFlow }; // FragmentedFlowState
+        uint8_t m_boxDecorationState : 2 { NoBoxDecorations }; // BoxDecorationState
+        // 3 bits left
 
     public:
+        OptionSet<RenderObjectFlag> flags() const { return OptionSet<RenderObjectFlag>::fromRaw(m_flags); }
+        bool hasFlag(RenderObjectFlag flag) const { return flags().contains(flag); }
+        void setFlag(RenderObjectFlag flag, bool value = true)
+        {
+            auto newFlags = flags();
+            newFlags.set(flag, value);
+            m_flags = newFlags.toRaw();
+            ASSERT(flags() == newFlags);
+        }
+        void clearFlag(RenderObjectFlag flag) { setFlag(flag, false); }
+
         bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
         bool isRelativelyPositioned() const { return m_positionedState == IsRelativelyPositioned; }
         bool isStickilyPositioned() const { return m_positionedState == IsStickilyPositioned; }
@@ -1325,9 +1300,9 @@ inline bool RenderObject::isBeforeOrAfterContent() const
 inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
 {
     ASSERT(!isSetNeedsLayoutForbidden());
-    if (m_bitfields.needsLayout())
+    if (selfNeedsLayout())
         return;
-    m_bitfields.setNeedsLayout(true);
+    m_bitfields.setFlag(RenderObjectFlag::NeedsLayout);
     if (markParents == MarkContainingBlockChain)
         markContainingBlocksForLayout();
     if (hasLayer())
@@ -1371,8 +1346,8 @@ inline bool RenderObject::backgroundIsKnownToBeObscured(const LayoutPoint& paint
 
 inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
 {
-    return m_bitfields.needsSimplifiedNormalFlowLayout() && !m_bitfields.needsLayout() && !m_bitfields.normalChildNeedsLayout()
-        && !m_bitfields.posChildNeedsLayout() && !m_bitfields.needsPositionedMovementLayout();
+    return needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout()
+        && !posChildNeedsLayout() && !needsPositionedMovementLayout();
 }
 
 inline RenderFragmentedFlow* RenderObject::enclosingFragmentedFlow() const
@@ -1403,20 +1378,20 @@ inline bool RenderObject::isAnonymousBlock() const
 
 inline bool RenderObject::needsLayout() const
 {
-    return m_bitfields.needsLayout()
-        || m_bitfields.normalChildNeedsLayout()
-        || m_bitfields.posChildNeedsLayout()
-        || m_bitfields.needsSimplifiedNormalFlowLayout()
-        || m_bitfields.needsPositionedMovementLayout();
+    return selfNeedsLayout()
+        || normalChildNeedsLayout()
+        || posChildNeedsLayout()
+        || needsSimplifiedNormalFlowLayout()
+        || needsPositionedMovementLayout();
 }
 
 inline bool RenderObject::needsPositionedMovementLayoutOnly() const
 {
-    return m_bitfields.needsPositionedMovementLayout()
-        && !m_bitfields.needsLayout()
-        && !m_bitfields.normalChildNeedsLayout()
-        && !m_bitfields.posChildNeedsLayout()
-        && !m_bitfields.needsSimplifiedNormalFlowLayout();
+    return needsPositionedMovementLayout()
+        && !selfNeedsLayout()
+        && !normalChildNeedsLayout()
+        && !posChildNeedsLayout()
+        && !needsSimplifiedNormalFlowLayout();
 }
 
 inline void RenderObject::setNeedsLayoutAndPrefWidthsRecalc()
