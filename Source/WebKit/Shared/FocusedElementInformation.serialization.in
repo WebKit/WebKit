@@ -22,6 +22,30 @@
 
 headers: "FocusedElementInformation.h" "WebCoreArgumentCoders.h"
 
+enum class WebKit::InputType : uint8_t {
+    None,
+    ContentEditable,
+    Text,
+    Password,
+    TextArea,
+    Search,
+    Email,
+    URL,
+    Phone,
+    Number,
+    NumberPad,
+    Date,
+    DateTimeLocal,
+    Month,
+    Week,
+    Time,
+    Select,
+    Drawing,
+#if ENABLE(INPUT_TYPE_COLOR)
+    Color
+#endif
+};
+
 #if PLATFORM(IOS_FAMILY)
 [CustomHeader] struct WebKit::OptionItem {
     String text;

@@ -27,8 +27,6 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebKit {
 
 enum class TextRecognitionUpdateResult : uint8_t {
@@ -38,18 +36,5 @@ enum class TextRecognitionUpdateResult : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::TextRecognitionUpdateResult> {
-    using values = EnumValues<
-        WebKit::TextRecognitionUpdateResult,
-        WebKit::TextRecognitionUpdateResult::NoText,
-        WebKit::TextRecognitionUpdateResult::Text,
-        WebKit::TextRecognitionUpdateResult::DataDetector
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(IMAGE_ANALYSIS)

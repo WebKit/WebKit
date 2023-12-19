@@ -35,17 +35,3 @@ enum class DragControllerAction : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::DragControllerAction> {
-    using values = EnumValues<
-        WebKit::DragControllerAction,
-        WebKit::DragControllerAction::Entered,
-        WebKit::DragControllerAction::Updated,
-        WebKit::DragControllerAction::Exited,
-        WebKit::DragControllerAction::PerformDragOperation
-    >;
-};
-
-} // namespace WTF

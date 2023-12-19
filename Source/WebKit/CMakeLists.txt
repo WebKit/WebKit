@@ -382,12 +382,16 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/AccessibilityPreferences.serialization.in
     Shared/AuxiliaryProcessCreationParameters.serialization.in
+    Shared/BackgroundFetchChange.serialization.in
     Shared/BackgroundFetchState.serialization.in
+    Shared/CacheModel.serialization.in
     Shared/CallbackID.serialization.in
     Shared/ContextMenuContextData.serialization.in
+    Shared/CoordinateSystem.serialization.in
     Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
     Shared/DocumentEditingContext.serialization.in
+    Shared/DragControllerAction.serialization.in
     Shared/DrawingAreaInfo.serialization.in
     Shared/EditingRange.serialization.in
     Shared/EditorState.serialization.in
@@ -400,10 +404,12 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/GPUProcessPreferencesForWebProcess.serialization.in
     Shared/GoToBackForwardItemParameters.serialization.in
+    Shared/InspectorExtensionTypes.serialization.in
     Shared/JavaScriptCore.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/LoadParameters.serialization.in
     Shared/LocalFrameCreationParameters.serialization.in
+    Shared/MediaPlaybackState.serialization.in
     Shared/Model.serialization.in
     Shared/NavigationActionData.serialization.in
     Shared/NetworkProcessConnectionParameters.serialization.in
@@ -423,12 +429,16 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/SessionState.serialization.in
     Shared/ShareableBitmap.serialization.in
     Shared/ShareableResource.serialization.in
+    Shared/SyntheticEditingCommandType.serialization.in
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
+    Shared/TextRecognitionUpdateResult.serialization.in
     Shared/URLSchemeTaskParameters.serialization.in
+    Shared/UndoOrRedo.serialization.in
     Shared/UpdateInfo.serialization.in
     Shared/UserContentControllerParameters.serialization.in
     Shared/UserData.serialization.in
+    Shared/VideoCodecType.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in
@@ -451,8 +461,11 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebPushDaemonConnectionConfiguration.serialization.in
     Shared/WebPushMessage.serialization.in
     Shared/WebUserContentControllerDataTypes.serialization.in
+    Shared/WebsiteAutoplayPolicy.serialization.in
+    Shared/WebsiteAutoplayQuirk.serialization.in
     Shared/WebsiteDataStoreParameters.serialization.in
     Shared/WebsitePoliciesData.serialization.in
+    Shared/WebsitePopUpPolicy.serialization.in
 
     Shared/API/APIArray.serialization.in
     Shared/API/APIData.serialization.in
@@ -469,6 +482,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/API/APIURLRequest.serialization.in
     Shared/API/APIURLResponse.serialization.in
     Shared/API/APIUserContentURLPattern.serialization.in
+
+    Shared/Authentication/AuthenticationChallengeDisposition.serialization.in
 
     Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 
@@ -542,6 +557,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
     Shared/WebGPU/WebGPUVertexState.serialization.in
 
+    Shared/WebsiteData/UnifiedOriginStorageLevel.serialization.in
     Shared/WebsiteData/WebsiteData.serialization.in
     Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
     Shared/WebsiteData/WebsiteDataType.serialization.in
