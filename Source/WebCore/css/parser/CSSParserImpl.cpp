@@ -837,10 +837,8 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     auto fontFeatureValues = FontFeatureValues::create();
 
     for (auto& block : rules) {
-        if (!block->isFontFeatureValuesBlockRule())
-            continue;
-        const auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(block.get());
-        fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule.fontFeatureValuesType(), fontFeatureValuesBlockRule.tags());
+        if (auto* fontFeatureValuesBlockRule = dynamicDowncast<StyleRuleFontFeatureValuesBlock>(block.get()))
+            fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule->fontFeatureValuesType(), fontFeatureValuesBlockRule->tags());
     }
 
     return StyleRuleFontFeatureValues::create(fontFamilies, WTFMove(fontFeatureValues));

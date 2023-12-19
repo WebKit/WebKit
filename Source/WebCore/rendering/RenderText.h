@@ -57,7 +57,7 @@ public:
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
-    const RenderStyle* selectionPseudoStyle() const;
+    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
 
     const RenderStyle* spellingErrorPseudoStyle() const;
     const RenderStyle* grammarErrorPseudoStyle() const;
@@ -319,7 +319,7 @@ inline Color RenderText::selectionEmphasisMarkColor() const
     return Color();
 }
 
-inline const RenderStyle* RenderText::selectionPseudoStyle() const
+inline std::unique_ptr<RenderStyle> RenderText::selectionPseudoStyle() const
 {
     if (auto* ancestor = firstNonAnonymousAncestor())
         return ancestor->selectionPseudoStyle();

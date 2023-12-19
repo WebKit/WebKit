@@ -101,10 +101,11 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
     AffineTransform ctm;
 
     for (Element* currentElement = element; currentElement; currentElement = currentElement->parentOrShadowHostElement()) {
-        if (!currentElement->isSVGElement())
+        auto* svgElement = dynamicDowncast<SVGElement>(*currentElement);
+        if (!svgElement)
             break;
 
-        ctm = downcast<SVGElement>(*currentElement).localCoordinateSpaceTransform(mode).multiply(ctm);
+        ctm = svgElement->localCoordinateSpaceTransform(mode).multiply(ctm);
 
         // For getCTM() computation, stop at the nearest viewport element
         if (currentElement == stopAtElement)
@@ -118,8 +119,8 @@ ExceptionOr<Ref<SVGMatrix>> SVGLocatable::getTransformToElement(SVGElement* targ
 {
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 
-    if (is<SVGGraphicsElement>(target)) {
-        AffineTransform targetCTM = downcast<SVGGraphicsElement>(*target).getCTM(styleUpdateStrategy);
+    if (auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(target)) {
+        AffineTransform targetCTM = graphicsElement->getCTM(styleUpdateStrategy);
         if (auto inverse = targetCTM.inverse())
             ctm = inverse.value() * ctm;
         else

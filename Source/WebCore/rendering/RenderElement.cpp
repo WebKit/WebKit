@@ -1660,18 +1660,8 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
     return WTFMove(resolvedStyle->style);
 }
 
-const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) const
+RenderElement* RenderElement::rendererForPseudoStyleAcrossShadowBoundary() const
 {
-    if (isAnonymous())
-        return nullptr;
-
-    if (auto* pseudoStyle = getCachedPseudoStyle(pseudoId)) {
-        // We intentionally return the pseudo style here if it exists before ascending to the
-        // shadow host element. This allows us to apply selection pseudo styles in user agent
-        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
-        return pseudoStyle;
-    }
-
     if (RefPtr root = element()->containingShadowRoot()) {
         if (root->mode() == ShadowRootMode::UserAgent) {
             RefPtr currentElement = element()->shadowHost();
@@ -1679,10 +1669,28 @@ const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) cons
             // and its children will render as children of the parent element.
             while (currentElement && currentElement->hasDisplayContents())
                 currentElement = currentElement->parentElement();
-            if (currentElement && currentElement->renderer())
-                return currentElement->renderer()->getCachedPseudoStyle(pseudoId);
+            if (currentElement)
+                return currentElement->renderer();
         }
     }
+
+    return nullptr;
+}
+
+const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) const
+{
+    if (isAnonymous())
+        return nullptr;
+
+    if (auto* pseudoStyle = getCachedPseudoStyle(pseudoId)) {
+        // We intentionally return the pseudo style here if it exists before ascending to the
+        // shadow host element. This allows us to apply pseudo styles in user agent shadow
+        // roots, instead of always deferring to the shadow host's selection pseudo style.
+        return pseudoStyle;
+    }
+
+    if (auto* renderer = rendererForPseudoStyleAcrossShadowBoundary())
+        return renderer->getCachedPseudoStyle(pseudoId);
 
     return nullptr;
 }
@@ -1695,7 +1703,7 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
         || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
         return Color();
 
-    if (auto* pseudoStyle = selectionPseudoStyle()) {
+    if (auto pseudoStyle = selectionPseudoStyle()) {
         Color color = pseudoStyle->visitedDependentColorWithColorFilter(colorProperty);
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
@@ -1707,9 +1715,22 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
     return theme().inactiveSelectionForegroundColor(styleColorOptions());
 }
 
-const RenderStyle* RenderElement::selectionPseudoStyle() const
+std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
 {
-    return textSegmentPseudoStyle(PseudoId::Selection);
+    if (isAnonymous())
+        return nullptr;
+
+    if (auto selectionStyle = getUncachedPseudoStyle({ PseudoId::Selection })) {
+        // We intentionally return the pseudo selection style here if it exists before ascending to
+        // the shadow host element. This allows us to apply selection pseudo styles in user agent
+        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
+        return selectionStyle;
+    }
+
+    if (auto* renderer = rendererForPseudoStyleAcrossShadowBoundary())
+        return renderer->getUncachedPseudoStyle({ PseudoId::Selection });
+
+    return nullptr;
 }
 
 Color RenderElement::selectionForegroundColor() const
@@ -1735,7 +1756,7 @@ Color RenderElement::selectionBackgroundColor() const
         pseudoStyleCandidate = pseudoStyleCandidate->firstNonAnonymousAncestor();
 
     if (pseudoStyleCandidate) {
-        auto* pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
+        auto pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
         if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
             return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
     }

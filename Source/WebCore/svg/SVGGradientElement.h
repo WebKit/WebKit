@@ -115,6 +115,7 @@ static bool isType(const WebCore::SVGElement& element)
 }
 static bool isType(const WebCore::Node& node)
 {
-    return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node));
+    auto* svgElement = dynamicDowncast<WebCore::SVGElement>(node);
+    return svgElement && isType(*svgElement);
 }
 SPECIALIZE_TYPE_TRAITS_END()

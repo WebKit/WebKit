@@ -4109,7 +4109,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     setLogicalHeight(newBorderBoxBottom);
     auto updateLineClampStateAndLogicalHeightIfApplicable = [&] {
         auto lineClamp = layoutState.lineClamp();
-        if (!lineClamp)
+        if (!lineClamp || isFloatingOrOutOfFlowPositioned())
             return;
         lineClamp->currentLineCount += layoutFormattingContextLineLayout.lineCount();
         if (lineClamp->clampedRenderer) {

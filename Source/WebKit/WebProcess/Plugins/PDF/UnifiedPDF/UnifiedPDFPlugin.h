@@ -186,6 +186,9 @@ private:
     void updateScrollingExtents();
     WebCore::ScrollingCoordinator* scrollingCoordinator();
 
+    // ScrollableArea
+    bool requestScrollToPosition(const WebCore::ScrollPosition&, const WebCore::ScrollPositionChangeOptions& = WebCore::ScrollPositionChangeOptions::createProgrammatic()) override;
+
     // HUD Actions.
 #if ENABLE(PDF_HUD)
     void zoomIn() final;

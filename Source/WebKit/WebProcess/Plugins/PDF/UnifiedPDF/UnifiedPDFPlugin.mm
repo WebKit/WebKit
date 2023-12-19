@@ -446,6 +446,17 @@ void UnifiedPDFPlugin::updateScrollingExtents()
     RefPtr page = this->page();
     if (!page)
         return;
+
+    // FIXME: It would be good to adjust the scroll to reveal the current page when changing view modes.
+    auto scrollPosition = this->scrollPosition();
+    auto constrainedPosition = constrainedScrollPosition(scrollPosition);
+    if (scrollPosition != constrainedPosition) {
+        auto oldScrollType = currentScrollType();
+        setCurrentScrollType(ScrollType::Programmatic); // It's silly that we have to do this to avoid an AsyncScrollingCoordinator assertion.
+        requestScrollToPosition(constrainedPosition);
+        setCurrentScrollType(oldScrollType);
+    }
+
     auto& scrollingCoordinator = *page->scrollingCoordinator();
     scrollingCoordinator.setScrollingNodeScrollableAreaGeometry(m_scrollingNodeID, *this);
 
@@ -453,6 +464,16 @@ void UnifiedPDFPlugin::updateScrollingExtents()
     auto eventRegionContext = eventRegion.makeContext();
     eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, size())), *m_element->renderer(), m_element->renderer()->style());
     m_scrollContainerLayer->setEventRegion(WTFMove(eventRegion));
+}
+
+bool UnifiedPDFPlugin::requestScrollToPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
+{
+    RefPtr page = this->page();
+    if (!page)
+        return false;
+
+    auto& scrollingCoordinator = *page->scrollingCoordinator();
+    return scrollingCoordinator.requestScrollToPosition(*this, position, options);
 }
 
 enum class AltKeyIsActive : bool { No, Yes };

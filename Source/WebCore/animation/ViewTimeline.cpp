@@ -57,7 +57,6 @@ Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const CSSViewValue& cssViewVa
         if (value->valueID() == CSSValueAuto)
             return Length();
 
-        ASSERT(value->isPrimitiveValue());
         auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
         if (primitiveValue.isPercentage())
             return Length(primitiveValue.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);

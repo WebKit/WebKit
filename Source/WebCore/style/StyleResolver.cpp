@@ -306,8 +306,8 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
         if (auto* value = propertyReference.value()) {
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
             if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
-                if (value->isCustomPropertyValue())
-                    blendingKeyframe.addProperty(downcast<CSSCustomPropertyValue>(*value).name());
+                if (auto customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
+                    blendingKeyframe.addProperty(customValue->name());
                 else
                     blendingKeyframe.addProperty(resolvedProperty);
             }

@@ -107,11 +107,11 @@ bool SVGImage::renderingTaintsOrigin() const
     for (auto& element : descendantsOfType<SVGElement>(*rootElement)) {
         if (is<SVGForeignObjectElement>(element))
             return true;
-        if (is<SVGImageElement>(element)) {
-            if (downcast<SVGImageElement>(element).renderingTaintsOrigin())
+        if (auto* svgImage = dynamicDowncast<SVGImageElement>(element)) {
+            if (svgImage->renderingTaintsOrigin())
                 return true;
-        } else if (is<SVGFEImageElement>(element)) {
-            if (downcast<SVGFEImageElement>(element).renderingTaintsOrigin())
+        } else if (auto* svgFEImage = dynamicDowncast<SVGFEImageElement>(element)) {
+            if (svgFEImage->renderingTaintsOrigin())
                 return true;
         }
     }
