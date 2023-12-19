@@ -199,16 +199,16 @@ void PopupMenuMac::show(const IntRect& r, LocalFrameView* v, int selectedIndex)
 
     NSControlSize controlSize;
     switch (m_client->menuStyle().menuSize()) {
-    case PopupMenuStyle::PopupMenuSizeNormal:
+    case PopupMenuStyle::Size::Normal:
         controlSize = NSControlSizeRegular;
         break;
-    case PopupMenuStyle::PopupMenuSizeSmall:
+    case PopupMenuStyle::Size::Small:
         controlSize = NSControlSizeSmall;
         break;
-    case PopupMenuStyle::PopupMenuSizeMini:
+    case PopupMenuStyle::Size::Mini:
         controlSize = NSControlSizeMini;
         break;
-    case PopupMenuStyle::PopupMenuSizeLarge:
+    case PopupMenuStyle::Size::Large:
         controlSize = NSControlSizeLarge;
         break;
     }

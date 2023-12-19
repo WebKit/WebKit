@@ -3759,7 +3759,6 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
     // Otherwise, sent from DidReceiveEvent message handler.
     if (internals().keyEventQueue.size() == 1) {
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
-        process->recordUserGestureAuthorizationToken(event.authorizationToken());
         sendKeyEvent(event);
     }
 

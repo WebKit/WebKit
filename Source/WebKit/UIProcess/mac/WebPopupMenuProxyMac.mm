@@ -158,16 +158,16 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     NSControlSize controlSize;
     switch (data.menuSize) {
-    case WebCore::PopupMenuStyle::PopupMenuSizeNormal:
+    case WebCore::PopupMenuStyle::Size::Normal:
         controlSize = NSControlSizeRegular;
         break;
-    case WebCore::PopupMenuStyle::PopupMenuSizeSmall:
+    case WebCore::PopupMenuStyle::Size::Small:
         controlSize = NSControlSizeSmall;
         break;
-    case WebCore::PopupMenuStyle::PopupMenuSizeMini:
+    case WebCore::PopupMenuStyle::Size::Mini:
         controlSize = NSControlSizeMini;
         break;
-    case PopupMenuStyle::PopupMenuSizeLarge:
+    case WebCore::PopupMenuStyle::Size::Large:
         controlSize = NSControlSizeLarge;
         break;
     }
