@@ -4677,3 +4677,7 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Fa
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
 
 webkit.org/b/266652 imported/w3c/web-platform-tests/css/css-cascade/scope-hover.html [ Failure ]
+
+# webkit.org/b/266660 [GARDENING] NEW-TEST(270986@main):[ iOS17 ] 2X imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen are constant ImageOnlyFailures
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
