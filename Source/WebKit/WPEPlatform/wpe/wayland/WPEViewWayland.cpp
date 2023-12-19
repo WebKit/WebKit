@@ -399,7 +399,7 @@ static void sharedMemoryBufferDestroy(SharedMemoryBuffer* buffer)
     delete buffer;
 }
 
-static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, GBytes* bytes, int width, int height)
+static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, GBytes* bytes, int width, int height, unsigned stride)
 {
     auto size = g_bytes_get_size(bytes);
     auto wlPool = WPE::WaylandSHMPool::create(wpe_display_wayland_get_wl_shm(display), size);
@@ -414,7 +414,7 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, 
 
     auto* sharedMemoryBuffer = new SharedMemoryBuffer();
     sharedMemoryBuffer->wlPool = WTFMove(wlPool);
-    sharedMemoryBuffer->wlBuffer = sharedMemoryBuffer->wlPool->createBuffer(offset, width, height, size / height);
+    sharedMemoryBuffer->wlBuffer = sharedMemoryBuffer->wlPool->createBuffer(offset, width, height, stride);
     return sharedMemoryBuffer;
 }
 
@@ -433,7 +433,8 @@ static struct wl_buffer* createWaylandBufferSHM(WPEBuffer* buffer, GError** erro
     }
 
     auto* display = WPE_DISPLAY_WAYLAND(wpe_buffer_get_display(buffer));
-    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, wpe_buffer_shm_get_data(bufferSHM), wpe_buffer_get_width(buffer), wpe_buffer_get_height(buffer));
+    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, wpe_buffer_shm_get_data(bufferSHM),
+        wpe_buffer_get_width(buffer), wpe_buffer_get_height(buffer), wpe_buffer_shm_get_stride(bufferSHM));
     if (!sharedMemoryBuffer) {
         g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: can't create Wayland buffer because failed to create shared memory");
         return nullptr;
@@ -545,14 +546,14 @@ static const struct wl_buffer_listener cursorBufferListener = {
     }
 };
 
-static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint hotspotX, guint hotspotY)
+static void wpeViewWaylandSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
 {
     auto* display = WPE_DISPLAY_WAYLAND(wpe_view_get_display(view));
     auto* cursor = wpeDisplayWaylandGetCursor(display);
     if (!cursor)
         return;
 
-    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, bytes, width, height);
+    auto* sharedMemoryBuffer = sharedMemoryBufferCreate(display, bytes, width, height, stride);
     if (!sharedMemoryBuffer)
         return;
 

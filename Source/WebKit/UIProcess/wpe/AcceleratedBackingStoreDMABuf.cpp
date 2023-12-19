@@ -102,11 +102,12 @@ void AcceleratedBackingStoreDMABuf::didCreateBufferSHM(uint64_t id, ShareableBit
     auto size = bitmap->size();
     const auto* data = bitmap->data();
     auto dataSize = bitmap->sizeInBytes();
+    auto stride = bitmap->bytesPerRow();
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, dataSize, [](gpointer userData) {
         delete static_cast<ShareableBitmap*>(userData);
     }, bitmap.leakRef()));
 
-    GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_shm_new(display, size.width(), size.height(), WPE_PIXEL_FORMAT_ARGB8888, bytes.get())));
+    GRefPtr<WPEBuffer> buffer = adoptGRef(WPE_BUFFER(wpe_buffer_shm_new(display, size.width(), size.height(), WPE_PIXEL_FORMAT_ARGB8888, bytes.get(), stride)));
     m_bufferIDs.add(buffer.get(), id);
     m_buffers.add(id, WTFMove(buffer));
 }

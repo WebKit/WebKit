@@ -58,6 +58,7 @@ struct _WPEViewClass
                                                 GBytes     *bytes,
                                                 guint       width,
                                                 guint       height,
+                                                guint       stride,
                                                 guint       hotspot_x,
                                                 guint       hotspot_y);
 
@@ -108,6 +109,7 @@ WPE_API void         wpe_view_set_cursor_from_bytes         (WPEView     *view,
                                                              GBytes      *bytes,
                                                              guint        width,
                                                              guint        height,
+                                                             guint        stride,
                                                              guint        hotspot_x,
                                                              guint        hotspot_y);
 WPE_API WPEViewState wpe_view_get_state                     (WPEView     *view);
