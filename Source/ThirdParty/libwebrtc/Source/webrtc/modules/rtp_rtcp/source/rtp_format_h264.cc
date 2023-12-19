@@ -257,6 +257,9 @@ bool RtpPacketizerH264::NextPacket(RtpPacketToSend* rtp_packet) {
   }
 
   PacketUnit packet = packets_.front();
+#ifdef WEBRTC_WEBKIT_BUILD
+  bool next_packet_result = true;
+#endif
   if (packet.first_fragment && packet.last_fragment) {
     // Single NAL unit packet.
     size_t bytes_to_send = packet.source_fragment.size();
@@ -265,18 +268,34 @@ bool RtpPacketizerH264::NextPacket(RtpPacketToSend* rtp_packet) {
     packets_.pop();
     input_fragments_.pop_front();
   } else if (packet.aggregated) {
+#ifdef WEBRTC_WEBKIT_BUILD
+    next_packet_result = NextAggregatePacket(rtp_packet);
+#else
     NextAggregatePacket(rtp_packet);
+#endif
   } else {
     NextFragmentPacket(rtp_packet);
   }
   rtp_packet->SetMarker(packets_.empty());
   --num_packets_left_;
+#ifdef WEBRTC_WEBKIT_BUILD
+  return next_packet_result;
+#else
   return true;
+#endif
 }
 
+#ifdef WEBRTC_WEBKIT_BUILD
+bool RtpPacketizerH264::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
+#else
 void RtpPacketizerH264::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
+#endif
   // Reserve maximum available payload, set actual payload size later.
   size_t payload_capacity = rtp_packet->FreeCapacity();
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (rtp_packet->payload_size() > payload_capacity)
+      return false;
+#endif
   RTC_CHECK_GE(payload_capacity, kNalHeaderSize);
   uint8_t* buffer = rtp_packet->AllocatePayload(payload_capacity);
   RTC_DCHECK(buffer);
@@ -289,7 +308,12 @@ void RtpPacketizerH264::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
   bool is_last_fragment = packet->last_fragment;
   while (packet->aggregated) {
     rtc::ArrayView<const uint8_t> fragment = packet->source_fragment;
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (index + kLengthFieldSize + fragment.size() > payload_capacity)
+      return false;
+#else
     RTC_CHECK_LE(index + kLengthFieldSize + fragment.size(), payload_capacity);
+#endif
     // Add NAL unit length field.
     ByteWriter<uint16_t>::WriteBigEndian(&buffer[index], fragment.size());
     index += kLengthFieldSize;
@@ -305,6 +329,9 @@ void RtpPacketizerH264::NextAggregatePacket(RtpPacketToSend* rtp_packet) {
   }
   RTC_CHECK(is_last_fragment);
   rtp_packet->SetPayloadSize(index);
+#ifdef WEBRTC_WEBKIT_BUILD
+  return true;
+#endif
 }
 
 void RtpPacketizerH264::NextFragmentPacket(RtpPacketToSend* rtp_packet) {

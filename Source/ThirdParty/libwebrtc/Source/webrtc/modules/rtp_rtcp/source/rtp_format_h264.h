@@ -91,7 +91,11 @@ class RtpPacketizerH264 : public RtpPacketizer {
 #endif
   bool PacketizeSingleNalu(size_t fragment_index);
 
+#ifdef WEBRTC_WEBKIT_BUILD
+  bool NextAggregatePacket(RtpPacketToSend* rtp_packet);
+#else
   void NextAggregatePacket(RtpPacketToSend* rtp_packet);
+#endif
   void NextFragmentPacket(RtpPacketToSend* rtp_packet);
 
   const PayloadSizeLimits limits_;
