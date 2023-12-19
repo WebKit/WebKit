@@ -45,7 +45,7 @@ void ElementData::destroy()
     if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
         delete uniqueData;
     else
-        delete downcast<ShareableElementData>(this);
+        delete uncheckedDowncast<ShareableElementData>(this);
 }
 
 ElementData::ElementData()

@@ -289,7 +289,13 @@ inline WeakRef<match_constness_t<Source, Target>, WeakPtrImpl> downcast(WeakRef<
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    // FIXME: This is too expensive to enable on x86 for now but we should try and
+    // enable the RELEASE_ASSERT() on all architectures.
+#if CPU(ARM64)
+    RELEASE_ASSERT(is<Target>(source));
+#else
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
+#endif
     return WeakRef<match_constness_t<Source, Target>, WeakPtrImpl> { static_reference_cast<match_constness_t<Source, Target>>(source.releaseImpl()), source.enableWeakPtrThreadingAssertions() };
 }
 

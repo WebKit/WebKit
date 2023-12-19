@@ -252,7 +252,7 @@ inline const Attribute* ElementData::attributeBase() const
 {
     if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
         return uniqueData->m_attributeVector.data();
-    return downcast<ShareableElementData>(*this).m_attributeArray;
+    return uncheckedDowncast<ShareableElementData>(*this).m_attributeArray;
 }
 
 inline const ImmutableStyleProperties* ElementData::presentationalHintStyle() const

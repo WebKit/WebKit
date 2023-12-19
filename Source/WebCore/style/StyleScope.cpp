@@ -394,7 +394,7 @@ auto Scope::collectActiveStyleSheets() -> ActiveStyleSheetCollection
                 styleSheetsForStyleSheetsList.append(sheet);
             LOG_WITH_STREAM(StyleSheets, stream << " adding sheet " << sheet << " from ProcessingInstruction node " << node);
         } else if (is<HTMLLinkElement>(node) || is<HTMLStyleElement>(node) || is<SVGStyleElement>(node)) {
-            Element& element = downcast<Element>(node);
+            Element& element = uncheckedDowncast<Element>(node);
             AtomString title = element.isInShadowTree() ? nullAtom() : element.attributeWithoutSynchronization(titleAttr);
             bool enabledViaScript = false;
             if (auto* linkElement = dynamicDowncast<HTMLLinkElement>(element)) {

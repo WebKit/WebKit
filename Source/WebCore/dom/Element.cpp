@@ -5163,7 +5163,7 @@ void Element::createUniqueElementData()
     if (!m_elementData)
         m_elementData = UniqueElementData::create();
     else
-        m_elementData = downcast<ShareableElementData>(*m_elementData).makeUniqueCopy();
+        m_elementData = uncheckedDowncast<ShareableElementData>(*m_elementData).makeUniqueCopy();
 }
 
 bool Element::canContainRangeEndPoint() const

@@ -1224,7 +1224,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, bool deep)
         return nodeToImport.cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf);
 
     case ATTRIBUTE_NODE: {
-        auto& attribute = downcast<Attr>(nodeToImport);
+        auto& attribute = uncheckedDowncast<Attr>(nodeToImport);
         return Ref<Node> { Attr::create(*this, attribute.qualifiedName(), attribute.value()) };
     }
     case DOCUMENT_NODE: // Can't import a document into another document.
@@ -1244,7 +1244,7 @@ ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
     case DOCUMENT_NODE:
         return Exception { ExceptionCode::NotSupportedError };
     case ATTRIBUTE_NODE: {
-        auto& attr = downcast<Attr>(source);
+        auto& attr = uncheckedDowncast<Attr>(source);
         if (RefPtr element = attr.ownerElement()) {
             auto result = element->removeAttributeNode(attr);
             if (result.hasException())
@@ -4557,7 +4557,7 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
         return true;
     case DOCUMENT_FRAGMENT_NODE: {
         bool hasSeenElementChild = false;
-        for (RefPtr node = downcast<DocumentFragment>(newChild).firstChild(); node; node = node->nextSibling()) {
+        for (RefPtr node = uncheckedDowncast<DocumentFragment>(newChild).firstChild(); node; node = node->nextSibling()) {
             if (is<Element>(*node)) {
                 if (hasSeenElementChild)
                     return false;
