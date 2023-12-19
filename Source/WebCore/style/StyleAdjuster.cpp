@@ -379,17 +379,21 @@ static bool isRubyContainerOrInternalRubyBox(const RenderStyle& style)
 }
 
 // https://drafts.csswg.org/css-ruby-1/#bidi
-static UnicodeBidi adjustUnicodeBidiForRuby(UnicodeBidi unicodeBidi)
+static UnicodeBidi forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
 {
     switch (unicodeBidi) {
     case UnicodeBidi::Normal:
     case UnicodeBidi::Embed:
+    case UnicodeBidi::Isolate:
         return UnicodeBidi::Isolate;
     case UnicodeBidi::Override:
+    case UnicodeBidi::IsolateOverride:
         return UnicodeBidi::IsolateOverride;
-    default:
-        return unicodeBidi;
+    case UnicodeBidi::Plaintext:
+        return UnicodeBidi::Plaintext;
     }
+    ASSERT_NOT_REACHED();
+    return UnicodeBidi::Isolate;
 }
 
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
@@ -418,9 +422,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
             if (m_element->hasTagName(legendTag))
                 style.setEffectiveDisplay(equivalentBlockDisplay(style));
-
-            if (isRubyContainerOrInternalRubyBox(style))
-                style.setEffectiveDisplay(style.display());
         }
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
@@ -470,7 +471,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setEffectiveDisplay(equivalentInlineDisplay(style));
         // https://drafts.csswg.org/css-ruby-1/#bidi
         if (isRubyContainerOrInternalRubyBox(style))
-            style.setUnicodeBidi(adjustUnicodeBidiForRuby(style.unicodeBidi()));
+            style.setUnicodeBidi(forceBidiIsolationForRuby(style.unicodeBidi()));
     }
 
     auto hasAutoZIndex = [](const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element* element) {
