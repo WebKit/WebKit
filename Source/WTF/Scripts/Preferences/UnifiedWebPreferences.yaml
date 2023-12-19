@@ -2373,6 +2373,20 @@ DisallowSyncXHRDuringPageDismissalEnabled:
     WebCore:
       default: true
 
+DisallowSystemFontFallbackForPrivateUseAreaCharacters:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "Disallow system font fallback for Private Use Area (PUA) characters"
+  humanReadableDescription: "Disallow font fallback using system fonts for charactes that are within the Private Use Area (PUA) block"
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultDisallowSystemFontFallbackForPrivateUseAreaCharacters()
+    WebKit:
+      default: WebKit::defaultDisallowSystemFontFallbackForPrivateUseAreaCharacters()
+    WebCore:
+      default: true
+
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 DownloadAttributeEnabled:
   type: bool

@@ -321,4 +321,14 @@ bool defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
 #endif
 }
 
+bool defaultDisallowSystemFontFallbackForPrivateUseAreaCharacters()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DisallowSystemFontFallbackForPrivateUseAreaCharacters);
+    return newSDK;
+#else
+    return true;
+#endif
+}
+
 } // namespace WebKit

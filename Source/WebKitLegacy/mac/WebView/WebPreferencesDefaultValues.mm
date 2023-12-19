@@ -219,6 +219,16 @@ bool defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
     return !newSDK;
 }
 
+bool defaultDisallowSystemFontFallbackForPrivateUseAreaCharacters()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DisallowSystemFontFallbackForPrivateUseAreaCharacters);
+    return newSDK;
+#else
+    return true;
+#endif
+}
+
 #if PLATFORM(MAC)
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()

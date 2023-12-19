@@ -86,6 +86,7 @@ RenderStyle resolveForDocument(const Document& document)
     fontDescription.setSpecifiedLocale(document.contentLanguage());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setShouldAllowUserInstalledFonts(settings.shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
+    fontDescription.setDisallowSystemFontFallbackForPrivateUseAreaCharacters(settings.disallowSystemFontFallbackForPrivateUseAreaCharacters());
 
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     int size = fontSizeForKeyword(CSSValueMedium, false, document);

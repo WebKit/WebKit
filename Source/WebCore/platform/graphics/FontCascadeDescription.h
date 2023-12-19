@@ -69,6 +69,8 @@ public:
     FontSelectionValue bolderWeight() const { return bolderWeight(weight()); }
     static FontSelectionValue lighterWeight(FontSelectionValue);
     static FontSelectionValue bolderWeight(FontSelectionValue);
+    bool disallowSystemFontFallbackForPrivateUseAreaCharacters() const { return m_disallowSystemFontFallbackForPrivateUseAreaCharacters; }
+
 
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily() == monospaceFamily; }
@@ -105,6 +107,8 @@ public:
     }
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
+    void setDisallowSystemFontFallbackForPrivateUseAreaCharacters(bool value) { m_disallowSystemFontFallbackForPrivateUseAreaCharacters = value; }
+
 
 #if ENABLE(TEXT_AUTOSIZING)
     bool familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
@@ -140,6 +144,7 @@ public:
     static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
     static TextSpacingTrim initialTextSpacingTrim() { return { }; }
     static TextAutospace initialTextAutospace() { return { }; }
+    static bool initialDisallowSystemFontFallbackForPrivateUseAreaCharacters() { return true; }
 
 private:
     Ref<RefCountedFixedVector<AtomString>> m_families;
@@ -156,6 +161,7 @@ private:
     unsigned m_fontSmoothing : 2; // FontSmoothingMode
     // True if a web page specifies a non-generic font family as the first font family.
     unsigned m_isSpecifiedFont : 1;
+    unsigned m_disallowSystemFontFallbackForPrivateUseAreaCharacters : 1;
 };
 
 inline bool FontCascadeDescription::operator==(const FontCascadeDescription& other) const
@@ -167,7 +173,8 @@ inline bool FontCascadeDescription::operator==(const FontCascadeDescription& oth
         && m_kerning == other.m_kerning
         && m_keywordSize == other.m_keywordSize
         && m_fontSmoothing == other.m_fontSmoothing
-        && m_isSpecifiedFont == other.m_isSpecifiedFont;
+        && m_isSpecifiedFont == other.m_isSpecifiedFont
+        && m_disallowSystemFontFallbackForPrivateUseAreaCharacters == other.m_disallowSystemFontFallbackForPrivateUseAreaCharacters;
 }
 
 }

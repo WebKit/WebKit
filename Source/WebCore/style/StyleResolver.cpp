@@ -532,6 +532,7 @@ std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* ele
     fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(element), style.get(), document()));
 
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
+    fontDescription.setDisallowSystemFontFallbackForPrivateUseAreaCharacters(settings().disallowSystemFontFallbackForPrivateUseAreaCharacters());
     style->setFontDescription(WTFMove(fontDescription));
 
     style->fontCascade().update(&document().fontSelector());

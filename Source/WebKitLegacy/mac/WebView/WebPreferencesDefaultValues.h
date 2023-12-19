@@ -67,6 +67,7 @@ bool defaultAllowRunningOfInsecureContent();
 bool defaultShouldConvertInvalidURLsToBlank();
 bool defaultPopoverAttributeEnabled();
 bool defaultSearchInputIncrementalAttributeAndSearchEventEnabled();
+bool defaultDisallowSystemFontFallbackForPrivateUseAreaCharacters();
 
 #if PLATFORM(MAC)
 bool defaultPassiveWheelListenersAsDefaultOnDocument();

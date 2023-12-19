@@ -92,6 +92,7 @@ const TestFeatures& TestOptions::defaults()
             { "DataTransferItemsEnabled", true },
             { "DeveloperExtrasEnabled", true },
             { "DirectoryUploadEnabled", true },
+            { "DisallowSystemFontFallbackForPrivateUseAreaCharacters", true },
             { "EventHandlerDrivenSmoothKeyboardScrollingEnabled", eventHandlerDrivenSmoothKeyboardScrollingEnabledValue },
             { "ExposeSpeakersEnabled", true },
             { "FullScreenEnabled", true },

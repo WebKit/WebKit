@@ -103,6 +103,7 @@ bool defaultRunningBoardThrottlingEnabled();
 bool defaultShouldDropNearSuspendedAssertionAfterDelay();
 bool defaultShowModalDialogEnabled();
 bool defaultLiveRangeSelectionEnabled();
+bool defaultDisallowSystemFontFallbackForPrivateUseAreaCharacters();
 
 bool defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
