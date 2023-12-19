@@ -509,10 +509,10 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
         style->setProperty(CSSPropertyBorderColor, CSSPrimitiveValue::create(CSSValueInherit));
         break;
     case SolidBordersRowsOnly:
-        style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
-        style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
-        style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
+        style->setProperty(CSSPropertyBorderTopWidth, CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyBorderBottomWidth, CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX));
+        style->setProperty(CSSPropertyBorderTopStyle, CSSPrimitiveValue::create(CSSValueNone));
+        style->setProperty(CSSPropertyBorderBottomStyle, CSSPrimitiveValue::create(CSSValueNone));
         style->setProperty(CSSPropertyBorderColor, CSSPrimitiveValue::create(CSSValueInherit));
         break;
     case SolidBorders:

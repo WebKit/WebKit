@@ -90,25 +90,25 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 73: "col group 2"
       RenderBlock (anonymous) at (0,223) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,243) size 69x47 [border: (0.50px outset #808080)]
-        RenderTableSection {TBODY} at (0,0) size 68x47
+      RenderTable {TABLE} at (0,243) size 69x46 [border: (0.50px outset #808080)]
+        RenderTableSection {TBODY} at (0,0) size 68x46
           RenderTableRow {TR} at (0,0) size 68x23
-            RenderTableCell {TD} at (0,0) size 34x23 [border: (0.50px solid #808080) none (0.50px solid #808080) (0.50px none #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,0) size 34x23 [border: (0.50px none #808080) none none (0.50px none #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x20
                 text run at (1,1) width 32: "rules"
-            RenderTableCell {TD} at (33,0) size 35x23 [border: (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080) none] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (33,0) size 35x23 [border: (0.50px none #808080) (0.50px none #808080) none none] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 32x20
                 text run at (1,1) width 32: "rows"
-          RenderTableRow {TR} at (0,23) size 68x23
-            RenderTableCell {TD} at (0,23) size 34x23 [border: (0.50px solid #808080) none (0.50px solid #808080) (0.50px none #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x20
+          RenderTableRow {TR} at (0,22) size 68x23
+            RenderTableCell {TD} at (0,22) size 34x23 [border: none none (0.50px none #808080) (0.50px none #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 32x19
                 text run at (1,1) width 32: "rules"
-            RenderTableCell {TD} at (33,23) size 35x23 [border: (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080) none] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 32x20
+            RenderTableCell {TD} at (33,22) size 35x23 [border: none (0.50px none #808080) (0.50px none #808080) none] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 32x19
                 text run at (1,1) width 32: "rows"
-      RenderBlock (anonymous) at (0,290) size 784x20
+      RenderBlock (anonymous) at (0,289) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,310) size 64x46 [border: (0.50px outset #808080)]
+      RenderTable {TABLE} at (0,309) size 64x46 [border: (0.50px outset #808080)]
         RenderTableSection {TBODY} at (0,0) size 64x46
           RenderTableRow {TR} at (0,0) size 63x23
             RenderTableCell {TD} at (0,0) size 35x23 [border: (0.50px none #808080) (0.50px solid #808080) none (0.50px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -124,9 +124,9 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (34,22) size 29x23 [border: none (0.50px solid #808080) (0.50px none #808080) (0.50px solid #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 27x19
                 text run at (1,1) width 27: "cols"
-      RenderBlock (anonymous) at (0,356) size 784x20
+      RenderBlock (anonymous) at (0,355) size 784x20
         RenderBR {BR} at (0,0) size 0x19
-      RenderTable {TABLE} at (0,376) size 55x47 [border: (0.50px outset #808080)]
+      RenderTable {TABLE} at (0,375) size 55x47 [border: (0.50px outset #808080)]
         RenderTableSection {TBODY} at (0,0) size 54x47
           RenderTableRow {TR} at (0,0) size 54x23
             RenderTableCell {TD} at (0,0) size 35x23 [border: (0.50px solid #808080)] [r=0 c=0 rs=1 cs=1]
@@ -142,5 +142,5 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (34,23) size 20x23 [border: (0.50px solid #808080)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 17x20
                 text run at (1,1) width 17: "all"
-      RenderBlock (anonymous) at (0,423) size 784x20
+      RenderBlock (anonymous) at (0,422) size 784x20
         RenderBR {BR} at (0,0) size 0x19
