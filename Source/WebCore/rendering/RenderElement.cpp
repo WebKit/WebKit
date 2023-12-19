@@ -81,6 +81,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
+#include "RenderTreeBuilderRuby.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "SVGElementTypeHelpers.h"
@@ -780,7 +781,13 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (is<RenderFragmentedFlow>(elementChild.get()))
             continue;
 
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild->style().display());
+        auto newStyle = [&] {
+            auto display = elementChild->style().display();
+            if (display == DisplayType::RubyBase || display == DisplayType::Ruby)
+                return createAnonymousStyleForRuby(style(), display);
+            return RenderStyle::createAnonymousStyleWithDisplay(style(), display);
+        }();
+
         if (style().specifiesColumns()) {
             if (elementChild->style().specifiesColumns())
                 newStyle.inheritColumnPropertiesFrom(style());
