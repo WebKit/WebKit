@@ -66,6 +66,8 @@ public:
 
     static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
 
+    static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed);
+
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
 

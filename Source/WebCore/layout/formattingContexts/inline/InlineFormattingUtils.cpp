@@ -547,6 +547,17 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
     return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
 }
 
+LineEndingEllipsisPolicy InlineFormattingUtils::lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLinesWithInlineContent, std::optional<size_t> numberOfVisibleLinesAllowed)
+{
+    if (numberOfVisibleLinesAllowed && *numberOfVisibleLinesAllowed == numberOfLinesWithInlineContent)
+        return LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
+
+    // Truncation is in effect when the block container has overflow other than visible.
+    if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)
+        return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
+    return LineEndingEllipsisPolicy::NoEllipsis;
+}
+
 const InlineLayoutState& InlineFormattingUtils::layoutState() const
 {
     return formattingContext().layoutState();

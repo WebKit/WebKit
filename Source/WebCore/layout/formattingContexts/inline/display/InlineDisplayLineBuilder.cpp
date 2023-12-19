@@ -291,7 +291,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
 
     auto contentNeedsEllipsis = [&] {
         switch (lineEndingEllipsisPolicy) {
-        case LineEndingEllipsisPolicy::No:
+        case LineEndingEllipsisPolicy::NoEllipsis:
             return false;
         case LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
             return displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
