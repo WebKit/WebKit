@@ -145,8 +145,8 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
 
 using namespace HTMLNames;
 
-RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
-    : RenderReplaced(type, element, WTFMove(style), IntSize())
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> typeFlags, StyleImage* styleImage, const float imageDevicePixelRatio)
+    : RenderReplaced(type, element, WTFMove(style), IntSize(), typeFlags | RenderElementType::RenderImageFlag)
     , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
     , m_hasImageOverlay(is<HTMLElement>(element) && ImageOverlay::hasOverlay(downcast<HTMLElement>(element)))
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
@@ -158,8 +158,13 @@ RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Style
 #endif
 }
 
+RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, StyleImage* styleImage, const float imageDevicePixelRatio)
+    : RenderImage(type, element, WTFMove(style), RenderElementType::RenderImageFlag, styleImage, imageDevicePixelRatio)
+{
+}
+
 RenderImage::RenderImage(Type type, Document& document, RenderStyle&& style, StyleImage* styleImage)
-    : RenderReplaced(type, document, WTFMove(style), IntSize())
+    : RenderReplaced(type, document, WTFMove(style), IntSize(), RenderElementType::RenderImageFlag)
     , m_imageResource(styleImage ? makeUnique<RenderImageResourceStyleImage>(*styleImage) : makeUnique<RenderImageResource>())
 {
 }

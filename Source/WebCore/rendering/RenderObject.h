@@ -231,10 +231,14 @@ public:
         RenderBlockFlowFlag = 1 << 5,
         RenderFlexibleBoxFlag = 1 << 6,
         RenderTextControlFlag = 1 << 7,
-        LegacyRenderSVGContainer = 1 << 8,
+        RenderImageFlag = 1 << 8,
+        RenderMediaFlag = 1 << 9,
+        RenderWidgetFlag = 1 << 10,
+        LegacyRenderSVGContainerFlag = 1 << 11,
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        RenderSVGContainer = 1 << 9,
+        RenderSVGContainerFlag = 1 << 12,
 #endif
+
     };
 
     // Anonymous objects should pass the document as their node, and they will then automatically be
@@ -357,13 +361,13 @@ public:
     bool isRenderListBox() const { return type() == Type::ListBox; }
     bool isRenderListItem() const { return type() == Type::ListItem; }
     bool isRenderListMarker() const { return type() == Type::ListMarker; }
-    virtual bool isRenderMedia() const { return false; }
+    bool isRenderMedia() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderMediaFlag); }
     bool isRenderMenuList() const { return type() == Type::MenuList; }
     bool isRenderMeter() const { return type() == Type::Meter; }
     bool isRenderProgress() const { return type() == Type::Progress; }
     bool isRenderButton() const { return type() == Type::Button; }
     bool isRenderIFrame() const { return type() == Type::IFrame; }
-    virtual bool isRenderImage() const { return false; }
+    bool isRenderImage() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderImageFlag); }
     bool isRenderTextFragment() const { return type() == Type::TextFragment; }
 #if ENABLE(MODEL_ELEMENT)
     bool isRenderModel() const { return type() == Type::Model; }
@@ -389,14 +393,13 @@ public:
     bool isRenderSearchField() const { return type() == Type::SearchField; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderVideo() const { return type() == Type::Video; }
-    virtual bool isRenderWidget() const { return false; }
+    bool isRenderWidget() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderWidgetFlag); }
     bool isRenderHTMLCanvas() const { return type() == Type::HTMLCanvas; }
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool isRenderAttachment() const { return type() == Type::Attachment; }
 #endif
     bool isRenderGrid() const { return type() == Type::Grid; }
 
-    virtual bool isMultiColumnBlockFlow() const { return false; }
     bool isRenderMultiColumnSet() const { return type() == Type::MultiColumnSet; }
     bool isRenderMultiColumnFlow() const { return type() == Type::MultiColumnFlow; }
     bool isRenderMultiColumnSpannerPlaceholder() const { return type() == Type::MultiColumnSpannerPlaceholder; }
@@ -465,9 +468,9 @@ public:
     bool isLegacyRenderSVGRoot() const { return type() == Type::LegacySVGRoot; }
     bool isRenderSVGRoot() const { return type() == Type::SVGRoot; }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGContainer); }
+    bool isRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::RenderSVGContainerFlag); }
 #endif
-    bool isLegacyRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::LegacyRenderSVGContainer); }
+    bool isLegacyRenderSVGContainer() const { return m_renderElementTypeFlags.contains(RenderElementType::LegacyRenderSVGContainerFlag); }
     bool isRenderSVGTransformableContainer() const { return type() == Type::SVGTransformableContainer; }
     bool isLegacyRenderSVGTransformableContainer() const { return type() == Type::LegacySVGTransformableContainer; }
     bool isRenderSVGViewportContainer() const { return type() == Type::SVGViewportContainer; }

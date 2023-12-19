@@ -95,8 +95,6 @@ protected:
 private:
     void element() const = delete;
 
-    bool isRenderWidget() const final { return true; }
-
     bool needsPreferredWidthsRecalculation() const final;
     RenderBox* embeddedContentBox() const final;
 
