@@ -1955,11 +1955,6 @@ http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 
-# rdar://119272478 (REGRESSION ( Sonoma?): [ Sonoma Release wk2 ] 3 tests in fast/attachment are a flaky failure with image diff)
-[ Sonoma+ Release ] fast/attachment/attachment-folder-icon.html [ Pass Failure ]
-[ Sonoma+ Release ] fast/attachment/attachment-type-attribute.html [ Pass Failure ]
-[ Sonoma+ Release ] fast/attachment/attachment-default-icon.html [ Pass Failure ]
-
 webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Failure ]
 
 # rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
