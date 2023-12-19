@@ -3748,6 +3748,8 @@ webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-en
 webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Crash ]
 webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Crash ]
 
+webkit.org/b/266636 fast/multicol/last-set-crash.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

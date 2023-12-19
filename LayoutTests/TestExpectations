@@ -3526,6 +3526,7 @@ webkit.org/b/172864 imported/blink/storage/indexeddb/blob-delete-objectstore-db.
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
 
 [ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
+[ Debug ] fast/multicol/last-set-crash.html [ Skip ]
 
 webkit.org/b/202805 [ Debug ] fast/multicol/fragflow-gains-new-in-flow-descendant-crash.html [ Skip ]
 
