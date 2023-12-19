@@ -1147,9 +1147,6 @@ test/language/module-code/import-assertions/eval-gtbndng-indirect-faux-assertion
   raw: "SyntaxError: Unexpected token '*'. import call expects one or two arguments."
 test/language/module-code/import-assertions/import-assertion-empty.js:
   module: "SyntaxError: Unexpected identifier 'assert'. Expected a ';' following a targeted import declaration."
-test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
 test/language/statements/async-generator/yield-star-promise-not-unwrapped.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: yield* should not unwrap promises from manually-implemented async iterators Expected SameValue(«unwrapped value», «[object Promise]») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: yield* should not unwrap promises from manually-implemented async iterators Expected SameValue(«unwrapped value», «[object Promise]») to be true'
