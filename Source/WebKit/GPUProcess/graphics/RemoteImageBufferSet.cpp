@@ -153,9 +153,11 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         std::swap(m_frontBuffer, m_backBuffer);
     }
 
-    if (m_frontBuffer)
-        m_frontBuffer->setNonVolatile();
-    else {
+    if (m_frontBuffer) {
+        auto previousState = m_frontBuffer->setNonVolatile();
+        if (previousState == SetNonVolatileResult::Empty)
+            m_previouslyPaintedRect = std::nullopt;
+    } else {
         m_frontBuffer = m_backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, RenderingResourceIdentifier::generate());
         m_frontBufferIsCleared = true;
     }
