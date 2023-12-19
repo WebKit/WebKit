@@ -217,13 +217,9 @@ SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* 
     if (!renderer->isRenderSVGText() && !renderer->isRenderSVGInline())
         return nullptr;
 
-    SVGElement* element = downcast<SVGElement>(renderer->node());
+    auto* element = downcast<SVGElement>(renderer->node());
     ASSERT(element);
-
-    if (!is<SVGTextContentElement>(element))
-        return nullptr;
-
-    return downcast<SVGTextContentElement>(element);
+    return dynamicDowncast<SVGTextContentElement>(element);
 }
 
 }

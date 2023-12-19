@@ -319,14 +319,13 @@ std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
         return downcast<SVGSVGElement>(*m_context).currentViewportSizeExcludingZoom();
 
     // Take size from nearest viewport element.
-    RefPtr viewportElement = m_context->viewportElement();
-    if (!is<SVGSVGElement>(viewportElement))
+    RefPtr svg = dynamicDowncast<SVGSVGElement>(m_context->viewportElement());
+    if (!svg)
         return std::nullopt;
 
-    const SVGSVGElement& svg = downcast<SVGSVGElement>(*viewportElement);
-    auto viewportSize = svg.currentViewBoxRect().size();
+    auto viewportSize = svg->currentViewBoxRect().size();
     if (viewportSize.isEmpty())
-        viewportSize = svg.currentViewportSizeExcludingZoom();
+        viewportSize = svg->currentViewportSizeExcludingZoom();
 
     return viewportSize;
 }

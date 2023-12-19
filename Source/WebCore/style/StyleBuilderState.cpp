@@ -99,37 +99,37 @@ bool BuilderState::useSVGZoomRulesForLength() const
 
 RefPtr<StyleImage> BuilderState::createStyleImage(const CSSValue& value)
 {
-    if (is<CSSImageValue>(value))
-        return downcast<CSSImageValue>(value).createStyleImage(*this);
-    if (is<CSSImageSetValue>(value))
-        return downcast<CSSImageSetValue>(value).createStyleImage(*this);
-    if (is<CSSCursorImageValue>(value))
-        return downcast<CSSCursorImageValue>(value).createStyleImage(*this);
-    if (is<CSSNamedImageValue>(value))
-        return downcast<CSSNamedImageValue>(value).createStyleImage(*this);
-    if (is<CSSCanvasValue>(value))
-        return downcast<CSSCanvasValue>(value).createStyleImage(*this);
-    if (is<CSSCrossfadeValue>(value))
-        return downcast<CSSCrossfadeValue>(value).createStyleImage(*this);
-    if (is<CSSFilterImageValue>(value))
-        return downcast<CSSFilterImageValue>(value).createStyleImage(*this);
-    if (is<CSSLinearGradientValue>(value))
-        return downcast<CSSLinearGradientValue>(value).createStyleImage(*this);
-    if (is<CSSPrefixedLinearGradientValue>(value))
-        return downcast<CSSPrefixedLinearGradientValue>(value).createStyleImage(*this);
-    if (is<CSSDeprecatedLinearGradientValue>(value))
-        return downcast<CSSDeprecatedLinearGradientValue>(value).createStyleImage(*this);
-    if (is<CSSRadialGradientValue>(value))
-        return downcast<CSSRadialGradientValue>(value).createStyleImage(*this);
-    if (is<CSSPrefixedRadialGradientValue>(value))
-        return downcast<CSSPrefixedRadialGradientValue>(value).createStyleImage(*this);
-    if (is<CSSDeprecatedRadialGradientValue>(value))
-        return downcast<CSSDeprecatedRadialGradientValue>(value).createStyleImage(*this);
-    if (is<CSSConicGradientValue>(value))
-        return downcast<CSSConicGradientValue>(value).createStyleImage(*this);
+    if (auto* imageValue = dynamicDowncast<CSSImageValue>(value))
+        return imageValue->createStyleImage(*this);
+    if (auto* imageSetValue = dynamicDowncast<CSSImageSetValue>(value))
+        return imageSetValue->createStyleImage(*this);
+    if (auto* imageValue = dynamicDowncast<CSSCursorImageValue>(value))
+        return imageValue->createStyleImage(*this);
+    if (auto* imageValue = dynamicDowncast<CSSNamedImageValue>(value))
+        return imageValue->createStyleImage(*this);
+    if (auto* cssCanvasValue = dynamicDowncast<CSSCanvasValue>(value))
+        return cssCanvasValue->createStyleImage(*this);
+    if (auto* crossfadeValue = dynamicDowncast<CSSCrossfadeValue>(value))
+        return crossfadeValue->createStyleImage(*this);
+    if (auto* filterImageValue = dynamicDowncast<CSSFilterImageValue>(value))
+        return filterImageValue->createStyleImage(*this);
+    if (auto* linearGradientValue = dynamicDowncast<CSSLinearGradientValue>(value))
+        return linearGradientValue->createStyleImage(*this);
+    if (auto* linearGradientValue = dynamicDowncast<CSSPrefixedLinearGradientValue>(value))
+        return linearGradientValue->createStyleImage(*this);
+    if (auto* linearGradientValue = dynamicDowncast<CSSDeprecatedLinearGradientValue>(value))
+        return linearGradientValue->createStyleImage(*this);
+    if (auto* radialGradientvalue = dynamicDowncast<CSSRadialGradientValue>(value))
+        return radialGradientvalue->createStyleImage(*this);
+    if (auto* radialGradientvalue = dynamicDowncast<CSSPrefixedRadialGradientValue>(value))
+        return radialGradientvalue->createStyleImage(*this);
+    if (auto* radialGradientvalue = dynamicDowncast<CSSDeprecatedRadialGradientValue>(value))
+        return radialGradientvalue->createStyleImage(*this);
+    if (auto conicGradientValue = dynamicDowncast<CSSConicGradientValue>(value))
+        return conicGradientValue->createStyleImage(*this);
 #if ENABLE(CSS_PAINTING_API)
-    if (is<CSSPaintImageValue>(value))
-        return downcast<CSSPaintImageValue>(value).createStyleImage(*this);
+    if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(value))
+        return paintImageValue->createStyleImage(*this);
 #endif
     return nullptr;
 }

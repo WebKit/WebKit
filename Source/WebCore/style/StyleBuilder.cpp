@@ -353,8 +353,8 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
         style.setHasExplicitlyInheritedProperties();
 
 #if ENABLE(CSS_PAINTING_API)
-    if (is<CSSPaintImageValue>(valueToApply)) {
-        auto& name = downcast<CSSPaintImageValue>(valueToApply.get()).name();
+    if (auto* paintImageValue = dynamicDowncast<CSSPaintImageValue>(valueToApply.get())) {
+        auto& name = paintImageValue->name();
         if (auto* paintWorklet = const_cast<Document&>(m_state.document()).paintWorkletGlobalScopeForName(name)) {
             Locker locker { paintWorklet->paintDefinitionLock() };
             if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
@@ -374,10 +374,8 @@ Ref<CSSValue> Builder::resolveVariableReferences(CSSPropertyID propertyID, CSSVa
         return value;
 
     auto variableValue = [&]() -> RefPtr<CSSValue> {
-        if (is<CSSPendingSubstitutionValue>(value)) {
-            auto& substitution = downcast<CSSPendingSubstitutionValue>(value);
-            return substitution.resolveValue(m_state, propertyID);
-        }
+        if (auto* substitution = dynamicDowncast<CSSPendingSubstitutionValue>(value))
+            return substitution->resolveValue(m_state, propertyID);
 
         auto& variableReferenceValue = downcast<CSSVariableReferenceValue>(value);
         return variableReferenceValue.resolveSingleValue(m_state, propertyID);

@@ -162,25 +162,27 @@ bool compareAnimationsByCompositeOrder(const WebAnimation& a, const WebAnimation
     // this function should be called with std::stable_sort().
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&a != &b);
 
-    bool aHasOwningElement = is<DeclarativeAnimation>(a) && downcast<DeclarativeAnimation>(a).owningElement();
-    bool bHasOwningElement = is<DeclarativeAnimation>(b) && downcast<DeclarativeAnimation>(b).owningElement();
+    auto* aAsDeclarativeAnimation = dynamicDowncast<DeclarativeAnimation>(a);
+    bool aHasOwningElement = aAsDeclarativeAnimation && aAsDeclarativeAnimation->owningElement();
+    auto* bAsDeclarativeAnimation = dynamicDowncast<DeclarativeAnimation>(b);
+    bool bHasOwningElement = bAsDeclarativeAnimation && bAsDeclarativeAnimation->owningElement();
 
     // CSS Transitions sort first.
-    bool aIsCSSTransition = aHasOwningElement && is<CSSTransition>(a);
-    bool bIsCSSTransition = bHasOwningElement && is<CSSTransition>(b);
-    if (aIsCSSTransition || bIsCSSTransition) {
-        if (aIsCSSTransition == bIsCSSTransition)
-            return compareCSSTransitions(downcast<CSSTransition>(a), downcast<CSSTransition>(b));
-        return !bIsCSSTransition;
+    auto* aAsCSSTransition = aHasOwningElement ? dynamicDowncast<CSSTransition>(a) : nullptr;
+    auto* bAsCSSTransition = bHasOwningElement ? dynamicDowncast<CSSTransition>(b) : nullptr;
+    if (aAsCSSTransition || bAsCSSTransition) {
+        if (!!aAsCSSTransition == !!bAsCSSTransition)
+            return compareCSSTransitions(*aAsCSSTransition, *bAsCSSTransition);
+        return !bAsCSSTransition;
     }
 
     // CSS Animations sort next.
-    bool aIsCSSAnimation = aHasOwningElement && is<CSSAnimation>(a);
-    bool bIsCSSAnimation = bHasOwningElement && is<CSSAnimation>(b);
-    if (aIsCSSAnimation || bIsCSSAnimation) {
-        if (aIsCSSAnimation == bIsCSSAnimation)
-            return compareCSSAnimations(downcast<CSSAnimation>(a), downcast<CSSAnimation>(b));
-        return !bIsCSSAnimation;
+    auto* aAsCSSAnimation = aHasOwningElement ? dynamicDowncast<CSSAnimation>(a) : nullptr;
+    auto* bAsCSSAnimation = bHasOwningElement ? dynamicDowncast<CSSAnimation>(b) : nullptr;
+    if (aAsCSSAnimation || bAsCSSAnimation) {
+        if (!!aAsCSSAnimation == !!bAsCSSAnimation)
+            return compareCSSAnimations(*aAsCSSAnimation, *bAsCSSAnimation);
+        return !bAsCSSAnimation;
     }
 
     // JS-originated animations sort last based on their position in the global animation list.
@@ -192,13 +194,13 @@ bool compareAnimationsByCompositeOrder(const WebAnimation& a, const WebAnimation
 template <typename T>
 static std::optional<bool> compareDeclarativeAnimationEvents(const AnimationEventBase& a, const AnimationEventBase& b)
 {
-    bool aIsDeclarativeEvent = is<T>(a);
-    bool bIsDeclarativeEvent = is<T>(b);
-    if (!aIsDeclarativeEvent && !bIsDeclarativeEvent)
+    auto* aAsDeclarativeEvent = dynamicDowncast<T>(a);
+    auto* bAsDeclarativeEvent = dynamicDowncast<T>(b);
+    if (!aAsDeclarativeEvent && !bAsDeclarativeEvent)
         return std::nullopt;
 
-    if (aIsDeclarativeEvent != bIsDeclarativeEvent)
-        return !bIsDeclarativeEvent;
+    if (!!aAsDeclarativeEvent != !!bAsDeclarativeEvent)
+        return !bAsDeclarativeEvent;
 
     auto aScheduledTime = a.scheduledTime();
     auto bScheduledTime = b.scheduledTime();
@@ -210,11 +212,8 @@ static std::optional<bool> compareDeclarativeAnimationEvents(const AnimationEven
     if (aTarget == bTarget)
         return false;
 
-    RELEASE_ASSERT(is<Element>(aTarget));
-    RELEASE_ASSERT(is<Element>(bTarget));
-
-    auto aStyleable = Styleable(downcast<Element>(*aTarget), downcast<T>(a).pseudoId());
-    auto bStyleable = Styleable(downcast<Element>(*bTarget), downcast<T>(b).pseudoId());
+    auto aStyleable = Styleable(*checkedDowncast<Element>(aTarget), aAsDeclarativeEvent->pseudoId());
+    auto bStyleable = Styleable(*checkedDowncast<Element>(bTarget), bAsDeclarativeEvent->pseudoId());
     return compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder(aStyleable, bStyleable);
 }
 
