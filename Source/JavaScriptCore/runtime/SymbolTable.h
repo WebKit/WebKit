@@ -643,7 +643,7 @@ public:
     {
         return m_map.contains(key);
     }
-    
+
     bool contains(UniquedStringImpl* key)
     {
         ConcurrentJSLocker locker(m_lock);
@@ -677,6 +677,7 @@ public:
                 return false;
             m_arguments.set(vm, this, table);
         }
+
         return true;
     }
 
@@ -688,7 +689,7 @@ public:
     
     bool trySetArgumentOffset(VM& vm, uint32_t i, ScopeOffset offset)
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(m_arguments);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_arguments);
         auto* maybeCloned = m_arguments->trySet(vm, i, offset);
         if (!maybeCloned)
             return false;
@@ -696,6 +697,16 @@ public:
         return true;
     }
     
+    void prepareToWatchScopedArgument(SymbolTableEntry& entry, uint32_t i)
+    {
+        entry.prepareToWatch();
+        if (!m_arguments)
+            return;
+
+        WatchpointSet* watchpoints = entry.watchpointSet();
+        m_arguments->trySetWatchpointSet(i, watchpoints);
+    }
+
     ScopedArgumentsTable* arguments() const
     {
         if (!m_arguments)
@@ -703,7 +714,7 @@ public:
         m_arguments->lock();
         return m_arguments.get();
     }
-    
+
     const LocalToEntryVec& localToEntry(const ConcurrentJSLocker&);
     SymbolTableEntry* entryFor(const ConcurrentJSLocker&, ScopeOffset);
     
