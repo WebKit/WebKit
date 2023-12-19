@@ -44,7 +44,7 @@ public:
     ~Cursor();
 
     void setFromName(const char*, double);
-    void setFromBytes(GBytes*, uint32_t width, uint32_t height, uint32_t hotspotX, uint32_t hotspotY);
+    void setFromBytes(GBytes*, uint32_t width, uint32_t height, uint32_t stride, uint32_t hotspotX, uint32_t hotspotY);
     bool setPosition(uint32_t x, uint32_t y);
     uint32_t x() const { return m_position.x - m_hotspot.x; }
     uint32_t y() const { return m_position.y - m_hotspot.y; }
@@ -56,7 +56,7 @@ public:
 
 private:
     bool tryEnsureBuffer();
-    void updateBuffer(const uint8_t*, uint32_t width, uint32_t height);
+    void updateBuffer(const uint8_t*, uint32_t width, uint32_t height, uint32_t stride);
 
     std::unique_ptr<Plane> m_plane;
     struct gbm_device* m_device { nullptr };

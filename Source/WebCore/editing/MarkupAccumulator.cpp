@@ -369,7 +369,7 @@ void MarkupAccumulator::appendEndTag(StringBuilder& result, const Element& eleme
 {
     if (shouldSelfClose(element, m_serializationSyntax) || (!element.hasChildNodes() && elementCannotHaveEndTag(element)))
         return;
-    result.append("</", element.nodeNamePreservingCase(), '>');
+    result.append("</", element.tagQName().toString(), '>');
 }
 
 StringBuilder MarkupAccumulator::takeMarkup()
@@ -555,7 +555,7 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, const Element& elem
             result.append(':');
         }
     }
-    result.append(element.nodeNamePreservingCase());
+    result.append(element.tagQName().toString());
     if (inXMLFragmentSerialization() && namespaces && shouldAddNamespaceElement(element))
         appendNamespace(result, element.prefix(), element.namespaceURI(), *namespaces, inXMLFragmentSerialization());
 }

@@ -307,7 +307,6 @@ public:
     Ref<Element> cloneElementWithoutChildren(Document&);
 
     void normalizeAttributes();
-    String nodeNamePreservingCase() const;
 
     WEBCORE_EXPORT void setBooleanAttribute(const QualifiedName& name, bool);
 

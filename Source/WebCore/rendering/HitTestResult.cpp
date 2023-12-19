@@ -793,21 +793,6 @@ Vector<String> HitTestResult::dictationAlternatives() const
     return frame->editor().dictationAlternativesForMarker(*marker);
 }
 
-Node* HitTestResult::targetNode() const
-{
-    Node* node = innerNode();
-    if (!node)
-        return nullptr;
-    if (node->isConnected())
-        return node;
-
-    Element* element = node->parentElement();
-    if (element && element->isConnected())
-        return element;
-
-    return node;
-}
-
 Element* HitTestResult::targetElement() const
 {
     for (Node* node = m_innerNode.get(); node; node = node->parentInComposedTree()) {

@@ -143,11 +143,12 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<RenderElementType> t
     , m_hasAXObject(false)
     , m_setNeedsLayoutForbidden(false)
 #endif
-    , m_bitfields(node)
     , m_node(node)
     , m_renderElementTypeFlags(typeFlags)
     , m_type(type)
 {
+    if (node.isDocumentNode())
+        m_bitfields.setFlag(RenderObjectFlag::IsAnonymous);
     if (CheckedPtr renderView = node.document().renderView())
         renderView->didCreateRenderer();
 #ifndef NDEBUG
@@ -544,8 +545,8 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
 
 void RenderObject::clearNeedsLayout()
 {
-    m_bitfields.setNeedsLayout(false);
-    setEverHadLayout(true);
+    m_bitfields.clearFlag(RenderObjectFlag::NeedsLayout);
+    setEverHadLayout();
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
     setNormalChildNeedsLayoutBit(false);
@@ -636,7 +637,7 @@ void RenderObject::checkBlockPositionedObjectsNeedLayout()
 void RenderObject::setPreferredLogicalWidthsDirty(bool shouldBeDirty, MarkingBehavior markParents)
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
-    m_bitfields.setPreferredLogicalWidthsDirty(shouldBeDirty);
+    m_bitfields.setFlag(RenderObjectFlag::PreferredLogicalWidthsDirty, shouldBeDirty);
     if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isRenderText() || !style().hasOutOfFlowPosition()))
         invalidateContainerPreferredLogicalWidths();
 }
@@ -653,7 +654,7 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
         if (!container && !o->isRenderView())
             break;
 
-        o->m_bitfields.setPreferredLogicalWidthsDirty(true);
+        o->m_bitfields.setFlag(RenderObjectFlag::PreferredLogicalWidthsDirty, true);
         if (o->style().hasOutOfFlowPosition())
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
@@ -1815,9 +1816,9 @@ void RenderObject::destroy()
     RELEASE_ASSERT(!m_parent);
     RELEASE_ASSERT(!m_next);
     RELEASE_ASSERT(!m_previous);
-    RELEASE_ASSERT(!m_bitfields.beingDestroyed());
+    RELEASE_ASSERT(!m_bitfields.hasFlag(RenderObjectFlag::BeingDestroyed));
 
-    m_bitfields.setBeingDestroyed(true);
+    m_bitfields.setFlag(RenderObjectFlag::BeingDestroyed);
 
     willBeDestroyed();
 
@@ -2176,14 +2177,14 @@ const RenderObject::RenderObjectRareData& RenderObject::rareData() const
 
 RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
 {
-    setHasRareData(true);
+    m_bitfields.setFlag(RenderObjectFlag::HasRareData);
     return *rareDataMap().ensure(this, [] { return makeUnique<RenderObjectRareData>(); }).iterator->value;
 }
 
 void RenderObject::removeRareData()
 {
     rareDataMap().remove(this);
-    setHasRareData(false);
+    m_bitfields.clearFlag(RenderObjectFlag::HasRareData);
 }
 
 RenderObject::RenderObjectRareData::RenderObjectRareData()

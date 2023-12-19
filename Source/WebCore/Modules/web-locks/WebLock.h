@@ -36,6 +36,8 @@ class WebLock : public RefCounted<WebLock> {
 public:
     static Ref<WebLock> create(WebLockIdentifier, const String& name, WebLockMode);
 
+    static constexpr unsigned maxNameLength = { 1024 };
+
     WebLockIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
     WebLockMode mode() const { return m_mode; }

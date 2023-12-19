@@ -449,10 +449,10 @@ static void wpeViewDRMSetCursorFromName(WPEView* view, const char* name)
         cursor->setFromName(name, wpe_view_get_scale(view));
 }
 
-static void wpeViewDRMSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint hotspotX, guint hotspotY)
+static void wpeViewDRMSetCursorFromBytes(WPEView* view, GBytes* bytes, guint width, guint height, guint stride, guint hotspotX, guint hotspotY)
 {
     if (auto* cursor = wpeDisplayDRMGetCursor(WPE_DISPLAY_DRM(wpe_view_get_display(view))))
-        cursor->setFromBytes(bytes, width, height, hotspotX, hotspotY);
+        cursor->setFromBytes(bytes, width, height, stride, hotspotX, hotspotY);
 }
 
 static void wpeViewDRMScheduleCursorUpdate(WPEViewDRM* view)

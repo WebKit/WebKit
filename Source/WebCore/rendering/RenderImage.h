@@ -40,7 +40,7 @@ enum ImageSizeChangeType {
 class RenderImage : public RenderReplaced {
     WTF_MAKE_ISO_ALLOCATED(RenderImage);
 public:
-    RenderImage(Type, Element&, RenderStyle&&, StyleImage* = nullptr, const float = 1.0f);
+    RenderImage(Type, Element&, RenderStyle&&, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
     RenderImage(Type, Document&, RenderStyle&&, StyleImage* = nullptr);
     virtual ~RenderImage();
 
@@ -84,6 +84,7 @@ public:
     bool hasAnimatedImage() const;
 
 protected:
+    RenderImage(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
     void willBeDestroyed() override;
 
     bool needsPreferredWidthsRecalculation() const final;
@@ -111,7 +112,6 @@ private:
     bool canHaveChildren() const override;
 
     bool isImage() const override { return true; }
-    bool isRenderImage() const final { return true; }
 
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
     void paintIncompleteImageOutline(PaintInfo&, LayoutPoint, LayoutUnit) const;

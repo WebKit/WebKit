@@ -319,7 +319,7 @@ namespace JSC {
             threadSpecificData->takeBufferIfLarger(WTFMove(m_storage));
         }
 
-        ALWAYS_INLINE bool isAvailable(unsigned space)
+        bool isAvailable(unsigned space)
         {
             return m_index + space <= m_storage.capacity();
         }
@@ -330,7 +330,7 @@ namespace JSC {
                 outOfLineGrow();
         }
 
-        ALWAYS_INLINE bool isAligned(int alignment) const
+        bool isAligned(int alignment) const
         {
             return !(m_index & (alignment - 1));
         }
@@ -343,10 +343,10 @@ namespace JSC {
         void putInt64Unchecked(int64_t value) { putIntegralUnchecked(value); }
         void putInt64(int64_t value) { putIntegral(value); }
 #endif
-        ALWAYS_INLINE void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
-        ALWAYS_INLINE void putInt(int32_t value) { putIntegral(value); }
+        void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
+        void putInt(int32_t value) { putIntegral(value); }
 
-        ALWAYS_INLINE size_t codeSize() const
+        size_t codeSize() const
         {
             return m_index;
         }
@@ -362,14 +362,14 @@ namespace JSC {
         }
 #endif
 
-        ALWAYS_INLINE AssemblerLabel label() const
+        AssemblerLabel label() const
         {
             return AssemblerLabel(m_index);
         }
 
         unsigned debugOffset() { return m_index; }
 
-        ALWAYS_INLINE AssemblerData&& releaseAssemblerData()
+        AssemblerData&& releaseAssemblerData()
         {
             return WTFMove(m_storage);
         }
@@ -438,12 +438,12 @@ namespace JSC {
 #endif
 
 #if CPU(ARM64E)
-        ALWAYS_INLINE ARM64EHash<ShouldSign::Yes>& arm64eHash() { return m_hash; }
+        ARM64EHash<ShouldSign::Yes>& arm64eHash() { return m_hash; }
 #endif
 
     protected:
         template<typename IntegralType>
-        ALWAYS_INLINE void putIntegral(IntegralType value)
+        void putIntegral(IntegralType value)
         {
             unsigned nextIndex = m_index + sizeof(IntegralType);
             if (UNLIKELY(nextIndex > m_storage.capacity()))
@@ -452,7 +452,7 @@ namespace JSC {
         }
 
         template<typename IntegralType>
-        ALWAYS_INLINE void putIntegralUnchecked(IntegralType value)
+        void putIntegralUnchecked(IntegralType value)
         {
 #if CPU(ARM64)
             static_assert(sizeof(value) == 4);

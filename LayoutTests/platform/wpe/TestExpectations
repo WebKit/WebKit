@@ -1229,8 +1229,9 @@ webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-non-scroll
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-frame.html [ Timeout Pass ]
-webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout Pass ]
-webkit.org/b/173419 fast/events/wheel/wheelevent-basic.html [ Failure Timeout ]
+# Uncomment when webkit.org/b/266624 is fixed
+#webkit.org/b/173419 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout Pass ]
+#webkit.org/b/173419 fast/events/wheel/wheelevent-basic.html [ Failure Timeout ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/173419 fast/events/wheel/wheelevent-mousewheel-interaction.html [ Timeout Pass ]
@@ -1690,6 +1691,7 @@ webkit.org/b/266573 webgl/2.0.0/conformance2/textures/image_bitmap_from_video/te
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte.html [ Failure Crash ]
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb16f-rgb-float.html [ Failure Crash ]
 webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgba16f-rgba-half_float.html [ Failure Crash ]
+webkit.org/b/266573 webgl/2.0.0/conformance2/textures/video/tex-2d-rgb9_e5-rgb-half_float.html [ Failure Crash ]
 
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r11f_g11f_b10f-rgb-half_float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rg8-rg-unsigned_byte.html [ Failure Crash ]
@@ -1697,3 +1699,15 @@ webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb5_a1-rgba-
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb565-rgb-unsigned_short_5_6_5.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb9_e5-rgb-half_float.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba16f-rgba-float.html [ Failure Crash ]
+# Also webkit.org/b/266573
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r11f_g11f_b10f-rgb-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-r32f-red-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rg32f-rg-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb565-rgb-unsigned_byte.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb9_e5-rgb-float.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba8ui-rgba_integer-unsigned_byte.html [ Failure Crash ]
+webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-srgb8_alpha8-rgba-unsigned_byte.html [ Failure Crash ]
+
+webkit.org/b/266624 fast/events/wheel/wheel-event-destroys-overflow.html  [ Timeout Pass Crash ]
+webkit.org/b/266624 fast/events/wheel/wheelevent-basic.html  [ Failure Timeout Crash ]

@@ -439,8 +439,6 @@ protected:
     std::optional<LayoutUnit> lastLineBaseline() const override;
     std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
-    bool isMultiColumnBlockFlow() const override { return multiColumnFlow(); }
-    
     void setComputedColumnCountAndWidth(int, LayoutUnit);
 
     LayoutUnit computedColumnWidth() const;

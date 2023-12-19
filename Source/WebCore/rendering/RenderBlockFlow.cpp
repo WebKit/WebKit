@@ -548,7 +548,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         if (lowestFloatLogicalBottom() > (logicalHeight() - toAdd) && createsNewFormattingContext())
             setLogicalHeight(lowestFloatLogicalBottom() + toAdd);
         if (shouldBreakAtLineToAvoidWidow()) {
-            setEverHadLayout(true);
+            setEverHadLayout();
             continue;
         }
         break;

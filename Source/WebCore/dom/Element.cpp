@@ -2685,11 +2685,6 @@ String Element::nodeName() const
     return m_tagName.toString();
 }
 
-String Element::nodeNamePreservingCase() const
-{
-    return m_tagName.toString();
-}
-
 ExceptionOr<void> Element::setPrefix(const AtomString& prefix)
 {
     auto result = checkSetPrefix(prefix);
