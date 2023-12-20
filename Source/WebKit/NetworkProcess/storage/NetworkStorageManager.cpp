@@ -302,6 +302,8 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
             return shouldRemove;
         });
         m_temporaryBlobPathsByConnection.remove(connection);
+
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
