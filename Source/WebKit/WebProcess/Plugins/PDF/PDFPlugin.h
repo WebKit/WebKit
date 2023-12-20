@@ -154,7 +154,6 @@ private:
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
     void updateScrollbars() override;
-    WebCore::IntPoint lastKnownMousePositionInView() const override { return m_lastMousePositionInPluginCoordinates; }
     Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation) override;
     void destroyScrollbar(WebCore::ScrollbarOrientation) override;
 
@@ -244,7 +243,6 @@ private:
     RefPtr<WebCore::Element> m_annotationContainer;
 
     std::optional<WebMouseEvent> m_lastMouseEvent;
-    WebCore::IntPoint m_lastMousePositionInPluginCoordinates;
 
     String m_temporaryPDFUUID;
     String m_lastFoundString;
