@@ -326,7 +326,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
     return true;
 }
 
-void StyleSheetContents::wrapperDeleteRule(unsigned index)
+bool StyleSheetContents::wrapperDeleteRule(unsigned index)
 {
     ASSERT(m_isMutable);
     ASSERT_WITH_SECURITY_IMPLICATION(index < ruleCount());
@@ -334,7 +334,7 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
     unsigned childVectorIndex = index;
     if (childVectorIndex < m_layerRulesBeforeImportRules.size()) {
         m_layerRulesBeforeImportRules.remove(childVectorIndex);
-        return;
+        return true;
     }
     childVectorIndex -= m_layerRulesBeforeImportRules.size();
 
@@ -342,19 +342,21 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
         m_importRules[childVectorIndex]->cancelLoad();
         m_importRules[childVectorIndex]->clearParentStyleSheet();
         m_importRules.remove(childVectorIndex);
-        return;
+        return true;
     }
     childVectorIndex -= m_importRules.size();
 
     if (childVectorIndex < m_namespaceRules.size()) {
+        // Deleting @namespace rule when list contains anything other than @import or @namespace rules is not allowed.
         if (!m_childRules.isEmpty())
-            return;
+            return false;
         m_namespaceRules.remove(childVectorIndex);
-        return;
+        return true;
     }
     childVectorIndex -= m_namespaceRules.size();
 
     m_childRules.remove(childVectorIndex);
+    return true;
 }
 
 void StyleSheetContents::parserAddNamespace(const AtomString& prefix, const AtomString& uri)

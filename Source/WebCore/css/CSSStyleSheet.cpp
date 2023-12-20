@@ -377,8 +377,9 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
         return Exception { ExceptionCode::IndexSizeError };
     RuleMutationScope mutationScope(this);
 
-    m_contents->wrapperDeleteRule(index);
-
+    bool success = m_contents->wrapperDeleteRule(index);
+    if (!success)
+        return Exception { ExceptionCode::InvalidStateError };
     if (!m_childRuleCSSOMWrappers.isEmpty()) {
         if (m_childRuleCSSOMWrappers[index])
             m_childRuleCSSOMWrappers[index]->setParentStyleSheet(nullptr);
