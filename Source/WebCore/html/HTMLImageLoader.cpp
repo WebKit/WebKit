@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -80,7 +81,7 @@ void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& 
     Ref<Element> protect(element());
     ImageLoader::notifyFinished(cachedImage, metrics);
 
-    bool loadError = cachedImage.errorOccurred() || cachedImage.response().httpStatusCode() >= 400;
+    bool loadError = cachedImage.errorOccurred();
     if (!loadError) {
         if (!element().isConnected()) {
             JSC::VM& vm = commonVM();
@@ -91,7 +92,7 @@ void HTMLImageLoader::notifyFinished(CachedResource&, const NetworkLoadMetrics& 
         }
     }
 
-    if (loadError) {
+    if (loadError || cachedImage.response().httpStatusCode() >= 400) {
         if (RefPtr objectElement = dynamicDowncast<HTMLObjectElement>(element()))
             objectElement->renderFallbackContent();
     }

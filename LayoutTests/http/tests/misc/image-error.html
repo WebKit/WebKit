@@ -1,12 +1,10 @@
 <script>
     if (window.testRunner) {
-        testRunner.dumpAsText()
         testRunner.waitUntilDone();
     }
 
     function finished()
     {
-        document.getElementById('console').innerHTML = "The image size is: " + document.getElementById('result').width + "x" + document.getElementById('result').height;
         if (window.testRunner)
             testRunner.notifyDone();
     }
