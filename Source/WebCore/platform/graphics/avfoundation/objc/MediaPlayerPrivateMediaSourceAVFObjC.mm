@@ -757,7 +757,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
 
     GraphicsContextStateSaver stateSaver(context);
     FloatRect imageRect { FloatPoint::zero(), image->size() };
-    context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
+    context.drawNativeImage(*image, outputRect, imageRect);
 }
 
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)

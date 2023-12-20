@@ -197,9 +197,9 @@ void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRe
     append(DrawImageBuffer(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options));
 }
 
-void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
-    append(DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options));
+    append(DrawNativeImage(imageIdentifier, destRect, srcRect, options));
 }
 
 void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)

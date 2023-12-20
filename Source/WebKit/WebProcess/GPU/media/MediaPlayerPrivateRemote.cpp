@@ -1029,9 +1029,7 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext& conte
     auto nativeImage = nativeImageForCurrentTime();
     if (!nativeImage)
         return;
-
-    FloatRect imageRect { FloatPoint::zero(), nativeImage->size() };
-    context.drawNativeImage(*nativeImage, imageRect.size(), rect, imageRect);
+    context.drawNativeImage(*nativeImage, rect, FloatRect { { }, nativeImage->size() });
 }
 
 #if !USE(AVFOUNDATION)

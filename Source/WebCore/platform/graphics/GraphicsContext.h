@@ -250,7 +250,7 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
 
-    WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+    WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { });
 
     WEBCORE_EXPORT virtual void drawSystemImage(SystemImage&, const FloatRect&);
 
@@ -370,7 +370,7 @@ public:
 
     IsDeferred deferred() const { return m_isDeferred; }
 private:
-    virtual void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
+    virtual void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
 protected:
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);

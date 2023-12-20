@@ -143,7 +143,7 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
         return;
 
     FloatRect imageRect { { }, imageSize };
-    context->drawNativeImage(*nativeImage, imageSize, imageRect, imageRect, { CompositeOperator::Copy });
+    context->drawNativeImage(*nativeImage, imageRect, imageRect, { CompositeOperator::Copy });
     imageHandle = bitmap->createHandle();
 }
 
