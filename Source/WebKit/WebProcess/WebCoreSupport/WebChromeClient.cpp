@@ -162,7 +162,7 @@ using namespace WebCore;
 using namespace HTMLNames;
 
 AXRelayProcessSuspendedNotification::AXRelayProcessSuspendedNotification(Ref<WebPage> page, AutomaticallySend automaticallySend)
-    : m_page(page)
+    : m_page(page.get())
     , m_automaticallySend(automaticallySend)
 {
     if (m_automaticallySend == AutomaticallySend::Yes)

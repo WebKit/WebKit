@@ -27,7 +27,7 @@
 
 #include "WebPage.h"
 #include <WebCore/GeolocationClient.h>
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebKit {
 
@@ -54,7 +54,7 @@ private:
     void requestPermission(WebCore::Geolocation&) final;
     void cancelPermissionRequest(WebCore::Geolocation&) final;
 
-    CheckedRef<WebPage> m_page;
+    WeakRef<WebPage> m_page;
 };
 
 } // namespace WebKit

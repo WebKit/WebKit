@@ -248,7 +248,7 @@ void Node::dumpStatistics()
                 ++elementNodes;
 
                 // Tag stats
-                Element& element = downcast<Element>(node);
+                Element& element = uncheckedDowncast<Element>(node);
                 HashMap<String, size_t>::AddResult result = perTagCount.add(element.tagName(), 1);
                 if (!result.isNewEntry)
                     result.iterator->value++;
@@ -709,7 +709,7 @@ void Node::normalize()
             continue;
         }
 
-        Ref text = downcast<Text>(*node);
+        Ref text = uncheckedDowncast<Text>(*node);
 
         // Remove empty text nodes.
         if (!text->length()) {
@@ -723,7 +723,7 @@ void Node::normalize()
         while (RefPtr nextSibling = node->nextSibling()) {
             if (nextSibling->nodeType() != TEXT_NODE)
                 break;
-            Ref nextText = downcast<Text>(nextSibling.releaseNonNull());
+            Ref nextText = uncheckedDowncast<Text>(nextSibling.releaseNonNull());
 
             // Remove empty text nodes.
             if (!nextText->length()) {
@@ -1490,8 +1490,8 @@ bool Node::isEqualNode(Node* other) const
     
     switch (nodeType) {
     case Node::DOCUMENT_TYPE_NODE: {
-        auto& thisDocType = downcast<DocumentType>(*this);
-        auto& otherDocType = downcast<DocumentType>(*other);
+        auto& thisDocType = uncheckedDowncast<DocumentType>(*this);
+        auto& otherDocType = uncheckedDowncast<DocumentType>(*other);
         if (thisDocType.name() != otherDocType.name())
             return false;
         if (thisDocType.publicId() != otherDocType.publicId())
@@ -1501,8 +1501,8 @@ bool Node::isEqualNode(Node* other) const
         break;
         }
     case Node::ELEMENT_NODE: {
-        auto& thisElement = downcast<Element>(*this);
-        auto& otherElement = downcast<Element>(*other);
+        auto& thisElement = uncheckedDowncast<Element>(*this);
+        auto& otherElement = uncheckedDowncast<Element>(*other);
         if (thisElement.tagQName() != otherElement.tagQName())
             return false;
         if (!thisElement.hasEquivalentAttributes(otherElement))
@@ -1510,8 +1510,8 @@ bool Node::isEqualNode(Node* other) const
         break;
         }
     case Node::PROCESSING_INSTRUCTION_NODE: {
-        auto& thisProcessingInstruction = downcast<ProcessingInstruction>(*this);
-        auto& otherProcessingInstruction = downcast<ProcessingInstruction>(*other);
+        auto& thisProcessingInstruction = uncheckedDowncast<ProcessingInstruction>(*this);
+        auto& otherProcessingInstruction = uncheckedDowncast<ProcessingInstruction>(*other);
         if (thisProcessingInstruction.target() != otherProcessingInstruction.target())
             return false;
         if (thisProcessingInstruction.data() != otherProcessingInstruction.data())
@@ -1521,15 +1521,15 @@ bool Node::isEqualNode(Node* other) const
     case Node::CDATA_SECTION_NODE:
     case Node::TEXT_NODE:
     case Node::COMMENT_NODE: {
-        auto& thisCharacterData = downcast<CharacterData>(*this);
-        auto& otherCharacterData = downcast<CharacterData>(*other);
+        auto& thisCharacterData = uncheckedDowncast<CharacterData>(*this);
+        auto& otherCharacterData = uncheckedDowncast<CharacterData>(*other);
         if (thisCharacterData.data() != otherCharacterData.data())
             return false;
         break;
         }
     case Node::ATTRIBUTE_NODE: {
-        auto& thisAttribute = downcast<Attr>(*this);
-        auto& otherAttribute = downcast<Attr>(*other);
+        auto& thisAttribute = uncheckedDowncast<Attr>(*this);
+        auto& otherAttribute = uncheckedDowncast<Attr>(*other);
         if (thisAttribute.qualifiedName() != otherAttribute.qualifiedName())
             return false;
         if (thisAttribute.value() != otherAttribute.value())
@@ -1568,7 +1568,7 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
         if (prefix == xmlnsAtom())
             return XMLNSNames::xmlnsNamespaceURI.get();
 
-        auto& element = downcast<Element>(node);
+        auto& element = uncheckedDowncast<Element>(node);
         auto& namespaceURI = element.namespaceURI();
         if (!namespaceURI.isNull() && element.prefix() == prefix)
             return namespaceURI;
@@ -1588,14 +1588,14 @@ static const AtomString& locateDefaultNamespace(const Node& node, const AtomStri
         return parent ? locateDefaultNamespace(*parent, prefix) : nullAtom();
     }
     case Node::DOCUMENT_NODE:
-        if (auto* documentElement = downcast<Document>(node).documentElement())
+        if (auto* documentElement = uncheckedDowncast<Document>(node).documentElement())
             return locateDefaultNamespace(*documentElement, prefix);
         return nullAtom();
     case Node::DOCUMENT_TYPE_NODE:
     case Node::DOCUMENT_FRAGMENT_NODE:
         return nullAtom();
     case Node::ATTRIBUTE_NODE:
-        if (auto* ownerElement = downcast<Attr>(node).ownerElement())
+        if (auto* ownerElement = uncheckedDowncast<Attr>(node).ownerElement())
             return locateDefaultNamespace(*ownerElement, prefix);
         return nullAtom();
     default:
@@ -1643,16 +1643,16 @@ const AtomString& Node::lookupPrefix(const AtomString& namespaceURI) const
     
     switch (nodeType()) {
     case ELEMENT_NODE:
-        return locateNamespacePrefix(downcast<Element>(*this), namespaceURI);
+        return locateNamespacePrefix(uncheckedDowncast<Element>(*this), namespaceURI);
     case DOCUMENT_NODE:
-        if (auto* documentElement = downcast<Document>(*this).documentElement())
+        if (auto* documentElement = uncheckedDowncast<Document>(*this).documentElement())
             return locateNamespacePrefix(*documentElement, namespaceURI);
         return nullAtom();
     case DOCUMENT_FRAGMENT_NODE:
     case DOCUMENT_TYPE_NODE:
         return nullAtom();
     case ATTRIBUTE_NODE:
-        if (auto* ownerElement = downcast<Attr>(*this).ownerElement())
+        if (auto* ownerElement = uncheckedDowncast<Attr>(*this).ownerElement())
             return locateNamespacePrefix(*ownerElement, namespaceURI);
         return nullAtom();
     default:
@@ -1669,17 +1669,17 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
     case Node::CDATA_SECTION_NODE:
     case Node::COMMENT_NODE:
         isNullString = false;
-        content.append(downcast<CharacterData>(*node).data());
+        content.append(uncheckedDowncast<CharacterData>(*node).data());
         break;
 
     case Node::PROCESSING_INSTRUCTION_NODE:
         isNullString = false;
-        content.append(downcast<ProcessingInstruction>(*node).data());
+        content.append(uncheckedDowncast<ProcessingInstruction>(*node).data());
         break;
     
     case Node::ATTRIBUTE_NODE:
         isNullString = false;
-        content.append(downcast<Attr>(*node).value());
+        content.append(uncheckedDowncast<Attr>(*node).value());
         break;
 
     case Node::ELEMENT_NODE:
@@ -1724,7 +1724,7 @@ void Node::setTextContent(String&& text)
         return;
     case ELEMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE:
-        downcast<ContainerNode>(*this).stringReplaceAll(WTFMove(text));
+        uncheckedDowncast<ContainerNode>(*this).stringReplaceAll(WTFMove(text));
         return;
     case DOCUMENT_NODE:
     case DOCUMENT_TYPE_NODE:
@@ -1959,7 +1959,7 @@ void Node::showNodePathForThis() const
         case ELEMENT_NODE: {
             fprintf(stderr, "/%s", node->nodeName().utf8().data());
 
-            const Element& element = downcast<Element>(*node);
+            const Element& element = uncheckedDowncast<Element>(*node);
             const AtomString& idattr = element.getIdAttribute();
             bool hasIdAttr = !idattr.isNull() && !idattr.isEmpty();
             if (node->previousSibling() || node->nextSibling()) {

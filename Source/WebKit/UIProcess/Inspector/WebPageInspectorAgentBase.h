@@ -26,7 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/InspectorAgentBase.h>
-#include <wtf/CheckedPtr.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -42,7 +42,7 @@ class WebPageProxy;
 struct WebPageAgentContext {
     Inspector::FrontendRouter& frontendRouter;
     Inspector::BackendDispatcher& backendDispatcher;
-    CheckedRef<WebPageProxy> inspectedPage;
+    WeakRef<WebPageProxy> inspectedPage;
 };
 
 class InspectorAgentBase : public Inspector::InspectorAgentBase {

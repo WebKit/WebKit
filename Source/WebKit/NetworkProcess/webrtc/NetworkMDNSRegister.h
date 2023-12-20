@@ -79,7 +79,7 @@ private:
 
     PAL::SessionID sessionID() const;
 
-    CheckedRef<NetworkConnectionToWebProcess> m_connection;
+    WeakRef<NetworkConnectionToWebProcess> m_connection;
 #if ENABLE_MDNS
     struct DNSServiceDeallocator;
     HashMap<WebCore::ScriptExecutionContextIdentifier, std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>> m_services;

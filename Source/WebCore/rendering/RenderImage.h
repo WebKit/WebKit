@@ -84,7 +84,7 @@ public:
     bool hasAnimatedImage() const;
 
 protected:
-    RenderImage(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
+    RenderImage(Type, Element&, RenderStyle&&, OptionSet<ReplacedFlag>, StyleImage* = nullptr, const float imageDevicePixelRatio = 1.0f);
     void willBeDestroyed() override;
 
     bool needsPreferredWidthsRecalculation() const final;

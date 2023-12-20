@@ -83,44 +83,44 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
 {
     switch (type()) {
     case StyleRuleType::Style:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRule>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRule>(*this));
     case StyleRuleType::StyleWithNesting:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleWithNesting>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleWithNesting>(*this));
     case StyleRuleType::Page:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRulePage>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRulePage>(*this));
     case StyleRuleType::FontFace:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontFace>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleFontFace>(*this));
     case StyleRuleType::FontFeatureValues:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontFeatureValues>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleFontFeatureValues>(*this));
     case StyleRuleType::FontFeatureValuesBlock:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontFeatureValuesBlock>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleFontFeatureValuesBlock>(*this));
     case StyleRuleType::FontPaletteValues:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleFontPaletteValues>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleFontPaletteValues>(*this));
     case StyleRuleType::Media:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleMedia>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleMedia>(*this));
     case StyleRuleType::Supports:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleSupports>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleSupports>(*this));
     case StyleRuleType::Import:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleImport>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleImport>(*this));
     case StyleRuleType::Keyframes:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleKeyframes>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleKeyframes>(*this));
     case StyleRuleType::Namespace:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleNamespace>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleNamespace>(*this));
     case StyleRuleType::Keyframe:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleKeyframe>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleKeyframe>(*this));
     case StyleRuleType::Charset:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleCharset>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleCharset>(*this));
     case StyleRuleType::CounterStyle:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleCounterStyle>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleCounterStyle>(*this));
     case StyleRuleType::LayerBlock:
     case StyleRuleType::LayerStatement:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleLayer>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleLayer>(*this));
     case StyleRuleType::Container:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleContainer>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleContainer>(*this));
     case StyleRuleType::Property:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleProperty>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleProperty>(*this));
     case StyleRuleType::Scope:
-        return std::invoke(std::forward<Visitor>(visitor), downcast<StyleRuleScope>(*this));
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleScope>(*this));
     case StyleRuleType::Margin:
         break;
     case StyleRuleType::Unknown:

@@ -36,23 +36,21 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<PageGroupIdentifier, CheckedPtr<WebDatabaseProvider>>& databaseProviders()
+static HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>& databaseProviders()
 {
-    static NeverDestroyed<HashMap<PageGroupIdentifier, CheckedPtr<WebDatabaseProvider>>> databaseProviders;
+    static NeverDestroyed<HashMap<PageGroupIdentifier, WeakRef<WebDatabaseProvider>>> databaseProviders;
 
     return databaseProviders;
 }
 
 Ref<WebDatabaseProvider> WebDatabaseProvider::getOrCreate(PageGroupIdentifier identifier)
 {
-    auto& slot = databaseProviders().add(identifier, nullptr).iterator->value;
-    if (slot)
-        return *slot;
-
-    Ref<WebDatabaseProvider> databaseProvider = adoptRef(*new WebDatabaseProvider(identifier));
-    slot = databaseProvider.ptr();
-
-    return databaseProvider;
+    RefPtr<WebDatabaseProvider> databaseProvider;
+    auto& slot = databaseProviders().ensure(identifier, [&] {
+        databaseProvider = adoptRef(new WebDatabaseProvider(identifier));
+        return WeakRef { *databaseProvider };
+    }).iterator->value;
+    return databaseProvider ? databaseProvider.releaseNonNull() : Ref { slot.get() };
 }
 
 WebDatabaseProvider::WebDatabaseProvider(PageGroupIdentifier identifier)

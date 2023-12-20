@@ -268,6 +268,11 @@ void SuspendedPageProxy::suspensionTimedOut()
     backForwardCache().removeEntry(*this); // Will destroy |this|.
 }
 
+WebPageProxy& SuspendedPageProxy::page() const
+{
+    return m_page.get();
+}
+
 void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());

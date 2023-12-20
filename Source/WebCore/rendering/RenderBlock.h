@@ -59,8 +59,8 @@ public:
     virtual ~RenderBlock();
 
 protected:
-    RenderBlock(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
-    RenderBlock(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderBlock(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>);
+    RenderBlock(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>);
 
 public:
     // These two functions are overridden for inline-block.

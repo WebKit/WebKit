@@ -121,6 +121,8 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
         return true;
     bool didReceiveRedirectResponse = false;
     for (auto& origin : ancestorOrigins) {
+        if (!origin)
+            continue;
         URL originURL = urlFromOrigin(*origin);
         if (!originURL.isValid() || !directive->allows(originURL, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;

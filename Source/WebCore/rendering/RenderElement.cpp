@@ -81,6 +81,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
+#include "RenderTreeBuilderRuby.h"
 #include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "SVGElementTypeHelpers.h"
@@ -116,7 +117,7 @@ struct SameSizeAsRenderElement : public RenderObject {
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<RenderElementType> flags)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<TypeFlag> flags)
     : RenderObject(type, elementOrDocument, flags)
     , m_firstChild(nullptr)
     , m_ancestorLineBoxDirty(false)
@@ -140,12 +141,12 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     ASSERT(RenderObject::isRenderElement());
 }
 
-RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags)
     : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags)
     : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
 {
 }
@@ -780,7 +781,13 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (is<RenderFragmentedFlow>(elementChild.get()))
             continue;
 
-        auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild->style().display());
+        auto newStyle = [&] {
+            auto display = elementChild->style().display();
+            if (display == DisplayType::RubyBase || display == DisplayType::Ruby)
+                return createAnonymousStyleForRuby(style(), display);
+            return RenderStyle::createAnonymousStyleWithDisplay(style(), display);
+        }();
+
         if (style().specifiesColumns()) {
             if (elementChild->style().specifiesColumns())
                 newStyle.inheritColumnPropertiesFrom(style());

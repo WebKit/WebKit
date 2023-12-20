@@ -40,7 +40,7 @@ class WebPreferences;
 class WebPageProxy;
 class WebUserContentControllerProxy;
 
-class WebPageGroup : public API::ObjectImpl<API::Object::Type::PageGroup>, public CanMakeCheckedPtr {
+class WebPageGroup : public API::ObjectImpl<API::Object::Type::PageGroup>, public CanMakeWeakPtr<WebPageGroup> {
 public:
     explicit WebPageGroup(const String& identifier = { });
     static Ref<WebPageGroup> create(const String& identifier = { });

@@ -132,17 +132,15 @@ static const unsigned backgroundObscurationTestMaxDepth = 4;
 
 bool RenderBox::s_hadNonVisibleOverflow = false;
 
-RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderBoxModelObject(type, element, WTFMove(style), baseTypeFlags)
+RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> flags)
+    : RenderBoxModelObject(type, element, WTFMove(style), flags | TypeFlag::IsBox)
 {
-    setIsRenderBox();
     ASSERT(isRenderBox());
 }
 
-RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderBoxModelObject(type, document, WTFMove(style), baseTypeFlags)
+RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> flags)
+    : RenderBoxModelObject(type, document, WTFMove(style), flags | TypeFlag::IsBox)
 {
-    setIsRenderBox();
     ASSERT(isRenderBox());
 }
 

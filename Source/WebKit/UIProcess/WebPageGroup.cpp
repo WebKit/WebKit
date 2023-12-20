@@ -41,7 +41,7 @@
 
 namespace WebKit {
 
-using WebPageGroupMap = HashMap<PageGroupIdentifier, CheckedPtr<WebPageGroup>>;
+using WebPageGroupMap = HashMap<PageGroupIdentifier, WeakRef<WebPageGroup>>;
 
 static WebPageGroupMap& webPageGroupMap()
 {
@@ -62,7 +62,7 @@ WebPageGroup* WebPageGroup::get(PageGroupIdentifier pageGroupID)
 void WebPageGroup::forEach(Function<void(WebPageGroup&)>&& function)
 {
     auto allGroups = WTF::map(webPageGroupMap().values(), [](auto&& group) -> Ref<WebPageGroup> {
-        return *group;
+        return group.get();
     });
     for (auto& group : allGroups)
         function(group);
@@ -95,7 +95,7 @@ WebPageGroup::WebPageGroup(const String& identifier)
     , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2"_s, "WebKit2."_s))
     , m_userContentController(WebUserContentControllerProxy::create())
 {
-    webPageGroupMap().set(m_data.pageGroupID, this);
+    webPageGroupMap().set(m_data.pageGroupID, *this);
 }
 
 WebPageGroup::~WebPageGroup()

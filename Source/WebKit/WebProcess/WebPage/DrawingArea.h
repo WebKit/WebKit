@@ -193,7 +193,7 @@ protected:
 
     const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
-    CheckedRef<WebPage> m_webPage;
+    WeakRef<WebPage> m_webPage;
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
     bool m_isScalingViewToFitDocument { false };

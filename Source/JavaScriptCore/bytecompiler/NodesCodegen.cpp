@@ -4548,20 +4548,17 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         dst = nullptr;
 
     RefPtr<RegisterID> returnRegister = nullptr;
-    if (m_value)
+    if (m_value) {
         returnRegister = generator.emitNodeInTailPositionFromReturnNode(dst, m_value);
-    else
+        if (generator.parseMode() == SourceParseMode::AsyncGeneratorBodyMode)
+            returnRegister = generator.emitAwait(generator.newTemporary(), returnRegister.get());
+    } else
         returnRegister = generator.emitLoad(dst, jsUndefined());
 
     generator.emitProfileType(returnRegister.get(), ProfileTypeBytecodeFunctionReturnStatement, divotStart(), divotEnd());
 
     bool hasFinally = generator.emitReturnViaFinallyIfNeeded(returnRegister.get());
     if (!hasFinally) {
-        if (generator.parseMode() == SourceParseMode::AsyncGeneratorBodyMode) {
-            returnRegister = generator.move(generator.newTemporary(), returnRegister.get());
-            generator.emitAwait(returnRegister.get());
-        }
-
         generator.emitWillLeaveCallFrameDebugHook();
         generator.emitReturn(returnRegister.get());
     }

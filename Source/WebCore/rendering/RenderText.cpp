@@ -251,12 +251,11 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
 }
 
 inline RenderText::RenderText(Type type, Node& node, const String& text)
-    : RenderObject(type, node, { })
+    : RenderObject(type, node, TypeFlag::IsText)
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
 {
     ASSERT(!m_text.isNull());
-    setIsRenderText();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     ASSERT(isRenderText());
 }

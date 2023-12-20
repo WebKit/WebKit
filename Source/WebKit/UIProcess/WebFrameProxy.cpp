@@ -54,6 +54,7 @@
 #include <stdio.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
@@ -63,10 +64,10 @@ using namespace WebCore;
 
 class WebPageProxy;
 
-static HashMap<FrameIdentifier, CheckedPtr<WebFrameProxy>>& allFrames()
+static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& allFrames()
 {
     ASSERT(RunLoop::isMain());
-    static NeverDestroyed<HashMap<FrameIdentifier, CheckedPtr<WebFrameProxy>>> map;
+    static NeverDestroyed<HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>> map;
     return map.get();
 }
 
@@ -90,7 +91,7 @@ WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, Frame
     , m_frameID(frameID)
 {
     ASSERT(!allFrames().contains(frameID));
-    allFrames().set(frameID, this);
+    allFrames().set(frameID, *this);
     WebProcessPool::statistics().wkFrameCount++;
 }
 

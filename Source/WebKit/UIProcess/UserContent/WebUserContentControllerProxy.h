@@ -67,7 +67,7 @@ struct WebPageCreationParameters;
 struct UserContentControllerParameters;
 enum class InjectUserScriptImmediately : bool;
 
-class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, public IPC::MessageReceiver, public CanMakeCheckedPtr {
+class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, public IPC::MessageReceiver {
 public:
     static Ref<WebUserContentControllerProxy> create()
     { 

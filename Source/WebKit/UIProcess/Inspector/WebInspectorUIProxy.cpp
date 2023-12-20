@@ -66,7 +66,7 @@ const unsigned WebInspectorUIProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorUIProxy::initialWindowHeight = 650;
 
 WebInspectorUIProxy::WebInspectorUIProxy(WebPageProxy& inspectedPage)
-    : m_inspectedPage(&inspectedPage)
+    : m_inspectedPage(inspectedPage)
     , m_inspectorClient(makeUnique<API::InspectorClient>())
     , m_inspectedPageIdentifier(inspectedPage.identifier())
 #if PLATFORM(MAC)

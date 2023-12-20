@@ -247,6 +247,25 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
     return *lastRun;
 }
 
+RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, DisplayType display)
+{
+    ASSERT(display == DisplayType::Ruby || display == DisplayType::RubyBase);
+
+    auto style = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, display);
+    style.setUnicodeBidi(UnicodeBidi::Isolate);
+    if (display == DisplayType::RubyBase)
+        style.setTextWrapMode(TextWrapMode::NoWrap);
+    return style;
+}
+
+static RenderPtr<RenderElement> createAnonymousRendererForRuby(RenderElement& parent, DisplayType display)
+{
+    auto style = createAnonymousStyleForRuby(parent.style(), display);
+    auto ruby = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTFMove(style));
+    ruby->initializeStyle();
+    return ruby;
+}
+
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild(RenderElement& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
     if (!child.isRenderText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
@@ -259,8 +278,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
     }
 
     if (parent.style().display() != DisplayType::Ruby) {
-        auto rubyContainer = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Ruby));
-        rubyContainer->initializeStyle();
+        auto rubyContainer = createAnonymousRendererForRuby(parent, DisplayType::Ruby);
         WeakPtr newParent = rubyContainer.get();
         m_builder.attach(parent, WTFMove(rubyContainer), beforeChild);
         beforeChild = nullptr;
@@ -279,10 +297,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
         return downcast<RenderElement>(*previous);
     }
 
-    auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase);
-    baseStyle.setUnicodeBidi(UnicodeBidi::Isolate);
-
-    auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTFMove(baseStyle));
+    auto rubyBase = createAnonymousRendererForRuby(parent, DisplayType::RubyBase);
     rubyBase->initializeStyle();
     WeakPtr newParent = rubyBase.get();
     m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(rubyBase), beforeChild);
@@ -307,8 +322,7 @@ void RenderTreeBuilder::Ruby::attachForStyleBasedRuby(RenderElement& parent, Ren
         // Create an empty anonymous base if it is missing.
         WeakPtr previous = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
         if (!previous || previous->style().display() != DisplayType::RubyBase) {
-            auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
-            rubyBase->initializeStyle();
+            auto rubyBase = createAnonymousRendererForRuby(parent, DisplayType::RubyBase);
             m_builder.attachToRenderElementInternal(parent, WTFMove(rubyBase), beforeChild);
         }
     }

@@ -1871,6 +1871,9 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 # "reftest-wait" blocks attachment rendering.
 webkit.org/b/263367 fast/attachment/attachment-icon-from-file-extension.html [ Skip ]
 webkit.org/b/263367 fast/attachment/attachment-uti.html [ Skip ]
+webkit.org/b/265962 fast/attachment/attachment-folder-icon.html [ Skip ]
+webkit.org/b/265962 fast/attachment/attachment-type-attribute.html [ Skip ]
+webkit.org/b/265962 fast/attachment/attachment-default-icon.html [ Skip ]
 
 # <rdar://problem/42625657> REGRESSION (Mojave): 12 fast/images tests timing out on WK1
 fast/images/animated-heics-draw.html [ Skip ]

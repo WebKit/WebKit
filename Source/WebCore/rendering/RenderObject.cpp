@@ -120,7 +120,7 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
     CheckedRef<Node> node;
     SingleThreadWeakPtr<RenderObject> pointers;
     SingleThreadPackedWeakPtr<RenderObject> m_previous;
-    uint16_t m_renderElementTypes;
+    uint16_t m_typeFlags;
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     uint8_t m_type;
     uint8_t m_typeSpecificFlags;
@@ -138,18 +138,17 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
     renderer->destroy();
 }
 
-RenderObject::RenderObject(Type type, Node& node, OptionSet<RenderElementType> typeFlags)
+RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags)
     : CachedImageClient()
 #if ASSERT_ENABLED
     , m_hasAXObject(false)
     , m_setNeedsLayoutForbidden(false)
 #endif
     , m_node(node)
-    , m_renderElementTypeFlags(typeFlags)
+    , m_typeFlags(node.isDocumentNode() ? (typeFlags | TypeFlag::IsAnonymous) : typeFlags)
     , m_type(type)
 {
-    if (node.isDocumentNode())
-        m_bitfields.setFlag(RenderObjectFlag::IsAnonymous);
+    ASSERT(!typeFlags.contains(TypeFlag::IsAnonymous));
     if (CheckedPtr renderView = node.document().renderView())
         renderView->didCreateRenderer();
 #ifndef NDEBUG
@@ -2138,12 +2137,6 @@ void RenderObject::setHasReflection(bool hasReflection)
         ensureRareData().setHasReflection(hasReflection);
 }
 
-void RenderObject::setIsRenderFragmentedFlow(bool isFragmentedFlow)
-{
-    if (isFragmentedFlow || hasRareData())
-        ensureRareData().setIsRenderFragmentedFlow(isFragmentedFlow);
-}
-
 void RenderObject::setHasOutlineAutoAncestor(bool hasOutlineAutoAncestor)
 {
     if (hasOutlineAutoAncestor || hasRareData())
@@ -2190,7 +2183,6 @@ void RenderObject::removeRareData()
 
 RenderObject::RenderObjectRareData::RenderObjectRareData()
     : m_hasReflection(false)
-    , m_isRenderFragmentedFlow(false)
     , m_hasOutlineAutoAncestor(false)
     , m_paintContainmentApplies(false)
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

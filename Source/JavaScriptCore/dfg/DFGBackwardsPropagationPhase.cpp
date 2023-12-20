@@ -410,7 +410,7 @@ private:
         }
 
         case ArithClz32: {
-            flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | ~NodeBytecodePrefersArrayIndex);
+            flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodePrefersArrayIndex);
             flags |= NodeBytecodeUsesAsInt;
             node->child1()->mergeFlags(flags);
             break;
