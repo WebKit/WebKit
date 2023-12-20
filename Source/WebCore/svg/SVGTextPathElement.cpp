@@ -28,6 +28,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
+#include "SVGPathElement.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -157,8 +158,8 @@ void SVGTextPathElement::buildPendingResource()
             treeScope.addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (target.element->hasTagName(SVGNames::pathTag))
-        downcast<SVGElement>(*target.element).addReferencingElement(*this);
+    } else if (RefPtr pathElement = dynamicDowncast<SVGPathElement>(*target.element))
+        pathElement->addReferencingElement(*this);
 }
 
 Node::InsertedIntoAncestorResult SVGTextPathElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
