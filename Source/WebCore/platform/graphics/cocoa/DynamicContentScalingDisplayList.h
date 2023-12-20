@@ -33,13 +33,13 @@
 namespace WebCore {
 
 class DynamicContentScalingDisplayList {
-    WTF_MAKE_NONCOPYABLE(DynamicContentScalingDisplayList);
 public:
     DynamicContentScalingDisplayList(Ref<WebCore::SharedBuffer> displayList, Vector<MachSendRight>&& surfaces)
         : m_displayList(WTFMove(displayList))
         , m_surfaces(WTFMove(surfaces))
     {
     }
+    explicit CGDisplayList(const CGDisplayList&) = default;
 
     DynamicContentScalingDisplayList(DynamicContentScalingDisplayList&&) = default;
     DynamicContentScalingDisplayList& operator=(DynamicContentScalingDisplayList&&) = default;

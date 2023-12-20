@@ -3757,6 +3757,8 @@ webkit.org/b/266636 fast/multicol/last-set-crash.html [ Skip ]
 
 webkit.org/b/266708 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-currentSrc.html [ Pass Crash ]
 
+webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
