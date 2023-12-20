@@ -127,6 +127,7 @@ public:
 
     bool hasWidthDependentTransform() const { return m_hasWidthDependentTransform; }
     bool hasHeightDependentTransform() const { return m_hasHeightDependentTransform; }
+    bool hasExplicitlyInheritedKeyframeProperty() const { return m_hasExplicitlyInheritedKeyframeProperty; }
 
 private:
     void analyzeKeyframe(const BlendingKeyframe&);
@@ -140,6 +141,7 @@ private:
     bool m_containsCSSVariableReferences { false };
     bool m_hasWidthDependentTransform { false };
     bool m_hasHeightDependentTransform { false };
+    bool m_hasExplicitlyInheritedKeyframeProperty { false };
 };
 
 } // namespace WebCore

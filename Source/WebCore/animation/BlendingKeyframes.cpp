@@ -317,12 +317,12 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
 
 void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
 {
-    auto analyzeSizeDependentTransform = [&]() {
-        if (m_hasWidthDependentTransform && m_hasHeightDependentTransform)
-            return;
+    auto* style = keyframe.style();
+    if (!style)
+        return;
 
-        auto* style = keyframe.style();
-        if (!style)
+    auto analyzeSizeDependentTransform = [&] {
+        if (m_hasWidthDependentTransform && m_hasHeightDependentTransform)
             return;
 
         if (keyframe.animatesProperty(CSSPropertyTransform)) {
@@ -346,7 +346,13 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
         }
     };
 
+    auto analyzeExplicitlyInheritedKeyframeProperty = [&] {
+        if (!m_hasExplicitlyInheritedKeyframeProperty)
+            m_hasExplicitlyInheritedKeyframeProperty = style->hasExplicitlyInheritedProperties();
+    };
+
     analyzeSizeDependentTransform();
+    analyzeExplicitlyInheritedKeyframeProperty();
 }
 
 void BlendingKeyframe::addProperty(const AnimatableCSSProperty& property)
