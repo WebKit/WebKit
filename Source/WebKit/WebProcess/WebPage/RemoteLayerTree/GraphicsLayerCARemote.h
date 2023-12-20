@@ -33,7 +33,7 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA {
+class GraphicsLayerCARemote final : public WebCore::GraphicsLayerCA, public CanMakeWeakPtr<GraphicsLayerCARemote> {
 public:
     GraphicsLayerCARemote(Type layerType, WebCore::GraphicsLayerClient&, RemoteLayerTreeContext&);
     virtual ~GraphicsLayerCARemote();
