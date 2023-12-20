@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+
+input {
+    border: 1px solid black;
+}
+
+input:user-valid {
+    border: 1px solid green;
+}
+
+</style>
+</head>
+<body>
+
+<input id="input" type="time" min="09:30">
+
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    input.focus();
+    UIHelper.keyDown("9");
+    UIHelper.keyDown("\t");
+    UIHelper.keyDown("3");
+    UIHelper.keyDown("1");
+    UIHelper.keyDown("\t");
+    UIHelper.keyDown("A");
+    input.blur();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>

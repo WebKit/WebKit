@@ -30,7 +30,6 @@
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

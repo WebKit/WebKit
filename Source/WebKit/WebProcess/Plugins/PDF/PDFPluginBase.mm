@@ -440,6 +440,46 @@ void PDFPluginBase::willDetachRenderer()
         frameView->removeScrollableArea(this);
 }
 
+IntRect PDFPluginBase::viewRelativeVerticalScrollbarRect() const
+{
+    if (!m_verticalScrollbar)
+        return { };
+
+    auto scrollbarRect = IntRect({ }, size());
+    scrollbarRect.shiftXEdgeTo(scrollbarRect.maxX() - m_verticalScrollbar->width());
+
+    if (m_horizontalScrollbar)
+        scrollbarRect.contract(0, m_horizontalScrollbar->width());
+
+    return scrollbarRect;
+}
+
+IntRect PDFPluginBase::viewRelativeHorizontalScrollbarRect() const
+{
+    if (!m_horizontalScrollbar)
+        return { };
+
+    auto scrollbarRect = IntRect({ }, size());
+    scrollbarRect.shiftYEdgeTo(scrollbarRect.maxY() - m_horizontalScrollbar->height());
+
+    if (m_verticalScrollbar)
+        scrollbarRect.contract(m_verticalScrollbar->width(), 0);
+
+    return scrollbarRect;
+}
+
+IntRect PDFPluginBase::viewRelativeScrollCornerRect() const
+{
+    IntSize scrollbarSpace = scrollbarIntrusion();
+    if (scrollbarSpace.isEmpty())
+        return { };
+
+    auto cornerRect = IntRect({ }, size());
+    cornerRect.shiftXEdgeTo(cornerRect.maxX() - scrollbarSpace.width());
+    cornerRect.shiftYEdgeTo(cornerRect.maxY() - scrollbarSpace.height());
+    return cornerRect;
+}
+
 void PDFPluginBase::updateScrollbars()
 {
     if (m_hasBeenDestroyed)
@@ -460,24 +500,22 @@ void PDFPluginBase::updateScrollbars()
     } else if (m_size.height() < pdfDocumentSize.height())
         m_verticalScrollbar = createScrollbar(ScrollbarOrientation::Vertical);
 
-    IntSize scrollbarSpace = scrollbarIntrusion();
-
     if (m_horizontalScrollbar) {
-        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), firstPageHeight());
-        m_horizontalScrollbar->setProportion(m_size.width() - scrollbarSpace.width(), pdfDocumentSize.width());
-        IntRect scrollbarRect(m_view->x(), m_view->y() + m_size.height() - m_horizontalScrollbar->height(), m_size.width(), m_horizontalScrollbar->height());
-        if (m_verticalScrollbar)
-            scrollbarRect.contract(m_verticalScrollbar->width(), 0);
+        auto scrollbarRect = viewRelativeHorizontalScrollbarRect();
+        scrollbarRect.moveBy(m_view->location());
         m_horizontalScrollbar->setFrameRect(scrollbarRect);
+
+        m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), firstPageHeight());
+        m_horizontalScrollbar->setProportion(scrollbarRect.width(), pdfDocumentSize.width());
     }
 
     if (m_verticalScrollbar) {
-        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), firstPageHeight());
-        m_verticalScrollbar->setProportion(m_size.height() - scrollbarSpace.height(), pdfDocumentSize.height());
-        IntRect scrollbarRect(IntRect(m_view->x() + m_size.width() - m_verticalScrollbar->width(), m_view->y(), m_verticalScrollbar->width(), m_size.height()));
-        if (m_horizontalScrollbar)
-            scrollbarRect.contract(0, m_horizontalScrollbar->height());
+        auto scrollbarRect = viewRelativeVerticalScrollbarRect();
+        scrollbarRect.moveBy(m_view->location());
         m_verticalScrollbar->setFrameRect(scrollbarRect);
+
+        m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), firstPageHeight());
+        m_verticalScrollbar->setProportion(scrollbarRect.height(), pdfDocumentSize.height());
     }
 
     RefPtr frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;

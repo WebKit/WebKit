@@ -1,0 +1,26 @@
+Test for input and change events for <input type=date>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS inputEventsFired is 0
+PASS changeEventsFired is 0
+PASS inputEventsFired is 0
+PASS changeEventsFired is 0
+PASS inputEventsFired is 1
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 3
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 0
+PASS inputEventsFired is 4
+PASS changeEventsFired is 0
+PASS input.value is "2012-09-02"
+PASS inputEventsFired is 4
+PASS changeEventsFired is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

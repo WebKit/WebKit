@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+
+input {
+    border: 1px solid black;
+}
+
+input:user-invalid {
+    border: 1px red solid;
+}
+
+</style>
+</head>
+<body>
+
+<p>Test that typing a partially completed time does not match :user-invalid</p>
+<input id="input" type="time">
+
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+addEventListener("load", async () => {
+    input.focus();
+    UIHelper.keyDown("9");
+    input.blur();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+</script>
+</body>
+</html>

@@ -5545,7 +5545,7 @@ class PrintConfiguration(steps.ShellSequence):
     logEnviron = False
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], ['xcodebuild', '-sdk', '-version']]
-    command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a'], ['uptime']]
+    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime']]
 
     def __init__(self, **kwargs):
         super().__init__(timeout=60, **kwargs)

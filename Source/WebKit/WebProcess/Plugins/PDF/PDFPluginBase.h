@@ -211,13 +211,20 @@ protected:
     WebCore::IntSize visibleSize() const final { return m_size; }
     float deviceScaleFactor() const override;
     bool shouldSuspendScrollAnimations() const final { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
-    void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) final;
+    void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
+
     WebCore::IntRect convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntRect& scrollbarRect) const final;
     WebCore::IntRect convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntRect& parentRect) const final;
     WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const final;
     WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const final;
+
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool shouldPlaceVerticalScrollbarOnLeft() const final { return false; }
+
+    WebCore::IntRect viewRelativeVerticalScrollbarRect() const;
+    WebCore::IntRect viewRelativeHorizontalScrollbarRect() const;
+    WebCore::IntRect viewRelativeScrollCornerRect() const;
+
     String debugDescription() const final;
 
     // Scrolling, but not ScrollableArea:

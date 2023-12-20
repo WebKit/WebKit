@@ -6,11 +6,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Digit keys
 PASS input.value is "00:02"
+PASS changeEventsFired is 0
+PASS inputEventsFired is 1
 PASS changeEventsFired is 1
 PASS inputEventsFired is 1
 
 Digit keys with timeout
 PASS input.value is "14:05"
+PASS changeEventsFired is 0
+PASS inputEventsFired is 1
 PASS changeEventsFired is 1
 PASS inputEventsFired is 1
 
@@ -20,13 +24,17 @@ PASS input.value is "12:22"
 PASS input.value is "13:22"
 PASS input.value is "13:06"
 PASS input.value is "13:59"
-PASS changeEventsFired is 5
+PASS changeEventsFired is 0
+PASS inputEventsFired is 5
+PASS changeEventsFired is 1
 PASS inputEventsFired is 5
 
 Left/Right arrow keys
 PASS input.value is "02:02"
 PASS input.value is "03:03"
-PASS changeEventsFired is 5
+PASS changeEventsFired is 0
+PASS inputEventsFired is 5
+PASS changeEventsFired is 1
 PASS inputEventsFired is 5
 
 Left/Right arrow keys (vertical-lr)
@@ -37,7 +45,9 @@ PASS input.value is "23:59"
 PASS input.value is "11:59"
 PASS input.value is "23:59"
 PASS input.value is "11:59"
-PASS changeEventsFired is 7
+PASS changeEventsFired is 0
+PASS inputEventsFired is 7
+PASS changeEventsFired is 1
 PASS inputEventsFired is 7
 
 Left/Right arrow keys (vertical-rl)
@@ -48,7 +58,9 @@ PASS input.value is "23:59"
 PASS input.value is "11:59"
 PASS input.value is "23:59"
 PASS input.value is "11:59"
-PASS changeEventsFired is 7
+PASS changeEventsFired is 0
+PASS inputEventsFired is 7
+PASS changeEventsFired is 1
 PASS inputEventsFired is 7
 
 Advance field keys
@@ -58,7 +70,9 @@ PASS input.value is "01:05"
 PASS input.value is "01:06"
 PASS input.value is "01:07"
 PASS input.value is "01:08"
-PASS changeEventsFired is 6
+PASS changeEventsFired is 0
+PASS inputEventsFired is 6
+PASS changeEventsFired is 1
 PASS inputEventsFired is 6
 
 Up/Down arrow keys
@@ -69,19 +83,25 @@ PASS input.value is "23:59"
 PASS input.value is "11:59"
 PASS input.value is "23:59"
 PASS input.value is "11:59"
-PASS changeEventsFired is 7
+PASS changeEventsFired is 0
+PASS inputEventsFired is 7
+PASS changeEventsFired is 1
 PASS inputEventsFired is 7
 
 Up/Down arrow keys (vertical-lr)
 PASS input.value is "02:02"
 PASS input.value is "03:03"
-PASS changeEventsFired is 5
+PASS changeEventsFired is 0
+PASS inputEventsFired is 5
+PASS changeEventsFired is 1
 PASS inputEventsFired is 5
 
 Up/Down arrow keys (vertical-rl)
 PASS input.value is "02:02"
 PASS input.value is "03:03"
-PASS changeEventsFired is 5
+PASS changeEventsFired is 0
+PASS inputEventsFired is 5
+PASS changeEventsFired is 1
 PASS inputEventsFired is 5
 
 Tab key
@@ -89,17 +109,19 @@ PASS input.value is "02:02"
 PASS document.activeElement.id is "after"
 PASS input.value is "03:03"
 PASS document.activeElement.id is "before"
-PASS changeEventsFired is 3
+PASS changeEventsFired is 2
 PASS inputEventsFired is 3
 
 Backspace key
 PASS input.value is ""
 PASS input.value is "19:30"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
 PASS inputEventsFired is 2
 
 Delete key
 PASS input.value is ""
+PASS changeEventsFired is 0
+PASS inputEventsFired is 1
 PASS changeEventsFired is 1
 PASS inputEventsFired is 1
 
@@ -108,7 +130,9 @@ PASS input.value is "09:01"
 PASS input.value is "01:01"
 PASS input.value is "01:01"
 PASS input.value is "01:02"
-PASS changeEventsFired is 2
+PASS changeEventsFired is 0
+PASS inputEventsFired is 2
+PASS changeEventsFired is 1
 PASS inputEventsFired is 2
 PASS successfullyParsed is true
 

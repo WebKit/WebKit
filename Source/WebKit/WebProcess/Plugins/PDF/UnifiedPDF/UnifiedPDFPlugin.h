@@ -32,6 +32,10 @@
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/OptionSet.h>
 
+namespace WebCore {
+enum class DelegatedScrollingMode : uint8_t;
+}
+
 namespace WebKit {
 
 struct PDFContextMenu;
@@ -100,6 +104,13 @@ private:
     void scheduleRenderingUpdate();
 
     void updateLayout();
+
+    WebCore::IntRect availableContentsRect() const;
+
+    WebCore::DelegatedScrollingMode scrollingMode() const;
+
+    void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
+    void updateScrollbars() override;
     void geometryDidChange(const WebCore::IntSize&, const WebCore::AffineTransform&) override;
 
     RefPtr<WebCore::FragmentedSharedBuffer> liveResourceData() const override;
@@ -171,6 +182,7 @@ private:
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 
+    void ensureLayers();
     void updateLayerHierarchy();
 
     void didChangeScrollOffset() override;
@@ -183,7 +195,16 @@ private:
 
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
+
+    WebCore::GraphicsLayer* layerForHorizontalScrollbar() const override;
+    WebCore::GraphicsLayer* layerForVerticalScrollbar() const override;
+    WebCore::GraphicsLayer* layerForScrollCorner() const override;
+
     void updateScrollingExtents();
+
+    bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
+    void positionOverflowControlsLayers();
+
     WebCore::ScrollingCoordinator* scrollingCoordinator();
 
     // ScrollableArea
@@ -211,6 +232,11 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
     RefPtr<WebCore::GraphicsLayer> m_scrolledContentsLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
+
+    RefPtr<WebCore::GraphicsLayer> m_overflowControlsContainer;
+    RefPtr<WebCore::GraphicsLayer> m_layerForHorizontalScrollbar;
+    RefPtr<WebCore::GraphicsLayer> m_layerForVerticalScrollbar;
+    RefPtr<WebCore::GraphicsLayer> m_layerForScrollCorner;
 
     WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
 
