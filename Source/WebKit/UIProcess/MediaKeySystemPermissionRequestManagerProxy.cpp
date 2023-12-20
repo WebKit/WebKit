@@ -105,7 +105,7 @@ void MediaKeySystemPermissionRequestManagerProxy::grantRequest(MediaKeySystemPer
 #if ENABLE(ENCRYPTED_MEDIA)
     ALWAYS_LOG(LOGIDENTIFIER, request.mediaKeySystemID().toUInt64(), ", keySystem: ", request.keySystem());
 
-    m_page.sendWithAsyncReply(Messages::WebPage::MediaKeySystemWasGranted { request.mediaKeySystemID() }, [] { });
+    m_page.send(Messages::WebPage::MediaKeySystemWasGranted { request.mediaKeySystemID() });
 #else
     UNUSED_PARAM(request);
 #endif

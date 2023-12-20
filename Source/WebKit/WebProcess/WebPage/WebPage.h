@@ -1973,7 +1973,7 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    void mediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier, CompletionHandler<void()>&&);
+    void mediaKeySystemWasGranted(WebCore::MediaKeySystemRequestIdentifier);
     void mediaKeySystemWasDenied(WebCore::MediaKeySystemRequestIdentifier, String&& message);
 #endif
 
