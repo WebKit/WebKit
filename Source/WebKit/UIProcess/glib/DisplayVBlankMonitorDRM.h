@@ -35,7 +35,7 @@ namespace WebKit {
 class DisplayVBlankMonitorDRM final : public DisplayVBlankMonitor {
 public:
     static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
-    DisplayVBlankMonitorDRM(unsigned, WTF::UnixFileDescriptor&&, uint32_t);
+    DisplayVBlankMonitorDRM(unsigned, WTF::UnixFileDescriptor&&, int);
     ~DisplayVBlankMonitorDRM() = default;
 
 private:

@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <thread>
+#include <wtf/SafeStrerror.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <xf86drm.h>
@@ -164,6 +165,15 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 }
 #endif
 
+static int crtcBitmaskForIndex(uint32_t crtcIndex)
+{
+    if (crtcIndex > 1)
+        return ((crtcIndex << DRM_VBLANK_HIGH_CRTC_SHIFT) & DRM_VBLANK_HIGH_CRTC_MASK);
+    if (crtcIndex > 0)
+        return DRM_VBLANK_SECONDARY;
+    return 0;
+}
+
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDisplayID displayID)
 {
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
@@ -199,7 +209,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
         return nullptr;
     }
 
-    return makeUnique<DisplayVBlankMonitorDRM>(gdk_monitor_get_refresh_rate(monitor) / 1000, WTFMove(fd), crtcIndex.value());
+    auto crtcBitmask = crtcBitmaskForIndex(crtcIndex.value());
 #elif PLATFORM(WPE)
     auto crtcInfo = findCrtc(fd.value());
     if (!crtcInfo) {
@@ -207,18 +217,31 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
         return nullptr;
     }
 
-    return makeUnique<DisplayVBlankMonitorDRM>(crtcInfo->second / 1000, WTFMove(fd), crtcInfo->first);
+    auto crtcBitmask = crtcBitmaskForIndex(crtcInfo->first);
+#endif
+
+    drmVBlank vblank;
+    vblank.request.type = static_cast<drmVBlankSeqType>(DRM_VBLANK_RELATIVE | crtcBitmask);
+    vblank.request.sequence = 0;
+    vblank.request.signal = 0;
+    auto ret = drmWaitVBlank(fd.value(), &vblank);
+    if (ret) {
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: drmWaitVBlank failed: %s", displayID, safeStrerror(-ret).data());
+        return nullptr;
+    }
+
+#if PLATFORM(GTK)
+    return makeUnique<DisplayVBlankMonitorDRM>(gdk_monitor_get_refresh_rate(monitor) / 1000, WTFMove(fd), crtcBitmask);
+#elif PLATFORM(WPE)
+    return makeUnique<DisplayVBlankMonitorDRM>(crtcInfo->second / 1000, WTFMove(fd), crtcBitmask);
 #endif
 }
 
-DisplayVBlankMonitorDRM::DisplayVBlankMonitorDRM(unsigned refreshRate, UnixFileDescriptor&& fd, uint32_t crtcIndex)
+DisplayVBlankMonitorDRM::DisplayVBlankMonitorDRM(unsigned refreshRate, UnixFileDescriptor&& fd, int crtcBitmask)
     : DisplayVBlankMonitor(refreshRate)
     , m_fd(WTFMove(fd))
+    , m_crtcBitmask(crtcBitmask)
 {
-    if (crtcIndex > 1)
-        m_crtcBitmask = ((crtcIndex << DRM_VBLANK_HIGH_CRTC_SHIFT) & DRM_VBLANK_HIGH_CRTC_MASK);
-    else if (crtcIndex > 0)
-        m_crtcBitmask = DRM_VBLANK_SECONDARY;
 }
 
 bool DisplayVBlankMonitorDRM::waitForVBlank() const
