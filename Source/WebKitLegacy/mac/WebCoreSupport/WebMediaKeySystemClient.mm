@@ -36,7 +36,7 @@ void WebMediaKeySystemClient::requestMediaKeySystem(MediaKeySystemRequest& reque
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    request.allow([] { });
+    request.allow();
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

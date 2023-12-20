@@ -86,12 +86,14 @@ void MediaKeySystemRequest::start()
     controller->requestMediaKeySystem(*this);
 }
 
-void MediaKeySystemRequest::allow(CompletionHandler<void()>&& completionHandler)
+void MediaKeySystemRequest::allow()
 {
-    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this, handler = WTFMove(completionHandler)]() mutable {
-        auto completionHandler = WTFMove(m_allowCompletionHandler);
-        completionHandler(WTFMove(m_promise));
-        handler();
+    if (!scriptExecutionContext())
+        return;
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
+        if (auto allowCompletionHandler = std::exchange(m_allowCompletionHandler, { }))
+            allowCompletionHandler(WTFMove(m_promise));
     });
 }
 
