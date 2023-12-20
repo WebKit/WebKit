@@ -29,6 +29,7 @@
 #include "CSSParser.h"
 #include "Element.h"
 #include "PseudoClassChangeInvalidation.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

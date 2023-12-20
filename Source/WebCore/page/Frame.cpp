@@ -31,6 +31,7 @@
 #include "Page.h"
 #include "RemoteFrame.h"
 #include "RenderElement.h"
+#include "RenderWidget.h"
 #include "WindowProxy.h"
 
 namespace WebCore {

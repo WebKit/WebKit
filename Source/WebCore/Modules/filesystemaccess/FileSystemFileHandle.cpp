@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FileSystemFileHandle.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "File.h"
 #include "FileSystemHandleCloseScope.h"
 #include "FileSystemStorageConnection.h"

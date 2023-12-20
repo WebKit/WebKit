@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InlineContentAligner.h"
 
+#include "InlineFormattingContext.h"
 #include "TextUtil.h"
 
 namespace WebCore {

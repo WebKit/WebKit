@@ -30,6 +30,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSUnits.h"
+#include "CSSValuePool.h"
 #include "CSSViewValue.h"
 #include "Element.h"
 
