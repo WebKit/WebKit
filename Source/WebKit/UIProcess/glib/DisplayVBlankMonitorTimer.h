@@ -36,6 +36,7 @@ public:
     ~DisplayVBlankMonitorTimer() = default;
 
 private:
+    Type type() const override { return Type::Timer; }
     bool waitForVBlank() const override;
 };
 

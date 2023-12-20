@@ -39,6 +39,7 @@ public:
     ~DisplayVBlankMonitorDRM() = default;
 
 private:
+    Type type() const override { return Type::Drm; }
     bool waitForVBlank() const override;
 
     WTF::UnixFileDescriptor m_fd;
