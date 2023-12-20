@@ -294,8 +294,8 @@ public:
     void clearNeedsLayoutForDescendants();
 
 protected:
-    RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>);
-    RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>);
+    RenderElement(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
+    RenderElement(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -338,7 +338,7 @@ protected:
     inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
-    RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<TypeFlag>);
+    RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;

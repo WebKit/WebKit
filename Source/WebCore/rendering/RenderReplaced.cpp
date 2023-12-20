@@ -65,28 +65,25 @@ const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, OptionSet<ReplacedFlag> flags)
-    : RenderBox(type, element, WTFMove(style), TypeFlag::IsReplaced)
+    : RenderBox(type, element, WTFMove(style), TypeFlag::IsReplaced, flags)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
-    setReplacedFlags(flags);
     setReplacedOrInlineBlock(true);
     ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
-    : RenderBox(type, element, WTFMove(style), TypeFlag::IsReplaced)
+    : RenderBox(type, element, WTFMove(style), TypeFlag::IsReplaced, flags)
     , m_intrinsicSize(intrinsicSize)
 {
-    setReplacedFlags(flags);
     setReplacedOrInlineBlock(true);
     ASSERT(isRenderReplaced());
 }
 
 RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize, OptionSet<ReplacedFlag> flags)
-    : RenderBox(type, document, WTFMove(style), TypeFlag::IsReplaced)
+    : RenderBox(type, document, WTFMove(style), TypeFlag::IsReplaced, flags)
     , m_intrinsicSize(intrinsicSize)
 {
-    setReplacedFlags(flags);
     setReplacedOrInlineBlock(true);
     ASSERT(isRenderReplaced());
 }

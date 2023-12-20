@@ -260,9 +260,56 @@ public:
         IsShape = 1 << 4,
     };
 
+    class TypeSpecificFlags {
+    public:
+        enum class Kind : uint8_t {
+            Invalid = 0,
+            LineBreak,
+            Replaced,
+            SVGModelObject,
+        };
+
+        TypeSpecificFlags() = default;
+
+        TypeSpecificFlags(OptionSet<LineBreakFlag> flags)
+            : m_kind(enumToUnderlyingType(Kind::LineBreak))
+            , m_flags(flags.toRaw())
+        {
+            ASSERT(lineBreakFlags() == flags);
+        }
+
+        TypeSpecificFlags(OptionSet<ReplacedFlag> flags)
+            : m_kind(enumToUnderlyingType(Kind::Replaced))
+            , m_flags(flags.toRaw())
+        {
+            ASSERT(replacedFlags() == flags);
+        }
+
+        TypeSpecificFlags(OptionSet<SVGModelObjectFlag> flags)
+            : m_kind(enumToUnderlyingType(Kind::SVGModelObject))
+            , m_flags(flags.toRaw())
+        {
+            ASSERT(svgFlags() == flags);
+        }
+
+        OptionSet<LineBreakFlag> lineBreakFlags() const { return OptionSet<LineBreakFlag>::fromRaw(valueForKind(Kind::LineBreak)); }
+        OptionSet<ReplacedFlag> replacedFlags() const { return OptionSet<ReplacedFlag>::fromRaw(valueForKind(Kind::Replaced)); }
+        OptionSet<SVGModelObjectFlag> svgFlags() const { return OptionSet<SVGModelObjectFlag>::fromRaw(valueForKind(Kind::SVGModelObject)); }
+
+    private:
+        uint8_t valueForKind(Kind kind) const
+        {
+            ASSERT(m_kind == enumToUnderlyingType(kind));
+            return m_kind == enumToUnderlyingType(kind) ? m_flags : 0;
+        }
+
+        const uint8_t m_kind : 2 { enumToUnderlyingType(Kind::Invalid) }; // Security hardening to store the type.
+        const uint8_t m_flags : 6 { 0 };
+    };
+
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
-    RenderObject(Type, Node&, OptionSet<TypeFlag>);
+    RenderObject(Type, Node&, OptionSet<TypeFlag>, TypeSpecificFlags);
     virtual ~RenderObject();
 
     Type type() const { return m_type; }
@@ -380,13 +427,13 @@ public:
     bool isRenderListBox() const { return type() == Type::ListBox; }
     bool isRenderListItem() const { return type() == Type::ListItem; }
     bool isRenderListMarker() const { return type() == Type::ListMarker; }
-    bool isRenderMedia() const { return isRenderReplaced() && replacedFlags().contains(ReplacedFlag::IsMedia); }
+    bool isRenderMedia() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsMedia); }
     bool isRenderMenuList() const { return type() == Type::MenuList; }
     bool isRenderMeter() const { return type() == Type::Meter; }
     bool isRenderProgress() const { return type() == Type::Progress; }
     bool isRenderButton() const { return type() == Type::Button; }
     bool isRenderIFrame() const { return type() == Type::IFrame; }
-    bool isRenderImage() const { return isRenderReplaced() && replacedFlags().contains(ReplacedFlag::IsImage); }
+    bool isRenderImage() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsImage); }
     bool isRenderTextFragment() const { return type() == Type::TextFragment; }
 #if ENABLE(MODEL_ELEMENT)
     bool isRenderModel() const { return type() == Type::Model; }
@@ -412,7 +459,7 @@ public:
     bool isRenderSearchField() const { return type() == Type::SearchField; }
     bool isRenderTextControlInnerBlock() const { return type() == Type::TextControlInnerBlock; }
     bool isRenderVideo() const { return type() == Type::Video; }
-    bool isRenderWidget() const { return isRenderReplaced() && replacedFlags().contains(ReplacedFlag::IsWidget); }
+    bool isRenderWidget() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsWidget); }
     bool isRenderHTMLCanvas() const { return type() == Type::HTMLCanvas; }
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool isRenderAttachment() const { return type() == Type::Attachment; }
@@ -481,17 +528,17 @@ public:
     bool isRenderMathMLUnderOver() const { return type() == Type::MathMLUnderOver; }
 #endif // ENABLE(MATHML)
 
-    bool isLegacyRenderSVGModelObject() const { return m_typeFlags.contains(TypeFlag::IsSVGModelObject) && svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
+    bool isLegacyRenderSVGModelObject() const { return m_typeFlags.contains(TypeFlag::IsSVGModelObject) && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGModelObject() const { return m_typeFlags.contains(TypeFlag::IsSVGModelObject) && !svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
+    bool isRenderSVGModelObject() const { return m_typeFlags.contains(TypeFlag::IsSVGModelObject) && !m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
 #endif
     bool isRenderSVGBlock() const { return m_typeFlags.contains(TypeFlag::IsSVGBlock); }
     bool isLegacyRenderSVGRoot() const { return type() == Type::LegacySVGRoot; }
     bool isRenderSVGRoot() const { return type() == Type::SVGRoot; }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGContainer() const { return isRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsContainer); }
+    bool isRenderSVGContainer() const { return isRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsContainer); }
 #endif
-    bool isLegacyRenderSVGContainer() const { return isLegacyRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsContainer); }
+    bool isLegacyRenderSVGContainer() const { return isLegacyRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsContainer); }
     bool isRenderSVGTransformableContainer() const { return type() == Type::SVGTransformableContainer; }
     bool isLegacyRenderSVGTransformableContainer() const { return type() == Type::LegacySVGTransformableContainer; }
     bool isRenderSVGViewportContainer() const { return type() == Type::SVGViewportContainer; }
@@ -502,9 +549,9 @@ public:
     bool isLegacyRenderSVGPath() const { return type() == Type::LegacySVGPath; }
     bool isRenderSVGPath() const { return type() == Type::SVGPath; }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGShape() const { return isRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsShape); }
+    bool isRenderSVGShape() const { return isRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsShape); }
 #endif
-    bool isLegacyRenderSVGShape() const { return isLegacyRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsShape); }
+    bool isLegacyRenderSVGShape() const { return isLegacyRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsShape); }
     bool isRenderSVGText() const { return type() == Type::SVGText; }
     bool isRenderSVGTextPath() const { return type() == Type::SVGTextPath; }
     bool isRenderSVGTSpan() const { return type() == Type::SVGTSpan; }
@@ -514,9 +561,9 @@ public:
     bool isRenderSVGImage() const { return type() == Type::SVGImage; }
     bool isLegacyRenderSVGForeignObject() const { return type() == Type::LegacySVGForeignObject; }
     bool isRenderSVGForeignObject() const { return type() == Type::SVGForeignObject; }
-    bool isLegacyRenderSVGResourceContainer() const { return isLegacyRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
+    bool isLegacyRenderSVGResourceContainer() const { return isLegacyRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGResourceContainer() const { return isRenderSVGModelObject() && svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
+    bool isRenderSVGResourceContainer() const { return isRenderSVGModelObject() && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsResourceContainer); }
 #endif
     bool isRenderSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
     bool isLegacyRenderSVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
@@ -599,7 +646,7 @@ public:
     bool isRenderText() const { return m_typeFlags.contains(TypeFlag::IsText); }
     bool isRenderLineBreak() const { return type() == Type::LineBreak; }
     bool isBR() const { return isRenderLineBreak() && !isWBR(); }
-    bool isWBR() const { return isRenderLineBreak() && lineBreakFlags().contains(LineBreakFlag::IsWBR); }
+    bool isWBR() const { return isRenderLineBreak() && m_typeSpecificFlags.lineBreakFlags().contains(LineBreakFlag::IsWBR); }
     bool isLineBreakOpportunity() const { return isRenderLineBreak() && isWBR(); }
     bool isRenderTextOrLineBreak() const { return isRenderText() || isRenderLineBreak(); }
     bool isRenderBox() const { return m_typeFlags.contains(TypeFlag::IsBox); }
@@ -1077,15 +1124,6 @@ protected:
     //////////////////////////////////////////
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node.get(); }
 
-    OptionSet<LineBreakFlag> lineBreakFlags() const { ASSERT(isRenderLineBreak()); return OptionSet<LineBreakFlag>::fromRaw(m_typeSpecificFlags); }
-    void setLineBreakFlags(OptionSet<LineBreakFlag> flags) { ASSERT(isRenderLineBreak()); m_typeSpecificFlags = flags.toRaw(); }
-
-    OptionSet<ReplacedFlag> replacedFlags() const { ASSERT(isRenderReplaced()); return OptionSet<ReplacedFlag>::fromRaw(m_typeSpecificFlags); }
-    void setReplacedFlags(OptionSet<ReplacedFlag> flags) { ASSERT(isRenderReplaced()); m_typeSpecificFlags = flags.toRaw(); }
-
-    OptionSet<SVGModelObjectFlag> svgFlags() const { ASSERT(m_typeFlags.contains(TypeFlag::IsSVGModelObject)); return OptionSet<SVGModelObjectFlag>::fromRaw(m_typeSpecificFlags); }
-    void setSVGFlags(OptionSet<SVGModelObjectFlag> flags) { ASSERT(m_typeFlags.contains(TypeFlag::IsSVGModelObject)); m_typeSpecificFlags = flags.toRaw(); }
-
     virtual void willBeDestroyed();
 
     void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NeedsPositionedMovementLayout, b); }
@@ -1232,7 +1270,7 @@ private:
     const OptionSet<TypeFlag> m_typeFlags;
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     const Type m_type;
-    uint8_t m_typeSpecificFlags { 0 }; // Depends on values of m_type and/or m_typeFlags
+    const TypeSpecificFlags m_typeSpecificFlags; // Depends on values of m_type and/or m_typeFlags
 
     CheckedPtr<Layout::Box> m_layoutBox;
 
