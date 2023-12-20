@@ -441,6 +441,7 @@
                   {
                     "name": "GTK-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "gtk", "configuration": "debug", "architectures": ["x86_64"],
+                    "additionalArguments": ["--exit-after-n-crashes-or-timeouts=100"],
                     "workernames": ["gtk-linux-bot-7"]
                   },
                   {
@@ -592,6 +593,7 @@
                   {
                     "name": "WPE-Linux-64-bit-Debug-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
+                    "additionalArguments": ["--exit-after-n-crashes-or-timeouts=100"],
                     "workernames": ["wpe-linux-bot-4"]
                   },
                   {
