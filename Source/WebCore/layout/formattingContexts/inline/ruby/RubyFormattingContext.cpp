@@ -28,6 +28,7 @@
 
 #include "InlineContentAligner.h"
 #include "InlineFormattingContext.h"
+#include "InlineLevelBox.h"
 #include "InlineLine.h"
 #include "RenderStyleInlines.h"
 

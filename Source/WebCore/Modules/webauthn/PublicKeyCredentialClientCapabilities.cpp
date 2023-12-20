@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(WEB_AUTHN)
-
 #include "config.h"
 #include "PublicKeyCredentialClientCapabilities.h"
 
+#if ENABLE(WEB_AUTHN)
 #include "JSDOMMapLike.h"
 
 namespace WebCore {

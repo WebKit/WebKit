@@ -34,6 +34,7 @@
 #include "AudioNodeOptions.h"
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Logging.h"
 #include <wtf/Atomics.h>
 #include <wtf/IsoMallocInlines.h>

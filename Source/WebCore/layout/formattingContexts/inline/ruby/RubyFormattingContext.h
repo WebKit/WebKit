@@ -36,6 +36,7 @@ class InlineFormattingContext;
 class InlineLevelBox;
 class Line;
 class LineBox;
+class Rect;
 
 class RubyFormattingContext {
 public:

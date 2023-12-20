@@ -32,6 +32,7 @@
 #include "config.h"
 #include "CheckboxInputType.h"
 
+#include "Chrome.h"
 #include "ChromeClient.h"
 #include "EventHandler.h"
 #include "EventNames.h"

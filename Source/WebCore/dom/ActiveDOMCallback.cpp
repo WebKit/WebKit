@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ActiveDOMCallback.h"
 
-#include "ScriptExecutionContext.h"
+#include "ContextDestructionObserverInlines.h"
 
 namespace WebCore {
 

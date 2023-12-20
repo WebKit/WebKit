@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class Element;
+class WeakPtrImplWithEventTargetData;
 
 class DatasetDOMStringMap final : public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(DatasetDOMStringMap);
