@@ -142,7 +142,7 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
                 return nullptr;
         }
 
-        useGraphicsElement = downcast<SVGGraphicsElement>(childNode);
+        useGraphicsElement = graphicsElement;
     }
 
     return useGraphicsElement;

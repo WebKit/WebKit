@@ -156,7 +156,8 @@ public:
 
     virtual bool supportsBoxShadow(const RenderStyle&) const { return false; }
 
-    virtual bool useFormSemanticContext() const { return false; }
+    bool useFormSemanticContext() const { return m_useFormSemanticContext; }
+    void setUseFormSemanticContext(bool value) { m_useFormSemanticContext = value; }
     virtual bool supportsLargeFormControls() const { return false; }
 
     virtual bool searchFieldShouldAppearAsTextField(const RenderStyle&) const { return false; }
@@ -451,6 +452,8 @@ private:
     Color grammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
+
+    bool m_useFormSemanticContext { false };
 };
 
 } // namespace WebCore

@@ -65,25 +65,25 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
         
         switch (cssRule->styleRuleType()) {
         case StyleRuleType::Container:
-            collect(downcast<CSSContainerRule>(cssRule));
+            collect(uncheckedDowncast<CSSContainerRule>(cssRule));
             break;
         case StyleRuleType::Import:
-            collect(downcast<CSSImportRule>(*cssRule).styleSheet());
+            collect(uncheckedDowncast<CSSImportRule>(*cssRule).styleSheet());
             break;
         case StyleRuleType::LayerBlock:
-            collect(downcast<CSSLayerBlockRule>(cssRule));
+            collect(uncheckedDowncast<CSSLayerBlockRule>(cssRule));
             break;
         case StyleRuleType::Media:
-            collect(downcast<CSSMediaRule>(cssRule));
+            collect(uncheckedDowncast<CSSMediaRule>(cssRule));
             break;
         case StyleRuleType::Supports:
-            collect(downcast<CSSSupportsRule>(cssRule));
+            collect(uncheckedDowncast<CSSSupportsRule>(cssRule));
             break;
         case StyleRuleType::Style:
-            m_styleRuleToCSSOMWrapperMap.add(&downcast<CSSStyleRule>(*cssRule).styleRule(), downcast<CSSStyleRule>(cssRule));
+            m_styleRuleToCSSOMWrapperMap.add(&uncheckedDowncast<CSSStyleRule>(*cssRule).styleRule(), uncheckedDowncast<CSSStyleRule>(cssRule));
 
             // Eagerly collect rules nested in this style rule.
-            collect(downcast<CSSStyleRule>(cssRule));
+            collect(uncheckedDowncast<CSSStyleRule>(cssRule));
             break;
         default:
             break;

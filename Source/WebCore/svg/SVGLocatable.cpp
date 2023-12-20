@@ -34,20 +34,26 @@
 
 namespace WebCore {
 
-static bool isViewportElement(Node* node)
+// FIXME: This doesn't match SVGElement::viewportElement() as it has an extra check for
+// foreign object.
+static bool isViewportElement(const SVGElement* element)
 {
-    return (node->hasTagName(SVGNames::svgTag)
-        || node->hasTagName(SVGNames::symbolTag)
-        || node->hasTagName(SVGNames::foreignObjectTag)
-        || is<SVGImageElement>(*node));
+    if (!element)
+        return false;
+
+    return element->hasTagName(SVGNames::svgTag)
+        || element->hasTagName(SVGNames::symbolTag)
+        || element->hasTagName(SVGNames::foreignObjectTag)
+        || is<SVGImageElement>(*element);
 }
 
 SVGElement* SVGLocatable::nearestViewportElement(const SVGElement* element)
 {
     ASSERT(element);
     for (Element* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
-        if (isViewportElement(current))
-            return downcast<SVGElement>(current);
+        auto* svgElement = dynamicDowncast<SVGElement>(*current);
+        if (isViewportElement(svgElement))
+            return svgElement;
     }
 
     return nullptr;
@@ -58,8 +64,9 @@ SVGElement* SVGLocatable::farthestViewportElement(const SVGElement* element)
     ASSERT(element);
     SVGElement* farthest = nullptr;
     for (Element* current = element->parentOrShadowHostElement(); current; current = current->parentOrShadowHostElement()) {
-        if (isViewportElement(current))
-            farthest = downcast<SVGElement>(current);
+        auto* svgElement = dynamicDowncast<SVGElement>(*current);
+        if (isViewportElement(svgElement))
+            farthest = svgElement;
     }
     return farthest;
 }

@@ -743,6 +743,11 @@ void PlatformCALayerRemote::setContents(CFTypeRef value)
 
 void PlatformCALayerRemote::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
+    setRemoteDelegatedContents({ ImageBufferBackendHandle { MachSendRight { contents.surface } }, contents.finishedFence, contents.surfaceIdentifier });
+}
+
+void PlatformCALayerRemote::setRemoteDelegatedContents(const PlatformCALayerRemoteDelegatedContents& contents)
+{
     ASSERT(m_acceleratesDrawing);
     ensureBackingStore();
     m_properties.backingStoreOrProperties.store->setDelegatedContents(contents);

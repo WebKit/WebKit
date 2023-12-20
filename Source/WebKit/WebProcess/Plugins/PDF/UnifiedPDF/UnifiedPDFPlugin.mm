@@ -54,6 +54,7 @@
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollbarTheme.h>
+#include <WebCore/ScrollbarsController.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
 #include "PDFKitSoftLink.h"
@@ -639,6 +640,20 @@ GraphicsLayer* UnifiedPDFPlugin::layerForScrollCorner() const
     return m_layerForScrollCorner.get();
 }
 
+void UnifiedPDFPlugin::createScrollbarsController()
+{
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    if (auto scrollbarController = page->chrome().client().createScrollbarsController(*page, *this)) {
+        setScrollbarsController(WTFMove(scrollbarController));
+        return;
+    }
+
+    PDFPluginBase::createScrollbarsController();
+}
+
 DelegatedScrollingMode UnifiedPDFPlugin::scrollingMode() const
 {
 #if PLATFORM(IOS_FAMILY)
@@ -831,14 +846,15 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
 
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
+    m_lastMousePositionInPluginCoordinates = convertFromRootViewToPlugin(event.position());
+
     switch (event.type()) {
     case WebEventType::MouseMove:
         mouseMovedInContentArea();
         switch (event.button()) {
         case WebMouseEventButton::None: {
             auto altKeyIsActive = event.altKey() ? AltKeyIsActive::Yes : AltKeyIsActive::No;
-            auto mousePositionInPluginCoordinates = convertFromRootViewToPlugin(event.position());
-            auto pdfElementTypes = pdfElementTypesForPluginPoint(mousePositionInPluginCoordinates);
+            auto pdfElementTypes = pdfElementTypesForPluginPoint(m_lastMousePositionInPluginCoordinates);
             notifyCursorChanged(toWebCoreCursorType(pdfElementTypes, altKeyIsActive));
             return true;
         }

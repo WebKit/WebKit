@@ -86,8 +86,6 @@ public:
 
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.
     bool usesTestModeFocusRingColor() const;
-    // A view associated to the contained document.
-    NSView* documentViewFor(const RenderObject&) const;
 
     WEBCORE_EXPORT static RetainPtr<NSImage> iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
@@ -101,7 +99,6 @@ private:
 
     int baselinePosition(const RenderBox&) const final;
 
-    bool useFormSemanticContext() const final;
     bool supportsLargeFormControls() const final;
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;

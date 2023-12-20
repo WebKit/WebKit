@@ -1,0 +1,13 @@
+
+PASS anyref import
+PASS eqref import
+PASS structref import
+PASS arrayref import
+PASS i31ref import
+PASS funcref import
+PASS externref import
+PASS null import
+PASS concrete struct import
+PASS concrete array import
+PASS concrete func import
+

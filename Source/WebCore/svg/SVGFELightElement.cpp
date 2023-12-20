@@ -115,6 +115,7 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::azimuthAttr || attrName == SVGNames::elevationAttr || attrName == SVGNames::xAttr || attrName == SVGNames::yAttr
             || attrName == SVGNames::zAttr || attrName == SVGNames::pointsAtXAttr || attrName == SVGNames::pointsAtYAttr || attrName == SVGNames::pointsAtZAttr
             || attrName == SVGNames::specularExponentAttr || attrName == SVGNames::limitingConeAngleAttr);
+
         RefPtr parent = parentElement();
         if (!parent)
             return;
@@ -123,12 +124,12 @@ void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
         if (!renderer || !renderer->isRenderSVGResourceFilterPrimitive())
             return;
 
-        if (is<SVGFEDiffuseLightingElement>(*parent)) {
+        if (auto* lightingElement = dynamicDowncast<SVGFEDiffuseLightingElement>(*parent)) {
             InstanceInvalidationGuard guard(*this);
-            downcast<SVGFEDiffuseLightingElement>(*parent).lightElementAttributeChanged(this, attrName);
-        } else if (is<SVGFESpecularLightingElement>(*parent)) {
+            lightingElement->lightElementAttributeChanged(this, attrName);
+        } else if (auto* lightingElement = dynamicDowncast<SVGFESpecularLightingElement>(*parent)) {
             InstanceInvalidationGuard guard(*this);
-            downcast<SVGFESpecularLightingElement>(*parent).lightElementAttributeChanged(this, attrName);
+            lightingElement->lightElementAttributeChanged(this, attrName);
         }
 
         return;

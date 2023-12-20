@@ -264,7 +264,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             if (!global.type.isNullable() && value.isNull())
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "non-null externref cannot be null")));
                             m_instance->instance().setGlobal(import.kindIndex, value);
-                        } else if (Wasm::isFuncref(declaredGlobalType) || Wasm::isRefWithTypeIndex(declaredGlobalType)) {
+                        } else if (Wasm::isFuncref(declaredGlobalType) || (!Options::useWebAssemblyGC() && isRefWithTypeIndex(declaredGlobalType))) {
                             WebAssemblyFunction* wasmFunction = nullptr;
                             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                             value = globalValue->global()->get(globalObject);
@@ -282,8 +282,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             m_instance->instance().setGlobal(import.kindIndex, value);
-                        } else
-                            RELEASE_ASSERT_NOT_REACHED();
+                        } else {
+                            RELEASE_ASSERT(Options::useWebAssemblyGC());
+                            value = Wasm::internalizeExternref(globalValue->global()->get(globalObject));
+                            if (!Wasm::TypeInformation::castReference(value, declaredGlobalType.isNullable(), declaredGlobalType.index))
+                                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument value did not match the reference type")));
+                        }
                     }
                 } else {
                     const auto globalType = moduleInformation.globals[import.kindIndex].type;
@@ -323,7 +327,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             if (!globalType.isNullable() && value.isNull())
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a non-null value")));
                             m_instance->instance().setGlobal(import.kindIndex, value);
-                        } else if (Wasm::isFuncref(globalType) || Wasm::isRefWithTypeIndex(globalType)) {
+                        } else if (Wasm::isFuncref(globalType) || (!Options::useWebAssemblyGC() && Wasm::isRefWithTypeIndex(globalType))) {
                             WebAssemblyFunction* wasmFunction = nullptr;
                             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                             if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!globalType.isNullable() || !value.isNull())) {
@@ -339,8 +343,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             }
 
                             m_instance->instance().setGlobal(import.kindIndex, value);
-                        } else
-                            RELEASE_ASSERT_NOT_REACHED();
+                        } else {
+                            RELEASE_ASSERT(Options::useWebAssemblyGC());
+                            value = Wasm::internalizeExternref(value);
+                            if (!Wasm::TypeInformation::castReference(value, global.type.isNullable(), global.type.index))
+                                return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument value did not match the reference type")));
+                        }
                     }
                 }
             } else {

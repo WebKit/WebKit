@@ -190,6 +190,8 @@ private:
 
     void didChangeSettings() override;
 
+    void createScrollbarsController() override;
+
     bool usesAsyncScrolling() const final { return true; }
     WebCore::ScrollingNodeID scrollingNodeID() const final { return m_scrollingNodeID; }
 

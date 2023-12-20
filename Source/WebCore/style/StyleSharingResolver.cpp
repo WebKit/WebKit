@@ -161,11 +161,11 @@ StyledElement* SharingResolver::findSibling(const Context& context, Node* node, 
         if (!styledElement)
             continue;
         if (canShareStyleWithElement(context, *styledElement))
-            break;
+            return styledElement;
         if (count++ >= cStyleSearchThreshold)
             return nullptr;
     }
-    return downcast<StyledElement>(node);
+    return nullptr;
 }
 
 Node* SharingResolver::locateCousinList(const Element* parent) const

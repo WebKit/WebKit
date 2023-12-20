@@ -337,10 +337,11 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (document.page() && document.page()->shouldBuildInteractionRegions() && eventTarget.isNode()) {
-        const auto& node = downcast<Node>(eventTarget);
-        if (node.willRespondToMouseClickEventsWithEditability(node.computeEditabilityForMouseClickEvents(&style)))
-            types.add(EventListenerRegionType::MouseClick);
+    if (document.page() && document.page()->shouldBuildInteractionRegions()) {
+        if (const auto* node = dynamicDowncast<Node>(eventTarget)) {
+            if (node->willRespondToMouseClickEventsWithEditability(node->computeEditabilityForMouseClickEvents(&style)))
+                types.add(EventListenerRegionType::MouseClick);
+        }
     }
 #else
     UNUSED_PARAM(document);

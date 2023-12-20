@@ -148,7 +148,7 @@ static void invalidateAssignedElements(HTMLSlotElement& slot)
             invalidateAssignedElements(*slotElement);
             continue;
         }
-        downcast<Element>(*node).invalidateStyleInternal();
+        element->invalidateStyleInternal();
     }
 }
 

@@ -3747,7 +3747,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
             
             auto rect = region.rectInLayerCoordinates;
             Path path;
-            path.addRoundedRect(rect, { region.borderRadius, region.borderRadius });
+            path.addRoundedRect(rect, { region.cornerRadius, region.cornerRadius });
             context.strokePath(path);
         }
     }

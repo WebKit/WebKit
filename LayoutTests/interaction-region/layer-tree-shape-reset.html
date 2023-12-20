@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    .shape {
+        float: left;
+        background: blue;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+    #radius {
+        border-radius: 16px;
+    }
+    #partial-radius {
+        border-radius: 0px 14px 0px 14px;
+    }
+    #non-uniform-radius {
+        border-radius: 10px 11px 12px 13px;
+    }
+
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+    <div id="noradius" class="shape">
+    </div>
+    <div id="radius" class="shape">
+    </div>
+    <div id="partial-radius" class="shape">
+    </div>
+    <div id="non-uniform-radius" class="shape">
+    </div>
+</div>
+
+</section>
+
+<pre id="results"></pre>
+<script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    Array.from(document.querySelectorAll(".shape"))
+        .forEach(el => el.style.borderRadius = 0 );
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+
+    results.textContent = await UIHelper.getCALayerTree();
+    document.getElementById('test').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

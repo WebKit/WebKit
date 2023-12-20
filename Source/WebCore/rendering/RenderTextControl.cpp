@@ -44,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControl);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerContainer);
 
 RenderTextControl::RenderTextControl(Type type, HTMLTextFormControlElement& element, RenderStyle&& style)
-    : RenderBlockFlow(type, element, WTFMove(style), TypeFlag::IsTextControl)
+    : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsTextControl)
 {
     ASSERT(isRenderTextControl());
 }

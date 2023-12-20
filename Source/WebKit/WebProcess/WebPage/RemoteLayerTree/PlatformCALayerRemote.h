@@ -29,7 +29,9 @@
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformCALayer.h>
+#include <WebCore/PlatformCALayerDelegatedContents.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class LayerPool;
@@ -43,7 +45,13 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class PlatformCALayerRemote : public WebCore::PlatformCALayer {
+struct PlatformCALayerRemoteDelegatedContents {
+    ImageBufferBackendHandle surface;
+    RefPtr<WebCore::PlatformCALayerDelegatedContentsFence> finishedFence;
+    std::optional<WebCore::RenderingResourceIdentifier> surfaceIdentifier;
+};
+
+class PlatformCALayerRemote : public WebCore::PlatformCALayer, public CanMakeWeakPtr<PlatformCALayerRemote> {
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
@@ -145,6 +153,7 @@ public:
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
     void setDelegatedContents(const WebCore::PlatformCALayerDelegatedContents&) override;
+    void setRemoteDelegatedContents(const PlatformCALayerRemoteDelegatedContents&);
     void setContentsRect(const WebCore::FloatRect&) override;
 
     void setMinificationFilter(WebCore::PlatformCALayer::FilterType) override;

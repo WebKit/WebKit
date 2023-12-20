@@ -346,6 +346,102 @@ LayoutUnit RenderInline::offsetTop() const
     return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).y();
 }
 
+LayoutUnit RenderInline::offsetWidth() const
+{
+    auto offsetWidthForContinuation = [&]() -> std::optional<LayoutUnit> {
+        if (!continuation())
+            return { };
+        // In case of continuation we simply use the enclosing block's width for all the inline boxes participating in this continuation matching other engines.
+        CheckedPtr preBlock = this->containingBlock();
+        if (!preBlock || !preBlock->isAnonymous()) {
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+        return { preBlock->offsetWidth() };
+    };
+    if (auto offsetWidth = offsetWidthForContinuation())
+        return *offsetWidth;
+    return linesBoundingBox().width();
+}
+
+static bool hasValidContinuation(const RenderInline& renderer)
+{
+    CheckedPtr preBlock = renderer.containingBlock();
+    if (!preBlock || !preBlock->isAnonymous())
+        return false;
+
+    CheckedPtr middleBlock = dynamicDowncast<RenderBlock>(preBlock->nextInFlowSibling());
+    if (!middleBlock || !middleBlock->isAnonymous() || !middleBlock->isContinuation())
+        return false;
+
+    CheckedPtr postBlock = dynamicDowncast<RenderBlock>(middleBlock->nextInFlowSibling());
+    if (!postBlock || !postBlock->isAnonymous())
+        return false;
+
+    return true;
+}
+
+static inline std::optional<LayoutUnit> offsetHeightForMiddleAndPostBlocks(const RenderBlock& middleBlock)
+{
+    // At this point we've got only middle and post blocks potentially followed by another nested continuation.
+    if (!middleBlock.isContinuation()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    // post-block is supposed to include all inline content after the intrusive block.
+    // e.g. <span><span><block></block>this is after content</span>this too</span.
+    CheckedPtr postBlock = dynamicDowncast<RenderBlock>(middleBlock.nextInFlowSibling());
+    if (!postBlock || !postBlock->isAnonymous()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    // With multiple intrusive blocks we end up with a chain of continuations after the post-block starting with
+    // another middle block for each nesting.
+    // e.g. <span><span><div></div><span><div>
+    CheckedPtr nestedContinuationCandidate = dynamicDowncast<RenderBlock>(postBlock->nextInFlowSibling());
+    if (!nestedContinuationCandidate || !nestedContinuationCandidate->isContinuation())
+        return { middleBlock.offsetHeight() + postBlock->offsetHeight() };
+
+    auto nestedOffsetHeight = offsetHeightForMiddleAndPostBlocks(*nestedContinuationCandidate);
+    if (!nestedOffsetHeight) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    return { middleBlock.offsetHeight() + postBlock->offsetHeight() + *nestedOffsetHeight };
+};
+
+static inline std::optional<LayoutUnit> offsetHeightForContinuation(const RenderInline& renderer)
+{
+    if (!renderer.continuation())
+        return { };
+
+    if (!hasValidContinuation(renderer)) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    // Whether this is the continuation initiating inline (<span id=initiating><div>) or just participating (<span id=participating><span id=initiating><div>)
+    // we have to find the closest anonymous block container constructed for continuation (pre-block) and
+    // use that as the anchor renderer to walk and compute the enclosing height.
+
+    // pre-block is supposed to enclose all inline content in front of the intrusive block.
+    // e.g. <span>this is pre content<span>this too<div>
+    // while middle-block is the intrusive block container.
+    CheckedPtr preBlock = renderer.containingBlock();
+    CheckedPtr middleBlock = dynamicDowncast<RenderBlock>(preBlock->nextInFlowSibling());
+    if (auto middleAndPostBlocksOffsetHeight = offsetHeightForMiddleAndPostBlocks(*middleBlock))
+        return { preBlock->offsetHeight() + *middleAndPostBlocksOffsetHeight };
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+LayoutUnit RenderInline::offsetHeight() const
+{
+    if (auto offsetHeight = offsetHeightForContinuation(*this))
+        return *offsetHeight;
+    return linesBoundingBox().height();
+}
+
 LayoutPoint RenderInline::firstInlineBoxTopLeft() const
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))

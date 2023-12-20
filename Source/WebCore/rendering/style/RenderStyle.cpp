@@ -1912,6 +1912,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClip);
         if (first.viewTransitionName != second.viewTransitionName)
             changingProperties.m_properties.set(CSSPropertyViewTransitionName);
+        if (first.contentVisibility != second.contentVisibility)
+            changingProperties.m_properties.set(CSSPropertyContentVisibility);
 
         // Non animated styles are followings.
         // customProperties
@@ -1936,7 +1938,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // overscrollBehaviorY
         // applePayButtonStyle
         // applePayButtonType
-        // contentVisibility
         // inputSecurity
         // containerType
         // transformStyleForcedToFlat

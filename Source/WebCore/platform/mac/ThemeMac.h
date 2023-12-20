@@ -35,11 +35,6 @@ class ThemeMac final : public ThemeCocoa {
 public:
     static bool supportsLargeFormControls();
 
-    static NSView *ensuredView(ScrollView*, OptionSet<ControlStyle::State>, bool useUnparentedView = false);
-    WEBCORE_EXPORT static void setUseFormSemanticContext(bool);
-    static bool useFormSemanticContext();
-    static void setFocusRingClipRect(const FloatRect&);
-
 private:
     friend NeverDestroyed<ThemeMac>;
     ThemeMac() = default;

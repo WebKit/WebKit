@@ -269,17 +269,14 @@ void SVGFontFaceElement::rebuildFontFace()
     // we currently ignore all but the first src element, alternatively we could concat them
     auto srcElement = childrenOfType<SVGFontFaceSrcElement>(*this).first();
 
-    bool describesParentFont = is<SVGFontElement>(*parentNode());
-    RefPtr<CSSValueList> list;
+    m_fontElement = dynamicDowncast<SVGFontElement>(*parentNode());
+    bool describesParentFont = !!m_fontElement;
 
-    if (describesParentFont) {
-        m_fontElement = downcast<SVGFontElement>(parentNode());
+    RefPtr<CSSValueList> list;
+    if (m_fontElement)
         list = CSSValueList::createCommaSeparated(CSSFontFaceSrcLocalValue::create(AtomString { fontFamily() }));
-    } else {
-        m_fontElement = nullptr;
-        if (srcElement)
-            list = srcElement->createSrcValue();
-    }
+    else if (srcElement)
+        list = srcElement->createSrcValue();
 
     if (!list || !list->length())
         return;
@@ -287,7 +284,7 @@ void SVGFontFaceElement::rebuildFontFace()
     // Parse in-memory CSS rules
     m_fontFaceRule->mutableProperties().addParsedProperty(CSSProperty(CSSPropertySrc, list));
 
-    if (describesParentFont) {    
+    if (describesParentFont) {
         // Traverse parsed CSS values and associate CSSFontFaceSrcLocalValue elements with ourselves.
         if (auto* srcList = downcast<CSSValueList>(m_fontFaceRule->properties().getPropertyCSSValue(CSSPropertySrc).get())) {
             for (auto& item : *srcList)

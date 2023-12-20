@@ -43,7 +43,6 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Page.h"
-#include "PathUtilities.h"
 #include "PlatformMouseEvent.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderAncestorIterator.h"
@@ -281,18 +280,31 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!isOriginalMatch && !isInlineNonBlock && !renderer.style().isDisplayTableOrTablePart())
         return std::nullopt;
 
-    float borderRadius = 0;
     auto rect = bounds;
-    OptionSet<InteractionRegion::CornerMask> maskedCorners;
+    float cornerRadius = 0;
+    OptionSet<InteractionRegion::CornerMask> maskedCorners { };
+    std::optional<Path> clipPath = std::nullopt;
 
     if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
-        auto borderRadii = renderBox->borderRadii();
+        auto roundedRect = renderBox->borderRoundedRect();
+        auto borderRadii = roundedRect.radii();
         auto minRadius = borderRadii.minimumRadius();
         auto maxRadius = borderRadii.maximumRadius();
 
-        if (minRadius != maxRadius && !minRadius) {
-            // We apply the maximum radius to specific corners.
-            borderRadius = maxRadius;
+        bool needsClipPath = false;
+        auto checkIfClipPathNeeded = [&](auto radius) {
+            if (radius != minRadius && radius != maxRadius)
+                needsClipPath = true;
+        };
+        checkIfClipPathNeeded(borderRadii.topLeft().minDimension());
+        checkIfClipPathNeeded(borderRadii.topRight().minDimension());
+        checkIfClipPathNeeded(borderRadii.bottomLeft().minDimension());
+        checkIfClipPathNeeded(borderRadii.bottomRight().minDimension());
+
+        if (minRadius == maxRadius)
+            cornerRadius = minRadius;
+        else if (!minRadius && !needsClipPath) {
+            cornerRadius = maxRadius;
             if (borderRadii.topLeft().minDimension() == maxRadius)
                 maskedCorners.add(InteractionRegion::CornerMask::MinXMinYCorner);
             if (borderRadii.topRight().minDimension() == maxRadius)
@@ -302,8 +314,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
             if (borderRadii.bottomRight().minDimension() == maxRadius)
                 maskedCorners.add(InteractionRegion::CornerMask::MaxXMaxYCorner);
         } else {
-            // We default to the minimum radius applied uniformly to all corners.
-            borderRadius = minRadius;
+            Path path;
+            path.addRoundedRect(roundedRect);
+            clipPath = path;
         }
     }
 
@@ -318,7 +331,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     if (canTweakShape) {
         // We can safely tweak the bounds and radius without causing visual mismatch.
-        borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
+        cornerRadius = std::max<float>(cornerRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
         if (isInlineNonBlock)
             rect.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
     }
@@ -327,8 +340,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         InteractionRegion::Type::Interaction,
         elementIdentifier,
         rect,
-        borderRadius,
-        maskedCorners
+        cornerRadius,
+        maskedCorners,
+        clipPath
     } };
 }
 
@@ -338,18 +352,22 @@ TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegio
         ? "interaction"
         : (interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "guard");
     ts.dumpProperty(regionName, interactionRegion.rectInLayerCoordinates);
-    auto radius = interactionRegion.borderRadius;
-    if (interactionRegion.maskedCorners.isEmpty())
-        ts.dumpProperty("borderRadius", radius);
-    else {
-        auto mask = interactionRegion.maskedCorners;
-        ts.dumpProperty("borderRadius", makeString(
-            mask.contains(InteractionRegion::CornerMask::MinXMinYCorner) ? radius : 0, ' ',
-            mask.contains(InteractionRegion::CornerMask::MaxXMinYCorner) ? radius : 0, ' ',
-            mask.contains(InteractionRegion::CornerMask::MaxXMaxYCorner) ? radius : 0, ' ',
-            mask.contains(InteractionRegion::CornerMask::MinXMaxYCorner) ? radius : 0
-        ));
+    auto radius = interactionRegion.cornerRadius;
+    if (radius > 0) {
+        if (interactionRegion.maskedCorners.isEmpty())
+            ts.dumpProperty("cornerRadius", radius);
+        else  {
+            auto mask = interactionRegion.maskedCorners;
+            ts.dumpProperty("cornerRadius", makeString(
+                mask.contains(InteractionRegion::CornerMask::MinXMinYCorner) ? radius : 0, ' ',
+                mask.contains(InteractionRegion::CornerMask::MaxXMinYCorner) ? radius : 0, ' ',
+                mask.contains(InteractionRegion::CornerMask::MaxXMaxYCorner) ? radius : 0, ' ',
+                mask.contains(InteractionRegion::CornerMask::MinXMaxYCorner) ? radius : 0
+            ));
+        }
     }
+    if (interactionRegion.clipPath)
+        ts.dumpProperty("clipPath", interactionRegion.clipPath.value());
 
     return ts;
 }

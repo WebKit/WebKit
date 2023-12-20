@@ -73,7 +73,7 @@ private:
     HashSet<IntRect> m_occlusionRects;
     HashSet<ElementIdentifier> m_containerRemovalCandidates;
     HashSet<ElementIdentifier> m_containersToRemove;
-    HashMap<ElementIdentifier, Region> m_discoveredRegionsByElement;
+    HashMap<ElementIdentifier, Vector<FloatRect>> m_discoveredRectsByElement;
 #endif
 };
 

@@ -35,6 +35,22 @@
         height: 100px;
         cursor: pointer;
     }
+    .shape {
+        float: left;
+        background: blue;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+    }
+    #radius {
+        border-radius: 16px;
+    }
+    #partial-radius {
+        border-radius: 14px 0 0 14px;
+    }
+    #non-uniform-radius {
+        border-radius: 10px 11px 12px 13px;
+    }
 
 </style>
 <script src="../resources/ui-helper.js"></script>
@@ -61,6 +77,14 @@
     <div id="faded">
         <a href="#">Faded link</a>
     </div>
+    <div id="noradius" class="shape">
+    </div>
+    <div id="radius" class="shape">
+    </div>
+    <div id="partial-radius" class="shape">
+    </div>
+    <div id="non-uniform-radius" class="shape">
+    </div>
     <div id="resized" onclick="click()">
         will be resized
     </div>
@@ -70,6 +94,10 @@
 
 <pre id="results"></pre>
 <script>
+document.body.addEventListener("click", function(e) {
+    console.log(e, "event delegation");
+});
+
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
