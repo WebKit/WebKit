@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+DEFINE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
+
 JSFunction* InlineCallFrame::calleeConstant() const
 {
     if (calleeRecovery.isConstant())
