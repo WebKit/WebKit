@@ -94,13 +94,15 @@ void RemoteLayerTreeDrawingAreaMac::adjustTransientZoom(double scale, WebCore::F
     prepopulateRectForZoom(totalScale, origin);
 }
 
-void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::FloatPoint origin)
+void RemoteLayerTreeDrawingAreaMac::commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&& completionHandler)
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaMac::commitTransientZoom - scale " << scale << " origin " << origin);
 
     scale *= m_webPage->viewScaleFactor();
     
     applyTransientZoomToPage(scale, origin);
+
+    completionHandler();
 }
 
 void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
