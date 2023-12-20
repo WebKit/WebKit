@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -6147,8 +6147,6 @@
 		7AFBD36E21E546E3005DBACB /* PersistencyUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PersistencyUtils.cpp; sourceTree = "<group>"; };
 		7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteGraphicsContextGLProxyCocoa.mm; sourceTree = "<group>"; };
 		7B1DB26525668CE0000E26BC /* ArrayReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayReference.h; sourceTree = "<group>"; };
-		7B22007029B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp; sourceTree = "<group>"; };
-		7B22007129B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.h; sourceTree = "<group>"; };
 		7B2DDD5E27CCD9710060ABAB /* IPCStreamTesterProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterProxy.h; sourceTree = "<group>"; };
 		7B483F1B25CDDA9B00120486 /* MessageReceiveQueueMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueueMap.h; sourceTree = "<group>"; };
 		7B483F1C25CDDA9B00120486 /* MessageReceiveQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueue.h; sourceTree = "<group>"; };
@@ -12347,8 +12345,6 @@
 				2D25F32825758E9000231A8B /* ImageBufferRemoteIOSurfaceBackend.h */,
 				727A7F342407857D004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.cpp */,
 				727A7F352407857F004D2931 /* ImageBufferShareableMappedIOSurfaceBackend.h */,
-				7B22007029B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp */,
-				7B22007129B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.h */,
 				7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */,
 			);
 			path = cocoa;
@@ -18915,7 +18911,9 @@
 		};
 		5C400E6A29DB8AB500446F6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
 		};
@@ -18931,19 +18929,25 @@
 		};
 		5CE4B60729CEBB760038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62329CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
 		};
 		5CE4B62529CF880B0038F565 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;
 		};

@@ -190,8 +190,6 @@ private:
     Ref<ShapeDetection::ObjectHeap> m_shapeDetectionObjectHeap;
 };
 
-bool isSmallLayerBacking(const WebCore::ImageBufferParameters&);
-
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

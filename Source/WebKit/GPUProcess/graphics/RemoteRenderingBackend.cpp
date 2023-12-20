@@ -66,7 +66,6 @@
 #if HAVE(IOSURFACE)
 #include "ImageBufferRemoteIOSurfaceBackend.h"
 #include "ImageBufferShareableMappedIOSurfaceBackend.h"
-#include "ImageBufferShareableMappedIOSurfaceBitmapBackend.h"
 #include <WebCore/IOSurfacePool.h>
 #endif
 
@@ -90,14 +89,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-bool isSmallLayerBacking(const ImageBufferParameters& parameters)
-{
-    const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
-    return (parameters.purpose == RenderingPurpose::LayerBacking || parameters.purpose == RenderingPurpose::BitmapOnlyLayerBacking)
-        && ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area() <= maxSmallLayerBackingArea
-        && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
-}
 
 Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, Ref<IPC::StreamServerConnection>&& streamConnection)
 {
@@ -250,8 +241,6 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
 
 #if HAVE(IOSURFACE)
     if (renderingMode == RenderingMode::Accelerated) {
-        if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, pixelFormat, purpose }))
-            imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
         if (!imageBuffer)
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
     } else
