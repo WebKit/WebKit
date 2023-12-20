@@ -330,6 +330,16 @@ TextStream& operator<<(TextStream& ts, ContentPosition position)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ContentVisibility contentVisibility)
+{
+    switch (contentVisibility) {
+    case ContentVisibility::Visible: ts << "visible"; break;
+    case ContentVisibility::Auto: ts << "auto"; break;
+    case ContentVisibility::Hidden: ts << "hidden"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, CursorType cursor)
 {
     switch (cursor) {
