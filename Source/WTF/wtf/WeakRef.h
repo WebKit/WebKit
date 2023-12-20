@@ -216,6 +216,8 @@ public:
     explicit DefaultWeakPtrImpl(T* ptr) : WeakPtrImplBase<DefaultWeakPtrImpl>(ptr) { }
 };
 
+DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
+
 template<typename Derived>
 class WeakPtrImplBaseSingleThread {
     WTF_MAKE_NONCOPYABLE(WeakPtrImplBaseSingleThread);
