@@ -2059,7 +2059,7 @@ ImageOrientation RenderElement::imageOrientation() const
 
 void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
     // Make sure we invalidate the containing block cache for flows when the contianing block context changes
@@ -2091,7 +2091,7 @@ void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(con
 
 void RenderElement::removeFromRenderFragmentedFlow()
 {
-    ASSERT(fragmentedFlowState() != NotInsideFragmentedFlow);
+    ASSERT(fragmentedFlowState() != FragmentedFlowState::NotInsideFlow);
     // Sometimes we remove the element from the flow, but it's not destroyed at that time.
     // It's only until later when we actually destroy it and remove all the children from it.
     // Currently, that happens for firstLetter elements and list markers.
@@ -2112,7 +2112,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
             continue;
         }
         if (shouldUpdateState)
-            child->setFragmentedFlowState(NotInsideFragmentedFlow);
+            child->setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
     }
 
     // We have to ask for our containing flow thread as it may be above the removed sub-tree.
@@ -2120,7 +2120,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
     while (enclosingFragmentedFlow) {
         enclosingFragmentedFlow->removeFlowChildInfo(*this);
 
-        if (enclosingFragmentedFlow->fragmentedFlowState() == NotInsideFragmentedFlow)
+        if (enclosingFragmentedFlow->fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
             break;
         auto* parent = enclosingFragmentedFlow->parent();
         if (!parent)
@@ -2131,7 +2131,7 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
         downcast<RenderBlock>(*this).setCachedEnclosingFragmentedFlowNeedsUpdate();
 
     if (shouldUpdateState)
-        setFragmentedFlowState(NotInsideFragmentedFlow);
+        setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
 }
 
 void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)

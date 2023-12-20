@@ -249,7 +249,7 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
                     ASSERT_NOT_REACHED();
                     return false;
                 }
-                return containingBlock->fragmentedFlowState() == InsideInFragmentedFlow;
+                return containingBlock->fragmentedFlowState() == FragmentedFlowState::InsideFlow;
             };
             if (!isInsideMulticolumnFlow())
                 continue;
@@ -266,10 +266,10 @@ RenderObject::FragmentedFlowState RenderObject::computedFragmentedFlowState(cons
 
     if (is<RenderMultiColumnFlow>(renderer)) {
         // Multicolumn flows do not inherit the flow state.
-        return InsideInFragmentedFlow;
+        return FragmentedFlowState::InsideFlow;
     }
 
-    auto inheritedFlowState = RenderObject::NotInsideFragmentedFlow;
+    auto inheritedFlowState = RenderObject::FragmentedFlowState::NotInsideFlow;
     if (is<RenderText>(renderer))
         inheritedFlowState = renderer.parent()->fragmentedFlowState();
     else if (is<RenderSVGBlock>(renderer) || is<RenderSVGInline>(renderer) || is<LegacyRenderSVGModelObject>(renderer)) {
@@ -302,7 +302,7 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
 
 void RenderObject::resetFragmentedFlowStateOnRemoval()
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
     if (!renderTreeBeingDestroyed() && is<RenderElement>(*this)) {
@@ -314,7 +314,7 @@ void RenderObject::resetFragmentedFlowStateOnRemoval()
     if (isRenderFragmentedFlow())
         return;
 
-    setFragmentedFlowStateIncludingDescendants(NotInsideFragmentedFlow);
+    setFragmentedFlowStateIncludingDescendants(FragmentedFlowState::NotInsideFlow);
 }
 
 void RenderObject::setParent(RenderElement* parent)
@@ -1198,7 +1198,7 @@ static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const Ren
     if (!renderer)
         return nullptr;
 
-    if (renderer->fragmentedFlowState() == RenderObject::NotInsideFragmentedFlow)
+    if (renderer->fragmentedFlowState() == RenderObject::FragmentedFlowState::NotInsideFlow)
         return nullptr;
 
     if (is<RenderBlock>(*renderer))

@@ -723,7 +723,7 @@ bool RenderFragmentedFlow::checkLinesConsistency(const RenderBlockFlow& removedB
         RenderFragmentContainer& fragment = *linePair.value;
         if (&line->blockFlow() == &removedBlock)
             return false;
-        if (line->blockFlow().fragmentedFlowState() == NotInsideFragmentedFlow)
+        if (line->blockFlow().fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
             return false;
         if (!m_fragmentList.contains(fragment))
             return false;

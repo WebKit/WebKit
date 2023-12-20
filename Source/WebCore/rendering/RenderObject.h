@@ -450,13 +450,13 @@ public:
 
     bool childrenInline() const { return m_bitfields.hasFlag(RenderObjectFlag::ChildrenInline); }
     virtual void setChildrenInline(bool b) { m_bitfields.setFlag(RenderObjectFlag::ChildrenInline, b); }
-    
-    enum FragmentedFlowState {
-        NotInsideFragmentedFlow = 0,
-        InsideInFragmentedFlow = 1,
+
+    enum class FragmentedFlowState : bool {
+        NotInsideFlow = 0,
+        InsideFlow = 1,
     };
 
-    enum class SkipDescendentFragmentedFlow { No, Yes };
+    enum class SkipDescendentFragmentedFlow : bool { No, Yes };
     void setFragmentedFlowStateIncludingDescendants(FragmentedFlowState, SkipDescendentFragmentedFlow = SkipDescendentFragmentedFlow::Yes);
 
     FragmentedFlowState fragmentedFlowState() const { return m_bitfields.fragmentedFlowState(); }
@@ -626,13 +626,13 @@ public:
 
     bool hasLayer() const { return m_bitfields.hasFlag(RenderObjectFlag::HasLayer); }
 
-    enum BoxDecorationState {
-        NoBoxDecorations,
-        HasBoxDecorationsAndBackgroundObscurationStatusInvalid,
-        HasBoxDecorationsAndBackgroundIsKnownToBeObscured,
-        HasBoxDecorationsAndBackgroundMayBeVisible,
+    enum class BoxDecorationState : uint8_t {
+        None,
+        InvalidObscurationStatus,
+        IsKnownToBeObscured,
+        MayBeVisible,
     };
-    bool hasVisibleBoxDecorations() const { return m_bitfields.boxDecorationState() != NoBoxDecorations; }
+    bool hasVisibleBoxDecorations() const { return m_bitfields.boxDecorationState() != BoxDecorationState::None; }
     bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
 
     bool needsLayout() const;
@@ -982,7 +982,7 @@ public:
     bool isFloatingOrOutOfFlowPositioned() const { return (isFloating() || isOutOfFlowPositioned()); }
     bool isInFlow() const { return !isFloatingOrOutOfFlowPositioned(); }
 
-    enum HighlightState {
+    enum class HighlightState : uint8_t {
         None, // The object is not selected.
         Start, // The object either contains the start of a selection run or is the start of a run
         Inside, // The object is fully encompassed by a selection run
@@ -1184,9 +1184,9 @@ private:
     private:
         uint32_t m_flags : 18 { 0 };
         uint32_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
-        uint32_t m_selectionState : 3 { HighlightState::None }; // HighlightState
-        uint32_t m_fragmentedFlowState : 1 { NotInsideFragmentedFlow }; // FragmentedFlowState
-        uint32_t m_boxDecorationState : 2 { NoBoxDecorations }; // BoxDecorationState
+        uint32_t m_selectionState : 3 { enumToUnderlyingType(HighlightState::None) }; // HighlightState
+        uint32_t m_fragmentedFlowState : 1 { enumToUnderlyingType(FragmentedFlowState::NotInsideFlow) }; // FragmentedFlowState
+        uint32_t m_boxDecorationState : 2 { enumToUnderlyingType(BoxDecorationState::None) }; // BoxDecorationState
         // 6 bits left
 
     public:
@@ -1206,21 +1206,21 @@ private:
         bool isStickilyPositioned() const { return m_positionedState == IsStickilyPositioned; }
         bool isPositioned() const { return m_positionedState != IsStaticallyPositioned; }
 
-        void setPositionedState(int positionState)
+        void setPositionedState(PositionType positionState)
         {
             // This mask maps PositionType::Fixed and PositionType::Absolute to IsOutOfFlowPositioned, saving one bit.
-            m_positionedState = static_cast<PositionedState>(positionState & 0x3);
+            m_positionedState = static_cast<PositionedState>(static_cast<uint32_t>(positionState) & 0x3);
         }
         void clearPositionedState() { m_positionedState = static_cast<unsigned>(PositionType::Static); }
 
         ALWAYS_INLINE HighlightState selectionState() const { return static_cast<HighlightState>(m_selectionState); }
-        ALWAYS_INLINE void setSelectionState(HighlightState selectionState) { m_selectionState = selectionState; }
-        
+        ALWAYS_INLINE void setSelectionState(HighlightState selectionState) { m_selectionState = static_cast<uint32_t>(selectionState); }
+
         ALWAYS_INLINE FragmentedFlowState fragmentedFlowState() const { return static_cast<FragmentedFlowState>(m_fragmentedFlowState); }
-        ALWAYS_INLINE void setFragmentedFlowState(FragmentedFlowState fragmentedFlowState) { m_fragmentedFlowState = fragmentedFlowState; }
+        ALWAYS_INLINE void setFragmentedFlowState(FragmentedFlowState fragmentedFlowState) { m_fragmentedFlowState = static_cast<uint32_t>(fragmentedFlowState); }
 
         ALWAYS_INLINE BoxDecorationState boxDecorationState() const { return static_cast<BoxDecorationState>(m_boxDecorationState); }
-        ALWAYS_INLINE void setBoxDecorationState(BoxDecorationState boxDecorationState) { m_boxDecorationState = boxDecorationState; }
+        ALWAYS_INLINE void setBoxDecorationState(BoxDecorationState boxDecorationState) { m_boxDecorationState = static_cast<uint32_t>(boxDecorationState); }
     };
 
     RenderObjectBitfields m_bitfields;
@@ -1347,28 +1347,28 @@ inline void RenderObject::setSelectionStateIfNeeded(HighlightState state)
 inline void RenderObject::setHasVisibleBoxDecorations(bool b)
 {
     if (!b) {
-        m_bitfields.setBoxDecorationState(NoBoxDecorations);
+        m_bitfields.setBoxDecorationState(BoxDecorationState::None);
         return;
     }
     if (hasVisibleBoxDecorations())
         return;
-    m_bitfields.setBoxDecorationState(HasBoxDecorationsAndBackgroundObscurationStatusInvalid);
+    m_bitfields.setBoxDecorationState(BoxDecorationState::InvalidObscurationStatus);
 }
 
 inline void RenderObject::invalidateBackgroundObscurationStatus()
 {
     if (!hasVisibleBoxDecorations())
         return;
-    m_bitfields.setBoxDecorationState(HasBoxDecorationsAndBackgroundObscurationStatusInvalid);
+    m_bitfields.setBoxDecorationState(BoxDecorationState::InvalidObscurationStatus);
 }
 
 inline bool RenderObject::backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)
 {
-    if (m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundObscurationStatusInvalid) {
-        BoxDecorationState boxDecorationState = computeBackgroundIsKnownToBeObscured(paintOffset) ? HasBoxDecorationsAndBackgroundIsKnownToBeObscured : HasBoxDecorationsAndBackgroundMayBeVisible;
+    if (m_bitfields.boxDecorationState() == BoxDecorationState::InvalidObscurationStatus) {
+        BoxDecorationState boxDecorationState = computeBackgroundIsKnownToBeObscured(paintOffset) ? BoxDecorationState::IsKnownToBeObscured : BoxDecorationState::MayBeVisible;
         m_bitfields.setBoxDecorationState(boxDecorationState);
     }
-    return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;
+    return m_bitfields.boxDecorationState() == BoxDecorationState::IsKnownToBeObscured;
 }
 
 inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
@@ -1379,7 +1379,7 @@ inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
 
 inline RenderFragmentedFlow* RenderObject::enclosingFragmentedFlow() const
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return nullptr;
 
     return locateEnclosingFragmentedFlow();
@@ -1430,7 +1430,7 @@ inline void RenderObject::setNeedsLayoutAndPrefWidthsRecalc()
 inline void RenderObject::setPositionState(PositionType position)
 {
     ASSERT((position != PositionType::Absolute && position != PositionType::Fixed) || isRenderBox());
-    m_bitfields.setPositionedState(static_cast<int>(position));
+    m_bitfields.setPositionedState(position);
 }
 
 inline FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& quad, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
