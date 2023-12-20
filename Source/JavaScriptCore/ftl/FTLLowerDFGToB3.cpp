@@ -20410,6 +20410,14 @@ IGNORE_CLANG_WARNINGS_END
             return result;
         }
 
+        JSValue edgeValue = provenValue(edge);
+        if (edgeValue.isInt32()) {
+            simulatedTypeCheck(edge, SpecInt32Only);
+            LValue result = m_out.constInt32(edgeValue.asInt32());
+            result->setOrigin(B3::Origin(edge.node()));
+            return result;
+        }
+
         LoweredNodeValue value = m_int32Values.get(edge.node());
         if (isValid(value)) {
             simulatedTypeCheck(edge, SpecInt32Only);
