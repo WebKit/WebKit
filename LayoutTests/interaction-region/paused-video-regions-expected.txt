@@ -35,7 +35,7 @@
 
                   (interaction regions [
                     (interaction (0,0) width=51 height=51)
-                    (borderRadius 25.50)])
+                    (cornerRadius 25.50)])
                   )
                   (children 1
                     (GraphicsLayer

@@ -82,7 +82,11 @@
     {
         TextStream::GroupScope scope(ts);
         ts << "CALayer tree root ";
+#if PLATFORM(IOS_FAMILY)
+        dumpCALayer(ts, [_contentView layer], true);
+#else
         dumpCALayer(ts, self.layer, true);
+#endif
     }
 
     return ts.release();
@@ -101,8 +105,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     NSNumber *interactionRegionLayerType = [layer valueForKey:@"WKInteractionRegionType"];
     if (interactionRegionLayerType) {
-        ts.dumpProperty("type", interactionRegionLayerType);
         traverse = false;
+
+        ts.dumpProperty("type", interactionRegionLayerType);
+
+        if (layer.mask) {
+            TextStream::GroupScope scope(ts);
+            ts << "mask";
+            ts.dumpProperty("frame", rectToString(layer.mask.frame));
+        }
     }
 #endif
 
@@ -125,6 +136,10 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
     if (layer.cornerRadius != 0.0)
         ts.dumpProperty("layer cornerRadius", makeString(layer.cornerRadius));
+
+    constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
+    if (layer.maskedCorners != allCorners)
+        ts.dumpProperty("layer masked corners", makeString(layer.maskedCorners));
     
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);

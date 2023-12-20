@@ -5583,8 +5583,9 @@ struct WebCore::InteractionRegion {
     WebCore::InteractionRegion::Type type;
     WebCore::ElementIdentifier elementIdentifier;
     WebCore::FloatRect rectInLayerCoordinates;
-    float borderRadius;
+    float cornerRadius;
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
+    std::optional<WebCore::Path> clipPath;
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {

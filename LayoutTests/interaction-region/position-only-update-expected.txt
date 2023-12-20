@@ -14,7 +14,7 @@ compositing
 
       (interaction regions [
         (interaction (107.98,76) width=81.77 height=27)
-        (borderRadius 8.00)])
+        (cornerRadius 8.00)])
       )
       (children 2
         (GraphicsLayer

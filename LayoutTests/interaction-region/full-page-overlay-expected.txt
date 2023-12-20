@@ -11,8 +11,7 @@
         (rect (0,0) width=1536 height=5013)
 
       (interaction regions [
-        (occlusion (0,0) width=1536 height=5000)
-        (borderRadius 0.00)])
+        (occlusion (0,0) width=1536 height=5000)])
       )
     )
   )

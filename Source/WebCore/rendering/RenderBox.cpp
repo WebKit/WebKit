@@ -753,6 +753,15 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
     return logicalHeight;
 }
 
+RoundedRect RenderBox::borderRoundedRect() const
+{
+    auto& style = this->style();
+    LayoutRect bounds = frameRect();
+    bounds.setLocation({ });
+
+    return style.getRoundedBorderFor(bounds);
+}
+
 RoundedRect::Radii RenderBox::borderRadii() const
 {
     auto& style = this->style();
