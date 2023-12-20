@@ -32,6 +32,7 @@ struct WebKit::NavigationActionData {
     WTF::String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     WebCore::ResourceResponse redirectResponse;
+    bool isRequestFromClientOrUserInput;
     bool treatAsSameOriginNavigation;
     bool hasOpenedFrames;
     bool openedByDOMWithOpener;

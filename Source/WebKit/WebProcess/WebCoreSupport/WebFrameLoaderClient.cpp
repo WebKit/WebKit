@@ -137,6 +137,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.downloadAttribute(),
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
         redirectResponse,
+        navigationAction.isRequestFromClientOrUserInput(),
         navigationAction.treatAsSameOriginNavigation(),
         navigationAction.hasOpenedFrames(),
         navigationAction.openedByDOMWithOpener(),
