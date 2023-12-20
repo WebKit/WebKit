@@ -495,12 +495,27 @@ bool BaseDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
 void BaseDateAndTimeInputType::didBlurFromControl()
 {
     closeDateTimeChooser();
+
+    RefPtr element = this->element();
+    if (element && element->wasChangedSinceLastFormControlChangeEvent())
+        element->dispatchFormControlChangeEvent();
 }
 
 void BaseDateAndTimeInputType::didChangeValueFromControl()
 {
     String value = sanitizeValue(m_dateTimeEditElement->value());
-    InputType::setValue(value, value != element()->value(), DispatchInputAndChangeEvent, DoNotSet);
+    bool valueChanged = !equalIgnoringNullity(value, element()->value());
+
+    InputType::setValue(value, valueChanged, DispatchNoEvent, DoNotSet);
+
+    if (!valueChanged)
+        return;
+
+    Ref<HTMLInputElement> input(*element());
+    if (input->userAgentShadowRoot()->containsFocusedElement())
+        input->dispatchFormControlInputEvent();
+    else
+        input->dispatchFormControlChangeEvent();
 
     DateTimeChooserParameters parameters;
     if (!setupDateTimeChooserParameters(parameters))
