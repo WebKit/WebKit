@@ -34,13 +34,13 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
 class Page;
 
-class WheelEventTestMonitor : public ThreadSafeRefCounted<WheelEventTestMonitor> {
-    WTF_MAKE_NONCOPYABLE(WheelEventTestMonitor); WTF_MAKE_FAST_ALLOCATED;
+class WheelEventTestMonitor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WheelEventTestMonitor> {
 public:
     WheelEventTestMonitor(Page&);
 

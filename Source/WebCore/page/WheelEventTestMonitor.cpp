@@ -131,9 +131,11 @@ void WheelEventTestMonitor::receivedWheelEventWithPhases(PlatformWheelEventPhase
 
 void WheelEventTestMonitor::scheduleCallbackCheck()
 {
-    ensureOnMainThread([weakPage = WeakPtr { m_page }] {
-        if (weakPage)
-            weakPage->scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
+    ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_page.scheduleRenderingUpdate(RenderingUpdateStep::WheelEventMonitorCallbacks);
     });
 }
 
