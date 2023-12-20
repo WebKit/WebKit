@@ -208,7 +208,7 @@ static WPE::DRM::Buffer* drmBufferCreateDMABuf(WPEBuffer* buffer, bool modifiers
     }
 
     auto* drmBufferPtr = drmBuffer.get();
-    g_object_set_data_full(G_OBJECT(buffer), "wpe-drm-buffer", drmBuffer.release(), reinterpret_cast<GDestroyNotify>(+[](void* userData) {
+    wpe_buffer_set_user_data(buffer, drmBuffer.release(), reinterpret_cast<GDestroyNotify>(+[](void* userData) {
         delete static_cast<WPE::DRM::Buffer*>(userData);
     }));
     return drmBufferPtr;
@@ -402,7 +402,7 @@ static std::pair<uint32_t, uint64_t> wpeBufferFormat(WPEBuffer* buffer)
 static gboolean wpeViewDRMRequestUpdate(WPEViewDRM* view, GError** error)
 {
     auto* priv = view->priv;
-    auto* drmBuffer = priv->buffer ? static_cast<WPE::DRM::Buffer*>(g_object_get_data(G_OBJECT(priv->buffer.get()), "wpe-drm-buffer")) : nullptr;
+    auto* drmBuffer = priv->buffer ? static_cast<WPE::DRM::Buffer*>(wpe_buffer_get_user_data(WPE_BUFFER(priv->buffer.get()))) : nullptr;
     if (wpe_display_drm_supports_atomic(WPE_DISPLAY_DRM(wpe_view_get_display(WPE_VIEW(view)))))
         return wpeViewDRMCommitAtomic(WPE_VIEW_DRM(view), drmBuffer, error);
 
@@ -411,7 +411,7 @@ static gboolean wpeViewDRMRequestUpdate(WPEViewDRM* view, GError** error)
 
 static gboolean wpeViewDRMRenderBuffer(WPEView* view, WPEBuffer* buffer, GError** error)
 {
-    auto* drmBuffer = static_cast<WPE::DRM::Buffer*>(g_object_get_data(G_OBJECT(buffer), "wpe-drm-buffer"));
+    auto* drmBuffer = static_cast<WPE::DRM::Buffer*>(wpe_buffer_get_user_data(buffer));
     if (!drmBuffer) {
         auto* display = WPE_DISPLAY_DRM(wpe_view_get_display(view));
         auto& plane = wpeDisplayDRMGetPrimaryPlane(display);

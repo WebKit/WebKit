@@ -37,6 +37,11 @@ struct _WPEBufferPrivate {
     GRefPtr<WPEDisplay> display;
     int width;
     int height;
+
+    struct {
+        gpointer data;
+        GDestroyNotify destroyFunction;
+    } userData;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEBuffer, wpe_buffer, G_TYPE_OBJECT)
@@ -100,11 +105,19 @@ static void wpeBufferGetProperty(GObject* object, guint propId, GValue* value, G
     }
 }
 
+static void wpeBufferDispose(GObject* object)
+{
+    wpe_buffer_set_user_data(WPE_BUFFER(object), nullptr, nullptr);
+
+    G_OBJECT_CLASS(wpe_buffer_parent_class)->dispose(object);
+}
+
 static void wpe_buffer_class_init(WPEBufferClass* bufferClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(bufferClass);
     objectClass->set_property = wpeBufferSetProperty;
     objectClass->get_property = wpeBufferGetProperty;
+    objectClass->dispose = wpeBufferDispose;
 
     /**
      * WPEBuffer:display:
@@ -188,6 +201,45 @@ int wpe_buffer_get_height(WPEBuffer* buffer)
     g_return_val_if_fail(WPE_IS_BUFFER(buffer), 0);
 
     return buffer->priv->height;
+}
+
+/**
+ * wpe_buffer_set_user_data:
+ * @buffer: a #WPEBuffer
+ * @user_data: data to associate with @buffer
+ * @destroy_func: (nullable): the function to call to release @user_data
+ *
+ * Set @user_data to @buffer.
+ * When @buffer is destroyed @destroy_func is called with @user_data.
+ */
+void wpe_buffer_set_user_data(WPEBuffer* buffer, gpointer userData, GDestroyNotify destroyFunction)
+{
+    g_return_if_fail(WPE_IS_BUFFER(buffer));
+
+    auto* priv = buffer->priv;
+    if (priv->userData.data == userData && priv->userData.destroyFunction == destroyFunction)
+        return;
+
+    if (priv->userData.destroyFunction)
+        priv->userData.destroyFunction(priv->userData.data);
+
+    priv->userData.data = userData;
+    priv->userData.destroyFunction = destroyFunction;
+}
+
+/**
+ * wpe_buffer_get_user_data:
+ * @buffer: a #WPEBuffer
+ *
+ * Get user data previously set with wpe_buffer_set_user_data.
+ *
+ * Returns: (nullable): the @buffer user data, or %NULL
+ */
+gpointer wpe_buffer_get_user_data(WPEBuffer* buffer)
+{
+    g_return_val_if_fail(WPE_IS_BUFFER(buffer), nullptr);
+
+    return buffer->priv->userData.data;
 }
 
 /**
