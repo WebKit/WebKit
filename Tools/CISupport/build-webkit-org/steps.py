@@ -1407,6 +1407,8 @@ class PrintConfiguration(steps.ShellSequence):
             return 'Unknown'
 
         build_to_name_mapping = {
+            '14': 'Sonoma',
+            '13': 'Ventura',
             '12': 'Monterey',
             '11': 'Big Sur',
             '10.15': 'Catalina',
