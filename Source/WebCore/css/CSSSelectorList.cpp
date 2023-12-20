@@ -175,7 +175,7 @@ class SelectorHasInvalidSelectorFunctor {
 public:
     bool operator()(const CSSSelector* selector)
     {
-        return selector->isUnknownPseudoElement() || selector->isCustomPseudoElement();
+        return selector->isUnknownPseudoElement();
     }
 };
 
