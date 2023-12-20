@@ -489,14 +489,14 @@ public:
     static inline bool isAfterContent(const RenderObject* obj) { return obj && obj->isAfterContent(); }
     static inline bool isBeforeOrAfterContent(const RenderObject* obj) { return obj && obj->isBeforeOrAfterContent(); }
 
-    bool beingDestroyed() const { return m_bitfields.hasFlag(RenderObjectFlag::BeingDestroyed); }
+    bool beingDestroyed() const { return m_stateBitfields.hasFlag(StateFlag::BeingDestroyed); }
 
-    bool everHadLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::EverHadLayout); }
+    bool everHadLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadLayout); }
 
     static ScrollAnchoringController* findScrollAnchoringControllerForRenderer(const RenderObject&);
 
-    bool childrenInline() const { return m_bitfields.hasFlag(RenderObjectFlag::ChildrenInline); }
-    virtual void setChildrenInline(bool b) { m_bitfields.setFlag(RenderObjectFlag::ChildrenInline, b); }
+    bool childrenInline() const { return m_stateBitfields.hasFlag(StateFlag::ChildrenInline); }
+    virtual void setChildrenInline(bool b) { m_stateBitfields.setFlag(StateFlag::ChildrenInline, b); }
 
     enum class FragmentedFlowState : bool {
         NotInsideFlow = 0,
@@ -506,8 +506,8 @@ public:
     enum class SkipDescendentFragmentedFlow : bool { No, Yes };
     void setFragmentedFlowStateIncludingDescendants(FragmentedFlowState, SkipDescendentFragmentedFlow = SkipDescendentFragmentedFlow::Yes);
 
-    FragmentedFlowState fragmentedFlowState() const { return m_bitfields.fragmentedFlowState(); }
-    void setFragmentedFlowState(FragmentedFlowState state) { m_bitfields.setFragmentedFlowState(state); }
+    FragmentedFlowState fragmentedFlowState() const { return m_stateBitfields.fragmentedFlowState(); }
+    void setFragmentedFlowState(FragmentedFlowState state) { m_stateBitfields.setFragmentedFlowState(state); }
 
 #if ENABLE(MATHML)
     virtual bool isRenderMathMLBlock() const { return false; }
@@ -632,15 +632,15 @@ public:
     bool isAnonymousBlock() const;
     bool isBlockContainer() const;
 
-    bool isFloating() const { return m_bitfields.hasFlag(RenderObjectFlag::Floating); }
+    bool isFloating() const { return m_stateBitfields.hasFlag(StateFlag::Floating); }
 
-    bool isPositioned() const { return m_bitfields.isPositioned(); }
-    bool isInFlowPositioned() const { return m_bitfields.isRelativelyPositioned() || m_bitfields.isStickilyPositioned(); }
-    bool isOutOfFlowPositioned() const { return m_bitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
+    bool isPositioned() const { return m_stateBitfields.isPositioned(); }
+    bool isInFlowPositioned() const { return m_stateBitfields.isRelativelyPositioned() || m_stateBitfields.isStickilyPositioned(); }
+    bool isOutOfFlowPositioned() const { return m_stateBitfields.isOutOfFlowPositioned(); } // absolute or fixed positioning
     bool isFixedPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Fixed; }
     bool isAbsolutelyPositioned() const { return isOutOfFlowPositioned() && style().position() == PositionType::Absolute; }
-    bool isRelativelyPositioned() const { return m_bitfields.isRelativelyPositioned(); }
-    bool isStickilyPositioned() const { return m_bitfields.isStickilyPositioned(); }
+    bool isRelativelyPositioned() const { return m_stateBitfields.isRelativelyPositioned(); }
+    bool isStickilyPositioned() const { return m_stateBitfields.isStickilyPositioned(); }
     bool shouldUsePositionedClipping() const { return isAbsolutelyPositioned() || isRenderSVGForeignObject(); }
 
     bool isRenderText() const { return m_typeFlags.contains(TypeFlag::IsText); }
@@ -652,26 +652,21 @@ public:
     bool isRenderBox() const { return m_typeFlags.contains(TypeFlag::IsBox); }
     bool isRenderTableRow() const { return type() == Type::TableRow; }
     bool isRenderView() const  { return type() == Type::View; }
-    bool isInline() const { return !m_bitfields.hasFlag(RenderObjectFlag::IsBlock); } // inline object
-    bool isReplacedOrInlineBlock() const { return m_bitfields.hasFlag(RenderObjectFlag::IsReplacedOrInlineBlock); }
-    bool isHorizontalWritingMode() const { return !m_bitfields.hasFlag(RenderObjectFlag::VerticalWritingMode); }
+    bool isInline() const { return !m_stateBitfields.hasFlag(StateFlag::IsBlock); } // inline object
+    bool isReplacedOrInlineBlock() const { return m_stateBitfields.hasFlag(StateFlag::IsReplacedOrInlineBlock); }
+    bool isHorizontalWritingMode() const { return !m_stateBitfields.hasFlag(StateFlag::VerticalWritingMode); }
 
-    bool hasReflection() const { return hasRareData() && rareData().hasReflection(); }
+    bool hasReflection() const { return hasRareData() && rareData().hasReflection; }
     bool isRenderFragmentedFlow() const { return m_typeFlags.contains(TypeFlag::IsFragmentedFlow); }
-    bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor(); }
-    bool paintContainmentApplies() const { return hasRareData() && rareData().paintContainmentApplies(); }
+    bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor; }
+    bool paintContainmentApplies() const { return m_stateBitfields.hasFlag(StateFlag::PaintContainmentApplies); }
+    bool hasSVGTransform() const { return m_stateBitfields.hasFlag(StateFlag::HasSVGTransform); }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool hasSVGTransform() const { return hasRareData() && rareData().hasSVGTransform(); }
-#else
-    bool hasSVGTransform() const { return false; }
-#endif
-
-    bool isExcludedFromNormalLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::IsExcludedFromNormalLayout); }
-    void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setFlag(RenderObjectFlag::IsExcludedFromNormalLayout, excluded); }
+    bool isExcludedFromNormalLayout() const { return m_stateBitfields.hasFlag(StateFlag::IsExcludedFromNormalLayout); }
+    void setIsExcludedFromNormalLayout(bool excluded) { m_stateBitfields.setFlag(StateFlag::IsExcludedFromNormalLayout, excluded); }
     bool isExcludedAndPlacedInBorder() const { return isExcludedFromNormalLayout() && isLegend(); }
 
-    bool hasLayer() const { return m_bitfields.hasFlag(RenderObjectFlag::HasLayer); }
+    bool hasLayer() const { return m_stateBitfields.hasFlag(StateFlag::HasLayer); }
 
     enum class BoxDecorationState : uint8_t {
         None,
@@ -679,28 +674,28 @@ public:
         IsKnownToBeObscured,
         MayBeVisible,
     };
-    bool hasVisibleBoxDecorations() const { return m_bitfields.boxDecorationState() != BoxDecorationState::None; }
+    bool hasVisibleBoxDecorations() const { return m_stateBitfields.boxDecorationState() != BoxDecorationState::None; }
     bool backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset);
 
     bool needsLayout() const;
-    bool selfNeedsLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NeedsLayout); }
-    bool needsPositionedMovementLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NeedsPositionedMovementLayout); }
+    bool selfNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsLayout); }
+    bool needsPositionedMovementLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsPositionedMovementLayout); }
     bool needsPositionedMovementLayoutOnly() const;
 
-    bool posChildNeedsLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::PosChildNeedsLayout); }
-    bool needsSimplifiedNormalFlowLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NeedsSimplifiedNormalFlowLayout); }
+    bool posChildNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::PosChildNeedsLayout); }
+    bool needsSimplifiedNormalFlowLayout() const { return m_stateBitfields.hasFlag(StateFlag::NeedsSimplifiedNormalFlowLayout); }
     bool needsSimplifiedNormalFlowLayoutOnly() const;
-    bool normalChildNeedsLayout() const { return m_bitfields.hasFlag(RenderObjectFlag::NormalChildNeedsLayout); }
+    bool normalChildNeedsLayout() const { return m_stateBitfields.hasFlag(StateFlag::NormalChildNeedsLayout); }
     
-    bool preferredLogicalWidthsDirty() const { return m_bitfields.hasFlag(RenderObjectFlag::PreferredLogicalWidthsDirty); }
+    bool preferredLogicalWidthsDirty() const { return m_stateBitfields.hasFlag(StateFlag::PreferredLogicalWidthsDirty); }
 
     bool isSelectionBorder() const;
 
-    bool hasNonVisibleOverflow() const { return m_bitfields.hasFlag(RenderObjectFlag::HasNonVisibleOverflow); }
+    bool hasNonVisibleOverflow() const { return m_stateBitfields.hasFlag(StateFlag::HasNonVisibleOverflow); }
 
     bool hasPotentiallyScrollableOverflow() const;
 
-    bool hasTransformRelatedProperty() const { return m_bitfields.hasFlag(RenderObjectFlag::HasTransformRelatedProperty); } // Transform, perspective or transform-style: preserve-3d.
+    bool hasTransformRelatedProperty() const { return m_stateBitfields.hasFlag(StateFlag::HasTransformRelatedProperty); } // Transform, perspective or transform-style: preserve-3d.
     inline bool isTransformed() const;
     inline bool hasTransformOrPerspective() const;
 
@@ -754,26 +749,26 @@ public:
     void setNeedsLayoutAndPrefWidthsRecalc();
 
     void setPositionState(PositionType);
-    void clearPositionedState() { m_bitfields.clearPositionedState(); }
+    void clearPositionedState() { m_stateBitfields.clearPositionedState(); }
 
-    void setFloating(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::Floating, b); }
-    void setInline(bool b) { m_bitfields.setFlag(RenderObjectFlag::IsBlock, !b); }
+    void setFloating(bool b = true) { m_stateBitfields.setFlag(StateFlag::Floating, b); }
+    void setInline(bool b) { m_stateBitfields.setFlag(StateFlag::IsBlock, !b); }
 
     void setHasVisibleBoxDecorations(bool = true);
     void invalidateBackgroundObscurationStatus();
     virtual bool computeBackgroundIsKnownToBeObscured(const LayoutPoint&) { return false; }
 
-    void setReplacedOrInlineBlock(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::IsReplacedOrInlineBlock, b); }
-    void setHorizontalWritingMode(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::VerticalWritingMode, !b); }
-    void setHasNonVisibleOverflow(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::HasNonVisibleOverflow, b); }
-    void setHasLayer(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::HasLayer, b); }
-    void setHasTransformRelatedProperty(bool b = true) { m_bitfields.setFlag(RenderObjectFlag::HasTransformRelatedProperty, b); }
+    void setReplacedOrInlineBlock(bool b = true) { m_stateBitfields.setFlag(StateFlag::IsReplacedOrInlineBlock, b); }
+    void setHorizontalWritingMode(bool b = true) { m_stateBitfields.setFlag(StateFlag::VerticalWritingMode, !b); }
+    void setHasNonVisibleOverflow(bool b = true) { m_stateBitfields.setFlag(StateFlag::HasNonVisibleOverflow, b); }
+    void setHasLayer(bool b = true) { m_stateBitfields.setFlag(StateFlag::HasLayer, b); }
+    void setHasTransformRelatedProperty(bool b = true) { m_stateBitfields.setFlag(StateFlag::HasTransformRelatedProperty, b); }
 
     void setHasReflection(bool = true);
     void setHasOutlineAutoAncestor(bool = true);
-    void setPaintContainmentApplies(bool = true);
+    void setPaintContainmentApplies(bool value = true) { m_stateBitfields.setFlag(StateFlag::PaintContainmentApplies, value); }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    void setHasSVGTransform(bool = true);
+    void setHasSVGTransform(bool value = true) { m_stateBitfields.setFlag(StateFlag::HasSVGTransform, value); }
 #endif
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
@@ -1039,7 +1034,7 @@ public:
 
     // The current selection state for an object.  For blocks, the state refers to the state of the leaf
     // descendants (as described above in the HighlightState enum declaration).
-    HighlightState selectionState() const { return m_bitfields.selectionState(); }
+    HighlightState selectionState() const { return m_stateBitfields.selectionState(); }
     virtual void setSelectionState(HighlightState);
     inline void setSelectionStateIfNeeded(HighlightState);
     bool canUpdateSelectionOnRootLineBoxes();
@@ -1126,10 +1121,10 @@ protected:
 
     virtual void willBeDestroyed();
 
-    void setNeedsPositionedMovementLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NeedsPositionedMovementLayout, b); }
-    void setNormalChildNeedsLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NormalChildNeedsLayout, b); }
-    void setPosChildNeedsLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::PosChildNeedsLayout, b); }
-    void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setFlag(RenderObjectFlag::NeedsSimplifiedNormalFlowLayout, b); }
+    void setNeedsPositionedMovementLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsPositionedMovementLayout, b); }
+    void setNormalChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NormalChildNeedsLayout, b); }
+    void setPosChildNeedsLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::PosChildNeedsLayout, b); }
+    void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_stateBitfields.setFlag(StateFlag::NeedsSimplifiedNormalFlowLayout, b); }
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
 
@@ -1162,9 +1157,9 @@ private:
 
     void propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderLayerModelObject& repaintContainer, const LayoutRect& repaintRect) const;
 
-    void setEverHadLayout() { m_bitfields.setFlag(RenderObjectFlag::EverHadLayout); }
+    void setEverHadLayout() { m_stateBitfields.setFlag(StateFlag::EverHadLayout); }
 
-    bool hasRareData() const { return m_bitfields.hasFlag(RenderObjectFlag::HasRareData); }
+    bool hasRareData() const { return m_stateBitfields.hasFlag(StateFlag::HasRareData); }
 
 #if ASSERT_ENABLED
     void setNeedsLayoutIsForbidden(bool flag) const { m_setNeedsLayoutForbidden = flag; }
@@ -1176,21 +1171,7 @@ private:
     mutable bool m_setNeedsLayoutForbidden : 1;
 #endif
 
-#define ADD_BOOLEAN_BITFIELD(name, Name) \
-    private:\
-        unsigned m_##name : 1;\
-    public:\
-        bool name() const { return m_##name; }\
-        void set##Name(bool name) { m_##name = name; }\
-
-#define ADD_ENUM_BITFIELD(name, Name, Type, width) \
-    private:\
-        unsigned m_##name : width;\
-    public:\
-        Type name() const { return static_cast<Type>(m_##name); }\
-        void set##Name(Type name) { m_##name = static_cast<unsigned>(name); }\
-
-    enum class RenderObjectFlag : uint32_t {
+    enum class StateFlag : uint32_t {
         IsBlock = 1 << 0,
         IsReplacedOrInlineBlock = 1 << 1,
         BeingDestroyed = 1 << 2,
@@ -1209,9 +1190,11 @@ private:
         HasNonVisibleOverflow = 1 << 15,
         HasTransformRelatedProperty = 1 << 16,
         ChildrenInline = 1 << 17,
+        PaintContainmentApplies = 1 << 18,
+        HasSVGTransform = 1 << 19,
     };
 
-    class RenderObjectBitfields {
+    class StateBitfields {
         enum PositionedState {
             IsStaticallyPositioned = 0,
             IsRelativelyPositioned = 1,
@@ -1220,24 +1203,24 @@ private:
         };
 
     private:
-        uint32_t m_flags : 18 { 0 };
+        uint32_t m_flags : 20 { 0 };
         uint32_t m_positionedState : 2 { IsStaticallyPositioned }; // PositionedState
         uint32_t m_selectionState : 3 { enumToUnderlyingType(HighlightState::None) }; // HighlightState
         uint32_t m_fragmentedFlowState : 1 { enumToUnderlyingType(FragmentedFlowState::NotInsideFlow) }; // FragmentedFlowState
         uint32_t m_boxDecorationState : 2 { enumToUnderlyingType(BoxDecorationState::None) }; // BoxDecorationState
-        // 6 bits left
+        // 4 bits free
 
     public:
-        OptionSet<RenderObjectFlag> flags() const { return OptionSet<RenderObjectFlag>::fromRaw(m_flags); }
-        bool hasFlag(RenderObjectFlag flag) const { return flags().contains(flag); }
-        void setFlag(RenderObjectFlag flag, bool value = true)
+        OptionSet<StateFlag> flags() const { return OptionSet<StateFlag>::fromRaw(m_flags); }
+        bool hasFlag(StateFlag flag) const { return flags().contains(flag); }
+        void setFlag(StateFlag flag, bool value = true)
         {
             auto newFlags = flags();
             newFlags.set(flag, value);
             m_flags = newFlags.toRaw();
             ASSERT(flags() == newFlags);
         }
-        void clearFlag(RenderObjectFlag flag) { setFlag(flag, false); }
+        void clearFlag(StateFlag flag) { setFlag(flag, false); }
 
         bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
         bool isRelativelyPositioned() const { return m_positionedState == IsRelativelyPositioned; }
@@ -1261,7 +1244,7 @@ private:
         ALWAYS_INLINE void setBoxDecorationState(BoxDecorationState boxDecorationState) { m_boxDecorationState = static_cast<uint32_t>(boxDecorationState); }
     };
 
-    RenderObjectBitfields m_bitfields;
+    StateBitfields m_stateBitfields;
 
     CheckedRef<Node> m_node;
 
@@ -1281,13 +1264,9 @@ private:
         RenderObjectRareData();
         ~RenderObjectRareData();
 
-        ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
-        ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
-        ADD_BOOLEAN_BITFIELD(paintContainmentApplies, PaintContainmentApplies);
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        ADD_BOOLEAN_BITFIELD(hasSVGTransform, HasSVGTransform);
-#endif
-        ADD_ENUM_BITFIELD(trimmedMargins, TrimmedMargins, unsigned, 4);
+        bool hasReflection { false };
+        bool hasOutlineAutoAncestor { false };
+        OptionSet<MarginTrimType> trimmedMargins;
 
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;
@@ -1296,7 +1275,7 @@ private:
         // From RenderBox
         RefPtr<ControlPart> controlPart;
     };
-    
+
     WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
@@ -1305,7 +1284,6 @@ private:
 
     static RareDataMap& rareDataMap();
 
-#undef ADD_BOOLEAN_BITFIELD
 };
 
 class RenderObject::SetLayoutNeededForbiddenScope {
@@ -1367,7 +1345,7 @@ inline void RenderObject::setNeedsLayout(MarkingBehavior markParents)
     ASSERT(!isSetNeedsLayoutForbidden());
     if (selfNeedsLayout())
         return;
-    m_bitfields.setFlag(RenderObjectFlag::NeedsLayout);
+    m_stateBitfields.setFlag(StateFlag::NeedsLayout);
     if (markParents == MarkContainingBlockChain)
         markContainingBlocksForLayout();
     if (hasLayer())
@@ -1385,28 +1363,28 @@ inline void RenderObject::setSelectionStateIfNeeded(HighlightState state)
 inline void RenderObject::setHasVisibleBoxDecorations(bool b)
 {
     if (!b) {
-        m_bitfields.setBoxDecorationState(BoxDecorationState::None);
+        m_stateBitfields.setBoxDecorationState(BoxDecorationState::None);
         return;
     }
     if (hasVisibleBoxDecorations())
         return;
-    m_bitfields.setBoxDecorationState(BoxDecorationState::InvalidObscurationStatus);
+    m_stateBitfields.setBoxDecorationState(BoxDecorationState::InvalidObscurationStatus);
 }
 
 inline void RenderObject::invalidateBackgroundObscurationStatus()
 {
     if (!hasVisibleBoxDecorations())
         return;
-    m_bitfields.setBoxDecorationState(BoxDecorationState::InvalidObscurationStatus);
+    m_stateBitfields.setBoxDecorationState(BoxDecorationState::InvalidObscurationStatus);
 }
 
 inline bool RenderObject::backgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)
 {
-    if (m_bitfields.boxDecorationState() == BoxDecorationState::InvalidObscurationStatus) {
+    if (m_stateBitfields.boxDecorationState() == BoxDecorationState::InvalidObscurationStatus) {
         BoxDecorationState boxDecorationState = computeBackgroundIsKnownToBeObscured(paintOffset) ? BoxDecorationState::IsKnownToBeObscured : BoxDecorationState::MayBeVisible;
-        m_bitfields.setBoxDecorationState(boxDecorationState);
+        m_stateBitfields.setBoxDecorationState(boxDecorationState);
     }
-    return m_bitfields.boxDecorationState() == BoxDecorationState::IsKnownToBeObscured;
+    return m_stateBitfields.boxDecorationState() == BoxDecorationState::IsKnownToBeObscured;
 }
 
 inline bool RenderObject::needsSimplifiedNormalFlowLayoutOnly() const
@@ -1468,7 +1446,7 @@ inline void RenderObject::setNeedsLayoutAndPrefWidthsRecalc()
 inline void RenderObject::setPositionState(PositionType position)
 {
     ASSERT((position != PositionType::Absolute && position != PositionType::Fixed) || isRenderBox());
-    m_bitfields.setPositionedState(position);
+    m_stateBitfields.setPositionedState(position);
 }
 
 inline FloatQuad RenderObject::localToAbsoluteQuad(const FloatQuad& quad, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
