@@ -30,6 +30,7 @@
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class LayerPool;
@@ -43,7 +44,7 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 
-class PlatformCALayerRemote : public WebCore::PlatformCALayer {
+class PlatformCALayerRemote : public WebCore::PlatformCALayer, public CanMakeWeakPtr<PlatformCALayerRemote> {
 public:
     static Ref<PlatformCALayerRemote> create(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
