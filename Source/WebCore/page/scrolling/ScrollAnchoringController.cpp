@@ -99,8 +99,13 @@ static IntRect boundingRectForScrollableArea(ScrollableArea& scrollableArea)
 
 FloatPoint ScrollAnchoringController::computeOffsetFromOwningScroller(RenderObject& candidate)
 {
-    // TODO: investigate this for zoom/rtl
-    return FloatPoint(candidate.absoluteBoundingBoxRect().location() - boundingRectForScrollableArea(m_owningScrollableArea).location());
+    // TODO: investigate this for zoom
+    auto offset = FloatPoint(candidate.absoluteBoundingBoxRect().location() - boundingRectForScrollableArea(m_owningScrollableArea).location());
+    if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
+        if (auto* renderBox = element->renderBox())
+            return ScrollOffset(renderBox->flipForWritingMode(offset));
+    }
+    return offset;
 }
 
 void ScrollAnchoringController::notifyChildHadSuppressingStyleChange()
@@ -328,6 +333,24 @@ void ScrollAnchoringController::updateAnchorElement()
     frameView().queueScrollableAreaForScrollAnchoringUpdate(m_owningScrollableArea);
 }
 
+FloatSize ScrollAnchoringController::computeAdjustment(RenderElement& renderer)
+{
+    FloatSize adjustment = computeOffsetFromOwningScroller(renderer) - m_lastOffsetForAnchorElement;
+        
+    if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
+        if (auto* scrollerRenderer = element->renderer()) {
+            if (scrollerRenderer->style().isHorizontalWritingMode())
+                adjustment.setWidth(0);
+            else
+                adjustment.setHeight(0);
+            if (!scrollerRenderer->style().isHorizontalWritingMode() && scrollerRenderer->style().isFlippedBlocksWritingMode())
+                adjustment.setWidth(-adjustment.width());
+        }
+    } else
+        adjustment.setHeight(0);
+    return adjustment;
+}
+
 void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 {
     auto queued = std::exchange(m_isQueuedForScrollPositionUpdate, false);
@@ -344,7 +367,7 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
     }
     SetForScope midUpdatingScrollPositionForAnchorElement(m_midUpdatingScrollPositionForAnchorElement, true);
 
-    FloatSize adjustment = computeOffsetFromOwningScroller(*renderer) - m_lastOffsetForAnchorElement;
+    FloatSize adjustment = computeAdjustment(*renderer);
     if (!adjustment.isZero()) {
 #if PLATFORM(IOS_FAMILY)
         if (m_owningScrollableArea.isUserScrollInProgress()) {
