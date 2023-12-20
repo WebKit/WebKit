@@ -92,10 +92,11 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     auto failedPreflights = [this, weakThis = WeakPtr { *this }](Ref<Element>&& element, RefPtr<DeferredPromise>&& promise) mutable {
         if (!weakThis)
             return;
+        Ref document { protectedDocument() };
         m_fullscreenErrorEventTargetQueue.append(WTFMove(element));
         if (promise)
             promise->reject(Exception { ExceptionCode::TypeError });
-        protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
+        document->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
             if (weakThis)
                 weakThis->notifyAboutFullscreenChangeOrError();
         });
