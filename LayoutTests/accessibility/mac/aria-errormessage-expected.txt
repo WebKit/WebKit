@@ -7,6 +7,11 @@ PASS: errorMessages[1].domIdentifier === 'errorMessage2'
 Changing #startTime aria-invalid to be false.
 PASS: axStartTime.errorMessageElements() === undefined
 
+Changing #startTime aria-invalid back to be true.
+PASS: errorMessages.length === 2
+PASS: errorMessages[0].domIdentifier === 'errorMessage1'
+PASS: errorMessages[1].domIdentifier === 'errorMessage2'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

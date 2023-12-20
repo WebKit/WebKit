@@ -432,6 +432,10 @@ private:
     HashMap<AXID, ParentChildrenIDs> m_nodeMap;
 
     // Only accessed on the main thread.
+    // Stores all nodes that are added via addUnconnectedNode, which do not get stored in m_nodeMap.
+    HashSet<AXID> m_unconnectedNodes;
+
+    // Only accessed on the main thread.
     // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
     // The value is whether the wrapper should be attached on the main thread or the AX thread.
     HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
