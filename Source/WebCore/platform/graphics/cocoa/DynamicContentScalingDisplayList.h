@@ -39,7 +39,7 @@ public:
         , m_surfaces(WTFMove(surfaces))
     {
     }
-    explicit CGDisplayList(const CGDisplayList&) = default;
+    explicit DynamicContentScalingDisplayList(const DynamicContentScalingDisplayList&) = default;
 
     DynamicContentScalingDisplayList(DynamicContentScalingDisplayList&&) = default;
     DynamicContentScalingDisplayList& operator=(DynamicContentScalingDisplayList&&) = default;
