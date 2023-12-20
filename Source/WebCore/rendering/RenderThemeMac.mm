@@ -240,20 +240,9 @@ int RenderThemeMac::baselinePosition(const RenderBox& renderer) const
     return baseline;
 }
 
-bool RenderThemeMac::useFormSemanticContext() const
-{
-    return ThemeMac::useFormSemanticContext();
-}
-
 bool RenderThemeMac::supportsLargeFormControls() const
 {
     return ThemeMac::supportsLargeFormControls();
-}
-
-NSView *RenderThemeMac::documentViewFor(const RenderObject& renderer) const
-{
-    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance());
-    return ThemeMac::ensuredView(&renderer.view().frameView(), extractControlStyleStatesForRenderer(renderer));
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
