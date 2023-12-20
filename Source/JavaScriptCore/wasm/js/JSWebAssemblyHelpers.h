@@ -224,6 +224,7 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
                     return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
             }
         } else {
+            ASSERT(Options::useWebAssemblyGC());
             value = Wasm::internalizeExternref(value);
             if (!Wasm::TypeInformation::castReference(value, type.isNullable(), type.index)) {
                 // FIXME: provide a better error message here
