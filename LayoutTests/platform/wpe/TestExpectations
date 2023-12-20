@@ -1711,5 +1711,6 @@ webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb9_e5-rgb-f
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba8ui-rgba_integer-unsigned_byte.html [ Failure Crash ]
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-srgb8_alpha8-rgba-unsigned_byte.html [ Failure Crash ]
 
-webkit.org/b/266624 fast/events/wheel/wheel-event-destroys-overflow.html  [ Timeout Pass Crash ]
-webkit.org/b/266624 fast/events/wheel/wheelevent-basic.html  [ Failure Timeout Crash ]
+webkit.org/b/266624 fast/events/wheel/wheel-event-destroys-overflow.html [ Timeout Pass Crash ]
+webkit.org/b/266624 fast/events/wheel/wheelevent-basic.html [ Failure Timeout Crash ]
+webkit.org/b/266624 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Pass Crash ]
