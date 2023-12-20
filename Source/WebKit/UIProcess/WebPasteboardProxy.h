@@ -41,6 +41,7 @@ enum class DataOwnerType : uint8_t;
 class Color;
 class PasteboardCustomData;
 class SelectionData;
+struct PasteboardBuffer;
 struct PasteboardImage;
 struct PasteboardItemInfo;
 struct PasteboardURL;
@@ -96,7 +97,7 @@ private:
     void getPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&& pathnames, Vector<SandboxExtension::Handle>&&)>&&);
     void getPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(String&&)>&&);
     void getPasteboardStringsForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(Vector<String>&&)>&&);
-    void getPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void getPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(WebCore::PasteboardBuffer&&)>&&);
     void getPasteboardChangeCount(IPC::Connection&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(int64_t)>&&);
     void getPasteboardColor(IPC::Connection&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(WebCore::Color&&)>&&);
     void getPasteboardURL(IPC::Connection&, const String& pasteboardName, std::optional<WebCore::PageIdentifier>, CompletionHandler<void(const String&)>&&);

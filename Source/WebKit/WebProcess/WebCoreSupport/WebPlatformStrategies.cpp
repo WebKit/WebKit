@@ -150,8 +150,9 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String&
 
     // Fallback to messaging the UI process for native pasteboard content.
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardBufferForType(pasteboardName, pasteboardType, pageIdentifier(context)), 0);
-    auto [buffer] = sendResult.takeReplyOr(nullptr);
-    return buffer;
+    auto [pasteboardBuffer] = sendResult.takeReplyOr(WebCore::PasteboardBuffer { });
+
+    return Pasteboard::bufferConvertedToPasteboardType(pasteboardBuffer, pasteboardType);
 }
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)

@@ -28,7 +28,10 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <Foundation/NSGeometry.h>
-#elif !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
+#import <Foundation/NSPrivateDecls.h>
+#else // USE(APPLE_INTERNAL_SDK)
+
+#if !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
 #define NSEDGEINSETS_DEFINED 1
 typedef struct NS_SWIFT_SENDABLE NSEdgeInsets {
     CGFloat top;
@@ -37,6 +40,12 @@ typedef struct NS_SWIFT_SENDABLE NSEdgeInsets {
     CGFloat right;
 } NSEdgeInsets;
 #endif
+
+@interface NSArray ()
+- (NSArray *)arrayByExcludingObjectsInArray:(NSArray *)otherArray;
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
 
 @interface NSTextCheckingResult ()
 - (NSDictionary *)detail;

@@ -825,6 +825,7 @@ def headers_for_type(type):
         'WebCore::NetworkTransactionInformation': ['<WebCore/NetworkLoadInformation.h>'],
         'WebCore::OpaqueOriginIdentifier': ['<WebCore/SecurityOriginData.h>'],
         'WebCore::PasteboardCustomData': ['<WebCore/Pasteboard.h>'],
+        'WebCore::PasteboardBuffer': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardImage': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardWebContent': ['<WebCore/Pasteboard.h>'],
