@@ -572,7 +572,9 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     LayoutUnit newHeight = logicalHeight();
 
     LayoutUnit alignContentShift = 0_lu;
-    if ((!isPaginated || pageRemaining > newHeight) && (settings().alignContentOnBlocksEnabled()))
+    // Alignment isn't supported when fragmenting.
+    // Table cell alignment is handled in RenderTableCell::computeIntrinsicPadding.
+    if ((!isPaginated || pageRemaining > newHeight) && (settings().alignContentOnBlocksEnabled()) && !isRenderTableCell())
         alignContentShift = shiftForAlignContent(oldHeight, repaintLogicalTop, repaintLogicalBottom);
 
     {
