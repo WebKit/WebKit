@@ -1595,7 +1595,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         if (first.boxSizing() != second.boxSizing())
             changingProperties.m_properties.set(CSSPropertyBoxSizing);
         if (first.boxDecorationBreak() != second.boxDecorationBreak())
-            changingProperties.m_properties.set(CSSPropertyWebkitBoxDecorationBreak);
+            changingProperties.m_properties.set(CSSPropertyBoxDecorationBreak);
         // Non animated styles are followings.
         // usedZIndex
         // hasAutoUsedZIndex

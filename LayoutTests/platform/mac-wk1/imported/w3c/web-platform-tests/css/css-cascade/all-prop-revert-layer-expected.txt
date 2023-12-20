@@ -70,6 +70,7 @@ PASS border-top-right-radius
 PASS border-top-style
 PASS border-top-width
 PASS bottom
+PASS box-decoration-break
 PASS box-shadow
 PASS box-sizing
 PASS break-after
