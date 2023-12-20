@@ -30,24 +30,9 @@
 
 #import "WebPageProxy.h"
 #import "WebViewImpl.h"
+#import <WebCore/CorrectionIndicator.h>
 #import <pal/SessionID.h>
 #import <wtf/cocoa/VectorCocoa.h>
-
-static inline NSCorrectionIndicatorType correctionIndicatorType(WebCore::AlternativeTextType alternativeTextType)
-{
-    switch (alternativeTextType) {
-    case WebCore::AlternativeTextType::Correction:
-        return NSCorrectionIndicatorTypeDefault;
-    case WebCore::AlternativeTextType::Reversion:
-        return NSCorrectionIndicatorTypeReversion;
-    case WebCore::AlternativeTextType::SpellingSuggestions:
-    case WebCore::AlternativeTextType::GrammarSuggestions:
-        return NSCorrectionIndicatorTypeGuesses;
-    case WebCore::AlternativeTextType::DictationAlternatives:
-        ASSERT_NOT_REACHED();
-        return NSCorrectionIndicatorTypeDefault;
-    }
-}
 
 namespace WebKit {
 using namespace WebCore;

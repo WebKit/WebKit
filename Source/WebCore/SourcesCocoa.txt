@@ -234,6 +234,7 @@ page/ios/EventHandlerIOS.mm
 page/ios/FrameIOS.mm
 page/ios/WebEventRegion.mm
 page/mac/ChromeMac.mm
+page/mac/CorrectionIndicator.mm
 page/mac/DragControllerMac.mm
 page/mac/EventHandlerMac.mm
 page/mac/ImageOverlayControllerMac.mm
