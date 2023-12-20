@@ -6375,6 +6375,7 @@ fast/text/text-box-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-box-edge-no-half-leading-with-line-height-simple.html [ Skip ]
 
 webkit.org/b/249010 [ Debug ] fast/text/line-clamp-truncation-assert.html [ Skip ]
+webkit.org/b/263205 [ Debug ] fast/text/zero-height-first-line-assert.html [ Skip ]
 
 webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-019.html [ ImageOnlyFailure ]
 
