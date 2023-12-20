@@ -183,17 +183,20 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
         return;
     }
 
-    IntRect layerBounds = IntRect { { }, expandedIntSize(m_logicalSize) };
+    FloatRect bufferBounds { { }, m_logicalSize };
 
     GraphicsContext& context = m_frontBuffer->context();
     context.resetClip();
 
-    if (m_previousFrontBuffer && m_frontBuffer != m_previousFrontBuffer && !dirtyRegion.contains(layerBounds)) {
-        Region copyRegion(m_previouslyPaintedRect ? *m_previouslyPaintedRect : layerBounds);
-        copyRegion.subtract(dirtyRegion);
-        IntRect copyRect = copyRegion.bounds();
-        if (!copyRect.isEmpty())
-            m_frontBuffer->context().drawImageBuffer(*m_previousFrontBuffer, copyRect, copyRect, { CompositeOperator::Copy });
+    if (m_previousFrontBuffer && m_frontBuffer != m_previousFrontBuffer) {
+        IntRect enclosingCopyRect { m_previouslyPaintedRect ? *m_previouslyPaintedRect : enclosingIntRect(bufferBounds) };
+        if (!dirtyRegion.contains(enclosingCopyRect)) {
+            Region copyRegion(enclosingCopyRect);
+            copyRegion.subtract(dirtyRegion);
+            FloatRect copyRect = intersection(copyRegion.bounds(), bufferBounds);
+            if (!copyRect.isEmpty())
+                m_frontBuffer->context().drawImageBuffer(*m_previousFrontBuffer, copyRect, copyRect, { CompositeOperator::Copy });
+        }
     }
 
     auto dirtyRects = dirtyRegion.rects();
@@ -224,7 +227,7 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
     }
 
     if (requiresClearedPixels && !m_frontBufferIsCleared)
-        context.clearRect(layerBounds);
+        context.clearRect(bufferBounds);
 
     m_previouslyPaintedRect = dirtyRegion.bounds();
     m_previousFrontBuffer = nullptr;
