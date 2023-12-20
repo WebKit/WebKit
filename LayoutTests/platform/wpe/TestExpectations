@@ -1716,3 +1716,8 @@ webkit.org/b/266624 fast/events/wheel/wheelevent-basic.html [ Failure Timeout Cr
 webkit.org/b/266624 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Pass Crash ]
 
 webkit.org/b/266671 http/wpt/webcodecs/videoFrame-rect.html [ Failure ]
+
+webkit.org/b/266711 fast/mediastream/microphone-change-while-capturing.html [ Pass Crash ]
+webkit.org/b/266711 media/modern-media-controls/audio/audio-controls-styles.html [ Failure Crash ]
+webkit.org/b/266711 webrtc/canvas-to-peer-connection.html  [ Failure Timeout Crash ]
+webkit.org/b/266711 webrtc/release-after-getting-track.html [ Pass Crash ]
