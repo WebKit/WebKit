@@ -27,7 +27,6 @@
 
 #include "GenericArguments.h"
 #include "JSLexicalEnvironment.h"
-#include "Watchpoint.h"
 
 namespace JSC {
 
@@ -111,13 +110,9 @@ public:
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
         unsigned namedLength = m_table->length();
-        if (i < namedLength) {
+        if (i < namedLength)
             m_scope->variableAt(m_table->get(i)).set(vm, m_scope.get(), value);
-
-            auto* watchpointSet = m_table->getWatchpointSet(i);
-            if (watchpointSet)
-                watchpointSet->touch(vm, "Write to ScopedArgument.");
-        } else
+        else
             storage()[i - namedLength].set(vm, this, value);
     }
 
