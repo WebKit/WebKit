@@ -278,6 +278,35 @@ struct ForbidSynchronousLoadsScope : public PageLevelForbidScope {
     }
 };
 
+struct ForbidCopyPasteScope : public PageLevelForbidScope {
+    explicit ForbidCopyPasteScope(Page* page)
+        : PageLevelForbidScope(page)
+        , m_oldDOMPasteAllowed(page->settings().domPasteAllowed())
+        , m_oldJavaScriptCanAccessClipboard(page->settings().javaScriptCanAccessClipboard())
+        , m_oldClipboardAccessPolicy(page->settings().clipboardAccessPolicy())
+    {
+        if (m_page) {
+            m_page->settings().setDOMPasteAllowed(false);
+            m_page->settings().setJavaScriptCanAccessClipboard(false);
+            m_page->settings().setClipboardAccessPolicy(ClipboardAccessPolicy::Deny);
+        }
+    }
+
+    ~ForbidCopyPasteScope()
+    {
+        if (m_page) {
+            m_page->settings().setDOMPasteAllowed(m_oldDOMPasteAllowed);
+            m_page->settings().setJavaScriptCanAccessClipboard(m_oldJavaScriptCanAccessClipboard);
+            m_page->settings().setClipboardAccessPolicy(m_oldClipboardAccessPolicy);
+        }
+    }
+private:
+    bool m_oldDOMPasteAllowed;
+    bool m_oldJavaScriptCanAccessClipboard;
+    ClipboardAccessPolicy m_oldClipboardAccessPolicy;
+};
+
+
 class FrameLoader::FrameProgressTracker {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
@@ -3636,6 +3665,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
         SetForScope change(m_pageDismissalEventBeingDispatched, PageDismissalType::BeforeUnload);
         ForbidPromptsScope forbidPrompts(m_frame->protectedPage().get());
         ForbidSynchronousLoadsScope forbidSynchronousLoads(m_frame->page());
+        ForbidCopyPasteScope forbidCopyPaste(m_frame->page());
         domWindow->dispatchEvent(beforeUnloadEvent, domWindow->protectedDocument().get());
     }
 
