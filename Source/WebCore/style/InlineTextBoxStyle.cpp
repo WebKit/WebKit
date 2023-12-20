@@ -65,7 +65,7 @@ static float minLogicalTopForTextDecorationLineUnder(const InlineIterator::LineB
         if (!run->style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRendererForUnderline|'s hierarchy.
 
-        if (decoratingBoxRendererForUnderline.isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(decoratingBoxRendererForUnderline), &run->renderer()))
+        if (auto* renderInline = dynamicDowncast<RenderInline>(decoratingBoxRendererForUnderline); renderInline && !isAncestorAndWithinBlock(*renderInline, &run->renderer()))
             continue;
 
         if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
@@ -84,7 +84,7 @@ static float maxLogicalBottomForTextDecorationLineUnder(const InlineIterator::Li
         if (!run->style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decoratingBoxRendererForUnderline|'s hierarchy.
 
-        if (decoratingBoxRendererForUnderline.isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(decoratingBoxRendererForUnderline), &run->renderer()))
+        if (auto* renderInline = dynamicDowncast<RenderInline>(decoratingBoxRendererForUnderline); renderInline && !isAncestorAndWithinBlock(*renderInline, &run->renderer()))
             continue;
 
         if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)

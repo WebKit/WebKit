@@ -733,17 +733,16 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     if (matchAuthorAndUserStyles)
         matchUserRules();
 
-    if (is<StyledElement>(element())) {
-        auto& styledElement = downcast<StyledElement>(element());
+    if (auto* styledElement = dynamicDowncast<StyledElement>(element())) {
         // https://html.spec.whatwg.org/#presentational-hints
-        addElementStyleProperties(styledElement.presentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
+        addElementStyleProperties(styledElement->presentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
 
         // Tables and table cells share an additional presentation style that must be applied
         // after all attributes, since their style depends on the values of multiple attributes.
-        addElementStyleProperties(styledElement.additionalPresentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
+        addElementStyleProperties(styledElement->additionalPresentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
 
-        if (is<HTMLElement>(styledElement)) {
-            auto result = downcast<HTMLElement>(styledElement).directionalityIfDirIsAuto();
+        if (auto* htmlElement = dynamicDowncast<HTMLElement>(*styledElement)) {
+            auto result = htmlElement->directionalityIfDirIsAuto();
             auto& properties = result.value_or(TextDirection::LTR) == TextDirection::LTR ? leftToRightDeclaration() : rightToLeftDeclaration();
             if (result)
                 addMatchedProperties({ properties }, DeclarationOrigin::Author);
@@ -768,16 +767,19 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
 
 void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILProperties)
 {
-    if (!is<StyledElement>(element()))
+    auto* styledElement = dynamicDowncast<StyledElement>(element());
+    if (!styledElement)
         return;
 
-    if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
+    if (auto* inlineStyle = styledElement->inlineStyle()) {
         bool isInlineStyleCacheable = !inlineStyle->isMutable();
         addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, isInlineStyleCacheable, FromStyleAttribute::Yes);
     }
 
-    if (includeSMILProperties && is<SVGElement>(element()))
-        addElementStyleProperties(downcast<SVGElement>(element()).animatedSMILStyleProperties(), RuleSet::cascadeLayerPriorityForUnlayered, false /* isCacheable */);
+    if (includeSMILProperties) {
+        if (auto* svgElement = dynamicDowncast<SVGElement>(element()))
+            addElementStyleProperties(svgElement->animatedSMILStyleProperties(), RuleSet::cascadeLayerPriorityForUnlayered, false /* isCacheable */);
+    }
 }
 
 bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet& ruleSet)

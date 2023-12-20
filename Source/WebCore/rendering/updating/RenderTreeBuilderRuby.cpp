@@ -369,19 +369,18 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyRun& parent, R
     // If the child is a ruby text, then merge the ruby base with the base of
     // the right sibling run, if possible.
     if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed() && child.isRenderRubyText()) {
-        RenderRubyBase* base = parent.rubyBase();
-        RenderObject* rightNeighbour = parent.nextSibling();
-        if (base && is<RenderRubyRun>(rightNeighbour)) {
-            // Ruby run without a base can happen only at the first run.
-            RenderRubyRun& rightRun = downcast<RenderRubyRun>(*rightNeighbour);
-            if (rightRun.hasRubyBase()) {
-                RenderRubyBase* rightBase = rightRun.rubyBase();
-                // Collect all children in a single base, then swap the bases.
-                moveChildren(*rightBase, *base);
-                m_builder.move(parent, rightRun, *base, RenderTreeBuilder::NormalizeAfterInsertion::No);
-                m_builder.move(rightRun, parent, *rightBase, RenderTreeBuilder::NormalizeAfterInsertion::No);
-                // The now empty ruby base will be removed below.
-                ASSERT(!parent.rubyBase()->firstChild());
+        if (auto* base = parent.rubyBase()) {
+            if (auto* rightRun = dynamicDowncast<RenderRubyRun>(parent.nextSibling())) {
+                // Ruby run without a base can happen only at the first run.
+                if (rightRun->hasRubyBase()) {
+                    RenderRubyBase* rightBase = rightRun->rubyBase();
+                    // Collect all children in a single base, then swap the bases.
+                    moveChildren(*rightBase, *base);
+                    m_builder.move(parent, *rightRun, *base, RenderTreeBuilder::NormalizeAfterInsertion::No);
+                    m_builder.move(*rightRun, parent, *rightBase, RenderTreeBuilder::NormalizeAfterInsertion::No);
+                    // The now empty ruby base will be removed below.
+                    ASSERT(!parent.rubyBase()->firstChild());
+                }
             }
         }
     }
