@@ -213,6 +213,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCAVOutputContext.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCAuditToken.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFURL.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCContacts.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDActionContext.serialization.in

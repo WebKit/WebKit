@@ -23,55 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(COCOA)
-
-#import <CoreFoundation/CoreFoundation.h>
-#import <wtf/RetainPtr.h>
+#import "config.h"
+#import "CoreIPCCFURL.h"
 
 namespace WebKit {
 
-class CoreIPCDate {
-public:
-
-#ifdef __OBJC__
-    CoreIPCDate(NSDate *date)
-        : CoreIPCDate(bridge_cast(date))
-    {
-    }
-#endif
-
-    CoreIPCDate(CFDateRef date)
-        : m_absoluteTime(CFDateGetAbsoluteTime(date))
-    {
+std::optional<CoreIPCCFURL> CoreIPCCFURL::createWithBaseURLAndBytes(std::optional<CoreIPCCFURL>&& baseURL, Vector<uint8_t>&& bytes)
+{
+    if (bytes.isEmpty()) {
+        // CFURL can't hold an empty URL, unlike NSURL.
+        return CoreIPCCFURL { (__bridge CFURLRef)[NSURL URLWithString:@""] };
     }
 
-    CoreIPCDate(const double absoluteTime)
-        : m_absoluteTime(absoluteTime)
-    {
-    }
+    CFURLRef cfBaseURL = baseURL ? baseURL->m_cfURL.get() : nullptr;
+    RetainPtr<CFURLRef> newCFURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, reinterpret_cast<const UInt8*>(bytes.data()), bytes.size(), kCFStringEncodingUTF8, cfBaseURL, true));
+    if (newCFURL)
+        return CoreIPCCFURL { WTFMove(newCFURL) };
 
-    RetainPtr<CFDateRef> createCFDate() const
-    {
-        return adoptCF(CFDateCreate(0, m_absoluteTime));
-    }
-
-    double get() const
-    {
-        return m_absoluteTime;
-    }
-
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createCFDate().get());
-    }
-
-private:
-    double m_absoluteTime;
-};
-
+    return std::nullopt;
 }
 
+std::optional<CoreIPCCFURL> CoreIPCCFURL::baseURL() const
+{
+    if (CFURLRef baseURL = CFURLGetBaseURL(m_cfURL.get()))
+        return CoreIPCCFURL { baseURL };
+    return std::nullopt;
+}
 
-#endif // PLATFORM(COCOA)
+Vector<uint8_t> CoreIPCCFURL::bytes() const
+{
+    auto bytesLength = CFURLGetBytes(m_cfURL.get(), nullptr, 0);
+    RELEASE_ASSERT(bytesLength != -1);
+    Vector<uint8_t> result(bytesLength);
+    CFURLGetBytes(m_cfURL.get(), result.data(), bytesLength);
+
+    return result;
+}
+
+} // namespace WebKit
+

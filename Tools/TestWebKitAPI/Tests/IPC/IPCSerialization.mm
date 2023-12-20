@@ -622,6 +622,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     runTestNS({ contact.get() });
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
 
+
+    // CFURL
+    // The following URL described is quite nonsensical.
+    const UInt8 baseBytes[10] = { 'h', 't', 't', 'p', ':', '/', '/', 0xE2, 0x80, 0x80 };
+    auto baseURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, baseBytes, 10, kCFStringEncodingUTF8, nullptr, true));
+    const UInt8 compoundBytes[10] = { 'p', 'a', 't', 'h' };
+    auto compoundURL = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, compoundBytes, 4, kCFStringEncodingUTF8, baseURL.get(), true));
+    runTestCF({ baseURL.get() });
+    runTestCF({ compoundURL.get() });
+
+
     auto runValueTest = [&](NSValue *value) {
         ObjCHolderForTesting::ValueType valueVariant;
         valueVariant.emplace<RetainPtr<NSValue>>(value);

@@ -20,32 +20,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if USE(CF)
+#if PLATFORM(COCOA)
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->data()] CFDataRef wrapped by WebKit::CoreIPCData {
+webkit_platform_headers: "CoreIPCCFURL.h"
+
+[WebKitPlatform, CreateUsing=createWithBaseURLAndBytes, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCFURL {
+    std::optional<WebKit::CoreIPCCFURL> baseURL();
+    Vector<uint8_t> bytes();
 }
 
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFString()] CFStringRef wrapped by WTF::String {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createBoolean()] CFBooleanRef wrapped by WebKit::CoreIPCBoolean {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFNumber()] CFNumberRef wrapped by WebKit::CoreIPCNumber {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFDate()] CFDateRef wrapped by WebKit::CoreIPCDate {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCCFURL {
-}
-
-#endif
-
-#if USE(CG)
-
-additional_forward_declaration: typedef struct CGColor *CGColorRef
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, FromCFMethod=WebCore::Color::createAndPreserveColorSpace, ToCFMethod=WebCore::cachedCGColor(*result)] CGColorRef wrapped by WebCore::Color {
-}
-
-#endif
+#endif // PLATFORM(COCOA)

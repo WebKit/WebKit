@@ -532,6 +532,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCArray.serialization.in \
 	Shared/Cocoa/CoreIPCAuditToken.serialization.in \
 	Shared/Cocoa/CoreIPCCFType.serialization.in \
+	Shared/Cocoa/CoreIPCCFURL.serialization.in \
 	Shared/Cocoa/CoreIPCColor.serialization.in \
 	Shared/Cocoa/CoreIPCContacts.serialization.in \
 	Shared/Cocoa/CoreIPCDDActionContext.serialization.in \

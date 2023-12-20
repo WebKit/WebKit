@@ -1229,6 +1229,8 @@
 		5197FAED2AFD33FF009180C5 /* CoreIPCSecureCoding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5197FADA2AFD33B2009180C5 /* CoreIPCSecureCoding.mm */; };
 		5197FAF22AFD33FF009180C5 /* CoreIPCNSCFObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5197FADC2AFD33B2009180C5 /* CoreIPCNSCFObject.mm */; };
 		519DFBE7281387C1003FF6AD /* WKNotificationPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 519DFBE528138756003FF6AD /* WKNotificationPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		519F6F7C2B2D77E300559CB3 /* CoreIPCCFURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 519F6F7A2B2D77D900559CB3 /* CoreIPCCFURL.h */; };
+		519F6F7F2B2D7A4500559CB3 /* CoreIPCCFURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 519F6F7E2B2D7A4500559CB3 /* CoreIPCCFURL.mm */; };
 		51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A55600128C6D92009ABCEC /* WKContextMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A728DE1B1BAD3800102EEE /* WKBundleNavigationActionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A728DC1B1BAD2D00102EEE /* WKBundleNavigationActionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5405,6 +5407,9 @@
 		5197FAE22AFD33B4009180C5 /* CoreIPCCFType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFType.h; sourceTree = "<group>"; };
 		519DFBE528138756003FF6AD /* WKNotificationPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNotificationPrivateMac.h; path = mac/WKNotificationPrivateMac.h; sourceTree = "<group>"; };
 		519DFBE628138756003FF6AD /* WKNotificationPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNotificationPrivateMac.mm; path = mac/WKNotificationPrivateMac.mm; sourceTree = "<group>"; };
+		519F6F7A2B2D77D900559CB3 /* CoreIPCCFURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFURL.h; sourceTree = "<group>"; };
+		519F6F7E2B2D7A4500559CB3 /* CoreIPCCFURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCFURL.mm; sourceTree = "<group>"; };
+		519F6F802B2E194500559CB3 /* CoreIPCCFURL.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCCFURL.serialization.in; sourceTree = "<group>"; };
 		51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuItem.cpp; sourceTree = "<group>"; };
 		51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuItem.h; sourceTree = "<group>"; };
 		51A55600128C6D92009ABCEC /* WKContextMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuItemTypes.h; sourceTree = "<group>"; };
@@ -11053,6 +11058,9 @@
 				51E8284B2B2036DD009119F9 /* CoreIPCAVOutputContext.serialization.in */,
 				5197FAE22AFD33B4009180C5 /* CoreIPCCFType.h */,
 				5197FAD62AFD33B1009180C5 /* CoreIPCCFType.serialization.in */,
+				519F6F7A2B2D77D900559CB3 /* CoreIPCCFURL.h */,
+				519F6F7E2B2D7A4500559CB3 /* CoreIPCCFURL.mm */,
+				519F6F802B2E194500559CB3 /* CoreIPCCFURL.serialization.in */,
 				5197FAD32AFD33B0009180C5 /* CoreIPCColor.h */,
 				5197FADD2AFD33B3009180C5 /* CoreIPCColor.serialization.in */,
 				5157AE002B23C33500C0E095 /* CoreIPCContacts.h */,
@@ -15362,6 +15370,7 @@
 				5197FAEB2AFD33CF009180C5 /* CoreIPCArray.h in Headers */,
 				FA39AE682B23972B008F93CD /* CoreIPCAuditToken.h in Headers */,
 				5197FAE72AFD33CF009180C5 /* CoreIPCCFType.h in Headers */,
+				519F6F7C2B2D77E300559CB3 /* CoreIPCCFURL.h in Headers */,
 				5197FAE82AFD33CF009180C5 /* CoreIPCColor.h in Headers */,
 				5157AE022B23C33500C0E095 /* CoreIPCContacts.h in Headers */,
 				F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */,
@@ -18225,6 +18234,7 @@
 				5131D5452AE9D5140016EF39 /* ArgumentCodersCF.cpp in Sources */,
 				51FFD3092AE9A9FC00B0AB70 /* ArgumentCodersCocoa.mm in Sources */,
 				5187BDEA2AFF5419008A6EE5 /* CoreIPCArray.mm in Sources */,
+				519F6F7F2B2D7A4500559CB3 /* CoreIPCCFURL.mm in Sources */,
 				5157AE032B23C34700C0E095 /* CoreIPCContacts.mm in Sources */,
 				5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */,
 				F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */,

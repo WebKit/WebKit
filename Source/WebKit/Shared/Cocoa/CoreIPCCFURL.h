@@ -27,51 +27,36 @@
 
 #if PLATFORM(COCOA)
 
-#import <CoreFoundation/CoreFoundation.h>
-#import <wtf/RetainPtr.h>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/URL.h>
 
 namespace WebKit {
 
-class CoreIPCDate {
+class CoreIPCCFURL {
 public:
-
-#ifdef __OBJC__
-    CoreIPCDate(NSDate *date)
-        : CoreIPCDate(bridge_cast(date))
+    CoreIPCCFURL(CFURLRef url)
+        : m_cfURL(url)
     {
-    }
-#endif
-
-    CoreIPCDate(CFDateRef date)
-        : m_absoluteTime(CFDateGetAbsoluteTime(date))
-    {
+        RELEASE_ASSERT(url);
     }
 
-    CoreIPCDate(const double absoluteTime)
-        : m_absoluteTime(absoluteTime)
+    CoreIPCCFURL(RetainPtr<CFURLRef> url)
+        : m_cfURL(WTFMove(url))
     {
+        RELEASE_ASSERT(m_cfURL);
     }
 
-    RetainPtr<CFDateRef> createCFDate() const
-    {
-        return adoptCF(CFDateCreate(0, m_absoluteTime));
-    }
+    std::optional<CoreIPCCFURL> baseURL() const;
+    Vector<uint8_t> bytes() const;
 
-    double get() const
-    {
-        return m_absoluteTime;
-    }
+    RetainPtr<CFURLRef> createCFURL() const { return m_cfURL; }
 
-    RetainPtr<id> toID() const
-    {
-        return bridge_cast(createCFDate().get());
-    }
+    static std::optional<CoreIPCCFURL> createWithBaseURLAndBytes(std::optional<CoreIPCCFURL>&& baseURL, Vector<uint8_t>&& bytes);
 
 private:
-    double m_absoluteTime;
+    RetainPtr<CFURLRef> m_cfURL;
 };
 
-}
-
+} // namespace WebKit
 
 #endif // PLATFORM(COCOA)
