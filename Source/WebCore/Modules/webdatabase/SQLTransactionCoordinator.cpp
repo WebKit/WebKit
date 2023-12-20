@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009-2014 Google Inc. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -129,7 +129,7 @@ void SQLTransactionCoordinator::shutdown()
         // Transaction phase 3 cleanup. See comment on "What happens if a
         // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
         while (!info.pendingTransactions.isEmpty()) {
-            RefPtr<SQLTransaction> transaction = info.pendingTransactions.first();
+            RefPtr transaction = info.pendingTransactions.takeFirst();
             transaction->notifyDatabaseThreadIsShuttingDown();
         }
     }
