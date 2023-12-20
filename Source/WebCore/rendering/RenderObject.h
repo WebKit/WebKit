@@ -222,25 +222,25 @@ public:
         LegacySVGViewportContainer
     };
 
-    enum class TypeFlag : uint16_t {
+    enum class TypeFlag : uint8_t {
         IsAnonymous = 1 << 0,
         IsText = 1 << 1,
         IsBox = 1 << 2,
         IsBoxModelObject = 1 << 3,
         IsLayerModelObject = 1 << 4,
         IsRenderInline = 1 << 5,
-        IsReplaced = 1 << 6,
-        IsRenderBlock = 1 << 7,
-        IsBlockFlow = 1 << 8,
-        IsFragmentContainer = 1 << 9,
-        IsFragmentedFlow = 1 << 10,
-        IsTextControl = 1 << 11,
-        IsFlexibleBox = 1 << 12,
-        IsSVGModelObject = 1 << 13,
-        IsSVGBlock = 1 << 14,
+        IsRenderBlock = 1 << 6,
+        IsFlexibleBox = 1 << 7,
     };
 
     // Type Specific Flags
+
+    enum class BlockFlowFlag : uint8_t {
+        IsFragmentContainer = 1 << 0,
+        IsFragmentedFlow = 1 << 1,
+        IsTextControl = 1 << 2,
+        IsSVGBlock = 1 << 3,
+    };
 
     enum class LineBreakFlag : uint8_t {
         IsWBR = 1 << 0,
@@ -264,12 +264,20 @@ public:
     public:
         enum class Kind : uint8_t {
             Invalid = 0,
+            BlockFlow,
             LineBreak,
             Replaced,
             SVGModelObject,
         };
 
         TypeSpecificFlags() = default;
+
+        TypeSpecificFlags(OptionSet<BlockFlowFlag> flags)
+            : m_kind(enumToUnderlyingType(Kind::BlockFlow))
+            , m_flags(flags.toRaw())
+        {
+            ASSERT(blockFlowFlags() == flags);
+        }
 
         TypeSpecificFlags(OptionSet<LineBreakFlag> flags)
             : m_kind(enumToUnderlyingType(Kind::LineBreak))
@@ -292,6 +300,9 @@ public:
             ASSERT(svgFlags() == flags);
         }
 
+        Kind kind() const { return static_cast<Kind>(m_kind); }
+
+        OptionSet<BlockFlowFlag> blockFlowFlags() const { return OptionSet<BlockFlowFlag>::fromRaw(valueForKind(Kind::BlockFlow)); }
         OptionSet<LineBreakFlag> lineBreakFlags() const { return OptionSet<LineBreakFlag>::fromRaw(valueForKind(Kind::LineBreak)); }
         OptionSet<ReplacedFlag> replacedFlags() const { return OptionSet<ReplacedFlag>::fromRaw(valueForKind(Kind::Replaced)); }
         OptionSet<SVGModelObjectFlag> svgFlags() const { return OptionSet<SVGModelObjectFlag>::fromRaw(valueForKind(Kind::SVGModelObject)); }
@@ -299,12 +310,12 @@ public:
     private:
         uint8_t valueForKind(Kind kind) const
         {
-            ASSERT(m_kind == enumToUnderlyingType(kind));
-            return m_kind == enumToUnderlyingType(kind) ? m_flags : 0;
+            ASSERT(this->kind() == kind);
+            return this->kind() == kind ? m_flags : 0;
         }
 
-        const uint8_t m_kind : 2 { enumToUnderlyingType(Kind::Invalid) }; // Security hardening to store the type.
-        const uint8_t m_flags : 6 { 0 };
+        const uint8_t m_kind : 3 { enumToUnderlyingType(Kind::Invalid) }; // Security hardening to store the type.
+        const uint8_t m_flags : 5 { 0 };
     };
 
     // Anonymous objects should pass the document as their node, and they will then automatically be
@@ -404,10 +415,10 @@ public:
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }
 
     bool isRenderElement() const { return !isRenderText(); }
-    bool isRenderReplaced() const { return m_typeFlags.contains(TypeFlag::IsReplaced); }
+    bool isRenderReplaced() const { return m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::Replaced; }
     bool isRenderBoxModelObject() const { return m_typeFlags.contains(TypeFlag::IsBoxModelObject); }
     bool isRenderBlock() const { return m_typeFlags.contains(TypeFlag::IsRenderBlock); }
-    bool isRenderBlockFlow() const { return m_typeFlags.contains(TypeFlag::IsBlockFlow); }
+    bool isRenderBlockFlow() const { return m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::BlockFlow; }
     bool isRenderInline() const { return m_typeFlags.contains(TypeFlag::IsRenderInline); }
     bool isRenderLayerModelObject() const { return m_typeFlags.contains(TypeFlag::IsLayerModelObject); }
 
@@ -438,7 +449,7 @@ public:
 #if ENABLE(MODEL_ELEMENT)
     bool isRenderModel() const { return type() == Type::Model; }
 #endif
-    bool isRenderFragmentContainer() const { return m_typeFlags.contains(TypeFlag::IsFragmentContainer); }
+    bool isRenderFragmentContainer() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentContainer); }
     bool isRenderReplica() const { return type() == Type::Replica; }
 
     bool isRenderRubyAsInline() const { return type() == Type::RubyAsInline; }
@@ -453,7 +464,7 @@ public:
     bool isRenderTableCol() const { return type() == Type::TableCol; }
     bool isRenderTableCaption() const { return type() == Type::TableCaption; }
     bool isRenderTableSection() const { return type() == Type::TableSection; }
-    bool isRenderTextControl() const { return m_typeFlags.contains(TypeFlag::IsTextControl); }
+    bool isRenderTextControl() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsTextControl); }
     bool isRenderTextControlMultiLine() const { return type() == Type::TextControlMultiLine; }
     bool isRenderTextControlSingleLine() const { return isRenderTextControl() && !isRenderTextControlMultiLine(); }
     bool isRenderSearchField() const { return type() == Type::SearchField; }
@@ -528,11 +539,11 @@ public:
     bool isRenderMathMLUnderOver() const { return type() == Type::MathMLUnderOver; }
 #endif // ENABLE(MATHML)
 
-    bool isLegacyRenderSVGModelObject() const { return m_typeFlags.contains(TypeFlag::IsSVGModelObject) && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
+    bool isLegacyRenderSVGModelObject() const { return m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::SVGModelObject && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool isRenderSVGModelObject() const { return m_typeFlags.contains(TypeFlag::IsSVGModelObject) && !m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
+    bool isRenderSVGModelObject() const { return m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::SVGModelObject && !m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::IsLegacy); }
 #endif
-    bool isRenderSVGBlock() const { return m_typeFlags.contains(TypeFlag::IsSVGBlock); }
+    bool isRenderSVGBlock() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsSVGBlock); }
     bool isLegacyRenderSVGRoot() const { return type() == Type::LegacySVGRoot; }
     bool isRenderSVGRoot() const { return type() == Type::SVGRoot; }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -657,7 +668,7 @@ public:
     bool isHorizontalWritingMode() const { return !m_stateBitfields.hasFlag(StateFlag::VerticalWritingMode); }
 
     bool hasReflection() const { return hasRareData() && rareData().hasReflection; }
-    bool isRenderFragmentedFlow() const { return m_typeFlags.contains(TypeFlag::IsFragmentedFlow); }
+    bool isRenderFragmentedFlow() const { return isRenderBlockFlow() && m_typeSpecificFlags.blockFlowFlags().contains(BlockFlowFlag::IsFragmentedFlow); }
     bool hasOutlineAutoAncestor() const { return hasRareData() && rareData().hasOutlineAutoAncestor; }
     bool paintContainmentApplies() const { return m_stateBitfields.hasFlag(StateFlag::PaintContainmentApplies); }
     bool hasSVGTransform() const { return m_stateBitfields.hasFlag(StateFlag::HasSVGTransform); }
@@ -1251,6 +1262,7 @@ private:
     SingleThreadWeakPtr<RenderElement> m_parent;
     SingleThreadPackedWeakPtr<RenderObject> m_previous;
     const OptionSet<TypeFlag> m_typeFlags;
+    // Free 8 bits
     SingleThreadPackedWeakPtr<RenderObject> m_next;
     const Type m_type;
     const TypeSpecificFlags m_typeSpecificFlags; // Depends on values of m_type and/or m_typeFlags

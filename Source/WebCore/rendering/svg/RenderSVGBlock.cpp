@@ -37,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGBlock);
 
 RenderSVGBlock::RenderSVGBlock(Type type, SVGGraphicsElement& element, RenderStyle&& style)
-    : RenderBlockFlow(type, element, WTFMove(style), TypeFlag::IsSVGBlock)
+    : RenderBlockFlow(type, element, WTFMove(style), BlockFlowFlag::IsSVGBlock)
 {
 }
 
