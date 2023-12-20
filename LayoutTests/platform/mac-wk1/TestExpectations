@@ -2735,3 +2735,14 @@ webkit.org/b/266184 compositing/images/truncated-direct-png-image.html [ ImageOn
 # webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
 imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
+
+# webkit.org/b/263441 [ mac-wk1 ] Several WPTs using wheel actions are timing out after 269632@main
+imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-div.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
+imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Skip ]

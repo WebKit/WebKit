@@ -110,7 +110,7 @@ private:
     std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 
-std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving = CSSParserEnum::IsForgiving::No);
+std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 CSSParserSelectorList parseCSSParserSelectorList(CSSParserTokenRange&, const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext, CSSParserEnum::IsForgiving);
 
 } // namespace WebCore

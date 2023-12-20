@@ -4062,7 +4062,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     // Traverse the ancestor chain to find the rootmost element that has invalid computed style.
     RefPtr rootmostInvalidElement = [&]() -> RefPtr<const Element> {
         // In ResolveComputedStyleMode::RenderedOnly case we check for display:none ancestors.
-        if (mode == ResolveComputedStyleMode::Normal && !document->hasPendingStyleRecalc() && existingComputedStyle())
+        if (mode != ResolveComputedStyleMode::RenderedOnly && !document->hasPendingStyleRecalc() && existingComputedStyle())
             return nullptr;
 
         if (document->hasPendingFullStyleRebuild())
@@ -4113,7 +4113,7 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
     // FIXME: This is not as efficient as it could be. For example if an ancestor has a non-inherited style change but
     // the styles are otherwise clean we would not need to re-resolve descendants.
     for (auto& element : makeReversedRange(elementsRequiringComputedStyle)) {
-        if (computedStyle && computedStyle->containerType() != ContainerType::Normal) {
+        if (computedStyle && computedStyle->containerType() != ContainerType::Normal && mode != ResolveComputedStyleMode::Editability) {
             // If we find a query container we need to bail out and do full style update to resolve it.
             if (document->updateStyleIfNeeded())
                 return this->computedStyle();
@@ -4191,7 +4191,7 @@ const RenderStyle* Element::computedStyleForEditability()
     if (!isConnected())
         return nullptr;
 
-    return resolveComputedStyle();
+    return resolveComputedStyle(ResolveComputedStyleMode::Editability);
 }
 
 bool Element::needsStyleInvalidation() const

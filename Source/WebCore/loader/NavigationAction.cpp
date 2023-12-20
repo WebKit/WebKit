@@ -100,7 +100,7 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute)
     : m_requester { NavigationRequester::from(requester) }
     , m_originalRequest { originalRequest }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
@@ -110,11 +110,11 @@ NavigationAction::NavigationAction(Document& requester, const ResourceRequest& o
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, originalRequest.url()) }
-
+    , m_isRequestFromClientOrUserInput { isRequestFromClientOrUserInput }
 {
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, bool isRequestFromClientOrUserInput, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute)
     : m_requester { NavigationRequester::from(requester) }
     , m_originalRequest { originalRequest }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
@@ -124,6 +124,7 @@ NavigationAction::NavigationAction(Document& requester, const ResourceRequest& o
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, originalRequest.url()) }
+    , m_isRequestFromClientOrUserInput { isRequestFromClientOrUserInput }
 {
 }
 

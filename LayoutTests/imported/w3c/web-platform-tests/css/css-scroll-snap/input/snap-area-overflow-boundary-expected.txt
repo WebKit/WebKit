@@ -1,6 +1,6 @@
 Header 1Footer 1
 Header 2Footer 2
 
-FAIL Keyboard scrolling with vertical snap-area overflow assert_equals: End boundary of snap-area is valid snap target expected 39 but got 449
+FAIL Keyboard scrolling with vertical snap-area overflow assert_equals: Verify snap on relayout expected 0 but got 40
 FAIL Mouse-wheel scrolling with vertical snap-area overflow assert_equals: End boundary of snap-area is valid snap target expected 100 but got 101
 

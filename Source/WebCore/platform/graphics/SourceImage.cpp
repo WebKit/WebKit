@@ -96,7 +96,7 @@ ImageBuffer* SourceImage::imageBuffer() const
         if (!imageBuffer)
             return nullptr;
 
-        imageBuffer->context().drawNativeImage(nativeImage, rect.size(), rect, rect);
+        imageBuffer->context().drawNativeImage(nativeImage, rect, rect);
         m_transformedImageVariant = { imageBuffer.releaseNonNull() };
     }
 

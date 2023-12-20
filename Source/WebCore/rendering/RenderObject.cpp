@@ -116,7 +116,7 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
 #if ASSERT_ENABLED
     unsigned m_debugBitfields : 2;
 #endif
-    unsigned m_bitfields;
+    unsigned m_stateBitfields;
     CheckedRef<Node> node;
     SingleThreadWeakPtr<RenderObject> pointers;
     SingleThreadPackedWeakPtr<RenderObject> m_previous;
@@ -138,7 +138,7 @@ void RenderObjectDeleter::operator() (RenderObject* renderer) const
     renderer->destroy();
 }
 
-RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags)
+RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags, TypeSpecificFlags typeSpecificFlags)
     : CachedImageClient()
 #if ASSERT_ENABLED
     , m_hasAXObject(false)
@@ -147,6 +147,7 @@ RenderObject::RenderObject(Type type, Node& node, OptionSet<TypeFlag> typeFlags)
     , m_node(node)
     , m_typeFlags(node.isDocumentNode() ? (typeFlags | TypeFlag::IsAnonymous) : typeFlags)
     , m_type(type)
+    , m_typeSpecificFlags(typeSpecificFlags)
 {
     ASSERT(!typeFlags.contains(TypeFlag::IsAnonymous));
     if (CheckedPtr renderView = node.document().renderView())
@@ -249,7 +250,7 @@ void RenderObject::setFragmentedFlowStateIncludingDescendants(FragmentedFlowStat
                     ASSERT_NOT_REACHED();
                     return false;
                 }
-                return containingBlock->fragmentedFlowState() == InsideInFragmentedFlow;
+                return containingBlock->fragmentedFlowState() == FragmentedFlowState::InsideFlow;
             };
             if (!isInsideMulticolumnFlow())
                 continue;
@@ -266,10 +267,10 @@ RenderObject::FragmentedFlowState RenderObject::computedFragmentedFlowState(cons
 
     if (is<RenderMultiColumnFlow>(renderer)) {
         // Multicolumn flows do not inherit the flow state.
-        return InsideInFragmentedFlow;
+        return FragmentedFlowState::InsideFlow;
     }
 
-    auto inheritedFlowState = RenderObject::NotInsideFragmentedFlow;
+    auto inheritedFlowState = RenderObject::FragmentedFlowState::NotInsideFlow;
     if (is<RenderText>(renderer))
         inheritedFlowState = renderer.parent()->fragmentedFlowState();
     else if (is<RenderSVGBlock>(renderer) || is<RenderSVGInline>(renderer) || is<LegacyRenderSVGModelObject>(renderer)) {
@@ -302,7 +303,7 @@ void RenderObject::initializeFragmentedFlowStateOnInsertion()
 
 void RenderObject::resetFragmentedFlowStateOnRemoval()
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
     if (!renderTreeBeingDestroyed() && is<RenderElement>(*this)) {
@@ -314,7 +315,7 @@ void RenderObject::resetFragmentedFlowStateOnRemoval()
     if (isRenderFragmentedFlow())
         return;
 
-    setFragmentedFlowStateIncludingDescendants(NotInsideFragmentedFlow);
+    setFragmentedFlowStateIncludingDescendants(FragmentedFlowState::NotInsideFlow);
 }
 
 void RenderObject::setParent(RenderElement* parent)
@@ -545,7 +546,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
 
 void RenderObject::clearNeedsLayout()
 {
-    m_bitfields.clearFlag(RenderObjectFlag::NeedsLayout);
+    m_stateBitfields.clearFlag(StateFlag::NeedsLayout);
     setEverHadLayout();
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
@@ -637,7 +638,7 @@ void RenderObject::checkBlockPositionedObjectsNeedLayout()
 void RenderObject::setPreferredLogicalWidthsDirty(bool shouldBeDirty, MarkingBehavior markParents)
 {
     bool alreadyDirty = preferredLogicalWidthsDirty();
-    m_bitfields.setFlag(RenderObjectFlag::PreferredLogicalWidthsDirty, shouldBeDirty);
+    m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsDirty, shouldBeDirty);
     if (shouldBeDirty && !alreadyDirty && markParents == MarkContainingBlockChain && (isRenderText() || !style().hasOutOfFlowPosition()))
         invalidateContainerPreferredLogicalWidths();
 }
@@ -654,7 +655,7 @@ void RenderObject::invalidateContainerPreferredLogicalWidths()
         if (!container && !o->isRenderView())
             break;
 
-        o->m_bitfields.setFlag(RenderObjectFlag::PreferredLogicalWidthsDirty, true);
+        o->m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsDirty, true);
         if (o->style().hasOutOfFlowPosition())
             // A positioned object has no effect on the min/max width of its containing block ever.
             // We can optimize this case and not go up any further.
@@ -1198,7 +1199,7 @@ static const RenderFragmentedFlow* enclosingFragmentedFlowFromRenderer(const Ren
     if (!renderer)
         return nullptr;
 
-    if (renderer->fragmentedFlowState() == RenderObject::NotInsideFragmentedFlow)
+    if (renderer->fragmentedFlowState() == RenderObject::FragmentedFlowState::NotInsideFlow)
         return nullptr;
 
     if (is<RenderBlock>(*renderer))
@@ -1816,9 +1817,9 @@ void RenderObject::destroy()
     RELEASE_ASSERT(!m_parent);
     RELEASE_ASSERT(!m_next);
     RELEASE_ASSERT(!m_previous);
-    RELEASE_ASSERT(!m_bitfields.hasFlag(RenderObjectFlag::BeingDestroyed));
+    RELEASE_ASSERT(!m_stateBitfields.hasFlag(StateFlag::BeingDestroyed));
 
-    m_bitfields.setFlag(RenderObjectFlag::BeingDestroyed);
+    m_stateBitfields.setFlag(StateFlag::BeingDestroyed);
 
     willBeDestroyed();
 
@@ -2057,7 +2058,7 @@ OptionSet<StyleColorOptions> RenderObject::styleColorOptions() const
 
 void RenderObject::setSelectionState(HighlightState state)
 {
-    m_bitfields.setSelectionState(state);
+    m_stateBitfields.setSelectionState(state);
 }
 
 bool RenderObject::canUpdateSelectionOnRootLineBoxes()
@@ -2134,27 +2135,13 @@ RenderFragmentedFlow* RenderObject::locateEnclosingFragmentedFlow() const
 void RenderObject::setHasReflection(bool hasReflection)
 {
     if (hasReflection || hasRareData())
-        ensureRareData().setHasReflection(hasReflection);
+        ensureRareData().hasReflection = hasReflection;
 }
 
 void RenderObject::setHasOutlineAutoAncestor(bool hasOutlineAutoAncestor)
 {
     if (hasOutlineAutoAncestor || hasRareData())
-        ensureRareData().setHasOutlineAutoAncestor(hasOutlineAutoAncestor);
-}
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-void RenderObject::setHasSVGTransform(bool hasSVGTransform)
-{
-    if (hasSVGTransform || hasRareData())
-        ensureRareData().setHasSVGTransform(hasSVGTransform);
-}
-#endif
-
-void RenderObject::setPaintContainmentApplies(bool paintContainmentApplies)
-{
-    if (paintContainmentApplies || hasRareData())
-        ensureRareData().setPaintContainmentApplies(paintContainmentApplies);
+        ensureRareData().hasOutlineAutoAncestor = hasOutlineAutoAncestor;
 }
 
 RenderObject::RareDataMap& RenderObject::rareDataMap()
@@ -2171,26 +2158,17 @@ const RenderObject::RenderObjectRareData& RenderObject::rareData() const
 
 RenderObject::RenderObjectRareData& RenderObject::ensureRareData()
 {
-    m_bitfields.setFlag(RenderObjectFlag::HasRareData);
+    m_stateBitfields.setFlag(StateFlag::HasRareData);
     return *rareDataMap().ensure(this, [] { return makeUnique<RenderObjectRareData>(); }).iterator->value;
 }
 
 void RenderObject::removeRareData()
 {
     rareDataMap().remove(this);
-    m_bitfields.clearFlag(RenderObjectFlag::HasRareData);
+    m_stateBitfields.clearFlag(StateFlag::HasRareData);
 }
 
-RenderObject::RenderObjectRareData::RenderObjectRareData()
-    : m_hasReflection(false)
-    , m_hasOutlineAutoAncestor(false)
-    , m_paintContainmentApplies(false)
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    , m_hasSVGTransform(false)
-#endif
-{
-}
-
+RenderObject::RenderObjectRareData::RenderObjectRareData() = default;
 RenderObject::RenderObjectRareData::~RenderObjectRareData() = default;
 
 bool RenderObject::hasNonEmptyVisibleRectRespectingParentFrames() const

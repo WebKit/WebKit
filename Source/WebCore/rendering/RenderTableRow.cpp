@@ -48,7 +48,7 @@ using namespace HTMLNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableRow);
 
 RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
-    : RenderBox(Type::TableRow, element, WTFMove(style), { })
+    : RenderBox(Type::TableRow, element, WTFMove(style))
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);
@@ -56,7 +56,7 @@ RenderTableRow::RenderTableRow(Element& element, RenderStyle&& style)
 }
 
 RenderTableRow::RenderTableRow(Document& document, RenderStyle&& style)
-    : RenderBox(Type::TableRow, document, WTFMove(style), { })
+    : RenderBox(Type::TableRow, document, WTFMove(style))
     , m_rowIndex(unsetRowIndex)
 {
     setInline(false);

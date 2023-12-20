@@ -41,6 +41,9 @@ public:
     static std::unique_ptr<DisplayVBlankMonitor> create(PlatformDisplayID);
     virtual ~DisplayVBlankMonitor();
 
+    enum class Type { Drm, Timer };
+    virtual Type type() const = 0;
+
     unsigned refreshRate() const { return m_refreshRate; }
 
     void start();

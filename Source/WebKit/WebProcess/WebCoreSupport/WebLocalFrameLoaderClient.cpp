@@ -471,6 +471,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
         { }, /* downloadAttribute */
         { }, /* clickLocationInRootViewCoordinates */
         { }, /* redirectResponse */
+        false, /* isRequestFromClientOrUserInput */
         true, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */
@@ -941,6 +942,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         navigationAction.downloadAttribute(),
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint(),
         { }, /* redirectResponse */
+        false, /* isRequestFromClientOrUserInput */
         false, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */

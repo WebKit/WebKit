@@ -68,9 +68,9 @@ CSSParserSelectorList parseCSSParserSelectorList(CSSParserTokenRange& range, con
     return result;
 }
 
-std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext, CSSParserEnum::IsForgiving isForgiving)
+std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext)
 {
-    auto result = parseCSSParserSelectorList(range, context, styleSheet, isNestedContext, isForgiving);
+    auto result = parseCSSParserSelectorList(range, context, styleSheet, isNestedContext, CSSParserEnum::IsForgiving::No);
 
     if (result.isEmpty() || !range.atEnd())
         return { };

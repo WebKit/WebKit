@@ -276,14 +276,18 @@ void GraphicsContextCG::restore(GraphicsContextState::Purpose purpose)
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     auto image = nativeImage.platformImage();
+    if (!image)
+        return;
+    auto imageSize = nativeImage.size();
+    if (options.orientation().usesWidthAsHeight())
+        imageSize = imageSize.transposedSize();
     auto imageRect = FloatRect { { }, imageSize };
     auto normalizedSrcRect = normalizeRect(srcRect);
     auto normalizedDestRect = normalizeRect(destRect);
-
-    if (!image || !imageRect.intersects(normalizedSrcRect))
+    if (!imageRect.intersects(normalizedSrcRect))
         return;
 
 #if !LOG_DISABLED
@@ -317,11 +321,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         return adoptCF(CGImageCreateWithImageInRect(image, physicalSubimageRect));
     };
 
-    auto imageLogicalSize = [](CGImageRef image, ImagePaintingOptions options) -> FloatSize {
-        FloatSize size = FloatSize(CGImageGetWidth(image), CGImageGetHeight(image));
-        return options.orientation().usesWidthAsHeight() ? size.transposedSize() : size;
-    };
-
     auto context = platformContext();
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
@@ -329,7 +328,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     convertToDestinationColorSpaceIfNeeded(image);
 
     auto subImage = image;
-    auto currentImageSize = imageLogicalSize(image.get(), options);
 
     auto adjustedDestRect = normalizedDestRect;
 
@@ -348,13 +346,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
 
             auto subPixelPadding = normalizedSrcRect.location() - subimageRect.location();
             adjustedDestRect = { adjustedDestRect.location() - subPixelPadding * scale, subimageRect.size() * scale };
-
-            // If the image is only partially loaded, then shrink the destination rect that we're drawing
-            // into accordingly.
-            if (currentImageSize.height() < normalizedSrcRect.maxY()) {
-                auto currentSubimageSize = imageLogicalSize(subImage.get(), options);
-                adjustedDestRect.setHeight(currentSubimageSize.height() * scale.height());
-            }
         } else {
             // If the source rect is a subportion of the image, then we compute an inflated destination rect
             // that will hold the entire image and then set a clip to the portion that we want to display.
@@ -366,10 +357,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
             CGContextClipToRect(context, normalizedDestRect);
         }
     }
-
-    // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
-    if (subImage == image && currentImageSize.height() < imageSize.height())
-        adjustedDestRect.setHeight(adjustedDestRect.height() * currentImageSize.height() / imageSize.height());
 
 #if PLATFORM(IOS_FAMILY)
     bool wasAntialiased = CGContextGetShouldAntialias(context);

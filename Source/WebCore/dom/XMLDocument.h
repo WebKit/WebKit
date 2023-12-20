@@ -39,12 +39,7 @@ public:
         return document;
     }
 
-    static Ref<XMLDocument> createXHTML(LocalFrame* frame, const Settings& settings, const URL& url)
-    {
-        auto document = adoptRef(*new XMLDocument(frame, settings, url, { DocumentClass::XML, DocumentClass::XHTML }));
-        document->addToContextsMap();
-        return document;
-    }
+    WEBCORE_EXPORT static Ref<XMLDocument> createXHTML(LocalFrame*, const Settings&, const URL&);
 
 protected:
     XMLDocument(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses = { })

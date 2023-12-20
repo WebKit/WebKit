@@ -76,7 +76,6 @@ public:
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }
-    bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
 
     bool isPseudoElementCueFunction() const;
 

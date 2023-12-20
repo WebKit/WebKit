@@ -48,7 +48,7 @@ RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& s
     : RenderFragmentedFlow(Type::MultiColumnFlow, document, WTFMove(style))
     , m_spannerMap(makeUnique<SpannerMap>())
 {
-    setFragmentedFlowState(InsideInFragmentedFlow);
+    setFragmentedFlowState(FragmentedFlowState::InsideFlow);
     ASSERT(isRenderMultiColumnFlow());
 }
 

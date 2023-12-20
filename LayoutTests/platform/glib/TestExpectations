@@ -1288,7 +1288,8 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 http/tests/push-api [ Skip ]
 
 # <CR>same-origin<CR> seems to be parsed as same-origin instead of failing
-webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
 
 # Slight difference where the failure happens in relation to mac's baseline
 webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?5-6 [ Failure ]
@@ -3701,6 +3702,10 @@ webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/266280 imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ DumpJSConsoleLogInStdErr Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie-store.tentative.https.window.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/detached-iframe.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Pass Failure Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/anonymous-window.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure Crash ]
 
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]

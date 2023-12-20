@@ -2689,7 +2689,7 @@ RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
 
 void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
     if (auto* cachedFragmentedFlow = cachedEnclosingFragmentedFlow())

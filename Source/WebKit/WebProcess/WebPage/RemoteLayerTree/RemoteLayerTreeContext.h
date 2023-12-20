@@ -115,7 +115,7 @@ private:
     HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
 #endif
 
-    HashSet<CheckedPtr<GraphicsLayerCARemote>> m_liveGraphicsLayers;
+    HashSet<WeakRef<GraphicsLayerCARemote>> m_liveGraphicsLayers;
 
     std::unique_ptr<RemoteLayerBackingStoreCollection> m_backingStoreCollection;
 

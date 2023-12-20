@@ -1670,7 +1670,8 @@ webkit.org/b/257624 http/tests/frame-throttling/raf-throttle-in-cross-origin-sub
 webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass Timeout Crash ]
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections.html [ Pass Timeout ]
 webkit.org/b/257624 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Pass Timeout ]
-webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
 webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Crash Failure Pass ]
 webkit.org/b/257624 imported/blink/compositing/background-color/background-color-drawn-over-child.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ Crash ImageOnlyFailure Pass ]
@@ -2664,7 +2665,8 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-transforms/backface-
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/css-transforms/size-change-under-backface-visibility-hidden.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/filter-effects/dynamic-filter-changes-001.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/css/motion/change-offset-path.html [ ImageOnlyFailure Pass ]
-webkit.org/b/264680 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/264680 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Crash Failure Pass Timeout ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Crash Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure Pass ]

@@ -162,6 +162,12 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 
     tree->updateRelations(axObjectCache.relations());
 
+    for (auto& relatedObjectID : axObjectCache.relations().keys()) {
+        RefPtr axObject = axObjectCache.objectForID(relatedObjectID);
+        if (axObject && axObject->accessibilityIsIgnored())
+            tree->addUnconnectedNode(axObject.releaseNonNull());
+    }
+
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
     return tree;
@@ -239,22 +245,6 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
             continue;
         }
 
-        // There is no isolated object for this AXID. This can happen if the corresponding live object is ignored.
-        // If there is a live object for this ID and it is an ignored target of a relationship, create an isolated object for it.
-        object = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedObject>>([&axID, this] () -> RefPtr<AXIsolatedObject> {
-            auto* cache = axObjectCache();
-            if (!cache || !cache->relationTargetIDs().contains(axID))
-                return nullptr;
-
-            RefPtr axObject = cache->objectForID(axID);
-            if (!axObject || !axObject->accessibilityIsIgnored())
-                return nullptr;
-
-            auto object = AXIsolatedObject::create(*axObject, const_cast<AXIsolatedTree*>(this));
-            ASSERT(axObject->wrapper());
-            object->attachPlatformWrapper(axObject->wrapper());
-            return object;
-        });
         if (object) {
             m_readerThreadNodeMap.add(axID, *object);
             result.append(object);
@@ -331,6 +321,11 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     AXTRACE("AXIsolatedTree::addUnconnectedNode"_s);
     ASSERT(isMainThread());
 
+    if (m_unconnectedNodes.contains(axObject->objectID())) {
+        AXLOG(makeString("AXIsolatedTree::addUnconnectedNode exiting because an isolated object for ", axObject->objectID().loggingString(), " already exists."));
+        return;
+    }
+
     if (axObject->isDetached() || !axObject->wrapper()) {
         AXLOG(makeString("AXIsolatedTree::addUnconnectedNode bailing because associated live object ID ", axObject->objectID().loggingString(), " had no wrapper or is detached. Object is:"));
         AXLOG(axObject.ptr());
@@ -347,6 +342,7 @@ void AXIsolatedTree::addUnconnectedNode(Ref<AccessibilityObject> axObject)
     // other entity is removed from the page.
     auto object = AXIsolatedObject::create(axObject, this);
     object->attachPlatformWrapper(axObject->wrapper());
+    m_unconnectedNodes.add(axObject->objectID());
 
     NodeChange nodeChange { object, nullptr };
     Locker locker { m_changeLogLock };
@@ -1061,6 +1057,9 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AccessibilityObject
     ASSERT(isMainThread());
 
     if (!objectID.isValid())
+        return;
+
+    if (m_unconnectedNodes.remove(objectID))
         return;
 
     if (!m_nodeMap.contains(objectID)) {

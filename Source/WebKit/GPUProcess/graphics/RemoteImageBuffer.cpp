@@ -147,7 +147,7 @@ void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, Complet
         auto context = bitmap->createGraphicsContext();
         if (!context)
             return;
-        context->drawNativeImage(*image, imageSize, WebCore::FloatRect { { }, imageSize }, WebCore::FloatRect { { }, imageSize });
+        context->drawNativeImage(*image, WebCore::FloatRect { { }, imageSize }, WebCore::FloatRect { { }, imageSize });
         handle = bitmap->createHandle();
     }();
     completionHandler(WTFMove(handle));

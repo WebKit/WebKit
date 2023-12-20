@@ -325,6 +325,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         navigationAction.downloadAttribute(),
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint { },
         { }, /* redirectResponse */
+        navigationAction.isRequestFromClientOrUserInput(),
         false, /* treatAsSameOriginNavigation */
         false, /* hasOpenedFrames */
         false, /* openedByDOMWithOpener */

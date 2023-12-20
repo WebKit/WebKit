@@ -77,13 +77,6 @@ template<> struct ArgumentCoder<RetainPtr<CFDictionaryRef>> : CFRetainPtrArgumen
     static std::optional<RetainPtr<CFDictionaryRef>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<CFURLRef> {
-    template<typename Encoder> static void encode(Encoder&, CFURLRef);
-};
-template<> struct ArgumentCoder<RetainPtr<CFURLRef>> : CFRetainPtrArgumentCoder<CFURLRef> {
-    static std::optional<RetainPtr<CFURLRef>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<CGColorSpaceRef> {
     template<typename Encoder> static void encode(Encoder&, CGColorSpaceRef);
 };

@@ -251,7 +251,7 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
 }
 
 inline RenderText::RenderText(Type type, Node& node, const String& text)
-    : RenderObject(type, node, TypeFlag::IsText)
+    : RenderObject(type, node, TypeFlag::IsText, { })
     , m_text(text)
     , m_containsOnlyASCII(text.impl()->containsOnlyASCII())
 {

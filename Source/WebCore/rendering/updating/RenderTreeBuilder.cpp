@@ -611,8 +611,8 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
                 if (auto* containingBlock = renderer.containingBlock(); containingBlock && isOutOfFlowPositioned) {
                     // Sometimes the flow state could change even when the renderer stays out-of-flow (e.g when going from fixed to absolute and
                     // the containing block is inside a multi-column flow).
-                    return containingBlock->fragmentedFlowState() == RenderObject::InsideInFragmentedFlow
-                        && renderer.fragmentedFlowState() == RenderObject::NotInsideFragmentedFlow;
+                    return containingBlock->fragmentedFlowState() == RenderObject::FragmentedFlowState::InsideFlow
+                        && renderer.fragmentedFlowState() == RenderObject::FragmentedFlowState::NotInsideFlow;
                 }
                 return false;
             }();

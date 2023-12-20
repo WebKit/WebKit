@@ -132,14 +132,14 @@ static const unsigned backgroundObscurationTestMaxDepth = 4;
 
 bool RenderBox::s_hadNonVisibleOverflow = false;
 
-RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> flags)
-    : RenderBoxModelObject(type, element, WTFMove(style), flags | TypeFlag::IsBox)
+RenderBox::RenderBox(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+    : RenderBoxModelObject(type, element, WTFMove(style), flags | TypeFlag::IsBox, typeSpecificFlags)
 {
     ASSERT(isRenderBox());
 }
 
-RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> flags)
-    : RenderBoxModelObject(type, document, WTFMove(style), flags | TypeFlag::IsBox)
+RenderBox::RenderBox(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> flags, TypeSpecificFlags typeSpecificFlags)
+    : RenderBoxModelObject(type, document, WTFMove(style), flags | TypeFlag::IsBox, typeSpecificFlags)
 {
     ASSERT(isRenderBox());
 }
@@ -1424,13 +1424,14 @@ void RenderBox::clearOverridingLogicalWidthLength()
 
 void RenderBox::markMarginAsTrimmed(MarginTrimType newTrimmedMargin)
 {
-    ensureRareData().setTrimmedMargins(rareData().trimmedMargins() | static_cast<unsigned>(newTrimmedMargin));
+    auto& rareData = ensureRareData();
+    rareData.trimmedMargins = rareData.trimmedMargins | newTrimmedMargin;
 }
 
 void RenderBox::clearTrimmedMarginsMarkings()
 {
     ASSERT(hasRareData());
-    ensureRareData().setTrimmedMargins(0);
+    ensureRareData().trimmedMargins = { };
 }
 
 bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) const
@@ -1439,7 +1440,7 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
         return false;
     if (!hasRareData())
         return false;
-    return marginTrimType ? (rareData().trimmedMargins() & static_cast<unsigned>(*marginTrimType)) : rareData().trimmedMargins();
+    return marginTrimType ? rareData().trimmedMargins.contains(*marginTrimType) : !rareData().trimmedMargins.isEmpty();
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const

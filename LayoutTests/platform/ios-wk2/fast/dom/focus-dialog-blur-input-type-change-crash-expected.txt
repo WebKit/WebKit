@@ -1,3 +1,2 @@
 CONSOLE MESSAGE: RangeError: Maximum call stack size exceeded.
-CONSOLE MESSAGE: RangeError: Maximum call stack size exceeded.
 PASS

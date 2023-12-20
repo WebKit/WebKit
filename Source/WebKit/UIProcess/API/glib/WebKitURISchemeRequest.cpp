@@ -93,6 +93,11 @@ void webkitURISchemeRequestCancel(WebKitURISchemeRequest* request)
     g_cancellable_cancel(request->priv->cancellable.get());
 }
 
+WebPageProxy& webkitURISchemeRequestGetWebPage(WebKitURISchemeRequest* request)
+{
+    return *request->priv->initiatingPage;
+}
+
 /**
  * webkit_uri_scheme_request_get_scheme:
  * @request: a #WebKitURISchemeRequest

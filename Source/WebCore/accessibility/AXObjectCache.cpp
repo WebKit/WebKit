@@ -4618,7 +4618,18 @@ void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
         ASSERT_NOT_REACHED();
         return;
     }
-    addRelation(getOrCreate(origin, IsPartOfRelation::Yes), getOrCreate(target, IsPartOfRelation::Yes), relationType);
+    RefPtr relationOrigin = getOrCreate(origin, IsPartOfRelation::Yes);
+    RefPtr relationTarget = getOrCreate(target, IsPartOfRelation::Yes);
+    addRelation(relationOrigin.get(), relationTarget.get(), relationType);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        if (relationOrigin && relationOrigin->accessibilityIsIgnored())
+            tree->addUnconnectedNode(relationOrigin.releaseNonNull());
+        if (relationTarget && relationTarget->accessibilityIsIgnored())
+            tree->addUnconnectedNode(relationTarget.releaseNonNull());
+    }
+#endif
 }
 
 static bool canHaveRelations(Element& element)
