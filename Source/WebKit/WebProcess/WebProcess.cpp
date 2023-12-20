@@ -1021,25 +1021,28 @@ static uint64_t nextUserGestureTokenIdentifier()
     return identifier++;
 }
 
-uint64_t WebProcess::userGestureTokenIdentifier(RefPtr<UserGestureToken> token)
+uint64_t WebProcess::userGestureTokenIdentifier(std::optional<PageIdentifier> pageID, RefPtr<UserGestureToken> token)
 {
+    if (!pageID)
+        return 0;
+
     if (!token || !token->processingUserGesture())
         return 0;
 
     auto result = m_userGestureTokens.ensure(*token, [] { return nextUserGestureTokenIdentifier(); });
     if (result.isNewEntry) {
-        result.iterator->key.addDestructionObserver([] (UserGestureToken& tokenBeingDestroyed) {
-            WebProcess::singleton().userGestureTokenDestroyed(tokenBeingDestroyed);
+        result.iterator->key.addDestructionObserver([pageID] (UserGestureToken& tokenBeingDestroyed) {
+            WebProcess::singleton().userGestureTokenDestroyed(*pageID, tokenBeingDestroyed);
         });
     }
     
     return result.iterator->value;
 }
 
-void WebProcess::userGestureTokenDestroyed(UserGestureToken& token)
+void WebProcess::userGestureTokenDestroyed(PageIdentifier pageID, UserGestureToken& token)
 {
     auto identifier = m_userGestureTokens.take(token);
-    parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyUserGestureToken(identifier), 0);
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyUserGestureToken(pageID, identifier), 0);
 }
 
 void WebProcess::isJITEnabled(CompletionHandler<void(bool)>&& completionHandler)

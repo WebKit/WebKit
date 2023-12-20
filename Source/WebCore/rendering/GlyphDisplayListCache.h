@@ -31,10 +31,10 @@
 #include "Logging.h"
 #include "TextRun.h"
 #include "TextRunHash.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ namespace InlineDisplay {
 struct Box;
 }
 
-class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeCheckedPtr {
+class GlyphDisplayListCacheEntry : public RefCounted<GlyphDisplayListCacheEntry>, public CanMakeSingleThreadWeakPtr<GlyphDisplayListCacheEntry> {
     WTF_MAKE_FAST_ALLOCATED;
     friend struct GlyphDisplayListCacheKeyTranslator;
     friend void add(Hasher&, const GlyphDisplayListCacheEntry&);
@@ -92,10 +92,10 @@ inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 
 struct GlyphDisplayListCacheEntryHash {
     static unsigned hash(const GlyphDisplayListCacheEntry* entry) { return computeHash(*entry); }
-    static unsigned hash(const CheckedPtr<GlyphDisplayListCacheEntry>& entry) { return computeHash(*entry); }
-    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& a, const CheckedPtr<GlyphDisplayListCacheEntry>& b) { return a == b; }
-    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& a, const GlyphDisplayListCacheEntry* b) { return a == b; }
-    static bool equal(const GlyphDisplayListCacheEntry* a, const CheckedPtr<GlyphDisplayListCacheEntry>& b) { return a == b; }
+    static unsigned hash(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& entry) { return computeHash(entry.get()); }
+    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& a, const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& b) { return a.ptr() == b.ptr(); }
+    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& a, const GlyphDisplayListCacheEntry* b) { return a.ptr() == b; }
+    static bool equal(const GlyphDisplayListCacheEntry* a, const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& b) { return a == b.ptr(); }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
@@ -127,13 +127,13 @@ private:
     void remove(const void* run);
 
     HashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
-    HashSet<CheckedPtr<GlyphDisplayListCacheEntry>> m_entries;
+    HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
 };
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct DefaultHash<CheckedPtr<WebCore::GlyphDisplayListCacheEntry>> : WebCore::GlyphDisplayListCacheEntryHash { };
+template<> struct DefaultHash<SingleThreadWeakRef<WebCore::GlyphDisplayListCacheEntry>> : WebCore::GlyphDisplayListCacheEntryHash { };
 
 } // namespace WTF

@@ -24,7 +24,7 @@ messages -> WebProcessProxy LegacyReceiver {
     UpdateBackForwardItem(struct WebKit::BackForwardListItemState backForwardListItemState)
     DidDestroyFrame(WebCore::FrameIdentifier frameID, WebKit::WebPageProxyIdentifier pageID) 
 
-    DidDestroyUserGestureToken(uint64_t userGestureTokenID) 
+    DidDestroyUserGestureToken(WebCore::PageIdentifier pageID, uint64_t userGestureTokenID) 
 
     ShouldTerminate() -> (bool shouldTerminate) Synchronous
 
