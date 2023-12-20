@@ -318,7 +318,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         modifiersForNavigationAction(navigationAction),
         mouseButton(navigationAction),
         syntheticClickType(navigationAction),
-        webProcess.userGestureTokenIdentifier(navigationAction.userGestureToken()),
+        webProcess.userGestureTokenIdentifier(navigationAction.requester()->pageID, navigationAction.userGestureToken()),
         navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
         protectedPage()->canHandleRequest(navigationAction.originalRequest()),
         navigationAction.shouldOpenExternalURLsPolicy(),
