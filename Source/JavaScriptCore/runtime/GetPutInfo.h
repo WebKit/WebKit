@@ -83,8 +83,7 @@ enum ResolveType : unsigned {
 enum class InitializationMode : unsigned {
     Initialization,      // "let x = 20;"
     ConstInitialization, // "const x = 20;"
-    NotInitialization,   // "x = 20;"
-    ScopedArgumentInitialization // Assign to scoped argument, which also has NotInitialization semantics.
+    NotInitialization    // "x = 20;"
 };
 
 ALWAYS_INLINE const char* resolveModeName(ResolveMode resolveMode)
@@ -121,8 +120,7 @@ ALWAYS_INLINE const char* initializationModeName(InitializationMode initializati
     static const char* const names[] = {
         "Initialization",
         "ConstInitialization",
-        "NotInitialization",
-        "ScopedArgumentInitialization"
+        "NotInitialization"
     };
     return names[static_cast<unsigned>(initializationMode)];
 }
@@ -134,7 +132,6 @@ ALWAYS_INLINE bool isInitialization(InitializationMode initializationMode)
     case InitializationMode::ConstInitialization:
         return true;
     case InitializationMode::NotInitialization:
-    case InitializationMode::ScopedArgumentInitialization:
         return false;
     }
     ASSERT_NOT_REACHED();
