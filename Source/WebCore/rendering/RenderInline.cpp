@@ -65,14 +65,14 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderInline);
 
 RenderInline::RenderInline(Type type, Element& element, RenderStyle&& style)
-    : RenderBoxModelObject(type, element, WTFMove(style), RenderElementType::RenderInlineFlag)
+    : RenderBoxModelObject(type, element, WTFMove(style), TypeFlag::IsRenderInline)
 {
     setChildrenInline(true);
     ASSERT(isRenderInline());
 }
 
 RenderInline::RenderInline(Type type, Document& document, RenderStyle&& style)
-    : RenderBoxModelObject(type, document, WTFMove(style), RenderElementType::RenderInlineFlag)
+    : RenderBoxModelObject(type, document, WTFMove(style), TypeFlag::IsRenderInline)
 {
     setChildrenInline(true);
     ASSERT(isRenderInline());

@@ -660,8 +660,8 @@ public:
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
 
 protected:
-    RenderBox(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
-    RenderBox(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag>);
+    RenderBox(Type, Document&, RenderStyle&&, OptionSet<TypeFlag>);
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
