@@ -477,12 +477,7 @@ Scrollbar* PluginView::horizontalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (is<PDFPlugin>(m_plugin))
-        return downcast<PDFPlugin>(m_plugin)->horizontalScrollbar();
-#endif
-
-    return nullptr;
+    return m_plugin->horizontalScrollbar();
 }
 
 Scrollbar* PluginView::verticalScrollbar()
@@ -490,12 +485,7 @@ Scrollbar* PluginView::verticalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (is<PDFPlugin>(m_plugin))
-        return downcast<PDFPlugin>(m_plugin)->verticalScrollbar();
-#endif
-
-    return nullptr;
+    return m_plugin->verticalScrollbar();
 }
 
 bool PluginView::wantsWheelEvents()

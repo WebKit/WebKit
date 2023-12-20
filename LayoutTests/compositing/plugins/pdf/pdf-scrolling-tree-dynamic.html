@@ -5,7 +5,7 @@
     <style>
         embed {
             width: 300px;
-            height: 300px;
+            height: 250px;
         }
     </style>
     <script src="../../../resources/ui-helper.js"></script>
@@ -21,20 +21,20 @@
             if (!window.internals)
                 return;
 
+            let testOutput = "Before installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+
             const pdf = document.getElementById("pdf");
-
-            document.getElementById('scrollingtree').textContent = "Before installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
-
             pdf.src = "../../../fast/images/resources/green_rectangle.pdf";
 
-            shouldBecomeEqual("internals.numberOfScrollableAreas()", "1", function () {
-                document.getElementById('scrollingtree').textContent += "After installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+            shouldBecomeEqual("internals.numberOfScrollableAreas()", "1", () => {
+                testOutput += "After installing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
 
                 pdf.parentElement.removeChild(pdf);
 
-                shouldBecomeEqual("internals.numberOfScrollableAreas()", "0", function () {
+                shouldBecomeEqual("internals.numberOfScrollableAreas()", "0", () => {
 
-                    document.getElementById('scrollingtree').textContent += "After removing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+                    testOutput += "After removing PDF:\n" + internals.scrollingStateTreeAsText() + "\n";
+                    document.getElementById('scrollingtree').textContent = testOutput
 
                     finishJSTest();
                 });
