@@ -7046,13 +7046,16 @@
                 "url": "https://www.w3.org/TR/css3-multicol/#columns"
             }
         },
-        "-webkit-box-decoration-break": {
+        "box-decoration-break": {
             "values": [
                 "clone",
                 "slice"
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "aliases": [
+                    "-webkit-box-decoration-break"
+                ]
             },
             "status": {
                 "status": "experimental"

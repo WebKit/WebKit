@@ -75,6 +75,7 @@ PASS border-top-right-radius
 PASS border-top-style
 PASS border-top-width
 PASS bottom
+PASS box-decoration-break
 PASS box-shadow
 PASS box-sizing
 PASS break-after
@@ -379,7 +380,6 @@ PASS -webkit-background-origin
 PASS -webkit-border-horizontal-spacing
 PASS -webkit-border-vertical-spacing
 PASS -webkit-box-align
-PASS -webkit-box-decoration-break
 PASS -webkit-box-direction
 PASS -webkit-box-flex
 PASS -webkit-box-flex-group

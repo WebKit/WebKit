@@ -101,6 +101,9 @@ PASS border-top-style: "dotted" onto "solid"
 PASS border-top-width (type: length) has testAddition function
 PASS border-top-width: length
 PASS border-top-width: length of rem
+PASS box-decoration-break (type: discrete) has testAddition function
+PASS box-decoration-break: "clone" onto "slice"
+PASS box-decoration-break: "slice" onto "clone"
 PASS box-shadow (type: boxShadowList) has testAddition function
 PASS box-shadow: shadow
 PASS box-sizing (type: discrete) has testAddition function

@@ -1185,6 +1185,9 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "border-top-style": [
         "none", "hidden", "inset", "groove", "outset", "ridge", "dotted", "dashed", "solid", "double",
     ],
+    "box-decoration-break": [
+        "clone", "slice",
+    ],
     "box-sizing": [
         "border-box", "content-box",
     ],
