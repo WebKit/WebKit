@@ -505,7 +505,7 @@ public:
     WEBCORE_EXPORT unsigned short compareDocumentPosition(Node&);
 
     EventTargetInterface eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in Document.h
+    ScriptExecutionContext* scriptExecutionContext() const final; // Implemented in DocumentInlines.h.
 
     WEBCORE_EXPORT bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     bool removeEventListener(const AtomString& eventType, EventListener&, const EventListenerOptions&) override;

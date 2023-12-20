@@ -32,5 +32,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(XMLDocument);
 
+Ref<XMLDocument> XMLDocument::createXHTML(LocalFrame* frame, const Settings& settings, const URL& url)
+{
+    auto document = adoptRef(*new XMLDocument(frame, settings, url, { DocumentClass::XML, DocumentClass::XHTML }));
+    document->addToContextsMap();
+    return document;
+}
+
 } // namespace WebCore
 
