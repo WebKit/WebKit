@@ -37,6 +37,10 @@
 #include "StyleSheetContents.h"
 #include "TextResourceDecoder.h"
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
@@ -145,7 +149,15 @@ bool CachedCSSStyleSheet::canUseSheet(MIMETypeCheckHint mimeTypeCheckHint, bool*
         return false;
 
     // https://html.spec.whatwg.org/#fetching-and-processing-a-resource-from-a-link-element:processresponseconsumebody
-    if (response().url().protocolIsInHTTPFamily() && !response().isSuccessful()) {
+    auto shouldAvoidUsingStyleSheetDueToUnsuccessfulRequest = [&] {
+#if PLATFORM(COCOA)
+        if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoNotLoadStyleSheetIfHTTPStatusIsNotOK))
+            return false;
+#endif
+        return response().url().protocolIsInHTTPFamily() && !response().isSuccessful();
+    }();
+
+    if (shouldAvoidUsingStyleSheetDueToUnsuccessfulRequest) {
         if (hasHTTPStatusOK)
             *hasHTTPStatusOK = false;
         return false;
