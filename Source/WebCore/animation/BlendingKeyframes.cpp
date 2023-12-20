@@ -34,8 +34,11 @@
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
+#include "RenderStyleInlines.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
+#include "TransformOperations.h"
+#include "TranslateTransformOperation.h"
 
 namespace WebCore {
 
@@ -71,6 +74,8 @@ void BlendingKeyframes::insert(BlendingKeyframe&& keyframe)
 {
     if (keyframe.offset() < 0 || keyframe.offset() > 1)
         return;
+
+    analyzeKeyframe(keyframe);
 
     bool inserted = false;
     size_t i = 0;
@@ -308,6 +313,40 @@ void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properti
                 m_propertiesSetToCurrentColor.add(customPropertyValue->name());
         }
     }
+}
+
+void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
+{
+    auto analyzeSizeDependentTransform = [&]() {
+        if (m_hasWidthDependentTransform && m_hasHeightDependentTransform)
+            return;
+
+        auto* style = keyframe.style();
+        if (!style)
+            return;
+
+        if (keyframe.animatesProperty(CSSPropertyTransform)) {
+            for (auto& operation : style->transform().operations()) {
+                if (auto* translate = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
+                    if (translate->x().isPercent())
+                        m_hasWidthDependentTransform = true;
+                    if (translate->y().isPercent())
+                        m_hasHeightDependentTransform = true;
+                }
+            }
+        }
+
+        if (keyframe.animatesProperty(CSSPropertyTranslate)) {
+            if (auto* translate = style->translate()) {
+                if (translate->x().isPercent())
+                    m_hasWidthDependentTransform = true;
+                if (translate->y().isPercent())
+                    m_hasHeightDependentTransform = true;
+            }
+        }
+    };
+
+    analyzeSizeDependentTransform();
 }
 
 void BlendingKeyframe::addProperty(const AnimatableCSSProperty& property)

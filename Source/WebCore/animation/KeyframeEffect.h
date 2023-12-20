@@ -303,8 +303,6 @@ private:
     bool m_hasExplicitlyInheritedKeyframeProperty { false };
     bool m_hasAcceleratedPropertyOverriddenByCascadeProperty { false };
     bool m_hasReferenceFilter { false };
-    bool m_hasWidthDependentTransform { false };
-    bool m_hasHeightDependentTransform { false };
     bool m_animatesSizeAndSizeDependentTransform { false };
 };
 

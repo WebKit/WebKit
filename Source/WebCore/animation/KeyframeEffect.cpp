@@ -1115,28 +1115,11 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& ol
 
 void KeyframeEffect::computedNeedsForcedLayout()
 {
-    m_needsForcedLayout = false;
-    if (is<CSSTransition>(animation()) || !m_blendingKeyframes.containsProperty(CSSPropertyTransform))
-        return;
-
-    for (auto& keyframe : m_blendingKeyframes) {
-        auto* keyframeStyle = keyframe.style();
-        if (!keyframeStyle) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-        if (keyframeStyle->hasTransform()) {
-            auto& transformOperations = keyframeStyle->transform();
-            for (const auto& operation : transformOperations.operations()) {
-                if (auto* translation = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
-                    if (translation->x().isPercent() || translation->y().isPercent()) {
-                        m_needsForcedLayout = true;
-                        return;
-                    }
-                }
-            }
-        }
-    }
+    m_needsForcedLayout = [&]() {
+        if (is<CSSTransition>(animation()))
+            return false;
+        return m_blendingKeyframes.hasWidthDependentTransform() || m_blendingKeyframes.hasHeightDependentTransform();
+    }();
 }
 
 void KeyframeEffect::computeStackingContextImpact()
@@ -1969,8 +1952,8 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
         ASSERT(effectStack);
 
-        if ((m_hasWidthDependentTransform && effectStack->containsProperty(CSSPropertyWidth))
-            || (m_hasHeightDependentTransform && effectStack->containsProperty(CSSPropertyHeight)))
+        if ((m_blendingKeyframes.hasWidthDependentTransform() && effectStack->containsProperty(CSSPropertyWidth))
+            || (m_blendingKeyframes.hasHeightDependentTransform() && effectStack->containsProperty(CSSPropertyHeight)))
             return RunningAccelerated::Prevented;
 
         if (!effectStack->allowsAcceleration())
@@ -2557,46 +2540,8 @@ void KeyframeEffect::computeHasReferenceFilter()
 
 void KeyframeEffect::computeHasSizeDependentTransform()
 {
-    m_hasWidthDependentTransform = false;
-    m_hasHeightDependentTransform = false;
-    m_animatesSizeAndSizeDependentTransform = false;
-
-    if (m_blendingKeyframes.isEmpty())
-        return;
-
-    auto animatesTransform = m_blendingKeyframes.containsProperty(CSSPropertyTransform);
-    auto animatesTranslate = m_blendingKeyframes.containsProperty(CSSPropertyTranslate);
-
-    if (!animatesTransform && !animatesTranslate)
-        return;
-
-    for (auto& keyframe : m_blendingKeyframes) {
-        if (auto* style = keyframe.style()) {
-            if (animatesTranslate) {
-                if (auto* translate = style->translate()) {
-                    if (translate->x().isPercent())
-                        m_hasWidthDependentTransform = true;
-                    if (translate->y().isPercent())
-                        m_hasHeightDependentTransform = true;
-                }
-            }
-            if (animatesTransform) {
-                for (auto& operation : style->transform().operations()) {
-                    if (auto* translate = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
-                        if (translate->x().isPercent())
-                            m_hasWidthDependentTransform = true;
-                        if (translate->y().isPercent())
-                            m_hasHeightDependentTransform = true;
-                    }
-                }
-            }
-        }
-        if (m_hasWidthDependentTransform && m_hasHeightDependentTransform)
-            break;
-    }
-
-    m_animatesSizeAndSizeDependentTransform = (m_hasWidthDependentTransform && m_blendingKeyframes.containsProperty(CSSPropertyWidth))
-        || (m_hasHeightDependentTransform && m_blendingKeyframes.containsProperty(CSSPropertyHeight));
+    m_animatesSizeAndSizeDependentTransform = (m_blendingKeyframes.hasWidthDependentTransform() && m_blendingKeyframes.containsProperty(CSSPropertyWidth))
+        || (m_blendingKeyframes.hasHeightDependentTransform() && m_blendingKeyframes.containsProperty(CSSPropertyHeight));
 }
 
 void KeyframeEffect::effectStackNoLongerPreventsAcceleration()

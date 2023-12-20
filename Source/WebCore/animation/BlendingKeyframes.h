@@ -94,7 +94,7 @@ public:
     bool operator==(const BlendingKeyframes&) const;
 
     const AtomString& animationName() const { return m_animationName; }
-    
+
     void insert(BlendingKeyframe&&);
 
     void addProperty(const AnimatableCSSProperty&);
@@ -125,14 +125,21 @@ public:
 
     void updatePropertiesMetadata(const StyleProperties&);
 
+    bool hasWidthDependentTransform() const { return m_hasWidthDependentTransform; }
+    bool hasHeightDependentTransform() const { return m_hasHeightDependentTransform; }
+
 private:
+    void analyzeKeyframe(const BlendingKeyframe&);
+
     AtomString m_animationName;
     Vector<BlendingKeyframe> m_keyframes; // Kept sorted by key.
     HashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
-    bool m_usesRelativeFontWeight { false };
-    bool m_containsCSSVariableReferences { false };
     HashSet<AnimatableCSSProperty> m_propertiesSetToInherit;
     HashSet<AnimatableCSSProperty> m_propertiesSetToCurrentColor;
+    bool m_usesRelativeFontWeight { false };
+    bool m_containsCSSVariableReferences { false };
+    bool m_hasWidthDependentTransform { false };
+    bool m_hasHeightDependentTransform { false };
 };
 
 } // namespace WebCore
