@@ -187,9 +187,6 @@ public:
     void clear();
     void clear(WallTime modifiedSince, Function<void()>&&);
 
-    void retrieveData(const DataKey&, Function<void(const uint8_t*, size_t)>);
-    void storeData(const DataKey&,  const uint8_t* data, size_t);
-    
     std::unique_ptr<Entry> makeEntry(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&);
     std::unique_ptr<Entry> makeRedirectEntry(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest);
 
