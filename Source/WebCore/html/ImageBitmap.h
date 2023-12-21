@@ -118,10 +118,9 @@ public:
     bool forciblyPremultiplyAlpha() const { return m_backingStore && m_backingStore->forciblyPremultiplyAlpha(); }
 
     std::optional<ImageBitmapBacking> takeImageBitmapBacking();
+    std::optional<ImageBitmapBacking> detach();
     bool isDetached() const { return !m_backingStore; }
     void close() { takeImageBitmapBacking(); }
-
-    static Vector<std::optional<ImageBitmapBacking>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
 
     size_t memoryCost() const;
 private:
