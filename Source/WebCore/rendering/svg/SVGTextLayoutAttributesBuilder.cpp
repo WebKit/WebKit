@@ -103,22 +103,22 @@ void SVGTextLayoutAttributesBuilder::collectTextPositioningElements(RenderBoxMod
     ASSERT(!is<RenderSVGText>(start) || m_textPositions.isEmpty());
 
     for (auto& child : childrenOfType<RenderObject>(start)) {
-        if (is<RenderSVGInlineText>(child)) {
-            processRenderSVGInlineText(downcast<RenderSVGInlineText>(child), m_textLength, lastCharacterWasSpace);
+        if (CheckedPtr inlineText = dynamicDowncast<RenderSVGInlineText>(child)) {
+            processRenderSVGInlineText(*inlineText, m_textLength, lastCharacterWasSpace);
             continue;
         }
 
-        if (!is<RenderSVGInline>(child))
+        CheckedPtr inlineChild = dynamicDowncast<RenderSVGInline>(child);
+        if (!inlineChild)
             continue;
 
-        auto& inlineChild = downcast<RenderSVGInline>(child);
-        SVGTextPositioningElement* element = SVGTextPositioningElement::elementFromRenderer(inlineChild);
+        auto* element = SVGTextPositioningElement::elementFromRenderer(*inlineChild);
 
         unsigned atPosition = m_textPositions.size();
         if (element)
             m_textPositions.append(TextPosition(element, m_textLength));
 
-        collectTextPositioningElements(inlineChild, lastCharacterWasSpace);
+        collectTextPositioningElements(*inlineChild, lastCharacterWasSpace);
 
         if (!element)
             continue;

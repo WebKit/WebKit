@@ -59,7 +59,7 @@ static RenderBlock* getParentOfFirstLineBox(RenderBlock& current, RenderObject& 
         if (!is<RenderBlock>(child) || is<RenderTable>(child) || is<RenderRubyAsBlock>(child))
             break;
 
-        if (is<RenderBox>(child) && downcast<RenderBox>(child).isWritingModeRoot())
+        if (auto* renderBox = dynamicDowncast<RenderBox>(child); renderBox && renderBox->isWritingModeRoot())
             break;
 
         if (is<RenderListItem>(current) && inQuirksMode && child.node() && isHTMLListElement(*child.node()))

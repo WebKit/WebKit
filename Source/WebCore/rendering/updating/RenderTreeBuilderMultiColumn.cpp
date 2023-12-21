@@ -252,7 +252,8 @@ RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderFragmented
     if (!beforeChild)
         return nullptr;
 
-    if (!is<RenderBox>(*beforeChild))
+    auto* beforeChildRenderBox = dynamicDowncast<RenderBox>(*beforeChild);
+    if (!beforeChildRenderBox)
         return beforeChild;
 
     auto* renderMultiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(enclosingFragmentedFlow);
@@ -269,7 +270,7 @@ RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderFragmented
     // create and insert a renderer for the sibling node immediately preceding the spanner, we need
     // to map that spanner renderer to the spanner's placeholder, which is where the new inserted
     // renderer belongs.
-    if (auto* placeholder = renderMultiColumnFlow->findColumnSpannerPlaceholder(downcast<RenderBox>(beforeChild)))
+    if (auto* placeholder = renderMultiColumnFlow->findColumnSpannerPlaceholder(beforeChildRenderBox))
         return placeholder;
 
     // This is an invalid spanner, or its placeholder hasn't been created yet. This happens when
