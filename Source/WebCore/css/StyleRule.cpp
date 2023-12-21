@@ -565,6 +565,10 @@ StyleRuleScope::StyleRuleScope(CSSSelectorList&& scopeStart, CSSSelectorList&& s
 
 StyleRuleScope::StyleRuleScope(const StyleRuleScope&) = default;
 
+WeakPtr<const StyleSheetContents> StyleRuleScope::styleSheetContents() const { return m_styleSheetOwner; }
+
+void StyleRuleScope::setStyleSheetContents(const StyleSheetContents& sheet) { m_styleSheetOwner = &sheet; }
+
 StyleRuleCharset::StyleRuleCharset()
     : StyleRuleBase(StyleRuleType::Charset)
 {

@@ -139,9 +139,14 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
                 scopeRule->setScopeEnd(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeEnd(), &scopeRule->scopeStart()));
         }
 
-        m_selectorListStack.append(&scopeRule->scopeStart());
+        const auto& scopeStart = scopeRule->scopeStart();
+        // If <scope-start> is empty, it doesn't create a nesting context (the nesting selector might eventually be replaced by :scope)
+        if (!scopeStart.isEmpty())
+            m_selectorListStack.append(&scopeStart);
         addChildRules(scopeRule->childRules());
-        m_selectorListStack.removeLast();
+        if (!scopeStart.isEmpty())
+            m_selectorListStack.removeLast();
+
         if (m_ruleSet)
             m_currentScopeIdentifier = previousScopeIdentifier;
         return;
