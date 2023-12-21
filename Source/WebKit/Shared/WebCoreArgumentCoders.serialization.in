@@ -7220,3 +7220,9 @@ enum class WebCore::ContextMenuItemType : uint8_t {
     Mini,
     Large,
 };
+
+enum class WebCore::NotificationDirection : uint8_t {
+    Auto,
+    Ltr,
+    Rtl
+};
