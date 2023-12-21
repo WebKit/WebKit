@@ -1199,7 +1199,10 @@ inline LegacyInlineIterator BreakingContext::handleEndOfLine()
                 // Don't ever break in the middle of a word if we can help it.
                 // There's no room at all. We just have to be on this line,
                 // even though we'll spill out.
-                commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset());
+                if (m_current.renderer())
+                    commitLineBreakAtCurrentWidth(*m_current.renderer(), m_current.offset());
+                else if (m_lastObject)
+                    commitLineBreakAtCurrentWidth(*m_lastObject, m_lastObject->isRenderText() ? m_lastObject->length() : 0);
             }
         }
         // make sure we consume at least one char/object.
