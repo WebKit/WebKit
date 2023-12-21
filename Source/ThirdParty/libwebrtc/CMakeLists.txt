@@ -905,7 +905,6 @@ set(webrtc_SOURCES
     Source/webrtc/logging/rtc_event_log/events/rtc_event_video_send_stream_config.cc
     Source/webrtc/logging/rtc_event_log/ice_logger.cc
     Source/webrtc/logging/rtc_event_log/rtc_event_log_impl.cc
-    Source/webrtc/logging/rtc_event_log/rtc_event_processor.cc
     Source/webrtc/logging/rtc_event_log/rtc_stream_config.cc
     Source/webrtc/media/base/adapted_video_track_source.cc
     Source/webrtc/media/base/codec.cc
@@ -1591,10 +1590,10 @@ set(webrtc_SOURCES
     Source/webrtc/pc/sctp_transport.cc
     Source/webrtc/pc/sctp_utils.cc
     Source/webrtc/pc/sdp_offer_answer.cc
-    Source/webrtc/pc/sdp_serializer.cc
     Source/webrtc/pc/sdp_utils.cc
     Source/webrtc/pc/session_description.cc
     Source/webrtc/pc/simulcast_description.cc
+    Source/webrtc/pc/simulcast_sdp_serializer.cc
     Source/webrtc/pc/srtp_filter.cc
     Source/webrtc/pc/srtp_session.cc
     Source/webrtc/pc/srtp_transport.cc
@@ -1776,9 +1775,9 @@ set(webrtc_SOURCES
     Source/webrtc/video/frame_cadence_adapter.cc
     Source/webrtc/video/frame_decode_timing.cc
     Source/webrtc/video/frame_dumping_decoder.cc
+    Source/webrtc/video/frame_dumping_encoder.cc
     Source/webrtc/video/frame_encode_metadata_writer.cc
     Source/webrtc/video/quality_limitation_reason_tracker.cc
-    Source/webrtc/video/quality_threshold.cc
     Source/webrtc/video/receive_statistics_proxy.cc
     Source/webrtc/video/render/incoming_video_stream.cc
     Source/webrtc/video/render/video_render_frames.cc
@@ -1802,6 +1801,14 @@ set(webrtc_SOURCES
     Source/webrtc/video/video_stream_buffer_controller.cc
     Source/webrtc/video/video_stream_decoder2.cc
     Source/webrtc/video/video_stream_encoder.cc
+    Source/webrtc/modules/rtp_rtcp/source/flexfec_03_header_reader_writer.cc
+    Source/webrtc/p2p/base/stun_dictionary.cc
+    Source/webrtc/rtc_base/async_dns_resolver.cc
+    Source/webrtc/rtc_base/bitrate_tracker.cc
+    Source/webrtc/rtc_base/frequency_tracker.cc
+    Source/webrtc/rtc_base/network/received_packet.cc
+    Source/webrtc/rtc_tools/video_encoder/encoded_image_file_writer.cc
+    Source/webrtc/rtc_tools/video_encoder/video_encoder.cc
 
     $<TARGET_OBJECTS:libsrtp>
 )

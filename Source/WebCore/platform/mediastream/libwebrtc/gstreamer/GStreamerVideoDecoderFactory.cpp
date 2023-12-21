@@ -201,15 +201,15 @@ public:
         if (!GST_CLOCK_TIME_IS_VALID(m_firstBufferPts)) {
             GRefPtr<GstPad> srcpad = adoptGRef(gst_element_get_static_pad(m_src, "src"));
             m_firstBufferPts = (static_cast<guint64>(renderTimeMs)) * GST_MSECOND;
-            m_firstBufferDts = (static_cast<guint64>(inputImage.Timestamp())) * GST_MSECOND;
+            m_firstBufferDts = (static_cast<guint64>(inputImage.RtpTimestamp())) * GST_MSECOND;
         }
 
         // FIXME- Use a GstBufferPool.
         auto buffer = adoptGRef(gstBufferNewWrappedFast(fastMemDup(inputImage.data(), inputImage.size()),
             inputImage.size()));
-        GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage.Timestamp()) * GST_MSECOND) - m_firstBufferDts;
+        GST_BUFFER_DTS(buffer.get()) = (static_cast<guint64>(inputImage.RtpTimestamp()) * GST_MSECOND) - m_firstBufferDts;
         GST_BUFFER_PTS(buffer.get()) = (static_cast<guint64>(renderTimeMs) * GST_MSECOND) - m_firstBufferPts;
-        InputTimestamps timestamps = { inputImage.Timestamp(), renderTimeMs };
+        InputTimestamps timestamps = { inputImage.RtpTimestamp(), renderTimeMs };
         m_dtsPtsMap[GST_BUFFER_PTS(buffer.get())] = timestamps;
 
         GST_LOG_OBJECT(pipeline(), "%" G_GINT64_FORMAT " Decoding: %" GST_PTR_FORMAT, renderTimeMs, buffer.get());
