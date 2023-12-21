@@ -763,6 +763,7 @@ WebProcess/Network/WebTransportReceiveStreamSource.cpp
 WebProcess/Network/WebTransportSendStreamSink.cpp
 WebProcess/Network/WebTransportSession.cpp
 
+WebProcess/Network/webrtc/LibWebRTCDnsResolverFactory.cpp
 WebProcess/Network/webrtc/LibWebRTCNetwork.cpp
 WebProcess/Network/webrtc/LibWebRTCNetworkManager.cpp
 WebProcess/Network/webrtc/LibWebRTCProvider.cpp
