@@ -111,7 +111,7 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
         auto contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
         // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
-        m_decodedSheetText = m_decoder->decodeAndFlush(contiguousData->data(), data->size());
+        m_decodedSheetText = protectedDecoder()->decodeAndFlush(contiguousData->data(), data->size());
         m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;
@@ -121,6 +121,11 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     checkNotify(metrics);
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.
     m_decodedSheetText = String();
+}
+
+Ref<TextResourceDecoder> CachedCSSStyleSheet::protectedDecoder() const
+{
+    return m_decoder;
 }
 
 void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&)
