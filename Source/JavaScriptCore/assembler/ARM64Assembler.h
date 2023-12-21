@@ -3872,14 +3872,15 @@ protected:
     static void linkJumpOrCall(int* from, const int* fromInstruction, void* to, void* getJumpIslandData)
     {
         static_assert(type == BranchType_JMP || type == BranchType_CALL);
-
-        bool link;
         int imm26;
-        bool isUnconditionalBranchImmediateOrNop = disassembleUnconditionalBranchImmediate(from, link, imm26) || disassembleNop(from);
-
-        ASSERT_UNUSED(isUnconditionalBranchImmediateOrNop, isUnconditionalBranchImmediateOrNop);
         constexpr bool isCall = (type == BranchType_CALL);
-        ASSERT_UNUSED(isCall, (link == isCall) || disassembleNop(from) || true);
+
+        if constexpr (copy != noopJITMemcpy) {
+            bool link;
+            bool isUnconditionalBranchImmediateOrNop = disassembleUnconditionalBranchImmediate(from, link, imm26) || disassembleNop(from);
+            ASSERT_UNUSED(isUnconditionalBranchImmediateOrNop, isUnconditionalBranchImmediateOrNop);
+            ASSERT_UNUSED(isCall, (link == isCall) || disassembleNop(from) || true);
+        }
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);

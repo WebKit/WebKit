@@ -121,6 +121,8 @@ ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
     return memcpy(dst, src, bytes);
 }
 
+static ALWAYS_INLINE void* noopJITMemcpy(void *dst, const void *, size_t) { return dst; }
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)

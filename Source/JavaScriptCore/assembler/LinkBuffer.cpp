@@ -256,8 +256,6 @@ static ALWAYS_INLINE void* useExistingJumpIslands(void* data, void* from, void* 
     return d->jumpIslandsData[i][1];
 }
 
-static ALWAYS_INLINE void* noopJITMemcpy(void *dst, const void *, size_t) { return dst; }
-
 template <typename InstructionType, bool useFastJITPermissions>
 void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
@@ -303,9 +301,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     // First, update link record
 
+    Vector<LinkRecord> updatedLinkRecords;
+
     if (m_shouldPerformBranchCompaction) {
         for (unsigned i = 0; i < jumpCount; ++i) {
-            auto& linkRecord = jumpsToLink[i];
+            auto linkRecord = jumpsToLink[i];
             int offset = readPtr - writePtr;
             ASSERT(!(offset & 1));
 
@@ -318,9 +318,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));
             while (copySource != copyEnd) {
+                copySource++;
                 copyDst++;
             }
-            recordLinkOffsets(m_assemblerStorage, readPtr, linkRecord.from(), offset);
             readPtr += regionSize;
             writePtr += regionSize;
 
@@ -342,15 +342,16 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
                 int32_t delta = MacroAssembler::jumpSizeDelta(linkRecord.type(), jumpLinkType);
                 if (delta) {
                     writePtr -= delta;
-                    recordLinkOffsets(m_assemblerStorage, linkRecord.from() - delta, readPtr, readPtr - writePtr);
                 }
             }
             linkRecord.setFrom(&macroAssembler.m_assembler, writePtr);
+
+            updatedLinkRecords.append(linkRecord);
         }
     }
 
     for (unsigned i = 0; i < jumpCount; ++i) {
-        auto& linkRecord = jumpsToLink[i];
+        auto& linkRecord = updatedLinkRecords[i];
         uint8_t* location = codeOutData + linkRecord.from();
         const intptr_t to = linkRecord.to(&macroAssembler.m_assembler);
         uint8_t* target = nullptr;
