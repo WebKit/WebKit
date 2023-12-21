@@ -1,17 +1,16 @@
-From 297d68b30e6feeda0a399d697f112d31f5d75006 Mon Sep 17 00:00:00 2001
+From 627bd29a83425c1cf7a75be3e7ad2efce9605dc0 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
-Date: Thu, 23 Nov 2023 17:29:44 +0000
-Subject: [PATCH] GStreamer: Bump to 1.22.7
+Date: Thu, 21 Dec 2023 10:42:51 +0000
+Subject: [PATCH] GStreamer: Bump to 1.22.8
 
-Also include an avviddec deadlock fix scheduled to ship in 1.22.8.
 ---
  .../components/gstreamer-plugins-good.bst     |  1 +
  elements/include/gstreamer-source.yml         |  2 +-
- ...stream-lock-while-waiting-for-decode.patch | 33 +++++++++++++++++
  .../gstreamer/graceful-error-noopenh264.patch | 35 -------------------
- 4 files changed, 35 insertions(+), 36 deletions(-)
- create mode 100644 patches/gstreamer/0001-avviddec-Unlock-stream-lock-while-waiting-for-decode.patch
+ ...ins-bad-Optional-LRDF-dep-for-ladspa.patch | 13 -------
+ 4 files changed, 2 insertions(+), 49 deletions(-)
  delete mode 100644 patches/gstreamer/graceful-error-noopenh264.patch
+ delete mode 100644 patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
 
 diff --git a/elements/components/gstreamer-plugins-good.bst b/elements/components/gstreamer-plugins-good.bst
 index cea2a32..5d5224a 100644
@@ -26,7 +25,7 @@ index cea2a32..5d5224a 100644
  public:
    cpe:
 diff --git a/elements/include/gstreamer-source.yml b/elements/include/gstreamer-source.yml
-index f36b91e..a5050cc 100644
+index f36b91e..8fdb4f6 100644
 --- a/elements/include/gstreamer-source.yml
 +++ b/elements/include/gstreamer-source.yml
 @@ -2,6 +2,6 @@ sources:
@@ -34,48 +33,9 @@ index f36b91e..a5050cc 100644
    url: freedesktop:gstreamer/gstreamer.git
    track: 1.*[02468].*
 -  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
-+  ref: 1.22.7-0-g4d13eddc8b6d3f42ba44682ba42048acf170547f
++  ref: 1.22.8-0-g4af14db10e8355f980bbf79733af004e59d255fc
  - kind: patch_queue
    path: patches/gstreamer
-diff --git a/patches/gstreamer/0001-avviddec-Unlock-stream-lock-while-waiting-for-decode.patch b/patches/gstreamer/0001-avviddec-Unlock-stream-lock-while-waiting-for-decode.patch
-new file mode 100644
-index 0000000..40ae478
---- /dev/null
-+++ b/patches/gstreamer/0001-avviddec-Unlock-stream-lock-while-waiting-for-decode.patch
-@@ -0,0 +1,33 @@
-+From f96d05bf52d2e7b97241ed29b019fc5ad573592a Mon Sep 17 00:00:00 2001
-+From: Seungha Yang <seungha@centricular.com>
-+Date: Fri, 17 Nov 2023 01:01:36 +0900
-+Subject: [PATCH] avviddec: Unlock stream lock while waiting for decoded frame
-+
-+FFmpeg might request buffer from other threads, it will result
-+in deadlock
-+
-+Fixes: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/2558
-+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/5683>
-+---
-+ subprojects/gst-libav/ext/libav/gstavviddec.c | 4 ++++
-+ 1 file changed, 4 insertions(+)
-+
-+diff --git a/subprojects/gst-libav/ext/libav/gstavviddec.c b/subprojects/gst-libav/ext/libav/gstavviddec.c
-+index 1c10bb28ce..060b2f7dbe 100644
-+--- a/subprojects/gst-libav/ext/libav/gstavviddec.c
-++++ b/subprojects/gst-libav/ext/libav/gstavviddec.c
-+@@ -1779,7 +1779,11 @@ gst_ffmpegviddec_video_frame (GstFFMpegVidDec * ffmpegdec,
-+    * else we might skip a reference frame */
-+   gst_ffmpegviddec_do_qos (ffmpegdec, frame, &mode_switch);
-+ 
-++  /* FFmpeg might request new buffer from other threads.
-++   * Release lock here */
-++  GST_VIDEO_DECODER_STREAM_UNLOCK (ffmpegdec);
-+   res = avcodec_receive_frame (ffmpegdec->context, ffmpegdec->picture);
-++  GST_VIDEO_DECODER_STREAM_LOCK (ffmpegdec);
-+ 
-+   /* No frames available at this time */
-+   if (res == AVERROR (EAGAIN)) {
-+-- 
-+2.42.0
-+
 diff --git a/patches/gstreamer/graceful-error-noopenh264.patch b/patches/gstreamer/graceful-error-noopenh264.patch
 deleted file mode 100644
 index 8fbe833..0000000
@@ -117,6 +77,25 @@ index 8fbe833..0000000
 -   unsigned int uiTraceLevel = WELS_LOG_ERROR;
 -   openh264enc->encoder->SetOption (ENCODER_OPTION_TRACE_LEVEL, &uiTraceLevel);
 - 
+diff --git a/patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch b/patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
+deleted file mode 100644
+index a91cf04..0000000
+--- a/patches/gstreamer/gst-plugins-bad-Optional-LRDF-dep-for-ladspa.patch
++++ /dev/null
+@@ -1,13 +0,0 @@
+-diff --git a/subprojects/gst-plugins-bad/ext/ladspa/meson.build b/subprojects/gst-plugins-bad/ext/ladspa/meson.build
+-index adfd3459e2..3e8060796d 100644
+---- a/subprojects/gst-plugins-bad/ext/ladspa/meson.build
+-+++ b/subprojects/gst-plugins-bad/ext/ladspa/meson.build
+-@@ -13,7 +13,7 @@ if get_option('ladspa').disabled()
+- endif
+- 
+- # This is an optional dep, but we make it optional only in auto mode
+--lrdf_dep = dependency('lrdf', required : get_option('ladspa'))
+-+lrdf_dep = dependency('lrdf', required: false)
+- if lrdf_dep.found()
+-   ladspa_cargs = ['-DHAVE_LRDF']
+- endif
 -- 
-2.42.0
+2.43.0
 
