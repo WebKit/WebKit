@@ -722,6 +722,61 @@ static FloatRect inflateRect(const FloatRect& rect, const IntSize& size, const i
     return result;
 }
 
+static NSControlSize controlSizeFromPixelSize(const IntSize* sizes, const IntSize& minSize, float zoomLevel)
+{
+    if (ThemeMac::supportsLargeFormControls()
+        && minSize.width() >= static_cast<int>(sizes[NSControlSizeLarge].width() * zoomLevel)
+        && minSize.height() >= static_cast<int>(sizes[NSControlSizeLarge].height() * zoomLevel))
+        return NSControlSizeLarge;
+
+    if (minSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomLevel)
+        && minSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomLevel))
+        return NSControlSizeRegular;
+
+    if (minSize.width() >= static_cast<int>(sizes[NSControlSizeSmall].width() * zoomLevel)
+        && minSize.height() >= static_cast<int>(sizes[NSControlSizeSmall].height() * zoomLevel))
+        return NSControlSizeSmall;
+
+    return NSControlSizeMini;
+}
+
+static const int* popupButtonMargins(NSControlSize size)
+{
+    static const int margins[4][4] =
+    {
+        { 0, 3, 1, 3 },
+        { 0, 3, 2, 3 },
+        { 0, 1, 0, 1 },
+        { 0, 6, 2, 6 },
+    };
+    return margins[size];
+}
+
+static const IntSize* popupButtonSizes()
+{
+    static const IntSize sizes[4] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 24) };
+    return sizes;
+}
+
+static const int* popupButtonPadding(NSControlSize size, bool isRTL)
+{
+    static const int paddingLTR[4][4] =
+    {
+        { 2, 26, 3, 8 },
+        { 2, 23, 3, 8 },
+        { 2, 22, 3, 10 },
+        { 2, 26, 3, 8 },
+    };
+    static const int paddingRTL[4][4] =
+    {
+        { 2, 8, 3, 26 },
+        { 2, 8, 3, 23 },
+        { 2, 8, 3, 22 },
+        { 2, 8, 3, 26 },
+    };
+    return isRTL ? paddingRTL[size] : paddingLTR[size];
+}
+
 void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
 {
     auto appearance = renderer.style().effectiveAppearance();
@@ -738,48 +793,16 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
         break;
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().effectiveZoom();
-        setPopupButtonCellState(renderer, IntSize(rect.size()));
-        auto size = popupButtonSizes()[[popupButton() controlSize]];
+        auto controlSize = controlSizeFromPixelSize(popupButtonSizes(), IntSize(rect.size()), zoomLevel);
+        auto size = popupButtonSizes()[controlSize];
         size.setHeight(size.height() * zoomLevel);
         size.setWidth(rect.width());
-        rect = inflateRect(rect, size, popupButtonMargins(), zoomLevel);
+        rect = inflateRect(rect, size, popupButtonMargins(controlSize), zoomLevel);
         break;
     }
     default:
         break;
     }
-}
-
-void RenderThemeMac::updateCheckedState(NSCell* cell, const RenderObject& o)
-{
-    bool oldIndeterminate = [cell state] == NSControlStateValueMixed;
-    bool indeterminate = isIndeterminate(o);
-    bool checked = isChecked(o);
-
-    if (oldIndeterminate != indeterminate) {
-        [cell setState:indeterminate ? NSControlStateValueMixed : (checked ? NSControlStateValueOn : NSControlStateValueOff)];
-        return;
-    }
-
-    bool oldChecked = [cell state] == NSControlStateValueOn;
-    if (checked != oldChecked)
-        [cell setState:checked ? NSControlStateValueOn : NSControlStateValueOff];
-}
-
-void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject& o)
-{
-    bool oldEnabled = [cell isEnabled];
-    bool enabled = isEnabled(o);
-    if (enabled != oldEnabled)
-        [cell setEnabled:enabled];
-}
-
-void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
-{
-    bool oldPressed = [cell isHighlighted];
-    bool pressed = isPressed(o);
-    if (pressed != oldPressed)
-        [cell setHighlighted:pressed];
 }
 
 bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
@@ -800,7 +823,19 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
     return true;
 }
 
-NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
+static NSControlSize controlSizeForSystemFont(const RenderStyle& style)
+{
+    auto fontSize = style.computedFontSize();
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
+        return NSControlSizeLarge;
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
+        return NSControlSizeRegular;
+    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
+        return NSControlSizeSmall;
+    return NSControlSizeMini;
+}
+
+static NSControlSize controlSizeForFont(const RenderStyle& style)
 {
     auto fontSize = style.computedFontSize();
     if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
@@ -812,32 +847,7 @@ NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
     return NSControlSizeMini;
 }
 
-NSControlSize RenderThemeMac::controlSizeForCell(NSCell*, const IntSize* sizes, const IntSize& minSize, float zoomLevel) const
-{
-    if (ThemeMac::supportsLargeFormControls()
-        && minSize.width() >= static_cast<int>(sizes[NSControlSizeLarge].width() * zoomLevel)
-        && minSize.height() >= static_cast<int>(sizes[NSControlSizeLarge].height() * zoomLevel))
-        return NSControlSizeLarge;
-
-    if (minSize.width() >= static_cast<int>(sizes[NSControlSizeRegular].width() * zoomLevel)
-        && minSize.height() >= static_cast<int>(sizes[NSControlSizeRegular].height() * zoomLevel))
-        return NSControlSizeRegular;
-
-    if (minSize.width() >= static_cast<int>(sizes[NSControlSizeSmall].width() * zoomLevel)
-        && minSize.height() >= static_cast<int>(sizes[NSControlSizeSmall].height() * zoomLevel))
-        return NSControlSizeSmall;
-
-    return NSControlSizeMini;
-}
-
-void RenderThemeMac::setControlSize(NSCell* cell, const IntSize* sizes, const IntSize& minSize, float zoomLevel)
-{
-    NSControlSize size = controlSizeForCell(cell, sizes, minSize, zoomLevel);
-    if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
-        [cell setControlSize:size];
-}
-
-IntSize RenderThemeMac::sizeForFont(const RenderStyle& style, const IntSize* sizes) const
+static IntSize sizeForFont(const RenderStyle& style, const IntSize* sizes)
 {
     if (style.effectiveZoom() != 1.0f) {
         IntSize result = sizes[controlSizeForFont(style)];
@@ -846,7 +856,7 @@ IntSize RenderThemeMac::sizeForFont(const RenderStyle& style, const IntSize* siz
     return sizes[controlSizeForFont(style)];
 }
 
-IntSize RenderThemeMac::sizeForSystemFont(const RenderStyle& style, const IntSize* sizes) const
+static IntSize sizeForSystemFont(const RenderStyle& style, const IntSize* sizes)
 {
     if (style.effectiveZoom() != 1.0f) {
         IntSize result = sizes[controlSizeForSystemFont(style)];
@@ -855,7 +865,7 @@ IntSize RenderThemeMac::sizeForSystemFont(const RenderStyle& style, const IntSiz
     return sizes[controlSizeForSystemFont(style)];
 }
 
-void RenderThemeMac::setSizeFromFont(RenderStyle& style, const IntSize* sizes) const
+static void setSizeFromFont(RenderStyle& style, const IntSize* sizes)
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     IntSize size = sizeForFont(style, sizes);
@@ -865,7 +875,7 @@ void RenderThemeMac::setSizeFromFont(RenderStyle& style, const IntSize* sizes) c
         style.setHeight(Length(size.height(), LengthType::Fixed));
 }
 
-void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize controlSize) const
+static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize)
 {
     FontCascadeDescription fontDescription;
     fontDescription.setIsAbsoluteSize(true);
@@ -880,18 +890,6 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
 
     if (style.setFontDescription(WTFMove(fontDescription)))
         style.fontCascade().update(nullptr);
-}
-
-NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
-{
-    auto fontSize = style.computedFontSize();
-    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
-        return NSControlSizeLarge;
-    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
-        return NSControlSizeRegular;
-    if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
-        return NSControlSizeSmall;
-    return NSControlSizeMini;
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -911,51 +909,6 @@ void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const El
     style.setWidth(Length(imageControlsButtonSize().width(), LengthType::Fixed));
 }
 #endif
-
-void RenderThemeMac::adjustTextFieldStyle(RenderStyle&, const Element*) const
-{
-}
-
-void RenderThemeMac::adjustTextAreaStyle(RenderStyle&, const Element*) const
-{
-}
-
-const int* RenderThemeMac::popupButtonMargins() const
-{
-    static const int margins[4][4] =
-    {
-        { 0, 3, 1, 3 },
-        { 0, 3, 2, 3 },
-        { 0, 1, 0, 1 },
-        { 0, 6, 2, 6 },
-    };
-    return margins[[popupButton() controlSize]];
-}
-
-const IntSize* RenderThemeMac::popupButtonSizes() const
-{
-    static const IntSize sizes[4] = { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 24) };
-    return sizes;
-}
-
-const int* RenderThemeMac::popupButtonPadding(NSControlSize size, bool isRTL) const
-{
-    static const int paddingLTR[4][4] =
-    {
-        { 2, 26, 3, 8 },
-        { 2, 23, 3, 8 },
-        { 2, 22, 3, 10 },
-        { 2, 26, 3, 8 },
-    };
-    static const int paddingRTL[4][4] =
-    {
-        { 2, 8, 3, 26 },
-        { 2, 8, 3, 23 },
-        { 2, 8, 3, 22 },
-        { 2, 8, 3, 26 },
-    };
-    return isRTL ? paddingRTL[size] : paddingLTR[size];
-}
 
 FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, const FloatRect& bounds) const
 {
@@ -980,10 +933,6 @@ IntRect RenderThemeMac::progressBarRectForBounds(const RenderProgress& renderPro
 
     auto controlStyle = extractControlStyleForRenderer(renderProgress);
     return IntRect(control->rectForBounds(bounds, controlStyle));
-}
-
-void RenderThemeMac::adjustProgressBarStyle(RenderStyle&, const Element*) const
-{
 }
 
 const float baseFontSize = 11.0f;
@@ -1055,8 +1004,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
 
 PopupMenuStyle::Size RenderThemeMac::popupMenuSize(const RenderStyle& style, IntRect& rect) const
 {
-    NSPopUpButtonCell* popupButton = this->popupButton();
-    NSControlSize size = controlSizeForCell(popupButton, popupButtonSizes(), rect.size(), style.effectiveZoom());
+    auto size = controlSizeFromPixelSize(popupButtonSizes(), rect.size(), style.effectiveZoom());
     switch (size) {
     case NSControlSizeRegular:
         return PopupMenuStyle::Size::Normal;
@@ -1082,21 +1030,6 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
     style.setMinHeight(Length(minHeight, LengthType::Fixed));
 
     style.setLineHeight(RenderStyle::initialLineHeight());
-}
-
-void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSize& buttonSize)
-{
-    NSPopUpButtonCell* popupButton = this->popupButton();
-
-    // Set the control size based off the rectangle we're painting into.
-    setControlSize(popupButton, popupButtonSizes(), buttonSize, o.style().effectiveZoom());
-
-    popupButton.userInterfaceLayoutDirection = o.style().direction() == TextDirection::LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft;
-
-    // Update the various states we respond to.
-    updateCheckedState(popupButton, o);
-    updateEnabledState(popupButton, o);
-    updatePressedState(popupButton, o);
 }
 
 const IntSize* RenderThemeMac::menuListSizes() const
@@ -1244,18 +1177,6 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) c
         style.setWidth(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
         style.setHeight(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
     }
-}
-
-NSPopUpButtonCell* RenderThemeMac::popupButton() const
-{
-    if (!m_popupButton) {
-        m_popupButton = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
-        [m_popupButton setUsesItemFromMenu:NO];
-        [m_popupButton setFocusRingType:NSFocusRingTypeExterior];
-        [m_popupButton setUserInterfaceLayoutDirection:NSUserInterfaceLayoutDirectionLeftToRight];
-    }
-
-    return m_popupButton.get();
 }
 
 String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
