@@ -310,8 +310,6 @@ struct PossiblyQuotedIdentifier {
         void setPagePseudoType(PagePseudoClassType);
 
         bool matchesPseudoElement() const;
-        bool isUnknownPseudoElement() const;
-        bool isCustomPseudoElement() const;
         bool isWebKitCustomPseudoElement() const;
         bool isSiblingSelector() const;
         bool isAttributeSelector() const;
@@ -412,18 +410,6 @@ inline const QualifiedName& CSSSelector::attribute() const
 inline bool CSSSelector::matchesPseudoElement() const
 {
     return match() == Match::PseudoElement;
-}
-
-inline bool CSSSelector::isUnknownPseudoElement() const
-{
-    return match() == Match::PseudoElement && pseudoElementType() == PseudoElementUnknown;
-}
-
-inline bool CSSSelector::isCustomPseudoElement() const
-{
-    return match() == Match::PseudoElement
-        && (pseudoElementType() == PseudoElementWebKitCustom
-            || pseudoElementType() == PseudoElementWebKitCustomLegacyPrefixed);
 }
 
 inline bool CSSSelector::isWebKitCustomPseudoElement() const

@@ -57,8 +57,6 @@ public:
         return current - m_selectorArray.get();
     }
 
-    bool selectorsNeedNamespaceResolution();
-    bool hasInvalidSelector() const;
     bool hasExplicitNestingParent() const;
     bool hasOnlyNestingSelector() const;
 

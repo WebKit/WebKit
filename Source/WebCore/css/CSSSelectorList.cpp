@@ -153,38 +153,6 @@ static bool forEachSelector(Functor& functor, const CSSSelectorList* selectorLis
     return false;
 }
 
-class SelectorNeedsNamespaceResolutionFunctor {
-public:
-    bool operator()(const CSSSelector* selector)
-    {
-        if (selector->match() == CSSSelector::Match::Tag && !selector->tagQName().prefix().isEmpty() && selector->tagQName().prefix() != starAtom())
-            return true;
-        if (selector->isAttributeSelector() && !selector->attribute().prefix().isEmpty() && selector->attribute().prefix() != starAtom())
-            return true;
-        return false;
-    }
-};
-
-bool CSSSelectorList::selectorsNeedNamespaceResolution()
-{
-    SelectorNeedsNamespaceResolutionFunctor functor;
-    return forEachSelector(functor, this);
-}
-
-class SelectorHasInvalidSelectorFunctor {
-public:
-    bool operator()(const CSSSelector* selector)
-    {
-        return selector->isUnknownPseudoElement();
-    }
-};
-
-bool CSSSelectorList::hasInvalidSelector() const
-{
-    SelectorHasInvalidSelectorFunctor functor;
-    return forEachSelector(functor, this);
-}
-
 bool CSSSelectorList::hasExplicitNestingParent() const
 {
     auto functor = [](auto* selector) {

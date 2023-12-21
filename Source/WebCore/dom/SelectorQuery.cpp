@@ -615,10 +615,7 @@ SelectorQuery* SelectorQueryCache::add(const String& selectors, const Document& 
         auto tokenizer = CSSTokenizer { selectors };
         auto selectorList = parseCSSSelectorList(tokenizer.tokenRange(), context);
 
-        if (!selectorList || selectorList->hasInvalidSelector())
-            return nullptr;
-
-        if (selectorList->selectorsNeedNamespaceResolution())
+        if (!selectorList)
             return nullptr;
 
         if (selectorList->hasExplicitNestingParent())
