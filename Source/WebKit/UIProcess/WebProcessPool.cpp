@@ -1990,6 +1990,12 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     if (m_automationSession)
         return { WTFMove(sourceProcess), nullptr, "An automation session is active"_s };
 
+    // Redirects to a different scheme for which the client has registered their own custom handler.
+    // We need to process swap so that we end up with a fresh navigation instead of a redirect, so
+    // that the app's scheme handler gets used (rdar://117891282).
+    if (navigation.currentRequestIsRedirect() && navigation.originalRequest().url().protocol() != targetURL.protocol() && page.urlSchemeHandlerForScheme(targetURL.protocol().toString()))
+        return { createNewProcess(), nullptr, "Redirect to a different scheme for which the app registered a custom handler"_s };
+
     // FIXME: We ought to be able to re-use processes that haven't committed anything with site isolation enabled, but cross-site redirects are tricky. <rdar://116203552>
     if (!sourceProcess->hasCommittedAnyProvisionalLoads() && !page.preferences().siteIsolationEnabled()) {
         tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
