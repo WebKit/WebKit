@@ -217,6 +217,10 @@ public:
         : m_controlBlock(std::exchange(other.m_controlBlock, nullptr))
         , m_objectOfCorrectType(std::exchange(other.m_objectOfCorrectType, nullptr)) { }
 
+    ThreadSafeWeakPtr(ThreadSafeWeakPtrControlBlock& controlBlock, const T& objectOfCorrectType)
+        : m_controlBlock(&controlBlock)
+        , m_objectOfCorrectType(&objectOfCorrectType) { }
+
     ThreadSafeWeakPtr& operator=(ThreadSafeWeakPtr&& other)
     {
         m_controlBlock = std::exchange(other.m_controlBlock, nullptr);
