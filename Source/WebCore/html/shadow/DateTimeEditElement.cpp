@@ -205,7 +205,7 @@ DateTimeEditElement::~DateTimeEditElement() = default;
 inline Element& DateTimeEditElement::fieldsWrapperElement() const
 {
     ASSERT(firstChild());
-    return downcast<Element>(*firstChild());
+    return checkedDowncast<Element>(*firstChild());
 }
 
 void DateTimeEditElement::addField(Ref<DateTimeFieldElement> field)

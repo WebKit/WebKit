@@ -82,7 +82,7 @@ RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Render
 
 static inline bool isStrongPasswordTextField(const Element* element)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
     return inputElement && inputElement->hasAutoFillStrongPasswordButton();
 }
 
@@ -192,12 +192,12 @@ RenderPtr<RenderElement> TextControlInnerTextElement::createElementRenderer(Rend
 
 RenderTextControlInnerBlock* TextControlInnerTextElement::renderer() const
 {
-    return downcast<RenderTextControlInnerBlock>(HTMLDivElement::renderer());
+    return checkedDowncast<RenderTextControlInnerBlock>(HTMLDivElement::renderer());
 }
 
 std::optional<Style::ResolvedStyle> TextControlInnerTextElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle)
 {
-    auto style = downcast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
+    auto style = checkedDowncast<HTMLTextFormControlElement>(*shadowHost()).createInnerTextStyle(*shadowHostStyle);
     return Style::ResolvedStyle { makeUnique<RenderStyle>(WTFMove(style)) };
 }
 
@@ -220,10 +220,10 @@ std::optional<Style::ResolvedStyle> TextControlPlaceholderElement::resolveCustom
 {
     auto style = resolveStyle(resolutionContext);
 
-    auto& controlElement = downcast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
-    style.style->setDisplay(controlElement.isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
+    Ref controlElement = checkedDowncast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
+    style.style->setDisplay(controlElement->isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
 
-    if (auto* inputElement = dynamicDowncast<HTMLInputElement>(controlElement)) {
+    if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(controlElement)) {
         style.style->setTextOverflow(inputElement->shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
         style.style->setPaddingTop(Length { 0, LengthType::Fixed });
         style.style->setPaddingBottom(Length { 0, LengthType::Fixed });
@@ -280,7 +280,7 @@ std::optional<Style::ResolvedStyle> SearchFieldResultsButtonElement::resolveCust
 void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 {
     // On mousedown, bring up a menu, if needed
-    if (RefPtr input = downcast<HTMLInputElement>(shadowHost())) {
+    if (RefPtr input = checkedDowncast<HTMLInputElement>(shadowHost())) {
         auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
         if (event.type() == eventNames().mousedownEvent && mouseEvent && mouseEvent->button() == MouseButton::Left) {
             input->focus();
@@ -334,8 +334,8 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
 std::optional<Style::ResolvedStyle> SearchFieldCancelButtonElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(resolutionContext);
-    auto& inputElement = downcast<HTMLInputElement>(*shadowHost());
-    elementStyle.style->setVisibility(elementStyle.style->visibility() == Visibility::Hidden || inputElement.value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
+    Ref inputElement = checkedDowncast<HTMLInputElement>(*shadowHost());
+    elementStyle.style->setVisibility(elementStyle.style->visibility() == Visibility::Hidden || inputElement->value().isEmpty() ? Visibility::Hidden : Visibility::Visible);
 
     if (shadowHostStyle && searchFieldStyleHasExplicitlySpecifiedTextFieldAppearance(*shadowHostStyle))
         elementStyle.style->setDisplay(DisplayType::None);
@@ -345,7 +345,7 @@ std::optional<Style::ResolvedStyle> SearchFieldCancelButtonElement::resolveCusto
 
 void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 {
-    RefPtr input = downcast<HTMLInputElement>(shadowHost());
+    RefPtr input = checkedDowncast<HTMLInputElement>(shadowHost());
     if (!input || !input->isMutable()) {
         if (!event.defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -372,7 +372,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    RefPtr input = downcast<HTMLInputElement>(shadowHost());
+    RefPtr input = checkedDowncast<HTMLInputElement>(shadowHost());
     if (input && input->isMutable())
         return true;
 
