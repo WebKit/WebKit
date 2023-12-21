@@ -789,7 +789,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     case StyleAppearance::PushButton:
     case StyleAppearance::Radio:
     case StyleAppearance::Switch:
-        Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), rect, renderer.style().effectiveZoom());
+        ThemeMac::inflateControlPaintRect(renderer.style().effectiveAppearance(), rect, renderer.style().effectiveZoom(), !renderer.style().isHorizontalWritingMode());
         break;
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().effectiveZoom();

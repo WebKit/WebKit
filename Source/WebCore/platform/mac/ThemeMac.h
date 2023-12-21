@@ -34,6 +34,7 @@ namespace WebCore {
 class ThemeMac final : public ThemeCocoa {
 public:
     static bool supportsLargeFormControls();
+    static void inflateControlPaintRect(StyleAppearance, FloatRect&, float, bool);
 
 private:
     friend NeverDestroyed<ThemeMac>;
@@ -48,8 +49,6 @@ private:
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
 
     bool controlRequiresPreWhiteSpace(StyleAppearance appearance) const final { return appearance == StyleAppearance::PushButton; }
-
-    void inflateControlPaintRect(StyleAppearance, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersContrast() const final;
     bool userPrefersReducedMotion() const final;

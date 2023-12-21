@@ -723,8 +723,6 @@ static bool renderThemePaintSwitchTrack(const OptionSet<ControlStyle::State>, co
 
 void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* element) const
 {
-    RenderTheme::adjustSwitchStyle(style, element);
-
     if (!style.width().isAuto() && !style.height().isAuto())
         return;
 

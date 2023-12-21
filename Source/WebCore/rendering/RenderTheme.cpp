@@ -1262,7 +1262,7 @@ bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
 
 // FIXME: iOS does not use this so arguably this should be better abstracted. Or maybe we should
 // investigate if we can bring the various ports closer together.
-void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(RenderStyle& style, const Element* element) const
 {
     auto appearance = style.effectiveAppearance();
 
@@ -1351,29 +1351,29 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwi
 
 void RenderTheme::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
 void RenderTheme::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 #endif
 
 void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 void RenderTheme::adjustInnerSpinButtonStyle(RenderStyle& style, const Element* element) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
 void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
@@ -1504,9 +1504,14 @@ void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* elem
     adjustSliderThumbSize(style, element);
 }
 
-void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element* element) const
+void RenderTheme::adjustSwitchStyle(RenderStyle& style, const Element*) const
 {
-    adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(style, element);
+    // FIXME: This probably has the same flaw as
+    // RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle() by not taking
+    // min-width/min-height into account.
+    auto controlSize = Theme::singleton().controlSize(StyleAppearance::Switch, style.fontCascade(), { style.logicalWidth(), style.logicalHeight() }, style.effectiveZoom());
+    style.setLogicalWidth(WTFMove(controlSize.width));
+    style.setLogicalHeight(WTFMove(controlSize.height));
 }
 
 void RenderTheme::purgeCaches()

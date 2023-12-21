@@ -259,6 +259,16 @@ static const int* switchMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
+static const int* visualSwitchMargins(NSControlSize controlSize, bool isVertical)
+{
+    auto margins = switchMargins(controlSize);
+    if (isVertical) {
+        static const int verticalMargins[4] = { margins[3], margins[0], margins[1], margins[2] };
+        return verticalMargins;
+    }
+    return margins;
+}
+
 static LengthSize switchSize(const LengthSize& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
@@ -361,10 +371,10 @@ LengthBox ThemeMac::controlPadding(StyleAppearance appearance, const FontCascade
     }
 }
 
-void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zoomedRect, float zoomFactor) const
+void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zoomedRect, float zoomFactor, bool isVertical)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    IntSize zoomRectSize = IntSize(zoomedRect.size());
+    auto zoomRectSize = IntSize(zoomedRect.size());
     switch (appearance) {
     case StyleAppearance::Checkbox: {
         auto size = controlSizeFromPixelSize(checkboxSizes(), zoomRectSize, zoomFactor);
@@ -383,11 +393,14 @@ void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zo
         break;
     }
     case StyleAppearance::Switch: {
-        NSControlSize controlSize = controlSizeFromPixelSize(switchSizes(), zoomRectSize, zoomFactor);
-        IntSize zoomedSize = switchSizes()[controlSize];
+        auto logicalZoomRectSize = isVertical ? zoomRectSize.transposedSize() : zoomRectSize;
+        auto controlSize = controlSizeFromPixelSize(switchSizes(), logicalZoomRectSize, zoomFactor);
+        auto zoomedSize = switchSizes()[controlSize];
         zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
         zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
-        zoomedRect = inflateRect(zoomedRect, zoomedSize, switchMargins(controlSize), zoomFactor);
+        if (isVertical)
+            zoomedSize = zoomedSize.transposedSize();
+        zoomedRect = inflateRect(zoomedRect, zoomedSize, visualSwitchMargins(controlSize, isVertical), zoomFactor);
         break;
     }
     case StyleAppearance::PushButton:
