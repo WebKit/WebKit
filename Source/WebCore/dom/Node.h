@@ -574,11 +574,12 @@ public:
     static auto flagIsShadowRoot() { return enumToUnderlyingType(NodeFlag::IsShadowRoot); }
     static auto flagIsHTML() { return enumToUnderlyingType(NodeFlag::IsHTMLElement); }
     static auto flagIsLink() { return enumToUnderlyingType(NodeFlag::IsLink); }
-    static auto flagIsParsingChildrenFinished() { return enumToUnderlyingType(NodeFlag::IsParsingChildrenFinished); }
+    static auto flagIsParsingChildren() { return enumToUnderlyingType(NodeFlag::IsParsingChildren); }
 #endif // ENABLE(JIT)
 
 protected:
     enum class NodeFlag : uint32_t {
+        // Types
         IsCharacterData = 1 << 0,
         IsText = 1 << 1,
         IsContainerNode = 1 << 2,
@@ -589,21 +590,20 @@ protected:
         IsDocumentNode = 1 << 7,
         IsDocumentFragment = 1 << 8,
         IsShadowRoot = 1 << 9,
-        IsConnected = 1 << 10,
-        IsInShadowTree = 1 << 11,
-        IsUnknownElement = 1 << 12,
+        IsUnknownElement = 1 << 10,
+        IsDocumentFragmentForInnerOuterHTML = 1 << 11,
+        IsEditingText = 1 << 12,
+        HasCustomStyleResolveCallbacks = 1 << 13,
 
-        // These bits are used by derived classes, pulled up here so they can
-        // be stored in the same memory word as the Node bits above.
-        IsDocumentFragmentForInnerOuterHTML = 1 << 13, // DocumentFragment
-        IsEditingText = 1 << 14, // Text
-        IsLink = 1 << 15, // Element
-        IsUserActionElement = 1 << 16,
-        IsParsingChildrenFinished = 1 << 17,
-        HasSyntheticAttrChildNodes = 1 << 18,
-        SelfOrPrecedingNodesAffectDirAuto = 1 << 19,
+        // States
+        IsConnected = 1 << 14,
+        IsInShadowTree = 1 << 15,
+        IsLink = 1 << 16, // Element
+        IsUserActionElement = 1 << 17,
+        IsParsingChildren = 1 << 18,
+        HasSyntheticAttrChildNodes = 1 << 19,
+        SelfOrPrecedingNodesAffectDirAuto = 1 << 20,
 
-        HasCustomStyleResolveCallbacks = 1 << 20,
         HasPendingResources = 1 << 21,
         IsInGCReachableRefMap = 1 << 22,
         IsComputedStyleInvalidFlag = 1 << 23,
@@ -618,6 +618,7 @@ protected:
 #endif
         HasFormAssociatedCustomElementInterface = 1U << 31,
     };
+    static constexpr auto NodeFlagTypeMask = static_cast<uint32_t>(NodeFlag::IsConnected) - 1;
 
     enum class TabIndexState : uint8_t {
         NotSet = 0,
@@ -642,8 +643,8 @@ protected:
     };
 
     bool hasNodeFlag(NodeFlag flag) const { return m_nodeFlags.contains(flag); }
-    void setNodeFlag(NodeFlag flag, bool value = true) const { m_nodeFlags.set(flag, value); }
-    void clearNodeFlag(NodeFlag flag) const { m_nodeFlags.remove(flag); }
+    void setNodeFlag(NodeFlag flag, bool value = true) const { ASSERT(!(static_cast<uint32_t>(flag) & NodeFlagTypeMask)); m_nodeFlags.set(flag, value); }
+    void clearNodeFlag(NodeFlag flag) const { setNodeFlag(flag, false); }
 
     RareDataBitFields rareDataBitfields() const { return bitwise_cast<RareDataBitFields>(m_rareDataWithBitfields.type()); }
     void setRareDataBitfields(RareDataBitFields bitfields) { m_rareDataWithBitfields.setType(bitwise_cast<uint16_t>(bitfields)); }
@@ -654,23 +655,24 @@ protected:
     CustomElementState customElementState() const { return static_cast<CustomElementState>(rareDataBitfields().customElementState); }
     void setCustomElementState(CustomElementState);
 
-    bool isParsingChildrenFinished() const { return hasNodeFlag(NodeFlag::IsParsingChildrenFinished); }
-    void setIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildrenFinished); }
-    void clearIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildrenFinished); }
+    bool isParsingChildrenFinished() const { return !hasNodeFlag(NodeFlag::IsParsingChildren); }
+    void setIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildren); }
+    void clearIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildren); }
 
-    static constexpr auto DefaultNodeFlags = OptionSet<NodeFlag>(NodeFlag::IsParsingChildrenFinished);
-    static constexpr auto CreateOther = DefaultNodeFlags;
+    static constexpr auto DefaultNodeFlags = OptionSet<NodeFlag> { };
+    static constexpr auto CreateAttr = DefaultNodeFlags;
+    static constexpr auto CreateDocumentType = DefaultNodeFlags;
     static constexpr auto CreateCharacterData = DefaultNodeFlags | NodeFlag::IsCharacterData;
     static constexpr auto CreateText = CreateCharacterData | NodeFlag::IsText;
     static constexpr auto CreateContainer = DefaultNodeFlags | NodeFlag::IsContainerNode;
     static constexpr auto CreateElement = CreateContainer | NodeFlag::IsElement;
-    static constexpr auto CreatePseudoElement = CreateElement | NodeFlag::IsConnected | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreatePseudoElement = CreateElement | NodeFlag::HasCustomStyleResolveCallbacks;
     static constexpr auto CreateDocumentFragment = CreateContainer | NodeFlag::IsDocumentFragment;
-    static constexpr auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot | NodeFlag::IsInShadowTree;
+    static constexpr auto CreateShadowRoot = CreateDocumentFragment | NodeFlag::IsShadowRoot;
     static constexpr auto CreateHTMLElement = CreateElement | NodeFlag::IsHTMLElement;
     static constexpr auto CreateSVGElement = CreateElement | NodeFlag::IsSVGElement | NodeFlag::HasCustomStyleResolveCallbacks;
     static constexpr auto CreateMathMLElement = CreateElement | NodeFlag::IsMathMLElement;
-    static constexpr auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode | NodeFlag::IsConnected;
+    static constexpr auto CreateDocument = CreateContainer | NodeFlag::IsDocumentNode;
     static constexpr auto CreateEditingText = CreateText | NodeFlag::IsEditingText;
     using ConstructionType = OptionSet<NodeFlag>;
     Node(Document&, ConstructionType);
