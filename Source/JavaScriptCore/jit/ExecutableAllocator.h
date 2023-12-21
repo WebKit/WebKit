@@ -193,12 +193,26 @@ public:
     JS_EXPORT_PRIVATE void* getJumpIslandToUsingJITMemcpy(void* from, void* newDestination);
     JS_EXPORT_PRIVATE void* getJumpIslandToUsingMemcpy(void* from, void* newDestination);
     JS_EXPORT_PRIVATE void* getJumpIslandToConcurrently(void* from, void* newDestination);
+    JS_EXPORT_PRIVATE Vector<void*> allocateJumpIslandsToButDontPatch(void* from, void* newDestination);
+    JS_EXPORT_PRIVATE static void* patchPreallocatedIslands(Vector<void*>&);
 #endif
 
 private:
     ExecutableAllocator() = default;
     ~ExecutableAllocator() = default;
 };
+
+#if ENABLE(JUMP_ISLANDS)
+static ALWAYS_INLINE void* allocateJumpIslandUsingJITMemcpy(void*, void* from, void* newDestination)
+{
+    return ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(from, newDestination);
+}
+
+static ALWAYS_INLINE void* allocateJumpIslandUsingMemcpy(void*, void* from, void* newDestination)
+{
+    return ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(from, newDestination);
+}
+#endif
 
 #else
 

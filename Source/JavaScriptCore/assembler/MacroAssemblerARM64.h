@@ -92,8 +92,8 @@ public:
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
     static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
-    template <Assembler::CopyFunction copy>
-    ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<copy>(record, from, fromInstruction, to); }
+    template <Assembler::CopyFunction copy, Assembler::JumpIslandFunction getJumpIsland>
+    ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to, void* getJumpIslandData) { return Assembler::link<copy, getJumpIsland>(record, from, fromInstruction, to, getJumpIslandData); }
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {

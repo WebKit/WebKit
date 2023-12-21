@@ -390,8 +390,8 @@ private:
 
     JS_EXPORT_PRIVATE void linkCode(MacroAssembler&, JITCompilationEffort);
 #if ENABLE(BRANCH_COMPACTION)
-    template <typename InstructionType>
-    void copyCompactAndLinkCode(MacroAssembler&, JITCompilationEffort);
+    template <typename InstructionType, bool useFastJITPermissions>
+    NEVER_INLINE void copyCompactAndLinkCode(MacroAssembler&, JITCompilationEffort);
 #endif
 
     void performFinalization();
