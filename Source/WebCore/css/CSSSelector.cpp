@@ -1051,9 +1051,10 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     , m_isImplicit(other.m_isImplicit)
 {
     // Manually ref count the m_data union because they are stored as raw ptr, not as Ref.
-    if (other.m_hasRareData)
-        m_data.rareData = &other.m_data.rareData->deepCopy().leakRef();
-    else if (other.match() == Match::Tag) {
+    if (other.m_hasRareData) {
+        m_data.rareData = other.m_data.rareData;
+        m_data.rareData->ref();
+    } else if (other.match() == Match::Tag) {
         m_data.tagQName = other.m_data.tagQName;
         m_data.tagQName->ref();
     } else if (other.m_data.value) {
@@ -1062,7 +1063,7 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     }
 }
 
-bool CSSSelector::visitAllSimpleSelectors(auto& apply) const
+bool CSSSelector::visitAllSimpleSelectors(Functor& apply) const
 {
     std::queue<const CSSSelector*> worklist;
     worklist.push(this);
@@ -1092,7 +1093,7 @@ bool CSSSelector::visitAllSimpleSelectors(auto& apply) const
 
 void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
 {
-    auto replaceParentSelector = [&parent] (CSSSelector& selector) {
+    CSSSelector::Functor replaceParentSelector = [&parent] (CSSSelector& selector) {
         if (selector.match() == CSSSelector::Match::NestingParent) {
             // FIXME: Optimize cases where we can include the parent selector directly instead of wrapping it in a ":is" pseudo class.
             selector.setMatch(Match::PseudoClass);
@@ -1107,7 +1108,7 @@ void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
 
 void CSSSelector::replaceNestingParentByPseudoClassScope()
 {
-    auto replaceParentSelector = [] (CSSSelector& selector) {
+    CSSSelector::Functor replaceParentSelector = [] (CSSSelector& selector) {
         if (selector.match() == CSSSelector::Match::NestingParent) {
             // Replace by :scope
             selector.setMatch(Match::PseudoClass);
@@ -1121,7 +1122,7 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
 
 bool CSSSelector::hasExplicitNestingParent() const
 {
-    auto checkForExplicitParent = [] (const CSSSelector& selector) {
+    CSSSelector::Functor checkForExplicitParent = [] (const CSSSelector& selector) {
         if (selector.match() == Match::NestingParent)
             return true;
 
@@ -1136,7 +1137,7 @@ bool CSSSelector::hasExplicitNestingParent() const
 
 bool CSSSelector::hasExplicitPseudoClassScope() const
 {
-    auto check = [] (const CSSSelector& selector) {
+    CSSSelector::Functor check = [] (const CSSSelector& selector) {
         if (selector.match() == Match::PseudoClass && selector.pseudoClassType() == PseudoClassType::Scope)
             return true;
 
