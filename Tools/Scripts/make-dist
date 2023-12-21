@@ -233,7 +233,7 @@ class Distcheck(object):
         with closing(tarfile.open(tarball_path, 'r')) as tarball:
             tarball.extractall(self.build_root)
 
-    def configure(self, dist_dir, build_dir, install_dir, port):
+    def configure(self, dist_dir, build_dir, install_dir, port, build_unified):
         def create_dir(directory, directory_type):
             try:
                 os.mkdir(directory)
@@ -244,7 +244,9 @@ class Distcheck(object):
         create_dir(build_dir, "build")
         create_dir(install_dir, "install")
 
-        command = ['cmake', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir, '-DENABLE_UNIFIED_BUILDS=OFF']
+        command = ['cmake', '-DPORT=%s' % port, '-DCMAKE_INSTALL_PREFIX=%s' % install_dir, '-DCMAKE_BUILD_TYPE=Release', dist_dir]
+        if not build_unified:
+            command.append('-DENABLE_UNIFIED_BUILDS=OFF')
         subprocess.check_call(command, cwd=build_dir)
 
     def build(self, build_dir):
@@ -272,14 +274,14 @@ class Distcheck(object):
     def clean(self, dist_dir):
         shutil.rmtree(dist_dir)
 
-    def check(self, tarball, port):
+    def check(self, tarball, port, build_unified):
         tarball_name, ext = os.path.splitext(os.path.basename(tarball))
         dist_dir = os.path.join(self.build_root, tarball_name)
         build_dir = os.path.join(dist_dir, self.BUILD_DIRECTORY_NAME)
         install_dir = os.path.join(dist_dir, self.INSTALL_DIRECTORY_NAME)
 
         self.extract_tarball(tarball)
-        self.configure(dist_dir, build_dir, install_dir, port)
+        self.configure(dist_dir, build_dir, install_dir, port, build_unified)
         self.build(build_dir)
         if port == 'GTK':
             self.check_symbols(build_dir)
@@ -314,6 +316,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Build a distribution bundle.')
     parser.add_argument('-c', '--check', action='store_true',
                         help='Check the tarball')
+    parser.add_argument('-u', '--unified', action='store_true',
+                        help='Build unified when checking the tarball')
     parser.add_argument('-s', '--source-dir', type=str, action=FilePathAction, default=os.getcwd(),
                         help='The top-level directory of the source distribution. ' + \
                               'Directory for relative paths. Defaults to current directory.')
@@ -342,4 +346,4 @@ if __name__ == "__main__":
     manifest.create_tarfile(output_filename)
 
     if arguments.check:
-        Distcheck(arguments.source_dir, arguments.build_dir).check(output_filename, arguments.port)
+        Distcheck(arguments.source_dir, arguments.build_dir).check(output_filename, arguments.port, arguments.unified)
