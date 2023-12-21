@@ -33,6 +33,8 @@ require 'tempfile'
 require 'uri'
 require 'yaml'
 
+require_relative "webkitruby/jsc-stress-test/plan"
+require_relative "webkitruby/jsc-stress-test/runners"
 require_relative "webkitruby/jsc-stress-test/test-result-evaluator"
 require_relative "webkitruby/jsc-stress-test/executor"
 
@@ -136,13 +138,6 @@ def mysys(commandArray, options={})
     raise CommandExecutionFailed, "Command failed: #{status.inspect}"
 end
 
-def escapeAll(array)
-    array.map {
-        | v |
-        raise "Detected a non-string in #{inspect}" unless v.is_a? String
-        Shellwords.shellescape(v)
-    }.join(' ')
-end
 
 $jscPath = nil
 $doNotMessWithVMPath = false
@@ -658,98 +653,6 @@ FTL_OPTIONS = ["--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
 EXECUTABLE_FUZZER_OPTIONS = ["--useExecutableAllocationFuzz=true", "--fireExecutableAllocationFuzzRandomly=true"]
 
-class BasePlan
-    attr_reader :directory, :arguments, :family, :name, :outputHandler, :errorHandler, :additionalEnv, :index
-    attr_accessor :retryParameters
-
-    @@index = 0
-    def initialize(directory, arguments, family, name, outputHandler, errorHandler, retryParameters)
-        @directory = directory
-        @arguments = argumentsMapper(arguments)
-        @family = family
-        @name = name
-        @outputHandler = outputHandler
-        @errorHandler = errorHandler
-        # A plan for which @retryParameters is not nil is being
-        # treated as potentially flaky.
-        @retryParameters = retryParameters
-        @additionalEnv = []
-        @index = @@index
-        @@index += 1
-    end
-    def self.mock(family, name, retryParameters=nil)
-        self.new("/none", [], family, name, nil, nil, retryParameters)
-    end
-    def self.create(directory, arguments, family, name, outputHandler, errorHandler)
-        if $runCommandOptions[:crashOK]
-            outputHandler = noisyOutputHandler
-        end
-        self.new(directory, arguments, family, name, outputHandler, errorHandler, $runCommandOptions[:flaky])
-    end
-    def argumentsMapper(args)
-        args
-    end
-    # We regularly place Plans in containers, but may modify @retryParameters
-    # after the fact; only hash on @index instead.
-    def hash
-        @index
-    end
-    def to_s
-        "#{@index}"
-    end
-end
-
-class TestRunner
-    def initialize(testRunnerType, runnerDir)
-        @testRunnerType = testRunnerType
-        @runnerDir = runnerDir
-    end
-    def prepare(runlist, serialPlans, completedPlans, remoteHosts)
-        prepareScripts(runlist)
-        prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
-    end
-    def prepareScripts(runlist)
-        Dir.mkdir(@runnerDir) unless @runnerDir.directory?
-        toDelete = []
-        Dir.foreach(@runnerDir) {
-            | filename |
-            if filename =~ /^test_/
-                toDelete << filename
-            end
-        }
-
-        toDelete.each {
-            | filename |
-            File.unlink(@runnerDir + filename)
-        }
-
-        # Write test scripts in parallel as this is both an expensive and a
-        # highly IO intensive operation, but each script is independent and
-        # the operation is pure other than writing the unique run script.
-        parallelEach(runlist) do | plan |
-            plan.writeRunScript(@runnerDir + "test_script_#{plan.index}")
-        end
-    end
-    def self.create(testRunnerType, runnerDir)
-        cls = nil
-        case testRunnerType
-        when :shell
-            cls = TestRunnerShell
-        when :make
-            cls = TestRunnerMake
-        when :ruby
-            cls = TestRunnerRuby
-        when :gnuparallel
-            cls = TestRunnerGnuParallel
-        else
-            raise "Unknown test runner type: #{testRunnerType.to_s}"
-        end
-        return cls.new(testRunnerType, runnerDir)
-    end
-end
-
-require_relative "webkitruby/jsc-stress-test-writer-#{$testWriter}"
-
 def shouldCollectContinuously?
     $buildType == "release" or $forceCollectContinuously
 end
@@ -827,6 +730,9 @@ def addRunCommandCfg(cfg, *additionalEnv)
     [:kind, :command, :outputHandler, :errorHandler].each { |key|
         if not cfg.has_key?(key)
             raise "Missing #{key} in #{cfg}"
+        end
+        if [:outputHandler, :errorHandler].include?(key) and not cfg[key].is_a?(String)
+            raise "Value for #{key} is not a string: #{cfg[key]}"
         end
     }
     $didAddRunCommand = true
@@ -981,7 +887,7 @@ def runWithOutputHandler(kind, outputHandler, *options)
     cfg = {
         :kind => kind,
         :outputHandler => outputHandler,
-        :errorHandler => simpleErrorHandler,
+        :errorHandler => "simple",
     }
     runWithOptions(cfg, *options)
 end
@@ -990,23 +896,23 @@ def runWithOutputHandlerWithoutBaseOption(kind, outputHandler, *options)
     cfg = {
         :kind => kind,
         :outputHandler => outputHandler,
-        :errorHandler => simpleErrorHandler,
+        :errorHandler => "simple",
         :no_base_options => true,
     }
     runWithOptions(cfg, *options)
 end
 
 def run(kind, *options)
-    runWithOutputHandler(kind, silentOutputHandler, *options)
+    runWithOutputHandler(kind, "silent", *options)
 end
 
 def runInner(cfg, *options)
     cfg = cfg.dup
     if not cfg.has_key?(:outputHandler)
-        cfg[:outputHandler] = silentOutputHandler
+        cfg[:outputHandler] = "silent"
     end
     if not cfg.has_key?(:errorHandler)
-        cfg[:errorHandler] = simpleErrorHandler
+        cfg[:errorHandler] = "simple"
     end
     runWithOptions(cfg, *options)
 end
@@ -1018,7 +924,7 @@ def runWithoutBaseOptionCfg(cfg, *options)
 end
 
 def runWithoutBaseOption(kind, *options)
-    runWithOutputHandlerWithoutBaseOption(kind, silentOutputHandler, *options)
+    runWithOutputHandlerWithoutBaseOption(kind, "silent", *options)
 end
 
 def runOneLargeHeap(*optionalTestSpecificOptions)
@@ -1504,8 +1410,8 @@ BASE_MODES.each { |mode|
 }
 
 CFG_NOISY = {
-            :outputHandler => noisyOutputHandler,
-            :errorHandler => noisyErrorHandler,
+            :outputHandler => "noisy",
+            :errorHandler => "noisy",
 }.freeze
 
 BASE_MODES.each { |mode|
@@ -1623,7 +1529,7 @@ def runProfiler
 
     profilerOutput = uniqueFilename(".json")
     if $canRunDisplayProfilerOutput
-        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, *vmCommand, "--useConcurrentJIT=false", "-p", profilerOutput.to_s, $benchmark.to_s], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("profiler", ["ruby", (pathToHelpers + "profiler-test-helper").to_s, (SCRIPTS_PATH + "display-profiler-output").to_s, profilerOutput.to_s, *vmCommand, "--useConcurrentJIT=false", "-p", profilerOutput.to_s, $benchmark.to_s], "silent", "simple")
     else
         puts "Running simple version of #{$collectionName}/#{$benchmark} because some required Ruby features are unavailable."
         run("profiler-simple", "--useConcurrentJIT=false", "-p", profilerOutput.to_s)
@@ -1631,13 +1537,13 @@ def runProfiler
 end
 
 def runExceptionFuzz
-    subCommand = escapeAll(vmCommand + ["--useDollarVM=true", "--useExceptionFuzz=true", $benchmark.to_s])
-    addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
+    subCommand = (vmCommand + ["--useDollarVM=true", "--useExceptionFuzz=true", $benchmark.to_s]).join(" ")
+    addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], "silent", "simple")
 end
 
 def runExecutableAllocationFuzz(name, *options)
-    subCommand = escapeAll(vmCommand + ["--useDollarVM=true", $benchmark.to_s] + options)
-    addRunCommand("executable-allocation-fuzz-" + name, ["perl", (pathToHelpers + "js-executable-allocation-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
+    subCommand = (vmCommand + ["--useDollarVM=true", $benchmark.to_s] + options).join(" ")
+    addRunCommand("executable-allocation-fuzz-" + name, ["perl", (pathToHelpers + "js-executable-allocation-fuzz").to_s, subCommand], "silent", "simple")
 end
 
 def runTypeProfiler
@@ -1693,14 +1599,14 @@ def runTest262(mode, exception, includeFiles, flags)
 
     case mode
     when :normal
-        errorHandler = simpleErrorHandler
-        outputHandler = silentOutputHandler
+        errorHandler = "simple"
+        outputHandler = "silent"
     when :fail
-        errorHandler = expectedFailErrorHandler
-        outputHandler = noisyOutputHandler
+        errorHandler = "expectedFail"
+        outputHandler = "noisy"
     when :failDueToOutdatedOrBadTest
-        errorHandler = expectedFailErrorHandler
-        outputHandler = noisyOutputHandler
+        errorHandler = "expectedFail"
+        outputHandler = "noisy"
     when :skip
         return
     else
@@ -1731,17 +1637,17 @@ def runES6(mode)
     args = vmCommand + BASE_OPTIONS + $testSpecificRequiredOptions + [$benchmark.to_s]
     case mode
     when :normal
-        errorHandler = simpleErrorHandler
+        errorHandler = "simple"
     when :fail
-        errorHandler = expectedFailErrorHandler
+        errorHandler = "expectedFail"
     when :failDueToOutdatedOrBadTest
-        errorHandler = expectedFailErrorHandler
+        errorHandler = "expectedFail"
     when :skip
         return
     else
         raise "Invalid mode: #{mode}"
     end
-    addRunCommand("default", args, noisyOutputHandler, errorHandler)
+    addRunCommand("default", args, "noisy", errorHandler)
 end
 
 def defaultRunModules(noLLInt: true)
@@ -1876,7 +1782,7 @@ def runHarnessTest(kind, *options)
     wasmFiles.each {
         | file |
         basename = file.basename.to_s
-        addRunCommand("(" + basename + ")-" + kind, vmCommand + options + $testSpecificRequiredOptions + [$benchmark.to_s, "--", basename], silentOutputHandler, simpleErrorHandler)
+        addRunCommand("(" + basename + ")-" + kind, vmCommand + options + $testSpecificRequiredOptions + [$benchmark.to_s, "--", basename], "silent", "simple")
     }
 end
 
@@ -1943,15 +1849,15 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
     prepareExtraRelativeFiles(harness.map { |f| ("../" + specHarnessPath + "/") + f }, $collection)
 
     specHarnessJsPath = "../" + specHarnessPath + ".js"
-    runWithOutputHandler("default-wasm" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
+    runWithOutputHandler("default-wasm" + (postfix || ''), "noisy", specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
     if $mode != "quick"
-        runWithOutputHandler("wasm-no-cjit" + (postfix || ''), noisyOutputHandler, specHarnessJsPath,  *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
-        runWithOutputHandler("wasm-eager-jettison" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
-        runWithOutputHandler("wasm-collect-continuously" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
+        runWithOutputHandler("wasm-no-cjit" + (postfix || ''), "noisy", specHarnessJsPath,  *(FTL_OPTIONS + NO_CJIT_OPTIONS + optionalTestSpecificOptions))
+        runWithOutputHandler("wasm-eager-jettison" + (postfix || ''), "noisy", specHarnessJsPath, "--forceCodeBlockToJettisonDueToOldAge=true", "--useRandomizingExecutableIslandAllocation=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions))
+        runWithOutputHandler("wasm-collect-continuously" + (postfix || ''), "noisy", specHarnessJsPath, "--collectContinuously=true", "--verifyGC=true", *(FTL_OPTIONS + optionalTestSpecificOptions)) if shouldCollectContinuously?
         if $isFTLPlatform
-            runWithOutputHandler("wasm-bbq" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
-            runWithOutputHandler("wasm-omg" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
-            runWithOutputHandler("wasm-simd" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWithOutputHandler("wasm-bbq" + (postfix || ''), "noisy", specHarnessJsPath, "--useWasmLLInt=false", *(FTL_OPTIONS + optionalTestSpecificOptions)) # Doesn't actually depend on FTL, but we enable it on the same platforms for now.
+            runWithOutputHandler("wasm-omg" + (postfix || ''), "noisy", specHarnessJsPath, "--useWasmLLInt=true", "--useBBQJIT=false", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0", *(FTL_OPTIONS + optionalTestSpecificOptions))
+            runWithOutputHandler("wasm-simd" + (postfix || ''), "noisy", specHarnessJsPath, "--useWebAssemblySIMD=1", "--forceAllFunctionsToUseSIMD=1", *(FTL_OPTIONS + optionalTestSpecificOptions))
         end
     end
 end
@@ -2015,11 +1921,11 @@ def runChakra(mode, exception, baselineFile, extraFiles)
     case mode
     when :baseline
         prepareExtraRelativeFiles([(Pathname("..") + baselineFile).to_s], $collection)
-        errorHandler = diffErrorHandler(($benchmarkDirectory + baselineFile).to_s)
-        outputHandler = noisyOutputHandler
+        errorHandler = "diff #{($benchmarkDirectory + baselineFile).to_s}"
+        outputHandler = "noisy"
     when :pass
-        errorHandler = chakraPassFailErrorHandler
-        outputHandler = noisyOutputHandler
+        errorHandler = "chakraPassFail"
+        outputHandler = "noisy"
     when :skipDueToOutdatedOrBadTest
         return
     when :skip
@@ -2050,7 +1956,8 @@ def runLayoutTest(kind, *options)
         [(Pathname.new("resources") + "standalone-pre.js").to_s,
          $benchmark.to_s,
          (Pathname.new("resources") + "standalone-post.js").to_s]
-    addRunCommand(kind, args, noisyOutputHandler, diffErrorHandler(($benchmarkDirectory + "../#{testName}-expected.txt").to_s))
+    baseline = ($benchmarkDirectory + "../#{testName}-expected.txt").to_s
+    addRunCommand(kind, args, "noisy", "diff #{baseline}")
 end
 
 def runLayoutTestNoFTL
@@ -2187,7 +2094,7 @@ def runComplexTest(before, after, additionalEnv, *options)
     prepareExtraRelativeFiles(before.map{|v| (Pathname("..") + v).to_s}, $collection)
     prepareExtraRelativeFiles(after.map{|v| (Pathname("..") + v).to_s}, $collection)
     args = vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + before.map{|v| v.to_s} + [$benchmark.to_s] + after.map{|v| v.to_s}
-    addRunCommand("complex", args, noisyOutputHandler, simpleErrorHandler, *additionalEnv)
+    addRunCommand("complex", args, "noisy", "simple", *additionalEnv)
 end
 
 def runMozillaTest(kind, mode, extraFiles, *options)
@@ -2200,19 +2107,19 @@ def runMozillaTest(kind, mode, extraFiles, *options)
     args = vmCommand + BASE_OPTIONS + options + $testSpecificRequiredOptions + extraFiles.map{|v| v.to_s} + [$benchmark.to_s]
     case mode
     when :normal
-        errorHandler = mozillaErrorHandler
+        errorHandler = "mozilla"
     when :negative
-        errorHandler = mozillaExit3ErrorHandler
+        errorHandler = "mozillaExit3"
     when :fail
-        errorHandler = mozillaFailErrorHandler
+        errorHandler = "mozillaFail"
     when :failDueToOutdatedOrBadTest
-        errorHandler = mozillaFailErrorHandler
+        errorHandler = "mozillaFail"
     when :skip
         return
     else
         raise "Invalid mode: #{mode}"
     end
-    addRunCommand(kind, args, noisyOutputHandler, errorHandler)
+    addRunCommand(kind, args, "noisy", errorHandler)
 end
 
 def runMozillaTestDefault(mode, *extraFiles)
@@ -2275,8 +2182,8 @@ end
 
 def defaultRunNoisyTest
     cfg = {
-        :outputHandler => noisyOutputHandler,
-        :errorHandler => noisyErrorHandler,
+        :outputHandler => "noisy",
+        :errorHandler => "noisy",
     }
     defaultRunCfg(cfg, {})
 end
@@ -3027,7 +2934,7 @@ ENV["TZ"] = "US/Pacific";
 def runBundle
     raise unless $bundle
 
-    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner = TestRunner.create($testRunnerType, $runnerDir, $testWriter)
     evaluator = BundleTestsExecutor.new($runlist, $serialPlans, ITERATION_LIMITS, $treatFailingAsFlaky, testRunner)
     evaluator.loop
 end
@@ -3036,7 +2943,7 @@ def runTarball
     raise unless $tarball
 
     prepareBundle
-    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner = TestRunner.create($testRunnerType, $runnerDir, $testWriter)
     testRunner.prepare($runlist, $serialPlans, Set.new, nil)
     compressBundle
 end
@@ -3112,31 +3019,6 @@ def each_chunk(e, chunkSize)
         yield accumulator
     end
 end
-
-class TestRunnerGnuParallel < TestRunner
-    def prepareGnuParallelRunnerJobs(name, runlist, completedPlans)
-        path = @runnerDir + name
-        FileUtils.mkdir_p(@runnerDir)
-
-        File.open(path, "w") {
-            | outp |
-            runlist = runlist.select { |plan|
-                not completedPlans.include?(plan)
-            }
-            each_chunk(runlist, $gnuParallelChunkSize) { |plans|
-                job = plans.collect { |plan|
-                    "sh ./test_script_#{plan.index}"
-                }.join("; ")
-                outp.puts(job)
-            }
-        }
-    end
-    def prepareRunner(runlist, serialPlans, completedPlans, remoteHosts)
-        prepareGnuParallelRunnerJobs("parallel-tests", runlist, completedPlans | serialPlans)
-        prepareGnuParallelRunnerJobs("serial-tests", serialPlans, completedPlans)
-    end
-end
-
 
 def withGnuParallelSshWrapper(&blk)
     Tempfile.open('ssh-wrapper', $runnerDir) {
@@ -3418,7 +3300,7 @@ end
 def runNormal
     raise if $bundle or $tarball
 
-    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner = TestRunner.create($testRunnerType, $runnerDir, $testWriter)
     evaluator = NormalTestsExecutor.new($runlist, $serialPlans, ITERATION_LIMITS,
                                         $treatFailingAsFlaky, testRunner)
     statusMap = evaluator.loop
@@ -3429,7 +3311,7 @@ end
 def runRemote
     raise unless $remote
 
-    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner = TestRunner.create($testRunnerType, $runnerDir, $testWriter)
     executor = RemoteTestsExecutor.new($runlist, $serialPlans, $remoteHosts, ITERATION_LIMITS, $treatFailingAsFlaky, testRunner)
     statusMap = executor.loop
     detectFailures(statusMap)
@@ -3438,7 +3320,7 @@ end
 def runGnuParallel
     raise "Can only use --gnu-parallel-runner with --remote*" unless $remote
     raise "Can only use --gnu-parallel-runner with the default writer" unless $testWriter == "default"
-    testRunner = TestRunner.create($testRunnerType, $runnerDir)
+    testRunner = TestRunner.create($testRunnerType, $runnerDir, $testWriter)
     executor = GnuParallelTestsExecutor.new($runlist, $serialPlans,
                                             $remoteHosts, ITERATION_LIMITS,
                                             $treatFailingAsFlaky, testRunner)

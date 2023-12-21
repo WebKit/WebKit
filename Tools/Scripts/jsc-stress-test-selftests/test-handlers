@@ -1,0 +1,201 @@
+#!/usr/bin/env ruby
+# Copyright (C) 2023 Igalia S.L. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Changes to the output/error handlers are hard to comprehensively test. What's
+# more, any mistake when changing their behavior could invalidate the test
+# results until it's noticed which, for many tests, could be a long time from
+# then.
+#
+# Instead, this file tests
+# - all combinations of output/error handlers against
+# - all combinatiors of tests that
+#   - don't produce output
+#   - produce output that may or may not match what specific error
+#     handlers are looking for and may or may not match the expected
+#     output of the diff error handler.
+#   - exit with a number of exit codes (so as to exercise all paths
+#     in our current error handlers)
+#   - change their behavior depending on the value of an
+#     environment variable.
+#
+# The idea is that we can compare the output after any changes and possibly
+# "bless" the new behavior if the changes are intended.
+#
+# Note that this is still not enough to test everything -- we rely on
+# test-handlers-in-all-combinations to invoke this script in various
+# configurations.
+require 'optparse'
+require 'pathname'
+require 'shellwords'
+require 'yaml'
+
+$base = Pathname.new($0).dirname
+
+def putd(s)
+    if false
+        $stderr.puts(s)
+    end
+end
+
+def check_output(path)
+    IO.readlines(path).each { |l|
+        if /NO EXPECTATION/.match(l)
+            raise "Missing expectation message in #{path}, this is an error with the path to the diff handler"
+        end
+    }
+end
+
+def rjst(outpath, args)
+    cmd = [
+        $base.parent + "run-jsc-stress-tests",
+        "-j", $base + "mock-jsc",
+        "--arch", `uname -m`.chomp,
+        "-o", outpath + "stress-tests",
+    ] + args
+    cmd.collect! { |a|
+        a.to_s
+    }
+
+    putd("SPAWN #{cmd}")
+    outputpath = outpath + "out"
+    pid = Process.spawn(*cmd, :out => outputpath.to_s, 2 => 1)
+    Process.waitpid(pid)
+    if $?.exited? and $?.exitstatus == 0
+        check_output(outputpath)
+        return
+    end
+    raise "Error executing run-jsc-stress-tests: #{$?}"
+end
+
+BEHAVIORS = [
+    "",
+    "-O hello",
+    "-O failed!",
+    "-O FAILED",
+].product(
+    [
+        "-e 0",
+        "-e 1",
+        "-e 3",
+    ]).collect { |args|
+    args.join(" ")
+}
+
+test_js = "test.js"
+test_expected = "test-expected.txt"
+
+OUTPUT_HANDLERS = [
+    "silent",
+    "noisy",
+]
+
+ERROR_HANDLERS = [
+    "simple",
+    "expectedFail",
+    "noisy",
+    "diff #{test_expected}",
+    "mozilla",
+    "mozillaFail",
+    "mozillaExit3",
+    "chakraPassFail",
+]
+
+ENVVARS = [{}, {"TESTVAR" => "testval"}]
+
+$options = {
+    :output_dir => Pathname.new("."),
+    :use_functions => false,
+}
+
+rest = OptionParser.new { |opts|
+    opts.on("--output-dir=PATH", "-o") { |p|
+        $options[:output_dir] = Pathname.new(p)
+    }
+    opts.on("--use-functions") { |tf|
+        $options[:use_functions] = true
+    }
+}.order!
+
+testcases = []
+BEHAVIORS.product(OUTPUT_HANDLERS, ERROR_HANDLERS, ENVVARS).each { |behavior, outh, errh, envvars|
+    expected = nil
+    md = /^diff (.*)/.match(errh)
+    if not md.nil?
+        errh = "diff"
+        expected = md[1]
+    end
+    name = "#{behavior.gsub(/ /, "_")}-#{outh}OutputHandler#{errh}ErrorHandler"
+    cmd = nil
+    cmdPrefix = ""
+    envvars.each_key { |name|
+        behavior = "#{behavior} --print-envvar=#{name}"
+    }
+    behavior = Shellwords.shellsplit(behavior).collect { |arg|
+        "\"#{arg}\""
+    }.join(", ")
+
+    additionalEnv = "[ "
+    envvars.each_pair { |k, v|
+        additionalEnv << "\"#{k}=#{v}\""
+    }
+    additionalEnv << " ]"
+    if $options[:use_functions]
+        # --use-functions generates calls to the old-style specification of a
+        # handler in the cfg hash -- this part can get dropped after the patch
+        # lands.
+        errorHandler = "#{errh}ErrorHandler"
+        if not expected.nil?
+            errorHandler = "#{errorHandler}(\"../#{expected}\")"
+            cmdPrefix = "prepareExtraRelativeFiles([\"../#{test_expected}\"], $benchmarkDirectory); "
+        end
+        cmd = "serial!; #{cmdPrefix}runWithoutBaseOptionCfg({:kind => \"#{name}(test-parentheses)\", :outputHandler => #{outh}OutputHandler, :errorHandler => #{errorHandler}, :additionalEnv => #{additionalEnv}}, #{behavior})"
+    else
+        if not expected.nil?
+            errh = "diff ../#{expected}"
+            cmdPrefix = "prepareExtraRelativeFiles([\"../#{test_expected}\"], $benchmarkDirectory); "
+        end
+        # We effect the different behaviors by passing flags to mock-jsc.
+        cmd = "serial!; #{cmdPrefix}runWithoutBaseOptionCfg({:kind => \"#{name}(test-parentheses)\", :outputHandler => \"#{outh}\", :errorHandler => \"#{errh}\", :additionalEnv => #{additionalEnv}}, #{behavior})"
+    end
+    testcase = {
+        "path" => test_js,
+        "cmd" => cmd,
+    }
+    testcases << testcase
+}
+
+$options[:output_dir].mkdir
+yamlpath = $options[:output_dir] + "test-handlers.yaml"
+File.open(yamlpath, "w") { |f|
+    f.puts(YAML::dump(testcases))
+}
+File.open($options[:output_dir] + test_js, "w") { |f|
+    # Just create an empty file.
+}
+File.open($options[:output_dir] + test_expected, "w") { |f|
+    f.puts("hello") # we want this to match one of the outputs, so that we can cover all paths.
+    f.flush
+}
+
+rjst($options[:output_dir], rest + [yamlpath])
