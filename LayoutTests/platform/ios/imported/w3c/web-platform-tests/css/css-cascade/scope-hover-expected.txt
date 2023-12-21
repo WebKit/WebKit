@@ -1,9 +1,6 @@
-1
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT :hover via :scope in subject Test timed out
-NOTRUN :hover via :scope in non-subject
-NOTRUN :hover in limit, :scope in subject
-NOTRUN :hover in intermediate limit, :scope in subject
+FAIL :hover via :scope in subject assert_equals: expected "1" but got "auto"
+FAIL :hover via :scope in non-subject assert_equals: expected "1" but got "auto"
+FAIL :hover in limit, :scope in subject assert_equals: expected "auto" but got "1"
+FAIL :hover in intermediate limit, :scope in subject assert_equals: expected "auto" but got "1"
 
