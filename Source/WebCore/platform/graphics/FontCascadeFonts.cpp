@@ -67,7 +67,7 @@ private:
     }
 
     Glyph m_glyphs[GlyphPage::size] { };
-    WeakPtr<const Font> m_fonts[GlyphPage::size] { };
+    SingleThreadWeakPtr<const Font> m_fonts[GlyphPage::size] { };
 };
 
 inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
