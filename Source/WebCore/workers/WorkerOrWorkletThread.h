@@ -55,8 +55,10 @@ public:
 
     Thread* thread() const { return m_thread.get(); }
 
+    virtual void clearProxies() = 0;
+
     virtual WorkerDebuggerProxy* workerDebuggerProxy() const = 0;
-    virtual WorkerLoaderProxy& workerLoaderProxy() = 0;
+    virtual WorkerLoaderProxy* workerLoaderProxy() = 0;
 
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
     WorkerRunLoop& runLoop() { return m_runLoop; }

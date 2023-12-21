@@ -106,9 +106,9 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
 
     if (is<Document>(*m_scriptExecutionContext))
         m_loaderContextIdentifier = m_scriptExecutionContext->identifier();
-    else
-        m_loaderContextIdentifier = downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().workerLoaderProxy().loaderContextIdentifier();
-
+    else if (auto* workerLoaderProxy = downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().workerLoaderProxy())
+        m_loaderContextIdentifier = workerLoaderProxy->loaderContextIdentifier();
+    ASSERT(m_loaderContextIdentifier);
     // Nobody outside this class ref counts this object. The original ref
     // is balanced by the deref in workerGlobalScopeDestroyedInternal.
 }
@@ -119,6 +119,9 @@ WorkerMessagingProxy::~WorkerMessagingProxy()
     ASSERT(!m_scriptExecutionContext
         || (is<Document>(*m_scriptExecutionContext) && isMainThread())
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
+
+    if (m_workerThread)
+        m_workerThread->clearProxies();
 }
 
 void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID sessionID, const String& name, WorkerInitializationData&& initializationData, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
@@ -433,7 +436,9 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext.get()); workerGlobalScope && m_workerThread)
         workerGlobalScope->thread().removeChildThread(*m_workerThread);
 
-    m_workerThread = nullptr;
+    if (RefPtr workerThread = std::exchange(m_workerThread, nullptr))
+        workerThread->clearProxies();
+
     m_scriptExecutionContext = nullptr;
 
     // This balances the original ref in construction.
