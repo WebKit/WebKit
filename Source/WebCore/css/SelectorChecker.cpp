@@ -1127,10 +1127,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
         case CSSSelector::PseudoClassType::UserValid:
             return matchesUserValidPseudoClass(element);
-
-        case CSSSelector::PseudoClassType::Unknown:
-            ASSERT_NOT_REACHED();
-            break;
         }
         return false;
     }

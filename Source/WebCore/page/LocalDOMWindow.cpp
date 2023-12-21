@@ -1669,7 +1669,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
     auto pseudoType = CSSSelector::parsePseudoElementType(StringView { pseudoElement }.substring(colonStart), parserContext);
-    if (pseudoType == CSSSelector::PseudoElementUnknown && !pseudoElement.isEmpty())
+    if (!pseudoType && !pseudoElement.isEmpty())
         return nullptr;
 
     RefPtr frame = this->frame();
@@ -1679,7 +1679,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     if (!authorOnly)
         rulesToInclude |= Style::Resolver::UAAndUserCSSRules;
 
-    PseudoId pseudoId = CSSSelector::pseudoId(pseudoType);
+    PseudoId pseudoId = CSSSelector::pseudoId(*pseudoType);
 
     auto matchedRules = frame->document()->styleScope().resolver().pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
     if (matchedRules.isEmpty())

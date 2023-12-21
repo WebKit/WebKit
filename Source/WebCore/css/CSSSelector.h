@@ -103,7 +103,6 @@ struct PossiblyQuotedIdentifier {
         };
 
         enum class PseudoClassType : uint8_t {
-            Unknown = 0,
             Empty,
             FirstChild,
             FirstOfType,
@@ -203,7 +202,6 @@ struct PossiblyQuotedIdentifier {
         };
 
         enum PseudoElementType {
-            PseudoElementUnknown = 0,
             PseudoElementAfter,
             PseudoElementBackdrop,
             PseudoElementBefore,
@@ -263,7 +261,7 @@ struct PossiblyQuotedIdentifier {
             RightBottomMarginBox,
         };
 
-        static PseudoElementType parsePseudoElementType(StringView, const CSSSelectorParserContext&);
+        static std::optional<PseudoElementType> parsePseudoElementType(StringView, const CSSSelectorParserContext&);
         static PseudoId pseudoId(PseudoElementType);
 
         // Selectors are kept in an array by CSSSelectorList.

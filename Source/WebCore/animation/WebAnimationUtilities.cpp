@@ -357,9 +357,10 @@ ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
     // FIXME: This parserContext should include a document to get the proper settings.
     CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
     auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2), parserContext);
-    if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
+    // FIXME: Excluding CSSSelector::PseudoElementWebKitCustom is almost certainly a bug.
+    if (!pseudoType || pseudoType == CSSSelector::PseudoElementWebKitCustom)
         return Exception { ExceptionCode::SyntaxError };
-    return CSSSelector::pseudoId(pseudoType);
+    return CSSSelector::pseudoId(*pseudoType);
 }
 
 AtomString animatablePropertyAsString(AnimatableCSSProperty property)

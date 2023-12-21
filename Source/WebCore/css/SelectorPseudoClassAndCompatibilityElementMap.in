@@ -1,7 +1,7 @@
 -khtml-drag
 -internal-html-document
 -webkit-any
--webkit-any-link, PseudoClassType::AnyLinkDeprecated, PseudoElementUnknown
+-webkit-any-link, PseudoClassType::AnyLinkDeprecated
 -webkit-autofill
 -webkit-autofill-and-obscured
 -webkit-autofill-strong-password
@@ -9,10 +9,10 @@
 -webkit-drag
 -webkit-full-page-media
 active
-after, PseudoClassType::Unknown, PseudoElementAfter
+after, std::nullopt, PseudoElementAfter
 any-link
 autofill
-before, PseudoClassType::Unknown, PseudoElementBefore
+before, std::nullopt, PseudoElementBefore
 checked
 corner-present
 decrement
@@ -25,8 +25,8 @@ empty
 enabled
 end
 first-child
-first-letter, PseudoClassType::Unknown, PseudoElementFirstLetter
-first-line, PseudoClassType::Unknown, PseudoElementFirstLine
+first-letter, std::nullopt, PseudoElementFirstLetter
+first-line, std::nullopt, PseudoElementFirstLine
 first-of-type
 focus
 focus-visible
@@ -36,7 +36,7 @@ has
 has-attachment
 #endif
 horizontal
-host, PseudoClassType::Host, PseudoElementUnknown
+host, PseudoClassType::Host
 hover
 in-range
 increment
@@ -81,7 +81,7 @@ window-inactive
 #if ENABLE(FULLSCREEN_API)
 fullscreen
 -webkit-animating-full-screen-transition
--webkit-full-screen, PseudoClassType::WebkitFullScreen, PseudoElementUnknown
+-webkit-full-screen, PseudoClassType::WebkitFullScreen
 -webkit-full-screen-ancestor
 -webkit-full-screen-document
 -webkit-full-screen-controls-hidden

@@ -56,7 +56,8 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool 
         name = name.substring(1);
     if (name.startsWith(':'))
         name = name.substring(1);
-    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name, CSSSelectorParserContext { element.document() }));
+    auto pseudoType = CSSSelector::parsePseudoElementType(name, CSSSelectorParserContext { element.document() });
+    m_pseudoElementSpecifier = pseudoType ? CSSSelector::pseudoId(*pseudoType) : PseudoId::None;
 }
 
 CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;

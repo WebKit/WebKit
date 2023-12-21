@@ -101,12 +101,12 @@ namespace WebCore {
 
 struct SelectorPseudoTypeEntry {
     const char* name;
-    CSSSelector::PseudoElementType type;
+    std::optional<CSSSelector::PseudoElementType> type;
 };
 
 %}
 %struct-type
-%define initializer-suffix ,CSSSelector::PseudoElementUnknown
+%define initializer-suffix ,std::nullopt
 %define class-name SelectorPseudoElementTypeMapHash
 %omit-struct-type
 %language=C++
@@ -158,26 +158,26 @@ for line in input_file:
 
 output_file.write("""%%
 
-static inline CSSSelector::PseudoElementType parsePseudoElementString(const LChar* characters, unsigned length)
+static inline std::optional<CSSSelector::PseudoElementType> parsePseudoElementString(const LChar* characters, unsigned length)
 {
     if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementTypeMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
         return entry->type;
-    return CSSSelector::PseudoElementUnknown;
+    return std::nullopt;
 }""")
 
 output_file.write("""
 
-static inline CSSSelector::PseudoElementType parsePseudoElementString(const UChar* characters, unsigned length)
+static inline std::optional<CSSSelector::PseudoElementType> parsePseudoElementString(const UChar* characters, unsigned length)
 {
     const unsigned maxKeywordLength = %s;
     LChar buffer[maxKeywordLength];
     if (length > maxKeywordLength)
-        return CSSSelector::PseudoElementUnknown;
+        return std::nullopt;
 
     for (unsigned i = 0; i < length; ++i) {
         UChar character = characters[i];
         if (!isLatin1(character))
-            return CSSSelector::PseudoElementUnknown;
+            return std::nullopt;
 
         buffer[i] = static_cast<LChar>(character);
     }
@@ -186,7 +186,7 @@ static inline CSSSelector::PseudoElementType parsePseudoElementString(const UCha
 """ % longest_keyword)
 
 output_file.write("""
-CSSSelector::PseudoElementType parsePseudoElementString(StringView pseudoTypeString)
+std::optional<CSSSelector::PseudoElementType> parsePseudoElementString(StringView pseudoTypeString)
 {
     if (pseudoTypeString.is8Bit())
         return parsePseudoElementString(pseudoTypeString.characters8(), pseudoTypeString.length());

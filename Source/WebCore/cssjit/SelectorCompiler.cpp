@@ -1383,9 +1383,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         }
     case CSSSelector::PseudoClassType::Host:
         return FunctionType::CannotCompile;
-    case CSSSelector::PseudoClassType::Unknown:
-        ASSERT_NOT_REACHED();
-        return FunctionType::CannotMatchAnything;
     }
 
     ASSERT_NOT_REACHED();
@@ -1497,9 +1494,6 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
                 ASSERT(!fragment->pseudoElementSelector);
                 fragment->pseudoElementSelector = selector;
                 break;
-            case CSSSelector::PseudoElementUnknown:
-                ASSERT_NOT_REACHED();
-                return FunctionType::CannotMatchAnything;
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElementCue:
 #endif

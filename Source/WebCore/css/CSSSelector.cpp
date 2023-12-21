@@ -307,7 +307,6 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
 #endif
     case PseudoElementSlotted:
     case PseudoElementPart:
-    case PseudoElementUnknown:
     case PseudoElementWebKitCustom:
     case PseudoElementWebKitCustomLegacyPrefixed:
         return PseudoId::None;
@@ -317,30 +316,32 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
     return PseudoId::None;
 }
 
-CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView name, const CSSSelectorParserContext& context)
+std::optional<CSSSelector::PseudoElementType> CSSSelector::parsePseudoElementType(StringView name, const CSSSelectorParserContext& context)
 {
     if (name.isNull())
-        return PseudoElementUnknown;
+        return std::nullopt;
 
     auto type = parsePseudoElementString(name);
-    switch (type) {
-    case PseudoElementWebKitCustom:
-        if (!context.thumbAndTrackPseudoElementsEnabled && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
-            return PseudoElementUnknown;
-        break;
-    case PseudoElementUnknown:
+    if (!type) {
         // FIXME: Investigate removing -apple- as it's non-standard.
         if (name.startsWithIgnoringASCIICase("-webkit-"_s) || name.startsWithIgnoringASCIICase("-apple-"_s))
             return PseudoElementWebKitCustom;
+        return type;
+    }
+
+    switch (*type) {
+    case PseudoElementWebKitCustom:
+        if (!context.thumbAndTrackPseudoElementsEnabled && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
+            return std::nullopt;
         break;
     case PseudoElementHighlight:
         if (!context.highlightAPIEnabled)
-            return PseudoElementUnknown;
+            return std::nullopt;
         break;
     case PseudoElementGrammarError:
     case PseudoElementSpellingError:
         if (!context.grammarAndSpellingPseudoElementsEnabled)
-            return PseudoElementUnknown;
+            return std::nullopt;
         break;
     case PseudoElementViewTransition:
     case PseudoElementViewTransitionGroup:
@@ -348,12 +349,11 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
     case PseudoElementViewTransitionOld:
     case PseudoElementViewTransitionNew:
         if (!context.viewTransitionsEnabled)
-            return PseudoElementUnknown;
+            return std::nullopt;
         break;
     default:
         break;
     }
-
     return type;
 }
 
@@ -789,8 +789,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClassType::Defined:
                 builder.append(":defined");
                 break;
-            case CSSSelector::PseudoClassType::Unknown:
-                ASSERT_NOT_REACHED();
             }
         } else if (cs->match() == Match::PseudoElement) {
             switch (cs->pseudoElementType()) {

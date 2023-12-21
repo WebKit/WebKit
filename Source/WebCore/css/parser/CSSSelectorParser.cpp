@@ -475,8 +475,6 @@ static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElementType pseudoElem
 
 static bool isSimpleSelectorValidAfterPseudoElement(const CSSParserSelector& simpleSelector, CSSSelector::PseudoElementType compoundPseudoElement)
 {
-    ASSERT(compoundPseudoElement != CSSSelector::PseudoElementUnknown);
-    
     if (compoundPseudoElement == CSSSelector::PseudoElementPart) {
         if (simpleSelector.match() == CSSSelector::Match::PseudoElement && simpleSelector.pseudoElementType() != CSSSelector::PseudoElementPart)
             return true;
@@ -806,8 +804,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     if (token.type() == IdentToken) {
         range.consume();
-        if ((selector->match() == CSSSelector::Match::PseudoElement && (selector->pseudoElementType() == CSSSelector::PseudoElementUnknown || isOnlyPseudoElementFunction(selector->pseudoElementType())))
-            || (selector->match() == CSSSelector::Match::PseudoClass && (selector->pseudoClassType() == CSSSelector::PseudoClassType::Unknown || isOnlyPseudoClassFunction(selector->pseudoClassType()))))
+        if ((selector->match() == CSSSelector::Match::PseudoElement && isOnlyPseudoElementFunction(selector->pseudoElementType()))
+            || (selector->match() == CSSSelector::Match::PseudoClass && isOnlyPseudoClassFunction(selector->pseudoClassType())))
             return nullptr;
         return selector;
     }
@@ -1247,7 +1245,7 @@ bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& c
             if (current->pseudoElementType() != CSSSelector::PseudoElementWebKitCustom)
                 continue;
 
-            if (parsePseudoElementString(StringView(current->value())) == CSSSelector::PseudoElementUnknown)
+            if (!parsePseudoElementString(StringView(current->value())))
                 return true;
         }
     }
