@@ -610,6 +610,9 @@ webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Fa
 
 webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 
+# Times out due to missing AccessibilityUIElement::takeFocus
+http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

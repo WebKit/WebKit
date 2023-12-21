@@ -2680,6 +2680,11 @@ void AccessibilityNodeObject::setFocused(bool on)
         return;
 
     auto* document = this->document();
+
+    // This is needed or else focus won't always go into iframes with different origins.
+    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document);
+
+    // Handle clearing focus.
     if (!on || !is<Element>(node())) {
         document->setFocusedElement(nullptr);
         return;
