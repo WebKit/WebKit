@@ -3348,8 +3348,10 @@ void EventHandler::clearLatchedState()
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::clearLatchedState()");
-    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists())
-        scrollLatchingController->removeLatchingStateForFrame(protectedFrame());
+    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists()) {
+        // Unable to ref the frame as it may have started destruction.
+        scrollLatchingController->removeLatchingStateForFrame(m_frame);
+    }
 #endif
 }
 
