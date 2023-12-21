@@ -3759,6 +3759,8 @@ webkit.org/b/266708 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
 
+webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
