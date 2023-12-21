@@ -32,14 +32,13 @@ class DocumentFragment : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(DocumentFragment);
 public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
+    static Ref<DocumentFragment> createForInnerOuterHTML(Document&);
 
     void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
     WEBCORE_EXPORT bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     bool canContainRangeEndPoint() const final { return true; }
     virtual bool isTemplateContent() const { return false; }
-
-    void setIsDocumentFragmentForInnerOuterHTML() { setNodeFlag(NodeFlag::IsDocumentFragmentForInnerOuterHTML); }
 
     // From the NonElementParentNode interface - https://dom.spec.whatwg.org/#interface-nonelementparentnode
     WEBCORE_EXPORT Element* getElementById(const AtomString&) const;

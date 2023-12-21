@@ -27,6 +27,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ class StyleRuleNamespace;
 
 enum class CachePolicy : uint8_t;
 
-class StyleSheetContents final : public RefCounted<StyleSheetContents> {
+class StyleSheetContents final : public RefCounted<StyleSheetContents>, public CanMakeWeakPtr<StyleSheetContents> {
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {
@@ -135,6 +136,7 @@ public:
     void registerClient(CSSStyleSheet*);
     void unregisterClient(CSSStyleSheet*);
     bool hasOneClient() { return m_clients.size() == 1; }
+    Vector<CSSStyleSheet*> clients() const { return m_clients; }
 
     bool isMutable() const { return m_isMutable; }
     void setMutable() { m_isMutable = true; }

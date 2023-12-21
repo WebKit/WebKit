@@ -93,10 +93,11 @@ class WorkerThread : public WorkerOrWorkletThread {
 public:
     virtual ~WorkerThread();
 
-    WorkerBadgeProxy& workerBadgeProxy() const { return m_workerBadgeProxy; }
-    WorkerDebuggerProxy* workerDebuggerProxy() const final { return &m_workerDebuggerProxy; }
-    WorkerLoaderProxy& workerLoaderProxy() final { return m_workerLoaderProxy; }
-    WorkerReportingProxy& workerReportingProxy() const { return m_workerReportingProxy; }
+    WorkerBadgeProxy* workerBadgeProxy() const { return m_workerBadgeProxy; }
+    WorkerDebuggerProxy* workerDebuggerProxy() const final { return m_workerDebuggerProxy; }
+    WorkerLoaderProxy* workerLoaderProxy() final { return m_workerLoaderProxy; }
+    WorkerReportingProxy* workerReportingProxy() const { return m_workerReportingProxy; }
+
 
     // Number of active worker threads.
     WEBCORE_EXPORT static unsigned workerThreadCount();
@@ -108,6 +109,8 @@ public:
     
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
     bool isInStaticScriptEvaluation() const { return m_isInStaticScriptEvaluation; }
+
+    void clearProxies() override;
 
     void setWorkerClient(std::unique_ptr<WorkerClient>&& client) { m_workerClient = WTFMove(client); }
     WorkerClient* workerClient() { return m_workerClient.get(); }
@@ -134,10 +137,10 @@ private:
     void evaluateScriptIfNecessary(String& exceptionMessage) final;
     bool shouldWaitForWebInspectorOnStartup() const final;
 
-    WorkerLoaderProxy& m_workerLoaderProxy;
-    WorkerDebuggerProxy& m_workerDebuggerProxy;
-    WorkerReportingProxy& m_workerReportingProxy;
-    WorkerBadgeProxy& m_workerBadgeProxy;
+    WorkerLoaderProxy* m_workerLoaderProxy; // FIXME: Use CheckedPtr.
+    WorkerDebuggerProxy* m_workerDebuggerProxy; // FIXME: Use CheckedPtr.
+    WorkerReportingProxy* m_workerReportingProxy; // FIXME: Use CheckedPtr.
+    WorkerBadgeProxy* m_workerBadgeProxy; // FIXME: Use CheckedPtr.
     JSC::RuntimeFlags m_runtimeFlags;
 
     std::unique_ptr<WorkerThreadStartupData> m_startupData;

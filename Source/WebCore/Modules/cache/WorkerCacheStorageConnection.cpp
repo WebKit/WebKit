@@ -70,8 +70,9 @@ static Ref<CacheStorageConnection> createMainThreadConnection(WorkerGlobalScope&
 {
     RefPtr<CacheStorageConnection> mainThreadConnection;
     callOnMainThreadAndWait([workerThread = Ref { scope.thread() }, &mainThreadConnection]() mutable {
-        if (!workerThread->runLoop().terminated())
-            mainThreadConnection = workerThread->workerLoaderProxy().createCacheStorageConnection();
+        auto* workerLoaderProxy = workerThread->workerLoaderProxy();
+        if (!workerThread->runLoop().terminated() && workerLoaderProxy)
+            mainThreadConnection = workerLoaderProxy->createCacheStorageConnection();
         if (!mainThreadConnection) {
             RELEASE_LOG_INFO(ServiceWorker, "Creating stopped WorkerCacheStorageConnection");
             mainThreadConnection = StoppedCacheStorageConnection::create();

@@ -449,7 +449,7 @@ IntRect PDFPluginBase::viewRelativeVerticalScrollbarRect() const
     scrollbarRect.shiftXEdgeTo(scrollbarRect.maxX() - m_verticalScrollbar->width());
 
     if (m_horizontalScrollbar)
-        scrollbarRect.contract(0, m_horizontalScrollbar->width());
+        scrollbarRect.contract(0, m_horizontalScrollbar->height());
 
     return scrollbarRect;
 }

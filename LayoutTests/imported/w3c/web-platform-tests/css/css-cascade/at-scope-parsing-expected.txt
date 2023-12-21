@@ -14,6 +14,9 @@ PASS @scope (.a) to (& > &) is valid
 PASS @scope (.a) to (> .b) is valid
 PASS @scope (.a) to (+ .b) is valid
 PASS @scope (.a) to (~ .b) is valid
+PASS @scope () is valid
+PASS @scope to () is valid
+PASS @scope () to () is valid
 PASS @scope (.c <> .d) is valid
 PASS @scope (.a, .c <> .d) is valid
 PASS @scope (.a <> .b, .c) is valid
@@ -35,4 +38,7 @@ PASS @scope ( is not valid
 PASS @scope ( {} is not valid
 PASS @scope to is not valid
 PASS @scope } is not valid
+PASS @scope (.a is not valid
+PASS @scope (.a to (.b) is not valid
+PASS @scope ( to (.b) is not valid
 

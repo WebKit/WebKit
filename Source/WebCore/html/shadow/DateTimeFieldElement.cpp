@@ -199,7 +199,7 @@ void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
     if (!firstChild())
         appendChild(Text::create(document(), String { emptyString() }));
 
-    Ref textNode = downcast<Text>(*firstChild());
+    Ref textNode = checkedDowncast<Text>(*firstChild());
     String newVisibleValue = visibleValue();
     if (textNode->wholeText() != newVisibleValue)
         textNode->replaceWholeText(newVisibleValue);

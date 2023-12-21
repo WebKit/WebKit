@@ -49,12 +49,13 @@ private:
     String responseMIMEType() const;
     bool canUseSheet(MIMETypeCheckHint, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const;
     bool mayTryReplaceEncodedData() const final { return true; }
+    Ref<TextResourceDecoder> protectedDecoder() const;
 
     void didAddClient(CachedResourceClient&) final;
 
     void setEncoding(const String&) final;
     String encoding() const final;
-    const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.get(); }
+    const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.ptr(); }
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) final;
     void destroyDecodedData() final;
 
@@ -62,7 +63,7 @@ private:
 
     void checkNotify(const NetworkLoadMetrics&) final;
 
-    RefPtr<TextResourceDecoder> m_decoder;
+    Ref<TextResourceDecoder> m_decoder;
     String m_decodedSheetText;
 
     RefPtr<StyleSheetContents> m_parsedStyleSheetCache;

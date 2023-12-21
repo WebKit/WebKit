@@ -138,3 +138,25 @@ div {
     <span class="green-12">should be green</div>
   </div>
 </div>
+
+<div>
+  <div>
+    <style>
+    @scope {
+      .green-13 { color: green; }
+    }
+    </style>
+    <span class="green-13">should be green</div>
+  </div>
+  <span class="green-13">should not be green</div>
+</div>
+
+<div>
+  <div>
+    <style>
+    @import "scope-at-rule-green-14.css"
+    </style>
+    <span class="green-14">should be green</div>
+  </div>
+  <span class="green-14">should not be green</div>
+</div>

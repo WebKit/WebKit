@@ -395,6 +395,7 @@ Node::Node(Document& document, ConstructionType type)
     , m_nodeFlags(type)
     , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)
 {
+    ASSERT(type.toRaw() == (type.toRaw() & NodeFlagTypeMask));
     ASSERT(isMainThread());
 
     // Allow code to ref the Document while it is being constructed to make our life easier.
