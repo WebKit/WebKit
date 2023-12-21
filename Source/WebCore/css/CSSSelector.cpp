@@ -329,7 +329,8 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
             return PseudoElementUnknown;
         break;
     case PseudoElementUnknown:
-        if (name.startsWith("-webkit-"_s) || name.startsWith("-apple-"_s))
+        // FIXME: Investigate removing -apple- as it's non-standard.
+        if (name.startsWithIgnoringASCIICase("-webkit-"_s) || name.startsWithIgnoringASCIICase("-apple-"_s))
             return PseudoElementWebKitCustom;
         break;
     case PseudoElementHighlight:
@@ -838,7 +839,8 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
 #endif
             default:
-                builder.append("::", cs->serializingValue());
+                builder.append("::");
+                serializeIdentifier(cs->serializingValue(), builder);
             }
         } else if (cs->isAttributeSelector()) {
             builder.append('[');
