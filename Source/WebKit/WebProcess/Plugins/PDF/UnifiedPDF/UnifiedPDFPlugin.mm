@@ -149,10 +149,10 @@ void UnifiedPDFPlugin::ensureLayers()
     if (!m_rootLayer) {
         m_rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
         m_rootLayer->setAnchorPoint({ });
+        m_rootLayer->setBackgroundColor(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor));
         if (handlesPageScaleFactor())
             m_rootLayer->setAppliesPageScale();
     }
-
 
     if (!m_scrollContainerLayer) {
         m_scrollContainerLayer = createGraphicsLayer("UnifiedPDFPlugin scroll container"_s, GraphicsLayer::Type::ScrollContainer);
@@ -204,6 +204,7 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
 {
     ensureLayers();
 
+    m_rootLayer->setSize(size());
     m_overflowControlsContainer->setSize(size());
 
     auto scrollContainerRect = availableContentsRect();
@@ -349,7 +350,6 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         [page drawWithBox:kPDFDisplayBoxCropBox toContext:imageBuffer->context().platformContext()];
     }
 
-    context.fillRect(clipRect, WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor));
     context.drawImageBuffer(*imageBuffer, drawingRect.location());
 }
 
