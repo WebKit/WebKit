@@ -650,7 +650,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     , m_isNonRenderedPlaceholder(constructionFlags.contains(ConstructionFlag::NonRenderedPlaceholder))
     , m_frameIdentifier(frame ? std::optional(frame->frameID()) : std::nullopt)
 {
-    setNodeFlag(NodeFlag::IsConnected);
+    setEventTargetFlag(EventTargetFlag::IsConnected);
     addToDocumentsMap();
 
     // We depend on the url getting immediately set in subframes, but we

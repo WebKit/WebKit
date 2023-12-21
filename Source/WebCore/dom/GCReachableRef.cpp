@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-HashCountedSet<Node*>& GCReachableRefMap::map()
+HashCountedSet<EventTarget*>& GCReachableRefMap::map()
 {
-    static NeverDestroyed<HashCountedSet<Node*>> map;
+    static NeverDestroyed<HashCountedSet<EventTarget*>> map;
     return map;
 }
 

@@ -1427,9 +1427,9 @@ void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
 Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     if (insertionType.connectedToDocument)
-        setNodeFlag(NodeFlag::IsConnected);
+        setEventTargetFlag(EventTargetFlag::IsConnected);
     if (parentOfInsertedTree.isInShadowTree())
-        setNodeFlag(NodeFlag::IsInShadowTree);
+        setEventTargetFlag(EventTargetFlag::IsInShadowTree);
 
     invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 
@@ -1439,9 +1439,9 @@ Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insert
 void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.disconnectedFromDocument)
-        clearNodeFlag(NodeFlag::IsConnected);
+        clearEventTargetFlag(EventTargetFlag::IsConnected);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
-        clearNodeFlag(NodeFlag::IsInShadowTree);
+        clearEventTargetFlag(EventTargetFlag::IsInShadowTree);
     if (removalType.disconnectedFromDocument) {
         if (auto* cache = oldParentOfRemovedTree.document().existingAXObjectCache())
             cache->remove(*this);
@@ -2151,7 +2151,7 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
             ASSERT(!node.isTreeScope());
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
             if (newScopeIsUAShadowTree)
-                node.setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
+                node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
             node.setTreeScope(newScope);
             node.moveNodeToNewDocument(oldDocument, newDocument);
         }, [&](ShadowRoot& shadowRoot) {
@@ -2166,7 +2166,7 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
             ASSERT(!node.isTreeScope());
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
             if (newScopeIsUAShadowTree)
-                node.setNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree);
+                node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
             node.setTreeScope(newScope);
             if (UNLIKELY(!node.hasRareData()))
                 return;

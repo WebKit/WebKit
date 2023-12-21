@@ -246,11 +246,11 @@ public:
 
     bool hasCustomStyleResolveCallbacks() const { return hasNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
 
-    bool hasSyntheticAttrChildNodes() const { return hasNodeFlag(NodeFlag::HasSyntheticAttrChildNodes); }
-    void setHasSyntheticAttrChildNodes(bool flag) { setNodeFlag(NodeFlag::HasSyntheticAttrChildNodes, flag); }
+    bool hasSyntheticAttrChildNodes() const { return hasEventTargetFlag(EventTargetFlag::HasSyntheticAttrChildNodes); }
+    void setHasSyntheticAttrChildNodes(bool flag) { setEventTargetFlag(EventTargetFlag::HasSyntheticAttrChildNodes, flag); }
 
-    bool hasShadowRootContainingSlots() const { return hasNodeFlag(NodeFlag::HasShadowRootContainingSlots); }
-    void setHasShadowRootContainingSlots(bool flag) { setNodeFlag(NodeFlag::HasShadowRootContainingSlots, flag); }
+    bool hasShadowRootContainingSlots() const { return hasEventTargetFlag(EventTargetFlag::HasShadowRootContainingSlots); }
+    void setHasShadowRootContainingSlots(bool flag) { setEventTargetFlag(EventTargetFlag::HasShadowRootContainingSlots, flag); }
 
     bool needsSVGRendererUpdate() const { return hasNodeFlag(NodeFlag::NeedsSVGRendererUpdate); }
     void setNeedsSVGRendererUpdate(bool flag) { setNodeFlag(NodeFlag::NeedsSVGRendererUpdate, flag); }
@@ -360,9 +360,6 @@ public:
 
     void setHasValidStyle();
 
-    bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
-    void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }
-
     WEBCORE_EXPORT bool isContentEditable() const;
     bool isContentRichlyEditable() const;
 
@@ -410,11 +407,11 @@ public:
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise (https://dom.spec.whatwg.org/#connected).
-    bool isConnected() const { return hasNodeFlag(NodeFlag::IsConnected); }
+    bool isConnected() const { return hasEventTargetFlag(EventTargetFlag::IsConnected); }
     bool isInUserAgentShadowTree() const;
-    bool isInShadowTree() const { return hasNodeFlag(NodeFlag::IsInShadowTree); }
-    bool isInTreeScope() const { return hasNodeFlag(NodeFlag::IsConnected) || hasNodeFlag(NodeFlag::IsInShadowTree); }
-    bool hasBeenInUserAgentShadowTree() const { return hasNodeFlag(NodeFlag::HasBeenInUserAgentShadowTree); }
+    bool isInShadowTree() const { return hasEventTargetFlag(EventTargetFlag::IsInShadowTree); }
+    bool isInTreeScope() const { return isConnected() || isInShadowTree(); }
+    bool hasBeenInUserAgentShadowTree() const { return hasEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree); }
 
     // https://dom.spec.whatwg.org/#in-a-document-tree
     bool isInDocumentTree() const { return isConnected() && !isInShadowTree(); }
@@ -594,31 +591,28 @@ protected:
         IsDocumentFragmentForInnerOuterHTML = 1 << 11,
         IsEditingText = 1 << 12,
         HasCustomStyleResolveCallbacks = 1 << 13,
+        // 2 Free bits
 
         // States
-        IsConnected = 1 << 14,
-        IsInShadowTree = 1 << 15,
         IsLink = 1 << 16, // Element
         IsUserActionElement = 1 << 17,
         IsParsingChildren = 1 << 18,
-        HasSyntheticAttrChildNodes = 1 << 19,
+        EverHadSmoothScroll = 1 << 19,
         SelfOrPrecedingNodesAffectDirAuto = 1 << 20,
-
-        HasPendingResources = 1 << 21,
-        IsInGCReachableRefMap = 1 << 22,
+        EffectiveLangKnownToMatchDocumentElement = 1 << 21,
+        // Free bit
         IsComputedStyleInvalidFlag = 1 << 23,
-        HasShadowRootContainingSlots = 1 << 24,
-        IsInTopLayer = 1 << 25,
+        // 2 Free bits
         NeedsSVGRendererUpdate = 1 << 26,
         NeedsUpdateQueryContainerDependentStyle = 1 << 27,
-        HasBeenInUserAgentShadowTree = 1 << 28,
+        // Free bit
 #if ENABLE(FULLSCREEN_API)
         IsFullscreen = 1 << 29,
         IsIFrameFullscreen = 1 << 30,
 #endif
-        HasFormAssociatedCustomElementInterface = 1U << 31,
+        // Free bit
     };
-    static constexpr auto NodeFlagTypeMask = static_cast<uint32_t>(NodeFlag::IsConnected) - 1;
+    static constexpr auto NodeFlagTypeMask = 0xffff;
 
     enum class TabIndexState : uint8_t {
         NotSet = 0,
