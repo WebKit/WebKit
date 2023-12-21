@@ -3810,8 +3810,6 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/generate-tapi-filelist.py",
-				"$(TEMP_FILE_DIR)/all-product-headers.yaml",
 			);
 			name = "Generate TAPI filelist";
 			outputFileListPaths = (
@@ -3822,7 +3820,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${TEMP_FILE_DIR}\"/all-product-headers.yaml --install-dir=\"${BUILT_PRODUCTS_DIR}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" --relative-to=\"${SRCROOT}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
+			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    if [ -z ${PROJECT_GUID} ]; then\n        \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${TEMP_FILE_DIR}\"/all-product-headers.yaml --install-dir=\"${BUILT_PRODUCTS_DIR}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" --relative-to=\"${SRCROOT}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n    else\n        \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=${CONFIGURATION_TEMP_DIR}/${PROJECT}-${PROJECT_GUID}-VFS/all-product-headers.yaml --install-dir=\"${BUILT_PRODUCTS_DIR}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" --relative-to=\"${SRCROOT}\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n    fi\nelse\n    \"${SRCROOT}/Scripts/generate-tapi-filelist.py\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
