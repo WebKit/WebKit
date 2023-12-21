@@ -478,7 +478,13 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         return loadingResult;
     // https://drafts.csswg.org/css-fonts-4/#char-handling-issues
     // "If a given character is a Private-Use Area Unicode codepoint, user agents must only match font families named in the font-family list that are not generic families. If none of the families named in the font-family list contain a glyph for that codepoint, user agents must display some form of missing glyph symbol for that character rather than attempting installed font fallback for that codepoint."
-    if (isPrivateUseAreaCharacter(character)) {
+    bool shouldCheckForPrivateUseAreaCharacters = true;
+#if PLATFORM(COCOA)
+    // We make an exception for 0xF8FF in Apple platforms for compatibility with other browsers. This has traditionally being mapped on Apple platforms to the Apple logo glyph by some fonts like Times Roman.
+    // http://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/CORPCHAR.TXT
+    shouldCheckForPrivateUseAreaCharacters = character != 0xF8FF;
+#endif
+    if (shouldCheckForPrivateUseAreaCharacters && isPrivateUseAreaCharacter(character)) {
         auto font = FontCache::forCurrentThread().lastResortFallbackFont(description);
         GlyphData glyphData(0, font.ptr());
         m_systemFallbackFontSet.add(WTFMove(font));
