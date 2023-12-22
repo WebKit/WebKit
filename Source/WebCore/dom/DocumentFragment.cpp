@@ -49,7 +49,7 @@ Ref<DocumentFragment> DocumentFragment::create(Document& document)
 
 Ref<DocumentFragment> DocumentFragment::createForInnerOuterHTML(Document& document)
 {
-    return adoptRef(*new DocumentFragment(document, Node::CreateDocumentFragment | NodeFlag::IsDocumentFragmentForInnerOuterHTML));
+    return adoptRef(*new DocumentFragment(document, Node::CreateDocumentFragment | TypeFlag::IsDocumentFragmentForInnerOuterHTML));
 }
 
 String DocumentFragment::nodeName() const

@@ -2380,7 +2380,7 @@ void Element::setIsLink(bool flag)
         { CSSSelector::PseudoClassType::AnyLinkDeprecated, flag },
         { CSSSelector::PseudoClassType::Link, flag }
     });
-    setNodeFlag(NodeFlag::IsLink, flag);
+    setStateFlag(StateFlag::IsLink, flag);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2481,7 +2481,7 @@ void Element::invalidateForQueryContainerSizeChange()
 {
     // FIXME: Ideally we would just recompute things that are actually affected by containers queries within the subtree.
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
-    setNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+    setStateFlag(StateFlag::NeedsUpdateQueryContainerDependentStyle);
 }
 
 void Element::invalidateForResumingQueryContainerResolution()
@@ -2491,12 +2491,12 @@ void Element::invalidateForResumingQueryContainerResolution()
 
 bool Element::needsUpdateQueryContainerDependentStyle() const
 {
-    return hasNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+    return hasStateFlag(StateFlag::NeedsUpdateQueryContainerDependentStyle);
 }
 
 void Element::clearNeedsUpdateQueryContainerDependentStyle()
 {
-    clearNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+    clearStateFlag(StateFlag::NeedsUpdateQueryContainerDependentStyle);
 }
 
 void Element::invalidateEventListenerRegions()
@@ -4068,13 +4068,13 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
         if (document->hasPendingFullStyleRebuild())
             return document->documentElement();
 
-        if (!document->documentElement() || document->documentElement()->hasNodeFlag(NodeFlag::IsComputedStyleInvalidFlag))
+        if (!document->documentElement() || document->documentElement()->hasStateFlag(StateFlag::IsComputedStyleInvalidFlag))
             return document->documentElement();
 
         RefPtr<const Element> rootmost;
 
         for (RefPtr element = this; element; element = element->parentElementInComposedTree()) {
-            if (element->hasNodeFlag(NodeFlag::IsComputedStyleInvalidFlag)) {
+            if (element->hasStateFlag(StateFlag::IsComputedStyleInvalidFlag)) {
                 rootmost = element;
                 continue;
             }
@@ -4126,12 +4126,12 @@ const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
             if (change > Style::Change::NonInherited) {
                 for (Ref child : composedTreeChildren(*element)) {
                     if (RefPtr childElement = dynamicDowncast<Element>(WTFMove(child)))
-                        childElement->setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+                        childElement->setStateFlag(StateFlag::IsComputedStyleInvalidFlag);
                 }
             }
         }
         rareData.setComputedStyle(WTFMove(style));
-        element->clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+        element->clearStateFlag(StateFlag::IsComputedStyleInvalidFlag);
 
         if (mode == ResolveComputedStyleMode::RenderedOnly && computedStyle->display() == DisplayType::None)
             return nullptr;
@@ -4480,19 +4480,19 @@ void Element::setFullscreenFlag(bool flag)
 {
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, { { CSSSelector::PseudoClassType::Fullscreen, flag }, { CSSSelector::PseudoClassType::Modal, flag } });
     if (flag)
-        setNodeFlag(NodeFlag::IsFullscreen);
+        setStateFlag(StateFlag::IsFullscreen);
     else
-        clearNodeFlag(NodeFlag::IsFullscreen);
+        clearStateFlag(StateFlag::IsFullscreen);
 
-    clearNodeFlag(NodeFlag::IsIFrameFullscreen);
+    clearStateFlag(StateFlag::IsIFrameFullscreen);
 }
 
 void Element::setIFrameFullscreenFlag(bool flag)
 {
     if (flag)
-        setNodeFlag(NodeFlag::IsIFrameFullscreen);
+        setStateFlag(StateFlag::IsIFrameFullscreen);
     else
-        clearNodeFlag(NodeFlag::IsIFrameFullscreen);
+        clearStateFlag(StateFlag::IsIFrameFullscreen);
 }
 
 #endif

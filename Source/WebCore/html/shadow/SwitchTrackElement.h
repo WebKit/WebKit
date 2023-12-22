@@ -36,7 +36,7 @@ class SwitchTrackElement final : public HTMLDivElement {
 public:
     static Ref<SwitchTrackElement> create(Document&);
 private:
-    static constexpr auto CreateSwitchTrackElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateSwitchTrackElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit SwitchTrackElement(Document&);
 };
 
