@@ -7448,7 +7448,7 @@ void WebPageProxy::setStatusText(const String& text)
 void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultData, OptionSet<WebEventModifier> modifiers, UserData&& userData)
 {
 #if PLATFORM(MAC)
-    m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData, *this);
+    m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData, this);
 #endif
     m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, protectedProcess()->transformHandlesToObjects(userData.protectedObject().get()).get());
     setToolTip(hitTestResultData.toolTipText);

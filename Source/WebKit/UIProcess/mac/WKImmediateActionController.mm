@@ -254,7 +254,7 @@
 {
     RefPtr<API::HitTestResult> hitTestResult;
     if (_state == WebKit::ImmediateActionState::Ready)
-        hitTestResult = API::HitTestResult::create(_hitTestResultData, *_page);
+        hitTestResult = API::HitTestResult::create(_hitTestResultData, _page.get());
     else
         hitTestResult = RefPtr { _page.get() }->lastMouseMoveHitTestResult();
 
