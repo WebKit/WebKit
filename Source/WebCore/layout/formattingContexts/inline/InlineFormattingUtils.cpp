@@ -404,8 +404,14 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
         // [text-][text] : after [hyphen] position is a soft wrap opportunity.
         return endsWithSoftWrapOpportunity(currentInlineTextItem, nextInlineTextItem);
     }
-    if (previous.layoutBox().isListMarkerBox() || next.layoutBox().isListMarkerBox())
+    if (previous.layoutBox().isListMarkerBox()) {
+        auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
+        return !listMarkerBox.isListMarkerInsideList() || !listMarkerBox.isListMarkerOutside();
+    }
+    if (next.layoutBox().isListMarkerBox()) {
+        // FIXME: SHould this ever be the case?
         return true;
+    }
     if (previous.isBox() || next.isBox()) {
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
