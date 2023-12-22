@@ -70,6 +70,17 @@ label
 
 label
 
+Mixed Alternative Text (attr() and strings) for CSS content (previously `alt:`) in pseudo-elements
+
+rendered text should be "before label after"
+
+accessibility label should be "start alt-before end label start alt-after end"
+
+label
+label
+
+label
+
 simple w/ for each child
 
 one two three
@@ -174,9 +185,12 @@ FAIL link name from content no space joiners ::before and ::after assert_equals:
 PASS button name from content with ::before and ::after in rtl
 PASS heading name from content with ::before and ::after in rtl
 PASS link name from content with ::before and ::after in rtl
-FAIL button name from fallback content with ::before and ::after assert_equals: <button data-expectedlabel="alt-before label alt-after" data-testname="button name from fallback content with ::before and ::after" class="ex fallback-before fallback-after">label</button> expected "alt-before label alt-after" but got "before label after"
-FAIL heading name from fallback content with ::before and ::after assert_equals: <h3 data-expectedlabel="alt-before label alt-after" data-testname="heading name from fallback content with ::before and ::after" class="ex fallback-before fallback-after">label</h3> expected "alt-before label alt-after" but got "before label after"
-FAIL link name from fallback content with ::before and ::after assert_equals: <a href="#" data-expectedlabel="alt-before label alt-after" data-testname="link name from fallback content with ::before and ::after" class="ex fallback-before fallback-after">label</a> expected "alt-before label alt-after" but got "before label after"
+PASS button name from fallback content with ::before and ::after
+PASS heading name from fallback content with ::before and ::after
+PASS link name from fallback content with ::before and ::after
+PASS button name from fallback content mixing attr() and strings with ::before and ::after
+PASS heading name from fallback content mixing attr() and strings with ::before and ::after
+PASS link name from fallback content mixing attr() and strings with ::before and ::after
 PASS button name from content for each child
 PASS heading name from content for each child
 PASS link name from content for each child
