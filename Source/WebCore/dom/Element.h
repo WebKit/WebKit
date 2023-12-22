@@ -592,7 +592,7 @@ public:
     bool hasPendingKeyframesUpdate(PseudoId) const;
     // FIXME: do we need a counter style didChange here? (rdar://103018993).
 
-    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
+    bool isLink() const { return hasStateFlag(StateFlag::IsLink); }
     void setIsLink(bool flag);
 
     bool isInTopLayer() const { return hasEventTargetFlag(EventTargetFlag::IsInTopLayer); }
@@ -600,8 +600,8 @@ public:
     void removeFromTopLayer();
 
 #if ENABLE(FULLSCREEN_API)
-    bool hasFullscreenFlag() const { return hasNodeFlag(NodeFlag::IsFullscreen); }
-    bool hasIFrameFullscreenFlag() const { return hasNodeFlag(NodeFlag::IsIFrameFullscreen); }
+    bool hasFullscreenFlag() const { return hasStateFlag(StateFlag::IsFullscreen); }
+    bool hasIFrameFullscreenFlag() const { return hasStateFlag(StateFlag::IsIFrameFullscreen); }
     void setFullscreenFlag(bool);
     void setIFrameFullscreenFlag(bool);
     WEBCORE_EXPORT void webkitRequestFullscreen();
@@ -906,14 +906,14 @@ private:
     bool hasXMLLangAttr() const { return hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr); }
     void setHasXMLLangAttr(bool has) { setEventTargetFlag(EventTargetFlag::HasXMLLangAttr, has); }
 
-    bool effectiveLangKnownToMatchDocumentElement() const { return hasNodeFlag(NodeFlag::EffectiveLangKnownToMatchDocumentElement); }
-    void setEffectiveLangKnownToMatchDocumentElement(bool matches) { setNodeFlag(NodeFlag::EffectiveLangKnownToMatchDocumentElement, matches); }
+    bool effectiveLangKnownToMatchDocumentElement() const { return hasStateFlag(StateFlag::EffectiveLangKnownToMatchDocumentElement); }
+    void setEffectiveLangKnownToMatchDocumentElement(bool matches) { setStateFlag(StateFlag::EffectiveLangKnownToMatchDocumentElement, matches); }
 
     bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
     bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
 
-    bool hasEverHadSmoothScroll() const { return hasNodeFlag(NodeFlag::EverHadSmoothScroll); }
-    void setHasEverHadSmoothScroll(bool value) { return setNodeFlag(NodeFlag::EverHadSmoothScroll, value); }
+    bool hasEverHadSmoothScroll() const { return hasStateFlag(StateFlag::EverHadSmoothScroll); }
+    void setHasEverHadSmoothScroll(bool value) { return setStateFlag(StateFlag::EverHadSmoothScroll, value); }
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 

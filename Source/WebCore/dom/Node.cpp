@@ -967,7 +967,7 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
         return;
 
     if (validity != Style::Validity::Valid)
-        setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+        setStateFlag(StateFlag::IsComputedStyleInvalidFlag);
 
     bool markAncestors = styleValidity() == Style::Validity::Valid || mode == Style::InvalidationMode::InsertedIntoAncestor;
 

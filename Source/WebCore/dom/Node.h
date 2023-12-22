@@ -252,8 +252,8 @@ public:
     bool hasShadowRootContainingSlots() const { return hasEventTargetFlag(EventTargetFlag::HasShadowRootContainingSlots); }
     void setHasShadowRootContainingSlots(bool flag) { setEventTargetFlag(EventTargetFlag::HasShadowRootContainingSlots, flag); }
 
-    bool needsSVGRendererUpdate() const { return hasNodeFlag(NodeFlag::NeedsSVGRendererUpdate); }
-    void setNeedsSVGRendererUpdate(bool flag) { setNodeFlag(NodeFlag::NeedsSVGRendererUpdate, flag); }
+    bool needsSVGRendererUpdate() const { return hasStateFlag(StateFlag::NeedsSVGRendererUpdate); }
+    void setNeedsSVGRendererUpdate(bool flag) { setStateFlag(StateFlag::NeedsSVGRendererUpdate, flag); }
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
@@ -307,8 +307,8 @@ public:
     // Returns the parent node, but null if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
 
-    bool selfOrPrecedingNodesAffectDirAuto() const { return hasNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto); }
-    void setSelfOrPrecedingNodesAffectDirAuto(bool flag) { setNodeFlag(NodeFlag::SelfOrPrecedingNodesAffectDirAuto, flag); }
+    bool selfOrPrecedingNodesAffectDirAuto() const { return hasStateFlag(StateFlag::SelfOrPrecedingNodesAffectDirAuto); }
+    void setSelfOrPrecedingNodesAffectDirAuto(bool flag) { setStateFlag(StateFlag::SelfOrPrecedingNodesAffectDirAuto, flag); }
 
     TextDirection effectiveTextDirection() const;
     void setEffectiveTextDirection(TextDirection);
@@ -342,8 +342,8 @@ public:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
-    bool isUserActionElement() const { return hasNodeFlag(NodeFlag::IsUserActionElement); }
-    void setUserActionElement(bool flag) { setNodeFlag(NodeFlag::IsUserActionElement, flag); }
+    bool isUserActionElement() const { return hasStateFlag(StateFlag::IsUserActionElement); }
+    void setUserActionElement(bool flag) { setStateFlag(StateFlag::IsUserActionElement, flag); }
 
     bool inRenderedDocument() const;
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
@@ -559,6 +559,7 @@ public:
 
 #if ENABLE(JIT)
     static ptrdiff_t nodeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_nodeFlags); }
+    static ptrdiff_t stateFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_stateFlags); }
     static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareDataWithBitfields); }
 #if CPU(ADDRESS64)
     static uint64_t rareDataPointerMask() { return CompactPointerTuple<NodeRareData*, uint16_t>::pointerMask; }
@@ -570,8 +571,8 @@ public:
     static auto flagIsElement() { return enumToUnderlyingType(NodeFlag::IsElement); }
     static auto flagIsShadowRoot() { return enumToUnderlyingType(NodeFlag::IsShadowRoot); }
     static auto flagIsHTML() { return enumToUnderlyingType(NodeFlag::IsHTMLElement); }
-    static auto flagIsLink() { return enumToUnderlyingType(NodeFlag::IsLink); }
-    static auto flagIsParsingChildren() { return enumToUnderlyingType(NodeFlag::IsParsingChildren); }
+    static auto flagIsLink() { return enumToUnderlyingType(StateFlag::IsLink); }
+    static auto flagIsParsingChildren() { return enumToUnderlyingType(StateFlag::IsParsingChildren); }
 #endif // ENABLE(JIT)
 
 protected:
@@ -591,26 +592,22 @@ protected:
         IsDocumentFragmentForInnerOuterHTML = 1 << 11,
         IsEditingText = 1 << 12,
         HasCustomStyleResolveCallbacks = 1 << 13,
-        // 2 Free bits
+    };
 
-        // States
-        IsLink = 1 << 16, // Element
+    enum class StateFlag : uint32_t {
+        IsLink = 1 << 16,
         IsUserActionElement = 1 << 17,
         IsParsingChildren = 1 << 18,
         EverHadSmoothScroll = 1 << 19,
         SelfOrPrecedingNodesAffectDirAuto = 1 << 20,
         EffectiveLangKnownToMatchDocumentElement = 1 << 21,
-        // Free bit
-        IsComputedStyleInvalidFlag = 1 << 23,
-        // 2 Free bits
-        NeedsSVGRendererUpdate = 1 << 26,
-        NeedsUpdateQueryContainerDependentStyle = 1 << 27,
-        // Free bit
+        IsComputedStyleInvalidFlag = 1 << 22,
+        NeedsSVGRendererUpdate = 1 << 23,
+        NeedsUpdateQueryContainerDependentStyle = 1 << 24,
 #if ENABLE(FULLSCREEN_API)
-        IsFullscreen = 1 << 29,
-        IsIFrameFullscreen = 1 << 30,
+        IsFullscreen = 1 << 25,
+        IsIFrameFullscreen = 1 << 26,
 #endif
-        // Free bit
     };
     static constexpr auto NodeFlagTypeMask = 0xffff;
 
@@ -637,8 +634,10 @@ protected:
     };
 
     bool hasNodeFlag(NodeFlag flag) const { return m_nodeFlags.contains(flag); }
-    void setNodeFlag(NodeFlag flag, bool value = true) const { ASSERT(!(static_cast<uint32_t>(flag) & NodeFlagTypeMask)); m_nodeFlags.set(flag, value); }
-    void clearNodeFlag(NodeFlag flag) const { setNodeFlag(flag, false); }
+
+    bool hasStateFlag(StateFlag flag) const { return m_stateFlags.contains(flag); }
+    void setStateFlag(StateFlag flag, bool value = true) const { m_stateFlags.set(flag, value); }
+    void clearStateFlag(StateFlag flag) const { setStateFlag(flag, false); }
 
     RareDataBitFields rareDataBitfields() const { return bitwise_cast<RareDataBitFields>(m_rareDataWithBitfields.type()); }
     void setRareDataBitfields(RareDataBitFields bitfields) { m_rareDataWithBitfields.setType(bitwise_cast<uint16_t>(bitfields)); }
@@ -649,9 +648,9 @@ protected:
     CustomElementState customElementState() const { return static_cast<CustomElementState>(rareDataBitfields().customElementState); }
     void setCustomElementState(CustomElementState);
 
-    bool isParsingChildrenFinished() const { return !hasNodeFlag(NodeFlag::IsParsingChildren); }
-    void setIsParsingChildrenFinished() { clearNodeFlag(NodeFlag::IsParsingChildren); }
-    void clearIsParsingChildrenFinished() { setNodeFlag(NodeFlag::IsParsingChildren); }
+    bool isParsingChildrenFinished() const { return !hasStateFlag(StateFlag::IsParsingChildren); }
+    void setIsParsingChildrenFinished() { clearStateFlag(StateFlag::IsParsingChildren); }
+    void clearIsParsingChildrenFinished() { setStateFlag(StateFlag::IsParsingChildren); }
 
     static constexpr auto DefaultNodeFlags = OptionSet<NodeFlag> { };
     static constexpr auto CreateAttr = DefaultNodeFlags;
@@ -763,6 +762,7 @@ private:
     
     mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
     mutable OptionSet<NodeFlag> m_nodeFlags;
+    mutable OptionSet<StateFlag> m_stateFlags;
 
     CheckedPtr<ContainerNode> m_parentNode;
     CheckedPtr<TreeScope> m_treeScope;
@@ -886,7 +886,7 @@ inline void Node::setHasValidStyle()
     bitfields.setStyleValidity(Style::Validity::Valid);
     bitfields.clearFlags({ NodeStyleFlag::HasInvalidRenderer, NodeStyleFlag::StyleResolutionShouldRecompositeLayer });
     setStyleBitfields(bitfields);
-    clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+    clearStateFlag(StateFlag::IsComputedStyleInvalidFlag);
 }
 
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
