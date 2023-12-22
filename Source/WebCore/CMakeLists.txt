@@ -2839,14 +2839,6 @@ if (APPLE)
     set_target_properties(WebCore PROPERTIES LINK_FLAGS "-weak-lxslt -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
 endif ()
 
-# The -ftree-sra optimization (implicit with -O2) causes crashes when
-# allocating large chunks of memory using bmalloc on Intel 32bit.
-# See https://bugs.webkit.org/show_bug.cgi?id=146440
-string(TOLOWER ${CMAKE_HOST_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR)
-if (CMAKE_COMPILER_IS_GNUCXX AND "${LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(i[3-6]86|x86)$")
-    WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore -fno-tree-sra)
-endif ()
-
 target_precompile_headers(WebCoreTestSupport PRIVATE testing/js/WebCoreTestSupportPrefix.h)
 
 WEBKIT_COPY_FILES(Copy_WebCoreTestSupportPrivateHeaders
