@@ -42,6 +42,7 @@ OBJC_CLASS PDFSelection;
 namespace WebCore {
 class HTMLPlugInElement;
 class LocalFrame;
+class RenderEmbeddedObject;
 }
 
 namespace WebKit {
@@ -114,6 +115,8 @@ private:
 
     void initializePlugin();
 
+    Ref<PDFPluginBase> protectedPlugin() const;
+
     void viewGeometryDidChange();
     void viewVisibilityDidChange();
 
@@ -128,6 +131,8 @@ private:
     bool shouldCreateTransientPaintingSnapshot() const;
 
     void updateDocumentForPluginSizingBehavior();
+
+    CheckedPtr<WebCore::RenderEmbeddedObject> checkedRenderer() const;
 
     // WebCore::PluginViewBase
     WebCore::PluginLayerHostingStrategy layerHostingStrategy() const final;

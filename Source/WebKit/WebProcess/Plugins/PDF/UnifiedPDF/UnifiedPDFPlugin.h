@@ -182,6 +182,7 @@ private:
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
 
+    void paintPDFContent(WebCore::GraphicsContext&, const WebCore::FloatRect& clipRect);
     void ensureLayers();
     void updateLayerHierarchy();
 
