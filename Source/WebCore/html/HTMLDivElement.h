@@ -34,7 +34,7 @@ public:
 
 protected:
     static constexpr auto CreateHTMLDivElement = CreateHTMLElement;
-    HTMLDivElement(const QualifiedName&, Document&, ConstructionType = CreateHTMLDivElement);
+    HTMLDivElement(const QualifiedName&, Document&, OptionSet<TypeFlag> = CreateHTMLDivElement);
 
 private:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;

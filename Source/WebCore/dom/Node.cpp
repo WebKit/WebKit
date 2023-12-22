@@ -390,7 +390,7 @@ inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destr
         destroyAndFree(*nodeRareData);
 }
 
-Node::Node(Document& document, ConstructionType type)
+Node::Node(Document& document, OptionSet<TypeFlag> type)
     : EventTarget(ConstructNode)
     , m_typeFlags(type)
     , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)

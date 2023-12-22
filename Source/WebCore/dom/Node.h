@@ -665,8 +665,7 @@ protected:
     static constexpr auto CreateMathMLElement = CreateElement | TypeFlag::IsMathMLElement;
     static constexpr auto CreateDocument = CreateContainer | TypeFlag::IsDocumentNode;
     static constexpr auto CreateEditingText = CreateText | TypeFlag::IsEditingText;
-    using ConstructionType = OptionSet<TypeFlag>;
-    Node(Document&, ConstructionType);
+    Node(Document&, OptionSet<TypeFlag>);
 
     static constexpr uint32_t s_refCountIncrement = 2;
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);

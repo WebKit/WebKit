@@ -58,7 +58,7 @@ public:
     String debugDescription() const final;
 
 protected:
-    Text(Document& document, String&& data, ConstructionType type)
+    Text(Document& document, String&& data, OptionSet<TypeFlag> type)
         : CharacterData(document, WTFMove(data), type)
     {
     }
