@@ -3993,7 +3993,6 @@ static bool hasSimpleStaticPositionForOutOfFlowChildren(const RenderBlockFlow& r
 
 void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    bool needsUpdateReplacedDimensions = false;
     auto& layoutState = *view().frameView().layoutContext().layoutState();
 
     auto hasSimpleOutOfFlowContentOnly = hasSimpleStaticPositionForOutOfFlowChildren(*this);
@@ -4012,7 +4011,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         else
             hasSimpleOutOfFlowContentOnly = false;
 
-        if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty() && !needsUpdateReplacedDimensions)
+        if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty())
             continue;
 
         auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
@@ -4034,10 +4033,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         return;
     }
 
-    if (!modernLineLayout()) {
+    if (!modernLineLayout())
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
-        needsUpdateReplacedDimensions = true;
-    }
 
     auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
 
