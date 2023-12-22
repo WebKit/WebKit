@@ -71,10 +71,8 @@ FloatPoint RenderSVGViewportContainer::computeViewportLocation() const
 
 FloatSize RenderSVGViewportContainer::computeViewportSize() const
 {
-    if (isOutermostSVGViewportContainer()) {
-        ASSERT(is<RenderSVGRoot>(parent()));
+    if (isOutermostSVGViewportContainer())
         return downcast<RenderSVGRoot>(*parent()).computeViewportSize();
-    }
 
     auto& useSVGSVGElement = svgSVGElement();
     SVGLengthContext lengthContext(&useSVGSVGElement);
