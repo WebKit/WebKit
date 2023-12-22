@@ -341,8 +341,8 @@ static Vector<Ref<Document>> documentsToUnfullscreen(Document& firstDocument)
 static void clearFullscreenFlags(Element& element)
 {
     element.setFullscreenFlag(false);
-    if (auto* frameOwner = dynamicDowncast<HTMLIFrameElement>(element))
-        frameOwner->setIFrameFullscreenFlag(false);
+    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element))
+        iframe->setIFrameFullscreenFlag(false);
 }
 
 void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
@@ -546,9 +546,6 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
             containingBlockBeforeStyleResolution = renderer->containingBlock();
 
         ancestor->setFullscreenFlag(true);
-        // FIXME: Why is "iframe fullscreen" getting unset here?
-        if (auto* frameElement = dynamicDowncast<HTMLIFrameElement>(ancestor.get()))
-            frameElement->setIFrameFullscreenFlag(false);
         ancestor->document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
         // Remove before adding, so we always add at the end of the top layer.
