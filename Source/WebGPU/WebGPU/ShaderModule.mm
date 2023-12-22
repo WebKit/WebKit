@@ -71,7 +71,9 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
 id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label)
 {
     auto options = [MTLCompileOptions new];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = YES;
+ALLOW_DEPRECATED_DECLARATIONS_END
     NSError *error = nil;
     // FIXME(PERFORMANCE): Run the asynchronous version of this
     id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
