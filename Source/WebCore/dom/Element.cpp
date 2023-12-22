@@ -4483,16 +4483,6 @@ void Element::setFullscreenFlag(bool flag)
         setStateFlag(StateFlag::IsFullscreen);
     else
         clearStateFlag(StateFlag::IsFullscreen);
-
-    clearStateFlag(StateFlag::IsIFrameFullscreen);
-}
-
-void Element::setIFrameFullscreenFlag(bool flag)
-{
-    if (flag)
-        setStateFlag(StateFlag::IsIFrameFullscreen);
-    else
-        clearStateFlag(StateFlag::IsIFrameFullscreen);
 }
 
 #endif

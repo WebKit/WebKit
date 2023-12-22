@@ -601,9 +601,7 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     bool hasFullscreenFlag() const { return hasStateFlag(StateFlag::IsFullscreen); }
-    bool hasIFrameFullscreenFlag() const { return hasStateFlag(StateFlag::IsIFrameFullscreen); }
     void setFullscreenFlag(bool);
-    void setIFrameFullscreenFlag(bool);
     WEBCORE_EXPORT void webkitRequestFullscreen();
     virtual void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&);
 #endif
