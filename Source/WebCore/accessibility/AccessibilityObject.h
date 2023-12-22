@@ -93,6 +93,7 @@ public:
     bool isInDescriptionListDetail() const override;
     bool isInDescriptionListTerm() const override;
     bool isInCell() const override;
+    bool isInRow() const;
 
     bool isDetached() const override;
 
@@ -166,6 +167,7 @@ public:
     // Table row support.
     bool isTableRow() const override { return false; }
     unsigned rowIndex() const override { return 0; }
+    bool ignoredByRowAncestor() const;
 
     // ARIA tree/grid row support.
     bool isARIATreeGridRow() const override { return false; }
