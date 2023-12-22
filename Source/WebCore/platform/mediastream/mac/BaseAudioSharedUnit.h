@@ -84,7 +84,7 @@ public:
 
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
     bool isRenderingAudio() const { return m_isRenderingAudio; }
-    bool hasClients() const { return !m_clients.isEmpty(); }
+    bool hasClients() const { return !m_clients.isEmptyIgnoringNullReferences(); }
 
     const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
@@ -138,8 +138,8 @@ private:
     uint32_t m_outputDeviceID { 0 };
     std::optional<std::pair<String, uint32_t>> m_capturingDevice;
 
-    HashSet<CheckedPtr<CoreAudioCaptureSource>> m_clients;
-    Vector<CheckedPtr<CoreAudioCaptureSource>> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);
+    ThreadSafeWeakHashSet<CoreAudioCaptureSource> m_clients;
+    Vector<ThreadSafeWeakPtr<CoreAudioCaptureSource>> m_audioThreadClients WTF_GUARDED_BY_LOCK(m_audioThreadClientsLock);
     Lock m_audioThreadClientsLock;
 
     bool m_isCapturingWithDefaultMicrophone { false };

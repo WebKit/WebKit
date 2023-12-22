@@ -58,29 +58,28 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    bool isOn = owningPart().isOn();
-    bool isRTL = style.states.contains(ControlStyle::State::RightToLeft);
-    bool isEnabled = style.states.contains(ControlStyle::State::Enabled);
-    bool isPressed = style.states.contains(ControlStyle::State::Pressed);
+    auto isOn = owningPart().isOn();
+    auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
+    auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
+    auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
+    auto isPressed = style.states.contains(ControlStyle::State::Pressed);
     auto progress = SwitchMacUtilities::easeInOut(owningPart().progress());
 
-    auto borderRectRect = borderRect.rect();
-    auto controlSize = controlSizeForSize(borderRectRect.size(), style);
-    auto size = cellSize(controlSize, style);
-    auto outsets = cellOutsets(controlSize, style);
+    auto logicalBounds = SwitchMacUtilities::rectWithTransposedSize(borderRect.rect(), isVertical);
+    auto controlSize = controlSizeForSize(logicalBounds.size(), style);
+    auto size = SwitchMacUtilities::visualCellSize(controlSize, style);
+    auto outsets = SwitchMacUtilities::visualCellOutsets(controlSize, isVertical);
 
-    size.scale(style.zoomFactor);
-
-    auto trackY = std::max(((borderRectRect.height() - size.height()) / 2.0f), 0.0f);
-    auto trackRect = FloatRect { FloatPoint { borderRectRect.x(), borderRectRect.y() + trackY }, size };
-
+    auto trackRect = SwitchMacUtilities::trackRectForBounds(logicalBounds, size);
     auto inflatedTrackRect = inflatedRect(trackRect, size, outsets, style);
+    if (isVertical)
+        inflatedTrackRect.setSize(inflatedTrackRect.size().transposedSize());
 
     auto drawingThumbLength = inflatedTrackRect.height();
-    auto drawingThumbIsLeft = (!isRTL && !isOn) || (isRTL && isOn);
-    auto drawingThumbXAxis = inflatedTrackRect.width() - drawingThumbLength;
-    auto drawingThumbXAxisProgress = drawingThumbXAxis * progress;
-    auto drawingThumbX = drawingThumbIsLeft ? drawingThumbXAxis - drawingThumbXAxisProgress : drawingThumbXAxisProgress;
+    auto drawingThumbIsLogicallyLeft = (!isRTL && !isOn) || (isRTL && isOn);
+    auto drawingThumbLogicalXAxis = inflatedTrackRect.width() - drawingThumbLength;
+    auto drawingThumbLogicalXAxisProgress = drawingThumbLogicalXAxis * progress;
+    auto drawingThumbX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
     auto drawingThumbRect = NSMakeRect(drawingThumbX, 0, drawingThumbLength, drawingThumbLength);
 
     auto trackBuffer = context.createImageBuffer(inflatedTrackRect.size(), deviceScaleFactor);
@@ -99,6 +98,9 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
         (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
         (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
     }];
+
+    if (isVertical)
+        SwitchMacUtilities::rotateContextForVerticalWritingMode(context, inflatedTrackRect);
 
     context.drawConsumingImageBuffer(WTFMove(trackBuffer), inflatedTrackRect.location());
 }

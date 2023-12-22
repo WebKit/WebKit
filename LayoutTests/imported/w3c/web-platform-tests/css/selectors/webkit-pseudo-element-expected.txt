@@ -1,6 +1,6 @@
 
-FAIL rules include webkit-prefixed pseudo-element should be cascaded assert_equals: expected "rgb(0, 255, 0)" but got "rgb(255, 0, 0)"
-FAIL webkit-prefixed pseudo-element selectors should be accessible from CSSOM undefined is not an object (evaluating 'sheet.cssRules[1].selectorText')
+PASS rules include webkit-prefixed pseudo-element should be cascaded
+PASS webkit-prefixed pseudo-element selectors should be accessible from CSSOM
 PASS qS and qSA shouldn't throw exception
-FAIL webkit-prefix without dash is invalid assert_equals: expected 2 but got 1
+PASS webkit-prefix without dash is invalid
 

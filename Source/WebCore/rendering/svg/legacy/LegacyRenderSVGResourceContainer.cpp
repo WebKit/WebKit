@@ -116,8 +116,8 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
         if (root != SVGRenderSupport::findTreeRootObject(client))
             continue;
 
-        if (is<LegacyRenderSVGResourceContainer>(client)) {
-            downcast<LegacyRenderSVGResourceContainer>(client).removeAllClientsFromCacheIfNeeded(markForInvalidation, visitedRenderers);
+        if (CheckedPtr container = dynamicDowncast<LegacyRenderSVGResourceContainer>(client)) {
+            container->removeAllClientsFromCacheIfNeeded(markForInvalidation, visitedRenderers);
             continue;
         }
 

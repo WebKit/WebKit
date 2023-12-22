@@ -53,7 +53,7 @@ FloatRect SwitchTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return SwitchMacUtilities::rectForBounds(bounds);
 }
 
-static RefPtr<ImageBuffer> trackMaskImage(GraphicsContext& context, FloatSize trackRectSize, float deviceScaleFactor, bool isRTL, NSString * coreUISize)
+static RefPtr<ImageBuffer> trackMaskImage(GraphicsContext& context, FloatSize trackRectSize, float deviceScaleFactor, bool isRTL, NSString *coreUISize)
 {
     auto drawingTrackRect = NSMakeRect(0, 0, trackRectSize.width(), trackRectSize.height());
     auto maskImage = context.createImageBuffer(trackRectSize, deviceScaleFactor);
@@ -76,7 +76,7 @@ static RefPtr<ImageBuffer> trackMaskImage(GraphicsContext& context, FloatSize tr
     return maskImage;
 }
 
-static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuffer> trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isRTL, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString * coreUISize)
+static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuffer> trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isRTL, bool isVertical, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString *coreUISize)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
@@ -117,9 +117,22 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
     }];
 
     if (needsOnOffLabels) {
+        // This ensures the on label continues to appear upright.
+        if (isVertical && isOn) {
+            auto isRegularSize = coreUISize == (__bridge NSString *)kCUISizeRegular;
+            if (isRTL) {
+                auto thumbLogicalLeftAxis = trackRectSize.width() - trackRectSize.height();
+                auto y = -thumbLogicalLeftAxis;
+                trackImage->context().translate(thumbLogicalLeftAxis, y);
+            }
+            if (!isRTL && isRegularSize)
+                trackImage->context().translate(0.0f, 1.f);
+            SwitchMacUtilities::rotateContextForVerticalWritingMode(trackImage->context(), drawingTrackRect);
+        }
+
         [[NSAppearance currentDrawingAppearance] _drawInRect:drawingTrackRect context:cgContext options:@{
             (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchOnOffLabel,
-            // FIXME: below does not pass kCUIStatePressed like NSCoreUIStateForSwitchState does,
+            // FIXME: Below does not pass kCUIStatePressed like NSCoreUIStateForSwitchState does,
             // as passing that does not appear to work correctly. Might be related to
             // rdar://118563716.
             (__bridge NSString *)kCUIStateKey: (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : kCUIStateActive),
@@ -138,6 +151,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     auto isOn = owningPart().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
+    auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
     auto isPressed = style.states.contains(ControlStyle::State::Pressed);
     auto isInActiveWindow = style.states.contains(ControlStyle::State::WindowActive);
@@ -145,16 +159,15 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     auto needsOnOffLabels = userPrefersWithoutColorDifferentiation();
     auto progress = SwitchMacUtilities::easeInOut(owningPart().progress());
 
-    auto borderRectRect = borderRect.rect();
-    auto controlSize = controlSizeForSize(borderRectRect.size(), style);
-    auto size = cellSize(controlSize, style);
-    auto outsets = cellOutsets(controlSize, style);
+    auto logicalBounds = SwitchMacUtilities::rectWithTransposedSize(borderRect.rect(), isVertical);
+    auto controlSize = controlSizeForSize(logicalBounds.size(), style);
+    auto size = SwitchMacUtilities::visualCellSize(controlSize, style);
+    auto outsets = SwitchMacUtilities::visualCellOutsets(controlSize, isVertical);
 
-    size.scale(style.zoomFactor);
-
-    auto trackY = std::max(((borderRectRect.height() - size.height()) / 2.0f), 0.0f);
-    auto trackRect = FloatRect { FloatPoint { borderRectRect.x(), borderRectRect.y() + trackY }, size };
+    auto trackRect = SwitchMacUtilities::trackRectForBounds(logicalBounds, size);
     auto inflatedTrackRect = inflatedRect(trackRect, size, outsets, style);
+    if (isVertical)
+        inflatedTrackRect.setSize(inflatedTrackRect.size().transposedSize());
 
     auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
@@ -163,7 +176,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
         return;
 
     auto createTrackImage = [&](bool isOn) {
-        return trackImage(context, maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isRTL, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
+        return trackImage(context, maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isRTL, isVertical, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
     };
 
     GraphicsContextStateSaver stateSaver(context);
@@ -185,17 +198,23 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
             return;
         // This logic is from CrossfadeGeneratedImage.h, but we copy it to avoid some overhead and
         // also because that class is not supposed to be used in GPUP.
-        // FIXME: as above, not using context().platformContext() here is likely dubious.
+        // FIXME: As above, not using context().platformContext() here is likely dubious.
         trackImage->context().setAlpha(1.0f - progress);
         trackImage->context().drawConsumingImageBuffer(WTFMove(fromImage), IntPoint(), ImagePaintingOptions { CompositeOperator::SourceOver });
         trackImage->context().setAlpha(progress);
         trackImage->context().drawConsumingImageBuffer(WTFMove(toImage), IntPoint(), ImagePaintingOptions { CompositeOperator::PlusLighter });
     }
-    context.drawConsumingImageBuffer(WTFMove(trackImage), inflatedTrackRect.location());
+
+    {
+        GraphicsContextStateSaver rotationStateSaver(context);
+        if (isVertical)
+            SwitchMacUtilities::rotateContextForVerticalWritingMode(context, inflatedTrackRect);
+        context.drawConsumingImageBuffer(WTFMove(trackImage), inflatedTrackRect.location());
+    }
 
     if (isFocused) {
         auto color = colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
-        context.drawFocusRing(Vector { trackRect }, 0, 1.0f, color);
+        context.drawFocusRing(Vector { trackRect }, 0, 0, color);
     }
 }
 

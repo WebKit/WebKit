@@ -53,14 +53,14 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(St
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString, const CSSSelectorParserContext& context)
 {
     auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString, context);
-    if (pseudoType == CSSSelector::PseudoElementUnknown)
+    if (!pseudoType)
         return nullptr;
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-    selector->m_selector->setPseudoElementType(pseudoType);
+    selector->m_selector->setPseudoElementType(*pseudoType);
     AtomString name;
-    if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
+    if (*pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
         name = pseudoTypeString.convertToASCIILowercaseAtom();
     else {
         if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
@@ -79,16 +79,16 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(StringView pseudoTypeString)
 {
     auto pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
-    if (pseudoType.pseudoClass != CSSSelector::PseudoClassType::Unknown) {
+    if (pseudoType.pseudoClass) {
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::Match::PseudoClass);
-        selector->m_selector->setPseudoClassType(pseudoType.pseudoClass);
+        selector->m_selector->setPseudoClassType(*pseudoType.pseudoClass);
         return selector;
     }
-    if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoElementUnknown) {
+    if (pseudoType.compatibilityPseudoElement) {
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-        selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
+        selector->m_selector->setPseudoElementType(*pseudoType.compatibilityPseudoElement);
         selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercaseAtom());
         return selector;
     }

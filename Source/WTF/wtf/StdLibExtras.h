@@ -467,9 +467,6 @@ struct alternative_index_helper<index, Type, std::variant<T, Types...>> {
 
 template<class T, class Variant> struct variant_alternative_index;
 
-template<class T, class Variant> struct variant_alternative_index<T, const Variant>
-    : variant_alternative_index<T, Variant> { };
-
 template<class T, class... Types> struct variant_alternative_index<T, std::variant<Types...>>
     : std::integral_constant<size_t, detail::alternative_index_helper<0, T, std::variant<Types...>>::value> {
     static_assert(detail::alternative_index_helper<0, T, std::remove_cv_t<std::variant<Types...>>>::count == 1);

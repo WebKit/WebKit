@@ -66,12 +66,6 @@ public:
     virtual void paint(StyleAppearance, OptionSet<ControlStyle::State>, GraphicsContext&, const FloatRect&, bool, const Color&) { }
 #endif
 
-    // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
-    // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
-    // The rect passed in is in zoomed coordinates, so the inflation should take that into account and make sure the inflation
-    // amount is also scaled by the zoomFactor.
-    virtual void inflateControlPaintRect(StyleAppearance, FloatRect&, float) const { }
-
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatSize&) const;
 
     virtual bool userPrefersContrast() const { return false; }

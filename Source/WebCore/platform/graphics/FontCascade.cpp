@@ -245,7 +245,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     return displayList;
 }
 
-float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, WeakHashSet<const Font>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
+float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, SingleThreadWeakHashSet<const Font>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
 {
     ASSERT(from <= to);
     ASSERT(to <= run.length());
@@ -289,7 +289,7 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     return offsetAfterRange - offsetBeforeRange;
 }
 
-float FontCascade::width(const TextRun& run, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (!run.length())
         return 0;
@@ -309,7 +309,7 @@ float FontCascade::width(const TextRun& run, WeakHashSet<const Font>* fallbackFo
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
-    WeakHashSet<const Font> localFallbackFonts;
+    SingleThreadWeakHashSet<const Font> localFallbackFonts;
     if (!fallbackFonts)
         fallbackFonts = &localFallbackFonts;
 
@@ -1291,7 +1291,7 @@ int FontCascade::emphasisMarkAscent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    CheckedPtr markFontData = markGlyphData.value().font;
+    RefPtr markFontData = markGlyphData.value().font.get();
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1305,7 +1305,7 @@ int FontCascade::emphasisMarkDescent(const AtomString& mark) const
     if (!markGlyphData)
         return 0;
 
-    CheckedPtr markFontData = markGlyphData.value().font;
+    RefPtr markFontData = markGlyphData.value().font.get();
     ASSERT(markFontData);
     if (!markFontData)
         return 0;
@@ -1469,7 +1469,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     if (!markGlyphData)
         return;
 
-    CheckedPtr markFontData = markGlyphData.value().font;
+    RefPtr markFontData = markGlyphData.value().font.get();
     ASSERT(markFontData);
     if (!markFontData)
         return;
@@ -1500,7 +1500,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
 
-float FontCascade::floatWidthForSimpleText(const TextRun& run, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForSimpleText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
@@ -1517,7 +1517,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, WeakHashSet<const
     return it.runWidthSoFar();
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, WeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(*this, run, true, fallbackFonts);
     if (glyphOverflow) {

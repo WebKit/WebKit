@@ -3954,7 +3954,7 @@ void Element::addToTopLayer()
 
     Ref document = this->document();
     document->addTopLayerElement(*this);
-    setNodeFlag(NodeFlag::IsInTopLayer);
+    setEventTargetFlag(EventTargetFlag::IsInTopLayer);
 
     document->scheduleContentRelevancyUpdate(ContentRelevancy::IsInTopLayer);
 
@@ -3989,7 +3989,7 @@ void Element::removeFromTopLayer()
 
     // Unable to protect the document as it may have started destruction.
     document().removeTopLayerElement(*this);
-    clearNodeFlag(NodeFlag::IsInTopLayer);
+    clearEventTargetFlag(EventTargetFlag::IsInTopLayer);
 
     document().scheduleContentRelevancyUpdate(ContentRelevancy::IsInTopLayer);
 

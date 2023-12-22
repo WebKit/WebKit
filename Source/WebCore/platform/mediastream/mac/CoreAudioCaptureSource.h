@@ -51,7 +51,7 @@ class BaseAudioSharedUnit;
 class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 
-class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop>, public CanMakeCheckedPtr {
+class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop> {
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(String&& deviceID, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
     static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, BaseAudioSharedUnit& overrideUnit, PageIdentifier);

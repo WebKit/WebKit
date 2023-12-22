@@ -407,6 +407,7 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
     // Ensure that the end of the last invalidation point does not extend beyond the end of the buffer.
     macroAssembler.padBeforePatch();
 
+#if ENABLE(JIT)
 #if !ENABLE(BRANCH_COMPACTION)
 #if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
     macroAssembler.m_assembler.buffer().flushConstantPool(false);
@@ -429,6 +430,9 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
 #elif CPU(ARM64)
     copyCompactAndLinkCode<uint32_t>(macroAssembler, effort);
 #endif // !ENABLE(BRANCH_COMPACTION)
+#else  // ENABLE(JIT)
+UNUSED_PARAM(effort);
+#endif // ENABLE(JIT)
 
     m_linkTasks = WTFMove(macroAssembler.m_linkTasks);
     m_lateLinkTasks = WTFMove(macroAssembler.m_lateLinkTasks);

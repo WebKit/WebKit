@@ -259,13 +259,12 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
             continue;
 
         WindRule newClipRule = style.svgStyle().clipRule();
-        bool isUseElement = child.hasTagName(SVGNames::useTag);
-        if (isUseElement) {
-            SVGUseElement& useElement = downcast<SVGUseElement>(child);
-            renderer = useElement.rendererClipChild();
+        RefPtr useElement = dynamicDowncast<SVGUseElement>(child);
+        if (useElement) {
+            renderer = useElement->rendererClipChild();
             if (!renderer)
                 continue;
-            if (!useElement.hasAttributeWithoutSynchronization(SVGNames::clip_ruleAttr))
+            if (!useElement->hasAttributeWithoutSynchronization(SVGNames::clip_ruleAttr))
                 newClipRule = renderer->style().svgStyle().clipRule();
         }
 
@@ -277,8 +276,8 @@ bool LegacyRenderSVGResourceClipper::drawContentIntoMaskImage(ImageBuffer& maskI
 
         // In the case of a <use> element, we obtained its renderere above, to retrieve its clipRule.
         // We have to pass the <use> renderer itself to renderSubtreeToContext() to apply it's x/y/transform/etc. values when rendering.
-        // So if isUseElement is true, refetch the childNode->renderer(), as renderer got overridden above.
-        SVGRenderingContext::renderSubtreeToContext(maskContext, isUseElement ? *child.renderer() : *renderer, maskContentTransformation);
+        // So if useElement is non-null, refetch the childNode->renderer(), as renderer got overridden above.
+        SVGRenderingContext::renderSubtreeToContext(maskContext, useElement ? *child.renderer() : *renderer, maskContentTransformation);
     }
 
     view().frameView().setPaintBehavior(oldBehavior);

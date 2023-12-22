@@ -115,7 +115,7 @@ private:
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 
-    WeakPtr<const Font> m_cachedPrimaryFont;
+    SingleThreadWeakPtr<const Font> m_cachedPrimaryFont;
     RefPtr<FontSelector> m_fontSelector;
 
     WidthCache m_widthCache;

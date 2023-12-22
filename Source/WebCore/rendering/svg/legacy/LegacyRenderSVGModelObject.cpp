@@ -153,12 +153,11 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
     AffineTransform localTransform;
     Node* current = element;
 
-    while (current && current->isSVGElement()) {
-        SVGElement& currentElement = downcast<SVGElement>(*current);
-        localTransform = currentElement.renderer()->localToParentTransform();
+    while (auto* currentElement = dynamicDowncast<SVGElement>(current)) {
+        localTransform = currentElement->renderer()->localToParentTransform();
         transform = localTransform.multiply(transform);
         // For getCTM() computation, stop at the nearest viewport element
-        if (&currentElement == stopAtElement)
+        if (currentElement == stopAtElement)
             break;
 
         current = current->parentOrShadowHostNode();

@@ -595,7 +595,7 @@ public:
     bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
     void setIsLink(bool flag);
 
-    bool isInTopLayer() const { return hasNodeFlag(NodeFlag::IsInTopLayer); }
+    bool isInTopLayer() const { return hasEventTargetFlag(EventTargetFlag::IsInTopLayer); }
     void addToTopLayer();
     void removeFromTopLayer();
 
@@ -906,14 +906,14 @@ private:
     bool hasXMLLangAttr() const { return hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr); }
     void setHasXMLLangAttr(bool has) { setEventTargetFlag(EventTargetFlag::HasXMLLangAttr, has); }
 
-    bool effectiveLangKnownToMatchDocumentElement() const { return hasEventTargetFlag(EventTargetFlag::EffectiveLangKnownToMatchDocumentElement); }
-    void setEffectiveLangKnownToMatchDocumentElement(bool matches) { setEventTargetFlag(EventTargetFlag::EffectiveLangKnownToMatchDocumentElement, matches); }
+    bool effectiveLangKnownToMatchDocumentElement() const { return hasNodeFlag(NodeFlag::EffectiveLangKnownToMatchDocumentElement); }
+    void setEffectiveLangKnownToMatchDocumentElement(bool matches) { setNodeFlag(NodeFlag::EffectiveLangKnownToMatchDocumentElement, matches); }
 
     bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
     bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
 
-    bool hasEverHadSmoothScroll() const { return hasEventTargetFlag(EventTargetFlag::EverHadSmoothScroll); }
-    void setHasEverHadSmoothScroll(bool value) { return setEventTargetFlag(EventTargetFlag::EverHadSmoothScroll, value); }
+    bool hasEverHadSmoothScroll() const { return hasNodeFlag(NodeFlag::EverHadSmoothScroll); }
+    void setHasEverHadSmoothScroll(bool value) { return setNodeFlag(NodeFlag::EverHadSmoothScroll, value); }
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 

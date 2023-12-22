@@ -1,4 +1,15 @@
 ================
+WebKitGTK 2.43.3
+================
+
+What's new in WebKitGTK 2.43.3?
+
+  - Show vblank monitor information in webkit://gpu.
+  - Fallback to timer based vblank monitor if drmWaitVBlank fails.
+  - Fix several memory leaks in media backend.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.43.2
 ================
 

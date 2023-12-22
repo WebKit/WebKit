@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "AXObjectCache.h"
 #include "Cursor.h"
 #include "DisabledAdaptations.h"
 #include "FocusDirection.h"
@@ -234,6 +235,12 @@ public:
 
     void registerPopupOpeningObserver(PopupOpeningObserver&);
     void unregisterPopupOpeningObserver(PopupOpeningObserver&);
+
+#if PLATFORM(PLAYSTATION)
+    void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification);
+    void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&);
+    void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXObjectCache::AXLoadingEvent);
+#endif
 
     WEBCORE_EXPORT void getToolTip(const HitTestResult&, String&, TextDirection&);
 

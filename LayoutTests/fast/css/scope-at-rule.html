@@ -70,6 +70,20 @@ div {
   }
 }
 
+#green-15 {
+  @scope (#b) {
+    & {
+      color: green;
+    }
+  }
+}
+
+#green-16 {
+  @scope (#b) {
+    color: green;
+  }
+}
+
 </style>
 
 <div class="a">
@@ -159,4 +173,18 @@ div {
     <span class="green-14">should be green</div>
   </div>
   <span class="green-14">should not be green</div>
+</div>
+
+<div id="green-15">
+  <div id="b">
+    should be green
+  </div>
+  should not be green
+</div>
+
+<div id="green-16">
+  <div id="b">
+   should be green
+  </div>
+  should not be green
 </div>

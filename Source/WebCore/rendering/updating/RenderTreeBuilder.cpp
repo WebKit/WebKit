@@ -166,21 +166,21 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
     ASSERT(renderer.parent());
     auto toDestroy = detach(*renderer.parent(), renderer, canCollapseAnonymousBlock);
 
-    if (is<RenderTextFragment>(renderer))
-        firstLetterBuilder().cleanupOnDestroy(downcast<RenderTextFragment>(renderer));
+    if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer))
+        firstLetterBuilder().cleanupOnDestroy(*textFragment);
 
-    if (is<RenderBoxModelObject>(renderer))
-        continuationBuilder().cleanupOnDestroy(downcast<RenderBoxModelObject>(renderer));
+    if (auto* renderBox = dynamicDowncast<RenderBoxModelObject>(renderer))
+        continuationBuilder().cleanupOnDestroy(*renderBox);
 
     // We need to detach the subtree first so that the descendants don't have
     // access to previous/next sublings at detach().
     // FIXME: webkit.org/b/182909.
-    if (!is<RenderElement>(toDestroy))
+    auto* childToDestroy = dynamicDowncast<RenderElement>(toDestroy.get());
+    if (!childToDestroy)
         return;
 
-    auto& childToDestroy = downcast<RenderElement>(*toDestroy.get());
-    while (childToDestroy.firstChild()) {
-        auto& firstChild = *childToDestroy.firstChild();
+    while (childToDestroy->firstChild()) {
+        auto& firstChild = *childToDestroy->firstChild();
         if (auto* node = firstChild.node())
             node->setRenderer(nullptr);
         destroy(firstChild);
@@ -198,8 +198,8 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
     auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
         if (&parent == &parentCandidate) {
             // Parents inside multicols can't call internal attach directly.
-            if (is<RenderBlockFlow>(parent) && downcast<RenderBlockFlow>(parent).multiColumnFlow()) {
-                blockFlowBuilder().attach(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
+            if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(parent); blockFlow && blockFlow->multiColumnFlow()) {
+                blockFlowBuilder().attach(*blockFlow, WTFMove(child), beforeChild);
                 return;
             }
             attachToRenderElement(parent, WTFMove(child), beforeChild);
@@ -210,18 +210,15 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
 
     ASSERT(&parent.view() == &m_view);
 
-    if (is<RenderText>(beforeChild)) {
-        if (auto* wrapperInline = downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents())
+    if (auto* beforeChildText = dynamicDowncast<RenderText>(beforeChild)) {
+        if (auto* wrapperInline = beforeChildText->inlineWrapperForDisplayContents())
             beforeChild = wrapperInline;
-    } else if (is<RenderBox>(beforeChild)) {
+    } else if (auto* beforeChildBox = dynamicDowncast<RenderBox>(beforeChild)) {
         // Adjust the beforeChild if it happens to be a spanner and the its actual location is inside the fragmented flow.
-        auto& beforeChildBox = downcast<RenderBox>(*beforeChild);
         if (auto* enclosingFragmentedFlow = parent.enclosingFragmentedFlow()) {
             auto columnSpannerPlaceholderForBeforeChild = [&]() -> RenderMultiColumnSpannerPlaceholder* {
-                if (!is<RenderMultiColumnFlow>(enclosingFragmentedFlow))
-                    return nullptr;
-                auto& multiColumnFlow = downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow);
-                return multiColumnFlow.findColumnSpannerPlaceholder(&beforeChildBox);
+                auto* multiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(enclosingFragmentedFlow);
+                return multiColumnFlow ? multiColumnFlow->findColumnSpannerPlaceholder(beforeChildBox) : nullptr;
             };
 
             if (auto* spannerPlaceholder = columnSpannerPlaceholderForBeforeChild())
@@ -229,104 +226,104 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         }
     }
 
-    if (is<RenderTableRow>(parent)) {
-        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild);
+    if (auto* row = dynamicDowncast<RenderTableRow>(parent)) {
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(*row, *child, beforeChild);
         if (&parentCandidate == &parent) {
-            tableBuilder().attach(downcast<RenderTableRow>(parentCandidate), WTFMove(child), beforeChild);
+            tableBuilder().attach(*row, WTFMove(child), beforeChild);
             return;
         }
         insertRecursiveIfNeeded(parentCandidate);
         return;
     }
 
-    if (is<RenderTableSection>(parent)) {
-        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
+    if (auto* tableSection = dynamicDowncast<RenderTableSection>(parent)) {
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(*tableSection, *child, beforeChild);
         if (&parent == &parentCandidate) {
-            tableBuilder().attach(downcast<RenderTableSection>(parent), WTFMove(child), beforeChild);
+            tableBuilder().attach(*tableSection, WTFMove(child), beforeChild);
             return;
         }
         insertRecursiveIfNeeded(parentCandidate);
         return;
     }
 
-    if (is<RenderTable>(parent)) {
-        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild);
+    if (auto* table = dynamicDowncast<RenderTable>(parent)) {
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(*table, *child, beforeChild);
         if (&parentCandidate == &parent) {
-            tableBuilder().attach(downcast<RenderTable>(parentCandidate), WTFMove(child), beforeChild);
+            tableBuilder().attach(*table, WTFMove(child), beforeChild);
             return;
         }
         insertRecursiveIfNeeded(parentCandidate);
         return;
     }
 
-    if (is<RenderRubyAsBlock>(parent)) {
-        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(downcast<RenderRubyAsBlock>(parent), *child, beforeChild));
+    if (auto* rubyBlock = dynamicDowncast<RenderRubyAsBlock>(parent)) {
+        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(*rubyBlock, *child, beforeChild));
         return;
     }
 
-    if (is<RenderRubyAsInline>(parent)) {
-        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(downcast<RenderRubyAsInline>(parent), *child, beforeChild));
+    if (auto* rubyInline = dynamicDowncast<RenderRubyAsInline>(parent)) {
+        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(*rubyInline, *child, beforeChild));
         return;
     }
 
-    if (is<RenderRubyRun>(parent)) {
-        rubyBuilder().attach(downcast<RenderRubyRun>(parent), WTFMove(child), beforeChild);
+    if (auto* run = dynamicDowncast<RenderRubyRun>(parent)) {
+        rubyBuilder().attach(*run, WTFMove(child), beforeChild);
         return;
     }
 
-    if (is<RenderButton>(parent)) {
-        formControlsBuilder().attach(downcast<RenderButton>(parent), WTFMove(child), beforeChild);
+    if (auto* button = dynamicDowncast<RenderButton>(parent)) {
+        formControlsBuilder().attach(*button, WTFMove(child), beforeChild);
         return;
     }
 
-    if (is<RenderMenuList>(parent)) {
-        formControlsBuilder().attach(downcast<RenderMenuList>(parent), WTFMove(child), beforeChild);
-        return;
-    }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGContainer>(parent)) {
-        svgBuilder().attach(downcast<RenderSVGContainer>(parent), WTFMove(child), beforeChild);
-        return;
-    }
-#endif
-
-    if (is<LegacyRenderSVGContainer>(parent)) {
-        svgBuilder().attach(downcast<LegacyRenderSVGContainer>(parent), WTFMove(child), beforeChild);
-        return;
-    }
-
-    if (is<RenderSVGInline>(parent)) {
-        svgBuilder().attach(downcast<RenderSVGInline>(parent), WTFMove(child), beforeChild);
+    if (auto* menuList = dynamicDowncast<RenderMenuList>(parent)) {
+        formControlsBuilder().attach(*menuList, WTFMove(child), beforeChild);
         return;
     }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGRoot>(parent)) {
-        svgBuilder().attach(downcast<RenderSVGRoot>(parent), WTFMove(child), beforeChild);
+    if (auto* container = dynamicDowncast<RenderSVGContainer>(parent)) {
+        svgBuilder().attach(*container, WTFMove(child), beforeChild);
         return;
     }
 #endif
 
-    if (is<LegacyRenderSVGRoot>(parent)) {
-        svgBuilder().attach(downcast<LegacyRenderSVGRoot>(parent), WTFMove(child), beforeChild);
+    if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent)) {
+        svgBuilder().attach(*container, WTFMove(child), beforeChild);
         return;
     }
 
-    if (is<RenderSVGText>(parent)) {
-        svgBuilder().attach(downcast<RenderSVGText>(parent), WTFMove(child), beforeChild);
+    if (auto* svgInline = dynamicDowncast<RenderSVGInline>(parent)) {
+        svgBuilder().attach(*svgInline, WTFMove(child), beforeChild);
+        return;
+    }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(parent)) {
+        svgBuilder().attach(*svgRoot, WTFMove(child), beforeChild);
+        return;
+    }
+#endif
+
+    if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent)) {
+        svgBuilder().attach(*svgRoot, WTFMove(child), beforeChild);
+        return;
+    }
+
+    if (auto* text = dynamicDowncast<RenderSVGText>(parent)) {
+        svgBuilder().attach(*text, WTFMove(child), beforeChild);
         return;
     }
 
 #if ENABLE(MATHML)
-    if (is<RenderMathMLFenced>(parent)) {
-        mathMLBuilder().attach(downcast<RenderMathMLFenced>(parent), WTFMove(child), beforeChild);
+    if (auto* mathMLFenced = dynamicDowncast<RenderMathMLFenced>(parent)) {
+        mathMLBuilder().attach(*mathMLFenced, WTFMove(child), beforeChild);
         return;
     }
 #endif
 
-    if (is<RenderGrid>(parent)) {
-        attachToRenderGrid(downcast<RenderGrid>(parent), WTFMove(child), beforeChild);
+    if (auto* gridParent = dynamicDowncast<RenderGrid>(parent)) {
+        attachToRenderGrid(*gridParent, WTFMove(child), beforeChild);
         return;
     }
 
@@ -340,18 +337,18 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
-    if (is<RenderBlockFlow>(parent)) {
-        blockFlowBuilder().attach(downcast<RenderBlockFlow>(parent), WTFMove(child), beforeChild);
+    if (auto* parentBlockFlow = dynamicDowncast<RenderBlockFlow>(parent)) {
+        blockFlowBuilder().attach(*parentBlockFlow, WTFMove(child), beforeChild);
         return;
     }
 
-    if (is<RenderBlock>(parent)) {
-        blockBuilder().attach(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
+    if (auto* parentBlock = dynamicDowncast<RenderBlock>(parent)) {
+        blockBuilder().attach(*parentBlock, WTFMove(child), beforeChild);
         return;
     }
 
-    if (is<RenderInline>(parent)) {
-        inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
+    if (auto* inlineParent = dynamicDowncast<RenderInline>(parent)) {
+        inlineBuilder().attach(*inlineParent, WTFMove(child), beforeChild);
         return;
     }
 
@@ -360,13 +357,13 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
 
 void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (is<RenderInline>(parent)) {
-        inlineBuilder().attachIgnoringContinuation(downcast<RenderInline>(parent), WTFMove(child), beforeChild);
+    if (auto* inlineParent = dynamicDowncast<RenderInline>(parent)) {
+        inlineBuilder().attachIgnoringContinuation(*inlineParent, WTFMove(child), beforeChild);
         return;
     }
 
-    if (is<RenderBlock>(parent)) {
-        blockBuilder().attachIgnoringContinuation(downcast<RenderBlock>(parent), WTFMove(child), beforeChild);
+    if (auto* parentBlock = dynamicDowncast<RenderBlock>(parent)) {
+        blockBuilder().attachIgnoringContinuation(*parentBlock, WTFMove(child), beforeChild);
         return;
     }
 
@@ -375,51 +372,51 @@ void RenderTreeBuilder::attachIgnoringContinuation(RenderElement& parent, Render
 
 RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderObject& child, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
-    if (is<RenderRubyAsInline>(parent))
-        return rubyBuilder().detach(downcast<RenderRubyAsInline>(parent), child);
+    if (auto* rubyInline = dynamicDowncast<RenderRubyAsInline>(parent))
+        return rubyBuilder().detach(*rubyInline, child);
 
-    if (is<RenderRubyAsBlock>(parent))
-        return rubyBuilder().detach(downcast<RenderRubyAsBlock>(parent), child);
+    if (auto* rubyBlock = dynamicDowncast<RenderRubyAsBlock>(parent))
+        return rubyBuilder().detach(*rubyBlock, child);
 
-    if (is<RenderRubyRun>(parent))
-        return rubyBuilder().detach(downcast<RenderRubyRun>(parent), child);
+    if (auto* run = dynamicDowncast<RenderRubyRun>(parent))
+        return rubyBuilder().detach(*run, child);
 
-    if (is<RenderMenuList>(parent))
-        return formControlsBuilder().detach(downcast<RenderMenuList>(parent), child);
+    if (auto* menuList = dynamicDowncast<RenderMenuList>(parent))
+        return formControlsBuilder().detach(*menuList, child);
 
-    if (is<RenderButton>(parent))
-        return formControlsBuilder().detach(downcast<RenderButton>(parent), child);
+    if (auto* button = dynamicDowncast<RenderButton>(parent))
+        return formControlsBuilder().detach(*button, child);
 
-    if (is<RenderGrid>(parent))
-        return detachFromRenderGrid(downcast<RenderGrid>(parent), child);
+    if (auto* grid = dynamicDowncast<RenderGrid>(parent))
+        return detachFromRenderGrid(*grid, child);
 
-    if (is<RenderSVGText>(parent))
-        return svgBuilder().detach(downcast<RenderSVGText>(parent), child);
+    if (auto* text = dynamicDowncast<RenderSVGText>(parent))
+        return svgBuilder().detach(*text, child);
 
-    if (is<RenderSVGInline>(parent))
-        return svgBuilder().detach(downcast<RenderSVGInline>(parent), child);
+    if (auto* svgInline = dynamicDowncast<RenderSVGInline>(parent))
+        return svgBuilder().detach(*svgInline, child);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGContainer>(parent))
         return svgBuilder().detach(downcast<RenderSVGContainer>(parent), child);
 #endif
 
-    if (is<LegacyRenderSVGContainer>(parent))
-        return svgBuilder().detach(downcast<LegacyRenderSVGContainer>(parent), child);
+    if (auto* container = dynamicDowncast<LegacyRenderSVGContainer>(parent))
+        return svgBuilder().detach(*container, child);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (is<RenderSVGRoot>(parent))
-        return svgBuilder().detach(downcast<RenderSVGRoot>(parent), child);
+    if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(parent))
+        return svgBuilder().detach(*svgRoot, child);
 #endif
 
-    if (is<LegacyRenderSVGRoot>(parent))
-        return svgBuilder().detach(downcast<LegacyRenderSVGRoot>(parent), child);
+    if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent))
+        return svgBuilder().detach(*svgRoot, child);
 
-    if (is<RenderBlockFlow>(parent))
-        return blockBuilder().detach(downcast<RenderBlockFlow>(parent), child, canCollapseAnonymousBlock);
+    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(parent))
+        return blockBuilder().detach(*blockFlow, child, canCollapseAnonymousBlock);
 
-    if (is<RenderBlock>(parent))
-        return blockBuilder().detach(downcast<RenderBlock>(parent), child, canCollapseAnonymousBlock);
+    if (auto* block = dynamicDowncast<RenderBlock>(parent))
+        return blockBuilder().detach(*block, child, canCollapseAnonymousBlock);
 
     return detachFromRenderElement(parent, child);
 }
@@ -428,9 +425,9 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
 {
     if (tableBuilder().childRequiresTable(parent, *child)) {
         RenderTable* table;
-        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
-        if (afterChild && afterChild->isAnonymous() && is<RenderTable>(*afterChild) && !afterChild->isBeforeContent())
-            table = downcast<RenderTable>(afterChild);
+        auto* afterChild = dynamicDowncast<RenderTable>(beforeChild ? beforeChild->previousSibling() : parent.lastChild());
+        if (afterChild && afterChild->isAnonymous() && !afterChild->isBeforeContent())
+            table = afterChild;
         else {
             auto newTable = RenderTable::createAnonymousWithParentRenderer(parent);
             table = newTable.get();
@@ -467,8 +464,8 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         newChild->insertedIntoTree(isInternalMove);
 
         if (m_internalMovesType == RenderObject::IsInternalMove::No) {
-            if (auto* fragmentedFlow = newChild->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(fragmentedFlow))
-                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
+            if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
+                multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
         }
     }
 
@@ -508,8 +505,8 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         auto* containingBlock = &from;
         while (containingBlock) {
             containingBlock->setNeedsLayout();
-            if (is<RenderBlockFlow>(*containingBlock)) {
-                downcast<RenderBlockFlow>(*containingBlock).deleteLines();
+            if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*containingBlock)) {
+                blockFlow->deleteLines();
                 break;
             }
             containingBlock = containingBlock->containingBlock();
@@ -546,10 +543,11 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
     // This condition is rarely hit since this function is usually called on
     // anonymous blocks which can no longer carry positioned objects (see r120761)
     // or when fullRemoveInsert is false.
-    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(from)) {
-        auto& blockFlow = downcast<RenderBlock>(from);
-        blockFlow.removePositionedObjects(nullptr);
-        removeFloatingObjects(blockFlow);
+    if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes) {
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlock>(from)) {
+            blockFlow->removePositionedObjects(nullptr);
+            removeFloatingObjects(*blockFlow);
+        }
     }
 
     ASSERT(!beforeChild || &to == beforeChild->parent());
@@ -604,7 +602,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             return;
         // Out of flow children of RenderMultiColumnFlow are not really part of the multicolumn flow. We need to ensure that changes in positioning like this
         // trigger insertions into the multicolumn flow.
-        if (auto* enclosingFragmentedFlow = renderer.parent()->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(enclosingFragmentedFlow)) {
+        if (auto* enclosingFragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(renderer.parent()->enclosingFragmentedFlow())) {
             auto movingIntoMulticolumn = [&] {
                 if (wasOutOfFlowPositioned && !isOutOfFlowPositioned)
                     return true;
@@ -618,12 +616,12 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             }();
             if (movingIntoMulticolumn) {
                 renderer.initializeFragmentedFlowStateOnInsertion();
-                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
+                multiColumnBuilder().multiColumnDescendantInserted(*enclosingFragmentedFlow, renderer);
                 return;
             }
             auto movingOutOfMulticolumn = !wasOutOfFlowPositioned && isOutOfFlowPositioned;
             if (movingOutOfMulticolumn) {
-                multiColumnBuilder().restoreColumnSpannersForContainer(renderer, downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow));
+                multiColumnBuilder().restoreColumnSpannersForContainer(renderer, *enclosingFragmentedFlow);
                 return;
             }
 
@@ -634,11 +632,11 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
                 if (auto* containingBlock = descendant.containingBlock(); containingBlock && containingBlock->enclosingFragmentedFlow() != enclosingFragmentedFlow)
                     spannerContainingBlockSet.add(*containingBlock);
             }
-            auto oldEnclosingFragmentedFlow = WeakPtr { *enclosingFragmentedFlow };
+            WeakPtr oldEnclosingFragmentedFlow = *enclosingFragmentedFlow;
             for (auto& containingBlock : spannerContainingBlockSet) {
                 if (!oldEnclosingFragmentedFlow)
                     break;
-                multiColumnBuilder().restoreColumnSpannersForContainer(containingBlock, downcast<RenderMultiColumnFlow>(*oldEnclosingFragmentedFlow));
+                multiColumnBuilder().restoreColumnSpannersForContainer(containingBlock, *oldEnclosingFragmentedFlow);
             }
         }
     };
@@ -666,20 +664,22 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     if (noLongerAffectsParent) {
         childFlowStateChangesAndNoLongerAffectsParentBlock(renderer);
 
-        if (isFloating && is<RenderBlockFlow>(renderer)) {
-            auto clearDescendantFloats = [&] {
-                // These descendent floats can not intrude other, sibling block containers anymore.
-                for (auto& descendant : descendantsOfType<RenderBox>(renderer)) {
-                    if (descendant.isFloating())
-                        descendant.removeFloatingAndInvalidateForLayout();
-                }
-            };
-            clearDescendantFloats();
-            removeFloatingObjects(downcast<RenderBlock>(renderer));
-            // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
-            // It copies the logic of RenderBlock::addChildIgnoringContinuation
-            if (renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
-                move(downcast<RenderBoxModelObject>(parent), downcast<RenderBoxModelObject>(*renderer.previousSibling()), renderer, RenderTreeBuilder::NormalizeAfterInsertion::No);
+        if (isFloating) {
+            if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer)) {
+                auto clearDescendantFloats = [&] {
+                    // These descendent floats can not intrude other, sibling block containers anymore.
+                    for (auto& descendant : descendantsOfType<RenderBox>(*blockFlow)) {
+                        if (descendant.isFloating())
+                            descendant.removeFloatingAndInvalidateForLayout();
+                    }
+                };
+                clearDescendantFloats();
+                removeFloatingObjects(*blockFlow);
+                // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
+                // It copies the logic of RenderBlock::addChildIgnoringContinuation
+                if (blockFlow->previousSibling() && blockFlow->previousSibling()->isAnonymousBlock())
+                    move(downcast<RenderBoxModelObject>(parent), downcast<RenderBoxModelObject>(*blockFlow->previousSibling()), renderer, RenderTreeBuilder::NormalizeAfterInsertion::No);
+            }
         }
     }
 
@@ -771,14 +771,16 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
 {
     if (!child.isInline()) {
         WeakPtr parent = child.parent();
-        if (is<RenderBlock>(*parent))
-            blockBuilder().childBecameNonInline(downcast<RenderBlock>(*parent), child);
-        else if (is<RenderInline>(*parent))
-            inlineBuilder().childBecameNonInline(downcast<RenderInline>(*parent), child);
+        if (auto* parentBlockRenderer = dynamicDowncast<RenderBlock>(*parent))
+            blockBuilder().childBecameNonInline(*parentBlockRenderer, child);
+        else if (auto* parentInlineRenderer = dynamicDowncast<RenderInline>(*parent))
+            inlineBuilder().childBecameNonInline(*parentInlineRenderer, child);
         // WARNING: original parent might be deleted at this point.
-        if (auto* newParent = child.parent(); newParent != parent && is<RenderGrid>(newParent)) {
-            // We need to re-run the grid items placement if it had gained a new item.
-            downcast<RenderGrid>(*newParent).dirtyGrid();
+        if (auto* newParent = child.parent(); newParent != parent) {
+            if (CheckedPtr gridRenderer = dynamicDowncast<RenderGrid>(newParent)) {
+                // We need to re-run the grid items placement if it had gained a new item.
+                gridRenderer->dirtyGrid();
+            }
         }
         return;
     }
@@ -793,10 +795,8 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
 
 void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent)
 {
-    if (!is<RenderBlock>(parent))
-        return;
-    auto& blockParent = downcast<RenderBlock>(parent);
-    if (!blockParent.canDropAnonymousBlockChild())
+    CheckedPtr blockParent = dynamicDowncast<RenderBlock>(parent);
+    if (!blockParent || !blockParent->canDropAnonymousBlockChild())
         return;
 
     // We have changed to floated or out-of-flow positioning so maybe all our parent's
@@ -805,7 +805,7 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
     // if we find a continuation.
     std::optional<bool> shouldAllChildrenBeInline;
-    for (auto* current = blockParent.firstChild(); current; current = current->nextSibling()) {
+    for (auto* current = blockParent->firstChild(); current; current = current->nextSibling()) {
         if (current->style().isFloating() || current->style().hasOutOfFlowPosition())
             continue;
         if (!current->isAnonymousBlock() || downcast<RenderBlock>(*current).isContinuation())
@@ -825,10 +825,10 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     }
 
     RenderObject* next = nullptr;
-    for (auto* current = blockParent.firstChild(); current; current = next) {
+    for (auto* current = blockParent->firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())
-            blockBuilder().dropAnonymousBoxChild(blockParent, downcast<RenderBlock>(*current));
+            blockBuilder().dropAnonymousBoxChild(*blockParent, downcast<RenderBlock>(*current));
     }
 }
 
@@ -847,8 +847,8 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     }
 
     // Also destroy ::backdrop along with element if there is one
-    if (is<RenderElement>(rendererToDestroy)) {
-        if (auto backdropRenderer = downcast<RenderElement>(rendererToDestroy).backdropRenderer())
+    if (auto* renderElement = dynamicDowncast<RenderElement>(rendererToDestroy)) {
+        if (auto backdropRenderer = renderElement->backdropRenderer())
             destroy(*backdropRenderer);
     }
 
@@ -876,26 +876,27 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
         // Remove floats and out-of-flow positioned objects from their containing block before detaching
         // the renderer from the tree. It includes all the anonymous block descendants that we are about
         // to destroy as well as part of the cleanup process below.
-        if (!is<RenderElement>(destroyRoot))
+        auto* destroyRootElement = dynamicDowncast<RenderElement>(destroyRoot);
+        if (!destroyRootElement)
             return;
-        for (auto& descendant : descendantsOfType<RenderBox>(downcast<RenderElement>(destroyRoot))) {
+        for (auto& descendant : descendantsOfType<RenderBox>(*destroyRootElement)) {
             if (descendant.isFloatingOrOutOfFlowPositioned())
                 descendant.removeFloatingOrPositionedChildFromBlockLists();
         }
-        if (is<RenderBox>(destroyRoot) && destroyRoot.isFloatingOrOutOfFlowPositioned())
-            downcast<RenderBox>(destroyRoot).removeFloatingOrPositionedChildFromBlockLists();
+        if (CheckedPtr box = dynamicDowncast<RenderBox>(destroyRoot); box && box->isFloatingOrOutOfFlowPositioned())
+            box->removeFloatingOrPositionedChildFromBlockLists();
     };
     clearFloatsAndOutOfFlowPositionedObjects();
 
     auto collapseAndDestroyAnonymousSiblings = [&] {
         // FIXME: Probably need to handle other table parts here as well.
-        if (is<RenderTableCell>(destroyRoot)) {
-            tableBuilder().collapseAndDestroyAnonymousSiblingCells(downcast<RenderTableCell>(destroyRoot));
+        if (CheckedPtr cell = dynamicDowncast<RenderTableCell>(destroyRoot)) {
+            tableBuilder().collapseAndDestroyAnonymousSiblingCells(*cell);
             return;
         }
 
-        if (is<RenderTableRow>(destroyRoot)) {
-            tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
+        if (CheckedPtr row = dynamicDowncast<RenderTableRow>(destroyRoot)) {
+            tableBuilder().collapseAndDestroyAnonymousSiblingRows(*row);
             return;
         }
     };
@@ -973,15 +974,19 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     }
 
     // If we have a line box wrapper, delete it.
-    if (is<RenderBox>(child))
-        downcast<RenderBox>(child).deleteLineBoxWrapper();
-    else if (is<RenderLineBreak>(child))
-        downcast<RenderLineBreak>(child).deleteInlineBoxWrapper();
-    else if (is<RenderText>(child))
-        downcast<RenderText>(child).removeAndDestroyTextBoxes();
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(child))
+        box->deleteLineBoxWrapper();
+    else if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(child))
+        lineBreak->deleteInlineBoxWrapper();
+    else if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(child))
+        textRenderer->removeAndDestroyTextBoxes();
 
-    if (!parent.renderTreeBeingDestroyed() && is<RenderFlexibleBox>(parent) && !child.isFloatingOrOutOfFlowPositioned() && child.isRenderBox())
-        downcast<RenderFlexibleBox>(parent).clearCachedChildIntrinsicContentLogicalHeight(downcast<RenderBox>(child));
+    if (!parent.renderTreeBeingDestroyed()) {
+        CheckedPtr parentFlexibleBox = dynamicDowncast<RenderFlexibleBox>(parent);
+        CheckedPtr childBox = dynamicDowncast<RenderBox>(child);
+        if (parentFlexibleBox && !child.isFloatingOrOutOfFlowPositioned() && childBox)
+            parentFlexibleBox->clearCachedChildIntrinsicContentLogicalHeight(*childBox);
+    }
 
     // If child is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers.
@@ -1023,13 +1028,11 @@ void RenderTreeBuilder::attachToRenderGrid(RenderGrid& parent, RenderPtr<RenderO
 
 void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& parent, const RenderObject& child)
 {
-    if (is<RenderText>(child)) {
+    if (auto* textRenderer = dynamicDowncast<RenderText>(child)) {
         auto& style = parent.style();
         // FIXME: Find out how to increment the visually non empty character count when the font becomes available.
-        if (style.visibility() == Visibility::Visible && !style.fontCascade().isLoadingCustomFonts()) {
-            auto& textRenderer = downcast<RenderText>(child);
-            m_view.frameView().incrementVisuallyNonEmptyCharacterCount(textRenderer.text());
-        }
+        if (style.visibility() == Visibility::Visible && !style.fontCascade().isLoadingCustomFonts())
+            m_view.frameView().incrementVisuallyNonEmptyCharacterCount(textRenderer->text());
         return;
     }
     if (is<RenderHTMLCanvas>(child) || is<RenderEmbeddedObject>(child)) {
@@ -1062,12 +1065,12 @@ void RenderTreeBuilder::markBoxForRelayoutAfterSplit(RenderBox& box)
 {
     // FIXME: The table code should handle that automatically. If not,
     // we should fix it and remove the table part checks.
-    if (is<RenderTable>(box)) {
+    if (CheckedPtr table = dynamicDowncast<RenderTable>(box)) {
         // Because we may have added some sections with already computed column structures, we need to
         // sync the table structure with them now. This avoids crashes when adding new cells to the table.
-        downcast<RenderTable>(box).forceSectionsRecalc();
-    } else if (is<RenderTableSection>(box))
-        downcast<RenderTableSection>(box).setNeedsCellRecalc();
+        table->forceSectionsRecalc();
+    } else if (CheckedPtr tableSection = dynamicDowncast<RenderTableSection>(box))
+        tableSection->setNeedsCellRecalc();
 
     box.setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -1076,10 +1079,12 @@ void RenderTreeBuilder::removeFloatingObjects(RenderBlock& renderer)
 {
     if (renderer.renderTreeBeingDestroyed())
         return;
-    if (!is<RenderBlockFlow>(renderer))
+
+    auto* blockFlow = dynamicDowncast<RenderBlockFlow>(renderer);
+    if (!blockFlow)
         return;
-    auto& blockFlow = downcast<RenderBlockFlow>(renderer);
-    auto* floatingObjects = blockFlow.floatingObjectSet();
+
+    auto* floatingObjects = blockFlow->floatingObjectSet();
     if (!floatingObjects)
         return;
     // Here we remove the floating objects from the descendants as well.

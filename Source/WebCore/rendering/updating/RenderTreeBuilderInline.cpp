@@ -49,8 +49,8 @@ static bool canUseAsParentForContinuation(const RenderObject* renderer)
 
 static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
 {
-    if (is<RenderInline>(*renderer) && !renderer->isReplacedOrInlineBlock())
-        return downcast<RenderInline>(*renderer).continuation();
+    if (auto* renderInline = dynamicDowncast<RenderInline>(*renderer); renderInline && !renderInline->isReplacedOrInlineBlock())
+        return renderInline->continuation();
     return downcast<RenderBlock>(*renderer).inlineContinuation();
 }
 
@@ -215,8 +215,8 @@ void RenderTreeBuilder::Inline::splitFlow(RenderInline& parent, RenderObject* be
         // FIXME-BLOCKFLOW: The enclosing method should likely be switched over
         // to only work on RenderBlockFlow, in which case this conversion can be
         // removed.
-        if (is<RenderBlockFlow>(*pre))
-            downcast<RenderBlockFlow>(*pre).removeFloatingObjects();
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*pre))
+            blockFlow->removeFloatingObjects();
         block = block->containingBlock();
     } else {
         // No anonymous block available for use. Make one.
@@ -305,8 +305,8 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
         auto childToMove = m_builder.detachFromRenderElement(*rendererToMove->parent(), *rendererToMove, WillBeDestroyed::No);
         m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
         auto* newParent = rendererToMove->parent();
-        if (is<RenderBox>(newParent))
-            markBoxForRelayoutAfterSplit(downcast<RenderBox>(*newParent));
+        if (CheckedPtr newParentBox = dynamicDowncast<RenderBox>(newParent))
+            markBoxForRelayoutAfterSplit(*newParentBox);
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
     }

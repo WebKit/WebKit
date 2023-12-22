@@ -165,6 +165,18 @@ public:
         return strongReferences;
     }
 
+    Vector<ThreadSafeWeakPtr<T>> weakValues() const
+    {
+        Vector<ThreadSafeWeakPtr<T>> weakReferences;
+        {
+            Locker locker { m_lock };
+            weakReferences = WTF::map(m_map, [](auto& pair) {
+                return ThreadSafeWeakPtr { *pair.value, *pair.key };
+            });
+        }
+        return weakReferences;
+    }
+
     template<typename Functor>
     void forEach(const Functor& callback) const
     {

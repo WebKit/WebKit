@@ -1,0 +1,7 @@
+This tests that accessibility APIs can focus a text field inside of an iframe.
+
+PASS: Text field in iframe was successfully focused.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
