@@ -164,9 +164,11 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    CheckedPtr { _viewImpl }->prepareForImmediateActionAnimation();
-
-    CheckedPtr { _viewImpl }->dismissContentRelativeChildWindowsWithAnimation(true);
+    {
+        CheckedPtr viewImpl = _viewImpl.get();
+        viewImpl->prepareForImmediateActionAnimation();
+        viewImpl->dismissContentRelativeChildWindowsWithAnimation(true);
+    }
 
     RefPtr { _page.get() }->setMaintainsInactiveSelection(true);
 
@@ -229,7 +231,7 @@
 
     RefPtr { _page.get() }->immediateActionDidCancel();
 
-    CheckedPtr { _viewImpl }->cancelImmediateActionAnimation();
+    CheckedPtr { _viewImpl.get() }->cancelImmediateActionAnimation();
 
     RefPtr { _page.get() }->setTextIndicatorAnimationProgress(0);
     [self _clearImmediateActionState];
@@ -243,7 +245,7 @@
 
     RefPtr { _page.get() }->immediateActionDidComplete();
 
-    CheckedPtr { _viewImpl }->completeImmediateActionAnimation();
+    CheckedPtr { _viewImpl.get() }->completeImmediateActionAnimation();
 
     RefPtr { _page.get() }->setTextIndicatorAnimationProgress(1);
 }
@@ -487,12 +489,12 @@
     if (!dictionaryPopupInfo.platformData.attributedString.nsAttributedString())
         return nil;
 
-    CheckedPtr { _viewImpl }->prepareForDictionaryLookup();
+    CheckedPtr { _viewImpl.get() }->prepareForDictionaryLookup();
 
     return WebCore::DictionaryLookup::animationControllerForPopup(dictionaryPopupInfo, _view, [self](WebCore::TextIndicator& textIndicator) {
-        CheckedPtr { _viewImpl }->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
+        CheckedPtr { _viewImpl.get() }->setTextIndicator(textIndicator, WebCore::TextIndicatorLifetime::Permanent);
     }, nullptr, [self]() {
-        CheckedPtr { _viewImpl }->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
+        CheckedPtr { _viewImpl.get() }->clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::None);
     });
 }
 
