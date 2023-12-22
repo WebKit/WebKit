@@ -49,6 +49,7 @@ LegacyCustomProtocolManager::LegacyCustomProtocolManager(NetworkProcess& network
 
 Ref<NetworkProcess> LegacyCustomProtocolManager::protectedNetworkProcess() const
 {
+    ASSERT(RunLoop::isMain());
     return m_networkProcess.get();
 }
 
