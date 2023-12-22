@@ -73,7 +73,7 @@ inline std::optional<std::span<uint8_t>> StreamServerConnectionBuffer::tryAcquir
 
     auto result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
     if (result.size() < minimumMessageSize) {
-        serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
+        serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acquire);
         result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
     }
 
