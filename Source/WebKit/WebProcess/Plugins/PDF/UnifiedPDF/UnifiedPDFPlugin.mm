@@ -204,6 +204,7 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
 {
     ensureLayers();
 
+    // The m_rootLayer's position is set in RenderLayerBacking::updateAfterWidgetResize().
     m_rootLayer->setSize(size());
     m_overflowControlsContainer->setSize(size());
 
