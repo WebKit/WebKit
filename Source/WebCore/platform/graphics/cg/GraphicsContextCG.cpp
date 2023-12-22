@@ -1033,31 +1033,6 @@ void GraphicsContextCG::endTransparencyLayer()
     restore(GraphicsContextState::Purpose::TransparencyLayer);
 }
 
-static void applyShadowOffsetWorkaroundIfNeeded(CGContextRef context, CGFloat& xOffset, CGFloat& yOffset)
-{
-#if PLATFORM(IOS_FAMILY)
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(xOffset);
-    UNUSED_PARAM(yOffset);
-#else
-    if (CGContextDrawsWithCorrectShadowOffsets(context))
-        return;
-
-    // Work around <rdar://problem/5539388> by ensuring that the offsets will get truncated
-    // to the desired integer. Also see: <rdar://problem/10056277>
-    static const CGFloat extraShadowOffset = narrowPrecisionToCGFloat(1.0 / 128);
-    if (xOffset > 0)
-        xOffset += extraShadowOffset;
-    else if (xOffset < 0)
-        xOffset -= extraShadowOffset;
-
-    if (yOffset > 0)
-        yOffset += extraShadowOffset;
-    else if (yOffset < 0)
-        yOffset -= extraShadowOffset;
-#endif
-}
-
 void GraphicsContextCG::setCGShadow(const std::optional<GraphicsDropShadow>& shadow, bool shadowsIgnoreTransforms)
 {
     if (!shadow || !shadow->color.isValid() || (shadow->offset.isZero() && !shadow->radius)) {
@@ -1090,9 +1065,6 @@ void GraphicsContextCG::setCGShadow(const std::optional<GraphicsDropShadow>& sha
 
     // Extreme "blur" values can make text drawing crash or take crazy long times, so clamp
     blurRadius = std::min(blurRadius, narrowPrecisionToCGFloat(1000.0));
-
-    if (renderingMode() != RenderingMode::Accelerated)
-        applyShadowOffsetWorkaroundIfNeeded(context, xOffset, yOffset);
 
     CGContextSetAlpha(context, shadow->opacity);
 
