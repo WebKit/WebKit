@@ -707,15 +707,15 @@ constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
 constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
 
 #if !USE(APPLE_INTERNAL_SDK)
-constexpr auto switchHeight = 31.f;
-constexpr auto switchWidth = 51.f;
+constexpr auto logicalSwitchHeight = 31.f;
+constexpr auto logicalSwitchWidth = 51.f;
 
-static bool renderThemePaintSwitchThumb(const OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
+static bool renderThemePaintSwitchThumb(OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
 {
     return true;
 }
 
-static bool renderThemePaintSwitchTrack(const OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
+static bool renderThemePaintSwitchTrack(OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
 {
     return true;
 }
@@ -726,9 +726,9 @@ void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* elemen
     if (!style.width().isAuto() && !style.height().isAuto())
         return;
 
-    auto size = std::max(style.computedFontSize(), switchHeight);
-    style.setWidth({ size * (switchWidth / switchHeight), LengthType::Fixed });
-    style.setHeight({ size, LengthType::Fixed });
+    auto size = std::max(style.computedFontSize(), logicalSwitchHeight);
+    style.setLogicalWidth({ size * (logicalSwitchWidth / logicalSwitchHeight), LengthType::Fixed });
+    style.setLogicalHeight({ size, LengthType::Fixed });
 
     if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
         style.setOutlineStyle(BorderStyle::None);
