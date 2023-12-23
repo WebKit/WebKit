@@ -3325,10 +3325,6 @@ imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-002.html [ 
 # These tests are for iOS port. Should be pass.
 fast/shadow-dom/ios/ [ Pass ]
 
-# This test fails in iOS due to subpixel differences for the moongolian characters
-imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-normal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-pr-strict.html [ ImageOnlyFailure ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=217156
 fast/forms/defaultValue-clobbering.html [ Failure ]
 
