@@ -42,7 +42,8 @@ StyleNamedImage::~StyleNamedImage() = default;
 
 bool StyleNamedImage::operator==(const StyleImage& other) const
 {
-    return is<StyleNamedImage>(other) && equals(downcast<StyleNamedImage>(other));
+    auto* otherNamedImage = dynamicDowncast<StyleNamedImage>(other);
+    return otherNamedImage && equals(*otherNamedImage);
 }
 
 bool StyleNamedImage::equals(const StyleNamedImage& other) const

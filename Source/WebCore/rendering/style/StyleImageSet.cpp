@@ -52,7 +52,8 @@ StyleImageSet::~StyleImageSet() = default;
 
 bool StyleImageSet::operator==(const StyleImage& other) const
 {
-    return is<StyleImageSet>(other) && equals(downcast<StyleImageSet>(other));
+    auto* otherImageSet = dynamicDowncast<StyleImageSet>(other);
+    return otherImageSet && equals(*otherImageSet);
 }
 
 bool StyleImageSet::equals(const StyleImageSet& other) const
