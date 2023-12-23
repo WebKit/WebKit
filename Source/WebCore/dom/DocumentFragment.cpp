@@ -38,28 +38,23 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentFragment);
 
 DocumentFragment::DocumentFragment(Document& document, OptionSet<TypeFlag> constructionType)
-    : ContainerNode(document, constructionType)
+    : ContainerNode(document, DOCUMENT_FRAGMENT_NODE, constructionType)
 {
 }
 
 Ref<DocumentFragment> DocumentFragment::create(Document& document)
 {
-    return adoptRef(*new DocumentFragment(document, Node::CreateDocumentFragment));
+    return adoptRef(*new DocumentFragment(document));
 }
 
 Ref<DocumentFragment> DocumentFragment::createForInnerOuterHTML(Document& document)
 {
-    return adoptRef(*new DocumentFragment(document, Node::CreateDocumentFragment | TypeFlag::IsDocumentFragmentForInnerOuterHTML));
+    return adoptRef(*new DocumentFragment(document, CreateContainer | TypeFlag::IsDocumentFragmentForInnerOuterHTML));
 }
 
 String DocumentFragment::nodeName() const
 {
     return "#document-fragment"_s;
-}
-
-Node::NodeType DocumentFragment::nodeType() const
-{
-    return DOCUMENT_FRAGMENT_NODE;
 }
 
 bool DocumentFragment::childTypeAllowed(NodeType type) const

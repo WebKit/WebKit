@@ -1912,7 +1912,6 @@ private:
     void childrenChanged(const ChildChange&) final;
 
     String nodeName() const final;
-    NodeType nodeType() const final;
     bool childTypeAllowed(NodeType) const final;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
     void cloneDataFromDocument(const Document&);
