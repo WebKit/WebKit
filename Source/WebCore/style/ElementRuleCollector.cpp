@@ -665,13 +665,14 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
                 return false;
             };
 
-            for (auto [scopingRoot, _] : scopingRoots) {
+            Vector<ScopingRootWithDistance> scopingRootsWithinScope;
+            for (auto scopingRootWithDistance : scopingRoots) {
                 for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-                    if (!match(scopingRoot, selector))
-                        return true;
+                    if (!match(scopingRootWithDistance.scopingRoot, selector))
+                        scopingRootsWithinScope.append(scopingRootWithDistance);
                 }
             }
-            return false;
+            return scopingRootsWithinScope;
         };
 
         const auto& scopeStart = rule->scopeStart();
@@ -718,8 +719,10 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
 
         const auto& scopeEnd = rule->scopeEnd();
         if (!scopeEnd.isEmpty()) {
-            if (!isWithinScopingRootsAndScopeEnd(scopeEnd))
+            auto scopingRootsWithinScope = isWithinScopingRootsAndScopeEnd(scopeEnd);
+            if (scopingRootsWithinScope.isEmpty())
                 return false;
+            scopingRoots = WTFMove(scopingRootsWithinScope);
         }
         // element is in the @scope donut
         return true;

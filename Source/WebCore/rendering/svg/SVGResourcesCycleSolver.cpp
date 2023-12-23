@@ -50,8 +50,8 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(LegacyRenderSVGResourceCont
             node = node->nextInPreOrderAfterChildren(&resource);
             continue;
         }
-        if (is<RenderElement>(*node)) {
-            if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(downcast<RenderElement>(*node))) {
+        if (auto* element = dynamicDowncast<RenderElement>(*node)) {
+            if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*element)) {
                 SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
                 resources->buildSetOfResources(resourceSet);
 
@@ -83,8 +83,8 @@ void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResource
     SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> activeResources;
     SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> acyclicResources;
 
-    if (is<LegacyRenderSVGResourceContainer>(renderer))
-        activeResources.add(downcast<LegacyRenderSVGResourceContainer>(renderer));
+    if (auto* container = dynamicDowncast<LegacyRenderSVGResourceContainer>(renderer))
+        activeResources.add(*container);
 
     // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
     // references us (or whether any of its kids references us) -> that's a cycle, we need to find and break it.

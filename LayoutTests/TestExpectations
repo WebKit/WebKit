@@ -2357,6 +2357,22 @@ webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
 # Initial failures on the import of css-content
 
+imported/w3c/web-platform-tests/css/css-content/content-none-details.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-fieldset.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-math.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-option.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-root-block.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-root-columns.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-root-flex.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-root-grid.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-root-ruby.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-root-table.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-select-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-select-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-span-dynamic.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-span.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/content-none-table.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/element-replacement-gradient.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-006.html [ ImageOnlyFailure ]
@@ -2371,6 +2387,11 @@ imported/w3c/web-platform-tests/css/css-content/quotes-021.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-content/quotes-022.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-030.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-034.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-first-letter-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-first-letter-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-first-letter-005.html [ ImageOnlyFailure ]
 
 # Causes the following test to be flaky.
 webkit.org/b/148950 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_href_specified.sub.html [ Skip ]
@@ -4499,7 +4520,6 @@ webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-b
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vlr-016.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vrl-015.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-001.html [ ImageOnlyFailure ]
-webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/nested-orthogonal-001.html [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-002.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/normal-flow-overconstrained-vrl-004.xht [ ImageOnlyFailure ]
@@ -7448,9 +7468,6 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-base-different-size.html [ Ima
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-004.html [ ImageOnlyFailure ]
 # <rt> is not a block so should not respect ::first-letter (needs clarification)
 imported/blink/fast/ruby/ruby-first-letter.html [ ImageOnlyFailure ]
-
-# needs reasonable -expectation.html
-fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 
 webkit.org/b/266537 [ Debug ] imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-text-container-float.html [ Skip ]
 

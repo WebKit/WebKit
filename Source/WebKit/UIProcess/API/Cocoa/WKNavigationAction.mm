@@ -253,7 +253,7 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
     if (!page)
         return nil;
 
-    auto apiHitTestResult = API::HitTestResult::create(webHitTestResultData.value(), *page);
+    auto apiHitTestResult = API::HitTestResult::create(webHitTestResultData.value(), page.get());
     return retainPtr(wrapper(apiHitTestResult)).autorelease();
 #else
     return nil;

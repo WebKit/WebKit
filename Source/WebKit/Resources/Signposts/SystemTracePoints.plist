@@ -758,6 +758,46 @@
                  <string>14003</string>
                  <key>CodeEnd</key>
                  <string>14004</string>
+                 <key>EventsMatchedBy</key>
+                 <string>Arg1</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>WebKit ID</string>
+                 </dict>
+                 <key>ArgValueTypesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                 </dict>
+                 <key>ArgNamesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>WebKit ID</string>
+                     <key>Arg2</key>
+                     <string>Process Type</string>
+                     <key>Arg3</key>
+                     <string>PID</string>
+                 </dict>
+                 <key>ArgValueTypesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>UInt64</string>
+                     <key>Arg3</key>
+                     <string>UInt64</string>
+                 </dict>
+                 <key>ArgValueLabelsEnd</key>
+                 <dict>
+                     <key>Arg2</key>
+                     <dict>
+                         <key>0x0</key>
+                         <string>WebProcess</string>
+                         <key>0x1</key>
+                         <string>NetworkProcess</string>
+                         <key>0x2</key>
+                         <string>GPUProcess</string>
+                     </dict>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>

@@ -1468,6 +1468,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _isHandlingActiveKeyEvent = NO;
     _isHandlingActivePressesEvent = NO;
     _isDeferringKeyEventsToInputMethod = NO;
+    _usingMouseDragForSelection = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -3244,20 +3245,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (scrollView.dragging || scrollView.decelerating)
             return YES;
 
-        if (UIPanGestureRecognizer *panGesture = scrollView.panGestureRecognizer) {
-            switch (panGesture.state) {
-            case UIGestureRecognizerStateBegan:
-            case UIGestureRecognizerStateChanged:
-            case UIGestureRecognizerStateEnded:
-                return YES;
-            case UIGestureRecognizerStatePossible:
-            case UIGestureRecognizerStateCancelled:
-            case UIGestureRecognizerStateFailed:
-                return NO;
-            }
-        }
-        ASSERT_NOT_REACHED();
-        return NO;
+        auto *panGesture = scrollView.panGestureRecognizer;
+        ASSERT(panGesture);
+        return [panGesture _wk_hasRecognizedOrEnded];
     }];
 }
 
@@ -3485,18 +3475,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             if (_suppressNonEditableSingleTapTextInteractionCount > 0)
                 return NO;
 
-            switch (self.textInteractionLoupeGestureRecognizer.state) {
-            case UIGestureRecognizerStateBegan:
-            case UIGestureRecognizerStateChanged:
-            case UIGestureRecognizerStateEnded: {
+            if (self.textInteractionLoupeGestureRecognizer._wk_hasRecognizedOrEnded) {
                 // Avoid handling one-finger taps while the web process is processing certain selection changes.
                 // This works around a scenario where UIKeyboardImpl blocks the main thread while handling a one-
                 // finger tap, which subsequently prevents the UI process from handling any incoming IPC messages.
                 return NO;
             }
-            default:
-                return _page->editorState().selectionIsRange;
-            }
+            return _page->editorState().selectionIsRange;
         }
     }
 
@@ -5444,6 +5429,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+    _usingMouseDragForSelection = [_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded;
+#endif
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
         selectionHandler();
@@ -5464,35 +5452,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point completionHandler:(void (^)(BOOL endIsMoving))completionHandler
 {
-    logTextInteraction(__PRETTY_FUNCTION__, self.textInteractionLoupeGestureRecognizer, point);
-
-    _autocorrectionContextNeedsUpdate = YES;
-
-    auto hasRecognizedOrEnded = [](UIGestureRecognizer *gestureRecognizer) {
-        switch (gestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan:
-        case UIGestureRecognizerStateChanged:
-        case UIGestureRecognizerStateEnded:
-            return true;
-        case UIGestureRecognizerStatePossible:
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateFailed:
-            return false;
-        }
-        ASSERT_NOT_REACHED();
-        return false;
-    };
-
-    auto triggeredByFloatingCursor = !hasRecognizedOrEnded(self.textInteractionLoupeGestureRecognizer)
-#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-        && !hasRecognizedOrEnded([_mouseInteraction mouseTouchGestureRecognizer])
-#endif
-        && !hasRecognizedOrEnded(self.textInteractionTapGestureRecognizer);
-
-    auto respectSelectionAnchor = triggeredByFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
-    _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
-        selectionHandler(endIsMoving);
-    });
+    [self updateSelectionWithExtentPoint:point withBoundary:UITextGranularityCharacter completionHandler:completionHandler];
 }
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
@@ -5500,9 +5460,24 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     logTextInteraction(__PRETTY_FUNCTION__, self.textInteractionLoupeGestureRecognizer, point);
 
     _autocorrectionContextNeedsUpdate = YES;
+
+    if (granularity == UITextGranularityCharacter && !_usingMouseDragForSelection) {
+        auto triggeredByFloatingCursor = !self.textInteractionLoupeGestureRecognizer._wk_hasRecognizedOrEnded
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+            && ![_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded
+#endif
+            && !self.textInteractionTapGestureRecognizer._wk_hasRecognizedOrEnded;
+
+        auto respectSelectionAnchor = triggeredByFloatingCursor ? WebKit::RespectSelectionAnchor::Yes : WebKit::RespectSelectionAnchor::No;
+        _page->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [selectionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
+            selectionHandler(static_cast<BOOL>(endIsMoving));
+        });
+        return;
+    }
+
     ++_suppressNonEditableSingleTapTextInteractionCount;
     _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
-        completionHandler(endIsMoving);
+        completionHandler(static_cast<BOOL>(endIsMoving));
         --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;
     });
 }
@@ -11278,10 +11253,12 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
         if (auto lastLocation = interaction.lastLocation)
             _lastInteractionLocation = *lastLocation;
-    }
+    } else if (event.type() == WebKit::WebEventType::MouseUp) {
+        _usingMouseDragForSelection = NO;
 
-    if (event.type() == WebKit::WebEventType::MouseUp && self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
-        [self.window makeKeyWindow];
+        if (self.hasHiddenContentEditable && self._hasFocusedElement && !self.window.keyWindow)
+            [self.window makeKeyWindow];
+    }
 
     _page->handleMouseEvent(event);
 }

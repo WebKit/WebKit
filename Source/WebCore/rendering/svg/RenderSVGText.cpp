@@ -93,8 +93,8 @@ const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObje
 static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLayoutAttributes*>& attributes)
 {
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
-        if (is<RenderSVGInlineText>(*descendant))
-            attributes.append(downcast<RenderSVGInlineText>(*descendant).layoutAttributes());
+        if (auto* svgInline = dynamicDowncast<RenderSVGInlineText>(*descendant))
+            attributes.append(svgInline->layoutAttributes());
     }
 }
 
@@ -103,15 +103,14 @@ static inline bool findPreviousAndNextAttributes(RenderElement& start, RenderSVG
     ASSERT(locateElement);
     // FIXME: Make this iterative.
     for (auto& child : childrenOfType<RenderObject>(start)) {
-        if (is<RenderSVGInlineText>(child)) {
-            auto& text = downcast<RenderSVGInlineText>(child);
-            if (locateElement != &text) {
+        if (auto* text = dynamicDowncast<RenderSVGInlineText>(child)) {
+            if (locateElement != text) {
                 if (stopAfterNext) {
-                    next = text.layoutAttributes();
+                    next = text->layoutAttributes();
                     return true;
                 }
 
-                previous = text.layoutAttributes();
+                previous = text->layoutAttributes();
                 continue;
             }
 
@@ -119,10 +118,11 @@ static inline bool findPreviousAndNextAttributes(RenderElement& start, RenderSVG
             continue;
         }
 
-        if (!is<RenderSVGInline>(child))
+        auto* childSVGInline = dynamicDowncast<RenderSVGInline>(child);
+        if (!childSVGInline)
             continue;
 
-        if (findPreviousAndNextAttributes(downcast<RenderElement>(child), locateElement, stopAfterNext, previous, next))
+        if (findPreviousAndNextAttributes(*childSVGInline, locateElement, stopAfterNext, previous, next))
             return true;
     }
 
@@ -295,10 +295,8 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
 static inline void updateFontInAllDescendants(RenderSVGText& text, SVGTextLayoutAttributesBuilder* builder = nullptr)
 {
     for (RenderObject* descendant = &text; descendant; descendant = descendant->nextInPreOrder(&text)) {
-        if (!is<RenderSVGInlineText>(*descendant))
-            continue;
-        auto& text = downcast<RenderSVGInlineText>(*descendant);
-        text.updateScaledFont();
+        if (auto* text = dynamicDowncast<RenderSVGInlineText>(*descendant))
+            text->updateScaledFont();
     }
     if (builder)
         builder->rebuildMetricsForSubtree(text);

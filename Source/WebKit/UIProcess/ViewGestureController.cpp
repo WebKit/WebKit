@@ -66,10 +66,10 @@ static const float minimumScrollEventRatioForSwipe = 0.5;
 static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 #endif
 
-static HashMap<WebPageProxyIdentifier, CheckedPtr<ViewGestureController>>& viewGestureControllersForAllPages()
+static HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>& viewGestureControllersForAllPages()
 {
     // The key in this map is the associated page ID.
-    static NeverDestroyed<HashMap<WebPageProxyIdentifier, CheckedPtr<ViewGestureController>>> viewGestureControllers;
+    static NeverDestroyed<HashMap<WebPageProxyIdentifier, WeakRef<ViewGestureController>>> viewGestureControllers;
     return viewGestureControllers.get();
 }
 
@@ -86,7 +86,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     if (webPageProxy.hasRunningProcess())
         connectToProcess();
 
-    viewGestureControllersForAllPages().add(webPageProxy.identifier(), this);
+    viewGestureControllersForAllPages().add(webPageProxy.identifier(), *this);
 }
 
 ViewGestureController::~ViewGestureController()
@@ -123,7 +123,7 @@ ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyI
         return nullptr;
     if (gestureControllerIter->value->m_currentGestureID != gestureID)
         return nullptr;
-    return gestureControllerIter->value.get();
+    return gestureControllerIter->value.ptr();
 }
 
 ViewGestureController::GestureID ViewGestureController::takeNextGestureID()

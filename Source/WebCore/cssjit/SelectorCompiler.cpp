@@ -2901,7 +2901,7 @@ void SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverI
 {
     if (fragment.onlyMatchesLinksInQuirksMode) {
         // If the element is a link, it can always match :hover or :active.
-        Assembler::Jump isLink = m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink()));
+        Assembler::Jump isLink = m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(elementAddressRegister, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink()));
 
         // Only quirks mode restrict :hover and :active.
         static_assert(sizeof(DocumentCompatibilityMode) == 1, "We generate a byte load/test for the compatibility mode.");
@@ -3741,7 +3741,7 @@ static void jumpIfElementIsNotEmpty(Assembler& assembler, RegisterAllocator& reg
     notEmptyCases.append(DOMJIT::branchTestIsElementFlagOnNode(assembler, Assembler::NonZero, currentChild));
 
     {
-        Assembler::Jump skipTextNodeCheck = assembler.branchTest32(Assembler::Zero, Assembler::Address(currentChild, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsText()));
+        Assembler::Jump skipTextNodeCheck = assembler.branchTest16(Assembler::Zero, Assembler::Address(currentChild, Node::typeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsText()));
 
         LocalRegister textStringImpl(registerAllocator);
         assembler.loadPtr(Assembler::Address(currentChild, CharacterData::dataMemoryOffset()), textStringImpl);
@@ -3880,7 +3880,7 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
         generateWalkToParentNode(parent);
         auto noParentCase = m_assembler.branchTestPtr(Assembler::Zero, parent);
 
-        failureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(parent, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren())));
+        failureCases.append(m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(parent, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren())));
 
         noParentCase.link(&m_assembler);
         return;
@@ -3895,7 +3895,7 @@ void SelectorCodeGenerator::generateElementIsLastChild(Assembler::JumpList& fail
     m_assembler.move(Assembler::TrustedImm32(0), isLastChildRegister);
 
     {
-        Assembler::Jump notFinishedParsingChildren = m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(parentNode, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren()));
+        Assembler::Jump notFinishedParsingChildren = m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(parentNode, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren()));
 
         Assembler::JumpList successCase = jumpIfNoNextAdjacentElement();
 
@@ -3940,7 +3940,7 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
         generateWalkToParentNode(parent);
         auto noParentCase = m_assembler.branchTestPtr(Assembler::Zero, parent);
 
-        failureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(parent, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren())));
+        failureCases.append(m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(parent, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren())));
 
         noParentCase.link(&m_assembler);
         return;
@@ -3961,7 +3961,7 @@ void SelectorCodeGenerator::generateElementIsOnlyChild(Assembler::JumpList& fail
             localFailureCases.append(m_assembler.jump());
             successCase.link(&m_assembler);
         }
-        localFailureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(parentNode, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren())));
+        localFailureCases.append(m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(parentNode, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsParsingChildren())));
         Assembler::JumpList successCase = jumpIfNoNextAdjacentElement();
 
         localFailureCases.link(&m_assembler);
@@ -4137,7 +4137,7 @@ void SelectorCodeGenerator::generateElementHasClasses(Assembler::JumpList& failu
 
 void SelectorCodeGenerator::generateElementIsLink(Assembler::JumpList& failureCases)
 {
-    failureCases.append(m_assembler.branchTest32(Assembler::Zero, Assembler::Address(elementAddressRegister, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
+    failureCases.append(m_assembler.branchTest16(Assembler::Zero, Assembler::Address(elementAddressRegister, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
 }
 
 static bool nthFilterIsAlwaysSatisified(int a, int b)
@@ -4282,7 +4282,7 @@ void SelectorCodeGenerator::generateNthLastChildParentCheckAndRelationUpdate(Ass
     generateAddStyleRelationIfResolvingStyle(parentNode, relation);
     notElementCase.link(&m_assembler);
 
-    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(parentNode, Node::nodeFlagsMemoryOffset()),
+    failureCases.append(m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(parentNode, Node::stateFlagsMemoryOffset()),
         Assembler::TrustedImm32(Node::flagIsParsingChildren())));
 
     noParentCase.link(&m_assembler);
@@ -4477,7 +4477,7 @@ void SelectorCodeGenerator::generateElementIsFirstLink(Assembler::JumpList& fail
     // So the tree walking doesn't loop infinitely and it will be stopped with the following `currentElement == element` condition.
     Assembler::Jump reachedToElement = m_assembler.branchPtr(Assembler::Equal, currentElement, element);
 
-    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, Assembler::Address(currentElement, Node::nodeFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
+    failureCases.append(m_assembler.branchTest16(Assembler::NonZero, Assembler::Address(currentElement, Node::stateFlagsMemoryOffset()), Assembler::TrustedImm32(Node::flagIsLink())));
 
     // And these ancestors are guaranteed that they are element nodes.
     // So there's no need to check whether it is an element node and whether it is not a nullptr.

@@ -44,7 +44,7 @@ public:
     WEBCORE_EXPORT Element* getElementById(const AtomString&) const;
 
 protected:
-    DocumentFragment(Document&, ConstructionType = CreateContainer);
+    DocumentFragment(Document&, OptionSet<TypeFlag> = CreateContainer);
     String nodeName() const final;
 
 private:

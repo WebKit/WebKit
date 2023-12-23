@@ -250,7 +250,9 @@ static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSim
 {
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
     MTLCompileOptions* options = [MTLCompileOptions new];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     options.fastMathEnabled = YES;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSUInteger sampleCount = 0;
     MTLDepthStencilDescriptor *depthStencilDescriptor = nil;

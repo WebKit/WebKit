@@ -132,6 +132,7 @@ private:
     void didFinishLaunchingProcess(ProcessID, IPC::Connection::Identifier);
 
     void platformInvalidate();
+    void platformDestroy();
 
 #if PLATFORM(COCOA)
     void terminateXPCConnection();

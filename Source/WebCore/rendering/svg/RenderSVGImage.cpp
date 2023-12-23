@@ -173,8 +173,8 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
     if (!image || image->isNull())
         return ImageDrawResult::DidNothing;
 
-    if (is<BitmapImage>(image))
-        downcast<BitmapImage>(*image).updateFromSettings(settings());
+    if (auto* bitmapImage = dynamicDowncast<BitmapImage>(*image))
+        bitmapImage->updateFromSettings(settings());
 
     ImagePaintingOptions options {
         CompositeOperator::SourceOver,

@@ -108,8 +108,9 @@ enum class AXAncestorFlag : uint8_t {
     IsInDescriptionListDetail = 1 << 3,
     IsInDescriptionListTerm = 1 << 4,
     IsInCell = 1 << 5,
+    IsInRow = 1 << 6,
 
-    // Bits 6 and 7 are free.
+    // Bit 7 is free.
 };
 
 #if ENABLE(AX_THREAD_TEXT_APIS)

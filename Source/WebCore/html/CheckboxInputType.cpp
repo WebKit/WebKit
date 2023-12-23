@@ -156,7 +156,7 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
             return;
         RefPtr<Touch> touch = targetTouches->item(0);
 
-        startSwitchPointerTracking(IntPoint(touch->pageX(), touch->pageY()), touch->identifier());
+        startSwitchPointerTracking({ touch->pageX(), touch->pageY() }, touch->identifier());
         performSwitchAnimation(SwitchAnimationType::Pressed);
         event.setDefaultHandled();
     } else if (eventType == eventNames.touchmoveEvent) {
@@ -171,8 +171,7 @@ void CheckboxInputType::handleTouchEvent(TouchEvent& event)
         if (!touch)
             return;
 
-        auto absoluteLocation = IntPoint(touch->pageX(), touch->pageY());
-        updateIsSwitchVisuallyOnFromAbsoluteLocation(absoluteLocation);
+        updateIsSwitchVisuallyOnFromAbsoluteLocation({ touch->pageX(), touch->pageY() });
         event.setDefaultHandled();
     } else if (eventType == eventNames.touchendEvent || eventType == eventNames.touchcancelEvent) {
         if (!m_switchPointerTrackingTouchIdentifier || !isSwitchPointerTracking())

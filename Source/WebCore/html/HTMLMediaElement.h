@@ -648,7 +648,7 @@ public:
     void updateMediaState();
 
 protected:
-    static constexpr auto CreateHTMLMediaElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateHTMLMediaElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
 

@@ -133,7 +133,7 @@ static NSURL *URLFromString(const WTF::String& urlString)
 - (WKFrameInfo *)frameInfo
 {
     if (auto frameInfo = _hitTestResult->frameInfo())
-        return wrapper(API::FrameInfo::create(WTFMove(*frameInfo), &_hitTestResult->page())).autorelease();
+        return wrapper(API::FrameInfo::create(WTFMove(*frameInfo), _hitTestResult->page())).autorelease();
     return nil;
 }
 

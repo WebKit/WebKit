@@ -40,7 +40,7 @@ public:
 
 protected:
     static constexpr auto CreateMathMLPresentationElement = CreateMathMLElement;
-    MathMLPresentationElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLPresentationElement);
+    MathMLPresentationElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = CreateMathMLPresentationElement);
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
 
     static std::optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? std::nullopt : std::optional<bool>(value == BooleanValue::True); }

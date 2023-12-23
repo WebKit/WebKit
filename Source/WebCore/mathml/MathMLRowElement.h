@@ -38,7 +38,7 @@ public:
 
 protected:
     static constexpr auto CreateMathMLRowElement = CreateMathMLPresentationElement;
-    MathMLRowElement(const QualifiedName& tagName, Document&, ConstructionType = CreateMathMLRowElement);
+    MathMLRowElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = CreateMathMLRowElement);
     void childrenChanged(const ChildChange&) override;
 
     bool acceptsMathVariantAttribute() override;

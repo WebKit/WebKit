@@ -204,6 +204,7 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
 {
     ensureLayers();
 
+    // The m_rootLayer's position is set in RenderLayerBacking::updateAfterWidgetResize().
     m_rootLayer->setSize(size());
     m_overflowControlsContainer->setSize(size());
 
@@ -263,12 +264,11 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
 void UnifiedPDFPlugin::paint(WebCore::GraphicsContext& context, const WebCore::IntRect&)
 {
     // Only called for snapshotting.
-
     if (size().isEmpty())
         return;
 
     context.translate(-m_scrollOffset.width(), -m_scrollOffset.height());
-    paintContents(m_contentsLayer.get(), context, { FloatPoint(m_scrollOffset), size() }, { });
+    paintPDFContent(context, { FloatPoint(m_scrollOffset), size() });
 }
 
 void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
@@ -306,6 +306,11 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     if (layer != m_contentsLayer.get())
         return;
 
+    paintPDFContent(context, clipRect);
+}
+
+void UnifiedPDFPlugin::paintPDFContent(WebCore::GraphicsContext& context, const WebCore::FloatRect& clipRect)
+{
     if (m_size.isEmpty() || documentSize().isEmpty())
         return;
 

@@ -30,22 +30,28 @@
 
 namespace WebCore {
 
-CSSValuePair::CSSValuePair(Ref<CSSValue> first, Ref<CSSValue> second, IdenticalValueSerialization serialization)
+CSSValuePair::CSSValuePair(ValueSeparator separator, Ref<CSSValue> first, Ref<CSSValue> second, IdenticalValueSerialization serialization)
     : CSSValue(ValuePairClass)
     , m_coalesceIdenticalValues(serialization != IdenticalValueSerialization::DoNotCoalesce)
     , m_first(WTFMove(first))
     , m_second(WTFMove(second))
 {
+    m_valueSeparator = separator;
 }
 
 Ref<CSSValuePair> CSSValuePair::create(Ref<CSSValue> first, Ref<CSSValue> second)
 {
-    return adoptRef(*new CSSValuePair(WTFMove(first), WTFMove(second), IdenticalValueSerialization::Coalesce));
+    return adoptRef(*new CSSValuePair(SpaceSeparator, WTFMove(first), WTFMove(second), IdenticalValueSerialization::Coalesce));
+}
+
+Ref<CSSValuePair> CSSValuePair::createSlashSeparated(Ref<CSSValue> first, Ref<CSSValue> second)
+{
+    return adoptRef(*new CSSValuePair(SlashSeparator, WTFMove(first), WTFMove(second), IdenticalValueSerialization::DoNotCoalesce));
 }
 
 Ref<CSSValuePair> CSSValuePair::createNoncoalescing(Ref<CSSValue> first, Ref<CSSValue> second)
 {
-    return adoptRef(*new CSSValuePair(WTFMove(first), WTFMove(second), IdenticalValueSerialization::DoNotCoalesce));
+    return adoptRef(*new CSSValuePair(SpaceSeparator, WTFMove(first), WTFMove(second), IdenticalValueSerialization::DoNotCoalesce));
 }
 
 String CSSValuePair::customCSSText() const

@@ -32,6 +32,7 @@ namespace WebCore {
 class CSSValuePair : public CSSValue {
 public:
     static Ref<CSSValuePair> create(Ref<CSSValue>, Ref<CSSValue>);
+    static Ref<CSSValuePair> createSlashSeparated(Ref<CSSValue>, Ref<CSSValue>);
     static Ref<CSSValuePair> createNoncoalescing(Ref<CSSValue>, Ref<CSSValue>);
 
     const CSSValue& first() const { return m_first; }
@@ -44,7 +45,7 @@ private:
     friend bool CSSValue::addHash(Hasher&) const;
 
     enum class IdenticalValueSerialization : bool { DoNotCoalesce, Coalesce };
-    CSSValuePair(Ref<CSSValue>, Ref<CSSValue>, IdenticalValueSerialization);
+    CSSValuePair(ValueSeparator, Ref<CSSValue>, Ref<CSSValue>, IdenticalValueSerialization);
 
     bool addDerivedHash(Hasher&) const;
 

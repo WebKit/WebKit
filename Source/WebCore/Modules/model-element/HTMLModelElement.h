@@ -118,7 +118,7 @@ public:
 #endif
 
 private:
-    static constexpr auto CreateHTMLModelElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateHTMLModelElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLModelElement(const QualifiedName&, Document&);
 
     URL selectModelSource() const;

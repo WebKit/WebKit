@@ -390,12 +390,11 @@ inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destr
         destroyAndFree(*nodeRareData);
 }
 
-Node::Node(Document& document, ConstructionType type)
+Node::Node(Document& document, OptionSet<TypeFlag> type)
     : EventTarget(ConstructNode)
-    , m_nodeFlags(type)
+    , m_typeFlags(type)
     , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)
 {
-    ASSERT(type.toRaw() == (type.toRaw() & NodeFlagTypeMask));
     ASSERT(isMainThread());
 
     // Allow code to ref the Document while it is being constructed to make our life easier.
@@ -967,7 +966,7 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
         return;
 
     if (validity != Style::Validity::Valid)
-        setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+        setStateFlag(StateFlag::IsComputedStyleInvalidFlag);
 
     bool markAncestors = styleValidity() == Style::Validity::Valid || mode == Style::InvalidationMode::InsertedIntoAncestor;
 

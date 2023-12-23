@@ -139,7 +139,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     }
 }
 
-ProcessLauncher::~ProcessLauncher()
+void ProcessLauncher::platformDestroy()
 {
 #if USE(EXTENSIONKIT)
     [m_process invalidate];

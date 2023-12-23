@@ -44,7 +44,7 @@ public:
     void parserAppendData(StringView);
 
 protected:
-    CharacterData(Document& document, String&& text, ConstructionType type = CreateCharacterData)
+    CharacterData(Document& document, String&& text, OptionSet<TypeFlag> type = CreateCharacterData)
         : Node(document, type)
         , m_data(!text.isNull() ? WTFMove(text) : emptyString())
     {
