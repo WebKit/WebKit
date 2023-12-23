@@ -307,8 +307,8 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
         delta = std::max(-thumbPos, delta);
     
     if (delta) {
-        float newPosition = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
-        m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, newPosition);
+        float newOffset = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
+        m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, newOffset);
     }
 }
 
