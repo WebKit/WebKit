@@ -158,7 +158,7 @@ void RenderTextControlSingleLine::layout()
             if (!inputElement().hasAutoFillStrongPasswordButton())
                 return nullptr;
 
-            CheckedPtr autoFillButtonElement = inputElement().autoFillButtonElement();
+            RefPtr autoFillButtonElement = inputElement().autoFillButtonElement();
             if (!autoFillButtonElement)
                 return nullptr;
 
