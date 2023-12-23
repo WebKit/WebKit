@@ -356,9 +356,9 @@ ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
 
     // FIXME: This parserContext should include a document to get the proper settings.
     CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
-    auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2), parserContext);
-    // FIXME: Excluding CSSSelector::PseudoElementWebKitCustom is almost certainly a bug.
-    if (!pseudoType || pseudoType == CSSSelector::PseudoElementWebKitCustom)
+    auto pseudoType = CSSSelector::parsePseudoElement(StringView(pseudoElement).substring(isLegacy ? 1 : 2), parserContext);
+    // FIXME: Excluding CSSSelector::PseudoElement::WebKitCustom is almost certainly a bug.
+    if (!pseudoType || pseudoType == CSSSelector::PseudoElement::WebKitCustom)
         return Exception { ExceptionCode::SyntaxError };
     return CSSSelector::pseudoId(*pseudoType);
 }

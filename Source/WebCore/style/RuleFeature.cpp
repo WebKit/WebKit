@@ -266,7 +266,7 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     }
     if (selector.match() == CSSSelector::Match::PseudoElement) {
         // Similarly for ::slotted().
-        if (selector.pseudoElementType() == CSSSelector::PseudoElementSlotted)
+        if (selector.pseudoElement() == CSSSelector::PseudoElement::Slotted)
             return MatchElement::Host;
     }
 
@@ -290,11 +290,11 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
             attributeLocalNamesInRules.add(selector->attribute().localName());
             selectorFeatures.attributes.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::Match::PseudoElement) {
-            switch (selector->pseudoElementType()) {
-            case CSSSelector::PseudoElementFirstLine:
+            switch (selector->pseudoElement()) {
+            case CSSSelector::PseudoElement::FirstLine:
                 usesFirstLineRules = true;
                 break;
-            case CSSSelector::PseudoElementFirstLetter:
+            case CSSSelector::PseudoElement::FirstLetter:
                 usesFirstLetterRules = true;
                 break;
             default:

@@ -9,10 +9,10 @@
 -webkit-drag
 -webkit-full-page-media
 active
-after, std::nullopt, PseudoElementAfter
+after, std::nullopt, PseudoElement::After
 any-link
 autofill
-before, std::nullopt, PseudoElementBefore
+before, std::nullopt, PseudoElement::Before
 checked
 corner-present
 decrement
@@ -25,8 +25,8 @@ empty
 enabled
 end
 first-child
-first-letter, std::nullopt, PseudoElementFirstLetter
-first-line, std::nullopt, PseudoElementFirstLine
+first-letter, std::nullopt, PseudoElement::FirstLetter
+first-line, std::nullopt, PseudoElement::FirstLine
 first-of-type
 focus
 focus-visible

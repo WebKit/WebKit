@@ -65,10 +65,10 @@ public:
     void setForPage() { m_selector->setForPage(); }
 
     CSSSelector::Match match() const { return m_selector->match(); }
-    CSSSelector::PseudoElementType pseudoElementType() const { return m_selector->pseudoElementType(); }
+    CSSSelector::PseudoElement pseudoElement() const { return m_selector->pseudoElement(); }
     const CSSSelectorList* selectorList() const { return m_selector->selectorList(); }
     
-    void setPseudoElementType(CSSSelector::PseudoElementType type) { m_selector->setPseudoElementType(type); }
+    void setPseudoElement(CSSSelector::PseudoElement type) { m_selector->setPseudoElement(type); }
     void setPseudoClass(CSSSelector::PseudoClass type) { m_selector->setPseudoClass(type); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>&&);
@@ -113,19 +113,19 @@ private:
 inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 {
     return match() == CSSSelector::Match::PseudoElement
-        && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom
+        && (pseudoElement() == CSSSelector::PseudoElement::WebKitCustom
 #if ENABLE(VIDEO)
-            || pseudoElementType() == CSSSelector::PseudoElementCue
+            || pseudoElement() == CSSSelector::PseudoElement::Cue
 #endif
-            || pseudoElementType() == CSSSelector::PseudoElementPart
-            || pseudoElementType() == CSSSelector::PseudoElementSlotted
-            || pseudoElementType() == CSSSelector::PseudoElementWebKitCustomLegacyPrefixed);
+            || pseudoElement() == CSSSelector::PseudoElement::Part
+            || pseudoElement() == CSSSelector::PseudoElement::Slotted
+            || pseudoElement() == CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed);
 }
 
 inline bool CSSParserSelector::isPseudoElementCueFunction() const
 {
 #if ENABLE(VIDEO)
-    return m_selector->match() == CSSSelector::Match::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
+    return m_selector->match() == CSSSelector::Match::PseudoElement && m_selector->pseudoElement() == CSSSelector::PseudoElement::Cue;
 #else
     return false;
 #endif

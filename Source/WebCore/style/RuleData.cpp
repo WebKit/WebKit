@@ -141,10 +141,10 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector* se
 {
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
 #if ENABLE(VIDEO)
-        if (component->match() == CSSSelector::Match::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == ShadowPseudoIds::cue()))
+        if (component->match() == CSSSelector::Match::PseudoElement && (component->pseudoElement() == CSSSelector::PseudoElement::Cue || component->value() == ShadowPseudoIds::cue()))
             return PropertyAllowlist::Cue;
 #endif
-        if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElementType() == CSSSelector::PseudoElementMarker)
+        if (component->match() == CSSSelector::Match::PseudoElement && component->pseudoElement() == CSSSelector::PseudoElement::Marker)
             return propertyAllowlistForPseudoId(PseudoId::Marker);
 
         if (const auto* selectorList = selector->selectorList()) {

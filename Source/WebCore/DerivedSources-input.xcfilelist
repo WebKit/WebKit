@@ -1243,7 +1243,7 @@ $(PROJECT_DIR)/css/MediaQueryList.idl
 $(PROJECT_DIR)/css/MediaQueryListEvent.idl
 $(PROJECT_DIR)/css/SVGCSSValueKeywords.in
 $(PROJECT_DIR)/css/SelectorPseudoClassAndCompatibilityElementMap.in
-$(PROJECT_DIR)/css/SelectorPseudoElementTypeMap.in
+$(PROJECT_DIR)/css/SelectorPseudoElementMap.in
 $(PROJECT_DIR)/css/StyleMedia.idl
 $(PROJECT_DIR)/css/StyleSheet.idl
 $(PROJECT_DIR)/css/StyleSheetList.idl

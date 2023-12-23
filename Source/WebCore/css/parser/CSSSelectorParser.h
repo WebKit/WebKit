@@ -107,7 +107,7 @@ private:
     bool m_resistDefaultNamespace { false };
     bool m_ignoreDefaultNamespace { false };
     bool m_disableForgivingParsing { false };
-    std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
+    std::optional<CSSSelector::PseudoElement> m_precedingPseudoElement;
 };
 
 std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);

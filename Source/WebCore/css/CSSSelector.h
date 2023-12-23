@@ -201,68 +201,49 @@ struct PossiblyQuotedIdentifier {
             UserValid
         };
 
-        enum PseudoElementType {
-            PseudoElementAfter,
-            PseudoElementBackdrop,
-            PseudoElementBefore,
+        enum class PseudoElement : uint8_t {
+            After,
+            Backdrop,
+            Before,
 #if ENABLE(VIDEO)
-            PseudoElementCue,
+            Cue,
 #endif
-            PseudoElementFirstLetter,
-            PseudoElementFirstLine,
-            PseudoElementGrammarError,
-            PseudoElementHighlight,
-            PseudoElementMarker,
-            PseudoElementPart,
-            PseudoElementResizer,
-            PseudoElementScrollbar,
-            PseudoElementScrollbarButton,
-            PseudoElementScrollbarCorner,
-            PseudoElementScrollbarThumb,
-            PseudoElementScrollbarTrack,
-            PseudoElementScrollbarTrackPiece,
-            PseudoElementSelection,
-            PseudoElementSlotted,
-            PseudoElementSpellingError,
-            PseudoElementViewTransition,
-            PseudoElementViewTransitionGroup,
-            PseudoElementViewTransitionImagePair,
-            PseudoElementViewTransitionOld,
-            PseudoElementViewTransitionNew,
-            PseudoElementWebKitCustom,
+            FirstLetter,
+            FirstLine,
+            GrammarError,
+            Highlight,
+            Marker,
+            Part,
+            Resizer,
+            Scrollbar,
+            ScrollbarButton,
+            ScrollbarCorner,
+            ScrollbarThumb,
+            ScrollbarTrack,
+            ScrollbarTrackPiece,
+            Selection,
+            Slotted,
+            SpellingError,
+            ViewTransition,
+            ViewTransitionGroup,
+            ViewTransitionImagePair,
+            ViewTransitionOld,
+            ViewTransitionNew,
+            WebKitCustom,
 
             // WebKitCustom that appeared in an old prefixed form
             // and need special handling.
-            PseudoElementWebKitCustomLegacyPrefixed,
+            WebKitCustomLegacyPrefixed,
         };
 
-        enum PagePseudoClassType {
-            PagePseudoClassFirst = 1,
-            PagePseudoClassLeft,
-            PagePseudoClassRight,
+        enum class PagePseudoClass : uint8_t {
+            First,
+            Left,
+            Right,
         };
 
-        enum MarginBoxType {
-            TopLeftCornerMarginBox,
-            TopLeftMarginBox,
-            TopCenterMarginBox,
-            TopRightMarginBox,
-            TopRightCornerMarginBox,
-            BottomLeftCornerMarginBox,
-            BottomLeftMarginBox,
-            BottomCenterMarginBox,
-            BottomRightMarginBox,
-            BottomRightCornerMarginBox,
-            LeftTopMarginBox,
-            LeftMiddleMarginBox,
-            LeftBottomMarginBox,
-            RightTopMarginBox,
-            RightMiddleMarginBox,
-            RightBottomMarginBox,
-        };
-
-        static std::optional<PseudoElementType> parsePseudoElementType(StringView, const CSSSelectorParserContext&);
-        static PseudoId pseudoId(PseudoElementType);
+        static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
+        static PseudoId pseudoId(PseudoElement);
 
         // Selectors are kept in an array by CSSSelectorList.
         // The next component of the selector is the next item in the array.
@@ -301,11 +282,11 @@ struct PossiblyQuotedIdentifier {
         PseudoClass pseudoClass() const;
         void setPseudoClass(PseudoClass);
 
-        PseudoElementType pseudoElementType() const;
-        void setPseudoElementType(PseudoElementType);
+        PseudoElement pseudoElement() const;
+        void setPseudoElement(PseudoElement);
 
-        PagePseudoClassType pagePseudoClassType() const;
-        void setPagePseudoType(PagePseudoClassType);
+        PagePseudoClass pagePseudoClass() const;
+        void setPagePseudoClass(PagePseudoClass);
 
         bool matchesPseudoElement() const;
         bool isWebKitCustomPseudoElement() const;
@@ -412,7 +393,7 @@ inline bool CSSSelector::matchesPseudoElement() const
 
 inline bool CSSSelector::isWebKitCustomPseudoElement() const
 {
-    return pseudoElementType() == PseudoElementWebKitCustom || pseudoElementType() == PseudoElementWebKitCustomLegacyPrefixed;
+    return pseudoElement() == PseudoElement::WebKitCustom || pseudoElement() == PseudoElement::WebKitCustomLegacyPrefixed;
 }
 
 static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClass type)
@@ -555,27 +536,28 @@ inline void CSSSelector::setPseudoClass(PseudoClass pseudoClass)
     ASSERT(static_cast<PseudoClass>(m_pseudoType) == pseudoClass);
 }
 
-inline auto CSSSelector::pseudoElementType() const -> PseudoElementType
+inline auto CSSSelector::pseudoElement() const -> PseudoElement
 {
     ASSERT(match() == Match::PseudoElement);
-    return static_cast<PseudoElementType>(m_pseudoType);
+    return static_cast<PseudoElement>(m_pseudoType);
 }
 
-inline void CSSSelector::setPseudoElementType(PseudoElementType pseudoElementType)
+inline void CSSSelector::setPseudoElement(PseudoElement pseudoElement)
 {
-    m_pseudoType = pseudoElementType;
-    ASSERT(m_pseudoType == pseudoElementType);
+    m_pseudoType = enumToUnderlyingType(pseudoElement);
+    ASSERT(static_cast<PseudoElement>(m_pseudoType) == pseudoElement);
 }
 
-inline auto CSSSelector::pagePseudoClassType() const -> PagePseudoClassType
+inline auto CSSSelector::pagePseudoClass() const -> PagePseudoClass
 {
     ASSERT(match() == Match::PagePseudoClass);
-    return static_cast<PagePseudoClassType>(m_pseudoType);
+    return static_cast<PagePseudoClass>(m_pseudoType);
 }
 
-inline void CSSSelector::setPagePseudoType(PagePseudoClassType pagePseudoType)
+inline void CSSSelector::setPagePseudoClass(PagePseudoClass pagePseudoClass)
 {
-    m_pseudoType = pagePseudoType;
+    m_pseudoType = enumToUnderlyingType(pagePseudoClass);
+    ASSERT(static_cast<PagePseudoClass>(m_pseudoType) == pagePseudoClass);
 }
 
 inline void CSSSelector::setRelation(Relation relation)
