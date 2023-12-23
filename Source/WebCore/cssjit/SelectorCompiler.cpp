@@ -650,21 +650,21 @@ void compileSelector(CompiledSelector& compiledSelector, const CSSSelector* sele
     ASSERT(compiledSelector.status != SelectorCompilationStatus::NotCompiled);
 }
 
-static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)
+static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::Relation relation)
 {
     switch (relation) {
-    case CSSSelector::RelationType::DescendantSpace:
+    case CSSSelector::Relation::DescendantSpace:
         return FragmentRelation::Descendant;
-    case CSSSelector::RelationType::Child:
+    case CSSSelector::Relation::Child:
         return FragmentRelation::Child;
-    case CSSSelector::RelationType::DirectAdjacent:
+    case CSSSelector::Relation::DirectAdjacent:
         return FragmentRelation::DirectAdjacent;
-    case CSSSelector::RelationType::IndirectAdjacent:
+    case CSSSelector::Relation::IndirectAdjacent:
         return FragmentRelation::IndirectAdjacent;
-    case CSSSelector::RelationType::Subselector:
-    case CSSSelector::RelationType::ShadowDescendant:
-    case CSSSelector::RelationType::ShadowPartDescendant:
-    case CSSSelector::RelationType::ShadowSlotted:
+    case CSSSelector::Relation::Subselector:
+    case CSSSelector::Relation::ShadowDescendant:
+    case CSSSelector::Relation::ShadowPartDescendant:
+    case CSSSelector::Relation::ShadowSlotted:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
@@ -1547,16 +1547,16 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         }
 
         auto relation = selector->relation();
-        if (relation == CSSSelector::RelationType::Subselector)
+        if (relation == CSSSelector::Relation::Subselector)
             continue;
 
-        if ((relation == CSSSelector::RelationType::ShadowDescendant || relation == CSSSelector::RelationType::ShadowPartDescendant) && !selector->isLastInTagHistory())
+        if ((relation == CSSSelector::Relation::ShadowDescendant || relation == CSSSelector::Relation::ShadowPartDescendant) && !selector->isLastInTagHistory())
             return FunctionType::CannotCompile;
 
-        if (relation == CSSSelector::RelationType::ShadowSlotted)
+        if (relation == CSSSelector::Relation::ShadowSlotted)
             return FunctionType::CannotCompile;
 
-        if (relation == CSSSelector::RelationType::DirectAdjacent || relation == CSSSelector::RelationType::IndirectAdjacent) {
+        if (relation == CSSSelector::Relation::DirectAdjacent || relation == CSSSelector::Relation::IndirectAdjacent) {
             FunctionType relationFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
             if (selectorContext == SelectorContext::QuerySelector)
                 relationFunctionType = FunctionType::SimpleSelectorChecker;

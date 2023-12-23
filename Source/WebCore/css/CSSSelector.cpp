@@ -51,13 +51,13 @@ struct SameSizeAsCSSSelector {
     void* unionPointer;
 };
 
-static_assert(CSSSelector::RelationType::Subselector == static_cast<CSSSelector::RelationType>(0u), "Subselector must be 0 for consumeCombinator.");
+static_assert(CSSSelector::Relation::Subselector == static_cast<CSSSelector::Relation>(0u), "Subselector must be 0 for consumeCombinator.");
 static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector should remain small.");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
 
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
-    : m_relation(enumToUnderlyingType(RelationType::DescendantSpace))
+    : m_relation(enumToUnderlyingType(Relation::DescendantSpace))
     , m_match(enumToUnderlyingType(Match::Tag))
     , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
 {
@@ -362,7 +362,7 @@ const CSSSelector* CSSSelector::firstInCompound() const
     auto* selector = this;
     while (!selector->isFirstInTagHistory()) {
         auto* previousSelector = selector - 1;
-        if (previousSelector->relation() != RelationType::Subselector)
+        if (previousSelector->relation() != Relation::Subselector)
             break;
         selector = previousSelector;
     }
@@ -894,7 +894,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
         }
 
-        if (cs->relation() != RelationType::Subselector || !cs->tagHistory())
+        if (cs->relation() != Relation::Subselector || !cs->tagHistory())
             break;
         cs = cs->tagHistory();
     }
@@ -903,11 +903,11 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 
     auto separatorTextForNestingRelative = [&] () -> String {
         switch (cs->relation()) {
-        case CSSSelector::RelationType::Child:
+        case CSSSelector::Relation::Child:
             return "> "_s;
-        case CSSSelector::RelationType::DirectAdjacent:
+        case CSSSelector::Relation::DirectAdjacent:
             return "+ "_s;
-        case CSSSelector::RelationType::IndirectAdjacent:
+        case CSSSelector::Relation::IndirectAdjacent:
             return "~ "_s;
         default:
             return { };
@@ -917,24 +917,24 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
     if (auto* previousSelector = cs->tagHistory()) {
         ASCIILiteral separator = ""_s;
         switch (cs->relation()) {
-        case CSSSelector::RelationType::DescendantSpace:
+        case CSSSelector::Relation::DescendantSpace:
             separator = " "_s;
             break;
-        case CSSSelector::RelationType::Child:
+        case CSSSelector::Relation::Child:
             separator = " > "_s;
             break;
-        case CSSSelector::RelationType::DirectAdjacent:
+        case CSSSelector::Relation::DirectAdjacent:
             separator = " + "_s;
             break;
-        case CSSSelector::RelationType::IndirectAdjacent:
+        case CSSSelector::Relation::IndirectAdjacent:
             separator = " ~ "_s;
             break;
-        case CSSSelector::RelationType::Subselector:
+        case CSSSelector::Relation::Subselector:
             ASSERT_NOT_REACHED();
             break;
-        case CSSSelector::RelationType::ShadowDescendant:
-        case CSSSelector::RelationType::ShadowPartDescendant:
-        case CSSSelector::RelationType::ShadowSlotted:
+        case CSSSelector::Relation::ShadowDescendant:
+        case CSSSelector::Relation::ShadowPartDescendant:
+        case CSSSelector::Relation::ShadowSlotted:
             break;
         }
         return previousSelector->selectorText(separator, builder);

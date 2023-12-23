@@ -91,8 +91,8 @@ struct PossiblyQuotedIdentifier {
             ForgivingUnknownNestContaining
         };
 
-        enum class RelationType : uint8_t {
-            Subselector = 0,
+        enum class Relation : uint8_t {
+            Subselector,
             DescendantSpace,
             Child,
             DirectAdjacent,
@@ -294,9 +294,9 @@ struct PossiblyQuotedIdentifier {
         int nthA() const;
         int nthB() const;
 
-        bool hasDescendantRelation() const { return relation() == RelationType::DescendantSpace; }
+        bool hasDescendantRelation() const { return relation() == Relation::DescendantSpace; }
 
-        bool hasDescendantOrChildRelation() const { return relation() == RelationType::Child || hasDescendantRelation(); }
+        bool hasDescendantOrChildRelation() const { return relation() == Relation::Child || hasDescendantRelation(); }
 
         PseudoClass pseudoClass() const;
         void setPseudoClass(PseudoClass);
@@ -312,8 +312,8 @@ struct PossiblyQuotedIdentifier {
         bool isSiblingSelector() const;
         bool isAttributeSelector() const;
 
-        RelationType relation() const { return static_cast<RelationType>(m_relation); }
-        void setRelation(RelationType);
+        Relation relation() const { return static_cast<Relation>(m_relation); }
+        void setRelation(Relation);
 
         Match match() const { return static_cast<Match>(m_match); }
         void setMatch(Match);
@@ -337,8 +337,8 @@ struct PossiblyQuotedIdentifier {
         bool isImplicit() const { return m_isImplicit; }
 
     private:
-        unsigned m_relation : 4 { enumToUnderlyingType(RelationType::DescendantSpace) }; // enum RelationType.
-        mutable unsigned m_match : 5 { enumToUnderlyingType(Match::Unknown) }; // enum Match.
+        unsigned m_relation : 4 { enumToUnderlyingType(Relation::DescendantSpace) };
+        mutable unsigned m_match : 5 { enumToUnderlyingType(Match::Unknown) };
         mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
         // 17 bits
         unsigned m_isLastInSelectorList : 1 { false };
@@ -452,8 +452,8 @@ inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClass pseudoClass
 
 inline bool CSSSelector::isSiblingSelector() const
 {
-    return relation() == RelationType::DirectAdjacent
-        || relation() == RelationType::IndirectAdjacent
+    return relation() == Relation::DirectAdjacent
+        || relation() == Relation::IndirectAdjacent
         || (match() == CSSSelector::Match::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClass()));
 }
 
@@ -578,7 +578,7 @@ inline void CSSSelector::setPagePseudoType(PagePseudoClassType pagePseudoType)
     m_pseudoType = pagePseudoType;
 }
 
-inline void CSSSelector::setRelation(RelationType relation)
+inline void CSSSelector::setRelation(Relation relation)
 {
     m_relation = enumToUnderlyingType(relation);
 }

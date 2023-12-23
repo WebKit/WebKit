@@ -73,7 +73,7 @@ auto HasSelectorFilter::makeKey(const CSSSelector& hasSelector) -> Key
         SelectorFilter::collectSimpleSelectorHash(hashes, *simpleSelector);
         if (!hashes.ids.isEmpty())
             break;
-        if (simpleSelector->relation() != CSSSelector::RelationType::Subselector)
+        if (simpleSelector->relation() != CSSSelector::Relation::Subselector)
             break;
     }
 
