@@ -149,7 +149,8 @@ Ref<const Shape> makeShapeForShapeOutside(const RenderBox& renderer)
         styleImage->setContainerContextForRenderer(renderer, imageSize, style.effectiveZoom());
 
         auto marginRect = getShapeImageMarginRect(renderer, boxSize);
-        auto imageRect = is<RenderImage>(renderer) ? downcast<RenderImage>(renderer).replacedContentRect() : LayoutRect { { }, imageSize };
+        auto* renderImage = dynamicDowncast<RenderImage>(renderer);
+        auto imageRect = renderImage ? renderImage->replacedContentRect() : LayoutRect { { }, imageSize };
 
         ASSERT(!styleImage->isPending());
         RefPtr<Image> image = styleImage->image(const_cast<RenderBox*>(&renderer), imageSize);

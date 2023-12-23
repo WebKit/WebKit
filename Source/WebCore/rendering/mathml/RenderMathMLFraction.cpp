@@ -170,10 +170,11 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::stackParameters()
 
 RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator() const
 {
-    if (!isValid() || !is<RenderMathMLBlock>(numerator()))
+    if (!isValid())
         return nullptr;
 
-    return downcast<RenderMathMLBlock>(numerator()).unembellishedOperator();
+    auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(numerator());
+    return mathMLBlock ? mathMLBlock->unembellishedOperator() : nullptr;
 }
 
 void RenderMathMLFraction::computePreferredLogicalWidths()
