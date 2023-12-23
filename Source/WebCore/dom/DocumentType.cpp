@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentType);
 
 DocumentType::DocumentType(Document& document, const String& name, const String& publicId, const String& systemId)
-    : Node(document, CreateDocumentType)
+    : Node(document, DOCUMENT_TYPE_NODE, CreateDocumentType)
     , m_name(name)
     , m_publicId(publicId.isNull() ? emptyString() : publicId)
     , m_systemId(systemId.isNull() ? emptyString() : systemId)
@@ -43,11 +43,6 @@ DocumentType::DocumentType(Document& document, const String& name, const String&
 String DocumentType::nodeName() const
 {
     return name();
-}
-
-Node::NodeType DocumentType::nodeType() const
-{
-    return DOCUMENT_TYPE_NODE;
 }
 
 Ref<Node> DocumentType::cloneNodeInternal(Document& documentTarget, CloningOperation)

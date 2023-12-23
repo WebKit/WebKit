@@ -592,7 +592,7 @@ static Ref<CachedResourceLoader> createCachedResourceLoader(LocalFrame* frame)
 }
 
 Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, DocumentClasses documentClasses, OptionSet<ConstructionFlag> constructionFlags, ScriptExecutionContextIdentifier identifier)
-    : ContainerNode(*this, CreateDocument)
+    : ContainerNode(*this, DOCUMENT_NODE)
     , TreeScope(*this)
     , ScriptExecutionContext(identifier)
     , FrameDestructionObserver(frame)
@@ -2076,11 +2076,6 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
 String Document::nodeName() const
 {
     return "#document"_s;
-}
-
-Node::NodeType Document::nodeType() const
-{
-    return DOCUMENT_NODE;
 }
 
 WakeLockManager& Document::wakeLockManager()

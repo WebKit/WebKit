@@ -48,7 +48,6 @@ protected:
     String nodeName() const final;
 
 private:
-    NodeType nodeType() const final;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     bool childTypeAllowed(NodeType) const override;
 };
