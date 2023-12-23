@@ -28,6 +28,7 @@
 #include "BasicShapeFunctions.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSCounterValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontValue.h"
@@ -2102,19 +2103,28 @@ static Ref<CSSValue> altTextToCSSValue(const RenderStyle& style)
     return CSSPrimitiveValue::create(style.contentAltText());
 }
 
-static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
+static Ref<CSSValue> contentToCSSValue(const RenderStyle& style)
 {
     CSSValueListBuilder list;
     for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
-        if (auto* counterContentData = dynamicDowncast<CounterContentData>(*contentData))
-            list.append(CSSPrimitiveValue::createCounterName(counterContentData->counter().identifier()));
-        else if (auto* imageContentData = dynamicDowncast<ImageContentData>(*contentData))
+        if (auto* counterContentData = dynamicDowncast<CounterContentData>(*contentData)) {
+            RefPtr counterStyle = CSSPrimitiveValue::createCustomIdent(counterContentData->counter().listStyleType().identifier);
+            list.append(CSSCounterValue::create(counterContentData->counter().identifier(), counterContentData->counter().separator(), WTFMove(counterStyle)));
+        } else if (auto* imageContentData = dynamicDowncast<ImageContentData>(*contentData))
             list.append(imageContentData->image().computedStyleValue(style));
+        else if (auto* quoteContentData = dynamicDowncast<QuoteContentData>(*contentData))
+            list.append(createConvertingToCSSValueID(quoteContentData->quote()));
         else if (auto* textContentData = dynamicDowncast<TextContentData>(*contentData))
             list.append(CSSPrimitiveValue::create(textContentData->text()));
+        else {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
     }
     if (list.isEmpty())
         list.append(CSSPrimitiveValue::create(style.hasEffectiveContentNone() ? CSSValueNone : CSSValueNormal));
+    else if (auto& altText = style.contentAltText(); !altText.isNull())
+        return CSSValuePair::createSlashSeparated(CSSValueList::createSpaceSeparated(WTFMove(list)), CSSPrimitiveValue::create(altText));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
