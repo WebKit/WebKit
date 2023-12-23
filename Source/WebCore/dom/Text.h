@@ -59,7 +59,7 @@ public:
 
 protected:
     Text(Document& document, String&& data, NodeType type, OptionSet<TypeFlag> typeFlags)
-        : CharacterData(document, WTFMove(data), type, typeFlags)
+        : CharacterData(document, WTFMove(data), type, typeFlags | TypeFlag::IsText)
     {
     }
 

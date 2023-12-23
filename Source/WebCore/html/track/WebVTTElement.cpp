@@ -80,7 +80,7 @@ static const QualifiedName& nodeTypeToTagName(WebVTTNodeType nodeType)
 
 WebVTTElement::WebVTTElement(WebVTTNodeType nodeType, AtomString language, Document& document)
     : WebVTTElementImpl(nodeType, language)
-    , Element(nodeTypeToTagName(nodeType), document, CreateElement)
+    , Element(nodeTypeToTagName(nodeType), document, { })
 {
 }
 

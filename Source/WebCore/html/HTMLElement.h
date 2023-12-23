@@ -166,7 +166,7 @@ public:
 #endif
 
 protected:
-    HTMLElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag>);
+    HTMLElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
 
     enum class AllowZeroValue : bool { No, Yes };
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowZeroValue = AllowZeroValue::Yes);
@@ -223,10 +223,13 @@ private:
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
 };
 
-inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type = CreateHTMLElement)
-    : StyledElement(tagName, document, type)
+inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type)
+    : StyledElement(tagName, document, type | TypeFlag::IsHTMLElement)
 {
     ASSERT(tagName.localName().impl());
+    ASSERT(isHTMLElement());
+    ASSERT(!isSVGElement());
+    ASSERT(!isMathMLElement());
 }
 
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const

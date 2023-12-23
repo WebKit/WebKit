@@ -40,7 +40,6 @@ public:
     ScrollbarMode scrollingMode() const final;
 
 protected:
-    static constexpr auto CreateHTMLFrameElementBase = CreateHTMLFrameOwnerElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLFrameElementBase(const QualifiedName&, Document&);
 
     bool canLoad() const;

@@ -144,7 +144,7 @@ public:
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
 
 protected:
-    explicit ContainerNode(Document&, NodeType, OptionSet<TypeFlag> = CreateContainer);
+    explicit ContainerNode(Document&, NodeType, OptionSet<TypeFlag> = { });
 
     friend void removeDetachedChildrenInContainer(ContainerNode&);
 
@@ -176,9 +176,9 @@ private:
 };
 
 inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)
-    : Node(document, type, typeFlags)
+    : Node(document, type, typeFlags | TypeFlag::IsContainerNode)
 {
-    ASSERT(typeFlags.contains(TypeFlag::IsContainerNode));
+    ASSERT(!typeFlags.contains(TypeFlag::IsText));
 }
 
 inline unsigned Node::countChildNodes() const

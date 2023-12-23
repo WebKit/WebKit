@@ -45,7 +45,7 @@ Ref<SwitchThumbElement> SwitchThumbElement::create(Document& document)
 }
 
 SwitchThumbElement::SwitchThumbElement(Document& document)
-    : HTMLDivElement(HTMLNames::divTag, document, CreateSwitchThumbElement)
+    : HTMLDivElement(HTMLNames::divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 
