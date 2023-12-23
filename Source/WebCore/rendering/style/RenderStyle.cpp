@@ -2237,15 +2237,9 @@ void RenderStyle::setContent(RefPtr<StyleImage>&& image, bool add)
 void RenderStyle::setContent(const String& string, bool add)
 {
     auto& data = m_nonInheritedData.access().miscData.access();
-    if (add && data.content) {
-        auto& last = lastContent(*data.content);
-        if (!is<TextContentData>(last))
-            last.setNext(makeUnique<TextContentData>(string));
-        else {
-            auto& textContent = downcast<TextContentData>(last);
-            textContent.setText(textContent.text() + string);
-        }
-    } else {
+    if (add && data.content)
+        lastContent(*data.content).setNext(makeUnique<TextContentData>(string));
+    else {
         data.content = makeUnique<TextContentData>(string);
         auto& altText = data.altText;
         if (!altText.isNull())

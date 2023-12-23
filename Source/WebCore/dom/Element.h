@@ -834,7 +834,6 @@ private:
 
     void scrollByUnits(int units, ScrollGranularity);
 
-    NodeType nodeType() const final;
     bool childTypeAllowed(NodeType) const final;
 
     void notifyAttributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason = AttributeModificationReason::Directly);

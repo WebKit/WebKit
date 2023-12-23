@@ -1965,7 +1965,6 @@ public:
     static StyleImage* initialMaskBorderSource() { return nullptr; }
     static constexpr PrintColorAdjust initialPrintColorAdjust();
     static QuotesData* initialQuotes() { return nullptr; }
-    static inline const AtomString& initialContentAltText();
 
 #if ENABLE(DARK_MODE_CSS)
     static constexpr StyleColorScheme initialColorScheme();

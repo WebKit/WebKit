@@ -390,11 +390,12 @@ inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destr
         destroyAndFree(*nodeRareData);
 }
 
-Node::Node(Document& document, OptionSet<TypeFlag> type)
+Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
     : EventTarget(ConstructNode)
-    , m_typeFlags(type)
+    , m_typeBitFields(constructBitFieldsFromNodeTypeAndFlags(type, flags))
     , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)
 {
+    ASSERT(nodeType() == type);
     ASSERT(isMainThread());
 
     // Allow code to ref the Document while it is being constructed to make our life easier.

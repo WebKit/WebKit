@@ -6320,20 +6320,6 @@
                 "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-z-index"
             }
         },
-        "alt": {
-            "codegen-properties": {
-                "aliases": [
-                    "-webkit-alt"
-                ],
-                "name-for-methods": "ContentAltText",
-                "custom": "Value",
-                "parser-function": "consumeAlt",
-                "parser-function-requires-context": true,
-                "parser-grammar-unused": "<string> | <attr()>",
-                "parser-grammar-unused-reason": "Needs support for function notation."
-            },
-            "status": "non-standard"
-        },
         "appearance": {
             "values": [
                 "checkbox",

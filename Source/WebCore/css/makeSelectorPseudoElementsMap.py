@@ -29,7 +29,7 @@ import subprocess
 
 
 def enumerablePseudoType(stringPseudoType):
-    output = ['CSSSelector::PseudoElement']
+    output = ['CSSSelector::PseudoElement::']
 
     if stringPseudoType.endswith('('):
         stringPseudoType = stringPseudoType[:-1]
@@ -58,7 +58,8 @@ def enumerablePseudoType(stringPseudoType):
 def expand_ifdef_condition(condition):
     return condition.replace('(', '_').replace(')', '')
 
-output_file = open('SelectorPseudoElementTypeMap.gperf', 'w')
+
+output_file = open('SelectorPseudoElementMap.gperf', 'w')
 
 output_file.write("""
 %{
@@ -101,13 +102,13 @@ namespace WebCore {
 
 struct SelectorPseudoTypeEntry {
     const char* name;
-    std::optional<CSSSelector::PseudoElementType> type;
+    std::optional<CSSSelector::PseudoElement> type;
 };
 
 %}
 %struct-type
 %define initializer-suffix ,std::nullopt
-%define class-name SelectorPseudoElementTypeMapHash
+%define class-name SelectorPseudoElementMapHash
 %omit-struct-type
 %language=C++
 %readonly-tables
@@ -158,16 +159,16 @@ for line in input_file:
 
 output_file.write("""%%
 
-static inline std::optional<CSSSelector::PseudoElementType> parsePseudoElementString(const LChar* characters, unsigned length)
+static inline std::optional<CSSSelector::PseudoElement> parsePseudoElementString(const LChar* characters, unsigned length)
 {
-    if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementTypeMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
+    if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
         return entry->type;
     return std::nullopt;
 }""")
 
 output_file.write("""
 
-static inline std::optional<CSSSelector::PseudoElementType> parsePseudoElementString(const UChar* characters, unsigned length)
+static inline std::optional<CSSSelector::PseudoElement> parsePseudoElementString(const UChar* characters, unsigned length)
 {
     const unsigned maxKeywordLength = %s;
     LChar buffer[maxKeywordLength];
@@ -186,7 +187,7 @@ static inline std::optional<CSSSelector::PseudoElementType> parsePseudoElementSt
 """ % longest_keyword)
 
 output_file.write("""
-std::optional<CSSSelector::PseudoElementType> parsePseudoElementString(StringView pseudoTypeString)
+std::optional<CSSSelector::PseudoElement> parsePseudoElementString(StringView pseudoTypeString)
 {
     if (pseudoTypeString.is8Bit())
         return parsePseudoElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
@@ -204,6 +205,6 @@ gperf_command = sys.argv[2]
 if 'GPERF' in os.environ:
     gperf_command = os.environ['GPERF']
 
-if subprocess.call([gperf_command, '--key-positions=*', '-m', '10', '-s', '2', 'SelectorPseudoElementTypeMap.gperf', '--output-file=SelectorPseudoElementTypeMap.cpp']) != 0:
-    print("Error when generating SelectorPseudoElementTypeMap.cpp from SelectorPseudoElementTypeMap.gperf :(")
+if subprocess.call([gperf_command, '--key-positions=*', '-m', '10', '-s', '2', 'SelectorPseudoElementMap.gperf', '--output-file=SelectorPseudoElementMap.cpp']) != 0:
+    print("Error when generating SelectorPseudoElementMap.cpp from SelectorPseudoElementMap.gperf :(")
     sys.exit(gperf_return)

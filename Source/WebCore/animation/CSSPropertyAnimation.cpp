@@ -4031,7 +4031,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         case CSSPropertyWebkitTextZoom:
         case CSSPropertyAlignmentBaseline:
-        case CSSPropertyAlt:
         case CSSPropertyAnimation:
         case CSSPropertyAnimationComposition:
         case CSSPropertyAnimationDelay:

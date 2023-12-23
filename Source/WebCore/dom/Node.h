@@ -134,7 +134,7 @@ public:
     virtual String nodeName() const = 0;
     virtual String nodeValue() const;
     virtual void setNodeValue(const String&);
-    virtual NodeType nodeType() const = 0;
+    NodeType nodeType() const { return nodeTypeFromBitFields(m_typeBitFields); }
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
     ContainerNode* parentNode() const;
     inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
@@ -238,9 +238,9 @@ public:
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
 
-    bool isDocumentNode() const { return hasTypeFlag(TypeFlag::IsDocumentNode); }
-    bool isTreeScope() const { return hasTypeFlag(TypeFlag::IsDocumentNode) || hasTypeFlag(TypeFlag::IsShadowRoot); }
-    bool isDocumentFragment() const { return hasTypeFlag(TypeFlag::IsDocumentFragment); }
+    bool isDocumentNode() const { return nodeType() == DOCUMENT_NODE; }
+    bool isTreeScope() const { return isDocumentNode() || hasTypeFlag(TypeFlag::IsShadowRoot); }
+    bool isDocumentFragment() const { return nodeType() == DOCUMENT_FRAGMENT_NODE; }
     bool isShadowRoot() const { return hasTypeFlag(TypeFlag::IsShadowRoot); }
     bool isUserAgentShadowRoot() const; // Defined in ShadowRoot.h
 
@@ -558,7 +558,7 @@ public:
     void updateAncestorConnectedSubframeCountForInsertion() const;
 
 #if ENABLE(JIT)
-    static ptrdiff_t typeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_typeFlags); }
+    static ptrdiff_t typeFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_typeBitFields); }
     static ptrdiff_t stateFlagsMemoryOffset() { return OBJECT_OFFSETOF(Node, m_stateFlags); }
     static ptrdiff_t rareDataMemoryOffset() { return OBJECT_OFFSETOF(Node, m_rareDataWithBitfields); }
 #if CPU(ADDRESS64)
@@ -584,14 +584,18 @@ protected:
         IsHTMLElement = 1 << 4,
         IsSVGElement = 1 << 5,
         IsMathMLElement = 1 << 6,
-        IsDocumentNode = 1 << 7,
-        IsDocumentFragment = 1 << 8,
-        IsShadowRoot = 1 << 9,
-        IsUnknownElement = 1 << 10,
-        IsDocumentFragmentForInnerOuterHTML = 1 << 11,
-        IsEditingText = 1 << 12,
-        HasCustomStyleResolveCallbacks = 1 << 13,
+        IsShadowRoot = 1 << 7,
+        IsUnknownElement = 1 << 8,
+        IsDocumentFragmentForInnerOuterHTML = 1 << 9,
+        IsEditingText = 1 << 10,
+        HasCustomStyleResolveCallbacks = 1 << 11,
     };
+    static constexpr auto typeFlagBitCount = 12;
+
+    static uint16_t constructBitFieldsFromNodeTypeAndFlags(NodeType type, OptionSet<TypeFlag> flags) { return (type << typeFlagBitCount) | flags.toRaw(); }
+    static NodeType nodeTypeFromBitFields(uint16_t bitFields) { return static_cast<NodeType>((bitFields >> typeFlagBitCount) & 0xf); }
+    // Don't bother masking with (1 << typeFlagBitCount) - 1 since OptionSet tolerates the upper 4-bits being used for other purposes.
+    bool hasTypeFlag(TypeFlag flag) const { return OptionSet<TypeFlag>::fromRaw(m_typeBitFields).contains(flag); }
 
     enum class StateFlag : uint16_t {
         IsLink = 1 << 0,
@@ -630,8 +634,6 @@ protected:
         uint16_t effectiveTextDirection : 1;
     };
 
-    bool hasTypeFlag(TypeFlag flag) const { return m_typeFlags.contains(flag); }
-
     bool hasStateFlag(StateFlag flag) const { return m_stateFlags.contains(flag); }
     void setStateFlag(StateFlag flag, bool value = true) const { m_stateFlags.set(flag, value); }
     void clearStateFlag(StateFlag flag) const { setStateFlag(flag, false); }
@@ -657,14 +659,12 @@ protected:
     static constexpr auto CreateContainer = DefaultTypeFlags | TypeFlag::IsContainerNode;
     static constexpr auto CreateElement = CreateContainer | TypeFlag::IsElement;
     static constexpr auto CreatePseudoElement = CreateElement | TypeFlag::HasCustomStyleResolveCallbacks;
-    static constexpr auto CreateDocumentFragment = CreateContainer | TypeFlag::IsDocumentFragment;
-    static constexpr auto CreateShadowRoot = CreateDocumentFragment | TypeFlag::IsShadowRoot;
+    static constexpr auto CreateShadowRoot = CreateContainer | TypeFlag::IsShadowRoot;
     static constexpr auto CreateHTMLElement = CreateElement | TypeFlag::IsHTMLElement;
     static constexpr auto CreateSVGElement = CreateElement | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks;
     static constexpr auto CreateMathMLElement = CreateElement | TypeFlag::IsMathMLElement;
-    static constexpr auto CreateDocument = CreateContainer | TypeFlag::IsDocumentNode;
     static constexpr auto CreateEditingText = CreateText | TypeFlag::IsEditingText;
-    Node(Document&, OptionSet<TypeFlag>);
+    Node(Document&, NodeType, OptionSet<TypeFlag>);
 
     static constexpr uint32_t s_refCountIncrement = 2;
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
@@ -757,7 +757,7 @@ private:
     WEBCORE_EXPORT void notifyInspectorOfRendererChange();
     
     mutable uint32_t m_refCountAndParentBit { s_refCountIncrement };
-    const OptionSet<TypeFlag> m_typeFlags;
+    const uint16_t m_typeBitFields;
     mutable OptionSet<StateFlag> m_stateFlags;
 
     CheckedPtr<ContainerNode> m_parentNode;

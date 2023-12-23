@@ -92,7 +92,7 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
             hasHostInLastCompound = true;
         if (isHostSelectorMatchingInShadowTreeInSelectorList(selector->selectorList()))
             return true;
-        if (selector->tagHistory() && selector->relation() != CSSSelector::RelationType::Subselector) {
+        if (selector->tagHistory() && selector->relation() != CSSSelector::Relation::Subselector) {
             hasOnlyOneCompound = false;
             hasHostInLastCompound = false;
         }
@@ -186,19 +186,19 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 tagSelector = selector;
             break;
         case CSSSelector::Match::PseudoElement:
-            switch (selector->pseudoElementType()) {
-            case CSSSelector::PseudoElementWebKitCustom:
-            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+            switch (selector->pseudoElement()) {
+            case CSSSelector::PseudoElement::WebKitCustom:
+            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
                 customPseudoElementSelector = selector;
                 break;
-            case CSSSelector::PseudoElementSlotted:
+            case CSSSelector::PseudoElement::Slotted:
                 slottedPseudoElementSelector = selector;
                 break;
-            case CSSSelector::PseudoElementPart:
+            case CSSSelector::PseudoElement::Part:
                 partPseudoElementSelector = selector;
                 break;
 #if ENABLE(VIDEO)
-            case CSSSelector::PseudoElementCue:
+            case CSSSelector::PseudoElement::Cue:
                 cuePseudoElementSelector = selector;
                 break;
 #endif
@@ -232,7 +232,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         case CSSSelector::Match::PagePseudoClass:
             break;
         }
-        if (selector->relation() != CSSSelector::RelationType::Subselector)
+        if (selector->relation() != CSSSelector::Relation::Subselector)
             break;
         selector = selector->tagHistory();
     } while (selector);
@@ -266,7 +266,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         ruleData.disableSelectorFiltering();
 
         auto* nextSelector = customPseudoElementSelector->tagHistory();
-        if (nextSelector && nextSelector->match() == CSSSelector::Match::PseudoElement && nextSelector->pseudoElementType() == CSSSelector::PseudoElementPart) {
+        if (nextSelector && nextSelector->match() == CSSSelector::Match::PseudoElement && nextSelector->pseudoElement() == CSSSelector::PseudoElement::Part) {
             // Handle selectors like ::part(foo)::placeholder with the part codepath.
             m_partPseudoElementRules.append(ruleData);
             return;

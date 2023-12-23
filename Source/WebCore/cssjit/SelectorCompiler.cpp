@@ -650,21 +650,21 @@ void compileSelector(CompiledSelector& compiledSelector, const CSSSelector* sele
     ASSERT(compiledSelector.status != SelectorCompilationStatus::NotCompiled);
 }
 
-static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)
+static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::Relation relation)
 {
     switch (relation) {
-    case CSSSelector::RelationType::DescendantSpace:
+    case CSSSelector::Relation::DescendantSpace:
         return FragmentRelation::Descendant;
-    case CSSSelector::RelationType::Child:
+    case CSSSelector::Relation::Child:
         return FragmentRelation::Child;
-    case CSSSelector::RelationType::DirectAdjacent:
+    case CSSSelector::Relation::DirectAdjacent:
         return FragmentRelation::DirectAdjacent;
-    case CSSSelector::RelationType::IndirectAdjacent:
+    case CSSSelector::Relation::IndirectAdjacent:
         return FragmentRelation::IndirectAdjacent;
-    case CSSSelector::RelationType::Subselector:
-    case CSSSelector::RelationType::ShadowDescendant:
-    case CSSSelector::RelationType::ShadowPartDescendant:
-    case CSSSelector::RelationType::ShadowSlotted:
+    case CSSSelector::Relation::Subselector:
+    case CSSSelector::Relation::ShadowDescendant:
+    case CSSSelector::Relation::ShadowPartDescendant:
+    case CSSSelector::Relation::ShadowSlotted:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
@@ -1471,39 +1471,39 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             if (selectorContext == SelectorContext::QuerySelector)
                 return FunctionType::CannotMatchAnything;
 
-            switch (selector->pseudoElementType()) {
-            case CSSSelector::PseudoElementAfter:
-            case CSSSelector::PseudoElementBackdrop:
-            case CSSSelector::PseudoElementBefore:
-            case CSSSelector::PseudoElementFirstLetter:
-            case CSSSelector::PseudoElementFirstLine:
-            case CSSSelector::PseudoElementGrammarError:
-            case CSSSelector::PseudoElementMarker:
-            case CSSSelector::PseudoElementResizer:
-            case CSSSelector::PseudoElementScrollbar:
-            case CSSSelector::PseudoElementScrollbarButton:
-            case CSSSelector::PseudoElementScrollbarCorner:
-            case CSSSelector::PseudoElementScrollbarThumb:
-            case CSSSelector::PseudoElementScrollbarTrack:
-            case CSSSelector::PseudoElementScrollbarTrackPiece:
-            case CSSSelector::PseudoElementSelection:
-            case CSSSelector::PseudoElementSpellingError:
-            case CSSSelector::PseudoElementViewTransition:
-            case CSSSelector::PseudoElementWebKitCustom:
-            case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
+            switch (selector->pseudoElement()) {
+            case CSSSelector::PseudoElement::After:
+            case CSSSelector::PseudoElement::Backdrop:
+            case CSSSelector::PseudoElement::Before:
+            case CSSSelector::PseudoElement::FirstLetter:
+            case CSSSelector::PseudoElement::FirstLine:
+            case CSSSelector::PseudoElement::GrammarError:
+            case CSSSelector::PseudoElement::Marker:
+            case CSSSelector::PseudoElement::Resizer:
+            case CSSSelector::PseudoElement::Scrollbar:
+            case CSSSelector::PseudoElement::ScrollbarButton:
+            case CSSSelector::PseudoElement::ScrollbarCorner:
+            case CSSSelector::PseudoElement::ScrollbarThumb:
+            case CSSSelector::PseudoElement::ScrollbarTrack:
+            case CSSSelector::PseudoElement::ScrollbarTrackPiece:
+            case CSSSelector::PseudoElement::Selection:
+            case CSSSelector::PseudoElement::SpellingError:
+            case CSSSelector::PseudoElement::ViewTransition:
+            case CSSSelector::PseudoElement::WebKitCustom:
+            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
                 ASSERT(!fragment->pseudoElementSelector);
                 fragment->pseudoElementSelector = selector;
                 break;
 #if ENABLE(VIDEO)
-            case CSSSelector::PseudoElementCue:
+            case CSSSelector::PseudoElement::Cue:
 #endif
-            case CSSSelector::PseudoElementHighlight:
-            case CSSSelector::PseudoElementPart:
-            case CSSSelector::PseudoElementSlotted:
-            case CSSSelector::PseudoElementViewTransitionGroup:
-            case CSSSelector::PseudoElementViewTransitionImagePair:
-            case CSSSelector::PseudoElementViewTransitionOld:
-            case CSSSelector::PseudoElementViewTransitionNew:
+            case CSSSelector::PseudoElement::Highlight:
+            case CSSSelector::PseudoElement::Part:
+            case CSSSelector::PseudoElement::Slotted:
+            case CSSSelector::PseudoElement::ViewTransitionGroup:
+            case CSSSelector::PseudoElement::ViewTransitionImagePair:
+            case CSSSelector::PseudoElement::ViewTransitionOld:
+            case CSSSelector::PseudoElement::ViewTransitionNew:
                 return FunctionType::CannotCompile;
             }
 
@@ -1547,16 +1547,16 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         }
 
         auto relation = selector->relation();
-        if (relation == CSSSelector::RelationType::Subselector)
+        if (relation == CSSSelector::Relation::Subselector)
             continue;
 
-        if ((relation == CSSSelector::RelationType::ShadowDescendant || relation == CSSSelector::RelationType::ShadowPartDescendant) && !selector->isLastInTagHistory())
+        if ((relation == CSSSelector::Relation::ShadowDescendant || relation == CSSSelector::Relation::ShadowPartDescendant) && !selector->isLastInTagHistory())
             return FunctionType::CannotCompile;
 
-        if (relation == CSSSelector::RelationType::ShadowSlotted)
+        if (relation == CSSSelector::Relation::ShadowSlotted)
             return FunctionType::CannotCompile;
 
-        if (relation == CSSSelector::RelationType::DirectAdjacent || relation == CSSSelector::RelationType::IndirectAdjacent) {
+        if (relation == CSSSelector::Relation::DirectAdjacent || relation == CSSSelector::Relation::IndirectAdjacent) {
             FunctionType relationFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
             if (selectorContext == SelectorContext::QuerySelector)
                 relationFunctionType = FunctionType::SimpleSelectorChecker;
@@ -4422,7 +4422,7 @@ void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudo
             failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(PseudoId::None))));
         else {
             Assembler::Jump skip = m_assembler.branch8(Assembler::Equal, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(PseudoId::None)));
-            failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElementType())))));
+            failureCases.append(m_assembler.branch8(Assembler::NotEqual, Assembler::Address(checkingContext, OBJECT_OFFSETOF(SelectorChecker::CheckingContext, pseudoId)), Assembler::TrustedImm32(static_cast<unsigned>(CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElement())))));
             skip.link(&m_assembler);
         }
     }
@@ -4512,7 +4512,7 @@ void SelectorCodeGenerator::generateMarkPseudoStyleForPseudoElement(Assembler::J
     successCases.append(branchOnResolvingModeWithCheckingContext(Assembler::Equal, SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements, checkingContext));
 
     // When resolving mode is ResolvingStyle, mark the pseudo style for pseudo element.
-    PseudoId dynamicPseudo = CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElementType());
+    PseudoId dynamicPseudo = CSSSelector::pseudoId(fragment.pseudoElementSelector->pseudoElement());
     if (dynamicPseudo < PseudoId::FirstInternalPseudoId) {
         failureCases.append(branchOnResolvingModeWithCheckingContext(Assembler::NotEqual, SelectorChecker::Mode::ResolvingStyle, checkingContext));
 

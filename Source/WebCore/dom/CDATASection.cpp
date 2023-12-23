@@ -31,7 +31,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(CDATASection);
 
 inline CDATASection::CDATASection(Document& document, String&& data)
-    : Text(document, WTFMove(data), CreateText)
+    : Text(document, WTFMove(data), CDATA_SECTION_NODE, CreateText)
 {
 }
 
@@ -43,11 +43,6 @@ Ref<CDATASection> CDATASection::create(Document& document, String&& data)
 String CDATASection::nodeName() const
 {
     return "#cdata-section"_s;
-}
-
-Node::NodeType CDATASection::nodeType() const
-{
-    return CDATA_SECTION_NODE;
 }
 
 Ref<Node> CDATASection::cloneNodeInternal(Document& targetDocument, CloningOperation)

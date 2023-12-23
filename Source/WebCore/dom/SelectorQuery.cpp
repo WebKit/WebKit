@@ -83,7 +83,7 @@ static IdMatchingType findIdMatchingType(const CSSSelector& firstSelector)
                 return IdMatchingType::Rightmost;
             return IdMatchingType::Filter;
         }
-        if (selector->relation() != CSSSelector::RelationType::Subselector)
+        if (selector->relation() != CSSSelector::Relation::Subselector)
             inRightmost = false;
     }
     return IdMatchingType::None;
@@ -195,7 +195,7 @@ static const CSSSelector* selectorForIdLookup(const ContainerNode& rootNode, con
     for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
         if (canBeUsedForIdFastPath(*selector))
             return selector;
-        if (selector->relation() != CSSSelector::RelationType::Subselector)
+        if (selector->relation() != CSSSelector::Relation::Subselector)
             break;
     }
 
@@ -242,7 +242,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     const CSSSelector* selector = &firstSelector;
     do {
         ASSERT(!canBeUsedForIdFastPath(*selector));
-        if (selector->relation() != CSSSelector::RelationType::Subselector)
+        if (selector->relation() != CSSSelector::Relation::Subselector)
             break;
         selector = selector->tagHistory();
     } while (selector);
@@ -260,9 +260,9 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
                 }
             }
         }
-        if (selector->relation() == CSSSelector::RelationType::Subselector)
+        if (selector->relation() == CSSSelector::Relation::Subselector)
             continue;
-        inAdjacentChain = selector->relation() == CSSSelector::RelationType::DirectAdjacent || selector->relation() == CSSSelector::RelationType::IndirectAdjacent;
+        inAdjacentChain = selector->relation() == CSSSelector::Relation::DirectAdjacent || selector->relation() == CSSSelector::Relation::IndirectAdjacent;
     }
     return rootNode;
 }

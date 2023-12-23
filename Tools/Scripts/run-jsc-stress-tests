@@ -648,7 +648,7 @@ if $testWriter
 end
 
 # We force all tests to use a smaller (1.5M) stack so that stack overflow tests can run faster.
-BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--validateExceptionChecks=true", "--useDollarVM=true", "--maxPerThreadStackUsage=1572864"]
+BASE_OPTIONS = ["--validateOptions=true", "--useFTLJIT=false", "--useFunctionDotArguments=true", "--validateExceptionChecks=true", "--useDollarVM=true", "--maxPerThreadStackUsage=1572864"]
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--thresholdForOMGOptimizeAfterWarmUp=20", "--thresholdForOMGOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true", "--repatchBufferingCountdown=0"]
 # NOTE: Tests rely on this using scribbleFreeCells.
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
@@ -1631,12 +1631,12 @@ def runProfiler
 end
 
 def runExceptionFuzz
-    subCommand = escapeAll(vmCommand + ["--useDollarVM=true", "--useExceptionFuzz=true", $benchmark.to_s])
+    subCommand = escapeAll(vmCommand + ["--validateOptions=true", "--useDollarVM=true", "--useExceptionFuzz=true", $benchmark.to_s])
     addRunCommand("exception-fuzz", ["perl", (pathToHelpers + "js-exception-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 
 def runExecutableAllocationFuzz(name, *options)
-    subCommand = escapeAll(vmCommand + ["--useDollarVM=true", $benchmark.to_s] + options)
+    subCommand = escapeAll(vmCommand + ["--validateOptions=true", "--useDollarVM=true", $benchmark.to_s] + options)
     addRunCommand("executable-allocation-fuzz-" + name, ["perl", (pathToHelpers + "js-executable-allocation-fuzz").to_s, subCommand], silentOutputHandler, simpleErrorHandler)
 end
 

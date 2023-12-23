@@ -166,7 +166,7 @@ bool BasicShapeCircle::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherCircle = downcast<BasicShapeCircle>(other);
+    auto& otherCircle = uncheckedDowncast<BasicShapeCircle>(other);
     return m_centerX == otherCircle.m_centerX
         && m_centerY == otherCircle.m_centerY
         && m_radius == otherCircle.m_radius
@@ -203,7 +203,7 @@ bool BasicShapeCircle::canBlend(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    return radius().canBlend(downcast<BasicShapeCircle>(other).radius());
+    return radius().canBlend(uncheckedDowncast<BasicShapeCircle>(other).radius());
 }
 
 Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, const BlendingContext& context) const
@@ -253,7 +253,7 @@ bool BasicShapeEllipse::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherEllipse = downcast<BasicShapeEllipse>(other);
+    auto& otherEllipse = uncheckedDowncast<BasicShapeEllipse>(other);
     return m_centerX == otherEllipse.m_centerX
         && m_centerY == otherEllipse.m_centerY
         && m_radiusX == otherEllipse.m_radiusX
@@ -292,7 +292,7 @@ bool BasicShapeEllipse::canBlend(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherEllipse = downcast<BasicShapeEllipse>(other);
+    auto& otherEllipse = uncheckedDowncast<BasicShapeEllipse>(other);
     return radiusX().canBlend(otherEllipse.radiusX()) && radiusY().canBlend(otherEllipse.radiusY());
 }
 
@@ -367,7 +367,7 @@ bool BasicShapeRect::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherRect = downcast<BasicShapeRect>(other);
+    auto& otherRect = uncheckedDowncast<BasicShapeRect>(other);
     return m_edges == otherRect.m_edges
         && m_topLeftRadius == otherRect.m_topLeftRadius
         && m_topRightRadius == otherRect.m_topRightRadius
@@ -471,7 +471,7 @@ bool BasicShapeXywh::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherXywh = downcast<BasicShapeXywh>(other);
+    auto& otherXywh = uncheckedDowncast<BasicShapeXywh>(other);
     return m_insetX == otherXywh.m_insetX
         && m_insetY == otherXywh.m_insetY
         && m_width == otherXywh.m_width
@@ -561,7 +561,7 @@ bool BasicShapePolygon::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherPolygon = downcast<BasicShapePolygon>(other);
+    auto& otherPolygon = uncheckedDowncast<BasicShapePolygon>(other);
     return m_windRule == otherPolygon.m_windRule
         && m_values == otherPolygon.m_values;
 }
@@ -585,7 +585,7 @@ bool BasicShapePolygon::canBlend(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherPolygon = downcast<BasicShapePolygon>(other);
+    auto& otherPolygon = uncheckedDowncast<BasicShapePolygon>(other);
     return values().size() == otherPolygon.values().size() && windRule() == otherPolygon.windRule();
 }
 
@@ -654,7 +654,7 @@ bool BasicShapePath::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherPath = downcast<BasicShapePath>(other);
+    auto& otherPath = uncheckedDowncast<BasicShapePath>(other);
     return m_zoom == otherPath.m_zoom && m_windRule == otherPath.m_windRule && *m_byteStream == *otherPath.m_byteStream;
 }
 
@@ -663,7 +663,7 @@ bool BasicShapePath::canBlend(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherPath = downcast<BasicShapePath>(other);
+    auto& otherPath = uncheckedDowncast<BasicShapePath>(other);
     return windRule() == otherPath.windRule() && canBlendSVGPathByteStreams(*m_byteStream, *otherPath.pathData());
 }
 
@@ -722,7 +722,7 @@ bool BasicShapeInset::operator==(const BasicShape& other) const
     if (type() != other.type())
         return false;
 
-    auto& otherInset = downcast<BasicShapeInset>(other);
+    auto& otherInset = uncheckedDowncast<BasicShapeInset>(other);
     return m_right == otherInset.m_right
         && m_top == otherInset.m_top
         && m_bottom == otherInset.m_bottom

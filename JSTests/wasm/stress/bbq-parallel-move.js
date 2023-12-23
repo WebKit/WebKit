@@ -2,6 +2,9 @@
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 
+
+let verbose = false;
+
 let wat = `
 (module
     (func $log_value (import "a" "log_value") (param i32))
@@ -59,11 +62,11 @@ async function test() {
         log = []
     }
 
-    print(lastLog)
+    if (verbose) print(lastLog)
     if (lastLog != "value: 3")
         throw ""
 
-    ;; print("Success")
+    if (verbose) print("Success")
 }
 
 assert.asyncTest(test())

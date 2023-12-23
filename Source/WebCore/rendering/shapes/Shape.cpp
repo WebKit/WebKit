@@ -102,7 +102,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
     switch (basicShape.type()) {
 
     case BasicShape::Type::Circle: {
-        const auto& circle = downcast<BasicShapeCircle>(basicShape);
+        const auto& circle = uncheckedDowncast<BasicShapeCircle>(basicShape);
         float centerX = floatValueForCenterCoordinate(circle.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(circle.centerY(), boxHeight);
         float radius = circle.floatValueForRadiusInBox(boxWidth, boxHeight, { centerX, centerY });
@@ -114,7 +114,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
     }
 
     case BasicShape::Type::Ellipse: {
-        const auto& ellipse = downcast<BasicShapeEllipse>(basicShape);
+        const auto& ellipse = uncheckedDowncast<BasicShapeEllipse>(basicShape);
         float centerX = floatValueForCenterCoordinate(ellipse.centerX(), boxWidth);
         float centerY = floatValueForCenterCoordinate(ellipse.centerY(), boxHeight);
         float radiusX = ellipse.floatValueForRadiusInBox(ellipse.radiusX(), centerX, boxWidth);
@@ -127,7 +127,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
     }
 
     case BasicShape::Type::Polygon: {
-        const auto& polygon = downcast<BasicShapePolygon>(basicShape);
+        const auto& polygon = uncheckedDowncast<BasicShapePolygon>(basicShape);
         const Vector<Length>& values = polygon.values();
         size_t valuesSize = values.size();
         ASSERT(!(valuesSize % 2));
@@ -144,7 +144,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
     }
 
     case BasicShape::Type::Inset: {
-        const auto& inset = downcast<BasicShapeInset>(basicShape);
+        const auto& inset = uncheckedDowncast<BasicShapeInset>(basicShape);
         float left = floatValueForLength(inset.left(), boxWidth);
         float top = floatValueForLength(inset.top(), boxHeight);
         FloatRect rect(left,

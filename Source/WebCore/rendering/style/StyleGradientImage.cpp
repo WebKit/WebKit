@@ -84,7 +84,8 @@ StyleGradientImage::~StyleGradientImage() = default;
 
 bool StyleGradientImage::operator==(const StyleImage& other) const
 {
-    return is<StyleGradientImage>(other) && equals(downcast<StyleGradientImage>(other));
+    auto* otherGradientImage = dynamicDowncast<StyleGradientImage>(other);
+    return otherGradientImage && equals(*otherGradientImage);
 }
 
 bool StyleGradientImage::equals(const StyleGradientImage& other) const

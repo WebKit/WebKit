@@ -60,7 +60,8 @@ StyleFilterImage::~StyleFilterImage()
 
 bool StyleFilterImage::operator==(const StyleImage& other) const
 {
-    return is<StyleFilterImage>(other) && equals(downcast<StyleFilterImage>(other));
+    auto* otherFilterImage = dynamicDowncast<StyleFilterImage>(other);
+    return otherFilterImage && equals(*otherFilterImage);
 }
 
 bool StyleFilterImage::equals(const StyleFilterImage& other) const
@@ -101,10 +102,8 @@ void StyleFilterImage::load(CachedResourceLoader& cachedResourceLoader, const Re
     }
 
     for (auto& filterOperation : m_filterOperations.operations()) {
-        if (!is<ReferenceFilterOperation>(filterOperation))
-            continue;
-        auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(*filterOperation);
-        referenceFilterOperation.loadExternalDocumentIfNeeded(cachedResourceLoader, options);
+        if (auto* referenceFilterOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation.get()))
+            referenceFilterOperation->loadExternalDocumentIfNeeded(cachedResourceLoader, options);
     }
 
     m_inputImageIsReady = true;

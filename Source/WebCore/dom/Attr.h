@@ -63,7 +63,6 @@ private:
     Attr(Document&, const QualifiedName&, const AtomString& value);
 
     String nodeName() const final { return name(); }
-    NodeType nodeType() const final { return ATTRIBUTE_NODE; }
 
     String nodeValue() const final { return value(); }
     void setNodeValue(const String&) final;

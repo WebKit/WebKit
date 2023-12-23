@@ -45,7 +45,6 @@ private:
     DocumentType(Document&, const String& name, const String& publicId, const String& systemId);
 
     String nodeName() const override;
-    NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.

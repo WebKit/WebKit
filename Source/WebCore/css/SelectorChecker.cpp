@@ -294,7 +294,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             if (checkingContext.resolvingMode == Mode::QueryingRules)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
-            PseudoId pseudoId = CSSSelector::pseudoId(context.selector->pseudoElementType());
+            auto pseudoId = CSSSelector::pseudoId(context.selector->pseudoElement());
             if (pseudoId != PseudoId::None)
                 dynamicPseudoIdSet.add(pseudoId);
             matchType = MatchType::VirtualPseudoElementOnly;
@@ -312,7 +312,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     LocalContext nextContext(context);
     nextContext.selector = leftSelector;
 
-    if (relation != CSSSelector::RelationType::Subselector) {
+    if (relation != CSSSelector::Relation::Subselector) {
         // Bail-out if this selector is irrelevant for the pseudoId
         if (context.pseudoId != PseudoId::None && !dynamicPseudoIdSet.has(context.pseudoId))
             return MatchResult::fails(Match::SelectorFailsCompletely);
@@ -323,7 +323,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
         nextContext.pseudoId = PseudoId::None;
 
-        bool allowMultiplePseudoElements = relation == CSSSelector::RelationType::ShadowDescendant;
+        bool allowMultiplePseudoElements = relation == CSSSelector::Relation::ShadowDescendant;
         // Virtual pseudo element is only effective in the rightmost fragment.
         if (!allowMultiplePseudoElements)
             nextContext.pseudoElementEffective = false;
@@ -332,7 +332,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     }
 
     switch (relation) {
-    case CSSSelector::RelationType::DescendantSpace:
+    case CSSSelector::Relation::DescendantSpace:
         nextContext = localContextForParent(nextContext);
         nextContext.firstSelectorOfTheFragment = nextContext.selector;
         for (; nextContext.element; nextContext = localContextForParent(nextContext)) {
@@ -345,7 +345,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         }
         return MatchResult::fails(Match::SelectorFailsCompletely);
 
-    case CSSSelector::RelationType::Child:
+    case CSSSelector::Relation::Child:
         {
             nextContext = localContextForParent(nextContext);
             if (!nextContext.element)
@@ -360,7 +360,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             return MatchResult::fails(Match::SelectorFailsAllSiblings);
         }
 
-    case CSSSelector::RelationType::DirectAdjacent:
+    case CSSSelector::Relation::DirectAdjacent:
         {
             auto relation = context.isMatchElement ? Style::Relation::AffectedByPreviousSibling : Style::Relation::DescendantsAffectedByPreviousSibling;
             addStyleRelation(checkingContext, *context.element, relation);
@@ -379,7 +379,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
-    case CSSSelector::RelationType::IndirectAdjacent: {
+    case CSSSelector::Relation::IndirectAdjacent: {
         auto relation = context.isMatchElement ? Style::Relation::AffectedByPreviousSibling : Style::Relation::DescendantsAffectedByPreviousSibling;
         addStyleRelation(checkingContext, *context.element, relation);
 
@@ -397,7 +397,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         };
         return MatchResult::fails(Match::SelectorFailsAllSiblings);
     }
-    case CSSSelector::RelationType::Subselector:
+    case CSSSelector::Relation::Subselector:
         {
             // a selector is invalid if something follows a pseudo-element
             // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
@@ -413,7 +413,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
             return MatchResult::updateWithMatchType(result, matchType);
         }
-    case CSSSelector::RelationType::ShadowDescendant:  {
+    case CSSSelector::Relation::ShadowDescendant:  {
         auto* host = context.element->shadowHost();
         if (!host)
             return MatchResult::fails(Match::SelectorFailsCompletely);
@@ -426,7 +426,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
         return MatchResult::updateWithMatchType(result, matchType);
     }
-    case CSSSelector::RelationType::ShadowPartDescendant: {
+    case CSSSelector::Relation::ShadowPartDescendant: {
         // Continue matching in the scope where this rule came from.
         auto* host = checkingContext.styleScopeOrdinal == Style::ScopeOrdinal::Element
             ? context.element->shadowHost()
@@ -444,7 +444,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
 
         return MatchResult::updateWithMatchType(result, matchType);
     }
-    case CSSSelector::RelationType::ShadowSlotted: {
+    case CSSSelector::Relation::ShadowSlotted: {
         // We continue matching in the scope where this rule came from.
         auto slot = Style::assignedSlotForScopeOrdinal(*context.element, checkingContext.styleScopeOrdinal);
         if (!slot)
@@ -638,10 +638,10 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
         }
 
         auto relation = selector->relation();
-        if (relation == CSSSelector::RelationType::ShadowDescendant || relation == CSSSelector::RelationType::ShadowPartDescendant)
+        if (relation == CSSSelector::Relation::ShadowDescendant || relation == CSSSelector::Relation::ShadowPartDescendant)
             return true;
 
-        if (relation != CSSSelector::RelationType::Subselector)
+        if (relation != CSSSelector::Relation::Subselector)
             return false;
     }
     return false;
@@ -1132,9 +1132,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
     }
 
     if (selector.match() == CSSSelector::Match::PseudoElement) {
-        switch (selector.pseudoElementType()) {
+        switch (selector.pseudoElement()) {
 #if ENABLE(VIDEO)
-        case CSSSelector::PseudoElementCue: {
+        case CSSSelector::PseudoElement::Cue: {
             LocalContext subcontext(context);
 
             const CSSSelector* const & selector = context.selector;
@@ -1149,7 +1149,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return false;
         }
 #endif
-        case CSSSelector::PseudoElementSlotted: {
+        case CSSSelector::PseudoElement::Slotted: {
             if (!context.element->assignedSlot())
                 return false;
             // ::slotted matches after flattening so it can't match an active <slot>.
@@ -1164,7 +1164,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             PseudoIdSet ignoredDynamicPseudo;
             return matchRecursively(checkingContext, subcontext, ignoredDynamicPseudo).match == Match::SelectorMatches;
         }
-        case CSSSelector::PseudoElementPart: {
+        case CSSSelector::PseudoElement::Part: {
             auto translatePartNameToRuleScope = [&](AtomString partName) {
                 Vector<AtomString, 1> mappedNames { partName };
 
@@ -1200,7 +1200,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return true;
         }
 
-        case CSSSelector::PseudoElementHighlight:
+        case CSSSelector::PseudoElement::Highlight:
             // Always matches when not specifically requested so it gets added to the pseudoIdSet.
             if (checkingContext.pseudoId == PseudoId::None)
                 return true;
@@ -1208,14 +1208,14 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return false;
             return selector.argumentList()->first() == checkingContext.nameIdentifier;
 
-        case CSSSelector::PseudoElementViewTransitionGroup:
-        case CSSSelector::PseudoElementViewTransitionImagePair:
-        case CSSSelector::PseudoElementViewTransitionOld:
-        case CSSSelector::PseudoElementViewTransitionNew: {
+        case CSSSelector::PseudoElement::ViewTransitionGroup:
+        case CSSSelector::PseudoElement::ViewTransitionImagePair:
+        case CSSSelector::PseudoElement::ViewTransitionOld:
+        case CSSSelector::PseudoElement::ViewTransitionNew: {
             // Always matches when not specifically requested so it gets added to the pseudoIdSet.
             if (checkingContext.pseudoId == PseudoId::None)
                 return true;
-            if (checkingContext.pseudoId != CSSSelector::pseudoId(selector.pseudoElementType()) || !selector.argumentList())
+            if (checkingContext.pseudoId != CSSSelector::pseudoId(selector.pseudoElement()) || !selector.argumentList())
                 return false;
 
             // Wildcard always matches.
@@ -1509,7 +1509,7 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
             }
         }
         auto relation = selector->relation();
-        if (relation == CSSSelector::RelationType::Subselector)
+        if (relation == CSSSelector::Relation::Subselector)
             continue;
         if (!selector->hasDescendantOrChildRelation())
             return linkMatchType;

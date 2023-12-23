@@ -3434,7 +3434,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGElementTypeHelpers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SVGNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SelectorPseudoClassAndCompatibilityElementMap.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SelectorPseudoElementTypeMap.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SelectorPseudoElementMap.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ServiceWorkerGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Settings.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Settings.h
