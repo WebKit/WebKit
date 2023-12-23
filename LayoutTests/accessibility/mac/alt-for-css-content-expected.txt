@@ -1,4 +1,4 @@
-This tests that alt (formerly known as -webkit-alt) applies to text and image content in CSS styles, and that it makes it to accessibility.
+This tests that the content alt text syntax applies to text and image content in CSS styles, and that it makes it to accessibility.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -40,12 +40,6 @@ AXTitle:
 AXValue: ALTERNATIVE CONTENT TEST6
 
 alt accessed through Javascript: "ALTERNATIVE CONTENT TEST2"
-Test7 - alt does not apply to DOM nodes.
-AXRole: AXImage
-AXDescription: This is the right text
-AXTitle:
-AXValue:
-
 PASS successfullyParsed is true
 
 TEST COMPLETE

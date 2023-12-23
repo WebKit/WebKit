@@ -2098,11 +2098,6 @@ static Ref<CSSValue> fillSizeToCSSValue(CSSPropertyID propertyID, const FillSize
         zoomAdjustedPixelValueForLength(fillSize.size.height, style));
 }
 
-static Ref<CSSValue> altTextToCSSValue(const RenderStyle& style)
-{
-    return CSSPrimitiveValue::create(style.contentAltText());
-}
-
 static Ref<CSSValue> contentToCSSValue(const RenderStyle& style)
 {
     CSSValueListBuilder list;
@@ -4253,8 +4248,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.textOrientation());
     case CSSPropertyWebkitLineBoxContain:
         return createLineBoxContainValue(style.lineBoxContain());
-    case CSSPropertyAlt:
-        return altTextToCSSValue(style);
     case CSSPropertyContent:
         return contentToCSSValue(style);
     case CSSPropertyCounterIncrement:

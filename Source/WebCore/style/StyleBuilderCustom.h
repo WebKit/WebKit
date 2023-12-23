@@ -150,7 +150,6 @@ public:
 #endif
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
     static void applyValueWritingMode(BuilderState&, CSSValue&);
-    static void applyValueAlt(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
@@ -1924,28 +1923,6 @@ inline void BuilderCustom::applyValueGridTemplateRows(BuilderState& builderState
         return;
 
     SET_TRACKS_DATA(trackList, builderState.style(), Row);
-}
-
-void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.isString())
-        builderState.style().setContentAltText(primitiveValue.stringValue());
-    else if (primitiveValue.isAttr()) {
-        // FIXME: Can a namespace be specified for an attr(foo)?
-        if (builderState.style().styleType() == PseudoId::None)
-            builderState.style().setUnique();
-        else
-            const_cast<RenderStyle&>(builderState.parentStyle()).setUnique();
-
-        QualifiedName attr(nullAtom(), AtomString { primitiveValue.stringValue() }, nullAtom());
-        const AtomString& value = builderState.element() ? builderState.element()->getAttribute(attr) : nullAtom();
-        builderState.style().setContentAltText(value.isNull() ? emptyAtom() : value);
-
-        // Register the fact that the attribute value affects the style.
-        builderState.registerContentAttribute(attr.localName());
-    } else
-        builderState.style().setContentAltText(emptyAtom());
 }
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)

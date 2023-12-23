@@ -8238,15 +8238,6 @@ RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-RefPtr<CSSValue> consumeAlt(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    if (range.peek().type() == StringToken)
-        return consumeString(range);
-    if (range.peek().functionId() != CSSValueAttr)
-        return nullptr;
-    return consumeAttr(consumeFunction(range), context);
-}
-
 RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
 {
     if (auto singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range))

@@ -354,7 +354,6 @@ inline Vector<Style::ScopedName> RenderStyle::initialContainerNames() { return {
 constexpr ContainerType RenderStyle::initialContainerType() { return ContainerType::Normal; }
 constexpr OptionSet<Containment> RenderStyle::initialContainment() { return { }; }
 constexpr StyleContentAlignmentData RenderStyle::initialContentAlignment() { return { }; }
-inline const AtomString& RenderStyle::initialContentAltText() { return emptyAtom(); }
 constexpr ContentVisibility RenderStyle::initialContentVisibility() { return ContentVisibility::Visible; }
 constexpr CursorType RenderStyle::initialCursor() { return CursorType::Auto; }
 constexpr StyleSelfAlignmentData RenderStyle::initialDefaultAlignment() { return { ItemPosition::Normal, OverflowAlignment::Default }; }
