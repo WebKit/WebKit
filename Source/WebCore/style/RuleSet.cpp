@@ -88,7 +88,7 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
     bool hasOnlyOneCompound = true;
     bool hasHostInLastCompound = false;
     for (auto* selector = &startSelector; selector; selector = selector->tagHistory()) {
-        if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Host)
+        if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Host)
             hasHostInLastCompound = true;
         if (isHostSelectorMatchingInShadowTreeInSelectorList(selector->selectorList()))
             return true;
@@ -207,18 +207,18 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             }
             break;
         case CSSSelector::Match::PseudoClass:
-            switch (selector->pseudoClassType()) {
-            case CSSSelector::PseudoClassType::Link:
-            case CSSSelector::PseudoClassType::Visited:
-            case CSSSelector::PseudoClassType::AnyLink:
-            case CSSSelector::PseudoClassType::AnyLinkDeprecated:
+            switch (selector->pseudoClass()) {
+            case CSSSelector::PseudoClass::Link:
+            case CSSSelector::PseudoClass::Visited:
+            case CSSSelector::PseudoClass::AnyLink:
+            case CSSSelector::PseudoClass::AnyLinkDeprecated:
                 linkSelector = selector;
                 break;
-            case CSSSelector::PseudoClassType::Focus:
-            case CSSSelector::PseudoClassType::FocusVisible:
+            case CSSSelector::PseudoClass::Focus:
+            case CSSSelector::PseudoClass::FocusVisible:
                 focusSelector = selector;
                 break;
-            case CSSSelector::PseudoClassType::Host:
+            case CSSSelector::PseudoClass::Host:
                 hostPseudoClassSelector = selector;
                 break;
             default:

@@ -29,7 +29,7 @@ import subprocess
 
 
 def enumerablePseudoType(stringPseudoType):
-    output = ['CSSSelector::PseudoClassType::']
+    output = ['CSSSelector::PseudoClass::']
 
     if stringPseudoType.endswith('('):
         stringPseudoType = stringPseudoType[:-1]

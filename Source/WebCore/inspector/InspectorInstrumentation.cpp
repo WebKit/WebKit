@@ -328,7 +328,7 @@ bool InspectorInstrumentation::handleMousePressImpl(InstrumentingAgents& instrum
     return false;
 }
 
-bool InspectorInstrumentation::forcePseudoStateImpl(InstrumentingAgents& instrumentingAgents, const Element& element, CSSSelector::PseudoClassType pseudoState)
+bool InspectorInstrumentation::forcePseudoStateImpl(InstrumentingAgents& instrumentingAgents, const Element& element, CSSSelector::PseudoClass pseudoState)
 {
     if (auto* cssAgent = instrumentingAgents.enabledCSSAgent())
         return cssAgent->forcePseudoState(element, pseudoState);

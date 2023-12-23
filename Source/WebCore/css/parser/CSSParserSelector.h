@@ -69,13 +69,13 @@ public:
     const CSSSelectorList* selectorList() const { return m_selector->selectorList(); }
     
     void setPseudoElementType(CSSSelector::PseudoElementType type) { m_selector->setPseudoElementType(type); }
-    void setPseudoClassType(CSSSelector::PseudoClassType type) { m_selector->setPseudoClassType(type); }
+    void setPseudoClass(CSSSelector::PseudoClass type) { m_selector->setPseudoClass(type); }
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>&&);
     void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
-    CSSSelector::PseudoClassType pseudoClassType() const { return m_selector->pseudoClassType(); }
+    CSSSelector::PseudoClass pseudoClass() const { return m_selector->pseudoClass(); }
 
     bool isPseudoElementCueFunction() const;
 

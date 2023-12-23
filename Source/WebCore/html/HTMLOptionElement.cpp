@@ -171,7 +171,7 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
     case AttributeNames::disabledAttr: {
         bool newDisabled = !newValue.isNull();
         if (m_disabled != newDisabled) {
-            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassType::Disabled, newDisabled },  { CSSSelector::PseudoClassType::Enabled, !newDisabled } });
+            Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClass::Disabled, newDisabled },  { CSSSelector::PseudoClass::Enabled, !newDisabled } });
             m_disabled = newDisabled;
             if (renderer() && renderer()->style().hasEffectiveAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStyle::State::Enabled);
@@ -180,7 +180,7 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
     }
     case AttributeNames::selectedAttr: {
         // FIXME: Use PseudoClassChangeInvalidation in other elements that implement matchesDefaultPseudoClass().
-        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassType::Default, !newValue.isNull());
+        Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClass::Default, !newValue.isNull());
         m_isDefault = !newValue.isNull();
 
         // FIXME: WebKit still need to implement 'dirtiness'. See: https://bugs.webkit.org/show_bug.cgi?id=258073
@@ -244,7 +244,7 @@ void HTMLOptionElement::setSelectedState(bool selected, AllowStyleInvalidation a
 
     std::optional<Style::PseudoClassChangeInvalidation> checkedInvalidation;
     if (allowStyleInvalidation == AllowStyleInvalidation::Yes)
-        emplace(checkedInvalidation, *this, { { CSSSelector::PseudoClassType::Checked, selected } });
+        emplace(checkedInvalidation, *this, { { CSSSelector::PseudoClass::Checked, selected } });
 
     m_isSelected = selected;
 

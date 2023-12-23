@@ -68,7 +68,7 @@ auto HasSelectorFilter::makeKey(const CSSSelector& hasSelector) -> Key
     SelectorFilter::CollectedSelectorHashes hashes;
     bool hasHoverInCompound = false;
     for (auto* simpleSelector = &hasSelector; simpleSelector; simpleSelector = simpleSelector->tagHistory()) {
-        if (simpleSelector->match() == CSSSelector::Match::PseudoClass && simpleSelector->pseudoClassType() == CSSSelector::PseudoClassType::Hover)
+        if (simpleSelector->match() == CSSSelector::Match::PseudoClass && simpleSelector->pseudoClass() == CSSSelector::PseudoClass::Hover)
             hasHoverInCompound = true;
         SelectorFilter::collectSimpleSelectorHash(hashes, *simpleSelector);
         if (!hashes.ids.isEmpty())

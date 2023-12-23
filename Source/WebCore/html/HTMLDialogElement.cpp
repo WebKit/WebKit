@@ -173,7 +173,7 @@ void HTMLDialogElement::setIsModal(bool newValue)
 {
     if (m_isModal == newValue)
         return;
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Modal, newValue);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Modal, newValue);
     m_isModal = newValue;
 }
 

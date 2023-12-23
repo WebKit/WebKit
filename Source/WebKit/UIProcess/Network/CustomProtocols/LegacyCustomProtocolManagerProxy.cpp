@@ -44,6 +44,7 @@ Ref<NetworkProcessProxy> LegacyCustomProtocolManagerProxy::protectedProcess()
 
 LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 {
+    // Unable to ref the network process as it may have started destruction.
     CheckedRef checkedProcess = m_networkProcessProxy.get();
     checkedProcess->removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
     invalidate();
@@ -61,6 +62,7 @@ void LegacyCustomProtocolManagerProxy::stopLoading(LegacyCustomProtocolID custom
 
 void LegacyCustomProtocolManagerProxy::invalidate()
 {
+    // Unable to ref the network process as it may have started destruction.
     CheckedRef checkedProcess = m_networkProcessProxy.get();
     checkedProcess->customProtocolManagerClient().invalidate(*this);
 }
