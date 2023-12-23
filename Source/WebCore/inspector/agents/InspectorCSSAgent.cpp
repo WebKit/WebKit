@@ -379,7 +379,7 @@ void InspectorCSSAgent::setActiveStyleSheetsForDocument(Document& document, Vect
     }
 }
 
-bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClassType pseudoClassType)
+bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClass pseudoClass)
 {
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
@@ -392,7 +392,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (!nodeId)
         return false;
 
-    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClassType);
+    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClass);
 }
 
 std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
@@ -938,31 +938,31 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
 
         switch (*pseudoClass) {
         case Protocol::CSS::ForceablePseudoClass::Active:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Active);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Active);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Hover:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Hover);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Hover);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Focus:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Focus);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Focus);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::FocusVisible:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusVisible);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusVisible);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::FocusWithin:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::FocusWithin);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::FocusWithin);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Target:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Target);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Target);
             break;
 
         case Protocol::CSS::ForceablePseudoClass::Visited:
-            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassType::Visited);
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClass::Visited);
             break;
         }
     }

@@ -102,7 +102,7 @@ struct PossiblyQuotedIdentifier {
             ShadowSlotted
         };
 
-        enum class PseudoClassType : uint8_t {
+        enum class PseudoClass : uint8_t {
             Empty,
             FirstChild,
             FirstOfType,
@@ -298,8 +298,8 @@ struct PossiblyQuotedIdentifier {
 
         bool hasDescendantOrChildRelation() const { return relation() == RelationType::Child || hasDescendantRelation(); }
 
-        PseudoClassType pseudoClassType() const;
-        void setPseudoClassType(PseudoClassType);
+        PseudoClass pseudoClass() const;
+        void setPseudoClass(PseudoClass);
 
         PseudoElementType pseudoElementType() const;
         void setPseudoElementType(PseudoElementType);
@@ -415,35 +415,35 @@ inline bool CSSSelector::isWebKitCustomPseudoElement() const
     return pseudoElementType() == PseudoElementWebKitCustom || pseudoElementType() == PseudoElementWebKitCustomLegacyPrefixed;
 }
 
-static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClassType type)
+static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClass type)
 {
-    return type == CSSSelector::PseudoClassType::Empty
-        || type == CSSSelector::PseudoClassType::FirstChild
-        || type == CSSSelector::PseudoClassType::FirstOfType
-        || type == CSSSelector::PseudoClassType::LastChild
-        || type == CSSSelector::PseudoClassType::LastOfType
-        || type == CSSSelector::PseudoClassType::OnlyChild
-        || type == CSSSelector::PseudoClassType::OnlyOfType
-        || type == CSSSelector::PseudoClassType::NthChild
-        || type == CSSSelector::PseudoClassType::NthOfType
-        || type == CSSSelector::PseudoClassType::NthLastChild
-        || type == CSSSelector::PseudoClassType::NthLastOfType;
+    return type == CSSSelector::PseudoClass::Empty
+        || type == CSSSelector::PseudoClass::FirstChild
+        || type == CSSSelector::PseudoClass::FirstOfType
+        || type == CSSSelector::PseudoClass::LastChild
+        || type == CSSSelector::PseudoClass::LastOfType
+        || type == CSSSelector::PseudoClass::OnlyChild
+        || type == CSSSelector::PseudoClass::OnlyOfType
+        || type == CSSSelector::PseudoClass::NthChild
+        || type == CSSSelector::PseudoClass::NthOfType
+        || type == CSSSelector::PseudoClass::NthLastChild
+        || type == CSSSelector::PseudoClass::NthLastOfType;
 }
 
-static inline bool isTreeStructuralPseudoClass(CSSSelector::PseudoClassType type)
+static inline bool isTreeStructuralPseudoClass(CSSSelector::PseudoClass type)
 {
-    return pseudoClassIsRelativeToSiblings(type) || type == CSSSelector::PseudoClassType::Root;
+    return pseudoClassIsRelativeToSiblings(type) || type == CSSSelector::PseudoClass::Root;
 }
 
-inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClassType pseudoClassType)
+inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClass pseudoClass)
 {
-    switch (pseudoClassType) {
-    case CSSSelector::PseudoClassType::Is:
-    case CSSSelector::PseudoClassType::Where:
-    case CSSSelector::PseudoClassType::Not:
-    case CSSSelector::PseudoClassType::Any:
-    case CSSSelector::PseudoClassType::Matches:
-    case CSSSelector::PseudoClassType::Has:
+    switch (pseudoClass) {
+    case CSSSelector::PseudoClass::Is:
+    case CSSSelector::PseudoClass::Where:
+    case CSSSelector::PseudoClass::Not:
+    case CSSSelector::PseudoClass::Any:
+    case CSSSelector::PseudoClass::Matches:
+    case CSSSelector::PseudoClass::Has:
         return true;
     default:
         return false;
@@ -454,7 +454,7 @@ inline bool CSSSelector::isSiblingSelector() const
 {
     return relation() == RelationType::DirectAdjacent
         || relation() == RelationType::IndirectAdjacent
-        || (match() == CSSSelector::Match::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClassType()));
+        || (match() == CSSSelector::Match::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClass()));
 }
 
 inline bool CSSSelector::isAttributeSelector() const
@@ -543,16 +543,16 @@ inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
     return m_caseInsensitiveAttributeValueMatching;
 }
 
-inline auto CSSSelector::pseudoClassType() const -> PseudoClassType
+inline auto CSSSelector::pseudoClass() const -> PseudoClass
 {
     ASSERT(match() == Match::PseudoClass);
-    return static_cast<PseudoClassType>(m_pseudoType);
+    return static_cast<PseudoClass>(m_pseudoType);
 }
 
-inline void CSSSelector::setPseudoClassType(PseudoClassType pseudoType)
+inline void CSSSelector::setPseudoClass(PseudoClass pseudoClass)
 {
-    m_pseudoType = enumToUnderlyingType(pseudoType);
-    ASSERT(static_cast<PseudoClassType>(m_pseudoType) == pseudoType);
+    m_pseudoType = enumToUnderlyingType(pseudoClass);
+    ASSERT(static_cast<PseudoClass>(m_pseudoType) == pseudoClass);
 }
 
 inline auto CSSSelector::pseudoElementType() const -> PseudoElementType

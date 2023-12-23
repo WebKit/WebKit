@@ -255,7 +255,7 @@ ResolvedStyle Resolver::styleForElement(const Element& element, const Resolution
         style.setIsLink(true);
         InsideLink linkState = document().visitedLinkState().determineLinkState(element);
         if (linkState != InsideLink::NotInside) {
-            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassType::Visited);
+            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::Visited);
             if (forceVisited)
                 linkState = InsideLink::InsideVisited;
         }

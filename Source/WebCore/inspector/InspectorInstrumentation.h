@@ -151,7 +151,7 @@ public:
     static void mouseDidMoveOverElement(Page&, const HitTestResult&, OptionSet<PlatformEventModifier>);
     static bool handleMousePress(LocalFrame&);
     static bool handleTouchEvent(LocalFrame&, Node&);
-    static bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
+    static bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
     static void willFetch(ScriptExecutionContext&, const String& url);
@@ -380,7 +380,7 @@ private:
     static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, OptionSet<PlatformEventModifier>);
     static bool handleMousePressImpl(InstrumentingAgents&);
     static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
-    static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClassType);
+    static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClass);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
     static void willFetchImpl(InstrumentingAgents&, const String& url);
@@ -788,7 +788,7 @@ inline bool InspectorInstrumentation::handleMousePress(LocalFrame& frame)
     return false;
 }
 
-inline bool InspectorInstrumentation::forcePseudoState(const Element& element, CSSSelector::PseudoClassType pseudoState)
+inline bool InspectorInstrumentation::forcePseudoState(const Element& element, CSSSelector::PseudoClass pseudoState)
 {
     FAST_RETURN_IF_NO_FRONTENDS(false);
     if (auto* agents = instrumentingAgents(element.document()))

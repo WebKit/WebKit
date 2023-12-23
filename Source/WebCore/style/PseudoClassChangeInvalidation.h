@@ -35,16 +35,16 @@ namespace Style {
 
 class PseudoClassChangeInvalidation {
 public:
-    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, bool value, InvalidationScope = InvalidationScope::All);
+    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClass, bool value, InvalidationScope = InvalidationScope::All);
     enum AnyValueTag { AnyValue };
-    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClassType, AnyValueTag);
-    PseudoClassChangeInvalidation(Element&, std::initializer_list<std::pair<CSSSelector::PseudoClassType, bool>>);
+    PseudoClassChangeInvalidation(Element&, CSSSelector::PseudoClass, AnyValueTag);
+    PseudoClassChangeInvalidation(Element&, std::initializer_list<std::pair<CSSSelector::PseudoClass, bool>>);
 
     ~PseudoClassChangeInvalidation();
 
 private:
     enum class Value : uint8_t { False, True, Any };
-    void computeInvalidation(CSSSelector::PseudoClassType, Value, Style::InvalidationScope);
+    void computeInvalidation(CSSSelector::PseudoClass, Value, Style::InvalidationScope);
     void collectRuleSets(const PseudoClassInvalidationKey&, Value, InvalidationScope);
     void invalidateBeforeChange();
     void invalidateAfterChange();
@@ -56,14 +56,14 @@ private:
     Invalidator::MatchElementRuleSets m_afterChangeRuleSets;
 };
 
-Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType, const Element&);
+Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClass, const Element&);
 
-inline void emplace(std::optional<PseudoClassChangeInvalidation>& invalidation, Element& element, std::initializer_list<std::pair<CSSSelector::PseudoClassType, bool>> pseudoClasses)
+inline void emplace(std::optional<PseudoClassChangeInvalidation>& invalidation, Element& element, std::initializer_list<std::pair<CSSSelector::PseudoClass, bool>> pseudoClasses)
 {
     invalidation.emplace(element, pseudoClasses);
 }
 
-inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClassType pseudoClass, bool value, Style::InvalidationScope invalidationScope)
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClass pseudoClass, bool value, Style::InvalidationScope invalidationScope)
     : m_isEnabled(element.needsStyleInvalidation())
     , m_element(element)
 
@@ -74,7 +74,7 @@ inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& ele
     invalidateBeforeChange();
 }
 
-inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClassType pseudoClass, AnyValueTag)
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, CSSSelector::PseudoClass pseudoClass, AnyValueTag)
     : m_isEnabled(element.needsStyleInvalidation())
     , m_element(element)
 
@@ -85,7 +85,7 @@ inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& ele
     invalidateBeforeChange();
 }
 
-inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, std::initializer_list<std::pair<CSSSelector::PseudoClassType, bool>> pseudoClasses)
+inline PseudoClassChangeInvalidation::PseudoClassChangeInvalidation(Element& element, std::initializer_list<std::pair<CSSSelector::PseudoClass, bool>> pseudoClasses)
     : m_isEnabled(element.needsStyleInvalidation())
     , m_element(element)
 {

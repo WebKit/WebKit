@@ -243,9 +243,9 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
 static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector, const CSSSelector& childSelector)
 {
     if (selector.match() == CSSSelector::Match::PseudoClass) {
-        auto type = selector.pseudoClassType();
+        auto type = selector.pseudoClass();
         // For :nth-child(n of .some-subselector) where an element change may affect other elements similar to sibling combinators.
-        if (type == CSSSelector::PseudoClassType::NthChild || type == CSSSelector::PseudoClassType::NthLastChild) {
+        if (type == CSSSelector::PseudoClass::NthChild || type == CSSSelector::PseudoClass::NthLastChild) {
             if (matchElement == MatchElement::Parent)
                 return MatchElement::ParentAnySibling;
             if (matchElement == MatchElement::Ancestor)
@@ -254,10 +254,10 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
         }
 
         // Similarly for :host().
-        if (type == CSSSelector::PseudoClassType::Host)
+        if (type == CSSSelector::PseudoClass::Host)
             return MatchElement::Host;
 
-        if (type == CSSSelector::PseudoClassType::Has) {
+        if (type == CSSSelector::PseudoClass::Has) {
             if (matchElement != MatchElement::Subject)
                 return MatchElement::HasNonSubject;
             return computeHasPseudoClassMatchElement(childSelector);
@@ -301,10 +301,10 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
                 break;
             }
         } else if (selector->match() == CSSSelector::Match::PseudoClass) {
-            bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClassType());
+            bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClass());
             if (!isLogicalCombination)
                 selectorFeatures.pseudoClasses.append({ selector, matchElement, isNegation });
-            canBreakScope = isLogicalCombination && selector->pseudoClassType() != CSSSelector::PseudoClassType::Has ? CanBreakScope::Yes : CanBreakScope::No;
+            canBreakScope = isLogicalCombination && selector->pseudoClass() != CSSSelector::PseudoClass::Has ? CanBreakScope::Yes : CanBreakScope::No;
         }
 
         if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
@@ -312,14 +312,14 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
             auto subSelectorIsNegation = isNegation;
-            if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Not)
+            if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Not)
                 subSelectorIsNegation = isNegation == IsNegation::No ? IsNegation::Yes : IsNegation::No;
 
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector, *subSelector);
                 auto doesBreakScope = recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
 
-                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Has)
+                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Has)
                     selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation, doesBreakScope });
             }
         }
@@ -336,7 +336,7 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
     return isScopeBreaking(matchElement) ? DoesBreakScope::Yes : DoesBreakScope::No;
 }
 
-PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
+PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
 {
     ASSERT(keyType != InvalidationKeyType::Universal || keyString == starAtom());
     return {
@@ -346,13 +346,13 @@ PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoCla
     };
 };
 
-static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClassType pseudoClassType, const CSSSelector& selector)
+static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, const CSSSelector& selector)
 {
     AtomString className;
     AtomString tagName;
     for (auto* simpleSelector = selector.firstInCompound(); simpleSelector; simpleSelector = simpleSelector->tagHistory()) {
         if (simpleSelector->match() == CSSSelector::Match::Id)
-            return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Id, simpleSelector->value());
+            return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Id, simpleSelector->value());
 
         if (simpleSelector->match() == CSSSelector::Match::Class && className.isNull())
             className = simpleSelector->value();
@@ -364,12 +364,12 @@ static PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::Ps
             break;
     }
     if (!className.isEmpty())
-        return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Class, className);
+        return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Class, className);
 
     if (!tagName.isEmpty() && tagName != starAtom())
-        return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Tag, tagName);
+        return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Tag, tagName);
 
-    return makePseudoClassInvalidationKey(pseudoClassType, InvalidationKeyType::Universal);
+    return makePseudoClassInvalidationKey(pseudoClass, InvalidationKeyType::Universal);
 };
 
 void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<const StyleRuleScope>>& scopeRules)
@@ -428,13 +428,13 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
 
     for (auto& entry : selectorFeatures.pseudoClasses) {
         auto& [selector, matchElement, isNegation] = entry;
-        pseudoClassRules.ensure(makePseudoClassInvalidationKey(selector->pseudoClassType(), *selector), [] {
+        pseudoClassRules.ensure(makePseudoClassInvalidationKey(selector->pseudoClass(), *selector), [] {
             return makeUnique<Vector<RuleFeature>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation });
 
         if (matchElement == MatchElement::Host)
-            pseudoClassesAffectingHost.add(selector->pseudoClassType());
-        pseudoClassTypes.add(selector->pseudoClassType());
+            pseudoClassesAffectingHost.add(selector->pseudoClass());
+        pseudoClasss.add(selector->pseudoClass());
 
         setUsesMatchElement(matchElement);
     }
@@ -442,7 +442,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
     for (auto& entry : selectorFeatures.hasPseudoClasses) {
         auto& [selector, matchElement, isNegation, doesBreakScope] = entry;
         // The selector argument points to a selector inside :has() selector list instead of :has() itself.
-        hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClassType::Has, *selector), [] {
+        hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClass::Has, *selector), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
 
@@ -481,7 +481,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 
     addMap(pseudoClassRules, other.pseudoClassRules);
     pseudoClassesAffectingHost.add(other.pseudoClassesAffectingHost.begin(), other.pseudoClassesAffectingHost.end());
-    pseudoClassTypes.add(other.pseudoClassTypes.begin(), other.pseudoClassTypes.end());
+    pseudoClasss.add(other.pseudoClasss.begin(), other.pseudoClasss.end());
 
     addMap(hasPseudoClassRules, other.hasPseudoClassRules);
     scopeBreakingHasPseudoClassRules.appendVector(other.scopeBreakingHasPseudoClassRules);
@@ -518,7 +518,7 @@ void RuleFeatureSet::clear()
     attributesAffectingHost.clear();
     pseudoClassRules.clear();
     pseudoClassesAffectingHost.clear();
-    pseudoClassTypes.clear();
+    pseudoClasss.clear();
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
 }

@@ -518,7 +518,7 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
         return;
     ASSERT(m_inputType->type() != newType->type());
 
-    Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClassType::Default, Style::PseudoClassChangeInvalidation::AnyValue);
+    Style::PseudoClassChangeInvalidation defaultInvalidation(*this, CSSSelector::PseudoClass::Default, Style::PseudoClassChangeInvalidation::AnyValue);
 
     removeFromRadioButtonGroup();
     resignStrongPasswordAppearance();
@@ -553,7 +553,7 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
         updateTextDirectionalityAfterInputTypeChange();
 
     if (UNLIKELY(didSupportReadOnly != willSupportReadOnly && hasAttributeWithoutSynchronization(readonlyAttr))) {
-        emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClassType::ReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClassType::ReadOnly, willSupportReadOnly } });
+        emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClass::ReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClass::ReadOnly, willSupportReadOnly } });
         readOnlyStateChanged();
     }
 
@@ -1050,7 +1050,7 @@ void HTMLInputElement::setDefaultCheckedState(bool isDefaultChecked)
 
     std::optional<Style::PseudoClassChangeInvalidation> defaultInvalidation;
     if (m_inputType->isCheckable())
-        defaultInvalidation.emplace(*this, CSSSelector::PseudoClassType::Default, isDefaultChecked);
+        defaultInvalidation.emplace(*this, CSSSelector::PseudoClass::Default, isDefaultChecked);
     m_isDefaultChecked = isDefaultChecked;
 }
 
@@ -1062,7 +1062,7 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
 
     m_inputType->willUpdateCheckedness(isChecked, wasCheckedByJavaScript);
 
-    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassType::Checked, isChecked);
+    Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClass::Checked, isChecked);
 
     m_isChecked = isChecked;
 
@@ -1086,7 +1086,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     if (indeterminate() == newValue)
         return;
 
-    Style::PseudoClassChangeInvalidation indeterminateInvalidation(*this, CSSSelector::PseudoClassType::Indeterminate, newValue);
+    Style::PseudoClassChangeInvalidation indeterminateInvalidation(*this, CSSSelector::PseudoClass::Indeterminate, newValue);
     m_isIndeterminate = newValue;
 
     if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
@@ -1498,7 +1498,7 @@ void HTMLInputElement::setAutoFilled(bool autoFilled)
     if (autoFilled == m_isAutoFilled)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Autofill, autoFilled);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Autofill, autoFilled);
     m_isAutoFilled = autoFilled;
 }
 
@@ -1507,7 +1507,7 @@ void HTMLInputElement::setAutoFilledAndViewable(bool autoFilledAndViewable)
     if (autoFilledAndViewable == m_isAutoFilledAndViewable)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::AutofillStrongPasswordViewable, autoFilledAndViewable);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::AutofillStrongPasswordViewable, autoFilledAndViewable);
     m_isAutoFilledAndViewable = autoFilledAndViewable;
 }
 
@@ -1516,7 +1516,7 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
     if (autoFilledAndObscured == m_isAutoFilledAndObscured)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::AutofillAndObscured, autoFilledAndObscured);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::AutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
 
     if (auto* cache = document().existingAXObjectCache())

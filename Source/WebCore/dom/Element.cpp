@@ -856,7 +856,7 @@ void Element::setActive(bool value, Style::InvalidationScope invalidationScope)
     if (value == active())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Active, value, invalidationScope);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Active, value, invalidationScope);
         document().userActionElements().setActive(*this, value);
     }
 
@@ -878,7 +878,7 @@ void Element::setFocus(bool value, FocusVisibility visibility)
     if (value == focused())
         return;
     
-    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { { CSSSelector::PseudoClassType::Focus, value }, { CSSSelector::PseudoClassType::FocusVisible, value } });
+    Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { { CSSSelector::PseudoClass::Focus, value }, { CSSSelector::PseudoClass::FocusVisible, value } });
     protectedDocument()->userActionElements().setFocused(*this, value);
 
     // Shadow host with a slot that contain focused element is not considered focused.
@@ -915,7 +915,7 @@ void Element::setHasFocusWithin(bool value)
     if (hasFocusWithin() == value)
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::FocusWithin, value);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::FocusWithin, value);
         protectedDocument()->userActionElements().setHasFocusWithin(*this, value);
     }
 }
@@ -934,7 +934,7 @@ void Element::setHovered(bool value, Style::InvalidationScope invalidationScope,
     if (value == hovered())
         return;
     {
-        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Hover, value, invalidationScope);
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Hover, value, invalidationScope);
         protectedDocument()->userActionElements().setHovered(*this, value);
     }
 
@@ -949,7 +949,7 @@ void Element::setBeingDragged(bool value)
     if (value == isBeingDragged())
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Drag, value);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Drag, value);
     protectedDocument()->userActionElements().setBeingDragged(*this, value);
 }
 
@@ -2200,7 +2200,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 
 void Element::updateEffectiveLangStateAndPropagateToDescendants()
 {
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassType::Lang, Style::PseudoClassChangeInvalidation::AnyValue);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Lang, Style::PseudoClassChangeInvalidation::AnyValue);
     updateEffectiveLangState();
 
     for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
@@ -2209,7 +2209,7 @@ void Element::updateEffectiveLangStateAndPropagateToDescendants()
             it.traverseNextSkippingChildren();
             continue;
         }
-        Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassType::Lang, Style::PseudoClassChangeInvalidation::AnyValue);
+        Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClass::Lang, Style::PseudoClassChangeInvalidation::AnyValue);
         element->updateEffectiveLangStateFromParent();
         it.traverseNext();
     }
@@ -2376,9 +2376,9 @@ void Element::setIsLink(bool flag)
     if (isLink() == flag)
         return;
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
-        { CSSSelector::PseudoClassType::AnyLink, flag },
-        { CSSSelector::PseudoClassType::AnyLinkDeprecated, flag },
-        { CSSSelector::PseudoClassType::Link, flag }
+        { CSSSelector::PseudoClass::AnyLink, flag },
+        { CSSSelector::PseudoClass::AnyLinkDeprecated, flag },
+        { CSSSelector::PseudoClass::Link, flag }
     });
     setStateFlag(StateFlag::IsLink, flag);
 }
@@ -3037,7 +3037,7 @@ ShadowRoot& Element::createUserAgentShadowRoot()
 inline void Node::setCustomElementState(CustomElementState state)
 {
     Style::PseudoClassChangeInvalidation styleInvalidation(checkedDowncast<Element>(*this),
-        CSSSelector::PseudoClassType::Defined,
+        CSSSelector::PseudoClass::Defined,
         state == CustomElementState::Custom || state == CustomElementState::Uncustomized
     );
     auto bitfields = rareDataBitfields();
@@ -4478,7 +4478,7 @@ void Element::requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&& p
 
 void Element::setFullscreenFlag(bool flag)
 {
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, { { CSSSelector::PseudoClassType::Fullscreen, flag }, { CSSSelector::PseudoClassType::Modal, flag } });
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, { { CSSSelector::PseudoClass::Fullscreen, flag }, { CSSSelector::PseudoClass::Modal, flag } });
     if (flag)
         setStateFlag(StateFlag::IsFullscreen);
     else

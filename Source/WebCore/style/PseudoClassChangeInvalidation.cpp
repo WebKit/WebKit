@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Style {
 
-Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClassType pseudoClass, const Element& element)
+Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelector::PseudoClass pseudoClass, const Element& element)
 {
     Vector<PseudoClassInvalidationKey, 4> keys;
 
@@ -52,13 +52,13 @@ Vector<PseudoClassInvalidationKey, 4> makePseudoClassInvalidationKeys(CSSSelecto
     return keys;
 };
 
-void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClassType pseudoClass, Value value, InvalidationScope invalidationScope)
+void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass pseudoClass, Value value, InvalidationScope invalidationScope)
 {
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
-        if (mayAffectShadowTree && features.pseudoClassTypes.contains(pseudoClass))
+        if (mayAffectShadowTree && features.pseudoClasss.contains(pseudoClass))
             mayAffectStyleInShadowTree = true;
         if (m_element.shadowRoot() && features.pseudoClassesAffectingHost.contains(pseudoClass))
             shouldInvalidateCurrent = true;
