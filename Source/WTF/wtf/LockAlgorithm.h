@@ -63,7 +63,7 @@ public:
                 value = Hooks::lockHook(value);
                 return true;
             },
-            std::memory_order_acquire);
+            std::memory_order_relaxed);
     }
     
     static void lock(Atomic<LockType>& lock)

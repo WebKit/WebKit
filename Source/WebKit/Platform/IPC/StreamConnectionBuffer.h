@@ -113,7 +113,7 @@ public:
     uint8_t* data() const { return static_cast<uint8_t*>(m_sharedMemory->data()) + headerSize(); }
     size_t dataSize() const { return m_dataSize; }
 
-    static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ClientOffset::serverIsSleepingTag)) - 1; }
+    static constexpr size_t maximumSize() { return static_cast<size_t>(ClientOffset::serverIsSleepingTag) - 1; }
 
     std::span<uint8_t> headerForTesting();
     std::span<uint8_t> dataForTesting();

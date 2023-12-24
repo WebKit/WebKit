@@ -106,6 +106,11 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
     ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
 
     for (;;) {
+        // The alignedSpan uses the minimumMessageSize to calculate the next beginning position in the buffer,
+        // and not the size. The size might be more or less what is needed, depending on where the reader is.
+        // If there is no capacity for minimum message size, wait until more is available.
+        // In the case where clientOffset < clientLimit we can arrive to a situation where
+        // 0 < result.size() < minimumMessageSize.
         if (clientLimit != ClientLimit::clientIsWaitingTag) {
             auto result = alignedSpan(m_clientOffset, toLimit(clientLimit));
             if (result.size() >= minimumMessageSize)
@@ -113,18 +118,13 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
         }
         if (timeout.didTimeOut())
             break;
-        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acquire);
+        ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_release, std::memory_order_relaxed);
         if (clientLimit == oldClientLimit) {
             if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
                 return std::nullopt;
             clientLimit = sharedClientLimit().load(std::memory_order_acquire);
         } else
             clientLimit = oldClientLimit;
-        // The alignedSpan uses the minimumMessageSize to calculate the next beginning position in the buffer,
-        // and not the size. The size might be more or less what is needed, depending on where the reader is.
-        // If there is no capacity for minimum message size, wait until more is available.
-        // In the case where clientOffset < clientLimit we can arrive to a situation where
-        // 0 < result.size() < minimumMessageSize.
     }
     return std::nullopt;
 }
@@ -133,7 +133,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
 {
     // This would mean we try to send messages after a timeout. It is a programming error.
     // Since the value is trusted, we only assert.
-    ASSERT(sharedClientLimit().load(std::memory_order_acquire) != ClientLimit::clientIsWaitingTag);
+    ASSERT(sharedClientLimit().load(std::memory_order_relaxed) != ClientLimit::clientIsWaitingTag);
 
     // The server acknowledges that sync message has been processed by setting clientOffset == clientLimit == 0.
     // Wait for this condition, or then the condition where server says that it started to sleep after setting that condition.
@@ -144,7 +144,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
     for (;;) {
         ClientLimit clientLimit = sharedClientLimit().exchange(ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel);
         ClientOffset clientOffset = sharedClientOffset().load(std::memory_order_acquire);
-        if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
+        if (!clientLimit && (!clientOffset || clientOffset == ClientOffset::serverIsSleepingTag))
             break;
 
         if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))

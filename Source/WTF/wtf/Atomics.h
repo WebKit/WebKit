@@ -86,18 +86,12 @@ struct Atomic {
     ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
         T expectedOrActual = expected;
-        return value.compare_exchange_weak(expectedOrActual, desired, order);
+        return value.compare_exchange_weak(expectedOrActual, desired, order, std::memory_order_relaxed);
     }
 
     ALWAYS_INLINE bool compareExchangeWeakRelaxed(T expected, T desired)
     {
         return compareExchangeWeak(expected, desired, std::memory_order_relaxed);
-    }
-
-    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
-    {
-        T expectedOrActual = expected;
-        return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
     }
 
     // WARNING: This does not have strong fencing guarantees when it fails. For example, stores could
@@ -205,6 +199,12 @@ template<typename T>
 inline T atomicCompareExchangeStrong(T* location, T expected, T newValue, std::memory_order order = std::memory_order_seq_cst)
 {
     return bitwise_cast<Atomic<T>*>(location)->compareExchangeStrong(expected, newValue, order);
+}
+
+template<typename T>
+inline T atomicCompareExchangeStrong(T* location, T expected, T newValue, std::memory_order order_success, std::memory_order order_failure)
+{
+    return bitwise_cast<Atomic<T>*>(location)->compareExchangeStrong(expected, newValue, order_success, order_failure);
 }
 
 template<typename T, typename U>
