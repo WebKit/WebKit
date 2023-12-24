@@ -434,7 +434,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData, const Vector<Ref<
 
         if (matchElement == MatchElement::Host)
             pseudoClassesAffectingHost.add(selector->pseudoClass());
-        pseudoClasss.add(selector->pseudoClass());
+        pseudoClasses.add(selector->pseudoClass());
 
         setUsesMatchElement(matchElement);
     }
@@ -481,7 +481,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 
     addMap(pseudoClassRules, other.pseudoClassRules);
     pseudoClassesAffectingHost.add(other.pseudoClassesAffectingHost.begin(), other.pseudoClassesAffectingHost.end());
-    pseudoClasss.add(other.pseudoClasss.begin(), other.pseudoClasss.end());
+    pseudoClasses.add(other.pseudoClasses.begin(), other.pseudoClasses.end());
 
     addMap(hasPseudoClassRules, other.hasPseudoClassRules);
     scopeBreakingHasPseudoClassRules.appendVector(other.scopeBreakingHasPseudoClassRules);
@@ -518,7 +518,7 @@ void RuleFeatureSet::clear()
     attributesAffectingHost.clear();
     pseudoClassRules.clear();
     pseudoClassesAffectingHost.clear();
-    pseudoClasss.clear();
+    pseudoClasses.clear();
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
 }

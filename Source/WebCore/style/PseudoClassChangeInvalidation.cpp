@@ -58,7 +58,7 @@ void PseudoClassChangeInvalidation::computeInvalidation(CSSSelector::PseudoClass
     bool mayAffectStyleInShadowTree = false;
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
-        if (mayAffectShadowTree && features.pseudoClasss.contains(pseudoClass))
+        if (mayAffectShadowTree && features.pseudoClasses.contains(pseudoClass))
             mayAffectStyleInShadowTree = true;
         if (m_element.shadowRoot() && features.pseudoClassesAffectingHost.contains(pseudoClass))
             shouldInvalidateCurrent = true;
