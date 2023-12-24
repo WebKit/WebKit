@@ -914,8 +914,6 @@ webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rendering-update.html [ Timeout Pass ]
 
-webkit.org/b/219474 svg/custom/animate-initial-pause-unpause.html [ Timeout Pass ]
-
 # Flaky tests detected from 29Jan2023 to 23Feb2023
 webkit.org/b/252878 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure Pass ]
