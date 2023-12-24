@@ -609,34 +609,6 @@ Position Position::previousCharacterPosition(Affinity affinity) const
     return *this;
 }
 
-// return first following position rendered at a different location, or "this"
-Position Position::nextCharacterPosition(Affinity affinity) const
-{
-    if (isNull())
-        return { };
-
-    RefPtr fromRootEditableElement = deprecatedNode()->rootEditableElement();
-
-    bool atEndOfLine = isEndOfLine({ *this, affinity });
-    bool rendered = isCandidate();
-    
-    Position currentPosition = *this;
-    while (!currentPosition.atEndOfTree()) {
-        currentPosition = currentPosition.next();
-
-        if (currentPosition.deprecatedNode()->rootEditableElement() != fromRootEditableElement)
-            return *this;
-
-        if (atEndOfLine || !rendered) {
-            if (currentPosition.isCandidate())
-                return currentPosition;
-        } else if (rendersInDifferentPosition(currentPosition))
-            return currentPosition;
-    }
-    
-    return *this;
-}
-
 // Whether or not [node, 0] and [node, lastOffsetForEditing(node)] are their own VisiblePositions.
 // If true, adjacent candidates are visually distinct.
 // FIXME: Disregard nodes with renderers that have no height, as we do in isCandidate.

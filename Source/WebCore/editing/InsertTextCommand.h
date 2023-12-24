@@ -64,8 +64,6 @@ protected:
 
 private:
 
-    void deleteCharacter();
-
     void doApply() override;
 
     bool isInsertTextCommand() const override { return true; }
