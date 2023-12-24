@@ -124,7 +124,7 @@ struct RuleFeatureSet {
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
     HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
-    HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasss;
+    HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasses;
 
     std::array<bool, matchElementCount> usedMatchElements { };
 

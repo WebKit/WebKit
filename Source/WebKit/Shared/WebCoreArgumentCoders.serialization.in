@@ -7220,3 +7220,11 @@ enum class WebCore::ContextMenuItemType : uint8_t {
     Mini,
     Large,
 };
+
+header: <WebCore/PredefinedColorSpace.h>
+enum class WebCore::PredefinedColorSpace : uint8_t {
+    SRGB
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    , DisplayP3
+#endif
+};

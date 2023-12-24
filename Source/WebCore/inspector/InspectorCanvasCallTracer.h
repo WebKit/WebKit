@@ -78,7 +78,7 @@ enum class CanvasLineCap;
 enum class CanvasLineJoin;
 enum class CanvasTextAlign;
 enum class CanvasTextBaseline;
-enum class PredefinedColorSpace;
+enum class PredefinedColorSpace : uint8_t;
 enum ImageSmoothingQuality;
 
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_CSS_TYPED_OM_ARGUMENT(macro) \
