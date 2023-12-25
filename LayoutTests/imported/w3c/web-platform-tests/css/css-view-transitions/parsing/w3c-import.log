@@ -14,5 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/pseudo-elements-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/pseudo-elements-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-name-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-name-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/parsing/view-transition-name-valid.html
