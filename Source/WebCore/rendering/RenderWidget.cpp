@@ -471,7 +471,7 @@ bool RenderWidget::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderWidget::embeddedContentBox() const
 {
-    if (!is<LocalFrameView>(widget()))
+    if (!is<RenderEmbeddedObject>(this) || !is<LocalFrameView>(widget()))
         return nullptr;
     return downcast<LocalFrameView>(*widget()).embeddedContentBox();
 }
