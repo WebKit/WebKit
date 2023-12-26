@@ -4772,7 +4772,6 @@ webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-009.html [
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/lch-010.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-009.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/oklch-010.html [ ImageOnlyFailure ]
-webkit.org/b/261898 imported/w3c/web-platform-tests/css/css-color/oklab-l-over-1-2.html [ ImageOnlyFailure ]
 
 # currentColor support in relative color syntax.
 webkit.org/b/245970 imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-a98rgb-01.html [ ImageOnlyFailure ]
