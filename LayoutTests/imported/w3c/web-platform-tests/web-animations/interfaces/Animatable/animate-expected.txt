@@ -149,6 +149,6 @@ PASS animate() with a non-null invalid pseudoElement '' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement 'before' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement ':abc' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement '::abc' throws a SyntaxError
-FAIL animate() with pseudoElement ::placeholder does not throw The string did not match the expected pattern.
+PASS animate() with pseudoElement ::placeholder does not throw
 PASS Finished fill animation doesn't replace animation on a different pseudoElement
 

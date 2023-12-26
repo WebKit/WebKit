@@ -22,5 +22,5 @@ PASS Changing pseudoElement to a non-null invalid pseudo-selector '' throws a Sy
 PASS Changing pseudoElement to a non-null invalid pseudo-selector 'before' throws a SyntaxError
 PASS Changing pseudoElement to a non-null invalid pseudo-selector ':abc' throws a SyntaxError
 PASS Changing pseudoElement to a non-null invalid pseudo-selector '::abc' throws a SyntaxError
-FAIL Changing pseudoElement to ::placeHOLDER works The string did not match the expected pattern.
+FAIL Changing pseudoElement to ::placeHOLDER works assert_equals: expected (string) "::placeholder" but got (object) null
 

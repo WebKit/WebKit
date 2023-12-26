@@ -284,6 +284,7 @@ bool compareAnimationEventsByCompositeOrder(const AnimationEventBase& a, const A
     return false;
 }
 
+// FIXME: This should be owned by CSSSelector.
 String pseudoIdAsString(PseudoId pseudoId)
 {
     static NeverDestroyed<const String> after(MAKE_STATIC_STRING_IMPL("::after"));
@@ -337,30 +338,15 @@ String pseudoIdAsString(PseudoId pseudoId)
     }
 }
 
-ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
+std::optional<PseudoId> pseudoIdFromString(const String& pseudoElement)
 {
-    // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
-
-    // - If the provided value is not null and is an invalid <pseudo-element-selector>, the user agent must throw a DOMException with error
-    // name SyntaxError and leave the target pseudo-selector of this animation effect unchanged. Note, that invalid in this context follows
-    // the definition of an invalid selector defined in [SELECTORS-4] such that syntactically invalid pseudo-elements as well as pseudo-elements
-    // for which the user agent has no usable level of support are both deemed invalid.
-    // - If one of the legacy Selectors Level 2 single-colon selectors (':before', ':after', ':first-letter', or ':first-line') is specified,
-    // the target pseudo-selector must be set to the equivalent two-colon selector (e.g. '::before').
+    // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
     if (pseudoElement.isNull())
         return PseudoId::None;
 
-    auto isLegacy = pseudoElement == ":before"_s || pseudoElement == ":after"_s || pseudoElement == ":first-letter"_s || pseudoElement == ":first-line"_s;
-    if (!isLegacy && !pseudoElement.startsWith("::"_s))
-        return Exception { ExceptionCode::SyntaxError };
-
     // FIXME: This parserContext should include a document to get the proper settings.
     CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
-    auto pseudoType = CSSSelector::parsePseudoElement(StringView(pseudoElement).substring(isLegacy ? 1 : 2), parserContext);
-    // FIXME: Excluding CSSSelector::PseudoElement::WebKitCustom is almost certainly a bug.
-    if (!pseudoType || pseudoType == CSSSelector::PseudoElement::WebKitCustom)
-        return Exception { ExceptionCode::SyntaxError };
-    return CSSSelector::pseudoId(*pseudoType);
+    return CSSSelector::parseStandalonePseudoElement(pseudoElement, parserContext);
 }
 
 AtomString animatablePropertyAsString(AnimatableCSSProperty property)

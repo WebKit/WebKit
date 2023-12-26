@@ -1227,17 +1227,16 @@ const String KeyframeEffect::pseudoElement() const
 
 ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
 {
-    // https://drafts.csswg.org/web-animations/#dom-keyframeeffect-pseudoelement
-    auto pseudoIdOrException = pseudoIdFromString(pseudoElement);
-    if (pseudoIdOrException.hasException())
-        return pseudoIdOrException.releaseException();
-    auto pseudoId = pseudoIdOrException.returnValue();
+    // https://drafts.csswg.org/web-animations-1/#dom-keyframeeffect-pseudoelement
+    auto pseudoId = pseudoIdFromString(pseudoElement);
+    if (!pseudoId)
+        return Exception { ExceptionCode::SyntaxError, "Parsing pseudo-element selector failed"_s };
 
-    if (pseudoId == m_pseudoId)
+    if (*pseudoId == m_pseudoId)
         return { };
 
     auto& previousTargetStyleable = targetStyleable();
-    m_pseudoId = pseudoId;
+    m_pseudoId = *pseudoId;
     didChangeTargetStyleable(previousTargetStyleable);
 
     return { };
