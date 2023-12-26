@@ -170,10 +170,8 @@ GstObject* TrackPrivateBaseGStreamer::objectForLogging() const
 
 void TrackPrivateBaseGStreamer::disconnect()
 {
-    if (m_stream) {
+    if (m_stream)
         g_signal_handlers_disconnect_matched(m_stream.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-        ASSERT(!g_signal_handler_find(m_stream.get(), G_SIGNAL_MATCH_UNBLOCKED, 0, 0, nullptr, nullptr, nullptr));
-    }
 
     m_tags.clear();
 
@@ -185,11 +183,8 @@ void TrackPrivateBaseGStreamer::disconnect()
         m_bestUpstreamPad.clear();
     }
 
-    if (m_pad) {
-        g_signal_handlers_disconnect_matched(m_pad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-        ASSERT(!g_signal_handler_find(m_pad.get(), G_SIGNAL_MATCH_UNBLOCKED, 0, 0, nullptr, nullptr, nullptr));
+    if (m_pad)
         m_pad.clear();
-    }
 }
 
 void TrackPrivateBaseGStreamer::tagsChanged()
