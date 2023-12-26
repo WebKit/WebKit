@@ -2421,7 +2421,7 @@ static Color parseLabParametersRaw(CSSParserTokenRange& args, ConsumerForLightne
 
     auto normalizedLightness = WTF::switchOn(*lightness,
         [] (NumberRaw number) { return std::clamp(number.value, 0.0, NormalizePercentage<ColorType>::maximumLightnessNumber); },
-        [] (PercentRaw percent) { return std::clamp(normalizeLightnessPercent<ColorType>(percent.value), 0.0, 100.0); },
+        [] (PercentRaw percent) { return std::clamp(normalizeLightnessPercent<ColorType>(percent.value), 0.0, NormalizePercentage<ColorType>::maximumLightnessNumber); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedA = WTF::switchOn(*aValue,
@@ -2510,7 +2510,7 @@ static Color parseLCHParametersRaw(CSSParserTokenRange& args, ConsumerForLightne
 
     auto normalizedLightness = WTF::switchOn(*lightness,
         [] (NumberRaw number) { return std::clamp(number.value, 0.0, NormalizePercentage<ColorType>::maximumLightnessNumber); },
-        [] (PercentRaw percent) { return std::clamp(normalizeLightnessPercent<ColorType>(percent.value), 0.0, 100.0); },
+        [] (PercentRaw percent) { return std::clamp(normalizeLightnessPercent<ColorType>(percent.value), 0.0, NormalizePercentage<ColorType>::maximumLightnessNumber); },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedChroma = WTF::switchOn(*chroma,
