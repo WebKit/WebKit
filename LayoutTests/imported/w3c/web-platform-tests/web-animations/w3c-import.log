@@ -16,5 +16,6 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/README.md
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/testcommon.js

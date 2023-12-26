@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-outgoing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/animating-new-content-subset-expected.html
@@ -100,7 +101,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/dialog-in-top-layer-during-transition-old-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/dialog-in-top-layer-during-transition-old.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/dialog-in-top-layer-during-transition-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/document-element-detatched-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/document-element-detached-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/duplicate-tag-rejects-capture.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/duplicate-tag-rejects-start.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation-expected.html
@@ -180,6 +181,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/japanese-tag-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/japanese-tag-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/japanese-tag.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/list-style-position-style-change-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-new-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-new.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-and-on-top-of-viewport-partially-onscreen-old-expected.html

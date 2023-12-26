@@ -77,6 +77,8 @@ public:
 
     LayoutUnit borderAndPaddingStart() const { return borderStart() + paddingStart().value_or(0_lu); }
     LayoutUnit borderAndPaddingEnd() const { return borderEnd() + paddingEnd().value_or(0_lu); }
+    LayoutUnit borderAndPaddingBefore() const { return borderBefore() + paddingBefore().value_or(0_lu); }
+    LayoutUnit borderAndPaddingAfter() const { return borderAfter() + paddingAfter().value_or(0_lu); }
     LayoutUnit horizontalBorderAndPadding() const { return horizontalBorder() + horizontalPadding().value_or(0_lu); }
     LayoutUnit verticalBorderAndPadding() const { return verticalBorder() + verticalPadding().value_or(0_lu); }
 
@@ -100,12 +102,12 @@ public:
     LayoutUnit marginBoxHeight() const { return marginBefore() + borderBoxHeight() + marginAfter(); }
     LayoutUnit marginBoxWidth() const { return marginStart() + borderBoxWidth() + marginEnd(); }
 
-    LayoutUnit marginBorderAndPaddingBefore() const { return marginBefore() + borderBefore() + paddingBefore().value_or(0_lu); }
-    LayoutUnit marginBorderAndPaddingAfter() const { return marginAfter() + borderAfter() + paddingAfter().value_or(0_lu); }
+    LayoutUnit marginBorderAndPaddingBefore() const { return marginBefore() + borderAndPaddingBefore(); }
+    LayoutUnit marginBorderAndPaddingAfter() const { return marginAfter() + borderAndPaddingAfter(); }
     LayoutUnit verticalMarginBorderAndPadding() const { return marginBorderAndPaddingBefore() + marginBorderAndPaddingAfter(); }
 
-    LayoutUnit marginBorderAndPaddingStart() const { return marginStart() + borderStart() + paddingStart().value_or(0_lu); }
-    LayoutUnit marginBorderAndPaddingEnd() const { return marginEnd() + borderEnd() + paddingEnd().value_or(0_lu); }
+    LayoutUnit marginBorderAndPaddingStart() const { return marginStart() + borderAndPaddingStart(); }
+    LayoutUnit marginBorderAndPaddingEnd() const { return marginEnd() + borderAndPaddingEnd(); }
     LayoutUnit horizontalMarginBorderAndPadding() const { return marginBorderAndPaddingStart() + marginBorderAndPaddingEnd(); }
 
     LayoutUnit verticalSpaceForScrollbar() const { return m_verticalSpaceForScrollbar; }
@@ -151,7 +153,8 @@ public:
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
 
-    BoxGeometry geometryForWritingModeAndDirection(WritingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const;
+    BoxGeometry toVisualGeometry(WritingMode, bool isLeftToRightInlineDirection, LayoutUnit containerLogicalWidth) const;
+    BoxGeometry toLogicalGeometry(WritingMode, bool isLeftToRightInlineDirection, LayoutUnit containerLogicalWidth) const;
 
 private:
     LayoutUnit top() const;
@@ -477,49 +480,6 @@ inline LayoutUnit BoxGeometry::borderEnd() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.horizontal.right;
-}
-
-inline BoxGeometry BoxGeometry::geometryForWritingModeAndDirection(WritingMode writingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const
-{
-    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
-    auto isFlippedBlocksWritingMode = WebCore::isFlippedWritingMode(writingMode);
-
-    if (isHorizontalWritingMode && isLeftToRightDirection)
-        return *this;
-
-    auto visualGeometry = *this;
-    if (isHorizontalWritingMode) {
-        // Horizontal flip.
-        visualGeometry.m_horizontalMargin = { m_horizontalMargin.end, m_horizontalMargin.start };
-        visualGeometry.m_border.horizontal = { m_border.horizontal.right, m_border.horizontal.left };
-        if (m_padding)
-            visualGeometry.m_padding->horizontal = { m_padding->horizontal.right, m_padding->horizontal.left };
-
-        visualGeometry.m_topLeft.setX(containerLogicalWidth - (m_topLeft.x() + borderBoxWidth())); 
-        return visualGeometry;
-    }
-
-    // Vertical flip.
-    visualGeometry.m_contentBoxWidth = m_contentBoxHeight;
-    visualGeometry.m_contentBoxHeight = m_contentBoxWidth;
-
-    visualGeometry.m_horizontalMargin = !isFlippedBlocksWritingMode ? HorizontalMargin { m_verticalMargin.after, m_verticalMargin.before } : HorizontalMargin { m_verticalMargin.before, m_verticalMargin.after };
-    visualGeometry.m_verticalMargin = { m_horizontalMargin.start, m_horizontalMargin.end };
-
-    auto left = isLeftToRightDirection ? m_topLeft.x() : containerLogicalWidth - (m_topLeft.x() + borderBoxWidth());
-    auto marginBoxOffset = LayoutSize { left - m_horizontalMargin.start, m_topLeft.y() - m_verticalMargin.before }.transposedSize();
-    visualGeometry.m_topLeft = { visualGeometry.m_horizontalMargin.start, visualGeometry.m_verticalMargin.before };
-    visualGeometry.m_topLeft.move(marginBoxOffset);
-
-    visualGeometry.m_border = { { m_border.vertical.bottom, m_border.vertical.top }, { m_border.horizontal.left, m_border.horizontal.right } };
-
-    if (m_padding)
-        visualGeometry.m_padding = Layout::Edges { { m_padding->vertical.bottom, m_padding->vertical.top }, { m_padding->horizontal.left, m_padding->horizontal.right } };
-
-    visualGeometry.m_verticalSpaceForScrollbar = m_horizontalSpaceForScrollbar;
-    visualGeometry.m_horizontalSpaceForScrollbar = m_verticalSpaceForScrollbar;
-
-    return visualGeometry;
 }
 
 }

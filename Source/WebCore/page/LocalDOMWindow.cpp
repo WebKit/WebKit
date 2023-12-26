@@ -1664,13 +1664,12 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
 
-    unsigned colonStart = pseudoElement[0] == ':' ? (pseudoElement[1] == ':' ? 2 : 1) : 0;
-
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto pseudoType = CSSSelector::parsePseudoElement(StringView { pseudoElement }.substring(colonStart), parserContext);
-    if (!pseudoType && !pseudoElement.isEmpty())
+    auto optionalPseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElement, parserContext);
+    if (!optionalPseudoId && !pseudoElement.isEmpty())
         return nullptr;
+    auto pseudoId = optionalPseudoId ? *optionalPseudoId : PseudoId::None;
 
     RefPtr frame = this->frame();
     frame->protectedDocument()->styleScope().flushPendingUpdate();
@@ -1678,8 +1677,6 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     unsigned rulesToInclude = Style::Resolver::AuthorCSSRules;
     if (!authorOnly)
         rulesToInclude |= Style::Resolver::UAAndUserCSSRules;
-
-    PseudoId pseudoId = CSSSelector::pseudoId(*pseudoType);
 
     auto matchedRules = frame->document()->styleScope().resolver().pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
     if (matchedRules.isEmpty())

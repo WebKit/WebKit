@@ -242,8 +242,9 @@ struct PossiblyQuotedIdentifier {
             Right,
         };
 
-        static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
         static PseudoId pseudoId(PseudoElement);
+        static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
+        static std::optional<PseudoId> parseStandalonePseudoElement(StringView, const CSSSelectorParserContext&);
 
         // Selectors are kept in an array by CSSSelectorList.
         // The next component of the selector is the next item in the array.
