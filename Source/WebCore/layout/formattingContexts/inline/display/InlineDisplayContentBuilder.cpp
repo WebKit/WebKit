@@ -73,6 +73,24 @@ static inline LayoutUnit paddingRightInInlineDirection(const Layout::BoxGeometry
     return isLeftToRightDirection ? boxGeometry.paddingEnd().value_or(0_lu) : boxGeometry.paddingStart().value_or(0_lu);
 }
 
+static InlineLayoutPoint flipLogicalPointToVisualForWritingModeWithinLine(const InlineLayoutPoint& logicalPoint, const InlineRect& lineLogicalRect, WritingMode writingMode)
+{
+    switch (writingModeToBlockFlowDirection(writingMode)) {
+    case BlockFlowDirection::TopToBottom:
+        return logicalPoint;
+    case BlockFlowDirection::BottomToTop:
+        return { logicalPoint.x(), lineLogicalRect.height() - logicalPoint.y() };
+    case BlockFlowDirection::RightToLeft:
+    case BlockFlowDirection::LeftToRight:
+        // FIXME: Find out why flipped vertical mode does not need special handling.
+        return { logicalPoint.y(), logicalPoint.x() };
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    return logicalPoint;
+}
+
 static inline OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> isFirstLastBox(const InlineLevelBox& inlineBox)
 {
     auto positionWithinInlineLevelBox = OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> { };
@@ -408,8 +426,19 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
         auto& lineRun = lineLayoutResult.inlineContent[index];
         if (lineRun.isWordBreakOpportunity() || lineRun.isInlineBoxEnd())
             continue;
-
         auto& layoutBox = lineRun.layoutBox();
+
+        if (lineRun.isOpaque()) {
+            if (layoutBox.style().isOriginalDisplayInlineType()) {
+                auto visualTopLeft = flipLogicalPointToVisualForWritingModeWithinLine({ lineBox.logicalRectForRootInlineBox().left() + lineRun.logicalLeft(), { } }, lineBox.logicalRect(), writingMode);
+                visualTopLeft += contentStartInVisualOrder;
+                formattingContext().geometryForBox(layoutBox).setTopLeft(toLayoutPoint(visualTopLeft));
+                continue;
+            }
+            blockLevelOutOfFlowBoxList.append(index);
+            continue;
+        }
+
         auto logicalRect = [&]() -> InlineRect {
             if (lineRun.isText() || lineRun.isSoftLineBreak())
                 return lineBox.logicalRectForTextRun(lineRun);
@@ -421,15 +450,6 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 return lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart())
                 return lineBox.logicalBorderBoxForInlineBox(layoutBox, boxGeometry);
-            if (lineRun.isOpaque()) {
-                if (layoutBox.style().isOriginalDisplayInlineType()) {
-                    auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
-                    logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                    return { logicalTopLeft, boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
-                }
-                // Computed at a later stage.
-                return { { }, { } };
-            }
             ASSERT_NOT_REACHED();
             return { };
         }();
@@ -453,7 +473,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 if (lineBox.hasContent())
                     appendInlineBoxDisplayBox(lineRun, lineBox.inlineLevelBoxFor(lineRun), visualRectRelativeToRoot, boxes);
             } else
-                ASSERT(lineRun.isOpaque());
+                ASSERT_NOT_REACHED();
         };
         createDisplayBoxForRun();
 
@@ -466,28 +486,17 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 // don't extend the spanning line box over to this line.
                 return;
             }
-
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
                 // Inline boxes need special (stretchy) box geometry handling.
                 setInlineBoxGeometry(layoutBox, visualRectRelativeToRoot, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
                 return;
             }
-
             auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            if (lineRun.isOpaque()) {
-                // FIXME: See webkit.org/b/266814 (move BoxGeometry to visual coords)
-                boxGeometry.setTopLeft(toLayoutPoint(logicalRect.topLeft()));
-                return;
-            }
             boxGeometry.setTopLeft(toLayoutPoint(visualRectRelativeToRoot.topLeft()));
             if (lineRun.isHardLineBreak())
                 boxGeometry.setContentBoxHeight(toLayoutUnit(visualRectRelativeToRoot.height()));
-            // Note that block level static positions are getting updated at a later stage.
         };
         updateAssociatedBoxGeometry();
-
-        if (lineRun.isOpaque() && !layoutBox.style().isOriginalDisplayInlineType())
-            blockLevelOutOfFlowBoxList.append(index);
     }
     setGeometryForBlockLevelOutOfFlowBoxes(blockLevelOutOfFlowBoxList, lineBox, lineLayoutResult.inlineContent);
 }
@@ -687,6 +696,19 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 continue;
 
             auto& layoutBox = lineRun.layoutBox();
+            auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
+            hasInlineBox = hasInlineBox || parentDisplayBoxNodeIndex || lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart();
+
+            if (lineRun.isOpaque()) {
+                if (layoutBox.style().isOriginalDisplayInlineType()) {
+                    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
+                    isHorizontalWritingMode ? boxGeometry.setTopLeft({ contentRightInInlineDirectionVisualOrder, m_displayLine.top() }) : boxGeometry.setTopLeft({ m_displayLine.left(), contentRightInInlineDirectionVisualOrder });
+                    continue;
+                }
+                blockLevelOutOfFlowBoxList.append(index);
+                continue;
+            }
+
             auto logicalRect = [&]() -> InlineRect {
                 if (lineRun.isText() || lineRun.isSoftLineBreak())
                     return lineBox.logicalRectForTextRun(lineRun);
@@ -699,15 +721,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
                 if (lineRun.isBox() || lineRun.isListMarker())
                     return lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
-                if (lineRun.isOpaque()) {
-                    if (layoutBox.style().isOriginalDisplayInlineType()) {
-                        auto logicalTopLeft = lineBox.logicalRectForOpaqueBox(lineRun, boxGeometry).topLeft();
-                        logicalTopLeft.moveBy(lineBox.logicalRect().topLeft());
-                        return InlineRect { logicalTopLeft, boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
-                    }
-                    // Computed at a later stage.
-                    return { { }, { } };
-                }
                 ASSERT_NOT_REACHED();
                 return { };
             }();
@@ -724,8 +737,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 return visualRect;
             }();
 
-            auto parentDisplayBoxNodeIndex = ensureDisplayBoxForContainer(layoutBox.parent(), displayBoxTree, ancestorStack, boxes);
-            hasInlineBox = hasInlineBox || parentDisplayBoxNodeIndex || lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart();
             if (lineRun.isText()) {
                 auto wordSpacingMargin = lineRun.isWordSeparator() ? layoutBox.style().fontCascade().wordSpacing() : 0.0f;
                 isHorizontalWritingMode ? visualRectRelativeToRoot.moveHorizontally(wordSpacingMargin) : visualRectRelativeToRoot.moveVertically(wordSpacingMargin);
@@ -798,14 +809,6 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                     appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
                     createDisplayBoxNodeForContainerAndPushToAncestorStack(downcast<ElementBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
                 }
-                continue;
-            }
-            if (lineRun.isOpaque()) {
-                if (layoutBox.style().isOriginalDisplayInlineType()) {
-                    // FIXME: See webkit.org/b/266814 (move BoxGeometry to visual coords)
-                    formattingContext().geometryForBox(layoutBox).setTopLeft(toLayoutPoint(logicalRect.topLeft()));
-                } else
-                    blockLevelOutOfFlowBoxList.append(index);
                 continue;
             }
             ASSERT_NOT_REACHED();

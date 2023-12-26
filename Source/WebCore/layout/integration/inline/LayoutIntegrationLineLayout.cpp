@@ -453,19 +453,28 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (layoutBox.isOutOfFlowPositioned()) {
             ASSERT(renderer.layer());
             auto& layer = *renderer.layer();
-            auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
+            auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft();
+
+            if (layoutBox.style().isOriginalDisplayInlineType()) {
+                if (!rootStyle.isLeftToRightDirection()) {
+                    auto rootBorderBoxLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+                    isHorizontalWritingMode ? borderBoxLogicalTopLeft.setX(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.x()) : borderBoxLogicalTopLeft.setY(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.y());
+                }
+                if (!isHorizontalWritingMode)
+                    borderBoxLogicalTopLeft = borderBoxLogicalTopLeft.transposedPoint();
+            }
             auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
-            auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
+            auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
             auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
-                blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
+                blockFlow.setStaticInlinePositionForChild(renderer, borderBoxLogicalTopLeft.y(), borderBoxLogicalTopLeft.x());
                 if (hasStaticInlinePositioning)
                     renderer.move(delta.width(), delta.height());
             }
 
-            layer.setStaticBlockPosition(logicalBorderBoxRect.y());
-            layer.setStaticInlinePosition(logicalBorderBoxRect.x());
+            layer.setStaticBlockPosition(borderBoxLogicalTopLeft.y());
+            layer.setStaticInlinePosition(borderBoxLogicalTopLeft.x());
 
             if (!delta.isZero() && hasStaticInlinePositioning)
                 renderer.setChildNeedsLayout(MarkOnlyThis);

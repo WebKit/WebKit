@@ -128,13 +128,6 @@ InlineRect LineBox::logicalBorderBoxForInlineBox(const Box& layoutBox, const Box
     return logicalRect;
 }
 
-InlineRect LineBox::logicalRectForOpaqueBox(const Line::Run& opaqueRun, const BoxGeometry& boxGeometry) const
-{
-    ASSERT(opaqueRun.isOpaque());
-    ASSERT(opaqueRun.layoutBox().style().isOriginalDisplayInlineType());
-    return { { }, m_rootInlineBox.logicalLeft() + opaqueRun.logicalLeft(), boxGeometry.borderBoxWidth(), boxGeometry.borderBoxHeight() };
-}
-
 } // namespace Layout
 } // namespace WebCore
 
