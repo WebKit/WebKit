@@ -455,14 +455,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto& layer = *renderer.layer();
             auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft();
 
-            if (layoutBox.style().isOriginalDisplayInlineType()) {
-                if (!rootStyle.isLeftToRightDirection()) {
-                    auto rootBorderBoxLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
-                    isHorizontalWritingMode ? borderBoxLogicalTopLeft.setX(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.x()) : borderBoxLogicalTopLeft.setY(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.y());
-                }
-                if (!isHorizontalWritingMode)
-                    borderBoxLogicalTopLeft = borderBoxLogicalTopLeft.transposedPoint();
+            if (!rootStyle.isLeftToRightDirection()) {
+                auto rootBorderBoxLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+                isHorizontalWritingMode ? borderBoxLogicalTopLeft.setX(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.x()) : borderBoxLogicalTopLeft.setY(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.y());
             }
+            if (!isHorizontalWritingMode)
+                borderBoxLogicalTopLeft = borderBoxLogicalTopLeft.transposedPoint();
             auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
             auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
             auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
