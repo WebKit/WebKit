@@ -231,7 +231,7 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::objectForID(const AXID axID) const
 }
 
 template<typename U>
-Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
+Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs) const
 {
     AXTRACE("AXIsolatedTree::objectsForIDs"_s);
     ASSERT(!isMainThread());
@@ -239,16 +239,8 @@ Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
     Vector<RefPtr<AXCoreObject>> result;
     result.reserveInitialCapacity(axIDs.size());
     for (auto& axID : axIDs) {
-        RefPtr object = objectForID(axID);
-        if (object) {
-            result.append(object);
-            continue;
-        }
-
-        if (object) {
-            m_readerThreadNodeMap.add(axID, *object);
-            result.append(object);
-        }
+        if (RefPtr object = objectForID(axID))
+            result.append(WTFMove(object));
     }
     result.shrinkToFit();
     return result;
