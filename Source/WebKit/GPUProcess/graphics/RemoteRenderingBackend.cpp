@@ -403,6 +403,13 @@ void RemoteRenderingBackend::releaseRenderingResource(RenderingResourceIdentifie
     MESSAGE_CHECK(success, "Resource is being released before being cached."_s);
 }
 
+#if USE(GRAPHICS_LAYER_WC)
+void RemoteRenderingBackend::flush(IPC::Semaphore&& semaphore)
+{
+    semaphore.signal();
+}
+#endif
+
 #if PLATFORM(COCOA)
 void RemoteRenderingBackend::prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, CompletionHandler<void(Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&&)>&& completionHandler)
 {

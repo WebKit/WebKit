@@ -111,7 +111,6 @@ private:
     bool itemIsLabel(unsigned listIndex) const override;
     bool itemIsSelected(unsigned listIndex) const override;
     bool shouldPopOver() const override { return !POPUP_MENU_PULLS_DOWN; }
-    bool valueShouldChangeOnHotTrack() const override { return true; }
     void setTextFromItem(unsigned listIndex) override;
     void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) override;
     bool multiple() const override;

@@ -76,4 +76,6 @@ PASS Property color value 'rgb(calc(0 / 0), 0, 0)' [Red channel resolves NaN equ
 PASS Property color value 'rgb(0, calc(0 / 0), 0)' [Green channel resolves NaN equivalent calc statements to zero]
 PASS Property color value 'rgb(0, 0, calc(0 / 0))' [Blue channel resolves NaN equivalent calc statements to zero]
 PASS Property color value 'rgba(0, 0, 0, calc(0 / 0))' [Alpha channel resolves NaN equivalent calc statements to zero]
+PASS Property color value 'rgb(var(--high), 0, 0)' [Variables above 255 get clamped to 255.]
+PASS Property color value 'rgb(var(--negative), 64, 128)' [Variables below 0 get clamped to 0.]
 

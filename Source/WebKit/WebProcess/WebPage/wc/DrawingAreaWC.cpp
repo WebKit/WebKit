@@ -41,7 +41,6 @@
 #include "WebPageInlines.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
-#include <RemoteImageBufferSetProxy.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
@@ -244,9 +243,6 @@ void DrawingAreaWC::updateRendering()
 
     willStartRenderingUpdateDisplay();
 
-    if (!m_flusher)
-        m_flusher = webPage->ensureRemoteRenderingBackendProxy().createRemoteImageBufferSet();
-
     if (isCompositingMode())
         sendUpdateAC();
     else
@@ -280,11 +276,10 @@ void DrawingAreaWC::sendUpdateAC()
         if (rootLayer.viewOverlayRootLayer)
             rootLayer.viewOverlayRootLayer->flushCompositingState(visibleRect);
 
-        auto flusher = m_flusher->flushFrontBufferAsync();
+        auto fence = m_webPage->ensureRemoteRenderingBackendProxy().flushImageBuffers();
 
-        m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { }), flusher = WTFMove(flusher), willCallDisplayDidRefresh]() mutable {
-            if (flusher)
-                flusher->flush();
+        m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { }), fence = WTFMove(fence), willCallDisplayDidRefresh]() mutable {
+            fence();
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), willCallDisplayDidRefresh]() mutable {
                 if (!weakThis)
                     return;
@@ -361,11 +356,10 @@ void DrawingAreaWC::sendUpdateNonAC()
         webPage->drawRect(image->context(), rect);
     image->flushDrawingContextAsync();
 
-    auto flusher = m_flusher->flushFrontBufferAsync();
+    auto fence = m_webPage->ensureRemoteRenderingBackendProxy().flushImageBuffers();
 
-    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image), flusher = WTFMove(flusher)]() mutable {
-        if (flusher)
-            flusher->flush();
+    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image), fence = WTFMove(fence)]() mutable {
+        fence();
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image)]() mutable {
             if (!weakThis)
                 return;

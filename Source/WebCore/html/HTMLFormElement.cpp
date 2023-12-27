@@ -126,11 +126,6 @@ HTMLFormElement::~HTMLFormElement()
         imageElement->formWillBeDestroyed();
 }
 
-bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
-{
-    return document().completeURL(url).protocolIs("https"_s);
-}
-
 Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
