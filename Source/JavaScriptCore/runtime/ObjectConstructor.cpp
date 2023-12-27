@@ -809,7 +809,7 @@ static JSValue definePropertiesSlow(JSGlobalObject* globalObject, JSObject* obje
     Vector<PropertyDescriptor> descriptors;
     MarkedArgumentBuffer markBuffer;
 #define RETURN_IF_EXCEPTION_CLEARING_OVERFLOW(value) do { \
-    if (scope.exception()) { \
+    if (UNLIKELY(scope.exception())) { \
         markBuffer.overflowCheckNotNeeded(); \
         return value; \
     } \
@@ -868,10 +868,13 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
 
     unsigned index = 0;
     unsigned numProperties = propertyNames.size();
-    Vector<PropertyDescriptor> descriptors;
+    Vector<PropertyDescriptor, 16> descriptors;
     MarkedArgumentBuffer markBuffer;
+
+    descriptors.reserveInitialCapacity(numProperties);
+
 #define RETURN_IF_EXCEPTION_CLEARING_OVERFLOW(value) do { \
-    if (scope.exception()) { \
+    if (UNLIKELY(scope.exception())) { \
         markBuffer.overflowCheckNotNeeded(); \
         return value; \
     } \
@@ -893,8 +896,11 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
             if (descriptor.setter())
                 markBuffer.append(descriptor.setter());
         }
-        if (UNLIKELY(!withoutSideEffect)) // Bail out to the slow code.
+        if (UNLIKELY(!withoutSideEffect)) {
+            // Bail out to the slow code.
+            ++index;
             break;
+        }
     }
 
     if (UNLIKELY(index < numProperties)) {
