@@ -146,8 +146,8 @@ public:
     void setHorizontalBorder(Layout::HorizontalEdges);
     void setVerticalBorder(Layout::VerticalEdges);
 
-    void setHorizontalPadding(Layout::HorizontalEdges);
-    void setVerticalPadding(Layout::VerticalEdges);
+    void setHorizontalPadding(std::optional<Layout::HorizontalEdges>);
+    void setVerticalPadding(std::optional<Layout::VerticalEdges>);
     void setPadding(std::optional<Layout::Edges>);
 
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
@@ -356,20 +356,20 @@ inline void BoxGeometry::setPadding(std::optional<Layout::Edges> padding)
     m_padding = padding;
 }
 
-inline void BoxGeometry::setHorizontalPadding(Layout::HorizontalEdges horizontalPadding)
+inline void BoxGeometry::setHorizontalPadding(std::optional<Layout::HorizontalEdges> horizontalPadding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
 #endif
-    m_padding = Layout::Edges { horizontalPadding, m_padding ? m_padding->vertical : Layout::VerticalEdges() };
+    m_padding = Layout::Edges { horizontalPadding ? *horizontalPadding : Layout::HorizontalEdges(), m_padding ? m_padding->vertical : Layout::VerticalEdges() };
 }
 
-inline void BoxGeometry::setVerticalPadding(Layout::VerticalEdges verticalPadding)
+inline void BoxGeometry::setVerticalPadding(std::optional<Layout::VerticalEdges> verticalPadding)
 {
 #if ASSERT_ENABLED
     setHasValidPadding();
 #endif
-    m_padding = Layout::Edges { m_padding ? m_padding->horizontal : Layout::HorizontalEdges(), verticalPadding };
+    m_padding = Layout::Edges { m_padding ? m_padding->horizontal : Layout::HorizontalEdges(), verticalPadding ? *verticalPadding : Layout::VerticalEdges() };
 }
 
 inline BoxGeometry::VerticalMargin BoxGeometry::verticalMargin() const
