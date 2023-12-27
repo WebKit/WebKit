@@ -515,6 +515,22 @@ bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
     return false;
 }
 
+#if USE(GRAPHICS_LAYER_WC)
+
+// Because RemoteRenderingBackend and RemoteImageBuffer share a single stream connection at the moment,
+// it is sufficient to flush the single command queue.
+// This should take Vector<Ref<ImageBuffer>> as an argument if a RemoteImageBuffer uses own stream connection.
+Function<bool()> RemoteRenderingBackendProxy::flushImageBuffers()
+{
+    IPC::Semaphore flushSemaphore;
+    send(Messages::RemoteRenderingBackend::Flush(flushSemaphore));
+    return [flushSemaphore = WTFMove(flushSemaphore)]() mutable {
+        return flushSemaphore.waitFor(RemoteRenderingBackendProxy::defaultTimeout);
+    };
+}
+
+#endif // USE(GRAPHICS_LAYER_WC)
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

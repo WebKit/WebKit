@@ -155,6 +155,10 @@ private:
     void createRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier, WebCore::RenderingResourceIdentifier displayListIdentifier);
     void releaseRemoteImageBufferSet(WebKit::RemoteImageBufferSetIdentifier);
 
+#if USE(GRAPHICS_LAYER_WC)
+    void flush(IPC::Semaphore&&);
+#endif
+
 #if PLATFORM(COCOA)
     void prepareImageBufferSetsForDisplay(Vector<ImageBufferSetPrepareBufferForDisplayInputData> swapBuffersInput, CompletionHandler<void(Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&&)>&&);
 #endif
