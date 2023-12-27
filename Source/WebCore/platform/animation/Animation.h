@@ -116,6 +116,7 @@ public:
     struct TransitionProperty {
         TransitionMode mode;
         AnimatableCSSProperty animatableProperty;
+        bool operator==(const TransitionProperty& o) const { return mode == o.mode && animatableProperty == o.animatableProperty; }
     };
 
     enum class Direction : uint8_t {

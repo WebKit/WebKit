@@ -1576,17 +1576,11 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-enum IsShorthand : bool { No, Yes };
-static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation, IsShorthand isShorthand = IsShorthand::No)
+static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation)
 {
     if (property == CSSPropertyTransitionBehavior) {
-        if (animation) {
-            if (animation->isAllowsDiscreteTransitionsFilled())
-                return;
-            if (isShorthand == IsShorthand::Yes && animation->allowsDiscreteTransitions() == Animation::initialAllowsDiscreteTransitions())
-                return;
-        }
-        list.append(valueForTransitionBehavior(animation ? animation->allowsDiscreteTransitions() : Animation::initialAllowsDiscreteTransitions()));
+        if (!animation || !animation->isAllowsDiscreteTransitionsFilled())
+            list.append(valueForTransitionBehavior(animation ? animation->allowsDiscreteTransitions() : Animation::initialAllowsDiscreteTransitions()));
     } else if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration) {
         if (!animation || !animation->isDurationFilled())
             list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration()));
@@ -1646,7 +1640,7 @@ static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const A
     auto addAnimation = [&](Ref<Animation> animation) {
         CSSValueListBuilder childList;
         for (auto longhand : shorthandForProperty(property))
-            addValueForAnimationPropertyToList(childList, longhand, animation.ptr(), IsShorthand::Yes);
+            addValueForAnimationPropertyToList(childList, longhand, animation.ptr());
         parentList.append(CSSValueList::createSpaceSeparated(WTFMove(childList)));
     };
     if (animationList && !animationList->isEmpty()) {
@@ -1655,6 +1649,44 @@ static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const A
     } else
         addAnimation(Animation::create());
     return CSSValueList::createCommaSeparated(WTFMove(parentList));
+}
+
+static Ref<CSSValue> singleTransitionValue(const Animation& transition)
+{
+    static NeverDestroyed<Ref<TimingFunction>> initialTimingFunction(Animation::initialTimingFunction());
+
+    // If we have a transition-delay but no transition-duration set, we must serialze
+    // the transition-duration because they're both <time> values and transition-delay
+    // comes first.
+    auto showsDelay = transition.delay() != Animation::initialDelay();
+    auto showsDuration = showsDelay || transition.duration() != Animation::initialDuration();
+
+    CSSValueListBuilder list;
+    if (transition.property() != Animation::initialProperty())
+        list.append(createTransitionPropertyValue(transition));
+    if (showsDuration)
+        list.append(valueForAnimationDuration(transition.duration()));
+    if (auto* timingFunction = transition.timingFunction(); *timingFunction != initialTimingFunction.get())
+        list.append(valueForAnimationTimingFunction(*timingFunction));
+    if (showsDelay)
+        list.append(valueForAnimationDelay(transition.delay()));
+    if (transition.allowsDiscreteTransitions() != Animation::initialAllowsDiscreteTransitions())
+        list.append(valueForTransitionBehavior(transition.allowsDiscreteTransitions()));
+    if (list.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueAll);
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> transitionShorthandValue(const AnimationList* transitions)
+{
+    if (!transitions || transitions->isEmpty())
+        return CSSPrimitiveValue::create(CSSValueAll);
+
+    CSSValueListBuilder list;
+    for (auto& transition : *transitions)
+        list.append(singleTransitionValue(transition));
+    ASSERT(!list.isEmpty());
+    return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
 static Ref<CSSValue> createLineBoxContainValue(OptionSet<LineBoxContain> lineBoxContain)
@@ -4217,7 +4249,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTransitionProperty:
         return valueListForAnimationOrTransitionProperty(propertyID, style.transitions());
     case CSSPropertyTransition:
-        return animationShorthandValue(propertyID, style.transitions());
+        return transitionShorthandValue(style.transitions());
     case CSSPropertyPointerEvents:
         return createConvertingToCSSValueID(style.pointerEvents());
     case CSSPropertyWebkitLineGrid:
