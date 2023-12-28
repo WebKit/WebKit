@@ -265,6 +265,24 @@ const Type* TypeStore::modfResultType(const Type* fract, const Type* whole)
     return type;
 }
 
+const Type* TypeStore::atomicCompareExchangeResultType(const Type* type)
+{
+    const auto& load = [&](const Type*& member) {
+        if (member)
+            return member;
+        FixedVector<const Type*> values(2);
+        values[PrimitiveStruct::AtomicCompareExchangeResult::oldValue] = type;
+        values[PrimitiveStruct::AtomicCompareExchangeResult::exchanged] = boolType();
+        member = allocateType<PrimitiveStruct>("__atomic_compare_exchange_result"_s, PrimitiveStruct::ModfResult::kind, values);
+        return member;
+    };
+
+    if (type == m_i32)
+        return load(m_atomicCompareExchangeResultI32);
+    ASSERT(type == m_u32);
+    return load(m_atomicCompareExchangeResultU32);
+}
+
 template<typename TypeKind, typename... Arguments>
 const Type* TypeStore::allocateType(Arguments&&... arguments)
 {

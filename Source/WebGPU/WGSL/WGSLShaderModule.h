@@ -91,6 +91,9 @@ public:
     bool usesModf() const { return m_usesModf; }
     void setUsesModf() { m_usesModf = true; }
 
+    bool usesAtomicCompareExchange() const { return m_usesAtomicCompareExchange; }
+    void setUsesAtomicCompareExchange() { m_usesAtomicCompareExchange = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -244,6 +247,7 @@ private:
     bool m_usesModulo { false };
     bool m_usesFrexp { false };
     bool m_usesModf { false };
+    bool m_usesAtomicCompareExchange { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

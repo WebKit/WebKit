@@ -1388,8 +1388,10 @@ function :atomicStore, {
     }
 end
 
-# FIXME: Implement atomicCompareExchangeWeak (which depends on the result struct that is not currently supported)
-# fn atomicCompareExchangeWeak(atomic_ptr: ptr<AS, atomic<T>, read_write>, cmp: T, v: T) -> __atomic_compare_exchange_result<T>
+function :atomicCompareExchangeWeak, {
+    [AS].(ptr[AS, atomic[i32], read_write], i32, i32) => __atomic_compare_exchange_result_i32,
+    [AS].(ptr[AS, atomic[u32], read_write], u32, u32) => __atomic_compare_exchange_result_u32,
+}
 
 # 16.9. Data Packing Built-in Functions (https://www.w3.org/TR/WGSL/#pack-builtin-functions)
 # FIXME: implement

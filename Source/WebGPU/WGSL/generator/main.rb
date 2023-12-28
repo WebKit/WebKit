@@ -535,6 +535,9 @@ module DSL
         __modf_result_vec4_abstract = Constructor.new(:modfResult, [vec4[abstract_float], vec4[abstract_float]])
         __modf_result_vec4_f16 = Constructor.new(:modfResult, [vec4[f16], vec4[f16]])
         __modf_result_vec4_f32 = Constructor.new(:modfResult, [vec4[f32], vec4[f32]])
+
+        __atomic_compare_exchange_result_i32 = Constructor.new(:atomicCompareExchangeResult, [i32])
+        __atomic_compare_exchange_result_u32 = Constructor.new(:atomicCompareExchangeResult, [u32])
         EOS
     end
 

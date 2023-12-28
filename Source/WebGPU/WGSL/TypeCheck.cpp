@@ -1037,6 +1037,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesFrexp();
             else if (targetName == "modf"_s)
                 m_shaderModule.setUsesModf();
+            else if (targetName == "atomicCompareExchangeWeak"_s)
+                m_shaderModule.setUsesAtomicCompareExchange();
             target.m_inferredType = result;
             return;
         }

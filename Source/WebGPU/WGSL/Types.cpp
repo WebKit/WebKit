@@ -73,6 +73,9 @@ void Type::dump(PrintStream& out) const
             case PrimitiveStruct::ModfResult::kind:
                 out.print(*structure.values[PrimitiveStruct::ModfResult::fract]);
                 break;
+            case PrimitiveStruct::AtomicCompareExchangeResult::kind:
+                out.print(*structure.values[PrimitiveStruct::AtomicCompareExchangeResult::oldValue]);
+                break;
             }
             out.print(">");
         },
@@ -260,10 +263,11 @@ ConversionRank conversionRank(const Type* from, const Type* to)
             return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract], toPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract]);
         case PrimitiveStruct::ModfResult::kind:
             return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::ModfResult::fract], toPrimitiveStruct->values[PrimitiveStruct::ModfResult::fract]);
+        case PrimitiveStruct::AtomicCompareExchangeResult::kind:
+            return std::nullopt;
         }
     }
 
-    // FIXME: add the abstract result conversion rules
     return std::nullopt;
 }
 

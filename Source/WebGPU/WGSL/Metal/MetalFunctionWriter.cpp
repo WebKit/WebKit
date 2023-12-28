@@ -320,6 +320,25 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
+    if (m_callGraph.ast().usesAtomicCompareExchange()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "T old_value;\n");
+            m_stringBuilder.append(m_indent, "bool exchanged;\n");
+        }
+        m_stringBuilder.append(m_indent, "};\n\n");
+
+        m_stringBuilder.append(m_indent, "#define __wgslAtomicCompareExchangeWeak(atomic, compare, value) \\\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n");
+            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed) }; \\\n");
+            m_stringBuilder.append(m_indent, "})\n");
+        }
+    }
+
     if (m_callGraph.ast().usesPackedStructs()) {
         m_callGraph.ast().clearUsesPackedStructs();
 
@@ -1658,6 +1677,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
+            { "atomicCompareExchangeWeak", "__wgslAtomicCompareExchangeWeak"_s },
             { "countLeadingZeros", "clz"_s },
             { "countOneBits", "popcount"_s },
             { "countTrailingZeros", "ctz"_s },
