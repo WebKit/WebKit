@@ -25,9 +25,23 @@ struct S {
 }
 alias v = vec2<i32>;
 alias s = S;
+alias f = f32;
+alias i = i32;
+alias u = u32;
+alias b = bool;
 
 @compute @workgroup_size(1)
 fn main() {
+
+    let z = 1;
+    _ = f(0);
+    _ = i(0);
+    _ = u(0);
+    _ = b(0);
+    _ = f(z);
+    _ = i(z);
+    _ = u(z);
+    _ = b(z);
 
     let x = v(0);
     let y = s(0);

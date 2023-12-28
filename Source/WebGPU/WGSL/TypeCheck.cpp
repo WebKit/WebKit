@@ -997,6 +997,9 @@ void TypeChecker::visit(AST::CallExpression& call)
                     typeArguments.append(matrixType->element);
                     targetName = makeString("mat", String::number(matrixType->columns), "x", String::number(matrixType->rows));
                 }
+
+                if (std::holds_alternative<Types::Primitive>(*targetBinding->type))
+                    targetName = targetBinding->type->toString();
             }
 
             if (targetBinding->kind == Binding::Value) {
