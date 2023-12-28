@@ -235,6 +235,7 @@ public:
     {
         m_pipelineOverrideIds.add(idValue);
     }
+    bool hasFeature(const String& featureName) const { return m_configuration.supportedFeatures.contains(featureName); }
 
 private:
     String m_source;
