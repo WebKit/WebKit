@@ -48,30 +48,24 @@ public:
     static constexpr GPUFlagsConstant QUERY_RESOLVE = 0x0200;
 };
 
+static constexpr bool compare(unsigned a, WebCore::WebGPU::BufferUsage b)
+{
+    return a == static_cast<unsigned>(b);
+}
+
 inline WebGPU::BufferUsageFlags convertBufferUsageFlagsToBacking(GPUBufferUsageFlags bufferUsageFlags)
 {
-    WebGPU::BufferUsageFlags result;
-    if (bufferUsageFlags & GPUBufferUsage::MAP_READ)
-        result.add(WebGPU::BufferUsage::MapRead);
-    if (bufferUsageFlags & GPUBufferUsage::MAP_WRITE)
-        result.add(WebGPU::BufferUsage::MapWrite);
-    if (bufferUsageFlags & GPUBufferUsage::COPY_SRC)
-        result.add(WebGPU::BufferUsage::CopySource);
-    if (bufferUsageFlags & GPUBufferUsage::COPY_DST)
-        result.add(WebGPU::BufferUsage::CopyDestination);
-    if (bufferUsageFlags & GPUBufferUsage::INDEX)
-        result.add(WebGPU::BufferUsage::Index);
-    if (bufferUsageFlags & GPUBufferUsage::VERTEX)
-        result.add(WebGPU::BufferUsage::Vertex);
-    if (bufferUsageFlags & GPUBufferUsage::UNIFORM)
-        result.add(WebGPU::BufferUsage::Uniform);
-    if (bufferUsageFlags & GPUBufferUsage::STORAGE)
-        result.add(WebGPU::BufferUsage::Storage);
-    if (bufferUsageFlags & GPUBufferUsage::INDIRECT)
-        result.add(WebGPU::BufferUsage::Indirect);
-    if (bufferUsageFlags & GPUBufferUsage::QUERY_RESOLVE)
-        result.add(WebGPU::BufferUsage::QueryResolve);
-    return result;
+    static_assert(compare(GPUBufferUsage::MAP_READ, WebGPU::BufferUsage::MapRead), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::MAP_WRITE,  WebGPU::BufferUsage::MapWrite), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::COPY_SRC,  WebGPU::BufferUsage::CopySource), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::COPY_DST,  WebGPU::BufferUsage::CopyDestination), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::INDEX, WebGPU::BufferUsage::Index), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::VERTEX, WebGPU::BufferUsage::Vertex), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::UNIFORM, WebGPU::BufferUsage::Uniform), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::STORAGE, WebGPU::BufferUsage::Storage), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::INDIRECT, WebGPU::BufferUsage::Indirect), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    static_assert(compare(GPUBufferUsage::QUERY_RESOLVE, WebGPU::BufferUsage::QueryResolve), "GPUBufferUsageFlags does not match BufferUsageFlags");
+    return static_cast<WebGPU::BufferUsageFlags>(bufferUsageFlags);
 }
 
 }

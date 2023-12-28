@@ -42,6 +42,6 @@ enum class BufferUsage : uint16_t {
     Indirect        = 1 << 8,
     QueryResolve    = 1 << 9,
 };
-using BufferUsageFlags = OptionSet<BufferUsage>;
+using BufferUsageFlags = std::underlying_type_t<BufferUsage>;
 
 } // namespace WebCore::WebGPU

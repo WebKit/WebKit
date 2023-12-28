@@ -63,7 +63,7 @@ static bool validateCreateBuffer(const Device& device, const WGPUBufferDescripto
         return false;
 
     constexpr auto allUsages = (WGPUBufferUsage_MapRead | WGPUBufferUsage_MapWrite | WGPUBufferUsage_CopySrc | WGPUBufferUsage_CopyDst | WGPUBufferUsage_Index | WGPUBufferUsage_Vertex | WGPUBufferUsage_Uniform | WGPUBufferUsage_Storage | WGPUBufferUsage_Indirect | WGPUBufferUsage_QueryResolve);
-    if (!(usage & allUsages))
+    if (!(usage & allUsages) || usage > allUsages)
         return false;
 
     if ((usage & WGPUBufferUsage_MapRead) && (usage & ~WGPUBufferUsage_CopyDst & ~WGPUBufferUsage_MapRead))
