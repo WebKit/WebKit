@@ -1,5 +1,11 @@
 // RUN: %wgslc
 
+fn testU32ConstantsThatOverflowI32()
+{
+    let x1 = u32(4294967295);
+    let x2 = u32(3735928559);
+}
+
 fn testLiteralConstants()
 {
     {

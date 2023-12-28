@@ -348,6 +348,7 @@ constructor :u32, {
     const: true,
 
     [T < ConcreteScalar].(T) => u32,
+    [].(abstract_int) => u32,
 }
 
 # 16.1.2.17.

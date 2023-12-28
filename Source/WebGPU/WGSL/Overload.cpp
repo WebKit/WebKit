@@ -308,6 +308,10 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, co
     if (auto* variable = std::get_if<TypeVariable>(parameter.get())) {
         auto* resolvedType = resolve(*variable);
         ASSERT(resolvedType);
+        if (variable->constraints) {
+            resolvedType = satisfyOrPromote(resolvedType, variable->constraints, m_types);
+            ASSERT(resolvedType);
+        }
         return conversionRank(argumentType, resolvedType);
     }
 
