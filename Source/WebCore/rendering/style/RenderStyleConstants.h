@@ -109,6 +109,7 @@ enum class PseudoId : uint32_t {
     ScrollbarTrackPiece,
     ScrollbarCorner,
     Resizer,
+    Invalid,
 
     AfterLastInternalPseudoId,
 

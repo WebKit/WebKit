@@ -51,7 +51,8 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool 
     : m_element(element)
     , m_allowVisitedStyle(allowVisitedStyle)
 {
-    // FIXME: This should return a style with initial values if the pseudo-element is invalid (webkit.org/b/243539).
+    // FIXME: Return the element style values if the pseudo-element is "unknown" (webkit.org/b/243539).
+    // FIXME: Return a list style properties with empty values if the pseudo-element is ":marker" or "::unknown" (webkit.org/b/243539).
     auto pseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElementName, CSSSelectorParserContext { element.document() });
     m_pseudoElementSpecifier = pseudoId ? *pseudoId : PseudoId::None;
 }

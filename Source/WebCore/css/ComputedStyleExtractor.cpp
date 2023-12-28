@@ -2657,6 +2657,8 @@ RenderElement* ComputedStyleExtractor::styledRenderer() const
 {
     if (!m_element)
         return nullptr;
+    if (m_pseudoElementSpecifier == PseudoId::Invalid)
+        return nullptr;
     if (m_pseudoElementSpecifier != PseudoId::None)
         return Styleable(*m_element, m_pseudoElementSpecifier).renderer();
     if (m_element->hasDisplayContents())

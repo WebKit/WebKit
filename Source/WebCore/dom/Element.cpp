@@ -4163,6 +4163,9 @@ const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     if (!isConnected())
         return nullptr;
 
+    if (pseudoElementSpecifier == PseudoId::Invalid)
+        return nullptr;
+
     if (RefPtr pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementSpecifier))
         return pseudoElement->computedStyle();
 

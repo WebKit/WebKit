@@ -359,7 +359,7 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
 
 std::optional<PseudoId> CSSSelector::parseStandalonePseudoElement(StringView input, const CSSSelectorParserContext& context)
 {
-    // FIXME: Tokenize input.
+    // FIXME: Tokenize input to handle cases like "::\000041fter" instead of "::after" or "::highlight(name)"
     if (input.startsWith("::"_s)) {
         auto pseudoElement = parsePseudoElement(input.substring(2), context);
         if (!pseudoElement)
