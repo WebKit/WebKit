@@ -1097,13 +1097,28 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On || !styleToUse.hasOutline())
         return;
 
+    if (!containingBlock()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto isHorizontalWritingMode = this->isHorizontalWritingMode();
+    auto& containingBlock = *this->containingBlock();
+    auto isFlippedBlocksWritingMode = containingBlock.style().isFlippedBlocksWritingMode();
     Vector<LayoutRect> rects;
     for (auto box = InlineIterator::firstInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
         auto lineBox = box->lineBox();
-        auto top = LayoutUnit { std::max(lineBox->contentLogicalTop(), box->logicalTop()) };
-        auto bottom = LayoutUnit { std::min(lineBox->contentLogicalBottom(), box->logicalBottom()) };
-        // FIXME: This is mixing physical and logical coordinates.
-        rects.append({ LayoutUnit(box->visualRectIgnoringBlockDirection().x()), top, LayoutUnit(box->logicalWidth()), bottom - top });
+        auto logicalTop = std::max(lineBox->contentLogicalTop(), box->logicalTop());
+        auto logicalBottom = std::min(lineBox->contentLogicalBottom(), box->logicalBottom());
+        auto enclosingVisualRect = FloatRect { box->logicalLeftIgnoringInlineDirection(), logicalTop, box->logicalWidth(), logicalBottom - logicalTop };
+
+        if (!isHorizontalWritingMode)
+            enclosingVisualRect = enclosingVisualRect.transposedRect();
+
+        if (isFlippedBlocksWritingMode)
+            containingBlock.flipForWritingMode(enclosingVisualRect);
+
+        rects.append(LayoutRect { enclosingVisualRect });
     }
     BorderPainter { *this, paintInfo }.paintOutline(paintOffset, rects);
 }

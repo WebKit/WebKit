@@ -166,7 +166,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
                 };
                 adjustCellContentWithInstrinsicPaddingBefore();
             }
-            cellBoxGeometry.setVerticalPadding({ paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
+            cellBoxGeometry.setVerticalPadding(VerticalEdges { paddingTop + intrinsicPaddingTop, paddingBottom + intrinsicPaddingBottom });
         };
         computeIntrinsicVerticalPaddingForCell();
     }

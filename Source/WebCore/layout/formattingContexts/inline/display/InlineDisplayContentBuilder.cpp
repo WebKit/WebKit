@@ -73,6 +73,81 @@ static inline LayoutUnit paddingRightInInlineDirection(const Layout::BoxGeometry
     return isLeftToRightDirection ? boxGeometry.paddingEnd().value_or(0_lu) : boxGeometry.paddingStart().value_or(0_lu);
 }
 
+static inline void convertBoxGeometryForWritingMode(BoxGeometry& boxGeometry, LayoutPoint borderBoxVisualTopLeft, WritingMode writingMode, bool isLeftToRightInlineDirection = true)
+{
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    auto isFlippedBlocksWritingMode = WebCore::isFlippedWritingMode(writingMode);
+
+    boxGeometry.setTopLeft(borderBoxVisualTopLeft);
+    if (isHorizontalWritingMode && !isFlippedBlocksWritingMode && isLeftToRightInlineDirection)
+        return;
+
+    auto flipHorizontalDecorationValues = [&] {
+        boxGeometry.setHorizontalMargin({ boxGeometry.marginEnd(), boxGeometry.marginStart() });
+        boxGeometry.setHorizontalBorder({ boxGeometry.borderEnd(), boxGeometry.borderStart() });
+        if (boxGeometry.horizontalPadding())
+            boxGeometry.setHorizontalPadding(Layout::HorizontalEdges { *boxGeometry.paddingEnd(), *boxGeometry.paddingStart() });
+    };
+
+    auto flipVerticalDecorationValues = [&] {
+        boxGeometry.setVerticalMargin({ boxGeometry.marginAfter(), boxGeometry.marginBefore() });
+        boxGeometry.setVerticalBorder({ boxGeometry.borderAfter(), boxGeometry.borderBefore() });
+        if (boxGeometry.verticalPadding())
+            boxGeometry.setVerticalPadding(Layout::VerticalEdges { *boxGeometry.paddingAfter(), *boxGeometry.paddingBefore() });
+    };
+
+    if (isHorizontalWritingMode) {
+        if (!isLeftToRightInlineDirection)
+            flipHorizontalDecorationValues();
+
+        if (isFlippedBlocksWritingMode)
+            flipVerticalDecorationValues();
+        return;
+    }
+
+    // // vertical-lr/rl with inline direction of ltr/rtl.
+    auto contentBoxLogicalWidth = boxGeometry.contentBoxWidth();
+    boxGeometry.setContentBoxWidth(boxGeometry.contentBoxHeight());
+    boxGeometry.setContentBoxHeight(contentBoxLogicalWidth);
+
+    auto horizontalSpaceForScrollbar = boxGeometry.horizontalSpaceForScrollbar();
+    boxGeometry.setHorizontalSpaceForScrollbar(boxGeometry.verticalSpaceForScrollbar());
+    boxGeometry.setVerticalSpaceForScrollbar(horizontalSpaceForScrollbar);
+
+    auto horizonalMargin = boxGeometry.horizontalMargin();
+    auto horizontalBorder = HorizontalEdges { boxGeometry.borderStart(), boxGeometry.borderEnd() };
+    boxGeometry.setHorizontalMargin({ boxGeometry.marginBefore(), boxGeometry.marginAfter() });
+    boxGeometry.setHorizontalBorder({ boxGeometry.borderBefore(), boxGeometry.borderAfter() });
+    auto horizontalPadding = std::optional<HorizontalEdges> { };
+    if (boxGeometry.verticalPadding()) {
+        if (boxGeometry.horizontalPadding())
+            horizontalPadding = { *boxGeometry.paddingStart(), *boxGeometry.paddingEnd() };
+        boxGeometry.setHorizontalPadding(Layout::HorizontalEdges { *boxGeometry.paddingBefore(), *boxGeometry.paddingAfter() });
+    }
+
+    // Flip inline direction now that we have the horizontal decoration resolved.
+    if (!isLeftToRightInlineDirection)
+        flipHorizontalDecorationValues();
+
+    // Flip vertical decoration depending on whether the block direction is left to right or right to left.
+    if (!isFlippedBlocksWritingMode) {
+        boxGeometry.setVerticalMargin({ horizonalMargin.start, horizonalMargin.end });
+        boxGeometry.setVerticalBorder({ horizontalBorder.left, horizontalBorder.right });
+        auto verticalPadding = std::optional<Layout::VerticalEdges> { };
+        if (horizontalPadding)
+            verticalPadding = { horizontalPadding->left, horizontalPadding->right };
+        boxGeometry.setVerticalPadding(verticalPadding);
+        return;
+    }
+
+    boxGeometry.setVerticalMargin({ horizonalMargin.end, horizonalMargin.start });
+    boxGeometry.setVerticalBorder({ horizontalBorder.right, horizontalBorder.left });
+    auto verticalPadding = std::optional<Layout::VerticalEdges> { };
+    if (horizontalPadding)
+        verticalPadding = { horizontalPadding->right, horizontalPadding->left };
+    boxGeometry.setVerticalPadding(verticalPadding);
+}
+
 static InlineLayoutPoint flipLogicalPointToVisualForWritingModeWithinLine(const InlineLayoutPoint& logicalPoint, const InlineRect& lineLogicalRect, WritingMode writingMode)
 {
     switch (writingModeToBlockFlowDirection(writingMode)) {
@@ -417,6 +492,8 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
     ASSERT(lineLayoutResult.directionality.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto writingMode = root().style().writingMode();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+    auto isFlippedBlocksWritingMode = WebCore::isFlippedWritingMode(writingMode);
     auto contentStartInVisualOrder = m_displayLine.topLeft();
     Vector<size_t> blockLevelOutOfFlowBoxList;
 
@@ -486,15 +563,17 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineLayoutResult& 
                 // don't extend the spanning line box over to this line.
                 return;
             }
+            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             if (lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) {
                 // Inline boxes need special (stretchy) box geometry handling.
-                setInlineBoxGeometry(layoutBox, visualRectRelativeToRoot, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
+                setInlineBoxGeometry(boxGeometry, visualRectRelativeToRoot, lineBox.inlineLevelBoxFor(lineRun).isFirstBox());
                 return;
             }
-            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
             boxGeometry.setTopLeft(toLayoutPoint(visualRectRelativeToRoot.topLeft()));
             if (lineRun.isHardLineBreak())
-                boxGeometry.setContentBoxHeight(toLayoutUnit(visualRectRelativeToRoot.height()));
+                boxGeometry.setContentBoxHeight(toLayoutUnit(logicalRect.height()));
+            if (!isHorizontalWritingMode || isFlippedBlocksWritingMode)
+                convertBoxGeometryForWritingMode(boxGeometry, toLayoutPoint(visualRectRelativeToRoot.topLeft()), writingMode);
         };
         updateAssociatedBoxGeometry();
     }
@@ -657,7 +736,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     };
     computeInkOverflow();
 
-    setInlineBoxGeometry(layoutBox, displayBox.visualRectIgnoringBlockDirection(), isFirstBox);
+    setInlineBoxGeometry(boxGeometry, displayBox.visualRectIgnoringBlockDirection(), isFirstBox);
     if (inlineBox->hasContent())
         displayBox.setHasContent();
 }
@@ -782,7 +861,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                 // Such inline boxes should also be handled here.
                 if (!lineBox.hasContent()) {
                     // FIXME: It's expected to not have any inline boxes on empty lines. They make the line taller. We should reconsider this.
-                    setInlineBoxGeometry(layoutBox, { { }, { } }, true);
+                    setInlineBoxGeometry(formattingContext().geometryForBox(layoutBox), { { }, { } }, true);
                     continue;
                 }
                 auto isEmptyInlineBox = [&] {
@@ -871,7 +950,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
             auto& inlineBox = lineBox.inlineLevelBoxFor(lineRun);
             auto visualRect = boxes.last().visualRectIgnoringBlockDirection();
             appendInlineBoxDisplayBox(lineRun, inlineBox, visualRect, boxes);
-            setInlineBoxGeometry(lineRun.layoutBox(), { visualRect }, inlineBox.isFirstBox());
+            setInlineBoxGeometry(formattingContext().geometryForBox(lineRun.layoutBox()), { visualRect }, inlineBox.isFirstBox());
         }
     };
     handleTrailingOpenInlineBoxes();
@@ -1218,11 +1297,10 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
     }
 }
 
-void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, const InlineRect& rect, bool isFirstInlineBoxFragment)
+void InlineDisplayContentBuilder::setInlineBoxGeometry(Layout::BoxGeometry& boxGeometry, const InlineRect& rect, bool isFirstInlineBoxFragment)
 {
     auto adjustedSize = LayoutSize { LayoutUnit::fromFloatCeil(rect.width()), LayoutUnit::fromFloatCeil(rect.height()) };
     auto adjustedRect = Rect { LayoutPoint { rect.topLeft() }, adjustedSize };
-    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     if (!isFirstInlineBoxFragment) {
         auto enclosingBorderBoxRect = BoxGeometry::borderBoxRect(boxGeometry);
         enclosingBorderBoxRect.expandToContain(adjustedRect);
