@@ -63,6 +63,7 @@ public:
         std::optional<uint32_t> vertexDynamicOffset;
         std::optional<uint32_t> fragmentDynamicOffset;
         std::optional<uint32_t> computeDynamicOffset;
+        uint32_t dynamicOffsetsIndex;
     };
     using EntriesContainer = HashMap<uint32_t, Entry, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
