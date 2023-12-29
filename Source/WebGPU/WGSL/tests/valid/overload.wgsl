@@ -3569,10 +3569,57 @@ fn testAtomicReadWriteModify()
 }
 
 // 16.9. Data Packing Built-in Functions (https://www.w3.org/TR/WGSL/#pack-builtin-functions)
-// FIXME: implement
+// RUN: %metal-compile testDataPackingFunction
+@compute @workgroup_size(1)
+fn testDataPackingFunctions()
+{
+    { let x = pack4x8snorm(vec4f(0)); }
+    { let x = pack4x8unorm(vec4f(0)); }
+    { let x = pack4xI8(vec4i(0)); }
+    { let x = pack4xU8(vec4u(0)); }
+    { let x = pack4xI8Clamp(vec4i(0)); }
+    { let x = pack4xU8Clamp(vec4u(0)); }
+    { let x = pack2x16snorm(vec2f(0)); }
+    { let x = pack2x16unorm(vec2f(0)); }
+    { let x = pack2x16float(vec2f(0)); }
+
+    let v2f = vec2f(0);
+    let v4f = vec4f(0);
+    let v4i = vec4i(0);
+    let v4u = vec4u(0);
+    { let x = pack4x8snorm(v4f); }
+    { let x = pack4x8unorm(v4f); }
+    { let x = pack4xI8(v4i); }
+    { let x = pack4xU8(v4u); }
+    { let x = pack4xI8Clamp(v4i); }
+    { let x = pack4xU8Clamp(v4u); }
+    { let x = pack2x16snorm(v2f); }
+    { let x = pack2x16unorm(v2f); }
+    { let x = pack2x16float(v2f); }
+}
 
 // 16.10. Data Unpacking Built-in Functions (https://www.w3.org/TR/WGSL/#unpack-builtin-functions)
-// FIXME: implement
+// RUN: %metal-compile testDataUnpackingFunction
+@compute @workgroup_size(1)
+fn testDataUnpackingFunction()
+{
+    { let x = unpack4x8snorm(0); }
+    { let x = unpack4x8unorm(0); }
+    { let x = unpack4xI8(0); }
+    { let x = unpack4xU8(0); }
+    { let x = unpack2x16snorm(0); }
+    { let x = unpack2x16unorm(0); }
+    { let x = unpack2x16float(0); }
+
+    let u = 0u;
+    { let x = unpack4x8snorm(u); }
+    { let x = unpack4x8unorm(u); }
+    { let x = unpack4xI8(u); }
+    { let x = unpack4xU8(u); }
+    { let x = unpack2x16snorm(u); }
+    { let x = unpack2x16unorm(u); }
+    { let x = unpack2x16float(u); }
+}
 
 // 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 
