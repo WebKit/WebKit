@@ -2344,8 +2344,12 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
 
         if (node) {
             auto* childParentElement = child->node() ? child->node()->parentElement() : nullptr;
+            auto isInShadowTree = [] (Node& node) {
+                return node.isInShadowTree() || node.isInUserAgentShadowTree();
+            };
             // Do not take the textUnderElement for a different element (determined by child's element parent not being us). Otherwise we may doubly-expose the same text.
-            if (childParentElement && childParentElement != node && childParentElement->shadowHost() != node && node->isInShadowTree() == childParentElement->isInShadowTree())
+            // But for now, don't do this if either node is in the shadow DOM, as determining descendancy is suprisingly tricky. We may want to change this in the future.
+            if (childParentElement && childParentElement != node && !isInShadowTree(*node) && !isInShadowTree(*child->node()))
                 continue;
         }
 

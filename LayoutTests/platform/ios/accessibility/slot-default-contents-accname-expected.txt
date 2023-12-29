@@ -1,0 +1,10 @@
+This test ensures that we compute the correct accessible name when the default contents of a slot are used.
+
+	AXLabel: slotted label
+
+	AXLabel: default label
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+slotted label

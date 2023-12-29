@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<my-simple></my-simple>
+
+<script>
+class MySimple extends HTMLElement {
+    constructor() {
+        super();
+        const root = this.attachShadow({ mode: "open" });
+        root.innerHTML = `
+            <my-buttons>
+                <span slot="flex">flex test</span>
+                <span slot="block">block test</span>
+            </my-buttons>
+        `;
+    }
+}
+customElements.define("my-simple", MySimple);
+
+class MyButtons extends HTMLElement {
+    constructor() {
+        super();
+        const root = this.attachShadow({ mode: "open" });
+        root.innerHTML = `
+            <button id="flex-button" style="display: flex;"><slot name="flex"></slot></button>
+            <button id="block-button" style="display: block;"><slot name="block"></slot></button>
+        `;
+    }
+}
+customElements.define("my-buttons", MyButtons);
+
+let output = "This test ensures that we compute the correct accessible name for shadow DOM elements with display:flex.\n\n";
+if (window.accessibilityController) {
+    output += `${platformTextAlternatives(accessibilityController.accessibleElementById("block-button"))}\n\n`;
+    output += `${platformTextAlternatives(accessibilityController.accessibleElementById("flex-button"))}\n`;
+    debug(output);
+}
+</script>
+</body>
+</html>
+
