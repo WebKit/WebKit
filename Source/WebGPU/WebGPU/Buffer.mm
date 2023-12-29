@@ -229,35 +229,37 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     return static_cast<char*>(m_buffer.contents) + offset;
 }
 
-bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
+NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
 {
+#define ERROR_STRING(x) (@"GPUTexture.mapAsync: " x)
     if (!isValid())
-        return false;
+        return ERROR_STRING(@"Buffer is not valid");
 
     if (offset % 8)
-        return false;
+        return ERROR_STRING(@"Offset is not divisible by 8");
 
     if (rangeSize % 4)
-        return false;
+        return ERROR_STRING(@"range size is not divisible by 4");
 
     auto end = checkedSum<uint64_t>(offset, rangeSize);
     if (end.hasOverflowed() || end.value() > m_size)
-        return false;
+        return ERROR_STRING(@"offset and rangeSize overflowed");
 
-    if (m_state != State::Unmapped && m_state != State::MappedAtCreation)
-        return false;
+    if (m_state != State::Unmapped)
+        return ERROR_STRING(@"state != Unmapped");
 
     auto readWriteModeFlags = mode & (WGPUMapMode_Read | WGPUMapMode_Write);
     if (readWriteModeFlags != WGPUMapMode_Read && readWriteModeFlags != WGPUMapMode_Write)
-        return false;
+        return ERROR_STRING(@"readWriteModeFlags != Read && readWriteModeFlags != Write");
 
     if ((mode & WGPUMapMode_Read) && !(m_usage & WGPUBufferUsage_MapRead))
-        return false;
+        return ERROR_STRING(@"(mode & Read) && !(usage & Read)");
 
     if ((mode & WGPUMapMode_Write) && !(m_usage & WGPUBufferUsage_MapWrite))
-        return false;
+        return ERROR_STRING(@"(mode & Write) && !(usage & Write)");
 
-    return true;
+#undef ERROR_STRING
+    return nil;
 }
 
 void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback)
@@ -268,12 +270,10 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     if (size == WGPU_WHOLE_MAP_SIZE)
         rangeSize = computeRangeSize(m_size, offset);
 
-    if (!validateMapAsync(mode, offset, rangeSize)) {
-        m_device->generateAValidationError("Validation failure."_s);
+    if (NSString* error = errorValidatingMapAsync(mode, offset, rangeSize)) {
+        m_device->generateAValidationError(error);
 
-        m_device->instance().scheduleWork([callback = WTFMove(callback)]() mutable {
-            callback(WGPUBufferMapAsyncStatus_ValidationError);
-        });
+        callback(WGPUBufferMapAsyncStatus_ValidationError);
         return;
     }
 
@@ -313,11 +313,6 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
 bool Buffer::validateUnmap() const
 {
-    if (m_state != State::MappedAtCreation
-        && m_state != State::MappingPending
-        && m_state != State::Mapped)
-        return false;
-
     return true;
 }
   
@@ -325,7 +320,7 @@ void Buffer::unmap()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-unmap
 
-    if (!validateUnmap())
+    if (!validateUnmap() && !m_device->isValid())
         return;
 
     // FIXME: "If this.[[state]] is mapping pending: Reject [[mapping]] with an AbortError."

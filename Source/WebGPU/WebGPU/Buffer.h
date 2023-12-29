@@ -92,7 +92,7 @@ private:
     Buffer(Device&);
 
     bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
-    bool validateMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
+    NSString* errorValidatingMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
     bool validateUnmap() const;
 
     id<MTLBuffer> m_buffer { nil };
