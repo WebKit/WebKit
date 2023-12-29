@@ -321,22 +321,6 @@ enum class WebCore::WebGPU::BufferUsage : uint16_t {
     QueryResolve,
 };
 
-header: <WebCore/WebGPUBufferUsage.h>
-[OptionSet] enum class WebCore::WebGPU::BufferUsage : uint16_t {
-    MapRead,
-    MapWrite,
-    CopySource,
-    CopyDestination,
-    Index,
-    Vertex,
-    Uniform,
-    Storage,
-    Indirect,
-    QueryResolve,
-};
-
-using WebCore::WebGPU::BufferUsageFlags = OptionSet<WebCore::WebGPU::BufferUsage>;
-
 header: <WebCore/WebGPUTextureUsage.h>
 enum class WebCore::WebGPU::TextureUsage : uint8_t {
     CopySource,

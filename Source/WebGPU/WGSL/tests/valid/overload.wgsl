@@ -3516,6 +3516,7 @@ fn testTextureStore()
 
 // 16.8. Atomic Built-in Functions (https://www.w3.org/TR/WGSL/#atomic-builtin-functions)
 var<workgroup> x: atomic<i32>;
+@group(8) @binding(0) var<storage, read_write> y: atomic<i32>;
 
 // RUN: %metal-compile testAtomicFunctions
 @compute @workgroup_size(1)
@@ -3531,6 +3532,7 @@ fn testAtomicLoad()
 {
     // [AS, T].(ptr[AS, atomic[T], read_write]) => T,
     _ = atomicLoad(&x);
+    _ = atomicLoad(&y);
 }
 
 // 16.8.2
@@ -3538,6 +3540,7 @@ fn testAtomicStore()
 {
     /*[AS, T].(ptr[AS, atomic[T], read_write], T) => void,*/
     atomicStore(&x, 42);
+    atomicStore(&y, 42);
 }
 
 // 16.8.3. Atomic Read-modify-write (this spec entry contains several functions)
@@ -3552,15 +3555,71 @@ fn testAtomicReadWriteModify()
     _ = atomicOr(&x, 42);
     _ = atomicXor(&x, 42);
     _ = atomicExchange(&x, 42);
+    _ = atomicCompareExchangeWeak(&x, 42, 13);
+
+    _ = atomicAdd(&y, 42);
+    _ = atomicSub(&y, 42);
+    _ = atomicMax(&y, 42);
+    _ = atomicMin(&y, 42);
+    _ = atomicAnd(&y, 42);
+    _ = atomicOr(&y, 42);
+    _ = atomicXor(&y, 42);
+    _ = atomicExchange(&y, 42);
+    _ = atomicCompareExchangeWeak(&y, 42, 13);
 }
 
-// FIXME: Implement atomicCompareExchangeWeak (which depends on the result struct that is not currently supported)
-
 // 16.9. Data Packing Built-in Functions (https://www.w3.org/TR/WGSL/#pack-builtin-functions)
-// FIXME: implement
+// RUN: %metal-compile testDataPackingFunction
+@compute @workgroup_size(1)
+fn testDataPackingFunctions()
+{
+    { let x = pack4x8snorm(vec4f(0)); }
+    { let x = pack4x8unorm(vec4f(0)); }
+    { let x = pack4xI8(vec4i(0)); }
+    { let x = pack4xU8(vec4u(0)); }
+    { let x = pack4xI8Clamp(vec4i(0)); }
+    { let x = pack4xU8Clamp(vec4u(0)); }
+    { let x = pack2x16snorm(vec2f(0)); }
+    { let x = pack2x16unorm(vec2f(0)); }
+    { let x = pack2x16float(vec2f(0)); }
+
+    let v2f = vec2f(0);
+    let v4f = vec4f(0);
+    let v4i = vec4i(0);
+    let v4u = vec4u(0);
+    { let x = pack4x8snorm(v4f); }
+    { let x = pack4x8unorm(v4f); }
+    { let x = pack4xI8(v4i); }
+    { let x = pack4xU8(v4u); }
+    { let x = pack4xI8Clamp(v4i); }
+    { let x = pack4xU8Clamp(v4u); }
+    { let x = pack2x16snorm(v2f); }
+    { let x = pack2x16unorm(v2f); }
+    { let x = pack2x16float(v2f); }
+}
 
 // 16.10. Data Unpacking Built-in Functions (https://www.w3.org/TR/WGSL/#unpack-builtin-functions)
-// FIXME: implement
+// RUN: %metal-compile testDataUnpackingFunction
+@compute @workgroup_size(1)
+fn testDataUnpackingFunction()
+{
+    { let x = unpack4x8snorm(0); }
+    { let x = unpack4x8unorm(0); }
+    { let x = unpack4xI8(0); }
+    { let x = unpack4xU8(0); }
+    { let x = unpack2x16snorm(0); }
+    { let x = unpack2x16unorm(0); }
+    { let x = unpack2x16float(0); }
+
+    let u = 0u;
+    { let x = unpack4x8snorm(u); }
+    { let x = unpack4x8unorm(u); }
+    { let x = unpack4xI8(u); }
+    { let x = unpack4xU8(u); }
+    { let x = unpack2x16snorm(u); }
+    { let x = unpack2x16unorm(u); }
+    { let x = unpack2x16float(u); }
+}
 
 // 16.11. Synchronization Built-in Functions (https://www.w3.org/TR/WGSL/#sync-builtin-functions)
 

@@ -342,6 +342,27 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             }
         }
 
+        auto hasDynamicOffsets = ^(size_t* sizeOfDynamicOffsets, size_t stageCount) {
+            for (size_t i = 0; i < stageCount; ++i) {
+                if (sizeOfDynamicOffsets[i])
+                    return true;
+            }
+
+            return false;
+        };
+        HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> dynamicOffsetIndices;
+        if (hasDynamicOffsets(sizeOfDynamicOffsets, stageCount)) {
+            std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupLayoutEntry& a, const WGPUBindGroupLayoutEntry& b) {
+                return a.binding < b.binding;
+            });
+            uint32_t nextDynamicOffsetIndex = 0;
+            for (auto& entry : descriptorEntries) {
+                if (entry.buffer.hasDynamicOffset)
+                    dynamicOffsetIndices.add(entry.binding, nextDynamicOffsetIndex++);
+            }
+        }
+
+        auto dynamicOffsetsIt = dynamicOffsetIndices.find(entry.binding);
         bindGroupLayoutEntries.add(entry.binding, BindGroupLayout::Entry {
             .binding = entry.binding,
             .visibility = entry.visibility,
@@ -350,7 +371,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             .bufferSizeArgumentBufferIndices = WTFMove(bufferSizeArgumentBufferIndices),
             .vertexDynamicOffset = WTFMove(dynamicOffsets[0]),
             .fragmentDynamicOffset = WTFMove(dynamicOffsets[1]),
-            .computeDynamicOffset = WTFMove(dynamicOffsets[2])
+            .computeDynamicOffset = WTFMove(dynamicOffsets[2]),
+            .dynamicOffsetsIndex = dynamicOffsetsIt == dynamicOffsetIndices.end() ? std::numeric_limits<uint32_t>::max() : dynamicOffsetsIt->value
         });
     }
 

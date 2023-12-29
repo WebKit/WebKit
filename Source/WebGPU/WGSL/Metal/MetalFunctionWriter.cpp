@@ -320,6 +320,25 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
+    if (m_callGraph.ast().usesAtomicCompareExchange()) {
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "struct __atomic_compare_exchange_result {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "T old_value;\n");
+            m_stringBuilder.append(m_indent, "bool exchanged;\n");
+        }
+        m_stringBuilder.append(m_indent, "};\n\n");
+
+        m_stringBuilder.append(m_indent, "#define __wgslAtomicCompareExchangeWeak(atomic, compare, value) \\\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "({ auto innerCompare = compare; \\\n");
+            m_stringBuilder.append(m_indent, "__atomic_compare_exchange_result<decltype(compare)> { innerCompare, atomic_compare_exchange_weak_explicit((atomic), &innerCompare, value, memory_order_relaxed, memory_order_relaxed) }; \\\n");
+            m_stringBuilder.append(m_indent, "})\n");
+        }
+    }
+
     if (m_callGraph.ast().usesPackedStructs()) {
         m_callGraph.ast().clearUsesPackedStructs();
 
@@ -1579,6 +1598,62 @@ static void emitBitcast(FunctionDefinitionWriter* writer, AST::CallExpression& c
     writer->stringBuilder().append(")");
 }
 
+static void emitPack2x16Float(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(half2(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitUnpack2x16Float(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("float2(as_type<half2>(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xI8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(char4(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xI8Clamp(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(char4(clamp(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(", -128, 127)))");
+}
+
+static void emitUnpack4xI8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("int4(as_type<char4>(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(uchar4(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
+static void emitPack4xU8Clamp(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("as_type<uint>(uchar4(min(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append(", 255)))");
+}
+
+static void emitUnpack4xU8(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    writer->stringBuilder().append("uint4(as_type<uchar4>(");
+    writer->visit(call.arguments()[0]);
+    writer->stringBuilder().append("))");
+}
+
 void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     if (is<AST::ElaboratedTypeExpression>(call.target())) {
@@ -1631,6 +1706,11 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "atomicSub", emitAtomicSub },
             { "atomicXor", emitAtomicXor },
             { "distance", emitDistance },
+            { "pack2x16float", emitPack2x16Float },
+            { "pack4xI8", emitPack4xI8 },
+            { "pack4xI8Clamp", emitPack4xI8Clamp },
+            { "pack4xU8", emitPack4xU8 },
+            { "pack4xU8Clamp", emitPack4xU8Clamp },
             { "storageBarrier", emitStorageBarrier },
             { "textureDimensions", emitTextureDimensions },
             { "textureGather", emitTextureGather },
@@ -1647,6 +1727,9 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "textureSampleGrad", emitTextureSampleGrad },
             { "textureSampleLevel", emitTextureSampleLevel },
             { "textureStore", emitTextureStore },
+            { "unpack2x16float", emitUnpack2x16Float },
+            { "unpack4xI8", emitUnpack4xI8 },
+            { "unpack4xU8", emitUnpack4xU8 },
             { "workgroupBarrier", emitWorkgroupBarrier },
             { "workgroupUniformLoad", emitWorkgroupUniformLoad },
         };
@@ -1658,6 +1741,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         }
 
         static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> directMappings[] {
+            { "atomicCompareExchangeWeak", "__wgslAtomicCompareExchangeWeak"_s },
             { "countLeadingZeros", "clz"_s },
             { "countOneBits", "popcount"_s },
             { "countTrailingZeros", "ctz"_s },
@@ -1675,7 +1759,15 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "insertBits", "insert_bits"_s },
             { "inverseSqrt", "rsqrt"_s },
             { "modf", "__wgslModf"_s },
+            { "pack2x16snorm", "pack_float_to_snorm2x16"_s },
+            { "pack2x16unorm", "pack_float_to_unorm2x16"_s },
+            { "pack4x8snorm", "pack_float_to_snorm4x8"_s },
+            { "pack4x8unorm", "pack_float_to_unorm4x8"_s },
             { "reverseBits", "reverse_bits"_s },
+            { "unpack2x16snorm", "unpack_snorm2x16_to_float"_s },
+            { "unpack2x16unorm", "unpack_unorm2x16_to_float"_s },
+            { "unpack4x8snorm", "unpack_snorm4x8_to_float"_s },
+            { "unpack4x8unorm", "unpack_unorm4x8_to_float"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {

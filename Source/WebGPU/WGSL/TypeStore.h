@@ -105,6 +105,7 @@ public:
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
     const Type* frexpResultType(const Type*, const Type*);
     const Type* modfResultType(const Type*, const Type*);
+    const Type* atomicCompareExchangeResultType(const Type*);
 
 private:
     template<typename TypeKind, typename... Arguments>
@@ -135,6 +136,8 @@ private:
     const Type* m_textureDepthMultisampled2d;
     const Type* m_atomicI32;
     const Type* m_atomicU32;
+    const Type* m_atomicCompareExchangeResultI32;
+    const Type* m_atomicCompareExchangeResultU32;
 };
 
 } // namespace WGSL

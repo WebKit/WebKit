@@ -63,7 +63,7 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
-    if (m_lineHasRubyContent)
+    if (m_lineHasNonLineSpanningRubyContent)
         RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext());
     computeLineBoxGeometry(lineBox);
     adjustOutsideListMarkersPosition(lineBox);
@@ -371,7 +371,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
             continue;
         }
         if (run.isInlineBoxStart()) {
@@ -388,7 +387,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
+            m_lineHasNonLineSpanningRubyContent = m_lineHasNonLineSpanningRubyContent || layoutBox.isRubyBase();
             continue;
         }
         if (run.isInlineBoxEnd()) {

@@ -33,6 +33,7 @@
 #include <memory>
 #include <variant>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -73,6 +74,7 @@ struct Configuration {
     uint32_t maxBuffersPlusVertexBuffersForVertexStage = 8;
     uint32_t maxBuffersForFragmentStage = 8;
     uint32_t maxBuffersForComputeStage = 8;
+    const HashSet<String> supportedFeatures = { };
 };
 
 std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration&);

@@ -110,6 +110,55 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, device);
 }
 
+static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& features)
+{
+    HashSet<String> result;
+    for (auto feature : features) {
+        switch (feature) {
+        case WGPUFeatureName_Undefined:
+            continue;
+        case WGPUFeatureName_DepthClipControl:
+            result.add("depth-clip-control"_s);
+            break;
+        case WGPUFeatureName_Depth32FloatStencil8:
+            result.add("depth32float-stencil8"_s);
+            break;
+        case WGPUFeatureName_TimestampQuery:
+            result.add("timestamp-query"_s);
+            break;
+        case WGPUFeatureName_TextureCompressionBC:
+            result.add("texture-compression-bc"_s);
+            break;
+        case WGPUFeatureName_TextureCompressionETC2:
+            result.add("texture-compression-etc2"_s);
+            break;
+        case WGPUFeatureName_TextureCompressionASTC:
+            result.add("texture-compression-astc"_s);
+            break;
+        case WGPUFeatureName_IndirectFirstInstance:
+            result.add("indirect-first-instance"_s);
+            break;
+        case WGPUFeatureName_ShaderF16:
+            result.add("shader-f16"_s);
+            break;
+        case WGPUFeatureName_RG11B10UfloatRenderable:
+            result.add("rg11b10ufloat-renderable"_s);
+            break;
+        case WGPUFeatureName_BGRA8UnormStorage:
+            result.add("bgra8unorm-storage"_s);
+            break;
+        case WGPUFeatureName_Float32Filterable:
+            result.add("float32-filterable"_s);
+            break;
+        case WGPUFeatureName_Force32:
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+    }
+
+    return result;
+}
+
 Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
     if (!descriptor.nextInChain || !isValid())
@@ -119,7 +168,13 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (!shaderModuleParameters)
         return ShaderModule::createInvalid(*this);
 
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
+    auto supportedFeatures = buildFeatureSet(m_capabilities.features);
+    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, WGSL::Configuration {
+        .maxBuffersPlusVertexBuffersForVertexStage = maxBuffersPlusVertexBuffersForVertexStage(),
+        .maxBuffersForFragmentStage = maxBuffersForFragmentStage(),
+        .maxBuffersForComputeStage = maxBuffersForComputeStage(),
+        .supportedFeatures = WTFMove(supportedFeatures)
+    });
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
         if (shaderModuleParameters->hints && descriptor.hintCount) {
