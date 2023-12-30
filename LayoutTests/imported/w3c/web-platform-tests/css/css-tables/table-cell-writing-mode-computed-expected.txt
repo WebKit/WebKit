@@ -1,4 +1,4 @@
 Test
 
-FAIL Computed value of orthogonal writing-mode on table cell assert_equals: expected "vertical-lr" but got "horizontal-tb"
+PASS Computed value of orthogonal writing-mode on table cell
 
