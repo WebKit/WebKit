@@ -448,8 +448,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setPosition(PositionType::Static);
 
         // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
+        // FIXME: Table cells should be allowed to be perpendicular or flipped with respect to the table, though.
         if (style.display() == DisplayType::TableColumn || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableFooterGroup
-            || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup)
+            || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableRowGroup
+            || style.display() == DisplayType::TableCell)
             style.setWritingMode(m_parentStyle.writingMode());
 
         if (style.isDisplayDeprecatedFlexibleBox()) {
