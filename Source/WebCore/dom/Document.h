@@ -581,6 +581,8 @@ public:
     Ref<HTMLCollection> windowNamedItems(const AtomString&);
     Ref<HTMLCollection> documentNamedItems(const AtomString&);
 
+    WEBCORE_EXPORT Ref<NodeList> getElementsByName(const AtomString& elementName);
+
     WakeLockManager& wakeLockManager();
 
     // Other methods (not part of DOM)
