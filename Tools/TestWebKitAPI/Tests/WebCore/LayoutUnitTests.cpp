@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Google Inc. All rights reserved.
+ * Copyright (c) 2012-2017, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -104,6 +104,13 @@ TEST(WebCoreLayoutUnit, LayoutUnitRounding)
     ASSERT_EQ(LayoutUnit::fromFloatRound(1.49f).round(), 1);
     ASSERT_EQ(LayoutUnit::fromFloatRound(1.5f).round(), 2);
     ASSERT_EQ(LayoutUnit::fromFloatRound(1.51f).round(), 2);
+    // The fractional part of LayoutUnit::Max() is 0x3f, so it should round up.
+    ASSERT_EQ(((std::numeric_limits<int>::max() / kFixedPointDenominator) + 1), LayoutUnit::max().round());
+    // The fractional part of LayoutUnit::Min() is 0, so the next bigger possible
+    // value should round down.
+    LayoutUnit epsilon;
+    epsilon.setRawValue(1);
+    ASSERT_EQ(((std::numeric_limits<int>::min() / kFixedPointDenominator)), (LayoutUnit::min() + epsilon).round());
 }
 
 TEST(WebCoreLayoutUnit, LayoutUnitMultiplication)
