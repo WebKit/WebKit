@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -164,6 +165,38 @@ TEST(FloatQuad, IsEmpty)
         FloatPoint(1, 1),
         FloatPoint(3, 3),
     });
+}
+
+TEST(FloatQuad, BoundingBox)
+{
+    FloatQuad quad(FloatPoint(2, 3), FloatPoint(5, 7), FloatPoint(11, 13), FloatPoint(17, 19));
+    FloatRect rect = quad.boundingBox();
+    ASSERT_EQ(rect.x(), 2);
+    ASSERT_EQ(rect.y(), 3);
+    ASSERT_EQ(rect.width(), 17 - 2);
+    ASSERT_EQ(rect.height(), 19 - 3);
+}
+
+TEST(FloatQuad, BoundingBoxSaturateInf)
+{
+    constexpr double inf = std::numeric_limits<double>::infinity();
+    FloatQuad quad(FloatPoint(-inf, 3), FloatPoint(5, inf), FloatPoint(11, 13), FloatPoint(17, 19));
+    FloatRect rect = quad.boundingBox();
+    ASSERT_EQ(rect.x(), std::numeric_limits<int>::min());
+    ASSERT_EQ(rect.y(), 3.0f);
+    ASSERT_EQ(rect.width(), 17.0f - std::numeric_limits<int>::min());
+    ASSERT_EQ(rect.height(), static_cast<float>(std::numeric_limits<int>::max()) - 3.0f);
+}
+
+TEST(FloatQuad, BoundingBoxSaturateLarge)
+{
+    constexpr double large = std::numeric_limits<float>::max() * 4;
+    FloatQuad quad(FloatPoint(-large, 3), FloatPoint(5, large), FloatPoint(11, 13), FloatPoint(17, 19));
+    FloatRect rect = quad.boundingBox();
+    ASSERT_EQ(rect.x(), std::numeric_limits<int>::min());
+    ASSERT_EQ(rect.y(), 3.0f);
+    ASSERT_EQ(rect.width(), 17.0f - std::numeric_limits<int>::min());
+    ASSERT_EQ(rect.height(), static_cast<float>(std::numeric_limits<int>::max()) - 3.0f);
 }
 
 } // namespace TestWebKitAPI
