@@ -179,6 +179,7 @@ public:
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
     const FontMetrics& metricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
+    float zeroWidth() const;
     float tabWidth(const Font&, const TabSize&, float, Font::SyntheticBoldInclusion) const;
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
