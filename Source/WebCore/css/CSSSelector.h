@@ -116,25 +116,25 @@ struct PossiblyQuotedIdentifier {
             NthLastOfType,
             Link,
             Visited,
-            Any,
+            WebKitAny,
             AnyLink,
-            AnyLinkDeprecated,
+            WebKitAnyLink,
             Autofill,
-            AutofillAndObscured,
-            AutofillStrongPassword,
-            AutofillStrongPasswordViewable,
+            WebKitAutofillAndObscured,
+            WebKitAutofillStrongPassword,
+            WebKitAutofillStrongPasswordViewable,
             Hover,
-            Drag,
+            WebKitDrag,
             Focus,
             FocusVisible,
             FocusWithin,
             Active,
             Checked,
             Enabled,
-            FullPageMedia,
+            WebKitFullPageMedia,
             Default,
             Disabled,
-            HtmlDocument, // for internal use only with forms in table case in UA stylesheet
+            InternalHTMLDocument, // for internal use in html.css
             Is,
             Matches, // obsolete synonym for PseudoClassIs
             Where,
@@ -167,11 +167,11 @@ struct PossiblyQuotedIdentifier {
             NoButton,
 #if ENABLE(FULLSCREEN_API)
             Fullscreen,
-            WebkitFullScreen,
-            FullScreenDocument,
-            FullScreenAncestor,
-            AnimatingFullScreenTransition,
-            FullScreenControlsHidden,
+            WebKitFullScreen,
+            WebKitFullScreenDocument,
+            WebKitFullScreenAncestor,
+            WebKitAnimatingFullScreenTransition,
+            WebKitFullScreenControlsHidden,
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
             PictureInPicture,
@@ -214,13 +214,13 @@ struct PossiblyQuotedIdentifier {
             Highlight,
             Marker,
             Part,
-            Resizer,
-            Scrollbar,
-            ScrollbarButton,
-            ScrollbarCorner,
-            ScrollbarThumb,
-            ScrollbarTrack,
-            ScrollbarTrackPiece,
+            WebKitResizer,
+            WebKitScrollbar,
+            WebKitScrollbarButton,
+            WebKitScrollbarCorner,
+            WebKitScrollbarThumb,
+            WebKitScrollbarTrack,
+            WebKitScrollbarTrackPiece,
             Selection,
             Slotted,
             SpellingError,
@@ -423,7 +423,7 @@ inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClass pseudoClass
     case CSSSelector::PseudoClass::Is:
     case CSSSelector::PseudoClass::Where:
     case CSSSelector::PseudoClass::Not:
-    case CSSSelector::PseudoClass::Any:
+    case CSSSelector::PseudoClass::WebKitAny:
     case CSSSelector::PseudoClass::Matches:
     case CSSSelector::PseudoClass::Has:
         return true;

@@ -31,20 +31,12 @@ import subprocess
 def enumerablePseudoType(stringPseudoType):
     output = ['CSSSelector::PseudoElement::']
 
-    webkitPrefix = '-webkit-'
-    if (stringPseudoType.startswith(webkitPrefix)):
-        stringPseudoType = stringPseudoType[len(webkitPrefix):]
+    def processSubstring(substring):
+        if substring == 'webkit':
+            return 'WebKit'
+        return substring.capitalize()
 
-    substring_start = 0
-    next_dash_position = stringPseudoType.find('-')
-    while (next_dash_position != -1):
-        output.append(stringPseudoType[substring_start].upper())
-        output.append(stringPseudoType[substring_start + 1:next_dash_position])
-        substring_start = next_dash_position + 1
-        next_dash_position = stringPseudoType.find('-', substring_start)
-
-    output.append(stringPseudoType[substring_start].upper())
-    output.append(stringPseudoType[substring_start + 1:])
+    output = output + list(map(processSubstring, stringPseudoType.split('-')))
     return ''.join(output)
 
 

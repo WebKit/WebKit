@@ -61,7 +61,7 @@ static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder
     //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
-    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, Scrollbar, Selection, SpellingError, After, Other };
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, After, Other };
     auto sortingIndex = [](PseudoId pseudoId) -> SortingIndex {
         switch (pseudoId) {
         case PseudoId::None:
@@ -78,8 +78,8 @@ static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder
             return GrammarError;
         case PseudoId::Highlight:
             return Highlight;
-        case PseudoId::Scrollbar:
-            return Scrollbar;
+        case PseudoId::WebKitScrollbar:
+            return WebKitScrollbar;
         case PseudoId::Selection:
             return Selection;
         case PseudoId::SpellingError:
@@ -295,13 +295,13 @@ String pseudoIdAsString(PseudoId pseudoId)
     static NeverDestroyed<const String> highlight(MAKE_STATIC_STRING_IMPL("::highlight"));
     static NeverDestroyed<const String> marker(MAKE_STATIC_STRING_IMPL("::marker"));
     static NeverDestroyed<const String> selection(MAKE_STATIC_STRING_IMPL("::selection"));
-    static NeverDestroyed<const String> scrollbar(MAKE_STATIC_STRING_IMPL("::-webkit-scrollbar"));
     static NeverDestroyed<const String> spellingError(MAKE_STATIC_STRING_IMPL("::spelling-error"));
     static NeverDestroyed<const String> viewTransition(MAKE_STATIC_STRING_IMPL("::view-transition"));
     static NeverDestroyed<const String> viewTransitionGroup(MAKE_STATIC_STRING_IMPL("::view-transition-group"));
     static NeverDestroyed<const String> viewTransitionImagePair(MAKE_STATIC_STRING_IMPL("::view-transition-image-pair"));
     static NeverDestroyed<const String> viewTransitionOld(MAKE_STATIC_STRING_IMPL("::view-transition-old"));
     static NeverDestroyed<const String> viewTransitionNew(MAKE_STATIC_STRING_IMPL("::view-transition-new"));
+    static NeverDestroyed<const String> webkitScrollbar(MAKE_STATIC_STRING_IMPL("::-webkit-scrollbar"));
     switch (pseudoId) {
     case PseudoId::After:
         return after;
@@ -319,8 +319,6 @@ String pseudoIdAsString(PseudoId pseudoId)
         return marker;
     case PseudoId::Selection:
         return selection;
-    case PseudoId::Scrollbar:
-        return scrollbar;
     case PseudoId::SpellingError:
         return spellingError;
     case PseudoId::ViewTransition:
@@ -333,6 +331,8 @@ String pseudoIdAsString(PseudoId pseudoId)
         return viewTransitionOld;
     case PseudoId::ViewTransitionNew:
         return viewTransitionNew;
+    case PseudoId::WebKitScrollbar:
+        return webkitScrollbar;
     default:
         return emptyString();
     }

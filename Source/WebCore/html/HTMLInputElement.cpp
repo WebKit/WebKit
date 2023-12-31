@@ -1507,7 +1507,7 @@ void HTMLInputElement::setAutoFilledAndViewable(bool autoFilledAndViewable)
     if (autoFilledAndViewable == m_isAutoFilledAndViewable)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::AutofillStrongPasswordViewable, autoFilledAndViewable);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::WebKitAutofillStrongPasswordViewable, autoFilledAndViewable);
     m_isAutoFilledAndViewable = autoFilledAndViewable;
 }
 
@@ -1516,7 +1516,7 @@ void HTMLInputElement::setAutoFilledAndObscured(bool autoFilledAndObscured)
     if (autoFilledAndObscured == m_isAutoFilledAndObscured)
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::AutofillAndObscured, autoFilledAndObscured);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::WebKitAutofillAndObscured, autoFilledAndObscured);
     m_isAutoFilledAndObscured = autoFilledAndObscured;
 
     if (auto* cache = document().existingAXObjectCache())
