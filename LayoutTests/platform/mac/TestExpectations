@@ -402,7 +402,6 @@ fast/writing-mode/japanese-rl-selection.html [ Failure ]
 fast/writing-mode/japanese-rl-text.html [ Failure ]
 
 # <rdar://problem/11229810> SVG square caps on zero-length paths draw incorrectly on Mountain Lion
-svg/W3C-SVG-1.1-SE/painting-control-04-f.svg [ Failure ]
 svg/custom/zero-path-square-cap-rendering.svg [ Failure ]
 svg/stroke/zero-length-arc-linecaps-rendering.svg [ Failure ]
 svg/stroke/zero-length-path-linecap-rendering.svg [ Failure ]

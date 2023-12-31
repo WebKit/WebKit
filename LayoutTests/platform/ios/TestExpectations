@@ -1440,7 +1440,6 @@ webkit.org/b/181752 storage/indexeddb/transaction-coordination-within-database.h
 webkit.org/b/181752 storage/indexeddb/transaction-starvation.html [ Skip ]
 
 # SVG tests that fail:
-svg/W3C-SVG-1.1-SE/text-intro-02-b.svg [ Failure ]
 svg/as-object/svg-embedded-in-html-in-iframe.html [ Failure ]
 svg/batik/filters/feTile.svg [ Failure ]
 svg/batik/filters/filterRegions.svg [ Failure ]
@@ -4688,8 +4687,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-v
 imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html [ Failure ]
 imported/w3c/web-platform-tests/css/selectors/user-invalid.html [ Failure ]
 imported/w3c/web-platform-tests/css/selectors/valid-invalid-form-fieldset.html [ Failure ]
-
-webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
 
 webkit.org/b/266665 imported/w3c/web-platform-tests/html/semantics/invokers/invoketarget-button-event-dispatch.tentative.html [ Failure ]
 

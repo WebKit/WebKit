@@ -1,3 +1,6 @@
+#if ENABLE(SERVICE_CONTROLS)
+-apple-attachment-controls-container, PseudoElement::WebKitCustom
+#endif
 after
 backdrop
 before
