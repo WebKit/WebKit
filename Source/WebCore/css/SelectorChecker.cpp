@@ -222,13 +222,20 @@ bool SelectorChecker::matchHostPseudoClass(const CSSSelector& selector, const El
 
 inline static bool hasScrollbarPseudoElement(const PseudoIdSet& dynamicPseudoIdSet)
 {
-    PseudoIdSet scrollbarIdSet = { PseudoId::Scrollbar, PseudoId::ScrollbarThumb, PseudoId::ScrollbarButton, PseudoId::ScrollbarTrack, PseudoId::ScrollbarTrackPiece, PseudoId::ScrollbarCorner };
+    PseudoIdSet scrollbarIdSet = {
+        PseudoId::WebKitScrollbar,
+        PseudoId::WebKitScrollbarThumb,
+        PseudoId::WebKitScrollbarButton,
+        PseudoId::WebKitScrollbarTrack,
+        PseudoId::WebKitScrollbarTrackPiece,
+        PseudoId::WebKitScrollbarCorner
+    };
     if (dynamicPseudoIdSet & scrollbarIdSet)
         return true;
 
-    // PseudoId::Resizer does not always have a scrollbar but it is a scrollbar-like pseudo element
+    // PseudoId::WebKitResizer does not always have a scrollbar but it is a scrollbar-like pseudo element
     // because it can have more than one pseudo element.
-    return dynamicPseudoIdSet.has(PseudoId::Resizer);
+    return dynamicPseudoIdSet.has(PseudoId::WebKitResizer);
 }
 
 static SelectorChecker::LocalContext localContextForParent(const SelectorChecker::LocalContext& context)
@@ -830,7 +837,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClass::Is:
         case CSSSelector::PseudoClass::Where:
         case CSSSelector::PseudoClass::Matches:
-        case CSSSelector::PseudoClass::Any:
+        case CSSSelector::PseudoClass::WebKitAny:
             {
                 bool hasMatchedAnything = false;
 
@@ -953,14 +960,14 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClass::Autofill:
             return isAutofilled(element);
-        case CSSSelector::PseudoClass::AutofillAndObscured:
+        case CSSSelector::PseudoClass::WebKitAutofillAndObscured:
             return isAutofilledAndObscured(element);
-        case CSSSelector::PseudoClass::AutofillStrongPassword:
+        case CSSSelector::PseudoClass::WebKitAutofillStrongPassword:
             return isAutofilledStrongPassword(element);
-        case CSSSelector::PseudoClass::AutofillStrongPasswordViewable:
+        case CSSSelector::PseudoClass::WebKitAutofillStrongPasswordViewable:
             return isAutofilledStrongPasswordViewable(element);
         case CSSSelector::PseudoClass::AnyLink:
-        case CSSSelector::PseudoClass::AnyLinkDeprecated:
+        case CSSSelector::PseudoClass::WebKitAnyLink:
         case CSSSelector::PseudoClass::Link:
             // :visited and :link matches are separated later when applying the style. Here both classes match all links...
             return element.isLink();
@@ -970,7 +977,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             if (context.inFunctionalPseudoClass)
                 return false;
             return element.isLink() && context.visitedMatchType == VisitedMatchType::Enabled;
-        case CSSSelector::PseudoClass::Drag:
+        case CSSSelector::PseudoClass::WebKitDrag:
             return element.isBeingDragged();
         case CSSSelector::PseudoClass::Focus:
             return matchesFocusPseudoClass(element);
@@ -996,7 +1003,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         case CSSSelector::PseudoClass::Enabled:
             return matchesEnabledPseudoClass(element);
-        case CSSSelector::PseudoClass::FullPageMedia:
+        case CSSSelector::PseudoClass::WebKitFullPageMedia:
             return isMediaDocument(element);
         case CSSSelector::PseudoClass::Default:
             return matchesDefaultPseudoClass(element);
@@ -1028,15 +1035,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClass::Fullscreen:
             return matchesFullscreenPseudoClass(element);
-        case CSSSelector::PseudoClass::WebkitFullScreen:
+        case CSSSelector::PseudoClass::WebKitFullScreen:
             return matchesWebkitFullScreenPseudoClass(element);
-        case CSSSelector::PseudoClass::AnimatingFullScreenTransition:
+        case CSSSelector::PseudoClass::WebKitAnimatingFullScreenTransition:
             return matchesFullScreenAnimatingFullScreenTransitionPseudoClass(element);
-        case CSSSelector::PseudoClass::FullScreenAncestor:
+        case CSSSelector::PseudoClass::WebKitFullScreenAncestor:
             return matchesFullScreenAncestorPseudoClass(element);
-        case CSSSelector::PseudoClass::FullScreenDocument:
+        case CSSSelector::PseudoClass::WebKitFullScreenDocument:
             return matchesFullScreenDocumentPseudoClass(element);
-        case CSSSelector::PseudoClass::FullScreenControlsHidden:
+        case CSSSelector::PseudoClass::WebKitFullScreenControlsHidden:
             return matchesFullScreenControlsHiddenPseudoClass(element);
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -1113,7 +1120,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClass::HasAttachment:
             return hasAttachment(element);
 #endif
-        case CSSSelector::PseudoClass::HtmlDocument:
+        case CSSSelector::PseudoClass::InternalHTMLDocument:
             return matchesHtmlDocumentPseudoClass(element);
 
         case CSSSelector::PseudoClass::PopoverOpen:

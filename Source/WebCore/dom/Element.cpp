@@ -944,7 +944,7 @@ void Element::setBeingDragged(bool value)
     if (value == isBeingDragged())
         return;
 
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Drag, value);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::WebKitDrag, value);
     protectedDocument()->userActionElements().setBeingDragged(*this, value);
 }
 
@@ -2372,7 +2372,7 @@ void Element::setIsLink(bool flag)
         return;
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
         { CSSSelector::PseudoClass::AnyLink, flag },
-        { CSSSelector::PseudoClass::AnyLinkDeprecated, flag },
+        { CSSSelector::PseudoClass::WebKitAnyLink, flag },
         { CSSSelector::PseudoClass::Link, flag }
     });
     setStateFlag(StateFlag::IsLink, flag);

@@ -31,31 +31,14 @@ import subprocess
 def enumerablePseudoType(stringPseudoType):
     output = ['CSSSelector::PseudoClass::']
 
-    if stringPseudoType.endswith('('):
-        stringPseudoType = stringPseudoType[:-1]
+    def processSubstring(substring):
+        if substring == 'webkit':
+            return 'WebKit'
+        if substring == 'html':
+            return 'HTML'
+        return substring.capitalize()
 
-    internalPrefix = '-internal-'
-    if (stringPseudoType.startswith(internalPrefix)):
-        stringPseudoType = stringPseudoType[len(internalPrefix):]
-
-    webkitPrefix = '-webkit-'
-    if (stringPseudoType.startswith(webkitPrefix)):
-        stringPseudoType = stringPseudoType[len(webkitPrefix):]
-
-    khtmlPrefix = '-khtml-'
-    if (stringPseudoType.startswith(khtmlPrefix)):
-        stringPseudoType = stringPseudoType[len(khtmlPrefix):]
-
-    substring_start = 0
-    next_dash_position = stringPseudoType.find('-')
-    while (next_dash_position != -1):
-        output.append(stringPseudoType[substring_start].upper())
-        output.append(stringPseudoType[substring_start + 1:next_dash_position])
-        substring_start = next_dash_position + 1
-        next_dash_position = stringPseudoType.find('-', substring_start)
-
-    output.append(stringPseudoType[substring_start].upper())
-    output.append(stringPseudoType[substring_start + 1:])
+    output = output + list(map(processSubstring, stringPseudoType.split('-')))
     return ''.join(output)
 
 

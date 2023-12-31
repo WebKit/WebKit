@@ -278,20 +278,20 @@ PseudoId CSSSelector::pseudoId(PseudoElement type)
         return PseudoId::Before;
     case PseudoElement::After:
         return PseudoId::After;
-    case PseudoElement::Scrollbar:
-        return PseudoId::Scrollbar;
-    case PseudoElement::ScrollbarButton:
-        return PseudoId::ScrollbarButton;
-    case PseudoElement::ScrollbarCorner:
-        return PseudoId::ScrollbarCorner;
-    case PseudoElement::ScrollbarThumb:
-        return PseudoId::ScrollbarThumb;
-    case PseudoElement::ScrollbarTrack:
-        return PseudoId::ScrollbarTrack;
-    case PseudoElement::ScrollbarTrackPiece:
-        return PseudoId::ScrollbarTrackPiece;
-    case PseudoElement::Resizer:
-        return PseudoId::Resizer;
+    case PseudoElement::WebKitScrollbar:
+        return PseudoId::WebKitScrollbar;
+    case PseudoElement::WebKitScrollbarButton:
+        return PseudoId::WebKitScrollbarButton;
+    case PseudoElement::WebKitScrollbarCorner:
+        return PseudoId::WebKitScrollbarCorner;
+    case PseudoElement::WebKitScrollbarThumb:
+        return PseudoId::WebKitScrollbarThumb;
+    case PseudoElement::WebKitScrollbarTrack:
+        return PseudoId::WebKitScrollbarTrack;
+    case PseudoElement::WebKitScrollbarTrackPiece:
+        return PseudoId::WebKitScrollbarTrackPiece;
+    case PseudoElement::WebKitResizer:
+        return PseudoId::WebKitResizer;
     case PseudoElement::ViewTransition:
         return PseudoId::ViewTransition;
     case PseudoElement::ViewTransitionGroup:
@@ -494,11 +494,11 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         } else if (cs->match() == Match::PseudoClass) {
             switch (cs->pseudoClass()) {
 #if ENABLE(FULLSCREEN_API)
-            case CSSSelector::PseudoClass::AnimatingFullScreenTransition:
+            case CSSSelector::PseudoClass::WebKitAnimatingFullScreenTransition:
                 builder.append(":-webkit-animating-full-screen-transition");
                 break;
 #endif
-            case CSSSelector::PseudoClass::Any: {
+            case CSSSelector::PseudoClass::WebKitAny: {
                 builder.append(":-webkit-any(");
                 cs->selectorList()->buildSelectorsText(builder);
                 builder.append(')');
@@ -507,41 +507,41 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClass::AnyLink:
                 builder.append(":any-link");
                 break;
-            case CSSSelector::PseudoClass::AnyLinkDeprecated:
+            case CSSSelector::PseudoClass::WebKitAnyLink:
                 builder.append(":-webkit-any-link");
                 break;
             case CSSSelector::PseudoClass::Autofill:
                 builder.append(":autofill");
                 break;
-            case CSSSelector::PseudoClass::AutofillAndObscured:
+            case CSSSelector::PseudoClass::WebKitAutofillAndObscured:
                 builder.append(":-webkit-autofill-and-obscured");
                 break;
-            case CSSSelector::PseudoClass::AutofillStrongPassword:
+            case CSSSelector::PseudoClass::WebKitAutofillStrongPassword:
                 builder.append(":-webkit-autofill-strong-password");
                 break;
-            case CSSSelector::PseudoClass::AutofillStrongPasswordViewable:
+            case CSSSelector::PseudoClass::WebKitAutofillStrongPasswordViewable:
                 builder.append(":-webkit-autofill-strong-password-viewable");
                 break;
-            case CSSSelector::PseudoClass::Drag:
+            case CSSSelector::PseudoClass::WebKitDrag:
                 builder.append(":-webkit-drag");
                 break;
-            case CSSSelector::PseudoClass::FullPageMedia:
+            case CSSSelector::PseudoClass::WebKitFullPageMedia:
                 builder.append(":-webkit-full-page-media");
                 break;
 #if ENABLE(FULLSCREEN_API)
             case CSSSelector::PseudoClass::Fullscreen:
                 builder.append(":fullscreen");
                 break;
-            case CSSSelector::PseudoClass::WebkitFullScreen:
+            case CSSSelector::PseudoClass::WebKitFullScreen:
                 builder.append(":-webkit-full-screen");
                 break;
-            case CSSSelector::PseudoClass::FullScreenAncestor:
+            case CSSSelector::PseudoClass::WebKitFullScreenAncestor:
                 builder.append(":-webkit-full-screen-ancestor");
                 break;
-            case CSSSelector::PseudoClass::FullScreenDocument:
+            case CSSSelector::PseudoClass::WebKitFullScreenDocument:
                 builder.append(":-webkit-full-screen-document");
                 break;
-            case CSSSelector::PseudoClass::FullScreenControlsHidden:
+            case CSSSelector::PseudoClass::WebKitFullScreenControlsHidden:
                 builder.append(":-webkit-full-screen-controls-hidden");
                 break;
 #endif
@@ -653,7 +653,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClass::Invalid:
                 builder.append(":invalid");
                 break;
-            case CSSSelector::PseudoClass::HtmlDocument:
+            case CSSSelector::PseudoClass::InternalHTMLDocument:
                 builder.append(":-internal-html-document");
                 break;
             case CSSSelector::PseudoClass::Lang:

@@ -1,8 +1,8 @@
--khtml-drag
+-khtml-drag, PseudoClass::WebKitDrag
 -internal-html-document
 -webkit-any
--webkit-any-link, PseudoClass::AnyLinkDeprecated
--webkit-autofill
+-webkit-any-link
+-webkit-autofill, PseudoClass::Autofill
 -webkit-autofill-and-obscured
 -webkit-autofill-strong-password
 -webkit-autofill-strong-password-viewable
@@ -81,7 +81,7 @@ window-inactive
 #if ENABLE(FULLSCREEN_API)
 fullscreen
 -webkit-animating-full-screen-transition
--webkit-full-screen, PseudoClass::WebkitFullScreen
+-webkit-full-screen
 -webkit-full-screen-ancestor
 -webkit-full-screen-document
 -webkit-full-screen-controls-hidden
@@ -102,4 +102,3 @@ stalled
 muted
 volume-locked
 #endif
-

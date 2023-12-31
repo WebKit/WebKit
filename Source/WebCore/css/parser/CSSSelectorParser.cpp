@@ -441,13 +441,13 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
         return !isTreeStructuralPseudoClass(pseudoClass);
     case CSSSelector::PseudoElement::Slotted:
         return false;
-    case CSSSelector::PseudoElement::Resizer:
-    case CSSSelector::PseudoElement::Scrollbar:
-    case CSSSelector::PseudoElement::ScrollbarCorner:
-    case CSSSelector::PseudoElement::ScrollbarButton:
-    case CSSSelector::PseudoElement::ScrollbarThumb:
-    case CSSSelector::PseudoElement::ScrollbarTrack:
-    case CSSSelector::PseudoElement::ScrollbarTrackPiece:
+    case CSSSelector::PseudoElement::WebKitResizer:
+    case CSSSelector::PseudoElement::WebKitScrollbar:
+    case CSSSelector::PseudoElement::WebKitScrollbarCorner:
+    case CSSSelector::PseudoElement::WebKitScrollbarButton:
+    case CSSSelector::PseudoElement::WebKitScrollbarThumb:
+    case CSSSelector::PseudoElement::WebKitScrollbarTrack:
+    case CSSSelector::PseudoElement::WebKitScrollbarTrackPiece:
         return isScrollbarPseudoClass(pseudoClass);
     case CSSSelector::PseudoElement::Selection:
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
@@ -720,7 +720,7 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClass pseudoClass)
     case CSSSelector::PseudoClass::NthOfType:
     case CSSSelector::PseudoClass::NthLastOfType:
     case CSSSelector::PseudoClass::Lang:
-    case CSSSelector::PseudoClass::Any:
+    case CSSSelector::PseudoClass::WebKitAny:
     case CSSSelector::PseudoClass::Dir:
     case CSSSelector::PseudoClass::State:
         return true;
@@ -778,7 +778,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
                 return nullptr;
             if (!m_context.customStateSetEnabled && selector->pseudoClass() == CSSSelector::PseudoClass::State)
                 return nullptr;
-            if (m_context.mode != UASheetMode && selector->pseudoClass() == CSSSelector::PseudoClass::HtmlDocument)
+            if (m_context.mode != UASheetMode && selector->pseudoClass() == CSSSelector::PseudoClass::InternalHTMLDocument)
                 return nullptr;
 #if ENABLE(ATTACHMENT_ELEMENT)
             if (!DeprecatedGlobalSettings::attachmentElementEnabled() && selector->pseudoClass() == CSSSelector::PseudoClass::HasAttachment)
@@ -863,7 +863,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         case CSSSelector::PseudoClass::Is:
         case CSSSelector::PseudoClass::Where:
         case CSSSelector::PseudoClass::Matches:
-        case CSSSelector::PseudoClass::Any: {
+        case CSSSelector::PseudoClass::WebKitAny: {
             SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
             auto selectorList = makeUnique<CSSSelectorList>();
             auto consumedBlock = consumeComplexForgivingSelectorList(block);

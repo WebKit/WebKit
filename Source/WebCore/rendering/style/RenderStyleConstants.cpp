@@ -858,19 +858,19 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::Before: ts << "before"; break;
     case PseudoId::After: ts << "after"; break;
     case PseudoId::Selection: ts << "selection"; break;
-    case PseudoId::Scrollbar: ts << "scrollbar"; break;
-    case PseudoId::ScrollbarThumb: ts << "scrollbar-thumb"; break;
-    case PseudoId::ScrollbarButton: ts << "scrollbar-button"; break;
-    case PseudoId::ScrollbarTrack: ts << "scrollbar-track"; break;
-    case PseudoId::ScrollbarTrackPiece: ts << "scrollbar-trackpiece"; break;
-    case PseudoId::ScrollbarCorner: ts << "scrollbar-corner"; break;
     case PseudoId::SpellingError: ts << "spelling-error"; break;
     case PseudoId::ViewTransition: ts << "view-transition"; break;
     case PseudoId::ViewTransitionGroup: ts << "view-transition-group"; break;
     case PseudoId::ViewTransitionImagePair: ts << "view-transition-image-pair"; break;
     case PseudoId::ViewTransitionOld: ts << "view-transition-old"; break;
     case PseudoId::ViewTransitionNew: ts << "view-transition-new"; break;
-    case PseudoId::Resizer: ts << "resizer"; break;
+    case PseudoId::WebKitResizer: ts << "-webkit-resizer"; break;
+    case PseudoId::WebKitScrollbar: ts << "-webkit-scrollbar"; break;
+    case PseudoId::WebKitScrollbarThumb: ts << "-webkit-scrollbar-thumb"; break;
+    case PseudoId::WebKitScrollbarButton: ts << "-webkit-scrollbar-button"; break;
+    case PseudoId::WebKitScrollbarTrack: ts << "-webkit-scrollbar-track"; break;
+    case PseudoId::WebKitScrollbarTrackPiece: ts << "-webkit-scrollbar-trackpiece"; break;
+    case PseudoId::WebKitScrollbarCorner: ts << "-webkit-scrollbar-corner"; break;
     default:
         ts << "other";
         break;

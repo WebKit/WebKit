@@ -94,7 +94,7 @@ enum class PseudoId : uint32_t {
     After,
     Selection,
     Backdrop,
-    Scrollbar,
+    WebKitScrollbar,
     SpellingError,
     ViewTransition,
     ViewTransitionGroup,
@@ -103,17 +103,17 @@ enum class PseudoId : uint32_t {
     ViewTransitionNew,
 
     // Internal:
-    ScrollbarThumb,
-    ScrollbarButton,
-    ScrollbarTrack,
-    ScrollbarTrackPiece,
-    ScrollbarCorner,
-    Resizer,
+    WebKitScrollbarThumb,
+    WebKitScrollbarButton,
+    WebKitScrollbarTrack,
+    WebKitScrollbarTrackPiece,
+    WebKitScrollbarCorner,
+    WebKitResizer,
 
     AfterLastInternalPseudoId,
 
     FirstPublicPseudoId = FirstLine,
-    FirstInternalPseudoId = ScrollbarThumb,
+    FirstInternalPseudoId = WebKitScrollbarThumb,
     PublicPseudoIdMask = ((1 << FirstInternalPseudoId) - 1) & ~((1 << FirstPublicPseudoId) - 1)
 };
 

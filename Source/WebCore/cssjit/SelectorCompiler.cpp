@@ -1056,13 +1056,13 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Autofill:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilled));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::AutofillAndObscured:
+    case CSSSelector::PseudoClass::WebKitAutofillAndObscured:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilledAndObscured));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::AutofillStrongPassword:
+    case CSSSelector::PseudoClass::WebKitAutofillStrongPassword:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPassword));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::AutofillStrongPasswordViewable:
+    case CSSSelector::PseudoClass::WebKitAutofillStrongPasswordViewable:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsAutofilledStrongPasswordViewable));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::Checked:
@@ -1089,7 +1089,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::FocusWithin:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFocusWithinPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::FullPageMedia:
+    case CSSSelector::PseudoClass::WebKitFullPageMedia:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsMediaDocument));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::InRange:
@@ -1127,20 +1127,20 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Fullscreen:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullscreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebkitFullScreen:
+    case CSSSelector::PseudoClass::WebKitFullScreen:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesWebkitFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::FullScreenDocument:
+    case CSSSelector::PseudoClass::WebKitFullScreenDocument:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenDocumentPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::FullScreenAncestor:
+    case CSSSelector::PseudoClass::WebKitFullScreenAncestor:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAncestorPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::AnimatingFullScreenTransition:
+    case CSSSelector::PseudoClass::WebKitAnimatingFullScreenTransition:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
-    case CSSSelector::PseudoClass::FullScreenControlsHidden:
+    case CSSSelector::PseudoClass::WebKitFullScreenControlsHidden:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenControlsHiddenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 #endif
@@ -1187,7 +1187,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
 #endif
 
-    case CSSSelector::PseudoClass::HtmlDocument:
+    case CSSSelector::PseudoClass::InternalHTMLDocument:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesHtmlDocumentPseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
@@ -1226,7 +1226,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::OnlyOfType:
     case CSSSelector::PseudoClass::NthOfType:
     case CSSSelector::PseudoClass::NthLastOfType:
-    case CSSSelector::PseudoClass::Drag:
+    case CSSSelector::PseudoClass::WebKitDrag:
     case CSSSelector::PseudoClass::Has:
     case CSSSelector::PseudoClass::HasScope:
     case CSSSelector::PseudoClass::State:
@@ -1238,7 +1238,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Root:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::AnyLinkDeprecated:
+    case CSSSelector::PseudoClass::WebKitAnyLink:
         fragment.pseudoClasses.add(CSSSelector::PseudoClass::AnyLink);
         return FunctionType::SimpleSelectorChecker;
 
@@ -1337,7 +1337,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Is:
     case CSSSelector::PseudoClass::Where:
     case CSSSelector::PseudoClass::Matches:
-    case CSSSelector::PseudoClass::Any:
+    case CSSSelector::PseudoClass::WebKitAny:
         {
             SelectorList matchesList;
             const CSSSelectorList* selectorList = selector.selectorList();
@@ -1479,13 +1479,13 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElement::FirstLine:
             case CSSSelector::PseudoElement::GrammarError:
             case CSSSelector::PseudoElement::Marker:
-            case CSSSelector::PseudoElement::Resizer:
-            case CSSSelector::PseudoElement::Scrollbar:
-            case CSSSelector::PseudoElement::ScrollbarButton:
-            case CSSSelector::PseudoElement::ScrollbarCorner:
-            case CSSSelector::PseudoElement::ScrollbarThumb:
-            case CSSSelector::PseudoElement::ScrollbarTrack:
-            case CSSSelector::PseudoElement::ScrollbarTrackPiece:
+            case CSSSelector::PseudoElement::WebKitResizer:
+            case CSSSelector::PseudoElement::WebKitScrollbar:
+            case CSSSelector::PseudoElement::WebKitScrollbarButton:
+            case CSSSelector::PseudoElement::WebKitScrollbarCorner:
+            case CSSSelector::PseudoElement::WebKitScrollbarThumb:
+            case CSSSelector::PseudoElement::WebKitScrollbarTrack:
+            case CSSSelector::PseudoElement::WebKitScrollbarTrackPiece:
             case CSSSelector::PseudoElement::Selection:
             case CSSSelector::PseudoElement::SpellingError:
             case CSSSelector::PseudoElement::ViewTransition:
