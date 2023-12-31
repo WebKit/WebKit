@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2013, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,10 +157,8 @@ video::-webkit-media-text-track-container {
     width: 100%;
     overflow: hidden;
     padding-bottom: 5px;
-
     text-align: center;
     color: rgba(255, 255, 255, 1);
-
     letter-spacing: normal;
     word-spacing: normal;
     text-transform: none;
@@ -169,9 +167,7 @@ video::-webkit-media-text-track-container {
     pointer-events: none;
     -webkit-user-select: none;
     word-break: break-word;
-
     flex: 1 1;
-
     -webkit-line-box-contain: block inline-box replaced;
 }
 
@@ -262,7 +258,7 @@ video::-webkit-media-text-track-region-container {
     flex-direction: column;
 }
 
-video::-webkit-media-text-track-region-container.scrolling {
+video[pseudo="-webkit-media-text-track-region-container"].scrolling {
     transition: top 433ms linear;
 }
 

@@ -1,5 +1,5 @@
 // Copyright 2014-2017 The Chromium Authors. All rights reserved.
-// Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+// Copyright (C) 2016-2024 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -279,15 +279,12 @@ enum class CompoundSelectorFlag {
     HasPseudoElementForRightmostCompound = 1 << 0,
 };
 
-static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const CSSParserSelector& simpleSelector, CSSParserMode parserMode)
+static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const CSSParserSelector& simpleSelector)
 {
     if (simpleSelector.match() != CSSSelector::Match::PseudoElement)
         return { };
     
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
-    // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
-    // input[type="range" i]::-webkit-media-slider-container > div {
-    if (parserMode == UASheetMode && simpleSelector.pseudoElement() == CSSSelector::PseudoElement::WebKitCustom)
+    if (simpleSelector.pseudoElement() == CSSSelector::PseudoElement::WebKitCustom)
         return { };
 
     return CompoundSelectorFlag::HasPseudoElementForRightmostCompound;
@@ -320,7 +317,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSS
     OptionSet<CompoundSelectorFlag> previousCompoundFlags;
 
     for (CSSParserSelector* simple = selector.get(); simple && !previousCompoundFlags; simple = simple->tagHistory())
-        previousCompoundFlags = extractCompoundFlags(*simple, m_context.mode);
+        previousCompoundFlags = extractCompoundFlags(*simple);
 
     while (true) {
         auto combinator = consumeCombinator(range);
@@ -333,10 +330,10 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSS
         if (previousCompoundFlags.contains(CompoundSelectorFlag::HasPseudoElementForRightmostCompound))
             return nullptr;
         CSSParserSelector* end = nextSelector.get();
-        auto compoundFlags = extractCompoundFlags(*end, m_context.mode);
+        auto compoundFlags = extractCompoundFlags(*end);
         while (end->tagHistory()) {
             end = end->tagHistory();
-            compoundFlags.add(extractCompoundFlags(*end, m_context.mode));
+            compoundFlags.add(extractCompoundFlags(*end));
         }
         end->setRelation(combinator);
         previousCompoundFlags = compoundFlags;
@@ -570,10 +567,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeSimpleSelector(CSSP
     }
 
     if (m_precedingPseudoElement) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
-        // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
-        // video::-webkit-media-text-track-region-container.scrolling
-        if (m_context.mode != UASheetMode && !isSimpleSelectorValidAfterPseudoElement(*selector, *m_precedingPseudoElement))
+        if (!isSimpleSelectorValidAfterPseudoElement(*selector, *m_precedingPseudoElement))
             m_failedParsing = true;
     }
 
@@ -1219,10 +1213,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     bool isSlotted = splitAfter->tagHistory()->match() == CSSSelector::Match::PseudoElement && splitAfter->tagHistory()->pseudoElement() == CSSSelector::PseudoElement::Slotted;
 
     std::unique_ptr<CSSParserSelector> secondCompound;
-    if (context.mode == UASheetMode || isPart) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
-        // We have to recur, since we have rules in media controls like video::a::b. This should not be allowed, and
-        // we should remove this recursion once those rules are gone.
+    if (isPart) {
         secondCompound = splitCompoundAtImplicitShadowCrossingCombinator(splitAfter->releaseTagHistory(), context);
     } else
         secondCompound = splitAfter->releaseTagHistory();
