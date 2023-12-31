@@ -835,13 +835,13 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
 
     switch (frameType) {
     case FrameType::C:
-#if HAVE(DLADDR)
         if (frameType == FrameType::C) {
-            auto demangled = StackTraceSymbolResolver::demangle(const_cast<void*>(cCodePC));
-            if (demangled)
-                return String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
+            auto mangledName = StackTraceSymbolResolver::resolve(const_cast<void*>(cCodePC));
+            if (mangledName) {
+                auto demangledName = StackTraceSymbolResolver::demangle(mangledName);
+                return String::fromLatin1(demangledName ? demangledName.get() : mangledName);
+            }
         }
-#endif
         return "(unknown C PC)"_s;
 
     case FrameType::Unknown:

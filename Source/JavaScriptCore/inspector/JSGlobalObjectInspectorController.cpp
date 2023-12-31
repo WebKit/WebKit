@@ -159,19 +159,10 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
     static constexpr int framesToShow = 31;
     static constexpr int framesToSkip = 3; // WTFGetBacktrace, appendAPIBacktrace, reportAPIException.
 
-    void* samples[framesToShow + framesToSkip];
-    int frames = framesToShow + framesToSkip;
-    WTFGetBacktrace(samples, &frames);
-
-    void** stack = samples + framesToSkip;
-    int size = frames - framesToSkip;
-    for (int i = 0; i < size; ++i) {
-        auto demangled = StackTraceSymbolResolver::demangle(stack[i]);
-        if (demangled)
-            callStack.append(ScriptCallFrame(String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName()), "[native code]"_s, noSourceID, 0, 0));
-        else
-            callStack.append(ScriptCallFrame("?"_s, "[native code]"_s, noSourceID, 0, 0));
-    }
+    std::unique_ptr<StackTrace> stackTrace = StackTrace::captureStackTrace(framesToShow, framesToSkip);
+    StackTraceSymbolResolver(*stackTrace).forEach([&](int, void*, const char* name) {
+        callStack.append(ScriptCallFrame(name ? String::fromLatin1(name) : "?"_s, "[native code]"_s, noSourceID, 0, 0));
+    });
 }
 
 void JSGlobalObjectInspectorController::reportAPIException(JSGlobalObject* globalObject, Exception* exception)

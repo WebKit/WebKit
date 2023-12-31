@@ -26,36 +26,17 @@
 
 #pragma once
 
-#include <optional>
 #include <span>
 #include <wtf/Forward.h>
 #include <wtf/SystemFree.h>
 
-#if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
+#if HAVE(BACKTRACE) || HAVE(BACKTRACE_SYMBOLS)
 #include <execinfo.h>
-#endif
-
-#if USE(LIBBACKTRACE)
-#include <backtrace.h>
-#endif
-
-#if HAVE(DLADDR)
-#include <cxxabi.h>
-#include <dlfcn.h>
-#endif
-
-#if OS(WINDOWS)
-#include <windows.h>
-#include <wtf/win/DbgHelperWin.h>
 #endif
 
 namespace WTF {
 
 class PrintStream;
-
-#if USE(LIBBACKTRACE)
-WTF_EXPORT_PRIVATE char** symbolize(void* const*, int);
-#endif
 
 class StackTrace {
     WTF_MAKE_FAST_ALLOCATED;
@@ -93,66 +74,28 @@ public:
     {
     }
 
-    class DemangleEntry {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        friend class StackTraceSymbolResolver;
-        const char* mangledName() const { return m_mangledName; }
-        const char* demangledName() const { return m_demangledName.get(); }
+    WTF_EXPORT_PRIVATE static auto resolve(void*) -> const char*;
 
-    private:
-        DemangleEntry(const char* mangledName, const char* demangledName)
-            : m_mangledName(mangledName)
-            , m_demangledName(demangledName)
-        { }
-
-        const char* m_mangledName { nullptr };
-        std::unique_ptr<const char[], SystemFree<const char[]>> m_demangledName;
-    };
-
-    WTF_EXPORT_PRIVATE static std::optional<DemangleEntry> demangle(void*);
+    WTF_EXPORT_PRIVATE static auto demangle(const char*) -> std::unique_ptr<char, SystemFree<char>>;
 
     template<typename Functor>
     void forEach(Functor functor) const
     {
-#if USE(LIBBACKTRACE)
-        char** symbols = symbolize(m_stack.data(), m_stack.size());
+#if !USE(LIBBACKTRACE) && !HAVE(DLADDR) && !OS(WINDOWS)
+        std::unique_ptr<char*, SystemFree<char*>> symbols(backtrace_symbols(m_stack.data(), m_stack.size()));
         if (!symbols)
             return;
-#elif HAVE(BACKTRACE_SYMBOLS)
-        char** symbols = backtrace_symbols(m_stack.data(), m_stack.size());
-        if (!symbols)
-            return;
-#elif OS(WINDOWS)
-        HANDLE hProc = GetCurrentProcess();
-        uint8_t symbolData[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = { 0 };
-        auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData);
-
-        symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
-        symbolInfo->MaxNameLen = MAX_SYM_NAME;
 #endif
+
         for (size_t i = 0; i < m_stack.size(); ++i) {
-            const char* name = nullptr;
-            auto demangled = demangle(m_stack[i]);
-            if (demangled)
-                name = demangled->demangledName() ? demangled->demangledName() : demangled->mangledName();
-#if HAVE(BACKTRACE_SYMBOLS)
-            if (!name || !strcmp(name, "<redacted>"))
-                name = symbols[i];
-#elif OS(WINDOWS)
-            if (!name && DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(m_stack[i]), nullptr, symbolInfo))
-                name = symbolInfo->Name;
+#if USE(LIBBACKTRACE) || HAVE(DLADDR) || OS(WINDOWS)
+            auto mangledName = resolve(m_stack[i]);
+#else
+            auto mangledName = symbols.get()[i];
 #endif
-            functor(i + 1, m_stack[i], name);
+            auto demangledName = demangle(mangledName);
+            functor(i + 1, m_stack[i], demangledName ? demangledName.get() : mangledName);
         }
-
-#if USE(LIBBACKTRACE)
-        for (size_t i = 0; i < m_stack.size(); ++i)
-            free(symbols[i]);
-        free(symbols);
-#elif HAVE(BACKTRACE_SYMBOLS)
-        free(symbols);
-#endif
     }
 private:
     std::span<void* const> m_stack;
