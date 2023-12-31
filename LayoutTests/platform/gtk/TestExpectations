@@ -1043,7 +1043,6 @@ webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
 webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
 
 webkit.org/b/156148 fast/text/svg-font-face-with-kerning.html [ Failure ]
-webkit.org/b/156148 svg/W3C-SVG-1.1-SE/types-dom-06-f.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
 webkit.org/b/156148 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
@@ -2136,8 +2135,6 @@ webkit.org/b/142479 svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg [ 
 
 webkit.org/b/142667 fast/forms/search-vertical-alignment.html [ Failure ]
 
-webkit.org/b/143871 svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
-
 webkit.org/b/144673 fast/forms/button-line-height.html [ ImageOnlyFailure ]
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
@@ -2245,8 +2242,6 @@ webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure 
 webkit.org/b/189564 http/tests/xmlhttprequest/url-with-credentials.html [ Failure ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
-
-webkit.org/b/190000 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
 
 webkit.org/b/190704 compositing/debug-borders-dynamic.html [ ImageOnlyFailure ]
 
