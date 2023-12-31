@@ -1,8 +1,8 @@
 
-FAIL :only-child should match because ::view-transition-new is not generated (root to none) promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should not match because ::view-transition-new is generated (root to root) promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should not match because ::view-transition-new is generated (root to element) promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should match because ::view-transition-new is not generated (element to none) promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should not match because ::view-transition-new is generated (element to root) promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
-FAIL :only-child should not match because ::view-transition-new is generated (element to element) promise_test: Unhandled rejection with value: "rgb(0, 0, 0) and rgb(0, 0, 0)"
+FAIL :only-child should match because ::view-transition-new is not generated (root to none) promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should not match because ::view-transition-new is generated (root to root) promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should not match because ::view-transition-new is generated (root to element) promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should match because ::view-transition-new is not generated (element to none) promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should not match because ::view-transition-new is generated (element to root) promise_test: Unhandled rejection with value: " and "
+FAIL :only-child should not match because ::view-transition-new is generated (element to element) promise_test: Unhandled rejection with value: " and "
 
