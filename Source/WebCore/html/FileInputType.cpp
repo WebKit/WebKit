@@ -57,60 +57,8 @@
 #endif
 
 namespace WebCore {
-class UploadButtonElement;
-}
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::UploadButtonElement)
-    static bool isType(const WebCore::Element& element) { return element.isUploadButton(); }
-    static bool isType(const WebCore::Node& node)
-    {
-        auto* element = dynamicDowncast<WebCore::Element>(node);
-        return element && isType(*element);
-    }
-SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WebCore {
 
 using namespace HTMLNames;
-
-// FIXME: This can likely be an HTMLDivElement.
-class UploadButtonElement final : public HTMLInputElement {
-    WTF_MAKE_ISO_ALLOCATED_INLINE(UploadButtonElement);
-public:
-    static Ref<UploadButtonElement> create(Document&);
-    static Ref<UploadButtonElement> createForMultiple(Document&);
-
-private:
-    static Ref<UploadButtonElement> createInternal(Document&, const String& value);
-    bool isUploadButton() const override { return true; }
-    
-    UploadButtonElement(Document&);
-};
-
-Ref<UploadButtonElement> UploadButtonElement::create(Document& document)
-{
-    return createInternal(document, fileButtonChooseFileLabel());
-}
-
-Ref<UploadButtonElement> UploadButtonElement::createForMultiple(Document& document)
-{
-    return createInternal(document, fileButtonChooseMultipleFilesLabel());
-}
-
-Ref<UploadButtonElement> UploadButtonElement::createInternal(Document& document, const String& value)
-{
-    auto button = adoptRef(*new UploadButtonElement(document));
-    ScriptDisallowedScope::EventAllowedScope eventAllowedScope { button };
-    button->setType(HTMLNames::buttonTag->localName());
-    button->setPseudo(ShadowPseudoIds::fileSelectorButton());
-    button->setValue(value);
-    return button;
-}
-
-UploadButtonElement::UploadButtonElement(Document& document)
-    : HTMLInputElement(inputTag, document, 0, false)
-{
-}
 
 FileInputType::FileInputType(HTMLInputElement& element)
     : BaseClickableWithKeyInputType(Type::File, element)
@@ -276,32 +224,41 @@ void FileInputType::createShadowSubtree()
     ASSERT(element());
     ASSERT(element()->shadowRoot());
 
-    auto button = element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()) : UploadButtonElement::create(element()->document());
+    auto button = HTMLInputElement::create(inputTag, element()->document(), nullptr, false);
+    {
+        ScriptDisallowedScope::EventAllowedScope eventAllowedScopeBeforeAppend { button };
+        button->setType(InputTypeNames::button());
+        button->setPseudo(ShadowPseudoIds::fileSelectorButton());
+        button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
+    }
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };
     element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, button);
     disabledStateChanged();
+}
+
+static RefPtr<HTMLInputElement> fileSelectorButton(const Element& element)
+{
+    auto root = element.userAgentShadowRoot();
+    if (!root)
+        return nullptr;
+
+    return childrenOfType<HTMLInputElement>(*root).first();
 }
 
 void FileInputType::disabledStateChanged()
 {
     ASSERT(element());
 
-    auto root = element()->userAgentShadowRoot();
-    if (!root)
-        return;
-    
-    if (RefPtr button = childrenOfType<UploadButtonElement>(*root).first())
+    if (RefPtr button = fileSelectorButton(*element()))
         button->setBooleanAttribute(disabledAttr, element()->isDisabledFormControl());
 }
 
 void FileInputType::attributeChanged(const QualifiedName& name)
 {
     if (name == multipleAttr) {
-        if (auto* element = this->element()) {
-            if (auto root = element->userAgentShadowRoot()) {
-                if (RefPtr button = childrenOfType<UploadButtonElement>(*root).first())
-                    button->setValue(element->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
-            }
+        if (RefPtr element = this->element()) {
+            if (RefPtr button = fileSelectorButton(*element))
+                button->setValue(element->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
         }
     }
     BaseClickableWithKeyInputType::attributeChanged(name);
