@@ -396,6 +396,9 @@ bool gstObjectHasProperty(GstPad*, const char* name);
 
 GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
 
+void registerActivePipeline(const GRefPtr<GstElement>&);
+void unregisterPipeline(const GRefPtr<GstElement>&);
+
 } // namespace WebCore
 
 #ifndef GST_BUFFER_DTS_OR_PTS

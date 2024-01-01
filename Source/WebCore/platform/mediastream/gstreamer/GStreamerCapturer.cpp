@@ -74,6 +74,7 @@ GStreamerCapturer::~GStreamerCapturer()
     if (!m_pipeline)
         return;
 
+    unregisterPipeline(m_pipeline);
     disconnectSimpleBusMessageCallback(pipeline());
     gst_element_set_state(pipeline(), GST_STATE_NULL);
 }
@@ -169,6 +170,7 @@ void GStreamerCapturer::setupPipeline()
         disconnectSimpleBusMessageCallback(pipeline());
 
     m_pipeline = makeElement("pipeline");
+    registerActivePipeline(m_pipeline);
 
     GRefPtr<GstElement> source = createSource();
     GRefPtr<GstElement> converter = createConverter();
@@ -208,6 +210,7 @@ void GStreamerCapturer::stop()
 {
     ASSERT(m_pipeline);
     GST_INFO_OBJECT(pipeline(), "Stopping");
+    unregisterPipeline(m_pipeline);
     gst_element_set_state(pipeline(), GST_STATE_NULL);
 }
 

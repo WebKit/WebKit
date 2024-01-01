@@ -117,6 +117,7 @@ MediaRecorderPrivateBackend::~MediaRecorderPrivateBackend()
     if (m_src)
         webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_src.get()));
     if (m_transcoder) {
+        unregisterPipeline(m_pipeline);
         m_pipeline.clear();
         m_transcoder.clear();
     }
@@ -364,6 +365,7 @@ bool MediaRecorderPrivateBackend::preparePipeline()
     m_transcoder = adoptGRef(gst_transcoder_new_full("mediastream://", "appsink://", GST_ENCODING_PROFILE(profile.get())));
     gst_transcoder_set_avoid_reencoding(m_transcoder.get(), true);
     m_pipeline = gst_transcoder_get_pipeline(m_transcoder.get());
+    registerActivePipeline(m_pipeline);
 
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(+[](MediaRecorderPrivateBackend* recorder, GstElement* sourceElement) {
         recorder->setSource(sourceElement);

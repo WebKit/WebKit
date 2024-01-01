@@ -116,6 +116,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 {
     static Atomic<uint32_t> pipelineId;
     m_pipeline = gst_pipeline_new(makeString("audio-destination-", pipelineId.exchangeAdd(1)).ascii().data());
+    registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         this->handleMessage(message);
     });
@@ -178,6 +179,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
 AudioDestinationGStreamer::~AudioDestinationGStreamer()
 {
     GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing");
+    unregisterPipeline(m_pipeline);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
     notifyStopResult(true);

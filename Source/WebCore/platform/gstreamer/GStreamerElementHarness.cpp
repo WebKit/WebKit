@@ -96,6 +96,8 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
         GST_DEBUG_CATEGORY_INIT(webkit_element_harness_debug, "webkitelementharness", 0, "WebKit Element Harness");
     });
 
+    registerActivePipeline(m_element);
+
     auto clock = adoptGRef(gst_system_clock_obtain());
     gst_element_set_clock(m_element.get(), clock.get());
 
@@ -160,6 +162,7 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
 GStreamerElementHarness::~GStreamerElementHarness()
 {
     GST_DEBUG_OBJECT(m_element.get(), "Stopping harness");
+    unregisterPipeline(m_element);
     gst_pad_set_active(m_srcPad.get(), FALSE);
     {
         auto streamLock = GstPadStreamLocker(m_srcPad.get());

@@ -45,6 +45,7 @@ GStreamerAudioMixer::GStreamerAudioMixer()
 {
     GST_DEBUG_CATEGORY_INIT(webkit_media_gst_audio_mixer_debug, "webkitaudiomixer", 0, "WebKit GStreamer audio mixer");
     m_pipeline = gst_element_factory_make("pipeline", "webkitaudiomixer");
+    registerActivePipeline(m_pipeline);
     connectSimpleBusMessageCallback(m_pipeline.get());
 
     m_mixer = makeGStreamerElement("audiomixer", nullptr);
@@ -75,8 +76,10 @@ void GStreamerAudioMixer::ensureState(GstStateChange stateChange)
             gst_element_set_state(m_pipeline.get(), GST_STATE_READY);
         break;
     case GST_STATE_CHANGE_READY_TO_NULL:
-        if (m_mixer->numsinkpads == 1)
+        if (m_mixer->numsinkpads == 1) {
+            unregisterPipeline(m_pipeline);
             gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+        }
         break;
     default:
         break;
