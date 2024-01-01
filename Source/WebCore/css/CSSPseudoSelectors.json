@@ -37,11 +37,6 @@
             "comment": "For UA stylesheet use.",
             "status": "non-standard"
         },
-        "-webkit-full-screen": {
-            "comment": "For compatibility.",
-            "condition": "ENABLE(FULLSCREEN_API)",
-            "status": "non-standard"
-        },
         "-webkit-full-screen-ancestor": {
             "comment": "For compatibility.",
             "condition": "ENABLE(FULLSCREEN_API)",
@@ -96,6 +91,9 @@
         "focus-visible": {},
         "focus-within": {},
         "fullscreen": {
+            "aliases": [
+                "-webkit-full-screen"
+            ],
             "condition": "ENABLE(FULLSCREEN_API)"
         },
         "future": {

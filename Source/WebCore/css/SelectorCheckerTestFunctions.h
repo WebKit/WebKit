@@ -416,19 +416,6 @@ ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
     return false;
 }
 
-ALWAYS_INLINE bool matchesWebkitFullScreenPseudoClass(const Element& element)
-{
-    // While a Document is in the fullscreen state, and the document's current fullscreen
-    // element is an element in the document, the 'full-screen' pseudoclass applies to
-    // that element. Also, an <iframe>, <object> or <embed> element whose child browsing
-    // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
-    if (is<HTMLFrameElementBase>(element) && element.hasFullscreenFlag())
-        return true;
-    if (!element.document().fullscreenManager().isFullscreen())
-        return false;
-    return &element == element.document().fullscreenManager().currentFullscreenElement();
-}
-
 ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
 {
     if (&element != element.document().fullscreenManager().currentFullscreenElement())

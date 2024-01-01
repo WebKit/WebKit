@@ -534,9 +534,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClass::Fullscreen:
                 builder.append(":fullscreen");
                 break;
-            case CSSSelector::PseudoClass::WebKitFullScreen:
-                builder.append(":-webkit-full-screen");
-                break;
             case CSSSelector::PseudoClass::WebKitFullScreenAncestor:
                 builder.append(":-webkit-full-screen-ancestor");
                 break;

@@ -1,0 +1,4 @@
+
+PASS ":-webkit-autofill" should be a valid selector
+PASS ":-webkit-full-screen" should be a valid selector
+

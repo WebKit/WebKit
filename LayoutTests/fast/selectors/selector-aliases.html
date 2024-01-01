@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Selectors: pseudo-classes aliases are parse-time aliases</title>
+<link rel="help" href="https://drafts.csswg.org/selectors/#legacy-aliasing">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script>
+test_valid_selector(":-webkit-autofill", ":autofill");
+test_valid_selector(":-webkit-full-screen", ":fullscreen");
+</script>

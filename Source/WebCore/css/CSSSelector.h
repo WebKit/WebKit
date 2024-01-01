@@ -167,7 +167,6 @@ struct PossiblyQuotedIdentifier {
             NoButton,
 #if ENABLE(FULLSCREEN_API)
             Fullscreen,
-            WebKitFullScreen,
             WebKitFullScreenDocument,
             WebKitFullScreenAncestor,
             WebKitAnimatingFullScreenTransition,
