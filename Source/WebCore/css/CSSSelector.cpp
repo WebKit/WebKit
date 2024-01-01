@@ -182,8 +182,6 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
         case CSSSelector::PseudoClass::NthLastChild:
         case CSSSelector::PseudoClass::Host:
             return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
-        case CSSSelector::PseudoClass::HasScope:
-            return 0;
         default:
             return SelectorSpecificityIncrement::ClassB;
         }
@@ -206,6 +204,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
         if (simpleSelector.pseudoElement() == CSSSelector::PseudoElement::Slotted)
             return maxSpecificity(simpleSelector.selectorList());
         return SelectorSpecificityIncrement::ClassC;
+    case CSSSelector::Match::HasScope:
     case CSSSelector::Match::Unknown:
     case CSSSelector::Match::ForgivingUnknown:
     case CSSSelector::Match::ForgivingUnknownNestContaining:
@@ -491,6 +490,9 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             serializeIdentifier(cs->serializingValue(), builder);
         } else if (cs->match() == Match::ForgivingUnknown || cs->match() == Match::ForgivingUnknownNestContaining) {
             builder.append(cs->value());
+        } else if (cs->match() == Match::HasScope) {
+            // Remove the space from the start to generate a relative selector string like in ":has(> foo)".
+            return makeString(separator.substring(1), rightSide);
         } else if (cs->match() == Match::PseudoClass) {
             switch (cs->pseudoClass()) {
 #if ENABLE(FULLSCREEN_API)
@@ -769,9 +771,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 serializeIdentifier(cs->argument(), builder);
                 builder.append(')');
                 break;
-            case CSSSelector::PseudoClass::HasScope:
-                // Remove the space from the start to generate a relative selector string like in ":has(> foo)".
-                return makeString(separator.substring(1), rightSide);
             case CSSSelector::PseudoClass::SingleButton:
                 builder.append(":single-button");
                 break;

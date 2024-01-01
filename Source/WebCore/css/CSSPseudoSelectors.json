@@ -1,0 +1,281 @@
+{
+    "pseudo-classes": {
+        "-internal-html-document": {
+            "status": "internal"
+        },
+        "-webkit-any": {
+            "comment": "Alias of :is(). (FIXME: Actually define this as an alias)",
+            "status": "non-standard"
+        },
+        "-webkit-any-link": {
+            "comment": "Alias of :any-link. (FIXME: Actually define this as an alias)",
+            "status": "non-standard"
+        },
+        "-webkit-animating-full-screen-transition": {
+            "comment": "For UA stylesheet use.",
+            "condition": "ENABLE(FULLSCREEN_API)",
+            "status": "non-standard"
+        },
+        "-webkit-autofill-and-obscured": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-autofill-strong-password": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-autofill-strong-password-viewable": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-drag": {
+            "aliases": [
+                "-khtml-drag"
+            ]
+        },
+        "-webkit-full-page-media": {
+            "comment": "For UA stylesheet use.",
+            "status": "non-standard"
+        },
+        "-webkit-full-screen": {
+            "comment": "For compatibility.",
+            "condition": "ENABLE(FULLSCREEN_API)",
+            "status": "non-standard"
+        },
+        "-webkit-full-screen-ancestor": {
+            "comment": "For compatibility.",
+            "condition": "ENABLE(FULLSCREEN_API)",
+            "status": "non-standard"
+        },
+        "-webkit-full-screen-document": {
+            "comment": "For UA stylesheet use.",
+            "condition": "ENABLE(FULLSCREEN_API)",
+            "status": "non-standard"
+        },
+        "-webkit-full-screen-controls-hidden": {
+            "comment": "For compatibility.",
+            "condition": "ENABLE(FULLSCREEN_API)",
+            "status": "non-standard"
+        },
+        "active": {},
+        "any-link": {},
+        "autofill": {
+            "aliases": [
+                "-webkit-autofill"
+            ]
+        },
+        "buffering": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "checked": {},
+        "corner-present": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "decrement": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "default": {},
+        "defined": {},
+        "dir": {},
+        "disabled": {},
+        "double-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "empty": {},
+        "enabled": {},
+        "end": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "first-child": {},
+        "first-of-type": {},
+        "focus": {},
+        "focus-visible": {},
+        "focus-within": {},
+        "fullscreen": {
+            "condition": "ENABLE(FULLSCREEN_API)"
+        },
+        "future": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "has": {},
+        "has-attachment": {
+            "condition": "ENABLE(ATTACHMENT_ELEMENT)"
+        },
+        "horizontal": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "host": {},
+        "hover": {},
+        "in-range": {},
+        "increment": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "indeterminate": {},
+        "invalid": {},
+        "is": {},
+        "lang": {},
+        "last-child": {},
+        "last-of-type": {},
+        "link": {},
+        "matches": {
+            "comment": "Alias of :is(). (FIXME: Actually define this as an alias)",
+            "status": "non-standard"
+        },
+        "modal": {},
+        "muted": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "no-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "not": {},
+        "nth-child": {},
+        "nth-last-child": {},
+        "nth-last-of-type": {},
+        "nth-of-type": {},
+        "only-child": {},
+        "only-of-type": {},
+        "optional": {},
+        "out-of-range": {},
+        "past": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "paused": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "picture-in-picture": {
+            "condition": "ENABLE(PICTURE_IN_PICTURE_API)"
+        },
+        "placeholder-shown": {},
+        "playing": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "popover-open": {},
+        "read-only": {},
+        "read-write": {},
+        "required": {},
+        "root": {},
+        "scope": {},
+        "seeking": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "stalled": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "state": {},
+        "single-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "start": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "target": {},
+        "user-invalid": {},
+        "user-valid": {},
+        "valid": {},
+        "vertical": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "visited": {},
+        "volume-locked": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "where": {},
+        "window-inactive": {
+            "comment": "Standards track point towards a media query rather than a pseudo-class: https://github.com/w3c/csswg-drafts/issues/5828.",
+            "status": "non-standard"
+        }
+    },
+    "pseudo-elements": {
+        "-apple-attachment-controls-container": {
+            "comment": "For use in Apple internal apps.",
+            "condition": "ENABLE(SERVICE_CONTROLS)",
+            "shadow": true,
+            "status": "internal"
+        },
+        "-webkit-resizer": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-button": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-corner": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-thumb": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-track": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "-webkit-scrollbar-track-piece": {
+            "comment": "For scrollbar styling.",
+            "status": "non-standard"
+        },
+        "after": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "backdrop": {},
+        "before": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "cue": {
+            "condition": "ENABLE(VIDEO)"
+        },
+        "first-letter": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "first-line": {
+            "supports-single-colon-for-compatibility": true
+        },
+        "grammar-error": {},
+        "highlight": {},
+        "marker": {},
+        "part": {},
+        "file-selector-button": {
+            "aliases": [
+                "-webkit-file-upload-button"
+            ],
+            "shadow": true
+        },
+        "placeholder": {
+            "aliases": [
+                "-webkit-input-placeholder"
+            ],
+            "shadow": true
+        },
+        "selection": {},
+        "slotted": {},
+        "spelling-error": {},
+        "thumb": {
+            "shadow": true
+        },
+        "track": {
+            "shadow": true
+        },
+        "view-transition": {},
+        "view-transition-group": {},
+        "view-transition-image-pair": {},
+        "view-transition-old": {},
+        "view-transition-new": {}
+    }
+}

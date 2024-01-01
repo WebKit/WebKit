@@ -74,6 +74,12 @@ GstGLContext* PlatformDisplay::gstGLContext() const
     return m_gstGLContext.get();
 }
 
+void PlatformDisplay::clearGStreamerGLState()
+{
+    m_gstGLDisplay = nullptr;
+    m_gstGLContext = nullptr;
+}
+
 } // namespace WebCore
 
 #endif

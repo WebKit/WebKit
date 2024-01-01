@@ -114,19 +114,17 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     String pipelineName = makeString("append-pipeline-",
         makeStringByReplacingAll(m_sourceBufferPrivate.type().containerType(), '/', '-'), '-', appendPipelineCount++);
     m_pipeline = gst_pipeline_new(pipelineName.utf8().data());
+    registerActivePipeline(m_pipeline);
+    connectSimpleBusMessageCallback(m_pipeline.get());
 
-    m_bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
-    gst_bus_add_signal_watch_full(m_bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
-    gst_bus_enable_sync_message_emission(m_bus.get());
+    auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    gst_bus_enable_sync_message_emission(bus.get());
 
-    g_signal_connect(m_bus.get(), "sync-message::error", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
+    g_signal_connect(bus.get(), "sync-message::error", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
         appendPipeline->handleErrorSyncMessage(message);
     }), this);
-    g_signal_connect(m_bus.get(), "sync-message::need-context", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
+    g_signal_connect(bus.get(), "sync-message::need-context", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
         appendPipeline->handleNeedContextSyncMessage(message);
-    }), this);
-    g_signal_connect(m_bus.get(), "message::state-changed", G_CALLBACK(+[](GstBus*, GstMessage* message, AppendPipeline* appendPipeline) {
-        appendPipeline->handleStateChangeMessage(message);
     }), this);
 
     // We assign the created instances here instead of adoptRef() because gst_bin_add_many()
@@ -209,10 +207,11 @@ AppendPipeline::~AppendPipeline()
     // when changing the pipeline state.
 
     if (m_pipeline) {
-        ASSERT(m_bus);
-        g_signal_handlers_disconnect_by_data(m_bus.get(), this);
-        gst_bus_disable_sync_message_emission(m_bus.get());
-        gst_bus_remove_signal_watch(m_bus.get());
+        auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+        ASSERT(bus);
+        g_signal_handlers_disconnect_by_data(bus.get(), this);
+        gst_bus_disable_sync_message_emission(bus.get());
+        disconnectSimpleBusMessageCallback(m_pipeline.get());
     }
 
     if (m_demux) {
@@ -237,8 +236,10 @@ AppendPipeline::~AppendPipeline()
     }
 
     // We can tear down the pipeline safely now.
-    if (m_pipeline)
+    if (m_pipeline) {
+        unregisterPipeline(m_pipeline);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+    }
 }
 
 void AppendPipeline::handleErrorConditionFromStreamingThread()
@@ -293,26 +294,6 @@ void AppendPipeline::handleNeedContextSyncMessage(GstMessage* message)
 {
     // MediaPlayerPrivateGStreamerBase will take care of setting up encryption.
     m_playerPrivate->handleNeedContextMessage(message);
-}
-
-void AppendPipeline::handleStateChangeMessage(GstMessage* message)
-{
-    ASSERT(isMainThread());
-
-    if (GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_pipeline.get())) {
-        GstState currentState, newState;
-        gst_message_parse_state_changed(message, &currentState, &newState, nullptr);
-        String sourceBufferTypeString = makeStringByReplacingAll(m_sourceBufferPrivate.type().raw(), '/', '_');
-        sourceBufferTypeString = makeStringByReplacingAll(sourceBufferTypeString, ' ', '_');
-        sourceBufferTypeString = makeStringByReplacingAll(sourceBufferTypeString, '"', ""_s);
-        sourceBufferTypeString = makeStringByReplacingAll(sourceBufferTypeString, '\'', ""_s);
-        CString sourceBufferType = sourceBufferTypeString.utf8();
-        CString dotFileName = makeString("webkit-append-",
-            sourceBufferType.data(), '-',
-            gst_element_state_get_name(currentState), '_',
-            gst_element_state_get_name(newState)).utf8();
-        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
-    }
 }
 
 std::tuple<GRefPtr<GstCaps>, AppendPipeline::StreamType, FloatSize> AppendPipeline::parseDemuxerSrcPadCaps(GstCaps* demuxerSrcPadCaps)
@@ -588,6 +569,9 @@ void AppendPipeline::consumeAppsinksAvailableSamples()
 void AppendPipeline::resetParserState()
 {
     ASSERT(isMainThread());
+
+    if (!m_pipeline)
+        return;
 
     // This function restores the GStreamer pipeline to the same state it was when the AppendPipeline constructor
     // finished. All previously enqueued data is lost and the demuxer is flushed, but retains the configuration from the

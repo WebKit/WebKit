@@ -31,7 +31,9 @@ namespace WebCore {
 
 namespace ShadowPseudoIds {
 
+#if ENABLE(VIDEO)
 const AtomString& cue();
+#endif
 
 const AtomString& fileSelectorButton();
 
@@ -51,10 +53,20 @@ const AtomString& webkitCapsLockIndicator();
 const AtomString& webkitColorSwatch();
 const AtomString& webkitColorSwatchWrapper();
 
-const AtomString& webkitDatetimeEdit();
-const AtomString& webkitDatetimeEditText();
-const AtomString& webkitDatetimeEditFieldsWrapper();
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const AtomString& webkitDateAndTimeValue();
+const AtomString& webkitDatetimeEdit();
+const AtomString& webkitDatetimeEditDayField();
+const AtomString& webkitDatetimeEditFieldsWrapper();
+const AtomString& webkitDatetimeEditHourField();
+const AtomString& webkitDatetimeEditMeridiemField();
+const AtomString& webkitDatetimeEditMillisecondField();
+const AtomString& webkitDatetimeEditMinuteField();
+const AtomString& webkitDatetimeEditMonthField();
+const AtomString& webkitDatetimeEditSecondField();
+const AtomString& webkitDatetimeEditText();
+const AtomString& webkitDatetimeEditYearField();
+#endif
 
 const AtomString& webkitDetailsMarker();
 

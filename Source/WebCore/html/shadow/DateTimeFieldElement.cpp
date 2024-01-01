@@ -58,11 +58,6 @@ DateTimeFieldElement::DateTimeFieldElement(Document& document, FieldOwner& field
 {
 }
 
-void DateTimeFieldElement::initialize(const AtomString& pseudo)
-{
-    setPseudo(pseudo);
-}
-
 std::optional<Style::ResolvedStyle> DateTimeFieldElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(resolutionContext);

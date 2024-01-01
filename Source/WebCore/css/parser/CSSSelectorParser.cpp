@@ -364,8 +364,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeRelativeScopeSelect
         end = end->tagHistory();
 
     auto scopeSelector = makeUnique<CSSParserSelector>();
-    scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
-    scopeSelector->setPseudoClass(CSSSelector::PseudoClass::HasScope);
+    scopeSelector->setMatch(CSSSelector::Match::HasScope);
 
     end->setRelation(scopeCombinator);
     end->setTagHistory(WTFMove(scopeSelector));
