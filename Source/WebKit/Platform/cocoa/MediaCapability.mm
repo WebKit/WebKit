@@ -28,17 +28,17 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#import <wtf/text/WTFString.h>
+
 #import "ExtensionKitSoftLink.h"
 
 namespace WebKit {
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-static RetainPtr<_SECapabilities> createPlatformCapability(const RegistrableDomain& registrableDomain)
-ALLOW_DEPRECATED_DECLARATIONS_END
+static RetainPtr<_SECapability> createPlatformCapability(const RegistrableDomain& registrableDomain)
 {
 #if USE(EXTENSIONKIT)
-    if ([get_SECapabilitiesClass() respondsToSelector:@selector(mediaWithWebsite:)])
-        return [get_SECapabilitiesClass() mediaWithWebsite:registrableDomain.string()];
+    if ([get_SECapabilityClass() respondsToSelector:@selector(mediaWithWebsite:)])
+        return [get_SECapabilityClass() mediaWithWebsite:registrableDomain.string()];
 #else
     UNUSED_PARAM(url);
 #endif

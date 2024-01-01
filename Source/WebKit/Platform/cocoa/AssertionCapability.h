@@ -43,9 +43,7 @@ public:
 
     // ExtensionCapability
     String environmentIdentifier() const final { return m_environmentIdentifier; }
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<_SECapabilities> platformCapability() const final;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr<_SECapability> platformCapability() const final;
 
 private:
     String m_environmentIdentifier;
