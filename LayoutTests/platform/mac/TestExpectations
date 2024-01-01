@@ -2590,3 +2590,7 @@ inspector/layers/layers-blending-compositing-reasons.html [ Pass Failure ]
 webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]
 
 webkit.org/b/265957 fullscreen/full-screen-layer-dump.html [ Failure ]
+
+# SVG Animations Failures on WPT Import
+imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Failure ]
+imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ Pass Failure ]
