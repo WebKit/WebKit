@@ -388,9 +388,9 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
                 strongThis->processAssertionWillBeInvalidated();
         };
         AssertionCapability capability { process.environmentIdentifier(), runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
-        m_capabilities = capability.platformCapability();
+        m_capability = capability.platformCapability();
         m_process = process.extensionProcess();
-        if (m_capabilities)
+        if (m_capability)
             return;
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %s", this, runningBoardAssertionName.characters());
     }
@@ -464,9 +464,7 @@ void ProcessAssertion::acquireSync()
 #if USE(EXTENSIONKIT)
     if (m_process) {
         NSError *error = nil;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        m_grant = [m_process grantCapabilities:m_capabilities.get() error:&error];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+        m_grant = [m_process grantCapability:m_capability.get() error:&error];
         if (m_grant) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;

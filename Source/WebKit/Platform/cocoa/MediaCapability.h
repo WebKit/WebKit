@@ -57,16 +57,12 @@ public:
 
     // ExtensionCapability
     String environmentIdentifier() const final;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<_SECapabilities> platformCapability() const final { return m_platformCapability.get(); }
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr<_SECapability> platformCapability() const final { return m_platformCapability.get(); }
 
 private:
     State m_state { State::Inactive };
     RegistrableDomain m_registrableDomain;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr<_SECapabilities> m_platformCapability;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr<_SECapability> m_platformCapability;
 };
 
 } // namespace WebKit
