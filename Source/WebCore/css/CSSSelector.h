@@ -87,6 +87,7 @@ struct PossiblyQuotedIdentifier {
             End, // css3: E[foo$="bar"]
             PagePseudoClass,
             NestingParent, // &
+            HasScope, // matches the :has() scope
             ForgivingUnknown,
             ForgivingUnknownNestContaining
         };
@@ -152,7 +153,6 @@ struct PossiblyQuotedIdentifier {
             Root,
             Scope,
             State,
-            HasScope, // for internal use, matches the :has() scope
             WindowInactive,
             CornerPresent,
             Decrement,

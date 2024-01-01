@@ -636,6 +636,7 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
         case CSSSelector::Match::PagePseudoClass:
         case CSSSelector::Match::PseudoElement:
             return true;
+        case CSSSelector::Match::HasScope:
         case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::Unknown:
         case CSSSelector::Match::ForgivingUnknown:
@@ -712,6 +713,17 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 
     if (selector.match() == CSSSelector::Match::NestingParent) {
         return false;
+    }
+
+    if (selector.match() == CSSSelector::Match::HasScope) {
+        bool matches = &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
+
+        if (!matches && checkingContext.hasScope) {
+            if (element.isDescendantOf(*checkingContext.hasScope))
+                checkingContext.matchedInsideScope = true;
+        }
+
+        return matches;
     }
 
     if (selector.match() == CSSSelector::Match::PseudoClass) {
@@ -1081,16 +1093,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         case CSSSelector::PseudoClass::State:
             return element.hasCustomState(selector.argument());
-        case CSSSelector::PseudoClass::HasScope: {
-            bool matches = &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
-
-            if (!matches && checkingContext.hasScope) {
-                if (element.isDescendantOf(*checkingContext.hasScope))
-                    checkingContext.matchedInsideScope = true;
-            }
-
-            return matches;
-        }
         case CSSSelector::PseudoClass::Host: {
             if (!context.mustMatchHostPseudoClass)
                 return false;
