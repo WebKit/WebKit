@@ -835,7 +835,6 @@ perf/mouse-event.html [ Skip ]
 platform/ios/ios/fast/coordinates/mouse-event-zoomed.html [ Skip ]
 platform/ios/ios/fast/coordinates/mouse-event.html [ Skip ]
 scrollbars/scrollbar-miss-mousemove-disabled.html [ Skip ]
-svg/animations/animate-css-xml-attributeType.html [ Skip ]
 svg/custom/anchor-on-use.svg [ Skip ]
 svg/custom/foreignObject-crash-on-hover.xml [ Skip ]
 svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ Skip ]
@@ -2523,8 +2522,6 @@ fast/images/pdf-as-image-dest-rect-change.html [ Pass ]
 fast/events/page-visibility-iframe-move-test.html [ Skip ]
 
 webkit.org/b/161143 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-fragment-scrolling-samedoc.html [ Pass Failure ]
-
-webkit.org/b/161395 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
 # rdar://problem/26478053
 http/tests/dom/document-contentType.html [ Failure ]

@@ -223,8 +223,6 @@ media/track/track-webvtt-snap-to-lines-inline-style.html [ Pass Crash ]
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
-webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
-
 webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
 webkit.org/b/184608 [ Debug ] transitions/created-while-suspended.html [ Skip ]
 
@@ -495,8 +493,6 @@ webkit.org/b/114375 svg/batik/filters/feTile.svg [ Pass Failure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
-webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
-
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
@@ -565,8 +561,6 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 
 # WebKit1-only
 webkit.org/b/103857 fast/events/mouse-cursor-change.html [ Failure ]
-
-webkit.org/b/120387 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 
 webkit.org/b/120923 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 
