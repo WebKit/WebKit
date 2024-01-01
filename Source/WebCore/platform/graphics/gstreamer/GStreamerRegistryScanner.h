@@ -42,7 +42,7 @@ void teardownGStreamerRegistryScanner();
 class GStreamerRegistryScanner {
     WTF_MAKE_NONCOPYABLE(GStreamerRegistryScanner)
 public:
-    static bool singletonNeedsInitialization();
+    static bool singletonWasInitialized();
     static GStreamerRegistryScanner& singleton();
     static void getSupportedDecodingTypes(HashSet<String>&);
 

@@ -32,6 +32,7 @@
 #include "GUniquePtrGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
+#include "PlatformDisplay.h"
 #include "RuntimeApplicationChecks.h"
 #include "SharedBuffer.h"
 #include "WebKitAudioSinkGStreamer.h"
@@ -51,6 +52,7 @@
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
+#include "GStreamerRegistryScannerMSE.h"
 #include "WebKitMediaSourceGStreamer.h"
 #endif
 
@@ -423,7 +425,7 @@ void registerWebKitGStreamerElements()
 
     // The GStreamer registry might be updated after the scanner was initialized, so in this situation
     // we need to reset the internal state of the registry scanner.
-    if (registryWasUpdated && !GStreamerRegistryScanner::singletonNeedsInitialization())
+    if (registryWasUpdated && GStreamerRegistryScanner::singletonWasInitialized())
         GStreamerRegistryScanner::singleton().refresh();
 }
 
@@ -437,16 +439,26 @@ void registerWebKitGStreamerVideoEncoder()
 
     // The video encoder might be registered after the scanner was initialized, so in this situation
     // we need to reset the internal state of the registry scanner.
-    if (registryWasUpdated && !GStreamerRegistryScanner::singletonNeedsInitialization())
+    if (registryWasUpdated && GStreamerRegistryScanner::singletonWasInitialized())
         GStreamerRegistryScanner::singleton().refresh();
 }
 
 void deinitializeGStreamer()
 {
+#if USE(GSTREAMER_GL)
+    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    sharedDisplay.clearGStreamerGLState();
+#endif
 #if ENABLE(MEDIA_STREAM)
     teardownGStreamerCaptureDeviceManagers();
 #endif
+#if ENABLE(MEDIA_SOURCE)
+    teardownGStreamerRegistryScannerMSE();
+#endif
     teardownGStreamerRegistryScanner();
+#if ENABLE(VIDEO)
+    teardownVideoEncoderSingleton();
+#endif
     gst_deinit();
 }
 
