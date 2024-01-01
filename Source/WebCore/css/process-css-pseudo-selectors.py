@@ -1,0 +1,438 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+import itertools
+import json
+import os
+import sys
+import subprocess
+import textwrap
+
+
+# - MARK: Helpers.
+
+
+class Writer:
+    def __init__(self, output):
+        self.output = output
+        self._indentation_level = 0
+
+    TAB_SIZE = 4
+
+    @property
+    def _current_indent(self):
+        return (self._indentation_level * Writer.TAB_SIZE) * ' '
+
+    def write(self, text):
+        self.output.write(self._current_indent)
+        self.output.write(text)
+        return self.newline()
+
+    def write_block(self, text):
+        self.output.write(textwrap.indent(textwrap.dedent(text), self._current_indent))
+        return self.newline()
+
+    def write_lines(self, iterable):
+        for line in iterable:
+            self.write(line)
+        return self
+
+    def newline(self):
+        self.output.write(f'\n')
+        return self
+
+    class Indent:
+        def __init__(self, writer):
+            self.writer = writer
+
+        def __enter__(self):
+            self.writer._indentation_level += 1
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            self.writer._indentation_level -= 1
+
+    def indent(self):
+        return Writer.Indent(self)
+
+
+def key_is_true(object, key):
+    return key in object and object[key]
+
+
+# - MARK: Formatters.
+
+def expand_ifdef_condition(condition):
+    return condition.replace('(', '_').replace(')', '')
+
+
+def format_name_for_enum_class(stringPseudoType):
+    def format(substring):
+        if substring == 'webkit':
+            return 'WebKit'
+        if substring == 'html':
+            return 'HTML'
+        return substring.capitalize()
+
+    output = list(map(format, stringPseudoType.split('-')))
+    return ''.join(output)
+
+
+# - MARK: Code generators.
+
+GeneratorTypes = {
+    'PSEUDO_CLASS_AND_COMPATIBILITY': 'pseudo_class_and_compatibility',
+    'PSEUDO_ELEMENT': 'pseudo_element',
+}
+
+
+class GPerfMappingGenerator:
+    def __init__(self, generator_type, data, webcore_defines):
+        self.webcore_defines = webcore_defines
+        if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY']:
+            self.initializer_suffix = '{std::nullopt,std::nullopt}'
+        else:
+            self.initializer_suffix = 'std::nullopt'
+
+        self.data = data
+        self.map = {}
+
+    def is_pseudo_selector_enabled(self, selector):
+        if 'condition' not in selector:
+            return True
+        return expand_ifdef_condition(selector['condition']) in self.webcore_defines
+
+    def generate_pseudo_class_and_compatibility_element_map(self):
+        pseudo_classes = self.data['pseudo-classes']
+        pseudo_elements = self.data['pseudo-elements']
+
+        # Process pseudo-classes.
+        for pseudo_class_name, pseudo_class in pseudo_classes.items():
+            if not self.is_pseudo_selector_enabled(pseudo_class):
+                continue
+
+            self.map[pseudo_class_name] = (format_name_for_enum_class(pseudo_class_name), 'std::nullopt')
+
+            if 'aliases' in pseudo_class:
+                for alias in pseudo_class['aliases']:
+                    self.map[alias] = (format_name_for_enum_class(pseudo_class_name), 'std::nullopt')
+
+        # Process compatibility pseudo-elements.
+        for pseudo_element_name, pseudo_element in pseudo_elements.items():
+            if not self.is_pseudo_selector_enabled(pseudo_element):
+                continue
+            if not key_is_true(pseudo_element, 'supports-single-colon-for-compatibility'):
+                continue
+
+            self.map[pseudo_element_name] = ('std::nullopt', format_name_for_enum_class(pseudo_element_name))
+
+        return self.map
+
+    def generate_pseudo_element_map(self):
+        pseudo_elements = self.data['pseudo-elements']
+
+        for pseudo_element_name, pseudo_element in pseudo_elements.items():
+            if not self.is_pseudo_selector_enabled(pseudo_element):
+                continue
+
+            if key_is_true(pseudo_element, 'shadow'):
+                self.map[pseudo_element_name] = 'WebKitCustom'
+            else:
+                self.map[pseudo_element_name] = format_name_for_enum_class(pseudo_element_name)
+
+            if 'aliases' in pseudo_element:
+                for alias in pseudo_element['aliases']:
+                    if key_is_true(pseudo_element, 'shadow'):
+                        self.map[alias] = 'WebKitCustomLegacyPrefixed'
+                    else:
+                        self.map[alias] = format_name_for_enum_class(pseudo_element_name)
+
+        return self.map
+
+
+class GPerfOutputGenerator:
+    def __init__(self, generator_type, output_file_name, mapping):
+        self.mapping = mapping
+
+        with open(output_file_name, 'w') as output_file:
+            writer = Writer(output_file)
+            writer.write('%{')
+            self.write_copyright_header(writer)
+            self.write_autogeneration_comment(writer)
+            self.write_includes(writer, generator_type)
+            self.write_ignore_implicit_fallthrough(writer)
+            self.write_define_register(writer)
+            self.open_namespace_webcore(writer)
+            self.write_entry_struct_definition(writer, generator_type)
+            writer.newline()
+            writer.write('%}')
+
+            self.write_gperf_mapping(writer, generator_type)
+
+            if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY']:
+                self.write_parsing_function_definitions_for_pseudo_class(writer)
+            else:
+                self.write_parsing_function_definitions_for_pseudo_element(writer)
+
+            self.close_namespace_webcore(writer)
+            self.write_end_ignore_warning(writer)
+
+    def write_copyright_header(self, writer):
+        writer.write_block("""
+            /*
+            * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
+            *
+            * Redistribution and use in source and binary forms, with or without
+            * modification, are permitted provided that the following conditions
+            * are met:
+            * 1. Redistributions of source code must retain the above copyright
+            *    notice, this list of conditions and the following disclaimer.
+            * 2. Redistributions in binary form must reproduce the above copyright
+            *    notice, this list of conditions and the following disclaimer in the
+            *    documentation and/or other materials provided with the distribution.
+            *
+            * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+            * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+            * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+            * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+            * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+            * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+            * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+            * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+            * THE POSSIBILITY OF SUCH DAMAGE.
+            */""")
+
+    def write_autogeneration_comment(self, writer):
+        writer.newline()
+        writer.write('// This file is automatically generated from CSSPseudoSelectors.json by process-css-pseudo-selectors, do not edit by hand.')
+
+    def write_includes(self, writer, generator_type):
+        writer.newline()
+        writer.write('#include "config.h"')
+        writer.write('#include "SelectorPseudoTypeMap.h"')
+        if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY']:
+            writer.newline()
+            writer.write('#include "CSSParserSelector.h"')
+
+    def write_ignore_implicit_fallthrough(self, writer):
+        writer.newline()
+        writer.write('IGNORE_WARNINGS_BEGIN("implicit-fallthrough")')
+
+    def write_define_register(self, writer):
+        writer.newline()
+        writer.write('// Older versions of gperf use the `register` keyword.')
+        writer.write('#define register')
+
+    def open_namespace_webcore(self, writer):
+        writer.newline()
+        writer.write('namespace WebCore {')
+
+    def write_entry_struct_definition(self, writer, generator_type):
+        if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY']:
+            writer.write_block("""
+                struct SelectorPseudoClassOrCompatibilityPseudoElementEntry {
+                    const char* name;
+                    PseudoClassOrCompatibilityPseudoElement pseudoTypes;
+                };""")
+        else:
+            writer.write_block("""
+                struct SelectorPseudoTypeEntry {
+                    const char* name;
+                    std::optional<CSSSelector::PseudoElement> type;
+                };""")
+
+    def write_gperf_mapping(self, writer, generator_type):
+        writer.write_block("""
+            %struct-type
+            %define initializer-suffix ,{0}
+            %define class-name {1}
+            %omit-struct-type
+            %language=C++
+            %readonly-tables
+            %global-table
+            %ignore-case
+            %compare-strncmp
+            %enum
+
+            struct {2};
+            """.format(
+            '{std::nullopt,std::nullopt}' if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY'] else 'std::nullopt',
+            'SelectorPseudoClassAndCompatibilityElementMapHash' if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY'] else 'SelectorPseudoElementMapHash',
+            'SelectorPseudoClassOrCompatibilityPseudoElementEntry' if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY'] else 'SelectorPseudoTypeEntry',
+        ))
+
+        writer.write('%%')
+
+        def prefix_value(prefix, value):
+            if value == 'std::nullopt':
+                return value
+            return 'CSSSelector::{}::{}'.format(prefix, value)
+
+        for key in self.mapping:
+            value = self.mapping[key]
+            if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY']:
+                writer.write('"{}", {{{}, {}}}'.format(key, prefix_value('PseudoClass', value[0]), prefix_value('PseudoElement', value[1])))
+            else:
+                writer.write('"{}", {}'.format(key, prefix_value('PseudoElement', value)))
+
+        writer.write('%%')
+
+    def write_parsing_function_definitions_for_pseudo_class(self, writer):
+        longest_keyword_length = len(max(self.mapping, key=len))
+        writer.write_block("""
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parsePseudoClassAndCompatibilityElementString(const LChar* characters, unsigned length)
+        {
+            return SelectorPseudoClassAndCompatibilityElementMapHash::in_word_set(reinterpret_cast<const char*>(characters), length);
+        }""")
+
+        writer.write_block("""
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parsePseudoClassAndCompatibilityElementString(const UChar* characters, unsigned length)
+        {{
+            constexpr unsigned maxKeywordLength = {};
+            LChar buffer[maxKeywordLength];
+            if (length > maxKeywordLength)
+                return nullptr;
+
+            for (unsigned i = 0; i < length; ++i) {{
+                UChar character = characters[i];
+                if (!isLatin1(character))
+                    return nullptr;
+
+                buffer[i] = static_cast<LChar>(character);
+            }}
+            return parsePseudoClassAndCompatibilityElementString(buffer, length);
+        }}""".format(longest_keyword_length))
+
+        writer.write_block("""
+        PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(StringView pseudoTypeString)
+        {
+            const SelectorPseudoClassOrCompatibilityPseudoElementEntry* entry;
+            if (pseudoTypeString.is8Bit())
+                entry = parsePseudoClassAndCompatibilityElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
+            else
+                entry = parsePseudoClassAndCompatibilityElementString(pseudoTypeString.characters16(), pseudoTypeString.length());
+
+            if (entry)
+                return entry->pseudoTypes;
+            return { std::nullopt, std::nullopt };
+        }""")
+
+    def write_parsing_function_definitions_for_pseudo_element(self, writer):
+        longest_keyword_length = len(max(self.mapping, key=len))
+        writer.write_block("""
+            static inline std::optional<CSSSelector::PseudoElement> parsePseudoElementString(const LChar* characters, unsigned length)
+            {
+                if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
+                    return entry->type;
+                return std::nullopt;
+            }""")
+
+        writer.write_block("""
+            static inline std::optional<CSSSelector::PseudoElement> parsePseudoElementString(const UChar* characters, unsigned length)
+            {{
+                constexpr unsigned maxKeywordLength = {};
+                LChar buffer[maxKeywordLength];
+                if (length > maxKeywordLength)
+                    return std::nullopt;
+
+                for (unsigned i = 0; i < length; ++i) {{
+                    UChar character = characters[i];
+                    if (!isLatin1(character))
+                        return std::nullopt;
+
+                    buffer[i] = static_cast<LChar>(character);
+                }}
+                return parsePseudoElementString(buffer, length);
+            }}""".format(longest_keyword_length))
+
+        writer.write_block("""
+            std::optional<CSSSelector::PseudoElement> parsePseudoElementString(StringView pseudoTypeString)
+            {
+                if (pseudoTypeString.is8Bit())
+                    return parsePseudoElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
+                return parsePseudoElementString(pseudoTypeString.characters16(), pseudoTypeString.length());
+            }""")
+
+    def close_namespace_webcore(self, writer):
+        writer.newline()
+        writer.write('} // namespace WebCore')
+
+    def write_end_ignore_warning(self, writer):
+        writer.newline()
+        writer.write('IGNORE_WARNINGS_END')
+
+
+# - MARK: Script entry point.
+
+input_file = open(sys.argv[1], 'r')
+input_data = json.load(input_file)
+webcore_defines = [i.strip() for i in sys.argv[-1].split(' ')]
+
+
+def generate_pseudo_class_and_compatibility_gperf():
+    mapping = GPerfMappingGenerator(
+        GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY'],
+        input_data,
+        webcore_defines,
+    ).generate_pseudo_class_and_compatibility_element_map()
+    GPerfOutputGenerator(
+        GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY'],
+        'SelectorPseudoClassAndCompatibilityElementMap.gperf',
+        mapping,
+    )
+
+
+def generate_pseudo_element_gperf():
+    mapping = GPerfMappingGenerator(
+        GeneratorTypes['PSEUDO_ELEMENT'],
+        input_data,
+        webcore_defines,
+    ).generate_pseudo_element_map()
+    GPerfOutputGenerator(
+        GeneratorTypes['PSEUDO_ELEMENT'],
+        'SelectorPseudoElementMap.gperf',
+        mapping,
+    )
+
+
+def main():
+    generate_pseudo_class_and_compatibility_gperf()
+    generate_pseudo_element_gperf()
+
+    gperf_command = sys.argv[2]
+    if 'GPERF' in os.environ:
+        gperf_command = os.environ['GPERF']
+
+    if subprocess.call([gperf_command, '--key-positions=*', '-m', '10', '-s', '2', 'SelectorPseudoClassAndCompatibilityElementMap.gperf', '--output-file=SelectorPseudoClassAndCompatibilityElementMap.cpp']) != 0:
+        print("Error when generating SelectorPseudoClassAndCompatibilityElementMap.cpp from SelectorPseudoClassAndCompatibilityElementMap.gperf :(")
+        sys.exit(1)
+
+    if subprocess.call([gperf_command, '--key-positions=*', '-m', '10', '-s', '2', 'SelectorPseudoElementMap.gperf', '--output-file=SelectorPseudoElementMap.cpp']) != 0:
+        print("Error when generating SelectorPseudoElementMap.cpp from SelectorPseudoElementMap.gperf :(")
+        sys.exit(1)
+
+
+main()

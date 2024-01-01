@@ -1208,6 +1208,7 @@ $(PROJECT_DIR)/css/CSSPaintCallback.idl
 $(PROJECT_DIR)/css/CSSPaintSize.idl
 $(PROJECT_DIR)/css/CSSProperties.json
 $(PROJECT_DIR)/css/CSSPropertyRule.idl
+$(PROJECT_DIR)/css/CSSPseudoSelectors.json
 $(PROJECT_DIR)/css/CSSRule.idl
 $(PROJECT_DIR)/css/CSSRuleList.idl
 $(PROJECT_DIR)/css/CSSScopeRule.idl
@@ -1255,18 +1256,16 @@ $(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/htmlSwitchControl.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
-$(PROJECT_DIR)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
-$(PROJECT_DIR)/css/makeSelectorPseudoElementsMap.py
 $(PROJECT_DIR)/css/mathml.css
 $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
 $(PROJECT_DIR)/css/popover.css
 $(PROJECT_DIR)/css/process-css-properties.py
+$(PROJECT_DIR)/css/process-css-pseudo-selectors.py
 $(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/ruby.css
 $(PROJECT_DIR)/css/svg.css
-$(PROJECT_DIR)/css/viewTransitions.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
 $(PROJECT_DIR)/css/typedom/CSSOMVariableReferenceValue.idl
@@ -1308,6 +1307,7 @@ $(PROJECT_DIR)/css/typedom/transform/CSSSkewY.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTransformComponent.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTransformValue.idl
 $(PROJECT_DIR)/css/typedom/transform/CSSTranslate.idl
+$(PROJECT_DIR)/css/viewTransitions.css
 $(PROJECT_DIR)/dom/AbortAlgorithm.idl
 $(PROJECT_DIR)/dom/AbortController.idl
 $(PROJECT_DIR)/dom/AbortSignal.idl
@@ -1757,8 +1757,6 @@ $(PROJECT_DIR)/page/LocalDOMWindow+Selection.idl
 $(PROJECT_DIR)/page/LocalDOMWindow+VisualViewport.idl
 $(PROJECT_DIR)/page/LocalDOMWindow.idl
 $(PROJECT_DIR)/page/Location.idl
-$(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
-$(PROJECT_DIR)/page/Navigator+UserActivation.idl
 $(PROJECT_DIR)/page/NavigateEvent.idl
 $(PROJECT_DIR)/page/Navigation.idl
 $(PROJECT_DIR)/page/NavigationCurrentEntryChangeEvent.idl
@@ -1767,6 +1765,8 @@ $(PROJECT_DIR)/page/NavigationHistoryEntry.idl
 $(PROJECT_DIR)/page/NavigationInterceptHandler.idl
 $(PROJECT_DIR)/page/NavigationNavigationType.idl
 $(PROJECT_DIR)/page/NavigationTransition.idl
+$(PROJECT_DIR)/page/Navigator+IsLoggedIn.idl
+$(PROJECT_DIR)/page/Navigator+UserActivation.idl
 $(PROJECT_DIR)/page/Navigator.idl
 $(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl
