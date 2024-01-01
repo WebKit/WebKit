@@ -606,7 +606,7 @@ void CairoOperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, cons
     append(createCommand<DrawFilteredImageBuffer>(nativeImage->platformImage(), FloatRect(result->absoluteImageRect()), FloatRect({ } , imageBuffer->logicalSize()), filter.filterScale(), ImagePaintingOptions(state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
-void CairoOperationRecorder::drawNativeImageInternal(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void CairoOperationRecorder::drawNativeImageInternal(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     struct DrawNativeImage final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawNativeImage() = default;
@@ -622,7 +622,6 @@ void CairoOperationRecorder::drawNativeImageInternal(NativeImage& nativeImage, c
         }
     };
 
-    UNUSED_PARAM(imageSize);
     auto& state = this->state();
     append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }

@@ -115,8 +115,8 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
     m_negativeMargin = m_canCollapseMarginBeforeWithChildren ? block.maxNegativeMarginBefore() : 0_lu;
 }
 
-RenderBlockFlow::RenderBlockFlow(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderBlock(type, element, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlowFlag)
+RenderBlockFlow::RenderBlockFlow(Type type, Element& element, RenderStyle&& style, OptionSet<BlockFlowFlag> flags)
+    : RenderBlock(type, element, WTFMove(style), { }, flags)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -126,8 +126,8 @@ RenderBlockFlow::RenderBlockFlow(Type type, Element& element, RenderStyle&& styl
     setChildrenInline(true);
 }
 
-RenderBlockFlow::RenderBlockFlow(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderBlock(type, document, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlowFlag)
+RenderBlockFlow::RenderBlockFlow(Type type, Document& document, RenderStyle&& style, OptionSet<BlockFlowFlag> flags)
+    : RenderBlock(type, document, WTFMove(style), { }, flags)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
@@ -572,7 +572,9 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     LayoutUnit newHeight = logicalHeight();
 
     LayoutUnit alignContentShift = 0_lu;
-    if ((!isPaginated || pageRemaining > newHeight) && (settings().alignContentOnBlocksEnabled()))
+    // Alignment isn't supported when fragmenting.
+    // Table cell alignment is handled in RenderTableCell::computeIntrinsicPadding.
+    if ((!isPaginated || pageRemaining > newHeight) && (settings().alignContentOnBlocksEnabled()) && !isRenderTableCell())
         alignContentShift = shiftForAlignContent(oldHeight, repaintLogicalTop, repaintLogicalBottom);
 
     {
@@ -3991,7 +3993,6 @@ static bool hasSimpleStaticPositionForOutOfFlowChildren(const RenderBlockFlow& r
 
 void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    bool needsUpdateReplacedDimensions = false;
     auto& layoutState = *view().frameView().layoutContext().layoutState();
 
     auto hasSimpleOutOfFlowContentOnly = hasSimpleStaticPositionForOutOfFlowChildren(*this);
@@ -4010,7 +4011,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         else
             hasSimpleOutOfFlowContentOnly = false;
 
-        if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty() && !needsUpdateReplacedDimensions)
+        if (!renderer.needsLayout() && !renderer.preferredLogicalWidthsDirty())
             continue;
 
         auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
@@ -4032,10 +4033,8 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         return;
     }
 
-    if (!modernLineLayout()) {
+    if (!modernLineLayout())
         m_lineLayout = makeUnique<LayoutIntegration::LineLayout>(*this);
-        needsUpdateReplacedDimensions = true;
-    }
 
     auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
 
@@ -4109,7 +4108,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     setLogicalHeight(newBorderBoxBottom);
     auto updateLineClampStateAndLogicalHeightIfApplicable = [&] {
         auto lineClamp = layoutState.lineClamp();
-        if (!lineClamp)
+        if (!lineClamp || isFloatingOrOutOfFlowPositioned())
             return;
         lineClamp->currentLineCount += layoutFormattingContextLineLayout.lineCount();
         if (lineClamp->clampedRenderer) {

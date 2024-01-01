@@ -76,6 +76,7 @@ public:
     LayoutUnit guttersSize(GridTrackSizingDirection, unsigned startLine, unsigned span, std::optional<LayoutUnit> availableSize) const;
     LayoutUnit gridItemOffset(GridTrackSizingDirection) const;
 
+    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     void updateGridAreaLogicalSize(RenderBox&, std::optional<LayoutUnit> width, std::optional<LayoutUnit> height) const;
     bool isBaselineAlignmentForChild(const RenderBox&) const;
     bool isBaselineAlignmentForChild(const RenderBox& child, GridAxis, AllowedBaseLine = AllowedBaseLine::BothLines) const;
@@ -150,7 +151,6 @@ private:
     bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
 
     bool shouldCheckExplicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
-    std::optional<LayoutUnit> explicitIntrinsicInnerLogicalSize(GridTrackSizingDirection) const;
     unsigned computeAutoRepeatTracksCount(GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
     unsigned clampAutoRepeatTracks(GridTrackSizingDirection, unsigned autoRepeatTracks) const;

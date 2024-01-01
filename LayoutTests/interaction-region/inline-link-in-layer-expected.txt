@@ -14,7 +14,7 @@ This is a link, inside the layer.
 
       (interaction regions [
         (interaction (-4,-4) width=36.45 height=27)
-        (borderRadius 8.00)])
+        (cornerRadius 8.00)])
       )
       (children 1
         (GraphicsLayer
@@ -26,7 +26,7 @@ This is a link, inside the layer.
 
           (interaction regions [
             (interaction (-4,-4) width=36.45 height=27)
-            (borderRadius 8.00)])
+            (cornerRadius 8.00)])
           )
         )
       )

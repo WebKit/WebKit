@@ -2554,13 +2554,13 @@ add_custom_command(
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp)
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementTypeMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementTypeMap.cpp
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/SelectorPseudoElementTypeMap.in
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp
+    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/SelectorPseudoElementMap.in
     DEPENDS ${WEBCORE_DIR}/css/makeSelectorPseudoElementsMap.py
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/makeSelectorPseudoElementsMap.py ${WEBCORE_DIR}/css/SelectorPseudoElementTypeMap.in "${GPERF_EXECUTABLE}" "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/makeSelectorPseudoElementsMap.py ${WEBCORE_DIR}/css/SelectorPseudoElementMap.in "${GPERF_EXECUTABLE}" "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}"
     VERBATIM)
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementTypeMap.cpp)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp)
 
 # Generate user agent styles
 add_custom_command(

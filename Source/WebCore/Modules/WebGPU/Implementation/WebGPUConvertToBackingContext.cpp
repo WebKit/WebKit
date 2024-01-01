@@ -691,30 +691,25 @@ WGPUVertexStepMode ConvertToBackingContext::convertToBacking(VertexStepMode vert
     }
 }
 
+static constexpr bool compare(BufferUsage a, unsigned b)
+{
+    return static_cast<unsigned>(a) == b;
+}
+
 WGPUBufferUsageFlags ConvertToBackingContext::convertBufferUsageFlagsToBacking(BufferUsageFlags bufferUsageFlags)
 {
-    WGPUBufferUsageFlags result = 0;
-    if (bufferUsageFlags.contains(BufferUsage::MapRead))
-        result |= WGPUBufferUsage_MapRead;
-    if (bufferUsageFlags.contains(BufferUsage::MapWrite))
-        result |= WGPUBufferUsage_MapWrite;
-    if (bufferUsageFlags.contains(BufferUsage::CopySource))
-        result |= WGPUBufferUsage_CopySrc;
-    if (bufferUsageFlags.contains(BufferUsage::CopyDestination))
-        result |= WGPUBufferUsage_CopyDst;
-    if (bufferUsageFlags.contains(BufferUsage::Index))
-        result |= WGPUBufferUsage_Index;
-    if (bufferUsageFlags.contains(BufferUsage::Vertex))
-        result |= WGPUBufferUsage_Vertex;
-    if (bufferUsageFlags.contains(BufferUsage::Uniform))
-        result |= WGPUBufferUsage_Uniform;
-    if (bufferUsageFlags.contains(BufferUsage::Storage))
-        result |= WGPUBufferUsage_Storage;
-    if (bufferUsageFlags.contains(BufferUsage::Indirect))
-        result |= WGPUBufferUsage_Indirect;
-    if (bufferUsageFlags.contains(BufferUsage::QueryResolve))
-        result |= WGPUBufferUsage_QueryResolve;
-    return result;
+    static_assert(compare(BufferUsage::MapRead, WGPUBufferUsage_MapRead), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::MapWrite, WGPUBufferUsage_MapWrite), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::CopySource, WGPUBufferUsage_CopySrc), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::CopyDestination, WGPUBufferUsage_CopyDst), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::Index, WGPUBufferUsage_Index), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::Vertex, WGPUBufferUsage_Vertex), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::Uniform, WGPUBufferUsage_Uniform), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::Storage, WGPUBufferUsage_Storage), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::Indirect, WGPUBufferUsage_Indirect), "BufferUsageFlags mismatch");
+    static_assert(compare(BufferUsage::QueryResolve, WGPUBufferUsage_QueryResolve), "BufferUsageFlags mismatch");
+
+    return static_cast<WGPUBufferUsageFlags>(bufferUsageFlags);
 }
 
 WGPUColorWriteMaskFlags ConvertToBackingContext::convertColorWriteFlagsToBacking(ColorWriteFlags colorWriteFlags)

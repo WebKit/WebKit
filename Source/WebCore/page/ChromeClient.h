@@ -507,6 +507,10 @@ public:
     virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient&) const = 0;
 
     virtual void postAccessibilityNotification(AccessibilityObject&, AXObjectCache::AXNotification) { }
+#if PLATFORM(PLAYSTATION)
+    virtual void postAccessibilityNodeTextChangeNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
+    virtual void postAccessibilityFrameLoadingEventNotification(AccessibilityObject*, AXObjectCache::AXLoadingEvent) { }
+#endif
 
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }

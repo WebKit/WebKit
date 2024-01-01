@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace WebKit {
 
 enum class AuthenticationChallengeDisposition : uint8_t {
@@ -37,17 +35,3 @@ enum class AuthenticationChallengeDisposition : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::AuthenticationChallengeDisposition> {
-    using values = EnumValues<
-        WebKit::AuthenticationChallengeDisposition,
-        WebKit::AuthenticationChallengeDisposition::UseCredential,
-        WebKit::AuthenticationChallengeDisposition::PerformDefaultHandling,
-        WebKit::AuthenticationChallengeDisposition::Cancel,
-        WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue
-    >;
-};
-
-} // namespace WTF

@@ -2595,9 +2595,9 @@ layer at (-4316,0) size 5116x585 backgroundClip at (0,0) size 5116x585 clip at (
                 RenderText {#text} at (1872,443) size 83x415
                   text run at (1872,443) width -29: "\x{76F8}"
                   text run at (1937,0) width 16: "\x{7167}"
-            RenderBlock {RT} at (1827,0) size 13x483
-              RenderText {#text} at (2,43) size 10x397
-                text run at (2,43) width 396: "\x{3042}\x{3044}\x{3066}\x{3089}\x{3059}"
+            RenderBlock {RT} at (1859,420) size 13x46
+              RenderText {#text} at (2,0) size 10x45
+                text run at (2,0) width 45: "\x{3042}\x{3044}\x{3066}\x{3089}\x{3059}"
           RenderText {#text} at (1937,16) size 18x160
             text run at (1937,16) width 160: "\x{3002}\x{305F}\x{3060}\x{4E8C}\x{5341}\x{5B57}\x{306E}\x{3046}\x{3061}\x{306B}"
           RenderInline {RUBY} at (0,0) size 18x18

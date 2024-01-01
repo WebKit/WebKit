@@ -28,21 +28,21 @@
 
 #include "ContentWorldShared.h"
 #include "WebUserContentControllerProxy.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/StringHash.h>
 
 namespace API {
 
-static HashMap<WTF::String, CheckedPtr<ContentWorld>>& sharedWorldNameMap()
+static HashMap<WTF::String, WeakRef<ContentWorld>>& sharedWorldNameMap()
 {
-    static NeverDestroyed<HashMap<WTF::String, CheckedPtr<ContentWorld>>> sharedMap;
+    static NeverDestroyed<HashMap<WTF::String, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
-static HashMap<WebKit::ContentWorldIdentifier, CheckedPtr<ContentWorld>>& sharedWorldIdentifierMap()
+static HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>& sharedWorldIdentifierMap()
 {
-    static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, CheckedPtr<ContentWorld>>> sharedMap;
+    static NeverDestroyed<HashMap<WebKit::ContentWorldIdentifier, WeakRef<ContentWorld>>> sharedMap;
     return sharedMap;
 }
 
@@ -63,7 +63,7 @@ ContentWorld::ContentWorld(const WTF::String& name)
     });
 
     m_identifier = WebKit::ContentWorldIdentifier::generate();
-    auto addResult = sharedWorldIdentifierMap().add(m_identifier, this);
+    auto addResult = sharedWorldIdentifierMap().add(m_identifier, *this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -75,13 +75,12 @@ ContentWorld::ContentWorld(WebKit::ContentWorldIdentifier identifier)
 
 Ref<ContentWorld> ContentWorld::sharedWorldWithName(const WTF::String& name)
 {
-    auto result = sharedWorldNameMap().add(name, nullptr);
-    if (result.isNewEntry) {
-        result.iterator->value = new ContentWorld(name);
-        return adoptRef(*result.iterator->value.get());
-    }
-
-    return *result.iterator->value;
+    RefPtr<ContentWorld> newContentWorld;
+    auto result = sharedWorldNameMap().ensure(name, [&] {
+        newContentWorld = adoptRef(*new ContentWorld(name));
+        return WeakRef { *newContentWorld };
+    });
+    return newContentWorld ? newContentWorld.releaseNonNull() : Ref { result.iterator->value.get() };
 }
 
 ContentWorld& ContentWorld::pageContentWorld()

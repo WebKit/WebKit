@@ -27,7 +27,7 @@
 #include "config.h"
 #include "PublicURLManager.h"
 
-#include "ScriptExecutionContext.h"
+#include "ContextDestructionObserverInlines.h"
 #include "SecurityOrigin.h"
 #include "URLRegistry.h"
 #include <wtf/URL.h>

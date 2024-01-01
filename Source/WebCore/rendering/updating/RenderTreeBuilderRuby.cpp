@@ -247,6 +247,25 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
     return *lastRun;
 }
 
+RenderStyle createAnonymousStyleForRuby(const RenderStyle& parentStyle, DisplayType display)
+{
+    ASSERT(display == DisplayType::Ruby || display == DisplayType::RubyBase);
+
+    auto style = RenderStyle::createAnonymousStyleWithDisplay(parentStyle, display);
+    style.setUnicodeBidi(UnicodeBidi::Isolate);
+    if (display == DisplayType::RubyBase)
+        style.setTextWrapMode(TextWrapMode::NoWrap);
+    return style;
+}
+
+static RenderPtr<RenderElement> createAnonymousRendererForRuby(RenderElement& parent, DisplayType display)
+{
+    auto style = createAnonymousStyleForRuby(parent.style(), display);
+    auto ruby = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTFMove(style));
+    ruby->initializeStyle();
+    return ruby;
+}
+
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild(RenderElement& parent, const RenderObject& child, RenderObject*& beforeChild)
 {
     if (!child.isRenderText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
@@ -259,8 +278,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
     }
 
     if (parent.style().display() != DisplayType::Ruby) {
-        auto rubyContainer = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Ruby));
-        rubyContainer->initializeStyle();
+        auto rubyContainer = createAnonymousRendererForRuby(parent, DisplayType::Ruby);
         WeakPtr newParent = rubyContainer.get();
         m_builder.attach(parent, WTFMove(rubyContainer), beforeChild);
         beforeChild = nullptr;
@@ -279,10 +297,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
         return downcast<RenderElement>(*previous);
     }
 
-    auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase);
-    baseStyle.setUnicodeBidi(UnicodeBidi::Isolate);
-
-    auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTFMove(baseStyle));
+    auto rubyBase = createAnonymousRendererForRuby(parent, DisplayType::RubyBase);
     rubyBase->initializeStyle();
     WeakPtr newParent = rubyBase.get();
     m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(rubyBase), beforeChild);
@@ -307,8 +322,7 @@ void RenderTreeBuilder::Ruby::attachForStyleBasedRuby(RenderElement& parent, Ren
         // Create an empty anonymous base if it is missing.
         WeakPtr previous = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
         if (!previous || previous->style().display() != DisplayType::RubyBase) {
-            auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
-            rubyBase->initializeStyle();
+            auto rubyBase = createAnonymousRendererForRuby(parent, DisplayType::RubyBase);
             m_builder.attachToRenderElementInternal(parent, WTFMove(rubyBase), beforeChild);
         }
     }
@@ -355,19 +369,18 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::detach(RenderRubyRun& parent, R
     // If the child is a ruby text, then merge the ruby base with the base of
     // the right sibling run, if possible.
     if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed() && child.isRenderRubyText()) {
-        RenderRubyBase* base = parent.rubyBase();
-        RenderObject* rightNeighbour = parent.nextSibling();
-        if (base && is<RenderRubyRun>(rightNeighbour)) {
-            // Ruby run without a base can happen only at the first run.
-            RenderRubyRun& rightRun = downcast<RenderRubyRun>(*rightNeighbour);
-            if (rightRun.hasRubyBase()) {
-                RenderRubyBase* rightBase = rightRun.rubyBase();
-                // Collect all children in a single base, then swap the bases.
-                moveChildren(*rightBase, *base);
-                m_builder.move(parent, rightRun, *base, RenderTreeBuilder::NormalizeAfterInsertion::No);
-                m_builder.move(rightRun, parent, *rightBase, RenderTreeBuilder::NormalizeAfterInsertion::No);
-                // The now empty ruby base will be removed below.
-                ASSERT(!parent.rubyBase()->firstChild());
+        if (auto* base = parent.rubyBase()) {
+            if (auto* rightRun = dynamicDowncast<RenderRubyRun>(parent.nextSibling())) {
+                // Ruby run without a base can happen only at the first run.
+                if (rightRun->hasRubyBase()) {
+                    RenderRubyBase* rightBase = rightRun->rubyBase();
+                    // Collect all children in a single base, then swap the bases.
+                    moveChildren(*rightBase, *base);
+                    m_builder.move(parent, *rightRun, *base, RenderTreeBuilder::NormalizeAfterInsertion::No);
+                    m_builder.move(*rightRun, parent, *rightBase, RenderTreeBuilder::NormalizeAfterInsertion::No);
+                    // The now empty ruby base will be removed below.
+                    ASSERT(!parent.rubyBase()->firstChild());
+                }
             }
         }
     }

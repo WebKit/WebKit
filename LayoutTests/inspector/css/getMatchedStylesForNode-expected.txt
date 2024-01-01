@@ -531,7 +531,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "scrollbar",
+    "pseudoId": "-webkit-scrollbar",
     "matches": [
       {
         "rule": {
@@ -580,7 +580,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "scrollbar-thumb",
+    "pseudoId": "-webkit-scrollbar-thumb",
     "matches": [
       {
         "rule": {
@@ -629,7 +629,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "scrollbar-button",
+    "pseudoId": "-webkit-scrollbar-button",
     "matches": [
       {
         "rule": {
@@ -678,7 +678,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "scrollbar-track",
+    "pseudoId": "-webkit-scrollbar-track",
     "matches": [
       {
         "rule": {
@@ -727,7 +727,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "scrollbar-track-piece",
+    "pseudoId": "-webkit-scrollbar-track-piece",
     "matches": [
       {
         "rule": {
@@ -776,7 +776,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "scrollbar-corner",
+    "pseudoId": "-webkit-scrollbar-corner",
     "matches": [
       {
         "rule": {
@@ -825,7 +825,7 @@ Pseudo:
     ]
   },
   {
-    "pseudoId": "resizer",
+    "pseudoId": "-webkit-resizer",
     "matches": [
       {
         "rule": {

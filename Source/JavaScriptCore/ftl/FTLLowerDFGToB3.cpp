@@ -14252,6 +14252,8 @@ IGNORE_CLANG_WARNINGS_END
                 // This is the direct exit target for operation calls.
                 Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
                 GPRReg stubInfoGPR = InvalidGPRReg;
                 GPRReg scratchGPR = InvalidGPRReg;
                 if (Options::useDataICInFTL()) {
@@ -20406,6 +20408,14 @@ IGNORE_CLANG_WARNINGS_END
                 return m_out.int32Zero;
             }
             LValue result = m_out.constInt32(value.asInt32());
+            result->setOrigin(B3::Origin(edge.node()));
+            return result;
+        }
+
+        JSValue edgeValue = provenValue(edge);
+        if (edgeValue.isInt32()) {
+            simulatedTypeCheck(edge, SpecInt32Only);
+            LValue result = m_out.constInt32(edgeValue.asInt32());
             result->setOrigin(B3::Origin(edge.node()));
             return result;
         }

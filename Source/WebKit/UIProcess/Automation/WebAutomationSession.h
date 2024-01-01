@@ -298,7 +298,7 @@ private:
     std::optional<unichar> charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
 #endif
 
-    CheckedPtr<WebProcessPool> m_processPool;
+    WeakPtr<WebProcessPool> m_processPool;
 
     std::unique_ptr<API::AutomationSessionClient> m_client;
     String m_sessionIdentifier { "Untitled Session"_s };

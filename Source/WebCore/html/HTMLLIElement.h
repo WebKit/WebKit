@@ -33,7 +33,7 @@ public:
     static Ref<HTMLLIElement> create(const QualifiedName&, Document&);
 
 private:
-    static constexpr auto CreateHTMLLIElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateHTMLLIElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLLIElement(const QualifiedName&, Document&);
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;

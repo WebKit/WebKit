@@ -387,7 +387,7 @@ static struct wl_buffer* createWaylandBufferFromEGLImage(WPEBuffer* buffer, GErr
 
 static struct wl_buffer* createWaylandBufferFromDMABuf(WPEBuffer* buffer, GError** error)
 {
-    if (auto* wlBuffer = static_cast<struct wl_buffer*>(g_object_get_data(G_OBJECT(buffer), "wpe-wayland-buffer")))
+    if (auto* wlBuffer = static_cast<struct wl_buffer*>(wpe_buffer_get_user_data(buffer)))
         return wlBuffer;
 
     struct wl_buffer* wlBuffer = nullptr;
@@ -414,7 +414,7 @@ static struct wl_buffer* createWaylandBufferFromDMABuf(WPEBuffer* buffer, GError
             return nullptr;
     }
 
-    g_object_set_data_full(G_OBJECT(buffer), "wpe-wayland-buffer", wlBuffer, reinterpret_cast<GDestroyNotify>(wl_buffer_destroy));
+    wpe_buffer_set_user_data(buffer, wlBuffer, reinterpret_cast<GDestroyNotify>(wl_buffer_destroy));
     return wlBuffer;
 }
 
@@ -452,7 +452,7 @@ static SharedMemoryBuffer* sharedMemoryBufferCreate(WPEDisplayWayland* display, 
 
 static struct wl_buffer* createWaylandBufferSHM(WPEBuffer* buffer, GError** error)
 {
-    if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(g_object_get_data(G_OBJECT(buffer), "wpe-wayland-buffer"))) {
+    if (auto* sharedMemoryBuffer = static_cast<SharedMemoryBuffer*>(wpe_buffer_get_user_data(buffer))) {
         GBytes* bytes = wpe_buffer_shm_get_data(WPE_BUFFER_SHM(buffer));
         memcpy(reinterpret_cast<char*>(sharedMemoryBuffer->wlPool->data()), g_bytes_get_data(bytes, nullptr), sharedMemoryBuffer->wlPool->size());
         return sharedMemoryBuffer->wlBuffer;
@@ -472,8 +472,7 @@ static struct wl_buffer* createWaylandBufferSHM(WPEBuffer* buffer, GError** erro
         return nullptr;
     }
 
-    g_object_set_data_full(G_OBJECT(buffer), "wpe-wayland-buffer", sharedMemoryBuffer, reinterpret_cast<GDestroyNotify>(sharedMemoryBufferDestroy));
-
+    wpe_buffer_set_user_data(buffer, sharedMemoryBuffer, reinterpret_cast<GDestroyNotify>(sharedMemoryBufferDestroy));
     return sharedMemoryBuffer->wlBuffer;
 }
 

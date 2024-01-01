@@ -342,6 +342,8 @@ public:
 
     void switchBrowsingContextsGroup();
 
+    bool errorOccurredInLoading() const { return m_errorOccurredInLoading; }
+
     // HistoryController specific.
     void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad);
     HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
@@ -525,6 +527,8 @@ private:
     bool m_inStopForBackForwardCache { false };
     bool m_isHTTPFallbackInProgress { false };
     bool m_shouldRestoreScrollPositionAndViewState { false };
+
+    bool m_errorOccurredInLoading { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

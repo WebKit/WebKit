@@ -171,12 +171,12 @@ void RenderTreeUpdater::updateRebuildRoots()
         auto it = descendants.begin();
         auto end = descendants.end();
         while (it != end) {
-            auto& descendant = *it;
-            if (!is<Element>(descendant)) {
+            auto* descendant = dynamicDowncast<Element>(*it);
+            if (!descendant) {
                 it.traverseNext();
                 continue;
             }
-            if (!addForRebuild(downcast<Element>(descendant))) {
+            if (!addForRebuild(*descendant)) {
                 it.traverseNextSkippingChildren();
                 continue;
             }
@@ -225,18 +225,17 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         if (auto* renderer = node.renderer())
             renderTreePosition().invalidateNextSibling(*renderer);
-        else if (is<Element>(node) && downcast<Element>(node).hasDisplayContents())
+        else if (auto* element = dynamicDowncast<Element>(node); element && element->hasDisplayContents())
             renderTreePosition().invalidateNextSibling();
 
-        if (is<Text>(node)) {
-            auto& text = downcast<Text>(node);
-            auto* textUpdate = m_styleUpdate->textUpdate(text);
+        if (auto* text = dynamicDowncast<Text>(node)) {
+            auto* textUpdate = m_styleUpdate->textUpdate(*text);
             bool didCreateParent = parent().update && parent().update->change == Style::Change::Renderer;
-            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text.data().containsOnly<isASCIIWhitespace>();
+            bool mayNeedUpdateWhitespaceOnlyRenderer = renderingParent().didCreateOrDestroyChildRenderer && text->data().containsOnly<isASCIIWhitespace>();
             if (didCreateParent || textUpdate || mayNeedUpdateWhitespaceOnlyRenderer)
-                updateTextRenderer(text, textUpdate);
+                updateTextRenderer(*text, textUpdate);
 
-            storePreviousRenderer(text);
+            storePreviousRenderer(*text);
             it.traverseNextSkippingChildren();
             continue;
         }
@@ -751,8 +750,8 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     for (auto it = descendants.begin(), end = descendants.end(); it != end; ++it) {
         pop(it.depth());
 
-        if (is<Text>(*it)) {
-            tearDownTextRenderer(downcast<Text>(*it), builder);
+        if (auto* text = dynamicDowncast<Text>(*it)) {
+            tearDownTextRenderer(*text, builder);
             continue;
         }
 
@@ -790,12 +789,12 @@ void RenderTreeUpdater::tearDownLeftoverChildrenOfComposedTree(Element& element,
     for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
         if (!child->renderer())
             continue;
-        if (is<Text>(*child)) {
-            tearDownTextRenderer(downcast<Text>(*child), builder);
+        if (auto* text = dynamicDowncast<Text>(*child)) {
+            tearDownTextRenderer(*text, builder);
             continue;
         }
-        if (is<Element>(*child))
-            tearDownRenderers(downcast<Element>(*child), TeardownType::Full, builder);
+        if (auto* element = dynamicDowncast<Element>(*child))
+            tearDownRenderers(*element, TeardownType::Full, builder);
     }
 }
 

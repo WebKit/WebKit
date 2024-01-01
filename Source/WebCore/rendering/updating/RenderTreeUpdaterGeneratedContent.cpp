@@ -85,8 +85,8 @@ void RenderTreeUpdater::GeneratedContent::updateCounters()
 
 static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)
 {
-    if (is<PseudoElement>(element))
-        return elementIsTargetedByKeyframeEffectRequiringPseudoElement(downcast<PseudoElement>(*element).hostElement(), pseudoId);
+    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
+        return elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement->hostElement(), pseudoId);
 
     if (element) {
         if (auto* stack = element->keyframeEffectStack(pseudoId))

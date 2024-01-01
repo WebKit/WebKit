@@ -147,7 +147,7 @@ GPUDevice::LostPromise& GPUDevice::lost()
 ExceptionOr<Ref<GPUBuffer>> GPUDevice::createBuffer(const GPUBufferDescriptor& bufferDescriptor)
 {
     auto bufferSize = bufferDescriptor.size;
-    if (bufferSize > limits()->maxBufferSize())
+    if (bufferDescriptor.mappedAtCreation && bufferSize > limits()->maxBufferSize())
         return Exception { ExceptionCode::RangeError };
 
     auto usage = bufferDescriptor.usage;

@@ -36,6 +36,8 @@ input.focus();
 debug("Digit keys");                               // [00]/00/00
 UIHelper.keyDown('downArrow');
 
+input.blur();
+
 shouldBeEqualToString('input.value', '01:01:01');
 shouldBe('eventsCounter.input', '1');
 shouldBe('eventsCounter.change', '1');

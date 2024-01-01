@@ -1316,12 +1316,14 @@ bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
     return m_previouslyApprovedFilePaths.contains(fileSystemPath);
 }
 
-void WebProcessProxy::recordUserGestureAuthorizationToken(WTF::UUID authorizationToken)
+void WebProcessProxy::recordUserGestureAuthorizationToken(PageIdentifier pageID, WTF::UUID authorizationToken)
 {
     if (!UserInitiatedActionByAuthorizationTokenMap::isValidKey(authorizationToken) || !authorizationToken)
         return;
 
-    m_userInitiatedActionByAuthorizationTokenMap.ensure(authorizationToken, [authorizationToken] {
+    m_userInitiatedActionByAuthorizationTokenMap.ensure(pageID, [] {
+        return UserInitiatedActionByAuthorizationTokenMap { };
+    }).iterator->value.ensure(authorizationToken, [authorizationToken] {
         Ref action = API::UserInitiatedAction::create();
         action->setAuthorizationToken(authorizationToken);
         return action;
@@ -1337,28 +1339,36 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t
     return result.iterator->value;
 }
 
-RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::optional<WTF::UUID> authorizationToken, uint64_t identifier)
+RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(PageIdentifier pageID, std::optional<WTF::UUID> authorizationToken, uint64_t identifier)
 {
     if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
         return nullptr;
 
     if (authorizationToken) {
-        auto it = m_userInitiatedActionByAuthorizationTokenMap.find(*authorizationToken);
-        if (it != m_userInitiatedActionByAuthorizationTokenMap.end()) {
-            auto result = m_userInitiatedActionMap.ensure(identifier, [it] {
-                return it->value;
-            });
-            return result.iterator->value;
+        auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);
+        if (authorizationTokenMapByPageIterator != m_userInitiatedActionByAuthorizationTokenMap.end()) {
+            auto it = authorizationTokenMapByPageIterator->value.find(*authorizationToken);
+            if (it != authorizationTokenMapByPageIterator->value.end()) {
+                auto result = m_userInitiatedActionMap.ensure(identifier, [it] {
+                    return it->value;
+                });
+                return result.iterator->value;
+            }
         }
     }
 
     return userInitiatedActivity(identifier);
 }
 
-void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction& action, std::optional<WTF::UUID> authToken)
+void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(PageIdentifier pageID, API::UserInitiatedAction& action, std::optional<WTF::UUID> authToken)
 {
-    if (authToken && m_userInitiatedActionByAuthorizationTokenMap.remove(*authToken))
-        return;
+    auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);
+    if (authorizationTokenMapByPageIterator != m_userInitiatedActionByAuthorizationTokenMap.end()) {
+        if (authToken && authorizationTokenMapByPageIterator->value.contains(*authToken)) {
+            m_userInitiatedActionByAuthorizationTokenMap.remove(authorizationTokenMapByPageIterator);
+            return;
+        }
+    }
     action.setConsumed();
 }
 
@@ -1367,11 +1377,17 @@ bool WebProcessProxy::isResponsive() const
     return responsivenessTimer().isResponsive() && m_backgroundResponsivenessTimer.isResponsive();
 }
 
-void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
+void WebProcessProxy::didDestroyUserGestureToken(PageIdentifier pageID, uint64_t identifier)
 {
     ASSERT(UserInitiatedActionMap::isValidKey(identifier));
-    if (auto removed = m_userInitiatedActionMap.take(identifier); removed && removed->authorizationToken())
-        m_userInitiatedActionByAuthorizationTokenMap.remove(*removed->authorizationToken());
+    auto authorizationTokenMapByPageIterator = m_userInitiatedActionByAuthorizationTokenMap.find(pageID);
+    if (authorizationTokenMapByPageIterator != m_userInitiatedActionByAuthorizationTokenMap.end()) {
+        if (auto removed = m_userInitiatedActionMap.take(identifier); removed && removed->authorizationToken()) {
+            authorizationTokenMapByPageIterator->value.remove(*removed->authorizationToken());
+            if (authorizationTokenMapByPageIterator->value.isEmpty())
+                m_userInitiatedActionByAuthorizationTokenMap.remove(authorizationTokenMapByPageIterator);
+        }
+    }
 }
 
 bool WebProcessProxy::canBeAddedToWebProcessCache() const

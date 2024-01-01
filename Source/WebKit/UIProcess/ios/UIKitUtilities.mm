@@ -242,6 +242,22 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
     return [self.name isEqualToString:@"UITextInteractionNameSingleTap"];
 }
 
+- (BOOL)_wk_hasRecognizedOrEnded
+{
+    switch (self.state) {
+    case UIGestureRecognizerStateBegan:
+    case UIGestureRecognizerStateChanged:
+    case UIGestureRecognizerStateEnded:
+        return YES;
+    case UIGestureRecognizerStatePossible:
+    case UIGestureRecognizerStateCancelled:
+    case UIGestureRecognizerStateFailed:
+        return NO;
+    }
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
 @end
 
 namespace WebKit {

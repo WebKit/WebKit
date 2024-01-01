@@ -92,10 +92,11 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
     auto failedPreflights = [this, weakThis = WeakPtr { *this }](Ref<Element>&& element, RefPtr<DeferredPromise>&& promise) mutable {
         if (!weakThis)
             return;
+        Ref document { protectedDocument() };
         m_fullscreenErrorEventTargetQueue.append(WTFMove(element));
         if (promise)
             promise->reject(Exception { ExceptionCode::TypeError });
-        protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
+        document->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
             if (weakThis)
                 weakThis->notifyAboutFullscreenChangeOrError();
         });
@@ -328,11 +329,20 @@ static Vector<Ref<Document>> documentsToUnfullscreen(Document& firstDocument)
         if (!frame)
             break;
         auto frameOwner = frame->ownerElement();
-        if (!frameOwner || frameOwner->hasIFrameFullscreenFlag())
+        if (!frameOwner)
+            break;
+        if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(frameOwner); iframe && iframe->hasIFrameFullscreenFlag())
             break;
         documents.append(frameOwner->document());
     }
     return documents;
+}
+
+static void clearFullscreenFlags(Element& element)
+{
+    element.setFullscreenFlag(false);
+    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element))
+        iframe->setIFrameFullscreenFlag(false);
 }
 
 void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
@@ -355,7 +365,7 @@ void FullscreenManager::exitFullscreen(RefPtr<DeferredPromise>&& promise)
     auto element = exitingDocument->fullscreenManager().fullscreenElement();
     if (element && !element->isConnected()) {
         addDocumentToFullscreenChangeEventQueue(exitingDocument);
-        element->setFullscreenFlag(false);
+        clearFullscreenFlags(*element);
         element->removeFromTopLayer();
     }
 
@@ -432,7 +442,7 @@ void FullscreenManager::finishExitFullscreen(Document& currentDocument, ExitMode
         for (auto& element : document->topLayerElements()) {
             if (!element->hasFullscreenFlag())
                 continue;
-            element->setFullscreenFlag(false);
+            clearFullscreenFlags(element);
             toRemove.append(element);
         }
         for (auto& element : toRemove)
@@ -446,7 +456,7 @@ void FullscreenManager::finishExitFullscreen(Document& currentDocument, ExitMode
             unfullscreenDocument(exitDocument);
         else {
             auto fullscreenElement = exitDocument->fullscreenManager().fullscreenElement();
-            fullscreenElement->setFullscreenFlag(false);
+            clearFullscreenFlags(*fullscreenElement);
             fullscreenElement->removeFromTopLayer();
         }
     }
@@ -549,8 +559,8 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     for (auto ancestor : ancestorsInTreeOrder)
         addDocumentToFullscreenChangeEventQueue(ancestor->document());
 
-    if (is<HTMLIFrameElement>(element))
-        element.setIFrameFullscreenFlag(true);
+    if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element))
+        iframe->setIFrameFullscreenFlag(true);
 
     if (!document().quirks().shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk())
         notifyAboutFullscreenChangeOrError();
@@ -710,7 +720,7 @@ void FullscreenManager::exitRemovedFullscreenElement(Element& element)
         INFO_LOG(LOGIDENTIFIER, "Fullscreen element removed; exiting fullscreen");
         exitFullscreen(nullptr);
     } else
-        element.setFullscreenFlag(false);
+        clearFullscreenFlags(element);
 }
 
 bool FullscreenManager::isAnimatingFullscreen() const
@@ -727,7 +737,7 @@ void FullscreenManager::setAnimatingFullscreen(bool flag)
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_fullscreenElement)
-        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassType::AnimatingFullScreenTransition, flag } });
+        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClass::WebKitAnimatingFullScreenTransition, flag } });
     m_isAnimatingFullscreen = flag;
 }
 
@@ -745,7 +755,7 @@ void FullscreenManager::setFullscreenControlsHidden(bool flag)
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_fullscreenElement)
-        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClassType::FullScreenControlsHidden, flag } });
+        emplace(styleInvalidation, *m_fullscreenElement, { { CSSSelector::PseudoClass::WebKitFullScreenControlsHidden, flag } });
     m_areFullscreenControlsHidden = flag;
 }
 

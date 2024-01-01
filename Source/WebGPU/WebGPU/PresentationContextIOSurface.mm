@@ -81,6 +81,9 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
     if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
         return;
 
+    if ((descriptor.usage & WGPUTextureUsage_StorageBinding) && !device.hasFeature(WGPUFeatureName_BGRA8UnormStorage))
+        device.generateAValidationError("Requested storage format but BGRA8UnormStorage is not enabled"_s);
+
     m_device = &device;
 
     auto width = std::min<uint32_t>(device.limits().maxTextureDimension2D, descriptor.width);

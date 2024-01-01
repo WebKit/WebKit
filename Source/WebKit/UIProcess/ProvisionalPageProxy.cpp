@@ -126,7 +126,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
 
         auto dataStore = m_process->websiteDataStore();
         if (dataStore && dataStore!= &m_page->websiteDataStore())
-            m_process->processPool().pageEndUsingWebsiteDataStore(CheckedRef { m_page }, *dataStore);
+            m_process->processPool().pageEndUsingWebsiteDataStore(Ref { m_page.get() }, *dataStore);
 
         if (m_process->hasConnection())
             send(Messages::WebPage::Close());

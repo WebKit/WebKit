@@ -5583,8 +5583,9 @@ struct WebCore::InteractionRegion {
     WebCore::InteractionRegion::Type type;
     WebCore::ElementIdentifier elementIdentifier;
     WebCore::FloatRect rectInLayerCoordinates;
-    float borderRadius;
+    float cornerRadius;
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
+    std::optional<WebCore::Path> clipPath;
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {
@@ -7218,4 +7219,12 @@ enum class WebCore::ContextMenuItemType : uint8_t {
     Small,
     Mini,
     Large,
+};
+
+header: <WebCore/PredefinedColorSpace.h>
+enum class WebCore::PredefinedColorSpace : uint8_t {
+    SRGB
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    , DisplayP3
+#endif
 };

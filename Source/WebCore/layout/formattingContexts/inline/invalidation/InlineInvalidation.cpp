@@ -318,6 +318,19 @@ void InlineInvalidation::updateInlineDamage(InlineDamage::Type type, std::option
 {
     if (type == InlineDamage::Type::Invalid || !damagedLine)
         return m_inlineDamage.reset();
+    auto isValidDamage = [&] {
+        // Check for consistency.
+        if (!damagedLine->leadingInlineItemPosition) {
+            // We have to start at the first line if damage points to the leading inline item.
+            return !damagedLine->index;
+        }
+        return true;
+    };
+    if (!isValidDamage()) {
+        ASSERT_NOT_REACHED();
+        m_inlineDamage.reset();
+        return;
+    }
 
     m_inlineDamage.setDamageType(type);
     m_inlineDamage.setDamageReason(*reason);

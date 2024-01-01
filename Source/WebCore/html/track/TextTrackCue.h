@@ -56,7 +56,7 @@ public:
 protected:
     void initialize();
 
-    static constexpr auto CreateTextTrackCueBox = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateTextTrackCueBox = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     TextTrackCueBox(Document&, TextTrackCue&);
     ~TextTrackCueBox() { }
 

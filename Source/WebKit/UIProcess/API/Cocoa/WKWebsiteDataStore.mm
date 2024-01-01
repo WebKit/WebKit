@@ -454,7 +454,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #if HAVE(NW_PROXY_CONFIG)
 - (void)setProxyConfigurations:(NSArray<nw_proxy_config_t> *)proxyConfigurations
 {
-    _proxyConfigurations = [proxyConfigurations copy];
+    _proxyConfigurations = adoptNS([proxyConfigurations copy]);
     if (!_proxyConfigurations || !_proxyConfigurations.get().count) {
         _websiteDataStore->clearProxyConfigData();
         return;

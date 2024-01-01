@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="/resources/testharness.js"></script>
+        <script src="/resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<img id=myImage></img>
+<script>
+promise_test(async (t) => {
+    myImage.src = 'data:';
+    await new Promise(resolve => myImage.onerror = resolve);
+    const videoFrame = new VideoFrame(myImage, {timestamp: 0});
+    return promise_rejects_js(t, TypeError,
+        videoFrame.copyTo(new ArrayBuffer(72), { rect: {
+            y: -2,
+            width: 1,
+            height: 18
+        }})
+     );
+  }, "Checking invalid rect");
+</script>
+</body>
+</html>

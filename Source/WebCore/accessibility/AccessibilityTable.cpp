@@ -46,6 +46,7 @@
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include <wtf/Scope.h>
+#include <wtf/WeakRef.h>
 
 #include <queue>
 
@@ -483,7 +484,7 @@ void AccessibilityTable::addChildren()
     RefPtr<HTMLTableCaptionElement> captionElement;
 
     struct DownwardGrowingCell {
-        CheckedRef<AccessibilityTableCell> axObject;
+        WeakRef<AccessibilityTableCell> axObject;
         // The column the cell starts in.
         unsigned x;
         // The number of columns the cell spans (called "width" in the spec).

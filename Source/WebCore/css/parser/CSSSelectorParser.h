@@ -83,7 +83,7 @@ private:
     std::unique_ptr<CSSParserSelector> consumeAttribute(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeNesting(CSSParserTokenRange&);
 
-    CSSSelector::RelationType consumeCombinator(CSSParserTokenRange&);
+    CSSSelector::Relation consumeCombinator(CSSParserTokenRange&);
     CSSSelector::Match consumeAttributeMatch(CSSParserTokenRange&);
     CSSSelector::AttributeMatchType consumeAttributeFlags(CSSParserTokenRange&);
 
@@ -107,10 +107,10 @@ private:
     bool m_resistDefaultNamespace { false };
     bool m_ignoreDefaultNamespace { false };
     bool m_disableForgivingParsing { false };
-    std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
+    std::optional<CSSSelector::PseudoElement> m_precedingPseudoElement;
 };
 
-std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving = CSSParserEnum::IsForgiving::No);
+std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 CSSParserSelectorList parseCSSParserSelectorList(CSSParserTokenRange&, const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext, CSSParserEnum::IsForgiving);
 
 } // namespace WebCore

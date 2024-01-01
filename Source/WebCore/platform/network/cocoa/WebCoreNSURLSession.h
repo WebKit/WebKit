@@ -70,9 +70,9 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     WeakObjCPtr<id<NSURLSessionDelegate>> _delegate;
     RetainPtr<NSOperationQueue> _queue;
     RetainPtr<NSString> _sessionDescription;
-    HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks;
-    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins;
     Lock _dataTasksLock;
+    HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks WTF_GUARDED_BY_LOCK(_dataTasksLock);
+    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins;
     BOOL _invalidated;
     std::atomic<uint64_t> _nextTaskIdentifier;
     OSObjectPtr<dispatch_queue_t> _internalQueue;
@@ -131,7 +131,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     int64_t _countOfBytesSent;
     int64_t _countOfBytesExpectedToSend;
     int64_t _countOfBytesExpectedToReceive;
-    NSURLSessionTaskState _state;
+    std::atomic<NSURLSessionTaskState> _state;
     RetainPtr<NSError> _error;
     RetainPtr<NSString> _taskDescription;
     float _priority;
@@ -145,7 +145,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @property int64_t countOfBytesSent;
 @property int64_t countOfBytesExpectedToSend;
 @property int64_t countOfBytesExpectedToReceive;
-@property NSURLSessionTaskState state;
+@property (readonly) NSURLSessionTaskState state;
 @property (nullable, readonly, copy) NSError *error;
 @property (nullable, copy) NSString *taskDescription;
 @property float priority;

@@ -64,28 +64,3 @@ struct ResourceLoadInfo {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::ResourceLoadInfo::Type> {
-    using values = EnumValues<
-        WebKit::ResourceLoadInfo::Type,
-        WebKit::ResourceLoadInfo::Type::ApplicationManifest,
-        WebKit::ResourceLoadInfo::Type::Beacon,
-        WebKit::ResourceLoadInfo::Type::CSPReport,
-        WebKit::ResourceLoadInfo::Type::Document,
-        WebKit::ResourceLoadInfo::Type::Fetch,
-        WebKit::ResourceLoadInfo::Type::Font,
-        WebKit::ResourceLoadInfo::Type::Image,
-        WebKit::ResourceLoadInfo::Type::Media,
-        WebKit::ResourceLoadInfo::Type::Object,
-        WebKit::ResourceLoadInfo::Type::Other,
-        WebKit::ResourceLoadInfo::Type::Ping,
-        WebKit::ResourceLoadInfo::Type::Script,
-        WebKit::ResourceLoadInfo::Type::Stylesheet,
-        WebKit::ResourceLoadInfo::Type::XMLHTTPRequest,
-        WebKit::ResourceLoadInfo::Type::XSLT
-    >;
-};
-
-} // namespace WTF

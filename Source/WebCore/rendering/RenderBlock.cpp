@@ -304,14 +304,14 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+    : RenderBox(type, element, WTFMove(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
 }
 
-RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
-    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
+    : RenderBox(type, document, WTFMove(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
 {
     ASSERT(isRenderBlock());
 }
@@ -2689,7 +2689,7 @@ RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
 
 void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
 {
-    if (fragmentedFlowState() == NotInsideFragmentedFlow)
+    if (fragmentedFlowState() == FragmentedFlowState::NotInsideFlow)
         return;
 
     if (auto* cachedFragmentedFlow = cachedEnclosingFragmentedFlow())

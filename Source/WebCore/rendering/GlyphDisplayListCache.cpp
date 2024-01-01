@@ -47,13 +47,13 @@ struct GlyphDisplayListCacheKeyTranslator {
         return computeHash(key);
     }
 
-    static bool equal(const CheckedPtr<GlyphDisplayListCacheEntry>& entryPtr, const GlyphDisplayListCacheKey& key)
+    static bool equal(const SingleThreadWeakRef<GlyphDisplayListCacheEntry>& entryRef, const GlyphDisplayListCacheKey& key)
     {
-        auto* entry = entryPtr.get();
-        return entry->m_textRun == key.textRun
-            && entry->m_scaleFactor == key.context.scaleFactor()
-            && entry->m_fontCascadeGeneration == key.font.generation()
-            && entry->m_shouldSubpixelQuantizeFont == key.context.shouldSubpixelQuantizeFonts();
+        auto& entry = entryRef.get();
+        return entry.m_textRun == key.textRun
+            && entry.m_scaleFactor == key.context.scaleFactor()
+            && entry.m_fontCascadeGeneration == key.font.generation()
+            && entry.m_shouldSubpixelQuantizeFont == key.context.shouldSubpixelQuantizeFonts();
     }
 };
 
@@ -91,12 +91,12 @@ DisplayList::DisplayList* GlyphDisplayListCache::get(const void* run, const Font
         return &entry->displayList();
 
     if (auto entry = m_entries.find<GlyphDisplayListCacheKeyTranslator>(GlyphDisplayListCacheKey { textRun, font, context }); entry != m_entries.end())
-        return &m_entriesForLayoutRun.add(run, Ref { **entry }).iterator->value->displayList();
+        return &m_entriesForLayoutRun.add(run, Ref { entry->get() }).iterator->value->displayList();
 
     if (auto displayList = font.displayListForTextRun(context, textRun)) {
-        auto entry = GlyphDisplayListCacheEntry::create(WTFMove(displayList), textRun, font, context);
+        Ref entry = GlyphDisplayListCacheEntry::create(WTFMove(displayList), textRun, font, context);
         if (canShareDisplayList(entry->displayList()))
-            m_entries.add(entry.ptr());
+            m_entries.add(entry.get());
         return &m_entriesForLayoutRun.add(run, WTFMove(entry)).iterator->value->displayList();
     }
 

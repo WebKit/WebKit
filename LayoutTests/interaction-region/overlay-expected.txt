@@ -11,10 +11,8 @@
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (occlusion (0,0) width=200 height=100)
-        (borderRadius 0.00),
-        (occlusion (0,200) width=200 height=100)
-        (borderRadius 0.00)])
+        (occlusion (0,0) width=200 height=100),
+        (occlusion (0,200) width=200 height=100)])
       )
       (children 3
         (GraphicsLayer

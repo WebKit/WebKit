@@ -1912,6 +1912,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClip);
         if (first.viewTransitionName != second.viewTransitionName)
             changingProperties.m_properties.set(CSSPropertyViewTransitionName);
+        if (first.contentVisibility != second.contentVisibility)
+            changingProperties.m_properties.set(CSSPropertyContentVisibility);
 
         // Non animated styles are followings.
         // customProperties
@@ -1936,7 +1938,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // overscrollBehaviorY
         // applePayButtonStyle
         // applePayButtonType
-        // contentVisibility
         // inputSecurity
         // containerType
         // transformStyleForcedToFlat
@@ -2236,15 +2237,9 @@ void RenderStyle::setContent(RefPtr<StyleImage>&& image, bool add)
 void RenderStyle::setContent(const String& string, bool add)
 {
     auto& data = m_nonInheritedData.access().miscData.access();
-    if (add && data.content) {
-        auto& last = lastContent(*data.content);
-        if (!is<TextContentData>(last))
-            last.setNext(makeUnique<TextContentData>(string));
-        else {
-            auto& textContent = downcast<TextContentData>(last);
-            textContent.setText(textContent.text() + string);
-        }
-    } else {
+    if (add && data.content)
+        lastContent(*data.content).setNext(makeUnique<TextContentData>(string));
+    else {
         data.content = makeUnique<TextContentData>(string);
         auto& altText = data.altText;
         if (!altText.isNull())

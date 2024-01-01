@@ -11,12 +11,8 @@
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (50,0) width=150 height=100)
-        (borderRadius 12 12 0 12),
-        (interaction (200,25) width=50 height=75)
-        (borderRadius 0 12 0 0),
-        (interaction (100,100) width=150 height=25)
-        (borderRadius 0 0 12 12)])
+        (interaction (50,0) width=200 height=125)
+        (clipPath move to (0,12), add line to (0,12), add curve to (0,5.37) (5.37,0) (12,0), add line to (138,0), add line to (138,0), add curve to (144.63,0) (150,5.37) (150,12), add line to (150,13), add line to (150,13), add curve to (150,19.63) (155.37,25) (162,25), add line to (188,25), add line to (188,25), add curve to (194.63,25) (200,30.37) (200,37), add line to (200,113), add line to (200,113), add curve to (200,119.63) (194.63,125) (188,125), add line to (62,125), add line to (62,125), add curve to (55.37,125) (50,119.63) (50,113), add line to (50,112), add line to (50,112), add curve to (50,105.37) (44.63,100) (38,100), add line to (12,100), add line to (12,100), add curve to (5.37,100) (0,94.63) (0,88), close subpath)])
       )
     )
   )

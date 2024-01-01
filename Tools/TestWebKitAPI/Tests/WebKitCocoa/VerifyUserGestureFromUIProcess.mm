@@ -123,6 +123,76 @@ TEST(VerifyUserGesture, WindowOpenKeyEvent)
         Util::spinRunLoop();
     EXPECT_FALSE(consumed);
 }
+
+TEST(VerifyUserGesture, InvalidateAuthorizationTokensByPage)
+{
+    auto openerHTML = "<script>"
+    "addEventListener('mouseup', () => {"
+    "    window.open('https://domain2.com/opened');"
+    "})"
+    "</script>"_s;
+    HTTPServer server({
+        { "/opener"_s, { openerHTML } },
+        { "/opened"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    [[configuration preferences] _setVerifyWindowOpenUserGestureFromUIProcess:YES];
+    auto openerNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerNavigationDelegate allowAnyTLSCertificate];
+    auto openerUIDelegate = adoptNS([TestUIDelegate new]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [openerWebView setNavigationDelegate:openerNavigationDelegate.get()];
+    [openerWebView setUIDelegate:openerUIDelegate.get()];
+
+    __block RetainPtr<TestNavigationDelegate> openedNavigationDelegate;
+    __block RetainPtr<TestUIDelegate> openedUIDelegate;
+    __block BOOL openerConsumed;
+    __block RetainPtr<TestWKWebView> openedWebView;
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *navigationAction, WKWindowFeatures *) {
+        openerConsumed = navigationAction._userInitiatedAction.consumed;
+        [[configuration preferences] _setVerifyWindowOpenUserGestureFromUIProcess:YES];
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedNavigationDelegate allowAnyTLSCertificate];
+        [openedWebView setNavigationDelegate:openedNavigationDelegate.get()];
+        openedUIDelegate = adoptNS([TestUIDelegate new]);
+        [openedWebView setUIDelegate:openedUIDelegate.get()];
+        return openedWebView.get();
+    };
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/opener"]]];
+    [openerNavigationDelegate waitForDidFinishNavigation];
+    [openerWebView mouseDownAtPoint:CGPointMake(50, 50) simulatePressure:NO];
+    [openerWebView mouseUpAtPoint:CGPointMake(50, 50)];
+    while (!openedWebView)
+        Util::spinRunLoop();
+    EXPECT_FALSE(openerConsumed);
+
+    __block BOOL openedConsumed;
+    __block RetainPtr<TestWKWebView> secondOpenedWebView;
+    openedUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *navigationAction, WKWindowFeatures *) {
+        openedConsumed = navigationAction._userInitiatedAction.consumed;
+        secondOpenedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        return secondOpenedWebView.get();
+    };
+
+    __block bool done = false;
+    [openedWebView evaluateJavaScript:@"addEventListener('mouseup', () => { window.open('https://domain3.com/opened'); });" completionHandler:^(id, NSError *) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    openerUIDelegate.get().createWebViewWithConfiguration = nullptr;
+
+    [openerWebView mouseDownAtPoint:CGPointMake(50, 50) simulatePressure:NO];
+    [openedWebView mouseDownAtPoint:CGPointMake(50, 50) simulatePressure:NO];
+    [openerWebView mouseUpAtPoint:CGPointMake(50, 50)];
+    [openedWebView mouseUpAtPoint:CGPointMake(50, 50)];
+    while (!secondOpenedWebView)
+        Util::spinRunLoop();
+    EXPECT_FALSE(openedConsumed);
+}
 #endif
 
 }

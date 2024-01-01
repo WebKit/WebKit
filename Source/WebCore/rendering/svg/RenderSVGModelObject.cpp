@@ -55,14 +55,18 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGModelObject);
 
-RenderSVGModelObject::RenderSVGModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> typeFlags)
-    : RenderLayerModelObject(type, document, WTFMove(style), typeFlags)
+RenderSVGModelObject::RenderSVGModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+    : RenderLayerModelObject(type, document, WTFMove(style), { }, typeFlags)
 {
+    ASSERT(!isLegacyRenderSVGModelObject());
+    ASSERT(isRenderSVGModelObject());
 }
 
-RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<RenderElementType> typeFlags)
-    : RenderLayerModelObject(type, element, WTFMove(style), typeFlags)
+RenderSVGModelObject::RenderSVGModelObject(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> typeFlags)
+    : RenderLayerModelObject(type, element, WTFMove(style), { }, typeFlags)
 {
+    ASSERT(!isLegacyRenderSVGModelObject());
+    ASSERT(isRenderSVGModelObject());
 }
 
 void RenderSVGModelObject::updateFromStyle()
@@ -228,9 +232,8 @@ bool RenderSVGModelObject::checkIntersection(RenderElement* renderer, const Floa
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
-    SVGElement* svgElement = downcast<SVGElement>(renderer->element());
-    ASSERT(is<SVGGraphicsElement>(svgElement));
-    auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
+    auto* svgElement = downcast<SVGGraphicsElement>(renderer->element());
+    auto ctm = svgElement->getCTM(SVGLocatable::DisallowStyleUpdate);
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
     return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));
@@ -242,9 +245,8 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
         return false;
     if (!isGraphicsElement(*renderer))
         return false;
-    SVGElement* svgElement = downcast<SVGElement>(renderer->element());
-    ASSERT(is<SVGGraphicsElement>(svgElement));
-    auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
+    auto* svgElement = downcast<SVGGraphicsElement>(renderer->element());
+    auto ctm = svgElement->getCTM(SVGLocatable::DisallowStyleUpdate);
     // FIXME: [SVG] checkEnclosure implementation is inconsistent
     // https://bugs.webkit.org/show_bug.cgi?id=262709
     return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate)));

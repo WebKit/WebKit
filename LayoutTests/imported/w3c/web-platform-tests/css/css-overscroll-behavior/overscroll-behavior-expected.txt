@@ -8,5 +8,5 @@ Repeat the same scrolls as in step 1 and then tap on DONE.
 Repeat the same scrolls as in step 1 and then tap on DONE.
 Make two separate scrolls on GREEN, in this order: scroll UP (or drag down), then scroll LEFT (or drag right). Scroll (or drag) until nothing is scrolling. Then tap on DONE.
 
-FAIL overscroll-behavior prevents scroll-propagation in the area and direction as specified assert_equals: expected 0 but got 100
+PASS overscroll-behavior prevents scroll-propagation in the area and direction as specified
 

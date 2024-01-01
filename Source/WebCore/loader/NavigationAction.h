@@ -57,8 +57,8 @@ enum class MouseButton : int8_t;
 class NavigationAction {
 public:
     NavigationAction();
-    WEBCORE_EXPORT NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomString& downloadAttribute = nullAtom());
-    NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomString& downloadAttribute = nullAtom());
+    WEBCORE_EXPORT NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, bool, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomString& downloadAttribute = nullAtom());
+    NavigationAction(Document&, const ResourceRequest&, InitiatedByMainFrame, bool, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomString& downloadAttribute = nullAtom());
 
     WEBCORE_EXPORT ~NavigationAction();
 

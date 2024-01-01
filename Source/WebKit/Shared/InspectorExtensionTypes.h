@@ -56,19 +56,4 @@ WTF::String extensionErrorToString(ExtensionError);
 
 } // namespace Inspector
 
-namespace WTF {
-
-template<> struct EnumTraits<Inspector::ExtensionError> {
-    using values = EnumValues<
-        Inspector::ExtensionError,
-        Inspector::ExtensionError::ContextDestroyed,
-        Inspector::ExtensionError::InternalError,
-        Inspector::ExtensionError::InvalidRequest,
-        Inspector::ExtensionError::RegistrationFailed,
-        Inspector::ExtensionError::NotImplemented
-    >;
-};
-
-}
-
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

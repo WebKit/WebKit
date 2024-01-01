@@ -28,7 +28,7 @@
 #include "MatchResult.h"
 #include "RenderStyle.h"
 #include "Timer.h"
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -69,7 +69,7 @@ public:
 private:
     void sweep();
 
-    CheckedRef<const Resolver> m_owner;
+    SingleThreadWeakRef<const Resolver> m_owner;
     HashMap<unsigned, Entry, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };

@@ -140,7 +140,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
     if (!result)
         return false;
 
-    return !matchProperties || (m_property.mode == other.m_property.mode && m_property.animatableProperty == other.m_property.animatableProperty && m_propertySet == other.m_propertySet);
+    return !matchProperties || (m_property == other.m_property && m_propertySet == other.m_propertySet);
 }
 
 auto Animation::initialName() -> const Style::ScopedName&

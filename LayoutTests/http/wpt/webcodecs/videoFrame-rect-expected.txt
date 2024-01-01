@@ -1,0 +1,4 @@
+
+
+PASS Checking invalid rect
+

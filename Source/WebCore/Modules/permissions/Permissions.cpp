@@ -196,7 +196,8 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         });
     };
 
-    workerGlobalScope.thread().workerLoaderProxy().postTaskToLoader(WTFMove(completionHandler));
+    if (auto* workerLoaderProxy = workerGlobalScope.thread().workerLoaderProxy())
+        workerLoaderProxy->postTaskToLoader(WTFMove(completionHandler));
 }
 
 } // namespace WebCore

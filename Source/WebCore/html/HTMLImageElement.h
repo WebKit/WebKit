@@ -178,7 +178,7 @@ public:
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&);
 
 protected:
-    static constexpr auto CreateHTMLImageElement = CreateHTMLElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateHTMLImageElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) override;

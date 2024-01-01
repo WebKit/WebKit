@@ -289,7 +289,9 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceValue(AST::Identifier::make("write"_s), m_types.accessModeType());
     introduceValue(AST::Identifier::make("read_write"_s), m_types.accessModeType());
 
-    introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType());
+    if (m_shaderModule.hasFeature("bgra8unorm-storage"_s))
+        introduceValue(AST::Identifier::make("bgra8unorm"_s), m_types.texelFormatType());
+
     introduceValue(AST::Identifier::make("r32float"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("r32sint"_s), m_types.texelFormatType());
     introduceValue(AST::Identifier::make("r32uint"_s), m_types.texelFormatType());
@@ -997,6 +999,9 @@ void TypeChecker::visit(AST::CallExpression& call)
                     typeArguments.append(matrixType->element);
                     targetName = makeString("mat", String::number(matrixType->columns), "x", String::number(matrixType->rows));
                 }
+
+                if (std::holds_alternative<Types::Primitive>(*targetBinding->type))
+                    targetName = targetBinding->type->toString();
             }
 
             if (targetBinding->kind == Binding::Value) {
@@ -1037,6 +1042,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesFrexp();
             else if (targetName == "modf"_s)
                 m_shaderModule.setUsesModf();
+            else if (targetName == "atomicCompareExchangeWeak"_s)
+                m_shaderModule.setUsesAtomicCompareExchange();
             target.m_inferredType = result;
             return;
         }

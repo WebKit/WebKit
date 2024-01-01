@@ -91,12 +91,8 @@ auto RemoteBufferProxy::getMappedRange(WebCore::WebGPU::Size64 offset, std::opti
 
 void RemoteBufferProxy::unmap()
 {
-    // FIXME: Implement error handling.
-    if (!m_data)
-        return;
-
     Vector<uint8_t> data;
-    if (m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
+    if (m_data && m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         data = WTFMove(*m_data);
     auto sendResult = send(Messages::RemoteBuffer::Unmap(WTFMove(data)));
     UNUSED_VARIABLE(sendResult);

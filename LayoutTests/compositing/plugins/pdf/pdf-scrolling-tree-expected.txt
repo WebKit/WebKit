@@ -12,7 +12,7 @@
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,0))
   (synchronous event dispatch region for event wheel
-    at (8,8) size 300x300)
+    at (8,8) size 300x250)
   (behavior for fixed 1)
 )
 

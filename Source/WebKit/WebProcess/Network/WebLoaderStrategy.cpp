@@ -513,10 +513,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     if (resourceLoader.options().mode == FetchOptions::Mode::Navigate) {
         Vector<RefPtr<SecurityOrigin>> frameAncestorOrigins;
         for (auto* frame = resourceLoader.frame()->tree().parent(); frame; frame = frame->tree().parent()) {
-            auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-            if (!localFrame)
-                continue;
-            frameAncestorOrigins.append(&localFrame->document()->securityOrigin());
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
+                frameAncestorOrigins.append(&localFrame->document()->securityOrigin());
+            else
+                frameAncestorOrigins.append(nullptr);
         }
         loadParameters.frameAncestorOrigins = WTFMove(frameAncestorOrigins);
     }
@@ -563,7 +563,7 @@ void WebLoaderStrategy::startLocalLoad(WebCore::ResourceLoader& resourceLoader)
 
 void WebLoaderStrategy::addURLSchemeTaskProxy(WebURLSchemeTaskProxy& task)
 {
-    auto result = m_urlSchemeTasks.add(task.identifier(), &task);
+    auto result = m_urlSchemeTasks.add(task.identifier(), task);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 

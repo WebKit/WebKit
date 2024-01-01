@@ -46,9 +46,11 @@ void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
             timeline->removeAnimation(animation);
-        else if (timeline == this && is<KeyframeEffect>(animation.effect())) {
-            if (auto styleable = downcast<KeyframeEffect>(animation.effect())->targetStyleable())
-                styleable->animationWasAdded(animation);
+        else if (timeline == this) {
+            if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation.effect())) {
+                if (auto styleable = keyframeEffect->targetStyleable())
+                    styleable->animationWasAdded(animation);
+            }
         }
     }
 }

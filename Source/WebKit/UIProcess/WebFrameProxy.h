@@ -71,7 +71,7 @@ struct FrameTreeCreationParameters;
 struct FrameTreeNodeData;
 struct WebsitePoliciesData;
 
-class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy>, public CanMakeCheckedPtr {
+class WebFrameProxy : public API::ObjectImpl<API::Object::Type::Frame>, public CanMakeWeakPtr<WebFrameProxy> {
 public:
     static Ref<WebFrameProxy> create(WebPageProxy& page, WebProcessProxy& process, WebCore::FrameIdentifier frameID)
     {

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        
+        .scroller {
+            width: 300px;
+            height: 300px;
+            overflow-x: scroll;
+            border: 1px solid black;
+        }
+        
+        .contents {
+            width: 300%;
+            height: 100%;
+            background-color: silver;
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function runTest()
+        {
+            const scroller = document.getElementsByClassName("scroller")[0];
+            const scrollerBounds = scroller.getBoundingClientRect();
+
+            if (window.eventSender) {
+                const startX = scrollerBounds.width - 20;
+                const eventY = scrollerBounds.height - 8;
+                eventSender.mouseMoveTo(startX, eventY);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(startX - 150, eventY);
+                eventSender.mouseUp();
+            }
+
+            if (window.testRunner)
+                document.getElementById("result").innerText = `Scrolled to ${scroller.scrollLeft}`;
+        }
+    
+        window.addEventListener('load', () => {
+            runTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller" dir="rtl">
+        <div class="contents"></div>
+    </div>
+    
+    <p id="result">Test did not run.</p>    
+</body>
+</html>

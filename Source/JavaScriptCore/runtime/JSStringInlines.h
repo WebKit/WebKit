@@ -294,9 +294,9 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
 
     auto createFromRope = [&](VM& vm, auto& buffer) {
         auto impl = AtomStringImpl::add(buffer);
-        if (impl->hasOneRef())
-            vm.heap.reportExtraMemoryAllocated(ropeString, impl->cost());
+        size_t sizeToReport = impl->hasOneRef() ? impl->cost() : 0;
         ropeString->convertToNonRope(String { WTFMove(impl) });
+        vm.heap.reportExtraMemoryAllocated(ropeString, sizeToReport);
         return ropeString;
     };
 

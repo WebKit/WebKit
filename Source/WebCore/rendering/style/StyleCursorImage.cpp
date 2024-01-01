@@ -62,7 +62,8 @@ StyleCursorImage::~StyleCursorImage()
 
 bool StyleCursorImage::operator==(const StyleImage& other) const
 {
-    return is<StyleCursorImage>(other) && equals(downcast<StyleCursorImage>(other));
+    auto* otherCursorImage = dynamicDowncast<StyleCursorImage>(other);
+    return otherCursorImage && equals(*otherCursorImage);
 }
 
 bool StyleCursorImage::equals(const StyleCursorImage& other) const
@@ -82,12 +83,12 @@ Ref<CSSValue> StyleCursorImage::computedStyleValue(const RenderStyle& style) con
 
 ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
 {
-    if (is<StyleImageSet>(m_image))
-        return downcast<StyleImageSet>(m_image.get()).selectBestFitImage(document);
+    if (RefPtr imageSet = dynamicDowncast<StyleImageSet>(m_image.get()))
+        return imageSet->selectBestFitImage(document);
 
-    if (is<StyleCachedImage>(m_image)) {
-        if (auto* cursorElement = updateCursorElement(document)) {
-            auto existingImageURL = downcast<StyleCachedImage>(m_image.get()).imageURL();
+    if (RefPtr cachedImage = dynamicDowncast<StyleCachedImage>(m_image.get())) {
+        if (RefPtr cursorElement = updateCursorElement(document)) {
+            auto existingImageURL = cachedImage->imageURL();
             auto updatedImageURL = document.completeURL(cursorElement->href());
 
             if (existingImageURL != updatedImageURL)
@@ -98,19 +99,18 @@ ImageWithScale StyleCursorImage::selectBestFitImage(const Document& document)
     return { m_image.ptr(), 1, String() };
 }
 
-SVGCursorElement* StyleCursorImage::updateCursorElement(const Document& document)
+RefPtr<SVGCursorElement> StyleCursorImage::updateCursorElement(const Document& document)
 {
-    auto element = SVGURIReference::targetElementFromIRIString(m_originalURL.string(), document).element;
-    if (!is<SVGCursorElement>(element))
+    RefPtr cursorElement = dynamicDowncast<SVGCursorElement>(SVGURIReference::targetElementFromIRIString(m_originalURL.string(), document).element);
+    if (!cursorElement)
         return nullptr;
 
     // FIXME: Not right to keep old cursor elements as clients. The new one should replace the old, not join it in a set.
-    auto& cursorElement = downcast<SVGCursorElement>(*element);
-    if (m_cursorElements.add(cursorElement).isNewEntry) {
-        cursorElementChanged(cursorElement);
-        cursorElement.addClient(*this);
+    if (m_cursorElements.add(*cursorElement).isNewEntry) {
+        cursorElementChanged(*cursorElement);
+        cursorElement->addClient(*this);
     }
-    return &cursorElement;
+    return cursorElement;
 }
 
 void StyleCursorImage::cursorElementRemoved(SVGCursorElement& cursorElement)

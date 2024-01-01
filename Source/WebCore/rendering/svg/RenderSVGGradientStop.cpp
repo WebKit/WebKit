@@ -38,7 +38,7 @@ using namespace SVGNames;
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGGradientStop);
 
 RenderSVGGradientStop::RenderSVGGradientStop(SVGStopElement& element, RenderStyle&& style)
-    : RenderElement(Type::SVGGradientStop, element, WTFMove(style), { })
+    : RenderElement(Type::SVGGradientStop, element, WTFMove(style), { }, { })
 {
     ASSERT(isRenderSVGGradientStop());
 }
@@ -72,9 +72,7 @@ void RenderSVGGradientStop::layout()
 
 SVGGradientElement* RenderSVGGradientStop::gradientElement()
 {
-    if (is<SVGGradientElement>(element().parentElement()))
-        return downcast<SVGGradientElement>(element().parentElement());
-    return nullptr;
+    return dynamicDowncast<SVGGradientElement>(element().parentElement());
 }
 
 }

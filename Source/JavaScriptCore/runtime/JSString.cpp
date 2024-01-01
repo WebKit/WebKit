@@ -177,12 +177,10 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     } else
         atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
 
-    // If we resolved a string that didn't previously exist, notify the heap that we've grown.
-    if (atomString.impl()->hasOneRef())
-        vm.heap.reportExtraMemoryAllocated(this, atomString.impl()->cost());
-
+    size_t sizeToReport = atomString.impl()->hasOneRef() ? atomString.impl()->cost() : 0;
     convertToNonRope(String { atomString });
-
+    // If we resolved a string that didn't previously exist, notify the heap that we've grown.
+    vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
     return atomString;
 }
 
@@ -243,11 +241,12 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
             outOfMemory(nullOrGlobalObjectForOOM);
             return nullString();
         }
-        vm.heap.reportExtraMemoryAllocated(this, newImpl->cost());
 
+        size_t sizeToReport = newImpl->cost();
         uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
         resolveRopeInternalNoSubstring(buffer, stackLimit);
         convertToNonRope(function(newImpl.releaseNonNull()));
+        vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
         return valueInternal();
     }
     
@@ -257,11 +256,12 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         outOfMemory(nullOrGlobalObjectForOOM);
         return nullString();
     }
-    vm.heap.reportExtraMemoryAllocated(this, newImpl->cost());
     
+    size_t sizeToReport = newImpl->cost();
     uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     resolveRopeInternalNoSubstring(buffer, stackLimit);
     convertToNonRope(function(newImpl.releaseNonNull()));
+    vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
     return valueInternal();
 }
 

@@ -36,18 +36,3 @@ enum class SyntheticEditingCommandType : uint8_t  {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::SyntheticEditingCommandType> {
-    using values = EnumValues <
-    WebKit::SyntheticEditingCommandType,
-    WebKit::SyntheticEditingCommandType::Undo,
-    WebKit::SyntheticEditingCommandType::Redo,
-    WebKit::SyntheticEditingCommandType::ToggleBoldface,
-    WebKit::SyntheticEditingCommandType::ToggleItalic,
-    WebKit::SyntheticEditingCommandType::ToggleUnderline
-    >;
-};
-
-}

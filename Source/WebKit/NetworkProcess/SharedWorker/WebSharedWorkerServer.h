@@ -85,7 +85,7 @@ private:
 
     NetworkSession& m_session;
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<WebSharedWorkerServerConnection>> m_connections;
-    HashMap<WebCore::RegistrableDomain, CheckedPtr<WebSharedWorkerServerToContextConnection>> m_contextConnections;
+    HashMap<WebCore::RegistrableDomain, WeakRef<WebSharedWorkerServerToContextConnection>> m_contextConnections;
     HashSet<WebCore::RegistrableDomain> m_pendingContextConnectionDomains;
     HashMap<WebCore::SharedWorkerKey, std::unique_ptr<WebSharedWorker>> m_sharedWorkers;
 };

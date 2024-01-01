@@ -87,7 +87,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 
 + (void)_setCachedProcessSuspensionDelayForTesting:(double)delayInSeconds WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-- (void)_allowTLSCertificateChain:(NSArray *)certificateChain forHost:(NSString *)host WK_API_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate.didReceiveAuthenticationChallenge", macos(12.0, WK_MAC_TBA), ios(15.0, WK_IOS_TBA));
+- (void)_allowTLSCertificateChain:(NSArray *)certificateChain forHost:(NSString *)host WK_API_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate.didReceiveAuthenticationChallenge", macos(12.0, 14.2), ios(15.0, 17.2));
 - (void)_trustServerForLocalPCMTesting:(SecTrustRef)serverTrust WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_setPrivateClickMeasurementDebugModeEnabled:(BOOL)enabled WK_API_AVAILABLE(macos(14.0), ios(17.0));

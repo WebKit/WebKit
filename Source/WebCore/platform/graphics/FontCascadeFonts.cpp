@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2014 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +68,7 @@ private:
     }
 
     Glyph m_glyphs[GlyphPage::size] { };
-    WeakPtr<const Font> m_fonts[GlyphPage::size] { };
+    SingleThreadWeakPtr<const Font> m_fonts[GlyphPage::size] { };
 };
 
 inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPage>&& singleFont)
@@ -247,7 +248,7 @@ static bool shouldIgnoreRotation(char32_t character)
     if (isInRange(character, 0x002E5, 0x002EB))
         return true;
 
-    if (isInRange(character, 0x01100, 0x011FF) || isInRange(character, 0x01401, 0x0167F) || isInRange(character, 0x01800, 0x018FF))
+    if (isInRange(character, 0x01100, 0x011FF) || isInRange(character, 0x01401, 0x0167F) || isInRange(character, 0x018B0, 0x018FF))
         return true;
 
     if (character == 0x02016 || character == 0x02020 || character == 0x02021 || character == 0x2030 || character == 0x02031)
@@ -282,8 +283,8 @@ static bool shouldIgnoreRotation(char32_t character)
         || isInRange(character, 0x030FD, 0x0A4CF))
         return true;
 
-    if (isInRange(character, 0x0A840, 0x0A87F) || isInRange(character, 0x0A960, 0x0A97F)
-        || isInRange(character, 0x0AC00, 0x0D7FF) || isInRange(character, 0x0E000, 0x0FAFF))
+    if (isInRange(character, 0x0A960, 0x0A97F) || isInRange(character, 0x0AC00, 0x0D7FF)
+        || isInRange(character, 0x0E000, 0x0FAFF))
         return true;
 
     if (isInRange(character, 0x0FE10, 0x0FE1F) || isInRange(character, 0x0FE30, 0x0FE48)
@@ -478,7 +479,13 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         return loadingResult;
     // https://drafts.csswg.org/css-fonts-4/#char-handling-issues
     // "If a given character is a Private-Use Area Unicode codepoint, user agents must only match font families named in the font-family list that are not generic families. If none of the families named in the font-family list contain a glyph for that codepoint, user agents must display some form of missing glyph symbol for that character rather than attempting installed font fallback for that codepoint."
-    if (isPrivateUseAreaCharacter(character)) {
+    bool shouldCheckForPrivateUseAreaCharacters = true;
+#if PLATFORM(COCOA)
+    // We make an exception for 0xF8FF in Apple platforms for compatibility with other browsers. This has traditionally being mapped on Apple platforms to the Apple logo glyph by some fonts like Times Roman.
+    // http://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/CORPCHAR.TXT
+    shouldCheckForPrivateUseAreaCharacters = character != 0xF8FF;
+#endif
+    if (shouldCheckForPrivateUseAreaCharacters && isPrivateUseAreaCharacter(character)) {
         auto font = FontCache::forCurrentThread().lastResortFallbackFont(description);
         GlyphData glyphData(0, font.ptr());
         m_systemFallbackFontSet.add(WTFMove(font));

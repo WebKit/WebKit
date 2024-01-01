@@ -540,8 +540,9 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
  * Version 12. added support for agent cluster ID.
  * Version 13. added support for ErrorInstance objects.
  * Version 14. encode booleans as uint8_t instead of int32_t.
+ * Version 15. changed the terminator of the indexed property section in array.
  */
-static constexpr unsigned CurrentVersion = 14;
+static constexpr unsigned CurrentVersion = 15;
 static constexpr unsigned TerminatorTag = 0xFFFFFFFF;
 static constexpr unsigned StringPoolTag = 0xFFFFFFFE;
 static constexpr unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -4837,21 +4838,32 @@ DeserializationResult CloneDeserializer::deserialize()
                 fail();
                 goto error;
             }
-            if (index == TerminatorTag) {
-                // We reached the end of the indexed properties section.
-                if (!read(index)) {
-                    fail();
-                    goto error;
+
+            if (m_version >= 15) {
+                if (index == TerminatorTag) {
+                    // We reached the end of the indexed properties section.
+                    if (!read(index)) {
+                        fail();
+                        goto error;
+                    }
+                    // At this point, we're either done with the array or is starting the
+                    // non-indexed property section.
+                    if (index == TerminatorTag) {
+                        JSObject* outArray = outputObjectStack.last();
+                        outValue = outArray;
+                        outputObjectStack.removeLast();
+                        break;
+                    }
+                    if (index == NonIndexPropertiesTag)
+                        goto objectStartVisitMember;
                 }
-                // At this point, we're either done with the array or is starting the
-                // non-indexed property section.
+            } else {
                 if (index == TerminatorTag) {
                     JSObject* outArray = outputObjectStack.last();
                     outValue = outArray;
                     outputObjectStack.removeLast();
                     break;
-                }
-                if (index == NonIndexPropertiesTag)
+                } else if (index == NonIndexPropertiesTag)
                     goto objectStartVisitMember;
             }
 
@@ -5396,7 +5408,9 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     if (arrayBufferContentsArray.hasException())
         return arrayBufferContentsArray.releaseException();
 
-    auto backingStores = ImageBitmap::detachBitmaps(WTFMove(imageBitmaps));
+    auto detachedImageBitmaps = map(WTFMove(imageBitmaps), [](auto&& imageBitmap) -> std::optional<ImageBitmapBacking> {
+        return imageBitmap->detach();
+    });
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedCanvases;
@@ -5418,7 +5432,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         audioData->close();
 #endif
 
-    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(backingStores)
+    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(detachedImageBitmaps)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                 , WTFMove(detachedCanvases)
                 , WTFMove(inMemoryOffscreenCanvases)

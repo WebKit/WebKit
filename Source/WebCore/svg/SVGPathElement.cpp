@@ -155,8 +155,8 @@ void SVGPathElement::invalidateMPathDependencies()
     // <mpath> can only reference <path> but this dependency is not handled in
     // markForLayoutAndParentResourceInvalidation so we update any mpath dependencies manually.
     for (auto& element : referencingElements()) {
-        if (is<SVGMPathElement>(element))
-            downcast<SVGMPathElement>(element.get()).targetPathChanged();
+        if (auto* mpathElement = dynamicDowncast<SVGMPathElement>(element.get()))
+            mpathElement->targetPathChanged();
     }
 }
 

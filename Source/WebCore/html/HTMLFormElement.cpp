@@ -126,11 +126,6 @@ HTMLFormElement::~HTMLFormElement()
         imageElement->formWillBeDestroyed();
 }
 
-bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
-{
-    return document().completeURL(url).protocolIs("https"_s);
-}
-
 Node::InsertedIntoAncestorResult HTMLFormElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
@@ -623,7 +618,7 @@ void HTMLFormElement::addInvalidFormControl(const HTMLElement& formControlElemen
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidFormControls.isEmptyIgnoringNullReferences())
-        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassType::Valid, false }, { CSSSelector::PseudoClassType::Invalid, true } });
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClass::Valid, false }, { CSSSelector::PseudoClass::Invalid, true } });
 
     m_invalidFormControls.add(formControlElement);
 }
@@ -635,7 +630,7 @@ void HTMLFormElement::removeInvalidFormControlIfNeeded(const HTMLElement& formCo
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (m_invalidFormControls.computeSize() == 1)
-        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassType::Valid, true }, { CSSSelector::PseudoClassType::Invalid, false } });
+        emplace(styleInvalidation, *this, { { CSSSelector::PseudoClass::Valid, true }, { CSSSelector::PseudoClass::Invalid, false } });
 
     m_invalidFormControls.remove(formControlElement);
 }

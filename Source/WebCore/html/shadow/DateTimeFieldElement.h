@@ -75,7 +75,7 @@ public:
     virtual String placeholderValue() const = 0;
 
 protected:
-    static constexpr auto CreateDateTimeFieldElement = CreateHTMLDivElement | NodeFlag::HasCustomStyleResolveCallbacks;
+    static constexpr auto CreateDateTimeFieldElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     DateTimeFieldElement(Document&, FieldOwner&);
     void initialize(const AtomString& pseudo);
     Locale& localeForOwner() const;

@@ -58,6 +58,7 @@ struct NavigationActionData {
     WTF::String downloadAttribute;
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     WebCore::ResourceResponse redirectResponse;
+    bool isRequestFromClientOrUserInput { false };
     bool treatAsSameOriginNavigation { false };
     bool hasOpenedFrames { false };
     bool openedByDOMWithOpener { false };

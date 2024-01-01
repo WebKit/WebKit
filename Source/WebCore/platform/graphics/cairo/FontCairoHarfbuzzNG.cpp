@@ -123,14 +123,14 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     else if (characters[length - 1] == 0xFE0F)
         preferColoredFont = true;
 
-    CheckedPtr baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
+    RefPtr baseFont = glyphDataForCharacter(character, false, NormalVariant).font.get();
     if (baseFont
         && (clusterLength == length || baseFont->canRenderCombiningCharacterSequence(normalizedString.view))
         && (!preferColoredFont || baseFont->platformData().isColorBitmapFont()))
         return baseFont.get();
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        CheckedPtr fallbackFont = fallbackRangesAt(i).fontForCharacter(character);
+        RefPtr fallbackFont = fallbackRangesAt(i).fontForCharacter(character);
         if (!fallbackFont || fallbackFont == baseFont)
             continue;
 

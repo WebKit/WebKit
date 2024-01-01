@@ -111,6 +111,7 @@ public:
     inline LayoutSize borderBoxLogicalSize() const;
 
     WEBCORE_EXPORT RoundedRectRadii borderRadii() const;
+    RoundedRect borderRoundedRect() const;
     RoundedRect roundedBorderBoxRect() const;
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).
@@ -660,8 +661,8 @@ public:
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
 
 protected:
-    RenderBox(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
-    RenderBox(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
+    RenderBox(Type, Document&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

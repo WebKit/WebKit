@@ -134,8 +134,10 @@ private:
     // This function updates the range it's given.
     RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
 
-    // This function is used for all the nested group rules (@media, @supports,..etc)
-    Vector<Ref<StyleRuleBase>> consumeRegularRuleList(CSSParserTokenRange block);
+    // This function is used for all the nested group rules (@media, @layer, @supports, @scope, @container,..etc)
+    // It handles potentially orphaned declarations (in the context of style nesting)
+    // https://drafts.csswg.org/css-nesting/#conditionals
+    Vector<Ref<StyleRuleBase>> consumeNestedGroupRules(CSSParserTokenRange block);
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleImport> consumeImportRule(CSSParserTokenRange prelude);

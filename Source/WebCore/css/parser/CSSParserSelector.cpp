@@ -34,33 +34,33 @@ namespace WebCore {
 
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(StringView pseudoTypeString)
 {
-    CSSSelector::PagePseudoClassType pseudoType;
+    CSSSelector::PagePseudoClass pseudoType;
     if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"_s))
-        pseudoType = CSSSelector::PagePseudoClassFirst;
+        pseudoType = CSSSelector::PagePseudoClass::First;
     else if (equalLettersIgnoringASCIICase(pseudoTypeString, "left"_s))
-        pseudoType = CSSSelector::PagePseudoClassLeft;
+        pseudoType = CSSSelector::PagePseudoClass::Left;
     else if (equalLettersIgnoringASCIICase(pseudoTypeString, "right"_s))
-        pseudoType = CSSSelector::PagePseudoClassRight;
+        pseudoType = CSSSelector::PagePseudoClass::Right;
     else
         return nullptr;
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::Match::PagePseudoClass);
-    selector->m_selector->setPagePseudoType(pseudoType);
+    selector->m_selector->setPagePseudoClass(pseudoType);
     return selector;
 }
 
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString, const CSSSelectorParserContext& context)
 {
-    auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString, context);
-    if (pseudoType == CSSSelector::PseudoElementUnknown)
+    auto pseudoType = CSSSelector::parsePseudoElement(pseudoTypeString, context);
+    if (!pseudoType)
         return nullptr;
 
     auto selector = makeUnique<CSSParserSelector>();
     selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-    selector->m_selector->setPseudoElementType(pseudoType);
+    selector->m_selector->setPseudoElement(*pseudoType);
     AtomString name;
-    if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
+    if (*pseudoType != CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed)
         name = pseudoTypeString.convertToASCIILowercaseAtom();
     else {
         if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
@@ -79,16 +79,16 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(StringView pseudoTypeString)
 {
     auto pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
-    if (pseudoType.pseudoClass != CSSSelector::PseudoClassType::Unknown) {
+    if (pseudoType.pseudoClass) {
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::Match::PseudoClass);
-        selector->m_selector->setPseudoClassType(pseudoType.pseudoClass);
+        selector->m_selector->setPseudoClass(*pseudoType.pseudoClass);
         return selector;
     }
-    if (pseudoType.compatibilityPseudoElement != CSSSelector::PseudoElementUnknown) {
+    if (pseudoType.compatibilityPseudoElement) {
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
-        selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
+        selector->m_selector->setPseudoElement(*pseudoType.compatibilityPseudoElement);
         selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercaseAtom());
         return selector;
     }
@@ -207,7 +207,7 @@ bool CSSParserSelector::matchesPseudoElement() const
     return m_selector->matchesPseudoElement() || selectorListMatchesPseudoElement(m_selector->selectorList());
 }
 
-void CSSParserSelector::insertTagHistory(CSSSelector::RelationType before, std::unique_ptr<CSSParserSelector> selector, CSSSelector::RelationType after)
+void CSSParserSelector::insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector> selector, CSSSelector::Relation after)
 {
     if (m_tagHistory)
         selector->setTagHistory(WTFMove(m_tagHistory));
@@ -216,7 +216,7 @@ void CSSParserSelector::insertTagHistory(CSSSelector::RelationType before, std::
     m_tagHistory = WTFMove(selector);
 }
 
-void CSSParserSelector::appendTagHistory(CSSSelector::RelationType relation, std::unique_ptr<CSSParserSelector> selector)
+void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, std::unique_ptr<CSSParserSelector> selector)
 {
     CSSParserSelector* end = this;
     while (end->tagHistory())
@@ -233,8 +233,8 @@ void CSSParserSelector::appendTagHistoryAsRelative(std::unique_ptr<CSSParserSele
 
     // Relation is Descendant by default.
     auto relation = lastSelector->relation();
-    if (relation == CSSSelector::RelationType::Subselector)
-        relation = CSSSelector::RelationType::DescendantSpace;
+    if (relation == CSSSelector::Relation::Subselector)
+        relation = CSSSelector::Relation::DescendantSpace;
 
     appendTagHistory(relation, WTFMove(selector));
 }
@@ -245,19 +245,19 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
     while (end->tagHistory())
         end = end->tagHistory();
 
-    CSSSelector::RelationType selectorRelation;
+    CSSSelector::Relation selectorRelation;
     switch (relation) {
     case CSSParserSelectorCombinator::Child:
-        selectorRelation = CSSSelector::RelationType::Child;
+        selectorRelation = CSSSelector::Relation::Child;
         break;
     case CSSParserSelectorCombinator::DescendantSpace:
-        selectorRelation = CSSSelector::RelationType::DescendantSpace;
+        selectorRelation = CSSSelector::Relation::DescendantSpace;
         break;
     case CSSParserSelectorCombinator::DirectAdjacent:
-        selectorRelation = CSSSelector::RelationType::DirectAdjacent;
+        selectorRelation = CSSSelector::Relation::DirectAdjacent;
         break;
     case CSSParserSelectorCombinator::IndirectAdjacent:
-        selectorRelation = CSSSelector::RelationType::IndirectAdjacent;
+        selectorRelation = CSSSelector::Relation::IndirectAdjacent;
         break;
     }
     end->setRelation(selectorRelation);
@@ -272,25 +272,25 @@ void CSSParserSelector::prependTagSelector(const QualifiedName& tagQName, bool t
     m_tagHistory = WTFMove(second);
 
     m_selector = makeUnique<CSSSelector>(tagQName, tagIsForNamespaceRule);
-    m_selector->setRelation(CSSSelector::RelationType::Subselector);
+    m_selector->setRelation(CSSSelector::Relation::Subselector);
 }
 
 std::unique_ptr<CSSParserSelector> CSSParserSelector::releaseTagHistory()
 {
-    setRelation(CSSSelector::RelationType::Subselector);
+    setRelation(CSSSelector::Relation::Subselector);
     return WTFMove(m_tagHistory);
 }
 
 // FIXME-NEWPARSER: Add support for :host-context
 bool CSSParserSelector::isHostPseudoSelector() const
 {
-    return match() == CSSSelector::Match::PseudoClass && pseudoClassType() == CSSSelector::PseudoClassType::Host;
+    return match() == CSSSelector::Match::PseudoClass && pseudoClass() == CSSSelector::PseudoClass::Host;
 }
 
 bool CSSParserSelector::startsWithExplicitCombinator() const
 {
     auto relation = leftmostSimpleSelector()->selector()->relation();
-    return relation != CSSSelector::RelationType::Subselector && relation != CSSSelector::RelationType::DescendantSpace;
+    return relation != CSSSelector::Relation::Subselector && relation != CSSSelector::Relation::DescendantSpace;
 }
 
 }

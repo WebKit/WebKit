@@ -610,6 +610,9 @@ webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Fa
 
 webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
 
+# Times out due to missing AccessibilityUIElement::takeFocus
+http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1199,11 +1202,10 @@ imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.worker.html [ Pass ]
-# Uncomment when webkit.org/b/266571 is fixed
-#imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Pass ]
-#imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Pass ]
-#imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
-#imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
 
 http/tests/webcodecs/h264-reordering.html [ Failure ]
 http/tests/webcodecs/hevc-reordering.html [ Failure ]
@@ -1288,7 +1290,8 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 http/tests/push-api [ Skip ]
 
 # <CR>same-origin<CR> seems to be parsed as same-origin instead of failing
-webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
+# Uncomment when webkit.org/b/266280 is fixed
+#webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
 
 # Slight difference where the failure happens in relation to mac's baseline
 webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?5-6 [ Failure ]
@@ -2193,9 +2196,9 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-009.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-overrides-uax-behavior-010.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-hyphens-002.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-023.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-024.html [ Pass ]
-webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-025.html [ Pass ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-023.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-024.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-025.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/shaping/shaping-arabic-diacritics-002.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-no-join-001.html [ Pass ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-encoding/shaping-no-join-002.html [ Pass ]
@@ -3701,6 +3704,10 @@ webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storag
 webkit.org/b/266280 imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.window.html [ DumpJSConsoleLogInStdErr Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie-store.tentative.https.window.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/detached-iframe.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/local-storage.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Pass Failure Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/anonymous-window.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure Crash ]
 
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]
@@ -3743,10 +3750,13 @@ webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFa
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run [ Slow ]
 webkit.org/b/266465 [ Debug ] imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Crash ]
 
-webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.html [ Crash ]
-webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ Crash ]
-webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Crash ]
-webkit.org/b/266571 [ Debug ] imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Crash ]
+webkit.org/b/266636 fast/multicol/last-set-crash.html [ Skip ]
+
+webkit.org/b/266708 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-currentSrc.html [ Pass Crash ]
+
+webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
+
+webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
 
 # End: Common failures between GTK and WPE.
 

@@ -95,7 +95,7 @@ static void moveWidgetToParentSoon(Widget& child, LocalFrameView* parent)
 }
 
 RenderWidget::RenderWidget(Type type, HTMLFrameOwnerElement& element, RenderStyle&& style)
-    : RenderReplaced(type, element, WTFMove(style), RenderElementType::RenderWidgetFlag)
+    : RenderReplaced(type, element, WTFMove(style), ReplacedFlag::IsWidget)
 {
     relaxAdoptionRequirement();
     setInline(false);
@@ -471,7 +471,7 @@ bool RenderWidget::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderWidget::embeddedContentBox() const
 {
-    if (!is<LocalFrameView>(widget()))
+    if (!is<RenderEmbeddedObject>(this) || !is<LocalFrameView>(widget()))
         return nullptr;
     return downcast<LocalFrameView>(*widget()).embeddedContentBox();
 }

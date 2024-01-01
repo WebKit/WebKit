@@ -84,8 +84,8 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
     auto composedDescendants = composedTreeDescendants(*parentElement);
 
     auto initializeIteratorConsideringPseudoElements = [&] {
-        if (is<PseudoElement>(node)) {
-            auto* host = downcast<PseudoElement>(node).hostElement();
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(node)) {
+            auto* host = pseudoElement->hostElement();
             if (node.isBeforePseudoElement()) {
                 if (host != parentElement)
                     return composedDescendants.at(*host).traverseNext();
@@ -131,10 +131,9 @@ RenderObject* RenderTreePosition::nextSiblingRenderer(const Node& node) const
         if (auto* renderer = it->renderer())
             return renderer;
 
-        if (is<Element>(*it)) {
-            auto& element = downcast<Element>(*it);
-            if (element.hasDisplayContents()) {
-                if (auto* renderer = pushCheckingForAfterPseudoElementRenderer(element))
+        if (auto* element = dynamicDowncast<Element>(*it)) {
+            if (element->hasDisplayContents()) {
+                if (auto* renderer = pushCheckingForAfterPseudoElementRenderer(*element))
                     return renderer;
                 it.traverseNext();
                 continue;

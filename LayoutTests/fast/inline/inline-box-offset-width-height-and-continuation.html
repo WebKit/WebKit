@@ -1,0 +1,26 @@
+<style>
+.container {
+  font-family: Ahem;
+  font-size: 10px;
+  margin-top: 10px;
+  width: 400px;
+}
+</style>
+<div class=container><span id=continuation1><div>middle block</div></span></div>
+<div class=container><span id=continuation2>pre block<div>middle block</div></span></div>
+<div class=container><span id=continuation3><div>middle block</div>post block</span></div>
+<div class=container><span id=continuation4>pre block<div>middle block</div>post block</span></div>
+<div class=container><span id=continuation5>pre block<div style="height: 100px;">middle block</div>post block</span></div>
+<div class=container><span id=continuation6><span style="font-size: 50px">pre block</span><div style="height: 100px;">middle block</div>post block</span></div>
+<div class=container><span><span id=continuation7><div>middle block</div></span></span></div>
+<div class=container><span id=continuation8><span><div>middle block</div><span id=continuation9><div>middle block</div></span></span></div>
+<pre id=result style="font-size: 12px;"></pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+result.innerText = "(offsetHeight, offsetWidth): "
+for (var i = 1; i < 10; ++i) {
+  let cid = "continuation" + i;
+  result.innerText += "(" + document.getElementById(cid).offsetHeight + "px, " + document.getElementById(cid).offsetWidth + "px) ";
+}
+</script>

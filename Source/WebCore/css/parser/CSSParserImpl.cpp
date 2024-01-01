@@ -75,7 +75,7 @@ static void appendImplicitSelectorPseudoClassScopeIfNeeded(CSSParserSelector& se
     if ((!selector.hasExplicitNestingParent() && !selector.hasExplicitPseudoClassScope()) || selector.startsWithExplicitCombinator()) {
         auto scopeSelector = makeUnique<CSSParserSelector>();
         scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
-        scopeSelector->setPseudoClassType(CSSSelector::PseudoClassType::Scope);
+        scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
         scopeSelector->selector()->setImplicit();
         selector.appendTagHistoryAsRelative(WTFMove(scopeSelector));
     }
@@ -624,7 +624,7 @@ Ref<StyleRuleBase> CSSParserImpl::createNestingParentRule()
     return StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) }, { });
 }
 
-Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeRegularRuleList(CSSParserTokenRange block)
+Vector<Ref<StyleRuleBase>> CSSParserImpl::consumeNestedGroupRules(CSSParserTokenRange block)
 {
     NestingLevelIncrementer incrementer { m_ruleListNestingLevel };
 
@@ -668,7 +668,7 @@ RefPtr<StyleRuleMedia> CSSParserImpl::consumeMediaRule(CSSParserTokenRange prelu
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 
-    auto rules = consumeRegularRuleList(block);
+    auto rules = consumeNestedGroupRules(block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -688,7 +688,7 @@ RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 
-    auto rules = consumeRegularRuleList(block);
+    auto rules = consumeNestedGroupRules(block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
@@ -837,10 +837,8 @@ RefPtr<StyleRuleFontFeatureValues> CSSParserImpl::consumeFontFeatureValuesRule(C
     auto fontFeatureValues = FontFeatureValues::create();
 
     for (auto& block : rules) {
-        if (!block->isFontFeatureValuesBlockRule())
-            continue;
-        const auto& fontFeatureValuesBlockRule = downcast<StyleRuleFontFeatureValuesBlock>(block.get());
-        fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule.fontFeatureValuesType(), fontFeatureValuesBlockRule.tags());
+        if (auto* fontFeatureValuesBlockRule = dynamicDowncast<StyleRuleFontFeatureValuesBlock>(block.get()))
+            fontFeatureValues->updateOrInsertForType(fontFeatureValuesBlockRule->fontFeatureValuesType(), fontFeatureValuesBlockRule->tags());
     }
 
     return StyleRuleFontFeatureValues::create(fontFamilies, WTFMove(fontFeatureValues));
@@ -1064,12 +1062,12 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
 
     NestingLevelIncrementer incrementer { m_scopeRuleNestingLevel };
     m_ancestorRuleTypeStack.append(AncestorRuleType::Scope);
-    Vector<Ref<StyleRuleBase>> rules;
-    consumeRuleList(block, RegularRuleList, [&rules](Ref<StyleRuleBase> rule) {
-        rules.append(rule);
-    });
+    auto rules = consumeNestedGroupRules(block);
     m_ancestorRuleTypeStack.removeLast();
-    return StyleRuleScope::create(WTFMove(scopeStart), WTFMove(scopeEnd), WTFMove(rules));
+    auto rule = StyleRuleScope::create(WTFMove(scopeStart), WTFMove(scopeEnd), WTFMove(rules));
+    if (m_styleSheet)
+        rule->setStyleSheetContents(*m_styleSheet);
+    return rule;
 }
 
 RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelude, std::optional<CSSParserTokenRange> block)
@@ -1121,7 +1119,7 @@ RefPtr<StyleRuleLayer> CSSParserImpl::consumeLayerRule(CSSParserTokenRange prelu
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(*block));
     }
 
-    auto rules = consumeRegularRuleList(*block);
+    auto rules = consumeNestedGroupRules(*block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(*block));
@@ -1153,7 +1151,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
     }
 
-    auto rules = consumeRegularRuleList(block);
+    auto rules = consumeNestedGroupRules(block);
 
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));

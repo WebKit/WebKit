@@ -49,6 +49,15 @@ static IntSize cellSize(NSControlSize controlSize)
     return sizes[controlSize];
 }
 
+static FloatSize visualCellSize(NSControlSize controlSize, const ControlStyle& style)
+{
+    auto size = cellSize(controlSize);
+    if (style.states.contains(ControlStyle::State::VerticalWritingMode))
+        size = size.transposedSize();
+    size.scale(style.zoomFactor);
+    return size;
+}
+
 static IntOutsets cellOutsets(NSControlSize controlSize)
 {
     static const IntOutsets margins[] =
@@ -60,6 +69,14 @@ static IntOutsets cellOutsets(NSControlSize controlSize)
         { 2, 2, 1, 2 },
     };
     return margins[controlSize];
+}
+
+static IntOutsets visualCellOutsets(NSControlSize controlSize, bool isVertical)
+{
+    auto outsets = cellOutsets(controlSize);
+    if (isVertical)
+        outsets = { outsets.left(), outsets.top(), outsets.right(), outsets.bottom() };
+    return outsets;
 }
 
 static FloatRect rectForBounds(const FloatRect& bounds)
@@ -80,6 +97,28 @@ static NSString *coreUISizeForControlSize(const NSControlSize controlSize)
 static float easeInOut(const float progress)
 {
     return -2.0f * pow(progress, 3.0f) + 3.0f * pow(progress, 2.0f);
+}
+
+static FloatRect rectWithTransposedSize(const FloatRect& rect, bool isVertical)
+{
+    auto logicalRect = rect;
+    if (isVertical)
+        logicalRect.setSize(logicalRect.size().transposedSize());
+    return logicalRect;
+}
+
+static FloatRect trackRectForBounds(const FloatRect& bounds, const FloatSize& size)
+{
+    auto offsetY = std::max(((bounds.height() - size.height()) / 2.0f), 0.0f);
+    return { FloatPoint { bounds.x(), bounds.y() + offsetY }, size };
+}
+
+static void rotateContextForVerticalWritingMode(GraphicsContext& context, const FloatRect& rect)
+{
+    context.translate(rect.height(), 0);
+    context.translate(rect.location());
+    context.rotate(piOverTwoFloat);
+    context.translate(-rect.location());
 }
 
 } // namespace WebCore::SwitchMacUtilities

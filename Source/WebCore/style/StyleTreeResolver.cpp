@@ -277,7 +277,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         auto pseudoElementUpdate = resolvePseudoElement(element, pseudoId, update);
         auto pseudoElementChange = [&] {
             if (pseudoElementUpdate) {
-                if (pseudoId == PseudoId::Scrollbar)
+                if (pseudoId == PseudoId::WebKitScrollbar)
                     return pseudoElementUpdate->change;
                 return pseudoElementUpdate->change == Change::None ? Change::None : Change::NonInherited;
             }
@@ -299,7 +299,7 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
         descendantsToResolve = DescendantsToResolve::All;
     if (resolveAndAddPseudoElementStyle(PseudoId::FirstLetter) != Change::None)
         descendantsToResolve = DescendantsToResolve::All;
-    if (resolveAndAddPseudoElementStyle(PseudoId::Scrollbar) != Change::None)
+    if (resolveAndAddPseudoElementStyle(PseudoId::WebKitScrollbar) != Change::None)
         descendantsToResolve = DescendantsToResolve::All;
 
     resolveAndAddPseudoElementStyle(PseudoId::Marker);
@@ -344,7 +344,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         return { };
     if (pseudoId == PseudoId::FirstLetter && !scope().resolver->usesFirstLetterRules())
         return { };
-    if (pseudoId == PseudoId::Scrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
+    if (pseudoId == PseudoId::WebKitScrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
         return { };
     if (pseudoId == PseudoId::ViewTransition && (!element.document().hasViewTransitionPseudoElementTree() || &element != element.document().documentElement()))
         return { };

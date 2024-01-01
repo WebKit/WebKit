@@ -32,6 +32,7 @@
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionMessageSenderParameters.h"
 #include "WebExtensionPortChannelIdentifier.h"
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
@@ -39,9 +40,8 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
-class WebExtensionAPIPort : public WebExtensionAPIObject, public JSWebExtensionWrappable, public CanMakeCheckedPtr {
+class WebExtensionAPIPort : public WebExtensionAPIObject, public JSWebExtensionWrappable, public CanMakeWeakPtr<WebExtensionAPIPort> {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIPort, port);
-
 public:
 #if PLATFORM(COCOA)
     using PortSet = HashSet<Ref<WebExtensionAPIPort>>;
@@ -64,6 +64,14 @@ public:
 
     WebExtensionAPIEvent& onMessage();
     WebExtensionAPIEvent& onDisconnect();
+
+    virtual ~WebExtensionAPIPort()
+    {
+        remove();
+    }
+
+private:
+    friend class WebExtensionContextProxy;
 
     explicit WebExtensionAPIPort(ForMainWorld forMainWorld, WebExtensionAPIRuntimeBase& runtime, WebExtensionContextProxy& context, WebExtensionContentWorldType targetContentWorldType, const String& name)
         : WebExtensionAPIObject(forMainWorld, runtime, context)
@@ -93,14 +101,6 @@ public:
     {
         add();
     }
-
-    virtual ~WebExtensionAPIPort()
-    {
-        remove();
-    }
-
-private:
-    friend class WebExtensionContextProxy;
 
     void add();
     void remove();

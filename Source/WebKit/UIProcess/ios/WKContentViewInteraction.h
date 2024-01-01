@@ -472,6 +472,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _selectionNeedsUpdate;
     BOOL _shouldRestoreSelection;
     BOOL _usingGestureForSelection;
+    BOOL _usingMouseDragForSelection;
     BOOL _inspectorNodeSearchEnabled;
     BOOL _isChangingFocusUsingAccessoryTab;
     BOOL _didAccessoryTabInitiateFocus;

@@ -36,7 +36,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceContainer);
 
 LegacyRenderSVGResourceContainer::LegacyRenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGHiddenContainer(type, element, WTFMove(style))
+    : LegacyRenderSVGHiddenContainer(type, element, WTFMove(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
 }
@@ -116,8 +116,8 @@ void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(Inv
         if (root != SVGRenderSupport::findTreeRootObject(client))
             continue;
 
-        if (is<LegacyRenderSVGResourceContainer>(client)) {
-            downcast<LegacyRenderSVGResourceContainer>(client).removeAllClientsFromCacheIfNeeded(markForInvalidation, visitedRenderers);
+        if (CheckedPtr container = dynamicDowncast<LegacyRenderSVGResourceContainer>(client)) {
+            container->removeAllClientsFromCacheIfNeeded(markForInvalidation, visitedRenderers);
             continue;
         }
 

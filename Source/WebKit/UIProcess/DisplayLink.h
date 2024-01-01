@@ -76,6 +76,10 @@ public:
 
     void setObserverPreferredFramesPerSecond(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    DisplayVBlankMonitor& vblankMonitor() const { return *m_vblankMonitor; }
+#endif
+
 private:
 #if PLATFORM(MAC)
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);

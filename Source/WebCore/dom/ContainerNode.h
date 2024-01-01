@@ -127,7 +127,6 @@ public:
 
     WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagName(const AtomString&);
     WEBCORE_EXPORT Ref<HTMLCollection> getElementsByTagNameNS(const AtomString& namespaceURI, const AtomString& localName);
-    WEBCORE_EXPORT Ref<NodeList> getElementsByName(const AtomString& elementName);
     WEBCORE_EXPORT Ref<HTMLCollection> getElementsByClassName(const AtomString& classNames);
     Ref<RadioNodeList> radioNodeList(const AtomString&);
 
@@ -144,7 +143,7 @@ public:
     ExceptionOr<void> ensurePreInsertionValidity(Node& newChild, Node* refChild);
 
 protected:
-    explicit ContainerNode(Document&, ConstructionType = CreateContainer);
+    explicit ContainerNode(Document&, NodeType, OptionSet<TypeFlag> = CreateContainer);
 
     friend void removeDetachedChildrenInContainer(ContainerNode&);
 
@@ -175,9 +174,10 @@ private:
     Node* m_lastChild { nullptr };
 };
 
-inline ContainerNode::ContainerNode(Document& document, ConstructionType type)
-    : Node(document, type)
+inline ContainerNode::ContainerNode(Document& document, NodeType type, OptionSet<TypeFlag> typeFlags)
+    : Node(document, type, typeFlags)
 {
+    ASSERT(typeFlags.contains(TypeFlag::IsContainerNode));
 }
 
 inline unsigned Node::countChildNodes() const

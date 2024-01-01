@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/OptionSet.h>
-
 namespace WebKit {
 
 enum class WebsiteAutoplayQuirk : uint8_t {
@@ -37,17 +35,3 @@ enum class WebsiteAutoplayQuirk : uint8_t {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteAutoplayQuirk> {
-    using values = EnumValues<
-        WebKit::WebsiteAutoplayQuirk,
-        WebKit::WebsiteAutoplayQuirk::SynthesizedPauseEvents,
-        WebKit::WebsiteAutoplayQuirk::InheritedUserGestures,
-        WebKit::WebsiteAutoplayQuirk::ArbitraryUserGestures,
-        WebKit::WebsiteAutoplayQuirk::PerDocumentAutoplayBehavior
-    >;
-};
-
-} // namespace WTF

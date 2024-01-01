@@ -40,6 +40,8 @@ log = logging.getLogger('global')
 
 
 def ucfirst(str):
+    if str == 'webkit':
+        return 'WebKit'
     return str[:1].upper() + str[1:]
 
 
@@ -67,10 +69,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     # Console.ChannelSource
     'mediasource': 'MediaSource',
     'webrtc': 'WebRTC',
-    'itp-debug': 'ITPDebug',
-
-    # CPUProfiler.ThreadInfo.type
-    'webkit': 'WebKit',
+    'itp-debug': 'ITPDebug'
 }
 
 # These objects are built manually by creating and setting JSON::Value instances.

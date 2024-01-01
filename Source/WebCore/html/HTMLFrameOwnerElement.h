@@ -68,7 +68,7 @@ public:
 
 protected:
     static constexpr auto CreateHTMLFrameOwnerElement = CreateHTMLElement;
-    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, ConstructionType = CreateHTMLFrameOwnerElement);
+    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = CreateHTMLFrameOwnerElement);
     void setSandboxFlags(SandboxFlags);
     bool isProhibitedSelfReference(const URL&) const;
     bool isKeyboardFocusable(KeyboardEvent*) const override;

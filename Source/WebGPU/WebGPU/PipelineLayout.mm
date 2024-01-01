@@ -209,7 +209,7 @@ const Vector<uint32_t>* PipelineLayout::offsetVectorForBindGroup(uint32_t bindGr
     auto& bindGroupLayouts = *m_bindGroupLayouts;
     if (auto it = stageOffsets.find(bindGroupIndex); it != stageOffsets.end()) {
         auto& container = it->value;
-        uint32_t dynamicOffsetIndex = 0, stageOffsetIndex = 0;
+        uint32_t stageOffsetIndex = 0;
         auto& bindGroupLayout = bindGroupLayouts[bindGroupIndex];
         for (auto& entryKvp : bindGroupLayout->entries()) {
             auto& entry = entryKvp.value;
@@ -218,12 +218,10 @@ const Vector<uint32_t>* PipelineLayout::offsetVectorForBindGroup(uint32_t bindGr
                 continue;
 
             if (entry.visibility & stage) {
-                ASSERT(container.size() > stageOffsetIndex && dynamicOffsets.size() > dynamicOffsetIndex);
-                container[stageOffsetIndex] = dynamicOffsets[dynamicOffsetIndex];
+                RELEASE_ASSERT(container.size() > stageOffsetIndex && dynamicOffsets.size() > entry.dynamicOffsetsIndex);
+                container[stageOffsetIndex] = dynamicOffsets[entry.dynamicOffsetsIndex];
                 ++stageOffsetIndex;
             }
-
-            ++dynamicOffsetIndex;
         }
 
         return &container;

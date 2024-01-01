@@ -1656,7 +1656,11 @@ StyleMedia& LocalDOMWindow::styleMedia()
 
 Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
 {
-    return CSSComputedStyleDeclaration::create(element, false, pseudoElt);
+    std::optional<PseudoId> pseudoId = PseudoId::None;
+    // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
+    if (pseudoElt.startsWith(":"_s))
+        pseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
+    return CSSComputedStyleDeclaration::create(element, pseudoId);
 }
 
 RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const
@@ -1664,13 +1668,12 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
 
-    unsigned colonStart = pseudoElement[0] == ':' ? (pseudoElement[1] == ':' ? 2 : 1) : 0;
-
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto pseudoType = CSSSelector::parsePseudoElementType(StringView { pseudoElement }.substring(colonStart), parserContext);
-    if (pseudoType == CSSSelector::PseudoElementUnknown && !pseudoElement.isEmpty())
+    auto optionalPseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElement, parserContext);
+    if (!optionalPseudoId && !pseudoElement.isEmpty())
         return nullptr;
+    auto pseudoId = optionalPseudoId ? *optionalPseudoId : PseudoId::None;
 
     RefPtr frame = this->frame();
     frame->protectedDocument()->styleScope().flushPendingUpdate();
@@ -1678,8 +1681,6 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
     unsigned rulesToInclude = Style::Resolver::AuthorCSSRules;
     if (!authorOnly)
         rulesToInclude |= Style::Resolver::UAAndUserCSSRules;
-
-    PseudoId pseudoId = CSSSelector::pseudoId(pseudoType);
 
     auto matchedRules = frame->document()->styleScope().resolver().pseudoStyleRulesForElement(element, pseudoId, rulesToInclude);
     if (matchedRules.isEmpty())

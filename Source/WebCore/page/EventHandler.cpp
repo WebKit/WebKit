@@ -3348,8 +3348,10 @@ void EventHandler::clearLatchedState()
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     LOG_WITH_STREAM(ScrollLatching, stream << "EventHandler::clearLatchedState()");
-    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists())
-        scrollLatchingController->removeLatchingStateForFrame(protectedFrame());
+    if (auto* scrollLatchingController = page->scrollLatchingControllerIfExists()) {
+        // Unable to ref the frame as it may have started destruction.
+        scrollLatchingController->removeLatchingStateForFrame(m_frame);
+    }
 #endif
 }
 
@@ -3831,7 +3833,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         bool userHasInteractedViaKeyword = keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
 
         if (element.focused() && userHasInteractedViaKeyword) {
-            Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(element, CSSSelector::PseudoClassType::FocusVisible, true);
+            Style::PseudoClassChangeInvalidation focusVisibleStyleInvalidation(element, CSSSelector::PseudoClass::FocusVisible, true);
             element.setHasFocusVisible(true);
         }
     };

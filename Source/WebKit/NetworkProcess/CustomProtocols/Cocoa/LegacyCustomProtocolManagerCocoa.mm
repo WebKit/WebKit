@@ -108,16 +108,20 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 - (void)startLoading
 {
-    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
-        customProtocolManager->startLoading(self.customProtocolID, [self request]);
+    ensureOnMainRunLoop([customProtocolID = self.customProtocolID, request = retainPtr([self request])] {
+        if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+            customProtocolManager->startLoading(customProtocolID, request.get());
+    });
 }
 
 - (void)stopLoading
 {
-    if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
-        customProtocolManager->stopLoading(self.customProtocolID);
-        customProtocolManager->removeCustomProtocol(self.customProtocolID);
-    }
+    ensureOnMainRunLoop([customProtocolID = self.customProtocolID] {
+        if (auto* customProtocolManager = firstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
+            customProtocolManager->stopLoading(customProtocolID);
+            customProtocolManager->removeCustomProtocol(customProtocolID);
+        }
+    });
 }
 
 @end

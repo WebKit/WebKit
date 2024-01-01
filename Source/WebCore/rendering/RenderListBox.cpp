@@ -731,8 +731,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     if (style().isFlippedBlocksWritingMode())
         newOffset *= -1;
 
-    scrollToOffsetWithoutAnimation(scrollbarOrientationForWritingMode(), newOffset);
-
+    scrollToPosition(newOffset);
     return true;
 }
 
@@ -946,6 +945,25 @@ int RenderListBox::logicalScrollTop() const
     return logicalTop;
 }
 
+void RenderListBox::scrollToPosition(int positionIndex)
+{
+    auto orientation = scrollbarOrientationForWritingMode();
+    auto scrollOrigin = this->scrollOrigin();
+
+    int offsetIndex = positionIndex;
+
+    switch (orientation) {
+    case ScrollbarOrientation::Vertical:
+        offsetIndex = positionIndex + scrollOrigin.y();
+        break;
+    case ScrollbarOrientation::Horizontal:
+        offsetIndex = positionIndex + scrollOrigin.x();
+        break;
+    }
+
+    scrollToOffsetWithoutAnimation(orientation, offsetIndex);
+}
+
 void RenderListBox::setLogicalScrollTop(int newLogicalScrollTop)
 {
     bool isFlippedBlocksWritingMode = style().isFlippedBlocksWritingMode();
@@ -963,7 +981,7 @@ void RenderListBox::setLogicalScrollTop(int newLogicalScrollTop)
         index *= -1;
 
     setupWheelEventTestMonitor(*this);
-    scrollToOffsetWithoutAnimation(scrollbarOrientationForWritingMode(), index);
+    scrollToPosition(index);
 }
 
 bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

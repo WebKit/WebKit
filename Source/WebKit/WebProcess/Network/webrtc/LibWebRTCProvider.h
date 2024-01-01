@@ -33,7 +33,7 @@
 
 #if USE(LIBWEBRTC)
 
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/LibWebRTCProviderCocoa.h>
@@ -77,7 +77,7 @@ private:
 
     void willCreatePeerConnectionFactory() final;
 
-    CheckedRef<WebPage> m_webPage;
+    WeakRef<WebPage> m_webPage;
 };
 
 inline UniqueRef<LibWebRTCProvider> createLibWebRTCProvider(WebPage& page)

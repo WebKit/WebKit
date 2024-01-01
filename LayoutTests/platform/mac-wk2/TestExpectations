@@ -1204,9 +1204,6 @@ webkit.org/b/216292 imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-
 # App Bound Domains is for iOS only
 http/tests/resourceLoadStatistics/exemptDomains/ [ Skip ]
 
-# rdar://68947260 (REGRESSION (r266634): [ BigSur wk2 ] fast/selectors/text-field-selection-window-inactive-stroke-color.html is a flaky image failure)
-fast/selectors/text-field-selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
-
 #<rdar://68952824> [ macOS iOS wk2 ] media/media-continues-playing-after-replace-source.html is a flaky failure
 [ Monterey+ ] media/media-continues-playing-after-replace-source.html [ Pass Failure ]
 
@@ -1409,8 +1406,6 @@ webkit.org/b/229237 inspector/canvas/recording-2d-memoryLimit.html [ Pass Crash 
 webkit.org/b/229237 inspector/canvas/recording-offscreen-canvas-2d-memoryLimit.html [ Pass Crash ]
 
 webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html [ Pass Timeout ]
-
-webkit.org/b/228337 [ Release Debug arm64 ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/228528 [ BigSur Debug arm64 ] fast/text/emoji-overlap.html [ Pass ImageOnlyFailure ]
 
@@ -1960,21 +1955,14 @@ http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 
-# rdar://119272478 (REGRESSION ( Sonoma?): [ Sonoma Release wk2 ] 3 tests in fast/attachment are a flaky failure with image diff)
-[ Sonoma+ Release ] fast/attachment/attachment-folder-icon.html [ Pass Failure ]
-[ Sonoma+ Release ] fast/attachment/attachment-type-attribute.html [ Pass Failure ]
-[ Sonoma+ Release ] fast/attachment/attachment-default-icon.html [ Pass Failure ]
-
 webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Failure ]
 
 # rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
 [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]
 
-webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Pass Crash ]
+webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Failure Crash ]
 
 webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/266508 [ Monterey+ Release x86_64 ] fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]
 
 # rdar://119828743 (REGRESSION (263917@main?): [ Sonoma Debug wk2 x86_64 ] 3 tests in inspector/timeline are flaky crash with ASSERTION FAILED in void WebCore::InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType)
 [ Sonoma+ Debug x86_64 ] inspector/timeline/timeline-event-TimerInstall.html [ Pass Crash ]

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="input" type="time">
+
+<script>
+
+jsTestIsAsync = true;
+
+changeEventsFired = 0;
+function onChangeEvent() {
+    changeEventsFired++;
+}
+
+inputEventsFired = 0;
+function onInputEvent() {
+    inputEventsFired++;
+}
+
+input.addEventListener("change", onChangeEvent);
+input.addEventListener("input", onInputEvent);
+
+addEventListener("load", async () => {
+    description("Test for input and change events for &lt;input type=time&gt;");
+
+    input.focus();                                         // [hh]:mm tt
+    UIHelper.keyDown("1");                                 // -> [01]:mm tt
+    UIHelper.keyDown("2");                                 // -> [12]:mm tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                        // -> 12:[mm] tt
+    UIHelper.keyDown("2");                                 // -> 12:[02] tt
+    shouldBe("inputEventsFired", "0");
+    shouldBe("changeEventsFired", "0");
+
+    UIHelper.keyDown("rightArrow");                        // -> 12:02 [tt]
+    UIHelper.keyDown("A");                                 // -> 12:02 [AM]
+    shouldBe("inputEventsFired", "1");
+    shouldBe("changeEventsFired", "0");
+
+    shouldBeEqualToString("input.value", "00:02");
+
+    input.blur();
+    shouldBe("inputEventsFired", "1");
+    shouldBe("changeEventsFired", "1");
+
+    finishJSTest();
+});
+
+</script>
+</body>
+</html>

@@ -35,6 +35,7 @@ input.focus();
 UIHelper.keyDown('rightArrow');
 UIHelper.keyDown('rightArrow');
 UIHelper.keyDown('downArrow');
+input.blur();
 
 shouldBeEqualToString('input.value', '2000-01-01T01:01:01');
 shouldBe('eventsCounter.input', '1');

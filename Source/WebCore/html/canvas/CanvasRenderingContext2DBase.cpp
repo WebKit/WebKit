@@ -1774,7 +1774,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 #if USE(CG)
     if (c->hasPlatformContext() && video.shouldGetNativeImageForCanvasDrawing()) {
         if (auto image = video.nativeImageForCurrentTime()) {
-            c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), normalizedDstRect, normalizedSrcRect);
+            c->drawNativeImage(*image, normalizedDstRect, normalizedSrcRect);
 
             didDraw(repaintEntireCanvas, normalizedDstRect, defaultDidDrawOptionsWithoutPostProcessing());
 

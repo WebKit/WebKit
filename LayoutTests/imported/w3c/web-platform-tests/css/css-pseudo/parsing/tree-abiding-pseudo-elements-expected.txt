@@ -11,15 +11,15 @@ PASS "::marker" should be a valid selector
 PASS "*::marker" should be a valid selector
 PASS "foo.bar[baz]::marker" should be a valid selector
 PASS "::marker *" should be an invalid selector
-FAIL "::placeholder" should be a valid selector '::placeholder' is not a valid selector.
-FAIL "*::placeholder" should be a valid selector '*::placeholder' is not a valid selector.
-FAIL "foo.bar[baz]::placeholder" should be a valid selector 'foo.bar[baz]::placeholder' is not a valid selector.
+PASS "::placeholder" should be a valid selector
+PASS "*::placeholder" should be a valid selector
+PASS "foo.bar[baz]::placeholder" should be a valid selector
 PASS "::placeholder *" should be an invalid selector
-FAIL "::file-selector-button" should be a valid selector '::file-selector-button' is not a valid selector.
-FAIL "::file-selector-button:hover" should be a valid selector '::file-selector-button:hover' is not a valid selector.
-FAIL "::file-selector-button:focus" should be a valid selector '::file-selector-button:focus' is not a valid selector.
-FAIL "::file-selector-button:active" should be a valid selector '::file-selector-button:active' is not a valid selector.
-FAIL "::file-selector-button:is(:hover)" should be a valid selector '::file-selector-button:is(:hover)' is not a valid selector.
+PASS "::file-selector-button" should be a valid selector
+PASS "::file-selector-button:hover" should be a valid selector
+PASS "::file-selector-button:focus" should be a valid selector
+PASS "::file-selector-button:active" should be a valid selector
+PASS "::file-selector-button:is(:hover)" should be a valid selector
 PASS "::file-selector-button::before" should be an invalid selector
 PASS "::file-selector-button#id" should be an invalid selector
 PASS "::file-selector-button#class" should be an invalid selector

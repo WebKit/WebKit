@@ -29,6 +29,13 @@ if (window.accessibilityController) {
     setTimeout(async function() {
         output += await expectAsync("axStartTime.errorMessageElements()", "undefined");
 
+        output += "\nChanging #startTime aria-invalid back to be true.\n";
+        document.getElementById("startTime").setAttribute("aria-invalid", "false");
+
+        output += await expectAsync("errorMessages.length", "2");
+        output += expect("errorMessages[0].domIdentifier", "'errorMessage1'");
+        output += expect("errorMessages[1].domIdentifier", "'errorMessage2'");
+
         debug(output);
         finishJSTest();
     }, 0);

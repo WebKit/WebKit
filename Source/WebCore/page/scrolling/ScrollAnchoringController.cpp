@@ -60,12 +60,29 @@ static bool elementIsScrollableArea(const Element& element, const ScrollableArea
     return element.renderBox() && element.renderBox()->layer() && element.renderBox()->layer()->scrollableArea() == &scrollableArea;
 }
 
+static Element* elementForScrollableArea(ScrollableArea& scrollableArea)
+{
+    if (is<RenderLayerScrollableArea>(scrollableArea))
+        return downcast<RenderLayerScrollableArea>(scrollableArea).layer().renderer().element();
+    if (auto* document = downcast<LocalFrameView>(downcast<ScrollView>(scrollableArea)).frame().document())
+        return document->documentElement();
+    return nullptr;
+}
+
 void ScrollAnchoringController::invalidateAnchorElement()
 {
     if (m_midUpdatingScrollPositionForAnchorElement)
         return;
     LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::invalidateAnchorElement() invalidating anchor for frame: " << frameView() << " for scroller: " << m_owningScrollableArea);
-
+    if (!m_anchorElement) {
+        if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
+            if (auto* renderer = element->renderer()) {
+                auto* scrollAnchoringControllerForScrollableArea = RenderObject::findScrollAnchoringControllerForRenderer(*renderer);
+                if (scrollAnchoringControllerForScrollableArea && scrollAnchoringControllerForScrollableArea->isInScrollAnchoringAncestorChain(*renderer))
+                    scrollAnchoringControllerForScrollableArea->invalidateAnchorElement();
+            }
+        }
+    }
     m_anchorElement = nullptr;
     m_lastOffsetForAnchorElement = { };
     m_isQueuedForScrollPositionUpdate = false;
@@ -78,15 +95,6 @@ static IntRect boundingRectForScrollableArea(ScrollableArea& scrollableArea)
         return downcast<RenderLayerScrollableArea>(scrollableArea).layer().renderer().absoluteBoundingBoxRect();
 
     return IntRect(downcast<LocalFrameView>(downcast<ScrollView>(scrollableArea)).layoutViewportRect());
-}
-
-static Element* elementForScrollableArea(ScrollableArea& scrollableArea)
-{
-    if (is<RenderLayerScrollableArea>(scrollableArea))
-        return downcast<RenderLayerScrollableArea>(scrollableArea).layer().renderer().element();
-    if (auto* document = downcast<LocalFrameView>(downcast<ScrollView>(scrollableArea)).frame().document())
-        return document->documentElement();
-    return nullptr;
 }
 
 FloatPoint ScrollAnchoringController::computeOffsetFromOwningScroller(RenderObject& candidate)
@@ -171,6 +179,21 @@ static bool absolutePositionedElementOutsideScroller(RenderElement& renderer, Sc
     return false;
 }
 
+static bool canDescendIntoElement(Element& element)
+{
+    if (auto renderer = element.renderer()) {
+        if (renderer->hasLayer()) {
+            if (auto layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
+                if (auto scrollableArea = layer->scrollableArea()) {
+                    if (auto* scrollAnchoringController = scrollableArea->scrollAnchoringController())
+                        return !scrollAnchoringController->anchorElement();
+                }
+            }
+        }
+    }
+    return false;
+}
+
 CandidateExaminationResult ScrollAnchoringController::examineAnchorCandidate(Element& element)
 {
     if (elementForScrollableArea(m_owningScrollableArea) && elementForScrollableArea(m_owningScrollableArea)->identifier() == element.identifier())
@@ -209,7 +232,7 @@ CandidateExaminationResult ScrollAnchoringController::examineAnchorCandidate(Ele
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
             isScrollingNode = renderBox->hasPotentiallyScrollableOverflow();
         if (intersects)
-            return isScrollingNode ? CandidateExaminationResult::Select : CandidateExaminationResult::Descend;
+            return !isScrollingNode || canDescendIntoElement(element) ? CandidateExaminationResult::Descend : CandidateExaminationResult::Select;
         if (isScrollingNode)
             return CandidateExaminationResult::Exclude;
     }

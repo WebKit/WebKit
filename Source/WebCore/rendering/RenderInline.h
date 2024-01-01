@@ -112,8 +112,8 @@ private:
 
     LayoutUnit offsetLeft() const final;
     LayoutUnit offsetTop() const final;
-    LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
-    LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
+    LayoutUnit offsetWidth() const final;
+    LayoutUnit offsetHeight() const final;
     LayoutPoint firstInlineBoxTopLeft() const;
 
 protected:

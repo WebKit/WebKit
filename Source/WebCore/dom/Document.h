@@ -581,6 +581,8 @@ public:
     Ref<HTMLCollection> windowNamedItems(const AtomString&);
     Ref<HTMLCollection> documentNamedItems(const AtomString&);
 
+    WEBCORE_EXPORT Ref<NodeList> getElementsByName(const AtomString& elementName);
+
     WakeLockManager& wakeLockManager();
 
     // Other methods (not part of DOM)
@@ -1912,7 +1914,6 @@ private:
     void childrenChanged(const ChildChange&) final;
 
     String nodeName() const final;
-    NodeType nodeType() const final;
     bool childTypeAllowed(NodeType) const final;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
     void cloneDataFromDocument(const Document&);

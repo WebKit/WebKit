@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceContainer);
 
 RenderSVGResourceContainer::RenderSVGResourceContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderSVGHiddenContainer(type, element, WTFMove(style))
+    : RenderSVGHiddenContainer(type, element, WTFMove(style), SVGModelObjectFlag::IsResourceContainer)
     , m_id(element.getIdAttribute())
 {
     ASSERT(isRenderSVGResourceContainer());

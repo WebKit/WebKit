@@ -37,6 +37,9 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFDate()] CFDateRef wrapped by WebKit::CoreIPCDate {
 }
 
+[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCCFURL {
+}
+
 #endif
 
 #if USE(CG)

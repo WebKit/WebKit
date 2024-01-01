@@ -516,7 +516,7 @@ using WebPageProxyIdentifier = ObjectIdentifier<WebPageProxyIdentifierType>;
 using WebURLSchemeHandlerIdentifier = ObjectIdentifier<WebURLSchemeHandler>;
 using WebUndoStepID = uint64_t;
 
-class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>, public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeCheckedPtr {
+class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();

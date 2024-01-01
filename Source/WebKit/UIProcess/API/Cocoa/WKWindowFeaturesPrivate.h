@@ -29,9 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKWindowFeatures (WKPrivate)
 
-@property (nonatomic, readonly) BOOL _wantsPopup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, readonly) BOOL _hasAdditionalFeatures WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nullable, nonatomic, readonly) NSNumber *_popup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) BOOL _wantsPopup WK_API_AVAILABLE(macos(14.2), ios(17.2));
+@property (nonatomic, readonly) BOOL _hasAdditionalFeatures WK_API_AVAILABLE(macos(14.2), ios(17.2));
+@property (nullable, nonatomic, readonly) NSNumber *_popup WK_API_AVAILABLE(macos(14.2), ios(17.2));
 @property (nullable, nonatomic, readonly) NSNumber *_locationBarVisibility WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nullable, nonatomic, readonly) NSNumber *_scrollbarsVisibility WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nullable, nonatomic, readonly) NSNumber *_fullscreenDisplay WK_API_AVAILABLE(macos(10.13), ios(11.0));

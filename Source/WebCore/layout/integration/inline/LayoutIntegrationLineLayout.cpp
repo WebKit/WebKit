@@ -375,12 +375,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto needsResizing = layoutBox.isInterlinearRubyAnnotationBox() || !isHorizontalWritingMode;
             if (!needsResizing)
                 return;
-            auto visualMarginBoxRect = Layout::BoxGeometry::marginBoxRect(visualGeometry);
-            if (visualMarginBoxRect.size() == renderer.size())
+            auto visualMarginBoxSize = Layout::BoxGeometry::marginBoxRect(visualGeometry).size();
+            auto logicalMarginBoxSize = isHorizontalWritingMode ? visualMarginBoxSize : visualMarginBoxSize.transposedSize();
+            if (logicalMarginBoxSize == renderer.size())
                 return;
-            renderer.setSize(visualMarginBoxRect.size());
-            auto logicalMarginBoxWidth = renderer.isHorizontalWritingMode() ? visualMarginBoxRect.width() : visualMarginBoxRect.height();
-            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxWidth, LengthType::Fixed });
+            renderer.setSize(logicalMarginBoxSize);
+            renderer.setOverridingLogicalWidthLength({ logicalMarginBoxSize.width(), LengthType::Fixed });
             renderer.setNeedsLayout(MarkOnlyThis);
             renderer.layoutIfNeeded();
             renderer.clearOverridingLogicalWidthLength();
@@ -415,7 +415,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             ASSERT(m_inlineContentConstraints);
             auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
 
-            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(writingMode, isLeftToRightPlacedFloatsInlineDirection, rootBorderBoxWidth);
+            auto visualGeometry = logicalGeometry.toVisualGeometry(writingMode, isLeftToRightPlacedFloatsInlineDirection, rootBorderBoxWidth);
             auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
             auto visualBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(visualGeometry) };
 
@@ -452,19 +452,26 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (layoutBox.isOutOfFlowPositioned()) {
             ASSERT(renderer.layer());
             auto& layer = *renderer.layer();
-            auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
+            auto borderBoxLogicalTopLeft = Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft();
+
+            if (!rootStyle.isLeftToRightDirection()) {
+                auto rootBorderBoxLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+                isHorizontalWritingMode ? borderBoxLogicalTopLeft.setX(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.x()) : borderBoxLogicalTopLeft.setY(rootBorderBoxLogicalWidth - borderBoxLogicalTopLeft.y());
+            }
+            if (!isHorizontalWritingMode)
+                borderBoxLogicalTopLeft = borderBoxLogicalTopLeft.transposedPoint();
             auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
-            auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
+            auto delta = borderBoxLogicalTopLeft - previousStaticPosition;
             auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
-                blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
+                blockFlow.setStaticInlinePositionForChild(renderer, borderBoxLogicalTopLeft.y(), borderBoxLogicalTopLeft.x());
                 if (hasStaticInlinePositioning)
                     renderer.move(delta.width(), delta.height());
             }
 
-            layer.setStaticBlockPosition(logicalBorderBoxRect.y());
-            layer.setStaticInlinePosition(logicalBorderBoxRect.x());
+            layer.setStaticBlockPosition(borderBoxLogicalTopLeft.y());
+            layer.setStaticInlinePosition(borderBoxLogicalTopLeft.x());
 
             if (!delta.isZero() && hasStaticInlinePositioning)
                 renderer.setChildNeedsLayout(MarkOnlyThis);

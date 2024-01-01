@@ -25,22 +25,8 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace WebKit {
 
 enum class UndoOrRedo : bool { Undo, Redo };
-
-}
-
-namespace WTF {
-    
-template<> struct EnumTraits<WebKit::UndoOrRedo> {
-    using values = EnumValues<
-        WebKit::UndoOrRedo,
-        WebKit::UndoOrRedo::Undo,
-        WebKit::UndoOrRedo::Redo
-    >;
-};
 
 }

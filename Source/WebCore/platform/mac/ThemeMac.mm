@@ -30,99 +30,11 @@
 
 #import "FontCascade.h"
 #import "LengthSize.h"
-#import "ScrollView.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
-#import <pal/spi/mac/NSGraphicsSPI.h>
-#import <pal/spi/mac/NSViewSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
-
-static NSRect focusRingClipRect;
-static BOOL themeWindowHasKeyAppearance;
-static bool _useFormSemanticContext;
-
-@interface WebCoreThemeWindow : NSWindow
-@end
-
-@interface WebCoreThemeView : NSControl
-@end
-
-@implementation WebCoreThemeWindow
-
-- (BOOL)hasKeyAppearance
-{
-    return themeWindowHasKeyAppearance;
-}
-
-- (BOOL)isKeyWindow
-{
-    return themeWindowHasKeyAppearance;
-}
-@end
-
-@implementation WebCoreThemeView {
-    RetainPtr<WebCoreThemeWindow> _window;
-}
-
-- (instancetype)init
-{
-    if (!(self = [super init]))
-        return nil;
-
-    // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
-    // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
-    _window = adoptNS([[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100) styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
-
-    return self;
-}
-
-- (NSWindow *)window
-{
-    return _window.get();
-}
-
-- (BOOL)isFlipped
-{
-    return YES;
-}
-
-- (NSText *)currentEditor
-{
-    return nil;
-}
-
-- (BOOL)_automaticFocusRingDisabled
-{
-    return YES;
-}
-
-- (NSRect)_focusRingVisibleRect
-{
-    if (NSIsEmptyRect(focusRingClipRect))
-        return [self visibleRect];
-    return focusRingClipRect;
-}
-
-- (NSView *)_focusRingClipAncestor
-{
-    return self;
-}
-
-- (NSWindow *)_viewRoot
-{
-    return _window.get();
-}
-
-- (void)addSubview:(NSView *)subview
-{
-    // By doing nothing in this method we forbid controls from adding subviews.
-    // This tells AppKit to not use layer-backed animation for control rendering.
-    UNUSED_PARAM(subview);
-}
-
-@end
 
 // FIXME: Default buttons really should be more like push buttons and not like buttons.
 
@@ -320,45 +232,6 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
     return NSControlSizeMini;
 }
 
-// This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
-// If the ScrollView doesn't have an NSView, we will return a fake NSView set up in the way AppKit expects.
-NSView *ThemeMac::ensuredView(ScrollView* scrollView, OptionSet<ControlStyle::State> states, bool useUnparentedView)
-{
-    if (!useUnparentedView) {
-        if (NSView *documentView = scrollView->documentView())
-            return documentView;
-    }
-
-    // Use a fake view.
-    static WebCoreThemeView *themeView = [[WebCoreThemeView alloc] init];
-    [themeView setFrameSize:NSSizeFromCGSize(scrollView->totalContentsSize())];
-    [themeView setAppearance:[NSAppearance currentDrawingAppearance]];
-
-#if USE(NSVIEW_SEMANTICCONTEXT)
-    if (_useFormSemanticContext)
-        [themeView _setSemanticContext:NSViewSemanticContextForm];
-#endif
-
-    themeWindowHasKeyAppearance = states.contains(ControlStyle::State::WindowActive);
-
-    return themeView;
-}
-
-bool ThemeMac::useFormSemanticContext()
-{
-    return _useFormSemanticContext;
-}
-
-void ThemeMac::setUseFormSemanticContext(bool use)
-{
-    _useFormSemanticContext = use;
-}
-
-void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
-{
-    focusRingClipRect = rect;
-}
-
 // Switch
 
 static const std::array<IntSize, 4>& switchSizes()
@@ -384,6 +257,16 @@ static const int* switchMargins(NSControlSize controlSize)
         { 2, 2, 1, 2 },
     };
     return margins[controlSize];
+}
+
+static const int* visualSwitchMargins(NSControlSize controlSize, bool isVertical)
+{
+    auto margins = switchMargins(controlSize);
+    if (isVertical) {
+        static const int verticalMargins[4] = { margins[3], margins[0], margins[1], margins[2] };
+        return verticalMargins;
+    }
+    return margins;
 }
 
 static LengthSize switchSize(const LengthSize& zoomedSize, float zoomFactor)
@@ -488,10 +371,10 @@ LengthBox ThemeMac::controlPadding(StyleAppearance appearance, const FontCascade
     }
 }
 
-void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zoomedRect, float zoomFactor) const
+void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zoomedRect, float zoomFactor, bool isVertical)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    IntSize zoomRectSize = IntSize(zoomedRect.size());
+    auto zoomRectSize = IntSize(zoomedRect.size());
     switch (appearance) {
     case StyleAppearance::Checkbox: {
         auto size = controlSizeFromPixelSize(checkboxSizes(), zoomRectSize, zoomFactor);
@@ -510,11 +393,14 @@ void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, FloatRect& zo
         break;
     }
     case StyleAppearance::Switch: {
-        NSControlSize controlSize = controlSizeFromPixelSize(switchSizes(), zoomRectSize, zoomFactor);
-        IntSize zoomedSize = switchSizes()[controlSize];
+        auto logicalZoomRectSize = isVertical ? zoomRectSize.transposedSize() : zoomRectSize;
+        auto controlSize = controlSizeFromPixelSize(switchSizes(), logicalZoomRectSize, zoomFactor);
+        auto zoomedSize = switchSizes()[controlSize];
         zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
         zoomedSize.setWidth(zoomedSize.width() * zoomFactor);
-        zoomedRect = inflateRect(zoomedRect, zoomedSize, switchMargins(controlSize), zoomFactor);
+        if (isVertical)
+            zoomedSize = zoomedSize.transposedSize();
+        zoomedRect = inflateRect(zoomedRect, zoomedSize, visualSwitchMargins(controlSize, isVertical), zoomFactor);
         break;
     }
     case StyleAppearance::PushButton:

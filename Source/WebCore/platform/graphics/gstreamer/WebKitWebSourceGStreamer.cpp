@@ -1010,6 +1010,15 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     // length will be zero (unknown) if no Content-Length is provided or the response is compressed with Content-Encoding.
     uint64_t length = !response.httpHeaderFields().contains(HTTPHeaderName::ContentEncoding) ? response.expectedContentLength() : 0;
+
+    // But in some cases, Content-Encoding: chunked can specify the total length. Use it.
+    std::optional<uint64_t> contentLength;
+    // There's a contentLength assignment (=) on purpose, plus an implicit comparison on the variable having a value.
+    if (!length && response.httpHeaderFields().contains(HTTPHeaderName::TransferEncoding)
+        && equalLettersIgnoringASCIICase(response.httpHeaderField(HTTPHeaderName::TransferEncoding), "chunked"_s)
+        && (contentLength = parseInteger<uint64_t>(response.httpHeaderField(HTTPHeaderName::ContentLength))))
+        length = contentLength.value();
+
     if (length > 0 && members->requestedPosition && response.httpStatusCode() == 206)
         length += members->requestedPosition;
 

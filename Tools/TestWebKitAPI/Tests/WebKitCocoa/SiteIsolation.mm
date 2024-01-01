@@ -1160,6 +1160,28 @@ TEST(SiteIsolation, IframeRedirectCrossSite)
     });
 }
 
+TEST(SiteIsolation, CrossOriginOpenerPolicy)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "iframe content"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+    __block bool done { false };
+    [webView _doAfterNextPresentationUpdate:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
 TEST(SiteIsolation, NavigationWithIFrames)
 {
     HTTPServer server({

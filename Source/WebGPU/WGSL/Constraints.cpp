@@ -172,6 +172,9 @@ const Type* concretize(const Type* type, TypeStore& types)
                 auto* whole = concretize(primitiveStruct.values[PrimitiveStruct::ModfResult::whole], types);
                 return types.modfResultType(fract, whole);
             }
+            case PrimitiveStruct::AtomicCompareExchangeResult::kind: {
+                return type;
+            }
             }
         },
         [&](const Pointer&) -> const Type* {

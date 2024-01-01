@@ -389,9 +389,13 @@ public:
 
     void completeAllJITPlans();
     
-    // Use this API to report non-GC memory referenced by GC objects. Be sure to
+    // Note that:
+    // 1. Use this API to report non-GC memory referenced by GC objects. Be sure to
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
+    // 2. Use this API may trigger JSRopeString::resolveRope. If this API need
+    // to be used when resolving a rope string, then make sure to call this API
+    // after the rope string is completely resolved.
     void reportExtraMemoryAllocated(const JSCell*, size_t);
     void reportExtraMemoryAllocated(GCDeferralContext*, const JSCell*, size_t);
     JS_EXPORT_PRIVATE void reportExtraMemoryVisited(size_t);

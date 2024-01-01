@@ -1231,6 +1231,13 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
         return false;
     }
 
+    // Objects that are between table rows and cells should be ignored, otherwise the table hierarchy will be
+    // incorrect, preventing the table content from being accessible to ATs.
+    if (!ancestorFlagsAreInitialized() || isInRow()) {
+        if (!isTableCell() && canHaveChildren() && ignoredByRowAncestor())
+            return true;
+    }
+
     if (ariaRoleAttribute() != AccessibilityRole::Unknown)
         return false;
 

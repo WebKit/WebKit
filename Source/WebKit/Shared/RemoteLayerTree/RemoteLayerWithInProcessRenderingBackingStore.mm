@@ -71,7 +71,7 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buf
 {
     auto* sharing = buffer.toBackendSharing();
     if (is<ImageBufferBackendHandleSharing>(sharing))
-        return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
+        return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle(SharedMemory::Protection::ReadOnly);
 
     return std::nullopt;
 }
@@ -99,26 +99,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContent
         return;
     }
 
-    auto markFrontBufferNotCleared = makeScopeExit([&]() {
-        m_frontBuffer.isCleared = false;
-    });
-
-    auto clipAndDrawInContext = [&](GraphicsContext& context) {
-        if (m_paintingRects.size() == 1)
-            context.clip(m_paintingRects[0]);
-        else {
-            Path clipPath;
-            for (auto rect : m_paintingRects)
-                clipPath.addRect(rect);
-            context.clipPath(clipPath);
-        }
-
-        if (drawingRequiresClearedPixels() && !m_frontBuffer.isCleared)
-            context.clearRect(layerBounds());
-
-        drawInContext(context);
-    };
-
     GraphicsContext& context = m_frontBuffer.imageBuffer->context();
 
     // We never need to copy forward when using display list drawing, since we don't do partial repaint.
@@ -135,7 +115,21 @@ void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContent
         }
     }
 
-    clipAndDrawInContext(context);
+    if (m_paintingRects.size() == 1)
+        context.clip(m_paintingRects[0]);
+    else {
+        Path clipPath;
+        for (auto rect : m_paintingRects)
+            clipPath.addRect(rect);
+        context.clipPath(clipPath);
+    }
+
+    if (drawingRequiresClearedPixels() && !m_frontBuffer.isCleared)
+        context.clearRect(layerBounds());
+
+    drawInContext(context);
+
+    m_frontBuffer.isCleared = false;
 }
 
 Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerWithInProcessRenderingBackingStore::createFlushers()

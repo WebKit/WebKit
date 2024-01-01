@@ -29,33 +29,16 @@ import subprocess
 
 
 def enumerablePseudoType(stringPseudoType):
-    output = ['CSSSelector::PseudoClassType::']
+    output = ['CSSSelector::PseudoClass::']
 
-    if stringPseudoType.endswith('('):
-        stringPseudoType = stringPseudoType[:-1]
+    def processSubstring(substring):
+        if substring == 'webkit':
+            return 'WebKit'
+        if substring == 'html':
+            return 'HTML'
+        return substring.capitalize()
 
-    internalPrefix = '-internal-'
-    if (stringPseudoType.startswith(internalPrefix)):
-        stringPseudoType = stringPseudoType[len(internalPrefix):]
-
-    webkitPrefix = '-webkit-'
-    if (stringPseudoType.startswith(webkitPrefix)):
-        stringPseudoType = stringPseudoType[len(webkitPrefix):]
-
-    khtmlPrefix = '-khtml-'
-    if (stringPseudoType.startswith(khtmlPrefix)):
-        stringPseudoType = stringPseudoType[len(khtmlPrefix):]
-
-    substring_start = 0
-    next_dash_position = stringPseudoType.find('-')
-    while (next_dash_position != -1):
-        output.append(stringPseudoType[substring_start].upper())
-        output.append(stringPseudoType[substring_start + 1:next_dash_position])
-        substring_start = next_dash_position + 1
-        next_dash_position = stringPseudoType.find('-', substring_start)
-
-    output.append(stringPseudoType[substring_start].upper())
-    output.append(stringPseudoType[substring_start + 1:])
+    output = output + list(map(processSubstring, stringPseudoType.split('-')))
     return ''.join(output)
 
 
@@ -112,7 +95,7 @@ struct SelectorPseudoClassOrCompatibilityPseudoElementEntry {
 
 %}
 %struct-type
-%define initializer-suffix ,{CSSSelector::PseudoClassType::Unknown,CSSSelector::PseudoElementUnknown}
+%define initializer-suffix ,{std::nullopt,std::nullopt}
 %define class-name SelectorPseudoClassAndCompatibilityElementMapHash
 %omit-struct-type
 %language=C++
@@ -152,11 +135,18 @@ for line in input_file:
         continue
 
     keyword_definition = line.split(',')
-    if len(keyword_definition) == 1:
+    if len(keyword_definition):
         keyword = keyword_definition[0].strip()
-        output_file.write('"%s", {%s, CSSSelector::PseudoElementUnknown}\n' % (keyword, enumerablePseudoType(keyword)))
-    else:
-        output_file.write('"%s", {CSSSelector::%s, CSSSelector::%s}\n' % (keyword_definition[0].strip(), keyword_definition[1].strip(), keyword_definition[2].strip()))
+        pseudo_class = "std::nullopt"
+        pseudo_element = "std::nullopt"
+        if len(keyword_definition) == 1:
+            pseudo_class = enumerablePseudoType(keyword)
+        else:
+            if keyword_definition[1].strip() != "std::nullopt":
+                pseudo_class = 'CSSSelector::%s' % keyword_definition[1].strip()
+            if len(keyword_definition) == 3:
+                pseudo_element = 'CSSSelector::%s' % keyword_definition[2].strip()
+        output_file.write('"%s", {%s, %s}\n' % (keyword, pseudo_class, pseudo_element))
 
     longest_keyword = max(longest_keyword, len(keyword))
 
@@ -198,7 +188,7 @@ PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementS
 
     if (entry)
         return entry->pseudoTypes;
-    return { CSSSelector::PseudoClassType::Unknown, CSSSelector::PseudoElementUnknown };
+    return { std::nullopt, std::nullopt };
 }
 
 } // namespace WebCore

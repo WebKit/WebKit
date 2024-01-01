@@ -66,8 +66,6 @@
 #import "WAKWindow.h"
 #import "WKGraphics.h"
 #import "WebCoreThread.h"
-#else
-#import "ThemeMac.h"
 #endif
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -1242,11 +1240,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
         }
 
         {
-#if PLATFORM(MAC)
-            // It's important to get the clip from the context, because it may be significantly
-            // smaller than the layer bounds (e.g. tiled layers)
-            ThemeMac::setFocusRingClipRect(graphicsContext.clipBounds());
-#endif
             if (dirtyRects.size() == 1)
                 layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, dirtyRects[0], layerPaintBehavior);
             else {
@@ -1256,10 +1249,6 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
                     layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
                 }
             }
-
-#if PLATFORM(MAC)
-            ThemeMac::setFocusRingClipRect(FloatRect());
-#endif
         }
     }
 

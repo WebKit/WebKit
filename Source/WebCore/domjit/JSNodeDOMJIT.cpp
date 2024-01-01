@@ -65,7 +65,7 @@ static Ref<JSC::DOMJIT::CallDOMGetterSnippet> createCallDOMGetterForOffsetAccess
         static_assert(!JSNode::hasCustomPtrTraits(), "Optimized JSNode wrapper access should not be using RawPtrTraits");
 
         if (isContainerGuardRequirement == IsContainerGuardRequirement::Required)
-            nullCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch, Node::nodeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsContainer())));
+            nullCases.append(jit.branchTest16(CCallHelpers::Zero, CCallHelpers::Address(scratch, Node::typeFlagsMemoryOffset()), CCallHelpers::TrustedImm32(Node::flagIsContainer())));
 
         jit.loadPtr(CCallHelpers::Address(scratch, offset), scratch);
         nullCases.append(jit.branchTestPtr(CCallHelpers::Zero, scratch));

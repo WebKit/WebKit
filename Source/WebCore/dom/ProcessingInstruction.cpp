@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ProcessingInstruction);
 
 inline ProcessingInstruction::ProcessingInstruction(Document& document, String&& target, String&& data)
-    : CharacterData(document, WTFMove(data))
+    : CharacterData(document, WTFMove(data), PROCESSING_INSTRUCTION_NODE)
     , m_target(WTFMove(target))
 {
 }
@@ -70,11 +70,6 @@ ProcessingInstruction::~ProcessingInstruction()
 String ProcessingInstruction::nodeName() const
 {
     return m_target;
-}
-
-Node::NodeType ProcessingInstruction::nodeType() const
-{
-    return PROCESSING_INSTRUCTION_NODE;
 }
 
 Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& targetDocument, CloningOperation)

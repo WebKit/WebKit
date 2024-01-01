@@ -51,18 +51,4 @@ struct BindGroupEntry {
 
 } // namespace WebKit::WebGPU
 
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebGPU::BindingResourceType> {
-    using values = EnumValues<
-        WebKit::WebGPU::BindingResourceType,
-        WebKit::WebGPU::BindingResourceType::Sampler,
-        WebKit::WebGPU::BindingResourceType::TextureView,
-        WebKit::WebGPU::BindingResourceType::BufferBinding,
-        WebKit::WebGPU::BindingResourceType::ExternalTexture
-    >;
-};
-
-} // namespace WTF
-
 #endif // ENABLE(GPU_PROCESS)

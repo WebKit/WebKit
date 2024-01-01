@@ -10,38 +10,32 @@
 
 /* alt on image content with attr() function. */
 [test1]::after {
-    content: url(resources/cake.png);
-    alt: attr(test1);
+    content: url(resources/cake.png) / attr(test1);
 }
 
 /* alt on image content that is a string. */
 .test2::after {
-    content: url(resources/cake.png);
-    alt: "ALTERNATIVE CONTENT TEST2";
+    content: url(resources/cake.png) / "ALTERNATIVE CONTENT TEST2";
 }
 
 /* alt on image content that is an empty string - representing that it should be ignored. */
 .test3::after {
-    content: url(resources/cake.png);
-    alt: "";
+    content: url(resources/cake.png) / "";
 }
 
 /* alt on text content. */
 [aria-expanded="test4"]::before {
-    content: "\25BB";
-    alt: "ALTERNATIVE CONTENT TEST4";
+    content: "\25BB" / "ALTERNATIVE CONTENT TEST4";
 }
 
 /* alt on text content that is an empty string - representing that is should be ignored. */
 [aria-expanded="test5"]::before {
-    content: "\25BC";
-    alt: "";
+    content: "\25BC" / "";
 }
 
 /* alt on text content that uses the attr() function. */
 [aria-expanded="test6"]::before {
-    content: "\25BC";
-    alt: attr(test6);
+    content: "\25BC" / attr(test6);
 }
 </style>
 
@@ -52,15 +46,13 @@
 <div id="test4" aria-expanded="test4">test4</div>
 <div id="test5" test5="ALTERNATIVE CONTENT TEST5" aria-expanded="test5">test5</div>
 <div id="test6" test6="ALTERNATIVE CONTENT TEST6" aria-expanded="test6">test6</div>
-
-<img id="image1" src="#" alt="This is the right text" style="width:100px; height:100px; -webkit-alt: 'this is the wrong text';">
 </div>
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-    description("This tests that alt (formerly known as -webkit-alt) applies to text and image content in CSS styles, and that it makes it to accessibility.");
+    description("This tests that the content alt text syntax applies to text and image content in CSS styles, and that it makes it to accessibility.");
     
     function outputElement(element) {
         var role = "AXRole: ";
@@ -98,10 +90,7 @@
         debug("Test6 - alt on text content that uses the attr() function.");
         outputElement(accessibilityController.accessibleElementById("test6").childAtIndex(0));
 
-        debug("alt accessed through Javascript: " + getComputedStyle(document.getElementById("test2"), ':after').alt);
-
-        debug("Test7 - alt does not apply to DOM nodes.");
-        outputElement(accessibilityController.accessibleElementById("image1"));
+        debug("alt accessed through Javascript: " + getComputedStyle(document.getElementById("test2"), ':after').content.split(" / ")[1]);
 
         document.getElementById("content").style.visibility = "hidden";
     }

@@ -33,5 +33,9 @@
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGComponentTransferFunctionElement)
     static bool isType(const WebCore::Element& element) { return is<WebCore::SVGFEFuncRElement>(element) || is<WebCore::SVGFEFuncGElement>(element) || is<WebCore::SVGFEFuncBElement>(element) || is<WebCore::SVGFEFuncAElement>(element); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::Element>(node) && isType(downcast<WebCore::Element>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* element = dynamicDowncast<WebCore::Element>(node);
+        return element && isType(*element);
+    }
 SPECIALIZE_TYPE_TRAITS_END()

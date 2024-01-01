@@ -35,6 +35,7 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/MediaStrategy.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/PasteboardItemInfo.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
@@ -109,9 +110,10 @@ void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteb
     PlatformPasteboard(pasteboardName).getTypes(types);
 }
 
-RefPtr<SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
+RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)
 {
-    return PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
+    auto pasteboardBuffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
+    return Pasteboard::bufferConvertedToPasteboardType(pasteboardBuffer, pasteboardType);
 }
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName, const PasteboardContext*)

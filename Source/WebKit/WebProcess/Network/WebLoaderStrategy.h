@@ -135,7 +135,7 @@ private:
     RunLoop::Timer m_internallyFailedLoadTimer;
     
     HashMap<WebCore::ResourceLoaderIdentifier, RefPtr<WebResourceLoader>> m_webResourceLoaders;
-    HashMap<WebCore::ResourceLoaderIdentifier, CheckedPtr<WebURLSchemeTaskProxy>> m_urlSchemeTasks;
+    HashMap<WebCore::ResourceLoaderIdentifier, WeakRef<WebURLSchemeTaskProxy>> m_urlSchemeTasks;
     HashMap<WebCore::ResourceLoaderIdentifier, PingLoadCompletionHandler> m_pingLoadCompletionHandlers;
     HashMap<WebCore::ResourceLoaderIdentifier, PreconnectCompletionHandler> m_preconnectCompletionHandlers;
     Vector<Function<void(bool)>> m_onlineStateChangeListeners;

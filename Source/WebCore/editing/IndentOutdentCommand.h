@@ -45,7 +45,6 @@ private:
 
     EditAction editingAction() const override { return m_typeOfAction == Indent ? EditAction::Indent : EditAction::Outdent; }
 
-    void indentRegion(const VisiblePosition&, const VisiblePosition&);
     void outdentRegion(const VisiblePosition&, const VisiblePosition&);
     void outdentParagraph();
     bool tryIndentingAsListItem(const Position&, const Position&);

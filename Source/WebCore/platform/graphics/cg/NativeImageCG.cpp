@@ -97,7 +97,7 @@ Color NativeImage::singlePixelSolidColor() const
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
 }
 
-void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
     auto isHDRColorSpace = [](CGColorSpaceRef colorSpace) -> bool {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -125,7 +125,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     };
 
-    auto drawHDRNativeImage = [&](GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options) -> bool {
+    auto drawHDRNativeImage = [&](GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options) -> bool {
         if (sourceRect.isEmpty() || !isHDRNativeImage(*this))
             return false;
 
@@ -140,7 +140,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
 
         // Draw sourceRect from the image into the temporary ImageBuffer.
-        imageBuffer->context().drawNativeImageInternal(*this, imageSize, destinationRect, sourceRect, options);
+        imageBuffer->context().drawNativeImageInternal(*this, destinationRect, sourceRect, options);
 
         auto sourceRectScaled = FloatRect { { }, sourceRect.size() };
         auto scaleFactor = destinationRect.size() / sourceRect.size();
@@ -151,10 +151,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     // FIXME: rdar://105525195 -- Remove this HDR workaround once the system libraries can render images without clipping HDR data.
-    if (drawHDRNativeImage(context, imageSize, destinationRect, sourceRect, options))
+    if (drawHDRNativeImage(context, destinationRect, sourceRect, options))
         return;
 
-    context.drawNativeImageInternal(*this, imageSize, destinationRect, sourceRect, options);
+    context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
 }
 
 void NativeImage::clearSubimages()

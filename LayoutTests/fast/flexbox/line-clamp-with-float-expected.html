@@ -1,0 +1,26 @@
+<style>
+.container {
+  font-family: Monospace;
+  font-size: 20px;
+
+  width: 200px;
+  border: solid 1px green;
+}
+
+.float {
+  float: right;
+  width: 50px;
+  height: 50px;
+  background-color: green;
+  color: transparent;
+}
+
+.content {
+  clear: both
+}
+</style>
+
+<div class=container><div class=float></div><div class=content>longlonglongtex&#8230;</div></div>
+<div class=container><div class=float></div><div class=content>longlonglongtext second line get&#8230;</div></div>
+<div class=container><div class=float></div><div class=content>longlonglongtext third line gets truncated&#8230;</div></div>
+<div class=container><div class=float></div><div class=content>longlonglongtext no line gets truncated</div>

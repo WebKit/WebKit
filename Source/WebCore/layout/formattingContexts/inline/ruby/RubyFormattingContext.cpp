@@ -28,6 +28,7 @@
 
 #include "InlineContentAligner.h"
 #include "InlineFormattingContext.h"
+#include "InlineLevelBox.h"
 #include "InlineLine.h"
 #include "RenderStyleInlines.h"
 
@@ -106,8 +107,8 @@ static bool annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox,
     auto& adjacentLayoutBox = adjacentDisplayBox.layoutBox();
     // Adjacent ruby may have overlapping annotation.
     if (adjacentLayoutBox.isRubyBase() && adjacentLayoutBox.associatedRubyAnnotationBox()) {
-        auto annotationMarginBoxRect = InlineLayoutRect { BoxGeometry::marginBoxRect(inlineFormattingContext.geometryForBox(*adjacentLayoutBox.associatedRubyAnnotationBox())) };
-        if (visualRectIncludingBlockDirection(annotationMarginBoxRect, rootStyle).intersects(visualRectIncludingBlockDirection(overhangingRect, rootStyle)))
+        auto annotationMarginBoxVisualRect = InlineLayoutRect { BoxGeometry::marginBoxRect(inlineFormattingContext.geometryForBox(*adjacentLayoutBox.associatedRubyAnnotationBox())) };
+        if (visualRectIncludingBlockDirection(annotationMarginBoxVisualRect, rootStyle).intersects(visualRectIncludingBlockDirection(overhangingRect, rootStyle)))
             return true;
     }
     return false;

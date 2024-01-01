@@ -59,7 +59,7 @@ public:
     bool isDisabledFormControl() const final;
 
     void setInterfaceIsFormAssociated();
-    bool hasFormAssociatedInterface() const { return hasNodeFlag(NodeFlag::HasFormAssociatedCustomElementInterface); }
+    bool hasFormAssociatedInterface() const { return hasEventTargetFlag(EventTargetFlag::HasFormAssociatedCustomElementInterface); }
 
     void willUpgradeFormAssociated();
     void didUpgradeFormAssociated();

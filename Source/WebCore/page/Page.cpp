@@ -3789,8 +3789,8 @@ Document* Page::outermostFullscreenDocument() const
     if (!localMainFrame)
         return nullptr;
 
-    CheckedPtr<Document> outermostFullscreenDocument = nullptr;
-    CheckedPtr currentDocument = localMainFrame->document();
+    RefPtr<Document> outermostFullscreenDocument;
+    RefPtr currentDocument = localMainFrame->document();
     while (currentDocument) {
         auto* fullscreenElement = currentDocument->fullscreenManager().fullscreenElement();
         if (!fullscreenElement)

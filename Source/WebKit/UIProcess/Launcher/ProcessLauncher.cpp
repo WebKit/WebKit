@@ -41,22 +41,31 @@ ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)
     : m_client(client)
     , m_launchOptions(WTFMove(launchOptions))
 {
-    tracePoint(ProcessLaunchStart);
+    tracePoint(ProcessLaunchStart, m_launchOptions.processIdentifier.toUInt64());
     launchProcess();
 }
 
-#if !PLATFORM(COCOA)
 ProcessLauncher::~ProcessLauncher()
+{
+    platformDestroy();
+
+    if (m_isLaunching)
+        tracePoint(ProcessLaunchEnd, m_launchOptions.processIdentifier.toUInt64(), static_cast<uint64_t>(m_launchOptions.processType));
+}
+
+#if !PLATFORM(COCOA)
+void ProcessLauncher::platformDestroy()
 {
 }
 #endif
 
 void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC::Connection::Identifier identifier)
 {
-    tracePoint(ProcessLaunchEnd);
     m_processID = processIdentifier;
     m_isLaunching = false;
-    
+
+    tracePoint(ProcessLaunchEnd, m_launchOptions.processIdentifier.toUInt64(), static_cast<uint64_t>(m_launchOptions.processType), static_cast<uint64_t>(m_processID));
+
     if (!m_client) {
         // FIXME: Make Identifier a move-only object and release port rights/connections in the destructor.
 #if OS(DARWIN) && !PLATFORM(GTK)

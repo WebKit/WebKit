@@ -1744,6 +1744,7 @@ public:
     constexpr bool isDisplayInlineType() const;
     constexpr bool isOriginalDisplayInlineType() const;
     constexpr bool isDisplayFlexibleOrGridBox() const;
+    constexpr bool isDisplayDeprecatedFlexibleBox() const;
     constexpr bool isDisplayFlexibleBoxIncludingDeprecatedOrGridBox() const;
     constexpr bool isDisplayRegionType() const;
     constexpr bool isDisplayBlockLevel() const;
@@ -1964,7 +1965,6 @@ public:
     static StyleImage* initialMaskBorderSource() { return nullptr; }
     static constexpr PrintColorAdjust initialPrintColorAdjust();
     static QuotesData* initialQuotes() { return nullptr; }
-    static inline const AtomString& initialContentAltText();
 
 #if ENABLE(DARK_MODE_CSS)
     static constexpr StyleColorScheme initialColorScheme();

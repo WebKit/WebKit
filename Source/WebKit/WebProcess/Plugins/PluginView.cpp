@@ -410,6 +410,11 @@ void PluginView::initializePlugin()
     }
 }
 
+Ref<PDFPluginBase> PluginView::protectedPlugin() const
+{
+    return m_plugin;
+}
+
 PluginLayerHostingStrategy PluginView::layerHostingStrategy() const
 {
     if (!m_isInitialized)
@@ -477,12 +482,7 @@ Scrollbar* PluginView::horizontalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (is<PDFPlugin>(m_plugin))
-        return downcast<PDFPlugin>(m_plugin)->horizontalScrollbar();
-#endif
-
-    return nullptr;
+    return m_plugin->horizontalScrollbar();
 }
 
 Scrollbar* PluginView::verticalScrollbar()
@@ -490,12 +490,7 @@ Scrollbar* PluginView::verticalScrollbar()
     if (!m_isInitialized)
         return nullptr;
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN)
-    if (is<PDFPlugin>(m_plugin))
-        return downcast<PDFPlugin>(m_plugin)->verticalScrollbar();
-#endif
-
-    return nullptr;
+    return m_plugin->verticalScrollbar();
 }
 
 bool PluginView::wantsWheelEvents()
@@ -524,9 +519,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
     }
 
     // FIXME: We should try to intersect the dirty rect with the plug-in's clip rect here.
-    IntRect paintRect = IntRect(IntPoint(), frameRect().size());
-
-    if (paintRect.isEmpty())
+    if (frameRect().isEmpty())
         return;
 
     if (m_transientPaintingSnapshot) {
@@ -544,7 +537,28 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
         return;
     }
 
-    m_plugin->paint(context, dirtyRect);
+    bool isSnapshotting = [&]() {
+        auto* frameView = frame()->view();
+        if (!frameView)
+            return false;
+
+        return frameView->paintBehavior().contains(PaintBehavior::FlattenCompositingLayers);
+    }();
+
+    if (!isSnapshotting && m_plugin->layerHostingStrategy() == PluginLayerHostingStrategy::GraphicsLayer)
+        return;
+
+    // RenderWidget::paintContents() translated the context so the origin is aligned with frameRect().location().
+    // Shift it back to align with the plugin origin.
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto widgetOrigin = frameRect().location();
+    context.translate(widgetOrigin);
+
+    auto paintRect = dirtyRect;
+    paintRect.moveBy(-widgetOrigin);
+
+    protectedPlugin()->paint(context, paintRect);
 }
 
 void PluginView::frameRectsChanged()
@@ -850,6 +864,11 @@ void PluginView::redeliverManualStream()
         manualLoadDidFinishLoading();
 }
 
+CheckedPtr<RenderEmbeddedObject> PluginView::checkedRenderer() const
+{
+    return dynamicDowncast<RenderEmbeddedObject>(m_pluginElement->renderer());
+}
+
 void PluginView::invalidateRect(const IntRect& dirtyRect)
 {
     if (!parent() || !m_isInitialized)
@@ -860,13 +879,12 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 #endif
 
-    auto* renderer = m_pluginElement->renderer();
-    if (!is<RenderEmbeddedObject>(renderer))
+    CheckedPtr renderer = checkedRenderer();
+    if (!renderer)
         return;
-    auto& object = downcast<RenderEmbeddedObject>(*renderer);
 
-    IntRect contentRect(dirtyRect);
-    contentRect.move(object.borderLeft() + object.paddingLeft(), object.borderTop() + object.paddingTop());
+    auto contentRect = dirtyRect;
+    contentRect.move(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
     renderer->repaintRectangle(contentRect);
 }
 

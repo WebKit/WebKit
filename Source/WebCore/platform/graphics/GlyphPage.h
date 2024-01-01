@@ -55,7 +55,7 @@ struct GlyphData {
 
     Glyph glyph;
     ColorGlyphType colorGlyphType;
-    CheckedPtr<const Font> font;
+    SingleThreadWeakPtr<const Font> font;
 };
 
 // A GlyphPage contains a fixed-size set of GlyphData mappings for a contiguous
@@ -135,7 +135,7 @@ private:
         ++s_count;
     }
 
-    WeakPtr<const Font> m_font;
+    SingleThreadWeakPtr<const Font> m_font;
     Glyph m_glyphs[size] { };
     WTF::BitSet<size> m_isColor;
 

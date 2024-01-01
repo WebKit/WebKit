@@ -58,6 +58,7 @@ WebCookieManager::~WebCookieManager() = default;
 
 Ref<NetworkProcess> WebCookieManager::protectedProcess()
 {
+    ASSERT(RunLoop::isMain());
     return m_process.get();
 }
 
@@ -156,7 +157,7 @@ void WebCookieManager::stopObservingCookieChanges(PAL::SessionID sessionID)
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(PAL::SessionID sessionID, HTTPCookieAcceptPolicy policy, CompletionHandler<void()>&& completionHandler)
 {
-    platformSetHTTPCookieAcceptPolicy(sessionID, policy, [policy, process = Ref { m_process.get() }, completionHandler = WTFMove(completionHandler)] () mutable {
+    platformSetHTTPCookieAcceptPolicy(sessionID, policy, [policy, process = protectedProcess(), completionHandler = WTFMove(completionHandler)] () mutable {
         process->cookieAcceptPolicyChanged(policy);
         completionHandler();
     });

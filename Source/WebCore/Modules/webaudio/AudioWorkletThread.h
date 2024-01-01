@@ -47,11 +47,13 @@ public:
 
     AudioWorkletGlobalScope* globalScope() const;
 
+    void clearProxies() final;
+
     // WorkerOrWorkletThread.
-    WorkerLoaderProxy& workerLoaderProxy() final;
+    WorkerLoaderProxy* workerLoaderProxy() final;
     WorkerDebuggerProxy* workerDebuggerProxy() const final;
 
-    AudioWorkletMessagingProxy& messagingProxy() { return m_messagingProxy; }
+    AudioWorkletMessagingProxy* messagingProxy() { return m_messagingProxy; }
 
 private:
     AudioWorkletThread(AudioWorkletMessagingProxy&, WorkletParameters&&);
@@ -60,7 +62,7 @@ private:
     Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
 
-    AudioWorkletMessagingProxy& m_messagingProxy;
+    AudioWorkletMessagingProxy* m_messagingProxy; // FIXME: Adopt CheckedPtr.
     WorkletParameters m_parameters;
 };
 

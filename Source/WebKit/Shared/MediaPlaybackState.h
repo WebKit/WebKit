@@ -35,17 +35,3 @@ enum class MediaPlaybackState : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::MediaPlaybackState> {
-    using values = EnumValues<
-        WebKit::MediaPlaybackState,
-        WebKit::MediaPlaybackState::NoMediaPlayback,
-        WebKit::MediaPlaybackState::MediaPlaybackPaused,
-        WebKit::MediaPlaybackState::MediaPlaybackSuspended,
-        WebKit::MediaPlaybackState::MediaPlaybackPlaying
-    >;
-};
-
-} // namespace WTF

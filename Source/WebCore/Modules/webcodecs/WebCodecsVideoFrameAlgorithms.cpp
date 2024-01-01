@@ -111,7 +111,7 @@ ExceptionOr<DOMRectInit> parseVisibleRect(const DOMRectInit& defaultRect, const 
 {
     auto sourceRect = defaultRect;
     if (overrideRect) {
-        if (!overrideRect->width || !overrideRect->height)
+        if (overrideRect->width <= 0 || overrideRect->height <= 0 || overrideRect->x < 0 || overrideRect->y < 0)
             return Exception { ExceptionCode::TypeError, "overrideRect is not valid"_s };
         if (overrideRect->x + overrideRect->width > codedWidth)
             return Exception { ExceptionCode::TypeError, "overrideRect is not valid"_s };

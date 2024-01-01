@@ -255,7 +255,7 @@ ResolvedStyle Resolver::styleForElement(const Element& element, const Resolution
         style.setIsLink(true);
         InsideLink linkState = document().visitedLinkState().determineLinkState(element);
         if (linkState != InsideLink::NotInside) {
-            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassType::Visited);
+            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClass::Visited);
             if (forceVisited)
                 linkState = InsideLink::InsideVisited;
         }
@@ -306,8 +306,8 @@ std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, 
         if (auto* value = propertyReference.value()) {
             auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.direction(), elementStyle.writingMode());
             if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
-                if (value->isCustomPropertyValue())
-                    blendingKeyframe.addProperty(downcast<CSSCustomPropertyValue>(*value).name());
+                if (auto customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
+                    blendingKeyframe.addProperty(customValue->name());
                 else
                     blendingKeyframe.addProperty(resolvedProperty);
             }

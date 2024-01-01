@@ -47,13 +47,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGContainer);
 
-RenderSVGContainer::RenderSVGContainer(Type type, Document& document, RenderStyle&& style)
-    : RenderSVGModelObject(type, document, WTFMove(style), RenderElementType::RenderSVGContainerFlag)
+RenderSVGContainer::RenderSVGContainer(Type type, Document& document, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
+    : RenderSVGModelObject(type, document, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer)
 {
 }
 
-RenderSVGContainer::RenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style)
-    : RenderSVGModelObject(type, element, WTFMove(style), RenderElementType::RenderSVGContainerFlag)
+RenderSVGContainer::RenderSVGContainer(Type type, SVGElement& element, RenderStyle&& style, OptionSet<SVGModelObjectFlag> svgFlags)
+    : RenderSVGModelObject(type, element, WTFMove(style), svgFlags | SVGModelObjectFlag::IsContainer)
 {
 }
 

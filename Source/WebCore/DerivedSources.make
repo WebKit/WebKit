@@ -1808,7 +1808,7 @@ all : \
     SVGNames.cpp \
     SVGNames.h \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
-    SelectorPseudoElementTypeMap.cpp \
+    SelectorPseudoElementMap.cpp \
     StyleBuilderGenerated.cpp \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
@@ -1867,8 +1867,8 @@ $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/c
 SelectorPseudoClassAndCompatibilityElementMap.cpp : $(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py" $(WebCore)/css/SelectorPseudoClassAndCompatibilityElementMap.in $(GPERF) "$(FEATURE_AND_PLATFORM_DEFINES)"
 
-SelectorPseudoElementTypeMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementTypeMap.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementTypeMap.in $(GPERF) "$(FEATURE_AND_PLATFORM_DEFINES)"
+SelectorPseudoElementMap.cpp : $(WebCore)/css/makeSelectorPseudoElementsMap.py $(WebCore)/css/SelectorPseudoElementMap.in $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	$(PYTHON) "$(WebCore)/css/makeSelectorPseudoElementsMap.py" $(WebCore)/css/SelectorPseudoElementMap.in $(GPERF) "$(FEATURE_AND_PLATFORM_DEFINES)"
 
 # --------
 

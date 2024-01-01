@@ -108,8 +108,8 @@ void SVGFEImageElement::buildPendingResource()
             treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
-    } else if (is<SVGElement>(*target.element))
-        downcast<SVGElement>(*target.element).addReferencingElement(*this);
+    } else if (RefPtr element = dynamicDowncast<SVGElement>(*target.element))
+        element->addReferencingElement(*this);
 
     updateSVGRendererForElementChange();
 }

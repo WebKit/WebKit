@@ -120,7 +120,6 @@ private:
     bool fillContains(const FloatPoint&, bool requiresFill = true, const WindRule fillRule = WindRule::NonZero);
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
-    bool isRenderSVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
     ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
 

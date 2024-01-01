@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifiedPDFEnabled=true PDFPluginHUDEnabled=false ] -->
+<html>
+<head>
+    <style>
+        embed {
+            margin: 200px;
+            width: 300px;
+            height: 300px;
+            border: 20px solid silver;
+            padding: 20px;
+            box-shadow: 0 0 20px black;
+        }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+        }
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+            
+            const layers = document.getElementById('layers');
+            layers.textContent = internals.layerTreeAsText(document);
+            
+            testRunner.notifyDone();
+        }, false);
+    </script>
+</head>
+<body>
+    <embed src="../../../fast/images/resources/green_rectangle.pdf">
+<pre id="layers"></pre>
+</body>
+</html>

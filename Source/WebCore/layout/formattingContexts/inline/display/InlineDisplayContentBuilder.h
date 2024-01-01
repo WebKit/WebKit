@@ -56,18 +56,17 @@ private:
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendHardLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
-    void appendAtomicInlineLevelDisplayBox(const Line::Run&, const InlineRect& , InlineDisplay::Boxes&);
+    void appendAtomicInlineLevelDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendRootInlineBoxDisplayBox(const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
-    void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
-    void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
+    void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
-    void insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, InlineDisplay::Boxes&);
+    void insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, const InlineRect&, InlineDisplay::Boxes&);
 
     size_t processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes&, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation);
     void processRubyContent(InlineDisplay::Boxes&, const LineLayoutResult&);
     void applyRubyOverhang(InlineDisplay::Boxes&, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList);
 
-    void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
+    void setInlineBoxGeometry(Layout::BoxGeometry&, const InlineRect&, bool isFirstInlineBoxFragment);
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
     size_t ensureDisplayBoxForContainer(const ElementBox&, DisplayBoxTree&, AncestorStack&, InlineDisplay::Boxes&);
 

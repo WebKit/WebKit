@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteImageBufferSetProxy.h"
 
+#include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"
 #include "RemoteRenderingBackendProxy.h"
 #include <wtf/SystemTracing.h>

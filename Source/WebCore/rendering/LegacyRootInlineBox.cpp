@@ -691,7 +691,7 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
         return;
     }
 
-    Vector<WeakPtr<const Font>>* usedFonts = nullptr;
+    Vector<SingleThreadWeakPtr<const Font>>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;
     if (is<LegacyInlineTextBox>(box)) {
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&downcast<LegacyInlineTextBox>(box));

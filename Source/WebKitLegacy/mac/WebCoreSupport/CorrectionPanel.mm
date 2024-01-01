@@ -26,28 +26,12 @@
 #import "CorrectionPanel.h"
 
 #import "WebViewInternal.h"
+#import <WebCore/CorrectionIndicator.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if USE(AUTOCORRECTION_PANEL)
 
 using namespace WebCore;
-
-static inline NSCorrectionIndicatorType correctionIndicatorType(AlternativeTextType alternativeTextType)
-{
-    switch (alternativeTextType) {
-    case AlternativeTextType::Correction:
-        return NSCorrectionIndicatorTypeDefault;
-    case AlternativeTextType::Reversion:
-        return NSCorrectionIndicatorTypeReversion;
-    case AlternativeTextType::SpellingSuggestions:
-    case AlternativeTextType::GrammarSuggestions:
-        return NSCorrectionIndicatorTypeGuesses;
-    case AlternativeTextType::DictationAlternatives:
-        ASSERT_NOT_REACHED();
-        return NSCorrectionIndicatorTypeDefault;
-    }
-    
-}
 
 CorrectionPanel::CorrectionPanel()
     : m_wasDismissedExternally(false)

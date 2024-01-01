@@ -275,8 +275,8 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
             [regionLayer setFrame:rect];
 
         if (region.type == InteractionRegion::Type::Interaction) {
-            [regionLayer setCornerRadius:region.borderRadius];
-            if (region.borderRadius)
+            [regionLayer setCornerRadius:region.cornerRadius];
+            if (region.cornerRadius)
                 [regionLayer setCornerCurve:kCACornerCurveCircular];
 
             constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
@@ -284,6 +284,18 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
                 [regionLayer setMaskedCorners:allCorners];
             else
                 [regionLayer setMaskedCorners:convertToCACornerMask(region.maskedCorners)];
+
+            if (region.clipPath) {
+                RetainPtr<CAShapeLayer> mask = [regionLayer mask];
+                if (!mask) {
+                    mask = adoptNS([[CAShapeLayer alloc] init]);
+                    [regionLayer setMask:mask.get()];
+                }
+
+                [mask setFrame:[regionLayer bounds]];
+                [mask setPath:region.clipPath->platformPath()];
+            } else
+                [regionLayer setMask:nil];
         }
 
         if ([container.sublayers objectAtIndex:insertionPoint] != regionLayer) {

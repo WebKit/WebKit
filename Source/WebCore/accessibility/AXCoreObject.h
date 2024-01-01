@@ -65,6 +65,8 @@ class AccessibilityObjectAtspi;
 }
 typedef WebCore::AccessibilityObjectAtspi AccessibilityObjectWrapper;
 
+#elif PLATFORM(PLAYSTATION)
+class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #else
 class AccessibilityObjectWrapper;
 #endif
@@ -106,8 +108,9 @@ enum class AXAncestorFlag : uint8_t {
     IsInDescriptionListDetail = 1 << 3,
     IsInDescriptionListTerm = 1 << 4,
     IsInCell = 1 << 5,
+    IsInRow = 1 << 6,
 
-    // Bits 6 and 7 are free.
+    // Bit 7 is free.
 };
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -1438,6 +1441,8 @@ private:
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
+#elif PLATFORM(PLAYSTATION)
+    RefPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif USE(ATSPI)
     RefPtr<AccessibilityObjectAtspi> m_wrapper;
 #endif
