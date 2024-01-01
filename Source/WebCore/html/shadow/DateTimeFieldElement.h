@@ -77,7 +77,6 @@ public:
 protected:
     static constexpr auto CreateDateTimeFieldElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     DateTimeFieldElement(Document&, FieldOwner&);
-    void initialize(const AtomString& pseudo);
     Locale& localeForOwner() const;
     AtomString localeIdentifier() const;
     void updateVisibleValue(EventBehavior);
