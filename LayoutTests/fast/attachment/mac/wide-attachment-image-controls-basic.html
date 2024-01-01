@@ -1,5 +1,5 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
-<html>
+<html class="reftest-wait">
 <head>
 <script>
     if (window.internals)
@@ -9,5 +9,9 @@
 <body>
     <attachment id="test" type="application/pdf" src="../resources/green_rectangle.pdf"></attachment>
     <img src="400x200-circle.png"></img>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+takeActualScreenshotWhenAttachmentsSettled();
+</script>
 </body>
 </html>

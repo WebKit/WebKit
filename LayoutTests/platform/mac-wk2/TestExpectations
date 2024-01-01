@@ -1766,8 +1766,6 @@ webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.ht
 
 webkit.org/b/259464 [ Monterey+ ] fast/events/wheel/redispatched-wheel-event.html [ Pass Failure ]
 
-webkit.org/b/259183 fast/attachment/mac/wide-attachment-image-controls-basic.html [ Pass Failure ]
-
 webkit.org/b/259708 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash Failure Timeout ]
 
 webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-outline.html [ Pass ImageOnlyFailure ]
