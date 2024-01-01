@@ -353,59 +353,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         auto& style = styleToUse(layoutBox);
         lineHasContent = lineHasContent || Line::Run::isContentfulOrHasDecoration(run, formattingContext);
         auto logicalLeft = rootInlineBox.logicalLeft() + run.logicalLeft();
-        if (run.isBox()) {
-            auto& inlineLevelBoxGeometry = formattingContext.geometryForBox(layoutBox);
-            logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
-            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
-            setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
-            lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
-            continue;
-        }
-        if (run.isLineSpanningInlineBoxStart()) {
-            auto marginStart = LayoutUnit { };
-            if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
-                marginStart = formattingContext.geometryForBox(layoutBox).marginStart();
-            logicalLeft += std::max(0_lu, marginStart);
-            auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
-            setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
-            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
-            lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            continue;
-        }
-        if (run.isInlineBoxStart()) {
-            // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
-            // and adjust it later if we come across an inlineBoxEnd run (see below).
-            // Inline box run is based on margin box. Let's convert it to border box.
-            auto marginStart = formattingContext.geometryForBox(layoutBox).marginStart();
-            logicalLeft += std::max(0_lu, marginStart);
-            auto initialLogicalWidth = rootInlineBox.logicalRight() - logicalLeft;
-            ASSERT(initialLogicalWidth >= 0 || lineLayoutResult().hangingContent.logicalWidth || std::isnan(initialLogicalWidth));
-            initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
-            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
-            inlineBox.setIsFirstBox();
-            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
-            setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
-            lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            m_lineHasNonLineSpanningRubyContent = m_lineHasNonLineSpanningRubyContent || layoutBox.isRubyBase();
-            continue;
-        }
-        if (run.isInlineBoxEnd()) {
-            // Adjust the logical width when the inline box closes on this line.
-            // Note that margin end does not affect the logical width (e.g. positive margin right does not make the run wider).
-            auto& inlineBox = lineBox.inlineLevelBoxFor(run);
-            ASSERT(inlineBox.isInlineBox());
-            // Inline box run is based on margin box. Let's convert it to border box.
-            // Negative margin end makes the run have negative width.
-            auto marginEndAdjustemnt = -formattingContext.geometryForBox(layoutBox).marginEnd();
-            auto logicalWidth = run.logicalWidth() + marginEndAdjustemnt;
-            auto inlineBoxLogicalRight = logicalLeft + logicalWidth;
-            // When the content pulls the </span> to the logical left direction (e.g. negative letter space)
-            // make sure we don't end up with negative logical width on the inline box.
-            inlineBox.setLogicalWidth(std::max(0.f, inlineBoxLogicalRight - inlineBox.logicalLeft()));
-            inlineBox.setIsLastBox();
-            continue;
-        }
+
         if (run.isText()) {
             auto& parentInlineBox = lineBox.parentInlineBox(run);
             parentInlineBox.setHasContent();
@@ -430,6 +378,54 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
 
             if (layoutState().inStandardsMode() || InlineQuirks::lineBreakBoxAffectsParentInlineBox(lineBox))
                 lineBox.parentInlineBox(run).setHasContent();
+            continue;
+        }
+        if (run.isBox()) {
+            auto& inlineLevelBoxGeometry = formattingContext.geometryForBox(layoutBox);
+            logicalLeft += std::max(0_lu, inlineLevelBoxGeometry.marginStart());
+            auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, inlineLevelBoxGeometry.borderBoxWidth());
+            setVerticalPropertiesForInlineLevelBox(lineBox, atomicInlineLevelBox);
+            lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
+            continue;
+        }
+        if (run.isInlineBoxStart() || run.isLineSpanningInlineBoxStart()) {
+            auto marginStart = run.isInlineBoxStart() || style.boxDecorationBreak() == BoxDecorationBreak::Clone ? formattingContext.geometryForBox(layoutBox).marginStart() : LayoutUnit();
+            // At this point we don't know yet how wide this inline box is. Let's assume it's as long as the line is
+            // and adjust it later if we come across an inlineBoxEnd run (see below).
+            // Inline box run is based on margin box. Let's convert it to border box.
+            logicalLeft += std::max(0_lu, marginStart);
+            auto initialLogicalWidth = [&] {
+                auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
+                // We (editing, DOM etc) can't yet handle RTL hanging content (see contentLogicalWidth in LineBoxBuilder::build).
+                if (lineLayoutResult().directionality.inlineBaseDirection == TextDirection::LTR)
+                    logicalWidth += lineLayoutResult().hangingContent.logicalWidth;
+                return logicalWidth;
+            }();
+            initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
+            auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth, run.isInlineBoxStart() ? InlineLevelBox::LineSpanningInlineBox::No : InlineLevelBox::LineSpanningInlineBox::Yes);
+            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
+            setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
+            if (run.isInlineBoxStart()) {
+                inlineBox.setIsFirstBox();
+                m_lineHasNonLineSpanningRubyContent = m_lineHasNonLineSpanningRubyContent || layoutBox.isRubyBase();
+            }
+            lineBox.addInlineLevelBox(WTFMove(inlineBox));
+            continue;
+        }
+        if (run.isInlineBoxEnd()) {
+            // Adjust the logical width when the inline box closes on this line.
+            // Note that margin end does not affect the logical width (e.g. positive margin right does not make the run wider).
+            auto& inlineBox = lineBox.inlineLevelBoxFor(run);
+            ASSERT(inlineBox.isInlineBox());
+            // Inline box run is based on margin box. Let's convert it to border box.
+            // Negative margin end makes the run have negative width.
+            auto marginEndAdjustemnt = -formattingContext.geometryForBox(layoutBox).marginEnd();
+            auto logicalWidth = run.logicalWidth() + marginEndAdjustemnt;
+            auto inlineBoxLogicalRight = logicalLeft + logicalWidth;
+            // When the content pulls the </span> to the logical left direction (e.g. negative letter space)
+            // make sure we don't end up with negative logical width on the inline box.
+            inlineBox.setLogicalWidth(std::max(0.f, inlineBoxLogicalRight - inlineBox.logicalLeft()));
+            inlineBox.setIsLastBox();
             continue;
         }
         if (run.isListMarker()) {
