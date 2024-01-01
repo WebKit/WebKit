@@ -107,7 +107,6 @@ using PseudoClassesSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::
     v(operationIsValid) \
     v(operationIsWindowInactive) \
     v(operationMatchesFullscreenPseudoClass) \
-    v(operationMatchesWebkitFullScreenPseudoClass) \
     v(operationMatchesFullScreenDocumentPseudoClass) \
     v(operationMatchesFullScreenAncestorPseudoClass) \
     v(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass) \
@@ -258,7 +257,6 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDir, bool,
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesLangPseudoClass, bool, (const Element&, const FixedVector<PossiblyQuotedIdentifier>&));
 #if ENABLE(FULLSCREEN_API)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullscreenPseudoClass, bool, (const Element&));
-static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesWebkitFullScreenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAncestorPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesFullScreenAnimatingFullScreenTransitionPseudoClass, bool, (const Element&));
@@ -903,12 +901,6 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesFullscreenPseudoClass, bool, (const Ele
     return matchesFullscreenPseudoClass(element);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationMatchesWebkitFullScreenPseudoClass, bool, (const Element& element))
-{
-    COUNT_SELECTOR_OPERATION(operationMatchesWebkitFullScreenPseudoClass);
-    return matchesWebkitFullScreenPseudoClass(element);
-}
-
 JSC_DEFINE_JIT_OPERATION(operationMatchesFullScreenDocumentPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesFullScreenDocumentPseudoClass);
@@ -1126,9 +1118,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 #if ENABLE(FULLSCREEN_API)
     case CSSSelector::PseudoClass::Fullscreen:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullscreenPseudoClass));
-        return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebKitFullScreen:
-        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesWebkitFullScreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::WebKitFullScreenDocument:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesFullScreenDocumentPseudoClass));

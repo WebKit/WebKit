@@ -194,31 +194,10 @@ svg/transforms/transform-origin-and-box-getCTM.html [ Failure ]
 svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 
 # SVG tests that time out (these require EventSender)
-svg/animations/animVal-basics.html
-svg/animations/animate-calcMode-spline-by.html
-svg/animations/animate-calcMode-spline-from-by.html
-svg/animations/animate-calcMode-spline-from-to.html
-svg/animations/animate-calcMode-spline-to.html
-svg/animations/animate-calcMode-spline-values.html
-svg/animations/animate-color-calcMode-discrete.html
-svg/animations/animate-color-fill-currentColor.html
-svg/animations/animate-color-fill-from-by.html
 svg/animations/animate-color-rgba-calcMode-discrete.html
-svg/animations/animate-color-transparent.html
-svg/animations/animate-currentColor.html
-svg/animations/animate-dynamic-update-attributeName.html
 svg/animations/animate-end-attribute.html
 svg/animations/animate-endElement-beginElement.html
-svg/animations/animate-from-to-keyTimes.html
-svg/animations/animate-gradient-transform.html
-svg/animations/animate-inherit-css-property.html
-svg/animations/animate-keySplines.html
-svg/animations/animate-marker-orient-from-angle-to-angle.html
-svg/animations/animate-marker-orient-from-angle-to-auto.html
-svg/animations/animate-marker-orient-to-angle.html
 svg/animations/animate-mpath-insert.html
-svg/animations/animate-number-calcMode-discrete-keyTimes.html
-svg/animations/animate-number-calcMode-discrete.html
 svg/animations/animate-path-animation-Cc-Ss.html
 svg/animations/animate-path-animation-Ll-Vv-Hh.html
 svg/animations/animate-path-animation-Qq-Tt.html
@@ -228,74 +207,13 @@ svg/animations/animate-path-animation-qQ-tT-inverse.html
 svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-path-to-animation.html
 svg/animations/animate-text-nested-transforms.html
-svg/animations/animateTransform-pattern-transform.html
 svg/animations/animateTransform-translate-attributetype-auto.html
 svg/animations/animateTransform-translate-invalid-attributetype.html
 svg/animations/deferred-insertion.html
 svg/animations/svgPreserveAspectRatio-animation-1.html
-svg/animations/svgangle-animation-deg-to-grad.html
-svg/animations/svgangle-animation-deg-to-rad.html
-svg/animations/svgangle-animation-grad-to-deg.html
-svg/animations/svgangle-animation-grad-to-rad.html
-svg/animations/svgangle-animation-rad-to-deg.html
-svg/animations/svgangle-animation-rad-to-grad.html
-svg/animations/svgboolean-animation-1.html
-svg/animations/svgenum-animation-1.html
-svg/animations/svgenum-animation-10.html
-svg/animations/svgenum-animation-11.html
-svg/animations/svgenum-animation-12.html
-svg/animations/svgenum-animation-13.html
-svg/animations/svgenum-animation-2.html
-svg/animations/svgenum-animation-3.html
-svg/animations/svgenum-animation-4.html
-svg/animations/svgenum-animation-5.html
-svg/animations/svgenum-animation-6.html
-svg/animations/svgenum-animation-7.html
-svg/animations/svgenum-animation-8.html
-svg/animations/svgenum-animation-9.html
-svg/animations/svginteger-animation-1.html
-svg/animations/svginteger-animation-2.html
-svg/animations/svglength-animation-LengthModeHeight.html
-svg/animations/svglength-animation-LengthModeOther.html
-svg/animations/svglength-animation-LengthModeWidth.html
-svg/animations/svglength-animation-invalid-value-1.html
-svg/animations/svglength-animation-invalid-value-2.html
-svg/animations/svglength-animation-invalid-value-3.html
-svg/animations/svglength-animation-number-to-number.html
-svg/animations/svglength-animation-px-to-cm.html
-svg/animations/svglength-animation-px-to-ems.html
 svg/animations/svglength-animation-px-to-exs.html
-svg/animations/svglength-animation-px-to-in.html
-svg/animations/svglength-animation-px-to-number.html
-svg/animations/svglength-animation-px-to-pc.html
 svg/animations/svglength-animation-px-to-percentage.html
-svg/animations/svglength-animation-px-to-pt.html
-svg/animations/svglength-animation-px-to-px.html
-svg/animations/svglength-animation-unitType.html
-svg/animations/svglength-animation-values.html
-svg/animations/svglengthlist-animation-1.html
-svg/animations/svglengthlist-animation-2.html
-svg/animations/svglengthlist-animation-3.html
-svg/animations/svglengthlist-animation-4.html
-svg/animations/svglengthlist-animation-5.html
-svg/animations/svgnumber-animation-1.html
-svg/animations/svgnumber-animation-2.html
-svg/animations/svgnumber-animation-3.html
-svg/animations/svgnumber-animation-4.html
-svg/animations/svgnumberlist-animation-1.html
-svg/animations/svgnumberlist-animation-2.html
-svg/animations/svgnumberoptionalnumber-animation-1.html
-svg/animations/svgnumberoptionalnumber-animation-2.html
-svg/animations/svgnumberoptionalnumber-animation-3.html
-svg/animations/svgnumberoptionalnumber-animation-4.html
 svg/animations/svgpath-animation-1.html
-svg/animations/svgpointlist-animation-1.html
-svg/animations/svgpointlist-animation-2.html
-svg/animations/svgrect-animation-1.html
-svg/animations/svgrect-animation-2.html
-svg/animations/svgstring-animation-fallback-to-discrete.html
-svg/animations/svgtransform-animation-1.html
-svg/animations/svgtransform-animation-discrete.html
 svg/animations/use-animate-transform-and-position.html
 svg/animations/use-animate-width-and-height.html [ Skip ]
 svg/custom/gradient-attr-update.svg
@@ -1263,8 +1181,6 @@ webkit.org/b/184245 http/tests/workers/service/service-worker-cache-api.https.ht
 webkit.org/b/184783 compositing/ios/overflow-scroll-touch-tiles.html [ Pass Failure ]
 
 webkit.org/b/179853 [ Debug ] imported/blink/fast/text/international-iteration-simple-text.html [ Pass Failure ]
-
-webkit.org/b/189087 svg/animations/animate-end-attribute-numeric-precision.html [ Pass Failure ]
 
 webkit.org/b/190847 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register-new-script.https.html [ Pass Failure ]
 

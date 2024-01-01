@@ -1047,8 +1047,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
 #if ENABLE(FULLSCREEN_API)
         case CSSSelector::PseudoClass::Fullscreen:
             return matchesFullscreenPseudoClass(element);
-        case CSSSelector::PseudoClass::WebKitFullScreen:
-            return matchesWebkitFullScreenPseudoClass(element);
         case CSSSelector::PseudoClass::WebKitAnimatingFullScreenTransition:
             return matchesFullScreenAnimatingFullScreenTransitionPseudoClass(element);
         case CSSSelector::PseudoClass::WebKitFullScreenAncestor:

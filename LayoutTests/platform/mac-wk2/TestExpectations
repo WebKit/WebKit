@@ -1180,8 +1180,6 @@ webkit.org/b/230105 [ Monterey+ Debug arm64 ] imported/w3c/web-platform-tests/ht
 
 webkit.org/b/230691 [ Release ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html [ Pass Failure ]
 
-webkit.org/b/230113 [ Monterey+ Debug arm64 ] svg/animations/animate-elem-14-t-drt.html [ Pass Crash ]
-
 # rdar://66806059 (REGRESSION (20A2321a-20A2348b): 4 fast hidpi tests are a flaky image failure)
 [ arm64 ] fast/flexbox/hidpi-simple-line-layout-with-flexbox-and-transition.html [ ImageOnlyFailure ]
 [ arm64 ] fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
