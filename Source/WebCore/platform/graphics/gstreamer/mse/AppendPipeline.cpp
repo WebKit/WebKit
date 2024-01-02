@@ -509,7 +509,9 @@ void AppendPipeline::didReceiveInitializationSegment()
     }
 
     for (std::unique_ptr<Track>& track : m_tracks) {
+#ifndef GST_DISABLE_GST_DEBUG
         GST_DEBUG_OBJECT(pipeline(), "Adding track to initialization with segment type %s, id %s.", streamTypeToString(track->streamType), track->trackSringId.string().utf8().data());
+#endif // GST_DISABLE_GST_DEBUG
         switch (track->streamType) {
         case Audio: {
             ASSERT(track->webKitTrack);
