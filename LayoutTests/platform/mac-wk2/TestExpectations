@@ -1785,10 +1785,6 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 [ Sonoma+ ] compositing/images/direct-image-object-fit.html [ Skip ]
 [ Sonoma+ ] compositing/reflections/direct-image-object-fit-reflected.html [ Skip ]
 
-# rdar://107294589 ([UI-side compositing] fast/attachment/mac/attachment-element-gpu-process.html and fast/attachment/mac/wide-attachment-element-gpu-process.html fails)
-[ Sonoma+ ] fast/attachment/mac/attachment-element-gpu-process.html [ ImageOnlyFailure ]
-[ Sonoma+ ] fast/attachment/mac/wide-attachment-element-gpu-process.html [ ImageOnlyFailure ]
-
 # rdar://107294843 ([UI-side compositing] fast/events/wheel/wheel-events-become-non-cancelable.html fails)
 [ Sonoma+ ] fast/events/wheel/wheel-events-become-non-cancelable.html [ Failure ]
 
