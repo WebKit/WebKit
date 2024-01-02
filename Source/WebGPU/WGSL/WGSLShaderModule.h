@@ -93,6 +93,8 @@ public:
 
     bool usesAtomicCompareExchange() const { return m_usesAtomicCompareExchange; }
     void setUsesAtomicCompareExchange() { m_usesAtomicCompareExchange = true; }
+    bool usesFragDepth() const { return m_usesFragDepth; }
+    void setUsesFragDepth() { m_usesFragDepth = true; }
 
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
@@ -249,6 +251,7 @@ private:
     bool m_usesFrexp { false };
     bool m_usesModf { false };
     bool m_usesAtomicCompareExchange { false };
+    bool m_usesFragDepth { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

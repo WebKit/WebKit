@@ -31,6 +31,7 @@
 #import "Device.h"
 #import "Pipeline.h"
 #import "RenderBundleEncoder.h"
+#import "WGSLShaderModule.h"
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
 @interface NSObject ()
@@ -604,11 +605,77 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
     return generatedPipelineLayout;
 }
 
-static Ref<RenderPipeline> returnInvalidRenderPipeline(WebGPU::Device &object, bool isAsync)
+static Ref<RenderPipeline> returnInvalidRenderPipeline(WebGPU::Device &object, bool isAsync, String&& error)
 {
     if (!isAsync)
-        object.generateAValidationError("createRenderPipeline failed"_s);
+        object.generateAValidationError(WTFMove(error));
     return RenderPipeline::createInvalid(object);
+}
+
+static constexpr const char* name(WGPUCompareFunction compare)
+{
+    switch (compare) {
+    case WGPUCompareFunction_Undefined: return "undefined";
+    case WGPUCompareFunction_Never: return "never";
+    case WGPUCompareFunction_Less: return "less";
+    case WGPUCompareFunction_LessEqual: return "less-equal";
+    case WGPUCompareFunction_Greater: return "greater";
+    case WGPUCompareFunction_GreaterEqual: return "greater-equal";
+    case WGPUCompareFunction_Equal: return "equal";
+    case WGPUCompareFunction_NotEqual: return "not-equal";
+    case WGPUCompareFunction_Always: return "always";
+    case WGPUCompareFunction_Force32: RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+static constexpr const char* name(WGPUStencilOperation operation)
+{
+    switch (operation) {
+    case WGPUStencilOperation_Keep: return "keep";
+    case WGPUStencilOperation_Zero: return "zero";
+    case WGPUStencilOperation_Replace: return "replace";
+    case WGPUStencilOperation_Invert: return "invert";
+    case WGPUStencilOperation_IncrementClamp: return "increment-clamp";
+    case WGPUStencilOperation_DecrementClamp: return "decrement-clamp";
+    case WGPUStencilOperation_IncrementWrap: return "increment-wrap";
+    case WGPUStencilOperation_DecrementWrap: return "decrement-wrap";
+    case WGPUStencilOperation_Force32: RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static NSString* errorValidatingDepthStencilState(const WGPUDepthStencilState& depthStencil)
+{
+#define ERROR_STRING(x) ([NSString stringWithFormat:@"Invalid DepthStencilState: %@", x])
+    if (!Texture::isDepthOrStencilFormat(depthStencil.format))
+        return ERROR_STRING(@"Color format passed to depth / stencil format");
+
+    auto depthFormat = Texture::depthOnlyAspectMetalFormat(depthStencil.format);
+    if ((depthStencil.depthWriteEnabled && *depthStencil.depthWriteEnabled) || (depthStencil.depthCompare != WGPUCompareFunction_Undefined && depthStencil.depthCompare != WGPUCompareFunction_Always)) {
+        if (!depthFormat)
+            return ERROR_STRING(@"depth-stencil state missing format");
+    }
+
+    auto isDefault = ^(const WGPUStencilFaceState& s) {
+        return s.compare == WGPUCompareFunction_Always && s.failOp == WGPUStencilOperation_Keep && s.depthFailOp == WGPUStencilOperation_Keep && s.passOp == WGPUStencilOperation_Keep;
+    };
+    if (!isDefault(depthStencil.stencilFront) || !isDefault(depthStencil.stencilBack)) {
+        if (!Texture::stencilOnlyAspectMetalFormat(depthStencil.format)) {
+            NSString *error = [NSString stringWithFormat:@"missing stencil format - stencilFront: compare = %s, failOp = %s, depthFailOp = %s, passOp = %s, stencilBack: compare = %s, failOp = %s, depthFailOp = %s, passOp = %s", name(depthStencil.stencilFront.compare), name(depthStencil.stencilFront.failOp), name(depthStencil.stencilFront.depthFailOp), name(depthStencil.stencilFront.passOp), name(depthStencil.stencilBack.compare), name(depthStencil.stencilBack.failOp), name(depthStencil.stencilBack.depthFailOp), name(depthStencil.stencilBack.passOp)];
+            return ERROR_STRING(error);
+        }
+    }
+
+    if (depthFormat) {
+        if (!depthStencil.depthWriteEnabled)
+            return ERROR_STRING(@"depthWrite must be provided");
+
+        bool depthWriteEnabled = *depthStencil.depthWriteEnabled;
+        if (depthWriteEnabled || depthStencil.stencilFront.depthFailOp != WGPUStencilOperation_Keep || depthStencil.stencilBack.depthFailOp != WGPUStencilOperation_Keep) {
+            if (depthStencil.depthCompare == WGPUCompareFunction_Undefined)
+                return ERROR_STRING(@"Depth compare must be provided");
+        }
+    }
+#undef ERROR_STRING
+    return nil;
 }
 
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync)
@@ -627,23 +694,23 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.isValid() && !layout.isAutoLayout()) {
             pipelineLayout = &layout;
             if (pipelineLayout && &pipelineLayout->device() != this)
-                return returnInvalidRenderPipeline(*this, isAsync);
+                return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid"_s);
         }
     }
 
     std::optional<PipelineLayout> vertexPipelineLayout { std::nullopt };
     {
         if (descriptor.vertex.nextInChain)
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync, "Vertex module has an invalid chain"_s);
 
         const auto& vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
         if (!vertexModule.isValid())
-            return returnInvalidRenderPipeline(*this, isAsync);
+            return returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s);
 
         const auto& vertexFunctionName = fromAPI(descriptor.vertex.entryPoint);
         auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint(), label);
         if (!libraryCreationResult)
-            return returnInvalidRenderPipeline(*this, isAsync);
+            return returnInvalidRenderPipeline(*this, isAsync, "Vertex library failed creation"_s);
 
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout)
@@ -651,26 +718,28 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation);
         auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
-            return returnInvalidRenderPipeline(*this, isAsync);
+            return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
     }
 
     std::optional<PipelineLayout> fragmentPipelineLayout { std::nullopt };
+    bool usesFragDepth = false;
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 
         if (fragmentDescriptor.nextInChain)
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync, "Fragment has extra chain"_s);
 
         const auto& fragmentModule = WebGPU::fromAPI(fragmentDescriptor.module);
-        if (!fragmentModule.isValid())
-            return returnInvalidRenderPipeline(*this, isAsync);
+        if (!fragmentModule.isValid() || !fragmentModule.ast())
+            return returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s);
 
+        usesFragDepth = fragmentModule.ast()->usesFragDepth();
         const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
 
         auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint(), label);
         if (!libraryCreationResult)
-            return returnInvalidRenderPipeline(*this, isAsync);
+            return returnInvalidRenderPipeline(*this, isAsync, "Fragment library could not be created"_s);
 
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout)
@@ -679,7 +748,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         auto [constantValues, wgslConstantValues] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation);
         auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
         if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
-            return returnInvalidRenderPipeline(*this, isAsync);
+            return returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 
         for (uint32_t i = 0; i < fragmentDescriptor.targetCount; ++i) {
@@ -689,11 +758,16 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
             const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
 
+            if (Texture::isDepthOrStencilFormat(targetDescriptor.format) || !Texture::isRenderableFormat(targetDescriptor.format, *this))
+                return returnInvalidRenderPipeline(*this, isAsync, "Depth / stencil format passed to color format"_s);
+
             mtlColorAttachment.pixelFormat = Texture::pixelFormat(targetDescriptor.format);
 
             mtlColorAttachment.writeMask = colorWriteMask(targetDescriptor.writeMask);
 
             if (targetDescriptor.blend) {
+                if (!Texture::supportsBlending(targetDescriptor.format, *this))
+                    return returnInvalidRenderPipeline(*this, isAsync, "Color target attempted to use blending on non-blendable format"_s);
                 mtlColorAttachment.blendingEnabled = YES;
 
                 const auto& alphaBlend = targetDescriptor.blend->alpha;
@@ -713,6 +787,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
     float depthBias = 0.f, depthBiasSlopeScale = 0.f, depthBiasClamp = 0.f;
     if (auto depthStencil = descriptor.depthStencil) {
+        if (NSString *error = errorValidatingDepthStencilState(*depthStencil))
+            return returnInvalidRenderPipeline(*this, isAsync, error);
+
         MTLPixelFormat depthStencilFormat = Texture::pixelFormat(depthStencil->format);
         bool isStencilOnlyFormat = Device::isStencilOnlyFormat(depthStencilFormat);
         mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = isStencilOnlyFormat ? MTLPixelFormatInvalid : depthStencilFormat;
@@ -721,13 +798,16 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         depthStencilDescriptor = [MTLDepthStencilDescriptor new];
         depthStencilDescriptor.depthCompareFunction = convertToMTLCompare(depthStencil->depthCompare);
-        depthStencilDescriptor.depthWriteEnabled = depthStencil->depthWriteEnabled;
+        depthStencilDescriptor.depthWriteEnabled = depthStencil->depthWriteEnabled.value_or(false);
         populateStencilOperation(depthStencilDescriptor.frontFaceStencil, depthStencil->stencilFront, depthStencil->stencilReadMask, depthStencil->stencilWriteMask);
         populateStencilOperation(depthStencilDescriptor.backFaceStencil, depthStencil->stencilBack, depthStencil->stencilReadMask, depthStencil->stencilWriteMask);
         depthBias = depthStencil->depthBias;
         depthBiasSlopeScale = depthStencil->depthBiasSlopeScale;
         depthBiasClamp = depthStencil->depthBiasClamp;
     }
+
+    if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)
+        return returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s);
 
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;

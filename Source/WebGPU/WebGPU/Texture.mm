@@ -732,7 +732,7 @@ uint32_t Texture::texelBlockHeight(WGPUTextureFormat format)
     }
 }
 
-static bool isRenderableFormat(WGPUTextureFormat format, const Device& device)
+bool Texture::isRenderableFormat(WGPUTextureFormat format, const Device& device)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
@@ -841,7 +841,7 @@ static bool isRenderableFormat(WGPUTextureFormat format, const Device& device)
     }
 }
 
-static bool supportsMultisampling(WGPUTextureFormat format, const Device& device)
+bool Texture::supportsMultisampling(WGPUTextureFormat format, const Device& device)
 {
     switch (format) {
     // https://gpuweb.github.io/gpuweb/#texture-format-caps
@@ -882,6 +882,115 @@ static bool supportsMultisampling(WGPUTextureFormat format, const Device& device
         return true;
     case WGPUTextureFormat_RG11B10Ufloat:
         return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+    case WGPUTextureFormat_R32Uint:
+    case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG32Float:
+    case WGPUTextureFormat_RG32Uint:
+    case WGPUTextureFormat_RG32Sint:
+    case WGPUTextureFormat_RGBA32Float:
+    case WGPUTextureFormat_RGBA32Uint:
+    case WGPUTextureFormat_RGBA32Sint:
+    case WGPUTextureFormat_RGB9E5Ufloat:
+    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+    case WGPUTextureFormat_BC4RUnorm:
+    case WGPUTextureFormat_BC4RSnorm:
+    case WGPUTextureFormat_BC5RGUnorm:
+    case WGPUTextureFormat_BC5RGSnorm:
+    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WGPUTextureFormat_BC6HRGBFloat:
+    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+    case WGPUTextureFormat_ETC2RGB8Unorm:
+    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+    case WGPUTextureFormat_EACR11Unorm:
+    case WGPUTextureFormat_EACR11Snorm:
+    case WGPUTextureFormat_EACRG11Unorm:
+    case WGPUTextureFormat_EACRG11Snorm:
+    case WGPUTextureFormat_ASTC4x4Unorm:
+    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x4Unorm:
+    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x5Unorm:
+    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x5Unorm:
+    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x6Unorm:
+    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x5Unorm:
+    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WGPUTextureFormat_ASTC8x6Unorm:
+    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x8Unorm:
+    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x5Unorm:
+    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WGPUTextureFormat_ASTC10x6Unorm:
+    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WGPUTextureFormat_ASTC10x8Unorm:
+    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x10Unorm:
+    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x10Unorm:
+    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x12Unorm:
+    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+        return false;
+    case WGPUTextureFormat_Undefined:
+    case WGPUTextureFormat_Force32:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+bool Texture::supportsBlending(WGPUTextureFormat format, const Device& device)
+{
+    switch (format) {
+    // https://gpuweb.github.io/gpuweb/#texture-format-caps
+    case WGPUTextureFormat_R8Unorm:
+    case WGPUTextureFormat_RG8Unorm:
+    case WGPUTextureFormat_RGBA8Unorm:
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WGPUTextureFormat_BGRA8Unorm:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_RG16Float:
+    case WGPUTextureFormat_RGBA16Float:
+    case WGPUTextureFormat_RGB10A2Unorm:
+        return true;
+    case WGPUTextureFormat_RG11B10Ufloat:
+        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
+    case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_R8Uint:
+    case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RG8Uint:
+    case WGPUTextureFormat_RG8Sint:
+    case WGPUTextureFormat_R32Float:
+    case WGPUTextureFormat_RG16Uint:
+    case WGPUTextureFormat_RG16Sint:
+    case WGPUTextureFormat_RGBA8Snorm:
+    case WGPUTextureFormat_RGBA8Uint:
+    case WGPUTextureFormat_RGBA8Sint:
+    case WGPUTextureFormat_RGB10A2Uint:
+    case WGPUTextureFormat_RGBA16Uint:
+    case WGPUTextureFormat_RGBA16Sint:
+    case WGPUTextureFormat_Stencil8:
+    case WGPUTextureFormat_Depth16Unorm:
+    case WGPUTextureFormat_Depth24Plus:
+    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WGPUTextureFormat_Depth32Float:
+    case WGPUTextureFormat_Depth32FloatStencil8:
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
     case WGPUTextureFormat_RG32Float:
@@ -1311,10 +1420,10 @@ NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& de
         if ((descriptor.usage & WGPUTextureUsage_StorageBinding) || !(descriptor.usage & WGPUTextureUsage_RenderAttachment))
             return @"createTexture: descriptor.sampleCount > 1 and (descriptor.usage & WGPUTextureUsage_StorageBinding) || !(descriptor.usage & WGPUTextureUsage_RenderAttachment)";
 
-        if (!isRenderableFormat(descriptor.format, *this))
+        if (!Texture::isRenderableFormat(descriptor.format, *this))
             return @"createTexture: descriptor.sampleCount > 1 and !isRenderableFormat(descriptor.format, *this)";
 
-        if (!supportsMultisampling(descriptor.format, *this))
+        if (!Texture::supportsMultisampling(descriptor.format, *this))
             return @"createTexture: descriptor.sampleCount > 1 and !supportsMultisampling(descriptor.format, *this)";
     }
 
@@ -1322,7 +1431,7 @@ NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& de
         return @"createTexture: descriptor.mipLevelCount > maximumMiplevelCount(descriptor.dimension, descriptor.size)";
 
     if (descriptor.usage & WGPUTextureUsage_RenderAttachment) {
-        if (!isRenderableFormat(descriptor.format, *this))
+        if (!Texture::isRenderableFormat(descriptor.format, *this))
             return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && !isRenderableFormat(descriptor.format, *this)";
 
         if (descriptor.dimension == WGPUTextureDimension_1D)

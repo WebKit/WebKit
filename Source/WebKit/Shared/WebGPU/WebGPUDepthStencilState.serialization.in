@@ -24,8 +24,8 @@
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::DepthStencilState {
     WebCore::WebGPU::TextureFormat format;
 
-    bool depthWriteEnabled;
-    WebCore::WebGPU::CompareFunction depthCompare;
+    std::optional<bool> depthWriteEnabled;
+    std::optional<WebCore::WebGPU::CompareFunction> depthCompare;
 
     WebKit::WebGPU::StencilFaceState stencilFront;
     WebKit::WebGPU::StencilFaceState stencilBack;
