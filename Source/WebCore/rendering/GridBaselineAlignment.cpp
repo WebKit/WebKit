@@ -106,7 +106,7 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
         if (baseline == noValidBaseline) {
             ASSERT(!child.needsLayout());
             if (isVerticalAlignmentContext(alignmentAxis))
-                return isFlippedWritingMode(m_blockFlow) ? child.size().width().toInt() + margin : margin;
+                return isFlippedWritingMode(m_writingMode) ? child.size().width().toInt() + margin : margin;
             return child.size().height() + margin;
         }
     }
@@ -125,18 +125,18 @@ LayoutUnit GridBaselineAlignment::descentForChild(const RenderBox& child, Layout
 bool GridBaselineAlignment::isDescentBaselineForChild(const RenderBox& child, GridAxis alignmentAxis) const
 {
     return isVerticalAlignmentContext(alignmentAxis)
-        && ((child.style().isFlippedBlocksWritingMode() && !isFlippedWritingMode(m_blockFlow))
-            || (child.style().isFlippedLinesWritingMode() && isFlippedWritingMode(m_blockFlow)));
+        && ((child.style().isFlippedBlocksWritingMode() && !isFlippedWritingMode(m_writingMode))
+            || (child.style().isFlippedLinesWritingMode() && isFlippedWritingMode(m_writingMode)));
 }
 
 bool GridBaselineAlignment::isVerticalAlignmentContext(GridAxis alignmentAxis) const
 {
-    return alignmentAxis == GridAxis::GridRowAxis ? isHorizontalWritingMode(m_blockFlow) : !isHorizontalWritingMode(m_blockFlow);
+    return alignmentAxis == GridAxis::GridRowAxis ? isHorizontalWritingMode(m_writingMode) : !isHorizontalWritingMode(m_writingMode);
 }
 
 bool GridBaselineAlignment::isOrthogonalChildForBaseline(const RenderBox& child) const
 {
-    return isHorizontalWritingMode(m_blockFlow) != child.isHorizontalWritingMode();
+    return isHorizontalWritingMode(m_writingMode) != child.isHorizontalWritingMode();
 }
 
 bool GridBaselineAlignment::isParallelToAlignmentAxisForChild(const RenderBox& child, GridAxis alignmentAxis) const
