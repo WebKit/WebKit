@@ -2057,20 +2057,68 @@ JSC_DEFINE_JIT_OPERATION(operationLinkCall, UGPRPair, (CallFrame* calleeFrame, J
 
 JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
-    sanitizeStackForVM(globalObject->vm());
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
     ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
     UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
 
-    linkPolymorphicCall(globalObject, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
-    
+    CallFrame* callerFrame = calleeFrame->callerFrame();
+    JSCell* owner = callerFrame->codeOwnerCell();
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
     return result;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForRegularCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+{
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
+    JSCell* calleeAsFunctionCell;
+    CallFrame* callFrame = calleeFrame->callerFrame();
+    NativeCallFrameTracer tracer(vm, callFrame);
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
+    auto span = stub->trailingSpan();
+    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
+    size_t first;
+    size_t second;
+    decodeResult(result, first, second);
+    return first;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForTailCall, UCPURegister, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
+{
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
+    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
+    JSCell* calleeAsFunctionCell;
+    EntryFrame* topEntryFrame = vm.topEntryFrame;
+    CallFrame* callFrame = calleeFrame->callerFrame(topEntryFrame);
+    NativeCallFrameTracerForTailCall tracer(vm, callFrame);
+    UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
+
+    PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
+    auto span = stub->trailingSpan();
+    JSCell* owner = span[std::size(span) - 1].m_codeBlock;
+    linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
+    size_t first;
+    size_t second;
+    decodeResult(result, first, second);
+    return first;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationVirtualCall, UGPRPair, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))
 {
-    sanitizeStackForVM(globalObject->vm());
+    VM& vm = globalObject->vm();
+    sanitizeStackForVM(vm);
     JSCell* calleeAsFunctionCellIgnored;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
     return virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 

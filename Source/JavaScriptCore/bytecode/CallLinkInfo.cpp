@@ -337,39 +337,41 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
     CCallHelpers::JumpList slowPath;
 
     if (useDataIC == UseDataIC::Yes) {
-        CCallHelpers::Jump goPolymorphic;
-
         // For RISCV64, scratch register usage here collides with MacroAssembler's internal usage
         // that's necessary for the test-and-branch operation but is avoidable by loading from the callee
         // address for each branch operation. Other MacroAssembler implementations handle this better by
         // using a wider range of scratch registers or more potent branching instructions.
+        CCallHelpers::Jump found;
         if constexpr (isRISCV64()) {
             CCallHelpers::Address calleeAddress(callLinkInfoGPR, offsetOfCallee());
-            goPolymorphic = jit.branchTestPtr(CCallHelpers::NonZero, calleeAddress, CCallHelpers::TrustedImm32(polymorphicCalleeMask));
-            slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, calleeAddress, calleeGPR));
+            found = jit.branchPtr(CCallHelpers::Equal, calleeAddress, calleeGPR);
+            slowPath.append(jit.branchTestPtr(CCallHelpers::Zero, calleeAddress, CCallHelpers::TrustedImm32(polymorphicCalleeMask)));
+            jit.loadPtr(calleeAddress, GPRInfo::regT3);
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::regT3, CodeBlock::offsetOfGlobalObject() - polymorphicCalleeMask), GPRInfo::regT3);
         } else {
             GPRReg scratchGPR = jit.scratchRegister();
             DisallowMacroScratchRegisterUsage disallowScratch(jit);
             jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCallee()), scratchGPR);
-            goPolymorphic = jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR, CCallHelpers::TrustedImm32(polymorphicCalleeMask));
-            slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, calleeGPR));
+            found = jit.branchPtr(CCallHelpers::Equal, scratchGPR, calleeGPR);
+            slowPath.append(jit.branchTestPtr(CCallHelpers::Zero, scratchGPR, CCallHelpers::TrustedImm32(polymorphicCalleeMask)));
+            jit.loadPtr(CCallHelpers::Address(scratchGPR, CodeBlock::offsetOfGlobalObject() - polymorphicCalleeMask), GPRInfo::regT3);
         }
 
         if (isTailCall) {
+            found.link(&jit);
             prepareForTailCall();
 
             GPRReg scratchGPR = CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR);
             jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), scratchGPR);
             jit.storePtr(scratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
 
-            goPolymorphic.link(&jit); // Polymorphic stub handles tail call stack prep.
             jit.farJump(CCallHelpers::Address(callLinkInfoGPR, offsetOfMonomorphicCallDestination()), JSEntryPtrTag);
         } else {
+            found.link(&jit);
             GPRReg scratchGPR = CCallHelpers::selectScratchGPR(calleeGPR, callLinkInfoGPR);
             jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCodeBlock()), scratchGPR);
             jit.storePtr(scratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeCall());
 
-            goPolymorphic.link(&jit);
             jit.call(CCallHelpers::Address(callLinkInfoGPR, offsetOfMonomorphicCallDestination()), JSEntryPtrTag);
         }
     } else {
@@ -410,7 +412,7 @@ MacroAssembler::JumpList CallLinkInfo::emitTailCallDataICFastPath(CCallHelpers& 
     return emitFastPathImpl(nullptr, jit, calleeGPR, callLinkInfoGPR, UseDataIC::Yes, true, WTFMove(prepareForTailCall));
 }
 
-void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
+void CallLinkInfo::setStub(JSCell* owner, Ref<PolymorphicCallStubRoutine>&& newStub)
 {
     clearStub();
     m_stub = WTFMove(newStub);
@@ -418,7 +420,7 @@ void CallLinkInfo::setStub(Ref<PolymorphicCallStubRoutine>&& newStub)
     m_calleeOrCodeBlock.clear();
 
     if (isDataIC()) {
-        *bitwise_cast<uintptr_t*>(m_calleeOrCodeBlock.slot()) = polymorphicCalleeMask;
+        *bitwise_cast<uintptr_t*>(m_calleeOrCodeBlock.slot()) = (bitwise_cast<uintptr_t>(owner) | polymorphicCalleeMask);
         u.dataIC.m_codeBlock = nullptr; // PolymorphicCallStubRoutine will set CodeBlock inside it.
         u.dataIC.m_monomorphicCallDestination = m_stub->code().code().retagged<JSEntryPtrTag>();
     } else {
