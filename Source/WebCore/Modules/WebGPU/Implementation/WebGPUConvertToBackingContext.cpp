@@ -712,18 +712,17 @@ WGPUBufferUsageFlags ConvertToBackingContext::convertBufferUsageFlagsToBacking(B
     return static_cast<WGPUBufferUsageFlags>(bufferUsageFlags);
 }
 
+static constexpr bool compare(auto a, auto b)
+{
+    return static_cast<unsigned>(a) == static_cast<unsigned>(b);
+}
 WGPUColorWriteMaskFlags ConvertToBackingContext::convertColorWriteFlagsToBacking(ColorWriteFlags colorWriteFlags)
 {
-    WGPUColorWriteMaskFlags result = 0;
-    if (colorWriteFlags.contains(ColorWrite::Red))
-        result |= WGPUColorWriteMask_Red;
-    if (colorWriteFlags.contains(ColorWrite::Green))
-        result |= WGPUColorWriteMask_Green;
-    if (colorWriteFlags.contains(ColorWrite::Blue))
-        result |= WGPUColorWriteMask_Blue;
-    if (colorWriteFlags.contains(ColorWrite::Alpha))
-        result |= WGPUColorWriteMask_Alpha;
-    return result;
+    static_assert(compare(ColorWrite::Red, WGPUColorWriteMask_Red), "color masks have different values");
+    static_assert(compare(ColorWrite::Green, WGPUColorWriteMask_Green), "color masks have different values");
+    static_assert(compare(ColorWrite::Blue, WGPUColorWriteMask_Blue), "color masks have different values");
+    static_assert(compare(ColorWrite::Alpha, WGPUColorWriteMask_Alpha), "color masks have different values");
+    return static_cast<WGPUColorWriteMaskFlags>(colorWriteFlags);
 }
 
 WGPUMapModeFlags ConvertToBackingContext::convertMapModeFlagsToBacking(MapModeFlags mapModeFlags)

@@ -38,8 +38,9 @@ enum class ColorWrite : uint8_t {
     Green = 1 << 1,
     Blue  = 1 << 2,
     Alpha = 1 << 3,
-    All   = Red | Green | Blue | Alpha,
+    All = Red | Green | Blue | Alpha
 };
-using ColorWriteFlags = OptionSet<ColorWrite>;
+using ColorWriteFlags = uint32_t;
+static constexpr ColorWriteFlags ColorWriteFlags_All = static_cast<ColorWriteFlags>(ColorWrite::All);
 
 } // namespace WebCore::WebGPU

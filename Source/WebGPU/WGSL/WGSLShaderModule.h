@@ -108,6 +108,9 @@ public:
     bool usesSign() const { return m_usesSign; }
     void setUsesSign() { m_usesSign = true; }
 
+    bool usesSampleMask() const { return m_usesSampleMask; }
+    void setUsesSampleMask() { m_usesSampleMask = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -268,6 +271,7 @@ private:
     bool m_usesFirstLeadingBit { false };
     bool m_usesFirstTrailingBit { false };
     bool m_usesSign { false };
+    bool m_usesSampleMask { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
