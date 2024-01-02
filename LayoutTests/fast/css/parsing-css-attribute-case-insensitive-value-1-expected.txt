@@ -53,11 +53,11 @@ PASS document.querySelector(":matches(foo, [foo=bar i], bar)") did not throw exc
 PASS document.querySelector(":matches(foo, [*|foo=bar i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo=bar i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo=bar i])") did not throw exception.
 PASS document.querySelector(":not([*|foo=bar i])") did not throw exception.
 PASS document.querySelector(":not([|foo=bar i])") did not throw exception.
@@ -116,11 +116,11 @@ PASS document.querySelector(":matches(foo, [foo=\"bar\" i], bar)") did not throw
 PASS document.querySelector(":matches(foo, [*|foo=\"bar\" i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo=\"bar\" i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([*|foo=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([|foo=\"bar\" i])") did not throw exception.
@@ -179,11 +179,11 @@ PASS document.querySelector(":matches(foo, [foo~=bar i], bar)") did not throw ex
 PASS document.querySelector(":matches(foo, [*|foo~=bar i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo~=bar i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo~=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo~=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo~=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo~=bar i])") did not throw exception.
 PASS document.querySelector(":not([*|foo~=bar i])") did not throw exception.
 PASS document.querySelector(":not([|foo~=bar i])") did not throw exception.
@@ -242,11 +242,11 @@ PASS document.querySelector(":matches(foo, [foo~=\"bar\" i], bar)") did not thro
 PASS document.querySelector(":matches(foo, [*|foo~=\"bar\" i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo~=\"bar\" i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo~=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo~=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo~=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo~=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo~=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([*|foo~=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([|foo~=\"bar\" i])") did not throw exception.
@@ -305,11 +305,11 @@ PASS document.querySelector(":matches(foo, [foo|=bar i], bar)") did not throw ex
 PASS document.querySelector(":matches(foo, [*|foo|=bar i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo|=bar i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo|=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo|=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo|=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo|=bar i])") did not throw exception.
 PASS document.querySelector(":not([*|foo|=bar i])") did not throw exception.
 PASS document.querySelector(":not([|foo|=bar i])") did not throw exception.
@@ -368,11 +368,11 @@ PASS document.querySelector(":matches(foo, [foo|=\"bar\" i], bar)") did not thro
 PASS document.querySelector(":matches(foo, [*|foo|=\"bar\" i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo|=\"bar\" i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo|=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo|=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo|=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo|=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo|=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([*|foo|=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([|foo|=\"bar\" i])") did not throw exception.
@@ -431,11 +431,11 @@ PASS document.querySelector(":matches(foo, [foo^=bar i], bar)") did not throw ex
 PASS document.querySelector(":matches(foo, [*|foo^=bar i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo^=bar i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo^=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo^=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo^=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo^=bar i])") did not throw exception.
 PASS document.querySelector(":not([*|foo^=bar i])") did not throw exception.
 PASS document.querySelector(":not([|foo^=bar i])") did not throw exception.
@@ -494,11 +494,11 @@ PASS document.querySelector(":matches(foo, [foo^=\"bar\" i], bar)") did not thro
 PASS document.querySelector(":matches(foo, [*|foo^=\"bar\" i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo^=\"bar\" i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo^=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo^=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo^=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo^=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo^=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([*|foo^=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([|foo^=\"bar\" i])") did not throw exception.
@@ -557,11 +557,11 @@ PASS document.querySelector(":matches(foo, [foo$=bar i], bar)") did not throw ex
 PASS document.querySelector(":matches(foo, [*|foo$=bar i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo$=bar i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo$=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo$=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo$=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo$=bar i])") did not throw exception.
 PASS document.querySelector(":not([*|foo$=bar i])") did not throw exception.
 PASS document.querySelector(":not([|foo$=bar i])") did not throw exception.
@@ -620,11 +620,11 @@ PASS document.querySelector(":matches(foo, [foo$=\"bar\" i], bar)") did not thro
 PASS document.querySelector(":matches(foo, [*|foo$=\"bar\" i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo$=\"bar\" i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo$=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo$=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo$=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo$=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo$=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([*|foo$=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([|foo$=\"bar\" i])") did not throw exception.
@@ -683,11 +683,11 @@ PASS document.querySelector(":matches(foo, [foo*=bar i], bar)") did not throw ex
 PASS document.querySelector(":matches(foo, [*|foo*=bar i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo*=bar i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo*=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo*=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo*=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo*=bar i])") did not throw exception.
 PASS document.querySelector(":not([*|foo*=bar i])") did not throw exception.
 PASS document.querySelector(":not([|foo*=bar i])") did not throw exception.
@@ -746,11 +746,11 @@ PASS document.querySelector(":matches(foo, [foo*=\"bar\" i], bar)") did not thro
 PASS document.querySelector(":matches(foo, [*|foo*=\"bar\" i], bar)") did not throw exception.
 PASS document.querySelector(":matches(foo, [|foo*=\"bar\" i], bar)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo*=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [foo*=\"bar\" i], bar)"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, [*|foo*=\"bar\" i], bar)"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":is(foo, [*|foo*=\"bar\" i], bar)"
 PASS document.querySelector(":not([foo*=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([*|foo*=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":not([|foo*=\"bar\" i])") did not throw exception.

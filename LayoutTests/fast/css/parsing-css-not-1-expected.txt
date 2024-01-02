@@ -66,10 +66,10 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:is(.notclass))"
 PASS document.querySelector(":not(.class:matches(.notclass))") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:matches(.notclass))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:is(.notclass))"
 PASS document.querySelector(":not(.class:matches(.notclass)    )") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:matches(.notclass))"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(.class:is(.notclass))"
 PASS document.querySelector(":not(#id:empty)") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(#id:empty)"

@@ -3,17 +3,13 @@
         "-internal-html-document": {
             "status": "internal"
         },
-        "-webkit-any": {
-            "comment": "Alias of :is(). (FIXME: Actually define this as an alias)",
-            "status": "non-standard"
-        },
-        "-webkit-any-link": {
-            "comment": "Alias of :any-link. (FIXME: Actually define this as an alias)",
-            "status": "non-standard"
-        },
         "-webkit-animating-full-screen-transition": {
             "comment": "For UA stylesheet use.",
             "condition": "ENABLE(FULLSCREEN_API)",
+            "status": "non-standard"
+        },
+        "-webkit-any": {
+            "comment": "Alias of :is() with different specificity rules.",
             "status": "non-standard"
         },
         "-webkit-autofill-and-obscured": {
@@ -31,7 +27,9 @@
         "-webkit-drag": {
             "aliases": [
                 "-khtml-drag"
-            ]
+            ],
+            "comment": "Currently has no standard equivalent.",
+            "status": "non-standard"
         },
         "-webkit-full-page-media": {
             "comment": "For UA stylesheet use.",
@@ -53,7 +51,11 @@
             "status": "non-standard"
         },
         "active": {},
-        "any-link": {},
+        "any-link": {
+            "aliases": [
+                "-webkit-any-link"
+            ]
+        },
         "autofill": {
             "aliases": [
                 "-webkit-autofill"
@@ -116,15 +118,15 @@
         },
         "indeterminate": {},
         "invalid": {},
-        "is": {},
+        "is": {
+            "aliases": [
+                "matches"
+            ]
+        },
         "lang": {},
         "last-child": {},
         "last-of-type": {},
         "link": {},
-        "matches": {
-            "comment": "Alias of :is(). (FIXME: Actually define this as an alias)",
-            "status": "non-standard"
-        },
         "modal": {},
         "muted": {
             "condition": "ENABLE(VIDEO)"
@@ -239,6 +241,12 @@
         "cue": {
             "condition": "ENABLE(VIDEO)"
         },
+        "file-selector-button": {
+            "aliases": [
+                "-webkit-file-upload-button"
+            ],
+            "shadow": true
+        },
         "first-letter": {
             "supports-single-colon-for-compatibility": true
         },
@@ -249,12 +257,6 @@
         "highlight": {},
         "marker": {},
         "part": {},
-        "file-selector-button": {
-            "aliases": [
-                "-webkit-file-upload-button"
-            ],
-            "shadow": true
-        },
         "placeholder": {
             "aliases": [
                 "-webkit-input-placeholder"

@@ -119,7 +119,6 @@ struct PossiblyQuotedIdentifier {
             Visited,
             WebKitAny,
             AnyLink,
-            WebKitAnyLink,
             Autofill,
             WebKitAutofillAndObscured,
             WebKitAutofillStrongPassword,
@@ -137,7 +136,6 @@ struct PossiblyQuotedIdentifier {
             Disabled,
             InternalHTMLDocument, // for internal use in html.css
             Is,
-            Matches, // obsolete synonym for PseudoClassIs
             Where,
             Optional,
             PlaceholderShown,
@@ -421,9 +419,8 @@ inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClass pseudoClass
     switch (pseudoClass) {
     case CSSSelector::PseudoClass::Is:
     case CSSSelector::PseudoClass::Where:
-    case CSSSelector::PseudoClass::Not:
     case CSSSelector::PseudoClass::WebKitAny:
-    case CSSSelector::PseudoClass::Matches:
+    case CSSSelector::PseudoClass::Not:
     case CSSSelector::PseudoClass::Has:
         return true;
     default:

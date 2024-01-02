@@ -137,7 +137,6 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
     auto pseudoType = selector->pseudoClass();
     return pseudoType == CSSSelector::PseudoClass::Link
         || pseudoType == CSSSelector::PseudoClass::AnyLink
-        || pseudoType == CSSSelector::PseudoClass::WebKitAnyLink
         || pseudoType == CSSSelector::PseudoClass::Visited
         || pseudoType == CSSSelector::PseudoClass::Focus;
 }

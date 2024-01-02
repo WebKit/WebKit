@@ -848,7 +848,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         case CSSSelector::PseudoClass::Is:
         case CSSSelector::PseudoClass::Where:
-        case CSSSelector::PseudoClass::Matches:
         case CSSSelector::PseudoClass::WebKitAny:
             {
                 bool hasMatchedAnything = false;
@@ -979,7 +978,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClass::WebKitAutofillStrongPasswordViewable:
             return isAutofilledStrongPasswordViewable(element);
         case CSSSelector::PseudoClass::AnyLink:
-        case CSSSelector::PseudoClass::WebKitAnyLink:
         case CSSSelector::PseudoClass::Link:
             // :visited and :link matches are separated later when applying the style. Here both classes match all links...
             return element.isLink();

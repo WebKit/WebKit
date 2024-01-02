@@ -1226,9 +1226,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Root:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClass::WebKitAnyLink:
-        fragment.pseudoClasses.add(CSSSelector::PseudoClass::AnyLink);
-        return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClass::Visited:
         // Determine this :visited cannot match anything statically.
@@ -1324,7 +1321,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClass::Is:
     case CSSSelector::PseudoClass::Where:
-    case CSSSelector::PseudoClass::Matches:
     case CSSSelector::PseudoClass::WebKitAny:
         {
             SelectorList matchesList;
