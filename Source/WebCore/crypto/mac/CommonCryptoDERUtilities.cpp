@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CommonCryptoDERUtilities.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 size_t bytesUsedToEncodedLength(uint8_t octet)
@@ -73,5 +71,3 @@ size_t bytesNeededForEncodedLength(size_t length)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

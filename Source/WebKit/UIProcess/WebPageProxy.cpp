@@ -10969,7 +10969,6 @@ void WebPageProxy::setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOver
         send(Messages::WebPage::SetScrollbarOverlayStyle(scrollbarStyleForMessage), internals().webPageID);
 }
 
-#if ENABLE(WEB_CRYPTO)
 void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
 {
     PageClientProtector protector(pageClient());
@@ -10997,7 +10996,6 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Completion
     bool succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
     completionHandler(succeeded, WTFMove(key));
 }
-#endif
 
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
 {

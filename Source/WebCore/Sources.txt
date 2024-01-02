@@ -950,6 +950,7 @@ css/calc/CSSCalcValue.cpp
 css/color/CSSResolvedColorMix.cpp
 css/color/CSSUnresolvedColor.cpp
 css/color/CSSUnresolvedColorMix.cpp
+css/color/CSSUnresolvedLightDark.cpp
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSCustomPropertySyntax.cpp
 css/parser/CSSParser.cpp

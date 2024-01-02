@@ -26,8 +26,6 @@
 #import "config.h"
 #import "SerializedCryptoKeyWrap.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #import "CommonCryptoUtilities.h"
 #import "LocalizedStrings.h"
 #import <CommonCrypto/CommonSymmetricKeywrap.h>
@@ -319,6 +317,4 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return true;
 }
 
-}
-
-#endif // ENABLE(WEB_CRYPTO)
+} // namespace WebCore

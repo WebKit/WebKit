@@ -159,7 +159,6 @@ my (
     $webAudioSupport,
     $webAuthNSupport,
     $webCodecsSupport,
-    $webCryptoSupport,
     $webRTCSupport,
     $webdriverKeyboardInteractionsSupport,
     $webdriverMouseInteractionsSupport,
@@ -475,9 +474,6 @@ my @features = (
 
     { option => "web-authn", desc => "Toggle Web AuthN support",
       define => "ENABLE_WEB_AUTHN", value => \$webAuthNSupport },
-
-    { option => "web-crypto", desc => "Toggle WebCrypto Subtle-Crypto support",
-      define => "ENABLE_WEB_CRYPTO", value => \$webCryptoSupport },
 
     { option => "web-codecs", desc => "Toggle WebCodecs support",
       define => "ENABLE_WEB_CODECS", value => \$webCodecsSupport },

@@ -27,8 +27,6 @@
 
 #include "CryptoKey.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoKeyRaw final : public CryptoKey {
@@ -53,5 +51,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyRaw, CryptoKeyClass::Raw)
-
-#endif // ENABLE(WEB_CRYPTO)

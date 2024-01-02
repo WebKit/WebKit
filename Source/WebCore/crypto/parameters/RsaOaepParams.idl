@@ -24,7 +24,6 @@
 */
 
 [
-    Conditional=WEB_CRYPTO,
     ImplementedAs=CryptoAlgorithmRsaOaepParams
 ] dictionary RsaOaepParams : CryptoAlgorithmParameters {
     // The optional label/application data to associate with the message

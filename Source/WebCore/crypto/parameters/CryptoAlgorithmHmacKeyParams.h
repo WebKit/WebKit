@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmParameters.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
@@ -57,5 +55,3 @@ public:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacKeyParams)
-
-#endif // ENABLE(WEB_CRYPTO)

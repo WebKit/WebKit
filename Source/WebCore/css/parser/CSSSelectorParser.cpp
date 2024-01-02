@@ -711,15 +711,14 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClass pseudoClass)
     switch (pseudoClass) {
     case CSSSelector::PseudoClass::Not:
     case CSSSelector::PseudoClass::Is:
-    case CSSSelector::PseudoClass::Matches:
     case CSSSelector::PseudoClass::Where:
+    case CSSSelector::PseudoClass::WebKitAny:
     case CSSSelector::PseudoClass::Has:
     case CSSSelector::PseudoClass::NthChild:
     case CSSSelector::PseudoClass::NthLastChild:
     case CSSSelector::PseudoClass::NthOfType:
     case CSSSelector::PseudoClass::NthLastOfType:
     case CSSSelector::PseudoClass::Lang:
-    case CSSSelector::PseudoClass::WebKitAny:
     case CSSSelector::PseudoClass::Dir:
     case CSSSelector::PseudoClass::State:
         return true;
@@ -861,7 +860,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         }
         case CSSSelector::PseudoClass::Is:
         case CSSSelector::PseudoClass::Where:
-        case CSSSelector::PseudoClass::Matches:
         case CSSSelector::PseudoClass::WebKitAny: {
             SetForScope resistDefaultNamespace(m_resistDefaultNamespace, true);
             auto selectorList = makeUnique<CSSSelectorList>();

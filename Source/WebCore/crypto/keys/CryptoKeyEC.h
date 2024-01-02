@@ -29,8 +29,6 @@
 #include "CryptoKeyPair.h"
 #include "ExceptionOr.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include "CommonCryptoUtilities.h"
 
@@ -118,5 +116,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyEC, CryptoKeyClass::EC)
-
-#endif // ENABLE(WEB_CRYPTO)

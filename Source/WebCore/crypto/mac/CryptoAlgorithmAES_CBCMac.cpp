@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_CBC.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoKeyAES.h"
 #include <CommonCrypto/CommonCrypto.h>
@@ -96,5 +94,3 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const Crypt
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

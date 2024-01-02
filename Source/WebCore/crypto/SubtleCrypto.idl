@@ -28,7 +28,6 @@ enum KeyFormat { "raw", "spki", "pkcs8", "jwk" };
 typedef (object or DOMString) AlgorithmIdentifier;
 
 [
-    Conditional=WEB_CRYPTO,
     Exposed=(Window,Worker),
     GenerateIsReachable=ImplScriptExecutionContext,
     SecureContext,

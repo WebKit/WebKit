@@ -31,4 +31,5 @@
 interface GPUInternalError {
     constructor(DOMString message);
     readonly attribute DOMString message;
+    readonly attribute DOMString stack;
 };

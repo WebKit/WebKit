@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "ContextDestructionObserver.h"
 #include "CryptoKeyFormat.h"
 #include <JavaScriptCore/Strong.h>
@@ -50,7 +48,7 @@ class BufferSource;
 class CryptoKey;
 class DeferredPromise;
 
-enum class CryptoAlgorithmIdentifier;
+enum class CryptoAlgorithmIdentifier : uint8_t;
 enum class CryptoKeyUsage;
 
 class SubtleCrypto : public ContextDestructionObserver, public RefCounted<SubtleCrypto>, public CanMakeWeakPtr<SubtleCrypto> {
@@ -86,6 +84,4 @@ private:
     HashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
 };
 
-}
-
-#endif
+} // namespace WebCore

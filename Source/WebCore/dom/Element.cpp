@@ -2372,7 +2372,6 @@ void Element::setIsLink(bool flag)
         return;
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
         { CSSSelector::PseudoClass::AnyLink, flag },
-        { CSSSelector::PseudoClass::WebKitAnyLink, flag },
         { CSSSelector::PseudoClass::Link, flag }
     });
     setStateFlag(StateFlag::IsLink, flag);

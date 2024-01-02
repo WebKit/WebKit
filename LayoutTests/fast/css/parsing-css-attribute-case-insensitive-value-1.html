@@ -54,7 +54,7 @@ for (var testCase of simpleValidSelectors) {
     testValidSelector(":nth-child(2n+1 of " + testCase[0] + ")", ":nth-child(2n+1 of " + testCase[1] + ")");
     testValidSelector(":nth-last-child(2n+1 of " + testCase[0] + ")", ":nth-last-child(2n+1 of " + testCase[1] + ")");
     testValidSelector(":is(foo, " + testCase[0] + ", bar)", ":is(foo, " + testCase[1] + ", bar)");
-    testValidSelector(":matches(foo, " + testCase[0] + ", bar)", ":matches(foo, " + testCase[1] + ", bar)");
+    testValidSelector(":matches(foo, " + testCase[0] + ", bar)", ":is(foo, " + testCase[1] + ", bar)");
     testValidSelector(":not(" + testCase[0] + ")", ":not(" + testCase[1] + ")");
 }
 </script>

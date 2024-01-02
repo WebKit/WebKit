@@ -25,8 +25,6 @@
 #include <JavaScriptCore/Strong.h>
 #include <variant>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoAlgorithmX25519Params final : public CryptoAlgorithmParameters {
@@ -38,5 +36,3 @@ public:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(X25519Params)
-
-#endif // ENABLE(WEB_CRYPTO)

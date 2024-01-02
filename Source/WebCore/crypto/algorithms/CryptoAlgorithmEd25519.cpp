@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmEd25519.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyOKP.h"
 #include "NotImplemented.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -195,4 +193,3 @@ void CryptoAlgorithmEd25519::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
 }
 
 } // namespace WebCore
-#endif // ENABLE(WEB_CRYPTO)

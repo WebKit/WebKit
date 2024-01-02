@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmAES_KW.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
 #include <variant>
@@ -184,6 +182,4 @@ ExceptionOr<size_t> CryptoAlgorithmAES_KW::getKeyLength(const CryptoAlgorithmPar
     return CryptoKeyAES::getKeyLength(parameters);
 }
 
-}
-
-#endif // ENABLE(WEB_CRYPTO)
+} // namespace WebCore

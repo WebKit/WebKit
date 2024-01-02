@@ -16,7 +16,7 @@ layer at (58,258) size 100x100
   RenderSVGEllipse {circle} at (50,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=100.00] [cy=100.00] [r=50.00]
 layer at (8,208) size 200x200 scrollWidth 208 scrollHeight 208
   RenderSVGForeignObject {foreignObject} at (0,0) size 200x200
-layer at (16,216) size 200x200 backgroundClip at (8,208) size 200x200 clip at (8,208) size 200x200
+layer at (16,216) size 200x200 backgroundClip at (0,208) size 149.42x282.83 clip at (0,208) size 149.42x282.83
   RenderBlock (positioned) {div} at (8,8) size 200x200 [bgcolor=#FFFFFF]
     RenderText {#text} at (0,0) size 194x54
       text run at (0,0) width 194: "There should be a green circle"

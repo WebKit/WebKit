@@ -1157,7 +1157,11 @@ typedef struct WGPUComputePassDescriptor {
 typedef struct WGPUDepthStencilState {
     WGPUChainedStruct const * nextInChain;
     WGPUTextureFormat format;
+#ifdef __cplusplus
+    std::optional<WGPUBool> depthWriteEnabled;
+#else
     WGPUBool depthWriteEnabled;
+#endif
     WGPUCompareFunction depthCompare;
     WGPUStencilFaceState stencilFront;
     WGPUStencilFaceState stencilBack;
