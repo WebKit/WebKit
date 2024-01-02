@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoKeyEC.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "JsonWebKey.h"
 #include "OpenSSLUtilities.h"
 #include <wtf/text/Base64.h>
@@ -460,5 +458,3 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

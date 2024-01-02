@@ -185,9 +185,7 @@ enum SerializationTag {
     MapObjectTag = 30,
     NonMapPropertiesTag = 31,
     NonSetPropertiesTag = 32,
-#if ENABLE(WEB_CRYPTO)
     CryptoKeyTag = 33,
-#endif
     SharedArrayBufferTag = 34,
 #if ENABLE(WEBASSEMBLY)
     WasmModuleTag = 35,
@@ -301,9 +299,7 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     case FileListTag:
     case ImageDataTag:
     case BlobTag:
-#if ENABLE(WEB_CRYPTO)
     case CryptoKeyTag:
-#endif
     case DOMPointReadOnlyTag:
     case DOMPointTag:
     case DOMRectReadOnlyTag:
@@ -444,8 +440,6 @@ static String agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
 }
 #endif
 
-#if ENABLE(WEB_CRYPTO)
-
 const uint32_t currentKeyFormatVersion = 1;
 
 enum class CryptoKeyClassSubtag {
@@ -519,8 +513,6 @@ enum class CryptoKeyOKPOpNameTag {
 };
 const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
 
-
-#endif
 
 /* CurrentVersion tracks the serialization version so that persistent stores
  * are able to correctly bail out in the case of encountering newer formats.
@@ -756,7 +748,6 @@ protected:
     MarkedArgumentBuffer m_gcBuffer;
 };
 
-#if ENABLE(WEB_CRYPTO)
 static bool wrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
     auto context = executionContext(lexicalGlobalObject);
@@ -768,7 +759,6 @@ static bool unwrapCryptoKey(JSGlobalObject* lexicalGlobalObject, const Vector<ui
     auto context = executionContext(lexicalGlobalObject);
     return context && context->unwrapCryptoKey(wrappedKey, key);
 }
-#endif
 
 #if ASSUME_LITTLE_ENDIAN
 template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
@@ -1725,7 +1715,6 @@ private:
                 recordObject(obj);
                 return success;
             }
-#if ENABLE(WEB_CRYPTO)
             if (auto* key = JSCryptoKey::toWrapped(vm, obj)) {
                 write(CryptoKeyTag);
                 Vector<uint8_t> serializedKey;
@@ -1774,7 +1763,6 @@ private:
                 write(wrappedKey);
                 return true;
             }
-#endif
 #if ENABLE(WEB_RTC)
             if (auto* rtcCertificate = JSRTCCertificate::toWrapped(vm, obj)) {
                 write(RTCCertificateTag);
@@ -1907,7 +1895,6 @@ private:
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
 
-#if ENABLE(WEB_CRYPTO)
     void write(CryptoKeyClassSubtag tag)
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
@@ -1932,7 +1919,6 @@ private:
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
-#endif
 
     void write(bool b)
     {
@@ -2143,7 +2129,6 @@ private:
         write(DestinationColorSpaceSRGBTag);
     }
 
-#if ENABLE(WEB_CRYPTO)
     void write(CryptoKeyOKP::NamedCurve curve)
     {
         switch (curve) {
@@ -2348,7 +2333,6 @@ private:
             break;
         }
     }
-#endif
 
     void write(const uint8_t* data, unsigned length)
     {
@@ -3406,7 +3390,6 @@ private:
         return false;
     }
 
-#if ENABLE(WEB_CRYPTO)
     bool read(CryptoKeyOKP::NamedCurve& result)
     {
         uint8_t nameTag;
@@ -3778,7 +3761,6 @@ private:
         cryptoKey = getJSValue(result.get());
         return true;
     }
-#endif
 
     bool read(SerializableErrorType& errorType)
     {
@@ -4663,7 +4645,6 @@ private:
             m_gcBuffer.appendWithCrashOnOverflow(arrayBufferView);
             return arrayBufferView;
         }
-#if ENABLE(WEB_CRYPTO)
         case CryptoKeyTag: {
             Vector<uint8_t> wrappedKey;
             if (!read(wrappedKey)) {
@@ -4685,7 +4666,6 @@ private:
             m_gcBuffer.appendWithCrashOnOverflow(cryptoKey);
             return cryptoKey;
         }
-#endif
         case DOMPointReadOnlyTag:
             return readDOMPoint<DOMPointReadOnly>();
         case DOMPointTag:

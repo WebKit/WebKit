@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithm.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -118,6 +116,4 @@ void CryptoAlgorithm::dispatchOperationInWorkQueue(WorkQueue& workQueue, ScriptE
     dispatchAlgorithmOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback), WTFMove(operation));
 }
 
-}
-
-#endif
+} // namespace WebCore

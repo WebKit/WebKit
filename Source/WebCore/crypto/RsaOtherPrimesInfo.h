@@ -27,8 +27,6 @@
 
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 struct RsaOtherPrimesInfo {
@@ -38,5 +36,3 @@ struct RsaOtherPrimesInfo {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

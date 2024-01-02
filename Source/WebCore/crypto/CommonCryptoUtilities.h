@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmIdentifier.h"
 #include <CommonCrypto/CommonCryptor.h>
 #include <CommonCrypto/CommonRandom.h>
@@ -38,5 +36,3 @@ namespace WebCore {
 bool getCommonCryptoDigestAlgorithm(CryptoAlgorithmIdentifier, CCDigestAlgorithm&);
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

@@ -26,7 +26,6 @@
 typedef Uint8Array BigInteger;
 
 [
-    Conditional=WEB_CRYPTO,
     JSGenerateToJSObject
 ] dictionary CryptoRsaKeyAlgorithm : CryptoKeyAlgorithm {
     // The length, in bits, of the RSA modulus

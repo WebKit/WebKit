@@ -415,10 +415,8 @@ messages -> WebPageProxy {
 
     DidUpdateActivityState() CanDispatchOutOfOrder
 
-#if ENABLE(WEB_CRYPTO)
     WrapCryptoKey(Vector<uint8_t> key) -> (bool succeeded, Vector<uint8_t> wrappedKey) Synchronous
     UnwrapCryptoKey(Vector<uint8_t> wrappedKey) -> (bool succeeded, Vector<uint8_t> key) Synchronous
-#endif
 
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

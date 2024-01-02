@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoKeyEC.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoAlgorithmRegistry.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
@@ -230,5 +228,3 @@ auto CryptoKeyEC::algorithm() const -> KeyAlgorithm
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

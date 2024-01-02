@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmHMAC.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyHMAC.h"
 #include "OpenSSLCryptoUniquePtr.h"
 #include "OpenSSLUtilities.h"
@@ -85,5 +83,3 @@ ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, 
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

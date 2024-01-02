@@ -29,8 +29,6 @@
 #include "CryptoKeyPair.h"
 #include "ExceptionOr.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 struct JsonWebKey;
@@ -89,5 +87,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CRYPTO_KEY(CryptoKeyOKP, CryptoKeyClass::OKP)
-
-#endif // ENABLE(WEB_CRYPTO)

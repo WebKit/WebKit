@@ -48,16 +48,12 @@ public:
     ExceptionOr<void> getRandomValues(JSC::ArrayBufferView&);
     String randomUUID() const;
 
-#if ENABLE(WEB_CRYPTO)
     SubtleCrypto& subtle();
-#endif
 
 private:
     Crypto(ScriptExecutionContext*);
 
-#if ENABLE(WEB_CRYPTO)
     Ref<SubtleCrypto> m_subtle;
-#endif
 };
 
 }

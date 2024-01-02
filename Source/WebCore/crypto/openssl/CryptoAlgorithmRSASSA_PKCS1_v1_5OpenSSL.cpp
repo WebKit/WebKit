@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CryptoAlgorithmRSASSA_PKCS1_v1_5.h"
 
-#if ENABLE(WEB_CRYPTO)
-
 #include "CryptoKeyRSA.h"
 #include "OpenSSLUtilities.h"
 
@@ -97,5 +95,3 @@ ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoK
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)

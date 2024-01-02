@@ -27,13 +27,11 @@
 
 #include <wtf/Vector.h>
 
-#if ENABLE(WEB_CRYPTO)
-
 namespace WebCore {
 
 class CryptoKeyRSAComponents {
 public:
-    enum class Type {
+    enum class Type : bool {
         Public,
         Private
     };
@@ -111,5 +109,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_CRYPTO)
