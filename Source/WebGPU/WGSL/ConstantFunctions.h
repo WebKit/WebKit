@@ -1171,7 +1171,7 @@ CONSTANT_FUNCTION(Ldexp)
         if (auto* f32E1 = std::get_if<float>(&e1))
             return *f32E1 * std::pow(2.f, static_cast<float>(std::get<int32_t>(e2)));
         if (auto* f16E1 = std::get_if<half>(&e1))
-            return *f16E1 * std::pow(2.f, static_cast<half>(std::get<int32_t>(e2)));
+            return static_cast<half>(*f16E1 * std::pow(2.f, static_cast<float>(std::get<int32_t>(e2))));
         RELEASE_ASSERT_NOT_REACHED();
     }, arguments[0], arguments[1]);
 }
@@ -1180,7 +1180,7 @@ UNARY_OPERATION(Log, Float, WRAP_STD(log))
 UNARY_OPERATION(Log2, Float, WRAP_STD(log2))
 BINARY_OPERATION(Max, Number, WRAP_STD(max))
 BINARY_OPERATION(Min, Number, WRAP_STD(min))
-TERNARY_OPERATION(Mix, Number, [&](auto e1, auto e2, auto e3) { return  e1 * (1 - e3) + e2 * e3; })
+TERNARY_OPERATION(Mix, Number, [&]<typename T>(T e1, T e2, T e3) -> T { return  e1 * (1 - e3) + e2 * e3; })
 
 CONSTANT_FUNCTION(Modf)
 {
@@ -1237,13 +1237,13 @@ CONSTANT_FUNCTION(Normalize)
 
 BINARY_OPERATION(Pow, Float, WRAP_STD(pow))
 
-CONSTANT_FUNCTION(QuantizeToF16)
-{
-    // FIXME: add support for f16
+UNARY_OPERATION(QuantizeToF16, F32, [&](float arg) -> ConstantResult {
     UNUSED_PARAM(resultType);
-    UNUSED_PARAM(arguments);
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    auto converted = convertFloat<half>(arg);
+    if (!converted)
+        return makeUnexpected(makeString("value ", String::number(arg), " cannot be represented as 'f16'"));
+    return { { static_cast<float>(*converted) } };
+});
 
 UNARY_OPERATION(Radians, Float, [&]<typename T>(T arg) -> T { return arg * std::numbers::pi / 180; })
 
@@ -1320,7 +1320,7 @@ UNARY_OPERATION(ReverseBits, Integer, [&]<typename T>(T e) -> T {
     return result;
 })
 
-UNARY_OPERATION(Round, Float, [&](auto v) {
+UNARY_OPERATION(Round, Float, [&]<typename T>(T v) -> T {
     auto rounded = std::round(v);
     if (rounded - v == 0.5 && fmod(rounded, 2))
         return rounded - 1;
@@ -1474,7 +1474,7 @@ CONSTANT_FUNCTION(Pack2x16float)
         auto e = std::get<float>(vector.elements[i]);
         auto converted = convertFloat<half>(e);
         if (!converted)
-            return makeUnexpected("FIXME"_s);
+            return makeUnexpected(makeString("value ", String::number(e), " cannot be represented as 'f16'"));
         packed[i] = *converted;
     }
     return { { bitwise_cast<uint32_t>(packed) } };

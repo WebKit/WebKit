@@ -96,6 +96,18 @@ public:
     bool usesFragDepth() const { return m_usesFragDepth; }
     void setUsesFragDepth() { m_usesFragDepth = true; }
 
+    bool usesDot() const { return m_usesDot; }
+    void setUsesDot() { m_usesDot = true; }
+
+    bool usesFirstLeadingBit() const { return m_usesFirstLeadingBit; }
+    void setUsesFirstLeadingBit() { m_usesFirstLeadingBit = true; }
+
+    bool usesFirstTrailingBit() const { return m_usesFirstTrailingBit; }
+    void setUsesFirstTrailingBit() { m_usesFirstTrailingBit = true; }
+
+    bool usesSign() const { return m_usesSign; }
+    void setUsesSign() { m_usesSign = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -252,6 +264,10 @@ private:
     bool m_usesModf { false };
     bool m_usesAtomicCompareExchange { false };
     bool m_usesFragDepth { false };
+    bool m_usesDot { false };
+    bool m_usesFirstLeadingBit { false };
+    bool m_usesFirstTrailingBit { false };
+    bool m_usesSign { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
