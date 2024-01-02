@@ -812,12 +812,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 builder.append(')');
                 break;
             }
-            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
-                if (cs->value() == "placeholder"_s)
-                    builder.append("::-webkit-input-placeholder"_s);
-                if (cs->value() == "file-selector-button"_s)
-                    builder.append("::-webkit-file-upload-button"_s);
-                break;
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElement::Cue: {
                 if (auto* selectorList = cs->selectorList()) {

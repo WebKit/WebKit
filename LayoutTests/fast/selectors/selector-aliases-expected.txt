@@ -3,4 +3,6 @@ PASS ":-webkit-any-link" should be a valid selector
 PASS ":-webkit-autofill" should be a valid selector
 PASS ":-webkit-full-screen" should be a valid selector
 PASS ":matches(h1, h2)" should be a valid selector
+PASS "::-webkit-file-upload-button" should be a valid selector
+PASS "::-webkit-input-placeholder" should be a valid selector
 
