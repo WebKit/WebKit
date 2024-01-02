@@ -452,7 +452,7 @@ void OriginStorageManager::StorageBucket::deleteIDBStorageData(WallTime time)
 void OriginStorageManager::StorageBucket::deleteCacheStorageData(WallTime time)
 {
     if (m_cacheStorageManager)
-        m_cacheStorageManager = nullptr;
+        m_cacheStorageManager->reset();
 
     FileSystem::deleteAllFilesModifiedSince(resolvedCacheStoragePath(), time);
 }
