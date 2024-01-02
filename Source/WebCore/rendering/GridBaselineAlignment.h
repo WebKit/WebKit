@@ -70,9 +70,9 @@ private:
     LayoutUnit ascentForChild(const RenderBox&, GridAxis, ItemPosition) const;
     LayoutUnit descentForChild(const RenderBox&, LayoutUnit, GridAxis, ExtraMarginsFromSubgrids) const;
     bool isDescentBaselineForChild(const RenderBox&, GridAxis) const;
-    bool isHorizontalBaselineAxis(GridAxis) const;
+    bool isVerticalAlignmentContext(GridAxis) const;
     bool isOrthogonalChildForBaseline(const RenderBox&) const;
-    bool isParallelToBaselineAxisForChild(const RenderBox&, GridAxis) const;
+    bool isParallelToAlignmentAxisForChild(const RenderBox&, GridAxis) const;
 
     typedef HashMap<unsigned, std::unique_ptr<BaselineAlignmentState>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BaselineAlignmentStateMap;
 
