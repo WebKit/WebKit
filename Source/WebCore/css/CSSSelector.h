@@ -119,6 +119,9 @@ struct PossiblyQuotedIdentifier {
         static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
         static std::optional<PseudoId> parseStandalonePseudoElement(StringView, const CSSSelectorParserContext&);
 
+        static ASCIILiteral selectorTextForPseudoClass(CSSSelector::PseudoClass);
+        static ASCIILiteral nameForShadowPseudoElementLegacyAlias(StringView);
+
         // Selectors are kept in an array by CSSSelectorList.
         // The next component of the selector is the next item in the array.
         const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? nullptr : this + 1; }
