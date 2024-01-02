@@ -357,7 +357,7 @@ testSelectorRoundTrip('a:not(a .b, #c > [d], e + f:empty, .g ~ #h:first-child) b
 
 debug('')
 
-shouldBeEqualToString("parseThenSerializeRule('::-webkit-file-upload-button { }')", "::-webkit-file-upload-button { }")
+shouldBeEqualToString("parseThenSerializeRule('::-webkit-file-upload-button { }')", "::file-selector-button { }")
 shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-cancel-button { }')", "::-webkit-search-cancel-button { }")
 shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-decoration { }')", "::-webkit-search-decoration { }")
 shouldBeEqualToString("parseThenSerializeRule('::-webkit-search-results-button { }')", "::-webkit-search-results-button { }")
@@ -390,10 +390,10 @@ testSelectorRoundTrip("a[b]::placeholder")
 testSelectorRoundTrip("a.b::placeholder")
 testSelectorRoundTrip("a#b::placeholder")
 testSelectorRoundTrip("a[b].c#d::placeholder")
-testSelectorRoundTrip("a[b]::-webkit-input-placeholder")
-testSelectorRoundTrip("a.b::-webkit-input-placeholder")
-testSelectorRoundTrip("a#b::-webkit-input-placeholder")
-testSelectorRoundTrip("a[b].c#d::-webkit-input-placeholder")
+testSelectorSerialization("a[b]::-webkit-input-placeholder", "a[b]::placeholder")
+testSelectorSerialization("a.b::-webkit-input-placeholder", "a.b::placeholder")
+testSelectorSerialization("a#b::-webkit-input-placeholder", "a#b::placeholder")
+testSelectorSerialization("a[b].c#d::-webkit-input-placeholder", "a[b].c#d::placeholder")
 
 debug('')
 

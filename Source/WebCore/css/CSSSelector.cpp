@@ -28,6 +28,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSParserSelector.h"
+#include "CSSSelectorInlines.h"
 #include "CSSSelectorList.h"
 #include "CSSSelectorParserContext.h"
 #include "CommonAtomStrings.h"
@@ -326,35 +327,9 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
         return type;
     }
 
-    switch (*type) {
-    case PseudoElement::WebKitCustom:
-        if (!context.thumbAndTrackPseudoElementsEnabled && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
-            return std::nullopt;
-#if ENABLE(SERVICE_CONTROLS)
-        if (!context.imageControlsEnabled && equalLettersIgnoringASCIICase(name, "-apple-attachment-controls-container"_s))
-            return std::nullopt;
-#endif
-        break;
-    case PseudoElement::Highlight:
-        if (!context.highlightAPIEnabled)
-            return std::nullopt;
-        break;
-    case PseudoElement::GrammarError:
-    case PseudoElement::SpellingError:
-        if (!context.grammarAndSpellingPseudoElementsEnabled)
-            return std::nullopt;
-        break;
-    case PseudoElement::ViewTransition:
-    case PseudoElement::ViewTransitionGroup:
-    case PseudoElement::ViewTransitionImagePair:
-    case PseudoElement::ViewTransitionOld:
-    case PseudoElement::ViewTransitionNew:
-        if (!context.viewTransitionsEnabled)
-            return std::nullopt;
-        break;
-    default:
-        break;
-    }
+    if (!CSSSelector::isPseudoElementEnabled(*type, name, context))
+        return std::nullopt;
+
     return type;
 }
 
@@ -812,12 +787,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 builder.append(')');
                 break;
             }
-            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
-                if (cs->value() == "placeholder"_s)
-                    builder.append("::-webkit-input-placeholder"_s);
-                if (cs->value() == "file-selector-button"_s)
-                    builder.append("::-webkit-file-upload-button"_s);
-                break;
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElement::Cue: {
                 if (auto* selectorList = cs->selectorList()) {

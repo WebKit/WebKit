@@ -426,7 +426,7 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     } else
         setLastChild(&child);
 
-    child.setParent(this);
+    child.m_parent = this;
 
     dirtyPaintOrderListsOnChildChange(child);
 
@@ -473,7 +473,7 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
 
     oldChild.setPreviousSibling(nullptr);
     oldChild.setNextSibling(nullptr);
-    oldChild.setParent(nullptr);
+    oldChild.m_parent = nullptr;
     
     oldChild.updateDescendantDependentFlags();
     if (oldChild.m_hasVisibleContent || oldChild.m_hasVisibleDescendant)
@@ -678,17 +678,6 @@ bool RenderLayer::setCanBeBackdropRoot(bool canBeBackdropRoot)
         return false;
     m_canBeBackdropRoot = canBeBackdropRoot;
     return true;
-}
-
-void RenderLayer::setParent(RenderLayer* parent)
-{
-    if (parent == m_parent)
-        return;
-
-    if (m_parent && !renderer().renderTreeBeingDestroyed())
-        compositor().layerWillBeRemoved(*m_parent, *this);
-
-    m_parent = parent;
 }
 
 RenderLayer* RenderLayer::stackingContext() const
@@ -5635,7 +5624,7 @@ void RenderLayer::createReflection()
     ASSERT(!m_reflection);
     m_reflection = createRenderer<RenderReplica>(renderer().document(), createReflectionStyle());
     // FIXME: A renderer should be a child of its parent!
-    m_reflection->setParent(&renderer()); // We create a 1-way connection.
+    m_reflection->m_parent = &renderer(); // We create a 1-way connection.
     m_reflection->initializeStyle();
 }
 
@@ -5646,7 +5635,7 @@ void RenderLayer::removeReflection()
             removeChild(*layer);
     }
 
-    m_reflection->setParent(nullptr);
+    m_reflection->m_parent = nullptr;
     m_reflection = nullptr;
 }
 

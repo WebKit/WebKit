@@ -10,6 +10,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyParsing.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSPropertyParsing.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSSelectorEnums.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSSelectorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSStyleDeclaration+PropertyNames.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/CSSValueKeywords.h

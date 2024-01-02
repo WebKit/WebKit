@@ -1779,6 +1779,8 @@ all : \
     CSSPropertyNames.h \
     CSSPropertyParsing.cpp \
     CSSPropertyParsing.h \
+    CSSSelectorEnums.h \
+    CSSSelectorInlines.h \
     CSSValueKeywords.cpp \
     CSSValueKeywords.h \
     ColorData.cpp \
@@ -1862,9 +1864,11 @@ $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/c
 
 # --------
 
-# CSS pseudo class & element selector maps.
+# CSS pseudo class & element selector code and maps.
 
 CSS_PSEUDO_SELECTOR_FILES = \
+    CSSSelectorEnums.h \
+    CSSSelectorInlines.h \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementMap.cpp \
 #
