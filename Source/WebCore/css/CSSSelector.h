@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include "CSSSelectorEnums.h"
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
 #include <wtf/EnumTraits.h>
@@ -70,6 +71,9 @@ struct PossiblyQuotedIdentifier {
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
         void replaceNestingParentByPseudoClassScope();
 
+        using PseudoClass = CSSSelectorPseudoClass;
+        using PseudoElement = CSSSelectorPseudoElement;
+
         // How the attribute value has to match. Default is Exact.
         enum class Match : uint8_t {
             Unknown = 0,
@@ -103,136 +107,6 @@ struct PossiblyQuotedIdentifier {
             ShadowSlotted
         };
 
-        enum class PseudoClass : uint8_t {
-            Empty,
-            FirstChild,
-            FirstOfType,
-            LastChild,
-            LastOfType,
-            OnlyChild,
-            OnlyOfType,
-            NthChild,
-            NthOfType,
-            NthLastChild,
-            NthLastOfType,
-            Link,
-            Visited,
-            WebKitAny,
-            AnyLink,
-            Autofill,
-            WebKitAutofillAndObscured,
-            WebKitAutofillStrongPassword,
-            WebKitAutofillStrongPasswordViewable,
-            Hover,
-            WebKitDrag,
-            Focus,
-            FocusVisible,
-            FocusWithin,
-            Active,
-            Checked,
-            Enabled,
-            WebKitFullPageMedia,
-            Default,
-            Disabled,
-            InternalHTMLDocument, // for internal use in html.css
-            Is,
-            Where,
-            Optional,
-            PlaceholderShown,
-            Required,
-            ReadOnly,
-            ReadWrite,
-            Valid,
-            Invalid,
-            Indeterminate,
-            Target,
-            Lang,
-            Not,
-            Root,
-            Scope,
-            State,
-            WindowInactive,
-            CornerPresent,
-            Decrement,
-            Increment,
-            Has,
-            Horizontal,
-            Vertical,
-            Start,
-            End,
-            DoubleButton,
-            SingleButton,
-            NoButton,
-#if ENABLE(FULLSCREEN_API)
-            Fullscreen,
-            WebKitFullScreenDocument,
-            WebKitFullScreenAncestor,
-            WebKitAnimatingFullScreenTransition,
-            WebKitFullScreenControlsHidden,
-#endif
-#if ENABLE(PICTURE_IN_PICTURE_API)
-            PictureInPicture,
-#endif
-            InRange,
-            OutOfRange,
-#if ENABLE(VIDEO)
-            Future,
-            Past,
-            Playing,
-            Paused,
-            Seeking,
-            Buffering,
-            Stalled,
-            Muted,
-            VolumeLocked,
-#endif
-            Dir,
-            Host,
-            Defined,
-#if ENABLE(ATTACHMENT_ELEMENT)
-            HasAttachment,
-#endif
-            Modal,
-            PopoverOpen,
-            UserInvalid,
-            UserValid
-        };
-
-        enum class PseudoElement : uint8_t {
-            After,
-            Backdrop,
-            Before,
-#if ENABLE(VIDEO)
-            Cue,
-#endif
-            FirstLetter,
-            FirstLine,
-            GrammarError,
-            Highlight,
-            Marker,
-            Part,
-            WebKitResizer,
-            WebKitScrollbar,
-            WebKitScrollbarButton,
-            WebKitScrollbarCorner,
-            WebKitScrollbarThumb,
-            WebKitScrollbarTrack,
-            WebKitScrollbarTrackPiece,
-            Selection,
-            Slotted,
-            SpellingError,
-            ViewTransition,
-            ViewTransitionGroup,
-            ViewTransitionImagePair,
-            ViewTransitionOld,
-            ViewTransitionNew,
-            WebKitCustom,
-
-            // WebKitCustom that appeared in an old prefixed form
-            // and need special handling.
-            WebKitCustomLegacyPrefixed,
-        };
-
         enum class PagePseudoClass : uint8_t {
             First,
             Left,
@@ -240,6 +114,8 @@ struct PossiblyQuotedIdentifier {
         };
 
         static PseudoId pseudoId(PseudoElement);
+        static bool isPseudoClassEnabled(PseudoClass, const CSSSelectorParserContext&);
+        static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
         static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
         static std::optional<PseudoId> parseStandalonePseudoElement(StringView, const CSSSelectorParserContext&);
 

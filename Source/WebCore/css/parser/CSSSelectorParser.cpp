@@ -34,8 +34,8 @@
 #include "CSSParserIdioms.h"
 #include "CSSParserSelector.h"
 #include "CSSSelector.h"
+#include "CSSSelectorInlines.h"
 #include "CommonAtomStrings.h"
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
@@ -767,22 +767,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         selector = CSSParserSelector::parsePseudoClassSelector(token.value());
         if (!selector)
             return nullptr;
-        if (selector->match() == CSSSelector::Match::PseudoClass) {
-            if (!m_context.focusVisibleEnabled && selector->pseudoClass() == CSSSelector::PseudoClass::FocusVisible)
-                return nullptr;
-            if (!m_context.hasPseudoClassEnabled && selector->pseudoClass() == CSSSelector::PseudoClass::Has)
-                return nullptr;
-            if (!m_context.popoverAttributeEnabled && selector->pseudoClass() == CSSSelector::PseudoClass::PopoverOpen)
-                return nullptr;
-            if (!m_context.customStateSetEnabled && selector->pseudoClass() == CSSSelector::PseudoClass::State)
-                return nullptr;
-            if (m_context.mode != UASheetMode && selector->pseudoClass() == CSSSelector::PseudoClass::InternalHTMLDocument)
-                return nullptr;
-#if ENABLE(ATTACHMENT_ELEMENT)
-            if (!DeprecatedGlobalSettings::attachmentElementEnabled() && selector->pseudoClass() == CSSSelector::PseudoClass::HasAttachment)
-                return nullptr;
-#endif
-        }
+        if (selector->match() == CSSSelector::Match::PseudoClass && !CSSSelector::isPseudoClassEnabled(selector->pseudoClass(), m_context))
+            return nullptr;
     } else {
         selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context);
 #if ENABLE(VIDEO)

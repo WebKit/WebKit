@@ -1,8 +1,6 @@
 {
     "pseudo-classes": {
-        "-internal-html-document": {
-            "status": "internal"
-        },
+        "-internal-html-document": {},
         "-webkit-animating-full-screen-transition": {
             "comment": "For UA stylesheet use.",
             "condition": "ENABLE(FULLSCREEN_API)",
@@ -90,7 +88,9 @@
         "first-child": {},
         "first-of-type": {},
         "focus": {},
-        "focus-visible": {},
+        "focus-visible": {
+            "settings-flag": "focusVisibleEnabled"
+        },
         "focus-within": {},
         "fullscreen": {
             "aliases": [
@@ -101,9 +101,12 @@
         "future": {
             "condition": "ENABLE(VIDEO)"
         },
-        "has": {},
+        "has": {
+            "settings-flag": "hasPseudoClassEnabled"
+        },
         "has-attachment": {
-            "condition": "ENABLE(ATTACHMENT_ELEMENT)"
+            "condition": "ENABLE(ATTACHMENT_ELEMENT)",
+            "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
         },
         "horizontal": {
             "comment": "For scrollbar styling.",
@@ -157,7 +160,9 @@
         "playing": {
             "condition": "ENABLE(VIDEO)"
         },
-        "popover-open": {},
+        "popover-open": {
+            "settings-flag": "popoverAttributeEnabled"
+        },
         "read-only": {},
         "read-write": {},
         "required": {},
@@ -169,7 +174,9 @@
         "stalled": {
             "condition": "ENABLE(VIDEO)"
         },
-        "state": {},
+        "state": {
+            "settings-flag": "customStateSetEnabled"
+        },
         "single-button": {
             "comment": "For scrollbar styling.",
             "status": "non-standard"
@@ -200,8 +207,8 @@
         "-apple-attachment-controls-container": {
             "comment": "For use in Apple internal apps.",
             "condition": "ENABLE(SERVICE_CONTROLS)",
-            "shadow": true,
-            "status": "internal"
+            "settings-flag": "imageControlsEnabled",
+            "shadow": true
         },
         "-webkit-resizer": {
             "comment": "For scrollbar styling.",
@@ -253,8 +260,12 @@
         "first-line": {
             "supports-single-colon-for-compatibility": true
         },
-        "grammar-error": {},
-        "highlight": {},
+        "grammar-error": {
+            "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
+        },
+        "highlight": {
+            "settings-flag": "highlightAPIEnabled"
+        },
         "marker": {},
         "part": {},
         "placeholder": {
@@ -265,17 +276,31 @@
         },
         "selection": {},
         "slotted": {},
-        "spelling-error": {},
+        "spelling-error": {
+            "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
+        },
         "thumb": {
+            "settings-flag": "thumbAndTrackPseudoElementsEnabled",
             "shadow": true
         },
         "track": {
+            "settings-flag": "thumbAndTrackPseudoElementsEnabled",
             "shadow": true
         },
-        "view-transition": {},
-        "view-transition-group": {},
-        "view-transition-image-pair": {},
-        "view-transition-old": {},
-        "view-transition-new": {}
+        "view-transition": {
+            "settings-flag": "viewTransitionsEnabled"
+        },
+        "view-transition-group": {
+            "settings-flag": "viewTransitionsEnabled"
+        },
+        "view-transition-image-pair": {
+            "settings-flag": "viewTransitionsEnabled"
+        },
+        "view-transition-old": {
+            "settings-flag": "viewTransitionsEnabled"
+        },
+        "view-transition-new": {
+            "settings-flag": "viewTransitionsEnabled"
+        }
     }
 }

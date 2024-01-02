@@ -2571,6 +2571,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.h
+    ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorEnums.h
+    ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorInlines.h
     ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.h
     ${WebCore_DERIVED_SOURCES_DIR}/CommandLineAPIModuleSourceBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/EventInterfaces.h
