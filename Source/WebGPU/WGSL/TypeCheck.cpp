@@ -1044,6 +1044,14 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesModf();
             else if (targetName == "atomicCompareExchangeWeak"_s)
                 m_shaderModule.setUsesAtomicCompareExchange();
+            else if (targetName == "dot"_s)
+                m_shaderModule.setUsesDot();
+            else if (targetName == "firstLeadingBit"_s)
+                m_shaderModule.setUsesFirstLeadingBit();
+            else if (targetName == "firstTrailingBit"_s)
+                m_shaderModule.setUsesFirstTrailingBit();
+            else if (targetName == "sign"_s)
+                m_shaderModule.setUsesSign();
             target.m_inferredType = result;
             return;
         }

@@ -1194,13 +1194,23 @@ fn testArrayLength()
 // 16.5. Numeric Built-in Functions (https://www.w3.org/TR/WGSL/#numeric-builtin-functions)
 
 // Trigonometric
+// RUN: %metal-compile testTrigonometric
+@compute @workgroup_size(1)
 fn testTrigonometric()
 {
+  let f = 0.0;
+  let v2f = vec2f(0.0);
+  let v3f = vec3f(0.0);
+  let v4f = vec4f(0.0);
   {
     _ = acos(0.0);
     _ = acos(vec2(0.0, 0.0));
     _ = acos(vec3(0.0, 0.0, 0.0));
     _ = acos(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = acos(f);
+    _ = acos(v2f);
+    _ = acos(v3f);
+    _ = acos(v4f);
   }
 
   {
@@ -1208,6 +1218,10 @@ fn testTrigonometric()
     _ = asin(vec2(0.0, 0.0));
     _ = asin(vec3(0.0, 0.0, 0.0));
     _ = asin(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = asin(f);
+    _ = asin(v2f);
+    _ = asin(v3f);
+    _ = asin(v4f);
   }
 
   {
@@ -1215,6 +1229,10 @@ fn testTrigonometric()
     _ = atan(vec2(0.0, 0.0));
     _ = atan(vec3(0.0, 0.0, 0.0));
     _ = atan(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = atan(f);
+    _ = atan(v2f);
+    _ = atan(v3f);
+    _ = atan(v4f);
   }
 
   {
@@ -1222,6 +1240,10 @@ fn testTrigonometric()
     _ = cos(vec2(0.0, 0.0));
     _ = cos(vec3(0.0, 0.0, 0.0));
     _ = cos(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = cos(f);
+    _ = cos(v2f);
+    _ = cos(v3f);
+    _ = cos(v4f);
   }
 
   {
@@ -1229,6 +1251,10 @@ fn testTrigonometric()
     _ = sin(vec2(0.0, 0.0));
     _ = sin(vec3(0.0, 0.0, 0.0));
     _ = sin(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = sin(f);
+    _ = sin(v2f);
+    _ = sin(v3f);
+    _ = sin(v4f);
   }
 
   {
@@ -1236,16 +1262,30 @@ fn testTrigonometric()
     _ = tan(vec2(0.0, 0.0));
     _ = tan(vec3(0.0, 0.0, 0.0));
     _ = tan(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = tan(f);
+    _ = tan(v2f);
+    _ = tan(v3f);
+    _ = tan(v4f);
   }
 }
 
+// RUN: %metal-compile testTrigonometricHyperbolic
+@compute @workgroup_size(1)
 fn testTrigonometricHyperbolic()
 {
+  let f = 0.0;
+  let v2f = vec2f(0.0);
+  let v3f = vec3f(0.0);
+  let v4f = vec4f(0.0);
   {
     _ = acosh(1.0);
     _ = acosh(vec2(1.0, 1.0));
     _ = acosh(vec3(1.0, 1.0, 1.0));
     _ = acosh(vec4(1.0, 1.0, 1.0, 1.0));
+    _ = acosh(f);
+    _ = acosh(v2f);
+    _ = acosh(v3f);
+    _ = acosh(v4f);
   }
 
   {
@@ -1253,6 +1293,10 @@ fn testTrigonometricHyperbolic()
     _ = asinh(vec2(0.0, 0.0));
     _ = asinh(vec3(0.0, 0.0, 0.0));
     _ = asinh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = asinh(f);
+    _ = asinh(v2f);
+    _ = asinh(v3f);
+    _ = asinh(v4f);
   }
 
   {
@@ -1260,6 +1304,10 @@ fn testTrigonometricHyperbolic()
     _ = atanh(vec2(0.0, 0.0));
     _ = atanh(vec3(0.0, 0.0, 0.0));
     _ = atanh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = atanh(f);
+    _ = atanh(v2f);
+    _ = atanh(v3f);
+    _ = atanh(v4f);
   }
 
   {
@@ -1267,6 +1315,10 @@ fn testTrigonometricHyperbolic()
     _ = cosh(vec2(0.0, 0.0));
     _ = cosh(vec3(0.0, 0.0, 0.0));
     _ = cosh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = cosh(f);
+    _ = cosh(v2f);
+    _ = cosh(v3f);
+    _ = cosh(v4f);
   }
 
   {
@@ -1274,6 +1326,10 @@ fn testTrigonometricHyperbolic()
     _ = sinh(vec2(0.0, 0.0));
     _ = sinh(vec3(0.0, 0.0, 0.0));
     _ = sinh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = sinh(f);
+    _ = sinh(v2f);
+    _ = sinh(v3f);
+    _ = sinh(v4f);
   }
 
   {
@@ -1281,29 +1337,48 @@ fn testTrigonometricHyperbolic()
     _ = tanh(vec2(0.0, 0.0));
     _ = tanh(vec3(0.0, 0.0, 0.0));
     _ = tanh(vec4(0.0, 0.0, 0.0, 0.0));
+    _ = tanh(f);
+    _ = tanh(v2f);
+    _ = tanh(v3f);
+    _ = tanh(v4f);
   }
 }
 
 
 // 16.5.1
+// RUN: %metal-compile testAbs
+@compute @workgroup_size(1)
 fn testAbs()
 {
-    // [T < Float].(T) => T,
+    let i = 0i;
+    let u = 0u;
+    let f = 0f;
+    let h = 0h;
+    // [T < Number].(T) => T,
     {
         _ = abs(0);
         _ = abs(1i);
         _ = abs(1u);
         _ = abs(0.0);
+        _ = abs(1h);
         _ = abs(1f);
+        _ = abs(i);
+        _ = abs(u);
+        _ = abs(h);
+        _ = abs(f);
     }
 
-    // [T < Float, N].(Vector[T, N]) => Vector[T, N],
+    // [T < Number, N].(Vector[T, N]) => Vector[T, N],
     {
         _ = abs(vec2(0, 1));
         _ = abs(vec2(1i, 2i));
         _ = abs(vec2(1u, 2u));
         _ = abs(vec2(0.0, 1.0));
         _ = abs(vec2(1f, 2f));
+        _ = abs(vec2(i));
+        _ = abs(vec2(u));
+        _ = abs(vec2(h));
+        _ = abs(vec2(f));
     }
     {
         _ = abs(vec3(-1, 0, 1));
@@ -1311,6 +1386,21 @@ fn testAbs()
         _ = abs(vec3(0u, 1u, 2u));
         _ = abs(vec3(-1.0, 0.0, 1.0));
         _ = abs(vec3(-1f, 1f, 2f));
+        _ = abs(vec3(i));
+        _ = abs(vec3(u));
+        _ = abs(vec3(h));
+        _ = abs(vec3(f));
+    }
+    {
+        _ = abs(vec4(-1, 0, 0, 1));
+        _ = abs(vec4(-1i, 1i, 1i, 2i));
+        _ = abs(vec4(0u, 1u, 1u, 2u));
+        _ = abs(vec4(-1.0, 0.0, 0.0, 1.0));
+        _ = abs(vec4(-1f, 1f, 1f, 2f));
+        _ = abs(vec4(i));
+        _ = abs(vec4(u));
+        _ = abs(vec4(h));
+        _ = abs(vec4(f));
     }
 }
 
@@ -1323,39 +1413,64 @@ fn testAbs()
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
 // 16.5.8
+// RUN: %metal-compile testAtan2
+@compute @workgroup_size(1)
 fn testAtan2() {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T, T) => T,
     {
         _ = atan2(0, 1);
         _ = atan2(0, 1.0);
         _ = atan2(1, 2f);
+        _ = atan2(1, 2h);
+        _ = atan2(f, f);
+        _ = atan2(h, h);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = atan2(vec2(0), vec2(0));
         _ = atan2(vec2(0), vec2(0.0));
         _ = atan2(vec2(0), vec2(0f));
+        _ = atan2(vec2(0), vec2(0h));
+        _ = atan2(vec2(f), vec2(f));
+        _ = atan2(vec2(h), vec2(h));
     }
     {
         _ = atan2(vec3(0), vec3(0));
         _ = atan2(vec3(0), vec3(0.0));
         _ = atan2(vec3(0), vec3(0f));
+        _ = atan2(vec3(0), vec3(0h));
+        _ = atan2(vec3(f), vec3(f));
+        _ = atan2(vec3(h), vec3(h));
     }
     {
         _ = atan2(vec4(0), vec4(0));
         _ = atan2(vec4(0), vec4(0.0));
         _ = atan2(vec4(0), vec4(0f));
+        _ = atan2(vec4(0), vec4(0h));
+        _ = atan2(vec4(f), vec4(f));
+        _ = atan2(vec4(h), vec4(h));
     }
 }
 
 // 16.5.9
+// RUN: %metal-compile testCeil
+@compute @workgroup_size(1)
 fn testCeil()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = ceil(0);
         _ = ceil(0.0);
         _ = ceil(1f);
+        _ = ceil(1h);
+        _ = ceil(f);
+        _ = ceil(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -1363,22 +1478,38 @@ fn testCeil()
         _ = ceil(vec2(0, 1));
         _ = ceil(vec2(0.0, 1.0));
         _ = ceil(vec2(1f, 2f));
+        _ = ceil(vec2(1h, 2h));
+        _ = ceil(vec2(f));
+        _ = ceil(vec2(h));
     }
     {
         _ = ceil(vec3(-1, 0, 1));
         _ = ceil(vec3(-1.0, 0.0, 1.0));
         _ = ceil(vec3(-1f, 1f, 2f));
+        _ = ceil(vec3(1h, 2h, 3h));
+        _ = ceil(vec3(f));
+        _ = ceil(vec3(h));
     }
     {
         _ = ceil(vec4(-1, 0, 1, 2));
         _ = ceil(vec4(-1.0, 0.0, 1.0, 2.0));
         _ = ceil(vec4(-1f, 1f, 2f, 3f));
+        _ = ceil(vec4(1h, 2h, 3h, 4h));
+        _ = ceil(vec4(f));
+        _ = ceil(vec4(h));
     }
 }
 
 // 16.5.10
+// RUN: %metal-compile testCeil
+@compute @workgroup_size(1)
 fn testClamp()
 {
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+
     // [T < Number].(T, T, T) => T,
     {
         _ = clamp(-1, 0, 1);
@@ -1386,6 +1517,11 @@ fn testClamp()
         _ = clamp(0, 1, 2u);
         _ = clamp(-1, 0, 1.0);
         _ = clamp(-1, 1, 2f);
+        _ = clamp(-1, 1, 2h);
+        _ = clamp(i, i, i);
+        _ = clamp(u, u, u);
+        _ = clamp(f, f, f);
+        _ = clamp(h, h, h);
     }
     // [T < Number, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
@@ -1394,6 +1530,11 @@ fn testClamp()
         _ = clamp(vec2(0), vec2(0), vec2(0u));
         _ = clamp(vec2(0), vec2(0), vec2(0.0));
         _ = clamp(vec2(0), vec2(0), vec2(0f));
+        _ = clamp(vec2(-1), vec2(1), vec2(2h));
+        _ = clamp(vec2(i), vec2(i), vec2(i));
+        _ = clamp(vec2(u), vec2(u), vec2(u));
+        _ = clamp(vec2(f), vec2(f), vec2(f));
+        _ = clamp(vec2(h), vec2(h), vec2(h));
     }
     {
         _ = clamp(vec3(0), vec3(0), vec3(0));
@@ -1401,6 +1542,11 @@ fn testClamp()
         _ = clamp(vec3(0), vec3(0), vec3(0u));
         _ = clamp(vec3(0), vec3(0), vec3(0.0));
         _ = clamp(vec3(0), vec3(0), vec3(0f));
+        _ = clamp(vec3(-1), vec3(1), vec3(2h));
+        _ = clamp(vec3(i), vec3(i), vec3(i));
+        _ = clamp(vec3(u), vec3(u), vec3(u));
+        _ = clamp(vec3(f), vec3(f), vec3(f));
+        _ = clamp(vec3(h), vec3(h), vec3(h));
     }
     {
         _ = clamp(vec4(0), vec4(0), vec4(0));
@@ -1408,6 +1554,11 @@ fn testClamp()
         _ = clamp(vec4(0), vec4(0), vec4(0u));
         _ = clamp(vec4(0), vec4(0), vec4(0.0));
         _ = clamp(vec4(0), vec4(0), vec4(0f));
+        _ = clamp(vec4(-1), vec4(1), vec4(2h));
+        _ = clamp(vec4(i), vec4(i), vec4(i));
+        _ = clamp(vec4(u), vec4(u), vec4(u));
+        _ = clamp(vec4(f), vec4(f), vec4(f));
+        _ = clamp(vec4(h), vec4(h), vec4(h));
     }
 }
 
@@ -1479,48 +1630,77 @@ fn testBitCounting()
 }
 
 // 16.5.16
+// RUN: %metal-compile testCross
+@compute @workgroup_size(1)
 fn testCross()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(Vector[T, 3], Vector[T, 3]) => Vector[T, 3],
     _ = cross(vec3(1, 1, 1), vec3(1f, 2f, 3f));
     _ = cross(vec3(1.0, 1.0, 1.0), vec3(1f, 2f, 3f));
     _ = cross(vec3(1f, 1f, 1f), vec3(1f, 2f, 3f));
+    _ = cross(vec3(f), vec3(f));
 
     _ = cross(vec3(1, 1, 1), vec3(1h, 2h, 3h));
     _ = cross(vec3(1.0, 1.0, 1.0), vec3(1h, 2h, 3h));
     _ = cross(vec3(1h, 1h, 1h), vec3(1h, 2h, 3h));
+    _ = cross(vec3(h), vec3(h));
 }
 
 // 16.5.17
+// RUN: %metal-compile testDegress
+@compute @workgroup_size(1)
 fn testDegress()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = degrees(0);
         _ = degrees(0.0);
         _ = degrees(1f);
+        _ = degrees(1h);
+        _ = degrees(f);
+        _ = degrees(h);
     }
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
         _ = degrees(vec2(0, 1));
         _ = degrees(vec2(0.0, 1.0));
         _ = degrees(vec2(1f, 2f));
+        _ = degrees(vec2(1h));
+        _ = degrees(vec2(f));
+        _ = degrees(vec2(h));
     }
     {
         _ = degrees(vec3(-1, 0, 1));
         _ = degrees(vec3(-1.0, 0.0, 1.0));
         _ = degrees(vec3(-1f, 1f, 2f));
+        _ = degrees(vec3(1h));
+        _ = degrees(vec3(f));
+        _ = degrees(vec3(h));
     }
     {
         _ = degrees(vec4(-1, 0, 1, 2));
         _ = degrees(vec4(-1.0, 0.0, 1.0, 2.0));
         _ = degrees(vec4(-1f, 1f, 2f, 3f));
+        _ = degrees(vec4(1h));
+        _ = degrees(vec4(f));
+        _ = degrees(vec4(h));
     }
 }
 
 // 16.5.18
+// RUN: %metal-compile testDegress
+@compute @workgroup_size(1)
 fn testDeterminant()
 {
+    let f = 1f;
+    let h = 1h;
+
     // [T < Float, C].(Matrix[T, C, C]) => T,
     _ = determinant(mat2x2(1, 1, 1, 1));
     _ = determinant(mat3x3(1, 1, 1, 1, 1, 1, 1, 1, 1));
@@ -1533,6 +1713,14 @@ fn testDeterminant()
     _ = determinant(mat2x2(1h, 1h, 1h, 1h));
     _ = determinant(mat3x3(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
     _ = determinant(mat4x4(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
+
+    _ = determinant(mat2x2(f, f, f, f));
+    _ = determinant(mat3x3(f, f, f, f, f, f, f, f, f));
+    _ = determinant(mat4x4(f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f));
+
+    _ = determinant(mat2x2(h, h, h, h));
+    _ = determinant(mat3x3(h, h, h, h, h, h, h, h, h));
+    _ = determinant(mat4x4(h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h));
 }
 
 // 16.5.19
@@ -1583,8 +1771,15 @@ fn testDistance()
 }
 
 // 16.5.20
+// RUN: %metal-compile testDot
+@compute @workgroup_size(1)
 fn testDot()
 {
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => T,
     {
         _ = dot(vec2(0),   vec2(1)  );
@@ -1597,6 +1792,10 @@ fn testDot()
         _ = dot(vec2(0.0), vec2(0.0));
         _ = dot(vec2(0.0), vec2(0f) );
         _ = dot(vec2(1f),  vec2(1f) );
+        _ = dot(vec2(i), vec2(i));
+        _ = dot(vec2(u), vec2(u));
+        _ = dot(vec2(f), vec2(f));
+        _ = dot(vec2(h), vec2(h));
     }
     {
         _ = dot(vec3(0),   vec3(1)  );
@@ -1609,6 +1808,10 @@ fn testDot()
         _ = dot(vec3(0.0), vec3(0.0));
         _ = dot(vec3(0.0), vec3(0f) );
         _ = dot(vec3(1f),  vec3(1f) );
+        _ = dot(vec3(i), vec3(i));
+        _ = dot(vec3(u), vec3(u));
+        _ = dot(vec3(f), vec3(f));
+        _ = dot(vec3(h), vec3(h));
     }
     {
         _ = dot(vec4(0),   vec4(1)  );
@@ -1621,21 +1824,37 @@ fn testDot()
         _ = dot(vec4(0.0), vec4(0.0));
         _ = dot(vec4(0.0), vec4(0f) );
         _ = dot(vec4(1f),  vec4(1f) );
+        _ = dot(vec4(i), vec4(i));
+        _ = dot(vec4(u), vec4(u));
+        _ = dot(vec4(f), vec4(f));
+        _ = dot(vec4(h), vec4(h));
     }
 }
 
 // 16.5.21 & 16.5.22
-fn testExpAndExp2() {
+// RUN: %metal-compile testExpAndExp2
+@compute @workgroup_size(1)
+fn testExpAndExp2()
+{
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = exp(0);
         _ = exp(0.0);
         _ = exp(1f);
+        _ = exp(1h);
+        _ = exp(f);
+        _ = exp(h);
     }
     {
         _ = exp2(0);
         _ = exp2(0.0);
         _ = exp2(1f);
+        _ = exp2(1h);
+        _ = exp2(f);
+        _ = exp2(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -1643,32 +1862,50 @@ fn testExpAndExp2() {
         _ = exp(vec2(0, 1));
         _ = exp(vec2(0.0, 1.0));
         _ = exp(vec2(1f, 2f));
+        _ = exp(vec2(1h));
+        _ = exp(vec2(f));
+        _ = exp(vec2(h));
     }
     {
         _ = exp(vec3(-1, 0, 1));
         _ = exp(vec3(-1.0, 0.0, 1.0));
         _ = exp(vec3(-1f, 1f, 2f));
+        _ = exp(vec3(1h));
+        _ = exp(vec3(f));
+        _ = exp(vec3(h));
     }
     {
         _ = exp(vec4(-1, 0, 1, 2));
         _ = exp(vec4(-1.0, 0.0, 1.0, 2.0));
         _ = exp(vec4(-1f, 1f, 2f, 3f));
+        _ = exp(vec4(1h));
+        _ = exp(vec4(f));
+        _ = exp(vec4(h));
     }
 
     {
         _ = exp2(vec2(0, 1));
         _ = exp2(vec2(0.0, 1.0));
         _ = exp2(vec2(1f, 2f));
+        _ = exp2(vec2(1h));
+        _ = exp2(vec2(f));
+        _ = exp2(vec2(h));
     }
     {
         _ = exp2(vec3(-1, 0, 1));
         _ = exp2(vec3(-1.0, 0.0, 1.0));
         _ = exp2(vec3(-1f, 1f, 2f));
+        _ = exp2(vec3(1h));
+        _ = exp2(vec3(f));
+        _ = exp2(vec3(h));
     }
     {
         _ = exp2(vec4(-1, 0, 1, 2));
         _ = exp2(vec4(-1.0, 0.0, 1.0, 2.0));
         _ = exp2(vec4(-1f, 1f, 2f, 3f));
+        _ = exp2(vec4(1h));
+        _ = exp2(vec4(f));
+        _ = exp2(vec4(h));
     }
 }
 
@@ -1773,26 +2010,35 @@ fn testFaceForward()
 }
 
 // 16.5.26 & 16.5.27
+// RUN: %metal-compile testFirstLeadingBit
+@compute @workgroup_size(1)
 fn testFirstLeadingBit()
 {
+    let i = 0i;
+    let u = 0u;
+
     // signed
     // [].(I32) => I32,
     {
         _ = firstLeadingBit(0);
         _ = firstLeadingBit(0i);
+        _ = firstLeadingBit(i);
     }
     // [N].(Vector[I32, N]) => Vector[I32, N],
     {
         _ = firstLeadingBit(vec2(0));
         _ = firstLeadingBit(vec2(0i));
+        _ = firstLeadingBit(vec2(i));
     }
     {
         _ = firstLeadingBit(vec3(0));
         _ = firstLeadingBit(vec3(0i));
+        _ = firstLeadingBit(vec3(i));
     }
     {
         _ = firstLeadingBit(vec4(0));
         _ = firstLeadingBit(vec4(0i));
+        _ = firstLeadingBit(vec4(i));
     }
 
     // unsigned
@@ -1800,31 +2046,42 @@ fn testFirstLeadingBit()
     {
         _ = firstLeadingBit(0);
         _ = firstLeadingBit(0u);
+        _ = firstLeadingBit(u);
     }
 
     // [N].(Vector[U32, N]) => Vector[U32, N],
     {
         _ = firstLeadingBit(vec2(0));
         _ = firstLeadingBit(vec2(0u));
+        _ = firstLeadingBit(vec2(u));
     }
     {
         _ = firstLeadingBit(vec3(0));
         _ = firstLeadingBit(vec3(0u));
+        _ = firstLeadingBit(vec3(u));
     }
     {
         _ = firstLeadingBit(vec4(0));
         _ = firstLeadingBit(vec4(0u));
+        _ = firstLeadingBit(vec4(u));
     }
 }
 
 // 16.5.28
+// RUN: %metal-compile testFirstTrailingBit
+@compute @workgroup_size(1)
 fn testFirstTrailingBit()
 {
+    let i = 0i;
+    let u = 0u;
+
     // [T < ConcreteInteger].(T) => T,
     {
         _ = firstTrailingBit(0);
         _ = firstTrailingBit(0i);
         _ = firstTrailingBit(0u);
+        _ = firstTrailingBit(i);
+        _ = firstTrailingBit(u);
     }
 
     // [T < ConcreteInteger, N].(Vector[T, N]) => Vector[T, N],
@@ -1832,27 +2089,41 @@ fn testFirstTrailingBit()
         _ = firstTrailingBit(vec2(0));
         _ = firstTrailingBit(vec2(0i));
         _ = firstTrailingBit(vec2(0u));
+        _ = firstTrailingBit(vec2(i));
+        _ = firstTrailingBit(vec2(u));
     }
     {
         _ = firstTrailingBit(vec3(0));
         _ = firstTrailingBit(vec3(0i));
         _ = firstTrailingBit(vec3(0u));
+        _ = firstTrailingBit(vec3(i));
+        _ = firstTrailingBit(vec3(u));
     }
     {
         _ = firstTrailingBit(vec4(0));
         _ = firstTrailingBit(vec4(0i));
         _ = firstTrailingBit(vec4(0u));
+        _ = firstTrailingBit(vec4(i));
+        _ = firstTrailingBit(vec4(u));
     }
 }
 
 // 16.5.29
+// RUN: %metal-compile testFloor
+@compute @workgroup_size(1)
 fn testFloor()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = floor(0);
         _ = floor(0.0);
         _ = floor(1f);
+        _ = floor(1h);
+        _ = floor(f);
+        _ = floor(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -1860,54 +2131,88 @@ fn testFloor()
         _ = floor(vec2(0, 1));
         _ = floor(vec2(0.0, 1.0));
         _ = floor(vec2(1f, 2f));
+        _ = floor(vec2(1h));
+        _ = floor(vec2(f));
+        _ = floor(vec2(h));
     }
     {
         _ = floor(vec3(-1, 0, 1));
         _ = floor(vec3(-1.0, 0.0, 1.0));
         _ = floor(vec3(-1f, 1f, 2f));
+        _ = floor(vec3(1h));
+        _ = floor(vec3(f));
+        _ = floor(vec3(h));
     }
     {
         _ = floor(vec4(-1, 0, 1, 2));
         _ = floor(vec4(-1.0, 0.0, 1.0, 2.0));
         _ = floor(vec4(-1f, 1f, 2f, 3f));
+        _ = floor(vec4(1h));
+        _ = floor(vec4(f));
+        _ = floor(vec4(h));
     }
 }
 
 // 16.5.30
+// RUN: %metal-compile testFma
+@compute @workgroup_size(1)
 fn testFma()
 {
+    let f = 0f;
+    let h = 0f;
+
     // [T < Float].(T, T, T) => T,
     {
         _ = fma(-1, 0, 1);
         _ = fma(-1, 0, 1.0);
         _ = fma(-1, 1, 2f);
+        _ = fma(-1, 1, 2h);
+        _ = fma(f, f, f);
+        _ = fma(h, h, h);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = fma(vec2(0), vec2(0), vec2(0));
         _ = fma(vec2(0), vec2(0), vec2(0.0));
         _ = fma(vec2(0), vec2(0), vec2(0f));
+        _ = fma(vec2(0), vec2(0), vec2(0h));
+        _ = fma(vec2(f), vec2(f), vec2(f));
+        _ = fma(vec2(h), vec2(h), vec2(h));
     }
     {
         _ = fma(vec3(0), vec3(0), vec3(0));
         _ = fma(vec3(0), vec3(0), vec3(0.0));
         _ = fma(vec3(0), vec3(0), vec3(0f));
+        _ = fma(vec3(0), vec3(0), vec3(0h));
+        _ = fma(vec3(f), vec3(f), vec3(f));
+        _ = fma(vec3(h), vec3(h), vec3(h));
     }
     {
         _ = fma(vec4(0), vec4(0), vec4(0));
         _ = fma(vec4(0), vec4(0), vec4(0.0));
         _ = fma(vec4(0), vec4(0), vec4(0f));
+        _ = fma(vec4(0), vec4(0), vec4(0h));
+        _ = fma(vec4(f), vec4(f), vec4(f));
+        _ = fma(vec4(h), vec4(h), vec4(h));
     }
 }
 
 // 16.5.31
+// RUN: %metal-compile testFract
+@compute @workgroup_size(1)
 fn testFract()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = fract(0);
         _ = fract(0.0);
         _ = fract(1f);
+        _ = fract(1h);
+        _ = fract(f);
+        _ = fract(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -1915,20 +2220,31 @@ fn testFract()
         _ = fract(vec2(0));
         _ = fract(vec2(0.0));
         _ = fract(vec2(1f));
+        _ = fract(vec2(1h));
+        _ = fract(vec2(f));
+        _ = fract(vec2(h));
     }
     {
         _ = fract(vec3(-1));
         _ = fract(vec3(-1.0));
         _ = fract(vec3(-1f));
+        _ = fract(vec3(-1h));
+        _ = fract(vec3(f));
+        _ = fract(vec3(h));
     }
     {
         _ = fract(vec4(-1));
         _ = fract(vec4(-1.0));
         _ = fract(vec4(-1f));
+        _ = fract(vec4(-1h));
+        _ = fract(vec4(f));
+        _ = fract(vec4(h));
     }
 }
 
 // 16.5.32
+// RUN: %metal-compile testFrexp
+@compute @workgroup_size(1)
 fn testFrexp()
 {
     {
@@ -1968,7 +2284,6 @@ fn testFrexp()
       let r2 = frexp(y);
       let r3 = frexp(vec4(1.5));
       let r4 = frexp(vec4(1.5f));
-      let r5 = frexp(vec4(1.5h));
     }
 }
 
@@ -2054,22 +2369,43 @@ fn testInverseSqrt()
 }
 
 // 16.5.35
+// RUN: %metal-compile testLdexp
+@compute @workgroup_size(1)
 fn testLdexp()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < ConcreteFloat].(T, I32) => T,
     {
         _ = ldexp(0f, 1);
+        _ = ldexp(0h, 1);
+        _ = ldexp(f, 1);
+        _ = ldexp(h, 1);
     }
     // [].(AbstractFloat, AbstractInt) => AbstractFloat,
     {
         _ = ldexp(0, 1);
         _ = ldexp(0.0, 1);
     }
+
     // [T < ConcreteFloat, N].(Vector[T, N], Vector[I32, N]) => Vector[T, N],
     {
         _ = ldexp(vec2(0f), vec2(1));
         _ = ldexp(vec3(0f), vec3(1));
         _ = ldexp(vec4(0f), vec4(1));
+
+        _ = ldexp(vec2(0h), vec2(1));
+        _ = ldexp(vec3(0h), vec3(1));
+        _ = ldexp(vec4(0h), vec4(1));
+
+        _ = ldexp(vec2(f), vec2(1));
+        _ = ldexp(vec3(f), vec3(1));
+        _ = ldexp(vec4(f), vec4(1));
+
+        _ = ldexp(vec2(h), vec2(1));
+        _ = ldexp(vec3(h), vec3(1));
+        _ = ldexp(vec4(h), vec4(1));
     }
     // [N].(Vector[AbstractFloat, N], Vector[AbstractInt, N]) => Vector[AbstractFloat, N],
     {
@@ -2084,13 +2420,21 @@ fn testLdexp()
 }
 
 // 16.5.36
+// RUN: %metal-compile testLength
+@compute @workgroup_size(1)
 fn testLength()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = length(0);
         _ = length(0.0);
         _ = length(1f);
+        _ = length(1h);
+        _ = length(f);
+        _ = length(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2098,27 +2442,44 @@ fn testLength()
         _ = length(vec2(0));
         _ = length(vec2(0.0));
         _ = length(vec2(1f));
+        _ = length(vec2(1h));
+        _ = length(vec2(f));
+        _ = length(vec2(h));
     }
     {
         _ = length(vec3(-1));
         _ = length(vec3(-1.0));
         _ = length(vec3(-1f));
+        _ = length(vec3(-1h));
+        _ = length(vec3(f));
+        _ = length(vec3(h));
     }
     {
         _ = length(vec4(-1));
         _ = length(vec4(-1.0));
         _ = length(vec4(-1f));
+        _ = length(vec4(-1h));
+        _ = length(vec4(f));
+        _ = length(vec4(h));
     }
 }
 
 // 16.5.37
+// RUN: %metal-compile testLog
+@compute @workgroup_size(1)
 fn testLog()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = log(2);
         _ = log(1.0);
         _ = log(1f);
+        _ = log(1h);
+        _ = log(f);
+        _ = log(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2126,26 +2487,44 @@ fn testLog()
         _ = log(vec2(2));
         _ = log(vec2(2.0));
         _ = log(vec2(2f));
+        _ = log(vec2(2h));
+        _ = log(vec2(f));
+        _ = log(vec2(h));
     }
     {
         _ = log(vec3(2));
         _ = log(vec3(2.0));
         _ = log(vec3(2f));
+        _ = log(vec3(2h));
+        _ = log(vec3(f));
+        _ = log(vec3(h));
     }
     {
         _ = log(vec4(2));
         _ = log(vec4(2.0));
         _ = log(vec4(2f));
+        _ = log(vec4(2h));
+        _ = log(vec4(f));
+        _ = log(vec4(h));
     }
 }
 
 // 16.5.38
-fn testLog2() {
+// RUN: %metal-compile testLog2
+@compute @workgroup_size(1)
+fn testLog2()
+{
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = log2(2);
         _ = log2(2.0);
         _ = log2(2f);
+        _ = log2(2h);
+        _ = log2(f);
+        _ = log2(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2153,29 +2532,50 @@ fn testLog2() {
         _ = log2(vec2(2));
         _ = log2(vec2(2.0));
         _ = log2(vec2(2f));
+        _ = log2(vec2(2h));
+        _ = log2(vec2(f));
+        _ = log2(vec2(h));
     }
     {
         _ = log2(vec3(2));
         _ = log2(vec3(2.0));
         _ = log2(vec3(2f));
+        _ = log2(vec3(2h));
+        _ = log2(vec3(f));
+        _ = log2(vec3(h));
     }
     {
         _ = log2(vec4(2));
         _ = log2(vec4(2.0));
         _ = log2(vec4(2f));
+        _ = log2(vec4(2h));
+        _ = log2(vec4(f));
+        _ = log2(vec4(h));
     }
 }
 
 // 16.5.39
+// RUN: %metal-compile testMax
+@compute @workgroup_size(1)
 fn testMax()
 {
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+
     // [T < Number].(T, T) => T,
     {
         _ = max(-1, 0);
-        _ = max(-1, 1);
-        _ = max(0, 1);
-        _ = max(-1, 0);
-        _ = max(-1, 1);
+        _ = max(-1, 1i);
+        _ = max(0, 1u);
+        _ = max(-1, 0.0);
+        _ = max(-1, 1f);
+        _ = max(-1, 1h);
+        _ = max(-1, i);
+        _ = max(0, u);
+        _ = max(-1, f);
+        _ = max(-1, h);
     }
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
@@ -2184,6 +2584,11 @@ fn testMax()
         _ = max(vec2(0), vec2(0u));
         _ = max(vec2(0), vec2(0.0));
         _ = max(vec2(0), vec2(0f));
+        _ = max(vec2(0), vec2(0h));
+        _ = max(vec2(0), vec2(i));
+        _ = max(vec2(0), vec2(u));
+        _ = max(vec2(0), vec2(f));
+        _ = max(vec2(0), vec2(h));
     }
     {
         _ = max(vec3(0), vec3(0));
@@ -2191,6 +2596,11 @@ fn testMax()
         _ = max(vec3(0), vec3(0u));
         _ = max(vec3(0), vec3(0.0));
         _ = max(vec3(0), vec3(0f));
+        _ = max(vec3(0), vec3(0h));
+        _ = max(vec3(0), vec3(i));
+        _ = max(vec3(0), vec3(u));
+        _ = max(vec3(0), vec3(f));
+        _ = max(vec3(0), vec3(h));
     }
     {
         _ = max(vec4(0), vec4(0));
@@ -2198,19 +2608,32 @@ fn testMax()
         _ = max(vec4(0), vec4(0u));
         _ = max(vec4(0), vec4(0.0));
         _ = max(vec4(0), vec4(0f));
+        _ = max(vec4(0), vec4(0h));
+        _ = max(vec4(0), vec4(i));
+        _ = max(vec4(0), vec4(u));
+        _ = max(vec4(0), vec4(f));
+        _ = max(vec4(0), vec4(h));
     }
 }
 
 // 16.5.40
+// RUN: %metal-compile testMin
+@compute @workgroup_size(1)
 fn testMin()
 {
+    let i = 1i;
+    let u = 1u;
+    let f = 1f;
+    let h = 1h;
+
     // [T < Number].(T, T) => T,
     {
         _ = min(-1, 0);
-        _ = min(-1, 1);
-        _ = min(0, 1);
-        _ = min(-1, 0);
-        _ = min(-1, 1);
+        _ = min(-1, 1i);
+        _ = min(0, 1u);
+        _ = min(-1, 0.0);
+        _ = min(-1, 1f);
+        _ = min(-1, 1h);
     }
     // [T < Number, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
@@ -2219,6 +2642,11 @@ fn testMin()
         _ = min(vec2(0), vec2(0u));
         _ = min(vec2(0), vec2(0.0));
         _ = min(vec2(0), vec2(0f));
+        _ = min(vec2(0), vec2(0h));
+        _ = min(vec2(0), vec2(i));
+        _ = min(vec2(0), vec2(u));
+        _ = min(vec2(0), vec2(f));
+        _ = min(vec2(0), vec2(h));
     }
     {
         _ = min(vec3(0), vec3(0));
@@ -2226,6 +2654,11 @@ fn testMin()
         _ = min(vec3(0), vec3(0u));
         _ = min(vec3(0), vec3(0.0));
         _ = min(vec3(0), vec3(0f));
+        _ = min(vec3(0), vec3(0h));
+        _ = min(vec3(0), vec3(i));
+        _ = min(vec3(0), vec3(u));
+        _ = min(vec3(0), vec3(f));
+        _ = min(vec3(0), vec3(h));
     }
     {
         _ = min(vec4(0), vec4(0));
@@ -2233,49 +2666,80 @@ fn testMin()
         _ = min(vec4(0), vec4(0u));
         _ = min(vec4(0), vec4(0.0));
         _ = min(vec4(0), vec4(0f));
+        _ = min(vec4(0), vec4(0h));
+        _ = min(vec4(0), vec4(i));
+        _ = min(vec4(0), vec4(u));
+        _ = min(vec4(0), vec4(f));
+        _ = min(vec4(0), vec4(h));
     }
 }
 
 // 16.5.41
+// RUN: %metal-compile testMix
+@compute @workgroup_size(1)
 fn testMix()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T, T, T) => T,
     {
         _ = mix(-1, 0, 1);
         _ = mix(-1, 0, 1.0);
         _ = mix(-1, 1, 2f);
+        _ = mix(-1, 1, 2h);
+        _ = mix(-1, 1, f);
+        _ = mix(-1, 1, h);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = mix(vec2(0), vec2(0), vec2(0));
         _ = mix(vec2(0), vec2(0), vec2(0.0));
         _ = mix(vec2(0), vec2(0), vec2(0f));
+        _ = mix(vec2(0), vec2(0), vec2(0h));
+        _ = mix(vec2(0), vec2(0), vec2(f));
+        _ = mix(vec2(0), vec2(0), vec2(h));
     }
     {
         _ = mix(vec3(0), vec3(0), vec3(0));
         _ = mix(vec3(0), vec3(0), vec3(0.0));
         _ = mix(vec3(0), vec3(0), vec3(0f));
+        _ = mix(vec3(0), vec3(0), vec3(0h));
+        _ = mix(vec3(0), vec3(0), vec3(f));
+        _ = mix(vec3(0), vec3(0), vec3(h));
     }
     {
         _ = mix(vec4(0), vec4(0), vec4(0));
         _ = mix(vec4(0), vec4(0), vec4(0.0));
         _ = mix(vec4(0), vec4(0), vec4(0f));
+        _ = mix(vec4(0), vec4(0), vec4(0h));
+        _ = mix(vec4(0), vec4(0), vec4(f));
+        _ = mix(vec4(0), vec4(0), vec4(h));
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
     {
         _ = mix(vec2(0), vec2(0), 0);
         _ = mix(vec2(0), vec2(0), 0.0);
         _ = mix(vec2(0), vec2(0), 0f);
+        _ = mix(vec2(0), vec2(0), 0h);
+        _ = mix(vec2(0), vec2(0), f);
+        _ = mix(vec2(0), vec2(0), h);
     }
     {
         _ = mix(vec3(0), vec3(0), 0);
         _ = mix(vec3(0), vec3(0), 0.0);
         _ = mix(vec3(0), vec3(0), 0f);
+        _ = mix(vec3(0), vec3(0), 0h);
+        _ = mix(vec3(0), vec3(0), f);
+        _ = mix(vec3(0), vec3(0), h);
     }
     {
         _ = mix(vec4(0), vec4(0), 0);
         _ = mix(vec4(0), vec4(0), 0.0);
         _ = mix(vec4(0), vec4(0), 0f);
+        _ = mix(vec4(0), vec4(0), 0h);
+        _ = mix(vec4(0), vec4(0), f);
+        _ = mix(vec4(0), vec4(0), h);
     }
 }
 
@@ -2354,111 +2818,174 @@ fn testModf()
 }
 
 // 16.5.43
+// RUN: %metal-compile testNormalize
+@compute @workgroup_size(1)
 fn testNormalize()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
     {
         _ = normalize(vec2(1));
         _ = normalize(vec2(1.0));
         _ = normalize(vec2(1f));
+        _ = normalize(vec2(1h));
+        _ = normalize(vec2(f));
+        _ = normalize(vec2(h));
     }
     {
         _ = normalize(vec3(-1));
         _ = normalize(vec3(-1.0));
         _ = normalize(vec3(-1f));
+        _ = normalize(vec3(-1h));
+        _ = normalize(vec3(f));
+        _ = normalize(vec3(h));
     }
     {
         _ = normalize(vec4(-1));
         _ = normalize(vec4(-1.0));
         _ = normalize(vec4(-1f));
+        _ = normalize(vec4(-1h));
+        _ = normalize(vec4(f));
+        _ = normalize(vec4(h));
     }
 }
 
 // 16.5.44
+// RUN: %metal-compile testPow
+@compute @workgroup_size(1)
 fn testPow()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T, T) => T,
     {
         _ = pow(0, 1);
         _ = pow(0, 1.0);
         _ = pow(0, 1f);
+        _ = pow(0, 1h);
+        _ = pow(0, f);
+        _ = pow(0, h);
         _ = pow(0.0, 1.0);
         _ = pow(1.0, 2f);
+        _ = pow(1.0, 2h);
+        _ = pow(1.0, f);
+        _ = pow(1.0, h);
         _ = pow(1f, 2f);
+        _ = pow(1h, 2h);
+        _ = pow(1f, f);
+        _ = pow(1h, h);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = pow(vec2(0),   vec2(1)  );
         _ = pow(vec2(0),   vec2(0.0));
         _ = pow(vec2(0),   vec2(1f) );
+        _ = pow(vec2(0),   vec2(1h) );
+        _ = pow(vec2(0),   vec2(f) );
+        _ = pow(vec2(0),   vec2(h) );
         _ = pow(vec2(0.0), vec2(0.0));
         _ = pow(vec2(0.0), vec2(0f) );
+        _ = pow(vec2(0.0), vec2(0h) );
+        _ = pow(vec2(0.0), vec2(f) );
+        _ = pow(vec2(0.0), vec2(h) );
         _ = pow(vec2(1f),  vec2(1f) );
+        _ = pow(vec2(1h),  vec2(1h) );
+        _ = pow(vec2(1f),  vec2(f) );
+        _ = pow(vec2(1h),  vec2(h) );
     }
     {
         _ = pow(vec3(0),   vec3(1)  );
         _ = pow(vec3(0),   vec3(0.0));
         _ = pow(vec3(0),   vec3(1f) );
+        _ = pow(vec3(0),   vec3(1h) );
+        _ = pow(vec3(0),   vec3(f) );
+        _ = pow(vec3(0),   vec3(h) );
         _ = pow(vec3(0.0), vec3(0.0));
         _ = pow(vec3(0.0), vec3(0f) );
+        _ = pow(vec3(0.0), vec3(0h) );
+        _ = pow(vec3(0.0), vec3(f) );
+        _ = pow(vec3(0.0), vec3(h) );
         _ = pow(vec3(1f),  vec3(1f) );
+        _ = pow(vec3(1h),  vec3(1h) );
+        _ = pow(vec3(1f),  vec3(f) );
+        _ = pow(vec3(1h),  vec3(h) );
     }
     {
         _ = pow(vec4(0),   vec4(1)  );
         _ = pow(vec4(0),   vec4(0.0));
         _ = pow(vec4(0),   vec4(1f) );
+        _ = pow(vec4(0),   vec4(1h) );
+        _ = pow(vec4(0),   vec4(f) );
+        _ = pow(vec4(0),   vec4(h) );
         _ = pow(vec4(0.0), vec4(0.0));
         _ = pow(vec4(0.0), vec4(0f) );
+        _ = pow(vec4(0.0), vec4(0h) );
+        _ = pow(vec4(0.0), vec4(f) );
+        _ = pow(vec4(0.0), vec4(h) );
         _ = pow(vec4(1f),  vec4(1f) );
+        _ = pow(vec4(1h),  vec4(1h) );
+        _ = pow(vec4(1f),  vec4(f) );
+        _ = pow(vec4(1h),  vec4(h) );
     }
 }
 
 // 16.5.45
-fn testQuantizeToF16() {
+// RUN: %metal-compile testQuantizeToF16
+@compute @workgroup_size(1)
+fn testQuantizeToF16()
+{
     // [].(F32) => F32,
-    // FIXME: we don't support this as constant yet, since there's no f16 implementation.
-    // In order to avoid constant evaluation we use a non-const argument. We
-    // should re-enable the commented-out tests below once we implement f16.
     {
         let x = 0f;
         _ = quantizeToF16(x);
-        // _ = quantizeToF16(0);
-        // _ = quantizeToF16(0.0);
-        // _ = quantizeToF16(0f);
+        _ = quantizeToF16(0);
+        _ = quantizeToF16(0.0);
+        _ = quantizeToF16(0f);
     }
 
     // [N].(Vector[F32, N]) => Vector[F32, N],
     {
         let x = vec2(0f);
         _ = quantizeToF16(x);
-        // _ = quantizeToF16(vec2(0));
-        // _ = quantizeToF16(vec2(0.0));
-        // _ = quantizeToF16(vec2(0f));
+        _ = quantizeToF16(vec2(0));
+        _ = quantizeToF16(vec2(0.0));
+        _ = quantizeToF16(vec2(0f));
     }
     {
         let x = vec3(0f);
         _ = quantizeToF16(x);
-        // _ = quantizeToF16(vec3(0));
-        // _ = quantizeToF16(vec3(0.0));
-        // _ = quantizeToF16(vec3(0f));
+        _ = quantizeToF16(vec3(0));
+        _ = quantizeToF16(vec3(0.0));
+        _ = quantizeToF16(vec3(0f));
     }
     {
         let x = vec4(0f);
         _ = quantizeToF16(x);
-        // _ = quantizeToF16(vec4(0));
-        // _ = quantizeToF16(vec4(0.0));
-        // _ = quantizeToF16(vec4(0f));
+        _ = quantizeToF16(vec4(0));
+        _ = quantizeToF16(vec4(0.0));
+        _ = quantizeToF16(vec4(0f));
     }
 }
 
 // 16.5.46
+// RUN: %metal-compile testRadians
+@compute @workgroup_size(1)
 fn testRadians()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = radians(0);
         _ = radians(0.0);
         _ = radians(1f);
+        _ = radians(1h);
+        _ = radians(f);
+        _ = radians(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2466,67 +2993,121 @@ fn testRadians()
         _ = radians(vec2(0));
         _ = radians(vec2(0.0));
         _ = radians(vec2(1f));
+        _ = radians(vec2(1h));
+        _ = radians(vec2(f));
+        _ = radians(vec2(h));
     }
     {
         _ = radians(vec3(-1));
         _ = radians(vec3(-1.0));
         _ = radians(vec3(-1f));
+        _ = radians(vec3(-1h));
+        _ = radians(vec3(f));
+        _ = radians(vec3(h));
     }
     {
         _ = radians(vec4(-1));
         _ = radians(vec4(-1.0));
         _ = radians(vec4(-1f));
+        _ = radians(vec4(-1h));
+        _ = radians(vec4(f));
+        _ = radians(vec4(h));
     }
 }
 
 // 16.5.47
+// RUN: %metal-compile testReflect
+@compute @workgroup_size(1)
 fn testReflect()
 {
+    let f = 0f;
+    let h = 0h;
     // [T < Float, N].(Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = reflect(vec2(0),   vec2(1)  );
         _ = reflect(vec2(0),   vec2(0.0));
         _ = reflect(vec2(0),   vec2(1f) );
+        _ = reflect(vec2(0),   vec2(1h) );
+        _ = reflect(vec2(0),   vec2(f) );
+        _ = reflect(vec2(0),   vec2(h) );
         _ = reflect(vec2(0.0), vec2(0.0));
         _ = reflect(vec2(0.0), vec2(0f) );
+        _ = reflect(vec2(0.0), vec2(0h) );
+        _ = reflect(vec2(0.0), vec2(f) );
+        _ = reflect(vec2(0.0), vec2(h) );
         _ = reflect(vec2(1f),  vec2(1f) );
+        _ = reflect(vec2(1h),  vec2(1h) );
+        _ = reflect(vec2(1f),  vec2(f) );
+        _ = reflect(vec2(1h),  vec2(h) );
     }
     {
         _ = reflect(vec3(0),   vec3(1)  );
         _ = reflect(vec3(0),   vec3(0.0));
         _ = reflect(vec3(0),   vec3(1f) );
+        _ = reflect(vec3(0),   vec3(1h) );
+        _ = reflect(vec3(0),   vec3(f) );
+        _ = reflect(vec3(0),   vec3(h) );
         _ = reflect(vec3(0.0), vec3(0.0));
         _ = reflect(vec3(0.0), vec3(0f) );
+        _ = reflect(vec3(0.0), vec3(0h) );
+        _ = reflect(vec3(0.0), vec3(f) );
+        _ = reflect(vec3(0.0), vec3(h) );
         _ = reflect(vec3(1f),  vec3(1f) );
+        _ = reflect(vec3(1h),  vec3(1h) );
+        _ = reflect(vec3(1f),  vec3(f) );
+        _ = reflect(vec3(1h),  vec3(h) );
     }
     {
         _ = reflect(vec4(0),   vec4(1)  );
         _ = reflect(vec4(0),   vec4(0.0));
         _ = reflect(vec4(0),   vec4(1f) );
+        _ = reflect(vec4(0),   vec4(1h) );
+        _ = reflect(vec4(0),   vec4(f) );
+        _ = reflect(vec4(0),   vec4(h) );
         _ = reflect(vec4(0.0), vec4(0.0));
         _ = reflect(vec4(0.0), vec4(0f) );
+        _ = reflect(vec4(0.0), vec4(0h) );
+        _ = reflect(vec4(0.0), vec4(f) );
+        _ = reflect(vec4(0.0), vec4(h) );
         _ = reflect(vec4(1f),  vec4(1f) );
+        _ = reflect(vec4(1h),  vec4(1h) );
+        _ = reflect(vec4(1f),  vec4(f) );
+        _ = reflect(vec4(1h),  vec4(h) );
     }
 }
 
 // 16.5.48
+// RUN: %metal-compile testRefract
+@compute @workgroup_size(1)
 fn testRefract()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float, N].(Vector[T, N], Vector[T, N], T) => Vector[T, N],
     {
         _ = refract(vec2(0), vec2(0), 1);
         _ = refract(vec2(0), vec2(0), 0.0);
         _ = refract(vec2(0), vec2(0), 1f);
+        _ = refract(vec2(0), vec2(0), 1h);
+        _ = refract(vec2(0), vec2(0), f);
+        _ = refract(vec2(0), vec2(0), h);
     }
     {
         _ = refract(vec3(0), vec3(0), 1);
         _ = refract(vec3(0), vec3(0), 0.0);
         _ = refract(vec3(0), vec3(0), 1f);
+        _ = refract(vec3(0), vec3(0), 1h);
+        _ = refract(vec3(0), vec3(0), f);
+        _ = refract(vec3(0), vec3(0), h);
     }
     {
         _ = refract(vec4(0), vec4(0), 1);
         _ = refract(vec4(0), vec4(0), 0.0);
         _ = refract(vec4(0), vec4(0), 1f);
+        _ = refract(vec4(0), vec4(0), 1h);
+        _ = refract(vec4(0), vec4(0), f);
+        _ = refract(vec4(0), vec4(0), h);
     }
 }
 
@@ -2576,13 +3157,21 @@ fn testReverseBits()
 }
 
 // 16.5.50
+// RUN: %metal-compile testRound
+@compute @workgroup_size(1)
 fn testRound()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = round(0);
         _ = round(0.0);
         _ = round(1f);
+        _ = round(1h);
+        _ = round(f);
+        _ = round(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2590,27 +3179,44 @@ fn testRound()
         _ = round(vec2(0));
         _ = round(vec2(0.0));
         _ = round(vec2(1f));
+        _ = round(vec2(1h));
+        _ = round(vec2(f));
+        _ = round(vec2(h));
     }
     {
         _ = round(vec3(-1));
         _ = round(vec3(-1.0));
         _ = round(vec3(-1f));
+        _ = round(vec3(-1h));
+        _ = round(vec3(f));
+        _ = round(vec3(h));
     }
     {
         _ = round(vec4(-1));
         _ = round(vec4(-1.0));
         _ = round(vec4(-1f));
+        _ = round(vec4(-1h));
+        _ = round(vec4(f));
+        _ = round(vec4(h));
     }
 }
 
 // 16.5.51
+// RUN: %metal-compile testSaturate
+@compute @workgroup_size(1)
 fn testSaturate()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = saturate(0);
         _ = saturate(0.0);
         _ = saturate(1f);
+        _ = saturate(1h);
+        _ = saturate(f);
+        _ = saturate(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2618,28 +3224,47 @@ fn testSaturate()
         _ = saturate(vec2(0));
         _ = saturate(vec2(0.0));
         _ = saturate(vec2(1f));
+        _ = saturate(vec2(1h));
+        _ = saturate(vec2(f));
+        _ = saturate(vec2(h));
     }
     {
         _ = saturate(vec3(-1));
         _ = saturate(vec3(-1.0));
         _ = saturate(vec3(-1f));
+        _ = saturate(vec3(-1h));
+        _ = saturate(vec3(f));
+        _ = saturate(vec3(h));
     }
     {
         _ = saturate(vec4(-1));
         _ = saturate(vec4(-1.0));
         _ = saturate(vec4(-1f));
+        _ = saturate(vec4(-1h));
+        _ = saturate(vec4(f));
+        _ = saturate(vec4(h));
     }
 }
 
 // 16.5.52
+// RUN: %metal-compile testSign
+@compute @workgroup_size(1)
 fn testSign()
 {
+    let i = 0i;
+    let f = 0f;
+    let h = 0h;
+
     // [T < SignedNumber].(T) => T,
     {
         _ = sign(0);
         _ = sign(0i);
         _ = sign(0.0);
         _ = sign(1f);
+        _ = sign(1h);
+        _ = sign(i);
+        _ = sign(f);
+        _ = sign(h);
     }
 
     // [T < SignedNumber, N].(Vector[T, N]) => Vector[T, N],
@@ -2648,18 +3273,30 @@ fn testSign()
         _ = sign(vec2(0i));
         _ = sign(vec2(0.0));
         _ = sign(vec2(1f));
+        _ = sign(vec2(1h));
+        _ = sign(vec2(i));
+        _ = sign(vec2(f));
+        _ = sign(vec2(h));
     }
     {
         _ = sign(vec3(-1));
         _ = sign(vec3(-1i));
         _ = sign(vec3(-1.0));
         _ = sign(vec3(-1f));
+        _ = sign(vec3(-1h));
+        _ = sign(vec3(i));
+        _ = sign(vec3(f));
+        _ = sign(vec3(h));
     }
     {
         _ = sign(vec4(-1));
         _ = sign(vec4(-1i));
         _ = sign(vec4(-1.0));
         _ = sign(vec4(-1f));
+        _ = sign(vec4(-1h));
+        _ = sign(vec4(i));
+        _ = sign(vec4(f));
+        _ = sign(vec4(h));
     }
 }
 
@@ -2668,40 +3305,65 @@ fn testSign()
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
 // 16.5.55
+// RUN: %metal-compile testSmoothstep
+@compute @workgroup_size(1)
 fn testSmoothstep()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T, T, T) => T,
     {
         _ = smoothstep(-1, 0, 1);
         _ = smoothstep(-1, 0, 1.0);
         _ = smoothstep(-1, 1, 2f);
+        _ = smoothstep(-1, 1, 2h);
+        _ = smoothstep(-1, 1, f);
+        _ = smoothstep(-1, 1, h);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = smoothstep(vec2(2), vec2(1), vec2(1));
         _ = smoothstep(vec2(2), vec2(1), vec2(1.0));
         _ = smoothstep(vec2(2), vec2(1), vec2(1f));
+        _ = smoothstep(vec2(2), vec2(1), vec2(1h));
+        _ = smoothstep(vec2(2), vec2(1), vec2(f));
+        _ = smoothstep(vec2(2), vec2(1), vec2(h));
     }
     {
         _ = smoothstep(vec3(2), vec3(1), vec3(1));
         _ = smoothstep(vec3(2), vec3(1), vec3(1.0));
         _ = smoothstep(vec3(2), vec3(1), vec3(1f));
+        _ = smoothstep(vec3(2), vec3(1), vec3(1h));
+        _ = smoothstep(vec3(2), vec3(1), vec3(f));
+        _ = smoothstep(vec3(2), vec3(1), vec3(h));
     }
     {
         _ = smoothstep(vec4(2), vec4(1), vec4(1));
         _ = smoothstep(vec4(2), vec4(1), vec4(1.0));
         _ = smoothstep(vec4(2), vec4(1), vec4(1f));
+        _ = smoothstep(vec4(2), vec4(1), vec4(1h));
+        _ = smoothstep(vec4(2), vec4(1), vec4(f));
+        _ = smoothstep(vec4(2), vec4(1), vec4(h));
     }
 }
 
 // 16.5.56
+// RUN: %metal-compile testSqrt
+@compute @workgroup_size(1)
 fn testSqrt()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T) => T,
     {
         _ = sqrt(0);
         _ = sqrt(0.0);
         _ = sqrt(1f);
+        _ = sqrt(1h);
+        _ = sqrt(f);
+        _ = sqrt(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2709,43 +3371,69 @@ fn testSqrt()
         _ = sqrt(vec2(0));
         _ = sqrt(vec2(0.0));
         _ = sqrt(vec2(1f));
+        _ = sqrt(vec2(1h));
+        _ = sqrt(vec2(f));
+        _ = sqrt(vec2(h));
     }
     {
         _ = sqrt(vec3(1));
         _ = sqrt(vec3(1.0));
         _ = sqrt(vec3(1f));
+        _ = sqrt(vec3(1h));
+        _ = sqrt(vec3(f));
+        _ = sqrt(vec3(h));
     }
     {
         _ = sqrt(vec4(1));
         _ = sqrt(vec4(1.0));
         _ = sqrt(vec4(1f));
+        _ = sqrt(vec4(1h));
+        _ = sqrt(vec4(f));
+        _ = sqrt(vec4(h));
     }
 }
 
 // 16.5.57
+// RUN: %metal-compile testStep
+@compute @workgroup_size(1)
 fn testStep()
 {
+    let f = 0f;
+    let h = 0h;
+
     // [T < Float].(T, T) => T,
     {
         _ = step(0, 1);
         _ = step(0, 1.0);
         _ = step(1, 2f);
+        _ = step(1, 2h);
+        _ = step(1, f);
+        _ = step(1, h);
     }
     // [T < Float, N].(Vector[T, N], Vector[T, N], Vector[T, N]) => Vector[T, N],
     {
         _ = step(vec2(0), vec2(0));
         _ = step(vec2(0), vec2(0.0));
         _ = step(vec2(0), vec2(0f));
+        _ = step(vec2(0), vec2(0h));
+        _ = step(vec2(0), vec2(f));
+        _ = step(vec2(0), vec2(h));
     }
     {
         _ = step(vec3(0), vec3(0));
         _ = step(vec3(0), vec3(0.0));
         _ = step(vec3(0), vec3(0f));
+        _ = step(vec3(0), vec3(0h));
+        _ = step(vec3(0), vec3(f));
+        _ = step(vec3(0), vec3(h));
     }
     {
         _ = step(vec4(0), vec4(0));
         _ = step(vec4(0), vec4(0.0));
         _ = step(vec4(0), vec4(0f));
+        _ = step(vec4(0), vec4(0h));
+        _ = step(vec4(0), vec4(f));
+        _ = step(vec4(0), vec4(h));
     }
 }
 
@@ -2754,8 +3442,12 @@ fn testStep()
 // Tested in testTrigonometric and testTrigonometricHyperbolic
 
 // 16.5.60
+// RUN: %metal-compile testTranspose
+@compute @workgroup_size(1)
 fn testTranspose()
 {
+    let f = 0f;
+    let h = 0h;
     // [T < Float, C, R].(Matrix[T, C, R]) => Matrix[T, R, C],
     {
         const x = 1;
@@ -2793,16 +3485,45 @@ fn testTranspose()
         _ = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
         _ = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x));
     }
+    {
+        _ = transpose(mat2x2(0, 0, 0, f));
+        _ = transpose(mat2x3(0, 0, 0, 0, 0, f));
+        _ = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, f));
+        _ = transpose(mat3x2(0, 0, 0, 0, 0, f));
+        _ = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, f));
+        _ = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, f));
+        _ = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, f));
+        _ = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, f));
+        _ = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, f));
+    }
+    {
+        _ = transpose(mat2x2(0, 0, 0, h));
+        _ = transpose(mat2x3(0, 0, 0, 0, 0, h));
+        _ = transpose(mat2x4(0, 0, 0, 0, 0, 0, 0, h));
+        _ = transpose(mat3x2(0, 0, 0, 0, 0, h));
+        _ = transpose(mat3x3(0, 0, 0, 0, 0, 0, 0, 0, h));
+        _ = transpose(mat3x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h));
+        _ = transpose(mat4x2(0, 0, 0, 0, 0, 0, 0, h));
+        _ = transpose(mat4x3(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h));
+        _ = transpose(mat4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h));
+    }
 }
 
 // 16.5.61
+// RUN: %metal-compile testTrunc
+@compute @workgroup_size(1)
 fn testTrunc()
 {
+    let f = 0f;
+    let h = 0h;
     // [T < Float].(T) => T,
     {
         _ = trunc(0);
         _ = trunc(0.0);
         _ = trunc(1f);
+        _ = trunc(1h);
+        _ = trunc(f);
+        _ = trunc(h);
     }
 
     // [T < Float, N].(Vector[T, N]) => Vector[T, N],
@@ -2810,16 +3531,25 @@ fn testTrunc()
         _ = trunc(vec2(0));
         _ = trunc(vec2(0.0));
         _ = trunc(vec2(1f));
+        _ = trunc(vec2(1h));
+        _ = trunc(vec2(f));
+        _ = trunc(vec2(h));
     }
     {
         _ = trunc(vec3(-1));
         _ = trunc(vec3(-1.0));
         _ = trunc(vec3(-1f));
+        _ = trunc(vec3(-1h));
+        _ = trunc(vec3(f));
+        _ = trunc(vec3(h));
     }
     {
         _ = trunc(vec4(-1));
         _ = trunc(vec4(-1.0));
         _ = trunc(vec4(-1f));
+        _ = trunc(vec4(-1h));
+        _ = trunc(vec4(f));
+        _ = trunc(vec4(h));
     }
 }
 
