@@ -24,13 +24,13 @@ layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0)
   RenderSVGTransformableContainer {use} at (0,0) size 1000x1000
 layer at (0,0) size 240x150
   RenderSVGViewportContainer {svg} at (0,0) size 240x150
-layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 240x150 clip at (0,0) size 240x150
   RenderSVGImage {image} at (0,0) size 1000x1000
 layer at (0,0) size 1000x1000 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {use} at (0,0) size 1000x1000
 layer at (0,0) size 240x150
   RenderSVGViewportContainer {svg} at (0,0) size 240x150
-layer at (0,0) size 500x500 backgroundClip at (240,150) size 240x210 clip at (240,150) size 240x210
+layer at (0,0) size 500x500 backgroundClip at (240,150) size 240x150 clip at (240,150) size 240x150
   RenderSVGRect {rect} at (0,0) size 500x500 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=0.00] [width=500.00] [height=500.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
