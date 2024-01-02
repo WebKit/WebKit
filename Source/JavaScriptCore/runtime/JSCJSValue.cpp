@@ -47,6 +47,8 @@ uint64_t JSValue::toLength(JSGlobalObject* globalObject) const
 {
     // ECMA 7.1.15
     // http://www.ecma-international.org/ecma-262/6.0/#sec-tolength
+    if (isInt32())
+        return static_cast<uint64_t>(std::max<int32_t>(asInt32(), 0));
     double d = toIntegerOrInfinity(globalObject);
     if (d <= 0)
         return 0;

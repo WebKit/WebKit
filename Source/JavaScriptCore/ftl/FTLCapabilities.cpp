@@ -408,6 +408,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ArrayPop:
     case ArrayPush:
     case ParseInt:
+    case ToIntegerOrInfinity:
+    case ToLength:
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:

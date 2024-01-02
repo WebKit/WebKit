@@ -5023,6 +5023,44 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ToIntegerOrInfinity: {
+        AbstractValue child = forNode(node->child1());
+        if (JSValue value = child.value(); value && value.isNumber()) {
+            if (node->child1().useKind() == UntypedUse)
+                didFoldClobberWorld();
+            double d = value.asNumber();
+            setConstant(node, jsNumber(trunc(std::isnan(d) ? 0.0 : d + 0.0)));
+            break;
+        }
+        if (node->child1().useKind() == UntypedUse)
+            clobberWorld();
+        setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
+    case ToLength: {
+        AbstractValue child = forNode(node->child1());
+        if (JSValue value = child.value(); value && value.isNumber()) {
+            if (node->child1().useKind() == UntypedUse)
+                didFoldClobberWorld();
+            double d = value.asNumber();
+            d = trunc(std::isnan(d) ? 0.0 : d + 0.0);
+            if (d <= 0)
+                d = 0.0;
+            else
+                d = std::min(d, maxSafeInteger());
+            setConstant(node, jsNumber(d));
+            break;
+        }
+        if (node->child1().useKind() == UntypedUse)
+            clobberWorld();
+        if (node->child1().useKind() == Int32Use)
+            setNonCellTypeForNode(node, SpecInt32Only);
+        else
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
+        break;
+    }
+
     case CreateRest:
         if (!m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
             // This means we're already having a bad time.

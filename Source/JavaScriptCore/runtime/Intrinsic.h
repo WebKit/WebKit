@@ -127,6 +127,8 @@ namespace JSC {
     macro(IMulIntrinsic) \
     macro(RandomIntrinsic) \
     macro(FRoundIntrinsic) \
+    macro(ToIntegerOrInfinityIntrinsic) \
+    macro(ToLengthIntrinsic) \
     macro(TruncIntrinsic) \
     macro(TypedArrayValuesIntrinsic) \
     macro(TypedArrayKeysIntrinsic) \
