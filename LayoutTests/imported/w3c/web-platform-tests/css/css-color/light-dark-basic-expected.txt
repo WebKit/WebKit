@@ -1,4 +1,4 @@
 
-FAIL light-dark(white, black) assert_not_equals: Should be valid got disallowed value ""
-FAIL light-dark(light-dark(white, red), red) assert_not_equals: Should be valid got disallowed value ""
+PASS light-dark(white, black)
+PASS light-dark(light-dark(white, red), red)
 

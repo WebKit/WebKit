@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSUnresolvedColorMix.h"
+#include "CSSUnresolvedLightDark.h"
 #include <variant>
 #include <wtf/Forward.h>
 
@@ -60,7 +61,8 @@ public:
 private:
     // FIXME: Add support for unresolved relative colors.
     std::variant<
-        CSSUnresolvedColorMix
+        CSSUnresolvedColorMix,
+        CSSUnresolvedLightDark
     > m_value;
 };
 
