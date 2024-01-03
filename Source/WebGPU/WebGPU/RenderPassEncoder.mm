@@ -83,6 +83,11 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : attachment->depthClearValue;
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
+        if (textureView.width() && !m_renderTargetWidth) {
+            m_renderTargetWidth = textureView.width();
+            m_renderTargetHeight = textureView.height();
+        }
+
         id<MTLTexture> depthTexture = textureView.texture();
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = attachment->depthStoreOp == WGPUStoreOp_Discard;
