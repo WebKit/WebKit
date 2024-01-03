@@ -364,8 +364,11 @@ static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, const AtomStrin
     // Stop the thread now.
     gst_pad_set_active(stream->pad.get(), false);
 
-    if (source->priv->isStarted())
-        gst_element_remove_pad(GST_ELEMENT(source), stream->pad.get());
+    if (source->priv->isStarted()) {
+        WebKitMediaSrcPad* pad = WEBKIT_MEDIA_SRC_PAD(stream->pad.get());
+        gst_element_remove_pad(GST_ELEMENT(source), GST_PAD(pad));
+        pad->priv->stream = nullptr;
+    }
     source->priv->streams.remove(name);
 }
 
