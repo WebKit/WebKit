@@ -48,10 +48,10 @@
 #include "RenderSlider.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
+#include "UserAgentPartIds.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 
@@ -255,7 +255,7 @@ void RangeInputType::createShadowSubtree()
     element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, container);
     container->appendChild(ContainerNode::ChildChange::Source::Parser, track);
 
-    track->setPseudo(ShadowPseudoIds::webkitSliderRunnableTrack());
+    track->setPseudo(UserAgentPartIds::webkitSliderRunnableTrack());
     track->appendChild(ContainerNode::ChildChange::Source::Parser, SliderThumbElement::create(document));
 }
 

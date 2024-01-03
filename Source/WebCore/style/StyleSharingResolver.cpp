@@ -216,7 +216,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
     if (candidateElement.isBeingDragged() != element.isBeingDragged())
         return false;
-    if (candidateElement.shadowPseudoId() != element.shadowPseudoId())
+    if (candidateElement.userAgentPartId() != element.userAgentPartId())
         return false;
     if (element.isInShadowTree() && candidateElement.partNames() != element.partNames())
         return false;

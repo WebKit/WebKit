@@ -16,9 +16,9 @@ function runTest()
 
     // On cloned <details>, marker shadow element should be created
     var targetDetailsSummaryShadow = internals.shadowRoot(targetDetails.querySelector("summary"));
-    targetMarkerPseudoId = internals.shadowPseudoId(targetDetailsSummaryShadow.firstChild);
+    targetMarkerPseudoId = internals.userAgentPartId(targetDetailsSummaryShadow.firstChild);
     var clonedDetailsSummaryShadow = internals.shadowRoot(clonedDetails.querySelector("summary"));
-    clonedMarkerPseudoId = internals.shadowPseudoId(clonedDetailsSummaryShadow.firstChild);
+    clonedMarkerPseudoId = internals.userAgentPartId(clonedDetailsSummaryShadow.firstChild);
     shouldBe("targetMarkerPseudoId", "clonedMarkerPseudoId");
 }
 </script>

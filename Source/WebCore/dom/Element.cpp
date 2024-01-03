@@ -3124,7 +3124,7 @@ CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists()
     return isPrecustomizedOrDefinedCustomElement() && hasRareData() ? elementRareData()->customElementDefaultARIA() : nullptr;
 }
 
-const AtomString& Element::shadowPseudoId() const
+const AtomString& Element::userAgentPartId() const
 {
     return pseudo();
 }

@@ -38,7 +38,7 @@
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollbarTheme.h"
-#include "ShadowPseudoIds.h"
+#include "UserAgentPartIds.h"
 #include "WheelEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
@@ -63,7 +63,7 @@ Ref<SpinButtonElement> SpinButtonElement::create(Document& document, SpinButtonO
 {
     auto element = adoptRef(*new SpinButtonElement(document, spinButtonOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(ShadowPseudoIds::webkitInnerSpinButton());
+    element->setPseudo(UserAgentPartIds::webkitInnerSpinButton());
     return element;
 }
 

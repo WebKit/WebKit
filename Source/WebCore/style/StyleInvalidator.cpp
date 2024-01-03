@@ -421,11 +421,11 @@ void Invalidator::invalidateShadowPseudoElements(ShadowRoot& shadowRoot)
         return;
 
     for (auto& descendant : descendantsOfType<Element>(shadowRoot)) {
-        auto& shadowPseudoId = descendant.shadowPseudoId();
-        if (!shadowPseudoId)
+        auto& partId = descendant.userAgentPartId();
+        if (!partId)
             continue;
         for (auto& ruleSet : m_ruleSets) {
-            if (ruleSet->shadowPseudoElementRules(shadowPseudoId))
+            if (ruleSet->shadowPseudoElementRules(partId))
                 descendant.invalidateStyleInternal();
         }
     }

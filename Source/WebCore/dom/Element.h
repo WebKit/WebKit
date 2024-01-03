@@ -375,7 +375,7 @@ public:
     CustomElementDefaultARIA* customElementDefaultARIAIfExists();
 
     // FIXME: This should not be virtual. Please do not add additional overrides of this function.
-    virtual const AtomString& shadowPseudoId() const;
+    virtual const AtomString& userAgentPartId() const;
 
     bool isInActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
     bool active() const { return isUserActionElement() && isUserActionElementActive(); }

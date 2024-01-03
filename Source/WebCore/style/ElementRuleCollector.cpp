@@ -355,7 +355,7 @@ void ElementRuleCollector::matchPartPseudoElementRules(CascadeLevel level)
     if (!element().containingShadowRoot())
         return;
 
-    bool isUAShadowPseudoElement = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().shadowPseudoId().isNull();
+    bool isUAShadowPseudoElement = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().userAgentPartId().isNull();
 
     auto& partMatchingElement = isUAShadowPseudoElement ? *element().shadowHost() : element();
     if (partMatchingElement.partNames().isEmpty() || !partMatchingElement.isInShadowTree())
@@ -402,9 +402,9 @@ void ElementRuleCollector::collectMatchingShadowPseudoElementRules(const MatchRe
     if (element().isWebVTTElement() || element().isWebVTTRubyElement() || element().isWebVTTRubyTextElement())
         collectMatchingRulesForList(&rules.cuePseudoRules(), matchRequest);
 #endif
-    auto& pseudoId = element().shadowPseudoId();
-    if (!pseudoId.isEmpty())
-        collectMatchingRulesForList(rules.shadowPseudoElementRules(pseudoId), matchRequest);
+    auto& partId = element().userAgentPartId();
+    if (!partId.isEmpty())
+        collectMatchingRulesForList(rules.shadowPseudoElementRules(partId), matchRequest);
 }
 
 void ElementRuleCollector::matchUserRules()

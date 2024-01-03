@@ -53,11 +53,11 @@
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
 #include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentPartIds.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/DateMath.h>
@@ -341,7 +341,7 @@ void BaseDateAndTimeInputType::createShadowSubtree()
     } else {
         auto valueContainer = HTMLDivElement::create(document);
         element.userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, valueContainer);
-        valueContainer->setPseudo(ShadowPseudoIds::webkitDateAndTimeValue());
+        valueContainer->setPseudo(UserAgentPartIds::webkitDateAndTimeValue());
     }
     updateInnerTextValue();
 }

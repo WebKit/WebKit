@@ -1423,12 +1423,12 @@ ExceptionOr<String> Internals::shadowRootType(const Node& root) const
     }
 }
 
-const AtomString& Internals::shadowPseudoId(Element& element)
+const AtomString& Internals::userAgentPartId(Element& element)
 {
-    return element.shadowPseudoId();
+    return element.userAgentPartId();
 }
 
-void Internals::setShadowPseudoId(Element& element, const AtomString& id)
+void Internals::setUserAgentPartId(Element& element, const AtomString& id)
 {
     return element.setPseudo(id);
 }

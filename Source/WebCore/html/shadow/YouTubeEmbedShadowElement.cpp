@@ -27,7 +27,7 @@
 #include "YouTubeEmbedShadowElement.h"
 
 #include "RenderBlockFlow.h"
-#include "ShadowPseudoIds.h"
+#include "UserAgentPartIds.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

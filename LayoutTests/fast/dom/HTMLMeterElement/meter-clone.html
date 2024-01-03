@@ -21,9 +21,9 @@
     clonedInnerElement = clonedShadowRoot.querySelector("#inner");
 
     shouldBe("cloned.value", "target.value");
-    shouldBe("internals.shadowPseudoId(clonedInnerElement)", "internals.shadowPseudoId(targetInnerElement)");
-    shouldBe("internals.shadowPseudoId(clonedInnerElement.firstChild)", "internals.shadowPseudoId(targetInnerElement.firstChild)");
-    shouldBe("internals.shadowPseudoId(clonedInnerElement.firstChild.firstChild)", "internals.shadowPseudoId(targetInnerElement.firstChild.firstChild)");
+    shouldBe("internals.userAgentPartId(clonedInnerElement)", "internals.userAgentPartId(targetInnerElement)");
+    shouldBe("internals.userAgentPartId(clonedInnerElement.firstChild)", "internals.userAgentPartId(targetInnerElement.firstChild)");
+    shouldBe("internals.userAgentPartId(clonedInnerElement.firstChild.firstChild)", "internals.userAgentPartId(targetInnerElement.firstChild.firstChild)");
 
     cloned.value = 70;
     shouldBe("clonedInnerElement.firstChild.firstChild.style.inlineSize", '"70%"');

@@ -24,14 +24,16 @@
  */
 
 #include "config.h"
-#include "ShadowPseudoIds.h"
+#include "UserAgentPartIds.h"
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomString.h>
 
+// FIXME: Generate this from CSSPseudoSelectors.json.
+
 namespace WebCore {
 
-namespace ShadowPseudoIds {
+namespace UserAgentPartIds {
 
 #if ENABLE(VIDEO)
 const AtomString& cue()
@@ -391,6 +393,6 @@ const AtomString& appleAttachmentControlsContainer()
     return appleAttachmentControlsContainer;
 }
 
-} // namespace ShadowPseudoId
+} // namespace UserAgentPartIds
 
 } // namespace WebCore

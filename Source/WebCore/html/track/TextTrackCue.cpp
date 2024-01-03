@@ -46,10 +46,10 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "ScriptDisallowedScope.h"
-#include "ShadowPseudoIds.h"
 #include "Text.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
+#include "UserAgentPartIds.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
 #include <limits.h>
@@ -80,7 +80,7 @@ TextTrackCueBox::TextTrackCueBox(Document& document, TextTrackCue& cue)
 
 void TextTrackCueBox::initialize()
 {
-    setPseudo(ShadowPseudoIds::webkitMediaTextTrackDisplay());
+    setPseudo(UserAgentPartIds::webkitMediaTextTrackDisplay());
 }
 
 TextTrackCue* TextTrackCueBox::getCue() const
@@ -139,7 +139,7 @@ static ExceptionOr<void> tagPseudoObjects(Node& node, OptionSet<RequiredNodes>& 
         return { };
 
     if (element->hasAttributeWithoutSynchronization(HTMLNames::cuebackgroundAttr)) {
-        element->setPseudo(ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop());
+        element->setPseudo(UserAgentPartIds::webkitMediaTextTrackDisplayBackdrop());
         nodeTypes.add(RequiredNodes::CueBackground);
     }
 
@@ -147,7 +147,7 @@ static ExceptionOr<void> tagPseudoObjects(Node& node, OptionSet<RequiredNodes>& 
         if (!nodeTypes.contains(RequiredNodes::CueBackground) || !element->closest("[cuebackground]"_s).returnValue())
             return Exception { ExceptionCode::HierarchyRequestError, "Found cue attribute but no cuebackground attribute in hierarchy "_s };
 
-        element->setPseudo(ShadowPseudoIds::cue());
+        element->setPseudo(UserAgentPartIds::cue());
         nodeTypes.add(RequiredNodes::Cue);
     }
 
@@ -494,7 +494,7 @@ void TextTrackCue::rebuildDisplayTree()
 
     if (!m_displayTree) {
         m_displayTree = TextTrackCueBox::create(*document, *this);
-        m_displayTree->setPseudo(ShadowPseudoIds::webkitGenericCueRoot());
+        m_displayTree->setPseudo(UserAgentPartIds::webkitGenericCueRoot());
     }
 
     m_displayTree->removeChildren();
@@ -506,7 +506,7 @@ void TextTrackCue::rebuildDisplayTree()
         if (auto page = document->page()) {
             auto style = HTMLStyleElement::create(HTMLNames::styleTag, *document, false);
             style->setTextContent(makeString(page->captionUserPreferencesStyleSheet(),
-                " ::", ShadowPseudoIds::cue(), "{font-size:", m_fontSize, m_fontSizeIsImportant ? "px !important}" : "px}"));
+                " ::", UserAgentPartIds::cue(), "{font-size:", m_fontSize, m_fontSizeIsImportant ? "px !important}" : "px}"));
             m_displayTree->appendChild(style);
         }
     }

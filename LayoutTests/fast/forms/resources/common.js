@@ -182,7 +182,7 @@ function getElementByPseudoId(root, pseudoId) {
         return null;
     var node = root;
     while (node) {
-        if (node.nodeType === Node.ELEMENT_NODE && internals.shadowPseudoId(node) === pseudoId)
+        if (node.nodeType === Node.ELEMENT_NODE && internals.userAgentPartId(node) === pseudoId)
             return node;
         node = traverseNextNode(node, root);
     }

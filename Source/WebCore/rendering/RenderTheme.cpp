@@ -61,7 +61,6 @@
 #include "SearchFieldCancelButtonPart.h"
 #include "SearchFieldPart.h"
 #include "SearchFieldResultsPart.h"
-#include "ShadowPseudoIds.h"
 #include "SliderThumbElement.h"
 #include "SliderThumbPart.h"
 #include "SliderTrackPart.h"
@@ -75,6 +74,7 @@
 #include "Theme.h"
 #include "ToggleButtonPart.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentPartIds.h"
 #include <wtf/FileSystem.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
@@ -362,43 +362,43 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 #endif
 
     if (element->isInUserAgentShadowTree()) {
-        auto& pseudo = element->shadowPseudoId();
+        auto& part = element->userAgentPartId();
 
 #if ENABLE(DATALIST_ELEMENT)
-        if (pseudo == ShadowPseudoIds::webkitListButton())
+        if (part == UserAgentPartIds::webkitListButton())
             return StyleAppearance::ListButton;
 #endif
 
-        if (pseudo == ShadowPseudoIds::webkitCapsLockIndicator())
+        if (part == UserAgentPartIds::webkitCapsLockIndicator())
             return StyleAppearance::CapsLockIndicator;
 
-        if (pseudo == ShadowPseudoIds::webkitSearchCancelButton())
+        if (part == UserAgentPartIds::webkitSearchCancelButton())
             return StyleAppearance::SearchFieldCancelButton;
 
         if (RefPtr button = dynamicDowncast<SearchFieldResultsButtonElement>(element)) {
             if (!button->canAdjustStyleForAppearance())
                 return StyleAppearance::None;
 
-            if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
+            if (part == UserAgentPartIds::webkitSearchDecoration())
                 return StyleAppearance::SearchFieldDecoration;
 
-            if (pseudo == ShadowPseudoIds::webkitSearchResultsDecoration())
+            if (part == UserAgentPartIds::webkitSearchResultsDecoration())
                 return StyleAppearance::SearchFieldResultsDecoration;
 
-            if (pseudo == ShadowPseudoIds::webkitSearchResultsButton())
+            if (part == UserAgentPartIds::webkitSearchResultsButton())
                 return StyleAppearance::SearchFieldResultsButton;
         }
 
-        if (pseudo == ShadowPseudoIds::webkitSliderThumb())
+        if (part == UserAgentPartIds::webkitSliderThumb())
             return StyleAppearance::SliderThumbHorizontal;
 
-        if (pseudo == ShadowPseudoIds::webkitInnerSpinButton())
+        if (part == UserAgentPartIds::webkitInnerSpinButton())
             return StyleAppearance::InnerSpinButton;
 
-        if (pseudo == ShadowPseudoIds::thumb())
+        if (part == UserAgentPartIds::thumb())
             return StyleAppearance::SwitchThumb;
 
-        if (pseudo == ShadowPseudoIds::track())
+        if (part == UserAgentPartIds::track())
             return StyleAppearance::SwitchTrack;
     }
 

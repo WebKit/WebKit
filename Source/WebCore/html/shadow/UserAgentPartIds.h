@@ -27,9 +27,11 @@
 
 #include <wtf/Forward.h>
 
+// FIXME: Generate this from CSSPseudoSelectors.json.
+
 namespace WebCore {
 
-namespace ShadowPseudoIds {
+namespace UserAgentPartIds {
 
 #if ENABLE(VIDEO)
 const AtomString& cue();
@@ -118,6 +120,6 @@ const AtomString& webkitValidationBubbleBody();
 
 const AtomString& appleAttachmentControlsContainer();
 
-} // namespace ShadowPseudoId
+} // namespace UserAgentPartIds
 
 } // namespace WebCore

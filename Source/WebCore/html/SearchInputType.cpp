@@ -41,9 +41,9 @@
 #include "NodeRenderStyle.h"
 #include "RenderSearchField.h"
 #include "ScriptDisallowedScope.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "TextControlInnerElements.h"
+#include "UserAgentPartIds.h"
 
 namespace WebCore {
 
@@ -71,11 +71,11 @@ void SearchInputType::addSearchResult()
 static void updateResultButtonPseudoType(SearchFieldResultsButtonElement& resultButton, int maxResults)
 {
     if (!maxResults)
-        resultButton.setPseudo(ShadowPseudoIds::webkitSearchResultsDecoration());
+        resultButton.setPseudo(UserAgentPartIds::webkitSearchResultsDecoration());
     else if (maxResults < 0)
-        resultButton.setPseudo(ShadowPseudoIds::webkitSearchDecoration());
+        resultButton.setPseudo(UserAgentPartIds::webkitSearchDecoration());
     else
-        resultButton.setPseudo(ShadowPseudoIds::webkitSearchResultsButton());
+        resultButton.setPseudo(UserAgentPartIds::webkitSearchResultsButton());
 }
 
 void SearchInputType::attributeChanged(const QualifiedName& name)
