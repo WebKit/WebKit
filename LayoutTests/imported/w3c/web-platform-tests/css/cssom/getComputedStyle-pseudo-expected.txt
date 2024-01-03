@@ -1,6 +1,9 @@
 Item
 
-PASS Resolution of width is correct for ::before and ::after pseudo-elements
+PASS Resolution of width is correct when pseudo-element argument is ignored (due to no colon)
+PASS Resolution of width is correct when pseudo-element argument is invalid (due to a trailing token)
+PASS Resolution of width is correct for ::before and ::after pseudo-elements (single-colon)
+PASS Resolution of width is correct for ::before and ::after pseudo-elements (double-colon)
 FAIL Pseudo-elements can use the full range of CSS syntax assert_equals: expected "50px" but got ""
 PASS Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements
 PASS Resolution of nonexistent pseudo-element styles
@@ -10,6 +13,7 @@ FAIL Item-based blockification of nonexistent pseudo-elements assert_equals: Pse
 PASS display: contents on pseudo-elements
 PASS Dynamically change to display: contents on pseudo-elements
 PASS Unknown pseudo-elements
+PASS CSSStyleDeclaration is immutable
 PASS Unknown pseudo-element with a known identifier: backdrop
 FAIL Unknown pseudo-element with a known identifier: file-selector-button assert_equals: Should return the ::file-selector-button style expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 PASS Unknown pseudo-element with a known identifier: grammar-error
