@@ -3218,10 +3218,9 @@ void Heap::verifyGC()
     m_verifierSlotVisitor = nullptr;
 }
 
-void Heap::scheduleOpportunisticFullCollectionIfNeeded()
+void Heap::scheduleOpportunisticFullCollection()
 {
-    if (shouldDoFullCollection())
-        m_shouldDoOpportunisticFullCollection = true;
+    m_shouldDoOpportunisticFullCollection = true;
 }
 
 #define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type) \
