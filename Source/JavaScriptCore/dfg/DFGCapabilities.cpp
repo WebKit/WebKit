@@ -70,20 +70,38 @@ bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
         && codeBlock->ownerExecutable()->isOkToOptimize();
 }
 
-bool mightInlineFunctionForCall(CodeBlock* codeBlock)
+bool mightInlineFunctionForCall(JITType jitType, CodeBlock* codeBlock)
 {
-    return codeBlock->bytecodeCost() <= Options::maximumFunctionForCallInlineCandidateBytecodeCost()
-        && isSupportedForInlining(codeBlock);
+    if (jitType == JITType::DFGJIT) {
+        if (codeBlock->bytecodeCost() > Options::maximumFunctionForCallInlineCandidateBytecodeCostForDFG())
+            return false;
+    } else {
+        if (codeBlock->bytecodeCost() > Options::maximumFunctionForCallInlineCandidateBytecodeCostForFTL())
+            return false;
+    }
+    return isSupportedForInlining(codeBlock);
 }
-bool mightInlineFunctionForClosureCall(CodeBlock* codeBlock)
+bool mightInlineFunctionForClosureCall(JITType jitType, CodeBlock* codeBlock)
 {
-    return codeBlock->bytecodeCost() <= Options::maximumFunctionForClosureCallInlineCandidateBytecodeCost()
-        && isSupportedForInlining(codeBlock);
+    if (jitType == JITType::DFGJIT) {
+        if (codeBlock->bytecodeCost() > Options::maximumFunctionForClosureCallInlineCandidateBytecodeCostForDFG())
+            return false;
+    } else {
+        if (codeBlock->bytecodeCost() > Options::maximumFunctionForClosureCallInlineCandidateBytecodeCostForFTL())
+            return false;
+    }
+    return isSupportedForInlining(codeBlock);
 }
-bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
+bool mightInlineFunctionForConstruct(JITType jitType, CodeBlock* codeBlock)
 {
-    return codeBlock->bytecodeCost() <= Options::maximumFunctionForConstructInlineCandidateBytecoodeCost()
-        && isSupportedForInlining(codeBlock);
+    if (jitType == JITType::DFGJIT) {
+        if (codeBlock->bytecodeCost() > Options::maximumFunctionForConstructInlineCandidateBytecodeCostForDFG())
+            return false;
+    } else {
+        if (codeBlock->bytecodeCost() > Options::maximumFunctionForConstructInlineCandidateBytecodeCostForFTL())
+            return false;
+    }
+    return isSupportedForInlining(codeBlock);
 }
 bool canUseOSRExitFuzzing(CodeBlock* codeBlock)
 {
