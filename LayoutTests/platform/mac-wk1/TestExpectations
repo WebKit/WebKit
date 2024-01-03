@@ -2603,6 +2603,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 
 # rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
 fast/html/transient-activation.html [ Skip ]
+fast/html/history-action-user-activation.html [ Skip ]
 
 webkit.org/b/259485 [ Ventura+ ] http/tests/media/hls/track-in-band-multiple-cues.html [ Crash ]
 

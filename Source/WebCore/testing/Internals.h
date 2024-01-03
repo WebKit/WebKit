@@ -883,6 +883,10 @@ public:
 
     bool consumeTransientActivation();
 
+    bool hasHistoryActionActivation();
+
+    bool consumeHistoryActionUserActivation();
+
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 
     enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };

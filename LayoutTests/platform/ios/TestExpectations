@@ -1053,6 +1053,7 @@ fast/frames/focus-controller-crash-change-event.html
 fast/html/details-keyboard-show-hide.html [ Skip ]
 fast/html/details-no-summary-keyboard-show-hide.html [ Skip ]
 fast/html/transient-activation.html [ Skip ]
+fast/html/history-action-user-activation.html [ Skip ]
 fast/shadow-dom/activate-over-slotted-content.html [ Skip ]
 fast/shadow-dom/clear-active-state-in-shadow.html [ Skip ]
 fast/shadow-dom/focus-across-details-element.html [ Skip ]

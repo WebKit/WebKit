@@ -1545,6 +1545,7 @@ fast/encoding/backslash-encoding-jp.html [ Skip ] # Timeout.
 fast/encoding/char-encoding-mac.html [ Skip ] # Timeout.
 fast/encoding/char-encoding.html [ Skip ] # Timeout.
 fast/html/transient-activation.html [ Skip ] # Timeout.
+fast/html/history-action-user-activation.html [ Skip ] # Timeout.
 fast/mediastream/video-srcObject-set-twice.html [ Skip ] # Timeout.
 fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ Skip ] # Timeout.
 fast/text/large-synthetic-bold-with-scale-transform.html [ Skip ] # Timeout.

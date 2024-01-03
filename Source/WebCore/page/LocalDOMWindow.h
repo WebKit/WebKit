@@ -179,6 +179,8 @@ public:
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
     WEBCORE_EXPORT bool consumeTransientActivation();
+    WEBCORE_EXPORT bool hasHistoryActionActivation() const;
+    WEBCORE_EXPORT bool consumeHistoryActionUserActivation();
 
     DOMSelection* getSelection();
 
@@ -495,6 +497,7 @@ private:
     // been activated, while negative infinity indicates that a user activation-gated API has consumed the last user activation of W. The initial
     // value is positive infinity.
     MonotonicTime m_lastActivationTimestamp { MonotonicTime::infinity() };
+    MonotonicTime m_lastHistoryActionActivationTimestamp { MonotonicTime::infinity() };
 
     bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
     bool m_mayReuseForNavigation { true };
