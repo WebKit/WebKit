@@ -7,6 +7,7 @@
             "status": "non-standard"
         },
         "-webkit-any": {
+            "argument": "required",
             "comment": "Alias of :is() with different specificity rules.",
             "status": "non-standard"
         },
@@ -73,7 +74,9 @@
         },
         "default": {},
         "defined": {},
-        "dir": {},
+        "dir": {
+            "argument": "required"
+        },
         "disabled": {},
         "double-button": {
             "comment": "For scrollbar styling.",
@@ -102,6 +105,7 @@
             "condition": "ENABLE(VIDEO)"
         },
         "has": {
+            "argument": "required",
             "settings-flag": "hasPseudoClassEnabled"
         },
         "has-attachment": {
@@ -112,7 +116,9 @@
             "comment": "For scrollbar styling.",
             "status": "non-standard"
         },
-        "host": {},
+        "host": {
+            "argument": "optional"
+        },
         "hover": {},
         "in-range": {},
         "increment": {
@@ -124,9 +130,12 @@
         "is": {
             "aliases": [
                 "matches"
-            ]
+            ],
+            "argument": "required"
         },
-        "lang": {},
+        "lang": {
+            "argument": "required"
+        },
         "last-child": {},
         "last-of-type": {},
         "link": {},
@@ -138,11 +147,21 @@
             "comment": "For scrollbar styling.",
             "status": "non-standard"
         },
-        "not": {},
-        "nth-child": {},
-        "nth-last-child": {},
-        "nth-last-of-type": {},
-        "nth-of-type": {},
+        "not": {
+            "argument": "required"
+        },
+        "nth-child": {
+            "argument": "required"
+        },
+        "nth-last-child": {
+            "argument": "required"
+        },
+        "nth-last-of-type": {
+            "argument": "required"
+        },
+        "nth-of-type": {
+            "argument": "required"
+        },
         "only-child": {},
         "only-of-type": {},
         "optional": {},
@@ -175,6 +194,7 @@
             "condition": "ENABLE(VIDEO)"
         },
         "state": {
+            "argument": "required",
             "settings-flag": "customStateSetEnabled"
         },
         "single-button": {
@@ -197,7 +217,9 @@
         "volume-locked": {
             "condition": "ENABLE(VIDEO)"
         },
-        "where": {},
+        "where": {
+            "argument": "required"
+        },
         "window-inactive": {
             "comment": "Standards track point towards a media query rather than a pseudo-class: https://github.com/w3c/csswg-drafts/issues/5828.",
             "status": "non-standard"
@@ -246,6 +268,7 @@
             "supports-single-colon-for-compatibility": true
         },
         "cue": {
+            "argument": "optional",
             "condition": "ENABLE(VIDEO)"
         },
         "file-selector-button": {
@@ -264,10 +287,13 @@
             "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
         },
         "highlight": {
+            "argument": "required",
             "settings-flag": "highlightAPIEnabled"
         },
         "marker": {},
-        "part": {},
+        "part": {
+            "argument": "required"
+        },
         "placeholder": {
             "aliases": [
                 "-webkit-input-placeholder"
@@ -275,7 +301,9 @@
             "user-agent-part": true
         },
         "selection": {},
-        "slotted": {},
+        "slotted": {
+            "argument": "required"
+        },
         "spelling-error": {
             "settings-flag": "grammarAndSpellingPseudoElementsEnabled"
         },
@@ -291,15 +319,19 @@
             "settings-flag": "viewTransitionsEnabled"
         },
         "view-transition-group": {
+            "argument": "required",
             "settings-flag": "viewTransitionsEnabled"
         },
         "view-transition-image-pair": {
+            "argument": "required",
             "settings-flag": "viewTransitionsEnabled"
         },
         "view-transition-old": {
+            "argument": "required",
             "settings-flag": "viewTransitionsEnabled"
         },
         "view-transition-new": {
+            "argument": "required",
             "settings-flag": "viewTransitionsEnabled"
         }
     }

@@ -698,52 +698,12 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
     if (attributeValue.type() != IdentToken && attributeValue.type() != StringToken)
         return nullptr;
     selector->setValue(attributeValue.value().toAtomString());
-    
+
     selector->setAttribute(qualifiedName, consumeAttributeFlags(block));
 
     if (!block.atEnd())
         return nullptr;
     return selector;
-}
-
-static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClass pseudoClass)
-{
-    switch (pseudoClass) {
-    case CSSSelector::PseudoClass::Not:
-    case CSSSelector::PseudoClass::Is:
-    case CSSSelector::PseudoClass::Where:
-    case CSSSelector::PseudoClass::WebKitAny:
-    case CSSSelector::PseudoClass::Has:
-    case CSSSelector::PseudoClass::NthChild:
-    case CSSSelector::PseudoClass::NthLastChild:
-    case CSSSelector::PseudoClass::NthOfType:
-    case CSSSelector::PseudoClass::NthLastOfType:
-    case CSSSelector::PseudoClass::Lang:
-    case CSSSelector::PseudoClass::Dir:
-    case CSSSelector::PseudoClass::State:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-    
-static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElement pseudoElement)
-{
-    // Note that we omit ::cue since it can be either an ident or a function.
-    switch (pseudoElement) {
-    case CSSSelector::PseudoElement::Highlight:
-    case CSSSelector::PseudoElement::Part:
-    case CSSSelector::PseudoElement::Slotted:
-    case CSSSelector::PseudoElement::ViewTransitionGroup:
-    case CSSSelector::PseudoElement::ViewTransitionImagePair:
-    case CSSSelector::PseudoElement::ViewTransitionOld:
-    case CSSSelector::PseudoElement::ViewTransitionNew:
-        return true;
-    default:
-        break;
-    }
-    return false;
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTokenRange& range)
@@ -788,8 +748,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     if (token.type() == IdentToken) {
         range.consume();
-        if ((selector->match() == CSSSelector::Match::PseudoElement && isOnlyPseudoElementFunction(selector->pseudoElement()))
-            || (selector->match() == CSSSelector::Match::PseudoClass && isOnlyPseudoClassFunction(selector->pseudoClass())))
+        if ((selector->match() == CSSSelector::Match::PseudoElement && CSSSelector::pseudoElementRequiresArgument(selector->pseudoElement()))
+            || (selector->match() == CSSSelector::Match::PseudoClass && CSSSelector::pseudoClassRequiresArgument(selector->pseudoClass())))
             return nullptr;
         return selector;
     }

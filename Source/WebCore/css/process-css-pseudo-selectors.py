@@ -499,6 +499,10 @@ class CSSSelectorInlinesGenerator:
             self.write_is_pseudo_element_enabled(writer, pseudo_elements)
             self.write_selector_text_for_pseudo_class(writer, pseudo_classes)
             self.write_name_for_shadow_pseudo_element_legacy_alias(writer, pseudo_elements)
+            self.write_pseudo_argument_check_function(writer, 'pseudoClassRequiresArgument', 'PseudoClass', ['required'], pseudo_classes)
+            self.write_pseudo_argument_check_function(writer, 'pseudoElementRequiresArgument', 'PseudoElement', ['required'], pseudo_elements)
+            self.write_pseudo_argument_check_function(writer, 'pseudoClassMayHaveArgument', 'PseudoClass', ['required', 'optional'], pseudo_classes)
+            self.write_pseudo_argument_check_function(writer, 'pseudoElementMayHaveArgument', 'PseudoElement', ['required', 'optional'], pseudo_elements)
             close_namespace_webcore(writer)
 
     def write_includes(self, writer):
@@ -700,6 +704,35 @@ class CSSSelectorInlinesGenerator:
             writer.write('ASSERT_NOT_REACHED();')
             writer.write('return ""_s;')
         writer.write('}')
+
+    def write_pseudo_argument_check_function(self, writer, function_name, enum_name, argument_types, pseudos):
+        writer.write_block("""
+            inline bool CSSSelector::{}({} type)
+            {{
+                switch (type) {{""".format(function_name, enum_name))
+
+        for pseudo_name, pseudo_data in pseudos.items():
+            if 'argument' not in pseudo_data or pseudo_data['argument'] not in argument_types:
+                continue
+            if 'condition' in pseudo_data:
+                writer.write('#if {}'.format(pseudo_data['condition']))
+            with writer.indent():
+                writer.write('case {}::{}:'.format(enum_name, format_name_for_enum_class(pseudo_name)))
+            if 'condition' in pseudo_data:
+                writer.write('#endif')
+
+        with writer.indent(), writer.indent():
+            writer.write('return true;')
+
+        with writer.indent():
+            writer.write('default:')
+            with writer.indent():
+                writer.write('return false;')
+            # End switch.
+            writer.write('}')
+        # End function.
+        writer.write('}')
+
 
 # - MARK: Script entry point.
 

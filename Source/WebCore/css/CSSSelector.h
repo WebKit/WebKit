@@ -118,6 +118,10 @@ public:
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoId> parseStandalonePseudoElement(StringView, const CSSSelectorParserContext&);
+    static bool pseudoClassRequiresArgument(PseudoClass);
+    static bool pseudoElementRequiresArgument(PseudoElement);
+    static bool pseudoClassMayHaveArgument(PseudoClass);
+    static bool pseudoElementMayHaveArgument(PseudoElement);
 
     static const ASCIILiteral selectorTextForPseudoClass(PseudoClass);
     static const ASCIILiteral nameForShadowPseudoElementLegacyAlias(StringView);

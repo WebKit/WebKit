@@ -516,6 +516,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 builder.append(')');
                 break;
             default:
+                ASSERT(!pseudoClassMayHaveArgument(cs->pseudoClass()), "Missing serialization for pseudo-class argument");
                 break;
             }
         } else if (cs->match() == Match::PseudoElement) {
@@ -559,6 +560,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
 #endif
             default:
+                ASSERT(!pseudoElementMayHaveArgument(cs->pseudoElement()), "Missing serialization for pseudo-element argument");
                 builder.append("::");
                 serializeIdentifier(cs->serializingValue(), builder);
             }
