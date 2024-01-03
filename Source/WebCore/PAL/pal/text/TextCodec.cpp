@@ -46,9 +46,9 @@ int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling
 
     switch (handling) {
     case UnencodableHandling::Entities:
-        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "&#%u;", codePoint);
+        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "&#%u;", static_cast<unsigned>(codePoint));
     case UnencodableHandling::URLEncodedEntities:
-        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "%%26%%23%u%%3B", codePoint);
+        return snprintf(replacement.data(), sizeof(UnencodableReplacementArray), "%%26%%23%u%%3B", static_cast<unsigned>(codePoint));
     }
     ASSERT_NOT_REACHED();
     replacement.data()[0] = 0;
