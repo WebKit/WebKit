@@ -80,10 +80,10 @@ public:
         void doCollection(JSC::VM&) final;
 
     private:
-        FullGCActivityCallback(JSC::Heap& heap)
-            : Base(heap)
-        { }
+        FullGCActivityCallback(JSC::Heap&);
 
+        JSC::VM& m_vm;
+        std::unique_ptr<RunLoopObserver> m_runLoopObserver;
         JSC::HeapVersion m_version { 0 };
         unsigned m_deferCount { 0 };
     };
@@ -100,10 +100,10 @@ public:
         void doCollection(JSC::VM&) final;
 
     private:
-        EdenGCActivityCallback(JSC::Heap& heap)
-            : Base(heap)
-        { }
+        EdenGCActivityCallback(JSC::Heap&);
 
+        JSC::VM& m_vm;
+        std::unique_ptr<RunLoopObserver> m_runLoopObserver;
         JSC::HeapVersion m_version { 0 };
         unsigned m_deferCount { 0 };
     };
