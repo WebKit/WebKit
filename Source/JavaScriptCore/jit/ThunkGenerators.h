@@ -50,6 +50,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM&);
 
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForRegularCall(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForTailCall(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForRegularCallForClosure(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> polymorphicThunkForTailCallForClosure(VM&);
+
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM&);
@@ -87,6 +92,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> numberConstructorCallThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> stringConstructorCallThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> toIntegerOrInfinityThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> toLengthThunkGenerator(VM&);
 
 } // namespace JSC
 #endif // ENABLE(JIT)

@@ -642,6 +642,8 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
             FAIL("Unknown builtin value. Expected 'vertex_index', 'instance_index', 'position', 'front_facing', 'frag_depth', 'sample_index', 'sample_mask', 'local_invocation_id', 'local_invocation_index', 'global_invocation_id', 'workgroup_id' or 'num_workgroups'"_s);
         if (*builtin == Builtin::FragDepth)
             m_shaderModule.setUsesFragDepth();
+        else if (*builtin == Builtin::SampleMask)
+            m_shaderModule.setUsesSampleMask();
         CONSUME_TYPE(ParenRight);
         RETURN_ARENA_NODE(BuiltinAttribute, *builtin);
     }

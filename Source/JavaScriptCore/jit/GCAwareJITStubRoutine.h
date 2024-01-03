@@ -61,13 +61,14 @@ public:
     static Ref<JITStubRoutine> create(VM& vm, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, JSCell* owner)
     {
         auto stub = adoptRef(*new GCAwareJITStubRoutine(Type::GCAwareJITStubRoutineType, code, owner));
-        stub->makeGCAware(vm);
+        constexpr bool isCodeImmutable = false;
+        stub->makeGCAware(vm, isCodeImmutable);
         return stub;
     }
 
     void deleteFromGC();
 
-    void makeGCAware(VM&);
+    void makeGCAware(VM&, bool isCodeImmutable);
 
     JSCell* owner() const { return m_owner; }
     
@@ -82,6 +83,7 @@ private:
     bool m_isJettisoned : 1 { false };
     bool m_ownerIsDead : 1 { false };
     bool m_isGCAware : 1 { false };
+    bool m_isCodeImmutable : 1 { false };
 };
 
 class PolymorphicAccessJITStubRoutine : public GCAwareJITStubRoutine {

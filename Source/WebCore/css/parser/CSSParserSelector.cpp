@@ -22,6 +22,7 @@
 #include "CSSParserSelector.h"
 
 #include "CSSSelector.h"
+#include "CSSSelectorInlines.h"
 #include "CSSSelectorList.h"
 #include "SelectorPseudoTypeMap.h"
 
@@ -60,18 +61,10 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
     selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
     selector->m_selector->setPseudoElement(*pseudoType);
     AtomString name;
-    if (*pseudoType != CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed)
+    if (*pseudoType == CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed)
+        name = CSSSelector::nameForShadowPseudoElementLegacyAlias(pseudoTypeString);
+    else
         name = pseudoTypeString.convertToASCIILowercaseAtom();
-    else {
-        if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
-            name = "placeholder"_s;
-        else if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-file-upload-button"_s))
-            name = "file-selector-button"_s;
-        else {
-            ASSERT_NOT_REACHED();
-            name = pseudoTypeString.convertToASCIILowercaseAtom();
-        }
-    }
     selector->m_selector->setValue(name);
     return selector;
 }

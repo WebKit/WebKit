@@ -64,7 +64,7 @@ class WebView;
 class WebInspectorUIExtensionControllerProxy;
 #endif
 
-class RemoteWebInspectorUIProxyClient : public CanMakeCheckedPtr {
+class RemoteWebInspectorUIProxyClient : public CanMakeWeakPtr<RemoteWebInspectorUIProxyClient>, public CanMakeCheckedPtr {
 public:
     virtual ~RemoteWebInspectorUIProxyClient() { }
     virtual void sendMessageToBackend(const String& message) = 0;
@@ -166,7 +166,7 @@ private:
     void platformRevealFileExternally(const String& path);
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
-    CheckedPtr<RemoteWebInspectorUIProxyClient> m_client;
+    WeakPtr<RemoteWebInspectorUIProxyClient> m_client;
     WeakPtr<WebPageProxy> m_inspectorPage;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

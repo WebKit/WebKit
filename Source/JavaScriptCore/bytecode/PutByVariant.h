@@ -74,7 +74,7 @@ public:
     
     const StructureSet& structure() const
     {
-        ASSERT(kind() == Replace || kind() == Setter || kind() == Proxy);
+        ASSERT(kind() == Replace || kind() == Setter || kind() == Proxy || kind() == CustomAccessorSetter);
         return m_oldStructure;
     }
     

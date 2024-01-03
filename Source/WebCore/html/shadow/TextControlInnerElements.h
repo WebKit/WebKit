@@ -37,8 +37,8 @@ class TextControlInnerContainer final : public HTMLDivElement {
     WTF_MAKE_ISO_ALLOCATED(TextControlInnerContainer);
 public:
     static Ref<TextControlInnerContainer> create(Document&);
+
 private:
-    static constexpr auto CreateTextControlInnerContainer = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit TextControlInnerContainer(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
@@ -50,7 +50,6 @@ public:
     static Ref<TextControlInnerElement> create(Document&);
 
 private:
-    static constexpr auto CreateTextControlInnerElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit TextControlInnerElement(Document&);
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
 
@@ -75,7 +74,6 @@ public:
 private:
     void updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization);
 
-    static constexpr auto CreateTextControlInnerTextElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit TextControlInnerTextElement(Document&);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
@@ -89,7 +87,6 @@ public:
     static Ref<TextControlPlaceholderElement> create(Document&);
 
 private:
-    static constexpr auto CreateTextControlPlaceholderElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit TextControlPlaceholderElement(Document&);
     
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
@@ -108,7 +105,6 @@ public:
     bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
 
 private:
-    static constexpr auto CreateSearchFieldResultsButtonElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit SearchFieldResultsButtonElement(Document&);
     bool isMouseFocusable() const override { return false; }
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;
@@ -128,7 +124,6 @@ public:
 #endif
 
 private:
-    static constexpr auto CreateSearchFieldCancelButtonElement = CreateHTMLDivElement | TypeFlag::HasCustomStyleResolveCallbacks;
     explicit SearchFieldCancelButtonElement(Document&);
     bool isMouseFocusable() const override { return false; }
     std::optional<Style::ResolvedStyle> resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* shadowHostStyle) override;

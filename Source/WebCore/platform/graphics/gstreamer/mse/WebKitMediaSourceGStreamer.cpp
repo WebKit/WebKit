@@ -198,6 +198,7 @@ struct Stream : public ThreadSafeRefCounted<Stream> {
     DataMutex<StreamingMembers> streamingMembersDataMutex;
 };
 
+#ifndef GST_DISABLE_GST_DEBUG
 static GRefPtr<GstElement> findPipeline(GRefPtr<GstElement> element)
 {
     while (true) {
@@ -207,6 +208,7 @@ static GRefPtr<GstElement> findPipeline(GRefPtr<GstElement> element)
         element = parentElement;
     }
 }
+#endif // GST_DISABLE_GST_DEBUG
 
 static GstStreamType gstStreamType(TrackPrivateBaseGStreamer::TrackType type)
 {
@@ -305,7 +307,9 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
 
     source->priv->collection = adoptGRef(gst_stream_collection_new("WebKitMediaSrc"));
     for (const auto& track : tracks) {
+#ifndef GST_DISABLE_GST_DEBUG
         GST_DEBUG_OBJECT(source, "Adding stream with trackId '%s' of type %s with caps %" GST_PTR_FORMAT, track->stringId().string().utf8().data(), streamTypeToString(track->type()), track->initialCaps().get());
+#endif // GST_DISABLE_GST_DEBUG
 
         GRefPtr<WebKitMediaSrcPad> pad = WEBKIT_MEDIA_SRC_PAD(g_object_new(webkit_media_src_pad_get_type(), "name", makeString("src_", track->stringId()).utf8().data(), "direction", GST_PAD_SRC, NULL));
         gst_pad_set_activatemode_function(GST_PAD(pad.get()), webKitMediaSrcActivateMode);

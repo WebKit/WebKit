@@ -1015,6 +1015,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     boolean hasTransientActivation();
 
+    boolean hasHistoryActionActivation();
+
     GCObservation? observeGC(any observed);
 
     undefined setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
@@ -1291,6 +1293,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined acceptTypedArrays(Int32Array target);
 
     boolean consumeTransientActivation();
+
+    boolean consumeHistoryActionUserActivation();
 
     SelectorFilterHashCounts selectorFilterHashCounts(DOMString selector);
 

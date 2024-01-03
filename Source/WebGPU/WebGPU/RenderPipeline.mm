@@ -678,10 +678,191 @@ static NSString* errorValidatingDepthStencilState(const WGPUDepthStencilState& d
     return nil;
 }
 
+static bool hasAlphaChannel(WGPUTextureFormat format)
+{
+    switch (format) {
+    case WGPUTextureFormat_Undefined:
+    case WGPUTextureFormat_R8Unorm:
+    case WGPUTextureFormat_R8Snorm:
+    case WGPUTextureFormat_R8Uint:
+    case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_RG8Unorm:
+    case WGPUTextureFormat_RG8Snorm:
+    case WGPUTextureFormat_RG8Uint:
+    case WGPUTextureFormat_RG8Sint:
+    case WGPUTextureFormat_R32Float:
+    case WGPUTextureFormat_R32Uint:
+    case WGPUTextureFormat_R32Sint:
+    case WGPUTextureFormat_RG16Uint:
+    case WGPUTextureFormat_RG16Sint:
+    case WGPUTextureFormat_RG16Float:
+        return false;
+    case WGPUTextureFormat_RGBA8Unorm:
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WGPUTextureFormat_RGBA8Snorm:
+    case WGPUTextureFormat_RGBA8Uint:
+    case WGPUTextureFormat_RGBA8Sint:
+    case WGPUTextureFormat_BGRA8Unorm:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_RGB10A2Uint:
+    case WGPUTextureFormat_RGB10A2Unorm:
+        return true;
+    case WGPUTextureFormat_RG11B10Ufloat:
+    case WGPUTextureFormat_RGB9E5Ufloat:
+    case WGPUTextureFormat_RG32Float:
+    case WGPUTextureFormat_RG32Uint:
+    case WGPUTextureFormat_RG32Sint:
+        return false;
+    case WGPUTextureFormat_RGBA16Uint:
+    case WGPUTextureFormat_RGBA16Sint:
+    case WGPUTextureFormat_RGBA16Float:
+    case WGPUTextureFormat_RGBA32Float:
+    case WGPUTextureFormat_RGBA32Uint:
+    case WGPUTextureFormat_RGBA32Sint:
+        return true;
+    case WGPUTextureFormat_Stencil8:
+    case WGPUTextureFormat_Depth16Unorm:
+    case WGPUTextureFormat_Depth24Plus:
+    case WGPUTextureFormat_Depth24PlusStencil8:
+    case WGPUTextureFormat_Depth32Float:
+    case WGPUTextureFormat_Depth32FloatStencil8:
+        return false;
+    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+        return true;
+    case WGPUTextureFormat_BC4RUnorm:
+    case WGPUTextureFormat_BC4RSnorm:
+    case WGPUTextureFormat_BC5RGUnorm:
+    case WGPUTextureFormat_BC5RGSnorm:
+    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WGPUTextureFormat_BC6HRGBFloat:
+        return false;
+    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+        return true;
+    case WGPUTextureFormat_ETC2RGB8Unorm:
+    case WGPUTextureFormat_ETC2RGB8UnormSrgb:
+        return false;
+    case WGPUTextureFormat_ETC2RGB8A1Unorm:
+    case WGPUTextureFormat_ETC2RGB8A1UnormSrgb:
+    case WGPUTextureFormat_ETC2RGBA8Unorm:
+    case WGPUTextureFormat_ETC2RGBA8UnormSrgb:
+        return true;
+    case WGPUTextureFormat_EACR11Unorm:
+    case WGPUTextureFormat_EACR11Snorm:
+    case WGPUTextureFormat_EACRG11Unorm:
+    case WGPUTextureFormat_EACRG11Snorm:
+    case WGPUTextureFormat_ASTC4x4Unorm:
+    case WGPUTextureFormat_ASTC4x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x4Unorm:
+    case WGPUTextureFormat_ASTC5x4UnormSrgb:
+    case WGPUTextureFormat_ASTC5x5Unorm:
+    case WGPUTextureFormat_ASTC5x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x5Unorm:
+    case WGPUTextureFormat_ASTC6x5UnormSrgb:
+    case WGPUTextureFormat_ASTC6x6Unorm:
+    case WGPUTextureFormat_ASTC6x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x5Unorm:
+    case WGPUTextureFormat_ASTC8x5UnormSrgb:
+    case WGPUTextureFormat_ASTC8x6Unorm:
+    case WGPUTextureFormat_ASTC8x6UnormSrgb:
+    case WGPUTextureFormat_ASTC8x8Unorm:
+    case WGPUTextureFormat_ASTC8x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x5Unorm:
+    case WGPUTextureFormat_ASTC10x5UnormSrgb:
+    case WGPUTextureFormat_ASTC10x6Unorm:
+    case WGPUTextureFormat_ASTC10x6UnormSrgb:
+    case WGPUTextureFormat_ASTC10x8Unorm:
+    case WGPUTextureFormat_ASTC10x8UnormSrgb:
+    case WGPUTextureFormat_ASTC10x10Unorm:
+    case WGPUTextureFormat_ASTC10x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x10Unorm:
+    case WGPUTextureFormat_ASTC12x10UnormSrgb:
+    case WGPUTextureFormat_ASTC12x12Unorm:
+    case WGPUTextureFormat_ASTC12x12UnormSrgb:
+        return false;
+    case WGPUTextureFormat_Force32:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static bool textureFormatAllowedForRetunType(WGPUTextureFormat format, MTLDataType dataType, bool readsAlpha)
+{
+    if (dataType == MTLDataTypeNone || format == WGPUTextureFormat_Undefined)
+        return true;
+
+    if (readsAlpha && !(dataType == MTLDataTypeFloat4 || dataType == MTLDataTypeInt4 || dataType == MTLDataTypeUInt4))
+        return false;
+
+    switch (format) {
+    case WGPUTextureFormat_R8Unorm:
+    case WGPUTextureFormat_R16Float:
+    case WGPUTextureFormat_R32Float:
+        return dataType == MTLDataTypeFloat || dataType == MTLDataTypeFloat2 || dataType == MTLDataTypeFloat3 || dataType == MTLDataTypeFloat4;
+
+    case WGPUTextureFormat_RG8Unorm:
+    case WGPUTextureFormat_RG16Float:
+    case WGPUTextureFormat_RG32Float:
+        return dataType == MTLDataTypeFloat2 || dataType == MTLDataTypeFloat3 || dataType == MTLDataTypeFloat4;
+
+    case WGPUTextureFormat_RGBA8Unorm:
+    case WGPUTextureFormat_RGBA8UnormSrgb:
+    case WGPUTextureFormat_BGRA8Unorm:
+    case WGPUTextureFormat_BGRA8UnormSrgb:
+    case WGPUTextureFormat_RGB10A2Unorm:
+    case WGPUTextureFormat_RGBA16Float:
+    case WGPUTextureFormat_RGBA32Float:
+        return dataType == MTLDataTypeFloat4;
+
+    case WGPUTextureFormat_R8Uint:
+    case WGPUTextureFormat_R16Uint:
+    case WGPUTextureFormat_R32Uint:
+        return dataType == MTLDataTypeUInt || dataType == MTLDataTypeUInt2 || dataType == MTLDataTypeUInt3 || dataType == MTLDataTypeUInt4;
+
+    case WGPUTextureFormat_R8Sint:
+    case WGPUTextureFormat_R16Sint:
+    case WGPUTextureFormat_R32Sint:
+        return dataType == MTLDataTypeInt || dataType == MTLDataTypeInt2 || dataType == MTLDataTypeInt3 || dataType == MTLDataTypeInt4;
+
+    case WGPUTextureFormat_RG8Uint:
+    case WGPUTextureFormat_RG16Uint:
+    case WGPUTextureFormat_RG32Uint:
+        return dataType == MTLDataTypeUInt2 || dataType == MTLDataTypeUInt3 || dataType == MTLDataTypeUInt4;
+
+    case WGPUTextureFormat_RG8Sint:
+    case WGPUTextureFormat_RG16Sint:
+    case WGPUTextureFormat_RG32Sint:
+        return dataType == MTLDataTypeInt2 || dataType == MTLDataTypeInt3 || dataType == MTLDataTypeInt4;
+
+    case WGPUTextureFormat_RGBA8Uint:
+    case WGPUTextureFormat_RGB10A2Uint:
+    case WGPUTextureFormat_RGBA16Uint:
+    case WGPUTextureFormat_RGBA32Uint:
+        return dataType == MTLDataTypeUInt4;
+
+    case WGPUTextureFormat_RGBA8Sint:
+    case WGPUTextureFormat_RGBA16Sint:
+    case WGPUTextureFormat_RGBA32Sint:
+        return dataType == MTLDataTypeInt4;
+
+    case WGPUTextureFormat_RG11B10Ufloat:
+        return dataType == MTLDataTypeFloat3 || dataType == MTLDataTypeFloat4;
+    default:
+        return false;
+    }
+}
+
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync)
 {
     if (!validateRenderPipeline(descriptor) || !isValid())
-        return RenderPipeline::createInvalid(*this);
+        return returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_s);
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
     auto label = fromAPI(descriptor.label);
@@ -724,6 +905,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
     std::optional<PipelineLayout> fragmentPipelineLayout { std::nullopt };
     bool usesFragDepth = false;
+    bool usesSampleMask = false;
+    bool hasAtLeastOneColorTarget = false;
+
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 
@@ -735,9 +919,11 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s);
 
         usesFragDepth = fragmentModule.ast()->usesFragDepth();
+        usesSampleMask = fragmentModule.ast()->usesSampleMask();
         const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
 
-        auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint(), label);
+        auto fragmentEntryPoint = fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint();
+        auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentEntryPoint, label);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment library could not be created"_s);
 
@@ -751,37 +937,65 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 
+        uint32_t bytesPerSample = 0;
+        const auto& returnTypes = fragmentModule.returnTypeForEntryPoint(fragmentEntryPoint);
         for (uint32_t i = 0; i < fragmentDescriptor.targetCount; ++i) {
             const auto& targetDescriptor = fragmentDescriptor.targets[i];
             if (targetDescriptor.format == WGPUTextureFormat_Undefined)
                 continue;
 
+            MTLDataType fragmentFunctionReturnType = MTLDataTypeNone;
+            if (returnTypes) {
+                if (auto it = returnTypes->find(i); it != returnTypes->end())
+                    fragmentFunctionReturnType = it->value;
+            }
             const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
 
             if (Texture::isDepthOrStencilFormat(targetDescriptor.format) || !Texture::isRenderableFormat(targetDescriptor.format, *this))
                 return returnInvalidRenderPipeline(*this, isAsync, "Depth / stencil format passed to color format"_s);
 
+            bytesPerSample = roundUpToMultipleOf(Texture::renderTargetPixelByteAlignment(targetDescriptor.format), bytesPerSample);
+            bytesPerSample += Texture::renderTargetPixelByteCost(targetDescriptor.format);
             mtlColorAttachment.pixelFormat = Texture::pixelFormat(targetDescriptor.format);
 
+            hasAtLeastOneColorTarget = true;
+            if (targetDescriptor.writeMask > WGPUColorWriteMask_All || (fragmentFunctionReturnType == MTLDataTypeNone && targetDescriptor.writeMask))
+                return returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s);
             mtlColorAttachment.writeMask = colorWriteMask(targetDescriptor.writeMask);
 
+            bool readsAlpha = false;
             if (targetDescriptor.blend) {
                 if (!Texture::supportsBlending(targetDescriptor.format, *this))
                     return returnInvalidRenderPipeline(*this, isAsync, "Color target attempted to use blending on non-blendable format"_s);
                 mtlColorAttachment.blendingEnabled = YES;
 
                 const auto& alphaBlend = targetDescriptor.blend->alpha;
+                const auto& colorBlend = targetDescriptor.blend->color;
+                auto validateBlend = ^(const WGPUBlendComponent& blend) {
+                    if (blend.operation == WGPUBlendOperation_Min || blend.operation == WGPUBlendOperation_Max)
+                        return blend.srcFactor == WGPUBlendFactor_One && blend.dstFactor == WGPUBlendFactor_One;
+                    return true;
+                };
+                if (!validateBlend(alphaBlend) || !validateBlend(colorBlend))
+                    return returnInvalidRenderPipeline(*this, isAsync, "Blend states are not valid"_s);
                 mtlColorAttachment.alphaBlendOperation = blendOperation(alphaBlend.operation);
                 mtlColorAttachment.sourceAlphaBlendFactor = blendFactor(alphaBlend.srcFactor);
                 mtlColorAttachment.destinationAlphaBlendFactor = blendFactor(alphaBlend.dstFactor);
 
-                const auto& colorBlend = targetDescriptor.blend->color;
                 mtlColorAttachment.rgbBlendOperation = blendOperation(colorBlend.operation);
                 mtlColorAttachment.sourceRGBBlendFactor = blendFactor(colorBlend.srcFactor);
                 mtlColorAttachment.destinationRGBBlendFactor = blendFactor(colorBlend.dstFactor);
+                readsAlpha = colorBlend.srcFactor == WGPUBlendFactor_SrcAlpha || colorBlend.srcFactor == WGPUBlendFactor_OneMinusSrcAlpha || colorBlend.srcFactor == WGPUBlendFactor_SrcAlphaSaturated || colorBlend.dstFactor == WGPUBlendFactor_SrcAlpha || colorBlend.dstFactor == WGPUBlendFactor_OneMinusSrcAlpha || colorBlend.dstFactor == WGPUBlendFactor_SrcAlphaSaturated;
             } else
                 mtlColorAttachment.blendingEnabled = NO;
+
+            if (!textureFormatAllowedForRetunType(targetDescriptor.format, fragmentFunctionReturnType, readsAlpha))
+                return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"pipeline creation - color target pixel format(%u) for location(%zu) is incompatible with shader output data type of %zu", i, mtlColorAttachment.pixelFormat, fragmentFunctionReturnType]);
+
         }
+
+        if (bytesPerSample > limits().maxColorAttachmentBytesPerSample)
+            return returnInvalidRenderPipeline(*this, isAsync, "Bytes per sample exceeded maximum allowed limit"_s);
     }
 
     MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
@@ -806,11 +1020,22 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         depthBiasClamp = depthStencil->depthBiasClamp;
     }
 
+    if (!hasAtLeastOneColorTarget && !descriptor.depthStencil)
+        return returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_s);
+
     if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)
         return returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s);
 
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
+    if (descriptor.multisample.alphaToCoverageEnabled) {
+        if (usesSampleMask)
+            return returnInvalidRenderPipeline(*this, isAsync, "Can not use sampleMask with alphaToCoverage"_s);
+        if (!descriptor.fragment)
+            return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
+        if (!descriptor.fragment->targetCount || !hasAlphaChannel(descriptor.fragment->targets[0].format))
+            return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
+    }
     RELEASE_ASSERT([mtlRenderPipelineDescriptor respondsToSelector:@selector(setSampleMask:)]);
     uint32_t sampleMask = RenderBundleEncoder::defaultSampleMask;
     if (auto mask = descriptor.multisample.mask; mask != sampleMask) {

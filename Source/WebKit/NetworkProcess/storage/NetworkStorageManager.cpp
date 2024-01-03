@@ -1673,7 +1673,8 @@ void NetworkStorageManager::lockCacheStorage(IPC::Connection& connection, const 
 
 void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, const WebCore::ClientOrigin& origin)
 {
-    originStorageManager(origin).cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()).unlockStorage(connection.uniqueID());
+    if (auto cacheStorageManager = originStorageManager(origin).existingCacheStorageManager())
+        cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
 void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)

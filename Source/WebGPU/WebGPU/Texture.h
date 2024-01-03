@@ -84,6 +84,8 @@ public:
     static std::optional<WGPUTextureFormat> resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
     static bool isCompressedFormat(WGPUTextureFormat);
     static bool isRenderableFormat(WGPUTextureFormat, const Device&);
+    static uint32_t renderTargetPixelByteCost(WGPUTextureFormat);
+    static uint32_t renderTargetPixelByteAlignment(WGPUTextureFormat);
 
     WGPUExtent3D logicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);

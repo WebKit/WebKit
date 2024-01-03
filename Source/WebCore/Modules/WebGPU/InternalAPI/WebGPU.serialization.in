@@ -257,16 +257,7 @@ enum class WebCore::WebGPU::ColorWrite : uint8_t {
     All,
 };
 
-header: <WebCore/WebGPUColorWrite.h>
-[OptionSet] enum class WebCore::WebGPU::ColorWrite : uint8_t {
-    Red,
-    Green,
-    Blue,
-    Alpha,
-    All,
-};
-
-using WebCore::WebGPU::ColorWriteFlags = OptionSet<WebCore::WebGPU::ColorWrite>;
+using WebCore::WebGPU::ColorWriteFlags = std::underlying_type<WebCore::WebGPU::ColorWrite>;
 
 header: <WebCore/WebGPUSamplerBindingType.h>
 enum class WebCore::WebGPU::SamplerBindingType : uint8_t {

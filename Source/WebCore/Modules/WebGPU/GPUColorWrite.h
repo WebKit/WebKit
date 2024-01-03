@@ -44,18 +44,19 @@ public:
     static constexpr GPUFlagsConstant ALL   = 0xF;
 };
 
+static constexpr bool compare(auto a, auto b)
+{
+    return static_cast<unsigned>(a) == static_cast<unsigned>(b);
+}
+
 inline WebGPU::ColorWriteFlags convertColorWriteFlagsToBacking(GPUColorWriteFlags colorWriteFlags)
 {
-    WebGPU::ColorWriteFlags result;
-    if (colorWriteFlags & GPUColorWrite::RED)
-        result.add(WebGPU::ColorWrite::Red);
-    if (colorWriteFlags & GPUColorWrite::GREEN)
-        result.add(WebGPU::ColorWrite::Green);
-    if (colorWriteFlags & GPUColorWrite::BLUE)
-        result.add(WebGPU::ColorWrite::Blue);
-    if (colorWriteFlags & GPUColorWrite::ALPHA)
-        result.add(WebGPU::ColorWrite::Alpha);
-    return result;
+    static_assert(compare(GPUColorWrite::RED, WebGPU::ColorWrite::Red), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::GREEN, WebGPU::ColorWrite::Green), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::BLUE, WebGPU::ColorWrite::Blue), "ColorWriteFlags enum values differ");
+    static_assert(compare(GPUColorWrite::ALPHA, WebGPU::ColorWrite::Alpha), "ColorWriteFlags enum values differ");
+
+    return static_cast<WebGPU::ColorWriteFlags>(colorWriteFlags);
 }
 
 }

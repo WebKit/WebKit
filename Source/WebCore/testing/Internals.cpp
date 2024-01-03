@@ -5493,6 +5493,24 @@ double Internals::lastHandledUserGestureTimestamp()
     return document->lastHandledUserGestureTimestamp().secondsSinceEpoch().value();
 }
 
+bool Internals::hasHistoryActionActivation()
+{
+    if (auto* document = contextDocument()) {
+        if (auto* window = document->domWindow())
+            return window->hasHistoryActionActivation();
+    }
+    return false;
+}
+
+bool Internals::consumeHistoryActionUserActivation()
+{
+    if (auto* document = contextDocument()) {
+        if (auto* window = document->domWindow())
+            return window->consumeHistoryActionUserActivation();
+    }
+    return false;
+}
+
 RefPtr<GCObservation> Internals::observeGC(JSC::JSValue value)
 {
     if (!value.isObject())

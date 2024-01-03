@@ -2093,10 +2093,10 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 #endif
 }
 
-void CodeBlock::linkIncomingCall(CallFrame* callerFrame, CallLinkInfoBase* incoming)
+void CodeBlock::linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase* incoming)
 {
-    if (callerFrame)
-        noticeIncomingCall(callerFrame);
+    if (caller)
+        noticeIncomingCall(caller, callerFrame);
     m_incomingCalls.push(incoming);
 }
 
@@ -2327,12 +2327,12 @@ private:
     mutable bool m_didRecurse;
 };
 
-void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
+void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame)
 {
     RELEASE_ASSERT(!m_isJettisoned);
+    UNUSED_PARAM(callerFrame);
 
-    auto* owner = callerFrame->codeOwnerCell();
-    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(owner);
+    CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(caller);
     
     dataLogLnIf(Options::verboseCallLink(), "Noticing call link from ", pointerDump(callerCodeBlock), " to ", *this);
     
@@ -2387,18 +2387,20 @@ void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
     }
 
     // Recursive calls won't be inlined.
-    VM& vm = this->vm();
-    RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-    StackVisitor::visit(vm.topCallFrame, vm, functor);
+    if (callerFrame) {
+        VM& vm = this->vm();
+        RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
+        StackVisitor::visit(vm.topCallFrame, vm, functor);
 
-    if (functor.didRecurse()) {
-        dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
-        m_shouldAlwaysBeInlined = false;
-        return;
+        if (functor.didRecurse()) {
+            dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
+            m_shouldAlwaysBeInlined = false;
+            return;
+        }
     }
     
     if (callerCodeBlock->capabilityLevelState() == DFG::CapabilityLevelNotSet) {
-        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, callerFrame->codeOrigin()), " to ", *this, ": caller's DFG capability level is not set.\n");
+        dataLog("In call from ", FullCodeOrigin(callerCodeBlock, callerFrame ? callerFrame->codeOrigin() : CodeOrigin { }), " to ", *this, ": caller's DFG capability level is not set.\n");
         CRASH();
     }
     

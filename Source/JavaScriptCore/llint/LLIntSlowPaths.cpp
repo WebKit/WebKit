@@ -595,7 +595,9 @@ extern "C" UGPRPair llint_link_call(CallFrame* calleeFrame, JSCell* globalObject
 
 extern "C" UGPRPair llint_virtual_call(CallFrame* calleeFrame, JSCell* globalObject, CallLinkInfo* callLinkInfo)
 {
+    VM& vm = globalObject->vm();
     JSCell* calleeAsFunctionCellIgnored;
+    NativeCallFrameTracer tracer(vm, calleeFrame->callerFrame());
     return virtualForWithFunction(jsCast<JSGlobalObject*>(globalObject), calleeFrame, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 

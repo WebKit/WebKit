@@ -37,7 +37,6 @@ namespace WTF {
 //     [ Leading Array ][  DerivedClass  ][ Trailing Array ]
 template<typename Derived, typename LeadingType, typename TrailingType>
 class ButterflyArray {
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ButterflyArray);
     friend class JSC::LLIntOffsetsExtractor;
 protected:
@@ -101,7 +100,7 @@ public:
     {
         unsigned leadingSize = base->m_leadingSize;
         std::destroy_at(static_cast<Derived*>(base));
-        Derived::freeAfterDestruction(bitwise_cast<uint8_t*>(static_cast<Derived*>(base)) - memoryOffsetForDerived(leadingSize));
+        fastFree(bitwise_cast<uint8_t*>(static_cast<Derived*>(base)) - memoryOffsetForDerived(leadingSize));
     }
 
     ~ButterflyArray()
@@ -128,7 +127,7 @@ protected:
         return bitwise_cast<TrailingType*>(bitwise_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfTrailingData());
     }
 
-    const TrailingType trailingData() const
+    const TrailingType* trailingData() const
     {
         return bitwise_cast<const TrailingType*>(bitwise_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfTrailingData());
     }

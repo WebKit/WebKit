@@ -28,8 +28,11 @@
 
 #import "APIConversions.h"
 #import "ASTFunction.h"
+#import "ASTStructure.h"
+#import "ASTStructureMember.h"
 #import "Device.h"
 #import "PipelineLayout.h"
+#import "Types.h"
 #import "WGSLShaderModule.h"
 
 #import <WebGPU/WebGPU.h>
@@ -206,6 +209,106 @@ auto ShaderModule::convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::
     });
 }
 
+static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize = 1)
+{
+    switch (vectorSize) {
+    case 1:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return MTLDataTypeInt;
+        case WGSL::Types::Primitive::U32:
+            return MTLDataTypeUInt;
+        case WGSL::Types::Primitive::F16:
+            return MTLDataTypeHalf;
+        case WGSL::Types::Primitive::F32:
+            return MTLDataTypeFloat;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    case 2:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return MTLDataTypeInt2;
+        case WGSL::Types::Primitive::U32:
+            return MTLDataTypeUInt2;
+        case WGSL::Types::Primitive::F16:
+            return MTLDataTypeHalf2;
+        case WGSL::Types::Primitive::F32:
+            return MTLDataTypeFloat2;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    case 3:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return MTLDataTypeInt3;
+        case WGSL::Types::Primitive::U32:
+            return MTLDataTypeUInt3;
+        case WGSL::Types::Primitive::F16:
+            return MTLDataTypeHalf3;
+        case WGSL::Types::Primitive::F32:
+            return MTLDataTypeFloat3;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    case 4:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return MTLDataTypeInt4;
+        case WGSL::Types::Primitive::U32:
+            return MTLDataTypeUInt4;
+        case WGSL::Types::Primitive::F16:
+            return MTLDataTypeHalf4;
+        case WGSL::Types::Primitive::F32:
+            return MTLDataTypeFloat4;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static MTLDataType metalDataTypeForStructMember(const WGSL::Type* type)
+{
+    if (!type)
+        return MTLDataTypeNone;
+
+    auto* vectorType = std::get_if<WGSL::Types::Vector>(type);
+    auto* primitiveType = std::get_if<WGSL::Types::Primitive>(vectorType ? vectorType->element : type);
+    if (!primitiveType)
+        return MTLDataTypeNone;
+
+    auto vectorSize = vectorType ? vectorType->size : 1;
+    return metalDataTypeFromPrimitive(primitiveType, vectorSize);
+}
+
+static ShaderModule::FragmentOutputs parseReturnType(const WGSL::Type& type)
+{
+    ShaderModule::FragmentOutputs fragmentOutputs;
+    if (auto* returnPrimitive = std::get_if<WGSL::Types::Primitive>(&type)) {
+        fragmentOutputs.add(0, metalDataTypeFromPrimitive(returnPrimitive));
+        return fragmentOutputs;
+    }
+    if (std::get_if<WGSL::Types::Vector>(&type)) {
+        fragmentOutputs.add(0, metalDataTypeForStructMember(&type));
+        return fragmentOutputs;
+    }
+    auto* returnStruct = std::get_if<WGSL::Types::Struct>(&type);
+    if (!returnStruct)
+        return fragmentOutputs;
+
+    for (auto& member : returnStruct->structure.members()) {
+        if (!member.location() || member.builtin())
+            continue;
+
+        auto location = *member.location();
+        fragmentOutputs.add(location, metalDataTypeForStructMember(member.type().inferredType()));
+    }
+
+    return fragmentOutputs;
+}
+
 ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
     : m_checkResult(convertCheckResult(WTFMove(checkResult)))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
@@ -232,6 +335,10 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
                 m_defaultVertexEntryPoint = function.name();
             } break;
             case WGSL::ShaderStage::Fragment: {
+                if (auto expression = function.maybeReturnType()) {
+                    if (auto* inferredType = expression->inferredType())
+                        m_returnTypeForEntryPoint.add(function.name(), parseReturnType(*inferredType));
+                }
                 if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
                     allowFragmentDefault = false;
                     m_defaultFragmentEntryPoint = emptyString();
@@ -253,6 +360,14 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
             }
         }
     }
+}
+
+const ShaderModule::FragmentOutputs* ShaderModule::returnTypeForEntryPoint(const String& entryPoint) const
+{
+    if (auto it = m_returnTypeForEntryPoint.find(entryPoint); it != m_returnTypeForEntryPoint.end())
+        return &it->value;
+
+    return nullptr;
 }
 
 ShaderModule::ShaderModule(Device& device, CheckResult&& checkResult)

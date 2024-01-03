@@ -87,7 +87,7 @@ void repatchInstanceOf(JSGlobalObject*, CodeBlock*, JSValue, JSValue prototype, 
 void linkMonomorphicCall(VM&, CallFrame*, CallLinkInfo&, CodeBlock*, JSObject* callee, CodePtr<JSEntryPtrTag>);
 void linkDirectCall(CallFrame*, OptimizingCallLinkInfo&, CodeBlock*, CodePtr<JSEntryPtrTag>);
 void unlinkCall(VM&, CallLinkInfo&);
-void linkPolymorphicCall(JSGlobalObject*, CallFrame*, CallLinkInfo&, CallVariant);
+void linkPolymorphicCall(JSGlobalObject*, JSCell*, CallFrame*, CallLinkInfo&, CallVariant);
 void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
 void resetPutBy(CodeBlock*, StructureStubInfo&, PutByKind);
 void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);

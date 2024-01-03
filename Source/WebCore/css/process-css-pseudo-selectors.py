@@ -497,6 +497,8 @@ class CSSSelectorInlinesGenerator:
             open_namespace_webcore(writer)
             self.write_is_pseudo_class_enabled(writer, pseudo_classes)
             self.write_is_pseudo_element_enabled(writer, pseudo_elements)
+            self.write_selector_text_for_pseudo_class(writer, pseudo_classes)
+            self.write_name_for_shadow_pseudo_element_legacy_alias(writer, pseudo_elements)
             close_namespace_webcore(writer)
 
     def write_includes(self, writer):
@@ -524,7 +526,7 @@ class CSSSelectorInlinesGenerator:
 
     def write_is_pseudo_class_enabled(self, writer, values):
         writer.write_block("""
-            inline bool CSSSelector::isPseudoClassEnabled(CSSSelector::PseudoClass type, const CSSSelectorParserContext& context)
+            inline bool CSSSelector::isPseudoClassEnabled(PseudoClass type, const CSSSelectorParserContext& context)
             {
                 switch (type) {""")
 
@@ -538,7 +540,7 @@ class CSSSelectorInlinesGenerator:
 
             settings_flag = pseudo_data['settings-flag'] if 'settings-flag' in pseudo_data else None
             with writer.indent():
-                writer.write('case CSSSelector::PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
+                writer.write('case PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
                 enablement_condition = self.format_enablement_condition(settings_flag, is_internal_pseudo)
                 with writer.indent():
                     writer.write('return {};'.format(enablement_condition))
@@ -547,18 +549,18 @@ class CSSSelectorInlinesGenerator:
                 writer.write('#endif')
 
         with writer.indent():
-            writer.write("default:")
+            writer.write('default:')
             with writer.indent():
-                writer.write("return true;")
+                writer.write('return true;')
 
             # End switch statement.
-            writer.write("}")
+            writer.write('}')
         # End function.
-        writer.write("}")
+        writer.write('}')
 
     def write_is_pseudo_element_enabled(self, writer, values):
         writer.write_block("""
-            inline bool CSSSelector::isPseudoElementEnabled(CSSSelector::PseudoElement type, StringView name, const CSSSelectorParserContext& context)
+            inline bool CSSSelector::isPseudoElementEnabled(PseudoElement type, StringView name, const CSSSelectorParserContext& context)
             {
                 switch (type) {""")
 
@@ -593,7 +595,7 @@ class CSSSelectorInlinesGenerator:
                 writer.write('#if {}'.format(pseudo_data['condition']))
 
             with writer.indent():
-                writer.write('case CSSSelector::PseudoElement::{}:'.format(format_name_for_enum_class(pseudo_name)))
+                writer.write('case PseudoElement::{}:'.format(format_name_for_enum_class(pseudo_name)))
 
                 with writer.indent():
                     writer.write('return {};'.format(enablement_condition))
@@ -625,23 +627,79 @@ class CSSSelectorInlinesGenerator:
                 writer.write('return true;')
 
         with writer.indent():
-            writer.write('case CSSSelector::PseudoElement::WebKitCustom:')
+            writer.write('case PseudoElement::WebKitCustom:')
         write_condition_cases_for_shadow_elements(shadow_map)
 
         with writer.indent():
-            writer.write('case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:')
+            writer.write('case PseudoElement::WebKitCustomLegacyPrefixed:')
         write_condition_cases_for_shadow_elements(shadow_alias_map)
 
         with writer.indent():
-            writer.write("default:")
+            writer.write('default:')
             with writer.indent():
-                writer.write("return true;")
+                writer.write('return true;')
 
             # End switch statement.
-            writer.write("}")
+            writer.write('}')
         # End function.
-        writer.write("}")
+        writer.write('}')
 
+    def write_selector_text_for_pseudo_class(self, writer, pseudo_classes):
+        writer.write_block("""
+            inline const ASCIILiteral CSSSelector::selectorTextForPseudoClass(PseudoClass type)
+            {
+                switch (type) {""")
+
+        for pseudo_name, pseudo_data in pseudo_classes.items():
+            if 'condition' in pseudo_data:
+                writer.write('#if {}'.format(pseudo_data['condition']))
+
+            with writer.indent():
+                writer.write('case PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
+                with writer.indent():
+                    writer.write('return ":{}"_s;'.format(pseudo_name))
+
+            if 'condition' in pseudo_data:
+                writer.write('#endif')
+
+        with writer.indent():
+            writer.write('default:')
+            with writer.indent():
+                writer.write('ASSERT_NOT_REACHED();')
+                writer.write('return ""_s;')
+
+            # End switch statement.
+            writer.write('}')
+        # End function.
+        writer.write('}')
+
+    def write_name_for_shadow_pseudo_element_legacy_alias(self, writer, pseudo_elements):
+        writer.write_block("""
+            inline const ASCIILiteral CSSSelector::nameForShadowPseudoElementLegacyAlias(StringView alias)
+            {""")
+
+        for pseudo_name, pseudo_data in pseudo_elements.items():
+            if not key_is_true(pseudo_data, 'shadow'):
+                continue
+            if 'aliases' not in pseudo_data:
+                continue
+
+            if 'condition' in pseudo_data:
+                writer.write('#if {}'.format(pseudo_data['condition']))
+
+            with writer.indent():
+                for alias in pseudo_data['aliases']:
+                    writer.write('if (equalLettersIgnoringASCIICase(alias, "{}"_s))'.format(alias))
+                    with writer.indent():
+                        writer.write('return "{}"_s;'.format(pseudo_name))
+
+            if 'condition' in pseudo_data:
+                writer.write('#endif')
+
+        with writer.indent():
+            writer.write('ASSERT_NOT_REACHED();')
+            writer.write('return ""_s;')
+        writer.write('}')
 
 # - MARK: Script entry point.
 

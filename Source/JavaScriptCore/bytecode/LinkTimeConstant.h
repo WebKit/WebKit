@@ -53,6 +53,8 @@ class JSGlobalObject;
     v(typedArrayLength, nullptr) \
     v(typedArrayContentType, nullptr) \
     v(typedArrayGetOriginalConstructor, nullptr) \
+    v(toIntegerOrInfinity, nullptr) \
+    v(toLength, nullptr) \
     v(isTypedArrayView, nullptr) \
     v(isSharedTypedArrayView, nullptr) \
     v(isResizableOrGrowableSharedTypedArrayView, nullptr) \
@@ -65,7 +67,6 @@ class JSGlobalObject;
     v(BuiltinDescribe, nullptr) \
     v(RegExp, nullptr) \
     v(min, nullptr) \
-    v(trunc, nullptr) \
     v(Promise, nullptr) \
     v(InternalPromise, nullptr) \
     v(defaultPromiseThen, nullptr) \

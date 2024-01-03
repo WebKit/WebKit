@@ -217,6 +217,7 @@ bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkIn
         CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
         CallFrameShuffler shuffler { *this, shuffleData };
         shuffler.lockGPR(BaselineJITRegisters::Call::callLinkInfoGPR);
+        shuffler.lockGPR(BaselineJITRegisters::Call::globalObjectGPR);
         shuffler.prepareForTailCall();
     }));
     addSlowCase(slowPaths);
@@ -281,7 +282,7 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
         if constexpr (Op::opcodeID == op_tail_call_varargs || Op::opcodeID == op_tail_call_forward_arguments) {
             auto slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
                 emitRestoreCalleeSaves();
-                prepareForTailCallSlow(BaselineJITRegisters::Call::callLinkInfoGPR);
+                prepareForTailCallSlow(BaselineJITRegisters::Call::callLinkInfoGPR, BaselineJITRegisters::Call::globalObjectGPR);
             }));
             addSlowCase(slowPaths);
             auto doneLocation = label();

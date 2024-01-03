@@ -75,7 +75,6 @@ public:
     WEBCORE_EXPORT bool isReplacementObscured();
 
 protected:
-    static constexpr auto CreateHTMLPlugInElement = CreateHTMLFrameOwnerElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLPlugInElement(const QualifiedName& tagName, Document&);
 
     bool canContainRangeEndPoint() const override { return false; }

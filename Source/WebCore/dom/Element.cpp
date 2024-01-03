@@ -242,11 +242,11 @@ static HashMap<CheckedRef<Element>, ElementIdentifier>& elementIdentifiersMap()
 
 Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new Element(tagName, document, CreateElement));
+    return adoptRef(*new Element(tagName, document, { }));
 }
 
-Element::Element(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type)
-    : ContainerNode(document, ELEMENT_NODE, type)
+Element::Element(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> typeFlags)
+    : ContainerNode(document, ELEMENT_NODE, typeFlags | TypeFlag::IsElement)
     , m_tagName(tagName)
 {
 }

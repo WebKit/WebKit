@@ -8,4 +8,7 @@ To update to a newer version:
 4. Delete the example PDF file, compressed.tracemonkey-pldi-09.pdf.
 5. From top source dir, run: 'Tools/glib/generate-pdfjs-resource-manifest.py --cmake --input=Source/ThirdParty/pdfjs --output=Source/ThirdParty/pdfjs/PdfJSFiles.cmake'
 6. Build WebKit, your favorite port will do
-7. Sanity-check by loading https://www.irs.gov/pub/irs-pdf/i1040gi.pdf (big PDF) and https://www.irs.gov/pub/irs-pdf/f1040.pdf (PDF with forms)
+7. Sanity-check:
+  * Load https://www.irs.gov/pub/irs-pdf/i1040gi.pdf (a big PDF)
+  * Test downloading the PDF
+  * Test opening the print dialog

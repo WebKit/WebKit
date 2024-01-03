@@ -523,8 +523,8 @@ MacroAssemblerCodeRef<NativeToJITGatePtrTag> createTailCallGate(PtrTag tag, bool
     CCallHelpers jit;
 
     if (untag) {
-        jit.untagPtr(GPRInfo::argumentGPR2, ARM64Registers::lr);
-        jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::argumentGPR2);
+        jit.untagPtr(GPRInfo::argumentGPR6, ARM64Registers::lr);
+        jit.validateUntaggedPtr(ARM64Registers::lr, GPRInfo::argumentGPR6);
     }
     jit.farJump(GPRInfo::argumentGPR7, tag);
 

@@ -62,26 +62,45 @@ void PolymorphicCallCase::dump(PrintStream& out) const
     out.print("<variant = ", m_variant, ", codeBlock = ", pointerDump(m_codeBlock), ">");
 }
 
-PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, JSCell* owner, CallFrame* callerFrame,
-    CallLinkInfo& info, const Vector<PolymorphicCallCase>& cases,
-    UniqueArray<uint32_t>&& fastCounts)
+PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& info, const Vector<PolymorphicCallCase, 16>& cases, UniqueArray<uint32_t>&& fastCounts, bool notUsingCounting)
     : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, codeRef, owner)
+    , ButterflyArray<PolymorphicCallStubRoutine, void*, CallSlot>(headerSize, trailingSize)
     , m_variants(cases.size())
     , m_fastCounts(WTFMove(fastCounts))
+    , m_notUsingCounting(notUsingCounting)
 {
     for (unsigned index = 0; index < cases.size(); ++index) {
         const PolymorphicCallCase& callCase = cases[index];
         m_variants[index].set(vm, owner, callCase.variant().rawCalleeCell());
-        if (!callerFrame->isNativeCalleeFrame()) {
-            if (shouldDumpDisassemblyFor(callerFrame->codeBlock()))
-                dataLog("Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()), "\n");
-        }
+        if (callerFrame && !callerFrame->isNativeCalleeFrame())
+            dataLogLnIf(shouldDumpDisassemblyFor(callerFrame->codeBlock()), "Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()));
         if (CodeBlock* codeBlock = callCase.codeBlock())
-            codeBlock->linkIncomingCall(callerFrame, m_callNodes.add(&info));
+            codeBlock->linkIncomingCall(owner, callerFrame, m_callNodes.add(&info));
     }
     WTF::storeStoreFence();
-    makeGCAware(vm);
+    constexpr bool isCodeImmutable = false;
+    makeGCAware(vm, isCodeImmutable);
+}
+
+PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsigned trailingSize, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, VM& vm, JSCell* owner, CallFrame* callerFrame, CallLinkInfo& callLinkInfo, const Vector<PolymorphicCallCase, 16>& cases, const Vector<CallSlot, 16>& callSlots, bool notUsingCounting)
+    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, code, owner)
+    , ButterflyArray<PolymorphicCallStubRoutine, void*, CallSlot>(headerSize, trailingSize)
+    , m_variants(cases.size())
+    , m_notUsingCounting(notUsingCounting)
+{
+    for (unsigned index = 0; index < cases.size(); ++index) {
+        const PolymorphicCallCase& callCase = cases[index];
+        m_variants[index].set(vm, owner, callCase.variant().rawCalleeCell());
+        if (callerFrame && !callerFrame->isNativeCalleeFrame())
+            dataLogLnIf(shouldDumpDisassemblyFor(callerFrame->codeBlock()), "Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()));
+        if (CodeBlock* codeBlock = callCase.codeBlock())
+            codeBlock->linkIncomingCall(owner, callerFrame, m_callNodes.add(&callLinkInfo));
+    }
+    for (unsigned index = 0; index < callSlots.size(); ++index)
+        trailingSpan()[index] = callSlots[index];
+    WTF::storeStoreFence();
+    constexpr bool isCodeImmutable = true;
+    makeGCAware(vm, isCodeImmutable);
 }
 
 CallVariantList PolymorphicCallStubRoutine::variants() const
@@ -103,16 +122,19 @@ bool PolymorphicCallStubRoutine::hasEdges() const
     // profiling is bad for polyvariant inlining. But polyvariant inlining is profitable sometimes
     // while not having to increment counts is profitable always. So, we let the FTL run faster and
     // not keep counts.
-    return !!m_fastCounts;
+    return !m_notUsingCounting;
 }
 
 CallEdgeList PolymorphicCallStubRoutine::edges() const
 {
-    RELEASE_ASSERT(m_fastCounts);
-    
     CallEdgeList result;
-    for (size_t i = 0; i < m_variants.size(); ++i)
-        result.append(CallEdge(CallVariant(m_variants[i].get()), m_fastCounts[i]));
+    if (m_fastCounts) {
+        for (size_t i = 0; i < m_variants.size(); ++i)
+            result.append(CallEdge(CallVariant(m_variants[i].get()), m_fastCounts[i]));
+    } else {
+        for (size_t i = 0; i < m_variants.size(); ++i)
+            result.append(CallEdge(CallVariant(m_variants[i].get()), trailingSpan()[i].m_count));
+    }
     return result;
 }
 

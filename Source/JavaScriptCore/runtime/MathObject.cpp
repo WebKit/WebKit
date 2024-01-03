@@ -61,6 +61,7 @@ static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncSinh);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncSqrt);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTan);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTanh);
+static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTrunc);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncIMul);
 
 const ClassInfo MathObject::s_info = { "Math"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };

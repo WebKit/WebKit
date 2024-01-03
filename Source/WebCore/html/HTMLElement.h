@@ -223,8 +223,8 @@ private:
     void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
 };
 
-inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type = CreateHTMLElement)
-    : StyledElement(tagName, document, type)
+inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> type = { })
+    : StyledElement(tagName, document, type | TypeFlag::IsHTMLElement)
 {
     ASSERT(tagName.localName().impl());
 }

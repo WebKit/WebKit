@@ -1981,6 +1981,7 @@ webkit.org/b/100238 fast/history/window-open.html [ Failure ]
 # These failures appear to be bugs in the EventSender
 webkit.org/b/53964 fast/forms/listbox-onchange.html [ Failure ]
 fast/html/transient-activation.html [ Skip ]
+fast/html/history-action-user-activation.html [ Skip ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
 

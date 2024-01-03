@@ -371,7 +371,7 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
     if (!oldStyle || diff != StyleDifference::Layout)
         return;
 
-    auto oldStyleAlignItemsIsStrecth = oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch;
+    auto oldStyleAlignItemsIsStretch = oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch;
     for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
         if (flexItem.needsPreferredWidthsRecalculation())
             flexItem.setPreferredLogicalWidthsDirty(true, MarkingBehavior::MarkOnlyThis);
@@ -380,7 +380,7 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
         // can compute new available cross axis space. This is only necessary for
         // stretching since other alignment values don't change the size of the
         // box.
-        if (oldStyleAlignItemsIsStrecth) {
+        if (oldStyleAlignItemsIsStretch) {
             ItemPosition previousAlignment = flexItem.style().resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
             if (previousAlignment == ItemPosition::Stretch && previousAlignment != flexItem.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position())
                 flexItem.setChildNeedsLayout(MarkOnlyThis);

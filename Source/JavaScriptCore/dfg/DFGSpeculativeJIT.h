@@ -1638,6 +1638,8 @@ public:
     void compileDateSet(Node*);
     void compileGlobalIsNaN(Node*);
     void compileNumberIsNaN(Node*);
+    void compileToIntegerOrInfinity(Node*);
+    void compileToLength(Node*);
 
     template<typename JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);

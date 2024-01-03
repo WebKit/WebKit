@@ -1588,6 +1588,14 @@ bool LocalDOMWindow::hasStickyActivation() const
     return now >= m_lastActivationTimestamp;
 }
 
+// When the last history-action activation timestamp of W is not equal to the last activation timestamp of W,
+// then W is said to have history-action activation.
+// (https://html.spec.whatwg.org/multipage/interaction.html#history-action-activation)
+bool LocalDOMWindow::hasHistoryActionActivation() const
+{
+    return m_lastHistoryActionActivationTimestamp != m_lastActivationTimestamp;
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#consume-user-activation
 bool LocalDOMWindow::consumeTransientActivation()
 {
@@ -1609,6 +1617,23 @@ void LocalDOMWindow::consumeLastActivationIfNecessary()
 {
     if (!m_lastActivationTimestamp.isInfinity())
         m_lastActivationTimestamp = -MonotonicTime::infinity();
+}
+
+// https://html.spec.whatwg.org/multipage/interaction.html#consume-history-action-user-activation
+bool LocalDOMWindow::consumeHistoryActionUserActivation()
+{
+    if (!hasHistoryActionActivation())
+        return false;
+
+    for (RefPtr<Frame> frame = this->frame() ? &this->frame()->tree().top() : nullptr; frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        if (!localFrame)
+            continue;
+        if (RefPtr window = localFrame->window())
+            window->m_lastHistoryActionActivationTimestamp = window->m_lastActivationTimestamp;
+    }
+
+    return true;
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification

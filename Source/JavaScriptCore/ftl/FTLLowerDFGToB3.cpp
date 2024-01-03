@@ -1596,6 +1596,12 @@ private:
         case ParseInt:
             compileParseInt();
             break;
+        case ToIntegerOrInfinity:
+            compileToIntegerOrInfinity();
+            break;
+        case ToLength:
+            compileToLength();
+            break;
         case TypeOf:
             compileTypeOf();
             break;
@@ -14536,6 +14542,86 @@ IGNORE_CLANG_WARNINGS_END
             }
         }
         setJSValue(result);
+    }
+
+    void compileToIntegerOrInfinity()
+    {
+        switch (m_node->child1().useKind()) {
+        case DoubleRepUse: {
+            LValue argument = lowDouble(m_node->child1());
+            setJSValue(vmCall(Int64, operationToIntegerOrInfinityDouble, argument));
+            break;
+        }
+        case UntypedUse: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+            LValue argument = lowJSValue(m_node->child1());
+            bool mayBeInt32 = abstractValue(m_node->child1()).m_type & SpecInt32Only;
+            if (mayBeInt32) {
+                LBasicBlock notInt32NumberCase = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                ValueFromBlock fastResult = m_out.anchor(argument);
+                m_out.branch(isInt32(argument, provenType(m_node->child1())), unsure(continuation), unsure(notInt32NumberCase));
+
+                LBasicBlock lastNext = m_out.appendTo(notInt32NumberCase, continuation);
+                ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationToIntegerOrInfinityUntyped, weakPointer(globalObject), argument));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                setJSValue(m_out.phi(Int64, fastResult, slowResult));
+            } else
+                setJSValue(vmCall(Int64, operationToIntegerOrInfinityUntyped, weakPointer(globalObject), argument));
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            break;
+        }
+    }
+
+    void compileToLength()
+    {
+        switch (m_node->child1().useKind()) {
+        case Int32Use: {
+            LValue argument = lowInt32(m_node->child1());
+            setInt32(m_out.select(m_out.lessThan(argument, m_out.int32Zero), m_out.int32Zero, argument));
+            break;
+        }
+        case DoubleRepUse: {
+            LValue argument = lowDouble(m_node->child1());
+            setJSValue(vmCall(Int64, operationToLengthDouble, argument));
+            break;
+        }
+        case UntypedUse: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+            LValue argument = lowJSValue(m_node->child1());
+            bool mayBeInt32 = abstractValue(m_node->child1()).m_type & SpecInt32Only;
+            if (mayBeInt32) {
+                LBasicBlock int32Case = m_out.newBlock();
+                LBasicBlock notInt32NumberCase = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                m_out.branch(isInt32(argument, provenType(m_node->child1())), unsure(int32Case), unsure(notInt32NumberCase));
+
+                LBasicBlock lastNext = m_out.appendTo(int32Case, notInt32NumberCase);
+                LValue int32Value = unboxInt32(argument);
+                ValueFromBlock fastResult = m_out.anchor(boxInt32(m_out.select(m_out.lessThan(int32Value, m_out.int32Zero), m_out.int32Zero, int32Value)));
+                m_out.jump(continuation);
+
+                m_out.appendTo(notInt32NumberCase, continuation);
+                ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationToLengthUntyped, weakPointer(globalObject), argument));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                setJSValue(m_out.phi(Int64, fastResult, slowResult));
+            } else
+                setJSValue(vmCall(Int64, operationToLengthUntyped, weakPointer(globalObject), argument));
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            break;
+        }
     }
 
     void compileOverridesHasInstance()

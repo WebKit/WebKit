@@ -1293,6 +1293,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         clobberTop();
         return;
 
+    case ToIntegerOrInfinity:
+    case ToLength: {
+        if (node->child1().useKind() == UntypedUse)
+            clobberTop();
+        else
+            def(PureValue(node));
+        return;
+    }
+
     case OverridesHasInstance:
         read(JSCell_typeInfoFlags);
         def(HeapLocation(OverridesHasInstanceLoc, JSCell_typeInfoFlags, node->child1()), LazyNode(node));

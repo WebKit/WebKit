@@ -73,7 +73,7 @@ Ref<TextTrackCueBox> TextTrackCueBox::create(Document& document, TextTrackCue& c
 }
 
 TextTrackCueBox::TextTrackCueBox(Document& document, TextTrackCue& cue)
-    : HTMLElement(HTMLNames::divTag, document, CreateTextTrackCueBox)
+    : HTMLElement(HTMLNames::divTag, document, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_cue(cue)
 {
 }
