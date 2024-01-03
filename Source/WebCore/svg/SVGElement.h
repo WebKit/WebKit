@@ -168,7 +168,7 @@ public:
     bool hasAssociatedSVGLayoutBox() const;
 
 protected:
-    SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = CreateSVGElement);
+    SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, OptionSet<TypeFlag> = { });
     virtual ~SVGElement();
 
     bool rendererIsNeeded(const RenderStyle&) override;

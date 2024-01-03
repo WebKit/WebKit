@@ -44,7 +44,6 @@ public:
     double position() const;
 
 private:
-    static constexpr auto CreateHTMLProgressElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLProgressElement(const QualifiedName&, Document&);
     virtual ~HTMLProgressElement();
 

@@ -68,7 +68,6 @@ public:
     bool selectedWithoutUpdate() const { return m_isSelected; }
 
 private:
-    static constexpr auto CreateHTMLOptionElement = CreateHTMLElement | TypeFlag::HasCustomStyleResolveCallbacks;
     HTMLOptionElement(const QualifiedName&, Document&);
 
     bool isFocusable() const final;

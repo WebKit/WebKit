@@ -67,8 +67,7 @@ public:
     virtual bool isLazyLoadObserverActive() const { return false; }
 
 protected:
-    static constexpr auto CreateHTMLFrameOwnerElement = CreateHTMLElement;
-    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = CreateHTMLFrameOwnerElement);
+    HTMLFrameOwnerElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
     void setSandboxFlags(SandboxFlags);
     bool isProhibitedSelfReference(const URL&) const;
     bool isKeyboardFocusable(KeyboardEvent*) const override;

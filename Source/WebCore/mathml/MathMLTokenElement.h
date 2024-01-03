@@ -41,7 +41,6 @@ public:
     static std::optional<char32_t> convertToSingleCodePoint(StringView);
 
 protected:
-    static constexpr auto CreateMathMLTokenElement = CreateMathMLPresentationElement | TypeFlag::HasCustomStyleResolveCallbacks;
     MathMLTokenElement(const QualifiedName& tagName, Document&);
     void childrenChanged(const ChildChange&) override;
 

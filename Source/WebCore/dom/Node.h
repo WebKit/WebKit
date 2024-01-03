@@ -651,19 +651,6 @@ protected:
     void setIsParsingChildrenFinished() { clearStateFlag(StateFlag::IsParsingChildren); }
     void clearIsParsingChildrenFinished() { setStateFlag(StateFlag::IsParsingChildren); }
 
-    static constexpr auto DefaultTypeFlags = OptionSet<TypeFlag> { };
-    static constexpr auto CreateAttr = DefaultTypeFlags;
-    static constexpr auto CreateDocumentType = DefaultTypeFlags;
-    static constexpr auto CreateCharacterData = DefaultTypeFlags | TypeFlag::IsCharacterData;
-    static constexpr auto CreateText = CreateCharacterData | TypeFlag::IsText;
-    static constexpr auto CreateContainer = DefaultTypeFlags | TypeFlag::IsContainerNode;
-    static constexpr auto CreateElement = CreateContainer | TypeFlag::IsElement;
-    static constexpr auto CreatePseudoElement = CreateElement | TypeFlag::HasCustomStyleResolveCallbacks;
-    static constexpr auto CreateShadowRoot = CreateContainer | TypeFlag::IsShadowRoot;
-    static constexpr auto CreateHTMLElement = CreateElement | TypeFlag::IsHTMLElement;
-    static constexpr auto CreateSVGElement = CreateElement | TypeFlag::IsSVGElement | TypeFlag::HasCustomStyleResolveCallbacks;
-    static constexpr auto CreateMathMLElement = CreateElement | TypeFlag::IsMathMLElement;
-    static constexpr auto CreateEditingText = CreateText | TypeFlag::IsEditingText;
     Node(Document&, NodeType, OptionSet<TypeFlag>);
 
     static constexpr uint32_t s_refCountIncrement = 2;

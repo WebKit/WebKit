@@ -44,11 +44,12 @@ public:
     void parserAppendData(StringView);
 
 protected:
-    CharacterData(Document& document, String&& text, NodeType type, OptionSet<TypeFlag> typeFlags = CreateCharacterData)
-        : Node(document, type, typeFlags)
+    CharacterData(Document& document, String&& text, NodeType type, OptionSet<TypeFlag> typeFlags = { })
+        : Node(document, type, typeFlags | TypeFlag::IsCharacterData)
         , m_data(!text.isNull() ? WTFMove(text) : emptyString())
     {
-        ASSERT(typeFlags == CreateCharacterData || typeFlags == CreateText || typeFlags == CreateEditingText);
+        ASSERT(isCharacterData());
+        ASSERT(!isContainerNode());
     }
 
     ~CharacterData();
