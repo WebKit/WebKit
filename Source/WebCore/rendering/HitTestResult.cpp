@@ -671,6 +671,18 @@ URL HitTestResult::absoluteLinkURL() const
     return url;
 }
 
+bool HitTestResult::hasLocalDataForLinkURL() const
+{
+    auto linkURL = absoluteLinkURL();
+    if (linkURL.isEmpty())
+        return false;
+
+    if (RefPtr page = m_innerURLElement->document().page())
+        return page->hasLocalDataForURL(linkURL);
+
+    return false;
+}
+
 bool HitTestResult::isOverLink() const
 {
     return m_innerURLElement && m_innerURLElement->isLink();
