@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -929,10 +929,8 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement& 
 {
     if (hasNoAttributeOrOnlyStyleAttribute(element, StyleAttributeShouldBeEmpty))
         removeNodePreservingChildren(element);
-    else {
-        RefPtr newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(element);
-        ASSERT_UNUSED(newSpanElement, newSpanElement && newSpanElement->isConnected());
-    }
+    else
+        replaceElementWithSpanPreservingChildrenAndAttributes(element);
 }
 
 bool ApplyStyleCommand::removeImplicitlyStyledElement(EditingStyle& style, HTMLElement& element, InlineStyleRemovalMode mode, EditingStyle* extractedStyle)
