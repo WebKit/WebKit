@@ -123,8 +123,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-045.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-046-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-046.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-047-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-047.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-048-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-048-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-048.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-002-expected.html
@@ -152,6 +153,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-logical-combinations-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-logical-combinations-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-logical-combinations.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-file-selector-button-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-file-selector-button.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-webkit-slider-thumb.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-webkit-slider-thumb.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/css-supports-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/css-supports-001.xht

@@ -1365,6 +1365,7 @@
         "web-platform-tests/css/css-color/yellowsquare-ref.html",
         "web-platform-tests/css/css-conditional/at-supports-001-ref.html",
         "web-platform-tests/css/css-conditional/at-supports-027-ref.html",
+        "web-platform-tests/css/css-conditional/at-supports-048-ref.html",
         "web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-forgiving-argument-ref.html",
         "web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-logical-combinations-ref.html",
         "web-platform-tests/css/css-conditional/support/at-media-dynamic-001-inner.html",

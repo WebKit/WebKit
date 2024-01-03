@@ -322,7 +322,7 @@ InlineRect InlineFormattingContext::createDisplayContentForInlineContent(const L
     auto numberOfLinesWithInlineContent = numberOfPreviousLinesWithInlineContent + (!lineLayoutResult.inlineContent.isEmpty() ? 1 : 0);
     auto lineIsFullyTruncatedInBlockDirection = numberOfVisibleLinesAllowed && numberOfLinesWithInlineContent > *numberOfVisibleLinesAllowed;
     auto displayLine = InlineDisplayLineBuilder { *this, constraints }.build(lineLayoutResult, lineBox, lineIsFullyTruncatedInBlockDirection);
-    auto boxes = InlineDisplayContentBuilder { *this, constraints, displayLine, lineBox.lineIndex() }.build(lineLayoutResult, lineBox);
+    auto boxes = InlineDisplayContentBuilder { *this, constraints, lineBox, displayLine }.build(lineLayoutResult);
 
     auto ellipsisPolicy = InlineFormattingUtils::lineEndingEllipsisPolicy(root().style(), numberOfLinesWithInlineContent, numberOfVisibleLinesAllowed);
     if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(ellipsisPolicy, displayLine, boxes, lineLayoutResult.isFirstLast.isLastLineWithInlineContent)) {

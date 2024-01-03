@@ -2148,7 +2148,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             setNonce(newValue.isNull() ? emptyAtom() : newValue);
         break;
     case AttributeNames::pseudoAttr:
-        if (needsStyleInvalidation() && isInShadowTree())
+        if (needsStyleInvalidation() && isInUserAgentShadowTree())
             invalidateStyleForSubtree();
         break;
     case AttributeNames::slotAttr:

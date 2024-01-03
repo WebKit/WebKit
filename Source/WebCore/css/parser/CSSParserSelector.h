@@ -37,7 +37,7 @@ enum class CSSParserSelectorCombinator {
 class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView);
+    static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView, const CSSSelectorParserContext&);
     static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView, const CSSSelectorParserContext&);
     static std::unique_ptr<CSSParserSelector> parsePagePseudoSelector(StringView);
 
@@ -57,7 +57,7 @@ public:
     void setValue(const AtomString& value, bool matchLowerCase = false) { m_selector->setValue(value, matchLowerCase); }
 
     void setAttribute(const QualifiedName& value, CSSSelector::AttributeMatchType type) { m_selector->setAttribute(value, type); }
-    
+
     void setArgument(const AtomString& value) { m_selector->setArgument(value); }
     void setNth(int a, int b) { m_selector->setNth(a, b); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
@@ -67,7 +67,7 @@ public:
     CSSSelector::Match match() const { return m_selector->match(); }
     CSSSelector::PseudoElement pseudoElement() const { return m_selector->pseudoElement(); }
     const CSSSelectorList* selectorList() const { return m_selector->selectorList(); }
-    
+
     void setPseudoElement(CSSSelector::PseudoElement type) { m_selector->setPseudoElement(type); }
     void setPseudoClass(CSSSelector::PseudoClass type) { m_selector->setPseudoClass(type); }
 
@@ -76,8 +76,6 @@ public:
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     CSSSelector::PseudoClass pseudoClass() const { return m_selector->pseudoClass(); }
-
-    bool isPseudoElementCueFunction() const;
 
     bool matchesPseudoElement() const;
 
@@ -120,15 +118,6 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
             || pseudoElement() == CSSSelector::PseudoElement::Part
             || pseudoElement() == CSSSelector::PseudoElement::Slotted
             || pseudoElement() == CSSSelector::PseudoElement::UserAgentPartLegacyAlias);
-}
-
-inline bool CSSParserSelector::isPseudoElementCueFunction() const
-{
-#if ENABLE(VIDEO)
-    return m_selector->match() == CSSSelector::Match::PseudoElement && m_selector->pseudoElement() == CSSSelector::PseudoElement::Cue;
-#else
-    return false;
-#endif
 }
 
 }

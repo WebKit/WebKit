@@ -723,13 +723,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     std::unique_ptr<CSSParserSelector> selector;
 
-    if (colons == 1) {
-        selector = CSSParserSelector::parsePseudoClassSelector(token.value());
-        if (!selector)
-            return nullptr;
-        if (selector->match() == CSSSelector::Match::PseudoClass && !CSSSelector::isPseudoClassEnabled(selector->pseudoClass(), m_context))
-            return nullptr;
-    } else {
+    if (colons == 1)
+        selector = CSSParserSelector::parsePseudoClassSelector(token.value(), m_context);
+    else {
         selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context);
 #if ENABLE(VIDEO)
         // Treat the ident version of cue as PseudoElement::UserAgentPart.
