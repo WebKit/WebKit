@@ -880,7 +880,7 @@ void TextFieldInputType::updateAutoFillButton()
         if (!m_autoFillButton)
             createAutoFillButton(autoFillButtonType);
 
-        const AtomString& attribute = m_autoFillButton->attributeWithoutSynchronization(pseudoAttr);
+        const AtomString& attribute = m_autoFillButton->pseudo();
         bool shouldUpdateAutoFillButtonType = isAutoFillButtonTypeChanged(attribute, autoFillButtonType);
         if (shouldUpdateAutoFillButtonType) {
             m_autoFillButton->setPseudo(autoFillButtonTypeToAutoFillButtonPseudoClassName(autoFillButtonType));

@@ -374,9 +374,6 @@ public:
     CheckedRef<CustomElementDefaultARIA> checkedCustomElementDefaultARIA();
     CustomElementDefaultARIA* customElementDefaultARIAIfExists();
 
-    // FIXME: This should not be virtual. Please do not add additional overrides of this function.
-    virtual const AtomString& userAgentPartId() const;
-
     bool isInActiveChain() const { return isUserActionElement() && isUserActionElementInActiveChain(); }
     bool active() const { return isUserActionElement() && isUserActionElementActive(); }
     bool hovered() const { return isUserActionElement() && isUserActionElementHovered(); }
@@ -495,7 +492,7 @@ public:
  
     virtual String title() const;
 
-    const AtomString& pseudo() const;
+    WEBCORE_EXPORT const AtomString& pseudo() const;
     WEBCORE_EXPORT void setPseudo(const AtomString&);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these

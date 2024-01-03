@@ -3124,11 +3124,6 @@ CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists()
     return isPrecustomizedOrDefinedCustomElement() && hasRareData() ? elementRareData()->customElementDefaultARIA() : nullptr;
 }
 
-const AtomString& Element::userAgentPartId() const
-{
-    return pseudo();
-}
-
 bool Element::childTypeAllowed(NodeType type) const
 {
     switch (type) {

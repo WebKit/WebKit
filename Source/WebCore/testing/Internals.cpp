@@ -1425,7 +1425,7 @@ ExceptionOr<String> Internals::shadowRootType(const Node& root) const
 
 const AtomString& Internals::userAgentPartId(Element& element)
 {
-    return element.userAgentPartId();
+    return element.pseudo();
 }
 
 void Internals::setUserAgentPartId(Element& element, const AtomString& id)

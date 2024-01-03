@@ -582,7 +582,7 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::progressTag
         || localName == HTMLNames::selectTag
         || localName == HTMLNames::meterTag
-        || (element.isInUserAgentShadowTree() && element.userAgentPartId() == UserAgentPartIds::webkitListButton());
+        || (element.isInUserAgentShadowTree() && element.pseudo() == UserAgentPartIds::webkitListButton());
 }
 
 void Resolver::invalidateMatchedDeclarationsCache()

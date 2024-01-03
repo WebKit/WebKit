@@ -421,7 +421,7 @@ void Invalidator::invalidateShadowPseudoElements(ShadowRoot& shadowRoot)
         return;
 
     for (auto& descendant : descendantsOfType<Element>(shadowRoot)) {
-        auto& partId = descendant.userAgentPartId();
+        auto& partId = descendant.pseudo();
         if (!partId)
             continue;
         for (auto& ruleSet : m_ruleSets) {

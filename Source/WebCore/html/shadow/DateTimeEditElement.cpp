@@ -263,11 +263,11 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
     }
 
     if (focusedField) {
-        auto& focusedFieldId = focusedField->userAgentPartId();
+        auto& focusedFieldId = focusedField->pseudo();
 
         auto foundFieldToFocus = false;
         for (auto& field : m_fields) {
-            if (field->userAgentPartId() == focusedFieldId) {
+            if (field->pseudo() == focusedFieldId) {
                 foundFieldToFocus = true;
                 field->focus();
                 break;

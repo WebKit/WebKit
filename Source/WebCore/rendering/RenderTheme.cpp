@@ -362,7 +362,7 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 #endif
 
     if (element->isInUserAgentShadowTree()) {
-        auto& part = element->userAgentPartId();
+        auto& part = element->pseudo();
 
 #if ENABLE(DATALIST_ELEMENT)
         if (part == UserAgentPartIds::webkitListButton())
