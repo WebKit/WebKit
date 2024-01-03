@@ -808,16 +808,6 @@
 #define ENABLE_COMPUTED_GOTO_OPCODES 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 140400) \
-    || (PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170400) \
-    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170400) \
-    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MAX_ALLOWED >= 170400) \
-    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MAX_ALLOWED >= 100400) \
-    || (PLATFORM(VISION) && __VISION_OS_VERSION_MAX_ALLOWED >= 170400)
-// Linkers from older SDKs causes wrong linking. ref: rdar://96556827
-#define ENABLE_OFFLINE_ASM_ALT_ENTRY 1
-#endif
-
 /* Regular Expression Tracing - Set to 1 to trace RegExp's in jsc.  Results dumped at exit */
 #if !defined(ENABLE_REGEXP_TRACING)
 #define ENABLE_REGEXP_TRACING 0
