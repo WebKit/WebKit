@@ -77,6 +77,21 @@ private:
         const ImageDataLayout&,
         const Extent3D& size) final;
 
+    void writeBuffer(
+        const Buffer&,
+        Size64 bufferOffset,
+        void* source,
+        size_t byteLength,
+        Size64 dataOffset,
+        std::optional<Size64>) final;
+
+    void writeTexture(
+        const ImageCopyTexture& destination,
+        void* source,
+        size_t byteLength,
+        const ImageDataLayout&,
+        const Extent3D& size) final;
+
     void copyExternalImageToTexture(
         const ImageCopyExternalImage& source,
         const ImageCopyTextureTagged& destination,

@@ -37,6 +37,8 @@
 
 namespace WebGPU {
 
+constexpr static auto largeBufferSize = 32 * 1024 * 1024;
+
 Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
     : m_commandQueue(commandQueue)
     , m_device(device)
@@ -233,7 +235,7 @@ void Queue::waitUntilIdle()
         [commandBuffer waitUntilCompleted];
 }
 
-void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void* data, size_t size)
+void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, void* data, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writebuffer
 
@@ -275,12 +277,13 @@ void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void*
     writeBuffer(buffer.buffer(), bufferOffset, data, size);
 }
 
-void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, const void* data, size_t size)
+void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, void* data, size_t size)
 {
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
-    id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared];
+    bool noCopy = size >= largeBufferSize;
+    id<MTLBuffer> temporaryBuffer = noCopy ? [m_device.device() newBufferWithBytesNoCopy:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared deallocator:nil] : [m_device.device() newBufferWithBytes:data length:static_cast<NSUInteger>(size) options:MTLResourceStorageModeShared];
     if (!temporaryBuffer) {
         ASSERT_NOT_REACHED();
         return;
@@ -292,6 +295,9 @@ void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, const void*
         toBuffer:buffer
         destinationOffset:static_cast<NSUInteger>(bufferOffset)
         size:static_cast<NSUInteger>(size)];
+
+    if (noCopy)
+        finalizeBlitCommandEncoder();
 }
 
 bool Queue::isIdle() const
@@ -337,7 +343,7 @@ void Queue::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger sli
     CommandEncoder::clearTexture(destination, slice, m_device.device(), m_blitCommandEncoder);
 }
 
-void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size)
+void Queue::writeTexture(const WGPUImageCopyTexture& destination, void* data, size_t dataSize, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size)
 {
     if (destination.nextInChain || dataLayout.nextInChain)
         return;
@@ -435,7 +441,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
                     for (uint32_t x = 0; x < widthForMetal; x += maxRowBytes) {
                         newDestination.origin.x = destination.origin.x + x;
-                        writeTexture(newDestination, static_cast<const uint8_t*>(data) + x + y * bytesPerRow + z * bytesPerImage, bytesPerRow * newSize.height, newDataLayout, newSize);
+                        writeTexture(newDestination, static_cast<uint8_t*>(data) + x + y * bytesPerRow + z * bytesPerImage, bytesPerRow * newSize.height, newDataLayout, newSize);
                     }
                 }
             }
@@ -550,7 +556,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     ensureBlitCommandEncoder();
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
-    id<MTLBuffer> temporaryBuffer = [m_device.device() newBufferWithBytes:static_cast<const char*>(data) + dataLayout.offset length:static_cast<NSUInteger>(dataByteSize) options:MTLResourceStorageModeShared];
+    auto newBufferSize = static_cast<NSUInteger>(dataByteSize - dataLayout.offset);
+    bool noCopy = newBufferSize >= largeBufferSize;
+    id<MTLBuffer> temporaryBuffer = noCopy ? [m_device.device() newBufferWithBytesNoCopy:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared deallocator:nil] : [m_device.device() newBufferWithBytes:static_cast<char*>(data) + dataLayout.offset length:newBufferSize options:MTLResourceStorageModeShared];
     if (!temporaryBuffer)
         return;
 
@@ -630,6 +638,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
         ASSERT_NOT_REACHED();
         return;
     }
+
+    if (noCopy)
+        finalizeBlitCommandEncoder();
 }
 
 void Queue::setLabel(String&& label)
@@ -678,12 +689,12 @@ void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuff
     WebGPU::fromAPI(queue).submit(WTFMove(commandsToForward));
 }
 
-void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, const void* data, size_t size)
+void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, void* data, size_t size)
 {
     WebGPU::fromAPI(queue).writeBuffer(WebGPU::fromAPI(buffer), bufferOffset, data, size);
 }
 
-void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
+void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, void* data, size_t dataSize, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
     WebGPU::fromAPI(queue).writeTexture(*destination, data, dataSize, *dataLayout, *writeSize);
 }
