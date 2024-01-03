@@ -303,6 +303,9 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
         return;
     }
 
+    if (m_rootPath.isEmpty())
+        return completionCallback(Exception { ExceptionCode::NotFoundError, "Path does not exist"_s });
+
     m_workQueue->dispatch([protectedThis = Ref { *this }, context = Ref { context }, fullPath = crossThreadCopy(WTFMove(fullPath)), resolvedVirtualPath = crossThreadCopy(WTFMove(resolvedVirtualPath)), completionCallback = WTFMove(completionCallback)]() mutable {
         auto entryType = fileTypeIgnoringHiddenFiles(fullPath);
         callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(WTFMove(resolvedVirtualPath)), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
@@ -327,6 +330,8 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
 
 void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemFileEntry& fileEntry, GetFileCallback&& completionCallback)
 {
+    if (m_rootPath.isEmpty())
+        return completionCallback(Exception { ExceptionCode::NotFoundError, "Path does not exist"_s });
     auto virtualPath = fileEntry.virtualPath();
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([fullPath = crossThreadCopy(WTFMove(fullPath)), virtualPath = crossThreadCopy(WTFMove(virtualPath)), context = Ref { context }, completionCallback = WTFMove(completionCallback)]() mutable {
