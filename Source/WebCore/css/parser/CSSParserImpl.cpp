@@ -42,7 +42,6 @@
 #include "CSSParserIdioms.h"
 #include "CSSParserObserver.h"
 #include "CSSParserObserverWrapper.h"
-#include "CSSParserSelector.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelectorList.h"
 #include "CSSSelectorParser.h"
@@ -58,6 +57,7 @@
 #include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "MutableCSSSelector.h"
 #include "NestingLevelIncrementer.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
@@ -70,10 +70,10 @@
 
 namespace WebCore {
 
-static void appendImplicitSelectorPseudoClassScopeIfNeeded(CSSParserSelector& selector)
+static void appendImplicitSelectorPseudoClassScopeIfNeeded(MutableCSSSelector& selector)
 {
     if ((!selector.hasExplicitNestingParent() && !selector.hasExplicitPseudoClassScope()) || selector.startsWithExplicitCombinator()) {
-        auto scopeSelector = makeUnique<CSSParserSelector>();
+        auto scopeSelector = makeUnique<MutableCSSSelector>();
         scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
         scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
         scopeSelector->selector()->setImplicit();
@@ -81,10 +81,10 @@ static void appendImplicitSelectorPseudoClassScopeIfNeeded(CSSParserSelector& se
     }
 }
 
-static void appendImplicitSelectorNestingParentIfNeeded(CSSParserSelector& selector)
+static void appendImplicitSelectorNestingParentIfNeeded(MutableCSSSelector& selector)
 {
     if (!selector.hasExplicitNestingParent() || selector.startsWithExplicitCombinator()) {
-        auto nestingParentSelector = makeUnique<CSSParserSelector>();
+        auto nestingParentSelector = makeUnique<MutableCSSSelector>();
         nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
         // https://drafts.csswg.org/css-nesting/#nesting
         // Spec: nested rules with relative selectors include the specificity of their implied nesting selector.
@@ -92,7 +92,7 @@ static void appendImplicitSelectorNestingParentIfNeeded(CSSParserSelector& selec
     }
 }
 
-void CSSParserImpl::appendImplicitSelectorIfNeeded(CSSParserSelector& selector, AncestorRuleType last)
+void CSSParserImpl::appendImplicitSelectorIfNeeded(MutableCSSSelector& selector, AncestorRuleType last)
 {
     if (last == AncestorRuleType::Style) {
         // For a rule inside a style rule, we had the implicit & if it's not there already or if it starts with a combinator > ~ +
@@ -261,13 +261,13 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
     if (!range.atEnd())
         return { }; // Parse error; extra tokens in @page selector
 
-    std::unique_ptr<CSSParserSelector> selector;
+    std::unique_ptr<MutableCSSSelector> selector;
     if (!typeSelector.isNull() && pseudo.isNull())
-        selector = makeUnique<CSSParserSelector>(QualifiedName(nullAtom(), typeSelector, styleSheet->defaultNamespace()));
+        selector = makeUnique<MutableCSSSelector>(QualifiedName(nullAtom(), typeSelector, styleSheet->defaultNamespace()));
     else {
-        selector = makeUnique<CSSParserSelector>();
+        selector = makeUnique<MutableCSSSelector>();
         if (!pseudo.isNull()) {
-            selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePagePseudoSelector(pseudo));
+            selector = std::unique_ptr<MutableCSSSelector>(MutableCSSSelector::parsePagePseudoSelector(pseudo));
             if (!selector || selector->match() != CSSSelector::Match::PagePseudoClass)
                 return { };
         }
@@ -276,7 +276,7 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
     }
 
     selector->setForPage();
-    return CSSSelectorList { Vector<std::unique_ptr<CSSParserSelector>>::from(WTFMove(selector)) };
+    return CSSSelectorList { Vector<std::unique_ptr<MutableCSSSelector>>::from(WTFMove(selector)) };
 }
 
 Vector<double> CSSParserImpl::parseKeyframeKeyList(const String& keyList)
@@ -617,8 +617,8 @@ Ref<StyleRuleBase> CSSParserImpl::createNestingParentRule()
 {
     CSSSelector nestingParentSelector;
     nestingParentSelector.setMatch(CSSSelector::Match::NestingParent);
-    auto parserSelector = makeUnique<CSSParserSelector>(nestingParentSelector);
-    Vector<std::unique_ptr<CSSParserSelector>> selectorList;
+    auto parserSelector = makeUnique<MutableCSSSelector>(nestingParentSelector);
+    Vector<std::unique_ptr<MutableCSSSelector>> selectorList;
     selectorList.append(WTFMove(parserSelector));
     auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);
     return StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) }, { });
@@ -1009,7 +1009,7 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
                 CSSParserTokenRange selectorListRange = prelude.makeSubRange(selectorListRangeStart, &prelude.peek());
 
                 // Parse the selector list range
-                auto parserSelectorList = parseCSSParserSelectorList(selectorListRange, m_context, m_styleSheet.get(), last.has_value() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::Yes);
+                auto parserSelectorList = parseMutableCSSSelectorList(selectorListRange, m_context, m_styleSheet.get(), last.has_value() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::Yes);
                 if (parserSelectorList.isEmpty())
                     return false;
 
@@ -1263,7 +1263,7 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     auto preludeCopyForInspector = prelude;
-    auto parserSelectorList = parseCSSParserSelectorList(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::No);
+    auto parserSelectorList = parseMutableCSSSelectorList(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::No);
 
     if (parserSelectorList.isEmpty())
         return nullptr; // Parse error, invalid selector list

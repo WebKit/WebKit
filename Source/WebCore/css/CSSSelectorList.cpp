@@ -27,8 +27,8 @@
 #include "config.h"
 #include "CSSSelectorList.h"
 
-#include "CSSParserSelector.h"
 #include "CommonAtomStrings.h"
+#include "MutableCSSSelector.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -44,21 +44,21 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
 
-CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<CSSParserSelector>>&& selectorVector)
+CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<MutableCSSSelector>>&& selectorVector)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectorVector.isEmpty());
 
     size_t flattenedSize = 0;
     for (size_t i = 0; i < selectorVector.size(); ++i) {
-        for (CSSParserSelector* selector = selectorVector[i].get(); selector; selector = selector->tagHistory())
+        for (auto* selector = selectorVector[i].get(); selector; selector = selector->tagHistory())
             ++flattenedSize;
     }
     ASSERT(flattenedSize);
     m_selectorArray = makeUniqueArray<CSSSelector>(flattenedSize);
     size_t arrayIndex = 0;
     for (size_t i = 0; i < selectorVector.size(); ++i) {
-        CSSParserSelector* first = selectorVector[i].get();
-        CSSParserSelector* current = first;
+        auto* first = selectorVector[i].get();
+        auto* current = first;
         while (current) {
             {
                 // Move item from the parser selector vector into m_selectorArray without invoking destructor (Ugh.)

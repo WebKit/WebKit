@@ -36,7 +36,6 @@
 #include "CSSMediaRule.h"
 #include "CSSNamespaceRule.h"
 #include "CSSPageRule.h"
-#include "CSSParserSelector.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
 #include "CSSStyleRule.h"

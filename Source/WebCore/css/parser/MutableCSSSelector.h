@@ -27,28 +27,28 @@ namespace WebCore {
 
 struct CSSSelectorParserContext;
 
-enum class CSSParserSelectorCombinator {
-    Child,
-    DescendantSpace,
-    DirectAdjacent,
-    IndirectAdjacent
-};
-
-class CSSParserSelector {
+class MutableCSSSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView, const CSSSelectorParserContext&);
-    static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView, const CSSSelectorParserContext&);
-    static std::unique_ptr<CSSParserSelector> parsePagePseudoSelector(StringView);
+    enum class Combinator {
+        Child,
+        DescendantSpace,
+        DirectAdjacent,
+        IndirectAdjacent
+    };
 
-    CSSParserSelector();
+    static std::unique_ptr<MutableCSSSelector> parsePseudoClassSelector(StringView, const CSSSelectorParserContext&);
+    static std::unique_ptr<MutableCSSSelector> parsePseudoElementSelector(StringView, const CSSSelectorParserContext&);
+    static std::unique_ptr<MutableCSSSelector> parsePagePseudoSelector(StringView);
+
+    MutableCSSSelector();
 
     // Recursively copy the selector chain.
-    CSSParserSelector(const CSSSelector&);
+    MutableCSSSelector(const CSSSelector&);
 
-    explicit CSSParserSelector(const QualifiedName&);
+    explicit MutableCSSSelector(const QualifiedName&);
 
-    ~CSSParserSelector();
+    ~MutableCSSSelector();
 
     std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
     const CSSSelector* selector() const { return m_selector.get(); };
@@ -71,7 +71,7 @@ public:
     void setPseudoElement(CSSSelector::PseudoElement type) { m_selector->setPseudoElement(type); }
     void setPseudoClass(CSSSelector::PseudoClass type) { m_selector->setPseudoClass(type); }
 
-    void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>&&);
+    void adoptSelectorVector(Vector<std::unique_ptr<MutableCSSSelector>>&&);
     void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
@@ -90,25 +90,25 @@ public:
     // special case, since it will be covered by this function once again.
     bool needsImplicitShadowCombinatorForMatching() const;
 
-    CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
-    CSSParserSelector* leftmostSimpleSelector();
-    const CSSParserSelector* leftmostSimpleSelector() const;
+    MutableCSSSelector* tagHistory() const { return m_tagHistory.get(); }
+    MutableCSSSelector* leftmostSimpleSelector();
+    const MutableCSSSelector* leftmostSimpleSelector() const;
     bool startsWithExplicitCombinator() const;
-    void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
+    void setTagHistory(std::unique_ptr<MutableCSSSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
-    void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector>, CSSSelector::Relation after);
-    void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);
-    void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
-    void appendTagHistoryAsRelative(std::unique_ptr<CSSParserSelector>);
+    void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<MutableCSSSelector>, CSSSelector::Relation after);
+    void appendTagHistory(CSSSelector::Relation, std::unique_ptr<MutableCSSSelector>);
+    void appendTagHistory(Combinator, std::unique_ptr<MutableCSSSelector>);
+    void appendTagHistoryAsRelative(std::unique_ptr<MutableCSSSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
-    std::unique_ptr<CSSParserSelector> releaseTagHistory();
+    std::unique_ptr<MutableCSSSelector> releaseTagHistory();
 
 private:
     std::unique_ptr<CSSSelector> m_selector;
-    std::unique_ptr<CSSParserSelector> m_tagHistory;
+    std::unique_ptr<MutableCSSSelector> m_tagHistory;
 };
 
-inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
+inline bool MutableCSSSelector::needsImplicitShadowCombinatorForMatching() const
 {
     return match() == CSSSelector::Match::PseudoElement
         && (pseudoElement() == CSSSelector::PseudoElement::UserAgentPart

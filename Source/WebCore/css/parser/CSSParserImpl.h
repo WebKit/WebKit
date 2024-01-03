@@ -205,7 +205,7 @@ private:
         Scope,
     };
     Vector<AncestorRuleType, 16> m_ancestorRuleTypeStack;
-    static void appendImplicitSelectorIfNeeded(CSSParserSelector&, AncestorRuleType);
+    static void appendImplicitSelectorIfNeeded(MutableCSSSelector&, AncestorRuleType);
 
     Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;
