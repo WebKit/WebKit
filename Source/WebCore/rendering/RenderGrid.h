@@ -41,7 +41,6 @@ struct ContentAlignmentData {
     WTF_MAKE_NONCOPYABLE(ContentAlignmentData); WTF_MAKE_FAST_ALLOCATED;
 public:
     ContentAlignmentData() = default;
-    bool isValid() const { return positionOffset >= 0 && distributionOffset >= 0; }
 
     LayoutUnit positionOffset;
     LayoutUnit distributionOffset;
