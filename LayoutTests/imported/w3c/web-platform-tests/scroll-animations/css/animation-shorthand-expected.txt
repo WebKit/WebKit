@@ -19,11 +19,11 @@ FAIL e.style['animation'] = "1s linear 1s 2 reverse forwards paused anim1,\n   1
 PASS e.style['animation'] = "1s linear 1s 2 reverse forwards paused anim1,\n   1s linear 1s 2 reverse forwards paused anim2,\n   1s linear 1s 2 reverse forwards paused anim3" should set animation-timing-function
 PASS e.style['animation'] = "1s linear 1s 2 reverse forwards paused anim1,\n   1s linear 1s 2 reverse forwards paused anim2,\n   1s linear 1s 2 reverse forwards paused anim3" should not set unrelated longhands
 FAIL Animation shorthand can not represent non-initial timelines (specified) assert_equals: expected "" but got "1s anim"
-FAIL Animation shorthand can not represent non-initial timelines (computed) assert_equals: expected "" but got "1s ease 0s 1 normal none running anim"
+FAIL Animation shorthand can not represent non-initial timelines (computed) assert_equals: expected "" but got "1s anim --timeline"
 FAIL Animation shorthand can not represent non-initial animation-delay-end (specified) assert_equals: expected "" but got "1s anim"
-FAIL Animation shorthand can not represent non-initial animation-delay-end (computed) assert_equals: expected "" but got "1s ease 0s 1 normal none running anim"
+FAIL Animation shorthand can not represent non-initial animation-delay-end (computed) assert_equals: expected "" but got "1s anim"
 FAIL Animation shorthand can not represent non-initial animation-range-start (specified) assert_equals: expected "" but got "1s anim"
-FAIL Animation shorthand can not represent non-initial animation-range-start (computed) assert_equals: expected "" but got "1s ease 0s 1 normal none running anim"
+FAIL Animation shorthand can not represent non-initial animation-range-start (computed) assert_equals: expected "" but got "1s anim"
 FAIL Animation shorthand can not represent non-initial animation-range-end (specified) assert_equals: expected "" but got "1s anim"
-FAIL Animation shorthand can not represent non-initial animation-range-end (computed) assert_equals: expected "" but got "1s ease 0s 1 normal none running anim"
+FAIL Animation shorthand can not represent non-initial animation-range-end (computed) assert_equals: expected "" but got "1s anim"
 
