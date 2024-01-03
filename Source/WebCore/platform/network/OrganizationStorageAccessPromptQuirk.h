@@ -61,7 +61,7 @@ inline void add(Hasher& hasher, const OrganizationStorageAccessPromptQuirk& quir
 
 struct OrganizationStorageAccessPromptQuirkHashTraits : SimpleClassHashTraits<OrganizationStorageAccessPromptQuirk> {
     static const bool hasIsEmptyValueFunction = true;
-    static const bool emptyValueIsZero = true;
+    static const bool emptyValueIsZero = false;
     static bool isEmptyValue(const OrganizationStorageAccessPromptQuirk& quirk) { return quirk.organizationName.isNull(); }
 };
 
