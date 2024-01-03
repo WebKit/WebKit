@@ -252,7 +252,7 @@ class GPerfOutputGenerator:
         writer.write('#include "SelectorPseudoTypeMap.h"')
         if generator_type == GeneratorTypes['PSEUDO_CLASS_AND_COMPATIBILITY']:
             writer.newline()
-            writer.write('#include "CSSParserSelector.h"')
+            writer.write('#include "MutableCSSSelector.h"')
 
     def write_ignore_implicit_fallthrough(self, writer):
         writer.newline()

@@ -22,6 +22,9 @@ var aesCfbParams = {
 var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
 var expectedCipherText = "a572525a0baef88e6f5b198c6f";
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["encrypt"]).then(function(key) {
     return crypto.subtle.encrypt(aesCfbParams, key, plainText);
 }).then(function(result) {

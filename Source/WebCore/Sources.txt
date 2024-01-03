@@ -959,7 +959,6 @@ css/parser/CSSParserFastPaths.cpp
 css/parser/CSSParserIdioms.cpp
 css/parser/CSSParserImpl.cpp
 css/parser/CSSParserObserverWrapper.cpp
-css/parser/CSSParserSelector.cpp
 css/parser/CSSParserToken.cpp
 css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParser.cpp
@@ -972,6 +971,7 @@ css/parser/CSSTokenizer.cpp
 css/parser/CSSTokenizerInputStream.cpp
 css/parser/CSSVariableParser.cpp
 css/parser/MediaQueryBlockWatcher.cpp
+css/parser/MutableCSSSelector.cpp
 css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
 css/query/ContainerQueryFeatures.cpp

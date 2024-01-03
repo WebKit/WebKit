@@ -20,6 +20,9 @@ var jwkKey = {
 };
 var extractable = true;
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 debug("Importing a key...");
 crypto.subtle.importKey("jwk", jwkKey, "aes-cfb-8", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(result) {
     key = result;

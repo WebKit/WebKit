@@ -16,6 +16,9 @@ jsTestIsAsync = true;
 var rawKey = asciiToUint8Array("jnOw99oOZFLIEPMr");
 var extractable = true;
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 debug("Importing a key...");
 crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(result) {
     key = result;

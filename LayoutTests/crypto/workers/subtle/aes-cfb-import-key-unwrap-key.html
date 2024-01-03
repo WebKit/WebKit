@@ -5,6 +5,10 @@
 </head>
 <body>
     <script>
+
+        if (window.internals)
+          internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+
         worker = startWorker('resources/aes-cfb-import-key-unwrap-key.js');
     </script>
     <script src="../../../resources/js-test-post.js"></script>

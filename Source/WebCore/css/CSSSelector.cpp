@@ -27,12 +27,12 @@
 #include "CSSSelector.h"
 
 #include "CSSMarkup.h"
-#include "CSSParserSelector.h"
 #include "CSSSelectorInlines.h"
 #include "CSSSelectorList.h"
 #include "CSSSelectorParserContext.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
+#include "MutableCSSSelector.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
 #include <queue>

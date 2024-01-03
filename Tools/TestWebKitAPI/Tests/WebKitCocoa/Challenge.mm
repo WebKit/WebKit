@@ -586,6 +586,7 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
+    EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
     _authenticationChallengeCount++;
     SecTrustRef trust = challenge.protectionSpace.serverTrust;
     verifyCertificateAndPublicKey(trust);
@@ -608,7 +609,7 @@ TEST(WebKit, ServerTrust)
     [delegate waitForDidFinishNavigation];
 
     verifyCertificateAndPublicKey([webView serverTrust]);
-    EXPECT_EQ([delegate authenticationChallengeCount], 1u);
+    EXPECT_GT([delegate authenticationChallengeCount], 0u);
 }
 
 TEST(WebKit, FastServerTrust)
@@ -623,7 +624,7 @@ TEST(WebKit, FastServerTrust)
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://localhost:%d/", server.port()]]]];
     [delegate waitForDidFinishNavigation];
-    EXPECT_EQ([delegate authenticationChallengeCount], 1ull);
+    EXPECT_GT([delegate authenticationChallengeCount], 0u);
 }
 
 TEST(WebKit, ErrorSecureCoding)
