@@ -526,7 +526,7 @@ class CSSSelectorInlinesGenerator:
 
     def write_is_pseudo_class_enabled(self, writer, values):
         writer.write_block("""
-            inline bool CSSSelector::isPseudoClassEnabled(CSSSelector::PseudoClass type, const CSSSelectorParserContext& context)
+            inline bool CSSSelector::isPseudoClassEnabled(PseudoClass type, const CSSSelectorParserContext& context)
             {
                 switch (type) {""")
 
@@ -540,7 +540,7 @@ class CSSSelectorInlinesGenerator:
 
             settings_flag = pseudo_data['settings-flag'] if 'settings-flag' in pseudo_data else None
             with writer.indent():
-                writer.write('case CSSSelector::PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
+                writer.write('case PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
                 enablement_condition = self.format_enablement_condition(settings_flag, is_internal_pseudo)
                 with writer.indent():
                     writer.write('return {};'.format(enablement_condition))
@@ -560,7 +560,7 @@ class CSSSelectorInlinesGenerator:
 
     def write_is_pseudo_element_enabled(self, writer, values):
         writer.write_block("""
-            inline bool CSSSelector::isPseudoElementEnabled(CSSSelector::PseudoElement type, StringView name, const CSSSelectorParserContext& context)
+            inline bool CSSSelector::isPseudoElementEnabled(PseudoElement type, StringView name, const CSSSelectorParserContext& context)
             {
                 switch (type) {""")
 
@@ -595,7 +595,7 @@ class CSSSelectorInlinesGenerator:
                 writer.write('#if {}'.format(pseudo_data['condition']))
 
             with writer.indent():
-                writer.write('case CSSSelector::PseudoElement::{}:'.format(format_name_for_enum_class(pseudo_name)))
+                writer.write('case PseudoElement::{}:'.format(format_name_for_enum_class(pseudo_name)))
 
                 with writer.indent():
                     writer.write('return {};'.format(enablement_condition))
@@ -627,11 +627,11 @@ class CSSSelectorInlinesGenerator:
                 writer.write('return true;')
 
         with writer.indent():
-            writer.write('case CSSSelector::PseudoElement::WebKitCustom:')
+            writer.write('case PseudoElement::WebKitCustom:')
         write_condition_cases_for_shadow_elements(shadow_map)
 
         with writer.indent():
-            writer.write('case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:')
+            writer.write('case PseudoElement::WebKitCustomLegacyPrefixed:')
         write_condition_cases_for_shadow_elements(shadow_alias_map)
 
         with writer.indent():
@@ -646,7 +646,7 @@ class CSSSelectorInlinesGenerator:
 
     def write_selector_text_for_pseudo_class(self, writer, pseudo_classes):
         writer.write_block("""
-            inline ASCIILiteral CSSSelector::selectorTextForPseudoClass(CSSSelector::PseudoClass type)
+            inline const ASCIILiteral CSSSelector::selectorTextForPseudoClass(PseudoClass type)
             {
                 switch (type) {""")
 
@@ -655,7 +655,7 @@ class CSSSelectorInlinesGenerator:
                 writer.write('#if {}'.format(pseudo_data['condition']))
 
             with writer.indent():
-                writer.write('case CSSSelector::PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
+                writer.write('case PseudoClass::{}:'.format(format_name_for_enum_class(pseudo_name)))
                 with writer.indent():
                     writer.write('return ":{}"_s;'.format(pseudo_name))
 
@@ -675,7 +675,7 @@ class CSSSelectorInlinesGenerator:
 
     def write_name_for_shadow_pseudo_element_legacy_alias(self, writer, pseudo_elements):
         writer.write_block("""
-            inline ASCIILiteral CSSSelector::nameForShadowPseudoElementLegacyAlias(StringView alias)
+            inline const ASCIILiteral CSSSelector::nameForShadowPseudoElementLegacyAlias(StringView alias)
             {""")
 
         for pseudo_name, pseudo_data in pseudo_elements.items():
