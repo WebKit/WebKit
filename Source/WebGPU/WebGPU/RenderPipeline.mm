@@ -1030,7 +1030,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)
         return returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s);
 
-    mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
+    if (descriptor.multisample.count != 1 && descriptor.multisample.count != 4)
+        return returnInvalidRenderPipeline(*this, isAsync, "multisample count must be either 1 or 4"_s);
+    mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
     if (descriptor.multisample.alphaToCoverageEnabled) {
         if (usesSampleMask)
@@ -1039,6 +1041,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
         if (!descriptor.fragment->targetCount || !hasAlphaChannel(descriptor.fragment->targets[0].format))
             return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
+        if (descriptor.multisample.count == 1)
+            return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires multisampling"_s);
     }
     RELEASE_ASSERT([mtlRenderPipelineDescriptor respondsToSelector:@selector(setSampleMask:)]);
     uint32_t sampleMask = RenderBundleEncoder::defaultSampleMask;
