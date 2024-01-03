@@ -387,7 +387,7 @@ static void appendLangArgumentList(StringBuilder& builder, const FixedVector<Pos
         else
             serializeString(list[i].identifier, builder);
         if (i != size - 1)
-            builder.append(", ");
+            builder.append(", "_s);
     }
 }
 
@@ -423,7 +423,7 @@ static void outputNthChildAnPlusB(const CSSSelector& selector, StringBuilder& bu
         builder.append('n', b);
     } else {
         outputFirstTerm(a);
-        builder.append("n+", b);
+        builder.append("n+"_s, b);
     }
 }
 
@@ -561,7 +561,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 #endif
             default:
                 ASSERT(!pseudoElementMayHaveArgument(cs->pseudoElement()), "Missing serialization for pseudo-element argument");
-                builder.append("::");
+                builder.append("::"_s);
                 serializeIdentifier(cs->serializingValue(), builder);
             }
         } else if (cs->isAttributeSelector()) {
@@ -580,19 +580,19 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 builder.append(']');
                 break;
             case Match::List:
-                builder.append("~=");
+                builder.append("~="_s);
                 break;
             case Match::Hyphen:
-                builder.append("|=");
+                builder.append("|="_s);
                 break;
             case Match::Begin:
-                builder.append("^=");
+                builder.append("^="_s);
                 break;
             case Match::End:
-                builder.append("$=");
+                builder.append("$="_s);
                 break;
             case Match::Contain:
-                builder.append("*=");
+                builder.append("*="_s);
                 break;
             default:
                 break;
@@ -600,20 +600,20 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             if (cs->match() != Match::Set) {
                 serializeString(cs->serializingValue(), builder);
                 if (cs->attributeValueMatchingIsCaseInsensitive())
-                    builder.append(" i]");
+                    builder.append(" i]"_s);
                 else
                     builder.append(']');
             }
         } else if (cs->match() == Match::PagePseudoClass) {
             switch (cs->pagePseudoClass()) {
             case PagePseudoClass::First:
-                builder.append(":first");
+                builder.append(":first"_s);
                 break;
             case PagePseudoClass::Left:
-                builder.append(":left");
+                builder.append(":left"_s);
                 break;
             case PagePseudoClass::Right:
-                builder.append(":right");
+                builder.append(":right"_s);
                 break;
             }
         }
