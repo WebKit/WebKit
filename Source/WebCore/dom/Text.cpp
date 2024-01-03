@@ -51,7 +51,9 @@ Ref<Text> Text::create(Document& document, String&& data)
 
 Ref<Text> Text::createEditingText(Document& document, String&& data)
 {
-    return adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { TypeFlag::IsEditingText }));
+    auto node = adoptRef(*new Text(document, WTFMove(data), TEXT_NODE, { TypeFlag::IsSpecialInternalNode }));
+    ASSERT(node->isEditingText());
+    return node;
 }
 
 Text::~Text() = default;
