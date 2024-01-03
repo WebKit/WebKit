@@ -1394,15 +1394,12 @@ void KeyframeEffect::computeSomeKeyframesUseStepsOrLinearTimingFunctionWithPoint
         if (defaultTimingFunctionIsSteps || defaultTimingFunctionIsLinearWithPoints) {
             for (auto& keyframe : m_blendingKeyframes) {
                 auto* timingFunction = keyframe.timingFunction();
-                if (!m_someKeyframesUseStepsTimingFunction) {
-                    if ((!timingFunction && defaultTimingFunctionIsSteps) || is<StepsTimingFunction>(timingFunction))
-                        m_someKeyframesUseStepsTimingFunction = true;
-                } else if (!m_someKeyframesUseLinearTimingFunctionWithPoints) {
-                    if ((!timingFunction && defaultTimingFunctionIsLinearWithPoints) || isLinearTimingFunctionWithPoints(timingFunction))
-                        m_someKeyframesUseStepsTimingFunction = true;
-                }
-                if (m_someKeyframesUseStepsTimingFunction && m_someKeyframesUseLinearTimingFunctionWithPoints)
-                    return;
+                if (defaultTimingFunctionIsSteps && !m_someKeyframesUseStepsTimingFunction)
+                    m_someKeyframesUseStepsTimingFunction = !timingFunction || is<StepsTimingFunction>(timingFunction);
+                else if (defaultTimingFunctionIsLinearWithPoints && !m_someKeyframesUseLinearTimingFunctionWithPoints)
+                    m_someKeyframesUseLinearTimingFunctionWithPoints = !timingFunction || isLinearTimingFunctionWithPoints(timingFunction);
+                if (defaultTimingFunctionIsSteps == m_someKeyframesUseStepsTimingFunction && defaultTimingFunctionIsLinearWithPoints == m_someKeyframesUseLinearTimingFunctionWithPoints)
+                    break;
             }
             return;
         }
