@@ -15,6 +15,9 @@ jsTestIsAsync = true;
 
 var extractable = true;
 
+if (window.internals)
+  internals.settings.setDeprecateAESCFBWebCryptoEnabled(false);
+ 
 debug("Generating a key...");
 crypto.subtle.generateKey({name: "aes-cfb-8", length: 256}, extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]).then(function(key) {
     debug("Exporting a key...");

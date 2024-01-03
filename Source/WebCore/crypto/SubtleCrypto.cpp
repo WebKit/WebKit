@@ -53,6 +53,7 @@
 #include "JSRsaPssParams.h"
 #include "JSX25519Params.h"
 #include <JavaScriptCore/JSONObject.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -79,6 +80,8 @@ enum class Operations : uint8_t {
     GetKeyLength
 };
 
+static const char* const AESCFBDeprecation = "AES-CFB support is deprecated";
+
 static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAlgorithmParameters(JSGlobalObject&, WebCore::SubtleCrypto::AlgorithmIdentifier, Operations);
 
 static ExceptionOr<CryptoAlgorithmIdentifier> toHashIdentifier(JSGlobalObject& state, SubtleCrypto::AlgorithmIdentifier algorithmIdentifier)
@@ -94,6 +97,12 @@ static bool isRSAESPKCSWebCryptoDeprecated(JSGlobalObject& state)
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
     auto* context = globalObject.scriptExecutionContext();
     return context && context->settingsValues().deprecateRSAESPKCSWebCryptoEnabled;
+}
+static bool isAESCFBWebCryptoDeprecated(JSGlobalObject& state)
+{
+    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto* context = globalObject.scriptExecutionContext();
+    return context && context->settingsValues().deprecateAESCFBWebCryptoEnabled;
 }
 
 static bool isSafeCurvesEnabled(JSGlobalObject& state)
@@ -153,8 +162,11 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             result = makeUnique<CryptoAlgorithmRsaOaepParams>(params);
             break;
         }
-        case CryptoAlgorithmIdentifier::AES_CBC:
-        case CryptoAlgorithmIdentifier::AES_CFB: {
+        case CryptoAlgorithmIdentifier::AES_CFB:
+            if (isAESCFBWebCryptoDeprecated(state))
+                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+            [[fallthrough]];
+        case CryptoAlgorithmIdentifier::AES_CBC: {
             auto params = convertDictionary<CryptoAlgorithmAesCbcCfbParams>(state, value.get());
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
             result = makeUnique<CryptoAlgorithmAesCbcCfbParams>(params);
@@ -239,10 +251,13 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             result = makeUnique<CryptoAlgorithmRsaHashedKeyGenParams>(params);
             break;
         }
+        case CryptoAlgorithmIdentifier::AES_CFB:
+            if (isAESCFBWebCryptoDeprecated(state))
+                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+            [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CTR:
         case CryptoAlgorithmIdentifier::AES_CBC:
         case CryptoAlgorithmIdentifier::AES_GCM:
-        case CryptoAlgorithmIdentifier::AES_CFB:
         case CryptoAlgorithmIdentifier::AES_KW: {
             auto params = convertDictionary<CryptoAlgorithmAesKeyParams>(state, value.get());
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
@@ -349,10 +364,13 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             result = makeUnique<CryptoAlgorithmRsaHashedImportParams>(params);
             break;
         }
+        case CryptoAlgorithmIdentifier::AES_CFB:
+            if (isAESCFBWebCryptoDeprecated(state))
+                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+            [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CTR:
         case CryptoAlgorithmIdentifier::AES_CBC:
         case CryptoAlgorithmIdentifier::AES_GCM:
-        case CryptoAlgorithmIdentifier::AES_CFB:
         case CryptoAlgorithmIdentifier::AES_KW:
         case CryptoAlgorithmIdentifier::Ed25519:
             result = makeUnique<CryptoAlgorithmParameters>(params);
@@ -403,10 +421,13 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
         break;
     case Operations::GetKeyLength:
         switch (*identifier) {
+        case CryptoAlgorithmIdentifier::AES_CFB:
+            if (isAESCFBWebCryptoDeprecated(state))
+                return Exception { ExceptionCode::NotSupportedError, String::fromUTF8(AESCFBDeprecation) };
+            [[fallthrough]];
         case CryptoAlgorithmIdentifier::AES_CTR:
         case CryptoAlgorithmIdentifier::AES_CBC:
         case CryptoAlgorithmIdentifier::AES_GCM:
-        case CryptoAlgorithmIdentifier::AES_CFB:
         case CryptoAlgorithmIdentifier::AES_KW: {
             auto params = convertDictionary<CryptoAlgorithmAesKeyParams>(state, value.get());
             RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
@@ -553,13 +574,14 @@ static bool isSupportedExportKey(JSGlobalObject& state, CryptoAlgorithmIdentifie
     switch (identifier) {
     case CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5:
         return !isRSAESPKCSWebCryptoDeprecated(state);
+    case CryptoAlgorithmIdentifier::AES_CFB:
+        return !isAESCFBWebCryptoDeprecated(state);
     case CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5:
     case CryptoAlgorithmIdentifier::RSA_PSS:
     case CryptoAlgorithmIdentifier::RSA_OAEP:
     case CryptoAlgorithmIdentifier::AES_CTR:
     case CryptoAlgorithmIdentifier::AES_CBC:
     case CryptoAlgorithmIdentifier::AES_GCM:
-    case CryptoAlgorithmIdentifier::AES_CFB:
     case CryptoAlgorithmIdentifier::AES_KW:
     case CryptoAlgorithmIdentifier::HMAC:
     case CryptoAlgorithmIdentifier::ECDSA:

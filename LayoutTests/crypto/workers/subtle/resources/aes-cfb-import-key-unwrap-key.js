@@ -14,7 +14,6 @@ var aesCfbParams = {
 }
 var wrappedKey = hexStringToUint8Array("8707ee311f6e8ed157885a7fc25f0ee7");
 
-
 crypto.subtle.importKey("raw", rawKey, "aes-cfb-8", extractable, ["unwrapKey"]).then(function(unwrappingKey) {
     return crypto.subtle.unwrapKey("raw", wrappedKey, unwrappingKey, aesCfbParams, {name: "aes-cbc"}, extractable, ["encrypt"]);
 }).then(function(cryptoKey) {
