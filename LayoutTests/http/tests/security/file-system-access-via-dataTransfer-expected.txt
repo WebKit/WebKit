@@ -1,0 +1,10 @@
+Test that accessing local file system metadata is not allowed
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Should not receive file
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
