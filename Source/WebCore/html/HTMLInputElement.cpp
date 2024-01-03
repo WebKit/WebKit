@@ -1709,7 +1709,7 @@ Node::InsertedIntoAncestorResult HTMLInputElement::insertedIntoAncestor(Insertio
         document().addElementWithPendingUserAgentShadowTreeUpdate(*this);
         m_hasPendingUserAgentShadowTreeUpdate = true;
     }
-    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+    return isRadioButton() ? InsertedIntoAncestorResult::NeedsPostInsertionCallback : InsertedIntoAncestorResult::Done;
 }
 
 void HTMLInputElement::updateUserAgentShadowTree()
@@ -1722,6 +1722,7 @@ void HTMLInputElement::updateUserAgentShadowTree()
 
 void HTMLInputElement::didFinishInsertingNode()
 {
+    ASSERT(isRadioButton());
     HTMLTextFormControlElement::didFinishInsertingNode();
     if (isInTreeScope() && !form())
         addToRadioButtonGroup();
