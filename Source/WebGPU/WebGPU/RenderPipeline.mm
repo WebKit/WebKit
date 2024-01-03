@@ -896,7 +896,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout)
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
-        auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation);
+        auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation, vertexModule);
         auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
@@ -931,7 +931,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (!pipelineLayout)
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
 
-        auto [constantValues, wgslConstantValues] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation);
+        auto [constantValues, wgslConstantValues] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation, fragmentModule);
         auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
         if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s);
@@ -1020,7 +1020,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         depthBiasClamp = depthStencil->depthBiasClamp;
     }
 
-    if (!hasAtLeastOneColorTarget && !descriptor.depthStencil)
+    if (descriptor.fragment && !hasAtLeastOneColorTarget && !descriptor.depthStencil)
         return returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_s);
 
     if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)

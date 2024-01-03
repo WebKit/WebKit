@@ -321,7 +321,8 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
     auto entryPoint = descriptor.compute.entryPoint.utf8();
 
     auto constantNames = descriptor.compute.constants.map([](const auto& constant) {
-        return constant.key.utf8();
+        bool lengthsMatch = constant.key.length() == String::fromUTF8(constant.key.utf8().data()).length();
+        return lengthsMatch ? constant.key.utf8() : "";
     });
 
     Vector<WGPUConstantEntry> backingConstantEntries(descriptor.compute.constants.size(), [&](size_t i) {
@@ -363,7 +364,8 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
     auto vertexEntryPoint = descriptor.vertex.entryPoint.utf8();
 
     auto vertexConstantNames = descriptor.vertex.constants.map([](const auto& constant) {
-        return constant.key.utf8();
+        bool lengthsMatch = constant.key.length() == String::fromUTF8(constant.key.utf8().data()).length();
+        return lengthsMatch ? constant.key.utf8() : "";
     });
 
     Vector<WGPUConstantEntry> vertexConstantEntries(descriptor.vertex.constants.size(), [&](size_t i) {
@@ -427,7 +429,8 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, bool de
     Vector<CString> fragmentConstantNames;
     if (descriptor.fragment) {
         fragmentConstantNames = descriptor.fragment->constants.map([](const auto& constant) {
-            return constant.key.utf8();
+            bool lengthsMatch = constant.key.length() == String::fromUTF8(constant.key.utf8().data()).length();
+            return lengthsMatch ? constant.key.utf8() : "";
         });
     }
 

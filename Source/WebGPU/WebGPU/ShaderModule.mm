@@ -110,7 +110,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
     auto library = ShaderModule::createLibrary(device.device(), prepareResult.msl, WTFMove(label));
     if (!library)
         return nullptr;
-    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, device);
+    return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library, nil, device);
 }
 
 static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& features)
@@ -162,6 +162,29 @@ static const HashSet<String> buildFeatureSet(const Vector<WGPUFeatureName>& feat
     return result;
 }
 
+static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> &checkResult, const WGPUShaderModuleDescriptor &descriptor, std::optional<ShaderModuleParameters> &shaderModuleParameters, NSMutableSet<NSString *> * originalOverrideNames = nil)
+{
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
+        if (shaderModuleParameters->hints && descriptor.hintCount) {
+            // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
+            // https://bugs.webkit.org/show_bug.cgi?id=254258
+            UNUSED_PARAM(earlyCompileShaderModule);
+        }
+        return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, originalOverrideNames, object);
+    }
+
+    auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
+    StringPrintStream message;
+    message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
+    for (const auto& error : failedCheck.errors)
+        message.print("\n"_s, error);
+
+    dataLogLn(message.toString());
+    dataLogLn(fromAPI(shaderModuleParameters->wgsl.code));
+    object.generateAValidationError(message.toString());
+    return ShaderModule::createInvalid(object, failedCheck);
+}
+
 Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
     if (!descriptor.nextInChain || !isValid())
@@ -179,27 +202,31 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         .supportedFeatures = WTFMove(supportedFeatures)
     });
 
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
-        if (shaderModuleParameters->hints && descriptor.hintCount) {
-            // FIXME: re-enable early compilation later on once deferred compilation is fully implemented
-            // https://bugs.webkit.org/show_bug.cgi?id=254258
-            UNUSED_PARAM(earlyCompileShaderModule);
+    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
+    if (!std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
+        NSString *nsWgsl = [NSString stringWithUTF8String:shaderModuleParameters->wgsl.code];
+        NSRange currentRange = NSMakeRange(0, nsWgsl.length);
+        NSMutableSet<NSString *> *overrideNames = [NSMutableSet set];
+        for (;;) {
+            NSRange newRange = [nsWgsl rangeOfString:@"override " options:NSLiteralSearch range:currentRange];
+            if (newRange.location == NSNotFound)
+                break;
+            NSRange endRange = [nsWgsl rangeOfString:@":" options:NSLiteralSearch range:NSMakeRange(newRange.location, nsWgsl.length - newRange.location)];
+            auto startIndex = newRange.location + newRange.length;
+            NSString* overrideName = [nsWgsl substringWithRange:NSMakeRange(startIndex, endRange.location - startIndex)];
+            [overrideNames addObject:overrideName];
+            currentRange = NSMakeRange(endRange.location + 1, nsWgsl.length - endRange.location - 1);
         }
 
-    } else {
-        auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
-        StringPrintStream message;
-        message.print(String::number(failedCheck.errors.size()), " error", failedCheck.errors.size() != 1 ? "s" : "", " generated while compiling the shader:"_s);
-        for (const auto& error : failedCheck.errors) {
-            message.print("\n"_s, error);
-        }
-        dataLogLn(message.toString());
+        nsWgsl = [nsWgsl stringByApplyingTransform:NSStringTransformToLatin reverse:NO];
+        nsWgsl = [nsWgsl stringByFoldingWithOptions:NSDiacriticInsensitiveSearch locale:NSLocale.currentLocale];
+        auto checkResult = WGSL::staticCheck(nsWgsl, std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
         dataLogLn(fromAPI(shaderModuleParameters->wgsl.code));
-        generateAValidationError(message.toString());
-        return ShaderModule::createInvalid(*this, failedCheck);
+        dataLogLn(String(nsWgsl));
+        return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters, overrideNames);
     }
 
-    return ShaderModule::create(WTFMove(checkResult), { }, { }, nil, *this);
+    return handleShaderSuccessOrFailure(*this, checkResult, descriptor, shaderModuleParameters);
 }
 
 auto ShaderModule::convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult) -> CheckResult
@@ -309,12 +336,13 @@ static ShaderModule::FragmentOutputs parseReturnType(const WGSL::Type& type)
     return fragmentOutputs;
 }
 
-ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, NSMutableSet<NSString* >* originalOverrideNames, Device& device)
     : m_checkResult(convertCheckResult(WTFMove(checkResult)))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
     , m_entryPointInformation(WTFMove(entryPointInformation))
     , m_library(library)
     , m_device(device)
+    , m_originalOverrideNames(originalOverrideNames)
 {
     bool allowVertexDefault = true, allowFragmentDefault = true, allowComputeDefault = true;
     if (std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult)) {
@@ -368,6 +396,11 @@ const ShaderModule::FragmentOutputs* ShaderModule::returnTypeForEntryPoint(const
         return &it->value;
 
     return nullptr;
+}
+
+bool ShaderModule::hasOverride(const String& name) const
+{
+    return [m_originalOverrideNames containsObject:name];
 }
 
 ShaderModule::ShaderModule(Device& device, CheckResult&& checkResult)
