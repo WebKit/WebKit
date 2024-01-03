@@ -38,10 +38,17 @@ bool GCActivityCallback::s_shouldCreateGCTimer = true;
 
 const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
 
-GCActivityCallback::GCActivityCallback(Heap* heap)
-    : GCActivityCallback(heap->vm())
+GCActivityCallback::GCActivityCallback(Heap& heap)
+    : GCActivityCallback(heap.vm())
 {
 }
+
+GCActivityCallback::GCActivityCallback(VM& vm)
+    : Base(vm)
+{
+}
+
+GCActivityCallback::~GCActivityCallback() = default;
 
 void GCActivityCallback::doWork(VM& vm)
 {
@@ -65,9 +72,8 @@ void GCActivityCallback::scheduleTimer(Seconds newDelay)
     Seconds delta = m_delay - newDelay;
     m_delay = newDelay;
     if (auto timeUntilFire = this->timeUntilFire())
-        setTimeUntilFire(*timeUntilFire - delta);
-    else
-        setTimeUntilFire(newDelay);
+        newDelay = *timeUntilFire - delta;
+    setTimeUntilFire(newDelay);
 }
 
 void GCActivityCallback::didAllocate(Heap& heap, size_t bytes)
