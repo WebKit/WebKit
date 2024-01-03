@@ -5925,9 +5925,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 {
     [self _updateInternalStateBeforeSelectionChange];
 
-#if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
     if (self.shouldUseAsyncInteractions)
-        [_asyncSystemInputDelegate selectionWillChange:self];
+        [_asyncSystemInputDelegate selectionWillChange:static_cast<id<UIAsyncTextInputClient>>(self)];
     else
 #endif
         [self.inputDelegate selectionWillChange:self];
@@ -5948,9 +5948,9 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)_internalEndSelectionChange
 {
-#if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
     if (self.shouldUseAsyncInteractions)
-        [_asyncSystemInputDelegate selectionDidChange:self];
+        [_asyncSystemInputDelegate selectionDidChange:static_cast<id<UIAsyncTextInputClient>>(self)];
     else
 #endif
         [self.inputDelegate selectionDidChange:self];
@@ -12627,7 +12627,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
             };
             break;
         }
-        completion(context.toPlatformContext({ }));
+        completion(context.toPlatformContext({ WebKit::DocumentEditingContextRequest::Options::Text }));
     }];
 }
 

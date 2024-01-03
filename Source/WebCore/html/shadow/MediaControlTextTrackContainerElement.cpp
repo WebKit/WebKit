@@ -51,11 +51,11 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
 #include "TextTrackCueGeneric.h"
 #include "TextTrackList.h"
+#include "UserAgentPartIds.h"
 #include "VTTRegionList.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -69,7 +69,7 @@ using namespace HTMLNames;
 Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document, HTMLMediaElement& mediaElement)
 {
     auto element = adoptRef(*new MediaControlTextTrackContainerElement(document, mediaElement));
-    element->setPseudo(ShadowPseudoIds::webkitMediaTextTrackContainer());
+    element->setPseudo(UserAgentPartIds::webkitMediaTextTrackContainer());
     element->hide();
     return element;
 }

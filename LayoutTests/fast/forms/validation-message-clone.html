@@ -31,9 +31,9 @@ function confirmNoBubble() {
         return;
 
     lastInOriginalShadow = internals.shadowRoot(original).lastChild;
-    shouldBeTrue('internals.shadowPseudoId(lastInOriginalShadow) == "-webkit-validation-bubble"');
+    shouldBeTrue('internals.userAgentPartId(lastInOriginalShadow) == "-webkit-validation-bubble"');
     lastInClonedShadow = internals.shadowRoot($('dest').firstChild).lastChild;
-    shouldBeFalse('internals.shadowPseudoId(lastInClonedShadow) == "-webkit-validation-bubble"');
+    shouldBeFalse('internals.userAgentPartId(lastInClonedShadow) == "-webkit-validation-bubble"');
     testRunner.notifyDone();
 }
 </script>

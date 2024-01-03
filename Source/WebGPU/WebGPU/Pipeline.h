@@ -28,6 +28,8 @@
 
 namespace WebGPU {
 
+class ShaderModule;
+
 struct LibraryCreationResult {
     id<MTLLibrary> library;
     WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
@@ -35,7 +37,7 @@ struct LibraryCreationResult {
 
 std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, const PipelineLayout*, const String& entryPointName, NSString *label);
 
-std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> createConstantValues(uint32_t constantCount, const WGPUConstantEntry* constants, const WGSL::Reflection::EntryPointInformation&);
+std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> createConstantValues(uint32_t constantCount, const WGPUConstantEntry* constants, const WGSL::Reflection::EntryPointInformation&, const ShaderModule&);
 
 id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPointInformation&, MTLFunctionConstantValues *, NSString *label);
 

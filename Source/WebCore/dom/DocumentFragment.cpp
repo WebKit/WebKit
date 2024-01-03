@@ -49,7 +49,9 @@ Ref<DocumentFragment> DocumentFragment::create(Document& document)
 
 Ref<DocumentFragment> DocumentFragment::createForInnerOuterHTML(Document& document)
 {
-    return adoptRef(*new DocumentFragment(document, TypeFlag::IsDocumentFragmentForInnerOuterHTML));
+    auto node = adoptRef(*new DocumentFragment(document, TypeFlag::IsSpecialInternalNode));
+    ASSERT(node->isDocumentFragmentForInnerOuterHTML());
+    return node;
 }
 
 String DocumentFragment::nodeName() const

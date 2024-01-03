@@ -19,8 +19,8 @@
     clonedShadowRoot = internals.shadowRoot(cloned);
 
     shouldBe("cloned.value", "target.value");
-    shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild.firstChild)");
-    shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild.firstChild.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild.firstChild.firstChild)");
+    shouldBe("internals.userAgentPartId(clonedShadowRoot.firstChild.firstChild)", "internals.userAgentPartId(targetShadowRoot.firstChild.firstChild)");
+    shouldBe("internals.userAgentPartId(clonedShadowRoot.firstChild.firstChild.firstChild)", "internals.userAgentPartId(targetShadowRoot.firstChild.firstChild.firstChild)");
 
     cloned.value = 70;
     shouldBe("clonedShadowRoot.firstChild.firstChild.firstChild.style.inlineSize", '"70%"');

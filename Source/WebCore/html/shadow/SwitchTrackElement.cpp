@@ -26,7 +26,7 @@
 #include "SwitchTrackElement.h"
 
 #include "ScriptDisallowedScope.h"
-#include "ShadowPseudoIds.h"
+#include "UserAgentPartIds.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ Ref<SwitchTrackElement> SwitchTrackElement::create(Document& document)
 {
     Ref element = adoptRef(*new SwitchTrackElement(document));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(ShadowPseudoIds::track());
+    element->setPseudo(UserAgentPartIds::track());
     return element;
 }
 

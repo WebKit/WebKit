@@ -1236,10 +1236,9 @@ IGNORE_WARNINGS_BEGIN("switch-unreachable")
 #endif
     case IPC::WebCore_TimingFunction_Subclass::SpringTimingFunction:
         return true;
-    default:
-        return false;
     }
 IGNORE_WARNINGS_END
+    return false;
 }
 
 template<> bool isValidEnum<IPC::WebCore_MoveOnlyBaseClass_Subclass, void>(IPC::EncodedVariantIndex value)
@@ -1248,10 +1247,9 @@ IGNORE_WARNINGS_BEGIN("switch-unreachable")
     switch (static_cast<IPC::WebCore_MoveOnlyBaseClass_Subclass>(value)) {
     case IPC::WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass:
         return true;
-    default:
-        return false;
     }
 IGNORE_WARNINGS_END
+    return false;
 }
 
 template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t value)

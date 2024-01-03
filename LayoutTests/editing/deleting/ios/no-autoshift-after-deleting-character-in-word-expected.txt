@@ -1,0 +1,10 @@
+Verifies that typing a word and then deleting backwards does not cause the keyboard to automatically enter shift state.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isAutoShifted is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hel

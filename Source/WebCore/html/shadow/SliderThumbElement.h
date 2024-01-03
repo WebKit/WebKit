@@ -92,7 +92,6 @@ private:
     void unregisterForTouchEvents();
 #endif
 
-    AtomString m_shadowPseudoId;
     bool m_inDragMode { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)

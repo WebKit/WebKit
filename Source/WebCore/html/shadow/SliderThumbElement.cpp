@@ -50,10 +50,10 @@
 #include "RenderTheme.h"
 #include "ResolvedStyle.h"
 #include "ScriptDisallowedScope.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
 #include "StyleResolver.h"
+#include "UserAgentPartIds.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -185,7 +185,7 @@ Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
 {
     auto element = adoptRef(*new SliderThumbElement(document));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(ShadowPseudoIds::webkitSliderThumb());
+    element->setPseudo(UserAgentPartIds::webkitSliderThumb());
     return element;
 }
 
@@ -593,7 +593,7 @@ Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
 {
     auto element = adoptRef(*new SliderContainerElement(document));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(ShadowPseudoIds::webkitSliderContainer());
+    element->setPseudo(UserAgentPartIds::webkitSliderContainer());
     return element;
 }
 

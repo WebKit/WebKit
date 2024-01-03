@@ -1005,10 +1005,9 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             if member.condition is not None:
                 result.append('#endif')
         result.append('        return true;')
-        result.append('    default:')
-        result.append('        return false;')
         result.append('    }')
         result.append('IGNORE_WARNINGS_END')
+        result.append('    return false;')
         result.append('}')
         if type.condition is not None:
             result.append('#endif')

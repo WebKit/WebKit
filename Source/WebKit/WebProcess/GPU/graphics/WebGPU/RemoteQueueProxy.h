@@ -92,6 +92,21 @@ private:
         const WebCore::WebGPU::ImageDataLayout&,
         const WebCore::WebGPU::Extent3D& size) final;
 
+    void writeBuffer(
+        const WebCore::WebGPU::Buffer&,
+        WebCore::WebGPU::Size64 bufferOffset,
+        void* source,
+        size_t byteLength,
+        WebCore::WebGPU::Size64 dataOffset = 0,
+        std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
+
+    void writeTexture(
+        const WebCore::WebGPU::ImageCopyTexture& destination,
+        void* source,
+        size_t byteLength,
+        const WebCore::WebGPU::ImageDataLayout&,
+        const WebCore::WebGPU::Extent3D& size) final;
+
     void copyExternalImageToTexture(
         const WebCore::WebGPU::ImageCopyExternalImage& source,
         const WebCore::WebGPU::ImageCopyTextureTagged& destination,

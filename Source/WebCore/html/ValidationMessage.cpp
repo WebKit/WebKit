@@ -44,10 +44,10 @@
 #include "RenderBoxModelObjectInlines.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include "UserAgentPartIds.h"
 #include "ValidationMessageClient.h"
 
 namespace WebCore {
@@ -199,33 +199,33 @@ void ValidationMessage::buildBubbleTree()
     Document& document = m_element->document();
     m_bubble = HTMLDivElement::create(document);
     shadowRoot->appendChild(*m_bubble);
-    m_bubble->setPseudo(ShadowPseudoIds::webkitValidationBubble());
+    m_bubble->setPseudo(UserAgentPartIds::webkitValidationBubble());
     // Need to force position:absolute because RenderMenuList doesn't assume it
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
 
     auto clipper = HTMLDivElement::create(document);
     m_bubble->appendChild(clipper);
-    clipper->setPseudo(ShadowPseudoIds::webkitValidationBubbleArrowClipper());
+    clipper->setPseudo(UserAgentPartIds::webkitValidationBubbleArrowClipper());
     auto bubbleArrow = HTMLDivElement::create(document);
     clipper->appendChild(bubbleArrow);
-    bubbleArrow->setPseudo(ShadowPseudoIds::webkitValidationBubbleArrow());
+    bubbleArrow->setPseudo(UserAgentPartIds::webkitValidationBubbleArrow());
 
     auto message = HTMLDivElement::create(document);
     m_bubble->appendChild(message);
-    message->setPseudo(ShadowPseudoIds::webkitValidationBubbleMessage());
+    message->setPseudo(UserAgentPartIds::webkitValidationBubbleMessage());
     auto icon = HTMLDivElement::create(document);
     message->appendChild(icon);
-    icon->setPseudo(ShadowPseudoIds::webkitValidationBubbleIcon());
+    icon->setPseudo(UserAgentPartIds::webkitValidationBubbleIcon());
     auto textBlock = HTMLDivElement::create(document);
     message->appendChild(textBlock);
-    textBlock->setPseudo(ShadowPseudoIds::webkitValidationBubbleTextBlock());
+    textBlock->setPseudo(UserAgentPartIds::webkitValidationBubbleTextBlock());
     m_messageHeading = HTMLDivElement::create(document);
     textBlock->appendChild(*m_messageHeading);
-    m_messageHeading->setPseudo(ShadowPseudoIds::webkitValidationBubbleHeading());
+    m_messageHeading->setPseudo(UserAgentPartIds::webkitValidationBubbleHeading());
     m_messageBody = HTMLDivElement::create(document);
     textBlock->appendChild(*m_messageBody);
-    m_messageBody->setPseudo(ShadowPseudoIds::webkitValidationBubbleBody());
+    m_messageBody->setPseudo(UserAgentPartIds::webkitValidationBubbleBody());
 
     setMessageDOMAndStartTimer();
 

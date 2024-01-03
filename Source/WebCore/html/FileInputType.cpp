@@ -43,8 +43,8 @@
 #include "RenderFileUploadControl.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
-#include "ShadowPseudoIds.h"
 #include "ShadowRoot.h"
+#include "UserAgentPartIds.h"
 #include "UserGestureIndicator.h"
 #include <wtf/FileSystem.h>
 #include <wtf/IsoMallocInlines.h>
@@ -228,7 +228,7 @@ void FileInputType::createShadowSubtree()
     {
         ScriptDisallowedScope::EventAllowedScope eventAllowedScopeBeforeAppend { button };
         button->setType(InputTypeNames::button());
-        button->setPseudo(ShadowPseudoIds::fileSelectorButton());
+        button->setPseudo(UserAgentPartIds::fileSelectorButton());
         button->setValue(element()->multiple() ? fileButtonChooseMultipleFilesLabel() : fileButtonChooseFileLabel());
     }
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { *element()->userAgentShadowRoot() };

@@ -77,7 +77,7 @@
   <!-- GStreamer plugins have been moved with the base code to a monorepo.
   Is not longer needed to fetch different tarballs when using the main repository.
   See: https://gstreamer.freedesktop.org/documentation/frequently-asked-questions/mono-repository.html -->
-  <meson id="gstreamer" mesonargs="-Dlibnice=enabled -Dpython=enabled -Dintrospection=enabled -Dgst-plugins-bad:microdns=disabled -Dgst-plugins-bad:avtp=disabled -Dgst-examples=disabled -Dexamples=disabled -Dtests=disabled -Ddoc=disabled">
+  <meson id="gstreamer" mesonargs="-Dlibnice=enabled -Ddoc=disabled -Dexamples=disabled -Dgst-examples=disabled -Dgst-plugins-bad:avtp=disabled -Dgst-plugins-bad:microdns=disabled -Dintrospection=disabled -Dpython=disabled -Dtests=disabled">
     <dependencies>
       <dep package="aom"/>
       <dep package="ffmpeg"/>

@@ -76,6 +76,21 @@ public:
         const ImageDataLayout&,
         const Extent3D& size) = 0;
 
+    virtual void writeBuffer(
+        const Buffer&,
+        Size64 bufferOffset,
+        void* source,
+        size_t byteLength,
+        Size64 dataOffset = 0,
+        std::optional<Size64> = std::nullopt) = 0;
+
+    virtual void writeTexture(
+        const ImageCopyTexture& destination,
+        void* source,
+        size_t byteLength,
+        const ImageDataLayout&,
+        const Extent3D& size) = 0;
+
     virtual void copyExternalImageToTexture(
         const ImageCopyExternalImage& source,
         const ImageCopyTextureTagged& destination,

@@ -281,13 +281,13 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         return MatchResult::fails(Match::SelectorFailsLocally);
 
     if (context.selector->match() == CSSSelector::Match::PseudoElement) {
-        if (context.selector->isWebKitCustomPseudoElement()) {
+        if (context.selector->isUserAgentPartPseudoElement()) {
             // In functional pseudo class, custom pseudo elements are always disabled.
             // FIXME: We should accept custom pseudo elements inside :is()/:matches().
             if (context.inFunctionalPseudoClass)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             if (ShadowRoot* root = context.element->containingShadowRoot()) {
-                if (context.element->shadowPseudoId() != context.selector->value())
+                if (context.element->pseudo() != context.selector->value())
                     return MatchResult::fails(Match::SelectorFailsLocally);
 
                 if (root->mode() != ShadowRootMode::UserAgent)

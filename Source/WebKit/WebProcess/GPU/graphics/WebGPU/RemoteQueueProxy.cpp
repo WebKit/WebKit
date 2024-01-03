@@ -105,6 +105,27 @@ void RemoteQueueProxy::writeTexture(
     UNUSED_VARIABLE(sendResult);
 }
 
+void RemoteQueueProxy::writeBuffer(
+    const WebCore::WebGPU::Buffer&,
+    WebCore::WebGPU::Size64,
+    void*,
+    size_t,
+    WebCore::WebGPU::Size64,
+    std::optional<WebCore::WebGPU::Size64>)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void RemoteQueueProxy::writeTexture(
+    const WebCore::WebGPU::ImageCopyTexture&,
+    void*,
+    size_t,
+    const WebCore::WebGPU::ImageDataLayout&,
+    const WebCore::WebGPU::Extent3D&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void RemoteQueueProxy::copyExternalImageToTexture(
     const WebCore::WebGPU::ImageCopyExternalImage& source,
     const WebCore::WebGPU::ImageCopyTextureTagged& destination,

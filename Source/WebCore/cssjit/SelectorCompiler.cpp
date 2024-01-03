@@ -1473,8 +1473,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElement::Selection:
             case CSSSelector::PseudoElement::SpellingError:
             case CSSSelector::PseudoElement::ViewTransition:
-            case CSSSelector::PseudoElement::WebKitCustom:
-            case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
+            case CSSSelector::PseudoElement::UserAgentPart:
+            case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
                 ASSERT(!fragment->pseudoElementSelector);
                 fragment->pseudoElementSelector = selector;
                 break;

@@ -287,7 +287,7 @@ static OptionSet<CompoundSelectorFlag> extractCompoundFlags(const CSSParserSelec
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=161747
     // The UASheetMode check is a work-around to allow this selector in mediaControls(New).css:
     // input[type="range" i]::-webkit-media-slider-container > div {
-    if (parserMode == UASheetMode && simpleSelector.pseudoElement() == CSSSelector::PseudoElement::WebKitCustom)
+    if (parserMode == UASheetMode && simpleSelector.pseudoElement() == CSSSelector::PseudoElement::UserAgentPart)
         return { };
 
     return CompoundSelectorFlag::HasPseudoElementForRightmostCompound;
@@ -450,8 +450,8 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
         return isScrollbarPseudoClass(pseudoClass);
     case CSSSelector::PseudoElement::Selection:
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
-    case CSSSelector::PseudoElement::WebKitCustom:
-    case CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed:
+    case CSSSelector::PseudoElement::UserAgentPart:
+    case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
         return isUserActionPseudoClass(pseudoClass);
     default:
         return false;
@@ -698,52 +698,12 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
     if (attributeValue.type() != IdentToken && attributeValue.type() != StringToken)
         return nullptr;
     selector->setValue(attributeValue.value().toAtomString());
-    
+
     selector->setAttribute(qualifiedName, consumeAttributeFlags(block));
 
     if (!block.atEnd())
         return nullptr;
     return selector;
-}
-
-static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClass pseudoClass)
-{
-    switch (pseudoClass) {
-    case CSSSelector::PseudoClass::Not:
-    case CSSSelector::PseudoClass::Is:
-    case CSSSelector::PseudoClass::Where:
-    case CSSSelector::PseudoClass::WebKitAny:
-    case CSSSelector::PseudoClass::Has:
-    case CSSSelector::PseudoClass::NthChild:
-    case CSSSelector::PseudoClass::NthLastChild:
-    case CSSSelector::PseudoClass::NthOfType:
-    case CSSSelector::PseudoClass::NthLastOfType:
-    case CSSSelector::PseudoClass::Lang:
-    case CSSSelector::PseudoClass::Dir:
-    case CSSSelector::PseudoClass::State:
-        return true;
-    default:
-        break;
-    }
-    return false;
-}
-    
-static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElement pseudoElement)
-{
-    // Note that we omit ::cue since it can be either an ident or a function.
-    switch (pseudoElement) {
-    case CSSSelector::PseudoElement::Highlight:
-    case CSSSelector::PseudoElement::Part:
-    case CSSSelector::PseudoElement::Slotted:
-    case CSSSelector::PseudoElement::ViewTransitionGroup:
-    case CSSSelector::PseudoElement::ViewTransitionImagePair:
-    case CSSSelector::PseudoElement::ViewTransitionOld:
-    case CSSSelector::PseudoElement::ViewTransitionNew:
-        return true;
-    default:
-        break;
-    }
-    return false;
 }
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTokenRange& range)
@@ -762,7 +722,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
         return nullptr;
 
     std::unique_ptr<CSSParserSelector> selector;
-    
+
     if (colons == 1) {
         selector = CSSParserSelector::parsePseudoClassSelector(token.value());
         if (!selector)
@@ -772,9 +732,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     } else {
         selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context);
 #if ENABLE(VIDEO)
-        // Treat the ident version of cue as PseudoElementWebkitCustom.
+        // Treat the ident version of cue as PseudoElement::UserAgentPart.
         if (token.type() == IdentToken && selector && selector->match() == CSSSelector::Match::PseudoElement && selector->pseudoElement() == CSSSelector::PseudoElement::Cue)
-            selector->setPseudoElement(CSSSelector::PseudoElement::WebKitCustom);
+            selector->setPseudoElement(CSSSelector::PseudoElement::UserAgentPart);
 #endif
     }
 
@@ -788,8 +748,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     if (token.type() == IdentToken) {
         range.consume();
-        if ((selector->match() == CSSSelector::Match::PseudoElement && isOnlyPseudoElementFunction(selector->pseudoElement()))
-            || (selector->match() == CSSSelector::Match::PseudoClass && isOnlyPseudoClassFunction(selector->pseudoClass())))
+        if ((selector->match() == CSSSelector::Match::PseudoElement && CSSSelector::pseudoElementRequiresArgument(selector->pseudoElement()))
+            || (selector->match() == CSSSelector::Match::PseudoClass && CSSSelector::pseudoClassRequiresArgument(selector->pseudoClass())))
             return nullptr;
         return selector;
     }
@@ -1225,9 +1185,11 @@ bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& c
 {
     for (auto current = &complexSelector; current; current = current->tagHistory()) {
         if (current->match() == CSSSelector::Match::PseudoElement) {
-            if (current->pseudoElement() != CSSSelector::PseudoElement::WebKitCustom)
+            // FIXME: Check against a different type for unknown "-webkit-" pseudo-elements. (webkit.org/b/266947)
+            if (current->pseudoElement() != CSSSelector::PseudoElement::UserAgentPart)
                 continue;
 
+            // FIXME: Stop attempting parsing once the unknown "-webkit" pseudo-elements are behind a different type. (webkit.org/b/266947)
             if (!parsePseudoElementString(StringView(current->value())))
                 return true;
         }

@@ -118,6 +118,10 @@ public:
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoId> parseStandalonePseudoElement(StringView, const CSSSelectorParserContext&);
+    static bool pseudoClassRequiresArgument(PseudoClass);
+    static bool pseudoElementRequiresArgument(PseudoElement);
+    static bool pseudoClassMayHaveArgument(PseudoClass);
+    static bool pseudoElementMayHaveArgument(PseudoElement);
 
     static const ASCIILiteral selectorTextForPseudoClass(PseudoClass);
     static const ASCIILiteral nameForShadowPseudoElementLegacyAlias(StringView);
@@ -166,7 +170,7 @@ public:
     void setPagePseudoClass(PagePseudoClass);
 
     bool matchesPseudoElement() const;
-    bool isWebKitCustomPseudoElement() const;
+    bool isUserAgentPartPseudoElement() const;
     bool isSiblingSelector() const;
     bool isAttributeSelector() const;
 
@@ -268,9 +272,9 @@ inline bool CSSSelector::matchesPseudoElement() const
     return match() == Match::PseudoElement;
 }
 
-inline bool CSSSelector::isWebKitCustomPseudoElement() const
+inline bool CSSSelector::isUserAgentPartPseudoElement() const
 {
-    return pseudoElement() == PseudoElement::WebKitCustom || pseudoElement() == PseudoElement::WebKitCustomLegacyPrefixed;
+    return pseudoElement() == PseudoElement::UserAgentPart || pseudoElement() == PseudoElement::UserAgentPartLegacyAlias;
 }
 
 static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClass type)

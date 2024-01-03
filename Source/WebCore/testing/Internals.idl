@@ -465,8 +465,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Node shadowRoot(Element host);
 
     DOMString shadowRootType(Node root);
-    DOMString shadowPseudoId(Element element);
-    undefined setShadowPseudoId(Element element, [AtomString] DOMString id);
+    DOMString userAgentPartId(Element element);
+    undefined setUserAgentPartId(Element element, [AtomString] DOMString id);
     Node treeScopeRootNode(Node node);
     Node parentTreeScope(Node node);
 

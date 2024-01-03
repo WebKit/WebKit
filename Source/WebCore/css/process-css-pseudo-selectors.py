@@ -204,15 +204,15 @@ class GPerfMappingGenerator:
             if not is_pseudo_selector_enabled(pseudo_element, self.webcore_defines):
                 continue
 
-            if key_is_true(pseudo_element, 'shadow'):
-                self.map[pseudo_element_name] = 'WebKitCustom'
+            if key_is_true(pseudo_element, 'user-agent-part'):
+                self.map[pseudo_element_name] = 'UserAgentPart'
             else:
                 self.map[pseudo_element_name] = format_name_for_enum_class(pseudo_element_name)
 
             if 'aliases' in pseudo_element:
                 for alias in pseudo_element['aliases']:
-                    if key_is_true(pseudo_element, 'shadow'):
-                        self.map[alias] = 'WebKitCustomLegacyPrefixed'
+                    if key_is_true(pseudo_element, 'user-agent-part'):
+                        self.map[alias] = 'UserAgentPartLegacyAlias'
                     else:
                         self.map[alias] = format_name_for_enum_class(pseudo_element_name)
 
@@ -454,13 +454,13 @@ class CSSSelectorEnumGenerator:
             write_pragma_once(writer)
             open_namespace_webcore(writer)
             self.write_enum_class(writer, "PseudoClass", self.pseudo_enum_values(pseudo_classes))
-            self.write_enum_class(writer, "PseudoElement", self.pseudo_enum_values(pseudo_elements) + [('WebKitCustom', None), ('WebKitCustomLegacyPrefixed', None)])
+            self.write_enum_class(writer, "PseudoElement", self.pseudo_enum_values(pseudo_elements) + [('UserAgentPart', None), ('UserAgentPartLegacyAlias', None)])
             close_namespace_webcore(writer)
 
     def pseudo_enum_values(self, values):
         enum_values = []
         for pseudo_name, pseudo_data in values.items():
-            if key_is_true(pseudo_data, 'shadow'):
+            if key_is_true(pseudo_data, 'user-agent-part'):
                 continue
             if 'condition' in pseudo_data:
                 enum_values.append((format_name_for_enum_class(pseudo_name), pseudo_data['condition']))
@@ -499,6 +499,10 @@ class CSSSelectorInlinesGenerator:
             self.write_is_pseudo_element_enabled(writer, pseudo_elements)
             self.write_selector_text_for_pseudo_class(writer, pseudo_classes)
             self.write_name_for_shadow_pseudo_element_legacy_alias(writer, pseudo_elements)
+            self.write_pseudo_argument_check_function(writer, 'pseudoClassRequiresArgument', 'PseudoClass', ['required'], pseudo_classes)
+            self.write_pseudo_argument_check_function(writer, 'pseudoElementRequiresArgument', 'PseudoElement', ['required'], pseudo_elements)
+            self.write_pseudo_argument_check_function(writer, 'pseudoClassMayHaveArgument', 'PseudoClass', ['required', 'optional'], pseudo_classes)
+            self.write_pseudo_argument_check_function(writer, 'pseudoElementMayHaveArgument', 'PseudoElement', ['required', 'optional'], pseudo_elements)
             close_namespace_webcore(writer)
 
     def write_includes(self, writer):
@@ -576,7 +580,7 @@ class CSSSelectorInlinesGenerator:
             settings_flag = pseudo_data['settings-flag'] if 'settings-flag' in pseudo_data else None
             enablement_condition = self.format_enablement_condition(settings_flag, is_internal_pseudo)
 
-            if key_is_true(pseudo_data, 'shadow'):
+            if key_is_true(pseudo_data, 'user-agent-part'):
                 if 'condition' in pseudo_data:
                     shadow_map[pseudo_name] = (enablement_condition, pseudo_data['condition'])
                 else:
@@ -627,11 +631,11 @@ class CSSSelectorInlinesGenerator:
                 writer.write('return true;')
 
         with writer.indent():
-            writer.write('case PseudoElement::WebKitCustom:')
+            writer.write('case PseudoElement::UserAgentPart:')
         write_condition_cases_for_shadow_elements(shadow_map)
 
         with writer.indent():
-            writer.write('case PseudoElement::WebKitCustomLegacyPrefixed:')
+            writer.write('case PseudoElement::UserAgentPartLegacyAlias:')
         write_condition_cases_for_shadow_elements(shadow_alias_map)
 
         with writer.indent():
@@ -679,7 +683,7 @@ class CSSSelectorInlinesGenerator:
             {""")
 
         for pseudo_name, pseudo_data in pseudo_elements.items():
-            if not key_is_true(pseudo_data, 'shadow'):
+            if not key_is_true(pseudo_data, 'user-agent-part'):
                 continue
             if 'aliases' not in pseudo_data:
                 continue
@@ -700,6 +704,35 @@ class CSSSelectorInlinesGenerator:
             writer.write('ASSERT_NOT_REACHED();')
             writer.write('return ""_s;')
         writer.write('}')
+
+    def write_pseudo_argument_check_function(self, writer, function_name, enum_name, argument_types, pseudos):
+        writer.write_block("""
+            inline bool CSSSelector::{}({} type)
+            {{
+                switch (type) {{""".format(function_name, enum_name))
+
+        for pseudo_name, pseudo_data in pseudos.items():
+            if 'argument' not in pseudo_data or pseudo_data['argument'] not in argument_types:
+                continue
+            if 'condition' in pseudo_data:
+                writer.write('#if {}'.format(pseudo_data['condition']))
+            with writer.indent():
+                writer.write('case {}::{}:'.format(enum_name, format_name_for_enum_class(pseudo_name)))
+            if 'condition' in pseudo_data:
+                writer.write('#endif')
+
+        with writer.indent(), writer.indent():
+            writer.write('return true;')
+
+        with writer.indent():
+            writer.write('default:')
+            with writer.indent():
+                writer.write('return false;')
+            # End switch.
+            writer.write('}')
+        # End function.
+        writer.write('}')
+
 
 # - MARK: Script entry point.
 

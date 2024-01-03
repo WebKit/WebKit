@@ -229,7 +229,7 @@ Markup._get = function(node, depth, shadowRootList)
         }
 
         if (!Markup._useHTML5libOutputFormat && window.internals) {
-            var pseudoId = window.internals.shadowPseudoId(node);
+            var pseudoId = window.internals.userAgentPartId(node);
             if (pseudoId)
                 str += Markup._indent(depth + 1) + 'shadow:pseudoId="' + pseudoId + '"';
         }
