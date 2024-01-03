@@ -56,13 +56,11 @@ private:
     void setStartingSelectionOnSmartDelete(const Position&, const Position&);
     bool initializePositionData();
     void saveTypingStyleState();
-    void insertPlaceholderForAncestorBlockContent();
     bool handleSpecialCaseBRDelete();
     void handleGeneralDelete();
     void fixupWhitespace();
     void mergeParagraphs();
     void removePreviouslySelectedEmptyTableRows();
-    void calculateEndingPosition();
     void calculateTypingStyleAfterDelete();
     void clearTransientState();
     void makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
