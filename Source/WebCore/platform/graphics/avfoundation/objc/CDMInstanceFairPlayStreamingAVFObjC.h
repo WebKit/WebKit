@@ -236,6 +236,8 @@ private:
 
     AVContentKey *contentKeyForSample(const MediaSampleAVFObjC&);
 
+    bool requestMatchesRenewingRequest(AVContentKeyRequest *);
+
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
