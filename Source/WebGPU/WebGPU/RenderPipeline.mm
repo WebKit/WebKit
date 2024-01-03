@@ -885,8 +885,10 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module has an invalid chain"_s);
 
         const auto& vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
-        if (!vertexModule.isValid())
+        if (!vertexModule.isValid() || !vertexModule.ast())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s);
+        if (&vertexModule.device() != this)
+            return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
 
         const auto& vertexFunctionName = fromAPI(descriptor.vertex.entryPoint);
         auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint(), label);
@@ -917,6 +919,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         const auto& fragmentModule = WebGPU::fromAPI(fragmentDescriptor.module);
         if (!fragmentModule.isValid() || !fragmentModule.ast())
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s);
+
+        if (&fragmentModule.device() != this)
+            return returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_s);
 
         usesFragDepth = fragmentModule.ast()->usesFragDepth();
         usesSampleMask = fragmentModule.ast()->usesSampleMask();
@@ -1022,7 +1027,6 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
     if (descriptor.fragment && !hasAtLeastOneColorTarget && !descriptor.depthStencil)
         return returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_s);
-
     if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)
         return returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s);
 
