@@ -113,13 +113,13 @@ private:
 inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 {
     return match() == CSSSelector::Match::PseudoElement
-        && (pseudoElement() == CSSSelector::PseudoElement::WebKitCustom
+        && (pseudoElement() == CSSSelector::PseudoElement::UserAgentPart
 #if ENABLE(VIDEO)
             || pseudoElement() == CSSSelector::PseudoElement::Cue
 #endif
             || pseudoElement() == CSSSelector::PseudoElement::Part
             || pseudoElement() == CSSSelector::PseudoElement::Slotted
-            || pseudoElement() == CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed);
+            || pseudoElement() == CSSSelector::PseudoElement::UserAgentPartLegacyAlias);
 }
 
 inline bool CSSParserSelector::isPseudoElementCueFunction() const

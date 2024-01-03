@@ -306,8 +306,8 @@ PseudoId CSSSelector::pseudoId(PseudoElement type)
 #endif
     case PseudoElement::Slotted:
     case PseudoElement::Part:
-    case PseudoElement::WebKitCustom:
-    case PseudoElement::WebKitCustomLegacyPrefixed:
+    case PseudoElement::UserAgentPart:
+    case PseudoElement::UserAgentPartLegacyAlias:
         return PseudoId::None;
     }
 
@@ -322,8 +322,9 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
 
     auto type = parsePseudoElementString(name);
     if (!type) {
+        // FIXME: Put all known UA parts in CSSPseudoSelectors.json and split out the unknown case (webkit.org/b/266947).
         if (name.startsWithIgnoringASCIICase("-webkit-"_s))
-            return PseudoElement::WebKitCustom;
+            return PseudoElement::UserAgentPart;
         return type;
     }
 

@@ -166,7 +166,7 @@ public:
     void setPagePseudoClass(PagePseudoClass);
 
     bool matchesPseudoElement() const;
-    bool isWebKitCustomPseudoElement() const;
+    bool isUserAgentPartPseudoElement() const;
     bool isSiblingSelector() const;
     bool isAttributeSelector() const;
 
@@ -268,9 +268,9 @@ inline bool CSSSelector::matchesPseudoElement() const
     return match() == Match::PseudoElement;
 }
 
-inline bool CSSSelector::isWebKitCustomPseudoElement() const
+inline bool CSSSelector::isUserAgentPartPseudoElement() const
 {
-    return pseudoElement() == PseudoElement::WebKitCustom || pseudoElement() == PseudoElement::WebKitCustomLegacyPrefixed;
+    return pseudoElement() == PseudoElement::UserAgentPart || pseudoElement() == PseudoElement::UserAgentPartLegacyAlias;
 }
 
 static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClass type)

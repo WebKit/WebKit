@@ -61,7 +61,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
     selector->m_selector->setMatch(CSSSelector::Match::PseudoElement);
     selector->m_selector->setPseudoElement(*pseudoType);
     AtomString name;
-    if (*pseudoType == CSSSelector::PseudoElement::WebKitCustomLegacyPrefixed)
+    if (*pseudoType == CSSSelector::PseudoElement::UserAgentPartLegacyAlias)
         name = CSSSelector::nameForShadowPseudoElementLegacyAlias(pseudoTypeString);
     else
         name = pseudoTypeString.convertToASCIILowercaseAtom();

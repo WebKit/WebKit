@@ -208,7 +208,7 @@
             "comment": "For use in Apple internal apps.",
             "condition": "ENABLE(SERVICE_CONTROLS)",
             "settings-flag": "imageControlsEnabled",
-            "shadow": true
+            "user-agent-part": true
         },
         "-webkit-resizer": {
             "comment": "For scrollbar styling.",
@@ -252,7 +252,7 @@
             "aliases": [
                 "-webkit-file-upload-button"
             ],
-            "shadow": true
+            "user-agent-part": true
         },
         "first-letter": {
             "supports-single-colon-for-compatibility": true
@@ -272,7 +272,7 @@
             "aliases": [
                 "-webkit-input-placeholder"
             ],
-            "shadow": true
+            "user-agent-part": true
         },
         "selection": {},
         "slotted": {},
@@ -281,11 +281,11 @@
         },
         "thumb": {
             "settings-flag": "thumbAndTrackPseudoElementsEnabled",
-            "shadow": true
+            "user-agent-part": true
         },
         "track": {
             "settings-flag": "thumbAndTrackPseudoElementsEnabled",
-            "shadow": true
+            "user-agent-part": true
         },
         "view-transition": {
             "settings-flag": "viewTransitionsEnabled"
