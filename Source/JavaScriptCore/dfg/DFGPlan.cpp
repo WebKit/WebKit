@@ -200,7 +200,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 
     {
         CompilerTimingScope timingScope("DFG", "bytecode parser");
-        parse(dfg);
+        if (!parse(dfg))
+            return CancelPath;
     }
 
     bool changed = false;
