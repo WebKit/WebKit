@@ -44,7 +44,7 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
         new (NotNull, &m_selectorArray[i]) CSSSelector(other.m_selectorArray[i]);
 }
 
-CSSSelectorList::CSSSelectorList(Vector<std::unique_ptr<MutableCSSSelector>>&& selectorVector)
+CSSSelectorList::CSSSelectorList(MutableCSSSelectorList&& selectorVector)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!selectorVector.isEmpty());
 

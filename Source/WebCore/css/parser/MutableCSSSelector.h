@@ -27,6 +27,9 @@ namespace WebCore {
 
 struct CSSSelectorParserContext;
 
+class MutableCSSSelector;
+using MutableCSSSelectorList = Vector<std::unique_ptr<MutableCSSSelector>>;
+
 class MutableCSSSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -71,7 +74,7 @@ public:
     void setPseudoElement(CSSSelector::PseudoElement type) { m_selector->setPseudoElement(type); }
     void setPseudoClass(CSSSelector::PseudoClass type) { m_selector->setPseudoClass(type); }
 
-    void adoptSelectorVector(Vector<std::unique_ptr<MutableCSSSelector>>&&);
+    void adoptSelectorVector(MutableCSSSelectorList&&);
     void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 

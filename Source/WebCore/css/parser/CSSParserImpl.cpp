@@ -276,7 +276,7 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
     }
 
     selector->setForPage();
-    return CSSSelectorList { Vector<std::unique_ptr<MutableCSSSelector>>::from(WTFMove(selector)) };
+    return CSSSelectorList { MutableCSSSelectorList::from(WTFMove(selector)) };
 }
 
 Vector<double> CSSParserImpl::parseKeyframeKeyList(const String& keyList)
@@ -617,7 +617,7 @@ Ref<StyleRuleBase> CSSParserImpl::createNestingParentRule()
 {
     auto nestingParentSelector = makeUnique<MutableCSSSelector>();
     nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
-    Vector<std::unique_ptr<MutableCSSSelector>> selectorList;
+    MutableCSSSelectorList selectorList;
     selectorList.append(WTFMove(nestingParentSelector));
     auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);
     return StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) }, { });
