@@ -872,11 +872,14 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     const PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
-        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.isValid() && !layout.isAutoLayout()) {
+        auto& layout = WebGPU::fromAPI(descriptor.layout);
+        if (!layout.isValid())
+            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid"_s);
+        if (&layout.device() != this)
+            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout created from different device"_s);
+
+        if (!layout.isAutoLayout())
             pipelineLayout = &layout;
-            if (pipelineLayout && &pipelineLayout->device() != this)
-                return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid"_s);
-        }
     }
 
     std::optional<PipelineLayout> vertexPipelineLayout { std::nullopt };
