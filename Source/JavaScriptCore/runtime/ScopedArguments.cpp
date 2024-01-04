@@ -150,6 +150,7 @@ void ScopedArguments::unmapArgument(JSGlobalObject* globalObject, uint32_t i)
             return;
         }
         m_table.set(vm, this, maybeCloned);
+        m_table->clearWatchpointSet(i);
     } else
         storage()[i - namedLength].clear();
 }
