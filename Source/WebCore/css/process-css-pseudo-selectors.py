@@ -30,6 +30,60 @@ import sys
 import subprocess
 import textwrap
 
+# - MARK: Input file validation.
+
+COMMON_KNOWN_KEY_TYPES = {
+    'aliases': [list],
+    'argument': [str],
+    'comment': [str],
+    'condition': [str],
+    'settings-flag': [str],
+    'status': [str],
+}
+
+KNOWN_KEY_TYPES = {
+    'pseudo-classes': COMMON_KNOWN_KEY_TYPES,
+    'pseudo-elements': dict(COMMON_KNOWN_KEY_TYPES, **{
+        'supports-single-colon-for-compatibility': [bool],
+        'user-agent-part': [bool],
+    })
+}
+
+
+class InputValidator:
+    def __init__(self, input_data):
+        self.check_field_documentation(input_data)
+        self.validate_fields(input_data, 'pseudo-classes')
+        self.validate_fields(input_data, 'pseudo-elements')
+
+    def check_field_documentation(self, input_data):
+        documentation = input_data['documentation']['fields']
+        for pseudo_type in KNOWN_KEY_TYPES:
+            for field in KNOWN_KEY_TYPES[pseudo_type]:
+                if field not in documentation:
+                    raise Exception('Missing documentation for field "{}" found in "{}".'.format(field, pseudo_type))
+
+    def validate_fields(self, input_data, pseudo_type):
+        for pseudo_name, pseudo_data in input_data[pseudo_type].items():
+            for key, value in pseudo_data.items():
+                # Check for unknown fields.
+                if key not in KNOWN_KEY_TYPES[pseudo_type]:
+                    raise Exception('Unknown field "{}" for {} found in "{}".'.format(key, pseudo_type, pseudo_name))
+
+                # Check if fields match expected types.
+                expected_types = KNOWN_KEY_TYPES[pseudo_type][key]
+                if type(value) not in expected_types:
+                    raise Exception('Invalid value type {} for "{}" in "{}". Expected type in set "{}".'.format(type(value), key, pseudo_name, expected_types))
+
+                # Validate "argument" field.
+                if key == 'argument':
+                    if value not in ['required', 'optional']:
+                        raise Exception('Invalid "argument" field in {}. The field should either be absent, "required" or "optional".'.format(pseudo_name))
+
+                    if key_is_true(pseudo_data, 'user-agent-part') and pseudo_type == 'pseudo-elements':
+                        raise Exception('Setting "argument" along with "user-agent-part": true is not supported.')
+
+
 # - MARK: Helpers.
 
 class Writer:
@@ -127,11 +181,17 @@ def key_is_true(object, key):
     return key in object and object[key]
 
 
-# - MARK: Formatters.
-
 def expand_ifdef_condition(condition):
     return condition.replace('(', '_').replace(')', '')
 
+
+def is_pseudo_selector_enabled(selector, webcore_defines):
+    if 'condition' not in selector:
+        return True
+    return expand_ifdef_condition(selector['condition']) in webcore_defines
+
+
+# - MARK: Formatters.
 
 def format_name_for_enum_class(stringPseudoType):
     def format(substring):
@@ -143,12 +203,6 @@ def format_name_for_enum_class(stringPseudoType):
 
     output = list(map(format, stringPseudoType.split('-')))
     return ''.join(output)
-
-
-def is_pseudo_selector_enabled(selector, webcore_defines):
-    if 'condition' not in selector:
-        return True
-    return expand_ifdef_condition(selector['condition']) in webcore_defines
 
 
 # - MARK: Code generators.
@@ -741,6 +795,7 @@ def main():
     input_data = json.load(input_file)
     webcore_defines = [i.strip() for i in sys.argv[-1].split(' ')]
 
+    InputValidator(input_data)
     GPerfGenerator(input_data, webcore_defines)
     CSSSelectorEnumGenerator(input_data)
     CSSSelectorInlinesGenerator(input_data)
