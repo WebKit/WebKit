@@ -50,6 +50,7 @@ namespace Wasm {
     macro(InvalidGCTypeUse, "Unsupported use of struct or array type"_s) \
     macro(OutOfBoundsArrayGet, "Out of bounds array.get"_s) \
     macro(OutOfBoundsArraySet, "Out of bounds array.set"_s) \
+    macro(BadArrayNew, "Failed to allocate new array"_s) \
     macro(NullArrayGet, "array.get to a null reference"_s) \
     macro(NullArraySet, "array.set to a null reference"_s) \
     macro(NullArrayLen, "array.len to a null reference"_s) \
@@ -103,6 +104,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::StackOverflow:
     case ExceptionType::OutOfBoundsArrayGet:
     case ExceptionType::OutOfBoundsArraySet:
+    case ExceptionType::BadArrayNew:
     case ExceptionType::NullArrayGet:
     case ExceptionType::NullArraySet:
     case ExceptionType::NullArrayLen:

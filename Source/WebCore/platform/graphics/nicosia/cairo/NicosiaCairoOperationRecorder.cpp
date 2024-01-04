@@ -301,6 +301,26 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
     append(createCommand<FillRect>(rect, gradient.createPattern(1.0, state.fillBrush().gradientSpaceTransform())));
 }
 
+void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    struct FillRect final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
+        virtual ~FillRect() = default;
+
+        void execute(PaintingOperationReplay& replayer) override
+        {
+            Cairo::fillRect(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+        }
+
+        void dump(TextStream& ts) override
+        {
+            ts << indent << "FillRect<>\n";
+        }
+    };
+
+    auto& state = this->state();
+    append(createCommand<FillRect>(rect, Cairo::FillSource(state, gradient, gradientSpaceTransform), Cairo::ShadowState(state)));
+}
+
 void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
 {
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Color, CompositeOperator, BlendMode, Cairo::ShadowState, CompositeOperator> {

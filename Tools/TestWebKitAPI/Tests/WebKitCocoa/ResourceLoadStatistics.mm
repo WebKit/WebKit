@@ -1453,7 +1453,7 @@ TEST(ResourceLoadStatistics, UserAgentStringForSite)
     TestWebKitAPI::Util::run(&done);
 }
 
-TEST(ResourceLoadStatistics, DISABLED_StorageAccessPromptSiteWithQuirk)
+TEST(ResourceLoadStatistics, StorageAccessPromptSiteWithQuirk)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);

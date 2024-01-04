@@ -46,6 +46,7 @@ class Color;
 class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
+class Gradient;
 class GraphicsContextState;
 class Path;
 
@@ -76,6 +77,7 @@ enum class OrientationSizing {
 struct FillSource {
     FillSource() = default;
     explicit FillSource(const GraphicsContextState&);
+    FillSource(const GraphicsContextState&, Gradient&, const AffineTransform&);
 
     float globalAlpha { 0 };
     struct {

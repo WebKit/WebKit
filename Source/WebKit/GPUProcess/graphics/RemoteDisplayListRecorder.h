@@ -99,6 +99,7 @@ public:
     void fillRect(const WebCore::FloatRect&);
     void fillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&);
     void fillRectWithGradient(WebCore::DisplayList::FillRectWithGradient&&);
+    void fillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform&&);
     void fillCompositedRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode);
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode);
     void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&);

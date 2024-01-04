@@ -83,6 +83,11 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : attachment->depthClearValue;
         auto& textureView = fromAPI(attachment->view);
         textureView.setPreviouslyCleared();
+        if (textureView.width() && !m_renderTargetWidth) {
+            m_renderTargetWidth = textureView.width();
+            m_renderTargetHeight = textureView.height();
+        }
+
         id<MTLTexture> depthTexture = textureView.texture();
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = attachment->depthStoreOp == WGPUStoreOp_Discard;
@@ -339,7 +344,7 @@ void RenderPassEncoder::pushDebugGroup(String&& groupLabel)
 void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
     if (dynamicOffsetCount)
-        m_bindGroupDynamicOffsets.add(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
+        m_bindGroupDynamicOffsets.set(groupIndex, Vector<uint32_t>(dynamicOffsets, dynamicOffsetCount));
 
     for (const auto& resource : group.resources()) {
         if (resource.renderStages & (MTLRenderStageVertex | MTLRenderStageFragment))

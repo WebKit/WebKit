@@ -187,6 +187,12 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect)
     Cairo::fillRect(*this, rect, Cairo::FillSource(state), Cairo::ShadowState(state));
 }
 
+void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    auto& state = this->state();
+    Cairo::fillRect(*this, rect, Cairo::FillSource(state, gradient, gradientSpaceTransform), Cairo::ShadowState(state));
+}
+
 void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color)
 {
     Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state()));

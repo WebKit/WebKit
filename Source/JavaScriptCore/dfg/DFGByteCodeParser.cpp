@@ -4363,6 +4363,12 @@ bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType predic
         return true;
     }
 
+    case SpeciesGetterIntrinsic: {
+        insertChecks();
+        set(result, addToGraph(ToThis, OpInfo(ECMAMode::strict()), OpInfo(prediction), thisNode));
+        return true;
+    }
+
 #if ENABLE(WEBASSEMBLY)
     case WebAssemblyInstanceExportsIntrinsic: {
         if (variant.structureSet().isEmpty())

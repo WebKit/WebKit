@@ -57,6 +57,7 @@ public:
     WTF::String linkLabel() const { return m_data.linkLabel; }
     WTF::String linkTitle() const { return m_data.linkTitle; }
     WTF::String linkLocalDataMIMEType() const { return m_data.linkLocalDataMIMEType; }
+    WTF::String linkSuggestedFilename() const { return m_data.linkSuggestedFilename; }
     WTF::String lookupText() const { return m_data.lookupText; }
     WTF::String sourceImageMIMEType() const { return m_data.sourceImageMIMEType; }
 

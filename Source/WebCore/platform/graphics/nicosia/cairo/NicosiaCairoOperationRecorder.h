@@ -52,6 +52,7 @@ private:
     void fillRect(const WebCore::FloatRect&) override;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&) override;
     void fillRect(const WebCore::FloatRect&, WebCore::Gradient&) override;
+    void fillRect(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&) override;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) override;
     void fillRoundedRectImpl(const WebCore::FloatRoundedRect&, const WebCore::Color&) override { ASSERT_NOT_REACHED(); }
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) override;

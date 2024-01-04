@@ -321,6 +321,11 @@ void RemoteDisplayListRecorderProxy::recordFillRectWithGradient(const FloatRect&
     send(Messages::RemoteDisplayListRecorder::FillRectWithGradient(DisplayList::FillRectWithGradient { rect, gradient }));
 }
 
+void RemoteDisplayListRecorderProxy::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    send(Messages::RemoteDisplayListRecorder::FillRectWithGradientAndSpaceTransform(DisplayList::FillRectWithGradientAndSpaceTransform { rect, gradient, gradientSpaceTransform }));
+}
+
 void RemoteDisplayListRecorderProxy::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
 {
     send(Messages::RemoteDisplayListRecorder::FillCompositedRect(rect, color, op, mode));

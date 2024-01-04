@@ -78,6 +78,7 @@ class FillPath;
 class FillRect;
 class FillRectWithColor;
 class FillRectWithGradient;
+class FillRectWithGradientAndSpaceTransform;
 class FillRectWithRoundedHole;
 class FillRoundedRect;
 class ResetClip;
@@ -154,6 +155,7 @@ using Item = std::variant
     , FillRect
     , FillRectWithColor
     , FillRectWithGradient
+    , FillRectWithGradientAndSpaceTransform
     , FillRectWithRoundedHole
     , FillRoundedRect
     , ResetClip

@@ -1634,21 +1634,105 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const AnimationList* animationList)
+static Ref<CSSValue> singleAnimationValue(const Animation& animation)
 {
-    CSSValueListBuilder parentList;
-    auto addAnimation = [&](Ref<Animation> animation) {
-        CSSValueListBuilder childList;
-        for (auto longhand : shorthandForProperty(property))
-            addValueForAnimationPropertyToList(childList, longhand, animation.ptr());
-        parentList.append(CSSValueList::createSpaceSeparated(WTFMove(childList)));
+    static NeverDestroyed<Ref<TimingFunction>> initialTimingFunction(Animation::initialTimingFunction());
+
+    static NeverDestroyed<String> alternate { "alternate"_s };
+    static NeverDestroyed<String> alternateReverse { "alternate-reverse"_s };
+    static NeverDestroyed<String> backwards { "backwards"_s };
+    static NeverDestroyed<String> both { "both"_s };
+    static NeverDestroyed<String> ease { "ease"_s };
+    static NeverDestroyed<String> easeIn { "ease-in"_s };
+    static NeverDestroyed<String> easeInOut { "ease-in-out"_s };
+    static NeverDestroyed<String> easeOut { "ease-out"_s };
+    static NeverDestroyed<String> forwards { "forwards"_s };
+    static NeverDestroyed<String> infinite { "infinite"_s };
+    static NeverDestroyed<String> linear { "linear"_s };
+    static NeverDestroyed<String> normal { "normal"_s };
+    static NeverDestroyed<String> paused { "paused"_s };
+    static NeverDestroyed<String> reverse { "reverse"_s };
+    static NeverDestroyed<String> running { "running"_s };
+    static NeverDestroyed<String> stepEnd { "step-end"_s };
+    static NeverDestroyed<String> stepStart { "step-start"_s };
+
+    // If we have an animation-delay but no animation-duration set, we must serialze
+    // the animation-duration because they're both <time> values and animation-delay
+    // comes first.
+    auto showsDelay = animation.delay() != Animation::initialDelay();
+    auto showsDuration = showsDelay || animation.duration() != Animation::initialDuration();
+
+    auto showsTimingFunction = [&]() {
+        auto* timingFunction = animation.timingFunction();
+        if (timingFunction && *timingFunction != initialTimingFunction.get())
+            return true;
+        auto& name = animation.name().name;
+        return name == ease || name == easeIn || name == easeInOut || name == easeOut || name == linear || name == stepEnd || name == stepStart;
     };
-    if (animationList && !animationList->isEmpty()) {
-        for (auto& animation : *animationList)
-            addAnimation(animation);
-    } else
-        addAnimation(Animation::create());
-    return CSSValueList::createCommaSeparated(WTFMove(parentList));
+
+    auto showsIterationCount = [&]() {
+        if (animation.iterationCount() != Animation::initialIterationCount())
+            return true;
+        return animation.name().name == infinite;
+    };
+
+    auto showsDirection = [&]() {
+        if (animation.direction() != Animation::initialDirection())
+            return true;
+        auto& name = animation.name().name;
+        return name == normal || name == reverse || name == alternate || name == alternateReverse;
+    };
+
+    auto showsFillMode = [&]() {
+        if (animation.fillMode() != Animation::initialFillMode())
+            return true;
+        auto& name = animation.name().name;
+        return name == forwards || name == backwards || name == both;
+    };
+
+    auto showsPlaysState = [&]() {
+        if (animation.playState() != Animation::initialPlayState())
+            return true;
+        auto& name = animation.name().name;
+        return name == running || name == paused;
+    };
+
+    CSSValueListBuilder list;
+    if (showsDuration)
+        list.append(valueForAnimationDuration(animation.duration()));
+    if (showsTimingFunction())
+        list.append(valueForAnimationTimingFunction(*animation.timingFunction()));
+    if (showsDelay)
+        list.append(valueForAnimationDelay(animation.delay()));
+    if (showsIterationCount())
+        list.append(valueForAnimationIterationCount(animation.iterationCount()));
+    if (showsDirection())
+        list.append(valueForAnimationDirection(animation.direction()));
+    if (showsFillMode())
+        list.append(valueForAnimationFillMode(animation.fillMode()));
+    if (showsPlaysState())
+        list.append(valueForAnimationPlayState(animation.playState()));
+    if (animation.name() != Animation::initialName())
+        list.append(valueForScopedName(animation.name()));
+    if (animation.timeline() != Animation::initialTimeline())
+        list.append(valueForAnimationTimeline(animation.timeline()));
+    if (animation.compositeOperation() != Animation::initialCompositeOperation())
+        list.append(valueForAnimationComposition(animation.compositeOperation()));
+    if (list.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> animationShorthandValue(const AnimationList* animations)
+{
+    if (!animations || animations->isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& animation : *animations)
+        list.append(singleAnimationValue(animation));
+    ASSERT(!list.isEmpty());
+    return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
 static Ref<CSSValue> singleTransitionValue(const Animation& transition)
@@ -4028,7 +4112,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueContentBox);
         return CSSPrimitiveValue::create(CSSValueBorderBox);
     case CSSPropertyAnimation:
-        return animationShorthandValue(propertyID, style.animations());
+        return animationShorthandValue(style.animations());
     case CSSPropertyAnimationComposition:
     case CSSPropertyAnimationDelay:
     case CSSPropertyAnimationDirection:

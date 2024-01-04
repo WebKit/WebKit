@@ -124,7 +124,7 @@ MutableCSSSelector::~MutableCSSSelector()
     }
 }
 
-void MutableCSSSelector::adoptSelectorVector(Vector<std::unique_ptr<MutableCSSSelector>>&& selectorVector)
+void MutableCSSSelector::adoptSelectorVector(MutableCSSSelectorList&& selectorVector)
 {
     m_selector->setSelectorList(makeUnique<CSSSelectorList>(WTFMove(selectorVector)));
 }

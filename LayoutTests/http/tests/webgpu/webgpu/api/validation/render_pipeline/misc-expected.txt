@@ -1,1 +1,7 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :basic:isAsync=false
+PASS :basic:isAsync=true
+PASS :vertex_state_only:isAsync=false
+PASS :vertex_state_only:isAsync=true
+PASS :pipeline_layout,device_mismatch:
+

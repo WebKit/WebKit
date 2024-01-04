@@ -941,7 +941,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
 
 bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties) const
 {
-    if (m_svgStyle->changeRequiresLayout(other.m_svgStyle))
+    if (m_svgStyle.ptr() != other.m_svgStyle.ptr() && m_svgStyle->changeRequiresLayout(other.m_svgStyle))
         return true;
 
     if (m_nonInheritedData.ptr() != other.m_nonInheritedData.ptr()) {
@@ -1279,8 +1279,10 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 {
     bool currentColorDiffers = m_inheritedData->color != other.m_inheritedData->color;
 
-    if (m_svgStyle->changeRequiresRepaint(other.m_svgStyle, currentColorDiffers))
-        return true;
+    if (currentColorDiffers || m_svgStyle.ptr() != other.m_svgStyle.ptr()) {
+        if (m_svgStyle->changeRequiresRepaint(other.m_svgStyle, currentColorDiffers))
+            return true;
+    }
 
     if (!requiresPainting(*this) && !requiresPainting(other))
         return false;
@@ -1328,20 +1330,31 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 
 bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
-    if (m_inheritedData->color != other.m_inheritedData->color
-        || m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
-        || m_nonInheritedFlags.textDecorationLine != other.m_nonInheritedFlags.textDecorationLine
-        || m_nonInheritedData->rareData->textDecorationStyle != other.m_nonInheritedData->rareData->textDecorationStyle
-        || m_nonInheritedData->rareData->textDecorationColor != other.m_nonInheritedData->rareData->textDecorationColor
-        || m_nonInheritedData->rareData->textDecorationThickness != other.m_nonInheritedData->rareData->textDecorationThickness
-        || m_rareInheritedData->textDecorationSkipInk != other.m_rareInheritedData->textDecorationSkipInk
-        || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
-        || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
-        || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
-        || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
-        || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor
-        || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor)
+    // FIXME: Does this code need to consider currentColorDiffers? webkit.org/b/266833
+    if (m_inheritedData->color != other.m_inheritedData->color)
         return true;
+
+    if (m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
+        || m_nonInheritedFlags.textDecorationLine != other.m_nonInheritedFlags.textDecorationLine)
+        return true;
+
+    if (m_nonInheritedData->rareData.ptr() != other.m_nonInheritedData->rareData.ptr()) {
+        if (m_nonInheritedData->rareData->textDecorationStyle != other.m_nonInheritedData->rareData->textDecorationStyle
+            || m_nonInheritedData->rareData->textDecorationColor != other.m_nonInheritedData->rareData->textDecorationColor
+            || m_nonInheritedData->rareData->textDecorationThickness != other.m_nonInheritedData->rareData->textDecorationThickness)
+            return true;
+    }
+
+    if (m_rareInheritedData.ptr() != other.m_rareInheritedData.ptr()) {
+        if (m_rareInheritedData->textDecorationSkipInk != other.m_rareInheritedData->textDecorationSkipInk
+            || m_rareInheritedData->textFillColor != other.m_rareInheritedData->textFillColor
+            || m_rareInheritedData->textStrokeColor != other.m_rareInheritedData->textStrokeColor
+            || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
+            || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
+            || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor
+            || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor)
+            return true;
+    }
 
     return false;
 }

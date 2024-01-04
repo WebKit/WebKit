@@ -90,6 +90,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return _hitTestResult->lookupText();
 }
 
+- (NSString *)linkSuggestedFilename
+{
+    return _hitTestResult->linkSuggestedFilename();
+}
+
 - (NSString *)imageMIMEType
 {
     return _hitTestResult->sourceImageMIMEType();

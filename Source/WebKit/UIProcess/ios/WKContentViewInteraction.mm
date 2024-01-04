@@ -2699,13 +2699,14 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
-    if ([_webView _isEditable] && !self._disableAutomaticKeyboardUI)
-        return YES;
-
+    BOOL webViewIsEditable = [_webView _isEditable];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (!webViewIsEditable && self.shouldUseAsyncInteractions)
         return [super _requiresKeyboardWhenFirstResponder];
 #endif
+
+    if (webViewIsEditable && !self._disableAutomaticKeyboardUI)
+        return YES;
 
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode] || _seenHardwareKeyDownInNonEditableElement;
@@ -6816,13 +6817,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 
     auto extendedTraits = dynamic_objc_cast<WKExtendedTextInputTraits>(traits);
     auto privateTraits = (id <UITextInputTraits_Private>)traits;
-    if ([privateTraits respondsToSelector:@selector(setIsSingleLineDocument:)]) {
+
+    BOOL isSingleLineDocument = ^{
         switch (_focusedElementInformation.elementType) {
         case WebKit::InputType::ContentEditable:
         case WebKit::InputType::TextArea:
-            extendedTraits.singleLineDocument = NO;
-            privateTraits.isSingleLineDocument = NO;
-            break;
+        case WebKit::InputType::None:
+            return NO;
 #if ENABLE(INPUT_TYPE_COLOR)
         case WebKit::InputType::Color:
 #endif
@@ -6841,13 +6842,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         case WebKit::InputType::Time:
         case WebKit::InputType::URL:
         case WebKit::InputType::Week:
-            extendedTraits.singleLineDocument = YES;
-            privateTraits.isSingleLineDocument = YES;
-            break;
-        case WebKit::InputType::None:
-            break;
+            return YES;
         }
-    }
+    }();
+
+    if ([extendedTraits respondsToSelector:@selector(setSingleLineDocument:)])
+        extendedTraits.singleLineDocument = isSingleLineDocument;
+    else if ([privateTraits respondsToSelector:@selector(setIsSingleLineDocument:)])
+        privateTraits.isSingleLineDocument = isSingleLineDocument;
 
     if (_focusedElementInformation.hasEverBeenPasswordField) {
         if ([privateTraits respondsToSelector:@selector(setLearnsCorrections:)])

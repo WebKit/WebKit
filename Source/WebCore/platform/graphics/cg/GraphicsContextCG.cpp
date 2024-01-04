@@ -789,27 +789,8 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
 {
     CGContextRef context = platformContext();
 
-    if (auto fillGradient = this->fillGradient()) {
-        CGContextStateSaver stateSaver(context);
-        if (hasDropShadow()) {
-            FloatSize layerSize = getCTM().mapSize(rect.size());
-
-            auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
-            CGContextRef layerContext = CGLayerGetContext(layer.get());
-
-            CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
-            CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
-            CGContextAddRect(layerContext, rect);
-            CGContextClip(layerContext);
-
-            CGContextConcatCTM(layerContext, fillGradientSpaceTransform());
-            fillGradient->paint(layerContext);
-            CGContextDrawLayerInRect(context, rect, layer.get());
-        } else {
-            CGContextClipToRect(context, rect);
-            CGContextConcatCTM(context, fillGradientSpaceTransform());
-            fillGradient->paint(*this);
-        }
+    if (auto* fillGradient = this->fillGradient()) {
+        fillRect(rect, *fillGradient, fillGradientSpaceTransform());
         return;
     }
 
@@ -829,6 +810,32 @@ void GraphicsContextCG::fillRect(const FloatRect& rect)
     }
 
     CGContextFillRect(context, rect);
+}
+
+void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    CGContextRef context = platformContext();
+
+    CGContextStateSaver stateSaver(context);
+    if (hasDropShadow()) {
+        FloatSize layerSize = getCTM().mapSize(rect.size());
+
+        auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
+        CGContextRef layerContext = CGLayerGetContext(layer.get());
+
+        CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
+        CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
+        CGContextAddRect(layerContext, rect);
+        CGContextClip(layerContext);
+
+        CGContextConcatCTM(layerContext, gradientSpaceTransform);
+        gradient.paint(layerContext);
+        CGContextDrawLayerInRect(context, rect, layer.get());
+    } else {
+        CGContextClipToRect(context, rect);
+        CGContextConcatCTM(context, gradientSpaceTransform);
+        gradient.paint(*this);
+    }
 }
 
 void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)

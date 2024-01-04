@@ -27,15 +27,6 @@
 // @internal
 
 @linkTimeConstant
-@getter
-@overriddenName="get [Symbol.species]"
-function speciesGetter()
-{
-    "use strict";
-    return this;
-}
-
-@linkTimeConstant
 function speciesConstructor(obj, defaultConstructor)
 {
     "use strict";

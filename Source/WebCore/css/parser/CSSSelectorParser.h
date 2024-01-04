@@ -44,8 +44,6 @@ class CSSSelectorList;
 class StyleSheetContents;
 class StyleRule;
 
-using MutableCSSSelectorList = Vector<std::unique_ptr<MutableCSSSelector>>;
-
 class CSSSelectorParser {
 public:
     CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);

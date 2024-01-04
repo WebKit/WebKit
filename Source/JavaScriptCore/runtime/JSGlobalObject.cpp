@@ -886,7 +886,7 @@ void JSGlobalObject::init(VM& vm)
 
     JS_GLOBAL_OBJECT_ADDITIONS_3;
 
-    m_speciesGetterSetter.set(vm, this, GetterSetter::create(vm, this, JSFunction::create(vm, globalOperationsSpeciesGetterCodeGenerator(vm), this), nullptr));
+    m_speciesGetterSetter.set(vm, this, GetterSetter::create(vm, this, JSFunction::create(vm, this, 0, "get [Symbol.species]"_s, globalFuncSpeciesGetter, ImplementationVisibility::Public, SpeciesGetterIntrinsic), nullptr));
 
     m_throwTypeErrorArgumentsCalleeGetterSetter.initLater(
         [] (const Initializer<GetterSetter>& init) {

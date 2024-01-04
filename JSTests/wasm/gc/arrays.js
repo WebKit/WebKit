@@ -669,6 +669,32 @@ function testArrayTable() {
   }
 }
 
+function testArrayLimit() {
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (array i8))
+        (start 0)
+        (func
+          (array.new 0 (i32.const 1) (i32.const 2_147_483_648)) drop))
+    `),
+    WebAssembly.RuntimeError,
+    "Failed to allocate new array"
+  );
+
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (array i8))
+        (start 0)
+        (func
+          (array.new_default 0 (i32.const 2_147_483_648)) drop))
+    `),
+    WebAssembly.RuntimeError,
+    "Failed to allocate new array"
+  );
+}
+
 testArrayDeclaration();
 testArrayJS();
 testArrayNew();
@@ -677,3 +703,4 @@ testArrayGet();
 testArraySet();
 testArrayLen();
 testArrayTable();
+testArrayLimit();

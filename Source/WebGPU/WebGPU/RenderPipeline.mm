@@ -872,11 +872,14 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     const PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
-        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.isValid() && !layout.isAutoLayout()) {
+        auto& layout = WebGPU::fromAPI(descriptor.layout);
+        if (!layout.isValid())
+            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid"_s);
+        if (&layout.device() != this)
+            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout created from different device"_s);
+
+        if (!layout.isAutoLayout())
             pipelineLayout = &layout;
-            if (pipelineLayout && &pipelineLayout->device() != this)
-                return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid"_s);
-        }
     }
 
     std::optional<PipelineLayout> vertexPipelineLayout { std::nullopt };
@@ -1057,7 +1060,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     MTLDepthClipMode mtlDepthClipMode = MTLDepthClipModeClip;
     if (descriptor.primitive.nextInChain) {
         if (!hasFeature(WGPUFeatureName_DepthClipControl) || descriptor.primitive.nextInChain->sType != WGPUSType_PrimitiveDepthClipControl || descriptor.primitive.nextInChain->next)
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync, "unclippedDepth used without enabling depth-clip-contro feature"_s);
 
         auto* depthClipControl = reinterpret_cast<const WGPUPrimitiveDepthClipControl*>(descriptor.primitive.nextInChain);
 
@@ -1070,7 +1073,13 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     // These properties are to be used by the render command encoder, not the render pipeline.
     // Therefore, the render pipeline stores these, and when the render command encoder is assigned
     // a pipeline, the render command encoder can get these information out of the render pipeline.
-    auto mtlPrimitiveType = primitiveType(descriptor.primitive.topology);
+    auto primitiveTopology = descriptor.primitive.topology;
+    if (primitiveTopology != WGPUPrimitiveTopology_LineStrip && primitiveTopology != WGPUPrimitiveTopology_TriangleStrip) {
+        if (descriptor.primitive.stripIndexFormat != WGPUIndexFormat_Undefined)
+            return returnInvalidRenderPipeline(*this, isAsync, "If primitive.topology is not line-strip or triangle-strip, primitive.stripIndexFormat must be undefined."_s);
+    }
+
+    auto mtlPrimitiveType = primitiveType(primitiveTopology);
     auto mtlIndexType = indexType(descriptor.primitive.stripIndexFormat);
     auto mtlFrontFace = frontFace(descriptor.primitive.frontFace);
     auto mtlCullMode = cullMode(descriptor.primitive.cullMode);
