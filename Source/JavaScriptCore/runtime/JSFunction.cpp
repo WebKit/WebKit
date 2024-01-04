@@ -389,14 +389,6 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
 
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
-    if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
-        FunctionRareData* rareData = thisObject->ensureRareData(vm);
-        if (propertyName == vm.propertyNames->length)
-            rareData->setHasModifiedLengthForBoundOrNonHostFunction();
-        else
-            rareData->setHasModifiedNameForBoundOrNonHostFunction();
-    }
-
     if (propertyName == vm.propertyNames->prototype && thisObject->mayHaveNonReifiedPrototype()) {
         slot.disableCaching();
         if (FunctionRareData* rareData = thisObject->rareData())
@@ -414,6 +406,15 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
 
     PropertyStatus propertyType = thisObject->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
     RETURN_IF_EXCEPTION(scope, false);
+
+    if (propertyName == vm.propertyNames->length || propertyName == vm.propertyNames->name) {
+        FunctionRareData* rareData = thisObject->ensureRareData(vm);
+        if (propertyName == vm.propertyNames->length)
+            rareData->setHasModifiedLengthForBoundOrNonHostFunction();
+        else
+            rareData->setHasModifiedNameForBoundOrNonHostFunction();
+    }
+
     if (isLazy(propertyType))
         slot.disableCaching();
     RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
