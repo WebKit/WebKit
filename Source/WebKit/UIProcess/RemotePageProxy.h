@@ -32,6 +32,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
+#include <wtf/WeakHashSet.h>
 
 namespace IPC {
 class Connection;
@@ -71,6 +72,8 @@ public:
 
     WebPageProxy* page() const;
     RefPtr<WebPageProxy> protectedPage() const;
+    void addFrame(WebFrameProxy&);
+    void removeFrame(WebFrameProxy&);
 
     template<typename M> void send(M&&);
     template<typename M> IPC::ConnectionSendSyncResult<M> sendSync(M&& message);
@@ -78,6 +81,7 @@ public:
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase&);
 
     void injectPageIntoNewProcess();
+    void processDidTerminate();
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 
@@ -105,6 +109,7 @@ private:
     std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
     std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
+    WeakHashSet<WebFrameProxy> m_frames;
 };
 
 template<typename M> void RemotePageProxy::send(M&& message)

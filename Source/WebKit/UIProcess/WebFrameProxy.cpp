@@ -87,7 +87,6 @@ bool WebFrameProxy::canCreateFrame(FrameIdentifier frameID)
 WebFrameProxy::WebFrameProxy(WebPageProxy& page, WebProcessProxy& process, FrameIdentifier frameID)
     : m_page(page)
     , m_process(process)
-    , m_webPageID(page.webPageID())
     , m_frameID(frameID)
 {
     ASSERT(!allFrames().contains(frameID));
@@ -403,7 +402,6 @@ void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& pr
 
     if (process.coreProcessIdentifier() == m_process->coreProcessIdentifier()) {
         m_provisionalFrame = nullptr;
-        m_remotePageProxy = nullptr;
         return completionHandler();
     }
 
@@ -441,7 +439,11 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
     if (m_provisionalFrame) {
         m_process->send(Messages::WebPage::DidCommitLoadInAnotherProcess(frameID, m_provisionalFrame->layerHostingContextIdentifier()), m_page->webPageID());
         m_process = m_provisionalFrame->process();
+        if (m_remotePageProxy)
+            m_remotePageProxy->removeFrame(*this);
         m_remotePageProxy = m_provisionalFrame->takeRemotePageProxy();
+        if (m_remotePageProxy)
+            m_remotePageProxy->addFrame(*this);
         m_provisionalFrame = nullptr;
     }
     m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
@@ -523,6 +525,36 @@ bool WebFrameProxy::isFocused() const
         return false;
 
     return webPage->focusedFrame() == this;
+}
+
+void WebFrameProxy::remoteProcessDidTerminate()
+{
+    if (m_frameLoadState.state() == FrameLoadState::State::Finished)
+        return;
+    notifyParentOfLoadCompletion(m_process);
+}
+
+void WebFrameProxy::notifyParentOfLoadCompletion(WebProcessProxy& childFrameProcess)
+{
+    RefPtr parentFrame = this->parentFrame();
+    if (!parentFrame)
+        return;
+    auto webPageID = parentFrame->webPageIDInCurrentProcess();
+    if (!webPageID)
+        return;
+    Ref parentFrameProcess = parentFrame->process();
+    if (parentFrameProcess->coreProcessIdentifier() == childFrameProcess.coreProcessIdentifier())
+        return;
+    parentFrameProcess->send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID()), *webPageID);
+}
+
+std::optional<WebCore::PageIdentifier> WebFrameProxy::webPageIDInCurrentProcess()
+{
+    if (m_remotePageProxy)
+        return m_remotePageProxy->pageID();
+    if (m_page)
+        return m_page->webPageID();
+    return std::nullopt;
 }
 
 } // namespace WebKit

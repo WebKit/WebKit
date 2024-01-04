@@ -165,6 +165,9 @@ public:
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
     std::unique_ptr<ProvisionalFrameProxy> takeProvisionalFrame();
     RefPtr<RemotePageProxy> remotePageProxy();
+    void remoteProcessDidTerminate();
+    std::optional<WebCore::PageIdentifier> webPageIDInCurrentProcess();
+    void notifyParentOfLoadCompletion(WebProcessProxy&);
 
     bool isFocused() const;
 
@@ -175,7 +178,6 @@ private:
 
     WeakPtr<WebPageProxy> m_page;
     Ref<WebProcessProxy> m_process;
-    WebCore::PageIdentifier m_webPageID;
 
     FrameLoadState m_frameLoadState;
 

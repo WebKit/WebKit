@@ -166,8 +166,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (void)defineSelection
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.hasAsyncTextInput)
-        return [self define:nil];
+    if (self.hasAsyncTextInput) {
+        [self define:nil];
+        return;
+    }
 #endif
     [self _lookup:nil];
 }
@@ -175,8 +177,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (void)shareSelection
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.hasAsyncTextInput)
-        return [self share:nil];
+    if (self.hasAsyncTextInput) {
+        [self share:nil];
+        return;
+    }
 #endif
     [self _share:nil];
 }
@@ -202,8 +206,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (void)moveSelectionToStartOfParagraph
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput)
-        return [asyncTextInput moveInDirection:UITextStorageDirectionBackward byGranularity:UITextGranularityParagraph];
+    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput) {
+        [asyncTextInput moveInDirection:UITextStorageDirectionBackward byGranularity:UITextGranularityParagraph];
+        return;
+    }
 #endif
     [self.textInputContentView _moveToStartOfParagraph:NO withHistory:nil];
 }
@@ -211,8 +217,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (void)extendSelectionToStartOfParagraph
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput)
-        return [asyncTextInput extendInDirection:UITextStorageDirectionBackward byGranularity:UITextGranularityParagraph];
+    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput) {
+        [asyncTextInput extendInDirection:UITextStorageDirectionBackward byGranularity:UITextGranularityParagraph];
+        return;
+    }
 #endif
     [self.textInputContentView _moveToStartOfParagraph:YES withHistory:nil];
 }
@@ -220,8 +228,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (void)moveSelectionToEndOfParagraph
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput)
-        return [asyncTextInput moveInDirection:UITextStorageDirectionForward byGranularity:UITextGranularityParagraph];
+    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput) {
+        [asyncTextInput moveInDirection:UITextStorageDirectionForward byGranularity:UITextGranularityParagraph];
+        return;
+    }
 #endif
     [self.textInputContentView _moveToEndOfParagraph:NO withHistory:nil];
 }
@@ -229,8 +239,10 @@ static NSString *overrideBundleIdentifier(id, SEL)
 - (void)extendSelectionToEndOfParagraph
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput)
-        return [asyncTextInput extendInDirection:UITextStorageDirectionForward byGranularity:UITextGranularityParagraph];
+    if (id<WKSETextInput> asyncTextInput = self.asyncTextInput) {
+        [asyncTextInput extendInDirection:UITextStorageDirectionForward byGranularity:UITextGranularityParagraph];
+        return;
+    }
 #endif
     [self.textInputContentView _moveToEndOfParagraph:YES withHistory:nil];
 }
