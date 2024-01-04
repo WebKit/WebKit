@@ -66,6 +66,7 @@ JSC_DECLARE_HOST_FUNCTION(globalFuncHandleProxyGetTrapResult);
 JSC_DECLARE_HOST_FUNCTION(globalFuncIsNaN);
 JSC_DECLARE_HOST_FUNCTION(globalFuncToIntegerOrInfinity);
 JSC_DECLARE_HOST_FUNCTION(globalFuncToLength);
+JSC_DECLARE_HOST_FUNCTION(globalFuncSpeciesGetter);
 
 JS_EXPORT_PRIVATE double jsToNumber(StringView);
 

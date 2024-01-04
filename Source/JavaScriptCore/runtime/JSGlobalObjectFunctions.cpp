@@ -1085,4 +1085,9 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncToLength, (JSGlobalObject* globalObject, Call
     return JSValue::encode(jsNumber(argument.toLength(globalObject)));
 }
 
+JSC_DEFINE_HOST_FUNCTION(globalFuncSpeciesGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
+}
+
 } // namespace JSC

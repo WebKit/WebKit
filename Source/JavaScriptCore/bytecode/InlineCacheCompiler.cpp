@@ -3408,6 +3408,13 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(StructureStubInfo& stubInfo, JS
         TypeInfo info = structure->typeInfo();
         return info.isObject() && !info.overridesGetPrototype();
     }
+    case SpeciesGetterIntrinsic: {
+#if USE(JSVALUE32_64)
+        return false;
+#else
+        return !structure->classInfoForCells()->isSubClassOf(JSScope::info());
+#endif
+    }
     case WebAssemblyInstanceExportsIntrinsic:
         return structure->typeInfo().type() == WebAssemblyInstanceType;
     default:
@@ -3541,6 +3548,12 @@ void InlineCacheCompiler::emitIntrinsicGetter(IntrinsicGetterAccessCase& accessC
             jit.loadValue(CCallHelpers::Address(baseGPR, offsetRelativeToBase(knownPolyProtoOffset)), valueRegs);
         else
             jit.moveValue(accessCase.structure()->storedPrototype(), valueRegs);
+        succeed();
+        return;
+    }
+
+    case SpeciesGetterIntrinsic: {
+        jit.moveValueRegs(stubInfo.baseRegs(), valueRegs);
         succeed();
         return;
     }
