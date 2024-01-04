@@ -50,6 +50,7 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(16.0))
 
 @property (nonatomic, readonly, copy) NSString *linkLabel;
 @property (nonatomic, readonly, copy) NSString *linkTitle;
+@property (nonatomic, readonly, copy) NSString *linkSuggestedFilename WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly, copy) NSString *lookupText;
 
 @property (nonatomic, readonly, getter=isContentEditable) BOOL contentEditable;
