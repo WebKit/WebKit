@@ -70,6 +70,7 @@ class WebPageProxy;
 @end
 
 @interface WKChildScrollView : WKBaseScrollView <WKContentControlled>
+@property BOOL _wk_userInteractive;
 @end
 
 #if USE(APPLE_INTERNAL_SDK)

@@ -60,9 +60,9 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
             continue;
 
         auto handlesEvent = [&] {
-            // FIXME: isUserInteractionEnabled is mostly redundant with event regions for web content layers.
-            //        It is currently only needed for scroll views.
             if (!view.isUserInteractionEnabled)
+                return false;
+            if ([view isKindOfClass:[WKChildScrollView class]] && ![(WKChildScrollView *)view _wk_userInteractive])
                 return false;
 
             if (CGRectIsEmpty([view frame]))
@@ -105,9 +105,9 @@ static void collectDescendantViewsInRect(Vector<UIView *, 16>& viewsInRect, UIVi
         CGRect subviewRect = [view convertRect:rect fromView:parent];
 
         auto intersectsRect = [&] {
-            // FIXME: isUserInteractionEnabled is mostly redundant with event regions for web content layers.
-            //        It is currently only needed for scroll views.
             if (!view.isUserInteractionEnabled)
+                return false;
+            if ([view isKindOfClass:[WKChildScrollView class]] && ![(WKChildScrollView *)view _wk_userInteractive])
                 return false;
 
             if (CGRectIsEmpty(view.frame))
@@ -427,6 +427,8 @@ static Class scrollViewScrollIndicatorClass()
     self = [super initWithFrame:frame];
     if (!self)
         return nil;
+
+    self._wk_userInteractive = YES;
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
