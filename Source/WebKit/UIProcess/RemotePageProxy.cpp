@@ -89,6 +89,22 @@ void RemotePageProxy::injectPageIntoNewProcess()
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, WTFMove(parameters)), 0);
 }
 
+void RemotePageProxy::processDidTerminate()
+{
+    for (auto& frame : m_frames)
+        frame.remoteProcessDidTerminate();
+}
+
+void RemotePageProxy::addFrame(WebFrameProxy& frame)
+{
+    m_frames.add(frame);
+}
+
+void RemotePageProxy::removeFrame(WebFrameProxy& frame)
+{
+    m_frames.remove(frame);
+}
+
 RemotePageProxy::~RemotePageProxy()
 {
     m_process->removeRemotePageProxy(*this);

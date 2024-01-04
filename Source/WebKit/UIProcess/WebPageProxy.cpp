@@ -6025,10 +6025,8 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     if (m_provisionalPage && m_provisionalPage->mainFrame() == &frame && willContinueLoading == WillContinueLoading::No)
         m_provisionalPage = nullptr;
 
-    if (auto provisionalFrame = frame.takeProvisionalFrame()) {
-        if (frame.parentFrame())
-            frame.parentFrame()->protectedProcess()->send(Messages::WebPage::DidFinishLoadInAnotherProcess(frame.frameID()), webPageID());
-    }
+    if (frame.takeProvisionalFrame())
+        frame.notifyParentOfLoadCompletion(process);
 }
 
 void WebPageProxy::didFinishServiceWorkerPageRegistration(bool success)
@@ -6323,10 +6321,7 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
         frame->didFinishLoad();
 
-        if (RefPtr parentFrame = frame->parentFrame()) {
-            if (parentFrame->process().coreProcessIdentifier() != frame->process().coreProcessIdentifier())
-                parentFrame->protectedProcess()->send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
-        }
+        frame->notifyParentOfLoadCompletion(frame->process());
 
         internals().pageLoadState.commitChanges();
     }
