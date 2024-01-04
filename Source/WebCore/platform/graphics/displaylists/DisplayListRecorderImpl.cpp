@@ -277,6 +277,11 @@ void RecorderImpl::recordFillRectWithGradient(const FloatRect& rect, Gradient& g
     append(FillRectWithGradient(rect, gradient));
 }
 
+void RecorderImpl::recordFillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform));
+}
+
 void RecorderImpl::recordFillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode mode)
 {
     append(FillCompositedRect(rect, color, op, mode));

@@ -113,6 +113,7 @@ protected:
     virtual void recordFillRect(const FloatRect&) = 0;
     virtual void recordFillRectWithColor(const FloatRect&, const Color&) = 0;
     virtual void recordFillRectWithGradient(const FloatRect&, Gradient&) = 0;
+    virtual void recordFillRectWithGradientAndSpaceTransform(const FloatRect&, Gradient&, const AffineTransform&) = 0;
     virtual void recordFillCompositedRect(const FloatRect&, const Color&, CompositeOperator, BlendMode) = 0;
     virtual void recordFillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) = 0;
     virtual void recordFillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) = 0;
@@ -211,6 +212,7 @@ private:
     WEBCORE_EXPORT void fillRect(const FloatRect&) final;
     WEBCORE_EXPORT void fillRect(const FloatRect&, const Color&) final;
     WEBCORE_EXPORT void fillRect(const FloatRect&, Gradient&) final;
+    WEBCORE_EXPORT void fillRect(const FloatRect&, Gradient&, const AffineTransform&) final;
     WEBCORE_EXPORT void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode) final;
     WEBCORE_EXPORT void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) final;
     WEBCORE_EXPORT void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) final;

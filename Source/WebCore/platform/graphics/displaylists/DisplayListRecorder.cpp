@@ -474,6 +474,12 @@ void Recorder::fillRect(const FloatRect& rect)
     recordFillRect(rect);
 }
 
+void Recorder::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform)
+{
+    appendStateChangeItemIfNecessary();
+    recordFillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform);
+}
+
 void Recorder::fillRect(const FloatRect& rect, const Color& color)
 {
     appendStateChangeItemIfNecessary();

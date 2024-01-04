@@ -67,6 +67,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     FillRect(WebCore::FloatRect rect)
     FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
     FillRectWithGradient(WebCore::DisplayList::FillRectWithGradient item)
+    FillRectWithGradientAndSpaceTransform(WebCore::DisplayList::FillRectWithGradientAndSpaceTransform item)
     FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode)
     FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
     FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)

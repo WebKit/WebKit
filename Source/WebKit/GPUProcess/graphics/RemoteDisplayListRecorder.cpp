@@ -443,6 +443,11 @@ void RemoteDisplayListRecorder::fillRectWithGradient(DisplayList::FillRectWithGr
     handleItem(WTFMove(item));
 }
 
+void RemoteDisplayListRecorder::fillRectWithGradientAndSpaceTransform(DisplayList::FillRectWithGradientAndSpaceTransform&& item)
+{
+    handleItem(WTFMove(item));
+}
+
 void RemoteDisplayListRecorder::fillCompositedRect(const FloatRect& rect, const Color& color, CompositeOperator op, BlendMode blendMode)
 {
     handleItem(DisplayList::FillCompositedRect(rect, color, op, blendMode));

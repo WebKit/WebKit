@@ -228,6 +228,12 @@ headers: <WebCore/DisplayListItems.h>
     Ref<WebCore::Gradient> gradient();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRectWithGradientAndSpaceTransform {
+    WebCore::FloatRect rect();
+    Ref<WebCore::Gradient> gradient();
+    WebCore::AffineTransform gradientSpaceTransform();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillCompositedRect {
     WebCore::FloatRect rect();
     WebCore::Color color();
