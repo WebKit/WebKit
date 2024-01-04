@@ -30,6 +30,7 @@
 #include "CSSSelectorInlines.h"
 #include "CSSSelectorList.h"
 #include "CSSSelectorParserContext.h"
+#include "CSSTokenizer.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
 #include "MutableCSSSelector.h"
@@ -334,21 +335,32 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElement(String
     return type;
 }
 
-std::optional<PseudoId> CSSSelector::parseStandalonePseudoElement(StringView input, const CSSSelectorParserContext& context)
+// FIXME: We should eventually deduplicate this with CSSSelectorParser::consumePseudo() somehow.
+std::optional<PseudoId> CSSSelector::parseStandalonePseudoElement(const String& input, const CSSSelectorParserContext& context)
 {
-    // FIXME: Tokenize input.
-    if (input.startsWith("::"_s)) {
-        auto pseudoElement = parsePseudoElement(input.substring(2), context);
-        if (!pseudoElement)
+    // FIXME: Add support for FunctionToken (webkit.org/b/264103).
+    auto tokenizer = CSSTokenizer { input };
+    auto range = tokenizer.tokenRange();
+    auto token = range.consume();
+    if (token.type() != ColonToken)
+        return std::nullopt;
+    token = range.consume();
+    if (token.type() == IdentToken) {
+        if (!range.atEnd())
             return std::nullopt;
-        return pseudoId(*pseudoElement);
-    }
-    if (input.startsWith(":"_s)) {
-        auto pseudoClassOrElement = parsePseudoClassAndCompatibilityElementString(input.substring(1));
+        auto pseudoClassOrElement = parsePseudoClassAndCompatibilityElementString(token.value());
         if (!pseudoClassOrElement.compatibilityPseudoElement)
             return std::nullopt;
+        ASSERT(CSSSelector::isPseudoElementEnabled(*pseudoClassOrElement.compatibilityPseudoElement, token.value(), context));
         return pseudoId(*pseudoClassOrElement.compatibilityPseudoElement);
     }
+    if (token.type() != ColonToken)
+        return std::nullopt;
+    token = range.consume();
+    if (token.type() != IdentToken || !range.atEnd())
+        return std::nullopt;
+    if (auto pseudoElement = parsePseudoElement(token.value(), context))
+        return pseudoId(*pseudoElement);
     return std::nullopt;
 }
 
