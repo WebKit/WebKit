@@ -323,11 +323,11 @@ static NSArray<NSString *> *supportedPlainTextPasteboardTypes()
     return supportedTypes.get().get();
 }
 
-static NSArray<NSString *> *supportedRichTextPasteboardTypes()
+static NSArray<NSString *> *supportedRichTextPasteboardTypesForPasteConfiguration()
 {
     static NeverDestroyed supportedTypes = [] {
         auto types = adoptNS([[NSMutableArray alloc] init]);
-        [types addObject:WebCore::WebArchivePboardType];
+        [types addObject:UTTypeWebArchive.identifier];
         [types addObjectsFromArray:UIPasteboardTypeListImage];
         [types addObjectsFromArray:supportedPlainTextPasteboardTypes()];
         return types;
@@ -335,13 +335,24 @@ static NSArray<NSString *> *supportedRichTextPasteboardTypes()
     return supportedTypes.get().get();
 }
 
-#if HAVE(UI_PASTE_CONFIGURATION)
-
-static NSArray<NSString *> *supportedRichTextPasteboardTypesWithAttachments()
+static NSArray<NSString *> *supportedRichTextPasteboardTypes()
 {
     static NeverDestroyed supportedTypes = [] {
         auto types = adoptNS([[NSMutableArray alloc] init]);
-        [types addObjectsFromArray:supportedRichTextPasteboardTypes()];
+        [types addObject:WebCore::WebArchivePboardType];
+        [types addObjectsFromArray:supportedRichTextPasteboardTypesForPasteConfiguration()];
+        return types;
+    }();
+    return supportedTypes.get().get();
+}
+
+#if HAVE(UI_PASTE_CONFIGURATION)
+
+static NSArray<NSString *> *supportedRichTextPasteboardTypesWithAttachmentsForPasteConfiguration()
+{
+    static NeverDestroyed supportedTypes = [] {
+        auto types = adoptNS([[NSMutableArray alloc] init]);
+        [types addObjectsFromArray:supportedRichTextPasteboardTypesForPasteConfiguration()];
         [types addObjectsFromArray:WebCore::Pasteboard::supportedFileUploadPasteboardTypes()];
         return types;
     }();
@@ -1377,8 +1388,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 #if HAVE(UI_PASTE_CONFIGURATION)
     self.pasteConfiguration = adoptNS([[UIPasteConfiguration alloc] initWithAcceptableTypeIdentifiers:[&] {
         if (_page->preferences().attachmentElementEnabled())
-            return WebKit::supportedRichTextPasteboardTypesWithAttachments();
-        return WebKit::supportedRichTextPasteboardTypes();
+            return WebKit::supportedRichTextPasteboardTypesWithAttachmentsForPasteConfiguration();
+        return WebKit::supportedRichTextPasteboardTypesForPasteConfiguration();
     }()]).get();
 #endif
 
