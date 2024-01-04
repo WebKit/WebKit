@@ -98,6 +98,8 @@ public:
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
 
+    AffineTransform nonScalingStrokeTransform() const;
+
 protected:
     void element() const = delete;
 
@@ -110,7 +112,6 @@ protected:
     float strokeWidth() const;
 
     inline bool hasNonScalingStroke() const;
-    AffineTransform nonScalingStrokeTransform() const;
     Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 
     virtual FloatRect adjustStrokeBoundingBoxForZeroLengthLinecaps(RepaintRectCalculation, FloatRect strokeBoundingBox) const { return strokeBoundingBox; }
@@ -136,7 +137,6 @@ private:
     std::unique_ptr<Path> createPath() const;
 
     void fillShape(const RenderStyle&, GraphicsContext&);
-    void strokeShapeInternal(const RenderStyle&, GraphicsContext&);
     void strokeShape(const RenderStyle&, GraphicsContext&);
     void fillStrokeMarkers(PaintInfo&);
     virtual void drawMarkers(PaintInfo&) { }

@@ -1,4 +1,29 @@
 {
+    "documentation": {
+        "description": "This file is used to generate code for pseudo-classes and pseudo-elements.",
+        "fields": {
+            "aliases": "Legacy name aliases for the pseudo. They will serialize to their modern counterpart.",
+            "argument": [
+                "Specifies if the pseudo takes an argument, and whether that argument is required or optional.",
+                "The 'optional' value is for pseudos like `:host` which support both `:host` and `:host(argument)`.",
+                "The 'required' value is for pseudos which don't support the argument-free syntax like: `::highlight(name)`.",
+                "Omit this field if the pseudo never takes an argument."
+            ],
+            "comment": "Add a description of how the pseudo is used. Especially useful for non-standard or internal ones.",
+            "condition": "Compile-time `#if ENABLE()` condition for the feature.",
+            "settings-flag": "Settings flag queried from CSSSelectorParserContext. Note that the flag needs to be manually added there.",
+            "status": "Specifies the standardization state of the pseudo.",
+            "supports-single-colon-for-compatibility": [
+                "For pseudo-elements only. Whether the pseudo-element supports the single colon form (e.g. `:after` instead of `::after`).",
+                "You should not have to add more of these. They exist only for compatibility with CSS 2.1."
+            ],
+            "user-agent-part": [
+                "For pseudo-elements only. Whether the pseudo-element represents an element in an user agent shadow tree.",
+                "They internally map to `PseudoElement::UserAgentPart` or `PseudoElement::UserAgentPartLegacyAlias` for aliases."
+            ]
+        },
+        "notes": "Pseudos that start with `-internal-` will automatically be restricted to user agent stylesheets."
+    },
     "pseudo-classes": {
         "-internal-html-document": {},
         "-webkit-animating-full-screen-transition": {

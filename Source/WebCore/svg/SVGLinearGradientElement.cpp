@@ -30,6 +30,7 @@
 #include "LegacyRenderSVGResourceLinearGradient.h"
 #include "LinearGradientAttributes.h"
 #include "NodeName.h"
+#include "RenderSVGResourceLinearGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
@@ -91,7 +92,7 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         updateRelativeLengthsInformation();
-        updateSVGRendererForElementChange();
+        invalidateGradientResource();
         return;
     }
 
@@ -100,6 +101,10 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceLinearGradient>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGResourceLinearGradient>(*this, WTFMove(style));
 }
 

@@ -9,6 +9,7 @@ layer at (0,-0.20) size 415x10 backgroundClip at (0,0) size 480x360 clip at (0,0
   RenderSVGTransformableContainer {g} at (0,-0.20) size 414.14x9.02
 layer at (0,-14.41) size 74x19 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGHiddenContainer {defs} at (0,-14.20) size 73.03x18.02
+    RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
 layer at (0,0) size 1x2
   RenderSVGRect {rect} at (0,14.41) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
 layer at (0,0) size 1x2

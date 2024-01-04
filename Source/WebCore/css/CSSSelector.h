@@ -119,7 +119,7 @@ public:
     static bool isPseudoClassEnabled(PseudoClass, const CSSSelectorParserContext&);
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
     static std::optional<PseudoElement> parsePseudoElement(StringView, const CSSSelectorParserContext&);
-    static std::optional<PseudoId> parseStandalonePseudoElement(StringView, const CSSSelectorParserContext&);
+    static std::optional<PseudoId> parseStandalonePseudoElement(const String&, const CSSSelectorParserContext&);
     static bool pseudoClassRequiresArgument(PseudoClass);
     static bool pseudoElementRequiresArgument(PseudoElement);
     static bool pseudoClassMayHaveArgument(PseudoClass);

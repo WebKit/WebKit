@@ -57,8 +57,11 @@ public:
     ReferencedSVGResources(RenderElement&);
     ~ReferencedSVGResources();
 
-    static Vector<std::pair<AtomString, QualifiedName>> referencedSVGResourceIDs(const RenderStyle&, const Document&);
-    void updateReferencedResources(TreeScope&, const Vector<std::pair<AtomString, QualifiedName>>&);
+    using QualifiedNames = Vector<QualifiedName>;
+    using SVGElementIdentifierAndTagPairs = Vector<std::pair<AtomString, QualifiedNames>>;
+
+    static SVGElementIdentifierAndTagPairs referencedSVGResourceIDs(const RenderStyle&, const Document&);
+    void updateReferencedResources(TreeScope&, const SVGElementIdentifierAndTagPairs&);
 
     // Legacy: Clipping needs a renderer, filters use an element.
     static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
@@ -71,10 +74,12 @@ public:
     static RefPtr<SVGClipPathElement> referencedClipPathElement(TreeScope&, const ReferencePathOperation&);
     static RefPtr<SVGMarkerElement> referencedMarkerElement(TreeScope&, const String&);
     static RefPtr<SVGMaskElement> referencedMaskElement(TreeScope&, const StyleImage&);
+    static RefPtr<SVGElement> referencedPaintServerElement(TreeScope&, const String&);
 #endif
 
 private:
     static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);
+    static RefPtr<SVGElement> elementForResourceIDs(TreeScope&, const AtomString& resourceID, const QualifiedNames& tagNames);
 
     void addClientForTarget(SVGElement& targetElement, const AtomString&);
     void removeClientForTarget(TreeScope&, const AtomString&);
