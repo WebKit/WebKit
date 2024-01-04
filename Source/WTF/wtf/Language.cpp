@@ -107,12 +107,6 @@ String defaultLanguage(ShouldMinimizeLanguages shouldMinimizeLanguages)
     return emptyString();
 }
 
-Vector<String> userPreferredLanguagesOverride()
-{
-    Locker locker { languagesLock };
-    return preferredLanguagesOverride();
-}
-
 // This returns a reference to a Vector<String> protected by languagesLock.
 // Callers should not let it escape past the lock.
 static Vector<String>& computeUserPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages) WTF_REQUIRES_LOCK(languagesLock)
