@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -352,8 +353,7 @@ AccessibilityObject* AccessibilityTableCell::titleUIElement() const
 
     // Table cells that are th cannot have title ui elements, since by definition
     // they are title ui elements
-    Node* node = m_renderer->node();
-    if (node && node->hasTagName(thTag))
+    if (isTableHeaderCell())
         return nullptr;
     
     RenderTableCell& renderCell = downcast<RenderTableCell>(*m_renderer);
