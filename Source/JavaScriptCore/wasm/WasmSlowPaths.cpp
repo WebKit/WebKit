@@ -431,7 +431,10 @@ WASM_SLOW_PATH_DECL(array_new)
         WASM_RETURN(Wasm::arrayNewFixed(instance, instruction.m_typeIndex, size, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_value))));
     }
     }
-    WASM_RETURN(Wasm::arrayNew(instance, instruction.m_typeIndex, size, value));
+    EncodedJSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, value);
+    if (JSValue::decode(result).isNull())
+        WASM_THROW(Wasm::ExceptionType::BadArrayNew);
+    WASM_RETURN(result);
 }
 
 WASM_SLOW_PATH_DECL(array_get)

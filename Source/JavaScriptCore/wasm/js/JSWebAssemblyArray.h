@@ -132,10 +132,38 @@ public:
     }
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_size); }
-    static ptrdiff_t offsetOfPayload()
+    static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload8) + FixedVector<uint8_t>::offsetOfStorage(); }
+    static ptrdiff_t offsetOfElements(Wasm::StorageType type)
     {
-        ASSERT(OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload32) == OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload64));
-        return OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload32);
+        if (type.is<Wasm::PackedType>()) {
+            switch (type.as<Wasm::PackedType>()) {
+            case Wasm::PackedType::I8:
+                return FixedVector<uint8_t>::Storage::offsetOfData();
+            case Wasm::PackedType::I16:
+                return FixedVector<uint16_t>::Storage::offsetOfData();
+            }
+        }
+
+        ASSERT(type.is<Wasm::Type>());
+
+        switch (type.as<Wasm::Type>().kind) {
+        case Wasm::TypeKind::I32:
+        case Wasm::TypeKind::F32:
+            return FixedVector<uint32_t>::Storage::offsetOfData();
+        case Wasm::TypeKind::I64:
+        case Wasm::TypeKind::F64:
+        case Wasm::TypeKind::Ref:
+        case Wasm::TypeKind::RefNull:
+            return FixedVector<uint64_t>::Storage::offsetOfData();
+        case Wasm::TypeKind::V128:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return 0;
     }
 
 protected:

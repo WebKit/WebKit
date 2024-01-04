@@ -74,6 +74,9 @@ inline EncodedJSValue arrayNew(Instance* instance, uint32_t typeIndex, uint32_t 
 
     size_t elementSize = fieldType.type.elementSize();
 
+    if (UNLIKELY(productOverflows<uint32_t>(elementSize * size) || elementSize * size > maxArraySizeInBytes))
+        return JSValue::encode(jsNull());
+
     JSWebAssemblyArray* array = nullptr;
 
     switch (elementSize) {

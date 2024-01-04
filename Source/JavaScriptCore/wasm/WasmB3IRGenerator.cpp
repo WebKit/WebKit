@@ -2605,10 +2605,11 @@ Value* B3IRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueTy
 
 void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const StructType& structType, Value* argument)
 {
+    auto fieldType = structType.field(fieldIndex).type;
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), structValue, JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.offsetOfField(fieldIndex));
 
-    if (structType.field(fieldIndex).type.is<PackedType>()) {
+    if (fieldType.is<PackedType>()) {
         switch (structType.field(fieldIndex).type.as<PackedType>()) {
         case PackedType::I8:
             m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store8), origin(), argument, payloadBase, fieldOffset);
@@ -2618,27 +2619,12 @@ void B3IRGenerator::emitStructSet(Value* structValue, uint32_t fieldIndex, const
             return;
         }
     }
-    ASSERT(structType.field(fieldIndex).type.is<Type>());
 
-    Type fieldType = structType.field(fieldIndex).type.as<Type>();
-    switch (fieldType.kind) {
-    case TypeKind::I32:
-    case TypeKind::Funcref:
-    case TypeKind::Externref:
-    case TypeKind::Ref:
-    case TypeKind::RefNull:
-    case TypeKind::I64:
-    case TypeKind::F32:
-    case TypeKind::F64: {
-        if (isRefType(fieldType)) {
-            Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
-            emitWriteBarrier(structValue, instance);
-        }
-        m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), argument, payloadBase, fieldOffset);
-        break;
-    }
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+    ASSERT(fieldType.is<Type>());
+    m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), argument, payloadBase, fieldOffset);
+    if (isRefType(fieldType.unpacked())) {
+        Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+        emitWriteBarrier(structValue, instance);
     }
 }
 
@@ -2930,9 +2916,20 @@ Variable* B3IRGenerator::pushArrayNew(uint32_t typeIndex, Value* initValue, Expr
 {
     // FIXME: Emit this inline.
     // https://bugs.webkit.org/show_bug.cgi?id=245405
-    return push(callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operationWasmArrayNew,
+    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Arrayref), operationWasmArrayNew,
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(size), initValue));
+        get(size), initValue);
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::BadArrayNew);
+        });
+    }
+
+    return push(resultValue);
 }
 
 // Given a type index, verify that it's an array type and return its expansion
@@ -3078,23 +3075,23 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
         });
     }
 
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    Value* arrayResult = callWasmOperation(m_currentBlock, B3::Int64, operationWasmArrayGet,
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        get(arrayref), get(index));
+    Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(arrayref), JSWebAssemblyArray::offsetOfPayload());
+    Value* indexValue = is32Bit() ? get(index) : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), get(index));
+    Value* indexedAddress = m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), payloadBase,
+        m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), constant(pointerType(), JSWebAssemblyArray::offsetOfElements(elementType)),
+            m_currentBlock->appendNew<Value>(m_proc, Mul, pointerType(), origin(), indexValue, constant(pointerType(), elementType.elementSize()))));
 
-    auto b3Type = toB3Type(resultType);
-    switch (b3Type.kind()) {
-    case B3::Float:
-    case B3::Double: {
-        if (b3Type == B3::Float)
-            arrayResult = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), arrayResult);
-        result = push(m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), arrayResult));
-        break;
-    }
-    case B3::Int32: {
-        Value* postProcess = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), arrayResult);
+    if (elementType.is<PackedType>()) {
+        Value* load;
+        switch (elementType.as<PackedType>()) {
+        case PackedType::I8:
+            load = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), Int32, origin(), indexedAddress);
+            break;
+        case PackedType::I16:
+            load = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load16Z), Int32, origin(), indexedAddress);
+            break;
+        }
+        Value* postProcess = load;
         switch (arrayGetKind) {
         case ExtGCOpType::ArrayGet:
         case ExtGCOpType::ArrayGetU:
@@ -3111,15 +3108,11 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
             return { };
         }
         result = push(postProcess);
-        break;
+        return { };
     }
-    case B3::Int64:
-        result = push(arrayResult);
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        break;
-    }
+
+    ASSERT(elementType.is<Type>());
+    result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), toB3Type(resultType), origin(), indexedAddress));
 
     return { };
 }
@@ -3137,18 +3130,36 @@ void B3IRGenerator::emitArrayNullCheck(Value* arrayref)
 // called directly by addArrayNewFixed()
 void B3IRGenerator::emitArraySetUnchecked(uint32_t typeIndex, Value* arrayref, Value* index, Value* setValue)
 {
-    if (setValue->type() == B3::Float || setValue->type() == B3::Double) {
-        setValue = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), setValue);
-        if (setValue->type() == B3::Int32)
-            setValue = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), setValue);
+    StorageType elementType;
+    getArrayElementType(typeIndex, elementType);
+
+    auto payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), arrayref, JSWebAssemblyArray::offsetOfPayload());
+    auto indexValue = is32Bit() ? index : m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), index);
+    auto indexedAddress = m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), payloadBase,
+        m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), constant(pointerType(), JSWebAssemblyArray::offsetOfElements(elementType)),
+            m_currentBlock->appendNew<Value>(m_proc, Mul, pointerType(), origin(), indexValue, constant(pointerType(), elementType.elementSize()))));
+
+    if (elementType.is<PackedType>()) {
+        switch (elementType.as<PackedType>()) {
+        case PackedType::I8:
+            m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store8), origin(), setValue, indexedAddress);
+            break;
+        case PackedType::I16:
+            m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store16), origin(), setValue, indexedAddress);
+            break;
+        }
+        return;
     }
 
-    // FIXME: Emit this inline.
-    // https://bugs.webkit.org/show_bug.cgi?id=245405
-    callWasmOperation(m_currentBlock, B3::Void, operationWasmArraySet,
-        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
-        arrayref, index, setValue);
+    ASSERT(elementType.is<Type>());
+    m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store), origin(), setValue, indexedAddress);
 
+    if (isRefType(elementType.unpacked())) {
+        Value* instance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
+        emitWriteBarrier(arrayref, instance);
+    }
+
+    return;
 }
 
 auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
@@ -3239,6 +3250,9 @@ auto B3IRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& resu
 
 auto B3IRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
 {
+    auto fieldType = structType.field(fieldIndex).type;
+    auto resultType = fieldType.unpacked();
+
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
@@ -3250,9 +3264,9 @@ auto B3IRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType struc
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(structReference), JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.offsetOfField(fieldIndex));
 
-    if (structType.field(fieldIndex).type.is<PackedType>()) {
+    if (fieldType.is<PackedType>()) {
         Value* load;
-        switch (structType.field(fieldIndex).type.as<PackedType>()) {
+        switch (fieldType.as<PackedType>()) {
         case PackedType::I8:
             load = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load8Z), Int32, origin(), payloadBase, fieldOffset);
             break;
@@ -3265,8 +3279,7 @@ auto B3IRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType struc
         case ExtGCOpType::StructGetU:
             break;
         case ExtGCOpType::StructGetS: {
-            size_t elementSize = structType.field(fieldIndex).type.as<PackedType>() == PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
-            uint8_t bitShift = (sizeof(uint32_t) - elementSize) * 8;
+            uint8_t bitShift = (sizeof(uint32_t) - fieldType.elementSize()) * 8;
             Value* shiftLeft = m_currentBlock->appendNew<Value>(m_proc, B3::Shl, origin(), postProcess, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
             postProcess = m_currentBlock->appendNew<Value>(m_proc, B3::SShr, origin(), shiftLeft, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), bitShift));
             break;
@@ -3278,29 +3291,9 @@ auto B3IRGenerator::addStructGet(ExtGCOpType structGetKind, ExpressionType struc
         result = push(postProcess);
         return { };
     }
-    ASSERT(structType.field(fieldIndex).type.is<Type>());
 
-    switch (structType.field(fieldIndex).type.as<Type>().kind) {
-    case TypeKind::I32:
-        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int32, origin(), payloadBase, fieldOffset));
-        break;
-    case TypeKind::Funcref:
-    case TypeKind::Externref:
-    case TypeKind::Ref:
-    case TypeKind::RefNull:
-    case TypeKind::I64:
-        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Int64, origin(), payloadBase, fieldOffset));
-        break;
-    case TypeKind::F32: {
-        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Float, origin(), payloadBase, fieldOffset));
-        break;
-    }
-    case TypeKind::F64:
-        result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), Double, origin(), payloadBase, fieldOffset));
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    ASSERT(fieldType.is<Type>());
+    result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), toB3Type(resultType), origin(), payloadBase, fieldOffset));
 
     return { };
 }
