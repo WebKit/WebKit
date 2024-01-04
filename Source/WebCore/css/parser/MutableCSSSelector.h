@@ -75,6 +75,8 @@ public:
     void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
+    void setImplicit() { m_selector->setImplicit(); }
+
     CSSSelector::PseudoClass pseudoClass() const { return m_selector->pseudoClass(); }
 
     bool matchesPseudoElement() const;

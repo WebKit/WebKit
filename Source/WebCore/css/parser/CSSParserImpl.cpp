@@ -76,7 +76,7 @@ static void appendImplicitSelectorPseudoClassScopeIfNeeded(MutableCSSSelector& s
         auto scopeSelector = makeUnique<MutableCSSSelector>();
         scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
         scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
-        scopeSelector->selector()->setImplicit();
+        scopeSelector->setImplicit();
         selector.appendTagHistoryAsRelative(WTFMove(scopeSelector));
     }
 }
@@ -615,11 +615,10 @@ void CSSParserImpl::runInNewNestingContext(auto&& run)
 
 Ref<StyleRuleBase> CSSParserImpl::createNestingParentRule()
 {
-    CSSSelector nestingParentSelector;
-    nestingParentSelector.setMatch(CSSSelector::Match::NestingParent);
-    auto parserSelector = makeUnique<MutableCSSSelector>(nestingParentSelector);
+    auto nestingParentSelector = makeUnique<MutableCSSSelector>();
+    nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
     Vector<std::unique_ptr<MutableCSSSelector>> selectorList;
-    selectorList.append(WTFMove(parserSelector));
+    selectorList.append(WTFMove(nestingParentSelector));
     auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);
     return StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, CSSSelectorList { WTFMove(selectorList) }, { });
 }

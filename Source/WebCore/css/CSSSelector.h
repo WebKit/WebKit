@@ -113,6 +113,8 @@ public:
         Right,
     };
 
+    enum AttributeMatchType { CaseSensitive, CaseInsensitive };
+
     static PseudoId pseudoId(PseudoElement);
     static bool isPseudoClassEnabled(PseudoClass, const CSSSelectorParserContext&);
     static bool isPseudoElementEnabled(PseudoElement, StringView, const CSSSelectorParserContext&);
@@ -143,31 +145,16 @@ public:
     const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
     CSSSelectorList* selectorList() { return m_hasRareData ? m_data.rareData->selectorList.get() : nullptr; }
 
-    void setValue(const AtomString&, bool matchLowerCase = false);
-
-    enum AttributeMatchType { CaseSensitive, CaseInsensitive };
-    void setAttribute(const QualifiedName&, AttributeMatchType);
-    void setNth(int a, int b);
-    void setArgument(const AtomString&);
-    void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
-    void setSelectorList(std::unique_ptr<CSSSelectorList>);
-
     bool matchNth(int count) const;
     int nthA() const;
     int nthB() const;
 
     bool hasDescendantRelation() const { return relation() == Relation::DescendantSpace; }
-
     bool hasDescendantOrChildRelation() const { return relation() == Relation::Child || hasDescendantRelation(); }
 
     PseudoClass pseudoClass() const;
-    void setPseudoClass(PseudoClass);
-
     PseudoElement pseudoElement() const;
-    void setPseudoElement(PseudoElement);
-
     PagePseudoClass pagePseudoClass() const;
-    void setPagePseudoClass(PagePseudoClass);
 
     bool matchesPseudoElement() const;
     bool isUserAgentPartPseudoElement() const;
@@ -175,30 +162,46 @@ public:
     bool isAttributeSelector() const;
 
     Relation relation() const { return static_cast<Relation>(m_relation); }
-    void setRelation(Relation);
-
     Match match() const { return static_cast<Match>(m_match); }
-    void setMatch(Match);
 
     bool isLastInSelectorList() const { return m_isLastInSelectorList; }
-    void setLastInSelectorList() { m_isLastInSelectorList = true; }
-    void setNotLastInSelectorList() { m_isLastInSelectorList = false; }
-
     bool isFirstInTagHistory() const { return m_isFirstInTagHistory; }
-    void setNotFirstInTagHistory() { m_isFirstInTagHistory = false; }
-
     bool isLastInTagHistory() const { return m_isLastInTagHistory; }
+
+    // FIXME: These should ideally be private, but CSSSelectorList and StyleRule use them.
+    void setLastInSelectorList() { m_isLastInSelectorList = true; }
+    void setNotFirstInTagHistory() { m_isFirstInTagHistory = false; }
     void setNotLastInTagHistory() { m_isLastInTagHistory = false; }
-    void setLastInTagHistory() { m_isLastInTagHistory = true; }
 
     bool isForPage() const { return m_isForPage; }
-    void setForPage() { m_isForPage = true; }
 
-    void setImplicit() { m_isImplicit = true; }
     // Implicit means that this selector is not author/UA written.
     bool isImplicit() const { return m_isImplicit; }
 
 private:
+    friend class MutableCSSSelector;
+
+    void setValue(const AtomString&, bool matchLowerCase = false);
+
+    void setAttribute(const QualifiedName&, AttributeMatchType);
+    void setNth(int a, int b);
+    void setArgument(const AtomString&);
+    void setArgumentList(FixedVector<PossiblyQuotedIdentifier>);
+    void setSelectorList(std::unique_ptr<CSSSelectorList>);
+
+    void setPseudoClass(PseudoClass);
+    void setPseudoElement(PseudoElement);
+    void setPagePseudoClass(PagePseudoClass);
+
+    void setRelation(Relation);
+    void setMatch(Match);
+
+    void setForPage() { m_isForPage = true; }
+    void setImplicit() { m_isImplicit = true; }
+
+    unsigned simpleSelectorSpecificityForPage() const;
+    CSSSelector* tagHistory() { return m_isLastInTagHistory ? nullptr : this + 1; }
+
     unsigned m_relation : 4 { enumToUnderlyingType(Relation::DescendantSpace) };
     mutable unsigned m_match : 5 { enumToUnderlyingType(Match::Unknown) };
     mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
@@ -215,9 +218,6 @@ private:
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     unsigned m_destructorHasBeenCalled : 1 { false };
 #endif
-
-    unsigned simpleSelectorSpecificityForPage() const;
-    CSSSelector* tagHistory() { return m_isLastInTagHistory ? nullptr : this + 1; }
 
     CSSSelector& operator=(const CSSSelector&) = delete;
     CSSSelector(CSSSelector&&) = delete;
