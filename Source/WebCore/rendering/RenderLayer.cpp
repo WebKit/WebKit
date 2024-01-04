@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  * Copyright (C) 2019 Adobe. All rights reserved.
  * Copyright (c) 2020, 2021, 2022 Igalia S.L.
@@ -431,9 +431,8 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     dirtyPaintOrderListsOnChildChange(child);
 
     child.updateAncestorDependentState();
+    dirtyAncestorChainVisibleDescendantStatus();
     child.updateDescendantDependentFlags();
-    if (child.m_hasVisibleContent || child.m_hasVisibleDescendant)
-        setAncestorChainHasVisibleDescendant();
 
     if (child.isSelfPaintingLayer() || child.hasSelfPaintingLayerDescendant())
         setAncestorChainHasSelfPaintingLayerDescendant();
@@ -1491,7 +1490,7 @@ void RenderLayer::setBehavesAsFixed(bool behavesAsFixed)
 void RenderLayer::setHasVisibleContent()
 { 
     if (m_hasVisibleContent && !m_visibleContentStatusDirty) {
-        ASSERT(!parent() || parent()->hasVisibleDescendant());
+        ASSERT(!parent() || parent()->m_visibleDescendantStatusDirty || parent()->hasVisibleDescendant());
         return;
     }
 
@@ -1510,7 +1509,7 @@ void RenderLayer::setHasVisibleContent()
     }
 
     if (parent())
-        parent()->setAncestorChainHasVisibleDescendant();
+        parent()->dirtyAncestorChainVisibleDescendantStatus();
 }
 
 void RenderLayer::dirtyVisibleContentStatus() 
@@ -1527,22 +1526,6 @@ void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
             break;
 
         layer->m_visibleDescendantStatusDirty = true;
-    }
-}
-
-void RenderLayer::setAncestorChainHasVisibleDescendant()
-{
-    for (auto* layer = this; layer; layer = layer->parent()) {
-        if (renderer().shouldApplyPaintContainment()) {
-            m_hasVisibleDescendant = true;
-            m_visibleDescendantStatusDirty = false;
-            break;
-        }
-        if (!layer->m_visibleDescendantStatusDirty && layer->hasVisibleDescendant())
-            break;
-
-        layer->m_hasVisibleDescendant = true;
-        layer->m_visibleDescendantStatusDirty = false;
     }
 }
 
