@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (20,30) size 20x20
+  RenderSVGResourceClipper {clipPath} at (20,30) size 20x20
+layer at (20,30) size 20x20
+  RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=30.00] [cy=40.00] [r=10.00]
+layer at (0,-1.41) size 298x18 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,-2) size 299x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 299x19
+      chunk 1 text run 1 at (0.00,13.00) startOffset 0 endOffset 46 width 298.11: "The rect should be opaque green, black stroke,"
+layer at (0,18.59) size 169x18
+  RenderSVGText {text} at (0,18) size 170x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 170x19
+      chunk 1 text run 1 at (0.00,33.00) startOffset 0 endOffset 25 width 169.29: "no markers and no dashes."
+layer at (30,40) size 50x50
+  RenderSVGPath {path} at (30,40) size 50x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [data="M 30 40 L 80 40 L 80 90 L 30 90 Z"]
+layer at (160,40) size 40x40
+  RenderSVGEllipse {circle} at (160,40) size 40x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [cx=180.00] [cy=60.00] [r=20.00]
+layer at (0,95.59) size 283x18
+  RenderSVGText {text} at (0,95) size 283x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 283x19
+      chunk 1 text run 1 at (0.00,110.00) startOffset 0 endOffset 45 width 283.00: "The circle should be opaque green, no filter,"
+layer at (0,115.59) size 107x18
+  RenderSVGText {text} at (0,115) size 108x19 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 108x19
+      chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 17 width 107.08: "green stop color."

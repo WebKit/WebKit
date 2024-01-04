@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-150,8.80) size 605x219 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-150,8.80) size 604.30x218.20
+layer at (-150,8.80) size 419x78 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,0) size 420x79 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 420x79
+      chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 16 width 419.22: "Gradient on fill"
+layer at (-150,78.80) size 506x78 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,70) size 507x79 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 507x79
+      chunk 1 text run 1 at (-150.00,140.00) startOffset 0 endOffset 18 width 506.08: "Gradient on stroke"
+layer at (-150,148.80) size 604x78 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGText {text} at (0,140) size 605x79 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 605x79
+      chunk 1 text run 1 at (-150.00,210.00) startOffset 0 endOffset 23 width 604.30: "Gradient on fill/stroke"

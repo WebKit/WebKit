@@ -38,10 +38,10 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResourceMarker.h"
-#include "LegacyRenderSVGResourceSolidColor.h"
 #include "PointerEventsHitRules.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
+#include "SVGPaintServerHandling.h"
 #include "SVGPathData.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
@@ -113,8 +113,8 @@ bool RenderSVGShape::fillContains(const FloatPoint& point, bool requiresFill, co
     if (m_fillBoundingBox.isEmpty() || !m_fillBoundingBox.contains(point))
         return false;
 
-    Color fallbackColor;
-    if (requiresFill && !LegacyRenderSVGResource::fillPaintingResource(*this, style(), fallbackColor))
+    auto paintServerResult = SVGPaintServerHandling::requestPaintServer<SVGPaintServerHandling::Operation::Fill>(*this, style());
+    if (requiresFill && std::holds_alternative<std::monostate>(paintServerResult))
         return false;
 
     return shapeDependentFillContains(point, fillRule);
@@ -130,8 +130,8 @@ bool RenderSVGShape::strokeContains(const FloatPoint& point, bool requiresStroke
     if (approximateStrokeBoundingBox.isEmpty() || !approximateStrokeBoundingBox.contains(point))
         return false;
 
-    Color fallbackColor;
-    if (requiresStroke && !LegacyRenderSVGResource::strokePaintingResource(*this, style(), fallbackColor))
+    auto paintServerResult = SVGPaintServerHandling::requestPaintServer<SVGPaintServerHandling::Operation::Stroke>(*this, style());
+    if (requiresStroke && std::holds_alternative<std::monostate>(paintServerResult))
         return false;
 
     return shapeDependentStrokeContains(point);
@@ -187,36 +187,11 @@ AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
     return graphicsElement().getScreenCTM(SVGLocatable::DisallowStyleUpdate);
 }
 
-void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& originalContext)
+void RenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& context)
 {
-    GraphicsContext* context = &originalContext;
-    Color fallbackColor;
-    if (LegacyRenderSVGResource* fillPaintingResource = LegacyRenderSVGResource::fillPaintingResource(*this, style, fallbackColor)) {
-        if (fillPaintingResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToFill))
-            fillPaintingResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToFill, nullptr, this);
-        else if (fallbackColor.isValid()) {
-            LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-            fallbackResource->setColor(fallbackColor);
-            if (fallbackResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToFill))
-                fallbackResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToFill, nullptr, this);
-        }
-    }
-}
-
-void RenderSVGShape::strokeShapeInternal(const RenderStyle& style, GraphicsContext& originalContext)
-{
-    GraphicsContext* context = &originalContext;
-    Color fallbackColor;
-    if (LegacyRenderSVGResource* strokePaintingResource = LegacyRenderSVGResource::strokePaintingResource(*this, style, fallbackColor)) {
-        if (strokePaintingResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToStroke))
-            strokePaintingResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToStroke, nullptr, this);
-        else if (fallbackColor.isValid()) {
-            LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
-            fallbackResource->setColor(fallbackColor);
-            if (fallbackResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToStroke))
-                fallbackResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToStroke, nullptr, this);
-        }
-    }
+    SVGPaintServerHandling paintServerHandling { context };
+    if (paintServerHandling.preparePaintOperation<SVGPaintServerHandling::Operation::Fill>(*this, style))
+        fillShape(context);
 }
 
 void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& context)
@@ -230,7 +205,10 @@ void RenderSVGShape::strokeShape(const RenderStyle& style, GraphicsContext& cont
         if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
             return;
     }
-    strokeShapeInternal(style, context);
+
+    SVGPaintServerHandling paintServerHandling { context };
+    if (paintServerHandling.preparePaintOperation<SVGPaintServerHandling::Operation::Stroke>(*this, style))
+        strokeShape(context);
 }
 
 void RenderSVGShape::fillStrokeMarkers(PaintInfo& childPaintInfo)

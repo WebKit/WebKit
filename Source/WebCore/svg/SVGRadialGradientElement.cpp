@@ -30,6 +30,7 @@
 #include "LegacyRenderSVGResourceRadialGradient.h"
 #include "NodeName.h"
 #include "RadialGradientAttributes.h"
+#include "RenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
@@ -98,7 +99,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         updateRelativeLengthsInformation();
-        updateSVGRendererForElementChange();
+        invalidateGradientResource();
         return;
     }
 
@@ -107,6 +108,10 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceRadialGradient>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGResourceRadialGradient>(*this, WTFMove(style));
 }
 

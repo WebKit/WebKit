@@ -27,7 +27,6 @@
 #include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGResourceElementClient.h"
-#include "SVGResourcesCache.h"
 
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>

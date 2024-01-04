@@ -32,6 +32,7 @@ class BlendingKeyframes;
 class RenderLayer;
 class RenderSVGResourceClipper;
 class RenderSVGResourceMasker;
+class RenderSVGResourcePaintServer;
 class SVGGraphicsElement;
 
 class RenderLayerModelObject : public RenderElement {
@@ -94,9 +95,12 @@ public:
     virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
     virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
 
-    // TODO: [LBSE] Add more cases here, as soon as we add the corresponding resources.
+    RenderSVGResourcePaintServer* svgFillPaintServerResourceFromStyle(const RenderStyle&) const;
+    RenderSVGResourcePaintServer* svgStrokePaintServerResourceFromStyle(const RenderStyle&) const;
+
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
     RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
+
     void paintSVGClippingMask(PaintInfo&) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
 #endif

@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023, 2024 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +37,7 @@
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "SVGInlineTextBoxInlines.h"
+#include "SVGPaintServerHandling.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
@@ -52,6 +54,9 @@ struct ExpectedSVGInlineTextBoxSize : public LegacyInlineTextBox {
     float float1;
     uint32_t bitfields : 5;
     void* pointer;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    SVGPaintServerOrColor paintServerOrColor;
+#endif
     Vector<SVGTextFragment> vector;
 };
 
@@ -59,7 +64,7 @@ static_assert(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize), 
 
 SVGInlineTextBox::SVGInlineTextBox(RenderSVGInlineText& renderer)
     : LegacyInlineTextBox(renderer)
-    , m_paintingResourceMode(OptionSet<RenderSVGResourceMode>().toRaw())
+    , m_legacyPaintingResourceMode(OptionSet<RenderSVGResourceMode>().toRaw())
     , m_startsNewTextChunk(false)
 {
 }
@@ -199,7 +204,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
         SVGTextFragment& fragment = m_textFragments.at(i);
-        ASSERT(!m_paintingResource);
+        ASSERT(!m_legacyPaintingResource);
 
         fragmentStartPosition = startPosition;
         fragmentEndPosition = endPosition;
@@ -217,7 +222,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
         setPaintingResourceMode({ });
     }
 
-    ASSERT(!m_paintingResource);
+    ASSERT(!m_legacyPaintingResource);
 }
 
 void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
@@ -273,7 +278,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
         SVGTextFragment& fragment = m_textFragments.at(i);
-        ASSERT(!m_paintingResource);
+        ASSERT(!m_legacyPaintingResource);
 
         GraphicsContextStateSaver stateSaver(paintInfo.context());
         fragment.buildFragmentTransform(fragmentTransform);
@@ -321,39 +326,94 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
             renderInline->paintOutline(paintInfo, paintOffset);
     }
 
-    ASSERT(!m_paintingResource);
+    ASSERT(!m_legacyPaintingResource);
 }
 
-bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+bool SVGInlineTextBox::acquirePaintingResource(SVGPaintServerHandling& paintServerHandling, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
+{
+    ASSERT(scalingFactor);
+    ASSERT(!paintingResourceMode().isEmpty());
+    ASSERT(renderer.document().settings().layerBasedSVGEngineEnabled());
+
+    auto& context = paintServerHandling.context();
+    if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill)) {
+        if (!paintServerHandling.preparePaintOperation<SVGPaintServerHandling::Operation::Fill>(parent()->renderer(), style))
+            return false;
+        context.save();
+        context.setTextDrawingMode(TextDrawingMode::Fill);
+    } else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke)) {
+        if (!paintServerHandling.preparePaintOperation<SVGPaintServerHandling::Operation::Stroke>(parent()->renderer(), style))
+            return false;
+        context.save();
+        context.setTextDrawingMode(TextDrawingMode::Stroke);
+
+        if (style.svgStyle().vectorEffect() == VectorEffect::NonScalingStroke) {
+            if (style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision)
+                scalingFactor = 1.0 / RenderSVGInlineText::computeScalingFactorForRenderer(renderer);
+            else
+                scalingFactor = 1.0;
+
+            if (auto zoomFactor = renderer.style().effectiveZoom(); zoomFactor != 1.0)
+                scalingFactor *= zoomFactor;
+
+            if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
+                scalingFactor *= deviceScaleFactor;
+        }
+
+        if (scalingFactor != 1.0)
+            context.setStrokeThickness(context.strokeThickness() * scalingFactor);
+    }
+
+    if (context.fillGradient() || context.strokeGradient()) {
+        context.beginTransparencyLayer(1);
+        context.setCompositeOperation(CompositeOperator::SourceOver);
+    }
+
+    return true;
+}
+
+void SVGInlineTextBox::releasePaintingResource(SVGPaintServerHandling& paintServerHandling)
+{
+    auto& context = paintServerHandling.context();
+
+    if (context.fillGradient() || context.strokeGradient())
+        context.endTransparencyLayer();
+
+    context.restore();
+}
+#endif
+
+bool SVGInlineTextBox::acquireLegacyPaintingResource(GraphicsContext*& context, float scalingFactor, RenderBoxModelObject& renderer, const RenderStyle& style)
 {
     ASSERT(scalingFactor);
     ASSERT(!paintingResourceMode().isEmpty());
 
     Color fallbackColor;
     if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
-        m_paintingResource = LegacyRenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
+        m_legacyPaintingResource = LegacyRenderSVGResource::fillPaintingResource(renderer, style, fallbackColor);
     else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
-        m_paintingResource = LegacyRenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
+        m_legacyPaintingResource = LegacyRenderSVGResource::strokePaintingResource(renderer, style, fallbackColor);
     else {
         // We're either called for stroking or filling.
         ASSERT_NOT_REACHED();
     }
 
-    if (!m_paintingResource)
+    if (!m_legacyPaintingResource)
         return false;
 
-    if (!m_paintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
+    if (!m_legacyPaintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
         if (!fallbackColor.isValid()) {
-            m_paintingResource = nullptr;
+            m_legacyPaintingResource = nullptr;
             return false;
         }
         
         LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
         fallbackResource->setColor(fallbackColor);
 
-        m_paintingResource = fallbackResource;
-        if (!m_paintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
-            m_paintingResource = nullptr;
+        m_legacyPaintingResource = fallbackResource;
+        if (!m_legacyPaintingResource->applyResource(renderer, style, context, paintingResourceMode())) {
+            m_legacyPaintingResource = nullptr;
             return false;
         }
     }
@@ -379,22 +439,12 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
     return true;
 }
 
-void SVGInlineTextBox::releasePaintingResource(GraphicsContext*& context, const Path* path)
+void SVGInlineTextBox::releaseLegacyPaintingResource(GraphicsContext*& context, const Path* path)
 {
-    ASSERT(m_paintingResource);
+    ASSERT(m_legacyPaintingResource);
 
-    m_paintingResource->postApplyResource(parent()->renderer(), context, paintingResourceMode(), path, /*LegacyRenderSVGShape*/ nullptr);
-    m_paintingResource = nullptr;
-}
-
-bool SVGInlineTextBox::prepareGraphicsContextForTextPainting(GraphicsContext*& context, float scalingFactor, const RenderStyle& style)
-{
-    return acquirePaintingResource(context, scalingFactor, parent()->renderer(), style);
-}
-
-void SVGInlineTextBox::restoreGraphicsContextAfterTextPainting(GraphicsContext*& context)
-{
-    releasePaintingResource(context, /* path */nullptr);
+    m_legacyPaintingResource->postApplyResource(parent()->renderer(), context, paintingResourceMode(), path, /*LegacyRenderSVGShape*/ nullptr);
+    m_legacyPaintingResource = nullptr;
 }
 
 TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTextFragment& fragment) const
@@ -498,7 +548,7 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext& context, OptionSet<TextD
 
 void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, OptionSet<TextDecorationLine> decoration, const SVGTextFragment& fragment, RenderBoxModelObject& decorationRenderer)
 {
-    ASSERT(!m_paintingResource);
+    ASSERT(!m_legacyPaintingResource);
     ASSERT(!paintingResourceMode().isEmpty());
 
     auto& decorationStyle = decorationRenderer.style();
@@ -530,9 +580,24 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
     Path path;
     path.addRect(FloatRect(decorationOrigin, FloatSize(width, thickness)));
 
-    GraphicsContext* contextPtr = &context;
-    if (acquirePaintingResource(contextPtr, scalingFactor, decorationRenderer, decorationStyle))
-        releasePaintingResource(contextPtr, &path);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (decorationRenderer.document().settings().layerBasedSVGEngineEnabled()) {
+        SVGPaintServerHandling paintServerHandling { context };
+        if (acquirePaintingResource(paintServerHandling, scalingFactor, decorationRenderer, decorationStyle)) {
+            if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill))
+                context.fillPath(path);
+            else if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
+                context.strokePath(path);
+
+            releasePaintingResource(paintServerHandling);
+        }
+        return;
+    }
+#endif
+
+    GraphicsContext* usedContext = &context;
+    if (acquireLegacyPaintingResource(usedContext, scalingFactor, decorationRenderer, decorationStyle))
+        releaseLegacyPaintingResource(usedContext, &path);
 }
 
 void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const RenderStyle& style, TextRun& textRun, const SVGTextFragment& fragment, unsigned startPosition, unsigned endPosition)
@@ -554,24 +619,77 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
     FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().floatAscent()), textSize);
 
     GraphicsContext* usedContext = &context;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    SVGPaintServerHandling paintServerHandling { context };
+#endif
+
+    auto prepareGraphicsContext = [&]() -> bool {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (renderer().document().settings().layerBasedSVGEngineEnabled())
+            return acquirePaintingResource(paintServerHandling, scalingFactor, parent()->renderer(), style);
+#endif
+
+        return acquireLegacyPaintingResource(usedContext, scalingFactor, parent()->renderer(), style);
+    };
+
+    auto restoreGraphicsContext = [&]() {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
+            releasePaintingResource(paintServerHandling);
+            return;
+        }
+#endif
+
+        releaseLegacyPaintingResource(usedContext, /* path */nullptr);
+    };
+
     do {
-        if (!prepareGraphicsContextForTextPainting(usedContext, scalingFactor, style))
+        if (!prepareGraphicsContext())
             break;
 
         {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+            // Optimized code path to support gradient fill/stroke on text without using temporary ImageBuffers / masking.
+            Gradient* gradient { nullptr };
+            if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
+                auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer());
+                ASSERT(textRootBlock);
+
+                AffineTransform gradientSpaceTransform;
+                if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToFill)) {
+                    gradient = usedContext->fillGradient();
+                    gradientSpaceTransform = usedContext->fillGradientSpaceTransform();
+                } else {
+                    gradient = usedContext->strokeGradient();
+                    gradientSpaceTransform = usedContext->strokeGradientSpaceTransform();
+                }
+
+                if (gradient) {
+                    usedContext->fillRect(textRootBlock->repaintRectInLocalCoordinates(), *gradient, gradientSpaceTransform);
+                    usedContext->setCompositeOperation(CompositeOperator::DestinationIn);
+                    usedContext->beginTransparencyLayer(1);
+                }
+            }
+#endif
+
             ShadowApplier shadowApplier(style, *usedContext, shadow, nullptr, shadowRect);
 
             if (!shadowApplier.didSaveContext())
                 usedContext->save();
-            usedContext->scale(1 / scalingFactor);
 
+            usedContext->scale(1 / scalingFactor);
             scaledFont.drawText(*usedContext, textRun, textOrigin + shadowApplier.extraOffset(), startPosition, endPosition);
 
             if (!shadowApplier.didSaveContext())
                 usedContext->restore();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+            if (gradient)
+                usedContext->endTransparencyLayer();
+#endif
         }
 
-        restoreGraphicsContextAfterTextPainting(usedContext);
+        restoreGraphicsContext();
 
         if (!shadow)
             break;
