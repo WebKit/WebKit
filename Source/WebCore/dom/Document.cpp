@@ -9806,7 +9806,6 @@ void Document::scheduleContentRelevancyUpdate(ContentRelevancy contentRelevancy)
     scheduleRenderingUpdate(RenderingUpdateStep::UpdateContentRelevancy);
 }
 
-// FIXME: remove when scroll anchoring is implemented (https://bugs.webkit.org/show_bug.cgi?id=259269).
 void Document::updateContentRelevancyForScrollIfNeeded(const Element& scrollAnchor)
 {
     if (!m_contentVisibilityDocumentState)
