@@ -650,14 +650,6 @@ LayoutUnit RenderBoxModelObject::offsetTop() const
     return adjustedPositionRelativeToOffsetParent(LayoutPoint()).y();
 }
 
-LayoutUnit RenderBoxModelObject::computedCSSPadding(const Length& padding) const
-{
-    LayoutUnit w;
-    if (padding.isPercentOrCalculated())
-        w = containingBlockLogicalWidthForContent();
-    return minimumValueForLength(padding, w);
-}
-
 InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size) const
 {
     return view().imageQualityController().chooseInterpolationQuality(context, const_cast<RenderBoxModelObject*>(this), image, layer, size);
