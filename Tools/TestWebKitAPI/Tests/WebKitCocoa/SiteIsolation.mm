@@ -1731,4 +1731,63 @@ TEST(SiteIsolation, FindStringInNestedFrame)
     done = false;
 }
 
+#if PLATFORM(MAC)
+TEST(SiteIsolation, ProcessDisplayNames)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://apple.com/apple'></iframe>"_s } },
+        { "/apple"_s, { "<script></script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    enableSiteIsolation(viewConfiguration.get());
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool done { false };
+    [webView.get().configuration.websiteDataStore removeDataOfTypes:WKWebsiteDataStore.allWebsiteDataTypes modifiedSince:NSDate.distantPast completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    pid_t mainFramePID { 0 };
+    pid_t iframePID { 0 };
+    auto trees = frameTrees(webView.get());
+    EXPECT_EQ([trees count], 2u);
+    for (_WKFrameTreeNode *tree in trees.get()) {
+        if (tree.info._isLocalFrame)
+            mainFramePID = tree.info._processIdentifier;
+        else if (tree.childFrames.count)
+            iframePID = tree.childFrames[0].info._processIdentifier;
+    }
+    EXPECT_NE(mainFramePID, iframePID);
+    EXPECT_NE(mainFramePID, 0);
+    EXPECT_NE(iframePID, 0);
+
+    done = false;
+    WKProcessPool *pool = webView.get().configuration.processPool;
+    [pool _getActivePagesOriginsInWebProcessForTesting:mainFramePID completionHandler:^(NSArray<NSString *> *result) {
+        EXPECT_EQ(result.count, 1u);
+        EXPECT_WK_STREQ(result[0], "https://example.com");
+        done = true;
+    }];
+    Util::run(&done);
+
+    done = false;
+    [pool _getActivePagesOriginsInWebProcessForTesting:iframePID completionHandler:^(NSArray<NSString *> *result) {
+        EXPECT_EQ(result.count, 1u);
+        EXPECT_WK_STREQ(result[0], "https://apple.com");
+        done = true;
+    }];
+    Util::run(&done);
+}
+#endif
+
 }
