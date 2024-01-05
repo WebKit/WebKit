@@ -2748,6 +2748,11 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventTargetInterfaces
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventTargetFactory.cpp)
 
 
+GENERATE_EVENT_NAMES(${WEBCORE_DIR}/dom/EventNames.json)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventNames.h)
+list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/EventNames.cpp)
+
+
 GENERATE_FONT_NAMES(${WEBCORE_DIR}/css/WebKitFontFamilyNames.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.cpp)
 

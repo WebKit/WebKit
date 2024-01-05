@@ -1786,6 +1786,8 @@ all : \
     ColorData.cpp \
     DOMJITAbstractHeapRepository.h \
     EventInterfaces.h \
+    EventNames.cpp \
+    EventNames.h \
     EventTargetInterfaces.h \
     HTMLElementFactory.cpp \
     HTMLElementFactory.h \
@@ -2246,6 +2248,22 @@ EVENT_TARGET_FACTORY_PATTERNS = $(subst .,%,$(EVENT_TARGET_FACTORY_FILES))
 all : $(EVENT_TARGET_FACTORY_FILES)
 $(EVENT_TARGET_FACTORY_PATTERNS) : $(WebCore)/dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
+
+# --------
+
+# Event names
+
+EVENT_NAME_JSON := $(WebCore)/dom/EventNames.json
+
+EVENT_NAME_FILES = \
+    EventNames.cpp \
+    EventNames.h \
+#
+EVENT_NAME_FILES_PATTERNS = $(subst .,%,$(EVENT_NAME_FILES))
+
+all : $(EVENT_NAME_FILES)
+$(EVENT_NAME_FILES_PATTERNS) : $(WebCore)/dom/make-event-names.py $(EVENT_NAME_JSON)
+	$(PYTHON) "$(WebCore)/dom/make-event-names.py" --event-names $(EVENT_NAME_JSON)
 
 # --------
 
