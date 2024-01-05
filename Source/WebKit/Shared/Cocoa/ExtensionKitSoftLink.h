@@ -33,5 +33,9 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, ServiceExtensions)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, _SECapability)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, _SEHostable)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, _SEHostingHandle)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, _SEHostingUpdateCoordinator)
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, _SEHostingView)
 
 #endif // USE(EXTENSIONKIT)
