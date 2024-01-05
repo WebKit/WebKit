@@ -21,14 +21,14 @@
 
 #pragma once
 
-#include "Document.h"
-#include "Quirks.h"
 #include "ThreadGlobalData.h"
 #include <array>
 #include <functional>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+
+class EventTarget;
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
 #define DOM_EVENT_NAME_APPLE_PAY_COUPON_CODE_CHANGED(macro) macro(couponcodechanged)
@@ -384,7 +384,6 @@ public:
     // We should choose one term and stick to it.
     bool isWheelEventType(const AtomString& eventType) const;
     bool isGestureEventType(const AtomString& eventType) const;
-    bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget&) const;
     bool isTouchScrollBlockingEventType(const AtomString& eventType) const;
     bool isMouseClickRelatedEventType(const AtomString& eventType) const;
     bool isMouseMoveRelatedEventType(const AtomString& eventType) const;
@@ -421,30 +420,6 @@ inline bool EventNames::isTouchScrollBlockingEventType(const AtomString& eventTy
 {
     return eventType == touchstartEvent
         || eventType == touchmoveEvent;
-}
-
-inline bool EventNames::isTouchRelatedEventType(const AtomString& eventType, const EventTarget& target) const
-{
-#if ENABLE(TOUCH_EVENTS)
-    if (auto* targetNode = dynamicDowncast<Node>(target); targetNode && targetNode->document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {
-        if (eventType == mousedownEvent || eventType == mousemoveEvent || eventType == mouseupEvent)
-            return true;
-    }
-#endif
-    UNUSED_PARAM(target);
-    return eventType == touchstartEvent
-        || eventType == touchmoveEvent
-        || eventType == touchendEvent
-        || eventType == touchcancelEvent
-        || eventType == touchforcechangeEvent
-        || eventType == pointeroverEvent
-        || eventType == pointerenterEvent
-        || eventType == pointerdownEvent
-        || eventType == pointermoveEvent
-        || eventType == pointerupEvent
-        || eventType == pointeroutEvent
-        || eventType == pointerleaveEvent
-        || eventType == pointercancelEvent;
 }
 
 inline bool EventNames::isWheelEventType(const AtomString& eventType) const

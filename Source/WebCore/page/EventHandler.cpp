@@ -91,6 +91,7 @@
 #include "PointerCaptureController.h"
 #include "PointerEventTypeNames.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "Quirks.h"
 #include "Range.h"
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"

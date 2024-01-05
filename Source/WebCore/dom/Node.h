@@ -769,6 +769,8 @@ template<TreeType = Tree> std::partial_ordering treeOrder(const Node&, const Nod
 
 WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const Node&, const Node&);
 
+bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget&);
+
 #if ASSERT_ENABLED
 
 inline void adopted(Node* node)

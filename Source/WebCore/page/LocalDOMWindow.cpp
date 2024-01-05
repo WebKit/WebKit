@@ -95,6 +95,7 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
+#include "Quirks.h"
 #include "RemoteFrame.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
@@ -2055,7 +2056,7 @@ bool LocalDOMWindow::addEventListener(const AtomString& eventType, Ref<EventList
         document->addListenerTypeIfNeeded(eventType);
         if (eventNames.isWheelEventType(eventType))
             document->didAddWheelEventHandler(*document);
-        else if (eventNames.isTouchRelatedEventType(eventType, *document))
+        else if (isTouchRelatedEventType(eventType, *document))
             document->didAddTouchEventHandler(*document);
         else if (eventType == eventNames.storageEvent)
             didAddStorageEventListener(*this);
@@ -2070,7 +2071,7 @@ bool LocalDOMWindow::addEventListener(const AtomString& eventType, Ref<EventList
         incrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames.isTouchRelatedEventType(eventType, *document))
+    else if (document && isTouchRelatedEventType(eventType, *document))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -2298,7 +2299,7 @@ bool LocalDOMWindow::removeEventListener(const AtomString& eventType, EventListe
     if (document) {
         if (eventNames.isWheelEventType(eventType))
             document->didRemoveWheelEventHandler(*document);
-        else if (eventNames.isTouchRelatedEventType(eventType, *document))
+        else if (isTouchRelatedEventType(eventType, *document))
             document->didRemoveTouchEventHandler(*document);
     }
 
@@ -2311,7 +2312,7 @@ bool LocalDOMWindow::removeEventListener(const AtomString& eventType, EventListe
         decrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames.isTouchRelatedEventType(eventType, *document)) {
+    else if (document && isTouchRelatedEventType(eventType, *document)) {
         ASSERT(m_touchAndGestureEventListenerCount > 0);
         --m_touchAndGestureEventListenerCount;
     }
