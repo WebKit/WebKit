@@ -1753,6 +1753,7 @@ public:
     {
         m_classSource.encode(encoder, rareData.m_classSource);
         m_parentScopeTDZVariables.encode(encoder, rareData.m_parentScopeTDZVariables);
+        m_generatorOrAsyncWrapperFunctionParameterNames.encode(encoder, rareData.m_generatorOrAsyncWrapperFunctionParameterNames);
         m_classFieldLocations.encode(encoder, rareData.m_classFieldLocations);
         m_parentPrivateNameEnvironment.encode(encoder, rareData.m_parentPrivateNameEnvironment);
     }
@@ -1762,6 +1763,7 @@ public:
         UnlinkedFunctionExecutable::RareData* rareData = new UnlinkedFunctionExecutable::RareData { };
         m_classSource.decode(decoder, rareData->m_classSource);
         m_parentScopeTDZVariables.decode(decoder, rareData->m_parentScopeTDZVariables);
+        m_generatorOrAsyncWrapperFunctionParameterNames.decode(decoder, rareData->m_generatorOrAsyncWrapperFunctionParameterNames);
         m_classFieldLocations.decode(decoder, rareData->m_classFieldLocations);
         m_parentPrivateNameEnvironment.decode(decoder, rareData->m_parentPrivateNameEnvironment);
         return rareData;
@@ -1770,6 +1772,7 @@ public:
 private:
     CachedSourceCodeWithoutProvider m_classSource;
     CachedRefPtr<CachedTDZEnvironmentLink> m_parentScopeTDZVariables;
+    CachedVector<CachedIdentifier> m_generatorOrAsyncWrapperFunctionParameterNames;
     CachedVector<JSTextPosition> m_classFieldLocations;
     CachedPrivateNameEnvironment m_parentPrivateNameEnvironment;
 };
