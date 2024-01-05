@@ -495,9 +495,11 @@ bool PropertyCondition::isValidValueForAttributes(JSValue value, unsigned attrib
 {
     if (!value)
         return false;
-    bool attributesClaimAccessor = !!(attributes & PropertyAttribute::Accessor);
-    bool valueClaimsAccessor = !!jsDynamicCast<GetterSetter*>(value);
-    return attributesClaimAccessor == valueClaimsAccessor;
+    if (value.inherits<GetterSetter>())
+        return attributes & PropertyAttribute::Accessor;
+    if (value.inherits<CustomGetterSetter>())
+        return attributes & PropertyAttribute::CustomAccessorOrValue;
+    return !(attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue);
 }
 
 bool PropertyCondition::isValidValueForPresence(JSValue value) const
