@@ -1423,13 +1423,16 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     if (cache)
         cache->add(Style::makeHasPseudoClassCacheKey(element, hasSelector), matchTypeForCache());
 
-    auto relationNeededForHasInvalidation = [](Style::Relation::Type type) {
-        switch (type) {
+    auto forwardStyleRelation = [&](const Style::Relation& relation) {
+        switch (relation.type) {
         case Style::Relation::ChildrenAffectedByForwardPositionalRules:
         case Style::Relation::ChildrenAffectedByBackwardPositionalRules:
+            checkingContext.styleRelations.append(Style::Relation { *relation.element, Style::Relation::AffectedByHasWithPositionalPseudoClass });
+            return;
         case Style::Relation::ChildrenAffectedByFirstChildRules:
         case Style::Relation::ChildrenAffectedByLastChildRules:
-            return true;
+            checkingContext.styleRelations.append(relation);
+            return;
         case Style::Relation::AffectedByEmpty:
         case Style::Relation::AffectedByPreviousSibling:
         case Style::Relation::DescendantsAffectedByPreviousSibling:
@@ -1440,16 +1443,15 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
         case Style::Relation::LastChild:
         case Style::Relation::NthChildIndex:
         case Style::Relation::Unique:
-            return false;
+            return;
+        case Style::Relation::AffectedByHasWithPositionalPseudoClass:
+            ASSERT_NOT_REACHED();
+            return;
         }
-        ASSERT_NOT_REACHED();
-        return false;
     };
 
-    for (auto& relation : hasCheckingContext.styleRelations) {
-        if (relationNeededForHasInvalidation(relation.type))
-            checkingContext.styleRelations.append(relation);
-    }
+    for (auto& relation : hasCheckingContext.styleRelations)
+        forwardStyleRelation(relation);
 
     return result;
 }

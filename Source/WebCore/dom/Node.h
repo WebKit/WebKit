@@ -348,7 +348,7 @@ public:
     bool inRenderedDocument() const;
     bool needsStyleRecalc() const { return styleValidity() != Style::Validity::Valid || hasInvalidRenderer(); }
     Style::Validity styleValidity() const { return styleBitfields().styleValidity(); }
-    bool hasInvalidRenderer() const { return hasStyleFlag(NodeStyleFlag::HasInvalidRenderer); }
+    bool hasInvalidRenderer() const { return hasStateFlag(StateFlag::HasInvalidRenderer); }
     bool styleResolutionShouldRecompositeLayer() const { return hasStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer); }
     bool childNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DescendantNeedsStyleResolution); }
     bool isEditingText() const { return isTextNode() && hasTypeFlag(TypeFlag::IsSpecialInternalNode); }
@@ -610,6 +610,7 @@ protected:
 #if ENABLE(FULLSCREEN_API)
         IsFullscreen = 1 << 9,
 #endif
+        HasInvalidRenderer = 1 << 10,
     };
 
     enum class TabIndexState : uint8_t {
@@ -660,8 +661,8 @@ protected:
         DescendantNeedsStyleResolution                          = 1 << 0,
         DirectChildNeedsStyleResolution                         = 1 << 1,
         StyleResolutionShouldRecompositeLayer                   = 1 << 2,
-        HasInvalidRenderer                                      = 1 << 3,
 
+        AffectedByHasWithPositionalPseudoClass                  = 1 << 3,
         ChildrenAffectedByFirstChildRules                       = 1 << 4,
         ChildrenAffectedByLastChildRules                        = 1 << 5,
         AffectsNextSiblingElementStyle                          = 1 << 6,
@@ -869,9 +870,10 @@ inline void Node::setHasValidStyle()
 {
     auto bitfields = styleBitfields();
     bitfields.setStyleValidity(Style::Validity::Valid);
-    bitfields.clearFlags({ NodeStyleFlag::HasInvalidRenderer, NodeStyleFlag::StyleResolutionShouldRecompositeLayer });
+    bitfields.clearFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
     setStyleBitfields(bitfields);
     clearStateFlag(StateFlag::IsComputedStyleInvalidFlag);
+    clearStateFlag(StateFlag::HasInvalidRenderer);
 }
 
 inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)

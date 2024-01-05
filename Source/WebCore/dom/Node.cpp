@@ -919,7 +919,7 @@ void Node::adjustStyleValidity(Style::Validity validity, Style::InvalidationMode
         break;
     case Style::InvalidationMode::RebuildRenderer:
     case Style::InvalidationMode::InsertedIntoAncestor:
-        setStyleFlag(NodeStyleFlag::HasInvalidRenderer);
+        setStateFlag(StateFlag::HasInvalidRenderer);
         break;
     };
 }
