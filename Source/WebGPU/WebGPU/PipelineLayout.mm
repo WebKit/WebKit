@@ -211,15 +211,16 @@ const Vector<uint32_t>* PipelineLayout::offsetVectorForBindGroup(uint32_t bindGr
         auto& container = it->value;
         uint32_t stageOffsetIndex = 0;
         auto& bindGroupLayout = bindGroupLayouts[bindGroupIndex];
-        for (auto& entryKvp : bindGroupLayout->entries()) {
-            auto& entry = entryKvp.value;
+        for (auto* entryPtr : bindGroupLayout->sortedEntries()) {
+            auto& entry = *entryPtr;
             bool hasDynamicOffset = entry.vertexDynamicOffset || entry.fragmentDynamicOffset || entry.computeDynamicOffset;
             if (!hasDynamicOffset)
                 continue;
 
             if (entry.visibility & stage) {
-                RELEASE_ASSERT(container.size() > stageOffsetIndex && dynamicOffsets.size() > entry.dynamicOffsetsIndex);
-                container[stageOffsetIndex] = dynamicOffsets[entry.dynamicOffsetsIndex];
+                auto dynamicOffsetsIndex = entry.dynamicOffsetsIndex;
+                RELEASE_ASSERT(container.size() > stageOffsetIndex && dynamicOffsets.size() > dynamicOffsetsIndex);
+                container[stageOffsetIndex] = dynamicOffsets[dynamicOffsetsIndex];
                 ++stageOffsetIndex;
             }
         }
