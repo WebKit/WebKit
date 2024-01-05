@@ -75,6 +75,11 @@ public:
     WEBCORE_EXPORT static bool shouldEnableVP9SWDecoder();
 #endif
 
+#if ENABLE(EXTENSION_CAPABILITIES)
+    WEBCORE_EXPORT static bool mediaCapabilityGrantsEnabled();
+    WEBCORE_EXPORT static void setMediaCapabilityGrantsEnabled(bool);
+#endif
+
     virtual ~PlatformMediaSessionManager() = default;
 
     virtual void scheduleSessionStatusUpdate() { }
@@ -255,6 +260,10 @@ private:
     static bool m_vp9DecoderEnabled;
     static bool m_vp8DecoderEnabled;
     static bool m_vp9SWDecoderEnabled;
+#endif
+
+#if ENABLE(EXTENSION_CAPABILITIES)
+    static bool s_mediaCapabilityGrantsEnabled;
 #endif
 
 #if !RELEASE_LOG_DISABLED

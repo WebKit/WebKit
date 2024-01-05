@@ -1716,8 +1716,12 @@ static void emitPack4xU8Clamp(FunctionDefinitionWriter* writer, AST::CallExpress
 
 static void emitQuantizeToF16(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
-    writer->stringBuilder().append("float(half(");
-    writer->visit(call.arguments()[0]);
+    auto& argument = call.arguments()[0];
+    String suffix = ""_s;
+    if (auto* vectorType = std::get_if<Types::Vector>(argument.inferredType()))
+        suffix = String::number(vectorType->size);
+    writer->stringBuilder().append("float", suffix, "(half", suffix, "(");
+    writer->visit(argument);
     writer->stringBuilder().append("))");
 }
 

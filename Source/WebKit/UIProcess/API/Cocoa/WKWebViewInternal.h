@@ -127,6 +127,12 @@ struct LiveResizeParameters {
     CGPoint initialScrollPosition;
 };
 
+struct OverriddenLayoutParameters {
+    CGSize viewLayoutSize { CGSizeZero };
+    CGSize minimumUnobscuredSize { CGSizeZero };
+    CGSize maximumUnobscuredSize { CGSizeZero };
+};
+
 // This holds state that should be reset when the web process exits.
 struct PerWebProcessState {
     CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
@@ -239,9 +245,7 @@ struct PerWebProcessState {
     
     PerWebProcessState _perProcessState;
 
-    std::optional<CGSize> _viewLayoutSizeOverride;
-    std::optional<CGSize> _minimumUnobscuredSizeOverride;
-    std::optional<CGSize> _maximumUnobscuredSizeOverride;
+    std::optional<OverriddenLayoutParameters> _overriddenLayoutParameters;
     CGRect _inputViewBoundsInWindow;
 
     BOOL _fastClickingIsDisabled;

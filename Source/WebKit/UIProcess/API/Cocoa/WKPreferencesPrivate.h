@@ -191,6 +191,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setManagedMediaSourceEnabled:) BOOL _managedMediaSourceEnabled  WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, setter=_setManagedMediaSourceLowThreshold:) double _managedMediaSourceLowThreshold WK_API_AVAILABLE(macos(14.0), ios(17.0));
 @property (nonatomic, setter=_setManagedMediaSourceHighThreshold:) double _managedMediaSourceHighThreshold WK_API_AVAILABLE(macos(14.0), ios(17.0));
+@property (nonatomic, setter=_setMediaCapabilityGrantsEnabled:) BOOL _mediaCapabilityGrantsEnabled WK_API_AVAILABLE(WK_IOS_TBA) WK_API_UNAVAILABLE(macos);
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));

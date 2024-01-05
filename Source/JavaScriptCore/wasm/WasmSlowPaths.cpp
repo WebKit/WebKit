@@ -486,6 +486,23 @@ WASM_SLOW_PATH_DECL(array_set)
     WASM_END_IMPL();
 }
 
+WASM_SLOW_PATH_DECL(array_fill)
+{
+    SlowPathFrameTracer tracer(instance->vm(), callFrame);
+
+    auto instruction = pc->as<WasmArrayFill>();
+    EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
+    if (JSValue::decode(arrayref).isNull())
+        WASM_THROW(Wasm::ExceptionType::NullArrayFill);
+    uint32_t offset = READ(instruction.m_offset).unboxedUInt32();
+    EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
+    uint32_t size = READ(instruction.m_size).unboxedUInt32();
+
+    if (!Wasm::arrayFill(instance, instruction.m_typeIndex, arrayref, offset, value, size))
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayFill);
+    WASM_END_IMPL();
+}
+
 WASM_SLOW_PATH_DECL(struct_new)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
@@ -829,6 +846,52 @@ WASM_SLOW_PATH_DECL(call_builtin)
     case Wasm::LLIntBuiltin::AnyConvertExtern: {
         auto reference = takeGPR().encodedJSValue();
         gprStart[0] = Wasm::externInternalize(reference);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::ArrayCopy: {
+        takeGPR().unboxedUInt32();
+        EncodedJSValue dst = takeGPR().encodedJSValue();
+        uint32_t dstOffset = takeGPR().unboxedUInt32();
+        takeGPR().unboxedUInt32();
+        EncodedJSValue src = takeGPR().encodedJSValue();
+        uint32_t srcOffset = takeGPR().unboxedUInt32();
+        uint32_t size = takeGPR().unboxedUInt32();
+
+        if (JSValue::decode(dst).isNull() || JSValue::decode(src).isNull())
+            WASM_THROW(Wasm::ExceptionType::NullArrayCopy);
+
+        if (!Wasm::arrayCopy(instance, dst, dstOffset, src, srcOffset, size))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayCopy);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::ArrayInitElem: {
+        takeGPR().unboxedUInt32();
+        EncodedJSValue dst = takeGPR().encodedJSValue();
+        uint32_t dstOffset = takeGPR().unboxedUInt32();
+        uint32_t srcElementIndex = takeGPR().unboxedUInt32();
+        uint32_t srcOffset = takeGPR().unboxedUInt32();
+        uint32_t size = takeGPR().unboxedUInt32();
+
+        if (JSValue::decode(dst).isNull())
+            WASM_THROW(Wasm::ExceptionType::NullArrayInitElem);
+
+        if (!Wasm::arrayInitElem(instance, dst, dstOffset, srcElementIndex, srcOffset, size))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayInitElem);
+        WASM_END();
+    }
+    case Wasm::LLIntBuiltin::ArrayInitData: {
+        takeGPR().unboxedUInt32();
+        EncodedJSValue dst = takeGPR().encodedJSValue();
+        uint32_t dstOffset = takeGPR().unboxedUInt32();
+        uint32_t srcDataIndex = takeGPR().unboxedUInt32();
+        uint32_t srcOffset = takeGPR().unboxedUInt32();
+        uint32_t size = takeGPR().unboxedUInt32();
+
+        if (JSValue::decode(dst).isNull())
+            WASM_THROW(Wasm::ExceptionType::NullArrayInitData);
+
+        if (!Wasm::arrayInitData(instance, dst, dstOffset, srcDataIndex, srcOffset, size))
+            WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayInitData);
         WASM_END();
     }
     default:

@@ -53,7 +53,7 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePagePseudoSelector(
 
 std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoElementSelector(StringView pseudoTypeString, const CSSSelectorParserContext& context)
 {
-    auto pseudoType = CSSSelector::parsePseudoElement(pseudoTypeString, context);
+    auto pseudoType = CSSSelector::parsePseudoElementName(pseudoTypeString, context);
     if (!pseudoType)
         return nullptr;
 
@@ -71,7 +71,7 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoElementSelect
 
 std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoClassSelector(StringView pseudoTypeString, const CSSSelectorParserContext& context)
 {
-    auto pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
+    auto pseudoType = findPseudoClassAndCompatibilityElementName(pseudoTypeString);
     if (pseudoType.pseudoClass) {
         if (!CSSSelector::isPseudoClassEnabled(*pseudoType.pseudoClass, context))
             return nullptr;

@@ -5005,6 +5005,7 @@ void Element::resetComputedStyle()
 void Element::resetStyleRelations()
 {
     clearStyleFlags(NodeStyleFlag::StyleAffectedByEmpty);
+    clearStyleFlags(NodeStyleFlag::AffectedByHasWithPositionalPseudoClass);
     if (!hasRareData())
         return;
     elementRareData()->setChildIndex(0);

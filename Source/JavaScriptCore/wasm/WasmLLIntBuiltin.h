@@ -47,6 +47,9 @@ enum class LLIntBuiltin : uint8_t {
     ArrayNewData,
     ArrayNewElem,
     AnyConvertExtern,
+    ArrayCopy,
+    ArrayInitElem,
+    ArrayInitData,
 };
 
 } } // namespace JSC::Wasm

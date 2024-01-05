@@ -4222,7 +4222,7 @@ MediaCapabilitiesExtensionsEnabled:
 
 MediaCapabilityGrantsEnabled:
   type: bool
-  status: unstable
+  status: embedder
   condition: ENABLE(EXTENSION_CAPABILITIES)
   humanReadableName: "Media Capability Grants"
   humanReadableDescription: "Enable granting and revoking of media capabilities"

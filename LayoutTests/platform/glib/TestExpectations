@@ -2027,7 +2027,8 @@ webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Crash F
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure Pass ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
-webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
+# Uncomment when webkit.org/b/267126 is fixed
+#webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
@@ -3759,6 +3760,8 @@ webkit.org/b/266708 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
 
 webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
+
+webkit.org/b/267126 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout Crash ]
 
 # End: Common failures between GTK and WPE.
 

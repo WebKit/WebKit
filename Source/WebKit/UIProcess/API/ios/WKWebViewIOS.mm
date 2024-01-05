@@ -963,7 +963,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     bool isZoomed = !WebKit::scalesAreEssentiallyEqual(layerTreeTransaction.pageScaleFactor(), layerTreeTransaction.initialScaleFactor()) && (layerTreeTransaction.pageScaleFactor() > layerTreeTransaction.initialScaleFactor());
 
     bool scrollingNeededToRevealUI = false;
-    if (_maximumUnobscuredSizeOverride) {
+    if (_overriddenLayoutParameters) {
         auto unobscuredContentRect = _page->unobscuredContentRect();
         auto maxUnobscuredSize = _page->maximumUnobscuredSize();
         auto minUnobscuredSize = _page->minimumUnobscuredSize();
@@ -2145,8 +2145,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (WebCore::FloatSize)activeViewLayoutSize:(const CGRect&)bounds
 {
-    if (_viewLayoutSizeOverride)
-        return WebCore::FloatSize(_viewLayoutSizeOverride.value());
+    if (_overriddenLayoutParameters)
+        return WebCore::FloatSize(_overriddenLayoutParameters->viewLayoutSize);
 
     return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), self._scrollViewSystemContentInset).size);
 }
@@ -2278,10 +2278,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
 
     if (!self._shouldDeferGeometryUpdates) {
-        if (!_viewLayoutSizeOverride)
+        if (!_overriddenLayoutParameters) {
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
-        if (!_maximumUnobscuredSizeOverride)
             _page->setDefaultUnobscuredSize(WebCore::FloatSize(bounds.size));
+        }
+
         [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 
         [self _updateDrawingAreaSize];
@@ -2658,12 +2659,18 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
 static WebCore::FloatSize activeMinimumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
 {
-    return WebCore::FloatSize(webView->_minimumUnobscuredSizeOverride.value_or(bounds.size));
+    if (!webView->_overriddenLayoutParameters)
+        return WebCore::FloatSize(bounds.size);
+
+    return WebCore::FloatSize(webView->_overriddenLayoutParameters->minimumUnobscuredSize);
 }
 
 static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
 {
-    return WebCore::FloatSize(webView->_maximumUnobscuredSizeOverride.value_or(bounds.size));
+    if (!webView->_overriddenLayoutParameters)
+        return WebCore::FloatSize(bounds.size);
+
+    return WebCore::FloatSize(webView->_overriddenLayoutParameters->maximumUnobscuredSize);
 }
 
 static WebCore::IntDegrees activeOrientation(WKWebView *webView)
@@ -2783,9 +2790,8 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     if (!_perProcessState.lastSentViewLayoutSize || newViewLayoutSize != _perProcessState.lastSentViewLayoutSize.value() || newMinimumEffectiveDeviceWidth != _perProcessState.lastSentMinimumEffectiveDeviceWidth.value())
         [self _dispatchSetViewLayoutSize:newViewLayoutSize];
 
-    if (_minimumUnobscuredSizeOverride)
+    if (_overriddenLayoutParameters) {
         _page->setMinimumUnobscuredSize(WebCore::FloatSize(newMinimumUnobscuredSize));
-    if (_maximumUnobscuredSizeOverride) {
         _page->setDefaultUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
         _page->setMaximumUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
     }
@@ -3027,7 +3033,7 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 
     _perProcessState.avoidsUnsafeArea = avoidsUnsafeArea;
 
-    if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_viewLayoutSizeOverride)
+    if ([self _updateScrollViewContentInsetsIfNecessary] && !self._shouldDeferGeometryUpdates && !_overriddenLayoutParameters)
         [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
 
     [self _updateScrollViewInsetAdjustmentBehavior];
@@ -3424,24 +3430,7 @@ static bool isLockdownModeWarningNeeded()
 
 - (BOOL)_hasOverriddenLayoutParameters
 {
-    return _viewLayoutSizeOverride
-        || _minimumUnobscuredSizeOverride
-        || _maximumUnobscuredSizeOverride;
-}
-
-- (std::optional<CGSize>)_viewLayoutSizeOverride
-{
-    return _viewLayoutSizeOverride;
-}
-
-- (std::optional<CGSize>)_minimumUnobscuredSizeOverride
-{
-    return _minimumUnobscuredSizeOverride;
-}
-
-- (std::optional<CGSize>)_maximumUnobscuredSizeOverride
-{
-    return _maximumUnobscuredSizeOverride;
+    return _overriddenLayoutParameters.has_value();
 }
 
 - (void)_resetObscuredInsets
@@ -3551,49 +3540,30 @@ static bool isLockdownModeWarningNeeded()
 // Deprecated SPI.
 - (CGSize)_minimumLayoutSizeOverride
 {
-    ASSERT(_viewLayoutSizeOverride);
-    return _viewLayoutSizeOverride.value_or(CGSizeZero);
-}
+    ASSERT(_overriddenLayoutParameters);
+    if (!_overriddenLayoutParameters)
+        return CGSizeZero;
 
-- (void)_setViewLayoutSizeOverride:(CGSize)viewLayoutSizeOverride
-{
-    _viewLayoutSizeOverride = viewLayoutSizeOverride;
-
-    if (!self._shouldDeferGeometryUpdates)
-        [self _dispatchSetViewLayoutSize:WebCore::FloatSize(viewLayoutSizeOverride)];
+    return _overriddenLayoutParameters->viewLayoutSize;
 }
 
 - (CGSize)_minimumUnobscuredSizeOverride
 {
-    ASSERT(_minimumUnobscuredSizeOverride);
-    return _minimumUnobscuredSizeOverride.value_or(CGSizeZero);
-}
+    ASSERT(_overriddenLayoutParameters);
+    if (!_overriddenLayoutParameters)
+        return CGSizeZero;
 
-- (void)_setMinimumUnobscuredSizeOverride:(CGSize)size
-{
-    ASSERT((!self.bounds.size.width || size.width <= self.bounds.size.width) && (!self.bounds.size.height || size.height <= self.bounds.size.height));
-    _minimumUnobscuredSizeOverride = size;
-
-    if (!self._shouldDeferGeometryUpdates)
-        _page->setMinimumUnobscuredSize(WebCore::FloatSize(size));
+    return _overriddenLayoutParameters->minimumUnobscuredSize;
 }
 
 // Deprecated SPI
 - (CGSize)_maximumUnobscuredSizeOverride
 {
-    ASSERT(_maximumUnobscuredSizeOverride);
-    return _maximumUnobscuredSizeOverride.value_or(CGSizeZero);
-}
+    ASSERT(_overriddenLayoutParameters);
+    if (!_overriddenLayoutParameters)
+        return CGSizeZero;
 
-- (void)_setMaximumUnobscuredSizeOverride:(CGSize)size
-{
-    ASSERT((!self.bounds.size.width || size.width <= self.bounds.size.width) && (!self.bounds.size.height || size.height <= self.bounds.size.height));
-    _maximumUnobscuredSizeOverride = size;
-
-    if (!self._shouldDeferGeometryUpdates) {
-        _page->setDefaultUnobscuredSize(WebCore::FloatSize(size));
-        _page->setMaximumUnobscuredSize(WebCore::FloatSize(size));
-    }
+    return _overriddenLayoutParameters->maximumUnobscuredSize;
 }
 
 - (UIEdgeInsets)_obscuredInsets
@@ -3934,11 +3904,9 @@ static bool isLockdownModeWarningNeeded()
         }
 
         [self _frameOrBoundsMayHaveChanged];
-        if (_viewLayoutSizeOverride)
+        if (_overriddenLayoutParameters) {
             [self _dispatchSetViewLayoutSize:newViewLayoutSize];
-        if (_minimumUnobscuredSizeOverride)
             _page->setMinimumUnobscuredSize(WebCore::FloatSize(newMinimumUnobscuredSize));
-        if (_maximumUnobscuredSizeOverride) {
             _page->setDefaultUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
             _page->setMaximumUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
         }
@@ -4155,16 +4123,29 @@ static bool isLockdownModeWarningNeeded()
     if (minimumLayoutSize.width < 0 || minimumLayoutSize.height < 0)
         RELEASE_LOG_FAULT(VisibleRects, "%s: Error: attempting to override layout parameters with negative width or height: %@", __PRETTY_FUNCTION__, NSStringFromCGSize(minimumLayoutSize));
 
-    [self _setViewLayoutSizeOverride:CGSizeMake(std::max<CGFloat>(0, minimumLayoutSize.width), std::max<CGFloat>(0, minimumLayoutSize.height))];
-    [self _setMinimumUnobscuredSizeOverride:minimumUnobscuredSizeOverride];
-    [self _setMaximumUnobscuredSizeOverride:maximumUnobscuredSizeOverride];
+    OverriddenLayoutParameters overriddenLayoutParameters;
+
+    overriddenLayoutParameters.viewLayoutSize = CGSizeMake(std::max<CGFloat>(0, minimumLayoutSize.width), std::max<CGFloat>(0, minimumLayoutSize.height));
+
+    ASSERT((!self.bounds.size.width || minimumUnobscuredSizeOverride.width <= self.bounds.size.width) && (!self.bounds.size.height || minimumUnobscuredSizeOverride.height <= self.bounds.size.height));
+    overriddenLayoutParameters.minimumUnobscuredSize = minimumUnobscuredSizeOverride;
+
+    ASSERT((!self.bounds.size.width || maximumUnobscuredSizeOverride.width <= self.bounds.size.width) && (!self.bounds.size.height || maximumUnobscuredSizeOverride.height <= self.bounds.size.height));
+    overriddenLayoutParameters.maximumUnobscuredSize = maximumUnobscuredSizeOverride;
+
+    _overriddenLayoutParameters = overriddenLayoutParameters;
+
+    if (!self._shouldDeferGeometryUpdates) {
+        [self _dispatchSetViewLayoutSize:WebCore::FloatSize(overriddenLayoutParameters.viewLayoutSize)];
+        _page->setMinimumUnobscuredSize(WebCore::FloatSize(overriddenLayoutParameters.minimumUnobscuredSize));
+        _page->setDefaultUnobscuredSize(WebCore::FloatSize(overriddenLayoutParameters.maximumUnobscuredSize));
+        _page->setMaximumUnobscuredSize(WebCore::FloatSize(overriddenLayoutParameters.maximumUnobscuredSize));
+    }
 }
 
 - (void)_clearOverrideLayoutParameters
 {
-    _viewLayoutSizeOverride = std::nullopt;
-    _minimumUnobscuredSizeOverride = std::nullopt;
-    _maximumUnobscuredSizeOverride = std::nullopt;
+    _overriddenLayoutParameters = std::nullopt;
 
     _page->setMinimumUnobscuredSize({ });
     _page->setDefaultUnobscuredSize({ });

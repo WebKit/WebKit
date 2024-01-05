@@ -95,6 +95,7 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
+#include "Quirks.h"
 #include "RemoteFrame.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResourceLoadInfo.h"
@@ -1684,7 +1685,7 @@ Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, cons
     std::optional<PseudoId> pseudoId = PseudoId::None;
     // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
     if (pseudoElt.startsWith(":"_s))
-        pseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
+        pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
     return CSSComputedStyleDeclaration::create(element, pseudoId);
 }
 
@@ -1695,7 +1696,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
 
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto optionalPseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElement, parserContext);
+    auto optionalPseudoId = CSSSelector::parsePseudoElement(pseudoElement, parserContext);
     if (!optionalPseudoId && !pseudoElement.isEmpty())
         return nullptr;
     auto pseudoId = optionalPseudoId ? *optionalPseudoId : PseudoId::None;
@@ -2055,7 +2056,7 @@ bool LocalDOMWindow::addEventListener(const AtomString& eventType, Ref<EventList
         document->addListenerTypeIfNeeded(eventType);
         if (eventNames.isWheelEventType(eventType))
             document->didAddWheelEventHandler(*document);
-        else if (eventNames.isTouchRelatedEventType(eventType, *document))
+        else if (isTouchRelatedEventType(eventType, *document))
             document->didAddTouchEventHandler(*document);
         else if (eventType == eventNames.storageEvent)
             didAddStorageEventListener(*this);
@@ -2070,7 +2071,7 @@ bool LocalDOMWindow::addEventListener(const AtomString& eventType, Ref<EventList
         incrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames.isTouchRelatedEventType(eventType, *document))
+    else if (document && isTouchRelatedEventType(eventType, *document))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -2298,7 +2299,7 @@ bool LocalDOMWindow::removeEventListener(const AtomString& eventType, EventListe
     if (document) {
         if (eventNames.isWheelEventType(eventType))
             document->didRemoveWheelEventHandler(*document);
-        else if (eventNames.isTouchRelatedEventType(eventType, *document))
+        else if (isTouchRelatedEventType(eventType, *document))
             document->didRemoveTouchEventHandler(*document);
     }
 
@@ -2311,7 +2312,7 @@ bool LocalDOMWindow::removeEventListener(const AtomString& eventType, EventListe
         decrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && eventNames.isTouchRelatedEventType(eventType, *document)) {
+    else if (document && isTouchRelatedEventType(eventType, *document)) {
         ASSERT(m_touchAndGestureEventListenerCount > 0);
         --m_touchAndGestureEventListenerCount;
     }

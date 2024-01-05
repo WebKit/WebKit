@@ -1092,41 +1092,67 @@ fn testBitcast()
 // 16.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 
 // 16.3.1
+// RUN: %metal-compile testAll
+@compute @workgroup_size(1)
 fn testAll()
 {
+    let b = false;
+
     // [N].(Vector[Bool, N]) => Bool,
     _ = all(vec2(false, true));
     _ = all(vec3(true, true, true));
     _ = all(vec4(false, false, false, false));
+    _ = all(vec2(b));
+    _ = all(vec3(b));
+    _ = all(vec4(b));
 
     // [N].(Bool) => Bool,
     _ = all(true);
     _ = all(false);
+    _ = all(b);
 }
 
 // 16.3.2
+// RUN: %metal-compile testAny
+@compute @workgroup_size(1)
 fn testAny()
 {
+    let b = false;
+
     // [N].(Vector[Bool, N]) => Bool,
     _ = any(vec2(false, true));
     _ = any(vec3(true, true, true));
     _ = any(vec4(false, false, false, false));
+    _ = any(vec2(b));
+    _ = any(vec3(b));
+    _ = any(vec4(b));
 
     // [N].(Bool) => Bool,
     _ = any(true);
     _ = any(false);
+    _ = any(b);
 }
 
 // 16.3.3
+// RUN: %metal-compile testSelect
+@compute @workgroup_size(1)
 fn testSelect()
 {
+    let b = false;
     // [T < Scalar].(T, T, Bool) => T,
     {
         _ = select(13, 42,   false);
         _ = select(13, 42i,  false);
         _ = select(13, 42u,  true);
         _ = select(13, 42f,  true);
+        _ = select(13, 42h,  true);
         _ = select(13, 42.0, true);
+        _ = select(13, 42,   b);
+        _ = select(13, 42i,  b);
+        _ = select(13, 42u,  b);
+        _ = select(13, 42f,  b);
+        _ = select(13, 42h,  b);
+        _ = select(13, 42.0, b);
     }
 
     // [T < Scalar, N].(Vector[T, N], Vector[T, N], Bool) => Vector[T, N],
@@ -1135,21 +1161,42 @@ fn testSelect()
         _ = select(vec2(13), vec2(42i),  false);
         _ = select(vec2(13), vec2(42u),  true);
         _ = select(vec2(13), vec2(42f),  true);
+        _ = select(vec2(13), vec2(42h),  true);
         _ = select(vec2(13), vec2(42.0), true);
+        _ = select(vec2(13), vec2(42),   b);
+        _ = select(vec2(13), vec2(42i),  b);
+        _ = select(vec2(13), vec2(42u),  b);
+        _ = select(vec2(13), vec2(42f),  b);
+        _ = select(vec2(13), vec2(42h),  b);
+        _ = select(vec2(13), vec2(42.0), b);
     }
     {
         _ = select(vec3(13), vec3(42),   false);
         _ = select(vec3(13), vec3(42i),  false);
         _ = select(vec3(13), vec3(42u),  true);
         _ = select(vec3(13), vec3(42f),  true);
+        _ = select(vec3(13), vec3(42h),  true);
         _ = select(vec3(13), vec3(42.0), true);
+        _ = select(vec3(13), vec3(42),   b);
+        _ = select(vec3(13), vec3(42i),  b);
+        _ = select(vec3(13), vec3(42u),  b);
+        _ = select(vec3(13), vec3(42f),  b);
+        _ = select(vec3(13), vec3(42h),  b);
+        _ = select(vec3(13), vec3(42.0), b);
     }
     {
         _ = select(vec4(13), vec4(42),   false);
         _ = select(vec4(13), vec4(42i),  false);
         _ = select(vec4(13), vec4(42u),  true);
         _ = select(vec4(13), vec4(42f),  true);
+        _ = select(vec4(13), vec4(42h),  true);
         _ = select(vec4(13), vec4(42.0), true);
+        _ = select(vec4(13), vec4(42),   b);
+        _ = select(vec4(13), vec4(42i),  b);
+        _ = select(vec4(13), vec4(42u),  b);
+        _ = select(vec4(13), vec4(42f),  b);
+        _ = select(vec4(13), vec4(42h),  b);
+        _ = select(vec4(13), vec4(42.0), b);
     }
 
     // [T < Scalar, N].(Vector[T, N], Vector[T, N], Vector[Bool, N]) => Vector[T, N],
@@ -1158,21 +1205,42 @@ fn testSelect()
         _ = select(vec2(13), vec2(42i),  vec2(false));
         _ = select(vec2(13), vec2(42u),  vec2(true));
         _ = select(vec2(13), vec2(42f),  vec2(true));
+        _ = select(vec2(13), vec2(42h),  vec2(true));
         _ = select(vec2(13), vec2(42.0), vec2(true));
+        _ = select(vec2(13), vec2(42),   vec2(b));
+        _ = select(vec2(13), vec2(42i),  vec2(b));
+        _ = select(vec2(13), vec2(42u),  vec2(b));
+        _ = select(vec2(13), vec2(42f),  vec2(b));
+        _ = select(vec2(13), vec2(42h),  vec2(b));
+        _ = select(vec2(13), vec2(42.0), vec2(b));
     }
     {
         _ = select(vec3(13), vec3(42),   vec3(false));
         _ = select(vec3(13), vec3(42i),  vec3(false));
         _ = select(vec3(13), vec3(42u),  vec3(true));
         _ = select(vec3(13), vec3(42f),  vec3(true));
+        _ = select(vec3(13), vec3(42h),  vec3(true));
         _ = select(vec3(13), vec3(42.0), vec3(true));
+        _ = select(vec3(13), vec3(42),   vec3(b));
+        _ = select(vec3(13), vec3(42i),  vec3(b));
+        _ = select(vec3(13), vec3(42u),  vec3(b));
+        _ = select(vec3(13), vec3(42f),  vec3(b));
+        _ = select(vec3(13), vec3(42h),  vec3(b));
+        _ = select(vec3(13), vec3(42.0), vec3(b));
     }
     {
         _ = select(vec4(13), vec4(42),   vec4(false));
         _ = select(vec4(13), vec4(42i),  vec4(false));
         _ = select(vec4(13), vec4(42u),  vec4(true));
         _ = select(vec4(13), vec4(42f),  vec4(true));
+        _ = select(vec4(13), vec4(42h),  vec4(true));
         _ = select(vec4(13), vec4(42.0), vec4(true));
+        _ = select(vec4(13), vec4(42),   vec4(b));
+        _ = select(vec4(13), vec4(42i),  vec4(b));
+        _ = select(vec4(13), vec4(42u),  vec4(b));
+        _ = select(vec4(13), vec4(42f),  vec4(b));
+        _ = select(vec4(13), vec4(42h),  vec4(b));
+        _ = select(vec4(13), vec4(42.0), vec4(b));
     }
 }
 

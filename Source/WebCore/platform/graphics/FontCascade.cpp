@@ -105,22 +105,25 @@ FontCascade& FontCascade::operator=(const FontCascade& other)
 
 bool FontCascade::operator==(const FontCascade& other) const
 {
-    if (isLoadingCustomFonts() || other.isLoadingCustomFonts())
-        return false;
-
     if (m_fontDescription != other.m_fontDescription || m_spacing != other.m_spacing)
         return false;
+
     if (m_fonts == other.m_fonts)
         return true;
+
     if (!m_fonts || !other.m_fonts)
         return false;
+
     if (m_fonts->fontSelector() != other.m_fonts->fontSelector())
         return false;
+
     // Can these cases actually somehow occur? All fonts should get wiped out by full style recalc.
     if (m_fonts->fontSelectorVersion() != other.m_fonts->fontSelectorVersion())
         return false;
+
     if (m_fonts->generation() != other.m_fonts->generation())
         return false;
+
     return true;
 }
 

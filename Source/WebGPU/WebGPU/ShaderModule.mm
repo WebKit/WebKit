@@ -388,7 +388,7 @@ static WGPUVertexFormat vertexFormatTypeForStructMember(const WGSL::Type* type)
     return vertexFormatTypeFromPrimitive(primitiveType, vectorSize);
 }
 
-static ShaderModule::FragmentOutputs parseReturnType(const WGSL::Type& type)
+static ShaderModule::FragmentOutputs parseFragmentReturnType(const WGSL::Type& type)
 {
     ShaderModule::FragmentOutputs fragmentOutputs;
     if (auto* returnPrimitive = std::get_if<WGSL::Types::Primitive>(&type)) {
@@ -414,6 +414,41 @@ static ShaderModule::FragmentOutputs parseReturnType(const WGSL::Type& type)
     return fragmentOutputs;
 }
 
+static ShaderModule::VertexOutputs parseVertexReturnType(const WGSL::Type& type)
+{
+    ShaderModule::VertexOutputs vertexOutputs;
+    if (auto* returnPrimitive = std::get_if<WGSL::Types::Primitive>(&type)) {
+        vertexOutputs.add(0, ShaderModule::VertexOutputFragmentInput {
+            .dataType = metalDataTypeFromPrimitive(returnPrimitive),
+            .interpolation = std::nullopt
+        });
+        return vertexOutputs;
+    }
+    if (std::get_if<WGSL::Types::Vector>(&type)) {
+        vertexOutputs.add(0, ShaderModule::VertexOutputFragmentInput {
+            .dataType = metalDataTypeForStructMember(&type),
+            .interpolation = std::nullopt
+        });
+        return vertexOutputs;
+    }
+    auto* returnStruct = std::get_if<WGSL::Types::Struct>(&type);
+    if (!returnStruct)
+        return vertexOutputs;
+
+    for (auto& member : returnStruct->structure.members()) {
+        if (!member.location() || member.builtin())
+            continue;
+
+        auto location = *member.location();
+        vertexOutputs.add(location, ShaderModule::VertexOutputFragmentInput {
+            .dataType = metalDataTypeForStructMember(member.type().inferredType()),
+            .interpolation = member.interpolation()
+        });
+    }
+
+    return vertexOutputs;
+}
+
 static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStageIn& vertexStageIn)
 {
     auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
@@ -429,6 +464,24 @@ static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStage
     }
 }
 
+static void populateFragmentInputs(const WGSL::Type& type, ShaderModule::FragmentInputs& fragmentInputs)
+{
+    auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
+    if (!inputStruct)
+        return;
+
+    for (auto& member : inputStruct->structure.members()) {
+        if (!member.location())
+            continue;
+        auto location = *member.location();
+        auto dataType = metalDataTypeForStructMember(member.type().inferredType());
+        fragmentInputs.add(location, ShaderModule::VertexOutputFragmentInput {
+            .dataType = dataType,
+            .interpolation = member.interpolation()
+        });
+    }
+}
+
 static ShaderModule::VertexStageIn parseStageIn(const WGSL::AST::Function& function)
 {
     ShaderModule::VertexStageIn result;
@@ -438,6 +491,20 @@ static ShaderModule::VertexStageIn parseStageIn(const WGSL::AST::Function& funct
 
         if (auto* inferredType = parameter.typeName().inferredType())
             populateStageInMap(*inferredType, result);
+    }
+
+    return result;
+}
+
+static ShaderModule::FragmentInputs parseFragmentInputs(const WGSL::AST::Function& function)
+{
+    ShaderModule::FragmentInputs result;
+    for (auto& parameter : function.parameters()) {
+        if (parameter.role() != WGSL::AST::ParameterRole::UserDefined)
+            continue;
+
+        if (auto* inferredType = parameter.typeName().inferredType())
+            populateFragmentInputs(*inferredType, result);
     }
 
     return result;
@@ -463,6 +530,10 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
             switch (*function.stage()) {
             case WGSL::ShaderStage::Vertex: {
                 m_stageInTypesForEntryPoint.add(function.name(), parseStageIn(function));
+                if (auto expression = function.maybeReturnType()) {
+                    if (auto* inferredType = expression->inferredType())
+                        m_vertexReturnTypeForEntryPoint.add(function.name(), parseVertexReturnType(*inferredType));
+                }
                 if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
                     allowVertexDefault = false;
                     m_defaultVertexEntryPoint = emptyString();
@@ -471,9 +542,10 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
                 m_defaultVertexEntryPoint = function.name();
             } break;
             case WGSL::ShaderStage::Fragment: {
+                m_fragmentInputsForEntryPoint.add(function.name(), parseFragmentInputs(function));
                 if (auto expression = function.maybeReturnType()) {
                     if (auto* inferredType = expression->inferredType())
-                        m_returnTypeForEntryPoint.add(function.name(), parseReturnType(*inferredType));
+                        m_fragmentReturnTypeForEntryPoint.add(function.name(), parseFragmentReturnType(*inferredType));
                 }
                 if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
                     allowFragmentDefault = false;
@@ -498,9 +570,25 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
     }
 }
 
-const ShaderModule::FragmentOutputs* ShaderModule::returnTypeForEntryPoint(const String& entryPoint) const
+const ShaderModule::FragmentInputs* ShaderModule::fragmentInputsForEntryPoint(const String& entryPoint) const
 {
-    if (auto it = m_returnTypeForEntryPoint.find(entryPoint); it != m_returnTypeForEntryPoint.end())
+    if (auto it = m_fragmentInputsForEntryPoint.find(entryPoint); it != m_fragmentInputsForEntryPoint.end())
+        return &it->value;
+
+    return nullptr;
+}
+
+const ShaderModule::FragmentOutputs* ShaderModule::fragmentReturnTypeForEntryPoint(const String& entryPoint) const
+{
+    if (auto it = m_fragmentReturnTypeForEntryPoint.find(entryPoint); it != m_fragmentReturnTypeForEntryPoint.end())
+        return &it->value;
+
+    return nullptr;
+}
+
+const ShaderModule::VertexOutputs* ShaderModule::vertexReturnTypeForEntryPoint(const String& entryPoint) const
+{
+    if (auto it = m_vertexReturnTypeForEntryPoint.find(entryPoint); it != m_vertexReturnTypeForEntryPoint.end())
         return &it->value;
 
     return nullptr;

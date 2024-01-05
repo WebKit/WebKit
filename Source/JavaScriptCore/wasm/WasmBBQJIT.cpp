@@ -4154,6 +4154,133 @@ public:
         return { };
     }
 
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size)
+    {
+        if (arrayref.isConst()) {
+            ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayFill);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayFill, loadIfNecessary(arrayref));
+
+        value = marshallToI64(value);
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            Value::fromI32(typeIndex),
+            arrayref,
+            offset,
+            value,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayFill, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayFill, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcTypeIndex, ExpressionType src, ExpressionType srcOffset, ExpressionType size)
+    {
+        if (dst.isConst() || src.isConst()) {
+            ASSERT_IMPLIES(dst.isConst(), dst.asI64() == JSValue::encode(jsNull()));
+            ASSERT_IMPLIES(src.isConst(), src.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayCopy);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayCopy, loadIfNecessary(dst));
+        emitThrowOnNullReference(ExceptionType::NullArrayCopy, loadIfNecessary(src));
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            dst,
+            dstOffset,
+            src,
+            srcOffset,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayCopy, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayCopy", dstTypeIndex, dst, dstOffset, srcTypeIndex, src, srcOffset, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayCopy, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size)
+    {
+        if (dst.isConst()) {
+            ASSERT(dst.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayInitElem);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayInitElem, loadIfNecessary(dst));
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            dst,
+            dstOffset,
+            Value::fromI32(srcElementIndex),
+            srcOffset,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayInitElem, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayInitElem", dstTypeIndex, dst, dstOffset, srcElementIndex, srcOffset, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayInitElem, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size)
+    {
+        if (dst.isConst()) {
+            ASSERT(dst.asI64() == JSValue::encode(jsNull()));
+            emitThrowException(ExceptionType::NullArrayInitData);
+            return { };
+        }
+
+        emitThrowOnNullReference(ExceptionType::NullArrayInitData, loadIfNecessary(dst));
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            dst,
+            dstOffset,
+            Value::fromI32(srcDataIndex),
+            srcOffset,
+            size
+        };
+        Value shouldThrow = topValue(TypeKind::I32);
+        emitCCall(&operationWasmArrayInitData, arguments, shouldThrow);
+        Location shouldThrowLocation = allocate(shouldThrow);
+
+        LOG_INSTRUCTION("ArrayInitData", dstTypeIndex, dst, dstOffset, srcDataIndex, srcOffset, size);
+
+        throwExceptionIf(ExceptionType::OutOfBoundsArrayInitData, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+
+        consume(shouldThrow);
+
+        return { };
+    }
+
     void emitStructSet(GPRReg structGPR, const StructType& structType, uint32_t fieldIndex, Value value)
     {
         m_jit.loadPtr(MacroAssembler::Address(structGPR, JSWebAssemblyStruct::offsetOfPayload()), wasmScratchGPR);

@@ -273,10 +273,12 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     return matchElement;
 }
 
-DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation, CanBreakScope canBreakScope)
+DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation, CanBreakScope allComponentsCanBreakScope)
 {
+    auto doesBreakScope = DoesBreakScope::No;
     const CSSSelector* selector = &firstSelector;
-    do {
+    while (true) {
+        auto canBreakScope = allComponentsCanBreakScope;
         if (selector->match() == CSSSelector::Match::Id) {
             idsInRules.add(selector->value());
             if (matchElement == MatchElement::Parent || matchElement == MatchElement::Ancestor)
@@ -304,7 +306,8 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
             bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClass());
             if (!isLogicalCombination)
                 selectorFeatures.pseudoClasses.append({ selector, matchElement, isNegation });
-            canBreakScope = isLogicalCombination && selector->pseudoClass() != CSSSelector::PseudoClass::Has ? CanBreakScope::Yes : CanBreakScope::No;
+            if (isLogicalCombination && selector->pseudoClass() != CSSSelector::PseudoClass::Has)
+                canBreakScope = CanBreakScope::Yes;
         }
 
         if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
@@ -317,23 +320,32 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
 
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector, *subSelector);
-                auto doesBreakScope = recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
+                auto pseudoClassDoesBreakScope = recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
 
                 if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Has)
-                    selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation, doesBreakScope });
+                    selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation, pseudoClassDoesBreakScope });
+
+                if (pseudoClassDoesBreakScope == DoesBreakScope::Yes)
+                    doesBreakScope = DoesBreakScope::Yes;
             }
         }
 
+        if (!selector->tagHistory())
+            break;
+
         matchElement = [&] {
             if (isHasPseudoClassMatchElement(matchElement))
-                return computeNextHasPseudoClassMatchElement(matchElement, selector->relation(), canBreakScope);
+                return computeNextHasPseudoClassMatchElement(matchElement, selector->relation(), allComponentsCanBreakScope);
             return computeNextMatchElement(matchElement, selector->relation());
         }();
 
-        selector = selector->tagHistory();
-    } while (selector);
+        if (isScopeBreaking(matchElement))
+            doesBreakScope = DoesBreakScope::Yes;
 
-    return isScopeBreaking(matchElement) ? DoesBreakScope::Yes : DoesBreakScope::No;
+        selector = selector->tagHistory();
+    };
+
+    return doesBreakScope;
 }
 
 PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
