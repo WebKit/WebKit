@@ -2588,3 +2588,6 @@ webkit.org/b/265957 fullscreen/full-screen-layer-dump.html [ Failure ]
 # SVG Animations Failures on WPT Import
 imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.html [ Failure ]
 imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ Pass Failure ]
+
+webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
+
