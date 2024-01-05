@@ -1134,7 +1134,7 @@ wasm/WasmInstance.cpp
 wasm/WasmInstance.h
 wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp
-wasm/WasmIPIntSlowPaths.cpp
+wasm/WasmIPIntSlowPaths.cpp @no-unify
 wasm/WasmLLIntGenerator.cpp
 wasm/WasmLLIntPlan.cpp
 wasm/WasmLLIntTierUpCounter.cpp
@@ -1153,7 +1153,7 @@ wasm/WasmCallsiteCollection.cpp
 wasm/WasmSectionParser.cpp
 wasm/WasmTypeDefinition.cpp
 wasm/WasmOpcodeCounter.cpp
-wasm/WasmSlowPaths.cpp
+wasm/WasmSlowPaths.cpp @no-unify
 wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmStreamingPlan.cpp
