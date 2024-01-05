@@ -466,9 +466,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
 
     receivedQuotaDelegateCalled = false;
     [webView loadRequest:server.request("/main.html#fragment"_s)];
-    [webView _test_waitForDidSameDocumentNavigation];
-
-    [webView evaluateJavaScript:@"doTestAgain()" completionHandler:nil];
+    [webView stringByEvaluatingJavaScript:@"doTestAgain()"];
 
     [messageHandler setExpectedMessage: @"start"];
     receivedMessage = false;
