@@ -65,6 +65,10 @@ class InputValidator:
 
     def validate_fields(self, input_data, pseudo_type):
         for pseudo_name, pseudo_data in input_data[pseudo_type].items():
+            # `-apple-` prefixed pseudos should be behind a flag that is disabled to web content by default.
+            if pseudo_name.startswith('-apple-') and 'settings-flag' not in pseudo_data:
+                raise Exception('"{}" should have a "settings-flag" that is disabled to web content by default.'.format(pseudo_name))
+
             for key, value in pseudo_data.items():
                 # Check for unknown fields.
                 if key not in KNOWN_KEY_TYPES[pseudo_type]:

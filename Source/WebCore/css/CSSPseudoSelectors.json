@@ -22,7 +22,10 @@
                 "They internally map to `PseudoElement::UserAgentPart` or `PseudoElement::UserAgentPartLegacyAlias` for aliases."
             ]
         },
-        "notes": "Pseudos that start with `-internal-` will automatically be restricted to user agent stylesheets."
+        "notes": [
+            "Pseudos that start with `-apple-` require a 'settings-flag' field that points to a setting that is disabled to web content by default.",
+            "Pseudos that start with `-internal-` will automatically be restricted to user agent stylesheets."
+        ]
     },
     "pseudo-classes": {
         "-internal-html-document": {},
