@@ -131,9 +131,16 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier identifier, 
         return nullptr;
 
     CCRSACryptorRef cryptor = nullptr;
-    // FIXME: It is so weired that we recaculate the private exponent from first prime factor and second prime factor,
-    // given the fact that we have already had it. Also, the re-caculated private exponent may not match the given one.
+    // Noting here that we recaculate the private exponent from first prime factor and second prime factor,
+    // given the fact that we have already had it(d).
+    // Also, the re-caculated private exponent may not match the given one.
     // See <rdar://problem/15452324>.
+    // We now have CCRSACryptorRecoverPrivateKey in CommonCrypto which actually works with n,e,d but
+    // chrome and firefox don't support just d without additional params for import. So it's best not
+    // implemented here.
+    // Also, https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2 recommends all params.
+    // Note that the re-calculated value for d will be different if the input d is Phi based and will not be different if it's lambda based.
+    // Please see https://en.wikipedia.org/wiki/RSA_(cryptosystem) for more details on phi vs lambda.
     CCCryptorStatus status = CCRSACryptorCreateFromData(
         keyData.type() == CryptoKeyRSAComponents::Type::Public ? ccRSAKeyPublic : ccRSAKeyPrivate,
         keyData.modulus().data(), keyData.modulus().size(),

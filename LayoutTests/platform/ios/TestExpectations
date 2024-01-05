@@ -3288,10 +3288,6 @@ webkit.org/b/261703 fast/forms/datalist/datalist-show-picker.html [ Skip ]
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
 
-# <rdar://problem/57029120> Reenable crypto/workers/subtle/rsa-postMessage-worker.html and crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html for iOS
-crypto/workers/subtle/rsa-postMessage-worker.html [ Skip ]
-crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Skip ]
-
 # <rdar://problem/63448168> [ macOS iOS  Debug ] media/video-source-moved.html is a super flkay timeout
 media/video-source-moved.html [ Pass Timeout ]
 
