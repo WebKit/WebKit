@@ -36,7 +36,7 @@ def main():
     parser.add_argument('--event-names')
     args = parser.parse_args()
 
-    with open(args.event_names, "r", encoding="utf-8") as event_names_file:
+    with open(args.event_names, 'r', encoding='utf-8') as event_names_file:
         event_names_input = json.load(event_names_file)
 
     with open('EventNames.h', 'w') as output_file:
@@ -44,9 +44,9 @@ def main():
             output_file.write(text)
 
         def writeln(text):
-            write(text + "\n")
+            write(text + '\n')
 
-        writeln("""/*
+        writeln('''/*
  * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Jon Shier (jshier@iastate.edu)
  *
@@ -79,37 +79,37 @@ namespace WebCore {
 struct EventNames {
     WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
 
-public:""")
+public:''')
         type_map = {}
         for name in sorted(event_names_input.keys()):
             entry = event_names_input[name]
             conditional = entry.get('conditional', None)
             if conditional:
-                writeln(f"#if {conditional}")
-            writeln(f"    const AtomString {name}Event;")
+                writeln(f'#if {conditional}')
+            writeln(f'    const AtomString {name}Event;')
             for event_type in entry.get('types', []):
                 type_map.setdefault(event_type, [])
                 type_map[event_type].append(name)
             if conditional:
-                writeln("#endif")
+                writeln('#endif')
 
-        writeln("""
+        writeln('''
     template<class... Args>
     static std::unique_ptr<EventNames> create(Args&&... args)
     {
         return std::unique_ptr<EventNames>(new EventNames(std::forward<Args>(args)...));
-    }""")
+    }''')
 
         for event_type in sorted(type_map.keys()):
-            writeln("")
-            writeln(f"    inline bool is{event_type}EventType(const AtomString&) const;")
+            writeln('')
+            writeln(f'    inline bool is{event_type}EventType(const AtomString&) const;')
             name_count = len(type_map[event_type])
-            writeln(f"    inline std::array<const AtomString, {name_count}> {lowercase_first_letter(event_type)}EventNames() const;")
+            writeln(f'    inline std::array<const AtomString, {name_count}> {lowercase_first_letter(event_type)}EventNames() const;')
 
-        writeln("")
-        writeln(f"    inline std::array<const AtomString, {len(event_names_input)}> allEventNames() const;")
+        writeln('')
+        writeln(f'    inline std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
 
-        writeln("""
+        writeln('''
 private:
     EventNames();
 };
@@ -119,61 +119,61 @@ const EventNames& eventNames();
 inline const EventNames& eventNames()
 {
     return threadGlobalData().eventNames();
-}""")
+}''')
 
         for event_type in sorted(type_map.keys()):
             names = type_map[event_type]
             name_count = len(type_map[event_type])
-            writeln("")
-            writeln(f"inline bool EventNames::is{event_type}EventType(const AtomString& type) const")
-            writeln("{")
+            writeln('')
+            writeln(f'inline bool EventNames::is{event_type}EventType(const AtomString& type) const')
+            writeln('{')
             # FIXME: Support conditionals in the first or the last item.
-            writeln(f"    return type == {names[0]}Event")
+            writeln(f'    return type == {names[0]}Event')
             for name in names[1:-1]:
                 conditional = event_names_input[name].get('conditional', None)
                 if conditional:
-                    writeln(f"#if {conditional}")
-                writeln(f"        || type == {name}Event")
+                    writeln(f'#if {conditional}')
+                writeln(f'        || type == {name}Event')
                 if conditional:
-                    writeln(f"#endif")
+                    writeln(f'#endif')
             if len(names) >= 2:
-                writeln(f"        || type == {names[-1]}Event;")
-            writeln("}")
-            writeln("")
-            writeln(f"inline std::array<const AtomString, {name_count}> EventNames::{lowercase_first_letter(event_type)}EventNames() const")
-            writeln("{")
-            writeln("    return { {")
+                writeln(f'        || type == {names[-1]}Event;')
+            writeln('}')
+            writeln('')
+            writeln(f'inline std::array<const AtomString, {name_count}> EventNames::{lowercase_first_letter(event_type)}EventNames() const')
+            writeln('{')
+            writeln('    return { {')
             for name in names:
                 conditional = event_names_input[name].get('conditional', None)
                 if conditional:
-                    writeln(f"#if {conditional}")
-                writeln(f"        {name}Event,")
+                    writeln(f'#if {conditional}')
+                writeln(f'        {name}Event,')
                 if conditional:
-                    writeln(f"#endif")
-            writeln("    } };")
-            writeln("}")
+                    writeln(f'#endif')
+            writeln('    } };')
+            writeln('}')
 
-        writeln("")
+        writeln('')
 
-        writeln(f"inline std::array<const AtomString, {len(event_names_input)}> EventNames::allEventNames() const")
-        writeln("{")
-        writeln("    return { {")
+        writeln(f'inline std::array<const AtomString, {len(event_names_input)}> EventNames::allEventNames() const')
+        writeln('{')
+        writeln('    return { {')
         for name in sorted(event_names_input.keys()):
             conditional = event_names_input[name].get('conditional', None)
             if conditional:
-                writeln(f"#if {conditional}")
-            writeln(f"        {name}Event,")
+                writeln(f'#if {conditional}')
+            writeln(f'        {name}Event,')
             if conditional:
-                writeln(f"#endif")
-        writeln("    } };")
-        writeln("}")
-        writeln("")
-        writeln("} // namespace WebCore")
+                writeln(f'#endif')
+        writeln('    } };')
+        writeln('}')
+        writeln('')
+        writeln('} // namespace WebCore')
 
     with open('EventNames.cpp', 'w') as output_file:
         def writeln(text):
-            output_file.write(text + "\n")
-        writeln("""/*
+            output_file.write(text + '\n')
+        writeln('''/*
  * Copyright (C) 2005-2024 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -198,22 +198,22 @@ inline const EventNames& eventNames()
 
 namespace WebCore {
 
-EventNames::EventNames()""")
+EventNames::EventNames()''')
 
         delimiter = ':'
         for name in sorted(event_names_input.keys()):
             conditional = event_names_input[name].get('conditional', None)
             if conditional:
-                writeln(f"#if {conditional}")
-            writeln(f"    {delimiter} {name}Event(\"{name}\"_s)")
+                writeln(f'#if {conditional}')
+            writeln(f'    {delimiter} {name}Event(\"{name}\"_s)')
             delimiter = ','
             if conditional:
-                writeln("#endif")
+                writeln('#endif')
 
-        writeln("""{ }
+        writeln('''{ }
 
-} // namespace WebCore""")
+} // namespace WebCore''')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
