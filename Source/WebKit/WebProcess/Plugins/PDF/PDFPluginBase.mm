@@ -233,6 +233,15 @@ void PDFPluginBase::addArchiveResource()
     m_view->frame()->document()->loader()->addArchiveResource(resource.releaseNonNull());
 }
 
+void PDFPluginBase::tryRunScriptsInPDFDocument()
+{
+    if (!m_pdfDocument || !m_documentFinishedLoading || m_didRunScripts)
+        return;
+
+    PDFScriptEvaluator::runScripts([m_pdfDocument documentRef], *this);
+    m_didRunScripts = true;
+}
+
 void PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
     m_size = pluginSize;
@@ -560,6 +569,12 @@ void PDFPluginBase::destroyScrollbar(ScrollbarOrientation orientation)
     willRemoveScrollbar(scrollbar.get(), orientation);
     scrollbar->removeFromParent();
     scrollbar = nullptr;
+}
+
+void PDFPluginBase::print()
+{
+    if (RefPtr page = this->page())
+        page->chrome().print(*m_frame->coreLocalFrame());
 }
 
 #if ENABLE(PDF_HUD)
