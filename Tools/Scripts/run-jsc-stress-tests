@@ -74,7 +74,7 @@ raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
 HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
-STATUS_FILE_PREFIX = "test_status_"
+STATUS_FILE = "test_results"
 STATUS_FILE_PASS = "P"
 STATUS_FILE_FAIL = "F"
 
@@ -2661,7 +2661,7 @@ def cleanRunnerDirectory
     raise unless $bundle
     Dir.foreach($runnerDir) {
         | filename |
-        next unless filename =~ /^#{STATUS_FILE_PREFIX}/
+        next unless filename =~ /^#{STATUS_FILE}/
         FileUtils.rm_f $runnerDir + filename
     }
 end
@@ -2818,6 +2818,21 @@ def copyBundleToRemote(remoteHost)
     mysys(["scp"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
 end
 
+def getLocalRemoteResultPath(remoteHost)
+    $outputDir.dirname + "#{remoteHost.host}-#{remoteHost.port}"
+end
+
+def copyRemoteResultToHost(remoteHost)
+    hostResultFolder = getLocalRemoteResultPath(remoteHost)
+    Dir.mkdir hostResultFolder unless hostResultFolder.directory?
+    mysys(["scp"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}/#{$outputDir.basename}/.runner/#{STATUS_FILE}", "#{getLocalRemoteResultPath(remoteHost).to_s}/#{STATUS_FILE}" ])
+end
+
+def clearLocalRemoteResults(remoteHost)
+    hostResultFolder = getLocalRemoteResultPath(remoteHost)
+    FileUtils.rm_rf hostResultFolder
+end
+
 def exportBaseEnvironmentVariables(escape)
     if escape
         dyldFrameworkPath = "\\$(cd #{$testingFrameworkPath.dirname}; pwd)"
@@ -2853,7 +2868,7 @@ def runTestRunner(testRunner, remoteHosts, remoteIndex=0)
     end
 end
 
-STATUS_RE = /^[.]\/#{STATUS_FILE_PREFIX}(?<index>\d+)\s(?<runId>\h+)\s(?<exitCode>\d+)\s(?<result>#{STATUS_FILE_PASS}|#{STATUS_FILE_FAIL})$/
+STATUS_RE = /^(?<index>\d+)\s(?<runId>\h+)\s(?<exitCode>\d+)\s(?<result>#{STATUS_FILE_PASS}|#{STATUS_FILE_FAIL})$/
 
 def processStatusLine(map, line)
     md = STATUS_RE.match(line)
@@ -2887,7 +2902,6 @@ def processStatusLine(map, line)
 end
 
 def getStatusMap(map={})
-    find_cmd = "find . -maxdepth 1 -name \"#{STATUS_FILE_PREFIX}*\" -a -size +0c -exec sh -c \"printf \\\"%s \\\" {}; cat {}\" \\;"
     if $remote
         # Note: here we're using $remoteHosts (instead of getting the
         # list of live remoteHosts from the caller, because there may
@@ -2895,22 +2909,16 @@ def getStatusMap(map={})
         # (note, the test results are tagged with a run ID, so we'll
         # ignore any stale results from a previous run).
         forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => 8 * REMOTE_TIMEOUT) { |_, host|
-            runnerDir = "#{host.remoteDirectory}/#{$outputDir.basename}/.runner"
-            output = sshRead("if test -d #{runnerDir}; then cd #{runnerDir}; else false; fi && " + find_cmd, host, :ignoreFailure => true)
-            output.split(/\n/).each {
-                | line |
-                processStatusLine(map, line)
-            }
+            copyRemoteResultToHost(host)
+            File.open(getLocalRemoteResultPath(host) + STATUS_FILE).each do |line|
+                processStatusLine(map, line.strip)
+            end
+            clearLocalRemoteResults(host)
         }
     else
         Dir.chdir($runnerDir) {
-            Dir.glob("#{STATUS_FILE_PREFIX}*").each do |name|
-                if File.size(name) > 0
-                    File.open(name, 'r') { |f|
-                        line = f.first
-                        processStatusLine(map, "./#{name} #{line}")
-                    }
-                end
+            File.open(STATUS_FILE).each do |line|
+                processStatusLine(map, line.strip)
             end
         }
     end
