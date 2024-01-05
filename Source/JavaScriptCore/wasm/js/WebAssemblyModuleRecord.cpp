@@ -287,6 +287,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             value = Wasm::internalizeExternref(globalValue->global()->get(globalObject));
                             if (!Wasm::TypeInformation::castReference(value, declaredGlobalType.isNullable(), declaredGlobalType.index))
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument value did not match the reference type")));
+                            m_instance->instance().setGlobal(import.kindIndex, value);
                         }
                     }
                 } else {
@@ -348,6 +349,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                             value = Wasm::internalizeExternref(value);
                             if (!Wasm::TypeInformation::castReference(value, global.type.isNullable(), global.type.index))
                                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "Argument value did not match the reference type")));
+                            m_instance->instance().setGlobal(import.kindIndex, value);
                         }
                     }
                 }

@@ -633,6 +633,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t, ExpressionType, ExpressionType, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t typeIndex, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
@@ -779,7 +783,7 @@ private:
     Value* emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
     Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
 
-    void emitArrayNullCheck(Value*);
+    void emitArrayNullCheck(Value*, ExceptionType);
     void emitArraySetUnchecked(uint32_t, Value*, Value*, Value*);
     void emitStructSet(Value*, uint32_t, const StructType&, Value*);
     ExpressionType WARN_UNUSED_RETURN pushArrayNew(uint32_t typeIndex, Value* initValue, ExpressionType size);
@@ -3036,8 +3040,9 @@ auto B3IRGenerator::addArrayNewFixed(uint32_t typeIndex, Vector<ExpressionType>&
         instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
         m_currentBlock->appendNew<Const32Value>(m_proc, origin(), args.size()));
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
     // Ensure array is non-null
-    emitArrayNullCheck(arrayValue);
+    emitArrayNullCheck(arrayValue, ExceptionType::NullArraySet);
 
     for (uint32_t i = 0; i < args.size(); ++i) {
         // Emit the array set code -- note that this omits the bounds check, since
@@ -3117,12 +3122,12 @@ auto B3IRGenerator::addArrayGet(ExtGCOpType arrayGetKind, uint32_t typeIndex, Ex
     return { };
 }
 
-void B3IRGenerator::emitArrayNullCheck(Value* arrayref)
+void B3IRGenerator::emitArrayNullCheck(Value* arrayref, ExceptionType exceptionType)
 {
     CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
         m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arrayref, m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
     check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitExceptionCheck(jit, ExceptionType::NullArraySet);
+        this->emitExceptionCheck(jit, exceptionType);
     });
 }
 
@@ -3170,7 +3175,7 @@ auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, Exp
 #endif
 
     // Check for null array
-    emitArrayNullCheck(get(arrayref));
+    emitArrayNullCheck(get(arrayref), ExceptionType::NullArraySet);
 
     // Check array bounds.
     Value* arraySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
@@ -3200,6 +3205,93 @@ auto B3IRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result)
     }
 
     result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize())));
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size) -> PartialResult
+{
+    emitArrayNullCheck(get(arrayref), ExceptionType::NullArrayFill);
+
+    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(arrayref), get(offset), get(value), get(size));
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArrayFill);
+        });
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayCopy(uint32_t, ExpressionType dst, ExpressionType dstOffset, uint32_t, ExpressionType src, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+{
+    emitArrayNullCheck(get(dst), ExceptionType::NullArrayCopy);
+    emitArrayNullCheck(get(src), ExceptionType::NullArrayCopy);
+
+    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayCopy,
+        instanceValue(),
+        get(dst), get(dstOffset),
+        get(src), get(srcOffset),
+        get(size));
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArrayCopy);
+        });
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayInitElem(uint32_t, ExpressionType dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+{
+    emitArrayNullCheck(get(dst), ExceptionType::NullArrayInitElem);
+
+    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayInitElem,
+        instanceValue(),
+        get(dst), get(dstOffset),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), srcElementIndex), get(srcOffset),
+        get(size));
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArrayInitElem);
+        });
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayInitData(uint32_t, ExpressionType dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+{
+    emitArrayNullCheck(get(dst), ExceptionType::NullArrayInitData);
+
+    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayInitData,
+        instanceValue(),
+        get(dst), get(dstOffset),
+        m_currentBlock->appendNew<Const32Value>(m_proc, origin(), srcDataIndex), get(srcOffset),
+        get(size));
+
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<Const32Value>(m_proc, origin(), 0)));
+
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArrayInitData);
+        });
+    }
 
     return { };
 }

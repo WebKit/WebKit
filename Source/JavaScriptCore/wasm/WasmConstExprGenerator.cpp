@@ -179,6 +179,7 @@ public:
     }
 
     ExpressionType result() const { return m_result; }
+    const Vector<uint32_t>& declaredFunctions() const { return m_declaredFunctions; }
     void setParser(FunctionParser<ConstExprGenerator>* parser) { m_parser = parser; };
 
     bool addArguments(const TypeDefinition&) { RELEASE_ASSERT_NOT_REACHED(); }
@@ -319,6 +320,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayGet(ExtGCOpType, uint32_t, ExpressionType, ExpressionType, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t, ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType, ExpressionType&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t, ExpressionType, ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType) CONST_EXPR_STUB;
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType) CONST_EXPR_STUB;
 
     ExpressionType createNewStruct(uint32_t typeIndex)
     {
@@ -557,7 +562,9 @@ public:
             JSValue wrapper = m_instance->getFunctionWrapper(index);
             ASSERT(!wrapper.isNull());
             result = ConstExprValue(Strong<JSObject>(vm, wrapper.getObject()));
-        }
+        } else
+            m_declaredFunctions.append(index);
+
         return { };
     }
 
@@ -659,15 +666,19 @@ private:
     const ModuleInformation& m_info;
     RefPtr<Instance> m_instance;
     bool m_shouldError = false;
+    Vector<uint32_t> m_declaredFunctions;
 };
 
-Expected<void, String> parseExtendedConstExpr(const uint8_t* source, size_t length, size_t offsetInSource, size_t& offset, const ModuleInformation& info, Type expectedType)
+Expected<void, String> parseExtendedConstExpr(const uint8_t* source, size_t length, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
 {
     RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
     ConstExprGenerator generator(ConstExprGenerator::Mode::Validate, offsetInSource, info);
     FunctionParser<ConstExprGenerator> parser(generator, source, length, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
     offset = parser.offset();
+
+    for (const auto& declaredFunctionIndex : generator.declaredFunctions())
+        info.addDeclaredFunction(declaredFunctionIndex);
 
     return { };
 }

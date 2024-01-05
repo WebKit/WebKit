@@ -324,6 +324,10 @@ public:
     PartialResult WARN_UNUSED_RETURN addArrayNewElem(uint32_t typeIndex, uint32_t elemSegmentIndex, ExpressionType size, ExpressionType offset, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
     PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayFill(uint32_t, ExpressionType, ExpressionType, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayCopy(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayInitElem(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
+    PartialResult WARN_UNUSED_RETURN addArrayInitData(uint32_t, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     PartialResult WARN_UNUSED_RETURN addStructNew(uint32_t index, Vector<ExpressionType>& args, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
@@ -2144,6 +2148,34 @@ auto LLIntGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result
     result = push();
     WasmArrayLen::emit(this, result, arrayref);
 
+    return { };
+}
+
+auto LLIntGenerator::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, ExpressionType offset, ExpressionType value, ExpressionType size) -> PartialResult
+{
+    WasmArrayFill::emit(this, arrayref, offset, value, size, typeIndex);
+
+    return { };
+}
+
+auto LLIntGenerator::addArrayCopy(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcTypeIndex, ExpressionType src, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayCopy, { addConstantWithoutPush(Types::I32, dstTypeIndex), dst, dstOffset, addConstantWithoutPush(Types::I32, srcTypeIndex), src, srcOffset, size }, results);
+    return { };
+}
+
+auto LLIntGenerator::addArrayInitElem(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcElementIndex, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayInitElem, { addConstantWithoutPush(Types::I32, dstTypeIndex), dst, dstOffset, addConstantWithoutPush(Types::I32, srcElementIndex), srcOffset, size }, results);
+    return { };
+}
+
+auto LLIntGenerator::addArrayInitData(uint32_t dstTypeIndex, ExpressionType dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::ArrayInitData, { addConstantWithoutPush(Types::I32, dstTypeIndex), dst, dstOffset, addConstantWithoutPush(Types::I32, srcDataIndex), srcOffset, size }, results);
     return { };
 }
 

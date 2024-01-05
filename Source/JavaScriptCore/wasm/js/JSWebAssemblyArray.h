@@ -67,6 +67,35 @@ public:
     Wasm::FieldType elementType() const { return m_elementType; }
     size_t size() const { return m_size; }
 
+    uint8_t* data()
+    {
+        if (m_elementType.type.is<Wasm::PackedType>()) {
+            switch (m_elementType.type.as<Wasm::PackedType>()) {
+            case Wasm::PackedType::I8:
+                return reinterpret_cast<uint8_t*>(m_payload8.data());
+            case Wasm::PackedType::I16:
+                return reinterpret_cast<uint8_t*>(m_payload16.data());
+            }
+        }
+        ASSERT(m_elementType.type.is<Wasm::Type>());
+        switch (m_elementType.type.as<Wasm::Type>().kind) {
+        case Wasm::TypeKind::I32:
+        case Wasm::TypeKind::F32:
+            return reinterpret_cast<uint8_t*>(m_payload32.data());
+        default:
+            return reinterpret_cast<uint8_t*>(m_payload64.data());
+        }
+
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    };
+
+    uint64_t* reftypeData()
+    {
+        RELEASE_ASSERT(m_elementType.type.unpacked().isRef() || m_elementType.type.unpacked().isRefNull());
+        return m_payload64.data();
+    }
+
     EncodedJSValue get(uint32_t index)
     {
         if (m_elementType.type.is<Wasm::PackedType>()) {
@@ -130,6 +159,9 @@ public:
             break;
         }
     }
+
+    void fill(uint32_t, uint64_t, uint32_t);
+    void copy(JSWebAssemblyArray&, uint32_t, uint32_t, uint32_t);
 
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_size); }
     static ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyArray, m_payload8) + FixedVector<uint8_t>::offsetOfStorage(); }
