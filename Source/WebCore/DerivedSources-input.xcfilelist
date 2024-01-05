@@ -1379,10 +1379,10 @@ $(PROJECT_DIR)/dom/ElementInternals.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
 $(PROJECT_DIR)/dom/Event.idl
 $(PROJECT_DIR)/dom/EventInit.idl
+$(PROJECT_DIR)/dom/EventInterfaces.in
 $(PROJECT_DIR)/dom/EventListener.idl
 $(PROJECT_DIR)/dom/EventListenerOptions.idl
 $(PROJECT_DIR)/dom/EventModifierInit.idl
-$(PROJECT_DIR)/dom/EventNames.in
 $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
