@@ -171,13 +171,12 @@ void ProcessLauncher::launchProcess()
             return;
         }
         callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher, name = name, process = RetainPtr<_SEExtensionProcess>(process)] {
-            auto connection = [process makeLibXPCConnectionError:nil];
             auto launcher = weakProcessLauncher.get();
             if (!launcher) {
                 [process invalidate];
                 return;
             }
-            launcher->m_xpcConnection = connection;
+            launcher->m_xpcConnection = [process makeLibXPCConnectionError:nil];
             launcher->m_process = WTFMove(process);
             launcher->finishLaunchingProcess(name.characters());
         });
