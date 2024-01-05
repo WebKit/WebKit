@@ -175,7 +175,10 @@ void Plan::cancel()
     m_mustHandleValues.clear();
     m_compilation = nullptr;
     m_finalizer = nullptr;
-    m_inlineCallFrames = nullptr;
+    if (m_inlineCallFrames) {
+        for (auto i : *m_inlineCallFrames)
+            i->baselineCodeBlock.clear();
+    }
     m_watchpoints = DesiredWatchpoints();
     m_identifiers = DesiredIdentifiers();
     m_weakReferences = DesiredWeakReferences();
