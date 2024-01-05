@@ -109,6 +109,8 @@ public:
     static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
     static bool supportsBlending(WGPUTextureFormat, const Device&);
+    void recreateIfNeeded();
+    void makeCanvasBacking();
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -136,6 +138,7 @@ private:
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
     bool m_destroyed { false };
+    bool m_canvasBacking { false };
 };
 
 } // namespace WebGPU

@@ -2723,11 +2723,22 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     return TextureView::create(texture, *descriptor, renderExtent, *this, m_device);
 }
 
+void Texture::recreateIfNeeded()
+{
+    RELEASE_ASSERT(m_texture.iosurface && m_canvasBacking);
+    m_destroyed = false;
+}
+
+void Texture::makeCanvasBacking()
+{
+    m_canvasBacking = true;
+}
+
 void Texture::destroy()
 {
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
-
-    m_texture = nil;
+    if (!m_canvasBacking)
+        m_texture = nil;
     m_destroyed = true;
 }
 

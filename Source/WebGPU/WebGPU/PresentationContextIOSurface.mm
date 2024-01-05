@@ -121,6 +121,7 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         texture.label = fromAPI(descriptor.label);
         auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
         auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+        parentTexture->makeCanvasBacking();
         m_renderBuffers.append({ parentTexture, TextureView::create(texture, wgpuTextureViewDescriptor, { { width, height, 1 } }, parentTexture, device) });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
@@ -143,7 +144,9 @@ void PresentationContextIOSurface::present()
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
-    return m_renderBuffers[m_currentIndex].texture.ptr();
+    auto& texture = m_renderBuffers[m_currentIndex].texture;
+    texture->recreateIfNeeded();
+    return texture.ptr();
 }
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
