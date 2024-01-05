@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, Google Inc. All rights reserved.
+ * Copyright (c) 2012-2023, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +36,10 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
+namespace {
+constexpr float tolerance = 1.0f / kFixedPointDenominator;
+}
+
 TEST(WebCoreLayoutUnit, LayoutUnitInt)
 {
     ASSERT_EQ(LayoutUnit(INT_MIN).toInt(), intMinForLayoutUnit);
@@ -64,9 +68,10 @@ TEST(WebCoreLayoutUnit, LayoutUnitInt)
 
 TEST(WebCoreLayoutUnit, LayoutUnitFloat)
 {
-    const float tolerance = 1.0f / kFixedPointDenominator;
     ASSERT_FLOAT_EQ(LayoutUnit(1.0f).toFloat(), 1.0f);
     ASSERT_FLOAT_EQ(LayoutUnit(1.25f).toFloat(), 1.25f);
+    ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit(1.25f + tolerance / 2));
+    ASSERT_EQ(LayoutUnit(-2.0f), LayoutUnit(-2.0f - tolerance / 2));
     ASSERT_NEAR(LayoutUnit(1.1f).toFloat(), 1.1f, tolerance);
     ASSERT_NEAR(LayoutUnit(1.33f).toFloat(), 1.33f, tolerance);
     ASSERT_NEAR(LayoutUnit(1.3333f).toFloat(), 1.3333f, tolerance);
@@ -264,6 +269,52 @@ TEST(WebCoreLayoutUnit, LayoutUnitUnaryMinus)
     ASSERT_EQ(LayoutUnit::max(), -negativeMax);
     // -LayoutUnit::min() is saturated to LayoutUnit::max()
     ASSERT_EQ(LayoutUnit::max(), -LayoutUnit::min());
+}
+
+TEST(WebCoreLayoutUnit, FromFloatCeil)
+{
+    ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit::fromFloatCeil(1.25f));
+    ASSERT_EQ(LayoutUnit(1.25f + tolerance), LayoutUnit::fromFloatCeil(1.25f + tolerance / 2));
+    ASSERT_EQ(LayoutUnit(), LayoutUnit::fromFloatCeil(-tolerance / 2));
+
+    using Limits = std::numeric_limits<float>;
+    // Larger than max()
+    ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatCeil(Limits::max()));
+    ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatCeil(Limits::infinity()));
+    // Smaller than Min()
+    ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatCeil(Limits::lowest()));
+    ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatCeil(-Limits::infinity()));
+}
+
+TEST(WebCoreLayoutUnit, FromFloatFloor)
+{
+    ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit::fromFloatFloor(1.25f));
+    ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit::fromFloatFloor(1.25f + tolerance / 2));
+    ASSERT_EQ(LayoutUnit(-tolerance), LayoutUnit::fromFloatFloor(-tolerance / 2));
+
+    using Limits = std::numeric_limits<float>;
+    // Larger than max()
+    ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatFloor(Limits::max()));
+    ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatFloor(Limits::infinity()));
+    // Smaller than min()
+    ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatFloor(Limits::lowest()));
+    ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatFloor(-Limits::infinity()));
+}
+
+TEST(WebCoreLayoutUnit, FromFloatRound)
+{
+    ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit::fromFloatRound(1.25f));
+    ASSERT_EQ(LayoutUnit(1.25f), LayoutUnit::fromFloatRound(1.25f + tolerance / 4));
+    ASSERT_EQ(LayoutUnit(1.25f + tolerance), LayoutUnit::fromFloatRound(1.25f + tolerance * 3 / 4));
+    ASSERT_EQ(LayoutUnit(-tolerance), LayoutUnit::fromFloatRound(-tolerance * 3 / 4));
+
+    using Limits = std::numeric_limits<float>;
+    // Larger than max()
+    ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatRound(Limits::max()));
+    ASSERT_EQ(LayoutUnit::max(), LayoutUnit::fromFloatRound(Limits::infinity()));
+    // Smaller than min()
+    ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatRound(Limits::lowest()));
+    ASSERT_EQ(LayoutUnit::min(), LayoutUnit::fromFloatRound(-Limits::infinity()));
 }
 
 } // namespace TestWebKitAPI
