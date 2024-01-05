@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "ASTInterpolateAttribute.h"
 #import "WGSL.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
@@ -78,9 +79,17 @@ public:
 
     using VertexStageIn = HashMap<uint32_t, WGPUVertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    const FragmentOutputs* returnTypeForEntryPoint(const String&) const;
+    struct VertexOutputFragmentInput {
+        MTLDataType dataType { MTLDataTypeNone };
+        std::optional<WGSL::AST::Interpolation> interpolation { std::nullopt };
+    };
+    using VertexOutputs = HashMap<uint32_t, VertexOutputFragmentInput, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using FragmentInputs = VertexOutputs;
+    const FragmentOutputs* fragmentReturnTypeForEntryPoint(const String&) const;
+    const FragmentInputs* fragmentInputsForEntryPoint(const String&) const;
     bool hasOverride(const String&) const;
     const VertexStageIn* stageInTypesForEntryPoint(const String&) const;
+    const VertexOutputs* vertexReturnTypeForEntryPoint(const String&) const;
 private:
     ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, NSMutableSet<NSString *> *, Device&);
     ShaderModule(Device&, CheckResult&&);
@@ -95,7 +104,9 @@ private:
     const Ref<Device> m_device;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
     HashMap<String, String> m_constantIdentifiersToNames;
-    HashMap<String, FragmentOutputs> m_returnTypeForEntryPoint;
+    HashMap<String, FragmentOutputs> m_fragmentReturnTypeForEntryPoint;
+    HashMap<String, FragmentInputs> m_fragmentInputsForEntryPoint;
+    HashMap<String, VertexOutputs> m_vertexReturnTypeForEntryPoint;
     HashMap<String, VertexStageIn> m_stageInTypesForEntryPoint;
 
     String m_defaultVertexEntryPoint;

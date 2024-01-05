@@ -1115,6 +1115,110 @@ static bool textureFormatAllowedForRetunType(WGPUTextureFormat format, MTLDataTy
     }
 }
 
+static uint32_t componentsForDataType(MTLDataType dataType)
+{
+    switch (dataType) {
+    case MTLDataTypeInt:
+    case MTLDataTypeUInt:
+    case MTLDataTypeHalf:
+    case MTLDataTypeFloat:
+        return 1;
+    case MTLDataTypeInt2:
+    case MTLDataTypeUInt2:
+    case MTLDataTypeHalf2:
+    case MTLDataTypeFloat2:
+        return 2;
+    case MTLDataTypeInt3:
+    case MTLDataTypeUInt3:
+    case MTLDataTypeHalf3:
+    case MTLDataTypeFloat3:
+        return 3;
+    case MTLDataTypeInt4:
+    case MTLDataTypeUInt4:
+    case MTLDataTypeHalf4:
+    case MTLDataTypeFloat4:
+        return 4;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+static NSString* errorValidatingInterstageShaderInterfaces(WebGPU::Device &device, const WGPURenderPipelineDescriptor& descriptor, const ShaderModule::VertexOutputs* vertexOutputs, const WGSL::ShaderModule* fragmentShaderModule, const ShaderModule::FragmentInputs* fragmentInputs, const ShaderModule::FragmentOutputs* fragmentOutputs)
+{
+    if (!vertexOutputs)
+        return @"vertex shader has no outputs";
+
+    auto maxVertexShaderOutputComponents = device.limits().maxInterStageShaderComponents;
+    if (descriptor.primitive.topology == WGPUPrimitiveTopology_PointList) {
+        if (!maxVertexShaderOutputComponents)
+            return @"maxVertexShaderOutputComponents is zero";
+        --maxVertexShaderOutputComponents;
+    }
+
+    auto maxInterStageShaderVariables = device.limits().maxInterStageShaderVariables;
+    uint32_t vertexScalarComponents = 0;
+    for (auto& [location, structMember] : *vertexOutputs) {
+        if (location >= maxInterStageShaderVariables)
+            return @"location >= maxInterStageShaderVariables";
+
+        vertexScalarComponents += componentsForDataType(structMember.dataType);
+    }
+
+    if (vertexScalarComponents > maxVertexShaderOutputComponents)
+        return @"vertexScalarComponents > maxVertexShaderOutputComponents";
+
+    if (fragmentShaderModule) {
+        auto maxFragmentShaderInputComponents = device.limits().maxInterStageShaderComponents;
+        auto decrement = ^(uint32_t& unsignedValue) {
+            return unsignedValue-- ? true : false;
+        };
+        if (fragmentShaderModule->usesFrontFacing() && !decrement(maxFragmentShaderInputComponents))
+            return @"maxFragmentShaderInputComponents is less than zero due to front facing";
+        if (fragmentShaderModule->usesSampleIndex() && !decrement(maxFragmentShaderInputComponents))
+            return @"maxFragmentShaderInputComponents is less than zero due to sample index";
+        if (fragmentShaderModule->usesSampleMask() && !decrement(maxFragmentShaderInputComponents))
+            return @"maxFragmentShaderInputComponents is less than zero due to sample mask";
+
+        if (fragmentInputs) {
+            WGSL::AST::Interpolation defaultInterpolation {
+                .type = WGSL::InterpolationType::Perspective,
+                .sampling = WGSL::InterpolationSampling::Center
+            };
+            auto notEqual = ^(const WGSL::AST::Interpolation& interpolateA, const WGSL::AST::Interpolation& interpolateB) {
+                return interpolateA.type != interpolateB.type || interpolateA.sampling != interpolateB.sampling;
+            };
+            uint32_t fragmentScalarComponents = 0;
+            for (auto& [location, structMember] : *fragmentInputs) {
+                auto it = vertexOutputs->find(location);
+                if (it == vertexOutputs->end() || it->value.dataType != structMember.dataType)
+                    return @"data type between fragment inputs and vertex outputs do not match";
+
+                fragmentScalarComponents += componentsForDataType(structMember.dataType);
+                if (!structMember.interpolation && !it->value.interpolation)
+                    continue;
+                if (!structMember.interpolation && notEqual(*it->value.interpolation, defaultInterpolation))
+                    return @"interpolation attributes do not match";
+                if (!it->value.interpolation && notEqual(*structMember.interpolation, defaultInterpolation))
+                    return @"interpolation attributes do not match";
+                if (notEqual(structMember.interpolation.value_or(defaultInterpolation), it->value.interpolation.value_or(defaultInterpolation)))
+                    return @"interpolation attributes do not match";
+            }
+            if (fragmentScalarComponents > maxFragmentShaderInputComponents)
+                return @"fragmentScalarComponents > maxFragmentShaderInputComponents";
+        }
+
+        if (fragmentOutputs) {
+            for (auto& [location, _] : *fragmentOutputs) {
+                if (location >= maxInterStageShaderVariables)
+                    return @"location >= maxInterStageShaderVariables";
+            }
+        }
+    }
+
+    return nil;
+}
+
 Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync)
 {
     if (!validateRenderPipeline(descriptor) || !isValid())
@@ -1139,6 +1243,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     }
 
     const ShaderModule::VertexStageIn* vertexStageIn = nullptr;
+    const ShaderModule::VertexOutputs* vertexOutputs = nullptr;
     std::optional<PipelineLayout> vertexPipelineLayout { std::nullopt };
     {
         if (descriptor.vertex.nextInChain)
@@ -1165,13 +1270,16 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
         vertexStageIn = vertexModule.stageInTypesForEntryPoint(vertexEntryPoint);
+        vertexOutputs = vertexModule.vertexReturnTypeForEntryPoint(vertexEntryPoint);
     }
 
     std::optional<PipelineLayout> fragmentPipelineLayout { std::nullopt };
     bool usesFragDepth = false;
     bool usesSampleMask = false;
     bool hasAtLeastOneColorTarget = false;
-
+    const WGSL::ShaderModule* fragmentShaderModule { nullptr };
+    const ShaderModule::FragmentOutputs* fragmentReturnTypes { nullptr };
+    const ShaderModule::FragmentInputs* fragmentInputs { nullptr };
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 
@@ -1185,8 +1293,10 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (&fragmentModule.device() != this)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_s);
 
-        usesFragDepth = fragmentModule.ast()->usesFragDepth();
-        usesSampleMask = fragmentModule.ast()->usesSampleMask();
+        fragmentShaderModule = fragmentModule.ast();
+        RELEASE_ASSERT(fragmentShaderModule);
+        usesFragDepth = fragmentShaderModule->usesFragDepth();
+        usesSampleMask = fragmentShaderModule->usesSampleMask();
         const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
 
         const auto& fragmentEntryPoint = fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint();
@@ -1205,15 +1315,16 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 
         uint32_t bytesPerSample = 0;
-        const auto& returnTypes = fragmentModule.returnTypeForEntryPoint(fragmentEntryPoint);
+        fragmentInputs = fragmentModule.fragmentInputsForEntryPoint(fragmentEntryPoint);
+        fragmentReturnTypes = fragmentModule.fragmentReturnTypeForEntryPoint(fragmentEntryPoint);
         for (uint32_t i = 0; i < fragmentDescriptor.targetCount; ++i) {
             const auto& targetDescriptor = fragmentDescriptor.targets[i];
             if (targetDescriptor.format == WGPUTextureFormat_Undefined)
                 continue;
 
             MTLDataType fragmentFunctionReturnType = MTLDataTypeNone;
-            if (returnTypes) {
-                if (auto it = returnTypes->find(i); it != returnTypes->end())
+            if (fragmentReturnTypes) {
+                if (auto it = fragmentReturnTypes->find(i); it != fragmentReturnTypes->end())
                     fragmentFunctionReturnType = it->value;
             }
             const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
@@ -1312,6 +1423,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         [mtlRenderPipelineDescriptor setSampleMask:mask];
         sampleMask = mask;
     }
+
+    if (NSString* error = errorValidatingInterstageShaderInterfaces(*this, descriptor, vertexOutputs, fragmentShaderModule, fragmentInputs, fragmentReturnTypes))
+        return returnInvalidRenderPipeline(*this, isAsync, error);
 
     if (descriptor.vertex.bufferCount) {
         auto& deviceLimits = limits();
