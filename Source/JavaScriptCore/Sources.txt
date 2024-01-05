@@ -353,6 +353,7 @@ dfg/DFGCriticalEdgeBreakingPhase.cpp
 dfg/DFGDCEPhase.cpp
 dfg/DFGDesiredGlobalProperties.cpp
 dfg/DFGDesiredIdentifiers.cpp
+dfg/DFGDesiredObjectProperties.cpp
 dfg/DFGDesiredTransitions.cpp
 dfg/DFGDesiredWatchpoints.cpp
 dfg/DFGDesiredWeakReferences.cpp

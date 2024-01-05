@@ -1341,12 +1341,44 @@ JSValue Graph::tryGetConstantProperty(
     // incompatible with the getDirect we're trying to do. The easiest way to do that is to
     // determine if the structure belongs to the proven set.
 
-    Locker cellLock { object->cellLock() };
-    Structure* structure = object->structure();
-    if (!structureSet.toStructureSet().contains(structure))
+    JSValue result;
+    auto set = structureSet.toStructureSet();
+    {
+        Locker cellLock { object->cellLock() };
+        Structure* structure = object->structure();
+        if (!set.contains(structure))
+            return JSValue();
+        result = object->getDirectConcurrently(cellLock, structure, offset);
+    }
+
+    if (!result)
         return JSValue();
 
-    return object->getDirectConcurrently(cellLock, structure, offset);
+    // If all structures are watched, we don't need to check them in the main thread because they already registered watchpoints
+    // for transitions. If the object gets transition while compiling, then it invalidates the code.
+    bool allAreWatched = true;
+    for (unsigned i = structureSet.size(); i--;) {
+        RegisteredStructure structure = structureSet[i];
+        if (!structure->dfgShouldWatch()) {
+            allAreWatched = false;
+            break;
+        }
+    }
+    if (allAreWatched)
+        return result;
+
+    // However, if structures transitions are not watched, then object can get to the one of the structures transitively while it is changing the value.
+    // But we can still optimize it if StructureSet is only one: in that case, there is no way to fulfill Structure requirement while changing the property
+    // and avoiding the replacement watchpoint firing.
+    if (structureSet.size() != 1)
+        return JSValue();
+
+    m_plan.weakReferences().addLazily(object);
+    m_plan.weakReferences().addLazily(result);
+    if (!m_plan.objectProperties().addLazily(object, offset, result, set.onlyStructure()))
+        return JSValue();
+
+    return result;
 }
 
 JSValue Graph::tryGetConstantProperty(JSValue base, Structure* structure, PropertyOffset offset)
