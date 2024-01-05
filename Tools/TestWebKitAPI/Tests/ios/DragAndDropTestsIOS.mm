@@ -385,9 +385,7 @@ TEST(DragAndDropTests, ContentEditableToContentEditable)
     checkCGRectIsEqualToCGRectWithLogging(CGRectMake(960, 205, 2, 223), [simulator finalSelectionStartRect]);
     checkRichTextTypePrecedesPlainTextType(simulator.get());
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
-
-    // FIXME: Once <rdar://problem/46830277> is fixed, we should add "com.apple.webarchive" as a registered pasteboard type and rebaseline this expectation.
-    EXPECT_FALSE([[[simulator sourceItemProviders].firstObject registeredTypeIdentifiers] containsObject:(__bridge NSString *)kUTTypeWebArchive]);
+    EXPECT_TRUE([[[simulator sourceItemProviders].firstObject registeredTypeIdentifiers] containsObject:UTTypeWebArchive.identifier]);
 }
 
 TEST(DragAndDropTests, ContentEditableToTextarea)
