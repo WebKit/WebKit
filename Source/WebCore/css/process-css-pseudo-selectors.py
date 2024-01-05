@@ -374,13 +374,13 @@ class GPerfOutputGenerator:
     def write_parsing_function_definitions_for_pseudo_class(self, writer):
         longest_keyword_length = len(max(self.mapping, key=len))
         writer.write_block("""
-        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parsePseudoClassAndCompatibilityElementString(const LChar* characters, unsigned length)
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(const LChar* characters, unsigned length)
         {
             return SelectorPseudoClassAndCompatibilityElementMapHash::in_word_set(reinterpret_cast<const char*>(characters), length);
         }""")
 
         writer.write_block("""
-        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* parsePseudoClassAndCompatibilityElementString(const UChar* characters, unsigned length)
+        static inline const SelectorPseudoClassOrCompatibilityPseudoElementEntry* findPseudoClassAndCompatibilityElementName(const UChar* characters, unsigned length)
         {{
             constexpr unsigned maxKeywordLength = {};
             LChar buffer[maxKeywordLength];
@@ -394,17 +394,17 @@ class GPerfOutputGenerator:
 
                 buffer[i] = static_cast<LChar>(character);
             }}
-            return parsePseudoClassAndCompatibilityElementString(buffer, length);
+            return findPseudoClassAndCompatibilityElementName(buffer, length);
         }}""".format(longest_keyword_length))
 
         writer.write_block("""
-        PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(StringView pseudoTypeString)
+        PseudoClassOrCompatibilityPseudoElement findPseudoClassAndCompatibilityElementName(StringView name)
         {
             const SelectorPseudoClassOrCompatibilityPseudoElementEntry* entry;
-            if (pseudoTypeString.is8Bit())
-                entry = parsePseudoClassAndCompatibilityElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
+            if (name.is8Bit())
+                entry = findPseudoClassAndCompatibilityElementName(name.characters8(), name.length());
             else
-                entry = parsePseudoClassAndCompatibilityElementString(pseudoTypeString.characters16(), pseudoTypeString.length());
+                entry = findPseudoClassAndCompatibilityElementName(name.characters16(), name.length());
 
             if (entry)
                 return entry->pseudoTypes;
@@ -414,7 +414,7 @@ class GPerfOutputGenerator:
     def write_parsing_function_definitions_for_pseudo_element(self, writer):
         longest_keyword_length = len(max(self.mapping, key=len))
         writer.write_block("""
-            static inline std::optional<CSSSelector::PseudoElement> parsePseudoElementString(const LChar* characters, unsigned length)
+            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(const LChar* characters, unsigned length)
             {
                 if (const SelectorPseudoTypeEntry* entry = SelectorPseudoElementMapHash::in_word_set(reinterpret_cast<const char*>(characters), length))
                     return entry->type;
@@ -422,7 +422,7 @@ class GPerfOutputGenerator:
             }""")
 
         writer.write_block("""
-            static inline std::optional<CSSSelector::PseudoElement> parsePseudoElementString(const UChar* characters, unsigned length)
+            static inline std::optional<CSSSelector::PseudoElement> findPseudoElementName(const UChar* characters, unsigned length)
             {{
                 constexpr unsigned maxKeywordLength = {};
                 LChar buffer[maxKeywordLength];
@@ -436,15 +436,15 @@ class GPerfOutputGenerator:
 
                     buffer[i] = static_cast<LChar>(character);
                 }}
-                return parsePseudoElementString(buffer, length);
+                return findPseudoElementName(buffer, length);
             }}""".format(longest_keyword_length))
 
         writer.write_block("""
-            std::optional<CSSSelector::PseudoElement> parsePseudoElementString(StringView pseudoTypeString)
+            std::optional<CSSSelector::PseudoElement> findPseudoElementName(StringView name)
             {
-                if (pseudoTypeString.is8Bit())
-                    return parsePseudoElementString(pseudoTypeString.characters8(), pseudoTypeString.length());
-                return parsePseudoElementString(pseudoTypeString.characters16(), pseudoTypeString.length());
+                if (name.is8Bit())
+                    return findPseudoElementName(name.characters8(), name.length());
+                return findPseudoElementName(name.characters16(), name.length());
             }""")
 
     def write_end_ignore_warning(self, writer):

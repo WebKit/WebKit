@@ -1685,7 +1685,7 @@ Ref<CSSStyleDeclaration> LocalDOMWindow::getComputedStyle(Element& element, cons
     std::optional<PseudoId> pseudoId = PseudoId::None;
     // FIXME: This does not work for pseudo-elements that take arguments (webkit.org/b/264103).
     if (pseudoElt.startsWith(":"_s))
-        pseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
+        pseudoId = CSSSelector::parsePseudoElement(pseudoElt, CSSSelectorParserContext { element.document() });
     return CSSComputedStyleDeclaration::create(element, pseudoId);
 }
 
@@ -1696,7 +1696,7 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
 
     // FIXME: This parser context won't get the right settings without a document.
     auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
-    auto optionalPseudoId = CSSSelector::parseStandalonePseudoElement(pseudoElement, parserContext);
+    auto optionalPseudoId = CSSSelector::parsePseudoElement(pseudoElement, parserContext);
     if (!optionalPseudoId && !pseudoElement.isEmpty())
         return nullptr;
     auto pseudoId = optionalPseudoId ? *optionalPseudoId : PseudoId::None;

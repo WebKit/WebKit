@@ -34,7 +34,7 @@ struct PseudoClassOrCompatibilityPseudoElement {
     std::optional<CSSSelector::PseudoElement> compatibilityPseudoElement;
 };
 
-PseudoClassOrCompatibilityPseudoElement parsePseudoClassAndCompatibilityElementString(StringView pseudoTypeString);
-std::optional<CSSSelector::PseudoElement> parsePseudoElementString(StringView pseudoTypeString);
+PseudoClassOrCompatibilityPseudoElement findPseudoClassAndCompatibilityElementName(StringView);
+std::optional<CSSSelector::PseudoElement> findPseudoElementName(StringView);
 
 } // namespace WebCore

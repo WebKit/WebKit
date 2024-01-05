@@ -346,7 +346,7 @@ std::optional<PseudoId> pseudoIdFromString(const String& pseudoElement)
 
     // FIXME: This parserContext should include a document to get the proper settings.
     CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
-    return CSSSelector::parseStandalonePseudoElement(pseudoElement, parserContext);
+    return CSSSelector::parsePseudoElement(pseudoElement, parserContext);
 }
 
 AtomString animatablePropertyAsString(AnimatableCSSProperty property)

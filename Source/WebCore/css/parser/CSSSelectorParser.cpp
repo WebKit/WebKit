@@ -1186,7 +1186,7 @@ bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& c
                 continue;
 
             // FIXME: Stop attempting parsing once the unknown "-webkit" pseudo-elements are behind a different type. (webkit.org/b/266947)
-            if (!parsePseudoElementString(StringView(current->value())))
+            if (!findPseudoElementName(StringView(current->value())))
                 return true;
         }
     }
