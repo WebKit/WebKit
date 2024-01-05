@@ -252,7 +252,7 @@ class Plan < BasePlan
     end
 
     def statusCommand(status)
-        "echo #{$runUniqueId} $exitCode #{status} > #{statusFile}"
+        "echo #{@index} #{$runUniqueId} $exitCode #{status} >> #{statusFile}"
     end
 
     def failCommand
@@ -272,7 +272,7 @@ class Plan < BasePlan
     end
     
     def statusFile
-        "#{STATUS_FILE_PREFIX}#{@index}"
+        "#{STATUS_FILE}"
     end
     
     def writeRunScript(filename)

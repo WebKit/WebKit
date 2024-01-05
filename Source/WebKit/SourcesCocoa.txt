@@ -137,7 +137,6 @@ Shared/DocumentEditingContext.mm
 Shared/VisibleContentRectUpdateInfo.cpp
 Shared/WebSQLiteDatabaseTracker.cpp
 
-Shared/cf/ArgumentCodersCF.cpp @no-unify
 Shared/cf/CookieStorageUtilsCF.mm
 
 Shared/cg/ShareableBitmapCG.mm
@@ -155,9 +154,6 @@ Shared/Cocoa/ARKitSoftLink.mm
 Shared/Cocoa/AuxiliaryProcessCocoa.mm
 Shared/Cocoa/CodeSigning.mm
 Shared/Cocoa/CompletionHandlerCallChecker.mm
-Shared/Cocoa/CoreIPCError.mm
-Shared/Cocoa/CoreIPCLocale.mm
-Shared/Cocoa/CoreTextHelpers.mm
 Shared/Cocoa/DefaultWebBrowserChecks.mm
 Shared/Cocoa/ExtensionKitSoftLink.mm
 Shared/Cocoa/LoadParametersCocoa.mm

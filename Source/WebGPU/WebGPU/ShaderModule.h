@@ -76,9 +76,11 @@ public:
     const String& defaultFragmentEntryPoint() const;
     const String& defaultComputeEntryPoint() const;
 
+    using VertexStageIn = HashMap<uint32_t, WGPUVertexFormat, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using FragmentOutputs = HashMap<uint32_t, MTLDataType, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     const FragmentOutputs* returnTypeForEntryPoint(const String&) const;
     bool hasOverride(const String&) const;
+    const VertexStageIn* stageInTypesForEntryPoint(const String&) const;
 private:
     ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, NSMutableSet<NSString *> *, Device&);
     ShaderModule(Device&, CheckResult&&);
@@ -94,6 +96,7 @@ private:
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
     HashMap<String, String> m_constantIdentifiersToNames;
     HashMap<String, FragmentOutputs> m_returnTypeForEntryPoint;
+    HashMap<String, VertexStageIn> m_stageInTypesForEntryPoint;
 
     String m_defaultVertexEntryPoint;
     String m_defaultFragmentEntryPoint;

@@ -30,9 +30,11 @@
 #import "ImageBufferShareableBitmapBackend.h"
 #import "ImageBufferShareableMappedIOSurfaceBackend.h"
 #import "Logging.h"
+#import "PlatformCALayerRemote.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "SwapBuffersDisplayRequirement.h"
+#import <WebCore/GraphicsContext.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <wtf/Scope.h>

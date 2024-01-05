@@ -325,6 +325,78 @@ static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
     }
 }
 
+static size_t vertexFormatSize(WGPUVertexFormat vertexFormat)
+{
+    switch (vertexFormat) {
+    case WGPUVertexFormat_Uint8x2:
+        return 2;
+    case WGPUVertexFormat_Uint8x4:
+        return 4;
+    case WGPUVertexFormat_Sint8x2:
+        return 2;
+    case WGPUVertexFormat_Sint8x4:
+        return 4;
+    case WGPUVertexFormat_Unorm8x2:
+        return 2;
+    case WGPUVertexFormat_Unorm8x4:
+        return 4;
+    case WGPUVertexFormat_Snorm8x2:
+        return 2;
+    case WGPUVertexFormat_Snorm8x4:
+        return 4;
+    case WGPUVertexFormat_Uint16x2:
+        return 4;
+    case WGPUVertexFormat_Uint16x4:
+        return 8;
+    case WGPUVertexFormat_Sint16x2:
+        return 4;
+    case WGPUVertexFormat_Sint16x4:
+        return 8;
+    case WGPUVertexFormat_Unorm16x2:
+        return 4;
+    case WGPUVertexFormat_Unorm16x4:
+        return 8;
+    case WGPUVertexFormat_Snorm16x2:
+        return 4;
+    case WGPUVertexFormat_Snorm16x4:
+        return 8;
+    case WGPUVertexFormat_Float16x2:
+        return 4;
+    case WGPUVertexFormat_Float16x4:
+        return 8;
+    case WGPUVertexFormat_Float32:
+        return 4;
+    case WGPUVertexFormat_Float32x2:
+        return 8;
+    case WGPUVertexFormat_Float32x3:
+        return 12;
+    case WGPUVertexFormat_Float32x4:
+        return 16;
+    case WGPUVertexFormat_Uint32:
+        return 4;
+    case WGPUVertexFormat_Uint32x2:
+        return 8;
+    case WGPUVertexFormat_Uint32x3:
+        return 12;
+    case WGPUVertexFormat_Uint32x4:
+        return 16;
+    case WGPUVertexFormat_Sint32:
+        return 4;
+    case WGPUVertexFormat_Sint32x2:
+        return 8;
+    case WGPUVertexFormat_Sint32x3:
+        return 12;
+    case WGPUVertexFormat_Sint32x4:
+        return 16;
+    case WGPUVertexFormat_Unorm10_10_10_2:
+        return 4;
+    case WGPUVertexFormat_Force32:
+    case WGPUVertexFormat_Undefined:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
 static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode, auto arrayStride)
 {
     if (!arrayStride)
@@ -343,29 +415,213 @@ static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode, auto arra
     }
 }
 
-static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
+static const char* name(WGPUVertexFormat format)
+{
+    switch (format) {
+    case WGPUVertexFormat_Uint8x2:
+        return "UChar2";
+    case WGPUVertexFormat_Uint8x4:
+        return "UChar4";
+    case WGPUVertexFormat_Sint8x2:
+        return "Char2";
+    case WGPUVertexFormat_Sint8x4:
+        return "Char4";
+    case WGPUVertexFormat_Unorm8x2:
+        return "UChar2Normalized";
+    case WGPUVertexFormat_Unorm8x4:
+        return "UChar4Normalized";
+    case WGPUVertexFormat_Snorm8x2:
+        return "Char2Normalized";
+    case WGPUVertexFormat_Snorm8x4:
+        return "Char4Normalized";
+    case WGPUVertexFormat_Uint16x2:
+        return "UShort2";
+    case WGPUVertexFormat_Uint16x4:
+        return "UShort4";
+    case WGPUVertexFormat_Sint16x2:
+        return "Short2";
+    case WGPUVertexFormat_Sint16x4:
+        return "Short4";
+    case WGPUVertexFormat_Unorm16x2:
+        return "UShort2Normalized";
+    case WGPUVertexFormat_Unorm16x4:
+        return "UShort4Normalized";
+    case WGPUVertexFormat_Snorm16x2:
+        return "Short2Normalized";
+    case WGPUVertexFormat_Snorm16x4:
+        return "Short4Normalized";
+    case WGPUVertexFormat_Float16x2:
+        return "Half2";
+    case WGPUVertexFormat_Float16x4:
+        return "Half4";
+    case WGPUVertexFormat_Float32:
+        return "Float";
+    case WGPUVertexFormat_Float32x2:
+        return "Float2";
+    case WGPUVertexFormat_Float32x3:
+        return "Float3";
+    case WGPUVertexFormat_Float32x4:
+        return "Float4";
+    case WGPUVertexFormat_Uint32:
+        return "UInt";
+    case WGPUVertexFormat_Uint32x2:
+        return "UInt2";
+    case WGPUVertexFormat_Uint32x3:
+        return "UInt3";
+    case WGPUVertexFormat_Uint32x4:
+        return "UInt4";
+    case WGPUVertexFormat_Sint32:
+        return "Int";
+    case WGPUVertexFormat_Sint32x2:
+        return "Int2";
+    case WGPUVertexFormat_Sint32x3:
+        return "Int3";
+    case WGPUVertexFormat_Sint32x4:
+        return "Int4";
+    case WGPUVertexFormat_Unorm10_10_10_2:
+        return "UInt1010102Normalized";
+    case WGPUVertexFormat_Force32:
+    case WGPUVertexFormat_Undefined:
+        ASSERT_NOT_REACHED();
+        return "none";
+    }
+}
+
+enum class WGPUVertexFormatType {
+    Undefined,
+    SignedInt,
+    UnsignedInt,
+    Float
+};
+
+static constexpr WGPUVertexFormatType formatType(WGPUVertexFormat format)
+{
+    switch (format) {
+    case WGPUVertexFormat_Uint8x2:
+    case WGPUVertexFormat_Uint8x4:
+    case WGPUVertexFormat_Uint16x2:
+    case WGPUVertexFormat_Uint16x4:
+    case WGPUVertexFormat_Uint32:
+    case WGPUVertexFormat_Uint32x2:
+    case WGPUVertexFormat_Uint32x3:
+    case WGPUVertexFormat_Uint32x4:
+        return WGPUVertexFormatType::UnsignedInt;
+
+    case WGPUVertexFormat_Sint8x2:
+    case WGPUVertexFormat_Sint8x4:
+    case WGPUVertexFormat_Sint16x2:
+    case WGPUVertexFormat_Sint16x4:
+    case WGPUVertexFormat_Sint32:
+    case WGPUVertexFormat_Sint32x2:
+    case WGPUVertexFormat_Sint32x3:
+    case WGPUVertexFormat_Sint32x4:
+        return WGPUVertexFormatType::SignedInt;
+
+    case WGPUVertexFormat_Unorm8x2:
+    case WGPUVertexFormat_Unorm8x4:
+    case WGPUVertexFormat_Snorm8x2:
+    case WGPUVertexFormat_Snorm8x4:
+    case WGPUVertexFormat_Unorm16x2:
+    case WGPUVertexFormat_Unorm16x4:
+    case WGPUVertexFormat_Snorm16x2:
+    case WGPUVertexFormat_Snorm16x4:
+    case WGPUVertexFormat_Float16x2:
+    case WGPUVertexFormat_Float16x4:
+    case WGPUVertexFormat_Float32:
+    case WGPUVertexFormat_Float32x2:
+    case WGPUVertexFormat_Float32x3:
+    case WGPUVertexFormat_Float32x4:
+    case WGPUVertexFormat_Unorm10_10_10_2:
+        return WGPUVertexFormatType::Float;
+
+    case WGPUVertexFormat_Force32:
+        RELEASE_ASSERT_NOT_REACHED();
+    case WGPUVertexFormat_Undefined:
+        return WGPUVertexFormatType::Undefined;
+    }
+}
+
+static bool matchesFormat(const ShaderModule::VertexStageIn& stageIn, uint32_t shaderLocation, WGPUVertexFormat format)
+{
+    auto it = stageIn.find(shaderLocation);
+    if (it == stageIn.end())
+        return false;
+
+    return formatType(it->value) == formatType(format);
+}
+
+static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, const WGPULimits& limits, const ShaderModule::VertexStageIn& stageIn, NSString** error)
 {
     MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor new];
+    uint32_t totalAttributeCount = 0;
+    ASSERT(error);
 
+    ShaderModule::VertexStageIn shaderLocations;
     for (size_t bufferIndex = 0; bufferIndex < vertexState.bufferCount; ++bufferIndex) {
         auto& buffer = vertexState.buffers[bufferIndex];
         if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
             continue;
 
+        if (buffer.arrayStride > limits.maxVertexBufferArrayStride || (buffer.arrayStride % 4)) {
+            *error = @"buffer.arrayStride > limits.maxVertexBufferArrayStride || (buffer.arrayStride % 4)";
+            return nil;
+        }
+
         if (!buffer.attributeCount)
             continue;
 
+        totalAttributeCount += buffer.attributeCount;
         vertexDescriptor.layouts[bufferIndex].stride = std::max<NSUInteger>(sizeof(int), buffer.arrayStride);
         vertexDescriptor.layouts[bufferIndex].stepFunction = stepFunction(buffer.stepMode, buffer.arrayStride);
         if (vertexDescriptor.layouts[bufferIndex].stepFunction == MTLVertexStepFunctionConstant)
             vertexDescriptor.layouts[bufferIndex].stepRate = 0;
         for (size_t i = 0; i < buffer.attributeCount; ++i) {
             auto& attribute = buffer.attributes[i];
-            const auto& mtlAttribute = vertexDescriptor.attributes[attribute.shaderLocation];
+            auto formatSize = vertexFormatSize(attribute.format);
+            if (!buffer.arrayStride) {
+                if (attribute.offset + formatSize > limits.maxVertexBufferArrayStride) {
+                    *error = @"attribute.offset + formatSize > limits.maxVertexBufferArrayStride";
+                    return nil;
+                }
+            } else if (attribute.offset + formatSize > buffer.arrayStride) {
+                *error = @"attribute.offset + formatSize > buffer.arrayStride";
+                return nil;
+            }
+
+            if (attribute.offset % std::min<size_t>(4, formatSize)) {
+                *error = @"attribute.offset + formatSize > buffer.arrayStride";
+                return nil;
+            }
+
+            auto shaderLocation = attribute.shaderLocation;
+            if (shaderLocation >= limits.maxVertexAttributes || shaderLocations.contains(shaderLocation)) {
+                *error = @"shaderLocation >= limits.maxVertexAttributes || shaderLocations.contains(shaderLocation)";
+                return nil;
+            }
+
+            shaderLocations.add(shaderLocation, attribute.format);
+            const auto& mtlAttribute = vertexDescriptor.attributes[shaderLocation];
             mtlAttribute.format = vertexFormat(attribute.format);
             mtlAttribute.bufferIndex = bufferIndex;
             mtlAttribute.offset = attribute.offset;
         }
+    }
+
+    for (auto& [shaderLocation, attributeFormat] : stageIn) {
+        auto formatSize = vertexFormatSize(attributeFormat);
+        if (!matchesFormat(shaderLocations, shaderLocation, attributeFormat)) {
+            auto it = stageIn.find(shaderLocation);
+            WGPUVertexFormat otherFormat = WGPUVertexFormat_Undefined;
+            if (it != stageIn.end())
+                otherFormat = it->value;
+            *error = [NSString stringWithFormat:@"!matchesFormat(attribute(%d), format(%s), size(%zu), otherFormat(%d)", shaderLocation, name(attributeFormat), formatSize, otherFormat];
+            return nil;
+        }
+    }
+
+    if (totalAttributeCount > limits.maxVertexAttributes) {
+        *error = @"totalAttributeCount > limits.maxVertexAttributes";
+        return nil;
     }
 
     return vertexDescriptor;
@@ -882,6 +1138,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             pipelineLayout = &layout;
     }
 
+    const ShaderModule::VertexStageIn* vertexStageIn = nullptr;
     std::optional<PipelineLayout> vertexPipelineLayout { std::nullopt };
     {
         if (descriptor.vertex.nextInChain)
@@ -894,7 +1151,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
 
         const auto& vertexFunctionName = fromAPI(descriptor.vertex.entryPoint);
-        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint(), label);
+        const auto& vertexEntryPoint = vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint();
+        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex library failed creation"_s);
 
@@ -906,6 +1164,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
+        vertexStageIn = vertexModule.stageInTypesForEntryPoint(vertexEntryPoint);
     }
 
     std::optional<PipelineLayout> fragmentPipelineLayout { std::nullopt };
@@ -930,7 +1189,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         usesSampleMask = fragmentModule.ast()->usesSampleMask();
         const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
 
-        auto fragmentEntryPoint = fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint();
+        const auto& fragmentEntryPoint = fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint();
         auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentEntryPoint, label);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment library could not be created"_s);
@@ -1054,8 +1313,20 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         sampleMask = mask;
     }
 
-    if (descriptor.vertex.bufferCount)
-        mtlRenderPipelineDescriptor.vertexDescriptor = createVertexDescriptor(descriptor.vertex);
+    if (descriptor.vertex.bufferCount) {
+        auto& deviceLimits = limits();
+        if (!vertexStageIn)
+            return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Vertex shader has no stageIn parameters but buffer count was %zu and attribute count was %zu", descriptor.vertex.bufferCount, descriptor.vertex.buffers[0].attributeCount]);
+        if (descriptor.vertex.bufferCount > deviceLimits.maxVertexBuffers)
+            return returnInvalidRenderPipeline(*this, isAsync, "vertexBuffer count exceeds limit"_s);
+        NSString *error = nil;
+        MTLVertexDescriptor *vertexDecriptor = createVertexDescriptor(descriptor.vertex, deviceLimits, *vertexStageIn, &error);
+        if (error)
+            return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"vertex descriptor creation failed %@", error]);
+
+        ASSERT(vertexDecriptor);
+        mtlRenderPipelineDescriptor.vertexDescriptor = vertexDecriptor;
+    }
 
     MTLDepthClipMode mtlDepthClipMode = MTLDepthClipModeClip;
     if (descriptor.primitive.nextInChain) {

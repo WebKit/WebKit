@@ -296,6 +296,66 @@ static MTLDataType metalDataTypeFromPrimitive(const WGSL::Types::Primitive *prim
     }
 }
 
+static WGPUVertexFormat vertexFormatTypeFromPrimitive(const WGSL::Types::Primitive *primitiveType, int vectorSize)
+{
+    switch (vectorSize) {
+    case 1:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return WGPUVertexFormat_Sint32;
+        case WGSL::Types::Primitive::U32:
+            return WGPUVertexFormat_Uint32;
+        case WGSL::Types::Primitive::F16:
+            return WGPUVertexFormat_Float32;
+        case WGSL::Types::Primitive::F32:
+            return WGPUVertexFormat_Float32;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    case 2:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return WGPUVertexFormat_Sint32x2;
+        case WGSL::Types::Primitive::U32:
+            return WGPUVertexFormat_Uint32x2;
+        case WGSL::Types::Primitive::F16:
+            return WGPUVertexFormat_Float16x2;
+        case WGSL::Types::Primitive::F32:
+            return WGPUVertexFormat_Float32x2;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    case 3:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return WGPUVertexFormat_Sint32x3;
+        case WGSL::Types::Primitive::U32:
+            return WGPUVertexFormat_Uint32x3;
+        case WGSL::Types::Primitive::F16:
+            return WGPUVertexFormat_Float16x4;
+        case WGSL::Types::Primitive::F32:
+            return WGPUVertexFormat_Float32x3;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    case 4:
+        switch (primitiveType->kind) {
+        case WGSL::Types::Primitive::I32:
+            return WGPUVertexFormat_Sint32x4;
+        case WGSL::Types::Primitive::U32:
+            return WGPUVertexFormat_Uint32x4;
+        case WGSL::Types::Primitive::F16:
+            return WGPUVertexFormat_Float16x4;
+        case WGSL::Types::Primitive::F32:
+            return WGPUVertexFormat_Float32x4;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 static MTLDataType metalDataTypeForStructMember(const WGSL::Type* type)
 {
     if (!type)
@@ -308,6 +368,24 @@ static MTLDataType metalDataTypeForStructMember(const WGSL::Type* type)
 
     auto vectorSize = vectorType ? vectorType->size : 1;
     return metalDataTypeFromPrimitive(primitiveType, vectorSize);
+}
+
+static WGPUVertexFormat vertexFormatTypeForStructMember(const WGSL::Type* type)
+{
+    if (!type) {
+        RELEASE_ASSERT_NOT_REACHED();
+        return WGPUVertexFormat_Undefined;
+    }
+
+    auto* vectorType = std::get_if<WGSL::Types::Vector>(type);
+    auto* primitiveType = std::get_if<WGSL::Types::Primitive>(vectorType ? vectorType->element : type);
+    if (!primitiveType) {
+        RELEASE_ASSERT_NOT_REACHED();
+        return WGPUVertexFormat_Undefined;
+    }
+
+    auto vectorSize = vectorType ? vectorType->size : 1;
+    return vertexFormatTypeFromPrimitive(primitiveType, vectorSize);
 }
 
 static ShaderModule::FragmentOutputs parseReturnType(const WGSL::Type& type)
@@ -336,6 +414,35 @@ static ShaderModule::FragmentOutputs parseReturnType(const WGSL::Type& type)
     return fragmentOutputs;
 }
 
+static void populateStageInMap(const WGSL::Type& type, ShaderModule::VertexStageIn& vertexStageIn)
+{
+    auto* inputStruct = std::get_if<WGSL::Types::Struct>(&type);
+    if (!inputStruct)
+        return;
+
+    for (auto& member : inputStruct->structure.members()) {
+        if (!member.location())
+            continue;
+        auto location = *member.location();
+        auto dataType = vertexFormatTypeForStructMember(member.type().inferredType());
+        vertexStageIn.add(location, dataType);
+    }
+}
+
+static ShaderModule::VertexStageIn parseStageIn(const WGSL::AST::Function& function)
+{
+    ShaderModule::VertexStageIn result;
+    for (auto& parameter : function.parameters()) {
+        if (parameter.role() != WGSL::AST::ParameterRole::UserDefined)
+            continue;
+
+        if (auto* inferredType = parameter.typeName().inferredType())
+            populateStageInMap(*inferredType, result);
+    }
+
+    return result;
+}
+
 ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, NSMutableSet<NSString* >* originalOverrideNames, Device& device)
     : m_checkResult(convertCheckResult(WTFMove(checkResult)))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
@@ -355,6 +462,7 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
                 continue;
             switch (*function.stage()) {
             case WGSL::ShaderStage::Vertex: {
+                m_stageInTypesForEntryPoint.add(function.name(), parseStageIn(function));
                 if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
                     allowVertexDefault = false;
                     m_defaultVertexEntryPoint = emptyString();
@@ -401,6 +509,14 @@ const ShaderModule::FragmentOutputs* ShaderModule::returnTypeForEntryPoint(const
 bool ShaderModule::hasOverride(const String& name) const
 {
     return [m_originalOverrideNames containsObject:name];
+}
+
+const ShaderModule::VertexStageIn* ShaderModule::stageInTypesForEntryPoint(const String& entryPoint) const
+{
+    if (auto it = m_stageInTypesForEntryPoint.find(entryPoint); it != m_stageInTypesForEntryPoint.end())
+        return &it->value;
+
+    return nullptr;
 }
 
 ShaderModule::ShaderModule(Device& device, CheckResult&& checkResult)
