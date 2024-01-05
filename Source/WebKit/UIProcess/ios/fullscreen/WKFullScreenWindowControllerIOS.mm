@@ -162,9 +162,8 @@ struct WKWebViewState {
     BOOL _savedHaveSetUnobscuredSafeAreaInsets = NO;
     UIEdgeInsets _savedUnobscuredSafeAreaInsets = UIEdgeInsetsZero;
     BOOL _savedHasOverriddenLayoutParameters = NO;
-    std::optional<CGSize> _savedMinimumUnobscuredSizeOverride;
-    std::optional<CGSize> _savedMaximumUnobscuredSizeOverride;
-
+    CGSize _savedMinimumUnobscuredSizeOverride = CGSizeZero;
+    CGSize _savedMaximumUnobscuredSizeOverride = CGSizeZero;
 
     void applyTo(WKWebView* webView)
     {
@@ -197,8 +196,8 @@ struct WKWebViewState {
         else
             [webView _resetUnobscuredSafeAreaInsets];
 
-        if (_savedHasOverriddenLayoutParameters && _savedMinimumUnobscuredSizeOverride && _savedMaximumUnobscuredSizeOverride)
-            [webView _overrideLayoutParametersWithMinimumLayoutSize:*_savedMinimumUnobscuredSizeOverride minimumUnobscuredSizeOverride:*_savedMinimumUnobscuredSizeOverride maximumUnobscuredSizeOverride:*_savedMaximumUnobscuredSizeOverride];
+        if (_savedHasOverriddenLayoutParameters)
+            [webView _overrideLayoutParametersWithMinimumLayoutSize:_savedMinimumUnobscuredSizeOverride minimumUnobscuredSizeOverride:_savedMinimumUnobscuredSizeOverride maximumUnobscuredSizeOverride:_savedMaximumUnobscuredSizeOverride];
         else
             [webView _clearOverrideLayoutParameters];
 
