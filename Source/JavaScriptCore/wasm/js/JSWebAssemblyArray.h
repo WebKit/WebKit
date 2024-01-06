@@ -96,14 +96,14 @@ public:
         return m_payload64.data();
     }
 
-    EncodedJSValue get(uint32_t index)
+    uint64_t get(uint32_t index)
     {
         if (m_elementType.type.is<Wasm::PackedType>()) {
             switch (m_elementType.type.as<Wasm::PackedType>()) {
             case Wasm::PackedType::I8:
-                return static_cast<EncodedJSValue>(m_payload8[index]);
+                return static_cast<uint64_t>(m_payload8[index]);
             case Wasm::PackedType::I16:
-                return static_cast<EncodedJSValue>(m_payload16[index]);
+                return static_cast<uint64_t>(m_payload16[index]);
             }
         }
         // m_element_type must be a type, so we can get its kind
@@ -111,17 +111,15 @@ public:
         switch (m_elementType.type.as<Wasm::Type>().kind) {
         case Wasm::TypeKind::I32:
         case Wasm::TypeKind::F32:
-            return static_cast<EncodedJSValue>(m_payload32[index]);
+            return static_cast<uint64_t>(m_payload32[index]);
         default:
-            return static_cast<EncodedJSValue>(m_payload64[index]);
+            return static_cast<uint64_t>(m_payload64[index]);
         }
     }
 
-    void set(uint32_t index, EncodedJSValue value)
+    void set(uint32_t index, uint64_t value)
     {
         if (m_elementType.type.is<Wasm::PackedType>()) {
-            // `value` is assumed to be an unboxed int32; truncate it to either 8 or 16 bits
-            ASSERT(value <= UINT32_MAX);
             switch (m_elementType.type.as<Wasm::PackedType>()) {
             case Wasm::PackedType::I8:
                 m_payload8[index] = static_cast<uint8_t>(value);
@@ -150,7 +148,7 @@ public:
         case Wasm::TypeKind::RefNull: {
             WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(m_payload64.data());
             pointer += index;
-            pointer->set(vm(), this, JSValue::decode(value));
+            pointer->set(vm(), this, JSValue::decode(static_cast<EncodedJSValue>(value)));
             break;
         }
         case Wasm::TypeKind::V128:
