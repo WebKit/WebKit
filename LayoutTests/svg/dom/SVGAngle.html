@@ -1,7 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p id="description"></p>
@@ -68,13 +68,17 @@ shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN, 50)");
 shouldThrow("angle.newValueSpecifiedUnits(-1, 50)");
 shouldThrow("angle.newValueSpecifiedUnits(5, 50)");
 shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
-shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString')");
-shouldBe("angle.value", "NaN");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString')");
+shouldBe("angle.value", "0");
 shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0)");
-shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle)");
-shouldBe("angle.value", "NaN");
-shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement)");
-shouldBe("angle.value", "NaN");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle)");
+shouldBe("angle.value", "0");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement)");
+shouldBe("angle.value", "0");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, NaN)");
+shouldBe("angle.value", "0");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, Infinity)");
+shouldBe("angle.value", "0");
 shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
 // All of the following unitType arguments convert to 0 (SVG_ANGLETYPE_UNKNOWN).
 shouldThrow("angle.newValueSpecifiedUnits('aString', 4)");
@@ -153,29 +157,37 @@ shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");
 debug("Check setting invalid 'valueInSpecifiedUnits' arguments");
-shouldBe("angle.valueInSpecifiedUnits = 'test'", "'test'");
-shouldBe("angle.value", "NaN");
-shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldThrow("angle.valueInSpecifiedUnits = 'test'");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 shouldBe("angle.valueInSpecifiedUnits = 0", "0");
 
-shouldBe("angle.valueInSpecifiedUnits = angle", "angle");
-shouldBe("angle.value", "NaN");
-shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldThrow("angle.valueInSpecifiedUnits = angle");
+shouldBe("angle.value", "0");
+shouldThrow("angle.valueInSpecifiedUnits = NaN");
+shouldBe("angle.value", "0");
+shouldThrow("angle.valueInSpecifiedUnits = Infinity");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");
 debug("Check setting invalid 'value' arguments");
 shouldBe("angle.value = 0", "0");
-shouldBe("angle.value = 'test'", "'test'");
-shouldBe("angle.value", "NaN");
-shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldThrow("angle.value = 'test'");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 shouldBe("angle.value = 0", "0");
-shouldBe("angle.value = angle", "angle");
-shouldBe("angle.value", "NaN");
-shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldThrow("angle.value = angle");
+shouldBe("angle.value", "0");
+shouldThrow("angle.value = NaN");
+shouldBe("angle.value", "0");
+shouldThrow("angle.value = Infinity");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
 shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 
 debug("");
@@ -237,6 +249,5 @@ shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
 
 successfullyParsed = true;
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
