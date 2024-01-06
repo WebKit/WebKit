@@ -40,6 +40,7 @@
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
 #import <wtf/URL.h>
@@ -468,15 +469,10 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
 
     if (content.dataInWebArchiveFormat) {
         auto webArchiveData = content.dataInWebArchiveFormat->createNSData();
-#if PLATFORM(MACCATALYST)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSString *webArchiveType = (__bridge NSString *)kUTTypeWebArchive;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-        // FIXME: We should additionally register "com.apple.webarchive" once <rdar://problem/46830277> is fixed.
-        NSString *webArchiveType = WebArchivePboardType;
+#if !PLATFORM(MACCATALYST)
+        [representationsToRegister addData:webArchiveData.get() forType:WebArchivePboardType];
 #endif
-        [representationsToRegister addData:webArchiveData.get() forType:webArchiveType];
+        [representationsToRegister addData:webArchiveData.get() forType:UTTypeWebArchive.identifier];
     }
 
     if (content.dataInAttributedStringFormat) {

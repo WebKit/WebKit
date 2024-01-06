@@ -1725,6 +1725,8 @@
 
 (define (syscall-unix-in-use-after-launch)
     (syscall-number
+        SYS_ftruncate
+        SYS_fsync
         SYS___disable_threadsignal
         SYS___mac_syscall
         SYS_access
@@ -1856,7 +1858,6 @@
     (syscall-number
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
-        SYS_ftruncate
         SYS_msync
         SYS_rename))
 
@@ -1866,7 +1867,6 @@
         SYS_change_fdguard_np
         SYS_chmod
         SYS_fchmod
-        SYS_fsync
         SYS_getpriority ;; rdar://81727094. Required for CoreAudio AudioOutputUnitStart call. Remove when GPU process is enabled by default.
         SYS_guarded_close_np
         SYS_guarded_open_np

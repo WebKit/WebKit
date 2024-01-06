@@ -96,7 +96,7 @@ extern "C" void wasm_log_crash(CallFrame*, Wasm::Instance* instance)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
+static inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
 {
     if (requiredJIT == RequiredWasmJIT::OMG) {
         if (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex()))
@@ -114,7 +114,7 @@ inline bool shouldJIT(Wasm::LLIntCallee* callee, RequiredWasmJIT requiredJIT = R
     return true;
 }
 
-inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
+static inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
     ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
@@ -164,7 +164,7 @@ inline bool jitCompileAndSetHeuristics(Wasm::LLIntCallee* callee, Wasm::Instance
     return !!callee->replacement(instance->memory()->mode());
 }
 
-inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
+static inline bool jitCompileSIMDFunction(Wasm::LLIntCallee* callee, Wasm::Instance* instance)
 {
     Wasm::LLIntTierUpCounter& tierUpCounter = callee->tierUpCounter();
 
@@ -474,7 +474,7 @@ WASM_SLOW_PATH_DECL(array_set)
     if (JSValue::decode(arrayref).isNull())
         WASM_THROW(Wasm::ExceptionType::NullArraySet);
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
-    EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
+    uint64_t value = static_cast<uint64_t>(READ(instruction.m_value).unboxedInt64());
 
     JSValue arrayValue = JSValue::decode(arrayref);
     ASSERT(arrayValue.isObject());
@@ -545,7 +545,7 @@ WASM_SLOW_PATH_DECL(struct_set)
     auto structReference = READ(instruction.m_structReference).encodedJSValue();
     if (JSValue::decode(structReference).isNull())
         WASM_THROW(Wasm::ExceptionType::NullStructSet);
-    auto value = READ(instruction.m_value).encodedJSValue();
+    auto value = static_cast<uint64_t>(READ(instruction.m_value).unboxedInt64());
     Wasm::structSet(structReference, instruction.m_fieldIndex, value);
     WASM_END();
 }
@@ -609,7 +609,7 @@ WASM_SLOW_PATH_DECL(grow_memory)
     WASM_RETURN(Wasm::growMemory(instance, delta));
 }
 
-inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
+static inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
@@ -634,7 +634,7 @@ WASM_SLOW_PATH_DECL(call)
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
-inline UGPRPair doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
+static inline UGPRPair doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
 {
     Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
 
@@ -661,7 +661,7 @@ WASM_SLOW_PATH_DECL(call_indirect)
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_typeIndex);
 }
 
-inline UGPRPair doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned typeIndex)
+static inline UGPRPair doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstance, JSValue targetReference, unsigned typeIndex)
 {
     UNUSED_PARAM(callFrame);
     UNUSED_PARAM(callerInstance);

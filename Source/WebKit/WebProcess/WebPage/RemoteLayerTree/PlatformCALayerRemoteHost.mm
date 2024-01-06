@@ -26,9 +26,11 @@
 #import "config.h"
 #import "PlatformCALayerRemoteHost.h"
 
+#import "RemoteLayerTreeContext.h"
+
 namespace WebKit {
 
-Ref<PlatformCALayerRemote> PlatformCALayerRemoteHost::create(WebCore::LayerHostingContextIdentifier identifier, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemoteHost::create(WebCore::LayerHostingContextIdentifier identifier, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
     auto layer = adoptRef(*new PlatformCALayerRemoteHost(identifier, owner, context));
     context.layerDidEnterContext(layer.get(), layer->layerType());

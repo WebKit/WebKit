@@ -52,7 +52,7 @@
 #include "WebAssemblyFunction.h"
 #include <bit>
 
-namespace JSC { namespace LLInt {
+namespace JSC { namespace IPInt {
 
 #define WASM_RETURN_TWO(first, second) do { \
         return encodeResult(first, second); \
@@ -74,7 +74,7 @@ namespace JSC { namespace LLInt {
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 enum class RequiredWasmJIT { Any, OMG };
 
-inline bool shouldJIT(Wasm::IPIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
+static inline bool shouldJIT(Wasm::IPIntCallee* callee, RequiredWasmJIT requiredJIT = RequiredWasmJIT::Any)
 {
     if (requiredJIT == RequiredWasmJIT::OMG) {
         if (!Options::useOMGJIT() || !Wasm::OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(callee->functionIndex()))
@@ -92,7 +92,7 @@ inline bool shouldJIT(Wasm::IPIntCallee* callee, RequiredWasmJIT requiredJIT = R
     return true;
 }
 
-inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, Wasm::Instance* instance)
+static inline bool jitCompileAndSetHeuristics(Wasm::IPIntCallee* callee, Wasm::Instance* instance)
 {
     ASSERT(!instance->module().moduleInformation().usesSIMD(callee->functionIndex()));
 
@@ -566,7 +566,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_size, int32_t tableIndex)
 #endif
 }
 
-inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
+static inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
 {
     uint32_t importFunctionCount = instance->module().moduleInformation().importFunctionCount();
 
@@ -586,25 +586,6 @@ inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
 WASM_IPINT_EXTERN_CPP_DECL(call, unsigned functionIndex)
 {
     return doWasmCall(instance, functionIndex);
-}
-
-inline UGPRPair doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instance, unsigned functionIndex, unsigned tableIndex, unsigned typeIndex)
-{
-    Wasm::FuncRefTable* table = instance->table(tableIndex)->asFuncrefTable();
-
-    if (functionIndex >= table->length())
-        WASM_THROW(Wasm::ExceptionType::OutOfBoundsCallIndirect);
-
-    const Wasm::FuncRefTable::Function& function = table->function(functionIndex);
-
-    if (function.m_function.typeIndex == Wasm::TypeDefinition::invalidIndex)
-        WASM_THROW(Wasm::ExceptionType::NullTableEntry);
-
-    const auto& callSignature = IPINT_CALLEE()->signature(typeIndex);
-    if (callSignature.index() != function.m_function.typeIndex)
-        WASM_THROW(Wasm::ExceptionType::BadSignature);
-
-    WASM_CALL_RETURN(function.m_instance, function.m_function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, unsigned functionIndex, unsigned* metadataEntry)
@@ -704,7 +685,7 @@ WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)
 #endif
 }
 
-} } // namespace JSC::LLInt
+} } // namespace JSC::IPInt
 
 #endif
 

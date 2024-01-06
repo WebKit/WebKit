@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {INPUT} at (0,0) size 106x29 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
-      RenderText {#text} at (106,12) size 4x17
-        text run at (106,12) width 4: " "
-      RenderBlock {INPUT} at (110,0) size 106x29 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
+      RenderText {#text} at (106,4) size 4x17
+        text run at (106,4) width 4: " "
       RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 106x29 clip at (10,10) size 102x25
+  RenderFlexibleBox {INPUT} at (0,0) size 106x29 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
 layer at (11,11) size 100x23 clip at (12,12) size 98x21
   RenderBlock {DIV} at (3,3) size 100x23 [border: (1px solid #FF0000)]
     RenderBlock {DIV} at (2,2) size 96x19
@@ -26,6 +26,8 @@ layer at (11,11) size 100x23 clip at (12,12) size 98x21
       RenderBlock {DIV} at (58,0) size 38x19 [color=#0000FF]
         RenderText {#text} at (1,1) size 36x17
           text run at (1,1) width 36: "1976"
+layer at (118,8) size 106x29 clip at (120,10) size 102x25
+  RenderFlexibleBox {INPUT} at (110,0) size 106x29 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
 layer at (121,11) size 100x23 clip at (122,12) size 98x21
   RenderBlock {DIV} at (3,3) size 100x23 [border: (1px solid #FF0000)]
     RenderBlock {DIV} at (2,2) size 96x19

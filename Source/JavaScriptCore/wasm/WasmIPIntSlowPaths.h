@@ -29,6 +29,7 @@
 
 #include "CommonSlowPaths.h"
 #include "WasmExceptionType.h"
+#include "WasmTypeDefinition.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -37,7 +38,7 @@ namespace Wasm {
 class Instance;
 }
 
-namespace LLInt {
+namespace IPInt {
 
 #define WASM_IPINT_EXTERN_CPP_DECL(name, ...) \
     extern "C" UGPRPair ipint_extern_##name(Wasm::Instance* instance, __VA_ARGS__)
@@ -89,6 +90,6 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, uint64_t, uint64_t, uint
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, unsigned, unsigned, int32_t);
 
 
-} } // namespace JSC::LLInt
+} } // namespace JSC::IPInt
 
 #endif

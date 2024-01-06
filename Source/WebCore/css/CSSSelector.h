@@ -126,7 +126,7 @@ public:
     static bool pseudoElementMayHaveArgument(PseudoElement);
 
     static const ASCIILiteral selectorTextForPseudoClass(PseudoClass);
-    static const ASCIILiteral nameForShadowPseudoElementLegacyAlias(StringView);
+    static const ASCIILiteral nameForUserAgentPartLegacyAlias(StringView);
 
     // Selectors are kept in an array by CSSSelectorList.
     // The next component of the selector is the next item in the array.

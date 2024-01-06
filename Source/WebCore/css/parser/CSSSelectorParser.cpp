@@ -213,16 +213,16 @@ bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const
     // @supports requires that all arguments parse.
     parser.m_disableForgivingParsing = true;
 
-    std::unique_ptr<MutableCSSSelector> parserSelector;
+    std::unique_ptr<MutableCSSSelector> mutableSelector;
     if (isNestedContext == CSSParserEnum::IsNestedContext::Yes)
-        parserSelector = parser.consumeNestedComplexSelector(range);
+        mutableSelector = parser.consumeNestedComplexSelector(range);
     else
-        parserSelector = parser.consumeComplexSelector(range);
+        mutableSelector = parser.consumeComplexSelector(range);
 
-    if (parser.m_failedParsing || !range.atEnd() || !parserSelector)
+    if (parser.m_failedParsing || !range.atEnd() || !mutableSelector)
         return false;
 
-    auto complexSelector = parserSelector->releaseSelector();
+    auto complexSelector = mutableSelector->releaseSelector();
     ASSERT(complexSelector);
 
     return !containsUnknownWebKitPseudoElements(*complexSelector);
@@ -1207,8 +1207,8 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
             // It's top-level, the nesting parent selector should be replaced by :scope
             const_cast<CSSSelector*>(selector)->replaceNestingParentByPseudoClassScope();
         }
-        auto parserSelector = makeUnique<MutableCSSSelector>(*selector);
-        result.append(WTFMove(parserSelector));
+        auto mutableSelector = makeUnique<MutableCSSSelector>(*selector);
+        result.append(WTFMove(mutableSelector));
         selector = copiedSelectorList.next(selector);
     }
 

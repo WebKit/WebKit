@@ -5736,6 +5736,14 @@
    },
    {
       "emails" : [
+         "mohsinq@apple.com"
+      ],
+      "github" : "mogey",
+      "name" : "Mohsin Qureshi",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "Ms2ger@igalia.com",
          "Ms2ger@gmail.com"
       ],

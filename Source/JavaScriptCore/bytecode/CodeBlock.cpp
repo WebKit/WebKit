@@ -2284,6 +2284,12 @@ JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
     auto* inlineCallFrame = codeOrigin.inlineCallFrame();
     if (!inlineCallFrame)
         return globalObject();
+    // It is possible that the global object and/or other data relating to this origin
+    // was collected by GC, but we are still asking for this (ex: in a patchpoint generate() function).
+    // Plan::cancel should have cleared this in that case.
+    // Let's make sure we can continue to execute safely, even though we don't have a global object to give.
+    if (!inlineCallFrame->baselineCodeBlock)
+        return nullptr;
     return inlineCallFrame->baselineCodeBlock->globalObject();
 }
 

@@ -1383,6 +1383,7 @@ $(PROJECT_DIR)/dom/EventInterfaces.in
 $(PROJECT_DIR)/dom/EventListener.idl
 $(PROJECT_DIR)/dom/EventListenerOptions.idl
 $(PROJECT_DIR)/dom/EventModifierInit.idl
+$(PROJECT_DIR)/dom/EventNames.json
 $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
@@ -1462,6 +1463,7 @@ $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
+$(PROJECT_DIR)/dom/make-event-names.py
 $(PROJECT_DIR)/dom/make_event_factory.pl
 $(PROJECT_DIR)/dom/make_names.pl
 $(PROJECT_DIR)/domjit/DOMJITAbstractHeapRepository.yaml

@@ -1768,10 +1768,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without
 # <rdar://problem/59015708>
 [ Monterey+ ] fast/images/animated-webp.html [ Skip ]
 
-# <rdar://problem/59605703> REGRESSION: crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html is failing
-[ Monterey+ ] crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Pass Failure ]
-[ Monterey+ ] crypto/workers/subtle/rsa-postMessage-worker.html [ Pass Failure ]
-
 # <rdar://problem/59607934> REGRESSION: [ 20A184-20A211 ] 3 fast/mediastream tests are failing after updating the bots
 [ Monterey+ ] fast/mediastream/MediaStream-video-element-displays-buffer.html [ Pass Failure Timeout ]
 [ Monterey+ ] fast/mediastream/resize-trim.html [ Pass Failure ]

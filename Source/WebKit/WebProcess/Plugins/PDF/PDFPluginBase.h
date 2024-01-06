@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include "FrameInfoData.h"
 #include "PDFPluginIdentifier.h"
+#include "PDFScriptEvaluator.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FloatRect.h>
@@ -67,13 +68,17 @@ class WebMouseEvent;
 class WebWheelEvent;
 struct WebHitTestResultData;
 
-class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase>, public WebCore::ScrollableArea {
+class PDFPluginBase : public ThreadSafeRefCounted<PDFPluginBase>, public WebCore::ScrollableArea, public PDFScriptEvaluator::Client {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(PDFPluginBase);
 public:
     static WebCore::PluginInfo pluginInfo();
 
     virtual ~PDFPluginBase();
+
+    using WebKit::PDFScriptEvaluator::Client::weakPtrFactory;
+    using WebKit::PDFScriptEvaluator::Client::WeakValueType;
+    using WebKit::PDFScriptEvaluator::Client::WeakPtrImplType;
 
     void destroy();
 
@@ -181,7 +186,7 @@ protected:
 
     void createPDFDocument();
     virtual void installPDFDocument() = 0;
-    virtual void tryRunScriptsInPDFDocument() { }
+    void tryRunScriptsInPDFDocument();
 
     virtual void incrementalPDFStreamDidReceiveData(const WebCore::SharedBuffer&) { }
     virtual bool incrementalPDFStreamDidFinishLoading() { return false; }
@@ -195,6 +200,8 @@ protected:
     void addArchiveResource();
 
     void invalidateRect(const WebCore::IntRect&);
+
+    void print() override;
 
     // ScrollableArea functions.
     WebCore::IntRect scrollCornerRect() const final;
@@ -266,6 +273,7 @@ protected:
     bool m_documentFinishedLoading { false };
     bool m_isBeingDestroyed { false };
     bool m_hasBeenDestroyed { false };
+    bool m_didRunScripts { false };
 };
 
 } // namespace WebKit

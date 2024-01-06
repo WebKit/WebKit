@@ -379,6 +379,23 @@ static bool isRubyContainerOrInternalRubyBox(const RenderStyle& style)
         || display == DisplayType::RubyBase;
 }
 
+static bool hasUnsupportedRubyDisplay(DisplayType display, const Element* element)
+{
+    // Only allow ruby elements to have ruby display types for now.
+    switch (display) {
+    case DisplayType::Ruby:
+    case DisplayType::RubyBlock:
+        return !element || !element->hasTagName(rubyTag);
+    case DisplayType::RubyAnnotation:
+        return !element || !element->hasTagName(rtTag);
+    case DisplayType::RubyBase:
+        ASSERT_NOT_REACHED();
+        return false;
+    default:
+        return false;
+    }
+}
+
 // https://drafts.csswg.org/css-ruby-1/#bidi
 static UnicodeBidi forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
 {
@@ -424,6 +441,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             if (m_element->hasTagName(legendTag))
                 style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
+
+        if (hasUnsupportedRubyDisplay(style.display(), m_element))
+            style.setEffectiveDisplay(style.display() == DisplayType::RubyBlock ? DisplayType::Block : DisplayType::Inline);
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
         // https://fullscreen.spec.whatwg.org/#new-stacking-layer

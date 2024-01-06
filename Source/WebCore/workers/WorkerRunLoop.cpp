@@ -45,6 +45,7 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
+#include <wtf/AutodrainedPool.h>
 
 #if USE(GLIB)
 #include <glib.h>
@@ -175,6 +176,8 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalSc
 {
     ASSERT(context);
     ASSERT(context->workerOrWorkletThread()->thread() == &Thread::current());
+
+    AutodrainedPool pool;
 
     const String predicateMode = predicate.mode();
     JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this, predicateMode] {

@@ -38,6 +38,7 @@ void GPUServiceInitializer();
 
 void ExtensionEventHandler(xpc_connection_t);
 
+#if USE(EXTENSIONKIT)
 // Declared in WKProcessExtension.h for use in extension targets. Must be declared in project
 //  headers because the extension targets cannot import the entire WebKit module (rdar://119162443).
 @interface WKGrant : NSObject
@@ -45,6 +46,7 @@ void ExtensionEventHandler(xpc_connection_t);
 
 @interface WKProcessExtension : NSObject
 @end
+#endif
 
 #ifdef __cplusplus
 }

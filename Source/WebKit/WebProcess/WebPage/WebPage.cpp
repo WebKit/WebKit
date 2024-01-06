@@ -4787,6 +4787,27 @@ bool WebPage::hasRootFrames()
     return result;
 }
 
+String WebPage::rootFrameOriginString()
+{
+    auto rootFrameURL = [&] () -> URL {
+        if (!m_page)
+            return { };
+        if (m_page->rootFrames().isEmpty())
+            return { };
+        RefPtr documentLoader = m_page->rootFrames().begin()->get().loader().documentLoader();
+        if (!documentLoader)
+            return { };
+        return documentLoader->url();
+    } ();
+
+    Ref<SecurityOrigin> origin = SecurityOrigin::create(rootFrameURL);
+    if (!origin->isOpaque())
+        return origin->toRawString();
+
+    // toRawString() is not supposed to work with opaque origins, and would just return "://".
+    return makeString(rootFrameURL.protocol(), ':');
+}
+
 void WebPage::didUpdateRendering()
 {
     didPaintLayers();

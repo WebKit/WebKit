@@ -123,8 +123,8 @@ Invalidator::RuleInformation Invalidator::collectRuleInformation()
             information.hasHostPseudoClassRules = true;
         if (ruleSet->hasHostPseudoClassRulesMatchingInShadowTree())
             information.hasHostPseudoClassRulesMatchingInShadowTree = true;
-        if (ruleSet->hasShadowPseudoElementRules())
-            information.hasShadowPseudoElementRules = true;
+        if (ruleSet->hasUserAgentPartRules())
+            information.hasUserAgentPartRules = true;
 #if ENABLE(VIDEO)
         if (!ruleSet->cuePseudoRules().isEmpty())
             information.hasCuePseudoElementRules = true;
@@ -415,7 +415,7 @@ void Invalidator::invalidateShadowParts(ShadowRoot& shadowRoot)
     }
 }
 
-void Invalidator::invalidateShadowPseudoElements(ShadowRoot& shadowRoot)
+void Invalidator::invalidateUserAgentParts(ShadowRoot& shadowRoot)
 {
     if (shadowRoot.mode() != ShadowRootMode::UserAgent)
         return;
@@ -425,7 +425,7 @@ void Invalidator::invalidateShadowPseudoElements(ShadowRoot& shadowRoot)
         if (!partId)
             continue;
         for (auto& ruleSet : m_ruleSets) {
-            if (ruleSet->shadowPseudoElementRules(partId))
+            if (ruleSet->userAgentPartRules(partId))
                 descendant.invalidateStyleInternal();
         }
     }
@@ -437,8 +437,8 @@ void Invalidator::invalidateInShadowTreeIfNeeded(Element& element)
     if (!shadowRoot)
         return;
 
-    if (m_ruleInformation.hasShadowPseudoElementRules)
-        invalidateShadowPseudoElements(*shadowRoot);
+    if (m_ruleInformation.hasUserAgentPartRules)
+        invalidateUserAgentParts(*shadowRoot);
 
     if (m_ruleInformation.hasHostPseudoClassRulesMatchingInShadowTree) {
         for (auto& child : childrenOfType<Element>(*shadowRoot)) {

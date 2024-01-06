@@ -24,6 +24,8 @@
  */
 
 #import "config.h"
+
+#if USE(EXTENSIONKIT)
 #import "WKProcessExtension.h"
 
 #import <wtf/RetainPtr.h>
@@ -57,3 +59,5 @@ static RetainPtr<WKProcessExtension>& sharedInstance()
 {
 }
 @end
+
+#endif // USE(EXTENSIONKIT)

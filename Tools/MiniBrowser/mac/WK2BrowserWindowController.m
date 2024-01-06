@@ -737,6 +737,12 @@ static BOOL areEssentiallyEqual(double a, double b)
     return WKDragDestinationActionAny;
 }
 
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    [[_webView printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];
+    completionHandler();
+}
+
 - (void)updateTextFieldFromURL:(NSURL *)URL
 {
     if (!URL)

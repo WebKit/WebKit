@@ -37,6 +37,7 @@
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WKVideoView.h"
 #import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/MediaPlayerEnums.h>
@@ -58,6 +59,10 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
+#if USE(EXTENSIONKIT)
+#import "ExtensionKitSoftlink.h"
+#endif
+
 @interface WKLayerHostView : PlatformView
 @property (nonatomic, assign) uint32_t contextID;
 @end
@@ -65,6 +70,11 @@
 @implementation WKLayerHostView {
 #if PLATFORM(IOS_FAMILY)
     WeakObjCPtr<UIWindow> _window;
+#endif
+#if USE(EXTENSIONKIT)
+@public
+    RetainPtr<_SEHostingView> _hostingView;
+    RetainPtr<_SEHostingUpdateCoordinator> _hostingUpdateCoordinator;
 #endif
 }
 
@@ -76,6 +86,14 @@
 - (CALayer *)makeBackingLayer
 {
     return adoptNS([[CALayerHost alloc] init]).autorelease();
+}
+#endif
+
+#if USE(EXTENSIONKIT)
+- (void)dealloc
+{
+    [_hostingUpdateCoordinator commit];
+    [super dealloc];
 }
 #endif
 
@@ -718,7 +736,25 @@ RetainPtr<WKLayerHostView> VideoPresentationManagerProxy::createLayerHostViewWit
         [view layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
     }
 
+#if USE(EXTENSIONKIT)
+    if (!view->_hostingView) {
+        auto pid = m_page->process().processPool().gpuProcess()->processID();
+        auto xpcRepresentation = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+        xpc_dictionary_set_uint64(xpcRepresentation.get(), "pid", pid);
+        xpc_dictionary_set_uint64(xpcRepresentation.get(), "cid", videoLayerID);
+        auto handle = adoptNS([alloc_SEHostingHandleInstance() initFromXPCRepresentation:xpcRepresentation.get()]);
+        auto hostingView = adoptNS([[_SEHostingView alloc] init]);
+        [hostingView setHandle:handle.get()];
+        view->_hostingView = hostingView;
+        [view addSubview:hostingView.get()];
+
+        [hostingView layer].masksToBounds = NO;
+        [hostingView layer].name = @"WKLayerHostView layer";
+        [hostingView layer].frame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
+    }
+#else
     [view setContextID:videoLayerID];
+#endif
 
     interface->setupCaptionsLayer([view layer], initialSize);
 
@@ -1177,10 +1213,23 @@ void VideoPresentationManagerProxy::setVideoLayerFrame(PlaybackSessionContextIde
 
     auto& [model, interface] = ensureModelAndInterface(contextId);
     interface->setCaptionsFrame(CGRectMake(0, 0, frame.width(), frame.height()));
-#if PLATFORM(IOS_FAMILY)
-    auto fenceSendRight = MachSendRight::adopt([UIWindow _synchronizeDrawingAcrossProcesses]);
-#else
     MachSendRight fenceSendRight;
+#if PLATFORM(IOS_FAMILY)
+#if USE(EXTENSIONKIT)
+    RetainPtr<WKLayerHostView> view = static_cast<WKLayerHostView*>(model->layerHostView());
+    if (view && view->_hostingView) {
+        if (!view->_hostingUpdateCoordinator) {
+            auto hostingUpdateCoordinator = adoptNS([alloc_SEHostingUpdateCoordinatorInstance() init]);
+            [hostingUpdateCoordinator addHostingView:view->_hostingView.get()];
+            view->_hostingUpdateCoordinator = hostingUpdateCoordinator;
+        }
+        OSObjectPtr<xpc_object_t> xpcRepresentationHostingCoordinator = [view->_hostingUpdateCoordinator xpcRepresentation];
+        fenceSendRight = MachSendRight::adopt(xpc_dictionary_copy_mach_send(xpcRepresentationHostingCoordinator.get(), "p"));
+    }
+#else
+    fenceSendRight = MachSendRight::adopt([UIWindow _synchronizeDrawingAcrossProcesses]);
+#endif // USE(EXTENSIONKIT)
+#else
     if (DrawingAreaProxy* drawingArea = m_page->drawingArea())
         fenceSendRight = drawingArea->createFence();
 #endif

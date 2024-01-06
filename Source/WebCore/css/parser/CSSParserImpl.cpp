@@ -1008,17 +1008,17 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
                 CSSParserTokenRange selectorListRange = prelude.makeSubRange(selectorListRangeStart, &prelude.peek());
 
                 // Parse the selector list range
-                auto parserSelectorList = parseMutableCSSSelectorList(selectorListRange, m_context, m_styleSheet.get(), last.has_value() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::Yes);
-                if (parserSelectorList.isEmpty())
+                auto mutableSelectorList = parseMutableCSSSelectorList(selectorListRange, m_context, m_styleSheet.get(), last.has_value() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::Yes);
+                if (mutableSelectorList.isEmpty())
                     return false;
 
                 // In nested context, add the implicit :scope or &
                 if (last) {
-                    for (auto& parserSelector : parserSelectorList) {
+                    for (auto& mutableSelector : mutableSelectorList) {
                         if (*last == AncestorRuleType::Scope)
-                            appendImplicitSelectorPseudoClassScopeIfNeeded(*parserSelector);
+                            appendImplicitSelectorPseudoClassScopeIfNeeded(*mutableSelector);
                         else if (*last == AncestorRuleType::Style)
-                            appendImplicitSelectorNestingParentIfNeeded(*parserSelector);
+                            appendImplicitSelectorNestingParentIfNeeded(*mutableSelector);
                     }
                 }
 
@@ -1028,7 +1028,7 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
                 prelude.consumeIncludingWhitespace();
 
                 // Return the correctly parsed scope
-                scope = CSSSelectorList { WTFMove(parserSelectorList) };
+                scope = CSSSelectorList { WTFMove(mutableSelectorList) };
                 return true;
             };
             std::optional<AncestorRuleType> last;
@@ -1262,20 +1262,20 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     auto preludeCopyForInspector = prelude;
-    auto parserSelectorList = parseMutableCSSSelectorList(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::No);
+    auto mutableSelectorList = parseMutableCSSSelectorList(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::No);
 
-    if (parserSelectorList.isEmpty())
+    if (mutableSelectorList.isEmpty())
         return nullptr; // Parse error, invalid selector list
 
     if (!m_ancestorRuleTypeStack.isEmpty()) {
         // https://drafts.csswg.org/css-nesting/#cssom
         // Relative selector should be absolutized (only when not "nest-containing" for the descendant one),
         // with the implied nesting selector inserted.
-        for (auto& parserSelector : parserSelectorList)
-            appendImplicitSelectorIfNeeded(*parserSelector, m_ancestorRuleTypeStack.last());
+        for (auto& mutableSelector : mutableSelectorList)
+            appendImplicitSelectorIfNeeded(*mutableSelector, m_ancestorRuleTypeStack.last());
     }
 
-    auto selectorList = CSSSelectorList { WTFMove(parserSelectorList) };
+    auto selectorList = CSSSelectorList { WTFMove(mutableSelectorList) };
     ASSERT(!selectorList.isEmpty());
 
     if (m_observerWrapper)
