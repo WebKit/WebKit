@@ -33,7 +33,6 @@ $env:PATH = ($SplitPath | Where-Object { $_ -notlike "*strawberry*" }) -join ';'
 Write-Host $env:PATH
 
 (Get-Command link).Path
-(Get-Command bash).Path
 clang-cl.exe --version
 
 $env:CC = "clang-cl"
@@ -79,9 +78,11 @@ if (!(Test-Path -Path $ICU_STATIC_ROOT)) {
 
     # two patches needed to build statically with clang-cl
     
-    # 1. replace references to `cl` with `clang-cl` from configure
+    # 1. fix build script to align with bun's compiler requirements
+    #    a. replace references to `cl` with `clang-cl` from configure
+    #    b. use -MT instead of -MD to statically link the C runtime
     $ConfigureFile = Get-Content "$ICU_STATIC_ROOT/source/runConfigureICU" -Raw
-    Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" ($ConfigureFile -replace "=cl", "=clang-cl") -NoNewline -Encoding UTF8
+    Set-Content "$ICU_STATIC_ROOT/source/runConfigureICU" (($ConfigureFile -replace "=cl", "=clang-cl") -replace "-MD'", "-MT'") -NoNewline -Encoding UTF8
     # 2. hack remove dllimport from platform.h
     $PlatformFile = Get-Content "$ICU_STATIC_ROOT/source/common/unicode/platform.h" -Raw
     Set-Content "$ICU_STATIC_ROOT/source/common/unicode/platform.h" ($PlatformFile -replace "__declspec\(dllimport\)", "")
@@ -134,8 +135,8 @@ Write-Host ":: Configuring WebKit"
 
 $env:PATH = $PathWithPerl
 
-$env:CFLAGS = "/Zi /Z7"
-$env:CXXFLAGS = "/Zi /Z7"
+$env:CFLAGS = "/Zi /Z7 /MT"
+$env:CXXFLAGS = "/Zi /Z7 /MT"
 
 cmake -S . -B $WebKitBuild `
     -DPORT="JSCOnly" `
@@ -155,8 +156,9 @@ cmake -S . -B $WebKitBuild `
     "-DICU_INCLUDE_DIR=${ICU_SHARED_INCLUDE_DIR}" `
     "-DCMAKE_C_COMPILER=clang-cl" `
     "-DCMAKE_CXX_COMPILER=clang-cl" `
-    "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG" `
-    "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG" `
+    "-DCMAKE_C_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG /MT" `
+    "-DCMAKE_CXX_FLAGS_RELEASE=/Zi /O2 /Ob2 /DNDEBUG /MT" `
+    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" `
     -DENABLE_REMOTE_INSPECTOR=ON `
     -G Ninja
 if ($LASTEXITCODE -ne 0) { throw "cmake failed with exit code $LASTEXITCODE" }
