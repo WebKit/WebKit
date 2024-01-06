@@ -57,9 +57,9 @@ public:
     {
         return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, parentEncoder, visibilityResultBuffer, device));
     }
-    static Ref<RenderPassEncoder> createInvalid(Device& device)
+    static Ref<RenderPassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(device));
+        return adoptRef(*new RenderPassEncoder(parentEncoder, device));
     }
 
     ~RenderPassEncoder();
@@ -91,7 +91,7 @@ public:
 
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, CommandEncoder&, id<MTLBuffer>, Device&);
-    RenderPassEncoder(Device&);
+    RenderPassEncoder(CommandEncoder&, Device&);
 
     bool validatePopDebugGroup() const;
 
@@ -119,7 +119,7 @@ private:
     Vector<uint32_t> m_vertexDynamicOffsets;
     Vector<uint32_t> m_fragmentDynamicOffsets;
     const RenderPipeline* m_pipeline { nullptr };
-    RefPtr<CommandEncoder> m_parentEncoder;
+    Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;
     float m_minDepth { 0.f };
     float m_maxDepth { 1.f };

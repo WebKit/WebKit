@@ -30,6 +30,7 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
 
 @interface TextureAndClearColor : NSObject
 - (instancetype)initWithTexture:(id<MTLTexture>)texture NS_DESIGNATED_INITIALIZER;
@@ -52,7 +53,7 @@ class RenderPassEncoder;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandencoder
-class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin {
+class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin, public CanMakeWeakPtr<CommandEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device)
@@ -91,7 +92,7 @@ public:
 
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> = nil);
     static void clearTexture(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
-    void makeInvalid() { m_commandBuffer = nil; }
+    void makeInvalid();
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
@@ -115,6 +116,7 @@ private:
     };
     Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
+    WeakPtr<CommandBuffer> m_cachedCommandBuffer;
 
     const Ref<Device> m_device;
 };

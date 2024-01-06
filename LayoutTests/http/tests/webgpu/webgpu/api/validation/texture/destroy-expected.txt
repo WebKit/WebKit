@@ -1,1 +1,32 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :base:
+PASS :twice:
+PASS :invalid_texture:
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="valid";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="valid";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="valid";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="destroyedAfterEncode";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="destroyedAfterEncode";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="all";colorTextureState="destroyedAfterEncode";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="valid";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="valid";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="valid";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="destroyedAfterEncode";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="destroyedAfterEncode";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="depth-only";colorTextureState="destroyedAfterEncode";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="valid";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="valid";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="valid";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="destroyedBeforeEncode";depthStencilTextureState="destroyedAfterEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="destroyedAfterEncode";depthStencilTextureState="valid"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="destroyedAfterEncode";depthStencilTextureState="destroyedBeforeEncode"
+PASS :submit_a_destroyed_texture_as_attachment:depthStencilTextureAspect="stencil-only";colorTextureState="destroyedAfterEncode";depthStencilTextureState="destroyedAfterEncode"
+

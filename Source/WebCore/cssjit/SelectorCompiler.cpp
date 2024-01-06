@@ -1478,6 +1478,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
                 ASSERT(!fragment->pseudoElementSelector);
                 fragment->pseudoElementSelector = selector;
                 break;
+            case CSSSelector::PseudoElement::WebKitUnknown:
+                return FunctionType::CannotMatchAnything;
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElement::Cue:
 #endif

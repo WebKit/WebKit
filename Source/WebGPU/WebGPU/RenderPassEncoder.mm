@@ -43,7 +43,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
     , m_depthReadOnly(depthReadOnly)
     , m_stencilReadOnly(stencilReadOnly)
-    , m_parentEncoder(&parentEncoder)
+    , m_parentEncoder(parentEncoder)
     , m_visibilityResultBuffer(visibilityResultBuffer)
 {
     m_parentEncoder->lock(true);
@@ -102,9 +102,11 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     }
 }
 
-RenderPassEncoder::RenderPassEncoder(Device& device)
+RenderPassEncoder::RenderPassEncoder(CommandEncoder& parentEncoder, Device& device)
     : m_device(device)
+    , m_parentEncoder(parentEncoder)
 {
+    m_parentEncoder->lock(true);
 }
 
 RenderPassEncoder::~RenderPassEncoder()
@@ -221,11 +223,6 @@ void RenderPassEncoder::endOcclusionQuery()
 
 void RenderPassEncoder::endPass()
 {
-    if (!m_parentEncoder) {
-        ASSERT(!m_renderCommandEncoder);
-        return;
-    }
-
     if (m_debugGroupStackSize || !isValid()) {
         m_parentEncoder->makeInvalid();
         return;

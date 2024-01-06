@@ -1956,7 +1956,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-elemen
 
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-002.html [ ImageOnlyFailure ]
-webkit.org/b/266947 imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-webkit-slider-thumb.tentative.html [ ImageOnlyFailure ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]

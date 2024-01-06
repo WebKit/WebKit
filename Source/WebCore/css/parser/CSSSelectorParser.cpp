@@ -431,6 +431,8 @@ static bool isUserActionPseudoClass(CSSSelector::PseudoClass pseudo)
 
 static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudoClass, CSSSelector::PseudoElement compoundPseudoElement)
 {
+    // FIXME: https://drafts.csswg.org/selectors-4/#pseudo-element-states states all pseudo-elements
+    // can be followed by isUserActionPseudoClass().
     // Validity of these is determined by their content.
     if (isLogicalCombinationPseudoClass(pseudoClass))
         return true;
@@ -452,6 +454,7 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
         return pseudoClass == CSSSelector::PseudoClass::WindowInactive;
     case CSSSelector::PseudoElement::UserAgentPart:
     case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
+    case CSSSelector::PseudoElement::WebKitUnknown:
         return isUserActionPseudoClass(pseudoClass);
     default:
         return false;
@@ -1180,17 +1183,9 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::splitCompoundAtImplicitSh
 bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector)
 {
     for (auto current = &complexSelector; current; current = current->tagHistory()) {
-        if (current->match() == CSSSelector::Match::PseudoElement) {
-            // FIXME: Check against a different type for unknown "-webkit-" pseudo-elements. (webkit.org/b/266947)
-            if (current->pseudoElement() != CSSSelector::PseudoElement::UserAgentPart)
-                continue;
-
-            // FIXME: Stop attempting parsing once the unknown "-webkit" pseudo-elements are behind a different type. (webkit.org/b/266947)
-            if (!findPseudoElementName(StringView(current->value())))
-                return true;
-        }
+        if (current->match() == CSSSelector::Match::PseudoElement && current->pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown)
+            return true;
     }
-
     return false;
 }
 
