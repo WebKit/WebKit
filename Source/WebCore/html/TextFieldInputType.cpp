@@ -553,7 +553,7 @@ static AtomString autoFillButtonTypeToAutoFillButtonPseudoClassName(AutoFillButt
     case AutoFillButtonType::CreditCard:
         return UserAgentPartIds::webkitCreditCardAutoFillButton();
     case AutoFillButtonType::Loading:
-        return UserAgentPartIds::webkitLoadingAutoFillButton();
+        return UserAgentPartIds::internalLoadingAutoFillButton();
     case AutoFillButtonType::None:
         ASSERT_NOT_REACHED();
         return emptyAtom();
@@ -572,7 +572,7 @@ static bool isAutoFillButtonTypeChanged(const AtomString& attribute, AutoFillBut
         return true;
     if (attribute == UserAgentPartIds::webkitCreditCardAutoFillButton() && autoFillButtonType != AutoFillButtonType::CreditCard)
         return true;
-    if (attribute == UserAgentPartIds::webkitLoadingAutoFillButton() && autoFillButtonType != AutoFillButtonType::Loading)
+    if (attribute == UserAgentPartIds::internalLoadingAutoFillButton() && autoFillButtonType != AutoFillButtonType::Loading)
         return true;
     return false;
 }

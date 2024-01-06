@@ -156,58 +156,16 @@ static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>
     }
 }
 
-// FIXME: This function should not deal with url or serviceType!
-void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues, String& url, String& serviceType)
+void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
 {
-    HashSet<StringImpl*, ASCIICaseInsensitiveHash> uniqueParamNames;
-    String urlParameter;
-
-    // Scan the PARAM children and store their name/value pairs.
-    // Get the URL and type from the params if we don't already have them.
-    for (auto& param : childrenOfType<HTMLParamElement>(*this)) {
-        String name = param.name();
-        if (name.isEmpty())
-            continue;
-
-        uniqueParamNames.add(name.impl());
-        paramNames.append(param.name());
-        paramValues.append(param.value());
-
-        // FIXME: url adjustment does not belong in this function.
-        if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src"_s) || equalLettersIgnoringASCIICase(name, "movie"_s) || equalLettersIgnoringASCIICase(name, "code"_s) || equalLettersIgnoringASCIICase(name, "url"_s)))
-            urlParameter = param.value().string().trim(isASCIIWhitespace);
-        // FIXME: serviceType calculation does not belong in this function.
-        if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type"_s)) {
-            serviceType = param.value();
-            size_t pos = serviceType.find(';');
-            if (pos != notFound)
-                serviceType = serviceType.left(pos);
-        }
-    }
-
-    // Turn the attributes of the <object> element into arrays, but don't override <param> values.
     if (hasAttributes()) {
         for (const Attribute& attribute : attributesIterator()) {
-            const AtomString& name = attribute.name().localName();
-            if (!uniqueParamNames.contains(name.impl())) {
-                paramNames.append(name);
-                paramValues.append(attribute.value());
-            }
+            paramNames.append(attribute.name().localName());
+            paramValues.append(attribute.value());
         }
     }
 
     mapDataParamToSrc(paramNames, paramValues);
-
-    // HTML5 says that an object resource's URL is specified by the object's data
-    // attribute, not by a param element. However, for compatibility, allow the
-    // resource's URL to be given by a param named "src", "movie", "code" or "url"
-    // if we know that resource points to a plug-in.
-
-    if (url.isEmpty() && !urlParameter.isEmpty()) {
-        auto& loader = document().frame()->loader().subframeLoader();
-        if (loader.resourceWillUsePlugin(urlParameter, serviceType))
-            url = urlParameter;
-    }
 }
 
 bool HTMLObjectElement::hasFallbackContent() const
@@ -244,15 +202,12 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
         return;
     }
 
-    String url = this->url();
-    String serviceType = this->serviceType();
-
     // FIXME: These should be joined into a PluginParameters class.
     Vector<AtomString> paramNames;
     Vector<AtomString> paramValues;
-    parametersForPlugin(paramNames, paramValues, url, serviceType);
+    parametersForPlugin(paramNames, paramValues);
 
-    // Note: url is modified above by parametersForPlugin.
+    auto url = this->url();
     if (!canLoadURL(url)) {
         setNeedsWidgetUpdate(false);
         return;
@@ -260,6 +215,7 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 
     // FIXME: It's unfortunate that we have this special case here.
     // See http://trac.webkit.org/changeset/25128 and the plugins/netscape-plugin-setwindow-size.html test.
+    auto serviceType = this->serviceType();
     if (createPlugins == CreatePlugins::No && wouldLoadAsPlugIn(url, serviceType))
         return;
 

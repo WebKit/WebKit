@@ -151,6 +151,20 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
 static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float angleRadians,
     GradientColorStops::StopVector stops, float globalAlpha)
 {
+    // Locate last stop with offset 0.
+    size_t i = stops.size() - 1;
+    for (; i > 0; i--) {
+        if (!stops[i].offset)
+            break;
+    }
+    // Remove stops with offset zero before last one.
+    if (i > 0) {
+        GradientColorStops::StopVector newStops;
+        for (; i < stops.size(); i++)
+            newStops.append(stops[i]);
+        stops = newStops;
+    }
+
     // Degenerated gradients with two stops at the same offset arrive with a single stop at 0.0
     // Add another point here so it can be interpolated properly below.
     if (stops.size() == 1)

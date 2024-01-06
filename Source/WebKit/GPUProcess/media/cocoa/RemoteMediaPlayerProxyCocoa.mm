@@ -71,8 +71,11 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
         contextOptions.useHostable = true;
 #endif
         m_inlineLayerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
-        IntSize presentationSize = enclosingIntRect(FloatRect(layer.frame)).size();
-        m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextIdChanged(m_inlineLayerHostingContext->contextID(), presentationSize), m_id);
+        if (m_configuration.videoLayerSize.isEmpty())
+            m_configuration.videoLayerSize = enclosingIntRect(FloatRect(layer.frame)).size();
+        auto& size = m_configuration.videoLayerSize;
+        [layer setFrame:CGRectMake(0, 0, size.width(), size.height())];
+        m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextIdChanged(m_inlineLayerHostingContext->contextID(), size), m_id);
         for (auto& request : std::exchange(m_layerHostingContextIDRequests, { }))
             request(m_inlineLayerHostingContext->contextID());
     } else if (!layer && m_inlineLayerHostingContext) {

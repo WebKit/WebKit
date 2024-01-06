@@ -47,20 +47,24 @@ PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN, 50) threw exce
 PASS angle.newValueSpecifiedUnits(-1, 50) threw exception NotSupportedError: The operation is not supported..
 PASS angle.newValueSpecifiedUnits(5, 50) threw exception NotSupportedError: The operation is not supported..
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception TypeError: Not enough arguments.
-PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString') is undefined.
-PASS angle.value is NaN
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString') threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0) is undefined.
-PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle) is undefined.
-PASS angle.value is NaN
-PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement) is undefined.
-PASS angle.value is NaN
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle) threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement) threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, NaN) threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, Infinity) threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception TypeError: Not enough arguments.
 PASS angle.newValueSpecifiedUnits('aString', 4) threw exception NotSupportedError: The operation is not supported..
 PASS angle.newValueSpecifiedUnits(angle, 4) threw exception NotSupportedError: The operation is not supported..
 PASS angle.newValueSpecifiedUnits(svgElement, 4) threw exception NotSupportedError: The operation is not supported..
-PASS angle.newValueSpecifiedUnits('aString', 'aString') threw exception NotSupportedError: The operation is not supported..
-PASS angle.newValueSpecifiedUnits(angle, angle) threw exception NotSupportedError: The operation is not supported..
-PASS angle.newValueSpecifiedUnits(svgElement, svgElement) threw exception NotSupportedError: The operation is not supported..
+PASS angle.newValueSpecifiedUnits('aString', 'aString') threw exception TypeError: The provided value is non-finite.
+PASS angle.newValueSpecifiedUnits(angle, angle) threw exception TypeError: The provided value is non-finite.
+PASS angle.newValueSpecifiedUnits(svgElement, svgElement) threw exception TypeError: The provided value is non-finite.
 PASS angle.newValueSpecifiedUnits() threw exception TypeError: Not enough arguments.
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
 
@@ -118,26 +122,34 @@ PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 
 Check setting invalid 'valueInSpecifiedUnits' arguments
-PASS angle.valueInSpecifiedUnits = 'test' is 'test'
-PASS angle.value is NaN
-PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.valueInSpecifiedUnits = 'test' threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 PASS angle.valueInSpecifiedUnits = 0 is 0
-PASS angle.valueInSpecifiedUnits = angle is angle
-PASS angle.value is NaN
-PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.valueInSpecifiedUnits = angle threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits = NaN threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits = Infinity threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 
 Check setting invalid 'value' arguments
 PASS angle.value = 0 is 0
-PASS angle.value = 'test' is 'test'
-PASS angle.value is NaN
-PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.value = 'test' threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 PASS angle.value = 0 is 0
-PASS angle.value = angle is angle
-PASS angle.value is NaN
-PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.value = angle threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.value = NaN threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.value = Infinity threw exception TypeError: The provided value is non-finite.
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 
 Reset to angle in degree units

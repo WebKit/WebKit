@@ -294,21 +294,21 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
                     return MatchResult::fails(Match::SelectorFailsLocally);
             } else
                 return MatchResult::fails(Match::SelectorFailsLocally);
+        } else {
+            if (context.selector->pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown)
+                return MatchResult::fails(Match::SelectorFailsLocally);
+
+            if (!context.pseudoElementEffective)
+                return MatchResult::fails(Match::SelectorFailsCompletely);
+
+            if (checkingContext.resolvingMode == Mode::QueryingRules)
+                return MatchResult::fails(Match::SelectorFailsCompletely);
+
+            auto pseudoId = CSSSelector::pseudoId(context.selector->pseudoElement());
+            if (pseudoId != PseudoId::None)
+                dynamicPseudoIdSet.add(pseudoId);
+            matchType = MatchType::VirtualPseudoElementOnly;
         }
-
-        if (context.selector->pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown)
-            return MatchResult::fails(Match::SelectorFailsLocally);
-
-        if (!context.pseudoElementEffective)
-            return MatchResult::fails(Match::SelectorFailsCompletely);
-
-        if (checkingContext.resolvingMode == Mode::QueryingRules)
-            return MatchResult::fails(Match::SelectorFailsCompletely);
-
-        auto pseudoId = CSSSelector::pseudoId(context.selector->pseudoElement());
-        if (pseudoId != PseudoId::None)
-            dynamicPseudoIdSet.add(pseudoId);
-        matchType = MatchType::VirtualPseudoElementOnly;
     }
 
     // The rest of the selectors has to match
