@@ -2587,3 +2587,4 @@ imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2
 
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
 
+fast/gradients/conic-stop-with-offset-zero-in-middle.html [ ImageOnlyFailure ]
