@@ -28,17 +28,19 @@
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/WeakPtr.h>
 
 struct WGPUTextureViewImpl {
 };
 
 namespace WebGPU {
 
+class CommandEncoder;
 class Device;
 class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gputextureview
-class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView> {
+class TextureView : public WGPUTextureViewImpl, public RefCounted<TextureView>, public CanMakeWeakPtr<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<TextureView> create(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Texture& parentTexture, Device& device)
@@ -70,18 +72,21 @@ public:
     WGPUTextureFormat format() const;
     uint32_t mipLevelCount() const;
     bool isDestroyed() const;
+    void destroy();
+    void setCommandEncoder(CommandEncoder&);
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
     TextureView(Texture&, Device&);
 
-    const id<MTLTexture> m_texture { nil };
+    id<MTLTexture> m_texture { nil };
 
     const WGPUTextureViewDescriptor m_descriptor;
     const std::optional<WGPUExtent3D> m_renderExtent;
 
     const Ref<Device> m_device;
     Texture& m_parentTexture;
+    WeakPtr<CommandEncoder> m_commandEncoder;
 };
 
 } // namespace WebGPU

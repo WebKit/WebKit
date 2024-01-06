@@ -2720,7 +2720,9 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     if (m_usage & WGPUTextureUsage_RenderAttachment)
         renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
-    return TextureView::create(texture, *descriptor, renderExtent, *this, m_device);
+    auto result = TextureView::create(texture, *descriptor, renderExtent, *this, m_device);
+    m_textureViews.append(result);
+    return result;
 }
 
 void Texture::recreateIfNeeded()
@@ -2740,6 +2742,12 @@ void Texture::destroy()
     if (!m_canvasBacking)
         m_texture = nil;
     m_destroyed = true;
+    for (auto& view : m_textureViews) {
+        if (view.get())
+            view->destroy();
+    }
+
+    m_textureViews.clear();
 }
 
 void Texture::setLabel(String&& label)

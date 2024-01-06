@@ -27,6 +27,7 @@
 #import "TextureView.h"
 
 #import "APIConversions.h"
+#import "CommandEncoder.h"
 
 namespace WebGPU {
 
@@ -96,6 +97,20 @@ uint32_t TextureView::mipLevelCount() const
 bool TextureView::isDestroyed() const
 {
     return m_parentTexture.isDestroyed();
+}
+
+void TextureView::destroy()
+{
+    m_texture = nil;
+    if (m_commandEncoder)
+        m_commandEncoder.get()->makeInvalid();
+
+    m_commandEncoder = nullptr;
+}
+
+void TextureView::setCommandEncoder(CommandEncoder& commandEncoder)
+{
+    m_commandEncoder = &commandEncoder;
 }
 
 } // namespace WebGPU

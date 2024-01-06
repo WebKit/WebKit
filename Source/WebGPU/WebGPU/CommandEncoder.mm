@@ -174,10 +174,10 @@ bool CommandEncoder::validateComputePassDescriptor(const WGPUComputePassDescript
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return ComputePassEncoder::createInvalid(m_device);
+        return ComputePassEncoder::createInvalid(*this, m_device);
 
     if (!validateComputePassDescriptor(descriptor))
-        return ComputePassEncoder::createInvalid(m_device);
+        return ComputePassEncoder::createInvalid(*this, m_device);
 
     finalizeBlitCommandEncoder();
 
@@ -363,15 +363,15 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     if (!validateRenderPassDescriptor(descriptor))
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor new];
 
     if (descriptor.colorAttachmentCount > 8)
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     finalizeBlitCommandEncoder();
 
@@ -390,6 +390,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             attachment.clearValue.a);
 
         auto& texture = fromAPI(attachment.view);
+        if (texture.isDestroyed())
+            return RenderPassEncoder::createInvalid(*this, m_device);
+        texture.setCommandEncoder(*this);
+
         mtlAttachment.texture = texture.texture();
         if (!mtlAttachment.texture)
             continue;
@@ -410,7 +414,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             mtlAttachment.resolveSlice = 0;
             mtlAttachment.resolveDepthPlane = 0;
             if (mtlAttachment.resolveTexture.width != mtlAttachment.texture.width || mtlAttachment.resolveTexture.height != mtlAttachment.texture.height)
-                return RenderPassEncoder::createInvalid(m_device);
+                return RenderPassEncoder::createInvalid(*this, m_device);
         }
         if (textureToClear) {
             TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
@@ -428,6 +432,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     bool depthAttachmentToClear = false;
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         auto& textureView = fromAPI(attachment->view);
+        if (textureView.isDestroyed())
+            return RenderPassEncoder::createInvalid(*this, m_device);
+        textureView.setCommandEncoder(*this);
+
         id<MTLTexture> metalDepthStencilTexture = textureView.texture();
         hasStencilComponent = Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format).has_value();
         if (!Device::isStencilOnlyFormat(metalDepthStencilTexture.pixelFormat)) {
@@ -469,7 +477,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     }
 
     if (zeroColorTargets && !mtlDescriptor.renderTargetWidth)
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     size_t visibilityResultBufferSize = 0;
     id<MTLBuffer> visibilityResultBuffer = nil;
@@ -929,6 +937,13 @@ void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUIn
     texture.setPreviouslyCleared(destination.mipLevel, slice);
 }
 
+void CommandEncoder::makeInvalid()
+{
+    m_commandBuffer = nil;
+    if (m_cachedCommandBuffer)
+        m_cachedCommandBuffer.get()->makeInvalid();
+}
+
 void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
 {
     if (source.nextInChain || destination.nextInChain || destination.layout.nextInChain)
@@ -1324,7 +1339,9 @@ Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& des
 
     commandBuffer.label = fromAPI(descriptor.label);
 
-    return CommandBuffer::create(commandBuffer, m_device);
+    auto result = CommandBuffer::create(commandBuffer, m_device);
+    m_cachedCommandBuffer = result;
+    return result;
 }
 
 void CommandEncoder::insertDebugMarker(String&& markerLabel)
