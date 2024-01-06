@@ -2490,7 +2490,7 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
 static bool containsOnlyASCIIWhitespace(Node* node)
 {
     // FIXME: Respect ignoreWhitespace setting from inspector front end?
-    return is<Text>(node) && downcast<Text>(*node).data().containsOnly<isASCIIWhitespace>();
+    return is<Text>(node) && downcast<Text>(*node).containsOnlyASCIIWhitespace();
 }
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
