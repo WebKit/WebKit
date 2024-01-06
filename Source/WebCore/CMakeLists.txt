@@ -2550,7 +2550,7 @@ ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES(${WEBCORE_DIR}/css/CSSPrimitiveValueMapp
 
 # Generate code and maps for CSS pseudo class & element selectors.
 add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorEnums.h ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorInlines.h ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp
+    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorEnums.h ${WebCore_DERIVED_SOURCES_DIR}/CSSSelectorInlines.h ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoClassAndCompatibilityElementMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.gperf ${WebCore_DERIVED_SOURCES_DIR}/SelectorPseudoElementMap.cpp ${WebCore_DERIVED_SOURCES_DIR}/UserAgentPartIds.cpp ${WebCore_DERIVED_SOURCES_DIR}/UserAgentPartIds.h
     MAIN_DEPENDENCY ${WEBCORE_DIR}/css/process-css-pseudo-selectors.py
     DEPENDS ${WebCore_CSS_PSEUDO_SELECTORS}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
