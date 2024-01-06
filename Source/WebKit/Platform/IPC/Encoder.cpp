@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,8 @@
 #include "Encoder.h"
 
 #include "ArgumentCoders.h"
-#include "DataReference.h"
 #include "MessageFlags.h"
 #include <algorithm>
-#include <wtf/OptionSet.h>
 #include <wtf/UniqueRef.h>
 
 #if OS(DARWIN)
@@ -72,8 +70,11 @@ Encoder::Encoder(MessageName messageName, uint64_t destinationID)
 
 Encoder::~Encoder()
 {
-    if (m_buffer != m_inlineBuffer)
-        freeBuffer(m_buffer, m_bufferCapacity);
+    if (m_buffer.data() != m_inlineBuffer) {
+        auto buffer = std::exchange(m_buffer, { });
+        freeBuffer(buffer.data(), buffer.size_bytes());
+        m_data = { };
+    }
     // FIXME: We need to dispose of the attachments in cases of failure.
 }
 
@@ -133,7 +134,7 @@ void Encoder::wrapForTesting(UniqueRef<Encoder>&& original)
 
     original->setShouldDispatchMessageWhenWaitingForSyncReply(ShouldDispatchWhenWaitingForSyncReply::Yes);
 
-    *this << DataReference(original->buffer(), original->bufferSize());
+    *this << original->data();
 
     Vector<Attachment> attachments = original->releaseAttachments();
     reserve(attachments.size());
@@ -148,24 +149,26 @@ static inline size_t roundUpToAlignment(size_t value, size_t alignment)
 
 void Encoder::reserve(size_t size)
 {
-    if (size <= m_bufferCapacity)
+    if (size <= m_buffer.size_bytes())
         return;
 
-    size_t newCapacity = roundUpToAlignment(m_bufferCapacity * 2, 4096);
+    size_t newCapacity = roundUpToAlignment(m_buffer.size_bytes() * 2, 4096);
     while (newCapacity < size)
         newCapacity *= 2;
 
-    uint8_t* newBuffer;
-    if (!allocBuffer(newBuffer, newCapacity))
+    uint8_t* newBufferPtr;
+    if (!allocBuffer(newBufferPtr, newCapacity))
         CRASH();
 
-    memcpy(newBuffer, m_buffer, m_bufferSize);
+    MutableDataReference newBuffer { newBufferPtr, newCapacity };
+    MutableDataReference newData = newBuffer.subspan(0, m_data.size());
+    memcpySpan(newData, m_data);
 
-    if (m_buffer != m_inlineBuffer)
-        freeBuffer(m_buffer, m_bufferCapacity);
+    if (m_buffer.data() != m_inlineBuffer)
+        freeBuffer(m_buffer.data(), m_buffer.size_bytes());
 
     m_buffer = newBuffer;
-    m_bufferCapacity = newCapacity;
+    m_data = newData;
 }
 
 void Encoder::encodeHeader()
@@ -179,25 +182,24 @@ OptionSet<MessageFlags>& Encoder::messageFlags()
 {
     // FIXME: We should probably pass an OptionSet<MessageFlags> into the Encoder constructor instead of encoding defaultMessageFlags then using this to change it later.
     static_assert(sizeof(OptionSet<MessageFlags>::StorageType) == 1, "Encoder uses the first byte of the buffer for message flags.");
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+    return *spanReinterpretCast<OptionSet<MessageFlags>>(m_data.subspan(0, sizeof(OptionSet<MessageFlags>))).data();
 }
 
 const OptionSet<MessageFlags>& Encoder::messageFlags() const
 {
-    return *reinterpret_cast<OptionSet<MessageFlags>*>(buffer());
+    return *spanReinterpretCast<OptionSet<MessageFlags>>(m_data.subspan(0, sizeof(OptionSet<MessageFlags>))).data();
 }
 
-uint8_t* Encoder::grow(size_t alignment, size_t size)
+MutableDataReference Encoder::grow(size_t alignment, size_t size)
 {
-    size_t alignedSize = roundUpToAlignment(m_bufferSize, alignment);
+    size_t alignedSize = roundUpToAlignment(m_buffer.size_bytes(), alignment);
     reserve(alignedSize + size);
 
-    std::memset(m_buffer + m_bufferSize, 0, alignedSize - m_bufferSize);
+    std::memset(std::to_address(m_data.end()), 0, alignedSize - m_data.size_bytes());
 
-    m_bufferSize = alignedSize + size;
-    m_bufferPointer = m_buffer + alignedSize + size;
+    m_data = m_buffer.subspan(0, alignedSize + size);
 
-    return m_buffer + alignedSize;
+    return m_data.subspan(alignedSize, size);
 }
 
 void Encoder::addAttachment(Attachment&& attachment)

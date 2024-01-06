@@ -234,7 +234,8 @@ OSObjectPtr<xpc_object_t> WebPushXPCConnectionMessageSender::messageDictionaryFr
     xpc_dictionary_set_uint64(dictionary.get(), WebKit::WebPushD::protocolVersionKey, protocolVersion);
 
     __block auto blockEncoder = WTFMove(encoder);
-    auto dispatchData = adoptNS(dispatch_data_create(blockEncoder->buffer(), blockEncoder->bufferSize(), dispatch_get_main_queue(), ^{
+    auto blockEncoderData = blockEncoder->data();
+    auto dispatchData = adoptNS(dispatch_data_create(blockEncoderData.data(), blockEncoderData.size_bytes(), dispatch_get_main_queue(), ^{
         // Explicitly clear out the encoder, destroying it.
         blockEncoder.moveToUniquePtr();
     }));

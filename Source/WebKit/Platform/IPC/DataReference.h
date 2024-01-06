@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,5 +30,6 @@
 namespace IPC {
 
 using DataReference = std::span<const uint8_t>;
+using MutableDataReference = std::span<uint8_t>;
 
 } // namespace IPC

@@ -59,6 +59,14 @@ bool allOf(ContainerType&& container, AllOfFunction allOfFunction)
     return true;
 }
 
+template<typename T, size_t extentT = std::dynamic_extent, typename U, size_t extentU = std::dynamic_extent>
+void memcpySpan(std::span<T, extentT> destination, std::span<U, extentU> source)
+{
+    RELEASE_ASSERT(destination.size() == source.size());
+    static_assert(sizeof(T) == sizeof(U));
+    memcpy(destination.data(), source.data(), destination.size() * sizeof(T));
+}
+
 template<typename T, typename U>
 std::span<T> spanReinterpretCast(std::span<U> span)
 {
@@ -86,6 +94,7 @@ void memsetSpan(std::span<T> destination, uint8_t byte)
 
 } // namespace WTF
 
+using WTF::memcpySpan;
 using WTF::spanReinterpretCast;
 using WTF::memcpySpan;
 using WTF::memsetSpan;

@@ -552,7 +552,7 @@ void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, co
         return;
 
     if (useUnixDomainSockets() || bufferSize < minimumPageSize) {
-        encoder.reserve(encoder.bufferSize() + bufferSize);
+        encoder.reserve(encoder.data().size_bytes() + bufferSize);
         // Do not use shared memory for FragmentedSharedBuffer encoding in Unix, because it's easy to reach the
         // maximum number of file descriptors open per process when sending large data in small chunks
         // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is

@@ -43,7 +43,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     encoder << sessionState.backForwardListState;
     encoder << sessionState.renderTreeSize;
     encoder << sessionState.provisionalURL;
-    return API::Data::create(encoder.buffer(), encoder.bufferSize());
+    return API::Data::create(encoder.data());
 }
 
 bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState& sessionState)
