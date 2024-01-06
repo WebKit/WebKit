@@ -309,7 +309,6 @@ PseudoId CSSSelector::pseudoId(PseudoElement type)
     case PseudoElement::Part:
     case PseudoElement::UserAgentPart:
     case PseudoElement::UserAgentPartLegacyAlias:
-    case PseudoElement::WebKitUnknown:
         return PseudoId::None;
     }
 
@@ -324,15 +323,16 @@ std::optional<CSSSelector::PseudoElement> CSSSelector::parsePseudoElementName(St
 
     auto type = findPseudoElementName(name);
     if (!type) {
+        // FIXME: Put all known UA parts in CSSPseudoSelectors.json and split out the unknown case (webkit.org/b/266947).
         if (name.startsWithIgnoringASCIICase("-webkit-"_s))
-            return PseudoElement::WebKitUnknown;
+            return PseudoElement::UserAgentPart;
         return type;
     }
 
     if (!CSSSelector::isPseudoElementEnabled(*type, name, context))
         return std::nullopt;
 
-    return *type;
+    return type;
 }
 
 // FIXME: We should eventually deduplicate this with CSSSelectorParser::consumePseudo() somehow.

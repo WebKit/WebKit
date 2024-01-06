@@ -113,8 +113,6 @@ private:
     std::unique_ptr<MutableCSSSelector> m_tagHistory;
 };
 
-// FIXME: WebKitUnknown is listed below as otherwise @supports does the wrong thing, but there ought
-// to be a better solution.
 inline bool MutableCSSSelector::needsImplicitShadowCombinatorForMatching() const
 {
     return match() == CSSSelector::Match::PseudoElement
@@ -124,8 +122,7 @@ inline bool MutableCSSSelector::needsImplicitShadowCombinatorForMatching() const
 #endif
             || pseudoElement() == CSSSelector::PseudoElement::Part
             || pseudoElement() == CSSSelector::PseudoElement::Slotted
-            || pseudoElement() == CSSSelector::PseudoElement::UserAgentPartLegacyAlias
-            || pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown);
+            || pseudoElement() == CSSSelector::PseudoElement::UserAgentPartLegacyAlias);
 }
 
-} // namespace WebCore
+}

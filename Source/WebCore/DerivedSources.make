@@ -1826,8 +1826,6 @@ all : \
     MathMLElementTypeHelpers.h \
     MathMLNames.cpp \
     MathMLNames.h \
-    UserAgentPartIds.cpp \
-    UserAgentPartIds.h \
 #
 
 # --------
@@ -1877,9 +1875,6 @@ CSS_PSEUDO_SELECTOR_FILES = \
     CSSSelectorInlines.h \
     SelectorPseudoClassAndCompatibilityElementMap.cpp \
     SelectorPseudoElementMap.cpp \
-    UserAgentPartIds.cpp \
-    UserAgentPartIds.h \
-
 #
 CSS_PSEUDO_SELECTOR_FILES_PATTERNS = $(subst .,%,$(CSS_PSEUDO_SELECTOR_FILES))
 all : $(CSS_PSEUDO_SELECTOR_FILES)
