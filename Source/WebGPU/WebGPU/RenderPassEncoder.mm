@@ -235,19 +235,25 @@ void RenderPassEncoder::endPass()
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
-    [m_renderCommandEncoder endEncoding];
-    m_renderCommandEncoder = nil;
 
-    m_parentEncoder->lock(false);
+    auto endEncoder = ^{
+        [m_renderCommandEncoder endEncoding];
+    };
 
-    if (m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
+    if (m_issuedDrawCall)
+        endEncoder();
+
+    if (m_attachmentsToClear.count || !m_issuedDrawCall || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
         if (m_depthStencilAttachmentToClear && !m_issuedDrawCall) {
             auto pixelFormat = m_depthStencilAttachmentToClear.pixelFormat;
             m_clearDepthAttachment = !Device::isStencilOnlyFormat(pixelFormat);
             m_clearStencilAttachment = pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || pixelFormat == MTLPixelFormatStencil8 || pixelFormat == MTLPixelFormatX32_Stencil8;
         }
-        m_parentEncoder->runClearEncoder(m_issuedDrawCall ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue);
+        m_parentEncoder->runClearEncoder(m_issuedDrawCall ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue, m_issuedDrawCall ? nil : m_renderCommandEncoder);
     }
+
+    m_renderCommandEncoder = nil;
+    m_parentEncoder->lock(false);
 
     if (m_queryBufferIndicesToClear.size()) {
         id<MTLBlitCommandEncoder> blitCommandEncoder = m_parentEncoder->ensureBlitCommandEncoder();
