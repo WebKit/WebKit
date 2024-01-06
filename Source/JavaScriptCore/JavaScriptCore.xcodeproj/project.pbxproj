@@ -13061,7 +13061,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E34565A72B4753D800ED9B78 /* DFGDesiredObjectProperties.cpp in Sources */,
 				52CD0F682242F71C004A18A5 /* testdfg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
