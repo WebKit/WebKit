@@ -863,7 +863,7 @@ void TreeResolver::resolveComposedTree()
                 m_update->addText(*text, parent.element, WTFMove(textUpdate));
             }
 
-            if (!text->data().containsOnly<isASCIIWhitespace>())
+            if (!text->containsOnlyASCIIWhitespace())
                 parent.resolvedFirstLineAndLetterChild = true;
 
             text->setHasValidStyle();

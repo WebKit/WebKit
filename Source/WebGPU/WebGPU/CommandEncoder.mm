@@ -52,28 +52,30 @@
 
 namespace WebGPU {
 
-static MTLLoadAction loadAction(WGPULoadOp loadOp)
+static MTLLoadAction loadAction(WGPULoadOp loadOp, WGPUStoreOp storeOp)
 {
     switch (loadOp) {
     case WGPULoadOp_Load:
-        return MTLLoadActionLoad;
+        return storeOp == WGPUStoreOp_Discard ? MTLLoadActionClear : MTLLoadActionLoad;
     case WGPULoadOp_Clear:
         return MTLLoadActionClear;
     case WGPULoadOp_Undefined:
+        return MTLLoadActionDontCare;
     case WGPULoadOp_Force32:
         ASSERT_NOT_REACHED();
         return MTLLoadActionDontCare;
     }
 }
 
-static MTLStoreAction storeAction(WGPUStoreOp storeOp)
+static MTLStoreAction storeAction(WGPUStoreOp storeOp, WGPULoadOp loadOp)
 {
     switch (storeOp) {
     case WGPUStoreOp_Store:
         return MTLStoreActionStore;
     case WGPUStoreOp_Discard:
-        return MTLStoreActionDontCare;
+        return loadOp == WGPULoadOp_Load ? MTLStoreActionStore : MTLStoreActionDontCare;
     case WGPUStoreOp_Undefined:
+        return MTLStoreActionDontCare;
     case WGPUStoreOp_Force32:
         ASSERT_NOT_REACHED();
         return MTLStoreActionDontCare;
@@ -246,7 +248,7 @@ bool Device::isStencilOnlyFormat(MTLPixelFormat format)
     }
 }
 
-static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSimplePso(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, id<MTLDevice> device)
+static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSimplePso(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, id<MTLDevice> device)
 {
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
     MTLCompileOptions* options = [MTLCompileOptions new];
@@ -271,11 +273,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         depthStencilDescriptor = [MTLDepthStencilDescriptor new];
         id<MTLTexture> t = depthStencilAttachmentToClear;
         sampleCount = t.sampleCount;
-        bool isStencilOnlyFormat = Device::isStencilOnlyFormat(t.pixelFormat);
-        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = isStencilOnlyFormat ? MTLPixelFormatInvalid : t.pixelFormat;
+        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = (!depthAttachmentToClear || Device::isStencilOnlyFormat(t.pixelFormat)) ? MTLPixelFormatInvalid : t.pixelFormat;
         depthStencilDescriptor.depthWriteEnabled = NO;
 
-        if (t.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || t.pixelFormat == MTLPixelFormatStencil8 || t.pixelFormat == MTLPixelFormatX32_Stencil8)
+        if (stencilAttachmentToClear && (t.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || t.pixelFormat == MTLPixelFormatStencil8 || t.pixelFormat == MTLPixelFormatX32_Stencil8))
             mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = t.pixelFormat;
     }
 
@@ -302,7 +303,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return std::make_pair(pso, depthStencil);
 }
 
-void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue, uint32_t stencilClearValue)
+void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue, uint32_t stencilClearValue, id<MTLRenderCommandEncoder> existingEncoder)
 {
     if (!attachmentsToClear.count && !depthAttachmentToClear && !stencilAttachmentToClear)
         return;
@@ -311,44 +312,46 @@ void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndCl
         depthStencilAttachmentToClear = nil;
 
     id<MTLDevice> device = m_device->device();
-    MTLRenderPassDescriptor* clearDescriptor = [MTLRenderPassDescriptor new];
-    if (depthAttachmentToClear) {
-        clearDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
-        clearDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
-        clearDescriptor.depthAttachment.clearDepth = depthClearValue;
-        clearDescriptor.depthAttachment.texture = depthStencilAttachmentToClear;
-    }
+    id<MTLRenderCommandEncoder> clearRenderCommandEncoder = existingEncoder;
+    if (!clearRenderCommandEncoder) {
+        MTLRenderPassDescriptor* clearDescriptor = [MTLRenderPassDescriptor new];
+        if (depthAttachmentToClear) {
+            clearDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
+            clearDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
+            clearDescriptor.depthAttachment.clearDepth = depthClearValue;
+            clearDescriptor.depthAttachment.texture = depthStencilAttachmentToClear;
+        }
 
-    if (stencilAttachmentToClear) {
-        clearDescriptor.stencilAttachment.loadAction = MTLLoadActionClear;
-        clearDescriptor.stencilAttachment.storeAction = MTLStoreActionStore;
-        clearDescriptor.stencilAttachment.clearStencil = stencilClearValue;
-        clearDescriptor.stencilAttachment.texture = depthStencilAttachmentToClear;
-    }
+        if (stencilAttachmentToClear) {
+            clearDescriptor.stencilAttachment.loadAction = MTLLoadActionClear;
+            clearDescriptor.stencilAttachment.storeAction = MTLStoreActionStore;
+            clearDescriptor.stencilAttachment.clearStencil = stencilClearValue;
+            clearDescriptor.stencilAttachment.texture = depthStencilAttachmentToClear;
+        }
 
-    if (!attachmentsToClear.count) {
-        RELEASE_ASSERT(depthStencilAttachmentToClear);
-        clearDescriptor.defaultRasterSampleCount = depthStencilAttachmentToClear.sampleCount;
-        clearDescriptor.renderTargetWidth = depthStencilAttachmentToClear.width;
-        clearDescriptor.renderTargetHeight = depthStencilAttachmentToClear.height;
-    }
+        if (!attachmentsToClear.count) {
+            RELEASE_ASSERT(depthStencilAttachmentToClear);
+            clearDescriptor.defaultRasterSampleCount = depthStencilAttachmentToClear.sampleCount;
+            clearDescriptor.renderTargetWidth = depthStencilAttachmentToClear.width;
+            clearDescriptor.renderTargetHeight = depthStencilAttachmentToClear.height;
+        }
 
-    for (NSNumber *key in attachmentsToClear) {
-        int i = key.intValue;
-        TextureAndClearColor *textureAndClearColor = [attachmentsToClear objectForKey:key];
-        id<MTLTexture> t = textureAndClearColor.texture;
-        const auto& mtlAttachment = clearDescriptor.colorAttachments[i];
-        mtlAttachment.loadAction = MTLLoadActionClear;
-        mtlAttachment.storeAction = MTLStoreActionStore;
-        mtlAttachment.clearColor = textureAndClearColor.clearColor;
-        mtlAttachment.texture = t;
-        mtlAttachment.level = 0;
-        mtlAttachment.slice = 0;
-        mtlAttachment.depthPlane = 0;
+        for (NSNumber *key in attachmentsToClear) {
+            int i = key.intValue;
+            TextureAndClearColor *textureAndClearColor = [attachmentsToClear objectForKey:key];
+            id<MTLTexture> t = textureAndClearColor.texture;
+            const auto& mtlAttachment = clearDescriptor.colorAttachments[i];
+            mtlAttachment.loadAction = MTLLoadActionClear;
+            mtlAttachment.storeAction = MTLStoreActionStore;
+            mtlAttachment.clearColor = textureAndClearColor.clearColor;
+            mtlAttachment.texture = t;
+            mtlAttachment.level = 0;
+            mtlAttachment.slice = 0;
+            mtlAttachment.depthPlane = 0;
+        }
+        clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
     }
-
-    id<MTLRenderCommandEncoder> clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
-    auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, device);
+    auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear, device);
     [clearRenderCommandEncoder setRenderPipelineState:pso];
     if (depthStencil)
         [clearRenderCommandEncoder setDepthStencilState:depthStencil];
@@ -393,8 +396,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         mtlAttachment.level = 0;
         mtlAttachment.slice = 0;
         mtlAttachment.depthPlane = 0;
-        mtlAttachment.loadAction = loadAction(attachment.loadOp);
-        mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp);
+        mtlAttachment.loadAction = loadAction(attachment.loadOp, attachment.storeOp);
+        mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp, attachment.loadOp);
 
         zeroColorTargets = false;
         id<MTLTexture> textureToClear = nil;
@@ -432,8 +435,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             depthReadOnly = attachment->depthReadOnly;
             mtlAttachment.clearDepth = attachment->depthClearValue;
             mtlAttachment.texture = metalDepthStencilTexture;
-            mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
-            mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
+            mtlAttachment.loadAction = loadAction(attachment->depthLoadOp, attachment->depthStoreOp);
+            mtlAttachment.storeAction = storeAction(attachment->depthStoreOp, attachment->depthLoadOp);
 
             if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
                 depthStencilAttachmentToClear = mtlAttachment.texture;
@@ -456,8 +459,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         if (hasStencilComponent)
             mtlAttachment.texture = textureView.texture();
         mtlAttachment.clearStencil = attachment->stencilClearValue;
-        mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
-        mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
+        mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp, attachment->stencilStoreOp);
+        mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp, attachment->stencilLoadOp);
 
         if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
             depthStencilAttachmentToClear = mtlAttachment.texture;
@@ -518,7 +521,6 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     }
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
-
     return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, visibilityResultBuffer, m_device);
 }
 
@@ -1301,7 +1303,7 @@ bool CommandEncoder::validateFinish() const
 
 Ref<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
+    if (descriptor.nextInChain || !isValid())
         return CommandBuffer::createInvalid(m_device);
 
     // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-finish

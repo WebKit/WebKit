@@ -611,6 +611,8 @@ protected:
         IsFullscreen = 1 << 9,
 #endif
         HasInvalidRenderer = 1 << 10,
+        ContainsOnlyASCIIWhitespace = 1 << 11, // Only used on CharacterData.
+        ContainsOnlyASCIIWhitespaceIsValid = 1 << 12, // Only used on CharacterData.
     };
 
     enum class TabIndexState : uint8_t {

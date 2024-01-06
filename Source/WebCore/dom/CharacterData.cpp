@@ -72,7 +72,7 @@ void CharacterData::setData(const String& data)
     setDataAndUpdate(nonNullData, 0, oldLength, nonNullData.length());
 }
 
-ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count)
+ExceptionOr<String> CharacterData::substringData(unsigned offset, unsigned count) const
 {
     if (offset > length())
         return Exception { ExceptionCode::IndexSizeError };
@@ -101,6 +101,8 @@ void CharacterData::parserAppendData(StringView string)
 
     String oldData = m_data;
     m_data = makeString(m_data, string);
+
+    clearStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
 
     ASSERT(!renderer() || is<Text>(*this));
     if (auto text = dynamicDowncast<Text>(*this))
@@ -166,6 +168,13 @@ void CharacterData::setNodeValue(const String& nodeValue)
     setData(nodeValue);
 }
 
+void CharacterData::setDataWithoutUpdate(const String& data)
+{
+    ASSERT(!data.isNull());
+    m_data = data;
+    clearStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
+}
+
 void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength, UpdateLiveRanges shouldUpdateLiveRanges)
 {
     auto childChange = makeChildChange(*this, ContainerNode::ChildChange::Source::API);
@@ -178,6 +187,8 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
 
         m_data = newData;
     }
+
+    clearStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
 
     Ref document = this->document();
     if (oldLength && shouldUpdateLiveRanges != UpdateLiveRanges::No)
@@ -222,6 +233,17 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
     }
 
     InspectorInstrumentation::characterDataModified(protectedDocument(), *this);
+}
+
+bool CharacterData::containsOnlyASCIIWhitespace() const
+{
+    if (hasStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid))
+        return hasStateFlag(StateFlag::ContainsOnlyASCIIWhitespace);
+
+    bool hasOnlyWhitespace = m_data.containsOnly<isASCIIWhitespace>();
+    const_cast<CharacterData*>(this)->setStateFlag(StateFlag::ContainsOnlyASCIIWhitespace, hasOnlyWhitespace);
+    const_cast<CharacterData*>(this)->setStateFlag(StateFlag::ContainsOnlyASCIIWhitespaceIsValid);
+    return hasOnlyWhitespace;
 }
 
 } // namespace WebCore
