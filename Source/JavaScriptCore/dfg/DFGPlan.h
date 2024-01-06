@@ -28,6 +28,7 @@
 #include "CompilationResult.h"
 #include "DFGDesiredGlobalProperties.h"
 #include "DFGDesiredIdentifiers.h"
+#include "DFGDesiredObjectProperties.h"
 #include "DFGDesiredTransitions.h"
 #include "DFGDesiredWatchpoints.h"
 #include "DFGDesiredWeakReferences.h"
@@ -92,6 +93,7 @@ public:
     DesiredIdentifiers& identifiers() { return m_identifiers; }
     DesiredWeakReferences& weakReferences() { return m_weakReferences; }
     DesiredTransitions& transitions() { return m_transitions; }
+    DesiredObjectProperties& objectProperties() { return m_objectProperties; }
     RecordedStatuses& recordedStatuses() { return m_recordedStatuses; }
 
     bool willTryToTierUp() const { return m_willTryToTierUp; }
@@ -132,6 +134,7 @@ private:
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
     DesiredTransitions m_transitions;
+    DesiredObjectProperties m_objectProperties;
     RecordedStatuses m_recordedStatuses;
 
     HashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;
