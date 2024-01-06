@@ -28,8 +28,9 @@
             ]
         },
         "notes": [
-            "Pseudos that start with `-apple-` require a 'settings-flag' field that points to a setting that is disabled to web content by default.",
-            "Pseudos that start with `-internal-` will automatically be restricted to user agent stylesheets."
+            "Pseudos that start with `-apple-` require a 'settings-flag' field that points to a setting that is not exposed to web content.",
+            "Pseudos that start with `-internal-` will automatically be restricted to user agent stylesheets.",
+            "Please do not add new `-webkit-` pseudos. They exist mainly for historical and compatibility purposes. There is a mechanism to ensure no new ones are added."
         ]
     },
     "pseudo-classes": {

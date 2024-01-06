@@ -51,12 +51,23 @@ KNOWN_KEY_TYPES = {
     })
 }
 
+# These count the number of -webkit- prefixes (excluding aliases).
+# Do not increase these numbers and instead consider using:
+# - a pseudo on standards track for things that are meant to be styled by arbitrary web content
+# - an `-internal-` prefix for things only meant to be styled in the user agent stylesheet
+# - an `-apple-` prefix only exposed to certain Apple clients (there is a settings-flag requirement for using this prefix)
+WEBKIT_PREFIX_COUNTS_DO_NOT_INCREASE = {
+    'pseudo-classes': 10,
+    'pseudo-elements': 59,
+}
 
 class InputValidator:
     def __init__(self, input_data):
         self.check_field_documentation(input_data)
         self.validate_fields(input_data, 'pseudo-classes')
         self.validate_fields(input_data, 'pseudo-elements')
+        self.check_webkit_prefix_count(input_data, 'pseudo-classes')
+        self.check_webkit_prefix_count(input_data, 'pseudo-elements')
 
     def check_field_documentation(self, input_data):
         documentation = input_data['documentation']['fields']
@@ -66,10 +77,24 @@ class InputValidator:
                     raise Exception(f'Missing documentation for field "{field}" found in "{pseudo_type}".')
 
     def validate_fields(self, input_data, pseudo_type):
+        def is_known_prefix(name):
+            if not name.startswith('-'):
+                return True
+
+            # FIXME: Remove this case with `:-khtml-drag` alias.
+            if name.startswith('-khtml-'):
+                return True
+
+            return name.startswith('-apple-') or name.startswith('-internal-') or name.startswith('-webkit-')
+
         for pseudo_name, pseudo_data in input_data[pseudo_type].items():
-            # `-apple-` prefixed pseudos should be behind a flag that is disabled to web content by default.
+            # `-apple-` prefixed pseudos should be behind a flag that is not exposed to web content.
             if pseudo_name.startswith('-apple-') and 'settings-flag' not in pseudo_data:
-                raise Exception(f'"{pseudo_name}" should have a "settings-flag" that is disabled to web content by default.')
+                raise Exception(f'"{pseudo_name}" should have a "settings-flag" that is not exposed to web content.')
+
+            # Check for unknown prefixes.
+            if not is_known_prefix(pseudo_name):
+                raise Exception(f'"{pseudo_name}" starts with an unknown prefix.')
 
             for key, value in pseudo_data.items():
                 # Check for unknown fields.
@@ -81,21 +106,50 @@ class InputValidator:
                 if type(value) not in expected_types:
                     raise Exception(f'Invalid value type {type(value)} for "{key}" in "{pseudo_name}". Expected type in set "{expected_types}".')
 
-                # Aliases are not currently supported for "supports-single-colon-for-compatibility": true.
-                if key == 'aliases' and key_is_true(pseudo_data, 'supports-single-colon-for-compatibility') and pseudo_type == 'pseudo-elements':
-                    raise Exception('Setting "aliases" along with "supports-single-colon-for-compatibility": true is not supported.')
+                if key == 'aliases':
+                    # Check for unknown prefixes.
+                    for alias in value:
+                        if not is_known_prefix(alias):
+                            raise Exception(f'"{alias}" starts with an unknown prefix.')
+
+                    # Aliases are not currently supported for "supports-single-colon-for-compatibility": true.
+                    if key_is_true(pseudo_data, 'supports-single-colon-for-compatibility'):
+                        raise Exception('Setting "aliases" along with "supports-single-colon-for-compatibility": true is not supported.')
 
                 # Validate "argument" field.
                 if key == 'argument':
                     if value not in ['required', 'optional']:
-                        raise Exception(f'Invalid "argument" field in {pseudo_name}. The field should either be absent, "required" or "optional".')
+                        raise Exception(f'Invalid "argument" field in "{pseudo_name}". The field should either be absent, "required" or "optional".')
 
-                    if key_is_true(pseudo_data, 'user-agent-part') and pseudo_type == 'pseudo-elements':
+                    if key_is_true(pseudo_data, 'user-agent-part'):
                         raise Exception('Setting "argument" along with "user-agent-part": true is not supported.')
+
+                # Validate "supports-single-colon-for-compatiblity" field.
+                if key == 'supports-single-colon-for-compatibility':
+                    allowlist = ['after', 'before', 'first-letter', 'first-line']
+                    if pseudo_name not in allowlist:
+                        raise Exception(f'Unexpected "supports-single-colon-for-compatibility" field in "{pseudo_name}". This should never be set on new pseudo-elements.')
 
                 # Validate "user-agent-part-string" field.
                 if key == 'user-agent-part-string' and key_is_true(pseudo_data, 'user-agent-part'):
                     raise Exception('Setting "user-agent-part-string" along with "user-agent-part": true is not supported.')
+
+    def check_webkit_prefix_count(self, input_data, pseudo_type):
+        actual_count = len(list(filter(lambda name: name.startswith('-webkit-'), input_data[pseudo_type].keys())))
+        expected_count = WEBKIT_PREFIX_COUNTS_DO_NOT_INCREASE[pseudo_type]
+
+        too_many_webkit_prefixes_error_string = f"""Instead of adding a `-webkit-` prefix, please consider these alternatives:
+- an `-internal-` prefix for things only meant to be styled in the user agent stylesheet
+- an `-apple-` prefix only exposed to certain Apple clients (there is a settings-flag requirement for using this prefix)
+- {pseudo_type} on standards track for things that are meant to be styled by arbitrary web content
+"""
+
+        count_decreased_error_string = f'The number of `-webkit-` prefixed {pseudo_type} has decreased to {actual_count} (yay!), please update the count in `process-css-pseudo-selectors.py`.'
+
+        if actual_count > expected_count:
+            raise Exception(too_many_webkit_prefixes_error_string)
+        elif actual_count < expected_count:
+            raise Exception(count_decreased_error_string)
 
 
 # - MARK: Helpers.
@@ -191,7 +245,7 @@ def close_namespace_webcore(writer):
 
 
 def key_is_true(object, key):
-    return key in object and object[key]
+    return object.get(key, False)
 
 
 def expand_conditional(conditional):
