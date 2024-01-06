@@ -108,13 +108,13 @@ private:
 
     void addElementInlineStyleProperties(bool includeSMILProperties);
 
-    void matchShadowPseudoElementRules(CascadeLevel);
+    void matchUserAgentPartRules(CascadeLevel);
     void matchHostPseudoClassRules(CascadeLevel);
     void matchSlottedPseudoElementRules(CascadeLevel);
     void matchPartPseudoElementRules(CascadeLevel);
     void matchPartPseudoElementRulesForScope(const Element& partMatchingElement, CascadeLevel);
 
-    void collectMatchingShadowPseudoElementRules(const MatchRequest&);
+    void collectMatchingUserAgentPartRules(const MatchRequest&);
 
     void collectMatchingRules(CascadeLevel);
     void collectMatchingRules(const MatchRequest&);
