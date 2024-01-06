@@ -47,6 +47,7 @@ KNOWN_KEY_TYPES = {
     'pseudo-elements': dict(COMMON_KNOWN_KEY_TYPES, **{
         'supports-single-colon-for-compatibility': [bool],
         'user-agent-part': [bool],
+        'user-agent-part-string': [bool],
     })
 }
 
@@ -91,6 +92,10 @@ class InputValidator:
 
                     if key_is_true(pseudo_data, 'user-agent-part') and pseudo_type == 'pseudo-elements':
                         raise Exception('Setting "argument" along with "user-agent-part": true is not supported.')
+
+                # Validate "user-agent-part-string" field.
+                if key == 'user-agent-part-string' and key_is_true(pseudo_data, 'user-agent-part'):
+                    raise Exception('Setting "user-agent-part-string" along with "user-agent-part": true is not supported.')
 
 
 # - MARK: Helpers.
@@ -211,6 +216,14 @@ def format_name_for_enum_class(stringPseudoType):
 
     output = list(map(format, stringPseudoType.split('-')))
     return ''.join(output)
+
+
+def format_name_for_function(userAgentPart):
+    substrings = [substring for substring in userAgentPart.split('-') if substring != '']
+    output = substrings[0]
+    for substring in substrings[1:]:
+        output += substring.capitalize()
+    return output
 
 
 # - MARK: Code generators.
@@ -507,7 +520,7 @@ class CSSSelectorEnumGenerator:
             write_pragma_once(writer)
             open_namespace_webcore(writer)
             self.write_enum_class(writer, "PseudoClass", self.pseudo_enum_values(pseudo_classes))
-            self.write_enum_class(writer, "PseudoElement", self.pseudo_enum_values(pseudo_elements) + [('UserAgentPart', None), ('UserAgentPartLegacyAlias', None)])
+            self.write_enum_class(writer, "PseudoElement", self.pseudo_enum_values(pseudo_elements) + [('UserAgentPart', None), ('UserAgentPartLegacyAlias', None), ('WebKitUnknown', None)])
             close_namespace_webcore(writer)
 
     def pseudo_enum_values(self, values):
@@ -773,6 +786,81 @@ class CSSSelectorInlinesGenerator:
         writer.write('}')
 
 
+class UserAgentPartsGenerator():
+    def __init__(self, data):
+        user_agent_parts = self.filter_data(data)
+
+        with open('UserAgentPartIds.h', 'w') as output_file:
+            writer = Writer(output_file)
+            write_copyright_header(writer)
+            write_autogeneration_comment(writer)
+            write_pragma_once(writer)
+            self.write_h_includes(writer)
+            self.write_open_namespace(writer)
+            self.write_h_functions(writer, user_agent_parts)
+            self.write_close_namespace(writer)
+
+        with open('UserAgentPartIds.cpp', 'w') as output_file:
+            writer = Writer(output_file)
+            write_copyright_header(writer)
+            write_autogeneration_comment(writer)
+            self.write_cpp_includes(writer)
+            self.write_open_namespace(writer)
+            self.write_cpp_functions(writer, user_agent_parts)
+            self.write_close_namespace(writer)
+
+    def filter_data(self, data):
+        parts = {}
+        for part_name, part_data in data.items():
+            if 'user-agent-part' in part_data or 'user-agent-part-string' in part_data:
+                parts[part_name] = part_data
+        return parts
+
+    def write_h_includes(self, writer):
+        writer.newline()
+        writer.write('#include <wtf/Forward.h>')
+
+    def write_open_namespace(self, writer):
+        writer.newline()
+        writer.write('namespace WebCore::UserAgentPartIds {')
+        writer.newline()
+
+    def write_h_functions(self, writer, user_agent_parts):
+        for part_name, part_data in user_agent_parts.items():
+            if 'conditional' in part_data:
+                writer.write(f'#if {part_data["conditional"]}')
+            writer.write(f'const AtomString& {format_name_for_function(part_name)}();')
+            if 'conditional' in part_data:
+                writer.write('#endif')
+        writer.newline()
+
+    def write_close_namespace(self, writer):
+        writer.write('} // WebCore::UserAgentPartIds')
+
+    def write_cpp_includes(self, writer):
+        writer.newline()
+        writer.write('#include "config.h"')
+        writer.write('#include "UserAgentPartIds.h"')
+        writer.newline()
+        writer.write('#include <wtf/NeverDestroyed.h>')
+        writer.write('#include <wtf/text/AtomString.h>')
+
+    def write_cpp_functions(self, writer, user_agent_parts):
+        for part_name, part_data in user_agent_parts.items():
+            part_function_name = format_name_for_function(part_name)
+            if 'conditional' in part_data:
+                writer.write(f'#if {part_data["conditional"]}')
+            writer.write(f'const AtomString& {part_function_name}()')
+            writer.write('{')
+            with writer.indent():
+                writer.write(f'static MainThreadNeverDestroyed<const AtomString> {part_function_name}("{part_name}"_s);')
+                writer.write(f'return {part_function_name};')
+            writer.write('}')
+            if 'conditional' in part_data:
+                writer.write('#endif')
+            writer.newline()
+
+
 # - MARK: Script entry point.
 
 def main():
@@ -790,6 +878,7 @@ def main():
     GPerfGenerator(input_data, args.gperf_executable, webcore_defines)
     CSSSelectorEnumGenerator(input_data)
     CSSSelectorInlinesGenerator(input_data)
+    UserAgentPartsGenerator(input_data['pseudo-elements'])
 
 
 if __name__ == "__main__":

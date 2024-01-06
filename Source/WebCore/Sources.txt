@@ -1607,7 +1607,6 @@ html/shadow/SwitchThumbElement.cpp
 html/shadow/SwitchTrackElement.cpp
 html/shadow/TextControlInnerElements.cpp
 html/shadow/TextPlaceholderElement.cpp
-html/shadow/UserAgentPartIds.cpp
 html/track/AudioTrack.cpp
 html/track/AudioTrackList.cpp
 html/track/BufferedLineReader.cpp
