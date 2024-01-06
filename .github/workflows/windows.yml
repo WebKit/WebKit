@@ -1,12 +1,9 @@
-name: CI
+name: Windows (Manual)
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
-  push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
