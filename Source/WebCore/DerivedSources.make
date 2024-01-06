@@ -1868,6 +1868,8 @@ $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/c
 
 # CSS pseudo class & element selector code and maps.
 
+WEBCORE_CSS_PSEUDO_SELECTORS := $(WebCore)/css/CSSPseudoSelectors.json
+
 CSS_PSEUDO_SELECTOR_FILES = \
     CSSSelectorEnums.h \
     CSSSelectorInlines.h \
@@ -1876,8 +1878,9 @@ CSS_PSEUDO_SELECTOR_FILES = \
 #
 CSS_PSEUDO_SELECTOR_FILES_PATTERNS = $(subst .,%,$(CSS_PSEUDO_SELECTOR_FILES))
 all : $(CSS_PSEUDO_SELECTOR_FILES)
-$(CSS_PSEUDO_SELECTOR_FILES_PATTERNS) : $(WebCore)/css/process-css-pseudo-selectors.py $(WebCore)/css/CSSPseudoSelectors.json $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PYTHON) "$(WebCore)/css/process-css-pseudo-selectors.py" $(WebCore)/css/CSSPseudoSelectors.json $(GPERF) "$(FEATURE_AND_PLATFORM_DEFINES)"
+$(CSS_PSEUDO_SELECTOR_FILES_PATTERNS) : $(WEBCORE_CSS_PSEUDO_SELECTORS) $(WebCore)/css/process-css-pseudo-selectors.py $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
+	$(PERL) -pe '' $(WEBCORE_CSS_PSEUDO_SELECTORS) > CSSPseudoSelectors.json
+	$(PYTHON) "$(WebCore)/css/process-css-pseudo-selectors.py" --gperf-executable $(GPERF) --defines "$(FEATURE_AND_PLATFORM_DEFINES)"
 
 # --------
 

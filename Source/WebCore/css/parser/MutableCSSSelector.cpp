@@ -62,7 +62,7 @@ std::unique_ptr<MutableCSSSelector> MutableCSSSelector::parsePseudoElementSelect
     selector->m_selector->setPseudoElement(*pseudoType);
     AtomString name;
     if (*pseudoType == CSSSelector::PseudoElement::UserAgentPartLegacyAlias)
-        name = CSSSelector::nameForShadowPseudoElementLegacyAlias(pseudoTypeString);
+        name = CSSSelector::nameForUserAgentPartLegacyAlias(pseudoTypeString);
     else
         name = pseudoTypeString.convertToASCIILowercaseAtom();
     selector->m_selector->setValue(name);

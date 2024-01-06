@@ -10,7 +10,7 @@
                 "Omit this field if the pseudo never takes an argument."
             ],
             "comment": "Add a description of how the pseudo is used. Especially useful for non-standard or internal ones.",
-            "condition": "Compile-time `#if ENABLE()` condition for the feature.",
+            "conditional": "Compile-time `#if ENABLE()` conditional for the feature.",
             "settings-flag": "Settings flag queried from CSSSelectorParserContext. Note that the flag needs to be manually added there.",
             "status": "Specifies the standardization state of the pseudo.",
             "supports-single-colon-for-compatibility": [
@@ -31,7 +31,7 @@
         "-internal-html-document": {},
         "-webkit-animating-full-screen-transition": {
             "comment": "For UA stylesheet use.",
-            "condition": "ENABLE(FULLSCREEN_API)",
+            "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
         "-webkit-any": {
@@ -64,17 +64,17 @@
         },
         "-webkit-full-screen-ancestor": {
             "comment": "For compatibility.",
-            "condition": "ENABLE(FULLSCREEN_API)",
+            "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
         "-webkit-full-screen-document": {
             "comment": "For UA stylesheet use.",
-            "condition": "ENABLE(FULLSCREEN_API)",
+            "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
         "-webkit-full-screen-controls-hidden": {
             "comment": "For compatibility.",
-            "condition": "ENABLE(FULLSCREEN_API)",
+            "conditional": "ENABLE(FULLSCREEN_API)",
             "status": "non-standard"
         },
         "active": {},
@@ -89,7 +89,7 @@
             ]
         },
         "buffering": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "checked": {},
         "corner-present": {
@@ -127,17 +127,17 @@
             "aliases": [
                 "-webkit-full-screen"
             ],
-            "condition": "ENABLE(FULLSCREEN_API)"
+            "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "future": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "has": {
             "argument": "required",
             "settings-flag": "hasPseudoClassEnabled"
         },
         "has-attachment": {
-            "condition": "ENABLE(ATTACHMENT_ELEMENT)",
+            "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
             "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
         },
         "horizontal": {
@@ -169,7 +169,7 @@
         "link": {},
         "modal": {},
         "muted": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "no-button": {
             "comment": "For scrollbar styling.",
@@ -195,17 +195,17 @@
         "optional": {},
         "out-of-range": {},
         "past": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "paused": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "picture-in-picture": {
-            "condition": "ENABLE(PICTURE_IN_PICTURE_API)"
+            "conditional": "ENABLE(PICTURE_IN_PICTURE_API)"
         },
         "placeholder-shown": {},
         "playing": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "popover-open": {
             "settings-flag": "popoverAttributeEnabled"
@@ -216,10 +216,10 @@
         "root": {},
         "scope": {},
         "seeking": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "stalled": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "state": {
             "argument": "required",
@@ -243,7 +243,7 @@
         },
         "visited": {},
         "volume-locked": {
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "where": {
             "argument": "required"
@@ -256,7 +256,7 @@
     "pseudo-elements": {
         "-apple-attachment-controls-container": {
             "comment": "For use in Apple internal apps.",
-            "condition": "ENABLE(SERVICE_CONTROLS)",
+            "conditional": "ENABLE(SERVICE_CONTROLS)",
             "settings-flag": "imageControlsEnabled",
             "user-agent-part": true
         },
@@ -297,7 +297,7 @@
         },
         "cue": {
             "argument": "optional",
-            "condition": "ENABLE(VIDEO)"
+            "conditional": "ENABLE(VIDEO)"
         },
         "file-selector-button": {
             "aliases": [
