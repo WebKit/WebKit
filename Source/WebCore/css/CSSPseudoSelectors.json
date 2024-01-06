@@ -265,6 +265,9 @@
             "settings-flag": "imageControlsEnabled",
             "user-agent-part": true
         },
+        "-internal-loading-auto-fill-button": {
+            "user-agent-part": true
+        },
         "-webkit-caps-lock-indicator": {
             "status": "non-standard",
             "user-agent-part": true
@@ -362,10 +365,6 @@
             "user-agent-part": true
         },
         "-webkit-list-button": {
-            "status": "non-standard",
-            "user-agent-part": true
-        },
-        "-webkit-loading-auto-fill-button": {
             "status": "non-standard",
             "user-agent-part": true
         },

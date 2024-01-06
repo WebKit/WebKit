@@ -583,7 +583,8 @@ class CSSSelectorInlinesGenerator:
                 conditions.append(f'context.{settings_flag}')
 
         if is_internal:
-            conditions.append('context.mode == UASheetMode')
+            # Wrap around parentheses so it's valid when negated with `!boolean`.
+            conditions.append('(context.mode == UASheetMode)')
 
         if len(conditions) == 1:
             return conditions[0]
