@@ -76,9 +76,8 @@ private:
     void updateWidget(CreatePlugins) final;
     void updateExposedState();
 
-    // FIXME: This function should not deal with url or serviceType
-    // so that we can better share code between <object> and <embed>.
-    void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues, String& url, String& serviceType);
+    // FIXME: Better share code between <object> and <embed>.
+    void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues);
 
     void refFormAssociatedElement() const final { ref(); }
     void derefFormAssociatedElement() const final { deref(); }

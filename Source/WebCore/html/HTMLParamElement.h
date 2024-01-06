@@ -31,16 +31,8 @@ class HTMLParamElement final : public HTMLElement {
 public:
     static Ref<HTMLParamElement> create(const QualifiedName&, Document&);
 
-    AtomString name() const;
-    AtomString value() const;
-
-    static bool isURLParameter(const String&);
-
 private:
     HTMLParamElement(const QualifiedName&, Document&);
-
-    bool isURLAttribute(const Attribute&) const final;
-    void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 };
 
 } // namespace WebCore
