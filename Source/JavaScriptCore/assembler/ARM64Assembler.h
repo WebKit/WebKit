@@ -3888,7 +3888,7 @@ protected:
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
-            if constexpr (copy == performJITMemcpy)
+            if (copy == performJITMemcpy)
                 to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
             else
                 to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(bitwise_cast<void*>(fromInstruction), to);
