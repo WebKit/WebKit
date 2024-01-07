@@ -1261,7 +1261,14 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         // offset all box geometry as we check for overlap.
         auto moveBoxRangeToVisualLeft = [&](auto start, auto end, auto shiftValue) {
             for (auto index = start; index <= end; ++index) {
-                isHorizontalWritingMode ? displayBoxes[index].moveHorizontally(LayoutUnit { -shiftValue }) : displayBoxes[index].moveVertically(LayoutUnit { -shiftValue });
+                auto& displayBox = displayBoxes[index];
+                auto boxGeometryNeedsUpdating = displayBox.isInlineLevelBox() && !displayBox.isRootInlineBox();
+                isHorizontalWritingMode ? displayBox.moveHorizontally(-shiftValue) : displayBox.moveVertically(-shiftValue);
+                if (boxGeometryNeedsUpdating) {
+                    auto& boxVisualGeometry = formattingContext.geometryForBox(displayBox.layoutBox());
+                    isHorizontalWritingMode ? boxVisualGeometry.moveHorizontally(LayoutUnit { -shiftValue }) : boxVisualGeometry.moveVertically(LayoutUnit { -shiftValue });
+                }
+
                 auto updateAnnotationGeometryIfNeeded = [&] {
                     auto& layoutBox = displayBoxes[index].layoutBox();
                     if (!layoutBox.isRubyBase() || !layoutBox.associatedRubyAnnotationBox())
