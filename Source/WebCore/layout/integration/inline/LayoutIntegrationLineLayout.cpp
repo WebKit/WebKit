@@ -363,10 +363,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         if (auto* layer = renderer.layer())
             layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
 
-        auto& visualGeometry = layoutState().geometryForBox(layoutBox);
-        auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
-
-        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft() + adjustmentOffset);
+        renderer.setLocation(Layout::toLayoutPoint(box.visualRectIgnoringBlockDirection().location()));
         auto relayoutRubyAnnotationIfNeeded = [&] {
             if (!layoutBox.isRubyAnnotationBox())
                 return;
@@ -375,7 +372,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto needsResizing = layoutBox.isInterlinearRubyAnnotationBox() || !isHorizontalWritingMode;
             if (!needsResizing)
                 return;
-            auto visualMarginBoxSize = Layout::BoxGeometry::marginBoxRect(visualGeometry).size();
+            auto visualMarginBoxSize = Layout::BoxGeometry::marginBoxRect(layoutState().geometryForBox(layoutBox)).size();
             auto logicalMarginBoxSize = isHorizontalWritingMode ? visualMarginBoxSize : visualMarginBoxSize.transposedSize();
             if (logicalMarginBoxSize == renderer.size())
                 return;
