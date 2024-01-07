@@ -421,11 +421,11 @@ void Invalidator::invalidateUserAgentParts(ShadowRoot& shadowRoot)
         return;
 
     for (auto& descendant : descendantsOfType<Element>(shadowRoot)) {
-        auto& partId = descendant.pseudo();
-        if (!partId)
+        auto& part = descendant.userAgentPart();
+        if (!part)
             continue;
         for (auto& ruleSet : m_ruleSets) {
-            if (ruleSet->userAgentPartRules(partId))
+            if (ruleSet->userAgentPartRules(part))
                 descendant.invalidateStyleInternal();
         }
     }

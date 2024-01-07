@@ -54,7 +54,7 @@
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
 
 namespace WebCore {
@@ -152,8 +152,8 @@ void ColorInputType::createShadowSubtree()
     element()->userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, wrapperElement);
 
     wrapperElement->appendChild(ContainerNode::ChildChange::Source::Parser, colorSwatch);
-    wrapperElement->setPseudo(UserAgentPartIds::webkitColorSwatchWrapper());
-    colorSwatch->setPseudo(UserAgentPartIds::webkitColorSwatch());
+    wrapperElement->setUserAgentPart(UserAgentParts::webkitColorSwatchWrapper());
+    colorSwatch->setUserAgentPart(UserAgentParts::webkitColorSwatch());
 
     updateColorSwatch();
 }

@@ -845,7 +845,7 @@ class UserAgentPartsGenerator():
     def __init__(self, data):
         user_agent_parts = self.filter_data(data)
 
-        with open('UserAgentPartIds.h', 'w') as output_file:
+        with open('UserAgentParts.h', 'w') as output_file:
             writer = Writer(output_file)
             write_copyright_header(writer)
             write_autogeneration_comment(writer)
@@ -855,7 +855,7 @@ class UserAgentPartsGenerator():
             self.write_h_functions(writer, user_agent_parts)
             self.write_close_namespace(writer)
 
-        with open('UserAgentPartIds.cpp', 'w') as output_file:
+        with open('UserAgentParts.cpp', 'w') as output_file:
             writer = Writer(output_file)
             write_copyright_header(writer)
             write_autogeneration_comment(writer)
@@ -877,7 +877,7 @@ class UserAgentPartsGenerator():
 
     def write_open_namespace(self, writer):
         writer.newline()
-        writer.write('namespace WebCore::UserAgentPartIds {')
+        writer.write('namespace WebCore::UserAgentParts {')
         writer.newline()
 
     def write_h_functions(self, writer, user_agent_parts):
@@ -890,12 +890,12 @@ class UserAgentPartsGenerator():
         writer.newline()
 
     def write_close_namespace(self, writer):
-        writer.write('} // WebCore::UserAgentPartIds')
+        writer.write('} // WebCore::UserAgentParts')
 
     def write_cpp_includes(self, writer):
         writer.newline()
         writer.write('#include "config.h"')
-        writer.write('#include "UserAgentPartIds.h"')
+        writer.write('#include "UserAgentParts.h"')
         writer.newline()
         writer.write('#include <wtf/NeverDestroyed.h>')
         writer.write('#include <wtf/text/AtomString.h>')

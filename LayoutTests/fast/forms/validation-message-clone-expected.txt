@@ -3,6 +3,6 @@ There are two text fields. The first one should have a validation message bubble
 
 
 
-PASS internals.userAgentPartId(lastInOriginalShadow) == "-webkit-validation-bubble" is true
-PASS internals.userAgentPartId(lastInClonedShadow) == "-webkit-validation-bubble" is false
+PASS internals.userAgentPart(lastInOriginalShadow) == "-webkit-validation-bubble" is true
+PASS internals.userAgentPart(lastInClonedShadow) == "-webkit-validation-bubble" is false
 

@@ -355,7 +355,7 @@ void ElementRuleCollector::matchPartPseudoElementRules(CascadeLevel level)
     if (!element().containingShadowRoot())
         return;
 
-    bool isUserAgentPart = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().pseudo().isNull();
+    bool isUserAgentPart = element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent && !element().userAgentPart().isNull();
 
     auto& partMatchingElement = isUserAgentPart ? *element().shadowHost() : element();
     if (partMatchingElement.partNames().isEmpty() || !partMatchingElement.isInShadowTree())
@@ -402,9 +402,8 @@ void ElementRuleCollector::collectMatchingUserAgentPartRules(const MatchRequest&
     if (element().isWebVTTElement() || element().isWebVTTRubyElement() || element().isWebVTTRubyTextElement())
         collectMatchingRulesForList(&rules.cuePseudoRules(), matchRequest);
 #endif
-    auto& partId = element().pseudo();
-    if (!partId.isEmpty())
-        collectMatchingRulesForList(rules.userAgentPartRules(partId), matchRequest);
+    if (auto& part = element().userAgentPart(); !part.isEmpty())
+        collectMatchingRulesForList(rules.userAgentPartRules(part), matchRequest);
 }
 
 void ElementRuleCollector::matchUserRules()

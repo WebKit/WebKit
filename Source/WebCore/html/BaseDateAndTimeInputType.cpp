@@ -57,7 +57,7 @@
 #include "StepRange.h"
 #include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
 #include <limits>
 #include <wtf/DateMath.h>
@@ -341,7 +341,7 @@ void BaseDateAndTimeInputType::createShadowSubtree()
     } else {
         auto valueContainer = HTMLDivElement::create(document);
         element.userAgentShadowRoot()->appendChild(ContainerNode::ChildChange::Source::Parser, valueContainer);
-        valueContainer->setPseudo(UserAgentPartIds::webkitDateAndTimeValue());
+        valueContainer->setUserAgentPart(UserAgentParts::webkitDateAndTimeValue());
     }
     updateInnerTextValue();
 }

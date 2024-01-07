@@ -88,7 +88,7 @@ function checkShadowContent(x, y, topPadding, rightPadding, bottomPadding, leftP
   for (var j = 0; j < shadowContent.length; j++) {
     var found = false;
     for (var i = 0; i < nodes.length; i++) {
-      if (internals.userAgentPartId(nodes[i]) == shadowContent[j]) {
+      if (internals.userAgentPart(nodes[i]) == shadowContent[j]) {
           found = true;
           break;
       }

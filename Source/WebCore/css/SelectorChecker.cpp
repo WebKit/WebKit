@@ -287,7 +287,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             if (context.inFunctionalPseudoClass)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
             if (ShadowRoot* root = context.element->containingShadowRoot()) {
-                if (context.element->pseudo() != context.selector->value())
+                if (context.element->userAgentPart() != context.selector->value())
                     return MatchResult::fails(Match::SelectorFailsLocally);
 
                 if (root->mode() != ShadowRootMode::UserAgent)

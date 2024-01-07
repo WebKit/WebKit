@@ -50,7 +50,7 @@
 #include "StyleResolver.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
@@ -213,7 +213,7 @@ Ref<TextControlPlaceholderElement> TextControlPlaceholderElement::create(Documen
 {
     auto element = adoptRef(*new TextControlPlaceholderElement(document));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(UserAgentPartIds::placeholder());
+    element->setUserAgentPart(UserAgentParts::placeholder());
     return element;
 }
 
@@ -324,7 +324,7 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
     auto element = adoptRef(*new SearchFieldCancelButtonElement(document));
 
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(UserAgentPartIds::webkitSearchCancelButton());
+    element->setUserAgentPart(UserAgentParts::webkitSearchCancelButton());
 #if !PLATFORM(IOS_FAMILY)
     element->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { AXSearchFieldCancelButtonText() });
 #endif

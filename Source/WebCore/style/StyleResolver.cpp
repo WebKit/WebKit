@@ -74,7 +74,7 @@
 #include "StyleResolveForDocument.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "UserAgentStyle.h"
 #include "VisitedLinkState.h"
 #include "WebAnimationTypes.h"
@@ -582,7 +582,7 @@ static bool elementTypeHasAppearanceFromUAStyle(const Element& element)
         || localName == HTMLNames::progressTag
         || localName == HTMLNames::selectTag
         || localName == HTMLNames::meterTag
-        || (element.isInUserAgentShadowTree() && element.pseudo() == UserAgentPartIds::webkitListButton());
+        || (element.isInUserAgentShadowTree() && element.userAgentPart() == UserAgentParts::webkitListButton());
 }
 
 void Resolver::invalidateMatchedDeclarationsCache()

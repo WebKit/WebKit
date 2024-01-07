@@ -9,7 +9,7 @@ PASS shadowRoot.lastElementChild.localName is "div"
 PASS shadowRoot.lastElementChild.className is "media-controls-container"
 PASS shadowRoot.lastElementChild.childElementCount is 2
 PASS shadowRoot.lastElementChild.firstElementChild.localName is "div"
-PASS shadowRoot.lastElementChild.firstElementChild.getAttribute('pseudo') is "-webkit-media-text-track-container"
+PASS shadowRoot.lastElementChild.firstElementChild.getAttribute('useragentpart') is "-webkit-media-text-track-container"
 PASS shadowRoot.lastElementChild.lastElementChild.localName is "div"
 PASS shadowRoot.lastElementChild.lastElementChild.classList.contains('media-controls') is true
 PASS successfullyParsed is true

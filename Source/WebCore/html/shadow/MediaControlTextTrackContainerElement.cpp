@@ -55,7 +55,7 @@
 #include "StyleProperties.h"
 #include "TextTrackCueGeneric.h"
 #include "TextTrackList.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "VTTRegionList.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
@@ -69,7 +69,7 @@ using namespace HTMLNames;
 Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document& document, HTMLMediaElement& mediaElement)
 {
     auto element = adoptRef(*new MediaControlTextTrackContainerElement(document, mediaElement));
-    element->setPseudo(UserAgentPartIds::webkitMediaTextTrackContainer());
+    element->setUserAgentPart(UserAgentParts::webkitMediaTextTrackContainer());
     element->hide();
     return element;
 }

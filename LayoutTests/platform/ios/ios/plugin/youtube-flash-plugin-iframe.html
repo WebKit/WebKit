@@ -13,7 +13,7 @@ function checkEmbeddedYouTubeVideoInsideIframe()
 {
     normalEmbedInIframe = document.getElementById('test-iframe').contentDocument.getElementById('normal-embed');
     normalEmbedInIframeShadowRoot = internals.shadowRoot(normalEmbedInIframe);
-    shouldBe('internals.userAgentPartId(normalEmbedInIframeShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
+    shouldBe('internals.userAgentPart(normalEmbedInIframeShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
     shouldBe('normalEmbedInIframeShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
     document.body.removeChild(document.getElementById("test-container"));
@@ -53,15 +53,15 @@ function Test()
 
         // Test we have the shadow root and the iframe player.
         normalEmbedShadowRoot = internals.shadowRoot(normalEmbed);
-        shouldBe('internals.userAgentPartId(normalEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
+        shouldBe('internals.userAgentPart(normalEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
         shouldBe('normalEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
         objectEmbedShadowRoot = internals.shadowRoot(objectEmbed);
-        shouldBe('internals.userAgentPartId(objectEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
+        shouldBe('internals.userAgentPart(objectEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
         shouldBe('objectEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
         objectNoEmbedShadowRoot = internals.shadowRoot(objectNoEmbed);
-        shouldBe('internals.userAgentPartId(objectNoEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
+        shouldBe('internals.userAgentPart(objectNoEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
         shouldBe('objectNoEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
         testEmbedYouTubeVideoInsideIframe();

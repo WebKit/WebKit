@@ -20,10 +20,10 @@
             "user-agent-part": [
                 "For pseudo-elements only. Whether the pseudo-element represents an element in an user agent shadow tree.",
                 "They internally map to `PseudoElement::UserAgentPart` or `PseudoElement::UserAgentPartLegacyAlias` for aliases.",
-                "Also creates an entry in UserAgentPartIds."
+                "Also creates an entry in UserAgentParts."
             ],
             "user-agent-part-string": [
-                "For pseudo-elements only. When the pseudo-element needs to be in UserAgentPartIds despite not being a `PseudoElement::UserAgentPart`.",
+                "For pseudo-elements only. When the pseudo-element needs to be in UserAgentParts despite not being a `PseudoElement::UserAgentPart`.",
                 "Mutually exclusive with the user-agent-part field."
             ]
         },

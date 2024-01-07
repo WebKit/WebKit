@@ -582,7 +582,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setTextSecurity(style.inputSecurity() == InputSecurity::Auto ? TextSecurity::Disc : TextSecurity::None);
 
         // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
-        if (!m_element->pseudo().isNull())
+        if (!m_element->userAgentPart().isNull())
             style.setUserModify(UserModify::ReadOnly);
 
         if (is<HTMLMarqueeElement>(*m_element)) {

@@ -47,7 +47,7 @@
 #include "RenderImage.h"
 #include "ShadowRoot.h"
 #include "TreeScopeInlines.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/AtomString.h>
 
@@ -125,7 +125,7 @@ void createImageControls(HTMLElement& element)
     auto button = HTMLButtonElement::create(HTMLNames::buttonTag, element.document(), nullptr);
     button->setIdAttribute(imageControlsButtonIdentifier());
     controlLayer->appendChild(button);
-    controlLayer->setPseudo(UserAgentPartIds::appleAttachmentControlsContainer());
+    controlLayer->setUserAgentPart(UserAgentParts::appleAttachmentControlsContainer());
     
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element.renderer()))
         renderImage->setHasShadowControls(true);

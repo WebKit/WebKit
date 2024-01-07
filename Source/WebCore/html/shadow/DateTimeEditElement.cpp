@@ -41,7 +41,7 @@
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "Text.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -175,7 +175,7 @@ void DateTimeEditBuilder::visitLiteral(String&& text)
 
     auto element = HTMLDivElement::create(m_editElement.document());
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(UserAgentPartIds::webkitDatetimeEditText());
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEditText());
 
     // If the literal begins/ends with a space, the gap between two fields will appear
     // exaggerated due to the presence of a 1px padding around each field. This can
@@ -240,7 +240,7 @@ Ref<DateTimeEditElement> DateTimeEditElement::create(Document& document, EditCon
 {
     auto element = adoptRef(*new DateTimeEditElement(document, editControlOwner));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(UserAgentPartIds::webkitDatetimeEdit());
+    element->setUserAgentPart(UserAgentParts::webkitDatetimeEdit());
     return element;
 }
 
@@ -249,7 +249,7 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
     if (!firstChild()) {
         auto element = HTMLDivElement::create(document());
         appendChild(element);
-        element->setPseudo(UserAgentPartIds::webkitDatetimeEditFieldsWrapper());
+        element->setUserAgentPart(UserAgentParts::webkitDatetimeEditFieldsWrapper());
     }
 
     Element& fieldsWrapper = fieldsWrapperElement();
@@ -263,11 +263,11 @@ void DateTimeEditElement::layout(const LayoutParameters& layoutParameters)
     }
 
     if (focusedField) {
-        auto& focusedFieldId = focusedField->pseudo();
+        auto& focusedFieldId = focusedField->userAgentPart();
 
         auto foundFieldToFocus = false;
         for (auto& field : m_fields) {
-            if (field->pseudo() == focusedFieldId) {
+            if (field->userAgentPart() == focusedFieldId) {
                 foundFieldToFocus = true;
                 field->focus();
                 break;

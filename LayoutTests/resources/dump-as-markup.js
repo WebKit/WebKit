@@ -228,12 +228,6 @@ Markup._get = function(node, depth, shadowRootList)
             }
         }
 
-        if (!Markup._useHTML5libOutputFormat && window.internals) {
-            var pseudoId = window.internals.userAgentPartId(node);
-            if (pseudoId)
-                str += Markup._indent(depth + 1) + 'shadow:pseudoId="' + pseudoId + '"';
-        }
-
         if (!Markup._useHTML5libOutputFormat)
             if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA")
                 str += Markup._indent(depth + 1) + 'this.value="' + node.value + '"';

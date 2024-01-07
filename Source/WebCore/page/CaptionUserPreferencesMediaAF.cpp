@@ -36,7 +36,7 @@
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "TextTrackList.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "UserStyleSheetTypes.h"
 #include <algorithm>
 #include <wtf/Language.h>
@@ -591,13 +591,13 @@ String CaptionUserPreferencesMediaAF::captionsStyleSheetOverride() const
     String fontName = captionsDefaultFontCSS();
     String background = captionsBackgroundCSS();
     if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
-        captionsOverrideStyleSheet.append(" ::", UserAgentPartIds::cue(), '{', background, captionsColor, edgeStyle, fontName, '}');
-        captionsOverrideStyleSheet.append(" ::", UserAgentPartIds::cue(), "(rt) {", background, captionsColor, edgeStyle, fontName, '}');
+        captionsOverrideStyleSheet.append(" ::", UserAgentParts::cue(), '{', background, captionsColor, edgeStyle, fontName, '}');
+        captionsOverrideStyleSheet.append(" ::", UserAgentParts::cue(), "(rt) {", background, captionsColor, edgeStyle, fontName, '}');
     }
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
     if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty())
-        captionsOverrideStyleSheet.append(" ::", UserAgentPartIds::webkitMediaTextTrackDisplayBackdrop(), '{', windowColor, windowCornerRadius, '}');
+        captionsOverrideStyleSheet.append(" ::", UserAgentParts::webkitMediaTextTrackDisplayBackdrop(), '{', windowColor, windowCornerRadius, '}');
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
     LOG(Media, "CaptionUserPreferencesMediaAF::captionsStyleSheetOverrideSetting style to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());

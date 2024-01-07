@@ -24,8 +24,8 @@ shouldBe('dolly.clientHeight', 'sheep.clientHeight');
 if (window.internals) {
     var sheepShadow = internals.shadowRoot(sheep);
     var dollyShadow = internals.shadowRoot(dolly);
-    shouldBe('internals.userAgentPartId(dollyShadow.firstChild)',
-             'internals.userAgentPartId(sheepShadow.firstChild)');
+    shouldBe('internals.userAgentPart(dollyShadow.firstChild)',
+             'internals.userAgentPart(sheepShadow.firstChild)');
 }
 
 dolly.value = 0;

@@ -494,8 +494,8 @@ public:
  
     virtual String title() const;
 
-    WEBCORE_EXPORT const AtomString& pseudo() const;
-    WEBCORE_EXPORT void setPseudo(const AtomString&);
+    WEBCORE_EXPORT const AtomString& userAgentPart() const;
+    WEBCORE_EXPORT void setUserAgentPart(const AtomString&);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
     virtual void prepareForDocumentSuspension() { }

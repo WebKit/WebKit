@@ -68,7 +68,7 @@
                     debug("<br>** Test to make sure &lt;video&gt; element is in the shadow DOM.");
                     evalAndLog("shadowElement = internals.shadowRoot(embed).firstChild");
                     shouldBeEqualToString("shadowElement.tagName", "VIDEO");
-                    shouldBeEqualToString("internals.userAgentPartId(shadowElement)", "-webkit-plugin-replacement");
+                    shouldBeEqualToString("internals.userAgentPart(shadowElement)", "-webkit-plugin-replacement");
                 } else {
                     debug("");
                     testFailed("This test must be run in DRT.");

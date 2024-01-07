@@ -8,7 +8,7 @@
     <script src=../video-test.js></script>
     <script>
     function firstCueElement() {
-        return internals.shadowRoot(video).querySelector('[pseudo="cue"]');
+        return internals.shadowRoot(video).querySelector('[useragentpart="cue"]');
     }
 
     async function runTest() {

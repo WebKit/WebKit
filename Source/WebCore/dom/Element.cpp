@@ -2147,7 +2147,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         if (is<HTMLElement>(*this) || is<SVGElement>(*this))
             setNonce(newValue.isNull() ? emptyAtom() : newValue);
         break;
-    case AttributeNames::pseudoAttr:
+    case AttributeNames::useragentpartAttr:
         if (needsStyleInvalidation() && isInUserAgentShadowTree())
             invalidateStyleForSubtree();
         break;
@@ -3894,14 +3894,14 @@ String Element::title() const
     return String();
 }
 
-const AtomString& Element::pseudo() const
+const AtomString& Element::userAgentPart() const
 {
-    return attributeWithoutSynchronization(pseudoAttr);
+    return attributeWithoutSynchronization(useragentpartAttr);
 }
 
-void Element::setPseudo(const AtomString& value)
+void Element::setUserAgentPart(const AtomString& value)
 {
-    setAttributeWithoutSynchronization(pseudoAttr, value);
+    setAttributeWithoutSynchronization(useragentpartAttr, value);
 }
 
 void Element::willBecomeFullscreenElement()

@@ -54,7 +54,7 @@
 #include "TextTrack.h"
 #include "TextTrackCueGeneric.h"
 #include "TextTrackCueList.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "VTTRegionList.h"
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
@@ -956,9 +956,9 @@ void VTTCue::obtainCSSBoxes()
     // background box.
 
     // Note: This is contained by default in m_cueHighlightBox.
-    m_cueHighlightBox->setPseudo(UserAgentPartIds::cue());
+    m_cueHighlightBox->setUserAgentPart(UserAgentParts::cue());
 
-    m_cueBackdropBox->setPseudo(UserAgentPartIds::webkitMediaTextTrackDisplayBackdrop());
+    m_cueBackdropBox->setUserAgentPart(UserAgentParts::webkitMediaTextTrackDisplayBackdrop());
     m_cueBackdropBox->appendChild(m_cueHighlightBox);
     displayTree->appendChild(m_cueBackdropBox);
 

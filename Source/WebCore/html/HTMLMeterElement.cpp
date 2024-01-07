@@ -34,7 +34,7 @@
 #include "RenderMeter.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -202,15 +202,15 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
     switch (gaugeRegion) {
     case HTMLMeterElement::GaugeRegionOptimum:
         element.setAttribute(HTMLNames::classAttr, "optimum"_s);
-        element.setPseudo(UserAgentPartIds::webkitMeterOptimumValue());
+        element.setUserAgentPart(UserAgentParts::webkitMeterOptimumValue());
         return;
     case HTMLMeterElement::GaugeRegionSuboptimal:
         element.setAttribute(HTMLNames::classAttr, "suboptimum"_s);
-        element.setPseudo(UserAgentPartIds::webkitMeterSuboptimumValue());
+        element.setUserAgentPart(UserAgentParts::webkitMeterSuboptimumValue());
         return;
     case HTMLMeterElement::GaugeRegionEvenLessGood:
         element.setAttribute(HTMLNames::classAttr, "even-less-good"_s);
-        element.setPseudo(UserAgentPartIds::webkitMeterEvenLessGoodValue());
+        element.setUserAgentPart(UserAgentParts::webkitMeterEvenLessGoodValue());
         return;
     default:
         ASSERT_NOT_REACHED();
@@ -244,12 +244,12 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     // Pseudos are set to allow author styling.
     auto inner = HTMLDivElement::create(document());
     inner->setIdAttribute("inner"_s);
-    inner->setPseudo(UserAgentPartIds::webkitMeterInnerElement());
+    inner->setUserAgentPart(UserAgentParts::webkitMeterInnerElement());
     root.appendChild(inner);
 
     auto bar = HTMLDivElement::create(document());
     bar->setIdAttribute("bar"_s);
-    bar->setPseudo(UserAgentPartIds::webkitMeterBar());
+    bar->setUserAgentPart(UserAgentParts::webkitMeterBar());
     inner->appendChild(bar);
 
     m_value = HTMLDivElement::create(document());

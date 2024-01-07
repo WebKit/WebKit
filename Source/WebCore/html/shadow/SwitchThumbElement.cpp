@@ -26,7 +26,7 @@
 #include "SwitchThumbElement.h"
 
 #include "ScriptDisallowedScope.h"
-#include "UserAgentPartIds.h"
+#include "UserAgentParts.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ Ref<SwitchThumbElement> SwitchThumbElement::create(Document& document)
 {
     Ref element = adoptRef(*new SwitchThumbElement(document));
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { element };
-    element->setPseudo(UserAgentPartIds::thumb());
+    element->setUserAgentPart(UserAgentParts::thumb());
     return element;
 
 }

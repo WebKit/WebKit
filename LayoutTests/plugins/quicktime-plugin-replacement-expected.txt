@@ -9,7 +9,7 @@ EVENT(qt_canplaythrough)
 ** Test to make sure <video> element is in the shadow DOM.
 shadowElement = internals.shadowRoot(embed).firstChild
 PASS shadowElement.tagName is "VIDEO"
-PASS internals.userAgentPartId(shadowElement) is "-webkit-plugin-replacement"
+PASS internals.userAgentPart(shadowElement) is "-webkit-plugin-replacement"
 
 ** Test for the presence of overridden methods.
 PASS embed.SetURL is a function.

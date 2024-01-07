@@ -13,13 +13,13 @@ PASS elinkEmbed.tagName is "EMBED"
 PASS objectEmbed.tagName is "EMBED"
 PASS objectNoEmbed.tagName is "OBJECT"
 PASS document.querySelectorAll("iframe").length is 1
-PASS internals.userAgentPartId(normalEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
+PASS internals.userAgentPart(normalEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS normalEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
-PASS internals.userAgentPartId(objectEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
+PASS internals.userAgentPart(objectEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS objectEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
-PASS internals.userAgentPartId(objectNoEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
+PASS internals.userAgentPart(objectNoEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS objectNoEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
-PASS internals.userAgentPartId(normalEmbedInIframeShadowRoot.firstChild) is "-webkit-plugin-replacement"
+PASS internals.userAgentPart(normalEmbedInIframeShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS normalEmbedInIframeShadowRoot.firstChild.firstChild.tagName is "IFRAME"
 PASS successfullyParsed is true
 

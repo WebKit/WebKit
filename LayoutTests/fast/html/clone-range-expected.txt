@@ -2,7 +2,7 @@ Tests that a range input's slider is cloned along with its host. There should be
 
 
 PASS dolly.clientHeight is sheep.clientHeight
-PASS internals.userAgentPartId(dollyShadow.firstChild) is internals.userAgentPartId(sheepShadow.firstChild)
+PASS internals.userAgentPart(dollyShadow.firstChild) is internals.userAgentPart(sheepShadow.firstChild)
 PASS successfullyParsed is true
 
 TEST COMPLETE
