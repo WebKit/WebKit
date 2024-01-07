@@ -5467,10 +5467,6 @@ static bool needsWebViewInitThreadWorkaround()
 }
 
 #if !PLATFORM(IOS_FAMILY)
-// FIXME: Use AppKit constants for these when they are available.
-static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
-static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey";
-
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
@@ -5485,7 +5481,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [defaultNotificationCenter addObserver:self selector:@selector(_windowWillOrderOffScreen:)
             name:NSWindowWillOrderOffScreenNotification object:window];
         [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
-            name:windowDidChangeBackingPropertiesNotification object:window];
+            name:NSWindowDidChangeBackingPropertiesNotification object:window];
         [defaultNotificationCenter addObserver:self selector:@selector(_windowDidChangeScreen:)
             name:NSWindowDidChangeScreenNotification object:window];
         [defaultNotificationCenter addObserver:self selector:@selector(_windowVisibilityChanged:)
@@ -5513,7 +5509,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [defaultNotificationCenter removeObserver:self
             name:NSWindowWillOrderOffScreenNotification object:window];
         [defaultNotificationCenter removeObserver:self
-            name:windowDidChangeBackingPropertiesNotification object:window];
+            name:NSWindowDidChangeBackingPropertiesNotification object:window];
         [defaultNotificationCenter removeObserver:self
             name:NSWindowDidChangeScreenNotification object:window];
         [defaultNotificationCenter removeObserver:self
@@ -5669,7 +5665,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowDidChangeBackingProperties:(NSNotification *)notification
 {
-    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue];
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:NSBackingPropertyOldScaleFactorKey] doubleValue];
     CGFloat newBackingScaleFactor = [self _deviceScaleFactor];
     if (oldBackingScaleFactor == newBackingScaleFactor)
         return;
