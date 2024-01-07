@@ -49,7 +49,10 @@ PlatformImagePtr ImageBackingStore::image() const
         return nullptr;
 
     m_pixels->ref(); // Balanced above in dataProviderReleaseCallback().
-    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bytesPerPixel * 8, bytesPerRow, colorSpace.get(), (m_premultiplyAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst) | kCGImageByteOrder32Little, dataProvider.get(), nullptr, true, kCGRenderingIntentDefault));
+IGNORE_WARNINGS_BEGIN("deprecated-enum-enum-conversion")
+    CGBitmapInfo bitmapInfo = (m_premultiplyAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst) | kCGImageByteOrder32Little;
+IGNORE_WARNINGS_END
+    return adoptCF(CGImageCreate(width, height, bitsPerComponent, bytesPerPixel * 8, bytesPerRow, colorSpace.get(), bitmapInfo, dataProvider.get(), nullptr, true, kCGRenderingIntentDefault));
 }
 
 } // namespace WebCore

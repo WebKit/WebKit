@@ -83,8 +83,9 @@ void WebPopupMenuProxyMac::populate(const Vector<WebPopupItem>& items, NSFont *f
                 font, NSFontAttributeName,
             nil]);
             if (items[i].m_hasTextDirectionOverride) {
-                RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSWritingDirectionOverride]);
-                RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+                auto writingDirectionValue = static_cast<NSInteger>(writingDirection) + static_cast<NSInteger>(NSWritingDirectionOverride);
+                RetainPtr<NSNumber> writingDirectionNumber = adoptNS([[NSNumber alloc] initWithInteger:writingDirectionValue]);
+                RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionNumber.get(), nil]);
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
             RetainPtr<NSAttributedString> string = adoptNS([[NSAttributedString alloc] initWithString:nsStringFromWebCoreString(items[i].m_text) attributes:attributes.get()]);

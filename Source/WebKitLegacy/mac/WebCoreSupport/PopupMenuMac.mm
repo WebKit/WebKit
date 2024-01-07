@@ -96,8 +96,9 @@ void PopupMenuMac::populate()
         NSWritingDirection writingDirection = style.textDirection() == TextDirection::LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
         [paragraphStyle setBaseWritingDirection:writingDirection];
         if (style.hasTextDirectionOverride()) {
-            RetainPtr<NSNumber> writingDirectionValue = adoptNS([[NSNumber alloc] initWithInteger:writingDirection + NSWritingDirectionOverride]);
-            RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionValue.get(), nil]);
+            auto writingDirectionValue = static_cast<NSInteger>(writingDirection) + static_cast<NSInteger>(NSWritingDirectionOverride);
+            RetainPtr<NSNumber> writingDirectionNumber = adoptNS([[NSNumber alloc] initWithInteger:writingDirectionValue]);
+            RetainPtr<NSArray> writingDirectionArray = adoptNS([[NSArray alloc] initWithObjects:writingDirectionNumber.get(), nil]);
             [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
         }
         [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];

@@ -37,7 +37,9 @@ CGImagePixelReader::CGImagePixelReader(CGImageRef image)
     auto bytesPerPixel = 4;
     auto bytesPerRow = bytesPerPixel * CGImageGetWidth(image);
     auto bitsPerComponent = 8;
-    auto bitmapInfo = kCGImageAlphaPremultipliedLast | kCGImageByteOrder32Big;
+IGNORE_WARNINGS_BEGIN("deprecated-enum-enum-conversion")
+    CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedLast | kCGImageByteOrder32Big;
+IGNORE_WARNINGS_END
     m_context = adoptCF(CGBitmapContextCreateWithData(nullptr, m_width, m_height, bitsPerComponent, bytesPerRow, colorSpace.get(), bitmapInfo, nullptr, nullptr));
     CGContextDrawImage(m_context.get(), CGRectMake(0, 0, m_width, m_height), image);
 }
