@@ -51,7 +51,7 @@ public:
     unsigned bitRate() const;
 
 private:
-    enum class Profile { Baseline, Main, High };
+    enum class Profile : uint8_t { Baseline, Main, High };
     VideoSampleBufferCompressor(CMVideoCodecType, Profile);
 
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
