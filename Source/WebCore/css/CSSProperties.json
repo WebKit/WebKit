@@ -7071,7 +7071,6 @@
             ],
             "codegen-properties": {
                 "name-for-methods": "BlendMode",
-                "enable-if": "ENABLE_CSS_COMPOSITING",
                 "parser-grammar": "<<values>>"
             },
             "specification":  {
@@ -7085,7 +7084,6 @@
                 "isolate"
             ],
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_COMPOSITING",
                 "parser-grammar": "<<values>>"
             },
             "specification":  {

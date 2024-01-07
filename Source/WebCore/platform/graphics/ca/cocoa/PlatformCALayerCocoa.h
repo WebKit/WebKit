@@ -144,9 +144,7 @@ public:
     WEBCORE_EXPORT static bool filtersCanBeComposited(const FilterOperations&);
     void copyFiltersFrom(const PlatformCALayer&) override;
 
-#if ENABLE(CSS_COMPOSITING)
     void setBlendMode(BlendMode) override;
-#endif
 
     void setName(const String&) override;
 

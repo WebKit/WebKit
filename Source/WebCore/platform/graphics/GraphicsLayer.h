@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
+#include "GraphicsTypes.h"
 #include "HTMLMediaElementIdentifier.h"
 #include "LayerHostingContextIdentifier.h"
 #include "MediaPlayerEnums.h"
@@ -51,10 +52,6 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/Function.h>
 #include <wtf/TypeCasts.h>
-
-#if ENABLE(CSS_COMPOSITING)
-#include "GraphicsTypes.h"
-#endif
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 #include "AcceleratedEffectStack.h"
@@ -464,10 +461,8 @@ public:
     virtual void setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect) { m_backdropFiltersRect = backdropFiltersRect; }
     const FloatRoundedRect& backdropFiltersRect() const { return m_backdropFiltersRect; }
 
-#if ENABLE(CSS_COMPOSITING)
     BlendMode blendMode() const { return m_blendMode; }
     virtual void setBlendMode(BlendMode blendMode) { m_blendMode = blendMode; }
-#endif
 
     // Some GraphicsLayers paint only the foreground or the background content
     OptionSet<GraphicsLayerPaintingPhase> paintingPhase() const { return m_paintingPhase; }
@@ -766,9 +761,7 @@ protected:
     ScrollingNodeID m_scrollingNodeID { 0 };
 #endif
 
-#if ENABLE(CSS_COMPOSITING)
     BlendMode m_blendMode { BlendMode::Normal };
-#endif
 
     const Type m_type;
     CustomAppearance m_customAppearance { CustomAppearance::None };

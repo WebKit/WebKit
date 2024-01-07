@@ -101,12 +101,10 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderElement& renderer, Pai
     bool hasIsolation = style.hasIsolation();
     bool isolateMaskForBlending = false;
 
-#if ENABLE(CSS_COMPOSITING)
     if (style.hasPositionedMask()) {
         if (auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(*renderer.element()))
             isolateMaskForBlending = graphicsElement->shouldIsolateBlending();
     }
-#endif
 
     if (opacity < 1 || hasBlendMode || isolateMaskForBlending || hasIsolation) {
         FloatRect repaintRect = m_renderer->repaintRectInLocalCoordinates();

@@ -1062,12 +1062,10 @@ public:
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
 
-#if ENABLE(CSS_COMPOSITING)
     inline void setBlendMode(BlendMode);
     inline bool isInSubtreeWithBlendMode() const;
 
     inline void setIsolation(Isolation);
-#endif
 
     inline BlendMode blendMode() const;
     inline bool hasBlendMode() const;
@@ -2067,10 +2065,8 @@ public:
 
     static inline FilterOperations initialBackdropFilter();
 
-#if ENABLE(CSS_COMPOSITING)
     static constexpr BlendMode initialBlendMode();
     static constexpr Isolation initialIsolation();
-#endif
 
     static constexpr MathStyle initialMathStyle();
 

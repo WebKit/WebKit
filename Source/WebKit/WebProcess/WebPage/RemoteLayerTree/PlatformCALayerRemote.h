@@ -172,9 +172,7 @@ public:
     static bool filtersCanBeComposited(const WebCore::FilterOperations&);
     void copyFiltersFrom(const WebCore::PlatformCALayer&) override;
 
-#if ENABLE(CSS_COMPOSITING)
     void setBlendMode(WebCore::BlendMode) override;
-#endif
 
     void setName(const String&) override;
 

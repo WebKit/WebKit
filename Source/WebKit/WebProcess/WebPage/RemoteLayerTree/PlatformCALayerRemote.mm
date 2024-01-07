@@ -830,13 +830,11 @@ void PlatformCALayerRemote::copyFiltersFrom(const PlatformCALayer& sourceLayer)
     m_properties.notePropertiesChanged(LayerChange::FiltersChanged);
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void PlatformCALayerRemote::setBlendMode(BlendMode blendMode)
 {
     m_properties.blendMode = blendMode;
     m_properties.notePropertiesChanged(LayerChange::BlendModeChanged);
 }
-#endif
 
 bool PlatformCALayerRemote::filtersCanBeComposited(const FilterOperations& filters)
 {

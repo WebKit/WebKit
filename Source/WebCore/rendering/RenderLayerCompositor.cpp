@@ -156,9 +156,7 @@ struct RenderLayerCompositor::CompositingState {
         childState.descendantsRequireCompositingUpdate = descendantsRequireCompositingUpdate;
         childState.ancestorHasTransformAnimation = ancestorHasTransformAnimation;
         childState.hasCompositedNonContainedDescendants = false;
-#if ENABLE(CSS_COMPOSITING)
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
-#endif
         childState.hasBackdropFilterDescendantsWithoutRoot = false;
 #if !LOG_DISABLED
         childState.depth = depth + 1;
@@ -198,10 +196,8 @@ struct RenderLayerCompositor::CompositingState {
 
         hasCompositedNonContainedDescendants = computeHasCompositedNonContainedDescendants();
 
-#if ENABLE(CSS_COMPOSITING)
         if ((layer.isComposited() && layer.hasBlendMode()) || (layer.hasNotIsolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
             hasNotIsolatedCompositedBlendingDescendants = true;
-#endif
 
         if ((layer.isComposited() && layer.hasBackdropFilter()) || (layer.hasBackdropFilterDescendantsWithoutRoot() && !layer.isBackdropRoot()))
             hasBackdropFilterDescendantsWithoutRoot = true;
@@ -221,9 +217,7 @@ struct RenderLayerCompositor::CompositingState {
     bool descendantsRequireCompositingUpdate { false };
     bool ancestorHasTransformAnimation { false };
     bool hasCompositedNonContainedDescendants { false };
-#if ENABLE(CSS_COMPOSITING)
     bool hasNotIsolatedCompositedBlendingDescendants { false };
-#endif
     bool hasBackdropFilterDescendantsWithoutRoot { false };
 #if !LOG_DISABLED
     unsigned depth { 0 };
@@ -1215,7 +1209,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             willBeComposited = true;
     }
 
-#if ENABLE(CSS_COMPOSITING)
     bool isolatedCompositedBlending = layer.isolatesCompositedBlending();
     layer.setHasNotIsolatedCompositedBlendingDescendants(currentState.hasNotIsolatedCompositedBlendingDescendants);
     if (layer.isolatesCompositedBlending() != isolatedCompositedBlending) {
@@ -1224,7 +1217,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     }
 
     ASSERT(!layer.hasNotIsolatedCompositedBlendingDescendants() || layer.hasNotIsolatedBlendingDescendants());
-#endif
 
     bool isBackdropRoot = layer.isBackdropRoot();
     layer.setHasBackdropFilterDescendantsWithoutRoot(currentState.hasBackdropFilterDescendantsWithoutRoot);
@@ -3004,13 +2996,12 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         if (layer.isBackdropRoot())
             reasons.add(CompositingReason::BackdropRoot);
 
-#if ENABLE(CSS_COMPOSITING)
         if (layer.isolatesCompositedBlending())
             reasons.add(CompositingReason::IsolatesCompositedBlendingDescendants);
 
         if (layer.hasBlendMode())
             reasons.add(CompositingReason::BlendingWithCompositedDescendants);
-#endif
+
         if (renderer.hasClipPath())
             reasons.add(CompositingReason::ClipsCompositingDescendants);
         break;

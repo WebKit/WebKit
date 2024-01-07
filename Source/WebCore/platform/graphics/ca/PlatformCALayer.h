@@ -243,9 +243,7 @@ public:
     virtual void setFilters(const FilterOperations&) = 0;
     virtual void copyFiltersFrom(const PlatformCALayer&) = 0;
 
-#if ENABLE(CSS_COMPOSITING)
     virtual void setBlendMode(BlendMode) = 0;
-#endif
 
     virtual void setName(const String&) = 0;
 

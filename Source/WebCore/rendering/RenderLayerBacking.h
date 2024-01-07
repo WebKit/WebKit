@@ -349,9 +349,7 @@ private:
     void updateBackdropFilters(const RenderStyle&);
     void updateBackdropFiltersGeometry();
     bool updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
-#endif
 #if ENABLE(VIDEO)
     void updateVideoGravity(const RenderStyle&);
 #endif

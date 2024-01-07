@@ -90,9 +90,7 @@ bool WillChangeData::canBeBackdropRoot() const
         || containsProperty(CSSPropertyWebkitBackdropFilter)
         || containsProperty(CSSPropertyClipPath)
         || containsProperty(CSSPropertyFilter)
-#if ENABLE(CSS_COMPOSITING)
         || containsProperty(CSSPropertyMixBlendMode)
-#endif
         || containsProperty(CSSPropertyMask);
 }
 
@@ -115,10 +113,8 @@ bool WillChangeData::propertyCreatesStackingContext(CSSPropertyID property)
     case CSSPropertyPosition:
     case CSSPropertyZIndex:
     case CSSPropertyWebkitBoxReflect:
-#if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
     case CSSPropertyIsolation:
-#endif
     case CSSPropertyFilter:
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:

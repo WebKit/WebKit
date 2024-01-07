@@ -838,12 +838,10 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
         || first.breakInside != second.breakInside)
         return true;
 
-#if ENABLE(CSS_COMPOSITING)
     if (first.isolation != second.isolation) {
         // Ideally this would trigger a cheaper layout that just updates layer z-order trees (webkit.org/b/190088).
         return true;
     }
-#endif
 
     if (first.hasBackdropFilters() != second.hasBackdropFilters())
         return true;
@@ -1133,10 +1131,8 @@ static bool miscDataChangeRequiresLayerRepaint(const StyleMiscNonInheritedData& 
 
 static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& first, const StyleRareNonInheritedData& second, OptionSet<StyleDifferenceContextSensitiveProperty>& changedContextSensitiveProperties)
 {
-#if ENABLE(CSS_COMPOSITING)
     if (first.effectiveBlendMode != second.effectiveBlendMode)
         return true;
-#endif
 
     if (first.backdropFilter != second.backdropFilter) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
@@ -1624,9 +1620,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyBackgroundClip);
             changingProperties.m_properties.set(CSSPropertyBackgroundOrigin);
             changingProperties.m_properties.set(CSSPropertyBackgroundRepeat);
-#if ENABLE(CSS_COMPOSITING)
             changingProperties.m_properties.set(CSSPropertyBackgroundBlendMode);
-#endif
         }
         if (first.color != second.color)
             changingProperties.m_properties.set(CSSPropertyBackgroundColor);
@@ -1905,12 +1899,10 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTextDecorationStyle);
         if (first.textGroupAlign != second.textGroupAlign)
             changingProperties.m_properties.set(CSSPropertyTextGroupAlign);
-#if ENABLE(CSS_COMPOSITING)
         if (first.effectiveBlendMode != second.effectiveBlendMode)
             changingProperties.m_properties.set(CSSPropertyMixBlendMode);
         if (first.isolation != second.isolation)
             changingProperties.m_properties.set(CSSPropertyIsolation);
-#endif
         if (first.breakAfter != second.breakAfter)
             changingProperties.m_properties.set(CSSPropertyBreakAfter);
         if (first.breakBefore != second.breakBefore)
@@ -3070,10 +3062,8 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty, OptionSet<
     if (paintBehavior.contains(PaintBehavior::DontShowVisitedLinks))
         return unvisitedColor;
 
-#if ENABLE(CSS_COMPOSITING)
     if (isInSubtreeWithBlendMode())
         return unvisitedColor;
-#endif
 
     Color visitedColor = colorResolvingCurrentColor(colorProperty, true);
 

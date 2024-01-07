@@ -346,12 +346,10 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
 #if ASSERT_ENABLED
     , m_layerListMutationAllowed(true)
 #endif
-#if ENABLE(CSS_COMPOSITING)
     , m_blendMode(static_cast<unsigned>(BlendMode::Normal))
     , m_hasNotIsolatedCompositedBlendingDescendants(false)
     , m_hasNotIsolatedBlendingDescendants(false)
     , m_hasNotIsolatedBlendingDescendantsStatusDirty(false)
-#endif
     , m_repaintRectsValid(false)
     , m_renderer(renderer)
 {
@@ -446,10 +444,8 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
     if (child.hasDescendantNeedingUpdateBackingOrHierarchyTraversal() || child.needsUpdateBackingOrHierarchyTraversal())
         child.setAncestorsHaveCompositingDirtyFlag(Compositing::HasDescendantNeedingBackingOrHierarchyTraversal);
 
-#if ENABLE(CSS_COMPOSITING)
     if (child.hasBlendMode() || (child.hasNotIsolatedBlendingDescendants() && !child.isolatesBlending()))
         updateAncestorChainHasBlendingDescendants(); // Why not just dirty?
-#endif
 }
 
 void RenderLayer::removeChild(RenderLayer& oldChild)
@@ -484,10 +480,8 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
     if (compositor().hasContentCompositingLayers())
         setDescendantsNeedCompositingRequirementsTraversal();
 
-#if ENABLE(CSS_COMPOSITING)
     if (oldChild.hasBlendMode() || (oldChild.hasNotIsolatedBlendingDescendants() && !oldChild.isolatesBlending()))
         dirtyAncestorChainHasBlendingDescendants();
-#endif
     if (renderer().style().visibility() != Visibility::Visible)
         dirtyVisibleContentStatus();
 }
@@ -578,9 +572,7 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.hasFilter()
         || renderer.hasMask()
         || renderer.hasBackdropFilter()
-#if ENABLE(CSS_COMPOSITING)
         || renderer.hasBlendMode()
-#endif
         || renderer.isTransparent()
         || renderer.isPositioned() // Note that this only creates stacking context in conjunction with explicit z-index.
         || renderer.hasReflection()
@@ -619,9 +611,7 @@ bool RenderLayer::computeCanBeBackdropRoot() const
         || renderer().hasBackdropFilter()
         || renderer().hasClipPath()
         || renderer().hasFilter()
-#if ENABLE(CSS_COMPOSITING)
         || renderer().hasBlendMode()
-#endif
         || renderer().hasMask()
         || renderer().isDocumentElementRenderer()
         || (renderer().style().willChange() && renderer().style().willChange()->canBeBackdropRoot());
@@ -1241,8 +1231,6 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(OptionSet<UpdateLayer
         m_scrollableArea->updateMarqueePosition();
 }
 
-#if ENABLE(CSS_COMPOSITING)
-
 void RenderLayer::updateBlendMode()
 {
     bool hadBlendMode = static_cast<BlendMode>(m_blendMode) != BlendMode::Normal;
@@ -1290,7 +1278,6 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
             break;
     }
 }
-#endif
 
 FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds) const
 {
@@ -1567,9 +1554,7 @@ void RenderLayer::updateDescendantDependentFlags()
     if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty()) {
         bool hasVisibleDescendant = false;
         bool hasSelfPaintingLayerDescendant = false;
-#if ENABLE(CSS_COMPOSITING)
         bool hasNotIsolatedBlendingDescendants = false;
-#endif
 
         auto firstLayerChild = [&] () -> RenderLayer* {
             if (renderer().isSkippedContentRoot())
@@ -1581,14 +1566,10 @@ void RenderLayer::updateDescendantDependentFlags()
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
-#if ENABLE(CSS_COMPOSITING)
             hasNotIsolatedBlendingDescendants |= child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending());
-#endif
 
             bool allFlagsSet = hasVisibleDescendant && hasSelfPaintingLayerDescendant;
-#if ENABLE(CSS_COMPOSITING)
             allFlagsSet &= hasNotIsolatedBlendingDescendants;
-#endif
             if (allFlagsSet)
                 break;
         }
@@ -1598,13 +1579,11 @@ void RenderLayer::updateDescendantDependentFlags()
         m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
         m_hasSelfPaintingLayerDescendantDirty = false;
 
-#if ENABLE(CSS_COMPOSITING)
         m_hasNotIsolatedBlendingDescendants = hasNotIsolatedBlendingDescendants;
         if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
             m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
             updateSelfPaintingLayer();
         }
-#endif
     }
 
     if (m_visibleContentStatusDirty) {
@@ -2305,18 +2284,14 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         auto snappedClipRect = snapRectToDevicePixelsIfNeeded(adjustedClipRect, renderer());
         context.clip(snappedClipRect);
 
-#if ENABLE(CSS_COMPOSITING)
         bool usesCompositeOperation = hasBlendMode() && !(renderer().isLegacyRenderSVGRoot() && parent() && parent()->isRenderViewLayer());
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), blendMode());
-#endif
 
         context.beginTransparencyLayer(renderer().opacity());
 
-#if ENABLE(CSS_COMPOSITING)
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), BlendMode::Normal);
-#endif
 
 #ifdef REVEAL_TRANSPARENCY_LAYERS
         context.setFillColor(SRGBA<uint8_t> { 0, 0, 128, 51 });
@@ -5518,7 +5493,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     setCanBeBackdropRoot(computeCanBeBackdropRoot());
 
     if (setIsCSSStackingContext(shouldBeCSSStackingContext())) {
-#if ENABLE(CSS_COMPOSITING)
         if (parent()) {
             if (isCSSStackingContext()) {
                 if (!hasNotIsolatedBlendingDescendantsStatusDirty() && hasNotIsolatedBlendingDescendants())
@@ -5530,7 +5504,6 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
                     parent()->updateAncestorChainHasBlendingDescendants();
             }
         }
-#endif
     }
 
     updateLayerScrollableArea();
@@ -5575,9 +5548,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
     updateDescendantDependentFlags();
     updateTransform();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
-#endif
     updateFiltersAfterStyleChange(diff, oldStyle);
     
     compositor().layerStyleChanged(diff, *this, oldStyle);

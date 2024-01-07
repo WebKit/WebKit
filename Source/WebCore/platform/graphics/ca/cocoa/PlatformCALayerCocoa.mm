@@ -901,12 +901,10 @@ bool PlatformCALayerCocoa::filtersCanBeComposited(const FilterOperations& filter
     return true;
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void PlatformCALayerCocoa::setBlendMode(BlendMode blendMode)
 {
     PlatformCAFilters::setBlendingFiltersOnLayer(platformLayer(), blendMode);
 }
-#endif
 
 void PlatformCALayerCocoa::setName(const String& value)
 {

@@ -758,16 +758,11 @@ constexpr ApplePayButtonType RenderStyle::initialApplePayButtonType() { return A
 
 inline BoxDecorationBreak RenderStyle::boxDecorationBreak() const { return m_nonInheritedData->boxData->boxDecorationBreak(); }
 
-#if ENABLE(CSS_COMPOSITING)
 inline BlendMode RenderStyle::blendMode() const { return static_cast<BlendMode>(m_nonInheritedData->rareData->effectiveBlendMode); }
 constexpr BlendMode RenderStyle::initialBlendMode() { return BlendMode::Normal; }
 constexpr Isolation RenderStyle::initialIsolation() { return Isolation::Auto; }
 inline bool RenderStyle::isInSubtreeWithBlendMode() const { return m_rareInheritedData->isInSubtreeWithBlendMode; }
 inline Isolation RenderStyle::isolation() const { return static_cast<Isolation>(m_nonInheritedData->rareData->isolation); }
-#else
-inline BlendMode RenderStyle::blendMode() const { return BlendMode::Normal; }
-inline Isolation RenderStyle::isolation() const { return Isolation::Auto; }
-#endif
 
 #if ENABLE(CURSOR_VISIBILITY)
 constexpr CursorVisibility RenderStyle::initialCursorVisibility() { return CursorVisibility::Auto; }

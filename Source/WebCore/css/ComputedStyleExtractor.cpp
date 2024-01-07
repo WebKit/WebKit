@@ -4389,12 +4389,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForFilter(style, style.backdropFilter());
     case CSSPropertyMathStyle:
         return createConvertingToCSSValueID(style.mathStyle());
-#if ENABLE(CSS_COMPOSITING)
     case CSSPropertyMixBlendMode:
         return createConvertingToCSSValueID(style.blendMode());
     case CSSPropertyIsolation:
         return createConvertingToCSSValueID(style.isolation());
-#endif
     case CSSPropertyBackgroundBlendMode: {
         auto& layers = style.backgroundLayers();
         if (!layers.next())

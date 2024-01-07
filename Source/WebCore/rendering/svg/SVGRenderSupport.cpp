@@ -510,16 +510,9 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
 
 void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* oldStyle)
 {
-#if ENABLE(CSS_COMPOSITING)
     if (renderer.element() && renderer.element()->isSVGElement() && (!oldStyle || renderer.style().hasBlendMode() != oldStyle->hasBlendMode()))
         SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(renderer);
-#else
-    UNUSED_PARAM(renderer);
-    UNUSED_PARAM(oldStyle);
-#endif
 }
-
-#if ENABLE(CSS_COMPOSITING)
 
 bool SVGRenderSupport::isolatesBlending(const RenderStyle& style)
 {
@@ -540,8 +533,6 @@ void SVGRenderSupport::updateMaskedAncestorShouldIsolateBlending(const RenderEle
         return;
     }
 }
-
-#endif
 
 SVGHitTestCycleDetectionScope::SVGHitTestCycleDetectionScope(const RenderElement& element)
 {

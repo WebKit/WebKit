@@ -173,10 +173,8 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
         }
     } else if (layer() && layer()->parent()) {
         gainedOrLostLayer = true;
-#if ENABLE(CSS_COMPOSITING)
         if (oldStyle && oldStyle->hasBlendMode())
             layer()->willRemoveChildWithBlendMode();
-#endif
         setHasTransformRelatedProperty(false); // All transform-related properties force layers, so we know we don't have one or the object doesn't support them.
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         setHasSVGTransform(false); // Same reason as for setHasTransformRelatedProperty().

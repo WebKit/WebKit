@@ -554,9 +554,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateFilters(style);
     updateBackdropFilters(style);
     updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
-#endif
 #if ENABLE(VIDEO)
     updateVideoGravity(style);
 #endif
@@ -798,7 +796,6 @@ bool RenderLayerBacking::updateBackdropRoot()
     return true;
 }
 
-#if ENABLE(CSS_COMPOSITING)
 void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 {
     // FIXME: where is the blend mode updated when m_ancestorClippingStacks come and go?
@@ -808,7 +805,6 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
     } else
         m_graphicsLayer->setBlendMode(style.blendMode());
 }
-#endif
 
 #if ENABLE(VIDEO)
 void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
@@ -1024,9 +1020,7 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
 
     updateBackdropFilters(style);
     updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
-#endif
     updateContentsScalingFilters(style);
 
 #if ENABLE(VIDEO)
@@ -1390,9 +1384,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateFilters(style);
     updateBackdropFilters(style);
     updateBackdropRoot();
-#if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
-#endif
     updateContentsScalingFilters(style);
 
 #if ENABLE(VIDEO)

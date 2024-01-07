@@ -65,7 +65,6 @@ my (
     $contentExtensionsSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
-    $cssCompositingSupport,
     $cssDeviceAdaptationSupport,
     $cssImageResolutionSupport,
     $cssPaintingAPISupport,
@@ -213,9 +212,6 @@ my @features = (
 
     { option => "context-menus", desc => "Toggle Context Menu support",
       define => "ENABLE_CONTEXT_MENUS", value => \$contextMenusSupport },
-
-    { option => "css-compositing", desc => "Toggle CSS Compositing support",
-      define => "ENABLE_CSS_COMPOSITING", value => \$cssCompositingSupport },
 
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
