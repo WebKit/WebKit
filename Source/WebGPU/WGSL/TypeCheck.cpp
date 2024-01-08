@@ -403,10 +403,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
     if (value && !isBottom(result))
         convertValue(variable.span(), result, *value);
 
-    if (variable.flavor() == AST::VariableFlavor::Const && result != m_types.bottomType()) {
-        if (!value)
-            typeError(InferBottom::No, variable.span(), "INTERNAL ERROR: failed to compute constant");
-    } else
+    if (variable.flavor() != AST::VariableFlavor::Const || result == m_types.bottomType())
         value = nullptr;
 
     if (variable.flavor() == AST::VariableFlavor::Var) {
@@ -1167,28 +1164,52 @@ void TypeChecker::bitcast(AST::CallExpression& call, const Vector<const Type*>& 
         return;
     }
 
-    auto* sourceType = infer(call.arguments()[0]);
+    auto& argument = call.arguments()[0];
+    auto* sourceType = infer(argument);
     auto* destinationType = typeArguments[0];
     if (auto* reference = std::get_if<Types::Reference>(sourceType))
         sourceType = reference->element;
     sourceType = concretize(sourceType, m_types);
 
+    const auto& primitivePrimitive = [&](const Type* p1, const Type* p2) {
+        return (satisfies(p1, Constraints::Concrete32BitNumber) && satisfies(p2, Constraints::Concrete32BitNumber))
+            || (p1 == m_types.f16Type() && p2 == m_types.f16Type());
+    };
+
+    const auto& vectorVector16To32Bit = [&](const Types::Vector& v1, const Types::Vector& v2) {
+        return v1.size == 2 && satisfies(v1.element, Constraints::Concrete32BitNumber) && v2.size == 4 && v2.element == m_types.f16Type();
+    };
+
+    const auto& vectorVector = [&](const Types::Vector& v1, const Types::Vector& v2) {
+        return (v1.size == v2.size && primitivePrimitive(v1.element, v2.element))
+        || vectorVector16To32Bit(v1, v2)
+        || vectorVector16To32Bit(v2, v1);
+    };
+
+    const auto& vectorPrimitive = [&](const Types::Vector& v, const Type* p) {
+        return v.size == 2 && v.element == m_types.f16Type() && satisfies(p, Constraints::Concrete32BitNumber);
+    };
+
     bool allowed = false;
-    if (auto* dstPrimitive = std::get_if<Types::Primitive>(destinationType)) {
-        if (auto* srcPrimitive = std::get_if<Types::Primitive>(sourceType)) {
-            allowed = satisfies(sourceType, Constraints::Concrete32BitNumber)
-                && satisfies(destinationType, Constraints::Concrete32BitNumber);
-        }
-    } else if (auto* dstVector = std::get_if<Types::Vector>(destinationType)) {
-        if (auto* srcVector = std::get_if<Types::Vector>(sourceType)) {
-            allowed = dstVector->size == srcVector->size
-                && satisfies(dstVector->element, Constraints::Concrete32BitNumber)
-                && satisfies(srcVector->element, Constraints::Concrete32BitNumber);
-        }
-    }
+    if (auto* dstVector = std::get_if<Types::Vector>(destinationType)) {
+        if (auto* srcVector = std::get_if<Types::Vector>(sourceType))
+            allowed = vectorVector(*srcVector, *dstVector);
+        else
+            allowed = vectorPrimitive(*dstVector, sourceType);
+    } else if (auto* srcVector = std::get_if<Types::Vector>(sourceType))
+        allowed = vectorPrimitive(*srcVector, destinationType);
+    else
+        allowed = primitivePrimitive(sourceType, destinationType);
 
     if (allowed) {
         call.target().m_inferredType = destinationType;
+        if (argument.m_constantValue.has_value()) {
+            auto result = constantBitcast(destinationType, { *argument.m_constantValue });
+            if (!result)
+                typeError(InferBottom::No, call.span(), result.error());
+            else if (convertValue(call.span(), destinationType, *result))
+                setConstantValue(call, WTFMove(*result));
+        }
         inferred(destinationType);
         return;
     }

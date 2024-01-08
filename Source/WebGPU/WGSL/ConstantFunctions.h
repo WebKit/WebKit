@@ -1566,6 +1566,90 @@ CONSTANT_FUNCTION(Unpack2x16float)
     return { result };
 }
 
+CONSTANT_FUNCTION(Bitcast)
+{
+    const auto& split = [&](ConstantVector& result, const ConstantValue& argument, unsigned offset) -> std::optional<String> {
+        uint32_t value;
+        if (auto* i32 = std::get_if<int32_t>(&argument))
+            value = bitwise_cast<uint32_t>(*i32);
+        else if (auto* u32 = std::get_if<uint32_t>(&argument))
+            value = *u32;
+        else if (auto* f32 = std::get_if<float>(&argument))
+            value = bitwise_cast<uint32_t>(*f32);
+        else if (auto* abstractInt = std::get_if<int64_t>(&argument)) {
+            auto i32 = convertInteger<int32_t>(*abstractInt);
+            if (!i32)
+                return { makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'") };
+            value = bitwise_cast<uint32_t>(*i32);
+        } else {
+            RELEASE_ASSERT_NOT_REACHED();
+            value = 0;
+        }
+
+        result.elements[offset] = bitwise_cast<half>(static_cast<uint16_t>(value));
+        result.elements[offset + 1] = bitwise_cast<half>(static_cast<uint16_t>(value >> 16));
+        return std::nullopt;
+    };
+
+    const auto& join = [&](const Type* type, const ConstantVector& vector, unsigned offset) -> ConstantValue {
+        uint32_t value = 0;
+        value |= bitwise_cast<uint16_t>(std::get<half>(vector.elements[offset]));
+        value |= static_cast<uint32_t>(bitwise_cast<uint16_t>(std::get<half>(vector.elements[offset + 1]))) << 16;
+        return convertValue(type, value);
+    };
+
+    const auto& vectorVector = [&](const Types::Vector& dst, const ConstantVector& src) -> ConstantResult {
+        if (dst.size == src.elements.size()) {
+            return scalarOrVector([&](auto& value) {
+                return convertValue(dst.element, value);
+            }, src);
+        }
+
+        ConstantVector result(dst.size);
+        if (dst.size == 4) {
+            if (auto error = split(result, src.elements[0], 0))
+                return makeUnexpected(*error);
+            if (auto error = split(result, src.elements[1], 2))
+                return makeUnexpected(*error);
+        } else {
+            result.elements[0] = join(dst.element, src, 0);
+            result.elements[1] = join(dst.element, src, 2);
+        }
+        return { result };
+    };
+
+    auto& argument = arguments[0];
+    if (auto* dstVector = std::get_if<Types::Vector>(resultType)) {
+        if (auto* srcVector = std::get_if<ConstantVector>(&argument))
+            return vectorVector(*dstVector, *srcVector);
+
+        RELEASE_ASSERT(dstVector->size == 2);
+        ConstantVector result(2);
+        split(result, argument, 0);
+        return { result };
+    }
+
+    if (auto* srcVector = std::get_if<ConstantVector>(&argument))
+        return { join(resultType, *srcVector, 0) };
+
+    if (auto* abstractInt = std::get_if<int64_t>(&argument)) {
+        auto& primitive = std::get<Types::Primitive>(*resultType);
+
+        if (primitive.kind == Types::Primitive::U32) {
+            auto result = convertInteger<uint32_t>(*abstractInt);
+            if (!result.has_value())
+                return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'u32'"));
+            return { *result };
+        }
+
+        auto result = convertInteger<int32_t>(*abstractInt);
+        if (!result.has_value())
+            return makeUnexpected(makeString("value ", String::number(*abstractInt), " cannot be represented as 'i32'"));
+        return { convertValue(resultType, *result) };
+    }
+    return { convertValue(resultType, argument) };
+}
+
 // Type checker helpers
 
 static bool containsZero(ConstantValue value, const Type* valueType)

@@ -1032,61 +1032,141 @@ fn testBitcast()
     let u = 0u;
     let i = 0i;
     let f = 0f;
+    let h = 0h;
 
-    // [T < Concrete32BitNumber, S < Concrete32BitNumber].(S) => T
+    // @const @must_use fn bitcast<T>(e : T) -> T
+    { const x: u32 = bitcast<u32>(5u); }
+    { const x: i32 = bitcast<i32>(5i); }
+    { const x: f32 = bitcast<f32>(5f); }
+    { const x: f16 = bitcast<f16>(5h); }
     { let x: u32 = bitcast<u32>(u); }
+    { let x: i32 = bitcast<i32>(i); }
+    { let x: f32 = bitcast<f32>(f); }
+    { let x: f16 = bitcast<f16>(h); }
+
+    // @const @must_use fn bitcast<T>(e : S) -> T
+    { const x: u32 = bitcast<u32>(5i); }
+    { const x: u32 = bitcast<u32>(5f); }
     { let x: u32 = bitcast<u32>(i); }
     { let x: u32 = bitcast<u32>(f); }
 
+    { const x: i32 = bitcast<i32>(5u); }
+    { const x: i32 = bitcast<i32>(5f); }
     { let x: i32 = bitcast<i32>(u); }
-    { let x: i32 = bitcast<i32>(i); }
     { let x: i32 = bitcast<i32>(f); }
 
+    { const x: f32 = bitcast<f32>(5u); }
+    { const x: f32 = bitcast<f32>(5i); }
     { let x: f32 = bitcast<f32>(u); }
     { let x: f32 = bitcast<f32>(i); }
-    { let x: f32 = bitcast<f32>(f); }
 
-    // [T < Concrete32BitNumber, S < Concrete32BitNumber, N].(vec[N][S]) => vec[N][T]
+    // @const @must_use fn bitcast<vecN<T>>(e : vecN<S>) -> T
+
     // vec2
+    { const x: vec2<u32> = bitcast<vec2<u32>>(vec2(5u)); }
+    { const x: vec2<u32> = bitcast<vec2<u32>>(vec2(5i)); }
+    { const x: vec2<u32> = bitcast<vec2<u32>>(vec2(5f)); }
     { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(u)); }
     { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(i)); }
     { let x: vec2<u32> = bitcast<vec2<u32>>(vec2(f)); }
 
+    { const x: vec2<i32> = bitcast<vec2<i32>>(vec2(5u)); }
+    { const x: vec2<i32> = bitcast<vec2<i32>>(vec2(5i)); }
+    { const x: vec2<i32> = bitcast<vec2<i32>>(vec2(5f)); }
     { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(u)); }
     { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(i)); }
     { let x: vec2<i32> = bitcast<vec2<i32>>(vec2(f)); }
 
+    { const x: vec2<f32> = bitcast<vec2<f32>>(vec2(5u)); }
+    { const x: vec2<f32> = bitcast<vec2<f32>>(vec2(5i)); }
+    { const x: vec2<f32> = bitcast<vec2<f32>>(vec2(5f)); }
     { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(u)); }
     { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(i)); }
     { let x: vec2<f32> = bitcast<vec2<f32>>(vec2(f)); }
 
     // vec3
+    { const x: vec3<u32> = bitcast<vec3<u32>>(vec3(5u)); }
+    { const x: vec3<u32> = bitcast<vec3<u32>>(vec3(5i)); }
+    { const x: vec3<u32> = bitcast<vec3<u32>>(vec3(5f)); }
     { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(u)); }
     { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(i)); }
     { let x: vec3<u32> = bitcast<vec3<u32>>(vec3(f)); }
 
+    { const x: vec3<i32> = bitcast<vec3<i32>>(vec3(5u)); }
+    { const x: vec3<i32> = bitcast<vec3<i32>>(vec3(5i)); }
+    { const x: vec3<i32> = bitcast<vec3<i32>>(vec3(5f)); }
     { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(u)); }
     { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(i)); }
     { let x: vec3<i32> = bitcast<vec3<i32>>(vec3(f)); }
 
+    { const x: vec3<f32> = bitcast<vec3<f32>>(vec3(5u)); }
+    { const x: vec3<f32> = bitcast<vec3<f32>>(vec3(5i)); }
+    { const x: vec3<f32> = bitcast<vec3<f32>>(vec3(5f)); }
     { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(u)); }
     { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(i)); }
     { let x: vec3<f32> = bitcast<vec3<f32>>(vec3(f)); }
 
     // vec4
+    { const x: vec4<u32> = bitcast<vec4<u32>>(vec4(5u)); }
+    { const x: vec4<u32> = bitcast<vec4<u32>>(vec4(5i)); }
+    { const x: vec4<u32> = bitcast<vec4<u32>>(vec4(5f)); }
     { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(u)); }
     { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(i)); }
     { let x: vec4<u32> = bitcast<vec4<u32>>(vec4(f)); }
 
+    { const x: vec4<i32> = bitcast<vec4<i32>>(vec4(5u)); }
+    { const x: vec4<i32> = bitcast<vec4<i32>>(vec4(5i)); }
+    { const x: vec4<i32> = bitcast<vec4<i32>>(vec4(5f)); }
     { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(u)); }
     { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(i)); }
     { let x: vec4<i32> = bitcast<vec4<i32>>(vec4(f)); }
 
+    { const x: vec4<f32> = bitcast<vec4<f32>>(vec4(5u)); }
+    { const x: vec4<f32> = bitcast<vec4<f32>>(vec4(5i)); }
+    { const x: vec4<f32> = bitcast<vec4<f32>>(vec4(5f)); }
     { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(u)); }
     { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(i)); }
     { let x: vec4<f32> = bitcast<vec4<f32>>(vec4(f)); }
 
-    // FIXME: add f16 overloads
+    // @const @must_use fn bitcast<u32>(e : AbstractInt) -> T
+    { const x: u32 = bitcast<u32>(4294967295); }
+
+    // @const @must_use fn bitcast<vecN<u32>>(e : vecN<AbstractInt>) -> T
+    { const x: vec2<u32> = bitcast<vec2<u32>>(vec2(4294967295)); }
+    { const x: vec3<u32> = bitcast<vec3<u32>>(vec3(4294967295)); }
+    { const x: vec4<u32> = bitcast<vec4<u32>>(vec4(4294967295)); }
+
+    // @const @must_use fn bitcast<T>(e : vec2<f16>) -> T
+    { const x: u32 = bitcast<u32>(vec2(5h)); }
+    { let x: u32 = bitcast<u32>(vec2(h)); }
+    { const x: i32 = bitcast<i32>(vec2(5h)); }
+    { let x: i32 = bitcast<i32>(vec2(h)); }
+    { const x: f32 = bitcast<f32>(vec2(5h)); }
+    { let x: f32 = bitcast<f32>(vec2(h)); }
+
+    // @const @must_use fn bitcast<vec2<T>>(e : vec4<f16>) -> vec2<T>
+    { const x: vec2<u32> = bitcast<vec2<u32>>(vec4(5h)); }
+    { let x: vec2<u32> = bitcast<vec2<u32>>(vec4(h)); }
+    { const x: vec2<i32> = bitcast<vec2<i32>>(vec4(5h)); }
+    { let x: vec2<i32> = bitcast<vec2<i32>>(vec4(h)); }
+    { const x: vec2<f32> = bitcast<vec2<f32>>(vec4(5h)); }
+    { let x: vec2<f32> = bitcast<vec2<f32>>(vec4(h)); }
+
+    // @const @must_use fn bitcast<vec2<f16>>(e : T) -> vec2<f16>
+    { const x: vec2<f16> = bitcast<vec2<f16>>(5u); }
+    { const x: vec2<f16> = bitcast<vec2<f16>>(5i); }
+    { const x: vec2<f16> = bitcast<vec2<f16>>(5f); }
+    { let x: vec2<f16> = bitcast<vec2<f16>>(u); }
+    { let x: vec2<f16> = bitcast<vec2<f16>>(i); }
+    { let x: vec2<f16> = bitcast<vec2<f16>>(f); }
+
+    // @const @must_use fn bitcast<vec4<f16>>(e : vec2<T>) -> vec4<f16>
+    { const x: vec4<f16> = bitcast<vec4<f16>>(vec2(5u)); }
+    { const x: vec4<f16> = bitcast<vec4<f16>>(vec2(5i)); }
+    { const x: vec4<f16> = bitcast<vec4<f16>>(vec2(5f)); }
+    { let x: vec4<f16> = bitcast<vec4<f16>>(vec2(u)); }
+    { let x: vec4<f16> = bitcast<vec4<f16>>(vec2(i)); }
+    { let x: vec4<f16> = bitcast<vec4<f16>>(vec2(f)); }
 }
 
 // 16.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
