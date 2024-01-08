@@ -54,6 +54,7 @@ public:
     AuthenticatorGetInfoResponse& setExtensions(Vector<String>&&);
     AuthenticatorGetInfoResponse& setOptions(AuthenticatorSupportedOptions&&);
     AuthenticatorGetInfoResponse& setTransports(Vector<WebCore::AuthenticatorTransport>&&);
+    AuthenticatorGetInfoResponse& setRemainingDiscoverableCredentials(uint32_t);
 
     const StdSet<ProtocolVersion>& versions() const { return m_versions; }
     const Vector<uint8_t>& aaguid() const { return m_aaguid; }
@@ -62,6 +63,7 @@ public:
     const std::optional<Vector<String>>& extensions() const { return m_extensions; }
     const AuthenticatorSupportedOptions& options() const { return m_options; }
     const std::optional<Vector<WebCore::AuthenticatorTransport>>& transports() const { return m_transports; }
+    const std::optional<uint32_t>& remainingDiscoverableCredentials() const { return m_remainingDiscoverableCredentials; }
 
 private:
     StdSet<ProtocolVersion> m_versions;
@@ -71,6 +73,7 @@ private:
     std::optional<Vector<String>> m_extensions;
     AuthenticatorSupportedOptions m_options;
     std::optional<Vector<WebCore::AuthenticatorTransport>> m_transports;
+    std::optional<uint32_t> m_remainingDiscoverableCredentials;
 };
 
 WEBCORE_EXPORT Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse&);
