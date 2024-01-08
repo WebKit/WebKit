@@ -86,6 +86,8 @@ set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(PAL_LIBRARY_TYPE OBJECT)
 set(WebCore_LIBRARY_TYPE SHARED)
 
+set(USE_ANGLE_EGL ON)
+
 find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(LibXml2 2.8.0 REQUIRED)
 find_package(LibXslt 1.1.7 REQUIRED)

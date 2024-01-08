@@ -371,7 +371,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/WKSecurityOrigin.h
     UIProcess/API/Cocoa/WKSecurityOriginPrivate.h
     UIProcess/API/Cocoa/WKSnapshotConfiguration.h
-    UIProcess/API/Cocoa/WKTypeRefWrapper.h
     UIProcess/API/Cocoa/WKUIDelegate.h
     UIProcess/API/Cocoa/WKUIDelegatePrivate.h
     UIProcess/API/Cocoa/WKURLSchemeHandler.h
@@ -481,7 +480,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h
     UIProcess/API/Cocoa/_WKWebAuthenticationPanelForTesting.h
     UIProcess/API/Cocoa/_WKWebsiteDataSize.h
-    UIProcess/API/Cocoa/_WKWebsiteDataStore.h
     UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h
     UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h
 
@@ -827,3 +825,5 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     add_custom_target(WebContentProcessNib ALL DEPENDS ${WebKit_XPC_SERVICE_DIR}/com.apple.WebKit.WebContent.xpc/Contents/Resources/WebContentProcess.nib)
     add_dependencies(WebKit WebContentProcessNib)
 endfunction()
+
+set(WebKit_GENERATED_SERIALIZERS_SUFFIX mm)

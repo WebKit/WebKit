@@ -712,6 +712,8 @@ if (ENABLE_PLUGIN_PROCESS)
     list(APPEND WebKit_INTERFACE_DEPENDENCIES PluginProcess)
 endif ()
 
+set(WebKit_GENERATED_SERIALIZERS_SUFFIX cpp)
+
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
@@ -784,21 +786,21 @@ endforeach ()
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
-    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
-    ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
-    ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
+    ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+    ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
 )
 
 add_custom_command(
     OUTPUT
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
-        ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
-        ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+        ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
+        ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.${WebKit_GENERATED_SERIALIZERS_SUFFIX}
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
         ${WebKit_SERIALIZATION_DEPENDENCIES}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py cpp DIRECTORY ${WEBKIT_DIR} ${WebKit_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_DERIVED_SOURCES_DIR} ${WebCore_GENERATED_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore ${WebCore_SERIALIZATION_IN_FILES}
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-serializers.py ${WebKit_GENERATED_SERIALIZERS_SUFFIX} DIRECTORY ${WEBKIT_DIR} ${WebKit_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_DERIVED_SOURCES_DIR} ${WebCore_GENERATED_SERIALIZATION_IN_FILES} DIRECTORY ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore ${WebCore_SERIALIZATION_IN_FILES}
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
     VERBATIM
 )

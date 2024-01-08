@@ -699,8 +699,6 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 // The following files aren't unified with others to prevent them from being merged
 // with files that include system headers that include system OpenGL headers.
 
-platform/graphics/angle/ANGLEUtilities.mm @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
-platform/graphics/cocoa/ANGLEUtilitiesCocoa.cpp @no-unify
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm @no-unify
 platform/graphics/cv/GraphicsContextGLCVCocoa.cpp @no-unify

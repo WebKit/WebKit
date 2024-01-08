@@ -32,6 +32,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/SuperFastHash.h>
 
+OBJC_CLASS NSString;
+
 namespace WTF {
 
 class PrintStream;

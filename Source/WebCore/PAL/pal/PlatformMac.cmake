@@ -69,9 +69,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/IOKitSPI.h
     spi/cocoa/IOPMLibSPI.h
     spi/cocoa/IOPSLibSPI.h
-    spi/cocoa/IOReturnSPI.h
-    spi/cocoa/IOSurfaceSPI.h
-    spi/cocoa/IOTypesSPI.h
     spi/cocoa/LaunchServicesSPI.h
     spi/cocoa/LinkPresentationSPI.h
     spi/cocoa/MediaToolboxSPI.h

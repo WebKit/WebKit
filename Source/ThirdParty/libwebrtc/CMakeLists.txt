@@ -1426,10 +1426,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/third_party/g722/g722_encode.c
     Source/webrtc/modules/third_party/portaudio/pa_ringbuffer.c
     Source/webrtc/modules/video_capture/device_info_impl.cc
-    Source/webrtc/modules/video_capture/linux/device_info_linux.cc
-    Source/webrtc/modules/video_capture/linux/device_info_v4l2.cc
-    Source/webrtc/modules/video_capture/linux/video_capture_linux.cc
-    Source/webrtc/modules/video_capture/linux/video_capture_v4l2.cc
     Source/webrtc/modules/video_capture/video_capture_factory.cc
     Source/webrtc/modules/video_capture/video_capture_factory_null.cc
     Source/webrtc/modules/video_capture/video_capture_impl.cc
@@ -1745,7 +1741,6 @@ set(webrtc_SOURCES
     Source/webrtc/stats/rtc_stats_report.cc
     Source/webrtc/system_wrappers/source/clock.cc
     Source/webrtc/system_wrappers/source/cpu_features.cc
-    Source/webrtc/system_wrappers/source/cpu_features_linux.cc
     Source/webrtc/system_wrappers/source/cpu_info.cc
     Source/webrtc/system_wrappers/source/denormal_disabler.cc
     Source/webrtc/system_wrappers/source/field_trial.cc
@@ -2067,7 +2062,14 @@ else ()
         set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 0)
     else()
         list(APPEND webrtc_SOURCES
+            Source/webrtc/modules/video_capture/linux/device_info_linux.cc
+            Source/webrtc/modules/video_capture/linux/device_info_v4l2.cc
+            Source/webrtc/modules/video_capture/linux/video_capture_linux.cc
+            Source/webrtc/modules/video_capture/linux/video_capture_v4l2.cc
+
             Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc
+
+            Source/webrtc/system_wrappers/source/cpu_features_linux.cc
         )
         set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 1)
     endif ()
@@ -2106,7 +2108,7 @@ endif ()
 add_library(webrtc STATIC ${webrtc_SOURCES})
 
 target_compile_options(webrtc PRIVATE
-    "$<$<COMPILE_LANGUAGE:CXX>:-std=gnu++11>"
+    "$<$<COMPILE_LANGUAGE:CXX>:-std=c++2a>"
     "-UHAVE_CONFIG_H"
     "-DWEBRTC_WEBKIT_BUILD=1"
     "-w"
@@ -2680,7 +2682,6 @@ if (APPLE)
         Source/third_party/libvpx/source/config/linux/ppc64/vpx_config.c
         Source/third_party/libvpx/source/libvpx/vp8/vp8_ratectrl_rtc.cc
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_tpl_model.c
-        Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_ssse3.c
         Source/third_party/libvpx/source/libvpx/vpx/src/vpx_tpl.c
     )
 
@@ -2701,6 +2702,7 @@ if (APPLE)
             Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_mmx.c
             Source/third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_x86.c
             Source/third_party/libvpx/source/libvpx/vp8/common/x86/vp8_asm_stubs.c
+            Source/third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_quantize_ssse3.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct8x8_add_sse4.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct4x4_add_sse4.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_idct32x32_add_sse4.c
@@ -2941,8 +2943,9 @@ if (APPLE)
         )
         target_compile_options(vpx PRIVATE -mavx2)
     else ()
+        # Use the linux configuration instead of iOS on Cocoa arm64 platforms.
         list(APPEND vpx_INCLUDE_DIRECTORIES
-            Source/third_party/libvpx/source/config/ios/arm64
+            Source/third_party/libvpx/source/config/linux/arm64-highbd
         )
     endif ()
     target_include_directories(vpx PRIVATE ${vpx_INCLUDE_DIRECTORIES})
