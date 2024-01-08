@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
           RenderInline (generated) at (0,0) size 16x18
             RenderText {#text} at (178,10) size 10x18
               text run at (178,10) width 10: "T"
-          RenderBlock {RT} at (175,0) size 16x10
+          RenderBlock {RT} at (175,0) size 17x10
             RenderText {#text} at (0,0) size 16x10
               text run at (0,0) width 16: "Text"
           RenderInline (generated) at (0,0) size 29x18

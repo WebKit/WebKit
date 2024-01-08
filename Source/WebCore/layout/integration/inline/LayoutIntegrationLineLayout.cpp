@@ -823,7 +823,8 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent->hasContent())
         return { };
 
-    return Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(m_boxTree.layoutBoxForRenderer(renderInline)));
+    auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(m_boxTree.layoutBoxForRenderer(renderInline))) };
+    return WebCore::isHorizontalWritingMode(flow().style().writingMode()) ? borderBoxLogicalRect : borderBoxLogicalRect.transposedRect();
 }
 
 LayoutRect LineLayout::visualOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
