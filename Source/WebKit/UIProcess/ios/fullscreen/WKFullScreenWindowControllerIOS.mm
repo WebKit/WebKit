@@ -953,6 +953,10 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         WebKit::replaceViewWithView(webView.get(), _webViewPlaceholder.get());
 
         [webView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+        // FIXME (267139): Changing the web view's frame should ideally only be done by the fullscreen view controller.
+        // However, this adjustment is currently necessary to ensure that the layout parameters exposed to the web
+        // during the "fullscreenchange" event reflect the fullscreen size.
+        [webView setFrame:[_window bounds]];
         [webView _setMinimumEffectiveDeviceWidth:0];
         [webView _setViewScale:1.f];
         WebKit::WKWebViewState().applyTo(webView.get());
