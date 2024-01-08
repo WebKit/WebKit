@@ -3896,11 +3896,14 @@ String Element::title() const
 
 const AtomString& Element::userAgentPart() const
 {
+    ASSERT(isInUserAgentShadowTree());
     return attributeWithoutSynchronization(useragentpartAttr);
 }
 
 void Element::setUserAgentPart(const AtomString& value)
 {
+    // We may set the useragentpart attribute on elements before appending them to the shadow tree.
+    ASSERT(!isConnected() || isInUserAgentShadowTree());
     setAttributeWithoutSynchronization(useragentpartAttr, value);
 }
 

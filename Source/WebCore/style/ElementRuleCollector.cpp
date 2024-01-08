@@ -394,7 +394,7 @@ void ElementRuleCollector::matchPartPseudoElementRulesForScope(const Element& pa
 
 void ElementRuleCollector::collectMatchingUserAgentPartRules(const MatchRequest& matchRequest)
 {
-    ASSERT(element().containingShadowRoot()->mode() == ShadowRootMode::UserAgent);
+    ASSERT(element().isInUserAgentShadowTree());
 
     auto& rules = matchRequest.ruleSet;
 #if ENABLE(VIDEO)
