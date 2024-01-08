@@ -275,12 +275,12 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
     
 bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 {
-    const auto* thisBox = isRenderBox() ? downcast<RenderBox>(this) : nullptr;
+    auto* thisBox = dynamicDowncast<RenderBox>(this);
     Length logicalHeightLength = style().logicalHeight();
     auto* cb = containingBlockForAutoHeightDetection(logicalHeightLength);
     
-    if (logicalHeightLength.isPercentOrCalculated() && cb && isRenderBox())
-        cb->addPercentHeightDescendant(*const_cast<RenderBox*>(downcast<RenderBox>(this)));
+    if (logicalHeightLength.isPercentOrCalculated() && cb && thisBox)
+        cb->addPercentHeightDescendant(*const_cast<RenderBox*>(thisBox));
 
     if (thisBox && thisBox->isFlexItem() && downcast<RenderFlexibleBox>(*parent()).useChildOverridingLogicalHeightForPercentageResolution(*thisBox))
         return false;
@@ -302,11 +302,8 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const
 {
-    if (!is<BitmapImage>(image))
-        return DecodingMode::Synchronous;
-
-    const BitmapImage& bitmapImage = downcast<BitmapImage>(image);
-    if (bitmapImage.canAnimate()) {
+    auto* bitmapImage = dynamicDowncast<BitmapImage>(image);
+    if (!bitmapImage || bitmapImage->canAnimate()) {
         // The DecodingMode for the current frame has to be Synchronous. The DecodingMode
         // for the next frame will be calculated in BitmapImage::internalStartAnimation().
         return DecodingMode::Synchronous;
@@ -339,16 +336,16 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         return isVisibleInViewport() ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
     };
 
-    if (is<HTMLImageElement>(element())) {
+    if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(element())) {
         // <img decoding="sync"> forces synchronous decoding.
-        if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Synchronous)
+        if (imgElement->decodingMode() == DecodingMode::Synchronous)
             return DecodingMode::Synchronous;
 
         // <img decoding="async"> forces asynchronous decoding but make sure this
         // will not cause flickering.
-        if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Asynchronous) {
+        if (imgElement->decodingMode() == DecodingMode::Asynchronous) {
             // isAsyncDecodingEnabledForTesting() forces async image decoding regardless whether it is in the viewport or not.
-            if (bitmapImage.isAsyncDecodingEnabledForTesting())
+            if (bitmapImage->isAsyncDecodingEnabledForTesting())
                 return DecodingMode::Asynchronous;
 
             // Choose a decodingMode such that the image does not flicker.
@@ -357,11 +354,11 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     }
 
     // isAsyncDecodingEnabledForTesting() forces async image decoding regardless of the size.
-    if (bitmapImage.isAsyncDecodingEnabledForTesting())
+    if (bitmapImage->isAsyncDecodingEnabledForTesting())
         return DecodingMode::Asynchronous;
 
     // Large image case.
-    if (!(bitmapImage.canUseAsyncDecodingForLargeImages() && settings().largeImageAsyncDecodingEnabled()))
+    if (!(bitmapImage->canUseAsyncDecodingForLargeImages() && settings().largeImageAsyncDecodingEnabled()))
         return DecodingMode::Synchronous;
 
     // Choose a decodingMode such that the image does not flicker.
@@ -439,8 +436,8 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     // return the distance between the canvas origin and the left border edge 
     // of the element and stop this algorithm.
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
-        if (is<RenderBox>(*offsetParent) && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
-            referencePoint.move(-downcast<RenderBox>(*offsetParent).borderLeft(), -downcast<RenderBox>(*offsetParent).borderTop());
+        if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
+            referencePoint.move(-renderBox->borderLeft(), -renderBox->borderTop());
         if (!isOutOfFlowPositioned() || enclosingFragmentedFlow()) {
             if (isRelativelyPositioned())
                 referencePoint.move(relativePositionOffset());
@@ -454,21 +451,20 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             while (ancestor != offsetParent) {
                 // FIXME: What are we supposed to do inside SVG content?
                 
-                if (is<RenderMultiColumnFlow>(*ancestor)) {
+                if (auto* renderMultiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(*ancestor)) {
                     // We need to apply a translation based off what region we are inside.
-                    RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlow>(*ancestor).physicalTranslationFromFlowToFragment(referencePoint);
-                    if (fragment)
+                    if (auto* fragment = renderMultiColumnFlow->physicalTranslationFromFlowToFragment(referencePoint))
                         referencePoint.moveBy(fragment->topLeftLocation());
                 } else if (!isOutOfFlowPositioned()) {
-                    if (is<RenderBox>(*ancestor) && !is<RenderTableRow>(*ancestor))
-                        referencePoint.moveBy(downcast<RenderBox>(*ancestor).topLeftLocation());
+                    if (auto* renderBox = dynamicDowncast<RenderBox>(*ancestor); renderBox && !is<RenderTableRow>(*ancestor))
+                        referencePoint.moveBy(renderBox->topLeftLocation());
                 }
                 
                 ancestor = ancestor->parent();
             }
             
-            if (is<RenderBox>(*offsetParent) && offsetParent->isBody() && !offsetParent->isPositioned())
-                referencePoint.moveBy(downcast<RenderBox>(*offsetParent).topLeftLocation());
+            if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && offsetParent->isBody() && !offsetParent->isPositioned())
+                referencePoint.moveBy(renderBox->topLeftLocation());
         }
     }
 
@@ -680,7 +676,8 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
         return;
     }
 
-    LayoutSize localOffset = is<RenderBox>(*this) ? downcast<RenderBox>(*this).locationOffset() : LayoutSize();
+    auto* renderBox = dynamicDowncast<RenderBox>(*this);
+    auto localOffset = renderBox ? renderBox->locationOffset() : LayoutSize();
     paint(maskInfo, scrolledPaintRect.location() - localOffset);
 }
 
@@ -848,8 +845,8 @@ RenderInline* RenderBoxModelObject::inlineContinuation() const
         return nullptr;
 
     for (auto* next = continuationChainNodeMap().get(this)->next; next; next = next->next) {
-        if (is<RenderInline>(*next->renderer))
-            return downcast<RenderInline>(next->renderer.get());
+        if (auto* renderInline = dynamicDowncast<RenderInline>(*next->renderer))
+            return renderInline;
     }
     return nullptr;
 }
@@ -940,12 +937,11 @@ void RenderBoxModelObject::collectAbsoluteQuadsForContinuation(Vector<FloatQuad>
 {
     ASSERT(continuation());
     for (auto* nextInContinuation = this->continuation(); nextInContinuation; nextInContinuation = nextInContinuation->continuation()) {
-        if (is<RenderBlock>(*nextInContinuation)) {
-            auto& blockBox = downcast<RenderBlock>(*nextInContinuation);
+        if (auto blockBox = dynamicDowncast<RenderBlock>(*nextInContinuation)) {
             // For blocks inside inlines, we include margins so that we run right up to the inline boxes
             // above and below us (thus getting merged with them to form a single irregular shape).
-            auto logicalRect = FloatRect { 0, -blockBox.collapsedMarginBefore(), blockBox.width(),
-                blockBox.height() + blockBox.collapsedMarginBefore() + blockBox.collapsedMarginAfter() };
+            auto logicalRect = FloatRect { 0, -blockBox->collapsedMarginBefore(), blockBox->width(),
+                blockBox->height() + blockBox->collapsedMarginBefore() + blockBox->collapsedMarginAfter() };
             nextInContinuation->absoluteQuadsIgnoringContinuation(logicalRect, quads, wasFixed);
             continue;
         }
