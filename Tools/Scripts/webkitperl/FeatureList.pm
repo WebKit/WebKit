@@ -104,7 +104,6 @@ my (
     $macGestureEventsSupport,
     $mathmlSupport,
     $mediaCaptureSupport,
-    $mediaControlsScriptSupport,
     $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
@@ -314,9 +313,6 @@ my @features = (
 
     { option => "media-capture", desc => "Toggle Media Capture support",
       define => "ENABLE_MEDIA_CAPTURE", value => \$mediaCaptureSupport },
-
-    { option => "media-controls-script", desc => "Toggle definition of media controls in Javascript",
-      define => "ENABLE_MEDIA_CONTROLS_SCRIPT", value => \$mediaControlsScriptSupport },
 
     { option => "media-source", desc => "Toggle Media Source support",
       define => "ENABLE_MEDIA_SOURCE", value => \$mediaSourceSupport },
