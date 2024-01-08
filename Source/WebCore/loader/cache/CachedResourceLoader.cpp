@@ -461,6 +461,8 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #endif
     case CachedResource::Type::MediaResource:
     case CachedResource::Type::RawResource:
+    case CachedResource::Type::Beacon:
+    case CachedResource::Type::Ping:
     case CachedResource::Type::Icon:
     case CachedResource::Type::ImageResource:
     case CachedResource::Type::SVGFontResource:
@@ -473,8 +475,6 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         break;
     }
     case CachedResource::Type::MainResource:
-    case CachedResource::Type::Beacon:
-    case CachedResource::Type::Ping:
     case CachedResource::Type::LinkPrefetch:
         // Prefetch cannot affect the current document.
 #if ENABLE(APPLICATION_MANIFEST)

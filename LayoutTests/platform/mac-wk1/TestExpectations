@@ -917,6 +917,7 @@ imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/beacon.https.ht
 http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
 http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.py [ Skip ]
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-beacon-in-iframe.html [ Skip ]
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported on WK1
 http/tests/referrer-policy-script/ [ Skip ]
@@ -933,6 +934,11 @@ http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html [ Skip ]
+
+# Cross origin HTTPS loads require certificate validation, which are not supported for WK1 ping loads.
+http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-ping-in-iframe.https.html [ Failure ]
+http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html [ Skip ]
+http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Skip ]
 
 http/tests/lazyload [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html [ Skip ]
