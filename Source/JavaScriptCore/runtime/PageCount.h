@@ -38,9 +38,10 @@ namespace JSC {
 static_assert(sizeof(size_t) == sizeof(uint64_t));
 
 #if USE(BUN_JSC_ADDITIONS)
-// Allow up to 140 TB typed arrays in Bun
-// `maxPageCount` below must fit inside a UINT_MAX, and (64 KB / 1<<47) is just under that limit.
-#define MAX_ARRAY_BUFFER_SIZE (1ull << 47)
+// Allow up to 512 GB typed arrays in Bun
+// `maxPageCount` below must fit inside a UINT_MAX
+// The theoretical limit here is 47 bits, but making this number larger than necessary is a security risk
+#define MAX_ARRAY_BUFFER_SIZE (1ull << 39)
 #else
 #define MAX_ARRAY_BUFFER_SIZE (1ull << 32)
 #endif
