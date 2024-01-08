@@ -1,0 +1,42 @@
+name: Windows (Manual)
+
+# Controls when the workflow will run
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+
+  windows:
+    strategy:
+      matrix:
+        include:
+          - runner: windows-latest
+            build-type: Release
+            arch: amd64
+            suffix: ""
+          - runner: windows-latest
+            build-type: Debug
+            arch: amd64
+            suffix: -debug
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: KyleMayes/install-llvm-action@1a3da29f56261a1e1f937ec88f0856a9b8321d7e
+        with:
+          version: 16.0.6
+      - uses: cygwin/cygwin-install-action@006ad0b0946ca6d0a3ea2d4437677fa767392401
+      - run: choco install -y ninja
+      - uses: actions/checkout@v4
+      - name: Build WebKit
+        run: |
+          $env:Path = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\;" + $env:Path
+          $env:WEBKIT_OUTPUT_DIR = "bun-webkit"
+          $env:BUN_WEBKIT_VERSION = "${{ github.sha }}"
+          $env:CMAKE_BUILD_TYPE = "${{matrix.build-type}}"
+          ./windows-release.ps1
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bun-webkit-windows-${{ matrix.arch }}${{ matrix.suffix }}
+          path: bun-webkit.tar.gz
