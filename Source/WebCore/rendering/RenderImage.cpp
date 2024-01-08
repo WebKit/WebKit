@@ -153,8 +153,8 @@ RenderImage::RenderImage(Type type, Element& element, RenderStyle&& style, Optio
 {
     updateAltText();
 #if ENABLE(SERVICE_CONTROLS)
-    if (is<HTMLImageElement>(element))
-        m_hasShadowControls = downcast<HTMLImageElement>(element).isImageMenuEnabled();
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
+        m_hasShadowControls = image->isImageMenuEnabled();
 #endif
 }
 
@@ -397,8 +397,8 @@ void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetr
         contentChanged(ImageChanged);
     }
 
-    if (is<HTMLImageElement>(element()))
-        page().didFinishLoadingImageForElement(downcast<HTMLImageElement>(*element()));
+    if (RefPtr image = dynamicDowncast<HTMLImageElement>(element()))
+        page().didFinishLoadingImageForElement(*image);
 
     RenderReplaced::notifyFinished(newImage, metrics);
 }
@@ -464,7 +464,8 @@ void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint 
 
 static bool isDeferredImage(Element* element)
 {
-    return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element)->isDeferred();
+    RefPtr image = dynamicDowncast<HTMLImageElement>(element);
+    return image && image->isDeferred();
 }
 
 void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -641,15 +642,11 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
     if (paintInfo.context().paintingDisabled() && !paintInfo.context().performingPaintInvalidation())
         return;
 
-    Element* focusedElement = document().focusedElement();
-    if (!is<HTMLAreaElement>(focusedElement))
+    RefPtr areaElement = dynamicDowncast<HTMLAreaElement>(document().focusedElement());
+    if (!areaElement || areaElement->imageElement() != element())
         return;
 
-    HTMLAreaElement& areaElement = downcast<HTMLAreaElement>(*focusedElement);
-    if (areaElement.imageElement() != element())
-        return;
-
-    auto* areaElementStyle = areaElement.computedStyle();
+    auto* areaElementStyle = areaElement->computedStyle();
     if (!areaElementStyle)
         return;
 
@@ -659,7 +656,7 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo, const LayoutPo
 
     // Even if the theme handles focus ring drawing for entire elements, it won't do it for
     // an area within an image, so we don't call RenderTheme::supportsFocusRing here.
-    auto path = areaElement.computePathForFocusRing(size());
+    auto path = areaElement->computePathForFocusRing(size());
     if (path.isEmpty())
         return;
 
@@ -702,10 +699,9 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
 
     // FIXME: Document when image != img.get().
-    Image* image = imageResource().image().get();
-
-    if (is<BitmapImage>(image))
-        downcast<BitmapImage>(*image).updateFromSettings(settings());
+    auto* image = imageResource().image().get();
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image))
+        bitmapImage->updateFromSettings(settings());
 
     ImagePaintingOptions options = {
         imageElement ? imageElement->compositeOperator() : CompositeOperator::SourceOver,
@@ -811,10 +807,10 @@ void RenderImage::updateAltText()
     if (!element())
         return;
 
-    if (is<HTMLInputElement>(*element()))
-        m_altText = downcast<HTMLInputElement>(*element()).altText();
-    else if (is<HTMLImageElement>(*element()))
-        m_altText = downcast<HTMLImageElement>(*element()).altText();
+    if (auto* input = dynamicDowncast<HTMLInputElement>(*element()))
+        m_altText = input->altText();
+    else if (auto* image = dynamicDowncast<HTMLImageElement>(*element()))
+        m_altText = image->altText();
 }
 
 bool RenderImage::canHaveChildren() const
@@ -879,10 +875,9 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, Flo
     // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
     if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
         RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
-        if (is<RenderBox>(*containingBlock)) {
-            auto& box = downcast<RenderBox>(*containingBlock);
-            intrinsicSize.setWidth(box.availableLogicalWidth());
-            intrinsicSize.setHeight(box.availableLogicalHeight(IncludeMarginBorderPadding));
+        if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
+            intrinsicSize.setWidth(box->availableLogicalWidth());
+            intrinsicSize.setHeight(box->availableLogicalHeight(IncludeMarginBorderPadding));
         }
     }
 
@@ -905,10 +900,10 @@ bool RenderImage::needsPreferredWidthsRecalculation() const
 
 RenderBox* RenderImage::embeddedContentBox() const
 {
-    CachedImage* cachedImage = this->cachedImage();
-    if (cachedImage && is<SVGImage>(cachedImage->image()))
-        return downcast<SVGImage>(*cachedImage->image()).embeddedContentBox();
-
+    if (auto* cachedImage = this->cachedImage()) {
+        if (auto* image = dynamicDowncast<SVGImage>(cachedImage->image()))
+            return image->embeddedContentBox();
+    }
     return nullptr;
 }
 
