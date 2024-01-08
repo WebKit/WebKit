@@ -332,7 +332,7 @@ inline bool CSSSelector::isAttributeSelector() const
 inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
 {
     ASSERT(match() != Match::Tag);
-    AtomString matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
+    auto matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
     if (!m_hasRareData && matchingValue != value)
         createRareData();
 

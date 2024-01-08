@@ -628,10 +628,8 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeId(CSSParserTokenR
 
     auto selector = makeUnique<MutableCSSSelector>();
     selector->setMatch(CSSSelector::Match::Id);
-    
-    // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
-    // to be compatible for now.
-    CSSParserToken token = range.consume();
+
+    auto token = range.consume();
     selector->setValue(token.value().toAtomString(), m_context.mode == HTMLQuirksMode);
     return selector;
 }
@@ -646,10 +644,8 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeClass(CSSParserTok
 
     auto selector = makeUnique<MutableCSSSelector>();
     selector->setMatch(CSSSelector::Match::Class);
-    
-    // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
-    // to be compatible for now.
-    CSSParserToken token = range.consume();
+
+    auto token = range.consume();
     selector->setValue(token.value().toAtomString(), m_context.mode == HTMLQuirksMode);
 
     return selector;
