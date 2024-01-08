@@ -6,8 +6,6 @@ TEST SUCCEEDED: The value was the string 'null'. [tested CSSStyleRule.selectorTe
 
 TEST SUCCEEDED: The value was the empty string. [tested CSSStyleDeclaration.cssText]
 
-TEST SUCCEEDED: The value was the string 'black'. [tested CSSValue.cssText]
-
 TEST SUCCEEDED: The value was the empty string. [tested MediaList.mediaText]
 
 

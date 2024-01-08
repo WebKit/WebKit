@@ -93,7 +93,7 @@
         for (var i=0; i < expectedValues.length; i++) {
             var el = document.getElementById(expectedValues[i].id);
             var expectedValue = expectedValues[i].end;
-            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            var realValue = parseFloat(window.getComputedStyle(el).left);
             if (Math.abs(expectedValue - realValue) < allowance) {
               result += "PASS - end of animation - id: " + expectedValues[i].id + " close to expected: " + expectedValue + "<br>";
             } else {
@@ -110,7 +110,7 @@
         for (var i=0; i < expectedValues.length; i++) {
             var el = document.getElementById(expectedValues[i].id);
             var expectedValue = expectedValues[i].start;
-            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            var realValue = parseFloat(window.getComputedStyle(el).left);
             if (Math.abs(expectedValue - realValue) < allowance) {
               result += "PASS";
             } else {

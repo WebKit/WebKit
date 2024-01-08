@@ -2,9 +2,6 @@ This test checks some DOM object prototypes that WebKit has gotten wrong in the 
 
 PASS: Object.prototype.isPrototypeOf(window.DOMException) should be true and is.
 PASS: Object.prototype.isPrototypeOf(window.Option) should be true and is.
-PASS: Object.prototype.isPrototypeOf(cssValue) should be true and is.
-PASS: Object.prototype.isPrototypeOf(rgbColor) should be true and is.
-PASS: Object.prototype.isPrototypeOf(rect) should be true and is.
 PASS: Object.prototype.isPrototypeOf(styleSheetList) should be true and is.
 PASS: Object.prototype.isPrototypeOf(styleSheet) should be true and is.
 PASS: Object.prototype.isPrototypeOf(cssRule) should be true and is.

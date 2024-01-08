@@ -10,7 +10,6 @@ PASS 'webkitTransform' in document.body.style is true
 PASS 'WebkitTransform' in document.body.style is true
 PASS 'bogus-random-String' in document.body.style is false
 PASS 'cssText' in document.body.style is true
-PASS 'getPropertyCSSValue' in document.body.style is true
 PASS initialIndexOfGroup2 > initialIndexOfGroup1 is true
 PASS initialIndexOfGroup3 > initialIndexOfGroup2 is true
 PASS initialIndexOfGroup4 > initialIndexOfGroup3 is true

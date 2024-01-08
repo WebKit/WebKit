@@ -65,7 +65,7 @@
         for (var i=0; i < expectedEndValues.length; i++) {
             var el = document.getElementById(expectedEndValues[i].id);
             var expectedValue = expectedEndValues[i].value;
-            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            var realValue = parseFloat(window.getComputedStyle(el).left);
             if (Math.abs(expectedValue - realValue) < 5) {
               result += "PASS";
             } else {

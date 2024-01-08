@@ -18,7 +18,6 @@ PASS nonNumericPolicy('createCSSStyleSheet().insertRule(ruleText, x)') is 'any t
 PASS nonNumericPolicy('createCSSStyleSheet().deleteRule(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('createCSSStyleSheet().addRule(selector, styleText, x)') is 'any type allowed'
 PASS nonNumericPolicy('createCSSStyleSheet().removeRule(x)') is 'any type allowed'
-PASS nonNumericPolicy('createCSSValueList().item(x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('document.elementFromPoint(x, 0)') is 'mixed'
 PASS nonNumericPolicy('document.elementFromPoint(0, x)') is 'mixed'
 PASS nonNumericPolicy('document.scrollingElement.scrollLeft = x') is 'any type allowed'

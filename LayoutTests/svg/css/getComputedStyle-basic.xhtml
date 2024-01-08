@@ -26,9 +26,7 @@
           if (!propertiesToTest[name])
             continue;
           var value = style.getPropertyValue(name);
-          var cssValue = style.getPropertyCSSValue(name);
           debugLog(elementId + ": style.getPropertyValue(" + name + ") : " + value);
-          debugLog(elementId + ": style.getPropertyCSSValue(" + name + ") : " + cssValue);
         }
       }
       

@@ -10,7 +10,7 @@
             for (i = 0; i < sheets.length; i++) {
                 if (sheets[i].cssRules.length != 1
                     || sheets[i].cssRules[0].type != CSSRule.STYLE_RULE
-                    || sheets[i].cssRules[0].style.getPropertyCSSValue("background-image") == null) {
+                    || sheets[i].cssRules[0].style.backgroundImage === "") {
                     return;
                 }
             }

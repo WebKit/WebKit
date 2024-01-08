@@ -1,297 +1,67 @@
-Test the computed style of the filter property.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-
-Basic reference : url('#a')
-PASS filterStyle.length is 1
-PASS subRule.cssText is "url(\"#a\")"
-
-Bare unquoted reference converting to quoted form : url(#a)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "url(\"#a\")"
-
-Multiple references : url('#a') url('#b')
-PASS filterStyle.length is 2
-PASS subRule.cssText is "url(\"#a\")"
-PASS subRule.cssText is "url(\"#b\")"
-
-Reference as 2nd value : grayscale(1) url('#a')
-PASS filterStyle.length is 2
-PASS subRule.cssText is "grayscale(1)"
-PASS subRule.cssText is "url(\"#a\")"
-
-Integer value : grayscale(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "grayscale(1)"
-
-Float value converts to integer : grayscale(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "grayscale(1)"
-
-Zero value : grayscale(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "grayscale(0)"
-
-No values : grayscale()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "grayscale(1)"
-
-Multiple values : grayscale(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "grayscale(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Integer value : sepia(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "sepia(1)"
-
-Float value converts to integer : sepia(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "sepia(1)"
-
-Zero value : sepia(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "sepia(0)"
-
-No values : sepia()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "sepia(1)"
-
-Multiple values : sepia(0.5) sepia(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "sepia(0.5)"
-PASS subRule.cssText is "sepia(0.25)"
-
-Rule combinations : sepia(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "sepia(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Integer value : saturate(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "saturate(1)"
-
-Float value converts to integer : saturate(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "saturate(1)"
-
-Zero value : saturate(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "saturate(0)"
-
-No values : saturate()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "saturate(1)"
-
-Multiple values : saturate(0.5) saturate(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "saturate(0.5)"
-PASS subRule.cssText is "saturate(0.25)"
-
-Rule combinations : saturate(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "saturate(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Degrees value as integer : hue-rotate(10deg)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(10deg)"
-
-Degrees float value converts to integer : hue-rotate(10.0deg)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(10deg)"
-
-Radians value : hue-rotate(10rad)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(572.957795deg)"
-
-Gradians value : hue-rotate(10grad)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(9deg)"
-
-Turns value : hue-rotate(0.5turn)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(180deg)"
-
-Zero value : hue-rotate(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(0deg)"
-
-No values : hue-rotate()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "hue-rotate(0deg)"
-
-Rule combinations : hue-rotate(10deg) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "hue-rotate(10deg)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Integer value : invert(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "invert(1)"
-
-Float value converts to integer : invert(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "invert(1)"
-
-Zero value : invert(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "invert(0)"
-
-No values : invert()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "invert(1)"
-
-Multiple values : invert(0.5) invert(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "invert(0.5)"
-PASS subRule.cssText is "invert(0.25)"
-
-Rule combinations : invert(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "invert(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Integer value : opacity(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "opacity(1)"
-
-Float value converts to integer : opacity(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "opacity(1)"
-
-Zero value : opacity(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "opacity(0)"
-
-No values : opacity()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "opacity(1)"
-
-Multiple values : opacity(0.5) opacity(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "opacity(0.5)"
-PASS subRule.cssText is "opacity(0.25)"
-
-Rule combinations : opacity(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "opacity(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Integer value : brightness(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "brightness(1)"
-
-Float value converts to integer : brightness(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "brightness(1)"
-
-Zero value : brightness(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "brightness(0)"
-
-No values : brightness()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "brightness(1)"
-
-Multiple values : brightness(0.5) brightness(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "brightness(0.5)"
-PASS subRule.cssText is "brightness(0.25)"
-
-Rule combinations : brightness(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "brightness(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-Integer value : contrast(1)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "contrast(1)"
-
-Value greater than 1 : contrast(2)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "contrast(2)"
-
-Float value converts to integer : contrast(1.0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "contrast(1)"
-
-Zero value : contrast(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "contrast(0)"
-
-No values : contrast()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "contrast(1)"
-
-Multiple values : contrast(0.5) contrast(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "contrast(0.5)"
-PASS subRule.cssText is "contrast(0.25)"
-
-Rule combinations : contrast(0.5) grayscale(0.25)
-PASS filterStyle.length is 2
-PASS subRule.cssText is "contrast(0.5)"
-PASS subRule.cssText is "grayscale(0.25)"
-
-One zero to px : blur(0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "blur(0px)"
-
-One length : blur(2em)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "blur(32px)"
-
-One length : blur(5px)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "blur(5px)"
-
-No values : blur()
-PASS filterStyle.length is 1
-PASS subRule.cssText is "blur(0px)"
-
-Color then three values : drop-shadow(red 1px 2px 3px)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgb(255, 0, 0) 1px 2px 3px)"
-
-Three values then color : drop-shadow(1px 2px 3px red)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgb(255, 0, 0) 1px 2px 3px)"
-
-Color then three values with zero length : drop-shadow(#abc 0 0 0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgb(170, 187, 204) 0px 0px 0px)"
-
-Three values with zero length : drop-shadow(0 0 0)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgb(0, 0, 0) 0px 0px 0px)"
-
-Two values no color : drop-shadow(1px 2px)
-PASS filterStyle.length is 1
-PASS subRule.cssText is "drop-shadow(rgb(0, 0, 0) 1px 2px 0px)"
-
-Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px)
-PASS filterStyle.length is 7
-PASS subRule.cssText is "grayscale(0.5)"
-PASS subRule.cssText is "sepia(0.25)"
-PASS subRule.cssText is "saturate(0.75)"
-PASS subRule.cssText is "hue-rotate(35deg)"
-PASS subRule.cssText is "invert(0.2)"
-PASS subRule.cssText is "opacity(0.9)"
-PASS subRule.cssText is "blur(5px)"
-
-Percentage values : grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%) brightness(60%) contrast(30%)
-PASS filterStyle.length is 7
-PASS subRule.cssText is "grayscale(0.5)"
-PASS subRule.cssText is "sepia(0.25)"
-PASS subRule.cssText is "saturate(0.75)"
-PASS subRule.cssText is "invert(0.2)"
-PASS subRule.cssText is "opacity(0.9)"
-PASS subRule.cssText is "brightness(0.6)"
-PASS subRule.cssText is "contrast(0.3)"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+PASS Computed style after setting e.style['filter'] = "url('#a')"
+PASS Computed style after setting e.style['filter'] = "url(#a)"
+PASS Computed style after setting e.style['filter'] = "url('#a') url('#b')"
+PASS Computed style after setting e.style['filter'] = "grayscale(1)"
+PASS Computed style after setting e.style['filter'] = "grayscale(1.0)"
+PASS Computed style after setting e.style['filter'] = "grayscale(0)"
+PASS Computed style after setting e.style['filter'] = "grayscale()"
+PASS Computed style after setting e.style['filter'] = "grayscale(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "sepia(1)"
+PASS Computed style after setting e.style['filter'] = "sepia(1.0)"
+PASS Computed style after setting e.style['filter'] = "sepia(0)"
+PASS Computed style after setting e.style['filter'] = "sepia()"
+PASS Computed style after setting e.style['filter'] = "sepia(0.5) sepia(0.25)"
+PASS Computed style after setting e.style['filter'] = "saturate(1)"
+PASS Computed style after setting e.style['filter'] = "saturate(1.0)"
+PASS Computed style after setting e.style['filter'] = "saturate(0)"
+PASS Computed style after setting e.style['filter'] = "saturate()"
+PASS Computed style after setting e.style['filter'] = "saturate(0.5) saturate(0.25)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(10deg)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(10.0deg)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(10rad)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(10grad)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(0.5turn)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(0)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate()"
+PASS Computed style after setting e.style['filter'] = "invert(1)"
+PASS Computed style after setting e.style['filter'] = "invert(1.0)"
+PASS Computed style after setting e.style['filter'] = "invert(0)"
+PASS Computed style after setting e.style['filter'] = "invert()"
+PASS Computed style after setting e.style['filter'] = "invert(0.5) invert(0.25)"
+PASS Computed style after setting e.style['filter'] = "opacity(1)"
+PASS Computed style after setting e.style['filter'] = "opacity(1.0)"
+PASS Computed style after setting e.style['filter'] = "opacity(0)"
+PASS Computed style after setting e.style['filter'] = "opacity()"
+PASS Computed style after setting e.style['filter'] = "opacity(0.5) opacity(0.25)"
+PASS Computed style after setting e.style['filter'] = "brightness(1)"
+PASS Computed style after setting e.style['filter'] = "brightness(1.0)"
+PASS Computed style after setting e.style['filter'] = "brightness(0)"
+PASS Computed style after setting e.style['filter'] = "brightness()"
+PASS Computed style after setting e.style['filter'] = "brightness(0.5) brightness(0.25)"
+PASS Computed style after setting e.style['filter'] = "contrast(1)"
+PASS Computed style after setting e.style['filter'] = "contrast(2)"
+PASS Computed style after setting e.style['filter'] = "contrast(1.0)"
+PASS Computed style after setting e.style['filter'] = "contrast(0)"
+PASS Computed style after setting e.style['filter'] = "contrast()"
+PASS Computed style after setting e.style['filter'] = "contrast(0.5) contrast(0.25)"
+PASS Computed style after setting e.style['filter'] = "blur(0)"
+PASS Computed style after setting e.style['filter'] = "blur(2em)"
+PASS Computed style after setting e.style['filter'] = "blur(5px)"
+PASS Computed style after setting e.style['filter'] = "blur()"
+PASS Computed style after setting e.style['filter'] = "drop-shadow(red 1px 2px 3px)"
+PASS Computed style after setting e.style['filter'] = "drop-shadow(1px 2px 3px red)"
+PASS Computed style after setting e.style['filter'] = "drop-shadow(#abc 0 0 0)"
+PASS Computed style after setting e.style['filter'] = "drop-shadow(0 0 0)"
+PASS Computed style after setting e.style['filter'] = "drop-shadow(1px 2px)"
+PASS Computed style after setting e.style['filter'] = "grayscale(1) url('#a')"
+PASS Computed style after setting e.style['filter'] = "sepia(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "saturate(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "hue-rotate(10deg) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "invert(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "opacity(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "brightness(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "contrast(0.5) grayscale(0.25)"
+PASS Computed style after setting e.style['filter'] = "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px)"
+PASS Computed style after setting e.style['filter'] = "grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%) brightness(60%) contrast(30%)"
 

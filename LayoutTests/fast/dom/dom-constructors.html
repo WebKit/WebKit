@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <div id="element" name="element_name"></div>
@@ -104,7 +104,7 @@ var objects_exception = [
     'StyleSheetList',
     'TextEvent',
     'XPathResult',
-    'BarInfo',
+    'BarProp',
     'CanvasGradient',
     'CanvasPattern',
     'Console',
@@ -124,10 +124,10 @@ var objects_exception = [
 
 // These objects should have a working constructor.
 var objects_constructor = [
-    'CSSStyleSheet',
     'Comment',
-    'DOMParser',
+    'CSSStyleSheet',
     'DataTransfer',
+    'DOMParser',
     'Document',
     'DocumentFragment',
     'EventTarget',
@@ -141,8 +141,11 @@ var objects_constructor = [
 
 // These objects should have no constructor.
 var objects_no_constructor = [
-    'EventTargetNode', 'UndetectableHTMLCollection',
-    'XPathNSResolver', 'EventListener', 'NPObject'
+    'EventTargetNode',
+    'UndetectableHTMLCollection',
+    'XPathNSResolver',
+    'EventListener',
+    'NPObject'
 ];
 
 // These objects should have a working constructor, but their constructed
@@ -205,6 +208,5 @@ for (var obj in objects_different_constructor) {
     element.name = "element_name";
 }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

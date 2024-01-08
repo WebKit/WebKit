@@ -1,6 +1,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script src="../../resources/js-test-pre.js"/>
+<script src="../../resources/js-test.js" />
 </head>
 <body>
 <svg display="none" xmlns="http://www.w3.org/2000/svg"/>
@@ -8,8 +8,7 @@
 <div id="console"/>
 <script><![CDATA[
 SVG_NS = 'http://www.w3.org/2000/svg';
-var color1, color2;
-var systemColorRed, systemColorGreen, systemColorBlue;
+var computedStyleText, computedStyleDiv;
 function checkSystemColor(id1, id2, systemColor)
 {
     var textElement = document.getElementById(id1);
@@ -48,7 +47,5 @@ for (i = 0; i < systemColors.length; ++i) {
 
 ]]>
 </script>
-<script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>
