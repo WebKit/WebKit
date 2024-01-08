@@ -157,7 +157,6 @@ public:
     PagePseudoClass pagePseudoClass() const;
 
     bool matchesPseudoElement() const;
-    bool isUserAgentPartPseudoElement() const;
     bool isSiblingSelector() const;
     bool isAttributeSelector() const;
 
@@ -270,11 +269,6 @@ inline const QualifiedName& CSSSelector::attribute() const
 inline bool CSSSelector::matchesPseudoElement() const
 {
     return match() == Match::PseudoElement;
-}
-
-inline bool CSSSelector::isUserAgentPartPseudoElement() const
-{
-    return pseudoElement() == PseudoElement::UserAgentPart || pseudoElement() == PseudoElement::UserAgentPartLegacyAlias;
 }
 
 static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClass type)

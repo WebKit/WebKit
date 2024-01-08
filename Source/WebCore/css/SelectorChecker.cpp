@@ -281,7 +281,9 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         return MatchResult::fails(Match::SelectorFailsLocally);
 
     if (context.selector->match() == CSSSelector::Match::PseudoElement) {
-        if (context.selector->isUserAgentPartPseudoElement()) {
+        switch (context.selector->pseudoElement()) {
+        case CSSSelector::PseudoElement::UserAgentPart:
+        case CSSSelector::PseudoElement::UserAgentPartLegacyAlias: {
             // In functional pseudo class, custom pseudo elements are always disabled.
             // FIXME: We should accept custom pseudo elements inside :is()/:matches().
             if (context.inFunctionalPseudoClass)
@@ -294,10 +296,11 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
                     return MatchResult::fails(Match::SelectorFailsLocally);
             } else
                 return MatchResult::fails(Match::SelectorFailsLocally);
-        } else {
-            if (context.selector->pseudoElement() == CSSSelector::PseudoElement::WebKitUnknown)
-                return MatchResult::fails(Match::SelectorFailsLocally);
-
+            break;
+        }
+        case CSSSelector::PseudoElement::WebKitUnknown:
+            return MatchResult::fails(Match::SelectorFailsLocally);
+        default: {
             if (!context.pseudoElementEffective)
                 return MatchResult::fails(Match::SelectorFailsCompletely);
 
@@ -308,6 +311,8 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             if (pseudoId != PseudoId::None)
                 dynamicPseudoIdSet.add(pseudoId);
             matchType = MatchType::VirtualPseudoElementOnly;
+            break;
+        }
         }
     }
 
