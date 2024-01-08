@@ -4230,8 +4230,10 @@ MediaCapabilityGrantsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(IOS_FAMILY_SIMULATOR)": false
       default: false
     WebCore:
+      "PLATFORM(IOS_FAMILY_SIMULATOR)": false
       default: false
 
 MediaCaptionFormatTypesAllowedInLockdownMode:
