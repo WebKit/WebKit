@@ -32,4 +32,37 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationDestination);
 
+NavigationDestination::NavigationDestination(LocalDOMWindow& window, const String& url, const String& key, const String& id, int64_t index)
+    : LocalDOMWindowProperty(&window)
+    , m_url(url)
+    , m_key(key)
+    , m_id(id)
+    , m_index(index)
+{
 }
+
+NavigationDestination::NavigationDestination(LocalDOMWindow& window, const String& url)
+    : LocalDOMWindowProperty(&window)
+    , m_url(url)
+{
+}
+
+Ref<NavigationDestination> NavigationDestination::create(LocalDOMWindow& window, const String& url, const String& key, const String& id, int64_t index)
+{
+    return adoptRef(*new NavigationDestination(window, url, key, id, index));
+}
+
+Ref<NavigationDestination> NavigationDestination::create(LocalDOMWindow& window, const String& url)
+{
+    return adoptRef(*new NavigationDestination(window, url));
+}
+
+bool NavigationDestination::sameDocument() const
+{
+    auto currentURL = window()->document()->url();
+    URL destinationURL { m_url };
+
+    return equalIgnoringFragmentIdentifier(currentURL, destinationURL);
+}
+
+} // namespace WebCore

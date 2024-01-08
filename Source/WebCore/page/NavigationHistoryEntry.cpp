@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NavigationHistoryEntry.h"
 
+#include "NavigationController.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
@@ -34,9 +35,24 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
-NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context)
-    : ContextDestructionObserver(context)
+RefPtr<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContext* context, const RefPtr<NavigationEntry> entry, bool isSameDocument, int64_t index)
 {
+    return adoptRef(*new NavigationHistoryEntry(context, entry, isSameDocument, index));
+}
+
+NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, RefPtr<NavigationEntry> entry, bool isSameDocument, int64_t index)
+    : ContextDestructionObserver(context)
+    , m_url(entry->url())
+    , m_key(entry->key())
+    , m_id(entry->id())
+    , m_index(index)
+    , m_sameDocument(isSameDocument)
+{
+}
+
+const JSC::JSValue NavigationHistoryEntry::getState() const
+{
+    return JSC::jsUndefined();
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const

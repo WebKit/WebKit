@@ -1,3 +1,4 @@
 
-FAIL event.intercept() can intercept same-document history.back() null is not an object (evaluating 'navigation.currentEntry.index')
+FAIL event.intercept() can intercept same-document history.back() undefined is not an object (evaluating 'navigation.navigate("?foo").finished
+      .then')
 

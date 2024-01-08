@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT event.intercept() throws if used after the dispatch phase Test timed out
+FAIL event.intercept() throws if used after the dispatch phase assert_throws_dom: function "() => e.intercept()" did not throw
 

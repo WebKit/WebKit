@@ -1,6 +1,4 @@
 Click me
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Fragment <a> click fires navigate event Test timed out
+FAIL Fragment <a> click fires navigate event assert_true: expected true got false
 

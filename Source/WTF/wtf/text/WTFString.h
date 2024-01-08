@@ -524,6 +524,11 @@ inline bool codePointCompareLessThan(const String& a, const String& b)
     return codePointCompare(a.impl(), b.impl()) < 0;
 }
 
+inline bool operator<(const String& lhs, const String& rhs)
+{
+    return codePointCompareLessThan(lhs, rhs);
+}
+
 inline String String::fromUTF8(const Vector<LChar>& characters)
 {
     if (characters.isEmpty())

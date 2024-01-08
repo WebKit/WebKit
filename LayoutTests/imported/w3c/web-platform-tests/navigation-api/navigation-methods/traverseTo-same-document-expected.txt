@@ -1,3 +1,4 @@
 
-FAIL same-document navigate.traverseTo(), back(), and forward() null is not an object (evaluating 'navigation.currentEntry.index')
+FAIL same-document navigate.traverseTo(), back(), and forward() undefined is not an object (evaluating 'navigation.navigate("#").committed
+      .then')
 

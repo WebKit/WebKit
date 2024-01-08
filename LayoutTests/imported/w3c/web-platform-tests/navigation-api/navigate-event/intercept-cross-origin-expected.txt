@@ -39,6 +39,7 @@ cors
 credential-management
 css
 custom-elements
+custom-state-pseudo-class
 density-size-correction
 deprecation-reporting
 docs

@@ -36,21 +36,25 @@ class JSValue;
 
 namespace WebCore {
 
+class NavigationEntry;
+
 class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(NavigationHistoryEntry);
 public:
+    static RefPtr<NavigationHistoryEntry> create(ScriptExecutionContext*, const RefPtr<NavigationEntry>, bool isSameDocument, int64_t index);
+
     using RefCounted<NavigationHistoryEntry>::ref;
     using RefCounted<NavigationHistoryEntry>::deref;
 
     const String& url() const { return m_url; };
     const String& key() const { return m_key; };
     const String& id() const { return m_id; };
-    uint64_t index() const { return m_index; };
+    int64_t index() const { return m_index; };
     bool sameDocument() const { return m_sameDocument; };
-    const JSC::JSValue& getState() const { return m_state; };
+    const JSC::JSValue getState() const;
 
 private:
-    NavigationHistoryEntry(ScriptExecutionContext*);
+    NavigationHistoryEntry(ScriptExecutionContext*, const RefPtr<NavigationEntry>, bool isSameDocument, int64_t index);
 
     EventTargetInterface eventTargetInterface() const final;
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -60,8 +64,7 @@ private:
     String m_url;
     String m_key;
     String m_id;
-    uint64_t m_index;
-    JSC::JSValue m_state;
+    int64_t m_index;
     bool m_sameDocument;
 };
 

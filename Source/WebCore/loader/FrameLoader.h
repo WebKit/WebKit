@@ -119,6 +119,9 @@ public:
     HistoryController& history() const { return *m_history; }
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
+    class NavigationController;
+    NavigationController& navigation() const { return *m_navigation; }
+
     class SubframeLoader;
     SubframeLoader& subframeLoader() { return *m_subframeLoader; }
     const SubframeLoader& subframeLoader() const { return *m_subframeLoader; }
@@ -457,6 +460,8 @@ private:
     mutable ResourceLoadNotifier m_notifier;
     const std::unique_ptr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
+
+    const std::unique_ptr<NavigationController> m_navigation;
 
     class FrameProgressTracker;
     std::unique_ptr<FrameProgressTracker> m_progressTracker;

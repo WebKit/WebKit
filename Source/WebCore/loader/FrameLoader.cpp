@@ -92,6 +92,7 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
+#include "NavigationController.h"
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
 #include "Node.h"
@@ -356,6 +357,7 @@ FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& 
     , m_history(makeUnique<HistoryController>(frame))
     , m_notifier(frame)
     , m_subframeLoader(makeUnique<SubframeLoader>(frame))
+    , m_navigation(makeUnique<NavigationController>(frame))
     , m_state(FrameState::Provisional)
     , m_loadType(FrameLoadType::Standard)
     , m_checkTimer(*this, &FrameLoader::checkTimerFired)
@@ -1241,6 +1243,11 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     bool hashChange = equalIgnoringFragmentIdentifier(url, oldURL) && !equalRespectingNullity(url.fragmentIdentifier(), oldURL.fragmentIdentifier());
 
     history().updateForSameDocumentNavigation();
+
+    if (m_frame->document()->settings().navigationAPIEnabled()) {
+        auto entry = navigation().addEntry(url.string());
+        navigation().dispatchNavigationEvent(entry, oldURL, *m_frame->document(), NavigationNavigationType::Push);
+    }
 
     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
     if (hashChange)

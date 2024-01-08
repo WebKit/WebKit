@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "LocalDOMWindowProperty.h"
 #include "NavigationHistoryEntry.h"
@@ -74,7 +73,7 @@ public:
     };
 
     Vector<Ref<NavigationHistoryEntry>> entries() { return m_entries; };
-    RefPtr<NavigationHistoryEntry> currentEntry() { return m_currentEntry; };
+    RefPtr<NavigationHistoryEntry> currentEntry() const;
     RefPtr<NavigationTransition> transition() { return m_transition; };
 
     bool canGoBack() const { return m_canGoBack; };
@@ -98,7 +97,6 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    RefPtr<NavigationHistoryEntry> m_currentEntry;
     RefPtr<NavigationTransition> m_transition;
     bool m_canGoBack { false };
     bool m_canGoForward { false };

@@ -26,7 +26,13 @@
 #include "config.h"
 #include "Navigation.h"
 
+#include "FrameLoader.h"
+#include "NavigationController.h"
+#include "NavigationHistoryEntry.h"
+#include "ScriptExecutionContext.h"
+#include <JavaScriptCore/Exception.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -44,6 +50,20 @@ static Navigation::Result createNewResult()
 }
 
 Navigation::~Navigation() = default;
+
+RefPtr<NavigationHistoryEntry> Navigation::currentEntry() const
+{
+    if (!window()->frame())
+        return { };
+
+    auto [entry, index] = window()->frame()->loader().navigation().currentEntry();
+
+    if (!entry)
+        return { };
+
+    bool isSameDocument = equalIgnoringFragmentIdentifier(window()->document()->url(), URL { entry->url() });
+    return NavigationHistoryEntry::create(scriptExecutionContext(), entry, isSameDocument, index);
+}
 
 ScriptExecutionContext* Navigation::scriptExecutionContext() const
 {

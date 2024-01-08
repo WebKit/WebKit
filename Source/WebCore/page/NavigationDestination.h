@@ -35,23 +35,28 @@ class JSValue;
 
 namespace WebCore {
 
-class NavigationDestination final : public RefCounted<NavigationDestination>, public ScriptWrappable {
+class NavigationDestination final : public RefCounted<NavigationDestination>, public ScriptWrappable, public LocalDOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(NavigationDestination);
 public:
+    static Ref<NavigationDestination> create(LocalDOMWindow&, const String& url, const String& key, const String& id, int64_t index);
+    static Ref<NavigationDestination> create(LocalDOMWindow&, const String& url);
+
     const String& url() const { return m_url; };
     const String& key() const { return m_key; };
     const String& id() const { return m_id; };
-    uint64_t index() const { return m_index; };
-    bool sameDocument() const { return m_sameDocument; };
+    int64_t index() const { return m_index; };
+    bool sameDocument() const;
     const JSC::JSValue& getState() const { return m_state; };
 
 private:
+    NavigationDestination(LocalDOMWindow&, const String& url, const String& key, const String& id, int64_t index);
+    NavigationDestination(LocalDOMWindow&, const String& url);
+
     String m_url;
     String m_key;
     String m_id;
-    uint64_t m_index;
     JSC::JSValue m_state;
-    bool m_sameDocument;
+    int64_t m_index { -1 };
 };
 
 } // namespace WebCore
