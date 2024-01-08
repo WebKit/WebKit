@@ -158,6 +158,15 @@ class Bugzilla(Base, mocks.Requests):
                 issue['component'] = data['component']
             if data.get('version'):
                 issue['version'] = data['version']
+            issue['related'] = {'blocks': [], 'depends_on': [], 'regressions': [], 'regressed_by': []}
+            if data.get('depends_on'):
+                issue['related']['depends_on'] = data['depends_on']
+            if data.get('blocks'):
+                issue['related']['blocks'] = data['blocks']
+            if data.get('regressed_by'):
+                issue['related']['regressed_by'] = data['regressed_by']
+            if data.get('regressions'):
+                issue['related']['regressions'] = data['regressions']
 
             keywords = data.get('keywords', {})
             if keywords:
@@ -208,6 +217,10 @@ class Bugzilla(Base, mocks.Requests):
                 product=issue.get('project'),
                 component=issue.get('component'),
                 version=issue.get('version'),
+                depends_on=issue.get('related')['depends_on'] if issue.get('related') else None,
+                blocks=issue.get('related')['blocks'] if issue.get('related') else None,
+                regressed_by=issue.get('related')['regressed_by'] if issue.get('related') else None,
+                regressions=issue.get('related')['regressions'] if issue.get('related') else None,
                 keywords=issue.get('keywords', []),
                 creator_detail=dict(
                     email=issue['creator'].email,

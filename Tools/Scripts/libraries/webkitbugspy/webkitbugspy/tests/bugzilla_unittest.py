@@ -590,3 +590,75 @@ What component in 'WebKit' should the bug be associated with?:
             issue.set_keywords(['REGRESSION'])
             self.assertEqual(issue.keywords, ['REGRESSION'])
             self.assertEqual(tracker.issue(1).keywords, ['REGRESSION'])
+
+    def test_relate_simple(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            issue = tracker.issue(1)
+
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+            issue.relate(depends_on=[tracker.issue(2)])
+            self.assertEqual(issue.related['depends_on'], [tracker.issue(2)])
+            self.assertEqual(issue.related['blocks'], [])
+
+    def test_relate(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            issue = tracker.issue(1)
+
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+            issue.relate(depends_on=[tracker.issue(2)], blocks=[tracker.issue(3)])
+            self.assertEqual(issue.related['depends_on'], [tracker.issue(2)])
+            self.assertEqual(issue.related['blocks'], [tracker.issue(3)])
+
+    def test_relate_fail(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+
+            issue = tracker.issue(1)
+
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+            with self.assertRaises(TypeError) as c:
+                issue.relate(fake_relation=[0])
+            self.assertEqual('\'fake_relation\' is an invalid relation', str(c.exception))
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+
+    def test_relate_fail_type(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES):
+            bugzilla_tracker = bugzilla.Tracker(self.URL)
+
+            issue = bugzilla_tracker.issue(1)
+
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+            with self.assertRaises(AttributeError) as c:
+                issue.relate(blocks=[0])
+            self.assertEqual('\'int\' object has no attribute \'link\'', str(c.exception))
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+
+    def test_relate_fail_radar(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES), mocks.Radar(users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS,):
+            bugzilla_tracker = bugzilla.Tracker(self.URL)
+            radar_tracker = radar.Tracker()
+
+            issue = bugzilla_tracker.issue(1)
+
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})
+            with self.assertRaises(TypeError) as c:
+                issue.relate(blocks=[radar_tracker.issue(1)])
+            self.assertEqual('Cannot relate issues of different types.', str(c.exception))
+            self.assertEqual(issue.related, {'depends_on': [], 'blocks': [], 'regressions': [], 'regressed_by': []})

@@ -164,6 +164,9 @@ class Tracker(object):
                 return self.users.get(key)
         return None
 
+    def issues_to_ids(self, issues):
+        raise NotImplementedError()
+
     @decorators.Memoize()
     def me(self):
         raise NotImplementedError()
@@ -175,6 +178,9 @@ class Tracker(object):
         raise NotImplementedError()
 
     def set(self, issue, **properties):
+        raise NotImplementedError()
+
+    def relate(self, issue, **relations):
         raise NotImplementedError()
 
     def add_comment(self, issue, text):
