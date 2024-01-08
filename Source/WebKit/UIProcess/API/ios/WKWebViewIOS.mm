@@ -2543,7 +2543,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
 - (BOOL)_shouldDeferGeometryUpdates
 {
-    return _perProcessState.liveResizeParameters || _perProcessState.dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing;
+    return _perProcessState.liveResizeParameters || _perProcessState.dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing || _perProcessState.isAnimatingFullScreenExit;
 }
 
 - (void)_updateVisibleContentRects
@@ -3048,6 +3048,19 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
 - (BOOL)_haveSetObscuredInsets
 {
     return _haveSetObscuredInsets;
+}
+
+- (void)_beginAnimatedFullScreenExit
+{
+    _perProcessState.isAnimatingFullScreenExit = YES;
+}
+
+- (void)_endAnimatedFullScreenExit
+{
+    if (std::exchange(_perProcessState.isAnimatingFullScreenExit, NO)) {
+        if (!self._shouldDeferGeometryUpdates)
+            [self _didStopDeferringGeometryUpdates];
+    }
 }
 
 #if ENABLE(FULLSCREEN_API)

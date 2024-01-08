@@ -154,6 +154,8 @@ struct PerWebProcessState {
 
     WebCore::Color scrollViewBackgroundColor;
 
+    BOOL isAnimatingFullScreenExit { NO };
+
     BOOL invokingUIScrollViewDelegateCallback { NO };
 
     BOOL didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback { NO };
