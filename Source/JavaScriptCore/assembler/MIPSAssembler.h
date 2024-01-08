@@ -161,10 +161,8 @@ public:
     {
         emitInst(0x00000000);
     }
-    
-    using CopyFunction = void*(&)(void*, const void*, size_t);
 
-    template <CopyFunction copy>
+    template<MachineCodeCopyMode copy>
     ALWAYS_INLINE static void fillNops(void* base, size_t size)
     {
         UNUSED_PARAM(copy);

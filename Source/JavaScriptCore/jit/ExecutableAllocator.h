@@ -114,13 +114,6 @@ ALWAYS_INLINE bool isJITPC(void* pc)
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
-// We use this to prevent compile errors on some platforms that are unhappy
-// about the signature of the system's memcpy.
-ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
-{
-    return memcpy(dst, src, bytes);
-}
-
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -214,11 +207,6 @@ private:
     ~ExecutableAllocator() = default;
 };
 
-ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
-{
-    return memcpy(dst, src, bytes);
-}
-
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
     return memcpy(dst, src, n);
@@ -226,6 +214,5 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 
 inline bool isJITPC(void*) { return false; }
 #endif // ENABLE(JIT)
-
 
 } // namespace JSC

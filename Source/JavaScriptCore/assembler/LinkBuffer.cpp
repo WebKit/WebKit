@@ -353,9 +353,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         else
             target = codeOutData + to - executableOffsetFor(to);
         if (g_jscConfig.useFastJITPermissions)
-            MacroAssembler::link<memcpyWrapper>(linkRecord, outData + linkRecord.from(), location, target);
+            MacroAssembler::link<MachineCodeCopyMode::Memcpy>(linkRecord, outData + linkRecord.from(), location, target);
         else
-            MacroAssembler::link<performJITMemcpy>(linkRecord, outData + linkRecord.from(), location, target);
+            MacroAssembler::link<MachineCodeCopyMode::JITMemcpy>(linkRecord, outData + linkRecord.from(), location, target);
     }
 
     size_t compactSize = writePtr + initialSize - readPtr;
@@ -363,9 +363,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         size_t nopSizeInBytes = initialSize - compactSize;
 
         if (g_jscConfig.useFastJITPermissions)
-            Assembler::fillNops<memcpyWrapper>(outData + compactSize, nopSizeInBytes);
+            Assembler::fillNops<MachineCodeCopyMode::Memcpy>(outData + compactSize, nopSizeInBytes);
         else
-            Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes);
+            Assembler::fillNops<MachineCodeCopyMode::JITMemcpy>(outData + compactSize, nopSizeInBytes);
     }
 
     if (g_jscConfig.useFastJITPermissions)

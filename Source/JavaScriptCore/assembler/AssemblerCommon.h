@@ -313,4 +313,20 @@ ALWAYS_INLINE bool isValidARMThumb2Immediate(int64_t value)
     return false;
 }
 
+enum class MachineCodeCopyMode : uint8_t {
+    Memcpy,
+    JITMemcpy,
+};
+
+static void* performJITMemcpy(void *dst, const void *src, size_t n);
+
+template<MachineCodeCopyMode copy>
+ALWAYS_INLINE void* machineCodeCopy(void *dst, const void *src, size_t n)
+{
+    if constexpr (copy == MachineCodeCopyMode::Memcpy)
+        return memcpy(dst, src, n);
+    else
+        return performJITMemcpy(dst, src, n);
+}
+
 } // namespace JSC.
