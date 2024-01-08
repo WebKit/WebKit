@@ -4,6 +4,7 @@ main frame - didFinishLoadForFrame
 main frame - didStartProvisionalLoadForFrame
 main frame - didCommitLoadForFrame
 CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.
+CONSOLE MESSAGE: Blocked mixed content http://127.0.0.1:8000/security/resources/compass.jpg because 'block-all-mixed-content' appears in the Content Security Policy.
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
 main frame - didFinishLoadForFrame
