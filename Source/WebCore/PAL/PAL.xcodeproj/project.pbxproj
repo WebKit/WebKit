@@ -202,7 +202,6 @@
 		DD20DE1627BC90D80093D175 /* MobileGestaltSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE1727BC90D80093D175 /* OpenGLESSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE1827BC90D80093D175 /* QuickLookSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD20DE1927BC90D80093D175 /* SQLite3SPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE1A27BC90D80093D175 /* SystemPreviewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31308B1320A21705003FB929 /* SystemPreviewSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE1B27BC90D80093D175 /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DE1C27BC90D80093D175 /* CoreUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCEE4F420D871930047B097 /* CoreUISPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -283,6 +282,7 @@
 		E34F26F62846D0D90076E549 /* PowerLogSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E34F26F52846B7550076E549 /* PowerLogSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E57B44B529AB45F4006069DE /* VisionSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = E57B44B329AB45F4006069DE /* VisionSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E57B44B729AB462E006069DE /* VisionSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = E57B44B429AB45F4006069DE /* VisionSoftLink.mm */; };
+		EB3FE8E12A5DB94A00A20986 /* SQLite3SPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F410F1552ACA2EBA00A79859 /* LinkPresentationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F43E89342AEDB71C00097D2D /* CoreTelephonySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F43E89372AEDB8C800097D2D /* CoreTelephonySoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F43E89362AEDB8C800097D2D /* CoreTelephonySoftLink.mm */; };
@@ -455,7 +455,6 @@
 		0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileGestaltSPI.h; sourceTree = "<group>"; };
 		0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLESSPI.h; sourceTree = "<group>"; };
 		0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSPI.h; sourceTree = "<group>"; };
-		0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
 		0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		0C5FFF0B1F78D98F009EFF1A /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSPI.h; sourceTree = "<group>"; };
@@ -673,6 +672,7 @@
 		E57B44B429AB45F4006069DE /* VisionSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VisionSoftLink.mm; sourceTree = "<group>"; };
 		E5D45D112106A07400D2B738 /* NSColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorWellSPI.h; sourceTree = "<group>"; };
 		E5D45D132106A18700D2B738 /* NSPopoverColorWellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSPopoverColorWellSPI.h; sourceTree = "<group>"; };
+		EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
 		EB8A8DC12509E87E00D1BF90 /* MediaToolboxSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaToolboxSPI.h; sourceTree = "<group>"; };
 		F410F1542ACA2EBA00A79859 /* LinkPresentationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkPresentationSPI.h; sourceTree = "<group>"; };
 		F43E89332AEDB71C00097D2D /* CoreTelephonySPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTelephonySPI.h; sourceTree = "<group>"; };
@@ -834,6 +834,7 @@
 				570AB8F020AE2E8D00B8BE87 /* SecKeyProxySPI.h */,
 				0C2DA13C1F3BEB4900DBC317 /* ServersSPI.h */,
 				93B38EC125821D2200198E63 /* SpeechSPI.h */,
+				EB3FE8E02A5DB94A00A20986 /* SQLite3SPI.h */,
 				4996C0F22717642B002C125D /* TCCSPI.h */,
 				F44C007D29A06BC200211F33 /* TranslationUIServicesSPI.h */,
 				0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */,
@@ -861,7 +862,6 @@
 				0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */,
 				0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */,
 				41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */,
-				0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */,
 				31308B1320A21705003FB929 /* SystemPreviewSPI.h */,
 				0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */,
 			);
@@ -1455,7 +1455,7 @@
 				DD20DE4B27BC90D80093D175 /* Sound.h in Headers */,
 				DD20DD2427BC90D60093D175 /* SpeechSoftLink.h in Headers */,
 				DD20DE0A27BC90D80093D175 /* SpeechSPI.h in Headers */,
-				DD20DE1927BC90D80093D175 /* SQLite3SPI.h in Headers */,
+				EB3FE8E12A5DB94A00A20986 /* SQLite3SPI.h in Headers */,
 				DD20DE1A27BC90D80093D175 /* SystemPreviewSPI.h in Headers */,
 				DD20DE4127BC90D80093D175 /* SystemPreviewSPI.h in Headers */,
 				DD20DE4C27BC90D80093D175 /* SystemSleepListener.h in Headers */,

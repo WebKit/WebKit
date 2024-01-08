@@ -98,6 +98,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/PassKitSPI.h
     spi/cocoa/QuartzCoreSPI.h
     spi/cocoa/RevealSPI.h
+    spi/cocoa/SQLite3SPI.h
     spi/cocoa/SceneKitSPI.h
     spi/cocoa/SecKeyProxySPI.h
     spi/cocoa/ServersSPI.h

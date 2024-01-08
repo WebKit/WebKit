@@ -38,8 +38,8 @@
 #include <sqlite3.h>
 #include <wtf/FileSystem.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include <pal/spi/ios/SQLite3SPI.h>
+#if PLATFORM(COCOA)
+#include <pal/spi/cocoa/SQLite3SPI.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -118,7 +118,7 @@ bool SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String&
     return allMoved;
 }
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
 bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
 {
     return sqlite3_file_control(database, 0, SQLITE_TRUNCATE_DATABASE, 0) == SQLITE_OK;
