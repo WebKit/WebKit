@@ -14,6 +14,7 @@
 #include <new>
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
+#include "test/acm_random.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
@@ -177,6 +178,37 @@ TEST(EncodeAPI, HugeFramerateVp8) {
 
   vpx_img_free(image);
   ASSERT_EQ(vpx_codec_destroy(&enc), VPX_CODEC_OK);
+}
+
+// A test that reproduces https://crbug.com/webm/1831.
+TEST(EncodeAPI, RandomPixelsVp8) {
+  // Initialize libvpx encoder
+  vpx_codec_iface_t *const iface = vpx_codec_vp8_cx();
+  vpx_codec_enc_cfg_t cfg;
+  ASSERT_EQ(vpx_codec_enc_config_default(iface, &cfg, 0), VPX_CODEC_OK);
+
+  cfg.rc_target_bitrate = 2000;
+  cfg.g_w = 1280;
+  cfg.g_h = 720;
+
+  vpx_codec_ctx_t enc;
+  ASSERT_EQ(vpx_codec_enc_init(&enc, iface, &cfg, 0), VPX_CODEC_OK);
+
+  // Generate random frame data and encode
+  uint8_t img[1280 * 720 * 3 / 2];
+  libvpx_test::ACMRandom rng;
+  for (size_t i = 0; i < sizeof(img); ++i) {
+    img[i] = rng.Rand8();
+  }
+  vpx_image_t img_wrapper;
+  ASSERT_EQ(
+      vpx_img_wrap(&img_wrapper, VPX_IMG_FMT_I420, cfg.g_w, cfg.g_h, 1, img),
+      &img_wrapper);
+  ASSERT_EQ(vpx_codec_encode(&enc, &img_wrapper, 0, 1, 0, VPX_DL_BEST_QUALITY),
+            VPX_CODEC_OK);
+
+  // Destroy libvpx encoder
+  vpx_codec_destroy(&enc);
 }
 #endif
 
