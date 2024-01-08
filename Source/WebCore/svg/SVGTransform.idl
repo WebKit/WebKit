@@ -19,6 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://svgwg.org/svg2-draft/coords.html#InterfaceSVGTransform
+
 [
     ConstantsScope=SVGTransformValue,
     Exposed=Window
@@ -33,14 +35,14 @@
     const unsigned short SVG_TRANSFORM_SKEWY = 6;
 
     readonly attribute unsigned short type;
-    readonly attribute SVGMatrix matrix;
-    readonly attribute unrestricted float angle;
+    [SameObject] readonly attribute SVGMatrix matrix;
+    readonly attribute float angle;
 
-    undefined setMatrix(optional DOMMatrix2DInit matrix);
-    undefined setTranslate(unrestricted float tx, unrestricted float ty);
-    undefined setScale(unrestricted float sx, unrestricted float sy);
-    undefined setRotate(unrestricted float angle, unrestricted float cx, unrestricted float cy);
-    undefined setSkewX(unrestricted float angle);
-    undefined setSkewY(unrestricted float angle);
+    undefined setMatrix(optional DOMMatrix2DInit matrix = {});
+    undefined setTranslate(float tx, float ty);
+    undefined setScale(float sx, float sy);
+    undefined setRotate(float angle, float cx, float cy);
+    undefined setSkewX(float angle);
+    undefined setSkewY(float angle);
 };
 
