@@ -155,8 +155,8 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
     if (parentWorkerGlobalScope) {
         parentWorkerGlobalScope->thread().addChildThread(thread);
-        if (parentWorkerGlobalScope->thread().workerClient())
-            thread->setWorkerClient(parentWorkerGlobalScope->thread().workerClient()->clone(thread.get()));
+        if (auto* parentWorkerClient = parentWorkerGlobalScope->workerClient())
+            thread->setWorkerClient(parentWorkerClient->createNestedWorkerClient(thread.get()).moveToUniquePtr());
     } else if (is<Document>(m_scriptExecutionContext.get())) {
         auto& document = downcast<Document>(*m_scriptExecutionContext);
         if (auto* page = document.page()) {

@@ -1012,7 +1012,7 @@ RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<Seriali
 
 std::unique_ptr<WebCore::WorkerClient> WebChromeClient::createWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
-    return makeUnique<WebWorkerClient>(protectedPage().ptr(), dispatcher);
+    return WebWorkerClient::create(protectedPage(), dispatcher).moveToUniquePtr();
 }
 
 #if ENABLE(WEBGL)

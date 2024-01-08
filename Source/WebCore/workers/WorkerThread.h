@@ -112,8 +112,7 @@ public:
 
     void clearProxies() override;
 
-    void setWorkerClient(std::unique_ptr<WorkerClient>&& client) { m_workerClient = WTFMove(client); }
-    WorkerClient* workerClient() { return m_workerClient.get(); }
+    void setWorkerClient(std::unique_ptr<WorkerClient> client) { m_workerClient = WTFMove(client); }
 protected:
     WorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerBadgeProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
 

@@ -48,22 +48,9 @@ public:
     // happen on the worker.
     // Any details needed from the page must be copied at this
     // point, but can't hold references to any main-thread objects.
-    WebWorkerClient(WebPage*, SerialFunctionDispatcher&);
+    static UniqueRef<WebWorkerClient> create(WebPage&, SerialFunctionDispatcher&);
 
-    // Used for constructing clients for nested workers. Created on the
-    // worker thread of the outer worker, and then transferred to the
-    // nested worker.
-#if ENABLE(GPU_PROCESS)
-#if ENABLE(VIDEO)
-    WebWorkerClient(Ref<IPC::Connection>, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
-#else
-    WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&);
-#endif
-#else
-    WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID&);
-#endif
-
-    std::unique_ptr<WorkerClient> clone(SerialFunctionDispatcher&) final;
+    UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) final;
 
     WebCore::PlatformDisplayID displayID() const final;
 
@@ -78,20 +65,30 @@ public:
 #endif
 
 private:
+    WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID
+#if ENABLE(GPU_PROCESS)
+        , Ref<IPC::Connection>, WebPageProxyIdentifier, WebCore::PageIdentifier
+#if ENABLE(VIDEO)
+        , Ref<RemoteVideoFrameObjectHeapProxy>
+#endif
+#endif
+        ); //  NOLINT
+
 #if ENABLE(GPU_PROCESS)
     RemoteRenderingBackendProxy& ensureRenderingBackend() const;
 #endif
 
     SerialFunctionDispatcher& m_dispatcher;
+    const WebCore::PlatformDisplayID m_displayID;
 #if ENABLE(GPU_PROCESS)
     Ref<IPC::Connection> m_connection;
     mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
-    RemoteRenderingBackendCreationParameters m_creationParameters;
+    const WebPageProxyIdentifier m_pageProxyID;
+    const WebCore::PageIdentifier m_pageID;
 #if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
 #endif
 #endif
-    WebCore::PlatformDisplayID m_displayID;
 };
 
 } // namespace WebKit
