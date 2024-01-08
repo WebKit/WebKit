@@ -22,19 +22,10 @@
         android:key="@string/pref_key_angle_flags_category"
         android:title="@string/angle_general_title">
 
-        <!--TODO : Issue 2989 : boulder-graphics-team@google.com
-        Enable the switch once Android can boot with ANGLE enabled for everything-->
-        <androidx.preference.SwitchPreference
-            android:key="@string/pref_key_all_angle"
-            android:title="@string/use_angle_for_all_apps"
-            android:summary="@string/global_settings_driver_all_angle"
-            android:defaultValue="false"
-            android:enabled="false"/>
-
         <androidx.preference.SwitchPreference
             android:key="@string/pref_key_angle_in_use_dialog"
-            android:title="@string/show_angle_in_use_dialog_box"
-            android:summary="@string/global_settings_show_angle_in_use_dialog_box"
+            android:title="@string/show_angle_in_use_toast_title"
+            android:summary="@string/show_angle_in_use_toast_summary"
             android:defaultValue="false"
             android:enabled="true"/>
     </PreferenceCategory>

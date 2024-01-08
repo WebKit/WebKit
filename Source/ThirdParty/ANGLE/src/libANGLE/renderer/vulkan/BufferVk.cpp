@@ -511,9 +511,7 @@ angle::Result BufferVk::allocStagingBuffer(ContextVk *contextVk,
 
     if (mStagingBuffer.valid())
     {
-        if (size <= mStagingBuffer.getSize() &&
-            IsCoherent(coherency) == mStagingBuffer.isCoherent() &&
-            IsCached(coherency) == mStagingBuffer.isCached() &&
+        if (size <= mStagingBuffer.getSize() && IsCached(coherency) == mStagingBuffer.isCached() &&
             contextVk->getRenderer()->hasResourceUseFinished(mStagingBuffer.getResourceUse()))
         {
             // If size is big enough and it is idle, then just reuse the existing staging buffer
@@ -558,7 +556,9 @@ angle::Result BufferVk::handleDeviceLocalBufferMap(ContextVk *contextVk,
                                                    VkDeviceSize size,
                                                    uint8_t **mapPtr)
 {
-    ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedCoherent, size, mapPtr));
+    ANGLE_TRY(
+        allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedPreferCoherent, size, mapPtr));
+    ANGLE_TRY(mStagingBuffer.invalidate(contextVk->getRenderer()));
 
     // Copy data from device local buffer to host visible staging buffer.
     VkBufferCopy copyRegion = {mBuffer.getOffset() + offset, mStagingBuffer.getOffset(), size};
@@ -893,6 +893,12 @@ angle::Result BufferVk::directUpdate(ContextVk *contextVk,
 
     memcpy(dstPointer, srcPointer, size);
 
+    // External memory may end up with noncoherent
+    if (!mBuffer.isCoherent())
+    {
+        ANGLE_TRY(mBuffer.flush(renderer, offset, size));
+    }
+
     // Unmap the destination and source buffers if applicable.
     //
     // If the buffer has dynamic usage then the intent is frequent client side updates to the
@@ -902,7 +908,6 @@ angle::Result BufferVk::directUpdate(ContextVk *contextVk,
     {
         mBuffer.unmap(renderer);
     }
-    ASSERT(mBuffer.isCoherent());
 
     if (srcPointerMapped != nullptr)
     {

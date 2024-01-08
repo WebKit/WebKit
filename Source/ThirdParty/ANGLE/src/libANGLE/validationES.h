@@ -461,7 +461,8 @@ bool ValidateDrawArraysInstancedBase(const Context *context,
                                      PrimitiveMode mode,
                                      GLint first,
                                      GLsizei count,
-                                     GLsizei primcount);
+                                     GLsizei primcount,
+                                     GLuint baseinstance);
 bool ValidateDrawArraysInstancedANGLE(const Context *context,
                                       angle::EntryPoint entryPoint,
                                       PrimitiveMode mode,
@@ -481,7 +482,8 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
                                        GLsizei count,
                                        DrawElementsType type,
                                        const void *indices,
-                                       GLsizei primcount);
+                                       GLsizei primcount,
+                                       GLuint baseinstance);
 bool ValidateDrawElementsInstancedANGLE(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         PrimitiveMode mode,
@@ -985,7 +987,11 @@ ANGLE_INLINE bool ValidateDrawAttribs(const Context *context,
                                       angle::EntryPoint entryPoint,
                                       int64_t maxVertex)
 {
-    if (maxVertex > context->getStateCache().getNonInstancedVertexElementLimit())
+    // For non-instanced attributes, the maximum vertex must be accessible in the attribute buffers.
+    // For instanced attributes, in non-instanced draw calls only attribute 0 is accessed.  In
+    // instanced draw calls, the instance limit is checked in ValidateDrawInstancedAttribs.
+    if (maxVertex >= context->getStateCache().getNonInstancedVertexElementLimit() ||
+        context->getStateCache().getInstancedVertexElementLimit() < 1)
     {
         RecordDrawAttribsError(context, entryPoint);
         return false;
@@ -1022,14 +1028,19 @@ ANGLE_INLINE bool ValidateDrawArraysAttribs(const Context *context,
 
 ANGLE_INLINE bool ValidateDrawInstancedAttribs(const Context *context,
                                                angle::EntryPoint entryPoint,
-                                               GLint primcount)
+                                               GLint primcount,
+                                               GLuint baseinstance)
 {
     if (!context->isBufferAccessValidationEnabled())
     {
         return true;
     }
 
-    if ((primcount - 1) > context->getStateCache().getInstancedVertexElementLimit())
+    // Validate that the buffers bound for the attributes can hold enough vertices for this
+    // instanced draw.  For attributes with a divisor of 0, ValidateDrawAttribs already checks this.
+    // Thus, the following only checks attributes with a non-zero divisor (i.e. "instanced").
+    const GLint64 limit = context->getStateCache().getInstancedVertexElementLimit();
+    if (baseinstance >= limit || primcount > limit - baseinstance)
     {
         RecordDrawAttribsError(context, entryPoint);
         return false;
@@ -1231,6 +1242,8 @@ ANGLE_INLINE bool ValidateDrawElementsCommon(const Context *context,
     if (context->isBufferAccessValidationEnabled() && primcount > 0)
     {
         // Use the parameter buffer to retrieve and cache the index range.
+        // TODO: this calculation should take basevertex into account for
+        // glDrawElementsInstancedBaseVertexBaseInstanceEXT.  http://anglebug.com/8448
         IndexRange indexRange{IndexRange::Undefined()};
         ANGLE_VALIDATION_TRY(vao->getIndexRange(context, type, count, indices, &indexRange));
 

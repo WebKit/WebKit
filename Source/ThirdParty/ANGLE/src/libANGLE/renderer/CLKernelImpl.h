@@ -25,7 +25,7 @@ class CLKernelImpl : angle::NonCopyable
         WorkGroupInfo();
         ~WorkGroupInfo();
 
-        WorkGroupInfo(const WorkGroupInfo &) = delete;
+        WorkGroupInfo(const WorkGroupInfo &)            = delete;
         WorkGroupInfo &operator=(const WorkGroupInfo &) = delete;
 
         WorkGroupInfo(WorkGroupInfo &&);
@@ -44,7 +44,7 @@ class CLKernelImpl : angle::NonCopyable
         ArgInfo();
         ~ArgInfo();
 
-        ArgInfo(const ArgInfo &) = delete;
+        ArgInfo(const ArgInfo &)            = delete;
         ArgInfo &operator=(const ArgInfo &) = delete;
 
         ArgInfo(ArgInfo &&);
@@ -64,7 +64,7 @@ class CLKernelImpl : angle::NonCopyable
         Info();
         ~Info();
 
-        Info(const Info &) = delete;
+        Info(const Info &)            = delete;
         Info &operator=(const Info &) = delete;
 
         Info(Info &&);
@@ -83,9 +83,9 @@ class CLKernelImpl : angle::NonCopyable
     CLKernelImpl(const cl::Kernel &kernel);
     virtual ~CLKernelImpl();
 
-    virtual cl_int setArg(cl_uint argIndex, size_t argSize, const void *argValue) = 0;
+    virtual angle::Result setArg(cl_uint argIndex, size_t argSize, const void *argValue) = 0;
 
-    virtual Info createInfo(cl_int &errorCode) const = 0;
+    virtual angle::Result createInfo(Info *infoOut) const = 0;
 
   protected:
     const cl::Kernel &mKernel;

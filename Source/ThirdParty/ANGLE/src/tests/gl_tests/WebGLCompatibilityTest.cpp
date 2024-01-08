@@ -6390,8 +6390,369 @@ TEST_P(WebGL2CompatibilityTest, DrawWithZeroSizedBuffer)
     glVertexAttribDivisor(posLocation, 1);
     glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 9,
                           reinterpret_cast<void *>(0x41424344));
+    ASSERT_GL_NO_ERROR();
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    // This should be caught as an invalid draw
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that draw calls exceeding the vertex attribute range are caught in the presence of both
+// instanced and non-instanced attributes.
+TEST_P(WebGL2CompatibilityTest, DrawWithInstancedAndNonInstancedAttributes)
+{
+    if (IsGLExtensionRequestable("GL_ANGLE_base_vertex_base_instance"))
+    {
+        glRequestExtensionANGLE("GL_ANGLE_base_vertex_base_instance");
+    }
+
+    const bool hasBaseInstance = IsGLExtensionEnabled("GL_ANGLE_base_vertex_base_instance");
+
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 attr1;
+in vec2 attr2;
+in vec4 attr3;
+in vec3 attr4;
+
+out vec4 v1;
+out vec2 v2;
+out vec4 v3;
+out vec3 v4;
+
+void main()
+{
+    v1 = attr1;
+    v2 = attr2;
+    v3 = attr3;
+    v4 = attr4;
+    gl_Position = vec4(0, 0, 0, 0);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+
+in vec4 v1;
+in vec2 v2;
+in vec4 v3;
+in vec3 v4;
+
+out vec4 color;
+
+void main()
+{
+    color = v1 + v2.xyxy + v3 + v4.xyxz;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    const GLint attrLocations[4] = {
+        glGetAttribLocation(program, "attr1"),
+        glGetAttribLocation(program, "attr2"),
+        glGetAttribLocation(program, "attr3"),
+        glGetAttribLocation(program, "attr4"),
+    };
+
+    GLBuffer buffers[4];
+
+    // Set up all the buffers as such:
+    //
+    // Buffer 1: 64 bytes + (offset) 124
+    // Buffer 2: 16 bytes + (offset) 212
+    // Buffer 3: 128 bytes + (offset) 76
+    // Buffer 4: 96 bytes + (offset) 52
+    constexpr GLsizei kBufferSizes[4] = {
+        64,
+        16,
+        128,
+        96,
+    };
+    constexpr GLsizei kBufferOffsets[4] = {
+        124,
+        212,
+        76,
+        52,
+    };
+    // Attribute component count corresponding to the shader
+    constexpr GLint kAttrComponents[4] = {
+        4,
+        2,
+        4,
+        3,
+    };
+    // Attribute types
+    constexpr GLenum kAttrTypes[4] = {
+        GL_SHORT,
+        GL_BYTE,
+        GL_FLOAT,
+        GL_UNSIGNED_SHORT,
+    };
+    // Attribute strides.
+    //
+    // - Buffer 1 has 64 bytes, each attribute is 8 bytes.  With a stride of 12, 5 vertices can be
+    //   drawn from this buffer.
+    // - Buffer 2 has 16 bytes, each attribute is 2 bytes.  With a stride of 0, 8 vertices can be
+    //   drawn from this buffer.
+    // - Buffer 3 has 128 bytes, each attribute is 16 bytes.  With a stride of 20, 6 vertices can be
+    //   drawn from this buffer.
+    // - Buffer 4 has 96 bytes, each attribute is 6 bytes.  With a stride of 8, 12 vertices can be
+    //   drawn from this buffer.
+    constexpr GLsizei kAttrStrides[4] = {
+        12,
+        0,
+        20,
+        8,
+    };
+
+    for (int i = 0; i < 4; ++i)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
+        glBufferData(GL_ARRAY_BUFFER, kBufferSizes[i] + kBufferOffsets[i], nullptr, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(attrLocations[i]);
+        glVertexAttribPointer(attrLocations[i], kAttrComponents[i], kAttrTypes[i], GL_TRUE,
+                              kAttrStrides[i], reinterpret_cast<void *>(kBufferOffsets[i]));
+    }
+    ASSERT_GL_NO_ERROR();
+
+    // Without any attribute divisors, the maximum vertex attribute allowed is min(5, 8, 6, 12) with
+    // non-instanced draws.
+    glDrawArrays(GL_POINTS, 0, 4);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 5);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArrays(GL_POINTS, 1, 5);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArrays(GL_POINTS, 1, 4);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 4, 1);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 4, 2);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArrays(GL_POINTS, 5, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArrays(GL_POINTS, 200, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // Same with instanced draws.
+    glDrawArraysInstanced(GL_POINTS, 0, 4, 10);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 0, 5, 1);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 0, 6, 5);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArraysInstanced(GL_POINTS, 1, 5, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArraysInstanced(GL_POINTS, 1, 4, 22);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 4, 1, 1240);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 4, 2, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArraysInstanced(GL_POINTS, 5, 1, 6);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArraysInstanced(GL_POINTS, 200, 1, 100);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // With a divisor on attribute 1, that attribute can reference up to vertex #5 (as first
+    // attribute), while the rest are limited to min(8, 6, 12) as their maximum vertex attribute.
+    glVertexAttribDivisor(attrLocations[0], 5);
+
+    glDrawArrays(GL_POINTS, 0, 5);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 6);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 7);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following passes because attribute 1 only accesses index 0 regardless of first
+    glDrawArrays(GL_POINTS, 4, 2);
+    EXPECT_GL_NO_ERROR();
+    // The following fails because attribute 3 accesses vertices [4, 7)
+    glDrawArrays(GL_POINTS, 4, 3);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArrays(GL_POINTS, 5, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // With instanced rendering, the same limits as above hold.  Additionally, attribute 1 does no
+    // longer access only a single vertex, but it accesses instanceCount/5 (5 being the divisor)
+    // elements.
+    // The following passes because attribute 1 accesses vertices [0, 4)
+    glDrawArraysInstanced(GL_POINTS, 0, 5, 20);
+    EXPECT_GL_NO_ERROR();
+    // The following passes because attribute 1 accesses vertices [0, 5)
+    glDrawArraysInstanced(GL_POINTS, 0, 6, 25);
+    EXPECT_GL_NO_ERROR();
+    // The following fails because of the limit on non-instanced attributes
+    glDrawArraysInstanced(GL_POINTS, 0, 7, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following fails because attribute 1 accesses vertices [0, 6)
+    glDrawArraysInstanced(GL_POINTS, 0, 4, 26);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following passes because attribute 1 accesses vertices [0, 2).  Recall that first vertex
+    // is ignored for instanced attributes.
+    glDrawArraysInstanced(GL_POINTS, 3, 3, 9);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 3, 3, 10);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 3, 3, 11);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 5, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    if (hasBaseInstance)
+    {
+        // The following passes because attribute 1 accesses vertices [0, 3)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 15, 0);
+        EXPECT_GL_NO_ERROR();
+        // The following passes because attribute 1 accesses vertices [1, 4)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 15, 5);
+        EXPECT_GL_NO_ERROR();
+        // The following passes because attribute 1 accesses vertices [0, 4)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 17, 3);
+        EXPECT_GL_NO_ERROR();
+        // The following passes because attribute 1 accesses vertices [3, 5)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 10, 15);
+        EXPECT_GL_NO_ERROR();
+        // The following fails because attribute 1 accesses vertices [3, 6)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 11, 15);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        // The following fails because attribute 1 accesses vertex 6
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 1, 25);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    // With a divisor on attribute 3, that attribute can reference up to vertex #6 (as first
+    // attribute), while the rest are limited to min(8, 12) as their maximum vertex attribute.
+    glVertexAttribDivisor(attrLocations[2], 3);
+
+    glDrawArrays(GL_POINTS, 0, 7);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 8);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 9);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following passes because attribute 1 and 3 only access index 0 regardless of first and
+    // count
+    glDrawArrays(GL_POINTS, 4, 4);
+    EXPECT_GL_NO_ERROR();
+    // The following fails because attribute 2 accesses vertices [4, 9)
+    glDrawArrays(GL_POINTS, 4, 5);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glDrawArrays(GL_POINTS, 5, 1);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 6, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // With instanced rendering, the same limits as above hold.  Additionally, attribute 1 accesses
+    // instanceCount/5 and attribute 3 accesses instanceCount/3 elements.
+    // The following passes because attribute 1 accesses vertices [0, 4), and attribute 3 accesses
+    // vertices [0, 6)
+    glDrawArraysInstanced(GL_POINTS, 0, 5, 18);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 0, 8, 18);
+    EXPECT_GL_NO_ERROR();
+    // The following fails because attribute 3 accesses vertices [0, 7)
+    glDrawArraysInstanced(GL_POINTS, 0, 5, 19);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following fails because of the limit on non-instanced attributes
+    glDrawArraysInstanced(GL_POINTS, 0, 9, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following passes because attribute 1 accesses vertices [0, 3), and attribute 3 accesses
+    // vertices [0, 4)
+    glDrawArraysInstanced(GL_POINTS, 2, 4, 11);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 2, 4, 12);
+    EXPECT_GL_NO_ERROR();
+    // The following passes because attribute 3 accesses vertices [0, 5).  Attribute 1 still
+    // accesses within limits of [0, 3)
+    glDrawArraysInstanced(GL_POINTS, 2, 4, 13);
+    EXPECT_GL_NO_ERROR();
+    glDrawArraysInstanced(GL_POINTS, 5, 1, 1);
+    EXPECT_GL_NO_ERROR();
+
+    if (hasBaseInstance)
+    {
+        // The following passes because attribute 1 accesses vertices [0, 4), and attribute 3
+        // accesses vertices [0, 6)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 18, 0);
+        EXPECT_GL_NO_ERROR();
+        // The following fails because attribute 3 accesses vertices [0, 7)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 19, 0);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        // The following fails because attribute 3 accesses vertices [1, 7)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 18, 1);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        // The following passes because attribute 3 accesses vertices [3, 6)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 7, 11);
+        EXPECT_GL_NO_ERROR();
+        // The following fails because attribute 3 accesses vertices [3, 7)
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 2, 4, 8, 11);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    // With a divisor on attribute 2, that attribute can reference up to vertex #8 (as first
+    // attribute), and with a divisor on attribute 4, it can reference up to vertex #12.  There is
+    // no particular limit on the maxmium vertex attribute when not instanced.
+    glVertexAttribDivisor(attrLocations[1], 3);
+    glVertexAttribDivisor(attrLocations[3], 1);
+
+    // The following passes because all attributes only access index 0
+    glDrawArrays(GL_POINTS, 0, 123);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 4, 500);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 5, 1);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 231, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // With instanced rendering, the same limits as above hold.
+    //
+    // Attribute 1 accesses instanceCount/5 elements (note: buffer fits 5 vertices)
+    // Attribute 2 accesses instanceCount/3 elements (note: buffer fits 8 vertices)
+    // Attribute 3 accesses instanceCount/3 elements (note: buffer fits 6 vertices)
+    // Attribute 4 accesses instanceCount/1 elements (note: buffer fits 12 vertices)
+    //
+    // Only instances [0, 12) are valid.
+    glDrawArraysInstanced(GL_POINTS, 0, 123, 1);
+    EXPECT_GL_NO_ERROR();
+    // The following passes because attributes accessed are:
+    // [0, 3), [0, 4), [0, 4), [0, 12)
+    glDrawArraysInstanced(GL_POINTS, 0, 123, 12);
+    EXPECT_GL_NO_ERROR();
+    // The following fails because attributes accessed are:
+    // [0, 3), [0, 5), [0, 5), [0, 13)
+    //                              \-- overflow
+    glDrawArraysInstanced(GL_POINTS, 0, 123, 13);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following passes because attributes accessed are:
+    // [0, 2), [0, 3), [0, 3), [0, 9)
+    glDrawArraysInstanced(GL_POINTS, 3, 359, 9);
+    EXPECT_GL_NO_ERROR();
+    // The following fails because attributes accessed are:
+    // [0, 3), [0, 5), [0, 5), [0, 13)
+    //                              \-- overflow
+    glDrawArraysInstanced(GL_POINTS, 3, 359, 13);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // The following passes because attributes accessed are:
+    // [0, 1), [0, 2), [0, 2), [0, 5)
+    glDrawArraysInstanced(GL_POINTS, 120, 359, 5);
+    EXPECT_GL_NO_ERROR();
+
+    if (hasBaseInstance)
+    {
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 120, 359, 12, 0);
+        EXPECT_GL_NO_ERROR();
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 120, 359, 11, 1);
+        EXPECT_GL_NO_ERROR();
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 120, 359, 1, 11);
+        EXPECT_GL_NO_ERROR();
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 120, 359, 2, 11);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+        glDrawArraysInstancedBaseInstanceANGLE(GL_POINTS, 120, 359, 1, 14);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

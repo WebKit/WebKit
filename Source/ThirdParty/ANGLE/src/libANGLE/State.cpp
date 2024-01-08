@@ -1377,10 +1377,10 @@ void PrivateState::setEnableFeature(GLenum feature, bool enabled)
             mGLES1State.mAlphaTestEnabled = enabled;
             break;
         case GL_TEXTURE_2D:
-            mGLES1State.mTexUnitEnables[mActiveSampler].set(TextureType::_2D, enabled);
+            mGLES1State.setTextureEnabled(mActiveSampler, TextureType::_2D, enabled);
             break;
         case GL_TEXTURE_CUBE_MAP:
-            mGLES1State.mTexUnitEnables[mActiveSampler].set(TextureType::CubeMap, enabled);
+            mGLES1State.setTextureEnabled(mActiveSampler, TextureType::CubeMap, enabled);
             break;
         case GL_LIGHTING:
             mGLES1State.mLightingEnabled = enabled;

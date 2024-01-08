@@ -12,26 +12,20 @@ namespace cl
 
 cl_mem Buffer::createSubBuffer(MemFlags flags,
                                cl_buffer_create_type createType,
-                               const void *createInfo,
-                               cl_int &errorCode)
+                               const void *createInfo)
 {
     const cl_buffer_region &region = *static_cast<const cl_buffer_region *>(createInfo);
-    return Object::Create<Buffer>(errorCode, *this, flags, region.origin, region.size);
+    return Object::Create<Buffer>(*this, flags, region.origin, region.size);
 }
 
 Buffer::~Buffer() = default;
 
-Buffer::Buffer(Context &context,
-               PropArray &&properties,
-               MemFlags flags,
-               size_t size,
-               void *hostPtr,
-               cl_int &errorCode)
-    : Memory(*this, context, std::move(properties), flags, size, hostPtr, errorCode)
+Buffer::Buffer(Context &context, PropArray &&properties, MemFlags flags, size_t size, void *hostPtr)
+    : Memory(*this, context, std::move(properties), flags, size, hostPtr)
 {}
 
-Buffer::Buffer(Buffer &parent, MemFlags flags, size_t offset, size_t size, cl_int &errorCode)
-    : Memory(*this, parent, flags, offset, size, errorCode)
+Buffer::Buffer(Buffer &parent, MemFlags flags, size_t offset, size_t size)
+    : Memory(*this, parent, flags, offset, size)
 {}
 
 }  // namespace cl

@@ -21,12 +21,10 @@ class CLMemoryCL : public CLMemoryImpl
 
     cl_mem getNative() const;
 
-    size_t getSize(cl_int &errorCode) const override;
-
-    CLMemoryImpl::Ptr createSubBuffer(const cl::Buffer &buffer,
-                                      cl::MemFlags flags,
-                                      size_t size,
-                                      cl_int &errorCode) override;
+    angle::Result createSubBuffer(const cl::Buffer &buffer,
+                                  cl::MemFlags flags,
+                                  size_t size,
+                                  CLMemoryImpl::Ptr *subBufferOut) override;
 
   private:
     const cl_mem mNative;

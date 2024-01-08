@@ -1,25 +1,14 @@
 {
-   "Rules":[
+    "rules":[
       {
-         "Rule":"Default Rule (i.e. use native driver)",
-         "UseANGLE":false
+          "description": "Applications in this list will use ANGLE",
+          "choice": "angle",
+          "apps": []
       },
       {
-         "Rule":"Supported application(s) (e.g. Maps on Google devices)",
-         "UseANGLE":true,
-         "Applications":[
-            {
-               "AppName":"com.android.angle"
-            },
-            {
-               "AppName":"com.google.android.angle"
-            }
-         ],
-         "Devices":[
-            {
-               "Manufacturer":"Google"
-            }
-         ]
+          "description": "Applications in this list will not use ANGLE",
+          "choice": "native",
+          "apps": []
       }
    ]
 }

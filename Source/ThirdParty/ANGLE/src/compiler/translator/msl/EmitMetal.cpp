@@ -1411,6 +1411,15 @@ void GenMetalTraverser::emitStructDeclaration(const TType &type)
 
     if (hasAttributeIndices)
     {
+        // When attribute aliasing is supported, external attribute struct is filled post-link.
+        if (mCompiler.supportsAttributeAliasing())
+        {
+            mtl::getTranslatorMetalReflection(&mCompiler)->hasAttributeAliasing = true;
+            mOut << "@@Attrib-Bindings@@\n";
+            emitCloseBrace();
+            return;
+        }
+
         fieldToAttributeIndex =
             BuildExternalAttributeIndexMap(mCompiler, mPipelineStructs.vertexIn);
     }

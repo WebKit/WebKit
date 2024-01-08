@@ -6141,6 +6141,7 @@ void Context::bindBufferRange(BufferBinding target,
     if (target == BufferBinding::Uniform)
     {
         mUniformBufferObserverBindings[index].bind(object);
+        mState.onUniformBufferStateChange(index);
         mStateCache.onUniformBufferStateChange(this);
     }
     else if (target == BufferBinding::AtomicCounter)
@@ -9382,6 +9383,12 @@ void Context::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMess
                     ANGLE_CONTEXT_TRY(mState.installProgramPipelineExecutable(this));
                     mStateCache.onProgramExecutableChange(this);
                     break;
+                case angle::SubjectMessage::ProgramUniformBlockBindingUpdated:
+                    // A heavier hammer than necessary, but ensures the UBOs are reprocessed after
+                    // the binding change.  Applications should not call glUniformBlockBinding other
+                    // than right after link.
+                    mState.mDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
+                    break;
                 default:
                     UNREACHABLE();
                     break;
@@ -10002,13 +10009,13 @@ GLenum ErrorSet::getGraphicsResetStatus(rx::ContextImpl *contextImpl)
 
 // StateCache implementation.
 StateCache::StateCache()
-    : mCachedHasAnyEnabledClientAttrib(false),
-      mCachedNonInstancedVertexElementLimit(0),
+    : mCachedNonInstancedVertexElementLimit(0),
       mCachedInstancedVertexElementLimit(0),
       mCachedBasicDrawStatesErrorString(kInvalidPointer),
       mCachedBasicDrawStatesErrorCode(GL_NO_ERROR),
       mCachedBasicDrawElementsError(kInvalidPointer),
       mCachedProgramPipelineError(kInvalidPointer),
+      mCachedHasAnyEnabledClientAttrib(false),
       mCachedTransformFeedbackActiveUnpaused(false),
       mCachedCanDraw(false)
 {
@@ -10096,8 +10103,14 @@ void StateCache::updateVertexElementLimitsImpl(Context *context)
         GLint64 limit = attrib.getCachedElementLimit();
         if (binding.getDivisor() > 0)
         {
+            // For instanced draw calls, |divisor| times this limit is the limit for instance count
+            // (because every |divisor| instances accesses the same attribute)
+            angle::CheckedNumeric<GLint64> checkedLimit = limit;
+            checkedLimit *= binding.getDivisor();
+
             mCachedInstancedVertexElementLimit =
-                std::min(mCachedInstancedVertexElementLimit, limit);
+                std::min<GLint64>(mCachedInstancedVertexElementLimit,
+                                  checkedLimit.ValueOrDefault(VertexAttribute::kIntegerOverflow));
         }
         else
         {
@@ -10207,6 +10220,11 @@ void StateCache::onVertexArrayBufferStateChange(Context *context)
 }
 
 void StateCache::onGLES1ClientStateChange(Context *context)
+{
+    updateActiveAttribsMask(context);
+}
+
+void StateCache::onGLES1TextureStateChange(Context *context)
 {
     updateActiveAttribsMask(context);
 }

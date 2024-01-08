@@ -30,60 +30,61 @@ class CLContextCL : public CLContextImpl
     bool hasSampler(cl_sampler sampler) const;
     bool hasDeviceQueue(cl_command_queue queue) const;
 
-    cl::DevicePtrs getDevices(cl_int &errorCode) const override;
+    angle::Result getDevices(cl::DevicePtrs *devicePtrsOut) const override;
 
-    CLCommandQueueImpl::Ptr createCommandQueue(const cl::CommandQueue &commandQueue,
-                                               cl_int &errorCode) override;
+    angle::Result createCommandQueue(const cl::CommandQueue &commandQueue,
+                                     CLCommandQueueImpl::Ptr *commandQueueOut) override;
 
-    CLMemoryImpl::Ptr createBuffer(const cl::Buffer &buffer,
-                                   size_t size,
-                                   void *hostPtr,
-                                   cl_int &errorCode) override;
+    angle::Result createBuffer(const cl::Buffer &buffer,
+                               size_t size,
+                               void *hostPtr,
+                               CLMemoryImpl::Ptr *bufferOut) override;
 
-    CLMemoryImpl::Ptr createImage(const cl::Image &image,
-                                  cl::MemFlags flags,
-                                  const cl_image_format &format,
-                                  const cl::ImageDescriptor &desc,
-                                  void *hostPtr,
-                                  cl_int &errorCode) override;
+    angle::Result createImage(const cl::Image &image,
+                              cl::MemFlags flags,
+                              const cl_image_format &format,
+                              const cl::ImageDescriptor &desc,
+                              void *hostPtr,
+                              CLMemoryImpl::Ptr *imageOut) override;
 
-    cl_int getSupportedImageFormats(cl::MemFlags flags,
-                                    cl::MemObjectType imageType,
-                                    cl_uint numEntries,
-                                    cl_image_format *imageFormats,
-                                    cl_uint *numImageFormats) override;
+    angle::Result getSupportedImageFormats(cl::MemFlags flags,
+                                           cl::MemObjectType imageType,
+                                           cl_uint numEntries,
+                                           cl_image_format *imageFormats,
+                                           cl_uint *numImageFormats) override;
 
-    CLSamplerImpl::Ptr createSampler(const cl::Sampler &sampler, cl_int &errorCode) override;
+    angle::Result createSampler(const cl::Sampler &sampler,
+                                CLSamplerImpl::Ptr *samplerOut) override;
 
-    CLProgramImpl::Ptr createProgramWithSource(const cl::Program &program,
-                                               const std::string &source,
-                                               cl_int &errorCode) override;
+    angle::Result createProgramWithSource(const cl::Program &program,
+                                          const std::string &source,
+                                          CLProgramImpl::Ptr *programOut) override;
 
-    CLProgramImpl::Ptr createProgramWithIL(const cl::Program &program,
-                                           const void *il,
-                                           size_t length,
-                                           cl_int &errorCode) override;
+    angle::Result createProgramWithIL(const cl::Program &program,
+                                      const void *il,
+                                      size_t length,
+                                      CLProgramImpl::Ptr *programOut) override;
 
-    CLProgramImpl::Ptr createProgramWithBinary(const cl::Program &program,
-                                               const size_t *lengths,
-                                               const unsigned char **binaries,
-                                               cl_int *binaryStatus,
-                                               cl_int &errorCode) override;
+    angle::Result createProgramWithBinary(const cl::Program &program,
+                                          const size_t *lengths,
+                                          const unsigned char **binaries,
+                                          cl_int *binaryStatus,
+                                          CLProgramImpl::Ptr *programOut) override;
 
-    CLProgramImpl::Ptr createProgramWithBuiltInKernels(const cl::Program &program,
-                                                       const char *kernel_names,
-                                                       cl_int &errorCode) override;
+    angle::Result createProgramWithBuiltInKernels(const cl::Program &program,
+                                                  const char *kernel_names,
+                                                  CLProgramImpl::Ptr *programOut) override;
 
-    CLProgramImpl::Ptr linkProgram(const cl::Program &program,
-                                   const cl::DevicePtrs &devices,
-                                   const char *options,
-                                   const cl::ProgramPtrs &inputPrograms,
-                                   cl::Program *notify,
-                                   cl_int &errorCode) override;
+    angle::Result linkProgram(const cl::Program &program,
+                              const cl::DevicePtrs &devices,
+                              const char *options,
+                              const cl::ProgramPtrs &inputPrograms,
+                              cl::Program *notify,
+                              CLProgramImpl::Ptr *programOut) override;
 
-    CLEventImpl::Ptr createUserEvent(const cl::Event &event, cl_int &errorCode) override;
+    angle::Result createUserEvent(const cl::Event &event, CLEventImpl::Ptr *eventOut) override;
 
-    cl_int waitForEvents(const cl::EventPtrs &events) override;
+    angle::Result waitForEvents(const cl::EventPtrs &events) override;
 
   private:
     struct Mutable

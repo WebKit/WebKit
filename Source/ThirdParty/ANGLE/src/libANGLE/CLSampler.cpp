@@ -8,13 +8,17 @@
 #include "libANGLE/CLSampler.h"
 
 #include "libANGLE/CLContext.h"
+#include "libANGLE/cl_utils.h"
 
 #include <cstring>
 
 namespace cl
 {
 
-cl_int Sampler::getInfo(SamplerInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const
+angle::Result Sampler::getInfo(SamplerInfo name,
+                               size_t valueSize,
+                               void *value,
+                               size_t *valueSizeRet) const
 {
     static_assert(std::is_same<cl_uint, cl_addressing_mode>::value &&
                       std::is_same<cl_uint, cl_filter_mode>::value,
@@ -56,7 +60,7 @@ cl_int Sampler::getInfo(SamplerInfo name, size_t valueSize, void *value, size_t 
             copySize  = mProperties.size() * sizeof(decltype(mProperties)::value_type);
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -65,7 +69,7 @@ cl_int Sampler::getInfo(SamplerInfo name, size_t valueSize, void *value, size_t 
         // as described in the Sampler Object Queries table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -76,7 +80,7 @@ cl_int Sampler::getInfo(SamplerInfo name, size_t valueSize, void *value, size_t 
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
 Sampler::~Sampler() = default;
@@ -85,14 +89,15 @@ Sampler::Sampler(Context &context,
                  PropArray &&properties,
                  cl_bool normalizedCoords,
                  AddressingMode addressingMode,
-                 FilterMode filterMode,
-                 cl_int &errorCode)
+                 FilterMode filterMode)
     : mContext(&context),
       mProperties(std::move(properties)),
       mNormalizedCoords(normalizedCoords),
       mAddressingMode(addressingMode),
       mFilterMode(filterMode),
-      mImpl(context.getImpl().createSampler(*this, errorCode))
-{}
+      mImpl(nullptr)
+{
+    ANGLE_CL_IMPL_TRY(context.getImpl().createSampler(*this, &mImpl));
+}
 
 }  // namespace cl

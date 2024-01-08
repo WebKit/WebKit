@@ -37,14 +37,9 @@ class Object
     }
 
     template <typename T, typename... Args>
-    static T *Create(cl_int &errorCode, Args &&... args)
+    static T *Create(Args &&...args)
     {
-        T *object = new T(std::forward<Args>(args)..., errorCode);
-        if (errorCode != CL_SUCCESS)
-        {
-            delete object;
-            object = nullptr;
-        }
+        T *object = new T(std::forward<Args>(args)...);
         return object;
     }
 

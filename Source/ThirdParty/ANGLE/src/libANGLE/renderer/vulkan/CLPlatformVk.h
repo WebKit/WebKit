@@ -21,17 +21,17 @@ class CLPlatformVk : public CLPlatformImpl
     Info createInfo() const override;
     CLDeviceImpl::CreateDatas createDevices() const override;
 
-    CLContextImpl::Ptr createContext(cl::Context &context,
-                                     const cl::DevicePtrs &devices,
-                                     bool userSync,
-                                     cl_int &errorCode) override;
+    angle::Result createContext(cl::Context &context,
+                                const cl::DevicePtrs &devices,
+                                bool userSync,
+                                CLContextImpl::Ptr *contextOut) override;
 
-    CLContextImpl::Ptr createContextFromType(cl::Context &context,
-                                             cl::DeviceType deviceType,
-                                             bool userSync,
-                                             cl_int &errorCode) override;
+    angle::Result createContextFromType(cl::Context &context,
+                                        cl::DeviceType deviceType,
+                                        bool userSync,
+                                        CLContextImpl::Ptr *contextOut) override;
 
-    cl_int unloadCompiler() override;
+    angle::Result unloadCompiler() override;
 
     static void Initialize(CreateFuncs &createFuncs);
 

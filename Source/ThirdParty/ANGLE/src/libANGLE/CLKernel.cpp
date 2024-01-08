@@ -9,18 +9,22 @@
 
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLProgram.h"
+#include "libANGLE/cl_utils.h"
 
 #include <cstring>
 
 namespace cl
 {
 
-cl_int Kernel::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
+angle::Result Kernel::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
 {
     return mImpl->setArg(argIndex, argSize, argValue);
 }
 
-cl_int Kernel::getInfo(KernelInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const
+angle::Result Kernel::getInfo(KernelInfo name,
+                              size_t valueSize,
+                              void *value,
+                              size_t *valueSizeRet) const
 {
     cl_uint valUInt       = 0u;
     void *valPointer      = nullptr;
@@ -57,7 +61,7 @@ cl_int Kernel::getInfo(KernelInfo name, size_t valueSize, void *value, size_t *v
             copySize  = mInfo.attributes.length() + 1u;
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -66,7 +70,7 @@ cl_int Kernel::getInfo(KernelInfo name, size_t valueSize, void *value, size_t *v
         // as described in the Kernel Object Queries table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -77,14 +81,14 @@ cl_int Kernel::getInfo(KernelInfo name, size_t valueSize, void *value, size_t *v
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Kernel::getWorkGroupInfo(cl_device_id device,
-                                KernelWorkGroupInfo name,
-                                size_t valueSize,
-                                void *value,
-                                size_t *valueSizeRet) const
+angle::Result Kernel::getWorkGroupInfo(cl_device_id device,
+                                       KernelWorkGroupInfo name,
+                                       size_t valueSize,
+                                       void *value,
+                                       size_t *valueSizeRet) const
 {
     size_t index = 0u;
     if (device != nullptr)
@@ -96,7 +100,7 @@ cl_int Kernel::getWorkGroupInfo(cl_device_id device,
         }
         if (index == devices.size())
         {
-            return CL_INVALID_DEVICE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_DEVICE);
         }
     }
     const rx::CLKernelImpl::WorkGroupInfo &info = mInfo.workGroups[index];
@@ -131,7 +135,7 @@ cl_int Kernel::getWorkGroupInfo(cl_device_id device,
             copySize  = sizeof(info.privateMemSize);
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -140,7 +144,7 @@ cl_int Kernel::getWorkGroupInfo(cl_device_id device,
         // as described in the Kernel Object Device Queries table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -151,14 +155,14 @@ cl_int Kernel::getWorkGroupInfo(cl_device_id device,
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Kernel::getArgInfo(cl_uint argIndex,
-                          KernelArgInfo name,
-                          size_t valueSize,
-                          void *value,
-                          size_t *valueSizeRet) const
+angle::Result Kernel::getArgInfo(cl_uint argIndex,
+                                 KernelArgInfo name,
+                                 size_t valueSize,
+                                 void *value,
+                                 size_t *valueSizeRet) const
 {
     const rx::CLKernelImpl::ArgInfo &info = mInfo.args[argIndex];
     const void *copyValue                 = nullptr;
@@ -187,7 +191,7 @@ cl_int Kernel::getArgInfo(cl_uint argIndex,
             copySize  = info.name.length() + 1u;
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -196,7 +200,7 @@ cl_int Kernel::getArgInfo(cl_uint argIndex,
         // as described in the Kernel Argument Queries table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -207,7 +211,7 @@ cl_int Kernel::getArgInfo(cl_uint argIndex,
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
 Kernel::~Kernel()
@@ -215,17 +219,22 @@ Kernel::~Kernel()
     --mProgram->mNumAttachedKernels;
 }
 
-Kernel::Kernel(Program &program, const char *name, cl_int &errorCode)
-    : mProgram(&program),
-      mImpl(program.getImpl().createKernel(*this, name, errorCode)),
-      mInfo(mImpl ? mImpl->createInfo(errorCode) : rx::CLKernelImpl::Info{})
+Kernel::Kernel(Program &program, const char *name) : mProgram(&program), mImpl(nullptr)
 {
+    if (!IsError(program.getImpl().createKernel(*this, name, &mImpl)))
+    {
+        ANGLE_CL_IMPL_TRY(mImpl->createInfo(&mInfo));
+    }
     ++mProgram->mNumAttachedKernels;
 }
 
-Kernel::Kernel(Program &program, const rx::CLKernelImpl::CreateFunc &createFunc, cl_int &errorCode)
-    : mProgram(&program), mImpl(createFunc(*this)), mInfo(mImpl->createInfo(errorCode))
+Kernel::Kernel(Program &program, const rx::CLKernelImpl::CreateFunc &createFunc)
+    : mProgram(&program), mImpl(createFunc(*this))
 {
+    if (mImpl)
+    {
+        ANGLE_CL_IMPL_TRY(mImpl->createInfo(&mInfo));
+    }
     ++mProgram->mNumAttachedKernels;
 }
 

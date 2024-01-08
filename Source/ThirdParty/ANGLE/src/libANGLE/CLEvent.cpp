@@ -9,23 +9,24 @@
 
 #include "libANGLE/CLCommandQueue.h"
 #include "libANGLE/CLContext.h"
+#include "libANGLE/cl_utils.h"
 
 #include <cstring>
 
 namespace cl
 {
 
-cl_int Event::setUserEventStatus(cl_int executionStatus)
+angle::Result Event::setUserEventStatus(cl_int executionStatus)
 {
-    const cl_int errorCode = mImpl->setUserEventStatus(executionStatus);
-    if (errorCode == CL_SUCCESS)
-    {
-        mStatusWasChanged = true;
-    }
-    return errorCode;
+    ANGLE_TRY(mImpl->setUserEventStatus(executionStatus));
+    mStatusWasChanged = true;
+    return angle::Result::Continue;
 }
 
-cl_int Event::getInfo(EventInfo name, size_t valueSize, void *value, size_t *valueSizeRet) const
+angle::Result Event::getInfo(EventInfo name,
+                             size_t valueSize,
+                             void *value,
+                             size_t *valueSizeRet) const
 {
     cl_int execStatus     = 0;
     cl_uint valUInt       = 0u;
@@ -51,11 +52,7 @@ cl_int Event::getInfo(EventInfo name, size_t valueSize, void *value, size_t *val
             break;
         case EventInfo::CommandExecutionStatus:
         {
-            const cl_int errorCode = mImpl->getCommandExecutionStatus(execStatus);
-            if (errorCode != CL_SUCCESS)
-            {
-                return errorCode;
-            }
+            ANGLE_TRY(mImpl->getCommandExecutionStatus(execStatus));
             copyValue = &execStatus;
             copySize  = sizeof(execStatus);
             break;
@@ -66,7 +63,7 @@ cl_int Event::getInfo(EventInfo name, size_t valueSize, void *value, size_t *val
             copySize   = sizeof(valPointer);
             break;
         default:
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
     }
 
     if (value != nullptr)
@@ -75,7 +72,7 @@ cl_int Event::getInfo(EventInfo name, size_t valueSize, void *value, size_t *val
         // as described in the Event Queries table and param_value is not NULL.
         if (valueSize < copySize)
         {
-            return CL_INVALID_VALUE;
+            ANGLE_CL_RETURN_ERROR(CL_INVALID_VALUE);
         }
         if (copyValue != nullptr)
         {
@@ -86,27 +83,27 @@ cl_int Event::getInfo(EventInfo name, size_t valueSize, void *value, size_t *val
     {
         *valueSizeRet = copySize;
     }
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Event::setCallback(cl_int commandExecCallbackType, EventCB pfnNotify, void *userData)
+angle::Result Event::setCallback(cl_int commandExecCallbackType, EventCB pfnNotify, void *userData)
 {
     auto callbacks = mCallbacks.synchronize();
     // Only when required register a single callback with the back end for each callback type.
     if ((*callbacks)[commandExecCallbackType].empty())
     {
-        ANGLE_CL_TRY(mImpl->setCallback(*this, commandExecCallbackType));
+        ANGLE_TRY(mImpl->setCallback(*this, commandExecCallbackType));
         // This event has to be retained until the callback is called.
         retain();
     }
     (*callbacks)[commandExecCallbackType].emplace_back(pfnNotify, userData);
-    return CL_SUCCESS;
+    return angle::Result::Continue;
 }
 
-cl_int Event::getProfilingInfo(ProfilingInfo name,
-                               size_t valueSize,
-                               void *value,
-                               size_t *valueSizeRet)
+angle::Result Event::getProfilingInfo(ProfilingInfo name,
+                                      size_t valueSize,
+                                      void *value,
+                                      size_t *valueSizeRet)
 {
     return mImpl->getProfilingInfo(name, valueSize, value, valueSizeRet);
 }
@@ -139,16 +136,14 @@ EventPtrs Event::Cast(cl_uint numEvents, const cl_event *eventList)
     return events;
 }
 
-Event::Event(Context &context, cl_int &errorCode)
-    : mContext(&context),
-      mCommandType(CL_COMMAND_USER),
-      mImpl(context.getImpl().createUserEvent(*this, errorCode))
-{}
+Event::Event(Context &context) : mContext(&context), mCommandType(CL_COMMAND_USER), mImpl(nullptr)
+{
+    ANGLE_CL_IMPL_TRY(context.getImpl().createUserEvent(*this, &mImpl));
+}
 
 Event::Event(CommandQueue &queue,
              cl_command_type commandType,
-             const rx::CLEventImpl::CreateFunc &createFunc,
-             cl_int &errorCode)
+             const rx::CLEventImpl::CreateFunc &createFunc)
     : mContext(&queue.getContext()),
       mCommandQueue(&queue),
       mCommandType(commandType),

@@ -301,7 +301,7 @@ bool ValidateDrawElementsInstancedBaseVertex(const Context *context,
                                              GLint basevertex)
 {
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                             instancecount);
+                                             instancecount, 0);
 }
 
 bool ValidateDrawRangeElementsBaseVertex(const Context *context,

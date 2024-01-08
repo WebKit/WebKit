@@ -231,20 +231,26 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
                                           uint32_t *indicesGenerated)
 {
     ASSERT(count > 2);
+    ASSERT(indicesGenerated != nullptr);
     constexpr T kSrcPrimitiveRestartIndex = std::numeric_limits<T>::max();
     GLsizei dstTriangle                   = 0;
     uint32_t *dstPtr = reinterpret_cast<uint32_t *>(dstBuffer->map(contextMtl) + dstOffset);
-    T triFirstIdx, srcPrevIdx;
+    T triFirstIdx;
     memcpy(&triFirstIdx, indices, sizeof(triFirstIdx));
-    memcpy(&srcPrevIdx, indices + 1, sizeof(srcPrevIdx));
 
     if (primitiveRestartEnabled)
     {
         GLsizei triFirstIdxLoc = 0;
-        while (triFirstIdx == kSrcPrimitiveRestartIndex)
+        while (triFirstIdx == kSrcPrimitiveRestartIndex && triFirstIdxLoc + 2 < count)
         {
             ++triFirstIdxLoc;
             memcpy(&triFirstIdx, indices + triFirstIdxLoc, sizeof(triFirstIdx));
+        }
+
+        T srcPrevIdx = 0;
+        if (triFirstIdxLoc + 1 < count)
+        {
+            memcpy(&srcPrevIdx, indices + triFirstIdxLoc + 1, sizeof(srcPrevIdx));
         }
 
         for (GLsizei i = triFirstIdxLoc + 2; i < count; ++i)
@@ -281,6 +287,9 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
     }
     else
     {
+        T srcPrevIdx;
+        memcpy(&srcPrevIdx, indices + 1, sizeof(srcPrevIdx));
+
         for (GLsizei i = 2; i < count; ++i)
         {
             T srcIdx;
@@ -296,11 +305,8 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
             ++dstTriangle;
         }
     }
-    if (indicesGenerated)
-        *indicesGenerated = dstTriangle * 3;
-    dstBuffer->unmapAndFlushSubset(
-        contextMtl, dstOffset,
-        (indicesGenerated ? *(indicesGenerated) : (dstTriangle * 3)) * sizeof(uint32_t));
+    *indicesGenerated = dstTriangle * 3;
+    dstBuffer->unmapAndFlushSubset(contextMtl, dstOffset, *(indicesGenerated) * sizeof(uint32_t));
 
     return angle::Result::Continue;
 }

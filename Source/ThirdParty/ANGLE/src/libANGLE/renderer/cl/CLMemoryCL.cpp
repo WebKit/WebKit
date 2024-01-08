@@ -11,6 +11,7 @@
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
+#include "libANGLE/cl_utils.h"
 
 namespace rx
 {
@@ -33,28 +34,21 @@ CLMemoryCL::~CLMemoryCL()
     }
 }
 
-size_t CLMemoryCL::getSize(cl_int &errorCode) const
+angle::Result CLMemoryCL::createSubBuffer(const cl::Buffer &buffer,
+                                          cl::MemFlags flags,
+                                          size_t size,
+                                          CLMemoryImpl::Ptr *subBufferOut)
 {
-    size_t size = 0u;
-    errorCode = mNative->getDispatch().clGetMemObjectInfo(mNative, CL_MEM_SIZE, sizeof(size), &size,
-                                                          nullptr);
-    if (errorCode != CL_SUCCESS)
-    {
-        return 0u;
-    }
-    return size;
-}
-
-CLMemoryImpl::Ptr CLMemoryCL::createSubBuffer(const cl::Buffer &buffer,
-                                              cl::MemFlags flags,
-                                              size_t size,
-                                              cl_int &errorCode)
-{
+    cl_int errorCode              = CL_SUCCESS;
     const cl_buffer_region region = {buffer.getOffset(), size};
-    const cl_mem nativeBuffer     = mNative->getDispatch().clCreateSubBuffer(
+
+    const cl_mem nativeBuffer = mNative->getDispatch().clCreateSubBuffer(
         mNative, flags.get(), CL_BUFFER_CREATE_TYPE_REGION, &region, &errorCode);
-    return CLMemoryImpl::Ptr(nativeBuffer != nullptr ? new CLMemoryCL(buffer, nativeBuffer)
-                                                     : nullptr);
+    ANGLE_CL_TRY(errorCode);
+
+    *subBufferOut =
+        CLMemoryImpl::Ptr(nativeBuffer != nullptr ? new CLMemoryCL(buffer, nativeBuffer) : nullptr);
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

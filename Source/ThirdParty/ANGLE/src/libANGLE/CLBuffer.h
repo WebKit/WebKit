@@ -22,8 +22,7 @@ class Buffer final : public Memory
 
     cl_mem createSubBuffer(MemFlags flags,
                            cl_buffer_create_type createType,
-                           const void *createInfo,
-                           cl_int &errorCode);
+                           const void *createInfo);
 
     bool isRegionValid(size_t offset, size_t size) const;
     bool isRegionValid(const cl_buffer_region &region) const;
@@ -36,14 +35,9 @@ class Buffer final : public Memory
     bool isSubBuffer() const;
 
   private:
-    Buffer(Context &context,
-           PropArray &&properties,
-           MemFlags flags,
-           size_t size,
-           void *hostPtr,
-           cl_int &errorCode);
+    Buffer(Context &context, PropArray &&properties, MemFlags flags, size_t size, void *hostPtr);
 
-    Buffer(Buffer &parent, MemFlags flags, size_t offset, size_t size, cl_int &errorCode);
+    Buffer(Buffer &parent, MemFlags flags, size_t offset, size_t size);
 
     friend class Object;
 };

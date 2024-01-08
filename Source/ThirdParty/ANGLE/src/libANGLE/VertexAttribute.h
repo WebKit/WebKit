@@ -95,6 +95,9 @@ struct VertexAttribute final : private angle::NonCopyable
 
   private:
     // This is kept in sync by the VertexArray. It is used to optimize draw call validation.
+    // |mCachedElementLimit| defines the number of elements in the vertex attribute that are
+    // accessible in a draw call.  For instanced attributes in instanced draw calls, the number of
+    // possible instances is |VertexBinding::mDivisor| times this limit.
     GLint64 mCachedElementLimit;
 };
 

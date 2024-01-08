@@ -131,6 +131,11 @@ AutoObjCPtr<id<MTLSharedEvent>> ContextDevice::newSharedEvent() const
     return adoptObjCObj([get() newSharedEvent]);
 }
 
+AutoObjCPtr<id<MTLEvent>> ContextDevice::newEvent() const
+{
+    return adoptObjCObj([get() newEvent]);
+}
+
 void ContextDevice::setOwnerWithIdentity(id<MTLResource> resource) const
 {
 #if ANGLE_USE_METAL_OWNERSHIP_IDENTITY

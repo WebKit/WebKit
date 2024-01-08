@@ -23,34 +23,34 @@ class CLProgramCL : public CLProgramImpl
 
     cl_program getNative() const;
 
-    std::string getSource(cl_int &errorCode) const override;
+    angle::Result build(const cl::DevicePtrs &devices,
+                        const char *options,
+                        cl::Program *notify) override;
 
-    cl_int build(const cl::DevicePtrs &devices, const char *options, cl::Program *notify) override;
+    angle::Result compile(const cl::DevicePtrs &devices,
+                          const char *options,
+                          const cl::ProgramPtrs &inputHeaders,
+                          const char **headerIncludeNames,
+                          cl::Program *notify) override;
 
-    cl_int compile(const cl::DevicePtrs &devices,
-                   const char *options,
-                   const cl::ProgramPtrs &inputHeaders,
-                   const char **headerIncludeNames,
-                   cl::Program *notify) override;
+    angle::Result getInfo(cl::ProgramInfo name,
+                          size_t valueSize,
+                          void *value,
+                          size_t *valueSizeRet) const override;
 
-    cl_int getInfo(cl::ProgramInfo name,
-                   size_t valueSize,
-                   void *value,
-                   size_t *valueSizeRet) const override;
+    angle::Result getBuildInfo(const cl::Device &device,
+                               cl::ProgramBuildInfo name,
+                               size_t valueSize,
+                               void *value,
+                               size_t *valueSizeRet) const override;
 
-    cl_int getBuildInfo(const cl::Device &device,
-                        cl::ProgramBuildInfo name,
-                        size_t valueSize,
-                        void *value,
-                        size_t *valueSizeRet) const override;
+    angle::Result createKernel(const cl::Kernel &kernel,
+                               const char *name,
+                               CLKernelImpl::Ptr *kernelOut) override;
 
-    CLKernelImpl::Ptr createKernel(const cl::Kernel &kernel,
-                                   const char *name,
-                                   cl_int &errorCode) override;
-
-    cl_int createKernels(cl_uint numKernels,
-                         CLKernelImpl::CreateFuncs &createFuncs,
-                         cl_uint *numKernelsRet) override;
+    angle::Result createKernels(cl_uint numKernels,
+                                CLKernelImpl::CreateFuncs &createFuncs,
+                                cl_uint *numKernelsRet) override;
 
   private:
     static void CL_CALLBACK Callback(cl_program program, void *userData);
