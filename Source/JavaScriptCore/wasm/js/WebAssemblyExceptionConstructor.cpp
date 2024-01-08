@@ -61,7 +61,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     if (!tag)
         return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag"_s);
 
+    const auto& tagFunctionType = tag->type();
     MarkedArgumentBuffer values;
+    values.ensureCapacity(tagFunctionType.argumentCount());
     forEachInIterable(globalObject, tagParameters, [&] (VM&, JSGlobalObject*, JSValue nextValue) {
         values.append(nextValue);
         if (UNLIKELY(values.hasOverflowed()))
@@ -69,7 +71,6 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     });
     RETURN_IF_EXCEPTION(scope, { });
 
-    const auto& tagFunctionType = tag->type();
     if (values.size() != tagFunctionType.argumentCount())
         return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the number of paremeters in WebAssembly.Tag to match the tags parameter count."_s);
 

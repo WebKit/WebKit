@@ -142,6 +142,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     Identifier nameID = name ? name->identifier(&vm) : Identifier::fromString(vm, "anonymous"_s);
     
     MarkedArgumentBuffer args;
+    args.ensureCapacity(parameterCount + 1);
     for (unsigned i = 0; i < parameterCount; i++)
         args.append(jsString(vm, parameterNames[i]->string()));
     args.append(jsString(vm, body->string()));
@@ -173,6 +174,7 @@ JSObjectRef JSObjectMakeArray(JSContextRef ctx, size_t argumentCount, const JSVa
     JSObject* result;
     if (argumentCount) {
         MarkedArgumentBuffer argList;
+        argList.ensureCapacity(argumentCount);
         for (size_t i = 0; i < argumentCount; ++i)
             argList.append(toJS(globalObject, arguments[i]));
         if (UNLIKELY(argList.hasOverflowed())) {
@@ -204,6 +206,7 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     MarkedArgumentBuffer argList;
+    argList.ensureCapacity(argumentCount);
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(globalObject, arguments[i]));
     if (UNLIKELY(argList.hasOverflowed())) {
@@ -254,6 +257,7 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     MarkedArgumentBuffer argList;
+    argList.ensureCapacity(argumentCount);
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(globalObject, arguments[i]));
     if (UNLIKELY(argList.hasOverflowed())) {
@@ -717,6 +721,7 @@ JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObject
         jsThisObject = globalObject->globalThis();
 
     MarkedArgumentBuffer argList;
+    argList.ensureCapacity(argumentCount);
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(globalObject, arguments[i]));
     if (UNLIKELY(argList.hasOverflowed())) {
@@ -763,6 +768,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
         return nullptr;
 
     MarkedArgumentBuffer argList;
+    argList.ensureCapacity(argumentCount);
     for (size_t i = 0; i < argumentCount; i++)
         argList.append(toJS(globalObject, arguments[i]));
     if (UNLIKELY(argList.hasOverflowed())) {

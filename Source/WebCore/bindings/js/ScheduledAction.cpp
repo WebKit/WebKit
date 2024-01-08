@@ -109,6 +109,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
     MarkedArgumentBuffer arguments;
+    arguments.ensureCapacity(m_arguments.size());
     for (auto& argument : m_arguments)
         arguments.append(argument.get());
     if (UNLIKELY(arguments.hasOverflowed())) {

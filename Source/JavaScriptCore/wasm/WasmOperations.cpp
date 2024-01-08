@@ -675,6 +675,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (Instance* instance, con
 
     unsigned iterationCount = 0;
     MarkedArgumentBuffer buffer;
+    buffer.ensureCapacity(signature->returnCount());
     JSValue result = JSValue::decode(encResult);
     forEachInIterable(globalObject, result, [&] (VM&, JSGlobalObject*, JSValue value) -> void {
         if (buffer.size() < signature->returnCount()) {

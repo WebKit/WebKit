@@ -103,6 +103,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTagProtoFuncType, (JSGlobalObject* globalObj
     const Wasm::Tag& tag = jsTag->tag();
 
     MarkedArgumentBuffer argList;
+    argList.ensureCapacity(tag.parameterCount());
     for (size_t i = 0; i < tag.parameterCount(); ++i)
         argList.append(Wasm::typeToString(vm, tag.parameter(i).kind));
 

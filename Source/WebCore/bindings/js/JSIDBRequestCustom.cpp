@@ -80,6 +80,7 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
             auto& values = getAllResult.values();
             auto& keyPath = getAllResult.keyPath();
             JSC::MarkedArgumentBuffer list;
+            list.ensureCapacity(values.size());
             for (unsigned i = 0; i < values.size(); i ++) {
                 auto result = deserializeIDBValueWithKeyInjection(lexicalGlobalObject, values[i], keys[i], keyPath);
                 if (!result)
