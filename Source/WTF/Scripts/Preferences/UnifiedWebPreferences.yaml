@@ -5112,7 +5112,7 @@ PluginsEnabled:
   webcoreOnChange: pluginsEnabledChanged
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
       default: false
     WebCore:
