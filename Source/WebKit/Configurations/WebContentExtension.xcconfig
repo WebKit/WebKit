@@ -25,6 +25,6 @@
 
 INFOPLIST_FILE = Shared/AuxiliaryProcessExtensions/WebContentExtension-Info.plist;
 INFOPLIST_KEY_CFBundleDisplayName = WebContentExtension;
-PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContentExtension;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContent;
 PRODUCT_BUNDLE_EXECUTABLE = WebContentExtension;
 PRODUCT_BUNDLE_NAME = WebContentExtension;
