@@ -55,7 +55,7 @@ static GstStaticPadTemplate audioSrcTemplate = GST_STATIC_PAD_TEMPLATE("audio_sr
 GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
 #define GST_CAT_DEFAULT webkitMediaStreamSrcDebug
 
-GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(const MediaStreamTrackPrivate& track)
+WARN_UNUSED_RETURN GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(const MediaStreamTrackPrivate& track)
 {
     auto tagList = adoptGRef(gst_tag_list_new_empty());
 
@@ -63,7 +63,7 @@ GRefPtr<GstTagList> mediaStreamTrackPrivateGetTags(const MediaStreamTrackPrivate
         gst_tag_list_add(tagList.get(), GST_TAG_MERGE_APPEND, GST_TAG_TITLE, track.label().utf8().data(), nullptr);
 
     GST_DEBUG("Track tags: %" GST_PTR_FORMAT, tagList.get());
-    return tagList.leakRef();
+    return tagList;
 }
 
 GstStream* webkitMediaStreamNew(const MediaStreamTrackPrivate& track)
@@ -88,7 +88,7 @@ GstStream* webkitMediaStreamNew(const MediaStreamTrackPrivate& track)
     auto trackId = builder.toString();
     auto* stream = gst_stream_new(trackId.ascii().data(), caps.get(), type, GST_STREAM_FLAG_SELECT);
     auto tags = mediaStreamTrackPrivateGetTags(track);
-    gst_stream_set_tags(stream, tags.leakRef());
+    gst_stream_set_tags(stream, tags.get());
     return stream;
 }
 

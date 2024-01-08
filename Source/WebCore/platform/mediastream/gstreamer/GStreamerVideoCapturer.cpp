@@ -125,15 +125,6 @@ GstElement* GStreamerVideoCapturer::createConverter()
     return bin;
 }
 
-GstVideoInfo GStreamerVideoCapturer::getBestFormat()
-{
-    auto caps = adoptGRef(gst_caps_fixate(gst_device_get_caps(m_device->device())));
-    GstVideoInfo info;
-    gst_video_info_from_caps(&info, caps.get());
-
-    return info;
-}
-
 bool GStreamerVideoCapturer::setSize(int width, int height)
 {
     if (isCapturingDisplay()) {

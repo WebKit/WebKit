@@ -96,6 +96,9 @@ void GStreamerCaptureDeviceManager::teardown()
     GST_DEBUG_OBJECT(m_deviceMonitor.get(), "Tearing down");
     m_isTearingDown = true;
     stopMonitor();
+    for (auto& capturer : m_capturers)
+        capturer->stopDevice(true);
+    m_capturers.clear();
     RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(*this);
     m_devices.clear();
     m_gstreamerDevices.clear();
@@ -127,11 +130,13 @@ void GStreamerCaptureDeviceManager::deviceWillBeRemoved(const String& persistent
 
 void GStreamerCaptureDeviceManager::registerCapturer(const RefPtr<GStreamerCapturer>& capturer)
 {
+    GST_DEBUG("Registering capturer for device %s", capturer->devicePersistentId().ascii().data());
     m_capturers.append(capturer);
 }
 
 void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& capturer)
 {
+    GST_DEBUG("Un-registering capturer for device %s", capturer.devicePersistentId().ascii().data());
     m_capturers.removeAllMatching([&](auto& item) -> bool {
         return item.get() == &capturer;
     });
@@ -140,14 +145,13 @@ void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& 
 void GStreamerCaptureDeviceManager::stopCapturing(const String& persistentId)
 {
     GST_DEBUG("Stopping capturer for device with persistent ID: %s", persistentId.ascii().data());
-    m_capturers.removeAllMatching([&persistentId](auto& capturer) -> bool {
+    for (auto& capturer : m_capturers) {
         GST_DEBUG("Checking capturer with device persistent ID: %s", capturer->devicePersistentId().ascii().data());
         if (capturer->devicePersistentId() != persistentId)
-            return false;
-
-        capturer->stopDevice();
-        return true;
-    });
+            continue;
+        capturer->stopDevice(false);
+        break;
+    }
 }
 
 std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
@@ -232,6 +236,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
     if (m_isTearingDown)
         return;
 
+    bool monitorBus = false;
     if (!m_deviceMonitor) {
         m_deviceMonitor = adoptGRef(gst_device_monitor_new());
 
@@ -260,6 +265,8 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             m_deviceMonitor = nullptr;
             return;
         }
+
+        monitorBus = true;
     }
 
     GList* devices = g_list_sort(gst_device_monitor_get_devices(m_deviceMonitor.get()), sortDevices);
@@ -267,6 +274,9 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
         addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
         devices = g_list_delete_link(devices, devices);
     }
+
+    if (!monitorBus)
+        return;
 
     auto bus = adoptGRef(gst_device_monitor_get_bus(m_deviceMonitor.get()));
 
