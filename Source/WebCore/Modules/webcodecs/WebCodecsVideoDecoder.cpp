@@ -114,7 +114,7 @@ static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoder
         description,
         config.codedWidth.value_or(0),
         config.codedHeight.value_or(0),
-        config.hardwareAcceleration == HardwareAcceleration::PreferSoftware
+        config.hardwareAcceleration == HardwareAcceleration::PreferSoftware ? VideoDecoder::HardwareAcceleration::No : VideoDecoder::HardwareAcceleration::Yes
     };
 }
 

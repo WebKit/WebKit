@@ -448,6 +448,7 @@ platform/graphics/cocoa/WebActionDisablingCALayerDelegate.mm
 platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm
+platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm
 platform/graphics/cocoa/controls/ControlFactoryCocoa.mm

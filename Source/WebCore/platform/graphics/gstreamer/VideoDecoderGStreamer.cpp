@@ -20,7 +20,7 @@
 #include "config.h"
 #include "VideoDecoderGStreamer.h"
 
-#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#if USE(GSTREAMER)
 
 #include "GStreamerCodecUtilities.h"
 #include "GStreamerCommon.h"
