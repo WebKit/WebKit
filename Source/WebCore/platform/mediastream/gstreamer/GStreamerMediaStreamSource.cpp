@@ -620,8 +620,8 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
     if (!m_src)
         return;
 
-    auto* element = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
-    auto* priv = element->priv;
+    auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
+    auto priv = self->priv;
 
     // Lookup the corresponding InternalSource and take it from the storage.
     auto index = priv->sources.findIf([&](auto& item) {
@@ -635,11 +635,28 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
         return item->id() == track.id();
     });
 
-    // Make sure that the video.videoWidth is reset to 0.
-    webkitMediaStreamSrcEnsureStreamCollectionPosted(element);
-
     // Properly stop data flow. The source stops observing notifications from WebCore.
     source->signalEndOfStream();
+
+    auto element = GST_ELEMENT_CAST(self);
+    {
+        auto locker = GstStateLocker(element);
+        auto* appSrc = source->get();
+        gst_element_set_locked_state(appSrc, true);
+        gst_element_set_state(appSrc, GST_STATE_NULL);
+        gst_bin_remove(GST_BIN_CAST(self), appSrc);
+        gst_element_set_locked_state(appSrc, false);
+    }
+
+    auto pad = adoptGRef(gst_element_get_static_pad(element, source->padName().ascii().data()));
+    if (auto proxyPad = adoptGRef(GST_PAD_CAST(gst_proxy_pad_get_internal(GST_PROXY_PAD(pad.get())))))
+        gst_flow_combiner_remove_pad(priv->flowCombiner.get(), proxyPad.get());
+
+    gst_pad_set_active(pad.get(), FALSE);
+    gst_element_remove_pad(element, pad.get());
+
+    // Make sure that the video.videoWidth is reset to 0.
+    webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
 }
 
 static GstURIType webkitMediaStreamSrcUriGetType(GType)
