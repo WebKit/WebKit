@@ -214,7 +214,7 @@ void Settings::<%= @setting.setterFunctionName %>InspectorOverride(std::optional
 {
     if (m_values.<%= @setting.name %>InspectorOverride == <%= @setting.name %>InspectorOverride)
         return;
-        m_values.<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
+    m_values.<%= @setting.name %>InspectorOverride = <%= @setting.name %>InspectorOverride;
 <%- if @setting.condition -%>
 #if <%= @setting.condition %>
 <%- end -%>
