@@ -122,7 +122,9 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     });
 
     m_src = GST_ELEMENT_CAST(g_object_new(WEBKIT_TYPE_WEB_AUDIO_SRC, "rate", sampleRate,
-        "bus", m_renderBus.get(), "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
+        "destination", this, "frames", AudioUtilities::renderQuantumSize, nullptr));
+
+    webkitWebAudioSourceSetBus(WEBKIT_WEB_AUDIO_SRC(m_src.get()), m_renderBus);
 
 #if PLATFORM(AMLOGIC)
     // autoaudiosink changes child element state to READY internally in auto detection phase

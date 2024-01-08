@@ -1235,9 +1235,6 @@ webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/media
 
 webkit.org/b/264708 media/media-source/media-webm-opus-partial-abort.html [ Pass Crash Failure ]
 
-webkit.org/b/264934 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html [ Pass Crash ]
-webkit.org/b/264934 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Pass Crash ]
-
 webkit.org/b/265205 imported/w3c/web-platform-tests/media-source/mediasource-remove-preserves-currentTime.html [ Pass Crash ]
 
 webkit.org/b/265206 media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Pass Crash ]
@@ -2027,8 +2024,7 @@ webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Crash F
 webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure Pass ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
-# Uncomment when webkit.org/b/267126 is fixed
-#webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
+webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure Timeout ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
@@ -3760,8 +3756,6 @@ webkit.org/b/266708 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/266719 fast/canvas/offscreen-giant.html [ ImageOnlyFailure ]
 
 webkit.org/b/266713 webrtc/processIceTransportStateChange-gc.html [ Skip ]
-
-webkit.org/b/267126 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout Crash ]
 
 # End: Common failures between GTK and WPE.
 
