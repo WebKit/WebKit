@@ -439,6 +439,8 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
         return false;
     if (isRenderSVGBlock() || isRenderRubyRun() || isRenderRubyAsBlock() || isRenderRubyAsInline() || isRenderRubyBase())
         return false;
+    if (style().display() == DisplayType::RubyBlock || style().display() == DisplayType::RubyAnnotation)
+        return false;
 #if ENABLE(MATHML)
     if (isRenderMathMLBlock())
         return false;
