@@ -164,11 +164,13 @@ void AudioTrackPrivateWebM::setFormatDescription(Ref<AudioInfo>&& formatDescript
 
 void AudioTrackPrivateWebM::updateConfiguration()
 {
+IGNORE_WARNINGS_BEGIN("c99-designator")
     PlatformAudioTrackConfiguration configuration {
         { .codec = codec() },
         .sampleRate = sampleRate(),
         .numberOfChannels = numberOfChannels(),
     };
+IGNORE_WARNINGS_END
     setConfiguration(WTFMove(configuration));
 }
 

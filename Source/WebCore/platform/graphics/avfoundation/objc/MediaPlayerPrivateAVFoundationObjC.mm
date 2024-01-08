@@ -2684,12 +2684,12 @@ bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
     if (m_isGatheringVideoFrameMetadata) {
         auto presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds() - (currentTime - entry.displayTime).toDouble();
         m_videoFrameMetadata = {
-            .width = static_cast<unsigned>(CVPixelBufferGetWidth(m_lastPixelBuffer.get())),
-            .height = static_cast<unsigned>(CVPixelBufferGetHeight(m_lastPixelBuffer.get())),
-            .presentedFrames = static_cast<unsigned>(++m_sampleCount),
-            .mediaTime = entry.displayTime.toDouble(),
             .presentationTime = presentationTime,
             .expectedDisplayTime = presentationTime,
+            .width = static_cast<unsigned>(CVPixelBufferGetWidth(m_lastPixelBuffer.get())),
+            .height = static_cast<unsigned>(CVPixelBufferGetHeight(m_lastPixelBuffer.get())),
+            .mediaTime = entry.displayTime.toDouble(),
+            .presentedFrames = static_cast<unsigned>(++m_sampleCount),
         };
     }
 

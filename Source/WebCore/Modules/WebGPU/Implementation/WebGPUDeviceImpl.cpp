@@ -165,7 +165,7 @@ Ref<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureDesc
     auto pixelBuffer = std::get_if<RetainPtr<CVPixelBufferRef>>(&descriptor.videoBacking);
     WGPUExternalTextureDescriptor backingDescriptor {
         .nextInChain = nullptr,
-        label.data(),
+        .label = label.data(),
         .pixelBuffer = pixelBuffer ? pixelBuffer->get() : nullptr,
         .colorSpace = convertToWGPUColorSpace(descriptor.colorSpace),
     };
@@ -246,7 +246,7 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
     auto backingEntries = descriptor.entries.map([&convertToBackingContext = m_convertToBackingContext.get(), &chainedEntries](const auto& bindGroupEntry) {
         auto externalTexture = std::holds_alternative<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource).get()) : nullptr;
         chainedEntries.append(WGPUBindGroupExternalTextureEntry {
-            {
+            .chain = {
                 .next = nullptr,
                 .sType = static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupEntryExternalTexture)
             },
