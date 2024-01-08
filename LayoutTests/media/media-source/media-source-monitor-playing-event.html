@@ -11,7 +11,6 @@
     var sample;
     var handleVideoEvents = [
         "loadstart",
-        "waiting",
         "loadedmetadata",
         "loadeddata",
         "canplay",
@@ -62,18 +61,26 @@
         run('sourceBuffer.appendBuffer(sample)');
         await Promise.all([waitFor(mediaElement, 'playing'), waitFor(sourceBuffer, 'updateend')]);
 
-        consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
+        // As per the MockMediaPlayerMediaSource implementation, currentTime=10 (the maximum playable time) at
+        // this point, right after playback has started (at least in WebKitGTK), so we no longer have
+        // HAVE_ENOUGH_DATA. We have HAVE_CURRENT_DATA instead. We can't test for HAVE_ENOUGH_DATA and for
+        // canplaythrough at the same time in a single test with the current MockMediaPlayerMediaSource
+        // implementation. However, we get HAVE_ENOUGH_DATA on some Apple implementations. To avoid problems,
+        // let's just check for >= HAVE_CURRENT_DATA.
+        testExpected('video.readyState >= readyStateString.indexOf("HAVE_CURRENT_DATA")', true);
         // This remove changes ready state to HAVE_METADATA.
         run('sourceBuffer.remove(0,10)');
-        await waitFor(sourceBuffer, 'updateend');
+        // Waiting is time-dependant and can happen more than once. We're only interested in at least one occurence.
+        await Promise.all([waitFor(mediaElement, 'waiting'), waitFor(sourceBuffer, 'updateend')]);
 
         consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
         sample = makeASample(0, 0, 1, 1, 1, SAMPLE_FLAG.SYNC, 1);
         run('sourceBuffer.appendBuffer(sample)');
         await waitFor(sourceBuffer, 'updateend');
 
+        // Append at least 3s more than currentTime (10) to create an additional playable range that can trigger canPlayThrough.
         consoleWrite('video.readyState : ' + readyStateString[video.readyState]);
-        sample = makeASample(1, 1, 9, 1, 1, SAMPLE_FLAG.SYNC, 1);
+        sample = makeASample(1, 1, 12, 1, 1, SAMPLE_FLAG.SYNC, 1);
         // This append changes the ready state to HAVE_ENOUGH_DATA and fires the playing event.
         run('sourceBuffer.appendBuffer(sample)');
         await Promise.all([waitFor(mediaElement, 'playing'), waitFor(sourceBuffer, 'updateend')]);

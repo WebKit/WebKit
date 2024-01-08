@@ -450,12 +450,6 @@ void SourceBufferPrivateRemote::sourceBufferPrivateBufferedChanged(Vector<WebCor
         completionHandler();
 }
 
-void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)
-{
-    if (RefPtr client = this->client())
-        client->sourceBufferPrivateDidParseSample(sampleDuration);
-}
-
 void SourceBufferPrivateRemote::sourceBufferPrivateDidDropSample()
 {
     if (RefPtr client = this->client())

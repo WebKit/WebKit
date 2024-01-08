@@ -16,6 +16,10 @@ RUN(sourceBuffer.appendBuffer(loader.mediaSegment(2)))
 EVENT(update)
 RUN(sourceBuffer.appendBuffer(loader.mediaSegment(3)))
 EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(4)))
+EVENT(update)
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(5)))
+EVENT(update)
 EXPECTED (video.currentTime >= '3.5') OK
 END OF TEST
 
