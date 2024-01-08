@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -722,6 +723,41 @@ TEST(FloatRect, EnclosingIntRect)
     EXPECT_EQ(INT_MIN, enclosed2.y());
     EXPECT_EQ(INT_MAX, enclosed2.width());
     EXPECT_EQ(INT_MAX, enclosed2.height());
+
+    WebCore::FloatRect smallDimensionsRect(42.5f, 84.5f, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon());
+    EXPECT_EQ(WebCore::IntRect(42, 84, 1, 1), WebCore::enclosingIntRect(smallDimensionsRect));
+
+    WebCore::FloatRect integralRect(100, 150, 200, 350);
+    EXPECT_EQ(WebCore::IntRect(100, 150, 200, 350), WebCore::enclosingIntRect(integralRect));
+
+    WebCore::FloatRect fractionalPosRect(100.6f, 150.8f, 200, 350);
+    EXPECT_EQ(WebCore::IntRect(100, 150, 201, 351), WebCore::enclosingIntRect(fractionalPosRect));
+
+    WebCore::FloatRect fractionalDimensionsRect(100, 150, 200.6f, 350.4f);
+    EXPECT_EQ(WebCore::IntRect(100, 150, 201, 351), WebCore::enclosingIntRect(fractionalDimensionsRect));
+
+    WebCore::FloatRect fractionalBothRect1(100.6f, 150.8f, 200.4f, 350.2f);
+    EXPECT_EQ(WebCore::IntRect(100, 150, 201, 351), WebCore::enclosingIntRect(fractionalBothRect1));
+
+    WebCore::FloatRect fractionalBothRect2(100.6f, 150.8f, 200.3f, 350.3f);
+    EXPECT_EQ(WebCore::IntRect(100, 150, 201, 352), WebCore::enclosingIntRect(fractionalBothRect2));
+
+    WebCore::FloatRect fractionalBothRect3(100.6f, 150.8f, 200.5f, 350.3f);
+    EXPECT_EQ(WebCore::IntRect(100, 150, 202, 352), WebCore::enclosingIntRect(fractionalBothRect3));
+
+    WebCore::FloatRect fractionalNegposRect1(-100.4f, -150.8f, 200, 350);
+    EXPECT_EQ(WebCore::IntRect(-101, -151, 201, 351), WebCore::enclosingIntRect(fractionalNegposRect1));
+
+    WebCore::FloatRect fractionalNegposRect2(-100.4f, -150.8f, 199.4f, 350.3f);
+    EXPECT_EQ(WebCore::IntRect(-101, -151, 200, 351), WebCore::enclosingIntRect(fractionalNegposRect2));
+
+    WebCore::FloatRect fractionalNegposRect3(-100.6f, -150.8f, 199.6f, 350.3f);
+    EXPECT_EQ(WebCore::IntRect(-101, -151, 201, 351), WebCore::enclosingIntRect(fractionalNegposRect3));
+
+    constexpr int intMin = std::numeric_limits<int>::min();
+    constexpr int intMax = std::numeric_limits<int>::max();
+    WebCore::FloatRect maxRect(-std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max() / 2, std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    EXPECT_EQ(WebCore::IntRect(intMin, intMin, intMax, intMax), WebCore::enclosingIntRect(maxRect));
 }
 
 TEST(FloatRect, RoundedIntRect)
