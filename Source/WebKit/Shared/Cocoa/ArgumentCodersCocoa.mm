@@ -322,7 +322,7 @@ NSType typeFromObject(id object)
         return NSType::Color;
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)
-    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
+    if (PAL::isDataDetectorsFrameworkAvailable() && [object isKindOfClass:PAL::getWKDDActionContextClass()])
         return NSType::DDActionContext;
 #endif
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:PAL::getDDScannerResultClass()])
