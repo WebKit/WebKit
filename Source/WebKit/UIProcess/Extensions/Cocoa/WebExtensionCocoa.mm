@@ -1509,18 +1509,24 @@ void WebExtension::populateCommandsIfNeeded()
         commandData.activationKey = emptyString();
         commandData.modifierFlags = { };
 
-        if (!hasActionCommand) {
-            if (supportsManifestVersion(3) && commandData.identifier == "_execute_action"_s)
-                hasActionCommand = true;
-            else if (!supportsManifestVersion(3) && (commandData.identifier == "_execute_browser_action"_s || commandData.identifier == "_execute_page_action"_s))
-                hasActionCommand = true;
-        }
+        bool isActionCommand = false;
+        if (supportsManifestVersion(3) && commandData.identifier == "_execute_action"_s)
+            isActionCommand = true;
+        else if (!supportsManifestVersion(3) && (commandData.identifier == "_execute_browser_action"_s || commandData.identifier == "_execute_page_action"_s))
+            isActionCommand = true;
 
+        if (isActionCommand && !hasActionCommand)
+            hasActionCommand = true;
+
+        // Descriptions are required for standard commands, but are optional for action commands.
         auto *description = objectForKey<NSString>(commandDictionary, commandsDescriptionKeyManifestKey);
-        if (!description.length) {
+        if (!description.length && !isActionCommand) {
             error = WEB_UI_STRING("Empty or invalid `description` in the `commands` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for invalid command description");
             continue;
         }
+
+        if (isActionCommand && !description.length)
+            description = displayActionLabel();
 
         commandData.description = description;
 

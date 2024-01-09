@@ -58,8 +58,7 @@ static auto *commandsManifest = @{
             @"suggested_key": @{
                 @"default": @"Ctrl+Shift+Y",
                 @"mac": @"MacCtrl+Shift+Y"
-            },
-            @"description": @"Browser Action"
+            }
         },
         @"test-command": @{
             @"suggested_key": @{
@@ -81,7 +80,7 @@ TEST(WKWebExtensionAPICommands, GetAllCommands)
         @"let testCommand = commands.find(command => command.name === 'test-command')",
 
         @"browser.test.assertTrue(!!executeActionCommand, '_execute_action command should exist')",
-        @"browser.test.assertEq(executeActionCommand.description, 'Browser Action', 'The description should be')",
+        @"browser.test.assertEq(executeActionCommand.description, 'Test Action', 'The description should be')",
         @"browser.test.assertEq(executeActionCommand.shortcut, 'MacCtrl+Shift+Y', 'The shortcut should be')",
 
         @"browser.test.assertTrue(!!testCommand, 'test-command command should exist')",
