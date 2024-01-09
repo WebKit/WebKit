@@ -125,7 +125,12 @@ size_t SsDataLength(const RTPVideoHeaderVP9& hdr) {
 
   RTC_DCHECK_GT(hdr.num_spatial_layers, 0U);
   RTC_DCHECK_LE(hdr.num_spatial_layers, kMaxVp9NumberOfSpatialLayers);
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (hdr.gof.num_frames_in_gof > kMaxVp9FramesInGof)
+    return 0;
+#else
   RTC_DCHECK_LE(hdr.gof.num_frames_in_gof, kMaxVp9FramesInGof);
+#endif
   size_t length = 1;  // V
   if (hdr.spatial_layer_resolution_present) {
     length += 4 * hdr.num_spatial_layers;  // Y
