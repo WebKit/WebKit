@@ -4638,7 +4638,7 @@ fn testTextureSampleGrad()
 }
 
 // 16.7.13
-// RUN: %metal-compile testTexureSampleLevel
+// RUN: %metal-compile testTextureSampleLevel
 @compute @workgroup_size(1)
 fn testTextureSampleLevel()
 {
@@ -4770,7 +4770,7 @@ fn testAtomicReadWriteModify()
 }
 
 // 16.9. Data Packing Built-in Functions (https://www.w3.org/TR/WGSL/#pack-builtin-functions)
-// RUN: %metal-compile testDataPackingFunction
+// RUN: %metal-compile testDataPackingFunctions
 @compute @workgroup_size(1)
 fn testDataPackingFunctions()
 {
