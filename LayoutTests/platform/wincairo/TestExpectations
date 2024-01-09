@@ -396,6 +396,7 @@ fast/canvas/offscreen-giant.html [ Skip ]
 fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
+webgl/webgl-worker.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
