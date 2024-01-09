@@ -28,23 +28,27 @@ namespace WebCore {
 
 class RenderStyle;
 
-enum TextSizeAdjustmentType { AutoTextSizeAdjustment = -1, NoTextSizeAdjustment = -2 };
-
 class TextSizeAdjustment {
 public:
-    constexpr TextSizeAdjustment() : m_value(AutoTextSizeAdjustment) { }
-    constexpr TextSizeAdjustment(float value) : m_value(value) { }
+    static constexpr TextSizeAdjustment autoAdjust() { return TextSizeAdjustment(true); }
+    static constexpr TextSizeAdjustment none() { return TextSizeAdjustment(false); }
 
-    constexpr float percentage() const { return m_value; }
-    constexpr float multiplier() const { return m_value / 100; }
+    constexpr TextSizeAdjustment() : m_value(Auto) { }
+    constexpr TextSizeAdjustment(float value) : m_value(value) { ASSERT_UNDER_CONSTEXPR_CONTEXT(m_value >= 0); }
 
-    constexpr bool isAuto() const { return m_value == AutoTextSizeAdjustment; }
-    constexpr bool isNone() const { return m_value == NoTextSizeAdjustment; }
+    constexpr float percentage() const { ASSERT_UNDER_CONSTEXPR_CONTEXT(m_value >= 0); return m_value; }
+    constexpr float multiplier() const { ASSERT_UNDER_CONSTEXPR_CONTEXT(m_value >= 0); return m_value / 100; }
+
+    constexpr bool isAuto() const { return m_value == Auto; }
+    constexpr bool isNone() const { return m_value == None; }
     constexpr bool isPercentage() const { return m_value >= 0; }
 
     friend constexpr bool operator==(TextSizeAdjustment, TextSizeAdjustment) = default;
 
 private:
+    static constexpr float Auto = -1;
+    static constexpr float None = -2;
+    constexpr TextSizeAdjustment(bool isAuto) : m_value(isAuto ? Auto : None) { }
     float m_value;
 };
 
