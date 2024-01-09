@@ -550,6 +550,23 @@ function :dot, {
     [T < Number, N].(vec[N][T], vec[N][T]) => T
 }
 
+# FIXME: new functions were added so the spec numbers changed
+# 16.5.21
+function :dot4U8Packed, {
+    must_use: true,
+    const: true,
+
+    [].(u32, u32) => u32
+}
+
+# 16.5.22
+function :dot4I8Packed, {
+    must_use: true,
+    const: true,
+
+    [].(u32, u32) => i32
+}
+
 # 16.5.21 & 16.5.22
 ["exp", "exp2"].each do |op|
     function :"#{op}", {

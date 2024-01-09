@@ -2302,6 +2302,26 @@ fn testDot()
     }
 }
 
+// 16.5.21
+// RUN: %metal-compile testDot4U8Packed
+@compute @workgroup_size(1)
+fn testDot4U8Packed()
+{
+    let u = 0u;
+    { const x: u32 = dot4U8Packed(0u, 0u); }
+    { let x: u32 = dot4U8Packed(u, u); }
+}
+
+// 16.5.22
+// RUN: %metal-compile testDot4I8Packed
+@compute @workgroup_size(1)
+fn testDot4I8Packed()
+{
+    let u = 0u;
+    { const x: i32 = dot4I8Packed(0u, 0u); }
+    { let x: i32 = dot4I8Packed(u, u); }
+}
+
 // 16.5.21 & 16.5.22
 // RUN: %metal-compile testExpAndExp2
 @compute @workgroup_size(1)

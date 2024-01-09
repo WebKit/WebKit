@@ -979,6 +979,24 @@ CONSTANT_FUNCTION(Dot)
     return { { result } };
 }
 
+CONSTANT_FUNCTION(Dot4U8Packed)
+{
+    UNUSED_PARAM(resultType);
+    auto lhs = bitwise_cast<std::array<uint8_t, 4>>(std::get<uint32_t>(arguments[0]));
+    auto rhs = bitwise_cast<std::array<uint8_t, 4>>(std::get<uint32_t>(arguments[1]));
+    uint32_t result = lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
+    return { { result } };
+}
+
+CONSTANT_FUNCTION(Dot4I8Packed)
+{
+    UNUSED_PARAM(resultType);
+    auto lhs = bitwise_cast<std::array<int8_t, 4>>(std::get<uint32_t>(arguments[0]));
+    auto rhs = bitwise_cast<std::array<int8_t, 4>>(std::get<uint32_t>(arguments[1]));
+    int32_t result = lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2] + lhs[3] * rhs[3];
+    return { { result } };
+}
+
 CONSTANT_FUNCTION(Length)
 {
     ASSERT(arguments.size() == 1);

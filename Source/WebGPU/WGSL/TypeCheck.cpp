@@ -1049,6 +1049,10 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesFirstTrailingBit();
             else if (targetName == "sign"_s)
                 m_shaderModule.setUsesSign();
+            else if (targetName == "dot4I8Packed"_s)
+                m_shaderModule.setUsesDot4I8Packed();
+            else if (targetName == "dot4U8Packed"_s)
+                m_shaderModule.setUsesDot4U8Packed();
             target.m_inferredType = result;
             return;
         }

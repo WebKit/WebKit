@@ -117,6 +117,12 @@ public:
     bool usesSampleIndex() const { return m_usesSampleIndex; }
     void setUsesSampleIndex() { m_usesSampleIndex = true; }
 
+    bool usesDot4I8Packed() const { return m_usesDot4I8Packed; }
+    void setUsesDot4I8Packed() { m_usesDot4I8Packed = true; }
+
+    bool usesDot4U8Packed() const { return m_usesDot4U8Packed; }
+    void setUsesDot4U8Packed() { m_usesDot4U8Packed = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -280,6 +286,8 @@ private:
     bool m_usesSampleMask { false };
     bool m_usesFrontFacing { false };
     bool m_usesSampleIndex { false };
+    bool m_usesDot4I8Packed { false };
+    bool m_usesDot4U8Packed { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
