@@ -110,7 +110,7 @@ otherwise install OpenSSL and ensure that it's on your $PATH.""")
 def check_environ(product):
     if product not in ("android_weblayer", "android_webview", "chrome",
                        "chrome_android", "chrome_ios", "content_shell",
-                       "firefox", "firefox_android", "servo"):
+                       "firefox", "firefox_android", "servo", "wktr"):
         config_builder = serve.build_config(os.path.join(wpt_root, "config.json"))
         # Override the ports to avoid looking for free ports
         config_builder.ssl = {"type": "none"}
@@ -264,6 +264,9 @@ Consider installing certutil via your OS package manager or directly.""")
         if kwargs["headless"] is None and not kwargs["debug_test"]:
             kwargs["headless"] = True
             logger.info("Running in headless mode, pass --no-headless to disable")
+
+        if kwargs["browser_channel"] == "nightly" and kwargs["enable_webtransport_h3"] is None:
+            kwargs["enable_webtransport_h3"] = True
 
         # Turn off Firefox WebRTC ICE logging on WPT (turned on by mozrunner)
         safe_unsetenv('R_LOG_LEVEL')
@@ -686,6 +689,23 @@ class WebKit(BrowserSetup):
         pass
 
 
+class WebKitTestRunner(BrowserSetup):
+    name = "wktr"
+    browser_cls = browser.WebKitTestRunner
+
+    def install(self, channel=None):
+        if self.prompt_install(self.name):
+            return self.browser.install(self.venv.path, channel=channel)
+
+    def setup_kwargs(self, kwargs):
+        if kwargs["binary"] is None:
+            binary = self.browser.find_binary(self.venv.path, channel=kwargs["browser_channel"])
+
+            if binary is None:
+                raise WptrunError("Unable to find binary in PATH")
+            kwargs["binary"] = binary
+
+
 class WebKitGTKMiniBrowser(BrowserSetup):
     name = "webkitgtk_minibrowser"
     browser_cls = browser.WebKitGTKMiniBrowser
@@ -755,6 +775,7 @@ product_setup = {
     "sauce": Sauce,
     "opera": Opera,
     "webkit": WebKit,
+    "wktr": WebKitTestRunner,
     "webkitgtk_minibrowser": WebKitGTKMiniBrowser,
     "epiphany": Epiphany,
 }

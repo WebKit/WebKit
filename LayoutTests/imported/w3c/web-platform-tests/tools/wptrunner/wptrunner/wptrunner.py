@@ -62,10 +62,12 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
                                     device_serials=kwargs.get("device_serial"),
                                     adb_binary=kwargs.get("adb_binary"))
 
-    test_manifests = testloader.ManifestLoader(test_paths, force_manifest_update=kwargs["manifest_update"],
+    test_manifests = testloader.ManifestLoader(test_paths,
+                                               force_manifest_update=kwargs["manifest_update"],
                                                manifest_download=kwargs["manifest_download"]).load()
 
     manifest_filters = []
+    test_filters = []
 
     include = kwargs["include"]
     if kwargs["include_file"]:
@@ -73,6 +75,9 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
         include.extend(testloader.read_include_from_file(kwargs["include_file"]))
     if test_groups:
         include = testloader.update_include_for_groups(test_groups, include)
+
+    if kwargs["tags"]:
+        test_filters.append(testloader.TagFilter(kwargs["tags"]))
 
     if include or kwargs["exclude"] or kwargs["include_manifest"] or kwargs["default_exclude"]:
         manifest_filters.append(testloader.TestFilter(include=include,
@@ -87,6 +92,7 @@ def get_loader(test_paths, product, debug=None, run_info_extras=None, chunker_kw
                                         kwargs["test_types"],
                                         run_info,
                                         manifest_filters=manifest_filters,
+                                        test_filters=test_filters,
                                         chunk_type=kwargs["chunk_type"],
                                         total_chunks=kwargs["total_chunks"],
                                         chunk_number=kwargs["this_chunk"],
@@ -163,6 +169,7 @@ def run_test_iteration(test_status, test_loader, test_source_kwargs, test_source
     tests_by_type = defaultdict(list)
     for test_type in test_loader.test_types:
         tests_by_type[test_type].extend(test_loader.tests[test_type])
+        tests_by_type[test_type].extend(test_loader.disabled_tests[test_type])
 
     try:
         test_groups = test_source_cls.tests_by_group(

@@ -26,7 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestupdate.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/metadata.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/mpcontext.py
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/print_reftest_runner.html
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/print_pdf_runner.html
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/products.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/stability.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testdriver-extra.js
@@ -35,6 +35,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-content-shell.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servo.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-servodriver.js
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport-wktr.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testharnessreport.js
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testloader.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/testrunner.py

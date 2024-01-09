@@ -14,5 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/ISSUE_TEMPLATE.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/FUNDING.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/PULL_REQUEST_TEMPLATE.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/config.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/dependabot.yml
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest/.github/labels.toml

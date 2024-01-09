@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/CODE_OF_CONDUCT.rst
-/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/CONTRIBUTING.rst
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/CODE_OF_CONDUCT.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/CONTRIBUTING.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/FUNDING.yml
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/PULL_REQUEST_TEMPLATE.md
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/attrs/.github/SECURITY.md

@@ -15,4 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest-asyncio/pytest_asyncio/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest-asyncio/pytest_asyncio/_version.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest-asyncio/pytest_asyncio/plugin.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/third_party/pytest-asyncio/pytest_asyncio/py.typed

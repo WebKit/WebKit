@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorservo.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorservodriver.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorwebdriver.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/executorwktr.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/process.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/protocol.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/executors/reftest.js

@@ -249,21 +249,21 @@ class BaseWebTestRequestHandler(http.server.BaseHTTPRequestHandler):
 
         self.server.rewriter.rewrite(self)
 
-        request = Request(self)
-        response = Response(self, request)
+        with Request(self) as request:
+            response = Response(self, request)
 
-        if request.method == "CONNECT":
-            self.handle_connect(response)
-            return
+            if request.method == "CONNECT":
+                self.handle_connect(response)
+                return
 
-        if not request_line_is_valid:
-            response.set_error(414)
-            response.write()
-            return
+            if not request_line_is_valid:
+                response.set_error(414)
+                response.write()
+                return
 
-        self.logger.debug(f"{request.method} {request.request_path}")
-        handler = self.server.router.get_handler(request)
-        self.finish_handling(request, response, handler)
+            self.logger.debug(f"{request.method} {request.request_path}")
+            handler = self.server.router.get_handler(request)
+            self.finish_handling(request, response, handler)
 
     def finish_handling(self, request, response, handler):
         # If the handler we used for the request had a non-default base path
@@ -573,6 +573,20 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
         response = None
         req_handler = None
 
+        def cleanup():
+            # Try to close the files
+            # Ignore any exception (e.g. if the file handle was already closed for some reason).
+            if rfile:
+                try:
+                    rfile.close()
+                except OSError:
+                    pass
+            if wfile:
+                try:
+                    wfile.close()
+                except OSError:
+                    pass
+
         while not self.close_connection:
             try:
                 frame = queue.get(True, 1)
@@ -582,10 +596,7 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
 
             self.logger.debug(f'({self.uid} - {stream_id}) {str(frame)}')
             if isinstance(frame, RequestReceived):
-                if rfile:
-                    rfile.close()
-                if wfile:
-                    wfile.close()
+                cleanup()
 
                 pipe_rfile, pipe_wfile = os.pipe()
                 (rfile, wfile) = os.fdopen(pipe_rfile, 'rb'), os.fdopen(pipe_wfile, 'wb')
@@ -626,10 +637,7 @@ class Http2WebTestRequestHandler(BaseWebTestRequestHandler):
                                     (self.uid, stream_id))
                 break
 
-        if rfile:
-            rfile.close()
-        if wfile:
-            wfile.close()
+        cleanup()
 
     def frame_handler(self, request, response, handler):
         try:
@@ -854,7 +862,7 @@ class WebTestHttpd:
         self.logger.info(f"Starting {http_type} server on {http_scheme}://{self.host}:{self.port}")
         self.started = True
         self.server_thread = threading.Thread(target=self.httpd.serve_forever)
-        self.server_thread.setDaemon(True)  # don't hang on exit
+        self.server_thread.daemon = True  # don't hang on exit
         self.server_thread.start()
 
     def stop(self):
