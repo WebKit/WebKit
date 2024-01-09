@@ -153,9 +153,6 @@ public:
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
 
-    BoxGeometry toVisualGeometry(WritingMode, bool isLeftToRightInlineDirection, LayoutUnit containerLogicalWidth) const;
-    BoxGeometry toLogicalGeometry(WritingMode, bool isLeftToRightInlineDirection, LayoutUnit containerLogicalWidth) const;
-
 private:
     LayoutUnit top() const;
     LayoutUnit left() const;
