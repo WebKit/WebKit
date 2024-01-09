@@ -568,9 +568,9 @@ static JSValueRef sendSyncMessageWithJSArguments(IPC::Connection& connection, JS
     }
 
     auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.decoder) {
+    if (replyDecoderOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, replyDecoderOrError.value().get());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -593,9 +593,9 @@ static JSValueRef waitForMessageWithJSArguments(IPC::Connection& connection, JSC
 
     auto [destinationID, messageName, timeout] = *info;
     auto decoderOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
-    if (decoderOrError.decoder) {
+    if (decoderOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto jsResult = jsValueForArguments(globalObject, messageName, *decoderOrError.decoder);
+        auto jsResult = jsValueForArguments(globalObject, messageName, decoderOrError.value().get());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -1107,9 +1107,9 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
         return JSValueMakeUndefined(context);
 
     auto replyDecoderOrError = connection->sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.decoder) {
+    if (replyDecoderOrError.has_value()) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, replyDecoderOrError.value().get());
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();

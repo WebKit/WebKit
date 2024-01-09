@@ -130,7 +130,7 @@ ALWAYS_INLINE auto RemoteImageBufferSetProxy::sendSync(T&& message)
     if (UNLIKELY(!result.succeeded())) {
         auto& parameters = m_remoteRenderingBackendProxy->parameters();
         RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] Proxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
-            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
+            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error()));
     }
 #endif
     return result;

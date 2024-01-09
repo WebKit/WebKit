@@ -41,7 +41,7 @@ public:
     }
     ~FunctionDispatcherQueue() final = default;
 
-    void enqueueMessage(Connection& connection, std::unique_ptr<Decoder>&& message) final
+    void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
         m_dispatcher.dispatch([connection = Ref { connection }, message = WTFMove(message), &receiver = m_receiver]() mutable {
             connection->dispatchMessageReceiverMessage(receiver, WTFMove(message));
@@ -62,7 +62,7 @@ public:
     }
     ~WorkQueueMessageReceiverQueue() final = default;
 
-    void enqueueMessage(Connection& connection, std::unique_ptr<Decoder>&& message) final
+    void enqueueMessage(Connection& connection, UniqueRef<Decoder>&& message) final
     {
         m_queue->dispatch([connection = Ref { connection }, message = WTFMove(message), receiver = m_receiver]() mutable {
             connection->dispatchMessageReceiverMessage(receiver.get(), WTFMove(message));

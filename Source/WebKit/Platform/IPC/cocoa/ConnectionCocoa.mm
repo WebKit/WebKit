@@ -544,7 +544,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    processIncomingMessage(WTFMove(decoder));
+    processIncomingMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(decoder)));
 }
 
 IPC::Connection::Identifier Connection::identifier() const

@@ -37,7 +37,7 @@ public:
     virtual ~MessageReceiveQueue() = default;
     // Called with Connection incoming message lock held.
     // May be called from multiple threads.
-    virtual void enqueueMessage(Connection&, std::unique_ptr<Decoder>&&) = 0;
+    virtual void enqueueMessage(Connection&, UniqueRef<Decoder>&&) = 0;
 };
 
 } // namespace IPC

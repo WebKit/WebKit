@@ -776,7 +776,7 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
 
     auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), 0);
     if (!sendResult.succeeded()) {
-        WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR("loadResourceSynchronously: failed sending synchronous network process message %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error));
+        WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR("loadResourceSynchronously: failed sending synchronous network process message %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()));
         if (page)
             page->diagnosticLoggingClient().logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::synchronousMessageFailedKey(), WebCore::ShouldSample::No);
         response = ResourceResponse();
