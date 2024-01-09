@@ -42,7 +42,8 @@ public:
     // A general method asking if any control tinting is supported at all.
     bool supportsControlTints() const final { return true; }
 
-    void adjustRepaintRect(const RenderObject&, FloatRect&) final;
+    void inflateRectForControlRenderer(const RenderObject&, FloatRect&) final;
+    void adjustRepaintRect(const RenderBox&, FloatRect&) final;
 
     bool isControlStyled(const RenderStyle&, const RenderStyle& userAgentStyle) const final;
 

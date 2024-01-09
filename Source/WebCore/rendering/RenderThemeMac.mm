@@ -777,7 +777,7 @@ static const int* popupButtonPadding(NSControlSize size, bool isRTL)
     return isRTL ? paddingRTL[size] : paddingLTR[size];
 }
 
-void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
+void RenderThemeMac::inflateRectForControlRenderer(const RenderObject& renderer, FloatRect& rect)
 {
     auto appearance = renderer.style().effectiveAppearance();
 
@@ -803,6 +803,14 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     default:
         break;
     }
+}
+
+void RenderThemeMac::adjustRepaintRect(const RenderBox& renderer, FloatRect& rect)
+{
+    auto repaintRect = rect;
+    inflateRectForControlRenderer(renderer, repaintRect);
+    renderer.flipForWritingMode(repaintRect);
+    rect = repaintRect;
 }
 
 bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
