@@ -322,7 +322,7 @@ public:
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
-    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&);
+    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
 
     void generateSubtree(AccessibilityObject&);
     void labelCreated(AccessibilityObject&);
