@@ -65,6 +65,7 @@ fast/mediastream
 imported/w3c/web-platform-tests/feature-policy/reporting/camera-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/feature-policy/reporting/microphone-reporting.https.html [ Skip ]
 imported/w3c/web-platform-tests/mediacapture-streams
+imported/w3c/web-platform-tests/mediacapture-insertable-streams
 http/tests/media/media-stream
 http/tests/ssl/media-stream
 inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]

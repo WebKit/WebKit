@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackGenerator-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackGenerator-in-service-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackGenerator-in-shared-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackGenerator-in-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackGenerator-pipes-data-in-worker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackGenerator-video.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackProcessor-audio.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackProcessor-backpressure.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackProcessor-video.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/MediaStreamTrackProcessor-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/dedicated-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/service-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-insertable-streams/shared-worker.js

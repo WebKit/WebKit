@@ -529,6 +529,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCTrackEvent.idl
     Modules/mediastream/RTCTransformEvent.idl
     Modules/mediastream/RedEyeReduction.idl
+    Modules/mediastream/VideoTrackGenerator.idl
 
     Modules/model-element/HTMLModelElement.idl
     Modules/model-element/HTMLModelElementCamera.idl

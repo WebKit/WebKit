@@ -275,6 +275,7 @@ Modules/mediastream/SFrameUtils.cpp
 Modules/mediastream/STUNMessageParsing.cpp
 Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
+Modules/mediastream/VideoTrackGenerator.cpp
 Modules/model-element/HTMLModelElement.cpp
 Modules/model-element/ModelPlayer.cpp
 Modules/model-element/ModelPlayerClient.cpp
@@ -4414,6 +4415,7 @@ JSVideoPixelFormat.cpp
 JSVideoPlaybackQuality.cpp
 JSVideoTrack.cpp
 JSVideoTrackConfiguration.cpp
+JSVideoTrackGenerator.cpp
 JSVideoTrackList.cpp
 JSVideoTransferCharacteristics.cpp
 JSViewTimeline.cpp

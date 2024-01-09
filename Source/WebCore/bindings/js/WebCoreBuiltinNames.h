@@ -507,6 +507,7 @@ namespace WebCore {
     macro(XRViewerPose) \
     macro(XRViewport) \
     macro(XRWebGLLayer) \
+    macro(VideoTrackGenerator) \
     macro(abortAlgorithm) \
     macro(abortSteps) \
     macro(addAbortAlgorithmToSignal) \

@@ -2996,6 +2996,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackConfiguration.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackGenerator.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackGenerator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrackMediaSource.cpp
