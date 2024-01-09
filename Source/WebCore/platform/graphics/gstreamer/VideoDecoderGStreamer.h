@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#if USE(GSTREAMER)
 
 #include "GRefPtrGStreamer.h"
 #include "VideoDecoder.h"
@@ -51,4 +51,4 @@ private:
 
 }
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // USE(GSTREAMER)

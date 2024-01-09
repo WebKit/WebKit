@@ -130,7 +130,7 @@ static bool shouldUseLocalDecoder(std::optional<VideoCodecType> type, const Vide
         return true;
 
 #if PLATFORM(MAC) && CPU(X86_64)
-    if (*type == VideoCodecType::VP9 && config.prefersSoftware)
+    if (*type == VideoCodecType::VP9 && config.decoding == VideoDecoder::HardwareAcceleration::No)
         return true;
 #endif
 
