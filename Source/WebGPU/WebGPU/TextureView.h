@@ -59,6 +59,7 @@ public:
     bool isValid() const { return m_texture; }
 
     id<MTLTexture> texture() const { return m_texture; }
+    id<MTLTexture> parentTexture() const;
     const WGPUTextureViewDescriptor& descriptor() const { return m_descriptor; }
     const std::optional<WGPUExtent3D>& renderExtent() const { return m_renderExtent; }
 
@@ -69,8 +70,15 @@ public:
     uint32_t height() const;
     WGPUTextureUsageFlags usage() const;
     uint32_t sampleCount() const;
+    WGPUTextureFormat parentFormat() const;
     WGPUTextureFormat format() const;
+    uint32_t parentMipLevelCount() const;
     uint32_t mipLevelCount() const;
+    uint32_t baseMipLevel() const;
+    WGPUTextureAspect aspect() const;
+    uint32_t arrayLayerCount() const;
+    uint32_t baseArrayLayer() const;
+    WGPUTextureViewDimension dimension() const;
     bool isDestroyed() const;
     void destroy();
     void setCommandEncoder(CommandEncoder&);

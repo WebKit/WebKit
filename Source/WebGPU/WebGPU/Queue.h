@@ -70,11 +70,10 @@ public:
     bool isValid() const { return m_commandQueue; }
     void makeInvalid() { m_commandQueue = nil; }
 
-    id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
-
     const Device& device() const { return m_device; }
     void waitUntilIdle();
     void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
+    id<MTLCommandBuffer> commandBufferWithDescriptor(MTLCommandBufferDescriptor*);
 
 private:
     Queue(id<MTLCommandQueue>, Device&);
@@ -105,7 +104,8 @@ private:
     HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
-    NSMutableSet<id<MTLCommandBuffer>> *m_pendingCommandBuffers;
+    NSMutableSet<id<MTLCommandBuffer>> *m_pendingCommandBuffers { nil };
+    NSMutableOrderedSet<id<MTLCommandBuffer>> *m_createdNotCommittedBuffers { nil };
 };
 
 } // namespace WebGPU

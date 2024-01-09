@@ -93,6 +93,7 @@ public:
     void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0, id<MTLRenderCommandEncoder> = nil);
     static void clearTexture(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
     void makeInvalid();
+    void makeSubmitInvalid();
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
@@ -117,6 +118,7 @@ private:
     Vector<PendingTimestampWrites> m_pendingTimestampWrites;
     uint64_t m_debugGroupStackSize { 0 };
     WeakPtr<CommandBuffer> m_cachedCommandBuffer;
+    bool m_makeSubmitInvalid { false };
 
     const Ref<Device> m_device;
 };

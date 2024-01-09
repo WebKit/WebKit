@@ -44,6 +44,7 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
     , m_device(device)
 {
     m_pendingCommandBuffers = [NSMutableSet set];
+    m_createdNotCommittedBuffers = [NSMutableOrderedSet orderedSet];
 }
 
 Queue::Queue(Device& device)
@@ -74,7 +75,7 @@ void Queue::ensureBlitCommandEncoder()
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-    m_commandBuffer = [m_commandQueue commandBufferWithDescriptor:commandBufferDescriptor];
+    m_commandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
 }
 
@@ -86,6 +87,21 @@ void Queue::finalizeBlitCommandEncoder()
         m_blitCommandEncoder = nil;
         m_commandBuffer = nil;
     }
+}
+
+id<MTLCommandBuffer> Queue::commandBufferWithDescriptor(MTLCommandBufferDescriptor* descriptor)
+{
+    constexpr auto maxCommandBufferCount = 64;
+    if (m_createdNotCommittedBuffers.count >= maxCommandBufferCount) {
+        id<MTLCommandBuffer> buffer = [m_createdNotCommittedBuffers objectAtIndex:0];
+        [m_createdNotCommittedBuffers removeObjectAtIndex:0];
+        commitMTLCommandBuffer(buffer);
+        [buffer waitUntilCompleted];
+    }
+
+    id<MTLCommandBuffer> buffer = [m_commandQueue commandBufferWithDescriptor:descriptor];
+    [m_createdNotCommittedBuffers addObject:buffer];
+    return buffer;
 }
 
 void Queue::onSubmittedWorkDone(CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)
@@ -165,6 +181,7 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 
     [m_pendingCommandBuffers addObject:commandBuffer];
     [commandBuffer commit];
+    [m_createdNotCommittedBuffers removeObject:commandBuffer];
     ++m_submittedCommandBufferCount;
 }
 

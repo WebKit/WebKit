@@ -85,6 +85,8 @@ public:
     static std::optional<WGPUTextureFormat> resolveTextureFormat(WGPUTextureFormat, WGPUTextureAspect);
     static bool isCompressedFormat(WGPUTextureFormat);
     static bool isRenderableFormat(WGPUTextureFormat, const Device&);
+    static bool isColorRenderableFormat(WGPUTextureFormat, const Device&);
+    static bool isDepthStencilRenderableFormat(WGPUTextureFormat, const Device&);
     static uint32_t renderTargetPixelByteCost(WGPUTextureFormat);
     static uint32_t renderTargetPixelByteAlignment(WGPUTextureFormat);
 
@@ -109,6 +111,7 @@ public:
     bool isDestroyed() const;
     static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
+    static bool supportsResolve(WGPUTextureFormat, const Device&);
     static bool supportsBlending(WGPUTextureFormat, const Device&);
     void recreateIfNeeded();
     void makeCanvasBacking();

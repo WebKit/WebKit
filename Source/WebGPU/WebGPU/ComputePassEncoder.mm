@@ -55,6 +55,7 @@ ComputePassEncoder::ComputePassEncoder(CommandEncoder& parentEncoder, Device& de
     : m_device(device)
     , m_parentEncoder(parentEncoder)
 {
+    m_parentEncoder->lock(true);
 }
 
 ComputePassEncoder::~ComputePassEncoder()
