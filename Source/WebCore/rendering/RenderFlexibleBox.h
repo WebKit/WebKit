@@ -209,7 +209,7 @@ private:
     bool useChildOverridingCrossSizeForPercentageResolution(const RenderBox&);
     bool useChildOverridingMainSizeForPercentageResolution(const RenderBox&);
 
-    void layoutFlexItems(bool relayoutChildren);
+    FlexLineStates layoutFlexItems(bool relayoutChildren);
     LayoutUnit autoMarginOffsetInMainAxis(const FlexItems&, LayoutUnit& availableFreeSpace);
     void updateAutoMarginsInMainAxis(RenderBox& child, LayoutUnit autoMarginOffset);
     void initializeMarginTrimState(); 
@@ -262,6 +262,8 @@ private:
     void resetHasDefiniteHeight() { m_hasDefiniteHeight = SizeDefiniteness::Unknown; }
 
     void layoutUsingFlexFormattingContext();
+
+    FlexLineStates m_flexLines;
 
     // This is used to cache the preferred size for orthogonal flow children so we
     // don't have to relayout to get it
