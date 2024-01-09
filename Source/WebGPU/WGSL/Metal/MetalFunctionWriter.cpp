@@ -1752,10 +1752,8 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
     auto isArray = is<AST::ArrayTypeExpression>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().inferredType());
     if (isArray || isStruct) {
-        if (isStruct) {
-            visit(type);
-            m_stringBuilder.append(" ");
-        }
+        visit(type);
+        m_stringBuilder.append("(");
         const Type* arrayElementType = nullptr;
         if (isArray)
             arrayElementType = std::get<Types::Array>(*type).element;
@@ -1772,7 +1770,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
                 m_stringBuilder.append(",\n");
             }
         }
-        m_stringBuilder.append(m_indent, "}");
+        m_stringBuilder.append(m_indent, "})");
         return;
     }
 
