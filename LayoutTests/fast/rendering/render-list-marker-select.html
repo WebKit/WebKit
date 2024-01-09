@@ -1,0 +1,17 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<style>
+    ::before, html {
+        & body {
+            display: list-item;
+        }
+    }
+
+    select {
+        display: block;
+    }
+</style>
+<select></select>
+<div>This test should not crash</div>
