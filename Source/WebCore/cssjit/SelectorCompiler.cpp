@@ -1171,7 +1171,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    case CSSSelector::PseudoClass::HasAttachment:
+    case CSSSelector::PseudoClass::AppleHasAttachment:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationHasAttachment));
         return FunctionType::SimpleSelectorChecker;
 #endif

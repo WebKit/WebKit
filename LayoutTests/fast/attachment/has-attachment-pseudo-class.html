@@ -3,13 +3,13 @@
     <script src="../../resources/js-test-pre.js"></script>
     <style>
         img { clear: both; }
-        img:has-attachment { clear: none; }
+        img:-apple-has-attachment { clear: none; }
     </style>
 </head>
 <body>
     <img id=target>
     <script>
-        description("This tests the :has-attachment pseudoclass.");
+        description("This tests the :-apple-has-attachment pseudoclass.");
         var target = document.getElementById("target");
         shouldBeEqualToString("getComputedStyle(target).clear", "both");
         HTMLAttachmentElement.getAttachmentIdentifier(target);

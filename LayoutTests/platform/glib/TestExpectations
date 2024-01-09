@@ -2664,11 +2664,10 @@ http/tests/webshare [ Skip ]
 http/tests/privateClickMeasurement [ Skip ]
 inspector/page/overrideSetting-PrivateClickMeasurementDebugModeEnabled.html [ Skip ]
 
-# The attachment element is not stadandard and not currently supported on glib
+# The attachment element is not standard and not currently supported on glib
 fast/attachment [ Skip ]
 editing/pasteboard/copy-paste-attachment.html [ Skip ]
 editing/text-iterator/backwards-text-iterator-attachment.html [ Skip ]
-fast/css/has-attachment.html [ Skip ]
 
 # <model> is not supported by GTK/WPE
 http/tests/model/ [ Skip ]

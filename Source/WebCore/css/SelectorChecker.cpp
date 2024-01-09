@@ -1123,7 +1123,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return matchesDirPseudoClass(element, selector.argument());
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        case CSSSelector::PseudoClass::HasAttachment:
+        case CSSSelector::PseudoClass::AppleHasAttachment:
             return hasAttachment(element);
 #endif
         case CSSSelector::PseudoClass::InternalHTMLDocument:

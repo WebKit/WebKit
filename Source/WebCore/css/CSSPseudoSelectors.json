@@ -34,6 +34,11 @@
         ]
     },
     "pseudo-classes": {
+        "-apple-has-attachment": {
+            "comment": "For use in Apple internal apps.",
+            "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
+            "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
+        },
         "-internal-html-document": {},
         "-webkit-animating-full-screen-transition": {
             "comment": "For UA stylesheet use.",
@@ -141,10 +146,6 @@
         "has": {
             "argument": "required",
             "settings-flag": "hasPseudoClassEnabled"
-        },
-        "has-attachment": {
-            "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
-            "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
         },
         "horizontal": {
             "comment": "For scrollbar styling.",
