@@ -10,18 +10,18 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,10) size 158x18
           text run at (0,10) width 158: "<ruby> is defined in the "
         RenderInline {RUBY} at (0,0) size 129x18
-          RenderInline (generated) at (0,0) size 39x18
-            RenderInline {SPAN} at (0,0) size 23x18
+          RenderInline (generated) at (0,0) size 40x18
+            RenderInline {SPAN} at (0,0) size 22x18
               RenderText {#text} at (161,10) size 22x18
                 text run at (161,10) width 22: "HT"
           RenderBlock {RT} at (152,0) size 40x10
             RenderText {#text} at (0,0) size 39x10
               text run at (0,0) width 39: "Hyper-text"
           RenderInline (generated) at (0,0) size 91x18
-            RenderInline {SPAN} at (0,0) size 16x18
+            RenderInline {SPAN} at (0,0) size 15x18
               RenderText {#text} at (220,10) size 15x18
                 text run at (220,10) width 15: "M"
-            RenderInline {SPAN} at (0,0) size 10x18
+            RenderInline {SPAN} at (0,0) size 11x18
               RenderText {#text} at (234,10) size 11x18
                 text run at (234,10) width 11: "L"
             RenderInline {SPAN} at (0,0) size 9x18
