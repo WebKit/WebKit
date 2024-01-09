@@ -35,6 +35,7 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <mutex>
+#include <wtf/EnumTraits.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -142,7 +143,7 @@ void MockContentFilter::maybeDetermineStatus(DecisionPoint decisionPoint)
     if (m_state != State::Filtering || decisionPoint != settings().decisionPoint())
         return;
 
-    LOG(ContentFiltering, "MockContentFilter stopped buffering with state %u at decision point %hhu.\n", m_state, decisionPoint);
+    LOG(ContentFiltering, "MockContentFilter stopped buffering with state %u at decision point %hhu.\n", enumToUnderlyingType(m_state), enumToUnderlyingType(decisionPoint));
 
     m_state = settings().decision() == Decision::Allow ? State::Allowed : State::Blocked;
     if (m_state != State::Blocked)

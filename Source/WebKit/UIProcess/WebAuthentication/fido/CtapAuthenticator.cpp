@@ -42,6 +42,7 @@
 #include <WebCore/ExceptionData.h>
 #include <WebCore/Pin.h>
 #include <WebCore/U2fCommandConstructor.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -125,7 +126,7 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
     auto response = readCTAPMakeCredentialResponse(data, AuthenticatorAttachment::CrossPlatform, transports(), std::get<PublicKeyCredentialCreationOptions>(requestData().options).attestation);
     if (!response) {
         auto error = getResponseCode(data);
-        RELEASE_LOG_DEBUG(WebAuthn, "Got error code: %hhu from authenticator.", error);
+        RELEASE_LOG_DEBUG(WebAuthn, "Got error code: %hhu from authenticator.", enumToUnderlyingType(error));
 
         if (error == CtapDeviceResponseCode::kCtap2ErrActionTimeout) {
             makeCredential();
