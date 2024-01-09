@@ -22,166 +22,173 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 
-require 'rubygems'
 require 'getoptlong'
-
-begin
-    require 'json'
-    require 'highline'
-rescue LoadError
-    $stderr.puts "Error: some required gems are not installed!"
-    $stderr.puts
-    $stderr.puts "Try running:"
-    $stderr.puts
-    $stderr.puts "sudo gem install json"
-    $stderr.puts "sudo gem install highline"
-    exit 1
-end
-
+require 'json'
 
 $samplingProfilerIgnoreExternalSourceID = false
 $samplingProfilerTopFunctionsCount = 12
 $samplingProfilerTopBytecodesCount = 40
 
+def usage
+    puts <<-HELP
+Usage:
+
+    -s, --ignore-external-source-id:
+        Ignore external source id when aggregating.
+    -c n, --top-function-count n:
+        Show n items of top functions.
+    -b n, --top-bytecode-count n:
+        Show n items of top bytecodes.
+    -h, --help:
+        Show this help.
+    HELP
+    exit(0)
+end
+
 GetoptLong.new(
-  ['--ignore-external-source-id', '-s', GetoptLong::NO_ARGUMENT],
-  ['--top-function-count', '-c', GetoptLong::REQUIRED_ARGUMENT],
-  ['--top-bytecode-count', '-b', GetoptLong::REQUIRED_ARGUMENT],
+    ['--help', '-h', GetoptLong::NO_ARGUMENT],
+    ['--ignore-external-source-id', '-s', GetoptLong::NO_ARGUMENT],
+    ['--top-function-count', '-c', GetoptLong::REQUIRED_ARGUMENT],
+    ['--top-bytecode-count', '-b', GetoptLong::REQUIRED_ARGUMENT],
 ).each {
     | opt, arg |
     case opt
+    when '--help'
+        usage
     when '--ignore-external-source-id'
-      $samplingProfilerIgnoreExternalSourceID = true
+        $samplingProfilerIgnoreExternalSourceID = true
     when '--top-function-count'
-      $samplingProfilerTopFunctionsCount = arg.to_i
+        $samplingProfilerTopFunctionsCount = arg.to_i
     when '--top-bytecode-count'
-      $samplingProfilerTopBytecodesCount = arg.to_i
+        $samplingProfilerTopBytecodesCount = arg.to_i
     end
 }
 
 def reportTopFunctions database
-  totalSamples = 0
-  functionCounts = Hash.new(0)
-  database["traces"].each do |stackTrace|
-    next if stackTrace["frames"].empty?
-    frame = stackTrace["frames"][0]
-    hash, category, offset = frame["location"].split(":")
-    description = "#{frame["name"]}#{hash}"
-    unless $samplingProfilerIgnoreExternalSourceID
-      description = "#{description}:#{frame["sourceID"]}"
-    end
-    functionCounts[description] += 1
-    totalSamples += 1
-  end
-
-  def takeMax functionCounts
-    maxFrameDescription = nil
-    maxFrameCount = 0
-    functionCounts.each do |key, value|
-      if value > maxFrameCount
-        maxFrameCount = value
-        maxFrameDescription = key
-      end
+    totalSamples = 0
+    functionCounts = Hash.new(0)
+    database["traces"].each do |stackTrace|
+        next if stackTrace["frames"].empty?
+        frame = stackTrace["frames"][0]
+        hash, category, offset = frame["location"].split(":")
+        description = "#{frame["name"]}#{hash}"
+        unless $samplingProfilerIgnoreExternalSourceID
+            description = "#{description}:#{frame["sourceID"]}"
+        end
+        functionCounts[description] += 1
+        totalSamples += 1
     end
 
-    if maxFrameDescription
-      functionCounts.delete(maxFrameDescription)
-    end
-    return maxFrameDescription, maxFrameCount
-  end
+    def takeMax functionCounts
+        maxFrameDescription = nil
+        maxFrameCount = 0
+        functionCounts.each do |key, value|
+            if value > maxFrameCount
+                maxFrameCount = value
+                maxFrameDescription = key
+            end
+        end
 
-  timingInterval = database["interval"] * 1000.0 * 1000.0
-  puts "Sampling rate: #{timingInterval} microseconds. Total samples: #{totalSamples}"
-  puts "Top functions as <numSamples  'functionName#hash:sourceID'>"
-  $samplingProfilerTopFunctionsCount.times do
-    key, value = takeMax(functionCounts)
-    break unless key
-    printf("%6u   '%s'\n", value, key)
-  end
+        if maxFrameDescription
+            functionCounts.delete(maxFrameDescription)
+        end
+        return maxFrameDescription, maxFrameCount
+    end
+
+    timingInterval = database["interval"] * 1000.0 * 1000.0
+    puts "Sampling rate: #{timingInterval} microseconds. Total samples: #{totalSamples}"
+    puts "Top functions as <numSamples  'functionName#hash:sourceID'>"
+    $samplingProfilerTopFunctionsCount.times do
+        key, value = takeMax(functionCounts)
+        break unless key
+        printf("%6u   '%s'\n", value, key)
+    end
 end
 
 $tiers = {
-  :llint => "LLInt",
-  :baseline => "Baseline",
-  :dfg => "DFG",
-  :ftl => "FTL",
-  :ipint => "IPInt",
-  :wasmllint => "WasmLLInt",
-  :bbq => "BBQ",
-  :omg => "OMG",
-  :wasm => "Wasm",
-  :host => "Host",
-  :regexp => "RegExp",
-  :cpp => "C/C++",
-  :unknownFrame => "Unknown Frame",
-  :unknownExecutable => "Unknown Executable",
+    :llint => "LLInt",
+    :baseline => "Baseline",
+    :dfg => "DFG",
+    :ftl => "FTL",
+    :ipint => "IPInt",
+    :wasmllint => "WasmLLInt",
+    :bbq => "BBQ",
+    :omg => "OMG",
+    :wasm => "Wasm",
+    :host => "Host",
+    :regexp => "RegExp",
+    :cpp => "C/C++",
+    :unknownFrame => "Unknown Frame",
+    :unknownExecutable => "Unknown Executable",
 }
 
 def reportTopBytecodes database
-  totalSamples = 0
-  bytecodeCounts = Hash.new(0)
-  tierCounts = Hash.new(0)
+    totalSamples = 0
+    bytecodeCounts = Hash.new(0)
+    tierCounts = Hash.new(0)
 
-  database["traces"].each do |stackTrace|
-    next if stackTrace["frames"].empty?
-    frame = stackTrace["frames"][0]
-    description = "#{frame["name"]}#{frame["location"]}"
-    inliner = frame["inliner"]
-    unless inliner.nil?
-      description = "#{description} <-- #{inliner["name"]}#{inliner["location"]}"
-    end
-    bytecodeCounts[description] += 1
-    tierCounts[frame["category"]] += 1
-    totalSamples += 1
-  end
-
-  def takeMax bytecodeCounts
-    maxFrameDescription = nil
-    maxFrameCount = 0
-    bytecodeCounts.each do |key, value|
-      if value > maxFrameCount
-        maxFrameCount = value
-        maxFrameDescription = key
-      end
+    database["traces"].each do |stackTrace|
+        next if stackTrace["frames"].empty?
+        frame = stackTrace["frames"][0]
+        description = "#{frame["name"]}#{frame["location"]}"
+        inliner = frame["inliner"]
+        unless inliner.nil?
+            description = "#{description} <-- #{inliner["name"]}#{inliner["location"]}"
+        end
+        bytecodeCounts[description] += 1
+        tierCounts[frame["category"]] += 1
+        totalSamples += 1
     end
 
-    if maxFrameDescription
-      bytecodeCounts.delete(maxFrameDescription)
+    def takeMax bytecodeCounts
+        maxFrameDescription = nil
+        maxFrameCount = 0
+        bytecodeCounts.each do |key, value|
+            if value > maxFrameCount
+                maxFrameCount = value
+                maxFrameDescription = key
+            end
+        end
+
+        if maxFrameDescription
+            bytecodeCounts.delete(maxFrameDescription)
+        end
+        return maxFrameDescription, maxFrameCount
     end
-    return maxFrameDescription, maxFrameCount
-  end
 
-  timingInterval = database["interval"] * 1000.0 * 1000.0
-  puts "Sampling rate: #{timingInterval} microseconds. Total samples: #{totalSamples}"
-  puts ""
-  puts "Tier breakdown:"
-  puts "-----------------------------------"
+    timingInterval = database["interval"] * 1000.0 * 1000.0
+    puts "Sampling rate: #{timingInterval} microseconds. Total samples: #{totalSamples}"
+    puts ""
+    puts "Tier breakdown:"
+    puts "-----------------------------------"
 
-  $tiers.each do |key, value|
-    printf("%s %s  (%0.06f%%)\n", (value + ':').ljust(20, ' '), tierCounts[value].to_s.rjust(10, ' '), tierCounts[value] * 100.0 / totalSamples.to_f)
-  end
+    $tiers.each do |key, value|
+        printf("%s %s  (%0.06f%%)\n", (value + ':').ljust(20, ' '), tierCounts[value].to_s.rjust(10, ' '), tierCounts[value] * 100.0 / totalSamples.to_f)
+    end
 
-  puts ""
-  puts "Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>"
+    puts ""
+    puts "Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>"
 
-  $samplingProfilerTopBytecodesCount.times do
-    key, value = takeMax(bytecodeCounts)
-    break unless key
-    printf("%6u   '%s'\n", value, key)
-  end
+    $samplingProfilerTopBytecodesCount.times do
+        key, value = takeMax(bytecodeCounts)
+        break unless key
+        printf("%6u   '%s'\n", value, key)
+    end
 end
 
 def main
-  json = nil
-  if ARGV.empty?
-      json = JSON.parse(STDIN.read)
-  else
-      json = JSON::parse(IO::read(ARGV[0]))
-  end
+    json = nil
+    if ARGV.empty?
+        json = JSON.parse(STDIN.read)
+    else
+        json = JSON::parse(IO::read(ARGV[0]))
+    end
 
-  reportTopFunctions(json)
-  puts ""
-  reportTopBytecodes(json)
+    reportTopFunctions(json)
+    puts ""
+    reportTopBytecodes(json)
 end
 
 main
+
+# vim: set sw=4 ts=4 et tw=80 :
