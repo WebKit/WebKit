@@ -37,6 +37,7 @@
 #include <wtf/PrintStream.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -58,7 +59,7 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(CachedResourceStreamingClient);
 public:
-    CachedResourceStreamingClient(const WebKitWebSrc&, ResourceRequest&&, unsigned requestNumber);
+    CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&, unsigned requestNumber);
     virtual ~CachedResourceStreamingClient();
 
     const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
@@ -84,7 +85,7 @@ private:
     int m_increaseBlocksizeCount { 0 };
     unsigned m_requestNumber;
 
-    const GstElement* m_src;
+    GThreadSafeWeakPtr<WebKitWebSrc> m_src;
     ResourceRequest m_request;
     HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
@@ -704,7 +705,7 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
         PlatformMediaResourceLoader::LoadOptions loadOptions = 0;
         members->resource = members->loader->requestResource(ResourceRequest(request), loadOptions);
         if (members->resource) {
-            members->resource->setClient(adoptRef(*new CachedResourceStreamingClient(*protector.get(), ResourceRequest(request), requestNumber)));
+            members->resource->setClient(adoptRef(*new CachedResourceStreamingClient(protector.get(), ResourceRequest(request), requestNumber)));
             GST_DEBUG_OBJECT(protector.get(), "Started request R%u", requestNumber);
         } else {
             GST_ERROR_OBJECT(protector.get(), "Failed to setup streaming client to handle R%u", requestNumber);
@@ -942,9 +943,9 @@ bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc* src)
     return members->didPassAccessControlCheck;
 }
 
-CachedResourceStreamingClient::CachedResourceStreamingClient(const WebKitWebSrc& src, ResourceRequest&& request, unsigned requestNumber)
+CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, ResourceRequest&& request, unsigned requestNumber)
     : m_requestNumber(requestNumber)
-    , m_src(GST_ELEMENT_CAST(&src))
+    , m_src(src)
     , m_request(WTFMove(request))
 {
 }
@@ -954,12 +955,15 @@ CachedResourceStreamingClient::~CachedResourceStreamingClient() = default;
 void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
-    GstBaseSrc* baseSrc = GST_BASE_SRC_CAST(src);
+    auto src = m_src.get();
+    if (!src)
+        return;
+
+    GstBaseSrc* baseSrc = GST_BASE_SRC_CAST(src.get());
     WebKitWebSrcPrivate* priv = src->priv;
 
     unsigned blocksize = gst_base_src_get_blocksize(baseSrc);
-    GST_LOG_OBJECT(src, "Checking to update blocksize. Read: %u, current blocksize: %u", bytesRead, blocksize);
+    GST_LOG_OBJECT(src.get(), "Checking to update blocksize. Read: %u, current blocksize: %u", bytesRead, blocksize);
 
     if (bytesRead > blocksize * s_growBlocksizeLimit) {
         m_reduceBlocksizeCount = 0;
@@ -967,7 +971,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
 
         if (m_increaseBlocksizeCount >= s_growBlocksizeCount) {
             blocksize *= s_growBlocksizeFactor;
-            GST_DEBUG_OBJECT(src, "Increased blocksize to %u", blocksize);
+            GST_DEBUG_OBJECT(src.get(), "Increased blocksize to %u", blocksize);
             gst_base_src_set_blocksize(baseSrc, blocksize);
             m_increaseBlocksizeCount = 0;
         }
@@ -978,7 +982,7 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
         if (m_reduceBlocksizeCount >= s_reduceBlocksizeCount) {
             blocksize *= s_reduceBlocksizeFactor;
             blocksize = std::max(blocksize, priv->minimumBlocksize);
-            GST_DEBUG_OBJECT(src, "Decreased blocksize to %u", blocksize);
+            GST_DEBUG_OBJECT(src.get(), "Decreased blocksize to %u", blocksize);
             gst_base_src_set_blocksize(baseSrc, blocksize);
             m_reduceBlocksizeCount = 0;
         }
@@ -991,7 +995,12 @@ void CachedResourceStreamingClient::checkUpdateBlocksize(unsigned bytesRead)
 void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    auto src = m_src.get();
+    if (!src) {
+        completionHandler(ShouldContinuePolicyCheck::No);
+        return;
+    }
+
     WebKitWebSrcPrivate* priv = src->priv;
     DataMutexLocker members { priv->dataMutex };
     if (members->requestNumber != m_requestNumber) {
@@ -999,7 +1008,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         return;
     }
 
-    GST_DEBUG_OBJECT(src, "R%u: Received response: %d", m_requestNumber, response.httpStatusCode());
+    GST_DEBUG_OBJECT(src.get(), "R%u: Received response: %d", m_requestNumber, response.httpStatusCode());
 
     members->didPassAccessControlCheck = members->resource->didPassAccessControlCheck();
     m_origins.add(SecurityOrigin::create(response.url()));
@@ -1033,7 +1042,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));
     for (const auto& header : m_request.httpHeaderFields())
         gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
-    GST_DEBUG_OBJECT(src, "R%u: Request headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
+    GST_DEBUG_OBJECT(src.get(), "R%u: Request headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "request-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
 
     // Pack response headers in the http-headers structure.
@@ -1044,14 +1053,14 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         else
             gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
     }
-    GST_DEBUG_OBJECT(src, "R%u: Response headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
+    GST_DEBUG_OBJECT(src.get(), "R%u: Response headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "response-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
 
-    members->pendingHttpHeadersMessage = adoptGRef(gst_message_new_element(GST_OBJECT_CAST(src), gst_structure_copy(httpHeaders.get())));
+    members->pendingHttpHeadersMessage = adoptGRef(gst_message_new_element(GST_OBJECT_CAST(src.get()), gst_structure_copy(httpHeaders.get())));
     members->pendingHttpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders.release()));
 
     if (response.httpStatusCode() >= 400) {
-        GST_ELEMENT_ERROR(src, RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()), (nullptr));
+        GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()), (nullptr));
         members->doesHaveEOS = true;
         members->responseCondition.notifyOne();
         completionHandler(ShouldContinuePolicyCheck::No);
@@ -1062,18 +1071,18 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         // Seeking ... we expect a 206 == PARTIAL_CONTENT
         if (response.httpStatusCode() != 206) {
             // Range request completely failed.
-            GST_ELEMENT_ERROR(src, RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
+            GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
             members->doesHaveEOS = true;
             members->responseCondition.notifyOne();
             completionHandler(ShouldContinuePolicyCheck::No);
             return;
         }
-        GST_DEBUG_OBJECT(src, "R%u: Range request succeeded", m_requestNumber);
+        GST_DEBUG_OBJECT(src.get(), "R%u: Range request succeeded", m_requestNumber);
     }
 
     members->isSeekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField(HTTPHeaderName::AcceptRanges).utf8().data());
 
-    GST_DEBUG_OBJECT(src, "R%u: Size: %" G_GUINT64_FORMAT ", isSeekable: %s", m_requestNumber, length, boolForPrinting(members->isSeekable));
+    GST_DEBUG_OBJECT(src.get(), "R%u: Size: %" G_GUINT64_FORMAT ", isSeekable: %s", m_requestNumber, length, boolForPrinting(members->isSeekable));
     if (length > 0) {
         if (!members->haveSize || members->size != length) {
             members->haveSize = true;
@@ -1088,11 +1097,11 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, *metadataInterval, nullptr));
 
         String contentType = response.httpHeaderField(HTTPHeaderName::ContentType);
-        GST_DEBUG_OBJECT(src, "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8().data());
+        GST_DEBUG_OBJECT(src.get(), "R%u: Response ContentType: %s", m_requestNumber, contentType.utf8().data());
         gst_caps_set_simple(caps.get(), "content-type", G_TYPE_STRING, contentType.utf8().data(), nullptr);
     }
     if (caps) {
-        GST_DEBUG_OBJECT(src, "R%u: Set caps to %" GST_PTR_FORMAT, m_requestNumber, caps.get());
+        GST_DEBUG_OBJECT(src.get(), "R%u: Set caps to %" GST_PTR_FORMAT, m_requestNumber, caps.get());
         members->pendingCaps = WTFMove(caps);
     }
 
@@ -1111,7 +1120,10 @@ void CachedResourceStreamingClient::redirectReceived(PlatformMediaResource&, Res
 void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const SharedBuffer& data)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    auto src = m_src.get();
+    if (!src)
+        return;
+
     WebKitWebSrcPrivate* priv = src->priv;
 
     DataMutexLocker members { priv->dataMutex };
@@ -1124,38 +1136,41 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     if (!members->downloadStartTime.isNaN()) {
         members->totalDownloadedBytes += data.size();
         double timeSinceStart = (WallTime::now() - members->downloadStartTime).seconds();
-        GST_TRACE_OBJECT(src, "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart
+        GST_TRACE_OBJECT(src.get(), "R%u: downloaded %" G_GUINT64_FORMAT " bytes in %f seconds =~ %1.0f bytes/second", m_requestNumber, members->totalDownloadedBytes, timeSinceStart
             , timeSinceStart ? members->totalDownloadedBytes / timeSinceStart : 0);
     } else {
         members->downloadStartTime = WallTime::now();
     }
 
     int length = data.size();
-    GST_LOG_OBJECT(src, "R%u: Have %d bytes of data", m_requestNumber, length);
+    GST_LOG_OBJECT(src.get(), "R%u: Have %d bytes of data", m_requestNumber, length);
 
     members->readPosition += length;
     ASSERT(!members->haveSize || members->readPosition <= members->size);
 
-    gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src),
+    gst_element_post_message(GST_ELEMENT_CAST(src.get()), gst_message_new_element(GST_OBJECT_CAST(src.get()),
         gst_structure_new("webkit-network-statistics", "read-position", G_TYPE_UINT64, members->readPosition, "size", G_TYPE_UINT64, members->size, nullptr)));
 
     checkUpdateBlocksize(length);
     GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(data.data(), length), length);
     gst_adapter_push(members->adapter.get(), buffer);
 
-    stopLoaderIfNeeded(src, members);
+    stopLoaderIfNeeded(src.get(), members);
     members->responseCondition.notifyOne();
 }
 
 void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    auto src = m_src.get();
+    if (!src)
+        return;
+
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;
 
-    GST_ELEMENT_ERROR(src, RESOURCE, READ, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().data()), (nullptr));
+    GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().data()), (nullptr));
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
 }
@@ -1163,16 +1178,19 @@ void CachedResourceStreamingClient::accessControlCheckFailed(PlatformMediaResour
 void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const ResourceError& error)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    auto src = m_src.get();
+    if (!src)
+        return;
+
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;
 
     if (!error.isCancellation()) {
-        GST_ERROR_OBJECT(src, "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8().data());
-        GST_ELEMENT_ERROR(src, RESOURCE, FAILED, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().data()), (nullptr));
+        GST_ERROR_OBJECT(src.get(), "R%u: Have failure: %s", m_requestNumber, error.localizedDescription().utf8().data());
+        GST_ELEMENT_ERROR(src.get(), RESOURCE, FAILED, ("R%u: %s", m_requestNumber, error.localizedDescription().utf8().data()), (nullptr));
     } else
-        GST_LOG_OBJECT(src, "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8().data());
+        GST_LOG_OBJECT(src.get(), "R%u: Request cancelled: %s", m_requestNumber, error.localizedDescription().utf8().data());
 
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
@@ -1181,12 +1199,15 @@ void CachedResourceStreamingClient::loadFailed(PlatformMediaResource&, const Res
 void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&)
 {
     ASSERT(isMainThread());
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src);
+    auto src = m_src.get();
+    if (!src)
+        return;
+
     DataMutexLocker members { src->priv->dataMutex };
     if (members->requestNumber != m_requestNumber)
         return;
 
-    GST_LOG_OBJECT(src, "R%u: Load finished. Read position: %" G_GUINT64_FORMAT, m_requestNumber, members->readPosition);
+    GST_LOG_OBJECT(src.get(), "R%u: Load finished. Read position: %" G_GUINT64_FORMAT, m_requestNumber, members->readPosition);
 
     members->doesHaveEOS = true;
     members->responseCondition.notifyOne();
