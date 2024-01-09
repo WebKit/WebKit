@@ -231,7 +231,6 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
 
     while (!isEndOfLine) {
         auto& inlineItem = m_inlineItemList[nextItemIndex];
-        ASSERT(inlineItem.isText() || inlineItem.isLineBreak());
         if (inlineItem.isText()) {
             auto contentWidth = [&] {
                 if (auto logicalWidth = downcast<InlineTextItem>(inlineItem).width())
@@ -241,6 +240,10 @@ InlineItemPosition TextOnlySimpleLineBuilder::placeNonWrappingInlineTextContent(
             candidateContent.append(contentWidth());
         } else if (inlineItem.isLineBreak())
             trailingLineBreakIndex = nextItemIndex;
+        else {
+            ASSERT_NOT_REACHED();
+            return layoutRange.end;
+        }
         ++nextItemIndex;
         isEndOfLine = nextItemIndex >= layoutRange.endIndex() || trailingLineBreakIndex.has_value();
     }
