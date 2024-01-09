@@ -2370,7 +2370,7 @@ void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
     cancelScheduledScrolls();
 
     if (is<Element>(anchorNode))
-        m_frame->document()->contentVisibilityDocumentState().updateContentRelevancyForScrollIfNeeded(downcast<Element>(*anchorNode));
+        m_frame->document()->updateContentRelevancyForScrollIfNeeded(downcast<Element>(*anchorNode));
 
     // We need to update the layout before scrolling, otherwise we could
     // really mess things up if an anchor scroll comes at a bad moment.

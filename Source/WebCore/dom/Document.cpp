@@ -8542,6 +8542,11 @@ void Document::removeIntersectionObserver(IntersectionObserver& observer)
 
 void Document::updateIntersectionObservations()
 {
+    updateIntersectionObservations(m_intersectionObservers);
+}
+
+void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionObserver>>& intersectionObservers)
+{
     RefPtr frameView = view();
     if (!frameView)
         return;
@@ -8550,12 +8555,6 @@ void Document::updateIntersectionObservations()
     if (needsLayout || hasPendingStyleRecalc())
         return;
 
-    updateIntersectionObservations(m_intersectionObservers);
-}
-
-void Document::updateIntersectionObservations(const Vector<WeakPtr<IntersectionObserver>>& intersectionObservers)
-{
-    RELEASE_ASSERT(view() && !(view()->layoutContext().isLayoutPending() || (renderView() && renderView()->needsLayout())) && !hasPendingStyleRecalc());
     Vector<WeakPtr<IntersectionObserver>> intersectionObserversWithPendingNotifications;
 
     for (auto& weakObserver : intersectionObservers) {
