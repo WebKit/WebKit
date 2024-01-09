@@ -38,11 +38,6 @@ struct AudioInfo;
 
 class AudioTrackPrivate : public TrackPrivateBase {
 public:
-    static Ref<AudioTrackPrivate> create()
-    {
-        return adoptRef(*new AudioTrackPrivate);
-    }
-
     void setClient(AudioTrackPrivateClient& client) { m_client = client; }
     void clearClient() { m_client = nullptr; }
     AudioTrackPrivateClient* client() const override { return m_client.get(); }
