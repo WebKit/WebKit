@@ -77,7 +77,7 @@ void ScrollAnchoringController::invalidateAnchorElement()
     if (!m_anchorElement) {
         if (auto* element = elementForScrollableArea(m_owningScrollableArea)) {
             if (auto* renderer = element->renderer()) {
-                auto* scrollAnchoringControllerForScrollableArea = RenderObject::findScrollAnchoringControllerForRenderer(*renderer);
+                auto* scrollAnchoringControllerForScrollableArea = RenderObject::searchParentChainForScrollAnchoringController(*renderer);
                 if (scrollAnchoringControllerForScrollableArea && scrollAnchoringControllerForScrollableArea->isInScrollAnchoringAncestorChain(*renderer))
                     scrollAnchoringControllerForScrollableArea->invalidateAnchorElement();
             }
@@ -139,6 +139,28 @@ static RefPtr<Element> anchorElementForPriorityCandidate(Element* element)
     return nullptr;
 }
 
+static ScrollAnchoringController* scrollAnchoringControllerForElement(Element& element)
+{
+    if (auto renderer = element.renderer()) {
+        if (renderer->hasLayer()) {
+            if (auto layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
+                if (auto scrollableArea = layer->scrollableArea())
+                    return scrollableArea->scrollAnchoringController();
+            }
+        }
+    }
+    return nullptr;
+}
+
+// This function ensures that each element in the chain from the priorityCandidateElement to the parentController are viable according to
+// ScrollAnchoringController::examineAnchorCandidate and that none of them are maintaining an anchor element.
+static bool canIncludeElementInPriorityCandidateChain(Element& element, Element& priorityCandidateElement, ScrollAnchoringController& parentController)
+{
+    auto candidateResult = parentController.examineAnchorCandidate(element);
+    auto elementsController = scrollAnchoringControllerForElement(element);
+    return !(candidateResult == CandidateExaminationResult::Exclude || (element == priorityCandidateElement && candidateResult == CandidateExaminationResult::Skip) || (elementsController && elementsController->anchorElement()));
+}
+
 bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
 {
     auto viablePriorityCandidateForElement = [this](Element* element) -> RefPtr<Element> {
@@ -149,12 +171,13 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
         RefPtr iterElement = candidateElement;
 
         while (iterElement && iterElement.get() != elementForScrollableArea(m_owningScrollableArea)) {
-            auto candidateResult = examineAnchorCandidate(*iterElement);
-            if (candidateResult == CandidateExaminationResult::Exclude || (iterElement == candidateElement && candidateResult == CandidateExaminationResult::Skip))
+            if (!canIncludeElementInPriorityCandidateChain(*iterElement, *candidateElement, *this))
                 return nullptr;
             iterElement = iterElement->parentElement();
         }
-        if (!iterElement)
+
+        // Ensure that candidateElement is a child of m_owningScrollableArea
+        if (iterElement.get() != elementForScrollableArea(m_owningScrollableArea))
             return nullptr;
         return candidateElement;
     };
@@ -164,7 +187,7 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
     if (RefPtr priorityCandidate = viablePriorityCandidateForElement(document.focusedElement())) {
         m_anchorElement = priorityCandidate;
         m_lastOffsetForAnchorElement = computeOffsetFromOwningScroller(*m_anchorElement->renderer());
-        LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::viablePriorityCandidateForElement() for scroller: " << m_owningScrollableArea << " found priority candidate: " << *priorityCandidate);
+        LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::viablePriorityCandidateForElement() found priority candidate: " << *priorityCandidate << " for element: " << ValueOrNull(elementForScrollableArea(m_owningScrollableArea)));
         return true;
     }
     return false;
@@ -181,16 +204,8 @@ static bool absolutePositionedElementOutsideScroller(RenderElement& renderer, Sc
 
 static bool canDescendIntoElement(Element& element)
 {
-    if (auto renderer = element.renderer()) {
-        if (renderer->hasLayer()) {
-            if (auto layer = downcast<RenderLayerModelObject>(*renderer).layer()) {
-                if (auto scrollableArea = layer->scrollableArea()) {
-                    if (auto* scrollAnchoringController = scrollableArea->scrollAnchoringController())
-                        return !scrollAnchoringController->anchorElement();
-                }
-            }
-        }
-    }
+    if (auto* scrollAnchoringController = scrollAnchoringControllerForElement(element))
+        return !scrollAnchoringController->anchorElement();
     return false;
 }
 
@@ -289,7 +304,7 @@ Element* ScrollAnchoringController::findAnchorElementRecursive(Element* element)
 
 void ScrollAnchoringController::chooseAnchorElement(Document& document)
 {
-    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::chooseAnchorElement() starting findAnchorElementRecursive: ");
+    LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::chooseAnchorElement() starting findAnchorElementRecursive: for element: " << ValueOrNull(elementForScrollableArea(m_owningScrollableArea)));
 
     if (didFindPriorityCandidate(document))
         return;

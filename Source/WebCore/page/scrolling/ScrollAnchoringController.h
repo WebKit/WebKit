@@ -50,14 +50,14 @@ public:
     void adjustScrollPositionForAnchoring();
     void selectAnchorElement();
     void chooseAnchorElement(Document&);
+    CandidateExaminationResult examineAnchorCandidate(Element&);
     void updateAnchorElement();
     void notifyChildHadSuppressingStyleChange();
     bool isInScrollAnchoringAncestorChain(const RenderObject&);
-    Element* anchorElement() const { return m_anchorElement.get(); }
 
+    Element* anchorElement() const { return m_anchorElement.get(); }
 private:
     Element* findAnchorElementRecursive(Element*);
-    CandidateExaminationResult examineAnchorCandidate(Element&);
     bool didFindPriorityCandidate(Document&);
     FloatPoint computeOffsetFromOwningScroller(RenderObject& candidate);
     LocalFrameView& frameView();

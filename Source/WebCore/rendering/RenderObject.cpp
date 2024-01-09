@@ -2338,7 +2338,7 @@ Vector<FloatRect> RenderObject::clientBorderAndTextRects(const SimpleRange& rang
     return borderAndTextRects(range, CoordinateSpace::Client, { });
 }
 
-ScrollAnchoringController* RenderObject::findScrollAnchoringControllerForRenderer(const RenderObject& renderer)
+ScrollAnchoringController* RenderObject::searchParentChainForScrollAnchoringController(const RenderObject& renderer)
 {
     if (renderer.hasLayer()) {
         if (auto* scrollableArea = downcast<RenderLayerModelObject>(renderer).layer()->scrollableArea()) {

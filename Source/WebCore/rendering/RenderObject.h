@@ -504,7 +504,7 @@ public:
 
     bool everHadLayout() const { return m_stateBitfields.hasFlag(StateFlag::EverHadLayout); }
 
-    static ScrollAnchoringController* findScrollAnchoringControllerForRenderer(const RenderObject&);
+    static ScrollAnchoringController* searchParentChainForScrollAnchoringController(const RenderObject&);
 
     bool childrenInline() const { return m_stateBitfields.hasFlag(StateFlag::ChildrenInline); }
     virtual void setChildrenInline(bool b) { m_stateBitfields.setFlag(StateFlag::ChildrenInline, b); }
