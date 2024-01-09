@@ -53,6 +53,7 @@ namespace WebCore {
 class ContainerNode;
 class Document;
 class Element;
+class EventTypeInfo;
 class FloatPoint;
 class HTMLQualifiedName;
 class HTMLSlotElement;
@@ -772,7 +773,7 @@ template<TreeType = Tree> std::partial_ordering treeOrder(const Node&, const Nod
 
 WEBCORE_EXPORT std::partial_ordering treeOrderForTesting(TreeType, const Node&, const Node&);
 
-bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget&);
+bool isTouchRelatedEventType(const EventTypeInfo&, const EventTarget&);
 
 #if ASSERT_ENABLED
 

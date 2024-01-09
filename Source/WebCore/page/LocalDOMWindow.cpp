@@ -421,7 +421,16 @@ LocalDOMWindow::LocalDOMWindow(Document& document)
 
 void LocalDOMWindow::didSecureTransitionTo(Document& document)
 {
+    RefPtr oldDocument = downcast<Document>(scriptExecutionContext());
     observeContext(&document);
+
+    if (auto* eventTargetData = this->eventTargetData()) {
+        eventTargetData->eventListenerMap.enumerateEventListenerTypes([&](auto& eventType, unsigned count) {
+            if (oldDocument)
+                oldDocument->didRemoveEventListenersOfType(eventType, count);
+            document.didAddEventListenersOfType(eventType, count);
+        });
+    }
 
     // The Window is being transferred from one document to another so we need to reset data
     // members that store the window's document (rather than the window itself).
@@ -2052,42 +2061,53 @@ bool LocalDOMWindow::addEventListener(const AtomString& eventType, Ref<EventList
 
     RefPtr document = this->document();
     auto& eventNames = WebCore::eventNames();
+    auto typeInfo = eventNames.typeInfoForEvent(eventType);
     if (document) {
-        document->addListenerTypeIfNeeded(eventType);
-        if (eventNames.isWheelEventType(eventType))
+        document->didAddEventListenersOfType(eventType);
+        if (typeInfo.isInCategory(EventCategory::Wheel))
             document->didAddWheelEventHandler(*document);
-        else if (isTouchRelatedEventType(eventType, *document))
+        else if (isTouchRelatedEventType(typeInfo, *document))
             document->didAddTouchEventHandler(*document);
         else if (eventType == eventNames.storageEvent)
             didAddStorageEventListener(*this);
     }
 
-    if (eventType == eventNames.unloadEvent)
+    switch (typeInfo.type()) {
+    case EventType::unload:
         addUnloadEventListener(this);
-    else if (eventType == eventNames.beforeunloadEvent && allowsBeforeUnloadListeners(this))
-        addBeforeUnloadEventListener(this);
+        break;
+    case EventType::beforeunload:
+        if (allowsBeforeUnloadListeners(this))
+            addBeforeUnloadEventListener(this);
+        break;
 #if PLATFORM(IOS_FAMILY)
-    else if (eventType == eventNames.scrollEvent)
+    case EventType::scroll:
         incrementScrollEventListenersCount();
-#endif
-#if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && isTouchRelatedEventType(eventType, *document))
-        ++m_touchAndGestureEventListenerCount;
-#endif
-#if ENABLE(IOS_GESTURE_EVENTS)
-    else if (eventNames.isGestureEventType(eventType))
-        ++m_touchAndGestureEventListenerCount;
-#endif
-#if ENABLE(GAMEPAD)
-    else if (eventNames.isGamepadEventType(eventType))
-        incrementGamepadEventListenerCount();
+        break;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    else if (eventType == eventNames.deviceorientationEvent)
+    case EventType::deviceorientation:
         startListeningForDeviceOrientationIfNecessary();
-    else if (eventType == eventNames.devicemotionEvent)
+        break;
+    case EventType::devicemotion:
         startListeningForDeviceMotionIfNecessary();
+        break;
 #endif
+    default:
+#if ENABLE(IOS_TOUCH_EVENTS)
+        if (isTouchRelatedEventType(typeInfo, *document))
+            ++m_touchAndGestureEventListenerCount;
+#endif
+#if ENABLE(IOS_GESTURE_EVENTS)
+        if (typeInfo.isInCategory(EventCategory::Gesture))
+            ++m_touchAndGestureEventListenerCount;
+#endif
+#if ENABLE(GAMEPAD)
+        if (typeInfo.isInCategory(EventCategory::Gamepad))
+            incrementGamepadEventListenerCount();
+#endif
+        break;
+    }
 
     return true;
 }
@@ -2296,43 +2316,55 @@ bool LocalDOMWindow::removeEventListener(const AtomString& eventType, EventListe
 
     RefPtr document = this->document();
     auto& eventNames = WebCore::eventNames();
+    auto typeInfo = eventNames.typeInfoForEvent(eventType);
     if (document) {
-        if (eventNames.isWheelEventType(eventType))
+        document->didRemoveEventListenersOfType(eventType);
+        if (typeInfo.isInCategory(EventCategory::Wheel))
             document->didRemoveWheelEventHandler(*document);
-        else if (isTouchRelatedEventType(eventType, *document))
+        else if (isTouchRelatedEventType(typeInfo, *document))
             document->didRemoveTouchEventHandler(*document);
     }
 
-    if (eventType == eventNames.unloadEvent)
+    switch (typeInfo.type()) {
+    case EventType::unload:
         removeUnloadEventListener(this);
-    else if (eventType == eventNames.beforeunloadEvent && allowsBeforeUnloadListeners(this))
-        removeBeforeUnloadEventListener(this);
+        break;
+    case EventType::beforeunload:
+        if (allowsBeforeUnloadListeners(this))
+            removeBeforeUnloadEventListener(this);
+        break;
 #if PLATFORM(IOS_FAMILY)
-    else if (eventType == eventNames.scrollEvent)
+    case EventType::scroll:
         decrementScrollEventListenersCount();
-#endif
-#if ENABLE(IOS_TOUCH_EVENTS)
-    else if (document && isTouchRelatedEventType(eventType, *document)) {
-        ASSERT(m_touchAndGestureEventListenerCount > 0);
-        --m_touchAndGestureEventListenerCount;
-    }
-#endif
-#if ENABLE(IOS_GESTURE_EVENTS)
-    else if (eventNames.isGestureEventType(eventType)) {
-        ASSERT(m_touchAndGestureEventListenerCount > 0);
-        --m_touchAndGestureEventListenerCount;
-    }
-#endif
-#if ENABLE(GAMEPAD)
-    else if (eventNames.isGamepadEventType(eventType))
-        decrementGamepadEventListenerCount();
+        break;
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    else if (eventType == eventNames.deviceorientationEvent)
+    case EventType::deviceorientation:
         stopListeningForDeviceOrientationIfNecessary();
-    else if (eventType == eventNames.devicemotionEvent)
+        break;
+    case EventType::devicemotion:
         stopListeningForDeviceMotionIfNecessary();
+        break;
 #endif
+    default:
+#if ENABLE(IOS_TOUCH_EVENTS)
+        if (document && isTouchRelatedEventType(typeInfo, *document)) {
+            ASSERT(m_touchAndGestureEventListenerCount > 0);
+            --m_touchAndGestureEventListenerCount;
+        }
+#endif
+#if ENABLE(IOS_GESTURE_EVENTS)
+        if (typeInfo.isInCategory(EventCategory::Gesture)) {
+            ASSERT(m_touchAndGestureEventListenerCount > 0);
+            --m_touchAndGestureEventListenerCount;
+        }
+#endif
+#if ENABLE(GAMEPAD)
+        if (typeInfo.isInCategory(EventCategory::Gamepad))
+            decrementGamepadEventListenerCount();
+#endif
+        break;
+    }
 
     return true;
 }
