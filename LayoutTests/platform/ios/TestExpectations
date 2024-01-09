@@ -1393,6 +1393,7 @@ webkit.org/b/137572 scrollbars/scrollable-iframe-remove-crash.html [ Skip ] # Ti
 webkit.org/b/137572 scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/137572 scrollbars/scrollbar-selectors.html [ Failure ]
 scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
+scrollbars/scrollbar-drag-thumb-rtl.html [ Failure ]
 
 webkit.org/b/237150 fast/events/autoscroll-in-iframe-body.html [ Pass Failure ]
 
