@@ -982,7 +982,7 @@ class Instruction
                 $asm.puts ".indirect_symbol #{operands[0].asmLabel}"
                 $asm.puts ".long 0"
                 
-                $asm.puts ".text"
+                $asm.puts "OFFLINE_ASM_TEXT_SECTION"
                 $asm.puts ".align 4"
 
                 $asm.putStr("#elif OS(LINUX)")
