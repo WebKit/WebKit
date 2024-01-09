@@ -206,8 +206,6 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         return;
     }
 
-    ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
-
     event.resetBeforeDispatch();
 
     event.setTarget(RefPtr { EventPath::eventTargetRespectingTargetRules(node) });
