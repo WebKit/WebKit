@@ -325,7 +325,8 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
 
     // FIXME: Extend this for non JSFinalObject. For example, we would like to use this fast path for function objects too.
     // https://bugs.webkit.org/show_bug.cgi?id=185358
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
+    JSFinalObject* targetObject = jsDynamicCast<JSFinalObject*>(target);
+    bool targetCanPerformFastPut = targetObject && targetObject->canPerformFastPutInlineExcludingProto() && targetObject->isStructureExtensible();
     unsigned argsCount = callFrame->argumentCount();
 
     // argsCount == 2 case does not need to use arguments' batching.
@@ -387,7 +388,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                 RETURN_IF_EXCEPTION(scope, { });
             }
 
-            bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+            bool objectAssignFastSucceeded = objectAssignFast(globalObject, targetObject, source, properties, values);
             RETURN_IF_EXCEPTION(scope, { });
             if (objectAssignFastSucceeded)
                 continue;
@@ -420,19 +421,23 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
         bool canUseFastPath = false;
-        if (!target->canHaveExistingOwnIndexedProperties()) {
-            canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-                if (entry.attributes() & PropertyAttribute::DontEnum)
+        if (!target->canHaveExistingOwnIndexedProperties() && !target->hasNonReifiedStaticProperties()) {
+            Structure* targetStructure = target->structure();
+            if (targetStructure->canPerformFastPropertyEnumerationCommon()) {
+                canUseFastPath = true;
+                targetStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                    if (entry.attributes() & PropertyAttribute::DontEnum)
+                        return true;
+
+                    if (entry.key()->isSymbol())
+                        return true;
+
+                    properties.append(entry.key());
+                    values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+
                     return true;
-
-                if (entry.key()->isSymbol())
-                    return true;
-
-                properties.append(entry.key());
-                values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
-
-                return true;
-            });
+                });
+            }
         }
 
         if (canUseFastPath) {
@@ -568,17 +573,21 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     {
         MarkedArgumentBuffer namedPropertyValues;
         bool canUseFastPath = false;
-        if (!target->canHaveExistingOwnIndexedGetterSetterProperties()) {
-            canUseFastPath = target->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-                if (entry.attributes() & PropertyAttribute::DontEnum)
-                    return true;
+        if (!target->canHaveExistingOwnIndexedGetterSetterProperties() && !target->hasNonReifiedStaticProperties()) {
+            Structure* targetStructure = target->structure();
+            if (targetStructure->canPerformFastPropertyEnumerationCommon()) {
+                canUseFastPath = true;
+                targetStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                    if (entry.attributes() & PropertyAttribute::DontEnum)
+                        return true;
 
-                if (entry.key()->isSymbol())
-                    return true;
+                    if (entry.key()->isSymbol())
+                        return true;
 
-                namedPropertyValues.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
-                return true;
-            });
+                    namedPropertyValues.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+                    return true;
+                });
+            }
         }
 
         if (canUseFastPath) {
@@ -668,24 +677,27 @@ inline bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, Prope
 
 
     bool canUseFastPath = false;
-    if (globalObject->propertyDescriptorFastPathWatchpointSet().isStillValid() && globalObject->objectPrototypeChainIsSane() && description->inherits<JSFinalObject>() && description->getPrototypeDirect() == globalObject->objectPrototype() && description->structure()->canPerformFastPropertyEnumeration()) {
-        canUseFastPath = description->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-            PropertyName propertyName(entry.key());
-            if (propertyName == vm.propertyNames->enumerable)
-                enumerable = description->getDirect(entry.offset());
-            else if (propertyName == vm.propertyNames->configurable)
-                configurable = description->getDirect(entry.offset());
-            else if (propertyName == vm.propertyNames->value)
-                value = description->getDirect(entry.offset());
-            else if (propertyName == vm.propertyNames->writable)
-                writable = description->getDirect(entry.offset());
-            else if (propertyName == vm.propertyNames->get)
-                get = description->getDirect(entry.offset());
-            else if (propertyName == vm.propertyNames->set)
-                set = description->getDirect(entry.offset());
-            return true;
-        });
-        if (canUseFastPath) {
+    if (globalObject->propertyDescriptorFastPathWatchpointSet().isStillValid() && globalObject->objectPrototypeChainIsSane() && description->inherits<JSFinalObject>() && description->getPrototypeDirect() == globalObject->objectPrototype() && !description->hasNonReifiedStaticProperties()) {
+        Structure* descriptionStructure = description->structure();
+        if (descriptionStructure->canPerformFastPropertyEnumeration()) {
+            canUseFastPath = true;
+            descriptionStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                PropertyName propertyName(entry.key());
+                if (propertyName == vm.propertyNames->enumerable)
+                    enumerable = description->getDirect(entry.offset());
+                else if (propertyName == vm.propertyNames->configurable)
+                    configurable = description->getDirect(entry.offset());
+                else if (propertyName == vm.propertyNames->value)
+                    value = description->getDirect(entry.offset());
+                else if (propertyName == vm.propertyNames->writable)
+                    writable = description->getDirect(entry.offset());
+                else if (propertyName == vm.propertyNames->get)
+                    get = description->getDirect(entry.offset());
+                else if (propertyName == vm.propertyNames->set)
+                    set = description->getDirect(entry.offset());
+                return true;
+            });
+
             if (enumerable)
                 desc.setEnumerable(enumerable.toBoolean(globalObject));
             if (configurable)
@@ -850,19 +862,26 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
 
     Vector<RefPtr<UniquedStringImpl>, 8> propertyNames;
     MarkedArgumentBuffer values;
-    bool canUseFastPath = !hasIndexedProperties(properties->indexingType()) && properties->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
-        if (entry.attributes() & PropertyAttribute::DontEnum)
-            return true;
+    bool canUseFastPath = false;
+    if (!hasIndexedProperties(properties->indexingType())) {
+        Structure* propertiesStructure = properties->structure();
+        if (!properties->hasNonReifiedStaticProperties() && propertiesStructure->canPerformFastPropertyEnumerationCommon()) {
+            canUseFastPath = true;
+            propertiesStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                if (entry.attributes() & PropertyAttribute::DontEnum)
+                    return true;
 
-        PropertyName propertyName(entry.key());
-        if (propertyName.isPrivateName())
-            return true;
+                PropertyName propertyName(entry.key());
+                if (propertyName.isPrivateName())
+                    return true;
 
-        propertyNames.append(entry.key());
-        values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
+                propertyNames.append(entry.key());
+                values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
 
-        return true;
-    });
+                return true;
+            });
+        }
+    }
     if (UNLIKELY(!canUseFastPath))
         RELEASE_AND_RETURN(scope, definePropertiesSlow(globalObject, object, properties));
 

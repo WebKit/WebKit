@@ -842,6 +842,7 @@ public:
     ConcurrentJSLock& lock() { return m_lock; }
 
     unsigned propertyHash() const { return m_propertyHash; }
+    SeenProperties seenProperties() const { return m_seenProperties; }
 
     static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
 
@@ -882,7 +883,7 @@ public:
     DEFINE_BITFIELD(bool, hasAnyKindOfGetterSetterProperties, HasAnyKindOfGetterSetterProperties, 1, 3);
     DEFINE_BITFIELD(bool, hasReadOnlyOrGetterSetterPropertiesExcludingProto, HasReadOnlyOrGetterSetterPropertiesExcludingProto, 1, 4);
     DEFINE_BITFIELD(bool, isQuickPropertyAccessAllowedForEnumeration, IsQuickPropertyAccessAllowedForEnumeration, 1, 5);
-    DEFINE_BITFIELD(TransitionPropertyAttributes, transitionPropertyAttributes, TransitionPropertyAttributes, 7, 6);
+    DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 6);
     DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
     DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
@@ -899,7 +900,6 @@ public:
     DEFINE_BITFIELD(bool, hasNonConfigurableProperties, HasNonConfigurableProperties, 1, 30);
     DEFINE_BITFIELD(bool, hasNonConfigurableReadOnlyOrGetterSetterProperties, HasNonConfigurableReadOnlyOrGetterSetterProperties, 1, 31);
 
-    static_assert(s_bitWidthOfTransitionPropertyAttributes <= sizeof(TransitionPropertyAttributes) * 8);
     static_assert(s_bitWidthOfTransitionKind <= sizeof(TransitionKind) * 8);
 
     static bool bitFieldFlagsCantBeChangedWithoutTransition(unsigned flags)
@@ -907,6 +907,7 @@ public:
         return flags == (flags & (
             s_didPreventExtensionsBits
             | s_isQuickPropertyAccessAllowedForEnumerationBits
+            | s_hasNonEnumerablePropertiesBits
             | s_hasAnyKindOfGetterSetterPropertiesBits
             | s_hasReadOnlyOrGetterSetterPropertiesExcludingProtoBits
             | s_hasUnderscoreProtoPropertyExcludingOriginalProtoBits
@@ -914,6 +915,9 @@ public:
             | s_hasNonConfigurableReadOnlyOrGetterSetterPropertiesBits
         ));
     }
+
+    TransitionPropertyAttributes transitionPropertyAttributes() const { return m_transitionPropertyAttributes; }
+    void setTransitionPropertyAttributes(TransitionPropertyAttributes transitionPropertyAttributes) { m_transitionPropertyAttributes = transitionPropertyAttributes; }
 
     int transitionCountEstimate() const
     {
@@ -1055,6 +1059,7 @@ private:
     ConcurrentJSLock m_lock;
 
     uint32_t m_bitField;
+    TransitionPropertyAttributes m_transitionPropertyAttributes { 0 };
 
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;

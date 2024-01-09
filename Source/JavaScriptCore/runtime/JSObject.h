@@ -1054,9 +1054,6 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    template<typename Functor>
-    bool fastForEachPropertyWithSideEffectFreeFunctor(VM&, const Functor&);
-
     bool getOwnNonIndexPropertySlot(VM&, Structure*, PropertyName, PropertySlot&);
     bool getNonIndexPropertySlot(JSGlobalObject*, PropertyName, PropertySlot&);
 

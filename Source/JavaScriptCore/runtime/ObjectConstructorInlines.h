@@ -63,7 +63,145 @@ ALWAYS_INLINE void objectAssignIndexedPropertiesFast(JSGlobalObject* globalObjec
     RETURN_IF_EXCEPTION(scope, void());
 }
 
-ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
+ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* source)
+{
+    static constexpr bool verbose = false;
+
+    Structure* targetStructure = target->structure();
+    Structure* sourceStructure = source->structure();
+
+    ASSERT(sourceStructure->canPerformFastPropertyEnumerationCommon());
+
+    if (targetStructure->seenProperties().bits()) {
+        dataLogLnIf(verbose, "target already has properties");
+        return false;
+    }
+
+    auto checkStrucure = [&](Structure* structure) ALWAYS_INLINE_LAMBDA {
+        if (structure->typeInfo().type() != FinalObjectType) {
+            dataLogLnIf(verbose, "target is not final object");
+            return false;
+        }
+
+        if (structure->isDictionary()) {
+            dataLogLnIf(verbose, "target is dictionary");
+            return false;
+        }
+
+        if (hasIndexedProperties(structure->indexingType())) {
+            dataLogLnIf(verbose, "target has indexing mode");
+            return false;
+        }
+
+        if (structure->mayBePrototype()) {
+            dataLogLnIf(verbose, "target may be prototype");
+            return false;
+        }
+
+        if (structure->didPreventExtensions()) {
+            dataLogLnIf(verbose, "target has didPreventExtensions");
+            return false;
+        }
+
+        if (structure->hasBeenFlattenedBefore()) {
+            dataLogLnIf(verbose, "target has flattened before");
+            return false;
+        }
+
+        if (structure->hasBeenDictionary()) {
+            dataLogLnIf(verbose, "target has been dictionary");
+            return false;
+        }
+
+        if (structure->isBrandedStructure()) {
+            dataLogLnIf(verbose, "target has isBrandedStructure");
+            return false;
+        }
+
+        if (structure->hasPolyProto()) {
+            dataLogLnIf(verbose, "target has PolyProto");
+            return false;
+        }
+
+        if (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto()) {
+            dataLogLnIf(verbose, "target has non-writable properties");
+            return false;
+        }
+
+        if (structure->hasNonEnumerableProperties()) {
+            dataLogLnIf(verbose, "target has non-enumerable properties");
+            return false;
+        }
+
+        if (structure->hasNonConfigurableProperties()) {
+            dataLogLnIf(verbose, "target has non-configurable properties");
+            return false;
+        }
+
+        if (!structure->isQuickPropertyAccessAllowedForEnumeration()) {
+            dataLogLnIf(verbose, "target has symbol properties (right now we disable this optimization in this case since we cannot detect private symbol properties)");
+            return false;
+        }
+
+        return true;
+    };
+
+    if (!checkStrucure(targetStructure))
+        return false;
+
+    if (targetStructure->transitionWatchpointSetIsStillValid()) {
+        dataLogLnIf(verbose, "target transitionWatchpointSetIsStillValid");
+        return false;
+    }
+
+    // If the sourceStructure is frozen, we retrieve the last one before freezing.
+    if (sourceStructure->transitionKind() == TransitionKind::Freeze) {
+        dataLogLnIf(verbose, "source was frozen. Let's look into the previous structure");
+        sourceStructure = sourceStructure->previousID();
+        if (!sourceStructure)
+            return false;
+
+        dataLogLnIf(verbose, "source should have ArrayStorage since it was frozen. Let's see whether it is empty and we can quickly get the previous structure without ArrayStorage.");
+        if (sourceStructure->transitionKind() == TransitionKind::AllocateArrayStorage && !source->canHaveExistingOwnIndexedProperties()) {
+            sourceStructure = sourceStructure->previousID();
+            if (!sourceStructure)
+                return false;
+        }
+    }
+
+    if (!checkStrucure(sourceStructure))
+        return false;
+
+    if (targetStructure->inlineCapacity() != sourceStructure->inlineCapacity()) {
+        dataLogLnIf(verbose, "source and target has different inline capacity");
+        return false;
+    }
+
+    if (targetStructure->globalObject() != sourceStructure->globalObject()) {
+        dataLogLnIf(verbose, "source and target has different globalObject");
+        return false;
+    }
+
+    if (targetStructure->storedPrototype() != sourceStructure->storedPrototype()) {
+        dataLogLnIf(verbose, "__proto__ is different");
+        return false;
+    }
+
+    dataLogLnIf(verbose, "Use fast cloning!");
+
+    unsigned propertyCapacity = sourceStructure->outOfLineCapacity();
+    Butterfly* newButterfly = Butterfly::createUninitialized(vm, target, 0, propertyCapacity, /* hasIndexingHeader */ false, 0);
+    gcSafeMemcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
+    gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
+    target->nukeStructureAndSetButterfly(vm, targetStructure->id(), newButterfly);
+    target->setStructure(vm, sourceStructure);
+
+    vm.writeBarrier(target);
+
+    return true;
+}
+
+ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSFinalObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
 {
     // |source| Structure does not have any getters. And target can perform fast put.
     // So enumerating properties and putting properties are non observable.
@@ -84,9 +222,20 @@ ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSObject* targ
     properties.shrink(0);
     values.clear();
 
+    if (source->hasNonReifiedStaticProperties())
+        return false;
+
+    Structure* sourceStructure = source->structure();
+    if (!sourceStructure->canPerformFastPropertyEnumerationCommon())
+        return false;
+
+    if (objectCloneFast(vm, target, source))
+        return true;
+
     if (source->canHaveExistingOwnIndexedGetterSetterProperties())
         return false;
-    bool canUseFastPath = source->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+
+    sourceStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
         if (entry.attributes() & PropertyAttribute::DontEnum)
             return true;
 
@@ -99,8 +248,6 @@ ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSObject* targ
 
         return true;
     });
-    if (!canUseFastPath)
-        return false;
 
     if (source->canHaveExistingOwnIndexedProperties()) {
         objectAssignIndexedPropertiesFast(globalObject, target, source);

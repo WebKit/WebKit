@@ -290,9 +290,8 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
 
-    if (targetCanPerformFastPut) {
+    if (auto* targetObject = jsDynamicCast<JSFinalObject*>(target); targetObject && targetObject->canPerformFastPutInlineExcludingProto() && targetObject->isStructureExtensible()) {
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
         if (!source->staticPropertiesReified()) {
@@ -311,7 +310,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignObject, void, (JSGlobalObject* glo
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
         // Do not clear since Vector::clear shrinks the backing store.
-        bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+        bool objectAssignFastSucceeded = objectAssignFast(globalObject, targetObject, source, properties, values);
         RETURN_IF_EXCEPTION(scope, void());
         if (objectAssignFastSucceeded)
             return;
@@ -328,15 +327,13 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool targetCanPerformFastPut = jsDynamicCast<JSFinalObject*>(target) && target->canPerformFastPutInlineExcludingProto() && target->isStructureExtensible();
-
     JSValue sourceValue = JSValue::decode(encodedSource);
     if (sourceValue.isUndefinedOrNull())
         return;
     JSObject* source = sourceValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (targetCanPerformFastPut) {
+    if (auto* targetObject = jsDynamicCast<JSFinalObject*>(target); targetObject && targetObject->canPerformFastPutInlineExcludingProto() && targetObject->isStructureExtensible()) {
         if (!source->staticPropertiesReified()) {
             source->reifyAllStaticProperties(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
@@ -344,7 +341,7 @@ JSC_DEFINE_JIT_OPERATION(operationObjectAssignUntyped, void, (JSGlobalObject* gl
 
         Vector<RefPtr<UniquedStringImpl>, 8> properties;
         MarkedArgumentBuffer values;
-        bool objectAssignFastSucceeded = objectAssignFast(globalObject, target, source, properties, values);
+        bool objectAssignFastSucceeded = objectAssignFast(globalObject, targetObject, source, properties, values);
         RETURN_IF_EXCEPTION(scope, void());
         if (objectAssignFastSucceeded)
             return;
