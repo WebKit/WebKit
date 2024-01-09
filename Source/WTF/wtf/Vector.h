@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2024 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -864,6 +864,7 @@ public:
     void clear() { shrinkCapacity(0); }
 
     ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
+    ALWAYS_INLINE bool tryAppend(ValueType&& value) { return tryAppend<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> ALWAYS_INLINE void append(U&& u) { append<FailureAction::Crash, U>(std::forward<U>(u)); }
     template<typename U> ALWAYS_INLINE bool tryAppend(U&& u) { return append<FailureAction::Report, U>(std::forward<U>(u)); }
     template<typename... Args> ALWAYS_INLINE void constructAndAppend(Args&&... args) { constructAndAppend<FailureAction::Crash>(std::forward<Args>(args)...); }
