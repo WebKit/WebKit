@@ -458,7 +458,7 @@ public:
     bool shouldNotFireMutationEvents() const { return m_shouldNotFireMutationEvents; }
     void setShouldNotFireMutationEvents(bool fire) { m_shouldNotFireMutationEvents = fire; }
 
-    void parseMarkupUnsafe(const String&, OptionSet<ParserContentPolicy>);
+    void setMarkupUnsafe(const String&, OptionSet<ParserContentPolicy>);
     static Ref<Document> parseHTMLUnsafe(Document&, const String&);
 
     Element* elementForAccessKey(const String& key);
@@ -520,8 +520,6 @@ public:
     WEBCORE_EXPORT AtomString encoding() const;
 
     WEBCORE_EXPORT void setCharset(const String&); // Used by ObjC / GOBject bindings only.
-
-    void setContent(const String&);
 
     String suggestedMIMEType() const;
 

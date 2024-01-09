@@ -910,30 +910,30 @@ void Document::commonTeardown()
 #endif
 }
 
-void Document::parseMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+void Document::setMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
-    bool usedFastPath = false;
     if (this->contentType() == "text/html"_s) {
         auto body = HTMLBodyElement::create(*this);
-        usedFastPath = tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy);
-        if (LIKELY(usedFastPath)) {
+        if (LIKELY(tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy))) {
             auto html = HTMLHtmlElement::create(*this);
             auto head = HTMLHeadElement::create(*this);
             html->appendChild(head);
             html->appendChild(body);
             appendChild(html);
+            return;
         }
     }
-    if (!usedFastPath)
-        setContent(markup);
+    open();
+    protectedParser()->appendSynchronously(markup.impl());
+    close();
 }
 
 Ref<Document> Document::parseHTMLUnsafe(Document& context, const String& html)
 {
     Ref document = HTMLDocument::create(nullptr, context.protectedSettings(), URL { });
-    document->parseMarkupUnsafe(html, { ParserContentPolicy::AllowDeclarativeShadowRoots });
+    document->setMarkupUnsafe(html, { ParserContentPolicy::AllowDeclarativeShadowRoots });
     return document;
 }
 
@@ -1683,13 +1683,6 @@ void Document::setDocumentURI(const String& uri)
     // This property is read-only from JavaScript, but writable from Objective-C.
     m_documentURI = uri;
     updateBaseURL();
-}
-
-void Document::setContent(const String& content)
-{
-    open();
-    protectedParser()->appendSynchronously(content.impl());
-    close();
 }
 
 String Document::suggestedMIMEType() const

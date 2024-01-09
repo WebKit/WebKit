@@ -184,16 +184,15 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
                 responseDocument = HTMLDocument::create(nullptr, context.settings(), m_response.url(), { });
             else
                 responseDocument = XMLDocument::create(nullptr, context.settings(), m_response.url());
-            responseDocument->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent });
             responseDocument->overrideLastModified(m_response.lastModified());
             responseDocument->setContextDocument(context);
             responseDocument->setSecurityOriginPolicy(context.securityOriginPolicy());
             responseDocument->overrideMIMEType(mimeType);
-            responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
+            responseDocument->setMarkupUnsafe(m_responseBuilder.toStringPreserveCapacity(), { });
             if (m_decoder)
                 responseDocument->setDecoder(m_decoder.copyRef());
 
-            if (!responseDocument->wellFormed())
+            if (!isHTML && !responseDocument->wellFormed())
                 m_responseDocument = nullptr;
             else
                 m_responseDocument = WTFMove(responseDocument);
