@@ -81,9 +81,9 @@ ExceptionOr<void> HTMLTableElement::setCaption(RefPtr<HTMLTableCaptionElement>&&
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tHead() const
 {
-    for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
+    for (Ref child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
         if (child->hasTagName(theadTag))
-            return downcast<HTMLTableSectionElement>(child.get());
+            return child;
     }
     return nullptr;
 }
@@ -108,9 +108,9 @@ ExceptionOr<void> HTMLTableElement::setTHead(RefPtr<HTMLTableSectionElement>&& n
 
 RefPtr<HTMLTableSectionElement> HTMLTableElement::tFoot() const
 {
-    for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
+    for (Ref child : childrenOfType<HTMLTableSectionElement>(const_cast<HTMLTableElement&>(*this))) {
         if (child->hasTagName(tfootTag))
-            return downcast<HTMLTableSectionElement>(child.get());
+            return child;
     }
     return nullptr;
 }
