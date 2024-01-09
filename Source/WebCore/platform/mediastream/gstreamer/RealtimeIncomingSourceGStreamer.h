@@ -34,6 +34,8 @@ public:
 
     GstElement* bin() { return m_bin.get(); }
 
+    virtual void configureForInputCaps(const GRefPtr<GstCaps>&) { createParser(); }
+
     int registerClient(GRefPtr<GstElement>&&);
     void unregisterClient(int);
 
@@ -42,6 +44,11 @@ public:
 
 protected:
     RealtimeIncomingSourceGStreamer(const CaptureDevice&);
+
+    void createParser();
+
+    GRefPtr<GstElement> m_valve;
+    GRefPtr<GstElement> m_tee;
 
 private:
     // RealtimeMediaSource API
@@ -52,8 +59,6 @@ private:
     virtual void dispatchSample(GRefPtr<GstSample>&&) { }
 
     GRefPtr<GstElement> m_bin;
-    GRefPtr<GstElement> m_valve;
-    GRefPtr<GstElement> m_tee;
     GQuark m_clientQuark { 0 };
     HashMap<int, GRefPtr<GstElement>> m_clients;
 };

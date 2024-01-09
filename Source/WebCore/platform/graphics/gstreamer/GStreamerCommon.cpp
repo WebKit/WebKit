@@ -1111,6 +1111,30 @@ void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>& element)
         g_object_set(element.get(), "output-corrupt", FALSE, nullptr);
 }
 
+void configureMediaStreamVideoDecoder(GstElement* element)
+{
+    if (gstObjectHasProperty(element, "automatic-request-sync-points"))
+        g_object_set(element, "automatic-request-sync-points", TRUE, nullptr);
+
+    if (gstObjectHasProperty(element, "discard-corrupted-frames"))
+        g_object_set(element, "discard-corrupted-frames", TRUE, nullptr);
+
+    if (gstObjectHasProperty(element, "output-corrupt"))
+        g_object_set(element, "output-corrupt", FALSE, nullptr);
+
+    if (gstObjectHasProperty(element, "max-errors"))
+        g_object_set(element, "max-errors", -1, nullptr);
+}
+
+void configureVideoRTPDepayloader(GstElement* element)
+{
+    if (gstObjectHasProperty(element, "request-keyframe"))
+        g_object_set(element, "request-keyframe", TRUE, nullptr);
+
+    if (gstObjectHasProperty(element, "wait-for-keyframe"))
+        g_object_set(element, "wait-for-keyframe", TRUE, nullptr);
+}
+
 static bool gstObjectHasProperty(GstObject* gstObject, const char* name)
 {
     return g_object_class_find_property(G_OBJECT_GET_CLASS(gstObject), name);

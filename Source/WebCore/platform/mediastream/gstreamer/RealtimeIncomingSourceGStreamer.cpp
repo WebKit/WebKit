@@ -36,40 +36,42 @@ RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer(const CaptureDe
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_media_debug, "webkitwebrtcincomingmedia", 0, "WebKit WebRTC incoming media");
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_incoming_media_debug, "webkitwebrtcincoming", 0, "WebKit WebRTC incoming media");
     });
     m_bin = gst_bin_new(nullptr);
     m_valve = gst_element_factory_make("valve", nullptr);
     m_tee = gst_element_factory_make("tee", nullptr);
     g_object_set(m_tee.get(), "allow-not-linked", TRUE, nullptr);
 
-    auto* parsebin = makeGStreamerElement("parsebin", nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_valve.get(), m_tee.get(), nullptr);
 
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(m_valve.get(), "sink"));
+    gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("sink", sinkPad.get()));
+}
+
+void RealtimeIncomingSourceGStreamer::createParser()
+{
+    GST_DEBUG_OBJECT(bin(), "Creating parser for incoming RTP packets. Decoding will be performed by the client");
+    auto* parsebin = makeGStreamerElement("parsebin", nullptr);
     g_signal_connect(parsebin, "element-added", G_CALLBACK(+[](GstBin*, GstElement* element, gpointer) {
         auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
         auto classifiers = elementClass.split('/');
         if (!classifiers.contains("Depayloader"_s))
             return;
 
-        if (gstObjectHasProperty(element, "request-keyframe"))
-            g_object_set(element, "request-keyframe", TRUE, nullptr);
-        if (gstObjectHasProperty(element, "wait-for-keyframe"))
-            g_object_set(element, "wait-for-keyframe", TRUE, nullptr);
+        configureVideoRTPDepayloader(element);
     }), nullptr);
 
     g_signal_connect_swapped(parsebin, "pad-added", G_CALLBACK(+[](RealtimeIncomingSourceGStreamer* source, GstPad* pad) {
         auto sinkPad = adoptGRef(gst_element_get_static_pad(source->m_tee.get(), "sink"));
         gst_pad_link(pad, sinkPad.get());
 
-        gst_bin_sync_children_states(GST_BIN_CAST(source->m_bin.get()));
-        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(source->m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, GST_OBJECT_NAME(source->m_bin.get()));
+        gst_bin_sync_children_states(GST_BIN_CAST(source->bin()));
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(source->bin()), GST_DEBUG_GRAPH_SHOW_ALL, GST_OBJECT_NAME(source->bin()));
     }), this);
 
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_valve.get(), parsebin, m_tee.get(), nullptr);
+    gst_bin_add(GST_BIN_CAST(m_bin.get()), parsebin);
     gst_element_link(m_valve.get(), parsebin);
-
-    auto sinkPad = adoptGRef(gst_element_get_static_pad(m_valve.get(), "sink"));
-    gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("sink", sinkPad.get()));
 }
 
 void RealtimeIncomingSourceGStreamer::startProducingData()

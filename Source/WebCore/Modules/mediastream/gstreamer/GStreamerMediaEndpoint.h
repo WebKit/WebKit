@@ -139,8 +139,10 @@ private:
 
     MediaStream& mediaStreamFromRTCStream(String mediaStreamId);
 
-    void addRemoteStream(GstPad*);
+    String addRemoteStream(GstPad*);
     void removeRemoteStream(GstPad*);
+
+    void startRemoteStream(GstPad*, const String&);
 
     int pickAvailablePayloadType();
 

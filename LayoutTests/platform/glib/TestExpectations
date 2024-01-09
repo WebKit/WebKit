@@ -1886,11 +1886,14 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 
 webkit.org/b/264803 fast/mediastream/mediastreamtrack-video-resize-event.html [ Failure ]
 
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-address.html [ Failure ]
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/outbound-rtp.https.html [ Failure ]
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Failure ]
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Failure ]
-webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Failure ]
+# Adding transceivers without tracks is broken.
+webkit.org/b/265865 imported/w3c/web-platform-tests/webrtc-stats/rtp-stats-creation.html [ Skip ]
+
+# [GStreamer][WebRTC] Missing support for non-trickle ICE handshake
+webkit.org/b/265860 imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Skip ]
+
+# Pass Slow Failure with GStreamer 1.23. Skip (too many bugs) with GStreamer 1.22.
+webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/hardware-capability-stats.https.html [ Skip ]
 
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
@@ -1994,6 +1997,7 @@ webkit.org/b/235885 webrtc/video.html [ Failure ]
 
 # webrtcbin emits no ICE candidate stats for a PeerConnection managing only one data-channel.
 webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
+webkit.org/b/262989 imported/w3c/web-platform-tests/webrtc-stats/getStats-remote-candidate-address.html [ Failure ]
 
 # Pending investigation.
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]

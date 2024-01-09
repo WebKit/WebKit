@@ -110,6 +110,7 @@ class GLibPort(Port):
             environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
 
         environment['WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS'] = '1'
+        environment['WEBKIT_GST_WEBRTC_FORCE_EARLY_VIDEO_DECODING'] = '1'
 
         if self.get_option("leaks"):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
