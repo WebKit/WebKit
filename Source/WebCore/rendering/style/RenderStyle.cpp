@@ -555,7 +555,7 @@ unsigned RenderStyle::hashForTextAutosizing() const
     hash ^= m_rareInheritedData->nbspMode;
     hash ^= m_rareInheritedData->lineBreak;
     hash ^= WTF::FloatHash<float>::hash(m_inheritedData->specifiedLineHeight.value());
-    hash ^= computeFontHash(m_inheritedData->fontCascade);
+    hash ^= computeFontHash(m_inheritedData->fontData->fontCascade);
     hash ^= WTF::FloatHash<float>::hash(m_inheritedData->horizontalBorderSpacing);
     hash ^= WTF::FloatHash<float>::hash(m_inheritedData->verticalBorderSpacing);
     hash ^= m_inheritedFlags.boxDirection;
@@ -577,7 +577,7 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle& other) const
         && m_rareInheritedData->lineBreak == other.m_rareInheritedData->lineBreak
         && m_rareInheritedData->textSecurity == other.m_rareInheritedData->textSecurity
         && m_inheritedData->specifiedLineHeight == other.m_inheritedData->specifiedLineHeight
-        && m_inheritedData->fontCascade.equalForTextAutoSizing(other.m_inheritedData->fontCascade)
+        && m_inheritedData->fontData->fontCascade.equalForTextAutoSizing(other.m_inheritedData->fontData->fontCascade)
         && m_inheritedData->horizontalBorderSpacing == other.m_inheritedData->horizontalBorderSpacing
         && m_inheritedData->verticalBorderSpacing == other.m_inheritedData->verticalBorderSpacing
         && m_inheritedFlags.boxDirection == other.m_inheritedFlags.boxDirection
@@ -1023,9 +1023,11 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
 #if ENABLE(TEXT_AUTOSIZING)
             || m_inheritedData->specifiedLineHeight != other.m_inheritedData->specifiedLineHeight
 #endif
-            || m_inheritedData->fontCascade != other.m_inheritedData->fontCascade
             || m_inheritedData->horizontalBorderSpacing != other.m_inheritedData->horizontalBorderSpacing
             || m_inheritedData->verticalBorderSpacing != other.m_inheritedData->verticalBorderSpacing)
+            return true;
+
+        if (m_inheritedData->fontData != other.m_inheritedData->fontData)
             return true;
     }
 
@@ -1975,7 +1977,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyLineHeight);
 #endif
 
-        if (first.fontCascade != second.fontCascade) {
+        if (first.fontData != second.fontData) {
             changingProperties.m_properties.set(CSSPropertyWordSpacing);
             changingProperties.m_properties.set(CSSPropertyLetterSpacing);
             changingProperties.m_properties.set(CSSPropertyTextRendering);
@@ -2709,17 +2711,17 @@ AnimationList& RenderStyle::ensureTransitions()
 
 const FontCascade& RenderStyle::fontCascade() const
 {
-    return m_inheritedData->fontCascade;
+    return m_inheritedData->fontData->fontCascade;
 }
 
 const FontMetrics& RenderStyle::metricsOfPrimaryFont() const
 {
-    return m_inheritedData->fontCascade.metricsOfPrimaryFont();
+    return m_inheritedData->fontData->fontCascade.metricsOfPrimaryFont();
 }
 
 const FontCascadeDescription& RenderStyle::fontDescription() const
 {
-    return m_inheritedData->fontCascade.fontDescription();
+    return m_inheritedData->fontData->fontCascade.fontDescription();
 }
 
 float RenderStyle::specifiedFontSize() const
@@ -2756,7 +2758,7 @@ bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
 {
     if (fontDescription() == description)
         return false;
-    auto& cascade = m_inheritedData.access().fontCascade;
+    auto& cascade = m_inheritedData.access().fontData.access().fontCascade;
     cascade = { WTFMove(description), cascade };
     return true;
 }
@@ -2835,7 +2837,7 @@ void RenderStyle::setLetterSpacing(Length&& spacing)
         return;
 
     bool oldShouldDisableLigatures = fontDescription().shouldDisableLigaturesForSpacing();
-    m_inheritedData.access().fontCascade.setLetterSpacing(WTFMove(spacing));
+    m_inheritedData.access().fontData.access().fontCascade.setLetterSpacing(WTFMove(spacing));
 
     // Switching letter-spacing between zero and non-zero requires updating fonts (to enable/disable ligatures)
     bool shouldDisableLigatures = fontCascade().letterSpacing();
@@ -2854,7 +2856,7 @@ void RenderStyle::setWordSpacing(Length&& spacing)
     if (fontCascade().computedWordSpacing() == spacing)
         return;
 
-    m_inheritedData.access().fontCascade.setWordSpacing(WTFMove(spacing));
+    m_inheritedData.access().fontData.access().fontCascade.setWordSpacing(WTFMove(spacing));
 }
 
 void RenderStyle::setTextSpacingTrim(TextSpacingTrim value)
