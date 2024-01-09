@@ -115,6 +115,7 @@ enum class SDKAlignedBehavior {
     OnlyLoadWellKnownAboutURLs,
     AsyncFragmentNavigationPolicyDecision,
     DoNotLoadStyleSheetIfHTTPStatusIsNotOK,
+    ScrollViewSubclassImplementsAddGestureRecognizer,
 
     NumberOfBehaviors
 };
