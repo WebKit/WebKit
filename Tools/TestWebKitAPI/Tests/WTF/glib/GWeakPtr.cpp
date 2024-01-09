@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "Test.h"
+#include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 
 namespace TestWebKitAPI {
@@ -128,6 +129,73 @@ TEST(WTF_GWeakPtr, Move)
         g_clear_object(&obj);
         EXPECT_NULL(weak2.get());
         EXPECT_FALSE(weak2);
+    }
+    EXPECT_NULL(obj);
+}
+
+TEST(WTF_GThreadSafeWeakPtr, Basic)
+{
+    GThreadSafeWeakPtr<GObject> empty;
+    EXPECT_NULL(empty.get());
+
+    GObject* obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+    GThreadSafeWeakPtr<GObject> weak(obj);
+    EXPECT_EQ(obj, weak.get());
+    g_clear_object(&obj);
+    EXPECT_NULL(weak.get());
+    EXPECT_NULL(obj);
+}
+
+TEST(WTF_GThreadSafeWeakPtr, Reset)
+{
+    GObject* obj = nullptr;
+    {
+        obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+        GThreadSafeWeakPtr<GObject> weak(obj);
+        EXPECT_EQ(obj, weak.get());
+        weak.reset();
+        EXPECT_NULL(weak.get());
+        g_clear_object(&obj);
+    }
+    EXPECT_NULL(obj);
+
+    {
+        obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+        GThreadSafeWeakPtr<GObject> weak(obj);
+        EXPECT_EQ(obj, weak.get());
+        weak = nullptr;
+        EXPECT_NULL(weak.get());
+        g_clear_object(&obj);
+    }
+    EXPECT_NULL(obj);
+
+    {
+        obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+        GThreadSafeWeakPtr<GObject> weak(obj);
+        EXPECT_EQ(obj, weak.get());
+        GObject* obj2 = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+        weak.reset(obj2);
+        EXPECT_EQ(obj2, weak.get());
+        g_clear_object(&obj);
+        EXPECT_EQ(obj2, weak.get());
+        g_object_unref(obj2);
+        EXPECT_NULL(weak.get());
+    }
+    EXPECT_NULL(obj);
+}
+
+TEST(WTF_GThreadSafeWeakPtr, Move)
+{
+    GObject* obj = nullptr;
+    {
+        obj = G_OBJECT(g_object_new(G_TYPE_OBJECT, nullptr));
+        GThreadSafeWeakPtr<GObject> weak(obj);
+        EXPECT_EQ(obj, weak.get());
+        GThreadSafeWeakPtr<GObject> weak2 = WTFMove(weak);
+        EXPECT_NULL(weak.get());
+        EXPECT_EQ(obj, weak2.get());
+        g_clear_object(&obj);
+        EXPECT_NULL(weak2.get());
     }
     EXPECT_NULL(obj);
 }
