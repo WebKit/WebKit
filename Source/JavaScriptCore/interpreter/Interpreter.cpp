@@ -1295,7 +1295,7 @@ CodeBlock* Interpreter::prepareForCachedCall(CachedCall& cachedCall, JSFunction*
     newCodeBlock->m_shouldAlwaysBeInlined = false;
 
     cachedCall.m_addressForCall = newCodeBlock->jitCode()->addressForCall();
-    newCodeBlock->linkIncomingCall(nullptr, &cachedCall);
+    newCodeBlock->linkIncomingCall(nullptr, nullptr, &cachedCall);
     return newCodeBlock;
 }
 

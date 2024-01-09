@@ -2547,7 +2547,7 @@ macro arrayProfileForCall(opcodeStruct, getu)
 end
 
 # t5 holds metadata.
-macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCountIncludingThis)
+macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, prepareCall, invokeCall, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCountIncludingThis)
     getCallee(t1)
 
     loadConstantOrVariable(size, t1, t0)
@@ -2568,9 +2568,13 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
 
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t1
     btpz t1, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
-    # prepareCall in LLInt does not untag return address. So we need to untag that in the trampoline separately.
-    # But we should not untag that for polymorphic call case since it should be done in the polymorphic thunk side.
-    preparePolymorphic(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, JSEntryPtrTag)
+    prepareCall(t2, t3, t4, t1, macro(address)
+        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+        storep t2, address
+    end)
+    loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
+    loadp (CodeBlock::m_globalObject - (constexpr CallLinkInfo::polymorphicCalleeMask))[t3], t3
+    addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
     jmp .goPolymorphic
 
 .notPolymorphic:
@@ -2596,7 +2600,7 @@ macro callHelper(opcodeName, opcodeStruct, dispatchAfterCall, valueProfileName, 
     callTargetFunction(%opcodeName%_slow, size, opcodeStruct, dispatchAfterCall, valueProfileName, dstVirtualRegister, dispatch, t5, JSEntryPtrTag)
 end
 
-macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, prologue, dispatchAfterCall)
+macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, prepareSlowCall, prologue, dispatchAfterCall)
     llintOpWithMetadata(opcodeName, opcodeStruct, macro (size, get, dispatch, metadata, return)
         metadata(t5, t0)
 
@@ -2617,11 +2621,11 @@ macro commonCallOp(opcodeName, opcodeStruct, prepareCall, invokeCall, preparePol
         end
 
         # t5 holds metadata
-        callHelper(opcodeName, opcodeStruct, dispatchAfterCall, m_valueProfile, m_dst, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCount)
+        callHelper(opcodeName, opcodeStruct, dispatchAfterCall, m_valueProfile, m_dst, prepareCall, invokeCall, prepareSlowCall, size, dispatch, metadata, getCallee, getArgumentStart, getArgumentCount)
     end)
 end
 
-macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, metadata, frameSlowPath, slowPath, prepareCall, invokeCall, preparePolymorphic, prepareSlowCall, dispatchAfterCall)
+macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, metadata, frameSlowPath, slowPath, prepareCall, invokeCall, prepareSlowCall, dispatchAfterCall)
     callSlowPath(frameSlowPath)
     branchIfException(_llint_throw_from_slow_path_trampoline)
     # calleeFrame in r1
@@ -2649,9 +2653,13 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
 
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t1
             btpz t1, (constexpr CallLinkInfo::polymorphicCalleeMask), .notPolymorphic
-            # prepareCall in LLInt does not untag return address. So we need to untag that in the trampoline separately.
-            # But we should not untag that for polymorphic call case since it should be done in the polymorphic thunk side.
-            preparePolymorphic(opcodeName, size, opcodeStruct, valueProfileName, dstVirtualRegister, dispatch, JSEntryPtrTag)
+            prepareCall(t2, t3, t4, t1, macro(address)
+                loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
+                storep t2, address
+            end)
+            loadp %opcodeStruct%::Metadata::m_callLinkInfo.m_calleeOrCodeBlock[t5], t3
+            loadp (CodeBlock::m_globalObject - (constexpr CallLinkInfo::polymorphicCalleeMask))[t3], t3
+            addp %opcodeStruct%::Metadata::m_callLinkInfo, t5, t2 # CallLinkInfo* in t2
             jmp .goPolymorphic
 
         .notPolymorphic:
@@ -3311,7 +3319,7 @@ llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch
     loadi JSCell::m_structureID[t0], t3
     storei t3, OpIteratorOpen::Metadata::m_arrayProfile.m_lastSeenStructureID[t5]
     .done:
-    callHelper(op_iterator_open, OpIteratorOpen, dispatchAfterRegularCall, m_iteratorValueProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
+    callHelper(op_iterator_open, OpIteratorOpen, dispatchAfterRegularCall, m_iteratorValueProfile, m_iterator, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, size, gotoGetByIdCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getByIdStart:
     macro storeNextAndDispatch(value)
@@ -3369,7 +3377,7 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
     # Use m_value slot as a tmp since we are going to write to it later.
     metadata(t5, t0)
-    callHelper(op_iterator_next, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForPolymorphicRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
+    callHelper(op_iterator_next, OpIteratorNext, dispatchAfterRegularCall, m_nextResultValueProfile, m_value, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, size, gotoGetDoneCheckpoint, metadata, getCallee, getArgumentIncludingThisStart, getArgumentIncludingThisCount)
 
 .getDoneStart:
     macro storeDoneAndJmpToGetValue(doneValue)

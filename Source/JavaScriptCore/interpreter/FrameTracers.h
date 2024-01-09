@@ -109,6 +109,15 @@ public:
     }
 };
 
+class NativeCallFrameTracerForTailCall {
+public:
+    ALWAYS_INLINE NativeCallFrameTracerForTailCall(VM& vm, CallFrame* callFrame)
+    {
+        assertStackPointerIsAligned();
+        vm.topCallFrame = callFrame;
+    }
+};
+
 class JITOperationPrologueCallFrameTracer {
 public:
     ALWAYS_INLINE JITOperationPrologueCallFrameTracer(VM& vm, CallFrame* callFrame)
