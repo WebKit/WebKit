@@ -259,13 +259,9 @@ String GStreamerInternalVideoEncoder::initialize(const String& codecName, const 
     GRefPtr<GstCaps> encoderCaps;
     if (codecName == "vp8"_s)
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
-    else if (codecName.startsWith("vp09"_s)) {
+    else if (codecName.startsWith("vp09"_s))
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
-        if (auto profileId = GStreamerCodecUtilities::parseVP9Profile(codecName)) {
-            auto profile = makeString(profileId);
-            gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, profile.ascii().data(), nullptr);
-        }
-    } else if (codecName.startsWith("avc1"_s)) {
+    else if (codecName.startsWith("avc1"_s)) {
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
         auto [profile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecName);
         if (profile)
@@ -288,8 +284,9 @@ String GStreamerInternalVideoEncoder::initialize(const String& codecName, const 
         gst_caps_set_simple(encoderCaps.get(), "height", G_TYPE_INT, static_cast<int>(config.height), nullptr);
 
     // FIXME: Propagate config.frameRate to caps?
+    gst_caps_set_simple(encoderCaps.get(), "framerate", GST_TYPE_FRACTION, 1, 1, nullptr);
 
-    if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps)))
+    if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps), codecName))
         return "Unable to set encoder format"_s;
 
     if (config.bitRate > 1000)

@@ -77,6 +77,8 @@ private:
 
     RefPtr<GStreamerElementHarness> m_harness;
     FloatSize m_presentationSize;
+    int64_t m_timestamp;
+    std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
     GRefPtr<GstCaps> m_inputCaps;
 };
@@ -156,15 +158,17 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     : m_outputCallback(WTFMove(outputCallback))
     , m_postTaskCallback(WTFMove(postTaskCallback))
 {
+    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
     configureVideoDecoderForHarnessing(element);
 
-    GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
+    auto* factory = gst_element_get_factory(element.get());
     const char* parser = nullptr;
     if (codecName.startsWith("avc1"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-h264", "stream-format", G_TYPE_STRING, "avc", "alignment", G_TYPE_STRING, "au", nullptr));
-        parser = "h264parse";
         if (auto codecData = wrapSpanData(config.description))
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
+        if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
+            parser = "h264parse";
     } else if (codecName.startsWith("av01"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-av1", "stream-format", G_TYPE_STRING, "obu-stream", "alignment", G_TYPE_STRING, "frame", nullptr));
         parser = "av1parse";
@@ -175,14 +179,16 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         parser = "vp9parse";
     } else if (codecName.startsWith("hvc1"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-h265", "stream-format", G_TYPE_STRING, "hvc1", "alignment", G_TYPE_STRING, "au", nullptr));
-        parser = "h265parse";
         if (auto codecData = wrapSpanData(config.description))
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
+        if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
+            parser = "h265parse";
     } else if (codecName.startsWith("hev1"_s)) {
         m_inputCaps = adoptGRef(gst_caps_new_simple("video/x-h265", "stream-format", G_TYPE_STRING, "hev1", "alignment", G_TYPE_STRING, "au", nullptr));
-        parser = "h265parse";
         if (auto codecData = wrapSpanData(config.description))
             gst_caps_set_simple(m_inputCaps.get(), "codec_data", GST_TYPE_BUFFER, codecData.get(), nullptr);
+        if (!gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get()))
+            parser = "h265parse";
     } else {
         WTFLogAlways("Codec %s not wired in yet", codecName.ascii().data());
         return;
@@ -192,8 +198,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
         gst_caps_set_simple(m_inputCaps.get(), "width", G_TYPE_INT, config.width, "height", G_TYPE_INT, config.height, nullptr);
 
     GRefPtr<GstElement> harnessedElement;
-    auto* factory = gst_element_get_factory(element.get());
-    if (parser && !gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get())) {
+    if (parser) {
         // The decoder won't accept the input caps, so put a parser in front.
         auto* parserElement = makeGStreamerElement(parser, nullptr);
         if (!parserElement) {
@@ -223,8 +228,6 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
             m_harness->dumpGraph("video-decoder");
         });
 
-        GST_TRACE_OBJECT(m_harness->element(), "Got frame with PTS: %" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(outputBuffer.get())));
-
         if (m_presentationSize.isEmpty())
             m_presentationSize = getVideoResolutionFromCaps(stream.outputCaps().get()).value_or(FloatSize { 0, 0 });
 
@@ -235,10 +238,15 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
             if (m_isClosed)
                 return;
 
-            auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
-            auto videoFrame = VideoFrameGStreamer::create(WTFMove(sample), m_presentationSize, fromGstClockTime(GST_BUFFER_PTS(outputBuffer.get())));
+            auto duration = m_duration.value_or(GST_BUFFER_DURATION(outputBuffer.get()));
+            auto timestamp = static_cast<int64_t>(GST_BUFFER_PTS(outputBuffer.get()));
+            if (timestamp == -1)
+                timestamp = m_timestamp;
 
-            m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), static_cast<int64_t>(GST_BUFFER_PTS(outputBuffer.get())), GST_BUFFER_DURATION(outputBuffer.get()) });
+            GST_TRACE_OBJECT(m_harness->element(), "Handling decoded frame with PTS: %" GST_TIME_FORMAT " and duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timestamp), GST_TIME_ARGS(duration));
+            auto sample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
+            auto videoFrame = VideoFrameGStreamer::create(WTFMove(sample), m_presentationSize, fromGstClockTime(timestamp));
+            m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
         });
     });
 }
@@ -261,9 +269,15 @@ void GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, b
         return;
     }
 
+    m_timestamp = timestamp;
+    m_duration = duration;
+
     GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = timestamp;
     if (duration)
         GST_BUFFER_DURATION(buffer.get()) = *duration;
+
+    if (!isKeyFrame)
+        GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DELTA_UNIT);
 
     // FIXME: Maybe configure segment here, could be useful for reverse playback.
     auto result = m_harness->pushSample(adoptGRef(gst_sample_new(buffer.get(), m_inputCaps.get(), nullptr, nullptr)));

@@ -23,7 +23,10 @@
 #if USE(GSTREAMER)
 
 #include "HEVCUtilities.h"
+#include "VP9Utilities.h"
 #include <gst/pbutils/codec-utils.h>
+#include <gst/video/video.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
@@ -101,14 +104,136 @@ const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
     return gst_codec_utils_h265_get_profile(profileTierLevel, sizeof(profileTierLevel));
 }
 
-uint8_t GStreamerCodecUtilities::parseVP9Profile(const String& codec)
+static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> vpxCapsFromCodecString(const String& codecString, unsigned width, unsigned height, int framerateNumerator, int framerateDenominator)
 {
-    ensureDebugCategoryInitialized();
+    auto parameters = parseVPCodecParameters(codecString);
+    if (!parameters)
+        return { nullptr, nullptr };
 
-    auto components = codec.split('.');
-    auto profile = parseInteger<uint8_t>(components[1]).value_or(0);
-    GST_DEBUG("Codec %s translates to VP9 profile %u", codec.utf8().data(), profile);
-    return profile;
+    auto inputCaps = adoptGRef(gst_caps_new_any());
+
+    if (parameters->codecName.startsWith("vp8"_s) || parameters->codecName.startsWith("vp08"_s))
+        return { inputCaps, adoptGRef(gst_caps_new_empty_simple("video/x-vp8")) };
+
+    auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
+    auto profile = makeString(parameters->profile);
+    gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, profile.ascii().data(), nullptr);
+    const char* yuvFormat = "I420";
+    if (parameters->chromaSubsampling == VPConfigurationChromaSubsampling::Subsampling_422)
+        yuvFormat = "I422";
+    else if (parameters->chromaSubsampling == VPConfigurationChromaSubsampling::Subsampling_444)
+        yuvFormat = "Y444";
+    StringBuilder formatBuilder;
+    formatBuilder.append(yuvFormat);
+    if (parameters->bitDepth > 8) {
+        formatBuilder.append('_', parameters->bitDepth);
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+        formatBuilder.append("LE"_s);
+#else
+        formatBuilder.append("BE"_s);
+#endif
+    }
+
+    auto formatString = formatBuilder.toString();
+    auto format = gst_video_format_from_string(formatString.ascii().data());
+    GstVideoInfo info;
+    gst_video_info_set_format(&info, format, width, height);
+
+    if (parameters->videoFullRangeFlag == VPConfigurationRange::FullRange)
+        GST_VIDEO_INFO_COLORIMETRY(&info).range = GST_VIDEO_COLOR_RANGE_0_255;
+    else
+        GST_VIDEO_INFO_COLORIMETRY(&info).range = GST_VIDEO_COLOR_RANGE_16_235;
+
+    auto primaries = parameters->colorPrimaries;
+    if (primaries == VPConfigurationColorPrimaries::BT_709_6)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT709;
+    else if (primaries == VPConfigurationColorPrimaries::BT_470_6_M)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470M;
+    else if (primaries == VPConfigurationColorPrimaries::BT_470_7_BG || primaries == VPConfigurationColorPrimaries::BT_601_7)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT470BG;
+    else if (primaries == VPConfigurationColorPrimaries::SMPTE_ST_240)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTE240M;
+    else if (primaries == VPConfigurationColorPrimaries::Film)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_FILM;
+    else if (primaries == VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_BT2020;
+    else if (primaries == VPConfigurationColorPrimaries::SMPTE_ST_428_1)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTEST428;
+    else if (primaries == VPConfigurationColorPrimaries::SMPTE_RP_431_2)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTERP431;
+    else if (primaries == VPConfigurationColorPrimaries::SMPTE_EG_432_1)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_SMPTEEG432;
+    else if (primaries == VPConfigurationColorPrimaries::EBU_Tech_3213_E)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_EBU3213;
+    else if (primaries == VPConfigurationColorPrimaries::Unspecified)
+        GST_VIDEO_INFO_COLORIMETRY(&info).primaries = GST_VIDEO_COLOR_PRIMARIES_UNKNOWN;
+
+    auto transfer = parameters->transferCharacteristics;
+    if (transfer == VPConfigurationTransferCharacteristics::BT_709_6 || transfer == VPConfigurationTransferCharacteristics::BT_470_6_M || transfer == VPConfigurationTransferCharacteristics::BT_1361_0)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_BT709;
+    else if (transfer == VPConfigurationTransferCharacteristics::BT_470_7_BG)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_GAMMA28;
+    else if (transfer == VPConfigurationTransferCharacteristics::BT_601_7)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_BT601;
+    else if (transfer == VPConfigurationTransferCharacteristics::SMPTE_ST_240)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_SMPTE240M;
+    else if (transfer == VPConfigurationTransferCharacteristics::Linear)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_GAMMA10;
+    else if (transfer == VPConfigurationTransferCharacteristics::Logrithmic)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_LOG100;
+    else if (transfer == VPConfigurationTransferCharacteristics::Logrithmic_Sqrt)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_LOG316;
+    else if (transfer == VPConfigurationTransferCharacteristics::IEC_61966_2_4)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_SRGB;
+    else if (transfer == VPConfigurationTransferCharacteristics::IEC_61966_2_1) {
+        GST_WARNING("VPConfigurationTransferCharacteristics::IEC_61966_2_1 not supported");
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_UNKNOWN;
+    } else if (transfer == VPConfigurationTransferCharacteristics::BT_2020_10bit)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_BT2020_10;
+    else if (transfer == VPConfigurationTransferCharacteristics::BT_2020_12bit)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_BT2020_12;
+    else if (transfer == VPConfigurationTransferCharacteristics::SMPTE_ST_2084)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_SMPTE2084;
+    else if (transfer == VPConfigurationTransferCharacteristics::SMPTE_ST_428_1) {
+        GST_WARNING("VPConfigurationTransferCharacteristics::SMPTE_ST_428_1 not supported");
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_UNKNOWN;
+    } else if (transfer == VPConfigurationTransferCharacteristics::BT_2100_HLG)
+        GST_VIDEO_INFO_COLORIMETRY(&info).transfer = GST_VIDEO_TRANSFER_ARIB_STD_B67;
+
+    auto matrix = parameters->matrixCoefficients;
+    if (matrix == VPConfigurationMatrixCoefficients::Identity)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_RGB;
+    else if (matrix == VPConfigurationMatrixCoefficients::BT_709_6)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_BT709;
+    else if (matrix == VPConfigurationMatrixCoefficients::Unspecified)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
+    else if (matrix == VPConfigurationMatrixCoefficients::FCC)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_FCC;
+    else if (matrix == VPConfigurationMatrixCoefficients::BT_601_7)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_BT601;
+    else if (matrix == VPConfigurationMatrixCoefficients::SMPTE_ST_240)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_SMPTE240M;
+    else if (matrix == VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance)
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_BT2020;
+    else {
+        GST_WARNING("Color matrix not supported: %u", matrix);
+        GST_VIDEO_INFO_COLORIMETRY(&info).matrix = GST_VIDEO_COLOR_MATRIX_UNKNOWN;
+    }
+    inputCaps = adoptGRef(gst_video_info_to_caps(&info));
+
+    gst_caps_set_simple(inputCaps.get(), "framerate", GST_TYPE_FRACTION, framerateNumerator, framerateDenominator, nullptr);
+
+    return { inputCaps, outputCaps };
+}
+
+std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> GStreamerCodecUtilities::capsFromCodecString(const String& codecString, unsigned width, unsigned height, int framerateNumerator, int framerateDenominator)
+{
+    if (codecString.startsWith("vp8"_s) || codecString.startsWith("vp08"_s) || codecString.startsWith("vp9"_s) || codecString.startsWith("vp09"_s))
+        return vpxCapsFromCodecString(codecString, width, height, framerateNumerator, framerateDenominator);
+
+    if (codecString.startsWith("avc1"_s))
+        return { nullptr, nullptr };
+    return { nullptr, nullptr };
 }
 
 #undef GST_CAT_DEFAULT
