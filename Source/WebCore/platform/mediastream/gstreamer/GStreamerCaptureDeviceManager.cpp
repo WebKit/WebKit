@@ -32,6 +32,9 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkitGStreamerCaptureDeviceManagerDebugCategory);
 #define GST_CAT_DEFAULT webkitGStreamerCaptureDeviceManagerDebugCategory
 
+static bool audioCaptureSingletonInitialized = false;
+static bool videoCaptureSingletonInitialized = false;
+
 static gint sortDevices(gconstpointer a, gconstpointer b)
 {
     GstDevice* adev = GST_DEVICE(a), *bdev = GST_DEVICE(b);
@@ -55,22 +58,28 @@ static gint sortDevices(gconstpointer a, gconstpointer b)
 GStreamerAudioCaptureDeviceManager& GStreamerAudioCaptureDeviceManager::singleton()
 {
     static NeverDestroyed<GStreamerAudioCaptureDeviceManager> manager;
+    audioCaptureSingletonInitialized = true;
     return manager;
 }
 
 GStreamerVideoCaptureDeviceManager& GStreamerVideoCaptureDeviceManager::singleton()
 {
     static NeverDestroyed<GStreamerVideoCaptureDeviceManager> manager;
+    videoCaptureSingletonInitialized = true;
     return manager;
 }
 
 void teardownGStreamerCaptureDeviceManagers()
 {
-    auto& audioManager = GStreamerAudioCaptureDeviceManager::singleton();
-    audioManager.teardown();
+    if (audioCaptureSingletonInitialized) {
+        auto& audioManager = GStreamerAudioCaptureDeviceManager::singleton();
+        audioManager.teardown();
+    }
 
-    auto& videoManager = GStreamerVideoCaptureDeviceManager::singleton();
-    videoManager.teardown();
+    if (videoCaptureSingletonInitialized) {
+        auto& videoManager = GStreamerVideoCaptureDeviceManager::singleton();
+        videoManager.teardown();
+    }
 }
 
 GStreamerCaptureDeviceManager::GStreamerCaptureDeviceManager()
