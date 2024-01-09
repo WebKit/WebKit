@@ -788,7 +788,8 @@ fn testBitwise()
 }
 
 // 8.13. Address-Of Expression (https://www.w3.org/TR/WGSL/#address-of-expr)
-
+// RUN: %metal-compile testAddressOf
+@compute @workgroup_size(1)
 fn testAddressOf()
 {
     var x = 1;
