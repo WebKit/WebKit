@@ -328,8 +328,17 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomHTMLToken&& t
     if (!scriptingContentIsAllowed(m_parserContentPolicy))
         element.stripScriptingAttributes(token.attributes());
 
-    for (auto& tokenAttribute : token.attributes())
-        element.setAttributeWithoutOverwriting(tokenAttribute.name(), tokenAttribute.value());
+    for (auto& tokenAttribute : token.attributes()) {
+        auto& attributeName = tokenAttribute.name();
+        if (UNLIKELY(attributeName == nonceAttr)) {
+            if (element.hasAttributeWithoutSynchronization(nonceAttr) || !element.nonce().isEmpty())
+                continue;
+            // Make sure the nonce attribute remains hidden.
+            element.setAttribute(attributeName, tokenAttribute.value());
+            element.hideNonce();
+        } else
+            element.setAttributeWithoutOverwriting(attributeName, tokenAttribute.value());
+    }
 }
 
 void HTMLConstructionSite::insertHTMLHtmlStartTagInBody(AtomHTMLToken&& token)
