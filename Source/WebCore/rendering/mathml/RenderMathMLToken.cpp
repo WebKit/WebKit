@@ -594,6 +594,8 @@ void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogica
     setLogicalWidth(LayoutUnit(mathVariantGlyph.font->widthForGlyph(mathVariantGlyph.glyph)));
     setLogicalHeight(LayoutUnit(mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).height()));
 
+    layoutPositionedObjects(relayoutChildren);
+
     updateScrollInfoAfterLayout();
 
     clearNeedsLayout();
