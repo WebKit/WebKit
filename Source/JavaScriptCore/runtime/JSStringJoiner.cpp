@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,10 +185,14 @@ JSValue JSStringJoiner::joinSlow(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    if (UNLIKELY(m_hasOverflowed)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
     ASSERT(m_strings.size() <= m_strings.capacity());
 
     unsigned length = joinedLength(globalObject);
-    RETURN_IF_EXCEPTION(scope, JSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (!length)
         return jsEmptyString(vm);
@@ -203,10 +207,12 @@ JSValue JSStringJoiner::joinSlow(JSGlobalObject* globalObject)
             result = joinStrings<UChar>(m_strings, m_separator.span16(), length);
     }
 
-    if (result.isNull())
-        return throwOutOfMemoryError(globalObject, scope);
+    if (UNLIKELY(result.isNull())) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
 
     return jsString(vm, WTFMove(result));
 }
 
-}
+} // namespace JSC
