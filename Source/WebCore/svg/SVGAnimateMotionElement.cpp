@@ -304,4 +304,23 @@ void SVGAnimateMotionElement::updateAnimationMode()
         SVGAnimationElement::updateAnimationMode();
 }
 
+void SVGAnimateMotionElement::childrenChanged(const ChildChange& change)
+{
+    SVGElement::childrenChanged(change);
+    switch (change.type) {
+    case ChildChange::Type::ElementRemoved:
+    case ChildChange::Type::AllChildrenRemoved:
+    case ChildChange::Type::AllChildrenReplaced:
+        updateAnimationPath();
+        break;
+    case ChildChange::Type::ElementInserted:
+    case ChildChange::Type::TextInserted:
+    case ChildChange::Type::TextRemoved:
+    case ChildChange::Type::TextChanged:
+    case ChildChange::Type::NonContentsChildInserted:
+    case ChildChange::Type::NonContentsChildRemoved:
+        break;
+    }
+}
+
 }
