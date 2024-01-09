@@ -3852,6 +3852,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
+    [self _internalClearSelection];
+}
+
+- (void)_internalClearSelection
+{
     [self _elementDidBlur];
     _page->clearSelection();
 }
@@ -6161,7 +6166,7 @@ static NSArray<WKTextSelectionRect *> *textSelectionRects(const Vector<WebCore::
     if (!self._hasFocusedElement)
         return;
 #endif
-    [self clearSelection];
+    [self _internalClearSelection];
 }
 
 - (BOOL)hasMarkedText
