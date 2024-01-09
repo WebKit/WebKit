@@ -1325,6 +1325,16 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
     }
 }
 
+bool CDMInstanceSessionFairPlayStreamingAVFObjC::requestMatchesRenewingRequest(AVContentKeyRequest *request)
+{
+    if (!m_renewingRequest)
+        return false;
+
+    return m_renewingRequest->requests.containsIf([&](auto& renewingRequest) {
+        return [[renewingRequest identifier] isEqual:request.identifier];
+    });
+}
+
 void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVContentKeyRequest *request)
 {
     ASSERT(!m_requestLicenseCallback);
@@ -1344,17 +1354,15 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
 
     // The assumption here is that AVContentKeyRequest will only ever notify us of a renewing request as a result of calling
     // -renewExpiringResponseDataForContentKeyRequest: with an existing request.
-    if (!m_renewingRequest
-        || m_renewingRequest->requests.size() != 1
-        || !m_renewingRequest->requests[0]
-        || ![[m_renewingRequest->requests[0] identifier] isEqual:request.identifier])
-    {
+    if (!requestMatchesRenewingRequest(request)) {
+        ERROR_LOG(LOGIDENTIFIER, "failed to find renewing request matching identifier ", request.identifier);
         ASSERT_NOT_REACHED();
         return;
     }
 
     auto renewingIndex = m_requests.find(*m_renewingRequest);
     if (renewingIndex == notFound) {
+        ERROR_LOG(LOGIDENTIFIER, "failed to find renewing request index in requests");
         ASSERT_NOT_REACHED();
         return;
     }
