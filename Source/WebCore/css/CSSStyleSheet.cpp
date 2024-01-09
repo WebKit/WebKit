@@ -413,8 +413,15 @@ RefPtr<CSSRuleList> CSSStyleSheet::cssRules()
 {
     if (!canAccessRules())
         return nullptr;
+
+    return cssRulesSkippingAccessCheck();
+}
+
+RefPtr<CSSRuleList> CSSStyleSheet::cssRulesSkippingAccessCheck()
+{
     if (!m_ruleListCSSOMWrapper)
         m_ruleListCSSOMWrapper = makeUnique<StyleSheetCSSRuleList>(this);
+
     return m_ruleListCSSOMWrapper.get();
 }
 
@@ -482,7 +489,7 @@ String CSSStyleSheet::debugDescription() const
 
 String CSSStyleSheet::cssTextWithReplacementURLs(const HashMap<String, String>& replacementURLStrings, const HashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet)
 {
-    auto ruleList = cssRules();
+    auto ruleList = cssRulesSkippingAccessCheck();
     if (!ruleList)
         return { };
 
