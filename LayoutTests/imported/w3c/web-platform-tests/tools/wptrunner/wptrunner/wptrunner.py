@@ -413,7 +413,8 @@ def run_tests(config, test_paths, product, **kwargs):
                                  env_extras,
                                  kwargs["enable_webtransport_h3"],
                                  mojojs_path,
-                                 inject_script) as test_environment:
+                                 inject_script,
+                                 kwargs["suppress_handler_traceback"]) as test_environment:
             recording.set(["startup", "ensure_environment"])
             try:
                 test_environment.ensure_started()
