@@ -317,7 +317,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         }
 
         void convertToStackOverflowFrame(VM&, CodeBlock* codeBlockToKeepAliveUntilFrameIsUnwound);
-        bool isStackOverflowFrame() const;
+        bool isPartiallyInitializedFrame() const;
         bool isNativeCalleeFrame() const;
 
         void setArgumentCountIncludingThis(int count) { static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload() = count; }

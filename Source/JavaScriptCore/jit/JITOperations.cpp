@@ -2075,15 +2075,18 @@ JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForRegularCall, UCPURegiste
 {
     VM& vm = globalObject->vm();
     sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* calleeAsFunctionCell;
-    CallFrame* callFrame = calleeFrame->callerFrame();
-    NativeCallFrameTracer tracer(vm, callFrame);
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
 
     PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
     auto span = stub->trailingSpan();
     JSCell* owner = span[std::size(span) - 1].m_codeBlock;
     linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
+    if (UNLIKELY(scope.exception()))
+        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
 
     size_t first;
     size_t second;
@@ -2095,17 +2098,19 @@ JSC_DEFINE_JIT_OPERATION(operationLinkPolymorphicCallForTailCall, UCPURegister, 
 {
     VM& vm = globalObject->vm();
     sanitizeStackForVM(vm);
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
-    EntryFrame* topEntryFrame = vm.topEntryFrame;
-    CallFrame* callFrame = calleeFrame->callerFrame(topEntryFrame);
-    NativeCallFrameTracerForTailCall tracer(vm, callFrame);
+    NativeCallFrameTracer tracer(vm, calleeFrame);
     UGPRPair result = virtualForWithFunction(globalObject, calleeFrame, callLinkInfo, calleeAsFunctionCell);
 
     PolymorphicCallStubRoutine* stub = callLinkInfo->stub();
     auto span = stub->trailingSpan();
     JSCell* owner = span[std::size(span) - 1].m_codeBlock;
     linkPolymorphicCall(globalObject, owner, calleeFrame, *callLinkInfo, CallVariant(calleeAsFunctionCell));
+
+    if (UNLIKELY(scope.exception()))
+        return bitwise_cast<uintptr_t>(vm.getCTIStub(CommonJITThunkID::ThrowExceptionFromCall).template retagged<JSEntryPtrTag>().code().taggedPtr());
 
     size_t first;
     size_t second;
@@ -3983,7 +3988,7 @@ JSC_DEFINE_JIT_OPERATION(operationLookupExceptionHandlerFromCallerFrame, void, (
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    ASSERT(callFrame->isStackOverflowFrame());
+    ASSERT(callFrame->isPartiallyInitializedFrame());
     ASSERT(jsCast<ErrorInstance*>(vm.exceptionForInspection()->value().asCell())->isStackOverflowError());
     genericUnwind(vm, callFrame);
     ASSERT(vm.targetMachinePCForThrow);

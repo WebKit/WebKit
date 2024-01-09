@@ -94,7 +94,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(unsigned headerSize, unsi
         if (callerFrame && !callerFrame->isNativeCalleeFrame())
             dataLogLnIf(shouldDumpDisassemblyFor(callerFrame->codeBlock()), "Linking polymorphic call in ", FullCodeOrigin(callerFrame->codeBlock(), callerFrame->codeOrigin()), " to ", callCase.variant(), ", codeBlock = ", pointerDump(callCase.codeBlock()));
         if (CodeBlock* codeBlock = callCase.codeBlock())
-            codeBlock->linkIncomingCall(owner, callerFrame, m_callNodes.add(&callLinkInfo));
+            codeBlock->linkIncomingCall(owner, callerFrame, m_callNodes.add(&callLinkInfo), /* skipFirstFrame */ true);
     }
     for (unsigned index = 0; index < callSlots.size(); ++index)
         trailingSpan()[index] = callSlots[index];

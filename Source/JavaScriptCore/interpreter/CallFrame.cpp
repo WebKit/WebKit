@@ -355,10 +355,10 @@ void CallFrame::convertToStackOverflowFrame(VM& vm, CodeBlock* codeBlockToKeepAl
         globalObject = throwOriginFrame->jsCallee()->globalObject();
     else
         globalObject = vm.entryScope->globalObject();
-    JSObject* stackOverflowCallee = globalObject->stackOverflowFrameCallee();
+    JSObject* partiallyInitializedFrameCallee = globalObject->partiallyInitializedFrameCallee();
 
     setCodeBlock(codeBlockToKeepAliveUntilFrameIsUnwound);
-    setCallee(stackOverflowCallee);
+    setCallee(partiallyInitializedFrameCallee);
     setArgumentCountIncludingThis(0);
 }
 

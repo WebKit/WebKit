@@ -2098,10 +2098,10 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 #endif
 }
 
-void CodeBlock::linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase* incoming)
+void CodeBlock::linkIncomingCall(JSCell* caller, CallFrame* callerFrame, CallLinkInfoBase* incoming, bool skipFirstFrame)
 {
     if (caller)
-        noticeIncomingCall(caller, callerFrame);
+        noticeIncomingCall(caller, callerFrame, skipFirstFrame);
     m_incomingCalls.push(incoming);
 }
 
@@ -2338,10 +2338,11 @@ private:
     mutable bool m_didRecurse;
 };
 
-void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame)
+void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame, bool skipFirstFrame)
 {
     RELEASE_ASSERT(!m_isJettisoned);
     UNUSED_PARAM(callerFrame);
+    UNUSED_PARAM(skipFirstFrame);
 
     CodeBlock* callerCodeBlock = jsDynamicCast<CodeBlock*>(caller);
     
@@ -2401,7 +2402,7 @@ void CodeBlock::noticeIncomingCall(JSCell* caller, CallFrame* callerFrame)
     if (callerFrame) {
         VM& vm = this->vm();
         RecursionCheckFunctor functor(callerFrame, this, Options::maximumInliningDepth());
-        StackVisitor::visit(vm.topCallFrame, vm, functor);
+        StackVisitor::visit(vm.topCallFrame, vm, functor, skipFirstFrame);
 
         if (functor.didRecurse()) {
             dataLogLnIf(Options::verboseCallLink(), "    Clearing SABI because recursion was detected.");
