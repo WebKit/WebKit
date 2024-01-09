@@ -35,6 +35,9 @@
     },
     "pseudo-classes": {
         "-apple-has-attachment": {
+            "aliases": [
+                "has-attachment"
+            ],
             "comment": "For use in Apple internal apps.",
             "conditional": "ENABLE(ATTACHMENT_ELEMENT)",
             "settings-flag": "DeprecatedGlobalSettings::attachmentElementEnabled"
