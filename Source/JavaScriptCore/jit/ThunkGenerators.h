@@ -42,6 +42,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM&);
 
+MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM&);
 
 MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM&);

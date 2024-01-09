@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm)
+StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm, bool skipFirstFrame)
 {
     m_frame.m_index = 0;
     m_frame.m_isWasmFrame = false;
@@ -52,7 +52,7 @@ StackVisitor::StackVisitor(CallFrame* startFrame, VM& vm)
         m_frame.m_entryFrame = vm.topEntryFrame;
         topFrame = vm.topCallFrame;
 
-        if (topFrame && topFrame->isStackOverflowFrame()) {
+        if (topFrame && (skipFirstFrame || topFrame->isPartiallyInitializedFrame())) {
             topFrame = topFrame->callerFrame(m_frame.m_entryFrame);
             m_topEntryFrameIsEmpty = (m_frame.m_entryFrame != vm.topEntryFrame);
             if (startFrame == vm.topCallFrame)

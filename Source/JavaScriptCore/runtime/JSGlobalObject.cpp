@@ -806,8 +806,7 @@ void JSGlobalObject::init(VM& vm)
     JSCallee* globalCallee = JSCallee::create(vm, this, globalScope());
     m_globalCallee.set(vm, this, globalCallee);
 
-    JSCallee* stackOverflowFrameCallee = JSCallee::create(vm, this, globalScope());
-    m_stackOverflowFrameCallee.set(vm, this, stackOverflowFrameCallee);
+    m_partiallyInitializedFrameCallee.set(vm, this, JSCallee::create(vm, this, globalScope()));
 
     m_hostFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
 
@@ -2415,7 +2414,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_globalLexicalEnvironment);
     visitor.append(thisObject->m_globalScopeExtension);
     visitor.append(thisObject->m_globalCallee);
-    visitor.append(thisObject->m_stackOverflowFrameCallee);
+    visitor.append(thisObject->m_partiallyInitializedFrameCallee);
     JS_GLOBAL_OBJECT_ADDITIONS_4;
     thisObject->m_evalErrorStructure.visit(visitor);
     thisObject->m_rangeErrorStructure.visit(visitor);
