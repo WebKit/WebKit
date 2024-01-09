@@ -1647,10 +1647,12 @@ fn testSelect()
 
 // 16.4. Array Built-in Functions
 
-var<storage, read> a1: array<i32>;
-var<storage, read_write> a2: array<i32>;
+@group(4) @binding(0) var<storage, read> a1: array<i32>;
+@group(4) @binding(1) var<storage, read_write> a2: array<i32>;
 
 // 16.4.1.
+// RUN: %metal-compile testArrayLength
+@compute @workgroup_size(1)
 fn testArrayLength()
 {
     // [T].(Ptr[Storage, Array[T], Read]) => U32,
