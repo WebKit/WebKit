@@ -63,7 +63,9 @@ class NetworkSession;
 class ResourceLoadStatisticsStore;
 class WebFrameProxy;
 class WebProcessProxy;
+enum class CanRequestStorageAccessWithoutUserInteraction : bool;
 enum class ShouldGrandfatherStatistics : bool;
+
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
 
@@ -230,7 +232,7 @@ private:
     void performDailyTasks();
 
     void hasStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&);
-    void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
+    void requestStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessScope, CanRequestStorageAccessWithoutUserInteraction, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(RequestStorageAccessResult)>&&);
     void requestStorageAccessUnderOpenerEphemeral(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&);
     void grantStorageAccessEphemeral(const SubFrameDomain&, const TopFrameDomain&, WebCore::FrameIdentifier, WebCore::PageIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);
 
