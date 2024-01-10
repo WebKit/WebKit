@@ -120,58 +120,58 @@ AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 {
     if (m_assetTrack) {
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return AudioTrackPrivate::Alternative;
+            return AudioTrackPrivate::Kind::Alternative;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
-            return AudioTrackPrivate::Description;
+            return AudioTrackPrivate::Kind::Description;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return AudioTrackPrivate::Main;
-        return AudioTrackPrivate::None;
+            return AudioTrackPrivate::Kind::Main;
+        return AudioTrackPrivate::Kind::None;
     }
 
     if (m_mediaSelectionOption) {
         AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
         if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return AudioTrackPrivate::Alternative;
+            return AudioTrackPrivate::Kind::Alternative;
         if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
-            return AudioTrackPrivate::Description;
+            return AudioTrackPrivate::Kind::Description;
         if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return AudioTrackPrivate::Main;
-        return AudioTrackPrivate::None;
+            return AudioTrackPrivate::Kind::Main;
+        return AudioTrackPrivate::Kind::None;
     }
 
     ASSERT_NOT_REACHED();
-    return AudioTrackPrivate::None;
+    return AudioTrackPrivate::Kind::None;
 }
 
 VideoTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::videoKind() const
 {
     if (m_assetTrack) {
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
-            return VideoTrackPrivate::Sign;
+            return VideoTrackPrivate::Kind::Sign;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return VideoTrackPrivate::Captions;
+            return VideoTrackPrivate::Kind::Captions;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return VideoTrackPrivate::Alternative;
+            return VideoTrackPrivate::Kind::Alternative;
         if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return VideoTrackPrivate::Main;
-        return VideoTrackPrivate::None;
+            return VideoTrackPrivate::Kind::Main;
+        return VideoTrackPrivate::Kind::None;
     }
 
     if (m_mediaSelectionOption) {
         AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
         if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
-            return VideoTrackPrivate::Sign;
+            return VideoTrackPrivate::Kind::Sign;
         if ([option hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return VideoTrackPrivate::Captions;
+            return VideoTrackPrivate::Kind::Captions;
         if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return VideoTrackPrivate::Alternative;
+            return VideoTrackPrivate::Kind::Alternative;
         if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return VideoTrackPrivate::Main;
-        return VideoTrackPrivate::None;
+            return VideoTrackPrivate::Kind::Main;
+        return VideoTrackPrivate::Kind::None;
     }
 
     ASSERT_NOT_REACHED();
-    return VideoTrackPrivate::None;
+    return VideoTrackPrivate::Kind::None;
 }
 
 int AVTrackPrivateAVFObjCImpl::index() const

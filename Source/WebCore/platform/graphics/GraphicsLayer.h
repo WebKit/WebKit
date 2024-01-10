@@ -49,7 +49,6 @@
 #include "TransformOperations.h"
 #include "WindRule.h"
 #include <wtf/CheckedRef.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/Function.h>
 #include <wtf/TypeCasts.h>
 
@@ -590,7 +589,7 @@ public:
     virtual void setDebugBackgroundColor(const Color&) { }
     virtual void setDebugBorder(const Color&, float /*borderWidth*/) { }
 
-    enum class CustomAppearance : uint8_t {
+    enum class CustomAppearance : bool {
         None,
         ScrollingShadow
     };
@@ -842,15 +841,3 @@ SPECIALIZE_TYPE_TRAITS_END()
 // Outside the WebCore namespace for ease of invocation from the debugger.
 void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer);
 #endif
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::GraphicsLayer::CustomAppearance> {
-    using values = EnumValues<
-        WebCore::GraphicsLayer::CustomAppearance,
-        WebCore::GraphicsLayer::CustomAppearance::None,
-        WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow
-    >;
-};
-
-} // namespace WTF

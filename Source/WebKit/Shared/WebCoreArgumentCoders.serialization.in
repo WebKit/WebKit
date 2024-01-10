@@ -7228,3 +7228,69 @@ enum class WebCore::PredefinedColorSpace : uint8_t {
     , DisplayP3
 #endif
 };
+
+header: <WebCore/TransformOperation.h>
+enum class WebCore::TransformOperationType : uint8_t {
+    ScaleX,
+    ScaleY,
+    Scale,
+    TranslateX,
+    TranslateY,
+    Translate,
+    RotateX,
+    RotateY,
+    Rotate,
+    SkewX,
+    SkewY,
+    Skew,
+    Matrix,
+    ScaleZ,
+    Scale3D,
+    TranslateZ,
+    Translate3D,
+    RotateZ,
+    Rotate3D,
+    Matrix3D,
+    Perspective,
+    Identity,
+    None
+};
+
+enum class WebCore::GraphicsContextGLSurfaceBuffer : bool;
+
+[Nested] enum class WebCore::GraphicsLayer::CustomAppearance : bool;
+
+[OptionSet] enum class GCGLErrorCode : uint8_t {
+    ContextLost,
+    InvalidFramebufferOperation,
+    OutOfMemory,
+    InvalidOperation,
+    InvalidValue,
+    InvalidEnum
+};
+
+#if ENABLE(VIDEO)
+
+header: <WebCore/AudioTrackPrivate.h>
+[Nested] enum class WebCore::AudioTrackPrivate::Kind : uint8_t {
+    Alternative,
+    Description,
+    Main,
+    MainDesc,
+    Translation,
+    Commentary,
+    None
+};
+
+header: <WebCore/VideoTrackPrivate.h>
+[Nested] enum class WebCore::VideoTrackPrivate::Kind : uint8_t {
+    Alternative,
+    Captions,
+    Main,
+    Sign,
+    Subtitles,
+    Commentary,
+    None
+};
+
+#endif

@@ -113,6 +113,12 @@ using GraphicsContextGLEGLImageSource = std::variant<
     >;
 #endif // PLATFORM(COCOA)
 
+
+enum class GraphicsContextGLSurfaceBuffer : bool {
+    DrawingBuffer,
+    DisplayBuffer
+};
+
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
@@ -1637,10 +1643,7 @@ public:
     // FIXME: these should be removed, they're part of drawing buffer and
     // display buffer abstractions that the caller should hold separate to
     // the context.
-    enum class SurfaceBuffer : uint8_t {
-        DrawingBuffer,
-        DisplayBuffer
-    };
+    using SurfaceBuffer = GraphicsContextGLSurfaceBuffer;
     virtual void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
@@ -1753,17 +1756,5 @@ IMPLEMENT_GCGL_OWNED(Texture)
 #undef IMPLEMENT_GCGL_OWNED
 
 } // namespace WebCore
-
-namespace WTF {
-
-template <> struct EnumTraits<WebCore::GraphicsContextGL::SurfaceBuffer> {
-    using values = EnumValues<
-        WebCore::GraphicsContextGL::SurfaceBuffer,
-        WebCore::GraphicsContextGL::SurfaceBuffer::DrawingBuffer,
-        WebCore::GraphicsContextGL::SurfaceBuffer::DisplayBuffer
-    >;
-};
-
-}
 
 #endif

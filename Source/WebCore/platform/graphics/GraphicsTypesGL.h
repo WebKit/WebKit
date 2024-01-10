@@ -26,7 +26,6 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 // GCGL types match the corresponding GL types as defined in OpenGL ES 2.0
@@ -84,19 +83,3 @@ enum class GCGLErrorCode : uint8_t {
     InvalidEnum = 1 << 6
 };
 using GCGLErrorCodeSet = OptionSet<GCGLErrorCode>;
-
-namespace WTF {
-
-template <> struct EnumTraits<GCGLErrorCode> {
-    using values = EnumValues <
-    GCGLErrorCode,
-    GCGLErrorCode::ContextLost,
-    GCGLErrorCode::InvalidFramebufferOperation,
-    GCGLErrorCode::OutOfMemory,
-    GCGLErrorCode::InvalidOperation,
-    GCGLErrorCode::InvalidValue,
-    GCGLErrorCode::InvalidEnum
-    >;
-};
-
-}
