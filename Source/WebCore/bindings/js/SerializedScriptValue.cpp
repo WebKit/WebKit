@@ -154,8 +154,9 @@ enum class SerializationReturnCode {
     UnspecifiedError
 };
 
-enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember,
-    ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember,
+enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitIndexedMember, ArrayEndVisitIndexedMember,
+    ArrayStartVisitNamedMember, ArrayEndVisitNamedMember,
+    ObjectStartState, ObjectStartVisitNamedMember, ObjectEndVisitNamedMember,
     MapDataStartVisitEntry, MapDataEndVisitKey, MapDataEndVisitValue,
     SetDataStartVisitEntry, SetDataEndVisitKey };
 
@@ -2668,9 +2669,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 indexStack.append(0);
                 lengthStack.append(length);
             }
-            arrayStartVisitMember:
+            arrayStartVisitIndexedMember:
             FALLTHROUGH;
-            case ArrayStartVisitMember: {
+            case ArrayStartVisitIndexedMember: {
                 JSObject* array = inputObjectStack.last();
                 uint32_t index = indexStack.last();
                 if (index == lengthStack.last()) {
@@ -2685,7 +2686,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     if (propertyStack.last().size()) {
                         write(NonIndexPropertiesTag);
                         indexStack.append(0);
-                        goto objectStartVisitMember;
+                        goto startVisitNamedMember;
                     }
                     propertyStack.removeLast();
 
@@ -2698,7 +2699,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     return SerializationReturnCode::ExistingExceptionError;
                 if (!inValue) {
                     indexStack.last()++;
-                    goto arrayStartVisitMember;
+                    goto arrayStartVisitIndexedMember;
                 }
 
                 write(index);
@@ -2707,15 +2708,18 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                         return terminalCode;
                     indexStack.last()++;
-                    goto arrayStartVisitMember;
+                    goto arrayStartVisitIndexedMember;
                 }
-                stateStack.append(ArrayEndVisitMember);
+                stateStack.append(ArrayEndVisitIndexedMember);
                 goto stateUnknown;
             }
-            case ArrayEndVisitMember: {
+            case ArrayEndVisitIndexedMember: {
                 indexStack.last()++;
-                goto arrayStartVisitMember;
+                goto arrayStartVisitIndexedMember;
             }
+            case ArrayStartVisitNamedMember:
+            case ArrayEndVisitNamedMember:
+                RELEASE_ASSERT_NOT_REACHED();
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
@@ -2738,9 +2742,9 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
             }
-            objectStartVisitMember:
+            startVisitNamedMember:
             FALLTHROUGH;
-            case ObjectStartVisitMember: {
+            case ObjectStartVisitNamedMember: {
                 JSObject* object = inputObjectStack.last();
                 uint32_t index = indexStack.last();
                 PropertyNameArray& properties = propertyStack.last();
@@ -2758,7 +2762,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (!inValue) {
                     // Property was removed during serialisation
                     indexStack.last()++;
-                    goto objectStartVisitMember;
+                    goto startVisitNamedMember;
                 }
                 write(properties[index]);
 
@@ -2767,19 +2771,19 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 
                 auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
                 if (!dumpIfTerminal(inValue, terminalCode)) {
-                    stateStack.append(ObjectEndVisitMember);
+                    stateStack.append(ObjectEndVisitNamedMember);
                     goto stateUnknown;
                 }
                 if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                     return terminalCode;
                 FALLTHROUGH;
             }
-            case ObjectEndVisitMember: {
+            case ObjectEndVisitNamedMember: {
                 if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 indexStack.last()++;
-                goto objectStartVisitMember;
+                goto startVisitNamedMember;
             }
             mapStartState: {
                 ASSERT(inValue.isObject());
@@ -2809,7 +2813,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                         return SerializationReturnCode::ExistingExceptionError;
                     write(NonMapPropertiesTag);
                     indexStack.append(0);
-                    goto objectStartVisitMember;
+                    goto startVisitNamedMember;
                 }
                 inValue = key;
                 m_keepAliveBuffer.appendWithCrashOnOverflow(value);
@@ -2855,7 +2859,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                         return SerializationReturnCode::ExistingExceptionError;
                     write(NonSetPropertiesTag);
                     indexStack.append(0);
-                    goto objectStartVisitMember;
+                    goto startVisitNamedMember;
                 }
                 inValue = key;
                 stateStack.append(SetDataEndVisitKey);
@@ -3181,6 +3185,47 @@ private:
     {
         if (!read(m_version))
             m_version = 0xFFFFFFFF;
+    }
+
+    enum class VisitNamedMemberResult : uint8_t { Error, Break, Start, Unknown };
+
+    template<WalkerState endState>
+    ALWAYS_INLINE VisitNamedMemberResult startVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, Vector<WalkerState, 16>& stateStack, JSValue& outValue)
+    {
+        static_assert(endState == ArrayEndVisitNamedMember || endState == ObjectEndVisitNamedMember);
+        VM& vm = m_lexicalGlobalObject->vm();
+        CachedStringRef cachedString;
+        bool wasTerminator = false;
+        if (!readStringData(cachedString, wasTerminator, ShouldAtomize::Yes)) {
+            if (!wasTerminator) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                return VisitNamedMemberResult::Error;
+            }
+
+            JSObject* outObject = outputObjectStack.last();
+            outValue = outObject;
+            outputObjectStack.removeLast();
+            return VisitNamedMemberResult::Break;
+        }
+
+        Identifier identifier = Identifier::fromString(vm, cachedString->string());
+        if constexpr (endState == ArrayEndVisitNamedMember)
+            RELEASE_ASSERT(identifier != vm.propertyNames->length);
+
+        if (JSValue terminal = readTerminal()) {
+            putProperty(outputObjectStack.last(), identifier, terminal);
+            return VisitNamedMemberResult::Start;
+        }
+
+        stateStack.append(endState);
+        propertyNameStack.append(identifier);
+        return VisitNamedMemberResult::Unknown;
+    }
+
+    ALWAYS_INLINE void objectEndVisitNamedMember(MarkedVector<JSObject*, 32>& outputObjectStack, Vector<Identifier, 16>& propertyNameStack, JSValue& outValue)
+    {
+        putProperty(outputObjectStack.last(), propertyNameStack.last(), outValue);
+        propertyNameStack.removeLast();
     }
 
     DeserializationResult deserialize();
@@ -5243,9 +5288,9 @@ DeserializationResult CloneDeserializer::deserialize()
             addToObjectPool<ArrayTag>(outArray);
             outputObjectStack.append(outArray);
         }
-        arrayStartVisitMember:
+        arrayStartVisitIndexedMember:
         FALLTHROUGH;
-        case ArrayStartVisitMember: {
+        case ArrayStartVisitIndexedMember: {
             uint32_t index;
             if (!read(index)) {
                 SERIALIZE_TRACE("FAIL deserialize");
@@ -5270,7 +5315,7 @@ DeserializationResult CloneDeserializer::deserialize()
                         break;
                     }
                     if (index == NonIndexPropertiesTag)
-                        goto objectStartVisitMember;
+                        goto arrayStartVisitNamedMember;
                 }
             } else {
                 if (index == TerminatorTag) {
@@ -5279,24 +5324,42 @@ DeserializationResult CloneDeserializer::deserialize()
                     outputObjectStack.removeLast();
                     break;
                 } else if (index == NonIndexPropertiesTag)
-                    goto objectStartVisitMember;
+                    goto arrayStartVisitNamedMember;
             }
 
             if (JSValue terminal = readTerminal()) {
                 putProperty(outputObjectStack.last(), index, terminal);
-                goto arrayStartVisitMember;
+                goto arrayStartVisitIndexedMember;
             }
             if (m_failed)
                 goto error;
             indexStack.append(index);
-            stateStack.append(ArrayEndVisitMember);
+            stateStack.append(ArrayEndVisitIndexedMember);
             goto stateUnknown;
         }
-        case ArrayEndVisitMember: {
+        case ArrayEndVisitIndexedMember: {
             JSObject* outArray = outputObjectStack.last();
             putProperty(outArray, indexStack.last(), outValue);
             indexStack.removeLast();
-            goto arrayStartVisitMember;
+            goto arrayStartVisitIndexedMember;
+        }
+        arrayStartVisitNamedMember:
+        case ArrayStartVisitNamedMember: {
+            switch (startVisitNamedMember<ArrayEndVisitNamedMember>(outputObjectStack, propertyNameStack, stateStack, outValue)) {
+            case VisitNamedMemberResult::Error:
+                goto error;
+            case VisitNamedMemberResult::Break:
+                break;
+            case VisitNamedMemberResult::Start:
+                goto arrayStartVisitNamedMember;
+            case VisitNamedMemberResult::Unknown:
+                goto stateUnknown;
+            }
+            break;
+        }
+        case ArrayEndVisitNamedMember: {
+            objectEndVisitNamedMember(outputObjectStack, propertyNameStack, outValue);
+            goto arrayStartVisitNamedMember;
         }
         objectStartState:
         case ObjectStartState: {
@@ -5306,35 +5369,24 @@ DeserializationResult CloneDeserializer::deserialize()
             addToObjectPool<ObjectTag>(outObject);
             outputObjectStack.append(outObject);
         }
-        objectStartVisitMember:
+        startVisitNamedMember:
         FALLTHROUGH;
-        case ObjectStartVisitMember: {
-            CachedStringRef cachedString;
-            bool wasTerminator = false;
-            if (!readStringData(cachedString, wasTerminator, ShouldAtomize::Yes)) {
-                if (!wasTerminator) {
-                    SERIALIZE_TRACE("FAIL deserialize");
-                    goto error;
-                }
-
-                JSObject* outObject = outputObjectStack.last();
-                outValue = outObject;
-                outputObjectStack.removeLast();
+        case ObjectStartVisitNamedMember: {
+            switch (startVisitNamedMember<ObjectEndVisitNamedMember>(outputObjectStack, propertyNameStack, stateStack, outValue)) {
+            case VisitNamedMemberResult::Error:
+                goto error;
+            case VisitNamedMemberResult::Break:
                 break;
+            case VisitNamedMemberResult::Start:
+                goto startVisitNamedMember;
+            case VisitNamedMemberResult::Unknown:
+                goto stateUnknown;
             }
-
-            if (JSValue terminal = readTerminal()) {
-                putProperty(outputObjectStack.last(), Identifier::fromString(vm, cachedString->string()), terminal);
-                goto objectStartVisitMember;
-            }
-            stateStack.append(ObjectEndVisitMember);
-            propertyNameStack.append(Identifier::fromString(vm, cachedString->string()));
-            goto stateUnknown;
+            break;
         }
-        case ObjectEndVisitMember: {
-            putProperty(outputObjectStack.last(), propertyNameStack.last(), outValue);
-            propertyNameStack.removeLast();
-            goto objectStartVisitMember;
+        case ObjectEndVisitNamedMember: {
+            objectEndVisitNamedMember(outputObjectStack, propertyNameStack, outValue);
+            goto startVisitNamedMember;
         }
         mapStartState: {
             if (outputObjectStack.size() > maximumFilterRecursion) {
@@ -5351,7 +5403,7 @@ DeserializationResult CloneDeserializer::deserialize()
         case MapDataStartVisitEntry: {
             if (consumeCollectionDataTerminationIfPossible<NonMapPropertiesTag>()) {
                 mapStack.removeLast();
-                goto objectStartVisitMember;
+                goto startVisitNamedMember;
             }
             stateStack.append(MapDataEndVisitKey);
             goto stateUnknown;
@@ -5382,7 +5434,7 @@ DeserializationResult CloneDeserializer::deserialize()
         case SetDataStartVisitEntry: {
             if (consumeCollectionDataTerminationIfPossible<NonSetPropertiesTag>()) {
                 setStack.removeLast();
-                goto objectStartVisitMember;
+                goto startVisitNamedMember;
             }
             stateStack.append(SetDataEndVisitKey);
             goto stateUnknown;
