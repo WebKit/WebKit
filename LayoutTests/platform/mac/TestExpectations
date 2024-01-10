@@ -2588,3 +2588,5 @@ imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
 
 fast/gradients/conic-stop-with-offset-zero-in-middle.html [ ImageOnlyFailure ]
+
+webkit.org/b/267352 [ Monterey ] imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/margin-003.html [ Failure ]
