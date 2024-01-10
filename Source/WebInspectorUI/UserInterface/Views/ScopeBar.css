@@ -40,7 +40,7 @@
     display: inline-block;
     margin: 0 var(--scope-bar-margin);
     padding: 2px var(--scope-bar-padding) 4px;
-    font-size: 11px;
+    font-size: 0.7rem;
     line-height: 11px;
     color: var(--scope-bar-text-color);
     text-align: center;
