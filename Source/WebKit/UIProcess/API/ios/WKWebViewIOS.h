@@ -160,6 +160,9 @@ enum class TapHandlingResult : uint8_t;
 - (void)_updateScrollViewInsetAdjustmentBehavior;
 - (void)_resetScrollViewInsetAdjustmentBehavior;
 
+- (void)_beginAnimatedFullScreenExit;
+- (void)_endAnimatedFullScreenExit;
+
 - (BOOL)_effectiveAppearanceIsDark;
 - (BOOL)_effectiveUserInterfaceLevelIsElevated;
 

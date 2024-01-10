@@ -1154,6 +1154,9 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         _exitRequested = YES;
         return;
     }
+
+    [self._webView _beginAnimatedFullScreenExit];
+
     _fullScreenState = WebKit::WaitingToExitFullScreen;
     _exitingFullScreen = YES;
 
@@ -1225,6 +1228,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
 
     [webView setNeedsLayout];
     [webView layoutIfNeeded];
+
+    [webView _endAnimatedFullScreenExit];
 
     [CATransaction commit];
 }
