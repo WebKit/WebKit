@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+RealtimeMediaSourceSettings RealtimeMediaSourceSettings::isolatedCopy() const
+{
+    return { m_width, m_height , m_frameRate, m_facingMode, m_volume , m_sampleRate, m_sampleSize, m_echoCancellation, m_deviceId.isolatedCopy(), m_groupId.isolatedCopy(), m_label.isolatedCopy(), m_displaySurface, m_logicalSurface, m_whiteBalanceMode, m_zoom, m_torch, RealtimeMediaSourceSupportedConstraints { m_supportedConstraints } };
+}
+
 VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
 {
     if (mode == "user"_s)

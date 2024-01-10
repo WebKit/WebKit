@@ -123,9 +123,8 @@ void RealtimeMediaSource::initializePersistentId()
     if (m_device.persistentId().isEmpty())
         m_device.setPersistentId(createVersion4UUIDString());
 
-    auto& center = RealtimeMediaSourceCenter::singleton();
-    m_hashedID = AtomString { center.hashStringWithSalt(m_device.persistentId(), m_idHashSalts.persistentDeviceSalt) };
-    m_ephemeralHashedID = AtomString { center.hashStringWithSalt(m_device.persistentId(), m_idHashSalts.ephemeralDeviceSalt) };
+    m_hashedID = RealtimeMediaSourceCenter::hashStringWithSalt(m_device.persistentId(), m_idHashSalts.persistentDeviceSalt);
+    m_ephemeralHashedID = RealtimeMediaSourceCenter::hashStringWithSalt(m_device.persistentId(), m_idHashSalts.ephemeralDeviceSalt);
 }
 
 void RealtimeMediaSource::addAudioSampleObserver(AudioSampleObserver& observer)
@@ -1426,7 +1425,7 @@ void RealtimeMediaSource::scheduleDeferredTask(Function<void()>&& function)
     });
 }
 
-const AtomString& RealtimeMediaSource::hashedId() const
+const String& RealtimeMediaSource::hashedId() const
 {
     ASSERT(!m_hashedID.isEmpty());
     ASSERT(!m_ephemeralHashedID.isEmpty());

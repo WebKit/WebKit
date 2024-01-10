@@ -5007,9 +5007,9 @@ class WebCore::RealtimeMediaSourceSettings {
     uint32_t sampleRate();
     uint32_t sampleSize();
     bool echoCancellation();
-    AtomString deviceId();
+    String deviceId();
     String groupId();
-    AtomString label();
+    String label();
     WebCore::DisplaySurfaceType displaySurface();
     bool logicalSurface();
     WebCore::MeteringMode whiteBalanceMode();
@@ -5072,8 +5072,8 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::CapabilityRange sampleRate();
     WebCore::CapabilityRange sampleSize();
     WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
-    AtomString deviceId();
-    AtomString groupId();
+    String deviceId();
+    String groupId();
     WebCore::CapabilityRange focusDistance();
     Vector<WebCore::MeteringMode> whiteBalanceModes();
     WebCore::CapabilityRange zoom();
