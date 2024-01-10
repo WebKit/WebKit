@@ -72,14 +72,14 @@ static std::pair<ASCIILiteral, RetainPtr<NSString>> serviceNameAndIdentifier(Pro
     switch (processType) {
     case ProcessLauncher::ProcessType::Web: {
         if (client && client->shouldEnableLockdownMode())
-            return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent.CaptivePortal" };
-        return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContent" };
+            return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContentExtension.CaptivePortal" };
+        return { "com.apple.WebKit.WebContent"_s, @"com.apple.WebKit.WebContentExtension" };
     }
     case ProcessLauncher::ProcessType::Network:
-        return { "com.apple.WebKit.Networking"_s, @"com.apple.WebKit.Networking" };
+        return { "com.apple.WebKit.Networking"_s, @"com.apple.WebKit.NetworkingExtension" };
 #if ENABLE(GPU_PROCESS)
     case ProcessLauncher::ProcessType::GPU:
-        return { "com.apple.WebKit.GPU"_s, @"com.apple.WebKit.GPU" };
+        return { "com.apple.WebKit.GPU"_s, @"com.apple.WebKit.GPUExtension" };
 #endif
     }
 }
@@ -159,7 +159,6 @@ void ProcessLauncher::launchProcess()
         }
         if (error) {
             NSLog(@"Error launching process %@ error %@", process, error);
-            RELEASE_LOG_FAULT(Process, "Error launching process, descriptrion '%s', reason '%s'", String([error localizedDescription]).utf8().data(), String([error localizedFailureReason]).utf8().data());
             callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
                 auto launcher = weakProcessLauncher.get();
                 if (!launcher)

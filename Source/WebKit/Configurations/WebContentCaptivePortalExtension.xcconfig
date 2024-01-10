@@ -25,6 +25,6 @@
 
 INFOPLIST_FILE = Shared/AuxiliaryProcessExtensions/WebContentExtension-CaptivePortal-Info.plist;
 INFOPLIST_KEY_CFBundleDisplayName = WebContentCaptivePortalExtension;
-PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContent.CaptivePortal;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.WebContentExtension.CaptivePortal;
 PRODUCT_BUNDLE_EXECUTABLE = WebContentCaptivePortalExtension;
 PRODUCT_BUNDLE_NAME = WebContentCaptivePortalExtension;
