@@ -1854,6 +1854,13 @@
     SYS_umask
     SYS_work_interval_ctl))
 
+(define (syscall-appcache)
+    (syscall-number
+        SYS_guarded_open_np
+        SYS_guarded_close_np
+        SYS_guarded_pwrite_np
+        SYS_unlink))
+
 (define (syscall-unix-downlevels)
     (syscall-number
         SYS_flock
@@ -1902,6 +1909,8 @@
     (allow syscall-unix (syscall-unix-downlevels)))
 (with-filter (require-all (require-not (lockdown-mode)) (require-not (state-flag "BlockIOKitInWebContentSandbox")))
     (allow syscall-unix (syscall-unix-downlevels-blocked-in-lockdown-mode)))
+(with-filter (require-not (state-flag "AppCacheDisabled"))
+     (allow syscall-unix (syscall-appcache)))
 #else
 (allow syscall-unix
     (syscall-unix-only-in-use-before-launch)
