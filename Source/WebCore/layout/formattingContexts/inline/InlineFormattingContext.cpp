@@ -150,6 +150,37 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
 }
 
+std::pair<LayoutUnit, LayoutUnit> InlineFormattingContext::minimumMaximumContentSize(const InlineDamage* lineDamage)
+{
+    auto& inlineContentCache = this->inlineContentCache();
+    auto minimumContentSize = inlineContentCache.minimumContentSize();
+    auto maximumContentSize = inlineContentCache.maximumContentSize();
+
+    if (minimumContentSize && maximumContentSize)
+        return { ceiledLayoutUnit(*minimumContentSize), ceiledLayoutUnit(*maximumContentSize) };
+
+    rebuildInlineItemListIfNeeded(lineDamage);
+    auto& inlineItemList = inlineContentCache.inlineItems().content();
+
+    if (!isEmptyInlineContent(inlineItemList)) {
+        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache) };
+
+        if (!minimumContentSize)
+            minimumContentSize = intrinsicWidthHandler.minimumContentSize();
+        if (!maximumContentSize) {
+            maximumContentSize = intrinsicWidthHandler.maximumContentSize();
+            if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
+                inlineContentCache.setMaximumIntrinsicWidthLayoutResult(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthResult()));
+        }
+    } else {
+        minimumContentSize = minimumContentSize.value_or(0.f);
+        maximumContentSize = maximumContentSize.value_or(0.f);
+    }
+    inlineContentCache.setMinimumContentSize(*minimumContentSize);
+    inlineContentCache.setMaximumContentSize(*maximumContentSize);
+    return { ceiledLayoutUnit(*minimumContentSize), ceiledLayoutUnit(*maximumContentSize) };
+}
+
 LayoutUnit InlineFormattingContext::minimumContentSize(const InlineDamage* lineDamage)
 {
     auto& inlineContentCache = this->inlineContentCache();

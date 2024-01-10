@@ -58,6 +58,8 @@ public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, LayoutState&, BlockLayoutState& parentBlockLayoutState);
 
     InlineLayoutResult layout(const ConstraintsForInlineContent&, const InlineDamage* = nullptr);
+
+    std::pair<LayoutUnit, LayoutUnit> minimumMaximumContentSize(const InlineDamage* = nullptr);
     LayoutUnit minimumContentSize(const InlineDamage* = nullptr);
     LayoutUnit maximumContentSize(const InlineDamage* = nullptr);
 
