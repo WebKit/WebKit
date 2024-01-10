@@ -660,7 +660,17 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
 
 #endif
 
-/* CurrentVersion tracks the serialization version so that persistent stores
+static constexpr unsigned CurrentMajorVersion = 15;
+static constexpr unsigned CurrentMinorVersion = 0;
+static constexpr unsigned majorVersionFor(unsigned version) { return version & 0x00FFFFFF; }
+static constexpr unsigned minorVersionFor(unsigned version) { return version >> 24; }
+static constexpr unsigned makeVersion(unsigned major, unsigned minor)
+{
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(major < (1u << 24));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(minor < (1u << 8));
+    return (minor << 24) | major;
+}
+/* currentVersion tracks the serialization version so that persistent stores
  * are able to correctly bail out in the case of encountering newer formats.
  *
  * Initial version was 1.
@@ -676,11 +686,12 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
  * Version 10. changed the length (and offsets) of ArrayBuffers (and ArrayBufferViews) from 32 to 64 bits.
  * Version 11. added support for Blob's memory cost.
  * Version 12. added support for agent cluster ID.
+ * Version 12.1. changed the terminator of the indexed property section in array.
  * Version 13. added support for ErrorInstance objects.
  * Version 14. encode booleans as uint8_t instead of int32_t.
  * Version 15. changed the terminator of the indexed property section in array.
  */
-static constexpr unsigned CurrentVersion = 15;
+static constexpr unsigned currentVersion() { return makeVersion(CurrentMajorVersion, CurrentMinorVersion); }
 static constexpr unsigned TerminatorTag = 0xFFFFFFFF;
 static constexpr unsigned StringPoolTag = 0xFFFFFFFE;
 static constexpr unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -699,7 +710,7 @@ static_assert(TerminatorTag > MAX_ARRAY_INDEX);
  * minimum sized unsigned integer type required to represent the maximum index
  * in the constant pool.
  *
- * SerializedValue :- <CurrentVersion:uint32_t> Value
+ * SerializedValue :- <version:uint32_t> Value
  * Value :- Array | Object | Map | Set | Terminal
  *
  * Array :-
@@ -1030,7 +1041,7 @@ public:
 
     static bool serialize(StringView string, Vector<uint8_t>& out)
     {
-        writeLittleEndian(out, CurrentVersion);
+        writeLittleEndian(out, currentVersion());
         if (string.isEmpty()) {
             writeLittleEndian<uint8_t>(out, EmptyStringTag);
             return true;
@@ -1092,7 +1103,7 @@ private:
 #endif
         , m_forStorage(forStorage)
     {
-        write(CurrentVersion);
+        write(currentVersion());
         fillTransferMap(messagePorts, m_transferredMessagePorts);
         fillTransferMap(arrayBuffers, m_transferredArrayBuffers);
         fillTransferMap(imageBitmaps, m_transferredImageBitmaps);
@@ -2786,7 +2797,7 @@ public:
         const uint8_t* ptr = buffer.begin();
         const uint8_t* end = buffer.end();
         uint32_t version;
-        if (!readLittleEndian(ptr, end, version) || version > CurrentVersion)
+        if (!readLittleEndian(ptr, end, version) || majorVersionFor(version) > CurrentMajorVersion)
             return String();
         uint8_t tag;
         if (!readLittleEndian(ptr, end, tag) || tag != StringTag)
@@ -2846,7 +2857,7 @@ public:
             return std::make_pair(JSValue(), SerializationReturnCode::ValidationError);
         auto result = deserializer.deserialize();
         // Deserialize again if data may have wrong version number, see rdar://118775332.
-        if (UNLIKELY(result.second != SerializationReturnCode::SuccessfullyCompleted && deserializer.version() == 14)) {
+        if (UNLIKELY(result.second != SerializationReturnCode::SuccessfullyCompleted && deserializer.shouldRetryWithVersionUpgrade())) {
             CloneDeserializer newDeserializer(lexicalGlobalObject, globalObject, messagePorts, arrayBufferContentsArray, buffer, blobURLs, blobFilePaths, sharedBuffers, deserializer.takeBackingStores()
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                 , deserializer.takeDetachedOffscreenCanvases()
@@ -2932,7 +2943,8 @@ private:
         , m_canCreateDOMObject(m_isDOMGlobalObject && !globalObject->inherits<JSIDBSerializationGlobalObject>())
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
-        , m_version(0xFFFFFFFF)
+        , m_majorVersion(0xFFFFFFFF)
+        , m_minorVersion(0xFFFFFFFF)
         , m_messagePorts(messagePorts)
         , m_arrayBufferContents(arrayBufferContents)
         , m_arrayBuffers(arrayBufferContents ? arrayBufferContents->size() : 0)
@@ -2959,8 +2971,11 @@ private:
         , m_videoFrames(m_serializedVideoFrames.size())
 #endif
     {
-        if (!read(m_version))
-            m_version = 0xFFFFFFFF;
+        unsigned version;
+        if (read(version)) {
+            m_majorVersion = majorVersionFor(version);
+            m_minorVersion = minorVersionFor(version);
+        }
     }
 
     CloneDeserializer(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, const Vector<RefPtr<MessagePort>>& messagePorts, ArrayBufferContentsArray* arrayBufferContents, const Vector<uint8_t>& buffer, const Vector<String>& blobURLs, const Vector<String> blobFilePaths, ArrayBufferContentsArray* sharedBuffers, Vector<std::optional<ImageBitmapBacking>>&& backingStores
@@ -2987,7 +3002,8 @@ private:
         , m_canCreateDOMObject(m_isDOMGlobalObject && !globalObject->inherits<JSIDBSerializationGlobalObject>())
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
-        , m_version(0xFFFFFFFF)
+        , m_majorVersion(0xFFFFFFFF)
+        , m_minorVersion(0xFFFFFFFF)
         , m_messagePorts(messagePorts)
         , m_arrayBufferContents(arrayBufferContents)
         , m_arrayBuffers(arrayBufferContents ? arrayBufferContents->size() : 0)
@@ -3017,8 +3033,11 @@ private:
         , m_videoFrames(m_serializedVideoFrames.size())
 #endif
     {
-        if (!read(m_version))
-            m_version = 0xFFFFFFFF;
+        unsigned version;
+        if (read(version)) {
+            m_majorVersion = majorVersionFor(version);
+            m_minorVersion = minorVersionFor(version);
+        }
     }
 
     enum class VisitNamedMemberResult : uint8_t { Error, Break, Start, Unknown };
@@ -3076,12 +3095,31 @@ private:
     Vector<WebCodecsVideoFrameData> takeSerializedVideoFrames() { return std::exchange(m_serializedVideoFrames, { }); }
 #endif
 
-    bool isValid() const { return m_version <= CurrentVersion; }
-    unsigned version() const { return m_version; }
+    bool isValid() const
+    {
+        if (m_majorVersion > CurrentMajorVersion)
+            return false;
+        if (m_majorVersion == 12)
+            return m_minorVersion <= 1;
+        return !m_minorVersion;
+    }
+    bool shouldRetryWithVersionUpgrade()
+    {
+        if (m_majorVersion == 14 && !m_minorVersion)
+            return true;
+        if (m_majorVersion == 12 && !m_minorVersion)
+            return true;
+        return false;
+    }
     void upgradeVersion()
     {
-        RELEASE_ASSERT(m_version == 14);
-        ++m_version;
+        ASSERT(shouldRetryWithVersionUpgrade());
+        if (m_majorVersion == 14 && !m_minorVersion) {
+            m_majorVersion = 15;
+            return;
+        }
+        if (m_majorVersion == 12 && !m_minorVersion)
+            m_minorVersion = 1;
     }
 
     template<SerializationTag tag>
@@ -3135,7 +3173,7 @@ private:
     enum class ForceReadingAs8Bit : bool { No, Yes };
     bool read(bool& b, ForceReadingAs8Bit forceReadingAs8Bit = ForceReadingAs8Bit::No)
     {
-        if (m_version >= 14 || forceReadingAs8Bit == ForceReadingAs8Bit::Yes) {
+        if (m_majorVersion >= 14 || forceReadingAs8Bit == ForceReadingAs8Bit::Yes) {
             uint8_t integer;
             if (!read(integer) || integer > 1)
                 return false;
@@ -3354,7 +3392,7 @@ private:
         if (!readStringData(name))
             return false;
         std::optional<int64_t> optionalLastModified;
-        if (m_version > 6) {
+        if (m_majorVersion > 6) {
             double lastModified;
             if (!read(lastModified))
                 return false;
@@ -3391,7 +3429,7 @@ private:
 
     bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
     {
-        if (m_version < 10)
+        if (m_majorVersion < 10)
             return readArrayBufferImpl<uint32_t>(arrayBuffer);
         return readArrayBufferImpl<uint64_t>(arrayBuffer);
     }
@@ -3494,7 +3532,7 @@ private:
 
     bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
     {
-        if (m_version < 10)
+        if (m_majorVersion < 10)
             return readArrayBufferViewImpl<uint32_t>(vm, arrayBufferView);
         return readArrayBufferViewImpl<uint64_t>(vm, arrayBufferView);
     }
@@ -4319,7 +4357,7 @@ private:
         auto colorSpace = DestinationColorSpace::SRGB();
         RefPtr<ArrayBuffer> arrayBuffer;
 
-        if (!read(serializationState) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || (m_version > 8 && !read(colorSpace)) || !readArrayBufferImpl<uint32_t>(arrayBuffer)) {
+        if (!read(serializationState) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || (m_majorVersion > 8 && !read(colorSpace)) || !readArrayBufferImpl<uint32_t>(arrayBuffer)) {
             SERIALIZE_TRACE("FAIL deserialize");
             fail();
             return JSValue();
@@ -4585,7 +4623,7 @@ private:
             m_ptr += length;
 
             auto resultColorSpace = PredefinedColorSpace::SRGB;
-            if (m_version > 7) {
+            if (m_majorVersion > 7) {
                 if (!read(resultColorSpace))
                     return JSValue();
             }
@@ -4623,7 +4661,7 @@ private:
             if (!read(size))
                 return JSValue();
             uint64_t memoryCost = 0;
-            if (m_version >= 11 && !read(memoryCost))
+            if (m_majorVersion >= 11 && !read(memoryCost))
                 return JSValue();
             if (!m_canCreateDOMObject)
                 return jsNull();
@@ -4734,7 +4772,7 @@ private:
         }
 #if ENABLE(WEBASSEMBLY)
         case WasmModuleTag: {
-            if (m_version >= 12) {
+            if (m_majorVersion >= 12) {
                 // https://webassembly.github.io/spec/web-api/index.html#serialization
                 CachedStringRef agentClusterID;
                 bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
@@ -4760,7 +4798,7 @@ private:
             return result;
         }
         case WasmMemoryTag: {
-            if (m_version >= 12) {
+            if (m_majorVersion >= 12) {
                 CachedStringRef agentClusterID;
                 bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
                 if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != agentClusterIDFromGlobalObject(*m_globalObject)) {
@@ -4969,7 +5007,8 @@ private:
     const bool m_canCreateDOMObject;
     const uint8_t* m_ptr;
     const uint8_t* const m_end;
-    unsigned m_version;
+    unsigned m_majorVersion;
+    unsigned m_minorVersion;
     Vector<CachedString> m_constantPool;
     Vector<Ref<ImageData>> m_imageDataPool;
     const Vector<RefPtr<MessagePort>>& m_messagePorts;
@@ -5060,7 +5099,7 @@ DeserializationResult CloneDeserializer::deserialize()
                 goto error;
             }
 
-            if (m_version >= 15) {
+            if (m_majorVersion >= 15 || (m_majorVersion == 12 && m_minorVersion == 1)) {
                 if (index == TerminatorTag) {
                     // We reached the end of the indexed properties section.
                     if (!read(index)) {
@@ -5851,11 +5890,6 @@ JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, J
 Ref<SerializedScriptValue> SerializedScriptValue::nullValue()
 {
     return adoptRef(*new SerializedScriptValue(Vector<uint8_t>()));
-}
-
-uint32_t SerializedScriptValue::wireFormatVersion()
-{
-    return CurrentVersion;
 }
 
 Vector<String> SerializedScriptValue::blobURLs() const
