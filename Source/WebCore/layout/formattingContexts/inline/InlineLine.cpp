@@ -216,6 +216,7 @@ void Line::handleTrailingHangingContent(std::optional<IntrinsicWidthMode> intrin
         if (*intrinsicWidthMode == IntrinsicWidthMode::Minimum || !hangingTrailingContentIsConditional) {
             ASSERT(m_trimmableTrailingContent.isEmpty());
             m_contentLogicalWidth -= m_hangingContent.trailingWidth();
+            m_hangingContent.resetTrailingContent();
         }
     }
 }
