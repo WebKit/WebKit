@@ -143,6 +143,11 @@ MILESTONES = [
         tentpoles=['Scrolling', 'SVG'],
         isCategoryRequired=True,
     ), dict(
+        name='Internal Tools - October',
+        categories=['Test Development', 'Tentpole Feature Work', 'Escape / Regression in the Build'],
+        events=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Convergence'],
+        tentpoles=['Scrolling', 'SVG'],
+    ),  dict(
         name='Future',
         categories=['Test Development', 'Tentpole TBD', 'Escape / Regression in the Build'],
     ),

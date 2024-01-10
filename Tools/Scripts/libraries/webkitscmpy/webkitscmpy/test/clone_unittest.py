@@ -156,7 +156,7 @@ class TestClone(testing.PathTestCase):
             tracker = radar.Tracker()
             raw_issue = tracker.client.radar_for_id(4)
 
-            self.assertEqual(raw_issue.milestone.name, 'October')
+            self.assertEqual(raw_issue.milestone.name, 'Internal Tools - October')
             self.assertEqual(raw_issue.category.name, 'Tentpole Feature Work')
             self.assertIsNone(raw_issue.event)
             self.assertIsNone(raw_issue.tentpole)
@@ -165,5 +165,5 @@ class TestClone(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created '[merge-back] rdar://4 Example issue 1'\n"
-            'Moved clone to October and into Analyze: Prepare\n',
+            'Moved clone to Internal Tools - October and into Analyze: Prepare\n',
         )
