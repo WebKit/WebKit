@@ -76,6 +76,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;
+@property (nonatomic, readonly) BOOL disabled;
 @property (nonatomic, copy) WKElementActionDismissalHandler dismissalHandler;
 
 @end

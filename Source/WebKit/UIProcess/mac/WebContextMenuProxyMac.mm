@@ -712,21 +712,26 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     std::optional<WebContextMenuItemData> lookUpImageItem;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    filteredItems.removeAllMatching([&] (auto& item) {
+    for (auto& item : filteredItems) {
         switch (item.action()) {
-        case ContextMenuItemTagLookUpImage:
+        case ContextMenuItemTagLookUpImage: {
             ASSERT(!lookUpImageItem);
+            item.setEnabled(false);
             lookUpImageItem = { item };
-            return true;
-        case ContextMenuItemTagCopySubject:
+            break;
+        }
+
+        case ContextMenuItemTagCopySubject: {
             ASSERT(!copySubjectItem);
+            item.setEnabled(false);
             copySubjectItem = { item };
-            return true;
+            break;
+        }
+
         default:
             break;
         }
-        return false;
-    });
+    }
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
@@ -758,8 +763,11 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
 #if ENABLE(IMAGE_ANALYSIS)
             if (lookUpImageItem) {
                 page->computeHasVisualSearchResults(imageURL, *imageBitmap, [protectedThis, lookUpImageItem = WTFMove(*lookUpImageItem)] (bool hasVisualSearchResults) mutable {
-                    if (hasVisualSearchResults)
-                        [protectedThis->m_menu addItem:createMenuActionItem(lookUpImageItem).get()];
+                    if (hasVisualSearchResults) {
+                        NSInteger index = [protectedThis->m_menu indexOfItemWithTag:lookUpImageItem.action()];
+                        if (index >= 0)
+                            [protectedThis->m_menu itemAtIndex:index].enabled = YES;
+                    }
                 });
             }
 #else
@@ -778,7 +786,10 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
                             return;
 
                         protectedThis->m_copySubjectResult = result;
-                        [protectedThis->m_menu addItem:createMenuActionItem(copySubjectItem).get()];
+
+                        NSInteger index = [protectedThis->m_menu indexOfItemWithTag:copySubjectItem.action()];
+                        if (index >= 0)
+                            [protectedThis->m_menu itemAtIndex:index].enabled = YES;
                     });
                 }
             }

@@ -12298,14 +12298,28 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
             [replacements addObject:[elementAction uiActionForElementInfo:elementInfo]];
         };
 
-        if (foundCopyItem && self.copySubjectResultForImageContextMenu)
-            addAction(_WKElementActionTypeCopyCroppedImage);
+        for (UIMenuElement *child in adjustedChildren.get()) {
+            UIAction *action = dynamic_objc_cast<UIAction>(child);
+            if (!action)
+                continue;
+
+            if ([action.identifier isEqual:elementActionTypeToUIActionIdentifier(_WKElementActionTypeCopyCroppedImage)]) {
+                if (foundCopyItem && self.copySubjectResultForImageContextMenu)
+                    action.attributes &= ~UIMenuElementAttributesDisabled;
+
+                continue;
+            }
+
+            if ([action.identifier isEqual:revealImageIdentifier]) {
+                if (self.hasVisualSearchResultsForImageContextMenu)
+                    action.attributes &= ~UIMenuElementAttributesDisabled;
+
+                continue;
+            }
+        }
 
         if (self.hasSelectableTextForImageContextMenu)
             addAction(_WKElementActionTypeImageExtraction);
-
-        if (self.hasVisualSearchResultsForImageContextMenu)
-            addAction(_WKElementActionTypeRevealImage);
 
         if (UIMenu *subMenu = self.machineReadableCodeSubMenuForImageContextMenu)
             [replacements addObject:subMenu];
