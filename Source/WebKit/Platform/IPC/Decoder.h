@@ -112,7 +112,7 @@ public:
     void markInvalid()
     {
         auto buffer = std::exchange(m_buffer, { });
-        if (m_bufferDeallocator)
+        if (m_bufferDeallocator && !buffer.empty())
             m_bufferDeallocator(WTFMove(buffer));
     }
 
