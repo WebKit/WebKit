@@ -4936,19 +4936,6 @@ PDFPluginEnabled:
       "PLATFORM(IOS_FAMILY)": false
       default: true
 
-PDFPluginHUDEnabled:
-  type: bool
-  status: embedder
-  condition: PLATFORM(COCOA)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      "PLATFORM(IOS_FAMILY)": false
-      default: true
-    WebCore:
-      default: false
-
 PageAtRuleSupportEnabled:
   type: bool
   status: unstable

@@ -255,7 +255,7 @@ void PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
 void PDFPluginBase::visibilityDidChange(bool visible)
 {
 #if ENABLE(PDF_HUD)
-    if (!m_frame || !hudEnabled())
+    if (!m_frame)
         return;
     if (visible)
         m_frame->page()->createPDFHUD(*this, frameForHUDInRootViewCoordinates());
@@ -589,13 +589,6 @@ void PDFPluginBase::updatePDFHUDLocation()
 IntRect PDFPluginBase::frameForHUDInRootViewCoordinates() const
 {
     return convertFromPluginToRootView(IntRect(IntPoint(), size()));
-}
-
-bool PDFPluginBase::hudEnabled() const
-{
-    if (RefPtr page = this->page())
-        return page->settings().pdfPluginHUDEnabled();
-    return false;
 }
 
 #endif // ENABLE(PDF_HUD)

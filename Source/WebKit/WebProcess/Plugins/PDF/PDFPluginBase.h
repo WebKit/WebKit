@@ -246,7 +246,6 @@ protected:
 #if ENABLE(PDF_HUD)
     void updatePDFHUDLocation();
     WebCore::IntRect frameForHUDInRootViewCoordinates() const;
-    bool hudEnabled() const;
 #endif
 
     SingleThreadWeakPtr<PluginView> m_view;

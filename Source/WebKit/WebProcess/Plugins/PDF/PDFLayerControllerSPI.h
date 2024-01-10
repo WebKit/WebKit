@@ -131,9 +131,6 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 
 - (bool)keyDown:(NSEvent *)event;
 
-- (void)setHUDEnabled:(BOOL)enabled;
-- (BOOL)hudEnabled;
-
 - (CGRect)boundsForAnnotation:(PDFAnnotation *)annotation;
 - (void)activateNextAnnotation:(BOOL)previous;
 
