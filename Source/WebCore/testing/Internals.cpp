@@ -6184,7 +6184,7 @@ void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseD
     });
 }
 
-NO_RETURN_DUE_TO_CRASH void Internals::terminateWebContentProcess()
+void Internals::terminateWebContentProcess()
 {
     exit(0);
 }

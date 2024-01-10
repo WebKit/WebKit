@@ -1016,7 +1016,7 @@ public:
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
     void terminateServiceWorker(ServiceWorker&, DOMPromiseDeferred<void>&&);
     void whenServiceWorkerIsTerminated(ServiceWorker&, DOMPromiseDeferred<void>&&);
-    void terminateWebContentProcess();
+    NO_RETURN_DUE_TO_CRASH void terminateWebContentProcess();
 
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator& mockPaymentCoordinator(Document&);

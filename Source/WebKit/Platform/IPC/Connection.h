@@ -169,6 +169,15 @@ template<typename T> struct ConnectionSendSyncResult {
     bool succeeded() const { return value.has_value(); }
     Error error() const { return value.has_value() ? Error::NoError : value.error(); }
 
+    // FIXME: Remove this when we start using c++23 and std::expected.
+#if OS(WINDOWS) // Expected isn't move-constuctible
+    ConnectionSendSyncResult(ConnectionSendSyncResult&& other)
+        : value(makeUnexpected(Error::NoError))
+    {
+        value.swap(other.value);
+    }
+#endif
+
     typename T::ReplyArguments& reply()
     {
         return value.value();
