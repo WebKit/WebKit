@@ -124,7 +124,6 @@ class RefTest extends TestSuite {
     setup(rootElement) {
         this.rootElement = rootElement;
     }
-
     async testOnElementMount() {
         let triggered = false;
         let currentRef = null;
