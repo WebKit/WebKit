@@ -5,7 +5,7 @@
 	<key>EXAppExtensionAttributes</key>
 	<dict>
 		<key>EXExtensionPointIdentifier</key>
-		<string>com.apple.webkit.gpu.extension</string>
+		<string>com.apple.web-browser-engine.gpu</string>
 	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>${PRODUCT_BUNDLE_IDENTIFIER}</string>
