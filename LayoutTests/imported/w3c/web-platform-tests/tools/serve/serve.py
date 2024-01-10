@@ -19,7 +19,7 @@ from collections import defaultdict, OrderedDict
 from io import IOBase
 from itertools import chain, product
 from html5lib import html5parser
-from typing import ClassVar, List, Set, Tuple
+from typing import ClassVar, List, Optional, Set, Tuple
 
 from localpaths import repo_root  # type: ignore
 
@@ -97,7 +97,7 @@ class WrapperHandler:
 
     __meta__ = abc.ABCMeta
 
-    headers = []  # type: ClassVar[List[Tuple[str, str]]]
+    headers: ClassVar[List[Tuple[str, str]]] = []
 
     def __init__(self, base_path=None, url_base="/"):
         self.base_path = base_path
@@ -214,18 +214,18 @@ class WrapperHandler:
 
 
 class HtmlWrapperHandler(WrapperHandler):
-    global_type = None  # type: ClassVar[str]
+    global_type: ClassVar[Optional[str]] = None
     headers = [('Content-Type', 'text/html')]
 
     def check_exposure(self, request):
-        if self.global_type:
-            globals = ""
+        if self.global_type is not None:
+            global_variants = ""
             for (key, value) in self._get_metadata(request):
                 if key == "global":
-                    globals = value
+                    global_variants = value
                     break
 
-            if self.global_type not in parse_variants(globals):
+            if self.global_type not in parse_variants(global_variants):
                 raise HTTPException(404, "This test cannot be loaded in %s mode" %
                                     self.global_type)
 
@@ -423,7 +423,7 @@ class ShadowRealmHandler(HtmlWrapperHandler):
 <script>
 (async function() {
   const r = new ShadowRealm();
-
+  r.evaluate("globalThis.self = globalThis; undefined;");
   await new Promise(r.evaluate(`
     (resolve, reject) => {
       (async () => {
@@ -574,6 +574,7 @@ class RoutesBuilder:
             ("*", "/.well-known/attribution-reporting/report-aggregate-attribution", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/debug/report-aggregate-attribution", handlers.PythonScriptHandler),
             ("*", "/.well-known/attribution-reporting/debug/verbose", handlers.PythonScriptHandler),
+            ("*", "/.well-known/private-aggregation/*", handlers.PythonScriptHandler),
             ("*", "/.well-known/web-identity", handlers.PythonScriptHandler),
             ("*", "*.py", handlers.PythonScriptHandler),
             ("GET", "*", handlers.FileHandler)
@@ -621,18 +622,18 @@ class ServerProc:
     def start(self, init_func, host, port, paths, routes, bind_address, config, log_handlers, **kwargs):
         self.proc = self.mp_context.Process(target=self.create_daemon,
                                             args=(init_func, host, port, paths, routes, bind_address,
-                                                  config, log_handlers),
+                                                  config, log_handlers, dict(**os.environ)),
                                             name='%s on port %s' % (self.scheme, port),
                                             kwargs=kwargs)
         self.proc.daemon = True
         self.proc.start()
 
     def create_daemon(self, init_func, host, port, paths, routes, bind_address,
-                      config, log_handlers, **kwargs):
+                      config, log_handlers, env, **kwargs):
         # Ensure that when we start this in a new process we have the global lock
         # in the logging module unlocked
         importlib.reload(logging)
-
+        os.environ = env
         logger = get_logger(config.logging["level"], log_handlers)
 
         if sys.platform == "darwin":

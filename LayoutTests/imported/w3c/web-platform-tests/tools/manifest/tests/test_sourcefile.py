@@ -235,7 +235,7 @@ test()"""
 
 
 def test_worker_with_variants():
-    contents = b"""// META: variant=
+    contents = b"""// META: variant=?default
 // META: variant=?wss
 test()"""
 
@@ -255,7 +255,7 @@ test()"""
 
     expected_urls = [
         "/html/test.worker.html" + suffix
-        for suffix in ["", "?wss"]
+        for suffix in ["?default", "?wss"]
     ]
     assert len(items) == len(expected_urls)
 
@@ -265,7 +265,7 @@ test()"""
 
 
 def test_window_with_variants():
-    contents = b"""// META: variant=
+    contents = b"""// META: variant=?default
 // META: variant=?wss
 test()"""
 
@@ -285,7 +285,7 @@ test()"""
 
     expected_urls = [
         "/html/test.window.html" + suffix
-        for suffix in ["", "?wss"]
+        for suffix in ["?default", "?wss"]
     ]
     assert len(items) == len(expected_urls)
 
@@ -429,7 +429,7 @@ test()"""
 
 def test_multi_global_with_variants():
     contents = b"""// META: global=window,worker
-// META: variant=
+// META: variant=?default
 // META: variant=?wss
 test()"""
 
@@ -456,7 +456,7 @@ test()"""
     expected_urls = sorted(
         urls[ty] + suffix
         for ty in ["dedicatedworker", "serviceworker", "sharedworker", "window"]
-        for suffix in ["", "?wss"]
+        for suffix in ["?default", "?wss"]
     )
     assert len(items) == len(expected_urls)
 
@@ -524,6 +524,40 @@ def test_testharness_variant_invalid(variant):
 
     with pytest.raises(ValueError):
         s.test_variants
+
+
+def test_reftest_variant():
+    content = (b"<meta name=variant content=\"?first\">" +
+               b"<meta name=variant content=\"?second\">" +
+               b"<link rel=\"match\" href=\"ref.html\">")
+
+    s = create("html/test.html", contents=content)
+    assert not s.name_is_non_test
+    assert not s.name_is_manual
+    assert not s.name_is_visual
+    assert not s.name_is_worker
+    assert not s.name_is_reference
+
+    item_type, items = s.manifest_items()
+    assert item_type == "reftest"
+
+    actual_tests = [
+        {"url": item.url, "refs": item.references}
+        for item in items
+    ]
+
+    expected_tests = [
+        {
+            "url": "/html/test.html?first",
+            "refs": [("/html/ref.html?first", "==")],
+        },
+        {
+            "url": "/html/test.html?second",
+            "refs": [("/html/ref.html?second", "==")],
+        },
+    ]
+
+    assert actual_tests == expected_tests
 
 
 @pytest.mark.parametrize("ext", ["htm", "html"])
@@ -808,9 +842,24 @@ def test_spec_links_whitespace(url):
     assert s.spec_links == {"http://example.com/"}
 
 
+@pytest.mark.parametrize("input,expected", [
+    (b"""<link rel="help" title="Intel" href="foo">\n""", ["foo"]),
+    (b"""<link rel=help title="Intel" href="foo">\n""", ["foo"]),
+    (b"""<link  rel=help  href="foo" >\n""", ["foo"]),
+    (b"""<link rel="author" href="foo">\n""", []),
+    (b"""<link href="foo">\n""", []),
+    (b"""<link rel="help" href="foo">\n<link rel="help" href="bar">\n""", ["foo", "bar"]),
+    (b"""<link rel="help" href="foo">\n<script>\n""", ["foo"]),
+    (b"""random\n""", []),
+])
+def test_spec_links_complex(input, expected):
+    s = create("foo/test.html", input)
+    assert s.spec_links == set(expected)
+
+
 def test_url_base():
     contents = b"""// META: global=window,worker
-// META: variant=
+// META: variant=?default
 // META: variant=?wss
 test()"""
 
@@ -819,13 +868,13 @@ test()"""
 
     assert item_type == "testharness"
 
-    assert [item.url for item in items] == ['/_fake_base/html/test.any.html',
+    assert [item.url for item in items] == ['/_fake_base/html/test.any.html?default',
                                             '/_fake_base/html/test.any.html?wss',
-                                            '/_fake_base/html/test.any.serviceworker.html',
+                                            '/_fake_base/html/test.any.serviceworker.html?default',
                                             '/_fake_base/html/test.any.serviceworker.html?wss',
-                                            '/_fake_base/html/test.any.sharedworker.html',
+                                            '/_fake_base/html/test.any.sharedworker.html?default',
                                             '/_fake_base/html/test.any.sharedworker.html?wss',
-                                            '/_fake_base/html/test.any.worker.html',
+                                            '/_fake_base/html/test.any.worker.html?default',
                                             '/_fake_base/html/test.any.worker.html?wss']
 
     assert items[0].url_base == "/_fake_base/"

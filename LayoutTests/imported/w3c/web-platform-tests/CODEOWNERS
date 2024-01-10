@@ -1,5 +1,6 @@
-# Prevent accidentially touching CSS subtree
-/css/tools/apiclient/ @plinss @jgraham
+# Require review for changes that often need an RFC
+/resources/testdriver* @web-platform-tests/wpt-core-team
+/resources/testharness* @web-platform-tests/wpt-core-team
 
 # Prevent accidentally touching tools/third_party
-/tools/third_party/ @jgraham
+/tools/third_party/ @web-platform-tests/wpt-core-team

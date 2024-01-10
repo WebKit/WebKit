@@ -213,10 +213,10 @@ class ConfigBuilder:
             self.__dict__[key] = value
 
     def __getattr__(self, key):
-        if not key[0] == "_":
+        try:
             return self._data[key]
-        else:
-            return self.__dict__[key]
+        except KeyError as e:
+            raise AttributeError from e
 
     def update(self, override):
         """Load an overrides dict to override config values"""

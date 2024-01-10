@@ -21,23 +21,25 @@ from .protocol import Protocol, WdspecProtocol
 here = os.path.dirname(__file__)
 
 
-def executor_kwargs(test_type, test_environment, run_info_data, **kwargs):
+def executor_kwargs(test_type, test_environment, run_info_data, subsuite, **kwargs):
     timeout_multiplier = kwargs["timeout_multiplier"]
     if timeout_multiplier is None:
         timeout_multiplier = 1
 
     executor_kwargs = {"server_config": test_environment.config,
                        "timeout_multiplier": timeout_multiplier,
-                       "debug_info": kwargs["debug_info"]}
+                       "debug_info": kwargs["debug_info"],
+                       "subsuite": subsuite.name}
 
     if test_type in ("reftest", "print-reftest"):
         executor_kwargs["screenshot_cache"] = test_environment.cache_manager.dict()
         executor_kwargs["reftest_screenshot"] = kwargs["reftest_screenshot"]
 
     if test_type == "wdspec":
-        executor_kwargs["binary"] = kwargs.get("binary")
-        executor_kwargs["webdriver_binary"] = kwargs.get("webdriver_binary")
-        executor_kwargs["webdriver_args"] = kwargs.get("webdriver_args")
+        executor_kwargs["binary"] = kwargs["binary"]
+        executor_kwargs["binary_args"] = kwargs["binary_args"].copy()
+        executor_kwargs["webdriver_binary"] = kwargs["webdriver_binary"]
+        executor_kwargs["webdriver_args"] = kwargs["webdriver_args"].copy()
 
     # By default the executor may try to cleanup windows after a test (to best
     # associate any problems with the test causing them). If the user might
@@ -60,6 +62,16 @@ def strip_server(url):
     url_parts[0] = ""
     url_parts[1] = ""
     return urlunsplit(url_parts)
+
+
+def server_url(server_config, protocol, subdomain=False):
+    scheme = "https" if protocol == "h2" else protocol
+    host = server_config["browser_host"]
+    if subdomain:
+        # The only supported subdomain filename flag is "www".
+        host = "{subdomain}.{host}".format(subdomain="www", host=host)
+    return "{scheme}://{host}:{port}".format(scheme=scheme, host=host,
+        port=server_config["ports"][protocol][0])
 
 
 class TestharnessResultConverter:
@@ -103,7 +115,7 @@ def _ensure_hash_in_reftest_screenshots(extra):
     if not log_data:
         return
     for item in log_data:
-        if type(item) != dict:
+        if not isinstance(item, dict):
             # Skip relation strings.
             continue
         if "hash" not in item:
@@ -245,14 +257,14 @@ class TestExecutor:
     """
     __metaclass__ = ABCMeta
 
-    test_type = None  # type: ClassVar[str]
+    test_type: ClassVar[str]
     # convert_result is a class variable set to a callable converter
     # (e.g. reftest_result_converter) converting from an instance of
     # URLManifestItem (e.g. RefTest) + type-dependent results object +
     # type-dependent extra data, returning a tuple of Result and list of
     # SubtestResult. For now, any callable is accepted. TODO: Make this type
     # stricter when more of the surrounding code is annotated.
-    convert_result = None  # type: ClassVar[Callable[..., Any]]
+    convert_result: ClassVar[Callable[..., Any]]
     supports_testdriver = False
     supports_jsshell = False
     # Extra timeout to use after internal test timeout at which the harness
@@ -261,13 +273,14 @@ class TestExecutor:
 
 
     def __init__(self, logger, browser, server_config, timeout_multiplier=1,
-                 debug_info=None, **kwargs):
+                 debug_info=None, subsuite=None, **kwargs):
         self.logger = logger
         self.runner = None
         self.browser = browser
         self.server_config = server_config
         self.timeout_multiplier = timeout_multiplier
         self.debug_info = debug_info
+        self.subsuite = subsuite
         self.last_environment = {"protocol": "http",
                                  "prefs": {}}
         self.protocol = None  # This must be set in subclasses
@@ -301,7 +314,8 @@ class TestExecutor:
             result = self.do_test(test)
         except Exception as e:
             exception_string = traceback.format_exc()
-            self.logger.warning(exception_string)
+            message = f"Exception in TextExecutor.run:\n{exception_string}"
+            self.logger.warning(message)
             result = self.result_from_exception(test, e, exception_string)
 
         # log result of parent test
@@ -313,13 +327,7 @@ class TestExecutor:
         self.runner.send_message("test_ended", test, result)
 
     def server_url(self, protocol, subdomain=False):
-        scheme = "https" if protocol == "h2" else protocol
-        host = self.server_config["browser_host"]
-        if subdomain:
-            # The only supported subdomain filename flag is "www".
-            host = "{subdomain}.{host}".format(subdomain="www", host=host)
-        return "{scheme}://{host}:{port}".format(scheme=scheme, host=host,
-            port=self.server_config["ports"][protocol][0])
+        return server_url(self.server_config, protocol, subdomain)
 
     def test_url(self, test):
         return urljoin(self.server_url(test.environment["protocol"],
@@ -382,6 +390,7 @@ class RefTestImplementation:
     def __init__(self, executor):
         self.timeout_multiplier = executor.timeout_multiplier
         self.executor = executor
+        self.subsuite = executor.subsuite
         # Cache of url:(screenshot hash, screenshot). Typically the
         # screenshot is None, but we set this value if a test fails
         # and the screenshot was taken from the cache so that we may
@@ -401,7 +410,7 @@ class RefTestImplementation:
         return self.executor.logger
 
     def get_hash(self, test, viewport_size, dpi, page_ranges):
-        key = (test.url, viewport_size, dpi)
+        key = (self.subsuite, test.url, viewport_size, dpi)
 
         if key not in self.screenshot_cache:
             success, data = self.get_screenshot_list(test, viewport_size, dpi, page_ranges)
@@ -605,11 +614,11 @@ class RefTestImplementation:
 
 class WdspecExecutor(TestExecutor):
     convert_result = pytest_result_converter
-    protocol_cls = WdspecProtocol  # type: ClassVar[Type[Protocol]]
+    protocol_cls: ClassVar[Type[Protocol]] = WdspecProtocol
 
     def __init__(self, logger, browser, server_config, webdriver_binary,
                  webdriver_args, timeout_multiplier=1, capabilities=None,
-                 debug_info=None, **kwargs):
+                 debug_info=None, binary=None, binary_args=None, **kwargs):
         super().__init__(logger, browser, server_config,
                          timeout_multiplier=timeout_multiplier,
                          debug_info=debug_info)
@@ -617,6 +626,8 @@ class WdspecExecutor(TestExecutor):
         self.webdriver_args = webdriver_args
         self.timeout_multiplier = timeout_multiplier
         self.capabilities = capabilities
+        self.binary = binary
+        self.binary_args = binary_args
 
     def setup(self, runner):
         self.protocol = self.protocol_cls(self, self.browser)
@@ -645,6 +656,11 @@ class WdspecExecutor(TestExecutor):
                           "port": self.browser.port,
                           "capabilities": self.capabilities,
                           "timeout_multiplier": self.timeout_multiplier,
+                          "browser": {
+                              "binary": self.binary,
+                              "args": self.binary_args,
+                              "env": self.browser.env,
+                          },
                           "webdriver": {
                               "binary": self.webdriver_binary,
                               "args": self.webdriver_args
@@ -702,7 +718,8 @@ class CallbackHandler:
     WebDriver. Things that are more different to WebDriver may need to create a
     fully custom implementation."""
 
-    unimplemented_exc = (NotImplementedError,)  # type: ClassVar[Tuple[Type[Exception], ...]]
+    unimplemented_exc: ClassVar[Tuple[Type[Exception], ...]] = (NotImplementedError,)
+    expected_exc: ClassVar[Tuple[Type[Exception], ...]] = ()
 
     def __init__(self, logger, protocol, test_window):
         self.protocol = protocol
@@ -720,8 +737,8 @@ class CallbackHandler:
         self.logger.debug("Got async callback: %s" % result[1])
         try:
             callback = self.callbacks[command]
-        except KeyError:
-            raise ValueError("Unknown callback type %r" % result[1])
+        except KeyError as e:
+            raise ValueError("Unknown callback type %r" % result[1]) from e
         return callback(url, payload)
 
     def process_complete(self, url, payload):
@@ -731,20 +748,32 @@ class CallbackHandler:
     def process_action(self, url, payload):
         action = payload["action"]
         cmd_id = payload["id"]
-        self.logger.debug("Got action: %s" % action)
+        self.logger.debug(f"Got action: {action}")
         try:
             action_handler = self.actions[action]
-        except KeyError:
-            raise ValueError("Unknown action %s" % action)
+        except KeyError as e:
+            raise ValueError(f"Unknown action {action}") from e
         try:
             with ActionContext(self.logger, self.protocol, payload.get("context")):
-                result = action_handler(payload)
+                try:
+                    result = action_handler(payload)
+                except AttributeError as e:
+                    # If we fail to get an attribute from the protocol presumably that's a
+                    # ProtocolPart we don't implement
+                    # AttributeError got an obj property in Python 3.10, for older versions we
+                    # fall back to looking at the error message.
+                    if ((hasattr(e, "obj") and getattr(e, "obj") == self.protocol) or
+                        f"'{self.protocol.__class__.__name__}' object has no attribute" in str(e)):
+                        raise NotImplementedError from e
+                    raise
         except self.unimplemented_exc:
             self.logger.warning("Action %s not implemented" % action)
-            self._send_message(cmd_id, "complete", "error", "Action %s not implemented" % action)
+            self._send_message(cmd_id, "complete", "error", f"Action {action} not implemented")
+        except self.expected_exc:
+            self.logger.debug(f"Action {action} failed with an expected exception")
+            self._send_message(cmd_id, "complete", "error", f"Action {action} failed")
         except Exception:
-            self.logger.warning("Action %s failed" % action)
-            self.logger.warning(traceback.format_exc())
+            self.logger.warning(f"Action {action} failed")
             self._send_message(cmd_id, "complete", "error")
             raise
         else:

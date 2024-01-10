@@ -61,6 +61,27 @@ def test_exclude_users(event_path, expected):
         assert set(tasks) == expected
 
 
+def test_sink_task_depends():
+    """Verify that sink task only depends on required tasks"""
+    from tools.ci.tc.decision import decide
+    files_changed = {"layout-instability/clip-negative-bottom-margin.html",
+                     "layout-instability/composited-element-movement.html"}
+    with open(data_path("pr_event_tests_affected.json"), encoding="utf8") as f:
+        event = json.load(f)
+        with mock.patch("tools.ci.tc.decision.get_fetch_rev", return_value=(None, None, None)):
+            with mock.patch("tools.wpt.testfiles.repo_files_changed",
+                            return_value=files_changed):
+                # Ensure we don't exclude the Chrome jobs
+                event["pull_request"]["user"]["login"] = "test"
+                task_id_map = decide(event)
+
+        sink_task = task_id_map["sink-task"][1]
+
+        assert set(sink_task["dependencies"]) == (
+            set(task_id for (task_name, (task_id, _)) in task_id_map.items()
+                if task_name not in {"sink-task", "wpt-chrome-dev-stability"}))
+
+
 def test_verify_payload():
     """Verify that the decision task produces tasks with a valid payload"""
     from tools.ci.tc.decision import decide
@@ -137,11 +158,13 @@ def test_verify_payload():
       'wpt-firefox-nightly-reftest-3',
       'wpt-firefox-nightly-reftest-4',
       'wpt-firefox-nightly-reftest-5',
+      'wpt-firefox-nightly-reftest-6',
       'wpt-chrome-dev-reftest-1',
       'wpt-chrome-dev-reftest-2',
       'wpt-chrome-dev-reftest-3',
       'wpt-chrome-dev-reftest-4',
       'wpt-chrome-dev-reftest-5',
+      'wpt-chrome-dev-reftest-6',
       'wpt-firefox-nightly-wdspec-1',
       'wpt-firefox-nightly-wdspec-2',
       'wpt-chrome-dev-wdspec-1',
@@ -154,11 +177,11 @@ def test_verify_payload():
     ("pr_event.json", True, {".taskcluster.yml", ".travis.yml", "tools/ci/start.sh"},
      ['lint',
       'tools/ unittests (Python 3.7)',
-      'tools/ unittests (Python 3.10)',
+      'tools/ unittests (Python 3.11)',
       'tools/ integration tests (Python 3.7)',
-      'tools/ integration tests (Python 3.10)',
+      'tools/ integration tests (Python 3.11)',
       'resources/ tests (Python 3.7)',
-      'resources/ tests (Python 3.10)',
+      'resources/ tests (Python 3.11)',
       'download-firefox-nightly',
       'infrastructure/ tests',
       'sink-task']),
@@ -176,7 +199,7 @@ def test_verify_payload():
     ("pr_event_tests_affected.json", True, {"resources/testharness.js"},
      ['lint',
       'resources/ tests (Python 3.7)',
-      'resources/ tests (Python 3.10)',
+      'resources/ tests (Python 3.11)',
       'download-firefox-nightly',
       'infrastructure/ tests',
       'sink-task']),
@@ -246,26 +269,60 @@ def test_verify_payload():
       'wpt-webkitgtk_minibrowser-nightly-testharness-14',
       'wpt-webkitgtk_minibrowser-nightly-testharness-15',
       'wpt-webkitgtk_minibrowser-nightly-testharness-16',
+      'wpt-firefox_android-nightly-testharness-1',
+      'wpt-firefox_android-nightly-testharness-2',
+      'wpt-firefox_android-nightly-testharness-3',
+      'wpt-firefox_android-nightly-testharness-4',
+      'wpt-firefox_android-nightly-testharness-5',
+      'wpt-firefox_android-nightly-testharness-6',
+      'wpt-firefox_android-nightly-testharness-7',
+      'wpt-firefox_android-nightly-testharness-8',
+      'wpt-firefox_android-nightly-testharness-9',
+      'wpt-firefox_android-nightly-testharness-10',
+      'wpt-firefox_android-nightly-testharness-11',
+      'wpt-firefox_android-nightly-testharness-12',
+      'wpt-firefox_android-nightly-testharness-13',
+      'wpt-firefox_android-nightly-testharness-14',
+      'wpt-firefox_android-nightly-testharness-15',
+      'wpt-firefox_android-nightly-testharness-16',
+      'wpt-firefox_android-nightly-testharness-17',
+      'wpt-firefox_android-nightly-testharness-18',
+      'wpt-firefox_android-nightly-testharness-19',
+      'wpt-firefox_android-nightly-testharness-20',
+      'wpt-firefox_android-nightly-testharness-21',
+      'wpt-firefox_android-nightly-testharness-22',
+      'wpt-firefox_android-nightly-testharness-23',
+      'wpt-firefox_android-nightly-testharness-24',
       'wpt-firefox-stable-reftest-1',
       'wpt-firefox-stable-reftest-2',
       'wpt-firefox-stable-reftest-3',
       'wpt-firefox-stable-reftest-4',
       'wpt-firefox-stable-reftest-5',
+      'wpt-firefox-stable-reftest-6',
       'wpt-chromium-nightly-reftest-1',
       'wpt-chromium-nightly-reftest-2',
       'wpt-chromium-nightly-reftest-3',
       'wpt-chromium-nightly-reftest-4',
       'wpt-chromium-nightly-reftest-5',
+      'wpt-chromium-nightly-reftest-6',
       'wpt-chrome-stable-reftest-1',
       'wpt-chrome-stable-reftest-2',
       'wpt-chrome-stable-reftest-3',
       'wpt-chrome-stable-reftest-4',
       'wpt-chrome-stable-reftest-5',
+      'wpt-chrome-stable-reftest-6',
       'wpt-webkitgtk_minibrowser-nightly-reftest-1',
       'wpt-webkitgtk_minibrowser-nightly-reftest-2',
       'wpt-webkitgtk_minibrowser-nightly-reftest-3',
       'wpt-webkitgtk_minibrowser-nightly-reftest-4',
       'wpt-webkitgtk_minibrowser-nightly-reftest-5',
+      'wpt-webkitgtk_minibrowser-nightly-reftest-6',
+      'wpt-firefox_android-nightly-reftest-1',
+      'wpt-firefox_android-nightly-reftest-2',
+      'wpt-firefox_android-nightly-reftest-3',
+      'wpt-firefox_android-nightly-reftest-4',
+      'wpt-firefox_android-nightly-reftest-5',
+      'wpt-firefox_android-nightly-reftest-6',
       'wpt-firefox-stable-wdspec-1',
       'wpt-firefox-stable-wdspec-2',
       'wpt-chromium-nightly-wdspec-1',
@@ -274,10 +331,13 @@ def test_verify_payload():
       'wpt-chrome-stable-wdspec-2',
       'wpt-webkitgtk_minibrowser-nightly-wdspec-1',
       'wpt-webkitgtk_minibrowser-nightly-wdspec-2',
+      'wpt-firefox_android-nightly-wdspec-1',
+      'wpt-firefox_android-nightly-wdspec-2',
       'wpt-firefox-stable-crashtest-1',
       'wpt-chromium-nightly-crashtest-1',
       'wpt-chrome-stable-crashtest-1',
       'wpt-webkitgtk_minibrowser-nightly-crashtest-1',
+      'wpt-firefox_android-nightly-crashtest-1',
       'wpt-firefox-stable-print-reftest-1',
       'wpt-chromium-nightly-print-reftest-1',
       'wpt-chrome-stable-print-reftest-1'])
@@ -289,4 +349,5 @@ def test_schedule_tasks(event_path, is_pr, files_changed, expected):
             with open(data_path(event_path), encoding="utf8") as event_file:
                 event = json.load(event_file)
                 scheduled = decision.decide(event)
+                print(list(scheduled.keys()))
                 assert list(scheduled.keys()) == expected

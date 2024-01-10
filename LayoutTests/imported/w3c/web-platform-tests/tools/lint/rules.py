@@ -2,42 +2,30 @@ import abc
 import inspect
 import os
 import re
-
-MYPY = False
-if MYPY:
-    # MYPY is set to True when run under Mypy.
-    from typing import Any, List, Match, Optional, Pattern, Text, Tuple, cast
-    Error = Tuple[str, str, str, Optional[int]]
+from typing import Any, List, Match, Optional, Pattern, Text, Tuple, cast
 
 
-def collapse(text):
-    # type: (Text) -> Text
+Error = Tuple[str, str, str, Optional[int]]
+
+def collapse(text: Text) -> Text:
     return inspect.cleandoc(str(text)).replace("\n", " ")
 
 
 class Rule(metaclass=abc.ABCMeta):
     @abc.abstractproperty
-    def name(self):
-        # type: () -> Text
+    def name(self) -> Text:
         pass
 
     @abc.abstractproperty
-    def description(self):
-        # type: () -> Text
+    def description(self) -> Text:
         pass
 
-    to_fix = None  # type: Optional[Text]
+    to_fix: Optional[Text] = None
 
     @classmethod
-    def error(cls, path, context=(), line_no=None):
-        # type: (Text, Tuple[Any, ...], Optional[int]) -> Error
-        if MYPY:
-            name = cast(str, cls.name)
-            description = cast(str, cls.description)
-        else:
-            name = cls.name
-            description = cls.description
-        description = description % context
+    def error(cls, path: Text, context: Tuple[Any, ...] = (), line_no: Optional[int] = None) -> Error:
+        name = cast(str, cls.name)
+        description = cast(str, cls.description) % context
         return (name, description, path, line_no)
 
 
@@ -210,8 +198,8 @@ class VariantMissing(Rule):
 class MalformedVariant(Rule):
     name = "MALFORMED-VARIANT"
     description = collapse("""
-        %s `<meta name=variant>` 'content' attribute must be the empty string
-        or start with '?' or '#'
+        %s must be a non empty string
+        and start with '?' or '#'
     """)
 
 
@@ -351,35 +339,46 @@ class TentativeDirectoryName(Rule):
     to_fix = "rename directory to be called 'tentative'"
 
 
+class InvalidMetaFile(Rule):
+    name = "INVALID-META-FILE"
+    description = "The META.yml is not a YAML file with the expected structure"
+
+
+class InvalidWebFeaturesFile(Rule):
+    name = "INVALID-WEB-FEATURES-FILE"
+    description = "The WEB_FEATURES.yml file contains an invalid structure"
+
+
+class MissingTestInWebFeaturesFile(Rule):
+    name = "MISSING-WEB-FEATURES-FILE"
+    description = collapse("""
+        The WEB_FEATURES.yml file references a test that does not exist: '%s'
+    """)
+
+
 class Regexp(metaclass=abc.ABCMeta):
     @abc.abstractproperty
-    def pattern(self):
-        # type: () -> bytes
+    def pattern(self) -> bytes:
         pass
 
     @abc.abstractproperty
-    def name(self):
-        # type: () -> Text
+    def name(self) -> Text:
         pass
 
     @abc.abstractproperty
-    def description(self):
-        # type: () -> Text
+    def description(self) -> Text:
         pass
 
-    file_extensions = None  # type: Optional[List[Text]]
+    file_extensions: Optional[List[Text]] = None
 
-    def __init__(self):
-        # type: () -> None
-        self._re = re.compile(self.pattern)  # type: Pattern[bytes]
+    def __init__(self) -> None:
+        self._re: Pattern[bytes] = re.compile(self.pattern)
 
-    def applies(self, path):
-        # type: (Text) -> bool
+    def applies(self, path: Text) -> bool:
         return (self.file_extensions is None or
                 os.path.splitext(path)[1] in self.file_extensions)
 
-    def search(self, line):
-        # type: (bytes) -> Optional[Match[bytes]]
+    def search(self, line: bytes) -> Optional[Match[bytes]]:
         return self._re.search(line)
 
 
@@ -520,3 +519,15 @@ class AssertPreconditionRegexp(Regexp):
     file_extensions = [".html", ".htm", ".js", ".xht", ".xhtml", ".svg"]
     description = "Test-file line has an `assert_precondition(...)` call"
     to_fix = """Replace with `assert_implements` or `assert_implements_optional`"""
+
+
+class HTMLInvalidSyntaxRegexp(Regexp):
+    pattern = (br"<(a|abbr|article|audio|b|bdi|bdo|blockquote|body|button|canvas|caption|cite|code|colgroup|data|datalist|dd|del|details|"
+               br"dfn|dialog|div|dl|dt|em|fieldset|figcaption|figure|footer|form|h[1-6]|head|header|html|i|iframe|ins|kbd|label|legend|li|"
+               br"main|map|mark|menu|meter|nav|noscript|object|ol|optgroup|option|output|p|picture|pre|progress|q|rp|rt|ruby|s|samp|script|"
+               br"search|section|select|slot|small|span|strong|style|sub|summary|sup|table|tbody|td|template|textarea|tfoot|th|thead|time|"
+               br"title|tr|u|ul|var|video)(\s+[^>]+)?\s*/>")
+    name = "HTML INVALID SYNTAX"
+    file_extensions = [".html", ".htm"]
+    description = "Test-file line has a non-void HTML tag with /> syntax"
+    to_fix = """Replace with start tag and end tag"""

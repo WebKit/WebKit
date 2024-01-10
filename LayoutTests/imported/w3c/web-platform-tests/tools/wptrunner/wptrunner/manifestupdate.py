@@ -2,9 +2,9 @@
 
 import os
 from urllib.parse import urljoin, urlsplit
-from collections import namedtuple, defaultdict, deque
+from collections import Counter, namedtuple, defaultdict, deque
 from math import ceil
-from typing import Any, Callable, ClassVar, Dict, List
+from typing import Any, Callable, ClassVar, Dict, List, Optional
 
 from .wptmanifest import serialize
 from .wptmanifest.node import (DataNode, ConditionalNode, BinaryExpressionNode,
@@ -336,13 +336,13 @@ def build_unconditional_tree(_, run_info_properties, results):
 
 
 class PropertyUpdate:
-    property_name = None  # type: ClassVar[str]
-    cls_default_value = None  # type: ClassVar[Any]
-    value_type = None  # type: ClassVar[type]
+    property_name: ClassVar[str]
+    cls_default_value: ClassVar[Optional[Any]] = None
+    value_type: ClassVar[Optional[type]] = None
     # property_builder is a class variable set to either build_conditional_tree
     # or build_unconditional_tree. TODO: Make this type stricter when those
     # methods are annotated.
-    property_builder = None  # type: ClassVar[Callable[..., Any]]
+    property_builder: ClassVar[Callable[..., Any]]
 
     def __init__(self, node):
         self.node = node
@@ -560,21 +560,33 @@ class PropertyUpdate:
             # current existing node
             nodes = [node_by_run_info[run_info] for run_info in run_infos
                      if run_info in node_by_run_info]
-            # If all the values are the same, update the value
-            if nodes and all(set(node.result_values.keys()) == set(nodes[0].result_values.keys()) for node in nodes):
+
+            updated_value = None
+            current_values = set(condition.value)
+            if all(set(result).issubset(current_values)
+                   for node in nodes
+                   for result in node.result_values.keys()):
+                # If all the values are subsets of the current value, retain the condition as-is
+                updated_value = self.from_ini_value(condition.value)
+            elif nodes and all(set(node.result_values.keys()) ==
+                               set(nodes[0].result_values.keys()) for node in nodes):
+                # If the condition doesn't need to change, update the value
                 current_value = self.from_ini_value(condition.value)
                 try:
-                    new_value = self.updated_value(current_value,
-                                                   nodes[0].result_values)
+                    updated_value = self.updated_value(current_value,
+                                                       nodes[0].result_values)
                 except ConditionError as e:
                     errors.append(e)
                     continue
-                if new_value != current_value:
+                if updated_value != current_value:
                     self.node.modified = True
-                conditions.append((condition.condition_node, new_value))
+
+            if updated_value is not None:
+                # Reuse the existing condition with an updated value
+                conditions.append((condition.condition_node, updated_value))
                 run_info_with_condition |= set(run_infos)
             else:
-                # Don't append this condition
+                # Don't reuse this condition
                 self.node.modified = True
 
         new_conditions, new_errors = self.build_tree_conditions(property_tree,
@@ -604,8 +616,6 @@ class PropertyUpdate:
                               prev_default=None):
         conditions = []
         errors = []
-
-        value_count = defaultdict(int)
 
         def to_count_value(v):
             if v is None:
@@ -647,18 +657,22 @@ class PropertyUpdate:
                         if prev_default:
                             conditions.append((None, prev_default))
                 if error is None:
-                    count_value = to_count_value(value)
-                    value_count[count_value] += len(node.run_info)
-
-                if error is None:
                     conditions.append((expr, value))
                 else:
                     errors.append(error)
 
-            for child in node.children:
+            try:
+                # Attempt to stably order the next group of conditions by their
+                # values, which are typically string/numeric types that have an
+                # order defined.
+                children = sorted(node.children, key=lambda child: child.value)
+            except TypeError:
+                children = node.children
+            for child in children:
                 queue.append((child, parents_and_self))
 
         conditions = conditions[::-1]
+        value_count = Counter(to_count_value(value) for _, value in conditions)
 
         # If we haven't set a default condition, add one and remove all the conditions
         # with the same value
@@ -667,9 +681,9 @@ class PropertyUpdate:
             # or the previous default
             cls_default = to_count_value(self.default_value)
             prev_default = to_count_value(prev_default)
-            commonest_value = max(value_count, key=lambda x:(value_count.get(x),
-                                                             x == cls_default,
-                                                             x == prev_default))
+            commonest_value = max(value_count, key=lambda x: (value_count[x],
+                                                              x == cls_default,
+                                                              x == prev_default))
             if isinstance(commonest_value, tuple):
                 commonest_value = list(commonest_value)
             commonest_value = self.from_ini_value(commonest_value)
@@ -741,8 +755,13 @@ class ExpectedUpdate(PropertyUpdate):
         # If the new intermittent is a subset of the existing one, just use the existing one
         # This prevents frequent flip-flopping of results between e.g. [OK, TIMEOUT] and
         # [TIMEOUT, OK]
-        if current and set(expected).issubset(set(current)):
-            return current
+        if current is not None:
+            if not isinstance(current, list):
+                current_set = {current}
+            else:
+                current_set = set(current)
+            if set(expected).issubset(current_set):
+                return current
 
         if self.update_intermittent:
             if len(expected) == 1:
@@ -784,7 +803,7 @@ class MinAssertsUpdate(PropertyUpdate):
 
 
 class AppendOnlyListUpdate(PropertyUpdate):
-    cls_default_value = []  # type: ClassVar[List[str]]
+    cls_default_value: ClassVar[List[str]] = []
     property_builder = build_unconditional_tree
 
     def updated_value(self, current, new):
@@ -837,7 +856,7 @@ class LeakObjectUpdate(AppendOnlyListUpdate):
 
 class LeakThresholdUpdate(PropertyUpdate):
     property_name = "leak-threshold"
-    cls_default_value = {}  # type: ClassVar[Dict[str, int]]
+    cls_default_value: ClassVar[Dict[str, int]] = {}
     property_builder = build_unconditional_tree
 
     def from_result_value(self, result):
@@ -927,6 +946,8 @@ def make_node(value):
         node = ListNode()
         for item in value:
             node.append(make_node(item))
+    else:
+        raise ValueError(f"Unrecoginsed data type {type(value)}")
     return node
 
 

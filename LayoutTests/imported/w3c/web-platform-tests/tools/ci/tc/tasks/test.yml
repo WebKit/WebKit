@@ -4,7 +4,7 @@ components:
     workerType: ci
     schedulerId: taskcluster-github
     deadline: "24 hours"
-    image: webplatformtests/wpt:0.53
+    image: webplatformtests/wpt:0.56
     maxRunTime: 7200
     artifacts:
       public/results:
@@ -22,7 +22,7 @@ components:
       test-type: testharness
 
   wpt-reftest:
-    chunks: 5
+    chunks: 6
     vars:
       test-type: reftest
 
@@ -108,6 +108,13 @@ components:
 
   browser-servo: {}
 
+  browser-firefox_android:
+    privileged: true
+    scopes:
+      - "docker-worker:capability:privileged"
+    chunks-override:
+      testharness: 24
+
   tox-python3_7:
     env:
       TOXENV: py37
@@ -116,16 +123,17 @@ components:
       - python3.7
       - python3.7-distutils
       - python3.7-dev
+      - python3.7-venv
 
-  tox-python3_10:
+  tox-python3_11:
     env:
-      TOXENV: py310
+      TOXENV: py311
       PY_COLORS: "0"
     install:
-      - python3.10
-      - python3.10-distutils
-      - python3.10-dev
-
+      - python3.11
+      - python3.11-distutils
+      - python3.11-dev
+      - python3.11-venv
   tests-affected:
     options:
       browser:
@@ -220,6 +228,12 @@ tasks:
               use:
                 - trigger-weekly
                 - trigger-push
+            - vars:
+                browser: firefox_android
+                channel: nightly
+              use:
+                - trigger-daily
+                - trigger-push
           do:
             - ${vars.browser}-${vars.channel}-${vars.suite}:
                 use:
@@ -304,11 +318,13 @@ tasks:
             channel: nightly
             stability-exclude-users:
               - moz-wptsync-bot
+            required: true
         - vars:
             browser: chrome
             channel: dev
             stability-exclude-users:
               - chromium-wpt-export-bot
+            required: false
       do:
         - wpt-${vars.browser}-${vars.channel}-stability:
             use:
@@ -333,6 +349,7 @@ tasks:
               --verify-repeat-restart=10
               --github-checks-text-file="/home/test/artifacts/checkrun.md"
             exclude-users: ${vars.stability-exclude-users}
+            required: ${vars.required}
 
         - wpt-${vars.browser}-${vars.channel}-results:
             use:
@@ -423,13 +440,13 @@ tasks:
         run-job:
           - tools_unittest
 
-  - tools/ unittests (Python 3.10):
+  - tools/ unittests (Python 3.11):
       description: >-
-        Unit tests for tools running under Python 3.10, excluding wptrunner
+        Unit tests for tools running under Python 3.11, excluding wptrunner
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_10
+        - tox-python3_11
       command: ./tools/ci/ci_tools_unittest.sh
       env:
         HYPOTHESIS_PROFILE: ci
@@ -459,13 +476,13 @@ tasks:
         run-job:
           - wpt_integration
 
-  - tools/ integration tests (Python 3.10):
+  - tools/ integration tests (Python 3.11):
       description: >-
-        Integration tests for tools running under Python 3.10
+        Integration tests for tools running under Python 3.11
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_10
+        - tox-python3_11
       command: ./tools/ci/ci_tools_integration_test.sh
       install:
         - libnss3-tools
@@ -500,13 +517,13 @@ tasks:
         run-job:
           - resources_unittest
 
-  - resources/ tests (Python 3.10):
+  - resources/ tests (Python 3.11):
       description: >-
-        Tests for testharness.js and other files in resources/ under Python 3.10
+        Tests for testharness.js and other files in resources/ under Python 3.11
       use:
         - wpt-base
         - trigger-pr
-        - tox-python3_10
+        - tox-python3_11
       command: ./tools/ci/ci_resources_unittest.sh
       install:
         - libnss3-tools
@@ -528,6 +545,7 @@ tasks:
         - wpt-base
         - trigger-pr
         - browser-firefox
+        - browser-firefox_android
       command: ./tools/ci/ci_wptrunner_infrastructure.sh
       install:
         - python3-pip
@@ -539,6 +557,7 @@ tasks:
         browser:
           - firefox
           - chrome
+          - firefox_android
         channel: experimental
         xvfb: true
         hosts: false
