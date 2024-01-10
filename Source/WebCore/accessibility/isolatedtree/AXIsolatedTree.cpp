@@ -30,6 +30,7 @@
 
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
+#include "AccessibilityTableRow.h"
 #include "FrameSelection.h"
 #include "LocalFrameView.h"
 #include "Page.h"
@@ -228,22 +229,6 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::objectForID(const AXID axID) const
         return nullptr;
     }
     return axID.isValid() ? m_readerThreadNodeMap.get(axID) : nullptr;
-}
-
-template<typename U>
-Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs) const
-{
-    AXTRACE("AXIsolatedTree::objectsForIDs"_s);
-    ASSERT(!isMainThread());
-
-    Vector<RefPtr<AXCoreObject>> result;
-    result.reserveInitialCapacity(axIDs.size());
-    for (auto& axID : axIDs) {
-        if (RefPtr object = objectForID(axID))
-            result.append(WTFMove(object));
-    }
-    result.shrinkToFit();
-    return result;
 }
 
 void AXIsolatedTree::generateSubtree(AccessibilityObject& axObject)

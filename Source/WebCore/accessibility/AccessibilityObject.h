@@ -30,6 +30,7 @@
 #pragma once
 
 #include "AXCoreObject.h"
+#include "AXTextRun.h"
 #include "CharacterRange.h"
 #include "FloatQuad.h"
 #include "LayoutRect.h"
@@ -63,6 +64,7 @@ class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<Accessibi
 public:
     virtual ~AccessibilityObject();
 
+    AXID treeID() const final;
     ProcessID processID() const override;
     String dbg() const final;
 
@@ -382,6 +384,9 @@ public:
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return { }; }
     String text() const override { return { }; }
     unsigned textLength() const final;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    virtual AXTextRuns textRuns() { return { }; }
+#endif
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
     // textruns and replacement nodes included in the given range.

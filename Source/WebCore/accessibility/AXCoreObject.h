@@ -113,19 +113,6 @@ enum class AXAncestorFlag : uint8_t {
     // Bit 7 is free.
 };
 
-#if ENABLE(AX_THREAD_TEXT_APIS)
-struct AXTextRun {
-    // The line index of this run within the context of the containing RenderBlockFlow of the main-thread AX object.
-    size_t lineIndex;
-    String text;
-
-    AXTextRun(size_t lineIndex, String&& text)
-        : lineIndex(lineIndex)
-        , text(WTFMove(text))
-    { }
-};
-#endif
-
 enum class AccessibilityRole {
     Application = 1,
     ApplicationAlert,
@@ -656,6 +643,8 @@ enum class AccessibilityButtonState {
     Mixed,
 };
 
+enum class AXDirection : bool { Next, Previous };
+
 enum class AccessibilitySortDirection {
     None,
     Ascending,
@@ -803,6 +792,7 @@ public:
 
     void setObjectID(AXID axID) { m_id = axID; }
     AXID objectID() const { return m_id; }
+    virtual AXID treeID() const = 0;
     virtual ProcessID processID() const = 0;
 
     // When the corresponding WebCore object that this accessible object
@@ -1107,9 +1097,6 @@ public:
     virtual void accessibilityText(Vector<AccessibilityText>&) const = 0;
     // A programmatic way to set a name on an AccessibleObject.
     virtual void setAccessibleName(const AtomString&) = 0;
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    virtual Vector<AXTextRun> textRuns() { return { }; }
-#endif
 
     virtual String title() const = 0;
     virtual String description() const = 0;

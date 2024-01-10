@@ -523,6 +523,7 @@ accessibility/AXImage.cpp
 accessibility/AXLogger.cpp
 accessibility/AXObjectCache.cpp
 accessibility/AXTextMarker.cpp
+accessibility/AXTextRun.cpp
 accessibility/AccessibilityARIAGrid.cpp
 accessibility/AccessibilityARIAGridCell.cpp
 accessibility/AccessibilityARIAGridRow.cpp

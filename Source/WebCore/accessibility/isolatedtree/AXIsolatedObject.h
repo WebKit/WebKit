@@ -44,6 +44,9 @@
 namespace WebCore {
 
 class AXIsolatedTree;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+struct AXTextRuns;
+#endif
 
 class AXIsolatedObject final : public AXCoreObject {
     friend class AXIsolatedTree;
@@ -51,6 +54,7 @@ public:
     static Ref<AXIsolatedObject> create(const Ref<AccessibilityObject>&, AXIsolatedTree*);
     ~AXIsolatedObject();
 
+    AXID treeID() const final { return tree()->treeID(); }
     ProcessID processID() const final { return tree()->processID(); }
     String dbg() const final;
 
@@ -59,9 +63,16 @@ public:
     bool isTable() const final { return boolAttributeValue(AXPropertyName::IsTable); }
     bool isExposable() const final { return boolAttributeValue(AXPropertyName::IsExposable); }
 
+    const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
+    AXCoreObject* sibling(AXDirection) const;
     AXIsolatedObject* parentObject() const final { return parentObjectUnignored(); }
+    AXIsolatedObject* parentObjectUnignored() const final;
     AXIsolatedObject* editableAncestor() final { return Accessibility::editableAncestor(*this); };
     bool canSetFocusAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetFocusAttribute); }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    const AXTextRuns* textRuns() const;
+#endif
 
 private:
     void detachRemoteParts(AccessibilityDetachmentType) final;
@@ -243,7 +254,6 @@ private:
     Vector<String> determineDropEffects() const final;
     AXIsolatedObject* accessibilityHitTest(const IntPoint&) const final;
     AXIsolatedObject* focusedUIElement() const final;
-    AXIsolatedObject* parentObjectUnignored() const final;
     AccessibilityChildrenVector linkedObjects() const final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::LinkedObjects)); }
     AXIsolatedObject* titleUIElement() const final { return objectAttributeValue(AXPropertyName::TitleUIElement); }
     AXIsolatedObject* scrollBar(AccessibilityOrientation) final;
@@ -316,7 +326,6 @@ private:
     AccessibilityChildrenVector visibleChildren() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleChildren)); }
     AtomString tagName() const final;
     void setChildrenIDs(Vector<AXID>&&);
-    const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
     void updateChildrenIfNecessary() final;
     bool isDetachedFromParent() final;
     AXIsolatedObject* liveRegionAncestor(bool excludeIfOff = true) const final { return Accessibility::liveRegionAncestor(*this, excludeIfOff); }
@@ -345,9 +354,6 @@ private:
 
     // CharacterRange support.
     CharacterRange selectedTextRange() const final { return propertyValue<CharacterRange>(AXPropertyName::SelectedTextRange); }
-#if ENABLE(AX_THREAD_TEXT_APIS)
-    Vector<AXTextRun> textRuns() final { return vectorAttributeValue<AXTextRun>(AXPropertyName::TextRuns); }
-#endif
     int insertionPointLineNumber() const final;
     CharacterRange doAXRangeForLine(unsigned) const final;
     String doAXStringForRange(const CharacterRange&) const final;

@@ -113,6 +113,12 @@ void AccessibilityObject::init()
     m_role = determineAccessibilityRole();
 }
 
+AXID AccessibilityObject::treeID() const
+{
+    auto* cache = axObjectCache();
+    return cache ? cache->treeID() : AXID();
+}
+
 inline ProcessID AccessibilityObject::processID() const
 {
     return presentingApplicationPID();

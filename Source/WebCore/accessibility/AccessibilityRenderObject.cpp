@@ -1403,11 +1403,11 @@ CharacterRange AccessibilityRenderObject::selectedTextRange() const
 }
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-Vector<AXTextRun> AccessibilityRenderObject::textRuns()
+AXTextRuns AccessibilityRenderObject::textRuns()
 {
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer())) {
         auto box = InlineIterator::boxFor(*renderLineBreak);
-        return { { box->lineIndex(), makeString('\n') } };
+        return { renderLineBreak->containingBlock(), { AXTextRun(box->lineIndex(), makeString('\n').isolatedCopy()) } };
     }
 
     WeakPtr renderText = dynamicDowncast<RenderText>(renderer());
@@ -1460,7 +1460,7 @@ Vector<AXTextRun> AccessibilityRenderObject::textRuns()
 
     if (!lineString.isEmpty())
         runs.append({ currentLineIndex, lineString.toString().isolatedCopy() });
-    return runs;
+    return { renderText->containingBlock(), WTFMove(runs) };
 }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 

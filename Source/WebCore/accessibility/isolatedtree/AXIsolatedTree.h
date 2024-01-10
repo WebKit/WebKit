@@ -29,6 +29,7 @@
 
 #include "AXCoreObject.h"
 #include "AXTextMarker.h"
+#include "AXTextRun.h"
 #include "AXTreeStore.h"
 #include "PageIdentifier.h"
 #include "RenderStyleConstants.h"
@@ -47,6 +48,7 @@ class TextStream;
 namespace WebCore {
 
 class AXIsolatedObject;
+class AXGeometryManager;
 class AXObjectCache;
 class AccessibilityObject;
 class Page;
@@ -255,7 +257,7 @@ using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, 
     , RetainPtr<NSAttributedString>
 #endif
 #if ENABLE(AX_THREAD_TEXT_APIS)
-    , Vector<AXTextRun>
+    , AXTextRuns
 #endif
 >;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
@@ -322,7 +324,20 @@ public:
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
-    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
+    template<typename U>
+    Vector<RefPtr<AXCoreObject>> objectsForIDs(const U& axIDs) const
+    {
+        ASSERT(!isMainThread());
+
+        Vector<RefPtr<AXCoreObject>> result;
+        result.reserveInitialCapacity(axIDs.size());
+        for (const auto& axID : axIDs) {
+            if (RefPtr object = objectForID(axID))
+                result.append(WTFMove(object));
+        }
+        result.shrinkToFit();
+        return result;
+    }
 
     void generateSubtree(AccessibilityObject&);
     void labelCreated(AccessibilityObject&);
