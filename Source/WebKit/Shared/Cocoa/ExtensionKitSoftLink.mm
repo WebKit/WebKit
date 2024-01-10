@@ -32,5 +32,9 @@
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ServiceExtensions)
 
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SECapability)
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SEHostable)
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SEHostingHandle)
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SEHostingUpdateCoordinator)
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SEHostingView)
 
 #endif // USE(EXTENSIONKIT)
