@@ -39,26 +39,6 @@
 
 namespace WebCore {
 
-// This function gives the margin 'over' based on the baseline-axis, since in grid we can have 2-dimensional
-// alignment by baseline. In horizontal writing-mode, the row-axis is the horizontal axis. When we use this
-// axis to move the grid items so that they are baseline-aligned, we want their "horizontal" margin (right);
-// the same will happen when using the column-axis under vertical writing mode, we also want in this case the
-// 'right' margin.
-LayoutUnit GridBaselineAlignment::marginOverForChild(const RenderBox& child, GridAxis alignmentAxis) const
-{
-    return isVerticalAlignmentContext(alignmentAxis) ? child.marginRight() : child.marginTop();
-}
-
-// This function gives the margin 'under' based on the baseline-axis, since in grid we can can 2-dimensional
-// alignment by baseline. In horizontal writing-mode, the row-axis is the horizontal axis. When we use this
-// axis to move the grid items so that they are baseline-aligned, we want their "horizontal" margin (left);
-// the same will happen when using the column-axis under vertical writing mode, we also want in this case the
-// 'left' margin.
-LayoutUnit GridBaselineAlignment::marginUnderForChild(const RenderBox& child, GridAxis alignmentAxis) const
-{
-    return isVerticalAlignmentContext(alignmentAxis) ? child.marginLeft() : child.marginBottom();
-}
-
 LayoutUnit GridBaselineAlignment::logicalAscentForChild(const RenderBox& child, GridAxis alignmentAxis, ItemPosition position) const
 {
     auto hasOrthogonalAncestorSubgrids = [&] {
@@ -83,7 +63,7 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
 
     ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
     auto baseline = 0_lu;
-    LayoutUnit margin = isDescentBaselineForChild(child, alignmentAxis) ? marginUnderForChild(child, alignmentAxis) : marginOverForChild(child, alignmentAxis);
+    auto gridItemMargin = alignmentAxis == GridAxis::GridColumnAxis ? child.marginBlockStart(m_writingMode) : child.marginInlineStart(m_writingMode);
 
     if (alignmentAxis == GridAxis::GridColumnAxis) {
         ASSERT(child.parentStyle());
@@ -94,10 +74,10 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
         };
 
         if (!isParallelToAlignmentAxisForChild(child, alignmentAxis))
-            return (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu) + margin;
+            return gridItemMargin + (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu);
         auto ascent = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
         if (!ascent)
-            return (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu) + margin;
+            return gridItemMargin + (parentStyle ? synthesizedBaseline(child, *child.parentStyle(), alignmentContextDirection(), BaselineSynthesisEdge::BorderBox) : 0_lu);
         baseline = ascent.value();
     } else {
         auto computedBaselineValue = position == ItemPosition::Baseline ? child.firstLineBaseline() : child.lastLineBaseline();
@@ -106,12 +86,12 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
         if (baseline == noValidBaseline) {
             ASSERT(!child.needsLayout());
             if (isVerticalAlignmentContext(alignmentAxis))
-                return isFlippedWritingMode(m_writingMode) ? child.size().width().toInt() + margin : margin;
-            return child.size().height() + margin;
+                return isFlippedWritingMode(m_writingMode) ? gridItemMargin + child.size().width().toInt() : gridItemMargin;
+            return gridItemMargin + child.size().height();
         }
     }
 
-    return margin + baseline;
+    return gridItemMargin + baseline;
 }
 
 LayoutUnit GridBaselineAlignment::descentForChild(const RenderBox& child, LayoutUnit ascent, GridAxis alignmentAxis, ExtraMarginsFromSubgrids extraMarginsFromAncestorSubgrids) const
