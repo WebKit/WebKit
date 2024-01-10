@@ -27,10 +27,8 @@
 
 #if USE(EXTENSIONKIT)
 
-#import <Foundation/Foundation.h>
-
-#if __has_include(<ServiceExtensions/SEServiceManager_Private.h>)
-#import <ServiceExtensions/SEServiceManager_Private.h>
+#if __has_include(<ServiceExtensions/ServiceExtensions_Private.h>)
+#import <ServiceExtensions/ServiceExtensions_Private.h>
 #else
 
 @class _SEContentProcess;
@@ -72,7 +70,7 @@ typedef void(^_SEServiceInteruptionHandler)();
 @property (readonly) BOOL isValid;
 @end
 
-@interface _SECapabilities : NSObject
+@interface _SECapability : NSObject
 @end
 
 NS_REFINED_FOR_SWIFT
@@ -82,7 +80,7 @@ NS_REFINED_FOR_SWIFT
 
 - (void)invalidate;
 
-- (nullable id<_SEGrant>)grantCapabilities:(_SECapabilities *)capabilities error:(NSError * _Nullable *)error;
+- (nullable id<_SEGrant>)grantCapability:(_SECapability *)capability error:(NSError * _Nullable *)error;
 
 @end
 
@@ -104,9 +102,9 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-@interface _SECapabilities (IPI)
+@interface _SECapability (SPI)
 - (BOOL)setActive:(BOOL)active;
-+ (instancetype)mediaWithWebsite:(NSString*)website;
++ (instancetype)mediaWithWebsite:(NSString *)website;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier;
 + (instancetype)assertionWithDomain:(NSString *)domain name:(NSString *)name environmentIdentifier:(NSString *)environmentIdentifier willInvalidate:(void (^)())willInvalidateBlock didInvalidate:(void (^)())didInvalidateBlock;

@@ -31,6 +31,6 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ServiceExtensions)
 
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SECapabilities)
+SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ServiceExtensions, _SECapability)
 
 #endif // USE(EXTENSIONKIT)
