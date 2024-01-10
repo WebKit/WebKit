@@ -2321,8 +2321,6 @@ webkit.org/b/264063 platform/ios/mediastream/video-muted-in-background-tab.html 
 
 webkit.org/b/259524 media/audioSession/audioSessionState.html [ Pass Failure ]
 
-webkit.org/b/260225 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
-
 webkit.org/b/260224 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/260224 compositing/overlap-blending/opacity-and-infinity.html [ ImageOnlyFailure ]
 webkit.org/b/260224 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
