@@ -4231,10 +4231,10 @@ MediaCapabilityGrantsEnabled:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY_SIMULATOR)": false
-      default: false
+      default: true
     WebCore:
       "PLATFORM(IOS_FAMILY_SIMULATOR)": false
-      default: false
+      default: true
 
 MediaCaptionFormatTypesAllowedInLockdownMode:
   type: String

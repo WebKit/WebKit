@@ -28,42 +28,60 @@
 
 #if ENABLE(EXTENSION_CAPABILITIES)
 
+#import <WebCore/RegistrableDomain.h>
 #import <wtf/text/WTFString.h>
 
 #import "ExtensionKitSoftLink.h"
 
 namespace WebKit {
 
-static RetainPtr<_SECapability> createPlatformCapability(const RegistrableDomain& registrableDomain)
+using WebCore::RegistrableDomain;
+
+static RetainPtr<_SECapability> createPlatformCapability(const URL& url)
 {
 #if USE(EXTENSIONKIT)
-    if ([get_SECapabilityClass() respondsToSelector:@selector(mediaWithWebsite:)])
-        return [get_SECapabilityClass() mediaWithWebsite:registrableDomain.string()];
-#else
-    UNUSED_PARAM(url);
+    if (_SECapability *capability = [get_SECapabilityClass() mediaWithWebsite:RegistrableDomain(url).string()])
+        return capability;
 #endif
 
+    UNUSED_PARAM(url);
     return nil;
 }
 
-MediaCapability::MediaCapability(RegistrableDomain registrableDomain)
-    : m_registrableDomain { WTFMove(registrableDomain) }
-    , m_platformCapability { createPlatformCapability(m_registrableDomain) }
+MediaCapability::MediaCapability(URL url)
+    : m_url { WTFMove(url) }
+    , m_platformCapability { createPlatformCapability(m_url) }
 {
 }
 
-MediaCapability::MediaCapability(const URL& url)
-    : MediaCapability { RegistrableDomain(url) }
+bool MediaCapability::isActivatingOrActive() const
 {
+    switch (m_state) {
+    case State::Inactive:
+    case State::Deactivating:
+        return false;
+    case State::Activating:
+    case State::Active:
+        return true;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+
+RegistrableDomain MediaCapability::registrableDomain() const
+{
+    return RegistrableDomain { m_url };
 }
 
 String MediaCapability::environmentIdentifier() const
 {
 #if USE(EXTENSIONKIT)
-    return [m_platformCapability mediaEnvironment];
-#else
-    return { };
+    if (NSString *mediaEnvironment = [m_platformCapability mediaEnvironment])
+        return mediaEnvironment;
 #endif
+
+    return { };
 }
 
 } // namespace WebKit

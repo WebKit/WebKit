@@ -28,20 +28,25 @@
 #if ENABLE(EXTENSION_CAPABILITIES)
 
 #include "ExtensionCapability.h"
-#include <WebCore/RegistrableDomain.h>
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebCore {
+class RegistrableDomain;
+}
 
 namespace WebKit {
 
 class ExtensionCapabilityGrant;
 
-using WebCore::RegistrableDomain;
-
 class MediaCapability final : public ExtensionCapability, public CanMakeWeakPtr<MediaCapability> {
+    WTF_MAKE_NONCOPYABLE(MediaCapability);
 public:
-    explicit MediaCapability(RegistrableDomain);
-    explicit MediaCapability(const URL&);
+    explicit MediaCapability(URL);
+    MediaCapability(MediaCapability&&) = default;
+    MediaCapability& operator=(MediaCapability&&) = default;
 
     enum class State : uint8_t {
         Inactive,
@@ -52,8 +57,10 @@ public:
 
     State state() const { return m_state; }
     void setState(State state) { m_state = state; }
+    bool isActivatingOrActive() const;
 
-    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+    const URL& url() const { return m_url; }
+    WebCore::RegistrableDomain registrableDomain() const;
 
     // ExtensionCapability
     String environmentIdentifier() const final;
@@ -61,7 +68,7 @@ public:
 
 private:
     State m_state { State::Inactive };
-    RegistrableDomain m_registrableDomain;
+    URL m_url;
     RetainPtr<_SECapability> m_platformCapability;
 };
 
