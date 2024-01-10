@@ -60,6 +60,9 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], func: () => 'function', arguments: ['arguments']}), /it cannot specify both 'args' and 'arguments'. Please use 'args'./i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: ['path/to/file']}), /it must specify both 'func' and 'args'./i)",
 
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: 0, func: () => 'function' }), /'args' is expected to be an array, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: () => 'function', args: [ () => 'arguments' ] }), /it is not JSON-serializable./i)",
+
         @"const notAFunction = null",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
 
@@ -147,6 +150,9 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
         @"  browser.test.assertDeepEq(results[0], expectedResultWithFileExecution)",
 
         @"  results = await browser.scripting.executeScript( { target: { tabId: tabId, frameIds: [ 0 ] }, func: changeBackgroundColor, args: ['pink'] })",
+        @"  browser.test.assertDeepEq(results[0], expectedResultWithFunctionExecution)",
+
+        @"  results = await browser.scripting.executeScript({target: {tabId: tabId}, func: (bool, number, string, dict, array) => { browser.test.log('supported argument types') }, args: [true, 10, 'string', { }, [ ]]})",
         @"  browser.test.assertDeepEq(results[0], expectedResultWithFunctionExecution)",
 
         @"  await browser.scripting.executeScript( { target: { tabId: tabId, allFrames: true }, func: changeBackgroundColor, args: ['blue'] })",

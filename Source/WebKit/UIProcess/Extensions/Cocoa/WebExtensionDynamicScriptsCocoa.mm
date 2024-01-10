@@ -31,6 +31,8 @@
 #import "WebExtensionDynamicScripts.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
+#import "APIData.h"
+#import "CocoaHelpers.h"
 #import "WKContentWorld.h"
 #import "WKFrameInfoPrivate.h"
 #import "WKWebViewInternal.h"
@@ -121,7 +123,7 @@ void executeScript(std::optional<SourcePairs> scriptPairs, WKWebView *webView, A
 
             if (parameters.function) {
                 NSString *javaScript = [NSString stringWithFormat:@"return (%@)(...arguments)", (NSString *)parameters.function.value()];
-                NSArray *arguments = parameters.arguments ? createNSArray(parameters.arguments.value()).get() : @[ ];
+                NSArray *arguments = parameters.arguments ? parseJSON(parameters.arguments.value(), JSONOptions::FragmentsAllowed) : @[ ];
 
                 [webView _callAsyncJavaScript:javaScript arguments:@{ @"arguments": arguments } inFrame:frameInfo inContentWorld:world completionHandler:makeBlockPtr([injectionResults, aggregator, frameInfo](id resultOfExecution, NSError *error) mutable {
                     injectionResults->results.append(toInjectionResultParameters(resultOfExecution, frameInfo, error.localizedDescription));

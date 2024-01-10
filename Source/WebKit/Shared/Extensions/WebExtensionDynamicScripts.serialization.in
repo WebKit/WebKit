@@ -27,7 +27,7 @@ headers: "WebExtensionScriptInjectionParameters.h" "WebExtensionScriptInjectionR
 struct WebKit::WebExtensionScriptInjectionParameters {
     std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier;
 
-    std::optional<Vector<String>> arguments;
+    std::optional<Ref<API::Data>> arguments;
     std::optional<Vector<String>> files;
     std::optional<Vector<WebKit::WebExtensionFrameIdentifier>> frameIDs;
 

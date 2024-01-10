@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIObject.h"
 #import "CocoaHelpers.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
@@ -187,7 +188,7 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
 
     WebExtensionScriptInjectionParameters parameters;
     parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString);
-    parseScriptInjectionOptions(script, parameters);
+    parseScriptInjectionOptions(script, parameters, outExceptionString);
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, Error error) {
         if (error)
@@ -311,8 +312,8 @@ bool WebExtensionAPIScripting::validateScript(NSDictionary *script, NSString **o
     ];
 
     static NSDictionary<NSString *, id> *keyTypes = @{
-        argsKey: @[ NSObject.class ],
-        argumentsKey: @[ NSObject.class ],
+        argsKey: NSArray.class,
+        argumentsKey: NSArray.class,
         filesKey: @[ NSString.class ],
         funcKey: JSValue.class,
         functionKey : JSValue.class,
@@ -325,6 +326,14 @@ bool WebExtensionAPIScripting::validateScript(NSDictionary *script, NSString **o
 
     if (!validateTarget(script[targetKey], outExceptionString))
         return false;
+
+    if (NSArray *arguments = script[argsKey] ?: script[argumentsKey]) {
+        auto *key = script[argsKey] ? argsKey : argumentsKey;
+        if (!isValidJSONObject(arguments, { JSONOptions::FragmentsAllowed })) {
+            *outExceptionString = toErrorString(nil, key, @"it is not JSON-serializable");
+            return false;
+        }
+    }
 
     if (script[functionKey] && script[funcKey]) {
         *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'func' and 'function'. Please use 'func'");
@@ -538,14 +547,20 @@ void WebExtensionAPIScripting::parseTargetInjectionOptions(NSDictionary *targetI
         parameters.frameIDs = Vector { WebExtensionFrameConstants::MainFrameIdentifier };
 }
 
-void WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script, WebExtensionScriptInjectionParameters& parameters)
+void WebExtensionAPIScripting::parseScriptInjectionOptions(NSDictionary *script, WebExtensionScriptInjectionParameters& parameters, NSString **outExceptionString)
 {
     if (script[functionKey])
         parameters.function = script[functionKey];
 
-    if (script[argsKey] || script[argumentsKey]) {
+    if (NSArray *arguments = script[argsKey] ?: script[argumentsKey]) {
         auto *key = script[argsKey] ? argsKey : argumentsKey;
-        parameters.arguments = makeVector<String>(script[key]);
+        auto *data = encodeJSONData(arguments, { JSONOptions::FragmentsAllowed });
+        if (!data) {
+            *outExceptionString = toErrorString(nil, key, @"it is not JSON-serializable");
+            return;
+        }
+
+        parameters.arguments = API::Data::createWithoutCopying(data);
     }
 
     if (NSArray *files = script[filesKey])

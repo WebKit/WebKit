@@ -27,6 +27,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "APIData.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -34,7 +35,7 @@ namespace WebKit {
 struct WebExtensionScriptInjectionParameters {
     std::optional<WebExtensionTabIdentifier> tabIdentifier;
 
-    std::optional<Vector<String>> arguments;
+    std::optional<Ref<API::Data>> arguments;
     std::optional<Vector<String>> files;
     std::optional<Vector<WebExtensionFrameIdentifier>> frameIDs;
 
