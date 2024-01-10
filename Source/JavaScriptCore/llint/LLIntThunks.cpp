@@ -778,7 +778,7 @@ extern "C" VMEntryRecord* vmEntryRecord(EntryFrame* entryFrame)
     // The C Loop doesn't have any callee save registers, so the VMEntryRecord is allocated at the base of the frame.
     intptr_t stackAlignment = stackAlignmentBytes();
     intptr_t VMEntryTotalFrameSize = (sizeof(VMEntryRecord) + (stackAlignment - 1)) & ~(stackAlignment - 1);
-    return reinterpret_cast<VMEntryRecord*>(reinterpret_cast<char*>(entryFrame) - VMEntryTotalFrameSize);
+    return reinterpret_cast<VMEntryRecord*>(reinterpret_cast<intptr_t>(entryFrame) - VMEntryTotalFrameSize);
 }
 
 #endif // ENABLE(C_LOOP)

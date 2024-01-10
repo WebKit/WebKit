@@ -538,9 +538,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     // Leave space for the callee parameter home addresses.
     // At this point the stack is aligned to 16 bytes, but if this changes at some point, we need to emit code to align it.
     jit.subPtr(CCallHelpers::TrustedImm32(4 * sizeof(int64_t)), CCallHelpers::stackPointerRegister);
-#elif CPU(MIPS)
-    // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
-    jit.subPtr(CCallHelpers::TrustedImm32(16), CCallHelpers::stackPointerRegister);
 #endif
 
     jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR1);
@@ -569,8 +566,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 
 #if CPU(X86_64) && OS(WINDOWS)
     jit.addPtr(CCallHelpers::TrustedImm32(4 * sizeof(int64_t)), CCallHelpers::stackPointerRegister);
-#elif CPU(MIPS)
-    jit.addPtr(CCallHelpers::TrustedImm32(16), CCallHelpers::stackPointerRegister);
 #endif
 
     // Check for an exception
@@ -596,17 +591,12 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
 #if OS(WINDOWS)
     // Allocate space on stack for the 4 parameter registers.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
-#elif CPU(MIPS)
-    // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
-    jit.subPtr(CCallHelpers::TrustedImm32(16), CCallHelpers::stackPointerRegister);
 #endif
     jit.move(CCallHelpers::TrustedImmPtr(&vm), JSInterfaceJIT::argumentGPR0);
     jit.move(JSInterfaceJIT::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationVMHandleException)), JSInterfaceJIT::regT3);
     jit.call(JSInterfaceJIT::regT3, OperationPtrTag);
 #if OS(WINDOWS)
     jit.addPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
-#elif CPU(MIPS)
-    jit.addPtr(CCallHelpers::TrustedImm32(16), CCallHelpers::stackPointerRegister);
 #endif
 
     jit.jumpToExceptionHandler(vm);

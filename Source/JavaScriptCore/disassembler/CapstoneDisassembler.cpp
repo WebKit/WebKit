@@ -52,9 +52,6 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
 #elif CPU(ARM64)
     if (cs_open(CS_ARCH_ARM64, CS_MODE_ARM, &handle) != CS_ERR_OK)
         return false;
-#elif CPU(MIPS)
-    if (cs_open(CS_ARCH_MIPS, CS_MODE_MIPS32, &handle) != CS_ERR_OK)
-        return false;
 #else
     return false;
 #endif

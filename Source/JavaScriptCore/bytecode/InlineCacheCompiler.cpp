@@ -662,8 +662,6 @@ static constexpr size_t prologueSizeInBytesDataIC = 8;
 static constexpr size_t prologueSizeInBytesDataIC = 4;
 #elif CPU(ARM_THUMB2)
 static constexpr size_t prologueSizeInBytesDataIC = 6;
-#elif CPU(MIPS)
-static constexpr size_t prologueSizeInBytesDataIC = 16;
 #elif CPU(RISCV64)
 static constexpr size_t prologueSizeInBytesDataIC = 12;
 #else
@@ -693,10 +691,6 @@ void InlineCacheCompiler::emitDataICPrologue(CCallHelpers& jit)
 #elif CPU(ARM_THUMB2)
     static_assert(maxFrameExtentForSlowPathCall);
     jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-    jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
-#elif CPU(MIPS)
-    static_assert(maxFrameExtentForSlowPathCall);
-    jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::returnAddressRegister);
     jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 #elif CPU(RISCV64)
     static_assert(!maxFrameExtentForSlowPathCall);

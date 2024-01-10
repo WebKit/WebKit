@@ -422,9 +422,6 @@ void LinkBuffer::linkCode(MacroAssembler& macroAssembler, JITCompilationEffort e
     RELEASE_ASSERT(roundUpToMultipleOf<Assembler::instructionSize>(code) == code);
 #endif
     performJITMemcpy(code, buffer.data(), buffer.codeSize());
-#if CPU(MIPS)
-    macroAssembler.m_assembler.relocateJumps(buffer.data(), code);
-#endif
 #elif CPU(ARM_THUMB2)
     copyCompactAndLinkCode<uint16_t>(macroAssembler, effort);
 #elif CPU(ARM64)

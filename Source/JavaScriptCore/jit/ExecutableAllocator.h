@@ -47,10 +47,6 @@
 #include <sys/mman.h>
 #endif
 
-#if CPU(MIPS) && OS(LINUX)
-#include <sys/cachectl.h>
-#endif
-
 #define EXECUTABLE_POOL_WRITABLE true
 
 namespace JSC {

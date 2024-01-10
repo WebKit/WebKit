@@ -55,7 +55,6 @@ assembler/MacroAssembler.cpp
 assembler/MacroAssemblerARM64.cpp @no-unify
 assembler/MacroAssemblerARMv7.cpp @no-unify
 assembler/MacroAssemblerCodeRef.cpp
-assembler/MacroAssemblerMIPS.cpp @no-unify
 assembler/MacroAssemblerPrinter.cpp
 assembler/MacroAssemblerRISCV64.cpp @no-unify
 assembler/MacroAssemblerX86Common.cpp @no-unify

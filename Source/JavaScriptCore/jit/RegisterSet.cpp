@@ -104,8 +104,6 @@ RegisterSet RegisterSetBuilder::macroClobberedGPRs()
     return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::memoryTempRegister).buildAndValidate();
 #elif CPU(ARM_THUMB2)
     return RegisterSetBuilder(MacroAssembler::dataTempRegister, MacroAssembler::addressTempRegister).buildAndValidate();
-#elif CPU(MIPS)
-    return RegisterSetBuilder(MacroAssembler::immTempRegister, MacroAssembler::dataTempRegister, MacroAssembler::addrTempRegister, MacroAssembler::cmpTempRegister).buildAndValidate();
 #else
     return { };
 #endif
@@ -125,10 +123,6 @@ RegisterSet RegisterSetBuilder::macroClobberedFPRs()
     builder.add(MacroAssembler::fpTempRegister2, IgnoreVectors);
     return builder.buildAndValidate();
 #elif CPU(ARM_THUMB2)
-    RegisterSetBuilder builder;
-    builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
-    return builder.buildAndValidate();
-#elif CPU(MIPS)
     RegisterSetBuilder builder;
     builder.add(MacroAssembler::fpTempRegister, IgnoreVectors);
     return builder.buildAndValidate();
@@ -196,9 +190,6 @@ RegisterSet RegisterSetBuilder::vmCalleeSaveRegisters()
     result.add(FPRInfo::fpRegCS3, IgnoreVectors);
     result.add(FPRInfo::fpRegCS4, IgnoreVectors);
     result.add(FPRInfo::fpRegCS5, IgnoreVectors);
-#elif CPU(MIPS)
-    result.add(GPRInfo::regCS0, IgnoreVectors);
-    result.add(GPRInfo::regCS1, IgnoreVectors);
 #elif CPU(RISCV64)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
@@ -249,7 +240,7 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS5, IgnoreVectors);
     result.add(GPRInfo::regCS6, IgnoreVectors);
 #endif
-#elif CPU(ARM_THUMB2) || CPU(MIPS)
+#elif CPU(ARM_THUMB2)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
 #elif CPU(ARM64) || CPU(RISCV64)
@@ -290,7 +281,7 @@ RegisterSet RegisterSetBuilder::dfgCalleeSaveRegisters()
     result.add(GPRInfo::regCS5, IgnoreVectors);
     result.add(GPRInfo::regCS6, IgnoreVectors);
 #endif
-#elif CPU(ARM_THUMB2) || CPU(MIPS)
+#elif CPU(ARM_THUMB2)
     result.add(GPRInfo::regCS0, IgnoreVectors);
     result.add(GPRInfo::regCS1, IgnoreVectors);
 #elif CPU(ARM64) || CPU(RISCV64)

@@ -1384,8 +1384,6 @@
 		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B8690124B89EA400487C95 /* PrivateFieldPutKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B8690024B89EA400487C95 /* PrivateFieldPutKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86C568E211A213EE0007F7FF /* MIPSRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C568DF11A213EE0007F7FF /* MIPSRegisters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86CC85A10EE79A4700288682 /* JITInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CC85A00EE79A4700288682 /* JITInlines.h */; };
 		86CCEFDE0F413F8900FD7F9E /* JITCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CCEFDD0F413F8900FD7F9E /* JITCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86D2221A167EF9440024C804 /* testapi.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86D22219167EF9440024C804 /* testapi.mm */; };
@@ -4652,9 +4650,6 @@
 		86B8690224B8A20800487C95 /* PrivateFieldPutKind.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateFieldPutKind.cpp; sourceTree = "<group>"; };
 		86BF642A148DB2B5004DE36A /* Intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Intrinsic.h; sourceTree = "<group>"; };
 		86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssembler.h; sourceTree = "<group>"; };
-		86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerMIPS.h; sourceTree = "<group>"; };
-		86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSAssembler.h; sourceTree = "<group>"; };
-		86C568DF11A213EE0007F7FF /* MIPSRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSRegisters.h; sourceTree = "<group>"; };
 		86CC85A00EE79A4700288682 /* JITInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITInlines.h; sourceTree = "<group>"; };
 		86CC85A20EE79B7400288682 /* JITCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall.cpp; sourceTree = "<group>"; };
 		86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess.cpp; sourceTree = "<group>"; };
@@ -6006,7 +6001,6 @@
 		FEC579772310954B00BCA83F /* IntegrityInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegrityInlines.h; sourceTree = "<group>"; };
 		FEC60FE92AE971FD003B7B31 /* MacroAssemblerRISCV64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerRISCV64.cpp; sourceTree = "<group>"; };
 		FEC60FEC2AE9722C003B7B31 /* MacroAssemblerRISCV64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerRISCV64.h; sourceTree = "<group>"; };
-		FEC60FED2AE97245003B7B31 /* MacroAssemblerMIPS.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerMIPS.cpp; sourceTree = "<group>"; };
 		FEC60FEE2AE9726E003B7B31 /* RISCV64Registers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RISCV64Registers.h; sourceTree = "<group>"; };
 		FEC60FEF2AE9726E003B7B31 /* RISCV64Assembler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RISCV64Assembler.h; sourceTree = "<group>"; };
 		FECB8B251D25BB6E006F2463 /* FunctionOverridesTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FunctionOverridesTest.cpp; path = API/tests/FunctionOverridesTest.cpp; sourceTree = "<group>"; };
@@ -6033,7 +6027,6 @@
 		FEF3475920362B1D00B7C0EF /* asm.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = asm.rb; sourceTree = "<group>"; };
 		FEF3475A20362B1E00B7C0EF /* cloop.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = cloop.rb; sourceTree = "<group>"; };
 		FEF3475B20362B1E00B7C0EF /* x86.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = x86.rb; sourceTree = "<group>"; };
-		FEF3475C20362B1E00B7C0EF /* mips.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = mips.rb; sourceTree = "<group>"; };
 		FEF3475D20362B1F00B7C0EF /* config.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = config.rb; sourceTree = "<group>"; };
 		FEF3475E20362B1F00B7C0EF /* instructions.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = instructions.rb; sourceTree = "<group>"; };
 		FEF3475F20362B2000B7C0EF /* opt.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = opt.rb; sourceTree = "<group>"; };
@@ -9335,8 +9328,6 @@
 				0F6DB7EB1D617D0F00CDBF8E /* MacroAssemblerCodeRef.cpp */,
 				863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */,
 				E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */,
-				FEC60FED2AE97245003B7B31 /* MacroAssemblerMIPS.cpp */,
-				86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */,
 				FE68C6351B90DDD90042BCB3 /* MacroAssemblerPrinter.cpp */,
 				FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */,
 				FEC60FE92AE971FD003B7B31 /* MacroAssemblerRISCV64.cpp */,
@@ -9345,8 +9336,6 @@
 				A7A4AE0717973B26005612B1 /* MacroAssemblerX86Common.cpp */,
 				860161E20F3A83C100F84710 /* MacroAssemblerX86Common.h */,
 				65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */,
-				86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */,
-				86C568DF11A213EE0007F7FF /* MIPSRegisters.h */,
 				FE37C5292A9C3EA9003EE733 /* OSCheck.h */,
 				E38DAB522A95D23A0050B7A8 /* PerfLog.cpp */,
 				E38DAB512A95D23A0050B7A8 /* PerfLog.h */,
@@ -10109,7 +10098,6 @@
 				FEF3476420362B2300B7C0EF /* generate_offset_extractor.rb */,
 				FE0DA1022429417F00A884A6 /* generate_settings_extractor.rb */,
 				FEF3475E20362B1F00B7C0EF /* instructions.rb */,
-				FEF3475C20362B1E00B7C0EF /* mips.rb */,
 				FEF3476120362B2100B7C0EF /* offsets.rb */,
 				FEF3475F20362B2000B7C0EF /* opt.rb */,
 				FEF3475220362B1B00B7C0EF /* parser.rb */,
@@ -11422,8 +11410,6 @@
 				0FB5467B14F5C7E1002C2989 /* MethodOfGettingAValueProfile.h in Headers */,
 				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
 				FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */,
-				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
-				86C568E211A213EE0007F7FF /* MIPSRegisters.h in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
 				9F63434577274FAFB9336C38 /* ModuleNamespaceAccessCase.h in Headers */,

@@ -115,15 +115,6 @@ constexpr bool isX86_64_AVX()
 }
 #endif
 
-constexpr bool isMIPS()
-{
-#if CPU(MIPS)
-    return true;
-#else
-    return false;
-#endif
-}
-
 constexpr bool isRISCV64()
 {
 #if CPU(RISCV64)
@@ -210,7 +201,7 @@ constexpr size_t prologueStackPointerDelta()
 #elif CPU(X86_64)
     // Prologue only saves the framePointerRegister
     return sizeof(CPURegister);
-#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)
+#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(RISCV64)
     // Prologue saves the framePointerRegister and linkRegister
     return 2 * sizeof(CPURegister);
 #else

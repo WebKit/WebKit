@@ -537,40 +537,6 @@ public:
 #endif // CPU(ARM64)
 #endif
 
-#if CPU(MIPS)
-    void emitFunctionPrologue()
-    {
-        pushPair(framePointerRegister, returnAddressRegister);
-        move(stackPointerRegister, framePointerRegister);
-    }
-
-    void emitFunctionEpilogueWithEmptyFrame()
-    {
-        popPair(framePointerRegister, returnAddressRegister);
-    }
-
-    void emitFunctionEpilogue()
-    {
-        move(framePointerRegister, stackPointerRegister);
-        emitFunctionEpilogueWithEmptyFrame();
-    }
-
-    ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
-    {
-        move(returnAddressRegister, reg);
-    }
-
-    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(RegisterID reg)
-    {
-        move(reg, returnAddressRegister);
-    }
-
-    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(Address address)
-    {
-        loadPtr(address, returnAddressRegister);
-    }
-#endif
-
 #if CPU(RISCV64)
     void emitFunctionPrologue()
     {

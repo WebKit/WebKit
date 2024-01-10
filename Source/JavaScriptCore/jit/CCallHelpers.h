@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-#if CPU(MIPS) || (OS(WINDOWS) && CPU(X86_64))
+#if OS(WINDOWS) && CPU(X86_64)
 #define POKE_ARGUMENT_OFFSET 4
 #else
 #define POKE_ARGUMENT_OFFSET 0
@@ -204,22 +204,6 @@ private:
             }
         }
     }
-
-#if CPU(MIPS)
-    template<unsigned NumCrossSources, unsigned NumberOfRegisters>
-    ALWAYS_INLINE void setupStubCrossArgs(std::array<GPRReg, NumberOfRegisters> destinations, std::array<FPRReg, NumberOfRegisters> sources) {
-        if constexpr (NumCrossSources) {
-            for (unsigned i = 0; i < NumCrossSources; i++) {
-                GPRReg dest = destinations[i];
-                FPRReg source = sources[i];
-
-                moveDouble(source, dest);
-            }
-        }
-        UNUSED_PARAM(destinations);
-        UNUSED_PARAM(sources);
-    }
-#endif
 
     template<typename RegType>
     using InfoTypeForReg = decltype(toInfoFromReg(RegType(-1)));
@@ -461,25 +445,14 @@ private:
     }
 
 #else // USE(JSVALUE64)
-#if CPU(ARM_THUMB2) || CPU(MIPS)
+#if CPU(ARM_THUMB2)
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename... Args>
     void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, FPRReg arg, Args... args)
     {
         static_assert(std::is_same_v<CURRENT_ARGUMENT_TYPE, double>, "We should only be passing FPRRegs to a double. We use moveDouble / loadDouble / storeDouble exclusively");
 
-        // MIPS and ARM (hardfp, which we require) pass FP arguments in FP registers.
-#if CPU(MIPS)
-        unsigned numberOfFPArgumentRegisters = FPRInfo::numberOfArgumentRegisters;
-        unsigned currentFPArgCount = argSourceRegs.argCount(arg);
-
-        // MIPS can only use FP argument registers if it isn't preceeded by any GP argument.
-        if (currentFPArgCount < numberOfFPArgumentRegisters && !numGPRArgs) {
-            auto updatedArgSourceRegs = argSourceRegs.pushRegArg(arg, FPRInfo::toArgumentRegister(currentFPArgCount));
-            setupArgumentsImpl<OperationType>(updatedArgSourceRegs.addGPRExtraArg().addGPRExtraArg(), args...);
-            return;
-        }
-#elif CPU(ARM_THUMB2)
+        // ARM (hardfp, which we require) passes FP arguments in FP registers.
         unsigned numberOfFPArgumentRegisters = FPRInfo::numberOfArgumentRegisters;
         unsigned currentFPArgCount = argSourceRegs.argCount(arg);
 
@@ -488,31 +461,6 @@ private:
             setupArgumentsImpl<OperationType>(updatedArgSourceRegs, args...);
             return;
         }
-#endif
-
-#if CPU(MIPS)
-        // On MIPS arguments can be passed in GP registers.
-        unsigned numberOfGPArgumentRegisters = GPRInfo::numberOfArgumentRegisters;
-        unsigned currentGPArgCount = argSourceRegs.argCount(GPRInfo::regT0);
-        unsigned alignedGPArgCount = roundUpToMultipleOf<2>(currentGPArgCount);
-
-        if (alignedGPArgCount + 1 < numberOfGPArgumentRegisters) {
-            auto updatedArgSourceRegs = argSourceRegs.pushRegArg(arg, GPRInfo::toArgumentRegister(alignedGPArgCount));
-
-            if (alignedGPArgCount > currentGPArgCount)
-                setupArgumentsImpl<OperationType>(updatedArgSourceRegs.addGPRExtraArg().addGPRExtraArg().addGPRExtraArg(), args...);
-            else
-                setupArgumentsImpl<OperationType>(updatedArgSourceRegs.addGPRExtraArg().addGPRExtraArg(), args...);
-
-            return;
-        }
-
-        if (currentGPArgCount < numberOfGPArgumentRegisters) {
-            pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs + 1, nonArgGPRs, extraPoke);
-            setupArgumentsImpl<OperationType>(argSourceRegs.addGPRExtraArg().addStackArg(arg).addPoke(), args...);
-            return;
-        }
-#endif
 
         // Otherwise pass FP argument on stack.
         if (stackAligned(numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke)) {
@@ -605,7 +553,7 @@ private:
             pokeArgumentsAligned<OperationType>(argSourceRegs, arg.payloadGPR(), arg.tagGPR(), args...);
     }
 
-#endif // CPU(ARM_THUMB2) || CPU(MIPS)
+#endif // CPU(ARM_THUMB2)
 #endif // USE(JSVALUE64)
 
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
@@ -763,11 +711,8 @@ private:
         static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
 
         setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
-#if CPU(MIPS)
-        setupStubCrossArgs<numCrossSources>(argSourceRegs.crossDestinations, argSourceRegs.crossSources);
-#else
         static_assert(!numCrossSources, "shouldn't be used on this architecture.");
-#endif
+
         setupStubArgs<numFPRSources, FPRReg>(clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprDestinations), clampArrayToSize<numFPRSources, FPRReg>(argSourceRegs.fprSources));
 
 #if OS(WINDOWS) && CPU(X86_64)
@@ -935,9 +880,6 @@ public:
         untagPtr(tempGPR, linkRegister);
         validateUntaggedPtr(linkRegister, tempGPR);
 #endif
-#elif CPU(MIPS)
-        loadPtr(Address(framePointerRegister, sizeof(void*)), returnAddressRegister);
-        subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
 #elif CPU(X86_64)
         loadPtr(Address(framePointerRegister, sizeof(void*)), tempGPR);
         push(tempGPR);

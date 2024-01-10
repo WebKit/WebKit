@@ -133,7 +133,7 @@ end
 macro cCall2(function)
     if C_LOOP or C_LOOP_WIN
         cloopCallSlowPath function, a0, a1
-    elsif ARMv7 or MIPS
+    elsif ARMv7
         call function
     elsif X86 or X86_WIN
         subp 8, sp
@@ -157,7 +157,7 @@ end
 macro cCall3(function)
     if C_LOOP or C_LOOP_WIN
         cloopCallSlowPath3 function, a0, a1, a2
-    elsif ARMv7 or MIPS
+    elsif ARMv7
         call function
     elsif X86 or X86_WIN
         subp 4, sp
@@ -174,7 +174,7 @@ end
 macro cCall4(function)
     if C_LOOP or C_LOOP_WIN
         cloopCallSlowPath4 function, a0, a1, a2, a3
-    elsif ARMv7 or MIPS
+    elsif ARMv7
         call function
     elsif X86 or X86_WIN
         push a3
@@ -243,7 +243,7 @@ macro doVMEntry(makeCall)
     storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
 
     # Align stack pointer
-    if X86_WIN or MIPS
+    if X86_WIN 
         addp CallFrameAlignSlots * SlotSize, sp, t3
         andp ~StackAlignmentMask, t3
         subp t3, CallFrameAlignSlots * SlotSize, sp
@@ -418,14 +418,6 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
         push a0
         call temp1
         addp 8, sp
-    elsif MIPS
-        move sp, a1
-        # We need to allocate stack space for 16 bytes (8-byte aligned)
-        # for 4 arguments, since callee can use this space.
-        subp 16, sp 
-        loadp ProtoCallFrame::globalObject[protoCallFrame], a0
-        call temp1
-        addp 16, sp
     else
         loadp ProtoCallFrame::globalObject[protoCallFrame], a0
         move sp, a1
@@ -833,7 +825,7 @@ macro functionArityCheck(opcodeName, doneLabel)
     move 0, PC
     jmp doneLabel
 
-    # It is required in ARMv7 and MIPs because global label definitions
+    # It is required in ARMv7 because global label definitions
     # for those architectures generates a set of instructions
     # that can clobber LLInt execution, resulting in unexpected
     # crashes.
@@ -2542,11 +2534,6 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
         storep cfr, [sp]
-    elsif MIPS
-        # calling convention says to save stack space for 4 first registers in
-        # all cases. To match our 16-byte alignment, that means we need to
-        # take 24 bytes
-        subp 24, sp
     else
         subp 8, sp # align stack pointer
     end
@@ -2572,11 +2559,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadp JSFunction::m_scope[t3], t3
     loadp JSGlobalObject::m_vm[t3], t3
 
-    if MIPS
-        addp 24, sp
-    else
-        addp 8, sp
-    end
+    addp 8, sp
 
     btpnz VM::m_exception[t3], .handleException
 
