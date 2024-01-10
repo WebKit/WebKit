@@ -16,6 +16,7 @@
                   { "name": "bot178", "platform": "mac-sonoma" },
                   { "name": "bot179", "platform": "mac-sonoma" },
                   { "name": "bot184", "platform": "mac-sonoma" },
+                  { "name": "bot139", "platform": "mac-sonoma" },
                   
                   { "name": "bot183", "platform": "mac-ventura" },
                   { "name": "bot211", "platform": "mac-ventura" },
@@ -36,7 +37,6 @@
                   { "name": "bot111", "platform": "mac-monterey" },
                   { "name": "bot135", "platform": "mac-monterey" },
                   { "name": "bot138", "platform": "mac-monterey" },
-                  { "name": "bot139", "platform": "mac-monterey" },
                   { "name": "bot141", "platform": "mac-monterey" },
                   { "name": "bot185", "platform": "mac-monterey" },
                   { "name": "bot187", "platform": "mac-monterey" },
@@ -191,7 +191,7 @@
                   "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "triggers": [
                       "sonoma-debug-tests-wk1", "sonoma-debug-tests-wk2", "sonoma-debug-applesilicon-tests-wk1",
-                      "sonoma-debug-applesilicon-tests-wk2"
+                      "sonoma-debug-applesilicon-tests-wk2", "sonoma-debug-site-isolation-applesilicon-tests-wk2"
                   ],
                   "workernames": ["bot247", "bot248"]
                   },
@@ -215,6 +215,11 @@
                   "additionalArguments": ["--no-retry-failures"],
                   "workernames": ["bot687"]
                   },
+                  { "name": "Apple-Sonoma-Debug-Site-Isolation-AppleSilicon-WK2-Tests", "factory": "TestWebKit1AllButJSCFactory",
+                  "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                  "additionalArguments": ["--no-retry-failures", "--site-isolation"],
+                  "workernames": ["bot139"]
+                },
                   { "name": "Apple-Sonoma-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
                   "platform": "mac-sonoma", "configuration": "debug", "architectures": ["x86_64"],
                   "workernames": ["bot178"]
@@ -311,7 +316,7 @@
                   { "name": "Apple-Monterey-Debug-Build", "factory": "BuildFactory",
                     "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "triggers": [
-                        "monterey-debug-tests-test262", "monterey-debug-tests-wk1", "monterey-debug-tests-wk2", "monterey-debug-applesilicon-tests-wk1",
+                        "monterey-debug-tests-test262", "monterey-debug-tests-wk1", "monterey-debug-tests-wk2",
                         "monterey-debug-applesilicon-tests-wk2", "monterey-applesilicon-debug-tests-jsc"
                     ],
                     "workernames": ["bot198", "bot279"]
@@ -330,12 +335,7 @@
                     "additionalArguments": ["--no-retry-failures"],
                     "workernames": ["bot1026"]
                   },
-                  { "name": "Apple-Monterey-Debug-AppleSilicon-WK1-Tests", "factory": "TestWebKit1AllButJSCFactory",
-                    "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures"],
-                    "workernames": ["bot139"]
-                  },
-                  { "name": "Apple-Monterey-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                  { "name": "Apple-Monterey-Debug-Site-Isolation-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                     "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "additionalArguments": ["--no-retry-failures"],
                     "workernames": ["bot141"]
@@ -725,6 +725,9 @@
                   { "type": "Triggerable", "name": "sonoma-debug-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Sonoma-Debug-AppleSilicon-WK2-Tests"]
                   },
+                  { "type": "Triggerable", "name": "sonoma-debug-site-isolation-applesilicon-tests-wk2",
+                  "builderNames": ["Apple-Sonoma-Debug-Site-Isolation-AppleSilicon-WK2-Tests"]
+                  },
                   { "type": "Triggerable", "name": "sonoma-release-perf-tests",
                   "builderNames": ["Apple-Sonoma-Release-WK2-Perf"]
                   },
@@ -781,9 +784,6 @@
                   },
                   { "type": "Triggerable", "name": "monterey-debug-tests-wk2",
                     "builderNames": ["Apple-Monterey-Debug-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "monterey-debug-applesilicon-tests-wk1",
-                    "builderNames": ["Apple-Monterey-Debug-AppleSilicon-WK1-Tests"]
                   },
                   { "type": "Triggerable", "name": "monterey-debug-applesilicon-tests-wk2",
                     "builderNames": ["Apple-Monterey-Debug-AppleSilicon-WK2-Tests"]
