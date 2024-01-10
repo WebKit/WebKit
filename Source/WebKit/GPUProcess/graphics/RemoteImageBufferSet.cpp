@@ -188,10 +188,11 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
     GraphicsContext& context = m_frontBuffer->context();
     context.resetClip();
 
+    IntRect copyRect;
     if (m_previousFrontBuffer && m_frontBuffer != m_previousFrontBuffer && !dirtyRegion.contains(layerBounds)) {
         Region copyRegion(m_previouslyPaintedRect ? *m_previouslyPaintedRect : layerBounds);
         copyRegion.subtract(dirtyRegion);
-        IntRect copyRect = copyRegion.bounds();
+        copyRect = copyRegion.bounds();
         if (!copyRect.isEmpty())
             m_frontBuffer->context().drawImageBuffer(*m_previousFrontBuffer, copyRect, copyRect, { CompositeOperator::Copy });
     }
@@ -212,6 +213,11 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
         scaledRect = enclosingIntRect(scaledRect);
         scaledRect.scale(1 / m_resolutionScale);
         paintingRects.append(scaledRect);
+
+        // If the copy-forward touched pixels that are about to be painted, then they
+        // won't be 'clear' any more.
+        if (copyRect.intersects(scaledRect))
+            m_frontBufferIsCleared = false;
     }
 
     if (paintingRects.size() == 1)
