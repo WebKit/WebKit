@@ -17,10 +17,10 @@ index 1aa630356cff167ec370961d7256920a21d6c508..ef393bcdebc03d2aad9c52c3caef5ad0
              suiteResults[test.name] = testData;
              self._suitesResults[suite.name] = suiteResults;
 diff --git a/tests/resources/main.js b/tests/resources/main.js
-index c6c669e0eb1f5e1fa2dc6ac60ca0a7532d5d690f..81b121ef765d546fce7c02ac91d2c053a9de7ad3 100644
+index 212470bfb1b93e25db7966a2192b3ab84a1ace84..b90324994aa9be4e02de269e356d190c19f11292 100644
 --- a/tests/resources/main.js
 +++ b/tests/resources/main.js
-@@ -851,6 +851,8 @@ Benchmark = Utilities.createClass(
+@@ -889,6 +889,8 @@ Benchmark = Utilities.createClass(
          this._frameCount = 0;
          this._warmupFrameCount = options["warmup-frame-count"];
          this._firstFrameMinimumLength = options["first-frame-minimum-length"];
@@ -29,7 +29,7 @@ index c6c669e0eb1f5e1fa2dc6ac60ca0a7532d5d690f..81b121ef765d546fce7c02ac91d2c053
  
          this._stage = stage;
          this._stage.initialize(this, options);
-@@ -908,6 +910,7 @@ Benchmark = Utilities.createClass(
+@@ -946,6 +948,7 @@ Benchmark = Utilities.createClass(
              this._finishPromise = new SimplePromise;
              this._previousTimestamp = undefined;
              this._didWarmUp = false;
@@ -37,7 +37,7 @@ index c6c669e0eb1f5e1fa2dc6ac60ca0a7532d5d690f..81b121ef765d546fce7c02ac91d2c053
              this._stage.tune(this._controller.initialComplexity - this._stage.complexity());
              this._animateLoop();
              return this._finishPromise;
-@@ -938,6 +941,7 @@ Benchmark = Utilities.createClass(
+@@ -976,6 +979,7 @@ Benchmark = Utilities.createClass(
                  this._benchmarkStartTimestamp = timestamp;
              } else if (timestamp - this._previousTimestamp >= this._warmupLength && this._frameCount >= this._warmupFrameCount) {
                  this._didWarmUp = true;

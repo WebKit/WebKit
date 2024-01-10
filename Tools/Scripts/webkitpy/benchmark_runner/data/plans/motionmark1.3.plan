@@ -1,10 +1,10 @@
 {
     "timeout": 1800,
     "count": 3,
-    "github_source": "https://github.com/webkit/MotionMark/tree/655c569c743dc3092102cf5c759b1d446105a74b/MotionMark",
-    "webserver_benchmark_patch": "data/patches/webserver/MotionMark1.3-tentative.patch",
-    "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark1.3-tentative.patch",
-    "signpost_patch": "data/patches/signposts/MotionMark1.3-tentative.patch",
+    "github_source": "https://github.com/webkit/MotionMark/tree/c52acd4c645780fd77cdbbd572750a5abfee1f7d/MotionMark",
+    "webserver_benchmark_patch": "data/patches/webserver/MotionMark1.3.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark1.3.patch",
+    "signpost_patch": "data/patches/signposts/MotionMark1.3.patch",
     "entry_point": "index.html",
     "subtest_entry_point": "developer.html",
     "config": {
@@ -106,7 +106,7 @@
         ]
     },
     "github_subtree": {
-        "url": "https://api.github.com/repos/WebKit/MotionMark/git/trees/2dee014260f48fae17d68754479ab6dc3e688271",
+        "url": "https://api.github.com/repos/WebKit/MotionMark/git/trees/2ccd8c3022e9e8c350a54947a0734bc3af8a43c4",
         "tree": [
             {"path": "about.html", "mode": "100644", "type": "blob"},
             {"path": "developer.html", "mode": "100644", "type": "blob"},

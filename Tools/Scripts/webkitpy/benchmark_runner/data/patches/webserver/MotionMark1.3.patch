@@ -1,5 +1,5 @@
 diff --git a/resources/debug-runner/debug-runner.js b/resources/debug-runner/debug-runner.js
-index 46d62ddc837d0a59f675aa592ef31186f3f6a0f3..afb5b5b331783e9f7e6d613bbba04780e5a639b0 100644
+index 8f7a3c10e907cfeead784f3b768633322fd9e603..78d2f300d0e61c60f07290273ae5a513faf11eef 100644
 --- a/resources/debug-runner/debug-runner.js
 +++ b/resources/debug-runner/debug-runner.js
 @@ -509,6 +509,37 @@ window.suitesManager = {
@@ -40,7 +40,7 @@ index 46d62ddc837d0a59f675aa592ef31186f3f6a0f3..afb5b5b331783e9f7e6d613bbba04780
      updateLocalStorageFromJSON: function(results)
      {
          for (var suiteName in results[Strings.json.results.tests]) {
-@@ -663,16 +694,12 @@ Utilities.extendObject(window.benchmarkController, {
+@@ -679,16 +710,12 @@ Utilities.extendObject(window.benchmarkController, {
  
      startBenchmarkImmediatelyIfEncoded: function()
      {
@@ -60,10 +60,10 @@ index 46d62ddc837d0a59f675aa592ef31186f3f6a0f3..afb5b5b331783e9f7e6d613bbba04780
          return true;
      },
 diff --git a/resources/runner/motionmark.js b/resources/runner/motionmark.js
-index f29cfbb1a0ac6ede74db300424d779f543a78274..36ddee639735d4c678734dfdec1707762a4744c6 100644
+index a2ea11401414e03ea07ea94be8761f0542da515a..5f7f4f1d791c2392edf1df61f4d45665e4d63ced 100644
 --- a/resources/runner/motionmark.js
 +++ b/resources/runner/motionmark.js
-@@ -417,6 +417,62 @@ window.benchmarkRunnerClient = {
+@@ -420,6 +420,62 @@ window.benchmarkRunnerClient = {
      didFinishLastIteration: function()
      {
          benchmarkController.showResults();
@@ -126,7 +126,7 @@ index f29cfbb1a0ac6ede74db300424d779f543a78274..36ddee639735d4c678734dfdec170776
      }
  };
  
-@@ -744,5 +800,11 @@ window.benchmarkController = {
+@@ -751,5 +807,11 @@ window.benchmarkController = {
      }
  };
  
