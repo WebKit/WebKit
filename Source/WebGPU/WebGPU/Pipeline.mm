@@ -30,8 +30,10 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label)
+std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout* pipelineLayout, const String& untransformedEntryPoint, NSString *label)
 {
+    // FIXME: Remove below line when https://bugs.webkit.org/show_bug.cgi?id=266774 is completed
+    auto entryPoint = shaderModule.transformedEntryPoint(untransformedEntryPoint);
     if (!entryPoint.length() || !shaderModule.isValid())
         return std::nullopt;
 
@@ -58,6 +60,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     auto iterator = prepareResult.entryPoints.find(entryPoint);
     if (iterator == prepareResult.entryPoints.end())
         return std::nullopt;
+
     const auto& entryPointInformation = iterator->value;
 
     return { { library, entryPointInformation } };

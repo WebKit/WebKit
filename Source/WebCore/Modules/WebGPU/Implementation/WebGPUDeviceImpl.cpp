@@ -67,6 +67,11 @@
 
 namespace WebCore::WebGPU {
 
+static auto invalidEntryPointName()
+{
+    return CString("");
+}
+
 DeviceImpl::DeviceImpl(WebGPUPtr<WGPUDevice>&& device, Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits, ConvertToBackingContext& convertToBackingContext)
     : Device(WTFMove(features), WTFMove(limits))
     , m_backing(device.copyRef())
@@ -318,7 +323,12 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
 {
     auto label = descriptor.label.utf8();
 
-    auto entryPoint = descriptor.compute.entryPoint.utf8();
+    std::optional<CString> entryPoint;
+    if (auto& descriptorEntryPoint = descriptor.compute.entryPoint) {
+        entryPoint = descriptorEntryPoint->utf8();
+        if (descriptorEntryPoint->length() != String::fromUTF8(entryPoint->data()).length())
+            entryPoint = invalidEntryPointName();
+    }
 
     auto constantNames = descriptor.compute.constants.map([](const auto& constant) {
         bool lengthsMatch = constant.key.length() == String::fromUTF8(constant.key.utf8().data()).length();
@@ -340,7 +350,7 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
         descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.layout) : nullptr, {
             nullptr,
             convertToBackingContext.convertToBacking(descriptor.compute.module),
-            entryPoint.data(),
+            entryPoint ? entryPoint->data() : nullptr,
             static_cast<uint32_t>(backingConstantEntries.size()),
             backingConstantEntries.data(),
         }
@@ -361,7 +371,12 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
 {
     auto label = descriptor.label.utf8();
 
-    auto vertexEntryPoint = descriptor.vertex.entryPoint.utf8();
+    std::optional<CString> vertexEntryPoint;
+    if (auto& descriptorEntryPoint = descriptor.vertex.entryPoint) {
+        vertexEntryPoint = descriptorEntryPoint->utf8();
+        if (descriptorEntryPoint->length() != String::fromUTF8(vertexEntryPoint->data()).length())
+            vertexEntryPoint = invalidEntryPointName();
+    }
 
     auto vertexConstantNames = descriptor.vertex.constants.map([](const auto& constant) {
         bool lengthsMatch = constant.key.length() == String::fromUTF8(constant.key.utf8().data()).length();
@@ -424,10 +439,15 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         .depthBiasClamp = descriptor.depthStencil ? descriptor.depthStencil->depthBiasClamp : 0,
     };
 
-    auto fragmentEntryPoint = descriptor.fragment ? descriptor.fragment->entryPoint.utf8() : CString("");
-
+    std::optional<CString> fragmentEntryPoint;
     Vector<CString> fragmentConstantNames;
     if (descriptor.fragment) {
+        if (auto& descriptorEntryPoint = descriptor.fragment->entryPoint) {
+            fragmentEntryPoint = descriptorEntryPoint->utf8();
+            if (descriptorEntryPoint->length() != String::fromUTF8(descriptor.fragment->entryPoint->utf8().data()).length())
+                fragmentEntryPoint = invalidEntryPointName();
+        }
+
         fragmentConstantNames = descriptor.fragment->constants.map([](const auto& constant) {
             bool lengthsMatch = constant.key.length() == String::fromUTF8(constant.key.utf8().data()).length();
             return lengthsMatch ? constant.key.utf8() : "";
@@ -489,7 +509,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
     WGPUFragmentState fragmentState {
         nullptr,
         descriptor.fragment ? convertToBackingContext.convertToBacking(descriptor.fragment->module) : nullptr,
-        fragmentEntryPoint.data(),
+        fragmentEntryPoint ? fragmentEntryPoint->data() : nullptr,
         static_cast<uint32_t>(fragmentConstantEntries.size()),
         fragmentConstantEntries.data(),
         static_cast<uint32_t>(colorTargets.size()),
@@ -510,7 +530,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         descriptor.layout ? convertToBackingContext.convertToBacking(*descriptor.layout) : nullptr, {
             nullptr,
             convertToBackingContext.convertToBacking(descriptor.vertex.module),
-            vertexEntryPoint.data(),
+            vertexEntryPoint ? vertexEntryPoint->data() : nullptr,
             static_cast<uint32_t>(vertexConstantEntries.size()),
             vertexConstantEntries.data(),
             static_cast<uint32_t>(backingBuffers.size()),

@@ -1255,8 +1255,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (&vertexModule.device() != this)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
 
-        const auto& vertexFunctionName = fromAPI(descriptor.vertex.entryPoint);
-        const auto& vertexEntryPoint = vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint();
+        const auto& vertexEntryPoint = descriptor.vertex.entryPoint ? fromAPI(descriptor.vertex.entryPoint) : vertexModule.defaultVertexEntryPoint();
         auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexEntryPoint, label);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex library failed creation"_s);
@@ -1298,9 +1297,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         RELEASE_ASSERT(fragmentShaderModule);
         usesFragDepth = fragmentShaderModule->usesFragDepth();
         usesSampleMask = fragmentShaderModule->usesSampleMask();
-        const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
-
-        const auto& fragmentEntryPoint = fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint();
+        const auto& fragmentEntryPoint = fragmentDescriptor.entryPoint ? fromAPI(fragmentDescriptor.entryPoint) : fragmentModule.defaultFragmentEntryPoint();
         auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentEntryPoint, label);
         if (!libraryCreationResult)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment library could not be created"_s);

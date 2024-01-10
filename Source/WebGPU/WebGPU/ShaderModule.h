@@ -47,9 +47,9 @@ class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule
 
     using CheckResult = std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
 public:
-    static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, NSMutableSet<NSString *> *originalOverrideNames, Device& device)
+    static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, NSMutableSet<NSString *> *originalOverrideNames, HashMap<String, String>&& originalFunctionNames, Device& device)
     {
-        return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, originalOverrideNames, device));
+        return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, originalOverrideNames, WTFMove(originalFunctionNames), device));
     }
     static Ref<ShaderModule> createInvalid(Device& device, CheckResult&& checkResult = std::monostate { })
     {
@@ -71,6 +71,7 @@ public:
     const PipelineLayout* pipelineLayoutHint(const String&) const;
     const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
     id<MTLLibrary> library() const { return m_library; }
+    const String& transformedEntryPoint(const String&) const;
 
     Device& device() const { return m_device; }
     const String& defaultVertexEntryPoint() const;
@@ -90,8 +91,9 @@ public:
     bool hasOverride(const String&) const;
     const VertexStageIn* stageInTypesForEntryPoint(const String&) const;
     const VertexOutputs* vertexReturnTypeForEntryPoint(const String&) const;
+
 private:
-    ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, NSMutableSet<NSString *> *, Device&);
+    ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, NSMutableSet<NSString *> *, HashMap<String, String>&&, Device&);
     ShaderModule(Device&, CheckResult&&);
 
     CheckResult convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&);
@@ -114,6 +116,7 @@ private:
     String m_defaultComputeEntryPoint;
 
     NSMutableSet<NSString *> *m_originalOverrideNames { nil };
+    const HashMap<String, String> m_originalFunctionNames;
 };
 
 } // namespace WebGPU
