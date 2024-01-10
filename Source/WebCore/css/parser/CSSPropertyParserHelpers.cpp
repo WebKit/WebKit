@@ -6736,27 +6736,59 @@ RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserConte
     if (identMatches<CSSValueNone, CSSValueNormal>(range.peek().id()))
         return consumeIdent(range);
 
-    CSSValueListBuilder values;
-    do {
-        RefPtr<CSSValue> parsedValue = consumeImage(range, context);
-        if (!parsedValue)
-            parsedValue = consumeIdent<CSSValueOpenQuote, CSSValueCloseQuote, CSSValueNoOpenQuote, CSSValueNoCloseQuote>(range);
-        if (!parsedValue)
-            parsedValue = consumeString(range);
-        if (!parsedValue) {
-            if (range.peek().functionId() == CSSValueAttr)
-                parsedValue = consumeAttr(consumeFunction(range), context);
-            else if (range.peek().functionId() == CSSValueCounter)
-                parsedValue = consumeCounterContent(consumeFunction(range), false, context);
-            else if (range.peek().functionId() == CSSValueCounters)
-                parsedValue = consumeCounterContent(consumeFunction(range), true, context);
-            if (!parsedValue)
-                return nullptr;
-        }
-        values.append(parsedValue.releaseNonNull());
-    } while (!range.atEnd());
+    enum class ContentListType : bool { VisibleContent, AltText };
+    auto consumeContentList = [&](CSSValueListBuilder& values, ContentListType type) -> bool {
+        bool shouldEnd = false;
+        do {
+            RefPtr<CSSValue> parsedValue = consumeString(range);
+            if (type == ContentListType::VisibleContent) {
+                if (!parsedValue)
+                    parsedValue = consumeImage(range, context);
+                if (!parsedValue)
+                    parsedValue = consumeIdent<CSSValueOpenQuote, CSSValueCloseQuote, CSSValueNoOpenQuote, CSSValueNoCloseQuote>(range);
+            }
+            if (!parsedValue) {
+                if (range.peek().functionId() == CSSValueAttr)
+                    parsedValue = consumeAttr(consumeFunction(range), context);
+                // FIXME: Alt-text should support counters.
+                else if (type == ContentListType::VisibleContent) {
+                    if (range.peek().functionId() == CSSValueCounter)
+                        parsedValue = consumeCounterContent(consumeFunction(range), false, context);
+                    else if (range.peek().functionId() == CSSValueCounters)
+                        parsedValue = consumeCounterContent(consumeFunction(range), true, context);
+                }
+                if (!parsedValue)
+                    return false;
+            }
+            values.append(parsedValue.releaseNonNull());
 
-    return CSSValueList::createSpaceSeparated(WTFMove(values));
+            // Visible content parsing ends at '/' or end of range.
+            if (type == ContentListType::VisibleContent && !range.atEnd()) {
+                CSSParserToken value = range.peek();
+                if (value.type() == DelimiterToken && value.delimiter() == '/')
+                    shouldEnd = true;
+            }
+            shouldEnd = shouldEnd || range.atEnd();
+        } while (!shouldEnd);
+        return true;
+    };
+
+    CSSValueListBuilder visibleContent;
+    if (!consumeContentList(visibleContent, ContentListType::VisibleContent))
+        return nullptr;
+
+    // Consume alt-text content if there is any.
+    if (consumeSlashIncludingWhitespace(range)) {
+        CSSValueListBuilder altText;
+        if (!consumeContentList(altText, ContentListType::AltText))
+            return nullptr;
+        return CSSValuePair::createSlashSeparated(
+            CSSValueList::createSpaceSeparated(WTFMove(visibleContent)),
+            CSSValueList::createSpaceSeparated(WTFMove(altText))
+        );
+    }
+
+    return CSSValueList::createSpaceSeparated(WTFMove(visibleContent));
 }
 
 RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange& range)
