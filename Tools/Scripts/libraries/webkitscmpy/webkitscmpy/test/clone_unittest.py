@@ -141,12 +141,14 @@ class TestClone(testing.PathTestCase):
         )
 
     def test_merge_back(self):
+        issues = [issue.copy() for issue in bmocks.ISSUES]
+        issues[0]['category'] = 'Tentpole Feature Work'
+
         with mocks.local.Git(self.path), mocks.local.Svn(), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(
-            issues=bmocks.ISSUES,
+            issues=issues,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
         ), MockTerminal.input('1'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
-
             self.assertEqual(0, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for an October branch', '--milestone', 'October', '--merge-back'),
                 path=self.path,
@@ -155,7 +157,7 @@ class TestClone(testing.PathTestCase):
             raw_issue = tracker.client.radar_for_id(4)
 
             self.assertEqual(raw_issue.milestone.name, 'October')
-            self.assertEqual(raw_issue.category.name, 'Escape / Regression in the Build')
+            self.assertEqual(raw_issue.category.name, 'Tentpole Feature Work')
             self.assertIsNone(raw_issue.event)
             self.assertIsNone(raw_issue.tentpole)
 

@@ -203,7 +203,7 @@ class Clone(Command):
                 return False
             return value
 
-        category = pick_attr('category', 'categories', 'Escape / Regression in the Build' if merge_back else None)
+        category = pick_attr('category', 'categories', None)
         event = pick_attr('event', 'events')
         tentpole = pick_attr('tentpole', 'tentpoles')
 
