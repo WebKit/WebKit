@@ -1991,6 +1991,19 @@
    },
    {
       "emails" : [
+         "d_parkinson@apple.com"
+      ],
+      "expertise" : "Security",
+      "github" : "darryl-apple",
+      "name" : "Darryl Parkinson",
+      "nicks" : [
+         "darryl-apple",
+         "darryl.p"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "dbarton@mathscribe.com"
       ],
       "expertise" : "MathML",
