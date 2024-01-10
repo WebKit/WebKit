@@ -125,7 +125,6 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_CQMAX:
         return true;
     case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_PROPERTY_ID:
@@ -153,7 +152,6 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_FONT_FAMILY:
         return true;
     case CSSUnitType::CSS_CALC:
@@ -362,7 +360,6 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_FONT_FAMILY:
         if (m_value.string)
             m_value.string->deref();
@@ -582,11 +579,6 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSUnresolvedColor value)
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createAttr(String value)
 {
     return adoptRef(*new CSSPrimitiveValue(WTFMove(value), CSSUnitType::CSS_ATTR));
-}
-
-Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCounterName(String value)
-{
-    return adoptRef(*new CSSPrimitiveValue(WTFMove(value), CSSUnitType::CSS_COUNTER_NAME));
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCustomIdent(String value)
@@ -1302,7 +1294,6 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_IDENT:
@@ -1397,8 +1388,6 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
         return makeString("attr("_s, m_value.string, ')');
     case CSSUnitType::CSS_CALC:
         return m_value.calc->cssText();
-    case CSSUnitType::CSS_COUNTER_NAME:
-        return makeString("counter(", m_value.string, ')');
     case CSSUnitType::CSS_DIMENSION:
         // FIXME: This isn't correct.
         return formatNumberValue(""_s);
@@ -1539,7 +1528,6 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_FONT_FAMILY:
         return equal(m_value.string, other.m_value.string);
     case CSSUnitType::CSS_RGBCOLOR:
@@ -1644,7 +1632,6 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_FONT_FAMILY:
         add(hasher, String { m_value.string });
         break;
@@ -1762,7 +1749,6 @@ void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependenci
     case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_RGBCOLOR:
-    case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
     case CSSUnitType::CSS_UNRESOLVED_COLOR:

@@ -7,23 +7,15 @@
         a {
             text-decoration: none;
         }
-        a::after {
-            content: '(href=' attr(href) ')';
-        }
     </style>
-    <script>
-        function changeHref() {
-            document.getElementById("toChange").href = "4";
-        }
-    </script>
 </head>
-<body onload="changeHref();">
+<body>
 <p>Each link below should display the text "n(href=n)" where n is a number</p>
 <p>The href attribute of the last one is changed onload.</p>
 <hr/>
-<p><a href="1">1</a></p>
-<p><a href="2">2</a></p>
-<p><a href="3">3</a></p>
-<p><a id="toChange" href="3">4</a></p>
+<p><a href="1">1(href=1)</a></p>
+<p><a href="2">2(href=2)</a></p>
+<p><a href="3">3(href=3)</a></p>
+<p><a href="4">4(href=4)</a></p>
 </body>
 </html>
