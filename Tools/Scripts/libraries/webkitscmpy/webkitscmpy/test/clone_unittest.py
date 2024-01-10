@@ -115,7 +115,7 @@ class TestClone(testing.PathTestCase):
             issues=bmocks.ISSUES,
             projects=bmocks.PROJECTS,
             milestones=bmocks.MILESTONES,
-        ), MockTerminal.input('3'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
+        ), MockTerminal.input('2'), OutputCapture() as captured, patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]):
 
             self.assertEqual(0, program.main(
                 args=('clone', 'rdar://1', '--reason', 'Cloning for an October branch', '--milestone', 'October', '--prompt'),
@@ -125,7 +125,7 @@ class TestClone(testing.PathTestCase):
             raw_issue = tracker.client.radar_for_id(4)
 
             self.assertEqual(raw_issue.milestone.name, 'October')
-            self.assertEqual(raw_issue.category.name, 'Test Development')
+            self.assertEqual(raw_issue.category.name, 'Important')
             self.assertIsNone(raw_issue.event)
             self.assertIsNone(raw_issue.tentpole)
 
@@ -133,16 +133,17 @@ class TestClone(testing.PathTestCase):
         self.assertEqual(
             captured.stdout.getvalue(),
             'Pick a category for your clone:\n'
-            '    1) Escape / Regression in the Build\n'
-            '    2) Tentpole Feature Work\n'
-            '    3) Test Development\n: \n'
+            '    1) Feature\n'
+            '    2) Important\n'
+            '    3) Regression\n'
+            '    4) Testing\n: \n'
             "Created 'rdar://4 Example issue 1'\n"
             'Moved clone to October and into Analyze: Prepare\n',
         )
 
     def test_merge_back(self):
         issues = [issue.copy() for issue in bmocks.ISSUES]
-        issues[0]['category'] = 'Tentpole Feature Work'
+        issues[0]['category'] = 'Important'
 
         with mocks.local.Git(self.path), mocks.local.Svn(), Environment(RADAR_USERNAME='tcontributor'), bmocks.Radar(
             issues=issues,
@@ -157,7 +158,7 @@ class TestClone(testing.PathTestCase):
             raw_issue = tracker.client.radar_for_id(4)
 
             self.assertEqual(raw_issue.milestone.name, 'Internal Tools - October')
-            self.assertEqual(raw_issue.category.name, 'Tentpole Feature Work')
+            self.assertEqual(raw_issue.category.name, 'Important')
             self.assertIsNone(raw_issue.event)
             self.assertIsNone(raw_issue.tentpole)
 
