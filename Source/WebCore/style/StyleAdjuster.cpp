@@ -419,18 +419,17 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (style.display() == DisplayType::Contents)
         adjustDisplayContentsStyle(style);
 
+    if (m_element && (m_element->hasTagName(frameTag) || m_element->hasTagName(framesetTag))) {
+        // Framesets ignore display and position properties.
+        style.setPosition(PositionType::Static);
+        style.setEffectiveDisplay(DisplayType::Block);
+    }
+
     if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
         if (m_element) {
             // Tables never support the -webkit-* values for text-align and will reset back to the default.
             if (is<HTMLTableElement>(*m_element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
                 style.setTextAlign(TextAlignMode::Start);
-
-            // Frames and framesets never honor position:relative or position:absolute. This is necessary to
-            // fix a crash where a site tries to position these objects. They also never honor display.
-            if (m_element->hasTagName(frameTag) || m_element->hasTagName(framesetTag)) {
-                style.setPosition(PositionType::Static);
-                style.setEffectiveDisplay(DisplayType::Block);
-            }
 
             // Ruby text does not support float or position. This might change with evolution of the specification.
             if (m_element->hasTagName(rtTag)) {
