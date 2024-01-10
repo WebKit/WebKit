@@ -77,6 +77,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
         &SVGNames::polylineTag,
         &SVGNames::rectTag,
         &SVGNames::svgTag,
+        &SVGNames::switchTag,
         &SVGNames::textTag,
         &SVGNames::useTag,
 
@@ -98,7 +99,7 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
         &SVGNames::foreignObjectTag,
 
         // Elements that we ignore, as it doesn't make any sense.
-        // defs, pattern, switch (FIXME: Mail SVG WG about these)
+        // defs, pattern (FIXME: Mail SVG WG about these)
         // symbol (is converted to a svg element, when referenced by use, we can safely ignore it.)
     };
     static NeverDestroyed set = tagSet(tags);
