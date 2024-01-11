@@ -27,7 +27,6 @@
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -35,6 +34,7 @@ namespace WebCore {
 class DeferredPromise;
 class Document;
 class UserGestureIndicator;
+class WeakPtrImplWithEventTargetData;
 
 enum class StorageAccessWasGranted : bool { No, Yes };
 
@@ -96,7 +96,7 @@ private:
 
     std::unique_ptr<UserGestureIndicator> m_temporaryUserGesture;
     
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     uint8_t m_numberOfTimesExplicitlyDeniedFrameSpecificStorageAccess = 0;
 

@@ -26,7 +26,7 @@
 #include "ExceptionOr.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "XMLDocument.h"
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ public:
 private:
     Ref<Document> protectedDocument();
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

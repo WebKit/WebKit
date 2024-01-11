@@ -227,7 +227,7 @@ private:
     // m_head has to be destroyed after destroying CheckedRef of m_document and m_attachmentRoot
     HTMLStackItem m_head;
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     
     // This is the root ContainerNode to which the parser attaches all newly
     // constructed nodes. It points to a DocumentFragment when parsing fragments

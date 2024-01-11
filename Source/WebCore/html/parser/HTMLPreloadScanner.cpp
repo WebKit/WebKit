@@ -46,9 +46,9 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SizesAttributeParser.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/MainThread.h>
 #include <wtf/SortedArrayMap.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -405,7 +405,7 @@ private:
 
     Ref<Document> protectedDocument() const { return m_document.get(); }
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     TagId m_tagId;
     String m_urlToLoad;
     String m_srcSetAttribute;

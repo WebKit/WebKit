@@ -26,10 +26,10 @@
 
 #pragma once
 
-#include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -76,7 +76,7 @@ private:
 
     std::optional<Values> m_values;
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

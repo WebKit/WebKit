@@ -31,6 +31,7 @@
 #include "Position.h"
 #include <variant>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -139,7 +140,7 @@ private:
 
     void removeCorrectionIndicatorMarkers();
 
-    CheckedRef<Document> m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 #undef UNLESS_ENABLED
