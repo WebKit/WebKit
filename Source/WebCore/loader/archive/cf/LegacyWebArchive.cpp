@@ -459,6 +459,11 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     if (frame->page() && frame->page()->settings().isScriptEnabled())
         markupExclusionRules.append(MarkupExclusionRule { AtomString { "noscript"_s }, { } });
 
+    // This archive is created for saving, and all subresources URLs will be rewritten to relative file paths
+    // based on the main resource file.
+    if (!mainResourceFilePath.isEmpty())
+        markupExclusionRules.append(MarkupExclusionRule { AtomString { "base"_s }, { } });
+
     Vector<Ref<Node>> nodeList;
     String markupString = serializeFragment(node, SerializedNodes::SubtreeIncludingNode, &nodeList, ResolveURLs::No, std::nullopt, { }, { }, ShouldIncludeShadowDOM::Yes, markupExclusionRules);
     auto nodeType = node.nodeType();
@@ -724,7 +729,16 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             extension = makeString(".", extension);
         auto mainFrameFilePathWithExtension = mainFrameFilePath.endsWith(extension) ? mainFrameFilePath : makeString(mainFrameFilePath, extension);
         auto filePathWithExtension = frame.isMainFrame() ? mainFrameFilePathWithExtension : makeString(subresourcesDirectoryName, "/frame_"_s, frame.frameID().toString(), extension);
-        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, ResolveURLs::No, std::nullopt, WTFMove(uniqueSubresources), WTFMove(uniqueCSSStyleSheets), ShouldIncludeShadowDOM::Yes, markupExclusionRules);
+
+        ResolveURLs resolveURLs = ResolveURLs::No;
+        // Base element is excluded, so all URLs should be replaced with absolute URL.
+        bool baseElementExcluded = WTF::anyOf(markupExclusionRules, [&] (auto& rule) {
+            return rule.elementLocalName == "base"_s;
+        });
+        if (!document->baseElementURL().isEmpty() && baseElementExcluded)
+            resolveURLs = ResolveURLs::Yes;
+
+        String updatedMarkupString = serializeFragment(*document, SerializedNodes::SubtreeIncludingNode, nullptr, resolveURLs, std::nullopt, WTFMove(uniqueSubresources), WTFMove(uniqueCSSStyleSheets), ShouldIncludeShadowDOM::Yes, markupExclusionRules);
         mainResource = ArchiveResource::create(utf8Buffer(updatedMarkupString), responseURL, response.mimeType(), "UTF-8"_s, frame.tree().uniqueName(), ResourceResponse(), filePathWithExtension);
     }
 

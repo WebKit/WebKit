@@ -1667,6 +1667,79 @@ TEST(WebArchive, SaveResourcesCrossOriginLink)
     }];
     Util::run(&saved);
 }
+
+static const char* htmlDataBytesForExcludeBaseElement = R"TESTRESOURCE(
+<head>
+<base href="webarchivetest://resource.com" target="_blank">
+</head>
+<img src="image.png" onload="onImageLoad()">
+<a href="/link">Open Link</a>
+<script>
+function onImageLoad() {
+    window.webkit.messageHandlers.testHandler.postMessage("done");
+}
+</script>
+)TESTRESOURCE";
+
+TEST(WebArchive, SaveResourcesExcludeBaseElement)
+{
+    RetainPtr<NSURL> directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SaveResourcesTest"] isDirectory:YES];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:directoryURL.get() error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webarchivetest"];
+    NSData *htmlData = [NSData dataWithBytes:htmlDataBytesForExcludeBaseElement length:strlen(htmlDataBytesForExcludeBaseElement)];
+    NSData *imageData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"400x400-green" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSData *data = nil;
+        NSString *mimeType = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://host.com/main.html"]) {
+            mimeType = @"text/html";
+            data = htmlData;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"webarchivetest://resource.com/image.png"]) {
+            mimeType = @"image/png";
+            data = imageData;
+        }
+
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType expectedContentLength:data.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    static bool messageReceived = false;
+    [webView performAfterReceivingMessage:@"done" action:[&] {
+        messageReceived = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"webarchivetest://host.com/main.html"]]];
+    Util::run(&messageReceived);
+
+    static bool saved = false;
+    [webView _saveResources:directoryURL.get() suggestedFileName:@"host" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        NSString *mainResourcePath = [directoryURL URLByAppendingPathComponent:@"host.html"].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:mainResourcePath]);
+
+        NSString *savedMainResource = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:mainResourcePath] encoding:NSUTF8StringEncoding];
+        NSString *imageFile = @"image.png";
+        NSString *resourceDirectoryName = @"host_files";
+        NSString *imageResourceRelativePath = [resourceDirectoryName stringByAppendingPathComponent:imageFile];
+        EXPECT_TRUE([savedMainResource containsString:imageResourceRelativePath]);
+        EXPECT_FALSE([savedMainResource containsString:@"base"]);
+        // The anchor element's url should be resolved.
+        EXPECT_TRUE([savedMainResource containsString:@"webarchivetest://resource.com/link"]);
+
+        NSString *imageResourcePath = [directoryURL URLByAppendingPathComponent:imageResourceRelativePath].path;
+        EXPECT_TRUE([fileManager fileExistsAtPath:imageResourcePath]);
+
+        saved = true;
+    }];
+    Util::run(&saved);
+}
+
 static const char* htmlDataBytesForExclusionRules = R"TESTRESOURCE(
 <a href="foo.html" target="_blank">Blank</a>
 <a href="#bar" target="_self">Self</a>
